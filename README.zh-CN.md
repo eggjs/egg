@@ -28,27 +28,19 @@ A web framework's framework for Node.js
 $ npm install egg --save
 ```
 
-## Support Node.js versions table
+## 支持的 Node.js 版本
 
 egg \ node | 6.x | 4.x
 ---        | --- | ---
 ^1.0.0     | √   | √
 
-## Run Examples
-
-e.g.: run [helloworld](examples/helloworld)
-
-```bash
-$ npm run example helloworld
-```
-
-## Milestones Branches
+## 里程碑分支
 
 - 1.x - [master](https://github.com/eggjs/egg/tree/master)
 
-## How to Contributing
+## 参与贡献代码
 
-Please read [CONTRIBUTING](CONTRIBUTING.md) first.
+在你动手写代码之前，一定要先阅读 [CONTRIBUTING](CONTRIBUTING.md)，了解我们的一些开发约定和规范。
 
 ## License
 
