@@ -1,4 +1,6 @@
-# egg
+![](https://cloud.githubusercontent.com/assets/985607/16881873/c1612cf8-4aee-11e6-9b51-e95412750930.png)
+
+A web framework's framework for Node.js.
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -20,35 +22,25 @@
 [download-image]: https://img.shields.io/npm/dm/egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg
 
-A web framework's framework for Node.js
+## Installation
 
-## Install
-
-```$
+```bash
 $ npm install egg --save
 ```
 
-## Support Node.js versions table
+Egg is supported in node v4+.
 
-egg \ node | 6.x | 4.x
----        | --- | ---
-^1.0.0     | √   | √
+## Features
 
-## Run Examples
+## Docs & Community
 
-e.g.: run [helloworld](examples/helloworld)
+## Getting started
 
-```bash
-$ npm run example helloworld
-```
-
-## Milestones Branches
-
-- 1.x - [master](https://github.com/eggjs/egg/tree/master)
+## Examples
 
 ## How to Contributing
 
-Please read [CONTRIBUTING](CONTRIBUTING.md) first.
+## Team
 
 ## License
 

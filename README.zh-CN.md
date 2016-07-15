@@ -1,4 +1,6 @@
-# egg
+![](https://cloud.githubusercontent.com/assets/985607/16881873/c1612cf8-4aee-11e6-9b51-e95412750930.png)
+
+Node.js 编写的 web 框架的框架。
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -20,28 +22,26 @@
 [download-image]: https://img.shields.io/npm/dm/egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg
 
-A web framework's framework for Node.js
+## 安装
 
-## Install
-
-```$
+```bash
 $ npm install egg --save
 ```
 
-## 支持的 Node.js 版本
+Egg 支持 node v4 以上的版本。
 
-egg \ node | 6.x | 4.x
----        | --- | ---
-^1.0.0     | √   | √
+## 特性
 
-## 里程碑分支
+## 文档和社区
 
-- 1.x - [master](https://github.com/eggjs/egg/tree/master)
+## 快速开始
 
-## 参与贡献代码
+## 示例
 
-在你动手写代码之前，一定要先阅读 [CONTRIBUTING](CONTRIBUTING.md)，了解我们的一些开发约定和规范。
+## 贡献代码
 
-## License
+## 团队
+
+## 开源协议
 
 [MIT](LICENSE)
