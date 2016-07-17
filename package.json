@@ -1,0 +1,92 @@
+{
+  "name": "egg",
+  "version": "0.0.3",
+  "description": "A web framework's framework for Node.js",
+  "dependencies": {
+    "egg-cluster": "*",
+    "egg-loader": "*",
+    "accepts": "^1.3.3",
+    "agentkeepalive": "^2.1.1",
+    "co": "^4.6.0",
+    "debug": "^2.2.0",
+    "delegates": "^1.0.0",
+    "depd": "^1.1.0",
+    "egg-cookies": "^1.0.0",
+    "egg-logger": "^1.0.1",
+    "egg-onerror": "^0.0.2",
+    "egg-session": "^0.0.2",
+    "graceful": "^1.0.0",
+    "humanize-ms": "^1.2.0",
+    "inflection": "^1.10.0",
+    "is-type-of": "^1.0.0",
+    "jsonp-body": "^1.0.0",
+    "koa": "^1.2.0",
+    "koa-bodyparser": "^2.2.0",
+    "koa-override": "^1.0.0",
+    "koa-router": "^5.4.0",
+    "ready-callback": "^1.0.0",
+    "scmp": "^1.0.0",
+    "sdk-base": "^2.0.1",
+    "sendmessage": "^1.0.5",
+    "urllib": "^2.9.1",
+    "utility": "^1.8.0"
+  },
+  "devDependencies": {
+    "autod": "^2.6.1",
+    "autod-egg": "^1.0.0",
+    "beautify-benchmark": "^0.2.4",
+    "benchmark": "^2.1.0",
+    "co-sleep": "^0.0.1",
+    "coffee": "^3.2.2",
+    "egg-bin": "1",
+    "egg-ci": "^1.0.0",
+    "egg-plugin-puml": "1",
+    "eslint": "^3.0.0",
+    "eslint-config-egg": "^3.1.0",
+    "estraverse": "^4.1.1",
+    "formstream": "^1.0.0",
+    "glob": "^7.0.3",
+    "merge-descriptors": "^1.0.1",
+    "moment": "^2.13.0",
+    "node-uuid": "^1.4.7",
+    "once": "^1.3.3",
+    "pedding": "^1.0.0",
+    "rds": "^0.1.0",
+    "rimraf": "^2.5.2",
+    "should": "^6.0.3",
+    "stream-wormhole": "^1.0.0",
+    "supertest": "^1.2.0",
+    "supertest-as-promised": "^3.2.0",
+    "uuid": "^2.0.2",
+    "uuid-js": "^0.7.5"
+  },
+  "main": "index.js",
+  "files": [
+    "bin",
+    "lib",
+    "index.js"
+  ],
+  "scripts": {
+    "lint": "eslint --fix lib test *.js",
+    "test": "npm run lint && npm run test-local",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
+    "ci": "node -v && npm run lint && npm run cov",
+    "autod": "autod",
+    "doc": "./scripts/doc.sh",
+    "puml": "puml . --dest ./docs",
+    "commits": "./scripts/commits.sh",
+    "example": "node examples/start.js"
+  },
+  "homepage": "https://github.com/eggjs/egg",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git"
+  },
+  "engines": {
+    "node": ">= 4.4.7"
+  },
+  "ci": {
+    "version": "4, 6"
+  }
+}

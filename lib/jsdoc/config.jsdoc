@@ -1,0 +1,5 @@
+/**
+ * 应用程序配置信息，由 egg-loader 定义
+ * @namespace Config
+ * @see https://github.com/eggjs/egg-loader
+ */

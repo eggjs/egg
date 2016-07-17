@@ -1,0 +1,11 @@
+sudo: false
+language: node_js
+node_js:
+  - '4'
+  - '6'
+install:
+  - npm i npminstall && npminstall
+script:
+  - npm run ci
+after_script:
+  - npm i codecov && codecov
