@@ -2,19 +2,6 @@
 @startuml
 digraph world {
   "onerror";
-  "userservice";
-  "userrole";
   "session";
-  "i18n";
-  "validate";
-  "watcher";
-  "multipart";
-  "security" -> "session";
-  "development" -> "watcher";
-  "rest";
-  "static";
-  "cors" -> "security";
-  "logrotater";
-  "schedule";
 }
 @enduml
