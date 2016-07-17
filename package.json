@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A web framework's framework for Node.js",
   "dependencies": {
     "egg-cluster": "*",
