@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/schedule.test.js', () => {
+describe('test/lib/plugins/schedule.test.js', () => {
   it('should schedule work', function* () {
     const app = utils.cluster('apps/schedule', {
       workers: 4,
@@ -13,7 +13,6 @@ describe.skip('test/lib/plugins/schedule.test.js', () => {
     yield sleep(5000);
     app.close();
     const log = getLogContent('schedule');
-    // 由于 app.ready() 在 agent.ready 之后，ci 可能要耗太多时间导致多执行一次
     contains(log, 'cron').should.within(1, 2);
   });
 });
