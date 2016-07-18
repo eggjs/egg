@@ -5,7 +5,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm i npminstall && npminstall
+  - npm i npminstall && node_modules\.bin\npminstall
 
 test_script:
   - node --version

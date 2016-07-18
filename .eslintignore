@@ -1,2 +1,4 @@
 test/fixtures
-test/benchmark
+examples/**/app/public
+logs
+run

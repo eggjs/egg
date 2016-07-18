@@ -1,0 +1,6 @@
+name: {{ ctx.app.config.name }}
+ctx.request: {{ true if ctx.request else false }}
+request.querystring: {{ request.querystring }}
+helper.lower: {{ helper.lower('Hello World') }}
+ctx.state.foo: {{foo}}
+ctx.locals.bar: {{bar}}
