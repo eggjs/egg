@@ -15,6 +15,7 @@
     "egg-loader": "*",
     "egg-logger": "^1.0.1",
     "egg-onerror": "*",
+    "egg-schedule": "*",
     "egg-session": "*",
     "egg-static": "*",
     "egg-userrole": "*",
