@@ -5,9 +5,10 @@ const path = require('path');
 const request = require('supertest');
 const pedding = require('pedding');
 const mm = require('egg-mock');
+const should = require('should');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/development.test.js', () => {
+describe('test/lib/plugins/development.test.js', () => {
   afterEach(mm.restore);
 
   describe('development app', () => {
@@ -72,12 +73,11 @@ describe.skip('test/lib/plugins/development.test.js', () => {
     const filepath = path.join(baseDir, 'app/controller/home.js');
     const body = fs.readFileSync(filepath);
 
-    before(done => {
+    before(() => {
       mm.env('local');
-      mm(process.env, 'EGG_LOG', 'none');
       app = utils.cluster('apps/reload-worker');
       app.debug();
-      app.ready(done);
+      return app.ready();
     });
     after(() => {
       fs.writeFileSync(filepath, body);
@@ -86,15 +86,16 @@ describe.skip('test/lib/plugins/development.test.js', () => {
 
     it('should reload when file changed', done => {
       fs.writeFileSync(filepath, 'module.exports = function*() { this.body = \'change\'; };');
-      // 等待 app worker 重启
+      // wait for app worker restart
       setTimeout(() => {
         request(app.callback())
         .get('/')
         .expect('change', err => {
+          should.not.exist(err);
           app.expect('stdout', /App Worker#2:\d+ started/);
-          done(err);
+          done();
         });
-      }, 10000);
+      }, 3000);
     });
   });
 });

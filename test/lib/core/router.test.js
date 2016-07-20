@@ -1,15 +1,20 @@
 'use strict';
 
 const request = require('supertest-as-promised');
+const mm = require('egg-mock');
 const utils = require('../../utils');
 
 describe('test/lib/core/router.test.js', () => {
   let app;
   before(() => {
-    app = utils.app('apps/router-app');
+    app = utils.app({
+      baseDir: 'apps/router-app',
+    });
     return app.ready();
   });
   after(() => app.close());
+
+  afterEach(mm.restore);
 
   describe('router.resources', () => {
     describe('normal', () => {

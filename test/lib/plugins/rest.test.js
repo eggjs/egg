@@ -4,7 +4,7 @@ const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/rest.test.js', () => {
+describe('test/lib/plugins/rest.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/rest');
@@ -21,7 +21,7 @@ describe.skip('test/lib/plugins/rest.test.js', () => {
         data: [
           {
             id: 1,
-            name: 'suqian.yf',
+            name: 'fengmk2',
             age: 18,
           },
           {
