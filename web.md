@@ -3,7 +3,7 @@
 将实现一个适应阿里，蚂蚁环境的通用 Web 基础框架，包含 Web 应用目录结构约定，
 代码加载机制 (Loader)，配置文件约定和加载机制 启动脚本和部署脚本约定，插件机制。
 
-This document will introduce a base framework, including a series of rules that define the file structure of a Web application, Loaders, config file, scripts running and deployment, and plugins.
+This document focuses on introducing a base framework, including a series of rules that define the file structure of a Web application, Loaders, config file, scripts running and deployment, and plugins.
 
 本文章节：
 Index:
@@ -25,8 +25,6 @@ Index:
 - Config file and its loader
   - 运行环境名称约定 
   - Environmental variables naming rules
-  - antx 配置约定 
-  - Antx config
 - 插件机制 
 - Plugins 
   - 插件能做什么 
@@ -67,7 +65,7 @@ We already have 100% control of its source code, and participate in contribution
 This rule is only for the directories that are mentioned later in this section. For file directories that is not coverd, this rule is not applicable.
 
 以一个名称为 `helloweb` 的应用为例，它的目录结构如下：
-Let's use an app called `helloweb` as an example. Its file structure may looks like following: 
+Let's use an app called `helloweb` as an example. Its file structure may look like following: 
 
 ```sh
 . helloweb
@@ -92,7 +90,7 @@ Let's use an app called `helloweb` as an example. Its file structure may looks l
 │   │   └── ...
 │   ├── middleware (optional)
 │   │   └── response_time.js
-│   └── views (optional, base view plugin rule, we suggest to use views)
+│   └── view (optional, base view plugin rule, we suggest to use views)
 │       ├── layout.html
 │       └── home.html
 ├── config
@@ -124,13 +122,8 @@ Every `package.json` at least should have following attributes:
     "name": "helloweb"
     ```
 - `engines`：复用 `engines` 字段，用来表示当前应用所依赖的 Node 版本。
-    这样能确保任何一个开发者，只需要通过 `tnpm install` 就能将应用的
-    所有环境依赖安装上了，包括 Node 本身。
-    通过 `install-node` 字段知道 Node 的版本，如需要 `4.1.1` 版本：
-- `engines`: Extend the usage of `engines`. Node version that the app is dependent to.
-    By this way, we can assure that any developer can use `tnpm install` to install all
-    environmental dependencies, including node itself.
-    Use `install-node` attribute to get the version of Node, for example `4.1.1` is required.
+- `engines`: Extend the usage of `engines`. It specifies the Node version that the app depends on.
+    Use `install-node` attribute to get the required version of Node, for example `4.1.1` is required.
     ```json
     "engines": {
       "install-node": "4.1.1"
@@ -186,8 +179,8 @@ The following example explain how a directory is loaded by the rule mentioned ab
         └── home.js      ==> app.controller.home
 ```
 
-`controller` 就是一个普通的 koa middleware，格式为 `*function([next])`：
-`controller` is just a normal koa middleware. Its format is `*function([mext])`;
+`controller` 就是一个普通的 koa middleware，格式为 `function*([next])`：
+`controller` is just a normal koa middleware. Its format is `function*([next])`;
 
 ```js
 // home.js
@@ -215,8 +208,8 @@ Controller can call dependent directories, such as `service`, `proxy` etc.
 
 #### `app/middleware`
 
-应用自定义中间件都放在此目录，然后需要在 `config/config.js` 配置中间件的启动顺序。
-All custom middlewares should be placed in this directoy. The order that middlewares are used should be declared in `config/config.js`.
+应用自定义中间件都放在此目录，然后需要在 `config/config.default.js` 配置中间件的启动顺序。
+All custom middlewares should be placed in this directoy. The order that middlewares are used should be declared in `config/config.default.js`.
 
 ```js
 // config/config.js
@@ -274,27 +267,27 @@ class Service {
 module.exports = Service;
 ```
 
-一个对 buc 服务的 Service 封装示例：`BucService.js`
-An example that explains how to pack buc service as a Service.
+一个对 User 服务的 Service 封装示例：`UserService.js`
+An example that explains how to pack UserService as a Service.
 
 ```js
 const Service = require('egg').Service;
 
-class BucService extends Service {
+class UserService extends Service {
   constructor(ctx) {
     super(ctx);
-    this.bucClient = bucClient;
+    this.userClient = userClient;
   },
 
   * get(uid) {
     const ins = instrument(this.ctx, 'buc', 'get');
-    const result = yield bucClient.get(uid);
+    const result = yield userClient.get(uid);
     ins.end();
     return result;
   }
 }
 
-module.exports = BucService;
+module.exports = UserService;
 ```
 
 特别注意的是，`app/service/*.js` 下的文件，每个 `Service` 都会像 `Context` 一样，在

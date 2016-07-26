@@ -42,7 +42,7 @@ All demos should be compiled at [egg/examples](https://github.com/eggjs/examples
 If you are developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch. 
 
 ```bash
-// Create a new branch for development. The name of branch should be semantic, avoiding words like 'update' or 'tmp'.  
+// Create a new branch for development. The name of branch should be semantic, avoiding words like 'update' or 'tmp'. We suggest to use feature/xxx, if the modification is about to implement a new feature.  
 $ git checkout -b branch-name
 
 // Run the test after you finish your modification. Add new test cases or change old ones if you feel necessary  
