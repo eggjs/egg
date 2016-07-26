@@ -28,7 +28,7 @@ A web framework's framework for Node.js.
 $ npm install egg --save
 ```
 
-To use Egg, you should have node installed at v4+.
+Egg is supported in node v4+.
 
 ## Features
 

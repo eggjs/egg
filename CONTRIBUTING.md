@@ -21,11 +21,10 @@ tags can be divided into two groups, `type` and `scope`.
   - A confirmed bug will be resolved prior.
   - If the bug has negative impact on running online application, it will be tagged as `ciritical`, which refers to top priority, and will be fixed ASAP!
   - A bug will be fixed from lowest necessary version, e.g. A bug needs to be fixed from 0.9.x, then this issue will be tagged as `0.9`, `0.10`, `1.0`, `1.1`, referring that the bug is required to be fixed in those versions.
-- `core: xx`: the issue is related to core, e.g. `core: antx` refers that the issue is related with `antx` config.
+- `core: xx`: the issue is related to core, e.g. `core: loader` refers that the issue is related with `loader` config.
 - `plugin: xx`: the issue is related to plugins. e.g. `plugin: session` refers that the issue is related to `session` plugin.
 - `deps: xx`: the issue is related to `dependencies`, e.g. `deps:egg-cors` refers that the issue is related to `egg-cors`
 - `chore: documentation`: the issue is about documentation. Need to modify documentation.
-- `cbd`: the issue is relevent to server deployment. 
 
 ## Documentation
 
@@ -46,8 +45,8 @@ If you are developer of egg repo and you are willing to contribute, feel free to
 // Create a new branch for development. The name of branch should be semantic, avoiding words like 'update' or 'tmp'.  
 $ git checkout -b branch-name
 
-// Run the tests after you finish your modifications. Add new test cases or change old ones if you feel necessary  
-$ tnpm test
+// Run the test after you finish your modification. Add new test cases or change old ones if you feel necessary  
+$ npm test
 
 // If your modification pass the tests, congradulations it's time to push your work back to us. Notice that the commit message should be wirtten in the following format.
 $ git add . // git add -u to delete files
@@ -165,11 +164,6 @@ In the release of every stable version, there will be a PM who has the following
 - Nominate PM for next stable version.
 
 #### During Release
-
-- Copy old stable version to the branch which is named by new stable version(e.g. `1.x`), and tag it as `release-{v}.x` (v is the number of current version, e.g. `release-1.x`).
-- Push `next` branch to `master` to become the new stabel version, remove `next` tag, and edit README content which is relevant to branch (CISE task id). 
-- Publish new stable version to [alinpm], and notify high-level framework to update.
-- Please read [『我是如何发布一个 npm 包的』] \(how to publish an npm package, an introduction in Chinese), before `tnpm publish`.
 
 All tags mentioned above refere to adding tags from npm in `package.json`.
 
