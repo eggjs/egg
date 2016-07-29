@@ -165,10 +165,10 @@ module.exports = function(app) {
 每个 `app/controller/*.js` 文件，都会被自动加载到 `app.controller.*` 上。
 这样就能在 `app/router.js` 里面方便地进行路由配置。
 Every `app/controller/*.js` file will be automatically loaded into `app.controller.*`.
-Then it is very easy to set route for every controller in `app/controller/*.js`.
+Then it is very easy to set a route for every controller in `app/controller/*.js`.
 
 以下目录将按约定加载：
-The following example explain how a directory is loaded by the rule mentioned above:
+The following example explains how a directory is loaded by the rule mentioned above:
 
 ```js
 ├── app
@@ -204,7 +204,7 @@ Generally, controller is the last handler in chain of executing HTTP request.
 An HTTP request will not be handled by two controllers. 
 
 在 controller 中可以调用 `service`，`proxy` 等依赖目录。
-Controller can call dependent directories, such as `service`, `proxy` etc. 
+A Controller can call dependent directories, such as `service`, `proxy` etc. 
 
 #### `app/middleware`
 
@@ -454,7 +454,7 @@ A plugin is like a mini app. It is an extension for app, but excluding controlle
 - 如需要对 koa 进行扩展，可以通过 `app/extend/request.js, response.js, context.js, application.js` 实现。
 - If you need to extend koa, you can edit `app/extend/request.js, response.js, context.js, application.js`.
 - 如需要插入自定义中间件，则可以结合 `app.js` 和 `app/middleware/*.js` 实现。
-- If you need to add costum middleware, edit `app.js` and `app/middleware/*.js`.
+- If you need to add custom middleware, edit `app.js` and `app/middleware/*.js`.
 
     如将 static 插件的中间件放到应用中间件列表 `app.config.appMiddleware` 的前面：
     For example, put middleware of static plugin before list of app middlewares `app.config.appMiddleware`.
@@ -528,9 +528,9 @@ define attributes of plugin in `package.json`
 
 ```json
 {
-  "name": "@ali/egg-hsfclient",
+  "name": "egg-mysql",
   "eggPlugin": {
-    "name": "hsfclient",
+    "name": "egg-mysql",
     "dep": [ "configclient" ],
   }
 }
@@ -572,10 +572,10 @@ module.exports = {
   },
 
   /**
-   * drm client
+   * dataman
    * @member {Object} Plugin#drm
    * @property {Boolean} enable - default true
-   * @property {Array} dep - list of drm starting dependencies
+   * @property {Array} dep - list of dataman starting dependencies
    * @since 1.0.0
    */
   drm: {
@@ -644,11 +644,11 @@ Therefore plugin and app can use agent process to execute tasks by writing a `ag
 └── test
 ```
 
-For more guide about `agent.js`, please see [egg-diamond:agent.js](http://gitlab.alibaba-inc.com/egg/egg-diamond/blob/master/agent.js)。
+For more guide about `agent.js`, please see [egg-schedule:agent.js](https://github.com/eggjs/egg-schedule/blob/master/agent.js)。
 
 ### 进程间通信 Communication Between Multiple Processes
 
-![communication-seq](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/node/team/a2cffd043f/communication-seq.png)
+![communication-seq](https://github.com/eggjs/egg/blob/master/docs/assets/communication-seq.png)
 
 * agent 由 master 使用 child_process 启动，worker 由 master 使用 cluster 启动，所以 `master<->agent`，`master<->worker` 都可以使用 node 内置的 IPC 通道进行通讯。
 * agent process is created by master process using child_process, while worker process is created by master process using cluster. Therefore, `master<->agent`, `master<->worker` can use IPC channel from node to communicate with each other.
@@ -677,8 +677,8 @@ See more in [egg-diamond](http://gitlab.alibaba-inc.com/egg/egg-diamond/tree/mas
 
 ## 文件监听 File Watching
 
-node 自带的文件监听有跨平台兼容问题，而各 BU 对文件监听的机制不相同，所以需要一套统一的 API，屏蔽掉不同的实现。详细机制请移步 [egg-watcher](http://gitlab.alibaba-inc.com/egg/egg-watcher/tree/master)。
-The built-in file watcher from Node has cross-platform compatibility problem. To get a consisitent system of file watcher please see [egg-watcher](http://gitlab.alibaba-inc.com/egg/egg-watcher/tree/master).
+node 自带的文件监听有跨平台兼容问题，并且对文件监听的机制也不尽相同，所以需要一套统一的 API，屏蔽掉不同的实现。详细机制请移步 [egg-watcher](https://github.com/eggjs/egg-watcher)。
+The built-in file watcher from Node has cross-platform compatibility problem. To get a consisitent system of file watcher please see [egg-watcher](https://github.com/eggjs/egg-watcher).
 
 ## user 约定 User Object
 
@@ -694,7 +694,7 @@ For a Web application, login and store of user information is an inevitable func
 Generally, the rules above are implemented through middleware, who get user information and user id from user store and attach them into ctx object. 
 
 egg 中内置了简单的 userservice 实现，可以通过配置实现自己获取 user 的逻辑。如果不能够满足需求，可以自己单独实现一个 userservice plugin，覆盖默认实现，但需要保持命名 `userservice`。
-There exists built-in implementation of userservice in Egg. You can use config files to implement how to get user information. If that is not good enough, feel free to write a userservice plugin, and override the built-in implementation. Make sure the plug is named as `userservice`. 
+There is a built-in implementation of userservice in Egg. You can use config files to implement how to get user information. If that is not good enough, feel free to write a userservice plugin, and override the built-in implementation. Make sure the plugin is named as `userservice`. 
 
 ## 模板渲染约定 Template Rendering
 
@@ -718,12 +718,12 @@ Common Implementation:
 - Template engine is not restricted. Feel free to use as you wish.
 
 > 注意: 如果你写的是独立的 view 插件, 无需在 package.json 中声明对 egg 的依赖
-> Note: If you are writing a separate view plugin, there is no need to add egg as dependencies.  
+> Note: If you are writing a separate view plugin, there is no need to add egg as a dependency.  
 
 ```js
 // plugins/nunjucks-view/app/application.js
 
-const egg = require('@ali/egg');
+const egg = require('egg');
 
 class NunjucksView {
   constructor(app) {

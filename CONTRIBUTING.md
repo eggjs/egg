@@ -10,14 +10,14 @@ or make any change as you wish and submit an [PR](https://github.com/eggjs/egg/i
 - Explain your purpose clearly in tags(see __Useful Tags__), title, or content. 
 
 Egg group members will confirm the purpose of the issue, replace more accurate tags for it, identify related milestone, and assign developers working on it.    
-tags can be divided into two groups, `type` and `scope`.
+Tags can be divided into two groups, `type` and `scope`.
 
 - type: What kind of issue, e.g. `feature`, `bug`, `documentation`, `performance`, `support` ...
--  scope: The scale of your modification. Which files are modified, e.g. `core: xx`, `plugin: xx`, `deps: xx`	
+-  scope: What did you modified. Which files are modified, e.g. `core: xx`, `plugin: xx`, `deps: xx`	
 ### Useful Tags
 
-- `support`: the issue asks helps from developers of our group. If you need help to locate and handle problems or have any idea to improve Egg, mark it as `support`.  
-- `bug`: if you find problem which possiblly could be a bug, please tag it as `bug`. Then our group members will review that issue. If it is confirmed as a bug by our group member, this issue will be tagged as `confirmed`.
+- `support`: the issue asks helps from developers of our group. If you need helps to locate and handle problems or have any idea to improve Egg, mark it as `support`.  
+- `bug`: if you find a problem which possiblly could be a bug, please tag it as `bug`. Then our group members will review that issue. If it is confirmed as a bug by our group member, this issue will be tagged as `confirmed`.
   - A confirmed bug will be resolved prior.
   - If the bug has negative impact on running online application, it will be tagged as `ciritical`, which refers to top priority, and will be fixed ASAP!
   - A bug will be fixed from lowest necessary version, e.g. A bug needs to be fixed from 0.9.x, then this issue will be tagged as `0.9`, `0.10`, `1.0`, `1.1`, referring that the bug is required to be fixed in those versions.
@@ -131,7 +131,7 @@ BREAKING CHANGE:
 
 Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more detials.
 
-## Managing Release
+## Release
 
 egg uses semantic versioning in release process based on [semver].
 
@@ -151,7 +151,7 @@ In the release of every stable version, there will be a PM who has the following
 
 #### Preparation
 
-- Set up mileston. Confirm that request is related to milestone. Assign and update issues, like [1.x milestone].
+- Set up milestone. Confirm that request is related to milestone. Assign and update issues, like [1.x milestone].
 - Create a `next` branch from `master` branch and tag it as `next`.
 
 #### Before Release
