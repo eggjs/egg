@@ -24,6 +24,13 @@ describe('test/lib/core/app/middleware/meta.test.js', () => {
       .expect(200);
   });
 
+  it('should still get X-Powered-By header when controller error', () => {
+    return request(app.callback())
+      .get('/error')
+      .expect('X-Powered-By', 'Egg')
+      .expect(500);
+  });
+
   it('should hide X-Powered-By header', () => {
     mm(app, 'poweredBy', false);
     return request(app.callback())

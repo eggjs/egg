@@ -9,7 +9,7 @@ const file_path1 = utils.getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = utils.getFilepath('apps/watcher-development-app/tmp/tmp.txt');
 const file_path1_agent = utils.getFilepath('apps/watcher-development-app/tmp-agent.txt');
 
-describe.skip('test/lib/plugins/watcher.test.js', () => {
+describe('test/lib/plugins/watcher.test.js', () => {
   describe('default', () => {
     let app;
     beforeEach(() => {

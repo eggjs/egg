@@ -3,7 +3,7 @@
 const request = require('supertest-as-promised');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/userservice.test.js', () => {
+describe('test/lib/plugins/userservice.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/userservice');

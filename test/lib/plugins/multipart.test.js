@@ -6,7 +6,7 @@ const formstream = require('formstream');
 const urllib = require('urllib');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/multipart.test.js', () => {
+describe('test/lib/plugins/multipart.test.js', () => {
   let app;
   let csrfToken;
   let cookies;

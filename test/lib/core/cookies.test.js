@@ -55,7 +55,7 @@ describe('test/lib/core/cookies.test.js', () => {
       }).should.throw('.keys required for encrypt cookies');
     });
 
-    it.skip('should not set secure when request protocol is http', done => {
+    it('should not set secure when request protocol is http', done => {
       request(app.callback())
       .get('/')
       .set('Host', 'demo.eggjs.org')
@@ -70,7 +70,7 @@ describe('test/lib/core/cookies.test.js', () => {
       });
     });
 
-    it.skip('should set secure:true and httponly cookie', done => {
+    it('should set secure:true and httponly cookie', done => {
       request(app.callback())
       .get('/')
       .set('Host', 'demo.eggjs.org')
@@ -93,7 +93,7 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello mock secure app')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.match(/^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/);
         done();
@@ -109,11 +109,11 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello mock secure app')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.equal('cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
-        const expires = cookie.match(/expires=(.*?);/)[1];
-        (Date.now() > new Date(expires)).should.be.true;
+        const expires = cookie.match(/expires=([^;]+);/)[1];
+        (new Date() > new Date(expires)).should.equal(true);
         done();
       });
     });
@@ -126,11 +126,11 @@ describe('test/lib/core/cookies.test.js', () => {
       .set('X-Forwarded-Proto', 'https')
       .expect('hello mock secure app')
       .expect(200, (err, res) => {
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.equal('cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly');
-        const expires = cookie.match(/expires=(.*?);/)[1];
-        (Date.now() > new Date(expires)).should.be.true;
+        const expires = cookie.match(/expires=([^;]+);/)[1];
+        (new Date() > new Date(expires)).should.equal(true);
         done();
       });
     });
@@ -143,7 +143,7 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello mock secure app')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.equal('cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly');
         done();
@@ -158,7 +158,7 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello mock secure app')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.equal('notSetPath=okok; secure; httponly');
         done();
@@ -175,7 +175,7 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'][1];
         should.exist(cookie);
         cookie.should.match('hi=foo; path=/; httponly');
         done();
@@ -201,11 +201,11 @@ describe('test/lib/core/cookies.test.js', () => {
       })
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const encryptCookie = res.headers['set-cookie'][0];
+        const encryptCookie = res.headers['set-cookie'][1];
         should.exist(encryptCookie);
         encryptCookie.should.equal('foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
 
-        const plainCookie = res.headers['set-cookie'][1];
+        const plainCookie = res.headers['set-cookie'][2];
         should.exist(plainCookie);
         plainCookie.should.equal('plain=text ok; path=/; httponly');
 
@@ -230,7 +230,7 @@ describe('test/lib/core/cookies.test.js', () => {
       })
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const encryptCookie = res.headers['set-cookie'][0];
+        const encryptCookie = res.headers['set-cookie'][1];
         should.exist(encryptCookie);
         encryptCookie.should.equal('foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
 

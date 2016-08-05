@@ -4,7 +4,7 @@ const request = require('supertest-as-promised');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
-describe('test/lib/plugins/cors.test.js', () => {
+describe.skip('test/lib/plugins/cors.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/cors');
