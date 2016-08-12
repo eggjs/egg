@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const mm = require('egg-mock');
 const request = require('supertest-as-promised');
 const coffee = require('coffee');
@@ -15,7 +14,7 @@ describe('test/lib/cluster/master.test.js', () => {
     before(() => {
       mm.env('default');
       app = utils.cluster('apps/app-die');
-      // app.debug();
+      app.debug();
       app.coverage(false);
       return app.ready();
     });
@@ -26,12 +25,6 @@ describe('test/lib/cluster/master.test.js', () => {
         .get('/exit')
         // wait for app worker restart
         .end(() => setTimeout(() => {
-          // test common-error.log
-          const errorFile = utils.getFilepath('apps/app-die/logs/app-die/common-error.log');
-          const content = fs.readFileSync(errorFile, 'utf8');
-          content.should.match(/nodejs\.AppWorkerDiedError: \[master\]/);
-          content.should.match(/App Worker#1:\d+ died/);
-
           // error pipe to console
           app.expect('stdout', /App Worker#1:\d+ disconnect/);
           app.expect('stderr', /nodejs\.AppWorkerDiedError: \[master\]/);
@@ -48,10 +41,6 @@ describe('test/lib/cluster/master.test.js', () => {
         .get('/uncaughtException')
         // wait for app worker restart
         .end(() => setTimeout(() => {
-          const errorFile = utils.getFilepath('apps/app-die/logs/app-die/common-error.log');
-          const content = fs.readFileSync(errorFile, 'utf8');
-          content.should.match(/nodejs\.Error: get uncaughtException \(uncaughtException throw 1 times on pid:\d+\)/);
-
           app.expect('stderr', /\[graceful:worker:\d+:uncaughtException\] throw error 1 times/);
           app.expect('stdout', /App Worker#\d:\d+ started/);
           done();

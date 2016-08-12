@@ -4,7 +4,7 @@ const path = require('path');
 const glob = require('glob');
 const utils = require('../../utils');
 
-describe('test/lib/plugins/logrotater.test.js', () => {
+describe.skip('test/lib/plugins/logrotater.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/logrotater-app');

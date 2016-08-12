@@ -6,7 +6,7 @@ const merge = require('merge-descriptors');
 const urllib = require('urllib');
 const request = require('supertest');
 const utils = require('../../../../utils');
-const requestExt = require('../../../../../lib/core/app/extend/request');
+const requestExt = require('../../../../../app/extend/request');
 
 describe('test/lib/core/app/extend/request.test.js', () => {
   afterEach(mm.restore);

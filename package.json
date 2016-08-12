@@ -14,7 +14,7 @@
     "egg-cors": "*",
     "egg-development": "*",
     "egg-i18n": "^1.0.0",
-    "egg-loader": "*",
+    "egg-core": "~0.1.0",
     "egg-logger": "^1.1.0",
     "egg-logrotater": "^1.0.0",
     "egg-multipart": "^1.0.0",

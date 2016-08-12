@@ -8,7 +8,6 @@ module.exports = function (app) {
 
     * get(name) {
       return {
-        name: name,
         bar: 'bar111',
       };
     }

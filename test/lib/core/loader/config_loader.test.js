@@ -1,21 +1,17 @@
 'use strict';
 
 const utils = require('../../../utils');
-const AppWorkerLoader = require('../../../../').AppWorkerLoader;
-
-function createLoader(baseDir) {
-  baseDir = utils.getFilepath(baseDir);
-  const loader = new AppWorkerLoader({
-    baseDir,
-  });
-  loader.loadConfig();
-  return loader;
-}
 
 describe('test/lib/core/loader/config_loader.test.js', () => {
+  let app;
+  before(() => {
+    app = utils.app('apps/demo');
+    return app.ready();
+  });
+  after(() => app.close());
+
   it('should get middlewares', () => {
-    const appLoader = createLoader('apps/demo');
-    appLoader.config.coreMiddleware.should.eql([
+    app.config.coreMiddleware.slice(0, 5).should.eql([
       'meta',
       'siteFile',
       'notfound',

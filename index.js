@@ -8,7 +8,7 @@
  * Start egg application with cluster mode
  * @since 1.0.0
  */
-exports.startCluster = require('./lib/cluster/index').startCluster;
+exports.startCluster = require('egg-cluster').startCluster;
 
 /**
  * @member {Application} Egg#Application
@@ -35,32 +35,13 @@ exports.AgentWorkerClient = require('./lib/core/agent_worker_client');
 exports.AppWorkerClient = require('./lib/core/app_worker_client');
 
 /**
- * @member {MasterLoader} Egg#MasterLoader
- * @since 1.0.0
- */
-exports.MasterLoader = require('./lib/core/loader').MasterLoader;
-
-/**
  * @member {AppWorkerLoader} Egg#AppWorkerLoader
  * @since 1.0.0
  */
-exports.AppWorkerLoader = require('./lib/core/loader').AppWorkerLoader;
+exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
 
 /**
  * @member {AgentWorkerLoader} Egg#AgentWorkerLoader
  * @since 1.0.0
  */
-exports.AgentWorkerLoader = require('./lib/core/loader').AgentWorkerLoader;
-
-/**
- * @member {Service} Egg#Service
- * @since 1.0.0
- */
-exports.Service = require('./lib/core/base_service');
-
-/**
- * @member {Logger} Egg#console
- * @see Application#console
- * @since 1.0.0
- */
-exports.console = require('./lib/core/console');
+exports.AgentWorkerLoader = require('./lib/loader').AgentWorkerLoader;

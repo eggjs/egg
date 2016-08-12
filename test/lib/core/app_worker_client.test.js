@@ -10,8 +10,11 @@ describe('test/lib/core/app_worker_client.test.js', () => {
   let app;
   let client;
 
-  before(done => {
+  before(() => {
     app = utils.app('apps/demo');
+    return app.ready();
+  });
+  before(done => {
     const impl = {
       subscribe(reg, listener) {
         this._subscribe(reg, listener);

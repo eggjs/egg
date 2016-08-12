@@ -10,7 +10,7 @@ const delegate = require('delegates');
 const jsonpBody = require('jsonp-body');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
-const util = require('../../util');
+const util = require('../../lib/core/util');
 
 const LOGGER = Symbol('LOGGER');
 const CORE_LOGGER = Symbol('CORE_LOGGER');
