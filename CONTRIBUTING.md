@@ -1,81 +1,75 @@
-# 代码贡献规范
+# Contribution Guide
 
-有任何疑问，欢迎提交 [issue](https://github.com/eggjs/egg/issues)，
-或者直接修改提交 [MR](https://github.com/eggjs/egg/issues)!
+If you have any comment or advice, please report your [issue](https://github.com/eggjs/egg/issues),
+or make any change as you wish and submit an [PR](https://github.com/eggjs/egg/issues).
 
-## 提交 issue
+## Reporting New Issues
 
-- 请确定 issue 的类型。
-- 请避免提交重复的 issue，在提交之前搜索现有的 issue。
-- 在标签(分类参考__标签分类__), 标题 或者内容中体现明确的意图。
+- Please specify what kind of issue it is.
+- Before you report an issue, please search for related issues. Make sure you are not going to open a duplicate issue.
+- Explain your purpose clearly in tags(see __Useful Tags__), title, or content. 
 
-随后 egg 负责人会确认 issue 意图，更新合适的标签，关联 milestone，指派开发者。
+Egg group members will confirm the purpose of the issue, replace more accurate tags for it, identify related milestone, and assign developers working on it.    
+Tags can be divided into two groups, `type` and `scope`.
 
-标签可分为两类，type 和 scope
+- type: What kind of issue, e.g. `feature`, `bug`, `documentation`, `performance`, `support` ...
+-  scope: What did you modified. Which files are modified, e.g. `core: xx`, `plugin: xx`, `deps: xx`	
+### Useful Tags
 
-- type: issue 的类型，如 `feature`, `bug`, `documentation`, `performance`, `support` ...
-- scope: 修改文件的范围，如 `core: xx`，`plugin: xx`，`deps: xx`
+- `support`: the issue asks helps from developers of our group. If you need helps to locate and handle problems or have any idea to improve Egg, mark it as `support`.  
+- `bug`: if you find a problem which possiblly could be a bug, please tag it as `bug`. Then our group members will review that issue. If it is confirmed as a bug by our group member, this issue will be tagged as `confirmed`.
+  - A confirmed bug will be resolved prior.
+  - If the bug has negative impact on running online application, it will be tagged as `ciritical`, which refers to top priority, and will be fixed ASAP!
+  - A bug will be fixed from lowest necessary version, e.g. A bug needs to be fixed from 0.9.x, then this issue will be tagged as `0.9`, `0.10`, `1.0`, `1.1`, referring that the bug is required to be fixed in those versions.
+- `core: xx`: the issue is related to core, e.g. `core: loader` refers that the issue is related with `loader` config.
+- `plugin: xx`: the issue is related to plugins. e.g. `plugin: session` refers that the issue is related to `session` plugin.
+- `deps: xx`: the issue is related to `dependencies`, e.g. `deps:egg-cors` refers that the issue is related to `egg-cors`
+- `chore: documentation`: the issue is about documentation. Need to modify documentation.
 
-### 常用标签说明
+## Documentation
 
-- `support`: issue 提出的问题需要开发者协作排查，咨询，调试等等日常技术支持。
-- `bug`: 一旦发现可能是 bug 的问题，请打上 `bug`，然后等待确认，一旦确认是 bug，此 issue 会被再打上 `confirmed`。
-  - 此时 issue 会被非常高的优先级进行处理。
-  - 如果此 bug 是正在影响线上应用正常运行，会再打上 `critical`，代表是最高优先级，需要马上立刻处理！
-  - bug 会在最低需要修复的版本进行修复，如是在 `0.9.x` 要修复的，而当前最新版本是 `1.1.x`，
-  那么此 issue 还会被打上 `0.9`，`0.10`，`1.0`，`1.1`，代表需要修复到这些版本。
-- `core: xx`: 代表 issue 跟 core 内核相关，如 `core: antx` 代表跟 `antx` 配置相关。
-- `plugin: xx`: 代表 issue 跟插件相关，如 `deps: session` 代表跟 `session` 插件相关。
-- `deps: xx`: 代表 issue 跟 `dependencies` 模块相关，如 `deps: egg-cors` 代表跟 `egg-cors` 模块相关。
-- `chore: documentation`: 代表发现了文档相关问题，需要修复文档说明。
-- `cbd`: 代表跟服务器部署相关
+All features must be submitted along with documentations. The documentations should satify several requirements.
 
-## 编写文档
+- Documentations must clarify one or more aspects of the feature, depending on the nature of feature: what it is, why it happens and how it works.
+- It's better to include a series of procedues to explain how to fix the problem. You are also encourgaed to provide **simple, but self-explanatory** demo.   
+All demos should be compiled at [egg/examples](https://github.com/eggjs/examples) repository. 
+- Please provide essential urls, such as application process, terminology explainations and references.
 
-所有功能点必须提交配套文档，文档须满足以下要求
+## Submitting Code
 
-- 必须说清楚问题的几个方面：what（是什么），why（为什么），how（怎么做），可根据问题的特性有所侧重。
-- how 部分必须包含详尽完整的操作步骤，必要时附上 **足够简单，可运行** 的范例代码，
-所有范例代码放在 [egg/examples](https://github.com/eggjs/examples) 库中。
-- 提供必要的链接，如申请流程，术语解释和参考文档等。
+### Pull Request Guide
 
-## 提交代码
-
-### 提交 Pull Request
-
-如果你有仓库的开发者权限，而且希望贡献代码，那么你可以创建分支修改代码提交 MR，egg 开发团队会 review 代码合并到主干。
+If you are developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch. 
 
 ```bash
-// 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的
+// Create a new branch for development. The name of branch should be semantic, avoiding words like 'update' or 'tmp'. We suggest to use feature/xxx, if the modification is about to implement a new feature.  
 $ git checkout -b branch-name
 
-// 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例
-$ tnpm test
+// Run the test after you finish your modification. Add new test cases or change old ones if you feel necessary  
+$ npm test
 
-// 测试通过后，提交代码，message 见下面的规范
-
-$ git add . // git add -u 删除文件
+// If your modification pass the tests, congradulations it's time to push your work back to us. Notice that the commit message should be wirtten in the following format.
+$ git add . // git add -u to delete files
 $ git commit -m "fix(role): role.use must xxx"
 $ git push origin branch-name
 ```
 
-提交后就可以在 [egg](https://github.com/eggjs/egg/pulls) 创建 Pull Request 了。
+Then you can create a Pull Request at [egg](https://github.com/eggjs/egg/pulls)  
 
-由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。
+No one can garantee how much will be remembered about certain PR after some time. To make sure we can easily recap what happened previously, please provide the following information in your PR.
 
-1. 需求点（一般关联 issue 或者注释都算）
-2. 升级原因（不同于 issue，可以简要描述下为什么要处理）
-3. 框架测试点（可以关联到测试文件，不用详细描述，关键点即可）
-4. 关注点（针对用户而言，可以没有，一般是不兼容更新等，需要额外提示）
+1. Need: What function you want to achieve (Generally, please point out which issue is related).
+2. Updating Reason: Different with issue. Briefly describe your reason and logic about why you need to make such modification. 
+3. Related Testing: Briefly descirbe what part of testing is relevant to your modification.    
+4. User Tips: Notice for Egg users. You can skip this part, if the PR is not about update in API or potential compatibility problem.
 
-### 代码风格
+### Style Guide
 
-你的代码风格必须通过 eslint，你可以运行 `$ npm run lint` 本地测试。
+Eslint can help to identify styling issues that may exist in your code. Your code is required to pass the test from eslint. Run the test locally by `$ npm run lint`.
 
-### Commit 提交规范
+### Commit Message Format
 
-根据 [angular 规范](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format)提交 commit，
-这样 history 看起来更加清晰，还可以自动生成 changelog。
+You are encouraged to use [angular commit-message-format](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format) to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.  
 
 ```xml
 <type>(<scope>): <subject>
@@ -87,37 +81,37 @@ $ git push origin branch-name
 
 （1）type
 
-提交 commit 的类型，包括以下几种
+Must be one of the following:
 
-- feat: 新功能
-- fix: 修复问题
-- docs: 修改文档
-- style: 修改代码格式，不影响代码逻辑
-- refactor: 重构代码，理论上不影响现有功能
-- perf: 提升性能
-- test: 增加修改测试用例
-- chore: 修改工具相关（包括但不限于文档、代码生成等）
-- deps: 升级依赖
+- feat: A new feature
+- fix: A bug fix
+- docs: Documentation-only changes
+- style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- refactor: A code change that neither fixes a bug nor adds a feature
+- perf: A code change that improves performance
+- test: Adding missing tests
+- chore: Changes to the build process or auxiliary tools and libraries such as documentation generation
+- deps: Updates about dependencies
 
 （2）scope
 
-修改文件的范围（包括但不限于 doc, middleware, core, config, plugin）
+The scope could be anything specifying place of the commit change. For example $location, $browser, $compile, $rootScope, ngHref, ngClick, ngView, etc...
 
 （3）subject
 
-用一句话清楚的描述这次提交做了什么
+Use succinct words to describe what did you do in the commit change.
 
 （4）body
 
-补充 subject，适当增加原因、目的等相关因素，也可不写。
+Feel free to add more content in the body, if you think subject is not self-explanatory enough, such as what it is the purpose or reasone of you commit.
 
 （5）footer
 
-- ___当有非兼容修改(Breaking Change)时必须在这里描述清楚___
-- 关联相关 issue，如 `Closes #1, Closes #2, #3`
-- 如果功能点有新增或修改的，还需要关联文档 `doc` 和 `egg-init` 的 PR，如 `eggjs/egg-bin#123`
+- ___If the commit is a Breaking Change, please note it clearly in this part.___
+- related issues, like `Closes #1, Closes #2, #3`
+- If there is a change about an old feaure or a new feature, please associate `doc` and `egg-init`, like `eggjs/egg-bin#123`
 
-示例
+e.g.
 
 ```
 fix($compile): [BREAKING_CHANGE] couple of unit tests for IE9
@@ -135,48 +129,43 @@ BREAKING CHANGE:
   Breaks foo.bar api, foo.baz should be used instead
 ```
 
-查看具体[文档](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit)
+Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more detials.
 
-## 发布管理
+## Release
 
-egg 基于 [semver] 语义化版本号进行发布。
+egg uses semantic versioning in release process based on [semver].
 
-### 分支策略
+### Branch Strategy
 
-`master` 分支为当前稳定发布的版本，`next` 分支为下一个开发中的大版本。
+`master` branch is the latest stable version. `next` branch is the next stable version working in progress.
 
-- 只维护两个版本，除非有安全问题，否则修复只会 patch 到 `master` 和 `next` 分支，其他更新推动上层框架升级到稳定大版本的最新版本。
-- 所有 API 的废弃都需要在当前的稳定版本上 `deprecate` 提示，并保证在当前的稳定版本上一直兼容到新版本的发布。
-- `master` 分支不设置 publish tag，上层框架基于 semver 依赖稳定版本。
-- `next` 分支设置 tag 为 `next`，上层框架可以通过 `egg@next` 引用开发中的版本进行测试。
-- egg 持续维护的版本以 Milestone 为准，只要是开着的版本都会进行修复。
+- All new features will be added into `master` or `next` branch as well as all bug-fix except security issues. In such way, we can motivate developers to update to the latest stable version. 
+- If any API is discarded, it should be noted with `deprecate` in current stable version. The old version of API should be compatiable until the release of next stable version.
+- `master` branch doesn't have publish tag. High-level framework can work with stable versions defined by semantic versioning.
+- `next` branch is labelled with `next` tag, high-level framework can use `egg@next` to test the in-progress version.
+- The LTS versions of Egg determined by Milestone. If a version is listed in Milestone, then it is a LTS version. We will patch it if there is any problem with it.
 
-### 发布策略
+### Release Strategy
 
-每个大版本都有一个发布经理管理（PM），他/她要做的事情
+In the release of every stable version, there will be a PM who has the following responsibilities in different stages of the release.  
 
-#### 准备工作：
+#### Preparation
 
-- 建立 milestone，确认需求关联 milestone，指派和更新 issues，如 [1.x milestone]。
-- 从 `master` 分支新建 `next` 分支，并设置 tag 为 `next`。
+- Set up milestone. Confirm that request is related to milestone. Assign and update issues, like [1.x milestone].
+- Create a `next` branch from `master` branch and tag it as `next`.
 
-#### 发布前：
+#### Before Release
 
-- 确认当前 Milestone 所有的 issue 都已关闭或可延期，完成性能测试。
-- 发起一个新的 [Release Proposal MR]，按照 [node CHANGELOG] 进行 `History` 的编写，修正文档中与版本相关的内容，commits 可以自动生成。
+- Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.
+- Open a new [Release Proposal MR], and write `History` as [node CHANGELOG]. Don't forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.
     ```
     $ npm run commits
     ```
-- 指定下一个大版本的 PM。
+- Nominate PM for next stable version.
 
-#### 发布时：
+#### During Release
 
-- 将老的稳定版本（master）备份到以当前大版本为名字的分支上（例如 `1.x`），并设置 tag 为 `release-{v}.x`（ v 为当前版本，例如 `release-1.x`）。
-- 将 `next` 分支推送到 `master`，成为新的稳定版本分支，并去除 `next` tag，修改 README 中与分支相关的内容（CISE task id）。
-- 发布新的稳定版本到 [alinpm]，并通知上层框架进行更新。
-- `tnpm publish` 之前，请先阅读[『我是如何发布一个 npm 包的』]。
-
-上述描述中所有的设置 tag 都是指在 `package.json` 中设置 npm 的 tag。
+All tags mentioned above refere to adding tags from npm in `package.json`.
 
 ```json
 "publishConfig": {

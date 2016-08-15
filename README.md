@@ -34,11 +34,11 @@ Egg is supported in node v4+.
 
 ## Docs & Community
 
-## Getting started
+## Getting Started
 
 ## Examples
 
-## How to Contributing
+## How to Contribute
 
 ## Team
 
