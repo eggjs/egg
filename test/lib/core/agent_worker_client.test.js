@@ -2,7 +2,7 @@
 
 const should = require('should');
 const mm = require('egg-mock');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const sleep = require('co-sleep');
 const path = require('path');
 const EventEmitter = require('events').EventEmitter;

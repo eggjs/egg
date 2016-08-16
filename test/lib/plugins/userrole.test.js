@@ -1,9 +1,9 @@
 'use strict';
 
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/userrole.test.js', () => {
+describe('test/lib/plugins/userrole.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/userrole');

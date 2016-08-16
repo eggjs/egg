@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/schedule.test.js', () => {
+describe('test/lib/plugins/schedule.test.js', () => {
   it('should schedule work', function* () {
     const app = utils.cluster('apps/schedule', {
       workers: 4,

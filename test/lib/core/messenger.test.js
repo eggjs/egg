@@ -150,10 +150,10 @@ describe('test/lib/core/messenger.test.js', () => {
 
     it('app should accept agent message', done => {
       setTimeout(() => {
-        count(app.stdout, 'agent2app').should.containEql(2);
-        count(app.stdout, 'app2app').should.containEql(4);
-        count(app.stdout, 'agent2agent').should.containEql(1);
-        count(app.stdout, 'app2agent').should.containEql(2);
+        count(app.stdout, 'agent2app').should.equal(2);
+        count(app.stdout, 'app2app').should.equal(4);
+        count(app.stdout, 'agent2agent').should.equal(1);
+        count(app.stdout, 'app2agent').should.equal(2);
         done();
       }, 500);
 

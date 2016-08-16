@@ -31,7 +31,7 @@ module.exports = {
    * @since 1.0.0
    */
   userrole: {
-    enable: false,
+    enable: true,
     package: 'egg-userrole',
   },
 
@@ -53,7 +53,7 @@ module.exports = {
    * @since 1.0.0
    */
   i18n: {
-    enable: false,
+    enable: true,
     package: 'egg-i18n',
   },
 
@@ -130,7 +130,7 @@ module.exports = {
    * @since 2.7.0
    */
   schedule: {
-    enable: false,
+    enable: true,
     package: 'egg-schedule',
   },
 

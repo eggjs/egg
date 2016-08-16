@@ -1,7 +1,7 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const coffee = require('coffee');
 const utils = require('../../utils');
 

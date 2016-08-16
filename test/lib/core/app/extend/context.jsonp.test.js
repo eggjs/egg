@@ -1,7 +1,7 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const utils = require('../../../../utils');
 
 describe('test/lib/core/app/extend/context.jsonp.test.js', () => {

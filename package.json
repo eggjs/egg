@@ -62,8 +62,7 @@
     "rimraf": "^2.5.4",
     "should": "^11.1.0",
     "stream-wormhole": "^1.0.0",
-    "supertest": "^2.0.0",
-    "supertest-as-promised": "^4.0.0"
+    "supertest": "^2.0.0"
   },
   "main": "index.js",
   "files": [

@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const mm = require('egg-mock');
 
 describe('example static test', () => {

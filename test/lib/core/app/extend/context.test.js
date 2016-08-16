@@ -4,7 +4,7 @@ const should = require('should');
 const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const rimraf = require('rimraf');
 const utils = require('../../../../utils');
 
