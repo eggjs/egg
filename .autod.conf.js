@@ -7,6 +7,7 @@ module.exports = {
   devprefix: '^',
   exclude: [
     'test/fixtures',
+    'examples',
   ],
   devdep: [
     'autod',
