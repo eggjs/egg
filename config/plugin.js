@@ -119,7 +119,7 @@ module.exports = {
    * @since 1.0.0
    */
   logrotater: {
-    enable: false,
+    enable: true,
     package: 'egg-logrotater',
   },
 
