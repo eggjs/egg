@@ -10,7 +10,7 @@
     "delegates": "^1.0.0",
     "egg-cluster": "^0.1.0",
     "egg-cookies": "^1.0.0",
-    "egg-core": "^0.1.0",
+    "egg-core": "^0.2.0",
     "egg-cors": "^0.0.2",
     "egg-development": "^0.0.2",
     "egg-i18n": "^1.0.1",
