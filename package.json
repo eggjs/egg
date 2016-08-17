@@ -78,7 +78,7 @@
     "test-local": "egg-bin test",
     "test-examples": "TESTS=examples/**/test/**/*.test.js egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run cov",
+    "ci": "npm run lint && npm run test-examples && npm run cov",
     "autod": "autod",
     "doc": "./scripts/doc.sh",
     "puml": "puml . --dest ./docs",
