@@ -208,7 +208,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       'security',
       'development',
       'schedule',
-      'logrotater',
+      'logrotator',
       'b',
       'c1',
       'f',

@@ -15,7 +15,7 @@
     "egg-development": "^0.0.2",
     "egg-i18n": "^1.0.1",
     "egg-logger": "^1.2.0",
-    "egg-logrotater": "^1.0.1",
+    "egg-logrotator": "^2.0.0",
     "egg-multipart": "^1.0.0",
     "egg-onerror": "^0.0.3",
     "egg-rest": "^1.0.0",

@@ -114,13 +114,13 @@ module.exports = {
 
   /**
    * logger file rotater
-   * @member {Object} Plugin#logrotater
+   * @member {Object} Plugin#logrotator
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  logrotater: {
+  logrotator: {
     enable: true,
-    package: 'egg-logrotater',
+    package: 'egg-logrotator',
   },
 
   /**
