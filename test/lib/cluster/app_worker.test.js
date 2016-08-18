@@ -1,6 +1,6 @@
 'use strict';
 
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/app_worker.test.js', () => {

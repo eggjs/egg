@@ -1,2 +1,2 @@
-exports.logrotater = false;
+exports.logrotator = false;
 exports.watcher = false;

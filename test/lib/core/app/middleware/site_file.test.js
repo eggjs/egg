@@ -1,7 +1,7 @@
 'use strict';
 
 const should = require('should');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const utils = require('../../../../utils');
 
 describe('test/lib/core/app/middleware/site_file.test.js', () => {
@@ -46,7 +46,7 @@ describe('test/lib/core/app/middleware/site_file.test.js', () => {
   it('should support HEAD', () => {
     return request(app.callback())
       .head('/robots.txt')
-      .expect('content-length', 72)
+      .expect('content-length', '72')
       .expect('') // body must be empty for HEAD
       .expect(200);
   });

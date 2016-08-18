@@ -9,13 +9,19 @@ const utils = require('../../../utils');
 const EGG_BASE = path.join(__dirname, '../../../../');
 
 describe('test/lib/core/loader/load_plugin.test.js', () => {
-
+  let app;
+  const logger = console;
+  before(() => {
+    app = utils.app('apps/empty');
+  });
   afterEach(mm.restore);
 
   it('should loadConfig all plugins', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
     appLoader.plugins.b.should.eql({
@@ -49,6 +55,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
 
@@ -66,6 +74,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
     appLoader.plugins.d1.should.eql({
@@ -83,6 +93,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
     appLoader.plugins.g.should.eql({
@@ -97,13 +109,15 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
   it('should show warning message when plugin name wrong', () => {
     let message;
     mm(console, 'warn', m => {
-      if (!m.startsWith('[egg:loader] eggPlugin is missing') && !message) {
+      if (!m.startsWith('[egg:loader] pkg.eggPlugin is missing') && !message) {
         message = m;
       }
     });
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
 
@@ -124,6 +138,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const appLoader = new AppWorkerLoader({
       baseDir,
       plugins,
+      app,
+      logger,
     });
     appLoader.loadConfig();
 
@@ -150,6 +166,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       const baseDir = utils.getFilepath('apps/loader-plugin-noexist');
       const appLoader = new AppWorkerLoader({
         baseDir,
+        app,
+        logger,
       });
       appLoader.loadConfig();
     }).should.throw(/Can not find plugin noexist in /);
@@ -160,6 +178,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       const baseDir = utils.getFilepath('apps/notexist-app');
       const appLoader = new AppWorkerLoader({
         baseDir,
+        app,
+        logger,
       });
       appLoader.loadConfig();
     }).should.throw(/notexist\-app not exists/);
@@ -170,6 +190,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin-dep');
     const appLoader = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader.loadConfig();
     appLoader.orderPlugins.map(plugin => {
@@ -186,7 +208,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       'security',
       'development',
       'schedule',
-      'logrotater',
+      'logrotator',
       'b',
       'c1',
       'f',
@@ -201,6 +223,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       const baseDir = utils.getFilepath('apps/loader-plugin-dep-recursive');
       const appLoader = new AppWorkerLoader({
         baseDir,
+        app,
+        logger,
       });
       appLoader.loadConfig();
     }).should.throw('sequencify plugins has problem, missing: [], recursive: [a,b,c,a]');
@@ -211,6 +235,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       const baseDir = utils.getFilepath('apps/loader-plugin-dep-missing');
       const appLoader = new AppWorkerLoader({
         baseDir,
+        app,
+        logger,
       });
       appLoader.loadConfig();
     }).should.throw('sequencify plugins has problem, missing: [a1], recursive: []\n\t>> Plugin [a1] is disabled or missed, but is required by [c]');
@@ -221,6 +247,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const baseDir = utils.getFilepath('apps/loader-plugin');
     const appLoader1 = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader1.loadConfig();
     // unittest disable
@@ -233,6 +261,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     mm(process.env, 'NODE_ENV', 'development');
     const appLoader2 = new AppWorkerLoader({
       baseDir,
+      app,
+      logger,
     });
     appLoader2.loadConfig();
     const keys2 = appLoader2.orderPlugins.map(plugin => {

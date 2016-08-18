@@ -2,7 +2,7 @@
 
 const should = require('should');
 const mm = require('egg-mock');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const utils = require('../../../../utils');
 
 describe('test/lib/core/app/middleware/meta.test.js', () => {

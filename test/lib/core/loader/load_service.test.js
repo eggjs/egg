@@ -6,10 +6,15 @@ const mm = require('egg-mock');
 const utils = require('../../../utils');
 
 describe('test/lib/core/loader/load_service.test.js', () => {
+  let app;
+  before(() => {
+    app = utils.app('apps/loader-plugin');
+    return app.ready();
+  });
+  after(() => app.close());
   afterEach(mm.restore);
 
   it('should load app and plugin services', done => {
-    const app = utils.app('apps/loader-plugin');
     app.ready(() => {
       should.exists(app.serviceClasses.foo);
       should.exists(app.serviceClasses.foo2);
@@ -87,7 +92,9 @@ describe('test/lib/core/loader/load_service.test.js', () => {
           name: 'bar3name',
           bar: 'bar3',
         },
-        subdir11bar: false,
+        subdir11bar: {
+          bar: 'bar111',
+        },
         ok: {
           ok: true,
         },

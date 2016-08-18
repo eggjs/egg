@@ -57,7 +57,7 @@ describe.skip('test/lib/cluster/agent_worker.test.js', () => {
     });
   });
 
-  describe('logrotater', () => {
+  describe('logrotator', () => {
     let app;
     before(done => {
       mm(process.env, 'EGG_LOG', 'NONE');

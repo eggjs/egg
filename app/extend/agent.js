@@ -1,6 +1,6 @@
 'use strict';
 
-const Singleton = require('../../singleton');
+const Singleton = require('../../lib/core/singleton');
 
 // 空的 instrument 返回，用于生产环境，避免每次创建对象
 const emptyInstrument = {

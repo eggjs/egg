@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const path = require('path');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const mm = require('egg-mock');
 const formstream = require('formstream');
 const urllib = require('urllib');
