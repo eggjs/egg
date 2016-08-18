@@ -8,7 +8,7 @@
  * Start egg application with cluster mode
  * @since 1.0.0
  */
-exports.startCluster = require('egg-cluster').startCluster;
+exports.startCluster = require('./lib/cluster');
 
 /**
  * @member {Application} Egg#Application

@@ -167,12 +167,24 @@ describe('test/lib/cluster/master.test.js', () => {
 
     it('should not cause master die when agent start error', done => {
       app = coffee.spawn('node', [ utils.getFilepath('apps/agent-die/start.js') ])
-      .coverage(false);
+        .coverage(false);
 
       // spawn can't comunication, so `end` event won't emit
       setTimeout(() => {
         app.emit('close', 0);
         app.notExpect('stderr', /TypeError: process\.send is not a function/);
+        done();
+      }, 10000);
+    });
+
+    it('should start without customEgg', done => {
+      app = coffee.fork(utils.getFilepath('apps/master-worker-started/dispatch.js'))
+        .debug()
+        .coverage(false);
+
+      setTimeout(() => {
+        app.emit('close', 0);
+        app.expect('stdout', /Agent Worker started /);
         done();
       }, 10000);
     });
