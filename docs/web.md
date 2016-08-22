@@ -1,70 +1,52 @@
-# Web 基础框架 Base Framework 
+# Base Web Framework 
 
-将实现一个适应阿里，蚂蚁环境的通用 Web 基础框架，包含 Web 应用目录结构约定，
-代码加载机制 (Loader)，配置文件约定和加载机制 启动脚本和部署脚本约定，插件机制。
+Egg is an open-source web framework for building a flexible Node.js web and mobile applications. It includes a series of rules that defines the file structure of a web application, loaders, configurations, scheduler scripts, and plugins system.
 
-This document focuses on introducing a base framework, including a series of rules that define the file structure of a Web application, Loaders, config file, scripts running and deployment, and plugins.
 
-本文章节：
-Index:
+**Glossary:**
 
-- Based on koa
+- Based on [koa](http://koajs.com/)
 - Web application file structure and loading process
   - `package.json`
-  - `app` directory
+  - `app` (directory)
     - `app/router.js`
     - `app/controller`
     - `app/middleware`
     - `app/service`
     - `app/proxy`
-    - `app/public` static resources directory
+    - `app/public` (static resources directory)
   - `app.js`
   - koa extension
   - `test`
-- 配置文件约定和加载机制 
-- Config file and its loader
-  - 运行环境名称约定 
+- Configuration file and configuration loader
   - Environmental variables naming rules
-- 插件机制 
 - Plugins 
-  - 插件能做什么 
-  - What a plugin can do?
-  - 开启和关闭插件 
-  - Openning and Closing a Plugin
-  - 插件命名规则 
+  - What is a plugin
+  - Opening and closing a plugin
   - Naming a plugin 
-- 多进程模型及进程间通讯 
 - Multi-process model and communication between processes
-  - master&worker 进程 
   - Master & worker process
-  - agent 进程 
   - Agent process
-  - 进程间通信 
   - Communication between multiple processes
-  - 健壮性 
   - Robustness
-- 文件监听 
 - File Watching
-- user 约定
 - User object
 
 ## Based on Koa
 
-选择基于 [koa](http://koajs.com/)，是因为它是当前解决异步编程最好的 Web 通用框架。
-The reason for why we choose koa as foundation for other upper framework, because it is the best universal Web framework in asynchronous programming.
+`Koa` is a web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs. 
 
-并且将在 2016 年自动适配 async-await 的 es2016 推荐的异步编程方案。
-In addition, koa is going to adopt async-await feature from es2016 in 2016.
+**Egg** framework is built on top of `Koa` and its ecosystem. The [core contributors of **egg** framework](https://github.com/eggjs/egg/graphs/contributors) are also the core contributors of [`koa` web framework](https://github.com/koajs/koa/graphs/contributors). In addition, We are maintaining [many](https://github.com/repo-utils) [Node.js](https://github.com/node-modules) [open source](https://github.com/stream-utils) [projects](https://github.com/cojs) across the entire Node.js ecosystem.
 
-我们已经对它的所有源代码 100% 掌握并且参与到核心代码贡献中。
-We already have 100% control of its source code, and participate in contribution of its crucial parts.
+**Egg** framework is originated from **Alibaba** internal Node.js web framework. It is an open source version of what **Alibaba** Node.js team used. It is based on what the team have learned from maintaining production applications over the course of five years.
 
-## Web 应用目录结构约定和加载机制 Web Application File Structure and Loading Process
 
-此约定只限制本文描述的目录，不在本文描述的目录范围的其他目录，不在本约定范围。
+## Web Application File Structure and Loading Process
+
 This rule is only for the directories that are mentioned later in this section. For file directories that is not coverd, this rule is not applicable.
 
-以一个名称为 `helloweb` 的应用为例，它的目录结构如下：
+**Egg** is an opinionated framework for creating ambitious Node.js web applications. Simply following the naming convention, our friendly APIs help you get your job done fast.
+
 Let's use an app called `helloweb` as an example. Its file structure may look like following: 
 
 ```sh
@@ -110,46 +92,30 @@ Let's use an app called `helloweb` as an example. Its file structure may look li
 
 ### `package.json`
 
-每个应用都必须包含 `package.json` 文件。
-Every app must contain a `package.json` file.
+Like all Node.js application, it must contain a `package.json` file. It should have following attributes:
 
-每个 `package.json` 至少包含以下配置项：
-Every `package.json` at least should have following attributes:
-
-- `name`：表示当前应用名，并且应用名需要跟 `aone` 上的一致。
 - `name`: Application name
-    ```json
-    "name": "helloweb"
-    ```
-- `engines`：复用 `engines` 字段，用来表示当前应用所依赖的 Node 版本。
-- `engines`: Extend the usage of `engines`. It specifies the Node version that the app depends on.
-    Use `install-node` attribute to get the required version of Node, for example `4.1.1` is required.
-    ```json
-    "engines": {
-      "install-node": "4.1.1"
-    }
-    ```
+- `engines`: It specifies the Node.js version that the application depends on. Use `install-node` attribute to get the required version of Node, For example `4.1.1` is required.
+```json
+"name": "helloweb"
+"engines": {
+  "install-node": "4.1.1"
+}
+```
 
 ### `app` directory
 
-`app` 目录是一个应用业务逻辑代码存放的地方。
-它是整个应用的核心目录，包含 `router.js`，`controller`，`views`，`middleware` 等常用功能目录。
-同时还包含可选的 `service`，`proxy` 等服务调用相关功能代码目录。
-`app` directory is used to store central logic of this app. It includes frequentlty used directory, such as `router.js`, `controller`, `views`, `middleware` etc.
+`app` directory is used to store central logic of this application. 
+
+`app` directory can include directories, such as `controller`, `public`, `middleware`, `schedule`, `apis` etc. The files that were contained in those directories would be loaded automatically by [egg-core](https://github.com/eggjs/egg-core)
+
+`app` directory can include files, such as `router.js`. Those files are stored at the root of `app` directory and would be loaded loaded automatically by [egg-core](https://github.com/eggjs/egg-core).
 
 #### `app/router.js`
 
-`app/router.js` 是应用的路由配置文件，所有路由配置都在此设置，
-放在同一个文件非常方便通过 url 查找到对应的 `controller` 代码。
-`app/router.js` is the routing file for the app. All routing settings are place at this file.
-So it is very convenient to use url find corresponding `controller`. 
+`app/router.js` contains the routing configuration for the entire application. We use [koa-router](https://github.com/alexmingoia/koa-router) middleware under the hood, so that `koa-router`'s [APIs](https://github.com/alexmingoia/koa-router#api-reference) are applied fully here. 
 
-所有 `router.js` 文件约定的入口都是一个 `function(app)` 接口，
-会自动传入当前的 app 实例对象，
-开发者就可以通过 app 的路由方法 `get`, `post`, `put`, `delete`, `head` 等设置路由配置项。
-The entry of all `router.js` file is a `function(app)`interface.
-It will automatically injected into instance of app object.
-Developers can use route methods of app like `get`, `post`, `delete`, `head` etc. to achieve routing functionality.
+`router.js` file exports a function that takes a single parameter called `app`. The `app` object is an instance of the **Egg** application. On `app` object, you can use route methods, for example, `get`, `post`, `put`, `delete`, `head`, and much more, to achieve routing functionality. The route interface takes two parameters. First parameter is a string representation of the application partial URL. Second parameter is the controller function is called when the partial URL has been matched.
 
 Here is an example for `router.js`:
 
@@ -160,15 +126,19 @@ module.exports = function(app) {
 };
 ```
 
+```js
+module.exports = app => {
+  app.get('/', app.controller.home);
+  app.get('/forget', app.controller.forget);
+  app.post('/remember', app.controller.remember);
+};
+```
+
 #### `app/controller`
 
-每个 `app/controller/*.js` 文件，都会被自动加载到 `app.controller.*` 上。
-这样就能在 `app/router.js` 里面方便地进行路由配置。
-Every `app/controller/*.js` file will be automatically loaded into `app.controller.*`.
-Then it is very easy to set a route for every controller in `app/controller/*.js`.
+Every `app/controller/*.js` file will be automatically loaded into `app.controller.*`, thanks for the loader, [egg-core](https://github.com/eggjs/egg-core)
 
-以下目录将按约定加载：
-The following example explains how a directory is loaded by the rule mentioned above:
+The following example explains how a directory is loaded:
 
 ```js
 ├── app
@@ -179,8 +149,7 @@ The following example explains how a directory is loaded by the rule mentioned a
         └── home.js      ==> app.controller.home
 ```
 
-`controller` 就是一个普通的 koa middleware，格式为 `function*([next])`：
-`controller` is just a normal koa middleware. Its format is `function*([next])`;
+`controller` is a Koa (v1) middleware. Use the generator format, (star function), for example `function*([next])`;
 
 ```js
 // home.js
@@ -190,7 +159,6 @@ module.exports = function*() {
 ```
 
 
-
 ```js
 // blog.js
 exports.upload = function*() {
@@ -198,18 +166,13 @@ exports.upload = function*() {
 };
 ```
 
-通常来说，controller 是一个 HTTP 请求链中最后的一个处理者，
-按约定不太可能一个 HTTP 请求会经过 2 个 controller 的。
-Generally, controller is the last handler in chain of executing HTTP request.
-An HTTP request will not be handled by two controllers. 
+Generally, a HTTP request will be handled by one controller. A controller function is the last handler in the middleware chain of executing HTTP request. 
 
-在 controller 中可以调用 `service`，`proxy` 等依赖目录。
 A Controller can call dependent directories, such as `service`, `proxy` etc. 
 
 #### `app/middleware`
 
-应用自定义中间件都放在此目录，然后需要在 `config/config.default.js` 配置中间件的启动顺序。
-All custom middlewares should be placed in this directoy. The order that middlewares are used should be declared in `config/config.default.js`.
+All custom middlewares should be placed in this directory. The execution order of the middlewares should be declared in `config/config.${env}.js`.
 
 ```js
 // config/config.js
@@ -219,7 +182,6 @@ exports.middleware = [
 ];
 ```
 
-通常来说，middleware 是每一个 HTTP 请求都会经过，所以开发者需要明确了解自己开发的中间件前后顺序关系。
 Generally speaking, middleware is used for every HTTP request, so developers should have a clear awareness about the order that middlewares are used.
 
 例如一个简单的 rt 计算中间件示例如下：
