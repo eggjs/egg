@@ -1,0 +1,3 @@
+- helper 的定位
+- 内置到 helper 的方法有哪些
+- 注明 helper 是每个 request 实例化一个

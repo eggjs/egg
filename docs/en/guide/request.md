@@ -1,0 +1,3 @@
+- 介绍 request
+- 内置挂载到 request 的属性/方法
+- 如何通过 app/extend/request.js 扩展

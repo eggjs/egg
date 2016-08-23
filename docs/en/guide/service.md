@@ -1,0 +1,3 @@
+- service 的介绍
+- 注明 service 不是单例的, 而是每个 request 创建一个
+- loader 自动挂载的约定简单介绍, 更详细链接到 Loader 文档

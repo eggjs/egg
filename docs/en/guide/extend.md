@@ -1,0 +1,2 @@
+- 介绍如何通过 app.js 和 agent.js 扩展
+- 他们和 app/extend 的区别是什么, 分别什么情况下使用

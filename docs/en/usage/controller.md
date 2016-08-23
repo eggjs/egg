@@ -1,0 +1,2 @@
+- controller 的介绍
+- loader 自动挂载的约定简单介绍, 更详细链接到 Loader 文档

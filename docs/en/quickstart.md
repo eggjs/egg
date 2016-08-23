@@ -1,0 +1,1 @@
+这里应该不需要跟原来那篇 QuickStart 那样长, 就是一个 egg-init 后快速创建几个 router 的示例即可
