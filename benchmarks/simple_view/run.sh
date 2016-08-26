@@ -6,18 +6,18 @@ pid=$!
 
 sleep 3
 
-curl 'http://127.0.0.1:7001/'
+curl 'http://127.0.0.1:7001/' | grep 'title'
 echo ""
-curl 'http://127.0.0.1:7002/'
+curl 'http://127.0.0.1:7002/' | grep 'title'
 echo ""
 
-echo "------- egg hello -------"
+echo "------- egg view -------"
 wrk 'http://127.0.0.1:7001/' \
   -d 10 \
   -c 50 \
   -t 8
 
-echo "------- koa hello -------"
+echo "------- koa view -------"
 wrk 'http://127.0.0.1:7002/' \
   -d 10 \
   -c 50 \

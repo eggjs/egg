@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{title}}</title>
+    <meta charset="utf-8" />
+    <meta name="keywords" content="{{keywords}}" />
+    <meta name="description" content="{{description}}" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link href="//dn-staticfile.qbox.me/twitter-bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+  </head>
+  <body>
+    {% block nav %}{% include "component/nav.html" %}{% endblock %}
+
+    <div class="container theme-showcase">
+    {% block body %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <p>Maintained by the eggjs team.</p>
+        <ul class="footer-links muted">
+          <li><a href="https://github.com/eggjs/egg">GitHub</a></li>
+          <li>&middot;</li>
+          <li><a href="https://github.com/eggjs/egg/issues">Issues</a></li>
+        </ul>
+      </div>
+    </footer>
+
+    <script src="//dn-staticfile.qbox.me/jquery/1.9.0/jquery.min.js"></script>
+    <script src="//dn-staticfile.qbox.me/twitter-bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  </body>
+</html>
