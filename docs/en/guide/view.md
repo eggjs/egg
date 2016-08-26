@@ -1,4 +1,0 @@
-- 对 view 插件的约定
-- locals 覆盖的说明
-- view helper
-- 如何编写一个 view 插件
