@@ -13,7 +13,7 @@ describe('test/lib/core/config/config.test.js', () => {
 
   afterEach(mm.restore);
 
-  it('should return config.core.name that is deprecated', () => {
-    app.config.core.name.should.equal('Egg');
+  it('should return config.name', () => {
+    app.config.name.should.equal('demo');
   });
 });
