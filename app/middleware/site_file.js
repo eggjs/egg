@@ -1,9 +1,8 @@
 'use strict';
 
-// favicon.ico crossdomain.xml robots.txt support
-
 const path = require('path');
-const MAX_AGE = 30 * 24 * 68 * 60;
+
+const MAX_AGE_VALUE = 'public, max-age=2592000'; // 30 days
 
 module.exports = options => {
   return function* siteFile(next) {
@@ -20,7 +19,7 @@ module.exports = options => {
     // '/robots.txt': Buffer <xx..
     // content is buffer
     if (Buffer.isBuffer(content)) {
-      this.set('Cache-Control', `public, max-age=${MAX_AGE}`);
+      this.setRawHeader('Cache-Control', MAX_AGE_VALUE);
       this.body = content;
       this.type = path.extname(this.path);
       return;
