@@ -54,16 +54,6 @@ module.exports = {
   },
 
   /**
-   * X-Powered-By Header
-   * @member {String} Application#poweredBy
-   * @private
-   * @since 1.0.0
-   */
-  get poweredBy() {
-    return this.config.core.name;
-  },
-
-  /**
    * Service 基类
    * @member {Service} Application#Service
    * @since 1.0.0

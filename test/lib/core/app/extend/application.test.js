@@ -24,7 +24,7 @@ describe('test/lib/core/app/extend/application.test.js', () => {
       app.ready(() => {
         app.inspect().should.have.properties([
           'name', 'baseDir',
-          'env', 'subdomainOffset', 'poweredBy',
+          'env', 'subdomainOffset',
           'controller', 'middlewares', 'serviceClasses',
           'config', 'urllib', 'loggers',
         ]);

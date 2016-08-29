@@ -15,20 +15,6 @@ describe('test/lib/core/app/middleware/meta.test.js', () => {
 
   afterEach(mm.restore);
 
-  it('should get X-Powered-By header', () => {
-    return request(app.callback())
-      .get('/')
-      .expect('X-Powered-By', 'Egg')
-      .expect(200);
-  });
-
-  it('should still get X-Powered-By header when controller error', () => {
-    return request(app.callback())
-      .get('/error')
-      .expect('X-Powered-By', 'Egg')
-      .expect(500);
-  });
-
   it('should get X-Readtime header', () => {
     return request(app.callback())
       .get('/')

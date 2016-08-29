@@ -70,15 +70,6 @@ module.exports = appInfo => {
   };
 
   /**
-   * Framework name
-   * @member {Object} Config#core
-   * @property {String} name - 'Egg' by default
-   */
-  exports.core = {
-    name: 'Egg',
-  };
-
-  /**
    * notfound 中间件 options
    *
    * 指定应用 404 页面
