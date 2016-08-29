@@ -8,5 +8,4 @@ console.log('Starting %s', name);
 
 egg.startCluster({
   baseDir: path.join(__dirname, name),
-  workers: 1,
 });

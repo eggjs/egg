@@ -49,6 +49,7 @@
     "egg-ci": "1",
     "egg-mock": "^0.0.4",
     "egg-plugin-puml": "1",
+    "egg-view-nunjucks": "^0.2.0",
     "eslint": "^3.0.0",
     "eslint-config-egg": "^3.1.0",
     "estraverse": "^4.1.1",
