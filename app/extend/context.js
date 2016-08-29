@@ -366,3 +366,10 @@ delegate(proto, 'request')
  * @since 1.0.0
  */
 delegate(proto, 'request').getter('queries');
+
+/**
+ * @member {Array} Context#setRawHeader
+ * @see Resposne#setRawHeader
+ * @since 1.0.0
+ */
+delegate(proto, 'response').method('setRawHeader');
