@@ -13,6 +13,8 @@ describe('test/lib/core/app/extend/response.test.js', () => {
       .expect(res => {
         res.headers.foo.should.equal('bar');
         res.headers.bar.should.equal('foo, bar');
+        res.res.rawHeaders.filter(header => header === 'Foo-Bar').length.should.equal(2);
+        res.headers['foo-bar'].should.equal('Foo, Bar');
       });
     });
   });

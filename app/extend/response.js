@@ -10,8 +10,9 @@ module.exports = {
    * @param {String|Array} value - header value
    */
   setRawHeader(name, value) {
+    const key = name.toLowerCase();
     if (this.res._headers === null) this.res._headers = {};
-    this.res._headers[name] = value;
-    this.res._headerNames[name] = name;
+    this.res._headers[key] = value;
+    this.res._headerNames[key] = name;
   },
 };
