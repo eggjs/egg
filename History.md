@@ -1,4 +1,15 @@
 
+0.1.1 / 2016-08-29
+==================
+
+  * refactor: use ctx.setRawHeader (#61)
+  * chore: add benchmarks (#62)
+  * fix(meta): remove server-id (#56)
+  * feat(response): add res.setRawHeader (#60)
+  * refator: use utils.assign instead of Object.assign (#59)
+  * feat: docs structure (#55)
+  * docs: web.md and web.zh_CN.md (#54)
+
 0.1.0 / 2016-08-18
 ==================
 
