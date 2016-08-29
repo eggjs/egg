@@ -4,21 +4,11 @@
 
 'use strict';
 
-module.exports = () => {
-  let serverId = process.env.HOSTNAME || '';
-  if (serverId.indexOf('-') > 0) {
-    // appname-1-1 => 1-1
-    serverId = serverId.split('-').slice(1).join('-');
-  }
+module.exports = (_, app) => {
+  const poweredBy = typeof app.poweredBy === 'string' ? app.poweredBy : null;
 
   return function* meta(next) {
-    if (typeof this.app.poweredBy === 'string') {
-      this.set('X-Powered-By', this.app.poweredBy);
-    }
-
-    if (serverId) {
-      this.set('X-Server-Id', serverId);
-    }
+    if (poweredBy) this.set('X-Powered-By', poweredBy);
 
     yield next;
 
