@@ -234,7 +234,7 @@ const proto = module.exports = {
     if (!jsonpFunction) {
       this.body = obj;
     } else {
-      this.setRawHeader('X-Content-Type-Options', 'nosniff');
+      this.set('X-Content-Type-Options', 'nosniff');
       this.type = 'js';
       this.body = jsonpBody(obj, jsonpFunction, options);
     }
