@@ -234,7 +234,7 @@ const proto = module.exports = {
     if (!jsonpFunction) {
       this.body = obj;
     } else {
-      this.setRawHeader('X-Content-Type-Options', 'nosniff');
+      this.set('x-content-type-options', 'nosniff');
       this.type = 'js';
       this.body = jsonpBody(obj, jsonpFunction, options);
     }
@@ -366,10 +366,3 @@ delegate(proto, 'request')
  * @since 1.0.0
  */
 delegate(proto, 'request').getter('queries');
-
-/**
- * @member {Array} Context#setRawHeader
- * @see Resposne#setRawHeader
- * @since 1.0.0
- */
-delegate(proto, 'response').method('setRawHeader');
