@@ -1,4 +1,11 @@
 
+0.1.2 / 2016-08-31
+==================
+
+  * deps: egg-security@1 (#67)
+  * Revert raw header (#65)
+  * feat: [BREAKING_CHANGE] remove poweredBy && config.core (#63)
+
 0.1.1 / 2016-08-29
 ==================
 
