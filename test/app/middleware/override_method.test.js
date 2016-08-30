@@ -1,9 +1,9 @@
 'use strict';
 
 const request = require('supertest');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/middleware/override_method.test.js', () => {
+describe('test/app/middleware/override_method.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/override_method');

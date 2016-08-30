@@ -3,9 +3,9 @@
 const fs = require('fs');
 const mm = require('egg-mock');
 const sleep = require('co-sleep');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/extend/agent.test.js', () => {
+describe('test/app/extend/agent.test.js', () => {
   afterEach(mm.restore);
 
   describe('agent.addSingleton()', () => {

@@ -6,9 +6,9 @@ const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
 const rimraf = require('rimraf');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/extend/context.test.js', () => {
+describe('test/app/extend/context.test.js', () => {
 
   afterEach(mm.restore);
 

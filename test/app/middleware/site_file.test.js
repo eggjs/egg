@@ -2,9 +2,9 @@
 
 const should = require('should');
 const request = require('supertest');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/middleware/site_file.test.js', () => {
+describe('test/app/middleware/site_file.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/middlewares');
