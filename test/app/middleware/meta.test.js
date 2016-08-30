@@ -2,9 +2,9 @@
 
 const mm = require('egg-mock');
 const request = require('supertest');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/middleware/meta.test.js', () => {
+describe('test/app/middleware/meta.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/middlewares');

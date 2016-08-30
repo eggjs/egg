@@ -1,9 +1,9 @@
 'use strict';
 
 const request = require('supertest');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/extend/helper.test.js', () => {
+describe('test/app/extend/helper.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/helper');

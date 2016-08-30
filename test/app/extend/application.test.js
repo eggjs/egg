@@ -2,9 +2,9 @@
 
 const request = require('supertest');
 const mm = require('egg-mock');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/extend/application.test.js', () => {
+describe('test/app/extend/application.test.js', () => {
   describe('app.logger', () => {
     let app;
     before(() => {

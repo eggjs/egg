@@ -3,9 +3,9 @@
 const pedding = require('pedding');
 const request = require('supertest');
 const mm = require('egg-mock');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/middleware/notfound.test.js', () => {
+describe('test/app/middleware/notfound.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/notfound');

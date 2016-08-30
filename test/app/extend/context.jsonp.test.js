@@ -2,9 +2,9 @@
 
 const mm = require('egg-mock');
 const request = require('supertest');
-const utils = require('../../../../utils');
+const utils = require('../../utils');
 
-describe('test/lib/core/app/extend/context.jsonp.test.js', () => {
+describe('test/app/extend/context.jsonp.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/demo');
