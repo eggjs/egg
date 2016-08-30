@@ -8,13 +8,17 @@ module.exports = {
   exclude: [
     'test/fixtures',
     'examples',
+    'benchmarks',
   ],
   devdep: [
     'autod',
-    'autod-egg'
+    'autod-egg',
+    'nunjucks',
+    'koa',
   ],
   keep: [
   ],
   semver: [
+    'koa@1',
   ],
 };
