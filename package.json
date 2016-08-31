@@ -24,7 +24,7 @@
     "egg-session": "^0.0.2",
     "egg-static": "^0.1.0",
     "egg-userrole": "^0.1.0",
-    "egg-userservice": "^0.1.0",
+    "egg-userservice": "^1.0.0",
     "egg-validate": "^0.0.2",
     "egg-watcher": "^1.0.0",
     "graceful": "^1.0.1",

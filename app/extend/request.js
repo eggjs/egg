@@ -1,9 +1,11 @@
 'use strict';
 
 const querystring = require('querystring');
+const accepts = require('accepts');
 const _querycache = Symbol('_querycache');
 const _queriesCache = Symbol('_queriesCache');
 const PROTOCOL = Symbol('PROTOCOL');
+const ACCEPTS = Symbol('ACCEPTS');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 const AJAX_EXT_RE = /\.(json|tile|ajax)$/i;
 
@@ -212,6 +214,15 @@ module.exports = {
    */
   get queries() {
     return this._customQuery(_queriesCache, arrayValue);
+  },
+
+  get accept() {
+    let accept = this[ACCEPTS];
+    if (accept) {
+      return accept;
+    }
+    accept = this[ACCEPTS] = accepts(this.req);
+    return accept;
   },
 
   /**

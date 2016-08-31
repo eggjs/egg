@@ -2,17 +2,19 @@
 
 const should = require('should');
 const path = require('path');
+const fs = require('fs');
 const mm = require('egg-mock');
 const AppWorkerLoader = require('../../../../').AppWorkerLoader;
 const utils = require('../../../utils');
 
 const EGG_BASE = path.join(__dirname, '../../../../');
 
-describe('test/lib/core/loader/load_plugin.test.js', () => {
+describe('test/lib/core/loader.test.js', () => {
   let app;
   const logger = console;
   before(() => {
     app = utils.app('apps/empty');
+    return app.ready();
   });
   afterEach(mm.restore);
 
@@ -45,7 +47,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       env: [],
       path: path.join(baseDir, 'plugins/e'),
     });
-    appLoader.plugins.onerror.path.should.equal(path.join(EGG_BASE, 'node_modules/egg-onerror'));
+    appLoader.plugins.onerror.path.should.equal(fs.realpathSync(path.join(EGG_BASE, 'node_modules/egg-onerror')));
     appLoader.plugins.onerror.package.should.equal('egg-onerror');
     appLoader.plugins.onerror.version.should.match(/\d+\.\d+\.\d+/);
     appLoader.orderPlugins.should.be.an.Array;
