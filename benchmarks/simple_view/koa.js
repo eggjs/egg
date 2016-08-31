@@ -16,7 +16,7 @@ while (n--) {
 const options = {
   noCache: false,
 };
-const viewPaths = path.join(__dirname, 'app/views');
+const viewPaths = path.join(__dirname, 'app/view');
 const engine = new nunjucks.Environment(new nunjucks.FileSystemLoader(viewPaths, options), options);
 
 function render(name, locals) {

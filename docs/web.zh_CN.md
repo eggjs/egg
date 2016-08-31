@@ -65,7 +65,7 @@
 │   │   └── ...
 │   ├── middleware (optional)
 │   │   └── response_time.js
-│   └── view (optional, base view plugin rule, we suggest to use views)
+│   └── view (optional, base view plugin rule, we suggest to use view)
 │       ├── layout.html
 │       └── home.html
 ├── config
@@ -95,7 +95,7 @@
 ### `app` directory
 
 `app` 目录是一个应用业务逻辑代码存放的地方。
-它是整个应用的核心目录，包含 `router.js`，`controller`，`views`，`middleware` 等常用功能目录。
+它是整个应用的核心目录，包含 `router.js`，`controller`，`view`，`middleware` 等常用功能目录。
 同时还包含可选的 `service`，`proxy` 等服务调用相关功能代码目录。
 
 #### `app/router.js`
@@ -251,7 +251,7 @@ module.exports = UserService;
         └── user.js      ==> ctx.service.user
 ```
 
-#### `app/views`
+#### `app/view`
 
 存放模板文件和只在客户端使用的脚本目录文件。 此规范有 view 插件约定。具体规范参见下文的 `模板渲染约定`
 

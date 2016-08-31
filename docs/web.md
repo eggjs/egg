@@ -72,7 +72,7 @@ Let's use an app called `helloweb` as an example. Its file structure may look li
 │   │   └── ...
 │   ├── middleware (optional)
 │   │   └── response_time.js
-│   └── view (optional, base view plugin rule, we suggest to use views)
+│   └── view (optional, base view plugin rule, we suggest to use view)
 │       ├── layout.html
 │       └── home.html
 ├── config
@@ -254,7 +254,7 @@ Each service is defined in `app/service/*.js` will be injected into `ctx.service
         └── user.js      ==> ctx.service.user
 ```
 
-#### `app/views`
+#### `app/view`
 
 This directory is used to store template files in scripts used in rendering client side view templates. For more detail, please see `template rendering guide` 
 
