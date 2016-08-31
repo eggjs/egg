@@ -1,4 +1,10 @@
 
+0.1.3 / 2016-08-31
+==================
+
+  * fix: utils.assign support undefined (#71)
+  * refactor: change accept to getter (#68)
+
 0.1.2 / 2016-08-31
 ==================
 
