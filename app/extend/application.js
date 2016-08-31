@@ -2,7 +2,6 @@
 
 const http = require('http');
 const assert = require('assert');
-const accepts = require('accepts');
 const Keygrip = require('../../lib/core/keygrip');
 const Service = require('../../lib/core/base_service');
 const view = require('../../lib/core/view');
@@ -16,7 +15,7 @@ const VIEW = Symbol('Application#View');
 const LOCALS = Symbol('Application#locals');
 const LOCALS_LIST = Symbol('Application#localsList');
 
-// 空的 instrument 返回，用于生产环境，避免每次创建对象
+// empty instrument object, use on prod env, avoid create object every time.
 const emptyInstrument = {
   end() {},
 };
@@ -24,11 +23,11 @@ const emptyInstrument = {
 module.exports = {
 
   /**
-   * 创建 koa 上下文
+   * Create egg context
    * @method Application#createContext
-   * @param  {Req} req node 原生的 Request 对象
-   * @param  {Res} res node 原生的 Response 对象
-   * @return {Context} 返回 koa 上下文
+   * @param  {Req} req - node native Request object
+   * @param  {Res} res - node native Response object
+   * @return {Context} context object
    */
   createContext(req, res) {
     const app = this;
@@ -43,7 +42,6 @@ module.exports = {
     response.request = request;
     context.onerror = context.onerror.bind(context);
     context.originalUrl = request.originalUrl = req.url;
-    context.accept = request.accept = accepts(req);
 
     /**
      * Request start time
@@ -54,14 +52,14 @@ module.exports = {
   },
 
   /**
-   * Service 基类
+   * Service class
    * @member {Service} Application#Service
    * @since 1.0.0
    */
   Service,
 
   /**
-   * AppWorkerClient 基类
+   * AppWorkerClient class
    * @member {AppWorkerClient} Application#AppWorkerClient
    */
   AppWorkerClient,

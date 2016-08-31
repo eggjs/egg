@@ -356,13 +356,15 @@ const proto = module.exports = {
  * @see Request#isAjax
  * @since 1.0.0
  */
-delegate(proto, 'request')
-  .getter('isAjax')
-  .getter('acceptJSON');
 
 /**
  * @member {Array} Context#queries
  * @see Request#queries
  * @since 1.0.0
  */
-delegate(proto, 'request').getter('queries');
+
+delegate(proto, 'request')
+  .getter('isAjax')
+  .getter('acceptJSON')
+  .getter('queries')
+  .getter('accept');
