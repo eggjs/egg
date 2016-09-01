@@ -20,7 +20,7 @@
     "egg-onerror": "^0.0.3",
     "egg-rest": "^1.0.0",
     "egg-schedule": "^2.0.0",
-    "egg-security": "^1.1.0",
+    "egg-security": "^1.2.0",
     "egg-session": "^0.0.2",
     "egg-static": "^0.1.0",
     "egg-userrole": "^0.1.0",

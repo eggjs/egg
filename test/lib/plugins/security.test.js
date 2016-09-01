@@ -4,44 +4,6 @@ const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/security.test.js', () => {
-  describe('security.ctoken = false', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/ctoken-disable');
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should not check ctoken', () => {
-      return request(app.callback())
-        .get('/api/user.json?name=fengmk2')
-        .expect(200)
-        .expect({
-          url: '/api/user.json?name=fengmk2',
-          name: 'fengmk2',
-        });
-    });
-  });
-
-  describe('security.ctoken = true', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/csrf-disable');
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should check ctoken', () => {
-      return request(app.callback())
-        .get('/api/user.json?name=fengmk2')
-        .set('accept', 'application/json')
-        .expect(403)
-        .expect({
-          message: 'missing cookie ctoken',
-        });
-    });
-  });
-
   describe('security.csrf = false', () => {
     let app;
     before(() => {
@@ -115,7 +77,7 @@ describe('test/lib/plugins/security.test.js', () => {
         .set('accept', 'application/json')
         .send({ name: 'fengmk2' })
         .expect({
-          message: 'missing cookie ctoken',
+          message: 'secret is missing',
         })
         .expect(403);
     });

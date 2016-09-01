@@ -10,6 +10,9 @@ exports.home = function*() {
       this.deleteCookie('cookiedel', options);
     }
   }
+  if (this.query.setCookieValue) {
+    this.setCookie('foo-cookie', this.query.setCookieValue);
+  }
 
   if (this.query.hasOwnProperty('cookiepath')) {
     const opts = {
