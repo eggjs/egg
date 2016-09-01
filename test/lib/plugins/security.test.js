@@ -27,7 +27,7 @@ describe('test/lib/plugins/security.test.js', () => {
   describe('security.csrf = true', () => {
     let app;
     before(() => {
-      app = utils.app('apps/ctoken-disable');
+      app = utils.app('apps/csrf-enable');
       return app.ready();
     });
     after(() => app.close());
@@ -41,10 +41,10 @@ describe('test/lib/plugins/security.test.js', () => {
     });
   });
 
-  describe('security.csrfIgnore and ctokenIgnore', function() {
+  describe('security.csrfIgnore', () => {
     let app;
     before(() => {
-      app = utils.app('apps/ctoken-ignore');
+      app = utils.app('apps/csrf-ignore');
       return app.ready();
     });
     after(() => app.close());
@@ -60,7 +60,7 @@ describe('test/lib/plugins/security.test.js', () => {
         });
     });
 
-    it('should not check ctoken on /api/*', () => {
+    it('should not check csrf on /api/*.json', () => {
       return request(app.callback())
         .post('/api/user.json')
         .send({ name: 'fengmk2' })
@@ -71,7 +71,7 @@ describe('test/lib/plugins/security.test.js', () => {
         });
     });
 
-    it('should check ctoken on other', () => {
+    it('should check csrf on other.json', () => {
       return request(app.callback())
         .post('/apiuser.json')
         .set('accept', 'application/json')
