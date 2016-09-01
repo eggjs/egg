@@ -76,7 +76,8 @@
     "rimraf": "^2.5.4",
     "should": "^11.1.0",
     "stream-wormhole": "^1.0.0",
-    "supertest": "^2.0.0"
+    "supertest": "^2.0.0",
+    "toa": "^1.8.10"
   },
   "main": "index.js",
   "files": [
