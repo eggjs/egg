@@ -3,9 +3,11 @@
 const toa = require('toa');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const Router = require('toa-router');
 
+const router = new Router();
 const app = toa();
-let n = 10;
+let n = 15;
 
 while (n--) {
   app.use(function* (next) {
@@ -31,7 +33,7 @@ function render(name, locals) {
   });
 }
 
-app.use(function* () {
+router.get('/', function* () {
   this.body = yield render('home.html', {
     user: {
       name: 'footoa',
@@ -40,5 +42,6 @@ app.use(function* () {
   });
 });
 
+app.use(router.toThunk());
 console.log('toa app listen on 7003');
 app.listen(7003);
