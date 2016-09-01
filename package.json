@@ -42,6 +42,7 @@
     "is-type-of": "^1.0.0",
     "jsonp-body": "^1.0.0",
     "koa-bodyparser": "^2.2.0",
+    "koa-is-json": "^1.0.0",
     "koa-override": "^1.0.0",
     "mime-types": "^2.1.11",
     "scmp": "^1.0.0",

@@ -258,9 +258,7 @@ describe('test/app/extend/request.test.js', () => {
         },
         url: '/',
       });
-      context.res._headers = {
-        'content-type': 'json',
-      };
+      context.type = 'json';
       context.request.acceptJSON.should.equal(true);
     });
 
