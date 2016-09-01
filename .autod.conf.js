@@ -9,6 +9,7 @@ module.exports = {
     'test/fixtures',
     'examples',
     'benchmarks',
+    "docs",
   ],
   devdep: [
     'autod',

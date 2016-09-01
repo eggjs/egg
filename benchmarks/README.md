@@ -10,12 +10,17 @@
 
 Scene | QPS | Avg RT (ms) | Stdev RT | Max RT
 ---   | --- | ---         | ---      | ---
-egg Hello World | 8485 | 5.73 | 2.77 | 63.12
-koa Hello World | 11852 | 4.23 | 2.99 | 84.56
-toa Hello World | 12169 | 4.22 | 2.59 | 39.82
-egg nunjucks | 6534 | 7.49 | 4.15 | 96.07
-koa nunjucks | 9702 | 5.34 | 5.52 | 145.75
-toa nunjucks | 9420 | 5.32 | 2.84 | 52.41
+egg Hello World | 8917 | 4.68 | 3.56 | 108.21
+koa Hello World | 10709 | 5.02 | 2.74 | 45.41
+toa Hello World | 10041 | 5.38 | 2.20 | 47.18
+egg nunjucks | 6732 | 7.25 | 4.81 | 257.58
+koa nunjucks | 8596 | 6.03 | 6.35 | 162.53
+toa nunjucks | 7869 | 6.32 | 3.16 | 59.54
+
+## Default Middleware
+
+- 15 middlewares
+- enable router
 
 ## Scenes
 
@@ -44,11 +49,11 @@ wrk http://10.209.84.139:7002/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7002/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     4.23ms    2.99ms  84.56ms   94.80%
-    Req/Sec     1.50k   278.02     2.65k    77.36%
-  119711 requests in 10.10s, 17.92MB read
-Requests/sec:  11852.36
-Transfer/sec:      1.77MB
+    Latency     4.68ms    3.56ms 108.21ms   97.60%
+    Req/Sec     1.35k   270.38     2.86k    79.85%
+  108162 requests in 10.10s, 16.19MB read
+Requests/sec:  10709.54
+Transfer/sec:      1.60MB
 ```
 
 - toa
@@ -58,10 +63,11 @@ wrk http://10.209.84.139:7003/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7003/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     4.22ms    2.59ms  39.82ms   92.84%
-    Req/Sec     1.54k   181.11     2.83k    77.09%
-  122898 requests in 10.10s, 20.63MB read
-Requests/sec:  12169.05
+    Latency     5.02ms    2.74ms  45.41ms   92.83%
+    Req/Sec     1.27k   140.46     2.59k    82.32%
+  101410 requests in 10.10s, 17.02MB read
+Requests/sec:  10041.10
+Transfer/sec:      1.69MB
 ```
 
 - egg
@@ -71,11 +77,11 @@ wrk http://10.209.84.139:7001/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7001/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.73ms    2.77ms  63.12ms   84.02%
-    Req/Sec     1.07k   205.02     2.04k    69.40%
-  85700 requests in 10.10s, 24.11MB read
-Requests/sec:   8485.16
-Transfer/sec:      2.39MB
+    Latency     5.38ms    2.20ms  47.18ms   76.67%
+    Req/Sec     1.13k   219.26     2.56k    69.24%
+  90065 requests in 10.10s, 25.34MB read
+Requests/sec:   8917.43
+Transfer/sec:      2.51MB
 ```
 
 ### nunjucks
@@ -87,11 +93,11 @@ wrk http://10.209.84.139:7002/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7002/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.34ms    5.52ms 145.75ms   98.23%
-    Req/Sec     1.23k   239.23     2.48k    82.69%
-  97999 requests in 10.10s, 244.96MB read
-Requests/sec:   9702.78
-Transfer/sec:     24.25MB
+    Latency     6.03ms    6.35ms 162.53ms   97.93%
+    Req/Sec     1.09k   220.49     2.71k    82.02%
+  86825 requests in 10.10s, 217.03MB read
+Requests/sec:   8596.56
+Transfer/sec:     21.49MB
 ```
 
 - toa
@@ -101,11 +107,11 @@ wrk http://10.209.84.139:7003/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7003/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     5.32ms    2.84ms  52.41ms   92.35%
-    Req/Sec     1.19k   134.30     2.73k    82.92%
-  95139 requests in 10.10s, 239.53MB read
-Requests/sec:   9420.63
-Transfer/sec:     23.72MB
+    Latency     6.32ms    3.16ms  59.54ms   93.03%
+    Req/Sec     0.99k   116.72     2.05k    80.72%
+  79487 requests in 10.10s, 200.12MB read
+Requests/sec:   7869.66
+Transfer/sec:     19.81MB
 ```
 
 - egg
@@ -115,9 +121,9 @@ wrk http://10.209.84.139:7001/ -d 10 -c 50 -t 8
 Running 10s test @ http://10.209.84.139:7001/
   8 threads and 50 connections
   Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     7.49ms    4.15ms  96.07ms   89.68%
-    Req/Sec   824.74    175.90     1.75k    67.79%
-  65988 requests in 10.10s, 173.63MB read
-Requests/sec:   6534.15
-Transfer/sec:     17.19MB
+    Latency     7.25ms    4.81ms 257.58ms   92.97%
+    Req/Sec     0.85k   230.42     2.39k    62.89%
+  67997 requests in 10.10s, 178.91MB read
+Requests/sec:   6732.86
+Transfer/sec:     17.72MB
 ```

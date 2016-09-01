@@ -3,15 +3,18 @@
 const koa = require('koa');
 const nunjucks = require('nunjucks');
 const path = require('path');
+const router = require('koa-router')();
 
 const app = koa();
-let n = 10;
+let n = 15;
 
 while (n--) {
   app.use(function* (next) {
     yield next;
   });
 }
+
+app.use(router.routes());
 
 const options = {
   noCache: false,
@@ -31,7 +34,7 @@ function render(name, locals) {
   });
 }
 
-app.use(function* () {
+router.get('/', function* () {
   this.body = yield render('home.html', {
     user: {
       name: 'fookoa',
