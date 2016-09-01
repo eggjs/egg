@@ -1,0 +1,64 @@
+.mobile-menu {
+  display: none;
+}
+.mobile-menu ul {
+  padding-left: 20px;
+  margin-bottom: 40px;
+}
+.mobile-menu ul li a {
+  color: #000000;
+}
+@media screen and (max-width: 1004px) {
+  .nav,
+  footer {
+    padding: 0 20px;
+  }
+  .nav ul {
+    display: none;
+  }
+  .nav header {
+    text-align: center;
+  }
+  .mobile-menu {
+    display: block;
+  }
+  .page-main aside {
+    display: block;
+    position: absolute;
+    background: #fff;
+    top: 0px;
+    left: -210px;
+    width: 200px;
+    border-right: 1px solid #eee;
+    box-shadow: 0px 0px 4px 0px #ddd;
+    transition: left 1s;
+  }
+  .mobile-trigger {
+    display: inline-block;
+    top: 15px;
+    right: -50px;
+    transition: right 1s;
+    position: absolute;
+  }
+  .mobile-trigger li {
+    background: #fff;
+    width: 30px;
+    height: 6px;
+    margin-bottom: 4px;
+  }
+  .page-main aside.mobile-show {
+    left: 0;
+    transition: left 1s;
+  }
+  .page-main aside.mobile-show .mobile-trigger {
+    right: 15px;
+    transition: right 1s;
+  }
+  .page-main aside.mobile-show .mobile-trigger li {
+    background: #000;
+  }
+  .page-main article {
+    float: none;
+    width: auto;
+  }
+}

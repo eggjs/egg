@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title></title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="https://zos.alipayobjects.com/rmsportal/ENTdcfwZTKeTsTP.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/NhoSIAympGgsRee.svg"></a>
+    <ul>
+      <li><a href="/guide" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release" alt="Release">Release</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1 id="Contribution-Guide"><a href="#Contribution-Guide" class="headerlink" title="Contribution Guide"></a>Contribution Guide</h1><p>If you have any comment or advice, please report your <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">issue</a>,<br>or make any change as you wish and submit an <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">PR</a>.</p>
+<h2 id="Reporting-New-Issues"><a href="#Reporting-New-Issues" class="headerlink" title="Reporting New Issues"></a>Reporting New Issues</h2><ul>
+<li>Please specify what kind of issue it is.</li>
+<li>Before you report an issue, please search for related issues. Make sure you are not going to open a duplicate issue.</li>
+<li>Explain your purpose clearly in tags(see <strong>Useful Tags</strong>), title, or content.</li>
+</ul>
+<p>Egg group members will confirm the purpose of the issue, replace more accurate tags for it, identify related milestone, and assign developers working on it.<br>Tags can be divided into two groups, <code>type</code> and <code>scope</code>.</p>
+<ul>
+<li>type: What kind of issue, e.g. <code>feature</code>, <code>bug</code>, <code>documentation</code>, <code>performance</code>, <code>support</code> …</li>
+<li><p>scope: What did you modified. Which files are modified, e.g. <code>core: xx</code>, <code>plugin: xx</code>, <code>deps: xx</code></p>
+<h3 id="Useful-Tags"><a href="#Useful-Tags" class="headerlink" title="Useful Tags"></a>Useful Tags</h3></li>
+<li><p><code>support</code>: the issue asks helps from developers of our group. If you need helps to locate and handle problems or have any idea to improve Egg, mark it as <code>support</code>.  </p>
+</li>
+<li><code>bug</code>: if you find a problem which possiblly could be a bug, please tag it as <code>bug</code>. Then our group members will review that issue. If it is confirmed as a bug by our group member, this issue will be tagged as <code>confirmed</code>.<ul>
+<li>A confirmed bug will be resolved prior.</li>
+<li>If the bug has negative impact on running online application, it will be tagged as <code>ciritical</code>, which refers to top priority, and will be fixed ASAP!</li>
+<li>A bug will be fixed from lowest necessary version, e.g. A bug needs to be fixed from 0.9.x, then this issue will be tagged as <code>0.9</code>, <code>0.10</code>, <code>1.0</code>, <code>1.1</code>, referring that the bug is required to be fixed in those versions.</li>
+</ul>
+</li>
+<li><code>core: xx</code>: the issue is related to core, e.g. <code>core: loader</code> refers that the issue is related with <code>loader</code> config.</li>
+<li><code>plugin: xx</code>: the issue is related to plugins. e.g. <code>plugin: session</code> refers that the issue is related to <code>session</code> plugin.</li>
+<li><code>deps: xx</code>: the issue is related to <code>dependencies</code>, e.g. <code>deps:egg-cors</code> refers that the issue is related to <code>egg-cors</code></li>
+<li><code>chore: documentation</code>: the issue is about documentation. Need to modify documentation.</li>
+</ul>
+<h2 id="Documentation"><a href="#Documentation" class="headerlink" title="Documentation"></a>Documentation</h2><p>All features must be submitted along with documentations. The documentations should satify several requirements.</p>
+<ul>
+<li>Documentations must clarify one or more aspects of the feature, depending on the nature of feature: what it is, why it happens and how it works.</li>
+<li>It’s better to include a series of procedues to explain how to fix the problem. You are also encourgaed to provide <strong>simple, but self-explanatory</strong> demo.<br>All demos should be compiled at <a href="https://github.com/eggjs/examples" target="_blank" rel="external">egg/examples</a> repository.</li>
+<li>Please provide essential urls, such as application process, terminology explainations and references.</li>
+</ul>
+<h2 id="Submitting-Code"><a href="#Submitting-Code" class="headerlink" title="Submitting Code"></a>Submitting Code</h2><h3 id="Pull-Request-Guide"><a href="#Pull-Request-Guide" class="headerlink" title="Pull Request Guide"></a>Pull Request Guide</h3><p>If you are developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">// Create a new branch <span class="keyword">for</span> development. The name of branch should be semantic, avoiding words like <span class="string">'update'</span> or <span class="string">'tmp'</span>. We suggest to use feature/xxx, <span class="keyword">if</span> the modification is about to implement a new feature.  </div><div class="line">$ git checkout -b branch-name</div><div class="line"></div><div class="line">// Run the <span class="built_in">test</span> after you finish your modification. Add new <span class="built_in">test</span> cases or change old ones <span class="keyword">if</span> you feel necessary  </div><div class="line">$ npm <span class="built_in">test</span></div><div class="line"></div><div class="line">// If your modification pass the tests, congradulations it<span class="string">'s time to push your work back to us. Notice that the commit message should be wirtten in the following format.</span></div><div class="line">$ git add . // git add -u to delete files</div><div class="line">$ git commit -m "fix(role): role.use must xxx"</div><div class="line">$ git push origin branch-name</div></pre></td></tr></table></figure>
+<p>Then you can create a Pull Request at <a href="https://github.com/eggjs/egg/pulls" target="_blank" rel="external">egg</a>  </p>
+<p>No one can garantee how much will be remembered about certain PR after some time. To make sure we can easily recap what happened previously, please provide the following information in your PR.</p>
+<ol>
+<li>Need: What function you want to achieve (Generally, please point out which issue is related).</li>
+<li>Updating Reason: Different with issue. Briefly describe your reason and logic about why you need to make such modification.</li>
+<li>Related Testing: Briefly descirbe what part of testing is relevant to your modification.    </li>
+<li>User Tips: Notice for Egg users. You can skip this part, if the PR is not about update in API or potential compatibility problem.</li>
+</ol>
+<h3 id="Style-Guide"><a href="#Style-Guide" class="headerlink" title="Style Guide"></a>Style Guide</h3><p>Eslint can help to identify styling issues that may exist in your code. Your code is required to pass the test from eslint. Run the test locally by <code>$ npm run lint</code>.</p>
+<h3 id="Commit-Message-Format"><a href="#Commit-Message-Format" class="headerlink" title="Commit Message Format"></a>Commit Message Format</h3><p>You are encouraged to use <a href="https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format" target="_blank" rel="external">angular commit-message-format</a> to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.  </p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">type</span>&gt;</span>(<span class="tag">&lt;<span class="name">scope</span>&gt;</span>): <span class="tag">&lt;<span class="name">subject</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">footer</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>（1）type</p>
+<p>Must be one of the following:</p>
+<ul>
+<li>feat: A new feature</li>
+<li>fix: A bug fix</li>
+<li>docs: Documentation-only changes</li>
+<li>style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)</li>
+<li>refactor: A code change that neither fixes a bug nor adds a feature</li>
+<li>perf: A code change that improves performance</li>
+<li>test: Adding missing tests</li>
+<li>chore: Changes to the build process or auxiliary tools and libraries such as documentation generation</li>
+<li>deps: Updates about dependencies</li>
+</ul>
+<p>（2）scope</p>
+<p>The scope could be anything specifying place of the commit change. For example $location, $browser, $compile, $rootScope, ngHref, ngClick, ngView, etc…</p>
+<p>（3）subject</p>
+<p>Use succinct words to describe what did you do in the commit change.</p>
+<p>（4）body</p>
+<p>Feel free to add more content in the body, if you think subject is not self-explanatory enough, such as what it is the purpose or reasone of you commit.</p>
+<p>（5）footer</p>
+<ul>
+<li><strong><em>If the commit is a Breaking Change, please note it clearly in this part.</em></strong></li>
+<li>related issues, like <code>Closes #1, Closes #2, #3</code></li>
+<li>If there is a change about an old feaure or a new feature, please associate <code>doc</code> and <code>egg-init</code>, like <code>eggjs/egg-bin#123</code></li>
+</ul>
+<p>e.g.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">fix($compile): [BREAKING_CHANGE] couple of unit tests for IE9</div><div class="line"></div><div class="line">Older IEs serialize html uppercased, but IE9 does not...</div><div class="line">Would be better to expect case insensitive, unfortunately jasmine does</div><div class="line">not allow to user regexps for throw expectations.</div><div class="line"></div><div class="line">Document change on eggjs/egg#123</div><div class="line"></div><div class="line">Closes #392</div><div class="line"></div><div class="line">BREAKING CHANGE:</div><div class="line"></div><div class="line">  Breaks foo.bar api, foo.baz should be used instead</div></pre></td></tr></table></figure>
+<p>Look at <a href="https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit" target="_blank" rel="external">these files</a> for more detials.</p>
+<h2 id="Release"><a href="#Release" class="headerlink" title="Release"></a>Release</h2><p>egg uses semantic versioning in release process based on <a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">semver</a>.</p>
+<h3 id="Branch-Strategy"><a href="#Branch-Strategy" class="headerlink" title="Branch Strategy"></a>Branch Strategy</h3><p><code>master</code> branch is the latest stable version. <code>next</code> branch is the next stable version working in progress.</p>
+<ul>
+<li>All new features will be added into <code>master</code> or <code>next</code> branch as well as all bug-fix except security issues. In such way, we can motivate developers to update to the latest stable version.</li>
+<li>If any API is discarded, it should be noted with <code>deprecate</code> in current stable version. The old version of API should be compatiable until the release of next stable version.</li>
+<li><code>master</code> branch doesn’t have publish tag. High-level framework can work with stable versions defined by semantic versioning.</li>
+<li><code>next</code> branch is labelled with <code>next</code> tag, high-level framework can use <code>egg@next</code> to test the in-progress version.</li>
+<li>The LTS versions of Egg determined by Milestone. If a version is listed in Milestone, then it is a LTS version. We will patch it if there is any problem with it.</li>
+</ul>
+<h3 id="Release-Strategy"><a href="#Release-Strategy" class="headerlink" title="Release Strategy"></a>Release Strategy</h3><p>In the release of every stable version, there will be a PM who has the following responsibilities in different stages of the release.  </p>
+<h4 id="Preparation"><a href="#Preparation" class="headerlink" title="Preparation"></a>Preparation</h4><ul>
+<li>Set up milestone. Confirm that request is related to milestone. Assign and update issues, like <a href="https://github.com/eggjs/egg/milestone/1" target="_blank" rel="external">1.x milestone</a>.</li>
+<li>Create a <code>next</code> branch from <code>master</code> branch and tag it as <code>next</code>.</li>
+</ul>
+<h4 id="Before-Release"><a href="#Before-Release" class="headerlink" title="Before Release"></a>Before Release</h4><ul>
+<li>Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.</li>
+<li><p>Open a new <a href="https://github.com/nodejs/node/pull/4181" target="_blank" rel="external">Release Proposal MR</a>, and write <code>History</code> as <a href="https://github.com/nodejs/node/blob/master/CHANGELOG.md" target="_blank" rel="external">node CHANGELOG</a>. Don’t forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.</p>
+  <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm run commits</div></pre></td></tr></table></figure>
+</li>
+<li><p>Nominate PM for next stable version.</p>
+</li>
+</ul>
+<h4 id="During-Release"><a href="#During-Release" class="headerlink" title="During Release"></a>During Release</h4><p>All tags mentioned above refere to adding tags from npm in <code>package.json</code>.</p>
+<figure class="highlight"><table><tr><td class="code"><pre><div class="line">"publishConfig": &#123;</div><div class="line">  "tag": "next"</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/guide" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release" alt="Release">Release</a></li></ul>
+    </div>
+    <dl><dt>Guide</dt><dd><ul><li><a href="/guide/">Overview</a></li><li><a href="/guide/quickstart.html">QuickStart</a></li><li><a href="/guide/write_application.html">Write Application</a></li><li><a href="/guide/plugins.html">Core Plugins</a></li><li><a href="/guide/deployment.html">Deployment</a></li><li><a href="/guide/unittest.html">Unit Test</a></li></ul></dd><dt>Advanced</dt><dd><ul><li><a href="/advanced/write_framework.html">Write Framework</a></li><li><a href="/advanced/write_plugin.html">Write Plugin</a></li><li><a href="/advanced/cluster.html">Cluster</a></li><li><a href="/advanced/loader.html">Loader</a></li><li><a href="/advanced/singleton.html">Singleton</a></li><li><a href="/advanced/best_practice.html">Best Practice</a></li></ul></dd><dt>Community</dt><dd><ul><li><a href="/contributing.html">Contributing</a></li><li><a href="/member_guide.html">Member Guide</a></li><li><a href="/faq.html">FAQ</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/guide" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release" alt="Release">Release</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="https://zos.alipayobjects.com/rmsportal/kAZMouoCzSoaDbD.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>
