@@ -13,7 +13,7 @@ wrk 'http://127.0.0.1:7001/' \
   -c 50 \
   -t 8
 
-sleep3
+sleep 3
 echo "------- koa hello -------"
 curl 'http://127.0.0.1:7002/'
 echo ""
@@ -22,7 +22,7 @@ wrk 'http://127.0.0.1:7002/' \
   -c 50 \
   -t 8
 
-sleep3
+sleep 3
 echo "------- toa hello -------"
 curl 'http://127.0.0.1:7003/'
 echo ""
