@@ -98,13 +98,13 @@
     "index.js"
   ],
   "scripts": {
-    "postinstall": "test -h docs/node_modules || ln -s ../node_modules docs",
     "lint": "eslint --fix lib test examples *.js",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "test-examples": "TESTS=examples/**/test/**/*.test.js egg-bin test",
     "cov": "egg-bin cov",
     "ci": "npm run lint && npm run test-examples && npm run cov",
+    "doc-init": "test -h docs/node_modules || ln -s ../node_modules docs",
     "doc-server": "./scripts/doc.sh server",
     "doc-deploy": "./scripts/doc.sh deploy",
     "autod": "autod",
