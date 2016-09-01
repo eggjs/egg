@@ -1,10 +1,10 @@
 'use strict';
 
-const koa = require('koa');
+const toa = require('toa');
 const nunjucks = require('nunjucks');
 const path = require('path');
 
-const app = koa();
+const app = toa();
 let n = 10;
 
 while (n--) {
@@ -34,11 +34,11 @@ function render(name, locals) {
 app.use(function* () {
   this.body = yield render('home.html', {
     user: {
-      name: 'fookoa',
+      name: 'footoa',
     },
-    title: 'koa view example',
+    title: 'toa view example',
   });
 });
 
-console.log('koa app listen on 7002');
-app.listen(7002);
+console.log('toa app listen on 7003');
+app.listen(7003);
