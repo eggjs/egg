@@ -4,44 +4,6 @@ const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/security.test.js', () => {
-  describe('security.ctoken = false', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/ctoken-disable');
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should not check ctoken', () => {
-      return request(app.callback())
-        .get('/api/user.json?name=fengmk2')
-        .expect(200)
-        .expect({
-          url: '/api/user.json?name=fengmk2',
-          name: 'fengmk2',
-        });
-    });
-  });
-
-  describe('security.ctoken = true', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/csrf-disable');
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should check ctoken', () => {
-      return request(app.callback())
-        .get('/api/user.json?name=fengmk2')
-        .set('accept', 'application/json')
-        .expect(403)
-        .expect({
-          message: 'missing cookie ctoken',
-        });
-    });
-  });
-
   describe('security.csrf = false', () => {
     let app;
     before(() => {
@@ -65,7 +27,7 @@ describe('test/lib/plugins/security.test.js', () => {
   describe('security.csrf = true', () => {
     let app;
     before(() => {
-      app = utils.app('apps/ctoken-disable');
+      app = utils.app('apps/csrf-enable');
       return app.ready();
     });
     after(() => app.close());
@@ -79,10 +41,10 @@ describe('test/lib/plugins/security.test.js', () => {
     });
   });
 
-  describe('security.csrfIgnore and ctokenIgnore', function() {
+  describe('security.csrfIgnore', () => {
     let app;
     before(() => {
-      app = utils.app('apps/ctoken-ignore');
+      app = utils.app('apps/csrf-ignore');
       return app.ready();
     });
     after(() => app.close());
@@ -98,7 +60,7 @@ describe('test/lib/plugins/security.test.js', () => {
         });
     });
 
-    it('should not check ctoken on /api/*', () => {
+    it('should not check csrf on /api/*.json', () => {
       return request(app.callback())
         .post('/api/user.json')
         .send({ name: 'fengmk2' })
@@ -109,13 +71,13 @@ describe('test/lib/plugins/security.test.js', () => {
         });
     });
 
-    it('should check ctoken on other', () => {
+    it('should check csrf on other.json', () => {
       return request(app.callback())
         .post('/apiuser.json')
         .set('accept', 'application/json')
         .send({ name: 'fengmk2' })
         .expect({
-          message: 'missing cookie ctoken',
+          message: 'secret is missing',
         })
         .expect(403);
     });
