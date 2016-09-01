@@ -16,6 +16,9 @@ module.exports = {
     'autod-egg',
     'nunjucks',
     'koa',
+    'koa-router',
+    'toa',
+    'toa-router',
   ],
   keep: [
   ],
