@@ -2,13 +2,33 @@
 
 export PATH=./node_modules/.bin:$PATH
 
-cp README.md CONTRIBUTING.md docs/
+copy_release() {
+  echo -e "layout: release\n---\n" > tmp
+  cat tmp History.md > docs/source/release/index.md || exit $?
+  rm tmp
+}
 
-echo "Building Gitbook"
-gitbook build ./docs -o _site || exit $?
+copy_files() {
+  copy_release || exit $?
+  cp CONTRIBUTING.md docs/source/contributing.md || exit $?
+  cp CONTRIBUTING.zh-CN.md docs/source/zh-cn/contributing.md || exit $?
+  cp MEMBER_GUIDE.md docs/source/member_guide.md || exit $?
+}
 
-echo "Building Jsdoc"
-doc -d ./_site/api --verbose || exit $?
+server() {
+  copy_files || exit $?
+  hexo --cwd docs server -l
+}
 
-echo "Copying thumb"
-cp docs/logo/thumb.png _site || exit $?
+deploy() {
+  copy_files || exit $?
+  hexo --cwd docs generate --force || exit $?
+}
+
+action=$1
+
+if [ $action = 'deploy' ]; then
+  deploy
+elif [ $action = 'server' ]; then
+  server
+fi

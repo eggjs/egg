@@ -1,0 +1,4 @@
+guide: /guide
+# api: /api
+plugins: https://eggjs.org/badgeboard/
+release: /release

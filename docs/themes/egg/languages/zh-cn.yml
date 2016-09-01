@@ -1,0 +1,25 @@
+menu:
+  guide: 新手指南
+  api: API
+  plugins: 插件
+  release: 发布
+
+guide_toc:
+  Guide: 新手指南
+  Overview: 总览
+  QuickStart: 快速入门
+  "Write Application": 创建一个应用
+  "Core Plugins": 核心插件
+  Deployment: 部署应用
+  "Unit Test": 单元测试
+  Advanced: 高阶
+  "Write Framework": 编写一个框架
+  "Write Plugin": 编写一个插件
+  Cluster: 进程管理
+  Loader: 加载器
+  Singleton: 多实例模式
+  "Best Practice": 最佳实践
+  Community: 社区
+  Contributing: 如何共享
+  "Member Guide": 成员指南
+  FAQ: 常见问题

@@ -77,7 +77,13 @@
     "should": "^11.1.0",
     "stream-wormhole": "^1.0.0",
     "supertest": "^2.0.0",
-    "toa": "^1.8.10"
+    "toa": "^1.8.10",
+    "hexo": "^3.2.0",
+    "hexo-generator-index": "^0.2.0",
+    "hexo-generator-tag": "^0.2.0",
+    "hexo-renderer-marked": "^0.2.10",
+    "hexo-renderer-less": "^0.2.0",
+    "hexo-server": "^0.2.0"
   },
   "main": "index.js",
   "files": [
@@ -88,15 +94,17 @@
     "index.js"
   ],
   "scripts": {
+    "postinstall": "test -h docs/node_modules || ln -s ../node_modules docs",
     "lint": "eslint --fix lib test examples *.js",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "test-examples": "TESTS=examples/**/test/**/*.test.js egg-bin test",
     "cov": "egg-bin cov",
     "ci": "npm run lint && npm run test-examples && npm run cov",
+    "doc-server": "./scripts/doc.sh server",
+    "doc-deploy": "./scripts/doc.sh deploy",
     "autod": "autod",
     "autod-china": "autod --registry=https://registry.npm.taobao.org",
-    "doc": "./scripts/doc.sh",
     "puml": "puml . --dest ./docs",
     "commits": "./scripts/commits.sh",
     "example": "node examples/start.js"

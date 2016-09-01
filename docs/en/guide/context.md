@@ -1,3 +1,0 @@
-- 介绍 context
-- 内置挂载到 context 的属性/方法
-- 如何通过 app/extend/context.js 扩展
