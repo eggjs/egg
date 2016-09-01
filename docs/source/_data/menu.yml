@@ -1,4 +1,4 @@
-guide: /guide
+guide: /guide/
 # api: /api
 plugins: https://eggjs.org/badgeboard/
-release: /release
+release: /release/

@@ -5,7 +5,7 @@
 - node: 4.5.0
 - alinode: 1.6.0
 - koa: 1.2.2
-- toa: 1.8.1
+- toa: 1.8.10
 - egg: 0.2.0
 
 Scene | QPS | Avg RT (ms) | Stdev RT | Max RT

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
 
-describe('egg schedule example', () => {
+describe.skip('egg schedule example', () => {
   it('should schedule run schedule success', function* () {
     const baseDir = path.dirname(__dirname);
     const customEgg = path.join(baseDir, '../..');
