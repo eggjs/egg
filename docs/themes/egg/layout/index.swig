@@ -1,9 +1,9 @@
 <div class="index">
   <div class="banner block index-bg-dark">
     <div class="banner-logo" id="logo"></div>
-    <h1>A web framework's framework for Node.js</h1>
+    <h1>{{ __('index.title') }}</h1>
     <p class="banner-button">
-      <a class="btn btn-primary" href="/guide/">Get Started</a>
+      <a class="btn btn-primary" href="/guide/">{{ __('index.getstart') }}</a>
     </p>
   </div>
 
@@ -13,34 +13,34 @@
   </div>
 
   <div class="info block index-bg-light">
-    <h2 class="ft-b">Build Enterprise Web Application Simply</h2>
+    <h2 class="ft-b">{{ __('index.slogan') }}</h2>
     <ul>
       <li>
         <div class="info-img">
-          <img src="https://zos.alipayobjects.com/rmsportal/PRxOrrjBrTcACnE.svg" />
+          <img src="/images/feature1.svg" />
         </div>
-        <h3>Process Management</h3>
-        <div>Built-in production process manager and load balancer.</div>
+        <h3>{{ __('index.feature11') }}</h3>
+        <div>{{ __('index.feature12') }}</div>
       </li>
       <li>
         <div class="info-img">
-          <img src="https://zos.alipayobjects.com/rmsportal/GAldlsiewJjYaBp.svg" />
+          <img src="/images/feature2.svg" />
         </div>
-        <h3>Customization</h3>
-        <div>Customize framework for your team based on egg and plugins</div>
+        <h3>{{ __('index.feature21') }}</h3>
+        <div>{{ __('index.feature22') }}</div>
       </li>
       <li>
         <div class="info-img">
-          <img src="https://zos.alipayobjects.com/rmsportal/aYQsKTxvyZLtnVS.svg" />
+          <img src="/images/feature3.svg" />
         </div>
-        <h3>Powerful Plugin System</h3>
-        <div>A pluggable and extendable system that do everything you like in egg</div>
+        <h3>{{ __('index.feature31') }}</h3>
+        <div>{{ __('index.feature32') }}</div>
       </li>
     </ul>
   </div>
 
   <div class="guide block">
-    <h2 class="ft-b">Get Started</h2>
+    <h2 class="ft-b">{{ __('index.getstart') }}</h2>
     <div class="guide-code">
       <ul>
         <li><strong>$</strong>npm install egg-init -g</li>
@@ -51,9 +51,9 @@
       </ul>
     </div>
     <p>
-      <a class="btn btn-primary" href="/guide/">Read More</a>
+      <a class="btn btn-primary" href="/guide/">{{ __('index.readmore') }}</a>
     </p>
   </div>
 </div>
-<script src="https://os.alipayobjects.com/rmsportal/whONUpwYsgDMSnG.js"></script>
+<script src="/images/logo-animate.js"></script>
 <script>logo('logo')</script>
