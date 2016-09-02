@@ -4,6 +4,17 @@ menu:
   plugins: 插件
   release: 发布
 
+index:
+  slogan: "为企业级框架和应用而生"
+  feature11: "进程管理"
+  feature12: "内置的进程管理和负载均衡"
+  feature21: "自定义"
+  feature22: "基于 egg 和插件系统可以为你的团队自定义框架"
+  feature31: "强大的插件系统"
+  feature32: "插件系统可插拔及可扩展随心所欲"
+  getstart: "开始使用"
+  readmore: "查看更多"
+
 guide_toc:
   Guide: 新手指南
   Overview: 总览
