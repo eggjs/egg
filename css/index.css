@@ -1136,6 +1136,7 @@ p {
   padding-top: 60px;
 }
 .info li {
+  vertical-align: top;
   display: inline-block;
   width: 270px;
   padding: 0 20px;
