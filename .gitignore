@@ -15,6 +15,7 @@ docs/README.md
 docs/db.json
 docs/source/release/index.md
 docs/**/contributing.md
+docs/member_guide.md
 docs/public
 
 !test/fixtures/apps/loader-plugin/node_modules
