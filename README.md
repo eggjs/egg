@@ -24,23 +24,48 @@ A web framework's framework for Node.js.
 
 ## Installation
 
+
 ```bash
 $ npm install egg --save
 ```
 
-Egg is supported in node v4+.
+Node >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
 
 ## Features
 
+- ✔︎ Build-in process management
+- ✔︎ Plugin system
+- ✔︎ Framework customization
+- ✔︎ Lots of [plugins](https://eggjs.org/plugins/)
+
 ## Docs & Community
 
+- [Website](https://eggjs.org)
+- [Plugin List](https://eggjs.org/plugins/)
+- [Badgeboard](https://eggjs.org/badgeboard/)
+- [Frameworks](https://eggjs.org/frameworks.html)
+
 ## Getting Started
+
+Follow the step
+
+```bash
+$ npm install egg-init -g
+$ egg-init --type simple showcase && cd showcase
+$ npm install
+$ npm run dev
+$ open http://localhost:7001
+```
 
 ## Examples
 
 ## How to Contribute
 
-## Team
+Please let us know what we can help, check [issues](https://github.com/eggjs/egg/issues) for bug reporting and suggestion.
+
+If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
+
+If you are a member of egg, follow [MEMBER_GUIDE](MEMBER_GUIDE.md).
 
 ## License
 
