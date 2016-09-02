@@ -1,6 +1,18 @@
 #! /usr/bin/env bash
 
-export PATH=./node_modules/.bin:$PATH
+export PATH=./docs/node_modules/.bin:./node_modules/.bin:./scripts:$PATH
+
+npm_install() {
+  pushd docs > /dev/null
+  [ -d node_modules ] || npminstall
+  popd > /dev/null
+}
+
+import_ghpages() {
+  echo "Pushing gh-pages"
+  local message="Update documentation based on `git log -1 --pretty=%H`"
+  ghp-import -p -m "$message" docs/public || exit $?
+}
 
 copy_release() {
   echo -e "layout: release\n---\n" > tmp
@@ -17,12 +29,15 @@ copy_files() {
 
 server() {
   copy_files || exit $?
+  npm_install || exit $?
   hexo --cwd docs server -l
 }
 
 deploy() {
   copy_files || exit $?
+  npm_install || exit $?
   hexo --cwd docs generate --force || exit $?
+  import_ghpages || exit $?
 }
 
 action=$1
