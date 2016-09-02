@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="88px" height="57px" viewBox="0 0 88 57" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch Beta 39.1 (31721) - http://www.bohemiancoding.com/sketch -->
+    <title>Page 1</title>
+    <desc>Created with Sketch Beta.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Index" transform="translate(-1019.000000, -1069.000000)" stroke="#191919">
+            <g id="Group-18" transform="translate(281.000000, 1061.000000)">
+                <g id="Page-1" transform="translate(739.000000, 8.000000)">
+                    <path d="M64.4586058,20.012238 L53.7532116,38.4291494" id="Stroke-1"></path>
+                    <g id="Group-6" transform="translate(26.763485, 0.313671)">
+                        <polyline id="Stroke-2" points="10.9114373 55.4683544 0.206043154 37.051443 10.9114373 18.6348861 32.3222257 18.6348861"></polyline>
+                        <polyline id="Stroke-4" points="21.637029 37.0516203 10.9316349 18.6347089 21.637029 0.218151899 43.0478174 0.218151899"></polyline>
+                    </g>
+                    <path d="M75.1842332,1.59546835 L64.478839,20.0123797" id="Stroke-7"></path>
+                    <path d="M64.478839,20.012238 L75.1842332,38.4291494" id="Stroke-8"></path>
+                    <g id="Group-13" transform="translate(37.468880, 1.376962)">
+                        <path d="M0.226240664,54.4050633 L10.9316349,35.9881519" id="Stroke-9"></path>
+                        <polyline id="Stroke-11" points="37.6951203 0.218506329 48.4005145 18.6354177 37.6951203 37.0519747 16.284332 37.0519747"></polyline>
+                    </g>
+                    <path d="M48.3802813,37.3652911 L59.0856755,18.9483797" id="Stroke-14"></path>
+                    <path d="M16.284332,55.7820253 L26.9897261,37.3651139" id="Stroke-15"></path>
+                    <path d="M59.1059087,18.948557 L48.4005145,37.3654684" id="Stroke-17"></path>
+                    <g id="Group-24" transform="translate(0.000000, 18.744051)">
+                        <polyline id="Stroke-18" points="37.6749228 0.204506329 48.380317 18.6214177 37.6749228 37.0379747 16.2641344 37.0379747"></polyline>
+                        <polyline id="Stroke-20" points="10.9114017 37.0379747 0.206007469 18.6210633 10.9114017 0.204506329 32.32219 0.204506329"></polyline>
+                        <path d="M10.9316349,37.0379747 L21.637029,18.6210633" id="Stroke-22"></path>
+                    </g>
+                    <path d="M21.6167959,37.3652911 L32.32219,18.9483797" id="Stroke-25"></path>
+                    <g id="Group-30" transform="translate(0.000000, 0.313671)">
+                        <path d="M0.226240664,37.0516203 L21.637029,37.0516203" id="Stroke-26"></path>
+                        <path d="M69.8113029,0.218116456 L59.1059087,18.6350278" id="Stroke-28"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
