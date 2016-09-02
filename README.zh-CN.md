@@ -1,6 +1,6 @@
-![](https://cloud.githubusercontent.com/assets/985607/16881873/c1612cf8-4aee-11e6-9b51-e95412750930.png)
+![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/egg-logo.png)
 
-Node.js 编写的 web 框架的框架。
+为企业级框架和应用而生
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -28,19 +28,43 @@ Node.js 编写的 web 框架的框架。
 $ npm install egg --save
 ```
 
-Egg 支持 node v4 以上的版本。
+Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
 
 ## 特性
 
+- ✔︎ Build-in process management
+- ✔︎ Plugin system
+- ✔︎ Framework customization
+- ✔︎ Lots of [plugins](https://eggjs.org/plugins/)
+
 ## 文档和社区
 
+- [Website](https://eggjs.org)
+- [Plugin List](https://eggjs.org/plugins/)
+- [Badgeboard](https://eggjs.org/badgeboard/)
+- [Frameworks](https://eggjs.org/frameworks.html)
+
 ## 快速开始
+
+Follow the step
+
+```bash
+$ npm install egg-init -g
+$ egg-init --type simple showcase && cd showcase
+$ npm install
+$ npm run dev
+$ open http://localhost:7001
+```
 
 ## 示例
 
 ## 贡献代码
 
-## 团队
+Please let us know what we can help, check [issues](https://github.com/eggjs/egg/issues) for bug reporting and suggestion.
+
+If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
+
+If you are a member of egg, follow [MEMBER_GUIDE](MEMBER_GUIDE.md).
 
 ## 开源协议
 

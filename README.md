@@ -1,4 +1,4 @@
-![](https://cloud.githubusercontent.com/assets/985607/16881873/c1612cf8-4aee-11e6-9b51-e95412750930.png)
+![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/egg-logo.png)
 
 Born to build better enterprise frameworks and apps
 
@@ -29,7 +29,7 @@ Born to build better enterprise frameworks and apps
 $ npm install egg --save
 ```
 
-Node >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
+Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
 
 ## Features
 
