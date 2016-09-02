@@ -19,21 +19,21 @@
           <img src="/images/feature1.svg" />
         </div>
         <h3>{{ __('index.feature11') }}</h3>
-        <div>{{ __('index.feature12') }}</div>
+        <p>{{ __('index.feature12') }}</p>
       </li>
       <li>
         <div class="info-img">
           <img src="/images/feature2.svg" />
         </div>
         <h3>{{ __('index.feature21') }}</h3>
-        <div>{{ __('index.feature22') }}</div>
+        <p>{{ __('index.feature22') }}</p>
       </li>
       <li>
         <div class="info-img">
           <img src="/images/feature3.svg" />
         </div>
         <h3>{{ __('index.feature31') }}</h3>
-        <div>{{ __('index.feature32') }}</div>
+        <p>{{ __('index.feature32') }}</p>
       </li>
     </ul>
   </div>
