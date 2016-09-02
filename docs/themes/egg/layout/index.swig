@@ -1,7 +1,7 @@
 <div class="index">
   <div class="banner block index-bg-dark">
     <div class="banner-logo" id="logo"></div>
-    <h1>{{ __('index.title') }}</h1>
+    <h1>{{ __('index.slogan') }}</h1>
     <p class="banner-button">
       <a class="btn btn-primary" href="/guide/">{{ __('index.getstart') }}</a>
     </p>
@@ -9,11 +9,10 @@
 
   <div class="version">
     <span>Latest: <strong>0.1.0</strong></span>
-    <span>Nodejs >= <strong> 4.0.0</strong></span>
+    <span>Node.js >= <strong> 4.0.0</strong></span>
   </div>
 
-  <div class="info block index-bg-light">
-    <h2 class="ft-b">{{ __('index.slogan') }}</h2>
+  <div class="info index-bg-light">
     <ul>
       <li>
         <div class="info-img">
