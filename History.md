@@ -1,4 +1,16 @@
 
+0.2.0 / 2016-09-03
+==================
+
+  * docs: improve documents
+  * test: update benchmark scripts (#79)
+  * test: add router for bench cases (#78)
+  * fix: set header use lowercase (#76)
+  * test: add toa benchmark (#75)
+  * test: add benchmark results (#74)
+  * test: fix security tests (#73)
+  * test: egg-view-nunjucks change views -> view (#72)
+
 0.1.3 / 2016-08-31
 ==================
 

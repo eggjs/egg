@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -114,7 +114,7 @@
     "url": "https://github.com/eggjs/egg.git"
   },
   "engines": {
-    "node": ">= 4.4.7"
+    "node": ">= 4.0.0"
   },
   "ci": {
     "version": "4, 6"

@@ -8,7 +8,7 @@
   </div>
 
   <div class="version">
-    <span>Latest: <strong>0.1.0</strong></span>
+    <span>Latest: <strong>0.2.0</strong></span>
     <span>Node.js >= <strong> 4.0.0</strong></span>
   </div>
 
