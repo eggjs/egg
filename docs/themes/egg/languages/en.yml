@@ -5,14 +5,13 @@ menu:
   release: Release
 
 index:
-  title: "A web framework's framework for Node.js"
-  slogan: "Build Enterprise Web Application Simply"
+  slogan: "Born to build better enterprise frameworks and apps"
   feature11: "Process Management"
   feature12: "Built-in production process manager and load balancer"
   feature21: "Customization"
   feature22: "Customize framework for your team based on egg and plugins"
   feature31: "Powerful Plugin System"
-  feature32: "A pluggable and extendable system that do everything you like in egg"
+  feature32: "Do what you like in egg with the pluggable and extendable system"
   getstart: "Get Started"
   readmore: "Read More"
 
