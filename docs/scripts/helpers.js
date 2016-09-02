@@ -35,3 +35,10 @@ hexo.extend.helper.register('menu_link', function() {
 
   return links;
 });
+
+hexo.extend.helper.register('index_link', function() {
+  if (this.page.lang !== 'en') {
+    return `/${this.page.lang}/`;
+  }
+  return '/';
+});

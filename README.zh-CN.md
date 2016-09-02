@@ -35,13 +35,13 @@ Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/g
 - ✔︎ Build-in process management
 - ✔︎ Plugin system
 - ✔︎ Framework customization
-- ✔︎ Lots of [plugins](https://eggjs.org/plugins/)
+- ✔︎ Lots of [plugins](https://eggjs.org/badgeboard/)
+)
 
 ## 文档和社区
 
 - [Website](https://eggjs.org)
-- [Plugin List](https://eggjs.org/plugins/)
-- [Badgeboard](https://eggjs.org/badgeboard/)
+- [Plugin List](https://eggjs.org/badgeboard/)
 - [Frameworks](https://eggjs.org/frameworks.html)
 
 ## 快速开始
