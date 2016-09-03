@@ -1,2 +1,6 @@
-- egg-security 导致的 post 问题
-- view 插件引入问题
+title: FAQ
+---
+
+# FAQ
+
+If you have questions that is not contained below, please check [issue](https://gitlab.alibaba-inc.com/egg/egg/issues)
