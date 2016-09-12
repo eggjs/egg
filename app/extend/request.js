@@ -2,10 +2,12 @@
 
 const querystring = require('querystring');
 const accepts = require('accepts');
+
 const _querycache = Symbol('_querycache');
 const _queriesCache = Symbol('_queriesCache');
 const PROTOCOL = Symbol('PROTOCOL');
 const ACCEPTS = Symbol('ACCEPTS');
+const IPS = Symbol('IPS');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 const AJAX_EXT_RE = /\.(json|tile|ajax)$/i;
 
@@ -27,7 +29,7 @@ module.exports = {
    * ```
    */
   get host() {
-    const host = this.get('X-Forwarded-Host') || this.get('Host');
+    const host = this.get('x-forwarded-host') || this.get('host');
     if (!host) {
       return 'localhost';
     }
@@ -97,11 +99,18 @@ module.exports = {
    * @member {String} Request#ips
    */
   get ips() {
-    const val = this.get('X-Forwarded-For') ||
-      this.get('X-Real-IP');
-    return val
+    let ips = this[IPS];
+    if (ips) {
+      return ips;
+    }
+
+    // TODO: should trust these headers after trust proxy config set
+    const val = this.get('x-forwarded-for') || this.get('x-real-ip');
+    ips = this[IPS] = val
       ? val.split(/ *, */)
       : [];
+
+    return ips;
   },
 
   /**
@@ -112,7 +121,7 @@ module.exports = {
    * @since 1.0.0
    */
   get isAjax() {
-    return this.get('X-Requested-With') === 'XMLHttpRequest' || AJAX_EXT_RE.test(this.path);
+    return this.get('x-requested-with') === 'XMLHttpRequest' || AJAX_EXT_RE.test(this.path);
   },
 
   /**

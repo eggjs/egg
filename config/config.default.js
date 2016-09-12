@@ -33,7 +33,7 @@ module.exports = appInfo => {
 
     /**
      * Detect request, protocol header, case sensitive.
-     * If your app behind a proxy, like nginx, maybe you should set it to `X-Forwarded-Proto`
+     * If your app behind a proxy, like nginx, maybe you should set it to `x-forwarded-proto`
      * @member {String} Config#protocolHeaders
      * @since 1.0.0
      */
