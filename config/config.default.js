@@ -200,5 +200,11 @@ module.exports = appInfo => {
     limit: 50,
   };
 
+  /**
+   * emit `startTimeout` if worker don't ready after `workerStartTimeout` ms
+   * @member {Number} Config.workerStartTimeout
+   */
+  exports.workerStartTimeout = 10 * 60 * 1000;
+
   return exports;
 };

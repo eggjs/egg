@@ -84,6 +84,16 @@ describe('test/lib/application.test.js', () => {
       called.should.equal(true);
     });
   });
+
+  describe('app start timeout', function() {
+    it('should emit `startTimeout` event', function(done) {
+      const baseDir = path.join(__dirname, '../fixtures/apps/app-start-timeout');
+      const application = new Application({
+        baseDir,
+      });
+      application.once('startTimeout', done);
+    });
+  });
 });
 
 function createApplication(options) {
