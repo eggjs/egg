@@ -1,4 +1,13 @@
 
+0.2.1 / 2016-09-16
+==================
+
+  * feat(application): emit startTimeout event (#107)
+  * perf: get header using lower case (#106)
+  * chore: remove --fix for error check but not fix (#101)
+  * doc: Add Installation (#95)
+  * doc: add title (#94)
+
 0.2.0 / 2016-09-03
 ==================
 
