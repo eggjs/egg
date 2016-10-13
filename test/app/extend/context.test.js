@@ -322,4 +322,48 @@ describe('test/app/extend/context.test.js', () => {
       context.state.should.equal(context.locals);
     });
   });
+
+  describe('ctx.runInBackground(scope)', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/ctx-background');
+    });
+    after(() => app.close());
+
+    it('should run background task success', done => {
+      request(app.callback())
+        .get('/')
+        .expect(200)
+        .expect('hello')
+        .end(err => {
+          if (err) return done(err);
+          setTimeout(() => {
+            const logdir = app.config.logger.dir;
+            const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+            log.should.match(/background run result status: 200/);
+            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+              .should.match(/\[egg:background\] task:saveUserInfo success \(\d+ms\)/);
+            done();
+          }, 3000);
+        });
+    });
+
+    it('should run background task error', done => {
+      request(app.callback())
+        .get('/error')
+        .expect(200)
+        .expect('hello error')
+        .end(err => {
+          if (err) return done(err);
+          setTimeout(() => {
+            const logdir = app.config.logger.dir;
+            const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+            log.should.match(/getaddrinfo ENOTFOUND registry-not-exists\.npm/);
+            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+              .should.match(/\[egg:background\] task:mockError fail \(\d+ms\)/);
+            done();
+          }, 2000);
+        });
+    });
+  });
 });
