@@ -13,6 +13,7 @@ const fs = require('fs');
 const fixtures = path.join(__dirname, '../../fixtures');
 
 describe('test/lib/core/agent_worker_client.test.js', () => {
+
   describe('single process', () => {
     let agent;
     let client;
@@ -80,7 +81,7 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
       client.ready(done);
       realClient.ready(true);
     });
-
+    after(() => agent.close());
     afterEach(mm.restore);
 
     it('should ready', done => {
@@ -89,19 +90,6 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
       setTimeout(() => {
         client.innerClient.ready(true);
       }, 100);
-    });
-
-    it('should not exit when dumpConfig error', () => {
-      const writeFileSync = fs.writeFileSync;
-      mm(fs, 'writeFileSync', function() {
-        if (arguments[0] && arguments[0].endsWith('config.json')) {
-          throw new Error('mock error');
-        }
-        writeFileSync.apply(fs, arguments);
-      });
-      new Agent({
-        baseDir: path.join(fixtures, 'apps/demo'),
-      });
     });
 
     it('should subscribe well', done => {
@@ -205,6 +193,25 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
     });
   });
 
+  describe('when dumpConfig error', () => {
+    let agent;
+    after(() => agent.close());
+
+    it('should not exit ', done => {
+      const writeFileSync = fs.writeFileSync;
+      mm(fs, 'writeFileSync', function() {
+        if (arguments[0] && arguments[0].endsWith('config.json')) {
+          throw new Error('mock error');
+        }
+        writeFileSync.apply(fs, arguments);
+      });
+      agent = new Agent({
+        baseDir: path.join(fixtures, 'apps/demo'),
+      });
+      agent.ready(done);
+    });
+  });
+
   describe('cluster', () => {
     let app;
 
@@ -212,7 +219,6 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
       app = utils.cluster('apps/agent-app');
       return app.ready();
     });
-
     after(() => app.close());
 
     it('should request ok', () => {
@@ -270,7 +276,6 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
       app.expect('code', 0);
       return app.ready();
     });
-
     before(done => {
       app.process.send({
         action: 'die',

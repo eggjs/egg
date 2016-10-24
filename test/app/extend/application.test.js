@@ -19,19 +19,21 @@ describe('test/app/extend/application.test.js', () => {
   });
 
   describe('app.inspect()', () => {
-    it('should inspect app properties', done => {
-      const app = utils.app('apps/demo');
-      app.ready(() => {
-        app.inspect().should.have.properties([
-          'name', 'baseDir',
-          'env', 'subdomainOffset',
-          'controller', 'middlewares', 'serviceClasses',
-          'config', 'urllib', 'loggers',
-        ]);
-        app.inspect().name.should.equal('demo');
-        app.close();
-        done();
-      });
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should inspect app properties', () => {
+      app.inspect().should.have.properties([
+        'name', 'baseDir',
+        'env', 'subdomainOffset',
+        'controller', 'middlewares', 'serviceClasses',
+        'config', 'urllib', 'loggers',
+      ]);
+      app.inspect().name.should.equal('demo');
     });
   });
 

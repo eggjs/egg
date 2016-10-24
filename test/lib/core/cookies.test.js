@@ -14,7 +14,6 @@ describe('test/lib/core/cookies.test.js', () => {
       app = utils.app('apps/secure-app');
       return app.ready();
     });
-
     after(() => app.close());
 
     it('should throw TypeError when set secure on not secure request', () => {
@@ -167,8 +166,14 @@ describe('test/lib/core/cookies.test.js', () => {
   });
 
   describe('secure = false', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
     it('should set secure:false cookie', done => {
-      const app = utils.app('apps/demo');
       request(app.callback())
       .get('/hello')
       .set('Host', 'demo.eggjs.org')
@@ -190,7 +195,6 @@ describe('test/lib/core/cookies.test.js', () => {
       app = utils.app('apps/encrypt-cookies');
       return app.ready();
     });
-
     after(() => app.close());
 
     it('should get encrypt cookie', done => {

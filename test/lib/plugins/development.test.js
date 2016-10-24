@@ -79,9 +79,9 @@ describe('test/lib/plugins/development.test.js', () => {
       app.debug();
       return app.ready();
     });
+    after(() => app.close());
     after(() => {
       fs.writeFileSync(filepath, body);
-      app.close();
     });
 
     it('should reload when file changed', done => {

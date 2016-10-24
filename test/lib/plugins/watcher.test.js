@@ -17,10 +17,8 @@ describe('test/lib/plugins/watcher.test.js', () => {
       return app.ready();
     });
 
-    afterEach(() => {
-      app.close();
-      mm.restore();
-    });
+    afterEach(() => app.close());
+    afterEach(mm.restore);
 
     it('should app watcher work', done => {
       const server = app.callback();

@@ -14,9 +14,12 @@ describe('test/lib/agent.test.js', () => {
   afterEach(mm.restore);
 
   describe('agent.dumpConfig()', () => {
+    let agent;
+    afterEach(() => agent.close());
+
     it('should dump config and plugins', () => {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      new Agent({
+      agent = new Agent({
         baseDir,
       });
       const json = require(path.join(baseDir, 'run/agent_config.json'));
@@ -25,37 +28,34 @@ describe('test/lib/agent.test.js', () => {
     });
   });
 
-  describe('require agent', () => {
-    it('should exit normal', () => {
-      execSync(`${process.execPath} -e "require('./lib/agent')"`, {
-        timeout: 3000,
-      });
-    });
-  });
-
   describe('close()', () => {
-    it('should close all listeners', function() {
+    let agent;
+    afterEach(() => agent.close());
+
+    it('should close all listeners', function* () {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      const agent = new Agent({
+      agent = new Agent({
         baseDir,
       });
+      yield agent.ready();
       process.listeners('unhandledRejection')
         .indexOf(agent._unhandledRejectionHandler).should.not.equal(-1);
-      agent.close();
+      yield agent.close();
       process.listeners('unhandledRejection')
         .indexOf(agent._unhandledRejectionHandler).should.equal(-1);
     });
 
-    it('should emit close event before exit', () => {
+    it('should emit close event before exit', function* () {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      const agent = new Agent({
+      agent = new Agent({
         baseDir,
       });
+      yield agent.ready();
       let called = false;
       agent.on('close', () => {
         called = true;
       });
-      agent.close();
+      yield agent.close();
       called.should.equal(true);
     });
   });
@@ -68,7 +68,6 @@ describe('test/lib/agent.test.js', () => {
       app = utils.cluster('apps/agent-throw');
       return app.ready();
     });
-
     after(() => app.close());
 
     it('should catch exeption', done => {
@@ -85,4 +84,14 @@ describe('test/lib/agent.test.js', () => {
       });
     });
   });
+
+  if (process.platform !== 'win32') {
+    describe('require agent', () => {
+      it('should exit normal', () => {
+        execSync(`${process.execPath} -e "require('./lib/agent')"`, {
+          timeout: 3000,
+        });
+      });
+    });
+  }
 });

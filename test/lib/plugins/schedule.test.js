@@ -11,7 +11,7 @@ describe('test/lib/plugins/schedule.test.js', () => {
     });
     yield app.ready();
     yield sleep(5000);
-    app.close();
+    yield app.close();
     const log = getLogContent('schedule');
     contains(log, 'cron').should.within(1, 2);
   });

@@ -31,46 +31,6 @@ exports.getJSON = name => {
   return JSON.parse(fs.readFileSync(exports.getFilepath(name)));
 };
 
-// context helper, come from https://github.com/koajs/koa/blob/master/test/context.js
-exports.createContext = (ctx, cb) => {
-  const app = exports.app('apps/demo');
-  return new Promise(function(resolve, reject) {
-    app.ready(() => {
-      const mockCtx = app.mockContext(ctx);
-      if (cb) cb(mockCtx);
-      resolve(mockCtx);
-    });
-
-    app.on('error', err => {
-      reject(err);
-    });
-  });
-};
-
-exports.createRequest = function(ctx, cb) {
-  return new Promise(function(resolve, reject) {
-    exports.createContext(ctx).then(mockCtx => {
-      const req = mockCtx.request;
-      if (cb) cb(req);
-      resolve(req);
-    }, err => {
-      reject(err);
-    });
-  });
-};
-
-exports.createResponse = function(ctx, cb) {
-  return new Promise(function(resolve, reject) {
-    exports.createContext(ctx).then(mockCtx => {
-      const res = mockCtx.response;
-      if (cb) cb(res);
-      resolve(res);
-    }, err => {
-      reject(err);
-    });
-  });
-};
-
 function formatOptions(name, options) {
   let baseDir;
   if (typeof name === 'string') {
