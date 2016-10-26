@@ -69,6 +69,7 @@
     "estraverse": "^4.1.1",
     "formstream": "^1.0.0",
     "glob": "^7.1.1",
+    "ko-sleep": "^1.0.2",
     "koa": "^1.2.4",
     "koa-router": "^5.4.0",
     "merge-descriptors": "^1.0.1",
@@ -117,6 +118,6 @@
     "node": ">= 4.0.0"
   },
   "ci": {
-    "version": "4, 6"
+    "version": "4, 6, 7"
   }
 }

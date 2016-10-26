@@ -7,6 +7,8 @@ const fs = require('fs');
 const mm = require('egg-mock');
 const request = require('supertest');
 const Logger = require('egg-logger');
+const sleep = require('ko-sleep');
+
 const utils = require('../../utils');
 const Agent = require('../../..').Agent;
 
@@ -14,7 +16,8 @@ describe('test/lib/core/logger.test.js', () => {
 
   let app;
   afterEach(mm.restore);
-  afterEach(() => app.close());
+  afterEach(() => sleep(5000).then(() => app.close()));
+
 
   it('should got right default config on prod env', () => {
     mm.env('prod');
