@@ -260,36 +260,61 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.roleFailureHandler()', () => {
-    it('should detect ajax', function* () {
-      const context = yield utils.createContext({ isAjax: true });
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should detect ajax', () => {
+      const context = app.mockContext({ isAjax: true });
       context.roleFailureHandler('admin');
       context.body.should.eql({ message: 'Forbidden, required role: admin', stat: 'deny' });
     });
 
     it('should response message when is not ajax', function* () {
-      const context = yield utils.createContext();
+      const context = app.mockContext();
       context.roleFailureHandler('admin');
       context.body.should.equal('Forbidden, required role: admin');
     });
   });
 
   describe('ctx.curl()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
     it('should curl ok', function* () {
-      const context = yield utils.createContext();
+      this.timeout(10000);
+      const context = app.mockContext();
       const res = yield context.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js');
       res.status.should.equal(200);
     });
   });
 
   describe('ctx.realStatus', () => {
-    it('should get from status ok', function* () {
-      const context = yield utils.createContext();
+    let app;
+    beforeEach(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    afterEach(() => app.close());
+    afterEach(mm.restore);
+
+    it('should get from status ok', () => {
+      const context = app.mockContext();
       context.status = 200;
       context.realStatus.should.equal(200);
     });
 
     it('should get from realStatus ok', () => {
-      const context = utils.createContext();
+      const context = app.mockContext();
       context.status = 302;
       context.realStatus = 500;
       context.realStatus.should.equal(500);
@@ -297,8 +322,16 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.state', () => {
-    it('should delegate ctx.locals', function* () {
-      const context = yield utils.createContext();
+    let app;
+    beforeEach(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    afterEach(() => app.close());
+    afterEach(mm.restore);
+
+    it('should delegate ctx.locals', () => {
+      const context = app.mockContext();
       context.locals = { a: 'a', b: 'b' };
       context.state = { a: 'aa', c: 'cc' };
       context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });

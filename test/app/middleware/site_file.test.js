@@ -2,6 +2,7 @@
 
 const should = require('should');
 const request = require('supertest');
+const assert = require('assert');
 const utils = require('../../utils');
 
 describe('test/app/middleware/site_file.test.js', () => {
@@ -47,7 +48,8 @@ describe('test/app/middleware/site_file.test.js', () => {
     return request(app.callback())
       .head('/robots.txt')
       .expect('content-length', '72')
-      .expect('') // body must be empty for HEAD
+      // body must be empty for HEAD
+      .expect(res => assert.equal(res.text, undefined))
       .expect(200);
   });
 

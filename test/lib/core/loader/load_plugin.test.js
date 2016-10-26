@@ -9,13 +9,14 @@ const utils = require('../../../utils');
 
 const EGG_BASE = path.join(__dirname, '../../../../');
 
-describe('test/lib/core/loader.test.js', () => {
+describe('test/lib/core/loader/load_plugin.test.js', () => {
   let app;
   const logger = console;
   before(() => {
     app = utils.app('apps/empty');
     return app.ready();
   });
+  after(() => app.close());
   afterEach(mm.restore);
 
   it('should loadConfig all plugins', () => {
@@ -32,6 +33,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [],
       env: [],
       path: path.join(baseDir, 'node_modules/b'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
     appLoader.plugins.c.should.eql({
       enable: true,
@@ -39,6 +41,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [],
       env: [],
       path: path.join(baseDir, 'node_modules/c'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
     appLoader.plugins.e.should.eql({
       enable: true,
@@ -46,6 +49,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [ 'f' ],
       env: [],
       path: path.join(baseDir, 'plugins/e'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
     appLoader.plugins.onerror.path.should.equal(fs.realpathSync(path.join(EGG_BASE, 'node_modules/egg-onerror')));
     appLoader.plugins.onerror.package.should.equal('egg-onerror');
@@ -69,6 +73,7 @@ describe('test/lib/core/loader.test.js', () => {
       env: [],
       package: 'rds',
       path: path.join(baseDir, 'node_modules/rds'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
   });
 
@@ -87,6 +92,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [],
       env: [],
       path: path.join(baseDir, 'node_modules/d'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
     should.not.exists(appLoader.plugins.d);
   });
@@ -105,6 +111,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [ 'f' ],
       env: [],
       path: path.join(baseDir, 'plugins/g'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
   });
 
@@ -152,6 +159,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [],
       env: [ 'unittest' ],
       path: path.join(baseDir, 'node_modules/d'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
     appLoader.plugins.foo.should.eql({
       enable: true,
@@ -277,6 +285,7 @@ describe('test/lib/core/loader.test.js', () => {
       dep: [ 'd1' ],
       env: [ 'local', 'prod' ],
       path: path.join(baseDir, 'node_modules/a1'),
+      from: path.join(baseDir, 'config/plugin.js'),
     });
   });
 });

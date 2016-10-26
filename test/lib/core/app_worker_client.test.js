@@ -49,6 +49,7 @@ describe('test/lib/core/app_worker_client.test.js', () => {
 
       client.ready(done);
     });
+    after(() => app.close());
 
     afterEach(mm.restore);
 
@@ -213,12 +214,10 @@ describe('test/lib/core/app_worker_client.test.js', () => {
       app = utils.cluster('apps/agent-client-app');
       yield app.ready();
     });
+    after(() => app.close());
 
-    beforeEach(mm.restore);
+    afterEach(mm.restore);
 
-    after(() => {
-      app.close();
-    });
 
     it('should subscribe second time ok', done => {
       request(app.callback())

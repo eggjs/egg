@@ -160,7 +160,7 @@ describe('test/lib/cluster/master.test.js', () => {
 
   describe('spawn start', () => {
     let app;
-    after(() => {
+    afterEach(() => {
       // make sure process exit
       app.proc.kill('SIGTERM');
     });
