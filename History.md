@@ -1,4 +1,12 @@
 
+0.3.0 / 2016-10-28
+==================
+
+  * test: fix unstable test (#133)
+  * feat: close return promise (#128)
+  * deps: update deps version (#113)
+  * fix: AppWorkerClient subscribe same data failed issue (#110)
+
 0.2.1 / 2016-09-16
 ==================
 
