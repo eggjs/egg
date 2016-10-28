@@ -23,6 +23,7 @@ describe('test/lib/core/urllib.test.js', () => {
   it('should request ok with log', done => {
     const args = {
       dataType: 'text',
+      timeout: 10000,
     };
     client.once('response', info => {
       info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
@@ -31,7 +32,7 @@ describe('test/lib/core/urllib.test.js', () => {
     });
 
     client.request(url, args);
-  });
+  }).timeout(10000);
 
   it('should request callback with log', done => {
     client.once('response', info => {

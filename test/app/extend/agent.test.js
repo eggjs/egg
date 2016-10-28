@@ -31,7 +31,7 @@ describe('test/app/extend/agent.test.js', () => {
     let app;
     afterEach(() => app.close());
 
-    it.skip('should not log in unittest env', function* () {
+    it('should not log in unittest env', function* () {
       mm.env('unittest');
       app = utils.app('apps/agent-instrument');
       yield app.ready();

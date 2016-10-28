@@ -8,7 +8,7 @@ const dir_path = utils.getFilepath('apps/watcher-development-app/tmp');
 module.exports = function(app) {
   let fileChangeCount = 0;
 
-  function callback() {
+  function callback(a) {
     fileChangeCount++;
   }
 

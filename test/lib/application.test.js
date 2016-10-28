@@ -48,12 +48,13 @@ describe('test/lib/application.test.js', () => {
   describe('curl()', () => {
     afterEach(() => app.close());
     it('should curl success', function* () {
-      this.timeout(10000);
       app = createApplication();
       yield app.ready();
-      const res = yield app.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js');
+      const res = yield app.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js', {
+        timeout: 10000,
+      });
       res.status.should.equal(200);
-    });
+    }).timeout(10000);
   });
 
   describe('dumpConfig()', () => {
