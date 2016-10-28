@@ -7,78 +7,83 @@ const fs = require('fs');
 const mm = require('egg-mock');
 const request = require('supertest');
 const Logger = require('egg-logger');
+const sleep = require('ko-sleep');
+
 const utils = require('../../utils');
 const Agent = require('../../..').Agent;
 
 describe('test/lib/core/logger.test.js', () => {
+
+  let app;
   afterEach(mm.restore);
+  afterEach(() => sleep(5000).then(() => app.close()));
+
 
   it('should got right default config on prod env', () => {
     mm.env('prod');
     mm(process.env, 'EGG_LOG', '');
     mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app/config'));
-    const app = utils.app('apps/mock-production-app');
+    app = utils.app('apps/mock-production-app');
     // 生产环境默认 _level = info
     app.logger.get('file').options.level.should.equal(Logger.INFO);
     // stdout 默认 INFO
     app.logger.get('console').options.level.should.equal(Logger.INFO);
     app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
     app.coreLogger.get('console').options.level.should.equal(Logger.INFO);
-    app.close();
+    return app.ready();
   });
 
   it('should got right level on local env', () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', '');
-    const app = utils.app('apps/mock-dev-app');
+    app = utils.app('apps/mock-dev-app');
 
     app.logger.get('file').options.level.should.equal(Logger.DEBUG);
     app.logger.get('console').options.level.should.equal(Logger.INFO);
     app.coreLogger.get('file').options.level.should.equal(Logger.DEBUG);
     app.coreLogger.get('console').options.level.should.equal(Logger.WARN);
-    app.close();
+    return app.ready();
   });
 
   it('should set EGG_LOG level on local env', () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', 'ERROR');
-    const app = utils.app('apps/mock-dev-app');
+    app = utils.app('apps/mock-dev-app');
     app.logger.get('file').options.level.should.equal(Logger.DEBUG);
     app.logger.get('console').options.level.should.equal(Logger.ERROR);
     app.coreLogger.get('file').options.level.should.equal(Logger.DEBUG);
     app.coreLogger.get('console').options.level.should.equal(Logger.ERROR);
-    app.close();
+    return app.ready();
   });
 
   it('should got right config on unittest env', () => {
     mm.env('unittest');
     mm(process.env, 'EGG_LOG', '');
-    const app = utils.app('apps/mock-dev-app');
+    app = utils.app('apps/mock-dev-app');
     app.logger.get('file').options.level.should.equal(Logger.INFO);
     app.logger.get('console').options.level.should.equal(Logger.WARN);
     app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
     app.coreLogger.get('console').options.level.should.equal(Logger.WARN);
-    app.close();
+    return app.ready();
   });
 
   it('should set log.consoleLevel to env.EGG_LOG', () => {
     mm(process.env, 'EGG_LOG', 'ERROR');
-    const app = utils.app('apps/mock-dev-app');
+    app = utils.app('apps/mock-dev-app');
     app.logger.get('file').options.level.should.equal(Logger.INFO);
     app.logger.get('console').options.level.should.equal(Logger.ERROR);
-    app.close();
+    return app.ready();
   });
 
   it('log buffer disable cache on local and unittest env', done => {
     mm(process.env, 'EGG_LOG', 'NONE');
-    const app = utils.app('apps/nobuffer-logger');
+    app = utils.app('apps/nobuffer-logger');
     app.ready(() => {
       const ctx = app.mockContext();
       const logfile = path.join(app.config.logger.dir, 'common-error.log');
       // app.config.logger.buffer.should.equal(false);
       ctx.logger.error(new Error('mock nobuffer error'));
       setTimeout(() => {
-        app.close();
         fs.readFileSync(logfile, 'utf8').should.containEql('nodejs.Error: mock nobuffer error\n');
         done();
       }, 1000);
@@ -89,14 +94,13 @@ describe('test/lib/core/logger.test.js', () => {
     mm(process.env, 'EGG_LOG', 'none');
     mm.env('prod');
     mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app/config'));
-    const app = utils.app('apps/mock-production-app');
+    app = utils.app('apps/mock-production-app');
     app.ready(() => {
       const ctx = app.mockContext();
       const logfile = path.join(app.config.logger.dir, 'common-error.log');
       // app.config.logger.buffer.should.equal(true);
       ctx.logger.error(new Error('mock enable buffer error'));
       setTimeout(() => {
-        app.close();
         fs.readFileSync(logfile, 'utf8').should.containEql('');
         done();
       }, 1000);
@@ -106,13 +110,12 @@ describe('test/lib/core/logger.test.js', () => {
   it('output .json format log', done => {
     mm(process.env, 'EGG_LOG', 'none');
     mm.env('local');
-    const app = utils.app('apps/logger-output-json');
+    app = utils.app('apps/logger-output-json');
     app.ready(() => {
       const ctx = app.mockContext();
       const logfile = path.join(app.config.logger.dir, 'logger-output-json-web.json.log');
       ctx.logger.info('json format');
       setTimeout(() => {
-        app.close();
         fs.existsSync(logfile).should.be.true;
         fs.readFileSync(logfile, 'utf8').should.containEql('"message":"json format"');
         done();
@@ -122,7 +125,7 @@ describe('test/lib/core/logger.test.js', () => {
 
   it('dont output to console after app ready', done => {
     mm.env('default');
-    const app = utils.cluster('apps/logger');
+    app = utils.cluster('apps/logger');
     app
     .debug(false)
     .coverage(false)
@@ -131,16 +134,12 @@ describe('test/lib/core/logger.test.js', () => {
     .notExpect('stdout', /app info after ready/)
     .expect('stderr', /nodejs.Error: agent error/)
     .expect('stderr', /nodejs.Error: app error/)
-    .end(err => {
-      app.close();
-      should.not.exists(err);
-      done();
-    });
+    .end(done);
   });
 
   it('should still output to console after app ready on local env', done => {
     mm.env('local');
-    const app = utils.cluster('apps/logger');
+    app = utils.cluster('apps/logger');
     app
     // .debug()
     .coverage(false)
@@ -149,24 +148,19 @@ describe('test/lib/core/logger.test.js', () => {
     .expect('stdout', /app info after ready/)
     .expect('stderr', /nodejs.Error: agent error/)
     .expect('stderr', /nodejs.Error: app error/)
-    .end(err => {
-      app.close();
-      should.not.exists(err);
-      done();
-    });
+    .end(done);
   });
 
   it('agent and app error should output to common-error.log', done => {
     const baseDir = utils.getFilepath('apps/logger');
     mm.env('default');
     mm(process.env, 'EGG_LOG', 'none');
-    mm(process.env, 'HOME', baseDir);
-    const app = utils.cluster('apps/logger');
+    mm(process.env, 'EGG_HOME', baseDir);
+    app = utils.cluster('apps/logger');
     app
     // .debug()
     .coverage(false)
     .end(err => {
-      app.close();
       should.not.exists(err);
       const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
       content.should.containEql('nodejs.Error: agent error');
@@ -176,7 +170,7 @@ describe('test/lib/core/logger.test.js', () => {
   });
 
   it('all loggers error should redirect to errorLogger', done => {
-    const app = utils.app('apps/logger');
+    app = utils.app('apps/logger');
     app.ready(() => {
       app.logger.error(new Error('logger error'));
       app.coreLogger.error(new Error('coreLogger error'));
@@ -184,7 +178,6 @@ describe('test/lib/core/logger.test.js', () => {
       app.loggers.customLogger.error(new Error('customLogger error'));
 
       setTimeout(() => {
-        app.close();
         const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
         content.should.containEql('nodejs.Error: logger error');
         content.should.containEql('nodejs.Error: coreLogger error');
@@ -196,11 +189,11 @@ describe('test/lib/core/logger.test.js', () => {
   });
 
   it('agent\'s logger is same as coreLogger', done => {
-    const agent = new Agent({
+    app = new Agent({
       baseDir: utils.getFilepath('apps/logger'),
     });
-    agent.logger.options.file.should.equal(agent.coreLogger.options.file);
-    agent.ready(done);
+    app.logger.options.file.should.equal(app.coreLogger.options.file);
+    app.ready(done);
   });
 
   describe.skip('logger.reload()', () => {

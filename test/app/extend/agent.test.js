@@ -28,27 +28,28 @@ describe('test/app/extend/agent.test.js', () => {
   });
 
   describe('agent.instrument()', () => {
-    it.skip('should not log in unittest env', function* () {
+    let app;
+    afterEach(() => app.close());
+
+    it('should not log in unittest env', function* () {
       mm.env('unittest');
-      const app = utils.app('apps/agent-instrument');
+      app = utils.app('apps/agent-instrument');
       yield app.ready();
       yield sleep(1000);
       // TODO: why egg-agent.log not exists?
       const log = fs.readFileSync(
         utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
       log.should.not.match(/\[http\] \/hello/);
-      app.close();
     });
 
     it('should log in local env', function* () {
       mm.env('local');
-      const app = utils.app('apps/agent-instrument', { cache: false });
+      app = utils.app('apps/agent-instrument', { cache: false });
       yield app.ready();
       yield sleep(1000);
       const log = fs.readFileSync(
         utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
       log.should.match(/\[http\] \/hello/);
-      app.close();
     });
   });
 });

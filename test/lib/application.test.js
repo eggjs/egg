@@ -4,7 +4,10 @@ const Application = require('../../lib/application');
 const path = require('path');
 
 describe('test/lib/application.test.js', () => {
+  let app;
+
   describe('create application', () => {
+
     it('should throw options.baseDir required', () => {
       (function() {
         new Application({
@@ -31,67 +34,80 @@ describe('test/lib/application.test.js', () => {
   });
 
   describe('application.deprecate', () => {
+    afterEach(() => app.close());
+
     it('should get deprecate with namespace egg', () => {
-      const app = createApplication();
+      app = createApplication();
       const deprecate = app.deprecate;
       deprecate._namespace.should.equal('egg');
       deprecate.should.equal(app.deprecate);
+      return app.ready();
     });
   });
 
   describe('curl()', () => {
+    afterEach(() => app.close());
     it('should curl success', function* () {
-      const app = createApplication();
-      const res = yield app.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js');
+      app = createApplication();
+      yield app.ready();
+      const res = yield app.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js', {
+        timeout: 10000,
+      });
       res.status.should.equal(200);
-    });
+    }).timeout(10000);
   });
 
   describe('dumpConfig()', () => {
+    afterEach(() => app.close());
     it('should dump config and plugins', () => {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      new Application({
+      app = new Application({
         baseDir,
       });
       const json = require(path.join(baseDir, 'run/application_config.json'));
       json.plugins.onerror.version.should.match(/\d+\.\d+\.\d+/);
       json.config.name.should.equal('demo');
+      return app.ready();
     });
   });
 
   describe('close()', () => {
-    it('should close all listeners', () => {
+    afterEach(() => app.close());
+    it('should close all listeners', function* () {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      const application = new Application({
+      app = new Application({
         baseDir,
       });
+      yield app.ready();
       process.listeners('unhandledRejection')
-        .indexOf(application._unhandledRejectionHandler).should.not.equal(-1);
-      application.close();
+        .indexOf(app._unhandledRejectionHandler).should.not.equal(-1);
+      yield app.close();
       process.listeners('unhandledRejection')
-        .indexOf(application._unhandledRejectionHandler).should.equal(-1);
+        .indexOf(app._unhandledRejectionHandler).should.equal(-1);
     });
-    it('should emit close event before exit', () => {
+    it('should emit close event before exit', function* () {
       const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      const application = new Application({
+      app = new Application({
         baseDir,
       });
+      yield app.ready();
       let called = false;
-      application.on('close', () => {
+      app.on('close', () => {
         called = true;
       });
-      application.close();
+      yield app.close();
       called.should.equal(true);
     });
   });
 
   describe('app start timeout', function() {
+    afterEach(() => app.close());
     it('should emit `startTimeout` event', function(done) {
       const baseDir = path.join(__dirname, '../fixtures/apps/app-start-timeout');
-      const application = new Application({
+      app = new Application({
         baseDir,
       });
-      application.once('startTimeout', done);
+      app.once('startTimeout', done);
     });
   });
 });

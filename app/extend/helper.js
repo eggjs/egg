@@ -1,6 +1,7 @@
 'use strict';
 
-const path = require('path');
+const url = require('url');
+
 
 module.exports = {
 
@@ -36,7 +37,7 @@ module.exports = {
    * @return {String} 含有域名的完整 URL
    */
   urlFor(name, params) {
-    return this.ctx.protocol + '://' + this.ctx.host + path.join('/', this.app.router.url(name, params));
+    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.app.router.url(name, params));
   },
 
 };

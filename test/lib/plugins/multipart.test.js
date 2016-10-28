@@ -12,8 +12,11 @@ describe('test/lib/plugins/multipart.test.js', () => {
   let cookies;
   let host;
   let server;
-  before(done => {
+  before(() => {
     app = utils.app('apps/multipart');
+    return app.ready();
+  });
+  before(done => {
     server = app.listen();
     request(server)
     .get('/')

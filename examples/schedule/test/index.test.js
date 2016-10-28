@@ -24,7 +24,7 @@ describe.skip('egg schedule example', () => {
     countLine(log, 'worker&&cron').should.equal(1);
     countLine(log, 'worker&&interval').should.equal(1);
 
-    app.close();
+    yield app.close();
   });
 });
 

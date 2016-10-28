@@ -8,7 +8,6 @@ describe('test/lib/plugins/depd.test.js', () => {
 
   let app;
   before(() => {
-    mm(process.env, 'NO_DEPRECATION', '*');
     app = utils.app('apps/demo');
     return app.ready();
   });

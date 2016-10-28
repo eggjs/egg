@@ -9,6 +9,7 @@ describe('test/app/extend/helper.test.js', () => {
     app = utils.app('apps/helper');
     return app.ready();
   });
+  after(() => app.close());
 
   describe('pathFor()', () => {
     it('should get home path url', () => {

@@ -1,11 +1,9 @@
 'use strict';
 
-const should = require('should');
 const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
-const rimraf = require('rimraf');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
@@ -13,107 +11,92 @@ describe('test/app/extend/context.test.js', () => {
   afterEach(mm.restore);
 
   describe('ctx.logger', () => {
-    const baseDir = utils.getFilepath('apps/demo');
-
-    beforeEach(() => {
-      rimraf.sync(path.join(baseDir, 'logs'));
-    });
 
     let app;
     afterEach(() => app.close());
 
-    it('env=local: level => debug', done => {
+    it('env=local: level => debug', function* () {
       mm.env('local');
       mm(process.env, 'EGG_LOG', 'none');
       app = utils.app('apps/demo');
+      yield app.ready();
       const logdir = app.config.logger.dir;
 
-      request(app.callback())
+      yield request(app.callback())
       .get('/logger?message=foo')
-      .expect('logger', err => {
-        should.not.exists(err);
+      .expect('logger');
 
-        const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-        errorContent.should.containEql('nodejs.Error: error foo');
-        errorContent.should.containEql('nodejs.Error: core error foo');
+      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      errorContent.should.containEql('nodejs.Error: error foo');
+      errorContent.should.containEql('nodejs.Error: core error foo');
 
-        const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-        loggerContent.should.containEql('debug foo');
-        loggerContent.should.containEql('info foo');
-        loggerContent.should.containEql('warn foo');
+      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      loggerContent.should.containEql('debug foo');
+      loggerContent.should.containEql('info foo');
+      loggerContent.should.containEql('warn foo');
 
-        const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-        coreLoggerContent.should.containEql('core debug foo');
-        coreLoggerContent.should.containEql('core info foo');
-        coreLoggerContent.should.containEql('core warn foo');
-        done();
-      });
+      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      coreLoggerContent.should.containEql('core debug foo');
+      coreLoggerContent.should.containEql('core info foo');
+      coreLoggerContent.should.containEql('core warn foo');
     });
 
-    it('env=unittest: level => info', done => {
+    it('env=unittest: level => info', function* () {
       mm.env('unittest');
       app = utils.app('apps/demo');
-      app.ready(() => {
-        const logdir = app.config.logger.dir;
-
-        app.mockContext({
-          userId: '123123',
-          tracer: {
-            traceId: '456456',
-          },
-        });
-
-        request(app.callback())
-        .get('/logger?message=foo')
-        .expect('logger', err => {
-          should.not.exists(err);
-
-          const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-          errorContent.should.containEql('nodejs.Error: error foo');
-          errorContent.should.containEql('nodejs.Error: core error foo');
-          errorContent.should.match(/\[123123\/[\d\.]+\/456456\/\d+ms GET \/logger\?message=foo]/);
-
-          const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-          loggerContent.should.not.containEql('debug foo');
-          loggerContent.should.containEql('info foo');
-          loggerContent.should.containEql('warn foo');
-
-          const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-          coreLoggerContent.should.not.containEql('core debug foo');
-          coreLoggerContent.should.containEql('core info foo');
-          coreLoggerContent.should.containEql('core warn foo');
-
-          done();
-        });
-      });
-    });
-
-    it('env=prod: level => info', done => {
-      mm.env('unittest');
-      app = utils.app('apps/demo');
+      yield app.ready();
       const logdir = app.config.logger.dir;
 
-      request(app.callback())
-      .get('/logger?message=foo')
-      .expect('logger', err => {
-        should.not.exists(err);
-
-        const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-        errorContent.should.containEql('nodejs.Error: error foo');
-        errorContent.should.containEql('nodejs.Error: core error foo');
-
-        const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-        loggerContent.should.not.containEql('debug foo');
-        loggerContent.should.containEql('info foo');
-        loggerContent.should.containEql('warn foo');
-
-        const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-        coreLoggerContent.should.not.containEql('core debug foo');
-        coreLoggerContent.should.containEql('core info foo');
-        coreLoggerContent.should.containEql('core warn foo');
-
-        done();
+      app.mockContext({
+        userId: '123123',
+        tracer: {
+          traceId: '456456',
+        },
       });
+
+      yield request(app.callback())
+      .get('/logger?message=foo')
+      .expect('logger');
+
+      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      errorContent.should.containEql('nodejs.Error: error foo');
+      errorContent.should.containEql('nodejs.Error: core error foo');
+      errorContent.should.match(/\[123123\/[\d\.]+\/456456\/\d+ms GET \/logger\?message=foo]/);
+
+      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      loggerContent.should.not.containEql('debug foo');
+      loggerContent.should.containEql('info foo');
+      loggerContent.should.containEql('warn foo');
+
+      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      coreLoggerContent.should.not.containEql('core debug foo');
+      coreLoggerContent.should.containEql('core info foo');
+      coreLoggerContent.should.containEql('core warn foo');
+    });
+
+    it('env=prod: level => info', function* () {
+      mm.env('unittest');
+      app = utils.app('apps/demo');
+      yield app.ready();
+      const logdir = app.config.logger.dir;
+
+      yield request(app.callback())
+      .get('/logger?message=foo')
+      .expect('logger');
+
+      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      errorContent.should.containEql('nodejs.Error: error foo');
+      errorContent.should.containEql('nodejs.Error: core error foo');
+
+      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      loggerContent.should.not.containEql('debug foo');
+      loggerContent.should.containEql('info foo');
+      loggerContent.should.containEql('warn foo');
+
+      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      coreLoggerContent.should.not.containEql('core debug foo');
+      coreLoggerContent.should.containEql('core info foo');
+      coreLoggerContent.should.containEql('core warn foo');
     });
   });
 
@@ -260,36 +243,62 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.roleFailureHandler()', () => {
-    it('should detect ajax', function* () {
-      const context = yield utils.createContext({ isAjax: true });
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should detect ajax', () => {
+      const context = app.mockContext({ isAjax: true });
       context.roleFailureHandler('admin');
       context.body.should.eql({ message: 'Forbidden, required role: admin', stat: 'deny' });
     });
 
     it('should response message when is not ajax', function* () {
-      const context = yield utils.createContext();
+      const context = app.mockContext();
       context.roleFailureHandler('admin');
       context.body.should.equal('Forbidden, required role: admin');
     });
   });
 
   describe('ctx.curl()', () => {
-    it('should curl ok', function* () {
-      const context = yield utils.createContext();
-      const res = yield context.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js');
-      res.status.should.equal(200);
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
     });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should curl ok', function* () {
+      const context = app.mockContext();
+      const res = yield context.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js', {
+        timeout: 10000,
+      });
+      res.status.should.equal(200);
+    }).timeout(10000);
   });
 
   describe('ctx.realStatus', () => {
-    it('should get from status ok', function* () {
-      const context = yield utils.createContext();
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should get from status ok', () => {
+      const context = app.mockContext();
       context.status = 200;
       context.realStatus.should.equal(200);
     });
 
     it('should get from realStatus ok', () => {
-      const context = utils.createContext();
+      const context = app.mockContext();
       context.status = 302;
       context.realStatus = 500;
       context.realStatus.should.equal(500);
@@ -297,8 +306,16 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.state', () => {
-    it('should delegate ctx.locals', function* () {
-      const context = yield utils.createContext();
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should delegate ctx.locals', () => {
+      const context = app.mockContext();
       context.locals = { a: 'a', b: 'b' };
       context.state = { a: 'aa', c: 'cc' };
       context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });
