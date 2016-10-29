@@ -61,7 +61,7 @@ describe('test/app/extend/context.test.js', () => {
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
       errorContent.should.containEql('nodejs.Error: core error foo');
-      errorContent.should.match(/\[123123\/[\d\.]+\/456456\/\d+ms GET \/logger\?message=foo]/);
+      errorContent.should.match(/\[123123\/[\d.]+\/456456\/\d+ms GET \/logger\?message=foo]/);
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
       loggerContent.should.not.containEql('debug foo');
@@ -139,7 +139,7 @@ describe('test/app/extend/context.test.js', () => {
     it('should instrument whatever you want', done => {
       const ctx = app.mockContext();
       mm(ctx.logger, 'info', msg => {
-        msg.should.match(/\[foo\] test action on ctx \d+ms/);
+        msg.should.match(/\[foo] test action on ctx \d+ms/);
         done();
       });
       const ins = ctx.instrument('foo', 'test action on ctx');
@@ -148,7 +148,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('should app.instrument work', done => {
       mm(app.logger, 'info', msg => {
-        msg.should.match(/\[foo\] test action on app \d+ms/);
+        msg.should.match(/\[foo] test action on app \d+ms/);
         done();
       });
       const ins = app.instrument('foo', 'test action on app');
@@ -320,6 +320,50 @@ describe('test/app/extend/context.test.js', () => {
       context.state = { a: 'aa', c: 'cc' };
       context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });
       context.state.should.equal(context.locals);
+    });
+  });
+
+  describe('ctx.runInBackground(scope)', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/ctx-background');
+    });
+    after(() => app.close());
+
+    it('should run background task success', done => {
+      request(app.callback())
+        .get('/')
+        .expect(200)
+        .expect('hello')
+        .end(err => {
+          if (err) return done(err);
+          setTimeout(() => {
+            const logdir = app.config.logger.dir;
+            const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+            log.should.match(/background run result status: 200/);
+            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+              .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
+            done();
+          }, 3000);
+        });
+    });
+
+    it('should run background task error', done => {
+      request(app.callback())
+        .get('/error')
+        .expect(200)
+        .expect('hello error')
+        .end(err => {
+          if (err) return done(err);
+          setTimeout(() => {
+            const logdir = app.config.logger.dir;
+            const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+            log.should.match(/getaddrinfo ENOTFOUND registry-not-exists\.npm/);
+            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+              .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
+            done();
+          }, 2000);
+        });
     });
   });
 });

@@ -1,15 +1,10 @@
-/**
- * 对 koa context 的所有扩展，都放在此文件统一维护。
- *
- * - koa context: https://github.com/koajs/koa/blob/master/lib/context.js
- */
-
 'use strict';
 
 const delegate = require('delegates');
 const jsonpBody = require('jsonp-body');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
+const co = require('co');
 const util = require('../../lib/core/util');
 
 const LOGGER = Symbol('LOGGER');
@@ -344,6 +339,31 @@ const proto = module.exports = {
 
   set state(val) {
     this.locals = val;
+  },
+
+  /**
+   * Run generator function in the background
+   * @param  {Generator} scope - generator function, the first args is ctx
+   * ```js
+   * this.body = 'hi';
+   *
+   * this.runInBackground(function* saveUserInfo(ctx) {
+   *   yield ctx.mysql.query(sql);
+   *   yield ctx.curl(url);
+   * });
+   * ```
+   */
+  runInBackground(scope) {
+    const ctx = this;
+    const start = Date.now();
+    const taskName = scope.name || '-';
+    co(function* () {
+      yield scope(ctx);
+      ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
+    }).catch(err => {
+      ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
+      ctx.coreLogger.error(err);
+    });
   },
 };
 

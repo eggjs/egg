@@ -93,22 +93,22 @@ describe('test/lib/core/messenger.test.js', () => {
     after(() => app.close());
 
     it('app should accept agent message', () => {
-      app.expect('stdout', /\[app\] agent-to-app agent msg/);
+      app.expect('stdout', /\[app] agent-to-app agent msg/);
     });
     it('app should accept agent assgin pid message', () => {
-      app.expect('stdout', /\[app\] agent-to-app agent msg \d+/);
+      app.expect('stdout', /\[app] agent-to-app agent msg \d+/);
     });
     it('app should accept itself message', () => {
-      app.expect('stdout', /\[app\] app-to-agent app msg/);
+      app.expect('stdout', /\[app] app-to-agent app msg/);
     });
     it('agent should accept app message', () => {
-      app.expect('stdout', /\[agent\] app-to-agent app msg/);
+      app.expect('stdout', /\[agent] app-to-agent app msg/);
     });
     it('agent should accept itself message', () => {
-      app.expect('stdout', /\[agent\] agent-to-app agent msg/);
+      app.expect('stdout', /\[agent] agent-to-app agent msg/);
     });
     it('agent should accept itself assgin pid message', () => {
-      app.expect('stdout', /\[agent\] agent-to-app agent msg \d+/);
+      app.expect('stdout', /\[agent] agent-to-app agent msg \d+/);
     });
   });
 

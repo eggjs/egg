@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-module.exports = function(options, app) {
+module.exports = (options, app) => {
   return function* (next) {
     assert.deepEqual(options, app.config.hello);
     this.body = options.text;

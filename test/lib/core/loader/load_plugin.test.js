@@ -192,7 +192,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }).should.throw(/notexist\-app not exists/);
+    }).should.throw(/notexist-app not exists/);
   });
 
   it('should keep plugin list sorted', () => {
