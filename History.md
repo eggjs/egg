@@ -1,4 +1,11 @@
 
+0.4.0 / 2016-10-29
+==================
+
+  * deps: update version (#135)
+  * feat: support background task on ctx (#119)
+  * chore: add middleware example (#121)
+
 0.3.0 / 2016-10-28
 ==================
 
