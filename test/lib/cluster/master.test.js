@@ -27,7 +27,7 @@ describe('test/lib/cluster/master.test.js', () => {
         .end(() => setTimeout(() => {
           // error pipe to console
           app.expect('stdout', /App Worker#1:\d+ disconnect/);
-          app.expect('stderr', /nodejs\.AppWorkerDiedError: \[master\]/);
+          app.expect('stderr', /nodejs\.AppWorkerDiedError: \[master]/);
           app.expect('stderr', /App Worker#1:\d+ died/);
           app.expect('stdout', /App Worker#2:\d+ started/);
 
@@ -41,7 +41,7 @@ describe('test/lib/cluster/master.test.js', () => {
         .get('/uncaughtException')
         // wait for app worker restart
         .end(() => setTimeout(() => {
-          app.expect('stderr', /\[graceful:worker:\d+:uncaughtException\] throw error 1 times/);
+          app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
           app.expect('stdout', /App Worker#\d:\d+ started/);
           done();
         }, 5000));

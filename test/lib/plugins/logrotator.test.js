@@ -19,7 +19,7 @@ describe('test/lib/plugins/logrotator.test.js', () => {
     const files = glob.sync(path.join(app.config.logger.dir, '*.log.*'));
     files.length.should.above(0);
     files.forEach(file => {
-      file.should.match(/\.log\.\d{4}\-\d{2}\-\d{2}$/);
+      file.should.match(/\.log\.\d{4}-\d{2}-\d{2}$/);
     });
   });
 });

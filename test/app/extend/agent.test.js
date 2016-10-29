@@ -39,7 +39,7 @@ describe('test/app/extend/agent.test.js', () => {
       // TODO: why egg-agent.log not exists?
       const log = fs.readFileSync(
         utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
-      log.should.not.match(/\[http\] \/hello/);
+      log.should.not.match(/\[http] \/hello/);
     });
 
     it('should log in local env', function* () {
@@ -49,7 +49,7 @@ describe('test/app/extend/agent.test.js', () => {
       yield sleep(1000);
       const log = fs.readFileSync(
         utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
-      log.should.match(/\[http\] \/hello/);
+      log.should.match(/\[http] \/hello/);
     });
   });
 });

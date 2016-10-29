@@ -29,7 +29,7 @@ describe('test/lib/plugins/session.test.js', () => {
       if (err) return done(err);
       should.exist(res.headers['set-cookie']);
       const cookie = res.headers['set-cookie'].join(';');
-      cookie.should.match(/EGG_SESS=[\w\-]+/);
+      cookie.should.match(/EGG_SESS=[\w-]+/);
 
       // userId 不变，还是读取到上次的 session 值
       app.mockContext({
