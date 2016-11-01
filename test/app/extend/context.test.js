@@ -19,13 +19,14 @@ describe('test/app/extend/context.test.js', () => {
     it('env=local: level => debug', function* () {
       mm.env('local');
       mm(process.env, 'EGG_LOG', 'none');
-      app = utils.app('apps/demo');
+      app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
 
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
+      yield sleep(100);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
@@ -44,7 +45,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('env=unittest: level => info', function* () {
       mm.env('unittest');
-      app = utils.app('apps/demo');
+      app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
 
@@ -58,6 +59,7 @@ describe('test/app/extend/context.test.js', () => {
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
+      yield sleep(100);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
@@ -77,13 +79,14 @@ describe('test/app/extend/context.test.js', () => {
 
     it('env=prod: level => info', function* () {
       mm.env('unittest');
-      app = utils.app('apps/demo');
+      app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
 
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
+      yield sleep(100);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');

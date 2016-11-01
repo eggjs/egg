@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const mm = require('egg-mock');
-const sleep = require('co-sleep');
+const sleep = require('ko-sleep');
 const utils = require('../../utils');
 
 describe('test/app/extend/agent.test.js', () => {
