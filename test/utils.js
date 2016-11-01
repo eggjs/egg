@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const http = require('http');
 const mm = require('egg-mock');
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
@@ -21,6 +22,28 @@ exports.app = (name, options) => {
 exports.cluster = (name, options) => {
   options = formatOptions(name, options);
   return mm.cluster(options);
+};
+
+let localServer;
+
+exports.startLocalServer = () => {
+  return new Promise((resolve, reject) => {
+    if (localServer) {
+      return resolve('http://127.0.0.1:' + localServer.address().port);
+    }
+    localServer = http.createServer((req, res) => {
+      req.resume();
+      req.on('end', () => {
+        res.statusCode = 200;
+        res.end(`${req.method} ${req.url}`);
+      });
+    });
+
+    localServer.listen(0, err => {
+      if (err) return reject(err);
+      return resolve('http://127.0.0.1:' + localServer.address().port);
+    });
+  });
 };
 
 exports.getFilepath = name => {

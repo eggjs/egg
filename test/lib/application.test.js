@@ -2,6 +2,7 @@
 
 const Application = require('../../lib/application');
 const path = require('path');
+const utils = require('../utils');
 
 describe('test/lib/application.test.js', () => {
   let app;
@@ -50,11 +51,10 @@ describe('test/lib/application.test.js', () => {
     it('should curl success', function* () {
       app = createApplication();
       yield app.ready();
-      const res = yield app.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js', {
-        timeout: 10000,
-      });
+      const localServer = yield utils.startLocalServer();
+      const res = yield app.curl(`${localServer}/foo/app`);
       res.status.should.equal(200);
-    }).timeout(10000);
+    });
   });
 
   describe('dumpConfig()', () => {
