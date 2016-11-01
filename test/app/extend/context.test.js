@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
+const sleep = require('ko-sleep');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
@@ -274,12 +275,11 @@ describe('test/app/extend/context.test.js', () => {
     afterEach(mm.restore);
 
     it('should curl ok', function* () {
+      const localServer = yield utils.startLocalServer();
       const context = app.mockContext();
-      const res = yield context.curl('https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js', {
-        timeout: 10000,
-      });
+      const res = yield context.curl(`${localServer}/foo/bar`);
       res.status.should.equal(200);
-    }).timeout(10000);
+    });
   });
 
   describe('ctx.realStatus', () => {
@@ -331,40 +331,30 @@ describe('test/app/extend/context.test.js', () => {
     });
     after(() => app.close());
 
-    it('should run background task success', done => {
-      request(app.callback())
+    it('should run background task success', function* () {
+      yield request(app.callback())
         .get('/')
         .expect(200)
-        .expect('hello')
-        .end(err => {
-          if (err) return done(err);
-          setTimeout(() => {
-            const logdir = app.config.logger.dir;
-            const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
-            log.should.match(/background run result file size: \d+/);
-            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
-              .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
-            done();
-          }, 100);
-        });
+        .expect('hello');
+      yield sleep(100);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      log.should.match(/background run result file size: \d+/);
+      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+        .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
     });
 
-    it('should run background task error', done => {
-      request(app.callback())
+    it('should run background task error', function* () {
+      yield request(app.callback())
         .get('/error')
         .expect(200)
-        .expect('hello error')
-        .end(err => {
-          if (err) return done(err);
-          setTimeout(() => {
-            const logdir = app.config.logger.dir;
-            const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-            log.should.match(/ENOENT: no such file or directory/);
-            fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
-              .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
-            done();
-          }, 100);
-        });
+        .expect('hello error');
+      yield sleep(100);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      log.should.match(/ENOENT: no such file or directory/);
+      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+        .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
     });
   });
 });
