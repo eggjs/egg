@@ -74,6 +74,7 @@
     "koa-router": "^5.4.0",
     "merge-descriptors": "^1.0.1",
     "moment": "^2.15.2",
+    "mz": "^2.4.0",
     "npminstall": "^2.1.1",
     "nunjucks": "^2.5.2",
     "once": "^1.3.3",

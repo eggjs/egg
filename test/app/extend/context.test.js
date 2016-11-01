@@ -327,6 +327,7 @@ describe('test/app/extend/context.test.js', () => {
     let app;
     before(() => {
       app = utils.app('apps/ctx-background');
+      return app.ready();
     });
     after(() => app.close());
 
@@ -340,11 +341,11 @@ describe('test/app/extend/context.test.js', () => {
           setTimeout(() => {
             const logdir = app.config.logger.dir;
             const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
-            log.should.match(/background run result status: 200/);
+            log.should.match(/background run result file size: \d+/);
             fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
               .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
             done();
-          }, 3000);
+          }, 100);
         });
     });
 
@@ -358,11 +359,11 @@ describe('test/app/extend/context.test.js', () => {
           setTimeout(() => {
             const logdir = app.config.logger.dir;
             const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-            log.should.match(/getaddrinfo ENOTFOUND registry-not-exists\.npm/);
+            log.should.match(/ENOENT: no such file or directory/);
             fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
               .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
             done();
-          }, 2000);
+          }, 100);
         });
     });
   });
