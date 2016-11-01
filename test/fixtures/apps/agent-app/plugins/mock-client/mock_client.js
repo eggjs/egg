@@ -1,7 +1,7 @@
 'use strict';
 
 const EventEmitter = require('events').EventEmitter;
-const sleep = require('co-sleep');
+const sleep = require('ko-sleep');
 
 class MockClient extends EventEmitter {
   constructor(options) {

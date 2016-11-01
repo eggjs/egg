@@ -55,7 +55,6 @@
     "autod-egg": "^1.0.0",
     "beautify-benchmark": "^0.2.4",
     "benchmark": "^2.1.0",
-    "co-sleep": "^0.0.1",
     "coffee": "^3.3.0",
     "cross-env": "^2.0.1",
     "egg-alinode": "^1.0.3",
