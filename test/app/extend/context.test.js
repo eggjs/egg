@@ -5,6 +5,8 @@ const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
 const sleep = require('ko-sleep');
+
+
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
@@ -26,7 +28,8 @@ describe('test/app/extend/context.test.js', () => {
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
-      yield sleep(100);
+
+      yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
@@ -59,7 +62,8 @@ describe('test/app/extend/context.test.js', () => {
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
-      yield sleep(100);
+
+      yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
@@ -86,7 +90,8 @@ describe('test/app/extend/context.test.js', () => {
       yield request(app.callback())
       .get('/logger?message=foo')
       .expect('logger');
-      yield sleep(100);
+
+      yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
@@ -101,6 +106,30 @@ describe('test/app/extend/context.test.js', () => {
       coreLoggerContent.should.not.containEql('core debug foo');
       coreLoggerContent.should.containEql('core info foo');
       coreLoggerContent.should.containEql('core warn foo');
+    });
+  });
+
+  describe('ctx.getLogger', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/get-logger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should return null when logger is not found', () => {
+      return request(app.callback())
+      .get('/noExistLogger')
+      .expect('null');
+    });
+
+    it('should log with padding message', function* () {
+      yield request(app.callback())
+      .get('/logger')
+      .expect(200);
+
+      const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
+      fs.readFileSync(logPath, 'utf8').should.match(/\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/);
     });
   });
 
@@ -339,7 +368,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/')
         .expect(200)
         .expect('hello');
-      yield sleep(100);
+      yield sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       log.should.match(/background run result file size: \d+/);
@@ -352,7 +381,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      yield sleep(100);
+      yield sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       log.should.match(/ENOENT: no such file or directory/);

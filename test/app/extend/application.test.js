@@ -5,6 +5,7 @@ const mm = require('egg-mock');
 const utils = require('../../utils');
 
 describe('test/app/extend/application.test.js', () => {
+
   describe('app.logger', () => {
     let app;
     before(() => {
@@ -15,6 +16,18 @@ describe('test/app/extend/application.test.js', () => {
 
     it('should alias app.logger => app.loggers.logger', () => {
       app.logger.should.equal(app.loggers.logger);
+    });
+
+    it('should alias app.coreLooger => app.loggers.coreLooger', () => {
+      app.coreLogger.should.equal(app.loggers.coreLogger);
+    });
+
+    it('should alias app.getLogger(\'coreLogger\') => app.loggers.coreLooger', () => {
+      app.getLogger('coreLogger').should.equal(app.loggers.coreLogger);
+    });
+
+    it('should alias app.getLogger(\'noexist\') => null', () => {
+      (app.getLogger('noexist') === null).should.be.true();
     });
   });
 
