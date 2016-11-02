@@ -255,7 +255,7 @@ describe('test/lib/core/agent_worker_client.test.js', () => {
   describe('agent sync callback', () => {
     let app;
     before(() => {
-      app = utils.app('apps/agent-app-sync');
+      app = utils.cluster('apps/agent-app-sync');
       return app.ready();
     });
     after(() => app.close());

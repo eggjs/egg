@@ -1,6 +1,7 @@
 'use strict';
 
 const mm = require('egg-mock');
+const sleep = require('ko-sleep');
 const utils = require('../../utils');
 const Messenger = require('../../../lib/core/messenger');
 
@@ -12,35 +13,6 @@ describe('test/lib/core/messenger.test.js', () => {
   });
 
   afterEach(mm.restore);
-
-  describe('send()', () => {
-    it('should send demo message', done => {
-      // mock not childprocess
-      mm(process, 'send', null);
-      messenger.send('messenger-test-demo', { foo: 'haha' });
-      messenger.once('messenger-test-demo', data => {
-        data.should.eql({ foo: 'haha' });
-        done();
-      });
-    });
-
-    it('should mock process.send exists', done => {
-      mm(process, 'connected', true);
-      mm(process, 'send', msg => {
-        msg.should.eql({
-          action: 'message-test-send-demo',
-          data: {
-            foo: 'ok',
-          },
-        });
-        done();
-      });
-
-      messenger.send('message-test-send-demo', {
-        foo: 'ok',
-      });
-    });
-  });
 
   describe('on(action, data)', () => {
     it('should listen an action event', done => {
@@ -84,12 +56,12 @@ describe('test/lib/core/messenger.test.js', () => {
 
   describe('cluster messenger', () => {
     let app;
-    before(done => {
+    before(() => {
       app = utils.cluster('apps/messenger');
       app.coverage(false);
-      // 等 agent 接受消息
-      app.ready(() => setTimeout(done, 1000));
+      return app.ready();
     });
+    before(() => sleep(1000));
     after(() => app.close());
 
     it('app should accept agent message', () => {
@@ -97,9 +69,6 @@ describe('test/lib/core/messenger.test.js', () => {
     });
     it('app should accept agent assgin pid message', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg \d+/);
-    });
-    it('app should accept itself message', () => {
-      app.expect('stdout', /\[app] app-to-agent app msg/);
     });
     it('agent should accept app message', () => {
       app.expect('stdout', /\[agent] app-to-agent app msg/);
@@ -112,11 +81,37 @@ describe('test/lib/core/messenger.test.js', () => {
     });
   });
 
+  describe('broadcast()', () => {
+
+    let app;
+    before(() => {
+      mm.env('default');
+      app = utils.cluster('apps/messenger-broadcast', { workers: 2 });
+      app.coverage(false);
+      return app.ready();
+    });
+    before(() => sleep(1000));
+    after(() => app.close());
+
+    it('should broadcast each other', () => {
+      // app 26496 receive message from app pid 26495
+      // app 26496 receive message from app pid 26496
+      // app 26495 receive message from app pid 26495
+      // app 26495 receive message from app pid 26496
+      // app 26495 receive message from agent pid 26494
+      // app 26496 receive message from agent pid 26494
+      // agent 26494 receive message from app pid 26495
+      // agent 26494 receive message from app pid 26496
+      // agent 26494 receive message from agent pid 26494
+      const m = app.stdout.match(/(app|agent) \d+ receive message from (app|agent) pid \d+/g);
+      m.length.should.eql(9);
+    });
+  });
+
   describe('sendRandom', () => {
     let app;
     before(() => {
       mm.env('default');
-      mm.consoleLevel('NONE');
       app = utils.cluster('apps/messenger-random', { workers: 4 });
       app.coverage(false);
       return app.ready();
@@ -141,7 +136,6 @@ describe('test/lib/core/messenger.test.js', () => {
     let app;
     before(() => {
       mm.env('default');
-      mm.consoleLevel('NONE');
       app = utils.cluster('apps/messenger-app-agent', { workers: 2 });
       app.coverage(false);
       return app.ready();
