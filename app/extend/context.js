@@ -7,13 +7,12 @@ const Cookies = require('egg-cookies');
 const co = require('co');
 const util = require('../../lib/core/util');
 
-const LOGGER = Symbol('LOGGER');
-const CORE_LOGGER = Symbol('CORE_LOGGER');
 const HELPER = Symbol('Context#helper');
 const VIEW = Symbol('Context#view');
 const LOCALS = Symbol('Context#locals');
 const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
+const CONTEXT_LOGGERS = Symbol('Context#logger');
 
 const proto = module.exports = {
   get cookies() {
@@ -183,10 +182,31 @@ const proto = module.exports = {
   },
 
   /**
-   * 应用 Web 相关日志，用于记录 Web 行为相关的日志，
-   * 最终日志文件输出到 `{log.dir}/{app.name}-web.log` 中。
-   * 每行日志会自动记录上当前请求的一些基本信息，
-   * 如 `[$logonId/$userId/$ip/$timestamp_ms/$sofaTraceId $use_ms $method $url]`
+   * Wrap app.loggers with context infomation,
+   * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
+   * @param {String} name - logger name
+   * @return {Logger} logger
+   */
+  getLogger(name) {
+    let cache = this[CONTEXT_LOGGERS];
+    if (!cache) {
+      cache = this[CONTEXT_LOGGERS] = {};
+    }
+
+    // read from cache
+    if (cache[name]) return cache[name];
+
+    // get no exist logger
+    const appLogger = this.app.getLogger(name);
+    if (!appLogger) return null;
+
+    // write to cache
+    cache[name] = new ContextLogger(this, appLogger);
+    return cache[name];
+  },
+
+  /**
+   * Logger for Application, wrapping app.coreLogger with context infomation
    * @member {ContextLogger} Context#logger
    * @since 1.0.0
    * @example
@@ -194,28 +214,19 @@ const proto = module.exports = {
    * this.logger.info('some request data: %j', this.request.body);
    * this.logger.warn('WARNING!!!!');
    * ```
-   * 错误日志记录，直接会将错误日志完整堆栈信息记录下来，并且输出到 `{log.dir}/common-error.log`
-   * ```
-   * this.logger.error(err);
-   * ```
    */
   get logger() {
-    if (!this[LOGGER]) {
-      this[LOGGER] = new ContextLogger(this, this.app.logger);
-    }
-    return this[LOGGER];
+    return this.getLogger('logger');
   },
 
   /**
-   * app context 级别的 core logger，适合 core 对当前请求记录日志使用
+   * Logger for frameworks and plugins,
+   * wrapping app.coreLogger with context infomation
    * @member {ContextLogger} Context#coreLogger
    * @since 1.0.0
    */
   get coreLogger() {
-    if (!this[CORE_LOGGER]) {
-      this[CORE_LOGGER] = new ContextLogger(this, this.app.coreLogger);
-    }
-    return this[CORE_LOGGER];
+    return this.getLogger('coreLogger');
   },
 
   /**

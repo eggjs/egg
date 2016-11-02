@@ -2,10 +2,11 @@
 
 const mm = require('egg-mock');
 const urllib = require('../../../lib/core/urllib');
+const utils = require('../../utils');
 
 describe('test/lib/core/urllib.test.js', () => {
   let client;
-  const url = 'https://a.alipayobjects.com/aliBridge/1.0.0/aliBridge.min.js';
+  let url;
 
   before(() => {
     client = urllib({
@@ -17,13 +18,15 @@ describe('test/lib/core/urllib.test.js', () => {
       info.args.headers['mock-rpcid'] = 'mock-rpcid';
     });
   });
+  before(function* () {
+    url = yield utils.startLocalServer();
+  });
 
   afterEach(mm.restore);
 
   it('should request ok with log', done => {
     const args = {
       dataType: 'text',
-      timeout: 10000,
     };
     client.once('response', info => {
       info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
@@ -32,7 +35,7 @@ describe('test/lib/core/urllib.test.js', () => {
     });
 
     client.request(url, args);
-  }).timeout(10000);
+  });
 
   it('should request callback with log', done => {
     client.once('response', info => {
@@ -79,6 +82,9 @@ describe('test/lib/core/urllib.test.js', () => {
       done();
     });
 
-    client.request(url);
+    client.request(url).catch(e => {
+      // it will print
+      console.error(e.stack);
+    });
   });
 });

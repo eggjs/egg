@@ -45,6 +45,7 @@ exports.startLocalServer = () => {
     });
   });
 };
+process.once('exit', () => localServer && localServer.close());
 
 exports.getFilepath = name => {
   return path.join(fixtures, name);
