@@ -5,8 +5,6 @@ const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
 const sleep = require('ko-sleep');
-
-
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
@@ -387,6 +385,34 @@ describe('test/app/extend/context.test.js', () => {
       log.should.match(/ENOENT: no such file or directory/);
       fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
         .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
+    });
+  });
+
+  describe('ctx.ip', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should get current request ip', () => {
+      return request(app.callback())
+        .get('/ip')
+        .expect(200)
+        .expect({
+          ip: '127.0.0.1',
+        });
+    });
+
+    it('should set current request ip', () => {
+      return request(app.callback())
+        .get('/ip?set_ip=10.2.2.2')
+        .expect(200)
+        .expect({
+          ip: '10.2.2.2',
+        });
     });
   });
 });

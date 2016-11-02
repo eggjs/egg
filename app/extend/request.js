@@ -71,12 +71,13 @@ module.exports = {
   },
 
   /**
-   * 返回远程 ip 地址，总是返回 ipv4
+   * Request remote IPv4 address
    * @member {String} Request#ip
    * @example
    * ```js
    * this.request.ip
    * => '127.0.0.1'
+   * => '111.10.2.1'
    * ```
    */
   get ip() {
@@ -84,11 +85,18 @@ module.exports = {
       return this._ip;
     }
     const ip = this.ips[0] || this.socket.remoteAddress;
-    // ::ffff:x.x.x.x/96 是用于IPv4映射地址
-    // 如果是 IPV6 也不会做处理，现在还未遇到 IPV6 的场景
+    // will be '::ffff:x.x.x.x', should conver to standard IPv4 format
     // https://zh.wikipedia.org/wiki/IPv6
     this._ip = ip && ip.indexOf('::ffff:') > -1 ? ip.substring(7) : ip;
     return this._ip;
+  },
+
+  /**
+   * Set the remote address
+   * @param {String} ip - IPv4 address
+   */
+  set ip(ip) {
+    this._ip = ip;
   },
 
   /**

@@ -9,4 +9,5 @@ module.exports = app => {
   app.get('/user.json', function*() {
     this.jsonp = { name: 'fengmk2' };
   });
+  app.get('/ip', app.controller.ip);
 };

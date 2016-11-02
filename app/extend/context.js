@@ -398,4 +398,5 @@ delegate(proto, 'request')
   .getter('isAjax')
   .getter('acceptJSON')
   .getter('queries')
-  .getter('accept');
+  .getter('accept')
+  .access('ip');
