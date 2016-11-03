@@ -64,8 +64,8 @@ describe('test/lib/agent.test.js', () => {
     const baseDir = utils.getFilepath('apps/agent-throw');
     let app;
     before(() => {
-      mm(process.env, 'EGG_LOG', 'none');
       app = utils.cluster('apps/agent-throw');
+      app.debug();
       return app.ready();
     });
     after(() => app.close());
