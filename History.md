@@ -1,4 +1,17 @@
 
+0.5.0 / 2016-11-04
+==================
+
+  * deps: upgrade dependencies (#144)
+  * feat: warn when agent send message before started (#143)
+  * feat: [BREAKING_CHANGE] refactor Messenger (#141)
+  * feat: print error to console on unittest env (#139)
+  * feat: add ip setter on request (#138)
+  * feat: add getLogger to app and ctx (#136)
+  * test: remove co-sleep deps
+  * test: add local server for curl test cases
+  * test: use fs read instead of curl test on runInBackground
+
 0.4.0 / 2016-10-29
 ==================
 
