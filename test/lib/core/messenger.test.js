@@ -67,17 +67,21 @@ describe('test/lib/core/messenger.test.js', () => {
     it('app should accept agent message', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg/);
     });
+
     it('app should accept agent assgin pid message', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg \d+/);
     });
+
     it('agent should accept app message', () => {
       app.expect('stdout', /\[agent] app-to-agent app msg/);
     });
-    it('agent should accept itself message', () => {
-      app.expect('stdout', /\[agent] agent-to-app agent msg/);
-    });
-    it('agent should accept itself assgin pid message', () => {
-      app.expect('stdout', /\[agent] agent-to-app agent msg \d+/);
+
+    it('agent should not send message before started', () => {
+      app.expect('stdout', /agent can't call sendTo before server started/);
+      app.expect('stdout', /agent can't call sendToApp before server started/);
+      app.expect('stdout', /agent can't call sendToAgent before server started/);
+      app.expect('stdout', /agent can't call sendRandom before server started/);
+      app.expect('stdout', /agent can't call broadcast before server started/);
     });
   });
 
@@ -158,4 +162,5 @@ describe('test/lib/core/messenger.test.js', () => {
       }
     });
   });
+
 });
