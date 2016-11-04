@@ -5,6 +5,7 @@ module.exports = {
   plugin: 'autod-egg',
   prefix: '^',
   devprefix: '^',
+  registry: 'https://r.cnpmjs.org',
   exclude: [
     'test/fixtures',
     'examples',
@@ -14,6 +15,8 @@ module.exports = {
   devdep: [
     'autod',
     'autod-egg',
+    'eslint',
+    'egg-plugin-puml',
     'nunjucks',
     'koa',
     'koa-router',
