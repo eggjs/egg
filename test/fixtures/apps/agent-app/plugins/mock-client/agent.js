@@ -8,15 +8,16 @@ module.exports = agent => {
 
   agent.mockClient = new MockClient();
 
+  let count = 0;
   // 启动 agent 任务
   agent.startAgent({
     client: agent.mockClient,
     name: 'mock',
-    subscribe: function(info, listener) {
+    subscribe(info, listener) {
       agent.mockClient.on(info.id, listener);
       if (info.id === 'foo') {
-        setTimeout(function() {
-          agent.mockClient.emit('foo', 'bar');
+        setInterval(() => {
+          agent.mockClient.emit('foo', ++count);
         }, 100);
       }
     },

@@ -7,6 +7,8 @@ class MockClient extends EventEmitter {
   constructor(options) {
     super();
 
+    this.cache = new Map();
+
     setImmediate(function() {
       this.ready(true);
     }.bind(this));
@@ -30,32 +32,42 @@ class MockClient extends EventEmitter {
     return this;
   }
 
-  getCallback(id, callback) {
+  getCallback(key, callback) {
     setTimeout(function() {
       if (id === 'error') {
         callback(new Error('mock error'));
       } else {
-        callback(null, 'mock data');
+        callback(null, this.cache.get(key));
       }
     }, 100);
   }
 
-  getData() {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
-        resolve('mock data');
+  getData(key) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(this.cache.get(key));
       }, 100);
     });
   }
 
-  * getDataGenerator() {
+  * getTimeout() {
+    yield sleep(5000);
+    return 'timeout';
+  }
+
+  * getDataGenerator(key) {
     yield sleep(100);
-    return 'mock data';
+    return this.cache.get(key);
+  }
+
+  * save(key, value) {
+    yield sleep(100);
+    this.cache.set(key, value);
   }
 
   getError() {
-    return new Promise(function(resolve, reject) {
-      setTimeout(function() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
         reject(new Error('mock error'));
       }, 100);
     });

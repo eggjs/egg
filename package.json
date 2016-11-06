@@ -96,7 +96,7 @@
   ],
   "scripts": {
     "lint": "eslint lib test examples *.js",
-    "test": "npm run lint && npm run test-local",
+    "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
     "test-examples": "cross-env TESTS=examples/**/test/**/*.test.js egg-bin test",
     "cov": "egg-bin cov",
