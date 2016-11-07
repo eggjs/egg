@@ -35,7 +35,11 @@ exports.startLocalServer = () => {
       req.resume();
       req.on('end', () => {
         res.statusCode = 200;
-        res.end(`${req.method} ${req.url}`);
+        if (req.url === '/get_headers') {
+          res.end(JSON.stringify(req.headers));
+        } else {
+          res.end(`${req.method} ${req.url}`);
+        }
       });
     });
 

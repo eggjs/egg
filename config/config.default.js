@@ -163,11 +163,12 @@ module.exports = appInfo => {
   /**
    * urllib options
    * @member Config#urllib
-   * @property {Boolean} keepAlive - 是否开启 http keepalive, 默认是 true
-   * @property {Integer} keepAliveTimeout - socket 最长空闲时间, 单位毫秒, 默认是 30000 毫秒
-   * @property {Integer} timeout - socket 最长不活跃时间, 单位毫秒, 默认是 30000 毫秒
-   * @property {Integer} maxSockets - 对单个 host 的最大 socket 数, 默认是 Infinity 无限制
-   * @property {Integer} maxFreeSockets - 对单个 host 的最大空闲 socket 数, 默认是 256
+   * @property {Boolean} keepAlive - Enable http keepalive or not, default is true
+   * @property {Integer} keepAliveTimeout - socket keepalive max free time, default is 30000 ms.
+   * @property {Integer} timeout - socket max unative time, default is 30000 ms.
+   * @property {Integer} maxSockets - max socket number of one host, default is Infinity.
+   * @property {Integer} maxFreeSockets - max free socket number of one host, default is 256.
+   * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
    */
   exports.urllib = {
     keepAlive: true,
@@ -175,6 +176,7 @@ module.exports = appInfo => {
     timeout: 30000,
     maxSockets: Infinity,
     maxFreeSockets: 256,
+    enableDNSCache: false,
   };
 
   /**
