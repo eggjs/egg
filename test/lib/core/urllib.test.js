@@ -10,7 +10,9 @@ describe('test/lib/core/urllib.test.js', () => {
 
   before(() => {
     client = urllib({
-      config: {},
+      config: {
+        urllib: {},
+      },
     });
     client.on('request', info => {
       info.args.headers = info.args.headers || {};
