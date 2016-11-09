@@ -3,10 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 
+// https://github.com/eggjs/egg-core#appinfo
 module.exports = appInfo => {
-  // appInfo contains name, baseDir, env, HOME, and pkg
-
-  const appRoot = appInfo.env === 'local' || appInfo.env === 'unittest' ? appInfo.baseDir : appInfo.HOME;
 
   const exports = {
 
@@ -145,8 +143,8 @@ module.exports = appInfo => {
    * @property {Object} coreLogger - core logger 的自定义配置
    */
   exports.logger = {
-    dir: path.join(appRoot, 'logs', appInfo.name),
-    rotateLogDirs: [ path.join(appRoot, 'logs', appInfo.name) ],
+    dir: path.join(appInfo.root, 'logs', appInfo.name),
+    rotateLogDirs: [ path.join(appInfo.root, 'logs', appInfo.name) ],
     encoding: 'utf8',
     env: appInfo.env,
     level: 'INFO',
