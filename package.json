@@ -28,6 +28,7 @@
     "egg-logrotator": "^2.2.2",
     "egg-multipart": "^1.0.0",
     "egg-onerror": "^1.1.0",
+    "egg-path-matching": "^1.0.0",
     "egg-rest": "^1.1.0",
     "egg-schedule": "^2.2.1",
     "egg-security": "^1.2.1",
