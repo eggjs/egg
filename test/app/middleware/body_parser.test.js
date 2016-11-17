@@ -46,4 +46,43 @@ describe('test/app/middleware/body_parser.test.js', () => {
     .expect({ foo: 'bar', _csrf: csrf })
     .expect(200, done);
   });
+
+  it('should disable body parser', function* () {
+    const app = utils.app('apps/body_parser_testapp_disable');
+    yield request(app.callback())
+    .post('/test/body_parser/foo.json')
+    .send({ foo: 'bar' })
+    .expect(204);
+    app.close();
+  });
+
+  it('should body parser support ignore', function* () {
+    const app = utils.app('apps/body_parser_testapp_ignore');
+    yield request(app.callback())
+    .post('/test/body_parser/foo.json')
+    .send({ foo: 'bar' })
+    .expect(204);
+
+    yield request(app.callback())
+    .post('/test/body_parser/form.json')
+    .send({ foo: 'bar' })
+    .expect({ foo: 'bar' });
+
+    app.close();
+  });
+
+  it('should body parser support match', function* () {
+    const app = utils.app('apps/body_parser_testapp_match');
+    yield request(app.callback())
+    .post('/test/body_parser/foo.json')
+    .send({ foo: 'bar' })
+    .expect({ foo: 'bar' });
+
+    yield request(app.callback())
+    .post('/test/body_parser/form.json')
+    .send({ foo: 'bar' })
+    .expect(204);
+
+    app.close();
+  });
 });

@@ -105,6 +105,9 @@ module.exports = appInfo => {
   /**
    * bodyParser options
    * @member Config#bodyParser
+   * @property {Boolean} enable - enable bodyParser or not, default to true
+   * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
+   * @property {String | RegExp | Function | Array} match - will parse request body only when url path hit match pattern
    * @property {String} encoding - body 的编码格式，默认为 utf8
    * @property {String} formLimit - form body 的大小限制，默认为 100kb
    * @property {String} jsonLimit - json body 的大小限制，默认为 100kb
@@ -114,6 +117,7 @@ module.exports = appInfo => {
    * @property {Number} queryString.parameterLimit - 参数个数限制，默认 1000
    */
   exports.bodyParser = {
+    enable: true,
     encoding: 'utf8',
     formLimit: '100kb',
     jsonLimit: '100kb',
