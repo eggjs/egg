@@ -30,6 +30,7 @@ describe('test/lib/core/cookies.test.js', () => {
       ctx.response.get('set-cookie').should.eql([
         'foo=bar',
         'foo1=bar1; path=/; httponly',
+        'foo1.sig=Fqo9DaOWFOs3Gxsv0OHgyhhnJrjuY8jItBdSO-5WRgM; path=/; httponly',
       ]);
     });
 
@@ -40,7 +41,7 @@ describe('test/lib/core/cookies.test.js', () => {
         ctx.setCookie('foo', 'bar', {
           encrypt: true,
         });
-      }).should.throw('.keys required for encrypt cookies');
+      }).should.throw('.keys required for encrypt/sign cookies');
     });
 
     it('should throw TypeError when get encrypt on keys not exists', () => {
@@ -51,7 +52,7 @@ describe('test/lib/core/cookies.test.js', () => {
         ctx.getCookie('foo', {
           encrypt: true,
         });
-      }).should.throw('.keys required for encrypt cookies');
+      }).should.throw('.keys required for encrypt/sign cookies');
     });
 
     it('should not set secure when request protocol is http', done => {

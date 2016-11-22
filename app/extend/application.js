@@ -2,7 +2,6 @@
 
 const http = require('http');
 const assert = require('assert');
-const Keygrip = require('../../lib/core/keygrip');
 const Service = require('../../lib/core/base_service');
 const view = require('../../lib/core/view');
 const AppWorkerClient = require('../../lib/core/app_worker_client');
@@ -127,8 +126,8 @@ module.exports = {
           throw new Error('Please set config.keys first');
         }
       }
-      const keyConfig = this.config.keys.split(',').map(s => s.trim());
-      this[KEYS] = new Keygrip(keyConfig);
+
+      this[KEYS] = this.config.keys.split(',').map(s => s.trim());
     }
     return this[KEYS];
   },
