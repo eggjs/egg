@@ -19,7 +19,7 @@
     "debug": "^2.3.0",
     "delegates": "^1.0.0",
     "egg-cluster": "^1.0.0",
-    "egg-cookies": "^1.0.0",
+    "egg-cookies": "^2.1.0",
     "egg-core": "^1.1.0",
     "egg-cors": "^1.0.0",
     "egg-development": "^1.0.2",

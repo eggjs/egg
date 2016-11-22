@@ -42,6 +42,6 @@ describe('example cookie test', () => {
       .get('/forget')
       .expect(302)
       .expect('Location', '/')
-      .expect('Set-Cookie', /^remember=; path=\/; expires=[^;]+; httponly$/);
+      .expect('Set-Cookie', /^remember=; path=\/; expires=[^;]+; httponly,remember\.sig=; path=\/; expires=[^;]+; httponly$/);
   });
 });
