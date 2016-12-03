@@ -1,4 +1,14 @@
 
+0.6.0 / 2016-12-03
+==================
+
+  * deps: egg-cookies@2 (#155)
+  * fix: already supported in egg-core (#154)
+  * feat: body parser support disable, ignore and match (#150)
+  * feat: use appInfo.root in config (#147)
+  * test: refactor workclient test cases (#145)
+  * feat: add a dns cache httpclient (#146)
+
 0.5.0 / 2016-11-04
 ==================
 
