@@ -56,7 +56,7 @@ module.exports = {
     }
 
     if (typeof this.app.config.protocolHeaders === 'string' && this.app.config.protocolHeaders) {
-      const protocolHeaders = this.app.config.protocolHeaders.split(',');
+      const protocolHeaders = this.app.config.protocolHeaders.split(/\s*,\s*/);
       for (const header of protocolHeaders) {
         let proto = this.get(header);
         if (proto) {
