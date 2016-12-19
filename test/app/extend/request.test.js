@@ -90,7 +90,7 @@ describe('test/app/extend/request.test.js', () => {
       });
 
       it('should return value of X-Custom-Proto', () => {
-        mm(app.config, 'protocolHeaders', 'X-Custom-Proto');
+        mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto, X-Custom-Proto');
         return request(app.callback())
           .get('/protocol')
           .set('X-Custom-Proto', 'https')
