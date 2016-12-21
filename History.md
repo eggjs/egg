@@ -1,4 +1,11 @@
 
+0.6.1 / 2016-12-21
+==================
+
+  * refactor: use sendToApp/sendToAgent in worker client
+  * fix: protocolHeaders can split with whitespace (#164)
+  * deps: update version (#157)
+
 0.6.0 / 2016-12-03
 ==================
 
