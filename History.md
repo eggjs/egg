@@ -1,4 +1,9 @@
 
+0.6.2 / 2016-12-22
+==================
+
+  * refactor(config): set keepAliveTimeout 4000ms by default (#165)
+
 0.6.1 / 2016-12-21
 ==================
 
