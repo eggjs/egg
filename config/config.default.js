@@ -166,7 +166,7 @@ module.exports = appInfo => {
    * urllib options
    * @member Config#urllib
    * @property {Boolean} keepAlive - Enable http keepalive or not, default is true
-   * @property {Integer} keepAliveTimeout - socket keepalive max free time, default is 30000 ms.
+   * @property {Integer} keepAliveTimeout - socket keepalive max free time, default is 4000 ms.
    * @property {Integer} timeout - socket max unative time, default is 30000 ms.
    * @property {Integer} maxSockets - max socket number of one host, default is Infinity.
    * @property {Integer} maxFreeSockets - max free socket number of one host, default is 256.
@@ -174,7 +174,7 @@ module.exports = appInfo => {
    */
   exports.urllib = {
     keepAlive: true,
-    keepAliveTimeout: 30000,
+    keepAliveTimeout: 4000,
     timeout: 30000,
     maxSockets: Infinity,
     maxFreeSockets: 256,
