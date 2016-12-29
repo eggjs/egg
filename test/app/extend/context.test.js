@@ -18,7 +18,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('env=local: level => debug', function* () {
       mm.env('local');
-      mm(process.env, 'EGG_LOG', 'none');
+      mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
@@ -46,6 +46,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('env=unittest: level => info', function* () {
       mm.env('unittest');
+      mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
@@ -81,6 +82,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('env=prod: level => info', function* () {
       mm.env('unittest');
+      mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
       yield app.ready();
       const logdir = app.config.logger.dir;
@@ -375,6 +377,7 @@ describe('test/app/extend/context.test.js', () => {
     });
 
     it('should run background task error', function* () {
+      mm.consoleLevel('NONE');
       yield request(app.callback())
         .get('/error')
         .expect(200)

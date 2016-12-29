@@ -65,7 +65,6 @@ describe('test/lib/agent.test.js', () => {
     let app;
     before(() => {
       app = utils.cluster('apps/agent-throw');
-      app.debug();
       return app.ready();
     });
     after(() => app.close());
