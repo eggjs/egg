@@ -51,7 +51,7 @@ class MockClient extends EventEmitter {
   }
 
   * getTimeout() {
-    yield sleep(5000);
+    yield sleep(6000);
     return 'timeout';
   }
 
