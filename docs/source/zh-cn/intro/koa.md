@@ -53,7 +53,7 @@ run(main());
 
 通过 run 这个辅助函数，上面例子中的 main 中的异步代码就可以完全通过同步的写法完成了。对 Generator 更详细的讲解，可以查看[这篇文档和示例](https://github.com/dead-horse/koa-step-by-step#generator)。
 
-[co](https://github.com/tj/co) 相比于上面提到的那个 run 函数而言，加了支持 `yield [Object / Array / thunk / Generator Function / Generator]`，wrap 一个 Generator Function 成 Promise 等功能。而 co 也是 koa@1 选择的底层异步库，所有的 koa@1 的中间件都必须是一个 `Generator Function`。
+[co](https://github.com/tj/co) 相比于上面提到的那个 run 函数而言，加了支持 `yield [Object / Array / thunk / Generator Function / Generator]`，wrap 一个 Generator Function 成 Promise 等功能。而 co 也是 koa@1 选择的底层异步库，所有的 koa 1 的中间件都必须是一个 `Generator Function`。
 
 ### Async Await
 
@@ -79,7 +79,7 @@ fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 
 相较于 co 支持的种类，async await 不能直接 await 一个 `Promise` 数组（可以通过 `Promise.all` 来封装），也不能 await `thunk`。
 
-由于 async await 还尚未随着规范发布，node 7 中带的 v8 版本已经支持（但是仍然有问题），async await 还不能直接使用，必须经过 babel 等模块进行编译。同时， koa@2 开始支持 `Async Function` 类型的中间件。
+由于 async await 还尚未随着规范发布，node 7 中带的 v8 版本已经支持（但是仍然有问题），async await 还不能直接使用，必须经过 babel 等模块进行编译。同时， koa 2 开始支持 `Async Function` 类型的中间件。
 
 ## Koa
 
@@ -100,9 +100,9 @@ koa 的中间件和 express 不同，是类似洋葱圈形式的：
 - [koa-compress](https://github.com/koajs/compress/blob/master/index.js) for koa.
 - [compression](https://github.com/expressjs/compression/blob/master/index.js) for express.
 
-### Context
+### Context
 
-和 express 只有 request 和 response 两个对象不同，koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 koa@1 中为中间件的 `this`，在 koa@2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 traceId 这种需要贯穿整个请求（在后续任何第一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言，更加符合语义。
+和 express 只有 request 和 response 两个对象不同，koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 koa 1 中为中间件的 `this`，在 koa 2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 traceId 这种需要贯穿整个请求（在后续任何第一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言，更加符合语义。
 
 同时 Context 上也挂载了 Request 和 Response 两个对象。和 express 类似，这两个对象都提供了大量的便捷方法辅助开发，例如：
 
