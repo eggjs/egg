@@ -79,7 +79,7 @@ fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 
 相较于 co 支持的种类，async await 不能直接 await 一个 `Promise` 数组（可以通过 `Promise.all` 来封装），也不能 await `thunk`。
 
-由于 async await 还尚未随着规范发布，node 7 中带的 V8 版本已经支持（但是仍然有问题），async await 还不能直接使用，必须经过 babel 等模块进行编译。同时 koa 2 开始支持 `async function` 类型的中间件。
+由于 async await 还尚未随着规范发布，node 7 中带的 V8 版本已经支持（但是[仍然有问题](https://github.com/nodejs/node/issues/9339)），async await 还不能直接使用，必须经过 babel 等模块进行编译。同时 koa 2 开始支持 `async function` 类型的中间件。
 
 ## koa
 
