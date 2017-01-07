@@ -1,5 +1,6 @@
 'use strict';
 
+const cluster = require('cluster-client');
 const Singleton = require('../../lib/core/singleton');
 
 // 空的 instrument 返回，用于生产环境，避免每次创建对象
@@ -55,5 +56,31 @@ module.exports = {
         payload.agent.logger.info(`[${payload.event}] ${payload.action} ${duration}ms`);
       },
     };
+  },
+
+  /**
+   * Wrap the Client with Leader/Follower Pattern
+   *
+   * @see https://github.com/node-modules/cluster-client
+   * @method Agent#cluster
+   * @param {Function} clientClass - client class function
+   * @param {Object} [options]
+   *   - {Boolean} [autoGenerate] - whether generate delegate rule automatically, default is true
+   *   - {Function} [formatKey] - a method to tranform the subscription info into a string，default is JSON.stringify
+   *   - {Object} [transcode|JSON.stringify/parse]
+   *     - {Function} encode - custom serialize method
+   *     - {Function} decode - custom deserialize method
+   *   - {Boolean} [isBroadcast] - whether broadcast subscrption result to all followers or just one, default is true
+   *   - {Number} [responseTimeout] - response timeout, default is 3 seconds
+   * @return {ClientWrapper} wrapper
+   */
+  cluster(clientClass, options) {
+    options = options || {};
+    // master will find a free port as the clusterPort
+    options.port = this._options.clusterPort;
+    // agent will always be the leader
+    options.isLeader = true;
+    options.logger = this.coreLogger;
+    return cluster(clientClass, options);
   },
 };

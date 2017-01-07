@@ -24,8 +24,8 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart after app worker exit', function* () {
       try {
         yield request(app.callback())
-        .get('/exit')
-        .end();
+          .get('/exit')
+          .end();
       } catch (_) {
         // do nothing
       }
@@ -43,8 +43,8 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart when app worker throw uncaughtException', function* () {
       try {
         yield request(app.callback())
-        .get('/uncaughtException')
-        .end();
+          .get('/uncaughtException')
+          .end();
       } catch (_) {
         // do nothing
       }
@@ -103,6 +103,13 @@ describe('test/lib/cluster/master.test.js', () => {
         .expect('hi cluster')
         .expect(200);
     });
+
+    it('should assign a free port by master', () => {
+      return request(app.callback())
+        .get('/clusterPort')
+        .expect(/\d+/)
+        .expect(200);
+    });
   });
 
   describe('--dev', () => {
@@ -117,6 +124,52 @@ describe('test/lib/cluster/master.test.js', () => {
       return request(app)
         .get('/')
         .expect('hi cluster')
+        .expect(200);
+    });
+  });
+
+  describe('multi-application in one server', () => {
+    let app1;
+    let app2;
+    before(function* () {
+      mm.consoleLevel('NONE');
+      app1 = utils.cluster('apps/cluster_mod_app', { coverage: true });
+      app2 = utils.cluster('apps/cluster_mod_app', { coverage: true });
+      yield [
+        app1.ready(),
+        app2.ready(),
+      ];
+    });
+    after(() => {
+      app1.close();
+      app2.close();
+    });
+
+    it('should online cluster mode startup success, app1', () => {
+      return request(app1.callback())
+        .get('/')
+        .expect('hi cluster')
+        .expect(200);
+    });
+
+    it('should assign a free port by master, app1', () => {
+      return request(app1.callback())
+        .get('/clusterPort')
+        .expect(/\d+/)
+        .expect(200);
+    });
+
+    it('should online cluster mode startup success, app2', () => {
+      return request(app2.callback())
+        .get('/')
+        .expect('hi cluster')
+        .expect(200);
+    });
+
+    it('should assign a free port by master, app2', () => {
+      return request(app2.callback())
+        .get('/clusterPort')
+        .expect(/\d+/)
         .expect(200);
     });
   });
