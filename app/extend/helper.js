@@ -6,7 +6,7 @@ const url = require('url');
 module.exports = {
 
   /**
-   * 基于路由规则生成 URL（不带 host）。
+   * Generate URL path(withoud host) for route. Takes the route name and a map of named params.
    * @method Helper#pathFor
    * @param {String} name - Router Name
    * @param {Object} params - Other params
@@ -17,24 +17,24 @@ module.exports = {
    * helper.pathFor('home', { by: 'recent', limit: 20 })
    * => /index.htm?by=recent&limit=20
    * ```
-   * @return {String} 路由对应的相对路径
+   * @return {String} url path(without host)
    */
   pathFor(name, params) {
     return this.app.router.url(name, params);
   },
 
   /**
-   * 基于路由规则生成 URL，同时会包含 host 前缀。
+   * Generate full URL(with host) for route. Takes the route name and a map of named params.
    * @method Helper#urlFor
    * @param {String} name - Router name
    * @param {Object} params - Other params
    * @example
    * ```js
    * app.get('home', '/index.htm', 'home.index');
-   * helper.pathFor('home', { by: 'recent', limit: 20 })
+   * helper.urlFor('home', { by: 'recent', limit: 20 })
    * => http://127.0.0.1:7001/index.htm?by=recent&limit=20
    * ```
-   * @return {String} 含有域名的完整 URL
+   * @return {String} full url(with host)
    */
   urlFor(name, params) {
     return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.app.router.url(name, params));
