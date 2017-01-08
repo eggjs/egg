@@ -9,13 +9,13 @@ titile: 定时任务
 1. 定时从远程接口更新本地缓存。
 1. 定时进行文件切割、临时文件删除。
 
-框架支持了一套机制来让定时任务的编写和维护更加优雅。
+框架提供了一套机制来让定时任务的编写和维护更加优雅。
 
 ## 编写定时任务
 
 所有的定时任务都统一存放在 `app/schedule` 目录下，每一个文件都是一个独立的定时任务，可以配置定时任务的属性和要执行的方法。
 
-一个简单的例子，我们定义一个定时更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 update_cache.js 文件
+一个简单的例子，我们定义一个更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 `update_cache.js` 文件
 
 ```js
 module.exports = {
@@ -25,10 +25,11 @@ module.exports = {
     type: 'all', // 指定所有的 worker 都需要执行
   },
   // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
-  *task(ctx) {
-    ctx.app.cache = yield ctx.curl('http://www.api.com/cache', {
+  * task(ctx) {
+    const res = yield ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
+    ctx.app.cache = res.data;
   },
 };
 ```
@@ -44,7 +45,7 @@ module.exports = {
 通过 `schedule.interval` 参数来配置定时任务的执行时机，定时任务将会每间隔指定的时间执行一次。interval 可以配置成
 
 - 数字类型，单位为毫秒数，例如 `5000`。
-- 字符类型，会通过 [ms](https://github.com/zeit/ms) 转换成毫秒数），例如 `5s`。
+- 字符类型，会通过 [ms](https://github.com/zeit/ms) 转换成毫秒数，例如 `5s`。
 
 ```js
 exports.schedule = {
@@ -74,7 +75,7 @@ exports.schedule = {
 ```js
 exports.schedule = {
   // 每三小时准点执行一次
-  cron: '0 0 */3 * * *'
+  cron: '0 0 */3 * * *',
 };
 ```
 
@@ -102,12 +103,13 @@ module.exports = app => {
     schedule: {
       interval: '1m',
       type: 'all',
-      disable: app.config.env === 'local', // 本地开发环境不执行
+      disable: app.config.serverEnv === 'local', // 本地开发环境不执行
     },
-    *task(ctx) {
-      ctx.app.cache = yield ctx.curl('http://www.api.com/cache', {
+    * task(ctx) {
+      const res = yield ctx.curl('http://www.api.com/cache', {
         contentType: 'json',
       });
+      ctx.app.cache = res.data;
     },
   };
 };
@@ -145,20 +147,18 @@ module.exports = function*(app) {
 
 ## 扩展定时任务类型
 
-默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求，而 egg 并没有提供，这时上层框架可以基于其他的定时任务服务自行扩展新的定时任务类型。
+默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求，而框架并没有提供，这时上层框架可以基于其他的定时任务服务自行扩展新的定时任务类型。
 
-在 `${baseDir}/agent.js` 中扩展 `agent[Symbol.for('egg#scheduleHandler')]` 对象：
+在 `agent.js` 中扩展 `agent[Symbol.for('egg#scheduleHandler')]` 对象：
 
 ```js
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
 
-module.exports = function(agent) {
-  agent[SCHEDULE_HANDLER].custom = function(schedule, sender) {
-    // schedule 是用户的定时任务配置，可以自行解析
-    // sender 有两个方法：
-    // sender.one() 会随机通知一个 worker 执行 task
-    // sender.all() 会通知所有的 worker 执行 task
-    setInterval(sender.one, schedule.interval);
+module.exports = agent => {
+  agent[SCHEDULE_HANDLER].cluster = function(schedule, sender) {
+    // 订阅其他的分布式调度服务发送的消息
+    // 收到消息后让一个进程执行定时任务
+    agent.mq.subscribe(schedule.sence, () => sender.one());
   };
 };
 ```
