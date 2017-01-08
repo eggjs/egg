@@ -1,4 +1,4 @@
-title 中间件
+title: 中间件
 ---
 
 # 中间件
@@ -13,10 +13,9 @@ title 中间件
 
 ```js
 const isJSON = require('koa-is-json');
-var zlib = require('zlib');
+const zlib = require('zlib');
 
 function* gzip(next) {
-  if (this.method === 'HEAD') return; // HEAD 请求不响应 body，不需要进行 gzip
   yield next;
 
   // 后续中间件执行完成后将响应体转换成 gzip
@@ -27,7 +26,6 @@ function* gzip(next) {
   // 设置 gzip body，修正响应头
   this.body = zlib.createGzip().end(body);
   this.set('Content-Encoding', encoding);
-  this.res.removeHeader('Content-Type');
 }
 ```
 
@@ -35,7 +33,7 @@ function* gzip(next) {
 
 ### 配置
 
-一般来说中间件也会有自己的配置。在框架中，一个完整的中间件是包含了配置处理的。我们约定一个中间件是一个放置在 app/middleware 目录下的单独文件，它需要 exports 一个普通的 function，接受两个参数
+一般来说中间件也会有自己的配置。在框架中，一个完整的中间件是包含了配置处理的。我们约定一个中间件是一个放置在 `app/middleware` 目录下的单独文件，它需要 exports 一个普通的 function，接受两个参数
 
 - options: 中间件的配置项，框架会将 `app.config[${middlewareName}]` 传递进来。
 - app: 当前应用 Application 的实例。
@@ -44,14 +42,10 @@ function* gzip(next) {
 
 ```js
 const isJSON = require('koa-is-json');
-var zlib = require('zlib');
+const zlib = require('zlib');
 
-//
 module.exports = (options, app) => {
   return function* gzip(next) {
-    // HEAD 请求不响应 body，不需要进行 gzip
-    if (this.method === 'HEAD') return;
-
     yield next;
 
     // 后续中间件执行完成后将响应体转换成 gzip
@@ -66,16 +60,15 @@ module.exports = (options, app) => {
     // 设置 gzip body，修正响应头
     this.body = zlib.createGzip().end(body);
     this.set('Content-Encoding', encoding);
-    this.res.removeHeader('Content-Type');
   };
 };
 ```
 
-## 在框架中引入中间件
+## 在应用中引入中间件
 
-在框架中，我们可以完全通过配置来引入自定义的中间件，并配置它们的顺序。
+在应用中，我们可以完全通过配置来引入自定义的中间件，并决定它们的顺序。
 
-如果我们需要引入上面的 gzip 中间件，在 `app/config.default.js` 中，我们加入下面的配置就完成了中间件的开启和配置：
+如果我们需要引入上面的 gzip 中间件，在 `config.default.js` 中加入下面的配置就完成了中间件的开启和配置：
 
 ```js
 module.exports = {
@@ -93,7 +86,7 @@ module.exports = {
 
 ## 框架默认中间件
 
-除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [egg 自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `app/config.default.js` 中编写
+除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [egg 自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
 
 ```js
 module.exports = {
@@ -103,7 +96,20 @@ module.exports = {
 };
 ```
 
-**注意：框架和插件引入的中间件会在应用层配置的中间件之前，框架默认中间件不能被应用层中间件覆盖，如果应用层有定义同名中间件，在启动时会报错。**
+**注意：框架和插件引入的中间件会在应用层配置的中间件之前，框架默认中间件不能被应用层中间件覆盖，如果应用层有自定义同名中间件，在启动时会报错。**
+
+## router 中使用中间件
+
+应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 koa 中另有用处），所以应用层定义的中间件可以不通过配置引入，而是在 router 中引入，从而只对对应的路由生效。
+
+还是拿刚才的 gzip 中间件举例，当我们想直接在 router 中使用的时候，在 `app/router.js` 中就可以这样写
+
+```js
+module.exports = app => {
+  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  app.get('/needgzip', gzip, app.controller.handler);
+}
+```
 
 ## 通用配置
 
@@ -129,12 +135,12 @@ module.exports = {
 
 match 和 ignore 支持的参数都一样，只是作用完全相反，match 和 ignore 不允许同时配置。
 
-如果我们想让 gzip 只针对 `/api` 前缀开头的 url 请求开启，我们可以配置 match 选项
+如果我们想让 gzip 只针对 `/static` 前缀开头的 url 请求开启，我们可以配置 match 选项
 
 ```js
 module.exports = {
   gzip: {
-    match: '/api',
+    match: '/static',
   },
 };
 ```
