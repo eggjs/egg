@@ -133,22 +133,19 @@ module.exports = appInfo => {
   /**
    * logger options
    * @member Config#logger
-   * @property {String} dir - 日志存储目录
-   * @property {String} rotateLogDirs - 自动按日切割的目录
-   * @property {String} encoding - 日志文件编码，预发和生产环境默认是 gbk，其他环境是 utf8
-   * @property {String} level - 默认保存的日志级别，可选值: DEBUG, INFO, WARN, ERROR, NONE, 生产环境默认 INFO
-   * @property {String} env - 运行环境，等价于 antx.env
-   * @property {String} consoleLevel - 默认输出到标准输出的日志级别，本地开发环境默认是 INFO，单元测试 WARN，其他环境都是 NONE
-   * @property {Boolean} outputJSON - 是否输出 json 格式的日志，用于阿里监控。除非你明确知道自己想做什么，其他情况都不要配置
-   * @property {Boolean} buffer - 是否开启磁盘写入缓存，默认 true
-   * @property {String} errorLogName - 异常日志文件名
-   * @property {String} coreLogName - egg core 日志文件名
-   * @property {String} agentLogName - agent worker 进程日志文件名
-   * @property {Object} coreLogger - core logger 的自定义配置
+   * @property {String} dir - directory of log files
+   * @property {String} encoding - log file encloding, defaults to utf8
+   * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
+   * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
+   * @property {Boolean} outputJSON - log as JSON or not, defaults to false
+   * @property {Boolean} buffer - if enabled, flush logs to disk at a certain frequency to improve performance, defaults to true
+   * @property {String} errorLogName - file name of errorLogger
+   * @property {String} coreLogName - file name of coreLogger
+   * @property {String} agentLogName - file name of agent worker log
+   * @property {Object} coreLogger - custom config of coreLogger
    */
   exports.logger = {
     dir: path.join(appInfo.root, 'logs', appInfo.name),
-    rotateLogDirs: [ path.join(appInfo.root, 'logs', appInfo.name) ],
     encoding: 'utf8',
     env: appInfo.env,
     level: 'INFO',
