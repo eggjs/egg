@@ -1,5 +1,5 @@
 'use strict';
 
-exports.urllib = {
+exports.httpclient = {
   enableDNSCache: true,
 };

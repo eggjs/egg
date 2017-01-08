@@ -44,7 +44,7 @@ describe('test/app/extend/application.test.js', () => {
         'name', 'baseDir',
         'env', 'subdomainOffset',
         'controller', 'middlewares', 'serviceClasses',
-        'config', 'urllib', 'loggers',
+        'config', 'httpclient', 'loggers',
       ]);
       app.inspect().name.should.equal('demo');
     });
