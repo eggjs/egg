@@ -26,16 +26,31 @@ try {
 const reuqest = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
-setImmediate(() => this.service.trade.check(request));
+setImmediate(() => {
+  this.service.trade.check(request)
+  .catch(err => this.logger.error(err));
+});
 ```
 
-在这个场景中，如果 `service.trade.check` 方法中代码有问题，导致执行时抛出了异常，尽管框架会在最外层通过 `try catch` 统一捕获错误，但是由于 `setImmediate` 中的代码『跳出』了异步链，它里面的错误就无法被捕捉掉了。因此在编写类似代码的时候一定要注意。
+在这个场景中，如果 `service.trade.check` 方法中代码有问题，导致执行时抛出了异常，尽管框架会在最外层通过 `try catch` 统一捕获错误，但是由于 `setImmediate` 中的代码『跳出』了异步链，它里面的错误就无法被捕捉到了。因此在编写类似代码的时候一定要注意。
+
+当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
+
+```js
+const reuqest = {};
+const config = yield this.service.trade.buy(request);
+// 下单后需要进行一次核对，且不阻塞当前请求
+this.runInBackground(function* () {
+  // 这里面的异常都会统统被 runInBackgroud 捕获掉，并打印错误日志
+  yield this.service.trade.check(request);
+});
+```
 
 **为了保证异常可追踪，必须保证所有抛出的异常都是 Error 类型，因为只有 Error 类型才会带上堆栈信息，定位到问题。**
 
 ## 框架层统一异常处理
 
-框架通过 [onerror](https://github.com/eggjs/egg-onerror) 插件提供了统一的错误处理机制。对一个请求的所有处理方法（middleware、controller、service）中抛出的任何异常都会被它捕获，并自动根据请求想要获取的类型返回不同类型的错误（基于 [Content Negotiation](https://tools.ietf.org/html/rfc7231#section-5.3.2)。
+框架通过 [onerror](https://github.com/eggjs/egg-onerror) 插件提供了统一的错误处理机制。对一个请求的所有处理方法（middleware、controller、service）中抛出的任何异常都会被它捕获，并自动根据请求想要获取的类型返回不同类型的错误（基于 [Content Negotiation](https://tools.ietf.org/html/rfc7231#section-5.3.2)）。
 
 | 请求需求的格式 | 环境 | errorPageUrl 是否配置 | 返回内容 |
 |-------------|------|----------------------|--------|
@@ -48,6 +63,17 @@ setImmediate(() => this.service.trade.check(request));
 ### errorPageUrl
 
 onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 html 页面异常，就会重定向到这个地址。
+
+在 `config/config.defult.js` 中
+
+```js
+module.exports = {
+  onerror: {
+    // 线上页面发生异常时，重定向到这个页面上
+    errorPageUrl: '/50x.html',
+  },
+};
+```
 
 ## 自定义统一异常处理
 
@@ -70,7 +96,7 @@ module.exports = () => {
       // 自定义错误时异常返回的格式
       this.body = {
         success: false,
-        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
+        message: this.app.config.serverEnv === 'prod' ? 'Internal Server Error' : err.message,
       };
     }
   };
