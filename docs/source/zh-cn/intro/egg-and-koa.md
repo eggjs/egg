@@ -184,5 +184,6 @@ exports.handler = function*() {
 
 1. 服务端代码需要足够的稳定，并且出现故障时可以最快的定位到问题，所以尽量不要让编译后的后端代码运行在生产环境。
 1. node 6 对 ECMAScript 2015 的支持已经达到了 [99%](http://node.green/)，绝大多数的语法已经不需要 babel 也能够使用了。
+1. 基于 co + generator 的开发体验和 async await 没有区别，而且本质上它们就是同一个东西。当真的要做代码迁移的时候基本通过简单的替换就能完成。
 
 当然，当 node 8 发布，async await 在 LTS 版本上处于默认可用状态的时候，koa 2 会发布正式版，egg 也会在那个时候升级到 koa 2。
