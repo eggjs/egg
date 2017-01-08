@@ -155,10 +155,10 @@ module.exports = function*(app) {
 const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
 
 module.exports = agent => {
-  agent[SCHEDULE_HANDLER].cluster = function(schedule, sender) {
-    // 订阅其他的分布式调度服务发送的消息
-    // 收到消息后让一个进程执行定时任务
-    agent.mq.subscribe(schedule.sence, () => sender.one());
+  agent[SCHEDULE_HANDLER].cluster = (schedule, sender) => {
+    // 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
+    // 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）
+    agent.mq.subscribe(schedule.scene, () => sender.one());
   };
 };
 ```
