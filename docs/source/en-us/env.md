@@ -1,13 +1,13 @@
 title: Runtime Enviroment
 ---
 
-# runtime enviroments
+# runtime enviroment
 
 There could be all kinds of difference during various stages of a web application development, but the application itself should be stateless, so EGG provide enviromental variables to cope with such difference.
 
 EGG framework provides the variable named `serverEnv` for setting up runtime Enviroment. The `serverEnv` could be used to determine which configuration file should be applied, or any oprations by detect the `serverEnv` directly. 
 
-## How to defined the enviroments
+## How to specify runtime enviroment
 
 There are several ways:
 
