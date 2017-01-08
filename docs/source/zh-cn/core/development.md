@@ -87,27 +87,27 @@ TESTS=test/x.test.js npm test
 
 mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
 
-我们也可以手动指定 reporter：
+可以手动设置 `TEST_REPORTER` 环境变量来指定 reporter，例如使用 `dot`：
 
 ```bash
-TEST_REPORTER=doc npm test
+TEST_REPORTER=dot npm test
 ```
 
-### 用例超时时间
+![image](https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png)
 
-默认执行超时时间为 30 秒。我们也可以手动指定超时时间(单位毫秒)：
+### 指定用例超时时间
+
+默认执行超时时间为 30 秒。我们也可以手动指定超时时间（单位毫秒），例如设置为 5 秒：
 
 ```bash
-TEST_TIMEOUT=2000 npm test
+TEST_TIMEOUT=5000 egg-bin test
 ```
 
-## 覆盖率
+## 代码覆盖率
 
-通过 [istanbul](https://github.com/gotwarlost/istanbul) 支持单元测试覆盖率。
+egg-bin 已经内置了 [istanbul](https://github.com/gotwarlost/istanbul) 来支持单元测试自动生成代码覆盖率报告。
 
-### 添加命令
-
-添加便捷命令到 `scripts`：
+添加便捷命令到 `scripts.cov`：
 
 ```json
 {
@@ -119,6 +119,30 @@ TEST_TIMEOUT=2000 npm test
 
 这样我们就可以通过 `npm run cov` 命令运行单元测试覆盖率。
 
+```bash
+egg-bin cov
+
+  test/controller/home.test.js
+    GET /
+      ✓ should status 200 and get the body
+    POST /post
+      ✓ should status 200 and get the request body
+
+  ...
+
+  16 passing (1s)
+
+=============================== Coverage summary ===============================
+Statements   : 100% ( 41/41 )
+Branches     : 87.5% ( 7/8 )
+Functions    : 100% ( 10/10 )
+Lines        : 100% ( 41/41 )
+================================================================================
+```
+
+还可以通过 `open coverage/lcov-report/index.html` 打开完整的 HTML 覆盖率报告。
+
+![image](https://cloud.githubusercontent.com/assets/156269/21845201/a9a85ab6-d82c-11e6-8c24-5e85f352be4a.png)
 
 ### 环境配置
 
