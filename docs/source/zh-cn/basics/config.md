@@ -119,7 +119,7 @@ const arr = c.arr.split(',');
 
 ## 插件配置
 
-在应用中可以通过 `config/plugin.js` 来控制插件的一些选项。
+在应用中可以通过 `config/plugin.js` 来控制插件的一些选项。
 
 ### 开启关闭
 
