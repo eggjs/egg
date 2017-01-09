@@ -2,6 +2,7 @@
 
 const http = require('http');
 const assert = require('assert');
+const cluster = require('cluster-client');
 const Service = require('../../lib/core/base_service');
 const view = require('../../lib/core/view');
 const AppWorkerClient = require('../../lib/core/app_worker_client');
@@ -270,6 +271,35 @@ module.exports = {
         }
       },
     };
+  },
+
+  /**
+   * Wrap the Client with Leader/Follower Pattern
+   *
+   * @description almost the same as Agent.cluster API, the only different is that this method create Follower.
+   *
+   * @see https://github.com/node-modules/cluster-client
+   * @method Agent#cluster
+   * @param {Function} clientClass - client class function
+   * @param {Object} [options]
+   *   - {Boolean} [autoGenerate] - whether generate delegate rule automatically, default is true
+   *   - {Function} [formatKey] - a method to tranform the subscription info into a string，default is JSON.stringify
+   *   - {Object} [transcode|JSON.stringify/parse]
+   *     - {Function} encode - custom serialize method
+   *     - {Function} decode - custom deserialize method
+   *   - {Boolean} [isBroadcast] - whether broadcast subscrption result to all followers or just one, default is true
+   *   - {Number} [responseTimeout] - response timeout, default is 3 seconds
+   *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
+   * @return {ClientWrapper} wrapper
+   */
+  cluster(clientClass, options) {
+    options = options || {};
+    // master 启动的时候随机分配的一个端口，保证在一台机器上不冲突
+    options.port = this._options.clusterPort;
+    // app worker 只能是 follower
+    options.isLeader = false;
+    options.logger = this.coreLogger;
+    return cluster(clientClass, options);
   },
 
 };
