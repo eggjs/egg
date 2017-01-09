@@ -57,7 +57,7 @@ run(main());
 
 ### async await
 
-async await 的原理其实和 co 类似，单它是语言层面提供的语法糖，通过 async await 编写的代码和 co + generator 编写的代码看起来很类似。
+async await 的原理其实和 co 类似，但它是语言层面提供的语法糖，通过 async await 编写的代码和 co + generator 编写的代码看起来很类似。
 
 ```js
 const fn = co(function*() {
