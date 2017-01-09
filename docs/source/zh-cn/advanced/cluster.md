@@ -81,17 +81,17 @@ if (cluster.isMaster) {
          +---------+                 +----+----+
               | uncaughtException         |
               +------------+              |
-              |            |              |
-  close all   | <----------+              |
- tcp servers  |                           |               +---------+
-              |        disconnect         |               |  Worker |
-              +-------------------------> |               +----+----+
-              |          exit             |    fork a new      |
-              +-------------------------> +------------------> |
-              |                           |      worker        |
-             die                          |                    |
-                                          |                    |
-                                          |                    |
+              |            |              |              +---------+
+              | <----------+              |              |  Worker |
+              |                           |              +----+----+
+              |        disconnect         |    fork a new     |
+              +-------------------------> + ----------------> |
+              |          exit             |     worker        |
+              +-------------------------> |                   |
+              |                           |                   |
+             die                          |                   |
+                                          |                   |
+                                          |                   |
 ```
 
 ### 进程间通讯（IPC）
@@ -329,7 +329,7 @@ class Client extends Base {
 
   /**
    * 订阅
-   * 
+   *
    * @param {Object} info - 订阅的信息（一个 JSON 对象，注意尽量不要包含 Function, Buffer, Date 这类属性）
    * @param {Function} listener - 监听的回调函数，接收一个参数就是监听到的结果对象
    */
@@ -387,9 +387,9 @@ Leader 和 Follower 通过下面的协议进行数据交换：
 5. Follower 向 Leader 发送调用请求，Leader 收到后执行相应操作后返回结果
 
 ```js
- +----------+             +---------------+          +---------+ 
+ +----------+             +---------------+          +---------+
  | Follower |             |  local server |          |  Leader |
- +----------+             +---------------+          +---------+ 
+ +----------+             +---------------+          +---------+
       |     register channel     |       assign to        |
       + -----------------------> |  --------------------> |
       |                          |                        |
@@ -582,7 +582,7 @@ module.exports = function* (app) {
 };
 ```
 
-如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API 
+如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API
 
 `${baseDir}/app.js`
 ```js
