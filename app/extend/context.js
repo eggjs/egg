@@ -5,6 +5,7 @@ const jsonpBody = require('jsonp-body');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
+const ConextHttpClient = require('../../lib/core/context_httpclient');
 const util = require('../../lib/core/util');
 
 const HELPER = Symbol('Context#helper');
@@ -13,6 +14,7 @@ const LOCALS = Symbol('Context#locals');
 const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
 const CONTEXT_LOGGERS = Symbol('Context#logger');
+const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
 
 const proto = module.exports = {
   get cookies() {
@@ -42,21 +44,27 @@ const proto = module.exports = {
   },
 
   /**
-   * 对 {@link urllib} 的封装，会自动记录调用日志，参数跟 `urllib.request(url, args)` 保持一致.
-   * @method Context#curl
-   * @param {String} url request url address.
-   * @param {Object} opts options for request, Optional.
-   * @return {Object} 与 {@link Application#curl} 一致
-   * @since 1.0.0
+   * Get a wrapper httpclient instance contain ctx in the hold request process
+   *
+   * @return {ContextHttpClient} the wrapper httpclient instance
    */
-  * curl(url, opts) {
-    opts = opts || {};
-    opts.ctx = this;
-    const method = (opts.method || 'GET').toUpperCase();
-    const ins = this.instrument('http', `${method} ${url}`);
-    const result = yield this.app.curl(url, opts);
-    ins.end();
-    return result;
+  get httpclient() {
+    if (!this[CONTEXT_HTTPCLIENT]) {
+      this[CONTEXT_HTTPCLIENT] = new ConextHttpClient(this);
+    }
+    return this[CONTEXT_HTTPCLIENT];
+  },
+
+  /**
+   * Shortcut for httpclient.curl
+   *
+   * @method Context#curl
+   * @param {String|Object} url - request url address.
+   * @param {Object} [options] - options for request.
+   * @return {Object} see {@link ConextHttpClient#curl}
+   */
+  * curl(url, options) {
+    return yield this.httpclient.curl(url, options);
   },
 
   /**

@@ -5,6 +5,7 @@ const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
 const sleep = require('ko-sleep');
+const assert = require('assert');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
@@ -311,6 +312,23 @@ describe('test/app/extend/context.test.js', () => {
       const context = app.mockContext();
       const res = yield context.curl(`${localServer}/foo/bar`);
       res.status.should.equal(200);
+    });
+  });
+
+  describe('ctx.httpclient', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+    afterEach(mm.restore);
+
+    it('should only one httpclient on one ctx', function* () {
+      const ctx = app.mockContext();
+      assert(ctx.httpclient === ctx.httpclient);
+      assert(typeof ctx.httpclient.request === 'function');
+      assert(typeof ctx.httpclient.curl === 'function');
     });
   });
 

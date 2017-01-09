@@ -48,7 +48,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
       .expect(200)
       .expect(/"host":"localhost"/);
     // mock local cache expires and mock dns lookup throw error
-    app.urllib.dnsCache.get('localhost').timestamp = 0;
+    app.httpclient.dnsCache.get('localhost').timestamp = 0;
     mm.error(dns, 'lookup', 'mock dns lookup error');
     yield request(app.callback())
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
@@ -61,13 +61,13 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result.status === 200);
     assert(result.data.host === 'localhost');
 
-    const result2 = yield app.urllib.curl(url + '/get_headers', { dataType: 'json' });
+    const result2 = yield app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
     assert(result2.status === 200);
     assert(result2.data.host === 'localhost');
   });
 
   it('should callback style work', done => {
-    app.urllib.curl(url + '/get_headers', (err, data, res) => {
+    app.httpclient.curl(url + '/get_headers', (err, data, res) => {
       data = JSON.parse(data);
       assert(res.status === 200);
       assert(data.host === 'localhost');
@@ -76,7 +76,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should callback style work on domain not exists', done => {
-    app.urllib.curl('http://notexists-1111111local-domain.com', err => {
+    app.httpclient.curl('http://notexists-1111111local-domain.com', err => {
       assert(err);
       assert(err.code === 'ENOTFOUND');
       done();
@@ -84,7 +84,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should thunk style work', done => {
-    app.urllib.requestThunk(url + '/get_headers')((err, result) => {
+    app.httpclient.requestThunk(url + '/get_headers')((err, result) => {
       assert(!err);
       const data = JSON.parse(result.data);
       assert(result.res.status === 200);
@@ -94,7 +94,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should thunk style work on domain not exists', done => {
-    app.urllib.requestThunk('http://notexists-1111111local-domain.com')(err => {
+    app.httpclient.requestThunk('http://notexists-1111111local-domain.com')(err => {
       assert(err);
       assert(err.code === 'ENOTFOUND');
       done();
@@ -107,9 +107,9 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result.data.host === 'localhost');
 
     // mock local cache expires and mock dns lookup throw error
-    app.urllib.dnsCache.get('localhost').timestamp = 0;
+    app.httpclient.dnsCache.get('localhost').timestamp = 0;
     mm.error(dns, 'lookup', 'mock dns lookup error');
-    const result2 = yield app.urllib.curl(url + '/get_headers', { dataType: 'json' });
+    const result2 = yield app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
     assert(result2.status === 200);
     assert(result2.data.host === 'localhost');
   });

@@ -1,17 +1,17 @@
 'use strict';
 
 const mm = require('egg-mock');
-const urllib = require('../../../lib/core/urllib');
+const createHttpclient = require('../../../lib/core/httpclient');
 const utils = require('../../utils');
 
-describe('test/lib/core/urllib.test.js', () => {
+describe('test/lib/core/httpclient.test.js', () => {
   let client;
   let url;
 
   before(() => {
-    client = urllib({
+    client = createHttpclient({
       config: {
-        urllib: {},
+        httpclient: {},
       },
     });
     client.on('request', info => {
