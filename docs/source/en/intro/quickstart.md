@@ -117,8 +117,10 @@ In most cases, data are usually read, processed and rendered by the templates be
 Thus we need to introduce corresponding template engines to handle it.
 
 Egg does not force the use of any particular template engines,
-but instead specifies the [View Plug-ins Specification](../practice/view.md)
+but instead specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
 to allow the developers to use different plug-ins for their individual needs.
+
+For more information, cf. [View](../basics/view.md).
 
 In this example, we will use [nunjucks].
 
@@ -205,8 +207,7 @@ module.exports = app => {
       // read config
       const { serverUrl, pageSize } = this.app.config.new;
 
-      // use build-in http clinet, see https://www.npmjs.com/package/urllib
-      // GET hacker-news api
+      // use build-in http client to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
         data: {
           orderBy: '"$key"',
@@ -228,7 +229,7 @@ module.exports = app => {
 };
 ```
 
-> Egg has [urllib] built in in order to help you make http requests.
+> Egg has [http client](../core/httpclient.md) built in in order to help you make http requests.
 
 Then slightly modify our previous controller.
 

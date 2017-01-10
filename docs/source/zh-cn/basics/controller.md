@@ -122,7 +122,7 @@ exports.listPosts = function*() {
 ```js
 const key = this.query.key || '';
 if (key.startsWith('egg')) {
-  // do something  
+  // do something
 }
 ```
 
@@ -641,7 +641,9 @@ exports.proxy = function* () {
 
 #### 渲染模板
 
-通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。egg 自身没有集成任何一个模板引擎，但是约定了[view 插件的规范](../practice/view.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。具体示例可以查看 quick start 中的 [模板渲染](../intro/quickstart.md#模板渲染) 部分。
+通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。
+egg 自身没有集成任何一个模板引擎，但是约定了[view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。
+具体示例可以查看 [模板渲染](../core/view.md)。
 
 #### JSONP
 

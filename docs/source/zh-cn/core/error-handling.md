@@ -39,7 +39,7 @@ const request = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
 this.runInBackground(function* () {
-  // 这里面的异常都会统统被 runInBackgroud 捕获掉，并打印错误日志
+  // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
   yield this.service.trade.check(request);
 });
 ```
