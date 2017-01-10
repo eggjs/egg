@@ -313,7 +313,7 @@ Egg provides a powerful way to manage them in a merged configuration file.
 
 - Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.
 - Configurations could happen wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will take care of merging and loading them.
-- For more information on merging, see [Configurations](../basics/config).
+- For more information on merging, see [Configurations](../basics/config.md).
 
 ```js
 // config/config.default.js

@@ -12,6 +12,7 @@
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
+  line-height: 2;
 }
 
 .markdown-body .pl-c {
@@ -137,11 +138,6 @@
   font-weight: bolder;
 }
 
-.markdown-body h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
-}
-
 .markdown-body img {
   border-style: none;
 }
@@ -251,6 +247,7 @@
 .markdown-body h1 {
   font-size: 32px;
   font-weight: 600;
+  border: 0;
 }
 
 .markdown-body h2 {
@@ -460,7 +457,6 @@
 .markdown-body h1 {
   padding-bottom: 0.3em;
   font-size: 2em;
-  border-bottom: 1px solid #eee;
 }
 
 .markdown-body h2 {
@@ -587,15 +583,6 @@
   border: 0;
 }
 
-.markdown-body .highlight {
-  margin-bottom: 16px;
-}
-
-.markdown-body .highlight pre {
-  margin-bottom: 0;
-  word-break: normal;
-}
-
 .markdown-body .highlight pre,
 .markdown-body pre {
   padding: 16px;
@@ -691,4 +678,25 @@
 
 .markdown-body hr {
   border-bottom-color: #eee;
+}
+
+.markdown-body {
+  a.markdown-anchor {
+    position: absolute;
+    left: -20px;
+    display: block;
+    width: 20px;
+    color: #666;
+    visibility: hidden;
+    &:hover {
+      text-decoration: none;
+      color: #000000;
+    }
+  }
+  h1, h2, h3, h4, h5, h6 {
+    position: relative;
+    &:hover .markdown-anchor  {
+      visibility: visible;
+    }
+  }
 }

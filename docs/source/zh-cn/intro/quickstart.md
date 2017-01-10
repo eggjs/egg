@@ -1,8 +1,6 @@
 title: 快速入门
 ---
 
-# 快速入门
-
 本文将从实例的角度，一步步地搭建出一个 egg 应用，让你能快速的入门 egg。
 
 ## 环境准备
@@ -282,7 +280,7 @@ exports.robot = {
 
 - 支持按环境变量加载不同的配置文件，如 `config.local.js`， `config.prod.js` 等等。
 - 应用/插件/框架都可以配置自己的配置文件，框架将按顺序合并加载。
-- 具体合并逻辑可参见 [配置文件](../basics/config)。
+- 具体合并逻辑可参见 [配置文件](../basics/config.md)。
 
 ```js
 // config/config.default.js
@@ -313,7 +311,7 @@ exports.list = function* newsList() {
 
 - 提供了强大的扩展机制，参见 [插件开发](../advanced/plugin.md)。
 - 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
-- 写单元测试其实很简单的事，egg 也提供了非常多的辅助工具，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/test.md)。
+- 写单元测试其实很简单的事，egg 也提供了非常多的辅助工具，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
 [nvm]: http://gitlab.alibaba-inc.com/node/nvm
 [nvs]: https://github.com/jasongin/nvs

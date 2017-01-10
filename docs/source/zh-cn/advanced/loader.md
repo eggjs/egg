@@ -1,8 +1,6 @@
 title: Loader
 ---
 
-# Loader
-
 egg 在 koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。
 
 ## 应用、框架和插件
@@ -176,8 +174,8 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - [自定义初始化](../basics/app-start.md)，遍历 loadUnit 加载 `app.js` 和 `agent.js`
 - 加载 [service](../basics/service.md), 遍历 loadUnit 加载 `app/service` 目录
 - 加载 [middleware](../basics/middleware.md), 遍历 loadUnit 加载 `app/middleware` 目录
-- 加载 [controller](../basics/router-controller.md), 加载应用的 `app/controller` 目录
-- 加载 [router](../basics/router-controller.md), 加载应用的 `app/router.js`
+- 加载 [controller](../basics/controller.md), 加载应用的 `app/controller` 目录
+- 加载 [router](../basics/router.md), 加载应用的 `app/router.js`
 
 注意
 
