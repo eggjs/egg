@@ -4,7 +4,7 @@ When the application starts up, we often need to set up some initialization logi
 
 ## Application Customization
 
-During the application bootstrapping time, **Egg** Framework loads up environment files, service files, route files, plugin files and many more. After the startup task is finished, it executes the application initialization logic at file location of `app/init.js` if present.
+During the application bootstrapping time, the Framework loads up environment files, service files, route files, plugin files and many more. After the startup task is finished, it executes the application initialization logic at file location of `app/init.js` if present.
 
 For example, we need to load a list of national cities from the remote server during application startup for subsequent use in the controller:
 
@@ -18,7 +18,7 @@ module.exports = function*(app) {
 };
 ```
 
-`cities` method has attached on the global `this.app`. It can be accessed in the controller,
+`cities` attribute has attached on the global `this.app`. It can be accessed in the controller,
 
 ```js
 // app/controller/city.js
@@ -29,4 +29,4 @@ module.exports = function*() {
 
 ## Plugins Customization
 
-**Egg** framework provides the `app.js` file on purpose for plugins initialization. It is very similar to `init.js`, except that `app.js` is loaded before `init.js`. To understand the loading order, please see [loader documentation](../advanced/loader.md) for details.
+The framework provides the `app.js` file on purpose for plugins initialization. It is very similar to `init.js`, except that `app.js` is loaded before `init.js`. To understand the loading order, please see [loader documentation](../advanced/loader.md) for details.
