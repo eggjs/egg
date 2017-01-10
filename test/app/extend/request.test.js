@@ -29,15 +29,23 @@ describe('test/app/extend/request.test.js', () => {
         req.hostname.should.equal('foo.com');
       });
 
-      it('should return "localhost" when no host present', function* () {
+      it('should return "" when no host present', function* () {
         req.host.should.be.a.String;
-        req.host.should.equal('localhost');
+        req.host.should.equal('');
       });
 
       it('should return host from X-Forwarded-Host header', function* () {
         mm(req.header, 'x-forwarded-host', 'foo.com');
         req.host.should.be.a.String;
         req.host.should.equal('foo.com');
+      });
+
+      it('should return host from Host header when proxy=false', function* () {
+        mm(app.config, 'proxy', false);
+        mm(req.header, 'x-forwarded-host', 'foo.com');
+        mm(req.header, 'host', 'bar.com');
+        req.host.should.be.a.String;
+        req.host.should.equal('bar.com');
       });
     });
 
@@ -47,9 +55,9 @@ describe('test/app/extend/request.test.js', () => {
         req.hostname.should.equal('foo.com');
       });
 
-      it('should return "localhost" when no host present', function* () {
+      it('should return "" when no host present', function* () {
         req.hostname.should.be.a.String;
-        req.hostname.should.equal('localhost');
+        req.hostname.should.equal('');
       });
     });
 
@@ -68,6 +76,7 @@ describe('test/app/extend/request.test.js', () => {
       });
 
       it('should used x-real-ip', function* () {
+        mm(app.config, 'ipHeaders', 'X-Forwarded-For, X-Real-IP');
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '127.0.0.1,127.0.0.2');
         req.ips.should.eql([ '127.0.0.1', '127.0.0.2' ]);
@@ -78,12 +87,18 @@ describe('test/app/extend/request.test.js', () => {
         mm(req.header, 'x-real-ip', '');
         req.ips.should.eql([]);
       });
+
+      it('should return [] when proxy=false', function* () {
+        mm(app.config, 'proxy', false);
+        mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
+        req.ips.should.eql([]);
+      });
     });
 
     describe('req.protocol', () => {
 
       it('should return http when it not config and no protocol header', () => {
-        mm(app.config, 'protocl', null);
+        mm(app.config, 'protocol', null);
         return request(app.callback())
           .get('/protocol')
           .expect('http');
@@ -110,6 +125,14 @@ describe('test/app/extend/request.test.js', () => {
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('https');
+      });
+
+      it('should ignore X-Forwarded-Proto when proxy=false', () => {
+        mm(app.config, 'proxy', false);
+        return request(app.callback())
+          .get('/protocol')
+          .set('x-forwarded-proto', 'https')
+          .expect('http');
       });
 
       it('should ignore X-Forwarded-Proto', () => {
