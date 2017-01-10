@@ -410,7 +410,7 @@ cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的
 - path (String): 设置键值对生效的路径，默认设置在根路径上（`/`）。
 - domain (String): 设置键值对生效的域名，默认没有配置。
 - httpOnly (Boolean): 设置键值对是否不能被 js 访问，默认为 true，不允许被 js 访问。
-- secure (Boolean): 设置键值对只有在 HTTPS 连接上传输，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
+- secure (Boolean): 设置键值对[只在 HTTPS 连接上传输](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work)，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
 
 除了这些属性之外，框架另外扩展了 3 个参数的支持：
 
