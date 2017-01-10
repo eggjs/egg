@@ -150,17 +150,17 @@ if (cluster.isMaster) {
 ```js
 // 广播
 const data = { ... };
-app.messenger.broadcast('xxx_action', data);
+app.messenger.broadcast('custom_action', data);
 
 // 接收
-app.messenger.on('xxx_action', data => { ... });
+app.messenger.on('custom_action', data => { ... });
 
 // 指定接收方
 const pid = 2; // @see https://nodejs.org/api/cluster.html#cluster_worker_id
-app.messenger.sendTo(pid, 'xxx_action', data);
+app.messenger.sendTo(pid, 'custom_action', data);
 
 // 只有 worker id 为 2 的进程会收到消息
-app.messenger.on('xxx_action', data => { ... });
+app.messenger.on('custom_action', data => { ... });
 ```
 
 ## Agent 机制
@@ -222,7 +222,7 @@ app.messenger.on('xxx_action', data => { ... });
 你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 `app.js` 用法类似，只是入口参数是 agent 对象）
 
 ```js
-// ${baseDir}/agent.js
+// agent.js
 
 module.exports = agent => {
   // 在这里写你的初始化逻辑
@@ -235,6 +235,7 @@ module.exports = agent => {
 
 ```js
 // app.js
+
 module.exports = app => {
   app.messenger.on('xxx_action', data => {
     // ...
@@ -418,9 +419,17 @@ const Base = require('sdk-base');
 
 class RegistryClient extends Base {
   constructor(options) {
-    super();
+    super({
+      initMethod: 'init',
+    });
     this._options = options;
     this._registered = new Map();
+  }
+
+  /**
+   * 启动逻辑
+   */
+  * init() {
     this.ready(true);
   }
 
@@ -478,7 +487,7 @@ class RegistryClient extends Base {
 module.exports = RegistryClient;
 ```
 
-- 第二步，在 `agent.js` 中使用 `agent.cluster` 接口对 RegistryClient 进行封装
+- 第二步，在 `${app_root}/agent.js` 中使用 `agent.cluster` 接口对 RegistryClient 进行封装
 
 ```js
 'use strict';
@@ -490,13 +499,15 @@ module.exports = agent => {
   agent.registryClient = agent.cluster(RegistryClient)
     // create 方法的参数就是 RegistryClient 构造函数的参数
     .create({});
-  app.beforeStart(function* () {
+
+  agent.beforeStart(function* () {
     yield agent.registryClient.ready();
+    agent.coreLogger.info('registry client is ready');
   });
 };
 ```
 
-- 第三步，在 `app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
+- 第三步，在 `${app_root}/app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
 
 ```js
 'use strict';
@@ -507,6 +518,7 @@ module.exports = app => {
   app.registryClient = app.cluster(RegistryClient).create({});
   app.beforeStart(function* () {
     yield app.registryClient.ready();
+    app.coreLogger.info('registry client is ready');
 
     // 调用 subscribe 进行订阅
     app.registryClient.subscribe({
@@ -535,9 +547,14 @@ module.exports = app => {
 ```js
 class MockClient extends Base {
   constructor(options) {
-    super();
+    super({
+      initMethod: 'init',
+    });
     this._options = options;
     this._registered = new Map();
+  }
+
+  * init() {
     this.ready(true);
   }
 
@@ -557,7 +574,7 @@ class MockClient extends Base {
 
 你需要用 delegate API 手动设置
 
-`agent.js`
+`${app_root}/agent.js`
 ```js
 module.exports = agent => {
   agent.mockClient = agent.cluster(MockClient)
@@ -571,7 +588,7 @@ module.exports = agent => {
 };
 ```
 
-`app.js`
+`${app_root}/app.js`
 ```js
 module.exports = app => {
   app.mockClient = app.cluster(MockClient)
@@ -591,7 +608,7 @@ module.exports = app => {
 
 如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API
 
-`app.js`
+`${app_root}/app.js`
 ```js
 module.exports = app => {
   agent.mockClient = agent.cluster(MockClient)
@@ -602,8 +619,9 @@ module.exports = app => {
     })
     .create();
 
-  agent.beforeStart(function* () {
-    yield agent.mockClient.ready();
+  app.beforeStart(function* () {
+    yield app.mockClient.ready();
+
     console.log(app.getName()); // mockClient
   });
 };
