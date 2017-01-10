@@ -22,7 +22,7 @@ Application 对象指的是 koa 的全局应用对象，全局只有一个，在
 
    ```js
    // app.js
-   module.exports = function*(app) {
+   module.exports = app => {
      // 使用 app 对象
    };
    ```

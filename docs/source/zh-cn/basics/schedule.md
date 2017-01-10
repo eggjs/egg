@@ -138,10 +138,12 @@ it('should schedule work fine', function*() {
 - 应用启动时，手动执行定时任务进行系统初始化，等初始化完毕后再启动应用。参见[应用启动自定义](./app-start.md)章节，我们可以在 `app.js` 中编写初始化逻辑。
 
 ```js
-module.exports = function*(app) {
-  // 保证应用启动监听端口前数据已经准备好了
-  // 后续数据的更新由定时任务自动触发
-  yield app.runSchedule('update_cache');
+module.exports = app => {
+  app.beforeStart(function* () {
+    // 保证应用启动监听端口前数据已经准备好了
+    // 后续数据的更新由定时任务自动触发
+    yield app.runSchedule('update_cache');
+  });
 };
 ```
 
