@@ -234,8 +234,7 @@ module.exports = agent => {
 ```
 
 ```js
-// ${baseDir}/app.js
-
+// app.js
 module.exports = app => {
   app.messenger.on('xxx_action', data => {
     // ...
@@ -479,49 +478,53 @@ class RegistryClient extends Base {
 module.exports = RegistryClient;
 ```
 
-- 第二步，在 `${baseDir}/agent.js` 中使用 `agent.cluster` 接口对 RegistryClient 进行封装
+- 第二步，在 `agent.js` 中使用 `agent.cluster` 接口对 RegistryClient 进行封装
 
 ```js
 'use strict';
 
 const RegistryClient = require('registry_client');
 
-module.exports = function* (agent) {
+module.exports = agent => {
   // 对 RegistryClient 进行封装和实例化
   agent.registryClient = agent.cluster(RegistryClient)
     // create 方法的参数就是 RegistryClient 构造函数的参数
     .create({});
-  yield agent.registryClient.ready();
+  app.beforeStart(function* () {
+    yield agent.registryClient.ready();
+  });
 };
 ```
 
-- 第三步，在 `${baseDir}/app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
+- 第三步，在 `app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
 
 ```js
 'use strict';
 
 const RegistryClient = require('registry_client');
 
-module.exports = function* (app) {
+module.exports = app => {
   app.registryClient = app.cluster(RegistryClient).create({});
-  yield app.registryClient.ready();
+  app.beforeStart(function* () {
+    yield app.registryClient.ready();
 
-  // 调用 subscribe 进行订阅
-  app.registryClient.subscribe({
-    dataId: 'demo.DemoService',
-  }, val => {
-    // ...
+    // 调用 subscribe 进行订阅
+    app.registryClient.subscribe({
+      dataId: 'demo.DemoService',
+    }, val => {
+      // ...
+    });
+
+    // 调用 publish 发布数据
+    app.registryClient.publish({
+      dataId: 'demo.DemoService',
+      publishData: 'xxx',
+    });
+
+    // 调用 getConfig 接口
+    const res = yeild app.registryClient.getConfig('demo.DemoService');
+    console.log(res);
   });
-
-  // 调用 publish 发布数据
-  app.registryClient.publish({
-    dataId: 'demo.DemoService',
-    publishData: 'xxx',
-  });
-
-  // 调用 getConfig 接口
-  const res = yeild app.registryClient.getConfig('demo.DemoService');
-  console.log(res);
 };
 ```
 
@@ -554,39 +557,43 @@ class MockClient extends Base {
 
 你需要用 delegate API 手动设置
 
-`${baseDir}/agent.js`
+`agent.js`
 ```js
-module.exports = function* (agent) {
+module.exports = agent => {
   agent.mockClient = agent.cluster(MockClient)
     // 将 sub 代理到 subscribe 逻辑上
     .delegate('sub', 'subscribe')
     .create();
 
-  yield agent.mockClient.ready();
+  agent.beforeStart(function* () {
+    yield agent.mockClient.ready();
+  });
 };
 ```
 
-`${baseDir}/app.js`
+`app.js`
 ```js
-module.exports = function* (app) {
+module.exports = app => {
   app.mockClient = app.cluster(MockClient)
     // 将 sub 代理到 subscribe 逻辑上
     .delegate('sub', 'subscribe')
     .create();
 
-  yield app.mockClient.ready();
+  app.beforeStart(function* () {
+    yield app.mockClient.ready();
 
-  app.sub({ id: 'test-id' }, val => {
-    // put your code here
+    app.sub({ id: 'test-id' }, val => {
+      // put your code here
+    });
   });
 };
 ```
 
 如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API
 
-`${baseDir}/app.js`
+`app.js`
 ```js
-module.exports = function* (app) {
+module.exports = app => {
   agent.mockClient = agent.cluster(MockClient)
     .delegate('sub', 'subscribe')
     // 增加一个 getName 的方法
@@ -595,8 +602,9 @@ module.exports = function* (app) {
     })
     .create();
 
-  yield app.mockClient.ready();
-
-  console.log(app.getName()); // mockClient
+  agent.beforeStart(function* () {
+    yield agent.mockClient.ready();
+    console.log(app.getName()); // mockClient
+  });
 };
 ```

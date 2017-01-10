@@ -110,8 +110,7 @@ loadUnit
 │   |   └── agent.js
 │   ├── service
 │   ├── middleware
-│   ├── router.js
-│   └── init.js
+│   └── router.js
 └── config
     ├── config.default.js
     ├── config.prod.js
@@ -124,7 +123,6 @@ loadUnit
 
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
-app/init.js | ✔︎ | |
 app/router.js | ✔︎ | |
 app/controller | ✔︎ | |
 app/middleware | ✔︎ | ✔︎ | ✔︎
@@ -180,12 +178,11 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - 加载 [middleware](../basics/middleware.md), 遍历 loadUnit 加载 `app/middleware` 目录
 - 加载 [controller](../basics/router-controller.md), 加载应用的 `app/controller` 目录
 - 加载 [router](../basics/router-controller.md), 加载应用的 `app/router.js`
-- [应用自定义初始化](../basics/app-start.md)，加载 loadUnit 的 `app/init.js`
 
 注意
 
-- `app.js/agent.js` 和 `init.js` 使用的方法是一致的，但是加载时机不同。`init.js` 在整个 Loader 同步加载之后才加载是因为可以使用所有已加载的 API。比如应用初始化要调用 service 的一个方法，这时必须等 service 加载完才可以使用。
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
+- [应用完整启动顺序查看框架开发](./framework.md)
 
 ## 扩展 Loader
 
@@ -205,7 +202,6 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - loadMiddleware()
 - loadController()
 - loadRouter()
-- loadAppInit()
 
 egg 基于 Loader 实现了 [AppWorkerLoader] 和 [AgentWorkerLoader]，上层框架基于这两个类来扩展，**Loader 的扩展只能在框架进行**。
 
