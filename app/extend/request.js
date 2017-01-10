@@ -101,8 +101,8 @@ module.exports = {
 
   /**
    * 从请求头获取所有 ip
-   * 1. 先从 `X-Forwarded-For` 获取，这个值是从 spanner 传递过来的，如果前置没有 spanner 返回为空
-   * 2. 再从 `X-Real-IP` 获取，这个值为请求 nginx 的客户端 ip，如果前置是非 spanner 的服务器，那么 ip 可能不准确
+   * 1. 先从 `X-Forwarded-For` 获取
+   * 2. 再从 `X-Real-IP` 获取
    *
    * @member {String} Request#ips
    */
