@@ -1,24 +1,24 @@
-title: Controller
+title: controller
 ---
 
 # controller
 
 ## 什么是 controller
 
-前面章节写到，我们通过 router 将用户的请求基于 method 和 url 分发到了对应的 controller 上，那 controller 负责做什么？
+前面章节写到，我们通过 [router](./router.md) 将用户的请求基于 method 和 URL 分发到了对应的 controller 上，那 controller 负责做什么？
 
 简单的说 controller 负责**解析用户的输入，处理后返回相应的结果**，例如
 
 - 在 [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) 接口中，controller 接受用户的参数，从数据库中查找内容返回给用户或者将用户的请求更新到数据库中。
-- 在 html 页面请求中，controller 根据用户访问不同的 url，渲染不同的模板得到 html 返回给用户。
-- 在代理服务器中，controller 将用户的请求转发到其他服务器上，并将其他服务器的返回响应给用户。
+- 在 html 页面请求中，controller 根据用户访问不同的 URL，渲染不同的模板得到 html 返回给用户。
+- 在代理服务器中，controller 将用户的请求转发到其他服务器上，并将其他服务器的处理结果返回给用户。
 
-框架推荐 controller 层主要处理用户请求参数（校验、转换），调用对应的 [service](./service.md) 方法处理业务，并封装业务返回结果：
+框架推荐 controller 层主要对用户的请求参数进行处理（校验、转换），然后调用对应的 [service](./service.md) 方法处理业务，得到业务结果后封装并返回：
 
-1. 获取用户通过 http 传递过来的请求参数。
+1. 获取用户通过 HTTP 传递过来的请求参数。
 1. 校验、组装参数。
 1. 调用 service 进行业务处理，必要时处理转换 service 的返回结果，让它适应用户的需求。
-1. 通过 http 将结果响应给用户。
+1. 通过 HTTP 将结果响应给用户。
 
 ## 如何编写 controller
 
@@ -51,7 +51,13 @@ exports.create = function* () {
 
 由于 controller 基本上是业务开发中唯一和 HTTP 协议打交道的地方，在继续往下了解之前，我们首先简单的看一下 HTTP 协议是怎样的。
 
-如果我们发起一个请求请求前面例子中提到的 controller，我们发起的 HTTP 请求的内容就会是下面这样的
+如果我们发起一个 HTTP 请求来访问前面例子中提到的 controller：
+
+```
+curl -X POST http://localhost:3000/api/posts --data '{"title":"controller", "content": "what is controller"}' --header 'Content-Type:application/json; charset=UTF-8'
+```
+
+通过 curl 发出的 HTTP 请求的内容就会是下面这样的：
 
 ```
 POST /api/posts HTTP/1.1
@@ -156,10 +162,10 @@ exports.listApp = function*() {
 
 ### body
 
-虽然我们可以通过 url 传递参数，但是还是有诸多限制
+虽然我们可以通过 URL 传递参数，但是还是有诸多限制
 
-- 浏览器中会对 url 的长度有所限制，如果需要传递的参数过多就会无法传递。
-- 服务端经常会将访问的完整 url 记录到日志文件中，有一些敏感数据通过 url 传递会不安全。
+- [浏览器中会对 URL 的长度有所限制](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)，如果需要传递的参数过多就会无法传递。
+- 服务端经常会将访问的完整 URL 记录到日志文件中，有一些敏感数据通过 URL 传递会不安全。
 
 在前面的 HTTP 请求报文示例中，我们看到在 header 之后还有一个 body 部分，我们通常会在这个部分传递 POST、PUT 和 DELETE 等方法的参数。一般请求中有 body 的时候，客户端（浏览器）会同时发送 `Content-Type` 告诉服务端这次请求的 body 是什么格式的。web 开发中数据传递最常用的两类格式分别是 json 和 form。
 
@@ -214,12 +220,21 @@ module.exports = {
 
 ```js
 const path = require('path');
+const sendToWormhole = require('stream-wormhole');
 
 module.exports = function*() {
   const stream = yield this.getFileStream();
   const name = 'egg-multipart-test/' + path.basename(stream.filename);
   // 文件处理，上传到云存储等等
-  const result = yield this.oss.put(name, stream);
+  let result;
+  try {
+    result = yield this.oss.put(name, stream);
+  } catch (err) {
+    // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+    yield sendToWormhole(stream);
+    throw err;
+  }
+
   this.body = {
     url: result.url,
     // 所有表单字段都能通过 `stream.fields` 获取到
@@ -233,37 +248,46 @@ module.exports = function*() {
 - 上传文件必须在其他 field 之前。
 - 只支持上传一个文件。
 
-如果要获取同时上传的多个文件，不能通过 `this.getFileStream()` 来获取
+如果要获取同时上传的多个文件，不能通过 `this.getFileStream()` 来获取，只能通过下面这种方式：
 
 ```js
-module.exports = function* () {
+const sendToWormhole = require('stream-wormhole');
+
+module.exports = function*() {
   const parts = this.multipart();
   let part;
-  while (part = yield parts) {
+  while ((part = yield parts) != null) {
     if (part.length) {
-      // 如果是一个数组，说明是 fields
+      // 如果是数组的话是 filed
       console.log('field: ' + part[0]);
       console.log('value: ' + part[1]);
       console.log('valueTruncated: ' + part[2]);
       console.log('fieldnameTruncated: ' + part[3]);
     } else {
-      // 其他情况下是一个 file
       if (!part.filename) {
         // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
         // 需要做出处理，例如给出错误提示消息
         return;
       }
-      // otherwise, it's a stream
+      // part 是上传的文件流
       console.log('field: ' + part.fieldname);
       console.log('filename: ' + part.filename);
       console.log('encoding: ' + part.encoding);
       console.log('mime: ' + part.mime);
       // 文件处理，上传到云存储等等
-      const result = yield this.oss.put('egg-multipart-test/' + part.filename, part);
+      let result;
+      try {
+        result = yield this.oss.put('egg-multipart-test/' + part.filename, part);
+      } catch (err) {
+        // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+        yield sendToWormhole(stream);
+        throw err;
+      }
       console.log(result);
     }
   }
-};
+  console.log('and we are done parsing the form!');
+}
 ```
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
@@ -311,7 +335,7 @@ module.exports = {
 ```js
 module.exports = {
   multipart: {
-    whitelist: [ '.png '], // 覆盖整个白名单，只允许上传 '.png' 格式
+    whitelist: [ '.png' ], // 覆盖整个白名单，只允许上传 '.png' 格式
   },
 };
 ```
@@ -325,9 +349,9 @@ module.exports = {
 - `context.headers`，`context.header`，`context.request.headers`，`context.request.header`：这几个方法是等价的，都是获取整个 header 对象。
 - `context.get(name)`，`context.request.get(name)`：获取请求 header 中的一个字段的值，如果这个字段不存在，会返回空字符串。
 
-由于 header 比较特殊，有一些是 `HTTP` 协议规定了具体含义的（例如 `Content-Type`，`Accept`），有些是反向代理设置的，已经约定俗成（X-Forwarded-For），框架也会对他们增加一些便捷的 getter，详细的 getter 可以查看 [API]() 文档。
+由于 header 比较特殊，有一些是 `HTTP` 协议规定了具体含义的（例如 `Content-Type`，`Accept`），有些是反向代理设置的，已经约定俗成（X-Forwarded-For），框架也会对他们增加一些便捷的 getter，详细的 getter 可以查看 [API](https://eggjs.org/api/) 文档。
 
-特别是如果我们通过 `config.proxy` 设置了应用部署在反向代理（nginx）之后，有一些 getter 的内部处理会发生改变。
+特别是如果我们通过 `config.proxy = true` 设置了应用部署在反向代理（nginx）之后，有一些 getter 的内部处理会发生改变。
 
 #### `context.host`
 
@@ -345,11 +369,15 @@ module.exports = {
 
 #### `context.ips`
 
-通过 `context.ips` 获取请求经过设备的所有 ip 地址列表，通过读取 `config.ipHeaders` 中配置的 header 的值，获取不到时为空数组。
+通过 `context.ips` 获取请求经过所有的中间设备 ip 地址列表，只有在 `config.proxy = true` 时，才会通过读取 `config.ipHeaders` 中配置的 header 的值来获取，获取不到时为空数组。
+
+`config.ipHeaders` 默认配置为 `x-forwarded-for`。
 
 #### `context.ip`
 
 通过 `context.ip` 获取请求发起方的 ip 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 ip 地址。
+
+**注意：ip 和 ips 不同，ip 当 `config.proxy = false` 时会返回当前连接发起者的 ip 地址，ips 此时会为空数组。**
 
 ### cookie
 
@@ -390,7 +418,9 @@ cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的
 - sign（Boolean）：设置是否对 cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
 - encrypt（Boolean）：设置是否对 cookie 进行加密，如果设置为 true，则在发送 cookie 前会对这个键值对的值进行加密，客户端无法读取到 cookie 的值。默认为 false。
 
-在设置 cookie 时我们需要思考清楚这个 cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？默认的配置下设置的 cookie 前端可以看到，js 不能访问，不能被客户端（手工）篡改。
+在设置 cookie 时我们需要思考清楚这个 cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？
+
+**默认的配置下，cookie 是加签不加密的，浏览器可以看到明文，js 不能访问，不能被客户端（手工）篡改。**
 
 - 如果想要 cookie 在浏览器端可以被 js 访问并修改:
 
@@ -412,8 +442,8 @@ this.cookies.set(key, value, {
 
 注意：
 
-1. 由于 HTTP 对 header 中的字符集有限制，为了保证 cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。
-2. 由于部分浏览器对 cookie 有长度限制限制，所以尽量不要设置太长的 cookie。
+1. 由于[浏览器和其他客户端实现的不确定性](http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers)，为了保证 cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。
+2. 由于[浏览器对 cookie 有长度限制限制](http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key)，所以尽量不要设置太长的 cookie。一般来说不要超过 4000 bytes。
 
 #### `context.cookies.get(key, options)`
 
@@ -426,7 +456,7 @@ this.cookies.set(key, value, {
 
 由于我们在 cookie 中需要用到加解密和验签，所以需要配置一个秘钥供加密使用。在 `config/config.default.js` 中
 
-```
+```js
 module.exports = {
   keys: 'key1,key2',
 };
@@ -473,7 +503,7 @@ exports.deleteSession = function*() {
 
 ```js
 module.exports = {
-  key: 'koa:sess', // 承载 session 的 cookie 键值对名字
+  key: 'EGG_SESS', // 承载 session 的 cookie 键值对名字
   maxAge: 86400000, // session 的最大有效时间
 };
 ```
@@ -496,13 +526,14 @@ exports.create = function* () {
 };
 ```
 
-当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以使用 app 实例上的 validator 对象。
+当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
 exports.create = function*() {
-  const errors = this.app.validator.validate(createRule, this.request.body);
-  if (errors) {
-    this.logger.warn(errors);
+  try {
+    this.validate(createRule);
+  } catch (err) {
+    this.logger.warn(err.errors);
     this.body = { success: false };
     return;
   }
@@ -511,7 +542,7 @@ exports.create = function*() {
 
 ### 校验规则
 
-参数校验通过 [parameter](https://github.com/node-modules/parameter#rule) 完成，支持的校验规则可以在文档中查阅到。
+参数校验通过 [parameter](https://github.com/node-modules/parameter#rule) 完成，支持的校验规则可以在该模块的文档中查阅到。
 
 #### 自定义校验规则
 
@@ -555,7 +586,7 @@ exports.create = function* () {
 
 service 的具体写法，请查看 [service](./service.md) 章节。
 
-## 发送 http 响应
+## 发送 HTTP 响应
 
 当业务逻辑完成之后，controller 的最后一个职责就是将业务逻辑的处理结果通过 HTTP 响应发送给用户。
 
@@ -612,9 +643,9 @@ exports.proxy = function* () {
 
 通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。egg 自身没有集成任何一个模板引擎，但是约定了[view 插件的规范](../practice/view.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。具体示例可以查看 quick start 中的 [模板渲染](../guide/quickstart.md#模板渲染) 部分。
 
-#### jsonp
+#### JSONP
 
-有时我们需要给非本域的页面提供接口服务，又由于一些历史原因无法通过 [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) 实现，可以通过 [jsonp](https://en.wikipedia.org/wiki/JSONP) 来进行响应。
+有时我们需要给非本域的页面提供接口服务，又由于一些历史原因无法通过 [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) 实现，可以通过 [JSONP](https://en.wikipedia.org/wiki/JSONP) 来进行响应。
 
 由于 JSONP 如果使用不当会导致非常多的安全问题，所以框架中提供了一个便捷设置 JSONP body 的方式，并封装了 [JSONP 相关的安全防范](../core/security.md#jsonp-xss)。
 
