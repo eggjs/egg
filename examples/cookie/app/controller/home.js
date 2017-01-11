@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function* () {
-  if (this.getCookie('remember')) {
+  if (this.cookies.get('remember')) {
     this.body = '<p>Remembered :). Click to <a href="/forget">forget</a>!.</p>';
     return;
   }
