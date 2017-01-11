@@ -149,47 +149,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 写 Cookie
-   * @method Cookie#setCookie
-   * @param {String} name  cookie name
-   * @param {String} value cookie value
-   * @param {Object} opts  cookie options
-   * - {String}  domain    cookie domain, default is `ctx.hostname`
-   * - {String}  path      cookie path, default is '/'
-   * - {Boolean} encrypt   encrypt cookie or not, default is false
-   * - {Boolean} httpOnly  http only cookie or not, default is true
-   * - {Date}    expires   cookie's expiration date, default is expires at the end of session.
-   * @return {Context} koa context
-   */
-  setCookie(name, value, opts) {
-    this.cookies.set(name, value, opts);
-    return this;
-  },
-
-  /**
-   * 读取 Cookie
-   * @method Cookie#getCookie
-   * @param {String} name - Cookie key
-   * @param {Object} opts  cookie options
-   * @return {String} cookie value
-   */
-  getCookie(name, opts) {
-    return this.cookies.get(name, opts);
-  },
-
-  /**
-   * 删除 Cookie
-   * @method Cookie#deleteCookie
-   * @param {String} name - Cookie key
-   * @param {Object} opts  cookie options
-   * @return {Context} koa context
-   */
-  deleteCookie(name, opts) {
-    this.setCookie(name, null, opts);
-    return this;
-  },
-
-  /**
    * Wrap app.loggers with context infomation,
    * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
    * @param {String} name - logger name
