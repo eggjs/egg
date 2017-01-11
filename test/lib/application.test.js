@@ -3,6 +3,7 @@
 const Application = require('../../lib/application');
 const path = require('path');
 const utils = require('../utils');
+const assert = require('assert');
 
 describe('test/lib/application.test.js', () => {
   let app;
@@ -68,6 +69,30 @@ describe('test/lib/application.test.js', () => {
       json.plugins.onerror.version.should.match(/\d+\.\d+\.\d+/);
       json.config.name.should.equal('demo');
       return app.ready();
+    });
+  });
+
+  describe('env', () => {
+    afterEach(() => app.close());
+
+    it('should return app.config.env', function* () {
+      app = createApplication();
+      yield app.ready();
+      assert(app.env === app.config.env);
+      app.env = 'prod';
+      assert(app.config.env === 'prod');
+    });
+  });
+
+  describe('proxy', () => {
+    afterEach(() => app.close());
+
+    it('should delegate app.config.proxy', function* () {
+      app = createApplication();
+      yield app.ready();
+      assert(app.proxy === app.config.proxy);
+      app.proxy = true;
+      assert(app.config.proxy === true);
     });
   });
 
