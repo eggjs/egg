@@ -16,22 +16,33 @@ index:
   readmore: "查看更多"
 
 guide_toc:
-  Guide: 新手指南
-  Overview: 总览
-  QuickStart: 快速入门
-  "Write Application": 创建一个应用
-  "Core Plugins": 核心插件
-  Deployment: 部署应用
-  "Unit Test": 单元测试
-  Advanced: 高阶
-  "Write Framework": 编写一个框架
-  "Write Plugin": 编写一个插件
-  Cluster: 进程管理
-  Loader: 加载器
-  Singleton: 多实例模式
-  "Best Practice": 最佳实践
+  Intro: 新手指南
+  What is egg: 什么是 egg
+  egg and koa: egg 和 koa
+  Get Start: 快速入门
+  Basics: 基础功能
+  Environment: 运行环境
+  Config: 配置
+  Middleware: 中间件
+  Router: Router
+  Controller: Controller
+  Service: Service
+  Schedule: 定时任务
+  Extend: 框架扩展
+  Custom init: 启动自定义
+  Core: 核心功能
+  Security: 安全
+  # Passport:
+  HttpClient: HttpClient
+  Logger: 日志
+  Error Handling: 异常处理
+  i18n: 国际化
+  Advanced: 进阶
+  Cluster: 多进程模型
+  Framework: 框架开发
+  Plugin: 插件开发
+  # Loader:
   Community: 社区
-  Contributing: 如何共享
-  "Member Guide": 成员指南
-  Frameworks: 框架
+  Contributing: 如何贡献
+  Member Guide: 成员指南
   FAQ: 常见问题

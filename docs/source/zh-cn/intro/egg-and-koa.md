@@ -1,8 +1,6 @@
 title: egg 与 koa
 ---
 
-# egg 与 koa
-
 ## 异步编程模型
 
 node 是一个异步的世界，官方 API 支持的都是 callback 形式的异步编程模型，这会带来许多问题，例如

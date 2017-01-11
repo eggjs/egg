@@ -1,8 +1,6 @@
 title: router
 ---
 
-# router
-
 router 主要用来描述请求 URL 和具体承担执行动作 controller 的对应关系，
 在框架中约定了一个 `app/router.js` 文件，在这里统一所有路由规则。
 

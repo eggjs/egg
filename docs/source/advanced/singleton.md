@@ -1,6 +1,0 @@
-title: Singleton
----
-
-# Singleton
-
-TBD

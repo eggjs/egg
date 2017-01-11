@@ -1,8 +1,6 @@
 title: HttpClient
 ---
 
-# HttpClient
-
 互联网时代，无数服务是基于 HTTP 协议进行通信的。
 web 应用调用 HTTP 服务必然是一种非常常见的应用场景。
 

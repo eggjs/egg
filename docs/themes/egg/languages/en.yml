@@ -14,24 +14,3 @@ index:
   feature32: "Do what you like in egg with the pluggable and extendable system"
   getstart: "Get Started"
   readmore: "Read More"
-
-guide_toc:
-  Guide: Guide
-  Overview: Overview
-  QuickStart: QuickStart
-  "Write Application": "Write Application"
-  "Core Plugins": "Core Plugins"
-  Deployment: Deployment
-  "Unit Test": "Unit Test"
-  Advanced: Advanced
-  "Write Framework": "Write Framework"
-  "Write Plugin": "Write Plugin"
-  Cluster: Cluster
-  Loader: Loader
-  Singleton: Singleton
-  "Best Practice": "Best Practice"
-  Community: Community
-  Contributing: Contributing
-  "Member Guide": "Member Guide"
-  Frameworks: Frameworks
-  FAQ: FAQ
