@@ -20,8 +20,6 @@ EGG_SERVER_ENV 会比较常用，在应用启动的时候指定是最简单的�
 EGG_SERVER_ENV=prod npm start
 ```
 
-指定环境启动应用之后，我们可以在 `app.config.env` 这个配置项上读取到它。
-
 ## 如何使用
 
 可以通过 `app.config.env` 来获取这个环境变量直接判断环境。
