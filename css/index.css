@@ -376,6 +376,7 @@ textarea {
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
+  line-height: 2;
 }
 .markdown-body .pl-c {
   color: #969896;
@@ -475,10 +476,6 @@ textarea {
 .markdown-body strong {
   font-weight: bolder;
 }
-.markdown-body h1 {
-  font-size: 2em;
-  margin: 0.67em 0;
-}
 .markdown-body img {
   border-style: none;
 }
@@ -569,6 +566,7 @@ textarea {
 .markdown-body h1 {
   font-size: 32px;
   font-weight: 600;
+  border: 0;
 }
 .markdown-body h2 {
   font-size: 24px;
@@ -744,7 +742,6 @@ textarea {
 .markdown-body h1 {
   padding-bottom: 0.3em;
   font-size: 2em;
-  border-bottom: 1px solid #eee;
 }
 .markdown-body h2 {
   padding-bottom: 0.3em;
@@ -848,13 +845,6 @@ textarea {
   background: transparent;
   border: 0;
 }
-.markdown-body .highlight {
-  margin-bottom: 16px;
-}
-.markdown-body .highlight pre {
-  margin-bottom: 0;
-  word-break: normal;
-}
 .markdown-body .highlight pre,
 .markdown-body pre {
   padding: 16px;
@@ -935,6 +925,135 @@ textarea {
 .markdown-body hr {
   border-bottom-color: #eee;
 }
+.markdown-body a.markdown-anchor {
+  position: absolute;
+  left: -20px;
+  display: block;
+  width: 20px;
+  color: #666;
+  visibility: hidden;
+}
+.markdown-body a.markdown-anchor:hover {
+  text-decoration: none;
+  color: #000000;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+}
+.markdown-body h1:hover .markdown-anchor,
+.markdown-body h2:hover .markdown-anchor,
+.markdown-body h3:hover .markdown-anchor,
+.markdown-body h4:hover .markdown-anchor,
+.markdown-body h5:hover .markdown-anchor,
+.markdown-body h6:hover .markdown-anchor {
+  visibility: visible;
+}
+/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+.highlight {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: #333;
+  background: #f8f8f8;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+.highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+.highlight table,
+.highlight tbody,
+.highlight tr,
+.highlight td {
+  display: block;
+}
+.highlight table tr {
+  border: 0;
+}
+.highlight .code {
+  padding: 0;
+}
+.highlight .comment,
+.highlight .quote {
+  color: #998;
+  font-style: italic;
+}
+.highlight .keyword,
+.highlight .selector-tag,
+.highlight .subst {
+  color: #333;
+  font-weight: bold;
+}
+.highlight .number,
+.highlight .literal,
+.highlight .variable,
+.highlight .template-variable,
+.highlight .tag .attr {
+  color: #008080;
+}
+.highlight .string,
+.highlight .doctag {
+  color: #d14;
+}
+.highlight .title,
+.highlight .section,
+.highlight .selector-id {
+  color: #900;
+  font-weight: bold;
+}
+.highlight .subst {
+  font-weight: normal;
+}
+.highlight .type,
+.highlight .class .title {
+  color: #458;
+  font-weight: bold;
+}
+.highlight .tag,
+.highlight .name,
+.highlight .attribute {
+  color: #000080;
+  font-weight: normal;
+}
+.highlight .regexp,
+.highlight .link {
+  color: #009926;
+}
+.highlight .symbol,
+.highlight .bullet {
+  color: #990073;
+}
+.highlight .built_in,
+.highlight .builtin-name {
+  color: #0086b3;
+}
+.highlight .meta {
+  color: #999;
+  font-weight: bold;
+}
+.highlight .deletion {
+  background: #fdd;
+}
+.highlight .addition {
+  background: #dfd;
+}
+.highlight .emphasis {
+  font-style: italic;
+}
+.highlight .strong {
+  font-weight: bold;
+}
 body {
   min-width: 320px;
   background: #F6F8F8;
@@ -1013,7 +1132,7 @@ p {
   left: 3px;
   float: left;
   width: 200px;
-  padding: 30px 0;
+  padding: 40px 0;
   border-right: 1px solid #EFEFEF;
 }
 .toc dl {
@@ -1175,7 +1294,7 @@ p {
   user-select: none;
 }
 .page-title {
-  padding: 40px 0 160px;
+  padding: 20px 0 150px;
   background: #121724;
   text-align: center;
 }
@@ -1203,10 +1322,10 @@ p {
   border-radius: 2px;
 }
 .page-main article {
-  width: 760px;
+  width: 720px;
   float: right;
   min-height: 400px;
-  padding: 20px;
+  padding: 40px;
   border-left: 1px solid #EFEFEF;
 }
 .mobile-menu {

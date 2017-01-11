@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>Loader</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>Loader</h1>
+    <p>egg 在 koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。</p>
+<h2 id="应用-框架和插件"><a class="markdown-anchor" href="#应用-框架和插件">#</a> 应用、框架和插件</h2>
+<p>egg 是一个底层框架，应用可以直接使用，但 egg 本身的插件比较少，应用需要自己配置插件增加各种特性，比如 MySQL。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 应用配置</span></div><div class="line"><span class="comment">// package.json</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"dependencies"</span>: &#123;</div><div class="line">    <span class="string">"egg"</span>: <span class="string">"^1.0.0"</span>,</div><div class="line">    <span class="string">"egg-mysql"</span>: <span class="string">"^1.0.0"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-mysql'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当应用达到一定数量，我们会发现大部分应用的配置都是类似的，这时可以基于 egg 扩展出一个框架，应用的配置就会简化很多。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 框架配置</span></div><div class="line"><span class="comment">// package.json</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"name"</span>: <span class="string">"framework1"</span>,</div><div class="line">  <span class="string">"version"</span>: <span class="string">"1.0.0"</span>,</div><div class="line">  <span class="string">"dependencies"</span>: &#123;</div><div class="line">    <span class="string">"egg-mysql"</span>: <span class="string">"^1.0.0"</span>,</div><div class="line">    <span class="string">"egg-view-nunjucks"</span>: <span class="string">"^1.0.0"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">false</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-mysql'</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">view</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">false</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-view-nunjucks'</span>,</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 应用配置</span></div><div class="line"><span class="comment">// package.json</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"dependencies"</span>: &#123;</div><div class="line">    <span class="string">"framework1"</span>: <span class="string">"^1.0.0"</span>,</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="comment">// 开启插件</span></div><div class="line">  mysql: <span class="literal">true</span>,</div><div class="line">  <span class="attr">view</span>: <span class="literal">true</span>,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>从上面的使用场景可以看到应用、插件和框架三者之间的关系。</p>
+<ul>
+<li>我们在应用中完成业务，需要指定一个框架才能运行起来，当需要某个特性场景的功能时可以配置插件（比如 MySQL）。</li>
+<li>插件只完成特定功能，当两个独立的功能有互相依赖时，还是分开两个插件，但需要配置依赖。</li>
+<li>框架是一个启动器（默认就是 egg），必须有它才能运行起来。框架还是一个封装器，将插件的功能聚合起来统一提供，框架也可以配置插件。</li>
+<li>在框架的基础上还可以扩展出新的框架，也就是说<strong>框架是可以无限级继承的</strong>，有点像类的继承。</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+-----------------------------------+--------+</div><div class="line">|      app1, app2, app3, app4       |        |</div><div class="line">+-----+--------------+--------------+        |</div><div class="line">|     |              |  framework3  |        |</div><div class="line">+     |  framework1  +--------------+ plugin |</div><div class="line">|     |              |  framework2  |        |</div><div class="line">+     +--------------+--------------+        |</div><div class="line">|                   egg             |        |</div><div class="line">+-----------------------------------+--------|</div><div class="line">|                   koa                      |</div><div class="line">+-----------------------------------+--------+</div></pre></td></tr></table></figure></p>
+<h2 id="loadunit"><a class="markdown-anchor" href="#loadunit">#</a> loadUnit</h2>
+<p>egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异，下面是目录结构</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">loadUnit</div><div class="line">├── package.json</div><div class="line">├── app.js</div><div class="line">├── agent.js</div><div class="line">├── app</div><div class="line">│   ├── extend</div><div class="line">│   |   ├── helper.js</div><div class="line">│   |   ├── request.js</div><div class="line">│   |   ├── response.js</div><div class="line">│   |   ├── context.js</div><div class="line">│   |   ├── application.js</div><div class="line">│   |   └── agent.js</div><div class="line">│   ├── service</div><div class="line">│   ├── middleware</div><div class="line">│   └── router.js</div><div class="line">└── config</div><div class="line">    ├── config.default.js</div><div class="line">    ├── config.prod.js</div><div class="line">    ├── config.test.js</div><div class="line">    ├── config.local.js</div><div class="line">    └── config.unittest.js</div></pre></td></tr></table></figure></p>
+<p>不过还存在着一些差异</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>应用</th>
+<th>框架</th>
+<th>插件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app/router.js</td>
+<td>✔︎</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>app/controller</td>
+<td>✔︎</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>app/middleware</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>app/service</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>app/extend</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>app.js</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>agent.js</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>config/config.{env}.js</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+<tr>
+<td>config/plugin.js</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td></td>
+</tr>
+<tr>
+<td>package.json</td>
+<td>✔︎</td>
+<td>✔︎</td>
+<td>✔︎</td>
+</tr>
+</tbody>
+</table>
+<p>在加载过程中，egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级</p>
+<ul>
+<li>按插件 =&gt; 框架 =&gt; 应用依次加载</li>
+<li>插件之间的顺序由依赖关系决定，被依赖方先加载，无依赖按 object key 配置顺序加载，具体可以查看<a href="./plugin.html">插件章节</a></li>
+<li>框架按继承顺序加载，越底层越先加载。</li>
+</ul>
+<p>比如有这样一个应用配置了如下依赖</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">app</div><div class="line">| ├── plugin2 (依赖 plugin3)</div><div class="line">| └── plugin3</div><div class="line">└── framework1</div><div class="line">    | └── plugin1</div><div class="line">    └── egg</div></pre></td></tr></table></figure></p>
+<p>最终的加载顺序为</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">=&gt; plugin1</div><div class="line">=&gt; plugin3</div><div class="line">=&gt; plugin2</div><div class="line">=&gt; egg</div><div class="line">=&gt; framework1</div><div class="line">=&gt; app</div></pre></td></tr></table></figure></p>
+<p>plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会优先级于 plugin2/plugin3。因为 plugin2 和 plugin3 的依赖关系，所以交换了位置。framework1 继承了 egg，顺序会晚于 egg。应用最后加载。</p>
+<p>请查看 <a href="https://github.com/eggjs/egg-core/blob/65ea778a4f2156a9cebd3951dac12c4f9455e636/lib/loader/egg_loader.js#L233" target="_blank" rel="external">Loader.getLoadUnits</a> 方法</p>
+<h3 id="文件顺序"><a class="markdown-anchor" href="#文件顺序">#</a> 文件顺序</h3>
+<p>上面已经列出了默认会加载的文件，egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。</p>
+<ul>
+<li>加载 <a href="./plugin.html">plugin</a>，找到应用和框架，加载 <code>config/plugin.js</code></li>
+<li>加载 <a href="../basics/config.html">config</a>, 遍历 loadUnit 加载 <code>config/config.{env}.js</code></li>
+<li>加载 <a href="../basics/extend.html">extend</a>, 遍历 loadUnit 加载 <code>app/extend/xx.js</code></li>
+<li><a href="../basics/app-start.html">自定义初始化</a>，遍历 loadUnit 加载 <code>app.js</code> 和 <code>agent.js</code></li>
+<li>加载 <a href="../basics/service.html">service</a>, 遍历 loadUnit 加载 <code>app/service</code> 目录</li>
+<li>加载 <a href="../basics/middleware.html">middleware</a>, 遍历 loadUnit 加载 <code>app/middleware</code> 目录</li>
+<li>加载 <a href="../basics/controller.html">controller</a>, 加载应用的 <code>app/controller</code> 目录</li>
+<li>加载 <a href="../basics/router.html">router</a>, 加载应用的 <code>app/router.js</code></li>
+</ul>
+<p>注意</p>
+<ul>
+<li>加载时如果遇到同名的会覆盖，比如想要覆盖 <code>ctx.ip</code> 可以直接在应用的 <code>app/extend/context.js</code> 定义 ip 就可以了。</li>
+<li><a href="./framework.html">应用完整启动顺序查看框架开发</a></li>
+</ul>
+<h2 id="扩展-loader"><a class="markdown-anchor" href="#扩展-loader">#</a> 扩展 Loader</h2>
+<p><a href="https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js" target="_blank" rel="external">Loader</a> 是一个基类，并根据文件加载的规则提供了一些内置的方法，但基本本身并不会去调用，而是由继承类调用。</p>
+<ul>
+<li>loadPlugin()</li>
+<li>loadConfig()</li>
+<li>loadAgentExtend()</li>
+<li>loadApplicationExtend()</li>
+<li>loadRequestExtend()</li>
+<li>loadResponseExtend()</li>
+<li>loadContextExtend()</li>
+<li>loadHelperExtend()</li>
+<li>loadCustomAgent()</li>
+<li>loadCustomApp()</li>
+<li>loadService()</li>
+<li>loadMiddleware()</li>
+<li>loadController()</li>
+<li>loadRouter()</li>
+</ul>
+<p>egg 基于 Loader 实现了 <a href="https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js" target="_blank" rel="external">AppWorkerLoader</a> 和 <a href="https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js" target="_blank" rel="external">AgentWorkerLoader</a>，上层框架基于这两个类来扩展，<strong>Loader 的扩展只能在框架进行</strong>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 自定义 AppWorkerLoader</span></div><div class="line"><span class="comment">// lib/loader.js</span></div><div class="line"><span class="keyword">const</span> AppWorkerLoader = <span class="built_in">require</span>(<span class="string">'egg'</span>).AppWorkerLoader;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CustomAppWorkerLoader</span> <span class="keyword">extends</span> <span class="title">AppWorkerLoader</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(opt) &#123;</div><div class="line">    <span class="keyword">super</span>(opt);</div><div class="line">    <span class="comment">// 自定义初始化</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  loadConfig() &#123;</div><div class="line">    <span class="keyword">super</span>.loadConfig();</div><div class="line">    <span class="comment">// 对 config 进行处理</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  load() &#123;</div><div class="line">    <span class="keyword">super</span>.load();</div><div class="line">    <span class="comment">// 自定义加载其他目录</span></div><div class="line">    <span class="comment">// 或对已加载的文件进行处理</span></div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">exports.AppWorkerLoader = CustomAppWorkerLoader;</div><div class="line"></div><div class="line"><span class="comment">// index.js</span></div><div class="line"><span class="comment">// 拷贝一份 egg 的 API</span></div><div class="line"><span class="built_in">Object</span>.assign(exports, <span class="built_in">require</span>(<span class="string">'egg'</span>));</div><div class="line"><span class="comment">// 将自定义的 Loader exports 出来</span></div><div class="line">exports.AppWorkerLoader = <span class="built_in">require</span>(<span class="string">'./lib/loader'</span>).AppWorkerLoader;</div></pre></td></tr></table></figure></p>
+<p>以上只是说明 Loader 的写法，具体可以查看<a href="./framework.html">框架开发</a>。</p>
+<h2 id="loader-api"><a class="markdown-anchor" href="#loader-api">#</a> Loader API</h2>
+<p>Loader 还提供一些底层的 API，在扩展时可以简化代码，全部 API 请<a href="https://github.com/eggjs/egg-core#eggloader" target="_blank" rel="external">查看</a></p>
+<h3 id="loadfile"><a class="markdown-anchor" href="#loadfile">#</a> loadFile</h3>
+<p>用于加载一个文件，比如加载 <code>app.js</code> 就是使用这个方法。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/xx.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="built_in">console</span>.log(app.config);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="comment">// 以 app/xx.js 为例，我们可以在 app.js 加载这个文件</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.loader.loadFile(path.join(app.config.baseDir, <span class="string">'app/xx.js'</span>));</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>如果文件 export 一个函数会被调用，并将 app 作为参数，否则直接使用这个值。</p>
+<h3 id="loadtoapp"><a class="markdown-anchor" href="#loadtoapp">#</a> loadToApp</h3>
+<p>用于加载一个目录下的文件到 app，比如 <code>app/controller/home.js</code> 会加载到 <code>app.controller.home</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="comment">// 以下只是示例，加载 controller 请用 loadController</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> directory = path.join(app.config.baseDir, <span class="string">'app/controller'</span>);</div><div class="line">  app.loader.loadToApp(directory, <span class="string">'controller'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>一共有三个参数 <code>loadToApp(directory, property, LoaderOptions)</code></p>
+<ol>
+<li>directory 可以为 String 或 Array，Loader 会从这些目录加载文件</li>
+<li>property 为 app 的属性</li>
+<li><a href="#LoaderOptions">LoaderOptions</a> 为一些配置</li>
+</ol>
+<h3 id="loadtocontext"><a class="markdown-anchor" href="#loadtocontext">#</a> loadToContext</h3>
+<p>与 loadToApp 有一点差异，loadToContext 是加载到 ctx 上而非 app，而且是懒加载。加载时会将文件都放到一个临时对象上，在调用 ctx API 时才实例化对象。</p>
+<p>比如 service 的加载就是使用这种模式</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 以下为示例，请使用 loadService</span></div><div class="line"><span class="comment">// app/service/user.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;&#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 获取所有的 loadUnit</span></div><div class="line"><span class="keyword">const</span> servicePaths = app.loader.getLoadUnits().map(<span class="function"><span class="params">unit</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> path.join(unit.path, <span class="string">'app/service'</span>);</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.loader.loadToContext(servicePaths, <span class="string">'service'</span>, &#123;</div><div class="line">  <span class="comment">// service 需要继承 app.Service，所以要拿到 app 参数</span></div><div class="line">  <span class="comment">// 设置 call 在加载时会调用函数返回 UserService</span></div><div class="line">  call: <span class="literal">true</span>,</div><div class="line">  <span class="comment">// 将文件加载到 app.serviceClasses</span></div><div class="line">  fieldClass: <span class="string">'serviceClasses'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>文件加载后 <code>app.serviceClasses.user</code> 就是 UserService，当调用 <code>ctx.service.user</code> 时会实例化 UserService，
+所以这个类只有每次请求中首次访问时才会实例化，实例化后会被缓存，同一个请求多次调用也只会实例化一次。</p>
+<h3 id="loaderoptions"><a class="markdown-anchor" href="#loaderoptions">#</a> LoaderOptions</h3>
+<h4 id="ignore-string"><a class="markdown-anchor" href="#ignore-string">#</a> ignore [String]</h4>
+<p>ignore 可以忽略一些文件，支持 glob，默认为空</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.loader.loadToApp(directory, <span class="string">'controller'</span>, &#123;</div><div class="line">  <span class="comment">// 忽略 app/controller/util 下的文件</span></div><div class="line">  ignore: <span class="string">'util/**'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h4 id="initializer-function"><a class="markdown-anchor" href="#initializer-function">#</a> initializer [Function]</h4>
+<p>对每个文件 export 出来的值进行处理，默认为空</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/model/user.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(app, path) &#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 从 app/model 目录加载，加载时可做一些初始化处理</span></div><div class="line"><span class="keyword">const</span> directory = path.join(app.config.baseDir, <span class="string">'app/model'</span>);</div><div class="line">app.loader.loadToApp(directory, <span class="string">'model'</span>, &#123;</div><div class="line">  initializer(model, opt) &#123;</div><div class="line">    <span class="comment">// 第一个参数为 export 的对象</span></div><div class="line">    <span class="comment">// 第二个参数为一个对象，只包含当前文件的路径</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> model(app, opt.path);</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h4 id="lowercasefirst-boolean"><a class="markdown-anchor" href="#lowercasefirst-boolean">#</a> lowercaseFirst [Boolean]</h4>
+<p>是否强制将第一个字符转成小写，默认为 false。</p>
+<p>比如加载 <code>app/controller/User.js</code>，如果为 true 加载后生成 <code>app.controller.user</code>。</p>
+<p>在加载不同文件时配置不同</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app/controller</td>
+<td>true</td>
+</tr>
+<tr>
+<td>app/middleware</td>
+<td>true</td>
+</tr>
+<tr>
+<td>app/service</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+<h4 id="override-boolean"><a class="markdown-anchor" href="#override-boolean">#</a> override [Boolean]</h4>
+<p>遇到已经存在的文件时是直接覆盖还是抛出异常，默认为 false</p>
+<p>比如同时加载应用和插件的 <code>app/service/user.js</code> 文件，如果为 true 应用会覆盖插件的，否则加载应用的文件时会报错。</p>
+<p>在加载不同文件时配置不同</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app/controller</td>
+<td>true</td>
+</tr>
+<tr>
+<td>app/middleware</td>
+<td>false</td>
+</tr>
+<tr>
+<td>app/service</td>
+<td>false</td>
+</tr>
+</tbody>
+</table>
+<h4 id="call-boolean"><a class="markdown-anchor" href="#call-boolean">#</a> call [Boolean]</h4>
+<p>当 export 的对象为函数时则调用，并获取返回值，默认为 true</p>
+<p>在加载不同文件时配置不同</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>app/controller</td>
+<td>true</td>
+</tr>
+<tr>
+<td>app/middleware</td>
+<td>false</td>
+</tr>
+<tr>
+<td>app/service</td>
+<td>true</td>
+</tr>
+</tbody>
+</table>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

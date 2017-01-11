@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Quick Start</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/intro/" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release/" alt="Release">Release</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>Quick Start</h1>
+    <h1 id="quick-start"><a class="markdown-anchor" href="#quick-start">#</a> Quick Start</h1>
+<p>This guide covers getting up and running with Egg using a real example.
+By following along with this guide step by step, you can quickly get started with Egg development.</p>
+<h2 id="prerequisites"><a class="markdown-anchor" href="#prerequisites">#</a> Prerequisites</h2>
+<ul>
+<li>Operating System: Linux, OS X or Windows (not recommended).</li>
+<li>Node.js Runtime: 6.x or newer; it is recommended that you use <a href="http://nodejs.org" target="_blank" rel="external">LTS Releases</a>.</li>
+</ul>
+<h2 id="the-quick-way"><a class="markdown-anchor" href="#the-quick-way">#</a> the Quick Way</h2>
+<p>To begin with, let's quickly initialize the project using a scaffold,
+which will quickly generate some of the major pieces of the application.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-init -g</div><div class="line">$ egg-init egg-example --type=simple</div><div class="line">$ <span class="built_in">cd</span> egg-example</div><div class="line">$ npm i</div></pre></td></tr></table></figure></p>
+<p>Then get up and running using the following commands.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm run dev</div><div class="line">$ open localhost:7001</div></pre></td></tr></table></figure></p>
+<h2 id="step-by-step"><a class="markdown-anchor" href="#step-by-step">#</a> Step by Step</h2>
+<p>Usually you could just use <a href="https://github.com/eggjs/egg-init" target="_blank" rel="external">egg-init</a> of the last session,
+choose a scaffold that best fits your business model and quickly generate a project,
+then get started with the development.</p>
+<p>However, in this section, instead of using scaffolds we will build a project called <a href="https://github.com/eggjs/examples/tree/master/hackernews" target="_blank" rel="external">Egg HackerNews</a> step by step, for a better understanding of how it works.</p>
+<p><strong>WARNING, TL;NR</strong></p>
+<h3 id="initialization"><a class="markdown-anchor" href="#initialization">#</a> Initialization</h3>
+<p>First let's create the project directory and initialize its structure.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ mkdir egg-example</div><div class="line">$ <span class="built_in">cd</span> egg-example</div><div class="line">$ npm init</div><div class="line">$ npm i egg --save</div><div class="line">$ npm i egg-bin --save-dev</div></pre></td></tr></table></figure></p>
+<p>Then add <code>npm scripts</code> to <code>package.json</code>.</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-example"</span>,</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"dev"</span>: <span class="string">"egg-bin dev"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="create-a-controller"><a class="markdown-anchor" href="#create-a-controller">#</a> Create a Controller</h3>
+<p>If you are familiar with the MVC architecture,
+you might have already guessed that the first thing to create
+is a <a href="../basics/controller.html">controller</a> and <a href="../basics/router.html">router</a>.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">home</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">'hi, egg'</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Then edit the router file and add a mapping.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/'</span>, <span class="string">'home'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Now you can start up the Web Server and see your application in action.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm run dev</div><div class="line">$ open localhost:7001</div></pre></td></tr></table></figure></p>
+<h3 id="add-static-assets"><a class="markdown-anchor" href="#add-static-assets">#</a> Add Static Assets</h3>
+<p>Egg has a built-in plugin called <a href="https://github.com/eggjs/egg-static" target="_blank" rel="external">static</a>.
+In production, it is recommended that you deploy static assets to CDN instead of using this plugin.</p>
+<p><a href="https://github.com/eggjs/egg-static" target="_blank" rel="external">static</a> maps <code>/public/*</code> to the directory <code>app/public/*</code> by default.</p>
+<p>In this case, we just need to put our static assets into the directory <code>app/public</code>.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">app/public</div><div class="line">├── css</div><div class="line">│   └── news.css</div><div class="line">└── js</div><div class="line">    ├── lib.js</div><div class="line">    └── test.js</div></pre></td></tr></table></figure></p>
+<h3 id="add-templates-for-rendering"><a class="markdown-anchor" href="#add-templates-for-rendering">#</a> Add Templates for Rendering</h3>
+<p>In most cases, data are usually read, processed and rendered by the templates before being presented to the user.
+Thus we need to introduce corresponding template engines to handle it.</p>
+<p>Egg does not force the use of any particular template engines,
+but instead specifies the <a href="../practice/view.html">View Plug-ins Specification</a>
+to allow the developers to use different plug-ins for their individual needs.</p>
+<p>In this example, we will use <a href="https://mozilla.github.io/nunjucks/" target="_blank" rel="external">nunjucks</a>.</p>
+<p>First install the corresponding plug-in <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a>.</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-view-nunjucks --save</div></pre></td></tr></table></figure></p>
+<p>And enable it.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line">exports.view = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-view-nunjucks'</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Then create a template for the index page.
+This usually goes to the app/view directory.</p>
+<p><figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="comment">&lt;!-- app/view/news/list.tpl --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Egg HackerNews Clone<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/public/css/news.css"</span> /&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"news-view view"</span>&gt;</span></div><div class="line">      &#123;% for item in list %&#125;</div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"item"</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&#123;&#123; item.url &#125;&#125;"</span>&gt;</span>&#123;&#123; item.title &#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">      &#123;% endfor %&#125;</div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>/&gt;</span></div></pre></td></tr></table></figure></p>
+<p>Then add a controller and router.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/news.js</span></div><div class="line">exports.list = <span class="function"><span class="keyword">function</span>* <span class="title">newsList</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> dataList = &#123;</div><div class="line">    <span class="attr">list</span>: [</div><div class="line">      &#123; <span class="attr">id</span>: <span class="number">1</span>, <span class="attr">title</span>: <span class="string">'this is news 1'</span>, <span class="attr">url</span>: <span class="string">'/news/1'</span> &#125;,</div><div class="line">      &#123; <span class="attr">id</span>: <span class="number">2</span>, <span class="attr">title</span>: <span class="string">'this is news 2'</span>, <span class="attr">url</span>: <span class="string">'/news/2'</span> &#125;</div><div class="line">    ]</div><div class="line">  &#125;;</div><div class="line">  <span class="keyword">yield</span> <span class="keyword">this</span>.render(<span class="string">'news/list.tpl'</span>, dataList);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/'</span>, <span class="string">'home'</span>);</div><div class="line">  app.get(<span class="string">'/news'</span>, <span class="string">'news.list'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Open a browser window and navigate to http://localhost:7001/news.
+You should be able to see the rendered page.</p>
+<p><strong>Tip：In development, Egg enables the <a href="https://github.com/eggjs/egg-development" target="_blank" rel="external">development</a> plug-in by default, which reloads your worker process when changes are made to your back-end code.</strong></p>
+<h3 id="create-a-service"><a class="markdown-anchor" href="#create-a-service">#</a> Create a Service</h3>
+<p>In practice, controllers usually won't generate data on their own,
+neither will they contain complicated business logic.
+Complicated business logic should instead be abstracted as
+a busineess logic layer, i.e., <a href="../basics/service.html">service</a>.</p>
+<p>Let's create a service to fetch data from the
+<a href="https://github.com/HackerNews/API" target="_blank" rel="external">HackerNews</a>.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/service/news.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">NewsService</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;</div><div class="line">    * list(page = <span class="number">1</span>) &#123;</div><div class="line">      <span class="comment">// read config</span></div><div class="line">      <span class="keyword">const</span> &#123; serverUrl, pageSize &#125; = <span class="keyword">this</span>.app.config.new;</div><div class="line"></div><div class="line">      <span class="comment">// use build-in http clinet, see https://www.npmjs.com/package/urllib</span></div><div class="line">      <span class="comment">// GET hacker-news api</span></div><div class="line">      <span class="keyword">const</span> &#123; <span class="attr">data</span>: idList &#125; = <span class="keyword">yield</span> <span class="keyword">this</span>.ctx.curl(<span class="string">`<span class="subst">$&#123;serverUrl&#125;</span>/topstories.json`</span>, &#123;</div><div class="line">        <span class="attr">data</span>: &#123;</div><div class="line">          <span class="attr">orderBy</span>: <span class="string">'"$key"'</span>,</div><div class="line">          <span class="attr">startAt</span>: <span class="string">`"<span class="subst">$&#123;pageSize * (page - <span class="number">1</span>)&#125;</span>"`</span>,</div><div class="line">          <span class="attr">endAt</span>: <span class="string">`"<span class="subst">$&#123;pageSize * page - <span class="number">1</span>&#125;</span>"`</span>,</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">      &#125;);</div><div class="line"></div><div class="line">      <span class="comment">// parallel GET detail , see `yield &#123;&#125;` from co</span></div><div class="line">      <span class="keyword">const</span> newsList = <span class="keyword">yield</span> <span class="built_in">Object</span>.keys(idList).map(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</div><div class="line">        <span class="keyword">const</span> url = <span class="string">`<span class="subst">$&#123;serverUrl&#125;</span>/item/<span class="subst">$&#123;idList[key]&#125;</span>.json`</span>;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.ctx.curl(url, &#123; <span class="attr">dataType</span>: <span class="string">'json'</span> &#125;).then(<span class="function"><span class="params">res</span> =&gt;</span> res.data);</div><div class="line">      &#125;);</div><div class="line">      <span class="keyword">return</span> newsList;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> NewsService;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Egg has <a href="https://www.npmjs.com/package/urllib" target="_blank" rel="external">urllib</a> built in in order to help you make http requests.</p>
+</blockquote>
+<p>Then slightly modify our previous controller.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/news.js</span></div><div class="line">exports.list = <span class="function"><span class="keyword">function</span>* <span class="title">newsList</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> page = <span class="keyword">this</span>.query.page || <span class="number">1</span>;</div><div class="line">  <span class="keyword">const</span> newsList = <span class="keyword">yield</span> <span class="keyword">this</span>.service.news.list(page);</div><div class="line">  <span class="keyword">yield</span> <span class="keyword">this</span>.render(<span class="string">'news/list.tpl'</span>, &#123; <span class="attr">list</span>: newsList &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="add-extensions"><a class="markdown-anchor" href="#add-extensions">#</a> Add Extensions</h3>
+<p>We might encounter a small problem here.
+The time that we fetched are in Unix Time,
+whereas we want to present them in a more friendly way to read.</p>
+<p>Egg provides us with a quick way to extend its functionalities.
+We just need to add extension scripts to the <code>app/extend</code> directory.
+For more information, cf. <a href="../basics/extend.html">Extensions</a>.</p>
+<p>In the case of egg-view-nunjucks, we can just write a helper as an extension.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/helper.js</span></div><div class="line"><span class="keyword">const</span> moment = <span class="built_in">require</span>(<span class="string">'moment'</span>);</div><div class="line">exports.relativeTime = <span class="function"><span class="params">time</span> =&gt;</span> moment(<span class="keyword">new</span> <span class="built_in">Date</span>(time * <span class="number">1000</span>)).fromNow();</div></pre></td></tr></table></figure></p>
+<p>Then use it in the templates.</p>
+<p><figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="comment">&lt;!-- app/views/news/list.tpl --&gt;</span></div><div class="line">&#123;&#123; helper.relativeTime(item.time) &#125;&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="add-middlewares"><a class="markdown-anchor" href="#add-middlewares">#</a> Add Middlewares</h3>
+<p>Suppose that we wanted to prohibit accesses from Baidu crawlers.</p>
+<p>Smart developers might quickly guess that we can achieve it by adding a <a href="../basics/middleware.html">middleware</a>
+that checks the User-Agent.</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/middleware/robot.js</span></div><div class="line"><span class="comment">// options === app.config.robot</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">options, app</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* <span class="title">robotMiddleware</span>(<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> source = <span class="keyword">this</span>.get(<span class="string">'user-agent'</span>) || <span class="string">''</span>;</div><div class="line">    <span class="keyword">const</span> match = options.ua.some(<span class="function"><span class="params">ua</span> =&gt;</span> ua.test(source));</div><div class="line">    <span class="keyword">if</span> (match) &#123;</div><div class="line">      <span class="keyword">this</span>.status = <span class="number">403</span>;</div><div class="line">      <span class="keyword">this</span>.message = <span class="string">'go away, robot'</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">yield</span> next;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="comment">// mount middleware</span></div><div class="line">exports.middleware = [</div><div class="line">  <span class="string">'robot'</span></div><div class="line">];</div><div class="line"><span class="comment">// middleware config</span></div><div class="line">exports.robot = &#123;</div><div class="line">  <span class="attr">ua</span>: [</div><div class="line">    <span class="regexp">/Baiduspider/i</span>,</div><div class="line">  ]</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>Now try it using <code>curl localhost:7001/news -A &quot;Baiduspider&quot;</code>.</p>
+<h3 id="add-configurations"><a class="markdown-anchor" href="#add-configurations">#</a> Add Configurations</h3>
+<p>When writing business logic,
+it is inevitable that we need to manage configurations.
+Egg provides a powerful way to manage them in a merged configuration file.</p>
+<ul>
+<li>Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.</li>
+<li>Configurations could happen wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will take care of merging and loading them.</li>
+<li>For more information on merging, see <a href="../basics/config.html">Configurations</a>.</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line">exports.robot = &#123;</div><div class="line">  <span class="attr">ua</span>: [</div><div class="line">    <span class="regexp">/curl/i</span>,</div><div class="line">    /Baiduspider/i,</div><div class="line">  ],</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// config/config.local.js</span></div><div class="line"><span class="comment">// only read at development mode, will override default</span></div><div class="line">exports.robot = &#123;</div><div class="line">  <span class="attr">ua</span>: [</div><div class="line">    <span class="regexp">/Baiduspider/i</span>,</div><div class="line">  ],</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/news.js</span></div><div class="line">exports.list = <span class="function"><span class="keyword">function</span>* <span class="title">newsList</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> config = <span class="keyword">this</span>.app.config.news;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="conclusions"><a class="markdown-anchor" href="#conclusions">#</a> Conclusions</h2>
+<p>We can only touch the tip of the iceberg of Egg
+with the above short sections.
+We recommend that developers continue reading other documents:</p>
+<ul>
+<li>Egg provides a powerful mechanism for extending features. See <a href="../advanced/plugin.html">Plug-ins</a>.</li>
+<li>As large teams need to follow certain constraints and conventions, in egg, we recommend further creating an upper-level framework that fits your team. See <a href="../advanced/framework.html">Frameworks</a>.</li>
+<li>In Egg, writing unit tests is highly recommended, and it actually turns out to be very straightforward. See <a href="../core/test.html">Unit Testing</a>.</li>
+</ul>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/intro/" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release/" alt="Release">Release</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/en/intro/index.html">什么是 egg</a></li><li><a href="/en/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/en/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/en/basics/env.html">运行环境</a></li><li><a href="/en/basics/config.html">配置</a></li><li><a href="/en/basics/middleware.html">中间件</a></li><li><a href="/en/basics/router.html">Router</a></li><li><a href="/en/basics/controller.html">Controller</a></li><li><a href="/en/basics/service.html">Service</a></li><li><a href="/en/basics/schedule.html">定时任务</a></li><li><a href="/en/basics/extend.html">框架扩展</a></li><li><a href="/en/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/en/core/security.html">安全</a></li><li><a href="/en/core/httpclient.html">HttpClient</a></li><li><a href="/en/core/logger.html">日志</a></li><li><a href="/en/core/error-handling.html">异常处理</a></li><li><a href="/en/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/en/advanced/cluster.html">多进程模型</a></li><li><a href="/en/advanced/framework.html">框架开发</a></li><li><a href="/en/advanced/plugin.html">插件开发</a></li><li><a href="/en/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/en/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/intro/" alt="Guide">Guide</a></li><li><a href="https://eggjs.org/badgeboard/" alt="Plugins">Plugins</a></li><li><a href="/release/" alt="Release">Release</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

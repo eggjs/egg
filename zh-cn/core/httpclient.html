@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>HttpClient</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>HttpClient</h1>
+    <p>互联网时代，无数服务是基于 HTTP 协议进行通信的。
+web 应用调用 HTTP 服务必然是一种非常常见的应用场景。</p>
+<p>为此框架基于 <a href="https://github.com/node-modules/urllib" target="_blank" rel="external">urllib</a> 内置实现了一个 <a href="https://github.com/eggjs/egg/blob/master/lib/core/urllib.js" target="_blank" rel="external">httpclient</a>，应用可以非常便捷地完成任何 HTTP 请求。</p>
+<h2 id="通过-app-使用-httpclient"><a class="markdown-anchor" href="#通过-app-使用-httpclient">#</a> 通过 app 使用 HttpClient</h2>
+<p>框架在应用初始化的时候，会自动将 <a href="https://github.com/eggjs/egg/blob/master/lib/core/urllib.js" target="_blank" rel="external">httpclient</a> 初始化到 <code>app.httpclient</code>。
+同时增加了一个 <code>app.curl(url, options)</code> 方法，它等价于 <code>app.httpclient.request(url, options)</code>。</p>
+<p>这样就可以非常方便地使用 <code>app.curl</code> 方法完成一次 HTTP 请求。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.beforeStart(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// 示例：启动的时候去读取 https://registry.npm.taobao.org/egg/latest 的版本信息</span></div><div class="line">    <span class="keyword">const</span> result = <span class="keyword">yield</span> app.curl(<span class="string">'https://registry.npm.taobao.org/egg/latest'</span>, &#123;</div><div class="line">      <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">    &#125;);</div><div class="line">    app.logger.info(<span class="string">'egg latest version: %s'</span>, result.data.version);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="通过-context-使用-httpclient"><a class="markdown-anchor" href="#通过-context-使用-httpclient">#</a> 通过 context 使用 HttpClient</h2>
+<p>框架在 context 中同样提供了 <code>ctx.curl(url, options)</code> 和 <code>ctx.httpclient</code>，保持跟 app 下的使用体验一致。
+这样就可以在有 context 的地方（如在 controller 中）非常方便地使用 <code>ctx.curl()</code> 方法完成一次 HTTP 请求。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">home</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 示例：请求一个 npm 模块信息</span></div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://registry.npm.taobao.org/egg/latest'</span>, &#123;</div><div class="line">    <span class="comment">// 自动解析 JSON response</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">    <span class="comment">// 3 秒超时</span></div><div class="line">    timeout: <span class="number">3000</span>,</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  <span class="keyword">this</span>.body = &#123;</div><div class="line">    <span class="attr">status</span>: result.status,</div><div class="line">    <span class="attr">headers</span>: result.headers,</div><div class="line">    <span class="attr">package</span>: result.data,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="基本-http-请求"><a class="markdown-anchor" href="#基本-http-请求">#</a> 基本 HTTP 请求</h2>
+<p>HTTP 已经被广泛大量使用，尽管 HTTP 有多种请求方式，但是万变不离其宗，我们先以基本的4个请求方法为例子，
+逐步讲解一下更多的复杂应用场景。</p>
+<p>以下例子都会在 controller 代码中对 https://httpbin.org 发起请求来完成。</p>
+<h3 id="get"><a class="markdown-anchor" href="#get">#</a> GET</h3>
+<p>读取数据几乎都是使用 GET 请求，它是 HTTP 世界最常见的一种，也是最广泛的一种，它的请求参数也是最容易构造的。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/get.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">get</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/get?foo=bar'</span>);</div><div class="line">  <span class="keyword">this</span>.status = result.status;</div><div class="line">  <span class="keyword">this</span>.set(result.headers);</div><div class="line">  <span class="keyword">this</span>.body = result.data;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>GET 请求可以不用设置 <code>options.method</code> 参数，httpclient 的默认 method 会设置为 <code>GET</code>。</li>
+<li>返回值 <code>result</code> 会包含 3 个属性：<code>status</code>, <code>headers</code> 和 <code>data</code>
+<ul>
+<li><code>status</code>: 响应状态码，如 <code>200</code>, <code>302</code>, <code>404</code>, <code>500</code> 等等</li>
+<li><code>headers</code>: 响应头，类似 <code>{ 'content-type': 'text/html', ... }</code></li>
+<li><code>data</code>: 响应 body，默认 httpclient 不会做任何处理，会直接返回 Buffer 类型数据。
+一旦设置了 <code>options.dataType</code>，httpclient 将会根据此参数对 <code>data</code> 进行相应的处理。</li>
+</ul>
+</li>
+</ul>
+<p>完整的请求参数 <code>options</code> 和返回值 <code>result</code> 的说明请看下文的[<strong>options 参数详解</strong>](#options 参数详解)章节。</p>
+<h3 id="post"><a class="markdown-anchor" href="#post">#</a> POST</h3>
+<p>创建数据的场景一般来说都会使用 POST 请求，它相对于 GET 来说多了请求 body 这个参数。</p>
+<p>以发送 JSON body 的场景举例：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/post.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">post</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/post'</span>, &#123;</div><div class="line">    <span class="comment">// 必须指定 method</span></div><div class="line">    method: <span class="string">'POST'</span>,</div><div class="line">    <span class="comment">// 通过 contentType 告诉 httpclient 以 JSON 格式发送</span></div><div class="line">    contentType: <span class="string">'json'</span>,</div><div class="line">    <span class="attr">data</span>: &#123;</div><div class="line">      <span class="attr">hello</span>: <span class="string">'world'</span>,</div><div class="line">      <span class="attr">now</span>: <span class="built_in">Date</span>.now(),</div><div class="line">    &#125;,</div><div class="line">    <span class="comment">// 明确告诉 httpclient 以 JSON 格式处理响应 body</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.body = result.data;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>下文还会详细讲解以 POST 实现 Form 表单提交和文件上传的功能。</p>
+<h3 id="put"><a class="markdown-anchor" href="#put">#</a> PUT</h3>
+<p>PUT 与 POST 类似，它更加适合更新数据和替换数据的语义。
+除了 method 参数需要设置为 <code>PUT</code>，其他参数几乎跟 POST 一模一样。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/put.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">put</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/put'</span>, &#123;</div><div class="line">    <span class="comment">// 必须指定 method</span></div><div class="line">    method: <span class="string">'PUT'</span>,</div><div class="line">    <span class="comment">// 通过 contentType 告诉 httpclient 以 JSON 格式发送</span></div><div class="line">    contentType: <span class="string">'json'</span>,</div><div class="line">    <span class="attr">data</span>: &#123;</div><div class="line">      <span class="attr">update</span>: <span class="string">'foo bar'</span>,</div><div class="line">    &#125;,</div><div class="line">    <span class="comment">// 明确告诉 httpclient 以 JSON 格式处理响应 body</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.body = result.data;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="delete"><a class="markdown-anchor" href="#delete">#</a> DELETE</h3>
+<p>删除数据会选择 DELETE 请求，它通常可以不需要加请求 body，但是 httpclient 不会限制。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/delete.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">del</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/delete'</span>, &#123;</div><div class="line">    <span class="comment">// 必须指定 method</span></div><div class="line">    method: <span class="string">'DELETE'</span>,</div><div class="line">    <span class="comment">// 明确告诉 httpclient 以 JSON 格式处理响应 body</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.body = result.data;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="高级-http-请求"><a class="markdown-anchor" href="#高级-http-请求">#</a> 高级 HTTP 请求</h2>
+<p>在真实的应用场景下，还是会包含一些较为复杂的 HTTP 请求。</p>
+<h3 id="form-表单提交"><a class="markdown-anchor" href="#form-表单提交">#</a> Form 表单提交</h3>
+<p>面向浏览器设计的 Form 表单（不包含文件）提交接口，通常都要求以 <code>content-type: application/x-www-form-urlencoded</code>
+的格式提交请求数据。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/form.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">form</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/post'</span>, &#123;</div><div class="line">    <span class="comment">// 必须指定 method，支持 POST，PUT 和 DELETE</span></div><div class="line">    method: <span class="string">'POST'</span>,</div><div class="line">    <span class="comment">// 不需要设置 contentType，httpclient 会默认以 application/x-www-form-urlencoded 格式发送请求</span></div><div class="line">    data: &#123;</div><div class="line">      <span class="attr">now</span>: <span class="built_in">Date</span>.now(),</div><div class="line">      <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">    &#125;,</div><div class="line">    <span class="comment">// 明确告诉 httpclient 以 JSON 格式处理响应 body</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.body = result.data.form;</div><div class="line">  <span class="comment">// 响应最终会是类似以下的结果：</span></div><div class="line">  <span class="comment">// &#123;</span></div><div class="line">  <span class="comment">//   "foo": "bar",</span></div><div class="line">  <span class="comment">//   "now": "1483864184348"</span></div><div class="line">  <span class="comment">// &#125;</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="以-multipart-方式上传文件"><a class="markdown-anchor" href="#以-multipart-方式上传文件">#</a> 以 multipart 方式上传文件</h3>
+<p>当一个 Form 表单提交包含文件的时候，请求数据格式就必须以 <a href="http://tools.ietf.org/html/rfc2388" target="_blank" rel="external">multipart/form-data</a>
+进行提交了。
+这个时候需要引入 <a href="https://github.com/node-modules/formstream" target="_blank" rel="external">formstream</a> 这个第三方模块来帮助我们生成可以被 httpclient 消费的 <code>form</code> 对象。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/multipart.js</span></div><div class="line"><span class="keyword">const</span> FormStream = <span class="built_in">require</span>(<span class="string">'formstream'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">multipart</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> form = <span class="keyword">new</span> FormStream();</div><div class="line">  <span class="comment">// 设置普通的 key value</span></div><div class="line">  form.field(<span class="string">'foo'</span>, <span class="string">'bar'</span>);</div><div class="line">  <span class="comment">// 上传当前文件本身用于测试</span></div><div class="line">  form.file(<span class="string">'file'</span>, __filename);</div><div class="line"></div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://httpbin.org/post'</span>, &#123;</div><div class="line">    <span class="comment">// 必须指定 method，支持 POST，PUT</span></div><div class="line">    method: <span class="string">'POST'</span>,</div><div class="line">    <span class="comment">// 生成符合 multipart/form-data 要求的请求 headers</span></div><div class="line">    headers: form.headers(),</div><div class="line">    <span class="comment">// 以 stream 模式提交</span></div><div class="line">    stream: form,</div><div class="line">    <span class="comment">// 明确告诉 httpclient 以 JSON 格式处理响应 body</span></div><div class="line">    dataType: <span class="string">'json'</span>,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.body = result.data.files;</div><div class="line">  <span class="comment">// 响应最终会是类似以下的结果：</span></div><div class="line">  <span class="comment">// &#123;</span></div><div class="line">  <span class="comment">//   "file": "'use strict';\n\nconst For...."</span></div><div class="line">  <span class="comment">// &#125;</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>当然，你还可以继续通过 <code>form.file()</code> 添加更多文件以实现一次性上传多个文件的需求。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">form.file(<span class="string">'file1'</span>, file1);</div><div class="line">form.file(<span class="string">'file2'</span>, file2);</div></pre></td></tr></table></figure></p>
+<h3 id="以-stream-方式上传文件"><a class="markdown-anchor" href="#以-stream-方式上传文件">#</a> 以 stream 方式上传文件</h3>
+<p>其实，在 node 的世界里面，stream 才是主流。
+如果服务端支持流式上传，最友好的方式还是直接发送 stream。
+stream 实际会以 <code>Transfer-Encoding: chunked</code> 传输编码格式发送，这个转换是 <a href="https://nodejs.org/api/http.html" target="_blank" rel="external">http</a> 模块自动实现的。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/stream.js</span></div><div class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">stream</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 上传当前文件本身用于测试</span></div><div class="line">  <span class="keyword">const</span> fileStream = fs.createReadStream(__filename);</div><div class="line">  <span class="comment">// httpbin.org 不支持 stream 模式，使用本地 stream 接口代替</span></div><div class="line">  <span class="keyword">const</span> url = <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.protocol&#125;</span>://<span class="subst">$&#123;<span class="keyword">this</span>.host&#125;</span>/stream`</span>;</div><div class="line">  <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(url, &#123;</div><div class="line">    <span class="comment">// 必须指定 method，支持 POST，PUT</span></div><div class="line">    method: <span class="string">'POST'</span>,</div><div class="line">    <span class="comment">// 以 stream 模式提交</span></div><div class="line">    stream: fileStream,</div><div class="line">  &#125;);</div><div class="line">  <span class="keyword">this</span>.status = result.status;</div><div class="line">  <span class="keyword">this</span>.set(result.headers);</div><div class="line">  <span class="keyword">this</span>.body = result.data;</div><div class="line">  <span class="comment">// 响应最终会是类似以下的结果：</span></div><div class="line">  <span class="comment">// &#123;"streamSize":574&#125;</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="options-参数详解"><a class="markdown-anchor" href="#options-参数详解">#</a> options 参数详解</h2>
+<p>由于 HTTP 请求的复杂性，导致 <code>httpclient.request(url, options)</code> 的 options 参数会非常多。
+接下来将会以参数说明和代码配合一起讲解每个可选参数的实际用途。</p>
+<h3 id="httpclient-默认全局配置"><a class="markdown-anchor" href="#httpclient-默认全局配置">#</a> httpclient 默认全局配置</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.httpclient = &#123;</div><div class="line">  <span class="comment">// 默认开启 http/https KeepAlive 功能</span></div><div class="line">  keepAlive: <span class="literal">true</span>,</div><div class="line">  <span class="comment">// 空闲的 KeepAlive socket 最长可以存活 4 秒</span></div><div class="line">  freeSocketKeepAliveTimeout: <span class="number">4000</span>,</div><div class="line">  <span class="comment">// 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉</span></div><div class="line">  timeout: <span class="number">30000</span>,</div><div class="line">  <span class="comment">// 允许创建的最大 socket 数</span></div><div class="line">  maxSockets: <span class="literal">Infinity</span>,</div><div class="line">  <span class="comment">// 最大空闲 socket 数</span></div><div class="line">  maxFreeSockets: <span class="number">256</span>,</div><div class="line">  <span class="comment">// 是否开启本地 DNS 缓存，默认关闭</span></div><div class="line">  <span class="comment">// 一旦设置开启，则每个域名的 DNS 查询结果将在进程内缓存 10 秒</span></div><div class="line">  enableDNSCache: <span class="literal">false</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>应用可以通过 <code>config/config.default.js</code> 覆盖此配置。</p>
+<h3 id="data-object"><a class="markdown-anchor" href="#data-object">#</a> <code>data: Object</code></h3>
+<p>需要发送的请求数据，根据 <code>method</code> 自动选择正确的数据处理方式。</p>
+<ul>
+<li>GET，HEAD：通过 <code>querystring.stringify(data)</code> 处理后拼接到 url 的 query 参数上。</li>
+<li>POST，POST 和 DELETE 等：需要根据 <code>contentType</code> 做进一步判断处理。
+<ul>
+<li><code>contentType = json</code>：通过 <code>JSON.stringify(data)</code> 处理，并设置为 body 发送。</li>
+<li>其他：通过 <code>querystring.stringify(data)</code> 处理，并设置为 body 发送。</li>
+</ul>
+</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// GET + data</span></div><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">data</span>: &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;,</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// POST + data</span></div><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="attr">data</span>: &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;,</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// POST + JSON + data</span></div><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="attr">contentType</span>: <span class="string">'json'</span>,</div><div class="line">  <span class="attr">data</span>: &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="dataasquerystring-boolean"><a class="markdown-anchor" href="#dataasquerystring-boolean">#</a> <code>dataAsQueryString: Boolean</code></h3>
+<p>如果设置了 <code>dataAsQueryString=true</code>，那么即使在 POST 情况下，
+也会强制将 <code>options.data</code> 以 <code>querystring.stringify</code> 处理之后拼接到 url 的 query 参数上。</p>
+<p>可以很好地解决以 <code>stream</code> 发送数据，且额外的请求参数以 url query 形式传递的应用场景：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="attr">dataAsQueryString</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">data</span>: &#123;</div><div class="line">    <span class="comment">// 一般来说都是 access token 之类的权限验证参数</span></div><div class="line">    accessToken: <span class="string">'some access token value'</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">stream</span>: myFileStream,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="content-stringbuffer"><a class="markdown-anchor" href="#content-stringbuffer">#</a> <code>content: String|Buffer</code></h3>
+<p>发送请求正文，如果设置了此参数，那么会直接忽略 <code>data</code> 参数。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="comment">// 直接发送原始 xml 数据，不需要 httpclient 做特殊处理</span></div><div class="line">  content: <span class="string">'&lt;xml&gt;&lt;hello&gt;world&lt;/hello&gt;&lt;/xml&gt;'</span>,</div><div class="line">  <span class="attr">headers</span>: &#123;</div><div class="line">    <span class="string">'content-type'</span>: <span class="string">'text/html'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="stream-readstream"><a class="markdown-anchor" href="#stream-readstream">#</a> <code>stream: ReadStream</code></h3>
+<p>设置发送请求正文的可读数据流，默认是 <code>null</code>。
+一旦设置了此参数，httpclient 将会忽略 <code>data</code> 和 <code>content</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="attr">stream</span>: fs.createReadStream(<span class="string">'/path/to/read'</span>),</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="writestream-writestream"><a class="markdown-anchor" href="#writestream-writestream">#</a> <code>writeStream: WriteStream</code></h3>
+<p>设置接受响应数据的可写数据流，默认是 <code>null</code>。
+一旦设置此参数，那么返回值 <code>result.data</code> 将会被设置为 <code>null</code>，
+因为数据已经全部写入到 <code>writeStream</code> 中了。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">writeStream</span>: fs.createWriteStream(<span class="string">'/path/to/store'</span>),</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="consumewritestream-boolean"><a class="markdown-anchor" href="#consumewritestream-boolean">#</a> <code>consumeWriteStream: Boolean</code></h3>
+<p>是否等待 <code>writeStream</code> 完全写完才算响应全部接收完毕，默认是 <code>true</code>。
+此参数不建议修改默认值，除非我们明确知道它的副作用是可接受的，
+否则很可能会导致 <code>writeStream</code> 数据不完整。</p>
+<h3 id="method-string"><a class="markdown-anchor" href="#method-string">#</a> <code>method: String</code></h3>
+<p>设置请求方法，默认是 <code>GET</code>。
+支持 <code>GET、POST、PUT、DELETE、PATCH</code> 等<a href="https://nodejs.org/api/http.html#http_http_methods" target="_blank" rel="external">所有 HTTP 方法</a>。</p>
+<h3 id="contenttype-string"><a class="markdown-anchor" href="#contenttype-string">#</a> <code>contentType: String</code></h3>
+<p>设置请求数据格式，默认是 <code>undefined</code>，httpclient 会自动根据 <code>data</code> 和 <code>content</code> 参数自动设置。
+<code>data</code> 是 object 的时候默认设置的是 <code>form</code>。支持 <code>json</code> 格式。</p>
+<p>如需要以 JSON 格式发送 <code>data</code>：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">method</span>: <span class="string">'POST'</span>,</div><div class="line">  <span class="attr">data</span>: &#123;</div><div class="line">    <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">    <span class="attr">now</span>: <span class="built_in">Date</span>.now(),</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">contentType</span>: <span class="string">'json'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="datatype-string"><a class="markdown-anchor" href="#datatype-string">#</a> <code>dataType: String</code></h3>
+<p>设置响应数据格式，默认不对响应数据做任何处理，直接返回原始的 buffer 格式数据。
+支持 <code>text</code> 和 <code>json</code> 两种格式。</p>
+<p><strong>注意：设置成 <code>json</code> 时，如果响应数据解析失败会抛 <code>JSONResponseFormatError</code> 异常。</strong></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> jsonResult = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">&#125;);</div><div class="line"><span class="built_in">console</span>.log(jsonResult.data);</div><div class="line"></div><div class="line"><span class="keyword">const</span> htmlResult = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">dataType</span>: <span class="string">'text'</span>,</div><div class="line">&#125;);</div><div class="line"><span class="built_in">console</span>.log(htmlResult.data);</div></pre></td></tr></table></figure></p>
+<h3 id="fixjsonctlchars-boolean"><a class="markdown-anchor" href="#fixjsonctlchars-boolean">#</a> <code>fixJSONCtlChars: Boolean</code></h3>
+<p>是否自动过滤响应数据中的特殊控制字符 (U+0000 ~ U+001F)，默认是 <code>false</code>。
+通常一些 CGI 系统返回的 JSON 数据会包含这些特殊控制字符，通过此参数可以自动过滤掉它们。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">fixJSONCtlChars</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="headers-object"><a class="markdown-anchor" href="#headers-object">#</a> <code>headers: Object</code></h3>
+<p>自定义请求头。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">headers</span>: &#123;</div><div class="line">    <span class="string">'x-foo'</span>: <span class="string">'bar'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="timeout-numberarray"><a class="markdown-anchor" href="#timeout-numberarray">#</a> <code>timeout: Number|Array</code></h3>
+<p>请求超时时间，默认是 <code>[ 5000, 5000 ]</code>，即创建连接超时是 5 秒，接收响应超时是 5 秒。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="comment">// 创建连接超时 3 秒，接收响应超时 3 秒</span></div><div class="line">  timeout: <span class="number">3000</span>,</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="comment">// 创建连接超时 1 秒，接收响应超时 30 秒，用于响应比较大的场景</span></div><div class="line">  timeout: [ <span class="number">1000</span>, <span class="number">30000</span> ],</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="agent-httpagent"><a class="markdown-anchor" href="#agent-httpagent">#</a> <code>agent: HttpAgent</code></h3>
+<p>允许通过此参数覆盖默认的 http agent，如果你不想开启 KeepAlive，可以设置此参数为 <code>false</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">agent</span>: <span class="literal">false</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="httpsagent-httpsagent"><a class="markdown-anchor" href="#httpsagent-httpsagent">#</a> <code>httpsAgent: HttpsAgent</code></h3>
+<p>允许通过此参数覆盖默认的 https agent，如果你不想开启 KeepAlive，可以设置此参数为 <code>false</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">httpsAgent</span>: <span class="literal">false</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="auth-string"><a class="markdown-anchor" href="#auth-string">#</a> <code>auth: String</code></h3>
+<p>简单登录授权（Basic Authentication）参数，将以明文方式将登录信息以 <code>Authorization</code> 请求头发送出去。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="comment">// 参数必须按照 `user:password` 格式设置</span></div><div class="line">  auth: <span class="string">'foo:bar'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="digestauth-string"><a class="markdown-anchor" href="#digestauth-string">#</a> <code>digestAuth: String</code></h3>
+<p>摘要登录授权（Digest Authentication）参数，设置此参数会自动对 401 响应尝试生成 <code>Authorization</code> 请求头，
+尝试以授权方式请求一次。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="comment">// 参数必须按照 `user:password` 格式设置</span></div><div class="line">  digestAuth: <span class="string">'foo:bar'</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="followredirect-boolean"><a class="markdown-anchor" href="#followredirect-boolean">#</a> <code>followRedirect: Boolean</code></h3>
+<p>是否自动跟进 3xx 的跳转响应，默认是 <code>false</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">followRedirect</span>: <span class="literal">true</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="maxredirects-number"><a class="markdown-anchor" href="#maxredirects-number">#</a> <code>maxRedirects: Number</code></h3>
+<p>设置最大自动跳转次数，避免循环跳转无法终止，默认是 10 次。
+此参数不宜设置过大，它只在 <code>followRedirect=true</code> 情况下才会生效。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">followRedirect</span>: <span class="literal">true</span>,</div><div class="line">  <span class="comment">// 最大只允许自动跳转 5 次。</span></div><div class="line">  maxRedirects: <span class="number">5</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="formatredirecturl-functionfrom-to"><a class="markdown-anchor" href="#formatredirecturl-functionfrom-to">#</a> <code>formatRedirectUrl: Function(from, to)</code></h3>
+<p>允许我们通过 <code>formatRedirectUrl</code> 自定义实现 302、301 等跳转 url 拼接， 默认是 <code>url.resolve(from, to)</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">formatRedirectUrl</span>: <span class="function">(<span class="params"><span class="keyword">from</span>, to</span>) =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 例如可在这里修正跳转不正确的 url</span></div><div class="line">    <span class="keyword">if</span> (to === <span class="string">'//foo/'</span>) &#123;</div><div class="line">      to = <span class="string">'/foo'</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> url.resolve(<span class="keyword">from</span>, to);</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="beforerequest-functionoptions"><a class="markdown-anchor" href="#beforerequest-functionoptions">#</a> <code>beforeRequest: Function(options)</code></h3>
+<p>httpclient 在请求正在发送之前，会尝试调用 <code>beforeRequest</code> 钩子，允许我们在这里对请求参数做最后一次修改。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">beforeRequest</span>: <span class="function"><span class="params">options</span> =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 例如我们可以设置全局请求 id，方便日志跟踪</span></div><div class="line">    options.headers[<span class="string">'x-request-id'</span>] = uuid.v1();</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="streaming-boolean"><a class="markdown-anchor" href="#streaming-boolean">#</a> <code>streaming: Boolean</code></h3>
+<p>是否直接返回响应流，默认为 <code>false</code>。
+开启 streaming 之后，httpclient 会在拿到响应对象 res 之后马上返回，
+此时 <code>result.headers</code> 和 <code>result.status</code> 已经可以读取到，只是没有读取 data 数据而已。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">streaming</span>: <span class="literal">true</span>,</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(result.status, result.data);</div><div class="line"><span class="comment">// result.res 是一个 ReadStream 对象</span></div><div class="line"><span class="keyword">this</span>.body = result.res;</div></pre></td></tr></table></figure></p>
+<p><strong>注意：如果 res 不是直接传递给 body，那么我们必须消费这个 stream，并且要做好 error 事件处理。</strong></p>
+<h3 id="gzip-boolean"><a class="markdown-anchor" href="#gzip-boolean">#</a> <code>gzip: Boolean</code></h3>
+<p>是否支持 gzip 响应格式，默认为 <code>false</code>。
+开启 gzip 之后，httpclient 将自动设置 <code>Accept-Encoding: gzip</code> 请求头，
+并且会自动解压带 <code>Content-Encoding: gzip</code> 响应头的数据。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">gzip</span>: <span class="literal">true</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="timing-boolean"><a class="markdown-anchor" href="#timing-boolean">#</a> <code>timing: Boolean</code></h3>
+<p>是否开启请求各阶段的时间测量，默认为 <code>false</code>。
+开启 timing 之后，可以通过 <code>result.res.timing</code> 拿到这次 HTTP 请求各阶段的时间测量值（单位是毫秒），
+通过这些测量值，我们可以非常方便地定位到这次请求最慢的环境发生在那个阶段，效果如同 Chrome network timing 的作用。</p>
+<p>timing 各阶段测量值解析：</p>
+<ul>
+<li>queuing：分配 socket 耗时</li>
+<li>dnslookup：DNS 查询耗时</li>
+<li>connected：socket 三次握手连接成功耗时</li>
+<li>requestSent：请求数据完整发送完毕耗时</li>
+<li>waiting：收到第一个字节的响应数据耗时</li>
+<li>contentDownload：全部响应数据接收完毕耗时</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(url, &#123;</div><div class="line">  <span class="attr">timing</span>: <span class="literal">true</span>,</div><div class="line">&#125;);</div><div class="line"><span class="built_in">console</span>.log(result.res.timing);</div><div class="line"><span class="comment">// &#123;</span></div><div class="line"><span class="comment">//   "queuing":29,</span></div><div class="line"><span class="comment">//   "dnslookup":37,</span></div><div class="line"><span class="comment">//   "connected":370,</span></div><div class="line"><span class="comment">//   "requestSent":1001,</span></div><div class="line"><span class="comment">//   "waiting":1833,</span></div><div class="line"><span class="comment">//   "contentDownload":3416</span></div><div class="line"><span class="comment">// &#125;</span></div></pre></td></tr></table></figure></p>
+<h3 id="carejectunauthorizedpfxkeycertpassphrasecipherssecureprotocol"><a class="markdown-anchor" href="#carejectunauthorizedpfxkeycertpassphrasecipherssecureprotocol">#</a> <code>ca，rejectUnauthorized，pfx，key，cert，passphrase，ciphers，secureProtocol</code></h3>
+<p>这几个都是透传给 <a href="https://nodejs.org/api/https.html" target="_blank" rel="external">https</a> 模块的参数，具体请查看 <a href="https://nodejs.org/api/https.html#https_https_request_options_callback" target="_blank" rel="external"><code>https.request(options, callback)</code></a>。</p>
+<h2 id="常见错误"><a class="markdown-anchor" href="#常见错误">#</a> 常见错误</h2>
+<h3 id="创建连接超时"><a class="markdown-anchor" href="#创建连接超时">#</a> 创建连接超时</h3>
+<ul>
+<li>异常名称：<code>ConnectionTimeoutError</code></li>
+<li>出现场景：通常是 DNS 查询比较慢，或者客户端与服务端之间的网络速度比较慢导致的。</li>
+<li>排查建议：请适当增大 <code>timeout</code> 参数。</li>
+</ul>
+<h3 id="服务响应超时"><a class="markdown-anchor" href="#服务响应超时">#</a> 服务响应超时</h3>
+<ul>
+<li>异常名称：<code>ResponseTimeoutError</code></li>
+<li>出现场景：通常是客户端与服务端之间网络速度比较慢，并且响应数据比较大的情况下会发生。</li>
+<li>排查建议：请适当增大 <code>timeout</code> 参数。</li>
+</ul>
+<h3 id="服务主动断开连接"><a class="markdown-anchor" href="#服务主动断开连接">#</a> 服务主动断开连接</h3>
+<ul>
+<li>异常名称：<code>ResponseError, code: ECONNRESET</code></li>
+<li>出现场景：通常是服务端主动断开 socket 连接，导致 HTTP 请求链路异常。</li>
+<li>排查建议：请确保当时服务端是否发生网络异常。</li>
+</ul>
+<h3 id="服务不可达"><a class="markdown-anchor" href="#服务不可达">#</a> 服务不可达</h3>
+<ul>
+<li>异常名称：<code>RequestError, code: ECONNREFUSED, status: -1</code></li>
+<li>出现场景：通常是因为请求的 url 所属 IP 或者端口无法连接成功。</li>
+<li>排查建议：请确保 IP 或者端口设置正确。</li>
+</ul>
+<h3 id="域名不存在"><a class="markdown-anchor" href="#域名不存在">#</a> 域名不存在</h3>
+<ul>
+<li>异常名称：<code>RequestError, code: ENOTFOUND, status: -1</code></li>
+<li>出现场景：通常是因为请求的 url 所在的域名无法通过 DNS 解析成功。</li>
+<li>排查建议：请确保域名存在，也需要排查一下 DNS 服务是否配置正确。</li>
+</ul>
+<h3 id="json-响应数据格式错误"><a class="markdown-anchor" href="#json-响应数据格式错误">#</a> JSON 响应数据格式错误</h3>
+<ul>
+<li>异常名称：<code>JSONResponseFormatError</code></li>
+<li>出现场景：设置了 <code>dataType=json</code> 并且响应数据不符合 JSON 格式，就会抛出此异常。</li>
+<li>排查建议：确保服务端无论在什么情况下都要正确返回 JSON 格式的数据。</li>
+</ul>
+<h2 id="示例代码"><a class="markdown-anchor" href="#示例代码">#</a> 示例代码</h2>
+<p>完整示例代码可以在 <a href="https://github.com/eggjs/examples/blob/master/httpclient" target="_blank" rel="external">eggjs/exmaples/httpclient</a> 找到。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

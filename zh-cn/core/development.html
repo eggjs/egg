@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>本地开发</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>本地开发</h1>
+    <p>为了提升研发体验，我们提供了便捷的方式在本地进行开发、调试、单元测试等。</p>
+<p>在这里我们需要使用到 <a href="https://github.com/eggjs/egg-bin" target="_blank" rel="external">egg-bin</a> 模块（只在本地开发和单元测试使用，如果线上请参考 <a href="../advanced/deployment.html">部署</a>）。</p>
+<p>首先，我们需要把 <code>egg-bin</code> 模块作为 <code>devDependencies</code> 引入到 <code>package.json</code>：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"devDependencies"</span>: &#123;</div><div class="line">    <span class="attr">"egg-bin"</span>: <span class="string">"^1.0.0"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="启动应用"><a class="markdown-anchor" href="#启动应用">#</a> 启动应用</h2>
+<p>本地启动应用进行开发活动，当我们修改代码并保存后，应用会自动重启实时生效。</p>
+<h3 id="添加命令"><a class="markdown-anchor" href="#添加命令">#</a> 添加命令</h3>
+<p>添加便捷命令到 <code>scripts</code>：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"dev"</span>: <span class="string">"egg-bin dev"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样我们就可以通过 <code>npm run dev</code> 命令启动应用。</p>
+<h3 id="环境配置"><a class="markdown-anchor" href="#环境配置">#</a> 环境配置</h3>
+<p>本地启动的应用是以 <code>env: local</code> 启动的，读取的配置也是 <code>config.default.js</code> 和 <code>config.local.js</code> 合并的结果。</p>
+<h3 id="指定端口"><a class="markdown-anchor" href="#指定端口">#</a> 指定端口</h3>
+<p>本地启动应用默认监听 7001 端口，可指定其他端口，例如：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"dev"</span>: <span class="string">"egg-bin dev --port 7001"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="单元测试"><a class="markdown-anchor" href="#单元测试">#</a> 单元测试</h2>
+<p>这里主要讲解工具部分的使用，更多关于单元测试的内容请参考 <a href="./unittest.html">这里</a>。</p>
+<h3 id="添加命令-2"><a class="markdown-anchor" href="#添加命令-2">#</a> 添加命令</h3>
+<p>添加便捷命令到 <code>scripts</code>：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"test"</span>: <span class="string">"egg-bin test"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样我们就可以通过 <code>npm test</code> 命令运行单元测试。</p>
+<h3 id="环境配置-2"><a class="markdown-anchor" href="#环境配置-2">#</a> 环境配置</h3>
+<p>测试用例执行时，应用是以 <code>env: unittest</code> 启动的，读取的配置也是 <code>config.default.js</code> 和 <code>config.unittest.js</code> 合并的结果。</p>
+<h3 id="运行特定用例文件"><a class="markdown-anchor" href="#运行特定用例文件">#</a> 运行特定用例文件</h3>
+<p>运行 <code>npm test</code> 时会自动执行 test 目录下的以 <code>.test.js</code> 结尾的文件（<a href="http://web.npm.alibaba-inc.com/package/glob" target="_blank" rel="external">glob</a> 匹配规则<code>test/**/*.test.js</code>）。</p>
+<p>我们在编写用例时往往想单独执行正在编写的用例，可以通过以下方式指定特定用例文件：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">TESTS=<span class="built_in">test</span>/x.test.js npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<p>支持 <a href="http://web.npm.alibaba-inc.com/package/glob" target="_blank" rel="external">glob</a> 规则。</p>
+<h3 id="指定-reporter"><a class="markdown-anchor" href="#指定-reporter">#</a> 指定 reporter</h3>
+<p>mocha 支持多种形式的 reporter，默认使用 <code>spec</code> reporter。</p>
+<p>可以手动设置 <code>TEST_REPORTER</code> 环境变量来指定 reporter，例如使用 <code>dot</code>：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">TEST_REPORTER=dot npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<p><img src="https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png" alt="image"></p>
+<h3 id="指定用例超时时间"><a class="markdown-anchor" href="#指定用例超时时间">#</a> 指定用例超时时间</h3>
+<p>默认执行超时时间为 30 秒。我们也可以手动指定超时时间（单位毫秒），例如设置为 5 秒：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">TEST_TIMEOUT=5000 egg-bin <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<h2 id="代码覆盖率"><a class="markdown-anchor" href="#代码覆盖率">#</a> 代码覆盖率</h2>
+<p>egg-bin 已经内置了 <a href="https://github.com/gotwarlost/istanbul" target="_blank" rel="external">istanbul</a> 来支持单元测试自动生成代码覆盖率报告。</p>
+<p>添加便捷命令到 <code>scripts.cov</code>：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"cov"</span>: <span class="string">"egg-bin cov"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样我们就可以通过 <code>npm run cov</code> 命令运行单元测试覆盖率。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">egg-bin cov</div><div class="line"></div><div class="line">  <span class="built_in">test</span>/controller/home.test.js</div><div class="line">    GET /</div><div class="line">      ✓ should status 200 and get the body</div><div class="line">    POST /post</div><div class="line">      ✓ should status 200 and get the request body</div><div class="line"></div><div class="line">  ...</div><div class="line"></div><div class="line">  16 passing (1s)</div><div class="line"></div><div class="line">=============================== Coverage summary ===============================</div><div class="line">Statements   : 100% ( 41/41 )</div><div class="line">Branches     : 87.5% ( 7/8 )</div><div class="line">Functions    : 100% ( 10/10 )</div><div class="line">Lines        : 100% ( 41/41 )</div><div class="line">================================================================================</div></pre></td></tr></table></figure></p>
+<p>还可以通过 <code>open coverage/lcov-report/index.html</code> 打开完整的 HTML 覆盖率报告。</p>
+<p><img src="https://cloud.githubusercontent.com/assets/156269/21845201/a9a85ab6-d82c-11e6-8c24-5e85f352be4a.png" alt="image"></p>
+<h3 id="环境配置-3"><a class="markdown-anchor" href="#环境配置-3">#</a> 环境配置</h3>
+<p>和 <code>test</code> 命令一样，<code>cov</code> 命令执行时，应用也是以 <code>env: unittest</code> 启动的，读取的配置也是 <code>config.default.js</code> 和 <code>config.unittest.js</code> 合并的结果。</p>
+<h3 id="忽略指定文件"><a class="markdown-anchor" href="#忽略指定文件">#</a> 忽略指定文件</h3>
+<p>对于某些不需要跑测试覆盖率的文件，可以通过 <code>COV_EXCLUDES</code> 环境变量指定：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"cov"</span>: <span class="string">"COV_EXCLUDES=app/plugins/c* egg-bin cov"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="调试"><a class="markdown-anchor" href="#调试">#</a> 调试</h2>
+<h3 id="使用-egg-bin-调试"><a class="markdown-anchor" href="#使用-egg-bin-调试">#</a> 使用 egg-bin 调试</h3>
+<h4 id="添加命令-3"><a class="markdown-anchor" href="#添加命令-3">#</a> 添加命令</h4>
+<p>添加便捷命令到 <code>scripts</code>：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"debug"</span>: <span class="string">"egg-bin debug"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样我们就可以通过 <code>npm run debug</code> 命令调试应用。</p>
+<h4 id="环境配置-4"><a class="markdown-anchor" href="#环境配置-4">#</a> 环境配置</h4>
+<p>执行 <code>debug</code> 命令时，应用也是以 <code>env: local</code> 启动的，读取的配置是 <code>config.default.js</code> 和 <code>config.local.js</code> 合并的结果。</p>
+<h4 id="开始调试"><a class="markdown-anchor" href="#开始调试">#</a> 开始调试</h4>
+<p>找到你需要设置断点的文件，设置一个断点，访问一下，就进入断点调试了。</p>
+<p><img src="https://cloud.githubusercontent.com/assets/456108/21814737/38ed8f04-d795-11e6-93c4-1de9f1d432c8.png" alt="image"></p>
+<h3 id="使用-logger-模块调试"><a class="markdown-anchor" href="#使用-logger-模块调试">#</a> 使用 logger 模块调试</h3>
+<p>框架内置了<a href="./logger.html">日志</a>功能，使用 <code>logger.debug()</code> 输出调试信息，<strong>推荐在应用代码中使用它。</strong></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// controller</span></div><div class="line"><span class="keyword">this</span>.logger.debug(<span class="string">'current user: %j'</span>, <span class="keyword">this</span>.user);</div><div class="line"></div><div class="line"><span class="comment">// service</span></div><div class="line"><span class="keyword">this</span>.ctx.logger.debug(<span class="string">'debug info from service'</span>);</div><div class="line"></div><div class="line"><span class="comment">// app/init.js</span></div><div class="line">app.logger.debug(<span class="string">'app init'</span>);</div></pre></td></tr></table></figure></p>
+<p>通过 <code>config.logger.level</code> 来配置打印到文件的日志级别，通过 <code>config.logger.consoleLevel</code> 配置打印到终端的日志级别。</p>
+<h3 id="使用-debug-模块调试"><a class="markdown-anchor" href="#使用-debug-模块调试">#</a> 使用 debug 模块调试</h3>
+<p><a href="https://www.npmjs.com/package/debug" target="_blank" rel="external">debug</a> 模块是 node 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，egg 社区也广泛采用这一机制打印 debug 信息，<strong>推荐在框架和插件开发中使用它。</strong></p>
+<p>我们可以通过 <code>DEBUG</code> 环境变量选择开启指定的调试代码，方便观测执行过程。</p>
+<p>（调试模块和日志模块不要混淆，而且日志模块也有很多功能，这里所说的日志都是调试信息。）</p>
+<p>开启所有模块的日志：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">DEBUG=* npm run dev</div></pre></td></tr></table></figure></p>
+<p>开启指定模块的日志：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">DEBUG=egg* npm run dev</div></pre></td></tr></table></figure></p>
+<p>单元测试也可以用 <code>DEBUG=* npm test</code> 来查看测试用例运行的详细日志。</p>
+<h2 id="更多"><a class="markdown-anchor" href="#更多">#</a> 更多</h2>
+<p>如果想了解更多本地开发相关的内容，例如为你的团队定制一个本地开发工具，请参考 <a href="https://github.com/eggjs/egg-bin" target="_blank" rel="external">egg-bin</a>。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

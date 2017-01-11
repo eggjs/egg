@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>插件开发</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>插件开发</h1>
+    <p>插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了</p>
+<blockquote>
+<p>koa 已经有了中间件的机制，为啥还要插件呢？<br>
+中间件、插件、应用它们之间是什么关系，有什么区别？<br>
+我该怎么使用一个插件？<br>
+如何编写一个插件？<br>
+...</p>
+</blockquote>
+<p>接下来我们就来逐一讨论</p>
+<h2 id="为什么要插件"><a class="markdown-anchor" href="#为什么要插件">#</a> 为什么要插件</h2>
+<p>我们在使用 koa 中间件过程中发现了下面一些问题</p>
+<ol>
+<li>中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。</li>
+<li>中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。</li>
+<li>有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现</li>
+</ol>
+<p>综上所诉，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。</p>
+<h2 id="什么是插件"><a class="markdown-anchor" href="#什么是插件">#</a> 什么是插件</h2>
+<p>一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">. hello-plugin</div><div class="line">├── package.json</div><div class="line">├── app.js (可选)</div><div class="line">├── agent.js (可选)</div><div class="line">├── app</div><div class="line">│   ├── extend (可选)</div><div class="line">│   |   ├── helper.js (可选)</div><div class="line">│   |   ├── request.js (可选)</div><div class="line">│   |   ├── response.js (可选)</div><div class="line">│   |   ├── context.js (可选)</div><div class="line">│   |   ├── application.js (可选)</div><div class="line">│   |   └── agent.js (可选)</div><div class="line">│   ├── service (可选)</div><div class="line">│   └── middleware (可选)</div><div class="line">│       └── mw.js</div><div class="line">├── config</div><div class="line">|   ├── config.default.js</div><div class="line">│   ├── config.prod.js</div><div class="line">|   ├── config.test.js (可选)</div><div class="line">|   ├── config.local.js (可选)</div><div class="line">|   └── config.unittest.js (可选)</div><div class="line">└── test</div><div class="line">    └── middleware</div><div class="line">        └── mw.test.js</div></pre></td></tr></table></figure></p>
+<p>那区别在哪儿呢？</p>
+<ol>
+<li>
+<p>插件没有独立的 router 和 controller。这主要出于几点考虑：</p>
+<ul>
+<li>路由一般和应用强绑定的，不具备通用性</li>
+<li>一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突</li>
+<li>如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现</li>
+</ul>
+</li>
+<li>
+<p>插件需要在 <code>package.json</code> 中的 <code>eggPlugin</code> 节点指定插件特有的信息</p>
+<ul>
+<li><code>{String} name</code> - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。</li>
+<li><code>{Array} dependencies</code> - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）</li>
+<li><code>{Array} optionalDependencies</code> - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）</li>
+<li><code>{Array} env</code> - 只有在指定运行环境才能开启，具体有哪些环境可以参考 <a href="../basics/env.html">运行环境</a>。此配置是可选的，一般情况下都不需要配置</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-rpc"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"rpc"</span>,</div><div class="line">    <span class="attr">"dependencies"</span>: [ <span class="string">"registry"</span> ],</div><div class="line">    <span class="attr">"optionalDependencies"</span>: [ <span class="string">"vip"</span> ],</div><div class="line">    <span class="attr">"env"</span>: [ <span class="string">"local"</span>, <span class="string">"test"</span>, <span class="string">"unittest"</span>, <span class="string">"prod"</span> ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</li>
+</ol>
+<h2 id="插件的依赖管理"><a class="markdown-anchor" href="#插件的依赖管理">#</a> 插件的依赖管理</h2>
+<p>和中间件不同，插件是自己管理依赖的。应用在加载所有插件前会预先从它们的 <code>package.json</code> 中读取 <code>eggPlugin &gt; dependencies</code> 和 <code>eggPlugin &gt; optionalDependencies</code> 节点，然后根据依赖关系计算出加载顺序，举个例子，下面三个插件的加载顺序就应该是 <code>c =&gt; b =&gt; a</code></p>
+<p><figure class="highlight"><table><tr><td class="code"><pre><div class="line">// plugin a</div><div class="line">&#123;</div><div class="line">  "name": "egg-plugin-a",</div><div class="line">  "eggPlugin": &#123;</div><div class="line">    "name": "a",</div><div class="line">    "dependencies": [ "b" ]</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// plugin b</div><div class="line">&#123;</div><div class="line">  "name": "egg-plugin-b",</div><div class="line">  "egg-Plugin": &#123;</div><div class="line">    "name": "b",</div><div class="line">    "optionalDependencies": [ "c" ]</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">// plugin c</div><div class="line">&#123;</div><div class="line">  "name": "egg-plugin-c",</div><div class="line">  "egg-Plugin": &#123;</div><div class="line">    "name": "c"</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>dependencies</code> 和 <code>optionalDependencies</code> 是从 <code>npm</code> 借鉴来的概念，大多数情况下我们都使用 <code>dependencies</code>，这也是我们最推荐的依赖方式。那什么时候可以用 <code>optionalDependencies</code> 呢？大致就两种：</p>
+<ul>
+<li>只在某些环境下才依赖，比如：一个鉴权插件，只在开发环境依赖一个 mock 数据的插件</li>
+<li>弱依赖，比如：A 依赖 B，但是如果没有 B，A 有相应的降级方案</li>
+</ul>
+<p>需要特别强调的是：如果采用 <code>optionalDependencies</code> 那么框架不会校验依赖的插件是否开启，它的作用仅仅是计算加载顺序。所以，这时候依赖方需要通过『接口探测』等方式来决定相应的处理逻辑。</p>
+<h2 id="插件能做什么"><a class="markdown-anchor" href="#插件能做什么">#</a> 插件能做什么？</h2>
+<p>上面给出了插件的定义，那插件到底能做什么？</p>
+<h3 id="扩展内置对象的接口"><a class="markdown-anchor" href="#扩展内置对象的接口">#</a> 扩展内置对象的接口</h3>
+<p>在插件相应的文件内对框架内置对象进行扩展，和应用一样</p>
+<ul>
+<li><code>app/extend/request.js</code> - 扩展 koa#Request 对象</li>
+<li><code>app/extend/response.js</code> - 扩展 koa#Response 对象</li>
+<li><code>app/extend/context.js</code> - 扩展 koa#Context 对象</li>
+<li><code>app/extend/helper.js</code> - 扩展 Helper 对象</li>
+<li><code>app/extend/application.js</code> - 扩展 app 对象</li>
+<li><code>app/extend/agent.js</code> - 扩展 agent 对象</li>
+</ul>
+<h3 id="插入自定义中间件"><a class="markdown-anchor" href="#插入自定义中间件">#</a> 插入自定义中间件</h3>
+<ol>
+<li>首先在 <code>app/middleware</code> 目录下定义好中间件实现</li>
+</ol>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> staticCache = <span class="built_in">require</span>(<span class="string">'koa-static-cache'</span>);</div><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"><span class="keyword">const</span> mkdirp = <span class="built_in">require</span>(<span class="string">'mkdirp'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">options, app</span>) =&gt;</span> &#123;</div><div class="line">  assert.strictEqual(<span class="keyword">typeof</span> options.dir, <span class="string">'string'</span>,</div><div class="line">    <span class="string">'Must set `app.config.static.dir` when static plugin enable'</span>);</div><div class="line"></div><div class="line">  <span class="comment">// ensure directory exists</span></div><div class="line">  mkdirp.sync(options.dir);</div><div class="line"></div><div class="line">  app.loggers.coreLogger.info(<span class="string">'[egg-static] starting static serve %s -&gt; %s'</span>,</div><div class="line">    options.prefix, options.dir);</div><div class="line"></div><div class="line">  <span class="keyword">return</span> staticCache(options);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<ol start="2">
+<li>在 <code>app.js</code> 中将中间件插入到合适的位置（例如：下面将 static 中间件放到 bodyParser 之前）</li>
+</ol>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="comment">// 将 static 中间件放到 bodyParser 之前</span></div><div class="line">  <span class="keyword">const</span> index = app.config.coreMiddleware.indexOf(<span class="string">'bodyParser'</span>);</div><div class="line">  assert(index &gt;= <span class="number">0</span>, <span class="string">'bodyParser 中间件必须存在'</span>);</div><div class="line"></div><div class="line">  app.config.coreMiddleware.splice(index, <span class="number">0</span>, <span class="string">'static'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="在应用启动时做一些初始化工作"><a class="markdown-anchor" href="#在应用启动时做一些初始化工作">#</a> 在应用启动时做一些初始化工作</h3>
+<ul>
+<li>
+<p>我在启动前想读取一些本地配置</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// $&#123;plugin_root&#125;/app.js</span></div><div class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.customData = fs.readFileSync(path.join(app.config.baseDir, <span class="string">'data.bin'</span>));</div><div class="line"></div><div class="line">  app.coreLogger.info(<span class="string">'read data ok'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>如果有异步启动逻辑，可以使用 <code>app.beforeStart</code> API</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// $&#123;plugin_root&#125;/app.js</span></div><div class="line"><span class="keyword">const</span> MyClient = <span class="built_in">require</span>(<span class="string">'my-client'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.myClient = <span class="keyword">new</span> MyClient();</div><div class="line">  app.myClient.on(<span class="string">'error'</span>, err =&gt; &#123;</div><div class="line">    app.coreLogger.error(err);</div><div class="line">  &#125;);</div><div class="line">  app.beforeStart(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> app.myClient.ready();</div><div class="line">    app.coreLogger.info(<span class="string">'my client is ready'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>也可以添加 agent 启动逻辑，使用 <code>agent.beforeStart</code> API</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// $&#123;plugin_root&#125;/agent.js</span></div><div class="line"><span class="keyword">const</span> MyClient = <span class="built_in">require</span>(<span class="string">'my-client'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">agent</span> =&gt;</span> &#123;</div><div class="line">  agent.myClient = <span class="keyword">new</span> MyClient();</div><div class="line">  agent.myClient.on(<span class="string">'error'</span>, err =&gt; &#123;</div><div class="line">    agent.coreLogger.error(err);</div><div class="line">  &#125;);</div><div class="line">  agent.beforeStart(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> agent.myClient.ready();</div><div class="line">    agent.coreLogger.info(<span class="string">'my client is ready'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<h3 id="设置定时任务"><a class="markdown-anchor" href="#设置定时任务">#</a> 设置定时任务</h3>
+<ol>
+<li>在 <code>package.json</code> 里设置依赖 schedule 插件</li>
+</ol>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"your-plugin"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"your-plugin"</span>,</div><div class="line">    <span class="attr">"dependencies"</span>: [ <span class="string">"schedule"</span> ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ol start="2">
+<li>在 <code>${plugin_root}/app/schedule/</code> 目录下新建文件，编写你的定时任务</li>
+</ol>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.schedule = &#123;</div><div class="line">  <span class="attr">type</span>: <span class="string">'worker'</span>,</div><div class="line">  <span class="attr">cron</span>: <span class="string">'0 0 3 * * *'</span>,</div><div class="line">  <span class="comment">// interval: '1h',</span></div><div class="line">  <span class="comment">// immediate: true,</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line">exports.task = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="comment">// your logic code</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="插件使用指南"><a class="markdown-anchor" href="#插件使用指南">#</a> 插件使用指南</h2>
+<h3 id="安装"><a class="markdown-anchor" href="#安装">#</a> 安装</h3>
+<p>和安装普通 <code>npm</code> 包一样</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-onerror --save</div></pre></td></tr></table></figure></p>
+<h3 id="开启和关闭"><a class="markdown-anchor" href="#开启和关闭">#</a> 开启和关闭</h3>
+<p>在应用的 <code>${app_root}/config/plugin.js</code> 文件里配置</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">onerror</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-onerror'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>每个配置项有一下配置参数：</p>
+<ul>
+<li><code>{Boolean} enable</code> - 是否开启此插件</li>
+<li><code>{String} package</code> - <code>npm</code> 模块名称，允许插件以 <code>npm</code> 模块形式引入</li>
+<li><code>{String} path</code> - 插件绝对路径，跟 package 配置互斥</li>
+<li><code>{Array} env</code> - 只有在指定运行环境才能开启，会覆盖插件自己的配置</li>
+</ul>
+<p>这里稍微讲下 package 和 path 的区别</p>
+<ul>
+<li>package 是 <code>npm</code> 方式引入，也是最常见的引入方式</li>
+<li>path 是绝对路径引入，一般是内置插件，比如：应用内部抽了一个插件，但还没来得及发布到 <code>npm</code>，或者是应用自己覆盖了框架的一些插件</li>
+</ul>
+<p><em>说明：</em> 框架内部内置了一些插件，而应用在使用这些插件的时候就不用配置 package 或者 path，只需要指定 enable 与否</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 对于内置插件，可以用下面的简洁方式开启或关闭</span></div><div class="line">exports.onerror = <span class="literal">false</span>;</div></pre></td></tr></table></figure></p>
+<p>框架已内置插件列表：</p>
+<ul>
+<li><a href="https://github.com/eggjs/egg-onerror" target="_blank" rel="external">onerror</a> 统一异常处理</li>
+<li><a href="https://github.com/eggjs/egg-userservice" target="_blank" rel="external">userservice</a> 用户数据访问</li>
+<li><a href="https://github.com/eggjs/egg-userrole" target="_blank" rel="external">userrole</a> 用户角色定义</li>
+<li><a href="https://github.com/eggjs/egg-session" target="_blank" rel="external">session</a> session 实现</li>
+<li><a href="https://github.com/eggjs/egg-i18n" target="_blank" rel="external">i18n</a> 多语言</li>
+<li><a href="https://github.com/eggjs/egg-validate" target="_blank" rel="external">validate</a> 数据校验</li>
+<li><a href="https://github.com/eggjs/egg-watcher" target="_blank" rel="external">watcher</a> 文件和文件夹监控</li>
+<li><a href="https://github.com/eggjs/egg-multipart" target="_blank" rel="external">multipart</a> 文件流式上传</li>
+<li><a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">security</a> 安全</li>
+<li><a href="https://github.com/eggjs/egg-development" target="_blank" rel="external">development</a> 开发环境配置</li>
+<li><a href="https://github.com/eggjs/egg-logrotator" target="_blank" rel="external">logrotator</a> 日志切分</li>
+<li><a href="https://github.com/eggjs/egg-schedule" target="_blank" rel="external">schedule</a> 定时任务</li>
+<li><a href="https://github.com/eggjs/egg-rest" target="_blank" rel="external">rest</a> RESTful 支持</li>
+<li><a href="https://github.com/eggjs/egg-static" target="_blank" rel="external">static</a> 静态服务器</li>
+<li><a href="https://github.com/eggjs/egg-cors" target="_blank" rel="external">cors</a> CORS 支持</li>
+</ul>
+<h3 id="插件的寻址规则"><a class="markdown-anchor" href="#插件的寻址规则">#</a> 插件的寻址规则</h3>
+<p>框架在加载插件的时候，遵循下面的寻址规则：</p>
+<ul>
+<li>
+<p>如果配置了 path，直接按照 path 加载</p>
+</li>
+<li>
+<p>没有 path 根据 package 名去查找，查找的顺序依次是</p>
+<ol>
+<li>应用根目录下的 <code>node_modules</code></li>
+<li>应用依赖框架路径下的 <code>node_modules</code></li>
+<li>当前路径下的 <code>node_modules</code> （主要是兼容单元测试场景）</li>
+</ol>
+</li>
+</ul>
+<h2 id="插件规范"><a class="markdown-anchor" href="#插件规范">#</a> 插件规范</h2>
+<p>我们非常欢迎您贡献新的插件，同时也希望您遵守下面一些规范：</p>
+<ul>
+<li>
+<p>命名规范</p>
+<ul>
+<li><code>npm</code> 包名以 <code>egg-</code> 开头，且为全小写，例如：<code>egg-xx</code>。比较长的词组用中划线：<code>egg-foo-bar</code></li>
+<li>对应的插件名使用小驼峰，小驼峰转换规则以 <code>npm</code> 包名 的中划线为准 <code>egg-foo-bar</code> =&gt; <code>fooBar</code></li>
+<li>对于可以中划线也可以不用的情况，不做强制约定，例如：userservice(egg-userservice) 还是 user-service(egg-user-service) 都可以</li>
+</ul>
+</li>
+<li>
+<p><code>package.json</code> 书写规范</p>
+<ul>
+<li>按照上面的文档添加 <code>eggPlugin</code> 节点</li>
+<li>在 <code>keywords</code> 里加上 <code>egg</code>、<code>egg-plugin</code>、<code>eggPlugin</code> 等关键字，便于索引</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-view-nunjucks"</span>,</div><div class="line">  <span class="attr">"version"</span>: <span class="string">"0.5.0"</span>,</div><div class="line">  <span class="attr">"description"</span>: <span class="string">"view plugin for egg"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"view"</span>,</div><div class="line">    <span class="attr">"dep"</span>: [</div><div class="line">      <span class="string">"security"</span></div><div class="line">    ]</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">"keywords"</span>: [</div><div class="line">    <span class="string">"egg"</span>,</div><div class="line">    <span class="string">"egg-plugin"</span>,</div><div class="line">    <span class="string">"eggPlugin"</span>,</div><div class="line">    <span class="string">"egg-plugin-view"</span>,</div><div class="line">    <span class="string">"nunjucks"</span></div><div class="line">  ],</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</li>
+</ul>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

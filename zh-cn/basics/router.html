@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>router</title>
+<meta charset="utf-8">
+<meta name="description" content="A web framework's framework for Node.js.">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>router</h1>
+    <p>router 主要用来描述请求 URL 和具体承担执行动作 controller 的对应关系，
+在框架中约定了一个 <code>app/router.js</code> 文件，在这里统一所有路由规则。</p>
+<p>通过统一的配置，我们可以避免路由规则逻辑散落在多个地方，从而出现未知的冲突，集中在一起我们可以更方便的来查看全局的路由规则。</p>
+<h2 id="如何定义-router"><a class="markdown-anchor" href="#如何定义-router">#</a> 如何定义 router</h2>
+<ul>
+<li><code>app/router.js</code> 里面定义 url 路由规则</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/user/:id'</span>, <span class="string">'user.info'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>app/controller</code> 目录下面实现 controller</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/user.js</span></div><div class="line">exports.info = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = &#123;</div><div class="line">    <span class="attr">name</span>: <span class="string">`hello <span class="subst">$&#123;<span class="keyword">this</span>.params.id&#125;</span>`</span>,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这样就完成了一个最简单的 router 定义，当用户执行 <code>GET /user/123</code>，<code>user.js</code> 这个里面的 info 方法就会执行。</p>
+<h2 id="router-详细定义说明"><a class="markdown-anchor" href="#router-详细定义说明">#</a> router 详细定义说明</h2>
+<p>下面是路由的完整定义，参数可以根据场景的不同，自由选择。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.verb(<span class="string">'path-match'</span>, <span class="string">'controller.action'</span>);</div><div class="line">app.verb(<span class="string">'router-name'</span>, <span class="string">'path-match'</span>, <span class="string">'controller.action'</span>);</div><div class="line">app.verb(<span class="string">'path-match'</span>, middleware1, ..., middlewareN, <span class="string">'controller.action'</span>);</div><div class="line">app.verb(<span class="string">'router-name'</span>, <span class="string">'path-match'</span>, middleware1, ..., middlewareN, <span class="string">'controller.action'</span>);</div></pre></td></tr></table></figure></p>
+<p>路由完整定义主要包括5个主要部分:</p>
+<ul>
+<li>verb - 用户触发动作，支持 get，post 等方法，后面会通过示例详细说明。
+<ul>
+<li>app.head - HEAD</li>
+<li>app.options - OPTIONS</li>
+<li>app.get - GET</li>
+<li>app.put - PUT</li>
+<li>app.post - POST</li>
+<li>app.patch - PATCH</li>
+<li>app.delete - DELETE</li>
+<li>app.del - 由于 delete 是一个保留字，所以提供了一个 delete 方法的别名。</li>
+<li>app.redirect - 可以对 URL 进行重定向处理，比如我们最经常使用的可以把用户访问的根目录路由到某个主页。</li>
+</ul>
+</li>
+<li>router-name 给路由设定一个别名，可以通过 helper 提供的辅助函数 pathFor 和 urlFor 来生成 url。(可选)</li>
+<li>path-match - 路由 URL 路径。</li>
+<li>middleware1 - 在 router 里面可以配置多个 middleware。(可选)</li>
+<li>controller.action - 注意是字符串，框架会自动从 <code>app/controller</code> 目录中区查找同名 controller，
+并且把处理指定到配置的 action 方法。如果 controller 文件直接 export 一个方法，可以省略 action。</li>
+</ul>
+<h3 id="注意事项"><a class="markdown-anchor" href="#注意事项">#</a> 注意事项</h3>
+<ul>
+<li>在 router 定义中， 可以支持多个 middleware 串联执行</li>
+<li>controller 必须定义在 <code>app/controller</code> 目录中，并且对应的函数一定要是 generator function。</li>
+<li>一个文件里面也可以包含多个 controller 定义，在定义路由的时候，
+可以通过 <code>controller-filename.function-name</code> 的方式指定对应的 controller。</li>
+</ul>
+<p>下面是一些路由定义的方式：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.get(<span class="string">'/home'</span>, <span class="string">'home'</span>);</div><div class="line">app.get(<span class="string">'/user/:id'</span>, <span class="string">'user.page'</span>);</div><div class="line">app.post(<span class="string">'/admin'</span>, isAdmin, <span class="string">'admin'</span>);</div><div class="line">app.post(<span class="string">'user'</span>, <span class="string">'/user'</span>, isLoginUser, hasAdminPermission, <span class="string">'user.create'</span>);</div></pre></td></tr></table></figure></p>
+<h3 id="restful-风格的-url-定义"><a class="markdown-anchor" href="#restful-风格的-url-定义">#</a> RESTful 风格的 URL 定义</h3>
+<p>如果想通过 RESTful 的方式来定义路由，
+我们提供了 <code>app.resources('router-name', 'path-match', 'controller-name')</code> 快速在一个路径上生成 <a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete" target="_blank" rel="external">CRUD</a> 路由结构。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.resources(<span class="string">'posts'</span>, <span class="string">'/posts'</span>, <span class="string">'posts'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>上面代码就在 <code>/posts</code> 路径上部署了一组 CRUD 路径结构，对应的 controller 为 <code>app/controller/posts.js</code> 接下来，
+你只需要在 <code>posts.js</code> 里面实现对应的函数就可以了。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Route Name</th>
+<th>Controller.Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/posts</td>
+<td>posts</td>
+<td>app.controllers.posts.index</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/posts/new</td>
+<td>new_post</td>
+<td>app.controllers.posts.new</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/posts/:id</td>
+<td>post</td>
+<td>app.controllers.posts.show</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/posts/:id/edit</td>
+<td>edit_post</td>
+<td>app.controllers.posts.edit</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/posts</td>
+<td>posts</td>
+<td>app.controllers.posts.create</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/posts/:id</td>
+<td>post</td>
+<td>app.controllers.posts.update</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/posts/:id</td>
+<td>post</td>
+<td>app.controllers.posts.destroy</td>
+</tr>
+</tbody>
+</table>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/posts.js</span></div><div class="line">exports.index = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.new = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.create = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.show = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.edit = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.update = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div><div class="line"></div><div class="line">exports.destroy = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;&#125;;</div></pre></td></tr></table></figure></p>
+<p>如果我们不需要其中的某几个方法，可以不用在 <code>posts.js</code> 里面实现，这样对应 URL 路径也不会注册到 router。</p>
+<h2 id="router-实战"><a class="markdown-anchor" href="#router-实战">#</a> router 实战</h2>
+<p>下面通过更多实际的例子，来说明 router 的用法。</p>
+<h3 id="参数获取"><a class="markdown-anchor" href="#参数获取">#</a> 参数获取</h3>
+<h4 id="query-方式"><a class="markdown-anchor" href="#query-方式">#</a> query 方式</h4>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/search'</span>, <span class="string">'search'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/search.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">`search: <span class="subst">$&#123;<span class="keyword">this</span>.query.name&#125;</span>`</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// http://127.0.0.1:7001/search?name=egg</span></div></pre></td></tr></table></figure></p>
+<h4 id="参数命名方式"><a class="markdown-anchor" href="#参数命名方式">#</a> 参数命名方式</h4>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/user/:id/:name'</span>, <span class="string">'user.info'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/user.js</span></div><div class="line">exports.info = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">`user: <span class="subst">$&#123;<span class="keyword">this</span>.params.id&#125;</span>, <span class="subst">$&#123;<span class="keyword">this</span>.params.name&#125;</span>`</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// http://127.0.0.1:7001/user/123</span></div></pre></td></tr></table></figure></p>
+<h4 id="复杂参数的获取"><a class="markdown-anchor" href="#复杂参数的获取">#</a> 复杂参数的获取</h4>
+<p>路由里面也支持定义正则，可以更加灵活的获取参数</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="regexp">/^\/package\/([\w-.]+\/[\w-.]+)$/</span>, <span class="string">'package.detail'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/package.js</span></div><div class="line">exports.detail = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 如果请求 URL 被正则匹配， 可以按照捕获分组的顺序，从 this.params 中获取。</span></div><div class="line">  <span class="comment">// 按照下面的用户请求，`this.params[0]` 的 内容就是 `egg/1.0.0`</span></div><div class="line">  <span class="keyword">this</span>.body = <span class="string">`package:<span class="subst">$&#123;<span class="keyword">this</span>.params[<span class="number">0</span>]&#125;</span>`</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// curl http://127.0.0.1:7001/package/egg/1.0.0</span></div></pre></td></tr></table></figure></p>
+<h3 id="表单内容的获取"><a class="markdown-anchor" href="#表单内容的获取">#</a> 表单内容的获取</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.post(<span class="string">'/form'</span>, <span class="string">'form'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/form.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">`body: <span class="subst">$&#123;<span class="built_in">JSON</span>.stringify(<span class="keyword">this</span>.request.body)&#125;</span>`</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 模拟发起 post 请求。</span></div><div class="line"><span class="comment">// curl -X POST http://127.0.0.1:7001/form --data '&#123;"name":"controller"&#125;' --header 'Content-Type:application/json'</span></div></pre></td></tr></table></figure></p>
+<h3 id="表单校验"><a class="markdown-anchor" href="#表单校验">#</a> 表单校验</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.post(<span class="string">'/user'</span>, <span class="string">'user'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/user.js</span></div><div class="line"><span class="keyword">const</span> createRule = &#123;</div><div class="line">  <span class="attr">username</span>: &#123;</div><div class="line">    <span class="attr">type</span>: <span class="string">'email'</span>,</div><div class="line">  &#125;,</div><div class="line">  <span class="attr">password</span>: &#123;</div><div class="line">    <span class="attr">type</span>: <span class="string">'password'</span>,</div><div class="line">    <span class="attr">compare</span>: <span class="string">'re-password'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div><div class="line"></div><div class="line">exports.create = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 如果校验报错，会抛出异常</span></div><div class="line">  <span class="keyword">this</span>.validate(createRule);</div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">this</span>.request.body;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// curl -X POST http://127.0.0.1:7001/user --data 'username=abc@abc.com&amp;password=111111&amp;re-password=111111'</span></div></pre></td></tr></table></figure></p>
+<h3 id="重定向"><a class="markdown-anchor" href="#重定向">#</a> 重定向</h3>
+<h4 id="内部重定向"><a class="markdown-anchor" href="#内部重定向">#</a> 内部重定向</h4>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'index'</span>, <span class="string">'/home/index'</span>, <span class="string">'home.index'</span>);</div><div class="line">  app.redirect(<span class="string">'/'</span>, <span class="string">'/home/index'</span>, <span class="number">302</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line">exports.index = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">'hello controller'</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// curl -L http://localhost:7001</span></div></pre></td></tr></table></figure></p>
+<h4 id="外部重定向"><a class="markdown-anchor" href="#外部重定向">#</a> 外部重定向</h4>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'/search'</span>, <span class="string">'search'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/search.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> type = <span class="keyword">this</span>.query.type;</div><div class="line">  <span class="keyword">const</span> q = <span class="keyword">this</span>.query.q || <span class="string">'nodejs'</span>;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (type === <span class="string">'bing'</span>) &#123;</div><div class="line">    <span class="keyword">this</span>.redirect(<span class="string">`http://cn.bing.com/search?q=<span class="subst">$&#123;q&#125;</span>`</span>);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">this</span>.redirect(<span class="string">`https://www.google.co.kr/search?q=<span class="subst">$&#123;q&#125;</span>`</span>);</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// curl http://localhost:7001/search?type=bing&amp;q=node.js</span></div><div class="line"><span class="comment">// curl http://localhost:7001/search?q=node.js</span></div></pre></td></tr></table></figure></p>
+<h3 id="中间件的使用"><a class="markdown-anchor" href="#中间件的使用">#</a> 中间件的使用</h3>
+<p>如果我们想把用户某一类请求的参数都大写，可以通过中间件来实现。
+这里我们只是简单说明下如何使用中间件，更多请查看<a href="./middleware.html">中间件</a>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/search.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">`search: <span class="subst">$&#123;<span class="keyword">this</span>.query.name&#125;</span>`</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/middleware/uppercase.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* (<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">this</span>.query.name = <span class="keyword">this</span>.query.name &amp;&amp; <span class="keyword">this</span>.query.name.toUpperCase();</div><div class="line">    <span class="keyword">yield</span> next;</div><div class="line">  &#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'s'</span>, <span class="string">'/search'</span>, app.middlewares.uppercase(), <span class="string">'search'</span>)</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// curl http://localhost:7001/search2?name=egg</span></div></pre></td></tr></table></figure></p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>
