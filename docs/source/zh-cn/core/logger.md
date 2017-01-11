@@ -86,18 +86,22 @@ ctx.coreLogger.info('info');
 
 ```js
 // app.js
-app.logger.debug('debug info');
-app.logger.info('启动耗时 %d ms', Date.now() - start);
-app.logger.warn('warning!');
+module.exports = app => {
+  app.logger.debug('debug info');
+  app.logger.info('启动耗时 %d ms', Date.now() - start);
+  app.logger.warn('warning!');
 
-app.logger.error(someErrorObj);
+  app.logger.error(someErrorObj);
+};
 ```
 
 对于框架和插件开发者会使用到的 app logger 还有 `app.coreLogger`。
 
 ```js
 // app.js
-app.coreLogger.info('启动耗时 %d ms', Date.now() - start);
+module.exports = app => {
+  app.coreLogger.info('启动耗时 %d ms', Date.now() - start);
+};
 ```
 
 ### agent logger
@@ -106,11 +110,13 @@ app.coreLogger.info('启动耗时 %d ms', Date.now() - start);
 
 ```js
 // agent.js
-agent.logger.debug('debug info');
-agent.logger.info('启动耗时 %d ms', Date.now() - start);
-agent.logger.warn('warning!');
+module.exports = agent => {
+  agent.logger.debug('debug info');
+  agent.logger.info('启动耗时 %d ms', Date.now() - start);
+  agent.logger.warn('warning!');
 
-agent.logger.error(someErrorObj);
+  agent.logger.error(someErrorObj);
+};
 ```
 
 如需详细了解 agent 进程，请参考插件开发文档。
