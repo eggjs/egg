@@ -5,7 +5,7 @@ const mm = require('egg-mock');
 const request = require('supertest');
 const utils = require('../../utils');
 
-describe.only('test/lib/core/cookies.test.js', () => {
+describe('test/lib/core/cookies.test.js', () => {
   afterEach(mm.restore);
 
   describe('secure = true', () => {
