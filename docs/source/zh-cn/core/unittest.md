@@ -329,7 +329,7 @@ describe('test/controller/home.test.js', () => {
     });
 
     it('should send multi requests', function* () {
-      // 使用 generator function 方式写测试用例，可以请求地发起多次请求
+      // 使用 generator function 方式写测试用例，可以在一个用例中串行发起多次请求
       yield request(app.callback())
         .get('/')
         .expect(200) // 期望返回 status 200
