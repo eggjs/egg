@@ -79,8 +79,6 @@ describe('test/lib/application.test.js', () => {
       app = createApplication();
       yield app.ready();
       assert(app.env === app.config.env);
-      app.env = 'prod';
-      assert(app.config.env === 'prod');
     });
   });
 
@@ -91,8 +89,6 @@ describe('test/lib/application.test.js', () => {
       app = createApplication();
       yield app.ready();
       assert(app.proxy === app.config.proxy);
-      app.proxy = true;
-      assert(app.config.proxy === true);
     });
   });
 
