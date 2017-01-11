@@ -650,7 +650,7 @@ console.log(result.res.timing);
 
 ## 示例代码
 
-本文所使用到的完整示例代码可以在 [eggjs/exmaples/apps/httpclient](https://github.com/eggjs/examples/blob/master/apps/httpclient) 找到。
+完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
 [httpclient]: https://github.com/eggjs/egg/blob/master/lib/core/urllib.js
