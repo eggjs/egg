@@ -130,7 +130,7 @@ app/service | ✔︎ | ✔︎ | ✔︎
 app/extend | ✔︎ | ✔︎ | ✔︎
 app.js | ✔︎ | ✔︎ | ✔︎
 agent.js | ✔︎ | ✔︎ | ✔︎
-config/config.{serverEnv}.js | ✔︎ | ✔︎ | ✔︎
+config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
 config/plugin.js | ✔︎ | ✔︎ |
 package.json | ✔︎ | ✔︎ | ✔︎
 
@@ -171,7 +171,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 上面已经列出了默认会加载的文件，egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
 
 - 加载 [plugin](./plugin.md)，找到应用和框架，加载 `config/plugin.js`
-- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{serverEnv}.js`
+- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{env}.js`
 - 加载 [extend](../basics/extend.md), 遍历 loadUnit 加载 `app/extend/xx.js`
 - [自定义初始化](../basics/app-start.md)，遍历 loadUnit 加载 `app.js` 和 `agent.js`
 - 加载 [service](../basics/service.md), 遍历 loadUnit 加载 `app/service` 目录

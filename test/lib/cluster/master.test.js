@@ -175,7 +175,7 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('start app with custom env', () => {
-    describe('cluster mode, serverEnv: prod', () => {
+    describe('cluster mode, env: prod', () => {
       let app;
       before(() => {
         mm.env('prod');
