@@ -17,12 +17,12 @@
 ## 日志路径
 
 - 所有日志文件默认都放在 `${appInfo.root}/logs/${appInfo.name}` 路径下，例如 `/home/admin/logs/example-app`。
-- 在本地开发环境(serverEnv: local) 和单元测试环境(serverEnv: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 `/path/to/example-app/logs/example-app`。
+- 在本地开发环境(env: local) 和单元测试环境(env: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 `/path/to/example-app/logs/example-app`。
 
 如果想自定义日志路径：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   dir: '/path/to/your/custom/log/dir',
 };
@@ -40,7 +40,7 @@ exports.logger = {
 如果想自定义以上日志文件名称，可以在 config 文件中覆盖默认值：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 module.exports = appInfo => {
   return {
     logger: {
@@ -126,7 +126,7 @@ module.exports = agent => {
 默认编码为 `utf-8`，可通过如下方式覆盖：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   encoding: 'gbk',
 };
@@ -147,7 +147,7 @@ exports.logger = {
 打印所有级别日志到文件中：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   level: 'DEBUG',
 };
@@ -156,7 +156,7 @@ exports.logger = {
 关闭所有打印到文件的日志：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   level: 'NONE',
 };
@@ -173,7 +173,7 @@ exports.logger = {
 打印所有级别日志到文件中：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   consoleLevel: 'DEBUG',
 };
@@ -182,7 +182,7 @@ exports.logger = {
 关闭所有打印到终端的日志：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 exports.logger = {
   consoleLevel: 'NONE',
 };
@@ -197,7 +197,7 @@ exports.logger = {
 如果实在有需求可以如下配置：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 const path = require('path');
 
 module.exports = appInfo => {
@@ -274,7 +274,7 @@ app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ER
 例如，我们需要把 `egg-web.log` 按照大小进行切割：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 const path = require('path');
 
 module.exports = appInfo => {
@@ -298,7 +298,7 @@ module.exports = appInfo => {
 例如，我们需要把 `common-error.log` 按照小时进行切割：
 
 ```js
-// config/config.${serverEnv}.js
+// config/config.${env}.js
 const path = require('path');
 
 module.exports = appInfo => {

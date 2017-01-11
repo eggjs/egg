@@ -23,7 +23,7 @@ try {
 
 ```js
 // controller 中
-const reuqest = {};
+const request = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
 setImmediate(() => {
@@ -37,7 +37,7 @@ setImmediate(() => {
 当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
 
 ```js
-const reuqest = {};
+const request = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
 this.runInBackground(function* () {
@@ -64,7 +64,7 @@ this.runInBackground(function* () {
 
 onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 html 页面异常，就会重定向到这个地址。
 
-在 `config/config.defult.js` 中
+在 `config/config.default.js` 中
 
 ```js
 module.exports = {
@@ -96,7 +96,7 @@ module.exports = () => {
       // 自定义错误时异常返回的格式
       this.body = {
         success: false,
-        message: this.app.config.serverEnv === 'prod' ? 'Internal Server Error' : err.message,
+        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
       };
     }
   };

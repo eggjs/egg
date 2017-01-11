@@ -34,7 +34,7 @@
 
 ### 环境配置
 
-本地启动的应用是以 `serverEnv: local` 启动的，读取的配置也是 `config.default.js` 和 `config.local.js` 合并的结果。
+本地启动的应用是以 `env: local` 启动的，读取的配置也是 `config.default.js` 和 `config.local.js` 合并的结果。
 
 ### 指定端口
 
@@ -69,7 +69,7 @@
 
 ### 环境配置
 
-测试用例执行时，应用是以 `serverEnv: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
+测试用例执行时，应用是以 `env: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
 
 ### 运行特定用例文件
 
@@ -122,7 +122,7 @@ TEST_TIMEOUT=2000 npm test
 
 ### 环境配置
 
-和 `test` 命令一样，`cov` 命令执行时，应用也是以 `serverEnv: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
+和 `test` 命令一样，`cov` 命令执行时，应用也是以 `env: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
 
 ### 忽略指定文件
 
@@ -156,7 +156,7 @@ TEST_TIMEOUT=2000 npm test
 
 #### 环境配置
 
-执行 `debug` 命令时，应用也是以 `serverEnv: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
+执行 `debug` 命令时，应用也是以 `env: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
 
 #### 开始调试
 
