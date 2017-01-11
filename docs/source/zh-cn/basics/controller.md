@@ -375,7 +375,7 @@ module.exports = {
 
 #### `context.ip`
 
-通过 `context.ip` 获取请求发起方的 ip 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 ip 地址。
+通过 `context.ip` 获取请求发起方的 ip 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 ip 地址。
 
 **注意：ip 和 ips 不同，ip 当 `config.proxy = false` 时会返回当前连接发起者的 ip 地址，ips 此时会为空数组。**
 
