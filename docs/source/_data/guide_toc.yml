@@ -8,7 +8,7 @@ Basics:
   Middleware: /basics/middleware.html
   Router: /basics/router.html
   Controller: /basics/controller.html
-  # Service: /basics/service.html
+  Service: /basics/service.html
   Schedule: /basics/schedule.html
   Extend: /basics/extend.html
   Custom init: /basics/app-start.html
@@ -17,7 +17,7 @@ Core:
   # Passport: /core/passport.html
   HttpClient: /core/httpclient.html
   Logger: /core/logger.html
-  Error Handle: /core/error-handling.html
+  Error Handling: /core/error-handling.html
   i18n: /core/i18n.html
 Advanced:
   Cluster: /advanced/cluster.html

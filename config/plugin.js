@@ -4,7 +4,7 @@ module.exports = {
   // enable plugins
 
   /**
-   * app global error handler
+   * app global Error Handling
    * @member {Object} Plugin#onerror
    * @property {Boolean} enable - `true` by default
    */

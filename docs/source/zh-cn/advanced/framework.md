@@ -16,7 +16,7 @@ title: 框架开发
 
 在 Agent Worker 启动的时候会实例化 Agent，而在 App Worker 启动时会实例化 Application，这两个类又同时继承 [EggCore](https://github.com/eggjs/egg-core)
 
-EggCore 可以看做 koa Application 的升级版，默认内置 [Loader](./loader.md)、[Router](./router.md) 及应用异步启动等功能，可以看做是支持 Loader 的 koa。
+EggCore 可以看做 koa Application 的升级版，默认内置 [Loader](./loader.md)、[Router](../basics/router.md) 及应用异步启动等功能，可以看做是支持 Loader 的 koa。
 
 ```
        koa Application
