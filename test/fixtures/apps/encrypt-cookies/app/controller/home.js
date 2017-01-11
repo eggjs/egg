@@ -1,13 +1,13 @@
 module.exports = function* () {
-  var encrypt = this.getCookie('foo', {
+  var encrypt = this.cookies.get('foo', {
     encrypt: true
   });
-  var encryptWrong = this.getCookie('foo', { signed: false });
-  var plain = this.getCookie('plain', { signed: false });
-  this.setCookie('foo', 'bar 中文', {
+  var encryptWrong = this.cookies.get('foo', { signed: false });
+  var plain = this.cookies.get('plain', { signed: false });
+  this.cookies.set('foo', 'bar 中文', {
     encrypt: true
   });
-  this.setCookie('plain', 'text ok', { signed: false });
+  this.cookies.set('plain', 'text ok', { signed: false });
   this.body = {
     set: 'bar 中文',
     encrypt: encrypt,
