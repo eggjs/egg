@@ -5,13 +5,13 @@ title: Runtime Environment
 
 There could be all kinds of difference during various stages of a web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
 
-EGG framework provides a variable named `serverEnv` for setting up the runtime environment. The `serverEnv` could be used to determine which configuration file should be applied, or you can perform any operations by detecting the `serverEnv` directly. 
+EGG framework provides a variable named `env` for setting up the runtime environment. The `env` could be used to determine which configuration file should be applied, or you can perform any operations by detecting the `env` directly.
 
 ## How to Configure Runtime Environment
 
 There are several ways:
 
-1. Use `config/serverEnv` file, usually we use the build tools to generate this file.
+1. Use `config/env` file, usually we use the build tools to generate this file.
 2. Specify the `EGG_SERVER_ENV` environment variable.
 
 
@@ -20,6 +20,10 @@ There are several ways:
 ```shell
 EGG_SERVER_ENV=prod npm start
 ```
+
+## How to Use
+You can use `app.config.env` to get the environment variable.
+You can also load different configuration file for different environment by adding a file like  `config/config.{env}.js` with specified configs, please refer to  [config](./config.md) for details.
 
 ## Difference with NODE_ENV
 
@@ -34,6 +38,6 @@ unittest | test | unit test environment
 test | production | test environment on server
 prod | production | production environment
 
-## How to Use
-You can use `app.config.serverEnv` to get the environment variable.
-You can also load different configuration file for different environment by adding a file like  `config/config.{serverEnv}.js` with specified configs, please refer to  [config](./config.md) for details.
+## Difference with Koa
+
+We are using `app.env` to distinguishes the environments in koa, and `app.env` defualt to `process.env.NODE_ENV`. But in egg (and frameworks base on egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.
