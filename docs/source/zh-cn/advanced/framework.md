@@ -40,7 +40,7 @@ egg 框架提供了一些 API，所有继承的框架都需要提供，只增不
 
 #### `egg.startCluster`
 
-egg 的多进程启动器，由这个方法来启动 Master，主要的功能实现在 [egg-cluster]() 上。所以直接使用 EggCore 还是单进程的方式，而 egg 实现了多进程。
+egg 的多进程启动器，由这个方法来启动 Master，主要的功能实现在 [egg-cluster](https://github.com/eggjs/egg-cluster) 上。所以直接使用 EggCore 还是单进程的方式，而 egg 实现了多进程。
 
 ```js
 const startCluster = require('egg').startCluster;
@@ -73,9 +73,11 @@ startCluster({
 ```js
 // package.json
 {
-  "name": "example",
+  "name": "yadan",
   "dependencies": {
-    "egg": "^1.0.0",
+    "egg": "^1.0.0"
+  },
+  "devDependencies": {
     "egg-bin": "^1.0.0"
   },
   "scripts": {
@@ -93,6 +95,7 @@ Object.assign(exports, egg);
 
 ```js
 // index.js
+// 覆盖了 egg 的 Application
 exports.Application = require('./lib/application.js');
 
 // lib/application.js
@@ -126,7 +129,7 @@ module.exports = ExampleApplication;
 
 现在的实现方案是基于类继承的，每一层框架都必须继承上一层框架并且指定 eggPath，然后遍历原型链就能获取每一层的框架路径了。
 
-比如有三层框架部门框架（department）> 企业框架（enterprise）> egg
+比如有三层框架：部门框架（department）> 企业框架（enterprise）> egg
 
 ```js
 // enterprise
@@ -181,7 +184,7 @@ module.exports = ExampleAgent;
 
 ### 自定义 Loader
 
-框架扩展很大一个原因就是自定义 Loader，使用加载的访问能做很多约定，不会让应用代码过于随意。
+Loader 应用启动的核心，使用它还能规范应用代码，我们可以基于这个类扩展更多功能，比如加载数据代码。扩展 Loader 还能覆盖默认的实现，或调整现有的加载顺序等。
 
 自定义 Loader 也是用 `Symbol.for('egg#loader')` 的方式，主要的原因还是使用原型链，上层框架可覆盖底层 Loader，在上面例子的基础上
 
@@ -244,14 +247,14 @@ AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加�
 框架的初始化方式有一定差异
 
 ```js
+const mock = require('egg-mock');
 describe('/test/index.test.js', () => {
   let app;
   before(() => {
-    app = mm.app({
+    app = mock.app({
       // 转换成 test/fixtures/apps/example
       baseDir: 'apps/example',
       customEgg: true,
-      cache: false,
     });
     return app.ready();
   });
@@ -272,16 +275,17 @@ describe('/test/index.test.js', () => {
 
 ### 缓存
 
-在测试多环境场景的使用需要使用到 cache 参数，因为 `mm.app` 默认有缓存，当第一次加载过后再次加载会直接读取缓存，那么设置的环境也不会生效。
+在测试多环境场景需要使用到 cache 参数，因为 `mm.app` 默认有缓存，当第一次加载过后再次加载会直接读取缓存，那么设置的环境也不会生效。
 
 ```js
+const mock = require('egg-mock');
 describe('/test/index.test.js', () => {
   let app;
   afterEach(() => app.close());
 
   it('should test on local', () => {
-    mm.env('local');
-    app = mm.app({
+    mock.env('local');
+    app = mock.app({
       baseDir: 'apps/example',
       customEgg: true,
       cache: false,
@@ -289,8 +293,8 @@ describe('/test/index.test.js', () => {
     return app.ready();
   });
   it('should test on prod', () => {
-    mm.env('prod');
-    app = mm.app({
+    mock.env('prod');
+    app = mock.app({
       baseDir: 'apps/example',
       customEgg: true,
       cache: false,
@@ -307,16 +311,18 @@ describe('/test/index.test.js', () => {
 多进程测试和 `mm.app` 参数一致，但 app 的 API 完全不同，不过 supertest 依然可用。
 
 ```js
+const mock = require('egg-mock');
 describe('/test/index.test.js', () => {
   let app;
   before(() => {
-    app = mm.cluster({
+    app = mock.cluster({
       baseDir: 'apps/example',
       customEgg: true,
     });
     return app.ready();
   });
   after(() => app.close());
+  afterEach(mock.restore);
   it('should success', () => {
     return request(app.callback())
     .get('/')
@@ -328,10 +334,11 @@ describe('/test/index.test.js', () => {
 多进程测试还可以测试 stdout/stderr，因为 `mm.cluster` 是基于 [coffee](https://github.com/popomore/coffee) 扩展的，可进行进程测试。
 
 ```js
+const mock = require('egg-mock');
 describe('/test/index.test.js', () => {
   let app;
   before(() => {
-    app = mm.cluster({
+    app = mock.cluster({
       baseDir: 'apps/example',
       customEgg: true,
     });
