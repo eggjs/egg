@@ -1,7 +1,6 @@
 'use strict';
 
 const delegate = require('delegates');
-const jsonpBody = require('jsonp-body');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
@@ -197,23 +196,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 设置 jsonp 的内容，将会以 jsonp 的方式返回。注意：不可读。
-   * @member {Void} Context#jsonp
-   * @param {Object} obj 设置的对象
-   */
-  set jsonp(obj) {
-    const options = this.app.config.jsonp;
-    const jsonpFunction = this.query[options.callback];
-    if (!jsonpFunction) {
-      this.body = obj;
-    } else {
-      this.set('x-content-type-options', 'nosniff');
-      this.type = 'js';
-      this.body = jsonpBody(obj, jsonpFunction, options);
-    }
-  },
-
-  /**
    * 获取 view 实例
    * @return {View} view 实例
    */
@@ -367,3 +349,6 @@ delegate(proto, 'request')
   .getter('queries')
   .getter('accept')
   .access('ip');
+
+delegate(proto, 'response')
+  .setter('jsonp');

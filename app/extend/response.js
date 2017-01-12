@@ -1,6 +1,7 @@
 'use strict';
 
 const getType = require('mime-types').contentType;
+const jsonpBody = require('jsonp-body');
 const isJSON = require('koa-is-json');
 
 module.exports = {
@@ -42,5 +43,22 @@ module.exports = {
     const type = this.get('content-type');
     if (!type) return '';
     return type.split(';')[0];
+  },
+
+  /**
+   * 设置 jsonp 的内容，将会以 jsonp 的方式返回。注意：不可读。
+   * @member {Void} Context#jsonp
+   * @param {Object} obj 设置的对象
+   */
+  set jsonp(obj) {
+    const options = this.app.config.jsonp;
+    const jsonpFunction = this.ctx.query[options.callback];
+    if (!jsonpFunction) {
+      this.body = obj;
+    } else {
+      this.set('x-content-type-options', 'nosniff');
+      this.type = 'js';
+      this.body = jsonpBody(obj, jsonpFunction, options);
+    }
   },
 };
