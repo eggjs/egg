@@ -95,19 +95,16 @@
     "index.js"
   ],
   "scripts": {
-    "lint": "eslint lib test examples *.js",
+    "lint": "eslint lib test *.js",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
-    "test-examples": "cross-env TESTS=examples/**/test/**/*.test.js egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run test-examples && npm run cov",
+    "ci": "npm run lint && npm run cov",
     "doc-server": "./scripts/doc.sh server",
     "doc-deploy": "./scripts/doc.sh deploy",
     "autod": "autod",
-    "autod-china": "autod --registry=https://registry.npm.taobao.org",
     "puml": "puml . --dest ./docs",
-    "commits": "./scripts/commits.sh",
-    "example": "node examples/start.js"
+    "commits": "./scripts/commits.sh"
   },
   "homepage": "https://github.com/eggjs/egg",
   "repository": {
