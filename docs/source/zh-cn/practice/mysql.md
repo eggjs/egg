@@ -7,9 +7,9 @@ title: MySQL
 
 我们提供了 [egg-mysql](https://github.com/eggjs/egg-mysql) 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。
 
-## 安装与配置
+### 安装与配置
 
-在 package.json 里面依赖 egg-mysql模块，并通过 `config/plugin.js` 配置启动 MySQL 插件:
+在 `package.json` 里面依赖 egg-mysql 模块，并通过 `config/plugin.js` 配置启动 MySQL 插件:
 
 ```js
 // package.json
@@ -18,7 +18,6 @@ title: MySQL
     "egg-mysql": "^1.0.1"
   }
 }
-
 ```
 
 ```js
@@ -28,11 +27,11 @@ exports.mysql = {
 };
 ```
 
-在 `config/config.${env}.js` 配置各个环境的数据库连接信息：
+在 `config/config.${env}.js` 配置各个环境的数据库连接信息。
 
 #### 单数据源
 
-如果你的应用只需要访问一个 MySQL 数据库实例，可以如下配置：
+如果我们的应用只需要访问一个 MySQL 数据库实例，可以如下配置：
 
 ```js
 exports.mysql = {
@@ -59,12 +58,12 @@ exports.mysql = {
 使用方式：
 
 ```js
-app.mysql.query(sql, values); // 单实例可以直接通过 app.mysql 访问
+yield app.mysql.query(sql, values); // 单实例可以直接通过 app.mysql 访问
 ```
 
 #### 多数据源
 
-如果你的应用需要访问多个 MySQL 数据源，可以按照如下配置：
+如果我们的应用需要访问多个 MySQL 数据源，可以按照如下配置：
 
 ```js
 exports.mysql = {
@@ -112,42 +111,34 @@ exports.mysql = {
 
 ```js
 const client1 = app.mysql.get('db1');
-client1.query(sql, values);
+yield client1.query(sql, values);
 
 const client2 = app.mysql.get('db2');
-client2.query(sql, values);
+yield client2.query(sql, values);
 ```
 
 ## service 层
 
 由于对 MySQL 数据库的访问操作属于 web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。
 
-下面是一个 service 中访问 MySQL数据库的例子。
+下面是一个 service 中访问 MySQL 数据库的例子。
 
-更多 service 层的介绍，可以参考 egg 文档中的 service 一节。
+更多 service 层的介绍，可以参考 [service](../basics/service.md)
 
 ```js
 // app/service/user.js
 module.exports = app => {
-  class User extends app.Service {
-    // 默认不需要提供构造函数。
-    // constructor(ctx) {
-    //   super(ctx); 如果需要在构造函数做一些处理，一定要有这句话，才能保证后面 `this.ctx`的使用。
-    //   // 就可以直接通过 this.ctx 获取 ctx 了
-    //   // 还可以直接通过 this.app 获取 app 了
-    // }
-
+  return class User extends app.Service {
     * find(uid) {
       // 假如 我们拿到用户 id 从数据库获取用户详细信息
-      const user = yield this.app.mysql.get('users', {
-          id: 11
+      const user = yield app.mysql.get('users', {
+          id: 11,
       });
       return {
         user,
       };
     }
   }
-  return User;
 };
 ```
 
@@ -162,7 +153,7 @@ exports.info = function* () {
 };
 ```
 
-## 如何编写 crud 语句
+## 如何编写 CRUD 语句
 
 下面的语句若没有特殊注明，默认都书写在 `app/service` 下。
 
@@ -172,7 +163,24 @@ exports.info = function* () {
 
 ```js
 // 插入
-const result = yield this.app.mysql.insert('posts', { title: 'Hello World' }); // 在 post 表中，插入 title 为 Hello World 的记录 
+const result = yield this.app.mysql.insert('posts', { title: 'Hello World' }); // 在 post 表中，插入 title 为 Hello World 的记录
+
+=> INSERT INTO `posts`(`title`) VALUES('Hello World');
+
+console.log(result);
+=>
+{
+  fieldCount: 0,
+  affectedRows: 1,
+  insertId: 3710,
+  serverStatus: 2,
+  warningCount: 2,
+  message: '',
+  protocol41: true,
+  changedRows: 0
+}
+
+// 判断插入成功
 const insertSuccess = result.affectedRows === 1;
 ```
 
@@ -180,17 +188,38 @@ const insertSuccess = result.affectedRows === 1;
 
 可以直接使用 `get` 方法或 `select` 方法获取一条或多条记录。`select` 方法支持条件查询与结果的定制
 
+- 查询一条记录
+
 ```js
-// 获得一个
-const post = yield this.app.mysql.get('posts', { id: 12 }); // 在 post 表中，搜索 id 为 12 的记录 
-// 查询
-const results = yield this.app.mysql.select('posts',{ // 搜索 post 表
-  where: { status: 'draft' }, // 条件 : status 为 draft
-  orders: [['created_at','desc'], ['id','desc']], // 排序方式 
-  limit: 10, // 返回数据量
-  offset: 0 // 数据偏移量
-});
+const post = yield this.app.mysql.get('posts', { id: 12 });
+
+=> SELECT * FROM `posts` WHERE `id` = 12 LIMIT 0, 1;
 ```
+
+- 查询全表
+
+```js
+const results = yield this.app.mysql.select('posts');
+
+=> SELECT * FROM `posts`;
+```
+
+- 条件查询和结果定制
+
+```js
+const results = yield this.app.mysql.select('posts', { // 搜索 post 表
+  where: { status: 'draft', author: ['author1', 'author2'] }, // WHERE 条件
+  columns: ['author', 'title'], // 要查询的表字段
+  orders: [['created_at','desc'], ['id','desc']], // 排序方式
+  limit: 10, // 返回数据量
+  offset: 0, // 数据偏移量
+});
+
+=> SELECT `author`, `title` FROM `posts`
+  WHERE `status` = 'draft' AND `author` IN('author1','author2')
+  ORDER BY `created_at` DESC, `id` DESC LIMIT 0, 10;
+```
+
 
 ### Update
 
@@ -201,10 +230,14 @@ const results = yield this.app.mysql.select('posts',{ // 搜索 post 表
 const row = {
   id: 123,
   name: 'fengmk2',
-  otherField: 'other field value',
+  otherField: 'other field value',    // any other fields u want to update
   modifiedAt: this.app.mysql.literals.now, // `now()` on db server
 };
 const result = yield this.app.mysql.update('posts', row); // 更新 posts 表中的记录
+
+=> UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE id = 123 ;
+
+// 判断更新成功
 const updateSuccess = result.affectedRows === 1;
 ```
 
@@ -213,23 +246,28 @@ const updateSuccess = result.affectedRows === 1;
 可以直接使用 `delete` 方法删除数据库记录。
 
 ```js
-const result = yield this.app.mysql.delete('table-name', {
-  name: 'fengmk2'  // 在 table-name 表中删除苏千
+const result = yield this.app.mysql.delete('posts', {
+  author: 'fengmk2',
 });
+
+=> DELETE FROM `posts` WHERE `author` = 'fengmk2';
 ```
 
 ## 直接执行 sql 语句
 
 插件本身也支持拼接与直接执行 sql 语句。使用 `query` 可以执行合法的 sql 语句。
 
-**注意！！我们及其不建议开发者拼接 sql 语句，这样很容易引起 sql 注入！！**
+**注意！！我们极其不建议开发者拼接 sql 语句，这样很容易引起 sql 注入！！**
 
-如果必须要自己拼接 sql 语句，请使用 mysql.escape 方法。
+如果必须要自己拼接 sql 语句，请使用 `mysql.escape` 方法。
 
 参考 [preventing-sql-injection-in-node-js](http://stackoverflow.com/questions/15778572/preventing-sql-injection-in-node-js)
 
 ```js
+const postId = 1;
 const results = yield this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
+
+=> update posts set hits = (hits + 1) where id = 1;
 ```
 
 ## 使用事务
@@ -244,7 +282,7 @@ MySQL 事务主要用于处理操作量大，复杂度高的数据。比如说�
 - 隔离性：事务是彼此独立的，不互相影响
 - 持久性：确保提交事务后，事务产生的结果可以永久存在。
 
-因此，对于一个事务来讲，一定伴随着 beginTransaction, commit 或 rollback ，分别代表事务的开始，成功和失败回滚。
+因此，对于一个事务来讲，一定伴随着 beginTransaction、commit 或 rollback，分别代表事务的开始，成功和失败回滚。
 
 egg-mysql 提供了两种类型的事务。
 
@@ -285,32 +323,25 @@ const result = yield app.mysql.beginTransactionScope(function* (conn) {
 // if error throw on scope, will auto rollback
 ```
 
-## 使用 ORM
+## 表达式(Literal)
 
-// 等待补充
+如果需要调用 MySQL 内置的函数（或表达式），可以使用 `Literal`。
 
-## 使用 DAO 层
+### 内置表达式
 
-// 等待补充
-
-## 其他特性
-
-### 表达式(Literal)
-如果需要调用mysql内置的函数（或表达式），可以使用`Literal`。
-
-#### 内置表达式
-- NOW(): 数据库当前系统时间，通过`app.mysql.literals.now`获取。
+- `NOW()`：数据库当前系统时间，通过 `app.mysql.literals.now` 获取。
 
 ```js
 yield this.app.mysql.insert(table, {
-  create_time: this.app.mysql.literals.now
+  create_time: this.app.mysql.literals.now,
 });
 
-// INSERT INTO `$table`(`create_time`) VALUES(NOW())
+=> INSERT INTO `$table`(`create_time`) VALUES(NOW())
 ```
 
-#### 自定义表达式
-下例展示了如何调用mysql内置的`CONCAT(s1, ...sn)`函数，做字符串拼接。
+### 自定义表达式
+
+下例展示了如何调用 MySQL 内置的 `CONCAT(s1, ...sn)` 函数，做字符串拼接。
 
 ```js
 const Literal = this.app.mysql.literals.Literal;
@@ -321,6 +352,5 @@ yield this.app.mysql.insert(table, {
   fullname: new Literal(`CONCAT("${first}", "${last}"`),
 });
 
-// INSERT INTO `$table`(`id`, `fullname`) VALUES(123, CONCAT("James", "Bond"))
+=> INSERT INTO `$table`(`id`, `fullname`) VALUES(123, CONCAT("James", "Bond"))
 ```
-
