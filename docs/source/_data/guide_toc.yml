@@ -13,13 +13,20 @@ Basics:
   Extend: /basics/extend.html
   Custom init: /basics/app-start.html
 Core:
+  Development: /core/development.html
   Security: /core/security.html
   # Passport: /core/passport.html
   HttpClient: /core/httpclient.html
   Logger: /core/logger.html
   Error Handling: /core/error-handling.html
   i18n: /core/i18n.html
+  View: /core/view.html
+  Unittest: /core/unittest.html
+Tutorials:
+  Mysql: 
 Advanced:
+  # Deployment: /advanced/deployment.html
+  View Plugin: /advanced/view-plugin.html
   Cluster: /advanced/cluster.html
   Framework: /advanced/framework.html
   Plugin: /advanced/plugin.html

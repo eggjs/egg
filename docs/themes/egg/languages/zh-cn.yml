@@ -32,6 +32,8 @@ guide_toc:
   Custom init: 启动自定义
   Core: 核心功能
   Security: 安全
+  View: 模板渲染
+  View Plugin: 模板开发规范
   # Passport:
   HttpClient: HttpClient
   Logger: 日志
