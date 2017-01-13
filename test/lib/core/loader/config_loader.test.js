@@ -13,10 +13,11 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
   it('should get middlewares', function* () {
     app = utils.app('apps/demo');
     yield app.ready();
-    app.config.coreMiddleware.slice(0, 5).should.eql([
+    app.config.coreMiddleware.slice(0, 6).should.eql([
       'meta',
       'siteFile',
       'notfound',
+      'static',
       'bodyParser',
       'overrideMethod',
     ]);

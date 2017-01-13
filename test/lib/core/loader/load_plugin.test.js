@@ -219,6 +219,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       'development',
       'schedule',
       'logrotator',
+      'static',
       'b',
       'c1',
       'f',
