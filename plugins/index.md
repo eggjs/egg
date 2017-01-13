@@ -1,0 +1,3 @@
+layout: plugins
+title: Plugins
+---
