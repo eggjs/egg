@@ -89,7 +89,7 @@ module.exports = function* home(){
 // `app.locals` 会合并到 `this.locals
 this.app.locals = { a: 1 };
 this.locals.b = 2;
-console.log(this.locals); // { a: 1, b: 1 }
+console.log(this.locals); // { a: 1, b: 2 }
 
 // 一次请求过程中，仅会在第一次使用 `this.locals` 时把 `app.locals` 合并进去。
 this.app.locals = { a: 2 };
