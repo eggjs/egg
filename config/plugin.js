@@ -137,7 +137,7 @@ module.exports = {
   /**
    * `app/public` dir static serve
    * @member {Object} Plugin#static
-   * @property {Boolean} enable - `false` by default
+   * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
   static: {
