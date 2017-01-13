@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>配置 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>配置</h1>
+    <h2 id="config-配置"><a class="markdown-anchor" href="#config-配置">#</a> config 配置</h2>
+<p>框架提供了强大且可扩展的配置功能，可以自动合并应用、插件、框架的配置，按顺序覆盖，且可以根据环境维护不同的配置。合并后的配置可直接从 <code>app.config</code> 获取。</p>
+<p>配置的管理有多种方案，以下列一些常见的方案</p>
+<ol>
+<li>使用平台管理配置，应用构建时将当前环境的配置放入包内，启动时指定该配置。但应用就无法一次构建多次部署，而且本地开发环境想使用配置会变的很麻烦。</li>
+<li>使用平台管理配置，在启动时将当前环境的配置通过环境变量传入，这是比较优雅的方式，但框架对运维的要求会比较高，需要部署平台支持，同时开发环境也有相同痛点。</li>
+<li>使用代码管理配置，在代码中添加多个环境的配置，在启动时传入当前环境的参数即可。但无法全局配置，必须修改代码。</li>
+</ol>
+<p>我们选择了最后一种配置方案，<strong>配置即代码</strong>，配置的变更也应该经过 review 后才能发布。应用包本身是可以部署在多个环境的，只需要指定运行环境即可。</p>
+<h3 id="多环境配置"><a class="markdown-anchor" href="#多环境配置">#</a> 多环境配置</h3>
+<p>框架支持根据环境来加载配置，定义多个环境的配置文件，具体环境请查看<a href="./env.html">运行环境配置</a></p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">config</div><div class="line">|- config.default.js</div><div class="line">|- config.test.js</div><div class="line">|- config.prod.js</div><div class="line">|- config.unittest.js</div><div class="line">`- config.local.js</div></pre></td></tr></table></figure></p>
+<p><code>config.default.js</code> 为默认的配置文件，所有环境都会加载这个配置文件，一般也会作为开发环境的默认配置文件。</p>
+<p>当指定 env 时会同时加载对应的配置文件，并覆盖默认配置文件的同名配置。如 prod 环境会加载 <code>config.prod.js</code> 和 <code>config.default.js</code> 文件，<code>config.prod.js</code> 会覆盖 <code>config.default.js</code> 的同名配置。</p>
+<h3 id="配置写法"><a class="markdown-anchor" href="#配置写法">#</a> 配置写法</h3>
+<p>配置文件返回的是一个 object 对象，可以覆盖框架的一些配置，应用也可以将自己业务的配置放到这里方便管理。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 配置 logger 文件的目录，logger 默认配置由框架提供</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">logger</span>: &#123;</div><div class="line">    <span class="attr">dir</span>: <span class="string">'/home/admin/logs/demoapp'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>配置文件也可以返回一个 function，可以接受 appInfo 参数</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 将 logger 目录放到代码目录下</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">logger</span>: &#123;</div><div class="line">      <span class="attr">dir</span>: path.join(appInfo.baseDir, <span class="string">'logs'</span>),</div><div class="line">    &#125;,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>内置的 appInfo 有</p>
+<table>
+<thead>
+<tr>
+<th>appInfo</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pkg</td>
+<td>package.json</td>
+</tr>
+<tr>
+<td>name</td>
+<td>应用名，同 pkg.name</td>
+</tr>
+<tr>
+<td>baseDir</td>
+<td>应用代码的目录</td>
+</tr>
+<tr>
+<td>HOME</td>
+<td>用户目录，如 admin 账户为 /home/admin</td>
+</tr>
+<tr>
+<td>root</td>
+<td>应用根目录，只有在 local 和 unittest 环境下为 baseDir，其他都为 HOME。</td>
+</tr>
+</tbody>
+</table>
+<p><code>appInfo.root</code> 是一个优雅的适配，比如在服务器环境我们会使用 <code>/home/admin/logs</code> 作为日志目录，而本地开发时又不想污染用户目录，这样的适配就很好解决这个问题。</p>
+<h3 id="配置加载顺序"><a class="markdown-anchor" href="#配置加载顺序">#</a> 配置加载顺序</h3>
+<p>应用、插件、框架都可以定义这些配置，而且目录结构都是一致的，但存在优先级（应用 &gt; 框架 &gt; 插件），相对于此运行环境的优先级会更高。</p>
+<p>比如在 prod 环境加载一个配置的加载顺序为</p>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">-&gt; 插件 config.default.js</div><div class="line">-&gt; 框架 config.default.js</div><div class="line">-&gt; 应用 config.default.js</div><div class="line">-&gt; 插件 config.prod.js</div><div class="line">-&gt; 框架 config.prod.js</div><div class="line">-&gt; 应用 config.prod.js</div></pre></td></tr></table></figure></p>
+<p><strong>注意：插件之间也会有加载顺序，但大致顺序类似，具体逻辑可<a href="../advanced/loader.html">查看加载器</a>。</strong></p>
+<p>配置的合并是使用 <a href="https://github.com/justmoon/node-extend" target="_blank" rel="external">extend</a> 模块进行深度拷贝，但存在数组合并的问题。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> a = &#123;</div><div class="line">  <span class="attr">arr</span>: [ <span class="number">1</span>, <span class="number">2</span> ],</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> b = &#123;</div><div class="line">  <span class="attr">arr</span>: [ <span class="number">3</span> ],</div><div class="line">&#125;;</div><div class="line">extend(<span class="literal">true</span>, a, b);</div><div class="line"><span class="comment">// =&gt; &#123; arr: [ 3, 2 ] &#125;</span></div></pre></td></tr></table></figure></p>
+<p>因为 extend 把所有都当做对象处理，数组也是一个对象，所以 b 覆盖了 a 的第一个索引。<strong>尽量不要定义数组配置，可使用字符串分隔符代替。</strong></p>
+<p>修改一下上面的例子，将配置改成字符串，使用的时候再转成数组。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> a = &#123;</div><div class="line">  <span class="attr">arr</span>: <span class="string">'1,2'</span>,</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> b = &#123;</div><div class="line">  <span class="attr">arr</span>: <span class="string">'1,2,3'</span>,</div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> c = extend(<span class="literal">true</span>, a, b);</div><div class="line"><span class="keyword">const</span> arr = c.arr.split(<span class="string">','</span>);</div><div class="line"><span class="comment">// =&gt; [ '1', '2', '3' ]</span></div></pre></td></tr></table></figure></p>
+<h2 id="插件配置"><a class="markdown-anchor" href="#插件配置">#</a> 插件配置</h2>
+<p>在应用中可以通过 <code>config/plugin.js</code> 来控制插件的一些选项。</p>
+<h3 id="开启关闭"><a class="markdown-anchor" href="#开启关闭">#</a> 开启关闭</h3>
+<p>框架有一些内置的插件，通过配置可以开启或关闭插件。插件关闭后，插件内所有的文件都不会被加载。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 关闭内置的 i18n 插件</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">i18n</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">false</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>或可以简单的配置一个布尔值</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">i18n</span>: <span class="literal">false</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="新增插件"><a class="markdown-anchor" href="#新增插件">#</a> 新增插件</h3>
+<p>框架默认内置了<a href="https://github.com/eggjs/egg/blob/master/config/plugin.js" target="_blank" rel="external">一部分插件</a>。如果由应用添加插件，那么需要指定 package 配置。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 使用 mysql 插件</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-mysql'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>package 为一个 npm 模块，必须添加依赖到 <code>pkg.dependencies</code> 中。框架会在 node_modules 目录中找到这个模块作为插件入口。</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"dependencies"</span>: &#123;</div><div class="line">    <span class="attr">"egg-mysql"</span>: <span class="string">"^1.0.0"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>也可以指定 path 来替代 package。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">'../app/plugins/egg-mysql'</span>),</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>path 为一个绝对路径，这样应用可以把自己写的插件直接放到应用目录中，如 <code>app/plugins</code> 目录。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

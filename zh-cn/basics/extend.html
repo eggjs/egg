@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>框架扩展 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>框架扩展</h1>
+    <p>框架提供了多种扩展点扩展自身的功能：</p>
+<ul>
+<li>Application</li>
+<li>Context</li>
+<li>Request</li>
+<li>Response</li>
+<li>Helper</li>
+</ul>
+<p>在开发中，我们既可以使用已有的扩展 API 来方便开发，也可以对以上对象进行自定义扩展，进一步加强框架的功能。</p>
+<h2 id="application"><a class="markdown-anchor" href="#application">#</a> Application</h2>
+<p>Application 对象指的是 koa 的全局应用对象，全局只有一个，在应用启动时被创建。</p>
+<h3 id="访问方式"><a class="markdown-anchor" href="#访问方式">#</a> 访问方式</h3>
+<ul>
+<li>
+<p><code>ctx.app</code></p>
+</li>
+<li>
+<p>controller，middleware，helper，service 中都可以通过 <code>this.app</code> 访问到 application 对象，例如 <code>this.app.config</code> 访问配置对象。</p>
+</li>
+<li>
+<p>在 <code>app.js</code> 中 app 对象会作为第一个参数注入到入口函数中</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="comment">// 使用 app 对象</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<h3 id="扩展方式"><a class="markdown-anchor" href="#扩展方式">#</a> 扩展方式</h3>
+<p>框架会把 <code>app/extend/application.js</code> 中定义的对象与 koa application 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 app 对象。</p>
+<h4 id="方法扩展"><a class="markdown-anchor" href="#方法扩展">#</a> 方法扩展</h4>
+<p>例如，我们要增加一个 <code>app.foo()</code> 方法：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/application.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  foo(param) &#123;</div><div class="line">    <span class="comment">// this 就是 app 对象，在其中可以调用 app 上的其他方法，或访问属性</span></div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="属性扩展"><a class="markdown-anchor" href="#属性扩展">#</a> 属性扩展</h4>
+<p>一般来说属性的计算只需要进行一次，那么一定要实现缓存，否则在多次访问属性时会计算多次，这样会降低应用性能。</p>
+<p>推荐的方式是使用 Symbol + getter 的模式。</p>
+<p>例如，增加一个 <code>app.bar</code> 属性 getter：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/application.js</span></div><div class="line"><span class="keyword">const</span> BAR = <span class="built_in">Symbol</span>(<span class="string">'Application#bar'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get bar() &#123;</div><div class="line">    <span class="comment">// this 就是 app 对象，在其中可以调用 app 上的其他方法，或访问属性</span></div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[BAR]) &#123;</div><div class="line">      <span class="comment">// 实际情况肯定更复杂</span></div><div class="line">      <span class="keyword">this</span>[BAR] = <span class="keyword">this</span>.config.xx + <span class="keyword">this</span>.config.yy;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[BAR];</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="context"><a class="markdown-anchor" href="#context">#</a> Context</h2>
+<p>Context 指的是 koa 的请求上下文，这是__请求级别__的对象，每次请求生成一个 context 实例，通常我们也简写成 ctx。在所有的文档中，context 和 ctx 都是指 koa 的上下文对象。</p>
+<h3 id="访问方式-2"><a class="markdown-anchor" href="#访问方式-2">#</a> 访问方式</h3>
+<ul>
+<li>controller，middleware 中 <code>this</code> 就是 ctx，例如 <code>this.cookies.get('foo')</code>。</li>
+<li>helper，service 中的 this 指向 helper，service 对象本身，使用 <code>this.ctx</code> 访问 context 对象，例如 <code>this.ctx.cookies.get('foo')</code>。</li>
+</ul>
+<h3 id="扩展方式-2"><a class="markdown-anchor" href="#扩展方式-2">#</a> 扩展方式</h3>
+<p>框架会把 <code>app/extend/context.js</code> 中定义的对象与 koa context 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。</p>
+<h4 id="方法扩展-2"><a class="markdown-anchor" href="#方法扩展-2">#</a> 方法扩展</h4>
+<p>例如，我们要增加一个 <code>ctx.foo()</code> 方法：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/context.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  foo(param) &#123;</div><div class="line">    <span class="comment">// this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性</span></div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="属性扩展-2"><a class="markdown-anchor" href="#属性扩展-2">#</a> 属性扩展</h4>
+<p>一般来说属性的计算在同一次请求中只需要进行一次，那么一定要实现缓存，否则在同一次请求中多次访问属性时会计算多次，这样会降低应用性能。</p>
+<p>推荐的方式是使用 Symbol + getter 的模式。</p>
+<p>例如，增加一个 <code>ctx.bar</code> 属性 getter：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/context.js</span></div><div class="line"><span class="keyword">const</span> BAR = <span class="built_in">Symbol</span>(<span class="string">'Context#bar'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get bar() &#123;</div><div class="line">    <span class="comment">// this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性</span></div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[BAR]) &#123;</div><div class="line">      <span class="comment">// 例如，从 header 中获取，实际情况肯定更复杂</span></div><div class="line">      <span class="keyword">this</span>[BAR] = <span class="keyword">this</span>.get(<span class="string">'x-bar'</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[BAR];</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="request"><a class="markdown-anchor" href="#request">#</a> Request</h2>
+<p>Request 对象和 koa 的 request 对象相同，是__请求级别__的对象，它提供了大量请求相关的属性和方法供使用。</p>
+<h3 id="访问方式-3"><a class="markdown-anchor" href="#访问方式-3">#</a> 访问方式</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.request</div></pre></td></tr></table></figure></p>
+<p>ctx 上的很多属性和方法都被代理到 request 对象上，对于这些属性和方法使用 ctx 和使用 request 去访问它们是等价的，例如 <code>ctx.url === ctx.request.url</code>。</p>
+<p>koa 内置的代理 request 的属性和方法列表：http://koajs.com/#request-aliases</p>
+<h3 id="扩展方式-3"><a class="markdown-anchor" href="#扩展方式-3">#</a> 扩展方式</h3>
+<p>框架会把 <code>app/extend/request.js</code> 中定义的对象与内置 request 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 request 对象。</p>
+<p>例如，增加一个 <code>request.foo</code> 属性 getter：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/request.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get foo() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.get(<span class="string">'x-request-foo'</span>);</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="response"><a class="markdown-anchor" href="#response">#</a> Response</h2>
+<p>Response 对象和 koa 的 response 对象相同，是__请求级别__的对象，它提供了大量响应相关的属性和方法供使用。</p>
+<h3 id="访问方式-4"><a class="markdown-anchor" href="#访问方式-4">#</a> 访问方式</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.response</div></pre></td></tr></table></figure></p>
+<p>ctx 上的很多属性和方法都被代理到 response 对象上，对于这些属性和方法使用 ctx 和使用 response 去访问它们是等价的，例如 <code>ctx.status = 404</code> 和 <code>ctx.response.status = 404</code> 是等价的。</p>
+<p>koa 内置的代理 response 的属性和方法列表：http://koajs.com/#response-aliases</p>
+<h3 id="扩展方式-4"><a class="markdown-anchor" href="#扩展方式-4">#</a> 扩展方式</h3>
+<p>框架会把 <code>app/extend/response.js</code> 中定义的对象与内置 response 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 response 对象。</p>
+<p>例如，增加一个 <code>response.foo</code> 属性 setter：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/response.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  set foo(value) &#123;</div><div class="line">    <span class="keyword">this</span>.set(<span class="string">'x-response-foo'</span>, value);</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>就可以这样使用啦：<code>this.response.foo = 'bar';</code></p>
+<h2 id="helper"><a class="markdown-anchor" href="#helper">#</a> Helper</h2>
+<p>Helper 函数用来提供一些实用的 utility 函数。</p>
+<p>它的作用在于我们可以将一些常用的动作抽离在 helper.js 里面成为一个独立的函数，这样可以用 JavaScript 来写复杂的逻辑，避免逻辑分散各处。另外还有一个好处是 Helper 这样一个简单的函数，可以让我们更容易编写测试用例。</p>
+<p>框架内置了一些常用的 Helper 函数。我们也可以编写自定义的 Helper 函数。</p>
+<h3 id="访问方式-5"><a class="markdown-anchor" href="#访问方式-5">#</a> 访问方式</h3>
+<p>通过 <code>ctx.helper</code> 访问到 helper 对象，例如：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 假设在 app/router.js 中定义了 home router</span></div><div class="line">app.get(<span class="string">'home'</span>, <span class="string">'/'</span>, <span class="string">'home.index'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 使用 helper 计算指定 url path</span></div><div class="line">ctx.helper.pathFor(<span class="string">'home'</span>, &#123; <span class="attr">by</span>: <span class="string">'recent'</span>, <span class="attr">limit</span>: <span class="number">20</span> &#125;)</div><div class="line"><span class="comment">// =&gt; /?by=recent&amp;limit=20</span></div></pre></td></tr></table></figure></p>
+<h3 id="扩展方式-5"><a class="markdown-anchor" href="#扩展方式-5">#</a> 扩展方式</h3>
+<p>框架会把 <code>app/extend/helper.js</code> 中定义的对象与内置 helper 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 helper 对象。</p>
+<p>例如，增加一个 <code>helper.foo()</code> 方法：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/helper.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  foo(param) &#123;</div><div class="line">    <span class="comment">// this 是 helper 对象，在其中可以调用其他 helper 方法</span></div><div class="line">    <span class="comment">// this.ctx =&gt; context 对象</span></div><div class="line">    <span class="comment">// this.app =&gt; application 对象</span></div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="按照环境进行扩展"><a class="markdown-anchor" href="#按照环境进行扩展">#</a> 按照环境进行扩展</h2>
+<p>另外，还可以根据环境进行有选择的扩展，例如，只在 unittest 环境中提供 <code>mockXX()</code> 方法以便进行 mock 方便测试。<a href="https://github.com/eggjs/egg/pull/178" target="_blank" rel="external">#178</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/application.unittest.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  mockXX(k, v) &#123;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这个文件只会在 unittest 环境加载。</p>
+<p>同理，对于 application，context，request，response，helper 都可以使用这种方式针对某个环境进行扩展。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

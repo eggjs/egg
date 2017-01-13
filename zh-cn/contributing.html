@@ -14,9 +14,9 @@
   <div id="container">
     <div class="nav">
   <header>
-    <a href="" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
     <ul>
-      
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
       <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
     </ul>
   </header>
@@ -30,24 +30,30 @@
 <div class="page-main">
   <article class="markdown-body">
     <h1></h1>
-    <h1 id="代码贡献规范"><a href="#代码贡献规范" class="headerlink" title="代码贡献规范"></a>代码贡献规范</h1><p>有任何疑问，欢迎提交 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">issue</a>，<br>或者直接修改提交 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">MR</a>!</p>
-<h2 id="提交-issue"><a href="#提交-issue" class="headerlink" title="提交 issue"></a>提交 issue</h2><ul>
+    <h1 id="代码贡献规范"><a class="markdown-anchor" href="#代码贡献规范">#</a> 代码贡献规范</h1>
+<p>有任何疑问，欢迎提交 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">issue</a>，
+或者直接修改提交 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">MR</a>!</p>
+<h2 id="提交-issue"><a class="markdown-anchor" href="#提交-issue">#</a> 提交 issue</h2>
+<ul>
 <li>请确定 issue 的类型。</li>
 <li>请避免提交重复的 issue，在提交之前搜索现有的 issue。</li>
-<li>在标签(分类参考<strong>标签分类</strong>), 标题 或者内容中体现明确的意图。</li>
+<li>在标签(分类参考__标签分类__), 标题 或者内容中体现明确的意图。</li>
 </ul>
 <p>随后 egg 负责人会确认 issue 意图，更新合适的标签，关联 milestone，指派开发者。</p>
 <p>标签可分为两类，type 和 scope</p>
 <ul>
-<li>type: issue 的类型，如 <code>feature</code>, <code>bug</code>, <code>documentation</code>, <code>performance</code>, <code>support</code> …</li>
+<li>type: issue 的类型，如 <code>feature</code>, <code>bug</code>, <code>documentation</code>, <code>performance</code>, <code>support</code> ...</li>
 <li>scope: 修改文件的范围，如 <code>core: xx</code>，<code>plugin: xx</code>，<code>deps: xx</code></li>
 </ul>
-<h3 id="常用标签说明"><a href="#常用标签说明" class="headerlink" title="常用标签说明"></a>常用标签说明</h3><ul>
+<h3 id="常用标签说明"><a class="markdown-anchor" href="#常用标签说明">#</a> 常用标签说明</h3>
+<ul>
 <li><code>support</code>: issue 提出的问题需要开发者协作排查，咨询，调试等等日常技术支持。</li>
-<li><code>bug</code>: 一旦发现可能是 bug 的问题，请打上 <code>bug</code>，然后等待确认，一旦确认是 bug，此 issue 会被再打上 <code>confirmed</code>。<ul>
+<li><code>bug</code>: 一旦发现可能是 bug 的问题，请打上 <code>bug</code>，然后等待确认，一旦确认是 bug，此 issue 会被再打上 <code>confirmed</code>。
+<ul>
 <li>此时 issue 会被非常高的优先级进行处理。</li>
 <li>如果此 bug 是正在影响线上应用正常运行，会再打上 <code>critical</code>，代表是最高优先级，需要马上立刻处理！</li>
-<li>bug 会在最低需要修复的版本进行修复，如是在 <code>0.9.x</code> 要修复的，而当前最新版本是 <code>1.1.x</code>，<br>那么此 issue 还会被打上 <code>0.9</code>，<code>0.10</code>，<code>1.0</code>，<code>1.1</code>，代表需要修复到这些版本。</li>
+<li>bug 会在最低需要修复的版本进行修复，如是在 <code>0.9.x</code> 要修复的，而当前最新版本是 <code>1.1.x</code>，
+那么此 issue 还会被打上 <code>0.9</code>，<code>0.10</code>，<code>1.0</code>，<code>1.1</code>，代表需要修复到这些版本。</li>
 </ul>
 </li>
 <li><code>core: xx</code>: 代表 issue 跟 core 内核相关，如 <code>core: antx</code> 代表跟 <code>antx</code> 配置相关。</li>
@@ -56,14 +62,18 @@
 <li><code>chore: documentation</code>: 代表发现了文档相关问题，需要修复文档说明。</li>
 <li><code>cbd</code>: 代表跟服务器部署相关</li>
 </ul>
-<h2 id="编写文档"><a href="#编写文档" class="headerlink" title="编写文档"></a>编写文档</h2><p>所有功能点必须提交配套文档，文档须满足以下要求</p>
+<h2 id="编写文档"><a class="markdown-anchor" href="#编写文档">#</a> 编写文档</h2>
+<p>所有功能点必须提交配套文档，文档须满足以下要求</p>
 <ul>
 <li>必须说清楚问题的几个方面：what（是什么），why（为什么），how（怎么做），可根据问题的特性有所侧重。</li>
-<li>how 部分必须包含详尽完整的操作步骤，必要时附上 <strong>足够简单，可运行</strong> 的范例代码，<br>所有范例代码放在 <a href="https://github.com/eggjs/examples" target="_blank" rel="external">egg/examples</a> 库中。</li>
+<li>how 部分必须包含详尽完整的操作步骤，必要时附上 <strong>足够简单，可运行</strong> 的范例代码，
+所有范例代码放在 <a href="https://github.com/eggjs/examples" target="_blank" rel="external">egg/examples</a> 库中。</li>
 <li>提供必要的链接，如申请流程，术语解释和参考文档等。</li>
 </ul>
-<h2 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h2><h3 id="提交-Pull-Request"><a href="#提交-Pull-Request" class="headerlink" title="提交 Pull Request"></a>提交 Pull Request</h3><p>如果你有仓库的开发者权限，而且希望贡献代码，那么你可以创建分支修改代码提交 MR，egg 开发团队会 review 代码合并到主干。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">// 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的</div><div class="line">$ git checkout -b branch-name</div><div class="line"></div><div class="line">// 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例</div><div class="line">$ tnpm <span class="built_in">test</span></div><div class="line"></div><div class="line">// 测试通过后，提交代码，message 见下面的规范</div><div class="line"></div><div class="line">$ git add . // git add -u 删除文件</div><div class="line">$ git commit -m <span class="string">"fix(role): role.use must xxx"</span></div><div class="line">$ git push origin branch-name</div></pre></td></tr></table></figure>
+<h2 id="提交代码"><a class="markdown-anchor" href="#提交代码">#</a> 提交代码</h2>
+<h3 id="提交-pull-request"><a class="markdown-anchor" href="#提交-pull-request">#</a> 提交 Pull Request</h3>
+<p>如果你有仓库的开发者权限，而且希望贡献代码，那么你可以创建分支修改代码提交 MR，egg 开发团队会 review 代码合并到主干。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">// 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的</div><div class="line">$ git checkout -b branch-name</div><div class="line"></div><div class="line">// 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例</div><div class="line">$ tnpm <span class="built_in">test</span></div><div class="line"></div><div class="line">// 测试通过后，提交代码，message 见下面的规范</div><div class="line"></div><div class="line">$ git add . // git add -u 删除文件</div><div class="line">$ git commit -m <span class="string">"fix(role): role.use must xxx"</span></div><div class="line">$ git push origin branch-name</div></pre></td></tr></table></figure></p>
 <p>提交后就可以在 <a href="https://github.com/eggjs/egg/pulls" target="_blank" rel="external">egg</a> 创建 Pull Request 了。</p>
 <p>由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。</p>
 <ol>
@@ -72,9 +82,12 @@
 <li>框架测试点（可以关联到测试文件，不用详细描述，关键点即可）</li>
 <li>关注点（针对用户而言，可以没有，一般是不兼容更新等，需要额外提示）</li>
 </ol>
-<h3 id="代码风格"><a href="#代码风格" class="headerlink" title="代码风格"></a>代码风格</h3><p>你的代码风格必须通过 eslint，你可以运行 <code>$ npm run lint</code> 本地测试。</p>
-<h3 id="Commit-提交规范"><a href="#Commit-提交规范" class="headerlink" title="Commit 提交规范"></a>Commit 提交规范</h3><p>根据 <a href="https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format" target="_blank" rel="external">angular 规范</a>提交 commit，<br>这样 history 看起来更加清晰，还可以自动生成 changelog。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">type</span>&gt;</span>(<span class="tag">&lt;<span class="name">scope</span>&gt;</span>): <span class="tag">&lt;<span class="name">subject</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">footer</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="代码风格"><a class="markdown-anchor" href="#代码风格">#</a> 代码风格</h3>
+<p>你的代码风格必须通过 eslint，你可以运行 <code>$ npm run lint</code> 本地测试。</p>
+<h3 id="commit-提交规范"><a class="markdown-anchor" href="#commit-提交规范">#</a> Commit 提交规范</h3>
+<p>根据 <a href="https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format" target="_blank" rel="external">angular 规范</a>提交 commit，
+这样 history 看起来更加清晰，还可以自动生成 changelog。</p>
+<p><figure class="highlight xml"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">type</span>&gt;</span>(<span class="tag">&lt;<span class="name">scope</span>&gt;</span>): <span class="tag">&lt;<span class="name">subject</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">BLANK</span> <span class="attr">LINE</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">footer</span>&gt;</span></div></pre></td></tr></table></figure></p>
 <p>（1）type</p>
 <p>提交 commit 的类型，包括以下几种</p>
 <ul>
@@ -101,10 +114,12 @@
 <li>如果功能点有新增或修改的，还需要关联文档 <code>doc</code> 和 <code>egg-init</code> 的 PR，如 <code>eggjs/egg-bin#123</code></li>
 </ul>
 <p>示例</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">fix($compile): [BREAKING_CHANGE] couple of unit tests for IE9</div><div class="line"></div><div class="line">Older IEs serialize html uppercased, but IE9 does not...</div><div class="line">Would be better to expect case insensitive, unfortunately jasmine does</div><div class="line">not allow to user regexps for throw expectations.</div><div class="line"></div><div class="line">Document change on eggjs/egg#123</div><div class="line"></div><div class="line">Closes #392</div><div class="line"></div><div class="line">BREAKING CHANGE:</div><div class="line"></div><div class="line">  Breaks foo.bar api, foo.baz should be used instead</div></pre></td></tr></table></figure>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">fix($compile): [BREAKING_CHANGE] couple of unit tests for IE9</div><div class="line"></div><div class="line">Older IEs serialize html uppercased, but IE9 does not...</div><div class="line">Would be better to expect case insensitive, unfortunately jasmine does</div><div class="line">not allow to user regexps for throw expectations.</div><div class="line"></div><div class="line">Document change on eggjs/egg#123</div><div class="line"></div><div class="line">Closes #392</div><div class="line"></div><div class="line">BREAKING CHANGE:</div><div class="line"></div><div class="line">  Breaks foo.bar api, foo.baz should be used instead</div></pre></td></tr></table></figure></p>
 <p>查看具体<a href="https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit" target="_blank" rel="external">文档</a></p>
-<h2 id="发布管理"><a href="#发布管理" class="headerlink" title="发布管理"></a>发布管理</h2><p>egg 基于 <a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">semver</a> 语义化版本号进行发布。</p>
-<h3 id="分支策略"><a href="#分支策略" class="headerlink" title="分支策略"></a>分支策略</h3><p><code>master</code> 分支为当前稳定发布的版本，<code>next</code> 分支为下一个开发中的大版本。</p>
+<h2 id="发布管理"><a class="markdown-anchor" href="#发布管理">#</a> 发布管理</h2>
+<p>egg 基于 <a href="http://semver.org/lang/zh-CN/" target="_blank" rel="external">semver</a> 语义化版本号进行发布。</p>
+<h3 id="分支策略"><a class="markdown-anchor" href="#分支策略">#</a> 分支策略</h3>
+<p><code>master</code> 分支为当前稳定发布的版本，<code>next</code> 分支为下一个开发中的大版本。</p>
 <ul>
 <li>只维护两个版本，除非有安全问题，否则修复只会 patch 到 <code>master</code> 和 <code>next</code> 分支，其他更新推动上层框架升级到稳定大版本的最新版本。</li>
 <li>所有 API 的废弃都需要在当前的稳定版本上 <code>deprecate</code> 提示，并保证在当前的稳定版本上一直兼容到新版本的发布。</li>
@@ -112,27 +127,35 @@
 <li><code>next</code> 分支设置 tag 为 <code>next</code>，上层框架可以通过 <code>egg@next</code> 引用开发中的版本进行测试。</li>
 <li>egg 持续维护的版本以 Milestone 为准，只要是开着的版本都会进行修复。</li>
 </ul>
-<h3 id="发布策略"><a href="#发布策略" class="headerlink" title="发布策略"></a>发布策略</h3><p>每个大版本都有一个发布经理管理（PM），他/她要做的事情</p>
-<h4 id="准备工作："><a href="#准备工作：" class="headerlink" title="准备工作："></a>准备工作：</h4><ul>
+<h3 id="发布策略"><a class="markdown-anchor" href="#发布策略">#</a> 发布策略</h3>
+<p>每个大版本都有一个发布经理管理（PM），他/她要做的事情</p>
+<h4 id="准备工作"><a class="markdown-anchor" href="#准备工作">#</a> 准备工作：</h4>
+<ul>
 <li>建立 milestone，确认需求关联 milestone，指派和更新 issues，如 <a href="https://github.com/eggjs/egg/milestone/1" target="_blank" rel="external">1.x milestone</a>。</li>
 <li>从 <code>master</code> 分支新建 <code>next</code> 分支，并设置 tag 为 <code>next</code>。</li>
 </ul>
-<h4 id="发布前："><a href="#发布前：" class="headerlink" title="发布前："></a>发布前：</h4><ul>
-<li>确认当前 Milestone 所有的 issue 都已关闭或可延期，完成性能测试。</li>
-<li><p>发起一个新的 <a href="https://github.com/nodejs/node/pull/4181" target="_blank" rel="external">Release Proposal MR</a>，按照 <a href="https://github.com/nodejs/node/blob/master/CHANGELOG.md" target="_blank" rel="external">node CHANGELOG</a> 进行 <code>History</code> 的编写，修正文档中与版本相关的内容，commits 可以自动生成。</p>
-  <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm run commits</div></pre></td></tr></table></figure>
+<h4 id="发布前"><a class="markdown-anchor" href="#发布前">#</a> 发布前：</h4>
+<ul>
+<li>
+<p>确认当前 Milestone 所有的 issue 都已关闭或可延期，完成性能测试。</p>
 </li>
-<li><p>指定下一个大版本的 PM。</p>
+<li>
+<p>发起一个新的 <a href="https://github.com/nodejs/node/pull/4181" target="_blank" rel="external">Release Proposal MR</a>，按照 <a href="https://github.com/nodejs/node/blob/master/CHANGELOG.md" target="_blank" rel="external">node CHANGELOG</a> 进行 <code>History</code> 的编写，修正文档中与版本相关的内容，commits 可以自动生成。
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm run commits</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>指定下一个大版本的 PM。</p>
 </li>
 </ul>
-<h4 id="发布时："><a href="#发布时：" class="headerlink" title="发布时："></a>发布时：</h4><ul>
+<h4 id="发布时"><a class="markdown-anchor" href="#发布时">#</a> 发布时：</h4>
+<ul>
 <li>将老的稳定版本（master）备份到以当前大版本为名字的分支上（例如 <code>1.x</code>），并设置 tag 为 <code>release-{v}.x</code>（ v 为当前版本，例如 <code>release-1.x</code>）。</li>
 <li>将 <code>next</code> 分支推送到 <code>master</code>，成为新的稳定版本分支，并去除 <code>next</code> tag，修改 README 中与分支相关的内容（CISE task id）。</li>
 <li>发布新的稳定版本到 <a href="http://web.npm.alibaba-inc.com/" target="_blank" rel="external">alinpm</a>，并通知上层框架进行更新。</li>
 <li><code>tnpm publish</code> 之前，请先阅读<a href="https://fengmk2.com/blog/2016/how-i-publish-a-npm-package" target="_blank" rel="external">『我是如何发布一个 npm 包的』</a>。</li>
 </ul>
 <p>上述描述中所有的设置 tag 都是指在 <code>package.json</code> 中设置 npm 的 tag。</p>
-<figure class="highlight"><table><tr><td class="code"><pre><div class="line">"publishConfig": &#123;</div><div class="line">  "tag": "next"</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="code"><pre><div class="line">"publishConfig": &#123;</div><div class="line">  "tag": "next"</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 
   </article>
   <aside id="mobileAside" class="toc">
@@ -144,9 +167,9 @@
       </ul>
     </a>
     <div class="mobile-menu">
-      <ul></ul>
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
     </div>
-    
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
   </aside>
 </div>
 
@@ -164,7 +187,7 @@ mobileTrigger.onclick = function(e) {
 
     <div class="footer">
   <footer>
-    <ul></ul>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
     <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
   </footer>
 </div>

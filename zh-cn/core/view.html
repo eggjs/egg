@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>模板渲染 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>模板渲染</h1>
+    <p>绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户。故我们需要引入对应的模板引擎。</p>
+<p>框架并不强制你使用某种模板引擎，并且没有内置的 view 插件，只是约定了 <a href="../advanced/view-plugin.html">view 插件开发规范</a>，开发者需根据团队技术选型自行引入。</p>
+<h2 id="选择-view-插件"><a class="markdown-anchor" href="#选择-view-插件">#</a> 选择 view 插件</h2>
+<p>目前官方支持的 view 插件有：</p>
+<ul>
+<li><a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a></li>
+</ul>
+<p>下文将以 <code>egg-view-nunjucks</code> 为示例</p>
+<h3 id="引入-view-插件"><a class="markdown-anchor" href="#引入-view-插件">#</a> 引入 view 插件</h3>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-view-nunjucks --save</div></pre></td></tr></table></figure></p>
+<h3 id="启用插件"><a class="markdown-anchor" href="#启用插件">#</a> 启用插件</h3>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line">exports.view = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-view-nunjucks'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="配置插件"><a class="markdown-anchor" href="#配置插件">#</a> 配置插件</h3>
+<p>框架仅约定了以下配置项，更多的配置需要查阅对应插件的文档。</p>
+<ul>
+<li>{String} dir - 模板文件的根目录，绝对路径，默认为 <code>${baseDir}/app/view</code>。</li>
+<li>{Boolean} cache - 是否开启模板缓存，本地开发为 false，其他为 true。</li>
+</ul>
+<p>如下示例演示了如何配置多个 view 目录：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">view</span>: &#123;</div><div class="line">      <span class="attr">dir</span>: [</div><div class="line">        path.join(appInfo.baseDir, <span class="string">'app/view'</span>),</div><div class="line">        path.join(appInfo.baseDir, <span class="string">'path/to/another'</span>),</div><div class="line">      ].join(<span class="string">','</span>)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>注意：<strong>多目录支持这个特性依赖于对应的 view 插件是否实现</strong></p>
+<h2 id="渲染页面"><a class="markdown-anchor" href="#渲染页面">#</a> 渲染页面</h2>
+<p>框架在 context 上提供了 3 个接口，返回值均为 Promise:</p>
+<ul>
+<li><code>render(name, locals)</code> 渲染模板文件, 并赋值给 ctx.body</li>
+<li><code>renderView(name, locals)</code> 渲染模板文件, 仅返回不赋值</li>
+<li><code>renderString(tpl, locals)</code> 渲染模板字符串, 仅返回不赋值</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;app_root&#125;/app/controller/home.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">home</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">const</span> data = &#123; <span class="attr">name</span>: <span class="string">'egg'</span> &#125;;</div><div class="line"></div><div class="line">  <span class="comment">// render a template, path relate to `app/view`</span></div><div class="line">  <span class="keyword">yield</span> <span class="keyword">this</span>.render(<span class="string">'home/index.tpl'</span>, data);</div><div class="line"></div><div class="line">  <span class="comment">// or manually set render result to this.body</span></div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">yield</span> <span class="keyword">this</span>.renderView(<span class="string">'path/to/file.tpl'</span>, data);</div><div class="line"></div><div class="line">  <span class="comment">// or render string directly</span></div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'hi, &#123;&#123; name &#125;&#125;'</span>, data);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="locals"><a class="markdown-anchor" href="#locals">#</a> locals</h2>
+<p>在渲染页面的过程中，我们通常需要一个变量来收集需要传递给模板的变量，在框架里面，我们提供了 <code>app.locals</code> 和 <code>this.locals</code>。</p>
+<ul>
+<li><code>app.locals</code> 为全局的，一般在 <code>app.js</code> 里面配置全局变量。</li>
+<li><code>this.locals</code> 为单次请求的，会合并 <code>app.locals</code>。</li>
+<li>可以直接赋值对象，框架在对应的 setter 里面会自动 merge。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// `app.locals` 会合并到 `this.locals</span></div><div class="line"><span class="keyword">this</span>.app.locals = &#123; <span class="attr">a</span>: <span class="number">1</span> &#125;;</div><div class="line"><span class="keyword">this</span>.locals.b = <span class="number">2</span>;</div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.locals); <span class="comment">// &#123; a: 1, b: 1 &#125;</span></div><div class="line"></div><div class="line"><span class="comment">// 一次请求过程中，仅会在第一次使用 `this.locals` 时把 `app.locals` 合并进去。</span></div><div class="line"><span class="keyword">this</span>.app.locals = &#123; <span class="attr">a</span>: <span class="number">2</span> &#125;;</div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.locals); <span class="comment">// 上面已经合并过一次，故输出还是 &#123; a: 1, b: 2 &#125;</span></div><div class="line"></div><div class="line"><span class="comment">// 也可以直接赋值整个对象，不用担心会覆盖前面的值，我们通过 setter 做了自动合并。</span></div><div class="line"><span class="keyword">this</span>.locals.c = <span class="number">3</span>;</div><div class="line"><span class="keyword">this</span>.locals = &#123; <span class="attr">d</span>: <span class="number">4</span> &#125;;</div><div class="line"><span class="built_in">console</span>.log(<span class="keyword">this</span>.locals); <span class="comment">// &#123; a: 1, b: 2, c: 3, d: 4 &#125;</span></div></pre></td></tr></table></figure></p>
+<p>但在实际业务开发中，controller 中一般不会直接使用这 2 个对象，直接使用 <code>this.render(name, data)</code> 即可：</p>
+<ul>
+<li>框架会自动把 <code>data</code> 合并到 <code>this.locals</code>。</li>
+<li>框架会自动注入 <code>ctx</code>, <code>request</code>, <code>helper</code> 方便使用。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">this</span>.app.locals = &#123; <span class="attr">appName</span>: <span class="string">'showcase'</span> &#125;;</div><div class="line"><span class="keyword">const</span> data = &#123; <span class="attr">user</span>: <span class="string">'egg'</span> &#125;;</div><div class="line"></div><div class="line"><span class="comment">// will auto merge `data` to `this.locals`, output: egg - showcase</span></div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'&#123;&#123; name &#125;&#125; - &#123;&#123; appName &#125;&#125;'</span>, data);</div><div class="line"></div><div class="line"><span class="comment">// helper, ctx, request will auto inject</span></div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'&#123;&#123; name &#125;&#125; - &#123;&#123; helper.lowercaseFirst(ctx.app.config.baseDir) &#125;&#125;'</span>, data);</div></pre></td></tr></table></figure></p>
+<p>注意：</p>
+<ul>
+<li><strong>this.locals 有缓存，只在第一次访问 this.locals 时合并 app.locals。</strong></li>
+<li>原 koa 中的 <code>context.state</code>，由于容易产生歧义，在框架中被覆盖为 locals，即 <code>this.state</code> 和 <code>this.locals</code> 等价，我们建议使用后者。</li>
+</ul>
+<h2 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h2>
+<p>在模板中可以直接使用 <code>helper</code> 上注册的方法，具体可以参见 <a href="../basics/extend.html">扩展</a>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/helper.js</span></div><div class="line">exports.lowercaseFirst = <span class="function"><span class="params">str</span> =&gt;</span> str[<span class="number">0</span>].toLowerCase() + str.substring(<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'&#123;&#123; helper.lowercaseFirst(name) &#125;&#125;'</span>, data);</div></pre></td></tr></table></figure></p>
+<h2 id="filter"><a class="markdown-anchor" href="#filter">#</a> filter</h2>
+<p>在 view 插件里面，会扩展对 <code>filter</code> 的支持，类似 <code>helper</code> 一样编写 <code>filter.js</code> 即可。</p>
+<p>注意：<strong>该特性依赖于对应的 view 插件是否实现</strong></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/filter.js</span></div><div class="line">exports.lowercaseFirst = <span class="function"><span class="params">str</span> =&gt;</span> str[<span class="number">0</span>].toLowerCase() + str.substring(<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'&#123;&#123; name | lowercaseFirst &#125;&#125;'</span>, data);</div></pre></td></tr></table></figure></p>
+<h2 id="security"><a class="markdown-anchor" href="#security">#</a> security</h2>
+<p>框架内置的 <a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 插件，为我们提供了常见的安全辅助函数，包括 <code>helper.shtml / surl / sjs</code> 等等等，强烈建议阅读下 <a href="./security.html">安全</a>。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

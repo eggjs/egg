@@ -36,9 +36,8 @@
 
 - 必须说清楚问题的几个方面：what（是什么），why（为什么），how（怎么做），可根据问题的特性有所侧重。
 - how 部分必须包含详尽完整的操作步骤，必要时附上 **足够简单，可运行** 的范例代码，
-所有范例代码放在 [eggjs/examples](https://github.com/eggjs/examples) 库中。
+所有范例代码放在 [egg/examples](https://github.com/eggjs/examples) 库中。
 - 提供必要的链接，如申请流程，术语解释和参考文档等。
-- 同步修改中英文文档，或者在 PR 里面说明。
 
 ## 提交代码
 
@@ -47,15 +46,15 @@
 如果你有仓库的开发者权限，而且希望贡献代码，那么你可以创建分支修改代码提交 MR，egg 开发团队会 review 代码合并到主干。
 
 ```bash
-# 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的
+// 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的
 $ git checkout -b branch-name
 
-# 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例
-$ npm test
+// 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例
+$ tnpm test
 
-# 测试通过后，提交代码，message 见下面的规范
+// 测试通过后，提交代码，message 见下面的规范
 
-$ git add . # git add -u 删除文件
+$ git add . // git add -u 删除文件
 $ git commit -m "fix(role): role.use must xxx"
 $ git push origin branch-name
 ```
@@ -165,7 +164,7 @@ egg 基于 [semver] 语义化版本号进行发布。
 
 - 确认当前 Milestone 所有的 issue 都已关闭或可延期，完成性能测试。
 - 发起一个新的 [Release Proposal MR]，按照 [node CHANGELOG] 进行 `History` 的编写，修正文档中与版本相关的内容，commits 可以自动生成。
-    ```bash
+    ```
     $ npm run commits
     ```
 - 指定下一个大版本的 PM。
@@ -173,9 +172,9 @@ egg 基于 [semver] 语义化版本号进行发布。
 #### 发布时：
 
 - 将老的稳定版本（master）备份到以当前大版本为名字的分支上（例如 `1.x`），并设置 tag 为 `release-{v}.x`（ v 为当前版本，例如 `release-1.x`）。
-- 将 `next` 分支推送到 `master`，成为新的稳定版本分支，并去除 `next` tag，修改 README 中与分支相关的内容。
-- 发布新的稳定版本到 [npm]，并通知上层框架进行更新。
-- `npm publish` 之前，请先阅读[『我是如何发布一个 npm 包的』]。
+- 将 `next` 分支推送到 `master`，成为新的稳定版本分支，并去除 `next` tag，修改 README 中与分支相关的内容（CISE task id）。
+- 发布新的稳定版本到 [alinpm]，并通知上层框架进行更新。
+- `tnpm publish` 之前，请先阅读[『我是如何发布一个 npm 包的』]。
 
 上述描述中所有的设置 tag 都是指在 `package.json` 中设置 npm 的 tag。
 
@@ -189,5 +188,5 @@ egg 基于 [semver] 语义化版本号进行发布。
 [Release proposal MR]: https://github.com/nodejs/node/pull/4181
 [node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
 [1.x milestone]: https://github.com/eggjs/egg/milestone/1
-[npm]: http://npmjs.com/
+[alinpm]: http://web.npm.alibaba-inc.com/
 [『我是如何发布一个 npm 包的』]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>单元测试 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>单元测试</h1>
+    <h2 id="为什么要单元测试"><a class="markdown-anchor" href="#为什么要单元测试">#</a> 为什么要单元测试</h2>
+<p>先问我们自己以下几个问题：</p>
+<ul>
+<li>你的代码质量如何度量？</li>
+<li>你是如何保证代码质量？</li>
+<li>你敢随时重构代码吗？</li>
+<li>你是如何确保重构的代码依然保持正确性？</li>
+<li>你是否有足够信心在没有测试的情况下随时发布你的代码？</li>
+</ul>
+<p>如果答案都比较犹豫，那么就证明我们非常需要单元测试。</p>
+<p>它能带给我们很多保障：</p>
+<ul>
+<li>代码质量持续有保障</li>
+<li>重构正确性保障</li>
+<li>增强自信心</li>
+<li>自动化运行</li>
+</ul>
+<p>web 应用中的单元测试更加重要，在 web 产品快速迭代的时期，每个测试用例都给应用的稳定性提供了一层保障。
+API 升级，测试用例可以很好地检查代码是否向下兼容。
+对于各种可能的输入，一旦测试覆盖，都能明确它的输出。
+代码改动后，可以通过测试结果判断代码的改动是否影响已确定的结果。</p>
+<p>所以，应用的 controller、service、helper、extend 等代码，都必须有对应的单元测试保证代码质量。
+当然，框架和插件的每个功能改动和重构都需要有相应的单元测试，并且要求尽量做到修改的代码能被 100% 覆盖到。</p>
+<h2 id="测试框架"><a class="markdown-anchor" href="#测试框架">#</a> 测试框架</h2>
+<p>从 <a href="https://www.npmjs.com/search?q=test%20framework&amp;page=1&amp;ranking=popularity" target="_blank" rel="external">npm 搜索『test framework』</a>，
+我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。</p>
+<h3 id="mocha"><a class="markdown-anchor" href="#mocha">#</a> mocha</h3>
+<p>我们选择和推荐大家使用 <a href="http://mochajs.org" target="_blank" rel="external">mocha</a>，功能非常丰富，支持运行在 node 和浏览器中，
+对异步测试支持非常友好。</p>
+<blockquote>
+<p>Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.</p>
+</blockquote>
+<p>加上 <a href="https://npmjs.com/thunk-mocha" target="_blank" rel="external">thunk-mocha</a> 模块的帮助，
+扩展了 mocha 的多种用例书写方式，例如 generator function，async await 等。</p>
+<h3 id="ava"><a class="markdown-anchor" href="#ava">#</a> ava</h3>
+<p>为什么没有选择最近比较火的 <a href="https://github.com/avajs/ava" target="_blank" rel="external">ava</a>，它看起来会跑得很快。
+经过我们几个真实项目实践下来，ava 真的只是看起来很美，但是实际会让测试代码越来越难写，成本越来越高。</p>
+<p><a href="https://github.com/dead-horse" target="_blank" rel="external">@dead-horse</a> 的评价：</p>
+<blockquote>
+<ul>
+<li>ava 自身不够稳定，并发运行文件多的时候会撑爆 CPU；如果设置控制并发参数的方式运行，会导致 only 模式无效。</li>
+<li>并发执行对测试用例的要求很高，所有的测试不能有依赖，特别是遇到一些需要做 mock 的场景时，写好很难。</li>
+<li>app 在初始化的时候是有耗时的，如果串行运行，只需要初始化一个 app 对它测试。
+但是 ava 每一个文件都运行在独立进程，有多少个文件就需要初始化多少个 app。</li>
+</ul>
+</blockquote>
+<p><a href="https://github.com/fool2fish" target="_blank" rel="external">@fool2fish</a> 的评价：</p>
+<blockquote>
+<p>如果是简单的程序的话用 ava 会快一些（但是本来就简单可能也没啥感觉），
+如果是复杂的就不推荐了，比较大的问题是可能没法给出准确的错误堆栈，
+另外并发可能会导致依赖的其他测试环境的服务挂掉，降低测试的成功率，
+还有就是带流程的测试（比如测试数据库的增删改查功能）真心不适合用 ava。</p>
+</blockquote>
+<h2 id="断言库"><a class="markdown-anchor" href="#断言库">#</a> 断言库</h2>
+<p>同样，测试断言库也是<a href="https://www.npmjs.com/search?q=assert&amp;page=1&amp;ranking=popularity" target="_blank" rel="external">百花齐放的时代</a>，
+我们经历过 <a href="https://nodejs.org/api/assert.html" target="_blank" rel="external">assert</a>，到 <a href="https://github.com/shouldjs/should.js" target="_blank" rel="external">should</a> 和 <a href="https://github.com/Automattic/expect.js" target="_blank" rel="external">expect</a>，还是不断地在尝试更好的断言库。</p>
+<p>直到我们发现<a href="https://github.com/power-assert-js/power-assert" target="_blank" rel="external">power-assert</a>，
+因为<a href="https://github.com/atian25/blog/issues/16" target="_blank" rel="external">『No API is the best API』</a>，
+最终我们重新回归原始的 assert 作为默认的断言库。</p>
+<p>简单地说，它的优点是：</p>
+<ul>
+<li>没有 API 就是最好的 API，不需要任何记忆，只需 assert 即可。</li>
+<li><strong>强大的错误信息反馈</strong></li>
+<li><strong>强大的错误信息反馈</strong></li>
+<li><strong>强大的错误信息反馈</strong></li>
+</ul>
+<p>报错信息实在太美太详细，让人有种想看错误报告的欲望：</p>
+<p><img src="https://cloud.githubusercontent.com/assets/227713/20919940/19e83de8-bbd9-11e6-8951-bf4a332f9b5a.png" alt=""></p>
+<h2 id="测试约定"><a class="markdown-anchor" href="#测试约定">#</a> 测试约定</h2>
+<p>为了让我们更多地关注测试用例本身如何编写，而不是耗费时间在如何运行测试脚本等辅助工作上，
+框架对单元测试做了一些基本约定。</p>
+<h3 id="测试目录结构"><a class="markdown-anchor" href="#测试目录结构">#</a> 测试目录结构</h3>
+<p>我们约定 <code>test</code> 目录为存放所有测试脚本的目录，测试所使用到的 <code>fixtures</code> 和相关辅助脚本都应该放在此目录下。</p>
+<p>测试脚本文件统一按 <code>${filename}.test.js</code> 命名，必须以 <code>.test.js</code> 作为文件后缀。</p>
+<p>一个应用的测试目录示例：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="built_in">test</span></div><div class="line">├── controller</div><div class="line">│   └── home.test.js</div><div class="line">├── hello.test.js</div><div class="line">└── service</div><div class="line">    └── user.test.js</div></pre></td></tr></table></figure></p>
+<h3 id="测试运行工具"><a class="markdown-anchor" href="#测试运行工具">#</a> 测试运行工具</h3>
+<p>统一使用 <a href="./development.html#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95">egg-bin 来运行测试脚本</a>，
+自动将内置的 mocha、thunk-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
+让我们<strong>聚焦精力在编写测试代码</strong>上，而不是纠结选择那些测试周边工具和模块。</p>
+<p>只需要在 <code>package.json</code> 上配置好 <code>scripts.test</code> 即可。</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"scripts"</span>: &#123;</div><div class="line">    <span class="attr">"test"</span>: <span class="string">"egg-bin test"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后就可以按标准的 <code>npm test</code> 来运行测试了。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">npm <span class="built_in">test</span></div><div class="line"></div><div class="line">&gt; unittest-example@ <span class="built_in">test</span> /Users/mk2/git/github.com/eggjs/examples/unittest</div><div class="line">&gt; egg-bin <span class="built_in">test</span></div><div class="line"></div><div class="line">  <span class="built_in">test</span>/hello.test.js</div><div class="line">    ✓ should work</div><div class="line"></div><div class="line">  1 passing (10ms)</div></pre></td></tr></table></figure></p>
+<h2 id="准备测试"><a class="markdown-anchor" href="#准备测试">#</a> 准备测试</h2>
+<p>本文主要介绍如何编写应用的单元测试，关于框架和插件的单元测试请查看<a href="../advanced/framework.html">框架开发</a>和<a href="../advanced/plugin.html">插件开发</a>相关章节。</p>
+<h3 id="mock"><a class="markdown-anchor" href="#mock">#</a> mock</h3>
+<p>正常来说，如果要完整手写一个 app 创建和启动代码，还是需要写一段初始化脚本的，
+并且还需要在测试跑完之后做一些清理工作，如删除临时文件，销毁 app。</p>
+<p>常常还有模拟各种网络异常，服务访问异常等特殊情况。</p>
+<p>所以我们单独为框架抽取了一个测试 mock 辅助模块：<a href="https://github.com/eggjs/egg-mock" target="_blank" rel="external">egg-mock</a>，
+有了它我们就可以非常快速地编写一个 app 的单元测试，并且还能快速创建一个 ctx 来测试它的属性、方法和 service 等。</p>
+<h3 id="app"><a class="markdown-anchor" href="#app">#</a> app</h3>
+<p>在测试运行之前，我们首先要创建应用的一个 app 实例，
+通过它来访问需要被测试的 controller、middleware、service 等应用层代码。</p>
+<p>通过 egg-mock，结合 mocha 的 <code>before</code> 钩子就可以便捷地创建出一个 app 实例。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// test/controller/home.test.js</span></div><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"></div><div class="line">describe(<span class="string">'test/controller/home.test.js'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> app;</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 创建当前应用的 app 实例</span></div><div class="line">    app = mock.app();</div><div class="line">    <span class="comment">// 等待 app 启动成功，才能执行测试用例</span></div><div class="line">    <span class="keyword">return</span> app.ready();</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>这样我们就拿到了一个 app 的引用，接下来所有测试用例都会基于这个 app 进行。
+更多关于创建 app 的信息请查看 <a href="https://github.com/eggjs/egg-mock#options" target="_blank" rel="external"><code>mock.app(options)</code></a> 文档。</p>
+<h3 id="ctx"><a class="markdown-anchor" href="#ctx">#</a> ctx</h3>
+<p>我们除了 app，还需要一种方式便捷地拿到 ctx，方便我们进行 extend、service、helper 等测试。
+而我们已经通过上面的方式拿到了一个 app，结合 egg-mock 提供的 <a href="https://github.com/eggjs/egg-mock#appmockcontextoptions" target="_blank" rel="external"><code>app.mockContext(options)</code></a> 方法来快速创建一个 ctx 实例。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">it(<span class="string">'should get a ctx'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">  assert(ctx.method === <span class="string">'GET'</span>);</div><div class="line">  assert(ctx.url === <span class="string">'/'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>如果我们想模拟 <code>ctx.user</code> 这个数据，也可以通过给 mockContext 传递 data 参数实现：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">it(<span class="string">'should mock ctx.user'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">    <span class="attr">user</span>: &#123;</div><div class="line">      <span class="attr">name</span>: <span class="string">'fengmk2'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;);</div><div class="line">  assert(ctx.user);</div><div class="line">  assert(ctx.user.name === <span class="string">'fengmk2'</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>现在我们拿到了 app，也知道如何创建一个 ctx 了，那么就可以进行更多代码的单元测试了。</p>
+<h2 id="测试执行顺序"><a class="markdown-anchor" href="#测试执行顺序">#</a> 测试执行顺序</h2>
+<p>特别需要注意的是执行顺序，尽量保证在执行某个用例的时候执行相关代码。</p>
+<p>常见的错误写法</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// Bad</span></div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'supertest'</span>);</div><div class="line">describe(<span class="string">'bad test'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> app = mock.app();</div><div class="line">  it(<span class="string">'should redirect'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">return</span> request(app.callback())</div><div class="line">      .get(<span class="string">'/'</span>)</div><div class="line">      .expect(<span class="number">302</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就会被调用，
+那 <code>mock.app()</code> 就会启动。
+如果希望使用 only 的方式只执行某个用例那段代码还是会被执行，这是非预期的。</p>
+<p>正确的做法是将其放到 before 中，只有运行这个套件中某个用例才会执行。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// Good</span></div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'supertest'</span>);</div><div class="line">describe(<span class="string">'good test'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> app;</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    app = mock.app();</div><div class="line">    <span class="keyword">return</span> app.ready();</div><div class="line">  &#125;);</div><div class="line">  it(<span class="string">'should redirect'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">return</span> request(app.callback())</div><div class="line">      .get(<span class="string">'/'</span>)</div><div class="line">      .expect(<span class="number">302</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>mocha 使用 before/after/beforeEach/afterEach 来处理前置后置任务，基本能处理所有问题。
+每个用例会按 before -&gt; beforeEach -&gt; it -&gt; afterEach -&gt; after 的顺序执行，而且可以定义多个。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'egg test'</span>, () =&gt; &#123;</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'order 1'</span>));</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'order 2'</span>));</div><div class="line">  after(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'order 6'</span>));</div><div class="line">  beforeEach(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'order 3'</span>));</div><div class="line">  afterEach(<span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">'order 5'</span>));</div><div class="line">  it(<span class="string">'should worker'</span>, () =&gt; <span class="built_in">console</span>.log(<span class="string">'order 4'</span>));</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="异步测试"><a class="markdown-anchor" href="#异步测试">#</a> 异步测试</h2>
+<p>egg-bin 会自动加载 thunk-mocha 插件测试异步调用，它支持多种写法，比如上面启动完成，<code>app.ready()</code> 返回一个 Promise。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 使用 callback 的方式</span></div><div class="line">before(<span class="function"><span class="params">done</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> app = mm.app();</div><div class="line">  app.ready(done);</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 使用 Promise</span></div><div class="line">before(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> app = mm.app();</div><div class="line">  <span class="keyword">return</span> app.ready();</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 使用 generator</span></div><div class="line">before(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> app = mm.app();</div><div class="line">  <span class="keyword">yield</span> app.ready();</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>使用哪种写法取决于不同应用场景，如果遇到多个异步可以使用 generator function，也可以拆分成多个 before。</p>
+<h2 id="controller-测试"><a class="markdown-anchor" href="#controller-测试">#</a> controller 测试</h2>
+<p>controller 在整个应用代码里面属于比较难测试的部分了，因为它跟 router 配置紧密相关，
+我们需要利用 <a href="https://github.com/visionmedia/supertest" target="_blank" rel="external">supertest</a> 发起一个真实请求，
+来将 router 和 controller 连接起来，并且可以帮助我们发送各种满足边界条件的请求数据，
+以测试 controller 的参数校验完整性。</p>
+<p>例如我们要给 <code>app/controller/home.js</code>：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.get(<span class="string">'homepage'</span>, <span class="string">'/'</span>, <span class="string">'home.index'</span>);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line">exports.index = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="string">'hello world'</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>写一个完整的单元测试，它的测试代码 <code>test/controller/home.test.js</code> 如下：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'supertest'</span>);</div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"></div><div class="line">describe(<span class="string">'test/controller/home.test.js'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> app;</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 创建当前应用的 app 实例</span></div><div class="line">    app = mock.app();</div><div class="line">    <span class="comment">// 等待 app 启动成功，才能执行测试用例</span></div><div class="line">    <span class="keyword">return</span> app.ready();</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  describe(<span class="string">'GET /'</span>, () =&gt; &#123;</div><div class="line">    it(<span class="string">'should status 200 and get the body'</span>, () =&gt; &#123;</div><div class="line">      <span class="comment">// 对 app 发起 `GET /` 请求</span></div><div class="line">      <span class="keyword">return</span> request(app.callback())</div><div class="line">        .get(<span class="string">'/'</span>)</div><div class="line">        .expect(<span class="number">200</span>) <span class="comment">// 期望返回 status 200</span></div><div class="line">        .expect(<span class="string">'hello world'</span>); <span class="comment">// 期望 body 是 hello world</span></div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    it(<span class="string">'should send multi requests'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="comment">// 使用 generator function 方式写测试用例，可以在一个用例中串行发起多次请求</span></div><div class="line">      <span class="keyword">yield</span> request(app.callback())</div><div class="line">        .get(<span class="string">'/'</span>)</div><div class="line">        .expect(<span class="number">200</span>) <span class="comment">// 期望返回 status 200</span></div><div class="line">        .expect(<span class="string">'hello world'</span>); <span class="comment">// 期望 body 是 hello world</span></div><div class="line"></div><div class="line">      <span class="comment">// 再请求一次</span></div><div class="line">      <span class="keyword">yield</span> request(app.callback())</div><div class="line">        .get(<span class="string">'/'</span>)</div><div class="line">        .expect(<span class="number">200</span>)</div><div class="line">        .expect(<span class="string">'hello world'</span>);</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>通 supertest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
+例如以 POST 方式发送一个 JSON 请求：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line">exports.post = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">this</span>.request.body;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// test/controller/home.test.js</span></div><div class="line">it(<span class="string">'should status 200 and get the request body'</span>, () =&gt; &#123;</div><div class="line">  <span class="comment">// 模拟 CSRF token，下文会详细说明</span></div><div class="line">  app.mockCsrf();</div><div class="line">  <span class="keyword">return</span> request(app.callback())</div><div class="line">    .post(<span class="string">'/post'</span>)</div><div class="line">    .type(<span class="string">'form'</span>)</div><div class="line">    .send(&#123;</div><div class="line">      <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">    &#125;)</div><div class="line">    .expect(<span class="number">200</span>)</div><div class="line">    .expect(&#123;</div><div class="line">      <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>更详细的 HTTP 请求构造方式，请查看 <a href="https://github.com/visionmedia/supertest#getting-started" target="_blank" rel="external">supertest 文档</a>。</p>
+<h3 id="mock-csrf"><a class="markdown-anchor" href="#mock-csrf">#</a> mock CSRF</h3>
+<p>框架的默认安全插件会自动开启 <a href="./security.html#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81csrf%E7%9A%84%E9%98%B2%E8%8C%83">CSRF 防护</a>，
+如果完整走 CSRF 校验逻辑，那么测试代码需要先请求一次页面，通过解析 HTML 拿到 CSRF token，
+然后再使用此 token 发起 POST 请求。</p>
+<p>所以 egg-mock 对 app 增加了 <code>app.mockCsrf()</code> 方法来模拟取 CSRF token 的过程。
+这样在使用 supertest 请求 app 就会自动通过 CSRF 校验。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.mockCsrf();</div><div class="line"><span class="keyword">return</span> request(app.callback())</div><div class="line">  .post(<span class="string">'/post'</span>)</div><div class="line">  .type(<span class="string">'form'</span>)</div><div class="line">  .send(&#123;</div><div class="line">    <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">  &#125;)</div><div class="line">  .expect(<span class="number">200</span>)</div><div class="line">  .expect(&#123;</div><div class="line">    <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">  &#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="service-测试"><a class="markdown-anchor" href="#service-测试">#</a> service 测试</h2>
+<p>service 相对于 controller 来说，测试起来会更加简单，
+我们只需要先创建一个 ctx，然后通过 <code>ctx.service.${serviceName}</code> 拿到 service 实例，
+然后调用 service 方法即可。</p>
+<p>例如给 <code>app/service/user.js</code></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;</div><div class="line">    * get(name) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">yield</span> userDatabase.get(name);</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>编写单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'get()'</span>, () =&gt; &#123;</div><div class="line">  <span class="comment">// 因为需要异步调用，所以使用 generator function</span></div><div class="line">  it(<span class="string">'should get exists user'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// 创建 ctx</span></div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">    <span class="comment">// 通过 ctx 访问到 service.user</span></div><div class="line">    <span class="keyword">const</span> user = <span class="keyword">yield</span> ctx.service.user.get(<span class="string">'fengmk2'</span>);</div><div class="line">    assert(user);</div><div class="line">    assert(user.name === <span class="string">'fengmk2'</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  it(<span class="string">'should get null when user not exists'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">    <span class="keyword">const</span> user = <span class="keyword">yield</span> ctx.service.user.get(<span class="string">'fengmk1'</span>);</div><div class="line">    assert(!user);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>当然，实际的 service 代码不会像我们示例中那么简单，这里只是展示如何测试 service 而已。</p>
+<h2 id="extend-测试"><a class="markdown-anchor" href="#extend-测试">#</a> extend 测试</h2>
+<p>应用可以对 application、request、response、context 和 helper 进行扩展。
+我们可以对扩展的方法或者属性针对性的编写单元测试。</p>
+<h3 id="application"><a class="markdown-anchor" href="#application">#</a> application</h3>
+<p>egg-mock 创建 app 的时候，已经将 application 的扩展自动加载到 app 实例了，
+直接使用这个 app 实例访问扩展的属性和方法即可进行测试。</p>
+<p>例如 <code>app/extend/application.js</code>，我们给 app 增加了一个基于 <a href="https://github.com/node-modules/ylru" target="_blank" rel="external">ylru</a> 的缓存功能：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> LRU = <span class="built_in">Symbol</span>(<span class="string">'Application#lru'</span>);</div><div class="line"><span class="keyword">const</span> LRUCache = <span class="built_in">require</span>(<span class="string">'ylru'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get lru() &#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[LRU]) &#123;</div><div class="line">      <span class="keyword">this</span>[LRU] = <span class="keyword">new</span> LRUCache(<span class="number">1000</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[LRU];</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>对应的单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'get lru'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should get a lru and it work'</span>, () =&gt; &#123;</div><div class="line">    <span class="comment">// 设置缓存</span></div><div class="line">    app.lru.set(<span class="string">'foo'</span>, <span class="string">'bar'</span>);</div><div class="line">    <span class="comment">// 读取缓存</span></div><div class="line">    assert(app.lru.get(<span class="string">'foo'</span>) === <span class="string">'bar'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>可以看到，测试 application 的扩展是最容易的。</p>
+<h3 id="context"><a class="markdown-anchor" href="#context">#</a> context</h3>
+<p>context 测试只比 application 多了一个 <code>app.mockContext()</code> 步骤来模拟创建一个 context 对象。</p>
+<p>例如在 <code>app/extend/context.js</code> 中增加一个 <code>isXHR</code> 属性，判断是否通过 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/setRequestHeader" target="_blank" rel="external">XMLHttpRequest</a> 发起的请求：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isXHR() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.get(<span class="string">'X-Requested-With'</span>) === <span class="string">'XMLHttpRequest'</span>;</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>对应的单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'isXHR()'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should true'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">      <span class="attr">headers</span>: &#123;</div><div class="line">        <span class="string">'X-Requested-With'</span>: <span class="string">'XMLHttpRequest'</span>,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">    assert(ctx.isXHR === <span class="literal">true</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  it(<span class="string">'should false'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">      <span class="attr">headers</span>: &#123;</div><div class="line">        <span class="string">'X-Requested-With'</span>: <span class="string">'SuperAgent'</span>,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">    assert(ctx.isXHR === <span class="literal">false</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="request"><a class="markdown-anchor" href="#request">#</a> request</h3>
+<p>通过 <code>ctx.request</code> 来访问 request 扩展的属性和方法，直接即可进行测试。</p>
+<p>例如在 <code>app/extend/request.js</code> 中增加一个 <code>isChrome</code> 属性，判断是否 Chrome 浏览器发起的请求：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> IS_CHROME = <span class="built_in">Symbol</span>(<span class="string">'Request#isChrome'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isChrome() &#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[IS_CHROME]) &#123;</div><div class="line">      <span class="keyword">const</span> ua = <span class="keyword">this</span>.get(<span class="string">'User-Agent'</span>).toLowerCase();</div><div class="line">      <span class="keyword">this</span>[IS_CHROME] = ua.includes(<span class="string">'chrome/'</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[IS_CHROME];</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>对应的单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'isChrome()'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should true'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">      <span class="attr">headers</span>: &#123;</div><div class="line">        <span class="string">'User-Agent'</span>: <span class="string">'Chrome/56.0.2924.51'</span>,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">    assert(ctx.request.isChrome === <span class="literal">true</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  it(<span class="string">'should false'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">      <span class="attr">headers</span>: &#123;</div><div class="line">        <span class="string">'User-Agent'</span>: <span class="string">'FireFox/1'</span>,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">    assert(ctx.request.isChrome === <span class="literal">false</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="response"><a class="markdown-anchor" href="#response">#</a> response</h3>
+<p>response 测试与 request 完全一致。
+通过 <code>ctx.response</code> 来访问 response 扩展的属性和方法，直接即可进行测试。</p>
+<p>例如在 <code>app/extend/response.js</code> 中增加一个 <code>isSuccess</code> 属性，判断当前响应状态码是否 200：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isSuccess() &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.status === <span class="number">200</span>;</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>对应的单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'isSuccess()'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should true'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">    ctx.status = <span class="number">200</span>;</div><div class="line">    assert(ctx.response.isSuccess === <span class="literal">true</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  it(<span class="string">'should false'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">    ctx.status = <span class="number">404</span>;</div><div class="line">    assert(ctx.response.isSuccess === <span class="literal">false</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h3>
+<p>helper 测试方式与 service 类似，也是通过 ctx 来访问到 helper，然后调用 helper 方法测试。</p>
+<p>例如 <code>app/helper/format.js</code></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  money(val) &#123;</div><div class="line">    <span class="keyword">const</span> lang = <span class="keyword">this</span>.ctx.get(<span class="string">'Accept-Language'</span>);</div><div class="line">    <span class="keyword">if</span> (lang.includes(<span class="string">'zh-CN'</span>)) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="string">`￥ <span class="subst">$&#123;val&#125;</span>`</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="string">`$ <span class="subst">$&#123;val&#125;</span>`</span>;</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>对应的单元测试：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'money()'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should RMB'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext(&#123;</div><div class="line">      <span class="comment">// 模拟 ctx 的 headers</span></div><div class="line">      headers: &#123;</div><div class="line">        <span class="string">'Accept-Language'</span>: <span class="string">'zh-CN,zh;q=0.5'</span>,</div><div class="line">      &#125;,</div><div class="line">    &#125;);</div><div class="line">    assert(ctx.helper.money(<span class="number">100</span>) === <span class="string">'￥ 100'</span>);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  it(<span class="string">'should US Dolar'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> ctx = app.mockContext();</div><div class="line">    assert(ctx.helper.money(<span class="number">100</span>) === <span class="string">'$ 100'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="mock-方法"><a class="markdown-anchor" href="#mock-方法">#</a> mock 方法</h2>
+<p>egg-mock 除了上面介绍过的 <code>app.mockContext()</code> 和 <code>app.mockCsrf()</code> 方法外，还提供了<a href="https://github.com/eggjs/egg-mock#api" target="_blank" rel="external">非常多的 mock 方法</a>帮助我们便捷地写单元测试。</p>
+<ul>
+<li>
+<p>如我们不想在终端 console 输出任何日志，可以通过 <code>mock.consoleLevel('NONE')</code> 来模拟。</p>
+</li>
+<li>
+<p>又如我想模拟一次请求的 session 数据，可以通过 <code>app.mockSession(data)</code> 来模拟。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'GET /session'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should mock session work'</span>, () =&gt; &#123;</div><div class="line">    app.mockSession(&#123;</div><div class="line">      <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">      <span class="attr">uid</span>: <span class="number">123</span>,</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> request(app.callback())</div><div class="line">      .get(<span class="string">'/session'</span>)</div><div class="line">      .expect(<span class="number">200</span>)</div><div class="line">      .expect(&#123;</div><div class="line">        <span class="attr">session</span>: &#123;</div><div class="line">          <span class="attr">foo</span>: <span class="string">'bar'</span>,</div><div class="line">          <span class="attr">uid</span>: <span class="number">123</span>,</div><div class="line">        &#125;,</div><div class="line">      &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<p>因为 mock 之后会一直生效，我们需要避免每个单元测试用例之间是不能相互 mock 污染的，
+所以通常我们都会在 <code>afterEach</code> 钩子里面还原掉所有 mock。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'some tes'</span>, () =&gt; &#123;</div><div class="line">  <span class="comment">// before hook</span></div><div class="line"></div><div class="line">  afterEach(mock.restore);</div><div class="line"></div><div class="line">  <span class="comment">// it tests</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>下面会详细解释一下 egg-mock 的常见使用场景。</p>
+<h3 id="mock-属性和方法"><a class="markdown-anchor" href="#mock-属性和方法">#</a> mock 属性和方法</h3>
+<p>因为 egg-mock 是扩展自 <a href="https://github.com/node-modules/mm" target="_blank" rel="external">mm</a> 模块，
+它包含了 mm 的所有功能，这样我们就可以非常方便地 mock 任意对象的属性和方法了。</p>
+<h4 id="mock-一个对象的属性"><a class="markdown-anchor" href="#mock-一个对象的属性">#</a> mock 一个对象的属性</h4>
+<p>mock <code>app.config.baseDir</code> 指向 <code>/tmp/mockapp</code></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">mock(app.config, <span class="string">'baseDir'</span>, <span class="string">'/tmp/mockapp'</span>);</div><div class="line">assert(app.config.baseDir === <span class="string">'/tmp/mockapp'</span>);</div></pre></td></tr></table></figure></p>
+<h4 id="mock-一个对象的方法"><a class="markdown-anchor" href="#mock-一个对象的方法">#</a> mock 一个对象的方法</h4>
+<p>mock <code>fs.readFileSync</code> 返回 <code>hello world</code></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">mock(fs, <span class="string">'readFileSync'</span>, filename =&gt; &#123;</div><div class="line">  <span class="keyword">return</span> <span class="string">'hello world'</span>;</div><div class="line">&#125;);</div><div class="line">assert(fs.readFileSync(<span class="string">'foo.txt'</span>) === <span class="string">'hello world'</span>);</div></pre></td></tr></table></figure></p>
+<p>还有 <code>mock.data()</code>，<code>mock.error()</code> 等更多高级的 mock 方法，
+详细使用说明请查看 <a href="https://github.com/node-modules/mm#api" target="_blank" rel="external">mm API</a>。</p>
+<h3 id="mock-service"><a class="markdown-anchor" href="#mock-service">#</a> mock service</h3>
+<p>service 作为框架标准的内置对象，我们提供了便捷的 <code>app.mockService(service, methodName, fn)</code> 模拟 service 方法返回值。</p>
+<p>例如，模拟 <code>app/service/user</code> 中的 <code>get(name)</code> 方法，让它返回一个本来不存在的用户数据。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">it(<span class="string">'should mock fengmk1 exists'</span>, () =&gt; &#123;</div><div class="line">  app.mockService(<span class="string">'user'</span>, <span class="string">'get'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> &#123;</div><div class="line">      <span class="attr">name</span>: <span class="string">'fengmk1'</span>,</div><div class="line">    &#125;;</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  <span class="keyword">return</span> request(app.callback())</div><div class="line">    .get(<span class="string">'/user?name=fengmk1'</span>)</div><div class="line">    .expect(<span class="number">200</span>)</div><div class="line">    <span class="comment">// 返回了原本不存在的用户信息</span></div><div class="line">    .expect(&#123;</div><div class="line">      <span class="attr">name</span>: <span class="string">'fengmk1'</span>,</div><div class="line">    &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>通过 <code>app.mockServiceError(service, methodName, error)</code> 可以模拟 service 调用异常。</p>
+<p>例如，模拟 <code>app/service/user</code> 中的 <code>get(name)</code> 方法调用异常：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">it(<span class="string">'should mock service error'</span>, () =&gt; &#123;</div><div class="line">  app.mockServiceError(<span class="string">'user'</span>, <span class="string">'get'</span>, <span class="string">'mock user service error'</span>);</div><div class="line">  <span class="keyword">return</span> request(app.callback())</div><div class="line">    .get(<span class="string">'/user?name=fengmk2'</span>)</div><div class="line">    <span class="comment">// service 异常，触发 500 响应</span></div><div class="line">    .expect(<span class="number">500</span>)</div><div class="line">    .expect(<span class="regexp">/mock user service error/</span>);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="mock-httpclient"><a class="markdown-anchor" href="#mock-httpclient">#</a> mock httpclient</h3>
+<p>框架内置了 <a href="./httpclient.html">httpclient</a>，应用发起的对外 HTTP 请求基本都是通过它来处理。
+我们可以通过 <code>app.mockHttpclient(url, method, data)</code> 来 mock 掉 <code>app.curl</code> 和 <code>ctx.curl</code> 方法，
+从而实现各种网络异常情况。</p>
+<p>例如在 <code>app/controller/home.js</code> 中发起了一个 curl 请求</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.httpclient = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> res = <span class="keyword">yield</span> <span class="keyword">this</span>.curl(<span class="string">'https://eggjs.org'</span>);</div><div class="line">  <span class="keyword">this</span>.body = res.data.toString();</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>需要 mock 它的返回值：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">describe(<span class="string">'GET /httpclient'</span>, () =&gt; &#123;</div><div class="line">  it(<span class="string">'should mock httpclient response'</span>, () =&gt; &#123;</div><div class="line">    app.mockHttpclient(<span class="string">'https://eggjs.org'</span>, &#123;</div><div class="line">      <span class="comment">// 模拟的参数，可以是 buffer / string / json，</span></div><div class="line">      <span class="comment">// 都会转换成 buffer</span></div><div class="line">      <span class="comment">// 按照请求时的 options.dataType 来做对应的转换</span></div><div class="line">      data: <span class="string">'mock eggjs.org response'</span>,</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> request(app.callback())</div><div class="line">      .get(<span class="string">'/httpclient'</span>)</div><div class="line">      .expect(<span class="string">'mock eggjs.org response'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="示例代码"><a class="markdown-anchor" href="#示例代码">#</a> 示例代码</h2>
+<p>完整示例代码可以在 <a href="https://github.com/eggjs/examples/blob/master/unittest" target="_blank" rel="external">eggjs/exmaples/unittest</a> 找到。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>egg 与 koa - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>egg 与 koa</h1>
+    <h2 id="异步编程模型"><a class="markdown-anchor" href="#异步编程模型">#</a> 异步编程模型</h2>
+<p>node 是一个异步的世界，官方 API 支持的都是 callback 形式的异步编程模型，这会带来许多问题，例如</p>
+<ul>
+<li><a href="http://callbackhell.com/" target="_blank" rel="external">callback hell</a>: 最臭名昭著的 callback 嵌套问题。</li>
+<li><a href="https://oren.github.io/blog/zalgo.html" target="_blank" rel="external">release zalgo</a>: 异步函数中可能同步调用 callback 返回数据，带来不一致性。</li>
+</ul>
+<p>因此社区提供了各种异步的解决方案，最终胜出的是 Promise，它也内置到了 ECMAScript 2015 中。而在 Promise 的基础上，结合 Generator 提供的切换上下文能力，出现了 <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> 等第三方类库来让我们用同步写法编写异步代码。同时，<a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank" rel="external">async await</a> 这个官方解决方案也已经定稿，将于 ECMAScript 2017 中发布。</p>
+<h3 id="generator-和-co"><a class="markdown-anchor" href="#generator-和-co">#</a> Generator 和 co</h3>
+<h4 id="基于-generator-和-promise-提供同步写法的异步模型"><a class="markdown-anchor" href="#基于-generator-和-promise-提供同步写法的异步模型">#</a> 基于 Generator 和 Promise 提供同步写法的异步模型</h4>
+<p>上面提到，基于 Promise 和 Generator 可以实现用同步的方式编写异步代码，实现这个功能最广为人知的库就是 <a href="https://github.com/tj/co" target="_blank" rel="external">co</a>，其实它的核心原理就是下面这几行。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">run</span>(<span class="params">generator, res</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> ret = generator.next(res);</div><div class="line">  <span class="keyword">if</span> (ret.done) <span class="keyword">return</span>;</div><div class="line">  ret.value.then(<span class="function"><span class="keyword">function</span> (<span class="params">res</span>) </span>&#123;</div><div class="line">    run(generator, res);</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过这段代码，可以在 Generator Function 中来 yield 一个 Promise，并等待它 resolve 之后再执行后面的代码。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">let</span> count = <span class="number">1</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">tick</span>(<span class="params">time</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</div><div class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'tick %s after %s ms'</span>, count++, time);</div><div class="line">      resolve();</div><div class="line">    &#125;, time);</div><div class="line">  &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">main</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'start run...'</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">500</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">1000</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">2000</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">run(main());</div></pre></td></tr></table></figure></p>
+<p>通过 run 这个驱动器，上面例子中的 main 中的异步代码就可以完全通过同步的写法完成了。对 Generator 更详细的讲解，可以查看<a href="https://github.com/dead-horse/koa-step-by-step#generator" target="_blank" rel="external">这篇文档和示例</a>。</p>
+<p><a href="https://github.com/tj/co" target="_blank" rel="external">co</a> 相比于上面提到的那个 run 函数而言，加了支持 <code>yield [Object / Array / thunk / Generator Function / Generator]</code>，wrap 一个 Generator Function 成 Promise 等功能。而 co 也是 koa 1 选择的底层异步库，所有的 koa 1 的中间件都必须是一个 <code>generator function</code>。</p>
+<h3 id="async-await"><a class="markdown-anchor" href="#async-await">#</a> async await</h3>
+<p>async await 的原理其实和 co 类似，但它是语言层面提供的语法糖，通过 async await 编写的代码和 co + generator 编写的代码看起来很类似。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> fn = co(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">yield</span> getUser();</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">yield</span> fetchPosts(user.id);</div><div class="line">  <span class="keyword">return</span> &#123; user, posts &#125;;</div><div class="line">&#125;);</div><div class="line">fn().then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res)).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.error(err.stack));</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> fn = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">await</span> getUser();</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">await</span> fetchPosts(user.id);</div><div class="line">  <span class="keyword">return</span> &#123; user, posts &#125;;</div><div class="line">&#125;;</div><div class="line">fn().then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res)).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.error(err.stack));</div></pre></td></tr></table></figure></p>
+<p>相较于 co 支持的种类，async await 不能直接 await 一个 <code>Promise</code> 数组（可以通过 <code>Promise.all</code> 来封装），也不能 await <code>thunk</code>。</p>
+<p>由于 async await 还尚未随着规范发布，node 7 中带的 V8 版本已经支持（但是<a href="https://github.com/nodejs/node/issues/9339" target="_blank" rel="external">仍然有问题</a>），async await 还不能直接使用，必须经过 babel 等模块进行编译。同时 koa 2 开始支持 <code>async function</code> 类型的中间件。</p>
+<h2 id="koa"><a class="markdown-anchor" href="#koa">#</a> koa</h2>
+<blockquote>
+<p>Koa is a new web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs.</p>
+</blockquote>
+<p>koa 和 express 的设计风格非常类似，底层也都是共用的<a href="https://github.com/jshttp" target="_blank" rel="external">同一套 http 基础库</a>，但是有几个显著的区别，除了上面提到的默认异步解决方案之外，主要的特点还有下面几个。</p>
+<h3 id="midlleware"><a class="markdown-anchor" href="#midlleware">#</a> Midlleware</h3>
+<p>koa 的中间件和 express 不同，koa 选择了洋葱圈模型。</p>
+<ul>
+<li>中间件洋葱图：</li>
+</ul>
+<p><img src="https://camo.githubusercontent.com/d80cf3b511ef4898bcde9a464de491fa15a50d06/68747470733a2f2f7261772e6769746875622e636f6d2f66656e676d6b322f6b6f612d67756964652f6d61737465722f6f6e696f6e2e706e67" alt=""></p>
+<ul>
+<li>中间件执行顺序图：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/koajs/koa/a7b6ed0529a58112bac4171e4729b8760a34ab8b/docs/middleware.gif" alt=""></p>
+<p>所有的请求经过一个中间件的时候都会执行两次，对比 express 形式的中间件，koa 的模型可以非常方便的实现后置处理逻辑，对比 koa 和 express 的 compress 中间件就可以明显的感受到 koa 中间件模型的优势。</p>
+<ul>
+<li><a href="https://github.com/koajs/compress/blob/master/index.js" target="_blank" rel="external">koa-compress</a> for koa.</li>
+<li><a href="https://github.com/expressjs/compression/blob/master/index.js" target="_blank" rel="external">compression</a> for express.</li>
+</ul>
+<h3 id="context"><a class="markdown-anchor" href="#context">#</a> Context</h3>
+<p>和 express 只有 Request 和 Response 两个对象不同，koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 koa 1 中为中间件的 <code>this</code>，在 koa 2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 <a href="https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12" target="_blank" rel="external">traceId</a> 这种需要贯穿整个请求（在后续任何第一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言更加符合语义。</p>
+<p>同时 Context 上也挂载了 Request 和 Response 两个对象。和 express 类似，这两个对象都提供了大量的便捷方法辅助开发，例如</p>
+<ul>
+<li><code>get request.query</code></li>
+<li><code>get request.hostname</code></li>
+<li><code>set response.body</code></li>
+<li><code>set response.status</code></li>
+</ul>
+<h3 id="异常处理"><a class="markdown-anchor" href="#异常处理">#</a> 异常处理</h3>
+<p>通过同步方式编写异步代码带来的另外一个非常大的好处就是异常处理非常自然，使用 <code>try catch</code> 就可以将按照规范编写的代码中的所有错误都捕获到。这样我们可以很便捷的编写一个自定义的错误处理中间件。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">onerror</span>(<span class="params">next</span>) </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">yield</span> next;</div><div class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">    <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err);</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'server error'</span>;</div><div class="line">    <span class="keyword">this</span>.status = err.status || <span class="number">500</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>只需要将这个中间件放在其他中间件之前，就可以捕获它们所有的同步或者异步代码中抛出的异常了。</p>
+<h2 id="egg-是-koa"><a class="markdown-anchor" href="#egg-是-koa">#</a> egg 是 koa</h2>
+<p>egg 选择了 koa 作为其基础框架，而在 koa 的模型基础上，我们又进一步对它进行了一些增强。</p>
+<h3 id="扩展"><a class="markdown-anchor" href="#扩展">#</a> 扩展</h3>
+<p>在基于 egg 的框架或者应用中，我们可以通过定义 <code>app/extend/{application,context,request,response}.js</code> 来扩展 koa 中对应的四个对象的原型，通过这个功能，我们可以快速的增加更多的辅助方法，例如我们在 <code>app/extend/context.js</code> 中写入下列代码：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isIOS() &#123;</div><div class="line">    <span class="keyword">const</span> iosReg = <span class="regexp">/iphone|ipad|ipod/i</span>;</div><div class="line">    <span class="keyword">return</span> iosReg.test(<span class="keyword">this</span>.get(<span class="string">'user-agent'</span>);</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在 controller 中，我们就可以使用到刚才定义的这个便捷属性了：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.handler = <span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">this</span>.isIOS</div><div class="line">    ? <span class="string">'Your operating system is iOS.'</span></div><div class="line">    : <span class="string">'Your operating system is not iOS.'</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>更多关于扩展的内容，请查看<a href="../basics/extend.html">框架扩展</a>章节。</p>
+<h3 id="插件"><a class="markdown-anchor" href="#插件">#</a> 插件</h3>
+<p>众所周知，在 express 和 koa 中，经常会引入许许多多的中间件来提供各种各样的功能，例如引入 <a href="https://github.com/koajs/session" target="_blank" rel="external">koa-session</a> 提供 session 的支持，引入 <a href="https://github.com/koajs/bodyparser" target="_blank" rel="external">koa-bodyparser</a> 来解析请求 body。而 egg 提供了一个更加强大的插件机制，让这些独立领域的功能模块可以更加容易编写。</p>
+<p>一个插件可以包含</p>
+<ul>
+<li>extend：扩展基础对象的上下文，提供各种工具类、属性。</li>
+<li>middleware：增加一个或多个中间件，提供请求的前置、后置处理逻辑。</li>
+<li>config：配置各个环境下插件自身的默认配置项。</li>
+</ul>
+<p>一个独立领域下的插件实现，可以在代码维护性非常高的情况下实现非常完善的功能，而插件也支持配置各个环境下的默认（最佳）配置，让我们使用插件的时候几乎可以不需要修改配置项。</p>
+<p><a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 插件就是一个典型的例子。</p>
+<p>更多关于插件的内容，请查看<a href="../advanced/plugin.html">插件</a>章节。</p>
+<h3 id="升级计划"><a class="markdown-anchor" href="#升级计划">#</a> 升级计划</h3>
+<p>尽管现在 koa 2 已经比较稳定了，但是 koa 2 需要配合 async await 使用才有意义，所以仍然需要 babel 等工具进行编译。所以 egg 1 是基于 koa 1 开发的，主要考虑到</p>
+<ol>
+<li>服务端代码需要足够的稳定，并且出现故障时可以最快的定位到问题，所以尽量不要让编译后的后端代码运行在生产环境。</li>
+<li>node 6 对 ECMAScript 2015 的支持已经达到了 <a href="http://node.green/" target="_blank" rel="external">99%</a>，绝大多数的语法已经不需要 babel 也能够使用了。</li>
+<li>基于 co + generator 的开发体验和 async await 没有区别，而且本质上它们就是同一个东西。当真的要做代码迁移的时候基本通过简单的替换就能完成。</li>
+</ol>
+<p>当然，当 node 8 发布，async await 在 LTS 版本上处于默认可用状态的时候，koa 2 会发布正式版，egg 也会在那个时候升级到 koa 2。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

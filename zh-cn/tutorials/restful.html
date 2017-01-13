@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>实现 RESTful API - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>实现 RESTful API</h1>
+    <p>通过 web 技术开发服务给客户端提供接口，可能是各个 web 框架最广泛的应用之一。这篇文章我们拿 <a href="https://cnodejs.org/" target="_blank" rel="external">cnode</a> 社区的接口来看一看通过 egg 如何实现 <a href="https://zh.wikipedia.org/wiki/REST" target="_blank" rel="external">RESTful</a> API 给客户端调用。</p>
+<p>cnode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这篇文章中，我们将基于 cnode V1 的接口，封装一个更符合 RESTful 语义的 V2 版本 API。</p>
+<h2 id="设计响应格式"><a class="markdown-anchor" href="#设计响应格式">#</a> 设计响应格式</h2>
+<p>在 RESTful 风格的设计中，我们会通过响应状态码来标识响应的状态，保持响应的 body 简洁，只返回接口数据。以 <code>topic</code> 资源为例：</p>
+<h3 id="获取主题列表"><a class="markdown-anchor" href="#获取主题列表">#</a> 获取主题列表</h3>
+<ul>
+<li><code>GET /api/v2/topics</code></li>
+<li>响应状态码：200</li>
+<li>响应体：</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">[</div><div class="line">  &#123;</div><div class="line">    <span class="attr">"id"</span>: <span class="string">"57ea257b3670ca3f44c5beb6"</span>,</div><div class="line">    <span class="attr">"author_id"</span>: <span class="string">"541bf9b9ad60405c1f151a03"</span>,</div><div class="line">    <span class="attr">"tab"</span>: <span class="string">"share"</span>,</div><div class="line">    <span class="attr">"content"</span>: <span class="string">"content"</span>,</div><div class="line">    <span class="attr">"last_reply_at"</span>: <span class="string">"2017-01-11T13:32:25.089Z"</span>,</div><div class="line">    <span class="attr">"good"</span>: <span class="literal">false</span>,</div><div class="line">    <span class="attr">"top"</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">"reply_count"</span>: <span class="number">155</span>,</div><div class="line">    <span class="attr">"visit_count"</span>: <span class="number">28176</span>,</div><div class="line">    <span class="attr">"create_at"</span>: <span class="string">"2016-09-27T07:53:31.872Z"</span>,</div><div class="line">  &#125;,</div><div class="line">  &#123;</div><div class="line">    <span class="attr">"id"</span>: <span class="string">"57ea257b3670ca3f44c5beb6"</span>,</div><div class="line">    <span class="attr">"author_id"</span>: <span class="string">"541bf9b9ad60405c1f151a03"</span>,</div><div class="line">    <span class="attr">"tab"</span>: <span class="string">"share"</span>,</div><div class="line">    <span class="attr">"content"</span>: <span class="string">"content"</span>,</div><div class="line">    <span class="attr">"title"</span>: <span class="string">"《一起学 Node.js》彻底重写完毕"</span>,</div><div class="line">    <span class="attr">"last_reply_at"</span>: <span class="string">"2017-01-11T10:20:56.496Z"</span>,</div><div class="line">    <span class="attr">"good"</span>: <span class="literal">false</span>,</div><div class="line">    <span class="attr">"top"</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">"reply_count"</span>: <span class="number">193</span>,</div><div class="line">    <span class="attr">"visit_count"</span>: <span class="number">47633</span>,</div><div class="line">  &#125;,</div><div class="line">]</div></pre></td></tr></table></figure></p>
+<h3 id="获取单个主题"><a class="markdown-anchor" href="#获取单个主题">#</a> 获取单个主题</h3>
+<ul>
+<li><code>GET /api/v2/topics/57ea257b3670ca3f44c5beb6</code></li>
+<li>响应状态码：200</li>
+<li>响应体：</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"id"</span>: <span class="string">"57ea257b3670ca3f44c5beb6"</span>,</div><div class="line">  <span class="attr">"author_id"</span>: <span class="string">"541bf9b9ad60405c1f151a03"</span>,</div><div class="line">  <span class="attr">"tab"</span>: <span class="string">"share"</span>,</div><div class="line">  <span class="attr">"content"</span>: <span class="string">"content"</span>,</div><div class="line">  <span class="attr">"title"</span>: <span class="string">"《一起学 Node.js》彻底重写完毕"</span>,</div><div class="line">  <span class="attr">"last_reply_at"</span>: <span class="string">"2017-01-11T10:20:56.496Z"</span>,</div><div class="line">  <span class="attr">"good"</span>: <span class="literal">false</span>,</div><div class="line">  <span class="attr">"top"</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">"reply_count"</span>: <span class="number">193</span>,</div><div class="line">  <span class="attr">"visit_count"</span>: <span class="number">47633</span>,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="创建主题"><a class="markdown-anchor" href="#创建主题">#</a> 创建主题</h3>
+<ul>
+<li><code>POST /api/v2/topics</code></li>
+<li>响应状态码：201</li>
+<li>响应体：</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;topic_id&quot;: &quot;57ea257b3670ca3f44c5beb6&quot;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="更新主题"><a class="markdown-anchor" href="#更新主题">#</a> 更新主题</h3>
+<ul>
+<li><code>PUT /api/v2/topics/57ea257b3670ca3f44c5beb6</code></li>
+<li>响应状态码：204</li>
+<li>响应体：空</li>
+</ul>
+<h3 id="错误处理"><a class="markdown-anchor" href="#错误处理">#</a> 错误处理</h3>
+<p>在接口处理发生错误的时候，如果是客户端请求参数导致的错误，我们会返回 4xx 状态码，如果是服务端自身的处理逻辑错误，我们会返回 5xx 状态码。所有的异常对象都是对这个异常状态的描述，其中 error 字段是错误的描述，detail 字段（可选）是导致错误的详细原因。</p>
+<p>例如，当客户端传递的参数异常时，我们可能返回一个响应，状态码为 422，返回响应体为：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"error"</span>: <span class="string">"Validation Failed"</span>,</div><div class="line">  <span class="attr">"detail"</span>: [ &#123; <span class="attr">"message"</span>: <span class="string">"required"</span>, <span class="attr">"field"</span>: <span class="string">"title"</span>, <span class="attr">"code"</span>: <span class="string">"missing_field"</span> &#125; ]</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="实现"><a class="markdown-anchor" href="#实现">#</a> 实现</h2>
+<p>在约定好接口之后，我们可以开始动手实现了。</p>
+<h3 id="初始化项目"><a class="markdown-anchor" href="#初始化项目">#</a> 初始化项目</h3>
+<p>还是通过<a href="../intro/quickstart.html">快速入门</a>章节介绍的 <a href="https://github.com/eggjs/egg-init" target="_blank" rel="external">egg-init</a> 工具来初始化我们的应用</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ egg-init cnode-api --type=empty</div><div class="line">$ <span class="built_in">cd</span> cnode-api</div><div class="line">$ npm i</div></pre></td></tr></table></figure></p>
+<h3 id="注册路由"><a class="markdown-anchor" href="#注册路由">#</a> 注册路由</h3>
+<p>首先，我们先按照前面的设计来注册<a href="../basics/router.html">路由</a>，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 <code>app/router.js</code> 中：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.resources(<span class="string">'Topic'</span>, <span class="string">'/api/v2/topics'</span>, <span class="string">'topics'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>通过 <code>app.resources</code> 方法，我们将 Topic 这个资源的增删改查接口映射到了 <code>app/controller/topic.js</code> 文件。</p>
+<h3 id="controller-开发"><a class="markdown-anchor" href="#controller-开发">#</a> controller 开发</h3>
+<p>在 <a href="../basics/controller.html">controller</a> 中，我们只需要实现 <code>app.resources</code> 约定的 <a href="../basics/router.html#restful-%E9%A3%8E%E6%A0%BC%E7%9A%84-url-%E5%AE%9A%E4%B9%89">RESTful 风格的 URL 定义</a> 中我们需要提供的接口即可。例如我们来实现创建一个 Topic 的接口：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 定义创建接口的请求参数规则</span></div><div class="line"><span class="keyword">const</span> createRule = &#123;</div><div class="line">  <span class="attr">accesstoken</span>: <span class="string">'string'</span>,</div><div class="line">  <span class="attr">title</span>: <span class="string">'string'</span>,</div><div class="line">  <span class="attr">tab</span>: &#123; <span class="attr">type</span>: <span class="string">'enum'</span>, <span class="attr">values</span>: [ <span class="string">'ask'</span>, <span class="string">'share'</span>, <span class="string">'job'</span> ], <span class="attr">required</span>: <span class="literal">false</span> &#125;,</div><div class="line">  <span class="attr">content</span>: <span class="string">'string'</span>,</div><div class="line">&#125;;</div><div class="line">exports.create = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// 校验 `this.request.body` 是否符合我们预期的格式</span></div><div class="line">  <span class="comment">// 如果参数校验未通过，将会抛出一个 status = 422 的异常</span></div><div class="line">  <span class="keyword">this</span>.validate(createRule);</div><div class="line">  <span class="comment">// 调用 service 创建一个 topic</span></div><div class="line">  <span class="keyword">const</span> id = <span class="keyword">yield</span> <span class="keyword">this</span>.service.topic.create(<span class="keyword">this</span>.request.body);</div><div class="line">  <span class="comment">// 设置响应体和状态码</span></div><div class="line">  <span class="keyword">this</span>.body = &#123;</div><div class="line">    <span class="attr">topic_id</span>: id,</div><div class="line">  &#125;;</div><div class="line">  <span class="keyword">this</span>.status = <span class="number">201</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>如同注释中说明的，一个 controller 主要实现了下面的逻辑：</p>
+<ol>
+<li>调用 validate 方法对请求参数进行验证。</li>
+<li>用验证过的参数调用 service 封装的业务逻辑来创建一个 topic。</li>
+<li>按照接口约定的格式设置响应状态码和内容。</li>
+</ol>
+<h3 id="service-开发"><a class="markdown-anchor" href="#service-开发">#</a> service 开发</h3>
+<p>在 <a href="../basics/service.html">service</a> 中，我们可以更加专注的编写实际生效的业务逻辑。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">TopicService</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;</div><div class="line">    <span class="keyword">constructor</span>(ctx) &#123;</div><div class="line">      <span class="keyword">super</span>(ctx);</div><div class="line">      <span class="keyword">this</span>.root = <span class="string">'https://cnodejs.org/api/v1'</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    * create(params) &#123;</div><div class="line">      <span class="comment">// 调用 cnode V1 版本 API</span></div><div class="line">      <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.ctx.curl(<span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.root&#125;</span>/topics`</span>, &#123;</div><div class="line">        <span class="attr">method</span>: <span class="string">'post'</span>,</div><div class="line">        <span class="attr">data</span>: params,</div><div class="line">        <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">        <span class="attr">contentType</span>: <span class="string">'json'</span>,</div><div class="line">      &#125;);</div><div class="line">      <span class="comment">// 检查调用是否成功，如果调用失败会抛出异常</span></div><div class="line">      <span class="keyword">this</span>.checkSuccess(result);</div><div class="line">      <span class="comment">// 返回创建的 topic 的 id</span></div><div class="line">      <span class="keyword">return</span> result.data.topic_id;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 封装统一的调用检查函数，可以在查询、创建和更新等 service 中复用</span></div><div class="line">    checkSuccess(result) &#123;</div><div class="line">      <span class="keyword">if</span> (result.status !== <span class="number">200</span>) &#123;</div><div class="line">        <span class="keyword">const</span> errorMsg = result.data &amp;&amp; result.data.error_msg ? result.data.error_msg : <span class="string">'unknown error'</span>;</div><div class="line">        <span class="keyword">this</span>.ctx.throw(result.status, errorMsg);</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">if</span> (!result.data.success) &#123;</div><div class="line">        <span class="comment">// 远程调用返回格式错误</span></div><div class="line">        <span class="keyword">this</span>.ctx.throw(<span class="number">500</span>, <span class="string">'remote response error'</span>, &#123; <span class="attr">data</span>: result.data &#125;);</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> TopicService;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在 创建 topic 的 service 开发完成之后，我们就从上往下的完成了一个接口的开发。</p>
+<h3 id="统一错误处理"><a class="markdown-anchor" href="#统一错误处理">#</a> 统一错误处理</h3>
+<p>正常的业务逻辑已经正常完成了，但是异常我们还没有进行处理。在前面编写的代码中，controller 和 service 都有可能抛出异常，这也是我们推荐的编码方式，当发现客户端参数传递错误或者调用后端服务异常时，通过抛出异常的方式来进行中断。</p>
+<ul>
+<li>controller 中 <code>this.validate()</code> 进行参数校验，失败抛出异常。</li>
+<li>service 中调用 <code>this.ctx.curl()</code> 方法访问 cnode 服务，可能由于网络问题等原因抛出服务端异常。</li>
+<li>service 中拿到 cnode 服务端返回的结果后，可能会收到请求调用失败的返回结果，此时也会抛出异常。</li>
+</ul>
+<p>框架虽然提供了默认的异常处理，但是可能和我们在前面的接口约定不一致，因此我们需要自己实现一个统一错误处理的中间件来对错误进行处理。</p>
+<p>在 <code>app/middleware</code> 目录下新建一个 <code>error_handler.js</code> 的文件来新建一个 <a href="../basics/middleware.html">middleware</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* (<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">yield</span> next;</div><div class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">      <span class="comment">// 所有的异常都在 app 上触发一个 error 事件，框架会记录一条错误日志</span></div><div class="line">      <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err, <span class="keyword">this</span>);</div><div class="line"></div><div class="line">      <span class="keyword">const</span> status = err.status || <span class="number">500</span>;</div><div class="line">      <span class="comment">// 生产环境时 500 错误的详细错误内容不返回给客户端，因为可能包含敏感信息</span></div><div class="line">      <span class="keyword">const</span> error = status === <span class="number">500</span> &amp;&amp; <span class="keyword">this</span>.app.config.env === <span class="string">'prod'</span></div><div class="line">        ? <span class="string">'Internal Server Error'</span></div><div class="line">        : err.message;</div><div class="line"></div><div class="line">      <span class="comment">// 从 error 对象上读出各个属性，设置到响应中</span></div><div class="line">      <span class="keyword">this</span>.body = &#123; error &#125;;</div><div class="line">      <span class="keyword">if</span> (status === <span class="number">422</span>) &#123;</div><div class="line">        <span class="keyword">this</span>.body.detail = err.errors;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">this</span>.status = status;</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>通过这个中间件，我们可以捕获所有异常，并按照我们想要的格式封装了响应。将这个中间件通过配置文件(<code>config/config.default.js</code>)加载进来：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="comment">// 加载 errorHandler 中间件</span></div><div class="line">  middleware: [ <span class="string">'errorHandler'</span> ],</div><div class="line">  <span class="comment">// 只对 /api 前缀的 url 路径生效</span></div><div class="line">  errorHandler: &#123;</div><div class="line">    <span class="attr">match</span>: <span class="string">'/api'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="测试"><a class="markdown-anchor" href="#测试">#</a> 测试</h2>
+<p>代码完成只是第一步，我们还需要给代码加上<a href="../core/unittest.html">单元测试</a>。</p>
+<h3 id="controller-测试"><a class="markdown-anchor" href="#controller-测试">#</a> controller 测试</h3>
+<p>我们先来编写 controller 代码的单元测试。在写 controller 单测的时候，我们可以适时的模拟 service 层的实现，因为对 controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 service 层按照约定的接口 mock 掉，service 自身的逻辑可以让 service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> request = <span class="built_in">require</span>(<span class="string">'supertest'</span>);</div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"></div><div class="line">describe(<span class="string">'test/app/controller/topic.test.js'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> app;</div><div class="line">  before(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 通过 egg-mock 库快速创建一个应用实例</span></div><div class="line">    app = mock.app();</div><div class="line">    <span class="keyword">return</span> app.ready();</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  afterEach(mock.restore);</div><div class="line"></div><div class="line">  <span class="comment">// 测试请求参数错误时应用的响应</span></div><div class="line">  it(<span class="string">'should POST /api/v2/topics/ 422'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    app.mockCsrf();</div><div class="line">    <span class="keyword">yield</span> request(app.callback())</div><div class="line">    .post(<span class="string">'/api/v2/topics'</span>)</div><div class="line">    .send(&#123;</div><div class="line">      <span class="attr">accesstoken</span>: <span class="string">'123'</span>,</div><div class="line">    &#125;)</div><div class="line">    .expect(<span class="number">422</span>)</div><div class="line">    .expect(&#123;</div><div class="line">      <span class="attr">error</span>: <span class="string">'Validation Failed'</span>,</div><div class="line">      <span class="attr">detail</span>: [&#123; <span class="attr">message</span>: <span class="string">'required'</span>, <span class="attr">field</span>: <span class="string">'title'</span>, <span class="attr">code</span>: <span class="string">'missing_field'</span> &#125;, &#123; <span class="attr">message</span>: <span class="string">'required'</span>, <span class="attr">field</span>: <span class="string">'content'</span>, <span class="attr">code</span>: <span class="string">'missing_field'</span> &#125;],</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  <span class="comment">// mock 掉 service 层，测试正常时的返回</span></div><div class="line">  it(<span class="string">'should POST /api/v2/topics/ 201'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    app.mockCsrf();</div><div class="line">    app.mockService(<span class="string">'topic'</span>, <span class="string">'create'</span>, <span class="number">123</span>);</div><div class="line">    <span class="keyword">yield</span> request(app.callback())</div><div class="line">    .post(<span class="string">'/api/v2/topics'</span>)</div><div class="line">    .send(&#123;</div><div class="line">      <span class="attr">accesstoken</span>: <span class="string">'123'</span>,</div><div class="line">      <span class="attr">title</span>: <span class="string">'title'</span>,</div><div class="line">      <span class="attr">content</span>: <span class="string">'hello'</span>,</div><div class="line">    &#125;)</div><div class="line">    .expect(<span class="number">201</span>)</div><div class="line">    .expect(&#123;</div><div class="line">      <span class="attr">topic_id</span>: <span class="number">123</span>,</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>上面对 controller 的测试中，我们通过 <a href="https://github.com/eggjs/egg-mock" target="_blank" rel="external">egg-mock</a> 创建了一个应用，并通过 <a href="https://github.com/visionmedia/supertest" target="_blank" rel="external">supertest</a> 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。</p>
+<h3 id="service-测试"><a class="markdown-anchor" href="#service-测试">#</a> service 测试</h3>
+<p>service 层的测试也只需要聚焦于自身的代码逻辑，<a href="https://github.com/eggjs/egg-mock" target="_blank" rel="external">egg-mock</a> 同样提供了快速测试 service 的方法，不再需要用 supertest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"><span class="keyword">const</span> mock = <span class="built_in">require</span>(<span class="string">'egg-mock'</span>);</div><div class="line"></div><div class="line">describe(<span class="string">'test/app/service/topic.test.js'</span>, () =&gt; &#123;</div><div class="line">  <span class="keyword">let</span> app;</div><div class="line">  <span class="keyword">let</span> ctx;</div><div class="line">  before(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    app = mock.app();</div><div class="line">    <span class="keyword">yield</span> app.ready();</div><div class="line">    <span class="comment">// 创建一个全局的 context 对象，可以在 ctx 对象上调用 service 的方法</span></div><div class="line">    ctx = app.mockContext();</div><div class="line">  &#125;);</div><div class="line"></div><div class="line">  describe(<span class="string">'create()'</span>, () =&gt; &#123;</div><div class="line">    it(<span class="string">'should create failed by accesstoken error'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="comment">// 直接在 ctx 上调用 service 方法</span></div><div class="line">        <span class="keyword">yield</span> ctx.service.topic.create(&#123;</div><div class="line">          <span class="attr">accesstoken</span>: <span class="string">'hello'</span>,</div><div class="line">          <span class="attr">title</span>: <span class="string">'title'</span>,</div><div class="line">          <span class="attr">content</span>: <span class="string">'content'</span>,</div><div class="line">        &#125;);</div><div class="line">      &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">        assert(err.status === <span class="number">401</span>);</div><div class="line">        assert(err.message === <span class="string">'错误的accessToken'</span>);</div><div class="line">      &#125;</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    it(<span class="string">'should create success'</span>, <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="comment">// 不影响 cnode 的正常运行，我们可以将对 cnode 的调用按照接口约定模拟掉</span></div><div class="line">      <span class="comment">// app.mockHttpclient 方法可以便捷的对应用发起的 http 请求进行模拟</span></div><div class="line">      app.mockHttpclient(<span class="string">`<span class="subst">$&#123;ctx.service.topic.root&#125;</span>/topics`</span>, <span class="string">'POST'</span>, &#123;</div><div class="line">        <span class="attr">data</span>: &#123;</div><div class="line">          <span class="attr">success</span>: <span class="literal">true</span>,</div><div class="line">          <span class="attr">topic_id</span>: <span class="string">'5433d5e4e737cbe96dcef312'</span>,</div><div class="line">        &#125;,</div><div class="line">      &#125;);</div><div class="line">      <span class="keyword">const</span> id = <span class="keyword">yield</span> ctx.service.topic.create(&#123;</div><div class="line">        <span class="attr">accesstoken</span>: <span class="string">'hello'</span>,</div><div class="line">        <span class="attr">title</span>: <span class="string">'title'</span>,</div><div class="line">        <span class="attr">content</span>: <span class="string">'content'</span>,</div><div class="line">      &#125;);</div><div class="line">      assert(id === <span class="string">'5433d5e4e737cbe96dcef312'</span>);</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>上面对 service 层的测试中，我们通过 egg-mock 提供的 <code>app.createContext()</code> 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 <code>app.mockHttpclient()</code> 方法模拟 http 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。</p>
+<hr>
+<p>完整的代码实现和测试都在 <a href="https://github.com/eggjs/examples/tree/master/cnode-api" target="_blank" rel="external">eggjs/examples/cnode-api</a> 中可以找到。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

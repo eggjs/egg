@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>MySQL - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>MySQL</h1>
+    <p>在 web 应用方面 MySQL 是最常见，最好的关系型数据库之一。非常多网站都选择 MySQL 作为网站数据库。本篇文档介绍了如何使用 egg 框架及其插件来访问数据库。</p>
+<h2 id="egg-mysql"><a class="markdown-anchor" href="#egg-mysql">#</a> egg-mysql</h2>
+<p>我们提供了 <a href="https://github.com/eggjs/egg-mysql" target="_blank" rel="external">egg-mysql</a> 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。</p>
+<h3 id="安装与配置"><a class="markdown-anchor" href="#安装与配置">#</a> 安装与配置</h3>
+<p>在 <code>package.json</code> 里面依赖 egg-mysql 模块，并通过 <code>config/plugin.js</code> 配置启动 MySQL 插件:</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// package.json</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"dependencies"</span>: &#123;</div><div class="line">    <span class="string">"egg-mysql"</span>: <span class="string">"^1.0.1"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.mysql = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-mysql'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在 <code>config/config.${env}.js</code> 配置各个环境的数据库连接信息。</p>
+<h4 id="单数据源"><a class="markdown-anchor" href="#单数据源">#</a> 单数据源</h4>
+<p>如果我们的应用只需要访问一个 MySQL 数据库实例，可以如下配置：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.mysql = &#123;</div><div class="line">  <span class="comment">// 单数据库信息配置</span></div><div class="line">  client: &#123;</div><div class="line">    <span class="comment">// host</span></div><div class="line">    host: <span class="string">'mysql.com'</span>,</div><div class="line">    <span class="comment">// 端口号</span></div><div class="line">    port: <span class="string">'3306'</span>,</div><div class="line">    <span class="comment">// 用户名</span></div><div class="line">    user: <span class="string">'test_user'</span>,</div><div class="line">    <span class="comment">// 密码</span></div><div class="line">    password: <span class="string">'test_password'</span>,</div><div class="line">    <span class="comment">// 数据库名</span></div><div class="line">    database: <span class="string">'test'</span>,    </div><div class="line">  &#125;,</div><div class="line">  <span class="comment">// 是否加载到 app 上，默认开启</span></div><div class="line">  app: <span class="literal">true</span>,</div><div class="line">  <span class="comment">// 是否加载到 agent 上，默认关闭</span></div><div class="line">  agent: <span class="literal">false</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>使用方式：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">yield</span> app.mysql.query(sql, values); <span class="comment">// 单实例可以直接通过 app.mysql 访问</span></div></pre></td></tr></table></figure></p>
+<h4 id="多数据源"><a class="markdown-anchor" href="#多数据源">#</a> 多数据源</h4>
+<p>如果我们的应用需要访问多个 MySQL 数据源，可以按照如下配置：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.mysql = &#123;</div><div class="line">  <span class="attr">clients</span>: &#123;</div><div class="line">    <span class="comment">// clientId, 获取client实例，需要通过 app.mysql.get('clientId') 获取</span></div><div class="line">    db1: &#123;</div><div class="line">      <span class="comment">// host</span></div><div class="line">      host: <span class="string">'mysql.com'</span>,</div><div class="line">      <span class="comment">// 端口号</span></div><div class="line">      port: <span class="string">'3306'</span>,</div><div class="line">      <span class="comment">// 用户名</span></div><div class="line">      user: <span class="string">'test_user'</span>,</div><div class="line">      <span class="comment">// 密码</span></div><div class="line">      password: <span class="string">'test_password'</span>,</div><div class="line">      <span class="comment">// 数据库名</span></div><div class="line">      database: <span class="string">'test'</span>,</div><div class="line">    &#125;,</div><div class="line">    <span class="attr">db2</span>: &#123;</div><div class="line">      <span class="comment">// host</span></div><div class="line">      host: <span class="string">'mysql2.com'</span>,</div><div class="line">      <span class="comment">// 端口号</span></div><div class="line">      port: <span class="string">'3307'</span>,</div><div class="line">      <span class="comment">// 用户名</span></div><div class="line">      user: <span class="string">'test_user'</span>,</div><div class="line">      <span class="comment">// 密码</span></div><div class="line">      password: <span class="string">'test_password'</span>,</div><div class="line">      <span class="comment">// 数据库名</span></div><div class="line">      database: <span class="string">'test'</span>,</div><div class="line">    &#125;,</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;,</div><div class="line">  <span class="comment">// 所有数据库配置的默认值</span></div><div class="line">  <span class="keyword">default</span>: &#123;</div><div class="line"></div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  <span class="comment">// 是否加载到 app 上，默认开启</span></div><div class="line">  app: <span class="literal">true</span>,</div><div class="line">  <span class="comment">// 是否加载到 agent 上，默认关闭</span></div><div class="line">  agent: <span class="literal">false</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>使用方式：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> client1 = app.mysql.get(<span class="string">'db1'</span>);</div><div class="line"><span class="keyword">yield</span> client1.query(sql, values);</div><div class="line"></div><div class="line"><span class="keyword">const</span> client2 = app.mysql.get(<span class="string">'db2'</span>);</div><div class="line"><span class="keyword">yield</span> client2.query(sql, values);</div></pre></td></tr></table></figure></p>
+<h2 id="service-层"><a class="markdown-anchor" href="#service-层">#</a> service 层</h2>
+<p>由于对 MySQL 数据库的访问操作属于 web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。</p>
+<p>下面是一个 service 中访问 MySQL 数据库的例子。</p>
+<p>更多 service 层的介绍，可以参考 <a href="../basics/service.html">service</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/service/user.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Service</span> </span>&#123;</div><div class="line">    * find(uid) &#123;</div><div class="line">      <span class="comment">// 假如 我们拿到用户 id 从数据库获取用户详细信息</span></div><div class="line">      <span class="keyword">const</span> user = <span class="keyword">yield</span> app.mysql.get(<span class="string">'users'</span>, &#123;</div><div class="line">          <span class="attr">id</span>: <span class="number">11</span>,</div><div class="line">      &#125;);</div><div class="line">      <span class="keyword">return</span> &#123;</div><div class="line">        user,</div><div class="line">      &#125;;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>之后可以通过 controller 获取 service 层拿到的数据。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/user.js</span></div><div class="line">exports.info = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> userId = <span class="keyword">this</span>.params.id;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">yield</span> <span class="keyword">this</span>.service.user.find(userId);</div><div class="line">  <span class="keyword">this</span>.body = user;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="如何编写-crud-语句"><a class="markdown-anchor" href="#如何编写-crud-语句">#</a> 如何编写 CRUD 语句</h2>
+<p>下面的语句若没有特殊注明，默认都书写在 <code>app/service</code> 下。</p>
+<h3 id="create"><a class="markdown-anchor" href="#create">#</a> Create</h3>
+<p>可以直接使用 <code>insert</code> 方法插入一条记录。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 插入</span></div><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.insert(<span class="string">'posts'</span>, &#123; <span class="attr">title</span>: <span class="string">'Hello World'</span> &#125;); <span class="comment">// 在 post 表中，插入 title 为 Hello World 的记录</span></div><div class="line"></div><div class="line">=&gt; INSERT INTO <span class="string">`posts`</span>(<span class="string">`title`</span>) VALUES(<span class="string">'Hello World'</span>);</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(result);</div><div class="line">=&gt;</div><div class="line">&#123;</div><div class="line">  <span class="attr">fieldCount</span>: <span class="number">0</span>,</div><div class="line">  <span class="attr">affectedRows</span>: <span class="number">1</span>,</div><div class="line">  <span class="attr">insertId</span>: <span class="number">3710</span>,</div><div class="line">  <span class="attr">serverStatus</span>: <span class="number">2</span>,</div><div class="line">  <span class="attr">warningCount</span>: <span class="number">2</span>,</div><div class="line">  <span class="attr">message</span>: <span class="string">''</span>,</div><div class="line">  <span class="attr">protocol41</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">changedRows</span>: <span class="number">0</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 判断插入成功</span></div><div class="line"><span class="keyword">const</span> insertSuccess = result.affectedRows === <span class="number">1</span>;</div></pre></td></tr></table></figure></p>
+<h3 id="read"><a class="markdown-anchor" href="#read">#</a> Read</h3>
+<p>可以直接使用 <code>get</code> 方法或 <code>select</code> 方法获取一条或多条记录。<code>select</code> 方法支持条件查询与结果的定制</p>
+<ul>
+<li>查询一条记录</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> post = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.get(<span class="string">'posts'</span>, &#123; <span class="attr">id</span>: <span class="number">12</span> &#125;);</div><div class="line"></div><div class="line">=&gt; SELECT * FROM <span class="string">`posts`</span> WHERE <span class="string">`id`</span> = <span class="number">12</span> LIMIT <span class="number">0</span>, <span class="number">1</span>;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>查询全表</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> results = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.select(<span class="string">'posts'</span>);</div><div class="line"></div><div class="line">=&gt; SELECT * FROM <span class="string">`posts`</span>;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>条件查询和结果定制</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> results = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.select(<span class="string">'posts'</span>, &#123; <span class="comment">// 搜索 post 表</span></div><div class="line">  where: &#123; <span class="attr">status</span>: <span class="string">'draft'</span>, <span class="attr">author</span>: [<span class="string">'author1'</span>, <span class="string">'author2'</span>] &#125;, <span class="comment">// WHERE 条件</span></div><div class="line">  columns: [<span class="string">'author'</span>, <span class="string">'title'</span>], <span class="comment">// 要查询的表字段</span></div><div class="line">  orders: [[<span class="string">'created_at'</span>,<span class="string">'desc'</span>], [<span class="string">'id'</span>,<span class="string">'desc'</span>]], <span class="comment">// 排序方式</span></div><div class="line">  limit: <span class="number">10</span>, <span class="comment">// 返回数据量</span></div><div class="line">  offset: <span class="number">0</span>, <span class="comment">// 数据偏移量</span></div><div class="line">&#125;);</div><div class="line"></div><div class="line">=&gt; SELECT <span class="string">`author`</span>, <span class="string">`title`</span> FROM <span class="string">`posts`</span></div><div class="line">  WHERE <span class="string">`status`</span> = <span class="string">'draft'</span> AND <span class="string">`author`</span> IN(<span class="string">'author1'</span>,<span class="string">'author2'</span>)</div><div class="line">  ORDER BY <span class="string">`created_at`</span> DESC, <span class="string">`id`</span> DESC LIMIT <span class="number">0</span>, <span class="number">10</span>;</div></pre></td></tr></table></figure></p>
+<h3 id="update"><a class="markdown-anchor" href="#update">#</a> Update</h3>
+<p>可以直接使用 <code>update</code> 方法更新数据库记录。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 修改数据，将会根据主键 ID 查找，并更新</span></div><div class="line"><span class="keyword">const</span> row = &#123;</div><div class="line">  <span class="attr">id</span>: <span class="number">123</span>,</div><div class="line">  <span class="attr">name</span>: <span class="string">'fengmk2'</span>,</div><div class="line">  <span class="attr">otherField</span>: <span class="string">'other field value'</span>,    <span class="comment">// any other fields u want to update</span></div><div class="line">  modifiedAt: <span class="keyword">this</span>.app.mysql.literals.now, <span class="comment">// `now()` on db server</span></div><div class="line">&#125;;</div><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.update(<span class="string">'posts'</span>, row); <span class="comment">// 更新 posts 表中的记录</span></div><div class="line"></div><div class="line">=&gt; UPDATE <span class="string">`posts`</span> SET <span class="string">`name`</span> = <span class="string">'fengmk2'</span>, <span class="string">`modifiedAt`</span> = NOW() WHERE id = <span class="number">123</span> ;</div><div class="line"></div><div class="line"><span class="comment">// 判断更新成功</span></div><div class="line"><span class="keyword">const</span> updateSuccess = result.affectedRows === <span class="number">1</span>;</div></pre></td></tr></table></figure></p>
+<h3 id="delete"><a class="markdown-anchor" href="#delete">#</a> Delete</h3>
+<p>可以直接使用 <code>delete</code> 方法删除数据库记录。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.delete(<span class="string">'posts'</span>, &#123;</div><div class="line">  <span class="attr">author</span>: <span class="string">'fengmk2'</span>,</div><div class="line">&#125;);</div><div class="line"></div><div class="line">=&gt; DELETE FROM <span class="string">`posts`</span> WHERE <span class="string">`author`</span> = <span class="string">'fengmk2'</span>;</div></pre></td></tr></table></figure></p>
+<h2 id="直接执行-sql-语句"><a class="markdown-anchor" href="#直接执行-sql-语句">#</a> 直接执行 sql 语句</h2>
+<p>插件本身也支持拼接与直接执行 sql 语句。使用 <code>query</code> 可以执行合法的 sql 语句。</p>
+<p><strong>注意！！我们极其不建议开发者拼接 sql 语句，这样很容易引起 sql 注入！！</strong></p>
+<p>如果必须要自己拼接 sql 语句，请使用 <code>mysql.escape</code> 方法。</p>
+<p>参考 <a href="http://stackoverflow.com/questions/15778572/preventing-sql-injection-in-node-js" target="_blank" rel="external">preventing-sql-injection-in-node-js</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> postId = <span class="number">1</span>;</div><div class="line"><span class="keyword">const</span> results = <span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.query(<span class="string">'update posts set hits = (hits + ?) where id = ?'</span>, [<span class="number">1</span>, postId]);</div><div class="line"></div><div class="line">=&gt; update posts set hits = (hits + <span class="number">1</span>) where id = <span class="number">1</span>;</div></pre></td></tr></table></figure></p>
+<h2 id="使用事务"><a class="markdown-anchor" href="#使用事务">#</a> 使用事务</h2>
+<p>MySQL 事务主要用于处理操作量大，复杂度高的数据。比如说，在人员管理系统中，你删除一个人员，你既需要删除人员的基本资料，也要删除和该人员相关的信息，如信箱，文章等等。这时候使用事务处理可以方便管理这一组操作。
+一个事务将一组连续的数据库操作，放在一个单一的工作单元来执行。该组内的每个单独的操作是成功，事务才能成功。如果事务中的任何操作失败，则整个事务将失败。</p>
+<p>一般来说，事务是必须满足4个条件（ACID）： Atomicity（原子性）、Consistency（一致性）、Isolation（隔离性）、Durability（可靠性）</p>
+<ul>
+<li>原子性：确保事务内的所有操作都成功完成，否则事务将被中止在故障点，以前的操作将回滚到以前的状态。</li>
+<li>一致性：对于数据库的修改是一致的。</li>
+<li>隔离性：事务是彼此独立的，不互相影响</li>
+<li>持久性：确保提交事务后，事务产生的结果可以永久存在。</li>
+</ul>
+<p>因此，对于一个事务来讲，一定伴随着 beginTransaction、commit 或 rollback，分别代表事务的开始，成功和失败回滚。</p>
+<p>egg-mysql 提供了两种类型的事务。</p>
+<h3 id="手动控制"><a class="markdown-anchor" href="#手动控制">#</a> 手动控制</h3>
+<ul>
+<li>优点：beginTransaction, commit 或 rollback 都由开发者来完全控制，可以做到非常细粒度的控制。</li>
+<li>缺点：手写代码比较多，不是每个人都能写好。忘记了捕获异常和 cleanup 都会导致严重 bug。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> conn = <span class="keyword">yield</span> app.mysql.beginTransaction(); <span class="comment">// 初始化事务</span></div><div class="line"></div><div class="line"><span class="keyword">try</span> &#123;</div><div class="line">  <span class="keyword">yield</span> conn.insert(table, row1);  <span class="comment">// 第一步操作</span></div><div class="line">  <span class="keyword">yield</span> conn.update(table, row2);  <span class="comment">// 第二步操作</span></div><div class="line">  <span class="keyword">yield</span> conn.commit(); <span class="comment">// 提交事务</span></div><div class="line">&#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">  <span class="comment">// error, rollback</span></div><div class="line">  <span class="keyword">yield</span> conn.rollback(); <span class="comment">// 一定记得捕获异常后回滚事务！！</span></div><div class="line">  <span class="keyword">throw</span> err;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="自动控制transaction-with-scope"><a class="markdown-anchor" href="#自动控制transaction-with-scope">#</a> 自动控制：Transaction with scope</h3>
+<ul>
+<li>API：<code>*beginTransactionScope(scope, ctx)</code>
+<ul>
+<li><code>scope</code>: 一个 generatorFunction，在这个函数里面执行这次事务的所有 sql 语句。</li>
+<li><code>ctx</code>: 当前请求的上下文对象，传入 ctx 可以保证即便在出现事务嵌套的情况下，一次请求中同时只有一个激活状态的事务。</li>
+</ul>
+</li>
+<li>优点：使用简单，不容易犯错，就感觉事务不存在的样子。</li>
+<li>缺点：整个事务要么成功，要么失败，无法做细粒度控制。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> result = <span class="keyword">yield</span> app.mysql.beginTransactionScope(<span class="function"><span class="keyword">function</span>* (<span class="params">conn</span>) </span>&#123;</div><div class="line">  <span class="comment">// don't commit or rollback by yourself</span></div><div class="line">  <span class="keyword">yield</span> conn.insert(table, row1);</div><div class="line">  <span class="keyword">yield</span> conn.update(table, row2);</div><div class="line">  <span class="keyword">return</span> &#123; <span class="attr">success</span>: <span class="literal">true</span> &#125;;</div><div class="line">&#125;, ctx); <span class="comment">// ctx 是当前请求的上下文，如果是在 service 文件中，可以从 `this.ctx` 获取到</span></div><div class="line"><span class="comment">// if error throw on scope, will auto rollback</span></div></pre></td></tr></table></figure></p>
+<h2 id="表达式literal"><a class="markdown-anchor" href="#表达式literal">#</a> 表达式(Literal)</h2>
+<p>如果需要调用 MySQL 内置的函数（或表达式），可以使用 <code>Literal</code>。</p>
+<h3 id="内置表达式"><a class="markdown-anchor" href="#内置表达式">#</a> 内置表达式</h3>
+<ul>
+<li><code>NOW()</code>：数据库当前系统时间，通过 <code>app.mysql.literals.now</code> 获取。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.insert(table, &#123;</div><div class="line">  <span class="attr">create_time</span>: <span class="keyword">this</span>.app.mysql.literals.now,</div><div class="line">&#125;);</div><div class="line"></div><div class="line">=&gt; INSERT INTO <span class="string">`$table`</span>(<span class="string">`create_time`</span>) VALUES(NOW())</div></pre></td></tr></table></figure></p>
+<h3 id="自定义表达式"><a class="markdown-anchor" href="#自定义表达式">#</a> 自定义表达式</h3>
+<p>下例展示了如何调用 MySQL 内置的 <code>CONCAT(s1, ...sn)</code> 函数，做字符串拼接。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> Literal = <span class="keyword">this</span>.app.mysql.literals.Literal;</div><div class="line"><span class="keyword">const</span> first = <span class="string">'James'</span>;</div><div class="line"><span class="keyword">const</span> last = <span class="string">'Bond'</span>;</div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.app.mysql.insert(table, &#123;</div><div class="line">  <span class="attr">id</span>: <span class="number">123</span>,</div><div class="line">  <span class="attr">fullname</span>: <span class="keyword">new</span> Literal(<span class="string">`CONCAT("<span class="subst">$&#123;first&#125;</span>", "<span class="subst">$&#123;last&#125;</span>"`</span>),</div><div class="line">&#125;);</div><div class="line"></div><div class="line">=&gt; INSERT INTO <span class="string">`$table`</span>(<span class="string">`id`</span>, <span class="string">`fullname`</span>) VALUES(<span class="number">123</span>, CONCAT(<span class="string">"James"</span>, <span class="string">"Bond"</span>))</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>
