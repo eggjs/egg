@@ -30,6 +30,8 @@ guide_toc:
   Schedule: 定时任务
   Extend: 框架扩展
   Custom init: 启动自定义
+  Development: 本地开发
+  Unittest: 单元测试
   Core: 核心功能
   Security: 安全
   View: 模板渲染
@@ -39,6 +41,7 @@ guide_toc:
   Logger: 日志
   Error Handling: 异常处理
   i18n: 国际化
+  Tutorials: 教程 
   Advanced: 进阶
   Cluster: 多进程模型
   Framework: 框架开发

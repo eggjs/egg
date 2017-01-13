@@ -23,7 +23,7 @@ Core:
   View: /core/view.html
   Unittest: /core/unittest.html
 Tutorials:
-  Mysql: 
+  MySQL: /tutorials/mysql.html
 Advanced:
   # Deployment: /advanced/deployment.html
   View Plugin: /advanced/view-plugin.html
