@@ -70,8 +70,8 @@ module.exports = {
   },
 
   /**
-   * 从请求头获取请求中所有设备的 ip 列表，第一个 ip 为请求发起方的 ip
-   * 只有在 `app.config.proxy = true` 时有效
+   * Get all pass through ip addresses from the request.
+   * Enable only on `app.config.proxy = true`
    *
    * @member {Array} Request#ips
    * @example

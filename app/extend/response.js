@@ -3,6 +3,7 @@
 const getType = require('mime-types').contentType;
 const jsonpBody = require('jsonp-body');
 const isJSON = require('koa-is-json');
+const REAL_STATUS = Symbol('Context#realStatus');
 
 module.exports = {
   set length(n) {
@@ -65,5 +66,31 @@ module.exports = {
       this.type = 'js';
       this.body = jsonpBody(obj, jsonpFunction, options);
     }
+  },
+
+  /**
+   * read response real status code.
+   *
+   * e.g.: Using 302 status redirect to the global error page
+   * instead of show current 500 status page.
+   * And access log should save 500 not 302,
+   * then the `realStatus` can help us find out the real status code.
+   * @member {Number} Context#realStatus
+   */
+  get realStatus() {
+    if (this[REAL_STATUS]) {
+      return this[REAL_STATUS];
+    }
+    return this.status;
+  },
+
+  /**
+   * set response real status code.
+   *
+   * @member {Void} Response#realStatus
+   * @param {Number} status the real status code
+   */
+  set realStatus(status) {
+    this[REAL_STATUS] = status;
   },
 };
