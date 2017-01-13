@@ -111,21 +111,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 读/写真实的响应状态码，在一些特殊场景，如 404，500 状态，我们希望通过 302 跳转到统一的 404 和 500 页面， 但是日志里面又想正确地记录 404 或 500 真实的状态码而不是 302，那么我们就需要设置 realStatus 来实现了。
-   * @member {Number} Context#realStatus
-   */
-  get realStatus() {
-    if (this._realStatus) {
-      return this._realStatus;
-    }
-    return this.status;
-  },
-
-  set realStatus(status) {
-    this._realStatus = status;
-  },
-
-  /**
    * 获取 helper 实例
    * @member {Helper} Context#helper
    * @since 1.0.0
@@ -349,6 +334,12 @@ const proto = module.exports = {
  * @since 1.0.0
  */
 
+/**
+ * @member {Number} Context#realStatus
+ * @see Response#realStatus
+ * @since 1.0.0
+ */
+
 delegate(proto, 'request')
   .getter('isAjax')
   .getter('acceptJSON')
@@ -357,4 +348,5 @@ delegate(proto, 'request')
   .access('ip');
 
 delegate(proto, 'response')
-  .setter('jsonp');
+  .setter('jsonp')
+  .access('realStatus');
