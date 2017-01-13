@@ -112,7 +112,7 @@ $ npm i
 
 ### 注册路由
 
-首先，我们先按照前面的设计来注册[路由](../core/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中：
+首先，我们先按照前面的设计来注册[路由](../basics/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中：
 
 ```js
 module.exports = app => {
@@ -124,7 +124,7 @@ module.exports = app => {
 
 ### controller 开发
 
-在 [controller](../core/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 Topic 的接口：
+在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 Topic 的接口：
 
 ```js
 // 定义创建接口的请求参数规则
@@ -156,7 +156,7 @@ exports.create = function* () {
 
 ### service 开发
 
-在 [service](../core/service.md) 中，我们可以更加专注的编写实际生效的业务逻辑。
+在 [service](../basics/service.md) 中，我们可以更加专注的编写实际生效的业务逻辑。
 
 ```js
 'use strict';
@@ -212,7 +212,7 @@ module.exports = app => {
 
 框架虽然提供了默认的异常处理，但是可能和我们在前面的接口约定不一致，因此我们需要自己实现一个统一错误处理的中间件来对错误进行处理。
 
-在 `app/middleware` 目录下新建一个 `error_handler.js` 的文件来新建一个 [middleware](../core/middleware.md)
+在 `app/middleware` 目录下新建一个 `error_handler.js` 的文件来新建一个 [middleware](../basics/middleware.md)
 
 ```js
 module.exports = () => {

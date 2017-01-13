@@ -24,6 +24,7 @@ Core:
   Unittest: /core/unittest.html
 Tutorials:
   MySQL: /tutorials/mysql.html
+  RESTful API: /tutorials/restful.html
 Advanced:
   # Deployment: /advanced/deployment.html
   View Plugin: /advanced/view-plugin.html
