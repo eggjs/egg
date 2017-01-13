@@ -151,5 +151,5 @@ yield this.renderString('{{ name | lowercaseFirst }}', data);
 框架内置的 [egg-security] 插件，为我们提供了常见的安全辅助函数，包括 `helper.shtml / surl / sjs` 等等等，强烈建议阅读下 [安全](./security.md)。
 
 
-[egg-security]: gitlab.alibaba-inc.com/egg/egg-security
+[egg-security]: https://github.com/eggjs/egg-security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks

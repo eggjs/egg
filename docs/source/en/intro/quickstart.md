@@ -120,7 +120,7 @@ Egg does not force the use of any particular template engines,
 but instead specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
 to allow the developers to use different plug-ins for their individual needs.
 
-For more information, cf. [View](../basics/view.md).
+For more information, cf. [View](../core/view.md).
 
 In this example, we will use [nunjucks].
 

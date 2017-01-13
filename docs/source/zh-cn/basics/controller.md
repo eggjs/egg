@@ -1,8 +1,6 @@
 title: controller
 ---
 
-# controller
-
 ## 什么是 controller
 
 前面章节写到，我们通过 [router](./router.md) 将用户的请求基于 method 和 URL 分发到了对应的 controller 上，那 controller 负责做什么？

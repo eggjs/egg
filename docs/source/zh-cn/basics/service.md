@@ -1,8 +1,6 @@
 title: service
 ---
 
-# service
-
 简单来说，service 就是在复杂业务场景下用于做业务逻辑封装的一个抽象层，提供这个抽象有以下几个好处：
 
 - 保持 controller 中的逻辑更加简洁。
@@ -41,7 +39,7 @@ title: service
 - 一个 service 文件只能包含一个类， 这个类需要通过 `module.exports` 的方式返回。
 - service 需要通过 Class 的方式定义，父类必须是 `app.Service`, 其中 `app.Service` 会在初始化 service 的时候通过参数传递进来。
 
-### Service ctx 详解
+### service ctx 详解
 
 为了可以获取用户请求的链路，我们在 service 初始化中，注入了请求上下文, 用户在方法中可以直接通过 `this.ctx` 来获取上下文相关信息。关于上下文的具体详解可以参看 [Context](./extend.md#context),
 有了 ctx 我们可以拿到框架给我们封装的各种便捷属性和方法。比如我们可以用：

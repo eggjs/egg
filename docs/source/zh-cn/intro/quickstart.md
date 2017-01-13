@@ -105,7 +105,7 @@ app/public
 
 框架并不强制你使用某种模板引擎，只是约定了 [view 插件开发规范](../advanced/view-plugin.md)，开发者可以引入不同的插件来实现差异化定制。
 
-更多用法参见[View](../basics/view.md)。
+更多用法参见[View](../core/view.md)。
 
 在本例中，我们使用 [nunjucks] 来渲染，先安装对应的插件 [egg-view-nunjucks] ：
 
