@@ -165,12 +165,12 @@ module.exports = app => {
   class TopicService extends app.Service {
     constructor(ctx) {
       super(ctx);
-      this.root = 'https://cnodejs.org/api/v1/topics';
+      this.root = 'https://cnodejs.org/api/v1';
     }
 
     * create(params) {
       // 调用 cnode V1 版本 API
-      const result = yield this.ctx.curl(this.root, {
+      const result = yield this.ctx.curl(`${this.root}/topics`, {
         method: 'post',
         data: params,
         dataType: 'json',
@@ -255,4 +255,118 @@ module.exports = {
 
 ## 测试
 
-写完代码后，还要记得对我们的代码编写[单元测试](../core/unittest.md)哦！具体的代码实现和测试都在 [eggjs/examples/cnode-api](https://github.com/eggjs/examples/tree/master/cnode-api) 中可以找到。
+代码完成只是第一步，我们还需要给代码加上[单元测试](../core/unittest.md)。
+
+### controller 测试
+
+我们先来编写 controller 代码的单元测试。在写 controller 单测的时候，我们可以适时的模拟 service 层的实现，因为对 controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 service 层按照约定的接口 mock 掉，service 自身的逻辑可以让 service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。
+
+```js
+const request = require('supertest');
+const mock = require('egg-mock');
+const assert = require('assert');
+
+describe('test/app/controller/topic.test.js', () => {
+  let app;
+  before(() => {
+    // 通过 egg-mock 库快速创建一个应用实例
+    app = mock.app();
+    return app.ready();
+  });
+
+  afterEach(mock.restore);
+
+  // 测试请求参数错误时应用的响应
+  it('should POST /api/v2/topics/ 422', function* () {
+    app.mockCsrf();
+    yield request(app.callback())
+    .post('/api/v2/topics')
+    .send({
+      accesstoken: '123',
+    })
+    .expect(422)
+    .expect({
+      error: 'Validation Failed',
+      detail: [{ message: 'required', field: 'title', code: 'missing_field' }, { message: 'required', field: 'content', code: 'missing_field' }],
+    });
+  });
+
+  // mock 掉 service 层，测试正常时的返回
+  it('should POST /api/v2/topics/ 201', function* () {
+    app.mockCsrf();
+    app.mockService('topic', 'create', 123);
+    yield request(app.callback())
+    .post('/api/v2/topics')
+    .send({
+      accesstoken: '123',
+      title: 'title',
+      content: 'hello',
+    })
+    .expect(201)
+    .expect({
+      topic_id: 123,
+    });
+  });
+});
+```
+
+上面对 controller 的测试中，我们通过 [egg-mock](https://github.com/eggjs/egg-mock) 创建了一个应用，并通过 [supertest](https://github.com/visionmedia/supertest) 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。
+
+### service 测试
+
+service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 service 的方法，不再需要用 supertest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。
+
+```js
+const assert = require('assert');
+const mock = require('egg-mock');
+
+describe('test/app/service/topic.test.js', () => {
+  let app;
+  let ctx;
+  before(function* () {
+    app = mock.app();
+    yield app.ready();
+    // 创建一个全局的 context 对象，可以在 ctx 对象上调用 service 的方法
+    ctx = app.mockContext();
+  });
+
+  describe('create()', () => {
+    it('should create failed by accesstoken error', function* () {
+      try {
+        // 直接在 ctx 上调用 service 方法
+        yield ctx.service.topic.create({
+          accesstoken: 'hello',
+          title: 'title',
+          content: 'content',
+        });
+      } catch (err) {
+        assert(err.status === 401);
+        assert(err.message === '错误的accessToken');
+      }
+    });
+
+    it('should create success', function* () {
+      // 不影响 cnode 的正常运行，我们可以将对 cnode 的调用按照接口约定模拟掉
+      // app.mockHttpclient 方法可以便捷的对应用发起的 http 请求进行模拟
+      app.mockHttpclient(`${ctx.service.topic.root}/topics`, 'POST', {
+        data: {
+          success: true,
+          topic_id: '5433d5e4e737cbe96dcef312',
+        },
+      });
+      const id = yield ctx.service.topic.create({
+        accesstoken: 'hello',
+        title: 'title',
+        content: 'content',
+      });
+      assert(id === '5433d5e4e737cbe96dcef312');
+    });
+  });
+});
+```
+
+上面对 service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 http 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。
+
+------
+
+完整的代码实现和测试都在 [eggjs/examples/cnode-api](https://github.com/eggjs/examples/tree/master/cnode-api) 中可以找到。
