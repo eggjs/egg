@@ -3,7 +3,7 @@
     <div class="banner-logo" id="logo"></div>
     <h1>{{ __('index.slogan') }}</h1>
     <p class="banner-button">
-      <a class="btn btn-primary" href="{{ index_link('/intro/') }}">{{ __('index.getstart') }}</a>
+      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
     </p>
   </div>
 
@@ -50,7 +50,7 @@
       </ul>
     </div>
     <p>
-      <a class="btn btn-primary" href="{{ index_link('/intro/') }}">{{ __('index.readmore') }}</a>
+      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.readmore') }}</a>
     </p>
   </div>
 </div>
