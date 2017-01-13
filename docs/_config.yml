@@ -2,8 +2,8 @@ title: egg
 subtitle: "Born to build better enterprise frameworks and apps"
 description: "Born to build better enterprise frameworks and apps"
 language:
-- en
 - zh-cn
+- en
 timezone: UTC
 url: https://eggjs.org
 root: /
