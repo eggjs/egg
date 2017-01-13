@@ -21,7 +21,7 @@ Core:
   Error Handling: /core/error-handling.html
   i18n: /core/i18n.html
   View: /core/view.html
-  Unittest: /core/unittest.html
+  Unit Testing: /core/unittest.html
 Tutorials:
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
