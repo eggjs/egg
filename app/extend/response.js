@@ -46,9 +46,14 @@ module.exports = {
   },
 
   /**
-   * 设置 jsonp 的内容，将会以 jsonp 的方式返回。注意：不可读。
-   * @member {Void} Context#jsonp
-   * @param {Object} obj 设置的对象
+   * set jsonp response body
+   * If client requests with `query[options.callback]`, it will return jsonp body
+   * otherwise it will return json body
+   *
+   * Notice: you can't read `response.jsonp`, you can only get by `response.body`
+   *
+   * @member {Void} Response#jsonp
+   * @param {Object} obj response object
    */
   set jsonp(obj) {
     const options = this.app.config.jsonp;

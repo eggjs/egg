@@ -343,6 +343,12 @@ const proto = module.exports = {
  * @since 1.0.0
  */
 
+/**
+ * @member {Void} Context#jsonp
+ * @see Response#jsonp
+ * @since 1.0.0
+ */
+
 delegate(proto, 'request')
   .getter('isAjax')
   .getter('acceptJSON')
