@@ -235,6 +235,8 @@ Object.assign(exports, require('egg'));
 exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
 ```
 
+通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`， `app/extend/filter.js` 等等。
+
 以上只是说明 Loader 的写法，具体可以查看[框架开发](./framework.md)。
 
 ## Loader API

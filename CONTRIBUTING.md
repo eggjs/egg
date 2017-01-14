@@ -7,7 +7,7 @@ or make any change as you wish and submit an [PR](https://github.com/eggjs/egg/i
 
 - Please specify what kind of issue it is.
 - Before you report an issue, please search for related issues. Make sure you are not going to open a duplicate issue.
-- Explain your purpose clearly in tags(see __Useful Tags__), title, or content.
+- Explain your purpose clearly in tags(see **Useful Tags**), title, or content.
 
 Egg group members will confirm the purpose of the issue, replace more accurate tags for it, identify related milestone, and assign developers working on it.
 Tags can be divided into two groups, `type` and `scope`.
@@ -108,7 +108,7 @@ Feel free to add more content in the body, if you think subject is not self-expl
 
 （5）footer
 
-- ___If the commit is a Breaking Change, please note it clearly in this part.___
+- **If the commit is a Breaking Change, please note it clearly in this part.**
 - related issues, like `Closes #1, Closes #2, #3`
 - If there is a change about an old feaure or a new feature, please associate `doc` and `egg-init`, like `eggjs/egg-bin#123`
 

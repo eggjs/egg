@@ -120,7 +120,7 @@ module.exports = agent => {
 };
 ```
 
-如需详细了解 agent 进程，请参考插件开发文档。
+如需详细了解 agent 进程，请参考 [多进程模型](../advanced/cluster.md)。
 
 ## 日志文件编码
 
@@ -171,7 +171,7 @@ exports.logger = {
 
 可通过如下方式配置输出到终端日志的级别：
 
-打印所有级别日志到文件中：
+打印所有级别日志到终端：
 
 ```js
 // config/config.${env}.js
@@ -212,7 +212,7 @@ module.exports = appInfo => {
 };
 ```
 
-可通过 `app.getLogger('xxLogger')` `ctx.getLogger('xxLogger')` 获取，最终的打印结果和 coreLogger 类似。
+可通过 `app.getLogger('xxLogger')` / `ctx.getLogger('xxLogger')` 获取，最终的打印结果和 coreLogger 类似。
 
 ### 高级自定义日志
 

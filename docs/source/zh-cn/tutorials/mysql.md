@@ -21,6 +21,7 @@ title: MySQL
 ```
 
 ```js
+// config/plugin.js
 exports.mysql = {
   enable: true,
   package: 'egg-mysql',
@@ -34,6 +35,7 @@ exports.mysql = {
 如果我们的应用只需要访问一个 MySQL 数据库实例，可以如下配置：
 
 ```js
+// config/config.${env}.js
 exports.mysql = {
   // 单数据库信息配置
   client: {
@@ -46,7 +48,7 @@ exports.mysql = {
     // 密码
     password: 'test_password',
     // 数据库名
-    database: 'test',    
+    database: 'test',
   },
   // 是否加载到 app 上，默认开启
   app: true,
@@ -186,7 +188,7 @@ const insertSuccess = result.affectedRows === 1;
 
 ### Read
 
-可以直接使用 `get` 方法或 `select` 方法获取一条或多条记录。`select` 方法支持条件查询与结果的定制
+可以直接使用 `get` 方法或 `select` 方法获取一条或多条记录。`select` 方法支持条件查询与结果的定制。
 
 - 查询一条记录
 

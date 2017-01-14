@@ -71,7 +71,7 @@ module.exports = {
 
 ## Context
 
-Context 指的是 koa 的请求上下文，这是__请求级别__的对象，每次请求生成一个 context 实例，通常我们也简写成 ctx。在所有的文档中，context 和 ctx 都是指 koa 的上下文对象。
+Context 指的是 koa 的请求上下文，这是 **请求级别** 的对象，每次请求生成一个 context 实例，通常我们也简写成 ctx。在所有的文档中，context 和 ctx 都是指 koa 的上下文对象。
 
 ### 访问方式
 
@@ -121,7 +121,7 @@ module.exports = {
 
 ## Request
 
-Request 对象和 koa 的 request 对象相同，是__请求级别__的对象，它提供了大量请求相关的属性和方法供使用。
+Request 对象和 koa 的 request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -131,7 +131,7 @@ ctx.request
 
 ctx 上的很多属性和方法都被代理到 request 对象上，对于这些属性和方法使用 ctx 和使用 request 去访问它们是等价的，例如 `ctx.url === ctx.request.url`。
 
-koa 内置的代理 request 的属性和方法列表：http://koajs.com/#request-aliases
+koa 内置的代理 request 的属性和方法列表：[koajs request aliases](http://koajs.com/#request-aliases)
 
 ### 扩展方式
 
@@ -150,7 +150,7 @@ module.exports = {
 
 ## Response
 
-Response 对象和 koa 的 response 对象相同，是__请求级别__的对象，它提供了大量响应相关的属性和方法供使用。
+Response 对象和 koa 的 response 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -160,7 +160,7 @@ ctx.response
 
 ctx 上的很多属性和方法都被代理到 response 对象上，对于这些属性和方法使用 ctx 和使用 response 去访问它们是等价的，例如 `ctx.status = 404` 和 `ctx.response.status = 404` 是等价的。
 
-koa 内置的代理 response 的属性和方法列表：http://koajs.com/#response-aliases
+koa 内置的代理 response 的属性和方法列表：[koa response aliases](http://koajs.com/#response-aliases)
 
 ### 扩展方式
 
@@ -220,7 +220,7 @@ module.exports = {
 
 ## 按照环境进行扩展
 
-另外，还可以根据环境进行有选择的扩展，例如，只在 unittest 环境中提供 `mockXX()` 方法以便进行 mock 方便测试。[#178](https://github.com/eggjs/egg/pull/178)
+另外，还可以根据环境进行有选择的扩展，例如，只在 unittest 环境中提供 `mockXX()` 方法以便进行 mock 方便测试。
 
 ```js
 // app/extend/application.unittest.js
@@ -232,4 +232,4 @@ module.exports = {
 
 这个文件只会在 unittest 环境加载。
 
-同理，对于 application，context，request，response，helper 都可以使用这种方式针对某个环境进行扩展。
+同理，对于 application，context，request，response，helper 都可以使用这种方式针对某个环境进行扩展，更多参见[运行环境](./env.md)。

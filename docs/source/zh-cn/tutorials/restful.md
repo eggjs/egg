@@ -115,6 +115,7 @@ $ npm i
 首先，我们先按照前面的设计来注册[路由](../basics/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中：
 
 ```js
+// app/router.js
 module.exports = app => {
   app.resources('Topic', '/api/v2/topics', 'topics');
 };
@@ -127,6 +128,7 @@ module.exports = app => {
 在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 Topic 的接口：
 
 ```js
+// app/controller/topic.js
 // 定义创建接口的请求参数规则
 const createRule = {
   accesstoken: 'string',
@@ -159,8 +161,7 @@ exports.create = function* () {
 在 [service](../basics/service.md) 中，我们可以更加专注的编写实际生效的业务逻辑。
 
 ```js
-'use strict';
-
+// app/service/topic.js
 module.exports = app => {
   class TopicService extends app.Service {
     constructor(ctx) {
@@ -215,6 +216,7 @@ module.exports = app => {
 在 `app/middleware` 目录下新建一个 `error_handler.js` 的文件来新建一个 [middleware](../basics/middleware.md)
 
 ```js
+// app/middleware/error_handler.js
 module.exports = () => {
   return function* (next) {
     try {
@@ -243,6 +245,7 @@ module.exports = () => {
 通过这个中间件，我们可以捕获所有异常，并按照我们想要的格式封装了响应。将这个中间件通过配置文件(`config/config.default.js`)加载进来：
 
 ```js
+// config/config.default.js
 module.exports = {
   // 加载 errorHandler 中间件
   middleware: [ 'errorHandler' ],

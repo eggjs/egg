@@ -26,3 +26,5 @@ module.exports = function*() {
   // this.app.cities 在上面启动期间已经加载，可以直接使用
 }
 ```
+
+**注意：在 `beforeStart` 中不建议做太耗时的操作，框架会有启动的超时检测。**

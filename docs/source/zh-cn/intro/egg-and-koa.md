@@ -131,15 +131,18 @@ function* onerror(next) {
 
 只需要将这个中间件放在其他中间件之前，就可以捕获它们所有的同步或者异步代码中抛出的异常了。
 
-## egg 是 koa
+## egg 继承于 koa
 
-egg 选择了 koa 作为其基础框架，而在 koa 的模型基础上，我们又进一步对它进行了一些增强。
+如上述，koa 是一个非常优秀的框架，然而对于企业级应用来说，它还比较基础。
+
+而 egg 选择了 koa 作为其基础框架，在它的模型基础上，进一步对它进行了一些增强。
 
 ### 扩展
 
 在基于 egg 的框架或者应用中，我们可以通过定义 `app/extend/{application,context,request,response}.js` 来扩展 koa 中对应的四个对象的原型，通过这个功能，我们可以快速的增加更多的辅助方法，例如我们在 `app/extend/context.js` 中写入下列代码：
 
 ```js
+// app/extend/context.js
 module.exports = {
   get isIOS() {
     const iosReg = /iphone|ipad|ipod/i;
@@ -151,6 +154,7 @@ module.exports = {
 在 controller 中，我们就可以使用到刚才定义的这个便捷属性了：
 
 ```js
+// app/controller/home.js
 exports.handler = function*() {
   this.body = this.isIOS
     ? 'Your operating system is iOS.'
@@ -158,7 +162,7 @@ exports.handler = function*() {
 };
 ```
 
-更多关于扩展的内容，请查看[框架扩展](../basics/extend.md)章节。
+更多关于扩展的内容，请查看[扩展](../basics/extend.md)章节。
 
 ### 插件
 
