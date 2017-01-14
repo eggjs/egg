@@ -4,7 +4,7 @@ const delegate = require('delegates');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
-const ConextHttpClient = require('../../lib/core/context_httpclient');
+const ContextHttpClient = require('../../lib/core/context_httpclient');
 const util = require('../../lib/core/util');
 
 const HELPER = Symbol('Context#helper');
@@ -49,7 +49,7 @@ const proto = module.exports = {
    */
   get httpclient() {
     if (!this[CONTEXT_HTTPCLIENT]) {
-      this[CONTEXT_HTTPCLIENT] = new ConextHttpClient(this);
+      this[CONTEXT_HTTPCLIENT] = new ContextHttpClient(this);
     }
     return this[CONTEXT_HTTPCLIENT];
   },
@@ -60,7 +60,7 @@ const proto = module.exports = {
    * @method Context#curl
    * @param {String|Object} url - request url address.
    * @param {Object} [options] - options for request.
-   * @return {Object} see {@link ConextHttpClient#curl}
+   * @return {Object} see {@link ContextHttpClient#curl}
    */
   * curl(url, options) {
     return yield this.httpclient.curl(url, options);
