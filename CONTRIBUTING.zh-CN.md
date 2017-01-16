@@ -7,7 +7,7 @@
 
 - 请确定 issue 的类型。
 - 请避免提交重复的 issue，在提交之前搜索现有的 issue。
-- 在标签(分类参考__标签分类__), 标题 或者内容中体现明确的意图。
+- 在标签(分类参考**标签分类**), 标题 或者内容中体现明确的意图。
 
 随后 egg 负责人会确认 issue 意图，更新合适的标签，关联 milestone，指派开发者。
 
@@ -114,7 +114,7 @@ $ git push origin branch-name
 
 （5）footer
 
-- ___当有非兼容修改(Breaking Change)时必须在这里描述清楚___
+- **当有非兼容修改(Breaking Change)时必须在这里描述清楚**
 - 关联相关 issue，如 `Closes #1, Closes #2, #3`
 - 如果功能点有新增或修改的，还需要关联文档 `doc` 和 `egg-init` 的 PR，如 `eggjs/egg-bin#123`
 

@@ -4,27 +4,27 @@ title: 插件开发
 
 插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了
 
-> koa 已经有了中间件的机制，为啥还要插件呢？  
-> 中间件、插件、应用它们之间是什么关系，有什么区别？  
-> 我该怎么使用一个插件？  
-> 如何编写一个插件？  
-> ...  
+> koa 已经有了中间件的机制，为啥还要插件呢？
+> 中间件、插件、应用它们之间是什么关系，有什么区别？
+> 我该怎么使用一个插件？
+> 如何编写一个插件？
+> ...
 
 接下来我们就来逐一讨论
 
 ## 为什么要插件
 
-我们在使用 koa 中间件过程中发现了下面一些问题
+我们在使用 koa 中间件过程中发现了下面一些问题：
 
 1. 中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。
 2. 中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。
-3. 有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现
+3. 有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现。
 
-综上所诉，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。
+综上所述，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。
 
 ## 什么是插件
 
-一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样
+一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样。
 
 ```js
 . hello-plugin
@@ -57,16 +57,16 @@ title: 插件开发
 
 1. 插件没有独立的 router 和 controller。这主要出于几点考虑：
 
-    - 路由一般和应用强绑定的，不具备通用性
-    - 一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突
-    - 如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现
+    - 路由一般和应用强绑定的，不具备通用性。
+    - 一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突。
+    - 如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现。
 
 2. 插件需要在 `package.json` 中的 `eggPlugin` 节点指定插件特有的信息
 
     - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
-    - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）
-    - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）
-    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考 [运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置
+    - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
+    - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。
+    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考 [运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置。
 
     ```json
     {
@@ -146,18 +146,17 @@ title: 插件开发
   const mkdirp = require('mkdirp');
 
   module.exports = (options, app) => {
-    assert.strictEqual(typeof options.dir, 'string',
-      'Must set `app.config.static.dir` when static plugin enable');
+    assert.strictEqual(typeof options.dir, 'string', 'Must set `app.config.static.dir` when static plugin enable');
 
     // ensure directory exists
     mkdirp.sync(options.dir);
 
-    app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s',
-      options.prefix, options.dir);
+    app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s', options.prefix, options.dir);
 
     return staticCache(options);
   };
   ```
+
 2. 在 `app.js` 中将中间件插入到合适的位置（例如：下面将 static 中间件放到 bodyParser 之前）
 
   ```js
@@ -263,6 +262,8 @@ title: 插件开发
 $ npm i egg-onerror --save
 ```
 
+**注意：插件即使是只在 local 运行的，也需要配置为 dependencies 而不是 devDependencies，否则线上 `npm i --production` 时将无法找到插件。**
+
 ### 开启和关闭
 
 在应用的 `${app_root}/config/plugin.js` 文件里配置
@@ -323,7 +324,20 @@ exports.onerror = false;
   2. 应用依赖框架路径下的 `node_modules`
   3. 当前路径下的 `node_modules` （主要是兼容单元测试场景）
 
-## 插件规范
+## 插件开发
+
+### 使用骨架快速开发
+
+你可以直接通过 [egg-bin] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
+
+```bash
+$ egg-bin egg-xxx --type=plugin
+$ cd egg-xxx
+$ npm i
+$ npm test
+```
+
+### 插件规范
 
 我们非常欢迎您贡献新的插件，同时也希望您遵守下面一些规范：
 
@@ -355,3 +369,6 @@ exports.onerror = false;
     ],
   }
   ```
+
+[egg-init]: https://github.com/eggjs/egg-init
+[egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin

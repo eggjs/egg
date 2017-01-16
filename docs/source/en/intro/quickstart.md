@@ -38,8 +38,6 @@ then get started with the development.
 
 However, in this section, instead of using scaffolds we will build a project called [Egg HackerNews](https://github.com/eggjs/examples/tree/master/hackernews) step by step, for a better understanding of how it works.
 
-**WARNING, TL;NR**
-
 ### Initialization
 
 First let's create the project directory and initialize its structure.
@@ -108,7 +106,7 @@ app/public
 │   └── news.css
 └── js
     ├── lib.js
-    └── test.js
+    └── news.js
 ```
 
 ### Add Templates for Rendering
@@ -187,7 +185,7 @@ module.exports = app => {
 Open a browser window and navigate to http://localhost:7001/news.
 You should be able to see the rendered page.
 
-**Tip：In development, Egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -252,7 +250,7 @@ Egg provides us with a quick way to extend its functionalities.
 We just need to add extension scripts to the `app/extend` directory.
 For more information, cf. [Extensions](../basics/extend.md).
 
-In the case of egg-view-nunjucks, we can just write a helper as an extension.
+In the case of view, we can just write a helper as an extension.
 
 ```js
 // app/extend/helper.js
@@ -338,6 +336,60 @@ exports.list = function* newsList() {
   const config = this.app.config.news;
 };
 ```
+
+### Add Unit Testing
+
+Unit Testing is very important, and egg also provide [egg-bin] to help you write tests painless.
+
+```js
+// test/app/middleware/robot.test.js
+const assert = require('assert');
+const mock = require('egg-mock');
+const request = require('supertest');
+
+describe('test/app/middleware/robot.test.js', () => {
+  let app;
+  before(() => {
+    app = mock.app();
+    return app.ready();
+  });
+
+  afterEach(mock.restore);
+
+  it('should block robot', () => {
+    return request(app.callback())
+      .set('User-Agent', "Baiduspider")
+      .get('/')
+      .expect(403);
+  });
+
+  // ...
+});
+```
+
+Then add `npm scripts`.
+
+```json
+{
+  "scripts": {
+    "test": "egg-bin test"
+  }
+}
+```
+
+Also install dependencies.
+
+```bash
+$ npm i egg-mock supertest --save-dev
+```
+
+Run it.
+
+```bash
+$ npm test
+```
+
+That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 
 ## Conclusions
 

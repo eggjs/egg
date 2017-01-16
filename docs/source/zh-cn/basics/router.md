@@ -1,8 +1,8 @@
 title: router
 ---
 
-router 主要用来描述请求 URL 和具体承担执行动作 controller 的对应关系，
-在框架中约定了一个 `app/router.js` 文件，在这里统一所有路由规则。
+router 主要用来描述请求 URL 和具体承担执行动作的 controller 的对应关系，
+框架约定了 `app/router.js` 文件用于统一所有路由规则。
 
 通过统一的配置，我们可以避免路由规则逻辑散落在多个地方，从而出现未知的冲突，集中在一起我们可以更方便的来查看全局的路由规则。
 
@@ -138,7 +138,7 @@ module.exports = function* () {
   this.body = `search: ${this.query.name}`;
 };
 
-// http://127.0.0.1:7001/search?name=egg
+// curl http://127.0.0.1:7001/search?name=egg
 ```
 
 #### 参数命名方式
@@ -154,7 +154,7 @@ exports.info = function* () {
   this.body = `user: ${this.params.id}, ${this.params.name}`;
 };
 
-// http://127.0.0.1:7001/user/123
+// curl http://127.0.0.1:7001/user/123
 ```
 
 #### 复杂参数的获取
@@ -290,4 +290,30 @@ module.exports = app => {
 };
 
 // curl http://localhost:7001/search2?name=egg
+```
+
+### 太多路由映射?
+
+如上所述，我们并不建议把路由规则逻辑散落在多个地方，会给排查问题带来困扰。
+
+若确实有需求，可以如下拆分：
+
+```js
+// app/router.js
+module.exports = app => {
+  require('./router/news')(app);
+  require('./router/admin')(app);
+};
+
+// app/router/news.js
+module.exports = app => {
+  app.get('/news/list', 'news.list');
+  app.get('/news/detail', 'news.detail');
+};
+
+// app/router/admin.js
+module.exports = app => {
+  app.get('/admin/user', 'admin.user');
+  app.get('/admin/log', 'admin.log');
+};
 ```

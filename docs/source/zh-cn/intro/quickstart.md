@@ -30,7 +30,7 @@ $ open localhost:7001
 
 通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的骨架，快速启动 egg 项目的开发。
 
-接下来，我们将跳过脚手架，手动一步步的搭建出一个 [egg hackernews](https://github.com/eggjs/examples/tree/master/hackernews)。
+但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [egg hackernews](https://github.com/eggjs/examples/tree/master/hackernews)。
 
 ### 初始化项目
 
@@ -96,7 +96,7 @@ app/public
 │   └── news.css
 └── js
     ├── lib.js
-    └── test.js
+    └── news.js
 ```
 
 ### 模板渲染
@@ -105,7 +105,7 @@ app/public
 
 框架并不强制你使用某种模板引擎，只是约定了 [view 插件开发规范](../advanced/view-plugin.md)，开发者可以引入不同的插件来实现差异化定制。
 
-更多用法参见[View](../core/view.md)。
+更多用法参见 [View](../core/view.md)。
 
 在本例中，我们使用 [nunjucks] 来渲染，先安装对应的插件 [egg-view-nunjucks] ：
 
@@ -165,9 +165,9 @@ module.exports = app => {
 };
 ```
 
-启动浏览器，访问 localhost:7001/news 即可看到渲染后的页面。
+启动浏览器，访问 http://localhost:7001/news 即可看到渲染后的页面。
 
-**提示：开发期默认开启了 [egg-development] 插件，修改后端代码后，会自动重启 worker 进程。**
+**提示：开发期默认开启了 [development][egg-development] 插件，修改后端代码后，会自动重启 worker 进程。**
 
 ### 编写 service
 
@@ -224,7 +224,7 @@ exports.list = function* newsList() {
 
 框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见 [扩展](../basics/extend.md)。
 
-在 egg-view-nunjucks 里面，我们可以通过扩展 helper 的方式来实现：
+在这里，我们可以使用 view 插件支持的 helper 来实现：
 
 ```js
 // app/extend/helper.js
@@ -307,19 +307,74 @@ exports.list = function* newsList() {
 };
 ```
 
+### 单元测试
+
+单元测试非常重要，框架也提供了 [egg-bin] 来帮开发者无痛的编写测试。
+
+```js
+// test/app/middleware/robot.test.js
+const assert = require('assert');
+const mock = require('egg-mock');
+const request = require('supertest');
+
+describe('test/app/middleware/robot.test.js', () => {
+  let app;
+  before(() => {
+    // 创建当前应用的 app 实例
+    app = mock.app();
+    // 等待 app 启动成功，才能执行测试用例
+    return app.ready();
+  });
+
+  afterEach(mock.restore);
+
+  it('should block robot', () => {
+    return request(app.callback())
+      .set('User-Agent', "Baiduspider")
+      .get('/')
+      .expect(403);
+  });
+
+  // ...
+});
+```
+
+然后配置依赖和 `npm scripts`：
+
+```json
+{
+  "scripts": {
+    "test": "egg-bin test"
+  }
+}
+```
+
+```bash
+$ npm i egg-mock supertest --save-dev
+```
+
+执行测试：
+
+```bash
+$ npm test
+```
+
+就这么简单，更多请参见 [单元测试](../core/unittest.md)。
+
 ## 后记
 
 短短几章内容，只能讲 egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
 - 提供了强大的扩展机制，参见 [插件开发](../advanced/plugin.md)。
 - 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
-- 写单元测试其实很简单的事，egg 也提供了非常多的辅助工具，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
+- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
 [nvm]: http://gitlab.alibaba-inc.com/node/nvm
 [nvs]: https://github.com/jasongin/nvs
 [node]: http://nodejs.org
 [npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
+[egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
 [egg-development]: https://github.com/eggjs/egg-development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks

@@ -64,7 +64,7 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 同样，测试断言库也是[百花齐放的时代](https://www.npmjs.com/search?q=assert&page=1&ranking=popularity)，
 我们经历过 [assert](https://nodejs.org/api/assert.html)，到 [should](https://github.com/shouldjs/should.js) 和 [expect](https://github.com/Automattic/expect.js)，还是不断地在尝试更好的断言库。
 
-直到我们发现[power-assert](https://github.com/power-assert-js/power-assert)，
+直到我们发现 [power-assert](https://github.com/power-assert-js/power-assert)，
 因为[『No API is the best API』](https://github.com/atian25/blog/issues/16)，
 最终我们重新回归原始的 assert 作为默认的断言库。
 
@@ -307,6 +307,7 @@ exports.index = function* () {
 写一个完整的单元测试，它的测试代码 `test/controller/home.test.js` 如下：
 
 ```js
+const assert = require('assert');
 const request = require('supertest');
 const mock = require('egg-mock');
 
@@ -336,10 +337,13 @@ describe('test/controller/home.test.js', () => {
         .expect('hello world'); // 期望 body 是 hello world
 
       // 再请求一次
-      yield request(app.callback())
+      const result = yield request(app.callback())
         .get('/')
         .expect(200)
         .expect('hello world');
+
+      // 也可以这样验证
+      assert(result.status === 200);
     });
   });
 });

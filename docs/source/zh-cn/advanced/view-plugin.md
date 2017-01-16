@@ -133,7 +133,7 @@ module.exports = {
 - {String} dir - 模板文件的根目录，绝对路径。
 - {Boolean} cache - 是否开启模板缓存，本地开发为 false，其他为 true。
 
-** 由于[配置合并的限制](../basics/config.md)，我们建议若需要支持目录配置，不要定义数组配置，而使用字符串分隔符代替，并在文档中告知用户。**
+**由于[配置合并的限制](../basics/config.md)，我们建议若需要支持目录配置，不要定义数组配置，而使用字符串分隔符代替，并在文档中告知用户。**
 
 ```js
 // {plugin_root}/config/config.default.js
@@ -206,7 +206,7 @@ module.exports = app => {
 };
 ```
 
-在 application 和 view 中分别挂载上去：
+在 application 和 view 中分别扩展上去：
 
 ```js
 // {plugin_root}/app/extend/application.js
@@ -278,9 +278,11 @@ function loadFilter() {
 
 具体可以参考 [egg-view-nunjucks] 的 [FileLoader](https://github.com/eggjs/egg-view-nunjucks/blob/master/lib/engine.js#L60) 实现。
 
+更多安全相关知识，参见 [安全](../core/security.md)。
+
 ### 单元测试
 
-作为一个插件，我们强烈建议编写完善的单元测试，具体参见 [单元测试](../core/unittest.md) 和 [插件](./plugin.md) 中的相关内容。
+作为一个高质量的插件，完善的单元测试是必不可少的，我们也提供了很多辅助工具使插件开发者可以无痛的编写测试，具体参见 [单元测试](../core/unittest.md) 和 [插件](./plugin.md) 中的相关内容。
 
 ## 内部调用流程
 
@@ -294,9 +296,9 @@ function loadFilter() {
   - 该子类会在原 render 方法的基础上，增加对 locals 的注入。
 
 有兴趣的同学可以看下对应的源码：
-- app/extend/context.js, `* render()`
-- app/extend/application.js, `get View()`
-- lib/core/view.js
+- [app/extend/context.js](https://github.com/eggjs/egg/blob/master/app/extend/context.js), `* render()`
+- [app/extend/application.js](https://github.com/eggjs/egg/blob/master/app/extend/application.js), `get View()`
+- [lib/core/view.js](https://github.com/eggjs/egg/blob/master/lib/core/view.js)
 
 
 [egg-security]: https://github.com/eggjs/egg-security

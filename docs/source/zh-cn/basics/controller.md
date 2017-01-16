@@ -3,7 +3,7 @@ title: controller
 
 ## 什么是 controller
 
-前面章节写到，我们通过 [router](./router.md) 将用户的请求基于 method 和 URL 分发到了对应的 controller 上，那 controller 负责做什么？
+[前面章节](./router.md)写到，我们通过 router 将用户的请求基于 method 和 URL 分发到了对应的 controller 上，那 controller 负责做什么？
 
 简单的说 controller 负责**解析用户的输入，处理后返回相应的结果**，例如
 
@@ -25,6 +25,7 @@ title: controller
 例如我们写一个对应到 `POST /api/posts` 接口的 controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
 ```js
+// app/controller/post.js
 const createRule = {
   title: { type: 'string' },
   content: { type: 'string' },
@@ -128,7 +129,7 @@ if (key.startsWith('egg')) {
 
 #### queries
 
-有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。框架提供了 `context.queries` 对象，这个对象也解析了 query string，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
+有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。针对此类情况，框架提供了 `context.queries` 对象，这个对象也解析了 query string，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
 
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
@@ -160,7 +161,7 @@ exports.listApp = function*() {
 
 ### body
 
-虽然我们可以通过 URL 传递参数，但是还是有诸多限制
+虽然我们可以通过 URL 传递参数，但是还是有诸多限制：
 
 - [浏览器中会对 URL 的长度有所限制](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)，如果需要传递的参数过多就会无法传递。
 - 服务端经常会将访问的完整 URL 记录到日志文件中，有一些敏感数据通过 URL 传递会不安全。
@@ -290,7 +291,7 @@ module.exports = function*() {
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
 
-```
+```js
 // images
 '.jpg', '.jpeg', // image/jpeg
 '.png', // image/png, image/x-png
@@ -346,6 +347,7 @@ module.exports = {
 
 - `context.headers`，`context.header`，`context.request.headers`，`context.request.header`：这几个方法是等价的，都是获取整个 header 对象。
 - `context.get(name)`，`context.request.get(name)`：获取请求 header 中的一个字段的值，如果这个字段不存在，会返回空字符串。
+- 我们建议用 `context.get(name)` 而不是 `context.headers['name']`，因为前者会自动处理大小写。
 
 由于 header 比较特殊，有一些是 `HTTP` 协议规定了具体含义的（例如 `Content-Type`，`Accept`），有些是反向代理设置的，已经约定俗成（X-Forwarded-For），框架也会对他们增加一些便捷的 getter，详细的 getter 可以查看 [API](https://eggjs.org/api/) 文档。
 
@@ -471,7 +473,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cooki
 
 通过 cookie，我们可以给每一个用户设置一个 session，用来存储用户身份相关的信息，这份信息会加密后存储在 cookie 中，实现跨请求的用户身份保持。
 
-框架基于 [koa-session](https://github.com/koajs/session) 中间件，通过 `context.session` 给我们提供访问或者修改当前用户 session 的能力。
+框架内置了 [session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 session 。
 
 ```js
 exports.fetchPosts = function*() {
@@ -544,9 +546,10 @@ exports.create = function*() {
 
 #### 自定义校验规则
 
-有时候我们希望自定义一些校验规则，让开发时更便捷，我们可以通过 `app.validator.addRule` 的方式新增自定义规则
+除了上一节介绍的内置检验类型外，有时候我们希望自定义一些校验规则，让开发时更便捷，此时可以通过 `app.validator.addRule(type, check)` 的方式新增自定义规则。
 
 ```js
+// app.js
 app.validator.addRule('json', (rule, value) => {
   try {
     JSON.parse(value);
@@ -559,9 +562,10 @@ app.validator.addRule('json', (rule, value) => {
 添加完自定义规则之后，就可以在 controller 中直接使用这条规则来进行参数校验了
 
 ```js
-exports.handler = function*() {
-  const rule = { body: 'json' };
-  this.validate(rule);
+exports.handler = function* () {
+  // query.test 字段必须是 json 字符串
+  const rule = { test: 'json' };
+  this.validate(rule, this.query);
 };
 ```
 
@@ -569,7 +573,7 @@ exports.handler = function*() {
 
 我们并不想在 controller 中实现太多业务逻辑，所以提供了一个 [service](./service.md) 层进行业务逻辑的封装，这不仅能提高代码的复用性，同时可以让我们的业务逻辑更好测试。
 
-在 controller 中可以调用任何一个 service 上的任何方法，同时 service 是懒加载的，只有当访问到它的时候我们才会去实例化它。
+在 controller 中可以调用任何一个 service 上的任何方法，同时 service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
 exports.create = function* () {
@@ -640,7 +644,7 @@ exports.proxy = function* () {
 #### 渲染模板
 
 通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。
-egg 自身没有集成任何一个模板引擎，但是约定了[view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。
+egg 自身没有集成任何一个模板引擎，但是约定了 [view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。
 具体示例可以查看 [模板渲染](../core/view.md)。
 
 #### JSONP
@@ -652,6 +656,7 @@ egg 自身没有集成任何一个模板引擎，但是约定了[view 插件的�
 - 通过 `context.jsonp=` 来设置支持 JSONP 格式的响应。
 
 ```js
+// app/controller/api.js
 exports.show = function*() {
   this.jsonp = {
     name: 'egg',
@@ -665,9 +670,10 @@ exports.show = function*() {
 
 ##### JSONP 配置
 
-框架默认通过 query 中的 `_callback` 参数作为识别是否返回 JSONP 格式数据的依据，并且 `_callback` 中设置的方法名长度最多只允许 50 个字符。应用可以在 `config/config.default.js` 覆盖默认的配置
+框架默认通过 query 中的 `_callback` 参数作为识别是否返回 JSONP 格式数据的依据，并且 `_callback` 中设置的方法名长度最多只允许 50 个字符。应用可以在 `config/config.default.js` 覆盖默认的配置：
 
 ```js
+// config/config.default.js
 module.exports = {
   callback: 'callback', // 识别 query 中的 `callback` 参数
   limit: 100, // 函数名最长为 100 个字符
@@ -681,6 +687,7 @@ module.exports = {
 通过 `context.set(key, value)` 方法可以设置一个响应头，`context.set(headers)` 设置多个 header。
 
 ```js
+// app/controller/api.js
 exports.show = function*() {
   const start = Date.now();
   this.body = yield this.service.post.get();

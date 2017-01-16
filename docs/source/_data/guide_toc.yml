@@ -27,11 +27,11 @@ Tutorials:
   RESTful API: /tutorials/restful.html
 Advanced:
   # Deployment: /advanced/deployment.html
-  View Plugin: /advanced/view-plugin.html
-  Cluster: /advanced/cluster.html
-  Framework: /advanced/framework.html
-  Plugin: /advanced/plugin.html
   Loader: /advanced/loader.html
+  Plugin: /advanced/plugin.html
+  Framework: /advanced/framework.html
+  Cluster: /advanced/cluster.html
+  View Plugin: /advanced/view-plugin.html
 Community:
   Contributing: /contributing.html
   # Member Guide: /member_guide.html
