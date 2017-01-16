@@ -1,3 +1,0 @@
-layout: api
-title: API
----

@@ -28,7 +28,59 @@
 </div>
 
 <div class="page-main">
-  <div class="markdown-body release"><h1 id="0-6-0-2016-12-03"><a href="#0-6-0-2016-12-03" class="headerlink" title="0.6.0 / 2016-12-03"></a>0.6.0 / 2016-12-03</h1><ul>
+  <div class="markdown-body release"><h1 id="070-2017-01-12"><a class="markdown-anchor" href="#070-2017-01-12">#</a> 0.7.0 / 2017-01-12</h1>
+<ul>
+<li>docs: add service doc (#221)</li>
+<li>docs: serverEnv =&gt; env (#239)</li>
+<li>feat: delegate configurations in app (#233)</li>
+<li>refactor: remove ctx.getCookie, ctx.setCookie and ctx.deleteCookie (#240)</li>
+<li>docs: remove mon-printable character (#242)</li>
+<li>feat: support app.config.proxy to identify app is behind a proxy (#231)</li>
+<li>doc: add plugin doc (#224)</li>
+<li>docs: add Quick Start in English (#223)</li>
+<li>docs: add basics/controller.md (#209)</li>
+<li>docs: add core/development.md (#214)</li>
+<li>docs: remove init.js from document, use app.beforeStart (#229)</li>
+<li>docs: quickstart (#217)</li>
+<li>docs: add security plugin doc (#196)</li>
+<li>docs: mv cluster.md to zh-cn (#216)</li>
+<li>feat: add cluster-client (#191)</li>
+<li>docs: add basics/router.md (#203)</li>
+<li>docs: add advanced/loader.md (#198)</li>
+<li>docs: fix i18n doc (#210)</li>
+<li>docs: add core/i18n.md (#208)</li>
+<li>docs: add core/httpclient document (#197)</li>
+<li>docs: typo (#207)</li>
+<li>docs: add core/logger.md (#204)</li>
+<li>docs: add one more reason why not use koa 2 (#206)</li>
+<li>docs: add error handling (#205)</li>
+<li>docs: add schedule (#202)</li>
+<li>docs: add english translation of basics/env.md</li>
+<li>docs: basics/middleware (#194)</li>
+<li>docs: add basics/config.md (#188)</li>
+<li>doc: app start (#193)</li>
+<li>docs: rename koa.md to egg-and-koa.md (#190)</li>
+<li>docs: egg and koa (#179)</li>
+<li>doc: add basics/env.md (#178)</li>
+<li>doc: rename guide/basics/extend.md to basics/extend.md (#189)</li>
+<li>doc: guide/basics/extend doc (#187)</li>
+</ul>
+<h1 id="063-2016-12-30"><a class="markdown-anchor" href="#063-2016-12-30">#</a> 0.6.3 / 2016-12-30</h1>
+<ul>
+<li>refactor: use logger.close, .end is deprecated (#171)</li>
+</ul>
+<h1 id="062-2016-12-22"><a class="markdown-anchor" href="#062-2016-12-22">#</a> 0.6.2 / 2016-12-22</h1>
+<ul>
+<li>refactor(config): set keepAliveTimeout 4000ms by default (#165)</li>
+</ul>
+<h1 id="061-2016-12-21"><a class="markdown-anchor" href="#061-2016-12-21">#</a> 0.6.1 / 2016-12-21</h1>
+<ul>
+<li>refactor: use sendToApp/sendToAgent in worker client</li>
+<li>fix: protocolHeaders can split with whitespace (#164)</li>
+<li>deps: update version (#157)</li>
+</ul>
+<h1 id="060-2016-12-03"><a class="markdown-anchor" href="#060-2016-12-03">#</a> 0.6.0 / 2016-12-03</h1>
+<ul>
 <li>deps: egg-cookies@2 (#155)</li>
 <li>fix: already supported in egg-core (#154)</li>
 <li>feat: body parser support disable, ignore and match (#150)</li>
@@ -36,7 +88,8 @@
 <li>test: refactor workclient test cases (#145)</li>
 <li>feat: add a dns cache httpclient (#146)</li>
 </ul>
-<h1 id="0-5-0-2016-11-04"><a href="#0-5-0-2016-11-04" class="headerlink" title="0.5.0 / 2016-11-04"></a>0.5.0 / 2016-11-04</h1><ul>
+<h1 id="050-2016-11-04"><a class="markdown-anchor" href="#050-2016-11-04">#</a> 0.5.0 / 2016-11-04</h1>
+<ul>
 <li>deps: upgrade dependencies (#144)</li>
 <li>feat: warn when agent send message before started (#143)</li>
 <li>feat: [BREAKING_CHANGE] refactor Messenger (#141)</li>
@@ -47,25 +100,29 @@
 <li>test: add local server for curl test cases</li>
 <li>test: use fs read instead of curl test on runInBackground</li>
 </ul>
-<h1 id="0-4-0-2016-10-29"><a href="#0-4-0-2016-10-29" class="headerlink" title="0.4.0 / 2016-10-29"></a>0.4.0 / 2016-10-29</h1><ul>
+<h1 id="040-2016-10-29"><a class="markdown-anchor" href="#040-2016-10-29">#</a> 0.4.0 / 2016-10-29</h1>
+<ul>
 <li>deps: update version (#135)</li>
 <li>feat: support background task on ctx (#119)</li>
 <li>chore: add middleware example (#121)</li>
 </ul>
-<h1 id="0-3-0-2016-10-28"><a href="#0-3-0-2016-10-28" class="headerlink" title="0.3.0 / 2016-10-28"></a>0.3.0 / 2016-10-28</h1><ul>
+<h1 id="030-2016-10-28"><a class="markdown-anchor" href="#030-2016-10-28">#</a> 0.3.0 / 2016-10-28</h1>
+<ul>
 <li>test: fix unstable test (#133)</li>
 <li>feat: close return promise (#128)</li>
 <li>deps: update deps version (#113)</li>
 <li>fix: AppWorkerClient subscribe same data failed issue (#110)</li>
 </ul>
-<h1 id="0-2-1-2016-09-16"><a href="#0-2-1-2016-09-16" class="headerlink" title="0.2.1 / 2016-09-16"></a>0.2.1 / 2016-09-16</h1><ul>
+<h1 id="021-2016-09-16"><a class="markdown-anchor" href="#021-2016-09-16">#</a> 0.2.1 / 2016-09-16</h1>
+<ul>
 <li>feat(application): emit startTimeout event (#107)</li>
 <li>perf: get header using lower case (#106)</li>
-<li>chore: remove –fix for error check but not fix (#101)</li>
+<li>chore: remove --fix for error check but not fix (#101)</li>
 <li>doc: Add Installation (#95)</li>
 <li>doc: add title (#94)</li>
 </ul>
-<h1 id="0-2-0-2016-09-03"><a href="#0-2-0-2016-09-03" class="headerlink" title="0.2.0 / 2016-09-03"></a>0.2.0 / 2016-09-03</h1><ul>
+<h1 id="020-2016-09-03"><a class="markdown-anchor" href="#020-2016-09-03">#</a> 0.2.0 / 2016-09-03</h1>
+<ul>
 <li>docs: improve documents</li>
 <li>test: update benchmark scripts (#79)</li>
 <li>test: add router for bench cases (#78)</li>
@@ -75,16 +132,19 @@
 <li>test: fix security tests (#73)</li>
 <li>test: egg-view-nunjucks change views -&gt; view (#72)</li>
 </ul>
-<h1 id="0-1-3-2016-08-31"><a href="#0-1-3-2016-08-31" class="headerlink" title="0.1.3 / 2016-08-31"></a>0.1.3 / 2016-08-31</h1><ul>
+<h1 id="013-2016-08-31"><a class="markdown-anchor" href="#013-2016-08-31">#</a> 0.1.3 / 2016-08-31</h1>
+<ul>
 <li>fix: utils.assign support undefined (#71)</li>
 <li>refactor: change accept to getter (#68)</li>
 </ul>
-<h1 id="0-1-2-2016-08-31"><a href="#0-1-2-2016-08-31" class="headerlink" title="0.1.2 / 2016-08-31"></a>0.1.2 / 2016-08-31</h1><ul>
+<h1 id="012-2016-08-31"><a class="markdown-anchor" href="#012-2016-08-31">#</a> 0.1.2 / 2016-08-31</h1>
+<ul>
 <li>deps: egg-security@1 (#67)</li>
 <li>Revert raw header (#65)</li>
 <li>feat: [BREAKING_CHANGE] remove poweredBy &amp;&amp; config.core (#63)</li>
 </ul>
-<h1 id="0-1-1-2016-08-29"><a href="#0-1-1-2016-08-29" class="headerlink" title="0.1.1 / 2016-08-29"></a>0.1.1 / 2016-08-29</h1><ul>
+<h1 id="011-2016-08-29"><a class="markdown-anchor" href="#011-2016-08-29">#</a> 0.1.1 / 2016-08-29</h1>
+<ul>
 <li>refactor: use ctx.setRawHeader (#61)</li>
 <li>chore: add benchmarks (#62)</li>
 <li>fix(meta): remove server-id (#56)</li>
@@ -93,20 +153,23 @@
 <li>feat: docs structure (#55)</li>
 <li>docs: web.md and web.zh_CN.md (#54)</li>
 </ul>
-<h1 id="0-1-0-2016-08-18"><a href="#0-1-0-2016-08-18" class="headerlink" title="0.1.0 / 2016-08-18"></a>0.1.0 / 2016-08-18</h1><ul>
+<h1 id="010-2016-08-18"><a class="markdown-anchor" href="#010-2016-08-18">#</a> 0.1.0 / 2016-08-18</h1>
+<ul>
 <li>feat: [BREAKING_CHANGE] use egg-core (#44)</li>
 <li>doc: translate to EN (#25)</li>
-<li>fix: Error of no such file or directory, scandir ‘/restful_api/app/api’ (#42)</li>
+<li>fix: Error of no such file or directory, scandir '/restful_api/app/api' (#42)</li>
 <li>test: fix default plugins test (#37)</li>
 <li>feat: add inner plugins (#24)</li>
 <li>docs: add schedule example (#30)</li>
 </ul>
-<h1 id="0-0-5-2016-07-20"><a href="#0-0-5-2016-07-20" class="headerlink" title="0.0.5 / 2016-07-20"></a>0.0.5 / 2016-07-20</h1><ul>
+<h1 id="005-2016-07-20"><a class="markdown-anchor" href="#005-2016-07-20">#</a> 0.0.5 / 2016-07-20</h1>
+<ul>
 <li>refactor(core): let ctx.cookies become a getter (#22)</li>
 <li>fix(messenger): init when create app and agent (#21)</li>
 <li>test: add test codes (#20)</li>
 </ul>
-<h1 id="0-0-1-2016-07-13"><a href="#0-0-1-2016-07-13" class="headerlink" title="0.0.1 / 2016-07-13"></a>0.0.1 / 2016-07-13</h1><ul>
+<h1 id="001-2016-07-13"><a class="markdown-anchor" href="#001-2016-07-13">#</a> 0.0.1 / 2016-07-13</h1>
+<ul>
 <li>init version</li>
 </ul>
 </div>
