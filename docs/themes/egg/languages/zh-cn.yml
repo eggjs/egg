@@ -46,6 +46,7 @@ guide_toc:
   Cluster: 多进程模型
   Framework: 框架开发
   Plugin: 插件开发
+  Progressive: 渐进式开发
   # Loader:
   Community: 社区
   Contributing: 如何贡献
