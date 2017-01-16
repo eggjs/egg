@@ -32,41 +32,41 @@
     <h1>插件开发</h1>
     <p>插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了</p>
 <blockquote>
-<p>koa 已经有了中间件的机制，为啥还要插件呢？<br>
-中间件、插件、应用它们之间是什么关系，有什么区别？<br>
-我该怎么使用一个插件？<br>
-如何编写一个插件？<br>
+<p>koa 已经有了中间件的机制，为啥还要插件呢？
+中间件、插件、应用它们之间是什么关系，有什么区别？
+我该怎么使用一个插件？
+如何编写一个插件？
 ...</p>
 </blockquote>
 <p>接下来我们就来逐一讨论</p>
 <h2 id="为什么要插件"><a class="markdown-anchor" href="#为什么要插件">#</a> 为什么要插件</h2>
-<p>我们在使用 koa 中间件过程中发现了下面一些问题</p>
+<p>我们在使用 koa 中间件过程中发现了下面一些问题：</p>
 <ol>
 <li>中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。</li>
 <li>中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。</li>
-<li>有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现</li>
+<li>有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现。</li>
 </ol>
-<p>综上所诉，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。</p>
+<p>综上所述，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。</p>
 <h2 id="什么是插件"><a class="markdown-anchor" href="#什么是插件">#</a> 什么是插件</h2>
-<p>一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样</p>
+<p>一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">. hello-plugin</div><div class="line">├── package.json</div><div class="line">├── app.js (可选)</div><div class="line">├── agent.js (可选)</div><div class="line">├── app</div><div class="line">│   ├── extend (可选)</div><div class="line">│   |   ├── helper.js (可选)</div><div class="line">│   |   ├── request.js (可选)</div><div class="line">│   |   ├── response.js (可选)</div><div class="line">│   |   ├── context.js (可选)</div><div class="line">│   |   ├── application.js (可选)</div><div class="line">│   |   └── agent.js (可选)</div><div class="line">│   ├── service (可选)</div><div class="line">│   └── middleware (可选)</div><div class="line">│       └── mw.js</div><div class="line">├── config</div><div class="line">|   ├── config.default.js</div><div class="line">│   ├── config.prod.js</div><div class="line">|   ├── config.test.js (可选)</div><div class="line">|   ├── config.local.js (可选)</div><div class="line">|   └── config.unittest.js (可选)</div><div class="line">└── test</div><div class="line">    └── middleware</div><div class="line">        └── mw.test.js</div></pre></td></tr></table></figure></p>
 <p>那区别在哪儿呢？</p>
 <ol>
 <li>
 <p>插件没有独立的 router 和 controller。这主要出于几点考虑：</p>
 <ul>
-<li>路由一般和应用强绑定的，不具备通用性</li>
-<li>一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突</li>
-<li>如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现</li>
+<li>路由一般和应用强绑定的，不具备通用性。</li>
+<li>一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突。</li>
+<li>如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现。</li>
 </ul>
 </li>
 <li>
 <p>插件需要在 <code>package.json</code> 中的 <code>eggPlugin</code> 节点指定插件特有的信息</p>
 <ul>
 <li><code>{String} name</code> - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。</li>
-<li><code>{Array} dependencies</code> - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）</li>
-<li><code>{Array} optionalDependencies</code> - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）</li>
-<li><code>{Array} env</code> - 只有在指定运行环境才能开启，具体有哪些环境可以参考 <a href="../basics/env.html">运行环境</a>。此配置是可选的，一般情况下都不需要配置</li>
+<li><code>{Array} dependencies</code> - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。</li>
+<li><code>{Array} optionalDependencies</code> - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。</li>
+<li><code>{Array} env</code> - 只有在指定运行环境才能开启，具体有哪些环境可以参考 <a href="../basics/env.html">运行环境</a>。此配置是可选的，一般情况下都不需要配置。</li>
 </ul>
 <p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-rpc"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"rpc"</span>,</div><div class="line">    <span class="attr">"dependencies"</span>: [ <span class="string">"registry"</span> ],</div><div class="line">    <span class="attr">"optionalDependencies"</span>: [ <span class="string">"vip"</span> ],</div><div class="line">    <span class="attr">"env"</span>: [ <span class="string">"local"</span>, <span class="string">"test"</span>, <span class="string">"unittest"</span>, <span class="string">"prod"</span> ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 </li>
@@ -96,7 +96,7 @@
 <ol>
 <li>首先在 <code>app/middleware</code> 目录下定义好中间件实现</li>
 </ol>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> staticCache = <span class="built_in">require</span>(<span class="string">'koa-static-cache'</span>);</div><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"><span class="keyword">const</span> mkdirp = <span class="built_in">require</span>(<span class="string">'mkdirp'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">options, app</span>) =&gt;</span> &#123;</div><div class="line">  assert.strictEqual(<span class="keyword">typeof</span> options.dir, <span class="string">'string'</span>,</div><div class="line">    <span class="string">'Must set `app.config.static.dir` when static plugin enable'</span>);</div><div class="line"></div><div class="line">  <span class="comment">// ensure directory exists</span></div><div class="line">  mkdirp.sync(options.dir);</div><div class="line"></div><div class="line">  app.loggers.coreLogger.info(<span class="string">'[egg-static] starting static serve %s -&gt; %s'</span>,</div><div class="line">    options.prefix, options.dir);</div><div class="line"></div><div class="line">  <span class="keyword">return</span> staticCache(options);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"></div><div class="line"><span class="keyword">const</span> staticCache = <span class="built_in">require</span>(<span class="string">'koa-static-cache'</span>);</div><div class="line"><span class="keyword">const</span> assert = <span class="built_in">require</span>(<span class="string">'assert'</span>);</div><div class="line"><span class="keyword">const</span> mkdirp = <span class="built_in">require</span>(<span class="string">'mkdirp'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">options, app</span>) =&gt;</span> &#123;</div><div class="line">  assert.strictEqual(<span class="keyword">typeof</span> options.dir, <span class="string">'string'</span>, <span class="string">'Must set `app.config.static.dir` when static plugin enable'</span>);</div><div class="line"></div><div class="line">  <span class="comment">// ensure directory exists</span></div><div class="line">  mkdirp.sync(options.dir);</div><div class="line"></div><div class="line">  app.loggers.coreLogger.info(<span class="string">'[egg-static] starting static serve %s -&gt; %s'</span>, options.prefix, options.dir);</div><div class="line"></div><div class="line">  <span class="keyword">return</span> staticCache(options);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <ol start="2">
 <li>在 <code>app.js</code> 中将中间件插入到合适的位置（例如：下面将 static 中间件放到 bodyParser 之前）</li>
 </ol>
@@ -129,6 +129,7 @@
 <h3 id="安装"><a class="markdown-anchor" href="#安装">#</a> 安装</h3>
 <p>和安装普通 <code>npm</code> 包一样</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-onerror --save</div></pre></td></tr></table></figure></p>
+<p><strong>注意：插件即使是只在 local 运行的，也需要配置为 dependencies 而不是 devDependencies，否则线上 <code>npm i --production</code> 时将无法找到插件。</strong></p>
 <h3 id="开启和关闭"><a class="markdown-anchor" href="#开启和关闭">#</a> 开启和关闭</h3>
 <p>在应用的 <code>${app_root}/config/plugin.js</code> 文件里配置</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">onerror</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-onerror'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
@@ -179,7 +180,11 @@
 </ol>
 </li>
 </ul>
-<h2 id="插件规范"><a class="markdown-anchor" href="#插件规范">#</a> 插件规范</h2>
+<h2 id="插件开发"><a class="markdown-anchor" href="#插件开发">#</a> 插件开发</h2>
+<h3 id="使用骨架快速开发"><a class="markdown-anchor" href="#使用骨架快速开发">#</a> 使用骨架快速开发</h3>
+<p>你可以直接通过 [egg-bin] 选择 <a href="https://github.com/eggjs/egg-boilerplate-plugin" target="_blank" rel="external">plugin</a> 脚手架来快速上手。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ egg-bin egg-xxx --type=plugin</div><div class="line">$ <span class="built_in">cd</span> egg-xxx</div><div class="line">$ npm i</div><div class="line">$ npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<h3 id="插件规范"><a class="markdown-anchor" href="#插件规范">#</a> 插件规范</h3>
 <p>我们非常欢迎您贡献新的插件，同时也希望您遵守下面一些规范：</p>
 <ul>
 <li>
@@ -212,7 +217,7 @@
     <div class="mobile-menu">
       <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
     </div>
-    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
   </aside>
 </div>
 

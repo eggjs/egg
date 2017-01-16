@@ -37,7 +37,7 @@
 <ul>
 <li>请确定 issue 的类型。</li>
 <li>请避免提交重复的 issue，在提交之前搜索现有的 issue。</li>
-<li>在标签(分类参考__标签分类__), 标题 或者内容中体现明确的意图。</li>
+<li>在标签(分类参考<strong>标签分类</strong>), 标题 或者内容中体现明确的意图。</li>
 </ul>
 <p>随后 egg 负责人会确认 issue 意图，更新合适的标签，关联 milestone，指派开发者。</p>
 <p>标签可分为两类，type 和 scope</p>
@@ -67,13 +67,14 @@
 <ul>
 <li>必须说清楚问题的几个方面：what（是什么），why（为什么），how（怎么做），可根据问题的特性有所侧重。</li>
 <li>how 部分必须包含详尽完整的操作步骤，必要时附上 <strong>足够简单，可运行</strong> 的范例代码，
-所有范例代码放在 <a href="https://github.com/eggjs/examples" target="_blank" rel="external">egg/examples</a> 库中。</li>
+所有范例代码放在 <a href="https://github.com/eggjs/examples" target="_blank" rel="external">eggjs/examples</a> 库中。</li>
 <li>提供必要的链接，如申请流程，术语解释和参考文档等。</li>
+<li>同步修改中英文文档，或者在 PR 里面说明。</li>
 </ul>
 <h2 id="提交代码"><a class="markdown-anchor" href="#提交代码">#</a> 提交代码</h2>
 <h3 id="提交-pull-request"><a class="markdown-anchor" href="#提交-pull-request">#</a> 提交 Pull Request</h3>
 <p>如果你有仓库的开发者权限，而且希望贡献代码，那么你可以创建分支修改代码提交 MR，egg 开发团队会 review 代码合并到主干。</p>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">// 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的</div><div class="line">$ git checkout -b branch-name</div><div class="line"></div><div class="line">// 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例</div><div class="line">$ tnpm <span class="built_in">test</span></div><div class="line"></div><div class="line">// 测试通过后，提交代码，message 见下面的规范</div><div class="line"></div><div class="line">$ git add . // git add -u 删除文件</div><div class="line">$ git commit -m <span class="string">"fix(role): role.use must xxx"</span></div><div class="line">$ git push origin branch-name</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment"># 先创建开发分支开发，分支名应该有含义，避免使用 update、tmp 之类的</span></div><div class="line">$ git checkout -b branch-name</div><div class="line"></div><div class="line"><span class="comment"># 开发完成后跑下测试是否通过，必要时需要新增或修改测试用例</span></div><div class="line">$ npm <span class="built_in">test</span></div><div class="line"></div><div class="line"><span class="comment"># 测试通过后，提交代码，message 见下面的规范</span></div><div class="line"></div><div class="line">$ git add . <span class="comment"># git add -u 删除文件</span></div><div class="line">$ git commit -m <span class="string">"fix(role): role.use must xxx"</span></div><div class="line">$ git push origin branch-name</div></pre></td></tr></table></figure></p>
 <p>提交后就可以在 <a href="https://github.com/eggjs/egg/pulls" target="_blank" rel="external">egg</a> 创建 Pull Request 了。</p>
 <p>由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。</p>
 <ol>
@@ -109,7 +110,7 @@
 <p>补充 subject，适当增加原因、目的等相关因素，也可不写。</p>
 <p>（5）footer</p>
 <ul>
-<li><strong><em>当有非兼容修改(Breaking Change)时必须在这里描述清楚</em></strong></li>
+<li><strong>当有非兼容修改(Breaking Change)时必须在这里描述清楚</strong></li>
 <li>关联相关 issue，如 <code>Closes #1, Closes #2, #3</code></li>
 <li>如果功能点有新增或修改的，还需要关联文档 <code>doc</code> 和 <code>egg-init</code> 的 PR，如 <code>eggjs/egg-bin#123</code></li>
 </ul>
@@ -141,7 +142,7 @@
 </li>
 <li>
 <p>发起一个新的 <a href="https://github.com/nodejs/node/pull/4181" target="_blank" rel="external">Release Proposal MR</a>，按照 <a href="https://github.com/nodejs/node/blob/master/CHANGELOG.md" target="_blank" rel="external">node CHANGELOG</a> 进行 <code>History</code> 的编写，修正文档中与版本相关的内容，commits 可以自动生成。
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm run commits</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm run commits</div></pre></td></tr></table></figure></p>
 </li>
 <li>
 <p>指定下一个大版本的 PM。</p>
@@ -150,9 +151,9 @@
 <h4 id="发布时"><a class="markdown-anchor" href="#发布时">#</a> 发布时：</h4>
 <ul>
 <li>将老的稳定版本（master）备份到以当前大版本为名字的分支上（例如 <code>1.x</code>），并设置 tag 为 <code>release-{v}.x</code>（ v 为当前版本，例如 <code>release-1.x</code>）。</li>
-<li>将 <code>next</code> 分支推送到 <code>master</code>，成为新的稳定版本分支，并去除 <code>next</code> tag，修改 README 中与分支相关的内容（CISE task id）。</li>
-<li>发布新的稳定版本到 <a href="http://web.npm.alibaba-inc.com/" target="_blank" rel="external">alinpm</a>，并通知上层框架进行更新。</li>
-<li><code>tnpm publish</code> 之前，请先阅读<a href="https://fengmk2.com/blog/2016/how-i-publish-a-npm-package" target="_blank" rel="external">『我是如何发布一个 npm 包的』</a>。</li>
+<li>将 <code>next</code> 分支推送到 <code>master</code>，成为新的稳定版本分支，并去除 <code>next</code> tag，修改 README 中与分支相关的内容。</li>
+<li>发布新的稳定版本到 <a href="http://npmjs.com/" target="_blank" rel="external">npm</a>，并通知上层框架进行更新。</li>
+<li><code>npm publish</code> 之前，请先阅读<a href="https://fengmk2.com/blog/2016/how-i-publish-a-npm-package" target="_blank" rel="external">『我是如何发布一个 npm 包的』</a>。</li>
 </ul>
 <p>上述描述中所有的设置 tag 都是指在 <code>package.json</code> 中设置 npm 的 tag。</p>
 <p><figure class="highlight"><table><tr><td class="code"><pre><div class="line">"publishConfig": &#123;</div><div class="line">  "tag": "next"</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
@@ -169,7 +170,7 @@
     <div class="mobile-menu">
       <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
     </div>
-    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/view-plugin.html">模板开发规范</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/loader.html">Loader</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">什么是 egg</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
   </aside>
 </div>
 
