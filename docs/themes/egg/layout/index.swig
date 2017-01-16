@@ -8,8 +8,8 @@
   </div>
 
   <div class="version">
-    <span>Latest: <strong>0.2.0</strong></span>
-    <span>Node.js >= <strong> 4.0.0</strong></span>
+    <span>Latest: <strong>0.7.0</strong></span>
+    <span>Node.js >= <strong> 6.0.0</strong></span>
   </div>
 
   <div class="info index-bg-light">
