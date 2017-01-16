@@ -181,7 +181,7 @@ module.exports = app => {
   class NewsService extends app.Service {
     * list(page = 1) {
       // read config
-      const { serverUrl, pageSize } = this.app.config.new;
+      const { serverUrl, pageSize } = this.app.config.news;
 
       // use build-in http client to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
