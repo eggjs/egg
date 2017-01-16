@@ -23,7 +23,7 @@ $ npm i
 
 ```bash
 $ npm run dev
-$ open localhost:7001/home
+$ open localhost:7001
 ```
 
 ## 逐步搭建

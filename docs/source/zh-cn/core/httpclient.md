@@ -608,6 +608,43 @@ console.log(result.res.timing);
 
 这几个都是透传给 [https] 模块的参数，具体请查看 [`https.request(options, callback)`](https://nodejs.org/api/https.html#https_https_request_options_callback)。
 
+## 调试辅助
+
+框架还提供了 [egg-development-proxyagent] 插件来方便开发者调试。
+
+先安装和开启插件：
+
+```bash
+$ npm i egg-development-proxyagent --save
+```
+
+```js
+// config/plugin.js
+exports.proxyagent = {
+  enable: true,
+  package: 'egg-development-proxyagent',
+}
+```
+
+开启抓包工具，可以用 [charles] 或 [fiddler]，此处我们用 [anyproxy] 来演示下。
+
+```bash
+$ npm install anyproxy -g
+$ anyproxy --port 8888
+```
+
+使用环境变量启动应用：
+
+```bash
+$ http_proxy=http://127.0.0.1:8888 npm run dev
+```
+
+然后就可以正常操作了，所有经过 httpclient 的请求，都可以在 http://localhost:8002 这个控制台中查看到。
+
+![anyproxy](https://cloud.githubusercontent.com/assets/227713/21976937/06a63694-dc0f-11e6-98b5-e9e279c4867c.png)
+
+**注意：该插件默认只在 local 环境下启动。**
+
 ## 常见错误
 
 ### 创建连接超时
@@ -655,3 +692,7 @@ console.log(result.res.timing);
 [formstream]: https://github.com/node-modules/formstream
 [http]: https://nodejs.org/api/http.html
 [https]: https://nodejs.org/api/https.html
+[egg-development-proxyagent]: https://github.com/eggjs/egg-development-proxyagent
+[charles]: https://www.charlesproxy.com/
+[fiddler]: http://www.telerik.com/fiddler
+[anyproxy]: https://github.com/alibaba/anyproxy
