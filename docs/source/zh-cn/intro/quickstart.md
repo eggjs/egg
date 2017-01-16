@@ -217,14 +217,14 @@ exports.list = function* newsList() {
   yield this.render('news/list.tpl', { list: newsList });
 };
 ```
-还需增加app/service/news.js中读取到的配置：
+还需增加 `app/service/news.js` 中读取到的配置：
 
 ```js
 // config/config.default.js
 config.news = {
-    pageSize: 5,
-    serverUrl: 'https://hacker-news.firebaseio.com/v0',
-  };
+  pageSize: 5,
+  serverUrl: 'https://hacker-news.firebaseio.com/v0',
+};
 ```
 
 ### 编写扩展
