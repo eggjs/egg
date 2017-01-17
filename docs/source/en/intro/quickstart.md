@@ -218,9 +218,9 @@ module.exports = app => {
       // parallel GET detail , see `yield {}` from co
       const newsList = yield Object.keys(idList).map(key => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
-        return this.ctx.curl(url, { dataType: 'json' }).then(res => res.data);
+        return this.ctx.curl(url, { dataType: 'json' });
       });
-      return newsList;
+      return newsList.map(res => res.data);
     }
   }
   return NewsService;
@@ -237,6 +237,16 @@ exports.list = function* newsList() {
   const page = this.query.page || 1;
   const newsList = yield this.service.news.list(page);
   yield this.render('news/list.tpl', { list: newsList });
+};
+```
+
+And also add config.
+
+```js
+// config/config.default.js
+config.news = {
+  pageSize: 5,
+  serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
 
