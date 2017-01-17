@@ -1,10 +1,7 @@
 title: HttpClient
 ---
 
-# HttpClient
-
-互联网时代，无数服务是基于 HTTP 协议进行通信的。
-web 应用调用 HTTP 服务必然是一种非常常见的应用场景。
+互联网时代，无数服务是基于 HTTP 协议进行通信的，web 应用调用后端 HTTP 服务是一种非常常见的应用场景。
 
 为此框架基于 [urllib] 内置实现了一个 [httpclient]，应用可以非常便捷地完成任何 HTTP 请求。
 
@@ -17,12 +14,14 @@ web 应用调用 HTTP 服务必然是一种非常常见的应用场景。
 
 ```js
 // app.js
-module.exports = function* init(app) {
-  // 示例：启动的时候去读取 https://registry.npm.taobao.org/egg/latest 的版本信息
-  const result = yield app.curl('https://registry.npm.taobao.org/egg/latest', {
-    dataType: 'json',
+module.exports = app => {
+  app.beforeStart(function* () {
+    // 示例：启动的时候去读取 https://registry.npm.taobao.org/egg/latest 的版本信息
+    const result = yield app.curl('https://registry.npm.taobao.org/egg/latest', {
+      dataType: 'json',
+    });
+    app.logger.info('egg latest version: %s', result.data.version);
   });
-  app.logger.info('egg latest version: %s', result.data.version);
 };
 ```
 
@@ -78,7 +77,7 @@ module.exports = function* get() {
   - `data`: 响应 body，默认 httpclient 不会做任何处理，会直接返回 Buffer 类型数据。
     一旦设置了 `options.dataType`，httpclient 将会根据此参数对 `data` 进行相应的处理。
 
-完整的请求参数 `options` 和返回值 `result` 的说明请看下文的[**options 参数详解**](#options 参数详解)章节。
+完整的请求参数 `options` 和返回值 `result` 的说明请看下文的 [options 参数详解](#options 参数详解) 章节。
 
 ### POST
 
@@ -98,7 +97,7 @@ module.exports = function* post() {
       hello: 'world',
       now: Date.now(),
     },
-    // 明确告诉 httpclient 以 JSON 格式处理响应 body
+    // 明确告诉 httpclient 以 JSON 格式处理返回的响应 body
     dataType: 'json',
   });
   this.body = result.data;
@@ -256,6 +255,7 @@ module.exports = function* stream() {
 ### httpclient 默认全局配置
 
 ```js
+// config/config.default.js
 exports.httpclient = {
   // 默认开启 http/https KeepAlive 功能
   keepAlive: true,
@@ -608,6 +608,43 @@ console.log(result.res.timing);
 
 这几个都是透传给 [https] 模块的参数，具体请查看 [`https.request(options, callback)`](https://nodejs.org/api/https.html#https_https_request_options_callback)。
 
+## 调试辅助
+
+框架还提供了 [egg-development-proxyagent] 插件来方便开发者调试。
+
+先安装和开启插件：
+
+```bash
+$ npm i egg-development-proxyagent --save
+```
+
+```js
+// config/plugin.js
+exports.proxyagent = {
+  enable: true,
+  package: 'egg-development-proxyagent',
+}
+```
+
+开启抓包工具，可以用 [charles] 或 [fiddler]，此处我们用 [anyproxy] 来演示下。
+
+```bash
+$ npm install anyproxy -g
+$ anyproxy --port 8888
+```
+
+使用环境变量启动应用：
+
+```bash
+$ http_proxy=http://127.0.0.1:8888 npm run dev
+```
+
+然后就可以正常操作了，所有经过 httpclient 的请求，都可以在 http://localhost:8002 这个控制台中查看到。
+
+![anyproxy](https://cloud.githubusercontent.com/assets/227713/21976937/06a63694-dc0f-11e6-98b5-e9e279c4867c.png)
+
+**注意：该插件默认只在 local 环境下启动。**
+
 ## 常见错误
 
 ### 创建连接超时
@@ -648,10 +685,14 @@ console.log(result.res.timing);
 
 ## 示例代码
 
-本文所使用到的完整示例代码可以在 [eggjs/exmaples/apps/httpclient](https://github.com/eggjs/examples/blob/master/apps/httpclient) 找到。
+完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
 [httpclient]: https://github.com/eggjs/egg/blob/master/lib/core/urllib.js
 [formstream]: https://github.com/node-modules/formstream
 [http]: https://nodejs.org/api/http.html
 [https]: https://nodejs.org/api/https.html
+[egg-development-proxyagent]: https://github.com/eggjs/egg-development-proxyagent
+[charles]: https://www.charlesproxy.com/
+[fiddler]: http://www.telerik.com/fiddler
+[anyproxy]: https://github.com/alibaba/anyproxy

@@ -1,7 +1,5 @@
-titile: 定时任务
+title: 定时任务
 ---
-
-# 定时任务
 
 虽然我们通过框架开发的 http server 是请求响应模型的，但是仍然还会有许多场景需要执行一些定时任务，例如：
 
@@ -90,7 +88,7 @@ exports.schedule = {
 
 除了刚才介绍到的几个参数之外，定时任务还支持这些参数：
 
-- immediate：配置了该参数为 ture 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
+- immediate：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
 - disable：配置改参数为 true 时，这个定时任务不会被启动。
 
 ### 动态配置定时任务
@@ -103,7 +101,7 @@ module.exports = app => {
     schedule: {
       interval: '1m',
       type: 'all',
-      disable: app.config.serverEnv === 'local', // 本地开发环境不执行
+      disable: app.config.env === 'local', // 本地开发环境不执行
     },
     * task(ctx) {
       const res = yield ctx.curl('http://www.api.com/cache', {
@@ -138,10 +136,12 @@ it('should schedule work fine', function*() {
 - 应用启动时，手动执行定时任务进行系统初始化，等初始化完毕后再启动应用。参见[应用启动自定义](./app-start.md)章节，我们可以在 `app.js` 中编写初始化逻辑。
 
 ```js
-module.exports = function*(app) {
-  // 保证应用启动监听端口前数据已经准备好了
-  // 后续数据的更新由定时任务自动触发
-  yield app.runSchedule('update_cache');
+module.exports = app => {
+  app.beforeStart(function* () {
+    // 保证应用启动监听端口前数据已经准备好了
+    // 后续数据的更新由定时任务自动触发
+    yield app.runSchedule('update_cache');
+  });
 };
 ```
 

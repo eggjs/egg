@@ -344,14 +344,14 @@ describe('test/app/extend/context.test.js', () => {
     it('should get from status ok', () => {
       const context = app.mockContext();
       context.status = 200;
-      context.realStatus.should.equal(200);
+      assert(context.realStatus === 200);
     });
 
     it('should get from realStatus ok', () => {
       const context = app.mockContext();
       context.status = 302;
       context.realStatus = 500;
-      context.realStatus.should.equal(500);
+      assert(context.realStatus === 500);
     });
   });
 

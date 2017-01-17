@@ -6,6 +6,7 @@ const accepts = require('accepts');
 const _querycache = Symbol('_querycache');
 const _queriesCache = Symbol('_queriesCache');
 const PROTOCOL = Symbol('PROTOCOL');
+const HOST = Symbol('HOST');
 const ACCEPTS = Symbol('ACCEPTS');
 const IPS = Symbol('IPS');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
@@ -29,15 +30,18 @@ module.exports = {
    * ```
    */
   get host() {
-    const host = this.get('x-forwarded-host') || this.get('host');
-    if (!host) {
-      return 'localhost';
+    if (this[HOST]) return this[HOST];
+
+    let host;
+    if (this.app.config.proxy) {
+      host = getFromHeaders(this, this.app.config.hostHeaders);
     }
-    return host.split(/\s*,\s*/)[0];
+    host = host || this.get('host') || '';
+    this[HOST] = host.split(/\s*,\s*/)[0];
+    return this[HOST];
   },
 
   /**
-   * 由于部署在 Nginx 后面，Koa 原始的实现无法取到正确的 protocol
    * @member {String} Request#protocol
    * @example
    * ```js
@@ -46,28 +50,48 @@ module.exports = {
    * ```
    */
   get protocol() {
-    if (this[PROTOCOL]) {
-      return this[PROTOCOL];
-    }
-
+    if (this[PROTOCOL]) return this[PROTOCOL];
+    // detect encrypted socket
     if (this.socket && this.socket.encrypted) {
       this[PROTOCOL] = 'https';
-      return 'https';
+      return this[PROTOCOL];
     }
-
-    if (typeof this.app.config.protocolHeaders === 'string' && this.app.config.protocolHeaders) {
-      const protocolHeaders = this.app.config.protocolHeaders.split(/\s*,\s*/);
-      for (const header of protocolHeaders) {
-        let proto = this.get(header);
-        if (proto) {
-          proto = this[PROTOCOL] = proto.split(/\s*,\s*/)[0];
-          return proto;
-        }
+    // get from headers specified in `app.config.protocolHeaders`
+    if (this.app.config.proxy) {
+      const proto = getFromHeaders(this, this.app.config.protocolHeaders);
+      if (proto) {
+        this[PROTOCOL] = proto.split(/\s*,\s*/)[0];
+        return this[PROTOCOL];
       }
     }
+    // use protocol specified in `app.conig.protocol`
+    this[PROTOCOL] = this.app.config.protocol || 'http';
+    return this[PROTOCOL];
+  },
 
-    const proto = this[PROTOCOL] = this.app.config.protocol || 'http';
-    return proto;
+  /**
+   * Get all pass through ip addresses from the request.
+   * Enable only on `app.config.proxy = true`
+   *
+   * @member {Array} Request#ips
+   * @example
+   * ```js
+   * this.request.ips
+   * => ['100.23.1.2', '201.10.10.2']
+   * ```
+   */
+  get ips() {
+    if (this[IPS]) return this[IPS];
+
+    // return empty array when proxy=false
+    if (!this.app.config.proxy) {
+      this[IPS] = [];
+      return this[IPS];
+    }
+
+    const val = getFromHeaders(this, this.app.config.ipHeaders) || '';
+    this[IPS] = val ? val.split(/\s*,\s*/) : [];
+    return this[IPS];
   },
 
   /**
@@ -97,28 +121,6 @@ module.exports = {
    */
   set ip(ip) {
     this._ip = ip;
-  },
-
-  /**
-   * 从请求头获取所有 ip
-   * 1. 先从 `X-Forwarded-For` 获取，这个值是从 spanner 传递过来的，如果前置没有 spanner 返回为空
-   * 2. 再从 `X-Real-IP` 获取，这个值为请求 nginx 的客户端 ip，如果前置是非 spanner 的服务器，那么 ip 可能不准确
-   *
-   * @member {String} Request#ips
-   */
-  get ips() {
-    let ips = this[IPS];
-    if (ips) {
-      return ips;
-    }
-
-    // TODO: should trust these headers after trust proxy config set
-    const val = this.get('x-forwarded-for') || this.get('x-real-ip');
-    ips = this[IPS] = val
-      ? val.split(/ *, */)
-      : [];
-
-    return ips;
   },
 
   /**
@@ -268,4 +270,14 @@ function arrayValue(value) {
     value = [ value ];
   }
   return value;
+}
+
+function getFromHeaders(ctx, names) {
+  if (!names) return '';
+  names = names.split(/\s*,\s*/);
+  for (const name of names) {
+    const value = ctx.get(name);
+    if (value) return value;
+  }
+  return '';
 }

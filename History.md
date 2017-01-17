@@ -1,4 +1,42 @@
 
+0.7.0 / 2017-01-12
+==================
+
+  * docs: add service doc (#221)
+  * docs: serverEnv => env (#239)
+  * feat: delegate configurations in app (#233)
+  * refactor: remove ctx.getCookie, ctx.setCookie and ctx.deleteCookie (#240)
+  * docs: remove mon-printable character (#242)
+  * feat: support app.config.proxy to identify app is behind a proxy (#231)
+  * doc: add plugin doc (#224)
+  * docs: add Quick Start in English (#223)
+  * docs: add basics/controller.md (#209)
+  * docs: add core/development.md (#214)
+  * docs: remove init.js from document, use app.beforeStart (#229)
+  * docs: quickstart (#217)
+  * docs: add security plugin doc (#196)
+  * docs: mv cluster.md to zh-cn (#216)
+  * feat: add cluster-client (#191)
+  * docs: add basics/router.md (#203)
+  * docs: add advanced/loader.md (#198)
+  * docs: fix i18n doc (#210)
+  * docs: add core/i18n.md (#208)
+  * docs: add core/httpclient document (#197)
+  * docs: typo (#207)
+  * docs: add core/logger.md (#204)
+  * docs: add one more reason why not use koa 2 (#206)
+  * docs: add error handling (#205)
+  * docs: add schedule (#202)
+  * docs: add english translation of basics/env.md
+  * docs: basics/middleware (#194)
+  * docs: add basics/config.md (#188)
+  * doc: app start (#193)
+  * docs: rename koa.md to egg-and-koa.md (#190)
+  * docs: egg and koa (#179)
+  * doc: add basics/env.md (#178)
+  * doc: rename guide/basics/extend.md to basics/extend.md (#189)
+  * doc: guide/basics/extend doc (#187)
+
 0.6.3 / 2016-12-30
 ==================
 

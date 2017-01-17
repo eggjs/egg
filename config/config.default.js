@@ -30,12 +30,37 @@ module.exports = appInfo => {
     keys: '',
 
     /**
-     * Detect request, protocol header, case sensitive.
-     * If your app behind a proxy, like nginx, maybe you should set it to `x-forwarded-proto`
+     * is application deployed after reverse proxy
+     * when true proxy header fields will be trusted
+     * @member Config#proxy
+     * @since 1.0.0
+     * @type {Boolean}
+     */
+    proxy: false,
+
+    /**
+     * Detect request' protocol from specified headers, not case-sensitive.
+     * Only worked when config.proxy set to true.
      * @member {String} Config#protocolHeaders
      * @since 1.0.0
      */
-    protocolHeaders: '',
+    protocolHeaders: 'x-forwarded-proto',
+
+    /**
+     * Detect request' ip from specified headers, not case-sensitive.
+     * Only worked when config.proxy set to true.
+     * @member {String} Config#ipHeaders
+     * @since 1.0.0
+     */
+    ipHeaders: 'x-forwarded-for',
+
+    /**
+     * Detect request' host from specified headers, not case-sensitive.
+     * Only worked when config.proxy set to true.
+     * @member {String} Config#hostHeaders
+     * @since 1.0.0
+     */
+    hostHeaders: 'x-forwarded-host',
 
     /**
      * package.json object

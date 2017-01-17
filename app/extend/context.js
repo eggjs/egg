@@ -1,11 +1,10 @@
 'use strict';
 
 const delegate = require('delegates');
-const jsonpBody = require('jsonp-body');
 const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
-const ConextHttpClient = require('../../lib/core/context_httpclient');
+const ContextHttpClient = require('../../lib/core/context_httpclient');
 const util = require('../../lib/core/util');
 
 const HELPER = Symbol('Context#helper');
@@ -50,7 +49,7 @@ const proto = module.exports = {
    */
   get httpclient() {
     if (!this[CONTEXT_HTTPCLIENT]) {
-      this[CONTEXT_HTTPCLIENT] = new ConextHttpClient(this);
+      this[CONTEXT_HTTPCLIENT] = new ContextHttpClient(this);
     }
     return this[CONTEXT_HTTPCLIENT];
   },
@@ -61,7 +60,7 @@ const proto = module.exports = {
    * @method Context#curl
    * @param {String|Object} url - request url address.
    * @param {Object} [options] - options for request.
-   * @return {Object} see {@link ConextHttpClient#curl}
+   * @return {Object} see {@link ContextHttpClient#curl}
    */
   * curl(url, options) {
     return yield this.httpclient.curl(url, options);
@@ -112,21 +111,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 读/写真实的响应状态码，在一些特殊场景，如 404，500 状态，我们希望通过 302 跳转到统一的 404 和 500 页面， 但是日志里面又想正确地记录 404 或 500 真实的状态码而不是 302，那么我们就需要设置 realStatus 来实现了。
-   * @member {Number} Context#realStatus
-   */
-  get realStatus() {
-    if (this._realStatus) {
-      return this._realStatus;
-    }
-    return this.status;
-  },
-
-  set realStatus(status) {
-    this._realStatus = status;
-  },
-
-  /**
    * 获取 helper 实例
    * @member {Helper} Context#helper
    * @since 1.0.0
@@ -146,47 +130,6 @@ const proto = module.exports = {
    */
   get tracer() {
     return this._tracer || {};
-  },
-
-  /**
-   * 写 Cookie
-   * @method Cookie#setCookie
-   * @param {String} name  cookie name
-   * @param {String} value cookie value
-   * @param {Object} opts  cookie options
-   * - {String}  domain    cookie domain, default is `ctx.hostname`
-   * - {String}  path      cookie path, default is '/'
-   * - {Boolean} encrypt   encrypt cookie or not, default is false
-   * - {Boolean} httpOnly  http only cookie or not, default is true
-   * - {Date}    expires   cookie's expiration date, default is expires at the end of session.
-   * @return {Context} koa context
-   */
-  setCookie(name, value, opts) {
-    this.cookies.set(name, value, opts);
-    return this;
-  },
-
-  /**
-   * 读取 Cookie
-   * @method Cookie#getCookie
-   * @param {String} name - Cookie key
-   * @param {Object} opts  cookie options
-   * @return {String} cookie value
-   */
-  getCookie(name, opts) {
-    return this.cookies.get(name, opts);
-  },
-
-  /**
-   * 删除 Cookie
-   * @method Cookie#deleteCookie
-   * @param {String} name - Cookie key
-   * @param {Object} opts  cookie options
-   * @return {Context} koa context
-   */
-  deleteCookie(name, opts) {
-    this.setCookie(name, null, opts);
-    return this;
   },
 
   /**
@@ -235,23 +178,6 @@ const proto = module.exports = {
    */
   get coreLogger() {
     return this.getLogger('coreLogger');
-  },
-
-  /**
-   * 设置 jsonp 的内容，将会以 jsonp 的方式返回。注意：不可读。
-   * @member {Void} Context#jsonp
-   * @param {Object} obj 设置的对象
-   */
-  set jsonp(obj) {
-    const options = this.app.config.jsonp;
-    const jsonpFunction = this.query[options.callback];
-    if (!jsonpFunction) {
-      this.body = obj;
-    } else {
-      this.set('x-content-type-options', 'nosniff');
-      this.type = 'js';
-      this.body = jsonpBody(obj, jsonpFunction, options);
-    }
   },
 
   /**
@@ -402,9 +328,25 @@ const proto = module.exports = {
  * @since 1.0.0
  */
 
+/**
+ * @member {Void} Context#jsonp
+ * @see Response#jsonp
+ * @since 1.0.0
+ */
+
+/**
+ * @member {Number} Context#realStatus
+ * @see Response#realStatus
+ * @since 1.0.0
+ */
+
 delegate(proto, 'request')
   .getter('isAjax')
   .getter('acceptJSON')
   .getter('queries')
   .getter('accept')
   .access('ip');
+
+delegate(proto, 'response')
+  .setter('jsonp')
+  .access('realStatus');

@@ -19,14 +19,14 @@ describe('test/lib/core/cookies.test.js', () => {
     it('should throw TypeError when set secure on not secure request', () => {
       const ctx = app.mockContext();
       (function() {
-        ctx.setCookie('foo', 'bar', { secure: true });
+        ctx.cookies.set('foo', 'bar', { secure: true });
       }).should.throw('Cannot send secure cookie over unencrypted connection');
     });
 
     it('should set cookie twice and not set domain when ctx.hostname=localhost', () => {
       const ctx = app.mockContext();
       ctx.set('Set-Cookie', 'foo=bar');
-      ctx.setCookie('foo1', 'bar1');
+      ctx.cookies.set('foo1', 'bar1');
       ctx.response.get('set-cookie').should.eql([
         'foo=bar',
         'foo1=bar1; path=/; httponly',
@@ -38,7 +38,7 @@ describe('test/lib/core/cookies.test.js', () => {
       mm(app, 'keys', null);
       const ctx = app.mockContext();
       (function() {
-        ctx.setCookie('foo', 'bar', {
+        ctx.cookies.set('foo', 'bar', {
           encrypt: true,
         });
       }).should.throw('.keys required for encrypt/sign cookies');
@@ -49,7 +49,7 @@ describe('test/lib/core/cookies.test.js', () => {
       const ctx = app.mockContext();
       ctx.header.cookie = 'foo=bar';
       (function() {
-        ctx.getCookie('foo', {
+        ctx.cookies.get('foo', {
           encrypt: true,
         });
       }).should.throw('.keys required for encrypt/sign cookies');

@@ -1,14 +1,12 @@
 title: 异常处理
 ---
 
-# 异常处理
-
 ## 异常捕获
 
 得益于框架底层采用的 co 库将异步编码变成了同步模型，同时错误也完全可以用 `try catch` 来捕获。在编写应用代码时，所有地方都可以直接用 `try catch` 来捕获异常。
 
 ```js
-// service 中
+// app/service/test.js
 try {
   const res = yield this.ctx.curl('http://eggjs.com/api/echo', { dataType: 'json' });
   if (res.status !== 200) throw new Error('response status is not 200');
@@ -22,8 +20,8 @@ try {
 按照正常代码写法，所有的异常都可以用这个方式进行捕获并处理，但是一定要注意一些特殊的写法可能带来的问题。打一个不太正式的比方，我们的代码全部都在一个异步调用链上，所有的异步操作都通过 yield 串接起来了，但是只要有一个地方跳出了异步调用链，异常就捕获不到了。
 
 ```js
-// controller 中
-const reuqest = {};
+// app/controller/jump.js
+const request = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
 setImmediate(() => {
@@ -37,11 +35,11 @@ setImmediate(() => {
 当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
 
 ```js
-const reuqest = {};
+const request = {};
 const config = yield this.service.trade.buy(request);
 // 下单后需要进行一次核对，且不阻塞当前请求
 this.runInBackground(function* () {
-  // 这里面的异常都会统统被 runInBackgroud 捕获掉，并打印错误日志
+  // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
   yield this.service.trade.check(request);
 });
 ```
@@ -64,9 +62,10 @@ this.runInBackground(function* () {
 
 onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 html 页面异常，就会重定向到这个地址。
 
-在 `config/config.defult.js` 中
+在 `config/config.default.js` 中
 
 ```js
+// config/config.default.js
 module.exports = {
   onerror: {
     // 线上页面发生异常时，重定向到这个页面上
@@ -82,11 +81,9 @@ module.exports = {
 例如我们可以在 `app/middleware` 中新增一个 `error_handler.js` 的文件
 
 ```js
+// app/middleware/error_handler.js
 module.exports = () => {
   return function* errorHandler(next) {
-    // 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理
-    if (!this.path.startsWith('/api/')) return yield next;
-
     try {
       yield next;
     } catch (err) {
@@ -96,7 +93,7 @@ module.exports = () => {
       // 自定义错误时异常返回的格式
       this.body = {
         success: false,
-        message: this.app.config.serverEnv === 'prod' ? 'Internal Server Error' : err.message,
+        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
       };
     }
   };
@@ -108,5 +105,9 @@ module.exports = () => {
 ```js
 module.exports = {
   middleware: [ 'errorHandler' ],
+  errorHandler: {
+    // 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理
+    match: '/api',
+  },
 };
 ```

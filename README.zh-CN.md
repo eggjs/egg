@@ -1,6 +1,6 @@
 ![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/egg-logo.png)
 
-为企业级框架和应用而生
+为企业级框架和应用而生的 Web 框架
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -28,25 +28,22 @@
 $ npm install egg --save
 ```
 
-Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
+支持 Node.js 6.x 以上版本。
 
 ## 特性
 
-- ✔︎ Build-in process management
-- ✔︎ Plugin system
-- ✔︎ Framework customization
-- ✔︎ Lots of [plugins](https://eggjs.org/badgeboard/)
-)
+- ✔︎ 内置多进程管理
+- ✔︎ 高度可扩展的插件机制
+- ✔︎ 深度框架定制
+- ✔︎ 丰富的[插件](https://eggjs.org/badgeboard/)
 
 ## 文档和社区
 
-- [Website](https://eggjs.org)
-- [Plugin List](https://eggjs.org/badgeboard/)
-- [Frameworks](https://eggjs.org/frameworks.html)
+- [官方站点 && 文档](https://eggjs.org/zh-cn/)
+- [插件列表](https://eggjs.org/badgeboard/)
+- [框架列表](https://eggjs.org/frameworks.html)
 
 ## 快速开始
-
-Follow the step
 
 ```bash
 $ npm install egg-init -g
@@ -57,6 +54,8 @@ $ open http://localhost:7001
 ```
 
 ## 示例
+
+参见 [egg-examples](https://github.com/eggjs/examples)。
 
 ## 贡献代码
 

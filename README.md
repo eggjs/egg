@@ -24,12 +24,11 @@ Born to build better enterprise frameworks and apps
 
 ## Installation
 
-
 ```bash
 $ npm install egg --save
 ```
 
-Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/guide/installation.html).
+Node.js >= 6.0.0 required.
 
 ## Features
 
@@ -40,7 +39,7 @@ Node.js >= 4.0.0 required, check [document for installation](https://eggjs.org/g
 
 ## Docs & Community
 
-- [Website](https://eggjs.org)
+- [Website && Document](https://eggjs.org)
 - [Plugin List](https://eggjs.org/badgeboard/)
 - [Frameworks](https://eggjs.org/frameworks.html)
 
@@ -57,6 +56,8 @@ $ open http://localhost:7001
 ```
 
 ## Examples
+
+See [egg-examples](https://github.com/eggjs/examples).
 
 ## How to Contribute
 

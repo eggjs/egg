@@ -1,17 +1,17 @@
 exports.home = function*() {
   if (this.query.cookiedel) {
     if (!this.query.opts) {
-      this.deleteCookie('cookiedel');
+      this.cookies.set('cookiedel', null);
     } else {
       const options = {
         path: '/hello',
         domain: 'eggjs.org',
       };
-      this.deleteCookie('cookiedel', options);
+      this.cookies.set('cookiedel', null, options);
     }
   }
   if (this.query.setCookieValue) {
-    this.setCookie('foo-cookie', this.query.setCookieValue);
+    this.cookies.set('foo-cookie', this.query.setCookieValue);
   }
 
   if (this.query.hasOwnProperty('cookiepath')) {
@@ -21,10 +21,10 @@ exports.home = function*() {
     if (this.query.cookiedomain) {
       opts.domain = this.query.cookiedomain;
     }
-    this.setCookie('cookiepath', this.query.cookiepath, opts);
+    this.cookies.set('cookiepath', this.query.cookiepath, opts);
   }
   if (this.query.notSetPath) {
-    this.setCookie('notSetPath', this.query.notSetPath, {
+    this.cookies.set('notSetPath', this.query.notSetPath, {
       path: null,
       domain: null,
     });

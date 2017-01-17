@@ -4,7 +4,7 @@ module.exports = {
   // enable plugins
 
   /**
-   * app global error handler
+   * app global Error Handling
    * @member {Object} Plugin#onerror
    * @property {Boolean} enable - `true` by default
    */
@@ -134,38 +134,14 @@ module.exports = {
     package: 'egg-schedule',
   },
 
-  // disable plugins
-
-  /**
-   * RESTful API
-   * @member {Object} Plugin#rest
-   * @property {Boolean} enable - 默认 false
-   * @since 1.0.0
-   */
-  rest: {
-    enable: false,
-    package: 'egg-rest',
-  },
-
   /**
    * `app/public` dir static serve
    * @member {Object} Plugin#static
-   * @property {Boolean} enable - `false` by default
+   * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
   static: {
-    enable: false,
+    enable: true,
     package: 'egg-static',
-  },
-
-  /**
-   * CORS
-   * @member {Object} Plugin#cors
-   * @property {Boolean} enable - `false` by default
-   * @since 1.0.0
-   */
-  cors: {
-    enable: false,
-    package: 'egg-cors',
   },
 };

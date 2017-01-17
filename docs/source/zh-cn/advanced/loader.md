@@ -1,8 +1,6 @@
 title: Loader
 ---
 
-# Loader
-
 egg 在 koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。
 
 ## 应用、框架和插件
@@ -110,8 +108,7 @@ loadUnit
 │   |   └── agent.js
 │   ├── service
 │   ├── middleware
-│   ├── router.js
-│   └── init.js
+│   └── router.js
 └── config
     ├── config.default.js
     ├── config.prod.js
@@ -124,7 +121,6 @@ loadUnit
 
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
-app/init.js | ✔︎ | |
 app/router.js | ✔︎ | |
 app/controller | ✔︎ | |
 app/middleware | ✔︎ | ✔︎ | ✔︎
@@ -132,7 +128,7 @@ app/service | ✔︎ | ✔︎ | ✔︎
 app/extend | ✔︎ | ✔︎ | ✔︎
 app.js | ✔︎ | ✔︎ | ✔︎
 agent.js | ✔︎ | ✔︎ | ✔︎
-config/config.{serverEnv}.js | ✔︎ | ✔︎ | ✔︎
+config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
 config/plugin.js | ✔︎ | ✔︎ |
 package.json | ✔︎ | ✔︎ | ✔︎
 
@@ -173,19 +169,18 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 上面已经列出了默认会加载的文件，egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
 
 - 加载 [plugin](./plugin.md)，找到应用和框架，加载 `config/plugin.js`
-- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{serverEnv}.js`
+- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{env}.js`
 - 加载 [extend](../basics/extend.md), 遍历 loadUnit 加载 `app/extend/xx.js`
 - [自定义初始化](../basics/app-start.md)，遍历 loadUnit 加载 `app.js` 和 `agent.js`
 - 加载 [service](../basics/service.md), 遍历 loadUnit 加载 `app/service` 目录
 - 加载 [middleware](../basics/middleware.md), 遍历 loadUnit 加载 `app/middleware` 目录
-- 加载 [controller](../basics/router-controller.md), 加载应用的 `app/controller` 目录
-- 加载 [router](../basics/router-controller.md), 加载应用的 `app/router.js`
-- [应用自定义初始化](../basics/app-start.md)，加载 loadUnit 的 `app/init.js`
+- 加载 [controller](../basics/controller.md), 加载应用的 `app/controller` 目录
+- 加载 [router](../basics/router.md), 加载应用的 `app/router.js`
 
 注意
 
-- `app.js/agent.js` 和 `init.js` 使用的方法是一致的，但是加载时机不同。`init.js` 在整个 Loader 同步加载之后才加载是因为可以使用所有已加载的 API。比如应用初始化要调用 service 的一个方法，这时必须等 service 加载完才可以使用。
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
+- [应用完整启动顺序查看框架开发](./framework.md)
 
 ## 扩展 Loader
 
@@ -205,7 +200,6 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - loadMiddleware()
 - loadController()
 - loadRouter()
-- loadAppInit()
 
 egg 基于 Loader 实现了 [AppWorkerLoader] 和 [AgentWorkerLoader]，上层框架基于这两个类来扩展，**Loader 的扩展只能在框架进行**。
 
@@ -240,6 +234,8 @@ Object.assign(exports, require('egg'));
 // 将自定义的 Loader exports 出来
 exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
 ```
+
+通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`， `app/extend/filter.js` 等等。
 
 以上只是说明 Loader 的写法，具体可以查看[框架开发](./framework.md)。
 

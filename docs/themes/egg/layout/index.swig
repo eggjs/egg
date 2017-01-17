@@ -3,13 +3,13 @@
     <div class="banner-logo" id="logo"></div>
     <h1>{{ __('index.slogan') }}</h1>
     <p class="banner-button">
-      <a class="btn btn-primary" href="/guide/">{{ __('index.getstart') }}</a>
+      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
     </p>
   </div>
 
   <div class="version">
-    <span>Latest: <strong>0.2.0</strong></span>
-    <span>Node.js >= <strong> 4.0.0</strong></span>
+    <span>Latest: <strong>0.7.0</strong></span>
+    <span>Node.js >= <strong> 6.0.0</strong></span>
   </div>
 
   <div class="info index-bg-light">
@@ -50,7 +50,7 @@
       </ul>
     </div>
     <p>
-      <a class="btn btn-primary" href="/guide/">{{ __('index.readmore') }}</a>
+      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.readmore') }}</a>
     </p>
   </div>
 </div>
