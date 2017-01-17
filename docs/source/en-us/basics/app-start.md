@@ -2,18 +2,19 @@
 
 When the application starts up, we often need to set up some initialization logic. The application bootstraps with those specific configurations. It is in a healthy state and be able to take external service requests after those configurations successfully applied. Otherwise, it failed.
 
-## Application Customization
-
-During the application bootstrapping time, the Framework loads up environment files, service files, route files, plugin files and many more. After the startup task is finished, it executes the application initialization logic at file location of `app/init.js` if present.
+The framework starts with a file called `app.js` that executes the application initialization logic, if present, and it returns a function.
 
 For example, we need to load a list of national cities from the remote server during application startup for subsequent use in the controller:
 
 ```js
-// app/init.js
-module.exports = function*(app) {
-  app.cities = yield app.curl('http://example.com/city.json', {
-    method: 'GET',
-    dataType: 'json',
+// app.js
+module.exports = app => {
+  app.beforeStart(function* () {
+    // The lifecycle method runs before the application bootstraps
+    app.cities = yield app.curl('http://example.com/city.json', {
+      method: 'GET',
+      dataType: 'json',
+    });
   });
 };
 ```
@@ -23,10 +24,8 @@ module.exports = function*(app) {
 ```js
 // app/controller/city.js
 module.exports = function*() {
-  // this.app.cities // access `cities` property on the global `this.app`
+    // this.app.cities // access `cities` property on the global `this.app`
 }
 ```
 
-## Plugins Customization
-
-The framework provides the `app.js` file on purpose for plugins initialization. It is very similar to `init.js`, except that `app.js` is loaded before `init.js`. To understand the loading order, please see [loader documentation](../advanced/loader.md) for details.
+**Note: When the framework executes the lifecycle method `beforeStart`, do not run time-consuming operation. The framework enables a *Timeout* setting by default when it starts up.**
