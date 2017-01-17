@@ -36,7 +36,7 @@ module.exports = {
   // 覆盖内置的
   rds: {
     enable: true,
-    dep: ['session'],
+    dependencies: ['session'],
     package: 'rds',
   },
 };
