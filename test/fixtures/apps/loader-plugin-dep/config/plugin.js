@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   a: {
     enable: true,
-    dep: ['b', 'f'],
+    dependencies: ['b', 'f'],
     path: path.join(__dirname, '../plugins/a')
   },
 
@@ -14,25 +14,25 @@ module.exports = {
 
   c1: {
     enable: true,
-    dep: ['b'],
+    dependencies: ['b'],
     path: path.join(__dirname, '../plugins/c')
   },
 
   d: {
     enable: true,
-    dep: ['a'],
+    dependencies: ['a'],
     path: path.join(__dirname, '../plugins/d')
   },
 
   e: {
     enable: true,
-    dep: ['f'],
+    dependencies: ['f'],
     path: path.join(__dirname, '../plugins/e')
   },
 
   f: {
     enable: true,
-    dep: ['c1'],
+    dependencies: ['c1'],
     path: path.join(__dirname, '../plugins/f')
   },
 
