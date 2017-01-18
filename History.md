@@ -1,4 +1,33 @@
 
+0.8.0 / 2017-01-18
+==================
+
+  * test: dep -> dependencies (#270)
+  * docs: translate zh-cn/basics/app-start.md into english (#222)
+  * docs: fix quickstart typo (#266)
+  * docs: add http client debug docs (#265)
+  * docs: modify and fix 3 points (#264)
+  * docs(intro): improve decription (#263)
+  * docs: fix docs site version (#262)
+  * docs: Fix typo.  (#261)
+  * docs: review 1st version docs (#257)
+  * fix: typo conext -> context (#259)
+  * docs: contributing && readme && deps (#253)
+  * docs: fix quickstart link in index.html (#256)
+  * docs: set the default locale zh-cn (#255)
+  * refactor: ctx.realStatus delegate ctx.response.realStatus (#252)
+  * docs: Add intro/index.md (#246)
+  * feat: adjust default plugins (#251)
+  * docs: add RESTful documents (#247)
+  * feat: delegate ctx.jsonp to ctx.response.jsonp (#248)
+  * chore: remove examples (#245)
+  * docs: improve mysql doc
+  * docs: add mysql doc
+  * docs: view (#228)
+  * docs: improve doc theme (#230)
+  * docs: add core/unittest.md (#199)
+  * docs: add advanced/framework.md (#225)
+
 0.7.0 / 2017-01-12
 ==================
 
