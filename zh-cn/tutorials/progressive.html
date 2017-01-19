@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>渐进式开发 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="为企业级框架和应用而生">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div id="container">
+    <div class="nav">
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
+    <ul>
+      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    </ul>
+  </header>
+</div>
+
+    <div class="page-title">
+  <h1>GUIDE</h1>
+  <h2>The best way to know egg</h2>
+</div>
+
+<div class="page-main">
+  <article class="markdown-body">
+    <h1>渐进式开发</h1>
+    <p>在 egg 里面，有<a href="../advanced/plugin.html">插件</a>，也有<a href="../advanced/framework.html">框架</a>，前者还包括了 <code>path</code> 和 <code>package</code> 两种加载模式，那我们应该如何选择呢？</p>
+<p>本文将以实例的方式，一步步给大家演示下，如何渐进式地进行代码演进。</p>
+<p>全部的示例代码可以参见 <a href="https://github.com/eggjs/examples/progressive" target="_blank" rel="external">eggjs/examples/progressive</a>。</p>
+<h2 id="最初始的状态"><a class="markdown-anchor" href="#最初始的状态">#</a> 最初始的状态</h2>
+<p>假设我们有一段分析 UA 的代码，实现以下功能：</p>
+<ul>
+<li><code>ctx.isAndroid</code></li>
+<li><code>ctx.isIOS</code></li>
+</ul>
+<p>通过之前的教程，大家一定可以很快的写出来，我们快速回顾下：</p>
+<p>对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step1" target="_blank" rel="external">step1</a>。</p>
+<p>目录结构：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">example-app</div><div class="line">├── app</div><div class="line">│   ├── extend</div><div class="line">│   │   └── context.js</div><div class="line">│   └── router.js</div><div class="line">├── <span class="built_in">test</span></div><div class="line">│   └── index.test.js</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
+<p>核心代码：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/context.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isIOS() &#123;</div><div class="line">    <span class="keyword">const</span> iosReg = <span class="regexp">/iphone|ipad|ipod/i</span>;</div><div class="line">    <span class="keyword">return</span> iosReg.test(<span class="keyword">this</span>.get(<span class="string">'user-agent'</span>));</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="插件的雏形"><a class="markdown-anchor" href="#插件的雏形">#</a> 插件的雏形</h2>
+<p>我们很明显能感知到，这段逻辑是具备通用性的，可以写成插件。</p>
+<p>但一开始的时候，功能还没完善，直接独立插件，维护起来比较麻烦。</p>
+<p>此时，我们可以把代码写成插件的形式，但并不独立出去。</p>
+<p>对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step2" target="_blank" rel="external">step2</a>。</p>
+<p>新的目录结构：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">example-app</div><div class="line">├── app</div><div class="line">│   └── router.js</div><div class="line">├── config</div><div class="line">│   └── plugin.js</div><div class="line">├── lib</div><div class="line">│   └── plugin</div><div class="line">│       └── egg-ua</div><div class="line">│           ├── app</div><div class="line">│           │   └── extend</div><div class="line">│           │       └── context.js</div><div class="line">│           └── package.json</div><div class="line">├── <span class="built_in">test</span></div><div class="line">│   └── index.test.js</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
+<p>核心代码：</p>
+<ul>
+<li>
+<p><code>app/extend/context.js</code> 移动到 <code>lib/plugin/egg-ua/app/extend/context.js</code>。</p>
+</li>
+<li>
+<p><code>lib/plugin/egg-ua/package.json</code> 声明插件。</p>
+</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"ua"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li><code>config/plugin.js</code> 中通过 <code>path</code> 来挂载插件。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line">exports.ua = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">path</span>: path.join(__dirname, <span class="string">'../lib/plugin/egg-ua'</span>),</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="抽成独立插件"><a class="markdown-anchor" href="#抽成独立插件">#</a> 抽成独立插件</h2>
+<p>经过一段时间开发后，该模块的功能成熟，此时可以考虑抽出来成为独立的插件。</p>
+<p>首先，我们抽出一个 egg-ua 插件，看过<a href="../advanced/plugin.html">插件文档</a>的同学应该都比较熟悉，我们这里只简单过一下：</p>
+<p>目录结构：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">egg-ua</div><div class="line">├── app</div><div class="line">│   └── extend</div><div class="line">│       └── context.js</div><div class="line">├── <span class="built_in">test</span></div><div class="line">│   ├── fixtures</div><div class="line">│   │   └── <span class="built_in">test</span>-app</div><div class="line">│   │       ├── app</div><div class="line">│   │       │   └── router.js</div><div class="line">│   │       └── package.json</div><div class="line">│   └── ua.test.js</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
+<p>对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step3/egg-ua" target="_blank" rel="external">step3/egg-ua</a>。</p>
+<p>然后改造原有的应用，对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step3/example-app" target="_blank" rel="external">step3/example-app</a>。</p>
+<ul>
+<li>移除 <code>lib/plugin/egg-ua</code> 目录。</li>
+<li><code>package.json</code> 中声明对 <code>egg-ua</code> 的依赖。</li>
+<li><code>config/plugin.js</code> 中修改依赖声明为 <code>package</code> 方式。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line">exports.ua = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-ua'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><strong>注意：在插件还没发布前，可以通过 <code>npm link</code> 的方式进行本地测试，具体参见 <a href="https://docs.npmjs.com/cli/link" target="_blank" rel="external">npm-link</a>。</strong></p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> example-app</div><div class="line">$ npm link ../egg-ua</div><div class="line">$ npm i</div><div class="line">$ npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<h2 id="沉淀到框架"><a class="markdown-anchor" href="#沉淀到框架">#</a> 沉淀到框架</h2>
+<p>重复上述的过程，很快我们会积累了好几个插件和配置，并且我们会发现，在团队的大部分项目中，都会用到这些插件。</p>
+<p>此时，就可以考虑抽象出一个适合团队业务场景的框架。</p>
+<p>首先，抽象出 example-framework 框架，如上看过<a href="../advanced/framework.html">框架文档</a>的同学应该都比较熟悉，我们这里只简单过一下：</p>
+<p>目录结构：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">example-framework</div><div class="line">├── config</div><div class="line">│   ├── config.default.js</div><div class="line">│   └── plugin.js</div><div class="line">├── lib</div><div class="line">│   ├── agent.js</div><div class="line">│   └── application.js</div><div class="line">├── <span class="built_in">test</span></div><div class="line">│   ├── fixtures</div><div class="line">│   │   └── <span class="built_in">test</span>-app</div><div class="line">│   └── framework.test.js</div><div class="line">├── README.md</div><div class="line">├── index.js</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
+<ul>
+<li>对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step4/example-framework" target="_blank" rel="external">example-framework</a>。</li>
+<li>把原来的 <code>egg-ua</code> 等插件的依赖，从 example-app 中移除，配置到该框架的 <code>package.json</code> 和 <code>config/plugin.js</code> 中。</li>
+</ul>
+<p>然后改造原有的应用，对应的代码参见 <a href="https://github.com/eggjs/examples/tree/master/progressive/step4/example-app" target="_blank" rel="external">step4/example-app</a>。</p>
+<ul>
+<li>移除 <code>config/plugin.js</code> 中对 <code>egg-ua</code> 的依赖。</li>
+<li><code>package.json</code> 中移除对 <code>egg-ua</code> 的依赖。</li>
+<li><code>package.json</code> 中声明对 <code>example-framework</code> 的依赖，并配置 <code>egg.framework</code>。</li>
+</ul>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"progressive"</span>,</div><div class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</div><div class="line">  <span class="attr">"private"</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">"egg"</span>: &#123;</div><div class="line">    <span class="attr">"framework"</span>: <span class="string">"example-framework"</span></div><div class="line">  &#125;,</div><div class="line">  <span class="attr">"dependencies"</span>: &#123;</div><div class="line">    <span class="attr">"example-framework"</span>: <span class="string">"*"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>注意：在框架还没发布前，可以通过 <code>npm link</code> 的方式进行本地测试，具体参见 <a href="https://docs.npmjs.com/cli/link" target="_blank" rel="external">npm-link</a>。</strong></p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> example-app</div><div class="line">$ npm link ../egg-framework</div><div class="line">$ npm i</div><div class="line">$ npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
+<h2 id="写在最后"><a class="markdown-anchor" href="#写在最后">#</a> 写在最后</h2>
+<p>综上所述，大家可以看到，我们是如何一步步渐进的去进行框架演进，得益于 egg 强大的插件机制，代码的共建，复用和下沉，竟然可以这么的无痛。</p>
+<ul>
+<li>一般来说，当应用中有可能会复用到的代码时，直接放到 <code>lib/plugin</code> 目录去，如例子中的 <code>egg-ua</code>。</li>
+<li>当该插件功能稳定后，即可独立出来作为一个 <code>node module</code> 。</li>
+<li>如此以往，应用中相对复用性较强的代码都会逐渐独立为单独的插件。</li>
+<li>当你的应用逐渐进化到针对某类业务场景的解决方案时，将其抽象为独立的 framework 进行发布。</li>
+<li>当在新项目中抽象出的插件，下沉集成到框架后，其他项目只需要简单的重新 <code>npm install</code> 下就可以使用上，对整个团队的效率有极大的提升。</li>
+<li><strong>注意：不管是应用/插件/框架，都必须编写单元测试，并尽量实现 100% 覆盖率。</strong></li>
+</ul>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+    <div class="mobile-menu">
+      <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    </div>
+    <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+  </aside>
+</div>
+
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+    <div class="footer">
+  <footer>
+    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
+  </footer>
+</div>
+
+  </div>
+</body>
+</html>

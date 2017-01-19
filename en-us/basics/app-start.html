@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>部署 - 为企业级框架和应用而生</title>
+  <title>egg - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="为企业级框架和应用而生">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -29,8 +29,15 @@
 
 <div class="page-main">
   <article class="markdown-body">
-    <h1>部署</h1>
-    <p>请 <a href="https://github.com/eggjs/egg/issues/241" target="_blank" rel="external">催更</a></p>
+    <h1></h1>
+    <h1 id="application-startup-configuration"><a class="markdown-anchor" href="#application-startup-configuration">#</a> Application Startup Configuration</h1>
+<p>When the application starts up, we often need to set up some initialization logic. The application bootstraps with those specific configurations. It is in a healthy state and be able to take external service requests after those configurations successfully applied. Otherwise, it failed.</p>
+<p>The framework starts with a file called <code>app.js</code> that executes the application initialization logic, if present, and it returns a function.</p>
+<p>For example, we need to load a list of national cities from the remote server during application startup for subsequent use in the controller:</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.beforeStart(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// The lifecycle method runs before the application bootstraps</span></div><div class="line">    app.cities = <span class="keyword">yield</span> app.curl(<span class="string">'http://example.com/city.json'</span>, &#123;</div><div class="line">      <span class="attr">method</span>: <span class="string">'GET'</span>,</div><div class="line">      <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><code>cities</code> attribute has attached on the global <code>this.app</code>. It can be accessed in the controller,</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/city.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="comment">// this.app.cities // access `cities` property on the global `this.app`</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>Note: When the framework executes the lifecycle method <code>beforeStart</code>, do not run time-consuming operation. The framework enables a <em>Timeout</em> setting by default when it starts up.</strong></p>
 
   </article>
   <aside id="mobileAside" class="toc">
