@@ -45,6 +45,7 @@
 </ul>
 <p>为此，egg 为团队架构师和技术负责人提供 <code>框架定制</code> 的能力，框架是一层抽象，可以基于 egg 去封装上层框架，并且 egg 支持多层继承。</p>
 <p>这样，整个团队就可以遵循统一的方案，并且在项目中可以根据业务场景自行使用插件做差异化，当后者验证为最佳实践后，就能下沉到框架中，其他项目仅需简单的升级下框架的版本即可享受到。</p>
+<p>具体可以参见<a href="../tutorials/progressive.html">渐进式开发</a>。</p>
 <h2 id="框架与多进程"><a class="markdown-anchor" href="#框架与多进程">#</a> 框架与多进程</h2>
 <p>框架的扩展是和多进程模型有关的，我们已经知道<a href="./cluster.html">多进程模型</a>，也知道 Agent Worker 和 App Worker 的区别，所以我们需要扩展的类也有两个 Agent 和 Application，而这两个类的 API 不一定相同。</p>
 <p>在 Agent Worker 启动的时候会实例化 Agent，而在 App Worker 启动时会实例化 Application，这两个类又同时继承 <a href="https://github.com/eggjs/egg-core" target="_blank" rel="external">EggCore</a>。</p>

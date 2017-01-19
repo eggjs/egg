@@ -103,7 +103,7 @@ a busineess logic layer, i.e., <a href="../basics/service.html">service</a>.</p>
 <p>Then slightly modify our previous controller.</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/news.js</span></div><div class="line">exports.list = <span class="function"><span class="keyword">function</span>* <span class="title">newsList</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> page = <span class="keyword">this</span>.query.page || <span class="number">1</span>;</div><div class="line">  <span class="keyword">const</span> newsList = <span class="keyword">yield</span> <span class="keyword">this</span>.service.news.list(page);</div><div class="line">  <span class="keyword">yield</span> <span class="keyword">this</span>.render(<span class="string">'news/list.tpl'</span>, &#123; <span class="attr">list</span>: newsList &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>And also add config.</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line">config.news = &#123;</div><div class="line">  <span class="attr">pageSize</span>: <span class="number">5</span>,</div><div class="line">  <span class="attr">serverUrl</span>: <span class="string">'https://hacker-news.firebaseio.com/v0'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line">exports.news = &#123;</div><div class="line">  <span class="attr">pageSize</span>: <span class="number">5</span>,</div><div class="line">  <span class="attr">serverUrl</span>: <span class="string">'https://hacker-news.firebaseio.com/v0'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="add-extensions"><a class="markdown-anchor" href="#add-extensions">#</a> Add Extensions</h3>
 <p>We might encounter a small problem here.
 The time that we fetched are in Unix Time,
@@ -142,13 +142,13 @@ Egg provides a powerful way to manage them in a merged configuration file.</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm <span class="built_in">test</span></div></pre></td></tr></table></figure></p>
 <p>That is all of it, for more detail, see <a href="../core/unittest.html">Unit Testing</a>.</p>
 <h2 id="conclusions"><a class="markdown-anchor" href="#conclusions">#</a> Conclusions</h2>
-<p>We can only touch the tip of the iceberg of Egg
-with the above short sections.
-We recommend that developers continue reading other documents:</p>
+<p>We can only touch the tip of the iceberg of Egg with the above short sections.
+Where to go from here? Browse our documentation to better understand the framework.</p>
 <ul>
 <li>Egg provides a powerful mechanism for extending features. See <a href="../advanced/plugin.html">Plug-ins</a>.</li>
-<li>As large teams need to follow certain constraints and conventions, in egg, we recommend further creating an upper-level framework that fits your team. See <a href="../advanced/framework.html">Frameworks</a>.</li>
-<li>In Egg, writing unit tests is highly recommended, and it actually turns out to be very straightforward. See <a href="../core/test.html">Unit Testing</a>.</li>
+<li>Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suited their special needs. See more on [Frameworks].(../advanced/framework.md).</li>
+<li>Egg framework provides code reusabilities and modularities. See details at <a href="../tutorials/progressive.html">Progressive</a>.</li>
+<li>Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See <a href="../core/test.html">Unit Testing</a>.</li>
 </ul>
 
   </article>
