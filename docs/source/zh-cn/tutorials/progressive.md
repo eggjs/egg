@@ -5,7 +5,7 @@ title: 渐进式开发
 
 本文将以实例的方式，一步步给大家演示下，如何渐进式地进行代码演进。
 
-全部的示例代码可以参见 [eggjs/examples/progressive](https://github.com/eggjs/examples/progressive)。
+全部的示例代码可以参见 [eggjs/examples/progressive](https://github.com/eggjs/examples/tree/master/progressive)。
 
 ## 最初始的状态
 
