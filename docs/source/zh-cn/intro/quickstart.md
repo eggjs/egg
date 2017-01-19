@@ -123,7 +123,7 @@ exports.view = {
 };
 ```
 
-为列表页编写模板文件，一般放置在 app/view 目录下
+为列表页编写模板文件，一般放置在 `app/view` 目录下
 
 ``` html
 <!-- app/view/news/list.tpl -->
@@ -221,7 +221,7 @@ exports.list = function* newsList() {
 
 ```js
 // config/config.default.js
-config.news = {
+exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
@@ -231,7 +231,7 @@ config.news = {
 
 遇到一个小问题，我们的资讯时间的数据是 UnixTime 格式的，我们希望显示为便于阅读的格式。
 
-框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见 [扩展](../basics/extend.md)。
+框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见[扩展](../basics/extend.md)。
 
 在这里，我们可以使用 view 插件支持的 helper 来实现：
 
@@ -291,7 +291,7 @@ exports.robot = {
 
 - 支持按环境变量加载不同的配置文件，如 `config.local.js`， `config.prod.js` 等等。
 - 应用/插件/框架都可以配置自己的配置文件，框架将按顺序合并加载。
-- 具体合并逻辑可参见 [配置文件](../basics/config.md)。
+- 具体合并逻辑可参见[配置文件](../basics/config.md)。
 
 ```js
 // config/config.default.js
@@ -368,15 +368,16 @@ $ npm i egg-mock supertest --save-dev
 $ npm test
 ```
 
-就这么简单，更多请参见 [单元测试](../core/unittest.md)。
+就这么简单，更多请参见[单元测试](../core/unittest.md)。
 
 ## 后记
 
 短短几章内容，只能讲 egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
-- 提供了强大的扩展机制，参见 [插件开发](../advanced/plugin.md)。
-- 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
-- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
+- 提供了强大的扩展机制，参见[插件开发](../advanced/plugin.md)。
+- 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见[框架开发](../advanced/framework.md)。
+- 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读[渐进式开发](../tutorials/progressive.md)。
+- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见[单元测试](../core/unittest.md)。
 
 [nvm]: http://gitlab.alibaba-inc.com/node/nvm
 [nvs]: https://github.com/jasongin/nvs

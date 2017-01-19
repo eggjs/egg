@@ -244,7 +244,7 @@ And also add config.
 
 ```js
 // config/config.default.js
-config.news = {
+exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
@@ -403,12 +403,12 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 
 ## Conclusions
 
-We can only touch the tip of the iceberg of Egg
-with the above short sections.
-We recommend that developers continue reading other documents:
+We can only touch the tip of the iceberg of Egg with the above short sections.
+Where to go from here? Browse our documentation to better understand the framework.
 - Egg provides a powerful mechanism for extending features. See [Plug-ins](../advanced/plugin.md).
-- As large teams need to follow certain constraints and conventions, in egg, we recommend further creating an upper-level framework that fits your team. See [Frameworks](../advanced/framework.md).
-- In Egg, writing unit tests is highly recommended, and it actually turns out to be very straightforward. See [Unit Testing](../core/test.md).
+- Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suited their special needs. See more on [Frameworks].(../advanced/framework.md).
+- Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).
+- Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/test.md).
 
 [nvm]: http://gitlab.alibaba-inc.com/node/nvm
 [nvs]: https://github.com/jasongin/nvs
