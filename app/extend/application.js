@@ -15,11 +15,6 @@ const VIEW = Symbol('Application#View');
 const LOCALS = Symbol('Application#locals');
 const LOCALS_LIST = Symbol('Application#localsList');
 
-// empty instrument object, use on prod env, avoid create object every time.
-const emptyInstrument = {
-  end() {},
-};
-
 module.exports = {
 
   /**
@@ -225,52 +220,6 @@ module.exports = {
       this.ctx = ctx;
       this.app = ctx.app;
     }
-  },
-
-  /**
-   * 记录操作的时间
-   * @method Application#instrument
-   * @param  {String} event 类型
-   * @param  {String} action 具体操作
-   * @param  {Context} ctx 上下文，如果与上下文无关的记录可以不传入
-   * @return {Object} 对象包含 end 方法
-   * @example
-   * ```js
-   * const ins = app.instrument('http', `${method} ${url}`, ctx);
-   * // doing
-   * ins.end();
-   * ```
-   */
-  instrument(event, action, ctx) {
-    if (this.config.env !== 'local') {
-      return emptyInstrument;
-    }
-
-    const payload = {
-      start: Date.now(),
-      ctx, // 可选
-      app: this,
-      event,
-      action,
-    };
-
-    return {
-      end() {
-        const start = payload.start;
-        const duration = Date.now() - start;
-
-        const ctx = payload.ctx;
-        if (ctx) {
-          ctx.logger.info(`[${payload.event}] ${payload.action} ${duration}ms`);
-          if (ctx.runtime) {
-            ctx.runtime[payload.event] = ctx.runtime[payload.event] || 0;
-            ctx.runtime[payload.event] += duration;
-          }
-        } else {
-          payload.app.logger.info(`[${payload.event}] ${payload.action} ${duration}ms`);
-        }
-      },
-    };
   },
 
   /**

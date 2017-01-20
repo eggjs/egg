@@ -161,35 +161,6 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
-  describe('ctx.instrument(event, action), app.instrument(event, action)', () => {
-    let app;
-    before(() => {
-      mm.env('local');
-      app = utils.app('apps/context-config-app');
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should instrument whatever you want', done => {
-      const ctx = app.mockContext();
-      mm(ctx.logger, 'info', msg => {
-        msg.should.match(/\[foo] test action on ctx \d+ms/);
-        done();
-      });
-      const ins = ctx.instrument('foo', 'test action on ctx');
-      ins.end();
-    });
-
-    it('should app.instrument work', done => {
-      mm(app.logger, 'info', msg => {
-        msg.should.match(/\[foo] test action on app \d+ms/);
-        done();
-      });
-      const ins = app.instrument('foo', 'test action on app');
-      ins.end();
-    });
-  });
-
   describe('ctx.view', () => {
     let app;
     before(() => {

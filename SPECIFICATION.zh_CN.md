@@ -20,16 +20,16 @@
   - `test`
 - 配置文件约定和加载机制
   - 运行环境名称约定
-- 插件机制 
+- 插件机制
   - 插件能做什么
   - 开启和关闭插件
   - 插件命名规则
 - 多进程模型及进程间通讯
-  - master&worker 进程 
+  - master&worker 进程
   - agent 进程
-  - 进程间通信 
-  - 健壮性 
-- 文件监听 
+  - 进程间通信
+  - 健壮性
+- 文件监听
 - user 约定
 
 ## 基础框架基于`koa`
@@ -229,10 +229,7 @@ class UserService extends Service {
   },
 
   * get(uid) {
-    const ins = instrument(this.ctx, 'buc', 'get');
-    const result = yield userClient.get(uid);
-    ins.end();
-    return result;
+    return yield this.userClient.get(uid);
   }
 }
 
@@ -279,7 +276,7 @@ module.exports = function(app) {
 
   const done = app.async('my-client-ready');
   app.myClient.ready(done);
-  
+
   // 如果有异常事件，也需要监听
   app.myClient.once('error', done);
 };
@@ -345,7 +342,7 @@ module.exports = {
 | local | development or null | local environment, developers computer, which is very likely developing multiple apps  |
 | unittest | test | unit test environment, such as developer's local environment and ci environment |
 
-### 根据环境加载配置 `config.*.js` Loading Configs Based on Environment 
+### 根据环境加载配置 `config.*.js` Loading Configs Based on Environment
 
 - `{appname}/config/config.default.js`: default, all env will load this config
 - `{appname}/config/config.prod.js`: prod env config
@@ -387,7 +384,7 @@ egg/config/config.default.js
 - 如需要插入自定义中间件，则可以结合 `app.js` 和 `app/middleware/*.js` 实现。
 
 如将 static 插件的中间件放到应用中间件列表 `app.config.appMiddleware` 的前面：
-    
+
 ```js
 // plugins/static/app.js
 const assert = require('assert');
@@ -510,7 +507,7 @@ module.exports = {
 
   /**
    * development helper - jsonview
-   * add `?__json` to return data in page in json format 
+   * add `?__json` to return data in page in json format
    * @member {Object} Plugin#jsonview
    * @property {Boolean} enable - default true
    * @property {Array} env - open in non-production environment
@@ -538,7 +535,7 @@ module.exports = {
 
   * `sessiontair`(`egg-sessiontair`) or `sessionTair`(`egg-session-tair`)
   * `userservice`(`egg-userservice`) or `user-service`(`egg-user-service`)。
-  
+
 只要遵循上两条规则即可，如果选择用中划线，就要按照小驼峰命名 pluginName。
 
 
@@ -647,7 +644,7 @@ class NunjucksView {
    * @return {Promise} result string of rendering
    */
   render(name, locals) {
-    // Note: render returns a Promise object 
+    // Note: render returns a Promise object
     return Promise.resolve('some html');
   }
 

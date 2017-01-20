@@ -1,8 +1,6 @@
 'use strict';
 
-const fs = require('fs');
 const mm = require('egg-mock');
-const sleep = require('ko-sleep');
 const utils = require('../../utils');
 
 describe('test/app/extend/agent.test.js', () => {
@@ -27,29 +25,4 @@ describe('test/app/extend/agent.test.js', () => {
     });
   });
 
-  describe('agent.instrument()', () => {
-    let app;
-    afterEach(() => app.close());
-
-    it('should not log in unittest env', function* () {
-      mm.env('unittest');
-      app = utils.app('apps/agent-instrument');
-      yield app.ready();
-      yield sleep(1000);
-      // TODO: why egg-agent.log not exists?
-      const log = fs.readFileSync(
-        utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
-      log.should.not.match(/\[http] \/hello/);
-    });
-
-    it('should log in local env', function* () {
-      mm.env('local');
-      app = utils.app('apps/agent-instrument', { cache: false });
-      yield app.ready();
-      yield sleep(1000);
-      const log = fs.readFileSync(
-        utils.getFilepath('apps/agent-instrument/logs/agent-instrument/egg-agent.log'), 'utf8');
-      log.should.match(/\[http] \/hello/);
-    });
-  });
 });
