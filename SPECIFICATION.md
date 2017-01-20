@@ -1,4 +1,4 @@
-# Base Web Framework 
+# Base Web Framework
 
 Egg is an open-source web framework for building a flexible Node.js web and mobile applications. It includes a series of rules that defines the file structure of a web application, loaders, configurations, scheduler scripts, and plugins system.
 
@@ -20,10 +20,10 @@ Egg is an open-source web framework for building a flexible Node.js web and mobi
   - `test`
 - Configuration file and configuration loader
   - Environmental variables naming rules
-- Plugins 
+- Plugins
   - What is a plugin
   - Opening and closing a plugin
-  - Naming a plugin 
+  - Naming a plugin
 - Multi-process model and communication between processes
   - Master & worker process
   - Agent process
@@ -34,7 +34,7 @@ Egg is an open-source web framework for building a flexible Node.js web and mobi
 
 ## Based on Koa
 
-`Koa` is a web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs. 
+`Koa` is a web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs.
 
 **Egg** framework is built on top of `Koa` and its ecosystem. The [core contributors of **egg** framework](https://github.com/eggjs/egg/graphs/contributors) are also the core contributors of [`koa` web framework](https://github.com/koajs/koa/graphs/contributors). In addition, We are maintaining [many](https://github.com/repo-utils) [Node.js](https://github.com/node-modules) [open source](https://github.com/stream-utils) [projects](https://github.com/cojs) across the entire Node.js ecosystem.
 
@@ -47,7 +47,7 @@ This rule is only for the directories that are mentioned later in this section. 
 
 **Egg** is an opinionated framework for creating ambitious Node.js web applications. Simply following the naming convention, our friendly APIs help you get your job done fast.
 
-Let's use an app called `helloweb` as an example. Its file structure may look like following: 
+Let's use an app called `helloweb` as an example. Its file structure may look like following:
 
 ```sh
 . helloweb
@@ -105,7 +105,7 @@ Like all Node.js application, it must contain a `package.json` file. It should h
 
 ### `app` directory
 
-`app` directory is used to store central logic of this application. 
+`app` directory is used to store central logic of this application.
 
 `app` directory can include directories, such as `controller`, `public`, `middleware`, `schedule`, `apis` etc. The files that were contained in those directories would be loaded automatically by [egg-core](https://github.com/eggjs/egg-core)
 
@@ -113,7 +113,7 @@ Like all Node.js application, it must contain a `package.json` file. It should h
 
 #### `app/router.js`
 
-`app/router.js` contains the routing configuration for the entire application. We use [koa-router](https://github.com/alexmingoia/koa-router) middleware under the hood, so that `koa-router`'s [APIs](https://github.com/alexmingoia/koa-router#api-reference) are applied fully here. 
+`app/router.js` contains the routing configuration for the entire application. We use [koa-router](https://github.com/alexmingoia/koa-router) middleware under the hood, so that `koa-router`'s [APIs](https://github.com/alexmingoia/koa-router#api-reference) are applied fully here.
 
 `router.js` file exports a function that takes a single parameter called `app`. The `app` object is an instance of the **Egg** application. On `app` object, you can use route methods, for example, `get`, `post`, `put`, `delete`, `head`, and much more, to achieve routing functionality. The route interface takes two parameters. First parameter is a string representation of the application partial URL. Second parameter is the controller function is called when the partial URL has been matched.
 
@@ -166,9 +166,9 @@ exports.upload = function*() {
 };
 ```
 
-Generally, a HTTP request will be handled by one controller. A controller function is the last handler in the middleware chain of executing HTTP request. 
+Generally, a HTTP request will be handled by one controller. A controller function is the last handler in the middleware chain of executing HTTP request.
 
-A Controller can call dependent directories, such as `service`, `proxy` etc. 
+A Controller can call dependent directories, such as `service`, `proxy` etc.
 
 #### `app/middleware`
 
@@ -233,10 +233,7 @@ class UserService extends Service {
   },
 
   * get(uid) {
-    const ins = instrument(this.ctx, 'buc', 'get');
-    const result = yield userClient.get(uid);
-    ins.end();
-    return result;
+    return yield this.userClient.get(uid);
   }
 }
 
@@ -256,11 +253,11 @@ Each service is defined in `app/service/*.js` will be injected into `ctx.service
 
 #### `app/view`
 
-This directory is used to store template files in scripts used in rendering client side view templates. For more detail, please see `template rendering guide` 
+This directory is used to store template files in scripts used in rendering client side view templates. For more detail, please see `template rendering guide`
 
 #### `app/public`
 
-This directory is used to store static resources, such as 'favicon', 'images', 'fonts', etc. 
+This directory is used to store static resources, such as 'favicon', 'images', 'fonts', etc.
 
 **Egg** framework serves files in public directory at an absolute url `${domain}/public/${path-to-file}`
 
@@ -271,7 +268,7 @@ app/public/styles/bluc.css  => /public/styles/blue.css
 
 ### `app.js`
 
-`app.js` is responsible to do initializing work when an application starts. In general, most apps don't need this feature. 
+`app.js` is responsible to do initializing work when an application starts. In general, most apps don't need this feature.
 
 When an application starts and uses some custom services in client-side, it may need to check the dependencies status. Those inspections can be placed in `app.js`.
 
@@ -308,7 +305,7 @@ All extensions in `extend` directory is used to extend `Koa` framework APIs. In 
 
 All unit tests and integration tests goes into this directory. Group all your tests files into the central location is convenient to run testing scripts.
 
-`test` directory is based on current directory structure. It should have the same structure as `app` directory, except the file name end with `*.test.js`: 
+`test` directory is based on current directory structure. It should have the same structure as `app` directory, except the file name end with `*.test.js`:
 
 ```sh
 . helloweb
@@ -324,7 +321,7 @@ All unit tests and integration tests goes into this directory. Group all your te
     |   └── response_time.test.js
 ```
 
-## Config Guide and Loading Process 
+## Config Guide and Loading Process
 
 ```js
 // config/config.default.js
@@ -345,7 +342,7 @@ Configuration settings to run in different environments.
 | local | development or null | local environment, developers computer, which is very likely developing multiple apps  |
 | unittest | test | unit test environment, such as developer's local environment and ci environment |
 
-### 根据环境加载配置 `config.*.js` Loading Configs Based on Environment 
+### 根据环境加载配置 `config.*.js` Loading Configs Based on Environment
 
 - `{appname}/config/config.default.js`: default, all env will load this config
 - `{appname}/config/config.prod.js`: prod env config
@@ -358,9 +355,9 @@ Configuration settings to run in different environments.
 Suppose the current environment is `${env}`, the final configuration will be built based on the following hierarchy.
 
 - Loading order: loading from inside to outside
-    
+
     `core -> plugin -> app`
-    
+
 - Priority: Outer config can replace inner config
 
     `app > plugin > core`
@@ -380,7 +377,7 @@ egg/config/config.default.js
 
 **Koa has the concept of middleware. Why do we still need *plugins*?**
 
-In short, middleware cannot satisfy the requirement in some specific situation. 
+In short, middleware cannot satisfy the requirement in some specific situation.
 
 We could use diamond-client as an example. It need to be injected into applications, so it is not suitable to be a middleware. Moreover, diamond-client needs to be started before the application starts so that it requires to have some inspections to its dependencies.
 
@@ -393,7 +390,7 @@ A plugin is like a small application. It is an extension for application, but do
 - If you need to add custom middlewares, edit `app.js` and create `app/middleware/*.js`.
 
 For example, ensure `bodyParser` middleware is present and `static plugin` is executed before other middlewares that lists inside `app.config.appMiddleware`.
-    
+
 ```js
 // plugins/static/app.js
 const assert = require('assert');
@@ -514,7 +511,7 @@ module.exports = {
 
   /**
    * development helper - jsonview
-   * add `?__json` to return data in page in json format 
+   * add `?__json` to return data in page in json format
    * @member {Object} Plugin#jsonview
    * @property {Boolean} enable - default true
    * @property {Array} env - open in non-production environment
@@ -531,7 +528,7 @@ module.exports = {
 };
 ```
 
-### Naming a Plugin 
+### Naming a Plugin
 
 - simplest package name: `egg-xx`. corresponding `pluginName` should be in lowercase.
 
@@ -582,7 +579,7 @@ For more guide about `agent.js`, please see [egg-schedule:agent.js](https://gith
 - When app is running, the most frequent communication is between agent and worker. That is being done by a virtual channel redirected by master.
 
 `agent` and `worker` process can use `messager` send and receive messages:
-    
+
 ```js
 messager.broadcast('msg from agent');
 messager.on('msg form worker', callback);
@@ -609,9 +606,9 @@ For a Web application, login and store of user information is an inevitable func
 - ctx.user - to get current user information
 - ctx.userId - to get user id
 
-Generally, the rules above are implemented through middleware, which is responsible to get user information and user id from user store and inject into `ctx` object. 
+Generally, the rules above are implemented through middleware, which is responsible to get user information and user id from user store and inject into `ctx` object.
 
-**Egg** has a built-in implementation of `userservice`. You can use config files to implement how to get user information. If that is not good enough, feel free to write a `userservice` plugin, and override the built-in implementation. Make sure the plugin is named as `userservice`. 
+**Egg** has a built-in implementation of `userservice`. You can use config files to implement how to get user information. If that is not good enough, feel free to write a `userservice` plugin, and override the built-in implementation. Make sure the plugin is named as `userservice`.
 
 ## Template Rendering
 
@@ -648,7 +645,7 @@ class NunjucksView {
    * @return {Promise} result string of rendering
    */
   render(name, locals) {
-    // Note: render returns a Promise object 
+    // Note: render returns a Promise object
     return Promise.resolve('some html');
   }
 
