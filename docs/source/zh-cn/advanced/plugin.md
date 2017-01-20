@@ -328,10 +328,10 @@ exports.onerror = false;
 
 ### 使用骨架快速开发
 
-你可以直接通过 [egg-bin] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
+你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
 
 ```bash
-$ egg-bin egg-xxx --type=plugin
+$ egg-init egg-xxx --type=plugin
 $ cd egg-xxx
 $ npm i
 $ npm test
