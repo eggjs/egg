@@ -3,11 +3,6 @@
 const cluster = require('cluster-client');
 const Singleton = require('../../lib/core/singleton');
 
-// 空的 instrument 返回，用于生产环境，避免每次创建对象
-const emptyInstrument = {
-  end() {},
-};
-
 module.exports = {
 
   /**
@@ -23,39 +18,6 @@ module.exports = {
     options.app = this;
     const singleton = new Singleton(options);
     singleton.init();
-  },
-
-  /**
-   * 记录操作的时间
-   * @method Agent#instrument
-   * @param  {String} event 类型
-   * @param  {String} action 具体操作
-   * @return {Object} 对象包含 end 方法
-   * @example
-   * ```js
-   * const ins = agent.instrument('http', `${method} ${url}`);
-   * // doing
-   * ins.end();
-   * ```
-   */
-  instrument(event, action) {
-    if (this.config.env !== 'local') {
-      return emptyInstrument;
-    }
-    const payload = {
-      start: Date.now(),
-      agent: this,
-      event,
-      action,
-    };
-
-    return {
-      end() {
-        const start = payload.start;
-        const duration = Date.now() - start;
-        payload.agent.logger.info(`[${payload.event}] ${payload.action} ${duration}ms`);
-      },
-    };
   },
 
   /**

@@ -101,16 +101,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 记录上下文相关的操作时间
-   * @param  {String} event 与 {@link Application#instrument} 一致
-   * @param  {String} action 与 {@link Application#instrument} 一致
-   * @return {Object} 与 {@link Application#instrument} 一致
-   */
-  instrument(event, action) {
-    return this.app.instrument(event, action, this);
-  },
-
-  /**
    * 获取 helper 实例
    * @member {Helper} Context#helper
    * @since 1.0.0
@@ -211,10 +201,7 @@ const proto = module.exports = {
    * @see View#render
    */
   * renderView(name, locals) {
-    const ins = this.instrument('view', `render ${name}`);
-    const body = yield this.view.render(name, locals);
-    ins.end();
-    return body;
+    return yield this.view.render(name, locals);
   },
 
   /**
