@@ -95,12 +95,6 @@ startCluster({
   "name": "yadan",
   "dependencies": {
     "egg": "^1.0.0"
-  },
-  "devDependencies": {
-    "egg-bin": "^1.0.0"
-  },
-  "scripts": {
-    "dev": "egg-bin dev"
   }
 }
 
@@ -121,26 +115,29 @@ exports.Application = require('./lib/application.js');
 const path = require('path');
 const Application = require('egg').Application;
 const EGG_PATH = Symbol.for('egg#eggPath');
-class ExampleApplication extends Application {
+class YadanApplication extends Application {
   get [EGG_PATH]() {
     // 返回 framework 路径
     return path.dirname(__dirname);
   }
 }
-module.exports = ExampleApplication;
+module.exports = YadanApplication;
 ```
 
-启动时需要指定 example 找到他的 Application，指定 `--framework` 从 node_modules 找指定模块作为框架，默认会使用 egg。
+启动时需要指定框架名（在 `package.json` 指定 `egg.framework`，默认为 egg），Loader 将从 `node_modules` 找指定模块作为框架，并加载其 export 的 Application。
 
 ```json
 {
   "scripts": {
-    "dev": "egg-bin dev --framework example"
+    "dev": "egg-bin dev"
+  },
+  "egg": {
+    "framework": "yadan"
   }
 }
 ```
 
-现在 exmaple 目录已经是一个 loadUnit，那么相应目录的文件都会被加载，查看[框架被加载的文件](./loader.md)。
+现在 yadan 框架目录已经是一个 loadUnit，那么相应目录和文件（如 `app` 和 `config`）都会被加载，查看[框架被加载的文件](./loader.md)。
 
 ### 框架继承原理
 
@@ -190,16 +187,16 @@ exports.Agent = require('./lib/agent.js');
 const path = require('path');
 const Agent = require('egg').Agent;
 const EGG_PATH = Symbol.for('egg#eggPath');
-class ExampleAgent extends Agent {
+class YadanAgent extends Agent {
   get [EGG_PATH]() {
     // 返回 framework 路径
     return path.dirname(__dirname);
   }
 }
-module.exports = ExampleAgent;
+module.exports = YadanAgent;
 ```
 
-但因为 Agent 和 Application 是两个实例，所以 API 有可能不一致。
+**但因为 Agent 和 Application 是两个实例，所以 API 有可能不一致。**
 
 ### 自定义 Loader
 
@@ -215,28 +212,28 @@ exports.AppWorkerLoader = require('./lib/app_worker_loader.js');
 // lib/application.js
 const path = require('path');
 const Application = require('egg').Application;
-const ExampleAppWorkerLoader = require('./app_worker_loader');
+const AppWorkerLoader = require('./app_worker_loader');
 const EGG_PATH = Symbol.for('egg#eggPath');
 const EGG_LOADER = Symbol.for('egg#loader');
-class ExampleApplication extends Application {
+class YadanApplication extends Application {
   get [EGG_PATH]() {
     return path.dirname(__dirname);
   }
   // 覆盖 egg 的 Loader，启动时使用这个 Loader
   get [EGG_LOADER]() {
-    return ExampleAppWorkerLoader;
+    return AppWorkerLoader;
   }
 }
-module.exports = ExampleApplication;
+module.exports = YadanApplication;
 
 // lib/app_worker_loader.js
-class ExampleAppWorkerLoader extends AppWorkerLoader {
+class YadanAppWorkerLoader extends AppWorkerLoader {
   load() {
     super.load();
     // 自己扩展
   }
 }
-module.exports = ExampleAppWorkerLoader;
+module.exports = YadanAppWorkerLoader;
 ```
 
 AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加载的文件可以于 AppWorkerLoader 不同，比如 默认加载时，egg 的 AppWorkerLoader 会加载 `app.js` 而 AgentWorkerLoader 加载的是 `agent.js`。
