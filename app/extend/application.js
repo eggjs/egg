@@ -3,7 +3,6 @@
 const http = require('http');
 const assert = require('assert');
 const cluster = require('cluster-client');
-const Service = require('../../lib/core/base_service');
 const view = require('../../lib/core/view');
 const AppWorkerClient = require('../../lib/core/app_worker_client');
 const util = require('../../lib/core/util');
@@ -45,13 +44,6 @@ module.exports = {
     context.starttime = Date.now();
     return context;
   },
-
-  /**
-   * Service class
-   * @member {Service} Application#Service
-   * @since 1.0.0
-   */
-  Service,
 
   /**
    * AppWorkerClient class
