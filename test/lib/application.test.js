@@ -1,7 +1,6 @@
 'use strict';
 
 const Application = require('../../lib/application');
-const path = require('path');
 const utils = require('../utils');
 const assert = require('assert');
 
@@ -38,19 +37,20 @@ describe('test/lib/application.test.js', () => {
   describe('application.deprecate', () => {
     afterEach(() => app.close());
 
-    it('should get deprecate with namespace egg', () => {
-      app = createApplication();
+    it('should get deprecate with namespace egg', function* () {
+      app = utils.app('apps/demo');
+      yield app.ready();
       const deprecate = app.deprecate;
       deprecate._namespace.should.equal('egg');
       deprecate.should.equal(app.deprecate);
-      return app.ready();
     });
   });
 
   describe('curl()', () => {
     afterEach(() => app.close());
+
     it('should curl success', function* () {
-      app = createApplication();
+      app = utils.app('apps/demo');
       yield app.ready();
       const localServer = yield utils.startLocalServer();
       const res = yield app.curl(`${localServer}/foo/app`);
@@ -58,25 +58,11 @@ describe('test/lib/application.test.js', () => {
     });
   });
 
-  describe('dumpConfig()', () => {
-    afterEach(() => app.close());
-    it('should dump config and plugins', () => {
-      const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      app = new Application({
-        baseDir,
-      });
-      const json = require(path.join(baseDir, 'run/application_config.json'));
-      json.plugins.onerror.version.should.match(/\d+\.\d+\.\d+/);
-      json.config.name.should.equal('demo');
-      return app.ready();
-    });
-  });
-
   describe('env', () => {
     afterEach(() => app.close());
 
     it('should return app.config.env', function* () {
-      app = createApplication();
+      app = utils.app('apps/demo');
       yield app.ready();
       assert(app.env === app.config.env);
     });
@@ -86,55 +72,17 @@ describe('test/lib/application.test.js', () => {
     afterEach(() => app.close());
 
     it('should delegate app.config.proxy', function* () {
-      app = createApplication();
+      app = utils.app('apps/demo');
       yield app.ready();
       assert(app.proxy === app.config.proxy);
-    });
-  });
-
-  describe('close()', () => {
-    afterEach(() => app.close());
-    it('should close all listeners', function* () {
-      const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      app = new Application({
-        baseDir,
-      });
-      yield app.ready();
-      process.listeners('unhandledRejection')
-        .indexOf(app._unhandledRejectionHandler).should.not.equal(-1);
-      yield app.close();
-      process.listeners('unhandledRejection')
-        .indexOf(app._unhandledRejectionHandler).should.equal(-1);
-    });
-    it('should emit close event before exit', function* () {
-      const baseDir = path.join(__dirname, '../fixtures/apps/demo');
-      app = new Application({
-        baseDir,
-      });
-      yield app.ready();
-      let called = false;
-      app.on('close', () => {
-        called = true;
-      });
-      yield app.close();
-      called.should.equal(true);
     });
   });
 
   describe('app start timeout', function() {
     afterEach(() => app.close());
     it('should emit `startTimeout` event', function(done) {
-      const baseDir = path.join(__dirname, '../fixtures/apps/app-start-timeout');
-      app = new Application({
-        baseDir,
-      });
+      app = utils.app('apps/app-start-timeout');
       app.once('startTimeout', done);
     });
   });
 });
-
-function createApplication(options) {
-  options = options || {};
-  options.baseDir = options.baseDir || path.join(__dirname, '../fixtures/apps/demo');
-  return new Application(options);
-}

@@ -23,18 +23,6 @@ exports.Application = require('./lib/application');
 exports.Agent = require('./lib/agent');
 
 /**
- * @member {AgentWorkerClient} Egg#AgentWorkerClient
- * @since 1.0.0
- */
-exports.AgentWorkerClient = require('./lib/core/agent_worker_client');
-
-/**
- * @member {AppWorkerClient} Egg#AppWorkerClient
- * @since 1.0.0
- */
-exports.AppWorkerClient = require('./lib/core/app_worker_client');
-
-/**
  * @member {AppWorkerLoader} Egg#AppWorkerLoader
  * @since 1.0.0
  */

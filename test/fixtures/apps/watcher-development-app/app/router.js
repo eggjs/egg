@@ -17,11 +17,6 @@ module.exports = function(app) {
     this.body = 'app watch success';
   });
 
-  app.get('/app-unwatch', function*() {
-    app.watcher.unwatch([file_path1, dir_path], callback);
-    this.body = 'app unwatch success';
-  });
-
   app.get('/app-msg', function*() {
     this.body = fileChangeCount;
   });
@@ -30,15 +25,6 @@ module.exports = function(app) {
     app.messenger.broadcast('agent-watch');
     this.body = yield new Promise(function(resolve) {
       app.messenger.on('agent-watch-success', function(msg) {
-        resolve(msg);
-      });
-    });
-  });
-
-  app.get('/agent-unwatch', function*() {
-    app.messenger.broadcast('agent-unwatch');
-    this.body = yield new Promise(function(resolve) {
-      app.messenger.on('agent-unwatch-success', function(msg) {
         resolve(msg);
       });
     });
