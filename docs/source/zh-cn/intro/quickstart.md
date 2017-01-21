@@ -28,7 +28,7 @@ $ open localhost:7001
 
 ## 逐步搭建
 
-通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的骨架，快速启动 egg 项目的开发。
+通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 egg 项目的开发。
 
 但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [egg hackernews](https://github.com/eggjs/examples/tree/master/hackernews)。
 

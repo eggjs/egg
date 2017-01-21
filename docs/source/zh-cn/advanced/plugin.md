@@ -326,7 +326,7 @@ exports.onerror = false;
 
 ## 插件开发
 
-### 使用骨架快速开发
+### 使用脚手架快速开发
 
 你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
 
