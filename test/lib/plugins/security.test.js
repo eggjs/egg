@@ -37,7 +37,7 @@ describe('test/lib/plugins/security.test.js', () => {
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(403)
-        .expect('secret is missing');
+        .expect(/missing csrf token/);
     });
   });
 
@@ -77,7 +77,7 @@ describe('test/lib/plugins/security.test.js', () => {
         .set('accept', 'application/json')
         .send({ name: 'fengmk2' })
         .expect({
-          message: 'secret is missing',
+          message: 'missing csrf token',
         })
         .expect(403);
     });
@@ -86,7 +86,7 @@ describe('test/lib/plugins/security.test.js', () => {
       return request(app.callback())
         .post('/apiuser')
         .send({ name: 'fengmk2' })
-        .expect('secret is missing')
+        .expect(/missing csrf token/)
         .expect(403);
     });
   });
