@@ -273,8 +273,8 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('request.acceptJSON', () => {
-      it('should true when isAjax', function* () {
-        mm(req.req.headers, 'x-requested-with', 'XMLHttpRequest');
+      it('should true when url path ends with .json', function* () {
+        mm(req, 'path', 'hello.json');
         req.acceptJSON.should.equal(true);
       });
 
@@ -285,7 +285,7 @@ describe('test/app/extend/request.test.js', () => {
           },
           url: '/',
         });
-        context.type = 'json';
+        context.type = 'application/json';
         context.request.acceptJSON.should.equal(true);
       });
 

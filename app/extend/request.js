@@ -124,33 +124,19 @@ module.exports = {
   },
 
   /**
-   * 判断当前请求是否 AJAX 请求, 具体判断规则:
-   * - HTTP 包含 `X-Requested-With: XMLHttpRequest` header
-   * - `ctx.path` 以 `.json`, `.ajax`, `.tile` 为扩展名
-   * @member {Boolean} Request#isAjax
-   * @since 1.0.0
-   */
-  get isAjax() {
-    return this.get('x-requested-with') === 'XMLHttpRequest' || AJAX_EXT_RE.test(this.path);
-  },
-
-  /**
-   * 判断当前请求是否接受 JSON 响应
-   * 1. 如果是 ajax 请求，认为应该接受 JSON 响应
-   * 2. 如果设置过响应类型，通过响应类型来判断
-   * 3. 最后通过 accept 来判断
+   * detect if response should be json
+   * 1. url path ends with `.json`
+   * 2. response type is set to json
+   * 3. detect by request accept header
    *
    * @member {Boolean} Request#acceptJSON
-   * @since 2.0.0
+   * @since 1.0.0
    */
   get acceptJSON() {
-    if (this.isAjax) {
-      return true;
-    }
-    if (this.response.type && this.response.type.indexOf('json') >= 0) {
-      return true;
-    }
-    return this.accepts('html', 'text', 'json') === 'json';
+    if (this.path.endsWith('.json')) return true;
+    if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
+    if (this.accepts('html', 'text', 'json') === 'json') return true;
+    return false;
   },
 
   // 关于如何安全地读取 query 参数的讨论
