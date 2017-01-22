@@ -1,4 +1,18 @@
 
+0.9.0 / 2017-01-22
+==================
+
+  * feat: remove isAjax (#295)
+  * test: fix cookie test cases (#296)
+  * docs: adjust some words (#291)
+  * feat: move clusterPort to egg-cluster (#281)
+  * feat: move app.Service egg-core (#279)
+  * docs: change egg-bin to egg-init (#284)
+  * docs: improve framework doc based on eggjs/examples#9 (#267)
+  * feat: remove instrument (#283)
+  * docs: add progressive link && adjust en docs directory (#275)
+  * docs: add progressive usage (#268)
+
 0.8.0 / 2017-01-18
 ==================
 
