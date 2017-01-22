@@ -247,28 +247,6 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
-  describe('ctx.roleFailureHandler()', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/demo');
-      return app.ready();
-    });
-    after(() => app.close());
-    afterEach(mm.restore);
-
-    it('should detect ajax', () => {
-      const context = app.mockContext({ isAjax: true });
-      context.roleFailureHandler('admin');
-      context.body.should.eql({ message: 'Forbidden, required role: admin', stat: 'deny' });
-    });
-
-    it('should response message when is not ajax', function* () {
-      const context = app.mockContext();
-      context.roleFailureHandler('admin');
-      context.body.should.equal('Forbidden, required role: admin');
-    });
-  });
-
   describe('ctx.curl()', () => {
     let app;
     before(() => {

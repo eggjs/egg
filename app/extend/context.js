@@ -24,25 +24,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 默认的 role 检测失败处理
-   * session 插件等可以覆盖 ctx.roleFailureHandler(action) 来重置
-   * @method Context#roleFailureHandler
-   * @param  {String} action 导致失败的角色
-   */
-  roleFailureHandler(action) {
-    const message = `Forbidden, required role: ${action}`;
-    this.status = 403;
-    if (this.isAjax) {
-      this.body = {
-        message,
-        stat: 'deny',
-      };
-    } else {
-      this.body = message;
-    }
-  },
-
-  /**
    * Get a wrapper httpclient instance contain ctx in the hold request process
    *
    * @return {ContextHttpClient} the wrapper httpclient instance
@@ -304,8 +285,8 @@ const proto = module.exports = {
  */
 
 /**
- * @member {Boolean} Context#isAjax
- * @see Request#isAjax
+ * @member {Boolean} Context#acceptJSON
+ * @see Request#acceptJSON
  * @since 1.0.0
  */
 
@@ -328,7 +309,6 @@ const proto = module.exports = {
  */
 
 delegate(proto, 'request')
-  .getter('isAjax')
   .getter('acceptJSON')
   .getter('queries')
   .getter('accept')
