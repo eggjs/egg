@@ -181,9 +181,9 @@ describe('test/lib/core/cookies.test.js', () => {
       .expect('hello')
       .expect(200, (err, res) => {
         should.not.exist(err);
-        const cookie = res.headers['set-cookie'][0];
+        const cookie = res.headers['set-cookie'].join(';');
         should.exist(cookie);
-        cookie.should.match('hi=foo; path=/; httponly');
+        cookie.should.match(/hi=foo; path=\/; httponly/);
         done();
       });
     });
