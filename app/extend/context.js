@@ -5,6 +5,7 @@ const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
 const ContextHttpClient = require('../../lib/core/context_httpclient');
+const createView = require('../../lib/core/view');
 const util = require('../../lib/core/util');
 
 const HELPER = Symbol('Context#helper');
@@ -152,33 +153,32 @@ const proto = module.exports = {
   },
 
   /**
-   * 获取 view 实例
-   * @return {View} view 实例
+   * View instance for every context
+   * @return {View} view
    */
   get view() {
     if (!this[VIEW]) {
-      this[VIEW] = new this.app.View(this);
+      this[VIEW] = createView(this);
     }
     return this[VIEW];
   },
 
   /**
-   * 渲染页面模板后直接返回 response
+   * render for template path
    * @method Context#render
-   * @param {String} name 模板文件名
-   * @param {Object} [locals] 需要放到页面上的变量
-   * @see Context#renderView
+   * @param {String} name - template path
+   * @param {Object} locals - locals
    */
   * render(name, locals) {
     this.body = yield this.renderView(name, locals);
   },
 
   /**
-   * 渲染页面模板，返回字符串
+   * render for template path, but return string rather than writing to response
    * @method Context#renderView
-   * @param {String} name 模板文件名
-   * @param {Object} [locals] 需要放到页面上的变量
-   * @return {String} 渲染后的字符串.
+   * @param {String} name - template path
+   * @param {Object} locals - locals
+   * @return {String} html string
    * @see View#render
    */
   * renderView(name, locals) {
@@ -186,11 +186,11 @@ const proto = module.exports = {
   },
 
   /**
-   * 渲染模板字符串
+   * render for string
    * @method Context#renderString
-   * @param {String} tpl 模板字符串
-   * @param {Object} [locals] 需要放到页面上的变量
-   * @return {String} 渲染后的字符串
+   * @param {String} tpl - template string
+   * @param {Object} locals - locals
+   * @return {String} html string
    * @see View#renderString
    */
   * renderString(tpl, locals) {
