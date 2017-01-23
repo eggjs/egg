@@ -95,7 +95,7 @@
     "index.js"
   ],
   "scripts": {
-    "lint": "eslint lib test *.js",
+    "lint": "eslint app config lib test *.js",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
