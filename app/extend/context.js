@@ -49,7 +49,7 @@ const proto = module.exports = {
   },
 
   /**
-   * Alias for {@link Application#router}
+   * Alias to {@link Application#router}
    *
    * @member {Router} Context#router
    * @since 1.0.0
@@ -60,6 +60,11 @@ const proto = module.exports = {
    */
   get router() {
     return this.app.router;
+  },
+
+  get runtime() {
+    this._runtime = this._runtime || {};
+    return this._runtime;
   },
 
   /**
@@ -173,7 +178,7 @@ const proto = module.exports = {
    * render for string
    * @method Context#renderString
    * @param {String} tpl - template string
-   * @param {Object} locals - locals
+   * @param {Object} [locals] - locals
    * @return {String} html string
    * @see View#renderString
    */
@@ -284,13 +289,13 @@ delegate(proto, 'request')
   .getter('queries')
   /**
    * @member {Boolean} Context#accept
-   * @see Response#accept
+   * @see Request#accept
    * @since 1.0.0
    */
   .getter('accept')
   /**
    * @member {string} Context#ip
-   * @see Response#ip
+   * @see Request#ip
    * @since 1.0.0
    */
   .access('ip');
