@@ -144,4 +144,15 @@ module.exports = {
     enable: true,
     package: 'egg-static',
   },
+
+  /**
+   * jsonp support for egg
+   * @member {Function} Plugin#jsonp
+   * @property {Boolean} enable - `true` by default
+   * @since 1.0.0
+   */
+  jsonp: {
+    enable: true,
+    package: 'egg-jsonp',
+  },
 };
