@@ -410,7 +410,7 @@ Where to go from here? Browse our documentation to better understand the framewo
 - Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).
 - Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/test.md).
 
-[nvm]: http://gitlab.alibaba-inc.com/node/nvm
+[nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs
 [node]: http://nodejs.org
 [npm]: https://www.npmjs.org
