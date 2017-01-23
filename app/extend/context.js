@@ -49,7 +49,7 @@ const proto = module.exports = {
   },
 
   /**
-   * App 的 {@link Router} 实例，你可以用它生成 URL Path, 比如 `{@link Router#pathFor|router.pathFor}`
+   * Alias for {@link Application#router}
    *
    * @member {Router} Context#router
    * @since 1.0.0
@@ -63,27 +63,8 @@ const proto = module.exports = {
   },
 
   /**
-   * 用于记录 egg Request 周期的耗时，比如总耗时, View 渲染耗时
+   * Get helper instance from {@link Application#Helper}
    *
-   * 如果你有自定义的访问，希望往 RequestLog 里面增加统计信息，可以往 ctx.runtime['xx'] 里面写信息
-   * egg 会自动将它们打印出来。
-   * @member {Object} Context#runtime
-   * @property {Float} rt - 总耗时
-   * @property {Float} view - View Render 耗时
-   * @property {Float} buc - Buc 查询耗时
-   * @property {Float} mysql - MySQL 查询耗时
-   * @property {Float} hsf - HSF 查询耗时
-   * @property {Float} tr - TR 查询耗时
-   * @property {Float} http - 外部 HTTP 请求耗时
-   * @since 1.0.0
-   */
-  get runtime() {
-    this._runtime = this._runtime || {};
-    return this._runtime;
-  },
-
-  /**
-   * 获取 helper 实例
    * @member {Helper} Context#helper
    * @since 1.0.0
    */
@@ -107,6 +88,7 @@ const proto = module.exports = {
   /**
    * Wrap app.loggers with context infomation,
    * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
+   *
    * @param {String} name - logger name
    * @return {Logger} logger
    */
@@ -130,6 +112,7 @@ const proto = module.exports = {
 
   /**
    * Logger for Application, wrapping app.coreLogger with context infomation
+   *
    * @member {ContextLogger} Context#logger
    * @since 1.0.0
    * @example
@@ -145,6 +128,7 @@ const proto = module.exports = {
   /**
    * Logger for frameworks and plugins,
    * wrapping app.coreLogger with context infomation
+   *
    * @member {ContextLogger} Context#coreLogger
    * @since 1.0.0
    */
@@ -153,7 +137,7 @@ const proto = module.exports = {
   },
 
   /**
-   * View instance for every context
+   * View instance that is created every request
    * @return {View} view
    */
   get view() {
@@ -167,7 +151,7 @@ const proto = module.exports = {
    * render for template path
    * @method Context#render
    * @param {String} name - template path
-   * @param {Object} locals - locals
+   * @param {Object} [locals] - locals
    */
   * render(name, locals) {
     this.body = yield this.renderView(name, locals);
@@ -177,7 +161,7 @@ const proto = module.exports = {
    * render for template path, but return string rather than writing to response
    * @method Context#renderView
    * @param {String} name - template path
-   * @param {Object} locals - locals
+   * @param {Object} [locals] - locals
    * @return {String} html string
    * @see View#render
    */
@@ -198,10 +182,11 @@ const proto = module.exports = {
   },
 
   /**
-   * locals 为模板使用的变量，可以在任何地方设置 locals，在渲染模板的时候会合并这些变量。
-   * app.locals 和 this.locals 最大的区别是作用域不同，app.locals 是全局的，this.locals 是一个请求的。
+   * locals is an object for view, you can use `app.locals` and `ctx.locals` to set variables,
+   * which will be used as data when view is rendering.
+   * The difference between `app.locals` and `ctx.locals` is the context level, `app.locals` is global level, and `ctx.locals` is request level. when you get `ctx.locals`, it will merge `app.locals`.
    *
-   * 设置 locals 的时候只支持对象，他会和原来的数据进行合并
+   * when you set locals, only object is available
    *
    * ```js
    * this.locals = {
@@ -219,7 +204,7 @@ const proto = module.exports = {
    * };
    * ```
    *
-   * 注意：**this.locals 有缓存，只在第一次访问 this.locals 时合并 app.locals。**
+   * `ctx.locals` has cache, it only merges `app.locals` once in one request.
    *
    * @member {Object} Context#locals
    */
@@ -242,9 +227,9 @@ const proto = module.exports = {
   },
 
   /**
-   * egg 使用 locals 作为服务端传递给模板中的变量挂载容器
-   * 当开启 egg-locals 插件时，this.state 返回 this.locals
+   * alias to {@link Context#locals}, compatible with koa that use this variable
    * @member {Object} state
+   * @see Context#locals
    */
   get state() {
     return this.locals || {};
@@ -284,36 +269,42 @@ const proto = module.exports = {
  * Context delegation.
  */
 
-/**
- * @member {Boolean} Context#acceptJSON
- * @see Request#acceptJSON
- * @since 1.0.0
- */
-
-/**
- * @member {Array} Context#queries
- * @see Request#queries
- * @since 1.0.0
- */
-
-/**
- * @member {Void} Context#jsonp
- * @see Response#jsonp
- * @since 1.0.0
- */
-
-/**
- * @member {Number} Context#realStatus
- * @see Response#realStatus
- * @since 1.0.0
- */
-
 delegate(proto, 'request')
+  /**
+   * @member {Boolean} Context#acceptJSON
+   * @see Request#acceptJSON
+   * @since 1.0.0
+   */
   .getter('acceptJSON')
+  /**
+   * @member {Array} Context#queries
+   * @see Request#queries
+   * @since 1.0.0
+   */
   .getter('queries')
+  /**
+   * @member {Boolean} Context#accept
+   * @see Response#accept
+   * @since 1.0.0
+   */
   .getter('accept')
+  /**
+   * @member {string} Context#ip
+   * @see Response#ip
+   * @since 1.0.0
+   */
   .access('ip');
 
 delegate(proto, 'response')
+  /**
+   * @member {Void} Context#jsonp
+   * @see Response#jsonp
+   * @since 1.0.0
+   */
   .setter('jsonp')
+  /**
+   * @member {Number} Context#realStatus
+   * @see Response#realStatus
+   * @since 1.0.0
+   */
   .access('realStatus');
