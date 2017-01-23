@@ -62,10 +62,6 @@ const proto = module.exports = {
     return this.app.router;
   },
 
-  get runtime() {
-    this._runtime = this._runtime || {};
-    return this._runtime;
-  },
 
   /**
    * Get helper instance from {@link Application#Helper}

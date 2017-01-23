@@ -21,7 +21,7 @@ describe('test/lib/plugins/development.test.js', () => {
     });
     after(() => app.close());
 
-    it('should log status', done => {
+    it.skip('should log status', done => {
       done = pedding(3, done);
       request(app.callback())
       .get('/foo')
