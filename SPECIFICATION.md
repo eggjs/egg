@@ -379,7 +379,7 @@ egg/config/config.default.js
 
 In short, middleware cannot satisfy the requirement in some specific situation.
 
-We could use diamond-client as an example. It need to be injected into applications, so it is not suitable to be a middleware. Moreover, diamond-client needs to be started before the application starts so that it requires to have some inspections to its dependencies.
+We could use egg-mysql as an example. It need to be injected into applications, so it is not suitable to be a middleware. Moreover, egg-mysql needs to be prepared before the application starts so that it requires to have some inspections to its dependencies.
 
 ### What a plugin can do?
 
@@ -543,8 +543,8 @@ Follow the rules above. If you choose to use hyphen, pluginName should be in sma
 
 ## Multi-process Model and Communication Between Processes
 
-![multi-process-model](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/node/team/a44668d0ab/multi-process-model.png)
-![start-seq](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/node/team/202e55b92b/start-seq.png)
+![multi-process-model](https://cloud.githubusercontent.com/assets/985607/22191417/85b66d7c-e165-11e6-88a0-82859bcbe81a.png)
+![start-seq](https://cloud.githubusercontent.com/assets/985607/22191418/85b6e612-e165-11e6-9a9b-b0c4d064d6ef.png)
 
 ### master&worker process
 
@@ -584,8 +584,6 @@ For more guide about `agent.js`, please see [egg-schedule:agent.js](https://gith
 messager.broadcast('msg from agent');
 messager.on('msg form worker', callback);
 ```
-
-See details in [egg-diamond](http://gitlab.alibaba-inc.com/egg/egg-diamond/tree/master) about communication between agent and worker process.
 
 ### Robustness
 

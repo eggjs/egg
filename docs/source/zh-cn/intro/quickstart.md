@@ -379,7 +379,7 @@ $ npm test
 - 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读[渐进式开发](../tutorials/progressive.md)。
 - 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见[单元测试](../core/unittest.md)。
 
-[nvm]: http://gitlab.alibaba-inc.com/node/nvm
+[nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs
 [node]: http://nodejs.org
 [npm]: https://www.npmjs.org
