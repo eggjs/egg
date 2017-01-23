@@ -372,8 +372,8 @@ egg/config/config.default.js
 
 **为什么有了 koa 的中间件，还需要提出一个插件机制呢?**
 
-因为中间件不能满足很多内部需求，如 diamond-client 入注到应用中，放在中间件不合适，
-并且它还有启动检查依赖需求，必须确认 diamond-client 启动成功，才能让应用启动成功。
+因为中间件不能满足很多内部需求，如 egg-mysql 入注到应用中，放在中间件不合适，
+并且它还有启动检查依赖需求，必须确认 egg-mysql 连接成功，才能让应用启动成功。
 
 ### 插件能做什么?
 
@@ -541,8 +541,8 @@ module.exports = {
 
 ## 多进程模型及进程间通讯 Multi-process Model and Communication Between Processes
 
-![multi-process-model](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/node/team/a44668d0ab/multi-process-model.png)
-![start-seq](http://aligitlab.oss-cn-hangzhou-zmf.aliyuncs.com/uploads/node/team/202e55b92b/start-seq.png)
+![multi-process-model](https://cloud.githubusercontent.com/assets/985607/22191417/85b66d7c-e165-11e6-88a0-82859bcbe81a.png)
+![start-seq](https://cloud.githubusercontent.com/assets/985607/22191418/85b6e612-e165-11e6-9a9b-b0c4d064d6ef.png)
 
 
 ### master&worker process
@@ -581,8 +581,6 @@ For more guide about `agent.js`, please see [egg-schedule:agent.js](https://gith
 messager.broadcast('msg from agent');
 messager.on('msg form worker', callback);
 ```
-
-可参考 [egg-diamond](http://gitlab.alibaba-inc.com/egg/egg-diamond/tree/master) 中对于 agent 和 worker 之间通讯的实现。
 
 ### 健壮性
 
