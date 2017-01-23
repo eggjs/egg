@@ -33,5 +33,5 @@ exports.home = function*() {
 };
 
 exports.getUser = function*() {
-  this.jsonp = { name: 'fengmk2' };
+  this.body = { name: 'fengmk2' };
 };

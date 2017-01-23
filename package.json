@@ -24,6 +24,7 @@
     "egg-core": "^1.6.0",
     "egg-development": "^1.1.0",
     "egg-i18n": "^1.1.0",
+    "egg-jsonp": "^1.0.0",
     "egg-logger": "^1.5.0",
     "egg-logrotator": "^2.2.2",
     "egg-multipart": "^1.0.0",

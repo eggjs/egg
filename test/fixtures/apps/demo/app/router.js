@@ -6,8 +6,8 @@ module.exports = app => {
     this.body = this.protocol;
   });
 
-  app.get('/user.json', function*() {
-    this.jsonp = { name: 'fengmk2' };
+  app.get('/user.json', app.jsonp(), function*() {
+    this.body = { name: 'fengmk2' };
   });
   app.get('/ip', app.controller.ip);
 };
