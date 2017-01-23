@@ -510,7 +510,7 @@ module.exports = agent => {
 };
 ```
 
-- 第三步，在 `$app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
+- 第三步，在 `app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
 
 ```js
 'use strict';
@@ -577,8 +577,8 @@ class MockClient extends Base {
 
 你需要用 delegate API 手动设置
 
-`${app_root}/agent.js`
 ```js
+// agent.js
 module.exports = agent => {
   agent.mockClient = agent.cluster(MockClient)
     // 将 sub 代理到 subscribe 逻辑上
@@ -591,9 +591,8 @@ module.exports = agent => {
 };
 ```
 
-`app.js`
-
 ```js
+// app.js
 module.exports = app => {
   app.mockClient = app.cluster(MockClient)
     // 将 sub 代理到 subscribe 逻辑上
@@ -612,9 +611,8 @@ module.exports = app => {
 
 如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API
 
-`app.js`
-
 ```js
+// app.js
 module.exports = app => {
   agent.mockClient = agent.cluster(MockClient)
     .delegate('sub', 'subscribe')
