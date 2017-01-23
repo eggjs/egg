@@ -10,7 +10,6 @@ const HOST = Symbol('HOST');
 const ACCEPTS = Symbol('ACCEPTS');
 const IPS = Symbol('IPS');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
-const AJAX_EXT_RE = /\.(json|tile|ajax)$/i;
 
 module.exports = {
   /**
