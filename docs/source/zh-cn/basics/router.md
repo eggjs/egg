@@ -204,7 +204,7 @@ module.exports = function* () {
 
 >「除非清楚的确认后果，否则不建议擅自关闭安全插件提供的功能。」
 
-> 这里在写例子的话可临时在 config/config.default.js 中设置
+> 这里在写例子的话可临时在 `config/config.default.js` 中设置
 ```
 exports.security = {
   csrf: false
