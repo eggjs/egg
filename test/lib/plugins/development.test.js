@@ -21,25 +21,6 @@ describe('test/lib/plugins/development.test.js', () => {
     });
     after(() => app.close());
 
-    it('should log status', done => {
-      done = pedding(3, done);
-      request(app.callback())
-      .get('/foo')
-      .expect(200, done);
-
-      request(app.callback())
-      .get('/not_exist')
-      .expect(404, done);
-
-      setTimeout(() => {
-        const content = fs.readFileSync(
-          utils.getFilepath('apps/development/logs/development/development-web.log'), 'utf8');
-        content.should.containEql('GET /foo] status 200');
-        content.should.containEql('GET /not_exist] status 404');
-        done();
-      }, 1000);
-    });
-
     it('should ignore assets', done => {
       done = pedding(4, done);
       mm(app.logger, 'info', msg => {

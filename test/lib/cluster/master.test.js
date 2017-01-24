@@ -252,18 +252,4 @@ describe('test/lib/cluster/master.test.js', () => {
     });
   });
 
-  describe.skip('close watcher and logrotator both', () => {
-    let app;
-    before(done => {
-      mm.env('default');
-      app = utils.cluster('apps/close-watcher-logrotator');
-      app.ready(done);
-    });
-
-    after(() => app.close());
-
-    it('agent should exit normal', () => {
-      app.notExpect('stderr', /nodejs\.AgentWorkerDiedError/);
-    });
-  });
 });

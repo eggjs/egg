@@ -150,7 +150,6 @@ describe('test/app/extend/context.test.js', () => {
           .expect('{"path":"/","foo":1,"bar":2}');
       });
     });
-
   });
 
   describe('ctx.view', () => {
