@@ -3,7 +3,7 @@
 const request = require('supertest');
 const utils = require('../../utils');
 
-describe.skip('test/lib/plugins/i18n.test.js', () => {
+describe('test/lib/plugins/i18n.test.js', () => {
   let app;
   before(() => {
     app = utils.app('apps/i18n');

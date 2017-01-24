@@ -1,6 +1,5 @@
 'use strict';
 
-const moment = require('moment');
 const should = require('should');
 const path = require('path');
 const fs = require('fs');
@@ -194,47 +193,6 @@ describe('test/lib/core/logger.test.js', () => {
     });
     app.logger.options.file.should.equal(app.coreLogger.options.file);
     app.ready(done);
-  });
-
-  describe.skip('logger.reload()', () => {
-    let app;
-    before(() => {
-      mm(process.env, 'EGG_LOG', 'none');
-      app = utils.cluster('apps/logger-reload');
-      return app.ready();
-    });
-
-    after(() => app.close());
-
-    it('should reload worker loggers', done => {
-      request(app.callback())
-      .get('/')
-      .expect({
-        method: 'GET',
-        path: '/',
-      })
-      .expect(200, err => {
-        should.not.exist(err);
-        app.process.send({
-          to: 'agent',
-          action: 'test-reload-logger',
-        });
-        setTimeout(() => {
-          const logname = moment().subtract(1, 'days').format('.YYYY-MM-DD');
-          const logfile1 = utils.getFilepath('apps/logger-reload/logs/logger-reload/logger-reload-web.log');
-          const content1 = fs.readFileSync(logfile1, 'utf8');
-          content1.should.equal('');
-
-          const logfile2 = utils.getFilepath(`apps/logger-reload/logs/logger-reload/logger-reload-web.log${logname}`);
-          const content2 = fs.readFileSync(logfile2, 'utf8');
-          content2.should.containEql('GET /');
-
-          const logfile3 = utils.getFilepath(`apps/logger-reload/logs/logger-reload/egg-agent.log${logname}`);
-          fs.existsSync(logfile3).should.be.true;
-          done();
-        }, 2000);
-      });
-    });
   });
 
   describe('logger.level = DEBUG', () => {

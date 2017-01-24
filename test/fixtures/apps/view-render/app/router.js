@@ -1,7 +1,7 @@
 module.exports = app => {
   app.get('home', '/', app.controller.home);
   app.get('empty', '/empty', app.controller.empty);
-  app.get('/only_require', app.controller.onlyRequire);
+  // app.get('/only_require', app.controller.onlyRequire);
   app.get('/xss', app.controller.xss);
   app.post('/context', app.controller.context);
   app.get('/sjs', app.controller.sjs);

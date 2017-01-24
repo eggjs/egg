@@ -4,7 +4,7 @@ const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../../utils');
 
-describe.skip('test/lib/plugins/view/render.test.js', () => {
+describe('test/lib/plugins/view/render.test.js', () => {
   let app;
   before(function() {
     app = utils.app('apps/view-render');
@@ -41,4 +41,5 @@ describe.skip('test/lib/plugins/view/render.test.js', () => {
     .expect(200)
     .expect('templateString', done);
   });
+
 });

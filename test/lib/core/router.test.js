@@ -141,11 +141,6 @@ describe('test/lib/core/router.test.js', () => {
         .should.equal('/posts/10/edit?page=2&tags=chair&tags=develop');
     });
 
-    it.skip('should have router var in view', () => {
-      return request(app.callback())
-        .get('/locals/router')
-        .expect('posts: /posts');
-    });
   });
 
   describe('router.pathFor', () => {

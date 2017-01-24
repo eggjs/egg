@@ -44,7 +44,7 @@ describe('test/app/extend/helper.test.js', () => {
 
   });
 
-  describe.skip('escape()', () => {
+  describe('escape()', () => {
     it('should escape script', () => {
       return request(app.callback())
         .get('/escape')
@@ -53,7 +53,7 @@ describe('test/app/extend/helper.test.js', () => {
     });
   });
 
-  describe.skip('shtml()', () => {
+  describe('shtml()', () => {
     it('should ignore attribute if domain not in domainWhiteList', () => {
       return request(app.callback())
         .get('/shtml-not-in-domain-whitelist')
@@ -61,7 +61,7 @@ describe('test/app/extend/helper.test.js', () => {
         .expect(200);
     });
 
-    it('should keep attribute if domain in default domainWhiteList', () => {
+    it.skip('should keep attribute if domain in default domainWhiteList', () => {
       return request(app.callback())
         .get('/shtml-in-default-domain-whitelist')
         .expect('true')
