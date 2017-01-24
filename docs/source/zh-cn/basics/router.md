@@ -198,7 +198,7 @@ module.exports = function* () {
 
 > 这里直接发起 POST 请求会**报错**：'secret is missing'。错误信息来自 [koa-csrf/index.js#L69](https://github.com/koajs/csrf/blob/2.5.0/index.js#L69) 。
 
-> **原因**：框架内部针对表单 POST 请求均会验证 CSRF 的值，因此我们在表单提交时，请带上 CSRF key 进行提交。
+> **原因**：框架内部针对表单 POST 请求均会验证 CSRF 的值，因此我们在表单提交时，请带上 CSRF key 进行提交，可参考[安全威胁csrf的防范](https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范)
 
 > **注意**：上面的校验是因为框架中内置了安全插件 [egg-security](https://github.com/eggjs/egg-security)，提供了一些默认的安全实践，并且框架的安全插件是默认开启的，如果需要关闭其中一些安全防范，直接设置该项的 enable 属性为 false 即可。
 
