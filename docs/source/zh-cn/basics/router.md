@@ -196,17 +196,18 @@ module.exports = function* () {
 
 > 附：
 
-> 这里直接发起post请求会报错，框架内部针对表单 POST 请求均会验证 CSRF 的值，会把用户提交的 CSRF key 与当前上下文中的 CSRF key 进行对比，因此我们在表单提交时，请带上 CSRF key 进行提交。
+> 这里直接发起 POST 请求会**报错**：'secret is missing'。错误信息来自 [koa-csrf/index.js#L69](https://github.com/koajs/csrf/blob/2.5.0/index.js#L69) 。
 
-> 注意：上面的校验是因为框架中内置了安全插件 [egg-security](https://github.com/eggjs/egg-security)，提供了一些默认的安全实践，并且框架的安全插件是默认开启的，如果需要关闭其中一些安全防范，直接设置该项的 enable 属性为 false 即可。
+> **原因**：框架内部针对表单 POST 请求均会验证 CSRF 的值，因此我们在表单提交时，请带上 CSRF key 进行提交。
+
+> **注意**：上面的校验是因为框架中内置了安全插件 [egg-security](https://github.com/eggjs/egg-security)，提供了一些默认的安全实践，并且框架的安全插件是默认开启的，如果需要关闭其中一些安全防范，直接设置该项的 enable 属性为 false 即可。
 
 >「除非清楚的确认后果，否则不建议擅自关闭安全插件提供的功能。」
 
 > 这里在写例子的话可临时在 config/config.default.js 中设置
 ```
 exports.security = {
-  csrf: false,
-  ctoken: false,
+  csrf: false
 };
 ```
 
