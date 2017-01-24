@@ -151,14 +151,6 @@ describe('test/app/extend/context.test.js', () => {
       });
     });
 
-    describe('ctx.runtime', () => {
-      it('should work', () => {
-        return request(app.callback())
-          .get('/runtime')
-          .expect(200)
-          .expect('{"mysql":10,"foo":11}');
-      });
-    });
   });
 
   describe('ctx.view', () => {

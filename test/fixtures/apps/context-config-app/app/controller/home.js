@@ -7,12 +7,3 @@ exports.index = function* () {
     bar: this.bar()
   };
 };
-
-exports.runtime = function* () {
-  this.runtime.mysql = 10;
-  this.runtime.foo = 11;
-  this.body = {
-    mysql: this.runtime.mysql,
-    foo: this.runtime.foo
-  };
-};
