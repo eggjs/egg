@@ -10,7 +10,7 @@ describe('test/lib/plugins/view/render.test.js', () => {
     app = utils.app('apps/view-render');
     return app.ready();
   });
-  after(() => {
+  before(() => {
     app.locals = {
       copyright: '2014 @ mk2 <br>',
     };

@@ -56,6 +56,7 @@ describe('test/app/extend/application.test.js', () => {
 
     it('should log info when plugin is not ready', function* () {
       app = utils.cluster('apps/notready');
+      // it won't be ready, so wait for the timeout
       yield sleep(11000);
 
       app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
