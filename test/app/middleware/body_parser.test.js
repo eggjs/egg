@@ -7,6 +7,7 @@ const utils = require('../../utils');
 
 describe('test/app/middleware/body_parser.test.js', () => {
   let app;
+  let app1;
   let csrf;
   let cookies;
   before(done => {
@@ -25,6 +26,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   after(() => app.close());
+  afterEach(() => app1 && app1.close());
 
   it('should 200 when post form body below the limit', done => {
     request(app.callback())
@@ -48,41 +50,42 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   it('should disable body parser', function* () {
-    const app = utils.app('apps/body_parser_testapp_disable');
-    yield request(app.callback())
+    app1 = utils.app('apps/body_parser_testapp_disable');
+    yield app1.ready();
+
+    yield request(app1.callback())
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar' })
     .expect(204);
-    app.close();
   });
 
   it('should body parser support ignore', function* () {
-    const app = utils.app('apps/body_parser_testapp_ignore');
-    yield request(app.callback())
+    app1 = utils.app('apps/body_parser_testapp_ignore');
+    yield app1.ready();
+
+    yield request(app1.callback())
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar' })
     .expect(204);
 
-    yield request(app.callback())
+    yield request(app1.callback())
     .post('/test/body_parser/form.json')
     .send({ foo: 'bar' })
     .expect({ foo: 'bar' });
-
-    app.close();
   });
 
   it('should body parser support match', function* () {
-    const app = utils.app('apps/body_parser_testapp_match');
-    yield request(app.callback())
+    app1 = utils.app('apps/body_parser_testapp_match');
+    yield app1.ready();
+
+    yield request(app1.callback())
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar' })
     .expect({ foo: 'bar' });
 
-    yield request(app.callback())
+    yield request(app1.callback())
     .post('/test/body_parser/form.json')
     .send({ foo: 'bar' })
     .expect(204);
-
-    app.close();
   });
 });

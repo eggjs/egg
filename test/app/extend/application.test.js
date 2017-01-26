@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require('supertest');
-const mm = require('egg-mock');
+const sleep = require('ko-sleep');
 const utils = require('../../utils');
 
 describe('test/app/extend/application.test.js', () => {
@@ -54,16 +54,12 @@ describe('test/app/extend/application.test.js', () => {
     let app;
     after(() => app.close());
 
-    it('should log info when plugin is not ready', done => {
-      app = utils.app('apps/notready');
-      mm(app.console, 'warn', (message, a) => {
-        message.should.eql('[egg:core:ready_timeout] 10 seconds later %s was still unable to finish.');
-        a.should.eql('a');
-        done();
-      });
-      app.ready(() => {
-        throw new Error('should not be called');
-      });
+    it('should log info when plugin is not ready', function* () {
+      app = utils.cluster('apps/notready');
+      // it won't be ready, so wait for the timeout
+      yield sleep(11000);
+
+      app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
     });
   });
 

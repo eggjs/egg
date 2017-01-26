@@ -6,8 +6,11 @@ const utils = require('../../../utils');
 
 describe('test/lib/plugins/view/render.test.js', () => {
   let app;
-  before(function() {
+  before(() => {
     app = utils.app('apps/view-render');
+    return app.ready();
+  });
+  before(() => {
     app.locals = {
       copyright: '2014 @ mk2 <br>',
     };
