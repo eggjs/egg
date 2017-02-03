@@ -54,9 +54,6 @@ describe('test/app/extend/context.test.js', () => {
 
       app.mockContext({
         userId: '123123',
-        tracer: {
-          traceId: '456456',
-        },
       });
 
       yield request(app.callback())
@@ -68,7 +65,7 @@ describe('test/app/extend/context.test.js', () => {
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       errorContent.should.containEql('nodejs.Error: error foo');
       errorContent.should.containEql('nodejs.Error: core error foo');
-      errorContent.should.match(/\[123123\/[\d.]+\/456456\/\d+ms GET \/logger\?message=foo]/);
+      errorContent.should.match(/\[123123\/[\d.]+\/-\/\d+ms GET \/logger\?message=foo]/);
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
       loggerContent.should.not.containEql('debug foo');

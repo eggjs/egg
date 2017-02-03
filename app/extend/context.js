@@ -77,16 +77,6 @@ const proto = module.exports = {
   },
 
   /**
-   * 默认返回一个空对象，需要实现这个接口
-   *
-   * 插件需要实现一个内部约定 getter: `_tracer`
-   * @member {Object} Context#tracer
-   */
-  get tracer() {
-    return this._tracer || {};
-  },
-
-  /**
    * Wrap app.loggers with context infomation,
    * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
    *
