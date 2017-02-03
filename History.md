@@ -1,4 +1,17 @@
 
+0.10.0 / 2017-02-03
+===================
+
+  * feat: remove tracer (#311)
+  * refactor: use app.beforeClose (#306)
+  * feat: move ctx.runtime to egg-instrument (#302)
+  * feat: merge the api of application/agent from extend to instance (#294)
+  * docs: add egg-security config to router docs (#303)
+  * style: fix code style for app and config (#300)
+  * refactor: remove ctx.jsonp and add egg-jsonp plugin (#299)
+  * docs: fix typo $app to app (#297)
+  * docs: remove inner links (#298)
+
 0.9.0 / 2017-01-22
 ==================
 
