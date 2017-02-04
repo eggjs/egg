@@ -1,0 +1,39 @@
+'use strict';
+
+const assert = require('assert');
+const request = require('supertest');
+const utils = require('../../utils');
+
+describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
+  let url;
+  let app;
+
+  before(() => {
+    app = utils.app('apps/tracer-demo');
+    return app.ready();
+  });
+  before(function* () {
+    url = yield utils.startLocalServer();
+  });
+
+  after(() => app.close());
+
+  it('should send request with ctx.httpclient', function* () {
+    const r = yield app.curl(url + '/get_headers', {
+      dataType: 'json',
+    });
+    assert(r.status === 200);
+    assert(r.data['x-request-id'].startsWith('anonymous-'));
+  });
+
+  it('should work with context httpclient', () => {
+    return request(app.callback())
+      .get('/?url=' + encodeURIComponent(url + '/get_headers'))
+      .expect(res => {
+        assert(res.body.url === url + '/get_headers');
+        assert(res.body.data['x-request-id']);
+        assert(!res.body.data['x-request-id'].startsWith('anonymous-'));
+      })
+      .expect(200);
+  });
+});

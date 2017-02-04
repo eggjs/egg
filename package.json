@@ -82,8 +82,9 @@
     "should": "^11.1.2",
     "stream-wormhole": "^1.0.0",
     "supertest": "^2.0.1",
-    "toa": "^2.5.1",
-    "toa-router": "^2.0.1"
+    "toa": "^2.5.0",
+    "toa-router": "^2.0.1",
+    "uuid": "^3.0.1"
   },
   "main": "index.js",
   "files": [
