@@ -244,22 +244,121 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 
 ### 防范方式
 
-框架内部针对表单 POST 请求均会验证 CSRF 的值，会把用户提交的 CSRF key 与当前上下文中的 CSRF key 进行对比，避免请求被伪造。
-因此我们在表单提交时，请带上 CSRF key 进行提交。页面渲染时，将 `ctx.csrf` 作为 form 隐藏域或 query string 渲染在页面上，在提交表单时，带上 token 即可。
+通常来说，对于 CSRF 攻击有一些通用的[防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
 
-#### 例子：通过formData上传时使用 CSRF
+- Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。
+- Double Cookie Defense：将 token 设置在 cookie 中，在提交 post 请求的时候提交 cookie，并通过 header 或者 body 带上 cookie 中的 token，服务端进行对比校验。
+- Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都[放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
 
-浏览器端 html 代码:
+框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。
+
+#### 使用方式
+
+##### 同步表单的 CSRF 校验
+
+在同步渲染页面时，所有的表单请求中增加一个 name 为 `_csrf` 的隐藏域，值为 `ctx.csrf`，这样用户在提交这个表单的时候会将 CSRF token 提交上来：
+
+```html
+<form method="POST" action="/upload" enctype="multipart/form-data">
+  title: <input name="title" />
+  file: <input name="file" type="file" />
+  <input type="hidden" name="_csrf" value="{{ ctx.csrf }}">
+  <button type="submit">upload</button>
+</form>
+```
+
+CSRF token 也可以通过 url query 传递：
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" />
   file: <input name="file" type="file" />
-  <button type="submit">上传</button>
+  <button type="submit">upload</button>
 </form>
 ```
 
-[egg-view-nunjucks] 等 view 插件会自动对 form 进行注入，对应用开发者无感知。
+传递 CSRF token 的字段可以在配置中改变：
+
+```js
+// config/config.default.js
+module.exports = {
+  security: {
+    csrf: {
+      queryName: '_csrf', // 通过 query 传递 CSRF token 的默认字段为 _csrf
+      bodyName: '_csrf', // 通过 body 传递 CSRF token 的默认字段为 _csrf
+    },
+  },
+};
+```
+
+为了防范[BREACH 攻击](http://breachattack.com/)，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化，[egg-view-nunjucks] 等 view 插件会自动对 form 进行注入，对应用开发者无感知。
+
+##### AJAX 请求
+
+在 CSRF 默认配置下，token 会被设置在 cookie 中，在 AJAX 请求的时候，可以从 cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。
+
+In jQuery:
+
+```js
+var csrftoken = Cookies.get('csrftoken');
+
+function csrfSafeMethod(method) {
+  // these HTTP methods do not require CSRF protection
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+      xhr.setRequestHeader('x-csrf-token', csrftoken);
+    }
+  },
+});
+```
+
+通过 header 传递 CSRF token 的字段也可以在配置中改变：
+
+```js
+// config/config.default.js
+module.exports = {
+  security: {
+    csrf: {
+      headerName: 'x-csrf-token', // 通过 header 传递 CSRF token 的默认字段为 x-csrf-token
+    },
+  },
+};
+```
+
+#### session 存储 VS cookie 存储
+
+默认配置下，框架会将 CSRF token 存在 cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 session 中。
+
+```js
+// config/config.default.js
+module.exports = {
+  security: {
+    csrf: {
+      useSession: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中
+      cookieName: 'csrfToken', // cookie 中的字段名，默认为 csrfToken
+      sessionName: 'csrfToken', // session 中的字段名，默认为 csrfToken
+    },
+  },
+};
+```
+
+#### 忽略 JSON 请求
+
+在 [SOP](https://en.wikipedia.org/wiki/Same-origin_policy) 的安全策略保护下，基本上所有的现代浏览器都不允许跨域发起 content-type 为 JSON 的请求，因此我们可以直接放过类型的 JSON 格式的请求。
+
+```js
+// config/config.default.js
+module.exports = {
+  security: {
+    csrf: {
+      ignoreJSON: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中
+    },
+  },
+};
+```
 
 ## 安全威胁` XST `的防范
 
