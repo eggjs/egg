@@ -20,27 +20,122 @@ title: controller
 
 ## 如何编写 controller
 
-所有的 controller 都必须放在 `app/controller` 目录下，每一个 controller 都是一个 generator function，它的 `this` 都被绑定成了 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
+所有的 controller 文件都必须放在 `app/controller` 目录下。controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
+
+### controller 类（推荐）
+
+我们可以通过定义 controller 类的方式来编写代码：
+
+```js
+// app/controller/post.js
+module.exports = app => {
+  class PostController extends app.Controller {
+    create() {
+      const ctx = this.ctx;
+      const createRule = {
+        title: { type: 'string' },
+        content: { type: 'string' },
+      };
+      // 校验参数
+      ctx.validate(createRule);
+      // 组装参数
+      const author = ctx.session.userId;
+      const req = Object.assign(ctx.request.body, { author });
+      // 调用 service 进行业务处理
+      const res = yield ctx.service.post.create(req);
+      // 设置响应内容和响应状态码
+      ctx.body = { id: res.id };
+      ctx.status = 201;
+    },
+  };
+
+  return PostController;
+}
+```
+
+我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 controller 在 router 中引用到。
+
+```js
+// app/router.js
+module.exports = {
+  app.post('createPost', '/api/posts', 'post.create');
+}
+```
+
+定义的 controller 类，会在每一个请求访问到 server 时实例化一个全新的对象，而项目中的 controller 类继承于 `app.Controller`，会有下面几个属性挂在 `this` 上。
+
+- `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
+- `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
+- `this.service`：应用定义的 [service](./service.md)，通过它我们可以访问到抽象出的业务层。
+- `this.config`：应用运行时的[配置项](./config.md)。
+
+#### 自定义 Controller 基类
+
+按照类的方式编写 controller，不仅可以让我们更好的对 controller 层代码进行抽象（例如将一些统一的处理抽象成一些私有方法），还可以通过自定义 controller 基类的方式封装应用中常用的方法。
+
+在[启动自定义](./app-start.md)中，应用可自己定义 controller 基类，这样在 `app/controller` 中编写 controller 时就可以使用到定义在基类上的这些方法了。
+
+```js
+// app.js
+module.exports = app => {
+  class CustomController extends app.Controller {
+    get user() {
+      return this.ctx.session.user;
+    }
+
+    success(data) {
+      this.ctx.body = {
+        success: true,
+        data,
+      };
+    },
+
+    notFound(msg) {
+      const msg = msg || 'not found';
+      this.ctx.throw(404, msg);
+    },
+  };
+  app.Controller = CustomController;
+}
+```
+
+此时在编写应用的 controller 时，可以直接使用基类上的方法：
+
+```js
+//app/controller/post.js
+module.exports = app => {
+  return class PostController extends app.Controller {
+    * list() {
+      const posts = yield this.service.listByUser(this.user);
+      this.success(posts);
+    },
+  };
+};
+```
+
+### controller 方法
+
+每一个 controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
 例如我们写一个对应到 `POST /api/posts` 接口的 controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
 ```js
 // app/controller/post.js
-const createRule = {
-  title: { type: 'string' },
-  content: { type: 'string' },
-};
-exports.create = function* () {
+exports.create = function* (ctx) {
+  const createRule = {
+    title: { type: 'string' },
+    content: { type: 'string' },
+  };
   // 校验参数
-  this.validate(createRule);
+  ctx.validate(createRule);
   // 组装参数
-  const author = this.session.userId;
-  const req = Object.assign(this.request.body, { author });
+  const author = ctx.session.userId;
+  const req = Object.assign(ctx.request.body, { author });
   // 调用 service 进行业务处理
-  const res = yield this.service.post.create(req);
+  const res = yield ctx.service.post.create(req);
   // 设置响应内容和响应状态码
-  this.body = { id: res.id };
-  this.status = 201;
+  ctx.body = { id: res.id };
+  ctx.status = 201;
 };
 ```
 
@@ -105,8 +200,8 @@ Connection: keep-alive
 在 URL 中 `?` 后面的部分是一个 query string，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
 
 ```js
-exports.listPosts = function*() {
-  const query = this.query;
+exports.listPosts = function*(ctx) {
+  const query = ctx.query;
   // {
   //   category: 'egg',
   //   language: 'node',
@@ -119,7 +214,7 @@ exports.listPosts = function*() {
 这样处理的原因是为了保持统一性，由于通常情况下我们都不会设计让用户传递 key 相同的 query string，所以我们经常会写类似下面的代码：
 
 ```js
-const key = this.query.key || '';
+const key = ctx.query.key || '';
 if (key.startsWith('egg')) {
   // do something
 }
@@ -134,8 +229,8 @@ if (key.startsWith('egg')) {
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-exports.listPosts = function*() {
-  console.log(this.queries);
+exports.listPosts = function*(ctx) {
+  console.log(ctx.queries);
   // {
   //   category: [ 'egg' ],
   //   id: [ '1', '2', '3' ],
@@ -153,9 +248,9 @@ exports.listPosts = function*() {
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-exports.listApp = function*() {
-  assert.equal(this.params.projectId, '1');
-  assert.equal(this.params.appId, '2');
+exports.listApp = function*(ctx) {
+  assert.equal(ctx.params.projectId, '1');
+  assert.equal(ctx.params.appId, '2');
 };
 ```
 
@@ -176,7 +271,7 @@ exports.listApp = function*() {
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-exports.listPosts = function*() {
+exports.listPosts = function*(ctx) {
   assert.equal(this.request.body.title, 'controller');
   assert.equal(this.request.body.content, 'what is controller');
 };
@@ -221,20 +316,20 @@ module.exports = {
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function*() {
-  const stream = yield this.getFileStream();
+module.exports = function*(ctx) {
+  const stream = yield ctx.getFileStream();
   const name = 'egg-multipart-test/' + path.basename(stream.filename);
   // 文件处理，上传到云存储等等
   let result;
   try {
-    result = yield this.oss.put(name, stream);
+    result = yield ctx.oss.put(name, stream);
   } catch (err) {
     // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
     yield sendToWormhole(stream);
     throw err;
   }
 
-  this.body = {
+  ctx.body = {
     url: result.url,
     // 所有表单字段都能通过 `stream.fields` 获取到
     fields: stream.fields,
@@ -247,13 +342,13 @@ module.exports = function*() {
 - 上传文件必须在其他 field 之前。
 - 只支持上传一个文件。
 
-如果要获取同时上传的多个文件，不能通过 `this.getFileStream()` 来获取，只能通过下面这种方式：
+如果要获取同时上传的多个文件，不能通过 `ctx.getFileStream()` 来获取，只能通过下面这种方式：
 
 ```js
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function*() {
-  const parts = this.multipart();
+module.exports = function*(ctx) {
+  const parts = ctx.multipart();
   let part;
   while ((part = yield parts) != null) {
     if (part.length) {
@@ -276,7 +371,7 @@ module.exports = function*() {
       // 文件处理，上传到云存储等等
       let result;
       try {
-        result = yield this.oss.put('egg-multipart-test/' + part.filename, part);
+        result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
       } catch (err) {
         // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
         yield sendToWormhole(stream);
@@ -386,16 +481,16 @@ HTTP 的请求头中有一个特殊的字段叫 [cookie](https://en.wikipedia.or
 通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 cookie。
 
 ```js
-exports.add = function*() {
-  const count = this.cookie.get('count');
+exports.add = function*(ctx) {
+  const count = ctx.cookie.get('count');
   count = count ? Number(count) : 0;
-  this.cookie.set('count', ++count);
-  this.body = count;
+  ctx.cookie.set('count', ++count);
+  ctx.body = count;
 };
 
-exports.remove = function*() {
-  const count = this.cookie.set('count', null);
-  this.status = 204;
+exports.remove = function*(ctx) {
+  const count = ctx.cookie.set('count', null);
+  ctx.status = 204;
 };
 ```
 
@@ -425,7 +520,7 @@ cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的
 - 如果想要 cookie 在浏览器端可以被 js 访问并修改:
 
 ```js
-this.cookies.set(key, value, {
+ctx.cookies.set(key, value, {
   httpOnly: false,
   sign: false,
 });
@@ -434,7 +529,7 @@ this.cookies.set(key, value, {
 - 如果想要 cookie 在浏览器端不能被修改，不能看到明文：
 
 ```js
-this.cookies.set(key, value, {
+ctx.cookies.set(key, value, {
   httpOnly: true, // 默认就是 true
   encrypt: true, // 加密传输
 });
@@ -476,13 +571,13 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cooki
 框架内置了 [session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 session 。
 
 ```js
-exports.fetchPosts = function*() {
+exports.fetchPosts = function*(ctx) {
   // 获取 session 上的内容
-  const userId = this.session.userId;
-  const posts = yield this.service.post.fetch(userId);
+  const userId = ctx.session.userId;
+  const posts = yield ctx.service.post.fetch(userId);
   // 修改 session 的值
-  this.session.visited = this.session.visited ? this.session.visited++ : 1;
-  this.body = {
+  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+  ctx.body = {
     success: true,
     posts,
   };
@@ -492,8 +587,8 @@ exports.fetchPosts = function*() {
 session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：
 
 ```js
-exports.deleteSession = function*() {
-  this.session = null;
+exports.deleteSession = function*(ctx) {
+  ctx.session = null;
 };
 ```
 
@@ -521,20 +616,20 @@ const createRule = {
 };
 exports.create = function* () {
   // 校验参数
-  // 如果不传第二个参数会自动校验 `this.request.body`
-  this.validate(createRule);
+  // 如果不传第二个参数会自动校验 `ctx.request.body`
+  ctx.validate(createRule);
 };
 ```
 
 当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
-exports.create = function*() {
+exports.create = function*(ctx) {
   try {
-    this.validate(createRule);
+    ctx.validate(createRule);
   } catch (err) {
-    this.logger.warn(err.errors);
-    this.body = { success: false };
+    ctx.logger.warn(err.errors);
+    ctx.body = { success: false };
     return;
   }
 };
@@ -565,7 +660,7 @@ app.validator.addRule('json', (rule, value) => {
 exports.handler = function* () {
   // query.test 字段必须是 json 字符串
   const rule = { test: 'json' };
-  this.validate(rule, this.query);
+  ctx.validate(rule, ctx.query);
 };
 ```
 
@@ -577,12 +672,12 @@ exports.handler = function* () {
 
 ```js
 exports.create = function* () {
-  const author = this.session.userId;
-  const req = Object.assign(this.request.body, { author });
+  const author = ctx.session.userId;
+  const req = Object.assign(ctx.request.body, { author });
   // 调用 service 进行业务处理
-  const res = yield this.service.post.create(req);
-  this.body = { id: res.id };
-  this.status = 201;
+  const res = yield ctx.service.post.create(req);
+  ctx.body = { id: res.id };
+  ctx.status = 201;
 };
 ```
 
@@ -599,9 +694,9 @@ HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP
 框架提供了一个便捷的 setter 来进行状态码的设置
 
 ```js
-exports.create = function*() {
+exports.create = function*(ctx) {
   // 设置状态码为 201
-  this.status = 201;
+  ctx.status = 201;
 };
 ```
 
@@ -615,16 +710,16 @@ exports.create = function*() {
 - 作为一个 html 页面的 controller，我们通常会返回 Content-Type 为 `text/html` 格式的 body，内容是 html 代码段。
 
 ```js
-exports.show = function*() {
-  this.body = {
+exports.show = function*(ctx) {
+  ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
   };
 };
 
-exports.page = function*() {
-  this.body = '<html><h1>Hello</h1></html>';
+exports.page = function*(ctx) {
+  ctx.body = '<html><h1>Hello</h1></html>';
 };
 ```
 
@@ -632,33 +727,44 @@ exports.page = function*() {
 
 ```js
 exports.proxy = function* () {
-  const result = yield this.curl(url, {
+  const result = yield ctx.curl(url, {
     streaming: true,
   });
-  this.set(result.header);
+  ctx.set(result.header);
   // result.res 是一个 stream
-  this.body = result.res;
+  ctx.body = result.res;
 };
 ```
 
 #### 渲染模板
 
 通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。
-egg 自身没有集成任何一个模板引擎，但是约定了 [view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `this.render(template)` 来渲染模板生成 html。
+egg 自身没有集成任何一个模板引擎，但是约定了 [view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
 具体示例可以查看 [模板渲染](../core/view.md)。
 
 #### JSONP
 
 有时我们需要给非本域的页面提供接口服务，又由于一些历史原因无法通过 [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) 实现，可以通过 [JSONP](https://en.wikipedia.org/wiki/JSONP) 来进行响应。
 
-由于 JSONP 如果使用不当会导致非常多的安全问题，所以框架中提供了一个便捷设置 JSONP body 的方式，并封装了 [JSONP 相关的安全防范](../core/security.md#jsonp-xss)。
+由于 JSONP 如果使用不当会导致非常多的安全问题，所以框架中提供了便捷的响应 JSONP 格式数据的方法，封装了 [JSONP XSS 相关的安全防范](../core/security.md#jsonp-xss)，并支持进行 CSRF 校验和 referrer 校验。
 
-- 通过 `context.jsonp=` 来设置支持 JSONP 格式的响应。
+- 通过 `app.jsonp()` 提供的中间件来让一个 controller 支持响应 JSONP 格式的数据。在路由中，我们给需要支持 jsonp 的路由加上这个中间件：
 
 ```js
-// app/controller/api.js
-exports.show = function*() {
-  this.jsonp = {
+// app/router.js
+module.exports = app => {
+  const jsonp = app.jsonp();
+  app.get('/api/posts/:id', jsonp, 'posts.show');
+  app.get('/api/posts', jsonp, 'posts.list');
+};
+```
+
+- 在 controller 中，只需要正常编写即可：
+
+```js
+// app/controller/posts.js
+exports.show = function*(ctx) {
+  ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
@@ -670,7 +776,7 @@ exports.show = function*() {
 
 ##### JSONP 配置
 
-框架默认通过 query 中的 `_callback` 参数作为识别是否返回 JSONP 格式数据的依据，并且 `_callback` 中设置的方法名长度最多只允许 50 个字符。应用可以在 `config/config.default.js` 覆盖默认的配置：
+框架默认通过 query 中的 `_callback` 参数作为识别是否返回 JSONP 格式数据的依据，并且 `_callback` 中设置的方法名长度最多只允许 50 个字符。应用可以在 `config/config.default.js` 全局覆盖默认的配置：
 
 ```js
 // config/config.default.js
@@ -680,6 +786,107 @@ module.exports = {
 }
 ```
 
+通过上面的方式配置之后，如果用户请求 `/api/posts/1?callback=fn`，响应为 JSONP 格式，如果用户请求 `/api/posts/1`，响应格式为 JSON。
+
+我们同样可以在 `app.jsonp()` 创建中间件时覆盖默认的配置，以达到不同路由使用不同配置的目的：
+
+```js
+// app/router.js
+module.exports = app => {
+  app.get('/api/posts/:id', app.jsonp({ callback: 'callback' }), 'posts.show');
+  app.get('/api/posts', app.jsonp({ callback: 'cb' }), 'posts.list');
+};
+```
+
+##### 跨站防御配置
+
+默认配置下，响应 JSONP 时不会进行任何跨站攻击的防范，在某些情况下，这是很危险的。我们初略将 JSONP 接口分为三种类型：
+
+1. 查询非敏感数据，例如获取一个论坛的公开文章列表。
+2. 查询敏感数据，例如获取一个用户的交易记录。
+3. 提交数据并修改数据库，例如给某一个用户创建一笔订单。
+
+如果我们的 JSONP 接口提供下面两类服务，在不做任何跨站防御的情况下，可能泄露用户敏感数据甚至导致用户被钓鱼。因此框架给 JSONP 默认提供了 CSRF 校验支持和 referrer 校验支持。
+
+###### CSRF
+
+在 JSONP 配置中，我们只需要打开 `csrf: true`，即可对 JSONP 接口开启 CSRF 校验。
+
+```js
+// config/config.default.js
+module.exports = {
+  jsonp: {
+    csrf: true,
+  },
+};
+```
+
+**注意，CSRF 校验依赖于 [security](../core/security.md) 插件提供的基于 cookie 的 CSRF 校验。**
+
+在开启 CSRF 校验时，客户端在发起 JSONP 请求时，也要带上 CSRF token，如果发起 JSONP 的请求方所在的页面和我们的服务在同一个主域名之下的话，可以读取到 cookie 中的 CSRF token（在 CSRF token 缺失时也可以自行设置 CSRF token 到 cookie 中），并在请求时带上该 token。
+
+##### referrer 校验
+
+如果在同一个主域之下，可以通过开启 CSRF 的方式来校验 JSONP 请求的来源，而如果想对其他域名的网页提供 JSONP 服务，我们可以通过配置 referrer 白名单的方式来限制 JSONP 的请求方在可控范围之内。
+
+```js
+//config/config.default.js
+exports.jsonp = {
+  whiteList: /^https?:\/\/test.com\//,
+  // whiteList: '.test.com',
+  // whiteList: 'sub.test.com',
+  // whiteList: [ 'sub.test.com', 'sub2.test.com' ],
+}
+```
+
+`whiteList` 可以配置为正则表达式、字符串或者数组：
+
+- 正则表达式：此时只有请求的 Referrer 匹配该正则时才允许访问 JSONP 接口。在设置正则表达式的时候，注意开头的 `^` 以及结尾的 `\/`，保证匹配到完整的域名。
+
+```js
+exports.jsonp = {
+  whiteList: /^https?:\/\/test.com\//,
+}
+// matchs referrer:
+// https://test.com/hello
+// http://test.com/
+```
+
+- 字符串：设置字符串形式的白名单时分为两种，当字符串以 `.` 开头，例如 `.test.com` 时，代表 referrer 白名单为 `test.com` 的所有子域名，包括 `test.com` 自身。当字符串不以 `.` 开头，例如 `sub.test.com`，代表 referrer 白名单为 `sub.test.com` 这一个域名。（同时支持 http 和 https）。
+
+```js
+exports.jsonp = {
+  whiteList: '.test.com',
+};
+// matchs domain test.com:
+// https://test.com/hello
+// http://test.com/
+
+// matchs subdomain
+// https://sub.test.com/hello
+// http://sub.sub.test.com/
+
+exports.jsonp = {
+  whiteList: 'sub.test.com',
+};
+// only matchs domain sub.test.com:
+// https://sub.test.com/hello
+// http://sub.test.com/
+```
+
+- 数组：当设置的白名单为数组时，代表只要满足数组中任意一个元素的条件即可通过 referrer 校验。
+
+```js
+exports.jsonp = {
+  whiteList: [ 'sub.test.com', 'sub2.test.com' ],
+};
+// matchs domain sub.test.com and sub2.test.com:
+// https://sub.test.com/hello
+// http://sub2.test.com/
+```
+
+**当 CSRF 和 referrer 校验同时开启时，请求发起方只需要满足任意一个条件即可通过 JSONP 的安全校验。**
+
 ### 设置 header
 
 我们通过状态码标识请求成功与否、状态如何，在 body 中设置响应的内容。而通过响应的 header，还可以设置一些扩展信息。
@@ -688,11 +895,11 @@ module.exports = {
 
 ```js
 // app/controller/api.js
-exports.show = function*() {
+exports.show = function*(ctx) {
   const start = Date.now();
-  this.body = yield this.service.post.get();
+  ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
   // 设置一个响应头
-  this.set('show-response-time', userd.toString());
+  ctx.set('show-response-time', userd.toString());
 };
 ```
