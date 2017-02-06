@@ -198,7 +198,7 @@ title: 插件开发
     app.myClient.on('error', err => {
       app.coreLogger.error(err);
     });
-    app.beforeStart(function*() {
+    app.beforeStart(function* () {
       yield app.myClient.ready();
       app.coreLogger.info('my client is ready');
     });
@@ -216,7 +216,7 @@ title: 插件开发
     agent.myClient.on('error', err => {
       agent.coreLogger.error(err);
     });
-    agent.beforeStart(function*() {
+    agent.beforeStart(function* () {
       yield agent.myClient.ready();
       agent.coreLogger.info('my client is ready');
     });
@@ -288,6 +288,10 @@ module.exports = {
 - package 是 `npm` 方式引入，也是最常见的引入方式
 - path 是绝对路径引入，一般是内置插件，比如：应用内部抽了一个插件，但还没来得及发布到 `npm`，或者是应用自己覆盖了框架的一些插件
 
+## 如何区分插件依赖和 npm 包依赖
+
+egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性。也就是说明
+
 _说明：_ 框架内部内置了一些插件，而应用在使用这些插件的时候就不用配置 package 或者 path，只需要指定 enable 与否
 
 ```js
@@ -309,9 +313,31 @@ exports.onerror = false;
 - [development](https://github.com/eggjs/egg-development) 开发环境配置
 - [logrotator](https://github.com/eggjs/egg-logrotator) 日志切分
 - [schedule](https://github.com/eggjs/egg-schedule) 定时任务
-- [rest](https://github.com/eggjs/egg-rest) RESTful 支持
 - [static](https://github.com/eggjs/egg-static) 静态服务器
-- [cors](https://github.com/eggjs/egg-cors) CORS 支持
+- [jsonp](https://github.com/eggjs/egg-jsonp) jsonp 支持
+
+### 根据环境配置
+
+插件还支持 `plugin.{env}.js` 这种模式，会根据[环境](../basics/env.md)加载插件配置。
+
+比如定义了一个开发环境使用的插件 `egg-dev`，只希望在本地环境加载，可以如下定义
+
+```js
+// package.json
+{
+  "devDependencies": {
+    "egg-dev": "*"
+  }
+}
+
+// config/plugin.local.js
+exports.dev = {
+  enable: true,
+  package: 'egg-dev',
+};
+```
+
+这样在生产环境可以不需要下载 `egg-dev` 的包了。
 
 ### 插件的寻址规则
 
@@ -343,7 +369,7 @@ $ npm test
 
 - 命名规范
   - `npm` 包名以 `egg-` 开头，且为全小写，例如：`egg-xx`。比较长的词组用中划线：`egg-foo-bar`
-  - 对应的插件名使用小驼峰，小驼峰转换规则以 `npm` 包名 的中划线为准 `egg-foo-bar` => `fooBar`
+  - 对应的插件名使用小驼峰，小驼峰转换规则以 `npm` 包名的中划线为准 `egg-foo-bar` => `fooBar`
   - 对于可以中划线也可以不用的情况，不做强制约定，例如：userservice(egg-userservice) 还是 user-service(egg-user-service) 都可以
 - `package.json` 书写规范
   - 按照上面的文档添加 `eggPlugin` 节点
@@ -369,6 +395,16 @@ $ npm test
     ],
   }
   ```
+
+## 为何不使用 npm 包名来做插件名？
+
+egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
+
+首先 egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 egg 无法通过 npm 的包名来做唯一性。
+
+更重要的是 egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
+
+我把**同类功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
 
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
