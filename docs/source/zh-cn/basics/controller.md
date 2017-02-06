@@ -614,7 +614,7 @@ const createRule = {
   title: { type: 'string' },
   content: { type: 'string' },
 };
-exports.create = function* () {
+exports.create = function* (ctx) {
   // 校验参数
   // 如果不传第二个参数会自动校验 `ctx.request.body`
   ctx.validate(createRule);
@@ -657,7 +657,7 @@ app.validator.addRule('json', (rule, value) => {
 添加完自定义规则之后，就可以在 controller 中直接使用这条规则来进行参数校验了
 
 ```js
-exports.handler = function* () {
+exports.handler = function* (ctx) {
   // query.test 字段必须是 json 字符串
   const rule = { test: 'json' };
   ctx.validate(rule, ctx.query);
@@ -671,7 +671,7 @@ exports.handler = function* () {
 在 controller 中可以调用任何一个 service 上的任何方法，同时 service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
-exports.create = function* () {
+exports.create = function* (ctx) {
   const author = ctx.session.userId;
   const req = Object.assign(ctx.request.body, { author });
   // 调用 service 进行业务处理
@@ -726,7 +726,7 @@ exports.page = function* (ctx) {
 由于 node 的流式特性，我们还有很多场景需要通过 stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 stream，并会同时处理好这个 stream 上的错误事件。
 
 ```js
-exports.proxy = function* () {
+exports.proxy = function* (ctx) {
   const result = yield ctx.curl(url, {
     streaming: true,
   });
