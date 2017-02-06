@@ -289,6 +289,8 @@ function createMysql(config, app) {
     const index = count++;
     app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
   });
+
+  return client;
 }
 ```
 
@@ -374,12 +376,14 @@ module.exports = app => {
 我们可以不需要将配置提前申明在配置文件中，而是在应用运行时动态的初始化一个实例。
 
 ```js
-// egg-mysql/app.js
+// app.js
 module.exports = app => {
-  // 从配置中心获取 MySQL 的配置
-  const mysqlConfig = yield app.configCenter.fetch('mysql');
-  // 动态创建 MySQL 实例
-  app.database = app.mysql.createInstance(mysqlConfig);
+  app.beforeStart(function* () {
+    // 从配置中心获取 MySQL 的配置
+    const mysqlConfig = yield app.configCenter.fetch('mysql');
+    // 动态创建 MySQL 实例
+    app.database = app.mysql.createInstance(mysqlConfig);
+  });
 };
 ```
 
