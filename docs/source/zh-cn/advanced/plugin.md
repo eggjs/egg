@@ -288,10 +288,6 @@ module.exports = {
 - package 是 `npm` 方式引入，也是最常见的引入方式
 - path 是绝对路径引入，一般是内置插件，比如：应用内部抽了一个插件，但还没来得及发布到 `npm`，或者是应用自己覆盖了框架的一些插件
 
-## 如何区分插件依赖和 npm 包依赖
-
-egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性。也就是说明
-
 _说明：_ 框架内部内置了一些插件，而应用在使用这些插件的时候就不用配置 package 或者 path，只需要指定 enable 与否
 
 ```js
@@ -404,7 +400,7 @@ egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具�
 
 更重要的是 egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
 
-我把**同类功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
+我**将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
 
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
