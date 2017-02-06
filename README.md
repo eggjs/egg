@@ -40,8 +40,8 @@ Node.js >= 6.0.0 required.
 ## Docs & Community
 
 - [Website && Document](https://eggjs.org)
-- [Plugin List](https://eggjs.org/badgeboard/)
-- [Frameworks](https://eggjs.org/frameworks.html)
+- [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 
 ## Getting Started
 
