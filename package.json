@@ -65,6 +65,7 @@
     "eslint-config-egg": "^3.1.0",
     "estraverse": "^4.1.1",
     "formstream": "^1.1.0",
+    "gh-pages": "^0.12.0",
     "glob": "^7.1.1",
     "ko-sleep": "^1.0.2",
     "merge-descriptors": "^1.0.1",
@@ -76,6 +77,7 @@
     "pedding": "^1.1.0",
     "rds": "^0.1.0",
     "rimraf": "^2.5.4",
+    "runscript": "^1.2.0",
     "should": "^11.2.0",
     "stream-wormhole": "^1.0.0",
     "supertest": "^3.0.0"
@@ -95,7 +97,8 @@
     "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov",
     "doc-server": "./scripts/doc.sh server",
-    "doc-deploy": "./scripts/doc.sh deploy",
+    "doc-build": "./scripts/doc.js build",
+    "doc-deploy": "./scripts/doc.js deploy",
     "autod": "autod",
     "puml": "puml . --dest ./docs",
     "commits": "./scripts/commits.sh"
