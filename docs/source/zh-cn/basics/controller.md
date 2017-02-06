@@ -30,7 +30,7 @@ title: controller
 // app/controller/post.js
 module.exports = app => {
   class PostController extends app.Controller {
-    create() {
+    * create() {
       const ctx = this.ctx;
       const createRule = {
         title: { type: 'string' },
@@ -200,7 +200,7 @@ Connection: keep-alive
 在 URL 中 `?` 后面的部分是一个 query string，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
 
 ```js
-exports.listPosts = function*(ctx) {
+exports.listPosts = function* (ctx) {
   const query = ctx.query;
   // {
   //   category: 'egg',
@@ -229,7 +229,7 @@ if (key.startsWith('egg')) {
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-exports.listPosts = function*(ctx) {
+exports.listPosts = function* (ctx) {
   console.log(ctx.queries);
   // {
   //   category: [ 'egg' ],
@@ -248,7 +248,7 @@ exports.listPosts = function*(ctx) {
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-exports.listApp = function*(ctx) {
+exports.listApp = function* (ctx) {
   assert.equal(ctx.params.projectId, '1');
   assert.equal(ctx.params.appId, '2');
 };
@@ -271,7 +271,7 @@ exports.listApp = function*(ctx) {
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-exports.listPosts = function*(ctx) {
+exports.listPosts = function* (ctx) {
   assert.equal(this.request.body.title, 'controller');
   assert.equal(this.request.body.content, 'what is controller');
 };
@@ -316,7 +316,7 @@ module.exports = {
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function*(ctx) {
+module.exports = function* (ctx) {
   const stream = yield ctx.getFileStream();
   const name = 'egg-multipart-test/' + path.basename(stream.filename);
   // 文件处理，上传到云存储等等
@@ -347,7 +347,7 @@ module.exports = function*(ctx) {
 ```js
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function*(ctx) {
+module.exports = function* (ctx) {
   const parts = ctx.multipart();
   let part;
   while ((part = yield parts) != null) {
@@ -481,14 +481,14 @@ HTTP 的请求头中有一个特殊的字段叫 [cookie](https://en.wikipedia.or
 通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 cookie。
 
 ```js
-exports.add = function*(ctx) {
+exports.add = function* (ctx) {
   const count = ctx.cookie.get('count');
   count = count ? Number(count) : 0;
   ctx.cookie.set('count', ++count);
   ctx.body = count;
 };
 
-exports.remove = function*(ctx) {
+exports.remove = function* (ctx) {
   const count = ctx.cookie.set('count', null);
   ctx.status = 204;
 };
@@ -571,7 +571,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cooki
 框架内置了 [session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 session 。
 
 ```js
-exports.fetchPosts = function*(ctx) {
+exports.fetchPosts = function* (ctx) {
   // 获取 session 上的内容
   const userId = ctx.session.userId;
   const posts = yield ctx.service.post.fetch(userId);
@@ -587,7 +587,7 @@ exports.fetchPosts = function*(ctx) {
 session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：
 
 ```js
-exports.deleteSession = function*(ctx) {
+exports.deleteSession = function* (ctx) {
   ctx.session = null;
 };
 ```
@@ -624,7 +624,7 @@ exports.create = function* () {
 当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
-exports.create = function*(ctx) {
+exports.create = function* (ctx) {
   try {
     ctx.validate(createRule);
   } catch (err) {
@@ -694,7 +694,7 @@ HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP
 框架提供了一个便捷的 setter 来进行状态码的设置
 
 ```js
-exports.create = function*(ctx) {
+exports.create = function* (ctx) {
   // 设置状态码为 201
   ctx.status = 201;
 };
@@ -710,7 +710,7 @@ exports.create = function*(ctx) {
 - 作为一个 html 页面的 controller，我们通常会返回 Content-Type 为 `text/html` 格式的 body，内容是 html 代码段。
 
 ```js
-exports.show = function*(ctx) {
+exports.show = function* (ctx) {
   ctx.body = {
     name: 'egg',
     category: 'framework',
@@ -718,7 +718,7 @@ exports.show = function*(ctx) {
   };
 };
 
-exports.page = function*(ctx) {
+exports.page = function* (ctx) {
   ctx.body = '<html><h1>Hello</h1></html>';
 };
 ```
@@ -763,7 +763,7 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-exports.show = function*(ctx) {
+exports.show = function* (ctx) {
   ctx.body = {
     name: 'egg',
     category: 'framework',
@@ -895,7 +895,7 @@ exports.jsonp = {
 
 ```js
 // app/controller/api.js
-exports.show = function*(ctx) {
+exports.show = function* (ctx) {
   const start = Date.now();
   ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
