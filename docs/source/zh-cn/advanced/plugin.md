@@ -252,7 +252,7 @@ title: 插件开发
   };
   ```
 
-### 创建单例
+### 单例插件的最佳实践
 
 许多插件的目的都是将一些已有的服务引入到框架中，如 [egg-mysql], [egg-oss]。他们都需要在 app 上创建对应的实例。而在开发这一类的插件时，我们发现存在一些普遍性的问题：
 
@@ -261,12 +261,12 @@ title: 插件开发
 
 如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。
 
-#### 插件编写方法
+#### 插件写法
 
 我们将 [egg-mysql] 的实现简化之后来看看如何编写此类插件：
 
 ```js
-// app.js
+// egg-mysql/app.js
 module.exports = app => {
   // 第一个参数 mysql 指定了挂载到 app 上的字段，我们可以通过 `app.mysql` 访问到 MySQL singleton 实例
   // 第二个参数 createMysql 接受两个参数(config, app)，并返回一个 MySQL 的实例
@@ -274,11 +274,11 @@ module.exports = app => {
 }
 
 /**
- * @param  {Object}      cofnig 框架处理之后的配置项，如果应用配置了多个 MySQL 实例，会将每一个配置项分别传入并调用多次 createMysql
- * @param  {Application} app    当前的应用
- * @return {Object}             返回创建的 MySQL 实例
+ * @param  {Object} config   框架处理之后的配置项，如果应用配置了多个 MySQL 实例，会将每一个配置项分别传入并调用多次 createMysql
+ * @param  {Application} app 当前的应用
+ * @return {Object}          返回创建的 MySQL 实例
  */
-function createMysql(cofnig, app) {
+function createMysql(config, app) {
   assert(config.host && config.port && config.user && config.database);
   // 创建实例
   const client = new Mysql(config);
@@ -374,7 +374,7 @@ module.exports = app => {
 我们可以不需要将配置提前申明在配置文件中，而是在应用运行时动态的初始化一个实例。
 
 ```js
-// app.js
+// egg-mysql/app.js
 module.exports = app => {
   // 从配置中心获取 MySQL 的配置
   const mysqlConfig = yield app.configCenter.fetch('mysql');
