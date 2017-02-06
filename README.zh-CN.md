@@ -40,8 +40,8 @@ $ npm install egg --save
 ## 文档和社区
 
 - [官方站点 && 文档](https://eggjs.org/zh-cn/)
-- [插件列表](https://eggjs.org/badgeboard/)
-- [框架列表](https://eggjs.org/frameworks.html)
+- [插件列表](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- [框架列表](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 
 ## 快速开始
 
