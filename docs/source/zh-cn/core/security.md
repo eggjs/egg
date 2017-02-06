@@ -270,7 +270,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 CSRF token 也可以通过 url query 传递：
 
 ```html
-<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
+<form method="POST" action="/upload?_csrf={{ ctx.csrf }}" enctype="multipart/form-data">
   title: <input name="title" />
   file: <input name="file" type="file" />
   <button type="submit">upload</button>
@@ -354,7 +354,7 @@ module.exports = {
 module.exports = {
   security: {
     csrf: {
-      ignoreJSON: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中
+      ignoreJSON: true, // 默认为 false，当设置为 true 时，将会放过所有 content-type 为 `application/json` 的请求
     },
   },
 };
