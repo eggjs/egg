@@ -10,6 +10,8 @@ const ghpages = require('gh-pages');
 
 // The branch that pushing document
 const BRANCH = 'gh-pages';
+const DOC_PUBLISHER_NAME = 'Auto Doc Publisher';
+const DOC_PUBLISHER_EMAIL = 'docs@eggjs.org';
 const command = process.argv[2];
 
 co(function* () {
@@ -53,8 +55,8 @@ function* deploy() {
   yield publish('docs/public', {
     logger(message) { console.log(message); },
     user: {
-      name: 'Auto Doc Publisher',
-      email: 'docs@egg.com',
+      name: DOC_PUBLISHER_NAME,
+      email: DOC_PUBLISHER_EMAIL,
     },
     branch: BRANCH,
     repo,

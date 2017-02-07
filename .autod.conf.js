@@ -9,17 +9,19 @@ module.exports = {
   exclude: [
     'test/fixtures',
     'examples',
-    'benchmarks',
     "docs",
   ],
   devdep: [
     'autod',
     'autod-egg',
     'eslint',
-    'egg-plugin-puml'
+    'eslint-config-egg',
+    'egg-bin',
+    'egg-plugin-puml',
   ],
   keep: [
   ],
   semver: [
   ],
+  test: 'scripts',
 };
