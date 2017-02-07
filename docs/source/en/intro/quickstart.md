@@ -368,8 +368,8 @@ describe('test/app/middleware/robot.test.js', () => {
 
   it('should block robot', () => {
     return request(app.callback())
-      .set('User-Agent', "Baiduspider")
       .get('/')
+      .set('User-Agent', "Baiduspider")
       .expect(403);
   });
 
