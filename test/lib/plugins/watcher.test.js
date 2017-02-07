@@ -56,26 +56,6 @@ describe('test/lib/plugins/watcher.test.js', () => {
         count = parseInt(res.text);
         count.should.greaterThan(lastCount);
       });
-
-      yield request(server)
-      .get('/app-unwatch')
-      .expect(200)
-      .expect('app unwatch success');
-
-      yield sleep(3000);
-      fs.writeFileSync(file_path2, 'aaa');
-      fs.writeFileSync(file_path1, 'aaa');
-      yield sleep(3000);
-
-      // unchanged
-      yield request(server)
-      .get('/app-msg')
-      .expect(200)
-      .expect(function(res) {
-        const lastCount = count;
-        count = parseInt(res.text);
-        count.should.equal(lastCount);
-      });
     });
 
     it('should agent watcher work', function* () {
@@ -95,23 +75,6 @@ describe('test/lib/plugins/watcher.test.js', () => {
         const lastCount = count;
         count = parseInt(res.text);
         count.should.greaterThan(lastCount);
-      });
-      yield request(app.callback())
-      .get('/agent-unwatch')
-      .expect(200)
-      .expect('agent unwatch success');
-
-      yield sleep(3000);
-      fs.writeFileSync(file_path1_agent, 'bbb');
-      yield sleep(3000);
-
-      yield request(app.callback())
-      .get('/agent-msg')
-      .expect(200)
-      .expect(res => {
-        const lastCount = count;
-        count = parseInt(res.text);
-        count.should.equal(lastCount);
       });
     });
 

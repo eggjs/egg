@@ -14,11 +14,6 @@ module.exports = function(agent) {
     agent.messenger.broadcast('agent-file-changed-count', count);
   });
 
-  agent.messenger.on('agent-unwatch', function() {
-    agent.watcher.unwatch([file_path1, dir_path], listener);
-    agent.messenger.broadcast('agent-unwatch-success', 'agent unwatch success');
-  });
-
   agent.messenger.on('agent-watch', function() {
     agent.watcher.watch([file_path1, dir_path], listener);
     agent.messenger.broadcast('agent-watch-success', 'agent watch success');

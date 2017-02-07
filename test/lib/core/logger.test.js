@@ -9,7 +9,6 @@ const Logger = require('egg-logger');
 const sleep = require('ko-sleep');
 
 const utils = require('../../utils');
-const Agent = require('../../..').Agent;
 
 describe('test/lib/core/logger.test.js', () => {
 
@@ -193,12 +192,11 @@ describe('test/lib/core/logger.test.js', () => {
     content.should.containEql('nodejs.Error: customLogger error');
   });
 
-  it('agent\'s logger is same as coreLogger', done => {
-    app = new Agent({
-      baseDir: utils.getFilepath('apps/logger'),
-    });
-    app.logger.options.file.should.equal(app.coreLogger.options.file);
-    app.ready(done);
+  it('agent\'s logger is same as coreLogger', function* () {
+    app = utils.app('apps/logger');
+    yield app.ready();
+
+    app.agent.logger.options.file.should.equal(app.agent.coreLogger.options.file);
   });
 
   describe('logger.level = DEBUG', () => {
