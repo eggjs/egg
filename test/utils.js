@@ -36,6 +36,7 @@ exports.startLocalServer = () => {
       req.on('end', () => {
         res.statusCode = 200;
         if (req.url === '/get_headers') {
+          res.setHeader('Content-Type', 'json');
           res.end(JSON.stringify(req.headers));
         } else {
           res.end(`${req.method} ${req.url}`);

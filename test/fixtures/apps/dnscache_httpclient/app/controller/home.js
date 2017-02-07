@@ -12,5 +12,6 @@ module.exports = function* () {
   }
   const result = yield this.curl(this.query.url, args);
   this.status = result.status;
+  this.set(result.headers);
   this.body = result.data;
 };
