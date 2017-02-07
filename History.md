@@ -1,4 +1,22 @@
 
+0.11.0 / 2017-02-07
+===================
+
+  * feat: remove overrideMethod middleware (#324)
+  * feat: remove worker client, use app.cluster (#282)
+  * chore(scripts): Add PATH to find hexo (#327)
+  * docs: fix quickstart example code (#326)
+  * chore(scripts): deploy document by travis (#325)
+  * docs: add httpclient tracer demo and docs (#313)
+  * feat: close cluster clients before app close (#310)
+  * test: mv benchmark to eggjs/benchmark (#320)
+  * docs: document for plugin.{env}.js and the reason of plugin name (#321)
+  * docs: add sigleton in plugin.md (#316)
+  * docs: plugin and framework list use github tags (#318)
+  * docs: remove outdated docs (#319)
+  * docs: controller support class and refactor jsonp (#314)
+  * docs: add more details about csrf (#315)
+
 0.10.0 / 2017-02-03
 ===================
 
