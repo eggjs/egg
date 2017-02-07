@@ -96,7 +96,7 @@
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov",
-    "doc-server": "./scripts/doc.sh server",
+    "doc-server": "./scripts/doc.js server",
     "doc-build": "./scripts/doc.js build",
     "doc-deploy": "./scripts/doc.js deploy",
     "autod": "autod",
