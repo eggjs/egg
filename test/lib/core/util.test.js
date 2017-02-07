@@ -1,6 +1,6 @@
 'use strict';
 
-const mm = require('mm');
+const mm = require('egg-mock');
 const util = require('../../../lib/core/util');
 
 
