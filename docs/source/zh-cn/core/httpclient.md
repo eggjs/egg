@@ -683,6 +683,52 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 - 出现场景：设置了 `dataType=json` 并且响应数据不符合 JSON 格式，就会抛出此异常。
 - 排查建议：确保服务端无论在什么情况下都要正确返回 JSON 格式的数据。
 
+## 全局 `request` 和 `response` 事件
+
+在企业应用场景，常常会有统一 tracer 日志的需求。
+为了方便在 app 层面统一监听 httpclient 的请求和响应，我们约定了全局 `request` 和 `response` 事件来暴露这两个时机。
+
+```bash
+    init options
+        |
+        V
+    emit `request` event
+        |
+        V
+    send request and receive response
+        |
+        V
+    emit `response` event
+        |
+        V
+       end
+```
+
+### `request` 事件：发生在网络操作发生之前
+
+请求发送之前，会触发一个 `request` 事件，允许对请求做拦截。
+
+```js
+app.httpclient.on('request', req => {
+  req.url 请求 url
+  req.ctx 是发起这次请求的当前上下文
+
+  // 可以在这里设置一些 trace headers，方便全链路跟踪
+});
+```
+
+### `response` 事件：发生在网络操作结束之后
+
+请求结束之后会触发一个 `response` 事件，这样外部就可以订阅这个事件打印日志。
+
+```js
+app.httpclient.on('response', result => {
+  result.res.status
+  result.ctx 是发起这次请求的当前上下文
+  result.req 对应的 req 对象，即 request 事件里面那个 req
+});
+```
+
 ## 示例代码
 
 完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
