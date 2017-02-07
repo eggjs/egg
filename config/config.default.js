@@ -204,7 +204,7 @@ module.exports = appInfo => {
   };
 
   /**
-   * 定义 core 中间件加载的顺序，中间件的名称会映射到 app.middlewares 上
+   * core enable middlewares
    * @member {Array} Config#middleware
    */
   exports.coreMiddleware = [
@@ -212,7 +212,6 @@ module.exports = appInfo => {
     'siteFile',
     'notfound',
     'bodyParser',
-    'overrideMethod',
   ];
 
   /**

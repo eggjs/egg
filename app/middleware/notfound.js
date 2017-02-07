@@ -29,6 +29,5 @@ module.exports = options => {
     } else {
       this.body = title;
     }
-
   };
 };
