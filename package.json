@@ -41,7 +41,6 @@
     "is-type-of": "^1.0.0",
     "koa-bodyparser": "^2.3.0",
     "koa-is-json": "^1.0.0",
-    "koa-override": "^1.0.0",
     "mime-types": "^2.1.14",
     "sendmessage": "^1.1.0",
     "urllib": "^2.20.0"

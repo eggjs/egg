@@ -6,10 +6,10 @@ const MAX_AGE = 'public, max-age=2592000'; // 30 days
 module.exports = options => {
   return function* siteFile(next) {
     if (this.method !== 'HEAD' && this.method !== 'GET') return yield next;
-
-    if (!options.hasOwnProperty(this.path)) return yield next;
+    if (this.path[0] !== '/') return yield next;
 
     const content = options[this.path];
+    if (!content) return yield next;
 
     // '/favicon.ico': 'https://eggjs.org/favicon.ico',
     // content is url
