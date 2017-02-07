@@ -254,6 +254,16 @@ stream 实际会以 <code>Transfer-Encoding: chunked</code> 传输编码格式�
 <li>出现场景：设置了 <code>dataType=json</code> 并且响应数据不符合 JSON 格式，就会抛出此异常。</li>
 <li>排查建议：确保服务端无论在什么情况下都要正确返回 JSON 格式的数据。</li>
 </ul>
+<h2 id="全局-request-和-response-事件"><a class="markdown-anchor" href="#全局-request-和-response-事件">#</a> 全局 <code>request</code> 和 <code>response</code> 事件</h2>
+<p>在企业应用场景，常常会有统一 tracer 日志的需求。
+为了方便在 app 层面统一监听 httpclient 的请求和响应，我们约定了全局 <code>request</code> 和 <code>response</code> 事件来暴露这两个时机。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">init options</div><div class="line">    |</div><div class="line">    V</div><div class="line">emit `request` event</div><div class="line">    |</div><div class="line">    V</div><div class="line">send request and receive response</div><div class="line">    |</div><div class="line">    V</div><div class="line">emit `response` event</div><div class="line">    |</div><div class="line">    V</div><div class="line">   end</div></pre></td></tr></table></figure></p>
+<h3 id="request-事件发生在网络操作发生之前"><a class="markdown-anchor" href="#request-事件发生在网络操作发生之前">#</a> <code>request</code> 事件：发生在网络操作发生之前</h3>
+<p>请求发送之前，会触发一个 <code>request</code> 事件，允许对请求做拦截。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.httpclient.on(<span class="string">'request'</span>, req =&gt; &#123;</div><div class="line">  req.url 请求 url</div><div class="line">  req.ctx 是发起这次请求的当前上下文</div><div class="line"></div><div class="line">  <span class="comment">// 可以在这里设置一些 trace headers，方便全链路跟踪</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="response-事件发生在网络操作结束之后"><a class="markdown-anchor" href="#response-事件发生在网络操作结束之后">#</a> <code>response</code> 事件：发生在网络操作结束之后</h3>
+<p>请求结束之后会触发一个 <code>response</code> 事件，这样外部就可以订阅这个事件打印日志。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">app.httpclient.on(<span class="string">'response'</span>, result =&gt; &#123;</div><div class="line">  result.res.status</div><div class="line">  result.ctx 是发起这次请求的当前上下文</div><div class="line">  result.req 对应的 req 对象，即 request 事件里面那个 req</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <h2 id="示例代码"><a class="markdown-anchor" href="#示例代码">#</a> 示例代码</h2>
 <p>完整示例代码可以在 <a href="https://github.com/eggjs/examples/blob/master/httpclient" target="_blank" rel="external">eggjs/exmaples/httpclient</a> 找到。</p>
 
