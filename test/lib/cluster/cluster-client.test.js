@@ -1,14 +1,16 @@
 'use strict';
 
 const mm = require('egg-mock');
+const assert = require('assert');
 const utils = require('../../utils');
 const request = require('supertest');
+const innerClient = require('cluster-client/lib/symbol').innerClient;
 
 describe('test/lib/cluster/cluster-client.test.js', () => {
   let app;
   before(function* () {
     mm.consoleLevel('NONE');
-    app = utils.cluster('apps/cluster_mod_app', { coverage: true });
+    app = utils.app('apps/cluster_mod_app', { coverage: true });
     yield app.ready();
   });
 
@@ -31,8 +33,10 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       });
   });
 
-  after(() => {
-    app.close();
+  after(function* () {
+    yield app.close();
+    const agentInnerClient = app.agent.registryClient[innerClient];
+    assert(agentInnerClient._realClient.closed === true);
     mm.restore();
   });
 });

@@ -16,16 +16,10 @@ module.exports = {
     'autod',
     'autod-egg',
     'eslint',
-    'egg-plugin-puml',
-    'nunjucks',
-    'koa',
-    'koa-router',
-    'toa',
-    'toa-router',
+    'egg-plugin-puml'
   ],
   keep: [
   ],
   semver: [
-    'koa@1',
   ],
 };

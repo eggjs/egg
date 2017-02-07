@@ -52,6 +52,10 @@ class RegistryClient extends Base {
       this.emit(key, this._registered.get(key).map(url => URL.parse(url, true)));
     }
   }
+
+  close() {
+    this.closed = true;
+  }
 }
 
 module.exports = RegistryClient;
