@@ -12,6 +12,8 @@ const ghpages = require('gh-pages');
 const BRANCH = 'gh-pages';
 const DOC_PUBLISHER_NAME = 'Auto Doc Publisher';
 const DOC_PUBLISHER_EMAIL = 'docs@eggjs.org';
+process.env.PATH += `:${process.cwd()}/docs/node_modules/.bin`;
+
 const command = process.argv[2];
 
 co(function* () {
