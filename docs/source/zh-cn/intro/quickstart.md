@@ -61,8 +61,13 @@ $ npm i egg-bin --save-dev
 
 ```js
 // app/controller/home.js
-module.exports = function* home() {
-  this.body = 'hi, egg';
+module.exports = app => {
+  class HomeController extends app.Controller {
+    * index() {
+      this.ctx.body = 'hi, egg';
+    }
+  }
+  return HomeController;
 };
 ```
 
@@ -71,7 +76,7 @@ module.exports = function* home() {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home');
+  app.get('/', 'home.index');
 };
 ```
 
@@ -148,19 +153,24 @@ exports.view = {
 
 ```js
 // app/controller/news.js
-exports.list = function* newsList() {
-  const dataList = {
-    list: [
-      { id: 1, title: 'this is news 1', url: '/news/1' },
-      { id: 2, title: 'this is news 2', url: '/news/2' }
-    ]
-  };
-  yield this.render('news/list.tpl', dataList);
+module.exports = app => {
+  class NewsController extends app.Controller {
+    * list() {
+      const dataList = {
+        list: [
+          { id: 1, title: 'this is news 1', url: '/news/1' },
+          { id: 2, title: 'this is news 2', url: '/news/2' }
+        ]
+      };
+      yield this.ctx.render('news/list.tpl', dataList);
+    }
+  }
+  return NewsController;
 };
 
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home');
+  app.get('/', 'home.index');
   app.get('/news', 'news.list');
 };
 ```
@@ -211,12 +221,19 @@ module.exports = app => {
 
 ```js
 // app/controller/news.js
-exports.list = function* newsList() {
-  const page = this.query.page || 1;
-  const newsList = yield this.service.news.list(page);
-  yield this.render('news/list.tpl', { list: newsList });
+module.exports = app => {
+  class NewsController extends app.Controller {
+    * list() {
+      const ctx = this.ctx;
+      const page = ctx.query.page || 1;
+      const newsList = yield ctx.service.news.list(page);
+      yield ctx.render('news/list.tpl', { list: newsList });
+    }
+  }
+  return NewsController;
 };
 ```
+
 还需增加 `app/service/news.js` 中读取到的配置：
 
 ```js
@@ -310,10 +327,12 @@ exports.robot = {
   ],
 };
 
-// app/controller/news.js
-exports.list = function* newsList() {
-  const config = this.app.config.news;
-};
+// app/service/some.js
+class SomeService extends app.Service {
+  * list() {
+    const rule = this.app.config.robot.ua;
+  }
+}
 ```
 
 ### 单元测试

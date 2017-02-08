@@ -46,8 +46,8 @@ module.exports = app => {
       // 设置响应内容和响应状态码
       ctx.body = { id: res.id };
       ctx.status = 201;
-    },
-  };
+    }
+  }
 
   return PostController;
 }
