@@ -6,6 +6,7 @@ const MAX_AGE = 'public, max-age=2592000'; // 30 days
 module.exports = options => {
   return function* siteFile(next) {
     if (this.method !== 'HEAD' && this.method !== 'GET') return yield next;
+    /* istanbul ignore if */
     if (this.path[0] !== '/') return yield next;
 
     const content = options[this.path];

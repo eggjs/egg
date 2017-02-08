@@ -30,7 +30,7 @@ module.exports = {
   set type(type) {
     // copy from koa
     // change header name to lower case
-    type = getType(type) || false;
+    type = getType(type);
     if (type) {
       this.set('content-type', type);
     } else {

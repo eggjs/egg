@@ -1,13 +1,12 @@
 'use strict';
 
+const assert = require('assert');
 const mm = require('egg-mock');
 const urllib = require('urllib');
 const request = require('supertest');
 const utils = require('../../utils');
 
-
 describe('test/app/extend/request.test.js', () => {
-
   describe('normal', () => {
     let app;
     let ctx;
@@ -96,7 +95,6 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('req.protocol', () => {
-
       it('should return http when it not config and no protocol header', () => {
         mm(app.config, 'protocol', null);
         return request(app.callback())
@@ -148,6 +146,12 @@ describe('test/app/extend/request.test.js', () => {
         return request(app.callback())
           .get('/protocol')
           .expect('https');
+      });
+
+      it('should return value from socket.encrypted', () => {
+        const ctx = app.mockContext();
+        ctx.request.socket.encrypted = true;
+        assert(ctx.request.protocol === 'https');
       });
     });
 

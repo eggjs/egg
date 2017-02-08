@@ -60,12 +60,5 @@ describe('test/app/extend/helper.test.js', () => {
         .expect('true')
         .expect(200);
     });
-
-    it.skip('should keep attribute if domain in default domainWhiteList', () => {
-      return request(app.callback())
-        .get('/shtml-in-default-domain-whitelist')
-        .expect('true')
-        .expect(200);
-    });
   });
 });

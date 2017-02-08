@@ -63,8 +63,6 @@ Please let us know what we can help, check [issues](https://github.com/eggjs/egg
 
 If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
 
-If you are a member of egg, follow [MEMBER_GUIDE](MEMBER_GUIDE.md).
-
 ## 开源协议
 
 [MIT](LICENSE)

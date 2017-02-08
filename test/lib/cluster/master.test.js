@@ -242,6 +242,7 @@ describe('test/lib/cluster/master.test.js', () => {
 
     it('should start without customEgg', done => {
       app = coffee.fork(utils.getFilepath('apps/master-worker-started/dispatch.js'))
+        // .debug()
         .coverage(false);
 
       setTimeout(() => {
