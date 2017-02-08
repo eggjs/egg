@@ -32,6 +32,7 @@ hexo.extend.helper.register('menu_link', function() {
 
   let links = '';
   for (const menu in menus) {
+    console(x);
     let link = menus[menu];
     const content = getI18nText(this.__, menu, 'menu.');
 
