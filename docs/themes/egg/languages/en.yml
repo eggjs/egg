@@ -15,3 +15,42 @@ index:
   feature32: "Do what you like in egg with the pluggable and extendable system"
   getstart: "Get Started"
   readmore: "Read More"
+
+guide_toc:
+  Intro: Guide
+  What is egg: What is egg?
+  egg and koa: The egg and koa
+  Get Start: Quick start
+  Basics: Basis function
+  Environment: Environment
+  Config: Configuration
+  Middleware: Middleware
+  Router: Router
+  Controller: Controller
+  Service: Service
+  Schedule: Schedule
+  Extend: Extend
+  Custom init: Custom init
+  Development: Development
+  Unit Testing: Unit Testing
+  Core: Core
+  Security: Security
+  View: View
+  View Plugin: View Plugin
+  # Passport:
+  HttpClient: HttpClient
+  Logger:  Logger
+  Error Handling: Error Handling
+  i18n: i18n
+  Tutorials: Tutorials
+  Advanced: Advanced
+  Cluster: Cluster
+  Framework: Framework
+  Plugin: Plugin
+  Progressive:  Progressive
+  # Loader:
+  Community: Community
+  Contributing: Contributing献
+  Member Guide: Member Guide
+  FAQ: FAQ
+
