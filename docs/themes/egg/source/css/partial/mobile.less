@@ -10,19 +10,27 @@
 }
 
 @media screen and (max-width: 1004px) {
-  .nav, footer {
-    padding: 0 20px;
-  }
-
   .nav {
     ul {
       display: none;
     }
     header {
       text-align: center;
+      width: 100px;
     }
   }
-
+  .banner .banner-logo{
+    padding-right: 25%;
+    margin-top: -100px;
+    padding-bottom: 100px;
+  }
+  .banner .banner-info{
+    width: 80%;
+    margin: 0 auto;
+    h1{
+      font-size: 40px;
+    }
+  }
   .mobile-menu {
     display: block;
   }
@@ -43,11 +51,12 @@
   .mobile-trigger {
     display: inline-block;
     top: 15px;
-    right: -50px;
     transition: right 1s;
     position: absolute;
+    z-index: 3;
+    left: 0;
     li {
-      background: #fff;
+      background: #000;
       width: 30px;
       height: 6px;
       margin-bottom: 4px;
