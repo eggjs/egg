@@ -1,8 +1,4 @@
-<div class="page-title">
-  <h1>GUIDE</h1>
-  <h2>The best way to know egg</h2>
-</div>
-
+{{ partial('partial/header') }}
 <div class="page-main">
   <article class="markdown-body">
     <h1>{{ page.title }}</h1>

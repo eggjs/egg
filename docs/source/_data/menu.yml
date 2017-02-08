@@ -1,4 +1,6 @@
 guide: /intro/
 # api: /api
+Examples: /
 plugins: https://eggjs.org/badgeboard/
 release: /release/
+Translations:

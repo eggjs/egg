@@ -1,8 +1,10 @@
 menu:
-  guide: 新手指南
+  guide: 指南
   api: API
+  examples: 演示
   plugins: 插件
   release: 发布记录
+  translations: 切换语言
 
 index:
   slogan: "为企业级框架和应用而生"

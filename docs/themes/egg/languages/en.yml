@@ -1,8 +1,10 @@
 menu:
   guide: Guide
   api: API
+  examples: Examples
   plugins: Plugins
   release: Release
+  translations: Translations
 
 index:
   slogan: "Born to build better enterprise frameworks and apps"

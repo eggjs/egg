@@ -1,17 +1,23 @@
 .nav {
-  background: @bg_dark;
-
+  background: #f9f9f9;
+  height: 56px;
+  border-bottom: 1px solid rgba(230, 230, 230, 0.99);
+  z-index:9999;
+  width: 100%;
+  position:fixed;
+  top:0;
   header {
     overflow: hidden;
-    padding: 30px 0 10px;
+    padding: 12px 0 13px;
     max-width: @max_width;
     margin: 0 auto;
   }
 
   ul {
     height: 32px;
-    float: right;
+    float: left;
     line-height: 32px;
+    padding-left: 60px;
   }
 
   li {
@@ -21,11 +27,11 @@
 
   a {
     display: inline-block;
-    color: #6E717C;
+    color: #3C3C3C;
     letter-spacing:0.5px;
-    font-weight: 300;
+    font-weight: 500;
     &:hover{
-      color:#FFF;
+      color:#000;
       transition: 0.6s all;
     }
   }
@@ -38,4 +44,5 @@
 .nav-logo {
   margin: 0;
   display: inline-block;
+  float: left;
 }

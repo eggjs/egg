@@ -1,10 +1,10 @@
 .toc {
-  position: relative;
-  left: 3px;
   float: left;
-  width: 200px;
-  padding: 40px 0;
-  border-right: 1px solid #EFEFEF;
+  width: 220px;
+  padding: 60px 0;
+  height: 100%;
+  position: fixed;
+  overflow-y: scroll;
 
   dl {
     padding: 0 20px;
@@ -12,7 +12,9 @@
 
   dt {
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
   }
 
   dd {
@@ -21,12 +23,13 @@
 
   ul li a {
     font-size: 14px;
-    color: #71747B;
-    height: 40px;
-    line-height: 40px;
+    color: #585858;
+    height: 30px;
+    line-height: 30px;
     &:hover{
-      color: #006BE8;
-      transition: 0.3s all;
+      color: #22ab28;
+      transition: 0.3s color;
+
     }
   }
 
@@ -34,3 +37,4 @@
     list-style-type: none;
   }
 }
+
