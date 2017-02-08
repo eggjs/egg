@@ -127,12 +127,4 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result2.status === 200);
     assert(result2.data.host === 'localhost');
   });
-
-  it.skip('should ctx.curl work on remote url', function* () {
-    const url = process.env.CI ? 'https://registry.npmjs.org' : 'https://r.cnpmjs.org';
-    yield request(app.callback())
-      .get('/?url=' + encodeURIComponent(url + '/pedding/latest'))
-      .expect(200)
-      .expect(/{"name":"pedding"/);
-  });
 });
