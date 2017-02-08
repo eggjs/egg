@@ -119,6 +119,13 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     const result = yield app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === 'localhost');
+
+    const obj2 = urlparse(url + '/get_headers');
+    // mock obj2.host
+    obj2.host = null;
+    const result2 = yield app.curl(obj2, { dataType: 'json' });
+    assert(result2.status === 200);
+    assert(result2.data.host === 'localhost');
   });
 
   it.skip('should ctx.curl work on remote url', function* () {

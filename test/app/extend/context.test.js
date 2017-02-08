@@ -9,11 +9,9 @@ const assert = require('assert');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.test.js', () => {
-
   afterEach(mm.restore);
 
   describe('ctx.logger', () => {
-
     let app;
     afterEach(() => app.close());
 
@@ -123,9 +121,10 @@ describe('test/app/extend/context.test.js', () => {
 
     it('should log with padding message', function* () {
       yield request(app.callback())
-      .get('/logger')
-      .expect(200);
+        .get('/logger')
+        .expect(200);
 
+      yield sleep(100);
       const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
       fs.readFileSync(logPath, 'utf8').should.match(/\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/);
     });
@@ -172,6 +171,15 @@ describe('test/app/extend/context.test.js', () => {
         .get('/string')
         .expect(200)
         .expect('tpl={{a}}, a=111, b=b, c=testHelper');
+    });
+
+    it('should ctx.view === ctx.view', () => {
+      return request(app.callback())
+        .get('/sameView')
+        .expect(200)
+        .expect({
+          same: true,
+        });
     });
   });
 
@@ -235,81 +243,6 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
-  describe('ctx.curl()', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/demo');
-      return app.ready();
-    });
-    after(() => app.close());
-    afterEach(mm.restore);
-
-    it('should curl ok', function* () {
-      const localServer = yield utils.startLocalServer();
-      const context = app.mockContext();
-      const res = yield context.curl(`${localServer}/foo/bar`);
-      res.status.should.equal(200);
-    });
-  });
-
-  describe('ctx.httpclient', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/demo');
-      return app.ready();
-    });
-    after(() => app.close());
-    afterEach(mm.restore);
-
-    it('should only one httpclient on one ctx', function* () {
-      const ctx = app.mockContext();
-      assert(ctx.httpclient === ctx.httpclient);
-      assert(typeof ctx.httpclient.request === 'function');
-      assert(typeof ctx.httpclient.curl === 'function');
-    });
-  });
-
-  describe('ctx.realStatus', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/demo');
-      return app.ready();
-    });
-    after(() => app.close());
-    afterEach(mm.restore);
-
-    it('should get from status ok', () => {
-      const context = app.mockContext();
-      context.status = 200;
-      assert(context.realStatus === 200);
-    });
-
-    it('should get from realStatus ok', () => {
-      const context = app.mockContext();
-      context.status = 302;
-      context.realStatus = 500;
-      assert(context.realStatus === 500);
-    });
-  });
-
-  describe('ctx.state', () => {
-    let app;
-    before(() => {
-      app = utils.app('apps/demo');
-      return app.ready();
-    });
-    after(() => app.close());
-    afterEach(mm.restore);
-
-    it('should delegate ctx.locals', () => {
-      const context = app.mockContext();
-      context.locals = { a: 'a', b: 'b' };
-      context.state = { a: 'aa', c: 'cc' };
-      context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });
-      context.state.should.equal(context.locals);
-    });
-  });
-
   describe('ctx.runInBackground(scope)', () => {
     let app;
     before(() => {
@@ -346,31 +279,94 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
-  describe('ctx.ip', () => {
+  describe('tests on apps/demo', () => {
     let app;
     before(() => {
       app = utils.app('apps/demo');
       return app.ready();
     });
     after(() => app.close());
-    afterEach(mm.restore);
 
-    it('should get current request ip', () => {
-      return request(app.callback())
-        .get('/ip')
-        .expect(200)
-        .expect({
-          ip: '127.0.0.1',
-        });
+    describe('ctx.curl()', () => {
+      it('should curl ok', function* () {
+        const localServer = yield utils.startLocalServer();
+        const context = app.mockContext();
+        const res = yield context.curl(`${localServer}/foo/bar`);
+        res.status.should.equal(200);
+      });
     });
 
-    it('should set current request ip', () => {
-      return request(app.callback())
-        .get('/ip?set_ip=10.2.2.2')
-        .expect(200)
-        .expect({
-          ip: '10.2.2.2',
-        });
+    describe('ctx.httpclient', () => {
+      it('should only one httpclient on one ctx', function* () {
+        const ctx = app.mockContext();
+        assert(ctx.httpclient === ctx.httpclient);
+        assert(typeof ctx.httpclient.request === 'function');
+        assert(typeof ctx.httpclient.curl === 'function');
+      });
+    });
+
+    describe('ctx.realStatus', () => {
+      it('should get from status ok', () => {
+        const context = app.mockContext();
+        context.status = 200;
+        assert(context.realStatus === 200);
+      });
+
+      it('should get from realStatus ok', () => {
+        const context = app.mockContext();
+        context.status = 302;
+        context.realStatus = 500;
+        assert(context.realStatus === 500);
+      });
+    });
+
+    describe('ctx.state', () => {
+      it('should delegate ctx.locals', () => {
+        const context = app.mockContext();
+        context.locals = { a: 'a', b: 'b' };
+        context.state = { a: 'aa', c: 'cc' };
+        context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });
+        context.state.should.equal(context.locals);
+      });
+    });
+
+    describe('ctx.ip', () => {
+      it('should get current request ip', () => {
+        return request(app.callback())
+          .get('/ip')
+          .expect(200)
+          .expect({
+            ip: '127.0.0.1',
+          });
+      });
+
+      it('should set current request ip', () => {
+        return request(app.callback())
+          .get('/ip?set_ip=10.2.2.2')
+          .expect(200)
+          .expect({
+            ip: '10.2.2.2',
+          });
+      });
+    });
+
+    describe('get helper()', () => {
+      it('should be the same helper instance', () => {
+        const ctx = app.mockContext();
+        assert(ctx.helper === ctx.helper);
+      });
+    });
+
+    describe('getLogger()', () => {
+      it('should return null when logger name not exists', () => {
+        const ctx = app.mockContext();
+        assert(ctx.getLogger('not-exist-logger') === null);
+      });
+
+      it('should return same logger instance', () => {
+        const ctx = app.mockContext();
+        assert(ctx.getLogger('coreLogger') === ctx.getLogger('coreLogger'));
+      });
     });
   });
 });

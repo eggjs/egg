@@ -25,9 +25,29 @@ describe('test/app/extend/response.test.js', () => {
         assert(res.res.rawHeaders.indexOf('content-length') >= 0);
       });
     });
+
+    it('should get body length', () => {
+      const ctx = app.mockContext();
+      ctx.body = null;
+      ctx.response.remove('content-length');
+      assert(ctx.response.length === undefined);
+      ctx.body = '1';
+      ctx.response.remove('content-length');
+      assert(ctx.response.length === 1);
+      ctx.body = new Buffer(2);
+      ctx.response.remove('content-length');
+      assert(ctx.response.length === 2);
+      ctx.body = {};
+      ctx.response.remove('content-length');
+      assert(ctx.response.length === 2);
+      // mock stream
+      ctx.body = { pipe() {} };
+      ctx.response.remove('content-length');
+      assert(ctx.response.length === undefined);
+    });
   });
 
-  describe('response.realStatus', () => {
+  describe('test on apps/demo', () => {
     let app;
     before(() => {
       app = utils.app('apps/demo');
@@ -35,19 +55,34 @@ describe('test/app/extend/response.test.js', () => {
     });
     after(() => app.close());
 
-    it('should get from status ok', () => {
-      const ctx = app.mockContext();
-      ctx.response.status = 200;
-      assert(ctx.response.realStatus === 200);
-      assert(ctx.realStatus === 200);
+    describe('response.realStatus', () => {
+      it('should get from status ok', () => {
+        const ctx = app.mockContext();
+        ctx.response.status = 200;
+        assert(ctx.response.realStatus === 200);
+        assert(ctx.realStatus === 200);
+      });
+
+      it('should get from realStatus ok', () => {
+        const ctx = app.mockContext();
+        ctx.response.status = 302;
+        ctx.response.realStatus = 404;
+        assert(ctx.response.realStatus === 404);
+        assert(ctx.realStatus === 404);
+      });
     });
 
-    it('should get from realStatus ok', () => {
-      const ctx = app.mockContext();
-      ctx.response.status = 302;
-      ctx.response.realStatus = 404;
-      assert(ctx.response.realStatus === 404);
-      assert(ctx.realStatus === 404);
+    describe('response.type = type', () => {
+      it('should remove content-type when type is invalid', () => {
+        const ctx = app.mockContext();
+        ctx.response.type = 'html';
+        assert(ctx.response.header['content-type'] === 'text/html; charset=utf-8');
+        assert(ctx.response.type === 'text/html');
+
+        ctx.response.type = 'html-ooooooxxx';
+        assert(ctx.response.header['content-type'] === undefined);
+        assert(ctx.response.type === '');
+      });
     });
   });
 });

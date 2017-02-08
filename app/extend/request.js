@@ -18,11 +18,12 @@ module.exports = {
    * proxy is enabled.
    * @member {String} Request#host
    * @example
+   * ip + port
    * ```js
    * this.request.host
    * => '127.0.0.1:7001'
    * ```
-   * 如果是域名访问，会得到域名
+   * or domain
    * ```js
    * this.request.host
    * => 'demo.eggjs.org'
