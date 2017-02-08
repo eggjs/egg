@@ -5,9 +5,7 @@
 </head>
 <body>
   <div id="container">
-    {{ partial('partial/header') }}
     {{ body }}
-    {{ partial('partial/footer') }}
   </div>
 </body>
 </html>

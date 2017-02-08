@@ -1,58 +1,26 @@
-<div class="index">
-  <div class="banner block index-bg-dark">
-    <div class="banner-logo" id="logo"></div>
-    <h1>{{ __('index.slogan') }}</h1>
-    <p class="banner-button">
-      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
-    </p>
-  </div>
-
-  <div class="version">
-    <span>Latest: <strong>0.10.0</strong></span>
-    <span>Node.js >= <strong> 6.0.0</strong></span>
-  </div>
-
-  <div class="info index-bg-light">
+<div class="nav">
+  <header>
+    <a href="{{ index_link() }}" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
     <ul>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature1.svg" />
-        </div>
-        <h3>{{ __('index.feature11') }}</h3>
-        <p>{{ __('index.feature12') }}</p>
-      </li>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature2.svg" />
-        </div>
-        <h3>{{ __('index.feature21') }}</h3>
-        <p>{{ __('index.feature22') }}</p>
-      </li>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature3.svg" />
-        </div>
-        <h3>{{ __('index.feature31') }}</h3>
-        <p>{{ __('index.feature32') }}</p>
-      </li>
+      {{ menu_link() }}
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
     </ul>
-  </div>
+  </header>
+</div>
 
-  <div class="guide block">
-    <h2 class="ft-b">{{ __('index.getstart') }}</h2>
-    <div class="guide-code">
-      <ul>
-        <li><strong>$</strong>npm install egg-init -g</li>
-        <li><strong>$</strong>egg-init --type simple showcase && cd showcase</li>
-        <li><strong>$</strong>npm install</li>
-        <li><strong>$</strong>npm run dev</li>
-        <li><strong>$</strong>open http://localhost:7001</li>
-      </ul>
+<div class="index">
+  <div class="banner block index-bg-light">
+    <div class="banner-logo"><img src="https://zos.alipayobjects.com/rmsportal/JFKAMfmPehWfhBPdCjrw.svg"/></div>
+    <div class="banner-info">
+      <h1><p style="font-weight:bold;font-size:48px;">Born to build</p>better enterprise frameworks and apps with Node.js && koa"</h1>
+      <p style="font-size: 22px;">为企业级框架和应用而生</p>
+      <p class="banner-button">
+        <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
+        <a class="btn btn-secondary" href="https://github.com/eggjs/egg/">Github</a>
+      </p>
     </div>
-    <p>
-      <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.readmore') }}</a>
-    </p>
   </div>
 </div>
+{{ partial('partial/footer') }}
 <script src="/images/logo-animate.js"></script>
 <script>logo('logo')</script>
