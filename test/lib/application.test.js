@@ -15,7 +15,6 @@ describe('test/lib/application.test.js', () => {
   afterEach(mm.restore);
 
   describe('create application', () => {
-
     it('should throw options.baseDir required', () => {
       assert.throws(() => {
         new Application({
@@ -38,50 +37,6 @@ describe('test/lib/application.test.js', () => {
           baseDir: __filename,
         });
       }, /is not a directory/);
-    });
-  });
-
-  describe('application.deprecate', () => {
-    afterEach(() => app.close());
-
-    it('should get deprecate with namespace egg', function* () {
-      app = utils.app('apps/demo');
-      yield app.ready();
-      const deprecate = app.deprecate;
-      assert(deprecate._namespace === 'egg');
-      assert(deprecate === app.deprecate);
-    });
-  });
-
-  describe('curl()', () => {
-    afterEach(() => app.close());
-
-    it('should curl success', function* () {
-      app = utils.app('apps/demo');
-      yield app.ready();
-      const localServer = yield utils.startLocalServer();
-      const res = yield app.curl(`${localServer}/foo/app`);
-      assert(res.status === 200);
-    });
-  });
-
-  describe('env', () => {
-    afterEach(() => app.close());
-
-    it('should return app.config.env', function* () {
-      app = utils.app('apps/demo');
-      yield app.ready();
-      assert(app.env === app.config.env);
-    });
-  });
-
-  describe('proxy', () => {
-    afterEach(() => app.close());
-
-    it('should delegate app.config.proxy', function* () {
-      app = utils.app('apps/demo');
-      yield app.ready();
-      assert(app.proxy === app.config.proxy);
     });
   });
 
@@ -153,6 +108,52 @@ describe('test/lib/application.test.js', () => {
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('ReferenceError: a is not defined (uncaughtException throw'));
+    });
+  });
+
+  describe('test on apps/demo', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    describe('application.deprecate', () => {
+      it('should get deprecate with namespace egg', function* () {
+        const deprecate = app.deprecate;
+        assert(deprecate._namespace === 'egg');
+        assert(deprecate === app.deprecate);
+      });
+    });
+
+    describe('curl()', () => {
+      it('should curl success', function* () {
+        const localServer = yield utils.startLocalServer();
+        const res = yield app.curl(`${localServer}/foo/app`);
+        assert(res.status === 200);
+      });
+    });
+
+    describe('env', () => {
+      it('should return app.config.env', function* () {
+        assert(app.env === app.config.env);
+      });
+    });
+
+    describe('proxy', () => {
+      it('should delegate app.config.proxy', function* () {
+        assert(app.proxy === app.config.proxy);
+      });
+    });
+
+    describe('class style controller', () => {
+      it('should work with class style controller', () => {
+        return request(app.callback())
+          .get('/class-controller')
+          .expect('this is bar!')
+          .expect(200);
+      });
     });
   });
 });

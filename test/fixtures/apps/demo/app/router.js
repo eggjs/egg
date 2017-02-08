@@ -10,4 +10,6 @@ module.exports = app => {
     this.body = { name: 'fengmk2' };
   });
   app.get('/ip', app.controller.ip);
+
+  app.get('/class-controller', 'foo.bar');
 };
