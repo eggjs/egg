@@ -119,13 +119,12 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     const result = yield app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === 'localhost');
-  });
 
-  it.skip('should ctx.curl work on remote url', function* () {
-    const url = process.env.CI ? 'https://registry.npmjs.org' : 'https://r.cnpmjs.org';
-    yield request(app.callback())
-      .get('/?url=' + encodeURIComponent(url + '/pedding/latest'))
-      .expect(200)
-      .expect(/{"name":"pedding"/);
+    const obj2 = urlparse(url + '/get_headers');
+    // mock obj2.host
+    obj2.host = null;
+    const result2 = yield app.curl(obj2, { dataType: 'json' });
+    assert(result2.status === 200);
+    assert(result2.data.host === 'localhost');
   });
 });

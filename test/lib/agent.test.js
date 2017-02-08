@@ -1,6 +1,6 @@
 'use strict';
 
-const should = require('should');
+const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const request = require('supertest');
@@ -9,7 +9,6 @@ const mm = require('egg-mock');
 const utils = require('../utils');
 
 describe('test/lib/agent.test.js', () => {
-
   afterEach(mm.restore);
 
   describe('agent throw', () => {
@@ -25,14 +24,27 @@ describe('test/lib/agent.test.js', () => {
       request(app.callback())
       .get('/agent-throw')
       .expect(200, err => {
-        should.not.exists(err);
+        assert(!err);
         setTimeout(() => {
           const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
-          body.should.containEql('nodejs.unhandledExceptionError: agent error');
+          assert(body.includes('nodejs.unhandledExceptionError: agent error'));
           app.notExpect(/nodejs.AgentWorkerDiedError/);
           done();
         }, 1000);
       });
+    });
+
+    it('should catch uncaughtException string error', done => {
+      request(app.callback())
+        .get('/agent-throw-string')
+        .expect(200, err => {
+          assert(!err);
+          setTimeout(() => {
+            const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
+            assert(body.includes('nodejs.unhandledExceptionError: agent error string'));
+            done();
+          }, 1000);
+        });
     });
   });
 

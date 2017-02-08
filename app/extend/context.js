@@ -223,7 +223,7 @@ const proto = module.exports = {
    * @see Context#locals
    */
   get state() {
-    return this.locals || {};
+    return this.locals;
   },
 
   set state(val) {
@@ -245,6 +245,7 @@ const proto = module.exports = {
   runInBackground(scope) {
     const ctx = this;
     const start = Date.now();
+    /* istanbul ignore next */
     const taskName = scope.name || '-';
     co(function* () {
       yield scope(ctx);

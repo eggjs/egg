@@ -5,4 +5,9 @@ module.exports = app => {
     app.messenger.broadcast('agent-throw');
     this.body = 'done';
   });
+
+  app.get('/agent-throw-string', function*() {
+    app.messenger.broadcast('agent-throw-string');
+    this.body = 'done';
+  });
 };

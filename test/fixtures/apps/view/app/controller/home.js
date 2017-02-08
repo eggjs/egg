@@ -14,3 +14,8 @@ exports.string = function *() {
   });
 };
 
+exports.sameView = function* () {
+  this.body = {
+    same: this.view === this.view,
+  };
+};
