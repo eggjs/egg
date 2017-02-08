@@ -188,7 +188,7 @@ exports.handler = function*() {
 
 - 底层基于 koa 1.x，异步解决方案基于 [co] 封装的 generator function。
 - 官方插件以及 egg 核心使用 generator function 编写，保持对 node LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
-- 应用开发者可以选择 async function（node 7.x+） 或者 generator function（node 6.x+）进行编写，官方推荐 generator function 方案以确保应用可以运行在 node LTS 版本上。
+- 应用开发者可以选择 async function（node 7.6+） 或者 generator function（node 6.0+）进行编写，**我们推荐 generator function 方案以确保应用可以运行在 node LTS 版本上**。
 
 #### egg next
 
