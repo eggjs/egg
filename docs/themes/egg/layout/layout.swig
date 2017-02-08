@@ -4,6 +4,7 @@
   {{ partial('partial/head') }}
 </head>
 <body>
+  {{ partial('partial/header') }}
   <div id="container">
     {{ body }}
   </div>
