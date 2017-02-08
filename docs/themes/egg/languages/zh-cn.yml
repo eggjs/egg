@@ -3,8 +3,7 @@ menu:
   api: API
   tutorials: 教程
   plugins: 插件
-  release: 发布记录
-  translations: 切换语言
+  release: 发布日志
 
 index:
   slogan: "为企业级框架和应用而生"
