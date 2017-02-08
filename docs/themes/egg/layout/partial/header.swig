@@ -5,7 +5,7 @@
     <ul>
       {{ menu_link() }}
       <li class="translations">
-        <a class="nav-link">多语言 </a>
+        <a class="nav-link">Translations</a>
         <span class="arrow"></span>
         <ul class="nav-dropdown">
           <li><a>中文</a></li>
