@@ -44,8 +44,8 @@ const proto = module.exports = {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  * curl(url, options) {
-    return yield this.httpclient.curl(url, options);
+  curl(url, options) {
+    return this.httpclient.curl(url, options);
   },
 
   /**
