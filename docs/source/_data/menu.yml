@@ -1,6 +1,6 @@
 guide: /intro/
 # api: /api
-tutorials: /tutorials/
+tutorials: /zh-cn/tutorials/mysql.html
 plugins: https://eggjs.org/badgeboard/
-release: /release/
+release: https://github.com/eggjs/egg/releases
 
