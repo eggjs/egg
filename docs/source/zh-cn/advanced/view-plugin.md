@@ -296,7 +296,7 @@ function loadFilter() {
   - 该子类会在原 render 方法的基础上，增加对 locals 的注入。
 
 有兴趣的同学可以看下对应的源码：
-- [app/extend/context.js](https://github.com/eggjs/egg/blob/master/app/extend/context.js), `* render()`
+- [app/extend/context.js](https://github.com/eggjs/egg/blob/master/app/extend/context.js), `render()`
 - [app/extend/application.js](https://github.com/eggjs/egg/blob/master/app/extend/application.js), `get View()`
 - [lib/core/view.js](https://github.com/eggjs/egg/blob/master/lib/core/view.js)
 
