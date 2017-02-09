@@ -31,7 +31,7 @@
     letter-spacing:0.5px;
     font-weight: 500;
     &:hover{
-      color:#000;
+      color:#22ab28;
       transition: 0.6s all;
     }
   }
@@ -41,11 +41,15 @@
   }
 }
 
-.translations{
+.translations {
+  display: inline-block;
   ul{
     height: 70px;
     padding-left: 0px;
   }
+}
+.translations:hover .dropdown-content{
+  display: block;
 }
 .arrow{
   display: inline-block;
@@ -64,13 +68,13 @@
   cursor:pointer;
 
 }
-.nav-dropdown {
+.dropdown-content {
   display: none;
   position: absolute;
   background-color: #fff;
   padding: 10px 0;
-  border: 1px solid #ddd;
-  border-bottom-color: #ccc;
+  border: 1px solid #E6E6E6;
+  border-bottom-color: #E6E6E6;
   text-align: left;
   border-radius: 4px;
   li {
