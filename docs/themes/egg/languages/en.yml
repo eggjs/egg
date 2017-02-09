@@ -16,6 +16,9 @@ index:
   getstart: "Get Started"
   readmore: "Read More"
 
+header:
+  translations: "Translations"
+  
 guide_toc:
   Intro: Guide
   What is egg: What is egg?

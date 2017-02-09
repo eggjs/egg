@@ -16,6 +16,9 @@ index:
   getstart: "开始使用"
   readmore: "查看更多"
 
+header:
+  translations: "切换语言"
+
 guide_toc:
   Intro: 新手指南
   What is egg: egg 是什么?
