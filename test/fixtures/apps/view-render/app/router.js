@@ -1,5 +1,6 @@
 module.exports = app => {
   app.get('home', '/', app.controller.home);
+  app.get('async', '/async', 'async.index');
   app.get('empty', '/empty', app.controller.empty);
   // app.get('/only_require', app.controller.onlyRequire);
   app.get('/xss', app.controller.xss);

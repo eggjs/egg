@@ -143,9 +143,12 @@ const proto = module.exports = {
    * @method Context#render
    * @param {String} name - template path
    * @param {Object} [locals] - locals
+   * @return {Promise} resolve when render completed
    */
-  * render(name, locals) {
-    this.body = yield this.renderView(name, locals);
+  render(name, locals) {
+    return this.renderView(name, locals).then(body => {
+      this.body = body;
+    });
   },
 
   /**
@@ -153,11 +156,11 @@ const proto = module.exports = {
    * @method Context#renderView
    * @param {String} name - template path
    * @param {Object} [locals] - locals
-   * @return {String} html string
+   * @return {Promise} resolve html string
    * @see View#render
    */
-  * renderView(name, locals) {
-    return yield this.view.render(name, locals);
+  renderView(name, locals) {
+    return this.view.render(name, locals);
   },
 
   /**
@@ -165,11 +168,11 @@ const proto = module.exports = {
    * @method Context#renderString
    * @param {String} tpl - template string
    * @param {Object} [locals] - locals
-   * @return {String} html string
+   * @return {Promise} resolve html string
    * @see View#renderString
    */
-  * renderString(tpl, locals) {
-    return yield this.view.renderString(tpl, locals);
+  renderString(tpl, locals) {
+    return this.view.renderString(tpl, locals);
   },
 
   /**

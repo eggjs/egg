@@ -25,6 +25,13 @@ describe('test/lib/plugins/view/render.test.js', () => {
     .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
   });
 
+  it('should render with async function controller', function(done) {
+    request(app.callback())
+    .get('/async')
+    .expect(200)
+    .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+  });
+
   it('should render have helper instance', function(done) {
     request(app.callback())
     .get('/')
