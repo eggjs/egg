@@ -609,23 +609,98 @@ module.exports = app => {
 };
 ```
 
-如果在原来的客户端基础上，你还想增加一些 api，你可以使用 override API
+我们已经理解，通过 cluster-client 可以让我们在不理解多进程模型的情况下开发『纯粹』的 RegistryClient，只负责和服务端进行交互，然后使用 cluster-client 进行简单的 wrap 就可以得到一个支持多进程模型的 ClusterClient。这里的 RegistryClient 实际上是一个专门负责和远程服务通信进行数据通信的 DataClient。
+
+大家可能已经发现，ClusterClient 同时带来了一些约束，如果想在各进程暴露同样的方法，那么 RegistryClient 上只能支持 sub/pub 模式以及异步的 API 调用。因为在多进程模型中所有的交互都必须经过 socket 通信，势必带来了这一约束。
+
+假设我们要实现一个同步的 get 方法，sub 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。
+
+在这里，我们引入一个 APIClient 的最佳实践。对于有读取缓存数据等同步 API 需求的模块，在 RegistryClient 基础上再封装一个 APIClient 来实现这些与远程服务端交互无关的 API，暴露给用户使用到的是这个 APIClient 的实例。
+
+在 APIClient 内部实现上：
+
+- 异步数据获取，通过调用基于 ClusterClient 的 RegistryClient 的 API 实现。
+- 同步调用等与服务端无关的接口在 APIClient 上实现。由于 ClusterClient 的 API 已经抹平了多进程差异，所以在开发 APIClient 调用到 RegistryClient 时也无需关心多进程模型。
+
+例如增加带缓存的 get 同步方法：
 
 ```js
-// app.js
+const cluster = require('cluster-client');
+const RegistryClient = require('./registry_client');
+
+class APIClient extends Base {
+  constructor(options) {
+    super(options);
+
+    // options.cluster 用于给 egg 的插件传递 app.cluster 进来
+    this._client = (options.cluster || cluster)(RegistryClient).create(options);
+
+    this._client.ready(() => this.ready(true));
+
+    this._cache = {};
+
+    // config.subMap:
+    // {
+    //   foo: reg1,
+    //   bar: reg2,
+    // }
+    for (const key in config.subMap) {
+      this.subscribe(onfig.subMap[key], value => {
+        this._cache[key] = value;
+      });
+    }
+  }
+
+  subscribe(reg, listener) {
+    this._client.subscribe(reg, listener);
+  }
+
+  publish(reg) {
+    this._client.publish(reg);
+  }
+
+  get(key) {
+    return this._cache[key];
+  }
+}
+```
+
+最终模块向外暴露的是这个 APIClient：
+
+```js
+// index.js
+module.exports = APIClient;
+```
+
+那么在插件中我们就可以这么使用：
+
+```js
+// app.js || agent.js
+const APIClient = require('some-client'); // 上面那个模块
 module.exports = app => {
-  agent.mockClient = agent.cluster(MockClient)
-    .delegate('sub', 'subscribe')
-    // 增加一个 getName 的方法
-    .override('getName', function() {
-      return 'mockClient';
-    })
-    .create();
-
+  const config = app.config.client;
+  app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster.bind(app) });
   app.beforeStart(function* () {
-    yield app.mockClient.ready();
-
-    console.log(app.getName()); // mockClient
+    yield app.apiClient.ready();
   });
 };
 ```
+
+
+总结一下：
+
+```bash
+|------------------------------------------------|
+| APIClient                                      |
+|       |----------------------------------------|
+|       | ClusterClient                          |
+|       |      |---------------------------------|
+|       |      | RegistryClient                  |
+|-------|------|---------------------------------|
+```
+
+- RegistryClient - 负责和远端服务通讯，实现数据的存取，只支持异步 API，不关心多进程模型。
+- ClusterClient - 通过 cluster-client 模块进行简单 wrap 得到的 client 实例，负责自动抹平多进程模型的差异。
+- APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。
+
+有兴趣的同学可以看一下 [增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
