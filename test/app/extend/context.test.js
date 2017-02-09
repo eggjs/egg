@@ -294,6 +294,12 @@ describe('test/app/extend/context.test.js', () => {
         const res = yield context.curl(`${localServer}/foo/bar`);
         res.status.should.equal(200);
       });
+
+      it('should curl as promise ok', () => {
+        return utils.startLocalServer()
+        .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
+        .then(res => res.status.should.equal(200));
+      });
     });
 
     describe('ctx.httpclient', () => {
