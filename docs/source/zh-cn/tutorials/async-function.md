@@ -1,15 +1,15 @@
 
-title: 在 egg 中使用 async function
+title: 使用 async function 开发应用
 ---
 
 [前面的章节](../intro/egg-and-koa.md#async function)中介绍了 [async function] 是 js 语言层面提供的异步解决方案，而 node 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。
 
-**注意：在基于 async function 编写 egg 应用代码时，请确保你的代码运行在 node 7.6+ 的版本上。**
+**注意：在基于 async function 编写应用代码时，请确保你的代码运行在 node 7.6+ 的版本上。**
 
-## controller & controller
+## controller & service
 
 在 [controller] 章节中，我们提供了 controller 的两种写法：基于类和普通方法，其中所有用 generator function 实现的地方都可以用 aync function 来实现，代码逻辑没有任何变化，仅需要将 yield 语法改成 await 语法。
-而 [service] 和 controller 一样，所有的异步方法都可以用 async function 替换文档中的 async function。
+而 [service] 和 [controller] 一样，所有的异步方法都可以用 async function 替换文档中的 async function。
 
 举个例子，将 [controller] 文档中的示例改造成 async function 模式：
 
@@ -67,7 +67,7 @@ module.exports = {
 
 ## 中间件
 
-egg 中所有的中间件，包括[标准定义方式](../basics/middleware.md)以及在[路由中定义的中间件](../basics/router.md#中间件的使用)都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 koa v2.x 一样：
+框架中所有的中间件，包括[标准定义方式](../basics/middleware.md)以及在[路由中定义的中间件](../basics/router.md#中间件的使用)都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 koa v2.x 一样：
 
 - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](../basics/extend.md#Context) 的实例。
 - 第二个参数为 `next`，第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
