@@ -3,5 +3,5 @@
     <h1>{{ page.title }}</h1>
     {{ page.content }}
   </article>
+  {{ partial('partial/aside') }}
 </div>
-{{ partial('partial/aside') }}
