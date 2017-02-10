@@ -613,7 +613,7 @@ module.exports = app => {
 
 大家可能已经发现，ClusterClient 同时带来了一些约束，如果想在各进程暴露同样的方法，那么 RegistryClient 上只能支持 sub/pub 模式以及异步的 API 调用。因为在多进程模型中所有的交互都必须经过 socket 通信，势必带来了这一约束。
 
-假设我们要实现一个同步的 get 方法，sub 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。
+假设我们要实现一个同步的 get 方法，subscribe 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。
 
 在这里，我们引入一个 APIClient 的最佳实践。对于有读取缓存数据等同步 API 需求的模块，在 RegistryClient 基础上再封装一个 APIClient 来实现这些与远程服务端交互无关的 API，暴露给用户使用到的是这个 APIClient 的实例。
 
@@ -634,18 +634,19 @@ class APIClient extends Base {
 
     // options.cluster 用于给 egg 的插件传递 app.cluster 进来
     this._client = (options.cluster || cluster)(RegistryClient).create(options);
-
     this._client.ready(() => this.ready(true));
 
     this._cache = {};
 
-    // config.subMap:
+    // subMap:
     // {
     //   foo: reg1,
     //   bar: reg2,
     // }
-    for (const key in config.subMap) {
-      this.subscribe(onfig.subMap[key], value => {
+    const subMap = options.subMap;
+
+    for (const key in subMap) {
+      this.subscribe(subMap[key], value => {
         this._cache[key] = value;
       });
     }
@@ -678,11 +679,21 @@ module.exports = APIClient;
 // app.js || agent.js
 const APIClient = require('some-client'); // 上面那个模块
 module.exports = app => {
-  const config = app.config.client;
+  const config = app.config.apiClient;
   app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster.bind(app) });
   app.beforeStart(function* () {
     yield app.apiClient.ready();
   });
+};
+
+// config.${env}.js
+exports.apiClient = {
+  subMap: {
+    foo: {
+      id: '',
+    },
+    // bar...
+  }
 };
 ```
 
@@ -690,13 +701,13 @@ module.exports = app => {
 总结一下：
 
 ```bash
-|------------------------------------------------|
++------------------------------------------------+
 | APIClient                                      |
-|       |----------------------------------------|
+|       +----------------------------------------|
 |       | ClusterClient                          |
-|       |      |---------------------------------|
+|       |      +---------------------------------|
 |       |      | RegistryClient                  |
-|-------|------|---------------------------------|
++------------------------------------------------+
 ```
 
 - RegistryClient - 负责和远端服务通讯，实现数据的存取，只支持异步 API，不关心多进程模型。
