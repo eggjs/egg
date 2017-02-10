@@ -1,22 +1,29 @@
 .mobile-menu {
   display: none;
-  ul {
-    padding-left: 20px;
-    margin-bottom: 40px;
-    li a {
-      color: #000000;
-    }
-  }
 }
 
 @media screen and (max-width: 1004px) {
   .nav {
-    ul {
+    ul.nav-item {
       display: none;
     }
     header {
       text-align: center;
       width: 100px;
+    }
+    .mobile-trigger {
+      display: inline-block;
+      top: 15px;
+      right: 20px;
+      position: absolute;
+      z-index: 3;
+      li {
+        display: block;
+        background: #000;
+        width: 30px;
+        height: 6px;
+        margin-bottom: 4px;
+      }
     }
   }
   .banner .banner-logo{
@@ -31,48 +38,36 @@
       font-size: 40px;
     }
   }
-  .mobile-menu {
-    display: block;
-  }
 
   .page-main aside {
     display: block;
-    position: absolute;
-    background: #fff;
-    top: 0px;
-    left: -210px;
-    width: 200px;
-    // height: 100%;
-    border-right: 1px solid #eee;
-    box-shadow: 0px 0px 4px 0px #ddd;
-    transition: left 1s;
-  }
-
-  .mobile-trigger {
-    display: inline-block;
-    top: 15px;
+    padding: 0 20px;
+    width: 140px;
+    right: -200px;
+    border-left: 1px solid #E6E6E6;
     transition: right 1s;
-    position: absolute;
-    z-index: 3;
-    left: 0;
-    li {
-      background: #000;
-      width: 30px;
-      height: 6px;
-      margin-bottom: 4px;
-    }
-  }
+    overflow-y: scroll;
 
-  .page-main aside.mobile-show {
-    left: 0;
-    transition: left 1s;
-    .mobile-trigger {
-      right: 15px;
-      transition: right 1s;
-      li {
-        background: #000;
+    .mobile-menu {
+      padding-top: 30px;
+      display: block;
+      ul {
+        margin-bottom: 30px;
+        li a {
+          color: #000000;
+        }
       }
     }
+
+    dl {
+      padding-top: 0;
+    }
+  }
+
+
+  .page-main aside.mobile-show {
+    right: 0px;
+    transition: right 1s;
   }
 
   .page-main article {
@@ -83,4 +78,9 @@
     padding:20px;
   }
 
+  .footer {
+    position: inherit;
+    width: auto;
+    padding: 0 20px;
+  }
 }

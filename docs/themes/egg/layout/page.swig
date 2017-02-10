@@ -1,17 +1,10 @@
-{{ partial('partial/header') }}
 <div class="page-main">
   <article class="markdown-body">
     <h1>{{ page.title }}</h1>
     {{ page.content }}
   </article>
   <aside id="mobileAside" class="toc">
-    <a id="mobileTrigger" href="#" class="mobile-trigger">
-      <ul>
-        <li></li>
-        <li></li>
-        <li></li>
-      </ul>
-    </a>
+
     <div class="mobile-menu">
       <ul>{{ menu_link() }}</ul>
     </div>

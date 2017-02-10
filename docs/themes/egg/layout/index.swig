@@ -12,5 +12,3 @@
   </div>
 </div>
 {{ partial('partial/footer') }}
-<script src="/images/logo-animate.js"></script>
-<script>logo('logo')</script>

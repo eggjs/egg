@@ -1,11 +1,18 @@
 .toc {
-  float: left;
   width: 220px;
-  padding: 60px 0;
   height: 100%;
   position: fixed;
-  overflow-y: scroll;
+  top: 56px;
+  background: #fff;
   border-right:1px solid #E6E6E6;
+
+  &:hover {
+    overflow-y: scroll;
+  }
+
+  dl {
+    padding: 60px 0;
+  }
 
   dt {
     padding-bottom: 10px;
@@ -34,4 +41,3 @@
     list-style-type: none;
   }
 }
-

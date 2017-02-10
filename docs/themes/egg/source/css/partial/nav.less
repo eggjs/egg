@@ -13,37 +13,40 @@
     margin: 0 auto;
   }
 
-  ul {
+  ul.nav-item {
     height: 32px;
     float: left;
     line-height: 32px;
     padding-left: 60px;
-  }
+    li {
+      display: inline-block;
+      margin-left: 40px;
+    }
 
-  li {
-    display: inline-block;
-    margin-left: 40px;
-  }
-
-  a {
-    display: inline-block;
-    color: #3C3C3C;
-    letter-spacing:0.5px;
-    font-weight: 500;
-    &:hover{
-      color:#22ab28;
-      transition: 0.6s all;
+    a {
+      display: inline-block;
+      color: #3C3C3C;
+      letter-spacing:0.5px;
+      font-weight: 500;
+      &:hover{
+        color:#22ab28;
+        transition: 0.6s all;
+      }
     }
   }
 
   iframe {
     vertical-align: -5px;
   }
+
+  .mobile-trigger {
+    display: none;
+  }
 }
 
 .translations {
   display: inline-block;
-  ul{
+  ul.nav-item{
     height: 70px;
     padding-left: 0px;
   }
