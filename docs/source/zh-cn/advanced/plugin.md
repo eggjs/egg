@@ -198,7 +198,7 @@ title: 插件开发
     app.myClient.on('error', err => {
       app.coreLogger.error(err);
     });
-    app.beforeStart(function* () {
+    app.beforeStart(function*() {
       yield app.myClient.ready();
       app.coreLogger.info('my client is ready');
     });
@@ -216,7 +216,7 @@ title: 插件开发
     agent.myClient.on('error', err => {
       agent.coreLogger.error(err);
     });
-    agent.beforeStart(function* () {
+    agent.beforeStart(function*() {
       yield agent.myClient.ready();
       agent.coreLogger.info('my client is ready');
     });
@@ -251,156 +251,6 @@ title: 插件开发
     // your logic code
   };
   ```
-
-### 全局实例插件的最佳实践
-
-许多插件的目的都是将一些已有的服务引入到框架中，如 [egg-mysql], [egg-oss]。他们都需要在 app 上创建对应的实例。而在开发这一类的插件时，我们发现存在一些普遍性的问题：
-
-- 在一个应用中同时使用同一个服务的不同实例（连接到两个不同的 MySQL 数据库）。
-- 从其他服务获取配置后动态初始化连接（从配置中心获取到 MySQL 服务地址后再建立连接）。
-
-如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。
-
-#### 插件写法
-
-我们将 [egg-mysql] 的实现简化之后来看看如何编写此类插件：
-
-```js
-// egg-mysql/app.js
-module.exports = app => {
-  // 第一个参数 mysql 指定了挂载到 app 上的字段，我们可以通过 `app.mysql` 访问到 MySQL singleton 实例
-  // 第二个参数 createMysql 接受两个参数(config, app)，并返回一个 MySQL 的实例
-  app.addSingleton('mysql', createMysql);
-}
-
-/**
- * @param  {Object} config   框架处理之后的配置项，如果应用配置了多个 MySQL 实例，会将每一个配置项分别传入并调用多次 createMysql
- * @param  {Application} app 当前的应用
- * @return {Object}          返回创建的 MySQL 实例
- */
-function createMysql(config, app) {
-  assert(config.host && config.port && config.user && config.database);
-  // 创建实例
-  const client = new Mysql(config);
-
-  // 做启动应用前的检查
-  app.beforeStart(function* () {
-    const rows = yield client.query('select now() as currentTime;');
-    const index = count++;
-    app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
-  });
-
-  return client;
-}
-```
-
-可以看到，插件中我们只需要提供要挂载的字段以及对应服务的初始化方法，所有的配置管理、实例获取方式都由框架封装并统一提供了。
-
-#### 应用层使用方案
-
-##### 单实例
-
-1. 在配置文件中声明 MySQL 的配置。
-
-```js
-// config/config.default.js
-module.exports = {
-  mysql: {
-    client: {
-      host: 'mysql.com',
-      port: '3306',
-      user: 'test_user',
-      password: 'test_password',
-      database: 'test',
-    },
-  },
-};
-```
-
-2. 直接通过 `app.mysql` 访问数据库。
-
-```js
-// app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    *list () {
-      const posts = yield this.app.mysql.query(sql, values);
-    },
-  };
-};
-```
-
-##### 多实例
-
-1. 同样需要在配置文件中声明 MySQL 的配置，不过和单实例时不同，配置项中需要有一个 `clients` 字段，分别申明不同实例的配置，同时可以通过 `default` 字段来配置多个实例中共享的配置（如 host 和 port）。
-
-```js
-// config/config.default.js
-exports.mysql = {
-  clients: {
-    // clientId, access the client instance by app.mysql.get('clientId')
-    db1: {
-      user: 'user1',
-      password: 'upassword1',
-      database: 'db1',
-    },
-    db2: {
-      user: 'user2',
-      password: 'upassword2',
-      database: 'db2',
-    },
-  },
-  // default configuration for all databases
-  default: {
-    host: 'mysql.com',
-    port: '3306',
-  },
-};
-```
-
-2. 通过 `app.mysql.get('db1')` 来获取对应的实例并使用。
-
-```js
-// app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    *list () {
-      const posts = yield this.app.mysql. get('db1').query(sql, values);
-    },
-  };
-};
-```
-
-##### 动态创建实例
-
-我们可以不需要将配置提前申明在配置文件中，而是在应用运行时动态的初始化一个实例。
-
-```js
-// app.js
-module.exports = app => {
-  app.beforeStart(function* () {
-    // 从配置中心获取 MySQL 的配置
-    const mysqlConfig = yield app.configCenter.fetch('mysql');
-    // 动态创建 MySQL 实例
-    app.database = app.mysql.createInstance(mysqlConfig);
-  });
-};
-```
-
-通过 `app.database` 来使用这个实例。
-
-```js
-// app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    *list () {
-      const posts = yield this.app.databse.query(sql, values);
-    },
-  };
-};
-```
-
-**注意，在动态创建实例的时候，框架也会读取配置中 `default` 字段内的配置项作为默认配置。**
 
 ## 插件使用指南
 
@@ -459,31 +309,9 @@ exports.onerror = false;
 - [development](https://github.com/eggjs/egg-development) 开发环境配置
 - [logrotator](https://github.com/eggjs/egg-logrotator) 日志切分
 - [schedule](https://github.com/eggjs/egg-schedule) 定时任务
+- [rest](https://github.com/eggjs/egg-rest) RESTful 支持
 - [static](https://github.com/eggjs/egg-static) 静态服务器
-- [jsonp](https://github.com/eggjs/egg-jsonp) jsonp 支持
-
-### 根据环境配置
-
-插件还支持 `plugin.{env}.js` 这种模式，会根据[环境](../basics/env.md)加载插件配置。
-
-比如定义了一个开发环境使用的插件 `egg-dev`，只希望在本地环境加载，可以如下定义
-
-```js
-// package.json
-{
-  "devDependencies": {
-    "egg-dev": "*"
-  }
-}
-
-// config/plugin.local.js
-exports.dev = {
-  enable: true,
-  package: 'egg-dev',
-};
-```
-
-这样在生产环境可以不需要下载 `egg-dev` 的包了。
+- [cors](https://github.com/eggjs/egg-cors) CORS 支持
 
 ### 插件的寻址规则
 
@@ -515,7 +343,7 @@ $ npm test
 
 - 命名规范
   - `npm` 包名以 `egg-` 开头，且为全小写，例如：`egg-xx`。比较长的词组用中划线：`egg-foo-bar`
-  - 对应的插件名使用小驼峰，小驼峰转换规则以 `npm` 包名的中划线为准 `egg-foo-bar` => `fooBar`
+  - 对应的插件名使用小驼峰，小驼峰转换规则以 `npm` 包名 的中划线为准 `egg-foo-bar` => `fooBar`
   - 对于可以中划线也可以不用的情况，不做强制约定，例如：userservice(egg-userservice) 还是 user-service(egg-user-service) 都可以
 - `package.json` 书写规范
   - 按照上面的文档添加 `eggPlugin` 节点
@@ -542,17 +370,5 @@ $ npm test
   }
   ```
 
-## 为何不使用 npm 包名来做插件名？
-
-egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
-
-首先 egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 egg 无法通过 npm 的包名来做唯一性。
-
-更重要的是 egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
-
-我**将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
-
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
-[egg-mysql]: https://github.com/eggjs/egg-mysql
-[egg-oss]: https://github.com/eggjs/egg-oss

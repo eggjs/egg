@@ -4,10 +4,9 @@
   {{ partial('partial/head') }}
 </head>
 <body>
+  {{ partial('partial/header') }}
   <div id="container">
-    {{ partial('partial/header') }}
     {{ body }}
-    {{ partial('partial/footer') }}
   </div>
 </body>
 </html>

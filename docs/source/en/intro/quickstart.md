@@ -69,13 +69,8 @@ is a [controller](../basics/controller.md) and [router](../basics/router.md).
 
 ```js
 // app/controller/home.js
-module.exports = app => {
-  class HomeController extends app.Controller {
-    * index() {
-      this.ctx.body = 'hi, egg';
-    }
-  }
-  return HomeController;
+module.exports = function* home() {
+  this.body = 'hi, egg';
 };
 ```
 
@@ -85,7 +80,7 @@ Then edit the router file and add a mapping.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
+  app.get('/', 'home');
 };
 ```
 
@@ -170,24 +165,19 @@ Then add a controller and router.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const dataList = {
-        list: [
-          { id: 1, title: 'this is news 1', url: '/news/1' },
-          { id: 2, title: 'this is news 2', url: '/news/2' }
-        ]
-      };
-      yield this.ctx.render('news/list.tpl', dataList);
-    }
-  }
-  return NewsController;
+exports.list = function* newsList() {
+  const dataList = {
+    list: [
+      { id: 1, title: 'this is news 1', url: '/news/1' },
+      { id: 2, title: 'this is news 2', url: '/news/2' }
+    ]
+  };
+  yield this.render('news/list.tpl', dataList);
 };
 
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
+  app.get('/', 'home');
   app.get('/news', 'news.list');
 };
 ```
@@ -243,16 +233,10 @@ Then slightly modify our previous controller.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const ctx = this.ctx;
-      const page = ctx.query.page || 1;
-      const newsList = yield ctx.service.news.list(page);
-      yield ctx.render('news/list.tpl', { list: newsList });
-    }
-  }
-  return NewsController;
+exports.list = function* newsList() {
+  const page = this.query.page || 1;
+  const newsList = yield this.service.news.list(page);
+  yield this.render('news/list.tpl', { list: newsList });
 };
 ```
 
@@ -357,12 +341,10 @@ exports.robot = {
   ],
 };
 
-// app/service/some.js
-class SomeService extends app.Service {
-  * list() {
-    const rule = this.app.config.robot.ua;
-  }
-}
+// app/controller/news.js
+exports.list = function* newsList() {
+  const config = this.app.config.news;
+};
 ```
 
 ### Add Unit Testing
@@ -386,8 +368,8 @@ describe('test/app/middleware/robot.test.js', () => {
 
   it('should block robot', () => {
     return request(app.callback())
-      .get('/')
       .set('User-Agent', "Baiduspider")
+      .get('/')
       .expect(403);
   });
 
