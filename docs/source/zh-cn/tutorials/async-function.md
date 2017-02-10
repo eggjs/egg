@@ -42,7 +42,7 @@ module.exports = app => {
 }
 ```
 
-**注意：在上面的 contorller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generaotr function 接口的话，也需要改造成 async function 接口才能使用。**
+**注意：在上面的 contorller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generaotr function 类型，则也需要改造成 async function 接口才可以被调用。**
 
 ## 定时任务
 
