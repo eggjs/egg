@@ -11,7 +11,7 @@ EGG framework provides a variable named `env` for setting up the runtime environ
 
 There are several ways:
 
-1. Use `config/env` file, usually we use the build tools to generate this file.
+1. Use `config/env` file, usually we use the build tools to generate this file, the content of this file is just the env value, such as `prod`.
 2. Specify the `EGG_SERVER_ENV` environment variable.
 
 
