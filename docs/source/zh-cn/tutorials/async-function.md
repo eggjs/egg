@@ -94,7 +94,7 @@ module.exports = (options, app) => {
 
     // 设置 gzip body，修正响应头
     ctx.body = zlib.createGzip().end(body);
-    ctx.set('Content-Encoding', encoding);
+    ctx.set('Content-Encoding', 'gzip');
   };
 };
 ```
