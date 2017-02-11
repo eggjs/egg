@@ -6,7 +6,7 @@
       <p style="font-size: 22px;">为企业级框架和应用而生</p>
       <p class="banner-button">
         <a class="btn btn-primary" href="{{ index_link('/intro/quickstart.html') }}">{{ __('index.getstart') }}</a>
-        <a class="btn btn-secondary" href="https://github.com/eggjs/egg/">Github</a>
+        <a class="btn btn-secondary" href="https://github.com/eggjs/egg/">GitHub</a>
       </p>
     </div>
   </div>
