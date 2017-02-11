@@ -31,7 +31,7 @@ title: controller
 module.exports = app => {
   class PostController extends app.Controller {
     * create() {
-      const ctx = this.ctx;
+      const { ctx, service } = this;
       const createRule = {
         title: { type: 'string' },
         content: { type: 'string' },
@@ -42,7 +42,7 @@ module.exports = app => {
       const author = ctx.session.userId;
       const req = Object.assign(ctx.request.body, { author });
       // 调用 service 进行业务处理
-      const res = yield ctx.service.post.create(req);
+      const res = yield service.post.create(req);
       // 设置响应内容和响应状态码
       ctx.body = { id: res.id };
       ctx.status = 201;

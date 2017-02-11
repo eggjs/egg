@@ -23,7 +23,7 @@ function* gzip(next) {
 
   // 设置 gzip body，修正响应头
   this.body = zlib.createGzip().end(body);
-  this.set('Content-Encoding', encoding);
+  this.set('Content-Encoding', 'gzip');
 }
 ```
 
@@ -57,7 +57,7 @@ module.exports = (options, app) => {
 
     // 设置 gzip body，修正响应头
     this.body = zlib.createGzip().end(body);
-    this.set('Content-Encoding', encoding);
+    this.set('Content-Encoding', 'gzip');
   };
 };
 ```

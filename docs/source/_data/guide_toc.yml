@@ -26,6 +26,7 @@ Tutorials:
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
   Progressive: /tutorials/progressive.html
+  Async Function: /tutorials/async-function.html
 Advanced:
   # Deployment: /advanced/deployment.html
   Loader: /advanced/loader.html
