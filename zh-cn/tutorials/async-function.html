@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>使用 async function 开发应用 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <ul class="nav-item">
+      <li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/mysql.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li>
+      <!--
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/">中文</a></li>
+          <li><a href="/">English</a></li>
+        </ul>
+      </li>
+      -->
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe></li>
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>使用 async function 开发应用</h1>
+    <p>[前面的章节](../intro/egg-and-koa.md#async function)中介绍了 <a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank" rel="external">async function</a> 是 js 语言层面提供的异步解决方案，而 node 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。</p>
+<p><strong>注意：在基于 async function 编写应用代码时，请确保你的代码运行在 node 7.6+ 的版本上。</strong></p>
+<h2 id="controller-service"><a class="markdown-anchor" href="#controller-service">#</a> controller &amp; service</h2>
+<p>在 <a href="../basics/controller.html">controller</a> 章节中，我们提供了 controller 的两种写法：基于类和普通方法，其中所有用 generator function 实现的地方都可以用 aync function 来实现，代码逻辑没有任何变化，仅需要将 yield 语法改成 await 语法。
+而 <a href="../basics/service.html">service</a> 和 <a href="../basics/controller.html">controller</a> 一样，所有的异步方法都可以用 async function 替换文档中的 async function。</p>
+<p>举个例子，将 <a href="../basics/controller.html">controller</a> 文档中的示例改造成 async function 模式：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/post.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">PostController</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Controller</span> </span>&#123;</div><div class="line">    <span class="comment">// 从 * create() 换成 async create()</span></div><div class="line">    <span class="keyword">async</span> create() &#123;</div><div class="line">      <span class="keyword">const</span> &#123; ctx, service &#125; = <span class="keyword">this</span>;</div><div class="line">      <span class="keyword">const</span> createRule = &#123;</div><div class="line">        <span class="attr">title</span>: &#123; <span class="attr">type</span>: <span class="string">'string'</span> &#125;,</div><div class="line">        <span class="attr">content</span>: &#123; <span class="attr">type</span>: <span class="string">'string'</span> &#125;,</div><div class="line">      &#125;;</div><div class="line">      <span class="comment">// 校验参数</span></div><div class="line">      ctx.validate(createRule);</div><div class="line">      <span class="comment">// 组装参数</span></div><div class="line">      <span class="keyword">const</span> author = ctx.session.userId;</div><div class="line">      <span class="keyword">const</span> req = <span class="built_in">Object</span>.assign(ctx.request.body, &#123; author &#125;);</div><div class="line">      <span class="comment">// 调用 service 进行业务处理</span></div><div class="line">      <span class="comment">// 从 yield 换成 await</span></div><div class="line">      <span class="keyword">const</span> res = <span class="keyword">await</span> service.post.create(req);</div><div class="line">      <span class="comment">// 设置响应内容和响应状态码</span></div><div class="line">      ctx.body = &#123; <span class="attr">id</span>: res.id &#125;;</div><div class="line">      ctx.status = <span class="number">201</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> PostController;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>注意：在上面的 contorller 中，我们用 await 调用了 <code>service.post.create()</code> 方法，如果这个方法是 generaotr function 类型，则也需要改造成 async function 接口才可以被调用。</strong></p>
+<h2 id="定时任务"><a class="markdown-anchor" href="#定时任务">#</a> 定时任务</h2>
+<p>框架提供的<a href="../basics/schedule.html">定时任务</a>也支持 async function，只需要将 task 按照上面的规则，从 generator function 替换成 async function 即可。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="comment">// 通过 schedule 属性来设置定时任务的执行间隔等配置</span></div><div class="line">  schedule: &#123;</div><div class="line">    <span class="attr">interval</span>: <span class="string">'1m'</span>, <span class="comment">// 1 分钟间隔</span></div><div class="line">    type: <span class="string">'all'</span>, <span class="comment">// 指定所有的 worker 都需要执行</span></div><div class="line">  &#125;,</div><div class="line">  <span class="comment">// task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例</span></div><div class="line">  <span class="keyword">async</span> task(ctx) &#123;</div><div class="line">    <span class="keyword">const</span> res = <span class="keyword">await</span> ctx.curl(<span class="string">'http://www.api.com/cache'</span>, &#123;</div><div class="line">      <span class="attr">dataType</span>: <span class="string">'json'</span>,</div><div class="line">    &#125;);</div><div class="line">    ctx.app.cache = res.data;</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="中间件"><a class="markdown-anchor" href="#中间件">#</a> 中间件</h2>
+<p>框架中所有的中间件，包括<a href="../basics/middleware.html">标准定义方式</a>以及在<a href="../basics/router.html#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8">路由中定义的中间件</a>都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 koa v2.x 一样：</p>
+<ul>
+<li>第一个参数为 <code>ctx</code>，代表当前请求的上下文，是 <a href="../basics/extend.html#Context">Context</a> 的实例。</li>
+<li>第二个参数为 <code>next</code>，第二个参数为 <code>next</code>，用 await 执行它来执行后续中间件的逻辑。</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/middleware/gzip.js</span></div><div class="line"></div><div class="line"><span class="keyword">const</span> isJSON = <span class="built_in">require</span>(<span class="string">'koa-is-json'</span>);</div><div class="line"><span class="keyword">const</span> zlib = <span class="built_in">require</span>(<span class="string">'zlib'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function">(<span class="params">options, app</span>) =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">async</span> gzip(ctx, next) =&gt; &#123;</div><div class="line">    <span class="comment">// 注意，和 generator function 格式的中间件不同，此时 next 是一个方法，必须要调用它</span></div><div class="line">    <span class="keyword">await</span> next();</div><div class="line"></div><div class="line">    <span class="comment">// 后续中间件执行完成后将响应体转换成 gzip</span></div><div class="line">    <span class="keyword">const</span> body = ctx.body;</div><div class="line">    <span class="keyword">if</span>（!body) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">    <span class="comment">// 支持 options.threshold</span></div><div class="line">    <span class="keyword">if</span> (options.threshold &amp;&amp; ctx.length &lt; options.threshold) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (isJSON(body)) body = <span class="built_in">JSON</span>.stringify(body);</div><div class="line"></div><div class="line">    <span class="comment">// 设置 gzip body，修正响应头</span></div><div class="line">    ctx.body = zlib.createGzip().end(body);</div><div class="line">    ctx.set(<span class="string">'Content-Encoding'</span>, <span class="string">'gzip'</span>);</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="调用-generator-function-api"><a class="markdown-anchor" href="#调用-generator-function-api">#</a> 调用 generator function API</h2>
+<p>由于一些已有的插件直接提供的是 generator function 的 API，无法直接在 async function 中通过 await 调用，我们可以通过 <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> 提供的 wrap 方法将它们包装成一个返回 Promise 的接口即可在 async function 中使用。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> co = <span class="built_in">require</span>(<span class="string">'co'</span>);</div><div class="line">app.mysql.query = co.wrap(app.mysql.query);</div><div class="line"><span class="comment">// 如果想要直接用 query 方法，需要绑定 this 为 app.mysql</span></div><div class="line"><span class="keyword">const</span> query = co.wrap(app.mysql.query).bind(app.mysql);</div><div class="line"></div><div class="line"><span class="comment">// 包装之后即可在 async function 中使用</span></div><div class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getUser</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="comment">// return await app.mysql.query();</span></div><div class="line">  <span class="keyword">return</span> <span class="keyword">await</span> query();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="和-generator-function-的细微差别"><a class="markdown-anchor" href="#和-generator-function-的细微差别">#</a> 和 generator function 的细微差别</h2>
+<p>尽管两者的编程模型基本一模一样，但是 <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> 做了一些特殊处理，例如支持 yield 一个数组（对象），这些在 async function 中都无法原生做到，但是基于一些 Prmoise 提供的方法以及工具库，也可以轻松的实现这些功能。</p>
+<ul>
+<li>generator function</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;  </div><div class="line">  <span class="keyword">const</span> tasks = [ task(<span class="number">1</span>), task(<span class="number">2</span>), task(<span class="number">3</span>) ];</div><div class="line">  <span class="keyword">let</span> results;</div><div class="line">  <span class="comment">// 并行</span></div><div class="line">  results = <span class="keyword">yield</span> tasks;</div><div class="line">  <span class="comment">// 控制最大并发数为 2</span></div><div class="line">  result = <span class="keyword">yield</span> <span class="built_in">require</span>(<span class="string">'co-parallel'</span>)(tasks, <span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ul>
+<li>async function</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">async</span> () =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> tasks = [ task(<span class="number">1</span>), task(<span class="number">2</span>), task(<span class="number">3</span>) ];</div><div class="line">  <span class="keyword">let</span> results;</div><div class="line">  <span class="comment">// 并行</span></div><div class="line">  results = <span class="keyword">await</span> <span class="built_in">Promise</span>.all(tasks);</div><div class="line">  <span class="comment">// 控制最大并发数为 2</span></div><div class="line">  results = <span class="keyword">await</span> <span class="built_in">require</span>(<span class="string">'p-all'</span>)(tasks, &#123; <span class="attr">concurrency</span>: <span class="number">2</span>&#125; );</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>@sindresorhus 编写了许多<a href="https://github.com/sindresorhus/promise-fun" target="_blank" rel="external">基于 promise 的 helper 方法</a>，灵活的运用它们配合 async function 能让代码更加具有可读性。</p>
+<hr>
+<p>一个完整的例子可以参考 <a href="https://github.com/eggjs/examples/tree/async-await/hackernews-async" target="_blank" rel="external">examples/hackernews-async</a>。</p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/mysql.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+</aside>
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+</div>
+
+  </div>
+</body>
+</html>
