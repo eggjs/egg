@@ -5,12 +5,13 @@
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  color: #333;
+  line-height: 1.5;
+  color: #585858;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 16px;
-  line-height: 1.5;
   word-wrap: break-word;
   line-height: 2;
+  letter-spacing: 0.2px;
 }
 .markdown-body .pl-c {
   color: #969896;
@@ -106,6 +107,7 @@
 }
 .markdown-body strong {
   font-weight: inherit;
+  color: #000;
 }
 .markdown-body strong {
   font-weight: bolder;
@@ -153,7 +155,7 @@
   line-height: inherit;
 }
 .markdown-body a {
-  color: #4078c0;
+  color: #22ab28;
   text-decoration: none;
 }
 .markdown-body a:hover,
@@ -200,27 +202,33 @@
 .markdown-body h1 {
   font-size: 32px;
   font-weight: 600;
+  color: #000;
   border: 0;
 }
 .markdown-body h2 {
   font-size: 24px;
   font-weight: 600;
+  color: #000;
 }
 .markdown-body h3 {
   font-size: 20px;
   font-weight: 600;
+  color: #000;
 }
 .markdown-body h4 {
   font-size: 16px;
   font-weight: 600;
+  color: #000;
 }
 .markdown-body h5 {
   font-size: 14px;
   font-weight: 600;
+  color: #000;
 }
 .markdown-body h6 {
   font-size: 12px;
   font-weight: 600;
+  color: #000;
 }
 .markdown-body p {
   margin-top: 0;
@@ -381,6 +389,7 @@
   padding-bottom: 0.3em;
   font-size: 1.5em;
   border-bottom: 1px solid #eee;
+  line-height: 46px;
 }
 .markdown-body h3 {
   font-size: 1.25em;
@@ -439,11 +448,11 @@
 .markdown-body table th,
 .markdown-body table td {
   padding: 6px 13px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
 }
 .markdown-body table tr {
   background-color: #fff;
-  border-top: 1px solid #ccc;
+  border: 1px solid #ccc;
 }
 .markdown-body table tr:nth-child(2n) {
   background-color: #f8f8f8;
@@ -459,7 +468,8 @@
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
-  background-color: rgba(0, 0, 0, 0.04);
+  color: #687168;
+  background-color: #def5df;
   border-radius: 3px;
 }
 .markdown-body code::before,
@@ -485,7 +495,7 @@
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  background-color: #f7f7f7;
+  background-color: #f8f8f8;
   border-radius: 3px;
 }
 .markdown-body pre code {

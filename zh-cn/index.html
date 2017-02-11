@@ -3,7 +3,7 @@
 <head>
   <title>egg - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
-<meta name="description" content="为企业级框架和应用而生">
+<meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="icon" href="/images/favicon.png" type="image/x-icon">
@@ -11,85 +11,81 @@
 
 </head>
 <body>
-  <div id="container">
-    <div class="nav">
+  <div class="nav" >
   <header>
-    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="/images/logo.svg"></a>
-    <ul>
-      <li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li>
-      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=false" frameborder="0" scrolling="0" width="54px" height="20px"></iframe></li>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <ul class="nav-item">
+      <li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/mysql.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li>
+      <!--
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/">中文</a></li>
+          <li><a href="/">English</a></li>
+        </ul>
+      </li>
+      -->
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe></li>
     </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
   </header>
 </div>
 
+  <div id="container">
     <div class="index">
-  <div class="banner block index-bg-dark">
-    <div class="banner-logo" id="logo"></div>
-    <h1>为企业级框架和应用而生</h1>
-    <p class="banner-button">
-      <a class="btn btn-primary" href="/zh-cn/intro/quickstart.html">开始使用</a>
-    </p>
-  </div>
-
-  <div class="version">
-    <span>Latest: <strong>0.10.0</strong></span>
-    <span>Node.js >= <strong> 6.0.0</strong></span>
-  </div>
-
-  <div class="info index-bg-light">
-    <ul>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature1.svg" />
-        </div>
-        <h3>进程管理</h3>
-        <p>内置的进程管理和负载均衡</p>
-      </li>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature2.svg" />
-        </div>
-        <h3>自定义</h3>
-        <p>基于 egg 和插件系统可以为你的团队自定义框架</p>
-      </li>
-      <li>
-        <div class="info-img">
-          <img src="/images/feature3.svg" />
-        </div>
-        <h3>强大的插件系统</h3>
-        <p>插件系统可插拔及可扩展随心所欲</p>
-      </li>
-    </ul>
-  </div>
-
-  <div class="guide block">
-    <h2 class="ft-b">开始使用</h2>
-    <div class="guide-code">
-      <ul>
-        <li><strong>$</strong>npm install egg-init -g</li>
-        <li><strong>$</strong>egg-init --type simple showcase && cd showcase</li>
-        <li><strong>$</strong>npm install</li>
-        <li><strong>$</strong>npm run dev</li>
-        <li><strong>$</strong>open http://localhost:7001</li>
-      </ul>
+  <div class="banner block index-bg-light">
+    <div class="banner-logo"><img src="https://zos.alipayobjects.com/rmsportal/JFKAMfmPehWfhBPdCjrw.svg"/></div>
+    <div class="banner-info">
+      <h1><p style="font-weight:bold;font-size:48px;">Born to build</p>better enterprise frameworks and apps with Node.js & koa</h1>
+      <p style="font-size: 22px;">为企业级框架和应用而生</p>
+      <p class="banner-button">
+        <a class="btn btn-primary" href="/zh-cn/intro/quickstart.html">开始使用</a>
+        <a class="btn btn-secondary" href="https://github.com/eggjs/egg/">Github</a>
+      </p>
     </div>
-    <p>
-      <a class="btn btn-primary" href="/zh-cn/intro/quickstart.html">查看更多</a>
-    </p>
   </div>
 </div>
-<script src="/images/logo-animate.js"></script>
-<script>logo('logo')</script>
+<div class="index-aside">
+<aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/mysql.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li></ul></dd></dl>
+</aside>
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
 
-    <div class="footer">
+</div>
+<div class="footer">
   <footer>
-    <ul><li><a href="/zh-cn/intro/" alt="新手指南">新手指南</a></li><li><a href="https://eggjs.org/badgeboard/" alt="插件">插件</a></li><li><a href="/release/" alt="发布记录">发布记录</a></li></ul>
+    <ul>
+    <li>Latest: <strong>0.10.0</strong></li>
+    <li>Node.js >= <strong> 6.0.0</strong></li>
+    </ul>
+
     <div class="license">Released under the MIT License <a href="https://github.com/eggjs"><img src="/images/github.svg"/></a></div>
   </footer>
 </div>
 <div class="cnzz">
 <script src="https://s11.cnzz.com/z_stat.php?id=1261142226&web_id=1261142226" language="JavaScript"></script>
 </div>
+
 
   </div>
 </body>

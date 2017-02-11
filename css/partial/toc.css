@@ -1,31 +1,39 @@
-.toc {
-  position: relative;
-  left: 3px;
-  float: left;
-  width: 200px;
-  padding: 40px 0;
-  border-right: 1px solid #EFEFEF;
+aside {
+  width: 220px;
+  height: 100%;
+  position: fixed;
+  top: 56px;
+  background: #fff;
+  border-right: 1px solid #E6E6E6;
 }
-.toc dl {
-  padding: 0 20px;
+aside:hover {
+  overflow-y: scroll;
 }
-.toc dt {
+aside dl {
+  padding: 60px 0;
+}
+aside dt {
   padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
 }
-.toc dd {
+aside dd {
   margin-bottom: 30px;
 }
-.toc ul li a {
+aside ul li a {
   font-size: 14px;
-  color: #71747B;
-  height: 40px;
-  line-height: 40px;
+  color: #585858;
+  height: 30px;
+  line-height: 30px;
 }
-.toc ul li a:hover {
-  color: #006BE8;
-  transition: 0.3s all;
+aside ul li a:hover {
+  color: #22ab28;
+  transition: 0.3s color;
 }
-.toc li {
+aside li {
   list-style-type: none;
+}
+.index-aside aside {
+  display: none;
 }
