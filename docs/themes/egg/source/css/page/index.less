@@ -7,25 +7,37 @@
   color: #fff;
   line-height: 38px;
   letter-spacing: 0.5px;
+  text-align: center;
   font-weight: normal;
+  margin-right: 10px;
 }
 
 .btn-primary {
-  background: #006FE5;
-  border-color: #006FE5;
+  background: #22ab28;
+  border-color: #209425;
   &:hover{
-    box-shadow: 0px 4px 8px 0px #0E3D6F;
     color: #fff;
-    transition: box-shadow 0.3s;
+    background: #42bd48;
+    border-color: #0e5f12;
+    transition: all 0.3s;
   }
 }
-
+.btn-secondary{
+  border: 1px solid #22ab28;
+  border-radius: 100px;
+  color: #22ab28;
+  &:hover{
+    background: #22ab28;
+    color: #fff;
+    transition: all 0.6s;
+  }
+}
 .index {
   text-align: center;
 }
 
 .index-bg-dark {
-  background: @bg_dark;
+  background: @bg_light;
   color: #dbdde6;
 }
 
@@ -38,15 +50,30 @@
 }
 
 .banner {
+  max-width: @max_width;
+  margin:100px auto;
   h1{
-    font-size: 32px;
+    font-size: 46px;
     font-weight: 200;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
   }
-
+  .banner-info {
+    width: 60%;
+    h1 {
+      text-align: left;
+    }
+    p{
+      text-align: left;
+    }
+  }
   .banner-logo {
-    height: 280px;
+    float: right;
+    padding-right: 13%;
+    margin-top: -60px;
+    img{
+      width: 120%;
+    }
   }
 
   .banner-button {

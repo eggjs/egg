@@ -1,8 +1,9 @@
 menu:
-  guide: 新手指南
+  guide: 指南
   api: API
+  tutorials: 教程
   plugins: 插件
-  release: 发布记录
+  release: 发布日志
 
 index:
   slogan: "为企业级框架和应用而生"
@@ -14,6 +15,9 @@ index:
   feature32: "插件系统可插拔及可扩展随心所欲"
   getstart: "开始使用"
   readmore: "查看更多"
+
+header:
+  translations: "切换语言"
 
 guide_toc:
   Intro: 新手指南

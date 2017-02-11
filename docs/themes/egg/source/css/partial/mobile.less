@@ -1,74 +1,91 @@
 .mobile-menu {
   display: none;
-  ul {
-    padding-left: 20px;
-    margin-bottom: 40px;
-    li a {
-      color: #000000;
-    }
-  }
 }
 
 @media screen and (max-width: 1004px) {
-  .nav, footer {
-    padding: 0 20px;
-  }
-
   .nav {
-    ul {
+    ul.nav-item {
       display: none;
     }
     header {
-      text-align: center;
+      width: 90%;
     }
-  }
-
-  .mobile-menu {
-    display: block;
-  }
-
-  .page-main aside {
-    display: block;
-    position: absolute;
-    background: #fff;
-    top: 0px;
-    left: -210px;
-    width: 200px;
-    // height: 100%;
-    border-right: 1px solid #eee;
-    box-shadow: 0px 0px 4px 0px #ddd;
-    transition: left 1s;
-  }
-
-  .mobile-trigger {
-    display: inline-block;
-    top: 15px;
-    right: -50px;
-    transition: right 1s;
-    position: absolute;
-    li {
-      background: #fff;
-      width: 30px;
-      height: 6px;
-      margin-bottom: 4px;
+    .nav-logo{
+      padding-top: 2px;
     }
-  }
-
-  .page-main aside.mobile-show {
-    left: 0;
-    transition: left 1s;
     .mobile-trigger {
-      right: 15px;
-      transition: right 1s;
+      display: inline-block;
+      top: 21px;
+      right: 20px;
+      position: absolute;
+      z-index: 3;
       li {
-        background: #000;
+        display: block;
+        background: #6b6b6b;
+        width: 22px;
+        height: 3px;
+        margin-bottom: 4px;
       }
     }
+  }
+  .banner .banner-logo{
+    padding-right: 25%;
+    margin-top: -100px;
+    padding-bottom: 100px;
+  }
+  .banner .banner-info{
+    width: 80%;
+    margin: 0 auto;
+    h1{
+      font-size: 40px;
+    }
+  }
+
+  .index-aside aside {
+    display: block;
+  }
+
+  aside {
+    display: block;
+    padding: 0 20px;
+    width: 140px;
+    right: -200px;
+    border-left: 1px solid #E6E6E6;
+    transition: right 1s;
+    overflow-y: scroll;
+
+    .mobile-menu {
+      padding-top: 30px;
+      display: block;
+      ul {
+        margin-bottom: 30px;
+        li a {
+          color: #000000;
+        }
+      }
+    }
+
+    dl {
+      padding-top: 0;
+    }
+  }
+
+  aside.mobile-show {
+    right: 0px;
+    transition: right 1s;
   }
 
   .page-main article {
     float: none;
-    width: auto;
+    width: 100%;
+    width: 88%;
+    margin: 0 auto;
+    padding:20px;
   }
 
+  .footer {
+    position: inherit;
+    width: auto;
+    padding: 0 20px;
+  }
 }
