@@ -1,4 +1,24 @@
 
+0.12.0 / 2017-02-12
+===================
+
+  * docs: fix async link (#357)
+  * docs: add async await (#349)
+  * docs: typo Github > GitHub (#356)
+  * docs: update site style  (#340)
+  * deps: upgrade egg-core (#350)
+  * docs: add description to config/env file (#348)
+  * docs: add APIClient concept to cluster doc (#344)
+  * test: add async test case (#339)
+  * feat: view base promise to support async function (#343)
+  * feat: curl return promise (#342)
+  * test: add class style controller tests (#336)
+  * docs: add cnzz (#335)
+  * test: improve coverage to 100% (#333)
+  * docs: update egg-and-koa with async function (#334)
+  * fix: remove tair and hsf (#332)
+  * docs: quickstart - use controller class (#329)
+
 0.11.0 / 2017-02-07
 ===================
 
