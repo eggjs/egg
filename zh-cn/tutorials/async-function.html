@@ -42,7 +42,7 @@
     <div class="page-main">
   <article class="markdown-body">
     <h1>使用 async function 开发应用</h1>
-    <p>[前面的章节](../intro/egg-and-koa.md#async function)中介绍了 <a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank" rel="external">async function</a> 是 js 语言层面提供的异步解决方案，而 node 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。</p>
+    <p><a href="../intro/egg-and-koa.html#async-function">前面的章节</a>中介绍了 <a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank" rel="external">async function</a> 是 js 语言层面提供的异步解决方案，而 node 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。</p>
 <p><strong>注意：在基于 async function 编写应用代码时，请确保你的代码运行在 node 7.6+ 的版本上。</strong></p>
 <h2 id="controller-service"><a class="markdown-anchor" href="#controller-service">#</a> controller &amp; service</h2>
 <p>在 <a href="../basics/controller.html">controller</a> 章节中，我们提供了 controller 的两种写法：基于类和普通方法，其中所有用 generator function 实现的地方都可以用 aync function 来实现，代码逻辑没有任何变化，仅需要将 yield 语法改成 await 语法。
@@ -66,13 +66,15 @@
 <h2 id="和-generator-function-的细微差别"><a class="markdown-anchor" href="#和-generator-function-的细微差别">#</a> 和 generator function 的细微差别</h2>
 <p>尽管两者的编程模型基本一模一样，但是 <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> 做了一些特殊处理，例如支持 yield 一个数组（对象），这些在 async function 中都无法原生做到，但是基于一些 Prmoise 提供的方法以及工具库，也可以轻松的实现这些功能。</p>
 <ul>
-<li>generator function</li>
-</ul>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;  </div><div class="line">  <span class="keyword">const</span> tasks = [ task(<span class="number">1</span>), task(<span class="number">2</span>), task(<span class="number">3</span>) ];</div><div class="line">  <span class="keyword">let</span> results;</div><div class="line">  <span class="comment">// 并行</span></div><div class="line">  results = <span class="keyword">yield</span> tasks;</div><div class="line">  <span class="comment">// 控制最大并发数为 2</span></div><div class="line">  result = <span class="keyword">yield</span> <span class="built_in">require</span>(<span class="string">'co-parallel'</span>)(tasks, <span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<ul>
-<li>async function</li>
-</ul>
+<li>
+<p>generator function</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> tasks = [ task(<span class="number">1</span>), task(<span class="number">2</span>), task(<span class="number">3</span>) ];</div><div class="line">  <span class="keyword">let</span> results;</div><div class="line">  <span class="comment">// 并行</span></div><div class="line">  results = <span class="keyword">yield</span> tasks;</div><div class="line">  <span class="comment">// 控制最大并发数为 2</span></div><div class="line">  result = <span class="keyword">yield</span> <span class="built_in">require</span>(<span class="string">'co-parallel'</span>)(tasks, <span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>async function</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">async</span> () =&gt; &#123;</div><div class="line">  <span class="keyword">const</span> tasks = [ task(<span class="number">1</span>), task(<span class="number">2</span>), task(<span class="number">3</span>) ];</div><div class="line">  <span class="keyword">let</span> results;</div><div class="line">  <span class="comment">// 并行</span></div><div class="line">  results = <span class="keyword">await</span> <span class="built_in">Promise</span>.all(tasks);</div><div class="line">  <span class="comment">// 控制最大并发数为 2</span></div><div class="line">  results = <span class="keyword">await</span> <span class="built_in">require</span>(<span class="string">'p-all'</span>)(tasks, &#123; <span class="attr">concurrency</span>: <span class="number">2</span>&#125; );</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</li>
+</ul>
 <p>@sindresorhus 编写了许多<a href="https://github.com/sindresorhus/promise-fun" target="_blank" rel="external">基于 promise 的 helper 方法</a>，灵活的运用它们配合 async function 能让代码更加具有可读性。</p>
 <hr>
 <p>一个完整的例子可以参考 <a href="https://github.com/eggjs/examples/tree/async-await/hackernews-async" target="_blank" rel="external">examples/hackernews-async</a>。</p>
