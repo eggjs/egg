@@ -23,8 +23,8 @@ co(function* () {
   }
 
   console.log('Copying CONTRIBUTING.md');
-  yield copyFile('CONTRIBUTING.md', 'docs/source/contributing.md');
-  yield copyFile('CONTRIBUTING.zh-CN.md', 'docs/source/zh-cn/contributing.md');
+  yield copyContributing('CONTRIBUTING.md', 'docs/source/en/contributing.md');
+  yield copyContributing('CONTRIBUTING.zh-CN.md', 'docs/source/zh-cn/contributing.md');
 
   yield rm('docs/public');
   yield runscript('npminstall', { cwd: 'docs' });
@@ -65,9 +65,10 @@ function* deploy() {
   });
 }
 
-function* copyFile(src, dist) {
-  const buf = yield fs.readFile(src);
-  yield fs.writeFile(dist, buf);
+function* copyContributing(src, target) {
+  let content = yield fs.readFile(src, 'utf8');
+  content = content.replace(/^#\s*(.*?)\n/, 'title: $1\n---\n');
+  yield fs.writeFile(target, content);
 }
 
 function rm(dir) {
