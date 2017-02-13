@@ -1,6 +1,5 @@
 'use strict';
 
-const pedding = require('pedding');
 const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
@@ -15,20 +14,12 @@ describe('test/app/middleware/notfound.test.js', () => {
 
   afterEach(mm.restore);
 
-  it('should 302 redirect to 404.html on production env', () => {
-    mm(app.config.notfound, 'enableRedirect', true);
+  it('should 302 redirect to 404.html', () => {
     return request(app.callback())
       .get('/test/404')
       .set('Accept', 'test/html')
       .expect('Location', 'https://eggjs.org/404')
       .expect(302);
-  });
-
-  it('should show 404 on dev env', () => {
-    return request(app.callback())
-      .get('/test/404')
-      .expect('<h1>404 Not Found</h1>Because you are in a non-prod environment, you will be looking at this page, otherwise it will jump to https://eggjs.org/404')
-      .expect(404);
   });
 
   it('should 404 json response', () => {
@@ -59,7 +50,7 @@ describe('test/app/middleware/notfound.test.js', () => {
       .expect(404);
   });
 
-  describe('app.404.url=/404', () => {
+  describe('config.notfound.pageUrl = "/404"', () => {
     let app;
     before(() => {
       app = utils.app('apps/notfound-custom-404');
@@ -69,20 +60,32 @@ describe('test/app/middleware/notfound.test.js', () => {
 
     afterEach(mm.restore);
 
-    it('should 302 redirect to custom /404 on production env', done => {
-      done = pedding(2, done);
-      mm(app.config.notfound, 'enableRedirect', true);
-
-      request(app.callback())
+    it('should 302 redirect to custom /404 when required html', function* () {
+      yield request(app.callback())
         .get('/test/404')
         .set('Accept', 'test/html')
         .expect('Location', '/404')
-        .expect(302, done);
+        .expect(302);
 
-      request(app.callback())
+      yield request(app.callback())
         .get('/404')
         .expect('Hi, this is 404')
-        .expect(200, done);
+        .expect(200);
+    });
+
+    it('should not avoid circular redirects', function* () {
+      mm(app.config.notfound, 'pageUrl', '/notfound');
+
+      yield request(app.callback())
+        .get('/test/404')
+        .set('Accept', 'test/html')
+        .expect('Location', '/notfound')
+        .expect(302);
+
+      yield request(app.callback())
+        .get('/notfound')
+        .expect('<h1>404 Not Found</h1><p><pre><code>config.notfound.pageUrl(/notfound)</code></pre> is unimplemented</p>')
+        .expect(404);
     });
   });
 });

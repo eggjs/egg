@@ -106,7 +106,6 @@ module.exports = appInfo => {
    */
   exports.notfound = {
     pageUrl: '',
-    enableRedirect: appInfo.env === 'prod',
   };
 
   /**

@@ -18,16 +18,19 @@ module.exports = options => {
       return;
     }
 
-    if (options.enableRedirect && options.pageUrl) {
+    const notFoundHtml = '<h1>404 Not Found</h1>';
+
+    // notfound handler is unimplemented
+    if (options.pageUrl && this.path === options.pageUrl) {
+      this.body = `${notFoundHtml}<p><pre><code>config.notfound.pageUrl(${options.pageUrl})</code></pre> is unimplemented</p>`;
+      return;
+    }
+
+    if (options.pageUrl) {
       this.realStatus = 404;
       this.redirect(options.pageUrl);
       return;
     }
-    const title = '<h1>404 Not Found</h1>';
-    if (!options.enableRedirect && options.pageUrl) {
-      this.body = `${title}Because you are in a non-prod environment, you will be looking at this page, otherwise it will jump to ${options.pageUrl}`;
-    } else {
-      this.body = title;
-    }
+    this.body = notFoundHtml;
   };
 };

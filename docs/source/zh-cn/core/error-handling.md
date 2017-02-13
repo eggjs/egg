@@ -52,15 +52,15 @@ this.runInBackground(function* () {
 
 | 请求需求的格式 | 环境 | errorPageUrl 是否配置 | 返回内容 |
 |-------------|------|----------------------|--------|
-| html & text | local & unittest | - | onerror 自带的错误页面，展示详细的错误信息 |
-| html & text | 其他 | 是 | 重定向到 errorPageUrl |
-| html & text | 其他 | 否 | onerror 自带的没有错误信息的简单错误页（不推荐） |
-| json | local & unittest | - | json 对象，带详细的错误信息 |
-| json | 其他 | - | json 对象，不带详细的错误信息 |
+| HTML & TEXT | local & unittest | - | onerror 自带的错误页面，展示详细的错误信息 |
+| HTML & TEXT | 其他 | 是 | 重定向到 errorPageUrl |
+| HTML & TEXT | 其他 | 否 | onerror 自带的没有错误信息的简单错误页（不推荐） |
+| JSON | local & unittest | - | JSON 对象，带详细的错误信息 |
+| JSON | 其他 | - | json 对象，不带详细的错误信息 |
 
 ### errorPageUrl
 
-onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 html 页面异常，就会重定向到这个地址。
+onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 HTML 页面异常，就会重定向到这个地址。
 
 在 `config/config.default.js` 中
 
@@ -109,5 +109,58 @@ module.exports = {
     // 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理
     match: '/api',
   },
+};
+```
+
+## 404
+
+框架并不会将服务端返回的 404 状态当做异常来处理，但是框架提供了当响应为 404 且没有返回 body 时的默认响应。
+
+- 当请求被框架判定为需要 JSON 格式的响应时，会返回一段 JSON：
+
+  ```json
+  { "message": "Not Found" }
+  ```
+
+- 当请求被框架判定为需要 HTML 格式的响应时，会返回一段 HTML：
+
+  ```html
+  <h1>404 Not Found</h1>
+  ```
+
+框架支持通过配置，将默认的 HTML 请求的 404 响应重定向到指定的页面。
+
+```js
+// config/config.default.js
+module.exports = {
+  notfound: {
+    pageUrl: '/404.html',
+  },
+};
+```
+
+### 自定义 404 响应
+
+在一些场景下，我们需要自定义服务器 404 时的响应，和自定义异常处理一样，我们也只需要加入一个中间件即可对 404 做统一处理：
+
+```js
+// app/middleware/notfound_handler.js
+module.exports = () => {
+  return function* (next) {
+    yield next;
+    if (this.status === 404 && !this.body) {
+      if (this.acceptJSON) this.body = { error: 'Not Found' };
+      else this.body = '<h1>Page Not Found</h1>';
+    }
+  };
+};
+```
+
+在配置中引入中间件：
+
+```js
+// config/config.default.js
+module.exports = {
+  middleware: [ 'notfoundHander' ],
 };
 ```
