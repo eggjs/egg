@@ -15,20 +15,12 @@ describe('test/app/middleware/notfound.test.js', () => {
 
   afterEach(mm.restore);
 
-  it('should 302 redirect to 404.html on production env', () => {
-    mm(app.config.notfound, 'enableRedirect', true);
+  it('should 302 redirect to 404.html', () => {
     return request(app.callback())
       .get('/test/404')
       .set('Accept', 'test/html')
       .expect('Location', 'https://eggjs.org/404')
       .expect(302);
-  });
-
-  it('should show 404 on dev env', () => {
-    return request(app.callback())
-      .get('/test/404')
-      .expect('<h1>404 Not Found</h1>Because you are in a non-prod environment, you will be looking at this page, otherwise it will jump to https://eggjs.org/404')
-      .expect(404);
   });
 
   it('should 404 json response', () => {
@@ -71,7 +63,6 @@ describe('test/app/middleware/notfound.test.js', () => {
 
     it('should 302 redirect to custom /404 on production env', done => {
       done = pedding(2, done);
-      mm(app.config.notfound, 'enableRedirect', true);
 
       request(app.callback())
         .get('/test/404')

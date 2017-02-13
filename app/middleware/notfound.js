@@ -18,16 +18,11 @@ module.exports = options => {
       return;
     }
 
-    if (options.enableRedirect && options.pageUrl) {
+    if (options.pageUrl) {
       this.realStatus = 404;
       this.redirect(options.pageUrl);
       return;
     }
-    const title = '<h1>404 Not Found</h1>';
-    if (!options.enableRedirect && options.pageUrl) {
-      this.body = `${title}Because you are in a non-prod environment, you will be looking at this page, otherwise it will jump to ${options.pageUrl}`;
-    } else {
-      this.body = title;
-    }
+    this.body = '<h1>404 Not Found</h1>';
   };
 };
