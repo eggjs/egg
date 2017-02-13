@@ -715,3 +715,5 @@ exports.apiClient = {
 - APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。
 
 有兴趣的同学可以看一下 [增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
+
+[为什么我们没有选择 PM2?](../faq.md#进程管理为什么没有选型-pm2)
