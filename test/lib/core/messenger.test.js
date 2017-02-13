@@ -112,7 +112,7 @@ describe('test/lib/core/messenger.test.js', () => {
     });
   });
 
-  describe.only('sendRandom', () => {
+  describe('sendRandom', () => {
     let app;
     before(() => {
       mm.env('default');
