@@ -18,11 +18,19 @@ module.exports = options => {
       return;
     }
 
+    const notFoundHtml = '<h1>404 Not Found</h1>';
+
+    // notfound handler is unimplemented
+    if (options.pageUrl && this.path === options.pageUrl) {
+      this.body = `${notFoundHtml}<p><pre><code>config.notfound.pageUrl(${options.pageUrl})</code></pre> is unimplemented</p>`;
+      return;
+    }
+
     if (options.pageUrl) {
       this.realStatus = 404;
       this.redirect(options.pageUrl);
       return;
     }
-    this.body = '<h1>404 Not Found</h1>';
+    this.body = notFoundHtml;
   };
 };
