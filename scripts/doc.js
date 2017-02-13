@@ -13,6 +13,8 @@ const BRANCH = 'gh-pages';
 const DOC_PUBLISHER_NAME = 'Auto Doc Publisher';
 const DOC_PUBLISHER_EMAIL = 'docs@eggjs.org';
 process.env.PATH += `:${process.cwd()}/docs/node_modules/.bin`;
+const EGG_VERSION = require('../package.json').version;
+const NODE_VERSION = require('../package.json').engines.node;
 
 const command = process.argv[2];
 
@@ -25,6 +27,9 @@ co(function* () {
   console.log('Copying CONTRIBUTING.md');
   yield copyFile('CONTRIBUTING.md', 'docs/source/contributing.md');
   yield copyFile('CONTRIBUTING.zh-CN.md', 'docs/source/zh-cn/contributing.md');
+
+  console.log('Updating version');
+  yield versionUpdate();
 
   yield rm('docs/public');
   yield runscript('npminstall', { cwd: 'docs' });
@@ -76,4 +81,9 @@ function rm(dir) {
 
 function publish(basePath, options) {
   return done => ghpages.publish(basePath, options, done);
+}
+
+function* versionUpdate() {
+  const versionPath = 'docs/source/_data/versions.yml';
+  yield fs.writeFile(versionPath, `egg: ${EGG_VERSION}\nnode: "${NODE_VERSION}"\n`);
 }
