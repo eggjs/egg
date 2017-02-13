@@ -181,3 +181,7 @@ module.exports = {
 ```
 
 path 为一个绝对路径，这样应用可以把自己写的插件直接放到应用目录中，如 `app/plugin` 目录。
+
+## 配置结果
+
+框架在启动时会把合并后的最终配置 dump 到 `run/application.json`（worker 进程）和 `run/agent.json`（agent 进程）中，可以用来分析问题。
