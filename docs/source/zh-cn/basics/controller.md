@@ -780,7 +780,7 @@ exports.show = function* (ctx) {
 
 ```js
 // config/config.default.js
-module.exports = {
+exports.jsonp = {
   callback: 'callback', // 识别 query 中的 `callback` 参数
   limit: 100, // 函数名最长为 100 个字符
 }
