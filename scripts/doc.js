@@ -7,6 +7,7 @@ const co = require('co');
 const rimraf = require('rimraf');
 const runscript = require('runscript');
 const ghpages = require('gh-pages');
+const jsdoc = require('./jsdoc');
 
 // The branch that pushing document
 const BRANCH = 'gh-pages';
@@ -37,12 +38,15 @@ co(function* () {
   switch (command) {
     case 'server':
       yield runscript('hexo --cwd docs server -l');
+      yield jsdoc('docs/public/api');
       break;
     case 'build':
-      yield runscript('hexo --cwd docs generate --force');
+      // yield runscript('hexo --cwd docs generate --force');
+      yield jsdoc('docs/public/api');
       break;
     case 'deploy':
       yield runscript('hexo --cwd docs generate --force');
+      yield jsdoc('docs/public/api');
       yield deploy();
       break;
     default:
