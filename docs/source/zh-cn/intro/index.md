@@ -24,6 +24,7 @@ egg 奉行『**约定优于配置**』，按照[一套统一的约定](../advanc
 - 内置[多进程管理](../advanced/cluster.md)
 - 基于 [koa] 开发，性能优异
 - 框架稳定，测试覆盖率高
+- [渐进式开发](../tutorials/progressive.md)
 
 [sails]: http://sailsjs.com
 [express]: http://expressjs.com
