@@ -64,31 +64,31 @@
 </thead>
 <tbody>
 <tr>
-<td>html &amp; text</td>
+<td>HTML &amp; TEXT</td>
 <td>local &amp; unittest</td>
 <td>-</td>
 <td>onerror 自带的错误页面，展示详细的错误信息</td>
 </tr>
 <tr>
-<td>html &amp; text</td>
+<td>HTML &amp; TEXT</td>
 <td>其他</td>
 <td>是</td>
 <td>重定向到 errorPageUrl</td>
 </tr>
 <tr>
-<td>html &amp; text</td>
+<td>HTML &amp; TEXT</td>
 <td>其他</td>
 <td>否</td>
 <td>onerror 自带的没有错误信息的简单错误页（不推荐）</td>
 </tr>
 <tr>
-<td>json</td>
+<td>JSON</td>
 <td>local &amp; unittest</td>
 <td>-</td>
-<td>json 对象，带详细的错误信息</td>
+<td>JSON 对象，带详细的错误信息</td>
 </tr>
 <tr>
-<td>json</td>
+<td>JSON</td>
 <td>其他</td>
 <td>-</td>
 <td>json 对象，不带详细的错误信息</td>
@@ -96,7 +96,7 @@
 </tbody>
 </table>
 <h3 id="errorpageurl"><a class="markdown-anchor" href="#errorpageurl">#</a> errorPageUrl</h3>
-<p>onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 html 页面异常，就会重定向到这个地址。</p>
+<p>onerror 插件的配置中支持 errorPageUrl 属性，当配置了 errorPageUrl 时，一旦用户请求线上应用的 HTML 页面异常，就会重定向到这个地址。</p>
 <p>在 <code>config/config.default.js</code> 中</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">onerror</span>: &#123;</div><div class="line">    <span class="comment">// 线上页面发生异常时，重定向到这个页面上</span></div><div class="line">    errorPageUrl: <span class="string">'/50x.html'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h2 id="自定义统一异常处理"><a class="markdown-anchor" href="#自定义统一异常处理">#</a> 自定义统一异常处理</h2>
@@ -105,6 +105,25 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/middleware/error_handler.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* <span class="title">errorHandler</span>(<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">yield</span> next;</div><div class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">      <span class="comment">// 注意：自定义的错误统一处理函数捕捉到错误后也要 `app.emit('error', err, this)`</span></div><div class="line">      <span class="comment">// 框架会统一监听，并打印对应的错误日志</span></div><div class="line">      <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err, <span class="keyword">this</span>);</div><div class="line">      <span class="comment">// 自定义错误时异常返回的格式</span></div><div class="line">      <span class="keyword">this</span>.body = &#123;</div><div class="line">        <span class="attr">success</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">message</span>: <span class="keyword">this</span>.app.config.env === <span class="string">'prod'</span> ? <span class="string">'Internal Server Error'</span> : err.message,</div><div class="line">      &#125;;</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>然后在 <code>config/config.default.js</code> 中引入这个中间件</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">middleware</span>: [ <span class="string">'errorHandler'</span> ],</div><div class="line">  <span class="attr">errorHandler</span>: &#123;</div><div class="line">    <span class="comment">// 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理</span></div><div class="line">    match: <span class="string">'/api'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h2 id="404"><a class="markdown-anchor" href="#404">#</a> 404</h2>
+<p>框架并不会将服务端返回的 404 状态当做异常来处理，但是框架提供了当响应为 404 且没有返回 body 时的默认响应。</p>
+<ul>
+<li>
+<p>当请求被框架判定为需要 JSON 格式的响应时，会返回一段 JSON：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123; <span class="attr">"message"</span>: <span class="string">"Not Found"</span> &#125;</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>当请求被框架判定为需要 HTML 格式的响应时，会返回一段 HTML：</p>
+<p><figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>404 Not Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div></pre></td></tr></table></figure></p>
+</li>
+</ul>
+<p>框架支持通过配置，将默认的 HTML 请求的 404 响应重定向到指定的页面。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">notfound</span>: &#123;</div><div class="line">    <span class="attr">pageUrl</span>: <span class="string">'/404.html'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="自定义-404-响应"><a class="markdown-anchor" href="#自定义-404-响应">#</a> 自定义 404 响应</h3>
+<p>在一些场景下，我们需要自定义服务器 404 时的响应，和自定义异常处理一样，我们也只需要加入一个中间件即可对 404 做统一处理：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/middleware/notfound_handler.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* (<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> next;</div><div class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.status === <span class="number">404</span> &amp;&amp; !<span class="keyword">this</span>.body) &#123;</div><div class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>.acceptJSON) <span class="keyword">this</span>.body = &#123; <span class="attr">error</span>: <span class="string">'Not Found'</span> &#125;;</div><div class="line">      <span class="keyword">else</span> <span class="keyword">this</span>.body = <span class="string">'&lt;h1&gt;Page Not Found&lt;/h1&gt;'</span>;</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在配置中引入中间件：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">middleware</span>: [ <span class="string">'notfoundHander'</span> ],</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 
   </article>
   <aside id="mobileAside" class="toc">
