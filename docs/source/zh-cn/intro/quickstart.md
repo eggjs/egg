@@ -5,7 +5,7 @@ title: 快速入门
 
 ## 环境准备
 
-- 操作系统：支持 OSX，Linux，Windows(不建议)
+- 操作系统：支持 OSX，Linux，Windows
 - 运行环境：建议选择 [LTS 版本][node]，最低要求 6.x
 
 ## 快速初始化

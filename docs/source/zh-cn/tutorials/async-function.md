@@ -70,7 +70,7 @@ module.exports = {
 框架中所有的中间件，包括[标准定义方式](../basics/middleware.md)以及在[路由中定义的中间件](../basics/router.md#中间件的使用)都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 koa v2.x 一样：
 
 - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](../basics/extend.md#Context) 的实例。
-- 第二个参数为 `next`，第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
+- 第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
 
 ```js
 // app/middleware/gzip.js

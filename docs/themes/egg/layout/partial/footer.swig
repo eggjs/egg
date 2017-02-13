@@ -1,7 +1,7 @@
 <div class="footer">
   <footer>
     <ul>
-    <li>Latest: <strong>0.10.0</strong></li>
+    <li>Latest: <strong>0.12.0</strong></li>
     <li>Node.js >= <strong> 6.0.0</strong></li>
     </ul>
 
