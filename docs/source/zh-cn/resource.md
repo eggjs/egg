@@ -1,6 +1,10 @@
 title: 资源
 ---
 
+## 渠道
+
+- [知乎专栏](https://zhuanlan.zhihu.com/eggjs)
+
 ## 框架列表
 
 - [aliyun-egg](https://github.com/eggjs/aliyun-egg)
