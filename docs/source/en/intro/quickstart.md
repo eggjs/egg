@@ -8,7 +8,7 @@ By following along with this guide step by step, you can quickly get started wit
 
 ## Prerequisites
 
-- Operating System: Linux, OS X or Windows (not recommended).
+- Operating System: Linux, OS X or Windows.
 - Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][node].
 
 ## the Quick Way
