@@ -112,7 +112,7 @@ describe('test/lib/core/messenger.test.js', () => {
     });
   });
 
-  describe('sendRandom', () => {
+  describe.only('sendRandom', () => {
     let app;
     before(() => {
       mm.env('default');
@@ -122,17 +122,19 @@ describe('test/lib/core/messenger.test.js', () => {
     });
     after(() => app.close());
 
-    it('app should accept agent message', done => {
-      setTimeout(() => {
-        const m = app.stdout.match(/\d+=\d+/g);
-        const map = new Map();
-        for (const item of m) {
-          const a = item.split('=');
-          map.set(a[0], a[1]);
-        }
-        map.size.should.equal(4);
-        done();
-      }, 8000);
+    it('app should accept agent message', function* () {
+      yield sleep(10000);
+
+      const m = app.stdout.match(/\d+=\d+/g);
+      const map = new Map();
+      for (const item of m) {
+        const a = item.split('=');
+        map.set(a[0], a[1]);
+      }
+      for (const [ pid, count ] of map) {
+        console.log('pid: %s, %s', pid, count);
+      }
+      map.size.should.equal(4);
     });
   });
 
