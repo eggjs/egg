@@ -43,6 +43,8 @@ Node.js >= 6.0.0 required.
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 
+> English docs is still working in process, see [#360](https://github.com/eggjs/egg/issues/360).
+
 ## Getting Started
 
 Follow the step
