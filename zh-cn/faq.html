@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>Frameworks - 为企业级框架和应用而生</title>
+  <title>常见问题 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -41,11 +41,21 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>Frameworks</h1>
-    <h1 id="popular-frameworks"><a class="markdown-anchor" href="#popular-frameworks">#</a> Popular Frameworks</h1>
-<ul>
-<li><a href="https://github.com/eggjs/aliyun-egg" target="_blank" rel="external">aliyun-egg</a></li>
-</ul>
+    <h1>常见问题</h1>
+    <p>如果下面的内容无法解决你的问题，请查看 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">egg issues</a>。</p>
+<h2 id="进程管理为什么没有选型-pm2"><a class="markdown-anchor" href="#进程管理为什么没有选型-pm2">#</a> 进程管理为什么没有选型 PM2 ？</h2>
+<ol>
+<li>PM2 模块本身复杂度很高，出了问题很难排查。我们认为框架使用的工具复杂度不应该过高，而 PM2 自身的复杂度超越了大部分应用本身。</li>
+<li>没法做非常深的优化。</li>
+<li>切实的需求问题，一个进程里跑 leader，其他进程代理到 leader 这种模式（<a href="./advanced/cluster.html">多进程模型</a>），在企业级开发中对于减少远端连接，降低数据通信压力等都是切实的需求。特别当应用规模大到一定程度，这就会是刚需。egg 本身起源于蚂蚁金服和阿里，我们对标的起点就是大规模企业应用的构建，所以要非常全面。这些特性通过 PM2 很难做到。</li>
+</ol>
+<p>进程模型非常重要，会影响到开发模式，运行期间的深度优化等，我们认为可能由框架来控制比较合适。</p>
+<p><strong>如何使用 PM2 启动应用？</strong></p>
+<p>尽管我们不推荐使用 PM2 启动，但仍然是可以做到的。</p>
+<p>首先，在项目根目录定义启动文件：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// server.js</span></div><div class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">'egg'</span>);</div><div class="line"></div><div class="line"><span class="keyword">const</span> workers = <span class="built_in">Number</span>(process.argv[<span class="number">2</span>] || <span class="built_in">require</span>(<span class="string">'os'</span>).cpus().length);</div><div class="line">egg.startCluster(&#123;</div><div class="line">  workers,</div><div class="line">  <span class="attr">baseDir</span>: __dirname,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>这样，我们就可以通过 PM2 进行启动了：</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pm2 start server.js</div></pre></td></tr></table></figure></p>
 
   </article>
   <aside id="mobileAside" class="toc">
