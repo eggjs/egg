@@ -121,7 +121,7 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">path</span>: path.join(__dirname, <span class="string">'../app/plugin/egg-mysql'</span>),</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>path 为一个绝对路径，这样应用可以把自己写的插件直接放到应用目录中，如 <code>app/plugin</code> 目录。</p>
 <h2 id="配置结果"><a class="markdown-anchor" href="#配置结果">#</a> 配置结果</h2>
-<p>框架在启动时会把合并后的最终配置 dump 到 <code>run/application.json</code>（worker 进程）和 <code>run/agent.json</code>（agent 进程）中，可以用来分析问题。</p>
+<p>框架在启动时会把合并后的最终配置 dump 到 <code>run/application_config.json</code>（worker 进程）和 <code>run/agent_config.json</code>（agent 进程）中，可以用来分析问题。</p>
 
   </article>
   <aside id="mobileAside" class="toc">
