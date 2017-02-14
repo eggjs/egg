@@ -112,6 +112,8 @@ title: 插件开发
 }
 ```
 
+**注意：`dependencies` 和 `optionalDependencies` 的取值是另一个插件的 `eggPlugin.name`，而不是 `package name`。**
+
 `dependencies` 和 `optionalDependencies` 是从 `npm` 借鉴来的概念，大多数情况下我们都使用 `dependencies`，这也是我们最推荐的依赖方式。那什么时候可以用 `optionalDependencies` 呢？大致就两种：
 
 - 只在某些环境下才依赖，比如：一个鉴权插件，只在开发环境依赖一个 mock 数据的插件
