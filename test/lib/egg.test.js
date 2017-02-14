@@ -29,6 +29,26 @@ describe('test/lib/egg.test.js', () => {
       assert(json.config.name === 'demo');
     });
 
+    it('should dump dynamic modifications in config', function* () {
+      const app = utils.app('apps/dumpconfig');
+      const baseDir = utils.getFilepath('apps/dumpconfig');
+      let json;
+
+      yield sleep(100);
+      json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.dynamic === 1);
+      json = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(json.config.dynamic === 0);
+
+      yield app.ready();
+
+      yield sleep(100);
+      json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.dynamic === 2);
+      json = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(json.config.dynamic === 0);
+    });
+
     it('should console.log call inspect()', () => {
       console.log(app);
     });
@@ -107,3 +127,7 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 });
+
+function readJson(p) {
+  return JSON.parse(fs.readFileSync(p));
+}
