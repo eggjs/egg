@@ -3,45 +3,55 @@
 const fs = require('fs');
 const path = require('path');
 
-// https://github.com/eggjs/egg-core#appinfo
+/**
+ * The configuration of egg application, can be access by `app.config`
+ * @class Config
+ * @since 1.0.0
+ */
+
 module.exports = appInfo => {
 
-  const exports = {
+  const config = {
 
     /**
-     * runtime env
+     * The environment of egg
      * @member {String} Config#env
+     * @see {appInfo#env}
      * @since 1.0.0
      */
     env: appInfo.env,
 
     /**
-     * app name
+     * The name of the application
      * @member {String} Config#name
+     * @see {appInfo#name}
      * @since 1.0.0
      */
     name: appInfo.name,
 
     /**
-     * Should set by every app itself
+     * The key that signing cookies. It can contain multiple keys seperated by `,`.
      * @member {String} Config#keys
+     * @see https://eggjs.org/zh-cn/basics/controller.html#cookie-秘钥
+     * @default
      * @since 1.0.0
      */
     keys: '',
 
     /**
-     * is application deployed after reverse proxy
+     * Whether application deployed after a reverse proxy,
      * when true proxy header fields will be trusted
-     * @member Config#proxy
+     * @member {Boolean} Config#proxy
+     * @default
      * @since 1.0.0
-     * @type {Boolean}
      */
     proxy: false,
 
     /**
-     * Detect request' protocol from specified headers, not case-sensitive.
+     * Detect request's protocol from specified headers, not case-sensitive.
      * Only worked when config.proxy set to true.
      * @member {String} Config#protocolHeaders
+     * @default
      * @since 1.0.0
      */
     protocolHeaders: 'x-forwarded-proto',
@@ -50,6 +60,7 @@ module.exports = appInfo => {
      * Detect request' ip from specified headers, not case-sensitive.
      * Only worked when config.proxy set to true.
      * @member {String} Config#ipHeaders
+     * @default
      * @since 1.0.0
      */
     ipHeaders: 'x-forwarded-for',
@@ -58,71 +69,71 @@ module.exports = appInfo => {
      * Detect request' host from specified headers, not case-sensitive.
      * Only worked when config.proxy set to true.
      * @member {String} Config#hostHeaders
+     * @default
      * @since 1.0.0
      */
     hostHeaders: 'x-forwarded-host',
 
     /**
-     * package.json object
+     * package.json
      * @member {Object} Config#pkg
+     * @see {appInfo#pkg}
      * @since 1.0.0
      */
     pkg: appInfo.pkg,
 
     /**
-     * app base dir
+     * The current directory of the application
      * @member {String} Config#baseDir
+     * @see {appInfo#baseDir}
      * @since 1.0.0
      */
     baseDir: appInfo.baseDir,
 
     /**
-     * current user HOME dir
+     * The current HOME directory
      * @member {String} Config#HOME
+     * @see {appInfo#HOME}
      * @since 1.0.0
      */
     HOME: appInfo.HOME,
 
     /**
-     * store runtime info dir
+     * The directory of server running. You can find `application_config.json` under it that is dumpped from `app.config`.
      * @member {String} Config#rundir
+     * @default
      * @since 1.0.0
-     * @private
      */
     rundir: path.join(appInfo.baseDir, 'run'),
   };
 
   /**
-   * notfound 中间件 options
+   * The option of `notfound` middleware
    *
-   * 指定应用 404 页面
-   *
-   * 只有在 `enableRedirect === true && pageUrl` 才会真正 302 跳转到友好的404页面。
+   * It will return page or json depend on negotiation when 404,
+   * If pageUrl is set, it will redirect to the page.
    *
    * @member Config#notfound
-   * @property {String} pageUrl - 默认为空，不设置全局统一 404 页面
-   * @property {Boolean} enableRedirect - 是否跳转到 global404Url，默认在 local 为 false，其他为 true
+   * @property {String} pageUrl - the 404 page url
    * ```
    */
-  exports.notfound = {
+  config.notfound = {
     pageUrl: '',
   };
 
   /**
-   * siteFile options
-   * @member Config#siteFile
-   * key 值为 path，若 value 为 url，则 redirect，若 value 为文件 buffer，则直接返回此文件
-   * @example
-   *  - 指定应用 favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
-   *  - 指定应用 crossdomain.xml, => '/crossdomain.xml': fs.readFileSync('path_to_file')
-   *  - 指定应用 robots.txt, => '/robots.txt': fs.readFileSync('path_to_file')
+   * The option of `siteFile` middleware
    *
-   * ```js
-   * exports.siteFile = {
+   * You can map some files using this options, it will response immdiately when matching.
+   *
+   * @member {Object} Config#siteFile - key is path, and value is url or buffer.
+   * @example
+   * // 指定应用 favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   * config.siteFile = {
    *   '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * };
    */
-  exports.siteFile = {
+  config.siteFile = {
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.png')),
   };
 
@@ -140,7 +151,7 @@ module.exports = appInfo => {
    * @property {Number} queryString.depth - json 数值深度限制，默认 5
    * @property {Number} queryString.parameterLimit - 参数个数限制，默认 1000
    */
-  exports.bodyParser = {
+  config.bodyParser = {
     enable: true,
     encoding: 'utf8',
     formLimit: '100kb',
@@ -168,7 +179,7 @@ module.exports = appInfo => {
    * @property {String} agentLogName - file name of agent worker log
    * @property {Object} coreLogger - custom config of coreLogger
    */
-  exports.logger = {
+  config.logger = {
     dir: path.join(appInfo.root, 'logs', appInfo.name),
     encoding: 'utf8',
     env: appInfo.env,
@@ -193,7 +204,7 @@ module.exports = appInfo => {
    * @property {Number} maxFreeSockets - max free socket number of one host, default is 256.
    * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
    */
-  exports.httpclient = {
+  config.httpclient = {
     keepAlive: true,
     freeSocketKeepAliveTimeout: 4000,
     timeout: 30000,
@@ -206,7 +217,7 @@ module.exports = appInfo => {
    * core enable middlewares
    * @member {Array} Config#middleware
    */
-  exports.coreMiddleware = [
+  config.coreMiddleware = [
     'meta',
     'siteFile',
     'notfound',
@@ -219,7 +230,7 @@ module.exports = appInfo => {
    * @property {String} callback - jsonp 的 callback 方法参数名，默认为 `_callback`
    * @property {Number} limit - callback 方法名称最大长度，默认为 `50`
    */
-  exports.jsonp = {
+  config.jsonp = {
     callback: '_callback',
     limit: 50,
   };
@@ -228,7 +239,7 @@ module.exports = appInfo => {
    * emit `startTimeout` if worker don't ready after `workerStartTimeout` ms
    * @member {Number} Config.workerStartTimeout
    */
-  exports.workerStartTimeout = 10 * 60 * 1000;
+  config.workerStartTimeout = 10 * 60 * 1000;
 
-  return exports;
+  return config;
 };
