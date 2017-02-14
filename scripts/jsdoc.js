@@ -15,7 +15,7 @@ const tmp = path.join(os.tmpdir(), 'jsdoc');
 
 module.exports = function* (target) {
   const config = yield getConfig();
-  yield runscript(`jsdoc -c ${config} -d ${target}`);
+  yield runscript(`jsdoc -c ${config} -d ${target} --verbose`);
 };
 
 class Source extends Set {
@@ -34,6 +34,14 @@ class Source extends Set {
         // nothing
       }
     }
+
+    this.add(path.join(cwd, 'lib'));
+
+    this.add(path.join(cwd, 'node_modules/egg-core/index.js'));
+    this.add(path.join(cwd, 'node_modules/egg-core/lib'));
+
+    this.add(path.join(cwd, 'node_modules/egg-logger/index.js'));
+    this.add(path.join(cwd, 'node_modules/egg-logger/lib'));
   }
 
   getLoadUnits() {
