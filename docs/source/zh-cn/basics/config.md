@@ -184,4 +184,4 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 
 ## 配置结果
 
-框架在启动时会把合并后的最终配置 dump 到 `run/application.json`（worker 进程）和 `run/agent.json`（agent 进程）中，可以用来分析问题。
+框架在启动时会把合并后的最终配置 dump 到 `run/application_config.json`（worker 进程）和 `run/agent_config.json`（agent 进程）中，可以用来分析问题。
