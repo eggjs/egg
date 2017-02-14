@@ -138,7 +138,8 @@ module.exports = appInfo => {
   };
 
   /**
-   * bodyParser options
+   * The option of `bodyParser` middleware
+   *
    * @member Config#bodyParser
    * @property {Boolean} enable - enable bodyParser or not, default to true
    * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
@@ -195,7 +196,7 @@ module.exports = appInfo => {
   };
 
   /**
-   * httpclient options
+   * The option for httpclient
    * @member Config#httpclient
    * @property {Boolean} keepAlive - Enable http keepalive or not, default is true
    * @property {Number} freeSocketKeepAliveTimeout - socket keepalive max free time, default is 4000 ms.
@@ -225,10 +226,10 @@ module.exports = appInfo => {
   ];
 
   /**
-   * jsonp options
+   * The options of `jsonp` plugin
    * @member Config#jsonp
-   * @property {String} callback - jsonp 的 callback 方法参数名，默认为 `_callback`
-   * @property {Number} limit - callback 方法名称最大长度，默认为 `50`
+   * @property {String} callback - the method name，default is `_callback`
+   * @property {Number} limit - the max length of the method name，default is `50`
    */
   config.jsonp = {
     callback: '_callback',
