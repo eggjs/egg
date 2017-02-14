@@ -40,8 +40,8 @@ class Source extends Set {
     this.add(path.join(cwd, 'node_modules/egg-core/index.js'));
     this.add(path.join(cwd, 'node_modules/egg-core/lib'));
 
-    this.add(path.join(cwd, 'node_modules/egg-logger/index.js'));
-    this.add(path.join(cwd, 'node_modules/egg-logger/lib'));
+    // this.add(path.join(cwd, 'node_modules/egg-logger/index.js'));
+    // this.add(path.join(cwd, 'node_modules/egg-logger/lib'));
   }
 
   getLoadUnits() {
