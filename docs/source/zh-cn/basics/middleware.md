@@ -109,9 +109,46 @@ module.exports = app => {
 }
 ```
 
+## 使用 koa 的中间件
+
+框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：
+
+- generator function: `function* (next) {}`
+- async function: `async (ctx, next) => {}`
+- common function: `(ctx, next) => {}`
+
+所有可以在 koa 中使用的中间件都可以直接在 egg 中使用。
+
+以 [koa-bodyparser](https://github.com/koajs/bodyparser) 为例，在 koa 中使用时：
+
+```js
+var koa = require('koa');
+var bodyParser = require('koa-bodyparser');
+
+var app = koa();
+
+const options = { limit: '10kb' };
+app.use(bodyParser(options));
+```
+
+在 egg 中的使用我们推荐按照 egg 的规范来引入这个中间件：
+
+```js
+// app/middleware/body_parser.js
+module.exports = require('koa-bodyparser');
+```
+
+```js
+// config/config.default.js
+exports.middleware = [ 'body_parser' ];
+exports.bodyParser = {
+  limit: '10kb',
+};
+```
+
 ## 通用配置
 
-无论是应用层中间件还是框架自带中间件，都支持几个通用的配置项：
+无论是应用层引入的中间件还是框架自带中间件，都支持几个通用的配置项：
 
 - enable：控制中间件是否开启。
 - match：设置只有符合某些规则的请求才会经过这个中间件。
