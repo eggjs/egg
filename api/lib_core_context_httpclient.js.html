@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>lib/core/context_httpclient.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,25 +39,47 @@
 
 <div id="main">
     
+    <h1 class="page-title">lib/core/context_httpclient.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
+class ContextHttpClient {
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.app = ctx.app;
+  }
 
+  /**
+   * http request helper base on {@link HttpClient}, it will auto save httpclient log.
+   * Keep the same api with {@link Application#curl}.
+   *
+   * @param {String|Object} url - request url address.
+   * @param {Object} [options] - options for request.
+   * @return {Object} see {@link Application#curl}
+   */
+  curl(url, options) {
+    options = options || {};
+    options.ctx = this.ctx;
+    return this.app.curl(url, options);
+  }
 
+  request(url, options) {
+    return this.curl(url, options);
+  }
+}
 
-
-
-
-
-
-    
-
-
-
+module.exports = ContextHttpClient;
+</code></pre>
+        </article>
+    </section>
 
 
 

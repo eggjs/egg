@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>index.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,25 +39,54 @@
 
 <div id="main">
     
+    <h1 class="page-title">index.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
+/**
+ * @namespace Egg
+ */
 
+/**
+ * Start egg application with cluster mode
+ * @since 1.0.0
+ */
+exports.startCluster = require('./lib/cluster');
 
+/**
+ * @member {Application} Egg#Application
+ * @since 1.0.0
+ */
+exports.Application = require('./lib/application');
 
+/**
+ * @member {Agent} Egg#Agent
+ * @since 1.0.0
+ */
+exports.Agent = require('./lib/agent');
 
+/**
+ * @member {AppWorkerLoader} Egg#AppWorkerLoader
+ * @since 1.0.0
+ */
+exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
 
-
-
-
-    
-
-
-
+/**
+ * @member {AgentWorkerLoader} Egg#AgentWorkerLoader
+ * @since 1.0.0
+ */
+exports.AgentWorkerLoader = require('./lib/loader').AgentWorkerLoader;
+</code></pre>
+        </article>
+    </section>
 
 
 

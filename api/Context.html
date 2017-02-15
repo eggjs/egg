@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Context - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2>
+  <h3>Egg</h3>
+  <ul>
+    <li>
+      <a href="Egg.html">Egg</a>
+      <a href="Application.html">Application</a>
+      <a href="Context.html">Context</a>
+      <a href="Request.html">Request</a>
+      <a href="Response.html">Response</a>
+    </li>
+  </ul>
+  <h3>Classes</h3><ul><li><a href="Agent.html">Agent</a><ul class='members'><li data-type='member'><a href="Agent.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Agent.html#env">env</a></li><li data-type='member'><a href="Agent.html#httpclient">httpclient</a></li><li data-type='member'><a href="Agent.html#logger">logger</a></li><li data-type='member'><a href="Agent.html#loggers">loggers</a></li><li data-type='member'><a href="Agent.html#messenger">messenger</a></li><li data-type='member'><a href="Agent.html#proxy">proxy</a></li><li data-type='member'><a href="Agent.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="Agent.html#cluster">cluster()</a></li><li data-type='member'><a href="Agent.html#curl">curl()</a></li><li data-type='member'><a href="Agent.html#getLogger">getLogger()</a></li><li data-type='member'><a href="Agent.html#inspect">inspect()</a></li></ul></li><li><a href="AgentWorkerLoader.html">AgentWorkerLoader</a><ul class='members'><li data-type='member'><a href="AgentWorkerLoader.html#loadConfig">loadConfig()</a></li></ul></li><li><a href="Application.html">Application</a><ul class='members'><li data-type='member'><a href="Application.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Application.html#createAnonymousContext">createAnonymousContext</a></li><li data-type='member'><a href="Application.html#env">env</a></li><li data-type='member'><a href="Application.html#Helper">Helper</a></li><li data-type='member'><a href="Application.html#httpclient">httpclient</a></li><li data-type='member'><a href="Application.html#keys">keys</a></li><li data-type='member'><a href="Application.html#locals">locals</a></li><li data-type='member'><a href="Application.html#logger">logger</a></li><li data-type='member'><a href="Application.html#loggers">loggers</a></li><li data-type='member'><a href="Application.html#messenger">messenger</a></li><li data-type='member'><a href="Application.html#proxy">proxy</a></li><li data-type='member'><a href="Application.html#role">role</a></li><li data-type='member'><a href="Application.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="Application.html#cluster">cluster()</a></li><li data-type='member'><a href="Application.html#createContext">createContext()</a></li><li data-type='member'><a href="Application.html#curl">curl()</a></li><li data-type='member'><a href="Application.html#getLogger">getLogger()</a></li><li data-type='member'><a href="Application.html#inspect">inspect()</a></li></ul></li><li><a href="AppWorkerLoader.html">AppWorkerLoader</a><ul class='members'><li data-type='member'><a href="AppWorkerLoader.html#load">load()</a></li><li data-type='member'><a href="AppWorkerLoader.html#loadConfig">loadConfig()</a></li></ul></li><li><a href="Config.html">Config</a><ul class='members'><li data-type='member'><a href="Config.html#baseDir">baseDir</a></li><li data-type='member'><a href="Config.html#bodyParser">bodyParser</a></li><li data-type='member'><a href="Config.html#development">development</a></li><li data-type='member'><a href="Config.html#env">env</a></li><li data-type='member'><a href="Config.html#HOME">HOME</a></li><li data-type='member'><a href="Config.html#hostHeaders">hostHeaders</a></li><li data-type='member'><a href="Config.html#httpclient">httpclient</a></li><li data-type='member'><a href="Config.html#i18n">i18n</a></li><li data-type='member'><a href="Config.html#ipHeaders">ipHeaders</a></li><li data-type='member'><a href="Config.html#jsonp">jsonp</a></li><li data-type='member'><a href="Config.html#jsonp">jsonp</a></li><li data-type='member'><a href="Config.html#keys">keys</a></li><li data-type='member'><a href="Config.html#logger">logger</a></li><li data-type='member'><a href="Config.html#logrotator">logrotator</a></li><li data-type='member'><a href="Config.html#middleware">middleware</a></li><li data-type='member'><a href="Config.html#multipart">multipart</a></li><li data-type='member'><a href="Config.html#name">name</a></li><li data-type='member'><a href="Config.html#notfound">notfound</a></li><li data-type='member'><a href="Config.html#pkg">pkg</a></li><li data-type='member'><a href="Config.html#protocolHeaders">protocolHeaders</a></li><li data-type='member'><a href="Config.html#proxy">proxy</a></li><li data-type='member'><a href="Config.html#rundir">rundir</a></li><li data-type='member'><a href="Config.html#security">security</a></li><li data-type='member'><a href="Config.html#siteFile">siteFile</a></li><li data-type='member'><a href="Config.html#static">static</a></li><li data-type='member'><a href="Config.html#watcher">watcher</a></li><li data-type='member'><a href="Config.html#.workerStartTimeout">workerStartTimeout</a></li></ul></li><li><a href="Context.html">Context</a><ul class='members'><li data-type='member'><a href="Context.html#accept">accept</a></li><li data-type='member'><a href="Context.html#acceptJSON">acceptJSON</a></li><li data-type='member'><a href="Context.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Context.html#data=">data=</a></li><li data-type='member'><a href="Context.html#helper">helper</a></li><li data-type='member'><a href="Context.html#ip">ip</a></li><li data-type='member'><a href="Context.html#jsonp">jsonp</a></li><li data-type='member'><a href="Context.html#locale">locale</a></li><li data-type='member'><a href="Context.html#locals">locals</a></li><li data-type='member'><a href="Context.html#logger">logger</a></li><li data-type='member'><a href="Context.html#meta=">meta=</a></li><li data-type='member'><a href="Context.html#params">params</a></li><li data-type='member'><a href="Context.html#queries">queries</a></li><li data-type='member'><a href="Context.html#realStatus">realStatus</a></li><li data-type='member'><a href="Context.html#realStatus">realStatus</a></li><li data-type='member'><a href="Context.html#router">router</a></li><li data-type='member'><a href="Context.html#starttime">starttime</a></li><li data-type='member'><a href="Context.html#__">__()</a></li><li data-type='member'><a href="Context.html#curl">curl()</a></li><li data-type='member'><a href="Context.html#getFileStream">getFileStream()</a></li><li data-type='member'><a href="Context.html#gettext">gettext()</a></li><li data-type='member'><a href="Context.html#multipart">multipart()</a></li><li data-type='member'><a href="Context.html#redirect">redirect()</a></li><li data-type='member'><a href="Context.html#render">render()</a></li><li data-type='member'><a href="Context.html#renderString">renderString()</a></li><li data-type='member'><a href="Context.html#renderView">renderView()</a></li></ul></li><li><a href="EggApplication.html">EggApplication</a><ul class='members'><li data-type='member'><a href="EggApplication.html#BaseContextClass">BaseContextClass</a></li><li data-type='member'><a href="EggApplication.html#baseDir">baseDir</a></li><li data-type='member'><a href="EggApplication.html#close">close</a></li><li data-type='member'><a href="EggApplication.html#config">config</a></li><li data-type='member'><a href="EggApplication.html#console">console</a></li><li data-type='member'><a href="EggApplication.html#Controller">Controller</a></li><li data-type='member'><a href="EggApplication.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="EggApplication.html#deprecate">deprecate</a></li><li data-type='member'><a href="EggApplication.html#env">env</a></li><li data-type='member'><a href="EggApplication.html#httpclient">httpclient</a></li><li data-type='member'><a href="EggApplication.html#loader">loader</a></li><li data-type='member'><a href="EggApplication.html#logger">logger</a></li><li data-type='member'><a href="EggApplication.html#loggers">loggers</a></li><li data-type='member'><a href="EggApplication.html#messenger">messenger</a></li><li data-type='member'><a href="EggApplication.html#name">name</a></li><li data-type='member'><a href="EggApplication.html#options">options</a></li><li data-type='member'><a href="EggApplication.html#plugins">plugins</a></li><li data-type='member'><a href="EggApplication.html#proxy">proxy</a></li><li data-type='member'><a href="EggApplication.html#ready">ready</a></li><li data-type='member'><a href="EggApplication.html#readyCallback">readyCallback</a></li><li data-type='member'><a href="EggApplication.html#Service">Service</a></li><li data-type='member'><a href="EggApplication.html#type">type</a></li><li data-type='member'><a href="EggApplication.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="EggApplication.html#beforeClose">beforeClose()</a></li><li data-type='member'><a href="EggApplication.html#beforeStart">beforeStart()</a></li><li data-type='member'><a href="EggApplication.html#cluster">cluster()</a></li><li data-type='member'><a href="EggApplication.html#curl">curl()</a></li><li data-type='member'><a href="EggApplication.html#getLogger">getLogger()</a></li><li data-type='member'><a href="EggApplication.html#inspect">inspect()</a></li><li data-type='member'><a href="EggApplication.html#use">use()</a></li></ul></li><li><a href="EggCore.html">EggCore</a><ul class='members'><li data-type='member'><a href="EggCore.html#BaseContextClass">BaseContextClass</a></li><li data-type='member'><a href="EggCore.html#baseDir">baseDir</a></li><li data-type='member'><a href="EggCore.html#close">close</a></li><li data-type='member'><a href="EggCore.html#config">config</a></li><li data-type='member'><a href="EggCore.html#console">console</a></li><li data-type='member'><a href="EggCore.html#Controller">Controller</a></li><li data-type='member'><a href="EggCore.html#deprecate">deprecate</a></li><li data-type='member'><a href="EggCore.html#loader">loader</a></li><li data-type='member'><a href="EggCore.html#name">name</a></li><li data-type='member'><a href="EggCore.html#options">options</a></li><li data-type='member'><a href="EggCore.html#plugins">plugins</a></li><li data-type='member'><a href="EggCore.html#ready">ready</a></li><li data-type='member'><a href="EggCore.html#readyCallback">readyCallback</a></li><li data-type='member'><a href="EggCore.html#Service">Service</a></li><li data-type='member'><a href="EggCore.html#type">type</a></li><li data-type='member'><a href="EggCore.html#beforeClose">beforeClose()</a></li><li data-type='member'><a href="EggCore.html#beforeStart">beforeStart()</a></li><li data-type='member'><a href="EggCore.html#use">use()</a></li></ul></li><li><a href="EggLoader.html">EggLoader</a><ul class='members'><li data-type='member'><a href="EggLoader.html#appInfo">appInfo</a></li><li data-type='member'><a href="EggLoader.html#eggPaths">eggPaths</a></li><li data-type='member'><a href="EggLoader.html#pkg">pkg</a></li><li data-type='member'><a href="EggLoader.html#plugins">plugins</a></li><li data-type='member'><a href="EggLoader.html#serverEnv">serverEnv</a></li><li data-type='member'><a href="EggLoader.html#getAppInfo">getAppInfo()</a></li><li data-type='member'><a href="EggLoader.html#getAppname">getAppname()</a></li><li data-type='member'><a href="EggLoader.html#getEggPaths">getEggPaths()</a></li><li data-type='member'><a href="EggLoader.html#getLoadUnits">getLoadUnits()</a></li><li data-type='member'><a href="EggLoader.html#getServerEnv">getServerEnv()</a></li><li data-type='member'><a href="EggLoader.html#loadAgentExtend">loadAgentExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadApplicationExtend">loadApplicationExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadConfig">loadConfig()</a></li><li data-type='member'><a href="EggLoader.html#loadContextExtend">loadContextExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadFile">loadFile()</a></li><li data-type='member'><a href="EggLoader.html#loadHelperExtend">loadHelperExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadMiddleware">loadMiddleware()</a></li><li data-type='member'><a href="EggLoader.html#loadPlugin">loadPlugin()</a></li><li data-type='member'><a href="EggLoader.html#loadRequestExtend">loadRequestExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadResponseExtend">loadResponseExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadRouter">loadRouter()</a></li><li data-type='member'><a href="EggLoader.html#loadService">loadService()</a></li></ul></li><li><a href="I18n.html">I18n</a></li><li><a href="Request.html">Request</a><ul class='members'><li data-type='member'><a href="Request.html#acceptJSON">acceptJSON</a></li><li data-type='member'><a href="Request.html#header">header</a></li><li data-type='member'><a href="Request.html#headers">headers</a></li><li data-type='member'><a href="Request.html#host">host</a></li><li data-type='member'><a href="Request.html#ip">ip</a></li><li data-type='member'><a href="Request.html#ips">ips</a></li><li data-type='member'><a href="Request.html#method">method</a></li><li data-type='member'><a href="Request.html#originalUrl">originalUrl</a></li><li data-type='member'><a href="Request.html#path">path</a></li><li data-type='member'><a href="Request.html#protocol">protocol</a></li><li data-type='member'><a href="Request.html#queries">queries</a></li><li data-type='member'><a href="Request.html#query">query</a></li><li data-type='member'><a href="Request.html#querystring">querystring</a></li><li data-type='member'><a href="Request.html#url">url</a></li><li data-type='member'><a href="Request.html#query">query()</a></li></ul></li><li><a href="Response.html">Response</a><ul class='members'><li data-type='member'><a href="Response.html#realStatus">realStatus</a></li></ul></li><li><a href="Router.html">Router</a><ul class='members'><li data-type='member'><a href="Router.html#resources">resources()</a></li><li data-type='member'><a href="Router.html#url">url()</a></li></ul></li><li><a href="View.html">View</a><ul class='members'><li data-type='member'><a href="View.html#render">render()</a></li><li data-type='member'><a href="View.html#renderString">renderString()</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="Egg.html">Egg</a><ul class='members'><li data-type='member'><a href="Egg.html#Agent">Agent</a></li><li data-type='member'><a href="Egg.html#AgentWorkerLoader">AgentWorkerLoader</a></li><li data-type='member'><a href="Egg.html#Application">Application</a></li><li data-type='member'><a href="Egg.html#AppWorkerLoader">AppWorkerLoader</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Context</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        Context
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="Context"><span class="type-signature"></span>new Context<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>继承 koa 的 Context</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_jsdoc_context.jsdoc.html">lib/jsdoc/context.jsdoc</a>, <a href="lib_jsdoc_context.jsdoc.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="http://koajs.com/#context">http://koajs.com/#context</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="accept"><span class="type-signature"></span>accept<span class="type-signature"> :Boolean</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line280">line 280</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>Request#accept</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="acceptJSON"><span class="type-signature"></span>acceptJSON<span class="type-signature"> :Boolean</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line268">line 268</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Request.html#acceptJSON">Request#acceptJSON</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="coreLogger"><span class="type-signature"></span>coreLogger<span class="type-signature"> :ContextLogger</span></h4>
+
+
+
+
+<div class="description">
+    <p>Logger for frameworks and plugins,
+wrapping app.coreLogger with context infomation</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line119">line 119</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="data="><span class="type-signature"></span>data=<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>设置返回资源对象</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_jsdoc_context.jsdoc.html">lib/jsdoc/context.jsdoc</a>, <a href="lib_jsdoc_context.jsdoc.html#line44">line 44</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+ctx.data = {
+  id: 1,
+  name: 'fengmk2'
+};
+```
+
+会返回 200 响应
+
+```js
+HTTP/1.1 200 OK
+
+{
+  "data": {
+    "id": 1,
+    "name": "fengmk2"
+  }
+}
+```</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="helper"><span class="type-signature"></span>helper<span class="type-signature"> :<a href="Helper.html">Helper</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>Get helper instance from <a href="Application.html#Helper">Application#Helper</a></p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line66">line 66</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="ip"><span class="type-signature"></span>ip<span class="type-signature"> :string</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line286">line 286</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Request.html#ip">Request#ip</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="jsonp"><span class="type-signature"></span>jsonp<span class="type-signature"> :Void</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line294">line 294</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>Response#jsonp</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="locale"><span class="type-signature"></span>locale<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>get current request locale</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-i18n_app_extend_context.js.html">node_modules/.1.1.0@egg-i18n/app/extend/context.js</a>, <a href="node_modules_.1.1.0@egg-i18n_app_extend_context.js.html#line4">line 4</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="locals"><span class="type-signature"></span>locals<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>locals is an object for view, you can use <code>app.locals</code> and <code>ctx.locals</code> to set variables,
+which will be used as data when view is rendering.
+The difference between <code>app.locals</code> and <code>ctx.locals</code> is the context level, <code>app.locals</code> is global level, and <code>ctx.locals</code> is request level. when you get <code>ctx.locals</code>, it will merge <code>app.locals</code>.</p>
+<p>when you set locals, only object is available</p>
+<pre class="prettyprint source lang-js"><code>this.locals = {
+  a: 1
+};
+this.locals = {
+  b: 1
+};
+this.locals.c = 1;
+console.log(this.locals);
+{
+  a: 1,
+  b: 1,
+  c: 1,
+};</code></pre><p><code>ctx.locals</code> has cache, it only merges <code>app.locals</code> once in one request.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line178">line 178</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="logger"><span class="type-signature"></span>logger<span class="type-signature"> :ContextLogger</span></h4>
+
+
+
+
+<div class="description">
+    <p>Logger for Application, wrapping app.coreLogger with context infomation</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line104">line 104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+this.logger.info('some request data: %j', this.request.body);
+this.logger.warn('WARNING!!!!');
+```</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="meta="><span class="type-signature"></span>meta=<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>设置 meta 响应数据</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_jsdoc_context.jsdoc.html">lib/jsdoc/context.jsdoc</a>, <a href="lib_jsdoc_context.jsdoc.html#line69">line 69</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+ctx.meta = {
+  count: 100
+};
+
+ctx.data = [
+  {
+    id: 1,
+    title: 'post title 1'
+  },
+  {
+    id: 2,
+    title: 'post title 2'
+  }
+];
+```
+
+会返回 200 响应
+
+```js
+HTTP/1.1 200 OK
+
+{
+  "meta": {
+    "count": 100
+  }
+  "data": [
+    {
+      "id": 1,
+      "title": 'post title 1'
+    },
+    {
+      "id": 2,
+      "title": 'post title 2'
+    }
+  ]
+}
+```</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="params"><span class="type-signature"></span>params<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>开启 Rest 功能后，将会有 <code>this.params</code> 对象</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_jsdoc_context.jsdoc.html">lib/jsdoc/context.jsdoc</a>, <a href="lib_jsdoc_context.jsdoc.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>##### ctx.params.id {String}
+
+资源 id，如 `GET /api/users/1` => `'1'`
+
+##### ctx.params.ids {Array&lt;String>}
+
+一组资源 id，如 `GET /api/users/1,2,3` => `['1', '2', '3']`
+
+##### ctx.params.fields {Array&lt;String>}
+
+期待返回的资源字段，如 `GET /api/users/1?fields=name,title` => `['name', 'title']`.
+即使应用 Controller 实现返回了全部字段，[REST] 处理器会根据 `fields` 筛选只需要的字段。
+
+##### ctx.params.data {Object}
+
+请求数据对象
+
+##### ctx.params.page {Number}
+
+分页码，如 `GET /api/users?page=10` => `10`
+
+##### ctx.params.per_page {Number}
+
+每页资源数目，如 `GET /api/users?per_page=20` => `20`</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="queries"><span class="type-signature"></span>queries<span class="type-signature"> :Array</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line274">line 274</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Request.html#queries">Request#queries</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="realStatus"><span class="type-signature"></span>realStatus<span class="type-signature"> :Number</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line300">line 300</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Response.html#realStatus">Response#realStatus</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="realStatus"><span class="type-signature"></span>realStatus<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    <p>read response real status code.</p>
+<p>e.g.: Using 302 status redirect to the global error page
+instead of show current 500 status page.
+And access log should save 500 not 302,
+then the <code>realStatus</code> can help us find out the real status code.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_response.js.html">app/extend/response.js</a>, <a href="app_extend_response.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="router"><span class="type-signature"></span>router<span class="type-signature"> :<a href="Router.html">Router</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>Alias to Application#router</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+this.router.pathFor('post', { id: 12 });
+```</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="starttime"><span class="type-signature"></span>starttime<span class="type-signature"> :Number</span></h4>
+
+
+
+
+<div class="description">
+    <p>Request start time</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_application.js.html">lib/application.js</a>, <a href="lib_application.js.html#line104">line 104</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="__"><span class="type-signature"></span>__<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>如果开启了 I18n 多语言功能，那么会出现此 API，通过它可以获取到当前请求对应的本地化数据。</p>
+<p>详细使用说明，请查看 <a href="I18n.html">I18n</a></p>
+<ul>
+<li><code>ctx.__ = function (key, value[, value2, ...])</code>: 类似 <code>util.format</code> 接口</li>
+<li><code>ctx.__ = function (key, values)</code>: 支持数组下标占位符方式，如</li>
+<li><code>__</code> 的别名是 <code>gettext(key, value)</code></li>
+</ul>
+<blockquote>
+<p>NOTE: __ 是两个下划线哦！</p>
+</blockquote>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-i18n_app.js.html">node_modules/.1.1.0@egg-i18n/app.js</a>, <a href="node_modules_.1.1.0@egg-i18n_app.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+ctx.__('{0} {0} {1} {1}'), ['foo', 'bar'])
+ctx.gettext('{0} {0} {1} {1}'), ['foo', 'bar'])
+=>
+foo foo bar bar
+```
+##### Controller 下的使用示例
+
+```js
+module.exports = function* () {
+  this.body = {
+    message: this.__('Welcome back, %s!', this.user.name),
+    // 或者使用 gettext，如果觉得 __ 不好看的话
+    // message: this.gettext('Welcome back, %s!', this.user.name),
+    user: this.user,
+  };
+};
+```
+
+##### View 文件下的使用示例
+
+```html
+&lt;li>{{ __('Email') }}: {{ user.email }}&lt;/li>
+&lt;li>
+  {{ __('Hello %s, how are you today?', user.name) }}
+&lt;/li>
+&lt;li>
+  {{ __('{0} {0} {1} {1}'), ['foo', 'bar']) }}
+&lt;/li>
+```
+
+##### locale 参数获取途径
+
+优先级从上到下：
+
+- query: `/?locale=en-US`
+- cookie: `locale=zh-TW`
+- header: `Accept-Language: zh-CN,zh;q=0.5`</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="curl"><span class="type-signature"></span>curl<span class="signature">(url, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Shortcut for httpclient.curl</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>url</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>request url address.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>options</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>options for request.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line39">line 39</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getFileStream"><span class="type-signature"></span>getFileStream<span class="signature">()</span><span class="type-signature"> &rarr; {ReadStream}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>get upload file stream</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-multipart_app_extend_context.js.html">node_modules/.1.1.0@egg-multipart/app/extend/context.js</a>, <a href="node_modules_.1.1.0@egg-multipart_app_extend_context.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+const stream = yield this.getFileStream();
+// get other fields
+console.log(stream.fields);
+```</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="gettext"><span class="type-signature"></span>gettext<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p><code>ctx.__</code> 的别名。</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-i18n_app.js.html">node_modules/.1.1.0@egg-i18n/app.js</a>, <a href="node_modules_.1.1.0@egg-i18n_app.js.html#line117">line 117</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Context.html#__">Context#__</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="multipart"><span class="type-signature"></span>multipart<span class="signature">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Yieldable}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>create multipart.parts instance, to get separated files.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>options</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>override default multipart configurations</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-multipart_app_extend_context.js.html">node_modules/.1.1.0@egg-multipart/app/extend/context.js</a>, <a href="node_modules_.1.1.0@egg-multipart_app_extend_context.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="redirect"><span class="type-signature"></span>redirect<span class="signature">(url)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>实现页面跳转</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>url</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>需要跳转的地址</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_jsdoc_context.jsdoc.html">lib/jsdoc/context.jsdoc</a>, <a href="lib_jsdoc_context.jsdoc.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>Response#redirect</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="render"><span class="type-signature"></span>render<span class="signature">(name, locals<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>render for template path</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>template path</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>locals</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>locals</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="renderString"><span class="type-signature"></span>renderString<span class="signature">(tpl, locals<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>render for string</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>tpl</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>template string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>locals</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>locals</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line166">line 166</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="View.html#renderString">View#renderString</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="renderView"><span class="type-signature"></span>renderView<span class="signature">(name, locals<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>render for template path, but return string rather than writing to response</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>template path</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>locals</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>locals</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="app_extend_context.js.html">app/extend/context.js</a>, <a href="app_extend_context.js.html#line154">line 154</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="View.html#render">View#render</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Feb 15 2017 10:34:13 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

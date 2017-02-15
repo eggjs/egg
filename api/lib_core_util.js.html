@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>lib/core/util.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,25 +39,44 @@
 
 <div id="main">
     
+    <h1 class="page-title">lib/core/util.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
 
+/**
+ * 类似 Object.assign
+ * @param {Object} target - assign 的目标对象
+ * @param {Object | Array} objects - assign 的源，可以是一个 object 也可以是一个数组
+ * @return {Object} - 返回 target
+ */
+exports.assign = function(target, objects) {
+  if (!Array.isArray(objects)) {
+    objects = [ objects ];
+  }
 
-
-
-
-
-
-
-
-    
-
-
-
+  for (let i = 0; i &lt; objects.length; i++) {
+    const obj = objects[i];
+    if (obj) {
+      const keys = Object.keys(obj);
+      for (let j = 0; j &lt; keys.length; j++) {
+        const key = keys[j];
+        target[key] = obj[key];
+      }
+    }
+  }
+  return target;
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>Router - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,11 +39,34 @@
 
 <div id="main">
     
+    <h1 class="page-title">Router</h1>
+    
 
     
 
 
 
+
+<section>
+
+<header>
+    
+        <h2>
+        Router
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="Router"><span class="type-signature"></span>new Router<span class="signature">(opts, app)</span><span class="type-signature"></span></h4>
+
     
 
 
@@ -54,10 +77,551 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>opts</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>Router options.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>app</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Application.html">Application</a></span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>Application object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_utils_router.js.html">node_modules/egg-core/lib/utils/router.js</a>, <a href="node_modules_egg-core_lib_utils_router.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="resources"><span class="type-signature"></span>resources<span class="signature">(name, prefix, middleware)</span><span class="type-signature"> &rarr; {Route}</span></h4>
+
     
 
 
 
+<div class="description">
+    <p>restful router api</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>Router name</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>prefix</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>url prefix</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>middleware</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>middleware or controller</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_utils_router.js.html">node_modules/egg-core/lib/utils/router.js</a>, <a href="node_modules_egg-core_lib_utils_router.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+app.resources('/posts', 'posts')
+app.resources('posts', '/posts', 'posts')
+app.resources('posts', '/posts', app.role.can('user'), app.controller.posts)
+```
+
+Examples:
+
+```js
+app.resources('/posts', 'posts')
+```
+
+yield router mapping
+
+Method | Path            | Route Name     | Controller.Action
+-------|-----------------|----------------|-----------------------------
+GET    | /posts          | posts          | app.controller.posts.index
+GET    | /posts/new      | new_post       | app.controller.posts.new
+GET    | /posts/:id      | post           | app.controller.posts.show
+GET    | /posts/:id/edit | edit_post      | app.controller.posts.edit
+POST   | /posts          | posts          | app.controller.posts.create
+PUT    | /posts/:id      | post           | app.controller.posts.update
+DELETE | /posts/:id      | post           | app.controller.posts.destroy
+
+app.router.url can generate url based on arguments
+```js
+app.router.url('posts')
+=> /posts
+app.router.url('post', { id: 1 })
+=> /posts/1
+app.router.url('new_post')
+=> /posts/new
+app.router.url('edit_post', { id: 1 })
+=> /posts/1/edit
+```</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="url"><span class="type-signature"></span>url<span class="signature">(name, params)</span><span class="type-signature"> &rarr; {String}</span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>Router name</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>params</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>more parameters</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_utils_router.js.html">node_modules/egg-core/lib/utils/router.js</a>, <a href="node_modules_egg-core_lib_utils_router.js.html#line188">line 188</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+router.url('edit_post', { id: 1, name: 'foo', page: 2 })
+=> /posts/1/edit?name=foo&amp;page=2
+router.url('posts', { name: 'foo&amp;1', page: 2 })
+=> /posts?name=foo%261&amp;page=2
+```</code></pre>
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

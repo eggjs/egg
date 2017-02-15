@@ -1,0 +1,2902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>EggApplication - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2>
+  <h3>Egg</h3>
+  <ul>
+    <li>
+      <a href="Egg.html">Egg</a>
+      <a href="Application.html">Application</a>
+      <a href="Context.html">Context</a>
+      <a href="Request.html">Request</a>
+      <a href="Response.html">Response</a>
+    </li>
+  </ul>
+  <h3>Classes</h3><ul><li><a href="Agent.html">Agent</a><ul class='members'><li data-type='member'><a href="Agent.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Agent.html#env">env</a></li><li data-type='member'><a href="Agent.html#httpclient">httpclient</a></li><li data-type='member'><a href="Agent.html#logger">logger</a></li><li data-type='member'><a href="Agent.html#loggers">loggers</a></li><li data-type='member'><a href="Agent.html#messenger">messenger</a></li><li data-type='member'><a href="Agent.html#proxy">proxy</a></li><li data-type='member'><a href="Agent.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="Agent.html#cluster">cluster()</a></li><li data-type='member'><a href="Agent.html#curl">curl()</a></li><li data-type='member'><a href="Agent.html#getLogger">getLogger()</a></li><li data-type='member'><a href="Agent.html#inspect">inspect()</a></li></ul></li><li><a href="AgentWorkerLoader.html">AgentWorkerLoader</a><ul class='members'><li data-type='member'><a href="AgentWorkerLoader.html#loadConfig">loadConfig()</a></li></ul></li><li><a href="Application.html">Application</a><ul class='members'><li data-type='member'><a href="Application.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Application.html#createAnonymousContext">createAnonymousContext</a></li><li data-type='member'><a href="Application.html#env">env</a></li><li data-type='member'><a href="Application.html#Helper">Helper</a></li><li data-type='member'><a href="Application.html#httpclient">httpclient</a></li><li data-type='member'><a href="Application.html#keys">keys</a></li><li data-type='member'><a href="Application.html#locals">locals</a></li><li data-type='member'><a href="Application.html#logger">logger</a></li><li data-type='member'><a href="Application.html#loggers">loggers</a></li><li data-type='member'><a href="Application.html#messenger">messenger</a></li><li data-type='member'><a href="Application.html#proxy">proxy</a></li><li data-type='member'><a href="Application.html#role">role</a></li><li data-type='member'><a href="Application.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="Application.html#cluster">cluster()</a></li><li data-type='member'><a href="Application.html#createContext">createContext()</a></li><li data-type='member'><a href="Application.html#curl">curl()</a></li><li data-type='member'><a href="Application.html#getLogger">getLogger()</a></li><li data-type='member'><a href="Application.html#inspect">inspect()</a></li></ul></li><li><a href="AppWorkerLoader.html">AppWorkerLoader</a><ul class='members'><li data-type='member'><a href="AppWorkerLoader.html#load">load()</a></li><li data-type='member'><a href="AppWorkerLoader.html#loadConfig">loadConfig()</a></li></ul></li><li><a href="Config.html">Config</a><ul class='members'><li data-type='member'><a href="Config.html#baseDir">baseDir</a></li><li data-type='member'><a href="Config.html#bodyParser">bodyParser</a></li><li data-type='member'><a href="Config.html#development">development</a></li><li data-type='member'><a href="Config.html#env">env</a></li><li data-type='member'><a href="Config.html#HOME">HOME</a></li><li data-type='member'><a href="Config.html#hostHeaders">hostHeaders</a></li><li data-type='member'><a href="Config.html#httpclient">httpclient</a></li><li data-type='member'><a href="Config.html#i18n">i18n</a></li><li data-type='member'><a href="Config.html#ipHeaders">ipHeaders</a></li><li data-type='member'><a href="Config.html#jsonp">jsonp</a></li><li data-type='member'><a href="Config.html#jsonp">jsonp</a></li><li data-type='member'><a href="Config.html#keys">keys</a></li><li data-type='member'><a href="Config.html#logger">logger</a></li><li data-type='member'><a href="Config.html#logrotator">logrotator</a></li><li data-type='member'><a href="Config.html#middleware">middleware</a></li><li data-type='member'><a href="Config.html#multipart">multipart</a></li><li data-type='member'><a href="Config.html#name">name</a></li><li data-type='member'><a href="Config.html#notfound">notfound</a></li><li data-type='member'><a href="Config.html#pkg">pkg</a></li><li data-type='member'><a href="Config.html#protocolHeaders">protocolHeaders</a></li><li data-type='member'><a href="Config.html#proxy">proxy</a></li><li data-type='member'><a href="Config.html#rundir">rundir</a></li><li data-type='member'><a href="Config.html#security">security</a></li><li data-type='member'><a href="Config.html#siteFile">siteFile</a></li><li data-type='member'><a href="Config.html#static">static</a></li><li data-type='member'><a href="Config.html#watcher">watcher</a></li><li data-type='member'><a href="Config.html#.workerStartTimeout">workerStartTimeout</a></li></ul></li><li><a href="Context.html">Context</a><ul class='members'><li data-type='member'><a href="Context.html#accept">accept</a></li><li data-type='member'><a href="Context.html#acceptJSON">acceptJSON</a></li><li data-type='member'><a href="Context.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="Context.html#data=">data=</a></li><li data-type='member'><a href="Context.html#helper">helper</a></li><li data-type='member'><a href="Context.html#ip">ip</a></li><li data-type='member'><a href="Context.html#jsonp">jsonp</a></li><li data-type='member'><a href="Context.html#locale">locale</a></li><li data-type='member'><a href="Context.html#locals">locals</a></li><li data-type='member'><a href="Context.html#logger">logger</a></li><li data-type='member'><a href="Context.html#meta=">meta=</a></li><li data-type='member'><a href="Context.html#params">params</a></li><li data-type='member'><a href="Context.html#queries">queries</a></li><li data-type='member'><a href="Context.html#realStatus">realStatus</a></li><li data-type='member'><a href="Context.html#realStatus">realStatus</a></li><li data-type='member'><a href="Context.html#router">router</a></li><li data-type='member'><a href="Context.html#starttime">starttime</a></li><li data-type='member'><a href="Context.html#__">__()</a></li><li data-type='member'><a href="Context.html#curl">curl()</a></li><li data-type='member'><a href="Context.html#getFileStream">getFileStream()</a></li><li data-type='member'><a href="Context.html#gettext">gettext()</a></li><li data-type='member'><a href="Context.html#multipart">multipart()</a></li><li data-type='member'><a href="Context.html#redirect">redirect()</a></li><li data-type='member'><a href="Context.html#render">render()</a></li><li data-type='member'><a href="Context.html#renderString">renderString()</a></li><li data-type='member'><a href="Context.html#renderView">renderView()</a></li></ul></li><li><a href="EggApplication.html">EggApplication</a><ul class='members'><li data-type='member'><a href="EggApplication.html#BaseContextClass">BaseContextClass</a></li><li data-type='member'><a href="EggApplication.html#baseDir">baseDir</a></li><li data-type='member'><a href="EggApplication.html#close">close</a></li><li data-type='member'><a href="EggApplication.html#config">config</a></li><li data-type='member'><a href="EggApplication.html#console">console</a></li><li data-type='member'><a href="EggApplication.html#Controller">Controller</a></li><li data-type='member'><a href="EggApplication.html#coreLogger">coreLogger</a></li><li data-type='member'><a href="EggApplication.html#deprecate">deprecate</a></li><li data-type='member'><a href="EggApplication.html#env">env</a></li><li data-type='member'><a href="EggApplication.html#httpclient">httpclient</a></li><li data-type='member'><a href="EggApplication.html#loader">loader</a></li><li data-type='member'><a href="EggApplication.html#logger">logger</a></li><li data-type='member'><a href="EggApplication.html#loggers">loggers</a></li><li data-type='member'><a href="EggApplication.html#messenger">messenger</a></li><li data-type='member'><a href="EggApplication.html#name">name</a></li><li data-type='member'><a href="EggApplication.html#options">options</a></li><li data-type='member'><a href="EggApplication.html#plugins">plugins</a></li><li data-type='member'><a href="EggApplication.html#proxy">proxy</a></li><li data-type='member'><a href="EggApplication.html#ready">ready</a></li><li data-type='member'><a href="EggApplication.html#readyCallback">readyCallback</a></li><li data-type='member'><a href="EggApplication.html#Service">Service</a></li><li data-type='member'><a href="EggApplication.html#type">type</a></li><li data-type='member'><a href="EggApplication.html#addSingleton">addSingleton()</a></li><li data-type='member'><a href="EggApplication.html#beforeClose">beforeClose()</a></li><li data-type='member'><a href="EggApplication.html#beforeStart">beforeStart()</a></li><li data-type='member'><a href="EggApplication.html#cluster">cluster()</a></li><li data-type='member'><a href="EggApplication.html#curl">curl()</a></li><li data-type='member'><a href="EggApplication.html#getLogger">getLogger()</a></li><li data-type='member'><a href="EggApplication.html#inspect">inspect()</a></li><li data-type='member'><a href="EggApplication.html#use">use()</a></li></ul></li><li><a href="EggCore.html">EggCore</a><ul class='members'><li data-type='member'><a href="EggCore.html#BaseContextClass">BaseContextClass</a></li><li data-type='member'><a href="EggCore.html#baseDir">baseDir</a></li><li data-type='member'><a href="EggCore.html#close">close</a></li><li data-type='member'><a href="EggCore.html#config">config</a></li><li data-type='member'><a href="EggCore.html#console">console</a></li><li data-type='member'><a href="EggCore.html#Controller">Controller</a></li><li data-type='member'><a href="EggCore.html#deprecate">deprecate</a></li><li data-type='member'><a href="EggCore.html#loader">loader</a></li><li data-type='member'><a href="EggCore.html#name">name</a></li><li data-type='member'><a href="EggCore.html#options">options</a></li><li data-type='member'><a href="EggCore.html#plugins">plugins</a></li><li data-type='member'><a href="EggCore.html#ready">ready</a></li><li data-type='member'><a href="EggCore.html#readyCallback">readyCallback</a></li><li data-type='member'><a href="EggCore.html#Service">Service</a></li><li data-type='member'><a href="EggCore.html#type">type</a></li><li data-type='member'><a href="EggCore.html#beforeClose">beforeClose()</a></li><li data-type='member'><a href="EggCore.html#beforeStart">beforeStart()</a></li><li data-type='member'><a href="EggCore.html#use">use()</a></li></ul></li><li><a href="EggLoader.html">EggLoader</a><ul class='members'><li data-type='member'><a href="EggLoader.html#appInfo">appInfo</a></li><li data-type='member'><a href="EggLoader.html#eggPaths">eggPaths</a></li><li data-type='member'><a href="EggLoader.html#pkg">pkg</a></li><li data-type='member'><a href="EggLoader.html#plugins">plugins</a></li><li data-type='member'><a href="EggLoader.html#serverEnv">serverEnv</a></li><li data-type='member'><a href="EggLoader.html#getAppInfo">getAppInfo()</a></li><li data-type='member'><a href="EggLoader.html#getAppname">getAppname()</a></li><li data-type='member'><a href="EggLoader.html#getEggPaths">getEggPaths()</a></li><li data-type='member'><a href="EggLoader.html#getLoadUnits">getLoadUnits()</a></li><li data-type='member'><a href="EggLoader.html#getServerEnv">getServerEnv()</a></li><li data-type='member'><a href="EggLoader.html#loadAgentExtend">loadAgentExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadApplicationExtend">loadApplicationExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadConfig">loadConfig()</a></li><li data-type='member'><a href="EggLoader.html#loadContextExtend">loadContextExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadFile">loadFile()</a></li><li data-type='member'><a href="EggLoader.html#loadHelperExtend">loadHelperExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadMiddleware">loadMiddleware()</a></li><li data-type='member'><a href="EggLoader.html#loadPlugin">loadPlugin()</a></li><li data-type='member'><a href="EggLoader.html#loadRequestExtend">loadRequestExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadResponseExtend">loadResponseExtend()</a></li><li data-type='member'><a href="EggLoader.html#loadRouter">loadRouter()</a></li><li data-type='member'><a href="EggLoader.html#loadService">loadService()</a></li></ul></li><li><a href="I18n.html">I18n</a></li><li><a href="Request.html">Request</a><ul class='members'><li data-type='member'><a href="Request.html#acceptJSON">acceptJSON</a></li><li data-type='member'><a href="Request.html#header">header</a></li><li data-type='member'><a href="Request.html#headers">headers</a></li><li data-type='member'><a href="Request.html#host">host</a></li><li data-type='member'><a href="Request.html#ip">ip</a></li><li data-type='member'><a href="Request.html#ips">ips</a></li><li data-type='member'><a href="Request.html#method">method</a></li><li data-type='member'><a href="Request.html#originalUrl">originalUrl</a></li><li data-type='member'><a href="Request.html#path">path</a></li><li data-type='member'><a href="Request.html#protocol">protocol</a></li><li data-type='member'><a href="Request.html#queries">queries</a></li><li data-type='member'><a href="Request.html#query">query</a></li><li data-type='member'><a href="Request.html#querystring">querystring</a></li><li data-type='member'><a href="Request.html#url">url</a></li><li data-type='member'><a href="Request.html#query">query()</a></li></ul></li><li><a href="Response.html">Response</a><ul class='members'><li data-type='member'><a href="Response.html#realStatus">realStatus</a></li></ul></li><li><a href="Router.html">Router</a><ul class='members'><li data-type='member'><a href="Router.html#resources">resources()</a></li><li data-type='member'><a href="Router.html#url">url()</a></li></ul></li><li><a href="View.html">View</a><ul class='members'><li data-type='member'><a href="View.html#render">render()</a></li><li data-type='member'><a href="View.html#renderString">renderString()</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="Egg.html">Egg</a><ul class='members'><li data-type='member'><a href="Egg.html#Agent">Agent</a></li><li data-type='member'><a href="Egg.html#AgentWorkerLoader">AgentWorkerLoader</a></li><li data-type='member'><a href="Egg.html#Application">Application</a></li><li data-type='member'><a href="Egg.html#AppWorkerLoader">AppWorkerLoader</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">EggApplication</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        EggApplication
+        </h2>
+        
+            <div class="class-description"><p>Base on koa's Application</p></div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    <h4 class="name" id="EggApplication"><span class="type-signature"></span>new EggApplication<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>options</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><ul>
+<li>{Object} [type] - type of instance, Agent and Application both extend koa, type can determine what it is.<ul>
+<li>{String} [baseDir] - app root dir, default is <code>process.cwd()</code></li>
+<li>{Object} [plugins] - custom plugin config, use it in unittest</li>
+</ul>
+</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line23">line 23</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/eggjs/egg-core">https://github.com/eggjs/egg-core</a></li>
+        
+            <li><a href="http://koajs.com/#application">http://koajs.com/#application</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="EggCore.html">EggCore</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="BaseContextClass"><span class="type-signature"></span>BaseContextClass<span class="type-signature"> :BaseContextClass</span></h4>
+
+
+
+
+<div class="description">
+    <p>BaseContextClass is a base class extended by classes(like service and controller),
+it will be instantiated every request, and assign ctx and app to this.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#BaseContextClass">EggCore#BaseContextClass</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="baseDir"><span class="type-signature"></span>baseDir<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>alias to options.baseDir</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#baseDir">EggCore#baseDir</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line110">line 110</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="close"><span class="type-signature"></span>close<span class="type-signature"> :function</span></h4>
+
+
+
+
+<div class="description">
+    <p>close all, it wil close</p>
+<ul>
+<li>callbacks registered by beforeClose</li>
+<li>emit <code>close</code> event</li>
+<li>remove add listeners</li>
+</ul>
+<p>If error is thrown when it's closing, the promise will reject.
+It will also reject after following call.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#close">EggCore#close</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line188">line 188</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="config"><span class="type-signature"></span>config<span class="type-signature"> :<a href="Config.html">Config</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>alias to {EggCore#loader}</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#config">EggCore#config</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line150">line 150</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="console"><span class="type-signature"></span>console<span class="type-signature"> :Logger</span></h4>
+
+
+
+
+<div class="description">
+    <p>logging for EggCore, avoid using console directly</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#console">EggCore#console</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line47">line 47</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="Controller"><span class="type-signature"></span>Controller<span class="type-signature"> :Controller</span></h4>
+
+
+
+
+<div class="description">
+    <p>return base controller</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#Controller">EggCore#Controller</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line222">line 222</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="coreLogger"><span class="type-signature"></span>coreLogger<span class="type-signature"> :Logger</span></h4>
+
+
+
+
+<div class="description">
+    <p>core logger for framework and plugins, log file is <code>$HOME/logs/{appname}/egg-web</code></p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line216">line 216</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="deprecate"><span class="type-signature"></span>deprecate<span class="type-signature"> :function</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#deprecate">EggCore#deprecate</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line119">line 119</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://npmjs.com/package/depd">https://npmjs.com/package/depd</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="env"><span class="type-signature"></span>env<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>app.env delegate app.config.env</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line266">line 266</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="httpclient"><span class="type-signature"></span>httpclient<span class="type-signature"> :HttpClient</span></h4>
+
+
+
+
+<div class="description">
+    <p>HttpClient instance</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line173">line 173</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/node-modules/urllib">https://github.com/node-modules/urllib</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="loader"><span class="type-signature"></span>loader<span class="type-signature"> :<a href="EggLoader.html">EggLoader</a></span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#loader">EggCore#loader</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line66">line 66</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="logger"><span class="type-signature"></span>logger<span class="type-signature"> :Logger</span></h4>
+
+
+
+
+<div class="description">
+    <p>application logger, log file is <code>$HOME/logs/{appname}/{appname}-web</code></p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line207">line 207</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="loggers"><span class="type-signature"></span>loggers<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>All loggers contain logger, coreLogger and customLogger</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line185">line 185</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="messenger"><span class="type-signature"></span>messenger<span class="type-signature"> :<a href="Messenger.html">Messenger</a></span></h4>
+
+
+
+
+<div class="description">
+    <p>messenger instance</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>name in package.json</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#name">EggCore#name</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line132">line 132</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="options"><span class="type-signature"></span>options<span class="type-signature"> :Object</span></h4>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#options">EggCore#options</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="plugins"><span class="type-signature"></span>plugins<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>alias to {EggCore#loader}</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#plugins">EggCore#plugins</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="proxy"><span class="type-signature"></span>proxy<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    <p>app.proxy delegate app.config.proxy</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line277">line 277</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="ready"><span class="type-signature"></span>ready<span class="type-signature"> :function</span></h4>
+
+
+
+
+<div class="description">
+    <p>register an callback function that will be invoked when application is ready.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#ready">EggCore#ready</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line239">line 239</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="readyCallback"><span class="type-signature"></span>readyCallback<span class="type-signature"> :function</span></h4>
+
+
+
+
+<div class="description">
+    <p>If a client starts asynchronously, you can register <code>readyCallback</code>,
+then the application will wait for the callback to ready</p>
+<p>It will log when the callback is not invoked after 10s</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#readyCallback">EggCore#readyCallback</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line245">line 245</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+const done = app.readyCallback('mysql');
+mysql.ready(done);
+```</code></pre>
+
+
+
+        
+            
+<h4 class="name" id="Service"><span class="type-signature"></span>Service<span class="type-signature"> :Service</span></h4>
+
+
+
+
+<div class="description">
+    <p>return base service</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#Service">EggCore#Service</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line230">line 230</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="type"><span class="type-signature"></span>type<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>alias to options.type</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#type">EggCore#type</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line101">line 101</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="addSingleton"><span class="type-signature"></span>addSingleton<span class="signature">(name, create)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>create a singleton instance</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>unique name for singleton</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>create</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>method will be invoked when singleton instance create</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line289">line 289</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="beforeClose"><span class="type-signature"></span>beforeClose<span class="signature">(fn)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>register a function that will be called when app close</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>fn</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>the function that can be generator function or async function</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#beforeClose">EggCore#beforeClose</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line212">line 212</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="beforeStart"><span class="type-signature"></span>beforeStart<span class="signature">(scope)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>excute scope after loaded and before app start</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>scope</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+|
+
+<span class="param-type">GeneratorFunction</span>
+|
+
+<span class="param-type">AsyncFunction</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>function will excute before app start</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#beforeStart">EggCore#beforeStart</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line159">line 159</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="cluster"><span class="type-signature"></span>cluster<span class="signature">(clientClass, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {ClientWrapper}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>almost the same as Agent.cluster API, the only different is that this method create Follower.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>clientClass</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>client class function</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                    [
+                  
+                  <code>options</code>
+                  
+                  
+                    ]
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><ul>
+<li>{Boolean} [autoGenerate] - whether generate delegate rule automatically, default is true<ul>
+<li>{Function} [formatKey] - a method to tranform the subscription info into a string，default is JSON.stringify</li>
+<li>{Object} [transcode|JSON.stringify/parse]<ul>
+<li>{Function} encode - custom serialize method</li>
+<li>{Function} decode - custom deserialize method</li>
+</ul>
+</li>
+<li>{Boolean} [isBroadcast] - whether broadcast subscrption result to all followers or just one, default is true</li>
+<li>{Number} [responseTimeout] - response timeout, default is 3 seconds</li>
+<li>{Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds</li>
+</ul>
+</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line317">line 317</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/node-modules/cluster-client">https://github.com/node-modules/cluster-client</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="curl"><span class="type-signature"></span>curl<span class="signature">(url, opts)</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>http request helper base on httpclient, it will auto save httpclient log.
+Keep the same api with <code>httpclient.request(url, args)</code>.</p>
+<p>See https://github.com/node-modules/urllib#api-doc for more details.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>url</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>request url address.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>opts</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><ul>
+<li>method {String} - Request method, defaults to GET. Could be GET, POST, DELETE or PUT. Alias 'type'.</li>
+<li>data {Object} - Data to be sent. Will be stringify automatically.</li>
+<li>dataType {String} - String - Type of response data. Could be <code>text</code> or <code>json</code>.
+If it's <code>text</code>, the callbacked data would be a String.
+If it's <code>json</code>, the data of callback would be a parsed JSON Object.
+Default callbacked data would be a Buffer.</li>
+<li>headers {Object} - Request headers.</li>
+<li>timeout {Number} - Request timeout in milliseconds. Defaults to exports.TIMEOUT.
+Include remote server connecting timeout and response timeout.
+When timeout happen, will return ConnectionTimeout or ResponseTimeout.</li>
+<li>auth {String} - <code>username:password</code> used in HTTP Basic Authorization.</li>
+<li>followRedirect {Boolean} - follow HTTP 3xx responses as redirects. defaults to false.</li>
+<li>gzip {Boolean} - let you get the res object when request connected, default false. alias customResponse</li>
+</ul></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line164">line 164</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+const result = yield app.curl('http://example.com/foo.json', {
+  method: 'GET',
+  dataType: 'json,
+});
+console.log(result.status, result.headers, result.data);
+```</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="getLogger"><span class="type-signature"></span>getLogger<span class="signature">(name)</span><span class="type-signature"> &rarr; {Logger}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Get logger by name, it's equal to app.loggers['name'],
+but you can extend it with your own logical.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>name</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>logger name</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line198">line 198</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="inspect"><span class="type-signature"></span>inspect<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>print the infomation when console.log(app)</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="lib_egg.js.html">lib/egg.js</a>, <a href="lib_egg.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>```js
+console.log(app);
+=>
+{
+  name: 'mockapp',
+  env: 'test',
+  subdomainOffset: 2,
+  config: '&lt;egg config>',
+  controller: '&lt;egg controller>',
+  service: '&lt;egg service>',
+  middlewares: '&lt;egg middlewares>',
+  urllib: '&lt;egg urllib>',
+  loggers: '&lt;egg loggers>'
+}
+```</code></pre>
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="use"><span class="type-signature"></span>use<span class="signature">(fn)</span><span class="type-signature"> &rarr; {<a href="Application.html">Application</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>override koa's app.use
+support async function</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>fn</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>middleware</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="EggCore.html#use">EggCore#use</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_egg.js.html">node_modules/egg-core/lib/egg.js</a>, <a href="node_modules_egg-core_lib_egg.js.html#line89">line 89</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Feb 15 2017 10:34:13 GMT+0000 (UTC) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>I18n - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,25 +39,217 @@
 
 <div id="main">
     
+    <h1 class="page-title">I18n</h1>
+    
 
     
 
 
 
+
+<section>
+
+<header>
+    
+        <h2>
+        I18n
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="I18n"><span class="type-signature"></span>new I18n<span class="signature">(app)</span><span class="type-signature"></span></h4>
+
     
 
 
 
+<div class="description">
+    <p>I18n 国际化</p>
+<p>通过设置 Plugin 配置 <code>i18n: true</code>，开启多语言支持。</p>
+<h4>语言文件存储路径</h4><p>统一存放在 <code>config/locales/*.js</code> 下，如包含英文，简体中文，繁体中文的语言文件：</p>
+<pre class="prettyprint source"><code>- config/locales/
+  - en-US.js
+  - zh-CN.js
+  - zh-TW.js</code></pre>
+</div>
 
 
 
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>app</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">App</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>Application object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_.1.1.0@egg-i18n_app.js.html">node_modules/.1.1.0@egg-i18n/app.js</a>, <a href="node_modules_.1.1.0@egg-i18n_app.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>#### I18n 文件内容
+
+```js
+// config/locales/zh-CN.js
+module.exports = {
+  "Email": "邮箱",
+  "Welcome back, %s!": "欢迎回来, %s!",
+  "Hello %s, how are you today?": "你好 %s, 今天过得咋样？",
+};
+```
+
+```js
+// config/locales/en-US.js
+module.exports = {
+  "Email": "Email",
+};
+```
+或者也可以用 JSON 格式的文件:
+
+```js
+// config/locales/zh-CN.json
+{
+  "email": "邮箱",
+  "login": "帐号",
+  "createdAt": "注册时间"
+}
+```</code></pre>
 
 
 
     
+    </div>
 
+    
 
+    
 
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
