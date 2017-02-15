@@ -18,13 +18,14 @@ index:
 
 header:
   translations: "Translations"
-  
+
 guide_toc:
   Intro: Guide
   What is egg: What is egg?
   egg and koa: The egg and koa
   Get Start: Quick start
   Basics: Basis function
+  Structure: Directory Structure
   Environment: Environment
   Config: Configuration
   Middleware: Middleware

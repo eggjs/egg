@@ -25,6 +25,7 @@ guide_toc:
   egg and koa: egg 和 koa
   Get Start: 快速入门
   Basics: 基础功能
+  Structure: 目录结构
   Environment: 运行环境
   Config: 配置
   Middleware: 中间件
