@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>目录结构 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <ul class="nav-item">
+      <li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li>
+      <!--
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/">中文</a></li>
+          <li><a href="/">English</a></li>
+        </ul>
+      </li>
+      -->
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe></li>
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>目录结构</h1>
+    <p>在<a href="../intro/quickstart.html">快速入门</a>中，大家对框架应该有了初步的印象，接下来我们简单了解下目录约定规范。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">egg-project</div><div class="line">├── package.json</div><div class="line">├── app.js (可选)</div><div class="line">├── agent.js (可选)</div><div class="line">├── app</div><div class="line">|   ├── router.js</div><div class="line">│   ├── controller</div><div class="line">│   |   └── home.js</div><div class="line">│   ├── service (可选)</div><div class="line">│   |   └── user.js</div><div class="line">│   ├── middleware (可选)</div><div class="line">│   |   └── response_time.js</div><div class="line">│   ├── schedule (可选)</div><div class="line">│   |   └── my_task.js</div><div class="line">│   ├── public (可选)</div><div class="line">│   |   └── reset.css</div><div class="line">│   ├── view (可选)</div><div class="line">│   |   └── home.tpl</div><div class="line">│   └── extend (可选)</div><div class="line">│       ├── helper.js (可选)</div><div class="line">│       ├── request.js (可选)</div><div class="line">│       ├── response.js (可选)</div><div class="line">│       ├── context.js (可选)</div><div class="line">│       ├── application.js (可选)</div><div class="line">│       └── agent.js (可选)</div><div class="line">├── config</div><div class="line">|   ├── plugin.js</div><div class="line">|   ├── config.default.js</div><div class="line">│   ├── config.prod.js</div><div class="line">|   ├── config.test.js (可选)</div><div class="line">|   ├── config.local.js (可选)</div><div class="line">|   └── config.unittest.js (可选)</div><div class="line">└── <span class="built_in">test</span></div><div class="line">    ├── middleware</div><div class="line">    |   └── response_time.test.js</div><div class="line">    └── controller</div><div class="line">        └── home.test.js</div></pre></td></tr></table></figure></p>
+<p>如上，由框架约定的目录：</p>
+<ul>
+<li><code>app/router.js</code> 用于配置 URL 路由规则，具体参见<a href="./router.html">路由</a>。</li>
+<li><code>app/controller/**</code> 用于解析用户的输入，处理后返回相应的结果，具体参见 <a href="./controller.html">controller</a>。</li>
+<li><code>app/service/**</code> 用于编写业务逻辑层，可选，建议使用，具体参见 <a href="./service.html">service</a>。</li>
+<li><code>app/middleware/**</code> 用于编写中间件，可选，具体参见 <a href="./middleware.html">middleware</a>。</li>
+<li><code>app/public/**</code> 用于放置静态资源，可选，具体参见内置插件 <a href="https://github.com/eggjs/egg-static" target="_blank" rel="external">egg-static</a>。</li>
+<li><code>app/extend/**</code> 用于框架的扩展，可选，具体参见<a href="./extend.html">框架扩展</a>。</li>
+<li><code>config/config.{env}.js</code> 用于编写配置文件，具体参见<a href="./config.html">配置</a>。</li>
+<li><code>config/plugin.js</code> 用于配置需要加载的插件，具体参见<a href="../advanced/plugin.html">插件开发</a>。</li>
+<li><code>test/**</code> 用于单元测试，具体参见<a href="../core/unittest.html">单元测试</a>。</li>
+<li><code>app.js</code> 和 <code>agent.js</code> 用于自定义启动时的初始化工作，可选，具体参见<a href="./app-start.html">启动自动化</a>。</li>
+</ul>
+<p>由内置插件约定的目录：</p>
+<ul>
+<li><code>app/public/**</code> 用于放置静态资源，可选，具体参见内置插件 <a href="https://github.com/eggjs/egg-static" target="_blank" rel="external">egg-static</a>。</li>
+<li><code>app/schedule/**</code> 用于定时任务，可选，具体参见<a href="./schedule.html">定时任务</a>。</li>
+<li><code>config/role.js</code> 用于角色权限定义，可选，具体参见内置插件 <a href="https://github.com/eggjs/egg-userrole" target="_blank" rel="external">egg-userrole</a>。</li>
+</ul>
+<p><strong>若需自定义自己的目录规范，参见<a href="https://eggjs.org/zh-cn/advanced/loader.html">Loader API</a>。</strong></p>
+<ul>
+<li><code>app/view/**</code> 用于放置模板文件，可选，由模板插件约定，具体参见<a href="../core/view.html">模板渲染</a>。</li>
+<li><code>app/model/**</code> 用于放置领域模型，可选，由领域类相关插件约定，如 <a href="https://github.com/eggjs/egg-sequelize" target="_blank" rel="external">egg-sequelize</a>。</li>
+</ul>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+</aside>
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+</div>
+
+  </div>
+</body>
+</html>
