@@ -32,6 +32,8 @@ $ open localhost:7001
 
 但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [egg hackernews](https://github.com/eggjs/examples/tree/master/hackernews)。
 
+![Egg HackerNews Snapshoot](https://cloud.githubusercontent.com/assets/227713/22960991/812999bc-f37d-11e6-8bd5-a96ca37d0ff2.png)
+
 ### 初始化项目
 
 先来初始化下目录结构：
@@ -79,6 +81,19 @@ module.exports = app => {
   app.get('/', 'home.index');
 };
 ```
+
+此时目录结构如下：
+
+```bash
+egg-example
+├── app
+│   ├── controller
+│   │   └── home.js
+│   └── router.js
+└── package.json
+```
+
+完整的目录结构规范参见[目录结构](../basics/structure.md)。
 
 好，现在可以启动应用来体验下
 

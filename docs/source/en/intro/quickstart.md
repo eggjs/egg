@@ -38,6 +38,8 @@ then get started with the development.
 
 However, in this section, instead of using scaffolds we will build a project called [Egg HackerNews](https://github.com/eggjs/examples/tree/master/hackernews) step by step, for a better understanding of how it works.
 
+![Egg HackerNews Snapshoot](https://cloud.githubusercontent.com/assets/227713/22960991/812999bc-f37d-11e6-8bd5-a96ca37d0ff2.png)
+
 ### Initialization
 
 First let's create the project directory and initialize its structure.
@@ -88,6 +90,19 @@ module.exports = app => {
   app.get('/', 'home.index');
 };
 ```
+
+The project directory looks like this:
+
+```bash
+egg-example
+├── app
+│   ├── controller
+│   │   └── home.js
+│   └── router.js
+└── package.json
+```
+
+For more infomation about directory structure, see [Directory Structure](../basics/structure.md).
 
 Now you can start up the Web Server and see your application in action.
 
