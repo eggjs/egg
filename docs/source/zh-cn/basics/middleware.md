@@ -27,7 +27,7 @@ function* gzip(next) {
 }
 ```
 
-可以看到，egg 的中间件和 koa 1 的中间件写法是一模一样的，所以任何 koa 1 的中间件都可以直接被 egg 使用。
+可以看到，框架的中间件和 koa 的中间件写法是一模一样的，所以任何 koa 的中间件都可以直接被框架使用。
 
 ### 配置
 
@@ -84,7 +84,7 @@ module.exports = {
 
 ## 框架默认中间件
 
-除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [egg 自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
+除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
 
 ```js
 module.exports = {
@@ -109,9 +109,50 @@ module.exports = app => {
 }
 ```
 
+## 使用 koa 的中间件
+
+框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：
+
+- generator function: `function* (next) {}`
+- async function: `async (ctx, next) => {}`
+- common function: `(ctx, next) => {}`
+
+所有可以在 koa 中使用的中间件都可以直接在框架中使用。
+
+以 [koa-bodyparser](https://github.com/koajs/bodyparser) 为例，在 koa 中使用时：
+
+```js
+var koa = require('koa');
+var bodyParser = require('koa-bodyparser');
+
+var app = koa();
+
+const options = { limit: '10kb' };
+app.use(bodyParser(options));
+```
+
+我们按照框架的规范来在应用中引入这个 koa 的中间件：
+
+```js
+// app/middleware/body_parser.js
+
+// koa-bodyparser 暴露的接口(`(options) => middleware`)和框架对中间件要求一致
+module.exports = require('koa-bodyparser');
+```
+
+```js
+// config/config.default.js
+
+// 所有的下划线中划线分隔的文件名都会变成驼峰
+exports.middleware = [ 'bodyParser' ];
+exports.bodyParser = {
+  limit: '10kb',
+};
+```
+
 ## 通用配置
 
-无论是应用层中间件还是框架自带中间件，都支持几个通用的配置项：
+无论是应用层引入的中间件还是框架自带中间件，都支持几个通用的配置项：
 
 - enable：控制中间件是否开启。
 - match：设置只有符合某些规则的请求才会经过这个中间件。
