@@ -184,7 +184,7 @@ exports.handler = function*() {
 
 #### egg 1.x
 
-现在 node 的 LTS 版本尚不支持 async function，所以 egg 仍然基于 koa 1.x 开发，但是在此基础上，egg 全面增加了 async function 的支持，应用层代码可以完全基于 async function 来实现。
+现在 node 的 LTS 版本尚不支持 async function，所以 egg 仍然基于 koa 1.x 开发，但是在此基础上，egg 全面增加了 async function 的支持，再加上 egg 对 koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 [async function 来实现](../tutorials/async-function.md)。
 
 - 底层基于 koa 1.x，异步解决方案基于 [co] 封装的 generator function。
 - 官方插件以及 egg 核心使用 generator function 编写，保持对 node LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。

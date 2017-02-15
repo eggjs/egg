@@ -119,34 +119,33 @@ module.exports = app => {
 
 所有可以在 koa 中使用的中间件都可以直接在框架中使用。
 
-以 [koa-bodyparser](https://github.com/koajs/bodyparser) 为例，在 koa 中使用时：
+以 [koa-compress](https://github.com/koajs/compress) 为例，在 koa 中使用时：
 
 ```js
 var koa = require('koa');
-var bodyParser = require('koa-bodyparser');
+var compress = require('koa-compress');
 
 var app = koa();
 
-const options = { limit: '10kb' };
-app.use(bodyParser(options));
+const options = { threshold: 2048 };
+app.use(compress(options));
 ```
 
 我们按照框架的规范来在应用中引入这个 koa 的中间件：
 
 ```js
-// app/middleware/body_parser.js
+// app/middleware/compress.js
 
-// koa-bodyparser 暴露的接口(`(options) => middleware`)和框架对中间件要求一致
-module.exports = require('koa-bodyparser');
+// koa-compress 暴露的接口(`(options) => middleware`)和框架对中间件要求一致
+module.exports = require('koa-compress');
 ```
 
 ```js
 // config/config.default.js
 
-// 所有的下划线中划线分隔的文件名都会变成驼峰
-exports.middleware = [ 'bodyParser' ];
+exports.middleware = [ 'compress' ];
 exports.bodyParser = {
-  limit: '10kb',
+  threshold: 2048,
 };
 ```
 
