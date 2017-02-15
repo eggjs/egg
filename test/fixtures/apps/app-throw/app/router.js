@@ -21,4 +21,19 @@ module.exports = app => {
       reject('foo reject string error');
     });
   });
+
+  app.get('/throw-unhandledRejection-obj', function* () {
+    this.body = 'foo';
+    new Promise((resolve, reject) => {
+      const err = {
+        name: 'TypeError',
+        message: 'foo reject obj error',
+        stack: new Error().stack,
+        toString() {
+          return this.name + ': ' + this.message;
+        },
+      };
+      reject(err);
+    });
+  });
 };
