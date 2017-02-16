@@ -34,8 +34,8 @@ We can start application with PM2 like this:
 pm2 start server.js
 ```
 
-## How to resolve `invalid csrf token` error?
+## How to resolve csrf error?
 
 By default [egg-security](https://github.com/eggjs/egg-security/) plugin built in egg requires CSRF validation against all 'unsafe' request such as `POST`, `PUT`, `DELETE` requests.
 
-The error will disappear in the presence of csrf token in request. For more implentation details, see [./core/security.md#csrf].
+The error will disappear in the presence of correct csrf token in request. For more implentation details, see [./core/security.md#csrf].
