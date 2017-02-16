@@ -56,6 +56,14 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// server.js</span></div><div class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">'egg'</span>);</div><div class="line"></div><div class="line"><span class="keyword">const</span> workers = <span class="built_in">Number</span>(process.argv[<span class="number">2</span>] || <span class="built_in">require</span>(<span class="string">'os'</span>).cpus().length);</div><div class="line">egg.startCluster(&#123;</div><div class="line">  workers,</div><div class="line">  <span class="attr">baseDir</span>: __dirname,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>这样，我们就可以通过 PM2 进行启动了：</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pm2 start server.js</div></pre></td></tr></table></figure></p>
+<h2 id="为什么会有-csrf-报错"><a class="markdown-anchor" href="#为什么会有-csrf-报错">#</a> 为什么会有 csrf 报错？</h2>
+<p>通常有两种 csrf 报错：</p>
+<ul>
+<li><code>missing csrf token</code></li>
+<li><code>invalid csrf token</code></li>
+</ul>
+<p>egg 内置的 <a href="https://github.com/eggjs/egg-security/" target="_blank" rel="external">egg-security</a> 插件默认对所有『非安全』的方法，例如 <code>POST</code>，<code>PUT</code>，<code>DELETE</code> 都进行 CSRF 校验。</p>
+<p>请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读 <a href="./core/security.html#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81csrf%E7%9A%84%E9%98%B2%E8%8C%83">安全威胁CSRF的防范</a>。</p>
 
   </article>
   <aside id="mobileAside" class="toc">

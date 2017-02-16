@@ -56,6 +56,14 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// server.js</span></div><div class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">'egg'</span>);</div><div class="line"></div><div class="line"><span class="keyword">const</span> workers = <span class="built_in">Number</span>(process.argv[<span class="number">2</span>] || <span class="built_in">require</span>(<span class="string">'os'</span>).cpus().length);</div><div class="line">egg.startCluster(&#123;</div><div class="line">  workers,</div><div class="line">  <span class="attr">baseDir</span>: __dirname,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>We can start application with PM2 like this:</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pm2 start server.js</div></pre></td></tr></table></figure></p>
+<h2 id="how-to-resolve-csrf-error"><a class="markdown-anchor" href="#how-to-resolve-csrf-error">#</a> How to resolve csrf error?</h2>
+<p>There are two kinds of common csrf errors:</p>
+<ul>
+<li><code>missing csrf token</code></li>
+<li><code>invalid csrf token</code></li>
+</ul>
+<p>By default <a href="https://github.com/eggjs/egg-security/" target="_blank" rel="external">egg-security</a> plugin built in egg requires CSRF validation against all 'unsafe' request such as <code>POST</code>, <code>PUT</code>, <code>DELETE</code> requests.</p>
+<p>The error will disappear in the presence of correct csrf token in request. For more implentation details, see [./core/security.md#csrf].</p>
 
   </article>
   <aside id="mobileAside" class="toc">
