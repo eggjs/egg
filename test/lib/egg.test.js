@@ -118,12 +118,19 @@ describe('test/lib/egg.test.js', () => {
         .get('/throw-unhandledRejection-string')
         .expect('foo')
         .expect(200);
+      yield request(app.callback())
+        .get('/throw-unhandledRejection-obj')
+        .expect('foo')
+        .expect(200);
 
       yield sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('nodejs.unhandledRejectionError: foo reject error'));
       assert(body.includes('nodejs.unhandledRejectionError: foo reject string error'));
+      assert(body.includes('nodejs.TypeError: foo reject obj error'));
+      // make sure stack exists and right
+      assert(body.match(/at .+router.js:\d+:\d+\)/));
     });
   });
 });
