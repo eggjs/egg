@@ -5,11 +5,10 @@ const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
 const ContextHttpClient = require('../../lib/core/context_httpclient');
-const createView = require('../../lib/core/view');
-const util = require('../../lib/core/util');
+const utility = require('utility');
+
 
 const HELPER = Symbol('Context#helper');
-const VIEW = Symbol('Context#view');
 const LOCALS = Symbol('Context#locals');
 const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
@@ -128,54 +127,6 @@ const proto = module.exports = {
   },
 
   /**
-   * View instance that is created every request
-   * @return {View} view
-   */
-  get view() {
-    if (!this[VIEW]) {
-      this[VIEW] = createView(this);
-    }
-    return this[VIEW];
-  },
-
-  /**
-   * render for template path
-   * @method Context#render
-   * @param {String} name - template path
-   * @param {Object} [locals] - locals
-   * @return {Promise} resolve when render completed
-   */
-  render(name, locals) {
-    return this.renderView(name, locals).then(body => {
-      this.body = body;
-    });
-  },
-
-  /**
-   * render for template path, but return string rather than writing to response
-   * @method Context#renderView
-   * @param {String} name - template path
-   * @param {Object} [locals] - locals
-   * @return {Promise} resolve html string
-   * @see View#render
-   */
-  renderView(name, locals) {
-    return this.view.render(name, locals);
-  },
-
-  /**
-   * render for string
-   * @method Context#renderString
-   * @param {String} tpl - template string
-   * @param {Object} [locals] - locals
-   * @return {Promise} resolve html string
-   * @see View#renderString
-   */
-  renderString(tpl, locals) {
-    return this.view.renderString(tpl, locals);
-  },
-
-  /**
    * locals is an object for view, you can use `app.locals` and `ctx.locals` to set variables,
    * which will be used as data when view is rendering.
    * The difference between `app.locals` and `ctx.locals` is the context level, `app.locals` is global level, and `ctx.locals` is request level. when you get `ctx.locals`, it will merge `app.locals`.
@@ -204,10 +155,10 @@ const proto = module.exports = {
    */
   get locals() {
     if (!this[LOCALS]) {
-      this[LOCALS] = util.assign({}, this.app.locals);
+      this[LOCALS] = Object.assign({}, this.app.locals);
     }
     if (this[LOCALS_LIST] && this[LOCALS_LIST].length) {
-      util.assign(this[LOCALS], this[LOCALS_LIST]);
+      utility.assign(this[LOCALS], this[LOCALS_LIST]);
       this[LOCALS_LIST] = null;
     }
     return this[LOCALS];

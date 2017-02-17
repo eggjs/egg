@@ -155,4 +155,15 @@ module.exports = {
     enable: true,
     package: 'egg-jsonp',
   },
+
+  /**
+   * view plugin
+   * @member {Function} Plugin#view
+   * @property {Boolean} enable - `true` by default
+   * @since 1.0.0
+   */
+  view: {
+    enable: true,
+    package: 'egg-view',
+  },
 };
