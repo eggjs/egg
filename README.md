@@ -43,7 +43,8 @@ Node.js >= 6.0.0 required.
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 
-> English docs is still working in process, see [#360](https://github.com/eggjs/egg/issues/360).
+> All the resources are in English(comments, README, etc.), with one exception, guides are still [working in process](https://github.com/eggjs/egg/issues/363).
+> Welcome to join us to translate egg documents, we are glad to see that.
 
 ## Getting Started
 
