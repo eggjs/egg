@@ -343,11 +343,14 @@ exports.robot = {
 };
 
 // app/service/some.js
-class SomeService extends app.Service {
-  * list() {
-    const rule = this.app.config.robot.ua;
+module.exports = app => {
+  class SomeService extends app.Service {
+    * list() {
+      const rule = this.app.config.robot.ua;
+    }
   }
-}
+  return SomeService;
+};
 ```
 
 ### 单元测试
