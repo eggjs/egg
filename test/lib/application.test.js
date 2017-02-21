@@ -147,6 +147,15 @@ describe('test/lib/application.test.js', () => {
       });
     });
 
+    describe('inspect && toJSON', () => {
+      it('should override koa method', function() {
+        const inspectResult = app.inspect();
+        const jsonResult = app.toJSON();
+        assert.deepEqual(inspectResult, jsonResult);
+        assert(inspectResult.env === app.config.env);
+      });
+    });
+
     describe('class style controller', () => {
       it('should work with class style controller', () => {
         return request(app.callback())

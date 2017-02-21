@@ -1,7 +1,7 @@
 # 代码贡献规范
 
 有任何疑问，欢迎提交 [issue](https://github.com/eggjs/egg/issues)，
-或者直接修改提交 [MR](https://github.com/eggjs/egg/issues)!
+或者直接修改提交 [PR](https://github.com/eggjs/egg/pulls)!
 
 ## 提交 issue
 

@@ -15,7 +15,7 @@ title: MySQL
 // package.json
 {
   "dependencies": {
-    "egg-mysql": "^1.0.1"
+    "egg-mysql": "*"
   }
 }
 ```
