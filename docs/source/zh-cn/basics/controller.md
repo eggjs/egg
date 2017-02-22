@@ -91,7 +91,7 @@ module.exports = app => {
     },
 
     notFound(msg) {
-      const msg = msg || 'not found';
+      msg = msg || 'not found';
       this.ctx.throw(404, msg);
     },
   };
