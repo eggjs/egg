@@ -13,6 +13,12 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
     app = utils.app('apps/cluster_mod_app', { coverage: true });
     yield app.ready();
   });
+  after(function* () {
+    yield app.close();
+    const agentInnerClient = app.agent.registryClient[innerClient];
+    assert(agentInnerClient._realClient.closed === true);
+    mm.restore();
+  });
 
   it('should publish & subscribe ok', () => {
     return request(app.callback())
@@ -33,10 +39,4 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       });
   });
 
-  after(function* () {
-    yield app.close();
-    const agentInnerClient = app.agent.registryClient[innerClient];
-    assert(agentInnerClient._realClient.closed === true);
-    mm.restore();
-  });
 });
