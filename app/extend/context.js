@@ -5,7 +5,7 @@ const ContextLogger = require('egg-logger').EggContextLogger;
 const Cookies = require('egg-cookies');
 const co = require('co');
 const ContextHttpClient = require('../../lib/core/context_httpclient');
-const utility = require('utility');
+const { assign } = require('utility');
 
 
 const HELPER = Symbol('Context#helper');
@@ -155,10 +155,10 @@ const proto = module.exports = {
    */
   get locals() {
     if (!this[LOCALS]) {
-      this[LOCALS] = Object.assign({}, this.app.locals);
+      this[LOCALS] = assign({}, this.app.locals);
     }
     if (this[LOCALS_LIST] && this[LOCALS_LIST].length) {
-      utility.assign(this[LOCALS], this[LOCALS_LIST]);
+      assign(this[LOCALS], this[LOCALS_LIST]);
       this[LOCALS_LIST] = null;
     }
     return this[LOCALS];
