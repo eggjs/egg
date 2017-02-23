@@ -20,13 +20,6 @@ const proto = module.exports = {
   get cookies() {
     if (!this[COOKIES]) {
       this[COOKIES] = new Cookies(this, this.app.keys);
-      // Browser Cookie Limits: http://browsercookielimits.squawky.net/
-      this[COOKIES].on('cookieLimitExceed', ({ name, value }) => {
-        const err = new Error(`cookie ${name}'s length(${value.length}) exceed the limit(4093)`);
-        err.name = 'CookieLimitExceedError';
-        err.cookie = value;
-        this.coreLogger.error(err);
-      });
     }
     return this[COOKIES];
   },
