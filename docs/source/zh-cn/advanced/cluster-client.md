@@ -1,252 +1,7 @@
-title: 多进程模型
+title: 多进程研发模式增强
 ---
 
-## 背景
-
-我们知道 JavaScript 代码是运行在单线程上的，换句话说一个 node 进程只消耗一个 CPU。那么如果用 node 来做 web server，就无法享受到多核运算的好处。作为企业级的解决方案，我们要解决的一个问题就是:
-
-> 如何榨干服务器资源，利用上多核 CPU 的并发优势？
-
-而 node 官方提供的解决方案是 [cluster 模块](https://nodejs.org/api/cluster.html)
-
-> A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.
-
-> The cluster module allows you to easily create child processes that all share server ports.
-
-## cluster 是什么呢？
-
-简单的说，
-
-- 在服务器上同时启动多个进程。
-- 每个进程里都跑的是同一份源代码（好比把以前一个进程的工作分给多个进程去做）。
-- 更神奇的是，这些进程可以同时监听一个端口（具体原理推荐阅读 @DavidCai1993 这篇 [cluster 实现原理](https://cnodejs.org/topic/56e84480833b7c8a0492e20c)）。
-
-其中：
-
-- 负责启动其他进程的叫做 Master 进程，他好比是个『包工头』，不做具体的工作，只负责启动其他进程。
-- 其他被启动的叫 Worker 进程，顾名思义就是干活的『工人』。它们接收请求，对外提供服务。
-- Worker 进程的数量一般根据服务器的 CPU 核数来定，这样就可以完美利用多核资源。
-
-示例代码
-
-```js
-const cluster = require('cluster');
-const http = require('http');
-const numCPUs = require('os').cpus().length;
-
-if (cluster.isMaster) {
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-
-  cluster.on('exit', function(worker, code, signal) {
-    console.log('worker ' + worker.process.pid + ' died');
-  });
-} else {
-  // Workers can share any TCP connection
-  // In this case it is an HTTP server
-  http.createServer(function(req, res) {
-    res.writeHead(200);
-    res.end("hello world\n");
-  }).listen(8000);
-}
-```
-
-## cluster 就够了吗？
-
-上面的示例是不是很简单，但是作为企业级的解决方案，要考虑的东西还有很多。
-
-- Worker 进程异常退出以后该如何处理？
-- 多个 Worker 进程之间如何共享资源？
-- 多个 Worker 进程之间如何调度？
-- ...
-
-### 异常处理
-
-健壮性（又叫鲁棒性）是企业级应用必须考虑的问题，除了程序本身代码质量要保证，框架层面也需要提供相应的『兜底』机制保证极端情况下应用的可用性。
-
-当一个 Worker 进程遇到未捕获的异常时，通常需要做两件事情：
-
-1. 关闭当前进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，让进程能够优雅的退出；
-2. 当 Worker 进程『死掉』以后，Master 进程会重新 fork 一个新的 Worker，保证在线的『工人』总数不变。
-
-在框架里，我们采用 [graceful](https://github.com/node-modules/graceful) 和 [egg-cluster](https://github.com/eggjs/egg-cluster) 两个模块配合实现上面的逻辑。这套方案已在阿里和蚂蚁的生产环境广泛部署，且经受过『双11』大促的考验，所以是相对稳定和靠谱的。
-
-流程图
-
-```js
-   +---------+                 +---------+
-   |  Worker |                 |  Master |
-   +---------+                 +----+----+
-        | uncaughtException         |
-        +------------+              |
-        |            |              |                   +---------+
-        | <----------+              |                   |  Worker |
-        |                           |                   +----+----+
-        |        disconnect         |   fork a new worker    |
-        +-------------------------> + ---------------------> |
-        |          exit             |                        |
-        +-------------------------> |                        |
-        |                           |                        |
-       die                          |                        |
-                                    |                        |
-                                    |                        |
-```
-
-### 进程间通讯（IPC）
-
-虽然每个 Worker 进程是相对独立的，但是它们之间始终还是需要通讯的，叫进程间通讯（IPC）。下面是 node 官方提供的一段示例代码
-
-```js
-'use strict';
-const cluster = require('cluster');
-
-if (cluster.isMaster) {
-  const worker = cluster.fork();
-  worker.send('hi there');
-  worker.on('message', msg => {
-    console.log(`msg: ${msg} from worker#${worker.id}`);
-  });
-} else if (cluster.isWorker) {
-  process.on('message', (msg) => {
-    process.send(msg);
-  });
-}
-```
-
-细心的你可能已经发现 cluster 的 IPC 通道只存在于 Master 和 Worker 之间，Worker 之间是没有的。那么 Worker 之间想通讯该怎么办呢？是的，通过 Master 来转发。
-
-```js
-// 广播消息： one worker => all workers
-                 +---------+
-                 |  Master |
-                 +---------+
-                 ^    |     \
-                /     |      \
-   broadcast   /      |       \
-              /       |        \
-             /        v         v
-  +----------+   +----------+   +----------+
-  | Worker 1 |   | Worker 2 |   | Worker 3 |
-  +----------+   +----------+   +----------+
-
-// 指定接收方： one worker => another worker
-                 +---------+
-                 |  Master |
-                 +---------+
-                 ^    |
-     send to    /     |
-    worker 2   /      |
-              /       |
-             /        v
-  +----------+   +----------+   +----------+
-  | Worker 1 |   | Worker 2 |   | Worker 3 |
-  +----------+   +----------+   +----------+
-```
-
-为了方便调用，我们封装了一个 messenger 对象挂在 app 实例上，提供一系列友好的 API
-
-```js
-// 广播
-const data = { ... };
-app.messenger.broadcast('custom_action', data);
-
-// 接收
-app.messenger.on('custom_action', data => { ... });
-
-// 指定接收方
-const pid = 2; // @see https://nodejs.org/api/cluster.html#cluster_worker_id
-app.messenger.sendTo(pid, 'custom_action', data);
-
-// 只有 worker id 为 2 的进程会收到消息
-app.messenger.on('custom_action', data => { ... });
-```
-
-## Agent 机制
-
-说到这里，node 多进程方案貌似已经成型，这也是我们早期线上使用的方案。但后来我们发现有些工作其实不需要每个 Worker 都去做，如果都做，一来是浪费资源，更重要的是可能会导致多进程间资源访问冲突。举个例子：生产环境的日志文件我们一般会按照日期进行归档，在单进程模型下这再简单不过了：
-
-> 1. 每天凌晨 0 点，将当前日志文件按照日期进行重命名
-> 2. 销毁以前的文件句柄，并创建新的日志文件继续写入
-
-试想如果现在是 4 个进程来做同样的事情，是不是就乱套了。所以，对于这一类后台运行的逻辑，我们希望将它们放到一个单独的进程上去执行，这个进程就叫 Agent Worker，简称 Agent。Agent 好比是 Master 给其他 Worker 请的一个秘书，它不对外提供服务，只给 App Worker 打工，专门处理一些公共事务。现在我们的多进程模型就变成下面这个样子了
-
-```js
-                  +--------+          +-------+
-                  | Master |<-------->| Agent |
-                  +--------+          +-------+
-                  ^   ^    ^
-                 /    |     \
-               /      |       \
-             /        |         \
-           v          v          v
-  +----------+   +----------+   +----------+
-  | Worker 1 |   | Worker 2 |   | Worker 3 |
-  +----------+   +----------+   +----------+
-```
-
-那我们框架的启动时序如下：
-
-```js
-    +---------+           +---------+          +---------+
-    |  Master |           |  Agent  |          |  Worker |
-    +---------+           +----+----+          +----+----+
-         |      fork agent     |                    |
-         +-------------------->|                    |
-         |      agent ready    |                    |
-         |<--------------------+                    |
-         |                     |     fork worker    |
-         +----------------------------------------->|
-         |     worker ready    |                    |
-         |<-----------------------------------------+
-         |                     |                    |
-         |                     |                    |
-```
-
-1. Master 启动后先 fork Agent 进程
-2. Agent 初始化成功后，通过 IPC 通道通知 Master
-3. Master 再 fork 多个 App Worker
-4. App Worker 初始化成功，通知 Master
-5. 应用启动成功
-
-另外，关于 Agent Worker 还有几点需要注意的是：
-
-1. 由于 App Worker 依赖于 Agent，所以必须等 Agent 初始化完成后才能 fork App Worker
-2. Agent 虽然是 App Worker 的『小秘』，但是业务相关的工作不应该放到 Agent 上去做，不然把她累垮了就不好了
-3. 由于 Agent 的特殊定位，**我们应该保证它相对稳定**。当它发生未捕获异常，框架不会像 App Worker 一样让他退出重启，而是记录异常日志、报警等待人工处理
-4. Agent 和普通 App Worker 挂载的 API 不完全一样，如何识别差异可查看[框架文档](./framework.md)
-
-### Agent 的用法
-
-你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 `app.js` 用法类似，只是入口参数是 agent 对象）
-
-```js
-// agent.js
-module.exports = agent => {
-  // 在这里写你的初始化逻辑
-
-  // 也可以通过 messenger 对象发送消息给 App Worker
-  // 但需要等待 App Worker 启动成功后才能发送，不然很可能丢失
-  agent.messenger.on('egg-ready', () => {
-    const data = { ... };
-    agent.messenger.sendToApp('xxx_action', data);
-  });
-};
-```
-
-```js
-// app.js
-module.exports = app => {
-  app.messenger.on('xxx_action', data => {
-    // ...
-  });
-};
-```
-
-## Cluster Client
-
-对于 Agent 的应用还有一类常见的场景：一些中间件客户端需要和服务器建立长连接，理论上一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）连接被创建。
+在前面的[多进程模型章节](../core/cluster-and-ipc.md)中，我们详细讲述了框架的多进程模型，其中适合使用 Agent 进程的有一类常见的场景：一些中间件客户端需要和服务器建立长连接，理论上一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）连接被创建。
 
 ```bash
 +--------+   +--------+
@@ -267,7 +22,7 @@ module.exports = app => {
 
 那么有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。
 
-### 核心思想
+## 核心思想
 
 - 受到 [Leader/Follower](http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf) 模式的启发
 - 客户端会被区分为两种角色：
@@ -307,7 +62,7 @@ win /   +------------------+  \ lose
 +--------+   +--------+
 ```
 
-### 客户端接口类型抽象
+## 客户端接口类型抽象
 
 我们将客户端接口抽象为下面两大类，这也是对客户端接口的一个规范，对于符合规范的客户端，我们可以自动将其包装为 Leader/Follower 模式
 
@@ -359,12 +114,12 @@ class Client extends Base {
 }
 ```
 
-### 异常处理
+## 异常处理
 
 - Leader 如果“死掉”会触发新一轮的端口争夺，争夺到端口的那个实例被推选为新的 Leader
 - 为保证 Leader 和 Follower 之间的通道健康，需要引入定时心跳检查机制，如果 Follower 在固定时间内没有发送心跳包，那么 Leader 会将 Follower 主动断开，从而触发 Follower 的重新初始化
 
-### 协议和调用时序
+## 协议和调用时序
 
 Leader 和 Follower 通过下面的协议进行数据交换：
 
@@ -407,7 +162,7 @@ Leader 和 Follower 通过下面的协议进行数据交换：
       |                                                   |
 ```
 
-### 具体的使用方法
+## 具体的使用方法
 
 下面我用一个简单的例子，介绍在框架里面如何让一个客户端支持 Leader/Follower 模式
 
@@ -715,5 +470,3 @@ exports.apiClient = {
 - APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。
 
 有兴趣的同学可以看一下 [增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
-
-[为什么我们没有选择 PM2?](../faq.md#进程管理为什么没有选型-pm2)

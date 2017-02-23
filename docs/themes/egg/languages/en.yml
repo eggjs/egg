@@ -22,10 +22,10 @@ header:
 guide_toc:
   Intro: Guide
   What is egg: What is egg?
-  egg and koa: The egg and koa
+  Egg and Koa: Egg and koa
   Get Start: Quick start
   Basics: Basis function
-  Structure: Directory Structure
+  Structure: Directory structure
   Environment: Environment
   Config: Configuration
   Middleware: Middleware
@@ -36,25 +36,25 @@ guide_toc:
   Extend: Extend
   Custom init: Custom init
   Development: Development
-  Unit Testing: Unit Testing
+  Unit Testing: Unit testing
   Core: Core
   Security: Security
   View: View
-  View Plugin: View Plugin
+  View Plugin: View plugin
   # Passport:
   HttpClient: HttpClient
   Logger:  Logger
-  Error Handling: Error Handling
+  Error Handling: Error handling
   i18n: i18n
+  Cluster and IPC: Cluster and IPC
   Tutorials: Tutorials
   Advanced: Advanced
-  Cluster: Cluster
+  Cluster Client: Cluster enhancement
   Framework: Framework
   Plugin: Plugin
   Progressive:  Progressive
   # Loader:
   Community: Community
   Contributing: Contributing
-  Member Guide: Member Guide
+  Member Guide: Member guide
   FAQ: FAQ
-
