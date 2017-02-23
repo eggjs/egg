@@ -5,3 +5,5 @@ exports.logrotator = {
   maxFiles: 2,
   rotateDuration: 30000
 };
+
+exports.keys = 'test key';

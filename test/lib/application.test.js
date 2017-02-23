@@ -53,6 +53,7 @@ describe('test/lib/application.test.js', () => {
       mm.env('test');
       app = utils.app('apps/keys-missing');
       yield app.ready();
+      mm(app.config, 'keys', null);
 
       try {
         app.keys;
@@ -62,18 +63,6 @@ describe('test/lib/application.test.js', () => {
       }
 
       // make sure app close
-      yield app.close();
-    });
-
-    it('should auto set keys on unittest', function* () {
-      mm.env('unittest');
-      app = utils.app('apps/keys-missing');
-      yield app.ready();
-
-      assert(app.keys);
-      assert(app.keys);
-      assert(app.config.keys === 'foo, keys, you need to set your app keys');
-
       yield app.close();
     });
 

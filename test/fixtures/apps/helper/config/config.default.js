@@ -9,3 +9,5 @@ exports.helpers = {
     }
   },
 };
+
+exports.keys = 'test key';
