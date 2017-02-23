@@ -24,8 +24,7 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart after app worker exit', function* () {
       try {
         yield request(app.callback())
-          .get('/exit')
-          .end();
+          .get('/exit');
       } catch (_) {
         // do nothing
       }
@@ -43,8 +42,7 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart when app worker throw uncaughtException', function* () {
       try {
         yield request(app.callback())
-          .get('/uncaughtException')
-          .end();
+          .get('/uncaughtException');
       } catch (_) {
         // do nothing
       }

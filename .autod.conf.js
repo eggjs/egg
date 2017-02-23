@@ -18,6 +18,7 @@ module.exports = {
     'eslint-config-egg',
     'egg-bin',
     'egg-plugin-puml',
+    'egg-view-nunjucks',
   ],
   keep: [
   ],
