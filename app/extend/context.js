@@ -186,7 +186,7 @@ const proto = module.exports = {
 
   /**
    * Run generator function in the background
-   * @param  {Generator} scope - generator function, the first args is ctx
+   * @param {Generator} scope - generator function, the first args is ctx
    * ```js
    * this.body = 'hi';
    *

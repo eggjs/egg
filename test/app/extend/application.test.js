@@ -1,11 +1,12 @@
 'use strict';
 
 const request = require('supertest');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
+const fs = require('fs');
+const path = require('path');
 const utils = require('../../utils');
 
 describe('test/app/extend/application.test.js', () => {
-
   describe('app.logger', () => {
     let app;
     before(() => {
@@ -119,6 +120,28 @@ describe('test/app/extend/application.test.js', () => {
       const ds = yield app.dataService.createInstance({ foo: 'barrr' });
       config = yield ds.getConfig();
       config.foo.should.equal('barrr');
+    });
+  });
+
+  describe('app.runInBackground(scope)', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/ctx-background');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should run background task success', function* () {
+      yield request(app.callback())
+        .get('/app_background')
+        .expect(200)
+        .expect('hello app');
+      yield sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      log.should.match(/mock background run at app result file size: \d+/);
+      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
+        .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
     });
   });
 });

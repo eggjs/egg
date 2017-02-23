@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/cluster-client-error.test.js', () => {

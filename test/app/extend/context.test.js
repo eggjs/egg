@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const assert = require('assert');
 const utils = require('../../utils');
 

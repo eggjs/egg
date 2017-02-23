@@ -4,7 +4,7 @@ require('should');
 const mm = require('egg-mock');
 const fs = require('fs');
 const request = require('supertest');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 const file_path1 = utils.getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = utils.getFilepath('apps/watcher-development-app/tmp/tmp.txt');
