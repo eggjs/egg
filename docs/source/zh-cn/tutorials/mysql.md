@@ -5,20 +5,17 @@ title: MySQL
 
 ## egg-mysql
 
-我们提供了 [egg-mysql](https://github.com/eggjs/egg-mysql) 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。
+我们提供了 [egg-mysql] 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。
 
 ### 安装与配置
 
-在 `package.json` 里面依赖 egg-mysql 模块，并通过 `config/plugin.js` 配置启动 MySQL 插件:
+安装对应的插件 [egg-mysql] ：
 
-```js
-// package.json
-{
-  "dependencies": {
-    "egg-mysql": "*"
-  }
-}
+```bash
+$ npm i --save egg-mysql
 ```
+
+开启插件：
 
 ```js
 // config/plugin.js
@@ -356,3 +353,5 @@ yield this.app.mysql.insert(table, {
 
 => INSERT INTO `$table`(`id`, `fullname`) VALUES(123, CONCAT("James", "Bond"))
 ```
+
+[egg-mysql]: https://github.com/eggjs/egg-mysql
