@@ -297,12 +297,19 @@ if (cluster.isMaster) {
 ```js
 // app.js
 module.exports = app => {
-  app.messenger.sendToAgent('agent-event', { foo: 'bar' });
-  app.messenger.sendToApp()
+  // 注意，只有在 egg-ready 事件拿到之后才能发送消息
+  app.messenger.once('egg-ready', () => {
+    app.messenger.sendToAgent('agent-event', { foo: 'bar' });
+    app.messenger.sendToApp('app-egent', { foo: 'bar' });
+  });
 }
 ```
 
 *上面所有 `app.messenger` 上的方法都可以在 `agent.messenger` 上使用。*
+
+#### egg-ready
+
+上面的示例中提到，需要等 `egg-ready` 消息之后才能发送消息。只有在 Master 确认所有的 Agent 进程和 Worker 进程都已经成功启动（并 ready）之后，才会通过 messenger 发送 `egg-ready` 消息给所有的 Agent 和 Worker，告知一切准备就绪，IPC 通道可以开始使用了。
 
 ### 接收
 
