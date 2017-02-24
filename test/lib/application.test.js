@@ -66,6 +66,40 @@ describe('test/lib/application.test.js', () => {
       yield app.close();
     });
 
+    it('should throw when config.keys missing on unittest env', function* () {
+      mm.env('unittest');
+      app = utils.app('apps/keys-missing');
+      yield app.ready();
+      mm(app.config, 'keys', null);
+
+      try {
+        app.keys;
+        throw new Error('should not run this');
+      } catch (err) {
+        assert(err.message === 'Please set config.keys first');
+      }
+
+      // make sure app close
+      yield app.close();
+    });
+
+    it('should throw when config.keys missing on local env', function* () {
+      mm.env('local');
+      app = utils.app('apps/keys-missing');
+      yield app.ready();
+      mm(app.config, 'keys', null);
+
+      try {
+        app.keys;
+        throw new Error('should not run this');
+      } catch (err) {
+        assert(err.message === 'Please set config.keys first');
+      }
+
+      // make sure app close
+      yield app.close();
+    });
+
     it('should use exists keys', function* () {
       mm.env('unittest');
       app = utils.app('apps/keys-exists');
