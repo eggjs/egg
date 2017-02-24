@@ -212,7 +212,7 @@ egg.startCluster({
 
 ```bash
 # 后台运行 Master 进程
-$ SERVER_ENV=prod nohup node dispatch.js&
+$ EGG_SERVER_ENV=prod nohup node dispatch.js&
 ```
 
 #### Agent
@@ -331,7 +331,7 @@ app.messenger.once(action, data => {
 2. 远程数据源提供一个检查是否有数据更新的接口，我们的服务可以更频繁的调用检查接口，当有数据更新时才去重新拉取数据。
 3. 远程数据源通过消息中间件推送数据更新的消息，我们的服务监听消息来更新数据。
 
-在实际项目中，我们可以选择 1 + 2/3 的模式，方案一用于兜底，方案二、方案三用于提升数据更新的实时性，但是在这个示例中，我们会通过 IPC + [定时任务](../basics/schedule.md)来实现这三种内存更新方案。
+在实际项目中，我们可以采用方案一用于兜底，结合方案三或者方案二的一种用于提升数据更新的实时性。而在这个示例中，我们会通过 IPC + [定时任务](../basics/schedule.md)来同时实现这三种缓存更新方案。
 
 ### 实现
 
@@ -430,6 +430,10 @@ module.exports = agent => {
 ```
 
 通过合理使用 Agent 进程、定时任务和 IPC，我们可以轻松搞定类似的需求并降低对数据源的压力。具体的示例代码可以查看 [examples/ipc](https://github.com/eggjs/examples/tree/master/ipc)。
+
+## 更复杂的场景
+
+上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster
