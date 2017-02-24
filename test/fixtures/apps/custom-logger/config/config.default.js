@@ -10,5 +10,6 @@ module.exports = info => {
         formatter: meta => meta.message,
       },
     },
+    keys: 'test key',
   };
 };

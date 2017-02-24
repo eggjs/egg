@@ -3,3 +3,5 @@
 exports.httpclient = {
   enableDNSCache: true,
 };
+
+exports.keys = 'test key';

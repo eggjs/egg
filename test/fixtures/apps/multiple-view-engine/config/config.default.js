@@ -17,5 +17,7 @@ module.exports = appInfo => {
         '.html': 'html',
       },
     },
+
+    keys: 'test key',
   }
 };

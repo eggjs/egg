@@ -9,5 +9,7 @@ module.exports = appInfo => {
         file: path.join(appInfo.baseDir, 'logs', appInfo.name, 'a.log'),
       },
     },
+
+    keys: 'secret key',
   };
 };
