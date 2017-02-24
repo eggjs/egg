@@ -6,7 +6,6 @@ const request = require('supertest');
 const mock = require('egg-mock');
 const utils = require('../../utils');
 
-
 describe('test/lib/core/view.test.js', () => {
   afterEach(mock.restore);
 

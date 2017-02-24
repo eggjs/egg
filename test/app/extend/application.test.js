@@ -117,7 +117,7 @@ describe('test/app/extend/application.test.js', () => {
       config.foo.should.equal('bar');
       config.foo1.should.equal('bar1');
 
-      const ds = yield app.dataService.createInstance({ foo: 'barrr' });
+      const ds = app.dataService.createInstance({ foo: 'barrr' });
       config = yield ds.getConfig();
       config.foo.should.equal('barrr');
     });

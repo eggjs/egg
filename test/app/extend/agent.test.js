@@ -8,9 +8,9 @@ describe('test/app/extend/agent.test.js', () => {
 
   describe('agent.addSingleton()', () => {
     let app;
-    before(done => {
+    before(() => {
       app = utils.app('apps/singleton-demo');
-      app.ready(done);
+      return app.ready();
     });
     after(() => app.close());
 
@@ -19,7 +19,7 @@ describe('test/app/extend/agent.test.js', () => {
       config.foo.should.equal('bar');
       config.foo2.should.equal('bar2');
 
-      const ds = yield app.agent.dataService.createInstance({ foo: 'barrr' });
+      const ds = app.agent.dataService.createInstance({ foo: 'barrr' });
       config = yield ds.getConfig();
       config.foo.should.equal('barrr');
     });
