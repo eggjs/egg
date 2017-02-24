@@ -62,7 +62,6 @@
     "gh-pages": "^0.12.0",
     "glob": "^7.1.1",
     "jsdoc": "^3.4.3",
-    "ko-sleep": "^1.0.2",
     "merge-descriptors": "^1.0.1",
     "moment": "^2.17.1",
     "mz": "^2.6.0",

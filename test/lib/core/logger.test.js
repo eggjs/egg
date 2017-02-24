@@ -6,7 +6,7 @@ const fs = require('fs');
 const mm = require('egg-mock');
 const request = require('supertest');
 const Logger = require('egg-logger');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 
 const utils = require('../../utils');
 

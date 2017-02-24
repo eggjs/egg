@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 const Messenger = require('../../../lib/core/messenger');
 

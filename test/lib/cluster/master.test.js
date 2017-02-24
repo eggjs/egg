@@ -3,7 +3,7 @@
 const mm = require('egg-mock');
 const request = require('supertest');
 const coffee = require('coffee');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 
