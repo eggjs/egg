@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
 const request = require('supertest');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const assert = require('assert');
 const utils = require('../../utils');
 
@@ -145,41 +145,6 @@ describe('test/app/extend/context.test.js', () => {
           .expect(200)
           .expect('{"path":"/","foo":1,"bar":2}');
       });
-    });
-  });
-
-  describe('ctx.view', () => {
-    let app;
-    before(() => {
-      app = utils.cluster({
-        baseDir: 'apps/view',
-        customEgg: utils.getFilepath('apps/view-framework'),
-      });
-      return app.ready();
-    });
-    after(() => app.close());
-
-    it('should render template', () => {
-      return request(app.callback())
-        .get('/')
-        .expect(200)
-        .expect('name=index.html, a=111, b=b, c=testHelper');
-    });
-
-    it('should render string', () => {
-      return request(app.callback())
-        .get('/string')
-        .expect(200)
-        .expect('tpl={{a}}, a=111, b=b, c=testHelper');
-    });
-
-    it('should ctx.view === ctx.view', () => {
-      return request(app.callback())
-        .get('/sameView')
-        .expect(200)
-        .expect({
-          same: true,
-        });
     });
   });
 

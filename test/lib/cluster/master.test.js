@@ -3,9 +3,8 @@
 const mm = require('egg-mock');
 const request = require('supertest');
 const coffee = require('coffee');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
-
 
 describe('test/lib/cluster/master.test.js', () => {
 
@@ -24,8 +23,7 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart after app worker exit', function* () {
       try {
         yield request(app.callback())
-          .get('/exit')
-          .end();
+          .get('/exit');
       } catch (_) {
         // do nothing
       }
@@ -43,8 +41,7 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should restart when app worker throw uncaughtException', function* () {
       try {
         yield request(app.callback())
-          .get('/uncaughtException')
-          .end();
+          .get('/uncaughtException');
       } catch (_) {
         // do nothing
       }

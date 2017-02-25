@@ -9,7 +9,8 @@ const eggPath = path.join(__dirname, '..');
 
 exports.app = (name, options) => {
   options = formatOptions(name, options);
-  return mm.app(options);
+  const app = mm.app(options);
+  return app;
 };
 
 /**

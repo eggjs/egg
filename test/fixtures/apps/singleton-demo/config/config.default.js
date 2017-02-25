@@ -10,3 +10,5 @@ exports.dataService = {
     foo: 'bar',
   }
 };
+
+exports.keys = 'test key';
