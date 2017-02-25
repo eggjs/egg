@@ -5,7 +5,7 @@ const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const request = require('supertest');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../utils');
 
 describe('test/lib/egg.test.js', () => {

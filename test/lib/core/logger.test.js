@@ -6,16 +6,14 @@ const fs = require('fs');
 const mm = require('egg-mock');
 const request = require('supertest');
 const Logger = require('egg-logger');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 
 const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
-
   let app;
   afterEach(mm.restore);
   afterEach(() => sleep(5000).then(() => app.close()));
-
 
   it('should got right default config on prod env', function* () {
     mm.env('prod');

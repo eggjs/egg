@@ -20,7 +20,7 @@ Tags can be divided into two groups, `type` and `scope`.
 - `support`: the issue asks helps from developers of our group. If you need helps to locate and handle problems or have any idea to improve Egg, mark it as `support`.
 - `bug`: if you find a problem which possiblly could be a bug, please tag it as `bug`. Then our group members will review that issue. If it is confirmed as a bug by our group member, this issue will be tagged as `confirmed`.
   - A confirmed bug will be resolved prior.
-  - If the bug has negative impact on running online application, it will be tagged as `ciritical`, which refers to top priority, and will be fixed ASAP!
+  - If the bug has negative impact on running online application, it will be tagged as `critical`, which refers to top priority, and will be fixed ASAP!
   - A bug will be fixed from lowest necessary version, e.g. A bug needs to be fixed from 0.9.x, then this issue will be tagged as `0.9`, `0.10`, `1.0`, `1.1`, referring that the bug is required to be fixed in those versions.
 - `core: xx`: the issue is related to core, e.g. `core: loader` refers that the issue is related with `loader` config.
 - `plugin: xx`: the issue is related to plugins. e.g. `plugin: session` refers that the issue is related to `session` plugin.

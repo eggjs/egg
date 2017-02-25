@@ -84,9 +84,9 @@ describe('test/lib/core/httpclient.test.js', () => {
       done();
     });
 
-    client.request(url).catch(e => {
+    client.request(url).catch(() => {
       // it will print
-      console.error(e.stack);
+      // console.error(e.stack);
     });
   });
 });

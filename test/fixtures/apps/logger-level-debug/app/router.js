@@ -1,7 +1,6 @@
 'use strict';
 
-const sleep = require('ko-sleep');
-
+const sleep = require('mz-modules/sleep');
 
 module.exports = app => {
   app.get('/', function*() {

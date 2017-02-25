@@ -2,7 +2,7 @@
 
 module.exports = {
   i18n: true,
-  view: {
+  nunjucks: {
     enable: true,
     package: 'egg-view-nunjucks',
   }

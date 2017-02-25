@@ -12,5 +12,6 @@ module.exports = info => {
         file: path.join(info.baseDir, 'logs/custom.log'),
       },
     },
+    keys: 'test key',
   };
 };
