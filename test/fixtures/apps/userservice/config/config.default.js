@@ -16,3 +16,5 @@ exports.userservice = {
     },
   },
 };
+
+exports.keys = 'test key';

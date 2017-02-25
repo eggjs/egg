@@ -1,3 +1,3 @@
-exports.dynamic = 0;
+'use strict';
 
 exports.keys = 'test key';
