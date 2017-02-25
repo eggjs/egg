@@ -6,7 +6,6 @@ const coffee = require('coffee');
 const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
-
 describe('test/lib/cluster/master.test.js', () => {
 
   afterEach(mm.restore);
