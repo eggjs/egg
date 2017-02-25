@@ -149,7 +149,7 @@ async function getUser() {
 
 ----
 
-一个完整的例子可以参考 [examples/hackernews-async](https://github.com/eggjs/examples/tree/async-await/hackernews-async)。
+一个完整的例子可以参考 [examples/hackernews-async](https://github.com/eggjs/examples/tree/master/hackernews-async)。
 
 [async function]: https://github.com/tc39/ecmascript-asyncawait
 [co]: https://github.com/tj/co
