@@ -111,7 +111,7 @@ module.exports = app => {
 
 ## 使用 koa 的中间件
 
-框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：
+框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：
 
 - generator function: `function* (next) {}`
 - async function: `async (ctx, next) => {}`
