@@ -146,7 +146,7 @@
 </ul>
 </li>
 <li>框架里面我们采用的是强制指定模式，Leader 只能在 Agent 里面创建，这也符合我们对 Agent 的定位</li>
-<li>框架启动的时候 Master 会随机选择一个可用的端口作为 Cluster Client 监听的通讯端口，并将它通过参数传递给 Agent 和 App Worker</li>
+<li>框架启动的时候 Master 会随机选择一个可用的端口作为 Cluster Client 监听的通讯端口，并将它通过参数传递给 Agent 和 App Worker</li>
 <li>Leader 和 Follower 之间通过 socket 直连（通过通讯端口），不再需要 Master 中转</li>
 </ul>
 <p>新的模式下，客户端的启动流程如下：</p>
@@ -203,7 +203,7 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.mockClient = app.cluster(MockClient)</div><div class="line">    <span class="comment">// 将 sub 代理到 subscribe 逻辑上</span></div><div class="line">    .delegate(<span class="string">'sub'</span>, <span class="string">'subscribe'</span>)</div><div class="line">    .create();</div><div class="line"></div><div class="line">  app.beforeStart(<span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> app.mockClient.ready();</div><div class="line"></div><div class="line">    app.sub(&#123; <span class="attr">id</span>: <span class="string">'test-id'</span> &#125;, val =&gt; &#123;</div><div class="line">      <span class="comment">// put your code here</span></div><div class="line">    &#125;);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>我们已经理解，通过 cluster-client 可以让我们在不理解多进程模型的情况下开发『纯粹』的 RegistryClient，只负责和服务端进行交互，然后使用 cluster-client 进行简单的 wrap 就可以得到一个支持多进程模型的 ClusterClient。这里的 RegistryClient 实际上是一个专门负责和远程服务通信进行数据通信的 DataClient。</p>
 <p>大家可能已经发现，ClusterClient 同时带来了一些约束，如果想在各进程暴露同样的方法，那么 RegistryClient 上只能支持 sub/pub 模式以及异步的 API 调用。因为在多进程模型中所有的交互都必须经过 socket 通信，势必带来了这一约束。</p>
-<p>假设我们要实现一个同步的 get 方法，subscribe 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。</p>
+<p>假设我们要实现一个同步的 get 方法，subscribe 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。</p>
 <p>在这里，我们引入一个 APIClient 的最佳实践。对于有读取缓存数据等同步 API 需求的模块，在 RegistryClient 基础上再封装一个 APIClient 来实现这些与远程服务端交互无关的 API，暴露给用户使用到的是这个 APIClient 的实例。</p>
 <p>在 APIClient 内部实现上：</p>
 <ul>

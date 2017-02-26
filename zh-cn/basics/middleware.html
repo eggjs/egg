@@ -70,7 +70,7 @@
 <p>还是拿刚才的 gzip 中间件举例，当我们想直接在 router 中使用的时候，在 <code>app/router.js</code> 中就可以这样写</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> gzip = app.middlewares.gzip(&#123; <span class="attr">threshold</span>: <span class="number">1024</span> &#125;);</div><div class="line">  app.get(<span class="string">'/needgzip'</span>, gzip, app.controller.handler);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="使用-koa-的中间件"><a class="markdown-anchor" href="#使用-koa-的中间件">#</a> 使用 koa 的中间件</h2>
-<p>框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：</p>
+<p>框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：</p>
 <ul>
 <li>generator function: <code>function* (next) {}</code></li>
 <li>async function: <code>async (ctx, next) =&gt; {}</code></li>
