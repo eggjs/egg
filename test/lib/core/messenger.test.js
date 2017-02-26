@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 const Messenger = require('../../../lib/core/messenger');
 
@@ -18,16 +18,14 @@ describe('test/lib/core/messenger.test.js', () => {
   describe('on(action, data)', () => {
     it('should listen an action event', done => {
       messenger.on('messenger-test-on-event', data => {
-        data.should.eql({
+        assert.deepEqual(data, {
           success: true,
         });
         done();
       });
 
       process.emit('message', {});
-
       process.emit('message', null);
-
       process.emit('message', {
         action: 'messenger-test-on-event',
         data: {
@@ -40,14 +38,14 @@ describe('test/lib/core/messenger.test.js', () => {
   describe('close()', () => {
     it('should remove all listeners', () => {
       const messenger = new Messenger();
-      messenger.on('messenger-test-on-event', () => {
+      messenger.on('messenger-test-on-event-2', () => {
         throw new Error('should never emitted');
       });
 
       messenger.close();
 
       process.emit('message', {
-        action: 'messenger-test-on-event',
+        action: 'messenger-test-on-event-2',
         data: {
           success: true,
         },
@@ -109,7 +107,7 @@ describe('test/lib/core/messenger.test.js', () => {
       // agent 26494 receive message from app pid 26496
       // agent 26494 receive message from agent pid 26494
       const m = app.stdout.match(/(app|agent) \d+ receive message from (app|agent) pid \d+/g);
-      m.length.should.eql(9);
+      assert(m.length, 9);
     });
   });
 
@@ -132,9 +130,9 @@ describe('test/lib/core/messenger.test.js', () => {
         const a = item.split('=');
         map.set(a[0], a[1]);
       }
-      for (const [ pid, count ] of map) {
-        console.log('pid: %s, %s', pid, count);
-      }
+      // for (const [ pid, count ] of map) {
+      //   console.log('pid: %s, %s', pid, count);
+      // }
       assert(map.size <= 4);
       assert(map.size >= 2);
     });

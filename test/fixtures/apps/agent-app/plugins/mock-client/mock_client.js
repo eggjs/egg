@@ -1,7 +1,7 @@
 'use strict';
 
 const EventEmitter = require('events').EventEmitter;
-const sleep = require('ko-sleep');
+const sleep = require('mz-modules/sleep');
 
 class MockClient extends EventEmitter {
   constructor(options) {

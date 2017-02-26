@@ -1,4 +1,37 @@
 
+1.0.0-rc.1 / 2017-02-23
+=======================
+
+  * feat: [BREAKING_CHANGE] reimplement view, use egg-view plugin  (#402)
+  * fix: listen CookieLimitExceed in app (#429)
+  * fix: close gracefully (#419)
+  * docs: correct spelling mistake (#424)
+  * feat: log error when cookie value's length exceed the limit (#418)
+  * docs: Update mysql.md (#422)
+  * docs: add more complete example code for quickstart (#412)
+  * fix: deprecate warning when inspect & toJSON (#408)
+  * docs: should listen egg-ready using messenger (#406)
+  * docs: correct english description at README (#400)
+  * docs: fix character type error and link reference error (#396)
+  * docs: add csrf to faq (#393)
+  * fix: keep unhandledRejectionError err object stack (#390)
+  * docs: use compress replace bodyparser for example (#391)
+  * docs: add directory structure (#383)
+  * docs: add api-doc (#369)
+  * docs: how to use koa's middleware (#386)
+  * feat: dump config both after loaded and ready (#377)
+  * docs: fix filename in config.md (#376)
+  * docs: add plugin dep name description (#374)
+  * docs: update version automatically (#367)
+  * doc: add pm2 faq (#370)
+  * docs: fix jsonp config in controller.md (#372)
+  * feat: [BREAKING_CHANGE] remove notfound.enableRedirect (#368)
+  * docs: add resource page (#364)
+  * docs: add config result description (#365)
+  * deps: upgrade egg-mock (#362)
+  * docs: english wip description & remove unuse file (#361)
+  * docs: add tutorials index & fix async (#359)
+
 0.12.0 / 2017-02-12
 ===================
 
