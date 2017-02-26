@@ -537,7 +537,7 @@ module.exports = app => {
     });
 
     // 调用 getConfig 接口
-    const res = yeild app.registryClient.getConfig('demo.DemoService');
+    const res = yield app.registryClient.getConfig('demo.DemoService');
     console.log(res);
   });
 };
