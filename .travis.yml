@@ -3,6 +3,13 @@ language: node_js
 node_js:
   - '6'
   - '7'
+matrix:
+  include:
+    - node_js: '8'
+      env: 'NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly'
+  allow_failures:
+    # Allow the nightly installs to fail
+    - env: 'NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly'
 install:
   - npm i npminstall && npminstall
 script:
