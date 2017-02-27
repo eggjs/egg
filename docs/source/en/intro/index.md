@@ -1,7 +1,7 @@
 title: What is egg?
 ---
 
-**egg is born for building enterprise application and framework**，We hope egg will give birth to more application framework to help developers and developing team reduce development and maintenance costs.
+**egg is born for building enterprise application and framework**，we hope egg will give birth to more application framework to help developers and developing team reduce development and maintenance costs.
 ## Design principles
 
 Since we know well that enterprise applications need to consider how to balance the differences between different teams, seeking common ground while reserving differences in the pursuit of clarifying specification and cooperation, we focus on providing core features for web development and a flexible and extensible plug-in mechanism instead of giant bazaar mode which is popular in common web frameworks(with integrated such as database, template engine, front-end framework and other functions). We will not make technical selection because default technical selection makes the scalability of the framework too poor to meet a variety of custom requirements. With the help of egg , it is very easy for architects and technical leaders to build their own framework which is suitable for their business scenarios based on existing technology stack .
