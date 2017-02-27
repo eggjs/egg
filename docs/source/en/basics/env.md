@@ -43,7 +43,7 @@ For example, `EGG_SERVER_ENV` will be set to prod when `NODE_ENV` is production 
 
 In normal development process, it's not limit to these environments mentioned above. So you can customize environment for you development process, such as SIT (System integration testing).
 
-Set `EGG_SERVER_ENV` to sit (also set `NODE_ENV = production` as recommend), the framework will load `config/config.sit.js` when lanching, and the runtime environment `app.config.env` will be `sit`.
+Set `EGG_SERVER_ENV` to `sit` (also set `NODE_ENV = production` as recommend), the framework will load `config/config.sit.js` when lanching, and the runtime environment `app.config.env` will be `sit`.
 
 ## Difference with Koa
 
