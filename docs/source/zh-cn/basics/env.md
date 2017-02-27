@@ -28,14 +28,21 @@ EGG_SERVER_ENV=prod npm start
 
 很多 node 应用会使用 `NODE_ENV` 来区分环境，但 `EGG_SERVER_ENV` 会区分的更加精细。一般的项目开发流程包括本地开发环境、测试环境、生产环境，除了本地开发环境和单元测试环境外都为**服务器环境**，该环境的 `NODE_ENV` 都应该为 production。而且 npm 也会使用这个变量，在应用部署的时候一般不会安装 devDependencies，所以这个值也应该为 production。
 
-框架默认支持的环境及映射关系。
+框架默认支持的环境及映射关系（如果未指定 `EGG_SERVER_ENV` 会根据 `NODE_ENV` 来匹配）
 
-EGG_SERVER_ENV | NODE_ENV | 说明
---- | --- | ---
-local | | 本地开发环境
-unittest | test | 单元测试
-test | production | 服务器测试环境
-prod | production | 生产环境
+NODE_ENV   | EGG_SERVER_ENV | 说明
+---------- | -------------- | ------------
+           | local          | 本地开发环境
+test       | unittest       | 单元测试
+production | prod           | 生产环境
+
+例如，当 `NODE_ENV` 为 production 而 `EGG_SERVER_ENV` 未指定时，框架会将 EGG_SERVER_ENV 设置成 prod。
+
+## 自定义环境
+
+常规研发流程不仅仅只有以上几种环境，所以可以通过自定义环境来支持自己的研发流程，比如增加集成测试环境 SIT。
+
+将 `EGG_SERVER_ENV` 设置成 `sit`（并建议设置 `NODE_ENV = production`），启动时会加载 `config/config.sit.js`，运行环境变量 `app.config.env` 会被设置成 `sit`。
 
 ## 与 koa 的区别
 
