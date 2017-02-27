@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>node_modules/.1.1.0@egg-i18n/app.js - Documentation</title>
+    <title>AppInfo - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,145 +39,536 @@
 
 <div id="main">
     
-    <h1 class="page-title">node_modules/.1.1.0@egg-i18n/app.js</h1>
+    <h1 class="page-title">AppInfo</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+        <h2>
+        AppInfo
+        </h2>
+        
+    
+</header>
 
-const locales = require('koa-locales');
-const path = require('path');
-const debug = require('debug')('egg:plugin:i18n');
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * I18n 国际化
- *
- * 通过设置 Plugin 配置 `i18n: true`，开启多语言支持。
- *
- * #### 语言文件存储路径
- *
- * 统一存放在 `config/locales/*.js` 下，如包含英文，简体中文，繁体中文的语言文件：
- *
- * ```
- * - config/locales/
- *   - en-US.js
- *   - zh-CN.js
- *   - zh-TW.js
- * ```
- * @class I18n
- * @param {App} app Application object.
- * @example
- *
- * #### I18n 文件内容
- *
- * ```js
- * // config/locales/zh-CN.js
- * module.exports = {
- *   "Email": "邮箱",
- *   "Welcome back, %s!": "欢迎回来, %s!",
- *   "Hello %s, how are you today?": "你好 %s, 今天过得咋样？",
- * };
- * ```
- *
- * ```js
- * // config/locales/en-US.js
- * module.exports = {
- *   "Email": "Email",
- * };
- * ```
- * 或者也可以用 JSON 格式的文件:
- *
- * ```js
- * // config/locales/zh-CN.json
- * {
- *   "email": "邮箱",
- *   "login": "帐号",
- *   "createdAt": "注册时间"
- * }
- * ```
- */
-module.exports = function(app) {
-  /**
-   * 如果开启了 I18n 多语言功能，那么会出现此 API，通过它可以获取到当前请求对应的本地化数据。
-   *
-   * 详细使用说明，请查看 {@link I18n}
-   * - `ctx.__ = function (key, value[, value2, ...])`: 类似 `util.format` 接口
-   * - `ctx.__ = function (key, values)`: 支持数组下标占位符方式，如
-   * - `__` 的别名是 `gettext(key, value)`
-   *
-   * > NOTE: __ 是两个下划线哦！
-   * @method Context#__
-   * @example
-   * ```js
-   * ctx.__('{0} {0} {1} {1}'), ['foo', 'bar'])
-   * ctx.gettext('{0} {0} {1} {1}'), ['foo', 'bar'])
-   * =>
-   * foo foo bar bar
-   * ```
-   * ##### Controller 下的使用示例
-   *
-   * ```js
-   * module.exports = function* () {
-   *   this.body = {
-   *     message: this.__('Welcome back, %s!', this.user.name),
-   *     // 或者使用 gettext，如果觉得 __ 不好看的话
-   *     // message: this.gettext('Welcome back, %s!', this.user.name),
-   *     user: this.user,
-   *   };
-   * };
-   * ```
-   *
-   * ##### View 文件下的使用示例
-   *
-   * ```html
-   * &lt;li>{{ __('Email') }}: {{ user.email }}&lt;/li>
-   * &lt;li>
-   *   {{ __('Hello %s, how are you today?', user.name) }}
-   * &lt;/li>
-   * &lt;li>
-   *   {{ __('{0} {0} {1} {1}'), ['foo', 'bar']) }}
-   * &lt;/li>
-   * ```
-   *
-   * ##### locale 参数获取途径
-   *
-   * 优先级从上到下：
-   *
-   * - query: `/?locale=en-US`
-   * - cookie: `locale=zh-TW`
-   * - header: `Accept-Language: zh-CN,zh;q=0.5`
-   */
-  app.config.i18n.functionName = '__';
+    
 
-  // 按 egg > 插件 > 框架 > 应用的顺序遍历 config/locales 目录，加载所有配置文件
-  app.config.i18n.dirs = app.config.i18n.dirs || [];
-  for (const unit of app.loader.getLoadUnits()) {
-    app.config.i18n.dirs.push(path.join(unit.path, 'config/locales'));
-  }
+    <h4 class="name" id="AppInfo"><span class="type-signature"></span>new AppInfo<span class="signature">()</span><span class="type-signature"></span></h4>
 
-  debug('app.config.i18n.dirs:', app.config.i18n.dirs);
+    
 
-  locales(app, app.config.i18n);
 
-  /**
-   * `ctx.__` 的别名。
-   * @see {@link Context#__}
-   * @method Context#gettext
-   */
-  app.context.gettext = app.context.__;
 
-  // 自动加载 Middleware
-  app.config.coreMiddleware.push('i18n');
-};
-</code></pre>
-        </article>
-    </section>
+<div class="description">
+    <p>Meta infomation of the application</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line140">line 140</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="baseDir"><span class="type-signature"></span>baseDir<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>The current directory, where the application code is.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line151">line 151</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="env"><span class="type-signature"></span>env<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>The environment of the application, <strong>it's not NODE_ENV</strong></p>
+<ol>
+<li>from <code>$baseDir/config/env</code></li>
+<li>from EGG_SERVER_ENV</li>
+<li>from NODE_ENV</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>env</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>test</td>
+<td>system integration testing</td>
+</tr>
+<tr>
+<td>prod</td>
+<td>production</td>
+</tr>
+<tr>
+<td>local</td>
+<td>local on your own computer</td>
+</tr>
+<tr>
+<td>unittest</td>
+<td>unit test</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line157">line 157</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://eggjs.org/zh-cn/basics/env.html">https://eggjs.org/zh-cn/basics/env.html</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="HOME"><span class="type-signature"></span>HOME<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>The use directory, same as <code>process.env.HOME</code></p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line176">line 176</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>The name of the application, retreive from the name property in <code>package.json</code>.</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line145">line 145</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="pkg"><span class="type-signature"></span>pkg<span class="type-signature"> :Object</span></h4>
+
+
+
+
+<div class="description">
+    <p>parsed from <code>package.json</code></p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line182">line 182</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="root"><span class="type-signature"></span>root<span class="type-signature"> :String</span></h4>
+
+
+
+
+<div class="description">
+    <p>The directory whether is baseDir or HOME depend on env.
+it's good for test when you want to write some file to HOME,
+but don't want to write to the real directory,
+so use root to write file to baseDir instead of HOME when unitest.
+keep root directory in baseDir when local and unittest</p>
+</div>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_egg_loader.js.html">node_modules/egg-core/lib/loader/egg_loader.js</a>, <a href="node_modules_egg-core_lib_loader_egg_loader.js.html#line188">line 188</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

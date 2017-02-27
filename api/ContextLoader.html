@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>node_modules/.1.1.0@egg-i18n/app.js - Documentation</title>
+    <title>ContextLoader - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -39,145 +39,434 @@
 
 <div id="main">
     
-    <h1 class="page-title">node_modules/.1.1.0@egg-i18n/app.js</h1>
+    <h1 class="page-title">ContextLoader</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+        <h2>
+        ContextLoader
+        </h2>
+        
+            <div class="class-description"><p>Same as <a href="FileLoader.html">FileLoader</a>, but it will attach file to <code>inject[fieldClass]</code>. The exports will be lazy loaded, such as <code>ctx.group.repository</code>.</p></div>
+        
+    
+</header>
 
-const locales = require('koa-locales');
-const path = require('path');
-const debug = require('debug')('egg:plugin:i18n');
+<article>
+    <div class="container-overview">
+    
+        
 
-/**
- * I18n 国际化
- *
- * 通过设置 Plugin 配置 `i18n: true`，开启多语言支持。
- *
- * #### 语言文件存储路径
- *
- * 统一存放在 `config/locales/*.js` 下，如包含英文，简体中文，繁体中文的语言文件：
- *
- * ```
- * - config/locales/
- *   - en-US.js
- *   - zh-CN.js
- *   - zh-TW.js
- * ```
- * @class I18n
- * @param {App} app Application object.
- * @example
- *
- * #### I18n 文件内容
- *
- * ```js
- * // config/locales/zh-CN.js
- * module.exports = {
- *   "Email": "邮箱",
- *   "Welcome back, %s!": "欢迎回来, %s!",
- *   "Hello %s, how are you today?": "你好 %s, 今天过得咋样？",
- * };
- * ```
- *
- * ```js
- * // config/locales/en-US.js
- * module.exports = {
- *   "Email": "Email",
- * };
- * ```
- * 或者也可以用 JSON 格式的文件:
- *
- * ```js
- * // config/locales/zh-CN.json
- * {
- *   "email": "邮箱",
- *   "login": "帐号",
- *   "createdAt": "注册时间"
- * }
- * ```
- */
-module.exports = function(app) {
-  /**
-   * 如果开启了 I18n 多语言功能，那么会出现此 API，通过它可以获取到当前请求对应的本地化数据。
-   *
-   * 详细使用说明，请查看 {@link I18n}
-   * - `ctx.__ = function (key, value[, value2, ...])`: 类似 `util.format` 接口
-   * - `ctx.__ = function (key, values)`: 支持数组下标占位符方式，如
-   * - `__` 的别名是 `gettext(key, value)`
-   *
-   * > NOTE: __ 是两个下划线哦！
-   * @method Context#__
-   * @example
-   * ```js
-   * ctx.__('{0} {0} {1} {1}'), ['foo', 'bar'])
-   * ctx.gettext('{0} {0} {1} {1}'), ['foo', 'bar'])
-   * =>
-   * foo foo bar bar
-   * ```
-   * ##### Controller 下的使用示例
-   *
-   * ```js
-   * module.exports = function* () {
-   *   this.body = {
-   *     message: this.__('Welcome back, %s!', this.user.name),
-   *     // 或者使用 gettext，如果觉得 __ 不好看的话
-   *     // message: this.gettext('Welcome back, %s!', this.user.name),
-   *     user: this.user,
-   *   };
-   * };
-   * ```
-   *
-   * ##### View 文件下的使用示例
-   *
-   * ```html
-   * &lt;li>{{ __('Email') }}: {{ user.email }}&lt;/li>
-   * &lt;li>
-   *   {{ __('Hello %s, how are you today?', user.name) }}
-   * &lt;/li>
-   * &lt;li>
-   *   {{ __('{0} {0} {1} {1}'), ['foo', 'bar']) }}
-   * &lt;/li>
-   * ```
-   *
-   * ##### locale 参数获取途径
-   *
-   * 优先级从上到下：
-   *
-   * - query: `/?locale=en-US`
-   * - cookie: `locale=zh-TW`
-   * - header: `Accept-Language: zh-CN,zh;q=0.5`
-   */
-  app.config.i18n.functionName = '__';
+    
+    <h2>Constructor</h2>
+    
 
-  // 按 egg > 插件 > 框架 > 应用的顺序遍历 config/locales 目录，加载所有配置文件
-  app.config.i18n.dirs = app.config.i18n.dirs || [];
-  for (const unit of app.loader.getLoadUnits()) {
-    app.config.i18n.dirs.push(path.join(unit.path, 'config/locales'));
-  }
+    <h4 class="name" id="ContextLoader"><span class="type-signature"></span>new ContextLoader<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
-  debug('app.config.i18n.dirs:', app.config.i18n.dirs);
+    
 
-  locales(app, app.config.i18n);
 
-  /**
-   * `ctx.__` 的别名。
-   * @see {@link Context#__}
-   * @method Context#gettext
-   */
-  app.context.gettext = app.context.__;
 
-  // 自动加载 Middleware
-  app.config.coreMiddleware.push('i18n');
-};
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>options</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>options same as <a href="FileLoader.html">FileLoader</a></p>
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name">
+                  
+                  <code>fieldClass</code>
+                  
+                  
+                </td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            <td class="description last"><p>determine the field name of inject object.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_context_loader.js.html">node_modules/egg-core/lib/loader/context_loader.js</a>, <a href="node_modules_egg-core_lib_loader_context_loader.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="FileLoader.html">FileLoader</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id="load"><span class="type-signature"></span>load<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>attach items to target object. Mapping the directory to properties.
+<code>app/controller/group/repository.js</code> =&gt; <code>target.group.repository</code></p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="FileLoader.html#load">FileLoader#load</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_file_loader.js.html">node_modules/egg-core/lib/loader/file_loader.js</a>, <a href="node_modules_egg-core_lib_loader_file_loader.js.html#line62">line 62</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="parse"><span class="type-signature"></span>parse<span class="signature">()</span><span class="type-signature"> &rarr; {Array}</span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>Parse files from given directories, then return an items list, each item contains properties and exports.</p>
+<p>For exmple, parse <code>app/controller/group/repository.js</code></p>
+<pre class="prettyprint source"><code>module.exports = app => {
+  return class RepositoryController extends app.Controller {};
+}</code></pre><p>It returns a item</p>
+<pre class="prettyprint source"><code>{
+  properties: [ 'group', 'repository' ],
+  exports: app => { ... },
+}</code></pre><p><code>Properties</code> is an array that contains the directory of a filepath.</p>
+<p><code>Exports</code> depends on type, if exports is a function, it will be called. if initializer is specified, it will be called with exports for customizing.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+    <dt class="tag-since">Since:</dt>
+    <dd class="tag-since"><ul class="dummy"><li>1.0.0</li></ul></dd>
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="FileLoader.html#parse">FileLoader#parse</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_egg-core_lib_loader_file_loader.js.html">node_modules/egg-core/lib/loader/file_loader.js</a>, <a href="node_modules_egg-core_lib_loader_file_loader.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
