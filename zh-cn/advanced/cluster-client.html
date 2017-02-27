@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>多进程模型 - 为企业级框架和应用而生</title>
+  <title>多进程研发模式增强 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -41,96 +41,13 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>多进程模型</h1>
-    <h2 id="背景"><a class="markdown-anchor" href="#背景">#</a> 背景</h2>
-<p>我们知道 JavaScript 代码是运行在单线程上的，换句话说一个 node 进程只消耗一个 CPU。那么如果用 node 来做 web server，就无法享受到多核运算的好处。作为企业级的解决方案，我们要解决的一个问题就是:</p>
-<blockquote>
-<p>如何榨干服务器资源，利用上多核 CPU 的并发优势？</p>
-</blockquote>
-<p>而 node 官方提供的解决方案是 <a href="https://nodejs.org/api/cluster.html" target="_blank" rel="external">cluster 模块</a></p>
-<blockquote>
-<p>A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.</p>
-</blockquote>
-<blockquote>
-<p>The cluster module allows you to easily create child processes that all share server ports.</p>
-</blockquote>
-<h2 id="cluster-是什么呢"><a class="markdown-anchor" href="#cluster-是什么呢">#</a> cluster 是什么呢？</h2>
-<p>简单的说，</p>
-<ul>
-<li>在服务器上同时启动多个进程。</li>
-<li>每个进程里都跑的是同一份源代码（好比把以前一个进程的工作分给多个进程去做）。</li>
-<li>更神奇的是，这些进程可以同时监听一个端口（具体原理推荐阅读 @DavidCai1993 这篇 <a href="https://cnodejs.org/topic/56e84480833b7c8a0492e20c" target="_blank" rel="external">cluster 实现原理</a>）。</li>
-</ul>
-<p>其中：</p>
-<ul>
-<li>负责启动其他进程的叫做 Master 进程，他好比是个『包工头』，不做具体的工作，只负责启动其他进程。</li>
-<li>其他被启动的叫 Worker 进程，顾名思义就是干活的『工人』。它们接收请求，对外提供服务。</li>
-<li>Worker 进程的数量一般根据服务器的 CPU 核数来定，这样就可以完美利用多核资源。</li>
-</ul>
-<p>示例代码</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> cluster = <span class="built_in">require</span>(<span class="string">'cluster'</span>);</div><div class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</div><div class="line"><span class="keyword">const</span> numCPUs = <span class="built_in">require</span>(<span class="string">'os'</span>).cpus().length;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (cluster.isMaster) &#123;</div><div class="line">  <span class="comment">// Fork workers.</span></div><div class="line">  <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; numCPUs; i++) &#123;</div><div class="line">    cluster.fork();</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  cluster.on(<span class="string">'exit'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">worker, code, signal</span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">'worker '</span> + worker.process.pid + <span class="string">' died'</span>);</div><div class="line">  &#125;);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="comment">// Workers can share any TCP connection</span></div><div class="line">  <span class="comment">// In this case it is an HTTP server</span></div><div class="line">  http.createServer(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</div><div class="line">    res.writeHead(<span class="number">200</span>);</div><div class="line">    res.end(<span class="string">"hello world\n"</span>);</div><div class="line">  &#125;).listen(<span class="number">8000</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="cluster-就够了吗"><a class="markdown-anchor" href="#cluster-就够了吗">#</a> cluster 就够了吗？</h2>
-<p>上面的示例是不是很简单，但是作为企业级的解决方案，要考虑的东西还有很多。</p>
-<ul>
-<li>Worker 进程异常退出以后该如何处理？</li>
-<li>多个 Worker 进程之间如何共享资源？</li>
-<li>多个 Worker 进程之间如何调度？</li>
-<li>...</li>
-</ul>
-<h3 id="异常处理"><a class="markdown-anchor" href="#异常处理">#</a> 异常处理</h3>
-<p>健壮性（又叫鲁棒性）是企业级应用必须考虑的问题，除了程序本身代码质量要保证，框架层面也需要提供相应的『兜底』机制保证极端情况下应用的可用性。</p>
-<p>当一个 Worker 进程遇到未捕获的异常时，通常需要做两件事情：</p>
-<ol>
-<li>关闭当前进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，让进程能够优雅的退出；</li>
-<li>当 Worker 进程『死掉』以后，Master 进程会重新 fork 一个新的 Worker，保证在线的『工人』总数不变。</li>
-</ol>
-<p>在框架里，我们采用 <a href="https://github.com/node-modules/graceful" target="_blank" rel="external">graceful</a> 和 <a href="https://github.com/eggjs/egg-cluster" target="_blank" rel="external">egg-cluster</a> 两个模块配合实现上面的逻辑。这套方案已在阿里和蚂蚁的生产环境广泛部署，且经受过『双11』大促的考验，所以是相对稳定和靠谱的。</p>
-<p>流程图</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">+---------+                 +---------+</div><div class="line">|  Worker |                 |  Master |</div><div class="line">+---------+                 +----+----+</div><div class="line">     | uncaughtException         |</div><div class="line">     +------------+              |</div><div class="line">     |            |              |                   +---------+</div><div class="line">     | <span class="xml"><span class="tag">&lt;<span class="name">----------+</span>              |                   |  <span class="attr">Worker</span> |</span></span></div><div class="line">     |                           |                   +<span class="attr">----</span>+<span class="attr">----</span>+</div><div class="line">     |        <span class="attr">disconnect</span>         |   <span class="attr">fork</span> <span class="attr">a</span> <span class="attr">new</span> <span class="attr">worker</span>    |</div><div class="line">     +<span class="attr">-------------------------</span>&gt; + ---------------------&gt; |</div><div class="line">     |          exit             |                        |</div><div class="line">     +-------------------------&gt; |                        |</div><div class="line">     |                           |                        |</div><div class="line">    die                          |                        |</div><div class="line">                                 |                        |</div><div class="line">                                 |                        |</div></pre></td></tr></table></figure></p>
-<h3 id="进程间通讯ipc"><a class="markdown-anchor" href="#进程间通讯ipc">#</a> 进程间通讯（IPC）</h3>
-<p>虽然每个 Worker 进程是相对独立的，但是它们之间始终还是需要通讯的，叫进程间通讯（IPC）。下面是 node 官方提供的一段示例代码</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="meta">'use strict'</span>;</div><div class="line"><span class="keyword">const</span> cluster = <span class="built_in">require</span>(<span class="string">'cluster'</span>);</div><div class="line"></div><div class="line"><span class="keyword">if</span> (cluster.isMaster) &#123;</div><div class="line">  <span class="keyword">const</span> worker = cluster.fork();</div><div class="line">  worker.send(<span class="string">'hi there'</span>);</div><div class="line">  worker.on(<span class="string">'message'</span>, msg =&gt; &#123;</div><div class="line">    <span class="built_in">console</span>.log(<span class="string">`msg: <span class="subst">$&#123;msg&#125;</span> from worker#<span class="subst">$&#123;worker.id&#125;</span>`</span>);</div><div class="line">  &#125;);</div><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (cluster.isWorker) &#123;</div><div class="line">  process.on(<span class="string">'message'</span>, (msg) =&gt; &#123;</div><div class="line">    process.send(msg);</div><div class="line">  &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>细心的你可能已经发现 cluster 的 IPC 通道只存在于 Master 和 Worker 之间，Worker 之间是没有的。那么 Worker 之间想通讯该怎么办呢？是的，通过 Master 来转发。</p>
-<p><figure class="highlight"><table><tr><td class="code"><pre><div class="line">// 广播消息： one worker =&gt; all workers</div><div class="line">                 +---------+</div><div class="line">                 |  Master |</div><div class="line">                 +---------+</div><div class="line">                 ^    |     \</div><div class="line">                /     |      \</div><div class="line">   broadcast   /      |       \</div><div class="line">              /       |        \</div><div class="line">             /        v         v</div><div class="line">  +----------+   +----------+   +----------+</div><div class="line">  | Worker 1 |   | Worker 2 |   | Worker 3 |</div><div class="line">  +----------+   +----------+   +----------+</div><div class="line"></div><div class="line">// 指定接收方： one worker =&gt; another worker</div><div class="line">                 +---------+</div><div class="line">                 |  Master |</div><div class="line">                 +---------+</div><div class="line">                 ^    |</div><div class="line">     send to    /     |</div><div class="line">    worker 2   /      |</div><div class="line">              /       |</div><div class="line">             /        v</div><div class="line">  +----------+   +----------+   +----------+</div><div class="line">  | Worker 1 |   | Worker 2 |   | Worker 3 |</div><div class="line">  +----------+   +----------+   +----------+</div></pre></td></tr></table></figure></p>
-<p>为了方便调用，我们封装了一个 messenger 对象挂在 app 实例上，提供一系列友好的 API</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 广播</span></div><div class="line"><span class="keyword">const</span> data = &#123; ... &#125;;</div><div class="line">app.messenger.broadcast(<span class="string">'custom_action'</span>, data);</div><div class="line"></div><div class="line"><span class="comment">// 接收</span></div><div class="line">app.messenger.on(<span class="string">'custom_action'</span>, data =&gt; &#123; ... &#125;);</div><div class="line"></div><div class="line"><span class="comment">// 指定接收方</span></div><div class="line"><span class="keyword">const</span> pid = <span class="number">2</span>; <span class="comment">// @see https://nodejs.org/api/cluster.html#cluster_worker_id</span></div><div class="line">app.messenger.sendTo(pid, <span class="string">'custom_action'</span>, data);</div><div class="line"></div><div class="line"><span class="comment">// 只有 worker id 为 2 的进程会收到消息</span></div><div class="line">app.messenger.on(<span class="string">'custom_action'</span>, data =&gt; &#123; ... &#125;);</div></pre></td></tr></table></figure></p>
-<h2 id="agent-机制"><a class="markdown-anchor" href="#agent-机制">#</a> Agent 机制</h2>
-<p>说到这里，node 多进程方案貌似已经成型，这也是我们早期线上使用的方案。但后来我们发现有些工作其实不需要每个 Worker 都去做，如果都做，一来是浪费资源，更重要的是可能会导致多进程间资源访问冲突。举个例子：生产环境的日志文件我们一般会按照日期进行归档，在单进程模型下这再简单不过了：</p>
-<blockquote>
-<ol>
-<li>每天凌晨 0 点，将当前日志文件按照日期进行重命名</li>
-<li>销毁以前的文件句柄，并创建新的日志文件继续写入</li>
-</ol>
-</blockquote>
-<p>试想如果现在是 4 个进程来做同样的事情，是不是就乱套了。所以，对于这一类后台运行的逻辑，我们希望将它们放到一个单独的进程上去执行，这个进程就叫 Agent Worker，简称 Agent。Agent 好比是 Master 给其他 Worker 请的一个秘书，它不对外提供服务，只给 App Worker 打工，专门处理一些公共事务。现在我们的多进程模型就变成下面这个样子了</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">                +--------+          +-------+</div><div class="line">                | Master |<span class="xml"><span class="tag">&lt;<span class="name">--------</span>&gt;</span>| Agent |</span></div><div class="line">                +--------+          +-------+</div><div class="line">                ^   ^    ^</div><div class="line">               /    |     \</div><div class="line">             /      |       \</div><div class="line">           /        |         \</div><div class="line">         v          v          v</div><div class="line">+----------+   +----------+   +----------+</div><div class="line">| Worker 1 |   | Worker 2 |   | Worker 3 |</div><div class="line">+----------+   +----------+   +----------+</div></pre></td></tr></table></figure></p>
-<p>那我们框架的启动时序如下：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">+---------+           +---------+          +---------+</div><div class="line">|  Master |           |  Agent  |          |  Worker |</div><div class="line">+---------+           +----+----+          +----+----+</div><div class="line">     |      fork agent     |                    |</div><div class="line">     +--------------------&gt;|                    |</div><div class="line">     |      agent ready    |                    |</div><div class="line">     |<span class="xml"><span class="tag">&lt;<span class="name">--------------------+</span>                    |</span></span></div><div class="line">     |                     |     <span class="attr">fork</span> <span class="attr">worker</span>    |</div><div class="line">     +<span class="attr">-----------------------------------------</span>&gt;|</div><div class="line">     |     worker ready    |                    |</div><div class="line">     |<span class="tag">&lt;<span class="name">-----------------------------------------+</span></span></div><div class="line">     |                     |                    |</div><div class="line">     |                     |                    |</div></pre></td></tr></table></figure></p>
-<ol>
-<li>Master 启动后先 fork Agent 进程</li>
-<li>Agent 初始化成功后，通过 IPC 通道通知 Master</li>
-<li>Master 再 fork 多个 App Worker</li>
-<li>App Worker 初始化成功，通知 Master</li>
-<li>应用启动成功</li>
-</ol>
-<p>另外，关于 Agent Worker 还有几点需要注意的是：</p>
-<ol>
-<li>由于 App Worker 依赖于 Agent，所以必须等 Agent 初始化完成后才能 fork App Worker</li>
-<li>Agent 虽然是 App Worker 的『小秘』，但是业务相关的工作不应该放到 Agent 上去做，不然把她累垮了就不好了</li>
-<li>由于 Agent 的特殊定位，<strong>我们应该保证它相对稳定</strong>。当它发生未捕获异常，框架不会像 App Worker 一样让他退出重启，而是记录异常日志、报警等待人工处理</li>
-<li>Agent 和普通 App Worker 挂载的 API 不完全一样，如何识别差异可查看<a href="./framework.html">框架文档</a></li>
-</ol>
-<h3 id="agent-的用法"><a class="markdown-anchor" href="#agent-的用法">#</a> Agent 的用法</h3>
-<p>你可以在应用或插件根目录下的 <code>agent.js</code> 中实现你自己的逻辑（和 <code>app.js</code> 用法类似，只是入口参数是 agent 对象）</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// agent.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">agent</span> =&gt;</span> &#123;</div><div class="line">  <span class="comment">// 在这里写你的初始化逻辑</span></div><div class="line"></div><div class="line">  <span class="comment">// 也可以通过 messenger 对象发送消息给 App Worker</span></div><div class="line">  <span class="comment">// 但需要等待 App Worker 启动成功后才能发送，不然很可能丢失</span></div><div class="line">  agent.messenger.on(<span class="string">'egg-ready'</span>, () =&gt; &#123;</div><div class="line">    <span class="keyword">const</span> data = &#123; ... &#125;;</div><div class="line">    agent.messenger.sendToApp(<span class="string">'xxx_action'</span>, data);</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.messenger.on(<span class="string">'xxx_action'</span>, data =&gt; &#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<h2 id="cluster-client"><a class="markdown-anchor" href="#cluster-client">#</a> Cluster Client</h2>
-<p>对于 Agent 的应用还有一类常见的场景：一些中间件客户端需要和服务器建立长连接，理论上一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）连接被创建。</p>
+    <h1>多进程研发模式增强</h1>
+    <p>在前面的<a href="../core/cluster-and-ipc.html">多进程模型章节</a>中，我们详细讲述了框架的多进程模型，其中适合使用 Agent 进程的有一类常见的场景：一些中间件客户端需要和服务器建立长连接，理论上一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）连接被创建。</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">+--------+   +--------+</div><div class="line">| Client |   | Client |   ... n</div><div class="line">+--------+   +--------+</div><div class="line">    |  \     /   |</div><div class="line">    |    \ /     |        n * m 个链接</div><div class="line">    |    / \     |</div><div class="line">    |  /     \   |</div><div class="line">+--------+   +--------+</div><div class="line">| Server |   | Server |   ... m</div><div class="line">+--------+   +--------+</div></pre></td></tr></table></figure></p>
 <p>为了尽可能的复用长连接（因为它们对于服务端来说是非常宝贵的资源），我们会把它放到 Agent 进程里维护，然后通过 messenger 将数据传递给各个 Worker。这种做法是可行的，但是往往需要写大量代码去封装接口和实现数据的传递，非常麻烦。</p>
 <p>另外，通过 messenger 传递数据效率是比较低的，因为它会通过 Master 来做中转；万一 IPC 通道出现问题还可能将 Master 进程搞挂。</p>
 <p>那么有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。</p>
-<h3 id="核心思想"><a class="markdown-anchor" href="#核心思想">#</a> 核心思想</h3>
+<h2 id="核心思想"><a class="markdown-anchor" href="#核心思想">#</a> 核心思想</h2>
 <ul>
 <li>受到 <a href="http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf" target="_blank" rel="external">Leader/Follower</a> 模式的启发</li>
 <li>客户端会被区分为两种角色：
@@ -151,7 +68,7 @@
 </ul>
 <p>新的模式下，客户端的启动流程如下：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">             +-------+</div><div class="line">             | start |</div><div class="line">             +---+---+</div><div class="line">                 |</div><div class="line">        +--------+---------+</div><div class="line">      __| port competition |__</div><div class="line">win /   +------------------+  \ lose</div><div class="line">   /                           \</div><div class="line">+--------+     tcp conn     +----------+</div><div class="line">| Leader |<span class="xml"><span class="tag">&lt;<span class="name">----------------</span>&gt;</span>| Follower |</span></div><div class="line">+--------+                  +----------+</div><div class="line">    |</div><div class="line">+--------+</div><div class="line">| Client |</div><div class="line">+--------+</div><div class="line">    |  \</div><div class="line">    |    \</div><div class="line">    |      \</div><div class="line">    |        \</div><div class="line">+--------+   +--------+</div><div class="line">| Server |   | Server |   ...</div><div class="line">+--------+   +--------+</div></pre></td></tr></table></figure></p>
-<h3 id="客户端接口类型抽象"><a class="markdown-anchor" href="#客户端接口类型抽象">#</a> 客户端接口类型抽象</h3>
+<h2 id="客户端接口类型抽象"><a class="markdown-anchor" href="#客户端接口类型抽象">#</a> 客户端接口类型抽象</h2>
 <p>我们将客户端接口抽象为下面两大类，这也是对客户端接口的一个规范，对于符合规范的客户端，我们可以自动将其包装为 Leader/Follower 模式</p>
 <ul>
 <li>订阅、发布类（subscribe / publish）
@@ -164,12 +81,12 @@
 </ul>
 <p>客户端示例</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> Base = <span class="built_in">require</span>(<span class="string">'sdk-base'</span>);</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Client</span> <span class="keyword">extends</span> <span class="title">Base</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(options) &#123;</div><div class="line">    <span class="keyword">super</span>(options);</div><div class="line">    <span class="comment">// 在初始化成功以后记得 ready</span></div><div class="line">    <span class="keyword">this</span>.ready(<span class="literal">true</span>);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 订阅</div><div class="line">   *</div><div class="line">   * @param &#123;Object&#125; info - 订阅的信息（一个 JSON 对象，注意尽量不要包含 Function, Buffer, Date 这类属性）</div><div class="line">   * @param &#123;Function&#125; listener - 监听的回调函数，接收一个参数就是监听到的结果对象</div><div class="line">   */</div><div class="line">  subscribe(info, listener) &#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 发布</div><div class="line">   *</div><div class="line">   * @param &#123;Object&#125; info - 发布的信息，和上面 subscribe 的 info 类似</div><div class="line">   */</div><div class="line">  publish(info) &#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="comment">/**</span></div><div class="line">   * 获取数据 (invoke)</div><div class="line">   *</div><div class="line">   * @param &#123;String&#125; id - id</div><div class="line">   * @return &#123;Object&#125; result</div><div class="line">   */</div><div class="line">  * getData(id) &#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="异常处理-2"><a class="markdown-anchor" href="#异常处理-2">#</a> 异常处理</h3>
+<h2 id="异常处理"><a class="markdown-anchor" href="#异常处理">#</a> 异常处理</h2>
 <ul>
 <li>Leader 如果“死掉”会触发新一轮的端口争夺，争夺到端口的那个实例被推选为新的 Leader</li>
 <li>为保证 Leader 和 Follower 之间的通道健康，需要引入定时心跳检查机制，如果 Follower 在固定时间内没有发送心跳包，那么 Leader 会将 Follower 主动断开，从而触发 Follower 的重新初始化</li>
 </ul>
-<h3 id="协议和调用时序"><a class="markdown-anchor" href="#协议和调用时序">#</a> 协议和调用时序</h3>
+<h2 id="协议和调用时序"><a class="markdown-anchor" href="#协议和调用时序">#</a> 协议和调用时序</h2>
 <p>Leader 和 Follower 通过下面的协议进行数据交换：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="number">0</span>       <span class="number">1</span>       <span class="number">2</span>               <span class="number">4</span>                                                              <span class="number">12</span></div><div class="line">+-------+-------+---------------+---------------------------------------------------------------+</div><div class="line">|version|req/res|    reserved   |                          request id                           |</div><div class="line">+-------------------------------+-------------------------------+-------------------------------+</div><div class="line">|           timeout             |   connection object length    |   application object length   |</div><div class="line">+-------------------------------+---------------------------------------------------------------+</div><div class="line">|         conn object (<span class="built_in">JSON</span> format)  ...                    |            app object             |</div><div class="line">+-----------------------------------------------------------+                                   |</div><div class="line">|                                          ...                                                  |</div><div class="line">+-----------------------------------------------------------------------------------------------+</div></pre></td></tr></table></figure></p>
 <ol>
@@ -181,7 +98,7 @@
 <li>Follower 向 Leader 发送调用请求，Leader 收到后执行相应操作后返回结果</li>
 </ol>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">+----------+             +---------------+          +---------+</div><div class="line">| Follower |             |  Local Server |          |  Leader |</div><div class="line">+----------+             +---------------+          +---------+</div><div class="line">     |     register channel     |       assign to        |</div><div class="line">     + -----------------------&gt; |  --------------------&gt; |</div><div class="line">     |                          |                        |</div><div class="line">     |                                subscribe          |</div><div class="line">     + ------------------------------------------------&gt; |</div><div class="line">     |       subscribe result                            |</div><div class="line">     | <span class="xml"><span class="tag">&lt;<span class="name">------------------------------------------------</span> +</span></span></div><div class="line">     |                                                   |</div><div class="line">     |                                 <span class="attr">invoke</span>            |</div><div class="line">     + <span class="attr">------------------------------------------------</span>&gt; |</div><div class="line">     |          invoke result                            |</div><div class="line">     | <span class="tag">&lt;<span class="name">------------------------------------------------</span> +</span></div><div class="line">     |                                                   |</div></pre></td></tr></table></figure></p>
-<h3 id="具体的使用方法"><a class="markdown-anchor" href="#具体的使用方法">#</a> 具体的使用方法</h3>
+<h2 id="具体的使用方法"><a class="markdown-anchor" href="#具体的使用方法">#</a> 具体的使用方法</h2>
 <p>下面我用一个简单的例子，介绍在框架里面如何让一个客户端支持 Leader/Follower 模式</p>
 <ul>
 <li>第一步，我们的客户端最好是符合上面提到过的接口约定，例如：</li>
@@ -224,14 +141,13 @@
 <li>APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。</li>
 </ul>
 <p>有兴趣的同学可以看一下 <a href="https://github.com/eggjs/egg/issues/322" target="_blank" rel="external">增强多进程研发模式</a> 讨论过程。</p>
-<p><a href="../faq.html#%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%9C%89%E9%80%89%E5%9E%8B-pm2">为什么我们没有选择 PM2?</a></p>
 
   </article>
   <aside id="mobileAside" class="toc">
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster.html">多进程模型</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');
