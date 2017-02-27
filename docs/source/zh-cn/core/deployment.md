@@ -50,7 +50,7 @@ egg.startCluster({
 然后运行这个文件，将标准输出重定向到 `stdout.log`，错误输出重定向到 `stderr.log`，便于排查问题。
 
 ```bash
-EGG_SERVER_ENV=prod nohup node dispacth.js > stdout.log 2> stderr.log &
+EGG_SERVER_ENV=prod nohup node dispatch.js > stdout.log 2> stderr.log &
 ```
 
 注意：
