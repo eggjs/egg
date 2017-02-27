@@ -29,14 +29,21 @@ You can also load different configuration file for different environment by addi
 
 Lots of node applications use `NODE_ENV` for environment setting, but `EGG_SERVER_ENV`  distinguishes the environments much more specific. Generally speaking, there are local environment, unit test environment, test environment, production environment during the application development. Test and production environment are **Server Environment** and their `NODE_ENV` should be set to `production` , just like how npm make use of `NODE_ENV`. when you depoly applications in test and production environment, you don't install the devDependencies, so `production` should be applied.
 
-Default mapping of EGG_SERVER_ENV and NODE_ENV
+Default mapping of `EGG_SERVER_ENV` and `NODE_ENV` (will generate `EGG_SERVER_ENV` from `NODE_ENV` setting if `EGG_SERVER_ENV` is not specified)
 
-EGG_SERVER_ENV | NODE_ENV | remarks
---- | --- | ---
-local | | local development environment
-unittest | test | unit test environment
-test | production | test environment on server
-prod | production | production environment
+NODE_ENV   | EGG_SERVER_ENV | remarks
+---------- | -------------- | ------------
+           | local          | local development environment
+test       | unittest       | unit test environment
+production | prod           | production environment
+
+For example, `EGG_SERVER_ENV` will be set to prod when `NODE_ENV` is production and `EGG_SERVER_ENV` is not specified.
+
+## Customize environment
+
+In normal development process, it's not limit to these environments mentioned above. So you can customize environment for you development process, such as SIT (System integration testing).
+
+Set `EGG_SERVER_ENV` to sit (also set `NODE_ENV = production` as recommend), the framework will load `config/config.sit.js` when lanching, and the runtime environment `app.config.env` will be `sit`.
 
 ## Difference with Koa
 
