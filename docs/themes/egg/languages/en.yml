@@ -21,10 +21,10 @@ header:
 
 guide_toc:
   Intro: Guide
-  What is egg: What is egg?
-  egg and koa: The egg and koa
-  Get Start: Quick start
-  Basics: Basis function
+  What is egg: What is Egg?
+  Egg and Koa: Egg and koa
+  Get Start: Quick Start
+  Basics: Basis Function
   Structure: Directory Structure
   Environment: Environment
   Config: Configuration
@@ -34,7 +34,7 @@ guide_toc:
   Service: Service
   Schedule: Schedule
   Extend: Extend
-  Custom init: Custom init
+  Custom init: Custom Init
   Development: Development
   Unit Testing: Unit Testing
   Core: Core
@@ -46,9 +46,10 @@ guide_toc:
   Logger:  Logger
   Error Handling: Error Handling
   i18n: i18n
+  Cluster and IPC: Cluster and IPC
   Tutorials: Tutorials
   Advanced: Advanced
-  Cluster: Cluster
+  Cluster Client: Cluster Enhancement
   Framework: Framework
   Plugin: Plugin
   Progressive:  Progressive
@@ -57,4 +58,3 @@ guide_toc:
   Contributing: Contributing
   Member Guide: Member Guide
   FAQ: FAQ
-

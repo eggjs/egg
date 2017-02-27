@@ -1,6 +1,6 @@
 Intro:
   What is egg: /intro/index.html
-  egg and koa: /intro/egg-and-koa.html
+  Egg and Koa: /intro/egg-and-koa.html
   Get Start: /intro/quickstart.html
 Basics:
   Structure: /basics/structure.html
@@ -15,14 +15,15 @@ Basics:
   Custom init: /basics/app-start.html
 Core:
   Development: /core/development.html
+  Unit Testing: /core/unittest.html
+  Logger: /core/logger.html
+  HttpClient: /core/httpclient.html
+  Cluster and IPC: /core/cluster-and-ipc.html
+  View: /core/view.html
+  Error Handling: /core/error-handling.html
   Security: /core/security.html
   # Passport: /core/passport.html
-  HttpClient: /core/httpclient.html
-  Logger: /core/logger.html
-  Error Handling: /core/error-handling.html
   i18n: /core/i18n.html
-  View: /core/view.html
-  Unit Testing: /core/unittest.html
 Tutorials:
   Progressive: /tutorials/progressive.html
   MySQL: /tutorials/mysql.html
@@ -33,7 +34,7 @@ Advanced:
   Loader: /advanced/loader.html
   Plugin: /advanced/plugin.html
   Framework: /advanced/framework.html
-  Cluster: /advanced/cluster.html
+  Cluster Client: /advanced/cluster-client.html
   View Plugin: /advanced/view-plugin.html
 Community:
   Contributing: /contributing.html
