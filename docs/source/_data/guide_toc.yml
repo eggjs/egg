@@ -16,21 +16,21 @@ Basics:
 Core:
   Development: /core/development.html
   Unit Testing: /core/unittest.html
+  Deployment: /advanced/deployment.html
   Logger: /core/logger.html
   HttpClient: /core/httpclient.html
   Cluster and IPC: /core/cluster-and-ipc.html
   View: /core/view.html
   Error Handling: /core/error-handling.html
   Security: /core/security.html
-  # Passport: /core/passport.html
   i18n: /core/i18n.html
 Tutorials:
   Progressive: /tutorials/progressive.html
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
   Async Function: /tutorials/async-function.html
+  # Passport: /core/passport.html
 Advanced:
-  # Deployment: /advanced/deployment.html
   Loader: /advanced/loader.html
   Plugin: /advanced/plugin.html
   Framework: /advanced/framework.html
