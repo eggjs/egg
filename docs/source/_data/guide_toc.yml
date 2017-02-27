@@ -16,7 +16,7 @@ Basics:
 Core:
   Development: /core/development.html
   Unit Testing: /core/unittest.html
-  Deployment: /advanced/deployment.html
+  Deployment: /core/deployment.html
   Logger: /core/logger.html
   HttpClient: /core/httpclient.html
   Cluster and IPC: /core/cluster-and-ipc.html
