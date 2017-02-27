@@ -34,10 +34,15 @@ NODE_ENV   | EGG_SERVER_ENV | 说明
 ---------- | -------------- | ------------
            | local          | 本地开发环境
 test       | unittest       | 单元测试
-production | test           | 服务器测试环境
 production | prod           | 生产环境
 
-当 `NODE_ENV` 为 production 时默认的 `EGG_SERVER_ENV` 为 prod，需要自己指定 `EGG_SERVER_ENV`。
+例如，当 `NODE_ENV` 为 production 而 `EGG_SERVER_ENV` 未指定时，框架会将 EGG_SERVER_ENV 设置成 prod。
+
+## 自定义环境
+
+常规研发流程不仅仅只有以上几种环境，所以可以通过自定义环境来支持自己的研发流程，比如增加集成测试环境 SIT。
+
+将 `EGG_SERVER_ENV` 设置成 `sit`（并建议设置 `NODE_ENV = production`），启动时会加载 `config/config.sit.js`，运行环境变量 `app.config.env` 会被设置成 `sit`。
 
 ## 与 koa 的区别
 

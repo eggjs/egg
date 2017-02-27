@@ -55,7 +55,7 @@ EGG_SERVER_ENV=prod node dispacth.js > stdout.log 2> stderr.log &
 
 注意：
 
-- **生产环境使用的 EGG_SERVER_ENV 为 prod**，可查看[运行环境](./basics/env.md)获取更多内容。
+- **生产环境使用的 EGG_SERVER_ENV 必须为 prod**，可查看[运行环境](./basics/env.md)获取更多内容。
 - 如果使用 Docker，可直接前台运行。
 - 默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 
