@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>应用部署 - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <ul class="nav-item">
+      <li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li>
+      <!--
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/">中文</a></li>
+          <li><a href="/">English</a></li>
+        </ul>
+      </li>
+      -->
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe></li>
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>应用部署</h1>
+    <p>在<a href="./development.html">本地开发</a>时，我们使用 <code>egg-bin dev</code> 来启动服务，但是在部署应用的时候不可以这样使用。因为 <code>egg-bin dev</code> 会针对本地开发做很多处理，而生产运行需要一个更加简单稳定的方式。所以本章主要讲解如何部署你的应用。</p>
+<p>一般从源码代码到真正运行，我们会拆分成构建和部署两步，可以做到<strong>一次构建多次部署</strong>。</p>
+<h2 id="构建"><a class="markdown-anchor" href="#构建">#</a> 构建</h2>
+<p>Javascript 语言本身不需要编译的，构建过程主要是下载依赖。但如果使用 Typscript 或者 Babel 支持 ES6 以上的特性，那就必须要这一步了。</p>
+<p>一般安装依赖会指定 <code>NODE_ENV=production</code> 或 <code>npm install --production</code> 只安装 dependencies 的依赖。因为 devDependencies 中的模块过大而且在生产环境不会使用，安装后也可能遇到未知问题。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> baseDir</div><div class="line">$ npm install --production</div><div class="line">$ tar -zcvf ../release.tgz .</div></pre></td></tr></table></figure></p>
+<p>构建完成后打包成 tgz 文件，部署的时候解压启动就可以了。</p>
+<p>增加构建环节才能做到真正的<strong>一次构建多次部署</strong>，理论上代码没有改动的时候是不需要再次构建的，可以用原来的包进行部署，这有着不少好处：</p>
+<ul>
+<li>构建依赖的环境和运行时是有差异的，所以不要污染运行时环境。</li>
+<li>可以减少发布的时间，而且易回滚，只需要把原来的包重新启动即可。</li>
+</ul>
+<h2 id="部署"><a class="markdown-anchor" href="#部署">#</a> 部署</h2>
+<p>服务器需要预装 Node.js，框架支持的 Node 版本为 <code>&gt;= 6.0.0</code>。</p>
+<p>框架使用 <a href="https://github.com/eggjs/egg-cluster" target="_blank" rel="external">egg-cluster</a> 来启动 <a href="./cluster-and-ipc.html#master">Master 进程</a>，Master 有足够的稳定性，不再需要使用 <a href="https://github.com/Unitech/pm2" target="_blank" rel="external">pm2</a> 等进程守护模块。<a href="https://github.com/eggjs/egg-cluster" target="_blank" rel="external">egg-cluster</a> 已集成到框架中，只需要调用 <code>egg.startCluster</code> 方法。</p>
+<p>更多参数可参考 <a href="https://github.com/eggjs/egg-cluster#options" target="_blank" rel="external">egg-cluster</a></p>
+<h3 id="创建启动文件"><a class="markdown-anchor" href="#创建启动文件">#</a> 创建启动文件</h3>
+<p>在应用根目录创建一个启动文件，比如 <code>dispatch.js</code></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// dispatch.js</span></div><div class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">'egg'</span>);</div><div class="line"></div><div class="line">egg.startCluster(&#123;</div><div class="line">  <span class="attr">baseDir</span>: __dirname,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="后台运行"><a class="markdown-anchor" href="#后台运行">#</a> 后台运行</h3>
+<p>然后运行这个文件，将标准输出重定向到 <code>stdout.log</code>，错误输出重定向到 <code>stderr.log</code>，便于排查问题。</p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">EGG_SERVER_ENV=prod nohup node dispatch.js &gt; stdout.log 2&gt; stderr.log &amp;</div></pre></td></tr></table></figure></p>
+<p>注意：</p>
+<ul>
+<li><strong>生产环境使用的 EGG_SERVER_ENV 必须为 prod</strong>，可查看<a href="./basics/env.html">运行环境</a>获取更多内容。</li>
+<li>如果使用 Docker，可直接前台运行。</li>
+<li>默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。</li>
+</ul>
+<h3 id="自定义框架启动"><a class="markdown-anchor" href="#自定义框架启动">#</a> 自定义框架启动</h3>
+<p>如果应用使用了<a href="./advanced/framework.html">自定义框架</a>，还需要指定额外的参数，比如框架为 <code>yadan</code>。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// dispatch.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="keyword">const</span> egg = <span class="built_in">require</span>(<span class="string">'egg'</span>);</div><div class="line"></div><div class="line">egg.startCluster(&#123;</div><div class="line">  <span class="attr">baseDir</span>: __dirname,</div><div class="line">  <span class="attr">customEgg</span>: path.join(__dirname, <span class="string">'node_modules/yadan'</span>),</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/advanced/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+</aside>
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+</div>
+
+  </div>
+</body>
+</html>
