@@ -3,6 +3,14 @@ title: 常见问题
 
 如果下面的内容无法解决你的问题，请查看 [egg issues](https://github.com/eggjs/egg/issues)。
 
+## 为什么我的配置不生效？
+
+框架的配置功能比较强大，有不同环境变量，又有框架/插件/应用等很多地方配置。
+
+如果你分析问题时，想知道当前运行时使用的最终配置，可以查看下 `run/application_config.json` 和 `run/agent_config.json` 这两个文件。
+
+也可参见[配置文件](https://eggjs.org/zh-cn/basics/config.html#配置结果)。
+
 ## 进程管理为什么没有选型 PM2 ？
 
 1. PM2 模块本身复杂度很高，出了问题很难排查。我们认为框架使用的工具复杂度不应该过高，而 PM2 自身的复杂度超越了大部分应用本身。
