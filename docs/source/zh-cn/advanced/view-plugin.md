@@ -92,7 +92,7 @@ module.exports = class EjsView {
 `render` 方法的三个参数
 
 - filename: 是完整的文件的路径，框架查找文件时已确认文件是否存在，这里不需要处理
-- locals: 渲染所需的数据，来源于 `app.locals` 和 `ctx.locals` 设置的，也有 `render` 时直接传入的。框架还内置了 `ctx`，`request`, `ctx.helper` 这几个对象。
+- locals: 渲染所需的数据，数据来自 `app.locals`，`ctx.locals` 和调用 `render` 方法传入的。框架还内置了 `ctx`，`request`, `ctx.helper` 这几个对象。
 - viewOptions: 用户传入的配置，可覆盖模板引擎的默认配置，这个可根据模板引擎的特征考虑是否支持。比如默认开启了缓存，而某个页面不需要缓存。
 
 `renderString` 方法的三个参数
