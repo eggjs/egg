@@ -3,16 +3,11 @@ title: 模板渲染
 
 绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户。故我们需要引入对应的模板引擎。
 
-框架并不强制你使用某种模板引擎，并且没有内置的 view 插件，只是约定了 [view 插件开发规范](../advanced/view-plugin.md)，开发者需根据团队技术选型自行引入。
+框架内置 [egg-view] 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。如果想更深入的了解，可以查看[模板插件开发](../advanced/view-plugin.md)。
 
-## 选择 view 插件
+以下以官方支持的 view 插件 [egg-view-nunjucks] 为例
 
-目前官方支持的 view 插件有：
-- [egg-view-nunjucks]
-
-下文将以 `egg-view-nunjucks` 为示例
-
-### 引入 view 插件
+## 引入 view 插件
 
 ```bash
 $ npm i egg-view-nunjucks --save
@@ -22,18 +17,19 @@ $ npm i egg-view-nunjucks --save
 
 ```js
 // config/plugin.js
-exports.view = {
+exports.nunjucks = {
   enable: true,
   package: 'egg-view-nunjucks',
 };
 ```
 
-### 配置插件
+## 配置插件
 
-框架仅约定了以下配置项，更多的配置需要查阅对应插件的文档。
+[egg-view] 提供了 `config.view` 通用配置
 
-- {String} dir - 模板文件的根目录，绝对路径，默认为 `${baseDir}/app/view`。
-- {Boolean} cache - 是否开启模板缓存，本地开发为 false，其他为 true。
+### root {String}
+
+模板文件的根目录，为绝对路径，默认为 `${baseDir}/app/view`。支持配置多个目录，以 `,` 分割，会从多个目录查找文件。
 
 如下示例演示了如何配置多个 view 目录：
 
@@ -43,7 +39,7 @@ const path = require('path');
 module.exports = appInfo => {
   return {
     view: {
-      dir: [
+      root: [
         path.join(appInfo.baseDir, 'app/view'),
         path.join(appInfo.baseDir, 'path/to/another'),
       ].join(',')
@@ -52,11 +48,63 @@ module.exports = appInfo => {
 };
 ```
 
-注意：**多目录支持这个特性依赖于对应的 view 插件是否实现**
+### cache {Boolean}
+
+模板路径缓存，默认开启。框架会根据 root 配置的目录依次查找，如果匹配则会缓存文件路径，下载渲染相同路径时不会重新查找。
+
+### mapping 和 defaultViewEngine
+
+每个模板在注册时都会指定一个模板名（viewEngineName），在使用时需要根据后缀来匹配模板名，比如指定 `.nj` 后缀的文件使用 nunjucks 进行渲染。
+
+```js
+module.exports = {
+  view: {
+    mapping: {
+      '.nj': 'nunjucks',
+    },
+  },
+};
+```
+
+调用 render 渲染文件
+
+```js
+ctx.render('home.nj');
+```
+
+必须配置文件后缀和模板引擎的映射，否则无法找到对应的模板引擎，但是可以使用 `defaultViewEngine` 做全局配置。
+
+```js
+// config/config.default.js
+module.exports = {
+  view: {
+    defaultViewEngine: 'nunjucks',
+  },
+};
+```
+
+如果根据文件后缀没有找到对应的模板引擎，会使用默认的模板引擎进行渲染。对于只使用一种模板引擎的应用，建议配置此选项。
+
+### defaultExtension
+
+一般在调用 render 时需要指定文件路径，如果配置了 defaultExtension 可以省略后缀。
+
+```js
+// config/config.default.js
+module.exports = {
+  view: {
+    defaultExtension: '.nj',
+  },
+};
+
+// render app/view/home.nj
+ctx.render('home');
+```
 
 ## 渲染页面
 
 框架在 context 上提供了 3 个接口，返回值均为 Promise:
+
 - `render(name, locals)` 渲染模板文件, 并赋值给 ctx.body
 - `renderView(name, locals)` 渲染模板文件, 仅返回不赋值
 - `renderString(tpl, locals)` 渲染模板字符串, 仅返回不赋值
@@ -73,9 +121,13 @@ module.exports = function* home(){
   this.body = yield this.renderView('path/to/file.tpl', data);
 
   // or render string directly
-  this.body = yield this.renderString('hi, {{ name }}', data);
+  this.body = yield this.renderString('hi, {{ name }}', data, {
+    viewEngine: 'nunjucks',
+  });
 };
 ```
+
+当使用 `renderString` 时需要指定模板引擎，如果已经定义 `defaultViewEngine` 这里可以省略。
 
 ## locals
 
@@ -132,20 +184,6 @@ exports.lowercaseFirst = str => str[0].toLowerCase() + str.substring(1);
 yield this.renderString('{{ helper.lowercaseFirst(name) }}', data);
 ```
 
-## filter
-
-在 view 插件里面，会扩展对 `filter` 的支持，类似 `helper` 一样编写 `filter.js` 即可。
-
-注意：**该特性依赖于对应的 view 插件是否实现**
-
-```js
-// app/extend/filter.js
-exports.lowercaseFirst = str => str[0].toLowerCase() + str.substring(1);
-
-// app/controller/home.js
-yield this.renderString('{{ name | lowercaseFirst }}', data);
-```
-
 ## security
 
 框架内置的 [egg-security] 插件，为我们提供了常见的安全辅助函数，包括 `helper.shtml / surl / sjs` 等等等，强烈建议阅读下 [安全](./security.md)。
@@ -153,3 +191,4 @@ yield this.renderString('{{ name | lowercaseFirst }}', data);
 
 [egg-security]: https://github.com/eggjs/egg-security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
+[egg-view]: https://github.com/eggjs/egg-view
