@@ -50,7 +50,7 @@ module.exports = appInfo => {
 
 ### cache {Boolean}
 
-模板查找缓存，默认开启。框架会根据 root 配置去多个目录查找，如果找到会设置缓存，多次渲染就不会再去查找。**如果文件已被缓存，修改文件路径会在渲染时报错**。
+模板路径缓存，默认开启。框架会根据 root 配置的目录依次查找，如果匹配则会缓存文件路径，下载渲染相同路径时不会重新查找。**如果文件路径已被缓存，修改或删除文件路径后会在渲染时报错**，本地开发环境会关闭这个缓存。
 
 ### mapping 和 defaultViewEngine
 
@@ -60,7 +60,7 @@ module.exports = appInfo => {
 module.exports = {
   view: {
     mapping: {
-      '.nj': 'nunjucs',
+      '.nj': 'nunjucks',
     },
   },
 };
@@ -78,12 +78,12 @@ ctx.render('home.nj');
 // config/config.default.js
 module.exports = {
   view: {
-    defaultViewEngine: 'nunjucs',
+    defaultViewEngine: 'nunjucks',
   },
 };
 ```
 
-如果未找到模板引擎，会使用默认的模板引擎进行渲染。对于只使用一种模板引擎的应用，建议配置此选项。
+如果根据文件后缀没有找到对应的模板引擎，会使用默认的模板引擎进行渲染。对于只使用一种模板引擎的应用，建议配置此选项。
 
 ### defaultExtension
 
