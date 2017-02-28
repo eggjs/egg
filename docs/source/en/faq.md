@@ -3,6 +3,12 @@ title: FAQ
 
 If you have questions that is not contained below, please check [egg issues](https://github.com/eggjs/egg/issues).
 
+## Why my config don't work ?
+
+Framework [Config](./basics/config.md) settings is powerfull, support different environments and different places(framework, plugins, app).
+
+When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `run/application_config.json` and `run/agent_config.json`.
+
 ## Why not choose PM2 as process management tool?
 
 1. PM2 itself is too complex to issue problems if any.
