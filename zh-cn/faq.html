@@ -43,6 +43,10 @@
   <article class="markdown-body">
     <h1>常见问题</h1>
     <p>如果下面的内容无法解决你的问题，请查看 <a href="https://github.com/eggjs/egg/issues" target="_blank" rel="external">egg issues</a>。</p>
+<h2 id="为什么我的配置不生效"><a class="markdown-anchor" href="#为什么我的配置不生效">#</a> 为什么我的配置不生效？</h2>
+<p>框架的配置功能比较强大，有不同环境变量，又有框架/插件/应用等很多地方配置。</p>
+<p>如果你分析问题时，想知道当前运行时使用的最终配置，可以查看下 <code>run/application_config.json</code> 和 <code>run/agent_config.json</code> 这两个文件。</p>
+<p>也可参见<a href="https://eggjs.org/zh-cn/basics/config.html#%E9%85%8D%E7%BD%AE%E7%BB%93%E6%9E%9C">配置文件</a>。</p>
 <h2 id="进程管理为什么没有选型-pm2"><a class="markdown-anchor" href="#进程管理为什么没有选型-pm2">#</a> 进程管理为什么没有选型 PM2 ？</h2>
 <ol>
 <li>PM2 模块本身复杂度很高，出了问题很难排查。我们认为框架使用的工具复杂度不应该过高，而 PM2 自身的复杂度超越了大部分应用本身。</li>
