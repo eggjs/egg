@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>View 插件开发规范 - 为企业级框架和应用而生</title>
+  <title>View 插件开发 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -41,84 +41,66 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>View 插件开发规范</h1>
-    <p>绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户，而框架并不强制使用某种模板引擎，由开发者来自行选型，具体参见 <a href="../core/view.html">模板渲染</a>。</p>
-<p>本文将阐述框架对 View 插件的规范约束, 我们可以依此来封装对应的模板引擎插件。</p>
+    <h1>View 插件开发</h1>
+    <p>绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户，而框架并不强制使用某种模板引擎，由开发者来自行选型，具体参见<a href="../core/view.html">模板渲染</a>。</p>
+<p>本文将阐述框架对 View 插件的规范约束, 我们可以依此来封装对应的模板引擎插件。以下以 <a href="https://github.com/eggjs/egg-view-ejs" target="_blank" rel="external">egg-view-ejs</a> 为例</p>
 <h2 id="插件目录结构"><a class="markdown-anchor" href="#插件目录结构">#</a> 插件目录结构</h2>
-<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">egg-view-nunjucks</div><div class="line">├── app</div><div class="line">│   └── extend</div><div class="line">│       └── application.js</div><div class="line">├── config</div><div class="line">│   ├── config.default.js</div><div class="line">│   └── config.local.js</div><div class="line">├── lib</div><div class="line">│   ├── engine.js</div><div class="line">│   ├── helper.js</div><div class="line">│   └── view.js</div><div class="line">├── <span class="built_in">test</span></div><div class="line">├── History.md</div><div class="line">├── README.md</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">egg-view-ejs</div><div class="line">├── config</div><div class="line">│   ├── config.default.js</div><div class="line">│   └── config.local.js</div><div class="line">├── lib</div><div class="line">│   └── view.js</div><div class="line">├── app.js</div><div class="line">├── <span class="built_in">test</span></div><div class="line">├── History.md</div><div class="line">├── README.md</div><div class="line">└── package.json</div></pre></td></tr></table></figure></p>
 <h2 id="插件命名规范"><a class="markdown-anchor" href="#插件命名规范">#</a> 插件命名规范</h2>
 <ul>
-<li>遵循 <a href="./plugin.html">插件开发规范</a></li>
-<li>插件命名约定以 <code>egg-view-</code> 开头</li>
-<li>package.json 中增加:</li>
-</ul>
-<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-view-nunjucks"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"view"</span></div><div class="line">  &#125;,</div><div class="line">  <span class="attr">"keywords"</span>: [</div><div class="line">    <span class="string">"egg"</span>,</div><div class="line">    <span class="string">"eggPlugin"</span>,</div><div class="line">    <span class="string">"egg-plugin"</span>,</div><div class="line">    <span class="string">"egg-plugin-view"</span>,</div><div class="line">    <span class="string">"nunjucks"</span></div><div class="line">  ],</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="viewengine"><a class="markdown-anchor" href="#viewengine">#</a> ViewEngine</h3>
-<p>模板引擎一般只需要初始化一次，我们可以通过 ViewEngine 来初始化 ：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/engine.js</span></div><div class="line"><span class="keyword">const</span> nunjucks = <span class="built_in">require</span>(<span class="string">'nunjucks'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> engine = <span class="keyword">new</span> nunjucks.Environment();</div><div class="line">  engine.nunjucks = nunjucks;</div><div class="line">  <span class="keyword">return</span> engine;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>扩展到 application ：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/app/extend/application.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get viewEngine() &#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[VIEW_ENGINE]) &#123;</div><div class="line">      <span class="keyword">this</span>[VIEW_ENGINE] = engine(<span class="keyword">this</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[VIEW_ENGINE];</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>此外，还可以通过 <code>app.viewEngine</code> 提供接口给应用开发者调用，如 <code>app.viewEngine.cleanCache()</code> 之类的。</p>
-<h2 id="view-基类"><a class="markdown-anchor" href="#view-基类">#</a> View 基类</h2>
-<p>接下来需提供一个 View 基类，该类将被框架的内部 View 类继承，并在每次请求中进行初始化。</p>
-<p>View 基类需提供 <code>render</code> 和 <code>renderString</code> 两个方法，返回 Promise (考虑到后续对 await async 的支持)。</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/view.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">MyCustomView</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(ctx) &#123;</div><div class="line">    <span class="keyword">this</span>.ctx = ctx;</div><div class="line">    <span class="keyword">this</span>.app = ctx.app;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  render(name, locals) &#123;</div><div class="line">    <span class="comment">// name 为模板文件的相对于 `app/view` 的路径</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</div><div class="line">      <span class="keyword">this</span>.app.viewEngine.render(name, locals, (err, result) =&gt; &#123;</div><div class="line">        <span class="keyword">if</span> (err) &#123;</div><div class="line">          reject(err);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          resolve(result);</div><div class="line">        &#125;</div><div class="line">      &#125;);</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  renderString(tpl, locals) &#123;</div><div class="line">    <span class="comment">// tpl 是模板字符串</span></div><div class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(<span class="string">'some html'</span>);</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>再把该基类扩展到 application 上：</p>
-<p>使用 <code>Symbol.for('egg#view')</code> 来指定当前框架查找 View 基类的路径。</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/app/extend/application.js</span></div><div class="line"><span class="keyword">const</span> View = <span class="built_in">require</span>(<span class="string">'../../lib/view'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get [<span class="built_in">Symbol</span>.for(<span class="string">'egg#view'</span>)]() &#123;</div><div class="line">    <span class="keyword">return</span> View;</div><div class="line">  &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="插件配置"><a class="markdown-anchor" href="#插件配置">#</a> 插件配置</h2>
-<p>配置的 key 为 <code>view</code>，并提供至少两个配置属性:</p>
-<ul>
-<li>{String} dir - 模板文件的根目录，绝对路径。</li>
-<li>{Boolean} cache - 是否开启模板缓存，本地开发为 false，其他为 true。</li>
-</ul>
-<p><strong>由于<a href="../basics/config.html">配置合并的限制</a>，我们建议若需要支持目录配置，不要定义数组配置，而使用字符串分隔符代替，并在文档中告知用户。</strong></p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/config/config.default.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">    * View options</div><div class="line">    * @member Config#view</div><div class="line">    * @property &#123;String&#125; dir - full path of template dir, support multiple path by using comma, defaults to `&#123;app_root&#125;/app/view`.</div><div class="line">    * @property &#123;Boolean&#125; cache - whether cache template, default to true except false at local env.</div><div class="line">    */</div><div class="line">    view: &#123;</div><div class="line">      <span class="attr">dir</span>: path.join(appInfo.baseDir, <span class="string">'app/view'</span>),</div><div class="line">      <span class="attr">cache</span>: <span class="literal">true</span>,</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// &#123;plugin_root&#125;/config/config.local.js</span></div><div class="line">exports.view = &#123;</div><div class="line">  <span class="attr">cache</span>: <span class="literal">false</span>,</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/engine.js</span></div><div class="line"><span class="keyword">const</span> nunjucks = <span class="built_in">require</span>(<span class="string">'nunjucks'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">const</span> viewPaths = app.config.view.dir.split(<span class="string">','</span>).map(<span class="function"><span class="params">dir</span> =&gt;</span> dir.trim());</div><div class="line">  <span class="comment">// nunjucks 的 file loader 支持多目录</span></div><div class="line">  <span class="keyword">const</span> fileLoader = <span class="keyword">new</span> nunjucks.FileSystemLoader(viewPaths);</div><div class="line"></div><div class="line">  <span class="keyword">const</span> engine = <span class="keyword">new</span> nunjucks.Environment(fileLoader);</div><div class="line">  engine.nunjucks = nunjucks;</div><div class="line">  <span class="keyword">return</span> engine;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<blockquote>
-<p>上述几条规范，是框架对 View 插件的强约束。
-下文的约定，为最佳实践，非强制约束，插件开发者可以根据具体的模板引擎场景自行实现。</p>
-</blockquote>
-<h3 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h3>
-<p>框架本身提供了 <code>ctx.helper</code> 供开发者使用，但有些情况下，我们希望对 helper 方法进行覆盖，仅在模板渲染时生效。</p>
-<p>如 <code>helper.shtml</code> 在 controller 中使用时直接输出清洗后的 html， 但在模板中，需要绕过模板引擎本身的 <code>escape</code> 机制，则可以如下：</p>
-<p>先提供一个 helper 子类：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/helper.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="class"><span class="keyword">class</span> <span class="title">ViewHelper</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Helper</span> </span>&#123;</div><div class="line">    <span class="comment">// wrap `shtml/sjs/surl`, so you don't need `safe(sjs(foo))` to prevent unexpected escape</span></div><div class="line">    shtml(str) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.safe(<span class="keyword">super</span>.shtml(str));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    surl(str) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.safe(<span class="keyword">super</span>.surl(str));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    sjs(str) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.safe(<span class="keyword">super</span>.sjs(str));</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> ViewHelper;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>在 application 和 view 中分别扩展上去：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/app/extend/application.js</span></div><div class="line"><span class="keyword">const</span> VIEW_HELPER = <span class="built_in">Symbol</span>(<span class="string">'app#ViewHelper'</span>);</div><div class="line"><span class="keyword">const</span> helper = <span class="built_in">require</span>(<span class="string">'../../lib/helper'</span>);</div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get ViewHelper() &#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[VIEW_HELPER]) &#123;</div><div class="line">      <span class="keyword">this</span>[VIEW_HELPER] = helper(<span class="keyword">this</span>, <span class="keyword">this</span>.viewEngine.filters);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[VIEW_HELPER];</div><div class="line">  &#125;,</div><div class="line"></div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/view.js</span></div><div class="line"><span class="keyword">const</span> HELPER = <span class="built_in">Symbol</span>(<span class="string">'View#helper'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">MyCustomView</span> </span>&#123;</div><div class="line">  get helper() &#123;</div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>[HELPER]) &#123;</div><div class="line">      <span class="keyword">this</span>[HELPER] = <span class="keyword">new</span> <span class="keyword">this</span>.app.ViewHelper(<span class="keyword">this</span>.ctx);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[HELPER];</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// ...</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="filter"><a class="markdown-anchor" href="#filter">#</a> filter</h3>
-<p>模板引擎中最常用的就是 filter，故我们在框架的<a href="../basics/extend.html">扩展</a>之上增加对 <code>app/extend/filter.js</code> 的支持：</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/engine.js</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loadFilter</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> dirs = app.loader.getLoadUnits().map(<span class="function"><span class="params">unit</span> =&gt;</span> unit.path);</div><div class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> dir <span class="keyword">of</span> dirs) &#123;</div><div class="line">    <span class="comment">// load all `filter.js` define at all framework/plugin/app</span></div><div class="line">    <span class="keyword">const</span> filters = app.loader.loadFile(path.join(dir, <span class="string">'app/extend/filter.js'</span>)) || &#123;&#125;;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> name <span class="keyword">of</span> <span class="built_in">Object</span>.keys(filters)) &#123;</div><div class="line">      <span class="comment">// invoke your template engine lib's add filter method</span></div><div class="line">      engine.addFilter(name, filters[name]);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h3 id="安全相关"><a class="markdown-anchor" href="#安全相关">#</a> 安全相关</h3>
-<p>首先声明对 <a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 的依赖：</p>
-<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-view-nunjucks"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"view"</span>,</div><div class="line">    <span class="attr">"dep"</span>: [</div><div class="line">      <span class="string">"security"</span></div><div class="line">    ]</div><div class="line">  &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>然后需要在对应的 FileLoader 里面注入安全脚本：</p>
-<ul>
-<li><code>app.injectCsrf()</code> - 自动往 form 表单里插入 <code>_csrf</code> 隐藏域</li>
-<li><code>app.injectNonce()</code> - 自动往 script 标签增加 <code>nonce</code> 属性</li>
-</ul>
-<p>具体可以参考 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 的 <a href="https://github.com/eggjs/egg-view-nunjucks/blob/master/lib/engine.js#L60" target="_blank" rel="external">FileLoader</a> 实现。</p>
-<p>更多安全相关知识，参见 <a href="../core/security.html">安全</a>。</p>
-<h3 id="单元测试"><a class="markdown-anchor" href="#单元测试">#</a> 单元测试</h3>
-<p>作为一个高质量的插件，完善的单元测试是必不可少的，我们也提供了很多辅助工具使插件开发者可以无痛的编写测试，具体参见 <a href="../core/unittest.html">单元测试</a> 和 <a href="./plugin.html">插件</a> 中的相关内容。</p>
-<h2 id="内部调用流程"><a class="markdown-anchor" href="#内部调用流程">#</a> 内部调用流程</h2>
-<p>接下来，我们来介绍下框架内部实现，了解下整个调用流程：</p>
-<ul>
-<li>应用开发者在 controller 里面调用 <code>this.render()</code></li>
-<li>框架调用链:
-<ul>
-<li><code>this.render() -&gt; this.view.render()</code></li>
-<li><code>this.view</code> 是一个惰性实例化的单例， <code>new this.app.View(this)</code></li>
-<li><code>app.View</code> 也是一个惰性实例化的单例，该 View 类继承于插件里面扩展的 <code>app[Symbol.for('egg#view')]</code></li>
-<li>该子类会在原 render 方法的基础上，增加对 locals 的注入。</li>
-</ul>
+<li>
+<p>遵循<a href="./plugin.html">插件开发规范</a></p>
+</li>
+<li>
+<p>插件命名约定以 <code>egg-view-</code> 开头</p>
+</li>
+<li>
+<p><code>package.json</code> 配置如下，插件名以模板引擎命名，比如 ejs</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-view-ejs"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"ejs"</span></div><div class="line">  &#125;,</div><div class="line">  <span class="attr">"keywords"</span>: [</div><div class="line">    <span class="string">"egg"</span>,</div><div class="line">    <span class="string">"egg-plugin"</span>,</div><div class="line">    <span class="string">"egg-view"</span>,</div><div class="line">    <span class="string">"ejs"</span></div><div class="line">  ],</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+</li>
+<li>
+<p>配置项也以模板引擎命名</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">ejs</span>: &#123;&#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 </li>
 </ul>
-<p>有兴趣的同学可以看下对应的源码：</p>
+<h2 id="view-基类"><a class="markdown-anchor" href="#view-基类">#</a> View 基类</h2>
+<p>接下来需提供一个 View 基类，这个类会在每次请求实例化。</p>
+<p>View 基类需提供 <code>render</code> 和 <code>renderString</code> 两个方法，支持 generator function 和 async function（也可以是函数返回一个 Promise）。<code>render</code> 方法用于渲染文件，而 <code>renderString</code> 方法用于渲染模板字符串。</p>
+<p>以下为简化代码，可直接<a href="https://github.com/eggjs/egg-view-ejs/blob/master/lib/view.js" target="_blank" rel="external">查看源码</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> ejs = <span class="built_in">require</span>(<span class="string">'ejs'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">EjsView</span> </span>&#123;</div><div class="line"></div><div class="line">  render(filename, locals) &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</div><div class="line">      <span class="comment">// 异步调用 API</span></div><div class="line">      ejs.renderFile(filename, locals, (err, result) =&gt; &#123;</div><div class="line">        <span class="keyword">if</span> (err) &#123;</div><div class="line">          reject(err);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          resolve(result);</div><div class="line">        &#125;</div><div class="line">      &#125;);</div><div class="line">    &#125;);</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  renderString(tpl, locals) &#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="comment">// 同步调用 API</span></div><div class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(ejs.render(tpl, locals));</div><div class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(err);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="参数"><a class="markdown-anchor" href="#参数">#</a> 参数</h3>
+<p><code>render</code> 方法的三个参数</p>
 <ul>
-<li><a href="https://github.com/eggjs/egg/blob/master/app/extend/context.js" target="_blank" rel="external">app/extend/context.js</a>, <code>render()</code></li>
-<li><a href="https://github.com/eggjs/egg/blob/master/app/extend/application.js" target="_blank" rel="external">app/extend/application.js</a>, <code>get View()</code></li>
-<li><a href="https://github.com/eggjs/egg/blob/master/lib/core/view.js" target="_blank" rel="external">lib/core/view.js</a></li>
+<li>filename: 是完整的文件的路径，框架查找文件时已确认文件是否存在，这里不需要处理</li>
+<li>locals: 渲染所需的数据，数据来自 <code>app.locals</code>，<code>ctx.locals</code> 和调用 <code>render</code> 方法传入的。框架还内置了 <code>ctx</code>，<code>request</code>, <code>ctx.helper</code> 这几个对象。</li>
+<li>viewOptions: 用户传入的配置，可覆盖模板引擎的默认配置，这个可根据模板引擎的特征考虑是否支持。比如默认开启了缓存，而某个页面不需要缓存。</li>
 </ul>
+<p><code>renderString</code> 方法的三个参数</p>
+<ul>
+<li>tpl: 模板字符串，没有文件路径</li>
+<li>locals: 同 <code>render</code></li>
+<li>viewOptions: 同 <code>render</code></li>
+</ul>
+<h2 id="插件配置"><a class="markdown-anchor" href="#插件配置">#</a> 插件配置</h2>
+<p>根据上面的命名约定，配置名一般为模板引起的名字，比如 ejs</p>
+<p>插件的配置主要来自模板引擎的配置，可根据具体情况定义配置项，如 <a href="https://github.com/mde/ejs#options" target="_blank" rel="external">ejs 的配置</a></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">ejs</span>: &#123;</div><div class="line">    <span class="attr">cache</span>: <span class="literal">true</span>,</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><strong>由于<a href="../basics/config.html">配置合并的限制</a>，我们建议若需要支持目录配置，不要定义数组配置，而使用字符串分隔符代替，并在文档中告知用户。</strong></p>
+<h3 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h3>
+<p>框架本身提供了 <code>ctx.helper</code> 供开发者使用，但有些情况下，我们希望对 helper 方法进行覆盖，仅在模板渲染时生效。</p>
+<p>如 <code>helper.shtml</code> 在 controller 中使用时直接输出清洗后的 html，但在 [nunjucks] 模板中需要绕过模板引擎本身的 <code>escape</code> 机制，则可以如下：</p>
+<p>先提供一个 helper 子类：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/helper.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewHelper</span> <span class="keyword">extends</span> <span class="title">app</span>.<span class="title">Helper</span> </span>&#123;</div><div class="line">    <span class="comment">// safe 由 [egg-view-nunjucks] 注入，在渲染时不会转义，</span></div><div class="line">    <span class="comment">// 否则在模板调用 shtml 会被转义</span></div><div class="line">    shtml(str) &#123;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.safe(<span class="keyword">super</span>.shtml(str));</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在渲染时使用自定义的 helper</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;plugin_root&#125;/lib/view.js</span></div><div class="line"><span class="keyword">const</span> ViewHelper = <span class="built_in">require</span>(<span class="string">'./helper'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">MyCustomView</span> </span>&#123;</div><div class="line">  render(filename, locals) &#123;</div><div class="line">    locals.helper = <span class="keyword">new</span> ViewHelper(<span class="keyword">this</span>.ctx);</div><div class="line"></div><div class="line">    <span class="comment">// 调用 nunjucks render</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>具体代码可<a href="https://github.com/eggjs/egg-view-nunjucks/blob/0433cadd3bc7a88e925b01bae08cc85c38a0af71/lib/view.js#L11" target="_blank" rel="external">查看</a></p>
+<h3 id="安全相关"><a class="markdown-anchor" href="#安全相关">#</a> 安全相关</h3>
+<p>模板和安全息息相关，<a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 也给模板提供了一些方法，模板引擎可以根据需求使用。</p>
+<p>首先声明对 <a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 的依赖：</p>
+<p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-view-nunjucks"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"nunjucks"</span>,</div><div class="line">    <span class="attr">"dep"</span>: [</div><div class="line">      <span class="string">"security"</span></div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>框架提供了 <a href="../core/security.html#appinjectcsrfstr">app.injectCsrf</a> 和 <a href="../core/security.html#appinjectnoncestr">app.injectNonce</a>，更多可查看<a href="../core/security.html">安全章节</a>。</p>
+<h3 id="单元测试"><a class="markdown-anchor" href="#单元测试">#</a> 单元测试</h3>
+<p>作为一个高质量的插件，完善的单元测试是必不可少的，我们也提供了很多辅助工具使插件开发者可以无痛的编写测试，具体参见<a href="../core/unittest.html">单元测试</a>和<a href="./plugin.html">插件</a>中的相关内容。</p>
 
   </article>
   <aside id="mobileAside" class="toc">
