@@ -23,6 +23,7 @@ module.exports = {
   keep: [
   ],
   semver: [
+    'koa-bodyparser@2',
   ],
   test: 'scripts',
 };
