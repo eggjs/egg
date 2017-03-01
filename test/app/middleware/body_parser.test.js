@@ -34,8 +34,9 @@ describe('test/app/middleware/body_parser.test.js', () => {
     .set('Cookie', cookies)
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .set('Accept', 'application/json')
-    .send(querystring.stringify({ foo: 'bar', _csrf: csrf }))
-    .expect({ foo: 'bar', _csrf: csrf })
+    // https://snyk.io/vuln/npm:qs:20170213 test case
+    .send(querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' }))
+    .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
     .expect(200, done);
   });
 
@@ -44,8 +45,8 @@ describe('test/app/middleware/body_parser.test.js', () => {
     .post('/test/body_parser/user')
     .set('Cookie', cookies)
     .set('Content-Type', 'application/json')
-    .send({ foo: 'bar', _csrf: csrf })
-    .expect({ foo: 'bar', _csrf: csrf })
+    .send({ foo: 'bar', _csrf: csrf, ']': 'toString' })
+    .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
     .expect(200, done);
   });
 
@@ -55,7 +56,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
 
     yield request(app1.callback())
     .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar' })
+    .send({ foo: 'bar', ']': 'toString' })
     .expect(204);
   });
 
@@ -65,13 +66,14 @@ describe('test/app/middleware/body_parser.test.js', () => {
 
     yield request(app1.callback())
     .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar' })
+    .send({ foo: 'bar', ']': 'toString' })
     .expect(204);
 
     yield request(app1.callback())
     .post('/test/body_parser/form.json')
-    .send({ foo: 'bar' })
-    .expect({ foo: 'bar' });
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .send({ foo: 'bar', ']': 'toString' })
+    .expect({ foo: 'bar', ']': 'toString' });
   });
 
   it('should body parser support match', function* () {
@@ -80,12 +82,13 @@ describe('test/app/middleware/body_parser.test.js', () => {
 
     yield request(app1.callback())
     .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar' })
-    .expect({ foo: 'bar' });
+    .send({ foo: 'bar', ']': 'toString' })
+    .expect({ foo: 'bar', ']': 'toString' });
 
     yield request(app1.callback())
     .post('/test/body_parser/form.json')
-    .send({ foo: 'bar' })
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .send({ foo: 'bar', ']': 'toString' })
     .expect(204);
   });
 });
