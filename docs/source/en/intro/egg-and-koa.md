@@ -3,12 +3,12 @@ title: egg 与 koa
 
 ## Asynchronous programming model
 
-node is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:
+Node is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:
 
 - [callback hell](http://callbackhell.com/): Notorious "callback hell"。
-- [release zalgo](https://oren.github.io/blog/zalgo.html): Asynchronous functions may call callback function response data synchronously which will bring inconsistency. 
+- [release zalgo](https://oren.github.io/blog/zalgo.html): Asynchronous functions may call callback function response data synchronously which would bring inconsistency. 
 
-The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise and Generator with the ability to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function] the official solution has been finalized, and will be published in ECMAScript 2017.
+The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise, and Generator with the ability to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function], the official solution has been finalized, and will be published in ECMAScript 2017.
 
 ### Generator and co
 
@@ -50,11 +50,11 @@ run(main());
 
 With the run function, asynchronous code can be written in synchronous way in main function in the example above. If you want to know more about Generator, you can have a look at [this document](https://github.com/dead-horse/koa-step-by-step#generator)
 
-Compared with the run function, [co] has `yield [Object / Array / thunk / Generator Function / Generator]`, and builds a Promise with wrapping a Generator Function. [co] is also the underlying library for koa 1 that provides the asynchronous feature. Every middleware in koa 1 must be a `generator function`. 
+Compared with the run function, [co] has `yield [Object / Array / thunk / Generator Function / Generator]`, and builds a Promise with wrapping a Generator Function. [co] is also the underlying library of koa 1 providing the asynchronous feature. Every middleware in koa 1 must be a `generator function`. 
 
-### async function
+### Async function
 
-[async function] has the similar principles to the [co], it is a syntactic sugar at the language level. The code written in async function looks like the the code written in co + generator.
+[Async function] has the similar principles to the [co], it is a syntactic sugar at the language level. The code written in async function looks like that written in co + generator.
 
 ```js
 const fn = co(function*() {
@@ -74,15 +74,15 @@ const fn = async function() {
 fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 ```
 
-Other that the features supported by [co], async function can not await a `Promise` array (You can wrap it with `Promise.all`), await `thunk` is not avaliable either.
+Other than the features supported by [co], async function can not await a `Promise` array (You can wrap it with `Promise.all`), await `thunk` is not avaliable either.
 
-Though async function has not been published yet, it is supported in the V8 runtime built in node 7.x, you can use it without flag parameter after 7.6.0 version.
+Though async function has not been published with the spec yet, it is supported in the V8 runtime built in node 7.x, you can use it without flag parameter after 7.6.0 version.
 
-## koa
+## Koa
 
 > Koa is a new web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs.
 
-The design style of koa and express are very similar, The underlying base library is the same [HTTP library](https://github.com/jshttp). There are several significant differences between them. Besides the asynchronous solution by default metioned above, there are the following points.
+The design style of koa and express are very similar, The underlying base library is the same, [HTTP library](https://github.com/jshttp). There are several significant differences between them. Besides the asynchronous solution by default metioned above, there are the following points.
 
 ### Midlleware
 
@@ -103,7 +103,7 @@ All the requests will be executed twice during one middleware. Compared to expre
 
 ### Context
 
-Unlike that there are only two objects `Request` and `Response` in express, koa has one more, `Context` object during one http request(it is `this` in koa 1, while it is the first parameter for middleware function in koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other that request and response.
+Unlike that there are only two objects `Request` and `Response` in express, koa has one more, `Context` object in one http request(it is `this` in koa 1, while it is the first parameter for middleware function in koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.
 
 At the same time Request and Response are attached to Context object. Just like express, the two objects provide lots of easy ways to help developing. For example:
 
@@ -114,7 +114,7 @@ At the same time Request and Response are attached to Context object. Just like 
 
 ### Exception handlering
 
-Another enormous advantage for writing asynchronous code in synchronous way is it is quite at ease to handler exception. You can catch all the exceptions thrown in the codes followed the convention with `try catch`. We can easily write a customized exception handlering middleware.
+Another enormous advantage for writing asynchronous code in synchronous way is that it is quite at ease to handler exception. You can catch all the exceptions thrown in the codes followed the convention with `try catch`. We can easily write a customized exception handlering middleware.
 
 ```js
 function* onerror(next) {
@@ -128,9 +128,9 @@ function* onerror(next) {
 }
 ```
 
-Only putting the middleware before others, you can catch all the exceptions thrown by the synchronous or asynchronous code.
+ Putting the middleware before others, you can catch all the exceptions thrown by the synchronous or asynchronous code.
 
-## egg inherit from koa
+## Egg inherit from koa
 
 As the above words, koa is an excellent framework. However, it is not enough to building an enterprise-class application.
 
@@ -139,7 +139,7 @@ Egg is built around the koa. On the basis of koa model, egg implements enhanceme
 
 ### Extension
 
-In framework or application based on egg, we can extend the prototype of four koa objects through defining `app/extend/{application,context,request,response}.js`. With this, we can write more utility method quickly. For example, we have the following code in `app/extend/context.js`:
+In the framework or application based on egg, we can extend the prototype of 4 koa objects by defining `app/extend/{application,context,request,response}.js`. With this, we can write more utility methods quickly. For example, we have the following code in `app/extend/context.js`:
 
 ```js
 // app/extend/context.js
@@ -166,7 +166,7 @@ More about extension, please check [Exception](../basics/extend.md) section.
 
 ### Plugin
 
-As is known to all, Many middlewares are imported to provide different kind of feature in express and koa. Eg, [koa-session](https://github.com/koajs/session) provides the session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided an powerful plugin mechanism to make it more easy to write the stand alone feature.
+As is known to all, Many middlewares are imported to provide different kind of features in express and koa. Eg, [koa-session](https://github.com/koajs/session) provides the session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.
 
 One plugin can include:
 
@@ -174,7 +174,7 @@ One plugin can include:
 - middleware：add one or more middlewares, provide pre or post processing logic for request. 
 - config：configure the default value in different environments. 
 
-A stand alone module plugin can provide rich feature with high maintenancability. You can almost forget the configuration as the plugin supports configuring the default value in different environments.
+Stand alone module plugin can provide rich features with high maintenancability. You can almost forget the configuration as the plugin supports configuring the default value in different environments.
 
 [egg-security](https://github.com/eggjs/egg-security) is a typical example.
 
@@ -201,3 +201,4 @@ Egg will transfer core to koa 2.x until node LTS supports async function, compat
 
 [co]: https://github.com/tj/co
 [async function]: https://github.com/tc39/ecmascript-asyncawait
+[Async function]: https://github.com/tc39/ecmascript-asyncawait
