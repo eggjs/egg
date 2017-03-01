@@ -1,7 +1,7 @@
 'use strict';
 
 const request = require('supertest');
-const should = require('should');
+const assert = require('assert');
 const formstream = require('formstream');
 const urllib = require('urllib');
 const utils = require('../../utils');
@@ -37,7 +37,9 @@ describe('test/lib/plugins/multipart.test.js', () => {
     // form.file('file', filepath, filename);
     form.file('file', __filename);
     // other form fields
-    form.field('foo', 'fengmk2').field('love', 'chair');
+    form.field('foo', 'fengmk2').field('love', 'egg');
+    // https://snyk.io/vuln/npm:qs:20170213
+    form.field('[', 'toString');
 
     const headers = form.headers();
     headers.Cookie = cookies;
@@ -46,10 +48,15 @@ describe('test/lib/plugins/multipart.test.js', () => {
       headers,
       stream: form,
     }, (err, body, res) => {
-      should.not.exist(err);
-      res.statusCode.should.equal(200);
+      assert(!err);
+      assert(res.statusCode === 200);
       const data = JSON.parse(body);
-      data.filename.should.equal('multipart.test.js');
+      assert(data.filename === 'multipart.test.js');
+      assert.deepEqual(data.fields, {
+        foo: 'fengmk2',
+        love: 'egg',
+        '[': 'toString',
+      });
       done();
     });
   });
