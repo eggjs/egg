@@ -104,7 +104,7 @@ koa 的中间件和 express 不同，koa 选择了洋葱圈模型。
 
 ### Context
 
-和 express 只有 Request 和 Response 两个对象不同，koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 koa 1 中为中间件的 `this`，在 koa 2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) 这种需要贯穿整个请求（在后续任何第一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言更加符合语义。
+和 express 只有 Request 和 Response 两个对象不同，koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 koa 1 中为中间件的 `this`，在 koa 2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) 这种需要贯穿整个请求（在后续任何一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言更加符合语义。
 
 同时 Context 上也挂载了 Request 和 Response 两个对象。和 express 类似，这两个对象都提供了大量的便捷方法辅助开发，例如
 
