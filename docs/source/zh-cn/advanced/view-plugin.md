@@ -103,7 +103,7 @@ module.exports = class EjsView {
 
 ## 插件配置
 
-根据上面的命名约定，配置名一般为模板引起的名字，比如 ejs
+根据上面的命名约定，配置名一般为模板引擎的名字，比如 ejs
 
 插件的配置主要来自模板引擎的配置，可根据具体情况定义配置项，如 [ejs 的配置](https://github.com/mde/ejs#options)
 
@@ -122,7 +122,15 @@ module.exports = {
 
 框架本身提供了 `ctx.helper` 供开发者使用，但有些情况下，我们希望对 helper 方法进行覆盖，仅在模板渲染时生效。
 
-如 `helper.shtml` 在 controller 中使用时直接输出清洗后的 html，但在 [nunjucks] 模板中需要绕过模板引擎本身的 `escape` 机制，则可以如下：
+在模板渲染中，我们经常会需要输出用户提供的 html 片段，通常需要使用 `egg-security` 插件提供的 `helper.shtml` 清洗下
+
+```html
+<div>{{ helper.shtml(data.content) | safe }}</div>
+```
+
+但如上代码所示，我们需要加上 ` | safe` 来告知模板引擎，该 html 是安全的，无需再次 `escape`，直接渲染。
+
+而这样用起来比较麻烦，而且容易遗忘，所以我们可以封装下：
 
 先提供一个 helper 子类：
 

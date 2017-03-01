@@ -1,3 +1,0 @@
-exports.testHelper = () => {
-  return 'testHelper';
-};

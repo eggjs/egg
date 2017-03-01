@@ -137,7 +137,7 @@ $ npm i egg-view-nunjucks --save
 
 ```js
 // config/plugin.js
-exports.view = {
+exports.nunjucks = {
   enable: true,
   package: 'egg-view-nunjucks'
 };

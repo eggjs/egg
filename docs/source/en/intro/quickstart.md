@@ -152,7 +152,7 @@ And enable it.
 
 ```js
 // config/plugin.js
-exports.view = {
+exports.nunjucks = {
   enable: true,
   package: 'egg-view-nunjucks'
 };
