@@ -1,4 +1,24 @@
 
+1.0.0-rc.2 / 2017-03-01
+=======================
+
+  * deps: upgrade egg-session@2 to support external session store (#480)
+  * docs: fix view plugin config at quickstart (#482)
+  * docs: update document for view that using egg-view (#475)
+  * docs: add config merge to faq (#478)
+  * docs(doc): add english version of "what is egg" (#462)
+  * docs: fix deployment link (#473)
+  * docs: add document for deployment (#448)
+  * test: travis test on node 8 using nightly building (#464)
+  * docs: seperate cluster-and-ipc and cluster-client (#441)
+  * docs: fixed typos 'BS' (#461)
+  * docs: fixed spelling mistake (#460)
+  * test: disable error log to stderr (#453)
+  * docs: fix async-function demo link (#457)
+  * feat: throw if config.keys not exists when access app.keys (#443)
+  * docs: add year to licence && mysql docs (#447)
+  * feat: extend runInBackground on application (#442)
+
 1.0.0-rc.1 / 2017-02-23
 =======================
 
