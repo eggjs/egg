@@ -200,4 +200,5 @@ Egg will transfer core to koa 2.x until node LTS supports async function, compat
 - node 6.x will be no longer supported. 
 
 [co]: https://github.com/tj/co
-[Async function][async function]: https://github.com/tc39/ecmascript-asyncawait
+[Async function]: https://github.com/tc39/ecmascript-asyncawait
+[async function]: https://github.com/tc39/ecmascript-asyncawait
