@@ -1,9 +1,9 @@
-title: egg 与 koa
+title: egg and koa
 ---
 
 ## Asynchronous programming model
 
-Node is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:
+Node.js is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:
 
 - [callback hell](http://callbackhell.com/): Notorious "callback hell"。
 - [release zalgo](https://oren.github.io/blog/zalgo.html): Asynchronous functions may call callback function response data synchronously which would bring inconsistency. 
@@ -14,7 +14,7 @@ The community has provided many solutions for the problems, the winner is Promis
 
 ####  Asynchronous programming model in synchronous way on basis of Generator and Promise. 
 
-As methioned before, we can write asynchronous code in synchronous way with the help of Generator and Promise. The most popular library implementing this feature is [co]. the core principle of [co] can be described by lines of code below:
+As metioned before, we can write asynchronous code in synchronous way with the help of Generator and Promise. The most popular library implementing this feature is [co]. the core principle of [co] can be described by lines of code below:
 
 ```js
 function run(generator, res) {
@@ -200,5 +200,4 @@ Egg will transfer core to koa 2.x until node LTS supports async function, compat
 - node 6.x will be no longer supported. 
 
 [co]: https://github.com/tj/co
-[async function]: https://github.com/tc39/ecmascript-asyncawait
-[Async function]: https://github.com/tc39/ecmascript-asyncawait
+[Async function][async function]: https://github.com/tc39/ecmascript-asyncawait
