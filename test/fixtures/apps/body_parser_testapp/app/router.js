@@ -7,6 +7,7 @@ module.exports = app => {
   });
 
   app.post('/test/body_parser/user', function* () {
+    this.logger.info('request body %s', this.request.body);
     this.body = this.request.body;
   });
 
