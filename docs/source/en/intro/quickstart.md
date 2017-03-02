@@ -158,6 +158,16 @@ exports.nunjucks = {
 };
 ```
 
++```js
+ +// config/config.default.js
+ +exports.view = {
+ +  defaultViewEngine: 'nunjucks',
+ +  mapping: {
+ +    '.tpl': 'nunjucks',
+ +  },
+ +};
+ +```
+
 Then create a template for the index page.
 This usually goes to the app/view directory.
 
