@@ -1,4 +1,4 @@
-node_modules
+/node_modules
 coverage
 *.log
 npm-debug.log
@@ -11,6 +11,7 @@ run
 .DS_Store
 .tmp
 docs/CONTRIBUTING.md
+docs/node_modules
 docs/README.md
 docs/db.json
 docs/source/release/index.md

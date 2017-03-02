@@ -143,6 +143,16 @@ exports.nunjucks = {
 };
 ```
 
+```js
+// config/config.default.js
+exports.view = {
+  defaultViewEngine: 'nunjucks',
+  mapping: {
+    '.tpl': 'nunjucks',
+  },
+};
+```
+
 为列表页编写模板文件，一般放置在 `app/view` 目录下
 
 ``` html
