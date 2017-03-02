@@ -188,7 +188,7 @@ The node LTS version now does not support async function，so egg is based on ko
 
 - The underlying is based on koa 1.x, asynchronous solution is based on generator function wrapped by [co].
 - Official plugin and core of egg are written in generator function,  keep supporting node LTS version, use [co] when necessary to be compatiable with async function. 
-- Application developers can choose either async function(node 7.6+) or generator function(node 6.0+), ** we recommend generator function way for ensuring you application can be runned on node LTS version **.
+- Application developers can choose either async function(node 7.6+) or generator function(node 6.0+), **we recommend generator function way for ensuring you application can be runned on node LTS version**.
 
 #### egg next
 
