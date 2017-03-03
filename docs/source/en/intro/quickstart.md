@@ -166,13 +166,18 @@ exports.view = {
     '.tpl': 'nunjucks',
   },
 };
+
+// should change to your own keys
+exports.keys = '123456';
 ```
+
+**Carefull! `config` dir, not `app/config`!**
 
 Then create a template for the index page.
 This usually goes to the app/view directory.
 
 
-``` html
+```html
 <!-- app/view/news/list.tpl -->
 <html>
   <head>
