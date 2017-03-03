@@ -151,7 +151,12 @@ exports.view = {
     '.tpl': 'nunjucks',
   },
 };
+
+// 切记：要改为自己的 key 值
+exports.keys = '123456';
 ```
+
+**注意：是 `config` 目录，不是 `app/config`!**
 
 为列表页编写模板文件，一般放置在 `app/view` 目录下
 
