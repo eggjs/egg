@@ -185,3 +185,10 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 ## 配置结果
 
 框架在启动时会把合并后的最终配置 dump 到 `run/application_config.json`（worker 进程）和 `run/agent_config.json`（agent 进程）中，可以用来分析问题。
+
+配置文件中会隐藏一些字段，主要包括两类
+
+- 如密码、密钥等安全字段，这里可以通过 `config.dump.ignore` 配置，必须是 [Set] 类型，查看[默认配置](https://github.com/eggjs/egg/blob/master/config/config.default.js)。
+- 如函数、Buffer 等类型，`JSON.stringify` 后的内容特别大
+
+[Set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
