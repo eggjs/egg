@@ -47,6 +47,7 @@ guide_toc:
   Error Handling: 异常处理
   i18n: 国际化
   Cluster and IPC: 多进程模型和进程间通讯
+  Cooke and Session: Cookie 和 Session
   Tutorials: 教程
   Advanced: 进阶
   Cluster Client: 多进程研发模式增强

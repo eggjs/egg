@@ -476,7 +476,7 @@ module.exports = {
 
 ### cookie
 
-HTTP 的请求头中有一个特殊的字段叫 [cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过 cookie 将少量数据存到客户端中（浏览器会遵循协议将数据保存）。HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁，一个常用的解决方案就是通过 cookie 来确认用户身份。
+HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。
 
 通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 cookie。
 
@@ -496,73 +496,7 @@ exports.remove = function* (ctx) {
 
 cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的格式可以设置多个键值对。
 
-#### `context.cookies.set(key, value, options)`
-
-设置 cookie 其实是通过在 HTTP 响应中设置 set-cookie 头完成的，每一个 set-cookie 都会让浏览器在 cookie 中存一个键值对。在设置 cookie 值的同时，协议还支持许多参数来配置这个 cookie 的传输、存储和权限。
-
-- maxAge (Number): 设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。
-- expires (Date): 设置这个键值对的失效时间，如果设置了 maxAge，将会被覆盖。如果 maxAge 和 expires 都没设置，cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。
-- path (String): 设置键值对生效的路径，默认设置在根路径上（`/`）。
-- domain (String): 设置键值对生效的域名，默认没有配置。
-- httpOnly (Boolean): 设置键值对是否不能被 js 访问，默认为 true，不允许被 js 访问。
-- secure (Boolean): 设置键值对[只在 HTTPS 连接上传输](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work)，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
-
-除了这些属性之外，框架另外扩展了 3 个参数的支持：
-
-- overwrite(Boolean)：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。
-- sign（Boolean）：设置是否对 cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
-- encrypt（Boolean）：设置是否对 cookie 进行加密，如果设置为 true，则在发送 cookie 前会对这个键值对的值进行加密，客户端无法读取到 cookie 的值。默认为 false。
-
-在设置 cookie 时我们需要思考清楚这个 cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？
-
-**默认的配置下，cookie 是加签不加密的，浏览器可以看到明文，js 不能访问，不能被客户端（手工）篡改。**
-
-- 如果想要 cookie 在浏览器端可以被 js 访问并修改:
-
-```js
-ctx.cookies.set(key, value, {
-  httpOnly: false,
-  sign: false,
-});
-```
-
-- 如果想要 cookie 在浏览器端不能被修改，不能看到明文：
-
-```js
-ctx.cookies.set(key, value, {
-  httpOnly: true, // 默认就是 true
-  encrypt: true, // 加密传输
-});
-```
-
-注意：
-
-1. 由于[浏览器和其他客户端实现的不确定性](http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers)，为了保证 cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。
-2. 由于[浏览器对 cookie 有长度限制限制](http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key)，所以尽量不要设置太长的 cookie。一般来说不要超过 4000 bytes。
-
-#### `context.cookies.get(key, options)`
-
-由于 HTTP 请求中的 cookie 是在一个 header 中传输过来的，通过框架提供的这个方法可以快速的从整段 cookie 中获取对应的键值对的值。上面在设置 cookie 的时候，我们可以设置 `options.signed` 和 `options.encrypt` 来对 cookie 进行签名或加密，因此对应的在获取 cookie 的时候也要传相匹配的选项。
-
-- 如果设置的时候指定为 signed，获取时未指定，则不会在获取时对取到的值做验签，导致可能被客户端篡改。
-- 如果设置的时候指定为 encrypt，获取时未指定，则无法获取到真实的值，而是加密过后的密文。
-
-### cookie 秘钥
-
-由于我们在 cookie 中需要用到加解密和验签，所以需要配置一个秘钥供加密使用。在 `config/config.default.js` 中
-
-```js
-module.exports = {
-  keys: 'key1,key2',
-};
-```
-
-keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cookie 在使用这个配置进行加解密时：
-
-- 加密时只会使用第一个秘钥。
-- 解密或验签时会遍历 keys 进行解密。
-
-如果我们想要更新 cookie 的秘钥，但是又不希望之前设置到用户浏览器上的 cookie 失效，可以将新的秘钥配置到 keys 最前面，等过一段时间之后再删去不需要的秘钥即可。
+cookie 在 web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视， [cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 cookie 的用法和安全相关的配置项，可以深入阅读了解。
 
 ### session
 
@@ -591,6 +525,8 @@ exports.deleteSession = function* (ctx) {
   ctx.session = null;
 };
 ```
+
+和 cookie 一样，session 也有许多安全等选项和功能，在使用之前也最好阅读 [session](../core/cookie-and-session.md#session) 文档深入了解。
 
 #### 配置
 
