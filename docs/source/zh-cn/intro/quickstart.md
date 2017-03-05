@@ -176,7 +176,7 @@ exports.keys = '123456';
       {% endfor %}
     </div>
   </body>
-<html/>
+</html>
 ```
 
 添加 controller 和 router
