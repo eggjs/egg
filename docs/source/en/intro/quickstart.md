@@ -193,7 +193,7 @@ This usually goes to the app/view directory.
       {% endfor %}
     </div>
   </body>
-<html/>
+</html>
 ```
 
 Then add a controller and router.
