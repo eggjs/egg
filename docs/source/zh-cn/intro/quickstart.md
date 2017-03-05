@@ -87,7 +87,7 @@ module.exports = app => {
 ```js
 // config/config.default.js
 // 切记：要改为自己的 key 值
-exports.keys = '123456';
+exports.keys = <此处改为你自己的 cookie 安全字符串>;
 ```
 
 此时目录结构如下：

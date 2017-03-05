@@ -95,7 +95,7 @@ Then add a configuration file:
 ```js
 // config/config.default.js
 // should change to your own keys
-exports.keys = '123456';
+exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
 ```
 
 The project directory looks like this:
