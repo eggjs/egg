@@ -83,12 +83,19 @@ module.exports = app => {
 
 Then edit the router file and add a mapping.
 
-
 ```js
 // app/router.js
 module.exports = app => {
   app.get('/', 'home.index');
 };
+```
+
+Then add a configuration file:
+
+```js
+// config/config.default.js
+// should change to your own keys
+exports.keys = '123456';
 ```
 
 The project directory looks like this:
@@ -99,6 +106,8 @@ egg-example
 │   ├── controller
 │   │   └── home.js
 │   └── router.js
+├── config
+│   └── config.default.js
 └── package.json
 ```
 
@@ -166,9 +175,6 @@ exports.view = {
     '.tpl': 'nunjucks',
   },
 };
-
-// should change to your own keys
-exports.keys = '123456';
 ```
 
 **Carefull! `config` dir, not `app/config`!**

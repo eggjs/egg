@@ -1,6 +1,6 @@
 title: 教程
 ---
-
+- [快速入门](../intro/quickstart.md)
 - [渐进式开发](./progressive.md)
 - [RESTful API](./restful.md)
 - [Async Function](./async-function.md)

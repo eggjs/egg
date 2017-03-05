@@ -82,6 +82,14 @@ module.exports = app => {
 };
 ```
 
+加一个配置文件：
+
+```js
+// config/config.default.js
+// 切记：要改为自己的 key 值
+exports.keys = '123456';
+```
+
 此时目录结构如下：
 
 ```bash
@@ -90,6 +98,8 @@ egg-example
 │   ├── controller
 │   │   └── home.js
 │   └── router.js
+├── config
+│   └── config.default.js
 └── package.json
 ```
 
@@ -151,9 +161,6 @@ exports.view = {
     '.tpl': 'nunjucks',
   },
 };
-
-// 切记：要改为自己的 key 值
-exports.keys = '123456';
 ```
 
 **注意：是 `config` 目录，不是 `app/config`!**
