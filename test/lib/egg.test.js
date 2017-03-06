@@ -59,6 +59,7 @@ describe('test/lib/egg.test.js', () => {
     let app;
     before(() => {
       app = utils.app('apps/dumpconfig');
+      return app.ready();
     });
     after(() => app.close());
 
@@ -79,6 +80,21 @@ describe('test/lib/egg.test.js', () => {
       assert(json.config.dynamic === 2);
       json = readJson(path.join(baseDir, 'run/agent_config.json'));
       assert(json.config.dynamic === 0);
+    });
+  });
+
+  describe('dumpConfig() ignore error', () => {
+    const baseDir = utils.getFilepath('apps/dump-ignore-error');
+    let app;
+    before(() => {
+      app = utils.app('apps/dump-ignore-error');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should ignore config', () => {
+      const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.keys === 'test key');
     });
   });
 
