@@ -454,7 +454,6 @@ exports.onerror = false;
 - [userrole](https://github.com/eggjs/egg-userrole) 用户角色定义
 - [session](https://github.com/eggjs/egg-session) session 实现
 - [i18n](https://github.com/eggjs/egg-i18n) 多语言
-- [validate](https://github.com/eggjs/egg-validate) 数据校验
 - [watcher](https://github.com/eggjs/egg-watcher) 文件和文件夹监控
 - [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
 - [security](https://github.com/eggjs/egg-security) 安全

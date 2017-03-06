@@ -58,17 +58,6 @@ module.exports = {
   },
 
   /**
-   * Validate Plugin
-   * @member {Object} Plugin#validate
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  validate: {
-    enable: true,
-    package: 'egg-validate',
-  },
-
-  /**
    * file and dir watcher
    * @member {Object} Plugin#watcher
    * @property {Boolean} enable - `true` by default

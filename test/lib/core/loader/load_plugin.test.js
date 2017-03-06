@@ -220,7 +220,6 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       'userrole',
       'session',
       'i18n',
-      'validate',
       'watcher',
       'multipart',
       'security',
