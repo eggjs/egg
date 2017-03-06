@@ -86,7 +86,9 @@ root | 应用根目录，只有在 local 和 unittest 环境下为 baseDir，其
 
 **注意：插件之间也会有加载顺序，但大致顺序类似，具体逻辑可[查看加载器](../advanced/loader.md)。**
 
-配置的合并是使用 [extend](https://github.com/justmoon/node-extend) 模块进行深度拷贝，但存在数组合并的问题。
+### 合并规则
+
+配置的合并使用 [extend2] 模块进行深度拷贝，[extend2] fork 自 [extend]，处理数组时会存在差异。
 
 ```js
 const a = {
@@ -96,24 +98,10 @@ const b = {
   arr: [ 3 ],
 };
 extend(true, a, b);
-// => { arr: [ 3, 2 ] }
+// => { arr: [ 3 ] }
 ```
 
-因为 extend 把所有都当做对象处理，数组也是一个对象，所以 b 覆盖了 a 的第一个索引。**尽量不要定义数组配置，可使用字符串分隔符代替。**
-
-修改一下上面的例子，将配置改成字符串，使用的时候再转成数组。
-
-```js
-const a = {
-  arr: '1,2',
-};
-const b = {
-  arr: '1,2,3',
-};
-const c = extend(true, a, b);
-const arr = c.arr.split(',');
-// => [ '1', '2', '3' ]
-```
+根据上面的例子，框架直接覆盖数组而不是进行合并。
 
 ## 插件配置
 
@@ -192,3 +180,5 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 - 如函数、Buffer 等类型，`JSON.stringify` 后的内容特别大
 
 [Set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+[extend]: https://github.com/justmoon/node-extend
+[extend2]: https://github.com/eggjs/extend2
