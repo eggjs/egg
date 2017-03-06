@@ -186,62 +186,18 @@
 <p>通过 <code>context.ip</code> 获取请求发起方的 ip 地址，优先从 <code>context.ips</code> 中获取，<code>context.ips</code> 为空时使用连接上发起方的 ip 地址。</p>
 <p><strong>注意：ip 和 ips 不同，ip 当 <code>config.proxy = false</code> 时会返回当前连接发起者的 ip 地址，ips 此时会为空数组。</strong></p>
 <h3 id="cookie"><a class="markdown-anchor" href="#cookie">#</a> cookie</h3>
-<p>HTTP 的请求头中有一个特殊的字段叫 <a href="https://en.wikipedia.org/wiki/HTTP_cookie" target="_blank" rel="external">cookie</a>。服务端可以通过 cookie 将少量数据存到客户端中（浏览器会遵循协议将数据保存）。HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁，一个常用的解决方案就是通过 cookie 来确认用户身份。</p>
+<p>HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：<a href="https://en.wikipedia.org/wiki/HTTP_cookie" target="_blank" rel="external">cookie</a>。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。</p>
 <p>通过 <code>context.cookies</code>，我们可以在 controller 中便捷、安全的设置和读取 cookie。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.add = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> count = ctx.cookie.get(<span class="string">'count'</span>);</div><div class="line">  count = count ? <span class="built_in">Number</span>(count) : <span class="number">0</span>;</div><div class="line">  ctx.cookie.set(<span class="string">'count'</span>, ++count);</div><div class="line">  ctx.body = count;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">exports.remove = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> count = ctx.cookie.set(<span class="string">'count'</span>, <span class="literal">null</span>);</div><div class="line">  ctx.status = <span class="number">204</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>cookie 虽然在 HTTP 中只是一个头，但是通过 <code>foo=bar;foo1=bar1;</code> 的格式可以设置多个键值对。</p>
-<h4 id="contextcookiessetkey-value-options"><a class="markdown-anchor" href="#contextcookiessetkey-value-options">#</a> <code>context.cookies.set(key, value, options)</code></h4>
-<p>设置 cookie 其实是通过在 HTTP 响应中设置 set-cookie 头完成的，每一个 set-cookie 都会让浏览器在 cookie 中存一个键值对。在设置 cookie 值的同时，协议还支持许多参数来配置这个 cookie 的传输、存储和权限。</p>
-<ul>
-<li>maxAge (Number): 设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。</li>
-<li>expires (Date): 设置这个键值对的失效时间，如果设置了 maxAge，将会被覆盖。如果 maxAge 和 expires 都没设置，cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。</li>
-<li>path (String): 设置键值对生效的路径，默认设置在根路径上（<code>/</code>）。</li>
-<li>domain (String): 设置键值对生效的域名，默认没有配置。</li>
-<li>httpOnly (Boolean): 设置键值对是否不能被 js 访问，默认为 true，不允许被 js 访问。</li>
-<li>secure (Boolean): 设置键值对<a href="http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work" target="_blank" rel="external">只在 HTTPS 连接上传输</a>，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。</li>
-</ul>
-<p>除了这些属性之外，框架另外扩展了 3 个参数的支持：</p>
-<ul>
-<li>overwrite(Boolean)：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。</li>
-<li>sign（Boolean）：设置是否对 cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。</li>
-<li>encrypt（Boolean）：设置是否对 cookie 进行加密，如果设置为 true，则在发送 cookie 前会对这个键值对的值进行加密，客户端无法读取到 cookie 的值。默认为 false。</li>
-</ul>
-<p>在设置 cookie 时我们需要思考清楚这个 cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？</p>
-<p><strong>默认的配置下，cookie 是加签不加密的，浏览器可以看到明文，js 不能访问，不能被客户端（手工）篡改。</strong></p>
-<ul>
-<li>如果想要 cookie 在浏览器端可以被 js 访问并修改:</li>
-</ul>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.cookies.set(key, value, &#123;</div><div class="line">  <span class="attr">httpOnly</span>: <span class="literal">false</span>,</div><div class="line">  <span class="attr">sign</span>: <span class="literal">false</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<ul>
-<li>如果想要 cookie 在浏览器端不能被修改，不能看到明文：</li>
-</ul>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.cookies.set(key, value, &#123;</div><div class="line">  <span class="attr">httpOnly</span>: <span class="literal">true</span>, <span class="comment">// 默认就是 true</span></div><div class="line">  encrypt: <span class="literal">true</span>, <span class="comment">// 加密传输</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>注意：</p>
-<ol>
-<li>由于<a href="http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers" target="_blank" rel="external">浏览器和其他客户端实现的不确定性</a>，为了保证 cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。</li>
-<li>由于<a href="http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key" target="_blank" rel="external">浏览器对 cookie 有长度限制限制</a>，所以尽量不要设置太长的 cookie。一般来说不要超过 4000 bytes。</li>
-</ol>
-<h4 id="contextcookiesgetkey-options"><a class="markdown-anchor" href="#contextcookiesgetkey-options">#</a> <code>context.cookies.get(key, options)</code></h4>
-<p>由于 HTTP 请求中的 cookie 是在一个 header 中传输过来的，通过框架提供的这个方法可以快速的从整段 cookie 中获取对应的键值对的值。上面在设置 cookie 的时候，我们可以设置 <code>options.signed</code> 和 <code>options.encrypt</code> 来对 cookie 进行签名或加密，因此对应的在获取 cookie 的时候也要传相匹配的选项。</p>
-<ul>
-<li>如果设置的时候指定为 signed，获取时未指定，则不会在获取时对取到的值做验签，导致可能被客户端篡改。</li>
-<li>如果设置的时候指定为 encrypt，获取时未指定，则无法获取到真实的值，而是加密过后的密文。</li>
-</ul>
-<h3 id="cookie-秘钥"><a class="markdown-anchor" href="#cookie-秘钥">#</a> cookie 秘钥</h3>
-<p>由于我们在 cookie 中需要用到加解密和验签，所以需要配置一个秘钥供加密使用。在 <code>config/config.default.js</code> 中</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">keys</span>: <span class="string">'key1,key2'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cookie 在使用这个配置进行加解密时：</p>
-<ul>
-<li>加密时只会使用第一个秘钥。</li>
-<li>解密或验签时会遍历 keys 进行解密。</li>
-</ul>
-<p>如果我们想要更新 cookie 的秘钥，但是又不希望之前设置到用户浏览器上的 cookie 失效，可以将新的秘钥配置到 keys 最前面，等过一段时间之后再删去不需要的秘钥即可。</p>
+<p>cookie 在 web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视， <a href="../core/cookie-and-session.html#cookie">cookie</a> 文档中详细介绍了 cookie 的用法和安全相关的配置项，可以深入阅读了解。</p>
 <h3 id="session"><a class="markdown-anchor" href="#session">#</a> session</h3>
 <p>通过 cookie，我们可以给每一个用户设置一个 session，用来存储用户身份相关的信息，这份信息会加密后存储在 cookie 中，实现跨请求的用户身份保持。</p>
 <p>框架内置了 <a href="https://github.com/eggjs/egg-session" target="_blank" rel="external">session</a> 插件，给我们提供了 <code>context.session</code> 来访问或者修改当前用户 session 。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.fetchPosts = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="comment">// 获取 session 上的内容</span></div><div class="line">  <span class="keyword">const</span> userId = ctx.session.userId;</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">yield</span> ctx.service.post.fetch(userId);</div><div class="line">  <span class="comment">// 修改 session 的值</span></div><div class="line">  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : <span class="number">1</span>;</div><div class="line">  ctx.body = &#123;</div><div class="line">    <span class="attr">success</span>: <span class="literal">true</span>,</div><div class="line">    posts,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.deleteSession = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  ctx.session = <span class="literal">null</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>和 cookie 一样，session 也有许多安全等选项和功能，在使用之前也最好阅读 <a href="../core/cookie-and-session.html#session">session</a> 文档深入了解。</p>
 <h4 id="配置"><a class="markdown-anchor" href="#配置">#</a> 配置</h4>
 <p>对于 session 来说，主要有下面几个属性可以在 <code>config.default.js</code> 中进行配置:</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">key</span>: <span class="string">'EGG_SESS'</span>, <span class="comment">// 承载 session 的 cookie 键值对名字</span></div><div class="line">  maxAge: <span class="number">86400000</span>, <span class="comment">// session 的最大有效时间</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
@@ -341,7 +297,7 @@ egg 自身没有集成任何一个模板引擎，但是约定了 <a href="../adv
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

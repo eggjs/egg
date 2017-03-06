@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>cookie 与 session - 为企业级框架和应用而生</title>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="icon" href="/images/favicon.png" type="image/x-icon">
+<link rel="stylesheet" href="/css/index.css">
+
+</head>
+<body>
+  <div class="nav" >
+  <header>
+    <a href="/zh-cn/" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <ul class="nav-item">
+      <li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li>
+      <!--
+      <li class="translations">
+        <a class="nav-link">切换语言</a>
+        <span class="arrow"></span>
+        <ul class="dropdown-content">
+          <li><a href="/">中文</a></li>
+          <li><a href="/">English</a></li>
+        </ul>
+      </li>
+      -->
+      <li><iframe src="https://ghbtns.com/github-btn.html?user=eggjs&repo=egg&type=star&count=true" frameborder="0" scrolling="0" width="150px" height="20px"></iframe></li>
+    </ul>
+    <a id="mobileTrigger" href="#" class="mobile-trigger">
+      <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </a>
+  </header>
+</div>
+
+  <div id="container">
+    <div class="page-main">
+  <article class="markdown-body">
+    <h1>cookie 与 session</h1>
+    <h3 id="cookie"><a class="markdown-anchor" href="#cookie">#</a> cookie</h3>
+<p>HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：<a href="https://en.wikipedia.org/wiki/HTTP_cookie" target="_blank" rel="external">cookie</a>。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。</p>
+<p>通过 <code>context.cookies</code>，我们可以在 controller 中便捷、安全的设置和读取 cookie。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.add = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> count = ctx.cookie.get(<span class="string">'count'</span>);</div><div class="line">  count = count ? <span class="built_in">Number</span>(count) : <span class="number">0</span>;</div><div class="line">  ctx.cookie.set(<span class="string">'count'</span>, ++count);</div><div class="line">  ctx.body = count;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">exports.remove = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> count = ctx.cookie.set(<span class="string">'count'</span>, <span class="literal">null</span>);</div><div class="line">  ctx.status = <span class="number">204</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="contextcookiessetkey-value-options"><a class="markdown-anchor" href="#contextcookiessetkey-value-options">#</a> <code>context.cookies.set(key, value, options)</code></h4>
+<p>设置 cookie 其实是通过在 HTTP 响应中设置 set-cookie 头完成的，每一个 set-cookie 都会让浏览器在 cookie 中存一个键值对。在设置 cookie 值的同时，协议还支持许多参数来配置这个 cookie 的传输、存储和权限。</p>
+<ul>
+<li>maxAge (Number): 设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。</li>
+<li>expires (Date): 设置这个键值对的失效时间，如果设置了 maxAge，expires 将会被覆盖。如果 maxAge 和 expires 都没设置，cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。</li>
+<li>path (String): 设置键值对生效的 URL 路径，默认设置在根路径上（<code>/</code>），也就是当前域名下的所有 URL 都可以访问这个 cookie。</li>
+<li>domain (String): 设置键值对生效的域名，默认没有配置，可以配置成只在指定域名才能访问。</li>
+<li>httpOnly (Boolean): 设置键值对是否可以被 js 访问，默认为 true，不允许被 js 访问。</li>
+<li>secure (Boolean): 设置键值对<a href="http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work" target="_blank" rel="external">只在 HTTPS 连接上传输</a>，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。</li>
+</ul>
+<p>除了这些属性之外，框架另外扩展了 3 个参数的支持：</p>
+<ul>
+<li>overwrite(Boolean)：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。</li>
+<li>sign（Boolean）：设置是否对 cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。</li>
+<li>encrypt（Boolean）：设置是否对 cookie 进行加密，如果设置为 true，则在发送 cookie 前会对这个键值对的值进行加密，客户端无法读取到 cookie 的值。默认为 false。</li>
+</ul>
+<p>在设置 cookie 时我们需要思考清楚这个 cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？</p>
+<p><strong>默认的配置下，cookie 是加签不加密的，浏览器可以看到明文，js 不能访问，不能被客户端（手工）篡改。</strong></p>
+<ul>
+<li>如果想要 cookie 在浏览器端可以被 js 访问并修改:</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.cookies.set(key, value, &#123;</div><div class="line">  <span class="attr">httpOnly</span>: <span class="literal">false</span>,</div><div class="line">  <span class="attr">sign</span>: <span class="literal">false</span>,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<ul>
+<li>如果想要 cookie 在浏览器端不能被修改，不能看到明文：</li>
+</ul>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.cookies.set(key, value, &#123;</div><div class="line">  <span class="attr">httpOnly</span>: <span class="literal">true</span>, <span class="comment">// 默认就是 true</span></div><div class="line">  encrypt: <span class="literal">true</span>, <span class="comment">// 加密传输</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>注意：</p>
+<ol>
+<li>由于<a href="http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers" target="_blank" rel="external">浏览器和其他客户端实现的不确定性</a>，为了保证 cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。</li>
+<li>由于<a href="http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key" target="_blank" rel="external">浏览器对 cookie 有长度限制限制</a>，所以尽量不要设置太长的 cookie。一般来说不要超过 4093 bytes。当设置的 cookie value 大于这个值时，框架会打印一条警告日志。</li>
+</ol>
+<h4 id="contextcookiesgetkey-options"><a class="markdown-anchor" href="#contextcookiesgetkey-options">#</a> <code>context.cookies.get(key, options)</code></h4>
+<p>由于 HTTP 请求中的 cookie 是在一个 header 中传输过来的，通过框架提供的这个方法可以快速的从整段 cookie 中获取对应的键值对的值。上面在设置 cookie 的时候，我们可以设置 <code>options.signed</code> 和 <code>options.encrypt</code> 来对 cookie 进行签名或加密，因此对应的在获取 cookie 的时候也要传相匹配的选项。</p>
+<ul>
+<li>如果设置的时候指定为 signed，获取时未指定，则不会在获取时对取到的值做验签，导致可能被客户端篡改。</li>
+<li>如果设置的时候指定为 encrypt，获取时未指定，则无法获取到真实的值，而是加密过后的密文。</li>
+</ul>
+<h3 id="cookie-秘钥"><a class="markdown-anchor" href="#cookie-秘钥">#</a> cookie 秘钥</h3>
+<p>由于我们在 cookie 中需要用到加解密和验签，所以需要配置一个秘钥供加密使用。在 <code>config/config.default.js</code> 中</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">keys</span>: <span class="string">'key1,key2'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cookie 在使用这个配置进行加解密时：</p>
+<ul>
+<li>加密和加签时只会使用第一个秘钥。</li>
+<li>解密和验签时会遍历 keys 进行解密。</li>
+</ul>
+<p>如果我们想要更新 cookie 的秘钥，但是又不希望之前设置到用户浏览器上的 cookie 失效，可以将新的秘钥配置到 keys 最前面，等过一段时间之后再删去不需要的秘钥即可。</p>
+<h2 id="session"><a class="markdown-anchor" href="#session">#</a> session</h2>
+<p>cookie 在 web 应用中经常承担标识请求方身份的功能，所以 web 应用在 cookie 的基础上封装了 session 的概念，专门用做用户身份识别。</p>
+<p>框架内置了 <a href="https://github.com/eggjs/egg-session" target="_blank" rel="external">session</a> 插件，给我们提供了 <code>context.session</code> 来访问或者修改当前用户 session 。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.fetchPosts = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="comment">// 获取 session 上的内容</span></div><div class="line">  <span class="keyword">const</span> userId = ctx.session.userId;</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">yield</span> ctx.service.post.fetch(userId);</div><div class="line">  <span class="comment">// 修改 session 的值</span></div><div class="line">  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : <span class="number">1</span>;</div><div class="line">  ctx.body = &#123;</div><div class="line">    <span class="attr">success</span>: <span class="literal">true</span>,</div><div class="line">    posts,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.deleteSession = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  ctx.session = <span class="literal">null</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>session 的实现是基于 cookie 的，默认配置下，用户 session 的内容加密后直接存储在 cookie 中的一个字段中，用户每次请求我们网站的时候都会带上这个 cookie，我们在服务端解密后使用。session 的默认配置如下：</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.session = &#123;</div><div class="line">  <span class="attr">key</span>: <span class="string">'EGG_SESS'</span>,</div><div class="line">  <span class="attr">maxAge</span>: <span class="number">24</span> * <span class="number">3600</span> * <span class="number">1000</span>, <span class="comment">// 1 天</span></div><div class="line">  httpOnly: <span class="literal">true</span>,</div><div class="line">  <span class="attr">encrypt</span>: <span class="literal">true</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>可以看到这些参数除了 <code>key</code> 都是 cookie 的参数，<code>key</code> 代表了存储 session 的 cookie 键值对的 key 是什么。在默认的配置下，存放 session 的 cookie 将会加密存储、不可被前端 js 访问，这样可以保证用户的 session 是安全的。</p>
+<h3 id="扩展存储"><a class="markdown-anchor" href="#扩展存储">#</a> 扩展存储</h3>
+<p>session 默认存放在 cookie 中，但是如果我们的 session 对象过于庞大，就会带来一些额外的问题：</p>
+<ul>
+<li>前面提到，浏览器通常都有限制最大的 cookie 长度，当设置的 session 过大时，浏览器可能拒绝保存。</li>
+<li>cookie 在每次请求时都会带上，当 session 过大时，每次请求都要额外带上庞大的 cookie 信息。</li>
+</ul>
+<p>框架提供了将 session 存储到除了 cookie 之外的其他存储的扩展方案，我们只需要设置 <code>app.sessionStore</code> 即可将 session 存储到指定的存储中。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.sessionStore = &#123;</div><div class="line">    * get (key) &#123;</div><div class="line">      <span class="comment">// return value;</span></div><div class="line">    &#125;,</div><div class="line">    * set (key, value, maxAge) &#123;</div><div class="line">      <span class="comment">// set key to store</span></div><div class="line">    &#125;,</div><div class="line">    * destroy (key) &#123;</div><div class="line">      <span class="comment">// destroy key</span></div><div class="line">    &#125;,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>sessionStore 的实现我们也可以封装到插件中，例如 [egg-session-redis] 就提供了将 session 存储到 redis 中的能力，在应用层，我们只需要引入 [egg-redis] 和 [egg-session-redis] 插件即可。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// plugin.js</span></div><div class="line">exports.redis = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-redis'</span>,</div><div class="line">&#125;;</div><div class="line">exports.sessionRedis = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-redis-session'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><strong>注意：一旦选择了将 session 存入到外部存储中，就意味着系统将强依赖于这个外部存储，当它挂了的时候，我们就完全无法使用 session 相关的功能了。因此我们更推荐大家只将必要的信息存储在 session 中，保持 session 的精简并使用默认的 cookie 存储，用户级别的缓存不要存储在 session 中。</strong></p>
+<h3 id="session-实践"><a class="markdown-anchor" href="#session-实践">#</a> session 实践</h3>
+<h4 id="修改用户-session-失效时间"><a class="markdown-anchor" href="#修改用户-session-失效时间">#</a> 修改用户 session 失效时间</h4>
+<p>虽然在 session 的配置中有一项是 maxAge，但是它只能全局设置 session 的有效期，我们经常可以在一些网站的登陆页上看到有 <strong>记住我</strong> 的选项框，勾选之后可以让登陆用户的 session 有效期更长。这种针对特定用户的 session 有效时间设置我们可以通过 <code>context.session.maxAge=</code> 来实现。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> ms = <span class="built_in">require</span>(<span class="string">'ms'</span>);</div><div class="line"><span class="comment">// login 的 controller</span></div><div class="line">exports.login = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> &#123; username, password, rememberMe &#125; = ctx.request.body;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">yield</span> ctx.loginAndGetUser(username, password);</div><div class="line"></div><div class="line">  <span class="comment">// 设置 session</span></div><div class="line">  <span class="keyword">this</span>.session.user = user;</div><div class="line">  <span class="comment">// 如果用户勾选了 `记住我`，设置一个月的过期时间</span></div><div class="line">  <span class="keyword">if</span> (rememberMe) <span class="keyword">this</span>.session.maxAge = ms(<span class="string">'1m'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="延长用户-session-有效期"><a class="markdown-anchor" href="#延长用户-session-有效期">#</a> 延长用户 session 有效期</h4>
+<p>默认情况下，当用户请求没有导致 session 被修改时，框架都不会延长 session 的有效期，但是在有些场景下，我们希望用户每次访问都刷新 session 的有效时间，这样用户只有在长期未访问我们的网站的时候才会被登出。这个功能我们可以通过 <code>context.session.save()</code> 来实现。</p>
+<p>例如，我们在项目中增加一个中间件，让它在 session 有值的时候强制保存一次，以达到延长 session 有效期的目的。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/middleware/save_session.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>* (<span class="params">next</span>) </span>&#123;</div><div class="line">    <span class="keyword">yield</span> next;</div><div class="line">    <span class="comment">// 如果 session 是空的，则不保存</span></div><div class="line">    <span class="keyword">if</span> (!<span class="keyword">this</span>.session.populated) <span class="keyword">return</span>;</div><div class="line">    <span class="keyword">this</span>.session.save();</div><div class="line">  &#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="comment">// 在配置文件中引入中间件</span></div><div class="line">exports.middleware = [ <span class="string">'saveSession'</span> ];</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <aside id="mobileAside" class="toc">
+  <div class="mobile-menu">
+    <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
+  </div>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+</aside>
+<script>
+var mobileTrigger = document.getElementById('mobileTrigger');
+var mobileAside = document.getElementById('mobileAside');
+mobileTrigger.onclick = function(e) {
+  if (mobileAside.className.indexOf('mobile-show') === -1) {
+    mobileAside.className += ' mobile-show';
+  } else {
+    mobileAside.className = 'toc';
+  }
+};
+</script>
+
+</div>
+
+  </div>
+</body>
+</html>
