@@ -144,7 +144,7 @@ module.exports = require('koa-compress');
 // config/config.default.js
 
 exports.middleware = [ 'compress' ];
-exports.bodyParser = {
+exports.compress = {
   threshold: 2048,
 };
 ```
