@@ -110,6 +110,18 @@ $ cd cnode-api
 $ npm i
 ```
 
+### 开启 validate 插件
+
+我们选择 [egg-validate](https://github.com/eggjs/egg-validate) 作为 validate 插件的示例。
+
+```js
+// config/plugin.js
+exports.validate = {
+  enable: true,
+  package: 'egg-validate',
+};
+```
+
 ### 注册路由
 
 首先，我们先按照前面的设计来注册[路由](../basics/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中：
