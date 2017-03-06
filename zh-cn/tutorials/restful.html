@@ -82,6 +82,9 @@
 <h3 id="初始化项目"><a class="markdown-anchor" href="#初始化项目">#</a> 初始化项目</h3>
 <p>还是通过<a href="../intro/quickstart.html">快速入门</a>章节介绍的 <a href="https://github.com/eggjs/egg-init" target="_blank" rel="external">egg-init</a> 工具来初始化我们的应用</p>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ egg-init cnode-api --type=empty</div><div class="line">$ <span class="built_in">cd</span> cnode-api</div><div class="line">$ npm i</div></pre></td></tr></table></figure></p>
+<h3 id="开启-validate-插件"><a class="markdown-anchor" href="#开启-validate-插件">#</a> 开启 validate 插件</h3>
+<p>我们选择 <a href="https://github.com/eggjs/egg-validate" target="_blank" rel="external">egg-validate</a> 作为 validate 插件的示例。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/plugin.js</span></div><div class="line">exports.validate = &#123;</div><div class="line">  <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">  <span class="attr">package</span>: <span class="string">'egg-validate'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="注册路由"><a class="markdown-anchor" href="#注册路由">#</a> 注册路由</h3>
 <p>首先，我们先按照前面的设计来注册<a href="../basics/router.html">路由</a>，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 <code>app/router.js</code> 中：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/router.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.resources(<span class="string">'Topic'</span>, <span class="string">'/api/v2/topics'</span>, <span class="string">'topics'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
