@@ -19,7 +19,6 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
       'notfound',
       'static',
       'bodyParser',
-      'userservice',
     ]);
   });
 
