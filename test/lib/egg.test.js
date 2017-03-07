@@ -59,7 +59,6 @@ describe('test/lib/egg.test.js', () => {
     let app;
     before(() => {
       app = utils.app('apps/dumpconfig');
-      return app.ready();
     });
     after(() => app.close());
 
