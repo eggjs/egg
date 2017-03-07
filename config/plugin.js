@@ -14,28 +14,6 @@ module.exports = {
   },
 
   /**
-   * userservice
-   * @member {Object} Plugin#userservice
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  userservice: {
-    enable: true,
-    package: 'egg-userservice',
-  },
-
-  /**
-   * userrole
-   * @member {Object} Plugin#userrole
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  userrole: {
-    enable: true,
-    package: 'egg-userrole',
-  },
-
-  /**
    * session
    * @member {Object} Plugin#session
    * @property {Boolean} enable - `true` by default

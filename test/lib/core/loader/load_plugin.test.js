@@ -216,8 +216,6 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       return plugin.name;
     }).should.eql([
       'onerror',
-      'userservice',
-      'userrole',
       'session',
       'i18n',
       'watcher',
