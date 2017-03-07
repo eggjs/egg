@@ -14,28 +14,6 @@ module.exports = {
   },
 
   /**
-   * userservice
-   * @member {Object} Plugin#userservice
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  userservice: {
-    enable: true,
-    package: 'egg-userservice',
-  },
-
-  /**
-   * userrole
-   * @member {Object} Plugin#userrole
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  userrole: {
-    enable: true,
-    package: 'egg-userrole',
-  },
-
-  /**
    * session
    * @member {Object} Plugin#session
    * @property {Boolean} enable - `true` by default
@@ -55,17 +33,6 @@ module.exports = {
   i18n: {
     enable: true,
     package: 'egg-i18n',
-  },
-
-  /**
-   * Validate Plugin
-   * @member {Object} Plugin#validate
-   * @property {Boolean} enable - `true` by default
-   * @since 1.0.0
-   */
-  validate: {
-    enable: true,
-    package: 'egg-validate',
   },
 
   /**

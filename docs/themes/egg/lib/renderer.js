@@ -9,7 +9,7 @@ const md = require('markdown-it')({
   replaceLink(link) {
     const urlObj = url.parse(link);
     if (urlObj.pathname && urlObj.pathname[0] === '.' && /\.md$/.test(urlObj.pathname)) {
-      urlObj.pathname =  urlObj.pathname.replace(/md$/, 'html');
+      urlObj.pathname = urlObj.pathname.replace(/md$/, 'html');
       return url.format(urlObj);
     }
     return link;

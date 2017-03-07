@@ -1,7 +1,7 @@
 title: cookie 与 session
 ---
 
-## cookie
+### cookie
 
 HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。
 

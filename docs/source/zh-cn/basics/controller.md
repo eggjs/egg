@@ -541,9 +541,19 @@ module.exports = {
 
 ## 参数校验
 
-在获取到用户请求的参数后，不可避免的要对参数进行一些校验，框架集成了 [validate](https://github.com/eggjs/egg-validate) 插件提供便捷的参数校验机制。
+在获取到用户请求的参数后，不可避免的要对参数进行一些校验。
 
-通过 `context.validate(rule, [body])` 直接对参数进行校验
+借助 [validate](https://github.com/eggjs/egg-validate) 插件提供便捷的参数校验机制，帮助我们完成各种复杂的参数校验。
+
+```js
+// config/plugin.js
+exports.validate = {
+  enable: true,
+  package: 'egg-validate',
+};
+```
+
+通过 `context.validate(rule, [body])` 直接对参数进行校验：
 
 ```js
 const createRule = {
