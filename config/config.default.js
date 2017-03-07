@@ -105,6 +105,18 @@ module.exports = appInfo => {
      * @since 1.0.0
      */
     rundir: path.join(appInfo.baseDir, 'run'),
+
+    /**
+     * dump config
+     *
+     * It will ignore special keys when dumpConfig
+     *
+     * @member Config#dump
+     * @property {Array} ignore - keys to ignore
+     */
+    dump: {
+      ignore: [ 'pass', 'pwd', 'passd', 'passwd', 'password', 'keys' ],
+    },
   };
 
   /**
@@ -115,7 +127,6 @@ module.exports = appInfo => {
    *
    * @member Config#notfound
    * @property {String} pageUrl - the 404 page url
-   * ```
    */
   config.notfound = {
     pageUrl: '',
