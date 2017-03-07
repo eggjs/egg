@@ -122,6 +122,11 @@
 <p>path 为一个绝对路径，这样应用可以把自己写的插件直接放到应用目录中，如 <code>app/plugin</code> 目录。</p>
 <h2 id="配置结果"><a class="markdown-anchor" href="#配置结果">#</a> 配置结果</h2>
 <p>框架在启动时会把合并后的最终配置 dump 到 <code>run/application_config.json</code>（worker 进程）和 <code>run/agent_config.json</code>（agent 进程）中，可以用来分析问题。</p>
+<p>配置文件中会隐藏一些字段，主要包括两类</p>
+<ul>
+<li>如密码、密钥等安全字段，这里可以通过 <code>config.dump.ignore</code> 配置，必须是 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set" target="_blank" rel="external">Set</a> 类型，查看<a href="https://github.com/eggjs/egg/blob/master/config/config.default.js" target="_blank" rel="external">默认配置</a>。</li>
+<li>如函数、Buffer 等类型，<code>JSON.stringify</code> 后的内容特别大</li>
+</ul>
 
   </article>
   <aside id="mobileAside" class="toc">
