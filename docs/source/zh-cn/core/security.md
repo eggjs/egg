@@ -360,6 +360,25 @@ module.exports = {
 };
 ```
 
+#### 刷新 CSRF token
+
+ 当 CSRF token 存储在 cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都**必须刷新 CSRF token**。
+
+ ```js
+ // login controller
+ exports.login = function* (ctx) {
+   const { username, password } = ctx.request.body;
+   const user = yield ctx.service.user.find({ username, password });
+   if (!user) ctx.throw(403);
+   ctx.session = { user };
+
+   // 调用 rotateCsrfSecret 刷新用户的 CSRF token
+   ctx.rotateCsrfSecret();
+
+   ctx.body = { success: true };
+ }
+ ```
+
 ## 安全威胁` XST `的防范
 
 [XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
