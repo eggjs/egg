@@ -58,7 +58,6 @@ egg-project
 由内置插件约定的目录：
 - `app/public/**` 用于放置静态资源，可选，具体参见内置插件 [egg-static](https://github.com/eggjs/egg-static)。
 - `app/schedule/**` 用于定时任务，可选，具体参见[定时任务](./schedule.md)。
-- `config/role.js` 用于角色权限定义，可选，具体参见内置插件 [egg-userrole](https://github.com/eggjs/egg-userrole)。
 
 **若需自定义自己的目录规范，参见[Loader API](https://eggjs.org/zh-cn/advanced/loader.html)。**
 - `app/view/**` 用于放置模板文件，可选，由模板插件约定，具体参见[模板渲染](../core/view.md)。
