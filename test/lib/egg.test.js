@@ -26,27 +26,17 @@ describe('test/lib/egg.test.js', () => {
       assert(json.config.name === 'demo');
       json = require(path.join(baseDir, 'run/application_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
-      assert(json.config.name === 'demo');
     });
 
-    it('should dump dynamic modifications in config', function* () {
-      const app = utils.app('apps/dumpconfig');
-      const baseDir = utils.getFilepath('apps/dumpconfig');
-      let json;
+    it('should ignore some type', () => {
+      const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.name === 'demo');
+      assert(json.config.keys === '<String len: 3>');
+      assert(json.config.buffer === '<Buffer len: 4>');
+      assert(json.config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
 
-      yield sleep(100);
-      json = readJson(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.dynamic === 1);
-      json = readJson(path.join(baseDir, 'run/agent_config.json'));
-      assert(json.config.dynamic === 0);
-
-      yield app.ready();
-
-      yield sleep(100);
-      json = readJson(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.dynamic === 2);
-      json = readJson(path.join(baseDir, 'run/agent_config.json'));
-      assert(json.config.dynamic === 0);
+      // don't change config
+      assert(app.config.keys === 'foo');
     });
 
     it('should console.log call inspect()', () => {
@@ -65,6 +55,47 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
+  describe('dumpConfig() dynamically', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/dumpconfig');
+    });
+    after(() => app.close());
+
+    it('should dump in config', function* () {
+      const baseDir = utils.getFilepath('apps/dumpconfig');
+      let json;
+
+      yield sleep(100);
+      json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.dynamic === 1);
+      json = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(json.config.dynamic === 0);
+
+      yield app.ready();
+
+      yield sleep(100);
+      json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.dynamic === 2);
+      json = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(json.config.dynamic === 0);
+    });
+  });
+
+  describe('dumpConfig() ignore error', () => {
+    const baseDir = utils.getFilepath('apps/dump-ignore-error');
+    let app;
+    before(() => {
+      app = utils.app('apps/dump-ignore-error');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should ignore config', () => {
+      const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.keys === 'test key');
+    });
+  });
 
   describe('close()', () => {
     let app;
