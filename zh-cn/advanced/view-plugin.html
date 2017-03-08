@@ -85,7 +85,6 @@
 <p>根据上面的命名约定，配置名一般为模板引擎的名字，比如 ejs</p>
 <p>插件的配置主要来自模板引擎的配置，可根据具体情况定义配置项，如 <a href="https://github.com/mde/ejs#options" target="_blank" rel="external">ejs 的配置</a></p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">ejs</span>: &#123;</div><div class="line">    <span class="attr">cache</span>: <span class="literal">true</span>,</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p><strong>由于<a href="../basics/config.html">配置合并的限制</a>，我们建议若需要支持目录配置，不要定义数组配置，而使用字符串分隔符代替，并在文档中告知用户。</strong></p>
 <h3 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h3>
 <p>框架本身提供了 <code>ctx.helper</code> 供开发者使用，但有些情况下，我们希望对 helper 方法进行覆盖，仅在模板渲染时生效。</p>
 <p>在模板渲染中，我们经常会需要输出用户提供的 html 片段，通常需要使用 <code>egg-security</code> 插件提供的 <code>helper.shtml</code> 清洗下</p>
