@@ -7,10 +7,36 @@
   position:fixed;
   top:0;
   header {
-    overflow: hidden;
+    /* clear float because of the overflow hidden will hide the algolia*/
+    &:after {
+      display: block;
+      clear: both;
+      content: '\20';
+      height: 0;
+    }
     padding: 12px 0 13px;
     max-width: @max_width;
     margin: 0 auto;
+    .ds-dropdown-menu {
+      max-height: 450px;
+      overflow: auto;
+      /* hidden the small triangle prompt*/
+      &:before {
+        background: none;
+      }
+    }
+
+    .search-query {
+      height: 30px;
+      line-height: 30px;
+      box-sizing: border-box;
+      border: 1px solid #e3e3e3;
+      border-radius: 15px;
+      outline: none;
+      padding: 0 15px 0 30px;
+      background: #fff url(../images/search.png) 8px 5px no-repeat;
+      background-size: 20px;
+    }
   }
 
   ul.nav-item {
