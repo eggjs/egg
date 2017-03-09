@@ -116,6 +116,22 @@ const client2 = app.mysql.get('db2');
 yield client2.query(sql, values);
 ```
 
+#### 动态创建
+
+我们可以不需要将配置提前申明在配置文件中，而是在应用运行时动态的从配置中心获取实际的参数，再来初始化一个实例。
+
+```js
+// {app_root}/app.js
+module.exports = function(app) {
+  app.beforeStart(function* () {
+    // 从配置中心获取 MySQL 的配置
+    // { host: 'mysql.com', port: '3306', user: 'test_user', password: 'test_password', database: 'test' }
+    const mysqlConfig = yield app.configCenter.fetch('mysql');
+    app.database = app.mysql.createInstance(mysqlConfig);
+  });
+};
+```
+
 ## service 层
 
 由于对 MySQL 数据库的访问操作属于 web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。
