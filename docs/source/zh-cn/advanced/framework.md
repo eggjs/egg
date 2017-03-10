@@ -67,7 +67,7 @@ startCluster({
   // 应用的代码目录
   baseDir: '/path/to/app',
   // 需要通过这个参数来指定框架目录
-  customEgg: '/path/to/framework',
+  framework: '/path/to/framework',
 }, () => {
   console.log('app started');
 });
@@ -242,15 +242,15 @@ AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加�
 
 框架启动在[多进程模型](./cluster.md)、[Loader](./loader.md)、[插件](./plugin.md)中或多或少都提过，这里系统的梳理下启动顺序。
 
-- startCluster 启动传入 `baseDir` 和 `customEgg`，Master 进程启动
+- startCluster 启动传入 `baseDir` 和 `framework`，Master 进程启动
 - Master 先 fork Agent Worker
-  - 根据 customEgg 找到框架目录，实例化该框架的 Agent 类
+  - 根据 framework 找到框架目录，实例化该框架的 Agent 类
   - Agent 找到定义的 AgentWorkerLoader，开始进行加载
   - AgentWorkerLoader，开始进行加载 整个加载过程是同步的，按 plugin > config > extend > `agent.js` > 其他文件顺序加载
   - `agent.js` 可自定义初始化，支持异步启动，如果定义了 beforeStart 会等待执行完成之后通知 Master 启动完成。
 - Master 得到 Agent Worker 启动成功的消息，使用 cluster fork App Worker
   - App Worker 有多个进程，所以这几个进程是并行启动的，但执行逻辑是一致的
-  - 单个 App Worker 和 Agent 类似，通过 customEgg 找到框架目录，实例化该框架的 Application 类
+  - 单个 App Worker 和 Agent 类似，通过 framework 找到框架目录，实例化该框架的 Application 类
   - Application 找到 AppWorkerLoader，开始进行加载，顺序也是类似的，会异步等待，完成后通知 Master 启动完成
 - Master 等待多个 App Worker 的成功消息后启动完成，能对外提供服务。
 
@@ -270,8 +270,8 @@ describe('test/index.test.js', () => {
     app = mock.app({
       // 转换成 test/fixtures/apps/example
       baseDir: 'apps/example',
-      // 重要：配置 customEgg
-      customEgg: true,
+      // 重要：配置 framework
+      framework: true,
     });
     return app.ready();
   });
@@ -289,7 +289,7 @@ describe('test/index.test.js', () => {
 
 - 框架和应用不同，应用测试当前代码，而框架是测试框架代码，所以会频繁更换 baseDir 达到测试各种应用的目的。
 - baseDir 有潜规则，我们一般会把测试的应用代码放到 `test/fixtures` 下，所以自动补全，也可以传入绝对路径。
-- 必须指定 `customEgg: true`，告知当前路径为框架路径，也可以传入绝对路径。
+- 必须指定 `framework: true`，告知当前路径为框架路径，也可以传入绝对路径。
 - app 应用需要在 before 等待 ready，不然在 testcase 里无法获取部分 API
 - 框架在测试完毕后需要使用 `app.close()` 关闭，不然会有遗留问题，比如日志写文件未关闭导致 fd 不够。
 
@@ -307,7 +307,7 @@ describe('/test/index.test.js', () => {
     mock.env('local');
     app = mock.app({
       baseDir: 'apps/example',
-      customEgg: true,
+      framework: true,
       cache: false,
     });
     return app.ready();
@@ -316,7 +316,7 @@ describe('/test/index.test.js', () => {
     mock.env('prod');
     app = mock.app({
       baseDir: 'apps/example',
-      customEgg: true,
+      framework: true,
       cache: false,
     });
     return app.ready();
@@ -337,7 +337,7 @@ describe('/test/index.test.js', () => {
   before(() => {
     app = mock.cluster({
       baseDir: 'apps/example',
-      customEgg: true,
+      framework: true,
     });
     return app.ready();
   });
@@ -360,7 +360,7 @@ describe('/test/index.test.js', () => {
   before(() => {
     app = mock.cluster({
       baseDir: 'apps/example',
-      customEgg: true,
+      framework: true,
     });
     return app.ready();
   });
