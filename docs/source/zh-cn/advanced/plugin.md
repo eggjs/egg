@@ -367,7 +367,7 @@ exports.mysql = {
 module.exports = app => {
   return class PostController extends app.Controller {
     *list () {
-      const posts = yield this.app.mysql. get('db1').query(sql, values);
+      const posts = yield this.app.mysql.get('db1').query(sql, values);
     },
   };
 };
@@ -381,7 +381,7 @@ module.exports = app => {
 // app.js
 module.exports = app => {
   app.beforeStart(function* () {
-    // 从配置中心获取 MySQL 的配置
+    // 从配置中心获取 MySQL 的配置 { host, post, password, ... }
     const mysqlConfig = yield app.configCenter.fetch('mysql');
     // 动态创建 MySQL 实例
     app.database = app.mysql.createInstance(mysqlConfig);
@@ -524,10 +524,10 @@ $ npm test
   ```json
   {
     "name": "egg-view-nunjucks",
-    "version": "0.5.0",
+    "version": "1.0.0",
     "description": "view plugin for egg",
     "eggPlugin": {
-      "name": "view",
+      "name": "nunjucks",
       "dep": [
         "security"
       ]
@@ -537,6 +537,7 @@ $ npm test
       "egg-plugin",
       "eggPlugin",
       "egg-plugin-view",
+      "egg-view",
       "nunjucks"
     ],
   }
