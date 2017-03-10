@@ -1,4 +1,29 @@
 
+1.0.0-rc.3 / 2017-03-10
+=======================
+
+  * docs: fix doc scroll bug (#532)
+  * test: fix development test (#546)
+  * doc: add Algolia docsearch (#542)
+  * feat: [BREAKING_CHANGE] override array  when load config (#522)
+  * docs: fix cookie example (#533)
+  * feat: ignore types when dump (#518)
+  * docs: rotate csrf token (#520)
+  * refactor: [BREAKING CHANGE] remove userservice and userrole (#527)
+  * refactor: [BREAKING_CHANGE] remove default validate plugin (#526)
+  * docs: fix doc build (#524)
+  * docs: fix middleware typo (#519)
+  * docs(quickstart): fix keys again (#515)
+  * docs(quickstart): fix keys (#511)
+  * docs: add cookie and session (#510)
+  * docs: fix html closing tag in quickstart (#512)
+  * docs: quickstart tip (#502)
+  * docs: add English version of `egg and koa` (#490)
+  * feat: remove default customEgg (#487)
+  * doc: add the view config for the egg-view-nunjucks (#496)
+  * test: add qs security test cases (#491)
+  * docs: remove meaningless word (#488)
+
 1.0.0-rc.2 / 2017-03-01
 =======================
 
