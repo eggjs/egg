@@ -9,13 +9,13 @@
     {{ body }}
   </div>
 </body>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
-<script type="text/javascript"> 
+<script src="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.js"></script>
+<script> 
 docsearch({
   apiKey: '1561de31a86f79507ea00cdb54ce647c',
   indexName: 'eggjs',
   inputSelector: '#search-query',
-  debug: true // Set debug to true if you want to inspect the dropdown
+  // debug: true // Set debug to true if you want to inspect the dropdown
 });
 </script>
 </html>
