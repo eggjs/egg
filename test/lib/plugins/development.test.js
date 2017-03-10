@@ -5,7 +5,7 @@ const path = require('path');
 const request = require('supertest');
 const pedding = require('pedding');
 const mm = require('egg-mock');
-const should = require('should');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/development.test.js', () => {
@@ -65,18 +65,17 @@ describe('test/lib/plugins/development.test.js', () => {
       fs.writeFileSync(filepath, body);
     });
 
-    it('should reload when file changed', done => {
+    it('should reload when file changed', function* () {
       fs.writeFileSync(filepath, 'module.exports = function*() { this.body = \'change\'; };');
       // wait for app worker restart
-      setTimeout(() => {
-        request(app.callback())
-        .get('/')
-        .expect('change', err => {
-          should.not.exist(err);
-          app.expect('stdout', /App Worker#2:\d+ started/);
-          done();
-        });
-      }, 5000);
+
+      yield sleep(10000);
+
+      yield request(app.callback())
+      .get('/')
+      .expect('change');
+
+      app.expect('stdout', /App Worker#2:\d+ started/);
     });
   });
 });
