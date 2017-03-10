@@ -1113,10 +1113,35 @@ p {
   top: 0;
 }
 .nav header {
-  overflow: hidden;
+  /*shift way to clear float because of the overflow hidden will hide the algolia*/
   padding: 12px 0 13px;
   max-width: 1136px;
   margin: 0 auto;
+}
+.nav header:after {
+  display: block;
+  clear: both;
+  content: '\20';
+  height: 0;
+}
+.nav header .ds-dropdown-menu {
+  max-height: 450px;
+  overflow: auto;
+  /* hidden the small triangle prompt*/
+}
+.nav header .ds-dropdown-menu:before {
+  background: none;
+}
+.nav header .search-query {
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  border: 1px solid #e3e3e3;
+  border-radius: 15px;
+  outline: none;
+  padding: 0 15px 0 30px;
+  background: #fff url(../images/search.png) 8px 5px no-repeat;
+  background-size: 20px;
 }
 .nav ul.nav-item {
   height: 32px;
