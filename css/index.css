@@ -1222,8 +1222,6 @@ aside {
   top: 56px;
   background: #fff;
   border-right: 1px solid #E6E6E6;
-}
-aside:hover {
   overflow-y: scroll;
 }
 aside dl {
