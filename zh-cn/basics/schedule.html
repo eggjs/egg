@@ -104,9 +104,9 @@
 <p>默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求，而框架并没有提供，这时上层框架可以基于其他的定时任务服务自行扩展新的定时任务类型。</p>
 <p>在 <code>agent.js</code> 中扩展 <code>agent[Symbol.for('egg#scheduleHandler')]</code> 对象：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> SCHEDULE_HANDLER = <span class="built_in">Symbol</span>.for(<span class="string">'egg#scheduleHandler'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">agent</span> =&gt;</span> &#123;</div><div class="line">  agent[SCHEDULE_HANDLER].cluster = <span class="function">(<span class="params">schedule, sender</span>) =&gt;</span> &#123;</div><div class="line">    <span class="comment">// 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务</span></div><div class="line">    <span class="comment">// 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）</span></div><div class="line">    agent.mq.subscribe(schedule.scene, () =&gt; sender.one());</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>schedule hander 接受两个个参数：</p>
+<p>schedule handler 接受两个个参数：</p>
 <ul>
-<li><code>schedule</code> - 定时任务的属性，disbale 和 immediate 是默认统一支持的，其他配置可以自行解析。</li>
+<li><code>schedule</code> - 定时任务的属性，disable 和 immediate 是默认统一支持的，其他配置可以自行解析。</li>
 <li><code>sender</code> - 发消息通知 worker 执行 task 的方法。
 <ul>
 <li><code>sender.one()</code> - 随机通知一个 worker 执行 task。</li>
