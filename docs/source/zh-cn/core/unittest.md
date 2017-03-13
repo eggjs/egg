@@ -32,15 +32,15 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 从 [npm 搜索『test framework』](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity)，
 我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。
 
-### mocha
+### Mocha
 
-我们选择和推荐大家使用 [mocha](http://mochajs.org)，功能非常丰富，支持运行在 Node.js 和浏览器中，
+我们选择和推荐大家使用 [Mocha](http://mochajs.org)，功能非常丰富，支持运行在 Node.js 和浏览器中，
 对异步测试支持非常友好。
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
 
 加上 [thunk-mocha](https://npmjs.com/thunk-mocha) 模块的帮助，
-扩展了 mocha 的多种用例书写方式，例如 generator function，async await 等。
+扩展了 Mocha 的多种用例书写方式，例如 generator function，async await 等。
 
 ### ava
 
@@ -103,7 +103,7 @@ test
 ### 测试运行工具
 
 统一使用 [egg-bin 来运行测试脚本](./development.md#单元测试)，
-自动将内置的 mocha、thunk-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
+自动将内置的 Mocha、thunk-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
 让我们**聚焦精力在编写测试代码**上，而不是纠结选择那些测试周边工具和模块。
 
 只需要在 `package.json` 上配置好 `scripts.test` 即可。
@@ -149,7 +149,7 @@ npm test
 在测试运行之前，我们首先要创建应用的一个 app 实例，
 通过它来访问需要被测试的 controller、middleware、service 等应用层代码。
 
-通过 egg-mock，结合 mocha 的 `before` 钩子就可以便捷地创建出一个 app 实例。
+通过 egg-mock，结合 Mocha 的 `before` 钩子就可以便捷地创建出一个 app 实例。
 
 ```js
 // test/controller/home.test.js
@@ -219,7 +219,7 @@ describe('bad test', () => {
 });
 ```
 
-mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就会被调用，
+Mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就会被调用，
 那 `mock.app()` 就会启动。
 如果希望使用 only 的方式只执行某个用例那段代码还是会被执行，这是非预期的。
 
@@ -243,7 +243,7 @@ describe('good test', () => {
 });
 ```
 
-mocha 使用 before/after/beforeEach/afterEach 来处理前置后置任务，基本能处理所有问题。
+Mocha 使用 before/after/beforeEach/afterEach 来处理前置后置任务，基本能处理所有问题。
 每个用例会按 before -> beforeEach -> it -> afterEach -> after 的顺序执行，而且可以定义多个。
 
 ```js

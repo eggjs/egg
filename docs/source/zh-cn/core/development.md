@@ -82,7 +82,7 @@ TESTS=test/x.test.js npm test
 
 ### 指定 reporter
 
-mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
+Mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
 
 可以手动设置 `TEST_REPORTER` 环境变量来指定 reporter，例如使用 `dot`：
 
