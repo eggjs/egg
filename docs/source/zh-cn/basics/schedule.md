@@ -163,9 +163,9 @@ module.exports = agent => {
 };
 ```
 
-schedule hander 接受两个个参数：
+schedule handler 接受两个个参数：
 
-- `schedule` - 定时任务的属性，disbale 和 immediate 是默认统一支持的，其他配置可以自行解析。
+- `schedule` - 定时任务的属性，disable 和 immediate 是默认统一支持的，其他配置可以自行解析。
 - `sender` - 发消息通知 worker 执行 task 的方法。
   - `sender.one()` - 随机通知一个 worker 执行 task。
   - `sender.all()` - 通知所有的 worker 执行 task。
