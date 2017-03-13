@@ -66,7 +66,7 @@ if (cluster.isMaster) {
 
 #### 未捕获异常
 
-当代码抛出了异常没有被捕获到时，进程将会退出，此时 Node.js 提供了 `process.on('uncaughtException', handler)` 接口来捕获它，但是当一个 Worker 进程遇到[未捕获的异常](https://nodejs.org/dist/latest-v6.x/docs/api/process.html#process_event_uncaughtexception)时，它已经处于一个不确定状态，此时我们应该让这个进程优雅退出：
+当代码抛出了异常没有被捕获到时，进程将会退出，此时 Node.js 提供了 `process.on('uncaughtException', handler)` 接口来捕获它，但是当一个 Worker 进程遇到 [未捕获的异常](https://nodejs.org/dist/latest-v6.x/docs/api/process.html#process_event_uncaughtexception) 时，它已经处于一个不确定状态，此时我们应该让这个进程优雅退出：
 
 1. 关闭异常 Worker 进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，不再接受新的用户请求。
 2. Master 立刻 fork 一个新的 Worker 进程，保证在线的『工人』总数不变。
@@ -156,7 +156,7 @@ if (cluster.isMaster) {
 
 ### Agent 的用法
 
-你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 [启动自定义](../basics/app-start.md)用法类似，只是入口参数是 agent 对象）
+你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 [启动自定义](../basics/app-start.md) 用法类似，只是入口参数是 agent 对象）
 
 ```js
 // agent.js
@@ -342,7 +342,7 @@ app.messenger.once(action, data => {
 
 ### 实现
 
-我们将所有的与远程数据源交互的逻辑封装在一个 service 中，并提供 `get` 方法给 Controller 调用。
+我们将所有的与远程数据源交互的逻辑封装在一个 Service 中，并提供 `get` 方法给 Controller 调用。
 
 ```js
 // app/service/source.js
@@ -440,7 +440,7 @@ module.exports = agent => {
 
 ## 更复杂的场景
 
-上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
+上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在 [多进程研发模式增强](../advanced/cluster-client.md) 中找到答案。
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster

@@ -1,11 +1,11 @@
-title: 模板渲染
+title: View 模板渲染
 ---
 
 绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户。故我们需要引入对应的模板引擎。
 
 框架内置 [egg-view] 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。如果想更深入的了解，可以查看[模板插件开发](../advanced/view-plugin.md)。
 
-以下以官方支持的 view 插件 [egg-view-nunjucks] 为例
+以下以官方支持的 View 插件 [egg-view-nunjucks] 为例
 
 ## 引入 view 插件
 
@@ -31,7 +31,7 @@ exports.nunjucks = {
 
 模板文件的根目录，为绝对路径，默认为 `${baseDir}/app/view`。支持配置多个目录，以 `,` 分割，会从多个目录查找文件。
 
-如下示例演示了如何配置多个 view 目录：
+如下示例演示了如何配置多个 `view` 目录：
 
 ```js
 // config/config.default.js
@@ -103,7 +103,7 @@ ctx.render('home');
 
 ## 渲染页面
 
-框架在 context 上提供了 3 个接口，返回值均为 Promise:
+框架在 Context 上提供了 3 个接口，返回值均为 Promise:
 
 - `render(name, locals)` 渲染模板文件, 并赋值给 ctx.body
 - `renderView(name, locals)` 渲染模板文件, 仅返回不赋值
@@ -129,7 +129,7 @@ module.exports = function* home(){
 
 当使用 `renderString` 时需要指定模板引擎，如果已经定义 `defaultViewEngine` 这里可以省略。
 
-## locals
+## Locals
 
 在渲染页面的过程中，我们通常需要一个变量来收集需要传递给模板的变量，在框架里面，我们提供了 `app.locals` 和 `this.locals`。
 
@@ -172,7 +172,7 @@ yield this.renderString('{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.ba
 - **this.locals 有缓存，只在第一次访问 this.locals 时合并 app.locals。**
 - 原 Koa 中的 `context.state`，由于容易产生歧义，在框架中被覆盖为 locals，即 `this.state` 和 `this.locals` 等价，我们建议使用后者。
 
-## helper
+## Helper
 
 在模板中可以直接使用 `helper` 上注册的方法，具体可以参见 [扩展](../basics/extend.md)。
 
@@ -184,7 +184,7 @@ exports.lowercaseFirst = str => str[0].toLowerCase() + str.substring(1);
 yield this.renderString('{{ helper.lowercaseFirst(name) }}', data);
 ```
 
-## security
+## Security
 
 框架内置的 [egg-security] 插件，为我们提供了常见的安全辅助函数，包括 `helper.shtml / surl / sjs` 等等等，强烈建议阅读下 [安全](./security.md)。
 
