@@ -129,7 +129,7 @@ title: 插件开发
 
 在插件相应的文件内对框架内置对象进行扩展，和应用一样
 
-- `app/extend/request.js` - 扩展 koa#Request 对象
+- `app/extend/request.js` - 扩展 Koa#Request 对象
 - `app/extend/response.js` - 扩展 koa#Response 对象
 - `app/extend/context.js` - 扩展 koa#Context 对象
 - `app/extend/helper.js ` - 扩展 Helper 对象

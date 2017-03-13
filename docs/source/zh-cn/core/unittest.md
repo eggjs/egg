@@ -744,9 +744,9 @@ it('should mock service error', () => {
 });
 ```
 
-### mock httpclient
+### Mock HttpClient
 
-框架内置了 [httpclient](./httpclient.md)，应用发起的对外 HTTP 请求基本都是通过它来处理。
+框架内置了 [HttpClient](./httpclient.md)，应用发起的对外 HTTP 请求基本都是通过它来处理。
 我们可以通过 `app.mockHttpclient(url, method, data)` 来 mock 掉 `app.curl` 和 `ctx.curl` 方法，
 从而实现各种网络异常情况。
 

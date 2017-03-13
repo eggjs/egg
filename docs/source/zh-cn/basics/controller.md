@@ -458,7 +458,7 @@ module.exports = {
 
 通过这个 getter 获取 protocol 时，首先会判断当前连接是否是加密连接，如果是加密连接，返回 https。
 
-如果处于非加密连接时，优先读通过 `config.protocolHeaders` 中配置的 header 的值来判断是 http 还是 https，如果读取不到，我们可以在配置中通过 `config.protocol` 来设置兜底值，默认为 http。
+如果处于非加密连接时，优先读通过 `config.protocolHeaders` 中配置的 header 的值来判断是 HTTP 还是 https，如果读取不到，我们可以在配置中通过 `config.protocol` 来设置兜底值，默认为 HTTP。
 
 `config.protocolHeaders` 默认配置为 `x-forwarded-proto`。
 
@@ -798,7 +798,7 @@ exports.jsonp = {
 // http://test.com/
 ```
 
-- 字符串：设置字符串形式的白名单时分为两种，当字符串以 `.` 开头，例如 `.test.com` 时，代表 referrer 白名单为 `test.com` 的所有子域名，包括 `test.com` 自身。当字符串不以 `.` 开头，例如 `sub.test.com`，代表 referrer 白名单为 `sub.test.com` 这一个域名。（同时支持 http 和 https）。
+- 字符串：设置字符串形式的白名单时分为两种，当字符串以 `.` 开头，例如 `.test.com` 时，代表 referrer 白名单为 `test.com` 的所有子域名，包括 `test.com` 自身。当字符串不以 `.` 开头，例如 `sub.test.com`，代表 referrer 白名单为 `sub.test.com` 这一个域名。（同时支持 HTTP 和 HTTPS）。
 
 ```js
 exports.jsonp = {

@@ -380,7 +380,7 @@ describe('test/app/service/topic.test.js', () => {
 });
 ```
 
-上面对 service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 http 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。
+上面对 service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 HTTP 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。
 
 ------
 

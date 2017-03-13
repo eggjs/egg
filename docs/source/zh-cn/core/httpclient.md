@@ -1,13 +1,13 @@
 title: HttpClient
 ---
 
-互联网时代，无数服务是基于 HTTP 协议进行通信的，web 应用调用后端 HTTP 服务是一种非常常见的应用场景。
+互联网时代，无数服务是基于 HTTP 协议进行通信的，Web 应用调用后端 HTTP 服务是一种非常常见的应用场景。
 
-为此框架基于 [urllib] 内置实现了一个 [httpclient]，应用可以非常便捷地完成任何 HTTP 请求。
+为此框架基于 [urllib] 内置实现了一个 [HttpClient]，应用可以非常便捷地完成任何 HTTP 请求。
 
 ## 通过 app 使用 HttpClient
 
-框架在应用初始化的时候，会自动将 [httpclient] 初始化到 `app.httpclient`。
+框架在应用初始化的时候，会自动将 [HttpClient] 初始化到 `app.httpclient`。
 同时增加了一个 `app.curl(url, options)` 方法，它等价于 `app.httpclient.request(url, options)`。
 
 这样就可以非常方便地使用 `app.curl` 方法完成一次 HTTP 请求。
@@ -70,12 +70,12 @@ module.exports = function* get() {
 };
 ```
 
-- GET 请求可以不用设置 `options.method` 参数，httpclient 的默认 method 会设置为 `GET`。
+- GET 请求可以不用设置 `options.method` 参数，HttpClient 的默认 method 会设置为 `GET`。
 - 返回值 `result` 会包含 3 个属性：`status`, `headers` 和 `data`
   - `status`: 响应状态码，如 `200`, `302`, `404`, `500` 等等
   - `headers`: 响应头，类似 `{ 'content-type': 'text/html', ... }`
-  - `data`: 响应 body，默认 httpclient 不会做任何处理，会直接返回 Buffer 类型数据。
-    一旦设置了 `options.dataType`，httpclient 将会根据此参数对 `data` 进行相应的处理。
+  - `data`: 响应 body，默认 HttpClient 不会做任何处理，会直接返回 Buffer 类型数据。
+    一旦设置了 `options.dataType`，HttpClient 将会根据此参数对 `data` 进行相应的处理。
 
 完整的请求参数 `options` 和返回值 `result` 的说明请看下文的 [options 参数详解](#options 参数详解) 章节。
 
@@ -91,13 +91,13 @@ module.exports = function* post() {
   const result = yield this.curl('https://httpbin.org/post', {
     // 必须指定 method
     method: 'POST',
-    // 通过 contentType 告诉 httpclient 以 JSON 格式发送
+    // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
     contentType: 'json',
     data: {
       hello: 'world',
       now: Date.now(),
     },
-    // 明确告诉 httpclient 以 JSON 格式处理返回的响应 body
+    // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
     dataType: 'json',
   });
   this.body = result.data;
@@ -117,12 +117,12 @@ module.exports = function* put() {
   const result = yield this.curl('https://httpbin.org/put', {
     // 必须指定 method
     method: 'PUT',
-    // 通过 contentType 告诉 httpclient 以 JSON 格式发送
+    // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
     contentType: 'json',
     data: {
       update: 'foo bar',
     },
-    // 明确告诉 httpclient 以 JSON 格式处理响应 body
+    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
   this.body = result.data;
@@ -131,7 +131,7 @@ module.exports = function* put() {
 
 ### DELETE
 
-删除数据会选择 DELETE 请求，它通常可以不需要加请求 body，但是 httpclient 不会限制。
+删除数据会选择 DELETE 请求，它通常可以不需要加请求 body，但是 HttpClient 不会限制。
 
 ```js
 // app/controller/delete.js
@@ -139,7 +139,7 @@ module.exports = function* del() {
   const result = yield this.curl('https://httpbin.org/delete', {
     // 必须指定 method
     method: 'DELETE',
-    // 明确告诉 httpclient 以 JSON 格式处理响应 body
+    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
   this.body = result.data;
@@ -161,12 +161,12 @@ module.exports = function* form() {
   const result = yield this.curl('https://httpbin.org/post', {
     // 必须指定 method，支持 POST，PUT 和 DELETE
     method: 'POST',
-    // 不需要设置 contentType，httpclient 会默认以 application/x-www-form-urlencoded 格式发送请求
+    // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
     data: {
       now: Date.now(),
       foo: 'bar',
     },
-    // 明确告诉 httpclient 以 JSON 格式处理响应 body
+    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
   this.body = result.data.form;
@@ -178,11 +178,11 @@ module.exports = function* form() {
 };
 ```
 
-### 以 multipart 方式上传文件
+### 以 Multipart 方式上传文件
 
 当一个 Form 表单提交包含文件的时候，请求数据格式就必须以 [multipart/form-data](http://tools.ietf.org/html/rfc2388)
 进行提交了。
-这个时候需要引入 [formstream] 这个第三方模块来帮助我们生成可以被 httpclient 消费的 `form` 对象。
+这个时候需要引入 [formstream] 这个第三方模块来帮助我们生成可以被 HttpClient 消费的 `form` 对象。
 
 ```js
 // app/controller/multipart.js
@@ -201,7 +201,7 @@ module.exports = function* multipart() {
     headers: form.headers(),
     // 以 stream 模式提交
     stream: form,
-    // 明确告诉 httpclient 以 JSON 格式处理响应 body
+    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
   this.body = result.data.files;
@@ -223,7 +223,7 @@ form.file('file2', file2);
 
 其实，在 Node.js 的世界里面，Stream 才是主流。
 如果服务端支持流式上传，最友好的方式还是直接发送 Stream。
-Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [http] 模块自动实现的。
+Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [HTTP] 模块自动实现的。
 
 ```js
 // app/controller/stream.js
@@ -252,7 +252,7 @@ module.exports = function* stream() {
 由于 HTTP 请求的复杂性，导致 `httpclient.request(url, options)` 的 options 参数会非常多。
 接下来将会以参数说明和代码配合一起讲解每个可选参数的实际用途。
 
-### httpclient 默认全局配置
+### HttpClient 默认全局配置
 
 ```js
 // config/config.default.js
@@ -307,9 +307,9 @@ this.curl(url, {
 ### `dataAsQueryString: Boolean`
 
 如果设置了 `dataAsQueryString=true`，那么即使在 POST 情况下，
-也会强制将 `options.data` 以 `querystring.stringify` 处理之后拼接到 url 的 query 参数上。
+也会强制将 `options.data` 以 `querystring.stringify` 处理之后拼接到 `url` 的 query 参数上。
 
-可以很好地解决以 `stream` 发送数据，且额外的请求参数以 url query 形式传递的应用场景：
+可以很好地解决以 `stream` 发送数据，且额外的请求参数以 `url` query 形式传递的应用场景：
 
 ```js
 this.curl(url, {
@@ -330,7 +330,7 @@ this.curl(url, {
 ```js
 this.curl(url, {
   method: 'POST',
-  // 直接发送原始 xml 数据，不需要 httpclient 做特殊处理
+  // 直接发送原始 xml 数据，不需要 HttpClient 做特殊处理
   content: '<xml><hello>world</hello></xml>',
   headers: {
     'content-type': 'text/html',
@@ -341,7 +341,7 @@ this.curl(url, {
 ### `stream: ReadStream`
 
 设置发送请求正文的可读数据流，默认是 `null`。
-一旦设置了此参数，httpclient 将会忽略 `data` 和 `content`。
+一旦设置了此参数，HttpClient 将会忽略 `data` 和 `content`。
 
 ```js
 this.curl(url, {
@@ -375,7 +375,7 @@ this.curl(url, {
 
 ### `contentType: String`
 
-设置请求数据格式，默认是 `undefined`，httpclient 会自动根据 `data` 和 `content` 参数自动设置。
+设置请求数据格式，默认是 `undefined`，HttpClient 会自动根据 `data` 和 `content` 参数自动设置。
 `data` 是 object 的时候默认设置的是 `form`。支持 `json` 格式。
 
 如需要以 JSON 格式发送 `data`：
@@ -452,7 +452,7 @@ this.curl(url, {
 
 ### `agent: HttpAgent`
 
-允许通过此参数覆盖默认的 http agent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
+允许通过此参数覆盖默认的 HttpAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
 ```js
 this.curl(url, {
@@ -462,7 +462,7 @@ this.curl(url, {
 
 ### `httpsAgent: HttpsAgent`
 
-允许通过此参数覆盖默认的 https agent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
+允许通过此参数覆盖默认的 HttpsAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
 ```js
 this.curl(url, {
@@ -534,7 +534,7 @@ this.curl(url, {
 
 ### `beforeRequest: Function(options)`
 
-httpclient 在请求正在发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
+HttpClient 在请求正在发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
 
 ```js
 this.curl(url, {
@@ -548,7 +548,7 @@ this.curl(url, {
 ### `streaming: Boolean`
 
 是否直接返回响应流，默认为 `false`。
-开启 streaming 之后，httpclient 会在拿到响应对象 res 之后马上返回，
+开启 streaming 之后，HttpClient 会在拿到响应对象 res 之后马上返回，
 此时 `result.headers` 和 `result.status` 已经可以读取到，只是没有读取 data 数据而已。
 
 ```js
@@ -566,7 +566,7 @@ this.body = result.res;
 ### `gzip: Boolean`
 
 是否支持 gzip 响应格式，默认为 `false`。
-开启 gzip 之后，httpclient 将自动设置 `Accept-Encoding: gzip` 请求头，
+开启 gzip 之后，HttpClient 将自动设置 `Accept-Encoding: gzip` 请求头，
 并且会自动解压带 `Content-Encoding: gzip` 响应头的数据。
 
 ```js
@@ -606,7 +606,7 @@ console.log(result.res.timing);
 
 ### `ca，rejectUnauthorized，pfx，key，cert，passphrase，ciphers，secureProtocol`
 
-这几个都是透传给 [https] 模块的参数，具体请查看 [`https.request(options, callback)`](https://nodejs.org/api/https.html#https_https_request_options_callback)。
+这几个都是透传给 [HTTPS] 模块的参数，具体请查看 [`https.request(options, callback)`](https://nodejs.org/api/https.html#https_https_request_options_callback)。
 
 ## 调试辅助
 
@@ -639,7 +639,7 @@ $ anyproxy --port 8888
 $ http_proxy=http://127.0.0.1:8888 npm run dev
 ```
 
-然后就可以正常操作了，所有经过 httpclient 的请求，都可以在 http://localhost:8002 这个控制台中查看到。
+然后就可以正常操作了，所有经过 HttpClient 的请求，都可以在 http://localhost:8002 这个控制台中查看到。
 
 ![anyproxy](https://cloud.githubusercontent.com/assets/227713/21976937/06a63694-dc0f-11e6-98b5-e9e279c4867c.png)
 
@@ -686,7 +686,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 ## 全局 `request` 和 `response` 事件
 
 在企业应用场景，常常会有统一 tracer 日志的需求。
-为了方便在 app 层面统一监听 httpclient 的请求和响应，我们约定了全局 `request` 和 `response` 事件来暴露这两个时机。
+为了方便在 app 层面统一监听 HttpClient 的请求和响应，我们约定了全局 `request` 和 `response` 事件来暴露这两个时机。
 
 ```bash
     init options
@@ -734,10 +734,10 @@ app.httpclient.on('response', result => {
 完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
-[httpclient]: https://github.com/eggjs/egg/blob/master/lib/core/urllib.js
+[HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/urllib.js
 [formstream]: https://github.com/node-modules/formstream
-[http]: https://nodejs.org/api/http.html
-[https]: https://nodejs.org/api/https.html
+[HTTP]: https://nodejs.org/api/http.html
+[HTTPS]: https://nodejs.org/api/https.html
 [egg-development-proxyagent]: https://github.com/eggjs/egg-development-proxyagent
 [charles]: https://www.charlesproxy.com/
 [fiddler]: http://www.telerik.com/fiddler

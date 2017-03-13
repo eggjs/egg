@@ -103,7 +103,7 @@ All the requests will be executed twice during one middleware. Compared to Expre
 
 ### Context
 
-Unlike that there are only two objects `Request` and `Response` in Express, Koa has one more, `Context` object in one http request(it is `this` in Koa 1, while it is the first parameter for middleware function in Koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.
+Unlike that there are only two objects `Request` and `Response` in Express, Koa has one more, `Context` object in one HTTP request(it is `this` in Koa 1, while it is the first parameter for middleware function in Koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.
 
 At the same time Request and Response are attached to Context object. Just like Express, the two objects provide lots of easy ways to help developing. For example:
 

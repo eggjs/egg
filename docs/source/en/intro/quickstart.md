@@ -251,7 +251,7 @@ module.exports = app => {
       // read config
       const { serverUrl, pageSize } = this.app.config.news;
 
-      // use build-in http client to GET hacker-news api
+      // use build-in HttpClient to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
         data: {
           orderBy: '"$key"',
@@ -273,7 +273,7 @@ module.exports = app => {
 };
 ```
 
-> Egg has [http client](../core/httpclient.md) built in in order to help you make http requests.
+> Egg has [HttpClient](../core/httpclient.md) built in in order to help you make HTTP requests.
 
 Then slightly modify our previous controller.
 
