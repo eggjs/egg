@@ -328,7 +328,7 @@ describe('/test/index.test.js', () => {
 
 很少场景会使用多进程测试，因为多进程无法进行 API 级别的 mock 导致测试成本很高，而进程在有覆盖率的场景启动很慢，测试会超时。但多进程测试是验证多进程模型最好的方式，还可以测试 stdout 和 stderr。
 
-多进程测试和 `mm.app` 参数一致，但 app 的 API 完全不同，不过 supertest 依然可用。
+多进程测试和 `mm.app` 参数一致，但 app 的 API 完全不同，不过 SuperTest 依然可用。
 
 ```js
 const mock = require('egg-mock');

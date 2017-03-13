@@ -474,7 +474,7 @@ module.exports = {
 
 **注意：`ip` 和 `ips` 不同，`ip` 当 `config.proxy = false` 时会返回当前连接发起者的 `ip` 地址，`ips` 此时会为空数组。**
 
-### cookie
+### Cookie
 
 HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[Cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 Cookie 指定规则的网站时带上对应的 Cookie 来保证安全性）。
 
@@ -506,10 +506,10 @@ Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，�
 
 ```js
 exports.fetchPosts = function* (ctx) {
-  // 获取 session 上的内容
+  // 获取 Session 上的内容
   const userId = ctx.session.userId;
   const posts = yield ctx.service.post.fetch(userId);
-  // 修改 session 的值
+  // 修改 Session 的值
   ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
   ctx.body = {
     success: true,
@@ -534,8 +534,8 @@ exports.deleteSession = function* (ctx) {
 
 ```js
 module.exports = {
-  key: 'EGG_SESS', // 承载 session 的 cookie 键值对名字
-  maxAge: 86400000, // session 的最大有效时间
+  key: 'EGG_SESS', // 承载 Session 的 Cookie 键值对名字
+  maxAge: 86400000, // Session 的最大有效时间
 };
 ```
 
@@ -767,9 +767,9 @@ module.exports = {
 };
 ```
 
-**注意，CSRF 校验依赖于 [security](../core/security.md) 插件提供的基于 cookie 的 CSRF 校验。**
+**注意，CSRF 校验依赖于 [security](../core/security.md) 插件提供的基于 Cookie 的 CSRF 校验。**
 
-在开启 CSRF 校验时，客户端在发起 JSONP 请求时，也要带上 CSRF token，如果发起 JSONP 的请求方所在的页面和我们的服务在同一个主域名之下的话，可以读取到 cookie 中的 CSRF token（在 CSRF token 缺失时也可以自行设置 CSRF token 到 Cookie 中），并在请求时带上该 token。
+在开启 CSRF 校验时，客户端在发起 JSONP 请求时，也要带上 CSRF token，如果发起 JSONP 的请求方所在的页面和我们的服务在同一个主域名之下的话，可以读取到 Cookie 中的 CSRF token（在 CSRF token 缺失时也可以自行设置 CSRF token 到 Cookie 中），并在请求时带上该 token。
 
 ##### referrer 校验
 

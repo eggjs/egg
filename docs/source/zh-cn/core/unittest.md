@@ -42,22 +42,22 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 加上 [thunk-mocha](https://npmjs.com/thunk-mocha) 模块的帮助，
 扩展了 Mocha 的多种用例书写方式，例如 generator function，async await 等。
 
-### ava
+### AVA
 
-为什么没有选择最近比较火的 [ava](https://github.com/avajs/ava)，它看起来会跑得很快。
-经过我们几个真实项目实践下来，ava 真的只是看起来很美，但是实际会让测试代码越来越难写，成本越来越高。
+为什么没有选择最近比较火的 [AVA](https://github.com/avajs/ava)，它看起来会跑得很快。
+经过我们几个真实项目实践下来，AVA 真的只是看起来很美，但是实际会让测试代码越来越难写，成本越来越高。
 
 [@dead-horse](https://github.com/dead-horse) 的评价：
-> - ava 自身不够稳定，并发运行文件多的时候会撑爆 CPU；如果设置控制并发参数的方式运行，会导致 only 模式无效。
+> - AVA 自身不够稳定，并发运行文件多的时候会撑爆 CPU；如果设置控制并发参数的方式运行，会导致 only 模式无效。
 > - 并发执行对测试用例的要求很高，所有的测试不能有依赖，特别是遇到一些需要做 mock 的场景时，写好很难。
 > - app 在初始化的时候是有耗时的，如果串行运行，只需要初始化一个 app 对它测试。
->   但是 ava 每一个文件都运行在独立进程，有多少个文件就需要初始化多少个 app。
+>   但是 AVA 每一个文件都运行在独立进程，有多少个文件就需要初始化多少个 app。
 
 [@fool2fish](https://github.com/fool2fish) 的评价：
-> 如果是简单的程序的话用 ava 会快一些（但是本来就简单可能也没啥感觉），
+> 如果是简单的程序的话用 AVA 会快一些（但是本来就简单可能也没啥感觉），
 > 如果是复杂的就不推荐了，比较大的问题是可能没法给出准确的错误堆栈，
 > 另外并发可能会导致依赖的其他测试环境的服务挂掉，降低测试的成功率，
-> 还有就是带流程的测试（比如测试数据库的增删改查功能）真心不适合用 ava。
+> 还有就是带流程的测试（比如测试数据库的增删改查功能）真心不适合用 AVA。
 
 ## 断言库
 
@@ -132,7 +132,7 @@ npm test
 
 ## 准备测试
 
-本文主要介绍如何编写应用的单元测试，关于框架和插件的单元测试请查看[框架开发](../advanced/framework.md)和[插件开发](../advanced/plugin.md)相关章节。
+本文主要介绍如何编写应用的单元测试，关于框架和插件的单元测试请查看 [框架开发](../advanced/framework.md) 和 [插件开发](../advanced/plugin.md) 相关章节。
 
 ### mock
 
@@ -142,12 +142,12 @@ npm test
 常常还有模拟各种网络异常，服务访问异常等特殊情况。
 
 所以我们单独为框架抽取了一个测试 mock 辅助模块：[egg-mock](https://github.com/eggjs/egg-mock)，
-有了它我们就可以非常快速地编写一个 app 的单元测试，并且还能快速创建一个 ctx 来测试它的属性、方法和 service 等。
+有了它我们就可以非常快速地编写一个 app 的单元测试，并且还能快速创建一个 ctx 来测试它的属性、方法和 Service 等。
 
 ### app
 
 在测试运行之前，我们首先要创建应用的一个 app 实例，
-通过它来访问需要被测试的 controller、middleware、service 等应用层代码。
+通过它来访问需要被测试的 Controller、Middleware、Service 等应用层代码。
 
 通过 egg-mock，结合 Mocha 的 `before` 钩子就可以便捷地创建出一个 app 实例。
 
@@ -172,7 +172,7 @@ describe('test/controller/home.test.js', () => {
 
 ### ctx
 
-我们除了 app，还需要一种方式便捷地拿到 ctx，方便我们进行 extend、service、helper 等测试。
+我们除了 app，还需要一种方式便捷地拿到 ctx，方便我们进行 Extend、Service、Helper 等测试。
 而我们已经通过上面的方式拿到了一个 app，结合 egg-mock 提供的 [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) 方法来快速创建一个 ctx 实例。
 
 ```js
@@ -283,12 +283,12 @@ before(function* () {
 
 使用哪种写法取决于不同应用场景，如果遇到多个异步可以使用 generator function，也可以拆分成多个 before。
 
-## controller 测试
+## Controller 测试
 
-controller 在整个应用代码里面属于比较难测试的部分了，因为它跟 router 配置紧密相关，
-我们需要利用 [supertest](https://github.com/visionmedia/supertest) 发起一个真实请求，
-来将 router 和 controller 连接起来，并且可以帮助我们发送各种满足边界条件的请求数据，
-以测试 controller 的参数校验完整性。
+Controller 在整个应用代码里面属于比较难测试的部分了，因为它跟 router 配置紧密相关，
+我们需要利用 [SuperTest](https://github.com/visionmedia/supertest) 发起一个真实请求，
+来将 Router 和 Controller 连接起来，并且可以帮助我们发送各种满足边界条件的请求数据，
+以测试 Controller 的参数校验完整性。
 
 例如我们要给 `app/controller/home.js`：
 
@@ -349,7 +349,7 @@ describe('test/controller/home.test.js', () => {
 });
 ```
 
-通 supertest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
+通 SuperTest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
 例如以 POST 方式发送一个 JSON 请求：
 
 ```js
@@ -375,7 +375,7 @@ it('should status 200 and get the request body', () => {
 });
 ```
 
-更详细的 HTTP 请求构造方式，请查看 [supertest 文档](https://github.com/visionmedia/supertest#getting-started)。
+更详细的 HTTP 请求构造方式，请查看 [SuperTest 文档](https://github.com/visionmedia/supertest#getting-started)。
 
 ### mock CSRF
 
@@ -384,7 +384,7 @@ it('should status 200 and get the request body', () => {
 然后再使用此 token 发起 POST 请求。
 
 所以 egg-mock 对 app 增加了 `app.mockCsrf()` 方法来模拟取 CSRF token 的过程。
-这样在使用 supertest 请求 app 就会自动通过 CSRF 校验。
+这样在使用 SuperTest 请求 app 就会自动通过 CSRF 校验。
 
 ```js
 app.mockCsrf();
@@ -400,11 +400,11 @@ return request(app.callback())
   });
 ```
 
-## service 测试
+## Service 测试
 
-service 相对于 controller 来说，测试起来会更加简单，
-我们只需要先创建一个 ctx，然后通过 `ctx.service.${serviceName}` 拿到 service 实例，
-然后调用 service 方法即可。
+Service 相对于 Controller 来说，测试起来会更加简单，
+我们只需要先创建一个 ctx，然后通过 `ctx.service.${serviceName}` 拿到 Service 实例，
+然后调用 Service 方法即可。
 
 例如给 `app/service/user.js`
 
@@ -440,16 +440,16 @@ describe('get()', () => {
 });
 ```
 
-当然，实际的 service 代码不会像我们示例中那么简单，这里只是展示如何测试 service 而已。
+当然，实际的 Service 代码不会像我们示例中那么简单，这里只是展示如何测试 Service 而已。
 
-## extend 测试
+## Extend 测试
 
-应用可以对 application、request、response、context 和 helper 进行扩展。
+应用可以对 Application、Request、Response、Context 和 Helper 进行扩展。
 我们可以对扩展的方法或者属性针对性的编写单元测试。
 
-### application
+### Application
 
-egg-mock 创建 app 的时候，已经将 application 的扩展自动加载到 app 实例了，
+egg-mock 创建 app 的时候，已经将 Application 的扩展自动加载到 app 实例了，
 直接使用这个 app 实例访问扩展的属性和方法即可进行测试。
 
 例如 `app/extend/application.js`，我们给 app 增加了一个基于 [ylru](https://github.com/node-modules/ylru) 的缓存功能：
@@ -480,11 +480,11 @@ describe('get lru', () => {
 });
 ```
 
-可以看到，测试 application 的扩展是最容易的。
+可以看到，测试 Application 的扩展是最容易的。
 
-### context
+### Context
 
-context 测试只比 application 多了一个 `app.mockContext()` 步骤来模拟创建一个 context 对象。
+Context 测试只比 Application 多了一个 `app.mockContext()` 步骤来模拟创建一个 Context 对象。
 
 例如在 `app/extend/context.js` 中增加一个 `isXHR` 属性，判断是否通过 [XMLHttpRequest](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/setRequestHeader) 发起的请求：
 
@@ -520,9 +520,9 @@ describe('isXHR()', () => {
 });
 ```
 
-### request
+### Request
 
-通过 `ctx.request` 来访问 request 扩展的属性和方法，直接即可进行测试。
+通过 `ctx.request` 来访问 Request 扩展的属性和方法，直接即可进行测试。
 
 例如在 `app/extend/request.js` 中增加一个 `isChrome` 属性，判断是否 Chrome 浏览器发起的请求：
 
@@ -563,10 +563,10 @@ describe('isChrome()', () => {
 });
 ```
 
-### response
+### Response
 
-response 测试与 request 完全一致。
-通过 `ctx.response` 来访问 response 扩展的属性和方法，直接即可进行测试。
+Response 测试与 Request 完全一致。
+通过 `ctx.response` 来访问 Response 扩展的属性和方法，直接即可进行测试。
 
 例如在 `app/extend/response.js` 中增加一个 `isSuccess` 属性，判断当前响应状态码是否 200：
 
@@ -596,9 +596,9 @@ describe('isSuccess()', () => {
 });
 ```
 
-### helper
+### Helper
 
-helper 测试方式与 service 类似，也是通过 ctx 来访问到 helper，然后调用 helper 方法测试。
+Helper 测试方式与 Service 类似，也是通过 ctx 来访问到 Helper，然后调用 Helper 方法测试。
 
 例如 `app/helper/format.js`
 
@@ -635,12 +635,12 @@ describe('money()', () => {
 });
 ```
 
-## mock 方法
+## Mock 方法
 
-egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了[非常多的 mock 方法](https://github.com/eggjs/egg-mock#api)帮助我们便捷地写单元测试。
+egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了 [非常多的 mock 方法](https://github.com/eggjs/egg-mock#api) 帮助我们便捷地写单元测试。
 
 - 如我们不想在终端 console 输出任何日志，可以通过 `mock.consoleLevel('NONE')` 来模拟。
-- 又如我想模拟一次请求的 session 数据，可以通过 `app.mockSession(data)` 来模拟。
+- 又如我想模拟一次请求的 Session 数据，可以通过 `app.mockSession(data)` 来模拟。
 
   ```js
   describe('GET /session', () => {
@@ -677,12 +677,12 @@ describe('some tes', () => {
 
 下面会详细解释一下 egg-mock 的常见使用场景。
 
-### mock 属性和方法
+### Mock 属性和方法
 
 因为 egg-mock 是扩展自 [mm](https://github.com/node-modules/mm) 模块，
 它包含了 mm 的所有功能，这样我们就可以非常方便地 mock 任意对象的属性和方法了。
 
-#### mock 一个对象的属性
+#### Mock 一个对象的属性
 
 mock `app.config.baseDir` 指向 `/tmp/mockapp`
 
@@ -691,7 +691,7 @@ mock(app.config, 'baseDir', '/tmp/mockapp');
 assert(app.config.baseDir === '/tmp/mockapp');
 ```
 
-#### mock 一个对象的方法
+#### Mock 一个对象的方法
 
 mock `fs.readFileSync` 返回 `hello world`
 
@@ -705,9 +705,9 @@ assert(fs.readFileSync('foo.txt') === 'hello world');
 还有 `mock.data()`，`mock.error()` 等更多高级的 mock 方法，
 详细使用说明请查看 [mm API](https://github.com/node-modules/mm#api)。
 
-### mock service
+### Mock Service
 
-service 作为框架标准的内置对象，我们提供了便捷的 `app.mockService(service, methodName, fn)` 模拟 service 方法返回值。
+Service 作为框架标准的内置对象，我们提供了便捷的 `app.mockService(service, methodName, fn)` 模拟 Service 方法返回值。
 
 例如，模拟 `app/service/user` 中的 `get(name)` 方法，让它返回一个本来不存在的用户数据。
 
@@ -729,7 +729,7 @@ it('should mock fengmk1 exists', () => {
 });
 ```
 
-通过 `app.mockServiceError(service, methodName, error)` 可以模拟 service 调用异常。
+通过 `app.mockServiceError(service, methodName, error)` 可以模拟 Service 调用异常。
 
 例如，模拟 `app/service/user` 中的 `get(name)` 方法调用异常：
 

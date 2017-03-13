@@ -166,7 +166,7 @@ More about extension, please check [Exception](../basics/extend.md) section.
 
 ### Plugin
 
-As is known to all, Many middlewares are imported to provide different kind of features in Express and Koa. Eg, [koa-session](https://github.com/koajs/session) provides the session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.
+As is known to all, Many middlewares are imported to provide different kind of features in Express and Koa. Eg, [koa-session](https://github.com/koajs/session) provides the Session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.
 
 One plugin can include:
 

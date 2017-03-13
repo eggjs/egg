@@ -325,11 +325,11 @@ describe('test/app/controller/topic.test.js', () => {
 });
 ```
 
-上面对 controller 的测试中，我们通过 [egg-mock](https://github.com/eggjs/egg-mock) 创建了一个应用，并通过 [supertest](https://github.com/visionmedia/supertest) 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。
+上面对 controller 的测试中，我们通过 [egg-mock](https://github.com/eggjs/egg-mock) 创建了一个应用，并通过 [SuperTest](https://github.com/visionmedia/supertest) 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。
 
 ### service 测试
 
-service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 service 的方法，不再需要用 supertest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。
+service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 service 的方法，不再需要用 SuperTest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。
 
 ```js
 const assert = require('assert');

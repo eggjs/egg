@@ -25,10 +25,10 @@ module.exports = app => {
 };
 ```
 
-## 通过 context 使用 HttpClient
+## 通过 Context 使用 HttpClient
 
-框架在 context 中同样提供了 `ctx.curl(url, options)` 和 `ctx.httpclient`，保持跟 app 下的使用体验一致。
-这样就可以在有 context 的地方（如在 controller 中）非常方便地使用 `ctx.curl()` 方法完成一次 HTTP 请求。
+框架在 Context 中同样提供了 `ctx.curl(url, options)` 和 `ctx.httpclient`，保持跟 app 下的使用体验一致。
+这样就可以在有 Context 的地方（如在 controller 中）非常方便地使用 `ctx.curl()` 方法完成一次 HTTP 请求。
 
 ```js
 // app/controller/home.js

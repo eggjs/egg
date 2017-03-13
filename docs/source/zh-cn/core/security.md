@@ -247,7 +247,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 通常来说，对于 CSRF 攻击有一些通用的[防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
 
 - Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。
-- Double Cookie Defense：将 token 设置在 cookie 中，在提交 post 请求的时候提交 cookie，并通过 header 或者 body 带上 cookie 中的 token，服务端进行对比校验。
+- Double Cookie Defense：将 token 设置在 Cookie 中，在提交 post 请求的时候提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。
 - Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都[放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
 
 框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。
@@ -295,7 +295,7 @@ module.exports = {
 
 ##### AJAX 请求
 
-在 CSRF 默认配置下，token 会被设置在 cookie 中，在 AJAX 请求的时候，可以从 cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。
+在 CSRF 默认配置下，token 会被设置在 Cookie 中，在 AJAX 请求的时候，可以从 Cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。
 
 In jQuery:
 
@@ -328,18 +328,18 @@ module.exports = {
 };
 ```
 
-#### session 存储 VS cookie 存储
+#### Session 存储 VS Cookie 存储
 
-默认配置下，框架会将 CSRF token 存在 cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 session 中。
+默认配置下，框架会将 CSRF token 存在 Cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 Cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 Cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 Session 中。
 
 ```js
 // config/config.default.js
 module.exports = {
   security: {
     csrf: {
-      useSession: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中
-      cookieName: 'csrfToken', // cookie 中的字段名，默认为 csrfToken
-      sessionName: 'csrfToken', // session 中的字段名，默认为 csrfToken
+      useSession: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 Session 中
+      cookieName: 'csrfToken', // Cookie 中的字段名，默认为 csrfToken
+      sessionName: 'csrfToken', // Session 中的字段名，默认为 csrfToken
     },
   },
 };
@@ -362,7 +362,7 @@ module.exports = {
 
 #### 刷新 CSRF token
 
- 当 CSRF token 存储在 cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都**必须刷新 CSRF token**。
+ 当 CSRF token 存储在 Cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都**必须刷新 CSRF token**。
 
  ```js
  // login controller
@@ -381,7 +381,7 @@ module.exports = {
 
 ## 安全威胁` XST `的防范
 
-[XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
+[XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 Cookie。
 
 下面我们基于 Koa 来实现一个简单的支持 TRACE 方法的服务器：
 
@@ -418,9 +418,9 @@ Connection: keep-alive
 OK
 ```
 
-服务器设置了一个 httpOnly 的 cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。
+服务器设置了一个 httpOnly 的 Cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。
 
-接着我们发 TRACE 请求到服务器`curl -X TRACE -b a=1 -i http://127.0.0.1:7001`，并带上 cookie，得到如下响应：
+接着我们发 TRACE 请求到服务器`curl -X TRACE -b a=1 -i http://127.0.0.1:7001`，并带上 Cookie，得到如下响应：
 
 ```
   HTTP/1.1 200 OK

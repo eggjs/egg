@@ -450,7 +450,7 @@ exports.onerror = false;
 框架已内置插件列表：
 
 - [onerror](https://github.com/eggjs/egg-onerror) 统一异常处理
-- [session](https://github.com/eggjs/egg-session) session 实现
+- [Session](https://github.com/eggjs/egg-session) Session 实现
 - [i18n](https://github.com/eggjs/egg-i18n) 多语言
 - [watcher](https://github.com/eggjs/egg-watcher) 文件和文件夹监控
 - [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
