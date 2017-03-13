@@ -25,8 +25,8 @@ Egg is a convention-over-configuration framework, follows the [Loader](../advanc
 - stable core framework with high test coverage.
 - [progressive development](../tutorials/progressive.md)
 
-[sails]: http://sailsjs.com
-[express]: http://expressjs.com
-[koa]: http://koajs.com
-[nunjucks]: https://mozilla.github.io/nunjucks
+[Sails]: http://sailsjs.com
+[Express]: http://expressjs.com
+[Koa]: http://koajs.com
+[Nunjucks]: https://mozilla.github.io/nunjucks
 [WaterLine]: https://github.com/balderdashy/waterline

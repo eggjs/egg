@@ -13,7 +13,7 @@ title: 框架扩展
 
 ## Application
 
-Application 对象指的是 koa 的全局应用对象，全局只有一个，在应用启动时被创建。
+`app` 对象指的是 Koa 的全局应用对象，全局只有一个，在应用启动时被创建。
 
 ### 访问方式
 
@@ -30,7 +30,7 @@ Application 对象指的是 koa 的全局应用对象，全局只有一个，在
 
 ### 扩展方式
 
-框架会把 `app/extend/application.js` 中定义的对象与 koa application 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 app 对象。
+框架会把 `app/extend/application.js` 中定义的对象与 Koa `application` 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 `app` 对象。
 
 #### 方法扩展
 
@@ -51,7 +51,7 @@ module.exports = {
 
 推荐的方式是使用 Symbol + getter 的模式。
 
-例如，增加一个 `app.bar` 属性 getter：
+例如，增加一个 `app.bar` 属性 Getter：
 
 ```js
 // app/extend/application.js
@@ -71,7 +71,7 @@ module.exports = {
 
 ## Context
 
-Context 指的是 koa 的请求上下文，这是 **请求级别** 的对象，每次请求生成一个 context 实例，通常我们也简写成 ctx。在所有的文档中，context 和 ctx 都是指 koa 的上下文对象。
+Context 指的是 Koa 的请求上下文，这是 **请求级别** 的对象，每次请求生成一个 Context 实例，通常我们也简写成 `ctx`。在所有的文档中，Context 和 `ctx` 都是指 Koa 的上下文对象。
 
 ### 访问方式
 
@@ -80,7 +80,7 @@ Context 指的是 koa 的请求上下文，这是 **请求级别** 的对象，�
 
 ### 扩展方式
 
-框架会把 `app/extend/context.js` 中定义的对象与 koa context 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。
+框架会把 `app/extend/context.js` 中定义的对象与 Koa `context` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。
 
 #### 方法扩展
 
@@ -101,7 +101,7 @@ module.exports = {
 
 推荐的方式是使用 Symbol + getter 的模式。
 
-例如，增加一个 `ctx.bar` 属性 getter：
+例如，增加一个 `ctx.bar` 属性 Getter：
 
 ```js
 // app/extend/context.js
@@ -121,7 +121,7 @@ module.exports = {
 
 ## Request
 
-Request 对象和 koa 的 request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
+Request 对象和 Koa 的 `request` 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -129,15 +129,15 @@ Request 对象和 koa 的 request 对象相同，是 **请求级别** 的对象�
 ctx.request
 ```
 
-ctx 上的很多属性和方法都被代理到 request 对象上，对于这些属性和方法使用 ctx 和使用 request 去访问它们是等价的，例如 `ctx.url === ctx.request.url`。
+`ctx` 上的很多属性和方法都被代理到 `request` 对象上，对于这些属性和方法使用 `ctx` 和使用 `request` 去访问它们是等价的，例如 `ctx.url === ctx.request.url`。
 
-koa 内置的代理 request 的属性和方法列表：[koajs request aliases](http://koajs.com/#request-aliases)
+Koa 内置的代理 `request` 的属性和方法列表：[koajs request aliases](http://koajs.com/#request-aliases)
 
 ### 扩展方式
 
-框架会把 `app/extend/request.js` 中定义的对象与内置 request 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 request 对象。
+框架会把 `app/extend/request.js` 中定义的对象与内置 `request` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `request` 对象。
 
-例如，增加一个 `request.foo` 属性 getter：
+例如，增加一个 `request.foo` 属性 Getter：
 
 ```js
 // app/extend/request.js
@@ -150,7 +150,7 @@ module.exports = {
 
 ## Response
 
-Response 对象和 koa 的 response 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
+Response 对象和 Koa 的 `response` 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -158,13 +158,13 @@ Response 对象和 koa 的 response 对象相同，是 **请求级别** 的对�
 ctx.response
 ```
 
-ctx 上的很多属性和方法都被代理到 response 对象上，对于这些属性和方法使用 ctx 和使用 response 去访问它们是等价的，例如 `ctx.status = 404` 和 `ctx.response.status = 404` 是等价的。
+ctx 上的很多属性和方法都被代理到 `response` 对象上，对于这些属性和方法使用 `ctx` 和使用 `response` 去访问它们是等价的，例如 `ctx.status = 404` 和 `ctx.response.status = 404` 是等价的。
 
-koa 内置的代理 response 的属性和方法列表：[koa response aliases](http://koajs.com/#response-aliases)
+Koa 内置的代理 `response` 的属性和方法列表：[Koa Response aliases](http://koajs.com/#response-aliases)
 
 ### 扩展方式
 
-框架会把 `app/extend/response.js` 中定义的对象与内置 response 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 response 对象。
+框架会把 `app/extend/response.js` 中定义的对象与内置 `response` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `response` 对象。
 
 例如，增加一个 `response.foo` 属性 setter：
 
@@ -202,7 +202,7 @@ ctx.helper.pathFor('home', { by: 'recent', limit: 20 })
 
 ### 扩展方式
 
-框架会把 `app/extend/helper.js` 中定义的对象与内置 helper 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 helper 对象。
+框架会把 `app/extend/helper.js` 中定义的对象与内置 `helper` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `helper` 对象。
 
 例如，增加一个 `helper.foo()` 方法：
 

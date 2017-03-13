@@ -383,7 +383,7 @@ module.exports = {
 
 [XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
 
-下面我们基于 koa 来实现一个简单的支持 TRACE 方法的服务器：
+下面我们基于 Koa 来实现一个简单的支持 TRACE 方法的服务器：
 
 ```javascript
   var koa = require('koa');

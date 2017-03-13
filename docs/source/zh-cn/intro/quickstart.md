@@ -5,7 +5,7 @@ title: 快速入门
 
 ## 环境准备
 
-- 操作系统：支持 OSX，Linux，Windows
+- 操作系统：支持 macOS，Linux，Windows
 - 运行环境：建议选择 [LTS 版本][node]，最低要求 6.x
 
 ## 快速初始化
@@ -30,7 +30,7 @@ $ open localhost:7001
 
 通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 egg 项目的开发。
 
-但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [egg hackernews](https://github.com/eggjs/examples/tree/master/hackernews)。
+但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
 
 ![Egg HackerNews Snapshoot](https://cloud.githubusercontent.com/assets/227713/22960991/812999bc-f37d-11e6-8bd5-a96ca37d0ff2.png)
 
@@ -57,16 +57,16 @@ $ npm i egg-bin --save-dev
 }
 ```
 
-### 编写 controller
+### 编写 Controller
 
-如果你熟悉 Web 开发或 MVC，肯定猜到我们第一步需要编写的是 [controller](../basics/controller.md) 和 [router](../basics/router.md)。
+如果你熟悉 Web 开发或 MVC，肯定猜到我们第一步需要编写的是 [Controller](../basics/controller.md) 和 [Router](../basics/router.md)。
 
 ```js
 // app/controller/home.js
 module.exports = app => {
   class HomeController extends app.Controller {
     * index() {
-      this.ctx.body = 'hi, egg';
+      this.ctx.body = 'Hello world';
     }
   }
   return HomeController;
@@ -103,7 +103,7 @@ egg-example
 └── package.json
 ```
 
-完整的目录结构规范参见[目录结构](../basics/structure.md)。
+完整的目录结构规范参见 [目录结构](../basics/structure.md)。
 
 好，现在可以启动应用来体验下
 
@@ -133,11 +133,11 @@ app/public
 
 绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户。故我们需要引入对应的模板引擎。
 
-框架并不强制你使用某种模板引擎，只是约定了 [view 插件开发规范](../advanced/view-plugin.md)，开发者可以引入不同的插件来实现差异化定制。
+框架并不强制你使用某种模板引擎，只是约定了 [View 插件开发规范](../advanced/view-plugin.md)，开发者可以引入不同的插件来实现差异化定制。
 
 更多用法参见 [View](../core/view.md)。
 
-在本例中，我们使用 [nunjucks] 来渲染，先安装对应的插件 [egg-view-nunjucks] ：
+在本例中，我们使用 [Nunjucks] 来渲染，先安装对应的插件 [egg-view-nunjucks] ：
 
 ```bash
 $ npm i egg-view-nunjucks --save
@@ -171,7 +171,7 @@ exports.view = {
 <!-- app/view/news/list.tpl -->
 <html>
   <head>
-    <title>Egg HackerNews Clone</title>
+    <title>Hacker News</title>
     <link rel="stylesheet" href="/public/css/news.css" />
   </head>
   <body>
@@ -186,7 +186,7 @@ exports.view = {
 </html>
 ```
 
-添加 controller 和 router
+添加 Controller 和 Router
 
 ```js
 // app/controller/news.js
@@ -214,13 +214,13 @@ module.exports = app => {
 
 启动浏览器，访问 http://localhost:7001/news 即可看到渲染后的页面。
 
-**提示：开发期默认开启了 [development][egg-development] 插件，修改后端代码后，会自动重启 worker 进程。**
+**提示：开发期默认开启了 [development][egg-development] 插件，修改后端代码后，会自动重启 Worker 进程。**
 
 ### 编写 service
 
-在实际应用中， controller 一般不会自己产出数据，也不会包含复杂的逻辑，复杂的过程应抽象为业务逻辑层 [service](../basics/service.md)。
+在实际应用中，Controller 一般不会自己产出数据，也不会包含复杂的逻辑，复杂的过程应抽象为业务逻辑层 [Service](../basics/service.md)。
 
-我们来添加一个 service 抓取 [HackerNews](https://github.com/HackerNews/API) 的数据 ，如下：
+我们来添加一个 Service 抓取 [Hacker News](https://github.com/HackerNews/API) 的数据 ，如下：
 
 ```js
 // app/service/news.js
@@ -252,9 +252,9 @@ module.exports = app => {
 };
 ```
 
-> 框架提供了内置的 [http client](../core/httpclient.md) 来方便开发者使用 http 请求。
+> 框架提供了内置的 [HttpClient](../core/httpclient.md) 来方便开发者使用 HTTP 请求。
 
-然后稍微修改下之前的 controller：
+然后稍微修改下之前的 Controller：
 
 ```js
 // app/controller/news.js
@@ -285,9 +285,9 @@ exports.news = {
 
 遇到一个小问题，我们的资讯时间的数据是 UnixTime 格式的，我们希望显示为便于阅读的格式。
 
-框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见[扩展](../basics/extend.md)。
+框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见 [扩展](../basics/extend.md)。
 
-在这里，我们可以使用 view 插件支持的 helper 来实现：
+在这里，我们可以使用 View 插件支持的 Helper 来实现：
 
 ```js
 // app/extend/helper.js
@@ -302,11 +302,11 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 {{ helper.relativeTime(item.time) }}
 ```
 
-### 编写 middleware
+### 编写 Middleware
 
 假设有个需求：我们的新闻站点，禁止百度爬虫访问。
 
-聪明的同学们一定很快能想到可以通过 [middleware](../basics/middleware.md) 判断 UA，如下：
+聪明的同学们一定很快能想到可以通过 [Middleware](../basics/middleware.md) 判断 User-Agent，如下：
 
 ```js
 // app/middleware/robot.js
@@ -317,7 +317,7 @@ module.exports = (options, app) => {
     const match = options.ua.some(ua => ua.test(source));
     if (match) {
       this.status = 403;
-      this.message = 'go away, robot';
+      this.message = 'Go away, robot.';
     } else {
       yield next;
     }
@@ -337,7 +337,7 @@ exports.robot = {
 };
 ```
 
-现在可以使用 `curl localhost:7001/news -A "Baiduspider"` 看看效果。
+现在可以使用 `curl http://localhost:7001/news -A "Baiduspider"` 看看效果。
 
 ### 配置文件
 
@@ -345,7 +345,7 @@ exports.robot = {
 
 - 支持按环境变量加载不同的配置文件，如 `config.local.js`， `config.prod.js` 等等。
 - 应用/插件/框架都可以配置自己的配置文件，框架将按顺序合并加载。
-- 具体合并逻辑可参见[配置文件](../basics/config.md)。
+- 具体合并逻辑可参见 [配置文件](../basics/config.md)。
 
 ```js
 // config/config.default.js
@@ -427,16 +427,16 @@ $ npm i egg-mock supertest --save-dev
 $ npm test
 ```
 
-就这么简单，更多请参见[单元测试](../core/unittest.md)。
+就这么简单，更多请参见 [单元测试](../core/unittest.md)。
 
 ## 后记
 
 短短几章内容，只能讲 egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
-- 提供了强大的扩展机制，参见[插件开发](../advanced/plugin.md)。
-- 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见[框架开发](../advanced/framework.md)。
-- 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读[渐进式开发](../tutorials/progressive.md)。
-- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见[单元测试](../core/unittest.md)。
+- 提供了强大的扩展机制，参见 [插件开发](../advanced/plugin.md)。
+- 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
+- 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读 [渐进式开发](../tutorials/progressive.md)。
+- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
 [nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs

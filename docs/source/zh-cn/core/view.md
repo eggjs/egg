@@ -170,7 +170,7 @@ yield this.renderString('{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.ba
 
 注意：
 - **this.locals 有缓存，只在第一次访问 this.locals 时合并 app.locals。**
-- 原 koa 中的 `context.state`，由于容易产生歧义，在框架中被覆盖为 locals，即 `this.state` 和 `this.locals` 等价，我们建议使用后者。
+- 原 Koa 中的 `context.state`，由于容易产生歧义，在框架中被覆盖为 locals，即 `this.state` 和 `this.locals` 等价，我们建议使用后者。
 
 ## helper
 
