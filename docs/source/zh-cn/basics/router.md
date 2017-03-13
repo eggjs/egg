@@ -1,14 +1,14 @@
-title: router
+title: Router 路由
 ---
 
-router 主要用来描述请求 URL 和具体承担执行动作的 controller 的对应关系，
+Router 主要用来描述请求 URL 和具体承担执行动作的 Controller 的对应关系，
 框架约定了 `app/router.js` 文件用于统一所有路由规则。
 
 通过统一的配置，我们可以避免路由规则逻辑散落在多个地方，从而出现未知的冲突，集中在一起我们可以更方便的来查看全局的路由规则。
 
-## 如何定义 router
+## 如何定义 Router
 
-- `app/router.js` 里面定义 url 路由规则
+- `app/router.js` 里面定义 URL 路由规则
 
 ```js
 // app/router.js
@@ -17,7 +17,7 @@ module.exports = app => {
 };
 ```
 
-- `app/controller` 目录下面实现 controller
+- `app/controller` 目录下面实现 Controller
 
 ```js
 // app/controller/user.js
@@ -28,11 +28,11 @@ exports.info = function* () {
 };
 ```
 
-这样就完成了一个最简单的 router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
+这样就完成了一个最简单的 Router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
 
-## router 详细定义说明
+## Router 详细定义说明
 
-下面是路由的完整定义，参数可以根据场景的不同，自由选择。
+下面是路由的完整定义，参数可以根据场景的不同，自由选择：
 
 ```js
 app.verb('path-match', 'controller.action');
@@ -53,18 +53,18 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller
   * app.delete - DELETE
   * app.del - 由于 delete 是一个保留字，所以提供了一个 delete 方法的别名。
   * app.redirect - 可以对 URL 进行重定向处理，比如我们最经常使用的可以把用户访问的根目录路由到某个主页。
-- router-name 给路由设定一个别名，可以通过 helper 提供的辅助函数 pathFor 和 urlFor 来生成 url。(可选)
+- router-name 给路由设定一个别名，可以通过 Helper 提供的辅助函数 `pathFor` 和 `urlFor` 来生成 URL。(可选)
 - path-match - 路由 URL 路径。
-- middleware1 - 在 router 里面可以配置多个 middleware。(可选)
-- controller.action - 注意是字符串，框架会自动从 `app/controller` 目录中区查找同名 controller，
-并且把处理指定到配置的 action 方法。如果 controller 文件直接 export 一个方法，可以省略 action。
+- middleware1 - 在 Router 里面可以配置多个 Middleware。(可选)
+- controller.action - 注意是字符串，框架会自动从 `app/controller` 目录中区查找同名 Controller，
+并且把处理指定到配置的 action 方法。如果 Controller 文件直接 export 一个方法，可以省略 action。
 
 ### 注意事项
 
-- 在 router 定义中， 可以支持多个 middleware 串联执行
-- controller 必须定义在 `app/controller` 目录中，并且对应的函数一定要是 generator function。
-- 一个文件里面也可以包含多个 controller 定义，在定义路由的时候，
-可以通过 `controller-filename.function-name` 的方式指定对应的 controller。
+- 在 Router 定义中， 可以支持多个 Middleware 串联执行
+- Controller 必须定义在 `app/controller` 目录中，并且对应的函数一定要是 generator function。
+- 一个文件里面也可以包含多个 Controller 定义，在定义路由的时候，
+可以通过 `controller-filename.function-name` 的方式指定对应的 Controller。
 
 下面是一些路由定义的方式：
 
@@ -87,7 +87,7 @@ module.exports = app => {
 };
 ```
 
-上面代码就在 `/posts` 路径上部署了一组 CRUD 路径结构，对应的 controller 为 `app/controller/posts.js` 接下来，
+上面代码就在 `/posts` 路径上部署了一组 CRUD 路径结构，对应的 Controller 为 `app/controller/posts.js` 接下来，
 你只需要在 `posts.js` 里面实现对应的函数就可以了。
 
 Method | Path            | Route Name     | Controller.Action
@@ -117,15 +117,15 @@ exports.update = function* () {};
 exports.destroy = function* () {};
 ```
 
-如果我们不需要其中的某几个方法，可以不用在 `posts.js` 里面实现，这样对应 URL 路径也不会注册到 router。
+如果我们不需要其中的某几个方法，可以不用在 `posts.js` 里面实现，这样对应 URL 路径也不会注册到 Router。
 
-## router 实战
+## destroy 实战
 
-下面通过更多实际的例子，来说明 router 的用法。
+下面通过更多实际的例子，来说明 destroy 的用法。
 
 ### 参数获取
 
-#### query 方式
+#### Query String 方式
 
 ```js
 // app/router.js
@@ -159,7 +159,7 @@ exports.info = function* () {
 
 #### 复杂参数的获取
 
-路由里面也支持定义正则，可以更加灵活的获取参数
+路由里面也支持定义正则，可以更加灵活的获取参数：
 
 ```js
 // app/router.js
@@ -285,7 +285,7 @@ module.exports = function* () {
 ### 中间件的使用
 
 如果我们想把用户某一类请求的参数都大写，可以通过中间件来实现。
-这里我们只是简单说明下如何使用中间件，更多请查看[中间件](./middleware.md)。
+这里我们只是简单说明下如何使用中间件，更多请查看 [中间件](./middleware.md)。
 
 ```js
 // app/controller/search.js

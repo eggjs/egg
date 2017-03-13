@@ -18,8 +18,8 @@ title: 框架扩展
 ### 访问方式
 
 - `ctx.app`
-- controller，middleware，helper，service 中都可以通过 `this.app` 访问到 application 对象，例如 `this.app.config` 访问配置对象。
-- 在 `app.js` 中 app 对象会作为第一个参数注入到入口函数中
+- Controller，Middleware，Helper，Service 中都可以通过 `this.app` 访问到 Application 对象，例如 `this.app.config` 访问配置对象。
+- 在 `app.js` 中 `app` 对象会作为第一个参数注入到入口函数中
 
    ```js
    // app.js
@@ -30,7 +30,7 @@ title: 框架扩展
 
 ### 扩展方式
 
-框架会把 `app/extend/application.js` 中定义的对象与 Koa `application` 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 `app` 对象。
+框架会把 `app/extend/application.js` 中定义的对象与 Koa Application 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 `app` 对象。
 
 #### 方法扩展
 
@@ -49,7 +49,7 @@ module.exports = {
 
 一般来说属性的计算只需要进行一次，那么一定要实现缓存，否则在多次访问属性时会计算多次，这样会降低应用性能。
 
-推荐的方式是使用 Symbol + getter 的模式。
+推荐的方式是使用 Symbol + Getter 的模式。
 
 例如，增加一个 `app.bar` 属性 Getter：
 
@@ -80,7 +80,7 @@ Context 指的是 Koa 的请求上下文，这是 **请求级别** 的对象，�
 
 ### 扩展方式
 
-框架会把 `app/extend/context.js` 中定义的对象与 Koa `context` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。
+框架会把 `app/extend/context.js` 中定义的对象与 Koa Context 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。
 
 #### 方法扩展
 
@@ -99,7 +99,7 @@ module.exports = {
 
 一般来说属性的计算在同一次请求中只需要进行一次，那么一定要实现缓存，否则在同一次请求中多次访问属性时会计算多次，这样会降低应用性能。
 
-推荐的方式是使用 Symbol + getter 的模式。
+推荐的方式是使用 Symbol + Getter 的模式。
 
 例如，增加一个 `ctx.bar` 属性 Getter：
 
@@ -121,7 +121,7 @@ module.exports = {
 
 ## Request
 
-Request 对象和 Koa 的 `request` 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
+Request 对象和 Koa 的 Request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -131,7 +131,7 @@ ctx.request
 
 `ctx` 上的很多属性和方法都被代理到 `request` 对象上，对于这些属性和方法使用 `ctx` 和使用 `request` 去访问它们是等价的，例如 `ctx.url === ctx.request.url`。
 
-Koa 内置的代理 `request` 的属性和方法列表：[koajs request aliases](http://koajs.com/#request-aliases)
+Koa 内置的代理 `request` 的属性和方法列表：[Koa - Request aliases](http://koajs.com/#request-aliases)
 
 ### 扩展方式
 
@@ -150,7 +150,7 @@ module.exports = {
 
 ## Response
 
-Response 对象和 Koa 的 `response` 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
+Response 对象和 Koa 的 Response 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
 
 ### 访问方式
 
@@ -232,4 +232,4 @@ module.exports = {
 
 这个文件只会在 unittest 环境加载。
 
-同理，对于 application，context，request，response，helper 都可以使用这种方式针对某个环境进行扩展，更多参见[运行环境](./env.md)。
+同理，对于 Application，Context，Request，Response，Helper 都可以使用这种方式针对某个环境进行扩展，更多参见 [运行环境](./env.md)。

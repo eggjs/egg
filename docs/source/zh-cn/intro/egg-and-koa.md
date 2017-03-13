@@ -49,7 +49,7 @@ function* main() {
 run(main());
 ```
 
-通过 run 这个驱动器，上面例子中的 main 中的异步代码就可以完全通过同步的写法完成了。对 Generator 更详细的讲解，可以查看[这篇文档和示例](https://github.com/dead-horse/koa-step-by-step#generator)。
+通过 run 这个驱动器，上面例子中的 main 中的异步代码就可以完全通过同步的写法完成了。对 Generator 更详细的讲解，可以查看 [这篇文档和示例](https://github.com/dead-horse/koa-step-by-step#generator)。
 
 [co] 相比于上面提到的那个 run 函数而言，加了支持 `yield [Object / Array / thunk / Generator Function / Generator]`，wrap 一个 Generator Function 成 Promise 等功能。而 co 也是 Koa 1 选择的底层异步库，所有的 Koa 1 的中间件都必须是一个 `generator function`。
 
@@ -83,7 +83,7 @@ async function 虽然尚未随着规范发布，但是 Node.js 7.x 中带的 V8 
 
 > Koa is a new Web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for Web applications and APIs.
 
-Koa 和 Express 的设计风格非常类似，底层也都是共用的[同一套 HTTP 基础库](https://github.com/jshttp)，但是有几个显著的区别，除了上面提到的默认异步解决方案之外，主要的特点还有下面几个。
+Koa 和 Express 的设计风格非常类似，底层也都是共用的 [同一套 HTTP 基础库](https://github.com/jshttp)，但是有几个显著的区别，除了上面提到的默认异步解决方案之外，主要的特点还有下面几个。
 
 ### Midlleware
 
@@ -162,7 +162,7 @@ exports.handler = function*() {
 };
 ```
 
-更多关于扩展的内容，请查看[扩展](../basics/extend.md)章节。
+更多关于扩展的内容，请查看 [扩展](../basics/extend.md) 章节。
 
 ### 插件
 
@@ -178,7 +178,7 @@ exports.handler = function*() {
 
 [egg-security](https://github.com/eggjs/egg-security) 插件就是一个典型的例子。
 
-更多关于插件的内容，请查看[插件](../advanced/plugin.md)章节。
+更多关于插件的内容，请查看 [插件](../advanced/plugin.md) 章节。
 
 ### 升级计划
 
@@ -192,7 +192,7 @@ exports.handler = function*() {
 
 #### egg next
 
-当 Node.js 的 LTS 版本开始支持 async function 时，egg 核心将会迁移到 koa 2.x，并保持对 generator function 的兼容。
+当 Node.js 的 LTS 版本开始支持 async function 时，egg 核心将会迁移到 Koa 2.x，并保持对 generator function 的兼容。
 
 - 底层基于 Koa 2.x，异步解决方案基于 async function。
 - 官方插件以及 egg 核心使用 async function 编写。
