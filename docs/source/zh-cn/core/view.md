@@ -54,7 +54,7 @@ module.exports = appInfo => {
 
 ### mapping 和 defaultViewEngine
 
-每个模板在注册时都会指定一个模板名（viewEngineName），在使用时需要根据后缀来匹配模板名，比如指定 `.nj` 后缀的文件使用 nunjucks 进行渲染。
+每个模板在注册时都会指定一个模板名（viewEngineName），在使用时需要根据后缀来匹配模板名，比如指定 `.nj` 后缀的文件使用 Nunjucks 进行渲染。
 
 ```js
 module.exports = {

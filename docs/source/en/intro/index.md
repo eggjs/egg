@@ -14,7 +14,7 @@ Egg is a convention-over-configuration framework, follows the [Loader](../advanc
 
 [Express] is well used in Node.js community, it is easy and extensible, fit personal project a lot. However, without default convention, standard mvc model has lots of strange impl which would leads to misunderstand. egg's teamwork cost is really low by following convention convention-over-configuration.
 
-[Sails] is a framework that also follows convention-over-configuration,it does well in extensible work. Compared with egg, [Sails] supports blueprint REST API, [WaterLine] , Frontend integration, websocks and so on, all of these are provided by sails. Egg does not provide these functions, it only has integration of different functional extension, eg, egg-blueprint, egg-waterline, if you use sails-egg to integrate these extensions, [Sails] can be replaced.
+[Sails] is a framework that also follows convention-over-configuration,it does well in extensible work. Compared with egg, [Sails] supports blueprint REST API, [WaterLine] , Frontend integration, websocks and so on, all of these are provided by Sails. Egg does not provide these functions, it only has integration of different functional extension, eg, egg-blueprint, egg-waterline, if you use sails-egg to integrate these extensions, [Sails] can be replaced.
 
 ## features
 

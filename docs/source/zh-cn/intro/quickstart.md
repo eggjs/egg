@@ -448,4 +448,4 @@ $ npm test
 [egg-development]: https://github.com/eggjs/egg-development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
-[nunjucks]: https://mozilla.github.io/nunjucks/
+[Nunjucks]: https://mozilla.github.io/nunjucks/

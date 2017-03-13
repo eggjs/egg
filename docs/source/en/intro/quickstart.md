@@ -149,7 +149,7 @@ to allow the developers to use different plug-ins for their individual needs.
 
 For more information, cf. [View](../core/view.md).
 
-In this example, we will use [nunjucks].
+In this example, we will use [Nunjucks].
 
 First install the corresponding plug-in [egg-view-nunjucks].
 
@@ -476,4 +476,4 @@ Where to go from here? Browse our documentation to better understand the framewo
 [egg-development]: https://github.com/eggjs/egg-development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
-[nunjucks]: https://mozilla.github.io/nunjucks/
+[Nunjucks]: https://mozilla.github.io/nunjucks/
