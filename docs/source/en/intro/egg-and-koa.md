@@ -76,7 +76,7 @@ fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 
 Other than the features supported by [co], async function can not await a `Promise` array (You can wrap it with `Promise.all`), await `thunk` is not avaliable either.
 
-Though async function has not been published with the spec yet, it is supported in the V8 runtime built in node 7.x, you can use it without flag parameter after 7.6.0 version.
+Though async function has not been published with the spec yet, it is supported in the V8 runtime built in Node.js 7.x, you can use it without flag parameter after 7.6.0 version.
 
 ## Koa
 
@@ -184,20 +184,20 @@ More about plugin, please check [plugin](../advanced/plugin.md) section.
 
 #### egg 1.x
 
-The node LTS version now does not support async function，so egg is based on Koa 1.x. On the basis of this, egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
+The Node.js LTS version now does not support async function，so egg is based on Koa 1.x. On the basis of this, egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
 
 - The underlying is based on Koa 1.x, asynchronous solution is based on generator function wrapped by [co].
-- Official plugin and core of egg are written in generator function,  keep supporting node LTS version, use [co] when necessary to be compatiable with async function.
-- Application developers can choose either async function(node 7.6+) or generator function(node 6.0+), **we recommend generator function way for ensuring you application can be runned on node LTS version**.
+- Official plugin and core of egg are written in generator function,  keep supporting Node.js LTS version, use [co] when necessary to be compatiable with async function.
+- Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+), **we recommend generator function way for ensuring you application can be runned on Node.js LTS version**.
 
 #### egg next
 
-Egg will transfer core to Koa 2.x until node LTS supports async function, compatibility with generator function will also be kept.
+Egg will transfer core to Koa 2.x until Node.js LTS supports async function, compatibility with generator function will also be kept.
 
 - The underlying will be based on Koa 2.x, asynchronous solution will be based on async function.
 - Official plugin and core of egge will be written in async function.
 - Recommend user transfer business layer to async function.
-- node 6.x will be no longer supported.
+- Node.js 6.x will be no longer supported.
 
 [co]: https://github.com/tj/co
 [Async function]: https://github.com/tc39/ecmascript-asyncawait

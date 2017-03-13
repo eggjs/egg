@@ -669,7 +669,7 @@ exports.page = function* (ctx) {
 };
 ```
 
-由于 node 的流式特性，我们还有很多场景需要通过 stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 stream，并会同时处理好这个 stream 上的错误事件。
+由于 Node.js 的流式特性，我们还有很多场景需要通过 stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 stream，并会同时处理好这个 stream 上的错误事件。
 
 ```js
 exports.proxy = function* (ctx) {

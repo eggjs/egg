@@ -219,11 +219,11 @@ form.file('file1', file1);
 form.file('file2', file2);
 ```
 
-### 以 stream 方式上传文件
+### 以 Stream 方式上传文件
 
-其实，在 node 的世界里面，stream 才是主流。
-如果服务端支持流式上传，最友好的方式还是直接发送 stream。
-stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [http] 模块自动实现的。
+其实，在 Node.js 的世界里面，Stream 才是主流。
+如果服务端支持流式上传，最友好的方式还是直接发送 Stream。
+Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [http] 模块自动实现的。
 
 ```js
 // app/controller/stream.js

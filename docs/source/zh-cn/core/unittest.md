@@ -34,7 +34,7 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 
 ### mocha
 
-我们选择和推荐大家使用 [mocha](http://mochajs.org)，功能非常丰富，支持运行在 node 和浏览器中，
+我们选择和推荐大家使用 [mocha](http://mochajs.org)，功能非常丰富，支持运行在 Node.js 和浏览器中，
 对异步测试支持非常友好。
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.

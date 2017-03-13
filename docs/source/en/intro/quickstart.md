@@ -9,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 ## Prerequisites
 
 - Operating System: Linux, OS X or Windows.
-- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][node].
+- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
 ## the Quick Way
 
@@ -469,7 +469,7 @@ Where to go from here? Browse our documentation to better understand the framewo
 
 [nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs
-[node]: http://nodejs.org
+[Node.js]: http://nodejs.org
 [npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-static]: https://github.com/eggjs/egg-static

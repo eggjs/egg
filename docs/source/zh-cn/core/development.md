@@ -204,7 +204,7 @@ app.logger.debug('app init');
 
 ### 使用 debug 模块调试
 
-[debug](https://www.npmjs.com/package/debug) 模块是 node 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，egg 社区也广泛采用这一机制打印 debug 信息，**推荐在框架和插件开发中使用它。**
+[debug](https://www.npmjs.com/package/debug) 模块是 Node.js 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，egg 社区也广泛采用这一机制打印 debug 信息，**推荐在框架和插件开发中使用它。**
 
 我们可以通过 `DEBUG` 环境变量选择开启指定的调试代码，方便观测执行过程。
 

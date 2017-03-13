@@ -6,7 +6,7 @@ title: 快速入门
 ## 环境准备
 
 - 操作系统：支持 macOS，Linux，Windows
-- 运行环境：建议选择 [LTS 版本][node]，最低要求 6.x
+- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 6.x
 
 ## 快速初始化
 
@@ -440,7 +440,7 @@ $ npm test
 
 [nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs
-[node]: http://nodejs.org
+[Node.js]: http://nodejs.org
 [npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-bin]: https://github.com/eggjs/egg-bin
