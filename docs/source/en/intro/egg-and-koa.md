@@ -86,7 +86,7 @@ The design style of Koa and Express are very similar, The underlying base librar
 
 ### Midlleware
 
-The middleware in Koa is different from express, Koa use the onion model:
+The middleware in Koa is different from Express, Koa use the onion model:
 
 - Middleware onion diagram:
 
@@ -96,16 +96,16 @@ The middleware in Koa is different from express, Koa use the onion model:
 
 ![](https://raw.githubusercontent.com/koajs/koa/a7b6ed0529a58112bac4171e4729b8760a34ab8b/docs/middleware.gif)
 
-All the requests will be executed twice during one middleware. Compared to express middleware, it is very easy to implementing post-processing logic. You can obviously feel the advantage of Koa middleware model comparing to the compress middleware implementing in Koa and Express.
+All the requests will be executed twice during one middleware. Compared to Express middleware, it is very easy to implementing post-processing logic. You can obviously feel the advantage of Koa middleware model comparing to the compress middleware implementing in Koa and Express.
 
 - [koa-compress](https://github.com/koajs/compress/blob/master/index.js) for Koa.
 - [compression](https://github.com/expressjs/compression/blob/master/index.js) for Express.
 
 ### Context
 
-Unlike that there are only two objects `Request` and `Response` in express, Koa has one more, `Context` object in one http request(it is `this` in Koa 1, while it is the first parameter for middleware function in Koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.
+Unlike that there are only two objects `Request` and `Response` in Express, Koa has one more, `Context` object in one http request(it is `this` in Koa 1, while it is the first parameter for middleware function in Koa 2). We can attach all the relative things to the object. Such as [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.
 
-At the same time Request and Response are attached to Context object. Just like express, the two objects provide lots of easy ways to help developing. For example:
+At the same time Request and Response are attached to Context object. Just like Express, the two objects provide lots of easy ways to help developing. For example:
 
 - `get request.query`
 - `get request.hostname`
@@ -166,7 +166,7 @@ More about extension, please check [Exception](../basics/extend.md) section.
 
 ### Plugin
 
-As is known to all, Many middlewares are imported to provide different kind of features in express and Koa. Eg, [koa-session](https://github.com/koajs/session) provides the session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.
+As is known to all, Many middlewares are imported to provide different kind of features in Express and Koa. Eg, [koa-session](https://github.com/koajs/session) provides the session support, [koa-bodyparser](https://github.com/koajs/bodyparser) help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.
 
 One plugin can include:
 
