@@ -120,7 +120,7 @@ module.exports = agent => {
 };
 ```
 
-如需详细了解 Agent 进程，请参考 [多进程模型](../advanced/cluster.md)。
+如需详细了解 Agent 进程，请参考[多进程模型](../advanced/cluster.md)。
 
 ## 日志文件编码
 

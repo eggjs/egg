@@ -232,4 +232,4 @@ module.exports = {
 
 这个文件只会在 unittest 环境加载。
 
-同理，对于 Application，Context，Request，Response，Helper 都可以使用这种方式针对某个环境进行扩展，更多参见 [运行环境](./env.md)。
+同理，对于 Application，Context，Request，Response，Helper 都可以使用这种方式针对某个环境进行扩展，更多参见[运行环境](./env.md)。

@@ -51,4 +51,4 @@ pm2 start server.js
 
 egg 内置的 [egg-security](https://github.com/eggjs/egg-security/) 插件默认对所有『非安全』的方法，例如 `POST`，`PUT`，`DELETE` 都进行 CSRF 校验。
 
-请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读 [安全威胁 CSRF 的防范](./core/security.md#安全威胁csrf的防范)。
+请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读[安全威胁 CSRF 的防范](./core/security.md#安全威胁csrf的防范)。

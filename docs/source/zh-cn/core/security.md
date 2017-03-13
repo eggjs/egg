@@ -173,7 +173,7 @@ options:
 - `config.helper.shtml.domainWhiteList: []` 可拓展 href 和 src 中允许的域名白名单。
 
 注意，shtml 使用了严格的白名单机制，除了过滤掉 XSS 风险的字符串外，
-在 [默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js) 外的 tag 和 attr 都会被过滤掉。
+在[默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js)外的 tag 和 attr 都会被过滤掉。
 
 例如 HTML 标签就不在白名单中，
 
@@ -244,11 +244,11 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 
 ### 防范方式
 
-通常来说，对于 CSRF 攻击有一些通用的 [防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
+通常来说，对于 CSRF 攻击有一些通用的[防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
 
 - Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。
 - Double Cookie Defense：将 token 设置在 Cookie 中，在提交 post 请求的时候提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。
-- Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都 [放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
+- Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都[放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
 
 框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。
 
@@ -571,7 +571,7 @@ HPP 可能导致的安全威胁有：
 
 框架本身会在客户端传输 key 相同而 value 不同的参数时，强制使用第一个参数，因此不会导致 hpp 攻击。
 
-## [中间人攻击](https://www.owasp.org/index.php/Man-in-the-middle_attack) 与 HTTP / HTTPS
+## [中间人攻击](https://www.owasp.org/index.php/Man-in-the-middle_attack)与 HTTP / HTTPS
 
 HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。
 

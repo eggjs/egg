@@ -174,7 +174,7 @@ yield this.renderString('{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.ba
 
 ## Helper
 
-在模板中可以直接使用 `helper` 上注册的方法，具体可以参见 [扩展](../basics/extend.md)。
+在模板中可以直接使用 `helper` 上注册的方法，具体可以参见[扩展](../basics/extend.md)。
 
 ```js
 // app/extend/helper.js
@@ -186,7 +186,7 @@ yield this.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 ## Security
 
-框架内置的 [egg-security] 插件，为我们提供了常见的安全辅助函数，包括 `helper.shtml / surl / sjs` 等等等，强烈建议阅读下 [安全](./security.md)。
+框架内置的 [egg-security] 插件，为我们提供了常见的安全辅助函数，包括 `helper.shtml / surl / sjs` 等等等，强烈建议阅读下[安全](./security.md)。
 
 
 [egg-security]: https://github.com/eggjs/egg-security

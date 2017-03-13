@@ -5,7 +5,7 @@ title: Service
 
 - 保持 Controller 中的逻辑更加简洁。
 - 保持业务逻辑的独立性，抽象出来的 Service 可以被多个 Controller 重复调用。
-- 将逻辑和展现分离，更容易编写测试用例，测试用例的编写具体可以查看 [这里](../core/unittest.md)。
+- 将逻辑和展现分离，更容易编写测试用例，测试用例的编写具体可以查看[这里](../core/unittest.md)。
 
 ## 使用场景
 

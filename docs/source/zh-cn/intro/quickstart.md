@@ -103,7 +103,7 @@ egg-example
 └── package.json
 ```
 
-完整的目录结构规范参见 [目录结构](../basics/structure.md)。
+完整的目录结构规范参见[目录结构](../basics/structure.md)。
 
 好，现在可以启动应用来体验下
 
@@ -285,7 +285,7 @@ exports.news = {
 
 遇到一个小问题，我们的资讯时间的数据是 UnixTime 格式的，我们希望显示为便于阅读的格式。
 
-框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见 [扩展](../basics/extend.md)。
+框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见[扩展](../basics/extend.md)。
 
 在这里，我们可以使用 View 插件支持的 Helper 来实现：
 
@@ -345,7 +345,7 @@ exports.robot = {
 
 - 支持按环境变量加载不同的配置文件，如 `config.local.js`， `config.prod.js` 等等。
 - 应用/插件/框架都可以配置自己的配置文件，框架将按顺序合并加载。
-- 具体合并逻辑可参见 [配置文件](../basics/config.md)。
+- 具体合并逻辑可参见[配置文件](../basics/config.md)。
 
 ```js
 // config/config.default.js

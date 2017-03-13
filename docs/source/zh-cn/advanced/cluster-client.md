@@ -469,4 +469,4 @@ exports.apiClient = {
 - ClusterClient - 通过 cluster-client 模块进行简单 wrap 得到的 client 实例，负责自动抹平多进程模型的差异。
 - APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。
 
-有兴趣的同学可以看一下 [增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
+有兴趣的同学可以看一下[增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。

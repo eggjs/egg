@@ -66,7 +66,7 @@ title: 插件开发
     - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
     - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
     - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。
-    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考 [运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置。
+    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考[运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置。
 
     ```json
     {
@@ -130,11 +130,11 @@ title: 插件开发
 在插件相应的文件内对框架内置对象进行扩展，和应用一样
 
 - `app/extend/request.js` - 扩展 Koa#Request 对象
-- `app/extend/response.js` - 扩展 koa#Response 对象
-- `app/extend/context.js` - 扩展 koa#Context 对象
+- `app/extend/response.js` - 扩展 Koa#Response 对象
+- `app/extend/context.js` - 扩展 Koa#Context 对象
 - `app/extend/helper.js ` - 扩展 Helper 对象
-- `app/extend/application.js` - 扩展 app 对象
-- `app/extend/agent.js` - 扩展 agent 对象
+- `app/extend/application.js` - 扩展 Application 对象
+- `app/extend/agent.js` - 扩展 Agent 对象
 
 ### 插入自定义中间件
 

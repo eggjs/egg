@@ -80,11 +80,11 @@ module.exports = {
 };
 ```
 
-**配置项以及区分各运行环境的配置，请查看 [配置](./config.md) 章节。**
+**配置项以及区分各运行环境的配置，请查看[配置](./config.md)章节。**
 
 ## 框架默认中间件
 
-除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware) 中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
+除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如[框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
 
 ```js
 module.exports = {

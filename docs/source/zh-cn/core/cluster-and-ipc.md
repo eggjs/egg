@@ -156,7 +156,7 @@ if (cluster.isMaster) {
 
 ### Agent 的用法
 
-你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 [启动自定义](../basics/app-start.md) 用法类似，只是入口参数是 agent 对象）
+你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和[启动自定义](../basics/app-start.md) 用法类似，只是入口参数是 agent 对象）
 
 ```js
 // agent.js
@@ -440,7 +440,7 @@ module.exports = agent => {
 
 ## 更复杂的场景
 
-上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在 [多进程研发模式增强](../advanced/cluster-client.md) 中找到答案。
+上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster

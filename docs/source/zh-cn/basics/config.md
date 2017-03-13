@@ -82,7 +82,7 @@ root | 应用根目录，只有在 local 和 unittest 环境下为 baseDir，其
 -> 应用 config.prod.js
 ```
 
-**注意：插件之间也会有加载顺序，但大致顺序类似，具体逻辑可 [查看加载器](../advanced/loader.md)。**
+**注意：插件之间也会有加载顺序，但大致顺序类似，具体逻辑可[查看加载器](../advanced/loader.md)。**
 
 ### 合并规则
 
@@ -174,7 +174,7 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 
 配置文件中会隐藏一些字段，主要包括两类:
 
-- 如密码、密钥等安全字段，这里可以通过 `config.dump.ignore` 配置，必须是 [Set] 类型，查看 [默认配置](https://github.com/eggjs/egg/blob/master/config/config.default.js)。
+- 如密码、密钥等安全字段，这里可以通过 `config.dump.ignore` 配置，必须是 [Set] 类型，查看[默认配置](https://github.com/eggjs/egg/blob/master/config/config.default.js)。
 - 如函数、Buffer 等类型，`JSON.stringify` 后的内容特别大
 
 [Set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set

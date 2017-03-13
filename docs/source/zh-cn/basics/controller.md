@@ -67,7 +67,7 @@ module.exports = {
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
 - `this.service`：应用定义的 [Service](./service.md)，通过它我们可以访问到抽象出的业务层。
-- `this.config`：应用运行时的 [配置项](./config.md)。
+- `this.config`：应用运行时的[配置项](./config.md)。
 
 #### 自定义 Controller 基类
 
@@ -185,7 +185,7 @@ Connection: keep-alive
 {"id": 1}
 ```
 
-第一行中也包含了三段，其中我们常用的主要是 [响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
+第一行中也包含了三段，其中我们常用的主要是[响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
 
 和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字符。
 
@@ -685,8 +685,8 @@ exports.proxy = function* (ctx) {
 #### 渲染模板
 
 通常来说，我们不会手写 HTML 页面，而是会通过模板引擎进行生成。
-egg 自身没有集成任何一个模板引擎，但是约定了 [view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
-具体示例可以查看 [模板渲染](../core/view.md)。
+egg 自身没有集成任何一个模板引擎，但是约定了 [View 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
+具体示例可以查看[模板渲染](../core/view.md)。
 
 #### JSONP
 

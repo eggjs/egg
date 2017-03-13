@@ -132,7 +132,7 @@ npm test
 
 ## 准备测试
 
-本文主要介绍如何编写应用的单元测试，关于框架和插件的单元测试请查看 [框架开发](../advanced/framework.md) 和 [插件开发](../advanced/plugin.md) 相关章节。
+本文主要介绍如何编写应用的单元测试，关于框架和插件的单元测试请查看[框架开发](../advanced/framework.md)和[插件开发](../advanced/plugin.md)相关章节。
 
 ### mock
 
@@ -637,7 +637,7 @@ describe('money()', () => {
 
 ## Mock 方法
 
-egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了 [非常多的 mock 方法](https://github.com/eggjs/egg-mock#api) 帮助我们便捷地写单元测试。
+egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了[非常多的 mock 方法](https://github.com/eggjs/egg-mock#api)帮助我们便捷地写单元测试。
 
 - 如我们不想在终端 console 输出任何日志，可以通过 `mock.consoleLevel('NONE')` 来模拟。
 - 又如我想模拟一次请求的 Session 数据，可以通过 `app.mockSession(data)` 来模拟。
