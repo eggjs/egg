@@ -80,7 +80,7 @@ Though async function has not been published with the spec yet, it is supported 
 
 ## Koa
 
-> Koa is a new web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs.
+> Koa is a new Web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for Web applications and APIs.
 
 The design style of Koa and Express are very similar, The underlying base library is the same, [HTTP library](https://github.com/jshttp). There are several significant differences between them. Besides the asynchronous solution by default metioned above, there are the following points.
 

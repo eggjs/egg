@@ -3,7 +3,7 @@ title: Runtime Environment
 
 # Runtime Environment
 
-There could be all kinds of difference during various stages of a web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
+There could be all kinds of difference during various stages of a Web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
 
 EGG framework provides a variable named `env` for setting up the runtime environment. The `env` could be used to determine which configuration file should be applied, or you can perform any operations by detecting the `env` directly.
 

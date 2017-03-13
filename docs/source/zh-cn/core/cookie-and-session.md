@@ -3,7 +3,7 @@ title: cookie 与 session
 
 ### cookie
 
-HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。
+HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。
 
 通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 cookie。
 
@@ -91,7 +91,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。cooki
 
 ## session
 
-cookie 在 web 应用中经常承担标识请求方身份的功能，所以 web 应用在 cookie 的基础上封装了 session 的概念，专门用做用户身份识别。
+cookie 在 Web 应用中经常承担标识请求方身份的功能，所以 Web 应用在 cookie 的基础上封装了 session 的概念，专门用做用户身份识别。
 
 框架内置了 [session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 session 。
 
