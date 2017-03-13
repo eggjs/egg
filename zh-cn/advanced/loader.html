@@ -167,6 +167,14 @@
 <li>加载时如果遇到同名的会覆盖，比如想要覆盖 <code>ctx.ip</code> 可以直接在应用的 <code>app/extend/context.js</code> 定义 ip 就可以了。</li>
 <li><a href="./framework.html">应用完整启动顺序查看框架开发</a></li>
 </ul>
+<h3 id="文件加载规则"><a class="markdown-anchor" href="#文件加载规则">#</a> 文件加载规则</h3>
+<p>框架在加载文件时会进行转换，因为文件命名风格和 API 风格存在差异。我们推荐文件使用下划线，而 API 使用驼峰。比如 <code>app/service/user_info.js</code> 会转换成 <code>app.service.userInfo</code>。</p>
+<p>框架也支持连字符和驼峰的方式</p>
+<ul>
+<li><code>app/service/user-info.js</code> =&gt; <code>app.service.userInfo</code></li>
+<li><code>app/service/userInfo.js</code> =&gt; <code>app.service.userInfo</code></li>
+</ul>
+<p>Loader 还提供了 <a href="#caseStyle-boolean">caseStyle</a> 强制指定首字母大小写，比如加载 model 时 API 首字母大写，<code>app/model/user.js</code> =&gt; <code>app.model.User</code>，就可以指定 <code>caseStyle: 'upper'</code>。</p>
 <h2 id="扩展-loader"><a class="markdown-anchor" href="#扩展-loader">#</a> 扩展 Loader</h2>
 <p><a href="https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js" target="_blank" rel="external">Loader</a> 是一个基类，并根据文件加载的规则提供了一些内置的方法，但基本本身并不会去调用，而是由继承类调用。</p>
 <ul>
@@ -217,9 +225,14 @@
 <h4 id="initializer-function"><a class="markdown-anchor" href="#initializer-function">#</a> initializer [Function]</h4>
 <p>对每个文件 export 出来的值进行处理，默认为空</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/model/user.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">  <span class="keyword">constructor</span>(app, path) &#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 从 app/model 目录加载，加载时可做一些初始化处理</span></div><div class="line"><span class="keyword">const</span> directory = path.join(app.config.baseDir, <span class="string">'app/model'</span>);</div><div class="line">app.loader.loadToApp(directory, <span class="string">'model'</span>, &#123;</div><div class="line">  initializer(model, opt) &#123;</div><div class="line">    <span class="comment">// 第一个参数为 export 的对象</span></div><div class="line">    <span class="comment">// 第二个参数为一个对象，只包含当前文件的路径</span></div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> model(app, opt.path);</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<h4 id="lowercasefirst-boolean"><a class="markdown-anchor" href="#lowercasefirst-boolean">#</a> lowercaseFirst [Boolean]</h4>
-<p>是否强制将第一个字符转成小写，默认为 false。</p>
-<p>比如加载 <code>app/controller/User.js</code>，如果为 true 加载后生成 <code>app.controller.user</code>。</p>
+<h4 id="casestyle-string"><a class="markdown-anchor" href="#casestyle-string">#</a> caseStyle [String]</h4>
+<p>文件的转换规则，可选为 <code>camel</code>，<code>upper</code>，<code>lower</code>，默认为 <code>camel</code>。</p>
+<p>三者都会将文件名转换成驼峰，但是对于首字母的处理有所不同。</p>
+<ul>
+<li><code>camel</code>：首字母不变。</li>
+<li><code>upper</code>：首字母大写。</li>
+<li><code>lower</code>：首字母小写。</li>
+</ul>
 <p>在加载不同文件时配置不同</p>
 <table>
 <thead>
@@ -231,15 +244,15 @@
 <tbody>
 <tr>
 <td>app/controller</td>
-<td>true</td>
+<td>lower</td>
 </tr>
 <tr>
 <td>app/middleware</td>
-<td>true</td>
+<td>lower</td>
 </tr>
 <tr>
 <td>app/service</td>
-<td>true</td>
+<td>lower</td>
 </tr>
 </tbody>
 </table>
