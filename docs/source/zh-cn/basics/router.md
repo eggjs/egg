@@ -56,7 +56,7 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller
 - router-name 给路由设定一个别名，可以通过 Helper 提供的辅助函数 `pathFor` 和 `urlFor` 来生成 URL。(可选)
 - path-match - 路由 URL 路径。
 - middleware1 - 在 Router 里面可以配置多个 Middleware。(可选)
-- controller.action - 注意是字符串，框架会自动从 `app/controller` 目录中区查找同名 Controller，
+- controller.action - 注意是字符串，框架会自动从 `app/controller` 目录中去查找同名 Controller，
 并且把处理指定到配置的 action 方法。如果 Controller 文件直接 export 一个方法，可以省略 action。
 
 ### 注意事项
