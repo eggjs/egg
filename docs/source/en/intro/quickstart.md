@@ -9,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 ## Prerequisites
 
 - Operating System: Linux, OS X or Windows.
-- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][node].
+- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
 ## the Quick Way
 
@@ -149,7 +149,7 @@ to allow the developers to use different plug-ins for their individual needs.
 
 For more information, cf. [View](../core/view.md).
 
-In this example, we will use [nunjucks].
+In this example, we will use [Nunjucks].
 
 First install the corresponding plug-in [egg-view-nunjucks].
 
@@ -231,7 +231,7 @@ module.exports = app => {
 Open a browser window and navigate to http://localhost:7001/news.
 You should be able to see the rendered page.
 
-**Tip：In development, egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, Egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -251,7 +251,7 @@ module.exports = app => {
       // read config
       const { serverUrl, pageSize } = this.app.config.news;
 
-      // use build-in http client to GET hacker-news api
+      // use build-in HttpClient to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
         data: {
           orderBy: '"$key"',
@@ -273,7 +273,7 @@ module.exports = app => {
 };
 ```
 
-> Egg has [http client](../core/httpclient.md) built in in order to help you make http requests.
+> Egg has [HttpClient](../core/httpclient.md) built in in order to help you make HTTP requests.
 
 Then slightly modify our previous controller.
 
@@ -406,7 +406,7 @@ module.exports = app => {
 
 ### Add Unit Testing
 
-Unit Testing is very important, and egg also provide [egg-bin] to help you write tests painless.
+Unit Testing is very important, and Egg also provide [egg-bin] to help you write tests painless.
 
 ```js
 // test/app/middleware/robot.test.js
@@ -469,11 +469,11 @@ Where to go from here? Browse our documentation to better understand the framewo
 
 [nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs
-[node]: http://nodejs.org
+[Node.js]: http://nodejs.org
 [npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-static]: https://github.com/eggjs/egg-static
 [egg-development]: https://github.com/eggjs/egg-development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
-[nunjucks]: https://mozilla.github.io/nunjucks/
+[Nunjucks]: https://mozilla.github.io/nunjucks/

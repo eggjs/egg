@@ -4,7 +4,7 @@ title: 插件开发
 
 插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了
 
-> koa 已经有了中间件的机制，为啥还要插件呢？
+> Koa 已经有了中间件的机制，为啥还要插件呢？
 > 中间件、插件、应用它们之间是什么关系，有什么区别？
 > 我该怎么使用一个插件？
 > 如何编写一个插件？
@@ -14,7 +14,7 @@ title: 插件开发
 
 ## 为什么要插件
 
-我们在使用 koa 中间件过程中发现了下面一些问题：
+我们在使用 Koa 中间件过程中发现了下面一些问题：
 
 1. 中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。
 2. 中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。
@@ -66,7 +66,7 @@ title: 插件开发
     - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
     - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
     - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。
-    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考 [运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置。
+    - `{Array} env` - 只有在指定运行环境才能开启，具体有哪些环境可以参考[运行环境](../basics/env.md)。此配置是可选的，一般情况下都不需要配置。
 
     ```json
     {
@@ -129,12 +129,12 @@ title: 插件开发
 
 在插件相应的文件内对框架内置对象进行扩展，和应用一样
 
-- `app/extend/request.js` - 扩展 koa#Request 对象
-- `app/extend/response.js` - 扩展 koa#Response 对象
-- `app/extend/context.js` - 扩展 koa#Context 对象
-- `app/extend/helper.js ` - 扩展 Helper 对象
-- `app/extend/application.js` - 扩展 app 对象
-- `app/extend/agent.js` - 扩展 agent 对象
+- `app/extend/request.js` - 扩展 Koa#Request 类
+- `app/extend/response.js` - 扩展 Koa#Response 类
+- `app/extend/context.js` - 扩展 Koa#Context 类
+- `app/extend/helper.js ` - 扩展 Helper 类
+- `app/extend/application.js` - 扩展 Application 类
+- `app/extend/agent.js` - 扩展 Agent 类
 
 ### 插入自定义中间件
 
@@ -450,7 +450,7 @@ exports.onerror = false;
 框架已内置插件列表：
 
 - [onerror](https://github.com/eggjs/egg-onerror) 统一异常处理
-- [session](https://github.com/eggjs/egg-session) session 实现
+- [Session](https://github.com/eggjs/egg-session) Session 实现
 - [i18n](https://github.com/eggjs/egg-i18n) 多语言
 - [watcher](https://github.com/eggjs/egg-watcher) 文件和文件夹监控
 - [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
@@ -545,11 +545,11 @@ $ npm test
 
 ## 为何不使用 npm 包名来做插件名？
 
-egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
+Egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
 
-首先 egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 egg 无法通过 npm 的包名来做唯一性。
+首先 Egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 Egg 无法通过 npm 的包名来做唯一性。
 
-更重要的是 egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
+更重要的是 Egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
 
 **将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
 

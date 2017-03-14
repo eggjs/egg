@@ -1,7 +1,7 @@
-title: 中间件
+title: Middleware 中间件
 ---
 
-在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 egg 是基于 koa 1 实现的，所以 egg 的中间件形式和 koa 1 的中间件形式是一样的，都是基于 generator function 的[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
+在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 1 实现的，所以 Egg 的中间件形式和 Koa 1 的中间件形式是一样的，都是基于 generator function 的[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
 
 ## 编写中间件
 
@@ -27,7 +27,7 @@ function* gzip(next) {
 }
 ```
 
-可以看到，框架的中间件和 koa 的中间件写法是一模一样的，所以任何 koa 的中间件都可以直接被框架使用。
+可以看到，框架的中间件和 Koa 的中间件写法是一模一样的，所以任何 Koa 的中间件都可以直接被框架使用。
 
 ### 配置
 
@@ -84,7 +84,7 @@ module.exports = {
 
 ## 框架默认中间件
 
-除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如 [框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
+除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如[框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
 
 ```js
 module.exports = {
@@ -98,7 +98,7 @@ module.exports = {
 
 ## router 中使用中间件
 
-应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 koa 中另有用处），所以应用层定义的中间件可以不通过配置引入，而是在 router 中引入，从而只对对应的路由生效。
+应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 Koa 中另有用处），所以应用层定义的中间件可以不通过配置引入，而是在 router 中引入，从而只对对应的路由生效。
 
 还是拿刚才的 gzip 中间件举例，当我们想直接在 router 中使用的时候，在 `app/router.js` 中就可以这样写
 
@@ -109,17 +109,17 @@ module.exports = app => {
 }
 ```
 
-## 使用 koa 的中间件
+## 使用 Koa 的中间件
 
-框架兼容 koa 1.x 和 2.x 支持的所有形式的中间件，包括：
+框架兼容 Koa 1.x 和 2.x 支持的所有形式的中间件，包括：
 
 - generator function: `function* (next) {}`
 - async function: `async (ctx, next) => {}`
 - common function: `(ctx, next) => {}`
 
-所有可以在 koa 中使用的中间件都可以直接在框架中使用。
+所有可以在 Koa 中使用的中间件都可以直接在框架中使用。
 
-以 [koa-compress](https://github.com/koajs/compress) 为例，在 koa 中使用时：
+以 [koa-compress](https://github.com/koajs/compress) 为例，在 Koa 中使用时：
 
 ```js
 var koa = require('koa');
@@ -131,7 +131,7 @@ const options = { threshold: 2048 };
 app.use(compress(options));
 ```
 
-我们按照框架的规范来在应用中引入这个 koa 的中间件：
+我们按照框架的规范来在应用中引入这个 Koa 的中间件：
 
 ```js
 // app/middleware/compress.js

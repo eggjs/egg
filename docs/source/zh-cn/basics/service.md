@@ -1,18 +1,18 @@
-title: service
+title: Service
 ---
 
-简单来说，service 就是在复杂业务场景下用于做业务逻辑封装的一个抽象层，提供这个抽象有以下几个好处：
+简单来说，Service 就是在复杂业务场景下用于做业务逻辑封装的一个抽象层，提供这个抽象有以下几个好处：
 
-- 保持 controller 中的逻辑更加简洁。
-- 保持业务逻辑的独立性，抽象出来的 service 可以被多个 controller 重复调用。
-- 将逻辑和展现分离，更容易编写测试用例，测试用例的编写具体可以查看 [这里](../core/unittest.md)。
+- 保持 Controller 中的逻辑更加简洁。
+- 保持业务逻辑的独立性，抽象出来的 Service 可以被多个 Controller 重复调用。
+- 将逻辑和展现分离，更容易编写测试用例，测试用例的编写具体可以查看[这里](../core/unittest.md)。
 
 ## 使用场景
 
 - 复杂数据的处理，比如要展现的信息需要从数据库获取，还要经过一定的规则计算，才能返回用户显示。或者计算完成后，更新到数据库。
 - 第三方服务的调用，比如 GitHub 信息获取等。
 
-## 定义 service
+## 定义 Service
 
 - `app/service/user.js`
 
@@ -30,30 +30,30 @@ title: service
 
 ### 注意事项
 
-- service 文件必须放在 `app/service` 目录，可以支持多级目录，访问的时候可以通过目录名级联访问。
+- Service 文件必须放在 `app/service` 目录，可以支持多级目录，访问的时候可以通过目录名级联访问。
 
   ```js
-  app/service/biz/user.js => this.service.biz.user.find
+  app/service/biz/user.js => this.service.biz.user
   app/service/sync_user.js => this.service.syncUser
   app/service/HackerNews.js => this.service.hackerNews
   ```
 
-- 一个 service 文件只能包含一个类， 这个类需要通过 `module.exports` 的方式返回。
-- service 需要通过 Class 的方式定义，父类必须是 `app.Service`, 其中 `app.Service` 会在初始化 service 的时候通过参数传递进来。
-- service 不是单例，是 **请求级别** 的对象，框架在每次请求中首次访问 `ctx.service.xx` 时延迟实例化，所以 service 中可以通过 this.ctx 获取到当前请求的上下文。
+- 一个 Service 文件只能包含一个类， 这个类需要通过 `module.exports` 的方式返回。
+- Service 需要通过 Class 的方式定义，父类必须是 `app.Service`, 其中 `app.Service` 会在初始化 Service 的时候通过参数传递进来。
+- Service 不是单例，是 **请求级别** 的对象，框架在每次请求中首次访问 `ctx.service.xx` 时延迟实例化，所以 Service 中可以通过 this.ctx 获取到当前请求的上下文。
 
-### service ctx 详解
+### Service ctx 详解
 
-为了可以获取用户请求的链路，我们在 service 初始化中，注入了请求上下文, 用户在方法中可以直接通过 `this.ctx` 来获取上下文相关信息。关于上下文的具体详解可以参看 [Context](./extend.md#context),
+为了可以获取用户请求的链路，我们在 Service 初始化中，注入了请求上下文, 用户在方法中可以直接通过 `this.ctx` 来获取上下文相关信息。关于上下文的具体详解可以参看 [Context](./extend.md#context),
 有了 ctx 我们可以拿到框架给我们封装的各种便捷属性和方法。比如我们可以用：
 
 - `this.ctx.curl` 发起网络调用。
-- `this.ctx.service.otherService` 调用其他 service。
+- `this.ctx.service.otherService` 调用其他 Service。
 - `this.ctx.db` 发起数据库调用等， db 可能是其他插件提前挂载到 app 上的模块。
 
-## 使用 service
+## 使用 Service
 
-下面就通过一个完整的例子，看看怎么使用 service。
+下面就通过一个完整的例子，看看怎么使用 Service。
 
 ```js
 // app/router.js

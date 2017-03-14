@@ -47,7 +47,7 @@ $ npm i egg-bin --save-dev
 
 ## 单元测试
 
-这里主要讲解工具部分的使用，更多关于单元测试的内容请参考 [这里](./unittest.md)。
+这里主要讲解工具部分的使用，更多关于单元测试的内容请参考[这里](./unittest.md)。
 
 ### 添加命令
 
@@ -82,7 +82,7 @@ TESTS=test/x.test.js npm test
 
 ### 指定 reporter
 
-mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
+Mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
 
 可以手动设置 `TEST_REPORTER` 环境变量来指定 reporter，例如使用 `dot`：
 
@@ -204,7 +204,7 @@ app.logger.debug('app init');
 
 ### 使用 debug 模块调试
 
-[debug](https://www.npmjs.com/package/debug) 模块是 node 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，egg 社区也广泛采用这一机制打印 debug 信息，**推荐在框架和插件开发中使用它。**
+[debug](https://www.npmjs.com/package/debug) 模块是 Node.js 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，Egg 社区也广泛采用这一机制打印 debug 信息，**推荐在框架和插件开发中使用它。**
 
 我们可以通过 `DEBUG` 环境变量选择开启指定的调试代码，方便观测执行过程。
 

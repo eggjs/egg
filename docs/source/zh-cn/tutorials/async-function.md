@@ -1,9 +1,9 @@
 title: 使用 async function 开发应用
 ---
 
-[前面的章节](../intro/egg-and-koa.md#async-function)中介绍了 [async function] 是 js 语言层面提供的异步解决方案，而 node 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。
+[前面的章节](../intro/egg-and-koa.md#async-function)中介绍了 [async function] 是 js 语言层面提供的异步解决方案，而 Node.js 从 7.6.0 开始将会升级 v8 到 5.5，届时 async function 将不再需要开启 flag 即可使用。框架也默认支持了 async function，在所有支持 generator function 的地方都可以使用 async function 替代。
 
-**注意：在基于 async function 编写应用代码时，请确保你的代码运行在 node 7.6+ 的版本上。**
+**注意：在基于 async function 编写应用代码时，请确保你的代码运行在 Node.js 7.6+ 的版本上。**
 
 ## controller & service
 
@@ -66,7 +66,7 @@ module.exports = {
 
 ## 中间件
 
-框架中所有的中间件，包括[标准定义方式](../basics/middleware.md)以及在[路由中定义的中间件](../basics/router.md#中间件的使用)都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 koa v2.x 一样：
+框架中所有的中间件，包括[标准定义方式](../basics/middleware.md)以及在[路由中定义的中间件](../basics/router.md#中间件的使用)都可以通过 async function 来编写。但是和 generator function 格式的中间件稍有不同的是，中间件的参数列表变化了，和 Koa v2.x 一样：
 
 - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](../basics/extend.md#Context) 的实例。
 - 第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。

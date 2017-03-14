@@ -1,9 +1,9 @@
 title: 实现 RESTful API
 ---
 
-通过 web 技术开发服务给客户端提供接口，可能是各个 web 框架最广泛的应用之一。这篇文章我们拿 [cnode](https://cnodejs.org/) 社区的接口来看一看通过 egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API 给客户端调用。
+通过 Web 技术开发服务给客户端提供接口，可能是各个 Web 框架最广泛的应用之一。这篇文章我们拿 [CNode 社区](https://cnodejs.org/) 的接口来看一看通过 Egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API 给客户端调用。
 
-cnode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这篇文章中，我们将基于 cnode V1 的接口，封装一个更符合 RESTful 语义的 V2 版本 API。
+CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这篇文章中，我们将基于 CNode V1 的接口，封装一个更符合 RESTful 语义的 V2 版本 API。
 
 ## 设计响应格式
 
@@ -182,7 +182,7 @@ module.exports = app => {
     }
 
     * create(params) {
-      // 调用 cnode V1 版本 API
+      // 调用 CNode V1 版本 API
       const result = yield this.ctx.curl(`${this.root}/topics`, {
         method: 'post',
         data: params,
@@ -220,8 +220,8 @@ module.exports = app => {
 正常的业务逻辑已经正常完成了，但是异常我们还没有进行处理。在前面编写的代码中，controller 和 service 都有可能抛出异常，这也是我们推荐的编码方式，当发现客户端参数传递错误或者调用后端服务异常时，通过抛出异常的方式来进行中断。
 
 - controller 中 `this.validate()` 进行参数校验，失败抛出异常。
-- service 中调用 `this.ctx.curl()` 方法访问 cnode 服务，可能由于网络问题等原因抛出服务端异常。
-- service 中拿到 cnode 服务端返回的结果后，可能会收到请求调用失败的返回结果，此时也会抛出异常。
+- service 中调用 `this.ctx.curl()` 方法访问 CNode 服务，可能由于网络问题等原因抛出服务端异常。
+- service 中拿到 CNode 服务端返回的结果后，可能会收到请求调用失败的返回结果，此时也会抛出异常。
 
 框架虽然提供了默认的异常处理，但是可能和我们在前面的接口约定不一致，因此我们需要自己实现一个统一错误处理的中间件来对错误进行处理。
 
@@ -325,11 +325,11 @@ describe('test/app/controller/topic.test.js', () => {
 });
 ```
 
-上面对 controller 的测试中，我们通过 [egg-mock](https://github.com/eggjs/egg-mock) 创建了一个应用，并通过 [supertest](https://github.com/visionmedia/supertest) 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。
+上面对 controller 的测试中，我们通过 [egg-mock](https://github.com/eggjs/egg-mock) 创建了一个应用，并通过 [SuperTest](https://github.com/visionmedia/supertest) 来模拟客户端发送请求进行测试。在测试中我们会模拟 service 层的响应来测试 controller 层的处理逻辑。
 
 ### service 测试
 
-service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 service 的方法，不再需要用 supertest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。
+service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](https://github.com/eggjs/egg-mock) 同样提供了快速测试 service 的方法，不再需要用 SuperTest 模拟从客户端发起请求，而是直接调用 service 中的方法进行测试。
 
 ```js
 const assert = require('assert');
@@ -361,7 +361,7 @@ describe('test/app/service/topic.test.js', () => {
     });
 
     it('should create success', function* () {
-      // 不影响 cnode 的正常运行，我们可以将对 cnode 的调用按照接口约定模拟掉
+      // 不影响 CNode 的正常运行，我们可以将对 CNode 的调用按照接口约定模拟掉
       // app.mockHttpclient 方法可以便捷的对应用发起的 http 请求进行模拟
       app.mockHttpclient(`${ctx.service.topic.root}/topics`, 'POST', {
         data: {
@@ -380,7 +380,7 @@ describe('test/app/service/topic.test.js', () => {
 });
 ```
 
-上面对 service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 http 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。
+上面对 service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 context 对象，并直接调用 context 上的 service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 HTTP 调用的响应，让我们剥离环境的影响而专注于 service 自身逻辑的测试上。
 
 ------
 

@@ -1,21 +1,21 @@
 title: 安全
 ---
 
-##  web 安全概念
+##  Web 安全概念
 
-web 应用中存在很多安全风险，这些风险会被黑客利用，轻则篡改网页内容，重则窃取网站内部数据，更为严重的则是在网页中植入恶意代码，使得用户受到侵害。常见的安全漏洞如下：
+Web 应用中存在很多安全风险，这些风险会被黑客利用，轻则篡改网页内容，重则窃取网站内部数据，更为严重的则是在网页中植入恶意代码，使得用户受到侵害。常见的安全漏洞如下：
 
-- XSS 攻击：对 web 页面注入脚本，使用 JavaScript 窃取用户信息，诱导用户操作。
+- XSS 攻击：对 Web 页面注入脚本，使用 JavaScript 窃取用户信息，诱导用户操作。
 - CSRF 攻击：伪造用户请求向网站发起恶意请求。
 - 钓鱼攻击：利用网站的跳转链接或者图片制造钓鱼陷阱。
 - HTTP参数污染：利用对参数格式验证的不完善，对服务器进行参数注入攻击。
 - 远程代码执行：用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令。
 
 
-而框架本身针对 web 端常见的安全风险内置了丰富的解决方案：
+而框架本身针对 Web 端常见的安全风险内置了丰富的解决方案：
 
-- 利用 [extend](https://github.com/eggjs/egg/blob/master/docs/source/zh-cn/basics/extend.md) 机制扩展了 helper API, 提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。
-- 常见 web 安全头的支持。
+- 利用 [extend](https://github.com/eggjs/egg/blob/master/docs/source/zh-cn/basics/extend.md) 机制扩展了 Helper API, 提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。
+- 常见 Web 安全头的支持。
 - CSRF 的防御方案。
 - 灵活的安全配置，可以匹配不同的请求 url 。
 - 可定制的白名单，用于安全跳转和 url 过滤。
@@ -69,7 +69,7 @@ exports.security = {
 
 **注意：不能同时存在 match 和 ignore ，否则会报错。**
 
-下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 web 安全防范。
+下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 Web 安全防范。
 
 ## 安全威胁` XSS `的防范
 
@@ -88,7 +88,7 @@ XSS 攻击一般分为两类：
 
 #### 防范方式
 
-框架提供了`helper.escape()`方法对字符串进行 XSS 过滤。
+框架提供了 `helper.escape()` 方法对字符串进行 XSS 过滤。
 
 ```js
 const str = '><script>alert("abc") </script><';
@@ -98,9 +98,9 @@ console.log(ctx.helper.escape(str));
 
 当网站需要直接输出用户输入的结果时，请务必使用 `helper.escape()` 包裹起来，如在 [egg-view-nunjucks] 里面就覆盖掉了内置的 `escape`。
 
-另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用`helper.sjs()`来进行过滤。
+另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用 `helper.sjs()` 来进行过滤。
 
-`helper.sjs()`用于在 JavaScript（包括 onload 等 event）中输出变量，会对变量中字符进行 JavaScript ENCODE，
+`helper.sjs()` 用于在 JavaScript（包括 onload 等 event）中输出变量，会对变量中字符进行 JavaScript ENCODE，
 将所有非白名单字符转义为 `\x` 形式，防止 XSS 攻击，也确保在 js 中输出的正确性。使用实例：
 
 ```js
@@ -115,7 +115,7 @@ console.log(`var foo = "${this.helper.sjs(foo)}";`);
 // => var foo = "\\x22hello\\x22";
 ```
 
-还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 `helper.sjson()` 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为`\x`形式，防止 XSS 攻击。同时保持 json 结构不变。
+还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 `helper.sjson()` 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为 `\x` 形式，防止 XSS 攻击。同时保持 json 结构不变。
 若存在模板中输出一个 JSON 字符串给 JavaScript 使用的场景，请使用 `${this.helper.sjson(变量名)}` 进行转义。
 
 **处理过程较复杂，性能损耗较大，请仅在必要时使用。**
@@ -134,10 +134,10 @@ console.log(`var foo = "${this.helper.sjs(foo)}";`);
 
 #### 防范方式
 
-框架提供了`helper.shtml()`方法对字符串进行 XSS 过滤。
+框架提供了 `helper.shtml()` 方法对字符串进行 XSS 过滤。
 
-注意，将富文本（包含 html 代码的文本）当成变量直接在模版里面输出时，需要用到 shtml 来处理。
-使用 shtml 可以输出 html 的 tag，同时执行 XSS 的过滤动作，过滤掉非法的脚本。
+注意，将富文本（包含 HTML 代码的文本）当成变量直接在模版里面输出时，需要用到 shtml 来处理。
+使用 shtml 可以输出 HTML 的 tag，同时执行 XSS 的过滤动作，过滤掉非法的脚本。
 
 **由于是一个非常复杂的安全处理过程，对服务器处理性能一定影响，如果不是输出 HTML，请勿使用。**
 
@@ -173,9 +173,9 @@ options:
 - `config.helper.shtml.domainWhiteList: []` 可拓展 href 和 src 中允许的域名白名单。
 
 注意，shtml 使用了严格的白名单机制，除了过滤掉 XSS 风险的字符串外，
-在 [默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js) 外的 tag 和 attr 都会被过滤掉。
+在[默认规则](https://github.com/leizongmin/js-xss/blob/master/lib/default.js)外的 tag 和 attr 都会被过滤掉。
 
-例如 html 标签就不在白名单中，
+例如 HTML 标签就不在白名单中，
 
 ```js
 const html = '<html></html>';
@@ -189,19 +189,19 @@ ${helper.shtml($html)}
 常见的 `data-xx` 属性由于不在白名单中，所以都会被过滤。
 
 所以，一定要注意 shtml 的适用场景，一般是针对来自用户的富文本输入，切忌滥用，功能既受到限制，又会影响服务端性能。
-此类场景一般是论坛、评论系统等，即便是论坛等如果不支持 html 内容输入，也不要使用此 helper，直接使用 escape 即可。
+此类场景一般是论坛、评论系统等，即便是论坛等如果不支持 HTML 内容输入，也不要使用此 Helper，直接使用 `escape` 即可。
 
-### jsonp XSS
+### JSONP XSS
 
-jsonp 的 callback 参数非常危险，他有两种风险可能导致 XSS
+JSONP 的 callback 参数非常危险，他有两种风险可能导致 XSS
 
 1、callback 参数意外截断js代码，特殊字符单引号双引号，换行符均存在风险。
 
-2、callback 参数恶意添加标签（如 script ），造成 XSS 漏洞。
+2、callback 参数恶意添加标签（如 `<script>` ），造成 XSS 漏洞。
 
-参考 [jsonp安全攻防](http://blog.knownsec.com/2015/03/jsonp_security_technic/)
+参考 [JSONP 安全攻防](http://blog.knownsec.com/2015/03/jsonp_security_technic/)
 
-框架内部使用 [jsonp-body](https://github.com/node-modules/jsonp-body) 来对 jsonp 请求进行安全防范。
+框架内部使用 [jsonp-body](https://github.com/node-modules/jsonp-body) 来对 JSONP 请求进行安全防范。
 
 防御内容：
 
@@ -215,7 +215,7 @@ jsonp 的 callback 参数非常危险，他有两种风险可能导致 XSS
 
 ### 其他 XSS 的防范方式
 
-浏览器自身具有一定针对各种攻击的防范能力，他们一般是通过开启 web 安全头生效的。框架内置了一些常见的 web 安全头的支持。
+浏览器自身具有一定针对各种攻击的防范能力，他们一般是通过开启 Web 安全头生效的。框架内置了一些常见的 Web 安全头的支持。
 
 #### CSP
 
@@ -225,11 +225,11 @@ W3C 的 Content Security Policy，简称 CSP，主要是用来定义页面可以
 
 #### X-Download-Options:noopen
 
-默认开启，禁用IE下下载框Open按钮，防止 ie 下下载文件默认被打开 XSS。
+默认开启，禁用 IE 下下载框Open按钮，防止 IE 下下载文件默认被打开 XSS。
 
 #### X-Content-Type-Options:nosniff
 
-禁用IE8自动嗅探mime功能例如 text/plain 却当成 text/html 渲染，特别当本站点 serve 的内容未必可信的时候。
+禁用 IE8 自动嗅探 mime 功能例如 `text/plain` 却当成 `text/html` 渲染，特别当本站点 serve 的内容未必可信的时候。
 
 #### X-XSS-Protection
 
@@ -237,7 +237,7 @@ IE 提供的一些 XSS 检测与防范，默认开启
 
 - close 默认值false，即设置为 `1; mode=block`
 
-## 安全威胁` CSRF `的防范
+## 安全威胁 CSRF  的防范
 
 [CSRF](https://www.owasp.org/index.php/CSRF)（Cross-site request forgery跨站请求伪造，也被称为 `One Click Attack` 或者 `Session Riding`，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
 CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全。因此框架内置了 CSRF 防范方案。
@@ -247,7 +247,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 通常来说，对于 CSRF 攻击有一些通用的[防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
 
 - Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。
-- Double Cookie Defense：将 token 设置在 cookie 中，在提交 post 请求的时候提交 cookie，并通过 header 或者 body 带上 cookie 中的 token，服务端进行对比校验。
+- Double Cookie Defense：将 token 设置在 Cookie 中，在提交 post 请求的时候提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。
 - Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都[放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
 
 框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。
@@ -291,11 +291,11 @@ module.exports = {
 };
 ```
 
-为了防范[BREACH 攻击](http://breachattack.com/)，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化，[egg-view-nunjucks] 等 view 插件会自动对 form 进行注入，对应用开发者无感知。
+为了防范 [BREACH 攻击](http://breachattack.com/)，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化，[egg-view-nunjucks] 等 View 插件会自动对 Form 进行注入，对应用开发者无感知。
 
 ##### AJAX 请求
 
-在 CSRF 默认配置下，token 会被设置在 cookie 中，在 AJAX 请求的时候，可以从 cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。
+在 CSRF 默认配置下，token 会被设置在 Cookie 中，在 AJAX 请求的时候，可以从 Cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。
 
 In jQuery:
 
@@ -328,18 +328,18 @@ module.exports = {
 };
 ```
 
-#### session 存储 VS cookie 存储
+#### Session vs Cookie 存储
 
-默认配置下，框架会将 CSRF token 存在 cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 session 中。
+默认配置下，框架会将 CSRF token 存在 Cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 Cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 Cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 Session 中。
 
 ```js
 // config/config.default.js
 module.exports = {
   security: {
     csrf: {
-      useSession: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中
-      cookieName: 'csrfToken', // cookie 中的字段名，默认为 csrfToken
-      sessionName: 'csrfToken', // session 中的字段名，默认为 csrfToken
+      useSession: true, // 默认为 false，当设置为 true 时，将会把 csrf token 保存到 Session 中
+      cookieName: 'csrfToken', // Cookie 中的字段名，默认为 csrfToken
+      sessionName: 'csrfToken', // Session 中的字段名，默认为 csrfToken
     },
   },
 };
@@ -362,7 +362,7 @@ module.exports = {
 
 #### 刷新 CSRF token
 
- 当 CSRF token 存储在 cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都**必须刷新 CSRF token**。
+ 当 CSRF token 存储在 Cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都**必须刷新 CSRF token**。
 
  ```js
  // login controller
@@ -379,11 +379,11 @@ module.exports = {
  }
  ```
 
-## 安全威胁` XST `的防范
+## 安全威胁 XST 的防范
 
-[XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。
+[XST](https://www.owasp.org/index.php/XST) 的全称是 `Cross-Site Tracing`，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 Cookie。
 
-下面我们基于 koa 来实现一个简单的支持 TRACE 方法的服务器：
+下面我们基于 Koa 来实现一个简单的支持 TRACE 方法的服务器：
 
 ```javascript
   var koa = require('koa');
@@ -418,9 +418,9 @@ Connection: keep-alive
 OK
 ```
 
-服务器设置了一个 httpOnly 的 cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。
+服务器设置了一个 httpOnly 的 Cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。
 
-接着我们发 TRACE 请求到服务器`curl -X TRACE -b a=1 -i http://127.0.0.1:7001`，并带上 cookie，得到如下响应：
+接着我们发 TRACE 请求到服务器`curl -X TRACE -b a=1 -i http://127.0.0.1:7001`，并带上 Cookie，得到如下响应：
 
 ```
   HTTP/1.1 200 OK
@@ -449,7 +449,7 @@ http://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misundersto
 
 框架已经禁止了 trace，track，options 三种危险类型请求。
 
-## 安全威胁`钓鱼攻击`的防范
+## 安全威胁 `钓鱼攻击` 的防范
 
 钓鱼有多种方式，这里介绍 url 钓鱼、图片钓鱼和 iframe 钓鱼。
 
@@ -551,7 +551,7 @@ output:
 
 当需要嵌入一些可信的第三方网页时，可以关闭这个配置。
 
-## 安全威胁` HPP `的防范
+## 安全威胁 HPP 的防范
 
 Http Parameter Pollution（HPP)，即 HTTP 参数污染攻击。在HTTP协议中是允许同样名称的参数出现多次，而由于应用的实现不规范，攻击者通过传播参数的时候传输 key 相同而 value 不同的参数，从而达到绕过某些防护的后果。
 
@@ -573,7 +573,7 @@ HPP 可能导致的安全威胁有：
 
 ## [中间人攻击](https://www.owasp.org/index.php/Man-in-the-middle_attack)与 HTTP / HTTPS
 
-HTTP 是网络应用广泛使用的协议，负责 web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。
+HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。
 
 在没有 HTTPS 时，运营商可在用户发起请求时直接跳转到某个广告，或者直接改变搜索结果插入自家的广告。如果劫持代码出现了 BUG ，则直接让用户无法使用，出现白屏。
 
@@ -581,13 +581,13 @@ HTTP 是网络应用广泛使用的协议，负责 web 内容的请求和获取�
 
 尽管 HTTPS 并非绝对安全，掌握根证书的机构、掌握加密算法的组织同样可以进行中间人形式的攻击。不过HTTPS是现行架构下最安全的解决方案，并且它大幅增加了中间人攻击的成本。
 
-因此，请各位使用 egg 框架开发网站的开发者，务必推动自己的网站升级到 HTTPS。
+因此，请各位使用 Egg 框架开发网站的开发者，务必推动自己的网站升级到 HTTPS。
 
 对于 HTTPS 来讲，还有一点要注意的是 HTTP 严格传输安全（HSTS），如果不使用 HSTS，当用户在浏览器中输入网址时没有加 HTTPS，浏览器会默认使用 HTTP 访问
 
 框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
 
-如果我们的web站点是 http 站点，需要关闭这个头。配置如下：
+如果我们的Webb 站点是 http 站点，需要关闭这个头。配置如下：
 
 - maxAge 默认一年 `365 * 24 * 3600`。
 - includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。

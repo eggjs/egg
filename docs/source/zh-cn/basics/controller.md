@@ -1,30 +1,30 @@
 title: controller
 ---
 
-## 什么是 controller
+## 什么是 Controller
 
-[前面章节](./router.md)写到，我们通过 router 将用户的请求基于 method 和 URL 分发到了对应的 controller 上，那 controller 负责做什么？
+[前面章节](./router.md)写到，我们通过 Router 将用户的请求基于 method 和 URL 分发到了对应的 Controller 上，那 Controller 负责做什么？
 
-简单的说 controller 负责**解析用户的输入，处理后返回相应的结果**，例如
+简单的说 Controller 负责**解析用户的输入，处理后返回相应的结果**，例如
 
-- 在 [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) 接口中，controller 接受用户的参数，从数据库中查找内容返回给用户或者将用户的请求更新到数据库中。
-- 在 html 页面请求中，controller 根据用户访问不同的 URL，渲染不同的模板得到 html 返回给用户。
-- 在代理服务器中，controller 将用户的请求转发到其他服务器上，并将其他服务器的处理结果返回给用户。
+- 在 [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) 接口中，Controller 接受用户的参数，从数据库中查找内容返回给用户或者将用户的请求更新到数据库中。
+- 在 HTML 页面请求中，Controller 根据用户访问不同的 URL，渲染不同的模板得到 HTML 返回给用户。
+- 在代理服务器中，Controller 将用户的请求转发到其他服务器上，并将其他服务器的处理结果返回给用户。
 
-框架推荐 controller 层主要对用户的请求参数进行处理（校验、转换），然后调用对应的 [service](./service.md) 方法处理业务，得到业务结果后封装并返回：
+框架推荐 Controller 层主要对用户的请求参数进行处理（校验、转换），然后调用对应的 [service](./service.md) 方法处理业务，得到业务结果后封装并返回：
 
 1. 获取用户通过 HTTP 传递过来的请求参数。
 1. 校验、组装参数。
-1. 调用 service 进行业务处理，必要时处理转换 service 的返回结果，让它适应用户的需求。
+1. 调用 Service 进行业务处理，必要时处理转换 Service 的返回结果，让它适应用户的需求。
 1. 通过 HTTP 将结果响应给用户。
 
-## 如何编写 controller
+## 如何编写 Controller
 
-所有的 controller 文件都必须放在 `app/controller` 目录下。controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
+所有的 Controller 文件都必须放在 `app/controller` 目录下。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
 
-### controller 类（推荐）
+### Controller 类（推荐）
 
-我们可以通过定义 controller 类的方式来编写代码：
+我们可以通过定义 Controller 类的方式来编写代码：
 
 ```js
 // app/controller/post.js
@@ -41,7 +41,7 @@ module.exports = app => {
       // 组装参数
       const author = ctx.session.userId;
       const req = Object.assign(ctx.request.body, { author });
-      // 调用 service 进行业务处理
+      // 调用 Service 进行业务处理
       const res = yield service.post.create(req);
       // 设置响应内容和响应状态码
       ctx.body = { id: res.id };
@@ -53,7 +53,7 @@ module.exports = app => {
 }
 ```
 
-我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 controller 在 router 中引用到。
+我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 Controller 在 Router 中引用到。
 
 ```js
 // app/router.js
@@ -62,18 +62,18 @@ module.exports = {
 }
 ```
 
-定义的 controller 类，会在每一个请求访问到 server 时实例化一个全新的对象，而项目中的 controller 类继承于 `app.Controller`，会有下面几个属性挂在 `this` 上。
+定义的 Controller 类，会在每一个请求访问到 server 时实例化一个全新的对象，而项目中的 Controller 类继承于 `app.Controller`，会有下面几个属性挂在 `this` 上。
 
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
-- `this.service`：应用定义的 [service](./service.md)，通过它我们可以访问到抽象出的业务层。
+- `this.service`：应用定义的 [Service](./service.md)，通过它我们可以访问到抽象出的业务层。
 - `this.config`：应用运行时的[配置项](./config.md)。
 
 #### 自定义 Controller 基类
 
-按照类的方式编写 controller，不仅可以让我们更好的对 controller 层代码进行抽象（例如将一些统一的处理抽象成一些私有方法），还可以通过自定义 controller 基类的方式封装应用中常用的方法。
+按照类的方式编写 Controller，不仅可以让我们更好的对 Controller 层代码进行抽象（例如将一些统一的处理抽象成一些私有方法），还可以通过自定义 Controller 基类的方式封装应用中常用的方法。
 
-在[启动自定义](./app-start.md)中，应用可自己定义 controller 基类，这样在 `app/controller` 中编写 controller 时就可以使用到定义在基类上的这些方法了。
+在[启动自定义](./app-start.md)中，应用可自己定义 Controller 基类，这样在 `app/controller` 中编写 Controller 时就可以使用到定义在基类上的这些方法了。
 
 ```js
 // app.js
@@ -99,7 +99,7 @@ module.exports = app => {
 }
 ```
 
-此时在编写应用的 controller 时，可以直接使用基类上的方法：
+此时在编写应用的 Controller 时，可以直接使用基类上的方法：
 
 ```js
 //app/controller/post.js
@@ -113,11 +113,11 @@ module.exports = app => {
 };
 ```
 
-### controller 方法
+### Controller 方法
 
-每一个 controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
+每一个 Controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
-例如我们写一个对应到 `POST /api/posts` 接口的 controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
+例如我们写一个对应到 `POST /api/posts` 接口的 Controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
 ```js
 // app/controller/post.js
@@ -143,9 +143,9 @@ exports.create = function* (ctx) {
 
 ## HTTP 基础
 
-由于 controller 基本上是业务开发中唯一和 HTTP 协议打交道的地方，在继续往下了解之前，我们首先简单的看一下 HTTP 协议是怎样的。
+由于 Controller 基本上是业务开发中唯一和 HTTP 协议打交道的地方，在继续往下了解之前，我们首先简单的看一下 HTTP 协议是怎样的。
 
-如果我们发起一个 HTTP 请求来访问前面例子中提到的 controller：
+如果我们发起一个 HTTP 请求来访问前面例子中提到的 Controller：
 
 ```
 curl -X POST http://localhost:3000/api/posts --data '{"title":"controller", "content": "what is controller"}' --header 'Content-Type:application/json; charset=UTF-8'
@@ -166,9 +166,9 @@ Content-Type: application/json; charset=UTF-8
 - method：这个请求中 method 的值是 `POST`。
 - path：值为 `/api/posts`，如果用户的请求中包含 query，也会在这里出现
 
-从第二行开始直到遇到的第一个空行位置，都是请求的 headers 部分，这一部分中有许多常用的属性，包括这里看到的 Host，Content-Type，还有 `Cookie`，`User-Agent` 等等。在这个请求中有两个头：
+从第二行开始直到遇到的第一个空行位置，都是请求的 Headers 部分，这一部分中有许多常用的属性，包括这里看到的 Host，Content-Type，还有 `Cookie`，`User-Agent` 等等。在这个请求中有两个头：
 
-- `Host`：我们在浏览器发起请求的时候，域名会用来通过 DNS 解析找到服务的 ip 地址，但是浏览器也会将域名和端口号放在 Host 头中一并发送给服务端。
+- `Host`：我们在浏览器发起请求的时候，域名会用来通过 DNS 解析找到服务的 IP 地址，但是浏览器也会将域名和端口号放在 Host 头中一并发送给服务端。
 - `Content-Type`：当我们的请求有 body 的时候，都会有 Content-Type 来标明我们的请求体是什么格式的。
 
 之后的内容全部都是请求的 body，当请求是 POST, PUT, DELETE 等方法的时候，可以带上请求体，服务端会根据 Content-Type 来解析请求体。
@@ -187,17 +187,17 @@ Connection: keep-alive
 
 第一行中也包含了三段，其中我们常用的主要是[响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
 
-和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 json，长度为 8 个字符。
+和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字符。
 
 最后剩下的部分就是这次响应真正的内容。
 
 ## 获取 HTTP 请求参数
 
-从上面的 HTTP 请求示例中可以看到，有好多地方可以放用户的请求数据，框架通过在 controller 上绑定的 context 实例，提供了许多便捷方法和属性获取用户通过 HTTP 请求发送过来的参数。
+从上面的 HTTP 请求示例中可以看到，有好多地方可以放用户的请求数据，框架通过在 Controller 上绑定的 Context 实例，提供了许多便捷方法和属性获取用户通过 HTTP 请求发送过来的参数。
 
 ### query
 
-在 URL 中 `?` 后面的部分是一个 query string，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
+在 URL 中 `?` 后面的部分是一个 Query String，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
 
 ```js
 exports.listPosts = function* (ctx) {
@@ -209,9 +209,9 @@ exports.listPosts = function* (ctx) {
 };
 ```
 
-当 query string 中的 key 重复时，`context.query` 只取 key 第一次出现时的值，后面再出现的都会被忽略。`GET /posts?category=egg&category=koa` 通过 `context.query` 拿到的值是 `{ category: 'egg' }`。
+当 Query String 中的 key 重复时，`context.query` 只取 key 第一次出现时的值，后面再出现的都会被忽略。`GET /posts?category=egg&category=koa` 通过 `context.query` 拿到的值是 `{ category: 'egg' }`。
 
-这样处理的原因是为了保持统一性，由于通常情况下我们都不会设计让用户传递 key 相同的 query string，所以我们经常会写类似下面的代码：
+这样处理的原因是为了保持统一性，由于通常情况下我们都不会设计让用户传递 key 相同的 Query String，所以我们经常会写类似下面的代码：
 
 ```js
 const key = ctx.query.key || '';
@@ -220,11 +220,11 @@ if (key.startsWith('egg')) {
 }
 ```
 
-而如果有人故意发起请求在 query string 中带上重复的 key 来请求时就会引发系统异常。因此框架保证了从 `context.query` 上获取的参数一旦存在，一定是字符串类型。
+而如果有人故意发起请求在 Query String 中带上重复的 key 来请求时就会引发系统异常。因此框架保证了从 `context.query` 上获取的参数一旦存在，一定是字符串类型。
 
 #### queries
 
-有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。针对此类情况，框架提供了 `context.queries` 对象，这个对象也解析了 query string，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
+有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。针对此类情况，框架提供了 `context.queries` 对象，这个对象也解析了 Query String，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
 
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
@@ -240,9 +240,9 @@ exports.listPosts = function* (ctx) {
 
 `context.queries` 上所有的 key 如果有值，也一定会是数组类型。
 
-### router params
+### Router params
 
-在 [router](./router.md) 中，我们介绍了 router 上也可以申明参数，这些参数都可以通过 `context.params` 获取到。
+在 [Router](./router.md) 中，我们介绍了 Router 上也可以申明参数，这些参数都可以通过 `context.params` 获取到。
 
 ```js
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
@@ -261,7 +261,7 @@ exports.listApp = function* (ctx) {
 - [浏览器中会对 URL 的长度有所限制](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)，如果需要传递的参数过多就会无法传递。
 - 服务端经常会将访问的完整 URL 记录到日志文件中，有一些敏感数据通过 URL 传递会不安全。
 
-在前面的 HTTP 请求报文示例中，我们看到在 header 之后还有一个 body 部分，我们通常会在这个部分传递 POST、PUT 和 DELETE 等方法的参数。一般请求中有 body 的时候，客户端（浏览器）会同时发送 `Content-Type` 告诉服务端这次请求的 body 是什么格式的。web 开发中数据传递最常用的两类格式分别是 json 和 form。
+在前面的 HTTP 请求报文示例中，我们看到在 header 之后还有一个 body 部分，我们通常会在这个部分传递 POST、PUT 和 DELETE 等方法的参数。一般请求中有 body 的时候，客户端（浏览器）会同时发送 `Content-Type` 告诉服务端这次请求的 body 是什么格式的。Web 开发中数据传递最常用的两类格式分别是 JSON 和 Form。
 
 框架内置了 [bodyParser](https://github.com/koajs/bodyparser) 中间件来对这两类格式的请求 body 解析成 object 挂载到 `context.request.body` 上。HTTP 协议中并不建议在通过 GET、HEAD 方法访问时传递 body，所以我们无法在 GET、HEAD 方法中按照此方法获取到内容。
 
@@ -296,13 +296,13 @@ module.exports = {
 
 如果用户的请求 body 超过了我们配置的解析最大长度，会抛出一个状态码为 `413` 的异常，如果用户请求的 body 解析失败（错误的 JSON），会抛出一个状态码为 `400` 的异常。
 
-**注意：在调整 bodyParser 支持的 body 长度时，如果我们应用前面还有一层反向代理（nginx），可能也需要调整它的配置，确保反向代理也支持同样长度的请求 body。**
+**注意：在调整 bodyParser 支持的 body 长度时，如果我们应用前面还有一层反向代理（Nginx），可能也需要调整它的配置，确保反向代理也支持同样长度的请求 body。**
 
 ### 获取上传的文件
 
-请求 body 除了可以带参数之外，还可以发送文件，一般来说，浏览器上都是通过 `Multipart/form-data` 格式发送文件的，框架通过内置 [multipart](https://github.com/eggjs/egg-multipart) 插件来支持获取用户上传的文件。
+请求 body 除了可以带参数之外，还可以发送文件，一般来说，浏览器上都是通过 `Multipart/form-data` 格式发送文件的，框架通过内置 [Multipart](https://github.com/eggjs/egg-multipart) 插件来支持获取用户上传的文件。
 
-在 controller 中，我们可以通过 `context.getFileStream*()` 接口能获取到上传的文件流。
+在 Controller 中，我们可以通过 `context.getFileStream*()` 接口能获取到上传的文件流。
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
@@ -446,7 +446,7 @@ module.exports = {
 
 由于 header 比较特殊，有一些是 `HTTP` 协议规定了具体含义的（例如 `Content-Type`，`Accept`），有些是反向代理设置的，已经约定俗成（X-Forwarded-For），框架也会对他们增加一些便捷的 getter，详细的 getter 可以查看 [API](https://eggjs.org/api/) 文档。
 
-特别是如果我们通过 `config.proxy = true` 设置了应用部署在反向代理（nginx）之后，有一些 getter 的内部处理会发生改变。
+特别是如果我们通过 `config.proxy = true` 设置了应用部署在反向代理（Nginx）之后，有一些 Getter 的内部处理会发生改变。
 
 #### `context.host`
 
@@ -456,29 +456,29 @@ module.exports = {
 
 #### `context.protocol`
 
-通过这个 getter 获取 protocol 时，首先会判断当前连接是否是加密连接，如果是加密连接，返回 https。
+通过这个 Getter 获取 protocol 时，首先会判断当前连接是否是加密连接，如果是加密连接，返回 https。
 
-如果处于非加密连接时，优先读通过 `config.protocolHeaders` 中配置的 header 的值来判断是 http 还是 https，如果读取不到，我们可以在配置中通过 `config.protocol` 来设置兜底值，默认为 http。
+如果处于非加密连接时，优先读通过 `config.protocolHeaders` 中配置的 header 的值来判断是 HTTP 还是 https，如果读取不到，我们可以在配置中通过 `config.protocol` 来设置兜底值，默认为 HTTP。
 
 `config.protocolHeaders` 默认配置为 `x-forwarded-proto`。
 
 #### `context.ips`
 
-通过 `context.ips` 获取请求经过所有的中间设备 ip 地址列表，只有在 `config.proxy = true` 时，才会通过读取 `config.ipHeaders` 中配置的 header 的值来获取，获取不到时为空数组。
+通过 `context.ips` 获取请求经过所有的中间设备 IP 地址列表，只有在 `config.proxy = true` 时，才会通过读取 `config.ipHeaders` 中配置的 header 的值来获取，获取不到时为空数组。
 
 `config.ipHeaders` 默认配置为 `x-forwarded-for`。
 
 #### `context.ip`
 
-通过 `context.ip` 获取请求发起方的 ip 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 ip 地址。
+通过 `context.ip` 获取请求发起方的 IP 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 IP 地址。
 
-**注意：ip 和 ips 不同，ip 当 `config.proxy = false` 时会返回当前连接发起者的 ip 地址，ips 此时会为空数组。**
+**注意：`ip` 和 `ips` 不同，`ip` 当 `config.proxy = false` 时会返回当前连接发起者的 `ip` 地址，`ips` 此时会为空数组。**
 
-### cookie
+### Cookie
 
-HTTP 请求都是无状态的，但是我们的 web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 cookie 指定规则的网站时带上对应的 cookie 来保证安全性）。
+HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[Cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 Cookie 指定规则的网站时带上对应的 Cookie 来保证安全性）。
 
-通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 cookie。
+通过 `context.cookies`，我们可以在 Controller 中便捷、安全的设置和读取 Cookie。
 
 ```js
 exports.add = function* (ctx) {
@@ -494,22 +494,22 @@ exports.remove = function* (ctx) {
 };
 ```
 
-cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的格式可以设置多个键值对。
+Cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的格式可以设置多个键值对。
 
-cookie 在 web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视， [cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 cookie 的用法和安全相关的配置项，可以深入阅读了解。
+Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视， [Cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 Cookie 的用法和安全相关的配置项，可以深入阅读了解。
 
-### session
+### Session
 
-通过 cookie，我们可以给每一个用户设置一个 session，用来存储用户身份相关的信息，这份信息会加密后存储在 cookie 中，实现跨请求的用户身份保持。
+通过 Cookie，我们可以给每一个用户设置一个 Session，用来存储用户身份相关的信息，这份信息会加密后存储在 Cookie 中，实现跨请求的用户身份保持。
 
-框架内置了 [session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 session 。
+框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 Session 。
 
 ```js
 exports.fetchPosts = function* (ctx) {
-  // 获取 session 上的内容
+  // 获取 Session 上的内容
   const userId = ctx.session.userId;
   const posts = yield ctx.service.post.fetch(userId);
-  // 修改 session 的值
+  // 修改 Session 的值
   ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
   ctx.body = {
     success: true,
@@ -518,7 +518,7 @@ exports.fetchPosts = function* (ctx) {
 };
 ```
 
-session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：
+Session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 `null`：
 
 ```js
 exports.deleteSession = function* (ctx) {
@@ -526,16 +526,16 @@ exports.deleteSession = function* (ctx) {
 };
 ```
 
-和 cookie 一样，session 也有许多安全等选项和功能，在使用之前也最好阅读 [session](../core/cookie-and-session.md#session) 文档深入了解。
+和 Cookie 一样，Session 也有许多安全等选项和功能，在使用之前也最好阅读 [Session](../core/cookie-and-session.md#session) 文档深入了解。
 
 #### 配置
 
-对于 session 来说，主要有下面几个属性可以在 `config.default.js` 中进行配置:
+对于 Session 来说，主要有下面几个属性可以在 `config.default.js` 中进行配置:
 
 ```js
 module.exports = {
-  key: 'EGG_SESS', // 承载 session 的 cookie 键值对名字
-  maxAge: 86400000, // session 的最大有效时间
+  key: 'EGG_SESS', // 承载 Session 的 Cookie 键值对名字
+  maxAge: 86400000, // Session 的最大有效时间
 };
 ```
 
@@ -543,7 +543,7 @@ module.exports = {
 
 在获取到用户请求的参数后，不可避免的要对参数进行一些校验。
 
-借助 [validate](https://github.com/eggjs/egg-validate) 插件提供便捷的参数校验机制，帮助我们完成各种复杂的参数校验。
+借助 [Validate](https://github.com/eggjs/egg-validate) 插件提供便捷的参数校验机制，帮助我们完成各种复杂的参数校验。
 
 ```js
 // config/plugin.js
@@ -583,7 +583,7 @@ exports.create = function* (ctx) {
 
 ### 校验规则
 
-参数校验通过 [parameter](https://github.com/node-modules/parameter#rule) 完成，支持的校验规则可以在该模块的文档中查阅到。
+参数校验通过 [Parameter](https://github.com/node-modules/parameter#rule) 完成，支持的校验规则可以在该模块的文档中查阅到。
 
 #### 自定义校验规则
 
@@ -600,7 +600,7 @@ app.validator.addRule('json', (rule, value) => {
 });
 ```
 
-添加完自定义规则之后，就可以在 controller 中直接使用这条规则来进行参数校验了
+添加完自定义规则之后，就可以在 Controller 中直接使用这条规则来进行参数校验了
 
 ```js
 exports.handler = function* (ctx) {
@@ -610,11 +610,11 @@ exports.handler = function* (ctx) {
 };
 ```
 
-## 调用 service
+## 调用 Service
 
-我们并不想在 controller 中实现太多业务逻辑，所以提供了一个 [service](./service.md) 层进行业务逻辑的封装，这不仅能提高代码的复用性，同时可以让我们的业务逻辑更好测试。
+我们并不想在 Controller 中实现太多业务逻辑，所以提供了一个 [Service](./service.md) 层进行业务逻辑的封装，这不仅能提高代码的复用性，同时可以让我们的业务逻辑更好测试。
 
-在 controller 中可以调用任何一个 service 上的任何方法，同时 service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
+在 Controller 中可以调用任何一个 Service 上的任何方法，同时 Service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
 exports.create = function* (ctx) {
@@ -627,17 +627,17 @@ exports.create = function* (ctx) {
 };
 ```
 
-service 的具体写法，请查看 [service](./service.md) 章节。
+Service 的具体写法，请查看 [Service](./service.md) 章节。
 
 ## 发送 HTTP 响应
 
-当业务逻辑完成之后，controller 的最后一个职责就是将业务逻辑的处理结果通过 HTTP 响应发送给用户。
+当业务逻辑完成之后，Controller 的最后一个职责就是将业务逻辑的处理结果通过 HTTP 响应发送给用户。
 
 ### 设置 status
 
 HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，每一个状态码都代表了一个特定的含义，通过设置正确的状态码，可以让响应更符合语义。
 
-框架提供了一个便捷的 setter 来进行状态码的设置
+框架提供了一个便捷的 Setter 来进行状态码的设置
 
 ```js
 exports.create = function* (ctx) {
@@ -669,7 +669,7 @@ exports.page = function* (ctx) {
 };
 ```
 
-由于 node 的流式特性，我们还有很多场景需要通过 stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 stream，并会同时处理好这个 stream 上的错误事件。
+由于 Node.js 的流式特性，我们还有很多场景需要通过 Stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 Stream，并会同时处理好这个 stream 上的错误事件。
 
 ```js
 exports.proxy = function* (ctx) {
@@ -684,9 +684,9 @@ exports.proxy = function* (ctx) {
 
 #### 渲染模板
 
-通常来说，我们不会手写 html 页面，而是会通过模板引擎进行生成。
-egg 自身没有集成任何一个模板引擎，但是约定了 [view 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
-具体示例可以查看 [模板渲染](../core/view.md)。
+通常来说，我们不会手写 HTML 页面，而是会通过模板引擎进行生成。
+Egg 自身没有集成任何一个模板引擎，但是约定了 [View 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
+具体示例可以查看[模板渲染](../core/view.md)。
 
 #### JSONP
 
@@ -705,7 +705,7 @@ module.exports = app => {
 };
 ```
 
-- 在 controller 中，只需要正常编写即可：
+- 在 Controller 中，只需要正常编写即可：
 
 ```js
 // app/controller/posts.js
@@ -734,7 +734,7 @@ exports.jsonp = {
 
 通过上面的方式配置之后，如果用户请求 `/api/posts/1?callback=fn`，响应为 JSONP 格式，如果用户请求 `/api/posts/1`，响应格式为 JSON。
 
-我们同样可以在 `app.jsonp()` 创建中间件时覆盖默认的配置，以达到不同路由使用不同配置的目的：
+我们同样可以在 `app.jsonp()` 创建中间件时覆盖默认的配置，以达到不同路由使用不同配置的目的：
 
 ```js
 // app/router.js
@@ -767,9 +767,9 @@ module.exports = {
 };
 ```
 
-**注意，CSRF 校验依赖于 [security](../core/security.md) 插件提供的基于 cookie 的 CSRF 校验。**
+**注意，CSRF 校验依赖于 [security](../core/security.md) 插件提供的基于 Cookie 的 CSRF 校验。**
 
-在开启 CSRF 校验时，客户端在发起 JSONP 请求时，也要带上 CSRF token，如果发起 JSONP 的请求方所在的页面和我们的服务在同一个主域名之下的话，可以读取到 cookie 中的 CSRF token（在 CSRF token 缺失时也可以自行设置 CSRF token 到 cookie 中），并在请求时带上该 token。
+在开启 CSRF 校验时，客户端在发起 JSONP 请求时，也要带上 CSRF token，如果发起 JSONP 的请求方所在的页面和我们的服务在同一个主域名之下的话，可以读取到 Cookie 中的 CSRF token（在 CSRF token 缺失时也可以自行设置 CSRF token 到 Cookie 中），并在请求时带上该 token。
 
 ##### referrer 校验
 
@@ -798,7 +798,7 @@ exports.jsonp = {
 // http://test.com/
 ```
 
-- 字符串：设置字符串形式的白名单时分为两种，当字符串以 `.` 开头，例如 `.test.com` 时，代表 referrer 白名单为 `test.com` 的所有子域名，包括 `test.com` 自身。当字符串不以 `.` 开头，例如 `sub.test.com`，代表 referrer 白名单为 `sub.test.com` 这一个域名。（同时支持 http 和 https）。
+- 字符串：设置字符串形式的白名单时分为两种，当字符串以 `.` 开头，例如 `.test.com` 时，代表 referrer 白名单为 `test.com` 的所有子域名，包括 `test.com` 自身。当字符串不以 `.` 开头，例如 `sub.test.com`，代表 referrer 白名单为 `sub.test.com` 这一个域名。（同时支持 HTTP 和 HTTPS）。
 
 ```js
 exports.jsonp = {
@@ -833,11 +833,11 @@ exports.jsonp = {
 
 **当 CSRF 和 referrer 校验同时开启时，请求发起方只需要满足任意一个条件即可通过 JSONP 的安全校验。**
 
-### 设置 header
+### 设置 Header
 
-我们通过状态码标识请求成功与否、状态如何，在 body 中设置响应的内容。而通过响应的 header，还可以设置一些扩展信息。
+我们通过状态码标识请求成功与否、状态如何，在 body 中设置响应的内容。而通过响应的 Header，还可以设置一些扩展信息。
 
-通过 `context.set(key, value)` 方法可以设置一个响应头，`context.set(headers)` 设置多个 header。
+通过 `context.set(key, value)` 方法可以设置一个响应头，`context.set(headers)` 设置多个 Header。
 
 ```js
 // app/controller/api.js

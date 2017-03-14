@@ -3,7 +3,7 @@ title: Runtime Environment
 
 # Runtime Environment
 
-There could be all kinds of difference during various stages of a web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
+There could be all kinds of difference during various stages of a Web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
 
 EGG framework provides a variable named `env` for setting up the runtime environment. The `env` could be used to determine which configuration file should be applied, or you can perform any operations by detecting the `env` directly.
 
@@ -27,7 +27,7 @@ You can also load different configuration file for different environment by addi
 
 ## Difference with NODE_ENV
 
-Lots of node applications use `NODE_ENV` for environment setting, but `EGG_SERVER_ENV`  distinguishes the environments much more specific. Generally speaking, there are local environment, unit test environment, test environment, production environment during the application development. Test and production environment are **Server Environment** and their `NODE_ENV` should be set to `production` , just like how npm make use of `NODE_ENV`. when you depoly applications in test and production environment, you don't install the devDependencies, so `production` should be applied.
+Lots of Node.js applications use `NODE_ENV` for environment setting, but `EGG_SERVER_ENV`  distinguishes the environments much more specific. Generally speaking, there are local environment, unit test environment, test environment, production environment during the application development. Test and production environment are **Server Environment** and their `NODE_ENV` should be set to `production` , just like how npm make use of `NODE_ENV`. when you depoly applications in test and production environment, you don't install the devDependencies, so `production` should be applied.
 
 Default mapping of `EGG_SERVER_ENV` and `NODE_ENV` (will generate `EGG_SERVER_ENV` from `NODE_ENV` setting if `EGG_SERVER_ENV` is not specified)
 
@@ -47,4 +47,4 @@ Set `EGG_SERVER_ENV` to `sit` (also set `NODE_ENV = production` as recommend), t
 
 ## Difference with Koa
 
-We are using `app.env` to distinguishes the environments in koa, and `app.env` defualt to `process.env.NODE_ENV`. But in egg (and frameworks base on egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.
+We are using `app.env` to distinguishes the environments in Koa, and `app.env` defualt to `process.env.NODE_ENV`. But in Egg (and frameworks base on Egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.

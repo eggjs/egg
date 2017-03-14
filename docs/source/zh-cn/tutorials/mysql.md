@@ -1,7 +1,7 @@
 title: MySQL
 ---
 
-在 web 应用方面 MySQL 是最常见，最好的关系型数据库之一。非常多网站都选择 MySQL 作为网站数据库。本篇文档介绍了如何使用 egg 框架及其插件来访问数据库。
+在 Web 应用方面 MySQL 是最常见，最好的关系型数据库之一。非常多网站都选择 MySQL 作为网站数据库。本篇文档介绍了如何使用 Egg 框架及其插件来访问数据库。
 
 ## egg-mysql
 
@@ -134,7 +134,7 @@ module.exports = function(app) {
 
 ## service 层
 
-由于对 MySQL 数据库的访问操作属于 web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。
+由于对 MySQL 数据库的访问操作属于 Web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。
 
 下面是一个 service 中访问 MySQL 数据库的例子。
 

@@ -44,10 +44,11 @@ egg-project
 ```
 
 如上，由框架约定的目录：
-- `app/router.js` 用于配置 URL 路由规则，具体参见[路由](./router.md)。
-- `app/controller/**` 用于解析用户的输入，处理后返回相应的结果，具体参见 [controller](./controller.md)。
-- `app/service/**` 用于编写业务逻辑层，可选，建议使用，具体参见 [service](./service.md)。
-- `app/middleware/**` 用于编写中间件，可选，具体参见 [middleware](./middleware.md)。
+
+- `app/router.js` 用于配置 URL 路由规则，具体参见 [Router](./router.md)。
+- `app/controller/**` 用于解析用户的输入，处理后返回相应的结果，具体参见 [Controller](./controller.md)。
+- `app/service/**` 用于编写业务逻辑层，可选，建议使用，具体参见 [Service](./service.md)。
+- `app/middleware/**` 用于编写中间件，可选，具体参见 [Middleware](./middleware.md)。
 - `app/public/**` 用于放置静态资源，可选，具体参见内置插件 [egg-static](https://github.com/eggjs/egg-static)。
 - `app/extend/**` 用于框架的扩展，可选，具体参见[框架扩展](./extend.md)。
 - `config/config.{env}.js` 用于编写配置文件，具体参见[配置](./config.md)。
@@ -56,9 +57,10 @@ egg-project
 - `app.js` 和 `agent.js` 用于自定义启动时的初始化工作，可选，具体参见[启动自动化](./app-start.md)。
 
 由内置插件约定的目录：
+
 - `app/public/**` 用于放置静态资源，可选，具体参见内置插件 [egg-static](https://github.com/eggjs/egg-static)。
 - `app/schedule/**` 用于定时任务，可选，具体参见[定时任务](./schedule.md)。
 
-**若需自定义自己的目录规范，参见[Loader API](https://eggjs.org/zh-cn/advanced/loader.html)。**
+**若需自定义自己的目录规范，参见 [Loader API](https://eggjs.org/zh-cn/advanced/loader.html)**
 - `app/view/**` 用于放置模板文件，可选，由模板插件约定，具体参见[模板渲染](../core/view.md)。
 - `app/model/**` 用于放置领域模型，可选，由领域类相关插件约定，如 [egg-sequelize](https://github.com/eggjs/egg-sequelize)。

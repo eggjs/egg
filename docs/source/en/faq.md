@@ -1,7 +1,7 @@
 title: FAQ
 ---
 
-If you have questions that is not contained below, please check [egg issues](https://github.com/eggjs/egg/issues).
+If you have questions that is not contained below, please check [Egg issues](https://github.com/eggjs/egg/issues).
 
 ## Why my config don't work ?
 
@@ -47,6 +47,6 @@ There are two kinds of common csrf errors:
 - `missing csrf token`
 - `invalid csrf token`
 
-By default [egg-security](https://github.com/eggjs/egg-security/) plugin built in egg requires CSRF validation against all 'unsafe' request such as `POST`, `PUT`, `DELETE` requests.
+By default [egg-security](https://github.com/eggjs/egg-security/) plugin built in Egg requires CSRF validation against all 'unsafe' request such as `POST`, `PUT`, `DELETE` requests.
 
 The error will disappear in the presence of correct csrf token in request. For more implentation details, see [./core/security.md#csrf].

@@ -9,7 +9,7 @@ title: 应用部署
 
 Javascript 语言本身不需要编译的，构建过程主要是下载依赖。但如果使用 Typscript 或者 Babel 支持 ES6 以上的特性，那就必须要这一步了。
 
-一般安装依赖会指定 `NODE_ENV=production` 或 `npm install --production` 只安装 dependencies 的依赖。因为 devDependencies 中的模块过大而且在生产环境不会使用，安装后也可能遇到未知问题。
+一般安装依赖会指定 `NODE_ENV=production` 或 `npm install --production` 只安装 dependencies 的依赖。因为 devDependencies 中的模块过大而且在生产环境不会使用，安装后也可能遇到未知问题。
 
 ```bash
 $ cd baseDir
@@ -55,7 +55,7 @@ EGG_SERVER_ENV=prod nohup node dispatch.js > stdout.log 2> stderr.log &
 
 注意：
 
-- **生产环境使用的 EGG_SERVER_ENV 必须为 prod**，可查看[运行环境](./basics/env.md)获取更多内容。
+- **生产环境使用的 `EGG_SERVER_ENV` 必须为 `prod`**，可查看[运行环境](./basics/env.md)获取更多内容。
 - 如果使用 Docker，可直接前台运行。
 - 默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 

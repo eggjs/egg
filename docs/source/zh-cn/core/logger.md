@@ -1,7 +1,7 @@
 title: 日志
 ---
 
-日志对于 web 开发的重要性毋庸置疑，它对于监控应用的运行状态、问题排查等都有非常重要的意义。
+日志对于 Web 开发的重要性毋庸置疑，它对于监控应用的运行状态、问题排查等都有非常重要的意义。
 
 框架内置了强大的企业级日志支持，由 [egg-logger](https://github.com/eggjs/egg-logger) 模块提供。
 
@@ -18,7 +18,7 @@ title: 日志
 ## 日志路径
 
 - 所有日志文件默认都放在 `${appInfo.root}/logs/${appInfo.name}` 路径下，例如 `/home/admin/logs/example-app`。
-- 在本地开发环境(env: local) 和单元测试环境(env: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 `/path/to/example-app/logs/example-app`。
+- 在本地开发环境 (env: local) 和单元测试环境 (env: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 `/path/to/example-app/logs/example-app`。
 
 如果想自定义日志路径：
 
@@ -56,9 +56,9 @@ module.exports = appInfo => {
 
 ## 如何打印日志
 
-### context logger
+### Context Logger
 
-如果我们在处理请求时需要打印日志，这时候使用 context logger，用于记录 web 行为相关的日志。
+如果我们在处理请求时需要打印日志，这时候使用 Context Logger，用于记录 Web 行为相关的日志。
 
 每行日志会自动记录上当前请求的一些基本信息，
 如 `[$userId/$ip/$traceId/${cost}ms $method $url]`。
@@ -73,7 +73,7 @@ ctx.logger.warn('WARNNING!!!!');
 ctx.logger.error(new Error('whoops'));
 ```
 
-对于框架开发者和插件开发者会使用到的 context logger 还有 `ctx.coreLogger`。
+对于框架开发者和插件开发者会使用到的 Context Logger 还有 `ctx.coreLogger`。
 
 例如
 
@@ -81,9 +81,9 @@ ctx.logger.error(new Error('whoops'));
 ctx.coreLogger.info('info');
 ```
 
-### app logger
+### App Logger
 
-如果我们想做一些应用级别的日志记录，如记录启动阶段的一些数据信息，可以通过 app logger 来完成。
+如果我们想做一些应用级别的日志记录，如记录启动阶段的一些数据信息，可以通过 App Logger 来完成。
 
 ```js
 // app.js
@@ -96,7 +96,7 @@ module.exports = app => {
 };
 ```
 
-对于框架和插件开发者会使用到的 app logger 还有 `app.coreLogger`。
+对于框架和插件开发者会使用到的 App Logger 还有 `app.coreLogger`。
 
 ```js
 // app.js
@@ -105,9 +105,9 @@ module.exports = app => {
 };
 ```
 
-### agent logger
+### Agent Logger
 
-在开发框架和插件时有时会需要在 agent 进程运行代码，这时使用 `agent.coreLogger`。
+在开发框架和插件时有时会需要在 Agent 进程运行代码，这时使用 `agent.coreLogger`。
 
 ```js
 // agent.js
@@ -120,7 +120,7 @@ module.exports = agent => {
 };
 ```
 
-如需详细了解 agent 进程，请参考 [多进程模型](../advanced/cluster.md)。
+如需详细了解 Agent 进程，请参考[多进程模型](../advanced/cluster.md)。
 
 ## 日志文件编码
 
@@ -317,7 +317,7 @@ module.exports = appInfo => {
 
 ## 性能
 
-通常 web 访问是高频访问，每次打印日志都写磁盘会造成频繁磁盘 io，为了提高性能，我们采用的文件日志写入策略是：
+通常 Web 访问是高频访问，每次打印日志都写磁盘会造成频繁磁盘 IO，为了提高性能，我们采用的文件日志写入策略是：
 
 > 日志同步写入内存，异步每隔一段时间(默认 1 秒)刷盘
 

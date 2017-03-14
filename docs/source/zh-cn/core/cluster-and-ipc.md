@@ -1,23 +1,23 @@
 title: 多进程模型和进程间通讯
 ---
 
-我们知道 JavaScript 代码是运行在单线程上的，换句话说一个 node 进程只能运行在一个 CPU 上。那么如果用 node 来做 web server，就无法享受到多核运算的好处。作为企业级的解决方案，我们要解决的一个问题就是:
+我们知道 JavaScript 代码是运行在单线程上的，换句话说一个 Node.js 进程只能运行在一个 CPU 上。那么如果用 Node.js 来做 Web Server，就无法享受到多核运算的好处。作为企业级的解决方案，我们要解决的一个问题就是:
 
 > 如何榨干服务器资源，利用上多核 CPU 的并发优势？
 
-而 node 官方提供的解决方案是 [cluster 模块](https://nodejs.org/api/cluster.html)
+而 Node.js 官方提供的解决方案是 [Cluster 模块](https://nodejs.org/api/cluster.html)
 
 > A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.
 
 > The cluster module allows you to easily create child processes that all share server ports.
 
-## cluster 是什么呢？
+## Cluster 是什么呢？
 
 简单的说，
 
 - 在服务器上同时启动多个进程。
 - 每个进程里都跑的是同一份源代码（好比把以前一个进程的工作分给多个进程去做）。
-- 更神奇的是，这些进程可以同时监听一个端口（具体原理推荐阅读 @DavidCai1993 这篇 [cluster 实现原理](https://cnodejs.org/topic/56e84480833b7c8a0492e20c)）。
+- 更神奇的是，这些进程可以同时监听一个端口（具体原理推荐阅读 @DavidCai1993 这篇 [Cluster 实现原理](https://cnodejs.org/topic/56e84480833b7c8a0492e20c)）。
 
 其中：
 
@@ -62,11 +62,11 @@ if (cluster.isMaster) {
 
 健壮性（又叫鲁棒性）是企业级应用必须考虑的问题，除了程序本身代码质量要保证，框架层面也需要提供相应的『兜底』机制保证极端情况下应用的可用性。
 
-一般来说，node 进程退出可以分为两类：
+一般来说，Node.js 进程退出可以分为两类：
 
 #### 未捕获异常
 
-当代码抛出了异常没有被捕获到时，进程将会退出，此时 node 提供了 `process.on('uncaughtException', handler)` 接口来捕获它，但是当一个 Worker 进程遇到[未捕获的异常](https://nodejs.org/dist/latest-v6.x/docs/api/process.html#process_event_uncaughtexception)时，它已经处于一个不确定状态，此时我们应该让这个进程优雅退出：
+当代码抛出了异常没有被捕获到时，进程将会退出，此时 Node.js 提供了 `process.on('uncaughtException', handler)` 接口来捕获它，但是当一个 Worker 进程遇到 [未捕获的异常](https://nodejs.org/dist/latest-v6.x/docs/api/process.html#process_event_uncaughtexception) 时，它已经处于一个不确定状态，此时我们应该让这个进程优雅退出：
 
 1. 关闭异常 Worker 进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，不再接受新的用户请求。
 2. Master 立刻 fork 一个新的 Worker 进程，保证在线的『工人』总数不变。
@@ -100,7 +100,7 @@ if (cluster.isMaster) {
 
 ### Agent 机制
 
-说到这里，node 多进程方案貌似已经成型，这也是我们早期线上使用的方案。但后来我们发现有些工作其实不需要每个 Worker 都去做，如果都做，一来是浪费资源，更重要的是可能会导致多进程间资源访问冲突。举个例子：生产环境的日志文件我们一般会按照日期进行归档，在单进程模型下这再简单不过了：
+说到这里，Node.js 多进程方案貌似已经成型，这也是我们早期线上使用的方案。但后来我们发现有些工作其实不需要每个 Worker 都去做，如果都做，一来是浪费资源，更重要的是可能会导致多进程间资源访问冲突。举个例子：生产环境的日志文件我们一般会按照日期进行归档，在单进程模型下这再简单不过了：
 
 > 1. 每天凌晨 0 点，将当前日志文件按照日期进行重命名
 > 2. 销毁以前的文件句柄，并创建新的日志文件继续写入
@@ -135,9 +135,9 @@ if (cluster.isMaster) {
          +----------------------------------------->|
          |     worker ready    |                    |
          |<-----------------------------------------+
-         |      egg ready      |                    |
+         |      Egg ready      |                    |
          +-------------------->|                    |
-         |      egg ready      |                    |
+         |      Egg ready      |                    |
          +----------------------------------------->|
 ```
 
@@ -156,7 +156,7 @@ if (cluster.isMaster) {
 
 ### Agent 的用法
 
-你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和 [启动自定义](../basics/app-start.md)用法类似，只是入口参数是 agent 对象）
+你可以在应用或插件根目录下的 `agent.js` 中实现你自己的逻辑（和[启动自定义](../basics/app-start.md) 用法类似，只是入口参数是 agent 对象）
 
 ```js
 // agent.js
@@ -223,13 +223,13 @@ $ EGG_SERVER_ENV=prod nohup node dispatch.js&
 
 #### Worker
 
-Worker 进程负责处理真正的用户请求和[定时任务](../basics/schedule.md)的处理。而 egg 的定时任务也提供了只让一个 Worker 进程运行的能力，**所以能够通过定时任务解决的问题就不要放到 Agent 上执行**。
+Worker 进程负责处理真正的用户请求和[定时任务](../basics/schedule.md)的处理。而 Egg 的定时任务也提供了只让一个 Worker 进程运行的能力，**所以能够通过定时任务解决的问题就不要放到 Agent 上执行**。
 
 Worker 运行的是业务代码，相对会比 Agent 和 Master 进程上运行的代码复杂度更高，稳定性也低一点，**当 Worker 进程异常退出时，Master 进程会重启一个 Worker 进程。**
 
 ## 进程间通讯（IPC）
 
-虽然每个 Worker 进程是相对独立的，但是它们之间始终还是需要通讯的，叫进程间通讯（IPC）。下面是 node 官方提供的一段示例代码
+虽然每个 Worker 进程是相对独立的，但是它们之间始终还是需要通讯的，叫进程间通讯（IPC）。下面是 Node.js 官方提供的一段示例代码
 
 ```js
 'use strict';
@@ -290,7 +290,7 @@ if (cluster.isMaster) {
    - 在 app 调用该方法上会发送 agent 进程
    - 在 agent 上调用该方法会发送给 agent 自己
 - `agent.messenger.sendRandom(action, data)`:
-   - app 上没有该方法（现在 egg 的实现是等同于 sentToAgent）
+   - app 上没有该方法（现在 Egg 的实现是等同于 sentToAgent）
    - agent 上回随机发送消息给一个 app 进程（由 master 来控制发送给谁）
 - `app.messenger.sendTo(pid, action, data)`: 发送给指定进程
 
@@ -342,7 +342,7 @@ app.messenger.once(action, data => {
 
 ### 实现
 
-我们将所有的与远程数据源交互的逻辑封装在一个 service 中，并提供 `get` 方法给 Controller 调用。
+我们将所有的与远程数据源交互的逻辑封装在一个 Service 中，并提供 `get` 方法给 Controller 调用。
 
 ```js
 // app/service/source.js

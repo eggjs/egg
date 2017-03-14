@@ -155,7 +155,7 @@ module.exports = class MyCustomView {
   render(filename, locals) {
     locals.helper = new ViewHelper(this.ctx);
 
-    // 调用 nunjucks render
+    // 调用 Nunjucks render
   }
 }
 ```

@@ -1,7 +1,5 @@
-title: 配置
+title: Config 配置
 ---
-
-## config 配置
 
 框架提供了强大且可扩展的配置功能，可以自动合并应用、插件、框架的配置，按顺序覆盖，且可以根据环境维护不同的配置。合并后的配置可直接从 `app.config` 获取。
 
@@ -28,7 +26,7 @@ config
 
 `config.default.js` 为默认的配置文件，所有环境都会加载这个配置文件，一般也会作为开发环境的默认配置文件。
 
-当指定 env 时会同时加载对应的配置文件，并覆盖默认配置文件的同名配置。如 prod 环境会加载 `config.prod.js` 和 `config.default.js` 文件，`config.prod.js` 会覆盖 `config.default.js` 的同名配置。
+当指定 env 时会同时加载对应的配置文件，并覆盖默认配置文件的同名配置。如 `prod` 环境会加载 `config.prod.js` 和 `config.default.js` 文件，`config.prod.js` 会覆盖 `config.default.js` 的同名配置。
 
 ### 配置写法
 
@@ -132,7 +130,7 @@ module.exports = {
 
 框架默认内置了企业级应用常用的[一部分插件](https://github.com/eggjs/egg/blob/master/config/plugin.js)。
 
-而应用开发者可以根据业务需求，引入其他插件，只需要指定 package 配置。
+而应用开发者可以根据业务需求，引入其他插件，只需要指定 `package` 配置。
 
 ```js
 // 使用 mysql 插件
@@ -144,7 +142,7 @@ module.exports = {
 };
 ```
 
-package 为一个 npm 模块，必须添加依赖到 `pkg.dependencies` 中。框架会在 node_modules 目录中找到这个模块作为插件入口。
+`package` 为一个 npm 模块，必须添加依赖到 `pkg.dependencies` 中。框架会在 node_modules 目录中找到这个模块作为插件入口。
 
 ```json
 {
@@ -174,7 +172,7 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 
 框架在启动时会把合并后的最终配置 dump 到 `run/application_config.json`（worker 进程）和 `run/agent_config.json`（agent 进程）中，可以用来分析问题。
 
-配置文件中会隐藏一些字段，主要包括两类
+配置文件中会隐藏一些字段，主要包括两类:
 
 - 如密码、密钥等安全字段，这里可以通过 `config.dump.ignore` 配置，必须是 [Set] 类型，查看[默认配置](https://github.com/eggjs/egg/blob/master/config/config.default.js)。
 - 如函数、Buffer 等类型，`JSON.stringify` 后的内容特别大
