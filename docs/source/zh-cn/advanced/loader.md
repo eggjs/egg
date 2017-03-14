@@ -182,6 +182,17 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
 - [应用完整启动顺序查看框架开发](./framework.md)
 
+### 文件加载规则
+
+框架在加载文件时会进行转换，因为文件命名风格和 API 风格存在差异。我们推荐文件使用下划线，而 API 使用驼峰。比如 `app/service/user_info.js` 会转换成 `app.service.userInfo`。
+
+框架也支持连字符和驼峰的方式
+
+- `app/service/user-info.js` => `app.service.userInfo`
+- `app/service/userInfo.js` => `app.service.userInfo`
+
+Loader 还提供了 [caseStyle](#caseStyle-boolean) 强制指定首字母大小写，比如加载 model 时 API 首字母大写，`app/model/user.js` => `app.model.User`，就可以指定 `caseStyle: 'upper'`。
+
 ## 扩展 Loader
 
 [Loader] 是一个基类，并根据文件加载的规则提供了一些内置的方法，但基本本身并不会去调用，而是由继承类调用。
@@ -346,19 +357,23 @@ app.loader.loadToApp(directory, 'model', {
 });
 ```
 
-#### lowercaseFirst [Boolean]
+#### caseStyle [String]
 
-是否强制将第一个字符转成小写，默认为 false。
+文件的转换规则，可选为 `camel`，`upper`，`lower`，默认为 `camel`。
 
-比如加载 `app/controller/User.js`，如果为 true 加载后生成 `app.controller.user`。
+三者都会将文件名转换成驼峰，但是对于首字母的处理有所不同。
+
+- `camel`：首字母不变。
+- `upper`：首字母大写。
+- `lower`：首字母小写。
 
 在加载不同文件时配置不同
 
 文件 | 配置
 --- | ---
-app/controller | true
-app/middleware | true
-app/service | true
+app/controller | lower
+app/middleware | lower
+app/service | lower
 
 #### override [Boolean]
 
