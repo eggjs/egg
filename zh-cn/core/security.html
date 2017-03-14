@@ -48,19 +48,19 @@
     <div class="page-main">
   <article class="markdown-body">
     <h1>安全</h1>
-    <h2 id="web-安全概念"><a class="markdown-anchor" href="#web-安全概念">#</a> web 安全概念</h2>
-<p>web 应用中存在很多安全风险，这些风险会被黑客利用，轻则篡改网页内容，重则窃取网站内部数据，更为严重的则是在网页中植入恶意代码，使得用户受到侵害。常见的安全漏洞如下：</p>
+    <h2 id="web-安全概念"><a class="markdown-anchor" href="#web-安全概念">#</a> Web 安全概念</h2>
+<p>Web 应用中存在很多安全风险，这些风险会被黑客利用，轻则篡改网页内容，重则窃取网站内部数据，更为严重的则是在网页中植入恶意代码，使得用户受到侵害。常见的安全漏洞如下：</p>
 <ul>
-<li>XSS 攻击：对 web 页面注入脚本，使用 JavaScript 窃取用户信息，诱导用户操作。</li>
+<li>XSS 攻击：对 Web 页面注入脚本，使用 JavaScript 窃取用户信息，诱导用户操作。</li>
 <li>CSRF 攻击：伪造用户请求向网站发起恶意请求。</li>
 <li>钓鱼攻击：利用网站的跳转链接或者图片制造钓鱼陷阱。</li>
 <li>HTTP参数污染：利用对参数格式验证的不完善，对服务器进行参数注入攻击。</li>
 <li>远程代码执行：用户通过浏览器提交执行命令，由于服务器端没有针对执行函数做过滤，导致在没有指定绝对路径的情况下就执行命令。</li>
 </ul>
-<p>而框架本身针对 web 端常见的安全风险内置了丰富的解决方案：</p>
+<p>而框架本身针对 Web 端常见的安全风险内置了丰富的解决方案：</p>
 <ul>
-<li>利用 <a href="https://github.com/eggjs/egg/blob/master/docs/source/zh-cn/basics/extend.md" target="_blank" rel="external">extend</a> 机制扩展了 helper API, 提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。</li>
-<li>常见 web 安全头的支持。</li>
+<li>利用 <a href="https://github.com/eggjs/egg/blob/master/docs/source/zh-cn/basics/extend.md" target="_blank" rel="external">extend</a> 机制扩展了 Helper API, 提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。</li>
+<li>常见 Web 安全头的支持。</li>
 <li>CSRF 的防御方案。</li>
 <li>灵活的安全配置，可以匹配不同的请求 url 。</li>
 <li>可定制的白名单，用于安全跳转和 url 过滤。</li>
@@ -77,7 +77,7 @@
 <p>如果需要针对某一路径忽略某安全选项，则配置 ignore 选项，例如针对 <code>/example</code> 关闭 xframe，以便合作商户能够嵌入我们的页面：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">exports.security = &#123;</div><div class="line">  <span class="attr">csp</span>: &#123;</div><div class="line">    <span class="attr">ignore</span>: <span class="string">'/example'</span>,</div><div class="line">    <span class="attr">xframe</span>: &#123;</div><div class="line">      <span class="comment">//...</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p><strong>注意：不能同时存在 match 和 ignore ，否则会报错。</strong></p>
-<p>下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 web 安全防范。</p>
+<p>下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 Web 安全防范。</p>
 <h2 id="安全威胁xss的防范"><a class="markdown-anchor" href="#安全威胁xss的防范">#</a> 安全威胁<code>XSS</code>的防范</h2>
 <p><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank" rel="external">XSS</a>（cross-site scripting跨域脚本攻击）攻击是最常见的 Web 攻击，其重点是『跨域』和『客户端执行』。</p>
 <p>XSS 攻击一般分为两类：</p>
@@ -89,14 +89,14 @@
 <p>反射型的 XSS 攻击，主要是由于服务端接收到客户端的不安全输入，在客户端触发执行从而发起 Web 攻击。比如：</p>
 <p>在某购物网站搜索物品，搜索结果会显示搜索的关键词。搜索关键词填入<code>&lt;script&gt;alert('handsome boy')&lt;/script&gt;</code>, 点击搜索。页面没有对关键词进行过滤，这段代码就会直接在页面上执行，弹出 alert。</p>
 <h4 id="防范方式"><a class="markdown-anchor" href="#防范方式">#</a> 防范方式</h4>
-<p>框架提供了<code>helper.escape()</code>方法对字符串进行 XSS 过滤。</p>
+<p>框架提供了 <code>helper.escape()</code> 方法对字符串进行 XSS 过滤。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> str = <span class="string">'&gt;&lt;script&gt;alert("abc") &lt;/script&gt;&lt;'</span>;</div><div class="line"><span class="built_in">console</span>.log(ctx.helper.escape(str));</div><div class="line"><span class="comment">// =&gt; &amp;gt;&amp;lt;script&amp;gt;alert(&amp;quot;abc&amp;quot;) &amp;lt;/script&amp;gt;&amp;lt;</span></div></pre></td></tr></table></figure></p>
 <p>当网站需要直接输出用户输入的结果时，请务必使用 <code>helper.escape()</code> 包裹起来，如在 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 里面就覆盖掉了内置的 <code>escape</code>。</p>
-<p>另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用<code>helper.sjs()</code>来进行过滤。</p>
-<p><code>helper.sjs()</code>用于在 JavaScript（包括 onload 等 event）中输出变量，会对变量中字符进行 JavaScript ENCODE，
+<p>另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用 <code>helper.sjs()</code> 来进行过滤。</p>
+<p><code>helper.sjs()</code> 用于在 JavaScript（包括 onload 等 event）中输出变量，会对变量中字符进行 JavaScript ENCODE，
 将所有非白名单字符转义为 <code>\x</code> 形式，防止 XSS 攻击，也确保在 js 中输出的正确性。使用实例：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> foo = <span class="string">'"hello"'</span>;</div><div class="line"></div><div class="line"><span class="comment">// 未使用 sjs</span></div><div class="line"><span class="built_in">console</span>.log(<span class="string">`var foo = "<span class="subst">$&#123;foo&#125;</span>";`</span>);</div><div class="line"><span class="comment">// =&gt; var foo = ""hello"";</span></div><div class="line"></div><div class="line"><span class="comment">// 使用 sjs</span></div><div class="line"><span class="built_in">console</span>.log(<span class="string">`var foo = "<span class="subst">$&#123;<span class="keyword">this</span>.helper.sjs(foo)&#125;</span>";`</span>);</div><div class="line"><span class="comment">// =&gt; var foo = "\\x22hello\\x22";</span></div></pre></td></tr></table></figure></p>
-<p>还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 <code>helper.sjson()</code> 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为<code>\x</code>形式，防止 XSS 攻击。同时保持 json 结构不变。
+<p>还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 <code>helper.sjson()</code> 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为 <code>\x</code> 形式，防止 XSS 攻击。同时保持 json 结构不变。
 若存在模板中输出一个 JSON 字符串给 JavaScript 使用的场景，请使用 <code>${this.helper.sjson(变量名)}</code> 进行转义。</p>
 <p><strong>处理过程较复杂，性能损耗较大，请仅在必要时使用。</strong></p>
 <p>实例:</p>
@@ -104,9 +104,9 @@
 <h3 id="stored-xss"><a class="markdown-anchor" href="#stored-xss">#</a> Stored XSS</h3>
 <p>基于存储的 XSS 攻击，是通过提交带有恶意脚本的内容存储在服务器上，当其他人看到这些内容时发起 Web 攻击。一般提交的内容都是通过一些富文本编辑器编辑的，很容易插入危险代码。</p>
 <h4 id="防范方式-2"><a class="markdown-anchor" href="#防范方式-2">#</a> 防范方式</h4>
-<p>框架提供了<code>helper.shtml()</code>方法对字符串进行 XSS 过滤。</p>
-<p>注意，将富文本（包含 html 代码的文本）当成变量直接在模版里面输出时，需要用到 shtml 来处理。
-使用 shtml 可以输出 html 的 tag，同时执行 XSS 的过滤动作，过滤掉非法的脚本。</p>
+<p>框架提供了 <code>helper.shtml()</code> 方法对字符串进行 XSS 过滤。</p>
+<p>注意，将富文本（包含 HTML 代码的文本）当成变量直接在模版里面输出时，需要用到 shtml 来处理。
+使用 shtml 可以输出 HTML 的 tag，同时执行 XSS 的过滤动作，过滤掉非法的脚本。</p>
 <p><strong>由于是一个非常复杂的安全处理过程，对服务器处理性能一定影响，如果不是输出 HTML，请勿使用。</strong></p>
 <p>简单示例：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// js</span></div><div class="line"><span class="keyword">const</span> value = <span class="string">`&lt;a href="http://www.domain.com"&gt;google&lt;/a&gt;&lt;script&gt;evilcode…&lt;/script&gt;`</span>;</div></pre></td></tr></table></figure></p>
@@ -122,18 +122,18 @@
 <li><code>config.helper.shtml.domainWhiteList: []</code> 可拓展 href 和 src 中允许的域名白名单。</li>
 </ul>
 <p>注意，shtml 使用了严格的白名单机制，除了过滤掉 XSS 风险的字符串外，
-在 <a href="https://github.com/leizongmin/js-xss/blob/master/lib/default.js" target="_blank" rel="external">默认规则</a> 外的 tag 和 attr 都会被过滤掉。</p>
-<p>例如 html 标签就不在白名单中，</p>
+在<a href="https://github.com/leizongmin/js-xss/blob/master/lib/default.js" target="_blank" rel="external">默认规则</a>外的 tag 和 attr 都会被过滤掉。</p>
+<p>例如 HTML 标签就不在白名单中，</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> html = <span class="string">'&lt;html&gt;&lt;/html&gt;'</span>;</div><div class="line"></div><div class="line"><span class="comment">// html</span></div><div class="line">$&#123;helper.shtml($html)&#125;</div><div class="line"></div><div class="line"><span class="comment">// 输出空</span></div></pre></td></tr></table></figure></p>
 <p>常见的 <code>data-xx</code> 属性由于不在白名单中，所以都会被过滤。</p>
 <p>所以，一定要注意 shtml 的适用场景，一般是针对来自用户的富文本输入，切忌滥用，功能既受到限制，又会影响服务端性能。
-此类场景一般是论坛、评论系统等，即便是论坛等如果不支持 html 内容输入，也不要使用此 helper，直接使用 escape 即可。</p>
-<h3 id="jsonp-xss"><a class="markdown-anchor" href="#jsonp-xss">#</a> jsonp XSS</h3>
-<p>jsonp 的 callback 参数非常危险，他有两种风险可能导致 XSS</p>
+此类场景一般是论坛、评论系统等，即便是论坛等如果不支持 HTML 内容输入，也不要使用此 Helper，直接使用 <code>escape</code> 即可。</p>
+<h3 id="jsonp-xss"><a class="markdown-anchor" href="#jsonp-xss">#</a> JSONP XSS</h3>
+<p>JSONP 的 callback 参数非常危险，他有两种风险可能导致 XSS</p>
 <p>1、callback 参数意外截断js代码，特殊字符单引号双引号，换行符均存在风险。</p>
-<p>2、callback 参数恶意添加标签（如 script ），造成 XSS 漏洞。</p>
-<p>参考 <a href="http://blog.knownsec.com/2015/03/jsonp_security_technic/" target="_blank" rel="external">jsonp安全攻防</a></p>
-<p>框架内部使用 <a href="https://github.com/node-modules/jsonp-body" target="_blank" rel="external">jsonp-body</a> 来对 jsonp 请求进行安全防范。</p>
+<p>2、callback 参数恶意添加标签（如 <code>&lt;script&gt;</code> ），造成 XSS 漏洞。</p>
+<p>参考 <a href="http://blog.knownsec.com/2015/03/jsonp_security_technic/" target="_blank" rel="external">JSONP 安全攻防</a></p>
+<p>框架内部使用 <a href="https://github.com/node-modules/jsonp-body" target="_blank" rel="external">jsonp-body</a> 来对 JSONP 请求进行安全防范。</p>
 <p>防御内容：</p>
 <ul>
 <li>callback 函数名词最长 50 个字符限制</li>
@@ -145,27 +145,27 @@
 <li>limit - 函数名 length 限制，默认 50。</li>
 </ul>
 <h3 id="其他-xss-的防范方式"><a class="markdown-anchor" href="#其他-xss-的防范方式">#</a> 其他 XSS 的防范方式</h3>
-<p>浏览器自身具有一定针对各种攻击的防范能力，他们一般是通过开启 web 安全头生效的。框架内置了一些常见的 web 安全头的支持。</p>
+<p>浏览器自身具有一定针对各种攻击的防范能力，他们一般是通过开启 Web 安全头生效的。框架内置了一些常见的 Web 安全头的支持。</p>
 <h4 id="csp"><a class="markdown-anchor" href="#csp">#</a> CSP</h4>
 <p>W3C 的 Content Security Policy，简称 CSP，主要是用来定义页面可以加载哪些资源，减少 XSS 的发生。</p>
 <p>框架内支持 CSP 的配置，不过是默认关闭的，开启后可以有效的防止 XSS 攻击的发生。要配置 CSP , 需要对 CSP 的 policy 策略有了解，具体细节可以参考 <a href="https://www.zhihu.com/question/21979782" target="_blank" rel="external">CSP 是什么</a>。</p>
 <h4 id="x-download-optionsnoopen"><a class="markdown-anchor" href="#x-download-optionsnoopen">#</a> X-Download-Options:noopen</h4>
-<p>默认开启，禁用IE下下载框Open按钮，防止 ie 下下载文件默认被打开 XSS。</p>
+<p>默认开启，禁用 IE 下下载框Open按钮，防止 IE 下下载文件默认被打开 XSS。</p>
 <h4 id="x-content-type-optionsnosniff"><a class="markdown-anchor" href="#x-content-type-optionsnosniff">#</a> X-Content-Type-Options:nosniff</h4>
-<p>禁用IE8自动嗅探mime功能例如 text/plain 却当成 text/html 渲染，特别当本站点 serve 的内容未必可信的时候。</p>
+<p>禁用 IE8 自动嗅探 mime 功能例如 <code>text/plain</code> 却当成 <code>text/html</code> 渲染，特别当本站点 serve 的内容未必可信的时候。</p>
 <h4 id="x-xss-protection"><a class="markdown-anchor" href="#x-xss-protection">#</a> X-XSS-Protection</h4>
 <p>IE 提供的一些 XSS 检测与防范，默认开启</p>
 <ul>
 <li>close 默认值false，即设置为 <code>1; mode=block</code></li>
 </ul>
-<h2 id="安全威胁csrf的防范"><a class="markdown-anchor" href="#安全威胁csrf的防范">#</a> 安全威胁<code>CSRF</code>的防范</h2>
+<h2 id="安全威胁-csrf-的防范"><a class="markdown-anchor" href="#安全威胁-csrf-的防范">#</a> 安全威胁 CSRF  的防范</h2>
 <p><a href="https://www.owasp.org/index.php/CSRF" target="_blank" rel="external">CSRF</a>（Cross-site request forgery跨站请求伪造，也被称为 <code>One Click Attack</code> 或者 <code>Session Riding</code>，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
 CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全。因此框架内置了 CSRF 防范方案。</p>
 <h3 id="防范方式-3"><a class="markdown-anchor" href="#防范方式-3">#</a> 防范方式</h3>
 <p>通常来说，对于 CSRF 攻击有一些通用的<a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense" target="_blank" rel="external">防范方案</a>，简单的介绍几种常用的防范方案：</p>
 <ul>
 <li>Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。</li>
-<li>Double Cookie Defense：将 token 设置在 cookie 中，在提交 post 请求的时候提交 cookie，并通过 header 或者 body 带上 cookie 中的 token，服务端进行对比校验。</li>
+<li>Double Cookie Defense：将 token 设置在 Cookie 中，在提交 post 请求的时候提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。</li>
 <li>Custom Header：信任带有特定的 header（例如 <code>X-Requested-With: XMLHttpRequest</code>）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都<a href="https://www.djangoproject.com/weblog/2011/feb/08/security/" target="_blank" rel="external">放弃了该防范方式</a>。</li>
 </ul>
 <p>框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。</p>
@@ -177,30 +177,30 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 <p><figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">"POST"</span> <span class="attr">action</span>=<span class="string">"/upload?_csrf=&#123;&#123; ctx.csrf &#125;&#125;"</span> <span class="attr">enctype</span>=<span class="string">"multipart/form-data"</span>&gt;</span></div><div class="line">  title: <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"title"</span> /&gt;</span></div><div class="line">  file: <span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"file"</span> <span class="attr">type</span>=<span class="string">"file"</span> /&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;</span>upload<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></div></pre></td></tr></table></figure></p>
 <p>传递 CSRF token 的字段可以在配置中改变：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">security</span>: &#123;</div><div class="line">    <span class="attr">csrf</span>: &#123;</div><div class="line">      <span class="attr">queryName</span>: <span class="string">'_csrf'</span>, <span class="comment">// 通过 query 传递 CSRF token 的默认字段为 _csrf</span></div><div class="line">      bodyName: <span class="string">'_csrf'</span>, <span class="comment">// 通过 body 传递 CSRF token 的默认字段为 _csrf</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>为了防范<a href="http://breachattack.com/" target="_blank" rel="external">BREACH 攻击</a>，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化，<a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 等 view 插件会自动对 form 进行注入，对应用开发者无感知。</p>
+<p>为了防范 <a href="http://breachattack.com/" target="_blank" rel="external">BREACH 攻击</a>，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化，<a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 等 View 插件会自动对 Form 进行注入，对应用开发者无感知。</p>
 <h5 id="ajax-请求"><a class="markdown-anchor" href="#ajax-请求">#</a> AJAX 请求</h5>
-<p>在 CSRF 默认配置下，token 会被设置在 cookie 中，在 AJAX 请求的时候，可以从 cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。</p>
+<p>在 CSRF 默认配置下，token 会被设置在 Cookie 中，在 AJAX 请求的时候，可以从 Cookie 中取到 token，放置到 query、body 或者 header 中发送给服务端。</p>
 <p>In jQuery:</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> csrftoken = Cookies.get(<span class="string">'csrftoken'</span>);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">csrfSafeMethod</span>(<span class="params">method</span>) </span>&#123;</div><div class="line">  <span class="comment">// these HTTP methods do not require CSRF protection</span></div><div class="line">  <span class="keyword">return</span> (<span class="regexp">/^(GET|HEAD|OPTIONS|TRACE)$/</span>.test(method));</div><div class="line">&#125;</div><div class="line">$.ajaxSetup(&#123;</div><div class="line">  <span class="attr">beforeSend</span>: <span class="function"><span class="keyword">function</span>(<span class="params">xhr, settings</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (!csrfSafeMethod(settings.type) &amp;&amp; !<span class="keyword">this</span>.crossDomain) &#123;</div><div class="line">      xhr.setRequestHeader(<span class="string">'x-csrf-token'</span>, csrftoken);</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
 <p>通过 header 传递 CSRF token 的字段也可以在配置中改变：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">security</span>: &#123;</div><div class="line">    <span class="attr">csrf</span>: &#123;</div><div class="line">      <span class="attr">headerName</span>: <span class="string">'x-csrf-token'</span>, <span class="comment">// 通过 header 传递 CSRF token 的默认字段为 x-csrf-token</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<h4 id="session-存储-vs-cookie-存储"><a class="markdown-anchor" href="#session-存储-vs-cookie-存储">#</a> session 存储 VS cookie 存储</h4>
-<p>默认配置下，框架会将 CSRF token 存在 cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 session 中。</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">security</span>: &#123;</div><div class="line">    <span class="attr">csrf</span>: &#123;</div><div class="line">      <span class="attr">useSession</span>: <span class="literal">true</span>, <span class="comment">// 默认为 false，当设置为 true 时，将会把 csrf token 保存到 session 中</span></div><div class="line">      cookieName: <span class="string">'csrfToken'</span>, <span class="comment">// cookie 中的字段名，默认为 csrfToken</span></div><div class="line">      sessionName: <span class="string">'csrfToken'</span>, <span class="comment">// session 中的字段名，默认为 csrfToken</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="session-vs-cookie-存储"><a class="markdown-anchor" href="#session-vs-cookie-存储">#</a> Session vs Cookie 存储</h4>
+<p>默认配置下，框架会将 CSRF token 存在 Cookie 中，以方便 AJAX 请求获取到。但是所有的子域名都可以设置 Cookie，因此当我们的应用处于无法保证所有的子域名都受控的情况下，存放在 Cookie 中可能有被 CSRF 攻击的风险。框架提供了一个配置项，可以将 token 存放到 Session 中。</p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">security</span>: &#123;</div><div class="line">    <span class="attr">csrf</span>: &#123;</div><div class="line">      <span class="attr">useSession</span>: <span class="literal">true</span>, <span class="comment">// 默认为 false，当设置为 true 时，将会把 csrf token 保存到 Session 中</span></div><div class="line">      cookieName: <span class="string">'csrfToken'</span>, <span class="comment">// Cookie 中的字段名，默认为 csrfToken</span></div><div class="line">      sessionName: <span class="string">'csrfToken'</span>, <span class="comment">// Session 中的字段名，默认为 csrfToken</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h4 id="忽略-json-请求"><a class="markdown-anchor" href="#忽略-json-请求">#</a> 忽略 JSON 请求</h4>
 <p>在 <a href="https://en.wikipedia.org/wiki/Same-origin_policy" target="_blank" rel="external">SOP</a> 的安全策略保护下，基本上所有的现代浏览器都不允许跨域发起 content-type 为 JSON 的请求，因此我们可以直接放过类型的 JSON 格式的请求。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">security</span>: &#123;</div><div class="line">    <span class="attr">csrf</span>: &#123;</div><div class="line">      <span class="attr">ignoreJSON</span>: <span class="literal">true</span>, <span class="comment">// 默认为 false，当设置为 true 时，将会放过所有 content-type 为 `application/json` 的请求</span></div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h4 id="刷新-csrf-token"><a class="markdown-anchor" href="#刷新-csrf-token">#</a> 刷新 CSRF token</h4>
-<p>当 CSRF token 存储在 cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都<strong>必须刷新 CSRF token</strong>。</p>
+<p>当 CSRF token 存储在 Cookie 中时，一旦在同一个浏览器上发生用户切换，新登陆的用户将会依旧使用旧的 token（之前用户使用的），这会带来一定的安全风险，因此在每次用户登陆的时候都<strong>必须刷新 CSRF token</strong>。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// login controller</span></div><div class="line">exports.login = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> &#123; username, password &#125; = ctx.request.body;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">yield</span> ctx.service.user.find(&#123; username, password &#125;);</div><div class="line">  <span class="keyword">if</span> (!user) ctx.throw(<span class="number">403</span>);</div><div class="line">  ctx.session = &#123; user &#125;;</div><div class="line"></div><div class="line">  <span class="comment">// 调用 rotateCsrfSecret 刷新用户的 CSRF token</span></div><div class="line">  ctx.rotateCsrfSecret();</div><div class="line"></div><div class="line">  ctx.body = &#123; <span class="attr">success</span>: <span class="literal">true</span> &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="安全威胁xst的防范"><a class="markdown-anchor" href="#安全威胁xst的防范">#</a> 安全威胁<code>XST</code>的防范</h2>
-<p><a href="https://www.owasp.org/index.php/XST" target="_blank" rel="external">XST</a> 的全称是 <code>Cross-Site Tracing</code>，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 cookie。</p>
-<p>下面我们基于 koa 来实现一个简单的支持 TRACE 方法的服务器：</p>
+<h2 id="安全威胁-xst-的防范"><a class="markdown-anchor" href="#安全威胁-xst-的防范">#</a> 安全威胁 XST 的防范</h2>
+<p><a href="https://www.owasp.org/index.php/XST" target="_blank" rel="external">XST</a> 的全称是 <code>Cross-Site Tracing</code>，客户端发 TRACE 请求至服务器，如果服务器按照标准实现了 TRACE 响应，则在 response body 里会返回此次请求的完整头信息。通过这种方式，客户端可以获取某些敏感的头字段，例如 httpOnly 的 Cookie。</p>
+<p>下面我们基于 Koa 来实现一个简单的支持 TRACE 方法的服务器：</p>
 <p><figure class="highlight javascript"><table><tr><td class="code"><pre><div class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</div><div class="line"><span class="keyword">var</span> app = koa();</div><div class="line"></div><div class="line">app.use(<span class="function"><span class="keyword">function</span>* (<span class="params">next</span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.cookies.set(<span class="string">'a'</span>, <span class="number">1</span>, &#123; <span class="attr">httpOnly</span>: <span class="literal">true</span> &#125;);</div><div class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.method === <span class="string">'TRACE'</span>) &#123;</div><div class="line">    <span class="keyword">var</span> body = <span class="string">''</span>;</div><div class="line">    <span class="keyword">for</span> (header <span class="keyword">in</span> <span class="keyword">this</span>.headers) &#123;</div><div class="line">      body += header + <span class="string">': '</span> + <span class="keyword">this</span>.headers[header] + <span class="string">'\r\n'</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">this</span>.body = body;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">yield</span>* next;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.listen(<span class="number">7001</span>);</div></pre></td></tr></table></figure></p>
 <p>启动服务后，先发个 GET 请求 <code>curl -i http://127.0.0.1:7001</code>，得到如下响应：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">HTTP/1.1 200 OK</div><div class="line">X-Powered-By: koa</div><div class="line">Set-Cookie: a=1; path=/; httponly</div><div class="line">Content-Type: text/plain; charset=utf-8</div><div class="line">Content-Length: 2</div><div class="line">Date: Thu, 06 Nov 2014 05:04:42 GMT</div><div class="line">Connection: keep-alive</div><div class="line"></div><div class="line">OK</div></pre></td></tr></table></figure></p>
-<p>服务器设置了一个 httpOnly 的 cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。</p>
-<p>接着我们发 TRACE 请求到服务器<code>curl -X TRACE -b a=1 -i http://127.0.0.1:7001</code>，并带上 cookie，得到如下响应：</p>
+<p>服务器设置了一个 httpOnly 的 Cookie 为 1，在浏览器环境中，是无法通过脚本获取它的。</p>
+<p>接着我们发 TRACE 请求到服务器<code>curl -X TRACE -b a=1 -i http://127.0.0.1:7001</code>，并带上 Cookie，得到如下响应：</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">HTTP/1.1 200 OK</div><div class="line">X-Powered-By: koa</div><div class="line">Set-Cookie: a=1; path=/; httponly</div><div class="line">Content-Type: text/plain; charset=utf-8</div><div class="line">Content-Length: 73</div><div class="line">Date: Thu, 06 Nov 2014 05:07:47 GMT</div><div class="line">Connection: keep-alive</div><div class="line"></div><div class="line">user-agent: curl/7.37.1</div><div class="line">host: 127.0.0.1:7001</div><div class="line">accept: */*</div><div class="line">cookie: a=1</div></pre></td></tr></table></figure></p>
 <p>在响应体里可以看到完整的头信息，这样我们就绕过了 httpOnly 的限制，拿到了cookie=1，造成了很大的风险。</p>
 <h3 id="拓展阅读"><a class="markdown-anchor" href="#拓展阅读">#</a> 拓展阅读</h3>
@@ -208,7 +208,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 <p>http://deadliestwebattacks.com/2010/05/18/cross-site-tracing-xst-the-misunderstood-vulnerability/</p>
 <h3 id="防范方式-4"><a class="markdown-anchor" href="#防范方式-4">#</a> 防范方式</h3>
 <p>框架已经禁止了 trace，track，options 三种危险类型请求。</p>
-<h2 id="安全威胁钓鱼攻击的防范"><a class="markdown-anchor" href="#安全威胁钓鱼攻击的防范">#</a> 安全威胁<code>钓鱼攻击</code>的防范</h2>
+<h2 id="安全威胁-钓鱼攻击-的防范"><a class="markdown-anchor" href="#安全威胁-钓鱼攻击-的防范">#</a> 安全威胁 <code>钓鱼攻击</code> 的防范</h2>
 <p>钓鱼有多种方式，这里介绍 url 钓鱼、图片钓鱼和 iframe 钓鱼。</p>
 <h3 id="url-钓鱼"><a class="markdown-anchor" href="#url-钓鱼">#</a> url 钓鱼</h3>
 <p>服务端未对传入的跳转 url 变量进行检查和控制，可能导致可恶意构造任意一个恶意地址，诱导用户跳转到恶意网站。
@@ -255,7 +255,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 <p><a href="https://www.owasp.org/index.php/Cross_Frame_Scripting" target="_blank" rel="external">iframe 钓鱼</a>，通过内嵌 iframe 到被攻击的网页中，攻击者可以引导用户去点击 iframe 指向的危险网站，甚至遮盖，影响网站的正常功能，劫持用户的点击操作。</p>
 <p>框架提供了 <code>X-Frame-Options</code> 这个安全头来防止 iframe 钓鱼。默认值为 SAMEORIGIN，只允许同域把本页面当作 iframe 嵌入。</p>
 <p>当需要嵌入一些可信的第三方网页时，可以关闭这个配置。</p>
-<h2 id="安全威胁hpp的防范"><a class="markdown-anchor" href="#安全威胁hpp的防范">#</a> 安全威胁<code>HPP</code>的防范</h2>
+<h2 id="安全威胁-hpp-的防范"><a class="markdown-anchor" href="#安全威胁-hpp-的防范">#</a> 安全威胁 HPP 的防范</h2>
 <p>Http Parameter Pollution（HPP)，即 HTTP 参数污染攻击。在HTTP协议中是允许同样名称的参数出现多次，而由于应用的实现不规范，攻击者通过传播参数的时候传输 key 相同而 value 不同的参数，从而达到绕过某些防护的后果。</p>
 <p>HPP 可能导致的安全威胁有：</p>
 <ul>
@@ -272,14 +272,14 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 <h3 id="如何防范"><a class="markdown-anchor" href="#如何防范">#</a> 如何防范</h3>
 <p>框架本身会在客户端传输 key 相同而 value 不同的参数时，强制使用第一个参数，因此不会导致 hpp 攻击。</p>
 <h2 id="中间人攻击"><a class="markdown-anchor" href="#中间人攻击">#</a> <a href="https://www.owasp.org/index.php/Man-in-the-middle_attack" target="_blank" rel="external">中间人攻击</a>与 HTTP / HTTPS</h2>
-<p>HTTP 是网络应用广泛使用的协议，负责 web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。</p>
+<p>HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取。然而，内容请求和获取时会经过许多中间人，主要是网络环节，充当内容入口的浏览器、路由器厂商、WIFI提供商、通信运营商，如果使用了代理、翻墙软件则会引入更多中间人。由于 HTTP 请求的路径、参数默认情况下均是明文的，因此这些中间人可以对 HTTP 请求进行监控、劫持、阻挡。</p>
 <p>在没有 HTTPS 时，运营商可在用户发起请求时直接跳转到某个广告，或者直接改变搜索结果插入自家的广告。如果劫持代码出现了 BUG ，则直接让用户无法使用，出现白屏。</p>
 <p>数据泄露、请求劫持、内容篡改等等问题，核心原因就在于 HTTP 是全裸式的明文请求，域名、路径和参数都被中间人们看得一清二楚。HTTPS 做的就是给请求加密，让其对用户更加安全。对于自身而言除了保障用户利益外，还可避免本属于自己的流量被挟持，以保护自身利益。</p>
 <p>尽管 HTTPS 并非绝对安全，掌握根证书的机构、掌握加密算法的组织同样可以进行中间人形式的攻击。不过HTTPS是现行架构下最安全的解决方案，并且它大幅增加了中间人攻击的成本。</p>
-<p>因此，请各位使用 egg 框架开发网站的开发者，务必推动自己的网站升级到 HTTPS。</p>
+<p>因此，请各位使用 Egg 框架开发网站的开发者，务必推动自己的网站升级到 HTTPS。</p>
 <p>对于 HTTPS 来讲，还有一点要注意的是 HTTP 严格传输安全（HSTS），如果不使用 HSTS，当用户在浏览器中输入网址时没有加 HTTPS，浏览器会默认使用 HTTP 访问</p>
 <p>框架提供了 <code>hsts Strict-Transport-Security</code> 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。</p>
-<p>如果我们的web站点是 http 站点，需要关闭这个头。配置如下：</p>
+<p>如果我们的Webb 站点是 http 站点，需要关闭这个头。配置如下：</p>
 <ul>
 <li>maxAge 默认一年 <code>365 * 24 * 3600</code>。</li>
 <li>includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。</li>
@@ -300,7 +300,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

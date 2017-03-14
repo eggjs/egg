@@ -48,7 +48,7 @@
     <div class="page-main">
   <article class="markdown-body">
     <h1>日志</h1>
-    <p>日志对于 web 开发的重要性毋庸置疑，它对于监控应用的运行状态、问题排查等都有非常重要的意义。</p>
+    <p>日志对于 Web 开发的重要性毋庸置疑，它对于监控应用的运行状态、问题排查等都有非常重要的意义。</p>
 <p>框架内置了强大的企业级日志支持，由 <a href="https://github.com/eggjs/egg-logger" target="_blank" rel="external">egg-logger</a> 模块提供。</p>
 <p>主要特性：</p>
 <ul>
@@ -63,7 +63,7 @@
 <h2 id="日志路径"><a class="markdown-anchor" href="#日志路径">#</a> 日志路径</h2>
 <ul>
 <li>所有日志文件默认都放在 <code>${appInfo.root}/logs/${appInfo.name}</code> 路径下，例如 <code>/home/admin/logs/example-app</code>。</li>
-<li>在本地开发环境(env: local) 和单元测试环境(env: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 <code>/path/to/example-app/logs/example-app</code>。</li>
+<li>在本地开发环境 (env: local) 和单元测试环境 (env: unittest)，为了避免冲突以及集中管理，日志会打印在项目目录下的 logs 目录，例如 <code>/path/to/example-app/logs/example-app</code>。</li>
 </ul>
 <p>如果想自定义日志路径：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.$&#123;env&#125;.js</span></div><div class="line">exports.logger = &#123;</div><div class="line">  <span class="attr">dir</span>: <span class="string">'/path/to/your/custom/log/dir'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
@@ -78,23 +78,23 @@
 <p>如果想自定义以上日志文件名称，可以在 config 文件中覆盖默认值：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.$&#123;env&#125;.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">logger</span>: &#123;</div><div class="line">      <span class="attr">appLogName</span>: <span class="string">`<span class="subst">$&#123;appInfo.name&#125;</span>-web.log`</span>,</div><div class="line">      <span class="attr">coreLogName</span>: <span class="string">'egg-web.log'</span>,</div><div class="line">      <span class="attr">agentLogName</span>: <span class="string">'egg-agent.log'</span>,</div><div class="line">      <span class="attr">errorLogName</span>: <span class="string">'common-error.log'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h2 id="如何打印日志"><a class="markdown-anchor" href="#如何打印日志">#</a> 如何打印日志</h2>
-<h3 id="context-logger"><a class="markdown-anchor" href="#context-logger">#</a> context logger</h3>
-<p>如果我们在处理请求时需要打印日志，这时候使用 context logger，用于记录 web 行为相关的日志。</p>
+<h3 id="context-logger"><a class="markdown-anchor" href="#context-logger">#</a> Context Logger</h3>
+<p>如果我们在处理请求时需要打印日志，这时候使用 Context Logger，用于记录 Web 行为相关的日志。</p>
 <p>每行日志会自动记录上当前请求的一些基本信息，
 如 <code>[$userId/$ip/$traceId/${cost}ms $method $url]</code>。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.logger.debug(<span class="string">'debug info'</span>);</div><div class="line">ctx.logger.info(<span class="string">'some request data: %j'</span>, ctx.request.body);</div><div class="line">ctx.logger.warn(<span class="string">'WARNNING!!!!'</span>);</div><div class="line"></div><div class="line"><span class="comment">// 错误日志记录，直接会将错误日志完整堆栈信息记录下来，并且输出到 errorLog 中</span></div><div class="line"><span class="comment">// 为了保证异常可追踪，必须保证所有抛出的异常都是 Error 类型，因为只有 Error 类型才会带上堆栈信息，定位到问题。</span></div><div class="line">ctx.logger.error(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'whoops'</span>));</div></pre></td></tr></table></figure></p>
-<p>对于框架开发者和插件开发者会使用到的 context logger 还有 <code>ctx.coreLogger</code>。</p>
+<p>对于框架开发者和插件开发者会使用到的 Context Logger 还有 <code>ctx.coreLogger</code>。</p>
 <p>例如</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.coreLogger.info(<span class="string">'info'</span>);</div></pre></td></tr></table></figure></p>
-<h3 id="app-logger"><a class="markdown-anchor" href="#app-logger">#</a> app logger</h3>
-<p>如果我们想做一些应用级别的日志记录，如记录启动阶段的一些数据信息，可以通过 app logger 来完成。</p>
+<h3 id="app-logger"><a class="markdown-anchor" href="#app-logger">#</a> App Logger</h3>
+<p>如果我们想做一些应用级别的日志记录，如记录启动阶段的一些数据信息，可以通过 App Logger 来完成。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.logger.debug(<span class="string">'debug info'</span>);</div><div class="line">  app.logger.info(<span class="string">'启动耗时 %d ms'</span>, <span class="built_in">Date</span>.now() - start);</div><div class="line">  app.logger.warn(<span class="string">'warning!'</span>);</div><div class="line"></div><div class="line">  app.logger.error(someErrorObj);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>对于框架和插件开发者会使用到的 app logger 还有 <code>app.coreLogger</code>。</p>
+<p>对于框架和插件开发者会使用到的 App Logger 还有 <code>app.coreLogger</code>。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">app</span> =&gt;</span> &#123;</div><div class="line">  app.coreLogger.info(<span class="string">'启动耗时 %d ms'</span>, <span class="built_in">Date</span>.now() - start);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<h3 id="agent-logger"><a class="markdown-anchor" href="#agent-logger">#</a> agent logger</h3>
-<p>在开发框架和插件时有时会需要在 agent 进程运行代码，这时使用 <code>agent.coreLogger</code>。</p>
+<h3 id="agent-logger"><a class="markdown-anchor" href="#agent-logger">#</a> Agent Logger</h3>
+<p>在开发框架和插件时有时会需要在 Agent 进程运行代码，这时使用 <code>agent.coreLogger</code>。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// agent.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">agent</span> =&gt;</span> &#123;</div><div class="line">  agent.logger.debug(<span class="string">'debug info'</span>);</div><div class="line">  agent.logger.info(<span class="string">'启动耗时 %d ms'</span>, <span class="built_in">Date</span>.now() - start);</div><div class="line">  agent.logger.warn(<span class="string">'warning!'</span>);</div><div class="line"></div><div class="line">  agent.logger.error(someErrorObj);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>如需详细了解 agent 进程，请参考 <a href="../advanced/cluster.html">多进程模型</a>。</p>
+<p>如需详细了解 Agent 进程，请参考<a href="../advanced/cluster.html">多进程模型</a>。</p>
 <h2 id="日志文件编码"><a class="markdown-anchor" href="#日志文件编码">#</a> 日志文件编码</h2>
 <p>默认编码为 <code>utf-8</code>，可通过如下方式覆盖：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.$&#123;env&#125;.js</span></div><div class="line">exports.logger = &#123;</div><div class="line">  <span class="attr">encoding</span>: <span class="string">'gbk'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
@@ -149,7 +149,7 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.$&#123;env&#125;.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">logrotator</span>: &#123;</div><div class="line">      <span class="attr">filesRotateByHour</span>: [</div><div class="line">        path.join(appInfo.root, <span class="string">'logs'</span>, appInfo.name, <span class="string">'common-error.log'</span>),</div><div class="line">      ],</div><div class="line">    &#125;,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>添加到 <code>filesRotateByHour</code> 的日志文件不再被按天进行切割。</p>
 <h2 id="性能"><a class="markdown-anchor" href="#性能">#</a> 性能</h2>
-<p>通常 web 访问是高频访问，每次打印日志都写磁盘会造成频繁磁盘 io，为了提高性能，我们采用的文件日志写入策略是：</p>
+<p>通常 Web 访问是高频访问，每次打印日志都写磁盘会造成频繁磁盘 IO，为了提高性能，我们采用的文件日志写入策略是：</p>
 <blockquote>
 <p>日志同步写入内存，异步每隔一段时间(默认 1 秒)刷盘</p>
 </blockquote>
@@ -160,7 +160,7 @@
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

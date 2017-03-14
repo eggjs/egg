@@ -50,7 +50,7 @@
     <h1>插件开发</h1>
     <p>插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了</p>
 <blockquote>
-<p>koa 已经有了中间件的机制，为啥还要插件呢？
+<p>Koa 已经有了中间件的机制，为啥还要插件呢？
 中间件、插件、应用它们之间是什么关系，有什么区别？
 我该怎么使用一个插件？
 如何编写一个插件？
@@ -58,7 +58,7 @@
 </blockquote>
 <p>接下来我们就来逐一讨论</p>
 <h2 id="为什么要插件"><a class="markdown-anchor" href="#为什么要插件">#</a> 为什么要插件</h2>
-<p>我们在使用 koa 中间件过程中发现了下面一些问题：</p>
+<p>我们在使用 Koa 中间件过程中发现了下面一些问题：</p>
 <ol>
 <li>中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。</li>
 <li>中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。</li>
@@ -84,7 +84,7 @@
 <li><code>{String} name</code> - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。</li>
 <li><code>{Array} dependencies</code> - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。</li>
 <li><code>{Array} optionalDependencies</code> - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。</li>
-<li><code>{Array} env</code> - 只有在指定运行环境才能开启，具体有哪些环境可以参考 <a href="../basics/env.html">运行环境</a>。此配置是可选的，一般情况下都不需要配置。</li>
+<li><code>{Array} env</code> - 只有在指定运行环境才能开启，具体有哪些环境可以参考<a href="../basics/env.html">运行环境</a>。此配置是可选的，一般情况下都不需要配置。</li>
 </ul>
 <p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"name"</span>: <span class="string">"egg-rpc"</span>,</div><div class="line">  <span class="attr">"eggPlugin"</span>: &#123;</div><div class="line">    <span class="attr">"name"</span>: <span class="string">"rpc"</span>,</div><div class="line">    <span class="attr">"dependencies"</span>: [ <span class="string">"registry"</span> ],</div><div class="line">    <span class="attr">"optionalDependencies"</span>: [ <span class="string">"vip"</span> ],</div><div class="line">    <span class="attr">"env"</span>: [ <span class="string">"local"</span>, <span class="string">"test"</span>, <span class="string">"unittest"</span>, <span class="string">"prod"</span> ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 </li>
@@ -104,12 +104,12 @@
 <h3 id="扩展内置对象的接口"><a class="markdown-anchor" href="#扩展内置对象的接口">#</a> 扩展内置对象的接口</h3>
 <p>在插件相应的文件内对框架内置对象进行扩展，和应用一样</p>
 <ul>
-<li><code>app/extend/request.js</code> - 扩展 koa#Request 对象</li>
-<li><code>app/extend/response.js</code> - 扩展 koa#Response 对象</li>
-<li><code>app/extend/context.js</code> - 扩展 koa#Context 对象</li>
-<li><code>app/extend/helper.js</code> - 扩展 Helper 对象</li>
-<li><code>app/extend/application.js</code> - 扩展 app 对象</li>
-<li><code>app/extend/agent.js</code> - 扩展 agent 对象</li>
+<li><code>app/extend/request.js</code> - 扩展 Koa#Request 类</li>
+<li><code>app/extend/response.js</code> - 扩展 Koa#Response 类</li>
+<li><code>app/extend/context.js</code> - 扩展 Koa#Context 类</li>
+<li><code>app/extend/helper.js</code> - 扩展 Helper 类</li>
+<li><code>app/extend/application.js</code> - 扩展 Application 类</li>
+<li><code>app/extend/agent.js</code> - 扩展 Agent 类</li>
 </ul>
 <h3 id="插入自定义中间件"><a class="markdown-anchor" href="#插入自定义中间件">#</a> 插入自定义中间件</h3>
 <ol>
@@ -205,7 +205,7 @@
 <p>框架已内置插件列表：</p>
 <ul>
 <li><a href="https://github.com/eggjs/egg-onerror" target="_blank" rel="external">onerror</a> 统一异常处理</li>
-<li><a href="https://github.com/eggjs/egg-session" target="_blank" rel="external">session</a> session 实现</li>
+<li><a href="https://github.com/eggjs/egg-session" target="_blank" rel="external">Session</a> Session 实现</li>
 <li><a href="https://github.com/eggjs/egg-i18n" target="_blank" rel="external">i18n</a> 多语言</li>
 <li><a href="https://github.com/eggjs/egg-watcher" target="_blank" rel="external">watcher</a> 文件和文件夹监控</li>
 <li><a href="https://github.com/eggjs/egg-multipart" target="_blank" rel="external">multipart</a> 文件流式上传</li>
@@ -262,9 +262,9 @@
 </li>
 </ul>
 <h2 id="为何不使用-npm-包名来做插件名"><a class="markdown-anchor" href="#为何不使用-npm-包名来做插件名">#</a> 为何不使用 npm 包名来做插件名？</h2>
-<p>egg 是通过 <code>eggPlugin.name</code> 来定义插件名的，只在应用或框架具备唯一性，也就是说<strong>多个 npm 包可能有相同的插件名</strong>，为什么这么设计呢？</p>
-<p>首先 egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在<a href="../tutorials/progressive.html">渐进式开发</a>章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 egg 无法通过 npm 的包名来做唯一性。</p>
-<p>更重要的是 egg 可以使用这种特性来做适配器。比如<a href="./view-plugin.html#%E6%8F%92%E4%BB%B6%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83">模板开发规范</a>定义的插件名为 view，而存在 <code>egg-view-nunjucks</code>，<code>egg-view-react</code> 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。</p>
+<p>Egg 是通过 <code>eggPlugin.name</code> 来定义插件名的，只在应用或框架具备唯一性，也就是说<strong>多个 npm 包可能有相同的插件名</strong>，为什么这么设计呢？</p>
+<p>首先 Egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在<a href="../tutorials/progressive.html">渐进式开发</a>章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 Egg 无法通过 npm 的包名来做唯一性。</p>
+<p>更重要的是 Egg 可以使用这种特性来做适配器。比如<a href="./view-plugin.html#%E6%8F%92%E4%BB%B6%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83">模板开发规范</a>定义的插件名为 view，而存在 <code>egg-view-nunjucks</code>，<code>egg-view-react</code> 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。</p>
 <p><strong>将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换</strong>。这在模板、数据库等领域非常适用。</p>
 
   </article>
@@ -272,7 +272,7 @@
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

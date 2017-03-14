@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>配置 - 为企业级框架和应用而生</title>
+  <title>Config 配置 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -47,9 +47,8 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>配置</h1>
-    <h2 id="config-配置"><a class="markdown-anchor" href="#config-配置">#</a> config 配置</h2>
-<p>框架提供了强大且可扩展的配置功能，可以自动合并应用、插件、框架的配置，按顺序覆盖，且可以根据环境维护不同的配置。合并后的配置可直接从 <code>app.config</code> 获取。</p>
+    <h1>Config 配置</h1>
+    <p>框架提供了强大且可扩展的配置功能，可以自动合并应用、插件、框架的配置，按顺序覆盖，且可以根据环境维护不同的配置。合并后的配置可直接从 <code>app.config</code> 获取。</p>
 <p>配置的管理有多种方案，以下列一些常见的方案</p>
 <ol>
 <li>使用平台管理配置，应用构建时将当前环境的配置放入包内，启动时指定该配置。但应用就无法一次构建多次部署，而且本地开发环境想使用配置会变的很麻烦。</li>
@@ -61,7 +60,7 @@
 <p>框架支持根据环境来加载配置，定义多个环境的配置文件，具体环境请查看<a href="./env.html">运行环境配置</a></p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">config</div><div class="line">|- config.default.js</div><div class="line">|- config.test.js</div><div class="line">|- config.prod.js</div><div class="line">|- config.unittest.js</div><div class="line">`- config.local.js</div></pre></td></tr></table></figure></p>
 <p><code>config.default.js</code> 为默认的配置文件，所有环境都会加载这个配置文件，一般也会作为开发环境的默认配置文件。</p>
-<p>当指定 env 时会同时加载对应的配置文件，并覆盖默认配置文件的同名配置。如 prod 环境会加载 <code>config.prod.js</code> 和 <code>config.default.js</code> 文件，<code>config.prod.js</code> 会覆盖 <code>config.default.js</code> 的同名配置。</p>
+<p>当指定 env 时会同时加载对应的配置文件，并覆盖默认配置文件的同名配置。如 <code>prod</code> 环境会加载 <code>config.prod.js</code> 和 <code>config.default.js</code> 文件，<code>config.prod.js</code> 会覆盖 <code>config.default.js</code> 的同名配置。</p>
 <h3 id="配置写法"><a class="markdown-anchor" href="#配置写法">#</a> 配置写法</h3>
 <p>配置文件返回的是一个 object 对象，可以覆盖框架的一些配置，应用也可以将自己业务的配置放到这里方便管理。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 配置 logger 文件的目录，logger 默认配置由框架提供</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">logger</span>: &#123;</div><div class="line">    <span class="attr">dir</span>: <span class="string">'/home/admin/logs/demoapp'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
@@ -117,9 +116,9 @@
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">i18n</span>: <span class="literal">false</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="引入插件"><a class="markdown-anchor" href="#引入插件">#</a> 引入插件</h3>
 <p>框架默认内置了企业级应用常用的<a href="https://github.com/eggjs/egg/blob/master/config/plugin.js" target="_blank" rel="external">一部分插件</a>。</p>
-<p>而应用开发者可以根据业务需求，引入其他插件，只需要指定 package 配置。</p>
+<p>而应用开发者可以根据业务需求，引入其他插件，只需要指定 <code>package</code> 配置。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 使用 mysql 插件</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">mysql</span>: &#123;</div><div class="line">    <span class="attr">enable</span>: <span class="literal">true</span>,</div><div class="line">    <span class="attr">package</span>: <span class="string">'egg-mysql'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<p>package 为一个 npm 模块，必须添加依赖到 <code>pkg.dependencies</code> 中。框架会在 node_modules 目录中找到这个模块作为插件入口。</p>
+<p><code>package</code> 为一个 npm 模块，必须添加依赖到 <code>pkg.dependencies</code> 中。框架会在 node_modules 目录中找到这个模块作为插件入口。</p>
 <p><figure class="highlight json"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="attr">"dependencies"</span>: &#123;</div><div class="line">    <span class="attr">"egg-mysql"</span>: <span class="string">"^1.0.0"</span></div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p><strong>注意：配置的插件即使只在开发期使用，也必须是 dependencies 而不是 devDependencies，否则 <code>npm i --production</code> 后会找不到。</strong></p>
 <p>也可以指定 path 来替代 package。</p>
@@ -127,7 +126,7 @@
 <p>path 为一个绝对路径，这样应用可以把自己写的插件直接放到应用目录中，如 <code>app/plugin</code> 目录。</p>
 <h2 id="配置结果"><a class="markdown-anchor" href="#配置结果">#</a> 配置结果</h2>
 <p>框架在启动时会把合并后的最终配置 dump 到 <code>run/application_config.json</code>（worker 进程）和 <code>run/agent_config.json</code>（agent 进程）中，可以用来分析问题。</p>
-<p>配置文件中会隐藏一些字段，主要包括两类</p>
+<p>配置文件中会隐藏一些字段，主要包括两类:</p>
 <ul>
 <li>如密码、密钥等安全字段，这里可以通过 <code>config.dump.ignore</code> 配置，必须是 <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set" target="_blank" rel="external">Set</a> 类型，查看<a href="https://github.com/eggjs/egg/blob/master/config/config.default.js" target="_blank" rel="external">默认配置</a>。</li>
 <li>如函数、Buffer 等类型，<code>JSON.stringify</code> 后的内容特别大</li>
@@ -138,7 +137,7 @@
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

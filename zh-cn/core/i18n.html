@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>国际化 - 为企业级框架和应用而生</title>
+  <title>I18n 国际化 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -47,22 +47,22 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>国际化</h1>
-    <p>为了方便开发多语言应用，框架内置了国际化（i18n）支持，由 <a href="https://github.com/eggjs/egg-i18n" target="_blank" rel="external">egg-i18n</a> 插件提供。</p>
+    <h1>I18n 国际化</h1>
+    <p>为了方便开发多语言应用，框架内置了国际化（I18n）支持，由 <a href="https://github.com/eggjs/egg-i18n" target="_blank" rel="external">egg-i18n</a> 插件提供。</p>
 <h2 id="默认语言"><a class="markdown-anchor" href="#默认语言">#</a> 默认语言</h2>
 <p>默认语言是 <code>en-US</code>。假设我们想修改默认语言为简体中文：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line">exports.i18n = &#123;</div><div class="line">  <span class="attr">defaultLocale</span>: <span class="string">'zh-CN'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h2 id="切换语言"><a class="markdown-anchor" href="#切换语言">#</a> 切换语言</h2>
-<p>我们可以通过下面几种方式修改应用的当前语言（修改后会记录到 <code>locale</code> 这个 cookie），下次请求直接用设定好的语言。</p>
+<p>我们可以通过下面几种方式修改应用的当前语言（修改后会记录到 <code>locale</code> 这个 Cookie），下次请求直接用设定好的语言。</p>
 <p>优先级从高到低：</p>
 <ol>
 <li>query: <code>/?locale=en-US</code></li>
 <li>cookie: <code>locale=zh-TW</code></li>
 <li>header: <code>Accept-Language: zh-CN,zh;q=0.5</code></li>
 </ol>
-<p>如果想修改 query 或者 cookie 参数名称：</p>
+<p>如果想修改 query 或者 Cookie 参数名称：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line">exports.i18n = &#123;</div><div class="line">  <span class="attr">queryField</span>: <span class="string">'locale'</span>,</div><div class="line">  <span class="attr">cookieField</span>: <span class="string">'locale'</span>,</div><div class="line">  <span class="comment">// Cookie 默认一年后过期， 如果设置为 Number，则单位为 ms</span></div><div class="line">  cookieMaxAge: <span class="string">'1y'</span>,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
-<h2 id="编写-i18n-多语言文件"><a class="markdown-anchor" href="#编写-i18n-多语言文件">#</a> 编写 i18n 多语言文件</h2>
+<h2 id="编写-i18n-多语言文件"><a class="markdown-anchor" href="#编写-i18n-多语言文件">#</a> 编写 I18n 多语言文件</h2>
 <p>多种语言的配置是独立的，统一存放在 <code>config/locales/*.js</code> 下。</p>
 <p><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">- config/locales/</div><div class="line">  - en-US.js</div><div class="line">  - zh-CN.js</div><div class="line">  - zh-TW.js</div></pre></td></tr></table></figure></p>
 <p>不仅对于应用目录生效，在框架，插件的 <code>config/locales</code> 目录下同样生效。</p>
@@ -83,7 +83,7 @@
 <h3 id="controller-中使用"><a class="markdown-anchor" href="#controller-中使用">#</a> Controller 中使用</h3>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = &#123;</div><div class="line">    <span class="attr">message</span>: <span class="keyword">this</span>.__(<span class="string">'Welcome back, %s!'</span>, <span class="keyword">this</span>.user.name)</div><div class="line">    <span class="comment">// 或者使用 gettext，gettext 是 __ 函数的 alias</span></div><div class="line">    <span class="comment">// message: this.gettext('Welcome back', this.user.name)</span></div><div class="line">    user: <span class="keyword">this</span>.user,</div><div class="line">  &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="view-中使用"><a class="markdown-anchor" href="#view-中使用">#</a> View 中使用</h3>
-<p>假设我们使用的模板引擎是 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">nunjucks</a></p>
+<p>假设我们使用的模板引擎是 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">Nunjucks</a></p>
 <p><figure class="highlight html"><table><tr><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span>&#123;&#123; __('Email') &#125;&#125;: &#123;&#123; user.email &#125;&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span></div><div class="line">  &#123;&#123; __('Welcome back, %s!', user.name) &#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">li</span>&gt;</span></div><div class="line">  &#123;&#123; __('Hello &#123;0&#125;! My name is &#123;1&#125;.', ['foo', 'bar']) &#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div></pre></td></tr></table></figure></p>
 
   </article>
@@ -91,7 +91,7 @@
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

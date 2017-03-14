@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-  <title>模板渲染 - 为企业级框架和应用而生</title>
+  <title>View 模板渲染 - 为企业级框架和应用而生</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -47,10 +47,10 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>模板渲染</h1>
+    <h1>View 模板渲染</h1>
     <p>绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户。故我们需要引入对应的模板引擎。</p>
 <p>框架内置 <a href="https://github.com/eggjs/egg-view" target="_blank" rel="external">egg-view</a> 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。如果想更深入的了解，可以查看<a href="../advanced/view-plugin.html">模板插件开发</a>。</p>
-<p>以下以官方支持的 view 插件 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 为例</p>
+<p>以下以官方支持的 View 插件 <a href="https://github.com/eggjs/egg-view-nunjucks" target="_blank" rel="external">egg-view-nunjucks</a> 为例</p>
 <h2 id="引入-view-插件"><a class="markdown-anchor" href="#引入-view-插件">#</a> 引入 view 插件</h2>
 <p><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm i egg-view-nunjucks --save</div></pre></td></tr></table></figure></p>
 <h3 id="启用插件"><a class="markdown-anchor" href="#启用插件">#</a> 启用插件</h3>
@@ -59,12 +59,12 @@
 <p><a href="https://github.com/eggjs/egg-view" target="_blank" rel="external">egg-view</a> 提供了 <code>config.view</code> 通用配置</p>
 <h3 id="root-string"><a class="markdown-anchor" href="#root-string">#</a> root {String}</h3>
 <p>模板文件的根目录，为绝对路径，默认为 <code>${baseDir}/app/view</code>。支持配置多个目录，以 <code>,</code> 分割，会从多个目录查找文件。</p>
-<p>如下示例演示了如何配置多个 view 目录：</p>
+<p>如下示例演示了如何配置多个 <code>view</code> 目录：</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>);</div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="params">appInfo</span> =&gt;</span> &#123;</div><div class="line">  <span class="keyword">return</span> &#123;</div><div class="line">    <span class="attr">view</span>: &#123;</div><div class="line">      <span class="attr">root</span>: [</div><div class="line">        path.join(appInfo.baseDir, <span class="string">'app/view'</span>),</div><div class="line">        path.join(appInfo.baseDir, <span class="string">'path/to/another'</span>),</div><div class="line">      ].join(<span class="string">','</span>)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <h3 id="cache-boolean"><a class="markdown-anchor" href="#cache-boolean">#</a> cache {Boolean}</h3>
 <p>模板路径缓存，默认开启。框架会根据 root 配置的目录依次查找，如果匹配则会缓存文件路径，下载渲染相同路径时不会重新查找。</p>
 <h3 id="mapping-和-defaultviewengine"><a class="markdown-anchor" href="#mapping-和-defaultviewengine">#</a> mapping 和 defaultViewEngine</h3>
-<p>每个模板在注册时都会指定一个模板名（viewEngineName），在使用时需要根据后缀来匹配模板名，比如指定 <code>.nj</code> 后缀的文件使用 nunjucks 进行渲染。</p>
+<p>每个模板在注册时都会指定一个模板名（viewEngineName），在使用时需要根据后缀来匹配模板名，比如指定 <code>.nj</code> 后缀的文件使用 Nunjucks 进行渲染。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">view</span>: &#123;</div><div class="line">    <span class="attr">mapping</span>: &#123;</div><div class="line">      <span class="string">'.nj'</span>: <span class="string">'nunjucks'</span>,</div><div class="line">    &#125;,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>调用 render 渲染文件</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line">ctx.render(<span class="string">'home.nj'</span>);</div></pre></td></tr></table></figure></p>
@@ -75,7 +75,7 @@
 <p>一般在调用 render 时需要指定文件路径，如果配置了 defaultExtension 可以省略后缀。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// config/config.default.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  <span class="attr">view</span>: &#123;</div><div class="line">    <span class="attr">defaultExtension</span>: <span class="string">'.nj'</span>,</div><div class="line">  &#125;,</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// render app/view/home.nj</span></div><div class="line">ctx.render(<span class="string">'home'</span>);</div></pre></td></tr></table></figure></p>
 <h2 id="渲染页面"><a class="markdown-anchor" href="#渲染页面">#</a> 渲染页面</h2>
-<p>框架在 context 上提供了 3 个接口，返回值均为 Promise:</p>
+<p>框架在 Context 上提供了 3 个接口，返回值均为 Promise:</p>
 <ul>
 <li><code>render(name, locals)</code> 渲染模板文件, 并赋值给 ctx.body</li>
 <li><code>renderView(name, locals)</code> 渲染模板文件, 仅返回不赋值</li>
@@ -83,7 +83,7 @@
 </ul>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// &#123;app_root&#125;/app/controller/home.js</span></div><div class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span>* <span class="title">home</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  <span class="keyword">const</span> data = &#123; <span class="attr">name</span>: <span class="string">'egg'</span> &#125;;</div><div class="line"></div><div class="line">  <span class="comment">// render a template, path relate to `app/view`</span></div><div class="line">  <span class="keyword">yield</span> <span class="keyword">this</span>.render(<span class="string">'home/index.tpl'</span>, data);</div><div class="line"></div><div class="line">  <span class="comment">// or manually set render result to this.body</span></div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">yield</span> <span class="keyword">this</span>.renderView(<span class="string">'path/to/file.tpl'</span>, data);</div><div class="line"></div><div class="line">  <span class="comment">// or render string directly</span></div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'hi, &#123;&#123; name &#125;&#125;'</span>, data, &#123;</div><div class="line">    <span class="attr">viewEngine</span>: <span class="string">'nunjucks'</span>,</div><div class="line">  &#125;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>当使用 <code>renderString</code> 时需要指定模板引擎，如果已经定义 <code>defaultViewEngine</code> 这里可以省略。</p>
-<h2 id="locals"><a class="markdown-anchor" href="#locals">#</a> locals</h2>
+<h2 id="locals"><a class="markdown-anchor" href="#locals">#</a> Locals</h2>
 <p>在渲染页面的过程中，我们通常需要一个变量来收集需要传递给模板的变量，在框架里面，我们提供了 <code>app.locals</code> 和 <code>this.locals</code>。</p>
 <ul>
 <li><code>app.locals</code> 为全局的，一般在 <code>app.js</code> 里面配置全局变量。</li>
@@ -100,20 +100,20 @@
 <p>注意：</p>
 <ul>
 <li><strong>this.locals 有缓存，只在第一次访问 this.locals 时合并 app.locals。</strong></li>
-<li>原 koa 中的 <code>context.state</code>，由于容易产生歧义，在框架中被覆盖为 locals，即 <code>this.state</code> 和 <code>this.locals</code> 等价，我们建议使用后者。</li>
+<li>原 Koa 中的 <code>context.state</code>，由于容易产生歧义，在框架中被覆盖为 locals，即 <code>this.state</code> 和 <code>this.locals</code> 等价，我们建议使用后者。</li>
 </ul>
-<h2 id="helper"><a class="markdown-anchor" href="#helper">#</a> helper</h2>
-<p>在模板中可以直接使用 <code>helper</code> 上注册的方法，具体可以参见 <a href="../basics/extend.html">扩展</a>。</p>
+<h2 id="helper"><a class="markdown-anchor" href="#helper">#</a> Helper</h2>
+<p>在模板中可以直接使用 <code>helper</code> 上注册的方法，具体可以参见<a href="../basics/extend.html">扩展</a>。</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/helper.js</span></div><div class="line">exports.lowercaseFirst = <span class="function"><span class="params">str</span> =&gt;</span> str[<span class="number">0</span>].toLowerCase() + str.substring(<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line"><span class="keyword">yield</span> <span class="keyword">this</span>.renderString(<span class="string">'&#123;&#123; helper.lowercaseFirst(name) &#125;&#125;'</span>, data);</div></pre></td></tr></table></figure></p>
-<h2 id="security"><a class="markdown-anchor" href="#security">#</a> security</h2>
-<p>框架内置的 <a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 插件，为我们提供了常见的安全辅助函数，包括 <code>helper.shtml / surl / sjs</code> 等等等，强烈建议阅读下 <a href="./security.html">安全</a>。</p>
+<h2 id="security"><a class="markdown-anchor" href="#security">#</a> Security</h2>
+<p>框架内置的 <a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> 插件，为我们提供了常见的安全辅助函数，包括 <code>helper.shtml / surl / sjs</code> 等等等，强烈建议阅读下<a href="./security.html">安全</a>。</p>
 
   </article>
   <aside id="mobileAside" class="toc">
   <div class="mobile-menu">
     <ul><li><a href="/zh-cn/intro/" alt="指南">指南</a></li><li><a href="/zh-cn/tutorials/index.html" alt="教程">教程</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="插件">插件</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="发布日志">发布日志</a></li></ul>
   </div>
-  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">egg 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">egg 和 koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
+  <dl><dt>新手指南</dt><dd><ul><li><a href="/zh-cn/intro/index.html">Egg.js 是什么?</a></li><li><a href="/zh-cn/intro/egg-and-koa.html">Egg.js 和 Koa</a></li><li><a href="/zh-cn/intro/quickstart.html">快速入门</a></li></ul></dd><dt>基础功能</dt><dd><ul><li><a href="/zh-cn/basics/structure.html">目录结构</a></li><li><a href="/zh-cn/basics/env.html">运行环境</a></li><li><a href="/zh-cn/basics/config.html">配置</a></li><li><a href="/zh-cn/basics/middleware.html">中间件</a></li><li><a href="/zh-cn/basics/router.html">Router</a></li><li><a href="/zh-cn/basics/controller.html">Controller</a></li><li><a href="/zh-cn/basics/service.html">Service</a></li><li><a href="/zh-cn/basics/schedule.html">定时任务</a></li><li><a href="/zh-cn/basics/extend.html">框架扩展</a></li><li><a href="/zh-cn/basics/app-start.html">启动自定义</a></li></ul></dd><dt>核心功能</dt><dd><ul><li><a href="/zh-cn/core/development.html">本地开发</a></li><li><a href="/zh-cn/core/unittest.html">单元测试</a></li><li><a href="/zh-cn/core/deployment.html">应用部署</a></li><li><a href="/zh-cn/core/logger.html">日志</a></li><li><a href="/zh-cn/core/httpclient.html">HttpClient</a></li><li><a href="/zh-cn/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/zh-cn/core/cluster-and-ipc.html">多进程模型和进程间通讯</a></li><li><a href="/zh-cn/core/view.html">模板渲染</a></li><li><a href="/zh-cn/core/error-handling.html">异常处理</a></li><li><a href="/zh-cn/core/security.html">安全</a></li><li><a href="/zh-cn/core/i18n.html">国际化</a></li></ul></dd><dt>教程</dt><dd><ul><li><a href="/zh-cn/tutorials/progressive.html">渐进式开发</a></li><li><a href="/zh-cn/tutorials/mysql.html">MySQL</a></li><li><a href="/zh-cn/tutorials/restful.html">RESTful API</a></li><li><a href="/zh-cn/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>进阶</dt><dd><ul><li><a href="/zh-cn/advanced/loader.html">Loader</a></li><li><a href="/zh-cn/advanced/plugin.html">插件开发</a></li><li><a href="/zh-cn/advanced/framework.html">框架开发</a></li><li><a href="/zh-cn/advanced/cluster-client.html">多进程研发模式增强</a></li><li><a href="/zh-cn/advanced/view-plugin.html">模板插件开发规范</a></li></ul></dd><dt>社区</dt><dd><ul><li><a href="/zh-cn/contributing.html">如何贡献</a></li><li><a href="/zh-cn/resource.html">资源</a></li><li><a href="/zh-cn/faq.html">常见问题</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>egg and koa - Born to build better enterprise frameworks and apps</title>
+  <title>Egg and Koa - Born to build better enterprise frameworks and apps</title>
 <meta charset="utf-8">
 <meta name="description" content="">
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -47,7 +47,7 @@
   <div id="container">
     <div class="page-main">
   <article class="markdown-body">
-    <h1>egg and koa</h1>
+    <h1>Egg and Koa</h1>
     <h2 id="asynchronous-programming-model"><a class="markdown-anchor" href="#asynchronous-programming-model">#</a> Asynchronous programming model</h2>
 <p>Node.js is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:</p>
 <ul>
@@ -62,20 +62,20 @@
 <p>With the code , you can yield a Promise in Generator Function, and the runtime would execute the following code after being resolved.</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">let</span> count = <span class="number">1</span>;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">tick</span>(<span class="params">time</span>) </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</div><div class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</div><div class="line">      <span class="built_in">console</span>.log(<span class="string">'tick %s after %s ms'</span>, count++, time);</div><div class="line">      resolve();</div><div class="line">    &#125;, time);</div><div class="line">  &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">main</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="built_in">console</span>.log(<span class="string">'start run...'</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">500</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">1000</span>);</div><div class="line">  <span class="keyword">yield</span> tick(<span class="number">2000</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">run(main());</div></pre></td></tr></table></figure></p>
 <p>With the run function, asynchronous code can be written in synchronous way in main function in the example above. If you want to know more about Generator, you can have a look at <a href="https://github.com/dead-horse/koa-step-by-step#generator" target="_blank" rel="external">this document</a></p>
-<p>Compared with the run function, <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> has <code>yield [Object / Array / thunk / Generator Function / Generator]</code>, and builds a Promise with wrapping a Generator Function. <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> is also the underlying library of koa 1 providing the asynchronous feature. Every middleware in koa 1 must be a <code>generator function</code>.</p>
+<p>Compared with the run function, <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> has <code>yield [Object / Array / thunk / Generator Function / Generator]</code>, and builds a Promise with wrapping a Generator Function. <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> is also the underlying library of Koa 1 providing the asynchronous feature. Every middleware in Koa 1 must be a <code>generator function</code>.</p>
 <h3 id="async-function"><a class="markdown-anchor" href="#async-function">#</a> Async function</h3>
 <p><a href="https://github.com/tc39/ecmascript-asyncawait" target="_blank" rel="external">Async function</a> has the similar principles to the <a href="https://github.com/tj/co" target="_blank" rel="external">co</a>, it is a syntactic sugar at the language level. The code written in async function looks like that written in co + generator.</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> fn = co(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">yield</span> getUser();</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">yield</span> fetchPosts(user.id);</div><div class="line">  <span class="keyword">return</span> &#123; user, posts &#125;;</div><div class="line">&#125;);</div><div class="line">fn().then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res)).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.error(err.stack));</div></pre></td></tr></table></figure></p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="keyword">const</span> fn = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">const</span> user = <span class="keyword">await</span> getUser();</div><div class="line">  <span class="keyword">const</span> posts = <span class="keyword">await</span> fetchPosts(user.id);</div><div class="line">  <span class="keyword">return</span> &#123; user, posts &#125;;</div><div class="line">&#125;;</div><div class="line">fn().then(<span class="function"><span class="params">res</span> =&gt;</span> <span class="built_in">console</span>.log(res)).catch(<span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.error(err.stack));</div></pre></td></tr></table></figure></p>
 <p>Other than the features supported by <a href="https://github.com/tj/co" target="_blank" rel="external">co</a>, async function can not await a <code>Promise</code> array (You can wrap it with <code>Promise.all</code>), await <code>thunk</code> is not avaliable either.</p>
-<p>Though async function has not been published with the spec yet, it is supported in the V8 runtime built in node 7.x, you can use it without flag parameter after 7.6.0 version.</p>
+<p>Though async function has not been published with the spec yet, it is supported in the V8 runtime built in Node.js 7.x, you can use it without flag parameter after 7.6.0 version.</p>
 <h2 id="koa"><a class="markdown-anchor" href="#koa">#</a> Koa</h2>
 <blockquote>
-<p>Koa is a new web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for web applications and APIs.</p>
+<p>Koa is a new Web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for Web applications and APIs.</p>
 </blockquote>
-<p>The design style of koa and express are very similar, The underlying base library is the same, <a href="https://github.com/jshttp" target="_blank" rel="external">HTTP library</a>. There are several significant differences between them. Besides the asynchronous solution by default metioned above, there are the following points.</p>
+<p>The design style of Koa and Express are very similar, The underlying base library is the same, <a href="https://github.com/jshttp" target="_blank" rel="external">HTTP library</a>. There are several significant differences between them. Besides the asynchronous solution by default metioned above, there are the following points.</p>
 <h3 id="midlleware"><a class="markdown-anchor" href="#midlleware">#</a> Midlleware</h3>
-<p>The middleware in koa is different from express, koa use the onion model:</p>
+<p>The middleware in Koa is different from Express, Koa use the onion model:</p>
 <ul>
 <li>Middleware onion diagram:</li>
 </ul>
@@ -84,14 +84,14 @@
 <li>Middleware execution sequence diagram:</li>
 </ul>
 <p><img src="https://raw.githubusercontent.com/koajs/koa/a7b6ed0529a58112bac4171e4729b8760a34ab8b/docs/middleware.gif" alt=""></p>
-<p>All the requests will be executed twice during one middleware. Compared to express middleware, it is very easy to implementing post-processing logic. You can obviously feel the advantage of koa middleware model comparing to the compress middleware implementing in koa and express.</p>
+<p>All the requests will be executed twice during one middleware. Compared to Express middleware, it is very easy to implementing post-processing logic. You can obviously feel the advantage of Koa middleware model comparing to the compress middleware implementing in Koa and Express.</p>
 <ul>
-<li><a href="https://github.com/koajs/compress/blob/master/index.js" target="_blank" rel="external">koa-compress</a> for koa.</li>
-<li><a href="https://github.com/expressjs/compression/blob/master/index.js" target="_blank" rel="external">compression</a> for express.</li>
+<li><a href="https://github.com/koajs/compress/blob/master/index.js" target="_blank" rel="external">koa-compress</a> for Koa.</li>
+<li><a href="https://github.com/expressjs/compression/blob/master/index.js" target="_blank" rel="external">compression</a> for Express.</li>
 </ul>
 <h3 id="context"><a class="markdown-anchor" href="#context">#</a> Context</h3>
-<p>Unlike that there are only two objects <code>Request</code> and <code>Response</code> in express, koa has one more, <code>Context</code> object in one http request(it is <code>this</code> in koa 1, while it is the first parameter for middleware function in koa 2). We can attach all the relative things to the object. Such as <a href="https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12" target="_blank" rel="external">traceId</a> that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.</p>
-<p>At the same time Request and Response are attached to Context object. Just like express, the two objects provide lots of easy ways to help developing. For example:</p>
+<p>Unlike that there are only two objects <code>Request</code> and <code>Response</code> in Express, Koa has one more, <code>Context</code> object in one HTTP request(it is <code>this</code> in Koa 1, while it is the first parameter for middleware function in Koa 2). We can attach all the relative things to the object. Such as <a href="https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12" target="_blank" rel="external">traceId</a> that runs through the request lifetime (which will be called anywhere afterward) could be attached. It is more semantic other than request and response.</p>
+<p>At the same time Request and Response are attached to Context object. Just like Express, the two objects provide lots of easy ways to help developing. For example:</p>
 <ul>
 <li><code>get request.query</code></li>
 <li><code>get request.hostname</code></li>
@@ -102,17 +102,17 @@
 <p>Another enormous advantage for writing asynchronous code in synchronous way is that it is quite at ease to handler exception. You can catch all the exceptions thrown in the codes followed the convention with <code>try catch</code>. We can easily write a customized exception handlering middleware.</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span>* <span class="title">onerror</span>(<span class="params">next</span>) </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">yield</span> next;</div><div class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</div><div class="line">    <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err);</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'server error'</span>;</div><div class="line">    <span class="keyword">this</span>.status = err.status || <span class="number">500</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>Putting the middleware before others, you can catch all the exceptions thrown by the synchronous or asynchronous code.</p>
-<h2 id="egg-inherit-from-koa"><a class="markdown-anchor" href="#egg-inherit-from-koa">#</a> Egg inherit from koa</h2>
-<p>As the above words, koa is an excellent framework. However, it is not enough to building an enterprise-class application.</p>
-<p>Egg is built around the koa. On the basis of koa model, egg implements enhancements one step further.</p>
+<h2 id="egg-inherit-from-koa"><a class="markdown-anchor" href="#egg-inherit-from-koa">#</a> Egg inherit from Koa</h2>
+<p>As the above words, Koa is an excellent framework. However, it is not enough to building an enterprise-class application.</p>
+<p>Egg is built around the Koa. On the basis of Koa model, Egg implements enhancements one step further.</p>
 <h3 id="extension"><a class="markdown-anchor" href="#extension">#</a> Extension</h3>
-<p>In the framework or application based on egg, we can extend the prototype of 4 koa objects by defining <code>app/extend/{application,context,request,response}.js</code>. With this, we can write more utility methods quickly. For example, we have the following code in <code>app/extend/context.js</code>:</p>
+<p>In the framework or application based on Egg, we can extend the prototype of 4 Koa objects by defining <code>app/extend/{application,context,request,response}.js</code>. With this, we can write more utility methods quickly. For example, we have the following code in <code>app/extend/context.js</code>:</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/extend/context.js</span></div><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">  get isIOS() &#123;</div><div class="line">    <span class="keyword">const</span> iosReg = <span class="regexp">/iphone|ipad|ipod/i</span>;</div><div class="line">    <span class="keyword">return</span> iosReg.test(<span class="keyword">this</span>.get(<span class="string">'user-agent'</span>));</div><div class="line">  &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>It can be used in controller then:</p>
 <p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// app/controller/home.js</span></div><div class="line">exports.handler = <span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">this</span>.body = <span class="keyword">this</span>.isIOS</div><div class="line">    ? <span class="string">'Your operating system is iOS.'</span></div><div class="line">    : <span class="string">'Your operating system is not iOS.'</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>More about extension, please check <a href="../basics/extend.html">Exception</a> section.</p>
 <h3 id="plugin"><a class="markdown-anchor" href="#plugin">#</a> Plugin</h3>
-<p>As is known to all, Many middlewares are imported to provide different kind of features in express and koa. Eg, <a href="https://github.com/koajs/session" target="_blank" rel="external">koa-session</a> provides the session support, <a href="https://github.com/koajs/bodyparser" target="_blank" rel="external">koa-bodyparser</a> help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.</p>
+<p>As is known to all, Many middlewares are imported to provide different kind of features in Express and Koa. Eg, <a href="https://github.com/koajs/session" target="_blank" rel="external">koa-session</a> provides the Session support, <a href="https://github.com/koajs/bodyparser" target="_blank" rel="external">koa-bodyparser</a> help to parse request body. Egg has provided a powerful plugin mechanism to make it more easy to write stand alone features.</p>
 <p>One plugin can include:</p>
 <ul>
 <li>extend：extend the context of base object, provide utility and attributes.</li>
@@ -123,20 +123,20 @@
 <p><a href="https://github.com/eggjs/egg-security" target="_blank" rel="external">egg-security</a> is a typical example.</p>
 <p>More about plugin, please check <a href="../advanced/plugin.html">plugin</a> section.</p>
 <h3 id="roadmap"><a class="markdown-anchor" href="#roadmap">#</a> Roadmap</h3>
-<h4 id="egg-1x"><a class="markdown-anchor" href="#egg-1x">#</a> egg 1.x</h4>
-<p>The node LTS version now does not support async function，so egg is based on koa 1.x. On the basis of this, egg has added full async function support. Egg is completely compatible with middlewares in koa 2.x, all application layer are implemented based on <a href="../tutorials/async-function.html">async function</a>.</p>
+<h4 id="egg-1x"><a class="markdown-anchor" href="#egg-1x">#</a> Egg 1.x</h4>
+<p>The Node.js LTS version now does not support async function，so Egg is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on <a href="../tutorials/async-function.html">async function</a>.</p>
 <ul>
-<li>The underlying is based on koa 1.x, asynchronous solution is based on generator function wrapped by <a href="https://github.com/tj/co" target="_blank" rel="external">co</a>.</li>
-<li>Official plugin and core of egg are written in generator function,  keep supporting node LTS version, use <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> when necessary to be compatiable with async function.</li>
-<li>Application developers can choose either async function(node 7.6+) or generator function(node 6.0+), <strong>we recommend generator function way for ensuring you application can be runned on node LTS version</strong>.</li>
+<li>The underlying is based on Koa 1.x, asynchronous solution is based on generator function wrapped by <a href="https://github.com/tj/co" target="_blank" rel="external">co</a>.</li>
+<li>Official plugin and core of Egg are written in generator function,  keep supporting Node.js LTS version, use <a href="https://github.com/tj/co" target="_blank" rel="external">co</a> when necessary to be compatiable with async function.</li>
+<li>Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+), <strong>we recommend generator function way for ensuring you application can be runned on Node.js LTS version</strong>.</li>
 </ul>
-<h4 id="egg-next"><a class="markdown-anchor" href="#egg-next">#</a> egg next</h4>
-<p>Egg will transfer core to koa 2.x until node LTS supports async function, compatibility with generator function will also be kept.</p>
+<h4 id="egg-next"><a class="markdown-anchor" href="#egg-next">#</a> Egg next</h4>
+<p>Egg will transfer core to Koa 2.x until Node.js LTS supports async function, compatibility with generator function will also be kept.</p>
 <ul>
-<li>The underlying will be based on koa 2.x, asynchronous solution will be based on async function.</li>
+<li>The underlying will be based on Koa 2.x, asynchronous solution will be based on async function.</li>
 <li>Official plugin and core of egge will be written in async function.</li>
 <li>Recommend user transfer business layer to async function.</li>
-<li>node 6.x will be no longer supported.</li>
+<li>Node.js 6.x will be no longer supported.</li>
 </ul>
 
   </article>
@@ -144,7 +144,7 @@
   <div class="mobile-menu">
     <ul><li><a href="/intro/" alt="Guide">Guide</a></li><li><a href="/tutorials/index.html" alt="Tutorials">Tutorials</a></li><li><a href="https://github.com/search?q=topic%3Aegg-plugin&type=Repositories" alt="Plugins">Plugins</a></li><li><a href="https://github.com/eggjs/egg/releases" alt="Release">Release</a></li></ul>
   </div>
-  <dl><dt>Guide</dt><dd><ul><li><a href="/en/intro/index.html">What is Egg?</a></li><li><a href="/en/intro/egg-and-koa.html">Egg and koa</a></li><li><a href="/en/intro/quickstart.html">Quick Start</a></li></ul></dd><dt>Basis Function</dt><dd><ul><li><a href="/en/basics/structure.html">Directory Structure</a></li><li><a href="/en/basics/env.html">Environment</a></li><li><a href="/en/basics/config.html">Configuration</a></li><li><a href="/en/basics/middleware.html">Middleware</a></li><li><a href="/en/basics/router.html">Router</a></li><li><a href="/en/basics/controller.html">Controller</a></li><li><a href="/en/basics/service.html">Service</a></li><li><a href="/en/basics/schedule.html">Schedule</a></li><li><a href="/en/basics/extend.html">Extend</a></li><li><a href="/en/basics/app-start.html">Custom Init</a></li></ul></dd><dt>Core</dt><dd><ul><li><a href="/en/core/development.html">Development</a></li><li><a href="/en/core/unittest.html">Unit Testing</a></li><li><a href="/en/core/deployment.html">应用部署</a></li><li><a href="/en/core/logger.html">Logger</a></li><li><a href="/en/core/httpclient.html">HttpClient</a></li><li><a href="/en/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/en/core/cluster-and-ipc.html">Cluster and IPC</a></li><li><a href="/en/core/view.html">View</a></li><li><a href="/en/core/error-handling.html">Error Handling</a></li><li><a href="/en/core/security.html">Security</a></li><li><a href="/en/core/i18n.html">i18n</a></li></ul></dd><dt>Tutorials</dt><dd><ul><li><a href="/en/tutorials/progressive.html">Progressive</a></li><li><a href="/en/tutorials/mysql.html">MySQL</a></li><li><a href="/en/tutorials/restful.html">RESTful API</a></li><li><a href="/en/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>Advanced</dt><dd><ul><li><a href="/en/advanced/loader.html">Loader</a></li><li><a href="/en/advanced/plugin.html">Plugin</a></li><li><a href="/en/advanced/framework.html">Framework</a></li><li><a href="/en/advanced/cluster-client.html">Cluster Enhancement</a></li><li><a href="/en/advanced/view-plugin.html">View Plugin</a></li></ul></dd><dt>Community</dt><dd><ul><li><a href="/en/contributing.html">Contributing</a></li><li><a href="/en/resource.html">资源</a></li><li><a href="/en/faq.html">FAQ</a></li></ul></dd></dl>
+  <dl><dt>Guide</dt><dd><ul><li><a href="/en/intro/index.html">Egg.js 是什么?</a></li><li><a href="/en/intro/egg-and-koa.html">Egg and Koa</a></li><li><a href="/en/intro/quickstart.html">Quick Start</a></li></ul></dd><dt>Basis Function</dt><dd><ul><li><a href="/en/basics/structure.html">Directory Structure</a></li><li><a href="/en/basics/env.html">Environment</a></li><li><a href="/en/basics/config.html">Configuration</a></li><li><a href="/en/basics/middleware.html">Middleware</a></li><li><a href="/en/basics/router.html">Router</a></li><li><a href="/en/basics/controller.html">Controller</a></li><li><a href="/en/basics/service.html">Service</a></li><li><a href="/en/basics/schedule.html">Schedule</a></li><li><a href="/en/basics/extend.html">Extend</a></li><li><a href="/en/basics/app-start.html">Custom Init</a></li></ul></dd><dt>Core</dt><dd><ul><li><a href="/en/core/development.html">Development</a></li><li><a href="/en/core/unittest.html">Unit Testing</a></li><li><a href="/en/core/deployment.html">应用部署</a></li><li><a href="/en/core/logger.html">Logger</a></li><li><a href="/en/core/httpclient.html">HttpClient</a></li><li><a href="/en/core/cookie-and-session.html">Cookie and Session</a></li><li><a href="/en/core/cluster-and-ipc.html">Cluster and IPC</a></li><li><a href="/en/core/view.html">View</a></li><li><a href="/en/core/error-handling.html">Error Handling</a></li><li><a href="/en/core/security.html">Security</a></li><li><a href="/en/core/i18n.html">i18n</a></li></ul></dd><dt>Tutorials</dt><dd><ul><li><a href="/en/tutorials/progressive.html">Progressive</a></li><li><a href="/en/tutorials/mysql.html">MySQL</a></li><li><a href="/en/tutorials/restful.html">RESTful API</a></li><li><a href="/en/tutorials/async-function.html">Async Function</a></li></ul></dd><dt>Advanced</dt><dd><ul><li><a href="/en/advanced/loader.html">Loader</a></li><li><a href="/en/advanced/plugin.html">Plugin</a></li><li><a href="/en/advanced/framework.html">Framework</a></li><li><a href="/en/advanced/cluster-client.html">Cluster Enhancement</a></li><li><a href="/en/advanced/view-plugin.html">View Plugin</a></li></ul></dd><dt>Community</dt><dd><ul><li><a href="/en/contributing.html">Contributing</a></li><li><a href="/en/resource.html">资源</a></li><li><a href="/en/faq.html">FAQ</a></li></ul></dd></dl>
 </aside>
 <script>
 var mobileTrigger = document.getElementById('mobileTrigger');
