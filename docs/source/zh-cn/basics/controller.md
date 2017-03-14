@@ -66,7 +66,7 @@ module.exports = {
 
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
-- `this.service`：应用定义的 [Service](./service.md)，通过它我们可以访问到抽象出的业务层。
+- `this.service`：应用定义的 [Service](./service.md)，通过它我们可以访问到抽象出的业务层，等价于 `this.ctx.service` 。
 - `this.config`：应用运行时的[配置项](./config.md)。
 
 #### 自定义 Controller 基类

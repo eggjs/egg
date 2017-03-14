@@ -161,9 +161,9 @@ module.exports = app => {
 
 ```js
 // app/controller/user.js
-exports.info = function* () {
+exports.info = function* (ctx) {
   const userId = this.params.id;
-  const user = yield this.service.user.find(userId);
+  const user = yield ctx.service.user.find(userId);
   this.body = user;
 };
 ```

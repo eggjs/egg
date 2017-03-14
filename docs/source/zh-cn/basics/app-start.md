@@ -22,8 +22,8 @@ module.exports = app => {
 
 ```js
 // app/controller/city.js
-module.exports = function*() {
-  // this.app.cities 在上面启动期间已经加载，可以直接使用
+module.exports = function* (ctx) {
+  // ctx.app.cities 在上面启动期间已经加载，可以直接使用
 }
 ```
 

@@ -19,12 +19,12 @@ module.exports = app => {
 };
 ```
 
-`cities` attribute has attached on the global `this.app`. It can be accessed in the controller,
+`cities` attribute has attached on the global `app`. It can be accessed in the controller,
 
 ```js
 // app/controller/city.js
-module.exports = function*() {
-    // this.app.cities // access `cities` property on the global `this.app`
+module.exports = function* (ctx) {
+    // ctx.app.cities // access `cities` property on the global `ctx.app`
 }
 ```
 
