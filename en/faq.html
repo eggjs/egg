@@ -56,7 +56,7 @@
 <ol>
 <li>PM2 itself is too complex to issue problems if any.</li>
 <li>Deep optimization could be difficlut to achieve if choosing PM2.</li>
-<li>Pattern like one leader process communicating with remote services, along with serveral follower processes delegating request to it (（<a href="./advanced/cluster.html">Cluster</a>), is a rigid demand for reducing connections and data exchange load, espeically when facing applications in very large scale. egg originates from Ant Financial Group and Alibaba Group, we start with applications in that scale at first, so we take these goals into consideration. All of these goals above could be hard to achieve with PM2.</li>
+<li>Pattern like one leader process communicating with remote services, along with serveral follower processes delegating request to it (<a href="./core/cluster-and-ipc.html">Cluster</a>), is a rigid demand for reducing connections and data exchange load, espeically when facing applications in very large scale. egg originates from Ant Financial Group and Alibaba Group, we start with applications in that scale at first, so we take these goals into consideration. All of these goals above could be hard to achieve with PM2.</li>
 </ol>
 <p>Process management is very important. It defines the way we write code, meanwhile relates to deep runtime optimizations. So we think it's better included in framework itself.</p>
 <p><strong>How to start application with PM2?</strong></p>
