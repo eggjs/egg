@@ -1,11 +1,11 @@
 title: Loader
 ---
 
-egg 在 Koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。
+Egg 在 Koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。
 
 ## 应用、框架和插件
 
-egg 是一个底层框架，应用可以直接使用，但 egg 本身的插件比较少，应用需要自己配置插件增加各种特性，比如 MySQL。
+Egg 是一个底层框架，应用可以直接使用，但 Egg 本身的插件比较少，应用需要自己配置插件增加各种特性，比如 MySQL。
 
 ```js
 // 应用配置
@@ -26,7 +26,7 @@ module.exports = {
 }
 ```
 
-当应用达到一定数量，我们会发现大部分应用的配置都是类似的，这时可以基于 egg 扩展出一个框架，应用的配置就会简化很多。
+当应用达到一定数量，我们会发现大部分应用的配置都是类似的，这时可以基于 Egg 扩展出一个框架，应用的配置就会简化很多。
 
 ```js
 // 框架配置
@@ -72,7 +72,7 @@ module.exports = {
 
 - 我们在应用中完成业务，需要指定一个框架才能运行起来，当需要某个特性场景的功能时可以配置插件（比如 MySQL）。
 - 插件只完成特定功能，当两个独立的功能有互相依赖时，还是分开两个插件，但需要配置依赖。
-- 框架是一个启动器（默认就是 egg），必须有它才能运行起来。框架还是一个封装器，将插件的功能聚合起来统一提供，框架也可以配置插件。
+- 框架是一个启动器（默认就是 Egg），必须有它才能运行起来。框架还是一个封装器，将插件的功能聚合起来统一提供，框架也可以配置插件。
 - 在框架的基础上还可以扩展出新的框架，也就是说**框架是可以无限级继承的**，有点像类的继承。
 
 ```
@@ -83,7 +83,7 @@ module.exports = {
 +     |  framework1  +--------------+ plugin |
 |     |              |  framework2  |        |
 +     +--------------+--------------+        |
-|                   egg             |        |
+|                   Egg             |        |
 +-----------------------------------+--------|
 |                   Koa                      |
 +-----------------------------------+--------+
@@ -91,7 +91,7 @@ module.exports = {
 
 ## loadUnit
 
-egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异，下面是目录结构
+Egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异，下面是目录结构
 
 ```
 loadUnit
@@ -132,7 +132,7 @@ config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
 config/plugin.js | ✔︎ | ✔︎ |
 package.json | ✔︎ | ✔︎ | ✔︎
 
-在加载过程中，egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级
+在加载过程中，Egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级
 
 - 按插件 => 框架 => 应用依次加载
 - 插件之间的顺序由依赖关系决定，被依赖方先加载，无依赖按 object key 配置顺序加载，具体可以查看[插件章节](./plugin.md)
@@ -166,7 +166,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 ### 文件顺序
 
-上面已经列出了默认会加载的文件，egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
+上面已经列出了默认会加载的文件，Egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
 
 - 加载 [plugin](./plugin.md)，找到应用和框架，加载 `config/plugin.js`
 - 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{env}.js`
@@ -201,7 +201,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - loadController()
 - loadRouter()
 
-egg 基于 Loader 实现了 [AppWorkerLoader] 和 [AgentWorkerLoader]，上层框架基于这两个类来扩展，**Loader 的扩展只能在框架进行**。
+Egg 基于 Loader 实现了 [AppWorkerLoader] 和 [AgentWorkerLoader]，上层框架基于这两个类来扩展，**Loader 的扩展只能在框架进行**。
 
 ```js
 // 自定义 AppWorkerLoader
@@ -229,7 +229,7 @@ class CustomAppWorkerLoader extends AppWorkerLoader {
 exports.AppWorkerLoader = CustomAppWorkerLoader;
 
 // index.js
-// 拷贝一份 egg 的 API
+// 拷贝一份 Egg 的 API
 Object.assign(exports, require('egg'));
 // 将自定义的 Loader exports 出来
 exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;

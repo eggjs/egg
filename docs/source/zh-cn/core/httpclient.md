@@ -20,7 +20,7 @@ module.exports = app => {
     const result = yield app.curl('https://registry.npm.taobao.org/egg/latest', {
       dataType: 'json',
     });
-    app.logger.info('egg latest version: %s', result.data.version);
+    app.logger.info('Egg latest version: %s', result.data.version);
   });
 };
 ```

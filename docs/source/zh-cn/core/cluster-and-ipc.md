@@ -135,9 +135,9 @@ if (cluster.isMaster) {
          +----------------------------------------->|
          |     worker ready    |                    |
          |<-----------------------------------------+
-         |      egg ready      |                    |
+         |      Egg ready      |                    |
          +-------------------->|                    |
-         |      egg ready      |                    |
+         |      Egg ready      |                    |
          +----------------------------------------->|
 ```
 
@@ -223,7 +223,7 @@ $ EGG_SERVER_ENV=prod nohup node dispatch.js&
 
 #### Worker
 
-Worker 进程负责处理真正的用户请求和[定时任务](../basics/schedule.md)的处理。而 egg 的定时任务也提供了只让一个 Worker 进程运行的能力，**所以能够通过定时任务解决的问题就不要放到 Agent 上执行**。
+Worker 进程负责处理真正的用户请求和[定时任务](../basics/schedule.md)的处理。而 Egg 的定时任务也提供了只让一个 Worker 进程运行的能力，**所以能够通过定时任务解决的问题就不要放到 Agent 上执行**。
 
 Worker 运行的是业务代码，相对会比 Agent 和 Master 进程上运行的代码复杂度更高，稳定性也低一点，**当 Worker 进程异常退出时，Master 进程会重启一个 Worker 进程。**
 
@@ -290,7 +290,7 @@ if (cluster.isMaster) {
    - 在 app 调用该方法上会发送 agent 进程
    - 在 agent 上调用该方法会发送给 agent 自己
 - `agent.messenger.sendRandom(action, data)`:
-   - app 上没有该方法（现在 egg 的实现是等同于 sentToAgent）
+   - app 上没有该方法（现在 Egg 的实现是等同于 sentToAgent）
    - agent 上回随机发送消息给一个 app 进程（由 master 来控制发送给谁）
 - `app.messenger.sendTo(pid, action, data)`: 发送给指定进程
 

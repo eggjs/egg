@@ -1,4 +1,4 @@
-title: egg 与 Koa
+title: Egg.js 与 Koa
 ---
 
 ## 异步编程模型
@@ -131,15 +131,15 @@ function* onerror(next) {
 
 只需要将这个中间件放在其他中间件之前，就可以捕获它们所有的同步或者异步代码中抛出的异常了。
 
-## egg 继承于 Koa
+## Egg 继承于 Koa
 
 如上述，Koa 是一个非常优秀的框架，然而对于企业级应用来说，它还比较基础。
 
-而 egg 选择了 Koa 作为其基础框架，在它的模型基础上，进一步对它进行了一些增强。
+而 Egg 选择了 Koa 作为其基础框架，在它的模型基础上，进一步对它进行了一些增强。
 
 ### 扩展
 
-在基于 egg 的框架或者应用中，我们可以通过定义 `app/extend/{application,context,request,response}.js` 来扩展 Koa 中对应的四个对象的原型，通过这个功能，我们可以快速的增加更多的辅助方法，例如我们在 `app/extend/context.js` 中写入下列代码：
+在基于 Egg 的框架或者应用中，我们可以通过定义 `app/extend/{application,context,request,response}.js` 来扩展 Koa 中对应的四个对象的原型，通过这个功能，我们可以快速的增加更多的辅助方法，例如我们在 `app/extend/context.js` 中写入下列代码：
 
 ```js
 // app/extend/context.js
@@ -166,7 +166,7 @@ exports.handler = function*() {
 
 ### 插件
 
-众所周知，在 Express 和 Koa 中，经常会引入许许多多的中间件来提供各种各样的功能，例如引入 [koa-session](https://github.com/koajs/session) 提供 Session 的支持，引入 [koa-bodyparser](https://github.com/koajs/bodyparser) 来解析请求 body。而 egg 提供了一个更加强大的插件机制，让这些独立领域的功能模块可以更加容易编写。
+众所周知，在 Express 和 Koa 中，经常会引入许许多多的中间件来提供各种各样的功能，例如引入 [koa-session](https://github.com/koajs/session) 提供 Session 的支持，引入 [koa-bodyparser](https://github.com/koajs/bodyparser) 来解析请求 body。而 Egg 提供了一个更加强大的插件机制，让这些独立领域的功能模块可以更加容易编写。
 
 一个插件可以包含
 
@@ -182,20 +182,20 @@ exports.handler = function*() {
 
 ### 升级计划
 
-#### egg 1.x
+#### Egg 1.x
 
-现在 Node.js 的 LTS 版本尚不支持 async function，所以 egg 仍然基于 Koa 1.x 开发，但是在此基础上，egg 全面增加了 async function 的支持，再加上 egg 对 Koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 [async function 来实现](../tutorials/async-function.md)。
+现在 Node.js 的 LTS 版本尚不支持 async function，所以 Egg 仍然基于 Koa 1.x 开发，但是在此基础上，Egg 全面增加了 async function 的支持，再加上 Egg 对 Koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 [async function 来实现](../tutorials/async-function.md)。
 
 - 底层基于 Koa 1.x，异步解决方案基于 [co] 封装的 generator function。
-- 官方插件以及 egg 核心使用 generator function 编写，保持对 Node.js LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
+- 官方插件以及 Egg 核心使用 generator function 编写，保持对 Node.js LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
 - 应用开发者可以选择 async function（Node.js 7.6+） 或者 generator function（Node.js 6.0+）进行编写，**我们推荐 generator function 方案以确保应用可以运行在 Node.js LTS 版本上**。
 
-#### egg next
+#### Egg next
 
-当 Node.js 的 LTS 版本开始支持 async function 时，egg 核心将会迁移到 Koa 2.x，并保持对 generator function 的兼容。
+当 Node.js 的 LTS 版本开始支持 async function 时，Egg 核心将会迁移到 Koa 2.x，并保持对 generator function 的兼容。
 
 - 底层基于 Koa 2.x，异步解决方案基于 async function。
-- 官方插件以及 egg 核心使用 async function 编写。
+- 官方插件以及 Egg 核心使用 async function 编写。
 - 建议业务层迁移到 async function 方案。
 - 不再支持 Node.js 6.x。
 

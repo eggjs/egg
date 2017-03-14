@@ -387,7 +387,7 @@ class APIClient extends Base {
   constructor(options) {
     super(options);
 
-    // options.cluster 用于给 egg 的插件传递 app.cluster 进来
+    // options.cluster 用于给 Egg 的插件传递 app.cluster 进来
     this._client = (options.cluster || cluster)(RegistryClient).create(options);
     this._client.ready(() => this.ready(true));
 

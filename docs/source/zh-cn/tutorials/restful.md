@@ -1,7 +1,7 @@
 title: 实现 RESTful API
 ---
 
-通过 Web 技术开发服务给客户端提供接口，可能是各个 Web 框架最广泛的应用之一。这篇文章我们拿 [CNode 社区](https://cnodejs.org/) 的接口来看一看通过 egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API 给客户端调用。
+通过 Web 技术开发服务给客户端提供接口，可能是各个 Web 框架最广泛的应用之一。这篇文章我们拿 [CNode 社区](https://cnodejs.org/) 的接口来看一看通过 Egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API 给客户端调用。
 
 CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这篇文章中，我们将基于 CNode V1 的接口，封装一个更符合 RESTful 语义的 V2 版本 API。
 

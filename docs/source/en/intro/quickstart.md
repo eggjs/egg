@@ -231,7 +231,7 @@ module.exports = app => {
 Open a browser window and navigate to http://localhost:7001/news.
 You should be able to see the rendered page.
 
-**Tip：In development, egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, Egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -406,7 +406,7 @@ module.exports = app => {
 
 ### Add Unit Testing
 
-Unit Testing is very important, and egg also provide [egg-bin] to help you write tests painless.
+Unit Testing is very important, and Egg also provide [egg-bin] to help you write tests painless.
 
 ```js
 // test/app/middleware/robot.test.js

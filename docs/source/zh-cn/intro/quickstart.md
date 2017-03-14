@@ -1,7 +1,7 @@
 title: 快速入门
 ---
 
-本文将从实例的角度，一步步地搭建出一个 egg 应用，让你能快速的入门 egg。
+本文将从实例的角度，一步步地搭建出一个 Egg.js 应用，让你能快速的入门 Egg.js。
 
 ## 环境准备
 
@@ -28,9 +28,9 @@ $ open localhost:7001
 
 ## 逐步搭建
 
-通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 egg 项目的开发。
+通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
 
-但为了让大家更好的了解 egg，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
+但为了让大家更好的了解 Egg.js，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
 
 ![Egg HackerNews Snapshoot](https://cloud.githubusercontent.com/assets/227713/22960991/812999bc-f37d-11e6-8bd5-a96ca37d0ff2.png)
 
@@ -114,7 +114,7 @@ $ open localhost:7001
 
 ### 静态资源
 
-egg 内置了 [static][egg-static] 插件，线上环境建议部署到 CDN，无需该插件。
+Egg 内置了 [static][egg-static] 插件，线上环境建议部署到 CDN，无需该插件。
 
 static 插件默认映射 `/public/* -> app/public/*` 目录
 
@@ -431,12 +431,12 @@ $ npm test
 
 ## 后记
 
-短短几章内容，只能讲 egg 的冰山一角，我们建议开发者继续阅读其他章节：
+短短几章内容，只能讲 Egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
 - 提供了强大的扩展机制，参见 [插件开发](../advanced/plugin.md)。
-- 一个大规模的团队需要遵循一定的约束和约定，在 egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
+- 一个大规模的团队需要遵循一定的约束和约定，在 Egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
 - 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读 [渐进式开发](../tutorials/progressive.md)。
-- 写单元测试其实很简单的事，egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
+- 写单元测试其实很简单的事，Egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
 [nvm]: https://github.com/creationix/nvm
 [nvs]: https://github.com/jasongin/nvs

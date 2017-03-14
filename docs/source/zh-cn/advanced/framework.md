@@ -12,9 +12,9 @@ title: 框架开发
 - 统一的技术选型，比如数据库、模板、前端框架及各种中间件设施都需要选型，而框架封装后保证应用使用一套架构。
 - 统一的默认配置，开源社区的配置可能不适用于公司，而又不希望应用去配置。
 - 统一的部署方案，通过框架和平台的双向控制，应用只需要关注自己的代码，具体查看[部署章节](./deployment.md)
-- 统一的代码风格，框架不仅仅解决代码重用问题，还可以对应用做一定约束，作为企业框架是很必要的。egg 在 Koa 基础上做了很多约定，框架可以使用 [Loader](./loader.md) 自己定义代码规则。
+- 统一的代码风格，框架不仅仅解决代码重用问题，还可以对应用做一定约束，作为企业框架是很必要的。Egg 在 Koa 基础上做了很多约定，框架可以使用 [Loader](./loader.md) 自己定义代码规则。
 
-为此，egg 为团队架构师和技术负责人提供 `框架定制` 的能力，框架是一层抽象，可以基于 egg 去封装上层框架，并且 egg 支持多层继承。
+为此，Egg 为团队架构师和技术负责人提供 `框架定制` 的能力，框架是一层抽象，可以基于 Egg 去封装上层框架，并且 Egg 支持多层继承。
 
 这样，整个团队就可以遵循统一的方案，并且在项目中可以根据业务场景自行使用插件做差异化，当后者验证为最佳实践后，就能下沉到框架中，其他项目仅需简单的升级下框架的版本即可享受到。
 
@@ -35,7 +35,7 @@ EggCore 可以看做 Koa Application 的升级版，默认内置 [Loader](./load
               ^
        ┌──────┴───────┐
        │              │
-   egg Agent      egg Application
+   Egg Agent      Egg Application
       ^               ^
  agent worker     app worker
 ```
@@ -55,11 +55,11 @@ $ npm test
 
 ### 框架 API
 
-egg 框架提供了一些 API，所有继承的框架都需要提供，只增不减。这些 API 基本都有 Agent 和 Application 两份。
+Egg 框架提供了一些 API，所有继承的框架都需要提供，只增不减。这些 API 基本都有 Agent 和 Application 两份。
 
 #### `egg.startCluster`
 
-egg 的多进程启动器，由这个方法来启动 Master，主要的功能实现在 [egg-cluster](https://github.com/eggjs/egg-cluster) 上。所以直接使用 EggCore 还是单进程的方式，而 egg 实现了多进程。
+Egg 的多进程启动器，由这个方法来启动 Master，主要的功能实现在 [egg-cluster](https://github.com/eggjs/egg-cluster) 上。所以直接使用 EggCore 还是单进程的方式，而 Egg 实现了多进程。
 
 ```js
 const startCluster = require('egg').startCluster;
@@ -77,17 +77,17 @@ startCluster({
 
 #### `egg.Application` 和 `egg.Agent`
 
-进程中的唯一单例，但 Application 和 Agent 存在一定差异。如果框架继承于 egg，会定制这两个类，那 framework 应该 export 这两个类。
+进程中的唯一单例，但 Application 和 Agent 存在一定差异。如果框架继承于 Egg，会定制这两个类，那 framework 应该 export 这两个类。
 
 #### `egg.AppWorkerLoader` 和 `egg.AgentWorkerLoader`
 
-框架也存在定制 Loader 的场景，覆盖原方法或者新加载目录都需要提供自己的 Loader，而且必须要继承 egg 的 Loader。
+框架也存在定制 Loader 的场景，覆盖原方法或者新加载目录都需要提供自己的 Loader，而且必须要继承 Egg 的 Loader。
 
 ### 框架继承
 
-框架支持继承关系，可以把框架比作一个类，那么基类就是 egg 框架，如果想对 egg 做扩展就继承。
+框架支持继承关系，可以把框架比作一个类，那么基类就是 Egg 框架，如果想对 Egg 做扩展就继承。
 
-首先定义一个框架需要实现 egg 所有的 API
+首先定义一个框架需要实现 Egg 所有的 API
 
 ```js
 // package.json
@@ -108,7 +108,7 @@ Object.assign(exports, egg);
 
 ```js
 // index.js
-// 覆盖了 egg 的 Application
+// 覆盖了 Egg 的 Application
 exports.Application = require('./lib/application.js');
 
 // lib/application.js
@@ -145,7 +145,7 @@ module.exports = YadanApplication;
 
 现在的实现方案是基于类继承的，每一层框架都必须继承上一层框架并且指定 eggPath，然后遍历原型链就能获取每一层的框架路径了。
 
-比如有三层框架：部门框架（department）> 企业框架（enterprise）> egg
+比如有三层框架：部门框架（department）> 企业框架（enterprise）> Egg
 
 ```js
 // enterprise
@@ -173,11 +173,11 @@ const app = new Application();
 app.ready();
 ```
 
-以上均是伪代码，为了详细说明框架路径的加载过程，不过 egg 已经在[本地开发](../core/development.md)和[应用部署](./deployment.md)提供了很好的工具，不需要自己实现。
+以上均是伪代码，为了详细说明框架路径的加载过程，不过 Egg 已经在[本地开发](../core/development.md)和[应用部署](./deployment.md)提供了很好的工具，不需要自己实现。
 
 ### 自定义 Agent
 
-上面的例子自定义了 Application，因为 egg 是多进程模型，所以还需要定义 Agent，原理是一样的。
+上面的例子自定义了 Application，因为 Egg 是多进程模型，所以还需要定义 Agent，原理是一样的。
 
 ```js
 // index.js
@@ -219,7 +219,7 @@ class YadanApplication extends Application {
   get [EGG_PATH]() {
     return path.dirname(__dirname);
   }
-  // 覆盖 egg 的 Loader，启动时使用这个 Loader
+  // 覆盖 Egg 的 Loader，启动时使用这个 Loader
   get [EGG_LOADER]() {
     return AppWorkerLoader;
   }
@@ -236,7 +236,7 @@ class YadanAppWorkerLoader extends AppWorkerLoader {
 module.exports = YadanAppWorkerLoader;
 ```
 
-AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加载的文件可以于 AppWorkerLoader 不同，比如 默认加载时，egg 的 AppWorkerLoader 会加载 `app.js` 而 AgentWorkerLoader 加载的是 `agent.js`。
+AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加载的文件可以于 AppWorkerLoader 不同，比如 默认加载时，Egg 的 AppWorkerLoader 会加载 `app.js` 而 AgentWorkerLoader 加载的是 `agent.js`。
 
 ## 框架启动原理
 

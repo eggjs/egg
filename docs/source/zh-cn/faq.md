@@ -1,7 +1,7 @@
 title: 常见问题
 ---
 
-如果下面的内容无法解决你的问题，请查看 [egg issues](https://github.com/eggjs/egg/issues)。
+如果下面的内容无法解决你的问题，请查看 [Egg issues](https://github.com/eggjs/egg/issues)。
 
 ## 为什么我的配置不生效？
 
@@ -15,7 +15,7 @@ title: 常见问题
 
 1. PM2 模块本身复杂度很高，出了问题很难排查。我们认为框架使用的工具复杂度不应该过高，而 PM2 自身的复杂度超越了大部分应用本身。
 2. 没法做非常深的优化。
-3. 切实的需求问题，一个进程里跑 leader，其他进程代理到 leader 这种模式（[多进程模型](./advanced/cluster.md)），在企业级开发中对于减少远端连接，降低数据通信压力等都是切实的需求。特别当应用规模大到一定程度，这就会是刚需。egg 本身起源于蚂蚁金服和阿里，我们对标的起点就是大规模企业应用的构建，所以要非常全面。这些特性通过 PM2 很难做到。
+3. 切实的需求问题，一个进程里跑 leader，其他进程代理到 leader 这种模式（[多进程模型](./advanced/cluster.md)），在企业级开发中对于减少远端连接，降低数据通信压力等都是切实的需求。特别当应用规模大到一定程度，这就会是刚需。Egg 本身起源于蚂蚁金服和阿里，我们对标的起点就是大规模企业应用的构建，所以要非常全面。这些特性通过 PM2 很难做到。
 
 进程模型非常重要，会影响到开发模式，运行期间的深度优化等，我们认为可能由框架来控制比较合适。
 
@@ -49,6 +49,6 @@ pm2 start server.js
 - `missing csrf token`
 - `invalid csrf token`
 
-egg 内置的 [egg-security](https://github.com/eggjs/egg-security/) 插件默认对所有『非安全』的方法，例如 `POST`，`PUT`，`DELETE` 都进行 CSRF 校验。
+Egg 内置的 [egg-security](https://github.com/eggjs/egg-security/) 插件默认对所有『非安全』的方法，例如 `POST`，`PUT`，`DELETE` 都进行 CSRF 校验。
 
 请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读[安全威胁 CSRF 的防范](./core/security.md#安全威胁csrf的防范)。

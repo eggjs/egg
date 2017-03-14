@@ -1,4 +1,4 @@
-title: egg and Koa
+title: Egg and Koa
 ---
 
 ## Asynchronous programming model
@@ -134,12 +134,12 @@ function* onerror(next) {
 
 As the above words, Koa is an excellent framework. However, it is not enough to building an enterprise-class application.
 
-Egg is built around the Koa. On the basis of Koa model, egg implements enhancements one step further.
+Egg is built around the Koa. On the basis of Koa model, Egg implements enhancements one step further.
 
 
 ### Extension
 
-In the framework or application based on egg, we can extend the prototype of 4 Koa objects by defining `app/extend/{application,context,request,response}.js`. With this, we can write more utility methods quickly. For example, we have the following code in `app/extend/context.js`:
+In the framework or application based on Egg, we can extend the prototype of 4 Koa objects by defining `app/extend/{application,context,request,response}.js`. With this, we can write more utility methods quickly. For example, we have the following code in `app/extend/context.js`:
 
 ```js
 // app/extend/context.js
@@ -182,15 +182,15 @@ More about plugin, please check [plugin](../advanced/plugin.md) section.
 
 ### Roadmap
 
-#### egg 1.x
+#### Egg 1.x
 
-The Node.js LTS version now does not support async function，so egg is based on Koa 1.x. On the basis of this, egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
+The Node.js LTS version now does not support async function，so Egg is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
 
 - The underlying is based on Koa 1.x, asynchronous solution is based on generator function wrapped by [co].
-- Official plugin and core of egg are written in generator function,  keep supporting Node.js LTS version, use [co] when necessary to be compatiable with async function.
+- Official plugin and core of Egg are written in generator function,  keep supporting Node.js LTS version, use [co] when necessary to be compatiable with async function.
 - Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+), **we recommend generator function way for ensuring you application can be runned on Node.js LTS version**.
 
-#### egg next
+#### Egg next
 
 Egg will transfer core to Koa 2.x until Node.js LTS supports async function, compatibility with generator function will also be kept.
 

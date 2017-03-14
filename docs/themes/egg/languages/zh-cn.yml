@@ -10,7 +10,7 @@ index:
   feature11: "进程管理"
   feature12: "内置的进程管理和负载均衡"
   feature21: "自定义"
-  feature22: "基于 egg 和插件系统可以为你的团队自定义框架"
+  feature22: "基于 Egg 和插件系统可以为你的团队自定义框架"
   feature31: "强大的插件系统"
   feature32: "插件系统可插拔及可扩展随心所欲"
   getstart: "开始使用"
@@ -21,8 +21,8 @@ header:
 
 guide_toc:
   Intro: 新手指南
-  What is egg: egg 是什么?
-  Egg and Koa: egg 和 Koa
+  What is Egg: Egg.js 是什么?
+  Egg and Koa: Egg.js 和 Koa
   Get Start: 快速入门
   Basics: 基础功能
   Structure: 目录结构

@@ -47,4 +47,4 @@ Set `EGG_SERVER_ENV` to `sit` (also set `NODE_ENV = production` as recommend), t
 
 ## Difference with Koa
 
-We are using `app.env` to distinguishes the environments in Koa, and `app.env` defualt to `process.env.NODE_ENV`. But in egg (and frameworks base on egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.
+We are using `app.env` to distinguishes the environments in Koa, and `app.env` defualt to `process.env.NODE_ENV`. But in Egg (and frameworks base on Egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.

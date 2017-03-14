@@ -129,12 +129,12 @@ title: 插件开发
 
 在插件相应的文件内对框架内置对象进行扩展，和应用一样
 
-- `app/extend/request.js` - 扩展 Koa#Request 对象
-- `app/extend/response.js` - 扩展 Koa#Response 对象
-- `app/extend/context.js` - 扩展 Koa#Context 对象
-- `app/extend/helper.js ` - 扩展 Helper 对象
-- `app/extend/application.js` - 扩展 Application 对象
-- `app/extend/agent.js` - 扩展 Agent 对象
+- `app/extend/request.js` - 扩展 Koa#Request 类
+- `app/extend/response.js` - 扩展 Koa#Response 类
+- `app/extend/context.js` - 扩展 Koa#Context 类
+- `app/extend/helper.js ` - 扩展 Helper 类
+- `app/extend/application.js` - 扩展 Application 类
+- `app/extend/agent.js` - 扩展 Agent 类
 
 ### 插入自定义中间件
 
@@ -545,11 +545,11 @@ $ npm test
 
 ## 为何不使用 npm 包名来做插件名？
 
-egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
+Egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
 
-首先 egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 egg 无法通过 npm 的包名来做唯一性。
+首先 Egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 Egg 无法通过 npm 的包名来做唯一性。
 
-更重要的是 egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
+更重要的是 Egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
 
 **将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
 
