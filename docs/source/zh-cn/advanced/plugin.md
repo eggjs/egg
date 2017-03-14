@@ -325,7 +325,7 @@ module.exports = {
 // app/controller/post.js
 module.exports = app => {
   return class PostController extends app.Controller {
-    *list () {
+    * list() {
       const posts = yield this.app.mysql.query(sql, values);
     },
   };
@@ -366,7 +366,7 @@ exports.mysql = {
 // app/controller/post.js
 module.exports = app => {
   return class PostController extends app.Controller {
-    *list () {
+    * list() {
       const posts = yield this.app.mysql.get('db1').query(sql, values);
     },
   };
@@ -395,7 +395,7 @@ module.exports = app => {
 // app/controller/post.js
 module.exports = app => {
   return class PostController extends app.Controller {
-    *list () {
+    * list() {
       const posts = yield this.app.databse.query(sql, values);
     },
   };

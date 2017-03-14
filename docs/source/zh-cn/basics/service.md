@@ -33,9 +33,9 @@ title: Service
 - Service 文件必须放在 `app/service` 目录，可以支持多级目录，访问的时候可以通过目录名级联访问。
 
   ```js
-  app/service/biz/user.js => this.service.biz.user
-  app/service/sync_user.js => this.service.syncUser
-  app/service/HackerNews.js => this.service.hackerNews
+  app/service/biz/user.js => ctx.service.biz.user
+  app/service/sync_user.js => ctx.service.syncUser
+  app/service/HackerNews.js => ctx.service.hackerNews
   ```
 
 - 一个 Service 文件只能包含一个类， 这个类需要通过 `module.exports` 的方式返回。
@@ -62,10 +62,10 @@ module.exports = app => {
 };
 
 // app/controller/user.js
-exports.info = function* () {
-  const userId = this.params.id;
-  const userInfo = yield this.service.user.find(userId);
-  this.body = userInfo;
+exports.info = function* (ctx) {
+  const userId = ctx.params.id;
+  const userInfo = yield ctx.service.user.find(userId);
+  ctx.body = userInfo;
 };
 
 // app/service/user.js

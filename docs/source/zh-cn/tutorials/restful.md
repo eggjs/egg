@@ -148,17 +148,17 @@ const createRule = {
   tab: { type: 'enum', values: [ 'ask', 'share', 'job' ], required: false },
   content: 'string',
 };
-exports.create = function* () {
-  // 校验 `this.request.body` 是否符合我们预期的格式
+exports.create = function* (ctx) {
+  // 校验 `ctx.request.body` 是否符合我们预期的格式
   // 如果参数校验未通过，将会抛出一个 status = 422 的异常
-  this.validate(createRule);
+  ctx.validate(createRule);
   // 调用 service 创建一个 topic
-  const id = yield this.service.topic.create(this.request.body);
+  const id = yield ctx.service.topic.create(ctx.request.body);
   // 设置响应体和状态码
   this.body = {
     topic_id: id,
   };
-  this.status = 201;
+  ctx.status = 201;
 };
 ```
 

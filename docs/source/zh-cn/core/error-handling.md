@@ -21,13 +21,14 @@ try {
 
 ```js
 // app/controller/jump.js
-const request = {};
-const config = yield this.service.trade.buy(request);
-// 下单后需要进行一次核对，且不阻塞当前请求
-setImmediate(() => {
-  this.service.trade.check(request)
-  .catch(err => this.logger.error(err));
-});
+exports.buy = function* (ctx) {
+  const request = {};
+  const config = yield ctx.service.trade.buy(request);
+  // 下单后需要进行一次核对，且不阻塞当前请求
+  setImmediate(() => {
+    ctx.service.trade.check(request).catch(err => ctx.logger.error(err));
+  });
+}
 ```
 
 在这个场景中，如果 `service.trade.check` 方法中代码有问题，导致执行时抛出了异常，尽管框架会在最外层通过 `try catch` 统一捕获错误，但是由于 `setImmediate` 中的代码『跳出』了异步链，它里面的错误就无法被捕捉到了。因此在编写类似代码的时候一定要注意。
@@ -35,13 +36,15 @@ setImmediate(() => {
 当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
 
 ```js
-const request = {};
-const config = yield this.service.trade.buy(request);
-// 下单后需要进行一次核对，且不阻塞当前请求
-this.runInBackground(function* () {
-  // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
-  yield this.service.trade.check(request);
-});
+exports.buy = function* (ctx) {
+  const request = {};
+  const config = yield ctx.service.trade.buy(request);
+  // 下单后需要进行一次核对，且不阻塞当前请求
+  ctx.runInBackground(function* () {
+    // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
+    yield ctx.service.trade.check(request);
+  });
+}
 ```
 
 **为了保证异常可追踪，必须保证所有抛出的异常都是 Error 类型，因为只有 Error 类型才会带上堆栈信息，定位到问题。**
