@@ -1133,13 +1133,13 @@ p {
   background: none;
 }
 .nav header .search-query {
-  height: 30px;
-  line-height: 30px;
+  height: 32px;
+  line-height: 32px;
   box-sizing: border-box;
-  border: 1px solid #e3e3e3;
+  border: 1px solid #e6e6e6;
   border-radius: 15px;
   outline: none;
-  padding: 0 15px 0 30px;
+  padding: 0 15px 0 32px;
   background: #fff url(../images/search.png) 8px 5px no-repeat;
   background-size: 20px;
 }
@@ -1147,7 +1147,7 @@ p {
   height: 32px;
   float: left;
   line-height: 32px;
-  padding-left: 60px;
+  padding-left: 10px;
 }
 .nav ul.nav-item li {
   display: inline-block;
