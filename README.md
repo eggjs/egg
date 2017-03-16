@@ -7,7 +7,8 @@ Born to build better enterprise frameworks and apps
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
-[![npm download][download-image]][download-url]
+[![NPM download][download-image]][download-url]
+[![Gitter][gitter-image]][gitter-url]
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
@@ -21,6 +22,8 @@ Born to build better enterprise frameworks and apps
 [snyk-url]: https://snyk.io/test/npm/egg
 [download-image]: https://img.shields.io/npm/dm/egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg
+[gitter-image]: https://img.shields.io/gitter/room/eggjs/egg.svg?style=flat-square
+[gitter-url]: https://gitter.im/eggjs/egg
 
 ## Installation
 

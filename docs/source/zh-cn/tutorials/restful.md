@@ -155,7 +155,7 @@ exports.create = function* (ctx) {
   // 调用 service 创建一个 topic
   const id = yield ctx.service.topic.create(ctx.request.body);
   // 设置响应体和状态码
-  this.body = {
+  ctx.body = {
     topic_id: id,
   };
   ctx.status = 201;

@@ -299,8 +299,8 @@ module.exports = app => {
 };
 
 // app/controller/home.js
-exports.index = function* () {
-  this.body = 'hello world';
+exports.index = function* (ctx) {
+  ctx.body = 'hello world';
 };
 ```
 
@@ -354,8 +354,8 @@ describe('test/controller/home.test.js', () => {
 
 ```js
 // app/controller/home.js
-exports.post = function* () {
-  this.body = this.request.body;
+exports.post = function* (ctx) {
+  ctx.body = ctx.request.body;
 };
 
 // test/controller/home.test.js
@@ -753,9 +753,9 @@ it('should mock service error', () => {
 例如在 `app/controller/home.js` 中发起了一个 curl 请求
 
 ```js
-exports.httpclient = function* () {
-  const res = yield this.curl('https://eggjs.org');
-  this.body = res.data.toString();
+exports.httpclient = function* (ctx) {
+  const res = ctx.curl('https://eggjs.org');
+  ctx.body = res.data.toString();
 };
 ```
 

@@ -111,17 +111,17 @@ ctx.render('home');
 
 ```js
 // {app_root}/app/controller/home.js
-module.exports = function* home(){
+module.exports = function* home(ctx){
   const data = { name: 'egg' };
 
   // render a template, path relate to `app/view`
-  yield this.render('home/index.tpl', data);
+  yield ctx.render('home/index.tpl', data);
 
-  // or manually set render result to this.body
-  this.body = yield this.renderView('path/to/file.tpl', data);
+  // or manually set render result to ctx.body
+  ctx.body = yield ctx.renderView('path/to/file.tpl', data);
 
   // or render string directly
-  this.body = yield this.renderString('hi, {{ name }}', data, {
+  ctx.body = yield ctx.renderString('hi, {{ name }}', data, {
     viewEngine: 'nunjucks',
   });
 };

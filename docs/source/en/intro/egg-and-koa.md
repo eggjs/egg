@@ -155,8 +155,8 @@ It can be used in controller then:
 
 ```js
 // app/controller/home.js
-exports.handler = function*() {
-  this.body = this.isIOS
+exports.handler = function* (ctx) {
+  ctx.body = this.isIOS
     ? 'Your operating system is iOS.'
     : 'Your operating system is not iOS.';
 };

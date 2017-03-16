@@ -162,9 +162,9 @@ module.exports = app => {
 ```js
 // app/controller/user.js
 exports.info = function* (ctx) {
-  const userId = this.params.id;
+  const userId = ctx.params.id;
   const user = yield ctx.service.user.find(userId);
-  this.body = user;
+  ctx.body = user;
 };
 ```
 
