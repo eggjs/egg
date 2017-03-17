@@ -349,7 +349,7 @@ describe('test/controller/home.test.js', () => {
 });
 ```
 
-通 SuperTest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
+通过 SuperTest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
 例如以 POST 方式发送一个 JSON 请求：
 
 ```js
