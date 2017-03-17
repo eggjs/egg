@@ -280,7 +280,7 @@ exports.httpclient = {
 需要发送的请求数据，根据 `method` 自动选择正确的数据处理方式。
 
 - GET，HEAD：通过 `querystring.stringify(data)` 处理后拼接到 url 的 query 参数上。
-- POST，POST 和 DELETE 等：需要根据 `contentType` 做进一步判断处理。
+- POST，PUT 和 DELETE 等：需要根据 `contentType` 做进一步判断处理。
   - `contentType = json`：通过 `JSON.stringify(data)` 处理，并设置为 body 发送。
   - 其他：通过 `querystring.stringify(data)` 处理，并设置为 body 发送。
 
