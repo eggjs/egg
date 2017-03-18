@@ -272,8 +272,8 @@ exports.listApp = function* (ctx) {
 //
 // {"title": "controller", "content": "what is controller"}
 exports.listPosts = function* (ctx) {
-  assert.equal(this.request.body.title, 'controller');
-  assert.equal(this.request.body.content, 'what is controller');
+  assert.equal(ctx.request.body.title, 'controller');
+  assert.equal(ctx.request.body.content, 'what is controller');
 };
 ```
 

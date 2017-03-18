@@ -21,9 +21,9 @@ module.exports = app => {
 
 ```js
 // app/controller/user.js
-exports.info = function* () {
-  this.body = {
-    name: `hello ${this.params.id}`,
+exports.info = function* (ctx) {
+  ctx.body = {
+    name: `hello ${ctx.params.id}`,
   };
 };
 ```
@@ -62,9 +62,8 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller
 ### 注意事项
 
 - 在 Router 定义中， 可以支持多个 Middleware 串联执行
-- Controller 必须定义在 `app/controller` 目录中，并且对应的函数一定要是 generator function。
-- 一个文件里面也可以包含多个 Controller 定义，在定义路由的时候，
-可以通过 `controller-filename.function-name` 的方式指定对应的 Controller。
+- Controller 必须定义在 `app/controller` 目录中。
+- 一个文件里面也可以包含多个 Controller 定义，在定义路由的时候，可以通过 `controller-filename.function-name` 的方式指定对应的 Controller。
 
 下面是一些路由定义的方式：
 
@@ -134,8 +133,8 @@ module.exports = app => {
 };
 
 // app/controller/search.js
-module.exports = function* () {
-  this.body = `search: ${this.query.name}`;
+module.exports = function* (ctx) {
+  ctx.body = `search: ${this.query.name}`;
 };
 
 // curl http://127.0.0.1:7001/search?name=egg
@@ -150,8 +149,8 @@ module.exports = app => {
 };
 
 // app/controller/user.js
-exports.info = function* () {
-  this.body = `user: ${this.params.id}, ${this.params.name}`;
+exports.info = function* (ctx) {
+  ctx.body = `user: ${ctx.params.id}, ${ctx.params.name}`;
 };
 
 // curl http://127.0.0.1:7001/user/123/xiaoming
@@ -168,10 +167,10 @@ module.exports = app => {
 };
 
 // app/controller/package.js
-exports.detail = function* () {
-  // 如果请求 URL 被正则匹配， 可以按照捕获分组的顺序，从 this.params 中获取。
-  // 按照下面的用户请求，`this.params[0]` 的 内容就是 `egg/1.0.0`
-  this.body = `package:${this.params[0]}`;
+exports.detail = function* (ctx) {
+  // 如果请求 URL 被正则匹配， 可以按照捕获分组的顺序，从 ctx.params 中获取。
+  // 按照下面的用户请求，`ctx.params[0]` 的 内容就是 `egg/1.0.0`
+  ctx.body = `package:${ctx.params[0]}`;
 };
 
 // curl http://127.0.0.1:7001/package/egg/1.0.0
@@ -186,8 +185,8 @@ module.exports = app => {
 };
 
 // app/controller/form.js
-module.exports = function* () {
-  this.body = `body: ${JSON.stringify(this.request.body)}`;
+module.exports = function* (ctx) {
+  ctx.body = `body: ${JSON.stringify(ctx.request.body)}`;
 };
 
 // 模拟发起 post 请求。
@@ -230,10 +229,10 @@ const createRule = {
   },
 };
 
-exports.create = function* () {
+exports.create = function* (ctx) {
   // 如果校验报错，会抛出异常
-  this.validate(createRule);
-  this.body = this.request.body;
+  ctx.validate(createRule);
+  ctx.body = ctx.request.body;
 };
 
 // curl -X POST http://127.0.0.1:7001/user --data 'username=abc@abc.com&password=111111&re-password=111111'
@@ -251,8 +250,8 @@ module.exports = app => {
 };
 
 // app/controller/home.js
-exports.index = function* () {
-  this.body = 'hello controller';
+exports.index = function* (ctx) {
+  ctx.body = 'hello controller';
 };
 
 // curl -L http://localhost:7001
@@ -289,8 +288,8 @@ module.exports = function* () {
 
 ```js
 // app/controller/search.js
-module.exports = function* () {
-  this.body = `search: ${this.query.name}`;
+module.exports = function* (ctx) {
+  ctx.body = `search: ${this.query.name}`;
 };
 
 // app/middleware/uppercase.js

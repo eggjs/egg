@@ -32,16 +32,16 @@ module.exports = app => {
 
 ```js
 // app/controller/home.js
-module.exports = function* home() {
+module.exports = function* home(ctx) {
   // 示例：请求一个 npm 模块信息
-  const result = yield this.curl('https://registry.npm.taobao.org/egg/latest', {
+  const result = yield ctx.curl('https://registry.npm.taobao.org/egg/latest', {
     // 自动解析 JSON response
     dataType: 'json',
     // 3 秒超时
     timeout: 3000,
   });
 
-  this.body = {
+  ctx.body = {
     status: result.status,
     headers: result.headers,
     package: result.data,
@@ -62,11 +62,11 @@ HTTP 已经被广泛大量使用，尽管 HTTP 有多种请求方式，但是万
 
 ```js
 // app/controller/get.js
-module.exports = function* get() {
-  const result = yield this.curl('https://httpbin.org/get?foo=bar');
-  this.status = result.status;
-  this.set(result.headers);
-  this.body = result.data;
+module.exports = function* get(ctx) {
+  const result = yield ctx.curl('https://httpbin.org/get?foo=bar');
+  ctx.status = result.status;
+  ctx.set(result.headers);
+  ctx.body = result.data;
 };
 ```
 
@@ -87,8 +87,8 @@ module.exports = function* get() {
 
 ```js
 // app/controller/post.js
-module.exports = function* post() {
-  const result = yield this.curl('https://httpbin.org/post', {
+module.exports = function* post(ctx) {
+  const result = yield ctx.curl('https://httpbin.org/post', {
     // 必须指定 method
     method: 'POST',
     // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
@@ -100,7 +100,7 @@ module.exports = function* post() {
     // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
     dataType: 'json',
   });
-  this.body = result.data;
+  ctx.body = result.data;
 };
 ```
 
@@ -113,8 +113,8 @@ PUT 与 POST 类似，它更加适合更新数据和替换数据的语义。
 
 ```js
 // app/controller/put.js
-module.exports = function* put() {
-  const result = yield this.curl('https://httpbin.org/put', {
+module.exports = function* put(ctx) {
+  const result = yield ctx.curl('https://httpbin.org/put', {
     // 必须指定 method
     method: 'PUT',
     // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
@@ -125,7 +125,7 @@ module.exports = function* put() {
     // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
-  this.body = result.data;
+  ctx.body = result.data;
 };
 ```
 
@@ -135,14 +135,14 @@ module.exports = function* put() {
 
 ```js
 // app/controller/delete.js
-module.exports = function* del() {
-  const result = yield this.curl('https://httpbin.org/delete', {
+module.exports = function* del(ctx) {
+  const result = yield ctx.curl('https://httpbin.org/delete', {
     // 必须指定 method
     method: 'DELETE',
     // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
-  this.body = result.data;
+  ctx.body = result.data;
 };
 ```
 
@@ -157,8 +157,8 @@ module.exports = function* del() {
 
 ```js
 // app/controller/form.js
-module.exports = function* form() {
-  const result = yield this.curl('https://httpbin.org/post', {
+module.exports = function* form(ctx) {
+  const result = yield ctx.curl('https://httpbin.org/post', {
     // 必须指定 method，支持 POST，PUT 和 DELETE
     method: 'POST',
     // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
@@ -169,7 +169,7 @@ module.exports = function* form() {
     // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
-  this.body = result.data.form;
+  ctx.body = result.data.form;
   // 响应最终会是类似以下的结果：
   // {
   //   "foo": "bar",
@@ -187,14 +187,14 @@ module.exports = function* form() {
 ```js
 // app/controller/multipart.js
 const FormStream = require('formstream');
-module.exports = function* multipart() {
+module.exports = function* multipart(ctx) {
   const form = new FormStream();
   // 设置普通的 key value
   form.field('foo', 'bar');
   // 上传当前文件本身用于测试
   form.file('file', __filename);
 
-  const result = yield this.curl('https://httpbin.org/post', {
+  const result = yield ctx.curl('https://httpbin.org/post', {
     // 必须指定 method，支持 POST，PUT
     method: 'POST',
     // 生成符合 multipart/form-data 要求的请求 headers
@@ -204,7 +204,7 @@ module.exports = function* multipart() {
     // 明确告诉 HttpClient 以 JSON 格式处理响应 body
     dataType: 'json',
   });
-  this.body = result.data.files;
+  ctx.body = result.data.files;
   // 响应最终会是类似以下的结果：
   // {
   //   "file": "'use strict';\n\nconst For...."
@@ -228,20 +228,20 @@ Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这�
 ```js
 // app/controller/stream.js
 const fs = require('fs');
-module.exports = function* stream() {
+module.exports = function* stream(ctx) {
   // 上传当前文件本身用于测试
   const fileStream = fs.createReadStream(__filename);
   // httpbin.org 不支持 stream 模式，使用本地 stream 接口代替
-  const url = `${this.protocol}://${this.host}/stream`;
-  const result = yield this.curl(url, {
+  const url = `${ctx.protocol}://${ctx.host}/stream`;
+  const result = yield ctx.curl(url, {
     // 必须指定 method，支持 POST，PUT
     method: 'POST',
     // 以 stream 模式提交
     stream: fileStream,
   });
-  this.status = result.status;
-  this.set(result.headers);
-  this.body = result.data;
+  ctx.status = result.status;
+  ctx.set(result.headers);
+  ctx.body = result.data;
   // 响应最终会是类似以下的结果：
   // {"streamSize":574}
 };
@@ -280,24 +280,24 @@ exports.httpclient = {
 需要发送的请求数据，根据 `method` 自动选择正确的数据处理方式。
 
 - GET，HEAD：通过 `querystring.stringify(data)` 处理后拼接到 url 的 query 参数上。
-- POST，POST 和 DELETE 等：需要根据 `contentType` 做进一步判断处理。
+- POST，PUT 和 DELETE 等：需要根据 `contentType` 做进一步判断处理。
   - `contentType = json`：通过 `JSON.stringify(data)` 处理，并设置为 body 发送。
   - 其他：通过 `querystring.stringify(data)` 处理，并设置为 body 发送。
 
 ```js
 // GET + data
-this.curl(url, {
+ctx.curl(url, {
   data: { foo: 'bar' },
 });
 
 // POST + data
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   data: { foo: 'bar' },
 });
 
 // POST + JSON + data
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   contentType: 'json',
   data: { foo: 'bar' },
@@ -312,7 +312,7 @@ this.curl(url, {
 可以很好地解决以 `stream` 发送数据，且额外的请求参数以 `url` query 形式传递的应用场景：
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   dataAsQueryString: true,
   data: {
@@ -328,7 +328,7 @@ this.curl(url, {
 发送请求正文，如果设置了此参数，那么会直接忽略 `data` 参数。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   // 直接发送原始 xml 数据，不需要 HttpClient 做特殊处理
   content: '<xml><hello>world</hello></xml>',
@@ -344,7 +344,7 @@ this.curl(url, {
 一旦设置了此参数，HttpClient 将会忽略 `data` 和 `content`。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   stream: fs.createReadStream('/path/to/read'),
 });
@@ -357,7 +357,7 @@ this.curl(url, {
 因为数据已经全部写入到 `writeStream` 中了。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   writeStream: fs.createWriteStream('/path/to/store'),
 });
 ```
@@ -381,7 +381,7 @@ this.curl(url, {
 如需要以 JSON 格式发送 `data`：
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   method: 'POST',
   data: {
     foo: 'bar',
@@ -399,12 +399,12 @@ this.curl(url, {
 **注意：设置成 `json` 时，如果响应数据解析失败会抛 `JSONResponseFormatError` 异常。**
 
 ```js
-const jsonResult = yield this.curl(url, {
+const jsonResult = yield ctx.curl(url, {
   dataType: 'json',
 });
 console.log(jsonResult.data);
 
-const htmlResult = yield this.curl(url, {
+const htmlResult = yield ctx.curl(url, {
   dataType: 'text',
 });
 console.log(htmlResult.data);
@@ -416,7 +416,7 @@ console.log(htmlResult.data);
 通常一些 CGI 系统返回的 JSON 数据会包含这些特殊控制字符，通过此参数可以自动过滤掉它们。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   fixJSONCtlChars: true,
   dataType: 'json',
 });
@@ -427,7 +427,7 @@ this.curl(url, {
 自定义请求头。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   headers: {
     'x-foo': 'bar',
   },
@@ -439,12 +439,12 @@ this.curl(url, {
 请求超时时间，默认是 `[ 5000, 5000 ]`，即创建连接超时是 5 秒，接收响应超时是 5 秒。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   // 创建连接超时 3 秒，接收响应超时 3 秒
   timeout: 3000,
 });
 
-this.curl(url, {
+ctx.curl(url, {
   // 创建连接超时 1 秒，接收响应超时 30 秒，用于响应比较大的场景
   timeout: [ 1000, 30000 ],
 });
@@ -455,7 +455,7 @@ this.curl(url, {
 允许通过此参数覆盖默认的 HttpAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   agent: false,
 });
 ```
@@ -465,7 +465,7 @@ this.curl(url, {
 允许通过此参数覆盖默认的 HttpsAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   httpsAgent: false,
 });
 ```
@@ -475,7 +475,7 @@ this.curl(url, {
 简单登录授权（Basic Authentication）参数，将以明文方式将登录信息以 `Authorization` 请求头发送出去。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   // 参数必须按照 `user:password` 格式设置
   auth: 'foo:bar',
 });
@@ -487,7 +487,7 @@ this.curl(url, {
 尝试以授权方式请求一次。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   // 参数必须按照 `user:password` 格式设置
   digestAuth: 'foo:bar',
 });
@@ -498,7 +498,7 @@ this.curl(url, {
 是否自动跟进 3xx 的跳转响应，默认是 `false`。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   followRedirect: true,
 });
 ```
@@ -509,7 +509,7 @@ this.curl(url, {
 此参数不宜设置过大，它只在 `followRedirect=true` 情况下才会生效。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   followRedirect: true,
   // 最大只允许自动跳转 5 次。
   maxRedirects: 5,
@@ -521,7 +521,7 @@ this.curl(url, {
 允许我们通过 `formatRedirectUrl` 自定义实现 302、301 等跳转 url 拼接， 默认是 `url.resolve(from, to)`。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   formatRedirectUrl: (from, to) => {
     // 例如可在这里修正跳转不正确的 url
     if (to === '//foo/') {
@@ -537,7 +537,7 @@ this.curl(url, {
 HttpClient 在请求正在发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   beforeRequest: options => {
     // 例如我们可以设置全局请求 id，方便日志跟踪
     options.headers['x-request-id'] = uuid.v1();
@@ -552,13 +552,13 @@ this.curl(url, {
 此时 `result.headers` 和 `result.status` 已经可以读取到，只是没有读取 data 数据而已。
 
 ```js
-const result = yield this.curl(url, {
+const result = yield ctx.curl(url, {
   streaming: true,
 });
 
 console.log(result.status, result.data);
 // result.res 是一个 ReadStream 对象
-this.body = result.res;
+ctx.body = result.res;
 ```
 
 **注意：如果 res 不是直接传递给 body，那么我们必须消费这个 stream，并且要做好 error 事件处理。**
@@ -570,7 +570,7 @@ this.body = result.res;
 并且会自动解压带 `Content-Encoding: gzip` 响应头的数据。
 
 ```js
-this.curl(url, {
+ctx.curl(url, {
   gzip: true,
 });
 ```
@@ -590,7 +590,7 @@ timing 各阶段测量值解析：
 - contentDownload：全部响应数据接收完毕耗时
 
 ```js
-const result = yield this.curl(url, {
+const result = yield ctx.curl(url, {
   timing: true,
 });
 console.log(result.res.timing);
