@@ -187,7 +187,7 @@ exports.login = function* (ctx) {
 
   // 设置 Session
   this.session.user = user;
-  // 如果用户勾选了 `记住我`，设置一个月的过期时间
+  // 如果用户勾选了 `记住我`，设置一分钟的过期时间
   if (rememberMe) this.session.maxAge = ms('1m');
 };
 ```
