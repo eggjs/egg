@@ -734,7 +734,7 @@ app.httpclient.on('response', result => {
 完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
-[HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/urllib.js
+[HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js
 [formstream]: https://github.com/node-modules/formstream
 [HTTP]: https://nodejs.org/api/http.html
 [HTTPS]: https://nodejs.org/api/https.html
