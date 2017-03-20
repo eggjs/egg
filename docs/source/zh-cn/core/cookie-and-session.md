@@ -213,3 +213,6 @@ module.exports = () => {
 // 在配置文件中引入中间件
 exports.middleware = [ 'saveSession' ];
 ```
+
+[egg-redis]: https://github.com/eggjs/egg-redis
+[egg-session-redis]: https://github.com/eggjs/egg-session-redis
