@@ -1,3 +1,28 @@
+# History
+
+## 2017-03-21, Version 1.0.0, @popomore
+
+Release the first stable version :egg: :clap::clap::clap:
+
+### Commits
+
+  * [[`a3ad38d`](http://github.com/eggjs/egg/commit/a3ad38d649ff8eb0cd6dfcbe338466f1c59afef3)] - docs: fix HttpClient link in docs (#599) (Luobo Zhang <<zhang.pc3@gmail.com>>)
+  * [[`242a4a1`](http://github.com/eggjs/egg/commit/242a4a1fbecfc4efa37cca58d1861040dd5838bd)] - docs: fix session's maxage (#598) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`ee77e5c`](http://github.com/eggjs/egg/commit/ee77e5cdcb444f86bf9f50bfd89a63dd9321449f)] - docs: fix some typo (#597) (kyle <<succpeking@hotmail.com>>)
+  * [[`984d732`](http://github.com/eggjs/egg/commit/984d7320881adf9420e5c7e49d62d5530ad887dd)] - refactor: app.cluster auto bind this (#570) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+  * [[`4687f0f`](http://github.com/eggjs/egg/commit/4687f0f47566373938f9f928ac1dc4fa62590f4d)] - docs: fix session link (#595) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`3849c1c`](http://github.com/eggjs/egg/commit/3849c1c4b8f0354b12fd17bb884c33ef9e115e3c)] - docs: fix typo of httpclient & unittest (#591) (kyle <<succpeking@hotmail.com>>)
+  * [[`871aa82`](http://github.com/eggjs/egg/commit/871aa82d28eeb026de6633cafbe168cca8ad3182)] - docs: add gitter & more controller ctx style (#585) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`a172960`](http://github.com/eggjs/egg/commit/a1729604959af84878dddb2776d621ee01c2d447)] - docs: typo (kyle <<succpeking@hotmail.com>>)
+  * [[`54c10bc`](http://github.com/eggjs/egg/commit/54c10bc085b380f4f003d2f7987c205264dde1ad)] - docs: change controller showcase style to ctx (#568) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`d131f23`](http://github.com/eggjs/egg/commit/d131f236111981d7fb7021998bed200a46a4603d)] - docs: fix typo in docs (#563) (Jason Lee <<huacnlee@gmail.com>>)
+  * [[`497b9a9`](http://github.com/eggjs/egg/commit/497b9a9e7c5cdcb0b769691ea40a74a4d284cfff)] - docs(faq): fix cluster link (#557) (Mars Wong <<marswong618@gmail.com>>)
+  * [[`0d37e42`](http://github.com/eggjs/egg/commit/0d37e42259647ce9cb43deeba7a887817c7ef408)] - docs: update the style for search (#558) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`24ef44f`](http://github.com/eggjs/egg/commit/24ef44fa662392c7b80dbba8da0c4d5a7c9b83dd)] - docs: fix typo (#565) (Colin Cheng <<zbinlin@gmail.com>>)
+  * [[`9eecf7b`](http://github.com/eggjs/egg/commit/9eecf7b0f928fc33d47e93782c79289ca2a13289)] - docs: rule for transforming filepath to properties (#547) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`d088283`](http://github.com/eggjs/egg/commit/d0882837c34a8b950a11e4f8fe4f47f29d8823f7)] - feat: show warning message with call stack (#549) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4a89c3b`](http://github.com/eggjs/egg/commit/4a89c3b563ef79f5ad557ef741c16f283c11e835)] - docs: replace customEgg to framework (#545) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c1464fb`](http://github.com/eggjs/egg/commit/c1464fbecb27caa0dc6766147d3b13d790466386)] - docs: more detail for mysql dynamic create (#540) (TZ | 天猪 <<atian25@qq.com>>)
 
 1.0.0-rc.3 / 2017-03-10
 =======================

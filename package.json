@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -15,9 +15,9 @@
   "dependencies": {
     "accepts": "^1.3.3",
     "agentkeepalive": "^3.1.0",
-    "cluster-client": "^1.3.1",
+    "cluster-client": "^1.5.3",
     "co": "^4.6.0",
-    "debug": "^2.6.1",
+    "debug": "^2.6.3",
     "delegates": "^1.0.0",
     "egg-cluster": "^1.6.1",
     "egg-cookies": "^2.2.1",
@@ -27,7 +27,7 @@
     "egg-jsonp": "^1.0.0",
     "egg-logger": "^1.5.0",
     "egg-logrotator": "^2.2.2",
-    "egg-multipart": "^1.1.0",
+    "egg-multipart": "^1.2.0",
     "egg-onerror": "^1.3.0",
     "egg-schedule": "^2.3.0",
     "egg-security": "^1.8.0",
@@ -42,7 +42,7 @@
     "koa-is-json": "^1.0.0",
     "mime-types": "^2.1.14",
     "sendmessage": "^1.1.0",
-    "urllib": "^2.21.0",
+    "urllib": "^2.21.2",
     "utility": "^1.11.0"
   },
   "devDependencies": {
@@ -50,11 +50,11 @@
     "autod-egg": "^1.0.0",
     "coffee": "^3.3.0",
     "egg-alinode": "^1.0.3",
-    "egg-bin": "^2.2.3",
-    "egg-mock": "^3.1.2",
+    "egg-bin": "^3.0.0",
+    "egg-mock": "^3.2.0",
     "egg-plugin-puml": "^1.0.0",
     "egg-view-nunjucks": "^2.0.0",
-    "eslint": "^3.17.1",
+    "eslint": "^3.18.0",
     "eslint-config-egg": "^3.2.0",
     "formstream": "^1.1.0",
     "gh-pages": "^0.12.0",
@@ -69,7 +69,7 @@
     "rds": "^0.1.0",
     "rimraf": "^2.6.1",
     "runscript": "^1.2.1",
-    "should": "^11.2.0",
+    "should": "^11.2.1",
     "supertest": "^3.0.0",
     "taffydb": "^2.7.3",
     "webstorm-disable-index": "^1.1.2"
