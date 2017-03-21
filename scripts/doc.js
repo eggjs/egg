@@ -41,7 +41,7 @@ co(function* () {
       yield jsdoc('docs/public/api');
       break;
     case 'build':
-      // yield runscript('hexo --cwd docs generate --force');
+      yield runscript('hexo --cwd docs generate --force');
       yield jsdoc('docs/public/api');
       break;
     case 'deploy':

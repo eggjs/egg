@@ -116,7 +116,7 @@ console.log(`var foo = "${this.helper.sjs(foo)}";`);
 ```
 
 还有一种情况，有时候我们需要在 JavaScript 中输出 json ，若未做转义，易被利用为 XSS 漏洞。框架提供了 `helper.sjson()` 宏做 json encode，会遍历 json 中的 key ，将 value 的值中，所有非白名单字符转义为 `\x` 形式，防止 XSS 攻击。同时保持 json 结构不变。
-若存在模板中输出一个 JSON 字符串给 JavaScript 使用的场景，请使用 `{{ helper.sjson(变量名) }}` 进行转义。
+若存在模板中输出一个 JSON 字符串给 JavaScript 使用的场景，请使用 `helper.sjson(变量名)` 进行转义。
 
 **处理过程较复杂，性能损耗较大，请仅在必要时使用。**
 
