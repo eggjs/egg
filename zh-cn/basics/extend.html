@@ -86,7 +86,8 @@
 <p>Context 指的是 Koa 的请求上下文，这是 <strong>请求级别</strong> 的对象，每次请求生成一个 Context 实例，通常我们也简写成 <code>ctx</code>。在所有的文档中，Context 和 <code>ctx</code> 都是指 Koa 的上下文对象。</p>
 <h3 id="访问方式-2"><a class="markdown-anchor" href="#访问方式-2">#</a> 访问方式</h3>
 <ul>
-<li>controller，middleware 中 <code>this</code> 就是 ctx，例如 <code>this.cookies.get('foo')</code>。</li>
+<li>middleware 中 <code>this</code> 就是 ctx，例如 <code>this.cookies.get('foo')</code>。</li>
+<li>controller 有两种写法，类的写法通过 <code>this.ctx</code>，方法的写法直接通过 <code>ctx</code> 入参。</li>
 <li>helper，service 中的 this 指向 helper，service 对象本身，使用 <code>this.ctx</code> 访问 context 对象，例如 <code>this.ctx.cookies.get('foo')</code>。</li>
 </ul>
 <h3 id="扩展方式-2"><a class="markdown-anchor" href="#扩展方式-2">#</a> 扩展方式</h3>

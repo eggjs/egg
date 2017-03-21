@@ -74,7 +74,7 @@
 <ul>
 <li><code>this.ctx</code>: 当前请求的上下文 <a href="./extend.html#context">Context</a> 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。</li>
 <li><code>this.app</code>: 当前应用 <a href="./extend.html#application">Application</a> 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。</li>
-<li><code>this.service</code>：应用定义的 <a href="./service.html">Service</a>，通过它我们可以访问到抽象出的业务层。</li>
+<li><code>this.service</code>：应用定义的 <a href="./service.html">Service</a>，通过它我们可以访问到抽象出的业务层，等价于 <code>this.ctx.service</code> 。</li>
 <li><code>this.config</code>：应用运行时的<a href="./config.html">配置项</a>。</li>
 </ul>
 <h4 id="自定义-controller-基类"><a class="markdown-anchor" href="#自定义-controller-基类">#</a> 自定义 Controller 基类</h4>
@@ -134,7 +134,7 @@
 </ul>
 <p>在前面的 HTTP 请求报文示例中，我们看到在 header 之后还有一个 body 部分，我们通常会在这个部分传递 POST、PUT 和 DELETE 等方法的参数。一般请求中有 body 的时候，客户端（浏览器）会同时发送 <code>Content-Type</code> 告诉服务端这次请求的 body 是什么格式的。Web 开发中数据传递最常用的两类格式分别是 JSON 和 Form。</p>
 <p>框架内置了 <a href="https://github.com/koajs/bodyparser" target="_blank" rel="external">bodyParser</a> 中间件来对这两类格式的请求 body 解析成 object 挂载到 <code>context.request.body</code> 上。HTTP 协议中并不建议在通过 GET、HEAD 方法访问时传递 body，所以我们无法在 GET、HEAD 方法中按照此方法获取到内容。</p>
-<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// POST /api/posts HTTP/1.1</span></div><div class="line"><span class="comment">// Host: localhost:3000</span></div><div class="line"><span class="comment">// Content-Type: application/json; charset=UTF-8</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">// &#123;"title": "controller", "content": "what is controller"&#125;</span></div><div class="line">exports.listPosts = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  assert.equal(<span class="keyword">this</span>.request.body.title, <span class="string">'controller'</span>);</div><div class="line">  assert.equal(<span class="keyword">this</span>.request.body.content, <span class="string">'what is controller'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><figure class="highlight js"><table><tr><td class="code"><pre><div class="line"><span class="comment">// POST /api/posts HTTP/1.1</span></div><div class="line"><span class="comment">// Host: localhost:3000</span></div><div class="line"><span class="comment">// Content-Type: application/json; charset=UTF-8</span></div><div class="line"><span class="comment">//</span></div><div class="line"><span class="comment">// &#123;"title": "controller", "content": "what is controller"&#125;</span></div><div class="line">exports.listPosts = <span class="function"><span class="keyword">function</span>* (<span class="params">ctx</span>) </span>&#123;</div><div class="line">  assert.equal(ctx.request.body.title, <span class="string">'controller'</span>);</div><div class="line">  assert.equal(ctx.request.body.content, <span class="string">'what is controller'</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
 <p>框架对 bodyParser 设置了一些默认参数，配置好之后拥有以下特性：</p>
 <ul>
 <li>当请求的 Content-Type 为 <code>application/json</code>，<code>application/json-patch+json</code>，<code>application/vnd.api+json</code> 和 <code>application/csp-report</code> 时，会按照 json 格式对请求 body 进行解析，并限制 body 最大长度为 <code>100kb</code>。</li>
