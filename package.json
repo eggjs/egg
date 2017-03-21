@@ -50,7 +50,7 @@
     "autod-egg": "^1.0.0",
     "coffee": "^3.3.0",
     "egg-alinode": "^1.0.3",
-    "egg-bin": "^3.0.0",
+    "egg-bin": "^3.0.1",
     "egg-mock": "^3.2.0",
     "egg-plugin-puml": "^1.0.0",
     "egg-view-nunjucks": "^2.0.0",
