@@ -49,6 +49,7 @@
     "autod": "^2.7.1",
     "autod-egg": "^1.0.0",
     "coffee": "^3.3.0",
+    "conventional-changelog-cli": "^1.3.1",
     "egg-alinode": "^1.0.3",
     "egg-bin": "^3.0.1",
     "egg-mock": "^3.2.0",
@@ -93,7 +94,8 @@
     "doc-deploy": "./scripts/doc.js deploy",
     "autod": "autod",
     "puml": "puml . --dest ./docs",
-    "commits": "./scripts/commits.sh"
+    "commits": "./scripts/commits.sh",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "homepage": "https://github.com/eggjs/egg",
   "repository": {
