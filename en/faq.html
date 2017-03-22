@@ -73,6 +73,13 @@
 </ul>
 <p>By default <a href="https://github.com/eggjs/egg-security/" target="_blank" rel="external">egg-security</a> plugin built in Egg requires CSRF validation against all 'unsafe' request such as <code>POST</code>, <code>PUT</code>, <code>DELETE</code> requests.</p>
 <p>The error will disappear in the presence of correct csrf token in request. For more implentation details, see [./core/security.md#csrf].</p>
+<h2 id="in-local-development-environment-why-is-worker-process-not-restarted-automatically-when-files-are-modified"><a class="markdown-anchor" href="#in-local-development-environment-why-is-worker-process-not-restarted-automatically-when-files-are-modified">#</a> In local development environment, why is worker process not restarted automatically when files are modified?</h2>
+<p>Usually this happens when you are using Jetbrains softwares(IntelliJ IDEA, WebStorm, etc.) with <code>Safe Write</code> turned on.</p>
+<p>According to Jetbrains <a href="https://www.jetbrains.com/help/webstorm/2016.3/system-settings.html" target="_blank" rel="external">Safe Write document</a>:</p>
+<blockquote>
+<p>If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)</p>
+</blockquote>
+<p>Renaming files leads to file watching failure. The solution is simple: just turn of <code>Safe Write</code> option. (Settings | Appearance &amp; Behavior | System Settings | Use &quot;safe write&quot;, the path may vary in different versions)</p>
 
   </article>
   <aside id="mobileAside" class="toc">

@@ -74,6 +74,13 @@
 </ul>
 <p>Egg 内置的 <a href="https://github.com/eggjs/egg-security/" target="_blank" rel="external">egg-security</a> 插件默认对所有『非安全』的方法，例如 <code>POST</code>，<code>PUT</code>，<code>DELETE</code> 都进行 CSRF 校验。</p>
 <p>请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读<a href="./core/security.html#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81csrf%E7%9A%84%E9%98%B2%E8%8C%83">安全威胁 CSRF 的防范</a>。</p>
+<h2 id="本地开发时修改代码后为什么-worker-进程没有自动重启"><a class="markdown-anchor" href="#本地开发时修改代码后为什么-worker-进程没有自动重启">#</a> 本地开发时，修改代码后为什么 worker 进程没有自动重启？</h2>
+<p>没有自动重启的情况一般是在使用 Jetbrains 旗下软件（IntelliJ IDEA, WebStorm..），并且开启了 Safe Write 选项。</p>
+<p>Jetbrains <a href="https://www.jetbrains.com/help/webstorm/2016.3/system-settings.html" target="_blank" rel="external">Safe Write 文档</a>中有提到：</p>
+<blockquote>
+<p>If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)</p>
+</blockquote>
+<p>由于使用了重命名导致文件监听的失效。解决办法是关掉 Safe Write 选项。（Settings | Appearance &amp; Behavior | System Settings | Use &quot;safe write&quot; 路径可能根据版本有所不同）</p>
 
   </article>
   <aside id="mobileAside" class="toc">
