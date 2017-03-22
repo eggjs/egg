@@ -1,6 +1,6 @@
 <div class="nav" >
   <header>
-    <a href="{{ index_link() }}" class="nav-logo" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
+    <a href="{{ index_link() }}" class="nav-logo leftpadding" alt="egg"><img src="https://zos.alipayobjects.com/rmsportal/VTcUYAaoKqXyHJbLAPyF.svg"></a>
     <ul class="nav-item">
       <li>
         <form id="search-form">

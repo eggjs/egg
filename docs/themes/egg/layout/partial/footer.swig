@@ -1,5 +1,5 @@
 <div class="footer">
-  <footer>
+  <footer class="leftpadding">
     <ul>
     <li>Latest: <strong>{{ site.data.versions.egg }}</strong></li>
     <li>Node.js <strong>{{ site.data.versions.node }}</strong></li>

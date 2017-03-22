@@ -15,6 +15,7 @@ title: 教程
 - [egg-view-ejs]
 - [egg-view-handlebars]
 - [egg-view-pug]
+- [egg-view-xtpl]
 
 ## 数据库
 
@@ -32,4 +33,5 @@ title: 教程
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view-ejs]: https://github.com/eggjs/egg-view-ejs
 [egg-view-handlebars]: https://github.com/eggjs/egg-view-handlebars
-[egg-view-pug]: https://github.com/eggjs/egg-view-pug
+[egg-view-pug]: https://github.com/chrisyip/egg-view-pug
+[egg-view-xtpl]: https://github.com/eggjs/egg-view-xtpl
