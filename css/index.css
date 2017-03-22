@@ -1107,6 +1107,9 @@ p {
   letter-spacing: 1px;
   line-height: 2.5em;
 }
+.leftpadding {
+  padding-left: 20px;
+}
 .nav {
   background: #f9f9f9;
   height: 56px;
@@ -1220,7 +1223,8 @@ p {
   padding-top: 2px;
 }
 aside {
-  width: 220px;
+  padding-left: 20px;
+  width: 200px;
   height: 100%;
   position: fixed;
   top: 56px;
