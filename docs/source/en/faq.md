@@ -50,3 +50,14 @@ There are two kinds of common csrf errors:
 By default [egg-security](https://github.com/eggjs/egg-security/) plugin built in Egg requires CSRF validation against all 'unsafe' request such as `POST`, `PUT`, `DELETE` requests.
 
 The error will disappear in the presence of correct csrf token in request. For more implentation details, see [./core/security.md#csrf].
+
+## In local development environment, why is worker process not restarted automatically when files are modified?
+
+Usually this happens when you are using Jetbrains softwares(IntelliJ IDEA, WebStorm, etc.) with `Safe Write` turned on.
+
+According to Jetbrains [Safe Write document](https://www.jetbrains.com/help/webstorm/2016.3/system-settings.html):
+
+> If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
+
+Renaming files leads to file watching failure. The solution is simple: just turn of `Safe Write` option. (Settings | Appearance & Behavior | System Settings | Use "safe write", the path may vary in different versions)
+
