@@ -30,11 +30,11 @@ EGG_SERVER_ENV=prod npm start
 
 框架默认支持的环境及映射关系（如果未指定 `EGG_SERVER_ENV` 会根据 `NODE_ENV` 来匹配）
 
-NODE_ENV   | EGG_SERVER_ENV | 说明
----------- | -------------- | ------------
-           | local          | 本地开发环境
-test       | unittest       | 单元测试
-production | prod           | 生产环境
+| NODE_ENV   | EGG_SERVER_ENV | 说明         |
+| ---------- | -------------- | ------------ |
+|            | local          | 本地开发环境 |
+| test       | unittest       | 单元测试     |
+| production | prod           | 生产环境     |
 
 例如，当 `NODE_ENV` 为 `production` 而 `EGG_SERVER_ENV` 未指定时，框架会将 `EGG_SERVER_ENV` 设置成 `prod`。
 
