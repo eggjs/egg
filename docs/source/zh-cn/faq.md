@@ -52,3 +52,13 @@ pm2 start server.js
 Egg 内置的 [egg-security](https://github.com/eggjs/egg-security/) 插件默认对所有『非安全』的方法，例如 `POST`，`PUT`，`DELETE` 都进行 CSRF 校验。
 
 请求遇到 csrf 报错通常是因为没有加正确的 csrf token 导致，具体实现方式，请阅读[安全威胁 CSRF 的防范](./core/security.md#安全威胁csrf的防范)。
+
+## 本地开发时，修改代码后为什么 worker 进程没有自动重启？
+
+没有自动重启的情况一般是在使用 Jetbrains 旗下软件（IntelliJ IDEA, WebStorm..），并且开启了 Safe Write 选项。
+
+Jetbrains [Safe Write 文档](https://www.jetbrains.com/help/webstorm/2016.3/system-settings.html)中有提到：
+
+> If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
+
+由于使用了重命名导致文件监听的失效。解决办法是关掉 Safe Write 选项。（Settings | Appearance & Behavior | System Settings | Use "safe write" 路径可能根据版本有所不同）

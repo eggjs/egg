@@ -1,7 +1,7 @@
 <div class="index">
   <div class="banner block index-bg-light">
     <div class="banner-logo"><img src="https://zos.alipayobjects.com/rmsportal/JFKAMfmPehWfhBPdCjrw.svg"/></div>
-    <div class="banner-info">
+    <div class="banner-info leftpadding">
       <h1><p style="font-weight:bold;font-size:48px;">Born to build</p>better enterprise frameworks and apps with Node.js & Koa</h1>
       <p style="font-size: 22px;">为企业级框架和应用而生</p>
       <p class="banner-button">
