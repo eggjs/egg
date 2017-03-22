@@ -31,11 +31,11 @@ Lots of Node.js applications use `NODE_ENV` for environment setting, but `EGG_SE
 
 Default mapping of `EGG_SERVER_ENV` and `NODE_ENV` (will generate `EGG_SERVER_ENV` from `NODE_ENV` setting if `EGG_SERVER_ENV` is not specified)
 
-NODE_ENV   | EGG_SERVER_ENV | remarks
----------- | -------------- | ------------
-           | local          | local development environment
-test       | unittest       | unit test environment
-production | prod           | production environment
+| NODE_ENV   | EGG_SERVER_ENV | remarks                       |
+| ---------- | -------------- | ----------------------------- |
+|            | local          | local development environment |
+| test       | unittest       | unit test environment         |
+| production | prod           | production environment        |
 
 For example, `EGG_SERVER_ENV` will be set to prod when `NODE_ENV` is production and `EGG_SERVER_ENV` is not specified.
 
