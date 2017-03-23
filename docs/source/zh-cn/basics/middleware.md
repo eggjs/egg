@@ -17,8 +17,8 @@ function* gzip(next) {
   yield next;
 
   // 后续中间件执行完成后将响应体转换成 gzip
-  const body = this.body;
-  if（!body) return;
+  let body = this.body;
+  if (!body) return;
   if (isJSON(body)) body = JSON.stringify(body);
 
   // 设置 gzip body，修正响应头
@@ -44,13 +44,13 @@ function* gzip(next) {
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
-module.exports = (options, app) => {
+module.exports = options => {
   return function* gzip(next) {
     yield next;
 
     // 后续中间件执行完成后将响应体转换成 gzip
-    const body = this.body;
-    if（!body) return;
+    let body = this.body;
+    if (!body) return;
 
     // 支持 options.threshold
     if (options.threshold && this.length < options.threshold) return;
@@ -110,7 +110,7 @@ module.exports = {
 module.exports = app => {
   const gzip = app.middlewares.gzip({ threshold: 1024 });
   app.get('/needgzip', gzip, app.controller.handler);
-}
+};
 ```
 
 ## 使用 Koa 的中间件
@@ -126,10 +126,10 @@ module.exports = app => {
 以 [koa-compress](https://github.com/koajs/compress) 为例，在 Koa 中使用时：
 
 ```js
-var koa = require('koa');
-var compress = require('koa-compress');
+const koa = require('koa');
+const compress = require('koa-compress');
 
-var app = koa();
+const app = koa();
 
 const options = { threshold: 2048 };
 app.use(compress(options));
