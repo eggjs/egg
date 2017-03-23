@@ -93,7 +93,7 @@ module.exports = {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '10m',
+    jsonLimit: '10mb',
   },
 };
 ```
