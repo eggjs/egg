@@ -78,7 +78,7 @@ const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
 module.exports = (options, app) => {
-  return async gzip(ctx, next) => {
+  return async function gzip(ctx, next) {
     // 注意，和 generator function 格式的中间件不同，此时 next 是一个方法，必须要调用它
     await next();
 
