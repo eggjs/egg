@@ -300,7 +300,7 @@ module.exports = {
 In jQuery:
 
 ```js
-var csrftoken = Cookies.get('csrftoken');
+var csrftoken = Cookies.get('csrfToken');
 
 function csrfSafeMethod(method) {
   // these HTTP methods do not require CSRF protection
