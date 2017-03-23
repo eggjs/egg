@@ -129,7 +129,7 @@ exports.validate = {
 ```js
 // app/router.js
 module.exports = app => {
-  app.resources('Topic', '/api/v2/topics', 'topics');
+  app.resources('Topic', '/api/v2/topics', 'topic');
 };
 ```
 
