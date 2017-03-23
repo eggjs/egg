@@ -22,7 +22,9 @@ function* gzip(next) {
   if (isJSON(body)) body = JSON.stringify(body);
 
   // 设置 gzip body，修正响应头
-  this.body = zlib.createGzip().end(body);
+  const stream = zlib.createGzip();
+  stream.end(body);
+  this.body = stream;
   this.set('Content-Encoding', 'gzip');
 }
 ```
@@ -56,7 +58,9 @@ module.exports = (options, app) => {
     if (isJSON(body)) body = JSON.stringify(body);
 
     // 设置 gzip body，修正响应头
-    this.body = zlib.createGzip().end(body);
+    const stream = zlib.createGzip();
+    stream.end(body);
+    this.body = stream;
     this.set('Content-Encoding', 'gzip');
   };
 };
