@@ -87,7 +87,7 @@ module.exports = {
 
 ### defaultExtension
 
-一般在调用 render 时需要指定文件路径，如果配置了 defaultExtension 可以省略后缀。
+一般在调用 render 时的第一个参数需要包含文件后缀，如果配置了 defaultExtension 可以省略后缀。
 
 ```js
 // config/config.default.js
