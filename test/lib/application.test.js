@@ -134,6 +134,19 @@ describe('test/lib/application.test.js', () => {
     });
   });
 
+  describe('warn confused configurations', () => {
+    it('should warn if confused configurations exist', function* () {
+      const app = utils.app('apps/confused-configuration');
+      yield app.ready();
+      const logs = fs.readFileSync(utils.getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
+      assert(logs.match(/Unexpected config key `bodyparser` exists, Please use `bodyParser` instead\./));
+      assert(logs.match(/Unexpected config key `notFound` exists, Please use `notfound` instead\./));
+      assert(logs.match(/Unexpected config key `sitefile` exists, Please use `siteFile` instead\./));
+      assert(logs.match(/Unexpected config key `middlewares` exists, Please use `middleware` instead\./));
+      assert(logs.match(/Unexpected config key `httpClient` exists, Please use `httpclient` instead\./));
+    });
+  });
+
   describe('test on apps/demo', () => {
     let app;
     before(() => {

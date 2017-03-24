@@ -117,6 +117,22 @@ module.exports = appInfo => {
     dump: {
       ignore: new Set([ 'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'secret' ]),
     },
+
+    /**
+     * configurations are confused to users
+     * {
+     *   [unexpectedKey]: [expectedKey],
+     * }
+     * @member Config#confusedConfigurations
+     * @type {Object}
+     */
+    confusedConfigurations: {
+      bodyparser: 'bodyParser',
+      notFound: 'notfound',
+      sitefile: 'siteFile',
+      middlewares: 'middleware',
+      httpClient: 'httpclient',
+    },
   };
 
   /**
