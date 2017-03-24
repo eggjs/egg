@@ -166,7 +166,7 @@ exports.redis = {
 };
 exports.sessionRedis = {
   enable: true,
-  package: 'egg-redis-session',
+  package: 'egg-session-redis',
 };
 ```
 
