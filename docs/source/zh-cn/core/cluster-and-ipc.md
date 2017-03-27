@@ -152,7 +152,7 @@ if (cluster.isMaster) {
 1. 由于 App Worker 依赖于 Agent，所以必须等 Agent 初始化完成后才能 fork App Worker
 2. Agent 虽然是 App Worker 的『小秘』，但是业务相关的工作不应该放到 Agent 上去做，不然把她累垮了就不好了
 3. 由于 Agent 的特殊定位，**我们应该保证它相对稳定**。当它发生未捕获异常，框架不会像 App Worker 一样让他退出重启，而是记录异常日志、报警等待人工处理
-4. Agent 和普通 App Worker 挂载的 API 不完全一样，如何识别差异可查看[框架文档](./framework.md)
+4. Agent 和普通 App Worker 挂载的 API 不完全一样，如何识别差异可查看[框架文档](../advanced/framework.md)
 
 ### Agent 的用法
 
