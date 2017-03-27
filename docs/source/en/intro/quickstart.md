@@ -71,13 +71,8 @@ is a [controller](../basics/controller.md) and [router](../basics/router.md).
 
 ```js
 // app/controller/home.js
-module.exports = app => {
-  class HomeController extends app.Controller {
-    * index() {
-      this.ctx.body = 'hi, egg';
-    }
-  }
-  return HomeController;
+exports.index = function* (ctx) {
+  ctx.body = 'Hello world';
 };
 ```
 
@@ -119,6 +114,12 @@ Now you can start up the Web Server and see your application in action.
 $ npm run dev
 $ open localhost:7001
 ```
+
+> Note：
+>
+> - You could write `Controller` with `class` or `exports` style, see more detail at [Controller](../basics/controller.md).
+> - And `Config` could write with `module.exports` or `exports`, see more detail at [Node.js modules docs](https://nodejs.org/api/modules.html#modules_exports_shortcut).
+
 
 ### Add Static Assets
 
@@ -206,19 +207,14 @@ Then add a controller and router.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const dataList = {
-        list: [
-          { id: 1, title: 'this is news 1', url: '/news/1' },
-          { id: 2, title: 'this is news 2', url: '/news/2' }
-        ]
-      };
-      yield this.ctx.render('news/list.tpl', dataList);
-    }
-  }
-  return NewsController;
+exports.list = function* (ctx) {
+  const dataList = {
+    list: [
+      { id: 1, title: 'this is news 1', url: '/news/1' },
+      { id: 2, title: 'this is news 2', url: '/news/2' },
+    ]
+  };
+  yield ctx.render('news/list.tpl', dataList);
 };
 
 // app/router.js
@@ -279,16 +275,10 @@ Then slightly modify our previous controller.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const ctx = this.ctx;
-      const page = ctx.query.page || 1;
-      const newsList = yield ctx.service.news.list(page);
-      yield ctx.render('news/list.tpl', { list: newsList });
-    }
-  }
-  return NewsController;
+exports.list = function* (ctx) {
+  const page = ctx.query.page || 1;
+  const newsList = yield ctx.service.news.list(page);
+  yield ctx.render('news/list.tpl', { list: newsList });
 };
 ```
 
