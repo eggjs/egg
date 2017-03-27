@@ -288,8 +288,8 @@ exports.listPosts = function* (ctx) {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '1m',
-    formLimit: '1m',
+    jsonLimit: '1mb',
+    formLimit: '1mb',
   },
 };
 ```
