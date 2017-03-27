@@ -63,13 +63,8 @@ $ npm i egg-bin --save-dev
 
 ```js
 // app/controller/home.js
-module.exports = app => {
-  class HomeController extends app.Controller {
-    * index() {
-      this.ctx.body = 'Hello world';
-    }
-  }
-  return HomeController;
+exports.index = function* (ctx) {
+  ctx.body = 'Hello world';
 };
 ```
 
@@ -111,6 +106,11 @@ egg-example
 $ npm run dev
 $ open localhost:7001
 ```
+
+> 注意：
+>
+> - Controller 有 class 和 exports 两种编写方式，本文示范的是后者，你可能需要参考 [Controller](../basics/controller.md) 文档。
+> - Config 也有 module.exports 和 exports 的写法，具体参考 [Node.js modules 文档](https://nodejs.org/api/modules.html#modules_exports_shortcut)。
 
 ### 静态资源
 
@@ -190,20 +190,15 @@ exports.view = {
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const dataList = {
-        list: [
-          { id: 1, title: 'this is news 1', url: '/news/1' },
-          { id: 2, title: 'this is news 2', url: '/news/2' }
-        ]
-      };
-      yield this.ctx.render('news/list.tpl', dataList);
-    }
-  }
-  return NewsController;
-};
+exports.list = function* (ctx) {
+  const dataList = {
+    list: [
+      { id: 1, title: 'this is news 1', url: '/news/1' },
+      { id: 2, title: 'this is news 2', url: '/news/2' },
+    ]
+  };
+  yield ctx.render('news/list.tpl', dataList);
+}
 
 // app/router.js
 module.exports = app => {
@@ -258,16 +253,10 @@ module.exports = app => {
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const ctx = this.ctx;
-      const page = ctx.query.page || 1;
-      const newsList = yield ctx.service.news.list(page);
-      yield ctx.render('news/list.tpl', { list: newsList });
-    }
-  }
-  return NewsController;
+exports.list = function* (ctx) {
+  const page = ctx.query.page || 1;
+  const newsList = yield ctx.service.news.list(page);
+  yield ctx.render('news/list.tpl', { list: newsList });
 };
 ```
 
