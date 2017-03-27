@@ -7,7 +7,7 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 
 ## 设计响应格式
 
-在 RESTful 风格的设计中，我们会通过响应状态码来标识响应的状态，保持响应的 body 简洁，只返回接口数据。以 `topic` 资源为例：
+在 RESTful 风格的设计中，我们会通过响应状态码来标识响应的状态，保持响应的 body 简洁，只返回接口数据。以 `topics` 资源为例：
 
 ### 获取主题列表
 
@@ -129,18 +129,18 @@ exports.validate = {
 ```js
 // app/router.js
 module.exports = app => {
-  app.resources('Topic', '/api/v2/topics', 'topics');
+  app.resources('topics', '/api/v2/topics', 'topics');
 };
 ```
 
-通过 `app.resources` 方法，我们将 Topic 这个资源的增删改查接口映射到了 `app/controller/topic.js` 文件。
+通过 `app.resources` 方法，我们将 topics 这个资源的增删改查接口映射到了 `app/controller/topics.js` 文件。
 
 ### controller 开发
 
-在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 Topic 的接口：
+在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 topics 的接口：
 
 ```js
-// app/controller/topic.js
+// app/controller/topics.js
 // 定义创建接口的请求参数规则
 const createRule = {
   accesstoken: 'string',
@@ -153,7 +153,7 @@ exports.create = function* (ctx) {
   // 如果参数校验未通过，将会抛出一个 status = 422 的异常
   ctx.validate(createRule);
   // 调用 service 创建一个 topic
-  const id = yield ctx.service.topic.create(ctx.request.body);
+  const id = yield ctx.service.topics.create(ctx.request.body);
   // 设置响应体和状态码
   ctx.body = {
     topic_id: id,
@@ -173,7 +173,7 @@ exports.create = function* (ctx) {
 在 [service](../basics/service.md) 中，我们可以更加专注的编写实际生效的业务逻辑。
 
 ```js
-// app/service/topic.js
+// app/service/topics.js
 module.exports = app => {
   class TopicService extends app.Service {
     constructor(ctx) {
@@ -210,7 +210,6 @@ module.exports = app => {
 
   return TopicService;
 };
-
 ```
 
 在 创建 topic 的 service 开发完成之后，我们就从上往下的完成了一个接口的开发。
@@ -279,9 +278,8 @@ module.exports = {
 ```js
 const request = require('supertest');
 const mock = require('egg-mock');
-const assert = require('assert');
 
-describe('test/app/controller/topic.test.js', () => {
+describe('test/app/controller/topics.test.js', () => {
   let app;
   before(() => {
     // 通过 egg-mock 库快速创建一个应用实例
@@ -309,7 +307,7 @@ describe('test/app/controller/topic.test.js', () => {
   // mock 掉 service 层，测试正常时的返回
   it('should POST /api/v2/topics/ 201', function* () {
     app.mockCsrf();
-    app.mockService('topic', 'create', 123);
+    app.mockService('topics', 'create', 123);
     yield request(app.callback())
     .post('/api/v2/topics')
     .send({
@@ -335,7 +333,7 @@ service 层的测试也只需要聚焦于自身的代码逻辑，[egg-mock](http
 const assert = require('assert');
 const mock = require('egg-mock');
 
-describe('test/app/service/topic.test.js', () => {
+describe('test/app/service/topics.test.js', () => {
   let app;
   let ctx;
   before(function* () {
@@ -349,7 +347,7 @@ describe('test/app/service/topic.test.js', () => {
     it('should create failed by accesstoken error', function* () {
       try {
         // 直接在 ctx 上调用 service 方法
-        yield ctx.service.topic.create({
+        yield ctx.service.topics.create({
           accesstoken: 'hello',
           title: 'title',
           content: 'content',
@@ -363,13 +361,13 @@ describe('test/app/service/topic.test.js', () => {
     it('should create success', function* () {
       // 不影响 CNode 的正常运行，我们可以将对 CNode 的调用按照接口约定模拟掉
       // app.mockHttpclient 方法可以便捷的对应用发起的 http 请求进行模拟
-      app.mockHttpclient(`${ctx.service.topic.root}/topics`, 'POST', {
+      app.mockHttpclient(`${ctx.service.topics.root}/topics`, 'POST', {
         data: {
           success: true,
           topic_id: '5433d5e4e737cbe96dcef312',
         },
       });
-      const id = yield ctx.service.topic.create({
+      const id = yield ctx.service.topics.create({
         accesstoken: 'hello',
         title: 'title',
         content: 'content',
