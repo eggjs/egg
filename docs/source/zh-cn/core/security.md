@@ -67,7 +67,7 @@ exports.security = {
 };
 ```
 
-如果要针对内部机器关闭部分安全防范：
+如果要针对内部 ip 关闭部分安全防范：
 
 ```js
 exports.security = {
