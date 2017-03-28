@@ -112,6 +112,11 @@ $ npm run dev
 $ open localhost:7001
 ```
 
+> 注意：
+>
+> - Controller 有 `class` 和 `exports` 两种编写方式，本文示范的是前者，你可能需要参考 [Controller](../basics/controller.md) 文档。
+> - Config 也有 `module.exports` 和 `exports` 的写法，具体参考 [Node.js modules 文档](https://nodejs.org/api/modules.html#modules_exports_shortcut)。
+
 ### 静态资源
 
 Egg 内置了 [static][egg-static] 插件，线上环境建议部署到 CDN，无需该插件。

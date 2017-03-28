@@ -120,6 +120,11 @@ $ npm run dev
 $ open localhost:7001
 ```
 
+> Note：
+>
+> - You could write `Controller` with `class` or `exports` style, see more detail at [Controller](../basics/controller.md).
+> - And `Config` could write with `module.exports` or `exports` style, see more detail at [Node.js modules docs](https://nodejs.org/api/modules.html#modules_exports_shortcut).
+
 ### Add Static Assets
 
 Egg has a built-in plugin called [static][egg-static].
