@@ -173,7 +173,7 @@ module.exports = {
 };
 ```
 
-### match & ignore
+### match 和 ignore
 
 match 和 ignore 支持的参数都一样，只是作用完全相反，match 和 ignore 不允许同时配置。
 
