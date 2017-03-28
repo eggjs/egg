@@ -88,13 +88,13 @@ module.exports = app => {
         success: true,
         data,
       };
-    },
+    }
 
     notFound(msg) {
-      const msg = msg || 'not found';
+      msg = msg || 'not found';
       this.ctx.throw(404, msg);
-    },
-  };
+    }
+  }
   app.Controller = CustomController;
 }
 ```
@@ -108,7 +108,7 @@ module.exports = app => {
     * list() {
       const posts = yield this.service.listByUser(this.user);
       this.success(posts);
-    },
+    }
   };
 };
 ```
@@ -381,7 +381,7 @@ module.exports = function* (ctx) {
     }
   }
   console.log('and we are done parsing the form!');
-}
+};
 ```
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
@@ -715,7 +715,7 @@ exports.show = function* (ctx) {
     category: 'framework',
     language: 'Node.js',
   };
-}
+};
 ```
 
 用户请求对应的 URL 访问到这个 controller 的时候，如果 query 中有 `_callback=fn` 参数，将会返回 JSONP 格式的数据，否则返回 JSON 格式的数据。
@@ -729,7 +729,7 @@ exports.show = function* (ctx) {
 exports.jsonp = {
   callback: 'callback', // 识别 query 中的 `callback` 参数
   limit: 100, // 函数名最长为 100 个字符
-}
+};
 ```
 
 通过上面的方式配置之后，如果用户请求 `/api/posts/1?callback=fn`，响应为 JSONP 格式，如果用户请求 `/api/posts/1`，响应格式为 JSON。
@@ -782,7 +782,7 @@ exports.jsonp = {
   // whiteList: '.test.com',
   // whiteList: 'sub.test.com',
   // whiteList: [ 'sub.test.com', 'sub2.test.com' ],
-}
+};
 ```
 
 `whiteList` 可以配置为正则表达式、字符串或者数组：
@@ -792,7 +792,7 @@ exports.jsonp = {
 ```js
 exports.jsonp = {
   whiteList: /^https?:\/\/test.com\//,
-}
+};
 // matchs referrer:
 // https://test.com/hello
 // http://test.com/
