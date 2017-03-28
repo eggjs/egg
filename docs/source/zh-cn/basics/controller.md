@@ -88,12 +88,12 @@ module.exports = app => {
         success: true,
         data,
       };
-    },
+    }
 
     notFound(msg) {
-      const msg = msg || 'not found';
+      msg = msg || 'not found';
       this.ctx.throw(404, msg);
-    },
+    }
   };
   app.Controller = CustomController;
 }
