@@ -7,7 +7,11 @@ If you have questions that is not contained below, please check [Egg issues](htt
 
 Framework [Config](./basics/config.md) settings is powerfull, support different environments and different places(framework, plugins, app).
 
-When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `run/application_config.json` and `run/agent_config.json`.
+When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `${root}/run/application_config.json`(workers' configurations) and `${root}/run/agent_config.json`(agent's configurations).(`root` is application's root directory, in `local` and `unittest` environments, it will be project base directory, in other environments will be HOME directory)
+
+## Where are my log files in prod environment?
+
+By default, logs will print at `${baseDir}/logs`(baseDir is project's base directory) in local environment.But in non-development environments(neither local nor unittest), the logs will print at `$HOME/logs`(such as `/home/admin/logs`). So the logs won't mix in during development and locate in the same place when run in production environment.
 
 ## Why not choose PM2 as process management tool?
 
@@ -60,4 +64,3 @@ According to Jetbrains [Safe Write document](https://www.jetbrains.com/help/webs
 > If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
 
 Renaming files leads to file watching failure. The solution is simple: just turn of `Safe Write` option. (Settings | Appearance & Behavior | System Settings | Use "safe write", the path may vary in different versions)
-
