@@ -5,11 +5,15 @@ title: 常见问题
 
 ## 为什么我的配置不生效？
 
-框架的配置功能比较强大，有不同环境变量，又有框架/插件/应用等很多地方配置。
+框架的配置功能比较强大，有不同环境变量，又有框架、插件、应用等很多地方配置。
 
-如果你分析问题时，想知道当前运行时使用的最终配置，可以查看下 `run/application_config.json` 和 `run/agent_config.json` 这两个文件。
+如果你分析问题时，想知道当前运行时使用的最终配置，可以查看下 `${root}/run/application_config.json`（worker 进程配置） 和 `${root}/run/agent_config.json`（agent 进程配置） 这两个文件。（`root` 为应用根目录，只有在 local 和 unittest 环境下为项目所在目录，其他环境下都为 HOME 目录）
 
 也可参见[配置文件](https://eggjs.org/zh-cn/basics/config.html#配置结果)。
+
+## 线上的日志打印去哪里了？
+
+默认配置下，本地开发环境的日志都会打印在应用根目录的 `logs` 文件夹下(`${baseDir}/logs`) ，但是在非开发期的环境（非 local 和 unittest 环境），所有的日志都会打印到 `$HOME/logs` 文件夹下（例如 `/home/admin/logs`）。这样可以让本地开发时应用日志互不影响，服务器运行时又有统一的日志输出目录。
 
 ## 进程管理为什么没有选型 PM2 ？
 
