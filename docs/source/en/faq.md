@@ -61,3 +61,6 @@ According to Jetbrains [Safe Write document](https://www.jetbrains.com/help/webs
 
 Renaming files leads to file watching failure. The solution is simple: just turn of `Safe Write` option. (Settings | Appearance & Behavior | System Settings | Use "safe write", the path may vary in different versions)
 
+## How to figure out why the configurations does not take effect?
+
+The framework will merge different configuration files in different environments, and the final configurations will dump at `${root}/run/application_config.json`. We can confirm if our configurations are correct by check this file.(`root` is application's root directory, in `local` and `unittest` environments, it will be project base directory, in other environments will be HOME directory)

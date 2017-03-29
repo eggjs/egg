@@ -62,3 +62,7 @@ Jetbrains [Safe Write 文档](https://www.jetbrains.com/help/webstorm/2016.3/sys
 > If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
 
 由于使用了重命名导致文件监听的失效。解决办法是关掉 Safe Write 选项。（Settings | Appearance & Behavior | System Settings | Use "safe write" 路径可能根据版本有所不同）
+
+## 如何排查配置没生效问题？
+
+[框架在不同环境下会合并不同的配置文件](../basics/config.md#多环境配置)，最终生成运行时使用的配置，这份配置会写入 `${root}/run/application_config.json` 文件中，我们可以通过查看该文件的内容来确认我们的配置是否正确的被引入了。（`root` 为应用根目录，只有在 local 和 unittest 环境下为项目所在目录，其他环境下都为 HOME 目录）
