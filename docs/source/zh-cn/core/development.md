@@ -63,7 +63,6 @@ $ npm i egg-bin --save-dev
 
 这样我们就可以通过 `npm test` 命令运行单元测试。
 
-
 ### 环境配置
 
 测试用例执行时，应用是以 `env: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
@@ -75,7 +74,7 @@ $ npm i egg-bin --save-dev
 我们在编写用例时往往想单独执行正在编写的用例，可以通过以下方式指定特定用例文件：
 
 ```bash
-TESTS=test/x.test.js npm test
+$ TESTS=test/x.test.js npm test
 ```
 
 支持 [glob] 规则。
@@ -87,7 +86,7 @@ Mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
 可以手动设置 `TEST_REPORTER` 环境变量来指定 reporter，例如使用 `dot`：
 
 ```bash
-TEST_REPORTER=dot npm test
+$ TEST_REPORTER=dot npm test
 ```
 
 ![image](https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png)
@@ -97,7 +96,25 @@ TEST_REPORTER=dot npm test
 默认执行超时时间为 30 秒。我们也可以手动指定超时时间（单位毫秒），例如设置为 5 秒：
 
 ```bash
-TEST_TIMEOUT=5000 egg-bin test
+$ TEST_TIMEOUT=5000 npm test
+```
+
+### 通过 argv 方式传参
+
+`egg-bin test` 除了环境变量方式，也支持直接传参，支持 mocha 的所有参数，参见：[mocha usage](https://mochajs.org/#usage) 。
+
+```bash
+$ # npm 传递参数需额外加一个 `--`，参见 https://docs.npmjs.com/cli/run-script
+$ npm test -- --help
+$
+$ # 等同于 `TESTS=test/**/test.js npm test`，受限于 bash，最好加上双引号
+$ npm test "test/**/test.js"
+$
+$ # 等同于 `TEST_REPORTER=dot npm test`
+$ npm test -- --reporter=dot
+$
+$ # 支持 mocha 的参数，如 grep / require 等
+$ npm test -- -t 30000 --grep="should GET"
 ```
 
 ## 代码覆盖率
@@ -149,12 +166,10 @@ Lines        : 100% ( 41/41 )
 
 对于某些不需要跑测试覆盖率的文件，可以通过 `COV_EXCLUDES` 环境变量指定：
 
-```json
-{
-  "scripts": {
-    "cov": "COV_EXCLUDES=app/plugins/c* egg-bin cov"
-  }
-}
+```bash
+$ COV_EXCLUDES=app/plugins/c* npm run cov
+$ # 或者传参方式
+$ npm run cov -- --x=app/plugins/c*
 ```
 
 ## 调试
@@ -173,7 +188,7 @@ Lines        : 100% ( 41/41 )
 }
 ```
 
-这样我们就可以通过 `npm run debug` 命令调试应用。
+这样我们就可以通过 `npm run debug` 命令通过 `V8 Inspector port` 调试应用。
 
 #### 环境配置
 
@@ -213,16 +228,35 @@ app.logger.debug('app init');
 开启所有模块的日志：
 
 ```bash
-DEBUG=* npm run dev
+$ DEBUG=* npm run dev
 ```
 
 开启指定模块的日志：
 
 ```bash
-DEBUG=egg* npm run dev
+$ DEBUG=egg* npm run dev
 ```
 
 单元测试也可以用 `DEBUG=* npm test` 来查看测试用例运行的详细日志。
+
+### 使用 WebStorm 进行调试
+
+添加 `npm scripts` 到 `package.json`：
+
+```json
+{
+  "scripts": {
+    "debug": "egg-bin dev $NODE_DEBUG_OPTION"
+  }
+}
+```
+
+> 目前 WebStorm 还不支持 `--inspect` 故不能使用 `egg-bin debug`，暂时使用 `egg-bin dev --debug` 的方式。
+
+使用 WebStorm 的 npm 调试启动即可：
+
+![](https://cloud.githubusercontent.com/assets/227713/24495078/9bf8aaa2-1566-11e7-8dbd-2def56f904d3.png)
+
 
 ## 更多
 
