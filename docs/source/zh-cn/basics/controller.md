@@ -187,7 +187,7 @@ Connection: keep-alive
 
 第一行中也包含了三段，其中我们常用的主要是[响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
 
-和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字符。
+和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字节。
 
 最后剩下的部分就是这次响应真正的内容。
 
