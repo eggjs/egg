@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -52,7 +52,7 @@
     "egg-alinode": "^1.0.3",
     "egg-bin": "^3.2.1",
     "egg-mock": "^3.2.0",
-    "egg-plugin-puml": "^1.0.0",
+    "egg-plugin-puml": "^2.0.0",
     "egg-view-nunjucks": "^2.0.0",
     "eslint": "^3.19.0",
     "eslint-config-egg": "^3.2.0",

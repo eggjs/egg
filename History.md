@@ -1,5 +1,55 @@
 # History
 
+## 2017-04-11, Version 1.1.0, @fengmk2
+
+### Notable changes
+
+  * **document**
+    * Lots of documents improve and typo fixes. Thanks @lslxdx, @zhennann, @dotnil, @no7dw, @cuyl, @Andiedie, @kylezhang,
+      @SF-Zhou, @yandongxu, @jemmyzheng, @Carrotzpc, @zbinlin, @OneNewLife, @monkindey, @simman,
+      @demohi, @xwang1024 and @davidnotes
+  * **feature**
+    * warn if some confused configurations exist in config [#637](https://github.com/eggjs/egg/pull/637)
+    * use extend2 instead of extend to support `Array` config value [#674](https://github.com/eggjs/egg/pull/674)
+    * expose context base classes on Application instance, make app or framework override context extend more easily [#737](https://github.com/eggjs/egg/pull/737)
+    * expose egg.Controller and egg.Service [#741](https://github.com/eggjs/egg/pull/741)
+  * **fix**
+    * remove unused `jsonp` context delegate to response, please use [jsonp middleware instead](https://eggjs.org/zh-cn/basics/controller.html#jsonp) [#739](https://github.com/eggjs/egg/pull/739)
+
+### Commits
+
+  * [[`241b4e8`](http://github.com/eggjs/egg/commit/241b4e83c05e7086493564e536f5ce69d17dde0c)] - feat: expose egg.Controller and egg.Service (#741) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`26efa42`](http://github.com/eggjs/egg/commit/26efa427cf34e0ef0482d69fc10a77280e5fea5e)] - fix: remove unused jsonp delegate (#739) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`c33523d`](http://github.com/eggjs/egg/commit/c33523db3e086eafd1f7bc7486c6d1b2b68335e3)] - feat: export context base classes on Application (#737) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`ee127ad`](http://github.com/eggjs/egg/commit/ee127ad46b33a19d43c84a04649569a404a7f6af)] - docs: add sub directory support for controller (#734) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`88a1669`](http://github.com/eggjs/egg/commit/88a166933478373c4fd5cdd349d3b63e00cbaf7e)] - docs: typo at controller.md (#720) (lslxdx <<lslxdx@163.com>>)
+  * [[`4c298c2`](http://github.com/eggjs/egg/commit/4c298c2c70017d12688e2801bfe6e66886ba24bd)] - docs: async-function typo, change generator to async (#712) (zhennann <<zhennann@qq.com>>)
+  * [[`a9d27d0`](http://github.com/eggjs/egg/commit/a9d27d0ab3f3dea89487fc1e8c084b9ddc7e854d)] - docs: add schedule max interval (#711) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`9e94b7b`](http://github.com/eggjs/egg/commit/9e94b7b31106ce578a67dd15984d847587527299)] - docs: little grammar issues (#707) (Chen Yangjian <<jakeplus@gmail.com>>)
+  * [[`a4d12ec`](http://github.com/eggjs/egg/commit/a4d12ecc6c468ebf37ff6acba06e65b15cfde4f4)] - chore: remove unused config (#694) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`88449f9`](http://github.com/eggjs/egg/commit/88449f9b292d69bd2f936f0ecb037efecbed2e8e)] - docs: add webstorm debug (#689) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8517625`](http://github.com/eggjs/egg/commit/8517625b44f36909169032f8fff3ced3e1910a47)] - docs: correct spelling mistake (#682) (Wade Deng <<no7david@gmail.com>>)
+  * [[`92ef92b`](http://github.com/eggjs/egg/commit/92ef92b7cec015d2843c9d7cb113694ad7ca34ec)] - docs: faq add where are my logs (#680) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`b8fc4e4`](http://github.com/eggjs/egg/commit/b8fc4e460e2dcffe60364a71dec2d07bd354d2cf)] - deps: use extend2 instead of extend (#674) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`0ccbcf9`](http://github.com/eggjs/egg/commit/0ccbcf98be8946891b520321743d3b5a95899955)] - docs: fix example code syntax error & typos (#672) (cuyl <<463060544@qq.com>>)
+  * [[`1486705`](http://github.com/eggjs/egg/commit/14867059b5070b274cbee26df3accf5463eb4fe8)] - docs: security match and ignore (#668) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`7ab3791`](http://github.com/eggjs/egg/commit/7ab37915afc4a197cc58bc477e5b96cb1a73ced1)] - test: test for closing logger (#667) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`5f5cf91`](http://github.com/eggjs/egg/commit/5f5cf91a6af118ebc558252e07bcfa0f094045e3)] - docs(quickstart): tip for controller and config style (#666) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e47c24b`](http://github.com/eggjs/egg/commit/e47c24b3f1fd27b0f545f107913d6c6e1cae53ac)] - docs: fix example code typos (#629) (SF-Zhou <<sfzhou.scut@gmail.com>>)
+  * [[`7900576`](http://github.com/eggjs/egg/commit/7900576e690d038e4d75891890c467c743f03605)] - docs: fix egg-session-redis code (#642) (周长安 <<zchangan@163.com>>)
+  * [[`8c77e59`](http://github.com/eggjs/egg/commit/8c77e5907834cb110a99a4ace0356868107c88e6)] - feat: warn if some confused configurations exist in config (#637) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`cd8c659`](http://github.com/eggjs/egg/commit/cd8c65965dc62fe7d45598450d6ef31ab344b878)] - docs: fix some typo (#638) (kyle <<succpeking@hotmail.com>>)
+  * [[`7d830b7`](http://github.com/eggjs/egg/commit/7d830b7c92f81a9d133b7f1e6fe71b3d8a8d5a31)] - docs: fix reference framework path (#634) (kyle <<succpeking@hotmail.com>>)
+  * [[`a471e93`](http://github.com/eggjs/egg/commit/a471e93977e67c98280af8517100bfe48495bbb2)] - docs: fix example code in basics/middleware (#624) (SF-Zhou <<sfzhou.scut@gmail.com>>)
+  * [[`e87c170`](http://github.com/eggjs/egg/commit/e87c170770c117d275fd84c02a9fb1e699fa94cf)] - docs: fix code syntax (#628) (dongxu <<yandongxu@users.noreply.github.com>>)
+  * [[`531dadd`](http://github.com/eggjs/egg/commit/531dadd7c3f8bd813c365d705ce7293a719e98f3)] - docs(security): Cookie of token, the key must be csrfToken (#625) (jemmy zheng <<jemmy.zheng@hotmail.com>>)
+  * [[`8d73b02`](http://github.com/eggjs/egg/commit/8d73b02dcb856e3d8075aa34bc47a2f6dbb3af2b)] - docs: move cnzz to layout (#622) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`077bebe`](http://github.com/eggjs/egg/commit/077bebe17889d8a0cff2a1dbfebd72b4b8147ab3)] - docs: fix table render error in en env.md (#621) (SF-Zhou <<sfzhou.scut@gmail.com>>)
+  * [[`990d45e`](http://github.com/eggjs/egg/commit/990d45e75f2d73b9bb4cddbf76e67452740e3178)] - docs: fixed table render error in env.md (#619) (SF-Zhou <<sfzhou.scut@gmail.com>>)
+  * [[`e9428ba`](http://github.com/eggjs/egg/commit/e9428ba95fcd07ba255359a968dd027932ce2f77)] - docs: improve left padding when window between 1005 and 1130 (#617) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`c22e005`](http://github.com/eggjs/egg/commit/c22e0055ca8df35c1aa9d7d6ed7e31c21dd4b547)] - docs: turn off safe write in Jetbrains softwares (#614) (Shawn <<shaoshuai0102@gmail.com>>)
+  * [[`2296b7b`](http://github.com/eggjs/egg/commit/2296b7b22cc3e240bb676444d4fd2f953338cea5)] - docs: fix document deploy (#609) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 ## 2017-03-21, Version 1.0.0, @popomore
 
 Release the first stable version :egg: :clap::clap::clap:
