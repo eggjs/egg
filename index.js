@@ -33,3 +33,15 @@ exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
  * @since 1.0.0
  */
 exports.AgentWorkerLoader = require('./lib/loader').AgentWorkerLoader;
+
+/**
+ * @member {Controller} Egg#Controller
+ * @since 1.1.0
+ */
+exports.Controller = require('egg-core').BaseContextClass;
+
+/**
+ * @member {Service} Egg#Service
+ * @since 1.1.0
+ */
+exports.Service = require('egg-core').BaseContextClass;
