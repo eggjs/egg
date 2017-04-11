@@ -239,12 +239,6 @@ delegate(proto, 'request')
 
 delegate(proto, 'response')
   /**
-   * @member {Void} Context#jsonp
-   * @see Response#jsonp
-   * @since 1.0.0
-   */
-  .setter('jsonp')
-  /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
    * @since 1.0.0
