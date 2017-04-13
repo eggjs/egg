@@ -139,7 +139,7 @@ module.exports = {
     return false;
   },
 
-  // 关于如何安全地读取 query 参数的讨论
+  // How to read query safely
   // https://github.com/koajs/qs/issues/5
   _customQuery(cacheName, filter) {
     const str = this.querystring;
@@ -178,7 +178,7 @@ module.exports = {
   },
 
   /**
-   * 获取当前请求以 querystring 传递的参数，所有参数值都以 String 类型返回
+   * get params pass by querystring, all value are String type.
    * @member {Object} Request#query
    * @example
    * ```js
@@ -202,7 +202,7 @@ module.exports = {
   },
 
   /**
-   * 获取当前请求以 querystring 传递的参数，所有参数值都以 Array 类型返回，类似 {@link Request#query}
+   * get params pass by querystring, all value are Array type. {@link Request#query}
    * @member {Array} Request#queries
    * @example
    * ```js
