@@ -15,7 +15,7 @@ describe('test/app/extend/context.test.js', () => {
     let app;
     afterEach(() => app.close());
 
-    it('env=local: level => debug', function* () {
+    it('env=local: level => info', function* () {
       mm.env('local');
       mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
@@ -33,12 +33,12 @@ describe('test/app/extend/context.test.js', () => {
       errorContent.should.containEql('nodejs.Error: core error foo');
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-      loggerContent.should.containEql('debug foo');
+      // loggerContent.should.containEql('debug foo');
       loggerContent.should.containEql('info foo');
       loggerContent.should.containEql('warn foo');
 
       const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-      coreLoggerContent.should.containEql('core debug foo');
+      // coreLoggerContent.should.containEql('core debug foo');
       coreLoggerContent.should.containEql('core info foo');
       coreLoggerContent.should.containEql('core warn foo');
     });
