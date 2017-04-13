@@ -130,6 +130,21 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
+  describe('app or framework can override ctx.getLogger', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/custom-context-getlogger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should log with custom logger', () => {
+      return request(app.callback())
+        .get('/')
+        .expect('work, logger: exists');
+    });
+  });
+
   describe('properties', () => {
     let app;
     before(() => {

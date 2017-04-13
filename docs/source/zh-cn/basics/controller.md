@@ -20,7 +20,7 @@ title: controller
 
 ## 如何编写 Controller
 
-所有的 Controller 文件都必须放在 `app/controller` 目录下。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
+所有的 Controller 文件都必须放在 `app/controller` 目录下，可以支持多级目录，访问的时候可以通过目录名级联访问。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
 
 ### Controller 类（推荐）
 
@@ -57,8 +57,17 @@ module.exports = app => {
 
 ```js
 // app/router.js
-module.exports = {
+module.exports = app => {
   app.post('createPost', '/api/posts', 'post.create');
+}
+```
+
+Controller 支持多级目录，例如如果我们将上面的 Controller 代码放到 `app/controller/sub/post.js` 中，则可以在 router 中这样使用：
+
+```js
+// app/router.js
+module.exports = app => {
+  app.post('createPost', '/api/posts', 'sub.post.create');
 }
 ```
 
@@ -187,7 +196,7 @@ Connection: keep-alive
 
 第一行中也包含了三段，其中我们常用的主要是[响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
 
-和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字符。
+和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字节。
 
 最后剩下的部分就是这次响应真正的内容。
 
