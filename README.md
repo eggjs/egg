@@ -38,7 +38,7 @@ Node.js >= 6.0.0 required.
 - ✔︎ Built-in process management
 - ✔︎ Plugin system
 - ✔︎ Framework customization
-- ✔︎ Lots of [plugins](https://eggjs.org/badgeboard/)
+- ✔︎ Lots of [plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
 ## Docs & Community
 
