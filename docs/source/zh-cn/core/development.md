@@ -257,6 +257,82 @@ $ DEBUG=egg* npm run dev
 
 ![](https://cloud.githubusercontent.com/assets/227713/24495078/9bf8aaa2-1566-11e7-8dbd-2def56f904d3.png)
 
+### 使用 [VSCode] 进行调试
+
+由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 [VSCode] 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 `proxyworker` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 [VSCode] 通过固定 attach 到 proxyworker 来调试 worker 了。
+
+下面是安装使用步骤:
+
+##### 1. 安装 [egg-development-proxyworker](https://github.com/eggjs/egg-development-proxyworker) 插件
+
+```bash
+npm i egg-development-proxyworker --save
+```
+
+##### 2. 启动插件
+
+```js
+// config/plugin.js
+exports.proxyworker = {
+  enable: true,
+  package: 'egg-development-proxyworker',
+};
+
+// config/config.default.js
+// 如果10086被占用，你可以通过这个配置指定其他的端口号
+exports.proxyworker = {
+  port: 10086,
+};
+```
+
+##### 3. 在 .vscode/launch.json 添加调试配置:
+
+```js
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Egg",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "windows": {
+        "runtimeExecutable": "npm.cmd"
+      },
+      "runtimeArgs": [
+        "run", "dev", "--", "--debug"
+      ],
+      "port": 5858
+    },
+    {
+      "name": "Attach Agent",
+      "type": "node",
+      "request": "attach",
+      "port": 5856
+    },
+    {
+      "name": "Attach Worker",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 10086
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Egg",
+      "configurations": ["Launch Egg", "Attach Agent", "Attach Worker"]
+    }
+  ]
+}
+```
+
+##### 4. 开始调试
+
+在 [VSCode] 中，切换到调试页面。选择 Debug Egg 配置进行启动。
+
+更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
 ## 更多
 
@@ -264,3 +340,4 @@ $ DEBUG=egg* npm run dev
 
 [glob]: https://www.npmjs.com/package/glob
 [egg-bin]: https://github.com/eggjs/egg-bin
+[VSCode]: https://code.visualstudio.com
