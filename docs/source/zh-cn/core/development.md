@@ -286,6 +286,7 @@ exports.proxyworker = {
 ```
 
 ##### 3. 在 .vscode/launch.json 添加调试配置:
+
 ```js
 {
   "version": "0.2.0",
