@@ -164,13 +164,13 @@ interface EggAppConfig {
    * @property {Boolean} enable - enable bodyParser or not, default to true
    * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
    * @property {String | RegExp | Function | Array} match - will parse request body only when url path hit match pattern
-   * @property {String} encoding - body 的编码格式，默认为 utf8
-   * @property {String} formLimit - form body 的大小限制，默认为 100kb
-   * @property {String} jsonLimit - json body 的大小限制，默认为 100kb
-   * @property {Boolean} strict - json body 解析是否为严格模式，如果为严格模式则只接受 object 和 array
-   * @property {Number} queryString.arrayLimit - 表单元素数组长度限制，默认 100，否则会转换为 json 格式
-   * @property {Number} queryString.depth - json 数值深度限制，默认 5
-   * @property {Number} queryString.parameterLimit - 参数个数限制，默认 1000
+   * @property {String} encoding - body encoding config, default utf8
+   * @property {String} formLimit - form body size limit, default 100kb
+   * @property {String} jsonLimit - json body size limit, default 100kb
+   * @property {Boolean} strict - json body strict mode, if set strict value true, then only receive object and array json body
+   * @property {Number} queryString.arrayLimit - from item array length limit, default 100
+   * @property {Number} queryString.depth - json value deep lenght, default 5
+   * @property {Number} queryString.parameterLimit - paramter number limit ,default 1000
    */
   bodyParser: {
     enable: boolean;
@@ -258,22 +258,28 @@ interface EggAppConfig {
 
   /**
    * I18n options
-   * @member Config#i18n
-   * @property {String} defaultLocale - 默认语言是美式英语，毕竟支持多语言，基本都是以英语为母板
-   * @property {String} dir - 多语言资源文件存放路径，不建议修改
-   * @property {String} queryField - 设置当前语言的 query 参数字段名，默认通过 `query.locale` 获取
-   *   如果你想修改为 `query.lang`，那么请通过修改此配置实现
-   * @property {String} cookieField - 如果当前请求用户语言有变化，都会设置到 cookie 中保持着，
-   *   默认是存储在key 为 locale 的 cookie 中
-   * @property {String|Number} cookieMaxAge - cookie 默认 `1y` 一年后过期，
-   *   如果设置为 Number，则单位为 ms
    */
   i18n: {
+    /**
+     * default value EN_US
+     */
     defaultLocale: string;
+    /**
+     * i18n resource file dir, not recommend to change default value
+     */
     dir: string;
+    /**
+     * custom the locale value field, default `query.locale`, you can modify this config, such as `query.lang`
+     */
     queryField: string;
+    /**
+     * The locale value key in the cookie, default is locale.
+     */
     cookieField: string;
-    cookieMaxAge: string;
+    /**
+     * Locale cookie expire time, default `1y`, If pass number value, the unit will be ms
+     */
+    cookieMaxAge: string | number;
   };
 
   /**
@@ -375,8 +381,6 @@ declare interface EggApplication extends KoaApplication {
    * app.env delegate app.config.env
    */
   env: string;
-
-  Controller: Controller;
 
   /**
    * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
@@ -540,33 +544,33 @@ export interface Context extends KoaApplication.Context {
   response: Response;
 
   /**
-   * 开启 {@link rest} 功能后，将会有 `this.params` 对象
-   * @member {object} context#params
+   * Resource Parameters 
+   * 
    * @example
    * ##### ctx.params.id {string}
    *
-   * 资源 id，如 `GET /api/users/1` => `'1'`
+   * `GET /api/users/1` => `'1'`
    *
    * ##### ctx.params.ids {Array<String>}
    *
-   * 一组资源 id，如 `GET /api/users/1,2,3` => `['1', '2', '3']`
+   * `GET /api/users/1,2,3` => `['1', '2', '3']`
    *
    * ##### ctx.params.fields {Array<String>}
    *
-   * 期待返回的资源字段，如 `GET /api/users/1?fields=name,title` => `['name', 'title']`.
-   * 即使应用 Controller 实现返回了全部字段，[REST] 处理器会根据 `fields` 筛选只需要的字段。
+   * Expect request return data fields, for example
+   * `GET /api/users/1?fields=name,title` => `['name', 'title']`.
    *
    * ##### ctx.params.data {Object}
-   *
-   * 请求数据对象
+   * 
+   * Tht request data object
    *
    * ##### ctx.params.page {Number}
    *
-   * 分页码，如 `GET /api/users?page=10` => `10`
+   * Page number, `GET /api/users?page=10` => `10`
    *
    * ##### ctx.params.per_page {Number}
    *
-   * 每页资源数目，如 `GET /api/users?per_page=20` => `20`
+   * The number of every page, `GET /api/users?per_page=20` => `20`
    */
   params: any;
 
@@ -597,6 +601,8 @@ export interface Context extends KoaApplication.Context {
 
   /**
    * 设置返回资源对象
+   * set the ctx.body.data value
+   * 
    * @member {Object} Context#data=
    * @example
    * ```js
@@ -606,7 +612,7 @@ export interface Context extends KoaApplication.Context {
    * };
    * ```
    *
-   * 会返回 200 响应
+   * will get responce
    *
    * ```js
    * HTTP/1.1 200 OK
@@ -622,16 +628,15 @@ export interface Context extends KoaApplication.Context {
   data: any;
 
   /**
-   * 设置 meta 响应数据
-   * @member {Object} Context#meta=
+   * set ctx.body.meta value
+   * 
    * @example
    * ```js
    * ctx.meta = {
    *   count: 100
    * };
    * ```
-   *
-   * 会返回 200 响应
+   * will get responce
    *
    * ```js
    * HTTP/1.1 200 OK
