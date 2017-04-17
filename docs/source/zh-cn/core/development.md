@@ -330,9 +330,9 @@ exports.proxyworker = {
 
 ##### 4. 开始调试
 
-在 [VSCode](https://code.visualstudio.com/) 中，切换到调试页面。选择 Debug Egg 配置进行启动。
+在 [VSCode] 中，切换到调试页面。选择 Debug Egg 配置进行启动。
 
-更多 VSCode Debug 用法可以参见 VSCode 文档:  [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
+更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
 ## 更多
 
