@@ -257,9 +257,9 @@ $ DEBUG=egg* npm run dev
 
 ![](https://cloud.githubusercontent.com/assets/227713/24495078/9bf8aaa2-1566-11e7-8dbd-2def56f904d3.png)
 
-### 使用 [VSCode](https://code.visualstudio.com/) 进行调试
+### 使用 [VSCode] 进行调试
 
-由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 [VSCode](https://code.visualstudio.com/) 是需要 [attach](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_attaching-to-nodejs) 到固定的调试端口的。于是我们启用了一个叫 `proxyworker` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 [VSCode](https://code.visualstudio.com/) 通过固定 [attach](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_attaching-to-nodejs) 到 proxyworker 来调试 worker 了。
+由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 [VSCode] 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 `proxyworker` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 [VSCode] 通过固定 attach 到 proxyworker 来调试 worker 了。
 
 下面是安装使用步骤:
 
@@ -332,9 +332,12 @@ exports.proxyworker = {
 
 在 [VSCode](https://code.visualstudio.com/) 中，切换到调试页面。选择 Debug Egg 配置进行启动。
 
+更多 VSCode Debug 用法可以参见 VSCode 文档:  [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
+
 ## 更多
 
 如果想了解更多本地开发相关的内容，例如为你的团队定制一个本地开发工具，请参考 [egg-bin]。
 
 [glob]: https://www.npmjs.com/package/glob
 [egg-bin]: https://github.com/eggjs/egg-bin
+[VSCode]: https://code.visualstudio.com
