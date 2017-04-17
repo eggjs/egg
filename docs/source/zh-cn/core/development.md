@@ -259,7 +259,7 @@ $ DEBUG=egg* npm run dev
 
 ### 使用 VSCode 进行调试
 
-> 由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 vscode 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 ```proxyworker``` 单独的代理服务，默认端口为 ```10086```，worker 的调试信息会被代理到这个服务上。这样 vscode 通过固定 attach 到 proxyworker 来调试 worker 了。
+由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 vscode 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 ```proxyworker``` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 vscode 通过固定 attach 到 proxyworker 来调试 worker 了。
 
 下面是安装使用步骤:
 
