@@ -327,6 +327,19 @@ exports.proxyworker = {
   ]
 }
 ```
+由于 V8 Debugger [Legacy Protocol] 会在 Node.js 8.x 后被移除, 而替换使用的是 [Inspector Protocol]
+
+新的协议主要有三大优势:
+1. 支持非常大的 JavaScript 对象
+2. 支持 ES6 Proxy
+3. 支持 Source Map 更好
+
+对于 Node.js Version >= 6.3 (Windows: >= 6.9) 我们更应该使用 [Inspector Protocol] 进行调试。
+
+在上面的调试配置中需要修改一些参数来开启新协议:
+- `Launch Egg` 调整参数 `"runtimeArgs": ["run", "dev", "--", "--inspect"]`
+- `Attach Worker` 添加参数 `"protocol": "inspector"`
+
 
 ##### 4. 开始调试
 
@@ -341,3 +354,5 @@ exports.proxyworker = {
 [glob]: https://www.npmjs.com/package/glob
 [egg-bin]: https://github.com/eggjs/egg-bin
 [VSCode]: https://code.visualstudio.com
+[Legacy Protocol]: https://github.com/buggerjs/bugger-v8-client/blob/master/PROTOCOL.md
+[Inspector Protocol]: https://chromedevtools.github.io/debugger-protocol-viewer/v8
