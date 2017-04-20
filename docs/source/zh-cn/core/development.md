@@ -337,7 +337,7 @@ exports.proxyworker = {
 对于 Node.js Version >= 6.3 (Windows: >= 6.9) 我们更应该使用 [Inspector Protocol] 进行调试。
 
 在上面的调试配置中需要修改一些参数来开启新协议:
-- `Launch Egg` 调整参数 `"runtimeArgs": ["run", "dev", "debug"]`
+- `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`
 - `Attach Worker` 添加参数 `"protocol": "inspector"`
 
 
