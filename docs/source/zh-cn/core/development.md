@@ -63,7 +63,6 @@ $ npm i egg-bin --save-dev
 
 这样我们就可以通过 `npm test` 命令运行单元测试。
 
-
 ### 环境配置
 
 测试用例执行时，应用是以 `env: unittest` 启动的，读取的配置也是 `config.default.js` 和 `config.unittest.js` 合并的结果。
@@ -75,7 +74,7 @@ $ npm i egg-bin --save-dev
 我们在编写用例时往往想单独执行正在编写的用例，可以通过以下方式指定特定用例文件：
 
 ```bash
-TESTS=test/x.test.js npm test
+$ TESTS=test/x.test.js npm test
 ```
 
 支持 [glob] 规则。
@@ -87,7 +86,7 @@ Mocha 支持多种形式的 reporter，默认使用 `spec` reporter。
 可以手动设置 `TEST_REPORTER` 环境变量来指定 reporter，例如使用 `dot`：
 
 ```bash
-TEST_REPORTER=dot npm test
+$ TEST_REPORTER=dot npm test
 ```
 
 ![image](https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png)
@@ -97,7 +96,25 @@ TEST_REPORTER=dot npm test
 默认执行超时时间为 30 秒。我们也可以手动指定超时时间（单位毫秒），例如设置为 5 秒：
 
 ```bash
-TEST_TIMEOUT=5000 egg-bin test
+$ TEST_TIMEOUT=5000 npm test
+```
+
+### 通过 argv 方式传参
+
+`egg-bin test` 除了环境变量方式，也支持直接传参，支持 mocha 的所有参数，参见：[mocha usage](https://mochajs.org/#usage) 。
+
+```bash
+$ # npm 传递参数需额外加一个 `--`，参见 https://docs.npmjs.com/cli/run-script
+$ npm test -- --help
+$
+$ # 等同于 `TESTS=test/**/test.js npm test`，受限于 bash，最好加上双引号
+$ npm test "test/**/test.js"
+$
+$ # 等同于 `TEST_REPORTER=dot npm test`
+$ npm test -- --reporter=dot
+$
+$ # 支持 mocha 的参数，如 grep / require 等
+$ npm test -- -t 30000 --grep="should GET"
 ```
 
 ## 代码覆盖率
@@ -149,12 +166,10 @@ Lines        : 100% ( 41/41 )
 
 对于某些不需要跑测试覆盖率的文件，可以通过 `COV_EXCLUDES` 环境变量指定：
 
-```json
-{
-  "scripts": {
-    "cov": "COV_EXCLUDES=app/plugins/c* egg-bin cov"
-  }
-}
+```bash
+$ COV_EXCLUDES=app/plugins/c* npm run cov
+$ # 或者传参方式
+$ npm run cov -- --x=app/plugins/c*
 ```
 
 ## 调试
@@ -173,7 +188,7 @@ Lines        : 100% ( 41/41 )
 }
 ```
 
-这样我们就可以通过 `npm run debug` 命令调试应用。
+这样我们就可以通过 `npm run debug` 命令通过 `V8 Inspector port` 调试应用。
 
 #### 环境配置
 
@@ -213,16 +228,124 @@ app.logger.debug('app init');
 开启所有模块的日志：
 
 ```bash
-DEBUG=* npm run dev
+$ DEBUG=* npm run dev
 ```
 
 开启指定模块的日志：
 
 ```bash
-DEBUG=egg* npm run dev
+$ DEBUG=egg* npm run dev
 ```
 
 单元测试也可以用 `DEBUG=* npm test` 来查看测试用例运行的详细日志。
+
+### 使用 WebStorm 进行调试
+
+添加 `npm scripts` 到 `package.json`：
+
+```json
+{
+  "scripts": {
+    "debug": "egg-bin dev $NODE_DEBUG_OPTION"
+  }
+}
+```
+
+> 目前 WebStorm 还不支持 `--inspect` 故不能使用 `egg-bin debug`，暂时使用 `egg-bin dev --debug` 的方式。
+
+使用 WebStorm 的 npm 调试启动即可：
+
+![](https://cloud.githubusercontent.com/assets/227713/24495078/9bf8aaa2-1566-11e7-8dbd-2def56f904d3.png)
+
+### 使用 [VSCode] 进行调试
+
+由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 [VSCode] 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 `proxyworker` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 [VSCode] 通过固定 attach 到 proxyworker 来调试 worker 了。
+
+下面是安装使用步骤:
+
+##### 1. 安装 [egg-development-proxyworker](https://github.com/eggjs/egg-development-proxyworker) 插件
+
+```bash
+npm i egg-development-proxyworker --save
+```
+
+##### 2. 启动插件
+
+```js
+// config/plugin.js
+exports.proxyworker = {
+  enable: true,
+  package: 'egg-development-proxyworker',
+};
+
+// config/config.default.js
+// 如果10086被占用，你可以通过这个配置指定其他的端口号
+exports.proxyworker = {
+  port: 10086,
+};
+```
+
+##### 3. 在 .vscode/launch.json 添加调试配置:
+
+```js
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Egg",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "npm",
+      "windows": {
+        "runtimeExecutable": "npm.cmd"
+      },
+      "runtimeArgs": [
+        "run", "dev", "--", "--debug"
+      ],
+      "port": 5858
+    },
+    {
+      "name": "Attach Agent",
+      "type": "node",
+      "request": "attach",
+      "port": 5856
+    },
+    {
+      "name": "Attach Worker",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 10086
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Egg",
+      "configurations": ["Launch Egg", "Attach Agent", "Attach Worker"]
+    }
+  ]
+}
+```
+由于 V8 Debugger [Legacy Protocol] 会在 Node.js 8.x 后被移除, 而替换使用的是 [Inspector Protocol]
+
+新的协议主要有三大优势:
+1. 支持非常大的 JavaScript 对象
+2. 支持 ES6 Proxy
+3. 支持 Source Map 更好
+
+对于 Node.js Version >= 6.3 (Windows: >= 6.9) 我们更应该使用 [Inspector Protocol] 进行调试。
+
+在上面的调试配置中需要修改一些参数来开启新协议:
+- `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`
+- `Attach Worker` 添加参数 `"protocol": "inspector"`
+
+
+##### 4. 开始调试
+
+在 [VSCode] 中，切换到调试页面。选择 Debug Egg 配置进行启动。
+
+更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
 ## 更多
 
@@ -230,3 +353,6 @@ DEBUG=egg* npm run dev
 
 [glob]: https://www.npmjs.com/package/glob
 [egg-bin]: https://github.com/eggjs/egg-bin
+[VSCode]: https://code.visualstudio.com
+[Legacy Protocol]: https://github.com/buggerjs/bugger-v8-client/blob/master/PROTOCOL.md
+[Inspector Protocol]: https://chromedevtools.github.io/debugger-protocol-viewer/v8

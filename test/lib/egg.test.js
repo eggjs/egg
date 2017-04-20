@@ -6,6 +6,8 @@ const path = require('path');
 const fs = require('fs');
 const request = require('supertest');
 const sleep = require('mz-modules/sleep');
+const spy = require('spy');
+const Transport = require('egg-logger').Transport;
 const utils = require('../utils');
 
 describe('test/lib/egg.test.js', () => {
@@ -129,6 +131,21 @@ describe('test/lib/egg.test.js', () => {
       yield app.close();
       assert(isAppClosed === true);
       assert(isAgentClosed === true);
+    });
+
+    it('shoud close logger', function* () {
+      const close = spy();
+      class TestTransport extends Transport {
+        close() {
+          close();
+        }
+      }
+      const transport = new TestTransport();
+      for (const logger of app.loggers.values()) {
+        logger.set('test', transport);
+      }
+      yield app.close();
+      assert(close.called);
     });
   });
 

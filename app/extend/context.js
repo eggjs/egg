@@ -1,12 +1,8 @@
 'use strict';
 
 const delegate = require('delegates');
-const ContextLogger = require('egg-logger').EggContextLogger;
-const Cookies = require('egg-cookies');
 const co = require('co');
-const ContextHttpClient = require('../../lib/core/context_httpclient');
 const { assign } = require('utility');
-
 
 const HELPER = Symbol('Context#helper');
 const LOCALS = Symbol('Context#locals');
@@ -18,7 +14,7 @@ const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
 const proto = module.exports = {
   get cookies() {
     if (!this[COOKIES]) {
-      this[COOKIES] = new Cookies(this, this.app.keys);
+      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys);
     }
     return this[COOKIES];
   },
@@ -30,7 +26,7 @@ const proto = module.exports = {
    */
   get httpclient() {
     if (!this[CONTEXT_HTTPCLIENT]) {
-      this[CONTEXT_HTTPCLIENT] = new ContextHttpClient(this);
+      this[CONTEXT_HTTPCLIENT] = new this.app.ContextHttpClient(this);
     }
     return this[CONTEXT_HTTPCLIENT];
   },
@@ -96,7 +92,7 @@ const proto = module.exports = {
     if (!appLogger) return null;
 
     // write to cache
-    cache[name] = new ContextLogger(this, appLogger);
+    cache[name] = new this.app.ContextLogger(this, appLogger);
     return cache[name];
   },
 
@@ -242,12 +238,6 @@ delegate(proto, 'request')
   .access('ip');
 
 delegate(proto, 'response')
-  /**
-   * @member {Void} Context#jsonp
-   * @see Response#jsonp
-   * @since 1.0.0
-   */
-  .setter('jsonp')
   /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
