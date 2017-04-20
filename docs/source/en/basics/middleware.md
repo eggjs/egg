@@ -16,12 +16,12 @@ const zlib = require('zlib');
 function* gzip(next) {
   yield next;
 
-  // convert the reaponse body to gzip after the completion of the execution of subsequent middleware
+  // convert the response body to gzip after the completion of the execution of subsequent middleware
   let body = this.body;
   if (!body) return;
   if (isJSON(body)) body = JSON.stringify(body);
 
-  // set gzip body, correct the reponse header
+  // set gzip body, correct the response header
   const stream = zlib.createGzip();
   stream.end(body);
   this.body = stream;
@@ -33,9 +33,9 @@ You might find that the middleware's writing style in the framework is exactly t
 
 ### Configuration
 
-Usually the middleware has its own configuration. In the framework, a complete middleware is including the configuration process. We agree that a middleware is a separate file placed in `app/middleware` directory, which needs a exports function that take two paramters:
+Usually the middleware has its own configuration. In the framework, a complete middleware is including the configuration process. We agree that a middleware is a separate file placed in `app/middleware` directory, which needs an exports function that take two parameters:
 
-- options: the configuration field of the middleware, `app.config[${middlewareName}]` will be passed in by the frame
+- options: the configuration field of the middleware, `app.config[${middlewareName}]` will be passed in by the framework
 - app: the Application instance of current application
 
 We will do a simple optimization to the gzip middleware above, making it do gzip compression only if the body size is greater than a configured threshold. So, we need to create a new file `gzip.js` in `app/middleware` directory.
@@ -48,7 +48,7 @@ module.exports = options => {
   return function* gzip(next) {
     yield next;
 
-    // convert the reaponse body to gzip after the completion of the execution of subsequent middleware
+    // convert the response body to gzip after the completion of the execution of subsequent middleware
     let body = this.body;
     if (!body) return;
 
@@ -57,7 +57,7 @@ module.exports = options => {
 
     if (isJSON(body)) body = JSON.stringify(body);
 
-    // set gzip body, correct the reponse header
+    // set gzip body, correct the response header
     const stream = zlib.createGzip();
     stream.end(body);
     this.body = stream;
@@ -88,7 +88,7 @@ module.exports = {
 
 ## Default Framework Middleware
 
-In addition to the application layer middleware is imported, the framework itself and other plug-ins will also import many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/confg.default.js` to modify the bodyParser:
+In addition to the application layer middleware is imported, the framework itself and other plug-ins will also import many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
 
 ```js
 module.exports = {
@@ -183,7 +183,7 @@ module.exports = {
   },
 };
 ```
-match and ignore support various types of configuraton ways:
+match and ignore support various types of configuration ways:
 
 1. String: when string, it sets the prefix of a url path, and all urls starting with this prefix will match.
 2. Regular expression: when regular expression, all urls satisfy this regular expression will match.
