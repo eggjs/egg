@@ -66,10 +66,10 @@ module.exports = options => {
 };
 ```
 
-## Importing Middleware in the Application
+## Loading Middleware in the Application
 
-We can import customized middleware completely by configuration in the application, and decide their order.
-If we need to import the gzip middleware in the above, 
+We can load customized middleware completely by configuration in the application, and decide their order.
+If we need to load the gzip middleware in the above, 
 we can edit `config.default.js` like this:
 
 ```js
@@ -88,7 +88,7 @@ module.exports = {
 
 ## Default Framework Middleware
 
-In addition to the application layer middleware is imported, the framework itself and other plug-ins will also import many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
+In addition to the application layer middleware is loaded, the framework itself and other plug-ins will also load many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
 
 ```js
 module.exports = {
@@ -97,11 +97,11 @@ module.exports = {
   },
 };
 ```
-** Note: middleware imported by the framework and plugins are loaded earlier than those imported by the application layer, and the application layer cannot overwrite the default framework middleware. If the application layer imports customized middleware that has the same name with default framework middleware, an error will be raised on starting up. **
+** Note: middleware loaded by the framework and plugins are loaded earlier than those loaded by the application layer, and the application layer cannot overwrite the default framework middleware. If the application layer loads customized middleware that has the same name with default framework middleware, an error will be raised on starting up. **
 
 ## Middleware in Router
 
-Both middleware defined by the application layer and the default framework middleware will be loaded by the loader and are mounted to `app.middlewares`(Note: it's plural here since `app.middleware` is used for other purpose in Koa). So middleware defined by the application layer can be imported by the router other than the config, therefore they only take effect on the corresponding routes.
+Both middleware defined by the application layer and the default framework middleware will be loaded by the loader and are mounted to `app.middlewares`(Note: it's plural here since `app.middleware` is used for other purpose in Koa). So middleware defined by the application layer can be loaded by the router other than the config, therefore they only take effect on the corresponding routes.
 
 Again, let's take the gzip middleware above for an example. In order to use this middleware directly in the router, we can write like this in `app/router.js`:
 
@@ -133,7 +133,7 @@ const options = { threshold: 2048 };
 app.use(compress(options));
 ```
 
-We can import the middleware according to the framework specification like this:
+We can load the middleware according to the framework specification like this:
 
 ```js
 // app/middleware/compress.js
@@ -152,7 +152,7 @@ exports.compress = {
 ```
 ## General Configuration
 
-These general config fields are supported by middleware imported by the application layer or built in by the framework:
+These general config fields are supported by middleware loaded by the application layer or built in by the framework:
 
 - enable: enable the middleware or not
 - match: set some rules with which only the request match can go through middleware
