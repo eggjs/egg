@@ -531,7 +531,7 @@ There mainly are these attributes below can be used to configure Session in `con
 
 ```js
 module.exports = {
-  key: 'EGG_SESS', // the name of key-value pairs, specially used by Cookie to store Session
+  key: 'EGG_SESS', // the name of key-value pairs, which is specially used by Cookie to store Session
   maxAge: 86400000, // Session maximum valid time
 };
 ```
@@ -564,6 +564,47 @@ exports.create = function* (ctx) {
 };
 ```
 
+When the validation fails, an exception will be thrown immediately with an error code of 422 and an errors field containing the detailed information why it fails. You can capture this exception through `try catch` and handle it all by yourself.
+
+```js
+exports.create = function* (ctx) {
+  try {
+    ctx.validate(createRule);
+  } catch (err) {
+    ctx.logger.warn(err.errors);
+    ctx.body = { success: false };
+    return;
+  }
+};
+```
+### Validation Rules
+
+The parameter validation is done by [Parameter](https://github.com/node-modules/parameter#rule), and all supported validation rules can be found in its document.
+
+#### Customizing validation rules
+
+In addition to built-in validation types introduced in the previous section, sometimes we hope to customize several validation rules to make the development more convenient and now customized rules can be added through `app.validator.addRule(type, check)`.
+
+```js
+// app.js
+app.validator.addRule('json', (rule, value) => {
+  try {
+    JSON.parse(value);
+  } catch (err) {
+    return 'must be json string';
+  }
+});
+```
+
+After adding the customized rule, it can be used immediately in Controller to do parameter validation.
+
+```js
+exports.handler = function* (ctx) {
+  // query.test field must be a json string
+  const rule = { test: 'json' };
+  ctx.validate(rule, ctx.query);
+};
+```
 
 
 
