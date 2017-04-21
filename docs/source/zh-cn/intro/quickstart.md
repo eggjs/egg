@@ -350,7 +350,7 @@ exports.robot = {
 
 - 支持按环境变量加载不同的配置文件，如 `config.local.js`， `config.prod.js` 等等。
 - 应用/插件/框架都可以配置自己的配置文件，框架将按顺序合并加载。
-- 具体合并逻辑可参见[配置文件](../basics/config.md)。
+- 具体合并逻辑可参见[配置文件](../basics/config.md#配置加载顺序)。
 
 ```js
 // config/config.default.js
