@@ -5,9 +5,9 @@ In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on 
 
 ## Writing Middleware
 
-### how to write
+### How to write
 
-We begin by writing a simple gzip middleware, to see how to write middleware
+We begin to see how to write a middleware from a simple gzip example.
 
 ```js
 const isJSON = require('koa-is-json');
@@ -33,7 +33,7 @@ You might find that the middleware's writing style in the framework is exactly t
 
 ### Configuration
 
-Usually the middleware has its own configuration. In the framework, a complete middleware is including the configuration process. We agree that a middleware is a separate file placed in `app/middleware` directory, which needs an exports function that take two parameters:
+Usually the middleware has its own configuration. In the framework, a complete middleware is including the configuration process. A middleware is a file in `app/middleware` directory by convention, which needs an exports function that take two parameters:
 
 - options: the configuration field of the middleware, `app.config[${middlewareName}]` will be passed in by the framework
 - app: the Application instance of current application
@@ -69,7 +69,7 @@ module.exports = options => {
 ## Importing Middleware in the Application
 
 We can import customized middleware completely by configuration in the application, and decide their order.
-If we need to import the gzip Middleware in the above, 
+If we need to import the gzip middleware in the above, 
 we can edit `config.default.js` like this:
 
 ```js
@@ -99,7 +99,7 @@ module.exports = {
 ```
 ** Note: middleware imported by the framework and plugins are loaded earlier than those imported by the application layer, and the application layer cannot overwrite the default framework middleware. If the application layer imports customized middleware that has the same name with default framework middleware, an error will be raised on starting up. **
 
-## The Use of Middleware in Router
+## Middleware in Router
 
 Both middleware defined by the application layer and the default framework middleware will be loaded by the loader and are mounted to `app.middlewares`(Note: it's plural here since `app.middleware` is used for other purpose in Koa). So middleware defined by the application layer can be imported by the router other than the config, therefore they only take effect on the corresponding routes.
 
