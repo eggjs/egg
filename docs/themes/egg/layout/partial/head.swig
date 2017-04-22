@@ -6,4 +6,3 @@
 <link rel="icon" href="/images/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/2/docsearch.min.css" />
 {{ css('css/index') }}
-<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
