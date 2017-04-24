@@ -7,8 +7,8 @@ title: 使用 async function 开发应用
 
 ## controller & service
 
-在 [controller] 章节中，我们提供了 controller 的两种写法：基于类和普通方法，其中所有用 generator function 实现的地方都可以用 aync function 来实现，代码逻辑没有任何变化，仅需要将 yield 语法改成 await 语法。
-而 [service] 和 [controller] 一样，所有的异步方法都可以用 async function 替换文档中的 async function。
+在 [controller] 章节中，我们提供了 controller 的两种写法：基于类和普通方法，其中所有用 generator function 实现的地方都可以用 async function 来实现，代码逻辑没有任何变化，仅需要将 yield 语法改成 await 语法。
+而 [service] 和 [controller] 一样，所有的异步方法都可以用 async function 替换文档中的 generator function。
 
 举个例子，将 [controller] 文档中的示例改造成 async function 模式：
 
@@ -41,7 +41,7 @@ module.exports = app => {
 }
 ```
 
-**注意：在上面的 contorller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generaotr function 类型，则也需要改造成 async function 接口才可以被调用。**
+**注意：在上面的 contorller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generator function 类型，则也需要改造成 async function 接口才可以被调用。**
 
 ## 定时任务
 

@@ -84,6 +84,26 @@ module.exports = {
 };
 ```
 
+我们还可以动态修改现有中间件的顺序，中间件的加载顺序和插件顺序不同，是由 `app.config.coreMiddleware` 和 `app.config.appMiddleware` 这两个数组合并而成的。
+
+```js
+// app.js
+module.exports = app => {
+  // 在中间件最前面统计请求时间
+  app.config.coreMiddleware.unshift('report');
+};
+
+// app/middleware/report.js
+module.exports = () => {
+  return function* (next) {
+    const startTime = Date.now();
+    yield next;
+    // 上报请求时间
+    reportTime(Date.now() - startTime);
+  }
+};
+```
+
 **配置项以及区分各运行环境的配置，请查看[配置](./config.md)章节。**
 
 ## 框架默认中间件
@@ -93,7 +113,7 @@ module.exports = {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '10m',
+    jsonLimit: '10mb',
   },
 };
 ```
@@ -173,7 +193,7 @@ module.exports = {
 };
 ```
 
-### match & ignore
+### match 和 ignore
 
 match 和 ignore 支持的参数都一样，只是作用完全相反，match 和 ignore 不允许同时配置。
 

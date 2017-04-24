@@ -35,23 +35,23 @@ Node.js >= 6.0.0 required.
 
 ## Features
 
-- ✔︎ Build-in process management
+- ✔︎ Built-in process management
 - ✔︎ Plugin system
 - ✔︎ Framework customization
-- ✔︎ Lots of [plugins](https://eggjs.org/badgeboard/)
+- ✔︎ Lots of [plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
 ## Docs & Community
 
-- [Website && Document](https://eggjs.org)
+- [Website && Documentations](https://eggjs.org)
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 
-> All the resources are in English(comments, README, etc.), with one exception, guides are still [working in process](https://github.com/eggjs/egg/issues/363).
-> Welcome to join us to translate egg documents, we are glad to see that.
+> All the documentations (comments, README, etc.) are in English, except the tutorials and api documentations are still [being translated](https://github.com/eggjs/egg/issues/363).
+> Feel free to join us and translate egg documentations. It's appreciated.
 
 ## Getting Started
 
-Follow the step
+Follow the commands listed below.
 
 ```bash
 $ npm install egg-init -g
@@ -67,9 +67,9 @@ See [egg-examples](https://github.com/eggjs/examples).
 
 ## How to Contribute
 
-Please let us know what we can help, check [issues](https://github.com/eggjs/egg/issues) for bug reporting and suggestion.
+Please let us know how can we help. Do check out [issues](https://github.com/eggjs/egg/issues) for bug reports or suggestions first.
 
-If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
+To become a contributor, please follow our [contributing guide](CONTRIBUTING.md).
 
 ## License
 

@@ -19,5 +19,6 @@ docs/source/member_guide.md
 docs/source/_data/versions.yml
 docs/**/contributing.md
 docs/public
+docs/plugins.png
 
 !test/fixtures/apps/loader-plugin/node_modules
