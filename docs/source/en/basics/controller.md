@@ -606,18 +606,241 @@ exports.handler = function* (ctx) {
 };
 ```
 
+## Using Service
 
+We do not prefer to implement too many business logics in Controller, so a [Service](./service.md) layer is provided to encapsulate business logics, which not only increases the reusability of codes but also makes it easy for us to test our business logics.
 
+In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is initialized by the framework on the first time it is accessed.
 
+```js
+exports.create = function* (ctx) {
+  const author = ctx.session.userId;
+  const req = Object.assign(ctx.request.body, { author });
+  // using service to handle business logics
+  const res = yield ctx.service.post.create(req);
+  ctx.body = { id: res.id };
+  ctx.status = 201;
+};
+```
 
+To write a Service in detail, please refer to [Service](./service.md).
 
+## Sending HTTP Response
 
+After business logics are handled, the last thing Controller should do is to send the processing result to users with an HTTP response.
 
+### Setting Status
 
+HTTP designs many [Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes), each of which indicates a specific meaning, and setting the status code correctly makes the response more semantic.
 
+The framework provides a convenient Setter to set the status code:
 
+```js
+exports.create = function* (ctx) {
+  // set status code to 201
+  ctx.status = 201;
+};
+```
 
+As to which status code should be used for a specific case, please refer to status code meanings on [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
 
+### Setting Body
 
+Most data is sent to receivers through the body and, just like the body in the request, the body sent by the response demands a set of corresponding Content-Type to inform clients how to parse data.
 
+- for a RESTful API controller, we usually send a body whose Content-Type is `application/json`, indicating it's a JSON string.
+- for a HTML page controller, we usually send a body whose Content-Type is `text/html`, indicating it's a piece of HTML code.
 
+```js
+exports.show = function* (ctx) {
+  ctx.body = {
+    name: 'egg',
+    category: 'framework',
+    language: 'Node.js',
+  };
+};
+
+exports.page = function* (ctx) {
+  ctx.body = '<html><h1>Hello</h1></html>';
+};
+```
+
+Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upsteam straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
+
+```js
+exports.proxy = function* (ctx) {
+  const result = yield ctx.curl(url, {
+    streaming: true,
+  });
+  ctx.set(result.header);
+  // result.res is s stream
+  ctx.body = result.res;
+};
+```
+
+#### Rendering Template
+
+Usually we do not write HTML pages by hand, instead we generate them by a template engine.
+Egg itself does not integrate any template engine, but it establishes the [View Plugin Specification](../advanced/view-plugin.md). Once the template engine is loaded, `ctx.render(template)` can be used to render templates to HTML directly.
+For detailed examples, please refer to [Template Rendering](../core/view.md).
+
+#### JSONP
+
+Sometimes we need to provide API services for pages in a different domain, and, for historical reasons, [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) fails to make it through, while [JSONP](https://en.wikipedia.org/wiki/JSONP) does.
+
+Since misuse of JSONP leads to dozens of security issues, the framework supplies a convenient way to respond JSONP data, encapsulating [JSONP XSS Related Security Precautions](../core/security.md#jsonp-xss), supporting the validation of CSRF and referrer.
+
+- `app.jsonp()` provides a middleware for the controller to respond JSONP data. We may add this middleware for controllers demanding for JSONP supporting in the router:
+
+```js
+// app/router.js
+module.exports = app => {
+  const jsonp = app.jsonp();
+  app.get('/api/posts/:id', jsonp, 'posts.show');
+  app.get('/api/posts', jsonp, 'posts.list');
+};
+```
+
+- We just program as usual in the Controller:
+
+```js
+// app/controller/posts.js
+exports.show = function* (ctx) {
+  ctx.body = {
+    name: 'egg',
+    category: 'framework',
+    language: 'Node.js',
+  };
+};
+```
+
+When user requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
+
+##### JSONP Configuration
+
+By default, the framework determines whether to return data in JSONP format or not depending on the `_callback` parameter in the query, and the method name set by `_callback` must be less than 50 characters. Applications may overwrite the default configuration globally in `config/config.default.js`:
+
+```js
+// config/config.default.js
+exports.jsonp = {
+  callback: 'callback', // inspecting the `callback` parameter in the query
+  limit: 100, // the maximum size of the method name is 100 characters
+};
+```
+
+With the configuration above, if a user requests `/api/posts/1?callback=fn`, a JSONP format response is sent, if `/api/posts/1`, a JSON format response is sent.
+
+Also we can overwrite the default configuration in `app.jsonp()` when creating the middleware and therefore separate configurations is used for separate routers:
+
+```js
+// app/router.js
+module.exports = app => {
+  app.get('/api/posts/:id', app.jsonp({ callback: 'callback' }), 'posts.show');
+  app.get('/api/posts', app.jsonp({ callback: 'cb' }), 'posts.list');
+};
+```
+
+#### XSS Defense Configuration
+
+By default, XSS is not defended when responding JSONP, and, in some cases, it is quite dangerous. We classify JSONP APIs into three type grossly:
+
+1. querying non-sensitive data, e.g. getting the public post list of a BBS.
+2. querying sensitive data, e.g. getting the transaction record of a user.
+3. submitting data and modifying the database, e.g. create a new order for a user.
+
+If our JSONP API provides the last two type services and, without any XSS defense, user sensitive data may be leaked and even user may be phished. Given this, the framework supports the validations of CSRF and referrer by default.
+
+##### CSRF
+
+In the JSONP configuration, we could enable the CSRF validation for JSONP APIs simply by setting `csrf: true`.
+
+```js
+// config/config.default.js
+module.exports = {
+  jsonp: {
+    csrf: true,
+  },
+};
+```
+
+**Note: the CSRF validation depends on the Cookie based CSRF validation provided by [security](../core/security.md).**
+
+When the CSRF validation is enabled, the client should bring CSRF token as well when it sends a JSONP request, if the page where the JSONP sender belongs to shares the same domain with our services, CSRF token in Cookie can be read(CSRF can be set manually if it is absent), and is brought together with the request.
+
+##### referrer Validation
+
+The CSRF way can be used for JSONP request validation only if the main domains are the same, while providing JSONP services for pages in different domains, we can limit JSONP senders into a controllable rang by configuring the referrer whitelist.
+
+```js
+//config/config.default.js
+exports.jsonp = {
+  whiteList: /^https?:\/\/test.com\//,
+  // whiteList: '.test.com',
+  // whiteList: 'sub.test.com',
+  // whiteList: [ 'sub.test.com', 'sub2.test.com' ],
+};
+```
+`whileList` can be configured as regular expression, string and array:
+
+- Regular Expression: only requests whose Referrer match the regular expression are allow to access the JSONP API. When composing the regular expression, please also notice the leading `^` and tail `\/` which guarantees the whole domain matches.
+
+```js
+exports.jsonp = {
+  whiteList: /^https?:\/\/test.com\//,
+};
+// matchs referrer:
+// https://test.com/hello
+// http://test.com/
+```
+
+- String: two cases exists when configuring the whitelist as a string, if the string begins with a `.`, e.g. `.test.com`, the referrer whilelist indicates all sub-domains of `test.com`, `test.com` itselt included. if the string does not begin with a `.`, e.g. `sub.test.com`, it indicates `sub.test.com` one domain only. (both HTTP and HTTPS are supported)
+
+```js
+exports.jsonp = {
+  whiteList: '.test.com',
+};
+// matchs domain test.com:
+// https://test.com/hello
+// http://test.com/
+
+// matchs subdomain
+// https://sub.test.com/hello
+// http://sub.sub.test.com/
+
+exports.jsonp = {
+  whiteList: 'sub.test.com',
+};
+// only matchs domain sub.test.com:
+// https://sub.test.com/hello
+// http://sub.test.com/
+```
+
+- Array: when the whitelist is configured as an array, the referrer validation is passed only if at least one condition represented by array items is matched.
+
+```js
+exports.jsonp = {
+  whiteList: [ 'sub.test.com', 'sub2.test.com' ],
+};
+// matchs domain sub.test.com and sub2.test.com:
+// https://sub.test.com/hello
+// http://sub2.test.com/
+```
+
+**If both CSRF and referrer validation are enabled, the request sender passes any one of them passes the JSONP security validation.**
+
+### Setting Header
+
+We identify the request success or not, in which state by the status code and set response content in the body. By setting the response header, extended information can be set as well.
+
+`context.set(key, value)` sets one response header and `context.set(headers)` sets many in one time.
+
+```js
+// app/controller/api.js
+exports.show = function* (ctx) {
+  const start = Date.now();
+  ctx.body = yield ctx.service.post.get();
+  const used = Date.now() - start;
+  // set one response header
+  ctx.set('show-response-time', userd.toString());
+};
+```
