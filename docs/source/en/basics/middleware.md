@@ -66,7 +66,7 @@ module.exports = options => {
 };
 ```
 
-## Loading Middleware in the Application
+## Using Middleware in the Application
 
 We can load customized middleware completely by configuration in the application, and decide their order.
 If we need to load the gzip middleware in the above, 
