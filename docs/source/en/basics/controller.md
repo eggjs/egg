@@ -60,7 +60,7 @@ module.exports = {
 }
 ```
 
-The defined Controller class initializes a new object for every request accessing the server, and, for the example above, several attributes are attatched to `this` since the Controller class inherits `app.Controller`.
+The defined Controller class initializes a new object for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Controller class inherits `app.Controller`.
 
 - `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 - `this.app`: the instance of [Application](./extend.md#application) for current request, through which we can access global objects and methods provided by the framework.
@@ -159,7 +159,7 @@ Content-Type: application/json; charset=UTF-8
 {"title": "controller", "content": "what is controller"}
 ```
 
-The 1st line of the request contains 3 infomation, first 2 of which are commonly used: 
+The 1st line of the request contains 3 information, first 2 of which are commonly used: 
 
 - method: it's `POST` in this example.
 - path: it's `/api/posts`, the query, if any, is placed here too.
@@ -195,7 +195,7 @@ It can be seen from the above HTTP request examples that there are many places c
 
 ### query
 
-Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is paramter that user sends. We can acquire this parsed parameter body through `context.query`: 
+Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`: 
 
 ```js
 exports.listPosts = function* (ctx) {
@@ -259,9 +259,9 @@ Although we can pass parameters through URL, but constraints exist:
 - [the browser limits the maximum length of a URL](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers), so parameters cannot be passed that many.
 - the server records the full request URL to log files so it is not safe to pass sensitive data through URL.
 
-In the above HTTP request message example, we can learn, following the header, there's a body part that can be used to put parameters for POST, PUT and DELETE, etc. The `Content-Type` is to be sent by clients(browser) in the same time indicating the type of request body. Two mostly used data format are JSON and Form in Web developing for transfering data.
+In the above HTTP request message example, we can learn, following the header, there's a body part that can be used to put parameters for POST, PUT and DELETE, etc. The `Content-Type` is to be sent by clients(browser) in the same time indicating the type of request body. Two mostly used data format are JSON and Form in Web developing for transferring data.
 
-The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse these 2 kinds of reqeust to be an object mounting to `context.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `context.request.body` cannot be used for GET and HEAD methods.
+The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse these 2 kinds of request to be an object mounting to `context.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `context.request.body` cannot be used for GET and HEAD methods.
 
 ```js
 // POST /api/posts HTTP/1.1
@@ -281,7 +281,7 @@ The framework configures the bodyParser using default parameters and features be
 - when Content-Type is `application/x-www-form-urlencoded`, it parses the request body as Form format and limits the maximum length of the body down to `100kb`.
 - when parses successfully, the body must be an Object(also can be an array).
 
-The mostly adjusted config field is the maximum length of the request body for parsing which can be configured in `config/config.default.js` to overwrite the default valueof the framework:
+The mostly adjusted config field is the maximum length of the request body for parsing which can be configured in `config/config.default.js` to overwrite the default value of the framework:
 
 ```js
 module.exports = {
@@ -293,7 +293,7 @@ module.exports = {
 ```
 If user request exceeds the maximum length for parsing that we configured, the framework will throw an exception whose status code is `413`; if request body failed to be parsed(e.g. malformed JSON), an exception with status code `400` will be thrown.
 
-**Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy,if any in front of our application, should be adjusted as well to support the newly configured length of the body. **
+**Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy, if any in front of our application, should be adjusted as well to support the newly configured length of the body. **
 
 ### Acquire Uploaded Files
 
@@ -409,9 +409,9 @@ To ensure the security of uploading files, the framework limits supported file f
 '.avi',
 ```
 
-New file extentions can be add by configuring the `config/config.default.js` file or rewriting the whole whitelist.
+New file extensions can be add by configuring the `config/config.default.js` file or rewriting the whole whitelist.
 
-- add new file extentions
+- add new file extensions
 
 ```js
 module.exports = {
@@ -438,8 +438,8 @@ module.exports = {
 Apart from URL and request body, some parameters can be sent by request header. The framework provides some helper attributes and methods to retrieve them.
 
 - `context.headers`, `context.header`, `context.request.headers`, `context.request.header`: these methods are equivalent and all of them get the whole header object.
-- `context.get(name)`, `context.request.get(name)`: get the value of one parameter from the reqeust header, if the parameter does not exist, an empty string is returned.
-- We recommend you use `context.get(name)` rather than `context.headers['name']` because the former handles uppper/lower case automatically.
+- `context.get(name)`, `context.request.get(name)`: get the value of one parameter from the request header, if the parameter does not exist, an empty string is returned.
+- We recommend you use `context.get(name)` rather than `context.headers['name']` because the former handles upper/lower case automatically.
 
 Since header is special, some of which are given specific meanings by the `HTTP` protocol (like `Content-Type`, `Accept`), some are set by the reverse proxy as a convention (X-Forwarded-For), and the framework provides some convenient getters for them as well, for more details please refer to [API](https://eggjs.org/api/).
 
@@ -493,7 +493,7 @@ exports.remove = function* (ctx) {
 
 Although Cookie is only a header in HTTP, multiple key-value pairs can be set in the format of `foo=bar;foo1=bar1;`.
 
-In Web applications, Cookie is usually used to send the identity information of the client, so it has many safety related configurations which can not be ignored, [Cookie](../core/cookie-and-session.md#cookie) explains the usage and safety related configureations of Cookie in detail and is worth being read in depth.
+In Web applications, Cookie is usually used to send the identity information of the client, so it has many safety related configurations which can not be ignored, [Cookie](../core/cookie-and-session.md#cookie) explains the usage and safety related configurations of Cookie in detail and is worth being read in depth.
 
 ### Session
 
@@ -523,7 +523,7 @@ exports.deleteSession = function* (ctx) {
 };
 ```
 
-Like Cookie, Session has many safety related configurations and funtions etc., so it's better to read [Session](../core/cookie-and-session.md#session) in depth in ahead.
+Like Cookie, Session has many safety related configurations and functions etc., so it's better to read [Session](../core/cookie-and-session.md#session) in depth in ahead.
 
 #### Configuration
 
@@ -665,7 +665,7 @@ exports.page = function* (ctx) {
 };
 ```
 
-Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upsteam straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
+Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upstream straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
 
 ```js
 exports.proxy = function* (ctx) {
@@ -788,29 +788,29 @@ exports.jsonp = {
 exports.jsonp = {
   whiteList: /^https?:\/\/test.com\//,
 };
-// matchs referrer:
+// matches referrer:
 // https://test.com/hello
 // http://test.com/
 ```
 
-- String: two cases exists when configuring the whitelist as a string, if the string begins with a `.`, e.g. `.test.com`, the referrer whilelist indicates all sub-domains of `test.com`, `test.com` itselt included. if the string does not begin with a `.`, e.g. `sub.test.com`, it indicates `sub.test.com` one domain only. (both HTTP and HTTPS are supported)
+- String: two cases exists when configuring the whitelist as a string, if the string begins with a `.`, e.g. `.test.com`, the referrer whitelist indicates all sub-domains of `test.com`, `test.com` itself included. if the string does not begin with a `.`, e.g. `sub.test.com`, it indicates `sub.test.com` one domain only. (both HTTP and HTTPS are supported)
 
 ```js
 exports.jsonp = {
   whiteList: '.test.com',
 };
-// matchs domain test.com:
+// matches domain test.com:
 // https://test.com/hello
 // http://test.com/
 
-// matchs subdomain
+// matches subdomain
 // https://sub.test.com/hello
 // http://sub.sub.test.com/
 
 exports.jsonp = {
   whiteList: 'sub.test.com',
 };
-// only matchs domain sub.test.com:
+// only matches domain sub.test.com:
 // https://sub.test.com/hello
 // http://sub.test.com/
 ```
@@ -821,7 +821,7 @@ exports.jsonp = {
 exports.jsonp = {
   whiteList: [ 'sub.test.com', 'sub2.test.com' ],
 };
-// matchs domain sub.test.com and sub2.test.com:
+// matches domain sub.test.com and sub2.test.com:
 // https://sub.test.com/hello
 // http://sub2.test.com/
 ```
