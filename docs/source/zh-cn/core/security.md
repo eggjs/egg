@@ -596,7 +596,7 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 
 框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
 
-如果我们的Webb 站点是 http 站点，需要关闭这个头。配置如下：
+如果我们的Web 站点是 http 站点，需要关闭这个头。配置如下：
 
 - maxAge 默认一年 `365 * 24 * 3600`。
 - includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。
