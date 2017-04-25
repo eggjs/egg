@@ -11,7 +11,7 @@ title: 框架开发
 
 - 统一的技术选型，比如数据库、模板、前端框架及各种中间件设施都需要选型，而框架封装后保证应用使用一套架构。
 - 统一的默认配置，开源社区的配置可能不适用于公司，而又不希望应用去配置。
-- 统一的部署方案，通过框架和平台的双向控制，应用只需要关注自己的代码，具体查看[部署章节](./deployment.md)
+- 统一的部署方案，通过框架和平台的双向控制，应用只需要关注自己的代码，具体查看[应用部署](../core/deployment.md)
 - 统一的代码风格，框架不仅仅解决代码重用问题，还可以对应用做一定约束，作为企业框架是很必要的。Egg 在 Koa 基础上做了很多约定，框架可以使用 [Loader](./loader.md) 自己定义代码规则。
 
 为此，Egg 为团队架构师和技术负责人提供 `框架定制` 的能力，框架是一层抽象，可以基于 Egg 去封装上层框架，并且 Egg 支持多层继承。
@@ -22,7 +22,7 @@ title: 框架开发
 
 ## 框架与多进程
 
-框架的扩展是和多进程模型有关的，我们已经知道[多进程模型](./cluster.md)，也知道 Agent Worker 和 App Worker 的区别，所以我们需要扩展的类也有两个 Agent 和 Application，而这两个类的 API 不一定相同。
+框架的扩展是和多进程模型有关的，我们已经知道[多进程模型](../core/cluster-and-ipc.md)，也知道 Agent Worker 和 App Worker 的区别，所以我们需要扩展的类也有两个 Agent 和 Application，而这两个类的 API 不一定相同。
 
 在 Agent Worker 启动的时候会实例化 Agent，而在 App Worker 启动时会实例化 Application，这两个类又同时继承 [EggCore](https://github.com/eggjs/egg-core)。
 
@@ -42,10 +42,10 @@ EggCore 可以看做 Koa Application 的升级版，默认内置 [Loader](./load
 
 ## 如何定制一个框架
 
-你可以直接通过 [egg-bin] 选择 [framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架来快速上手。
+你可以直接通过 [egg-init] 选择 [framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架来快速上手。
 
 ```bash
-$ egg-bin my-framework --type=framework
+$ egg-init my-framework --type=framework
 $ cd my-framework
 $ npm i
 $ npm test
@@ -173,7 +173,7 @@ const app = new Application();
 app.ready();
 ```
 
-以上均是伪代码，为了详细说明框架路径的加载过程，不过 Egg 已经在[本地开发](../core/development.md)和[应用部署](./deployment.md)提供了很好的工具，不需要自己实现。
+以上均是伪代码，为了详细说明框架路径的加载过程，不过 Egg 已经在[本地开发](../core/development.md)和[应用部署](../core/deployment.md)提供了很好的工具，不需要自己实现。
 
 ### 自定义 Agent
 
@@ -240,7 +240,7 @@ AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加�
 
 ## 框架启动原理
 
-框架启动在[多进程模型](./cluster.md)、[Loader](./loader.md)、[插件](./plugin.md)中或多或少都提过，这里系统的梳理下启动顺序。
+框架启动在[多进程模型](../core/cluster-and-ipc.md)、[Loader](./loader.md)、[插件](./plugin.md)中或多或少都提过，这里系统的梳理下启动顺序。
 
 - startCluster 启动传入 `baseDir` 和 `framework`，Master 进程启动
 - Master 先 fork Agent Worker

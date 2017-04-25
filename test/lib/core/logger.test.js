@@ -36,10 +36,10 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.DEBUG);
+    app.logger.get('file').options.level.should.equal(Logger.INFO);
     app.logger.get('console').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('file').options.level.should.equal(Logger.DEBUG);
-    app.coreLogger.get('console').options.level.should.equal(Logger.WARN);
+    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
+    app.coreLogger.get('console').options.level.should.equal(Logger.INFO);
   });
 
   it('should set EGG_LOG level on local env', function* () {
@@ -48,9 +48,9 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.DEBUG);
+    app.logger.get('file').options.level.should.equal(Logger.INFO);
     app.logger.get('console').options.level.should.equal(Logger.ERROR);
-    app.coreLogger.get('file').options.level.should.equal(Logger.DEBUG);
+    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
     app.coreLogger.get('console').options.level.should.equal(Logger.ERROR);
     return app.ready();
   });

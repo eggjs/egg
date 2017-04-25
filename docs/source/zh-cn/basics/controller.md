@@ -20,7 +20,7 @@ title: controller
 
 ## 如何编写 Controller
 
-所有的 Controller 文件都必须放在 `app/controller` 目录下。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
+所有的 Controller 文件都必须放在 `app/controller` 目录下，可以支持多级目录，访问的时候可以通过目录名级联访问。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
 
 ### Controller 类（推荐）
 
@@ -57,8 +57,17 @@ module.exports = app => {
 
 ```js
 // app/router.js
-module.exports = {
+module.exports = app => {
   app.post('createPost', '/api/posts', 'post.create');
+}
+```
+
+Controller 支持多级目录，例如如果我们将上面的 Controller 代码放到 `app/controller/sub/post.js` 中，则可以在 router 中这样使用：
+
+```js
+// app/router.js
+module.exports = app => {
+  app.post('createPost', '/api/posts', 'sub.post.create');
 }
 ```
 
@@ -88,13 +97,13 @@ module.exports = app => {
         success: true,
         data,
       };
-    },
+    }
 
     notFound(msg) {
-      const msg = msg || 'not found';
+      msg = msg || 'not found';
       this.ctx.throw(404, msg);
-    },
-  };
+    }
+  }
   app.Controller = CustomController;
 }
 ```
@@ -108,7 +117,7 @@ module.exports = app => {
     * list() {
       const posts = yield this.service.listByUser(this.user);
       this.success(posts);
-    },
+    }
   };
 };
 ```
@@ -187,7 +196,7 @@ Connection: keep-alive
 
 第一行中也包含了三段，其中我们常用的主要是[响应状态码](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)，这个例子中它的值是 201，它的含义是在服务端成功创建了一条资源。
 
-和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字符。
+和请求一样，从第二行开始到下一个空行之间都是响应头，这里的 Content-Type, Content-Length 表示这个响应的格式是 JSON，长度为 8 个字节。
 
 最后剩下的部分就是这次响应真正的内容。
 
@@ -288,8 +297,8 @@ exports.listPosts = function* (ctx) {
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '1m',
-    formLimit: '1m',
+    jsonLimit: '1mb',
+    formLimit: '1mb',
   },
 };
 ```
@@ -381,7 +390,7 @@ module.exports = function* (ctx) {
     }
   }
   console.log('and we are done parsing the form!');
-}
+};
 ```
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
@@ -715,7 +724,7 @@ exports.show = function* (ctx) {
     category: 'framework',
     language: 'Node.js',
   };
-}
+};
 ```
 
 用户请求对应的 URL 访问到这个 controller 的时候，如果 query 中有 `_callback=fn` 参数，将会返回 JSONP 格式的数据，否则返回 JSON 格式的数据。
@@ -729,7 +738,7 @@ exports.show = function* (ctx) {
 exports.jsonp = {
   callback: 'callback', // 识别 query 中的 `callback` 参数
   limit: 100, // 函数名最长为 100 个字符
-}
+};
 ```
 
 通过上面的方式配置之后，如果用户请求 `/api/posts/1?callback=fn`，响应为 JSONP 格式，如果用户请求 `/api/posts/1`，响应格式为 JSON。
@@ -782,7 +791,7 @@ exports.jsonp = {
   // whiteList: '.test.com',
   // whiteList: 'sub.test.com',
   // whiteList: [ 'sub.test.com', 'sub2.test.com' ],
-}
+};
 ```
 
 `whiteList` 可以配置为正则表达式、字符串或者数组：
@@ -792,7 +801,7 @@ exports.jsonp = {
 ```js
 exports.jsonp = {
   whiteList: /^https?:\/\/test.com\//,
-}
+};
 // matches referrer:
 // https://test.com/hello
 // http://test.com/
