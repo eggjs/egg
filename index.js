@@ -44,7 +44,7 @@ exports.Controller = require('./lib/core/base_context_class');
  * @member {Service} Egg#Service
  * @since 1.1.0
  */
-exports.Controller = require('./lib/core/base_context_class');
+exports.Service = require('./lib/core/base_context_class');
 
 /**
  * @member {Service} Egg#BaseContextClass
