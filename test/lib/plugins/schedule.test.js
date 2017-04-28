@@ -8,7 +8,7 @@ const sleep = require('mz-modules/sleep');
 describe('test/lib/plugins/schedule.test.js', () => {
   it('should schedule work', function* () {
     const app = utils.cluster('apps/schedule', {
-      workers: 4,
+      workers: 2,
     });
     yield app.ready();
     yield sleep(5000);
