@@ -3,6 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 const utils = require('../../utils');
+const sleep = require('mz-modules/sleep');
 
 describe('test/lib/plugins/schedule.test.js', () => {
   it('should schedule work', function* () {
@@ -16,12 +17,6 @@ describe('test/lib/plugins/schedule.test.js', () => {
     contains(log, 'cron').should.within(1, 2);
   });
 });
-
-function sleep(time) {
-  return new Promise(resolve => {
-    setTimeout(resolve, time);
-  });
-}
 
 function getLogContent(name) {
   const logPath = path.join(__dirname, '../../fixtures/apps', name, 'logs', name, `${name}-web.log`);
