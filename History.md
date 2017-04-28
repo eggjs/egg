@@ -1,5 +1,35 @@
 # History
 
+## 2017-04-28, Version 1.2.0, @popomore
+
+### Notable changes
+
+  * **document**
+    * Documents improved, Thanks @Rwing, @bingqichen, @okoala, @binsee, @lslxdx
+  * **feature**
+    * Move BaseContextClass to egg and add BaseContextLogger [#816](https://github.com/eggjs/egg/pull/816)
+    * Remove logger config in local environment [#695](https://github.com/eggjs/egg/pull/695)
+
+### Commits
+
+  * [[`0757655c`](http://github.com/eggjs/egg/commit/0757655cfed451ab3b1ca5a480fb96a3da908708)] - feat:   BaseContextClass add logger (#816) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`9871e450`](http://github.com/eggjs/egg/commit/9871e45098ab4927236382656c4ac774eeffcd11)] - docs: only   use inspect at 7.x+ (#813) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`394bf371`](http://github.com/eggjs/egg/commit/394bf3711312f09d851be728b718e4d0f8fc9c1f)] -   docs:Modify some words (#811) (binsee <<binsee@163.com>>)
+  * [[`1132779c`](http://github.com/eggjs/egg/commit/1132779c4057bf96be1b73a3473b1545c3b5ab7a)] -   docs(head.swig):fix the document page anchor position offset. (#790) (binsee <<binsee@163.com>>)
+  * [[`9ef9d6aa`](http://github.com/eggjs/egg/commit/9ef9d6aa5953106555f11ac5dee6fe544773ceb8)] -   fix(package.json & doc.js): fix doc tool error. (#791) (binsee <<binsee@163.com>>)
+  * [[`90234efb`](http://github.com/eggjs/egg/commit/90234efbae13066ced3d25e8ba7201c0197c3ab1)] -   docs(middleware.md): fix grammar (lslxdx <<lslxdx@163.com>>)
+  * [[`9200a51d`](http://github.com/eggjs/egg/commit/9200a51d5b5c530a8f5ce8af4dd61f38981dc4c8)] -   docs(basic/controller.md): typo 'matchs' -> 'matches' (#802) (lslxdx <<lslxdx@163.com>>)
+  * [[`b4eb05b3`](http://github.com/eggjs/egg/commit/b4eb05b301bb1226edfc634ec90d1a5ae53514e2)] - docs(zh-cn   docs):fix some link and link text in docs (#789) (binsee <<binsee@163.com>>)
+  * [[`df1bf345`](http://github.com/eggjs/egg/commit/df1bf3459fd03f948532f7b6d2d436a74c54ed59)] - docs: add   inspector protocol vscode debug (#776) (仙森 <<dapixp@gmail.com>>)
+  * [[`a8893f7e`](http://github.com/eggjs/egg/commit/a8893f7e7d9937d675d8be0da7bed0f2c259ae39)] - docs: add   vscode debug (#751) (#767) (仙森 <<dapixp@gmail.com>>)
+  * [[`d4c345d3`](http://github.com/eggjs/egg/commit/d4c345d3d29266e0eb248eecee27bc0e492f5e5e)] - docs: typo   fix "aync => async" (BingqiChen <<bingqichen@live.cn>>)
+  * [[`492c97d6`](http://github.com/eggjs/egg/commit/492c97d61c75911ae0e987f65325a5c7493f63b9)] - docs: add   vscode plugin link (#756) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`2bf23fef`](http://github.com/eggjs/egg/commit/2bf23feffb7b9ff1bc07d072a4052eec863d001c)] - docs: link   plugins to github search results (#755) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`5befb0b1`](http://github.com/eggjs/egg/commit/5befb0b1f0f525ba778d54a5dedb72f2e880ab60)] - feat:   remove egg logger local config (#695) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`1ab42e02`](http://github.com/eggjs/egg/commit/1ab42e0243354eab7f602faebd76d7117038e877)] - docs:   document for middleware order (#724) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`d6be9499`](http://github.com/eggjs/egg/commit/d6be949973002880a2fe71313c7630f7f94fde97)] - chore:   remove chinese commnets (#749) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`3bdbcae2`](http://github.com/eggjs/egg/commit/3bdbcae2486073447849f6e09831860dc42995d6)] - docs: fix   typo, egg-bin => egg-init (#747) (Rwing <<Rwing@rwing.cn>>)
+
 ## 2017-04-11, Version 1.1.0, @fengmk2
 
 ### Notable changes
