@@ -58,6 +58,7 @@ describe('test/lib/plugins/development.test.js', () => {
       mm.env('local');
       app = utils.cluster('apps/reload-worker');
       app.debug();
+      app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
