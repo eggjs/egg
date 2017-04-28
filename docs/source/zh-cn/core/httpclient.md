@@ -534,7 +534,7 @@ ctx.curl(url, {
 
 ### `beforeRequest: Function(options)`
 
-HttpClient 在请求正在发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
+HttpClient 在请求正式发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
 
 ```js
 ctx.curl(url, {
@@ -663,7 +663,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 
 - 异常名称：`ResponseError, code: ECONNRESET`
 - 出现场景：通常是服务端主动断开 socket 连接，导致 HTTP 请求链路异常。
-- 排查建议：请确保当时服务端是否发生网络异常。
+- 排查建议：请检查当时服务端是否发生网络异常。
 
 ### 服务不可达
 

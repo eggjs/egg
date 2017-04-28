@@ -803,7 +803,7 @@ exports.jsonp = {
 exports.jsonp = {
   whiteList: /^https?:\/\/test.com\//,
 };
-// matchs referrer:
+// matches referrer:
 // https://test.com/hello
 // http://test.com/
 ```
@@ -814,18 +814,18 @@ exports.jsonp = {
 exports.jsonp = {
   whiteList: '.test.com',
 };
-// matchs domain test.com:
+// matches domain test.com:
 // https://test.com/hello
 // http://test.com/
 
-// matchs subdomain
+// matches subdomain
 // https://sub.test.com/hello
 // http://sub.sub.test.com/
 
 exports.jsonp = {
   whiteList: 'sub.test.com',
 };
-// only matchs domain sub.test.com:
+// only matches domain sub.test.com:
 // https://sub.test.com/hello
 // http://sub.test.com/
 ```
@@ -836,7 +836,7 @@ exports.jsonp = {
 exports.jsonp = {
   whiteList: [ 'sub.test.com', 'sub2.test.com' ],
 };
-// matchs domain sub.test.com and sub2.test.com:
+// matches domain sub.test.com and sub2.test.com:
 // https://sub.test.com/hello
 // http://sub2.test.com/
 ```

@@ -31,4 +31,22 @@
 .page-main article {
   min-height: 400px;
   padding:50px 50px 50px 270px;
+
+  h2, h3, h4, h5, h6 {
+    position: static;
+    a.markdown-anchor {
+      position: relative;
+      height: 25px;
+      margin-right: -25px;
+      display: inline-block;
+    }
+
+    &:before {
+      content: '';
+      display: block;
+      margin-top: -76px;
+      height: 76px;
+      visibility: hidden;
+    }
+  }
 }
