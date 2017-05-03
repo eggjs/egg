@@ -1,5 +1,7 @@
 'use strict';
 
+const assert = require('assert');
+
 const Singleton = require('../../../lib/core/singleton');
 
 class DataService {
@@ -33,9 +35,9 @@ describe('test/lib/core/singleton.test.js', () => {
       create,
     });
     singleton.init();
-    (app.dataService instanceof DataService).should.be.ok;
-    app.dataService.config.foo.should.equal('bar');
-    (typeof app.dataService.createInstance).should.equal('function');
+    assert(app.dataService instanceof DataService);
+    assert(app.dataService.config.foo === 'bar');
+    assert(typeof app.dataService.createInstance === 'function');
   });
 
   it('should init with clients', () => {
@@ -57,10 +59,10 @@ describe('test/lib/core/singleton.test.js', () => {
       create,
     });
     singleton.init();
-    (app.dataService instanceof Singleton).should.be.ok;
-    app.dataService.get('first').config.foo.should.equal('bar1');
-    app.dataService.get('second').config.foo.should.equal('bar2');
-    (typeof app.dataService.createInstance).should.equal('function');
+    assert(app.dataService instanceof Singleton);
+    assert(app.dataService.get('first').config.foo === 'bar1');
+    assert(app.dataService.get('second').config.foo === 'bar2');
+    assert(typeof app.dataService.createInstance === 'function');
   });
 
   it('should client support default', () => {
@@ -80,10 +82,10 @@ describe('test/lib/core/singleton.test.js', () => {
       create,
     });
     singleton.init();
-    (app.dataService instanceof DataService).should.be.ok;
-    app.dataService.config.foo.should.equal('bar');
-    app.dataService.config.foo1.should.equal('bar1');
-    (typeof app.dataService.createInstance).should.equal('function');
+    assert(app.dataService instanceof DataService);
+    assert(app.dataService.config.foo === 'bar');
+    assert(app.dataService.config.foo1 === 'bar1');
+    assert(typeof app.dataService.createInstance === 'function');
   });
 
   it('should clients support default', () => {
@@ -106,10 +108,10 @@ describe('test/lib/core/singleton.test.js', () => {
       create,
     });
     singleton.init();
-    (app.dataService instanceof Singleton).should.be.ok;
-    app.dataService.get('first').config.foo.should.equal('bar1');
-    app.dataService.get('second').config.foo.should.equal('bar');
-    (typeof app.dataService.createInstance).should.equal('function');
+    assert(app.dataService instanceof Singleton);
+    assert(app.dataService.get('first').config.foo === 'bar1');
+    assert(app.dataService.get('second').config.foo === 'bar');
+    assert(typeof app.dataService.createInstance === 'function');
   });
 
   it('should createInstance without client/clients support default', () => {
@@ -128,11 +130,11 @@ describe('test/lib/core/singleton.test.js', () => {
       create,
     });
     singleton.init();
-    app.dataService.should.equal(singleton);
-    (app.dataService instanceof Singleton).should.be.ok;
+    assert(app.dataService === singleton);
+    assert(app.dataService instanceof Singleton);
     app.dataService = app.dataService.createInstance({ foo1: 'bar1' });
-    (app.dataService instanceof DataService).should.be.ok;
-    app.dataService.config.foo1.should.equal('bar1');
-    app.dataService.config.foo.should.equal('bar');
+    assert(app.dataService instanceof DataService);
+    assert(app.dataService.config.foo1 === 'bar1');
+    assert(app.dataService.config.foo === 'bar');
   });
 });

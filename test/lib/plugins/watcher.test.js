@@ -1,6 +1,6 @@
 'use strict';
 
-require('should');
+const assert = require('assert');
 const mm = require('egg-mock');
 const fs = require('fs');
 const request = require('supertest');
@@ -42,7 +42,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
       .expect(function(res) {
         const lastCount = count;
         count = parseInt(res.text);
-        count.should.greaterThan(lastCount);
+        assert(count > lastCount);
       });
 
       fs.writeFileSync(file_path2, 'aaa');
@@ -54,7 +54,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
       .expect(function(res) {
         const lastCount = count;
         count = parseInt(res.text);
-        count.should.greaterThan(lastCount);
+        assert(count > lastCount);
       });
     });
 
@@ -94,7 +94,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
       yield sleep(3000);
       const logPath = utils.getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
-      content.should.containEql('defaultEventSource watcher will NOT take effect');
+      assert(content.includes('defaultEventSource watcher will NOT take effect'));
     });
   });
 });

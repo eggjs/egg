@@ -1,5 +1,7 @@
 'use strict';
 
+const assert = require('assert');
+
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -16,12 +18,12 @@ describe('test/app/extend/agent.test.js', () => {
 
     it('should add singleton success', function* () {
       let config = yield app.agent.dataService.get('second').getConfig();
-      config.foo.should.equal('bar');
-      config.foo2.should.equal('bar2');
+      assert(config.foo === 'bar');
+      assert(config.foo2 === 'bar2');
 
       const ds = app.agent.dataService.createInstance({ foo: 'barrr' });
       config = yield ds.getConfig();
-      config.foo.should.equal('barrr');
+      assert(config.foo === 'barrr');
     });
   });
 
