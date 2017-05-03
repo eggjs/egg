@@ -74,7 +74,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
       .expect(res => {
         const lastCount = count;
         count = parseInt(res.text);
-        count.should.greaterThan(lastCount);
+        assert(count > lastCount);
       });
     });
 
