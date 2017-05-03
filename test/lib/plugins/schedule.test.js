@@ -1,5 +1,6 @@
 'use strict';
 
+const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const utils = require('../../utils');
@@ -14,7 +15,9 @@ describe('test/lib/plugins/schedule.test.js', () => {
     yield sleep(5000);
     yield app.close();
     const log = getLogContent('schedule');
-    contains(log, 'cron').should.within(1, 2);
+    const count = contains(log, 'cron');
+    assert(count >= 1);
+    assert(count <= 2);
   });
 });
 

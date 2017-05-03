@@ -1,6 +1,5 @@
 'use strict';
 
-const should = require('should');
 const request = require('supertest');
 const assert = require('assert');
 const utils = require('../../utils');
@@ -91,9 +90,9 @@ describe('test/app/middleware/site_file.test.js', () => {
       return request(app.callback())
         .get('/favicon.ico')
         .expect(302, (err, res) => {
-          should.not.exist(err);
-          should.not.exist(res.headers['set-cookie']);
-          res.headers.location.should.eql('https://eggjs.org/favicon.ico');
+          assert(!err);
+          assert(!res.headers['set-cookie']);
+          assert(res.headers.location === 'https://eggjs.org/favicon.ico');
         });
     });
   });

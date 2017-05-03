@@ -1,5 +1,7 @@
 'use strict';
 
+const assert = require('assert');
+
 const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const fs = require('fs');
@@ -16,19 +18,19 @@ describe('test/app/extend/application.test.js', () => {
     after(() => app.close());
 
     it('should alias app.logger => app.loggers.logger', () => {
-      app.logger.should.equal(app.loggers.logger);
+      assert(app.logger === app.loggers.logger);
     });
 
     it('should alias app.coreLooger => app.loggers.coreLooger', () => {
-      app.coreLogger.should.equal(app.loggers.coreLogger);
+      assert(app.coreLogger === app.loggers.coreLogger);
     });
 
     it('should alias app.getLogger(\'coreLogger\') => app.loggers.coreLooger', () => {
-      app.getLogger('coreLogger').should.equal(app.loggers.coreLogger);
+      assert(app.getLogger('coreLogger') === app.loggers.coreLogger);
     });
 
     it('should alias app.getLogger(\'noexist\') => null', () => {
-      (app.getLogger('noexist') === null).should.be.true();
+      assert(app.getLogger('noexist') === null);
     });
   });
 
@@ -41,13 +43,13 @@ describe('test/app/extend/application.test.js', () => {
     after(() => app.close());
 
     it('should inspect app properties', () => {
-      app.inspect().should.have.properties([
+      assert([
         'name', 'baseDir',
         'env', 'subdomainOffset',
         'controller', 'middlewares', 'serviceClasses',
         'config', 'httpclient', 'loggers',
-      ]);
-      app.inspect().name.should.equal('demo');
+      ].every(p => Object.prototype.hasOwnProperty.call(app.inspect(), p)));
+      assert(app.inspect().name === 'demo');
     });
   });
 
@@ -97,10 +99,10 @@ describe('test/app/extend/application.test.js', () => {
         },
         url: '/foobar?ok=1',
       });
-      ctx.ip.should.equal('10.0.0.1');
-      ctx.url.should.equal('/foobar?ok=1');
-      ctx.socket.remoteAddress.should.equal('10.0.0.1');
-      ctx.socket.remotePort.should.equal(7001);
+      assert(ctx.ip === '10.0.0.1');
+      assert(ctx.url === '/foobar?ok=1');
+      assert(ctx.socket.remoteAddress === '10.0.0.1');
+      assert(ctx.socket.remotePort === 7001);
     });
   });
 
@@ -114,12 +116,12 @@ describe('test/app/extend/application.test.js', () => {
 
     it('should add singleton success', function* () {
       let config = yield app.dataService.get('first').getConfig();
-      config.foo.should.equal('bar');
-      config.foo1.should.equal('bar1');
+      assert(config.foo === 'bar');
+      assert(config.foo1 === 'bar1');
 
       const ds = app.dataService.createInstance({ foo: 'barrr' });
       config = yield ds.getConfig();
-      config.foo.should.equal('barrr');
+      assert(config.foo === 'barrr');
     });
   });
 
@@ -139,9 +141,10 @@ describe('test/app/extend/application.test.js', () => {
       yield sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
-      log.should.match(/mock background run at app result file size: \d+/);
-      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
-        .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
+      assert(/mock background run at app result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
     });
   });
 });

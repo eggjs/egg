@@ -1,6 +1,6 @@
 'use strict';
 
-const should = require('should');
+const assert = require('assert');
 const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../../utils');
@@ -13,18 +13,18 @@ describe('test/lib/core/loader/load_service.test.js', () => {
   it('should load app and plugin services', function* () {
     app = utils.app('apps/loader-plugin');
     yield app.ready();
-    should.exists(app.serviceClasses.foo);
-    should.exists(app.serviceClasses.foo2);
-    should.not.exists(app.serviceClasses.bar1);
-    should.exists(app.serviceClasses.bar2);
-    should.exists(app.serviceClasses.foo4);
+    assert(app.serviceClasses.foo);
+    assert(app.serviceClasses.foo2);
+    assert(!app.serviceClasses.bar1);
+    assert(app.serviceClasses.bar2);
+    assert(app.serviceClasses.foo4);
 
     const ctx = app.mockContext();
-    should.exists(ctx.service.fooDir.foo5);
-    should.exists(ctx.service.foo);
-    should.exists(ctx.service.foo2);
-    should.exists(ctx.service.bar2);
-    should.exists(ctx.service.foo4);
+    assert(ctx.service.fooDir.foo5);
+    assert(ctx.service.foo);
+    assert(ctx.service.foo2);
+    assert(ctx.service.bar2);
+    assert(ctx.service.foo4);
 
     yield request(app.callback())
     .get('/')
@@ -38,8 +38,10 @@ describe('test/lib/core/loader/load_service.test.js', () => {
   it('should service support es6', function* () {
     app = utils.app('apps/services_loader_verify');
     yield app.ready();
-    app.serviceClasses.should.have.property('foo');
-    app.serviceClasses.foo.should.have.properties('bar', 'bar1', 'aa');
+    assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
+    assert(
+      [ 'bar' ].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p))
+    );
   });
 
   it('should support extend app.Service class', function* () {
@@ -49,8 +51,8 @@ describe('test/lib/core/loader/load_service.test.js', () => {
     yield request(app.callback())
     .get('/user')
     .expect(res => {
-      should.exists(res.body.user);
-      res.body.user.userId.should.equal('123mock');
+      assert(res.body.user);
+      assert(res.body.user.userId === '123mock');
     })
     .expect(200);
   });
