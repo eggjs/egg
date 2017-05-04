@@ -1,10 +1,11 @@
 'use strict';
 
-const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
+const assert = require('assert');
 const AppWorkerLoader = require('../../../../').AppWorkerLoader;
+const AgentWorkerLoader = require('../../../../').AgentWorkerLoader;
 const utils = require('../../../utils');
 
 const EGG_BASE = path.join(__dirname, '../../../../');
@@ -300,5 +301,36 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'node_modules/a1'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
+  });
+
+  it('should customize loadPlugin', () => {
+    const baseDir = utils.getFilepath('apps/loader-plugin');
+    class CustomAppLoader extends AppWorkerLoader {
+      loadPlugin() {
+        this.hasAppLoadPlugin = true;
+        super.loadPlugin();
+      }
+    }
+    const appLoader = new CustomAppLoader({
+      baseDir,
+      app,
+      logger,
+    });
+    appLoader.loadConfig();
+    assert(appLoader.hasAppLoadPlugin === true);
+
+    class CustomAgentLoader extends AgentWorkerLoader {
+      loadPlugin() {
+        this.hasAgentLoadPlugin = true;
+        super.loadPlugin();
+      }
+    }
+    const agentLoader = new CustomAgentLoader({
+      baseDir,
+      app,
+      logger,
+    });
+    agentLoader.loadConfig();
+    assert(agentLoader.hasAgentLoadPlugin === true);
   });
 });

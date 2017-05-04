@@ -183,7 +183,7 @@ describe('test/lib/core/logger.test.js', () => {
     app.loggers.errorLogger.error(new Error('errorLogger error'));
     app.loggers.customLogger.error(new Error('customLogger error'));
 
-    yield sleep(10);
+    yield sleep(1000);
 
     const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
     assert(content.includes('nodejs.Error: logger error'));
