@@ -38,8 +38,8 @@ co(function* () {
 
   switch (command) {
     case 'server':
-      yield runscript('hexo --cwd docs server -l');
       yield jsdoc('docs/public/api');
+      yield runscript('hexo --cwd docs server -l');
       break;
     case 'build':
       yield runscript('hexo --cwd docs generate --force');
