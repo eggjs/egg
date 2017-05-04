@@ -1,5 +1,7 @@
 'use strict';
 
+const assert = require('assert');
+
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -16,7 +18,7 @@ describe('test/lib/plugins/depd.test.js', () => {
   it('should use this.locals instead of this.state', () => {
     const ctx = app.mockContext();
     ctx.locals.test = 'aaa';
-    ctx.locals.should.eql(ctx.state);
-    ctx.locals.test.should.eql(ctx.state.test);
+    assert.deepEqual(ctx.locals, ctx.state);
+    assert.deepEqual(ctx.locals.test, ctx.state.test);
   });
 });

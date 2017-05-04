@@ -1,6 +1,6 @@
 'use strict';
 
-const should = require('should');
+const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
@@ -29,7 +29,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
-    appLoader.plugins.b.should.eql({
+    assert.deepEqual(appLoader.plugins.b, {
       enable: true,
       name: 'b',
       dependencies: [],
@@ -38,7 +38,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'node_modules/b'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    appLoader.plugins.c.should.eql({
+    assert.deepEqual(appLoader.plugins.c, {
       enable: true,
       name: 'c',
       dependencies: [],
@@ -47,7 +47,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'node_modules/c'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    appLoader.plugins.e.should.eql({
+    assert.deepEqual(appLoader.plugins.e, {
       enable: true,
       name: 'e',
       dependencies: [ 'f' ],
@@ -56,10 +56,12 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'plugins/e'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    appLoader.plugins.onerror.path.should.equal(fs.realpathSync(path.join(EGG_BASE, 'node_modules/egg-onerror')));
-    appLoader.plugins.onerror.package.should.equal('egg-onerror');
-    appLoader.plugins.onerror.version.should.match(/\d+\.\d+\.\d+/);
-    appLoader.orderPlugins.should.be.an.Array;
+    assert(
+      appLoader.plugins.onerror.path === fs.realpathSync(path.join(EGG_BASE, 'node_modules/egg-onerror'))
+    );
+    assert(appLoader.plugins.onerror.package === 'egg-onerror');
+    assert(/\d+\.\d+\.\d+/.test(appLoader.plugins.onerror.version));
+    assert(Array.isArray(appLoader.orderPlugins));
   });
 
   it('should same name plugin level follow: app > framework > egg', () => {
@@ -71,7 +73,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     });
     appLoader.loadConfig();
 
-    appLoader.plugins.rds.should.eql({
+    assert.deepEqual(appLoader.plugins.rds, {
       enable: true,
       name: 'rds',
       dependencies: [ 'session' ],
@@ -91,7 +93,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
-    appLoader.plugins.d1.should.eql({
+    assert.deepEqual(appLoader.plugins.d1, {
       enable: true,
       name: 'd1',
       package: 'd',
@@ -101,7 +103,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'node_modules/d'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    should.not.exists(appLoader.plugins.d);
+    assert(!appLoader.plugins.d);
   });
 
   it('should support package.json config', () => {
@@ -112,7 +114,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
-    appLoader.plugins.g.should.eql({
+    assert.deepEqual(appLoader.plugins.g, {
       enable: true,
       name: 'g',
       dependencies: [ 'f' ],
@@ -138,7 +140,9 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     });
     appLoader.loadConfig();
 
-    message.should.eql('[egg:loader] pluginName(e) is different from pluginConfigName(wrong-name)');
+    assert(
+      message === '[egg:loader] pluginName(e) is different from pluginConfigName(wrong-name)'
+    );
   });
 
   it('should loadConfig plugins with custom plugins config', () => {
@@ -160,7 +164,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     });
     appLoader.loadConfig();
 
-    appLoader.plugins.d1.should.eql({
+    assert.deepEqual(appLoader.plugins.d1, {
       enable: true,
       name: 'd1',
       package: 'd',
@@ -170,7 +174,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       path: path.join(baseDir, 'node_modules/d'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
-    appLoader.plugins.foo.should.eql({
+    assert.deepEqual(appLoader.plugins.foo, {
       enable: true,
       name: 'foo',
       dependencies: [],
@@ -178,11 +182,11 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       env: [],
       path: path.join(baseDir, 'node_modules/d'),
     });
-    should.not.exists(appLoader.plugins.d);
+    assert(!appLoader.plugins.d);
   });
 
   it('should throw error when plugin not exists', () => {
-    (function() {
+    assert.throws(function() {
       const baseDir = utils.getFilepath('apps/loader-plugin-noexist');
       const appLoader = new AppWorkerLoader({
         baseDir,
@@ -190,11 +194,11 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }).should.throw(/Can not find plugin noexist in /);
+    }, /Can not find plugin noexist in /);
   });
 
   it('should throw error when app baseDir not exists', () => {
-    (function() {
+    assert.throws(function() {
       const baseDir = utils.getFilepath('apps/notexist-app');
       const appLoader = new AppWorkerLoader({
         baseDir,
@@ -202,7 +206,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }).should.throw(/notexist-app not exists/);
+    }, /notexist-app not exists/);
   });
 
   it('should keep plugin list sorted', () => {
@@ -214,9 +218,9 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
-    appLoader.orderPlugins.map(plugin => {
+    assert.deepEqual(appLoader.orderPlugins.map(plugin => {
       return plugin.name;
-    }).should.eql([
+    }), [
       'onerror',
       'session',
       'i18n',
@@ -239,7 +243,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
   });
 
   it('should throw recursive deps error', () => {
-    (function() {
+    assert.throws(function() {
       const baseDir = utils.getFilepath('apps/loader-plugin-dep-recursive');
       const appLoader = new AppWorkerLoader({
         baseDir,
@@ -247,11 +251,11 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }).should.throw('sequencify plugins has problem, missing: [], recursive: [a,b,c,a]');
+    }, 'sequencify plugins has problem, missing: [], recursive: [a,b,c,a]');
   });
 
   it('should throw error when plugin dep not exists', function() {
-    (function() {
+    assert.throws(function() {
       const baseDir = utils.getFilepath('apps/loader-plugin-dep-missing');
       const appLoader = new AppWorkerLoader({
         baseDir,
@@ -259,7 +263,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }).should.throw('sequencify plugins has problem, missing: [a1], recursive: []\n\t>> Plugin [a1] is disabled or missed, but is required by [c]');
+    }, 'sequencify plugins has problem, missing: [a1], recursive: []\n\t>> Plugin [a1] is disabled or missed, but is required by [c]');
   });
 
   it('should auto fill plugin infos', () => {
@@ -275,8 +279,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const keys1 = appLoader1.orderPlugins.map(plugin => {
       return plugin.name;
     }).join(',');
-    keys1.should.containEql('b,c,d1,f,e');
-    should.not.exist(appLoader1.plugins.a1);
+    assert(keys1.includes('b,c,d1,f,e'));
+    assert(!appLoader1.plugins.a1);
 
     mm(process.env, 'NODE_ENV', 'development');
     const appLoader2 = new AppWorkerLoader({
@@ -288,8 +292,8 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     const keys2 = appLoader2.orderPlugins.map(plugin => {
       return plugin.name;
     }).join(',');
-    keys2.should.containEql('d1,a1,b,c,f,e');
-    appLoader2.plugins.a1.should.eql({
+    assert(keys2.includes('d1,a1,b,c,f,e'));
+    assert.deepEqual(appLoader2.plugins.a1, {
       enable: true,
       name: 'a1',
       dependencies: [ 'd1' ],
