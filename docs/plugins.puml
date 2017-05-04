@@ -1,17 +1,20 @@
-
 @startuml
-digraph world {
-  "onerror";
-  "session";
-  "i18n";
-  "watcher";
-  "multipart";
-  "security" -> "session";
-  "development" -> "watcher";
-  "logrotator" -> "schedule";
-  "schedule";
-  "static";
-  "jsonp" -> "security";
-  "view";
+digraph plugins {
+  onerror
+  session
+  i18n
+  watcher
+  multipart
+  security
+  development
+  logrotator
+  schedule
+  static
+  jsonp
+  view
+  security -> session
+  development -> watcher
+  logrotator -> schedule
+  jsonp -> security [style=dotted]
 }
 @enduml
