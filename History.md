@@ -1,5 +1,18 @@
 # History
 
+## 2017-05-04, Version 1.2.1, @popomore
+
+### Notable changes
+
+  * **fix**
+    * loadPlugin can be extended
+
+### Commits
+
+  * [[`13587667`](http://github.com/eggjs/egg/commit/13587667ac019ca516ae11aea728e84966dc57a5)] - fix(loader): loadPlugin can be extended (#836) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`1a027ad7`](http://github.com/eggjs/egg/commit/1a027ad727468d48afe45d1f3ce54de2e4ecfd16)] - test: use assert instead of should (#837) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`89b4df9d`](http://github.com/eggjs/egg/commit/89b4df9d21ddf07efd246145c52141a72e07ad80)] - docs: fix  wrong name in chinese router doc (#833) (Tomatoo <<424203705@qq.com>>)
+
 ## 2017-04-28, Version 1.2.0, @popomore
 
 ### Notable changes
