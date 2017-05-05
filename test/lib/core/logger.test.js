@@ -39,7 +39,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
-    assert(app.coreLogger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.WARN);
   });
 
   it('should set EGG_LOG level on local env', function* () {
