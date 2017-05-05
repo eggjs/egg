@@ -30,7 +30,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.coreLogger.get('console').options.level === Logger.INFO);
   });
 
-  it('should got right level on local env', function* () {
+  it.only('should got right level on local env', function* () {
     mm.env('local');
     mm(process.env, 'EGG_LOG', '');
     app = utils.app('apps/mock-dev-app');
@@ -39,7 +39,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
-    assert(app.coreLogger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.WARN);
   });
 
   it('should set EGG_LOG level on local env', function* () {
