@@ -13,11 +13,11 @@ Born to build better enterprise frameworks and apps
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
-[quality-image]: http://npm.packagequality.com/shield/egg.svg
+[quality-image]: http://npm.packagequality.com/shield/egg.svg?style=flat-square
 [quality-url]: http://packagequality.com/#?package=egg
 [travis-image]: https://img.shields.io/travis/eggjs/egg.svg?style=flat-square
 [travis-url]: https://travis-ci.org/eggjs/egg
-[codecov-image]: https://codecov.io/gh/eggjs/egg/branch/master/graph/badge.svg
+[codecov-image]: https://codecov.io/gh/eggjs/egg/branch/master/graph/badge.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/eggjs/egg
 [david-image]: https://img.shields.io/david/eggjs/egg.svg?style=flat-square
 [david-url]: https://david-dm.org/eggjs/egg
