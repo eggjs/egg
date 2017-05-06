@@ -3,6 +3,7 @@
 为企业级框架和应用而生的 Web 框架
 
 [![NPM version][npm-image]][npm-url]
+[![NPM quality][quality-image]][quality-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
@@ -11,6 +12,8 @@
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
+[quality-image]: http://npm.packagequality.com/shield/egg.svg
+[quality-url]: http://packagequality.com/#?package=egg
 [travis-image]: https://img.shields.io/travis/eggjs/egg.svg?style=flat-square
 [travis-url]: https://travis-ci.org/eggjs/egg
 [codecov-image]: https://codecov.io/gh/eggjs/egg/branch/master/graph/badge.svg
