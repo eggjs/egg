@@ -50,7 +50,7 @@ module.exports = appInfo => {
 
 ### cache {Boolean}
 
-模板路径缓存，默认开启。框架会根据 root 配置的目录依次查找，如果匹配则会缓存文件路径，下载渲染相同路径时不会重新查找。
+模板路径缓存，默认开启。框架会根据 root 配置的目录依次查找，如果匹配则会缓存文件路径，下次渲染相同路径时不会重新查找。
 
 ### mapping 和 defaultViewEngine
 
