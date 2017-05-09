@@ -1,7 +1,7 @@
-title: Extend egg
+title: Extend the EGG
 ---
 
-Egg.js provides multiple extension point to enhance the functionality of itself:
+Egg.js is extensible and it provides multiple extension points to enhance the functionality of itself:
 
 - Application
 - Context
@@ -9,26 +9,26 @@ Egg.js provides multiple extension point to enhance the functionality of itself:
 - Response
 - Helper
 
-We could use the extension APIs to help with our developing, or extend the objects given above to enhance the functionality of egg while programming.
+We could use the extension APIs to help with our developing, or extend the objects given above to enhance the functionality of egg as well while programming.
 
 ## Application
 
-The object `app` is just the same as the global application object in Koa. There should be only one in your application, and it will be created by egg when the application is boot.
+The object `app` is just the same aspect as the global application object in Koa. There should be only one `app` in your application, and it will be created by egg when the application is boot.
 
 ### Access Method
 
 - `ctx.app`
-- You can access the Application object by `this.app` in Controller，Middleware，Helper，Service. For instance, `this.app.config` will help you access the Config object.
-- 在 `app.js` 中 `app` 对象会作为第一个参数注入到入口函数中
+- You can access the Application object by `this.app` in Controller, Middleware, Helper, Service. For instance, `this.app.config` will help you access the Config object.
+- The `app` object would be injected into the entry function as the first argument in `app.js`, like this: 
 
    ```js
    // app.js
    module.exports = app => {
-     // 使用 app 对象
+     // here you can use the app object
    };
    ```
 
-### 扩展方式
+### How to extend 
 
 框架会把 `app/extend/application.js` 中定义的对象与 Koa Application 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 `app` 对象。
 
