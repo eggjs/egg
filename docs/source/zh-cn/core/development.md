@@ -3,7 +3,7 @@ title: 本地开发
 
 为了提升研发体验，我们提供了便捷的方式在本地进行开发、调试、单元测试等。
 
-在这里我们需要使用到 [egg-bin] 模块（只在本地开发和单元测试使用，如果线上请参考 [部署](../advanced/deployment.md)）。
+在这里我们需要使用到 [egg-bin] 模块（只在本地开发和单元测试使用，如果线上请参考 [应用部署](./deployment.md)）。
 
 首先，我们需要把 `egg-bin` 模块作为 `devDependencies` 引入：
 
@@ -327,6 +327,7 @@ exports.proxyworker = {
   ]
 }
 ```
+
 由于 V8 Debugger [Legacy Protocol] 会在 Node.js 8.x 后被移除, 而替换使用的是 [Inspector Protocol]
 
 新的协议主要有三大优势:
@@ -334,7 +335,7 @@ exports.proxyworker = {
 2. 支持 ES6 Proxy
 3. 支持 Source Map 更好
 
-对于 Node.js Version >= 6.3 (Windows: >= 6.9) 我们更应该使用 [Inspector Protocol] 进行调试。
+当且仅当你的 Node.js 版本大于 7.x 时，可以使用 [Inspector Protocol] 进行调试。
 
 在上面的调试配置中需要修改一些参数来开启新协议:
 - `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`

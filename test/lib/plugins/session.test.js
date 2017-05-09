@@ -1,7 +1,7 @@
 'use strict';
 
+const assert = require('assert');
 const request = require('supertest');
-const should = require('should');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -27,9 +27,9 @@ describe('test/lib/plugins/session.test.js', () => {
     })
     .expect(200, (err, res) => {
       if (err) return done(err);
-      should.exist(res.headers['set-cookie']);
+      assert(res.headers['set-cookie']);
       const cookie = res.headers['set-cookie'].join(';');
-      cookie.should.match(/EGG_SESS=[\w-]+/);
+      assert(/EGG_SESS=[\w-]+/.test(cookie));
 
       // userId 不变，还是读取到上次的 session 值
       app.mockContext({
@@ -45,7 +45,7 @@ describe('test/lib/plugins/session.test.js', () => {
       })
       .expect(200, (err, res) => {
         if (err) return done(err);
-        should.not.exist(res.headers['set-cookie']);
+        assert(!res.headers['set-cookie']);
 
         // userId change, session still not change
         app.mockContext({
@@ -60,7 +60,7 @@ describe('test/lib/plugins/session.test.js', () => {
           uid: '2',
         })
         .expect(res => {
-          should.not.exist(res.headers['set-cookie']);
+          assert(!res.headers['set-cookie']);
         })
         .expect(200, err => {
           if (err) return done(err);

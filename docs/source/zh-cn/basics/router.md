@@ -121,9 +121,9 @@ exports.destroy = function* () {};
 
 如果我们不需要其中的某几个方法，可以不用在 `posts.js` 里面实现，这样对应 URL 路径也不会注册到 Router。
 
-## destroy 实战
+## router 实战
 
-下面通过更多实际的例子，来说明 destroy 的用法。
+下面通过更多实际的例子，来说明 router 的用法。
 
 ### 参数获取
 
