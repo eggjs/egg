@@ -88,7 +88,7 @@ module.exports = {
 
 ## Default Framework Middleware
 
-In addition to the application layer middleware is loaded, the framework itself and other plug-ins will also load many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
+In addition to the application-level middleware is loaded, the framework itself and other plugins will also load many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
 
 ```js
 module.exports = {
