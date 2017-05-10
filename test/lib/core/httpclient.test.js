@@ -1,5 +1,7 @@
 'use strict';
 
+const assert = require('assert');
+
 const mm = require('egg-mock');
 const createHttpclient = require('../../../lib/core/httpclient');
 const utils = require('../../utils');
@@ -31,8 +33,8 @@ describe('test/lib/core/httpclient.test.js', () => {
       dataType: 'text',
     };
     client.once('response', info => {
-      info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
-      info.req.options.headers['mock-rpcid'].should.equal('mock-rpcid');
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
       done();
     });
 
@@ -41,8 +43,8 @@ describe('test/lib/core/httpclient.test.js', () => {
 
   it('should request callback with log', done => {
     client.once('response', info => {
-      info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
-      info.req.options.headers['mock-rpcid'].should.equal('mock-rpcid');
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
       done();
     });
 
@@ -54,8 +56,8 @@ describe('test/lib/core/httpclient.test.js', () => {
       dataType: 'text',
     };
     client.once('response', info => {
-      info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
-      info.req.options.headers['mock-rpcid'].should.equal('mock-rpcid');
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
       done();
     });
 
@@ -67,8 +69,8 @@ describe('test/lib/core/httpclient.test.js', () => {
       dataType: 'text',
     };
     client.once('response', info => {
-      info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
-      info.req.options.headers['mock-rpcid'].should.equal('mock-rpcid');
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
     });
 
     yield client.requestThunk(url, args);
@@ -78,9 +80,9 @@ describe('test/lib/core/httpclient.test.js', () => {
     mm.http.requestError(/.*/i, null, 'mock res error');
 
     client.once('response', info => {
-      info.req.options.headers['mock-traceid'].should.equal('mock-traceid');
-      info.req.options.headers['mock-rpcid'].should.equal('mock-rpcid');
-      info.error.message.should.containEql('mock res error');
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
+      assert(info.error.message.includes('mock res error'));
       done();
     });
 
