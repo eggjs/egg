@@ -257,7 +257,7 @@ Plugin supports splicing and execute SQL statment directly. It can use `query` t
 
 **Note! Strongly do not recommend developers splicing SQL statement, it is easier to cause SQL injection!! **
 
-Use the `mysql.escape` method if you have to splice SQL statement,
+Use the `mysql.escape` method if you have to splice SQL statement
 
 Refer to [preventing-sql-injection-in-node-js](http://stackoverflow.com/questions/15778572/preventing-sql-injection-in-node-js)
 
