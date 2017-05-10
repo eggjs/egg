@@ -1,4 +1,4 @@
-title: Extend the EGG
+title: Extend EGG
 ---
 
 Egg.js is extensible and it provides multiple extension points to enhance the functionality of itself:
@@ -30,28 +30,28 @@ The object `app` is just the same aspect as the global application object in Koa
 
 ### How to extend 
 
-框架会把 `app/extend/application.js` 中定义的对象与 Koa Application 的 prototype 对象进行合并，在应用启动时会基于扩展后的 prototype 生成 `app` 对象。
+Egg will merge the object defined in `app/extend/application.js` with the prototype of Application object in Koa, then generate object `app` which is based on the extended prototype when application is boot.
 
-#### 方法扩展
+#### Extend Methods
 
-例如，我们要增加一个 `app.foo()` 方法：
+If we want to create a method `app.foo()`, we can do it like this: ：
 
 ```js
 // app/extend/application.js
 module.exports = {
   foo(param) {
-    // this 就是 app 对象，在其中可以调用 app 上的其他方法，或访问属性
+    // `this` points to the object app, you can access other methods or property of app with this
   },
 };
 ```
 
-#### 属性扩展
+#### Extend Properties
 
-一般来说属性的计算只需要进行一次，那么一定要实现缓存，否则在多次访问属性时会计算多次，这样会降低应用性能。
+Gernerally speaking, the calculation of properties only need to do once, therefore we have to do some cache, otherwise it will degrade performance of the app as too much calculation would be going to do when access those properties several times.
 
-推荐的方式是使用 Symbol + Getter 的模式。
+So, it's recommended to use Symbol + Getter.
 
-例如，增加一个 `app.bar` 属性 Getter：
+For example, if we would like to add a Getter property `app.bar`:
 
 ```js
 // app/extend/application.js
@@ -59,9 +59,9 @@ const BAR = Symbol('Application#bar');
 
 module.exports = {
   get bar() {
-    // this 就是 app 对象，在其中可以调用 app 上的其他方法，或访问属性
+    // `this` points to the app object, you can access other methods or property of app with this
     if (!this[BAR]) {
-      // 实际情况肯定更复杂
+      // It should be more complex in real situation
       this[BAR] = this.config.xx + this.config.yy;
     }
     return this[BAR];
@@ -71,38 +71,38 @@ module.exports = {
 
 ## Context
 
-Context 指的是 Koa 的请求上下文，这是 **请求级别** 的对象，每次请求生成一个 Context 实例，通常我们也简写成 `ctx`。在所有的文档中，Context 和 `ctx` 都是指 Koa 的上下文对象。
+Context means the context in Koa, which is a  **Request Level** object. That is to say, every request from client will gererate an Context instance. We usually write Context as `ctx` in short. Through all the doc, both Context and `ctx` means the context object in Koa.
 
-### 访问方式
+### Access Method
 
-- middleware 中 `this` 就是 ctx，例如 `this.cookies.get('foo')`。
-- controller 有两种写法，类的写法通过 `this.ctx`，方法的写法直接通过 `ctx` 入参。
-- helper，service 中的 this 指向 helper，service 对象本身，使用 `this.ctx` 访问 context 对象，例如 `this.ctx.cookies.get('foo')`。
+- `this` in middleware is ctx, such as `this.cookies.get('foo')`。
+- There are two different ways to write controller. If you use class to describe controller, you can use `this.ctx` to access Context. Or if you write as method, you can access Context with `ctx` directly.
+- `this` in helper, service points to the helper object and service object themselves. Simply use `this.ctx` to access Context object, such as `this.ctx.cookies.get('foo')`.
 
-### 扩展方式
+### How to extend
 
-框架会把 `app/extend/context.js` 中定义的对象与 Koa Context 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 ctx 对象。
+Egg will merge the object defined in `app/extend/context.js` with the prototype of Context object in Koa. And it will generate a `ctx` object which is based on the extended prototype when deal with request.
 
-#### 方法扩展
+#### Extend Methods
 
-例如，我们要增加一个 `ctx.foo()` 方法：
+For instance, we could add a method `ctx.foo()` in the following way:
 
 ```js
 // app/extend/context.js
 module.exports = {
   foo(param) {
-    // this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性
+    // `this` points to the ctx object, you can access other methods or property of ctx 
   },
 };
 ```
 
-#### 属性扩展
+#### Extend Properties
 
-一般来说属性的计算在同一次请求中只需要进行一次，那么一定要实现缓存，否则在同一次请求中多次访问属性时会计算多次，这样会降低应用性能。
+Gernerally speaking, the calculation of properties only need to do once, therefore we have to do some cache, otherwise it will degrade performance of the app as too much calculation would be going to do when access those properties several times.
 
-推荐的方式是使用 Symbol + Getter 的模式。
+So, it's recommended to use Symbol + Getter.
 
-例如，增加一个 `ctx.bar` 属性 Getter：
+For example, if we would like to add a Getter property `ctx.bar`:
 
 ```js
 // app/extend/context.js
@@ -110,9 +110,9 @@ const BAR = Symbol('Context#bar');
 
 module.exports = {
   get bar() {
-    // this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性
+    // `this` points to the ctx object, you can access other methods or property of ctx
     if (!this[BAR]) {
-      // 例如，从 header 中获取，实际情况肯定更复杂
+      // For example, we can get from header, but it should be more complex in real situation.
       this[BAR] = this.get('x-bar');
     }
     return this[BAR];
@@ -122,23 +122,23 @@ module.exports = {
 
 ## Request
 
-Request 对象和 Koa 的 Request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。
+Request object is the same as that in Koa, which is a **Request Level** object. It provides a great number of methods to help to access the properties and methods you need.
 
-### 访问方式
+### Access Method
 
 ```js
 ctx.request
 ```
 
-`ctx` 上的很多属性和方法都被代理到 `request` 对象上，对于这些属性和方法使用 `ctx` 和使用 `request` 去访问它们是等价的，例如 `ctx.url === ctx.request.url`。
+So many properties and methods in `ctx` can also be accessed in `request` object. For those properties and methods, it is just the same to access them eigher `ctx` or `request`, such as `ctx.url === ctx.request.url`.
 
-Koa 内置的代理 `request` 的属性和方法列表：[Koa - Request aliases](http://koajs.com/#request-aliases)
+Here are the properties and methods in `ctx` which can also be accessed by Request aliases: [Koa - Request aliases](http://koajs.com/#request-aliases)
 
-### 扩展方式
+### How to extend
 
-框架会把 `app/extend/request.js` 中定义的对象与内置 `request` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `request` 对象。
+Egg will merge the object defined in `app/extend/request.js` and the prototype of `request` object build in egg. And it will generate a `request` object which is based on the extended prototype when deal with request.
 
-例如，增加一个 `request.foo` 属性 Getter：
+For instance, we could add a property `request.foo` in the following way:
 
 ```js
 // app/extend/request.js
@@ -151,23 +151,23 @@ module.exports = {
 
 ## Response
 
-Response 对象和 Koa 的 Response 对象相同，是 **请求级别** 的对象，它提供了大量响应相关的属性和方法供使用。
+Response object is the same as that in Koa, which is a **Request Level** object. It provides a great number of methods to help to access the properties and methods you need.
 
-### 访问方式
+### Access Method
 
 ```js
 ctx.response
 ```
 
-ctx 上的很多属性和方法都被代理到 `response` 对象上，对于这些属性和方法使用 `ctx` 和使用 `response` 去访问它们是等价的，例如 `ctx.status = 404` 和 `ctx.response.status = 404` 是等价的。
+So many properties and methods in `ctx` can also be accessed in `response` object. For those properties and methods, it is just the same to access them eigher `ctx` or `response`. For example `ctx.status = 404` is the same as `ctx.response.status = 404`.
 
-Koa 内置的代理 `response` 的属性和方法列表：[Koa Response aliases](http://koajs.com/#response-aliases)
+Here are the properties and methods in `ctx` which can also be accessed by Response aliases: [Koa Response aliases](http://koajs.com/#response-aliases)
 
-### 扩展方式
+### How to extend
 
-框架会把 `app/extend/response.js` 中定义的对象与内置 `response` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `response` 对象。
+Egg will merge the object defined in `app/extend/response.js` and the prototype of `response` object build in egg. And it will generate a `response` object which is based on the extended prototype after dealt with request.
 
-例如，增加一个 `response.foo` 属性 setter：
+For instance, we could add a setter `request.foo` in the following way:
 
 ```js
 // app/extend/response.js
@@ -178,50 +178,50 @@ module.exports = {
 };
 ```
 
-就可以这样使用啦：`this.response.foo = 'bar';`
+Then we can use the setter like this: `this.response.foo = 'bar';`
 
 ## Helper
 
-Helper 函数用来提供一些实用的 utility 函数。
+Function Helper can provides some useful utility functions.
 
-它的作用在于我们可以将一些常用的动作抽离在 helper.js 里面成为一个独立的函数，这样可以用 JavaScript 来写复杂的逻辑，避免逻辑分散各处。另外还有一个好处是 Helper 这样一个简单的函数，可以让我们更容易编写测试用例。
+We can put some utility functions we use ofter into heper.js as an individual function. Then we can write the complex codes in JavaScript, avoiding to write them everywhere. Besides, such a simple function like Helper allows to write test case much easier.
 
-框架内置了一些常用的 Helper 函数。我们也可以编写自定义的 Helper 函数。
+Egg has had some build-in Helper functions. We can write our own Helper as well.
 
-### 访问方式
+### Access Method
 
-通过 `ctx.helper` 访问到 helper 对象，例如：
+Access helper object with `ctx.helper`, for example:
 
 ```js
-// 假设在 app/router.js 中定义了 home router
+// Assume that home router has already defined in app/router.js
 app.get('home', '/', 'home.index');
 
-// 使用 helper 计算指定 url path
+// Use helper to calculate the specific url path
 ctx.helper.pathFor('home', { by: 'recent', limit: 20 })
 // => /?by=recent&limit=20
 ```
 
-### 扩展方式
+### How to extend
 
-框架会把 `app/extend/helper.js` 中定义的对象与内置 `helper` 的 prototype 对象进行合并，在处理请求时会基于扩展后的 prototype 生成 `helper` 对象。
+Egg will merge the object defined in `app/extend/helper.js` and the prototype of `helper` object build in egg. And it will generate a `helper` object which is based on the extended prototype after dealt with request.
 
-例如，增加一个 `helper.foo()` 方法：
+For instance, we could add a method `helper.foo()` in the following way:
 
 ```js
 // app/extend/helper.js
 module.exports = {
   foo(param) {
-    // this 是 helper 对象，在其中可以调用其他 helper 方法
-    // this.ctx => context 对象
-    // this.app => application 对象
+    // // `this` points to the helper object, you can access other methods or property of helper 
+    // this.ctx => context object
+    // this.app => application object
   },
 };
 ```
 
 
-## 按照环境进行扩展
+## Extend according to environment
 
-另外，还可以根据环境进行有选择的扩展，例如，只在 unittest 环境中提供 `mockXX()` 方法以便进行 mock 方便测试。
+Besides, we can extend the framework in an optional way according to the environment. For example, if you want `mockXX()` only be able to accessed when doing unittest:
 
 ```js
 // app/extend/application.unittest.js
@@ -231,6 +231,6 @@ module.exports = {
 };
 ```
 
-这个文件只会在 unittest 环境加载。
+This file will only be required under unittest environment.
 
-同理，对于 Application，Context，Request，Response，Helper 都可以使用这种方式针对某个环境进行扩展，更多参见[运行环境](./env.md)。
+Similarly, we could extend egg in this way for orther object,such as Application, Context, Request, Response and Helper. See more on [environment](./env.md)
