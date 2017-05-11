@@ -255,7 +255,7 @@ const result = yield this.app.mysql.delete('posts', {
 
 Plugin supports splicing and execute SQL statment directly. It can use `query` to execute a valid SQL statement
 
-**Note!!Strongly do not recommend developers splicing SQL statement, it is easier to cause SQL injection!!**
+**Note!! Strongly do not recommend developers splicing SQL statement, it is easier to cause SQL injection!!**
 
 Use the `mysql.escape` method if you have to splice SQL statement
 
