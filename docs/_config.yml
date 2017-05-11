@@ -23,8 +23,3 @@ theme: egg
 
 less:
   compress: true
-
-# Deployment
-## Docs: https://hexo.io/docs/deployment.html
-deploy:
-  type:

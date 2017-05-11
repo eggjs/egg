@@ -1,7 +1,0 @@
-
-@startuml
-digraph world {
-  "onerror";
-  "session";
-}
-@enduml
