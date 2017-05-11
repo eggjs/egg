@@ -1,5 +1,28 @@
 # History
 
+## 2017-05-11, Version 1.3.0, @fengmk2
+
+### Notable changes
+
+  * **document**
+    * Documents improved. Thanks @Rwing, @lslxdx, @solarhell, @magicdawn
+    * API document is out https://eggjs.org/api/
+  * **refactor**
+    * Set coreLogger's consoleLevel to WARN in local env
+
+### Commits
+
+  * [[`bd6681a`](http://github.com/eggjs/egg/commit/bd6681a509f74af7f39b1505962c0d75958ae0d3)] - chore: typo eggg=>egg (#881) (Rwing <<Rwing@rwing.cn>>)
+  * [[`22c9cd9`](http://github.com/eggjs/egg/commit/22c9cd96df19bb43d1681ce0cffc59bc930c8f0f)] - docs: translated & proofread 'middleware.md' (#784) (lslxdx <<lslxdx@163.com>>)
+  * [[`e55a134`](http://github.com/eggjs/egg/commit/e55a13439ec297081d33a7eb2f87ece605581908)] - docs: Add a link to issue template (#853) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`b01d30e`](http://github.com/eggjs/egg/commit/b01d30e33e9b910ee24d69d3b55e2dbe887ff4e3)] - docs: Fix typo. (#869) (jethro <<songjiaxin2008@gmail.com>>)
+  * [[`b3403b5`](http://github.com/eggjs/egg/commit/b3403b56a5635394a4dc9825ef2780850449e573)] - docs: fix view typo (#867) (Tao <<magicdawn@qq.com>>)
+  * [[`5d6e067`](http://github.com/eggjs/egg/commit/5d6e067fc36697b7c01f290bccac06ce21fb4371)] - chore: add quality badge (#857) (仙森 <<chaogui.hcg@alibaba-inc.com>>)
+  * [[`8d6755b`](http://github.com/eggjs/egg/commit/8d6755b33c54d6230d1b20141dd6d043ed6c3897)] - deps: upgrade dependencies (#854) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`bd0a827`](http://github.com/eggjs/egg/commit/bd0a827c38f0a2cff42c8a73909081a1f9cd939a)] - refactor: set consoleLevel WARN of coreLogger in local (#850) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`af174ef`](http://github.com/eggjs/egg/commit/af174efb0a0dfe545849d03f8ec1fbee34559dae)] - docs: Add API document to menu (#845) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`edfc07e`](http://github.com/eggjs/egg/commit/edfc07e841b751a4c195544167f50a2ad56971e8)] - chore: generate puml (#842) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 ## 2017-05-04, Version 1.2.1, @popomore
 
 ### Notable changes
