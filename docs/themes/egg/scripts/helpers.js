@@ -35,8 +35,11 @@ hexo.extend.helper.register('menu_link', function() {
     let link = menus[menu];
     const content = getI18nText(this.__, menu, 'menu.');
 
-    if (this.page.lang !== 'en' && !/^http/.test(link)) {
-      link = '/' + this.page.lang + link;
+    // http://example.com -> http://example.com
+    // /api -> /api
+    // intro/ -> /zh-cn/intro/
+    if (this.page.lang !== 'en' && !/^http/.test(link) && !/^\//.test(link)) {
+      link = '/' + this.page.lang + '/' + link;
     }
     links += `<li><a href="${link}" alt="${content}">${content}</a></li>`;
   }

@@ -25,72 +25,72 @@ describe('test/app/extend/request.test.js', () => {
     describe('req.host', () => {
       it('should return host with port', function* () {
         mm(req.header, 'host', 'foo.com:3000');
-        req.hostname.should.equal('foo.com');
+        assert(req.hostname === 'foo.com');
       });
 
       it('should return "" when no host present', function* () {
-        req.host.should.be.a.String;
-        req.host.should.equal('');
+        assert(typeof req.host === 'string');
+        assert(req.host === '');
       });
 
       it('should return host from X-Forwarded-Host header', function* () {
         mm(req.header, 'x-forwarded-host', 'foo.com');
-        req.host.should.be.a.String;
-        req.host.should.equal('foo.com');
+        assert(typeof req.host === 'string');
+        assert(req.host === 'foo.com');
       });
 
       it('should return host from Host header when proxy=false', function* () {
         mm(app.config, 'proxy', false);
         mm(req.header, 'x-forwarded-host', 'foo.com');
         mm(req.header, 'host', 'bar.com');
-        req.host.should.be.a.String;
-        req.host.should.equal('bar.com');
+        assert(typeof req.host === 'string');
+        assert(req.host === 'bar.com');
       });
     });
 
     describe('req.hostname', () => {
       it('should return hostname with port', function* () {
         mm(req.header, 'host', 'foo.com:3000');
-        req.hostname.should.equal('foo.com');
+        assert(req.hostname === 'foo.com');
       });
 
       it('should return "" when no host present', function* () {
-        req.hostname.should.be.a.String;
-        req.hostname.should.equal('');
+        assert(typeof req.hostname === 'string');
+        assert(req.hostname === '');
       });
     });
 
     describe('req.ip', () => {
       it('should return ipv4', function* () {
         mm(req.socket, 'remoteAddress', '::ffff:127.0.0.1');
-        req.ip.should.equal('127.0.0.1');
-        req.ip.should.equal('127.0.0.1');
+        assert(req.ip === '127.0.0.1');
+        assert(req.ip === '127.0.0.1');
       });
     });
 
     describe('req.ips', () => {
       it('should used x-forwarded-for', function* () {
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
-        req.ips.should.eql([ '127.0.0.1', '127.0.0.2' ]);
+        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
       });
 
       it('should used x-real-ip', function* () {
         mm(app.config, 'ipHeaders', 'X-Forwarded-For, X-Real-IP');
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '127.0.0.1,127.0.0.2');
-        req.ips.should.eql([ '127.0.0.1', '127.0.0.2' ]);
+        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
       });
 
       it('should return []', function* () {
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '');
-        req.ips.should.eql([]);
+        assert.deepEqual(req.ips, []);
       });
 
       it('should return [] when proxy=false', function* () {
         mm(app.config, 'proxy', false);
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
-        req.ips.should.eql([]);
+        assert.deepEqual(req.ips, []);
       });
     });
 
@@ -158,7 +158,7 @@ describe('test/app/extend/request.test.js', () => {
     describe('this.query[key] => String', () => {
       function expectQuery(querystring, query) {
         mm(req, 'querystring', querystring);
-        req.query.should.eql(query);
+        assert.deepEqual(req.query, query);
         mm.restore();
       }
 
@@ -189,7 +189,7 @@ describe('test/app/extend/request.test.js', () => {
     describe('this.queries[key] => Array', () => {
       function expectQueries(querystring, query) {
         mm(req, 'querystring', querystring);
-        req.queries.should.eql(query);
+        assert.deepEqual(req.queries, query);
         mm.restore();
       }
 
@@ -261,25 +261,25 @@ describe('test/app/extend/request.test.js', () => {
     describe('this.query = obj', () => {
       it('should set query with object', () => {
         mm(req, 'querystring', 'a=c');
-        req.query.should.eql({ a: 'c' });
+        assert.deepEqual(req.query, { a: 'c' });
         req.query = {};
-        req.query.should.eql({});
-        req.querystring.should.equal('');
+        assert.deepEqual(req.query, {});
+        assert(req.querystring === '');
 
         req.query = { foo: 'bar' };
-        req.query.should.eql({ foo: 'bar' });
-        req.querystring.should.equal('foo=bar');
+        assert.deepEqual(req.query, { foo: 'bar' });
+        assert(req.querystring === 'foo=bar');
 
         req.query = { array: [ 1, 2 ] };
-        req.query.should.eql({ array: '1' });
-        req.querystring.should.equal('array=1&array=2');
+        assert.deepEqual(req.query, { array: '1' });
+        assert(req.querystring === 'array=1&array=2');
       });
     });
 
     describe('request.acceptJSON', () => {
       it('should true when url path ends with .json', function* () {
         mm(req, 'path', 'hello.json');
-        req.acceptJSON.should.equal(true);
+        assert(req.acceptJSON === true);
       });
 
       it('should true when response is json', function* () {
@@ -290,7 +290,7 @@ describe('test/app/extend/request.test.js', () => {
           url: '/',
         });
         context.type = 'application/json';
-        context.request.acceptJSON.should.equal(true);
+        assert(context.request.acceptJSON === true);
       });
 
       it('should true when accept json', function* () {
@@ -300,7 +300,7 @@ describe('test/app/extend/request.test.js', () => {
           },
           url: '/',
         });
-        context.request.acceptJSON.should.equal(true);
+        assert(context.request.acceptJSON === true);
       });
 
       it('should false when do not accept json', function* () {
@@ -311,7 +311,7 @@ describe('test/app/extend/request.test.js', () => {
           url: '/',
         });
         const request = context.request;
-        request.acceptJSON.should.equal(false);
+        assert(request.acceptJSON === false);
       });
     });
 
@@ -336,7 +336,7 @@ describe('test/app/extend/request.test.js', () => {
       urllib.request(`${host}/?p=a,b&p=b,c&a[foo]=bar`, {
         dataType: 'json',
       }, (err, body) => {
-        body.should.eql({
+        assert.deepEqual(body, {
           query: { p: 'a,b', 'a[foo]': 'bar' },
           queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
         });
@@ -348,7 +348,7 @@ describe('test/app/extend/request.test.js', () => {
       urllib.request(`${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`, {
         dataType: 'json',
       }, (err, body) => {
-        body.should.eql({
+        assert.deepEqual(body, {
           query: { p: 'a,b', 'a[foo]': 'bar' },
           queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
         });

@@ -8,12 +8,13 @@ const rimraf = require('rimraf');
 const runscript = require('runscript');
 const ghpages = require('gh-pages');
 const jsdoc = require('./jsdoc');
+const path = require('path');
 
 // The branch that pushing document
 const BRANCH = 'gh-pages';
 const DOC_PUBLISHER_NAME = 'Auto Doc Publisher';
 const DOC_PUBLISHER_EMAIL = 'docs@eggjs.org';
-process.env.PATH += `:${process.cwd()}/docs/node_modules/.bin`;
+process.env.PATH += `${path.delimiter}${process.cwd()}/docs/node_modules/.bin`;
 const EGG_VERSION = require('../package.json').version;
 const NODE_VERSION = require('../package.json').engines.node;
 
@@ -37,8 +38,8 @@ co(function* () {
 
   switch (command) {
     case 'server':
-      yield runscript('hexo --cwd docs server -l');
       yield jsdoc('docs/public/api');
+      yield runscript('hexo --cwd docs server -l');
       break;
     case 'build':
       yield runscript('hexo --cwd docs generate --force');

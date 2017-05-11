@@ -1,6 +1,6 @@
 'use strict';
 
-const should = require('should');
+const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
@@ -23,11 +23,11 @@ describe('test/lib/core/logger.test.js', () => {
     yield app.ready();
 
     // 生产环境默认 _level = info
-    app.logger.get('file').options.level.should.equal(Logger.INFO);
+    assert(app.logger.get('file').options.level === Logger.INFO);
     // stdout 默认 INFO
-    app.logger.get('console').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('console').options.level.should.equal(Logger.INFO);
+    assert(app.logger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('file').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.INFO);
   });
 
   it('should got right level on local env', function* () {
@@ -36,10 +36,10 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.INFO);
-    app.logger.get('console').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('console').options.level.should.equal(Logger.INFO);
+    assert(app.logger.get('file').options.level === Logger.INFO);
+    assert(app.logger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('file').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.WARN);
   });
 
   it('should set EGG_LOG level on local env', function* () {
@@ -48,10 +48,10 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.INFO);
-    app.logger.get('console').options.level.should.equal(Logger.ERROR);
-    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('console').options.level.should.equal(Logger.ERROR);
+    assert(app.logger.get('file').options.level === Logger.INFO);
+    assert(app.logger.get('console').options.level === Logger.ERROR);
+    assert(app.coreLogger.get('file').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.ERROR);
     return app.ready();
   });
 
@@ -61,10 +61,10 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.INFO);
-    app.logger.get('console').options.level.should.equal(Logger.WARN);
-    app.coreLogger.get('file').options.level.should.equal(Logger.INFO);
-    app.coreLogger.get('console').options.level.should.equal(Logger.WARN);
+    assert(app.logger.get('file').options.level === Logger.INFO);
+    assert(app.logger.get('console').options.level === Logger.WARN);
+    assert(app.coreLogger.get('file').options.level === Logger.INFO);
+    assert(app.coreLogger.get('console').options.level === Logger.WARN);
     return app.ready();
   });
 
@@ -73,8 +73,8 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-dev-app');
     yield app.ready();
 
-    app.logger.get('file').options.level.should.equal(Logger.INFO);
-    app.logger.get('console').options.level.should.equal(Logger.ERROR);
+    assert(app.logger.get('file').options.level === Logger.INFO);
+    assert(app.logger.get('console').options.level === Logger.ERROR);
     return app.ready();
   });
 
@@ -90,7 +90,9 @@ describe('test/lib/core/logger.test.js', () => {
 
     yield sleep(1000);
 
-    fs.readFileSync(logfile, 'utf8').should.containEql('nodejs.Error: mock nobuffer error\n');
+    assert(
+      fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
+    );
   });
 
   it('log buffer enable cache on non-local and non-unittest env', function* () {
@@ -107,7 +109,7 @@ describe('test/lib/core/logger.test.js', () => {
 
     yield sleep(1000);
 
-    fs.readFileSync(logfile, 'utf8').should.containEql('');
+    assert(fs.readFileSync(logfile, 'utf8').includes(''));
   });
 
   it('output .json format log', function* () {
@@ -122,8 +124,8 @@ describe('test/lib/core/logger.test.js', () => {
 
     yield sleep(1000);
 
-    fs.existsSync(logfile).should.be.true;
-    fs.readFileSync(logfile, 'utf8').should.containEql('"message":"json format"');
+    assert(fs.existsSync(logfile));
+    assert(fs.readFileSync(logfile, 'utf8').includes('"message":"json format"'));
   });
 
   it('dont output to console after app ready', done => {
@@ -164,10 +166,10 @@ describe('test/lib/core/logger.test.js', () => {
     // .debug()
     .coverage(false)
     .end(err => {
-      should.not.exists(err);
+      assert(!err);
       const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
-      content.should.containEql('nodejs.Error: agent error');
-      content.should.containEql('nodejs.Error: app error');
+      assert(content.includes('nodejs.Error: agent error'));
+      assert(content.includes('nodejs.Error: app error'));
       done();
     });
   });
@@ -181,20 +183,20 @@ describe('test/lib/core/logger.test.js', () => {
     app.loggers.errorLogger.error(new Error('errorLogger error'));
     app.loggers.customLogger.error(new Error('customLogger error'));
 
-    yield sleep(10);
+    yield sleep(1000);
 
     const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
-    content.should.containEql('nodejs.Error: logger error');
-    content.should.containEql('nodejs.Error: coreLogger error');
-    content.should.containEql('nodejs.Error: errorLogger error');
-    content.should.containEql('nodejs.Error: customLogger error');
+    assert(content.includes('nodejs.Error: logger error'));
+    assert(content.includes('nodejs.Error: coreLogger error'));
+    assert(content.includes('nodejs.Error: errorLogger error'));
+    assert(content.includes('nodejs.Error: customLogger error'));
   });
 
   it('agent\'s logger is same as coreLogger', function* () {
     app = utils.app('apps/logger');
     yield app.ready();
 
-    app.agent.logger.options.file.should.equal(app.agent.coreLogger.options.file);
+    assert(app.agent.logger.options.file === app.agent.coreLogger.options.file);
   });
 
   describe('logger.level = DEBUG', () => {
@@ -210,9 +212,10 @@ describe('test/lib/core/logger.test.js', () => {
       .get('/')
       .expect('ok')
       .end(err => {
-        should.not.exist(err);
-        fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8')
-          .should.containEql(' DEBUG ');
+        assert(!err);
+        assert(
+          fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8').includes(' DEBUG ')
+        );
         done();
       });
     });

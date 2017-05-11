@@ -10,6 +10,7 @@ describe('test/index.test.js', () => {
       'AgentWorkerLoader',
       'AppWorkerLoader',
       'Application',
+      'BaseContextClass',
       'Controller',
       'Service',
       'startCluster',
