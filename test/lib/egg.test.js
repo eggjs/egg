@@ -6,6 +6,8 @@ const path = require('path');
 const fs = require('fs');
 const request = require('supertest');
 const sleep = require('mz-modules/sleep');
+const spy = require('spy');
+const Transport = require('egg-logger').Transport;
 const utils = require('../utils');
 
 describe('test/lib/egg.test.js', () => {
@@ -130,6 +132,21 @@ describe('test/lib/egg.test.js', () => {
       assert(isAppClosed === true);
       assert(isAgentClosed === true);
     });
+
+    it('shoud close logger', function* () {
+      const close = spy();
+      class TestTransport extends Transport {
+        close() {
+          close();
+        }
+      }
+      const transport = new TestTransport();
+      for (const logger of app.loggers.values()) {
+        logger.set('test', transport);
+      }
+      yield app.close();
+      assert(close.called);
+    });
   });
 
   describe('handle unhandledRejection', () => {
@@ -162,6 +179,47 @@ describe('test/lib/egg.test.js', () => {
       assert(body.includes('nodejs.TypeError: foo reject obj error'));
       // make sure stack exists and right
       assert(body.match(/at .+router.js:\d+:\d+\)/));
+    });
+  });
+
+  describe('BaseContextClass', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/base-context-class');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should access base context properties success', function* () {
+      mm(app.config.logger, 'level', 'DEBUG');
+      yield request(app.callback())
+      .get('/')
+      .expect('hello')
+      .expect(200);
+
+      const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
+      const log = fs.readFileSync(logPath, 'utf8');
+      assert(log.match(/INFO .*? \[service\.home\] appname: base-context-class/));
+      assert(log.match(/INFO .*? \[controller\.home\] appname: base-context-class/));
+      assert(log.match(/WARN .*? \[service\.home\] warn/));
+      assert(log.match(/WARN .*? \[controller\.home\] warn/));
+      const errorPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/common-error.log');
+      const error = fs.readFileSync(errorPath, 'utf8');
+      assert(error.match(/nodejs.Error: some error/));
+    });
+
+    it('should get pathName success', function* () {
+      yield request(app.callback())
+      .get('/pathName')
+      .expect('controller.home')
+      .expect(200);
+    });
+
+    it('should get config success', function* () {
+      yield request(app.callback())
+      .get('/config')
+      .expect('base-context-class')
+      .expect(200);
     });
   });
 });

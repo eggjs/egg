@@ -11,3 +11,7 @@ title: 资源
 by [@天猪](https://github.com/atian25)
 
 - 你也可以到[知乎专栏](https://zhuanlan.zhihu.com/eggjs)看我们的文章
+
+## 工具
+
+- [vscode plugin - eggjs-dev-tools](https://marketplace.visualstudio.com/items?itemName=yuzukwok.eggjs-dev-tools)

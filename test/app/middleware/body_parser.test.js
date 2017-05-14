@@ -1,7 +1,7 @@
 'use strict';
 
+const assert = require('assert');
 const querystring = require('querystring');
-const should = require('should');
 const request = require('supertest');
 const utils = require('../../utils');
 
@@ -16,10 +16,10 @@ describe('test/app/middleware/body_parser.test.js', () => {
       request(app.callback())
       .get('/test/body_parser/user')
       .expect(200, (err, res) => {
-        should.not.exist(err);
+        assert(!err);
         csrf = res.body.csrf || '';
         cookies = res.headers['set-cookie'].join(';');
-        should.exist(csrf);
+        assert(csrf);
         done();
       });
     });

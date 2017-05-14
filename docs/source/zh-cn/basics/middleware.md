@@ -66,11 +66,11 @@ module.exports = options => {
 };
 ```
 
-## 在应用中引入中间件
+## 在应用中使用中间件
 
-在应用中，我们可以完全通过配置来引入自定义的中间件，并决定它们的顺序。
+在应用中，我们可以完全通过配置来加载自定义的中间件，并决定它们的顺序。
 
-如果我们需要引入上面的 gzip 中间件，在 `config.default.js` 中加入下面的配置就完成了中间件的开启和配置：
+如果我们需要加载上面的 gzip 中间件，在 `config.default.js` 中加入下面的配置就完成了中间件的开启和配置：
 
 ```js
 module.exports = {
@@ -84,25 +84,45 @@ module.exports = {
 };
 ```
 
+我们还可以动态修改现有中间件的顺序，中间件的加载顺序和插件顺序不同，是由 `app.config.coreMiddleware` 和 `app.config.appMiddleware` 这两个数组合并而成的。
+
+```js
+// app.js
+module.exports = app => {
+  // 在中间件最前面统计请求时间
+  app.config.coreMiddleware.unshift('report');
+};
+
+// app/middleware/report.js
+module.exports = () => {
+  return function* (next) {
+    const startTime = Date.now();
+    yield next;
+    // 上报请求时间
+    reportTime(Date.now() - startTime);
+  }
+};
+```
+
 **配置项以及区分各运行环境的配置，请查看[配置](./config.md)章节。**
 
 ## 框架默认中间件
 
-除了应用层引入中间件之外，框架自身和其他的插件也会引入许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如[框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
+除了应用层加载中间件之外，框架自身和其他的插件也会加载许多中间件。所有的这些自带中间件的配置项都通过在配置中修改中间件同名配置项进行修改，例如[框架自带的中间件](https://github.com/eggjs/egg/tree/master/app/middleware)中有一个 bodyParser 中间件（框架的加载器会将文件名中的各种分隔符都修改成驼峰形式的变量名），我们想要修改 bodyParser 的配置，只需要在 `config/config.default.js` 中编写
 
 ```js
 module.exports = {
   bodyParser: {
-    jsonLimit: '10m',
+    jsonLimit: '10mb',
   },
 };
 ```
 
-**注意：框架和插件引入的中间件会在应用层配置的中间件之前，框架默认中间件不能被应用层中间件覆盖，如果应用层有自定义同名中间件，在启动时会报错。**
+**注意：框架和插件加载的中间件会在应用层配置的中间件之前，框架默认中间件不能被应用层中间件覆盖，如果应用层有自定义同名中间件，在启动时会报错。**
 
 ## router 中使用中间件
 
-应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 Koa 中另有用处），所以应用层定义的中间件可以不通过配置引入，而是在 router 中引入，从而只对对应的路由生效。
+应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 Koa 中另有用处），所以应用层定义的中间件可以不通过配置加载，而是在 router 中加载，从而只对对应的路由生效。
 
 还是拿刚才的 gzip 中间件举例，当我们想直接在 router 中使用的时候，在 `app/router.js` 中就可以这样写
 
@@ -135,7 +155,7 @@ const options = { threshold: 2048 };
 app.use(compress(options));
 ```
 
-我们按照框架的规范来在应用中引入这个 Koa 的中间件：
+我们按照框架的规范来在应用中加载这个 Koa 的中间件：
 
 ```js
 // app/middleware/compress.js
@@ -155,7 +175,7 @@ exports.compress = {
 
 ## 通用配置
 
-无论是应用层引入的中间件还是框架自带中间件，都支持几个通用的配置项：
+无论是应用层加载的中间件还是框架自带中间件，都支持几个通用的配置项：
 
 - enable：控制中间件是否开启。
 - match：设置只有符合某些规则的请求才会经过这个中间件。
@@ -173,7 +193,7 @@ module.exports = {
 };
 ```
 
-### match & ignore
+### match 和 ignore
 
 match 和 ignore 支持的参数都一样，只是作用完全相反，match 和 ignore 不允许同时配置。
 

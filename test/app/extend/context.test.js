@@ -15,7 +15,7 @@ describe('test/app/extend/context.test.js', () => {
     let app;
     afterEach(() => app.close());
 
-    it('env=local: level => debug', function* () {
+    it('env=local: level => info', function* () {
       mm.env('local');
       mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
@@ -29,18 +29,18 @@ describe('test/app/extend/context.test.js', () => {
       yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-      errorContent.should.containEql('nodejs.Error: error foo');
-      errorContent.should.containEql('nodejs.Error: core error foo');
+      assert(errorContent.includes('nodejs.Error: error foo'));
+      assert(errorContent.includes('nodejs.Error: core error foo'));
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-      loggerContent.should.containEql('debug foo');
-      loggerContent.should.containEql('info foo');
-      loggerContent.should.containEql('warn foo');
+      // loggerContent.should.containEql('debug foo');
+      assert(loggerContent.includes('info foo'));
+      assert(loggerContent.includes('warn foo'));
 
       const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-      coreLoggerContent.should.containEql('core debug foo');
-      coreLoggerContent.should.containEql('core info foo');
-      coreLoggerContent.should.containEql('core warn foo');
+      // coreLoggerContent.should.containEql('core debug foo');
+      assert(coreLoggerContent.includes('core info foo'));
+      assert(coreLoggerContent.includes('core warn foo'));
     });
 
     it('env=unittest: level => info', function* () {
@@ -61,19 +61,19 @@ describe('test/app/extend/context.test.js', () => {
       yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-      errorContent.should.containEql('nodejs.Error: error foo');
-      errorContent.should.containEql('nodejs.Error: core error foo');
-      errorContent.should.match(/\[123123\/[\d.]+\/-\/\d+ms GET \/logger\?message=foo]/);
+      assert(errorContent.includes('nodejs.Error: error foo'));
+      assert(errorContent.includes('nodejs.Error: core error foo'));
+      assert(/\[123123\/[\d.]+\/-\/\d+ms GET \/logger\?message=foo]/.test(errorContent));
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-      loggerContent.should.not.containEql('debug foo');
-      loggerContent.should.containEql('info foo');
-      loggerContent.should.containEql('warn foo');
+      assert(!loggerContent.includes('debug foo'));
+      assert(loggerContent.includes('info foo'));
+      assert(loggerContent.includes('warn foo'));
 
       const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-      coreLoggerContent.should.not.containEql('core debug foo');
-      coreLoggerContent.should.containEql('core info foo');
-      coreLoggerContent.should.containEql('core warn foo');
+      assert(!coreLoggerContent.includes('core debug foo'));
+      assert(coreLoggerContent.includes('core info foo'));
+      assert(coreLoggerContent.includes('core warn foo'));
     });
 
     it('env=prod: level => info', function* () {
@@ -90,18 +90,18 @@ describe('test/app/extend/context.test.js', () => {
       yield sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-      errorContent.should.containEql('nodejs.Error: error foo');
-      errorContent.should.containEql('nodejs.Error: core error foo');
+      assert(errorContent.includes('nodejs.Error: error foo'));
+      assert(errorContent.includes('nodejs.Error: core error foo'));
 
       const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
-      loggerContent.should.not.containEql('debug foo');
-      loggerContent.should.containEql('info foo');
-      loggerContent.should.containEql('warn foo');
+      assert(!loggerContent.includes('debug foo'));
+      assert(loggerContent.includes('info foo'));
+      assert(loggerContent.includes('warn foo'));
 
       const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
-      coreLoggerContent.should.not.containEql('core debug foo');
-      coreLoggerContent.should.containEql('core info foo');
-      coreLoggerContent.should.containEql('core warn foo');
+      assert(!coreLoggerContent.includes('core debug foo'));
+      assert(coreLoggerContent.includes('core info foo'));
+      assert(coreLoggerContent.includes('core warn foo'));
     });
   });
 
@@ -126,7 +126,24 @@ describe('test/app/extend/context.test.js', () => {
 
       yield sleep(100);
       const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
-      fs.readFileSync(logPath, 'utf8').should.match(/\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/);
+      assert(
+        /\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/.test(fs.readFileSync(logPath, 'utf8'))
+      );
+    });
+  });
+
+  describe('app or framework can override ctx.getLogger', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/custom-context-getlogger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should log with custom logger', () => {
+      return request(app.callback())
+        .get('/')
+        .expect('work, logger: exists');
     });
   });
 
@@ -224,9 +241,10 @@ describe('test/app/extend/context.test.js', () => {
       yield sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
-      log.should.match(/background run result file size: \d+/);
-      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
-        .should.match(/\[egg:background] task:saveUserInfo success \(\d+ms\)/);
+      assert(/background run result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
     });
 
     it('should run background task error', function* () {
@@ -238,9 +256,10 @@ describe('test/app/extend/context.test.js', () => {
       yield sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
-      log.should.match(/ENOENT: no such file or directory/);
-      fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8')
-        .should.match(/\[egg:background] task:mockError fail \(\d+ms\)/);
+      assert(/ENOENT: no such file or directory/.test(log));
+      assert(
+        /\[egg:background] task:mockError fail \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
     });
   });
 
@@ -257,13 +276,13 @@ describe('test/app/extend/context.test.js', () => {
         const localServer = yield utils.startLocalServer();
         const context = app.mockContext();
         const res = yield context.curl(`${localServer}/foo/bar`);
-        res.status.should.equal(200);
+        assert(res.status === 200);
       });
 
       it('should curl as promise ok', () => {
         return utils.startLocalServer()
         .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
-        .then(res => res.status.should.equal(200));
+        .then(res => assert(res.status === 200));
       });
     });
 
@@ -296,8 +315,8 @@ describe('test/app/extend/context.test.js', () => {
         const context = app.mockContext();
         context.locals = { a: 'a', b: 'b' };
         context.state = { a: 'aa', c: 'cc' };
-        context.state.should.eql({ a: 'aa', b: 'b', c: 'cc' });
-        context.state.should.equal(context.locals);
+        assert.deepEqual(context.state, { a: 'aa', b: 'b', c: 'cc' });
+        assert(context.state === context.locals);
       });
     });
 

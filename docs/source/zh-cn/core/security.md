@@ -39,7 +39,9 @@ exports.security = {
 
 ### match 和 ignore
 
-如果只想开启针对某一路径，则配置 match 选项，例如只针对 `/example` 开启 CSP
+match 和 ignore 使用方法和格式与[中间件通用配置](../basics/middleware.md#match和ignore)一致。
+
+如果只想开启针对某一路径，则配置 match 选项，例如只针对 `/example` 开启 CSP：
 
 ```js
 exports.security = {
@@ -50,7 +52,6 @@ exports.security = {
     },
   },
 };
-
 ```
 
 如果需要针对某一路径忽略某安全选项，则配置 ignore 选项，例如针对 `/example` 关闭 xframe，以便合作商户能够嵌入我们的页面：
@@ -64,10 +65,18 @@ exports.security = {
     },
   },
 };
-
 ```
 
-**注意：不能同时存在 match 和 ignore ，否则会报错。**
+如果要针对内部 ip 关闭部分安全防范：
+
+```js
+exports.security = {
+  csrf: {
+    // 判断是否需要 ignore 的方法，请求上下文 context 作为第一个参数
+    ignore: ctx => isInnerIp(ctx.ip),
+  },
+}
+```
 
 下面我们会针对具体的场景，来讲解如何使用框架提供的安全方案进行 Web 安全防范。
 
@@ -587,7 +596,7 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 
 框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
 
-如果我们的Webb 站点是 http 站点，需要关闭这个头。配置如下：
+如果我们的Web 站点是 http 站点，需要关闭这个头。配置如下：
 
 - maxAge 默认一年 `365 * 24 * 3600`。
 - includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。

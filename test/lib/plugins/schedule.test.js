@@ -1,27 +1,25 @@
 'use strict';
 
+const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const utils = require('../../utils');
+const sleep = require('mz-modules/sleep');
 
 describe('test/lib/plugins/schedule.test.js', () => {
   it('should schedule work', function* () {
     const app = utils.cluster('apps/schedule', {
-      workers: 4,
+      workers: 2,
     });
     yield app.ready();
     yield sleep(5000);
     yield app.close();
     const log = getLogContent('schedule');
-    contains(log, 'cron').should.within(1, 2);
+    const count = contains(log, 'cron');
+    assert(count >= 1);
+    assert(count <= 2);
   });
 });
-
-function sleep(time) {
-  return new Promise(resolve => {
-    setTimeout(resolve, time);
-  });
-}
 
 function getLogContent(name) {
   const logPath = path.join(__dirname, '../../fixtures/apps', name, 'logs', name, `${name}-web.log`);

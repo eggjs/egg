@@ -253,17 +253,6 @@ module.exports = appInfo => {
   ];
 
   /**
-   * The options of `jsonp` plugin
-   * @member Config#jsonp
-   * @property {String} callback - the method name，default is `_callback`
-   * @property {Number} limit - the max length of the method name，default is `50`
-   */
-  config.jsonp = {
-    callback: '_callback',
-    limit: 50,
-  };
-
-  /**
    * emit `startTimeout` if worker don't ready after `workerStartTimeout` ms
    * @member {Number} Config.workerStartTimeout
    */
