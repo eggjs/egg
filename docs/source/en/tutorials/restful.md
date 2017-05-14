@@ -6,7 +6,7 @@ CNode currently use v1 interface is not fully consistent with the RESTful semant
 
 ## Response Formatting
 
-Designing a RESTful-style API, we will identify the status of response by the response status code which simply the body of response then only the interface data is returned. 
+Designing a RESTful-style API, we will identify the status of response by the response status code, keeping the response body simply and only the interface data is returned. 
 A example of `topics` is shown below:
 
 ### Get topics list
