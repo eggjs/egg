@@ -51,7 +51,7 @@
     "coffee": "^3.3.1",
     "egg-alinode": "^1.0.3",
     "egg-bin": "^3.3.2",
-    "egg-doctools": "^1.0.0",
+    "egg-doctools": "^1.1.0",
     "egg-mock": "^3.6.1",
     "egg-plugin-puml": "^2.3.0",
     "egg-view-nunjucks": "^2.1.1",
