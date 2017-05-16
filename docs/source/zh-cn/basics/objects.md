@@ -1,7 +1,7 @@
-title: egg 内置基础对象
+title: 框架内置基础对象
 ---
 
-在往下阅读之前，我们先初步介绍一下框架中内置的一些基础对象，包括从 [koa] 继承而来的 4 个对象（Application, Context, Request, Response) 以及框架扩展的一些对象（Helper, Controller, Service），在后续的文档阅读中我们会经常遇到它们。
+在往下阅读之前，我们先初步介绍一下框架中内置的一些基础对象，包括从 [Koa] 继承而来的 4 个对象（Application, Context, Request, Response) 以及框架扩展的一些对象（Controller, Service, Helper, Config, Logger），在后续的文档阅读中我们会经常遇到它们。
 
 ## Application
 
@@ -63,7 +63,7 @@ module.exports = app => {
 
 ## Context
 
-Context 是一个**请求级别的对象**，继承自 [koa.Context]。在每一次收到用户请求时，框架会实例化一个 Context 对象，这个对象封装了这次用户请求的信息，并提供了许多便捷的方法来获取请求参数或者设置响应信息。框架会将所有的 [service](./service.md) 挂载到 Context 实例上，一些插件也会将一些其他的方法和对象挂载到它上面（[egg-sequelize] 会将所有的 model 挂载在 Context 上。
+Context 是一个**请求级别的对象**，继承自 [koa.Context]。在每一次收到用户请求时，框架会实例化一个 Context 对象，这个对象封装了这次用户请求的信息，并提供了许多便捷的方法来获取请求参数或者设置响应信息。框架会将所有的 [Service] 挂载到 Context 实例上，一些插件也会将一些其他的方法和对象挂载到它上面（[egg-sequelize] 会将所有的 model 挂载在 Context 上。
 
 ### 获取方式
 
@@ -123,12 +123,15 @@ Response 是一个**请求级别的对象**，继承自 [koa.Response]。封装�
 module.exports = app => {
   return class UserController extends app.Controller {
     fetch* () {
-      const id = this.request.query.id;
-      this.ctx.response.body = this.app.cache.get(id);
+      const { app, ctx } = this;
+      const id = ctx.request.query.id;
+      ctx.response.body = app.cache.get(id);
     }
   };
 };
 ```
+
+在上面的例子中，`ctx.request.query.id` 和 `ctx.query.id` 是等价的，`ctx.response.body=` 和 `ctx.body=` 是等价的，[Koa] 系列的框架会在 Context 上代理一部分 Request 和 Response 上的方法和属性。
 
 ## Controller
 
@@ -146,7 +149,8 @@ module.exports = app => {
 // app/controller/user.js
 
 // 从 egg 上获取
-module.exports = UserController extends require('egg').Controller {
+const Controller = require('egg');
+module.exports = UserController extends egg.Controller {
   // implement  
 };
 
@@ -203,6 +207,13 @@ module.exports = app => {
 };
 ```
 
+除此之外，Helper 的实例还可以在模板中获取到，例如可以在模板中获取到 [security](../core/security.md) 插件提供的 `shtml` 方法。
+
+```
+// app/view/home.nj
+{{ helper.shtml(value) }}
+```
+
 ### 自定义 helper 方法
 
 应用开发中，我们可能经常要自定义一些 helper 方法，例如上面例子中的 `formatUser`，我们可以通过[框架扩展](./extend.md#helper)的形式来自定义 helper 方法。
@@ -216,7 +227,46 @@ module.exports = {
 };
 ```
 
-[koa]: http://koajs.com
+## Config
+
+我们推荐应用开发遵循配置和代码分离的原则，将一些需要硬编码的业务配置都放到配置文件中，同时配置文件支持各个不同的运行环境使用不同的配置，使用起来也非常方便，所有框架、插件和应用级别的配置都可以通过 Config 对象获取到，关于框架的配置，可以详细阅读[Config 配置](./config.md)章节。
+
+### 获取方式
+
+我们可以通过 `app.config` 从 Application 实例上获取到 config 对象，也可以在 Controller, Service, Helper 的实例上通过 `this.config` 获取到 config 对象。
+
+## Logger
+
+框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 5 个级别的方法：
+
+- `logger.debug()`
+- `logger.info()`
+- `logger.warn()`
+- `logger.error()`
+
+在框架中提供了多个 Logger 对象，下面我们简单的介绍一下各个 Logger 对象的获取方式和使用场景。
+
+### App Logger
+
+我们可以通过 `app.logger` 来获取到它，如果我们想做一些应用级别的日志记录，如记录启动阶段的一些数据信息，记录一些业务上与请求无关的信息，都可以通过 App Logger 来完成。
+
+### App CoreLogger
+
+我们可以通过 `app.coreLogger` 来获取到它，一般我们在开发应用时都不应该通过 CoreLogger 打印日志，而框架和插件则需要通过它来打印应用级别的日志，这样可以更清晰的区分应用和框架打印的日志，通过 CoreLogger 打印的日志会放到和 Logger 不同的文件中。
+
+### Context Logger
+
+我们可以通过 `ctx.logger` 从 Context 实例上获取到它，从访问方式上我们可以看出来，Context Logger 一定是与请求相关的，它打印的日志都会在前面带上一些当前请求相关的信息（如 `[$userId/$ip/$traceId/${cost}ms $method $url]`），通过这些信息，我们可以从日志快速定位请求，并串联一次请求中的所有的日志。
+
+### Context CoreLogger
+
+我们可以通过 `ctx.coreLogger` 获取到它，和 Context Logger 的区别是一般只有插件和框架会通过它来记录日志。
+
+### Controller Logger & Service Logger
+
+我们可以在 Controller 和 Service 实例上通过 `this.logger` 获取到它们，它们本质上就是一个 Context Logger，不过在打印日志的时候还会额外的加上文件路径，方便定位日志的打印位置。
+
+[Koa]: http://koajs.com
 [koa.Application]: http://koajs.com/#application
 [koa.Context]: http://koajs.com/#context
 [koa.Request]: http://koajs.com/#request
