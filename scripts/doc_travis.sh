@@ -22,4 +22,4 @@ chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
 
-npm run doc:deploy
+npm run doc-deploy
