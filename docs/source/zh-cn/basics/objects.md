@@ -1,7 +1,7 @@
 title: egg 内置基础对象
 ---
 
-在往下阅读之前，我们先初步介绍一下框架中内置的一些基础对象，包括从 [koa] 继承而来的 4 个对象（Application, Context, Request, Response) 以及框架扩展的一些对象（Helper, Controller, Service），在后续的文档阅读中我们会经常遇到他们。
+在往下阅读之前，我们先初步介绍一下框架中内置的一些基础对象，包括从 [koa] 继承而来的 4 个对象（Application, Context, Request, Response) 以及框架扩展的一些对象（Helper, Controller, Service），在后续的文档阅读中我们会经常遇到它们。
 
 ## Application
 
