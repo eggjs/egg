@@ -4,6 +4,7 @@ Intro:
   Get Start: /intro/quickstart.html
 Basics:
   Structure: /basics/structure.html
+  Objects: /basics/objects.html
   Environment: /basics/env.html
   Config: /basics/config.html
   Middleware: /basics/middleware.html

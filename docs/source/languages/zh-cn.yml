@@ -26,6 +26,7 @@ guide_toc:
   Get Start: 快速入门
   Basics: 基础功能
   Structure: 目录结构
+  Objects: 内置对象
   Environment: 运行环境
   Config: 配置
   Middleware: 中间件
