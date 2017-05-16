@@ -9,7 +9,8 @@ module.exports = {
   exclude: [
     'test/fixtures',
     'examples',
-    "docs",
+    'docs',
+    'run',
   ],
   devdep: [
     'autod',
