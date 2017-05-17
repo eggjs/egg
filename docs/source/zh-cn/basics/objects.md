@@ -67,7 +67,7 @@ Context 是一个**请求级别的对象**，继承自 [koa.Context]。在每一
 
 ### 获取方式
 
-最常见的 context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Contenxt 实例则和 [koa] 框架在中间件中获取 Context 对象的方式一致。
+最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Contenxt 实例则和 [koa] 框架在中间件中获取 Context 对象的方式一致。
 
 框架的 [Middleware] 同时支持 koa v1 和 koa v2 两种不同的中间件写法，根据不同的写法，获取 Context 实例的方式也稍有不同：
 
@@ -122,7 +122,7 @@ Response 是一个**请求级别的对象**，继承自 [koa.Response]。封装�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    fetch* () {
+    *fetch () {
       const { app, ctx } = this;
       const id = ctx.request.query.id;
       ctx.response.body = app.cache.get(id);
@@ -199,9 +199,10 @@ Helper 自身是一个类，有和 [Controller](#controller) 基类一样的属�
 module.exports = app => {
   return class UserController extends app.Controller {
     fetch* () {
-      const id = this.request.query.id;
-      const user = this.app.cache.get(id);
-      this.body = this.helper.formatUser(user);
+      const { app, ctx } = this;
+      const id = ctx.request.query.id;
+      const user = app.cache.get(id);
+      ctx.body = ctx.helper.formatUser(user);
     }
   };
 };
@@ -229,7 +230,7 @@ module.exports = {
 
 ## Config
 
-我们推荐应用开发遵循配置和代码分离的原则，将一些需要硬编码的业务配置都放到配置文件中，同时配置文件支持各个不同的运行环境使用不同的配置，使用起来也非常方便，所有框架、插件和应用级别的配置都可以通过 Config 对象获取到，关于框架的配置，可以详细阅读[Config 配置](./config.md)章节。
+我们推荐应用开发遵循配置和代码分离的原则，将一些需要硬编码的业务配置都放到配置文件中，同时配置文件支持各个不同的运行环境使用不同的配置，使用起来也非常方便，所有框架、插件和应用级别的配置都可以通过 Config 对象获取到，关于框架的配置，可以详细阅读 [Config 配置](./config.md)章节。
 
 ### 获取方式
 
