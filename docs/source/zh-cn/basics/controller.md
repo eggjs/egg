@@ -856,6 +856,6 @@ exports.show = function* (ctx) {
   ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
   // 设置一个响应头
-  ctx.set('show-response-time', userd.toString());
+  ctx.set('show-response-time', used.toString());
 };
 ```
