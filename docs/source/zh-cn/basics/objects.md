@@ -5,7 +5,7 @@ title: 框架内置基础对象
 
 ## Application
 
-Application 是全局应用对象，在一个应用中，只会实例化一个，它继承自 [koa.Application]，在它上面我们可以挂载一些全局的方法和对象。我们可以轻松的在插件或者应用中[扩展 Application 对象](./extend.md#Application)。
+Application 是全局应用对象，在一个应用中，只会实例化一个，它继承自 [Koa.Application]，在它上面我们可以挂载一些全局的方法和对象。我们可以轻松的在插件或者应用中[扩展 Application 对象](./extend.md#Application)。
 
 ### 获取方式
 
@@ -63,23 +63,23 @@ module.exports = app => {
 
 ## Context
 
-Context 是一个**请求级别的对象**，继承自 [koa.Context]。在每一次收到用户请求时，框架会实例化一个 Context 对象，这个对象封装了这次用户请求的信息，并提供了许多便捷的方法来获取请求参数或者设置响应信息。框架会将所有的 [Service] 挂载到 Context 实例上，一些插件也会将一些其他的方法和对象挂载到它上面（[egg-sequelize] 会将所有的 model 挂载在 Context 上）。
+Context 是一个**请求级别的对象**，继承自 [Koa.Context]。在每一次收到用户请求时，框架会实例化一个 Context 对象，这个对象封装了这次用户请求的信息，并提供了许多便捷的方法来获取请求参数或者设置响应信息。框架会将所有的 [Service] 挂载到 Context 实例上，一些插件也会将一些其他的方法和对象挂载到它上面（[egg-sequelize] 会将所有的 model 挂载在 Context 上）。
 
 ### 获取方式
 
 最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Context 实例则和 [Koa] 框架在中间件中获取 Context 对象的方式一致。
 
-框架的 [Middleware] 同时支持 koa v1 和 koa v2 两种不同的中间件写法，根据不同的写法，获取 Context 实例的方式也稍有不同：
+框架的 [Middleware] 同时支持 Koa v1 和 Koa v2 两种不同的中间件写法，根据不同的写法，获取 Context 实例的方式也稍有不同：
 
 ```js
-// koa v1
+// Koa v1
 function* middleware(next) {
   // this is instance of Context
   console.log(this.query);
   yield next;
 }
 
-// koa v2
+// Koa v2
 async function middleware(ctx, next) {
   // ctx is instance of Context
   console.log(ctx.query);
@@ -110,9 +110,9 @@ exports.task = function* (ctx) {
 
 ## Request & Response
 
-Request 是一个**请求级别的对象**，继承自 [koa.Request]。封装了 node 原生的 http request 对象，提供了一系列辅助方法获取 HTTP 请求常用参数。
+Request 是一个**请求级别的对象**，继承自 [Koa.Request]。封装了 Node.js 原生的 HTTP Request 对象，提供了一系列辅助方法获取 HTTP 请求常用参数。
 
-Response 是一个**请求级别的对象**，继承自 [koa.Response]。封装了 node 原生的 http response 对象，提供了一系列辅助方法设置 HTTP 响应。
+Response 是一个**请求级别的对象**，继承自 [Koa.Response]。封装了 Node.js 原生的 HTTP Response 对象，提供了一系列辅助方法设置 HTTP 响应。
 
 ### 获取方式
 
@@ -268,10 +268,10 @@ module.exports = {
 我们可以在 Controller 和 Service 实例上通过 `this.logger` 获取到它们，它们本质上就是一个 Context Logger，不过在打印日志的时候还会额外的加上文件路径，方便定位日志的打印位置。
 
 [Koa]: http://koajs.com
-[koa.Application]: http://koajs.com/#application
-[koa.Context]: http://koajs.com/#context
-[koa.Request]: http://koajs.com/#request
-[koa.Response]: http://koajs.com/#response
+[Koa.Application]: http://koajs.com/#application
+[Koa.Context]: http://koajs.com/#context
+[Koa.Request]: http://koajs.com/#request
+[Koa.Response]: http://koajs.com/#response
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
 [Middleware]: ./middleware.md
 [Controller]: ./controller.md
