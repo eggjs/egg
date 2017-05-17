@@ -9,7 +9,8 @@ module.exports = {
   exclude: [
     'test/fixtures',
     'examples',
-    "docs",
+    'docs',
+    'run',
   ],
   devdep: [
     'autod',
@@ -17,6 +18,7 @@ module.exports = {
     'eslint',
     'eslint-config-egg',
     'egg-bin',
+    'egg-doctools',
     'egg-plugin-puml',
     'egg-view-nunjucks',
   ],
