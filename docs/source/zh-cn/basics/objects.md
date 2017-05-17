@@ -48,7 +48,7 @@ module.exports = app => {
 };
 ```
 
-在 Controller, Service 类中，可以通过 `this.app` 访问到 Application 对象。
+在继承于 Controller, Service 基类的实例中，可以通过 `this.app` 访问到 Application 对象。
 
 ```js
 // app/controller/user.js
