@@ -20,7 +20,7 @@ Simply speaking, Service is an abstract layer which is used to encapsulate busin
 module.exports = app => {
   class User extends app.Service {
     * find(uid) {
-      const user = this.ctx.db.query(`select * from user where uid = ${uid}`);
+      const user = yield this.ctx.db.query(`select * from user where uid = ${uid}`);
       return user;
     }
   }
@@ -80,7 +80,7 @@ module.exports = app => {
 
     * find(uid) {
       // suppose we've got user's id and are going to get detailed user information from databases
-      const user = this.ctx.db.query(`select * from user where uid = ${uid}`);
+      const user = yield this.ctx.db.query(`select * from user where uid = ${uid}`);
 
       // suppose some complex processes should be made here, and demanded informations are returned then. 
       const picture = yield this.getPicture(uid);
