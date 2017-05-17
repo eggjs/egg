@@ -40,9 +40,9 @@ EGG_SERVER_ENV=prod npm start
 
 ## 自定义环境
 
-常规开发流程不仅仅只有以上几种环境，所以可以通过自定义环境来支持自己的开发流程，比如增加集成测试环境 SIT。
+常规开发流程可能不仅仅只有以上几种环境，Egg 支持自定义环境来适应自己的开发流程。
 
-将 `EGG_SERVER_ENV` 设置成 `sit`（并建议设置 `NODE_ENV = production`），启动时会加载 `config/config.sit.js`，运行环境变量 `app.config.env` 会被设置成 `sit`。
+比如，要为开发流程增加集成测试环境 SIT。将 `EGG_SERVER_ENV` 设置成 `sit`（并建议设置 `NODE_ENV = production`），启动时会加载 `config/config.sit.js`，运行环境变量 `app.config.env` 会被设置成 `sit`。
 
 ## 与 Koa 的区别
 
