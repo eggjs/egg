@@ -28,7 +28,7 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
   // app/controller/user.js
   module.exports = app => {
     return class UserController extends app.Controller {
-      fetch* () {
+      *fetch () {
         this.ctx.body = app.cache.get(this.query.id);
       }
     };
@@ -41,7 +41,7 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    fetch* () {
+    *fetch () {
       this.ctx.body = this.ctx.app.cache.get(this.query.id);
     }
   };
@@ -54,7 +54,7 @@ module.exports = app => {
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    fetch* () {
+    *fetch () {
       this.ctx.body = this.app.cache.get(this.query.id);
     }
   };
@@ -67,7 +67,7 @@ Context 是一个**请求级别的对象**，继承自 [koa.Context]。在每一
 
 ### 获取方式
 
-最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Contenxt 实例则和 [koa] 框架在中间件中获取 Context 对象的方式一致。
+最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Context 实例则和 [koa] 框架在中间件中获取 Context 对象的方式一致。
 
 框架的 [Middleware] 同时支持 koa v1 和 koa v2 两种不同的中间件写法，根据不同的写法，获取 Context 实例的方式也稍有不同：
 
@@ -198,7 +198,7 @@ Helper 自身是一个类，有和 [Controller](#controller) 基类一样的属�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    fetch* () {
+    *fetch () {
       const { app, ctx } = this;
       const id = ctx.request.query.id;
       const user = app.cache.get(id);
