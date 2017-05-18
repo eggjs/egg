@@ -35,7 +35,7 @@ exports.remove = function* (ctx) {
 除了这些属性之外，框架另外扩展了 3 个参数的支持：
 
 - overwrite(Boolean)：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。
-- sign（Boolean）：设置是否对 Cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
+- signed（Boolean）：设置是否对 Cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
 - encrypt（Boolean）：设置是否对 Cookie 进行加密，如果设置为 true，则在发送 Cookie 前会对这个键值对的值进行加密，客户端无法读取到 Cookie 的明文值。默认为 false。
 
 在设置 Cookie 时我们需要思考清楚这个 Cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？
@@ -47,7 +47,7 @@ exports.remove = function* (ctx) {
 ```js
 ctx.cookies.set(key, value, {
   httpOnly: false,
-  sign: false,
+  signed: false,
 });
 ```
 
