@@ -841,6 +841,6 @@ exports.show = function* (ctx) {
   ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
   // set one response header
-  ctx.set('show-response-time', userd.toString());
+  ctx.set('show-response-time', used.toString());
 };
 ```
