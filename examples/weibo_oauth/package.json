@@ -1,0 +1,16 @@
+{
+  "name": "weibo-oauth-demo",
+  "main": "dispatch.js",
+  "scripts": {
+    "dev": "egg-bin dev",
+    "start": "node dispatch.js"
+  },
+  "dependencies": {
+    "egg": "*",
+    "koa-passport": "*",
+    "passport-weibo": "*"
+  },
+  "devDependencies": {
+    "egg-bin": "*"
+  }
+}
