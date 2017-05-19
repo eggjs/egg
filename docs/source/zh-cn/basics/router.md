@@ -72,7 +72,7 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.control
 ```js
 app.get('/home', app.controller.home);
 app.get('/user/:id', app.controller.user.page);
-app.post('/admin', isAdmin, 'admin');
+app.post('/admin', isAdmin, app.controller.admin);
 app.post('/user', isLoginUser, hasAdminPermission, app.controller.user.create);
 app.post('/api/v1/comments', app.controller.v1.comments.create); // app/controller/v1/comments.js
 ```
@@ -185,7 +185,7 @@ exports.detail = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('/form', 'form');
+  app.post('/form', app.controller.form);
 };
 
 // app/controller/form.js
