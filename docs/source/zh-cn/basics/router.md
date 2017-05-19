@@ -333,7 +333,7 @@ module.exports = app => {
 
 // app/router/admin.js
 module.exports = app => {
-  app.get('/admin/user', app.controlleradmin.user);
+  app.get('/admin/user', app.controller.admin.user);
   app.get('/admin/log', app.controller.admin.log);
 };
 ```
