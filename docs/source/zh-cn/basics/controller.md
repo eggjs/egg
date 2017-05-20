@@ -53,12 +53,12 @@ module.exports = app => {
 }
 ```
 
-我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 Controller 在 Router 中引用到。
+我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 Controller 在 Router 中引用到，我们可以从 `app.controller` 根据文件名和方法名定位到它。
 
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('createPost', '/api/posts', 'post.create');
+  app.post('createPost', '/api/posts', app.controller.post.create);
 }
 ```
 
@@ -67,7 +67,7 @@ Controller 支持多级目录，例如如果我们将上面的 Controller 代码
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('createPost', '/api/posts', 'sub.post.create');
+  app.post('createPost', '/api/posts', app.controller.sub.post.create);
 }
 ```
 

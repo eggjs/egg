@@ -86,7 +86,7 @@ Then edit the router file and add a mapping.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
+  app.get('/', app.controller.home.index);
 };
 ```
 
@@ -228,8 +228,8 @@ module.exports = app => {
 
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
-  app.get('/news', 'news.list');
+  app.get('/', app.controller.home.index);
+  app.get('/news', app.controller.news.list);
 };
 ```
 
