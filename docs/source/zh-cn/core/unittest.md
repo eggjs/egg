@@ -208,11 +208,10 @@ it('should mock ctx.user', () => {
 ```js
 // Bad
 const mock = require('egg-mock');
-const request = require('supertest');
 describe('bad test', () => {
   const app = mock.app();
   it('should redirect', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect(302);
   });
@@ -228,7 +227,6 @@ Mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就�
 ```js
 // Good
 const mock = require('egg-mock');
-const request = require('supertest');
 describe('good test', () => {
   let app;
   before(() => {
@@ -236,7 +234,7 @@ describe('good test', () => {
     return app.ready();
   });
   it('should redirect', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect(302);
   });
@@ -286,9 +284,9 @@ before(function* () {
 ## Controller 测试
 
 Controller 在整个应用代码里面属于比较难测试的部分了，因为它跟 router 配置紧密相关，
-我们需要利用 [SuperTest](https://github.com/visionmedia/supertest) 发起一个真实请求，
+我们需要利用 `app.httpRequest()` [SuperTest](https://github.com/visionmedia/supertest) 发起一个真实请求，
 来将 Router 和 Controller 连接起来，并且可以帮助我们发送各种满足边界条件的请求数据，
-以测试 Controller 的参数校验完整性。
+以测试 Controller 的参数校验完整性。 `app.httpRequest()` 是 [egg-mock](https://github.com/eggjs/egg-mock) 封装的 [SuperTest](https://github.com/visionmedia/supertest) 请求实例。
 
 例如我们要给 `app/controller/home.js`：
 
@@ -308,7 +306,6 @@ exports.index = function* (ctx) {
 
 ```js
 const assert = require('assert');
-const request = require('supertest');
 const mock = require('egg-mock');
 
 describe('test/controller/home.test.js', () => {
@@ -323,7 +320,7 @@ describe('test/controller/home.test.js', () => {
   describe('GET /', () => {
     it('should status 200 and get the body', () => {
       // 对 app 发起 `GET /` 请求
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect(200) // 期望返回 status 200
         .expect('hello world'); // 期望 body 是 hello world
@@ -331,13 +328,13 @@ describe('test/controller/home.test.js', () => {
 
     it('should send multi requests', function* () {
       // 使用 generator function 方式写测试用例，可以在一个用例中串行发起多次请求
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/')
         .expect(200) // 期望返回 status 200
         .expect('hello world'); // 期望 body 是 hello world
 
       // 再请求一次
-      const result = yield request(app.callback())
+      const result = yield app.httpRequest()
         .get('/')
         .expect(200)
         .expect('hello world');
@@ -349,7 +346,7 @@ describe('test/controller/home.test.js', () => {
 });
 ```
 
-通过 SuperTest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
+通过基于 SuperTest 的 `app.httpRequest()` 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
 例如以 POST 方式发送一个 JSON 请求：
 
 ```js
@@ -362,7 +359,7 @@ exports.post = function* (ctx) {
 it('should status 200 and get the request body', () => {
   // 模拟 CSRF token，下文会详细说明
   app.mockCsrf();
-  return request(app.callback())
+  return app.httpRequest()
     .post('/post')
     .type('form')
     .send({
@@ -388,7 +385,7 @@ it('should status 200 and get the request body', () => {
 
 ```js
 app.mockCsrf();
-return request(app.callback())
+return app.httpRequest()
   .post('/post')
   .type('form')
   .send({
@@ -649,7 +646,7 @@ egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方�
         foo: 'bar',
         uid: 123,
       });
-      return request(app.callback())
+      return app.httpRequest()
         .get('/session')
         .expect(200)
         .expect({
@@ -719,7 +716,7 @@ it('should mock fengmk1 exists', () => {
     };
   });
 
-  return request(app.callback())
+  return app.httpRequest()
     .get('/user?name=fengmk1')
     .expect(200)
     // 返回了原本不存在的用户信息
@@ -736,7 +733,7 @@ it('should mock fengmk1 exists', () => {
 ```js
 it('should mock service error', () => {
   app.mockServiceError('user', 'get', 'mock user service error');
-  return request(app.callback())
+  return app.httpRequest()
     .get('/user?name=fengmk2')
     // service 异常，触发 500 响应
     .expect(500)
@@ -770,7 +767,7 @@ describe('GET /httpclient', () => {
       // 按照请求时的 options.dataType 来做对应的转换
       data: 'mock eggjs.org response',
     });
-    return request(app.callback())
+    return app.httpRequest()
       .get('/httpclient')
       .expect('mock eggjs.org response');
   });
