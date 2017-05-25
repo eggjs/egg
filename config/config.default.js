@@ -239,6 +239,8 @@ module.exports = appInfo => {
     maxSockets: Infinity,
     maxFreeSockets: 256,
     enableDNSCache: false,
+    dnsCacheMaxLength: 1000,
+    dnsCacheMaxAge: 10000,
   };
 
   /**

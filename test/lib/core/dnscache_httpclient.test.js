@@ -127,4 +127,29 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result2.status === 200);
     assert(result2.data.host === 'localhost');
   });
+
+  it('should dnsCacheMaxLength work', function* () {
+    mm.data(dns, 'lookup', '127.0.0.1');
+
+    // reset lru cache
+    mm(app.httpclient.dnsCache, 'max', 1);
+    mm(app.httpclient.dnsCache, 'size', 0);
+    mm(app.httpclient.dnsCache, 'cache', new Map());
+    mm(app.httpclient.dnsCache, '_cache', new Map());
+
+    let obj = urlparse(url + '/get_headers');
+    let result = yield app.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === 'localhost');
+
+    assert(app.httpclient.dnsCache.get('localhost'));
+
+    obj = urlparse(url.replace('localhost', 'another.com') + '/get_headers');
+    result = yield app.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === 'another.com');
+
+    assert(!app.httpclient.dnsCache.get('localhost'));
+    assert(app.httpclient.dnsCache.get('another.com'));
+  });
 });
