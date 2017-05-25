@@ -1,6 +1,6 @@
 title: Build RESTful API
 ---
-Web frameworks are widely used for providing interfaces to the client through web services . Let's use an example [CNode Club](https://cnodejs.org/) to show how to build [RESTful](https://en.wikipedia.org/wiki/REST) API using Egg.
+Web frameworks are widely used for providing interfaces to the client through Web services. Let's use an example [CNode Club](https://cnodejs.org/) to show how to build [RESTful](https://en.wikipedia.org/wiki/REST) API using Egg.
 
 CNode currently use v1 interface is not fully consistent with the RESTful semantic. In the article, we will encapsulate a more RESTful semantic V2 API based on CNode V1 interface.
 
@@ -34,7 +34,7 @@ A example of `topics` is shown below:
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
     "content": "content",
-    "title": "《一起学 Node.js》彻底重写完毕",
+    "title": "Finished Rewriting of Let's Learning Node.js Together",
     "last_reply_at": "2017-01-11T10:20:56.496Z",
     "good": false,
     "top": true,
@@ -56,7 +56,7 @@ A example of `topics` is shown below:
   "author_id": "541bf9b9ad60405c1f151a03",
   "tab": "share",
   "content": "content",
-  "title": "《一起学 Node.js》彻底重写完毕",
+  "title": "Finished Rewriting of Let's Learning Node.js Together",
   "last_reply_at": "2017-01-11T10:20:56.496Z",
   "good": false,
   "top": true,
@@ -71,7 +71,7 @@ A example of `topics` is shown below:
 - status code: 201
 - response body:
 
-```
+```json
 {
   "topic_id": "57ea257b3670ca3f44c5beb6"
 }
