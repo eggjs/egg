@@ -210,10 +210,10 @@ $ npm test
 In conclusion, we can see how to make the framework evolution step by step which benefits from Egg provides the powerful plugin mechanism, code co-build, reusability and modularity.
 
 
-- in general, put codes into `lib/plugin` if it can be reused in the application
-- separate it into a `node module` when plugin becomes stable
-- application with relatively reusable codes will work as a separate plugin
-- abstract as framework to release after application become certain solutions of specified business scenario
-- it would be a great improvement of teamwork after plugins extract, modularize and finally as a framework, beacuase other projects could reuse codes by just `npm install`
+- in general, put codes into `lib/plugin` if it can be reused in the application.
+- separate it into a `node module` when plugin becomes stable.
+- application with relatively reusable codes will work as a separate plugin.
+- abstract as framework to release after application become certain solutions of specified business scenario.
+- it would be a great improvement of teamwork after plugins extract, modularize and finally as a framework, beacuase other projects could reuse codes by just `npm install`.
 
 - **Note：Whether application/plugin/framework, unittest is a must and try to reach 100% coverage**
