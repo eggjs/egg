@@ -149,7 +149,7 @@ module.exports = app => {
 // app/controller/user.js
 
 // 从 egg 上获取
-const Controller = require('egg');
+const egg = require('egg');
 module.exports = UserController extends egg.Controller {
   // implement
 };
