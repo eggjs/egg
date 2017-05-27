@@ -263,8 +263,8 @@ exports.httpclient = {
   freeSocketKeepAliveTimeout: 4000,
   // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
   timeout: 30000,
-  // 允许创建的最大 socket 数 https://github.com/node-modules/utility/blob/master/lib/number.js#L5
-  maxSockets: utility.MAX_SAFE_INTEGER,
+  // 允许创建的最大 socket 数
+  maxSockets: Number.MAX_SAFE_INTEGER,
   // 最大空闲 socket 数
   maxFreeSockets: 256,
   // 是否开启本地 DNS 缓存，默认关闭，开启后有两个特性
