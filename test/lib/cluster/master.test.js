@@ -32,10 +32,10 @@ describe('test/lib/cluster/master.test.js', () => {
       yield sleep(5000);
 
       // error pipe to console
-      app.expect('stdout', /App Worker#1:\d+ disconnect/);
+      app.expect('stdout', /app_worker#1:\d+ disconnect/);
       app.expect('stderr', /nodejs\.AppWorkerDiedError: \[master]/);
-      app.expect('stderr', /App Worker#1:\d+ died/);
-      app.expect('stdout', /App Worker#2:\d+ started/);
+      app.expect('stderr', /app_worker#1:\d+ died/);
+      app.expect('stdout', /app_worker#2:\d+ started/);
     });
 
     it('should restart when app worker throw uncaughtException', function* () {
@@ -50,7 +50,7 @@ describe('test/lib/cluster/master.test.js', () => {
       yield sleep(5000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
-      app.expect('stdout', /App Worker#\d:\d+ started/);
+      app.expect('stdout', /app_worker#\d:\d+ started/);
     });
   });
 
@@ -244,7 +244,7 @@ describe('test/lib/cluster/master.test.js', () => {
 
       setTimeout(() => {
         app.emit('close', 0);
-        app.expect('stdout', /Agent Worker started /);
+        app.expect('stdout', /agent_worker#1:\d+ started /);
         done();
       }, 10000);
     });
