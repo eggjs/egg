@@ -76,7 +76,7 @@ describe('test/lib/plugins/development.test.js', () => {
       .get('/')
       .expect('change');
 
-      app.expect('stdout', /App Worker#2:\d+ started/);
+      app.expect('stdout', /app_worker#2:\d+ started/);
     });
   });
 });

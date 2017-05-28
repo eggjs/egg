@@ -1,5 +1,44 @@
 # History
 
+## 2017-05-28, Version 1.3.1, @dead-horse
+
+* **feature**
+  * use lru to aovid oom when httpclient dns cache enabled
+* **fix**
+  * fix port is missed when httpclient dns cache enabled
+  * fix request url object will be changed when httpclient dns cache enabled
+  * set maxSockets defautl value to Number.MAX_SAFE_INTEGER
+
+* **document**
+  * Documents improved. Thanks @DarrenWong, @zousandian, @lslxdx, @Azard, @johnnychen, @coogleyao, @DanielWLam, @m31271n, @Brian175
+
+### Commits
+
+* [[`7370a62`](http://github.com/eggjs/egg/commit/7370a62e190db55dab3fde7f39f621f449301eaa)] - docs: translate tutorials/restful.md (#908) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`5d8ca65`](http://github.com/eggjs/egg/commit/5d8ca654f311c52fd5faaa939943071c3f69f43f)] - docs: translatebasics/controller.md (#889) (lslxdx <<lslxdx@163.com>>)
+* [[`5b959e0`](http://github.com/eggjs/egg/commit/5b959e0a382491b3111afb66e10b6e866105e0c8)] - docs: translate tutorials/progressive.md to English version (#966) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`35fa5a9c`](http://github.com/eggjs/egg/commit/35fa5a9c4c2d969f66a5e4df28e1da7f69370709)] - fix: set maxSockets defautl value to Number.MAX_SAFE_INTEGER (#938) (tangyao <<2001-wms@163.com>>)
+* [[`5b6fe2b`](http://github.com/eggjs/egg/commit/5b6fe2b187b2c1a4bcee4693b2b1043f2724fe68)] - feat: use lru to aovid oom in dns cache httpclient (#961) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`3c5c0b8`](http://github.com/eggjs/egg/commit/3c5c0b8d81bb63166f6592390d14277d3baca283)] - docs: Fix objects.md typo (#969) (三点 <<zousandian@gmail.com>>)
+* [[`2bca50b`](http://github.com/eggjs/egg/commit/2bca50b2217424b8cdacd48550dcc39a31e50cff)] - docs(core/unittest.md): update with app.httpRequest() (#943) (Weilun Xiong <<330815461@qq.com>>)
+* [[`713e033`](http://github.com/eggjs/egg/commit/713e033f90eb39aad8ac48916985396ca5282815)] - docs: app.controller.foo instead of 'foo' (#942) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`cfc76ec`](http://github.com/eggjs/egg/commit/cfc76ec721460780d703ead1dfdd315ed484e5c8)] - fix spell error from sign to signed (#932) (johnnychen <<johnnychq@gmail.com>>)
+* [[`12499d6`](http://github.com/eggjs/egg/commit/12499d636dd471f35e54aad9f09b5f452ea198bf)] - docs: fix yield db.query for en (#930) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`25c7c95`](http://github.com/eggjs/egg/commit/25c7c95bff9eb51baf4f93724444982209872895)] - docs: translate basics/router.md (#896) (lslxdx <<lslxdx@163.com>>)
+* [[`a5c7ac4`](http://github.com/eggjs/egg/commit/a5c7ac462a275c5393f93308a7f31b21cba524a2)] - docs: translate basics/service.md (lslxdx <<lslxdx@163.com>>)
+* [[`7ee5de6`](http://github.com/eggjs/egg/commit/7ee5de6b0ad628332a5c130eb5a405b993a98c60)] - docs: translate basics/extend.md (#884) (DanielLam <<lwd931227@126.com>>)
+* [[`9bf3a65`](http://github.com/eggjs/egg/commit/9bf3a6511469ee85963096836ae8c2421313448d)] - docs: Update env.md (#918) (m31271n <<m31271n@2players.studio>>)
+* [[`b3825f3`](http://github.com/eggjs/egg/commit/b3825f33406c01ebc19b16519eccfca9f60e770f)] - docs: fix objects.md (#928) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`fd04ea2`](http://github.com/eggjs/egg/commit/fd04ea222af962e7fe9b82d108a0bd6f23b32891)] - docs: add document for built-in objects (#914) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`6180d5d`](http://github.com/eggjs/egg/commit/6180d5db90047a58222ba24d660c1a19b93648f3)] - docs: use names of constants declared (#923) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`02b02e0`](http://github.com/eggjs/egg/commit/02b02e0faf0d423105136723b9d2938a182fd486)] - docs: using a doctools as a external lib (#913) (Haoliang Gao <<sakura9515@gmail.com>>)
+* [[`5113088`](http://github.com/eggjs/egg/commit/51130889ad8d75baa157c43d9b88e7d08c6067fe)] - fix(docs):  yield db.query (#921) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`ddd342c`](http://github.com/eggjs/egg/commit/ddd342c84358319aaffe9ee6eab90c2df1a2e9dc)] - docs: translate basic/config.md (#875) (Brian175 <<zhangweilu@buaa.edu.cn>>)
+* [[`ae99e5d`](http://github.com/eggjs/egg/commit/ae99e5d6ee032171d17ce7ce67a8cb3c2f7bd04b)] - fix(docs): basics/structure.md link agent typo (#909) (Weilun Xiong <<330815461@qq.com>>)
+* [[`fac3e0c`](http://github.com/eggjs/egg/commit/fac3e0c7306b1143698c29a3685c8116c36b1434)] - refactor: rename private method name to symbol (#904) (Yu Qi <<njuyuqi@gmail.com>>)
+* [[`8115c57`](http://github.com/eggjs/egg/commit/8115c575ea082a92ebda5e4fd08ba4ad37e47bc0)] - docs: translate docs/source/zh-cn/tutorials/mysql.md  (#883) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`e13c515`](http://github.com/eggjs/egg/commit/e13c515226566ae3c87c35b575a8e914e75c6a0b)] - Release 1.3.0 (#885) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2017-05-11, Version 1.3.0, @fengmk2
 
 ### Notable changes
