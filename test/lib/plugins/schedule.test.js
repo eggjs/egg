@@ -11,6 +11,7 @@ describe('test/lib/plugins/schedule.test.js', () => {
     const app = utils.cluster('apps/schedule', {
       workers: 2,
     });
+    app.coverage(false);
     yield app.ready();
     yield sleep(5000);
     yield app.close();
