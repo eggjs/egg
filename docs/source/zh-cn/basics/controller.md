@@ -349,8 +349,8 @@ module.exports = function* (ctx) {
 
 要通过 `context.getFileStream` 便捷的获取到用户上传的文件，需要满足两个条件：
 
-- 上传文件必须在其他 field 之前。
 - 只支持上传一个文件。
+- 上传文件必须在所有其他的 fields 后面，否则在拿到文件流时可能还获取不到 fields。
 
 如果要获取同时上传的多个文件，不能通过 `ctx.getFileStream()` 来获取，只能通过下面这种方式：
 
