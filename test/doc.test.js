@@ -1,21 +1,29 @@
 'use strict';
 
-const cp = require('child_process');
-const sleep = require('mz-modules/sleep');
+const path = require('path');
 const findlinks = require('findlinks');
 const assert = require('assert');
+const runscript = require('runscript');
+const utils = require('./utils');
 
 describe.only('test/doc.test.js', () => {
 
-  let proc;
+  let app;
   before(function* () {
-    proc = cp.fork(require.resolve('egg-doctools/bin/_doctools'), [ 'server' ]);
-    yield sleep(10000);
+    yield runscript('doctools build', { cwd: path.dirname(__dirname) });
   });
-  after(() => proc.kill());
+  before(function* () {
+    app = utils.cluster({
+      baseDir: 'apps/docapp',
+    });
+    app.coverage(false);
+    yield app.ready();
+  });
+  after(() => app.close());
 
   it('should no broken url', function* () {
-    const result = yield findlinks({ src: 'http://localhost:4000', logger: console });
+    console.log(app.url);
+    const result = yield findlinks({ src: app.url, logger: console });
     assert(result.fail === 0);
   });
 });
