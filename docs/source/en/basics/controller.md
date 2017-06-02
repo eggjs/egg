@@ -159,7 +159,7 @@ Content-Type: application/json; charset=UTF-8
 {"title": "controller", "content": "what is controller"}
 ```
 
-The 1st line of the request contains 3 information, first 2 of which are commonly used: 
+The 1st line of the request contains 3 information, first 2 of which are commonly used:
 
 - method: it's `POST` in this example.
 - path: it's `/api/posts`, the query, if any, is placed here too.
@@ -171,7 +171,7 @@ From the 2nd line to the place where the 1st empty line appears is the Header pa
 
 The whole following content is the request body, which can be set by POST, PUT, DELETE, etc. methods and the server resolves the request body according to Content-Type.
 
-When the sever finishes to process the request, a HTTP response is send back to the client: 
+When the sever finishes to process the request, a HTTP response is send back to the client:
 
 ```
 HTTP/1.1 201 Created
@@ -195,7 +195,7 @@ It can be seen from the above HTTP request examples that there are many places c
 
 ### query
 
-Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`: 
+Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`:
 
 ```js
 exports.listPosts = function* (ctx) {
@@ -336,8 +336,8 @@ module.exports = function* (ctx) {
 
 To acquire user uploaded files conveniently by `context.getFileStream`, 2 conditions must be matched:
 
-- file uploading must appear before other fields.
-- only 1 file can be uploaded in the same time.
+- only one file can be uploaded in the same time.
+- file uploading must appear after other fields, otherwise we may can't access fields when we got file stream.
 
 If more than 1 file are to be uploaded, `ctx.getFileStream()` is no longer the way but the following:
 
