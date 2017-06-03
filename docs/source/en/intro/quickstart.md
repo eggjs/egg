@@ -180,10 +180,10 @@ module.exports = appInfo => {
 
   // add config
   config.view = {
-      defaultViewEngine: 'nunjucks',
-      mapping: {
-        '.tpl': 'nunjucks',    
-      },
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+     '.tpl': 'nunjucks',    
+    },
   }
   return config;
 };

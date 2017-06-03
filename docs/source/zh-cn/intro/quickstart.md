@@ -166,10 +166,10 @@ module.exports = appInfo => {
 
   // 添加配置
   config.view = {
-      defaultViewEngine: 'nunjucks',
-      mapping: {
-        '.tpl': 'nunjucks',    
-      },
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.tpl': 'nunjucks',    
+    },
   }
   return config;
 };
