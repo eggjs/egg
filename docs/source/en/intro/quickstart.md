@@ -174,11 +174,18 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-exports.view = {
-  defaultViewEngine: 'nunjucks',
-  mapping: {
-    '.tpl': 'nunjucks',
-  },
+module.exports = appInfo => {
+  const config = {};
+  config.keys = appInfo.name + '...';
+
+  // add config
+  config.view = {
+      defaultViewEngine: 'nunjucks',
+      mapping: {
+        '.tpl': 'nunjucks',    
+      },
+  }
+  return config;
 };
 ```
 
