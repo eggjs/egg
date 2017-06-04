@@ -6,7 +6,7 @@ const assert = require('assert');
 const runscript = require('runscript');
 const utils = require('./utils');
 
-describe.only('test/doc.test.js', () => {
+describe('test/doc.test.js', () => {
 
   let app;
   before(function* () {
