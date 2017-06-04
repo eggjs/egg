@@ -6,6 +6,8 @@ const assert = require('assert');
 const runscript = require('runscript');
 const utils = require('./utils');
 
+if (process.platform === 'win32') return;
+
 describe('test/doc.test.js', () => {
 
   let app;
