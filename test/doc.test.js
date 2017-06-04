@@ -22,7 +22,6 @@ describe('test/doc.test.js', () => {
   after(() => app.close());
 
   it('should no broken url', function* () {
-    console.log(app.url);
     const result = yield findlinks({ src: app.url, logger: console });
     assert(result.fail === 0);
   });
