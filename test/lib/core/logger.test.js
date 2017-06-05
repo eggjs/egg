@@ -7,7 +7,6 @@ const mm = require('egg-mock');
 const request = require('supertest');
 const Logger = require('egg-logger');
 const sleep = require('mz-modules/sleep');
-
 const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
@@ -28,6 +27,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.INFO);
+    assert(app.config.logger.disableConsoleAfterReady === true);
   });
 
   it('should got right level on local env', function* () {
@@ -40,6 +40,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.WARN);
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should set EGG_LOG level on local env', function* () {
@@ -52,7 +53,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.ERROR);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.ERROR);
-    return app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should got right config on unittest env', function* () {
@@ -65,7 +66,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.WARN);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.WARN);
-    return app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should set log.consoleLevel to env.EGG_LOG', function* () {
@@ -82,6 +83,7 @@ describe('test/lib/core/logger.test.js', () => {
     mm(process.env, 'EGG_LOG', 'NONE');
     app = utils.app('apps/nobuffer-logger');
     yield app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
 
     const ctx = app.mockContext();
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
@@ -102,6 +104,7 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-production-app');
     yield app.ready();
 
+    assert(app.config.logger.disableConsoleAfterReady === true);
     const ctx = app.mockContext();
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
     // app.config.logger.buffer.should.equal(true);
