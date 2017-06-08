@@ -18,7 +18,7 @@ title: Config 配置
 ```
 config
 |- config.default.js
-|- config.test.js
+|- config.unittest.js
 |- config.prod.js
 |- config.unittest.js
 `- config.local.js
