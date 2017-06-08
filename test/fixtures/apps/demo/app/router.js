@@ -12,4 +12,6 @@ module.exports = app => {
   app.get('/ip', app.controller.ip);
 
   app.get('/class-controller', 'foo.bar');
+
+  app.get('/deprecate', 'deprecate.call');
 };

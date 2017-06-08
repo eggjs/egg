@@ -161,6 +161,11 @@ describe('test/lib/application.test.js', () => {
         assert(deprecate._namespace === 'egg');
         assert(deprecate === app.deprecate);
       });
+
+      it.only('should deprecate', function* () {
+        yield request(app.callback())
+          .get('/deprecate');
+      });
     });
 
     describe('curl()', () => {
