@@ -5,7 +5,6 @@ const path = require('path');
 const request = require('supertest');
 const pedding = require('pedding');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/development.test.js', () => {
