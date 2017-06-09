@@ -66,17 +66,5 @@ describe('test/lib/plugins/development.test.js', () => {
       fs.writeFileSync(filepath, body);
     });
 
-    it('should reload when file changed', function* () {
-      fs.writeFileSync(filepath, 'module.exports = function*() { this.body = \'change\'; };');
-      // wait for app worker restart
-
-      yield sleep(10000);
-
-      yield request(app.callback())
-      .get('/')
-      .expect('change');
-
-      app.expect('stdout', /app_worker#2:\d+ started/);
-    });
   });
 });
