@@ -45,7 +45,7 @@ module.exports = app => {
 
 ## Schedule
 
-[Schedule] also support async function，task need to follow the below rules to replace generator function with async function.
+[Schedule] also support async function，tasks need to follow the rules above to replace generator function with async function.
 
 ```js
 module.exports = {
@@ -68,7 +68,7 @@ module.exports = {
 
 All middlewares，including [Standard](../basics/middleware.md) and [Using Middleware in Router](../basics/router.md#Using Middleware) can be writeen with async function, but argument lists changed comparing to the middleware in generator function, similar to Koa v2.x：
 
-- first parameter `ctx`，the request context，instance of [Context](../basics/extend.md#Context).
+- first parameter `ctx`，the request context，instance of [Context](../basics/extend.md#Context) .
 - second parameter `next`，use await to execute the logic of middleware.
 
 ```js
@@ -145,7 +145,7 @@ While both functions are exactly the same models, but [co] has some speical hand
   }
   ```
 
-@sindresorhus writing lots of [helpers based on promise](https://github.com/sindresorhus/promise-fun)，flexible use with async function can make code more readable
+@sindresorhus writing lots of [helpers based on promise](https://github.com/sindresorhus/promise-fun)，flexible use with async function can make code more readable.
 
 ----
 
