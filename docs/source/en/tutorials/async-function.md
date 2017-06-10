@@ -1,4 +1,4 @@
-title: Develop with Async Function
+title: Development with Async Function
 ---
 
 [Previous chapter](../intro/egg-and-koa.md#async-function) introduces [async function] is a js language level's syntax that providing asynchronous solutions，and Node.js will upgrade v8 to version 5.5 since 7.6.0, then async function don't need to be enabled by flag. Framework default support async function，and can use async function to replace generator function.
