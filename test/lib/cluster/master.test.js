@@ -1,28 +1,25 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest');
 const coffee = require('coffee');
 const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/master.test.js', () => {
-
   afterEach(mm.restore);
 
   describe('app worker die', () => {
     let app;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/app-die');
-      app.coverage(false);
+      app = utils.cluster('apps/app-die', { coverage: false });
       return app.ready();
     });
     after(() => app.close());
 
     it('should restart after app worker exit', function* () {
       try {
-        yield request(app.callback())
+        yield app.httpRequest()
           .get('/exit');
       } catch (_) {
         // do nothing
@@ -40,7 +37,7 @@ describe('test/lib/cluster/master.test.js', () => {
 
     it('should restart when app worker throw uncaughtException', function* () {
       try {
-        yield request(app.callback())
+        yield app.httpRequest()
           .get('/uncaughtException');
       } catch (_) {
         // do nothing
@@ -61,7 +58,7 @@ describe('test/lib/cluster/master.test.js', () => {
 
     it('should master exit with 1', done => {
       mm.consoleLevel('NONE');
-      master = utils.cluster('apps/worker-die', { coverage: true });
+      master = utils.cluster('apps/worker-die', { coverage: false });
       master.expect('code', 1).ready(done);
     });
   });
@@ -72,7 +69,7 @@ describe('test/lib/cluster/master.test.js', () => {
     afterEach(() => app.close());
 
     it('should dev env stdout message include "Egg started"', done => {
-      app = utils.cluster('apps/master-worker-started', { coverage: true });
+      app = utils.cluster('apps/master-worker-started', { coverage: false });
       app.expect('stdout', /Egg started/).ready(done);
     });
 
@@ -89,20 +86,20 @@ describe('test/lib/cluster/master.test.js', () => {
     let app;
     before(() => {
       mm.consoleLevel('NONE');
-      app = utils.cluster('apps/cluster_mod_app', { coverage: true });
+      app = utils.cluster('apps/cluster_mod_app', { coverage: false });
       return app.ready();
     });
     after(() => app.close());
 
     it('should online cluster mode startup success', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect('hi cluster')
         .expect(200);
     });
 
     it('should assign a free port by master', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/clusterPort')
         .expect(/\d+/)
         .expect(200);
@@ -112,13 +109,13 @@ describe('test/lib/cluster/master.test.js', () => {
   describe('--dev', () => {
     let app;
     before(() => {
-      app = utils.cluster('apps/cluster_mod_app', { coverage: true });
+      app = utils.cluster('apps/cluster_mod_app', { coverage: false });
       return app.ready();
     });
     after(() => app.close());
 
     it('should dev cluster mode startup success', () => {
-      return request(app)
+      return app.httpRequest()
         .get('/')
         .expect('hi cluster')
         .expect(200);
@@ -130,41 +127,43 @@ describe('test/lib/cluster/master.test.js', () => {
     let app2;
     before(function* () {
       mm.consoleLevel('NONE');
-      app1 = utils.cluster('apps/cluster_mod_app', { coverage: true });
-      app2 = utils.cluster('apps/cluster_mod_app', { coverage: true });
+      app1 = utils.cluster('apps/cluster_mod_app', { coverage: false });
+      app2 = utils.cluster('apps/cluster_mod_app', { coverage: false });
       yield [
         app1.ready(),
         app2.ready(),
       ];
     });
-    after(() => {
-      app1.close();
-      app2.close();
+    after(function* () {
+      yield [
+        app1.close(),
+        app2.close(),
+      ];
     });
 
     it('should online cluster mode startup success, app1', () => {
-      return request(app1.callback())
+      return app1.httpRequest()
         .get('/')
         .expect('hi cluster')
         .expect(200);
     });
 
     it('should assign a free port by master, app1', () => {
-      return request(app1.callback())
+      return app1.httpRequest()
         .get('/clusterPort')
         .expect(/\d+/)
         .expect(200);
     });
 
     it('should online cluster mode startup success, app2', () => {
-      return request(app2.callback())
+      return app2.httpRequest()
         .get('/')
         .expect('hi cluster')
         .expect(200);
     });
 
     it('should assign a free port by master, app2', () => {
-      return request(app2.callback())
+      return app2.httpRequest()
         .get('/clusterPort')
         .expect(/\d+/)
         .expect(200);
@@ -177,13 +176,13 @@ describe('test/lib/cluster/master.test.js', () => {
       before(() => {
         mm.env('prod');
         mm.home(utils.getFilepath('apps/custom-env-app'));
-        app = utils.cluster('apps/custom-env-app');
+        app = utils.cluster('apps/custom-env-app', { coverage: false });
         return app.ready();
       });
       after(() => app.close());
 
       it('should start with prod env', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/')
           .expect({
             env: 'prod',
@@ -201,13 +200,14 @@ describe('test/lib/cluster/master.test.js', () => {
       mm.home(utils.getFilepath('apps/aliyun-egg-app'));
       app = utils.cluster('apps/aliyun-egg-app', {
         customEgg: utils.getFilepath('apps/aliyun-egg-biz'),
+        coverage: false,
       });
       return app.ready();
     });
     after(() => app.close());
 
     it('should start success', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect({
           'aliyun-egg-core': true,
@@ -249,5 +249,4 @@ describe('test/lib/cluster/master.test.js', () => {
       }, 10000);
     });
   });
-
 });
