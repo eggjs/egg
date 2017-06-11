@@ -7,7 +7,7 @@ title: Development with Async Function
 
 ## Controller & Service
 
-In [controller]，there are two mothods to write a controller：Controller Class and Method. Any implementations using generator function can use async function instead without logic change，just modify yield syntax to await.
+In [controller]，there are two methods to write a controller：Controller Class and Method. Any implementations using generator function can use async function instead without logic change，just modify yield syntax to await.
 Also in [service] and [controller]，all async function can use async function to replace generator function。
 
 For example, replacing codes in the [controller] with async function：
@@ -41,7 +41,7 @@ module.exports = app => {
 }
 ```
 
-**Note： Using await to call `service.post.create()`  in the contorller, it might need be called after adjusting `service.post.create()` to async function if `service.post.create()` also use generator function**
+**Note： Using await to call `service.post.create()`  in the controller, it might need be called after adjusting `service.post.create()` to async function if `service.post.create()` also use generator function**
 
 ## Schedule
 
@@ -49,12 +49,12 @@ module.exports = app => {
 
 ```js
 module.exports = {
-  // config the schedule tasks throught the attributes of schedule
+  // config the schedule tasks through the attributes of schedule
   schedule: {
     interval: '1m', // 1 minute interval
     type: 'all', // assign all workers are needed to execute
   },
-  // task is the function that running within schedule taks, first parameter is instance of anonymous ctx
+  // task is the function that running within schedule tasks, first parameter is instance of anonymous ctx
   async task(ctx) {
     const res = await ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
@@ -66,7 +66,7 @@ module.exports = {
 
 ## Middleware
 
-All middlewares，including [Standard](../basics/middleware.md) and [Using Middleware in Router](../basics/router.md#Using Middleware) can be writeen with async function, but argument lists changed comparing to the middleware in generator function, similar to Koa v2.x：
+All middlewares，including [Standard](../basics/middleware.md) and [Using Middleware in Router](../basics/router.md#Using Middleware) can be written with async function, but argument lists changed comparing to the middleware in generator function, similar to Koa v2.x：
 
 - first parameter `ctx`，the request context，instance of [Context](../basics/extend.md#Context) .
 - second parameter `next`，use await to execute the logic of middleware.
@@ -117,7 +117,7 @@ async function getUser() {
 
 ## Slight of Difference with Generator Function
 
-While both functions are exactly the same models, but [co] has some speical handling such as supporting yield  an array (object), which are not native in the async function. But you can easily implement these functions based on some Promise libraries and methods. 
+While both functions are exactly the same models, but [co] has some special handling such as supporting yield an array (object), which are not native in the async function. But you can easily implement these functions based on some Promise libraries and methods. 
 
 - generator function
 
