@@ -10,7 +10,6 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
   before(function* () {
     mm.consoleLevel('NONE');
     app = utils.app('apps/cluster_mod_app');
-    app.coverage(true);
     yield app.ready();
   });
   after(function* () {
