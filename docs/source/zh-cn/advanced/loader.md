@@ -191,7 +191,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - `app/service/user-info.js` => `app.service.userInfo`
 - `app/service/userInfo.js` => `app.service.userInfo`
 
-Loader 还提供了 [caseStyle](#caseStyle-boolean) 强制指定首字母大小写，比如加载 model 时 API 首字母大写，`app/model/user.js` => `app.model.User`，就可以指定 `caseStyle: 'upper'`。
+Loader 还提供了 [caseStyle](#caseStyle-string) 强制指定首字母大小写，比如加载 model 时 API 首字母大写，`app/model/user.js` => `app.model.User`，就可以指定 `caseStyle: 'upper'`。
 
 ## 扩展 Loader
 
