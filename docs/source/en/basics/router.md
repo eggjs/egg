@@ -133,7 +133,7 @@ module.exports = app => {
 
 // app/controller/search.js
 module.exports = function* (ctx) {
-  ctx.body = `search: ${this.query.name}`;
+  ctx.body = `search: ${ctx.query.name}`;
 };
 
 // curl http://127.0.0.1:7001/search?name=egg
@@ -265,9 +265,9 @@ module.exports = app => {
 };
 
 // app/controller/search.js
-module.exports = function* () {
-  const type = this.query.type;
-  const q = this.query.q || 'nodejs';
+module.exports = function* (ctx) {
+  const type = ctx.query.type;
+  const q = ctx.query.q || 'nodejs';
 
   if (type === 'bing') {
     this.redirect(`http://cn.bing.com/search?q=${q}`);
@@ -288,7 +288,7 @@ Here we just briefly explain how to use the middleware, and refer to [Middleware
 ```js
 // app/controller/search.js
 module.exports = function* (ctx) {
-  ctx.body = `search: ${this.query.name}`;
+  ctx.body = `search: ${ctx.query.name}`;
 };
 
 // app/middleware/uppercase.js
