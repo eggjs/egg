@@ -12,7 +12,8 @@ describe('test/lib/cluster/master.test.js', () => {
     let app;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/app-die', { coverage: false });
+      app = utils.cluster('apps/app-die');
+      app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
@@ -58,7 +59,8 @@ describe('test/lib/cluster/master.test.js', () => {
 
     it('should master exit with 1', done => {
       mm.consoleLevel('NONE');
-      master = utils.cluster('apps/worker-die', { coverage: false });
+      master = utils.cluster('apps/worker-die');
+      master.coverage(false);
       master.expect('code', 1).ready(done);
     });
   });
@@ -69,7 +71,8 @@ describe('test/lib/cluster/master.test.js', () => {
     afterEach(() => app.close());
 
     it('should dev env stdout message include "Egg started"', done => {
-      app = utils.cluster('apps/master-worker-started', { coverage: false });
+      app = utils.cluster('apps/master-worker-started');
+      app.coverage(false);
       app.expect('stdout', /Egg started/).ready(done);
     });
 
@@ -77,7 +80,8 @@ describe('test/lib/cluster/master.test.js', () => {
       mm.env('prod');
       mm.consoleLevel('NONE');
       mm.home(utils.getFilepath('apps/mock-production-app/config'));
-      app = utils.cluster('apps/mock-production-app', { coverage: true });
+      app = utils.cluster('apps/mock-production-app');
+      app.coverage(true);
       app.expect('stdout', /Egg started/).ready(done);
     });
   });
@@ -86,7 +90,8 @@ describe('test/lib/cluster/master.test.js', () => {
     let app;
     before(() => {
       mm.consoleLevel('NONE');
-      app = utils.cluster('apps/cluster_mod_app', { coverage: false });
+      app = utils.cluster('apps/cluster_mod_app');
+      app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
@@ -109,7 +114,8 @@ describe('test/lib/cluster/master.test.js', () => {
   describe('--dev', () => {
     let app;
     before(() => {
-      app = utils.cluster('apps/cluster_mod_app', { coverage: false });
+      app = utils.cluster('apps/cluster_mod_app');
+      app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
@@ -127,8 +133,10 @@ describe('test/lib/cluster/master.test.js', () => {
     let app2;
     before(function* () {
       mm.consoleLevel('NONE');
-      app1 = utils.cluster('apps/cluster_mod_app', { coverage: false });
-      app2 = utils.cluster('apps/cluster_mod_app', { coverage: false });
+      app1 = utils.cluster('apps/cluster_mod_app');
+      app1.coverage(false);
+      app2 = utils.cluster('apps/cluster_mod_app');
+      app2.coverage(false);
       yield [
         app1.ready(),
         app2.ready(),
@@ -176,7 +184,8 @@ describe('test/lib/cluster/master.test.js', () => {
       before(() => {
         mm.env('prod');
         mm.home(utils.getFilepath('apps/custom-env-app'));
-        app = utils.cluster('apps/custom-env-app', { coverage: false });
+        app = utils.cluster('apps/custom-env-app');
+        app.coverage(false);
         return app.ready();
       });
       after(() => app.close());
@@ -200,8 +209,8 @@ describe('test/lib/cluster/master.test.js', () => {
       mm.home(utils.getFilepath('apps/aliyun-egg-app'));
       app = utils.cluster('apps/aliyun-egg-app', {
         customEgg: utils.getFilepath('apps/aliyun-egg-biz'),
-        coverage: false,
       });
+      app.coverage(false);
       return app.ready();
     });
     after(() => app.close());
