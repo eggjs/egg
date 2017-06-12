@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/i18n.test.js', () => {
@@ -13,7 +12,7 @@ describe('test/lib/plugins/i18n.test.js', () => {
 
   describe('ctx.__(key, value)', () => {
     it('should return locale de', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/message?locale=de')
         .expect(200)
         .expect('Set-Cookie', /locale=de; path=\/; expires=[^;]+ GMT/)
@@ -34,7 +33,7 @@ describe('test/lib/plugins/i18n.test.js', () => {
 
   describe('view render with __(key, value)', () => {
     it('should render with default locale: en-US', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect(200)
         .expect('Set-Cookie', /locale=en-us; path=\/; expires=[^;]+ GMT/)
@@ -42,7 +41,7 @@ describe('test/lib/plugins/i18n.test.js', () => {
     });
 
     it('should render with query locale: zh_CN', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/?locale=zh_CN')
         .set('Host', 'foo.example.com')
         .expect(200)

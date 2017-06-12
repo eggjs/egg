@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/app/extend/helper.test.js', () => {
@@ -13,14 +12,14 @@ describe('test/app/extend/helper.test.js', () => {
 
   describe('pathFor()', () => {
     it('should get home path url', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/pathFor')
         .expect('/home')
         .expect(200);
     });
 
     it('should get home path with params', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/pathFor?foo=bar')
         .expect('/home?foo=bar')
         .expect(200);
@@ -29,14 +28,14 @@ describe('test/app/extend/helper.test.js', () => {
 
   describe('urlFor()', () => {
     it('should get full home url', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/urlFor')
         .expect(/^http:\/\/127\.0\.0\.1:\d+\/home$/)
         .expect(200);
     });
 
     it('should get full home url with params', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/urlFor?foo=1')
         .expect(/^http:\/\/127\.0\.0\.1:\d+\/home\?foo=1$/)
         .expect(200);
@@ -46,7 +45,7 @@ describe('test/app/extend/helper.test.js', () => {
 
   describe('escape()', () => {
     it('should escape script', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/escape')
         .expect('&lt;script&gt;')
         .expect(200);
@@ -55,7 +54,7 @@ describe('test/app/extend/helper.test.js', () => {
 
   describe('shtml()', () => {
     it('should ignore attribute if domain not in domainWhiteList', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/shtml-not-in-domain-whitelist')
         .expect('true')
         .expect(200);

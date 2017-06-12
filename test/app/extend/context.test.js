@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
-const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const assert = require('assert');
 const utils = require('../../utils');
@@ -22,7 +21,7 @@ describe('test/app/extend/context.test.js', () => {
       yield app.ready();
       const logdir = app.config.logger.dir;
 
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/logger?message=foo')
       .expect('logger');
 
@@ -54,7 +53,7 @@ describe('test/app/extend/context.test.js', () => {
         userId: '123123',
       });
 
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/logger?message=foo')
       .expect('logger');
 
@@ -83,7 +82,7 @@ describe('test/app/extend/context.test.js', () => {
       yield app.ready();
       const logdir = app.config.logger.dir;
 
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/logger?message=foo')
       .expect('logger');
 
@@ -114,13 +113,13 @@ describe('test/app/extend/context.test.js', () => {
     after(() => app.close());
 
     it('should return null when logger is not found', () => {
-      return request(app.callback())
+      return app.httpRequest()
       .get('/noExistLogger')
       .expect('null');
     });
 
     it('should log with padding message', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/logger')
         .expect(200);
 
@@ -141,7 +140,7 @@ describe('test/app/extend/context.test.js', () => {
     after(() => app.close());
 
     it('should log with custom logger', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect('work, logger: exists');
     });
@@ -157,7 +156,7 @@ describe('test/app/extend/context.test.js', () => {
 
     describe('ctx.router', () => {
       it('should work', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/')
           .expect(200)
           .expect('{"path":"/","foo":1,"bar":2}');
@@ -174,13 +173,13 @@ describe('test/app/extend/context.test.js', () => {
     after(() => app.close());
 
     it('should same this.locals ref on every request ', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/ctx_same_ref')
         .expect('true');
     });
 
     it('should this.locals merge app.locals data', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/ctx_merge_app')
         .expect({
           a: 1,
@@ -189,7 +188,7 @@ describe('test/app/extend/context.test.js', () => {
     });
 
     it('should this.locals cover app.locals data', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/ctx_override_app')
         .expect({
           a: 'ctx.a',
@@ -198,7 +197,7 @@ describe('test/app/extend/context.test.js', () => {
     });
 
     it('should not change this.locals data when app.locals change again', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/ctx_app_update_can_not_affect_ctx')
         .expect({
           a: 'app.a',
@@ -208,7 +207,7 @@ describe('test/app/extend/context.test.js', () => {
     });
 
     it('should locals only support object format', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/set_only_support_object')
         .expect({
           'ctx.locals.object': true,
@@ -234,7 +233,7 @@ describe('test/app/extend/context.test.js', () => {
     after(() => app.close());
 
     it('should run background task success', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/')
         .expect(200)
         .expect('hello');
@@ -249,7 +248,7 @@ describe('test/app/extend/context.test.js', () => {
 
     it('should run background task error', function* () {
       mm.consoleLevel('NONE');
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/error')
         .expect(200)
         .expect('hello error');
@@ -322,7 +321,7 @@ describe('test/app/extend/context.test.js', () => {
 
     describe('ctx.ip', () => {
       it('should get current request ip', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/ip')
           .expect(200)
           .expect({
@@ -331,7 +330,7 @@ describe('test/app/extend/context.test.js', () => {
       });
 
       it('should set current request ip', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/ip?set_ip=10.2.2.2')
           .expect(200)
           .expect({

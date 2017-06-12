@@ -1,7 +1,6 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest');
 const assert = require('assert');
 const dns = require('dns');
 const urlparse = require('url').parse;
@@ -23,36 +22,36 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   afterEach(mm.restore);
 
   it('should ctx.curl work and set host', function* () {
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers') + '&host=localhost.foo.com')
       .expect(200)
       .expect(/"host":"localhost\.foo\.com"/);
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers') + '&Host=localhost2.foo.com')
       .expect(200)
       .expect(/"host":"localhost2\.foo\.com"/);
   });
 
   it('should throw error when the first dns lookup fail', function* () {
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent('http://notexists-1111111local-domain.com'))
       .expect(500)
       .expect(/getaddrinfo ENOTFOUND notexists-1111111local-domain\.com/);
   });
 
   it('should use local cache dns result when dns lookup error', function* () {
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);
     // mock local cache expires and mock dns lookup throw error
     app.httpclient.dnsCache.get('localhost').timestamp = 0;
     mm.error(dns, 'lookup', 'mock dns lookup error');
-    yield request(app.callback())
+    yield app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);

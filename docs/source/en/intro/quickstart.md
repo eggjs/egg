@@ -424,7 +424,6 @@ Unit Testing is very important, and Egg also provide [egg-bin] to help you write
 // test/app/middleware/robot.test.js
 const assert = require('assert');
 const mock = require('egg-mock');
-const request = require('supertest');
 
 describe('test/app/middleware/robot.test.js', () => {
   let app;
@@ -436,7 +435,7 @@ describe('test/app/middleware/robot.test.js', () => {
   afterEach(mock.restore);
 
   it('should block robot', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
@@ -459,7 +458,7 @@ Then add `npm scripts`.
 Also install dependencies.
 
 ```bash
-$ npm i egg-mock supertest --save-dev
+$ npm i egg-mock --save-dev
 ```
 
 Run it.

@@ -4,7 +4,6 @@ const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
-const request = require('supertest');
 const Logger = require('egg-logger');
 const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
@@ -211,7 +210,7 @@ describe('test/lib/core/logger.test.js', () => {
     after(() => app.close());
 
     it('should save debug log to file', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/')
       .expect('ok')
       .end(err => {

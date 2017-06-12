@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const querystring = require('querystring');
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/app/middleware/body_parser.test.js', () => {
@@ -13,7 +12,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   before(done => {
     app = utils.app('apps/body_parser_testapp');
     app.ready(() => {
-      request(app.callback())
+      app.httpRequest()
       .get('/test/body_parser/user')
       .expect(200, (err, res) => {
         assert(!err);
@@ -29,7 +28,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   afterEach(() => app1 && app1.close());
 
   it('should 200 when post form body below the limit', done => {
-    request(app.callback())
+    app.httpRequest()
     .post('/test/body_parser/user')
     .set('Cookie', cookies)
     .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -41,7 +40,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   it('should 200 when post json body below the limit', done => {
-    request(app.callback())
+    app.httpRequest()
     .post('/test/body_parser/user')
     .set('Cookie', cookies)
     .set('Content-Type', 'application/json')
@@ -54,7 +53,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
     app1 = utils.app('apps/body_parser_testapp_disable');
     yield app1.ready();
 
-    yield request(app1.callback())
+    yield app1.httpRequest()
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar', ']': 'toString' })
     .expect(204);
@@ -64,12 +63,12 @@ describe('test/app/middleware/body_parser.test.js', () => {
     app1 = utils.app('apps/body_parser_testapp_ignore');
     yield app1.ready();
 
-    yield request(app1.callback())
+    yield app1.httpRequest()
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar', ']': 'toString' })
     .expect(204);
 
-    yield request(app1.callback())
+    yield app1.httpRequest()
     .post('/test/body_parser/form.json')
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .send({ foo: 'bar', ']': 'toString' })
@@ -80,12 +79,12 @@ describe('test/app/middleware/body_parser.test.js', () => {
     app1 = utils.app('apps/body_parser_testapp_match');
     yield app1.ready();
 
-    yield request(app1.callback())
+    yield app1.httpRequest()
     .post('/test/body_parser/foo.json')
     .send({ foo: 'bar', ']': 'toString' })
     .expect({ foo: 'bar', ']': 'toString' });
 
-    yield request(app1.callback())
+    yield app1.httpRequest()
     .post('/test/body_parser/form.json')
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .send({ foo: 'bar', ']': 'toString' })

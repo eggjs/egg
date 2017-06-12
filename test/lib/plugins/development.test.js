@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const request = require('supertest');
 const pedding = require('pedding');
 const mm = require('egg-mock');
 const utils = require('../../utils');
@@ -28,20 +27,20 @@ describe('test/lib/plugins/development.test.js', () => {
         }
       });
 
-      request(app.callback())
+      app.httpRequest()
       .get('/foo.js')
       .expect(200)
       .end(done);
 
-      request(app.callback())
+      app.httpRequest()
       .get('/public/hello')
       .expect(404, done);
 
-      request(app.callback())
+      app.httpRequest()
       .get('/assets/hello')
       .expect(404, done);
 
-      request(app.callback())
+      app.httpRequest()
       .get('/__koa_mock_scene_toolbox/hello')
       .expect(404, done);
     });
