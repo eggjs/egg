@@ -25,6 +25,7 @@ module.exports = {
   keep: [
   ],
   semver: [
+    'eslint@3',
     'koa-bodyparser@2',
   ],
   test: 'scripts',
