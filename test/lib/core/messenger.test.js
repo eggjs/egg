@@ -55,13 +55,15 @@ describe('test/lib/core/messenger.test.js', () => {
 
   describe('cluster messenger', () => {
     let app;
-    before(() => {
-      app = utils.cluster('apps/messenger');
-      app.coverage(false);
-      return app.ready();
-    });
-    before(() => sleep(1000));
     after(() => app.close());
+
+    // use it to record create coverage codes time
+    it('before: should start cluster app', function* () {
+      app = utils.cluster('apps/messenger');
+      app.coverage(true);
+      yield app.ready();
+      yield sleep(1000);
+    });
 
     it('app should accept agent message', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg/);
@@ -85,7 +87,6 @@ describe('test/lib/core/messenger.test.js', () => {
   });
 
   describe('broadcast()', () => {
-
     let app;
     before(() => {
       mm.env('default');

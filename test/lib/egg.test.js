@@ -151,11 +151,14 @@ describe('test/lib/egg.test.js', () => {
 
   describe('handle unhandledRejection', () => {
     let app;
-    before(() => {
+    after(() => app.close());
+
+    // use it to record create coverage codes time
+    it('before: should cluster app ready', () => {
       app = utils.cluster('apps/app-throw');
+      app.coverage(true);
       return app.ready();
     });
-    after(() => app.close());
 
     it('should handle unhandledRejection and log it', function* () {
       yield request(app.callback())
