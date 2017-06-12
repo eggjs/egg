@@ -200,6 +200,7 @@ module.exports = appInfo => {
    * @property {String} encoding - log file encloding, defaults to utf8
    * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
    * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
+   * @property {Boolean} disableConsoleAfterReady - disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`.
    * @property {Boolean} outputJSON - log as JSON or not, defaults to false
    * @property {Boolean} buffer - if enabled, flush logs to disk at a certain frequency to improve performance, defaults to true
    * @property {String} errorLogName - file name of errorLogger
@@ -213,6 +214,7 @@ module.exports = appInfo => {
     env: appInfo.env,
     level: 'INFO',
     consoleLevel: 'INFO',
+    disableConsoleAfterReady: appInfo.env !== 'local' && appInfo.env !== 'unittest',
     outputJSON: false,
     buffer: true,
     appLogName: `${appInfo.name}-web.log`,
