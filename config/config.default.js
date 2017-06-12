@@ -228,7 +228,7 @@ module.exports = appInfo => {
    * @property {Boolean} keepAlive - Enable http keepalive or not, default is true
    * @property {Number} freeSocketKeepAliveTimeout - socket keepalive max free time, default is 4000 ms.
    * @property {Number} timeout - socket max unative time, default is 30000 ms.
-   * @property {Number} maxSockets - max socket number of one host, default is Infinity.
+   * @property {Number} maxSockets - max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} maxFreeSockets - max free socket number of one host, default is 256.
    * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
    */
@@ -236,9 +236,11 @@ module.exports = appInfo => {
     keepAlive: true,
     freeSocketKeepAliveTimeout: 4000,
     timeout: 30000,
-    maxSockets: Infinity,
+    maxSockets: Number.MAX_SAFE_INTEGER,
     maxFreeSockets: 256,
     enableDNSCache: false,
+    dnsCacheMaxLength: 1000,
+    dnsCacheMaxAge: 10000,
   };
 
   /**

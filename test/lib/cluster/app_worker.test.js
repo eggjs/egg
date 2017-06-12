@@ -1,21 +1,18 @@
 'use strict';
 
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/app_worker.test.js', () => {
   let app;
-  before(done => {
-    app = utils.cluster('apps/app-server', {
-      coverage: true,
-    });
-    app.ready(done);
+  before(() => {
+    app = utils.cluster('apps/app-server');
+    app.coverage(true);
+    return app.ready();
   });
-
   after(() => app.close());
 
   it('should start cluster success and app worker emit `server` event', () => {
-    return request(app.callback())
+    return app.httpRequest()
     .get('/')
     .expect('true');
   });

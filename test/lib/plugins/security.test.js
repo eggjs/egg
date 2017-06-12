@@ -1,9 +1,11 @@
 'use strict';
 
-const request = require('supertest');
+const mm = require('egg-mock');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/security.test.js', () => {
+  afterEach(mm.restore);
+
   describe('security.csrf = false', () => {
     let app;
     before(() => {
@@ -13,7 +15,7 @@ describe('test/lib/plugins/security.test.js', () => {
     after(() => app.close());
 
     it('should not check csrf', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -33,7 +35,7 @@ describe('test/lib/plugins/security.test.js', () => {
     after(() => app.close());
 
     it('should check csrf', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(403)
@@ -50,7 +52,7 @@ describe('test/lib/plugins/security.test.js', () => {
     after(() => app.close());
 
     it('should not check csrf on /api/*', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -61,7 +63,7 @@ describe('test/lib/plugins/security.test.js', () => {
     });
 
     it('should not check csrf on /api/*.json', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .post('/api/user.json')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -72,7 +74,9 @@ describe('test/lib/plugins/security.test.js', () => {
     });
 
     it('should check csrf on other.json', () => {
-      return request(app.callback())
+      // use prod env to ignore extends properties like frames
+      mm(app.config, 'env', 'prod');
+      return app.httpRequest()
         .post('/apiuser.json')
         .set('accept', 'application/json')
         .send({ name: 'fengmk2' })
@@ -83,7 +87,7 @@ describe('test/lib/plugins/security.test.js', () => {
     });
 
     it('should check csrf on other', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .post('/apiuser')
         .send({ name: 'fengmk2' })
         .expect(/missing csrf token/)

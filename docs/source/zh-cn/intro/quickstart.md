@@ -160,11 +160,18 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-exports.view = {
-  defaultViewEngine: 'nunjucks',
-  mapping: {
-    '.tpl': 'nunjucks',
-  },
+module.exports = appInfo => {
+  const config = {};
+  config.keys = appInfo.name + '...';
+
+  // 添加配置
+  config.view = {
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.tpl': 'nunjucks',    
+    },
+  }
+  return config;
 };
 ```
 

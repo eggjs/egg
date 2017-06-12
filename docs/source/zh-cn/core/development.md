@@ -200,6 +200,35 @@ $ npm run cov -- --x=app/plugins/c*
 
 ![image](https://cloud.githubusercontent.com/assets/456108/21814737/38ed8f04-d795-11e6-93c4-1de9f1d432c8.png)
 
+#### Node.js 8.x
+
+在 Node.js 8.x 后，不再输出完整的调试地址，仅输出如下的日志：
+
+```bash
+> egg-bin dev "--inspect"
+
+Debugger listening on ws://127.0.0.1:9229/fd7c6a26-5aa6-4c76-9310-045368fdaabc
+
+...
+
+2017-06-08 09:28:31,035 INFO 28121 [master] agent_worker#1:28131 start with clusterPort:54285
+Debugger listening on ws://127.0.0.1:5856/7aa12781-6452-4160-829e-2ef037d39658
+
+...
+
+2017-06-08 09:28:31,366 INFO 28121 [master] app_worker#1:28132 start, state: none, current workers: ["1"]
+Debugger listening on ws://127.0.0.1:9230/d1ad683d-a261-4f78-b9a2-77e8117a0aa0
+```
+
+分别对应于 master / agent / worker 的调试端口，我们一般关注最后一个即可，如上即 `9230`。
+
+- 访问 [chrome://inspect](chrome://inspect) 页面。
+- 点击 `Configure...`。
+- 增加 `localhost:9230`。
+- 在 `Remote Target` 里面访问对应的链接即可（包含 `app_worker` 的那个）。
+
+![image](https://user-images.githubusercontent.com/227713/26908722-0a9861b0-4c2f-11e7-834e-f26c3724f185.png)
+
 ### 使用 logger 模块调试
 
 框架内置了[日志](./logger.md) 功能，使用 `logger.debug()` 输出调试信息，**推荐在应用代码中使用它。**

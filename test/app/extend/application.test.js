@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
 const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const fs = require('fs');
