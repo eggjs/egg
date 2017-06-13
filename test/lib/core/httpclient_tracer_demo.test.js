@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
@@ -27,7 +26,7 @@ describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
   });
 
   it('should work with context httpclient', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(res => {
         assert(res.body.url === url + '/get_headers');

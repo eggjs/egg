@@ -3,7 +3,6 @@
 const assert = require('assert');
 const mm = require('egg-mock');
 const urllib = require('urllib');
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/app/extend/request.test.js', () => {
@@ -97,14 +96,14 @@ describe('test/app/extend/request.test.js', () => {
     describe('req.protocol', () => {
       it('should return http when it not config and no protocol header', () => {
         mm(app.config, 'protocol', null);
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .expect('http');
       });
 
       it('should return value of X-Custom-Proto', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto, X-Custom-Proto');
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .set('X-Custom-Proto', 'https')
           .expect('https');
@@ -112,14 +111,14 @@ describe('test/app/extend/request.test.js', () => {
 
       it('should ignore X-Client-Scheme', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto');
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .set('X-Client-Scheme', 'https')
           .expect('http');
       });
 
       it('should return value of X-Forwarded-Proto', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('https');
@@ -127,7 +126,7 @@ describe('test/app/extend/request.test.js', () => {
 
       it('should ignore X-Forwarded-Proto when proxy=false', () => {
         mm(app.config, 'proxy', false);
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('http');
@@ -135,7 +134,7 @@ describe('test/app/extend/request.test.js', () => {
 
       it('should ignore X-Forwarded-Proto', () => {
         mm(app.config, 'protocolHeaders', '');
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('http');
@@ -143,7 +142,7 @@ describe('test/app/extend/request.test.js', () => {
 
       it('should return value from config', () => {
         mm(app.config, 'protocol', 'https');
-        return request(app.callback())
+        return app.httpRequest()
           .get('/protocol')
           .expect('https');
       });

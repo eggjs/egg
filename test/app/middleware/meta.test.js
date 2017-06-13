@@ -1,7 +1,6 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/app/middleware/meta.test.js', () => {
@@ -16,7 +15,7 @@ describe('test/app/middleware/meta.test.js', () => {
   afterEach(mm.restore);
 
   it('should get X-Readtime header', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect('X-Readtime', /\d+/)
       .expect(200);

@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const assert = require('assert');
 const mm = require('egg-mock');
 const utils = require('../../utils');
@@ -17,7 +16,7 @@ describe('test/app/extend/response.test.js', () => {
     after(() => app.close());
 
     it('should get lower case header', () => {
-      return request(app.callback())
+      return app.httpRequest()
       .get('/')
       .expect(200)
       .expect(res => {

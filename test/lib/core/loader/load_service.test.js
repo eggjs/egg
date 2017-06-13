@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../../utils');
 
@@ -26,7 +25,7 @@ describe('test/lib/core/loader/load_service.test.js', () => {
     assert(ctx.service.bar2);
     assert(ctx.service.foo4);
 
-    yield request(app.callback())
+    yield app.httpRequest()
     .get('/')
     .expect({
       foo2: 'foo2',
@@ -48,7 +47,7 @@ describe('test/lib/core/loader/load_service.test.js', () => {
     app = utils.app('apps/service-app');
     yield app.ready();
 
-    yield request(app.callback())
+    yield app.httpRequest()
     .get('/user')
     .expect(res => {
       assert(res.body.user);
@@ -66,7 +65,7 @@ describe('test/lib/core/loader/load_service.test.js', () => {
       app = utils.app('apps/subdir-services');
       yield app.ready();
 
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/')
       .expect({
         user: {

@@ -280,7 +280,7 @@ describe('test/index.test.js', () => {
   afterEach(mock.restore);
 
   it('should success', () => {
-    return request(app.callback())
+    return app.httpRequest()
     .get('/')
     .expect(200);
   });
@@ -344,7 +344,7 @@ describe('/test/index.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
   it('should success', () => {
-    return request(app.callback())
+    return app.httpRequest()
     .get('/')
     .expect(200);
   });

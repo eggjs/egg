@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const request = require('supertest');
 const utils = require('../../utils');
 const fs = require('fs');
 const path = require('path');
@@ -70,7 +69,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should not set secure when request protocol is http', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?setCookieValue=foobar')
       .set('Host', 'demo.eggjs.org')
       .set('X-Forwarded-Proto', 'http')
@@ -85,7 +84,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should set secure:true and httponly cookie', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?setCookieValue=foobar')
       .set('Host', 'demo.eggjs.org')
       .set('X-Forwarded-Proto', 'https')
@@ -100,7 +99,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should set cookie with path: /cookiepath/ok', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?cookiepath=/cookiepath/ok')
       .set('Host', 'demo.eggjs.org')
       .set('X-Forwarded-Proto', 'https')
@@ -115,7 +114,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should delete cookie', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?cookiedel=true')
       .set('Host', 'demo.eggjs.org')
       .set('Cookie', 'cookiedel=true')
@@ -133,7 +132,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should delete cookie with options', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?cookiedel=true&opts=true')
       .set('Host', 'demo.eggjs.org')
       .set('Cookie', 'cookiedel=true; path=/hello; domain=eggjs.org; expires=30')
@@ -150,7 +149,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should set cookie with domain: okcookie.eggjs.org', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?cookiedomain=okcookie.eggjs.org&cookiepath=/')
       .set('Host', 'demo.eggjs.org')
       .set('X-Forwarded-Proto', 'https')
@@ -165,7 +164,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should not set domain and path', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/?notSetPath=okok')
       .set('Host', 'demo.eggjs.org')
       .set('X-Forwarded-Proto', 'https')
@@ -189,7 +188,7 @@ describe('test/lib/core/cookies.test.js', () => {
     after(() => app.close());
 
     it('should set secure:false cookie', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/hello')
       .set('Host', 'demo.eggjs.org')
       .expect('hello')
@@ -213,7 +212,7 @@ describe('test/lib/core/cookies.test.js', () => {
     after(() => app.close());
 
     it('should get encrypt cookie', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/')
       .expect({
         set: 'bar 中文',
@@ -228,7 +227,7 @@ describe('test/lib/core/cookies.test.js', () => {
         assert(plainCookie);
         assert.equal(plainCookie, 'plain=text ok; path=/; httponly');
 
-        request(app.callback())
+        app.httpRequest()
         .get('/')
         .set('Cookie', res.headers['set-cookie'].join(';'))
         .expect({
@@ -242,7 +241,7 @@ describe('test/lib/core/cookies.test.js', () => {
     });
 
     it('should decode encrypt value fail', done => {
-      request(app.callback())
+      app.httpRequest()
       .get('/')
       .expect({
         set: 'bar 中文',
@@ -253,7 +252,7 @@ describe('test/lib/core/cookies.test.js', () => {
         assert(encryptCookie);
         assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
 
-        request(app.callback())
+        app.httpRequest()
         .get('/')
         .set('Cookie', 'foo=123123; plain=text ok')
         .expect({

@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const pedding = require('pedding');
 const utils = require('../../../utils');
 
@@ -14,12 +13,12 @@ describe('test/lib/core/loader/load_router.test.js', () => {
 
   it('should load app/router.js', done => {
     done = pedding(2, done);
-    request(app.callback())
+    app.httpRequest()
     .get('/')
     .expect(200)
     .expect('hello', done);
 
-    request(app.callback())
+    app.httpRequest()
     .get('/home')
     .expect(200)
     .expect('hello', done);

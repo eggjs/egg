@@ -4,7 +4,6 @@ const mm = require('egg-mock');
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const spy = require('spy');
 const Transport = require('egg-logger').Transport;
@@ -161,15 +160,15 @@ describe('test/lib/egg.test.js', () => {
     });
 
     it('should handle unhandledRejection and log it', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection')
         .expect('foo')
         .expect(200);
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection-string')
         .expect('foo')
         .expect(200);
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection-obj')
         .expect('foo')
         .expect(200);
@@ -195,7 +194,7 @@ describe('test/lib/egg.test.js', () => {
 
     it('should access base context properties success', function* () {
       mm(app.config.logger, 'level', 'DEBUG');
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/')
       .expect('hello')
       .expect(200);
@@ -212,14 +211,14 @@ describe('test/lib/egg.test.js', () => {
     });
 
     it('should get pathName success', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/pathName')
       .expect('controller.home')
       .expect(200);
     });
 
     it('should get config success', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
       .get('/config')
       .expect('base-context-class')
       .expect(200);

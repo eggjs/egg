@@ -30,6 +30,7 @@ describe('test/lib/plugins/multipart.test.js', () => {
 
   after(() => {
     server.close();
+    return app.close();
   });
 
   it('should upload with csrf', done => {

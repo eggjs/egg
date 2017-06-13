@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -18,7 +17,7 @@ describe('test/lib/plugins/session.test.js', () => {
     app.mockContext({
       userId: 's1',
     });
-    request(app.callback())
+    app.httpRequest()
     .get('/?uid=1')
     .expect({
       userId: 's1',
@@ -35,7 +34,7 @@ describe('test/lib/plugins/session.test.js', () => {
       app.mockContext({
         userId: 's1',
       });
-      request(app.callback())
+      app.httpRequest()
       .get('/?uid=2&userId=s1')
       .set('Cookie', cookie)
       .expect({
@@ -51,7 +50,7 @@ describe('test/lib/plugins/session.test.js', () => {
         app.mockContext({
           userId: 's2',
         });
-        request(app.callback())
+        app.httpRequest()
         .get('/?uid=2')
         .set('Cookie', cookie)
         .expect({
@@ -64,7 +63,7 @@ describe('test/lib/plugins/session.test.js', () => {
         })
         .expect(200, err => {
           if (err) return done(err);
-          request(app.callback())
+          app.httpRequest()
           .get('/clear')
           .set('Cookie', cookie)
           .expect('set-cookie', /EGG_SESS=;/, done);
