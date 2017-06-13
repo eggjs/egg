@@ -176,13 +176,13 @@ exports.nunjucks = {
 // config/config.default.js
 module.exports = appInfo => {
   const config = {};
-  config.keys = appInfo.name + '...';
+  config.keys = <YOUR_SECURITY_COOKE_KEYS>;
 
   // add config
   config.view = {
     defaultViewEngine: 'nunjucks',
     mapping: {
-     '.tpl': 'nunjucks',    
+     '.tpl': 'nunjucks',
     },
   }
   return config;
@@ -263,7 +263,7 @@ module.exports = app => {
       // read config
       const { serverUrl, pageSize } = this.app.config.news;
 
-      // use build-in HttpClient to GET hacker-news api
+      // use built-in HttpClient to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
         data: {
           orderBy: '"$key"',
@@ -313,6 +313,9 @@ exports.news = {
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
+
+**Note: `async function` is also built-in supported, see [async-function](../tutorials/async-function.md).**
+
 
 ### Add Extensions
 
@@ -378,6 +381,9 @@ exports.robot = {
 
 Now try it using `curl localhost:7001/news -A "Baiduspider"`.
 
+**Note：both Koa1 and Koa2 style middleware is supported, see [Use Koa's Middleware](../basics/middleware.md#Use-Koa's-Middleware)。**
+
+
 ### Add Configurations
 
 When writing business logic,
@@ -419,6 +425,8 @@ module.exports = app => {
 ### Add Unit Testing
 
 Unit Testing is very important, and Egg also provide [egg-bin] to help you write tests painless.
+
+All the test files should place at `{app_root}/test/**/*.test.js`.
 
 ```js
 // test/app/middleware/robot.test.js

@@ -41,7 +41,7 @@ module.exports = app => {
 }
 ```
 
-**注意：在上面的 contorller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generator function 类型，则也需要改造成 async function 接口才可以被调用。**
+**注意：在上面的 controller 中，我们用 await 调用了 `service.post.create()` 方法，如果这个方法是 generator function 类型，则也需要改造成 async function 接口才可以被调用。**
 
 ## 定时任务
 
@@ -73,7 +73,6 @@ module.exports = {
 
 ```js
 // app/middleware/gzip.js
-
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
