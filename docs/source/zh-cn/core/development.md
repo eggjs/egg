@@ -370,6 +370,10 @@ exports.proxyworker = {
 - `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`
 - `Attach Worker` 添加参数 `"protocol": "inspector"`
 
+此外，如果使用新协议还可以通过 chrome devtools 进行调试, 调试地址：
+
+[chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:10087](chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:10087)
+
 
 ##### 4. 开始调试
 
