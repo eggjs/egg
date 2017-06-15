@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../utils');
 
@@ -20,7 +19,7 @@ describe('test/async.test.js', () => {
   });
 
   it('middleware, controller and service support async functions', async () => {
-    await request(app.callback())
+    await app.httpRequest()
     .get('/api')
     .expect(200)
     .expect([ 'service', 'controller', 'router', 'middleware' ]);

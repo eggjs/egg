@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
 const mm = require('egg-mock');
 const utils = require('../../../utils');
 
@@ -17,5 +16,6 @@ describe('test/lib/core/config/config.test.js', () => {
 
   it('should return config.name', () => {
     assert(app.config.name === 'demo');
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 });

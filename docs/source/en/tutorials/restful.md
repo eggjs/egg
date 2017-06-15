@@ -6,12 +6,12 @@ CNode currently use v1 interface is not fully consistent with the RESTful semant
 
 ## Response Formatting
 
-Designing a RESTful-style API, we will identify the status of response by the response status code, keeping the response body simply and only the interface data is returned. 
+Designing a RESTful-style API, we will identify the status of response by the response status code, keeping the response body simply and only the interface data is returned.
 A example of `topics` is shown below:
 
 ### Get topics list
 
-- `GET /api/v2/topics` 
+- `GET /api/v2/topics`
 - status code: 200
 - response body:
 
@@ -87,7 +87,7 @@ A example of `topics` is shown below:
 
 When an error is occurring, 4xx status code is returned if occurred by client-side request parameters and 5xx status code is returned if occurred by server-side logic processing. All error objects are used as the description for status exceptions.
 
-For example, passing invalided parameters from the client may return a response with status code 422, the response body as shown below: 
+For example, passing invalided parameters from the client may return a response with status code 422, the response body as shown below:
 ```json
 {
   "error": "Validation Failed",
@@ -201,7 +201,7 @@ module.exports = app => {
         this.ctx.throw(result.status, errorMsg);
       }
       if (!result.data.success) {
-        // remote response error 
+        // remote response error
         this.ctx.throw(500, 'remote response error', { data: result.data });
       }
     }
@@ -252,7 +252,7 @@ module.exports = () => {
 };
 ```
 
-We can catch all exceptions and follow the expected format to encapsulate the response through the middleware. It can be loaded into application using configuration file (`config/config.default.js`) 
+We can catch all exceptions and follow the expected format to encapsulate the response through the middleware. It can be loaded into application using configuration file (`config/config.default.js`)
 
 ```js
 // config/config.default.js
@@ -275,7 +275,6 @@ Completing the coding just the first step, furthermore we need to add [Unit Test
 Let's start writing the unit test for the controller. We can simulate the implementation of the service layer in an appropriate way because the most important part is to test the logic as for controller. And mocking up the service layer according the convention of interface, so we can develop layered testing because the service layer itself can also covered by service unit test.
 
 ```js
-const request = require('supertest');
 const mock = require('egg-mock');
 
 describe('test/app/controller/topics.test.js', () => {
@@ -291,7 +290,7 @@ describe('test/app/controller/topics.test.js', () => {
   // test the response of passing the error parameters
   it('should POST /api/v2/topics/ 422', function* () {
     app.mockCsrf();
-    yield request(app.callback())
+    yield app.httpRequest()
     .post('/api/v2/topics')
     .send({
       accesstoken: '123',
@@ -307,7 +306,7 @@ describe('test/app/controller/topics.test.js', () => {
   it('should POST /api/v2/topics/ 201', function* () {
     app.mockCsrf();
     app.mockService('topics', 'create', 123);
-    yield request(app.callback())
+    yield app.httpRequest()
     .post('/api/v2/topics')
     .send({
       accesstoken: '123',
@@ -376,8 +375,8 @@ describe('test/app/service/topics.test.js', () => {
   });
 });
 ```
-In the testing of service layer above,  we create a context object using the `app.createContext()` which provided by egg-mock and call the service method on context object to test directly. It can use `app.mockHttpclient()` to simulate the response of calling HTTP request, which allows us to focus on the logic testing of service layer without the impact of environment. 
+In the testing of service layer above,  we create a context object using the `app.createContext()` which provided by egg-mock and call the service method on context object to test directly. It can use `app.mockHttpclient()` to simulate the response of calling HTTP request, which allows us to focus on the logic testing of service layer without the impact of environment.
 
 ------
 
-Details of code implementation and unit test are available in [eggjs/examples/cnode-api](https://github.com/eggjs/examples/tree/master/cnode-api) 
+Details of code implementation and unit test are available in [eggjs/examples/cnode-api](https://github.com/eggjs/examples/tree/master/cnode-api)
