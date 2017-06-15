@@ -291,7 +291,7 @@ if (cluster.isMaster) {
    - 在 agent 上调用该方法会发送给 agent 自己
 - `agent.messenger.sendRandom(action, data)`:
    - app 上没有该方法（现在 Egg 的实现是等同于 sentToAgent）
-   - agent 上回随机发送消息给一个 app 进程（由 master 来控制发送给谁）
+   - agent 上随机发送消息给一个 app 进程（由 master 来控制发送给谁）
 - `app.messenger.sendTo(pid, action, data)`: 发送给指定进程
 
 ```js
