@@ -9,6 +9,7 @@ git:命令
 
 	实用
 	git branch
+	git checkout -b
 	git remote add 
 	git fetch
 	git rebase
