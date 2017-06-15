@@ -9,7 +9,7 @@ git:命令
 
 	实用
 	git branch
-	git checkout -b
+	git checkout -b 创建分支并切换到分支
 	git remote add 
 	git fetch
 	git rebase
