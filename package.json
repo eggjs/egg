@@ -56,6 +56,7 @@
     "egg-doctools": "^2.0.0",
     "egg-mock": "^3.7.2",
     "egg-plugin-puml": "^2.4.0",
+    "egg-type": "^1.0.0",
     "egg-view-nunjucks": "^2.1.2",
     "eslint": "^3.19.0",
     "eslint-config-egg": "^4.2.1",
@@ -68,6 +69,8 @@
     "runscript": "^1.2.1",
     "spy": "^1.0.0",
     "supertest": "^3.0.0",
+    "ts-node": "^3.0.6",
+    "typescript": "^2.3.4",
     "webstorm-disable-index": "^1.1.2"
   },
   "main": "index.js",
@@ -76,11 +79,13 @@
     "config",
     "bin",
     "lib",
-    "index.js"
+    "index.js",
+    "index.d.ts"
   ],
   "scripts": {
     "lint": "eslint app config lib test *.js",
-    "test": "npm run lint -- --fix && npm run test-local",
+    "test": "npm run lint -- --fix && npm run test-local && npm run test-ts",
+    "test-ts": "ts-node test/egg-ts.test.ts",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov --timeout 100000",
     "ci": "npm run lint && npm run cov",
