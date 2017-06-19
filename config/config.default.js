@@ -254,6 +254,7 @@ module.exports = appInfo => {
     'siteFile',
     'notfound',
     'bodyParser',
+    'overrideMethod',
   ];
 
   /**

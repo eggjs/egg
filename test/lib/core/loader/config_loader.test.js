@@ -14,12 +14,13 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
   it('should get middlewares', function* () {
     app = utils.app('apps/demo');
     yield app.ready();
-    assert.deepEqual(app.config.coreMiddleware.slice(0, 6), [
+    assert.deepEqual(app.config.coreMiddleware.slice(0, 7), [
       'meta',
       'siteFile',
       'notfound',
       'static',
       'bodyParser',
+      'overrideMethod',
       'session',
     ]);
   });
