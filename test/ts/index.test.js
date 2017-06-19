@@ -8,8 +8,12 @@ const utils = require('../utils');
 const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 
 describe('test/ts/index.test.js', () => {
-  it('tsc ok', function* () {
-    yield runscript('tsc', { cwd: baseDir });
+  before(function* () {
+    if (process.env.CI) {
+      yield runscript('tsc && npmlink ../../../../', { cwd: baseDir });
+    } else {
+      yield runscript('tsc && npm link ../../../../', { cwd: baseDir });
+    }
   });
 
   describe('compiler code', () => {

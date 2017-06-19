@@ -1,7 +1,7 @@
-import { Controller } from '../../../../../../';
+import { Controller } from 'egg';
 
 // add user controller and service
-declare module '../../../../../../' {
+declare module 'egg' {
   interface IController {
     foo: FooController;
   }

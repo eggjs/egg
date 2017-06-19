@@ -16,7 +16,6 @@
     "@types/accepts": "^1.3.2",
     "@types/koa": "^2.0.39",
     "@types/koa-router": "^7.0.22",
-    "@types/node": "^7.0.29",
     "accepts": "^1.3.3",
     "agentkeepalive": "^3.2.0",
     "cluster-client": "^1.6.4",
@@ -77,6 +76,7 @@
     "webstorm-disable-index": "^1.1.2"
   },
   "main": "index.js",
+  "types": "index.d.ts",
   "files": [
     "app",
     "config",

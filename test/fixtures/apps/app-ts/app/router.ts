@@ -1,4 +1,4 @@
-import { Application } from '../../../../../';
+import { Application } from 'egg';
 
 export default (app: Application) => {
   const controller = app.controller;
