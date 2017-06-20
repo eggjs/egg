@@ -82,7 +82,7 @@
     "lint": "eslint app config lib test *.js",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
-    "cov": "egg-bin cov --timeout 100000",
+    "cov": " set SPAWN_WRAP_DEBUG=1 egg-bin cov --timeout 100000",
     "ci": "npm run lint && npm run cov",
     "doc-server": "doctools server",
     "doc-build": "doctools build",
