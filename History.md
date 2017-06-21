@@ -1,6 +1,41 @@
 # History
 
-## 2017-05-28, Version 1.3.1, @dead-horse
+## 2017-06-21, Version 1.5.0, @fengmk2
+
+* **feature**
+  * better TypeScript support, add `index.d.ts` file.
+  * enable overrideMethod middleware by default.
+* **document**
+  * Documents improved.
+
+### Commits
+
+  * [[`1d02601`](http://github.com/eggjs/egg/commit/1d026019df76525d2d9117c260eb5d892388121c)] - tsd: add another properties of FileStream (#1080) (Rwing <<Rwing@rwing.cn>>)
+  * [[`2b1644e`](http://github.com/eggjs/egg/commit/2b1644e6d56e6481ee97bce009c5f53b4dd18441)] - feat: add tsd (#1027) (Eward Song <<eward.song@gmail.com>>)
+  * [[`a4ba2a2`](http://github.com/eggjs/egg/commit/a4ba2a2a1ef7de49e196c01447fd73ab22ed6d34)] - feat: enable overrideMethod middleware by default (#1069) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`bfb8df5`](http://github.com/eggjs/egg/commit/bfb8df58bcc7d7fe0fd6ff3453efcb54b715b4a0)] - docs: typo (#1060) (chenbin92 <<chen@mothin.com>>)
+  * [[`64d1b00`](http://github.com/eggjs/egg/commit/64d1b0026648e1128f09efb6e6c2cc7f632bf608)] - docs: add chrome devtools debug information (#1050) (仙森 <<dapixp@gmail.com>>)
+  * [[`4e510b2`](http://github.com/eggjs/egg/commit/4e510b22836096a47d562dbd5ca8affd28f94f9e)] - chore: use app.httpRequest() instead of supertest (#1041) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`78a13d5`](http://github.com/eggjs/egg/commit/78a13d52c3b6e8b40a0015b285cda33a059c0ee4)] - docs: add more description at quickstart (#1042) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ef7c864`](http://github.com/eggjs/egg/commit/ef7c864fbddf7e70afbd93a16d5176787328400d)] - docs: add ant.design link (#1037) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`f1b510c`](http://github.com/eggjs/egg/commit/f1b510c34039259c5772021432ab71a7a62b89e8)] - feat: add config.logger.disableConsoleAfterReady (#1001) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4890eda`](http://github.com/eggjs/egg/commit/4890eda31b9bc60ea4a1a7f36460ec1bf86dc134)] - docs: Uniform the standards that we should acquire this parsed parame… (#1038) (Ruanyq <<yiqiang0930@163.com>>)
+  * [[`9d705e4`](http://github.com/eggjs/egg/commit/9d705e4687cdb98d327fbd9a1061604828218dfc)] - test: make sure app close (#1030) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1d72e37`](http://github.com/eggjs/egg/commit/1d72e3799822e252934d6218a978c2bd21f378d3)] - docs: fix caseStyle link (#1033) (Desen Meng <<mds@xue.bi>>)
+  * [[`9b50725`](http://github.com/eggjs/egg/commit/9b507250725ef3beda0ee51ac0c2bc2b007b2ecb)] - docs: (tutorials/index.md & async-function.md ): [translate] Done (#1028) (Darren Wong <<darrenwongf@gmail.com>>)
+  * [[`3d04199`](http://github.com/eggjs/egg/commit/3d041992912d9aca1eb0edc6b226474022e08236)] - docs: typo (#1029) (Jerry Wu <<perzy_wu@163.com>>)
+  * [[`13b7c19`](http://github.com/eggjs/egg/commit/13b7c19531d772a2b932ada28e186a0dbd0cf5f5)] - test: node 8 (#976) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1b108a7`](http://github.com/eggjs/egg/commit/1b108a72a96d3d8241b332b8e728a9ec409efbb1)] - docs: remove api that is from egg-rest (#1022) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`057bc47`](http://github.com/eggjs/egg/commit/057bc47e4c5e3ec8faae0de3807f656fa4ef41d4)] - test: add doc test (#989) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`c6eb7b2`](http://github.com/eggjs/egg/commit/c6eb7b2f59f24fe0c6a787829d33cdf0cd4a2e77)] - doc: fix view config doc (#991) (当轩 <<code.falling@gmail.com>>)
+  * [[`52865b4`](http://github.com/eggjs/egg/commit/52865b47c4d336833ef1151bae9f30867359ceb6)] - docs: devtool inspect at 8.x (#1018) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8a120fd`](http://github.com/eggjs/egg/commit/8a120fde73df60e23f8c5559a3281acaf0a393e0)] - docs: remove max time limit at schdule (#995) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`9084c24`](http://github.com/eggjs/egg/commit/9084c24dd10fcbcd0d436ada9639b59f36dd2edf)] - docs: add plugin list (#988) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`20a5d91`](http://github.com/eggjs/egg/commit/20a5d9127f7454c899f7701f02b04eefa7c61fce)] - test: disable coverage for schedule (#987) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`3de963f`](http://github.com/eggjs/egg/commit/3de963f3881ef6fb9c5b6fa207730c6695853239)] - docs(basics/structure.md): [translate] (#970) (Weilun Xiong <<330815461@qq.com>>)
+  * [[`2f232f3`](http://github.com/eggjs/egg/commit/2f232f30b0ba7e14ab07c43e34d363bac3906a43)] - docs: file must appear after other fiels when using getFileStream (#982) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+
+## 2017-05-28, Version 1.4.0, @dead-horse
 
 * **feature**
   * use lru to aovid oom when httpclient dns cache enabled
@@ -8,7 +43,6 @@
   * fix port is missed when httpclient dns cache enabled
   * fix request url object will be changed when httpclient dns cache enabled
   * set maxSockets defautl value to Number.MAX_SAFE_INTEGER
-
 * **document**
   * Documents improved. Thanks @DarrenWong, @zousandian, @lslxdx, @Azard, @johnnychen, @coogleyao, @DanielWLam, @m31271n, @Brian175
 
