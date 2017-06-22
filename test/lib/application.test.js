@@ -137,6 +137,7 @@ describe('test/lib/application.test.js', () => {
     it('should warn if confused configurations exist', function* () {
       const app = utils.app('apps/confused-configuration');
       yield app.ready();
+      yield sleep(1000);
       const logs = fs.readFileSync(utils.getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
       assert(logs.match(/Unexpected config key `bodyparser` exists, Please use `bodyParser` instead\./));
       assert(logs.match(/Unexpected config key `notFound` exists, Please use `notfound` instead\./));
