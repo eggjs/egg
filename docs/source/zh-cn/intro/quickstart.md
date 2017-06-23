@@ -84,11 +84,10 @@ module.exports = app => {
 };
 ```
 
-加一个配置文件：
+加一个[配置文件](../basics/config.md)：
 
 ```js
 // config/config.default.js
-// 切记：要改为自己的 key 值
 exports.keys = <此处改为你自己的 Cookie 安全字符串>;
 ```
 
@@ -162,18 +161,13 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-module.exports = appInfo => {
-  const config = {};
-  config.keys = <此处改为你自己的 Cookie 安全字符串>;
-
-  // 添加配置
-  config.view = {
-    defaultViewEngine: 'nunjucks',
-    mapping: {
-      '.tpl': 'nunjucks',
-    },
-  }
-  return config;
+exports.keys = <此处改为你自己的 Cookie 安全字符串>;
+// 添加 view 配置
+exports.view = {
+  defaultViewEngine: 'nunjucks',
+  mapping: {
+    '.tpl': 'nunjucks',
+  },
 };
 ```
 
@@ -289,6 +283,7 @@ module.exports = app => {
 
 ```js
 // config/config.default.js
+// 添加 news 的配置项
 exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
@@ -341,11 +336,11 @@ module.exports = (options, app) => {
 };
 
 // config/config.default.js
-// mount middleware
+// add middleware robot
 exports.middleware = [
   'robot'
 ];
-// middleware config
+// robot's configurations
 exports.robot = {
   ua: [
     /Baiduspider/i,

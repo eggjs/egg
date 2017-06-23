@@ -41,6 +41,15 @@ module.exports = {
 };
 ```
 
+配置文件也可以简化的写成 `exports.key = value` 形式
+
+```js
+exports.keys = 'my-cookie-secret-key';
+exports.logger = {
+  level: 'DEBUG',
+};
+```
+
 配置文件也可以返回一个 function，可以接受 appInfo 参数
 
 ```js
