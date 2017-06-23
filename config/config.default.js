@@ -155,7 +155,7 @@ module.exports = appInfo => {
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
    * @example
-   * // 指定应用 favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * config.siteFile = {
    *   '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * };
@@ -168,16 +168,16 @@ module.exports = appInfo => {
    * The option of `bodyParser` middleware
    *
    * @member Config#bodyParser
-   * @property {Boolean} enable - enable bodyParser or not, default to true
+   * @property {Boolean} enable - enable bodyParser or not, default is true
    * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
    * @property {String | RegExp | Function | Array} match - will parse request body only when url path hit match pattern
-   * @property {String} encoding - body 的编码格式，默认为 utf8
-   * @property {String} formLimit - form body 的大小限制，默认为 100kb
-   * @property {String} jsonLimit - json body 的大小限制，默认为 100kb
-   * @property {Boolean} strict - json body 解析是否为严格模式，如果为严格模式则只接受 object 和 array
-   * @property {Number} queryString.arrayLimit - 表单元素数组长度限制，默认 100，否则会转换为 json 格式
-   * @property {Number} queryString.depth - json 数值深度限制，默认 5
-   * @property {Number} queryString.parameterLimit - 参数个数限制，默认 1000
+   * @property {String} encoding - body's encoding type，default is utf8
+   * @property {String} formLimit - limit of the urlencoded body. If the body ends up being larger than this limit, a 413 error code is returned. Default is 100kb
+   * @property {String} jsonLimit - limit of the json body, default is 100kb
+   * @property {Boolean} strict - when set to true, JSON parser will only accept arrays and objects. Default is true
+   * @property {Number} queryString.arrayLimit - urlencoded body array's max length, default is 100
+   * @property {Number} queryString.depth - urlencoded body object's max length, default is 5
+   * @property {Number} queryString.parameterLimit - urlencoded body maximum parameters, default is 1000
    */
   config.bodyParser = {
     enable: true,
