@@ -38,6 +38,16 @@ module.exports = {
   },
 };
 ```
+
+The configuration file can simplify to `exports.key = value` format
+
+```js
+exports.keys = 'my-cookie-secret-key';
+exports.logger = {
+  level: 'DEBUG',
+};
+```
+
 The configuration file can also return a function which could receive a parameter called `appInfo`
 
 ```js
@@ -75,7 +85,7 @@ Here is one sequence of loading configurations under "prod" environment, in whic
 	-> plugin config.prod.js
 	-> framework config.prod.js
 	-> application config.prod.js
-	
+
 **Note: there will be plugin loading sequence, but the approximate order is similar. For specific logic, please check the [loader](../advanced/loader.md) .**
 
 ### Merging rule

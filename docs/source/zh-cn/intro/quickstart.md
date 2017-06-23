@@ -84,7 +84,7 @@ module.exports = app => {
 };
 ```
 
-加一个配置文件：
+加一个[配置文件](../basics/config.md)：
 
 ```js
 // config/config.default.js

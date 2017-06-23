@@ -90,7 +90,7 @@ module.exports = app => {
 };
 ```
 
-Then add a configuration file:
+Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
