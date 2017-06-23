@@ -116,6 +116,8 @@ interface Request extends KoaApplication.Request { // tslint:disable-line
    * ```
    */
   query: { [key: string]: string };
+
+  body: any;
 }
 
 interface Response extends KoaApplication.Response { // tslint:disable-line
