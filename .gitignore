@@ -21,4 +21,6 @@ docs/**/contributing.md
 docs/public
 docs/plugins.png
 
+package-lock.json
+yarn.lock
 !test/fixtures/apps/loader-plugin/node_modules
