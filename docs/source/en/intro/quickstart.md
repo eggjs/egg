@@ -94,7 +94,7 @@ Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
-exports.keys = '<YOUR_SECURITY_COOKE_KEYS>';
+exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
 ```
 
 The project directory looks like this:
@@ -173,7 +173,7 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-exports.keys = '<YOUR_SECURITY_COOKE_KEYS>';
+exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
 // add view's configurations
 exports.view = {
   defaultViewEngine: 'nunjucks',
@@ -301,7 +301,8 @@ module.exports = app => {
 And also add config.
 
 ```js
-  // add news' configurations
+// config/config.default.js
+// add news' configurations
 exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',

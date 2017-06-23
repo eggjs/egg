@@ -88,7 +88,7 @@ module.exports = app => {
 
 ```js
 // config/config.default.js
-exports.keys = '<此处改为你自己的 Cookie 安全字符串>';
+exports.keys = <此处改为你自己的 Cookie 安全字符串>;
 ```
 
 此时目录结构如下：
@@ -161,7 +161,7 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-exports.keys = '<此处改为你自己的 Cookie 安全字符串>';
+exports.keys = <此处改为你自己的 Cookie 安全字符串>;
 // 添加 view 配置
 exports.view = {
   defaultViewEngine: 'nunjucks',
