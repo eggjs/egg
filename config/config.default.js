@@ -176,7 +176,7 @@ module.exports = appInfo => {
    * @property {String} jsonLimit - limit of the json body, default is 100kb
    * @property {Boolean} strict - when set to true, JSON parser will only accept arrays and objects. Default is true
    * @property {Number} queryString.arrayLimit - urlencoded body array's max length, default is 100
-   * @property {Number} queryString.depth - urlencoded body object's max length, default is 5
+   * @property {Number} queryString.depth - urlencoded body object's max depth, default is 5
    * @property {Number} queryString.parameterLimit - urlencoded body maximum parameters, default is 1000
    */
   config.bodyParser = {
