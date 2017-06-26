@@ -10,9 +10,17 @@ declare module 'egg' {
 // controller
 export default class FooController extends Controller {
   async getData() {
-    this.ctx.body = await this.ctx.service.foo.bar();
+    try {
+      this.ctx.body = await this.ctx.service.foo.bar();
+    } catch (e) {
+      this.app.logger.info(e.name, 'xxx');
+    }
   }
   async getBar() {
-    this.ctx.body = await this.service.foo.bar();
+    try {
+      this.ctx.body = await this.service.foo.bar();
+    } catch (e) {
+      this.ctx.logger.error(e);
+    }
   }
 }

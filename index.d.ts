@@ -35,7 +35,7 @@ export interface Logger {
   info(info: string, ...args: string[]): void;
   warn(info: string, ...args: string[]): void;
   debug(info: string, ...args: string[]): void;
-  error(info: string, ...args: string[]): void;
+  error(info: string | Error, ...args: string[]): void;
 }
 
 interface Request extends KoaApplication.Request { // tslint:disable-line
@@ -723,6 +723,11 @@ export interface Context extends KoaApplication.Context {
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
   curl(url: string, opt: any): Promise<any>;
+
+  /**
+   * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
+   */
+  getLogger(name: string): Logger;
 
   /**
    * Render a file by view engine
