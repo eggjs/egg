@@ -35,9 +35,11 @@ export interface Logger {
   info(info: string, ...args: string[]): void;
   warn(info: string, ...args: string[]): void;
   debug(info: string, ...args: string[]): void;
-  error(info: string, ...args: string[]): void;
+  error(info: string | Error, ...args: string[]): void;
 }
 
+export type RequestArrayBody = any[];
+export type RequestObjectBody = { [key: string]: any };
 interface Request extends KoaApplication.Request { // tslint:disable-line
   /**
    * detect if response should be json
@@ -116,6 +118,8 @@ interface Request extends KoaApplication.Request { // tslint:disable-line
    * ```
    */
   query: { [key: string]: string };
+
+  body: RequestArrayBody | RequestObjectBody;
 }
 
 interface Response extends KoaApplication.Response { // tslint:disable-line
@@ -723,6 +727,11 @@ export interface Context extends KoaApplication.Context {
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
   curl(url: string, opt: any): Promise<any>;
+
+  /**
+   * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
+   */
+  getLogger(name: string): Logger;
 
   /**
    * Render a file by view engine
