@@ -13,7 +13,8 @@ export default class FooController extends Controller {
     try {
       this.ctx.body = await this.ctx.service.foo.bar();
     } catch (e) {
-      this.app.logger.info(e.name, 'xxx');
+      const body: { foo: string } = this.ctx.request.body;
+      this.app.logger.info(e.name, body.foo);
     }
   }
   async getBar() {
