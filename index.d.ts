@@ -38,6 +38,8 @@ export interface Logger {
   error(info: string | Error, ...args: string[]): void;
 }
 
+export type RequestArrayBody = any[];
+export type RequestObjectBody = { [key: string]: any };
 interface Request extends KoaApplication.Request { // tslint:disable-line
   /**
    * detect if response should be json
@@ -117,7 +119,7 @@ interface Request extends KoaApplication.Request { // tslint:disable-line
    */
   query: { [key: string]: string };
 
-  body: any;
+  body: RequestArrayBody | RequestObjectBody;
 }
 
 interface Response extends KoaApplication.Response { // tslint:disable-line
