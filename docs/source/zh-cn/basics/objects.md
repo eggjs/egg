@@ -150,13 +150,13 @@ module.exports = app => {
 
 // 从 egg 上获取
 const egg = require('egg');
-module.exports = UserController extends egg.Controller {
+module.exports = class UserController extends egg.Controller {
   // implement
 };
 
 // 从 app 实例上获取
 module.exports = app => {
-  return UserController extends app.Controller {
+  return class UserController extends app.Controller {
     // implement
   };
 };
@@ -172,13 +172,13 @@ Service 基类的属性和 [Controller](#controller) 基类属性一致，访问
 // app/service/user.js
 
 // 从 egg 上获取
-module.exports = UserService extends require('egg').Service {
+module.exports = class UserService extends require('egg').Service {
   // implement
 };
 
 // 从 app 实例上获取
 module.exports = app => {
-  return UserService extends app.Service {
+  return class UserService extends app.Service {
     // implement
   };
 };
