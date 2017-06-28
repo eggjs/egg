@@ -414,8 +414,6 @@ module.exports = app => {
 $ npm i egg-onerror --save
 ```
 
-**注意：插件即使是只在 local 运行的，也需要配置为 dependencies 而不是 devDependencies，否则线上 `npm i --production` 时将无法找到插件。**
-
 ### 开启和关闭
 
 在应用的 `${app_root}/config/plugin.js` 文件里配置
