@@ -90,11 +90,10 @@ module.exports = app => {
 };
 ```
 
-Then add a configuration file:
+Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
-// should change to your own keys
 exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
 ```
 
@@ -174,18 +173,13 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-module.exports = appInfo => {
-  const config = {};
-  config.keys = <YOUR_SECURITY_COOKE_KEYS>;
-
-  // add config
-  config.view = {
-    defaultViewEngine: 'nunjucks',
-    mapping: {
-     '.tpl': 'nunjucks',
-    },
-  }
-  return config;
+exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
+// add view's configurations
+exports.view = {
+  defaultViewEngine: 'nunjucks',
+  mapping: {
+    '.tpl': 'nunjucks',
+  },
 };
 ```
 
@@ -308,6 +302,7 @@ And also add config.
 
 ```js
 // config/config.default.js
+// add news' configurations
 exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
@@ -367,11 +362,11 @@ module.exports = (options, app) => {
 };
 
 // config/config.default.js
-// mount middleware
+// add middleware robot
 exports.middleware = [
   'robot'
 ];
-// middleware config
+// robot's configurations
 exports.robot = {
   ua: [
     /Baiduspider/i,
