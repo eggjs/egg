@@ -173,13 +173,24 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
-exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
-// add view's configurations
-exports.view = {
-  defaultViewEngine: 'nunjucks',
-  mapping: {
-    '.tpl': 'nunjucks',
-  },
+
+'use strict';
+
+module.exports = appInfo => {
+  const config = {};
+
+  // should change to your own
+  config.keys = <YOUR_SECURITY_COOKE_KEYS>;
+
+  // add your config here
+  // 添加 view 配置
+  config.view = {
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.tpl': 'nunjucks',
+    },
+  };
+  return config;
 };
 ```
 
