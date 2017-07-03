@@ -28,8 +28,8 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
   // app/controller/user.js
   module.exports = app => {
     return class UserController extends app.Controller {
-      *fetch () {
-        this.ctx.body = app.cache.get(this.query.id);
+      * fetch() {
+        this.ctx.body = app.cache.get(this.ctx.query.id);
       }
     };
   };
@@ -41,8 +41,8 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    *fetch () {
-      this.ctx.body = this.ctx.app.cache.get(this.query.id);
+    * fetch() {
+      this.ctx.body = this.ctx.app.cache.get(this.ctx.query.id);
     }
   };
 };
@@ -54,8 +54,8 @@ module.exports = app => {
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    *fetch () {
-      this.ctx.body = this.app.cache.get(this.query.id);
+    * fetch() {
+      this.ctx.body = this.app.cache.get(this.ctx.query.id);
     }
   };
 };
@@ -67,7 +67,7 @@ Context 是一个**请求级别的对象**，继承自 [Koa.Context]。在每一
 
 ### 获取方式
 
-最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。[Controller] 中的获取方式在上面的例子中已经展示过了，在 [Service] 中获取和 [Controller] 中获取的方式一样，在 [Middleware] 中获取 Context 实例则和 [Koa] 框架在中间件中获取 Context 对象的方式一致。
+最常见的 Context 实例获取方式是在 [Middleware], [Controller] 以及 [Service] 中。Controller 中的获取方式在上面的例子中已经展示过了，在 Service 中获取和 Controller 中获取的方式一样，在 Middleware 中获取 Context 实例则和 [Koa] 框架在中间件中获取 Context 对象的方式一致。
 
 框架的 [Middleware] 同时支持 Koa v1 和 Koa v2 两种不同的中间件写法，根据不同的写法，获取 Context 实例的方式也稍有不同：
 
@@ -122,7 +122,7 @@ Response 是一个**请求级别的对象**，继承自 [Koa.Response]。封装�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    *fetch () {
+    * fetch() {
       const { app, ctx } = this;
       const id = ctx.request.query.id;
       ctx.response.body = app.cache.get(id);
@@ -131,7 +131,9 @@ module.exports = app => {
 };
 ```
 
-在上面的例子中，`ctx.request.query.id` 和 `ctx.query.id` 是等价的，`ctx.response.body=` 和 `ctx.body=` 是等价的，[Koa] 系列的框架会在 Context 上代理一部分 Request 和 Response 上的方法和属性。
+- [Koa] 会在 Context 上代理一部分 Request 和 Response 上的方法和属性，参见 [Koa.Context]。
+- 如上面例子中的 `ctx.request.query.id` 和 `ctx.query.id` 是等价的，`ctx.response.body=` 和 `ctx.body=` 是等价的。
+- 需要注意的是，获取 POST 的 body 应该使用 `ctx.request.body`，而不是 `ctx.body`。
 
 ## Controller
 
@@ -148,17 +150,17 @@ module.exports = app => {
 ```js
 // app/controller/user.js
 
-// 从 egg 上获取
-const egg = require('egg');
-module.exports = class UserController extends egg.Controller {
-  // implement
-};
-
-// 从 app 实例上获取
+// 从 app 实例上获取（推荐）
 module.exports = app => {
   return class UserController extends app.Controller {
     // implement
   };
+};
+
+// 从 egg 上获取
+const egg = require('egg');
+module.exports = class UserController extends egg.Controller {
+  // implement
 };
 ```
 
@@ -171,16 +173,17 @@ Service 基类的属性和 [Controller](#controller) 基类属性一致，访问
 ```js
 // app/service/user.js
 
-// 从 egg 上获取
-module.exports = class UserService extends require('egg').Service {
-  // implement
-};
-
-// 从 app 实例上获取
+// 从 app 实例上获取（推荐）
 module.exports = app => {
   return class UserService extends app.Service {
     // implement
   };
+};
+
+// 从 egg 上获取
+const egg = require('egg');
+module.exports = class UserService extends egg.Service {
+  // implement
 };
 ```
 
@@ -198,9 +201,9 @@ Helper 自身是一个类，有和 [Controller](#controller) 基类一样的属�
 // app/controller/user.js
 module.exports = app => {
   return class UserController extends app.Controller {
-    *fetch () {
+    * fetch() {
       const { app, ctx } = this;
-      const id = ctx.request.query.id;
+      const id = ctx.query.id;
       const user = app.cache.get(id);
       ctx.body = ctx.helper.formatUser(user);
     }
