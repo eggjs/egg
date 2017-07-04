@@ -29,6 +29,15 @@ describe('test/lib/egg.test.js', () => {
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
     });
 
+    it('should dump config meta', () => {
+      let json = require(path.join(baseDir, 'run/agent_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+      json = require(path.join(baseDir, 'run/application_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+    });
+
     it('should ignore some type', () => {
       const json = require(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.name === 'demo');
