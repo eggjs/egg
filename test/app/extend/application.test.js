@@ -77,6 +77,12 @@ describe('test/app/extend/application.test.js', () => {
         .get('/app_same_ref')
         .expect('true');
     });
+
+    it('should app.locals not OOM', () => {
+      return app.httpRequest()
+        .get('/app_locals_oom')
+        .expect('ok');
+    });
   });
 
   describe('app.createAnonymousContext()', () => {

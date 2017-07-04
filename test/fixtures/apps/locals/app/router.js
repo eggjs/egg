@@ -14,6 +14,16 @@ module.exports = app => {
     this.body = app1 === app2;
   });
 
+  app.get('/app_locals_oom', function*() {
+    for (let i = 0; i < 1000; i++) {
+      app.locals = {
+        // 10MB
+        buff: Buffer.alloc(10 * 1024 * 1024).toString()
+      };
+    }
+    this.body = 'ok';
+  });
+
   app.get('/ctx_same_ref', function*() {
     let ctx1, ctx2;
     this.locals = {
