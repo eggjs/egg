@@ -27,7 +27,6 @@ module.exports = {
     '@types/koa-router',
   ],
   semver: [
-    'eslint@3',
     'koa-bodyparser@2',
   ],
   test: 'scripts',
