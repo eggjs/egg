@@ -85,6 +85,26 @@ describe('test/app/extend/application.test.js', () => {
     });
   });
 
+  describe('app.locals.foo = bar', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/app-locals-getter');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work', () => {
+      return app.httpRequest()
+        .get('/test')
+        .expect({
+          locals: {
+            foo: 'bar',
+            abc: '123',
+          },
+        });
+    });
+  });
+
   describe('app.createAnonymousContext()', () => {
     let app;
     before(() => {
