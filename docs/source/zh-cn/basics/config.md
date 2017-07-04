@@ -186,6 +186,16 @@ path 为一个绝对路径，这样应用可以把自己写的插件直接放到
 - 如密码、密钥等安全字段，这里可以通过 `config.dump.ignore` 配置，必须是 [Set] 类型，查看[默认配置](https://github.com/eggjs/egg/blob/master/config/config.default.js)。
 - 如函数、Buffer 等类型，`JSON.stringify` 后的内容特别大
 
+还会生成 `run/application_config_meta.json`（worker 进程）和 `run/agent_config_meta.json`（agent 进程）文件，用来排查属性的来源，如
+
+```json
+{
+  "logger": {
+    "dir": "/path/to/config/config.default.js"
+  }
+}
+```
+
 [Set]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
 [extend]: https://github.com/justmoon/node-extend
 [extend2]: https://github.com/eggjs/extend2
