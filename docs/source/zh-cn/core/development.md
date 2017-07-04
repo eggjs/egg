@@ -119,7 +119,7 @@ $ npm test -- -t 30000 --grep="should GET"
 
 ## 代码覆盖率
 
-egg-bin 已经内置了 [istanbul](https://github.com/gotwarlost/istanbul) 来支持单元测试自动生成代码覆盖率报告。
+egg-bin 已经内置了 [nyc](https://github.com/istanbuljs/nyc) 来支持单元测试自动生成代码覆盖率报告。
 
 添加 `npm scripts` 到 `package.json`：
 
