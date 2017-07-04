@@ -14,13 +14,13 @@ describe('test/lib/core/loader/load_router.test.js', () => {
   it('should load app/router.js', done => {
     done = pedding(2, done);
     app.httpRequest()
-    .get('/')
-    .expect(200)
-    .expect('hello', done);
+      .get('/')
+      .expect(200)
+      .expect('hello', done);
 
     app.httpRequest()
-    .get('/home')
-    .expect(200)
-    .expect('hello', done);
+      .get('/home')
+      .expect(200)
+      .expect('hello', done);
   });
 });

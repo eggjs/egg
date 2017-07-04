@@ -13,14 +13,14 @@ describe('test/app/middleware/body_parser.test.js', () => {
     app = utils.app('apps/body_parser_testapp');
     app.ready(() => {
       app.httpRequest()
-      .get('/test/body_parser/user')
-      .expect(200, (err, res) => {
-        assert(!err);
-        csrf = res.body.csrf || '';
-        cookies = res.headers['set-cookie'].join(';');
-        assert(csrf);
-        done();
-      });
+        .get('/test/body_parser/user')
+        .expect(200, (err, res) => {
+          assert(!err);
+          csrf = res.body.csrf || '';
+          cookies = res.headers['set-cookie'].join(';');
+          assert(csrf);
+          done();
+        });
     });
   });
 
@@ -29,24 +29,24 @@ describe('test/app/middleware/body_parser.test.js', () => {
 
   it('should 200 when post form body below the limit', done => {
     app.httpRequest()
-    .post('/test/body_parser/user')
-    .set('Cookie', cookies)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Accept', 'application/json')
+      .post('/test/body_parser/user')
+      .set('Cookie', cookies)
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Accept', 'application/json')
     // https://snyk.io/vuln/npm:qs:20170213 test case
-    .send(querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' }))
-    .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-    .expect(200, done);
+      .send(querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' }))
+      .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
+      .expect(200, done);
   });
 
   it('should 200 when post json body below the limit', done => {
     app.httpRequest()
-    .post('/test/body_parser/user')
-    .set('Cookie', cookies)
-    .set('Content-Type', 'application/json')
-    .send({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-    .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-    .expect(200, done);
+      .post('/test/body_parser/user')
+      .set('Cookie', cookies)
+      .set('Content-Type', 'application/json')
+      .send({ foo: 'bar', _csrf: csrf, ']': 'toString' })
+      .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
+      .expect(200, done);
   });
 
   it('should disable body parser', function* () {
@@ -54,9 +54,9 @@ describe('test/app/middleware/body_parser.test.js', () => {
     yield app1.ready();
 
     yield app1.httpRequest()
-    .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar', ']': 'toString' })
-    .expect(204);
+      .post('/test/body_parser/foo.json')
+      .send({ foo: 'bar', ']': 'toString' })
+      .expect(204);
   });
 
   it('should body parser support ignore', function* () {
@@ -64,15 +64,15 @@ describe('test/app/middleware/body_parser.test.js', () => {
     yield app1.ready();
 
     yield app1.httpRequest()
-    .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar', ']': 'toString' })
-    .expect(204);
+      .post('/test/body_parser/foo.json')
+      .send({ foo: 'bar', ']': 'toString' })
+      .expect(204);
 
     yield app1.httpRequest()
-    .post('/test/body_parser/form.json')
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .send({ foo: 'bar', ']': 'toString' })
-    .expect({ foo: 'bar', ']': 'toString' });
+      .post('/test/body_parser/form.json')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({ foo: 'bar', ']': 'toString' })
+      .expect({ foo: 'bar', ']': 'toString' });
   });
 
   it('should body parser support match', function* () {
@@ -80,14 +80,14 @@ describe('test/app/middleware/body_parser.test.js', () => {
     yield app1.ready();
 
     yield app1.httpRequest()
-    .post('/test/body_parser/foo.json')
-    .send({ foo: 'bar', ']': 'toString' })
-    .expect({ foo: 'bar', ']': 'toString' });
+      .post('/test/body_parser/foo.json')
+      .send({ foo: 'bar', ']': 'toString' })
+      .expect({ foo: 'bar', ']': 'toString' });
 
     yield app1.httpRequest()
-    .post('/test/body_parser/form.json')
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .send({ foo: 'bar', ']': 'toString' })
-    .expect(204);
+      .post('/test/body_parser/form.json')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .send({ foo: 'bar', ']': 'toString' })
+      .expect(204);
   });
 });

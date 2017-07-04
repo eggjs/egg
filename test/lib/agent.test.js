@@ -21,16 +21,16 @@ describe('test/lib/agent.test.js', () => {
 
     it('should catch exeption', done => {
       app.httpRequest()
-      .get('/agent-throw')
-      .expect(200, err => {
-        assert(!err);
-        setTimeout(() => {
-          const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
-          assert(body.includes('nodejs.unhandledExceptionError: agent error'));
-          app.notExpect(/nodejs.AgentWorkerDiedError/);
-          done();
-        }, 1000);
-      });
+        .get('/agent-throw')
+        .expect(200, err => {
+          assert(!err);
+          setTimeout(() => {
+            const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
+            assert(body.includes('nodejs.unhandledExceptionError: agent error'));
+            app.notExpect(/nodejs.AgentWorkerDiedError/);
+            done();
+          }, 1000);
+        });
     });
 
     it('should catch uncaughtException string error', done => {

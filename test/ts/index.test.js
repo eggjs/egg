@@ -30,10 +30,10 @@ describe('test/ts/index.test.js', () => {
 
     it('controller run ok', done => {
       request(app.callback())
-      .get('/foo')
-      .expect(200)
-      .expect({ env: 'unittest' })
-      .end(done);
+        .get('/foo')
+        .expect(200)
+        .expect({ env: 'unittest' })
+        .end(done);
     });
   });
 

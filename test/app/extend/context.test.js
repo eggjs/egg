@@ -22,8 +22,8 @@ describe('test/app/extend/context.test.js', () => {
       const logdir = app.config.logger.dir;
 
       yield app.httpRequest()
-      .get('/logger?message=foo')
-      .expect('logger');
+        .get('/logger?message=foo')
+        .expect('logger');
 
       yield sleep(5000);
 
@@ -54,8 +54,8 @@ describe('test/app/extend/context.test.js', () => {
       });
 
       yield app.httpRequest()
-      .get('/logger?message=foo')
-      .expect('logger');
+        .get('/logger?message=foo')
+        .expect('logger');
 
       yield sleep(5000);
 
@@ -83,8 +83,8 @@ describe('test/app/extend/context.test.js', () => {
       const logdir = app.config.logger.dir;
 
       yield app.httpRequest()
-      .get('/logger?message=foo')
-      .expect('logger');
+        .get('/logger?message=foo')
+        .expect('logger');
 
       yield sleep(5000);
 
@@ -114,8 +114,8 @@ describe('test/app/extend/context.test.js', () => {
 
     it('should return null when logger is not found', () => {
       return app.httpRequest()
-      .get('/noExistLogger')
-      .expect('null');
+        .get('/noExistLogger')
+        .expect('null');
     });
 
     it('should log with padding message', function* () {
@@ -280,15 +280,16 @@ describe('test/app/extend/context.test.js', () => {
 
       it('should curl as promise ok', () => {
         return utils.startLocalServer()
-        .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
-        .then(res => assert(res.status === 200));
+          .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
+          .then(res => assert(res.status === 200));
       });
     });
 
     describe('ctx.httpclient', () => {
       it('should only one httpclient on one ctx', function* () {
         const ctx = app.mockContext();
-        assert(ctx.httpclient === ctx.httpclient);
+        const httpclient = ctx.httpclient;
+        assert(ctx.httpclient === httpclient);
         assert(typeof ctx.httpclient.request === 'function');
         assert(typeof ctx.httpclient.curl === 'function');
       });
@@ -342,7 +343,8 @@ describe('test/app/extend/context.test.js', () => {
     describe('get helper()', () => {
       it('should be the same helper instance', () => {
         const ctx = app.mockContext();
-        assert(ctx.helper === ctx.helper);
+        const helper = ctx.helper;
+        assert(ctx.helper === helper);
       });
     });
 
@@ -354,7 +356,8 @@ describe('test/app/extend/context.test.js', () => {
 
       it('should return same logger instance', () => {
         const ctx = app.mockContext();
-        assert(ctx.getLogger('coreLogger') === ctx.getLogger('coreLogger'));
+        const logger = ctx.getLogger('coreLogger');
+        assert(ctx.getLogger('coreLogger') === logger);
       });
     });
   });
