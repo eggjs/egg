@@ -20,8 +20,8 @@ describe('test/async.test.js', () => {
 
   it('middleware, controller and service support async functions', async () => {
     await app.httpRequest()
-    .get('/api')
-    .expect(200)
-    .expect([ 'service', 'controller', 'router', 'middleware' ]);
+      .get('/api')
+      .expect(200)
+      .expect([ 'service', 'controller', 'router', 'middleware' ]);
   });
 });

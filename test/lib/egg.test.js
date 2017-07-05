@@ -29,6 +29,15 @@ describe('test/lib/egg.test.js', () => {
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
     });
 
+    it('should dump config meta', () => {
+      let json = require(path.join(baseDir, 'run/agent_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+      json = require(path.join(baseDir, 'run/application_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+    });
+
     it('should ignore some type', () => {
       const json = require(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.name === 'demo');
@@ -195,9 +204,9 @@ describe('test/lib/egg.test.js', () => {
     it('should access base context properties success', function* () {
       mm(app.config.logger, 'level', 'DEBUG');
       yield app.httpRequest()
-      .get('/')
-      .expect('hello')
-      .expect(200);
+        .get('/')
+        .expect('hello')
+        .expect(200);
 
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');
@@ -212,16 +221,16 @@ describe('test/lib/egg.test.js', () => {
 
     it('should get pathName success', function* () {
       yield app.httpRequest()
-      .get('/pathName')
-      .expect('controller.home')
-      .expect(200);
+        .get('/pathName')
+        .expect('controller.home')
+        .expect(200);
     });
 
     it('should get config success', function* () {
       yield app.httpRequest()
-      .get('/config')
-      .expect('base-context-class')
-      .expect(200);
+        .get('/config')
+        .expect('base-context-class')
+        .expect(200);
     });
   });
 });

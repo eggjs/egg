@@ -13,7 +13,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 
   it('should start cluster success and app worker emit `server` event', () => {
     return app.httpRequest()
-    .get('/')
-    .expect('true');
+      .get('/')
+      .expect('true');
   });
 });

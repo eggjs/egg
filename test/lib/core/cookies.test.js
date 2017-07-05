@@ -70,112 +70,112 @@ describe('test/lib/core/cookies.test.js', () => {
 
     it('should not set secure when request protocol is http', done => {
       app.httpRequest()
-      .get('/?setCookieValue=foobar')
-      .set('Host', 'demo.eggjs.org')
-      .set('X-Forwarded-Proto', 'http')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'foo-cookie=foobar; path=/; httponly');
-        done();
-      });
+        .get('/?setCookieValue=foobar')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'http')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'foo-cookie=foobar; path=/; httponly');
+          done();
+        });
     });
 
     it('should set secure:true and httponly cookie', done => {
       app.httpRequest()
-      .get('/?setCookieValue=foobar')
-      .set('Host', 'demo.eggjs.org')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'foo-cookie=foobar; path=/; secure; httponly');
-        done();
-      });
+        .get('/?setCookieValue=foobar')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'foo-cookie=foobar; path=/; secure; httponly');
+          done();
+        });
     });
 
     it('should set cookie with path: /cookiepath/ok', done => {
       app.httpRequest()
-      .get('/?cookiepath=/cookiepath/ok')
-      .set('Host', 'demo.eggjs.org')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert(cookie.match(/^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/));
-        done();
-      });
+        .get('/?cookiepath=/cookiepath/ok')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert(cookie.match(/^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/));
+          done();
+        });
     });
 
     it('should delete cookie', done => {
       app.httpRequest()
-      .get('/?cookiedel=true')
-      .set('Host', 'demo.eggjs.org')
-      .set('Cookie', 'cookiedel=true')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
-        const expires = cookie.match(/expires=([^;]+);/)[1];
-        assert.equal((new Date() > new Date(expires)), true);
-        done();
-      });
+        .get('/?cookiedel=true')
+        .set('Host', 'demo.eggjs.org')
+        .set('Cookie', 'cookiedel=true')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
+          const expires = cookie.match(/expires=([^;]+);/)[1];
+          assert.equal((new Date() > new Date(expires)), true);
+          done();
+        });
     });
 
     it('should delete cookie with options', done => {
       app.httpRequest()
-      .get('/?cookiedel=true&opts=true')
-      .set('Host', 'demo.eggjs.org')
-      .set('Cookie', 'cookiedel=true; path=/hello; domain=eggjs.org; expires=30')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly');
-        const expires = cookie.match(/expires=([^;]+);/)[1];
-        assert.equal((new Date() > new Date(expires)), true);
-        done();
-      });
+        .get('/?cookiedel=true&opts=true')
+        .set('Host', 'demo.eggjs.org')
+        .set('Cookie', 'cookiedel=true; path=/hello; domain=eggjs.org; expires=30')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly');
+          const expires = cookie.match(/expires=([^;]+);/)[1];
+          assert.equal((new Date() > new Date(expires)), true);
+          done();
+        });
     });
 
     it('should set cookie with domain: okcookie.eggjs.org', done => {
       app.httpRequest()
-      .get('/?cookiedomain=okcookie.eggjs.org&cookiepath=/')
-      .set('Host', 'demo.eggjs.org')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly');
-        done();
-      });
+        .get('/?cookiedomain=okcookie.eggjs.org&cookiepath=/')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly');
+          done();
+        });
     });
 
     it('should not set domain and path', done => {
       app.httpRequest()
-      .get('/?notSetPath=okok')
-      .set('Host', 'demo.eggjs.org')
-      .set('X-Forwarded-Proto', 'https')
-      .expect('hello mock secure app')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'][0];
-        assert(cookie);
-        assert.equal(cookie, 'notSetPath=okok; secure; httponly');
-        done();
-      });
+        .get('/?notSetPath=okok')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'notSetPath=okok; secure; httponly');
+          done();
+        });
     });
   });
 
@@ -189,16 +189,16 @@ describe('test/lib/core/cookies.test.js', () => {
 
     it('should set secure:false cookie', done => {
       app.httpRequest()
-      .get('/hello')
-      .set('Host', 'demo.eggjs.org')
-      .expect('hello')
-      .expect(200, (err, res) => {
-        assert(!err);
-        const cookie = res.headers['set-cookie'].join(';');
-        assert(cookie);
-        assert(cookie.match(/hi=foo; path=\/; httponly/));
-        done();
-      });
+        .get('/hello')
+        .set('Host', 'demo.eggjs.org')
+        .expect('hello')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'].join(';');
+          assert(cookie);
+          assert(cookie.match(/hi=foo; path=\/; httponly/));
+          done();
+        });
     });
   });
 
@@ -213,55 +213,55 @@ describe('test/lib/core/cookies.test.js', () => {
 
     it('should get encrypt cookie', done => {
       app.httpRequest()
-      .get('/')
-      .expect({
-        set: 'bar 中文',
-      })
-      .expect(200, (err, res) => {
-        assert(!err);
-        const encryptCookie = res.headers['set-cookie'][0];
-        assert(encryptCookie);
-        assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
-
-        const plainCookie = res.headers['set-cookie'][1];
-        assert(plainCookie);
-        assert.equal(plainCookie, 'plain=text ok; path=/; httponly');
-
-        app.httpRequest()
         .get('/')
-        .set('Cookie', res.headers['set-cookie'].join(';'))
         .expect({
           set: 'bar 中文',
-          encrypt: 'bar 中文',
-          encryptWrong: 'B9om8kiaZ7Xg9dzTUoH-Pw==',
-          plain: 'text ok',
         })
-        .expect(200, done);
-      });
+        .expect(200, (err, res) => {
+          assert(!err);
+          const encryptCookie = res.headers['set-cookie'][0];
+          assert(encryptCookie);
+          assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
+
+          const plainCookie = res.headers['set-cookie'][1];
+          assert(plainCookie);
+          assert.equal(plainCookie, 'plain=text ok; path=/; httponly');
+
+          app.httpRequest()
+            .get('/')
+            .set('Cookie', res.headers['set-cookie'].join(';'))
+            .expect({
+              set: 'bar 中文',
+              encrypt: 'bar 中文',
+              encryptWrong: 'B9om8kiaZ7Xg9dzTUoH-Pw==',
+              plain: 'text ok',
+            })
+            .expect(200, done);
+        });
     });
 
     it('should decode encrypt value fail', done => {
       app.httpRequest()
-      .get('/')
-      .expect({
-        set: 'bar 中文',
-      })
-      .expect(200, (err, res) => {
-        assert(!err);
-        const encryptCookie = res.headers['set-cookie'][0];
-        assert(encryptCookie);
-        assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
-
-        app.httpRequest()
         .get('/')
-        .set('Cookie', 'foo=123123; plain=text ok')
         .expect({
           set: 'bar 中文',
-          encryptWrong: '123123',
-          plain: 'text ok',
         })
-        .expect(200, done);
-      });
+        .expect(200, (err, res) => {
+          assert(!err);
+          const encryptCookie = res.headers['set-cookie'][0];
+          assert(encryptCookie);
+          assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
+
+          app.httpRequest()
+            .get('/')
+            .set('Cookie', 'foo=123123; plain=text ok')
+            .expect({
+              set: 'bar 中文',
+              encryptWrong: '123123',
+              plain: 'text ok',
+            })
+            .expect(200, done);
+        });
     });
   });
 });

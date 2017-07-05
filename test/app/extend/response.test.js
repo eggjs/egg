@@ -17,12 +17,12 @@ describe('test/app/extend/response.test.js', () => {
 
     it('should get lower case header', () => {
       return app.httpRequest()
-      .get('/')
-      .expect(200)
-      .expect(res => {
-        assert(res.res.rawHeaders.indexOf('content-type') >= 0);
-        assert(res.res.rawHeaders.indexOf('content-length') >= 0);
-      });
+        .get('/')
+        .expect(200)
+        .expect(res => {
+          assert(res.res.rawHeaders.indexOf('content-type') >= 0);
+          assert(res.res.rawHeaders.indexOf('content-length') >= 0);
+        });
     });
 
     it('should get body length', () => {

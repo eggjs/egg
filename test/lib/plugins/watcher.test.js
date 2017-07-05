@@ -25,54 +25,54 @@ describe('test/lib/plugins/watcher.test.js', () => {
       let count = 0;
 
       yield app.httpRequest()
-      .get('/app-watch')
-      .expect(200)
-      .expect('app watch success');
+        .get('/app-watch')
+        .expect(200)
+        .expect('app watch success');
 
       yield sleep(3000);
       fs.writeFileSync(file_path1, 'aaa');
       yield sleep(3000);
 
       yield app.httpRequest()
-      .get('/app-msg')
-      .expect(200)
-      .expect(function(res) {
-        const lastCount = count;
-        count = parseInt(res.text);
-        assert(count > lastCount);
-      });
+        .get('/app-msg')
+        .expect(200)
+        .expect(function(res) {
+          const lastCount = count;
+          count = parseInt(res.text);
+          assert(count > lastCount);
+        });
 
       fs.writeFileSync(file_path2, 'aaa');
       yield sleep(3000);
 
       yield app.httpRequest()
-      .get('/app-msg')
-      .expect(200)
-      .expect(function(res) {
-        const lastCount = count;
-        count = parseInt(res.text);
-        assert(count > lastCount);
-      });
+        .get('/app-msg')
+        .expect(200)
+        .expect(function(res) {
+          const lastCount = count;
+          count = parseInt(res.text);
+          assert(count > lastCount);
+        });
     });
 
     it('should agent watcher work', function* () {
       let count = 0;
       yield app.httpRequest()
-      .get('/agent-watch')
-      .expect(200)
-      .expect('agent watch success');
+        .get('/agent-watch')
+        .expect(200)
+        .expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
       yield sleep(3000);
 
       yield app.httpRequest()
-      .get('/agent-msg')
-      .expect(200)
-      .expect(res => {
-        const lastCount = count;
-        count = parseInt(res.text);
-        assert(count > lastCount);
-      });
+        .get('/agent-msg')
+        .expect(200)
+        .expect(res => {
+          const lastCount = count;
+          count = parseInt(res.text);
+          assert(count > lastCount);
+        });
     });
   });
 

@@ -134,14 +134,14 @@ describe('test/lib/core/logger.test.js', () => {
     mm.env('default');
     app = utils.cluster('apps/logger');
     app
-    .debug(false)
-    .coverage(false)
-    .expect('stdout', /agent info/)
-    .expect('stdout', /app info/)
-    .notExpect('stdout', /app info after ready/)
-    .expect('stderr', /nodejs.Error: agent error/)
-    .expect('stderr', /nodejs.Error: app error/)
-    .end(done);
+      .debug(false)
+      .coverage(false)
+      .expect('stdout', /agent info/)
+      .expect('stdout', /app info/)
+      .notExpect('stdout', /app info after ready/)
+      .expect('stderr', /nodejs.Error: agent error/)
+      .expect('stderr', /nodejs.Error: app error/)
+      .end(done);
   });
 
   it('should still output to console after app ready on local env', done => {
@@ -149,13 +149,13 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.cluster('apps/logger');
     app
     // .debug()
-    .coverage(false)
-    .expect('stdout', /agent info/)
-    .expect('stdout', /app info/)
-    .expect('stdout', /app info after ready/)
-    .expect('stderr', /nodejs.Error: agent error/)
-    .expect('stderr', /nodejs.Error: app error/)
-    .end(done);
+      .coverage(false)
+      .expect('stdout', /agent info/)
+      .expect('stdout', /app info/)
+      .expect('stdout', /app info after ready/)
+      .expect('stderr', /nodejs.Error: agent error/)
+      .expect('stderr', /nodejs.Error: app error/)
+      .end(done);
   });
 
   it('agent and app error should output to common-error.log', done => {
@@ -166,14 +166,14 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.cluster('apps/logger');
     app
     // .debug()
-    .coverage(false)
-    .end(err => {
-      assert(!err);
-      const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
-      assert(content.includes('nodejs.Error: agent error'));
-      assert(content.includes('nodejs.Error: app error'));
-      done();
-    });
+      .coverage(false)
+      .end(err => {
+        assert(!err);
+        const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
+        assert(content.includes('nodejs.Error: agent error'));
+        assert(content.includes('nodejs.Error: app error'));
+        done();
+      });
   });
 
   it('all loggers error should redirect to errorLogger', function* () {
@@ -211,15 +211,15 @@ describe('test/lib/core/logger.test.js', () => {
 
     it('should save debug log to file', done => {
       app.httpRequest()
-      .get('/')
-      .expect('ok')
-      .end(err => {
-        assert(!err);
-        assert(
-          fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8').includes(' DEBUG ')
-        );
-        done();
-      });
+        .get('/')
+        .expect('ok')
+        .end(err => {
+          assert(!err);
+          assert(
+            fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8').includes(' DEBUG ')
+          );
+          done();
+        });
     });
   });
 });

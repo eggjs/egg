@@ -94,36 +94,36 @@ describe('test/lib/core/view.test.js', () => {
 
     it('should render with options', function(done) {
       app.httpRequest()
-      .get('/')
-      .expect(200)
-      .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .get('/')
+        .expect(200)
+        .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
     });
 
     it('should render with async function controller', function(done) {
       app.httpRequest()
-      .get('/async')
-      .expect(200)
-      .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .get('/async')
+        .expect(200)
+        .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
     });
 
     it('should render have helper instance', function(done) {
       app.httpRequest()
-      .get('/')
-      .expect(200, done);
+        .get('/')
+        .expect(200, done);
     });
 
     it('should render with empty', function(done) {
       app.httpRequest()
-      .get('/empty')
-      .expect(200)
-      .expect(`Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .get('/empty')
+        .expect(200)
+        .expect(`Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
     });
 
     it('should render template string', function(done) {
       app.httpRequest()
-      .get('/string')
-      .expect(200)
-      .expect('templateString', done);
+        .get('/string')
+        .expect(200)
+        .expect('templateString', done);
     });
   });
 

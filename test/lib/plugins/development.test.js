@@ -28,21 +28,21 @@ describe('test/lib/plugins/development.test.js', () => {
       });
 
       app.httpRequest()
-      .get('/foo.js')
-      .expect(200)
-      .end(done);
+        .get('/foo.js')
+        .expect(200)
+        .end(done);
 
       app.httpRequest()
-      .get('/public/hello')
-      .expect(404, done);
+        .get('/public/hello')
+        .expect(404, done);
 
       app.httpRequest()
-      .get('/assets/hello')
-      .expect(404, done);
+        .get('/assets/hello')
+        .expect(404, done);
 
       app.httpRequest()
-      .get('/__koa_mock_scene_toolbox/hello')
-      .expect(404, done);
+        .get('/__koa_mock_scene_toolbox/hello')
+        .expect(404, done);
     });
   });
 
