@@ -1,6 +1,35 @@
 # History
 
+## 2017-07-04, Version 1.6.0, @fengmk2
+
+### Notable changes
+
+* **feature**
+  * tsd add ctx.logger and logger.error support Error object
+  * ignore any key contains "secret" on dump config files
+  * show who define the property of the config on `run/application_config_meta.json`
+* **fix**
+  * don't cache the intermediate locals for application
+
+### Commits
+
+  * [[`5dc56fa`](http://github.com/eggjs/egg/commit/5dc56fac043eab22187f9ae1dd7e73d2160fd7ae)] - feat: ignore any key contains "secret" (#1156) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`74c8a54`](http://github.com/eggjs/egg/commit/74c8a547cc90939253946a145655996b59373457)] - feat: dump `run/${type}_config_meta.json` (#1155) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`b80bb14`](http://github.com/eggjs/egg/commit/b80bb1405c1f47c5596ff4a2c9540af7447430ec)] - fix: don't cache the intermediate locals for application (#1146) (Jackson Tian <<shyvo1987@gmail.com>>)
+  * [[`7c70beb`](http://github.com/eggjs/egg/commit/7c70beb26ecf2176cda7547f3163fec11aff450f)] - docs: change istanbul to nyc (#1150) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`c7a87a8`](http://github.com/eggjs/egg/commit/c7a87a8abade84769b34a1ef0ba50a3cc12dec49)] - docs: adjust objects docs (#1140) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`0052351`](http://github.com/eggjs/egg/commit/005235162dce4b0e87768a201c9a68c4291592d4)] - docs: improve plugin dependencies (#1061) (luicfer <<lucifer4he@gmail.com>>)
+  * [[`4322212`](http://github.com/eggjs/egg/commit/43222127b922b486d8f523230fed82ba453ee8d8)] - docs: add missing class in objects.md (kaiye <<catgecn@gmail.com>>)
+  * [[`daa8227`](http://github.com/eggjs/egg/commit/daa82278332d7617d6ebb3d07e8cdfd1e95cf644)] - feat(tsd): add ctx.logger and logger.error support Error object (#1108) (Eward Song <<eward.song@gmail.com>>)
+  * [[`7c2e436`](http://github.com/eggjs/egg/commit/7c2e43626d93049b5f91f59773ef02c4b0f478b3)] - docs: improve feature describe (#1102) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`5ae7814`](http://github.com/eggjs/egg/commit/5ae7814632b1f92d534a496fe4f51c6737447aba)] - chore: comments in english (#1101) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`9099be9`](http://github.com/eggjs/egg/commit/9099be91afa806d0a8258441d11e1da2318777ef)] - docs: unify config in quickstart (#1094) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`c31bc15`](http://github.com/eggjs/egg/commit/c31bc15097c692d08596a277c69fbd44f9d3e2bf)] - test: wait logger to flush (#1090) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`82d2158`](http://github.com/eggjs/egg/commit/82d2158e4c399ead9567b67dc27d13d1ef2e104e)] - docs: add Enclose.IO to Links (#1089) (Minqi Pan <<pmq2001@gmail.com>>)
+
 ## 2017-06-21, Version 1.5.0, @fengmk2
+
+### Notable changes
 
 * **feature**
   * better TypeScript support, add `index.d.ts` file.
@@ -36,6 +65,8 @@
   * [[`2f232f3`](http://github.com/eggjs/egg/commit/2f232f30b0ba7e14ab07c43e34d363bac3906a43)] - docs: file must appear after other fiels when using getFileStream (#982) (Yiyu He <<dead-horse@users.noreply.github.com>>)
 
 ## 2017-05-28, Version 1.4.0, @dead-horse
+
+### Notable changes
 
 * **feature**
   * use lru to aovid oom when httpclient dns cache enabled
