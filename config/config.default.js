@@ -115,7 +115,11 @@ module.exports = appInfo => {
      * @property {Set} ignore - keys to ignore
      */
     dump: {
-      ignore: new Set([ 'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'secret' ]),
+      ignore: new Set([
+        'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'masterKey', 'accessKey',
+        // ignore any key contains "secret" keyword
+        /secret/i,
+      ]),
     },
 
     /**

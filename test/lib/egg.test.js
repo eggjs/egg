@@ -40,10 +40,25 @@ describe('test/lib/egg.test.js', () => {
 
     it('should ignore some type', () => {
       const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.mysql.accessId === 'this is accessId');
+
       assert(json.config.name === 'demo');
       assert(json.config.keys === '<String len: 3>');
       assert(json.config.buffer === '<Buffer len: 4>');
       assert(json.config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
+
+      assert(json.config.pass === '<String len: 12>');
+      assert(json.config.pwd === '<String len: 11>');
+      assert(json.config.password === '<String len: 16>');
+      assert(json.config.passwordNew === 'this is passwordNew');
+      assert(json.config.mysql.passd === '<String len: 13>');
+      assert(json.config.mysql.passwd === '<String len: 14>');
+      assert(json.config.mysql.secret === '<String len: 10>');
+      assert(json.config.mysql.secretNumber === '<Number>');
+      assert(json.config.mysql.masterKey === '<String len: 17>');
+      assert(json.config.mysql.accessKey === '<String len: 17>');
+      assert(json.config.mysql.consumerSecret === '<String len: 22>');
+      assert(json.config.mysql.someSecret === null);
 
       // don't change config
       assert(app.config.keys === 'foo');
