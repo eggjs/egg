@@ -23,3 +23,7 @@ eval `ssh-agent -s`
 ssh-add deploy_key
 
 npm run doc-deploy
+echo 'Done.'
+
+# kill ssh-agent
+ssh-agent -k
