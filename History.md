@@ -1,5 +1,21 @@
 # History
 
+## 2017-07-19, Version 1.6.1, @fengmk2
+
+### Notable changes
+
+* **fix**
+  * make sure config.httpclient.httpAgent.timeout >= 30000, and distinguish
+    options: request, httpAgent and httpsAgent on `config.httpclient`.
+
+### Commits
+
+  * [[`988b8c8`](http://github.com/eggjs/egg/commit/988b8c84d0f63ce0e83e00bd12cff65ebf4f2ff5)] - fix: make sure config.httpclient.httpAgent.timeout >= 30000 (#1165) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`894005c`](http://github.com/eggjs/egg/commit/894005c8e683e764ec234c915afce89b57343f98)] - docs: (core/i18n): [translate] Done (#1194) (Darren Wong <<darrenwongf@gmail.com>>)
+  * [[`410633b`](http://github.com/eggjs/egg/commit/410633b3e47098abc30d83429895b543431929ec)] - chore: kill ssh-agent after deploy (#1204) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`05f4785`](http://github.com/eggjs/egg/commit/05f47858a6d74041a10539443a9ea2e195826bc4)] - chore: add travis_wait to avoid deploying document timeout (#1201) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`367e1d6`](http://github.com/eggjs/egg/commit/367e1d66ef3bdb49ee41758246cdaf49e04ea140)] - docs: fix typo (#1191) (BingqiChan <<bingqichen@live.cn>>)
+
 ## 2017-07-04, Version 1.6.0, @fengmk2
 
 ### Notable changes
