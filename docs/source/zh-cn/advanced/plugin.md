@@ -97,7 +97,7 @@ title: 插件开发
 // plugin b
 {
   "name": "egg-plugin-b",
-  "egg-Plugin": {
+  "eggPlugin": {
     "name": "b",
     "optionalDependencies": [ "c" ]
   }
@@ -106,7 +106,7 @@ title: 插件开发
 // plugin c
 {
   "name": "egg-plugin-c",
-  "egg-Plugin": {
+  "eggPlugin": {
     "name": "c"
   }
 }
