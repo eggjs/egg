@@ -39,6 +39,11 @@ exports.startLocalServer = () => {
         if (req.url === '/get_headers') {
           res.setHeader('Content-Type', 'json');
           res.end(JSON.stringify(req.headers));
+        } else if (req.url === '/timeout') {
+          setTimeout(() => {
+            res.end(`${req.method} ${req.url}`);
+          }, 10000);
+          return;
         } else {
           res.end(`${req.method} ${req.url}`);
         }
