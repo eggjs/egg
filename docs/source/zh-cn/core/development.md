@@ -367,7 +367,7 @@ exports.proxyworker = {
 
 当且仅当你的 Node.js 版本大于 7.x 时，可以使用 [Inspector Protocol] 进行调试。
 
-VScode升级1.14后，默认protocol由 Legacy 变为了 Inspector，如果仍需使用Legacy, 要手动指定。详情参考 https://github.com/Microsoft/vscode/issues/30629#issuecomment-315196813
+VScode 升级 1.14 后，默认 protocol 由 [Legacy] 变为了 [Inspector]。如果仍需使用 [Legacy], 需手动指定。详情参考 https://github.com/Microsoft/vscode/issues/30629#issuecomment-315196813
 
 在上面的调试配置中需要修改一些参数来开启新协议:
 - `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`、`"protocol": "inspector"`
