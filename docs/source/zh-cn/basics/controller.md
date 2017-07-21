@@ -123,7 +123,7 @@ module.exports = app => {
 };
 ```
 
-### Controller 方法
+### Controller 方法（不推荐使用，只是为了兼容）
 
 每一个 Controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
@@ -131,21 +131,21 @@ module.exports = app => {
 
 ```js
 // app/controller/post.js
-exports.create = function* (ctx) {
+exports.create = function* () {
   const createRule = {
     title: { type: 'string' },
     content: { type: 'string' },
   };
   // 校验参数
-  ctx.validate(createRule);
+  this.validate(createRule);
   // 组装参数
-  const author = ctx.session.userId;
-  const req = Object.assign(ctx.request.body, { author });
+  const author = this.session.userId;
+  const req = Object.assign(this.request.body, { author });
   // 调用 service 进行业务处理
-  const res = yield ctx.service.post.create(req);
+  const res = yield this.service.post.create(req);
   // 设置响应内容和响应状态码
-  ctx.body = { id: res.id };
-  ctx.status = 201;
+  this.body = { id: res.id };
+  this.status = 201;
 };
 ```
 
@@ -210,13 +210,13 @@ Connection: keep-alive
 在 URL 中 `?` 后面的部分是一个 Query String，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
 
 ```js
-exports.listPosts = function* (ctx) {
-  const query = ctx.query;
+* listPosts() {
+  const query = this.ctx.query;
   // {
   //   category: 'egg',
   //   language: 'node',
   // }
-};
+}
 ```
 
 当 Query String 中的 key 重复时，`context.query` 只取 key 第一次出现时的值，后面再出现的都会被忽略。`GET /posts?category=egg&category=koa` 通过 `context.query` 拿到的值是 `{ category: 'egg' }`。
@@ -239,13 +239,13 @@ if (key.startsWith('egg')) {
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-exports.listPosts = function* (ctx) {
-  console.log(ctx.queries);
+* listPosts() {
+  console.log(this.ctx.queries);
   // {
   //   category: [ 'egg' ],
   //   id: [ '1', '2', '3' ],
   // }
-};
+}
 ```
 
 `context.queries` 上所有的 key 如果有值，也一定会是数组类型。
@@ -258,10 +258,10 @@ exports.listPosts = function* (ctx) {
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-exports.listApp = function* (ctx) {
-  assert.equal(ctx.params.projectId, '1');
-  assert.equal(ctx.params.appId, '2');
-};
+* listApp() {
+  assert.equal(this.ctx.params.projectId, '1');
+  assert.equal(this.ctx.params.appId, '2');
+}
 ```
 
 ### body
@@ -281,10 +281,10 @@ exports.listApp = function* (ctx) {
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-exports.listPosts = function* (ctx) {
-  assert.equal(ctx.request.body.title, 'controller');
-  assert.equal(ctx.request.body.content, 'what is controller');
-};
+* listPosts() {
+  assert.equal(this.ctx.request.body.title, 'controller');
+  assert.equal(this.ctx.request.body.content, 'what is controller');
+}
 ```
 
 框架对 bodyParser 设置了一些默认参数，配置好之后拥有以下特性：
@@ -326,7 +326,9 @@ module.exports = {
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function* (ctx) {
+// controller class' upload method
+* upload() {
+  const ctx = this.ctx;
   const stream = yield ctx.getFileStream();
   const name = 'egg-multipart-test/' + path.basename(stream.filename);
   // 文件处理，上传到云存储等等
@@ -344,7 +346,7 @@ module.exports = function* (ctx) {
     // 所有表单字段都能通过 `stream.fields` 获取到
     fields: stream.fields,
   };
-};
+}
 ```
 
 要通过 `context.getFileStream` 便捷的获取到用户上传的文件，需要满足两个条件：
@@ -357,7 +359,9 @@ module.exports = function* (ctx) {
 ```js
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function* (ctx) {
+// controller class' upload method
+* upload() {
+  const ctx = this.ctx;
   const parts = ctx.multipart();
   let part;
   while ((part = yield parts) != null) {
@@ -391,7 +395,7 @@ module.exports = function* (ctx) {
     }
   }
   console.log('and we are done parsing the form!');
-};
+}
 ```
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
@@ -491,14 +495,16 @@ HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道�
 通过 `context.cookies`，我们可以在 Controller 中便捷、安全的设置和读取 Cookie。
 
 ```js
-exports.add = function* (ctx) {
+* add() {
+  const ctx = this.ctx;
   const count = ctx.cookie.get('count');
   count = count ? Number(count) : 0;
   ctx.cookie.set('count', ++count);
   ctx.body = count;
 };
 
-exports.remove = function* (ctx) {
+* remove(ctx) {
+  const ctx = this.ctx;
   const count = ctx.cookie.set('count', null);
   ctx.status = 204;
 };
@@ -515,7 +521,8 @@ Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，�
 框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 Session 。
 
 ```js
-exports.fetchPosts = function* (ctx) {
+*fetchPosts() {
+  const ctx = this.ctx;
   // 获取 Session 上的内容
   const userId = ctx.session.userId;
   const posts = yield ctx.service.post.fetch(userId);
@@ -525,14 +532,14 @@ exports.fetchPosts = function* (ctx) {
     success: true,
     posts,
   };
-};
+}
 ```
 
 Session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 `null`：
 
 ```js
-exports.deleteSession = function* (ctx) {
-  ctx.session = null;
+* deleteSession() {
+  this.ctx.session = null;
 };
 ```
 
@@ -566,21 +573,21 @@ exports.validate = {
 通过 `context.validate(rule, [body])` 直接对参数进行校验：
 
 ```js
-const createRule = {
-  title: { type: 'string' },
-  content: { type: 'string' },
-};
-exports.create = function* (ctx) {
+* create() {
   // 校验参数
   // 如果不传第二个参数会自动校验 `ctx.request.body`
-  ctx.validate(createRule);
-};
+  this.ctx.validate({
+    title: { type: 'string' },
+    content: { type: 'string' },
+  });
+}
 ```
 
 当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
-exports.create = function* (ctx) {
+* create() {
+  const ctx = this.ctx;
   try {
     ctx.validate(createRule);
   } catch (err) {
@@ -588,7 +595,7 @@ exports.create = function* (ctx) {
     ctx.body = { success: false };
     return;
   }
-};
+}
 ```
 
 ### 校验规则
@@ -613,7 +620,8 @@ app.validator.addRule('json', (rule, value) => {
 添加完自定义规则之后，就可以在 Controller 中直接使用这条规则来进行参数校验了
 
 ```js
-exports.handler = function* (ctx) {
+* handler() {
+  const ctx = this.ctx;
   // query.test 字段必须是 json 字符串
   const rule = { test: 'json' };
   ctx.validate(rule, ctx.query);
@@ -627,14 +635,15 @@ exports.handler = function* (ctx) {
 在 Controller 中可以调用任何一个 Service 上的任何方法，同时 Service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
-exports.create = function* (ctx) {
+* create() {
+  const ctx = this.ctx;
   const author = ctx.session.userId;
   const req = Object.assign(ctx.request.body, { author });
   // 调用 service 进行业务处理
   const res = yield ctx.service.post.create(req);
   ctx.body = { id: res.id };
   ctx.status = 201;
-};
+}
 ```
 
 Service 的具体写法，请查看 [Service](./service.md) 章节。
@@ -650,10 +659,10 @@ HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP
 框架提供了一个便捷的 Setter 来进行状态码的设置
 
 ```js
-exports.create = function* (ctx) {
+*create() {
   // 设置状态码为 201
-  ctx.status = 201;
-};
+  this.ctx.status = 201;
+}
 ```
 
 具体什么场景设置什么样的状态码，可以参考 [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) 中各个状态码的含义。
@@ -666,30 +675,31 @@ exports.create = function* (ctx) {
 - 作为一个 html 页面的 controller，我们通常会返回 Content-Type 为 `text/html` 格式的 body，内容是 html 代码段。
 
 ```js
-exports.show = function* (ctx) {
-  ctx.body = {
+* show() {
+  this.ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
   };
-};
+}
 
-exports.page = function* (ctx) {
-  ctx.body = '<html><h1>Hello</h1></html>';
-};
+* page() {
+  this.ctx.body = '<html><h1>Hello</h1></html>';
+}
 ```
 
 由于 Node.js 的流式特性，我们还有很多场景需要通过 Stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 Stream，并会同时处理好这个 stream 上的错误事件。
 
 ```js
-exports.proxy = function* (ctx) {
+* proxy() {
+  const ctx = this.ctx;
   const result = yield ctx.curl(url, {
     streaming: true,
   });
   ctx.set(result.header);
   // result.res 是一个 stream
   ctx.body = result.res;
-};
+}
 ```
 
 #### 渲染模板
@@ -719,13 +729,13 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-exports.show = function* (ctx) {
-  ctx.body = {
+*show() {
+  this.ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
   };
-};
+}
 ```
 
 用户请求对应的 URL 访问到这个 controller 的时候，如果 query 中有 `_callback=fn` 参数，将会返回 JSONP 格式的数据，否则返回 JSON 格式的数据。
@@ -851,11 +861,12 @@ exports.jsonp = {
 
 ```js
 // app/controller/api.js
-exports.show = function* (ctx) {
+* show() {
+  const ctx = this.ctx;
   const start = Date.now();
   ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
   // 设置一个响应头
   ctx.set('show-response-time', used.toString());
-};
+}
 ```

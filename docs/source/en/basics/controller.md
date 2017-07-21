@@ -111,7 +111,7 @@ module.exports = app => {
 };
 ```
 
-### Methods in Controller
+### Methods in Controller (not recommend, only for compatbility)
 
 Every Controller is a generation function, whose first argument is the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 
@@ -119,21 +119,21 @@ For example, when we define a Controller relative to `POST /api/posts`, we creat
 
 ```js
 // app/controller/post.js
-exports.create = function* (ctx) {
+exports.create = function* () {
   const createRule = {
     title: { type: 'string' },
     content: { type: 'string' },
   };
   // verify parameters
-  ctx.validate(createRule);
+  this.validate(createRule);
   // assemble parameters
-  const author = ctx.session.userId;
-  const req = Object.assign(ctx.request.body, { author });
+  const author = this.session.userId;
+  const req = Object.assign(this.request.body, { author });
   // calls Service to handle business
-  const res = yield ctx.service.post.create(req);
+  const res = yield this.service.post.create(req);
   // set response content and status code
-  ctx.body = { id: res.id };
-  ctx.status = 201;
+  this.body = { id: res.id };
+  this.status = 201;
 };
 ```
 
@@ -198,13 +198,13 @@ It can be seen from the above HTTP request examples that there are many places c
 Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`:
 
 ```js
-exports.listPosts = function* (ctx) {
-  const query = ctx.query;
+* listPosts() {
+  const query = this.ctx.query;
   // {
   //   category: 'egg',
   //   language: 'node',
   // }
-};
+}
 ```
 
 If duplicated keys exists in Query String, only the 1st value of this key is used by `context.query` and all other values it appear later will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `context.query` acquires is `{ category: 'egg' }`.
@@ -227,13 +227,13 @@ Sometimes our system is designed to accept same keys sent by users, like `GET /p
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-exports.listPosts = function* (ctx) {
-  console.log(ctx.queries);
+* listPosts() {
+  console.log(this.ctx.queries);
   // {
   //   category: [ 'egg' ],
   //   id: [ '1', '2', '3' ],
   // }
-};
+}
 ```
 
 The value type for keys in `context.queries` is array for sure if any.
@@ -246,10 +246,10 @@ In [Router](./router.md) part, we say Router is allowed to declare parameters wh
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-exports.listApp = function* (ctx) {
-  assert.equal(ctx.params.projectId, '1');
-  assert.equal(ctx.params.appId, '2');
-};
+* listApp() {
+  assert.equal(this.ctx.params.projectId, '1');
+  assert.equal(this.ctx.params.appId, '2');
+}
 ```
 
 ### body
@@ -269,10 +269,10 @@ The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by 
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-exports.listPosts = function* (ctx) {
-  assert.equal(ctx.request.body.title, 'controller');
-  assert.equal(ctx.request.body.content, 'what is controller');
-};
+* listPosts() {
+  assert.equal(this.ctx.request.body.title, 'controller');
+  assert.equal(this.ctx.request.body.content, 'what is controller');
+}
 ```
 
 The framework configures the bodyParser using default parameters and features below are available out of the box:
@@ -293,7 +293,7 @@ module.exports = {
 ```
 If user request exceeds the maximum length for parsing that we configured, the framework will throw an exception whose status code is `413`; if request body failed to be parsed(e.g. malformed JSON), an exception with status code `400` will be thrown.
 
-**Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy, if any in front of our application, should be adjusted as well to support the newly configured length of the body. **
+**Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy, if any in front of our application, should be adjusted as well to support the newly configured length of the body.**
 
 ### Acquire Uploaded Files
 
@@ -313,7 +313,9 @@ In Controller, we can acquire the file stream of the uploaded file through inter
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function* (ctx) {
+// controller class' upload method
+* upload() {
+  const ctx = this.ctx;
   const stream = yield ctx.getFileStream();
   const name = 'egg-multipart-test/' + path.basename(stream.filename);
   // file processing, e.g. uploading to the cloud storage etc.
@@ -331,7 +333,7 @@ module.exports = function* (ctx) {
     // all form fields can be acquired by `stream.fields`
     fields: stream.fields,
   };
-};
+}
 ```
 
 To acquire user uploaded files conveniently by `context.getFileStream`, 2 conditions must be matched:
@@ -344,7 +346,9 @@ If more than 1 file are to be uploaded, `ctx.getFileStream()` is no longer the w
 ```js
 const sendToWormhole = require('stream-wormhole');
 
-module.exports = function* (ctx) {
+// controller class' upload method
+* upload() {
+  const ctx = this.ctx;
   const parts = ctx.multipart();
   let part;
   while ((part = yield parts) != null) {
@@ -378,7 +382,7 @@ module.exports = function* (ctx) {
     }
   }
   console.log('and we are done parsing the form!');
-};
+}
 ```
 
 To ensure the security of uploading files, the framework limits supported file formats and the whitelist supported by default is below:
@@ -478,17 +482,19 @@ All HTTP requests are stateless but, on the contrary, our Web applications usual
 Through `context.cookies`, we can conveniently and safely set and get Cookie in Controller.
 
 ```js
-exports.add = function* (ctx) {
+* add() {
+  const ctx = this.ctx;
   const count = ctx.cookie.get('count');
   count = count ? Number(count) : 0;
   ctx.cookie.set('count', ++count);
   ctx.body = count;
-};
+}
 
-exports.remove = function* (ctx) {
+* remove(ctx) {
+  const ctx = this.ctx;
   const count = ctx.cookie.set('count', null);
   ctx.status = 204;
-};
+}
 ```
 
 Although Cookie is only a header in HTTP, multiple key-value pairs can be set in the format of `foo=bar;foo1=bar1;`.
@@ -502,7 +508,8 @@ By using Cookie, we can create an individual Session specific to every user to s
 The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `context.session` for us to get or set current user's Session.
 
 ```js
-exports.fetchPosts = function* (ctx) {
+*fetchPosts() {
+  const ctx = this.ctx;
   // get data from Session
   const userId = ctx.session.userId;
   const posts = yield ctx.service.post.fetch(userId);
@@ -512,15 +519,15 @@ exports.fetchPosts = function* (ctx) {
     success: true,
     posts,
   };
-};
+}
 ```
 
 It's quite intuition to use Session, just get or set directly, and if set it to `null`, it is deleted.
 
 ```js
-exports.deleteSession = function* (ctx) {
-  ctx.session = null;
-};
+* deleteSession() {
+  this.ctx.session = null;
+}
 ```
 
 Like Cookie, Session has many safety related configurations and functions etc., so it's better to read [Session](../core/cookie-and-session.md#session) in depth in ahead.
@@ -553,21 +560,21 @@ exports.validate = {
 Validate parameters directly through `context.validate(rule, [body])`:
 
 ```js
-const createRule = {
-  title: { type: 'string' },
-  content: { type: 'string' },
-};
-exports.create = function* (ctx) {
+* create() {
   // validate parameters
   // if the second parameter is absent, `ctx.request.body` is validated automatically
-  ctx.validate(createRule);
-};
+  this.ctx.validate({
+    title: { type: 'string' },
+    content: { type: 'string' },
+  });
+}
 ```
 
 When the validation fails, an exception will be thrown immediately with an error code of 422 and an errors field containing the detailed information why it fails. You can capture this exception through `try catch` and handle it all by yourself.
 
 ```js
-exports.create = function* (ctx) {
+* create() {
+  const ctx = this.ctx;
   try {
     ctx.validate(createRule);
   } catch (err) {
@@ -575,7 +582,7 @@ exports.create = function* (ctx) {
     ctx.body = { success: false };
     return;
   }
-};
+}
 ```
 ### Validation Rules
 
@@ -599,11 +606,12 @@ app.validator.addRule('json', (rule, value) => {
 After adding the customized rule, it can be used immediately in Controller to do parameter validation.
 
 ```js
-exports.handler = function* (ctx) {
+* handler() {
+  const ctx = this.ctx;
   // query.test field must be a json string
   const rule = { test: 'json' };
   ctx.validate(rule, ctx.query);
-};
+}
 ```
 
 ## Using Service
@@ -613,14 +621,15 @@ We do not prefer to implement too many business logics in Controller, so a [Serv
 In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is initialized by the framework on the first time it is accessed.
 
 ```js
-exports.create = function* (ctx) {
+* create() {
+  const ctx = this.ctx;
   const author = ctx.session.userId;
   const req = Object.assign(ctx.request.body, { author });
   // using service to handle business logics
   const res = yield ctx.service.post.create(req);
   ctx.body = { id: res.id };
   ctx.status = 201;
-};
+}
 ```
 
 To write a Service in detail, please refer to [Service](./service.md).
@@ -636,10 +645,10 @@ HTTP designs many [Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_statu
 The framework provides a convenient Setter to set the status code:
 
 ```js
-exports.create = function* (ctx) {
+*create() {
   // set status code to 201
-  ctx.status = 201;
-};
+  this.ctx.status = 201;
+}
 ```
 
 As to which status code should be used for a specific case, please refer to status code meanings on [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
@@ -652,30 +661,31 @@ Most data is sent to receivers through the body and, just like the body in the r
 - for a HTML page controller, we usually send a body whose Content-Type is `text/html`, indicating it's a piece of HTML code.
 
 ```js
-exports.show = function* (ctx) {
-  ctx.body = {
+* show() {
+  this.ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
   };
-};
+}
 
-exports.page = function* (ctx) {
-  ctx.body = '<html><h1>Hello</h1></html>';
-};
+* page() {
+  this.ctx.body = '<html><h1>Hello</h1></html>';
+}
 ```
 
 Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upstream straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
 
 ```js
-exports.proxy = function* (ctx) {
+* proxy() {
+  const ctx = this.ctx;
   const result = yield ctx.curl(url, {
     streaming: true,
   });
   ctx.set(result.header);
-  // result.res is s stream
+  // result.res is stream
   ctx.body = result.res;
-};
+}
 ```
 
 #### Rendering Template
@@ -705,13 +715,13 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-exports.show = function* (ctx) {
-  ctx.body = {
+*show() {
+  this.ctx.body = {
     name: 'egg',
     category: 'framework',
     language: 'Node.js',
   };
-};
+}
 ```
 
 When user requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
@@ -836,11 +846,12 @@ We identify the request success or not, in which state by the status code and se
 
 ```js
 // app/controller/api.js
-exports.show = function* (ctx) {
+// * show() {
+  const ctx = this.ctx;
   const start = Date.now();
   ctx.body = yield ctx.service.post.get();
   const used = Date.now() - start;
   // set one response header
   ctx.set('show-response-time', used.toString());
-};
+}
 ```
