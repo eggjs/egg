@@ -111,9 +111,9 @@ module.exports = app => {
 };
 ```
 
-### Methods in Controller (not recommend, only for compatbility)
+### Methods Style Controller (not recommend, only for compatbility)
 
-Every Controller is a generation function, whose first argument is the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
+Every Controller is a generation function, whose `this` is point to the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 
 For example, when we define a Controller relative to `POST /api/posts`, we create a `post.js` file under `app/controller` directory.
 

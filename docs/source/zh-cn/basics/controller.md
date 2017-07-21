@@ -125,7 +125,7 @@ module.exports = app => {
 
 ### Controller 方法（不推荐使用，只是为了兼容）
 
-每一个 Controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
+每一个 Controller 都是一个 generator function，它的 `this` 指向请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
 例如我们写一个对应到 `POST /api/posts` 接口的 Controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
