@@ -198,13 +198,16 @@ It can be seen from the above HTTP request examples that there are many places c
 Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`:
 
 ```js
-* listPosts() {
-  const query = this.ctx.query;
-  // {
-  //   category: 'egg',
-  //   language: 'node',
-  // }
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    const query = this.ctx.query;
+    // {
+    //   category: 'egg',
+    //   language: 'node',
+    // }
+  }
+};
 ```
 
 If duplicated keys exists in Query String, only the 1st value of this key is used by `context.query` and all other values it appear later will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `context.query` acquires is `{ category: 'egg' }`.
@@ -227,13 +230,16 @@ Sometimes our system is designed to accept same keys sent by users, like `GET /p
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-* listPosts() {
-  console.log(this.ctx.queries);
-  // {
-  //   category: [ 'egg' ],
-  //   id: [ '1', '2', '3' ],
-  // }
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    console.log(this.ctx.queries);
+    // {
+    //   category: [ 'egg' ],
+    //   id: [ '1', '2', '3' ],
+    // }
+  }
+};
 ```
 
 The value type for keys in `context.queries` is array for sure if any.
@@ -246,10 +252,13 @@ In [Router](./router.md) part, we say Router is allowed to declare parameters wh
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-* listApp() {
-  assert.equal(this.ctx.params.projectId, '1');
-  assert.equal(this.ctx.params.appId, '2');
-}
+const Controller = require('egg').Controller;
+module.exports = class AppController extends Controller {
+  * listApp() {
+    assert.equal(this.ctx.params.projectId, '1');
+    assert.equal(this.ctx.params.appId, '2');
+  }
+};
 ```
 
 ### body
@@ -269,10 +278,14 @@ The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by 
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-* listPosts() {
-  assert.equal(this.ctx.request.body.title, 'controller');
-  assert.equal(this.ctx.request.body.content, 'what is controller');
-}
+
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    assert.equal(this.ctx.request.body.title, 'controller');
+    assert.equal(this.ctx.request.body.content, 'what is controller');
+  }
+};
 ```
 
 The framework configures the bodyParser using default parameters and features below are available out of the box:
@@ -312,28 +325,30 @@ In Controller, we can acquire the file stream of the uploaded file through inter
 ```js
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
+const Controller = require('egg').Controller;
 
-// controller class' upload method
-* upload() {
-  const ctx = this.ctx;
-  const stream = yield ctx.getFileStream();
-  const name = 'egg-multipart-test/' + path.basename(stream.filename);
-  // file processing, e.g. uploading to the cloud storage etc.
-  let result;
-  try {
-    result = yield ctx.oss.put(name, stream);
-  } catch (err) {
-    // must consume the file stream, or the browser will get stuck
-    yield sendToWormhole(stream);
-    throw err;
+module.exports = class UploaderController extends Controller {
+  * upload() {
+    const ctx = this.ctx;
+    const stream = yield ctx.getFileStream();
+    const name = 'egg-multipart-test/' + path.basename(stream.filename);
+    // file processing, e.g. uploading to the cloud storage etc.
+    let result;
+    try {
+      result = yield ctx.oss.put(name, stream);
+    } catch (err) {
+      // must consume the file stream, or the browser will get stuck
+      yield sendToWormhole(stream);
+      throw err;
+    }
+
+    ctx.body = {
+      url: result.url,
+      // all form fields can be acquired by `stream.fields`
+      fields: stream.fields,
+    };
   }
-
-  ctx.body = {
-    url: result.url,
-    // all form fields can be acquired by `stream.fields`
-    fields: stream.fields,
-  };
-}
+};
 ```
 
 To acquire user uploaded files conveniently by `context.getFileStream`, 2 conditions must be matched:
@@ -345,44 +360,46 @@ If more than 1 file are to be uploaded, `ctx.getFileStream()` is no longer the w
 
 ```js
 const sendToWormhole = require('stream-wormhole');
+const Controller = require('egg').Controller;
 
-// controller class' upload method
-* upload() {
-  const ctx = this.ctx;
-  const parts = ctx.multipart();
-  let part;
-  while ((part = yield parts) != null) {
-    if (part.length) {
-      // it is field in case of arrays
-      console.log('field: ' + part[0]);
-      console.log('value: ' + part[1]);
-      console.log('valueTruncated: ' + part[2]);
-      console.log('fieldnameTruncated: ' + part[3]);
-    } else {
-      if (!part.filename) {
-        // it occurs when user selects no file then click to upload(part represents file, while part.filename is empty)
-        // more process should be taken, like giving an error message
-        return;
+module.exports = class UploaderController extends Controller {
+  * upload() {
+    const ctx = this.ctx;
+    const parts = ctx.multipart();
+    let part;
+    while ((part = yield parts) != null) {
+      if (part.length) {
+        // it is field in case of arrays
+        console.log('field: ' + part[0]);
+        console.log('value: ' + part[1]);
+        console.log('valueTruncated: ' + part[2]);
+        console.log('fieldnameTruncated: ' + part[3]);
+      } else {
+        if (!part.filename) {
+          // it occurs when user selects no file then click to upload(part represents file, while part.filename is empty)
+          // more process should be taken, like giving an error message
+          return;
+        }
+        // part represents the file stream uploaded
+        console.log('field: ' + part.fieldname);
+        console.log('filename: ' + part.filename);
+        console.log('encoding: ' + part.encoding);
+        console.log('mime: ' + part.mime);
+        // file processing, e.g. uploading to the cloud storage etc.
+        let result;
+        try {
+          result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
+        } catch (err) {
+          // must consume the file stream, or the browser will get stuck
+          yield sendToWormhole(stream);
+          throw err;
+        }
+        console.log(result);
       }
-      // part represents the file stream uploaded
-      console.log('field: ' + part.fieldname);
-      console.log('filename: ' + part.filename);
-      console.log('encoding: ' + part.encoding);
-      console.log('mime: ' + part.mime);
-      // file processing, e.g. uploading to the cloud storage etc.
-      let result;
-      try {
-        result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
-      } catch (err) {
-        // must consume the file stream, or the browser will get stuck
-        yield sendToWormhole(stream);
-        throw err;
-      }
-      console.log(result);
     }
+    console.log('and we are done parsing the form!');
   }
-  console.log('and we are done parsing the form!');
-}
+};
 ```
 
 To ensure the security of uploading files, the framework limits supported file formats and the whitelist supported by default is below:
@@ -482,19 +499,22 @@ All HTTP requests are stateless but, on the contrary, our Web applications usual
 Through `context.cookies`, we can conveniently and safely set and get Cookie in Controller.
 
 ```js
-* add() {
-  const ctx = this.ctx;
-  const count = ctx.cookie.get('count');
-  count = count ? Number(count) : 0;
-  ctx.cookie.set('count', ++count);
-  ctx.body = count;
-}
+const Controller = require('egg').Controller;
+module.exports = class CookieController extends Controller {
+  * add() {
+    const ctx = this.ctx;
+    const count = ctx.cookie.get('count');
+    count = count ? Number(count) : 0;
+    ctx.cookie.set('count', ++count);
+    ctx.body = count;
+  }
 
-* remove(ctx) {
-  const ctx = this.ctx;
-  const count = ctx.cookie.set('count', null);
-  ctx.status = 204;
-}
+  * remove() {
+    const ctx = this.ctx;
+    const count = ctx.cookie.set('count', null);
+    ctx.status = 204;
+  }
+};
 ```
 
 Although Cookie is only a header in HTTP, multiple key-value pairs can be set in the format of `foo=bar;foo1=bar1;`.
@@ -508,26 +528,32 @@ By using Cookie, we can create an individual Session specific to every user to s
 The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `context.session` for us to get or set current user's Session.
 
 ```js
-*fetchPosts() {
-  const ctx = this.ctx;
-  // get data from Session
-  const userId = ctx.session.userId;
-  const posts = yield ctx.service.post.fetch(userId);
-  // set value to Session
-  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
-  ctx.body = {
-    success: true,
-    posts,
-  };
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *fetchPosts() {
+    const ctx = this.ctx;
+    // get data from Session
+    const userId = ctx.session.userId;
+    const posts = yield ctx.service.post.fetch(userId);
+    // set value to Session
+    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.body = {
+      success: true,
+      posts,
+    };
+  }
+};
 ```
 
 It's quite intuition to use Session, just get or set directly, and if set it to `null`, it is deleted.
 
 ```js
-* deleteSession() {
-  this.ctx.session = null;
-}
+const Controller = require('egg').Controller;
+module.exports = class SessionController extends Controller {
+  * deleteSession() {
+    this.ctx.session = null;
+  }
+};
 ```
 
 Like Cookie, Session has many safety related configurations and functions etc., so it's better to read [Session](../core/cookie-and-session.md#session) in depth in ahead.
@@ -560,29 +586,35 @@ exports.validate = {
 Validate parameters directly through `context.validate(rule, [body])`:
 
 ```js
-* create() {
-  // validate parameters
-  // if the second parameter is absent, `ctx.request.body` is validated automatically
-  this.ctx.validate({
-    title: { type: 'string' },
-    content: { type: 'string' },
-  });
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    // validate parameters
+    // if the second parameter is absent, `ctx.request.body` is validated automatically
+    this.ctx.validate({
+      title: { type: 'string' },
+      content: { type: 'string' },
+    });
+  }
+};
 ```
 
 When the validation fails, an exception will be thrown immediately with an error code of 422 and an errors field containing the detailed information why it fails. You can capture this exception through `try catch` and handle it all by yourself.
 
 ```js
-* create() {
-  const ctx = this.ctx;
-  try {
-    ctx.validate(createRule);
-  } catch (err) {
-    ctx.logger.warn(err.errors);
-    ctx.body = { success: false };
-    return;
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    const ctx = this.ctx;
+    try {
+      ctx.validate(createRule);
+    } catch (err) {
+      ctx.logger.warn(err.errors);
+      ctx.body = { success: false };
+      return;
+    }
   }
-}
+};
 ```
 ### Validation Rules
 
@@ -606,12 +638,15 @@ app.validator.addRule('json', (rule, value) => {
 After adding the customized rule, it can be used immediately in Controller to do parameter validation.
 
 ```js
-* handler() {
-  const ctx = this.ctx;
-  // query.test field must be a json string
-  const rule = { test: 'json' };
-  ctx.validate(rule, ctx.query);
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * handler() {
+    const ctx = this.ctx;
+    // query.test field must be a json string
+    const rule = { test: 'json' };
+    ctx.validate(rule, ctx.query);
+  }
+};
 ```
 
 ## Using Service
@@ -621,15 +656,18 @@ We do not prefer to implement too many business logics in Controller, so a [Serv
 In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is initialized by the framework on the first time it is accessed.
 
 ```js
-* create() {
-  const ctx = this.ctx;
-  const author = ctx.session.userId;
-  const req = Object.assign(ctx.request.body, { author });
-  // using service to handle business logics
-  const res = yield ctx.service.post.create(req);
-  ctx.body = { id: res.id };
-  ctx.status = 201;
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    const ctx = this.ctx;
+    const author = ctx.session.userId;
+    const req = Object.assign(ctx.request.body, { author });
+    // using service to handle business logics
+    const res = yield ctx.service.post.create(req);
+    ctx.body = { id: res.id };
+    ctx.status = 201;
+  }
+};
 ```
 
 To write a Service in detail, please refer to [Service](./service.md).
@@ -645,10 +683,13 @@ HTTP designs many [Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_statu
 The framework provides a convenient Setter to set the status code:
 
 ```js
-*create() {
-  // set status code to 201
-  this.ctx.status = 201;
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *create() {
+    // set status code to 201
+    this.ctx.status = 201;
+  }
+};
 ```
 
 As to which status code should be used for a specific case, please refer to status code meanings on [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
@@ -661,31 +702,37 @@ Most data is sent to receivers through the body and, just like the body in the r
 - for a HTML page controller, we usually send a body whose Content-Type is `text/html`, indicating it's a piece of HTML code.
 
 ```js
-* show() {
-  this.ctx.body = {
-    name: 'egg',
-    category: 'framework',
-    language: 'Node.js',
-  };
-}
+const Controller = require('egg').Controller;
+module.exports = class ViewController extends Controller {
+  * show() {
+    this.ctx.body = {
+      name: 'egg',
+      category: 'framework',
+      language: 'Node.js',
+    };
+  }
 
-* page() {
-  this.ctx.body = '<html><h1>Hello</h1></html>';
-}
+  * page() {
+    this.ctx.body = '<html><h1>Hello</h1></html>';
+  }
+};
 ```
 
 Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upstream straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
 
 ```js
-* proxy() {
-  const ctx = this.ctx;
-  const result = yield ctx.curl(url, {
-    streaming: true,
-  });
-  ctx.set(result.header);
-  // result.res is stream
-  ctx.body = result.res;
-}
+const Controller = require('egg').Controller;
+module.exports = class ProxyController extends Controller {
+  * proxy() {
+    const ctx = this.ctx;
+    const result = yield ctx.curl(url, {
+      streaming: true,
+    });
+    ctx.set(result.header);
+    // result.res is stream
+    ctx.body = result.res;
+  }
+};
 ```
 
 #### Rendering Template
@@ -715,13 +762,16 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-*show() {
-  this.ctx.body = {
-    name: 'egg',
-    category: 'framework',
-    language: 'Node.js',
-  };
-}
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *show() {
+    this.ctx.body = {
+      name: 'egg',
+      category: 'framework',
+      language: 'Node.js',
+    };
+  }
+};
 ```
 
 When user requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
@@ -846,12 +896,15 @@ We identify the request success or not, in which state by the status code and se
 
 ```js
 // app/controller/api.js
-// * show() {
-  const ctx = this.ctx;
-  const start = Date.now();
-  ctx.body = yield ctx.service.post.get();
-  const used = Date.now() - start;
-  // set one response header
-  ctx.set('show-response-time', used.toString());
-}
+const Controller = require('egg').Controller;
+module.exports = class ProxyController extends Controller {
+  * show() {
+    const ctx = this.ctx;
+    const start = Date.now();
+    ctx.body = yield ctx.service.post.get();
+    const used = Date.now() - start;
+    // set one response header
+    ctx.set('show-response-time', used.toString());
+  }
+};
 ```
