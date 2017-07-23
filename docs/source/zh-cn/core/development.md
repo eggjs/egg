@@ -309,7 +309,7 @@ exports.proxyworker = {
 
 // config/config.default.js
 // 如果10086被占用，你可以通过这个配置指定其他的端口号
-exports.proxyworker = {
+config.proxyworker = {
   port: 10086,
 };
 ```
