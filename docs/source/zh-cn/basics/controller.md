@@ -28,29 +28,27 @@ title: controller
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  class PostController extends app.Controller {
-    * create() {
-      const { ctx, service } = this;
-      const createRule = {
-        title: { type: 'string' },
-        content: { type: 'string' },
-      };
-      // 校验参数
-      ctx.validate(createRule);
-      // 组装参数
-      const author = ctx.session.userId;
-      const req = Object.assign(ctx.request.body, { author });
-      // 调用 Service 进行业务处理
-      const res = yield service.post.create(req);
-      // 设置响应内容和响应状态码
-      ctx.body = { id: res.id };
-      ctx.status = 201;
-    }
+const Controller = require('egg').Controller;
+class PostController extends Controller {
+  * create() {
+    const { ctx, service } = this;
+    const createRule = {
+      title: { type: 'string' },
+      content: { type: 'string' },
+    };
+    // 校验参数
+    ctx.validate(createRule);
+    // 组装参数
+    const author = ctx.session.userId;
+    const req = Object.assign(ctx.request.body, { author });
+    // 调用 Service 进行业务处理
+    const res = yield service.post.create(req);
+    // 设置响应内容和响应状态码
+    ctx.body = { id: res.id };
+    ctx.status = 201;
   }
-
-  return PostController;
 }
+module.exports = PostController;
 ```
 
 我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 Controller 在 Router 中引用到，我们可以从 `app.controller` 根据文件名和方法名定位到它。
