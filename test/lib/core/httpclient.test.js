@@ -151,4 +151,30 @@ describe('test/lib/core/httpclient.test.js', () => {
         });
     });
   });
+
+  describe('overwrite httpclient', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-overwrite');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should set request default global timeout to 100ms', () => {
+      return app.httpclient.curl(`${url}/timeout`)
+        .catch(err => {
+          assert(err);
+          assert(err.name === 'ResponseTimeoutError');
+          assert(err.message.includes('Response timeout for 100ms'));
+        });
+    });
+
+    it('should assert url', () => {
+      return app.httpclient.curl('unknown url')
+        .catch(err => {
+          assert(err);
+          assert(err.message.includes('url should start with http, but got unknown url'));
+        });
+    });
+  });
 });
