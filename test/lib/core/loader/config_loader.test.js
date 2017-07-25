@@ -46,8 +46,8 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
   it('should get cluster defaults', function* () {
     app = utils.app('apps/demo');
     yield app.ready();
-    assert(app.config.cluster.path === '');
-    assert(app.config.cluster.port === 7001);
-    assert(app.config.cluster.hostname === '');
+    assert(app.config.cluster.listen.path === '');
+    assert(app.config.cluster.listen.port === 7001);
+    assert(app.config.cluster.listen.hostname === '');
   });
 });
