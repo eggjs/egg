@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const createHttpclient = require('../../../lib/core/httpclient');
+const Httpclient = require('../../../lib/core/httpclient');
 const utils = require('../../utils');
 
 describe('test/lib/core/httpclient.test.js', () => {
@@ -10,7 +10,7 @@ describe('test/lib/core/httpclient.test.js', () => {
   let url;
 
   before(() => {
-    client = createHttpclient({
+    client = new Httpclient({
       config: {
         httpclient: {
           request: {},
