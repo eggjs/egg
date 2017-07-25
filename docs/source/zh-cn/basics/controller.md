@@ -28,29 +28,27 @@ title: controller
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  class PostController extends app.Controller {
-    * create() {
-      const { ctx, service } = this;
-      const createRule = {
-        title: { type: 'string' },
-        content: { type: 'string' },
-      };
-      // 校验参数
-      ctx.validate(createRule);
-      // 组装参数
-      const author = ctx.session.userId;
-      const req = Object.assign(ctx.request.body, { author });
-      // 调用 Service 进行业务处理
-      const res = yield service.post.create(req);
-      // 设置响应内容和响应状态码
-      ctx.body = { id: res.id };
-      ctx.status = 201;
-    }
+const Controller = require('egg').Controller;
+class PostController extends Controller {
+  * create() {
+    const { ctx, service } = this;
+    const createRule = {
+      title: { type: 'string' },
+      content: { type: 'string' },
+    };
+    // 校验参数
+    ctx.validate(createRule);
+    // 组装参数
+    const author = ctx.session.userId;
+    const req = Object.assign(ctx.request.body, { author });
+    // 调用 Service 进行业务处理
+    const res = yield service.post.create(req);
+    // 设置响应内容和响应状态码
+    ctx.body = { id: res.id };
+    ctx.status = 201;
   }
-
-  return PostController;
 }
+module.exports = PostController;
 ```
 
 我们通过上面的代码定义了一个 `PostController` 的类，类里面的每一个方法都可以作为一个 Controller 在 Router 中引用到，我们可以从 `app.controller` 根据文件名和方法名定位到它。
@@ -123,29 +121,29 @@ module.exports = app => {
 };
 ```
 
-### Controller 方法
+### Controller 方法（不推荐使用，只是为了兼容）
 
-每一个 Controller 都是一个 generator function，它的第一个参数是请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
+每一个 Controller 都是一个 generator function，它的 `this` 指向请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
 例如我们写一个对应到 `POST /api/posts` 接口的 Controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
 ```js
 // app/controller/post.js
-exports.create = function* (ctx) {
+exports.create = function* () {
   const createRule = {
     title: { type: 'string' },
     content: { type: 'string' },
   };
   // 校验参数
-  ctx.validate(createRule);
+  this.validate(createRule);
   // 组装参数
-  const author = ctx.session.userId;
-  const req = Object.assign(ctx.request.body, { author });
+  const author = this.session.userId;
+  const req = Object.assign(this.request.body, { author });
   // 调用 service 进行业务处理
-  const res = yield ctx.service.post.create(req);
+  const res = yield this.service.post.create(req);
   // 设置响应内容和响应状态码
-  ctx.body = { id: res.id };
-  ctx.status = 201;
+  this.body = { id: res.id };
+  this.status = 201;
 };
 ```
 
@@ -210,12 +208,15 @@ Connection: keep-alive
 在 URL 中 `?` 后面的部分是一个 Query String，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
 
 ```js
-exports.listPosts = function* (ctx) {
-  const query = ctx.query;
-  // {
-  //   category: 'egg',
-  //   language: 'node',
-  // }
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    const query = this.ctx.query;
+    // {
+    //   category: 'egg',
+    //   language: 'node',
+    // }
+  }
 };
 ```
 
@@ -239,12 +240,15 @@ if (key.startsWith('egg')) {
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
 
-exports.listPosts = function* (ctx) {
-  console.log(ctx.queries);
-  // {
-  //   category: [ 'egg' ],
-  //   id: [ '1', '2', '3' ],
-  // }
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    console.log(this.ctx.queries);
+    // {
+    //   category: [ 'egg' ],
+    //   id: [ '1', '2', '3' ],
+    // }
+  }
 };
 ```
 
@@ -258,9 +262,12 @@ exports.listPosts = function* (ctx) {
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
 
-exports.listApp = function* (ctx) {
-  assert.equal(ctx.params.projectId, '1');
-  assert.equal(ctx.params.appId, '2');
+const Controller = require('egg').Controller;
+module.exports = class AppController extends Controller {
+  * listApp() {
+    assert.equal(this.ctx.params.projectId, '1');
+    assert.equal(this.ctx.params.appId, '2');
+  }
 };
 ```
 
@@ -281,9 +288,13 @@ exports.listApp = function* (ctx) {
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-exports.listPosts = function* (ctx) {
-  assert.equal(ctx.request.body.title, 'controller');
-  assert.equal(ctx.request.body.content, 'what is controller');
+
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * listPosts() {
+    assert.equal(this.ctx.request.body.title, 'controller');
+    assert.equal(this.ctx.request.body.content, 'what is controller');
+  }
 };
 ```
 
@@ -325,25 +336,29 @@ module.exports = {
 ```js
 const path = require('path');
 const sendToWormhole = require('stream-wormhole');
+const Controller = require('egg').Controller;
 
-module.exports = function* (ctx) {
-  const stream = yield ctx.getFileStream();
-  const name = 'egg-multipart-test/' + path.basename(stream.filename);
-  // 文件处理，上传到云存储等等
-  let result;
-  try {
-    result = yield ctx.oss.put(name, stream);
-  } catch (err) {
-    // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-    yield sendToWormhole(stream);
-    throw err;
+module.exports = class UploaderController extends Controller {
+  * upload() {
+    const ctx = this.ctx;
+    const stream = yield ctx.getFileStream();
+    const name = 'egg-multipart-test/' + path.basename(stream.filename);
+    // 文件处理，上传到云存储等等
+    let result;
+    try {
+      result = yield ctx.oss.put(name, stream);
+    } catch (err) {
+      // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+      yield sendToWormhole(stream);
+      throw err;
+    }
+
+    ctx.body = {
+      url: result.url,
+      // 所有表单字段都能通过 `stream.fields` 获取到
+      fields: stream.fields,
+    };
   }
-
-  ctx.body = {
-    url: result.url,
-    // 所有表单字段都能通过 `stream.fields` 获取到
-    fields: stream.fields,
-  };
 };
 ```
 
@@ -356,41 +371,45 @@ module.exports = function* (ctx) {
 
 ```js
 const sendToWormhole = require('stream-wormhole');
+const Controller = require('egg').Controller;
 
-module.exports = function* (ctx) {
-  const parts = ctx.multipart();
-  let part;
-  while ((part = yield parts) != null) {
-    if (part.length) {
-      // 如果是数组的话是 filed
-      console.log('field: ' + part[0]);
-      console.log('value: ' + part[1]);
-      console.log('valueTruncated: ' + part[2]);
-      console.log('fieldnameTruncated: ' + part[3]);
-    } else {
-      if (!part.filename) {
-        // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
-        // 需要做出处理，例如给出错误提示消息
-        return;
+module.exports = class UploaderController extends Controller {
+  * upload() {
+    const ctx = this.ctx;
+    const parts = ctx.multipart();
+    let part;
+    while ((part = yield parts) != null) {
+      if (part.length) {
+        // 如果是数组的话是 filed
+        console.log('field: ' + part[0]);
+        console.log('value: ' + part[1]);
+        console.log('valueTruncated: ' + part[2]);
+        console.log('fieldnameTruncated: ' + part[3]);
+      } else {
+        if (!part.filename) {
+          // 这时是用户没有选择文件就点击了上传(part 是 file stream，但是 part.filename 为空)
+          // 需要做出处理，例如给出错误提示消息
+          return;
+        }
+        // part 是上传的文件流
+        console.log('field: ' + part.fieldname);
+        console.log('filename: ' + part.filename);
+        console.log('encoding: ' + part.encoding);
+        console.log('mime: ' + part.mime);
+        // 文件处理，上传到云存储等等
+        let result;
+        try {
+          result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
+        } catch (err) {
+          // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
+          yield sendToWormhole(stream);
+          throw err;
+        }
+        console.log(result);
       }
-      // part 是上传的文件流
-      console.log('field: ' + part.fieldname);
-      console.log('filename: ' + part.filename);
-      console.log('encoding: ' + part.encoding);
-      console.log('mime: ' + part.mime);
-      // 文件处理，上传到云存储等等
-      let result;
-      try {
-        result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
-      } catch (err) {
-        // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-        yield sendToWormhole(stream);
-        throw err;
-      }
-      console.log(result);
     }
+    console.log('and we are done parsing the form!');
   }
-  console.log('and we are done parsing the form!');
 };
 ```
 
@@ -491,16 +510,21 @@ HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道�
 通过 `context.cookies`，我们可以在 Controller 中便捷、安全的设置和读取 Cookie。
 
 ```js
-exports.add = function* (ctx) {
-  const count = ctx.cookie.get('count');
-  count = count ? Number(count) : 0;
-  ctx.cookie.set('count', ++count);
-  ctx.body = count;
-};
+const Controller = require('egg').Controller;
+module.exports = class CookieController extends Controller {
+  * add() {
+    const ctx = this.ctx;
+    const count = ctx.cookie.get('count');
+    count = count ? Number(count) : 0;
+    ctx.cookie.set('count', ++count);
+    ctx.body = count;
+  }
 
-exports.remove = function* (ctx) {
-  const count = ctx.cookie.set('count', null);
-  ctx.status = 204;
+  * remove() {
+    const ctx = this.ctx;
+    const count = ctx.cookie.set('count', null);
+    ctx.status = 204;
+  }
 };
 ```
 
@@ -515,24 +539,31 @@ Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，�
 框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 Session 。
 
 ```js
-exports.fetchPosts = function* (ctx) {
-  // 获取 Session 上的内容
-  const userId = ctx.session.userId;
-  const posts = yield ctx.service.post.fetch(userId);
-  // 修改 Session 的值
-  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
-  ctx.body = {
-    success: true,
-    posts,
-  };
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *fetchPosts() {
+    const ctx = this.ctx;
+    // 获取 Session 上的内容
+    const userId = ctx.session.userId;
+    const posts = yield ctx.service.post.fetch(userId);
+    // 修改 Session 的值
+    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.body = {
+      success: true,
+      posts,
+    };
+  }
 };
 ```
 
 Session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 `null`：
 
 ```js
-exports.deleteSession = function* (ctx) {
-  ctx.session = null;
+const Controller = require('egg').Controller;
+module.exports = class SessionController extends Controller {
+  * deleteSession() {
+    this.ctx.session = null;
+  }
 };
 ```
 
@@ -566,27 +597,33 @@ exports.validate = {
 通过 `context.validate(rule, [body])` 直接对参数进行校验：
 
 ```js
-const createRule = {
-  title: { type: 'string' },
-  content: { type: 'string' },
-};
-exports.create = function* (ctx) {
-  // 校验参数
-  // 如果不传第二个参数会自动校验 `ctx.request.body`
-  ctx.validate(createRule);
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    // 校验参数
+    // 如果不传第二个参数会自动校验 `ctx.request.body`
+    this.ctx.validate({
+      title: { type: 'string' },
+      content: { type: 'string' },
+    });
+  }
 };
 ```
 
 当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
-exports.create = function* (ctx) {
-  try {
-    ctx.validate(createRule);
-  } catch (err) {
-    ctx.logger.warn(err.errors);
-    ctx.body = { success: false };
-    return;
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    const ctx = this.ctx;
+    try {
+      ctx.validate(createRule);
+    } catch (err) {
+      ctx.logger.warn(err.errors);
+      ctx.body = { success: false };
+      return;
+    }
   }
 };
 ```
@@ -613,10 +650,14 @@ app.validator.addRule('json', (rule, value) => {
 添加完自定义规则之后，就可以在 Controller 中直接使用这条规则来进行参数校验了
 
 ```js
-exports.handler = function* (ctx) {
-  // query.test 字段必须是 json 字符串
-  const rule = { test: 'json' };
-  ctx.validate(rule, ctx.query);
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * handler() {
+    const ctx = this.ctx;
+    // query.test 字段必须是 json 字符串
+    const rule = { test: 'json' };
+    ctx.validate(rule, ctx.query);
+  }
 };
 ```
 
@@ -627,13 +668,17 @@ exports.handler = function* (ctx) {
 在 Controller 中可以调用任何一个 Service 上的任何方法，同时 Service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
-exports.create = function* (ctx) {
-  const author = ctx.session.userId;
-  const req = Object.assign(ctx.request.body, { author });
-  // 调用 service 进行业务处理
-  const res = yield ctx.service.post.create(req);
-  ctx.body = { id: res.id };
-  ctx.status = 201;
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  * create() {
+    const ctx = this.ctx;
+    const author = ctx.session.userId;
+    const req = Object.assign(ctx.request.body, { author });
+    // 调用 service 进行业务处理
+    const res = yield ctx.service.post.create(req);
+    ctx.body = { id: res.id };
+    ctx.status = 201;
+  }
 };
 ```
 
@@ -650,9 +695,12 @@ HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP
 框架提供了一个便捷的 Setter 来进行状态码的设置
 
 ```js
-exports.create = function* (ctx) {
-  // 设置状态码为 201
-  ctx.status = 201;
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *create() {
+    // 设置状态码为 201
+    this.ctx.status = 201;
+  }
 };
 ```
 
@@ -666,29 +714,36 @@ exports.create = function* (ctx) {
 - 作为一个 html 页面的 controller，我们通常会返回 Content-Type 为 `text/html` 格式的 body，内容是 html 代码段。
 
 ```js
-exports.show = function* (ctx) {
-  ctx.body = {
-    name: 'egg',
-    category: 'framework',
-    language: 'Node.js',
-  };
-};
+const Controller = require('egg').Controller;
+module.exports = class ViewController extends Controller {
+  * show() {
+    this.ctx.body = {
+      name: 'egg',
+      category: 'framework',
+      language: 'Node.js',
+    };
+  }
 
-exports.page = function* (ctx) {
-  ctx.body = '<html><h1>Hello</h1></html>';
+  * page() {
+    this.ctx.body = '<html><h1>Hello</h1></html>';
+  }
 };
 ```
 
 由于 Node.js 的流式特性，我们还有很多场景需要通过 Stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 Stream，并会同时处理好这个 stream 上的错误事件。
 
 ```js
-exports.proxy = function* (ctx) {
-  const result = yield ctx.curl(url, {
-    streaming: true,
-  });
-  ctx.set(result.header);
-  // result.res 是一个 stream
-  ctx.body = result.res;
+const Controller = require('egg').Controller;
+module.exports = class ProxyController extends Controller {
+  * proxy() {
+    const ctx = this.ctx;
+    const result = yield ctx.curl(url, {
+      streaming: true,
+    });
+    ctx.set(result.header);
+    // result.res 是一个 stream
+    ctx.body = result.res;
+  }
 };
 ```
 
@@ -719,12 +774,15 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-exports.show = function* (ctx) {
-  ctx.body = {
-    name: 'egg',
-    category: 'framework',
-    language: 'Node.js',
-  };
+const Controller = require('egg').Controller;
+module.exports = class PostController extends Controller {
+  *show() {
+    this.ctx.body = {
+      name: 'egg',
+      category: 'framework',
+      language: 'Node.js',
+    };
+  }
 };
 ```
 
@@ -851,11 +909,15 @@ exports.jsonp = {
 
 ```js
 // app/controller/api.js
-exports.show = function* (ctx) {
-  const start = Date.now();
-  ctx.body = yield ctx.service.post.get();
-  const used = Date.now() - start;
-  // 设置一个响应头
-  ctx.set('show-response-time', used.toString());
+const Controller = require('egg').Controller;
+module.exports = class ProxyController extends Controller {
+  * show() {
+    const ctx = this.ctx;
+    const start = Date.now();
+    ctx.body = yield ctx.service.post.get();
+    const used = Date.now() - start;
+    // 设置一个响应头
+    ctx.set('show-response-time', used.toString());
+  }
 };
 ```
