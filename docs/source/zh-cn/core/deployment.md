@@ -59,6 +59,23 @@ EGG_SERVER_ENV=prod nohup node dispatch.js > stdout.log 2> stderr.log &
 - 如果使用 Docker，可直接前台运行。
 - 默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 
+### 启动配置项
+
+你也可以在 `config.{env}.js` 中配置指定启动配置。
+
+```js
+// config/config.default.js
+exports.cluster = {
+  listen: {
+    port: '7001',
+    hostname: '127.0.0.1',
+    // path: '/var/run/egg.sock',
+  }
+}
+```
+
+`path`，`port`，`hostname` 均为 [server.listen](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) 的参数，`egg.startCluster` 方法传入的 port 优先级高于此配置。
+
 ### 自定义框架启动
 
 如果应用使用了[自定义框架](../advanced/framework.md)，还需要指定额外的参数，比如框架为 `yadan`。
