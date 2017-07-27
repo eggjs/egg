@@ -1,5 +1,28 @@
 # History
 
+## 2017-07-27, Version 1.7.0, @popomore
+
+### Notable changes
+
+* **feature**
+  * Support listen options in config.js
+* **improve**
+  * `app.HttpClient` can be overwritten
+* **document**
+  * Document improvement
+  * English documents have been translated by @gztchan
+
+### Commits
+
+  * [[`45bea3cb5`](http://github.com/eggjs/egg/commit/45bea3cb55636a09160bfc66befca476994dacc8)] - docs(core-deployment): translate deployment.md in English (#1235) (Tony Chan <<gztchan@gmail.com>>)
+  * [[`dda386e42`](http://github.com/eggjs/egg/commit/dda386e425ce96019f3d068e66603f80af966571)] - test: add test and doc for listen options (#1246) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`3ef1de952`](http://github.com/eggjs/egg/commit/3ef1de95247aa3e3fdcbda71fe83e58a892a13d6)] - feat: set cluster options, include path, port, hostname (#1231) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`e9f93cf83`](http://github.com/eggjs/egg/commit/e9f93cf83d46fd84c8c6b10ec2e7e3eb2bf24f9d)] - refactor: export app.HttpClient that can be overwritten (#1234) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`96b3786eb`](http://github.com/eggjs/egg/commit/96b3786eb9640c9ec2d71a5a0a0b18ee32e9e3ad)] - docs(core/error-handling): translate error-handling.md in English (#1228) (Tony Chan <<gztchan@gmail.com>>)
+  * [[`c3c9fce55`](http://github.com/eggjs/egg/commit/c3c9fce557a8d8c57b2a5e5391d1c11a81ceeaa7)] - docs(controller): examples use controller class (#1221) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`24f279005`](http://github.com/eggjs/egg/commit/24f2790051c0d248f6df9850ffe8513dc11e5780)] - docs: new VScode 1.14 default protocol changed. (#1212) (Anto <<anto17@foxmail.com>>)
+  * [[`2b78b4cf8`](http://github.com/eggjs/egg/commit/2b78b4cf8275171ddf788550745edc3aef948ca7)] - docs: Fix config name from egg-Plugin to eggPlugin in plugin's doc (#1215) (hansen <<hasseyoung@gmail.com>>)
+
 ## 2017-07-19, Version 1.6.1, @fengmk2
 
 ### Notable changes
