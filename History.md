@@ -14,6 +14,8 @@
 
 ### Commits
 
+  * [[`773343061`](http://github.com/eggjs/egg/commit/7733430614d62392fa1b06568e223ce2ae5b3709)] - docs: only deploy docs at 8 (#1252) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`4f2ebfda8`](http://github.com/eggjs/egg/commit/4f2ebfda81c067ba500ee22ac30c8b201f746cac)] - docs: fix const define (#1249) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`45bea3cb5`](http://github.com/eggjs/egg/commit/45bea3cb55636a09160bfc66befca476994dacc8)] - docs(core-deployment): translate deployment.md in English (#1235) (Tony Chan <<gztchan@gmail.com>>)
   * [[`dda386e42`](http://github.com/eggjs/egg/commit/dda386e425ce96019f3d068e66603f80af966571)] - test: add test and doc for listen options (#1246) (Haoliang Gao <<sakura9515@gmail.com>>)
   * [[`3ef1de952`](http://github.com/eggjs/egg/commit/3ef1de95247aa3e3fdcbda71fe83e58a892a13d6)] - feat: set cluster options, include path, port, hostname (#1231) (Haoliang Gao <<sakura9515@gmail.com>>)
