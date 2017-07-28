@@ -10,7 +10,7 @@ script:
   - npm run ci
 after_script:
   - npminstall codecov && codecov
-  - travis_wait scripts/doc_travis.sh
+  - test $TRAVIS_NODE_VERSION = 8 && travis_wait scripts/doc_travis.sh
 env:
   global:
   - ENCRYPTION_LABEL: a62186272189
