@@ -14,6 +14,7 @@
 
 ### Commits
 
+  * [[`dd07cacb2`](http://github.com/eggjs/egg/commit/dd07cacb209565cc8bdc240b2a3bd7f624a3e56c)] - docs: fix typo on CONTRIBUTING.zh-CN.md (#1266) (SuperEwe <<superewe@qq.com>>)
   * [[`773343061`](http://github.com/eggjs/egg/commit/7733430614d62392fa1b06568e223ce2ae5b3709)] - docs: only deploy docs at 8 (#1252) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`4f2ebfda8`](http://github.com/eggjs/egg/commit/4f2ebfda81c067ba500ee22ac30c8b201f746cac)] - docs: fix const define (#1249) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`45bea3cb5`](http://github.com/eggjs/egg/commit/45bea3cb55636a09160bfc66befca476994dacc8)] - docs(core-deployment): translate deployment.md in English (#1235) (Tony Chan <<gztchan@gmail.com>>)
