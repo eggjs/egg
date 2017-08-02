@@ -39,7 +39,7 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
 
-加上 [thunk-mocha](https://npmjs.com/thunk-mocha) 模块的帮助，
+加上 [co-mocha](https://npmjs.com/co-mocha) 模块的帮助，
 扩展了 Mocha 的多种用例书写方式，例如 generator function，async await 等。
 
 ### AVA
@@ -103,7 +103,7 @@ test
 ### 测试运行工具
 
 统一使用 [egg-bin 来运行测试脚本](./development.md#单元测试)，
-自动将内置的 Mocha、thunk-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
+自动将内置的 Mocha、co-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
 让我们**聚焦精力在编写测试代码**上，而不是纠结选择那些测试周边工具和模块。
 
 只需要在 `package.json` 上配置好 `scripts.test` 即可。
@@ -268,7 +268,7 @@ describe('egg test', () => {
 
 ## 异步测试
 
-egg-bin 会自动加载 thunk-mocha 插件测试异步调用，它支持多种写法，比如上面 `app.httpRequest` 方法支持返回 Promise：
+egg-bin 会自动加载 co-mocha 插件测试异步调用，它支持多种写法，比如上面 `app.httpRequest` 方法支持返回 Promise：
 
 ```js
 // 使用返回 Promise 的方式
