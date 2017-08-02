@@ -28,38 +28,49 @@ $ tar -zcvf ../release.tgz .
 
 服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 6.0.0`。
 
-框架使用 [egg-cluster] 来启动 [Master 进程](./cluster-and-ipc.md#master)，Master 有足够的稳定性，不再需要使用 [pm2] 等进程守护模块。[egg-cluster] 已集成到框架中，只需要调用 `egg.startCluster` 方法。
+框架内置了 [egg-cluster] 来启动 [Master 进程](./cluster-and-ipc.md#master)，Master 有足够的稳定性，不再需要使用 [pm2] 等进程守护模块。
 
-更多参数可参考 [egg-cluster](https://github.com/eggjs/egg-cluster#options)
+同时，框架也提供了 [egg-scripts] 来支持线上环境的运行和停止。
 
-### 创建启动文件
-
-在应用根目录创建一个启动文件，比如 `dispatch.js`
-
-```js
-// dispatch.js
-const egg = require('egg');
-
-egg.startCluster({
-  baseDir: __dirname,
-});
-```
-
-### 后台运行
-
-然后运行这个文件，将标准输出重定向到 `stdout.log`，错误输出重定向到 `stderr.log`，便于排查问题。
+首先，我们需要把 `egg-scripts` 模块作为 `dependencies` 引入：
 
 ```bash
-EGG_SERVER_ENV=prod nohup node dispatch.js > stdout.log 2> stderr.log &
+$ npm i egg-scripts --save
 ```
 
-注意：
+添加 `npm scripts` 到 `package.json`：
 
-- **生产环境使用的 `EGG_SERVER_ENV` 必须为 `prod`**，可查看[运行环境](../basics/env.md)获取更多内容。
-- 如果使用 Docker，可直接前台运行。
-- 默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
+```json
+{
+  "scripts": {
+    "start": "egg-scripts start --daemon",
+    "stop": "egg-scripts stop"
+  }
+}
+```
 
-### 启动配置项
+这样我们就可以通过 `npm start` 和 `npm stop` 命令启动或停止应用。
+
+### 启动命令
+
+```bash
+$ egg-scripts start --port=7001 --daemon --env=prod --worker=2 --title=egg-server-showcase
+```
+
+如上，`egg-scripts start` 支持传递参数：
+
+- `--port=7001` 端口号，默认会读取环境变量 `process.env.PORT`，如未传递将使用框架内置端口 `7001`。
+- `--daemon` 是否允许在后台模式，无需 `nohup`。若使用 Docker 建议直接前台运行。
+- `--env=prod` 框架运行环境，默认为 `prod` 模式。
+- `--workers=2` 框架 worker 线程数，默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
+- `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
+- `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，还需要指定额外的参数，比如框架为 `yadan`。
+
+更多参见 [egg-scripts] 文档。
+
+**注意：该方式不会读取应用目录下的 `index.js`。**
+
+#### 启动配置项
 
 你也可以在 `config.{env}.js` 中配置指定启动配置。
 
@@ -74,22 +85,44 @@ exports.cluster = {
 }
 ```
 
-`path`，`port`，`hostname` 均为 [server.listen](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) 的参数，`egg.startCluster` 方法传入的 port 优先级高于此配置。
+`path`，`port`，`hostname` 均为 [server.listen](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) 的参数，`egg-scripts` 和 `egg.startCluster` 方法传入的 port 优先级高于此配置。
 
-### 自定义框架启动
+#### 手动创建启动文件
 
-如果应用使用了[自定义框架](../advanced/framework.md)，还需要指定额外的参数，比如框架为 `yadan`。
+你也可以手动在应用根目录创建一个入口文件如 `index.js` 来启动应用，但我们更推荐使用上述的 `egg-scripts start`。
 
 ```js
-// dispatch.js
-const path = require('path');
+// ${app_root}/index.js
 const egg = require('egg');
 
 egg.startCluster({
   baseDir: __dirname,
-  customEgg: path.join(__dirname, 'node_modules/yadan'),
 });
 ```
 
+然后后台运行这个文件，将标准输出重定向到 `stdout.log`，错误输出重定向到 `stderr.log`，便于排查问题。
+
+```bash
+EGG_SERVER_ENV=prod nohup node index.js > stdout.log 2> stderr.log &
+```
+
+注意：
+
+- **生产环境使用的 `EGG_SERVER_ENV` 必须为 `prod`**，可查看[运行环境](../basics/env.md)获取更多内容。
+- 如果使用 Docker，可无需 `nohup` 直接前台运行。
+- 更多参数可参考 [egg-cluster](https://github.com/eggjs/egg-cluster#options)
+
+
+### 停止命令
+
+```bash
+$ egg-scripts stop
+```
+
+该命令将杀死 master 进程，并通知 worker 和 agent 优雅退出。
+
+你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
+
 [egg-cluster]: https://github.com/eggjs/egg-cluster
+[egg-scripts]: https://github.com/eggjs/egg-scripts
 [pm2]: https://github.com/Unitech/pm2
