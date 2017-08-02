@@ -677,7 +677,7 @@ describe('some tes', () => {
 });
 ```
 
-**引入 `egg-mock/bootstrap` 时，会自动在 `afterEach` 钩子中还原所有的 mock，不需要在测试用例中再次编写。**
+**引入 `egg-mock/bootstrap` 时，会自动在 `afterEach` 钩子中还原所有的 mock，不需要在测试文件中再次编写。**
 
 下面会详细解释一下 egg-mock 的常见使用场景。
 
