@@ -241,7 +241,7 @@ Mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就�
 // Good
 const { app } = require('egg-mock/bootstrap');
 
-describe('bad test', () => {
+describe('good test', () => {
   before(() => doSomethingBefore());
 
   it('should redirect', () => {
