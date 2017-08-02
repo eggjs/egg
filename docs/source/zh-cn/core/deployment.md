@@ -57,18 +57,16 @@ $ npm i egg-scripts --save
 $ egg-scripts start --port=7001 --daemon --env=prod --worker=2 --title=egg-server-showcase
 ```
 
-如上，`egg-scripts start` 支持传递参数：
+如上示例，支持以下参数：
 
 - `--port=7001` 端口号，默认会读取环境变量 `process.env.PORT`，如未传递将使用框架内置端口 `7001`。
 - `--daemon` 是否允许在后台模式，无需 `nohup`。若使用 Docker 建议直接前台运行。
-- `--env=prod` 框架运行环境，默认为 `prod` 模式。
-- `--workers=2` 框架 worker 线程数，默认情况框架会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
+- `--env=prod` 框架运行环境，默认为 `process.env.EGG_SERVER_ENV || prod` 模式。
+- `--workers=2` 框架 worker 线程数，默认会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 - `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
-- `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，还需要指定额外的参数，比如框架为 `yadan`。
+- `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，可以配置 `package.json` 的 `egg.framework` 或指定该参数。
 
-更多参见 [egg-scripts] 文档。
-
-**注意：该方式不会读取应用目录下的 `index.js`。**
+更多参数可查看 [egg-scripts] 和 [egg-cluster] 文档。
 
 #### 启动配置项
 
@@ -87,31 +85,6 @@ exports.cluster = {
 
 `path`，`port`，`hostname` 均为 [server.listen](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) 的参数，`egg-scripts` 和 `egg.startCluster` 方法传入的 port 优先级高于此配置。
 
-#### 手动创建启动文件
-
-你也可以手动在应用根目录创建一个入口文件如 `index.js` 来启动应用，但我们更推荐使用上述的 `egg-scripts start`。
-
-```js
-// ${app_root}/index.js
-const egg = require('egg');
-
-egg.startCluster({
-  baseDir: __dirname,
-});
-```
-
-然后后台运行这个文件，将标准输出重定向到 `stdout.log`，错误输出重定向到 `stderr.log`，便于排查问题。
-
-```bash
-EGG_SERVER_ENV=prod nohup node index.js > stdout.log 2> stderr.log &
-```
-
-注意：
-
-- **生产环境使用的 `EGG_SERVER_ENV` 必须为 `prod`**，可查看[运行环境](../basics/env.md)获取更多内容。
-- 如果使用 Docker，可无需 `nohup` 直接前台运行。
-- 更多参数可参考 [egg-cluster](https://github.com/eggjs/egg-cluster#options)
-
 
 ### 停止命令
 
@@ -122,6 +95,7 @@ $ egg-scripts stop
 该命令将杀死 master 进程，并通知 worker 和 agent 优雅退出。
 
 你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
+
 
 [egg-cluster]: https://github.com/eggjs/egg-cluster
 [egg-scripts]: https://github.com/eggjs/egg-scripts
