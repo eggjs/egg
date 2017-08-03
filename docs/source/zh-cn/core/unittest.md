@@ -174,7 +174,7 @@ describe('test/controller/home.test.js', () => {
 
 ```js
 // test/controller/home.test.js
-const { app, mock, assert } = require('egg/mock/bootstrap');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/controller/home.test.js', () => {
   // test cases
