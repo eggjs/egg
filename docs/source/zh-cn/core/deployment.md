@@ -54,14 +54,14 @@ $ npm i egg-scripts --save
 ### 启动命令
 
 ```bash
-$ egg-scripts start --port=7001 --daemon --env=prod --worker=2 --title=egg-server-showcase
+$ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 ```
 
 如上示例，支持以下参数：
 
 - `--port=7001` 端口号，默认会读取环境变量 `process.env.PORT`，如未传递将使用框架内置端口 `7001`。
 - `--daemon` 是否允许在后台模式，无需 `nohup`。若使用 Docker 建议直接前台运行。
-- `--env=prod` 框架运行环境，默认为 `process.env.EGG_SERVER_ENV || prod` 模式。
+- `--env=prod` 框架运行环境，默认会读取环境变量 `process.env.EGG_SERVER_ENV`， 如未传递将使用框架内置环境 `prod`。
 - `--workers=2` 框架 worker 线程数，默认会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 - `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
 - `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，可以配置 `package.json` 的 `egg.framework` 或指定该参数。
