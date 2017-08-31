@@ -27,4 +27,29 @@ describe('test/app/extend/agent.test.js', () => {
     });
   });
 
+  describe('agent.createAnonymousContext()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get anonymous context object', function* () {
+      const ctx = app.agent.createAnonymousContext({
+        socket: {
+          remoteAddress: '10.0.0.1',
+        },
+        headers: {
+          'x-forwarded-for': '10.0.0.1',
+        },
+        url: '/foobar?ok=1',
+      });
+      assert(ctx.ip === '10.0.0.1');
+      assert(ctx.url === '/foobar?ok=1');
+      assert(ctx.socket.remoteAddress === '10.0.0.1');
+      assert(ctx.socket.remotePort === 7001);
+    });
+  });
+
 });
