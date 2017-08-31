@@ -275,12 +275,12 @@ $ DEBUG=egg* npm run dev
 ```json
 {
   "scripts": {
-    "debug": "egg-bin dev $NODE_DEBUG_OPTION"
+    "debug": "egg-bin debug"
   }
 }
 ```
 
-> 目前 WebStorm 还不支持 `--inspect` 故不能使用 `egg-bin debug`，暂时使用 `egg-bin dev --debug` 的方式。
+`egg-bin` 会自动读取 WebStorm 调试模式下设置的环境变量 `$NODE_DEBUG_OPTION`。
 
 使用 WebStorm 的 npm 调试启动即可：
 
