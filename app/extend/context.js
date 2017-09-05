@@ -57,7 +57,6 @@ const proto = module.exports = {
     return this.app.router;
   },
 
-
   /**
    * Get helper instance from {@link Application#Helper}
    *

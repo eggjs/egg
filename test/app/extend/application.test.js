@@ -171,4 +171,33 @@ describe('test/app/extend/application.test.js', () => {
       );
     });
   });
+
+  describe('app.httpclient.request()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get http server success', function* () {
+      const ctx = app.createAnonymousContext();
+
+      app.httpclient.on('request', ({ ctx }) => {
+        ctx.request.header['x-forwarded-for'] = '10.0.0.2';
+      });
+
+      let forwardedFor;
+      app.httpclient.on('response', ({ req }) => {
+        forwardedFor = req.ctx.request.header['x-forwarded-for'];
+      });
+
+      const result = yield app.httpclient.request('https://www.alipay.com', {
+        ctx,
+      });
+
+      assert(result.res.status === 200);
+      assert(forwardedFor === '10.0.0.2');
+    });
+  });
 });
