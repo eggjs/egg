@@ -264,7 +264,6 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       let res = yield httpclient.request('https://www.alipay.com', {
         method: 'GET',
-        ctx: {},
       });
 
       assert(res.status === 200);
