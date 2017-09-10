@@ -60,6 +60,7 @@
     "egg-doctools": "^2.0.1",
     "egg-mock": "^3.8.0",
     "egg-plugin-puml": "^2.4.0",
+    "egg-tracer": "^1.1.0",
     "egg-view-nunjucks": "^2.1.3",
     "eslint": "^4.1.1",
     "eslint-config-egg": "^5.0.0",

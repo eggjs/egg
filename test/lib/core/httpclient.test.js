@@ -177,4 +177,215 @@ describe('test/lib/core/httpclient.test.js', () => {
         });
     });
   });
+
+  describe('httpclient tracer', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-tracer');
+      return app.ready();
+    });
+
+    after(() => app.close());
+
+    it('should app request auto set tracer', function* () {
+      const httpclient = app.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      let res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+
+      reqTracer = null;
+      resTracer = null;
+
+      res = yield httpclient.request('https://www.alipay.com');
+
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+    });
+
+    it('should agent request auto set tracer', function* () {
+      const httpclient = app.agent.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      const res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+    });
+
+    it('should app request with ctx and tracer', function* () {
+      const httpclient = app.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer || options.ctx.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer || options.ctx.tracer;
+      });
+
+      let res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+
+      reqTracer = null;
+      resTracer = null;
+      res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+        ctx: {},
+        tracer: {
+          id: '1234',
+        },
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer.id === resTracer.id);
+      assert(reqTracer.id === '1234');
+
+      reqTracer = null;
+      resTracer = null;
+      res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+        ctx: {
+          tracer: {
+            id: '5678',
+          },
+        },
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer.id === resTracer.id);
+      assert(reqTracer.id === '5678');
+    });
+  });
+
+  describe('before app ready multi httpclient request tracer', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-tracer');
+    });
+
+    after(() => app.close());
+
+    it('should app request before ready use same tracer', function* () {
+      const httpclient = app.httpclient;
+
+      let reqTracers = [];
+      let resTracers = [];
+
+      httpclient.on('request', function(options) {
+        reqTracers.push(options.args.tracer);
+      });
+
+      httpclient.on('response', function(options) {
+        resTracers.push(options.req.args.tracer);
+      });
+
+      let res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+      });
+      assert(res.status === 200);
+
+
+      res = yield httpclient.request('https://github.com', {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+
+      res = yield httpclient.request('https://www.npmjs.com', {
+        method: 'GET',
+      });
+      assert(res.status === 200);
+
+      assert(reqTracers.length === 3);
+      assert(resTracers.length === 3);
+
+      assert(reqTracers[0] === reqTracers[1]);
+      assert(reqTracers[1] === reqTracers[2]);
+
+      assert(resTracers[0] === reqTracers[2]);
+      assert(resTracers[1] === resTracers[0]);
+      assert(resTracers[2] === resTracers[1]);
+
+      assert(reqTracers[0].traceId);
+
+      reqTracers = [];
+      resTracers = [];
+
+      yield app.ready();
+
+      res = yield httpclient.request('https://www.alipay.com', {
+        method: 'GET',
+      });
+      assert(res.status === 200);
+
+
+      res = yield httpclient.request('https://github.com', {
+        method: 'GET',
+      });
+      assert(res.status === 200);
+
+      res = yield httpclient.request('https://www.npmjs.com', {
+        method: 'GET',
+      });
+      assert(res.status === 200);
+
+      assert(reqTracers.length === 3);
+      assert(resTracers.length === 3);
+
+      assert(reqTracers[0] !== reqTracers[1]);
+      assert(reqTracers[1] !== reqTracers[2]);
+
+      assert(resTracers[0] !== reqTracers[2]);
+      assert(resTracers[1] !== resTracers[0]);
+      assert(resTracers[2] !== resTracers[1]);
+
+      assert(reqTracers[0].traceId);
+    });
+  });
+
 });
