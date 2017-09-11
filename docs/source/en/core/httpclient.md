@@ -76,7 +76,7 @@ module.exports = function* get(ctx) {
   - `data`: response body，default HttpClient doesn't do anything and returns as Buffer directly.
     Once the `options.dataType` is set，HttpClient will process the `data` based on the parameters
 
-For the complete request parameter `options` and return value `result`, refer to below section [options Parameters in Detail](#options Parameters in Detail)
+For the complete request parameter `options` and return value `result`, refer to below section [options Parameters in Detail](#options-Parameters-in-Detail)
 
 ### POST
 
