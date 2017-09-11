@@ -732,7 +732,7 @@ app.httpclient.on('request', req => {
 });
 ```
 
-### `response` event: occurs after the end of network operation
+### `response` event occurs after the end of network operation
 
 After the end of request, a `response` event is triggered, so that the external event can be subscribed to the log printing.
 
