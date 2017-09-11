@@ -77,7 +77,7 @@ module.exports = function* get(ctx) {
   - `data`: 响应 body，默认 HttpClient 不会做任何处理，会直接返回 Buffer 类型数据。
     一旦设置了 `options.dataType`，HttpClient 将会根据此参数对 `data` 进行相应的处理。
 
-完整的请求参数 `options` 和返回值 `result` 的说明请看下文的 [options 参数详解](#options 参数详解) 章节。
+完整的请求参数 `options` 和返回值 `result` 的说明请看下文的 [options 参数详解](#options-参数详解) 章节。
 
 ### POST
 
@@ -259,7 +259,7 @@ module.exports = function* stream(ctx) {
 exports.httpclient = {
   // 是否开启本地 DNS 缓存，默认关闭，开启后有两个特性
   // 1. 所有的 DNS 查询都会默认优先使用缓存的，即使 DNS 查询错误也不影响应用
-  // 2. 对同一个域名，在 dnsCacheLookupInterval 的间隔内（默认 10s）只会查询一次
+  // 2. 对同一个域名，在 dnsCacheLookupInterval 的间隔内（默认 10s）只会查询一次
   enableDNSCache: false,
   // 对同一个域名进行 DNS 查询的最小间隔时间
   dnsCacheLookupInterval: 10000,
@@ -736,8 +736,8 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 
 ```js
 app.httpclient.on('request', req => {
-  req.url 请求 url
-  req.ctx 是发起这次请求的当前上下文
+  req.url //请求 url
+  req.ctx //是发起这次请求的当前上下文
 
   // 可以在这里设置一些 trace headers，方便全链路跟踪
 });
@@ -750,8 +750,8 @@ app.httpclient.on('request', req => {
 ```js
 app.httpclient.on('response', result => {
   result.res.status
-  result.ctx 是发起这次请求的当前上下文
-  result.req 对应的 req 对象，即 request 事件里面那个 req
+  result.ctx //是发起这次请求的当前上下文
+  result.req //对应的 req 对象，即 request 事件里面那个 req
 });
 ```
 
