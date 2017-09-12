@@ -779,7 +779,7 @@ export class Controller extends BaseContextClass { }
 export class Service extends BaseContextClass { }
 
 /**
- * The empty interface `IService` is an placehoder, for egg
+ * The empty interface `IService` is a placeholder, for egg
  * to auto injection service to ctx.service
  *
  * @example

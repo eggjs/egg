@@ -9,14 +9,14 @@ HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道�
 
 ```js
 exports.add = function* (ctx) {
-  const count = ctx.cookies.get('count');
+  let count = ctx.cookies.get('count');
   count = count ? Number(count) : 0;
   ctx.cookies.set('count', ++count);
   ctx.body = count;
 };
 
 exports.remove = function* (ctx) {
-  const count = ctx.cookies.set('count', null);
+  ctx.cookies.set('count', null);
   ctx.status = 204;
 };
 ```

@@ -286,5 +286,21 @@ module.exports = appInfo => {
    */
   config.workerStartTimeout = 10 * 60 * 1000;
 
+  /**
+   *
+   * @member {Object} Config#cluster
+   * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
+   * @property {String} listen.path - set a unix sock path when server listen
+   * @property {Number} listen.port - set a port when server listen
+   * @property {String} listen.hostname - set a hostname binding server when server listen
+   */
+  config.cluster = {
+    listen: {
+      path: '',
+      port: 7001,
+      hostname: '',
+    },
+  };
+
   return config;
 };

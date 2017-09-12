@@ -2,3 +2,4 @@ test/fixtures
 examples/**/app/public
 logs
 run
+docs/node_modules

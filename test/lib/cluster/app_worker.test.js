@@ -1,12 +1,14 @@
 'use strict';
 
+const request = require('supertest');
+const address = require('address');
+const assert = require('assert');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/app_worker.test.js', () => {
   let app;
   before(() => {
     app = utils.cluster('apps/app-server');
-    app.coverage(true);
     return app.ready();
   });
   after(() => app.close());
@@ -16,4 +18,33 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       .get('/')
       .expect('true');
   });
+
+  describe('listen hostname', () => {
+    let app;
+    before(() => {
+      app = utils.cluster('apps/app-server-with-hostname');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should refuse other ip', function* () {
+      const url = address.ip() + ':' + app.port;
+
+      yield request(url)
+        .get('/')
+        .expect('done')
+        .expect(200);
+
+      try {
+        yield request('http://127.0.0.1:17010')
+          .get('/')
+          .expect('done')
+          .expect(200);
+        throw new Error('should not run');
+      } catch (err) {
+        assert(err.message === 'ECONNREFUSED: Connection refused');
+      }
+    });
+  });
+
 });
