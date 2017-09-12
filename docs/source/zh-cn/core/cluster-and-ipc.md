@@ -70,7 +70,7 @@ if (cluster.isMaster) {
 
 1. 关闭异常 Worker 进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，不再接受新的用户请求。
 2. Master 立刻 fork 一个新的 Worker 进程，保证在线的『工人』总数不变。
-3. 异常 Worker 等待一端时间，处理完已经接受的请求后退出。
+3. 异常 Worker 等待一段时间，处理完已经接受的请求后退出。
 
 ```bash
    +---------+                 +---------+
@@ -440,7 +440,7 @@ module.exports = agent => {
 
 ## 更复杂的场景
 
-上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
+上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来监听消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster
