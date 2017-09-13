@@ -255,11 +255,11 @@ describe('test/lib/core/httpclient.test.js', () => {
       let resTracer;
 
       httpclient.on('request', function(options) {
-        reqTracer = options.args.tracer || options.ctx.tracer;
+        reqTracer = options.args.tracer;
       });
 
       httpclient.on('response', function(options) {
-        resTracer = options.req.args.tracer || options.ctx.tracer;
+        resTracer = options.req.args.tracer;
       });
 
       let res = yield httpclient.request('https://www.alipay.com', {
