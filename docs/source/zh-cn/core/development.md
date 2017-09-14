@@ -248,7 +248,9 @@ $ egg-bin debug --proxy=9999 --inpsect=9229 --inspect-brk
 
 执行 `debug` 命令时，应用也是以 `env: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
 
-#### 开始调试
+#### 使用 [DevTools] 进行调试
+
+最新的 DevTools 只支持 [Inspector Protocol] 协议，故你需要使用 Node.js 7.x+ 的版本方能使用。
 
 执行 `npm run debug` 启动：
 
@@ -271,13 +273,7 @@ Debug Proxy online, now you could attach to 9999 without worry about reload.
 DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:9999/__ws_proxy__
 ```
 
-接下来你可以使用 [DevTools] / [WebStorm] / [VSCode] 尽情断点调试。
-
-#### 使用 [DevTools] 进行调试
-
-最新的 DevTools 只支持 [Inspector Protocol] 协议，故你需要使用 Node.js 7.x+ 的版本方能使用。
-
-选择以下一种方式即可：
+然后选择以下一种方式即可：
 - 直接访问控制台最后输出的 `DevTools` 地址，该地址是代理后的 worker，无需担心重启问题。
 - 访问 `chrome://inspect`，配置对应的端口，然后点击 `Open dedicated DevTools for Node` 即可打开调试控制台。
 
