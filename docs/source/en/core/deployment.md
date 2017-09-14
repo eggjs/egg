@@ -65,7 +65,7 @@ Arguments of dispatch can be configured in `config.{env}.js`.
 // config/config.default.js
 exports.cluster = {
   listen: {
-    port: '7001',
+    port: 7001,
     hostname: '127.0.0.1',
     // path: '/var/run/egg.sock',
   }
