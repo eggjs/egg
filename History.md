@@ -1,5 +1,28 @@
 # History
 
+## 2017-09-25, Version 1.9.0, @gxcsoccer
+
+### Notable changes
+
+* **feature**
+  * make cluster client configurable in egg
+  * don’t force logger to use INFO level in prod
+* **document**
+  * correct sample codes, by @Jawnkuin
+  * fix devtools debug, by @atian25
+  * adjust debug docs with new egg-bin debug, by @atian25
+  * fix port should be number, @atian25
+
+### Commits
+
+  * [[`21425e7`](https://github.com/eggjs/egg/commit/21425e7a9c451cfa07f3cb580d0b770eb5b0c890)] - feat: make cluster client configurable in egg (#1459) (gxcsoccer <<gxcsoccer@126.com>>)
+  * [[`d0797b1`](https://github.com/eggjs/egg/commit/d0797b1c2d078d1bea97c104471388bedc5e61c9)] - docs: correct sample codes (#1434) (Jawnkuin <<jawnkuin@gmail.com>>)
+  * [[`6eac07e`](https://github.com/eggjs/egg/commit/6eac07eb287ecf158b2c182a0e36a81fa14700ce)] - refactor: httpclient args tracer to be enforced (#1421) (hui <<kangpangpang@gmail.com>>)
+  * [[`c56274b`](https://github.com/eggjs/egg/commit/c56274bb818526370f857b926d178ff520b3bea8)] - docs(development): fix devtools debug (#1428) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e3f29de`](https://github.com/eggjs/egg/commit/e3f29de9bbbfb67c641cf54272883759d7256d89)] - docs(development): adjust debug docs with new egg-bin debug (#1427) (AnzerWall <<AnzerWall@gmail.com>>)
+  * [[`5a9531a`](https://github.com/eggjs/egg/commit/5a9531abbec83fbff08ddb6feb475f87498d2a3d)] - feat: don’t force logger to use INFO level in prod (#1218) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`95fbd47`](https://github.com/eggjs/egg/commit/95fbd47f4c20797df17dd210f30a40f43d1d8900)] - docs(deployment): port should be number (#1424) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2017-09-11, Version 1.8.0, @leoner
 
 ### Notable changes
