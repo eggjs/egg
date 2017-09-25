@@ -389,7 +389,7 @@ module.exports = class UploaderController extends Controller {
           result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
         } catch (err) {
           // must consume the file stream, or the browser will get stuck
-          yield sendToWormhole(stream);
+          yield sendToWormhole(part);
           throw err;
         }
         console.log(result);
@@ -501,15 +501,15 @@ const Controller = require('egg').Controller;
 module.exports = class CookieController extends Controller {
   * add() {
     const ctx = this.ctx;
-    const count = ctx.cookie.get('count');
+    const count = ctx.cookies.get('count');
     count = count ? Number(count) : 0;
-    ctx.cookie.set('count', ++count);
+    ctx.cookies.set('count', ++count);
     ctx.body = count;
   }
 
   * remove() {
     const ctx = this.ctx;
-    const count = ctx.cookie.set('count', null);
+    const count = ctx.cookies.set('count', null);
     ctx.status = 204;
   }
 };

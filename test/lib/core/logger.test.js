@@ -29,6 +29,21 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.config.logger.disableConsoleAfterReady === true);
   });
 
+  it('should got right level on prod env when set allowDebugAtProd to false', function* () {
+    mm.env('prod');
+    mm(process.env, 'EGG_LOG', '');
+    mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app-do-not-force/config'));
+    app = utils.app('apps/mock-production-app-do-not-force');
+    yield app.ready();
+
+    assert(app.config.logger.allowDebugAtProd === false);
+
+    assert(app.logger.get('file').options.level === Logger.DEBUG);
+    assert(app.logger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('file').options.level === Logger.DEBUG);
+    assert(app.coreLogger.get('console').options.level === Logger.INFO);
+  });
+
   it('should got right level on local env', function* () {
     mm.env('local');
     mm(process.env, 'EGG_LOG', '');
