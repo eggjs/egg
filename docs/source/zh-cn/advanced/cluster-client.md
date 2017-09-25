@@ -435,7 +435,7 @@ module.exports = APIClient;
 const APIClient = require('some-client'); // 上面那个模块
 module.exports = app => {
   const config = app.config.apiClient;
-  app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster.bind(app) });
+  app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster });
   app.beforeStart(function* () {
     yield app.apiClient.ready();
   });
@@ -452,6 +452,38 @@ exports.apiClient = {
 };
 ```
 
+为了方便你封装 `APIClient`，在 [cluster-client](https://www.npmjs.com/package/cluster-client) 模块中提供了一个 `APIClientBase` 基类，那么上面的 `APIClient` 可以改写为：
+
+```js
+const APIClientBase = require('cluster-client').APIClientBase;
+const RegistryClient = require('./registry_client');
+
+class APIClient extends APIClientBase {
+  // 返回原始的客户端类
+  get DataClient() {
+    return RegistryClient;
+  }
+
+  // 用于设置 cluster-client 相关参数，等同于 cluster 方法的第二个参数
+  get clusterOptions() {
+    return {
+      responseTimeout: 120 * 1000,
+    };
+  }
+
+  subscribe(reg, listener) {
+    this._client.subscribe(reg, listener);
+  }
+
+  publish(reg) {
+    this._client.publish(reg);
+  }
+
+  get(key) {
+    return this._cache[key];
+  }
+}
+```
 
 总结一下：
 
@@ -470,3 +502,57 @@ exports.apiClient = {
 - APIClient - 内部调用 ClusterClient 做数据同步，无需关心多进程模型，用户最终使用的模块。API 都通过此处暴露，支持同步和异步。
 
 有兴趣的同学可以看一下[增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
+
+## 在 Egg 里面 cluster-client 相关的配置项
+
+```js
+/**
+ * @property {Number} responseTimeout - response timeout, default is 60000
+ * @property {Transcode} [transcode]
+ *   - {Function} encode - custom serialize method
+ *   - {Function} decode - custom deserialize method
+ */
+config.clusterClient = {
+  responseTimeout: 60000,
+};
+```
+
+配置项                  | 类型      | 默认值          | 描述
+-----------------------|----------|-----------------|--------------------------------------------------------------------------
+responseTimeout        | number   | 60000 （一分钟） | 全局的进程间通讯的超时时长，不能设置的太短，因为代理的接口本身也有超时设置
+transcode              | function | N/A             | 进程间通讯的序列化方式，默认采用 [serialize-json](https://www.npmjs.com/package/serialize-json)（建议不要自行设置）
+
+上面是全局的配置方式。如果，你想对一个客户端单独做设置
+
+- 可以通过 `app/agent.cluster(ClientClass, options)` 的第二个参数 `options` 进行覆盖
+
+```js
+app.registryClient = app.cluster(RegistryClient, {
+  responseTimeout: 120 * 1000, // 这里传入的是和 cluster-client 相关的参数
+}).create({
+  // 这里传入的是 RegistryClient 需要的参数
+});
+```
+
+- 也可以通过覆盖 `APIClientBase` 的 `clusterOptions` 这个 `getter` 属性
+
+```js
+const APIClientBase = require('cluster-client').APIClientBase;
+const RegistryClient = require('./registry_client');
+
+class APIClient extends APIClientBase {
+  get DataClient() {
+    return RegistryClient;
+  }
+
+  get clusterOptions() {
+    return {
+      responseTimeout: 120 * 1000,
+    };
+  }
+
+  // ...
+}
+
+module.exports = APIClient;
+```

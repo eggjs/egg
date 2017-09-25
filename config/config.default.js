@@ -302,5 +302,12 @@ module.exports = appInfo => {
     },
   };
 
+  /**
+   * @property {Number} responseTimeout - response timeout, default is 60000
+   */
+  config.clusterClient = {
+    responseTimeout: 60000,
+  };
+
   return config;
 };
