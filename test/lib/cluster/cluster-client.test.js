@@ -37,4 +37,22 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
           .expect(200);
       });
   });
+
+  it('should get default cluster response timeout', () => {
+    return app.httpRequest()
+      .get('/getDefaultTimeout')
+      .expect(200)
+      .then(res => {
+        assert(res.text === '60000');
+      });
+  });
+
+  it('should get overwrite cluster response timeout', () => {
+    return app.httpRequest()
+      .get('/getOverwriteTimeout')
+      .expect(200)
+      .then(res => {
+        assert(res.text === '1000');
+      });
+  });
 });
