@@ -34,6 +34,11 @@ module.exports = {
 
 编写完这个文件就意味着一个定时任务定义完成了。这个定时任务会在每一个 Worker 进程上每 1 分钟执行一次，将远程数据请求回来挂载到 `app.cache` 上。
 
+### 任务
+
+- `task` 函数支持 `generator / async function`。
+- 入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
+
 ### 定时方式
 
 定时任务可以指定 interval 或者 cron 两种不同的定时方式。
@@ -79,17 +84,18 @@ exports.schedule = {
 
 ### 类型
 
-框架提供的定时任务默认支持两种类型，worker 和 all。worker 和 all 都支持上面的两种定时方式，但是当到执行时机时，会执行定时任务的 worker 不同
+框架提供的定时任务默认支持两种类型，worker 和 all。worker 和 all 都支持上面的两种定时方式，只是当到执行时机时，会执行定时任务的 worker 不同：
 
-- worker 类型：每台机器上只有一个 worker 会执行这个定时任务，每次执行定时任务的 worker 的选择是随机的。
-- all 类型：每台机器上的每个 worker 都会执行这个定时任务。
+- `worker` 类型：每台机器上只有一个 worker 会执行这个定时任务，每次执行定时任务的 worker 的选择是随机的。
+- `all` 类型：每台机器上的每个 worker 都会执行这个定时任务。
 
 ### 其他参数
 
 除了刚才介绍到的几个参数之外，定时任务还支持这些参数：
 
-- immediate：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
-- disable：配置改参数为 true 时，这个定时任务不会被启动。
+- `cronOptions`: 配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档
+- `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
+- `disable`：配置改参数为 true 时，这个定时任务不会被启动。
 
 ### 动态配置定时任务
 
@@ -147,25 +153,27 @@ module.exports = app => {
 
 ## 扩展定时任务类型
 
-默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求，而框架并没有提供，这时上层框架可以基于其他的定时任务服务自行扩展新的定时任务类型。
+默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求。
 
-在 `agent.js` 中扩展 `agent[Symbol.for('egg#scheduleHandler')]` 对象：
+框架并没有直接提供此功能，但开发者可以在上层框架自行扩展新的定时任务类型。
+
+在 `agent.js` 中继承 `agent.ScheduleStrategy`，然后通过 `agent.schedule.use()` 注册即可：
 
 ```js
-const SCHEDULE_HANDLER = Symbol.for('egg#scheduleHandler');
-
 module.exports = agent => {
-  agent[SCHEDULE_HANDLER].cluster = (schedule, sender) => {
-    // 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
-    // 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）
-    agent.mq.subscribe(schedule.scene, () => sender.one());
-  };
+  class ClusterStrategy extends agent.ScheduleStrategy {
+    start() {
+      // 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
+      // 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）
+      agent.mq.subscribe(schedule.scene, () => this.sendOne());
+    }
+  }
+  agent.schedule.use('cluster', ClusterStrategy);
 };
 ```
 
-schedule handler 接受两个个参数：
+`ScheduleStrategy` 基类提供了：
 
-- `schedule` - 定时任务的属性，disable 和 immediate 是默认统一支持的，其他配置可以自行解析。
-- `sender` - 发消息通知 worker 执行 task 的方法。
-  - `sender.one()` - 随机通知一个 worker 执行 task。
-  - `sender.all()` - 通知所有的 worker 执行 task。
+- `schedule` - 定时任务的属性，`disable`  是默认统一支持的，其他配置可以自行解析。
+- `this.sendOne()` - 随机通知一个 worker 执行 task。
+- `this.sendAll()` - 通知所有的 worker 执行 task。
