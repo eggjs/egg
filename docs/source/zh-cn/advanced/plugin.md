@@ -80,6 +80,10 @@ title: 插件开发
     }
     ```
 
+  3. 插件没有 `plugin.js`：
+    - 在 `eggPlugin.dependencies` 只是声明依赖关系，而不是引入插件或开启插件。
+    - 需要配置多个插件的开启，需要在[上层框架](./framework.md)处理。
+
 ## 插件的依赖管理
 
 和中间件不同，插件是自己管理依赖的。应用在加载所有插件前会预先从它们的 `package.json` 中读取 `eggPlugin > dependencies` 和 `eggPlugin > optionalDependencies` 节点，然后根据依赖关系计算出加载顺序，举个例子，下面三个插件的加载顺序就应该是 `c => b => a`
