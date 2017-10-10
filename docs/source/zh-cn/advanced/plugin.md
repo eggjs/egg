@@ -81,8 +81,8 @@ title: 插件开发
     ```
 
   3. 插件没有 `plugin.js`：
-    - 在 `eggPlugin.dependencies` 只是声明依赖关系，而不是引入插件或开启插件。
-    - 需要配置多个插件的开启，需要在[上层框架](./framework.md)处理。
+    - `eggPlugin.dependencies` 只是用于声明依赖关系，而不是引入插件或开启插件。
+    - 如果期望统一管理多个插件的开启和配置，可以在[上层框架](./framework.md)处理。
 
 ## 插件的依赖管理
 
