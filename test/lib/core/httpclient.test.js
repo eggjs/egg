@@ -179,6 +179,7 @@ describe('test/lib/core/httpclient.test.js', () => {
   });
 
   describe('httpclient tracer', () => {
+    const url = 'https://eggjs.org/';
     let app;
     before(() => {
       app = utils.app('apps/httpclient-tracer');
@@ -201,7 +202,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      let res = yield httpclient.request('https://www.alipay.com', {
+      let res = yield httpclient.request(url, {
         method: 'GET',
       });
 
@@ -214,7 +215,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       reqTracer = null;
       resTracer = null;
 
-      res = yield httpclient.request('https://www.alipay.com');
+      res = yield httpclient.request(url);
 
       assert(res.status === 200);
       assert(reqTracer === resTracer);
@@ -237,7 +238,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      const res = yield httpclient.request('https://www.alipay.com', {
+      const res = yield httpclient.request(url, {
         method: 'GET',
       });
 
@@ -262,7 +263,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      let res = yield httpclient.request('https://www.alipay.com', {
+      let res = yield httpclient.request(url, {
         method: 'GET',
       });
 
@@ -273,7 +274,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       reqTracer = null;
       resTracer = null;
-      res = yield httpclient.request('https://www.alipay.com', {
+      res = yield httpclient.request(url, {
         method: 'GET',
         ctx: {},
         tracer: {
@@ -287,7 +288,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       reqTracer = null;
       resTracer = null;
-      res = yield httpclient.request('https://www.alipay.com', {
+      res = yield httpclient.request(url, {
         method: 'GET',
         ctx: {
           tracer: {
@@ -324,7 +325,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracers.push(options.req.args.tracer);
       });
 
-      let res = yield httpclient.request('https://www.alipay.com', {
+      let res = yield httpclient.request(url, {
         method: 'GET',
       });
       assert(res.status === 200);
@@ -358,7 +359,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       yield app.ready();
 
-      res = yield httpclient.request('https://www.alipay.com', {
+      res = yield httpclient.request(url, {
         method: 'GET',
       });
       assert(res.status === 200);
