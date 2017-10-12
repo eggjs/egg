@@ -365,7 +365,8 @@ module.exports = class UploaderController extends Controller {
     const ctx = this.ctx;
     const parts = ctx.multipart();
     let part;
-    while ((part = yield parts) != null) {
+    // parts() return a promise
+    while ((part = yield parts()) != null) {
       if (part.length) {
         // it is field in case of arrays
         console.log('field: ' + part[0]);
