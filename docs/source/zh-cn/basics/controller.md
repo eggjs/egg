@@ -378,7 +378,8 @@ module.exports = class UploaderController extends Controller {
     const ctx = this.ctx;
     const parts = ctx.multipart();
     let part;
-    while ((part = yield parts) != null) {
+    // parts() return a promise
+    while ((part = yield parts()) != null) {
       if (part.length) {
         // 如果是数组的话是 filed
         console.log('field: ' + part[0]);
