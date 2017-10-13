@@ -84,7 +84,11 @@ module.exports = {
 };
 ```
 
-我们还可以动态修改现有中间件的顺序，中间件的加载顺序和插件顺序不同，是由 `app.config.coreMiddleware` 和 `app.config.appMiddleware` 这两个数组合并而成的。
+该配置最终将在启动时合并到 `app.config.appMiddleware`。
+
+## 在框架和插件中使用中间件
+
+框架和插件不支持在 `config.default.js` 中匹配 `middleware`，需要通过以下方式：
 
 ```js
 // app.js
@@ -104,7 +108,19 @@ module.exports = () => {
 };
 ```
 
-**配置项以及区分各运行环境的配置，请查看[配置](./config.md)章节。**
+应用层定义的中间件（`app.config.appMiddleware`）和框架默认中间件（`app.config.coreMiddleware`）都会被加载器加载，并挂载到 `app.middleware` 上。
+
+## router 中使用中间件
+
+以上两种方式配置的中间件是全局的，会处理每一次请求。
+如果你只想针对单个路由生效，可以直接在 `app/router.js` 中实例化和挂载，如下：
+
+```js
+module.exports = app => {
+  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  app.get('/needgzip', gzip, app.controller.handler);
+};
+```
 
 ## 框架默认中间件
 
@@ -119,19 +135,6 @@ module.exports = {
 ```
 
 **注意：框架和插件加载的中间件会在应用层配置的中间件之前，框架默认中间件不能被应用层中间件覆盖，如果应用层有自定义同名中间件，在启动时会报错。**
-
-## router 中使用中间件
-
-应用层定义的中间件和框架默认中间件都会被加载器加载，并挂载到 `app.middlewares` 上（注意：此处为复数，因为 `app.middleware` 在 Koa 中另有用处），所以应用层定义的中间件可以不通过配置加载，而是在 router 中加载，从而只对对应的路由生效。
-
-还是拿刚才的 gzip 中间件举例，当我们想直接在 router 中使用的时候，在 `app/router.js` 中就可以这样写
-
-```js
-module.exports = app => {
-  const gzip = app.middlewares.gzip({ threshold: 1024 });
-  app.get('/needgzip', gzip, app.controller.handler);
-};
-```
 
 ## 使用 Koa 的中间件
 
