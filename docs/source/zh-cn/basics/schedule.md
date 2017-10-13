@@ -16,13 +16,37 @@ title: 定时任务
 一个简单的例子，我们定义一个更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 `update_cache.js` 文件
 
 ```js
-module.exports = {
+const Subscription = require('egg').Subscription;
+
+class UpdateCache extends Subscription {
   // 通过 schedule 属性来设置定时任务的执行间隔等配置
+  static get schedule() {
+    return {
+      interval: '1m', // 1 分钟间隔
+      type: 'all', // 指定所有的 worker 都需要执行
+    };
+  }
+
+  // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
+  * subscribe() {
+    const res = yield this.ctx.curl('http://www.api.com/cache', {
+      dataType: 'json',
+    });
+    this.ctx.app.cache = res.data;
+  }
+}
+
+module.exports = UpdateCache;
+```
+
+还可以简写为
+
+```js
+module.exports = {
   schedule: {
     interval: '1m', // 1 分钟间隔
     type: 'all', // 指定所有的 worker 都需要执行
   },
-  // task 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
   * task(ctx) {
     const res = yield ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
@@ -36,7 +60,7 @@ module.exports = {
 
 ### 任务
 
-- `task` 函数支持 `generator / async function`。
+- `task` 函数或 `subscribe` 方法支持 `generator function / async function`。
 - 入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
 
 ### 定时方式
@@ -51,9 +75,11 @@ module.exports = {
 - 字符类型，会通过 [ms](https://github.com/zeit/ms) 转换成毫秒数，例如 `5s`。
 
 ```js
-exports.schedule = {
-  // 每 10 秒执行一次
-  interval: '10s',
+module.exports = {
+  schedule: {
+    // 每 10 秒执行一次
+    interval: '10s',
+  },
 };
 ```
 
@@ -76,9 +102,11 @@ exports.schedule = {
 ```
 
 ```js
-exports.schedule = {
-  // 每三小时准点执行一次
-  cron: '0 0 */3 * * *',
+module.exports = {
+  schedule: {
+    // 每三小时准点执行一次
+    cron: '0 0 */3 * * *',
+  },
 };
 ```
 
