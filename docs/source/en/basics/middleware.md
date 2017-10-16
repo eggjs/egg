@@ -66,10 +66,10 @@ module.exports = options => {
 };
 ```
 
-## Using Middleware in the Application
+## Using Middleware in Application
 
 We can load customized middleware completely by configuration in the application, and decide their order.
-If we need to load the gzip middleware in the above, 
+If we need to load the gzip middleware in the above,
 we can edit `config.default.js` like this:
 
 ```js
@@ -84,7 +84,44 @@ module.exports = {
 };
 ```
 
-** About Configuration fields and runtime environment configurations, see [Config](./config.md) chapter. **
+This config will merge to `app.config.appMiddleware` on starting up.
+
+## Using Middleware in Framework and Plugin
+
+Framework and Plugin don't support `config.middleware`, you should mount it in `app.js`:
+
+```js
+// app.js
+module.exports = app => {
+  // 在中间件最前面统计请求时间
+  app.config.coreMiddleware.unshift('report');
+};
+
+// app/middleware/report.js
+module.exports = () => {
+  return function* (next) {
+    const startTime = Date.now();
+    yield next;
+    // 上报请求时间
+    reportTime(Date.now() - startTime);
+  }
+};
+```
+
+Middlewares which defined at Application (`app.config.coreMiddleware`) and Framework(`app.config.coreMiddleware`) will be merge to `app.middleware` by loader at staring up.
+
+## Using Middleware in Router
+
+Both middleware defined by the application layer and the default framework middleware is global, will process every request.
+
+If you do want to take effect on the corresponding routes, you could just mount it at `app/router.js`:
+
+```js
+module.exports = app => {
+  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  app.get('/needgzip', gzip, app.controller.handler);
+};
+```
 
 ## Default Framework Middleware
 
@@ -97,24 +134,13 @@ module.exports = {
   },
 };
 ```
+
 ** Note: middleware loaded by the framework and plugins are loaded earlier than those loaded by the application layer, and the application layer cannot overwrite the default framework middleware. If the application layer loads customized middleware that has the same name with default framework middleware, an error will be raised on starting up. **
 
-## Middleware in Router
-
-Both middleware defined by the application layer and the default framework middleware will be loaded by the loader and are mounted to `app.middlewares`(Note: it's plural here since `app.middleware` is used for other purpose in Koa). So middleware defined by the application layer can be loaded by the router other than the config, therefore they only take effect on the corresponding routes.
-
-Again, let's take the gzip middleware above for an example. In order to use this middleware directly in the router, we can write like this in `app/router.js`:
-
-```js
-module.exports = app => {
-  const gzip = app.middlewares.gzip({ threshold: 1024 });
-  app.get('/needgzip', gzip, app.controller.handler);
-};
-```
 
 ## Use Koa's Middleware
 
-The framework is compatible with all kinds of middleware of Koa 1.x and 2.x, including: 
+The framework is compatible with all kinds of middleware of Koa 1.x and 2.x, including:
 - generator function: `function* (next) {}`
 - async function: `async (ctx, next) => {}`
 - common function: `(ctx, next) => {}`
