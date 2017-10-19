@@ -270,6 +270,22 @@ We can get it via `ctx.coreLogger`, the difference between the Context Logger is
 
 We can get them via `this.logger` in Controller and Service instance, they are essentially a Context Logger, but additional file path will be added to logs, easy to locate the log print location.
 
+## Subscription
+
+Subscription is the model for subscribing, including consumer in message broker or schedule.
+
+The base class of Subscription is exported by egg.
+
+```js
+const Subscription = require('egg').Subscription;
+class Schedule extends Subscription {
+  // This method should be implemented
+  * subscribe() {}
+}
+```
+
+[Schedule](./schedule.md) is implemented using the model，also recommend the plugin for message broker.
+
 [Koa]: http://koajs.com
 [Koa.Application]: http://koajs.com/#application
 [Koa.Context]: http://koajs.com/#context
