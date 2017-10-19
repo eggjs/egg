@@ -119,7 +119,7 @@ $ npm test -- -t 30000 --grep="should GET"
 
 ## 代码覆盖率
 
-egg-bin 已经内置了 [istanbul](https://github.com/gotwarlost/istanbul) 来支持单元测试自动生成代码覆盖率报告。
+egg-bin 已经内置了 [nyc](https://github.com/istanbuljs/nyc) 来支持单元测试自动生成代码覆盖率报告。
 
 添加 `npm scripts` 到 `package.json`：
 
@@ -174,33 +174,9 @@ $ npm run cov -- --x=app/plugins/c*
 
 ## 调试
 
-### 使用 egg-bin 调试
+### 日志输出
 
-#### 添加命令
-
-添加 `npm scripts` 到 `package.json`：
-
-```json
-{
-  "scripts": {
-    "debug": "egg-bin debug"
-  }
-}
-```
-
-这样我们就可以通过 `npm run debug` 命令通过 `V8 Inspector port` 调试应用。
-
-#### 环境配置
-
-执行 `debug` 命令时，应用也是以 `env: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
-
-#### 开始调试
-
-找到你需要设置断点的文件，设置一个断点，访问一下，就进入断点调试了。
-
-![image](https://cloud.githubusercontent.com/assets/456108/21814737/38ed8f04-d795-11e6-93c4-1de9f1d432c8.png)
-
-### 使用 logger 模块调试
+### 使用 logger 模块
 
 框架内置了[日志](./logger.md) 功能，使用 `logger.debug()` 输出调试信息，**推荐在应用代码中使用它。**
 
@@ -217,7 +193,7 @@ app.logger.debug('app init');
 
 通过 `config.logger.level` 来配置打印到文件的日志级别，通过 `config.logger.consoleLevel` 配置打印到终端的日志级别。
 
-### 使用 debug 模块调试
+### 使用 debug 模块
 
 [debug](https://www.npmjs.com/package/debug) 模块是 Node.js 社区广泛使用的 debug 工具，很多模块都使用它模块打印调试信息，Egg 社区也广泛采用这一机制打印 debug 信息，**推荐在框架和插件开发中使用它。**
 
@@ -239,55 +215,86 @@ $ DEBUG=egg* npm run dev
 
 单元测试也可以用 `DEBUG=* npm test` 来查看测试用例运行的详细日志。
 
-### 使用 WebStorm 进行调试
+### 使用 egg-bin 调试
+
+#### 添加命令
 
 添加 `npm scripts` 到 `package.json`：
 
 ```json
 {
   "scripts": {
-    "debug": "egg-bin dev $NODE_DEBUG_OPTION"
+    "debug": "egg-bin debug"
   }
 }
 ```
 
-> 目前 WebStorm 还不支持 `--inspect` 故不能使用 `egg-bin debug`，暂时使用 `egg-bin dev --debug` 的方式。
+这样我们就可以通过 `npm run debug` 命令来断点调试应用。
+
+`egg-bin` 会智能选择调试协议，在 7.x 之后版本使用 [Inspector Protocol] 协议，低版本使用 [Legacy Protocol]。
+
+同时也支持自定义调试参数：
+
+```bash
+$ egg-bin debug --proxy=9999 --inpsect=9229 --inspect-brk
+```
+
+- `master` 调试端口为 9229 或 5858（旧协议）
+- `agent` 调试端口固定为 5800
+- `worker` 调试端口为 `master` 调试端口递增。
+- 开发阶段 worker 在代码修改后会热重启，导致调试端口会自增，故 `egg-bin` 启动了代理服务，用户可以直接 attach 9999 端口即可，无需担心重启问题。
+
+#### 环境配置
+
+执行 `debug` 命令时，应用也是以 `env: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
+
+#### 使用 [DevTools] 进行调试
+
+最新的 DevTools 只支持 [Inspector Protocol] 协议，故你需要使用 Node.js 7.x+ 的版本方能使用。
+
+执行 `npm run debug` 启动：
+
+```bash
+➜  showcase git:(master) ✗ npm run debug
+
+> showcase@1.0.0 debug /Users/tz/Workspaces/eggjs/test/showcase
+> egg-bin debug
+
+Debugger listening on ws://127.0.0.1:9229/f8258ca6-d5ac-467d-bbb1-03f59bcce85b
+For help see https://nodejs.org/en/docs/inspector
+2017-09-14 16:01:35,990 INFO 39940 [master] egg version 1.8.0
+Debugger listening on ws://127.0.0.1:5800/bfe1bf6a-2be5-4568-ac7d-69935e0867fa
+For help see https://nodejs.org/en/docs/inspector
+2017-09-14 16:01:36,432 INFO 39940 [master] agent_worker#1:39941 started (434ms)
+Debugger listening on ws://127.0.0.1:9230/2fcf4208-4571-4968-9da0-0863ab9f98ae
+For help see https://nodejs.org/en/docs/inspector
+9230 opened
+Debug Proxy online, now you could attach to 9999 without worry about reload.
+DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&v8only=true&ws=127.0.0.1:9999/__ws_proxy__
+```
+
+然后选择以下一种方式即可：
+- 直接访问控制台最后输出的 `DevTools` 地址，该地址是代理后的 worker，无需担心重启问题。
+- 访问 `chrome://inspect`，配置对应的端口，然后点击 `Open dedicated DevTools for Node` 即可打开调试控制台。
+
+![DevTools](https://user-images.githubusercontent.com/227713/30419047-a54ac592-9967-11e7-8a05-5dbb82088487.png)
+
+#### 使用 WebStorm 进行调试
+
+`egg-bin` 会自动读取 WebStorm 调试模式下设置的环境变量 `$NODE_DEBUG_OPTION`。
 
 使用 WebStorm 的 npm 调试启动即可：
 
-![](https://cloud.githubusercontent.com/assets/227713/24495078/9bf8aaa2-1566-11e7-8dbd-2def56f904d3.png)
+![WebStorm](https://user-images.githubusercontent.com/227713/30423086-5dd32ac6-9974-11e7-840f-904e49a97694.png)
 
-### 使用 [VSCode] 进行调试
+#### 使用 [VSCode] 进行调试
 
-由于在开发阶段，当我们修改代码并保存后，应用会自动重启 worker。但是每次 worker 的更新都会使得调试端口发生变化，而 [VSCode] 是需要 attach 到固定的调试端口的。于是我们启用了一个叫 `proxyworker` 的代理服务，worker 的调试信息会被代理到这个服务上。这样 [VSCode] 通过固定 attach 到 proxyworker 来调试 worker 了。
+![VSCode](https://user-images.githubusercontent.com/227713/30421285-dad801e6-996e-11e7-85b6-817165ab5783.png)
 
-下面是安装使用步骤:
-
-##### 1. 安装 [egg-development-proxyworker](https://github.com/eggjs/egg-development-proxyworker) 插件
-
-```bash
-npm i egg-development-proxyworker --save
-```
-
-##### 2. 启动插件
+在 Node.js 7.x 及之后的版本，配置 `.vscode/launch.json` 如下，然后 F5 一键启动即可。
 
 ```js
-// config/plugin.js
-exports.proxyworker = {
-  enable: true,
-  package: 'egg-development-proxyworker',
-};
-
-// config/config.default.js
-// 如果10086被占用，你可以通过这个配置指定其他的端口号
-exports.proxyworker = {
-  port: 10086,
-};
-```
-
-##### 3. 在 .vscode/launch.json 添加调试配置:
-
-```js
+// .vscode/launch.json
 {
   "version": "0.2.0",
   "configurations": [
@@ -297,54 +304,36 @@ exports.proxyworker = {
       "request": "launch",
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
-      "windows": {
-        "runtimeExecutable": "npm.cmd"
-      },
-      "runtimeArgs": [
-        "run", "dev", "--", "--debug"
-      ],
-      "port": 5858
-    },
-    {
-      "name": "Attach Agent",
-      "type": "node",
-      "request": "attach",
-      "port": 5856
-    },
-    {
-      "name": "Attach Worker",
-      "type": "node",
-      "request": "attach",
+      "windows": { "runtimeExecutable": "npm.cmd" },
+      "runtimeArgs": [ "run", "debug" ],
+      "console": "integratedTerminal",
+      "protocol": "auto",
       "restart": true,
-      "port": 10086
-    }
-  ],
-  "compounds": [
-    {
-      "name": "Debug Egg",
-      "configurations": ["Launch Egg", "Attach Agent", "Attach Worker"]
+      "port": 9999
     }
   ]
 }
 ```
 
-由于 V8 Debugger [Legacy Protocol] 会在 Node.js 8.x 后被移除, 而替换使用的是 [Inspector Protocol]
+在低于 Node.js 7.x 版本中，**只能在 Terminal 手动执行 `npm run debug`**， 然后通过以下配置进行 attach :
 
-新的协议主要有三大优势:
-1. 支持非常大的 JavaScript 对象
-2. 支持 ES6 Proxy
-3. 支持 Source Map 更好
+```js
+// .vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach Egg Worker",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "port": 9999
+    }
+  ]
+}
+```
 
-当且仅当你的 Node.js 版本大于 7.x 时，可以使用 [Inspector Protocol] 进行调试。
-
-在上面的调试配置中需要修改一些参数来开启新协议:
-- `Launch Egg` 调整参数 `"runtimeArgs": ["run", "debug"]`
-- `Attach Worker` 添加参数 `"protocol": "inspector"`
-
-
-##### 4. 开始调试
-
-在 [VSCode] 中，切换到调试页面。选择 Debug Egg 配置进行启动。
+> 后续我们会提供一个 [vscode-eggjs](https://github.com/eggjs/vscode-eggjs) 来简化配置。
 
 更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
@@ -357,3 +346,5 @@ exports.proxyworker = {
 [VSCode]: https://code.visualstudio.com
 [Legacy Protocol]: https://github.com/buggerjs/bugger-v8-client/blob/master/PROTOCOL.md
 [Inspector Protocol]: https://chromedevtools.github.io/debugger-protocol-viewer/v8
+[DevTools]: https://developer.chrome.com/devtools
+[WebStorm]: https://www.jetbrains.com/webstorm/

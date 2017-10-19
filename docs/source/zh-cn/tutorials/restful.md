@@ -276,7 +276,6 @@ module.exports = {
 我们先来编写 controller 代码的单元测试。在写 controller 单测的时候，我们可以适时的模拟 service 层的实现，因为对 controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 service 层按照约定的接口 mock 掉，service 自身的逻辑可以让 service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。
 
 ```js
-const request = require('supertest');
 const mock = require('egg-mock');
 
 describe('test/app/controller/topics.test.js', () => {
@@ -292,7 +291,7 @@ describe('test/app/controller/topics.test.js', () => {
   // 测试请求参数错误时应用的响应
   it('should POST /api/v2/topics/ 422', function* () {
     app.mockCsrf();
-    yield request(app.callback())
+    yield app.httpRequest()
     .post('/api/v2/topics')
     .send({
       accesstoken: '123',
@@ -308,7 +307,7 @@ describe('test/app/controller/topics.test.js', () => {
   it('should POST /api/v2/topics/ 201', function* () {
     app.mockCsrf();
     app.mockService('topics', 'create', 123);
-    yield request(app.callback())
+    yield app.httpRequest()
     .post('/api/v2/topics')
     .send({
       accesstoken: '123',

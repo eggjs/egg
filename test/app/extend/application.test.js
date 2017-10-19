@@ -1,8 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
-const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
@@ -75,9 +73,35 @@ describe('test/app/extend/application.test.js', () => {
     after(() => app.close());
 
     it('should app.locals is same ref', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/app_same_ref')
         .expect('true');
+    });
+
+    it('should app.locals not OOM', () => {
+      return app.httpRequest()
+        .get('/app_locals_oom')
+        .expect('ok');
+    });
+  });
+
+  describe('app.locals.foo = bar', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/app-locals-getter');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work', () => {
+      return app.httpRequest()
+        .get('/test')
+        .expect({
+          locals: {
+            foo: 'bar',
+            abc: '123',
+          },
+        });
     });
   });
 
@@ -134,7 +158,7 @@ describe('test/app/extend/application.test.js', () => {
     after(() => app.close());
 
     it('should run background task success', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/app_background')
         .expect(200)
         .expect('hello app');

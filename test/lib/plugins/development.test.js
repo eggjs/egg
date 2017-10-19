@@ -2,10 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const request = require('supertest');
 const pedding = require('pedding');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/development.test.js', () => {
@@ -29,22 +27,22 @@ describe('test/lib/plugins/development.test.js', () => {
         }
       });
 
-      request(app.callback())
-      .get('/foo.js')
-      .expect(200)
-      .end(done);
+      app.httpRequest()
+        .get('/foo.js')
+        .expect(200)
+        .end(done);
 
-      request(app.callback())
-      .get('/public/hello')
-      .expect(404, done);
+      app.httpRequest()
+        .get('/public/hello')
+        .expect(404, done);
 
-      request(app.callback())
-      .get('/assets/hello')
-      .expect(404, done);
+      app.httpRequest()
+        .get('/assets/hello')
+        .expect(404, done);
 
-      request(app.callback())
-      .get('/__koa_mock_scene_toolbox/hello')
-      .expect(404, done);
+      app.httpRequest()
+        .get('/__koa_mock_scene_toolbox/hello')
+        .expect(404, done);
     });
   });
 
@@ -66,17 +64,5 @@ describe('test/lib/plugins/development.test.js', () => {
       fs.writeFileSync(filepath, body);
     });
 
-    it('should reload when file changed', function* () {
-      fs.writeFileSync(filepath, 'module.exports = function*() { this.body = \'change\'; };');
-      // wait for app worker restart
-
-      yield sleep(10000);
-
-      yield request(app.callback())
-      .get('/')
-      .expect('change');
-
-      app.expect('stdout', /App Worker#2:\d+ started/);
-    });
   });
 });

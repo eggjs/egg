@@ -39,7 +39,7 @@ API 升级，测试用例可以很好地检查代码是否向下兼容。
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
 
-加上 [thunk-mocha](https://npmjs.com/thunk-mocha) 模块的帮助，
+加上 [co-mocha](https://npmjs.com/co-mocha) 模块的帮助，
 扩展了 Mocha 的多种用例书写方式，例如 generator function，async await 等。
 
 ### AVA
@@ -103,7 +103,7 @@ test
 ### 测试运行工具
 
 统一使用 [egg-bin 来运行测试脚本](./development.md#单元测试)，
-自动将内置的 Mocha、thunk-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
+自动将内置的 Mocha、co-mocha、power-assert，istanbul 等模块组合引入到测试脚本中，
 让我们**聚焦精力在编写测试代码**上，而不是纠结选择那些测试周边工具和模块。
 
 只需要在 `package.json` 上配置好 `scripts.test` 即可。
@@ -170,6 +170,17 @@ describe('test/controller/home.test.js', () => {
 这样我们就拿到了一个 app 的引用，接下来所有测试用例都会基于这个 app 进行。
 更多关于创建 app 的信息请查看 [`mock.app(options)`](https://github.com/eggjs/egg-mock#options) 文档。
 
+每一个测试文件都需要这样创建一个 app 实例非常冗余，因此 egg-mock 提供了一个 bootstrap 文件，可以直接从它上面拿到我们所常用的实例：
+
+```js
+// test/controller/home.test.js
+const { app, mock, assert } = require('egg-mock/bootstrap');
+
+describe('test/controller/home.test.js', () => {
+  // test cases
+});
+```
+
 ### ctx
 
 我们除了 app，还需要一种方式便捷地拿到 ctx，方便我们进行 Extend、Service、Helper 等测试。
@@ -207,12 +218,13 @@ it('should mock ctx.user', () => {
 
 ```js
 // Bad
-const mock = require('egg-mock');
-const request = require('supertest');
+const { app } = require('egg-mock/bootstrap');
+
 describe('bad test', () => {
-  const app = mock.app();
+  doSomethingBefore();
+
   it('should redirect', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect(302);
   });
@@ -220,23 +232,20 @@ describe('bad test', () => {
 ```
 
 Mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就会被调用，
-那 `mock.app()` 就会启动。
+那 `doSomethingBefore` 就会启动。
 如果希望使用 only 的方式只执行某个用例那段代码还是会被执行，这是非预期的。
 
 正确的做法是将其放到 before 中，只有运行这个套件中某个用例才会执行。
 
 ```js
 // Good
-const mock = require('egg-mock');
-const request = require('supertest');
+const { app } = require('egg-mock/bootstrap');
+
 describe('good test', () => {
-  let app;
-  before(() => {
-    app = mock.app();
-    return app.ready();
-  });
+  before(() => doSomethingBefore());
+
   it('should redirect', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect(302);
   });
@@ -259,36 +268,39 @@ describe('egg test', () => {
 
 ## 异步测试
 
-egg-bin 会自动加载 thunk-mocha 插件测试异步调用，它支持多种写法，比如上面启动完成，`app.ready()` 返回一个 Promise。
+egg-bin 会自动加载 co-mocha 插件测试异步调用，它支持多种写法，比如上面 `app.httpRequest` 方法支持返回 Promise：
 
 ```js
-// 使用 callback 的方式
-before(done => {
-  const app = mm.app();
-  app.ready(done);
+// 使用返回 Promise 的方式
+it('should redirect', () => {
+  return app.httpRequest()
+    .get('/')
+    .expect(302);
 });
 
-// 使用 Promise
-before(() => {
-  const app = mm.app();
-  return app.ready();
+// 使用 callback 的方式
+it('should redirect', done => {
+  app.httpRequest()
+    .get('/')
+    .expect(302, done);
 });
 
 // 使用 generator
-before(function* () {
-  const app = mm.app();
-  yield app.ready();
+it('should redirect', function* () {
+  yield app.httpRequest()
+    .get('/')
+    .expect(302);
 });
 ```
 
-使用哪种写法取决于不同应用场景，如果遇到多个异步可以使用 generator function，也可以拆分成多个 before。
+使用哪种写法取决于不同应用场景，如果遇到多个异步可以使用 generator function，也可以拆分成多个测试用例。
 
 ## Controller 测试
 
 Controller 在整个应用代码里面属于比较难测试的部分了，因为它跟 router 配置紧密相关，
-我们需要利用 [SuperTest](https://github.com/visionmedia/supertest) 发起一个真实请求，
+我们需要利用 `app.httpRequest()` [SuperTest](https://github.com/visionmedia/supertest) 发起一个真实请求，
 来将 Router 和 Controller 连接起来，并且可以帮助我们发送各种满足边界条件的请求数据，
-以测试 Controller 的参数校验完整性。
+以测试 Controller 的参数校验完整性。 `app.httpRequest()` 是 [egg-mock](https://github.com/eggjs/egg-mock) 封装的 [SuperTest](https://github.com/visionmedia/supertest) 请求实例。
 
 例如我们要给 `app/controller/home.js`：
 
@@ -307,23 +319,13 @@ exports.index = function* (ctx) {
 写一个完整的单元测试，它的测试代码 `test/controller/home.test.js` 如下：
 
 ```js
-const assert = require('assert');
-const request = require('supertest');
-const mock = require('egg-mock');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/controller/home.test.js', () => {
-  let app;
-  before(() => {
-    // 创建当前应用的 app 实例
-    app = mock.app();
-    // 等待 app 启动成功，才能执行测试用例
-    return app.ready();
-  });
-
   describe('GET /', () => {
     it('should status 200 and get the body', () => {
       // 对 app 发起 `GET /` 请求
-      return request(app.callback())
+      return app.httpRequest()
         .get('/')
         .expect(200) // 期望返回 status 200
         .expect('hello world'); // 期望 body 是 hello world
@@ -331,13 +333,13 @@ describe('test/controller/home.test.js', () => {
 
     it('should send multi requests', function* () {
       // 使用 generator function 方式写测试用例，可以在一个用例中串行发起多次请求
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/')
         .expect(200) // 期望返回 status 200
         .expect('hello world'); // 期望 body 是 hello world
 
       // 再请求一次
-      const result = yield request(app.callback())
+      const result = yield app.httpRequest()
         .get('/')
         .expect(200)
         .expect('hello world');
@@ -349,7 +351,7 @@ describe('test/controller/home.test.js', () => {
 });
 ```
 
-通过 SuperTest 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
+通过基于 SuperTest 的 `app.httpRequest()` 可以轻松发起 GET、POST、PUT 等 HTTP 请求，并且它有非常丰富的请求数据构造接口，
 例如以 POST 方式发送一个 JSON 请求：
 
 ```js
@@ -362,7 +364,7 @@ exports.post = function* (ctx) {
 it('should status 200 and get the request body', () => {
   // 模拟 CSRF token，下文会详细说明
   app.mockCsrf();
-  return request(app.callback())
+  return app.httpRequest()
     .post('/post')
     .type('form')
     .send({
@@ -388,7 +390,7 @@ it('should status 200 and get the request body', () => {
 
 ```js
 app.mockCsrf();
-return request(app.callback())
+return app.httpRequest()
   .post('/post')
   .type('form')
   .send({
@@ -649,7 +651,7 @@ egg-mock 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方�
         foo: 'bar',
         uid: 123,
       });
-      return request(app.callback())
+      return app.httpRequest()
         .get('/session')
         .expect(200)
         .expect({
@@ -674,6 +676,8 @@ describe('some tes', () => {
   // it tests
 });
 ```
+
+**引入 `egg-mock/bootstrap` 时，会自动在 `afterEach` 钩子中还原所有的 mock，不需要在测试文件中再次编写。**
 
 下面会详细解释一下 egg-mock 的常见使用场景。
 
@@ -719,7 +723,7 @@ it('should mock fengmk1 exists', () => {
     };
   });
 
-  return request(app.callback())
+  return app.httpRequest()
     .get('/user?name=fengmk1')
     .expect(200)
     // 返回了原本不存在的用户信息
@@ -736,7 +740,7 @@ it('should mock fengmk1 exists', () => {
 ```js
 it('should mock service error', () => {
   app.mockServiceError('user', 'get', 'mock user service error');
-  return request(app.callback())
+  return app.httpRequest()
     .get('/user?name=fengmk2')
     // service 异常，触发 500 响应
     .expect(500)
@@ -770,7 +774,7 @@ describe('GET /httpclient', () => {
       // 按照请求时的 options.dataType 来做对应的转换
       data: 'mock eggjs.org response',
     });
-    return request(app.callback())
+    return app.httpRequest()
       .get('/httpclient')
       .expect('mock eggjs.org response');
   });

@@ -1,6 +1,8 @@
 title: 资源
 ---
 
+- [awesome-egg](https://github.com/eggjs/awesome-egg)
+
 ## 框架列表
 
 - [aliyun-egg](https://github.com/eggjs/aliyun-egg)
@@ -14,4 +16,5 @@ by [@天猪](https://github.com/atian25)
 
 ## 工具
 
+- [vscode plugin - eggjs](https://marketplace.visualstudio.com/items?itemName=atian25.eggjs)
 - [vscode plugin - eggjs-dev-tools](https://marketplace.visualstudio.com/items?itemName=yuzukwok.eggjs-dev-tools)

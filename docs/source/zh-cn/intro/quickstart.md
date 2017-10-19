@@ -10,7 +10,7 @@ title: 快速入门
 
 ## 快速初始化
 
-通过脚手架快速生成项目:
+我们推荐直接使用脚手架，只需几条简单指令，即可快速生成项目:
 
 ```bash
 $ npm i egg-init -g
@@ -31,6 +31,8 @@ $ open localhost:7001
 通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
 
 但为了让大家更好的了解 Egg.js，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
+
+**注意：实际项目中，我们推荐使用上一节的脚手架直接初始化。**
 
 ![Egg HackerNews Snapshoot](https://cloud.githubusercontent.com/assets/227713/22960991/812999bc-f37d-11e6-8bd5-a96ca37d0ff2.png)
 
@@ -78,15 +80,14 @@ module.exports = app => {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
+  app.get('/', app.controller.home.index);
 };
 ```
 
-加一个配置文件：
+加一个[配置文件](../basics/config.md)：
 
 ```js
 // config/config.default.js
-// 切记：要改为自己的 key 值
 exports.keys = <此处改为你自己的 Cookie 安全字符串>;
 ```
 
@@ -160,6 +161,8 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
+exports.keys = <此处改为你自己的 Cookie 安全字符串>;
+// 添加 view 配置
 exports.view = {
   defaultViewEngine: 'nunjucks',
   mapping: {
@@ -212,8 +215,8 @@ module.exports = app => {
 
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
-  app.get('/news', 'news.list');
+  app.get('/', app.controller.home.index);
+  app.get('/news', app.controller.news.list);
 };
 ```
 
@@ -280,11 +283,14 @@ module.exports = app => {
 
 ```js
 // config/config.default.js
+// 添加 news 的配置项
 exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
+
+**提示：框架本身也支持 `async function`，具体参见 [使用 async function 开发应用](../tutorials/async-function.md)。**
 
 ### 编写扩展
 
@@ -330,11 +336,11 @@ module.exports = (options, app) => {
 };
 
 // config/config.default.js
-// mount middleware
+// add middleware robot
 exports.middleware = [
   'robot'
 ];
-// middleware config
+// robot's configurations
 exports.robot = {
   ua: [
     /Baiduspider/i,
@@ -343,6 +349,8 @@ exports.robot = {
 ```
 
 现在可以使用 `curl http://localhost:7001/news -A "Baiduspider"` 看看效果。
+
+**提示：框架同时兼容 Koa1 和 Koa2 形式的中间件，具体参见 [使用 Koa 的中间件](../basics/middleware.md#使用-koa-的中间件)。**
 
 ### 配置文件
 
@@ -384,11 +392,12 @@ module.exports = app => {
 
 单元测试非常重要，框架也提供了 [egg-bin] 来帮开发者无痛的编写测试。
 
+测试文件应该放在项目根目录下的 test 目录下，并以 `test.js` 为后缀名，即 `{app_root}/test/**/*.test.js`。
+
 ```js
 // test/app/middleware/robot.test.js
 const assert = require('assert');
 const mock = require('egg-mock');
-const request = require('supertest');
 
 describe('test/app/middleware/robot.test.js', () => {
   let app;
@@ -402,7 +411,7 @@ describe('test/app/middleware/robot.test.js', () => {
   afterEach(mock.restore);
 
   it('should block robot', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
@@ -423,7 +432,7 @@ describe('test/app/middleware/robot.test.js', () => {
 ```
 
 ```bash
-$ npm i egg-mock supertest --save-dev
+$ npm i egg-mock --save-dev
 ```
 
 执行测试：

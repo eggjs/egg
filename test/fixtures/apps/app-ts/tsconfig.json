@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "egg": ["../../../../index"]
+    },
+    "module": "commonjs",
+    "lib": ["es7"],
+    "strict": true
+  }
+}

@@ -86,15 +86,14 @@ Then edit the router file and add a mapping.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
+  app.get('/', app.controller.home.index);
 };
 ```
 
-Then add a configuration file:
+Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
-// should change to your own keys
 exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
 ```
 
@@ -174,6 +173,8 @@ exports.nunjucks = {
 
 ```js
 // config/config.default.js
+exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
+// add view's configurations
 exports.view = {
   defaultViewEngine: 'nunjucks',
   mapping: {
@@ -228,8 +229,8 @@ module.exports = app => {
 
 // app/router.js
 module.exports = app => {
-  app.get('/', 'home.index');
-  app.get('/news', 'news.list');
+  app.get('/', app.controller.home.index);
+  app.get('/news', app.controller.news.list);
 };
 ```
 
@@ -256,7 +257,7 @@ module.exports = app => {
       // read config
       const { serverUrl, pageSize } = this.app.config.news;
 
-      // use build-in HttpClient to GET hacker-news api
+      // use built-in HttpClient to GET hacker-news api
       const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
         data: {
           orderBy: '"$key"',
@@ -301,11 +302,15 @@ And also add config.
 
 ```js
 // config/config.default.js
+// add news' configurations
 exports.news = {
   pageSize: 5,
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
+
+**Note: `async function` is also built-in supported, see [async-function](../tutorials/async-function.md).**
+
 
 ### Add Extensions
 
@@ -357,11 +362,11 @@ module.exports = (options, app) => {
 };
 
 // config/config.default.js
-// mount middleware
+// add middleware robot
 exports.middleware = [
   'robot'
 ];
-// middleware config
+// robot's configurations
 exports.robot = {
   ua: [
     /Baiduspider/i,
@@ -370,6 +375,9 @@ exports.robot = {
 ```
 
 Now try it using `curl localhost:7001/news -A "Baiduspider"`.
+
+**Note：both Koa1 and Koa2 style middleware is supported, see [Use Koa's Middleware](../basics/middleware.md#Use-Koa's-Middleware)。**
+
 
 ### Add Configurations
 
@@ -413,11 +421,12 @@ module.exports = app => {
 
 Unit Testing is very important, and Egg also provide [egg-bin] to help you write tests painless.
 
+All the test files should place at `{app_root}/test/**/*.test.js`.
+
 ```js
 // test/app/middleware/robot.test.js
 const assert = require('assert');
 const mock = require('egg-mock');
-const request = require('supertest');
 
 describe('test/app/middleware/robot.test.js', () => {
   let app;
@@ -429,7 +438,7 @@ describe('test/app/middleware/robot.test.js', () => {
   afterEach(mock.restore);
 
   it('should block robot', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
@@ -452,7 +461,7 @@ Then add `npm scripts`.
 Also install dependencies.
 
 ```bash
-$ npm i egg-mock supertest --save-dev
+$ npm i egg-mock --save-dev
 ```
 
 Run it.

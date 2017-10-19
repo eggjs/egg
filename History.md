@@ -1,5 +1,204 @@
 # History
 
+## 2017-09-25, Version 1.9.0, @gxcsoccer
+
+### Notable changes
+
+* **feature**
+  * make cluster client configurable in egg
+  * don’t force logger to use INFO level in prod
+* **document**
+  * correct sample codes, by @Jawnkuin
+  * fix devtools debug, by @atian25
+  * adjust debug docs with new egg-bin debug, by @atian25
+  * fix port should be number, @atian25
+
+### Commits
+
+  * [[`21425e7`](https://github.com/eggjs/egg/commit/21425e7a9c451cfa07f3cb580d0b770eb5b0c890)] - feat: make cluster client configurable in egg (#1459) (gxcsoccer <<gxcsoccer@126.com>>)
+  * [[`d0797b1`](https://github.com/eggjs/egg/commit/d0797b1c2d078d1bea97c104471388bedc5e61c9)] - docs: correct sample codes (#1434) (Jawnkuin <<jawnkuin@gmail.com>>)
+  * [[`6eac07e`](https://github.com/eggjs/egg/commit/6eac07eb287ecf158b2c182a0e36a81fa14700ce)] - refactor: httpclient args tracer to be enforced (#1421) (hui <<kangpangpang@gmail.com>>)
+  * [[`c56274b`](https://github.com/eggjs/egg/commit/c56274bb818526370f857b926d178ff520b3bea8)] - docs(development): fix devtools debug (#1428) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e3f29de`](https://github.com/eggjs/egg/commit/e3f29de9bbbfb67c641cf54272883759d7256d89)] - docs(development): adjust debug docs with new egg-bin debug (#1427) (AnzerWall <<AnzerWall@gmail.com>>)
+  * [[`5a9531a`](https://github.com/eggjs/egg/commit/5a9531abbec83fbff08ddb6feb475f87498d2a3d)] - feat: don’t force logger to use INFO level in prod (#1218) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`95fbd47`](https://github.com/eggjs/egg/commit/95fbd47f4c20797df17dd210f30a40f43d1d8900)] - docs(deployment): port should be number (#1424) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2017-09-11, Version 1.8.0, @leoner
+
+### Notable changes
+
+* **feature**
+  * support app.httpclient and agent.httpclient auto set tracer
+* **fix**
+  * should extends from egg-core BaseContextClass
+* **document**
+  * English documents `basics/objects`,`core/docs-logger` and `core/httpclient`
+    have been translated by @DarrenWong, @Azard and @gztchan
+  * documents typo fixed and improved by @vincenthou, @waitingsong and @hyj1991
+
+### Commits
+
+  * [[`54be7dc09`](http://github.com/eggjs/egg/commit/54be7dc099f47fb65b9bc3d9bb29de4d70ac25cd)] - docs(core/cluster-and-ipc): fix some typo (#1415) (vincent.hou <<vincenthou365@gmail.com>>)
+  * [[`6cf17c11a`](http://github.com/eggjs/egg/commit/6cf17c11af51220904881ed99aa65cac0f212c2b)] - docs: (core/httpclient): [translate] Done  (#1409) (Darren Wong <<darrenwongf@gmail.com>>)
+  * [[`105e1947e`](http://github.com/eggjs/egg/commit/105e1947ee0863ebd6c0a1111f218b025e0e9989)] - docs: translate basics/objects (#1238) (Weilun Xiong <<azardf4yy@gmail.com>>)
+  * [[`f7c0d8520`](http://github.com/eggjs/egg/commit/f7c0d85209c9e96f7812c4a2996f000a2667770d)] - feat: support app.httpclient and agent.httpclient auto set tracer (#1393) (hui <<kangpangpang@gmail.com>>)
+  * [[`3aaee8fbe`](http://github.com/eggjs/egg/commit/3aaee8fbea4aee8b5c40921670642772835bf40d)] - fix: should extends from egg-core BaseContextClass (#1392) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`a9936a383`](http://github.com/eggjs/egg/commit/a9936a383174fd0b2c201ee759bc5174486970a1)] - fix: typo (#1388) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`eef30faf6`](http://github.com/eggjs/egg/commit/eef30faf69b41f4a352a592ad65d097698d27303)] - docs: adjust webstorm debug config (#1367) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`499454379`](http://github.com/eggjs/egg/commit/499454379b2234a80d3946933f7511ac83c292d6)] - docs: curl(url, opts) add parameter introduction (#1351) (#1352) (hyj1991 <<66cfat66@gmail.com>>)
+  * [[`4daf497eb`](http://github.com/eggjs/egg/commit/4daf497eb32c05c73911a01e861b9cf761ede451)] - docs(en/core/docs-logger): finish logger.md translation in English (#1254) (Tony Chan <<gztchan@gmail.com>>)
+  * [[`aaacd56c9`](http://github.com/eggjs/egg/commit/aaacd56c9c60dbf0cbfd0d1fcc77366a3e3993fe)] - docs: remove egg-scripts env default description (#1318) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`4feae70b8`](http://github.com/eggjs/egg/commit/4feae70b8c8e69890053bff9f3df9cc7024d69cd)] - docs: add egg-scripts to deployment (#1279) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`08ed1b3c6`](http://github.com/eggjs/egg/commit/08ed1b3c68e242eba187640c9f6cf8a0acd7489f)] - docs(unittest): typo of egg-mock (#1284) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`734854c84`](http://github.com/eggjs/egg/commit/734854c84ef8b0107df3101b6aa212d96574b317)] - docs(unittest): add bootstrap usage (#1278) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`ebbbcd574`](http://github.com/eggjs/egg/commit/ebbbcd574f5bbd4d91bec345e8b35f9adc48d6c0)] - chore: skip docs deploy at ci cron (#1268) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2017-07-27, Version 1.7.0, @popomore
+
+### Notable changes
+
+* **feature**
+  * Support listen options in config.js
+* **improve**
+  * `app.HttpClient` can be overwritten
+* **document**
+  * Document improvement
+  * English documents have been translated by @gztchan
+
+### Commits
+
+  * [[`dd07cacb2`](http://github.com/eggjs/egg/commit/dd07cacb209565cc8bdc240b2a3bd7f624a3e56c)] - docs: fix typo on CONTRIBUTING.zh-CN.md (#1266) (SuperEwe <<superewe@qq.com>>)
+  * [[`773343061`](http://github.com/eggjs/egg/commit/7733430614d62392fa1b06568e223ce2ae5b3709)] - docs: only deploy docs at 8 (#1252) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`4f2ebfda8`](http://github.com/eggjs/egg/commit/4f2ebfda81c067ba500ee22ac30c8b201f746cac)] - docs: fix const define (#1249) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`45bea3cb5`](http://github.com/eggjs/egg/commit/45bea3cb55636a09160bfc66befca476994dacc8)] - docs(core-deployment): translate deployment.md in English (#1235) (Tony Chan <<gztchan@gmail.com>>)
+  * [[`dda386e42`](http://github.com/eggjs/egg/commit/dda386e425ce96019f3d068e66603f80af966571)] - test: add test and doc for listen options (#1246) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`3ef1de952`](http://github.com/eggjs/egg/commit/3ef1de95247aa3e3fdcbda71fe83e58a892a13d6)] - feat: set cluster options, include path, port, hostname (#1231) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`e9f93cf83`](http://github.com/eggjs/egg/commit/e9f93cf83d46fd84c8c6b10ec2e7e3eb2bf24f9d)] - refactor: export app.HttpClient that can be overwritten (#1234) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`96b3786eb`](http://github.com/eggjs/egg/commit/96b3786eb9640c9ec2d71a5a0a0b18ee32e9e3ad)] - docs(core/error-handling): translate error-handling.md in English (#1228) (Tony Chan <<gztchan@gmail.com>>)
+  * [[`c3c9fce55`](http://github.com/eggjs/egg/commit/c3c9fce557a8d8c57b2a5e5391d1c11a81ceeaa7)] - docs(controller): examples use controller class (#1221) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`24f279005`](http://github.com/eggjs/egg/commit/24f2790051c0d248f6df9850ffe8513dc11e5780)] - docs: new VScode 1.14 default protocol changed. (#1212) (Anto <<anto17@foxmail.com>>)
+  * [[`2b78b4cf8`](http://github.com/eggjs/egg/commit/2b78b4cf8275171ddf788550745edc3aef948ca7)] - docs: Fix config name from egg-Plugin to eggPlugin in plugin's doc (#1215) (hansen <<hasseyoung@gmail.com>>)
+
+## 2017-07-19, Version 1.6.1, @fengmk2
+
+### Notable changes
+
+* **fix**
+  * make sure config.httpclient.httpAgent.timeout >= 30000, and distinguish
+    options: request, httpAgent and httpsAgent on `config.httpclient`.
+
+### Commits
+
+  * [[`988b8c8`](http://github.com/eggjs/egg/commit/988b8c84d0f63ce0e83e00bd12cff65ebf4f2ff5)] - fix: make sure config.httpclient.httpAgent.timeout >= 30000 (#1165) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`894005c`](http://github.com/eggjs/egg/commit/894005c8e683e764ec234c915afce89b57343f98)] - docs: (core/i18n): [translate] Done (#1194) (Darren Wong <<darrenwongf@gmail.com>>)
+  * [[`410633b`](http://github.com/eggjs/egg/commit/410633b3e47098abc30d83429895b543431929ec)] - chore: kill ssh-agent after deploy (#1204) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`05f4785`](http://github.com/eggjs/egg/commit/05f47858a6d74041a10539443a9ea2e195826bc4)] - chore: add travis_wait to avoid deploying document timeout (#1201) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`367e1d6`](http://github.com/eggjs/egg/commit/367e1d66ef3bdb49ee41758246cdaf49e04ea140)] - docs: fix typo (#1191) (BingqiChan <<bingqichen@live.cn>>)
+
+## 2017-07-04, Version 1.6.0, @fengmk2
+
+### Notable changes
+
+* **feature**
+  * tsd add ctx.logger and logger.error support Error object
+  * ignore any key contains "secret" on dump config files
+  * show who define the property of the config on `run/application_config_meta.json`
+* **fix**
+  * don't cache the intermediate locals for application
+
+### Commits
+
+  * [[`5dc56fa`](http://github.com/eggjs/egg/commit/5dc56fac043eab22187f9ae1dd7e73d2160fd7ae)] - feat: ignore any key contains "secret" (#1156) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`74c8a54`](http://github.com/eggjs/egg/commit/74c8a547cc90939253946a145655996b59373457)] - feat: dump `run/${type}_config_meta.json` (#1155) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`b80bb14`](http://github.com/eggjs/egg/commit/b80bb1405c1f47c5596ff4a2c9540af7447430ec)] - fix: don't cache the intermediate locals for application (#1146) (Jackson Tian <<shyvo1987@gmail.com>>)
+  * [[`7c70beb`](http://github.com/eggjs/egg/commit/7c70beb26ecf2176cda7547f3163fec11aff450f)] - docs: change istanbul to nyc (#1150) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`c7a87a8`](http://github.com/eggjs/egg/commit/c7a87a8abade84769b34a1ef0ba50a3cc12dec49)] - docs: adjust objects docs (#1140) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`0052351`](http://github.com/eggjs/egg/commit/005235162dce4b0e87768a201c9a68c4291592d4)] - docs: improve plugin dependencies (#1061) (luicfer <<lucifer4he@gmail.com>>)
+  * [[`4322212`](http://github.com/eggjs/egg/commit/43222127b922b486d8f523230fed82ba453ee8d8)] - docs: add missing class in objects.md (kaiye <<catgecn@gmail.com>>)
+  * [[`daa8227`](http://github.com/eggjs/egg/commit/daa82278332d7617d6ebb3d07e8cdfd1e95cf644)] - feat(tsd): add ctx.logger and logger.error support Error object (#1108) (Eward Song <<eward.song@gmail.com>>)
+  * [[`7c2e436`](http://github.com/eggjs/egg/commit/7c2e43626d93049b5f91f59773ef02c4b0f478b3)] - docs: improve feature describe (#1102) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`5ae7814`](http://github.com/eggjs/egg/commit/5ae7814632b1f92d534a496fe4f51c6737447aba)] - chore: comments in english (#1101) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`9099be9`](http://github.com/eggjs/egg/commit/9099be91afa806d0a8258441d11e1da2318777ef)] - docs: unify config in quickstart (#1094) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+  * [[`c31bc15`](http://github.com/eggjs/egg/commit/c31bc15097c692d08596a277c69fbd44f9d3e2bf)] - test: wait logger to flush (#1090) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`82d2158`](http://github.com/eggjs/egg/commit/82d2158e4c399ead9567b67dc27d13d1ef2e104e)] - docs: add Enclose.IO to Links (#1089) (Minqi Pan <<pmq2001@gmail.com>>)
+
+## 2017-06-21, Version 1.5.0, @fengmk2
+
+### Notable changes
+
+* **feature**
+  * better TypeScript support, add `index.d.ts` file.
+  * enable overrideMethod middleware by default.
+* **document**
+  * Documents improved.
+
+### Commits
+
+  * [[`1d02601`](http://github.com/eggjs/egg/commit/1d026019df76525d2d9117c260eb5d892388121c)] - tsd: add another properties of FileStream (#1080) (Rwing <<Rwing@rwing.cn>>)
+  * [[`2b1644e`](http://github.com/eggjs/egg/commit/2b1644e6d56e6481ee97bce009c5f53b4dd18441)] - feat: add tsd (#1027) (Eward Song <<eward.song@gmail.com>>)
+  * [[`a4ba2a2`](http://github.com/eggjs/egg/commit/a4ba2a2a1ef7de49e196c01447fd73ab22ed6d34)] - feat: enable overrideMethod middleware by default (#1069) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`bfb8df5`](http://github.com/eggjs/egg/commit/bfb8df58bcc7d7fe0fd6ff3453efcb54b715b4a0)] - docs: typo (#1060) (chenbin92 <<chen@mothin.com>>)
+  * [[`64d1b00`](http://github.com/eggjs/egg/commit/64d1b0026648e1128f09efb6e6c2cc7f632bf608)] - docs: add chrome devtools debug information (#1050) (仙森 <<dapixp@gmail.com>>)
+  * [[`4e510b2`](http://github.com/eggjs/egg/commit/4e510b22836096a47d562dbd5ca8affd28f94f9e)] - chore: use app.httpRequest() instead of supertest (#1041) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`78a13d5`](http://github.com/eggjs/egg/commit/78a13d52c3b6e8b40a0015b285cda33a059c0ee4)] - docs: add more description at quickstart (#1042) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ef7c864`](http://github.com/eggjs/egg/commit/ef7c864fbddf7e70afbd93a16d5176787328400d)] - docs: add ant.design link (#1037) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`f1b510c`](http://github.com/eggjs/egg/commit/f1b510c34039259c5772021432ab71a7a62b89e8)] - feat: add config.logger.disableConsoleAfterReady (#1001) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4890eda`](http://github.com/eggjs/egg/commit/4890eda31b9bc60ea4a1a7f36460ec1bf86dc134)] - docs: Uniform the standards that we should acquire this parsed parame… (#1038) (Ruanyq <<yiqiang0930@163.com>>)
+  * [[`9d705e4`](http://github.com/eggjs/egg/commit/9d705e4687cdb98d327fbd9a1061604828218dfc)] - test: make sure app close (#1030) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1d72e37`](http://github.com/eggjs/egg/commit/1d72e3799822e252934d6218a978c2bd21f378d3)] - docs: fix caseStyle link (#1033) (Desen Meng <<mds@xue.bi>>)
+  * [[`9b50725`](http://github.com/eggjs/egg/commit/9b507250725ef3beda0ee51ac0c2bc2b007b2ecb)] - docs: (tutorials/index.md & async-function.md ): [translate] Done (#1028) (Darren Wong <<darrenwongf@gmail.com>>)
+  * [[`3d04199`](http://github.com/eggjs/egg/commit/3d041992912d9aca1eb0edc6b226474022e08236)] - docs: typo (#1029) (Jerry Wu <<perzy_wu@163.com>>)
+  * [[`13b7c19`](http://github.com/eggjs/egg/commit/13b7c19531d772a2b932ada28e186a0dbd0cf5f5)] - test: node 8 (#976) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1b108a7`](http://github.com/eggjs/egg/commit/1b108a72a96d3d8241b332b8e728a9ec409efbb1)] - docs: remove api that is from egg-rest (#1022) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`057bc47`](http://github.com/eggjs/egg/commit/057bc47e4c5e3ec8faae0de3807f656fa4ef41d4)] - test: add doc test (#989) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`c6eb7b2`](http://github.com/eggjs/egg/commit/c6eb7b2f59f24fe0c6a787829d33cdf0cd4a2e77)] - doc: fix view config doc (#991) (当轩 <<code.falling@gmail.com>>)
+  * [[`52865b4`](http://github.com/eggjs/egg/commit/52865b47c4d336833ef1151bae9f30867359ceb6)] - docs: devtool inspect at 8.x (#1018) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8a120fd`](http://github.com/eggjs/egg/commit/8a120fde73df60e23f8c5559a3281acaf0a393e0)] - docs: remove max time limit at schdule (#995) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`9084c24`](http://github.com/eggjs/egg/commit/9084c24dd10fcbcd0d436ada9639b59f36dd2edf)] - docs: add plugin list (#988) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`20a5d91`](http://github.com/eggjs/egg/commit/20a5d9127f7454c899f7701f02b04eefa7c61fce)] - test: disable coverage for schedule (#987) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`3de963f`](http://github.com/eggjs/egg/commit/3de963f3881ef6fb9c5b6fa207730c6695853239)] - docs(basics/structure.md): [translate] (#970) (Weilun Xiong <<330815461@qq.com>>)
+  * [[`2f232f3`](http://github.com/eggjs/egg/commit/2f232f30b0ba7e14ab07c43e34d363bac3906a43)] - docs: file must appear after other fiels when using getFileStream (#982) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+
+## 2017-05-28, Version 1.4.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * use lru to aovid oom when httpclient dns cache enabled
+* **fix**
+  * fix port is missed when httpclient dns cache enabled
+  * fix request url object will be changed when httpclient dns cache enabled
+  * set maxSockets defautl value to Number.MAX_SAFE_INTEGER
+* **document**
+  * Documents improved. Thanks @DarrenWong, @zousandian, @lslxdx, @Azard, @johnnychen, @coogleyao, @DanielWLam, @m31271n, @Brian175
+
+### Commits
+
+* [[`7370a62`](http://github.com/eggjs/egg/commit/7370a62e190db55dab3fde7f39f621f449301eaa)] - docs: translate tutorials/restful.md (#908) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`5d8ca65`](http://github.com/eggjs/egg/commit/5d8ca654f311c52fd5faaa939943071c3f69f43f)] - docs: translatebasics/controller.md (#889) (lslxdx <<lslxdx@163.com>>)
+* [[`5b959e0`](http://github.com/eggjs/egg/commit/5b959e0a382491b3111afb66e10b6e866105e0c8)] - docs: translate tutorials/progressive.md to English version (#966) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`35fa5a9c`](http://github.com/eggjs/egg/commit/35fa5a9c4c2d969f66a5e4df28e1da7f69370709)] - fix: set maxSockets defautl value to Number.MAX_SAFE_INTEGER (#938) (tangyao <<2001-wms@163.com>>)
+* [[`5b6fe2b`](http://github.com/eggjs/egg/commit/5b6fe2b187b2c1a4bcee4693b2b1043f2724fe68)] - feat: use lru to aovid oom in dns cache httpclient (#961) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`3c5c0b8`](http://github.com/eggjs/egg/commit/3c5c0b8d81bb63166f6592390d14277d3baca283)] - docs: Fix objects.md typo (#969) (三点 <<zousandian@gmail.com>>)
+* [[`2bca50b`](http://github.com/eggjs/egg/commit/2bca50b2217424b8cdacd48550dcc39a31e50cff)] - docs(core/unittest.md): update with app.httpRequest() (#943) (Weilun Xiong <<330815461@qq.com>>)
+* [[`713e033`](http://github.com/eggjs/egg/commit/713e033f90eb39aad8ac48916985396ca5282815)] - docs: app.controller.foo instead of 'foo' (#942) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`cfc76ec`](http://github.com/eggjs/egg/commit/cfc76ec721460780d703ead1dfdd315ed484e5c8)] - fix spell error from sign to signed (#932) (johnnychen <<johnnychq@gmail.com>>)
+* [[`12499d6`](http://github.com/eggjs/egg/commit/12499d636dd471f35e54aad9f09b5f452ea198bf)] - docs: fix yield db.query for en (#930) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`25c7c95`](http://github.com/eggjs/egg/commit/25c7c95bff9eb51baf4f93724444982209872895)] - docs: translate basics/router.md (#896) (lslxdx <<lslxdx@163.com>>)
+* [[`a5c7ac4`](http://github.com/eggjs/egg/commit/a5c7ac462a275c5393f93308a7f31b21cba524a2)] - docs: translate basics/service.md (lslxdx <<lslxdx@163.com>>)
+* [[`7ee5de6`](http://github.com/eggjs/egg/commit/7ee5de6b0ad628332a5c130eb5a405b993a98c60)] - docs: translate basics/extend.md (#884) (DanielLam <<lwd931227@126.com>>)
+* [[`9bf3a65`](http://github.com/eggjs/egg/commit/9bf3a6511469ee85963096836ae8c2421313448d)] - docs: Update env.md (#918) (m31271n <<m31271n@2players.studio>>)
+* [[`b3825f3`](http://github.com/eggjs/egg/commit/b3825f33406c01ebc19b16519eccfca9f60e770f)] - docs: fix objects.md (#928) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`fd04ea2`](http://github.com/eggjs/egg/commit/fd04ea222af962e7fe9b82d108a0bd6f23b32891)] - docs: add document for built-in objects (#914) (Yiyu He <<dead-horse@users.noreply.github.com>>)
+* [[`6180d5d`](http://github.com/eggjs/egg/commit/6180d5db90047a58222ba24d660c1a19b93648f3)] - docs: use names of constants declared (#923) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`02b02e0`](http://github.com/eggjs/egg/commit/02b02e0faf0d423105136723b9d2938a182fd486)] - docs: using a doctools as a external lib (#913) (Haoliang Gao <<sakura9515@gmail.com>>)
+* [[`5113088`](http://github.com/eggjs/egg/commit/51130889ad8d75baa157c43d9b88e7d08c6067fe)] - fix(docs):  yield db.query (#921) (Yao Mengfei <<coogleyao@gmail.com>>)
+* [[`ddd342c`](http://github.com/eggjs/egg/commit/ddd342c84358319aaffe9ee6eab90c2df1a2e9dc)] - docs: translate basic/config.md (#875) (Brian175 <<zhangweilu@buaa.edu.cn>>)
+* [[`ae99e5d`](http://github.com/eggjs/egg/commit/ae99e5d6ee032171d17ce7ce67a8cb3c2f7bd04b)] - fix(docs): basics/structure.md link agent typo (#909) (Weilun Xiong <<330815461@qq.com>>)
+* [[`fac3e0c`](http://github.com/eggjs/egg/commit/fac3e0c7306b1143698c29a3685c8116c36b1434)] - refactor: rename private method name to symbol (#904) (Yu Qi <<njuyuqi@gmail.com>>)
+* [[`8115c57`](http://github.com/eggjs/egg/commit/8115c575ea082a92ebda5e4fd08ba4ad37e47bc0)] - docs: translate docs/source/zh-cn/tutorials/mysql.md  (#883) (Darren Wong <<darrenwongf@gmail.com>>)
+* [[`e13c515`](http://github.com/eggjs/egg/commit/e13c515226566ae3c87c35b575a8e914e75c6a0b)] - Release 1.3.0 (#885) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2017-05-11, Version 1.3.0, @fengmk2
 
 ### Notable changes

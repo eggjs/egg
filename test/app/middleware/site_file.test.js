@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const assert = require('assert');
 const utils = require('../../utils');
 
@@ -10,11 +9,10 @@ describe('test/app/middleware/site_file.test.js', () => {
     app = utils.app('apps/middlewares');
     return app.ready();
   });
-
   after(() => app.close());
 
   it('should GET /favicon.ico 200', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/favicon.ico')
       .expect('Content-Type', 'image/x-icon')
       // .expect(res => console.log(res.headers))
@@ -22,7 +20,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   });
 
   it('should GET /favicon.ico?t=123 200', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/favicon.ico?t=123')
       .expect('Content-Type', 'image/x-icon')
       // .expect(res => console.log(res.headers))
@@ -30,21 +28,21 @@ describe('test/app/middleware/site_file.test.js', () => {
   });
 
   it('should 200 when accessing /robots.txt', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/robots.txt')
       .expect('User-agent: Baiduspider\nDisallow: /\n\nUser-agent: baiduspider\nDisallow: /')
       .expect(200);
   });
 
   it('should 200 when accessing crossdomain.xml', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/crossdomain.xml')
       .expect('xxx')
       .expect(200);
   });
 
   it('should support HEAD', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .head('/robots.txt')
       .expect('content-length', '72')
       // body must be empty for HEAD
@@ -53,26 +51,26 @@ describe('test/app/middleware/site_file.test.js', () => {
   });
 
   it('should ignore POST', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .post('/robots.txt')
       .expect(404);
   });
 
   it('normal router should work', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/')
       .expect('home')
       .expect(200);
   });
 
   it('not defined router should 404', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/xxx')
       .expect(404);
   });
 
   it('should 404 when accessing fake.txt using wrong config', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/fake.txt')
       .expect(404);
   });
@@ -83,14 +81,13 @@ describe('test/app/middleware/site_file.test.js', () => {
       app = utils.app('apps/favicon');
       return app.ready();
     });
-
     after(() => app.close());
 
     it('should redirect https://eggjs.org/favicon.ico', () => {
-      return request(app.callback())
+      return app.httpRequest()
         .get('/favicon.ico')
-        .expect(302, (err, res) => {
-          assert(!err);
+        .expect(302)
+        .expect(res => {
           assert(!res.headers['set-cookie']);
           assert(res.headers.location === 'https://eggjs.org/favicon.ico');
         });

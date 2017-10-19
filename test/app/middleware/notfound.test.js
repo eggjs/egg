@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -15,7 +14,7 @@ describe('test/app/middleware/notfound.test.js', () => {
   afterEach(mm.restore);
 
   it('should 302 redirect to 404.html', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/test/404')
       .set('Accept', 'test/html')
       .expect('Location', 'https://eggjs.org/404')
@@ -23,7 +22,7 @@ describe('test/app/middleware/notfound.test.js', () => {
   });
 
   it('should 404 json response', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/test/404.json?ctoken=404')
       .set('Cookie', 'ctoken=404')
       .expect({
@@ -33,7 +32,7 @@ describe('test/app/middleware/notfound.test.js', () => {
   });
 
   it('should 404 json response on rest api', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/api/404.json?ctoken=404')
       .set('Cookie', 'ctoken=404')
       .expect({
@@ -44,7 +43,7 @@ describe('test/app/middleware/notfound.test.js', () => {
 
   it('should show 404 page content when antx notfound.pageUrl not set', () => {
     mm(app.config.notfound, 'pageUrl', '');
-    return request(app.callback())
+    return app.httpRequest()
       .get('/foo')
       .expect('<h1>404 Not Found</h1>')
       .expect(404);
@@ -61,13 +60,13 @@ describe('test/app/middleware/notfound.test.js', () => {
     afterEach(mm.restore);
 
     it('should 302 redirect to custom /404 when required html', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/test/404')
         .set('Accept', 'test/html')
         .expect('Location', '/404')
         .expect(302);
 
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/404')
         .expect('Hi, this is 404')
         .expect(200);
@@ -76,13 +75,13 @@ describe('test/app/middleware/notfound.test.js', () => {
     it('should not avoid circular redirects', function* () {
       mm(app.config.notfound, 'pageUrl', '/notfound');
 
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/test/404')
         .set('Accept', 'test/html')
         .expect('Location', '/notfound')
         .expect(302);
 
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/notfound')
         .expect('<h1>404 Not Found</h1><p><pre><code>config.notfound.pageUrl(/notfound)</code></pre> is unimplemented</p>')
         .expect(404);

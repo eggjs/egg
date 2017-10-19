@@ -80,6 +80,10 @@ title: 插件开发
     }
     ```
 
+  3. 插件没有 `plugin.js`：
+    - `eggPlugin.dependencies` 只是用于声明依赖关系，而不是引入插件或开启插件。
+    - 如果期望统一管理多个插件的开启和配置，可以在[上层框架](./framework.md)处理。
+
 ## 插件的依赖管理
 
 和中间件不同，插件是自己管理依赖的。应用在加载所有插件前会预先从它们的 `package.json` 中读取 `eggPlugin > dependencies` 和 `eggPlugin > optionalDependencies` 节点，然后根据依赖关系计算出加载顺序，举个例子，下面三个插件的加载顺序就应该是 `c => b => a`
@@ -97,7 +101,7 @@ title: 插件开发
 // plugin b
 {
   "name": "egg-plugin-b",
-  "egg-Plugin": {
+  "eggPlugin": {
     "name": "b",
     "optionalDependencies": [ "c" ]
   }
@@ -106,7 +110,7 @@ title: 插件开发
 // plugin c
 {
   "name": "egg-plugin-c",
-  "egg-Plugin": {
+  "eggPlugin": {
     "name": "c"
   }
 }
@@ -413,8 +417,6 @@ module.exports = app => {
 ```bash
 $ npm i egg-onerror --save
 ```
-
-**注意：插件即使是只在 local 运行的，也需要配置为 dependencies 而不是 devDependencies，否则线上 `npm i --production` 时将无法找到插件。**
 
 ### 开启和关闭
 

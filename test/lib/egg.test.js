@@ -4,7 +4,6 @@ const mm = require('egg-mock');
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const spy = require('spy');
 const Transport = require('egg-logger').Transport;
@@ -30,12 +29,36 @@ describe('test/lib/egg.test.js', () => {
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
     });
 
+    it('should dump config meta', () => {
+      let json = require(path.join(baseDir, 'run/agent_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+      json = require(path.join(baseDir, 'run/application_config_meta.json'));
+      assert(json.name === path.join(__dirname, '../../config/config.default.js'));
+      assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
+    });
+
     it('should ignore some type', () => {
       const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert(json.config.mysql.accessId === 'this is accessId');
+
       assert(json.config.name === 'demo');
       assert(json.config.keys === '<String len: 3>');
       assert(json.config.buffer === '<Buffer len: 4>');
       assert(json.config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
+
+      assert(json.config.pass === '<String len: 12>');
+      assert(json.config.pwd === '<String len: 11>');
+      assert(json.config.password === '<String len: 16>');
+      assert(json.config.passwordNew === 'this is passwordNew');
+      assert(json.config.mysql.passd === '<String len: 13>');
+      assert(json.config.mysql.passwd === '<String len: 14>');
+      assert(json.config.mysql.secret === '<String len: 10>');
+      assert(json.config.mysql.secretNumber === '<Number>');
+      assert(json.config.mysql.masterKey === '<String len: 17>');
+      assert(json.config.mysql.accessKey === '<String len: 17>');
+      assert(json.config.mysql.consumerSecret === '<String len: 22>');
+      assert(json.config.mysql.someSecret === null);
 
       // don't change config
       assert(app.config.keys === 'foo');
@@ -151,22 +174,25 @@ describe('test/lib/egg.test.js', () => {
 
   describe('handle unhandledRejection', () => {
     let app;
-    before(() => {
-      app = utils.cluster('apps/app-throw');
-      return app.ready();
-    });
     after(() => app.close());
 
+    // use it to record create coverage codes time
+    it('before: should cluster app ready', () => {
+      app = utils.cluster('apps/app-throw');
+      app.coverage(true);
+      return app.ready();
+    });
+
     it('should handle unhandledRejection and log it', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection')
         .expect('foo')
         .expect(200);
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection-string')
         .expect('foo')
         .expect(200);
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw-unhandledRejection-obj')
         .expect('foo')
         .expect(200);
@@ -192,10 +218,10 @@ describe('test/lib/egg.test.js', () => {
 
     it('should access base context properties success', function* () {
       mm(app.config.logger, 'level', 'DEBUG');
-      yield request(app.callback())
-      .get('/')
-      .expect('hello')
-      .expect(200);
+      yield app.httpRequest()
+        .get('/')
+        .expect('hello')
+        .expect(200);
 
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');
@@ -209,17 +235,17 @@ describe('test/lib/egg.test.js', () => {
     });
 
     it('should get pathName success', function* () {
-      yield request(app.callback())
-      .get('/pathName')
-      .expect('controller.home')
-      .expect(200);
+      yield app.httpRequest()
+        .get('/pathName')
+        .expect('controller.home')
+        .expect(200);
     });
 
     it('should get config success', function* () {
-      yield request(app.callback())
-      .get('/config')
-      .expect('base-context-class')
-      .expect(200);
+      yield app.httpRequest()
+        .get('/config')
+        .expect('base-context-class')
+        .expect(200);
     });
   });
 });

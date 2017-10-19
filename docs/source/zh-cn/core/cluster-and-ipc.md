@@ -70,7 +70,7 @@ if (cluster.isMaster) {
 
 1. 关闭异常 Worker 进程所有的 TCP Server（将已有的连接快速断开，且不再接收新的连接），断开和 Master 的 IPC 通道，不再接受新的用户请求。
 2. Master 立刻 fork 一个新的 Worker 进程，保证在线的『工人』总数不变。
-3. 异常 Worker 等待一端时间，处理完已经接受的请求后退出。
+3. 异常 Worker 等待一段时间，处理完已经接受的请求后退出。
 
 ```bash
    +---------+                 +---------+
@@ -284,14 +284,14 @@ if (cluster.isMaster) {
 
 - `app.messenger.broadcast(action, data)`：发送给所有的 agent / app 进程（包括自己）
 - `app.messenger.sendToApp(action, data)`: 发送给所有的 app 进程
-   - 在 app 调用该方法上会发送给自己和其他的 app 进程
+   - 在 app 上调用该方法会发送给自己和其他的 app 进程
    - 在 agent 上调用该方法会发送给所有的 app 进程
 - `app.messenger.sendToAgent(action, data)`: 发送给 agent 进程
-   - 在 app 调用该方法上会发送 agent 进程
+   - 在 app 上调用该方法会发送给 agent 进程
    - 在 agent 上调用该方法会发送给 agent 自己
 - `agent.messenger.sendRandom(action, data)`:
    - app 上没有该方法（现在 Egg 的实现是等同于 sentToAgent）
-   - agent 上回随机发送消息给一个 app 进程（由 master 来控制发送给谁）
+   - agent 会随机发送消息给一个 app 进程（由 master 来控制发送给谁）
 - `app.messenger.sendTo(pid, action, data)`: 发送给指定进程
 
 ```js
@@ -440,7 +440,7 @@ module.exports = agent => {
 
 ## 更复杂的场景
 
-上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来接收和消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
+上面的例子中，我们在 Agent 进程上运行了一个 subscriber，来监听消息中间件的消息，如果 Worker 进程也需要监听一些消息怎么办？如何通过 Agent 进程建立连接再转发给 Worker 进程呢？这些问题可以在[多进程研发模式增强](../advanced/cluster-client.md)中找到答案。
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster

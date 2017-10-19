@@ -5,11 +5,11 @@ module.exports = {
   plugin: 'autod-egg',
   prefix: '^',
   devprefix: '^',
-  registry: 'https://r.cnpmjs.org',
   exclude: [
     'test/fixtures',
     'examples',
-    "docs",
+    'docs',
+    'run',
   ],
   devdep: [
     'autod',
@@ -17,10 +17,14 @@ module.exports = {
     'eslint',
     'eslint-config-egg',
     'egg-bin',
+    'egg-doctools',
     'egg-plugin-puml',
     'egg-view-nunjucks',
   ],
-  keep: [
+  dep: [
+    '@types/accepts',
+    '@types/koa',
+    '@types/koa-router',
   ],
   semver: [
     'koa-bodyparser@2',

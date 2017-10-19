@@ -2,15 +2,14 @@
 
 const mm = require('egg-mock');
 const assert = require('assert');
-const utils = require('../../utils');
-const request = require('supertest');
 const innerClient = require('cluster-client/lib/symbol').innerClient;
+const utils = require('../../utils');
 
 describe('test/lib/cluster/cluster-client.test.js', () => {
   let app;
   before(function* () {
     mm.consoleLevel('NONE');
-    app = utils.app('apps/cluster_mod_app', { coverage: true });
+    app = utils.app('apps/cluster_mod_app');
     yield app.ready();
   });
   after(function* () {
@@ -21,7 +20,7 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
   });
 
   it('should publish & subscribe ok', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .post('/publish')
       .send({ value: '30.20.78.299' })
       .expect('ok')
@@ -32,11 +31,28 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
         });
       })
       .then(() => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/getHosts')
           .expect('30.20.78.299:20880')
           .expect(200);
       });
   });
 
+  it('should get default cluster response timeout', () => {
+    return app.httpRequest()
+      .get('/getDefaultTimeout')
+      .expect(200)
+      .then(res => {
+        assert(res.text === '60000');
+      });
+  });
+
+  it('should get overwrite cluster response timeout', () => {
+    return app.httpRequest()
+      .get('/getOverwriteTimeout')
+      .expect(200)
+      .then(res => {
+        assert(res.text === '1000');
+      });
+  });
 });

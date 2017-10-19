@@ -115,7 +115,11 @@ module.exports = appInfo => {
      * @property {Set} ignore - keys to ignore
      */
     dump: {
-      ignore: new Set([ 'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'secret' ]),
+      ignore: new Set([
+        'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'masterKey', 'accessKey',
+        // ignore any key contains "secret" keyword
+        /secret/i,
+      ]),
     },
 
     /**
@@ -155,7 +159,7 @@ module.exports = appInfo => {
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
    * @example
-   * // 指定应用 favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * config.siteFile = {
    *   '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * };
@@ -168,16 +172,16 @@ module.exports = appInfo => {
    * The option of `bodyParser` middleware
    *
    * @member Config#bodyParser
-   * @property {Boolean} enable - enable bodyParser or not, default to true
+   * @property {Boolean} enable - enable bodyParser or not, default is true
    * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
    * @property {String | RegExp | Function | Array} match - will parse request body only when url path hit match pattern
-   * @property {String} encoding - body 的编码格式，默认为 utf8
-   * @property {String} formLimit - form body 的大小限制，默认为 100kb
-   * @property {String} jsonLimit - json body 的大小限制，默认为 100kb
-   * @property {Boolean} strict - json body 解析是否为严格模式，如果为严格模式则只接受 object 和 array
-   * @property {Number} queryString.arrayLimit - 表单元素数组长度限制，默认 100，否则会转换为 json 格式
-   * @property {Number} queryString.depth - json 数值深度限制，默认 5
-   * @property {Number} queryString.parameterLimit - 参数个数限制，默认 1000
+   * @property {String} encoding - body's encoding type，default is utf8
+   * @property {String} formLimit - limit of the urlencoded body. If the body ends up being larger than this limit, a 413 error code is returned. Default is 100kb
+   * @property {String} jsonLimit - limit of the json body, default is 100kb
+   * @property {Boolean} strict - when set to true, JSON parser will only accept arrays and objects. Default is true
+   * @property {Number} queryString.arrayLimit - urlencoded body array's max length, default is 100
+   * @property {Number} queryString.depth - urlencoded body object's max depth, default is 5
+   * @property {Number} queryString.parameterLimit - urlencoded body maximum parameters, default is 1000
    */
   config.bodyParser = {
     enable: true,
@@ -200,6 +204,7 @@ module.exports = appInfo => {
    * @property {String} encoding - log file encloding, defaults to utf8
    * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
    * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
+   * @property {Boolean} disableConsoleAfterReady - disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`.
    * @property {Boolean} outputJSON - log as JSON or not, defaults to false
    * @property {Boolean} buffer - if enabled, flush logs to disk at a certain frequency to improve performance, defaults to true
    * @property {String} errorLogName - file name of errorLogger
@@ -213,6 +218,7 @@ module.exports = appInfo => {
     env: appInfo.env,
     level: 'INFO',
     consoleLevel: 'INFO',
+    disableConsoleAfterReady: appInfo.env !== 'local' && appInfo.env !== 'unittest',
     outputJSON: false,
     buffer: true,
     appLogName: `${appInfo.name}-web.log`,
@@ -220,25 +226,46 @@ module.exports = appInfo => {
     agentLogName: 'egg-agent.log',
     errorLogName: 'common-error.log',
     coreLogger: {},
+    allowDebugAtProd: true,
   };
 
   /**
    * The option for httpclient
    * @member Config#httpclient
-   * @property {Boolean} keepAlive - Enable http keepalive or not, default is true
-   * @property {Number} freeSocketKeepAliveTimeout - socket keepalive max free time, default is 4000 ms.
-   * @property {Number} timeout - socket max unative time, default is 30000 ms.
-   * @property {Number} maxSockets - max socket number of one host, default is Infinity.
-   * @property {Number} maxFreeSockets - max free socket number of one host, default is 256.
    * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
+   *
+   * @property {Number} request.timeout - httpclient request default timeout, default is 5000 ms.
+   *
+   * @property {Boolean} httpAgent.keepAlive - Enable http agent keepalive or not, default is true
+   * @property {Number} httpAgent.freeSocketKeepAliveTimeout - http agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpAgent.maxSockets - http agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+   * @property {Number} httpAgent.maxFreeSockets - http agent max free socket number of one host, default is 256.
+   *
+   * @property {Boolean} httpsAgent.keepAlive - Enable https agent keepalive or not, default is true
+   * @property {Number} httpsAgent.freeSocketKeepAliveTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
+   * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    */
   config.httpclient = {
-    keepAlive: true,
-    freeSocketKeepAliveTimeout: 4000,
-    timeout: 30000,
-    maxSockets: Infinity,
-    maxFreeSockets: 256,
     enableDNSCache: false,
+    dnsCacheMaxLength: 1000,
+    dnsCacheMaxAge: 10000,
+
+    request: {
+      timeout: 5000,
+    },
+    httpAgent: {
+      keepAlive: true,
+      freeSocketKeepAliveTimeout: 4000,
+      maxSockets: Number.MAX_SAFE_INTEGER,
+      maxFreeSockets: 256,
+    },
+    httpsAgent: {
+      keepAlive: true,
+      freeSocketKeepAliveTimeout: 4000,
+      maxSockets: Number.MAX_SAFE_INTEGER,
+      maxFreeSockets: 256,
+    },
   };
 
   /**
@@ -250,6 +277,7 @@ module.exports = appInfo => {
     'siteFile',
     'notfound',
     'bodyParser',
+    'overrideMethod',
   ];
 
   /**
@@ -257,6 +285,29 @@ module.exports = appInfo => {
    * @member {Number} Config.workerStartTimeout
    */
   config.workerStartTimeout = 10 * 60 * 1000;
+
+  /**
+   *
+   * @member {Object} Config#cluster
+   * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
+   * @property {String} listen.path - set a unix sock path when server listen
+   * @property {Number} listen.port - set a port when server listen
+   * @property {String} listen.hostname - set a hostname binding server when server listen
+   */
+  config.cluster = {
+    listen: {
+      path: '',
+      port: 7001,
+      hostname: '',
+    },
+  };
+
+  /**
+   * @property {Number} responseTimeout - response timeout, default is 60000
+   */
+  config.clusterClient = {
+    responseTimeout: 60000,
+  };
 
   return config;
 };

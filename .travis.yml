@@ -3,20 +3,14 @@ language: node_js
 node_js:
   - '6'
   - '7'
-matrix:
-  include:
-    - node_js: '8'
-      env: 'NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly'
-  allow_failures:
-    # Allow the nightly installs to fail
-    - env: 'NVM_NODEJS_ORG_MIRROR=https://nodejs.org/download/nightly'
+  - '8'
 install:
   - npm i npminstall && npminstall
 script:
   - npm run ci
 after_script:
   - npminstall codecov && codecov
-  - scripts/doc_travis.sh
+  - test $TRAVIS_NODE_VERSION = 8 && travis_wait scripts/doc_travis.sh
 env:
   global:
   - ENCRYPTION_LABEL: a62186272189

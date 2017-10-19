@@ -19,17 +19,18 @@ describe('test/lib/plugins/multipart.test.js', () => {
   before(done => {
     server = app.listen();
     request(server)
-    .get('/')
-    .expect(200, (err, res) => {
-      csrfToken = res.headers['x-csrf'];
-      cookies = res.headers['set-cookie'].join(';');
-      host = `http://127.0.0.1:${server.address().port}`;
-      done(err);
-    });
+      .get('/')
+      .expect(200, (err, res) => {
+        csrfToken = res.headers['x-csrf'];
+        cookies = res.headers['set-cookie'].join(';');
+        host = `http://127.0.0.1:${server.address().port}`;
+        done(err);
+      });
   });
 
   after(() => {
     server.close();
+    return app.close();
   });
 
   it('should upload with csrf', done => {

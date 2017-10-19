@@ -1,7 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
 const path = require('path');
 const mm = require('egg-mock');
 const utils = require('../../../utils');
@@ -15,12 +14,13 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
   it('should get middlewares', function* () {
     app = utils.app('apps/demo');
     yield app.ready();
-    assert.deepEqual(app.config.coreMiddleware.slice(0, 6), [
+    assert.deepEqual(app.config.coreMiddleware.slice(0, 7), [
       'meta',
       'siteFile',
       'notfound',
       'static',
       'bodyParser',
+      'overrideMethod',
       'session',
     ]);
   });
@@ -31,6 +31,7 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
     app = utils.app('apps/demo');
     yield app.ready();
     assert.deepEqual(app.config.logger.dir, utils.getFilepath('apps/demo/logs/demo'));
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should get logger dir when default', function* () {
@@ -39,5 +40,14 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
     app = utils.app('apps/demo');
     yield app.ready();
     assert.deepEqual(app.config.logger.dir, path.join(home, 'logs/demo'));
+    assert(app.config.logger.disableConsoleAfterReady === true);
+  });
+
+  it('should get cluster defaults', function* () {
+    app = utils.app('apps/demo');
+    yield app.ready();
+    assert(app.config.cluster.listen.path === '');
+    assert(app.config.cluster.listen.port === 7001);
+    assert(app.config.cluster.listen.hostname === '');
   });
 });

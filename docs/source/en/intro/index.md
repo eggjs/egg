@@ -18,12 +18,12 @@ Egg is a convention-over-configuration framework, follows the [Loader](../advanc
 
 ## features
 
-- depth [customizd framework](../advanced/framework.md)
-- highly extensible [plug-in mechanism](../advanced/plugin.md)
-- built-in [cluster](../advanced/cluster.md)
-- based on [koa] with high performance
-- stable core framework with high test coverage.
-- [progressive development](../tutorials/progressive.md)
+- Provide capability to [customizd framework](../advanced/framework.md) base on Egg
+- Highly extensible [plug-in mechanism](../advanced/plugin.md)
+- Built-in [cluster](../advanced/cluster-client.md)
+- Based on [Koa] with high performance
+- Stable core framework with high test coverage
+- [Progressive development](../tutorials/progressive.md)
 
 [Sails]: http://sailsjs.com
 [Express]: http://expressjs.com

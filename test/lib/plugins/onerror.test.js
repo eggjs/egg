@@ -1,6 +1,5 @@
 'use strict';
 
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -19,9 +18,9 @@ describe('test/lib/plugins/onerror.test.js', () => {
 
   it('should redirect to error page', () => {
     mm(app.config, 'env', 'test');
-    return request(app.callback())
-    .get('/?status=500')
-    .expect('Location', 'http://eggjs.org/500?real_status=500')
-    .expect(302);
+    return app.httpRequest()
+      .get('/?status=500')
+      .expect('Location', 'http://eggjs.org/500?real_status=500')
+      .expect(302);
   });
 });

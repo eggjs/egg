@@ -3,7 +3,6 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
-const request = require('supertest');
 const execSync = require('child_process').execSync;
 const mm = require('egg-mock');
 const utils = require('../utils');
@@ -21,21 +20,21 @@ describe('test/lib/agent.test.js', () => {
     after(() => app.close());
 
     it('should catch exeption', done => {
-      request(app.callback())
-      .get('/agent-throw')
-      .expect(200, err => {
-        assert(!err);
-        setTimeout(() => {
-          const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
-          assert(body.includes('nodejs.unhandledExceptionError: agent error'));
-          app.notExpect(/nodejs.AgentWorkerDiedError/);
-          done();
-        }, 1000);
-      });
+      app.httpRequest()
+        .get('/agent-throw')
+        .expect(200, err => {
+          assert(!err);
+          setTimeout(() => {
+            const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
+            assert(body.includes('nodejs.unhandledExceptionError: agent error'));
+            app.notExpect(/nodejs.AgentWorkerDiedError/);
+            done();
+          }, 1000);
+        });
     });
 
     it('should catch uncaughtException string error', done => {
-      request(app.callback())
+      app.httpRequest()
         .get('/agent-throw-string')
         .expect(200, err => {
           assert(!err);

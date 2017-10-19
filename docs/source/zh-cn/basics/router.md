@@ -13,7 +13,7 @@ Router 主要用来描述请求 URL 和具体承担执行动作的 Controller �
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/user/:id', 'user.info');
+  app.get('/user/:id', app.controller.user.info);
 };
 ```
 
@@ -35,10 +35,10 @@ exports.info = function* (ctx) {
 下面是路由的完整定义，参数可以根据场景的不同，自由选择：
 
 ```js
-app.verb('path-match', 'controller.action');
-app.verb('router-name', 'path-match', 'controller.action');
-app.verb('path-match', middleware1, ..., middlewareN, 'controller.action');
-app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller.action');
+app.verb('path-match', app.controller.controller.action);
+app.verb('router-name', 'path-match', app.controller.controller.action);
+app.verb('path-match', middleware1, ..., middlewareN, app.controller.controller.action);
+app.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.controller.action);
 ```
 
 路由完整定义主要包括5个主要部分:
@@ -56,8 +56,9 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller
 - router-name 给路由设定一个别名，可以通过 Helper 提供的辅助函数 `pathFor` 和 `urlFor` 来生成 URL。(可选)
 - path-match - 路由 URL 路径。
 - middleware1 - 在 Router 里面可以配置多个 Middleware。(可选)
-- controller.action - 注意是字符串，框架会自动从 `app/controller` 目录中去查找同名 Controller，
-并且把处理指定到配置的 action 方法。如果 Controller 文件直接 export 一个方法，可以省略 action。
+- controller - 指定路由映射到的具体的 controller 上，controller 可以有两种写法：
+  * `app.controller.user.fetch` - 直接指定一个具体的 controller
+  * `'user.fetch'` - 可以简写为字符串形式
 
 ### 注意事项
 
@@ -69,23 +70,23 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller
 下面是一些路由定义的方式：
 
 ```js
-app.get('/home', 'home');
-app.get('/user/:id', 'user.page');
-app.post('/admin', isAdmin, 'admin');
-app.post('/user', isLoginUser, hasAdminPermission, 'user.create');
-app.post('/api/v1/comments', 'v1.comments.create'); // app/controller/v1/comments.js
+app.get('/home', app.controller.home);
+app.get('/user/:id', app.controller.user.page);
+app.post('/admin', isAdmin, app.controller.admin);
+app.post('/user', isLoginUser, hasAdminPermission, app.controller.user.create);
+app.post('/api/v1/comments', app.controller.v1.comments.create); // app/controller/v1/comments.js
 ```
 
 ### RESTful 风格的 URL 定义
 
 如果想通过 RESTful 的方式来定义路由，
-我们提供了 `app.resources('routerName', 'pathMatch', 'controllerName')` 快速在一个路径上生成 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 路由结构。
+我们提供了 `app.resources('routerName', 'pathMatch', controller)` 快速在一个路径上生成 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 路由结构。
 
 ```js
 // app/router.js
 module.exports = app => {
-  app.resources('posts', '/api/posts', 'posts');
-  app.resources('users', '/api/v1/users', 'v1.users'); // app/controller/v1/users.js
+  app.resources('posts', '/api/posts', app.controller.posts);
+  app.resources('users', '/api/v1/users', app.controller.v1.users); // app/controller/v1/users.js
 };
 ```
 
@@ -132,12 +133,12 @@ exports.destroy = function* () {};
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/search', 'search');
+  app.get('/search', app.controller.search);
 };
 
 // app/controller/search.js
 module.exports = function* (ctx) {
-  ctx.body = `search: ${this.query.name}`;
+  ctx.body = `search: ${ctx.query.name}`;
 };
 
 // curl http://127.0.0.1:7001/search?name=egg
@@ -148,7 +149,7 @@ module.exports = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/user/:id/:name', 'user.info');
+  app.get('/user/:id/:name', app.controller.user.info);
 };
 
 // app/controller/user.js
@@ -166,7 +167,7 @@ exports.info = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, 'package.detail');
+  app.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
@@ -184,7 +185,7 @@ exports.detail = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('/form', 'form');
+  app.post('/form', app.controller.form);
 };
 
 // app/controller/form.js
@@ -218,7 +219,7 @@ exports.security = {
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('/user', 'user');
+  app.post('/user', app.controller.user);
 };
 
 // app/controller/user.js
@@ -248,7 +249,7 @@ exports.create = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('index', '/home/index', 'home.index');
+  app.get('index', '/home/index', app.controller.home.index);
   app.redirect('/', '/home/index', 302);
 };
 
@@ -265,13 +266,13 @@ exports.index = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/search', 'search');
+  app.get('/search', app.controller.search);
 };
 
 // app/controller/search.js
-module.exports = function* () {
-  const type = this.query.type;
-  const q = this.query.q || 'nodejs';
+module.exports = function* (ctx) {
+  const type = ctx.query.type;
+  const q = ctx.query.q || 'nodejs';
 
   if (type === 'bing') {
     this.redirect(`http://cn.bing.com/search?q=${q}`);
@@ -292,7 +293,7 @@ module.exports = function* () {
 ```js
 // app/controller/search.js
 module.exports = function* (ctx) {
-  ctx.body = `search: ${this.query.name}`;
+  ctx.body = `search: ${ctx.query.name}`;
 };
 
 // app/middleware/uppercase.js
@@ -305,7 +306,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = app => {
-  app.get('s', '/search', app.middlewares.uppercase(), 'search')
+  app.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
 };
 
 // curl http://localhost:7001/search2?name=egg
@@ -326,13 +327,13 @@ module.exports = app => {
 
 // app/router/news.js
 module.exports = app => {
-  app.get('/news/list', 'news.list');
-  app.get('/news/detail', 'news.detail');
+  app.get('/news/list', app.controller.news.list);
+  app.get('/news/detail', app.controller.news.detail);
 };
 
 // app/router/admin.js
 module.exports = app => {
-  app.get('/admin/user', 'admin.user');
-  app.get('/admin/log', 'admin.log');
+  app.get('/admin/user', app.controller.admin.user);
+  app.get('/admin/log', app.controller.admin.log);
 };
 ```

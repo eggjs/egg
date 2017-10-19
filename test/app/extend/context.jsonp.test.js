@@ -1,7 +1,6 @@
 'use strict';
 
 const mm = require('egg-mock');
-const request = require('supertest');
 const utils = require('../../utils');
 
 describe('test/app/extend/context.jsonp.test.js', () => {
@@ -14,7 +13,7 @@ describe('test/app/extend/context.jsonp.test.js', () => {
   afterEach(mm.restore);
 
   it('should response jsonp', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/user.json?_callback=$jQuery110208780175377614796_1406016639408&ctoken=123')
       .set('Cookie', 'ctoken=123')
       .expect('Content-Type', 'application/javascript; charset=utf-8')
@@ -24,7 +23,7 @@ describe('test/app/extend/context.jsonp.test.js', () => {
   });
 
   it('should response json body when callback empty', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/user.json?_callback=&ctoken=123')
       .set('Cookie', 'ctoken=123')
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -33,7 +32,7 @@ describe('test/app/extend/context.jsonp.test.js', () => {
   });
 
   it('should response json body when callback missing', () => {
-    return request(app.callback())
+    return app.httpRequest()
       .get('/user.json?callback=&ctoken=123')
       .set('Cookie', 'ctoken=123')
       .expect('Content-Type', 'application/json; charset=utf-8')

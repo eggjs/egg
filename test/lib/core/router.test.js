@@ -1,8 +1,6 @@
 'use strict';
 
 const assert = require('assert');
-
-const request = require('supertest');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -21,49 +19,49 @@ describe('test/lib/core/router.test.js', () => {
   describe('router.resources', () => {
     describe('normal', () => {
       it('should GET /posts', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/posts')
           .expect(200)
           .expect('index');
       });
 
       it('should GET /posts/new', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/posts/new')
           .expect(200)
           .expect('new');
       });
 
       it('should POST /posts', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .post('/posts')
           .expect(200)
           .expect('create');
       });
 
       it('should GET /posts/:id', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/posts/123')
           .expect(200)
           .expect('show - 123');
       });
 
       it('should GET /posts/:id/edit', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/posts/123/edit')
           .expect(200)
           .expect('edit - 123');
       });
 
       it('should PUT /posts/:id', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .put('/posts/123')
           .expect(200)
           .expect('update - 123');
       });
 
       it('should DELETE /posts/:id', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .delete('/posts/123')
           .expect(200)
           .expect('destroy - 123');
@@ -72,47 +70,47 @@ describe('test/lib/core/router.test.js', () => {
 
     describe('controller url', () => {
       it('should GET /members', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/members')
           .expect(200)
           .expect('index');
       });
 
       it('should GET /members/index', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/members/index')
           .expect(200)
           .expect('index');
       });
 
       it('should GET /members/new', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/members/new')
           .expect(200)
           .expect('new');
       });
 
       it('should GET /members/:id', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/members/1231')
           .expect(200)
           .expect('show - 1231');
       });
 
       it('should POST /members', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .post('/members')
           .expect(404);
       });
 
       it('should PUT /members/:id', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .put('/members/1231')
           .expect(404);
       });
 
       it('should GET /POSTS', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/POSTS')
           .expect(404);
       });

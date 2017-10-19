@@ -4,10 +4,8 @@ const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
-const request = require('supertest');
 const Logger = require('egg-logger');
 const sleep = require('mz-modules/sleep');
-
 const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
@@ -28,6 +26,22 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.INFO);
+    assert(app.config.logger.disableConsoleAfterReady === true);
+  });
+
+  it('should got right level on prod env when set allowDebugAtProd to false', function* () {
+    mm.env('prod');
+    mm(process.env, 'EGG_LOG', '');
+    mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app-do-not-force/config'));
+    app = utils.app('apps/mock-production-app-do-not-force');
+    yield app.ready();
+
+    assert(app.config.logger.allowDebugAtProd === false);
+
+    assert(app.logger.get('file').options.level === Logger.DEBUG);
+    assert(app.logger.get('console').options.level === Logger.INFO);
+    assert(app.coreLogger.get('file').options.level === Logger.DEBUG);
+    assert(app.coreLogger.get('console').options.level === Logger.INFO);
   });
 
   it('should got right level on local env', function* () {
@@ -40,6 +54,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.INFO);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.WARN);
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should set EGG_LOG level on local env', function* () {
@@ -52,7 +67,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.ERROR);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.ERROR);
-    return app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should got right config on unittest env', function* () {
@@ -65,7 +80,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.logger.get('console').options.level === Logger.WARN);
     assert(app.coreLogger.get('file').options.level === Logger.INFO);
     assert(app.coreLogger.get('console').options.level === Logger.WARN);
-    return app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
   it('should set log.consoleLevel to env.EGG_LOG', function* () {
@@ -82,6 +97,7 @@ describe('test/lib/core/logger.test.js', () => {
     mm(process.env, 'EGG_LOG', 'NONE');
     app = utils.app('apps/nobuffer-logger');
     yield app.ready();
+    assert(app.config.logger.disableConsoleAfterReady === false);
 
     const ctx = app.mockContext();
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
@@ -102,6 +118,7 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.app('apps/mock-production-app');
     yield app.ready();
 
+    assert(app.config.logger.disableConsoleAfterReady === true);
     const ctx = app.mockContext();
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
     // app.config.logger.buffer.should.equal(true);
@@ -132,14 +149,14 @@ describe('test/lib/core/logger.test.js', () => {
     mm.env('default');
     app = utils.cluster('apps/logger');
     app
-    .debug(false)
-    .coverage(false)
-    .expect('stdout', /agent info/)
-    .expect('stdout', /app info/)
-    .notExpect('stdout', /app info after ready/)
-    .expect('stderr', /nodejs.Error: agent error/)
-    .expect('stderr', /nodejs.Error: app error/)
-    .end(done);
+      .debug(false)
+      .coverage(false)
+      .expect('stdout', /agent info/)
+      .expect('stdout', /app info/)
+      .notExpect('stdout', /app info after ready/)
+      .expect('stderr', /nodejs.Error: agent error/)
+      .expect('stderr', /nodejs.Error: app error/)
+      .end(done);
   });
 
   it('should still output to console after app ready on local env', done => {
@@ -147,13 +164,13 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.cluster('apps/logger');
     app
     // .debug()
-    .coverage(false)
-    .expect('stdout', /agent info/)
-    .expect('stdout', /app info/)
-    .expect('stdout', /app info after ready/)
-    .expect('stderr', /nodejs.Error: agent error/)
-    .expect('stderr', /nodejs.Error: app error/)
-    .end(done);
+      .coverage(false)
+      .expect('stdout', /agent info/)
+      .expect('stdout', /app info/)
+      .expect('stdout', /app info after ready/)
+      .expect('stderr', /nodejs.Error: agent error/)
+      .expect('stderr', /nodejs.Error: app error/)
+      .end(done);
   });
 
   it('agent and app error should output to common-error.log', done => {
@@ -164,14 +181,14 @@ describe('test/lib/core/logger.test.js', () => {
     app = utils.cluster('apps/logger');
     app
     // .debug()
-    .coverage(false)
-    .end(err => {
-      assert(!err);
-      const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
-      assert(content.includes('nodejs.Error: agent error'));
-      assert(content.includes('nodejs.Error: app error'));
-      done();
-    });
+      .coverage(false)
+      .end(err => {
+        assert(!err);
+        const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
+        assert(content.includes('nodejs.Error: agent error'));
+        assert(content.includes('nodejs.Error: app error'));
+        done();
+      });
   });
 
   it('all loggers error should redirect to errorLogger', function* () {
@@ -208,16 +225,16 @@ describe('test/lib/core/logger.test.js', () => {
     after(() => app.close());
 
     it('should save debug log to file', done => {
-      request(app.callback())
-      .get('/')
-      .expect('ok')
-      .end(err => {
-        assert(!err);
-        assert(
-          fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8').includes(' DEBUG ')
-        );
-        done();
-      });
+      app.httpRequest()
+        .get('/')
+        .expect('ok')
+        .end(err => {
+          assert(!err);
+          assert(
+            fs.readFileSync(path.join(app.config.baseDir, 'logs/foo/foo-web.log'), 'utf8').includes(' DEBUG ')
+          );
+          done();
+        });
     });
   });
 });

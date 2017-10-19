@@ -2,7 +2,6 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const request = require('supertest');
 const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
@@ -122,7 +121,7 @@ describe('test/lib/application.test.js', () => {
     after(() => app.close());
 
     it('should handle uncaughtException and log it', function* () {
-      yield request(app.callback())
+      yield app.httpRequest()
         .get('/throw')
         .expect('foo')
         .expect(200);
@@ -138,6 +137,7 @@ describe('test/lib/application.test.js', () => {
     it('should warn if confused configurations exist', function* () {
       const app = utils.app('apps/confused-configuration');
       yield app.ready();
+      yield sleep(1000);
       const logs = fs.readFileSync(utils.getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
       assert(logs.match(/Unexpected config key `bodyparser` exists, Please use `bodyParser` instead\./));
       assert(logs.match(/Unexpected config key `notFound` exists, Please use `notfound` instead\./));
@@ -194,7 +194,7 @@ describe('test/lib/application.test.js', () => {
 
     describe('class style controller', () => {
       it('should work with class style controller', () => {
-        return request(app.callback())
+        return app.httpRequest()
           .get('/class-controller')
           .expect('this is bar!')
           .expect(200);
