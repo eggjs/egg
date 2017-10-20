@@ -223,6 +223,8 @@ describe('test/lib/egg.test.js', () => {
         .expect('hello')
         .expect(200);
 
+      yield sleep(1000);
+
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');
       assert(log.match(/INFO .*? \[service\.home\] appname: base-context-class/));
