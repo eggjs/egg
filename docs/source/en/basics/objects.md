@@ -278,13 +278,15 @@ The base class of Subscription is exported by egg.
 
 ```js
 const Subscription = require('egg').Subscription;
+
 class Schedule extends Subscription {
   // This method should be implemented
+  // subscribe can be generator function or async function
   * subscribe() {}
 }
 ```
 
-[Schedule](./schedule.md) is implemented using the model，also recommend the plugin for message broker.
+We recommend plugin developers to implement based on this model, For example, [Schedule](./schedule.md).
 
 [Koa]: http://koajs.com
 [Koa.Application]: http://koajs.com/#application

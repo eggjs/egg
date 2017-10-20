@@ -272,19 +272,21 @@ module.exports = {
 
 ## Subscription
 
-Subscription 是一种订阅模型，消息中间件的消费者或调度任务都属于这种模式。
+订阅模型是一种比较常见的开发模式，譬如消息中间件的消费者或调度任务。因此我们提供了 Subscription 基类来规范化这个模式。
 
 可以通过以下方式来引用 Subscription 基类：
 
 ```js
 const Subscription = require('egg').Subscription;
+
 class Schedule extends Subscription {
-  // 是需要实现此方法
+  // 需要实现此方法
+  // subscribe 可以为 generator function 或 async function
   * subscribe() {}
 }
 ```
 
-[定时任务](./schedule.md)使用这种模式实现，也建议使用此模型实现消息中间件。
+插件开发者可以根据自己的需求基于它定制订阅规范，如[定时任务](./schedule.md)就是使用这种规范实现的。
 
 [Koa]: http://koajs.com
 [Koa.Application]: http://koajs.com/#application
