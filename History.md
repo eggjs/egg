@@ -1,5 +1,27 @@
 # History
 
+## 2017-10-24, Version 1.10.0, @popomore
+
+### Notable changes
+
+* **feature**
+  * add Subscription @popomore
+* **document**
+  * multipart example @dead_horse
+  * fix document @atian25 @beilunyang
+  * improve schedule document @atian25
+
+### Commits
+
+  * [[`6dd1594a5`](http://github.com/eggjs/egg/commit/6dd1594a5c300f24e668b3679c7ae8df733b6a39)] - docs: fix egg-scripts (#1552) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`46ed6fac9`](http://github.com/eggjs/egg/commit/46ed6fac9f94d300a23903a71cfafdb5c8b1ba91)] - feat: add Subscription (#1469) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`c508f9fa7`](http://github.com/eggjs/egg/commit/c508f9fa7dedbc8c3c4f6319b7233a034db463b4)] - docs: fix csrf (#1551) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`7fb9bbf71`](http://github.com/eggjs/egg/commit/7fb9bbf71219debf35b4e864a65be22e24a0480a)] - docs: fix typo (#1537) (悖论 <<786220806@qq.com>>)
+  * [[`68c0e1a9c`](http://github.com/eggjs/egg/commit/68c0e1a9c053618133d3484043abfb77e3372a22)] - docs: adjust new schedule (#1477) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`aeae948ec`](http://github.com/eggjs/egg/commit/aeae948ec986f5f7204ad6a0f748403b8e6e6fe1)] - docs: adjust middleware config at framework (#1523) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`7b37d2393`](http://github.com/eggjs/egg/commit/7b37d2393f59f3c5efbc84cf1d5f51e9332b0cd8)] - docs: multipart example use yield parts() (#1518) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`6846badc8`](http://github.com/eggjs/egg/commit/6846badc8da89b00483aa7be5c69b1cd2f06d797)] - docs: add plugin.js description (#1499) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2017-09-25, Version 1.9.0, @gxcsoccer
 
 ### Notable changes
