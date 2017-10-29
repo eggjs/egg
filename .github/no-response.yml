@@ -1,0 +1,14 @@
+# Configuration for probot-no-response - https://github.com/probot/no-response
+
+# Number of days of inactivity before an Issue is closed for lack of response
+daysUntilClose: 7
+# Label requiring a response
+responseRequiredLabel: need-more-infomation
+# Comment to post when closing an Issue for lack of response. Set to `false` to disable
+closeComment: |
+  This issue has been automatically closed because there has been no response to our request for more information from the original author.
+  With only the information that is currently in the issue, we don't have enough information to take action.
+  Please reach out if you have or find the answers we need so that we can investigate further.
+
+  该 issue 缺乏必要的信息，我们无法跟进。由于超过一周未收到补充信息，现将自动关闭。如果你有更多的补充，可以随时重新开启该 Issue。
+  必要的反馈信息包括：出现问题的场景，复现步骤，若能提交「最小可复现代码库」就更能有助于我们之间的高效交流。
