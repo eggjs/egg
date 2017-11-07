@@ -7,15 +7,15 @@ const path = require('path');
 const utils = require('../utils');
 const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
+const mkdirp = require('mz-modules/mkdirp');
+const rimraf = require('mz-modules/rimraf');
 
 describe('test/ts/index.test.js', () => {
   before(function* () {
     yield runscript('tsc', { cwd: baseDir });
     const dest = path.join(baseDir, 'node_modules/egg');
-    rimraf.sync(dest);
-    mkdirp.sync(path.dirname(dest));
+    yield rimraf(dest);
+    yield mkdirp(path.dirname(dest));
     fs.symlinkSync('../../../../../', dest);
   });
 
