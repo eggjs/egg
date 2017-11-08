@@ -106,7 +106,10 @@
     "url": "https://github.com/eggjs/egg.git"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 8.0.0"
+  },
+  "publishConfig": {
+    "tag": "next"
   },
   "license": "MIT"
 }
