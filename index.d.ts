@@ -801,3 +801,4 @@ export interface IService { }// tslint:disable-line
 
 export interface IController { } // tslint:disable-line
 
+export as namespace Egg;
