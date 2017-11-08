@@ -1,3 +1,14 @@
+
+1.10.1 / 2017-11-08
+==================
+
+**fixes**
+  * [[`9eec677`](http://github.com/eggjs/egg/commit/9eec677757ddbde6f7ddcff2c6a698087e07b70e)] - fix: use this.options instead of this._options (#1625) (Yiyu He <<dead_horse@qq.com>>)
+
+**others**
+  * [[`fd1ff63`](http://github.com/eggjs/egg/commit/fd1ff638920fef4a3258767df982b87e70614215)] - test: fix tsc test case (#1620) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`6804bd3`](http://github.com/eggjs/egg/commit/6804bd36cfc7a9bd54b3be2d9ce828d4e951f8b8)] - test: add node 9 and drop node 7 (#1602) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`3878862`](http://github.com/eggjs/egg/commit/38788621ccf06fd6ac8f4068de3e49c5668e1915)] - docs: translate core/cluster-and-ipc.md (#1594) (lslxdx <<lslxdx@163.com>>)
 # History
 
 ## 2017-10-24, Version 1.10.0, @popomore
