@@ -1,5 +1,16 @@
 # History
 
+## 2017-11-08, Version 1.11.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * export global namespace at d.ts @atian25
+
+### Commits
+
+  * [[`b131a4c`](http://github.com/eggjs/egg/commit/b131a4cec51cc783dcd4ccb8756439063c5b875c)] - feat: export global namespace at d.ts (#1633) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2017-11-08, Version 1.10.1, @dead-horse
 
 ### Notable changes
