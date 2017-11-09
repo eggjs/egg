@@ -5,9 +5,9 @@
 'use strict';
 
 module.exports = () => {
-  return function* meta(next) {
-    yield next;
+  return async function meta(ctx, next) {
+    await next();
     // total response time header
-    this.set('x-readtime', Date.now() - this.starttime);
+    ctx.set('x-readtime', Date.now() - ctx.starttime);
   };
 };

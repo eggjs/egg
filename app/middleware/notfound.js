@@ -1,18 +1,18 @@
 'use strict';
 
 module.exports = options => {
-  return function* notfound(next) {
-    yield next;
+  return async function notfound(ctx, next) {
+    await next();
 
-    if (this.status !== 404 || this.body) {
+    if (ctx.status !== 404 || ctx.body) {
       return;
     }
 
     // set status first, make sure set body not set status
-    this.status = 404;
+    ctx.status = 404;
 
-    if (this.acceptJSON) {
-      this.body = {
+    if (ctx.acceptJSON) {
+      ctx.body = {
         message: 'Not Found',
       };
       return;
@@ -21,16 +21,16 @@ module.exports = options => {
     const notFoundHtml = '<h1>404 Not Found</h1>';
 
     // notfound handler is unimplemented
-    if (options.pageUrl && this.path === options.pageUrl) {
-      this.body = `${notFoundHtml}<p><pre><code>config.notfound.pageUrl(${options.pageUrl})</code></pre> is unimplemented</p>`;
+    if (options.pageUrl && ctx.path === options.pageUrl) {
+      ctx.body = `${notFoundHtml}<p><pre><code>config.notfound.pageUrl(${options.pageUrl})</code></pre> is unimplemented</p>`;
       return;
     }
 
     if (options.pageUrl) {
-      this.realStatus = 404;
-      this.redirect(options.pageUrl);
+      ctx.realStatus = 404;
+      ctx.redirect(options.pageUrl);
       return;
     }
-    this.body = notFoundHtml;
+    ctx.body = notFoundHtml;
   };
 };
