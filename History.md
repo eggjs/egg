@@ -1,5 +1,17 @@
 # History
 
+## 2017-11-09, Version 2.0.0-beta.1, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * [BREAKING CHANGE] drop node <8 support
+  * upgrade to egg-core@4(base on koa 2), but still supports all the usages in egg 1
+
+### Commits
+
+  * [[`8e8869a`](http://github.com/eggjs/egg/commit/8e8869a4d73908503cf1f60de3be49461639ca08)] - refactor: upgrade egg-core@4 (#1631) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2017-11-08, Version 1.11.0, @dead-horse
 
 ### Notable changes
