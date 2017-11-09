@@ -183,3 +183,530 @@ Since we have got the app and the context, you are free to do a lot of tests.
 ## Testing Order
 
 Pay close attention to testing order, and make sure any chunk of code is executed as you expected.
+
+Common Error: 
+
+```js
+// Bad
+const { app } = require('egg-mock/bootstrap');
+
+describe('bad test', () => {
+  doSomethingBefore();
+
+  it('should redirect', () => {
+    return app.httpRequest()
+      .get('/')
+      .expect(302);
+  });
+});
+```
+
+Mocha is going to load all the code in the beginning, which means `doSomethingBefore` would be invoked. It's not expected when especially using 'only' to specify the test.
+
+It's supposed to locate in a `before` in suite of a particular test case.
+
+```js
+// Good
+const { app } = require('egg-mock/bootstrap');
+
+describe('good test', () => {
+  before(() => doSomethingBefore());
+
+  it('should redirect', () => {
+    return app.httpRequest()
+      .get('/')
+      .expect(302);
+  });
+});
+```
+
+Mocha have keywords - before, after, beforeEach and afterEach - to set up antecedent or subsequent tasks. These keywords could be multiple and execute in strict order.
+
+## Asynchronous Test
+
+egg-bin would load co-mocha module automaticlly to support asynchronous test written in various ways, such Promise returned by `app.httpRequest` mentioned above.
+
+```js
+// return Promise
+it('should redirect', () => {
+  return app.httpRequest()
+    .get('/')
+    .expect(302);
+});
+
+// using callback
+it('should redirect', done => {
+  app.httpRequest()
+    .get('/')
+    .expect(302, done);
+});
+
+// return generator
+it('should redirect', function* () {
+  yield app.httpRequest()
+    .get('/')
+    .expect(302);
+});
+```
+
+According to specific situation, you could make different choice of these ways. Multiple asynchronous test cases could be composed to one test, or divided into several independent tests.
+
+## Controller Test
+
+It's the tough part of all application tests, since it's closely related to router configuration. `app.httpRequest()` returns actually an instance of [SuperTest](https://github.com/visionmedia/supertest), which connects Router and Controller, using to load a real request. It could also help us to examine param verification of Router by loading boundary conditions.
+
+Here is a `app/controller/home.js` example.
+
+```js
+// app/router.js
+module.exports = app => {
+  app.get('homepage', '/', 'home.index');
+};
+
+// app/controller/home.js
+exports.index = function* (ctx) {
+  ctx.body = 'hello world';
+};
+```
+
+Then a test.
+
+```js
+// test/controller/home.test.js
+const { app, mock, assert } = require('egg-mock/bootstrap');
+
+describe('test/controller/home.test.js', () => {
+  describe('GET /', () => {
+    it('should status 200 and get the body', () => {
+      // load `GET /` request
+      return app.httpRequest()
+        .get('/')
+        .expect(200) // set expectaion of status to 200
+        .expect('hello world'); // set expectaion of body to 'hello world'
+    });
+
+    it('should send multi requests', function* () {
+      // one test could contains multiple request test cases that were yield
+      yield app.httpRequest()
+        .get('/')
+        .expect(200) v
+        .expect('hello world'); // set expectaion of body to 'hello world'
+
+      // once more
+      const result = yield app.httpRequest()
+        .get('/')
+        .expect(200)
+        .expect('hello world');
+
+      // varify via assert
+      assert(result.status === 200);
+    });
+  });
+});
+```
+
+`app.httpRequest` based on SuperTest can load request with various HTTP methods, and it provides rich interfaces to construct request, such as a JSON POST request.
+
+```js
+// app/controller/home.js
+exports.post = function* (ctx) {
+  ctx.body = ctx.request.body;
+};
+
+// test/controller/home.test.js
+it('should status 200 and get the request body', () => {
+  // mock CSRF token，explain later
+  app.mockCsrf();
+  return app.httpRequest()
+    .post('/post')
+    .type('form')
+    .send({
+      foo: 'bar',
+    })
+    .expect(200)
+    .expect({
+      foo: 'bar',
+    });
+});
+```
+
+See details at [SuperTest Document](https://github.com/visionmedia/supertest#getting-started)。
+
+### mock CSRF
+
+The security plugin of framework would enable [CSRF prevention](./security.md#csrf-prevention) as default. Typically, tests have to precede with a request of page in order to parse CSRF token from the response, and then use the token in later POST requests. But egg-mock provide the `app.mockCsrf()` function to skip the verifiation of CSRF token of requests sent by SuperTest.
+
+```js
+app.mockCsrf();
+return app.httpRequest()
+  .post('/post')
+  .type('form')
+  .send({
+    foo: 'bar',
+  })
+  .expect(200)
+  .expect({
+    foo: 'bar',
+  });
+```
+
+## Service Test
+
+Service is easier to test than Controller. Creating a ctx, and the get the instance of Service via `ctx.service.${serviceName}`, and then use the instance to test.
+
+For example, `app/service/user.js`:
+
+```js
+module.exports = app => {
+  return class User extends app.Service {
+    * get(name) {
+      return yield userDatabase.get(name);
+    }
+  };
+};
+```
+
+And a test: 
+
+```js
+describe('get()', () => {
+  // using generator function because of asynchronous invoking
+  it('should get exists user', function* () {
+    // create ctx
+    const ctx = app.mockContext();
+    // get service.user via ctx
+    const user = yield ctx.service.user.get('fengmk2');
+    assert(user);
+    assert(user.name === 'fengmk2');
+  });
+
+  it('should get null when user not exists', function* () {
+    const ctx = app.mockContext();
+    const user = yield ctx.service.user.get('fengmk1');
+    assert(!user);
+  });
+});
+```
+
+Of cause it's just a sample, practice would probably be more complicated.
+
+## Extend Test
+
+It's extendable of Application, Request, Response and Context as well as Helper, and we are able to write specific test cases aimed at extended functions or properties.
+
+### Application
+
+When app is created by egg-mock, the extended functions and properties are already available on instance of app and can be tested directly.
+
+For example, we extend application in `app/extend/application` to support cache based on [ylru](https://github.com/node-modules/ylru).
+
+```js
+const LRU = Symbol('Application#lru');
+const LRUCache = require('ylru');
+module.exports = {
+  get lru() {
+    if (!this[LRU]) {
+      this[LRU] = new LRUCache(1000);
+    }
+    return this[LRU];
+  },
+};
+```
+
+The corresponding test: 
+
+```js
+describe('get lru', () => {
+  it('should get a lru and it work', () => {
+    // set cache
+    app.lru.set('foo', 'bar');
+    // get cache
+    assert(app.lru.get('foo') === 'bar');
+  });
+});
+```
+
+As you can see, it's easy.
+
+### Context
+
+Compared to Application, you need one more step for Context test, which is to create Context instance via `app.mockContext`.
+
+Such as adding a property named `isXHR` to `app/extend/context.js` to present whether or not the request was submitted via [XMLHttpRequest](https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest/setRequestHeader).
+
+```js
+module.exports = {
+  get isXHR() {
+    return this.get('X-Requested-With') === 'XMLHttpRequest';
+  },
+};
+```
+
+The corresponding test: 
+
+```js
+describe('isXHR()', () => {
+  it('should true', () => {
+    const ctx = app.mockContext({
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    });
+    assert(ctx.isXHR === true);
+  });
+
+  it('should false', () => {
+    const ctx = app.mockContext({
+      headers: {
+        'X-Requested-With': 'SuperAgent',
+      },
+    });
+    assert(ctx.isXHR === false);
+  });
+});
+```
+
+### Request
+
+Extended properties and function are available on `ctx.request`, so they can be tested directly.
+
+For example, provide a `isChrome` property to `app/extend/request.js` to varify whether it's from Chrome or not.
+
+```js
+const IS_CHROME = Symbol('Request#isChrome');
+module.exports = {
+  get isChrome() {
+    if (!this[IS_CHROME]) {
+      const ua = this.get('User-Agent').toLowerCase();
+      this[IS_CHROME] = ua.includes('chrome/');
+    }
+    return this[IS_CHROME];
+  },
+};
+```
+
+The corresponding test: 
+
+```js
+describe('isChrome()', () => {
+  it('should true', () => {
+    const ctx = app.mockContext({
+      headers: {
+        'User-Agent': 'Chrome/56.0.2924.51',
+      },
+    });
+    assert(ctx.request.isChrome === true);
+  });
+
+  it('should false', () => {
+    const ctx = app.mockContext({
+      headers: {
+        'User-Agent': 'FireFox/1',
+      },
+    });
+    assert(ctx.request.isChrome === false);
+  });
+});
+```
+
+### Response
+
+Identical with Request, Response test could be based on `ctx.reponse` directly, accessing all the extended functions and properties.
+
+For example, provide an `isSuccess` property to indicate current status code equal to 200 or not.
+
+```js
+module.exports = {
+  get isSuccess() {
+    return this.status === 200;
+  },
+};
+```
+
+The corresponding test: 
+
+```js
+describe('isSuccess()', () => {
+  it('should true', () => {
+    const ctx = app.mockContext();
+    ctx.status = 200;
+    assert(ctx.response.isSuccess === true);
+  });
+
+  it('should false', () => {
+    const ctx = app.mockContext();
+    ctx.status = 404;
+    assert(ctx.response.isSuccess === false);
+  });
+});
+```
+
+### Helper
+
+Similiar to Service, Helper is avaliable on ctx.
+
+Such as `app/helper/format.js`:
+
+```js
+module.exports = {
+  money(val) {
+    const lang = this.ctx.get('Accept-Language');
+    if (lang.includes('zh-CN')) {
+      return `￥ ${val}`;
+    }
+    return `$ ${val}`;
+  },
+};
+```
+
+And a corresponding test: 
+
+```js
+describe('money()', () => {
+  it('should RMB', () => {
+    const ctx = app.mockContext({
+      // 模拟 ctx 的 headers
+      headers: {
+        'Accept-Language': 'zh-CN,zh;q=0.5',
+      },
+    });
+    assert(ctx.helper.money(100) === '￥ 100');
+  });
+
+  it('should US Dolar', () => {
+    const ctx = app.mockContext();
+    assert(ctx.helper.money(100) === '$ 100');
+  });
+});
+```l
+
+## Mock 方法 
+
+Except functions mentioned above, like `app.mockContext()` and `app.mockCsrf()`, egg-mock provides [quite a few mocking functions](https://github.com/eggjs/egg-mock#api) to make writing tests easier.
+
+- To prevent console logs through `mock.consoleLevel('NONE')`
+- To mock session data through `app.mockSession(data)`
+
+```js
+describe('GET /session', () => {
+  it('should mock session work', () => {
+    app.mockSession({
+      foo: 'bar',
+      uid: 123,
+    });
+    return app.httpRequest()
+      .get('/session')
+      .expect(200)
+      .expect({
+        session: {
+          foo: 'bar',
+          uid: 123,
+        },
+      });
+  });
+});
+```
+
+Remember to restore mocked data in an `afterEach` hook, otherwise it would take effect with all the tests supposed to be independent to each other.
+
+**When you required `egg-mock/bootstrap`, it would do the resetting work automaticly in an `afterEach` hook. Do not write these code any more.**
+
+### Mock Properties And Functions
+
+Egg-mock extended from mm moudle contains full features of it, so we can directly mock any objects' properties and functions.
+
+#### Mock Properties
+
+Set the expectation for the mock(`app.config.baseDir`) to return a given value(`/tmp/mockapp`).
+
+```js
+mock(app.config, 'baseDir', '/tmp/mockapp');
+assert(app.config.baseDir === '/tmp/mockapp');
+```
+
+#### Mock Functions
+
+Set the expectation for the mock(`fs.readFileSync`) to return a given function.
+
+```js
+mock(fs, 'readFileSync', filename => {
+  return 'hello world';
+});
+assert(fs.readFileSync('foo.txt') === 'hello world');
+```
+
+See more detail in [mm API](https://github.com/node-modules/mm#api), include advanced usages like `mock.data()`，`mock.error()` and so on.
+
+### Mock Service
+
+Service, a standard framework built-in member, is offered a specialized function to conveniently mock its result, which is `app.mockService(service, methodName, fn)`.
+
+For example, mock the method `get(name)` in `app/service/user` to return a nonexistent user.
+
+```js
+it('should mock fengmk1 exists', () => {
+  app.mockService('user', 'get', function* () {
+    return {
+      name: 'fengmk1',
+    };
+  });
+
+  return app.httpRequest()
+    .get('/user?name=fengmk1')
+    .expect(200)
+    // return an originally nonexistent user
+    .expect({
+      name: 'fengmk1',
+    });
+});
+```
+
+Using `app.mockServiceError(service, methodName, error)` to mock exception.
+
+For example, mock the method `get(name)` in `app/service/user` to throw an exception.
+
+```js
+it('should mock service error', () => {
+  app.mockServiceError('user', 'get', 'mock user service error');
+  return app.httpRequest()
+    .get('/user?name=fengmk2')
+    // service 异常，触发 500 响应
+    .expect(500)
+    .expect(/mock user service error/);
+});
+```
+
+### Mock HttpClient
+
+External HTTP requests should be performed though [HttpClient](./httpclient.md),a built-in member of Egg, then `app.mockHttpclient(url, method, data)` is able to simulate various network exceptions of requests performed by `app.curl` and `ctx.curl`.
+
+For example, we submit a request in `app/controller/home.js`.
+
+```js
+exports.httpclient = function* (ctx) {
+  const res = ctx.curl('https://eggjs.org');
+  ctx.body = res.data.toString();
+};
+```
+
+Then mocking its response.
+
+```js
+describe('GET /httpclient', () => {
+  it('should mock httpclient response', () => {
+    app.mockHttpclient('https://eggjs.org', {
+      // parameter allowed to be a buffer / string / json,
+      // will be finally converted to buffer
+      // according to options.dataType
+      data: 'mock eggjs.org response',
+    });
+    return app.httpRequest()
+      .get('/httpclient')
+      .expect('mock eggjs.org response');
+  });
+});
+```
+
+## Sample Code
+
+All sample code can be found in [eggjs/exmaples/unittest](https://github.com/eggjs/examples/blob/master/unittest)
