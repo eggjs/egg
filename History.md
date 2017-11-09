@@ -1,6 +1,6 @@
 # History
 
-## 2017-11-09, Version 2.0.0, @dead-horse
+## 2017-11-09, Version 2.0.0-beta.1, @dead-horse
 
 ### Notable changes
 
