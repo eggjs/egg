@@ -61,7 +61,7 @@ module.exports = {
 ### 任务
 
 - `task` 或 `subscribe` 同时支持 `generator function` 和 `async function`。
-- 入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
+- `task` 的入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
 
 ### 定时方式
 
