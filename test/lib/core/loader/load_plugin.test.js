@@ -218,6 +218,9 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     });
     appLoader.loadConfig();
     console.log(appLoader);
+    for (const name in appLoader.allPlugins) {
+      console.log(name);
+    }
     assert.deepEqual(appLoader.orderPlugins.map(plugin => {
       return plugin.name;
     }), [
