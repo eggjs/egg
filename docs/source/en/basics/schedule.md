@@ -9,9 +9,9 @@ Although the HTTP Server we developed using the framework is a request-response 
 
 The framework provides a mechanism to make the development and maintenance of scheduled tasks more elegant.
 
-## Develope Scheduled Tasks
+## Develop Scheduled Tasks
 
-All scheduled tasks are stored in directory `app/schedule`. Each file is an independent scheduled task that could configure the properties and the detail methods to be executed.
+All scheduled tasks should be placed in directory `app/schedule`. Each file is an independent scheduled task that could configure the properties and the detail methods to be executed.
 
 A simple example, to define a scheduled task to update the remote data to the memory cache, we can create a `update_cache.js` file in the directory 'app/schedule`
 
@@ -56,7 +56,7 @@ module.exports = {
 };
 ```
 
-Finished writing this file means that the definition of a scheduled task is complete. This scheduled task will be executed every 1 minute on every worker process, the requested remote data will be mounted back to `app.cache`.
+This scheduled task will be executed every 1 minute on every worker process, the requested remote data will be mounted back to `app.cache`.
 
 ### Task
 
@@ -72,7 +72,7 @@ Schedule tasks can specify `interval` or `cron` two different schedule mode.
 Configure the scheduled tasks by `schedule.interval`, scheduled tasks will be executed every specified time interval. `interval` can be configured as
 
 - Integer type, the unit is milliseconds, e.g `5000`.
-- String type, will be translated to milliseconds by [ms](https://github.com/zeit/ms), e.g `5s`.
+- String type, will be transformed to milliseconds by [ms](https://github.com/zeit/ms), e.g `5s`.
 
 ```js
 module.exports = {
@@ -87,7 +87,7 @@ module.exports = {
 
 Configure the scheduled tasks by `schedule.interval`, scheduled tasks will be executed at cron expressions specified timing. cron expressions are parsed by [cron-parser](https://github.com/harrisiirak/cron-parser).
 
-**Warning: cron-parser support second (linux crontab nonsupport).**
+**Note: cron-parser support second (which don't support by linux crontab).**
 
 ```bash
 *    *    *    *    *    *
