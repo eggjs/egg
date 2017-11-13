@@ -116,7 +116,7 @@ async function getUser() {
 
 ## 和 generator function 的细微差别
 
-尽管两者的编程模型基本一模一样，但是 [co] 做了一些特殊处理，例如支持 yield 一个数组（对象），这些在 async function 中都无法原生做到，但是基于一些 Prmoise 提供的方法以及工具库，也可以轻松的实现这些功能。
+尽管两者的编程模型基本一模一样，但是 [co] 做了一些特殊处理，例如支持 yield 一个数组（对象），这些在 async function 中都无法原生做到，但是基于一些 Promise 提供的方法以及工具库，也可以轻松的实现这些功能。
 
 - generator function
 
