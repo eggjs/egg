@@ -217,7 +217,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
-    console.log(require('../../../../config/plugin'));
+    console.log(appLoader);
     assert.deepEqual(appLoader.orderPlugins.map(plugin => {
       return plugin.name;
     }), [
