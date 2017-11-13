@@ -58,8 +58,8 @@ exports.buy = function* (ctx) {
 | HTML & TEXT | local & unittest | - | onerror 自带的错误页面，展示详细的错误信息 |
 | HTML & TEXT | 其他 | 是 | 重定向到 errorPageUrl |
 | HTML & TEXT | 其他 | 否 | onerror 自带的没有错误信息的简单错误页（不推荐） |
-| JSON | local & unittest | - | JSON 对象，带详细的错误信息 |
-| JSON | 其他 | - | json 对象，不带详细的错误信息 |
+| JSON & JSONP | local & unittest | - | JSON 对象或对应的 JSONP 格式响应，带详细的错误信息 |
+| JSON & JSONP | 其他 | - | JSON 对象或对应的 JSONP 格式响应，不带详细的错误信息 |
 
 ### errorPageUrl
 
@@ -79,38 +79,31 @@ module.exports = {
 
 ## 自定义统一异常处理
 
-尽管框架提供了默认的统一异常处理机制，但是应用开发中经常需要对异常时的响应做自定义，特别是在做一些接口开发的时候。这时我们可以通过自定义[中间件](../basics/middleware.md)的方式来自行定义统一的异常处理函数。
-
-例如我们可以在 `app/middleware` 中新增一个 `error_handler.js` 的文件
+尽管框架提供了默认的统一异常处理机制，但是应用开发中经常需要对异常时的响应做自定义，特别是在做一些接口开发的时候。框架自带的 onerror 插件支持自定义配置错误处理方法，可以覆盖默认的错误处理方法。
 
 ```js
-// app/middleware/error_handler.js
-module.exports = () => {
-  return function* errorHandler(next) {
-    try {
-      yield next;
-    } catch (err) {
-      // 注意：自定义的错误统一处理函数捕捉到错误后也要 `app.emit('error', err, this)`
-      // 框架会统一监听，并打印对应的错误日志
-      this.app.emit('error', err, this);
-      // 自定义错误时异常返回的格式
-      this.body = {
-        success: false,
-        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
-      };
-    }
-  };
-};
-```
-
-然后在 `config/config.default.js` 中引入这个中间件
-
-```js
+// config/config.default.js
 module.exports = {
-  middleware: [ 'errorHandler' ],
-  errorHandler: {
-    // 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理
-    match: '/api',
+  onerror: {
+    all(err, ctx) {
+      // 在此处定义针对所有响应类型的错误处理方法
+      // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
+      this.body = 'error';
+      this.status = 500;
+    },
+    html(err, ctx) {
+      // html hander
+      this.body = '<h3>error</h3>';
+      this.status = 500;
+    },
+    json(err, ctx) {
+      // json hander
+      this.body = { message: 'error' };
+      this.status = 500;
+    },
+    jsonp(err, ctx) {
+      // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
+    },
   },
 };
 ```
