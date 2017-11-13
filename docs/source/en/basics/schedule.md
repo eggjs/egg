@@ -28,8 +28,8 @@ class UpdateCache extends Subscription {
   }
 
   // `subscribe` is the function to be executed when the scheduled task is triggered
-  * subscribe() {
-    const res = yield this.ctx.curl('http://www.api.com/cache', {
+  async subscribe() {
+    const res = await this.ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     this.ctx.app.cache = res.data;
@@ -47,8 +47,8 @@ module.exports = {
     interval: '1m', // 1 minute interval
     type: 'all', // specify all `workers` need to execute
   },
-  * task(ctx) {
-    const res = yield ctx.curl('http://www.api.com/cache', {
+  async task(ctx) {
+    const res = await ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     ctx.app.cache = res.data;
@@ -137,8 +137,8 @@ module.exports = app => {
       type: 'all',
       disable: app.config.env === 'local', // not execute when local dev
     },
-    * task(ctx) {
-      const res = yield ctx.curl('http://www.api.com/cache', {
+    async task(ctx) {
+      const res = await ctx.curl('http://www.api.com/cache', {
         contentType: 'json',
       });
       ctx.app.cache = res.data;
@@ -159,10 +159,10 @@ There are some scenarios we may need to manually execute scheduled tasks, for ex
 const mm = require('egg-mock');
 const assert = require('assert');
 
-it('should schedule work fine', function*() {
+it('should schedule work fine', async () => {
   const app = mm.app();
-  yield app.ready();
-  yield app.runSchedule('update_cache');
+  await app.ready();
+  await app.runSchedule('update_cache');
   assert(app.cache);
 });
 ```
@@ -171,10 +171,10 @@ When the application starts up, manually perform the scheduled tasks for system 
 
 ```js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // ensure the data is ready before the application start listening port
     // follow-up data updates automatically by the scheduled task
-    yield app.runSchedule('update_cache');
+    await app.runSchedule('update_cache');
   });
 };
 ```
