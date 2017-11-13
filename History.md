@@ -1,5 +1,26 @@
 # History
 
+## 2017-11-13, Version 2.0.0-beta.2, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * upgrade built-in plugins to adapt egg@2
+
+* **document**
+  * translate basics/schedule.md, thanks @Azard
+  * change quickstart examples to async function
+  * add document for how to customize error handler
+  * fix typo in async function
+
+### Commits
+
+  * [[`ac55d5e`](http://github.com/eggjs/egg/commit/ac55d5eb0b90e2333e3d92523075615e80835647)] - docs: fix typo in async function (#1657) (BccSafe <<bccsafe5988@gmail.com>>)
+  * [[`9f362d8`](http://github.com/eggjs/egg/commit/9f362d878b61e1144ceab851215dbafb974fb85f)] - docs(basics/schedule.md): translate (#1648) (Weilun Xiong <<azardf4yy@gmail.com>>)
+  * [[`448d094`](http://github.com/eggjs/egg/commit/448d0945c0030d2f2bdf8e0f85ccfcbde4ba2b25)] - deps: upgrade all plugins to adapt egg@2 (#1653) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`4993ee8`](http://github.com/eggjs/egg/commit/4993ee8fae81bf14f92c86ac1d4d952d62e1d165)] - docs(quickstart): generator -> async (#1650) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8c6f16d`](http://github.com/eggjs/egg/commit/8c6f16d64834d46b0689ce079cc5d71155848ac8)] - docs: how to customize error handler (#1651) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2017-11-09, Version 2.0.0-beta.1, @dead-horse
 
 ### Notable changes
