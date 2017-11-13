@@ -28,8 +28,8 @@ class UpdateCache extends Subscription {
   }
 
   // subscribe 是真正定时任务执行时被运行的函数
-  * subscribe() {
-    const res = yield this.ctx.curl('http://www.api.com/cache', {
+  async subscribe() {
+    const res = await this.ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     this.ctx.app.cache = res.data;
@@ -47,8 +47,8 @@ module.exports = {
     interval: '1m', // 1 分钟间隔
     type: 'all', // 指定所有的 worker 都需要执行
   },
-  * task(ctx) {
-    const res = yield ctx.curl('http://www.api.com/cache', {
+  async task(ctx) {
+    const res = await ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     ctx.app.cache = res.data;
@@ -137,8 +137,8 @@ module.exports = app => {
       type: 'all',
       disable: app.config.env === 'local', // 本地开发环境不执行
     },
-    * task(ctx) {
-      const res = yield ctx.curl('http://www.api.com/cache', {
+    async task(ctx) {
+      const res = await ctx.curl('http://www.api.com/cache', {
         contentType: 'json',
       });
       ctx.app.cache = res.data;
@@ -159,10 +159,10 @@ module.exports = app => {
 const mm = require('egg-mock');
 const assert = require('assert');
 
-it('should schedule work fine', function*() {
+it('should schedule work fine', async () => {
   const app = mm.app();
-  yield app.ready();
-  yield app.runSchedule('update_cache');
+  await app.ready();
+  await app.runSchedule('update_cache');
   assert(app.cache);
 });
 ```
@@ -171,10 +171,10 @@ it('should schedule work fine', function*() {
 
 ```js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 保证应用启动监听端口前数据已经准备好了
     // 后续数据的更新由定时任务自动触发
-    yield app.runSchedule('update_cache');
+    await app.runSchedule('update_cache');
   });
 };
 ```
