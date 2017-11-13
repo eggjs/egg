@@ -27,7 +27,7 @@ class UpdateCache extends Subscription {
     };
   }
 
-  // subscribe 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
+  // subscribe 是真正定时任务执行时被运行的函数
   * subscribe() {
     const res = yield this.ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
@@ -56,12 +56,12 @@ module.exports = {
 };
 ```
 
-编写完这个文件就意味着一个定时任务定义完成了。这个定时任务会在每一个 Worker 进程上每 1 分钟执行一次，将远程数据请求回来挂载到 `app.cache` 上。
+这个定时任务会在每一个 Worker 进程上每 1 分钟执行一次，将远程数据请求回来挂载到 `app.cache` 上。
 
 ### 任务
 
-- `task` 或 `subscribe` 支持 `generator function / async function`。
-- 入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
+- `task` 或 `subscribe` 同时支持 `generator function` 和 `async function`。
+- `task` 的入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
 
 ### 定时方式
 
