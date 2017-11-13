@@ -67,8 +67,8 @@ ctx.cookies.set(key, value, {
 
 ```js
 ctx.cookies.set(key, value, {
-  httpOnly: true, // 默认就是 true
-  encrypt: true, // 加密传输
+  httpOnly: true, // by default it's true
+  encrypt: true, // cookies are encrypted during network transmission
 });
 ```
 
@@ -142,9 +142,9 @@ exports.deleteSession = function* (ctx) {
 
 Session is built on top of Cookie.
 By default, the content of Session is stored in a Cookie field as encrypted string.
-Every time client sends requests to server, is cookie is attached.
-Server auto decrypts it.
-Default config of Session is:
+Every time a client sends requests to server, the cookie is attached in requests.
+Egg.js passes decrypted cookie to server code.
+The default configuration of Session is:
 
 ```js
 exports.session = {
