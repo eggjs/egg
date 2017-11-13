@@ -1,4 +1,12 @@
 'use strict';
+require('egg-core/lib/utils/sequencify');
+const m = require.cache[require.resolve('egg-core/lib/utils/sequencify')];
+const seq = m.exports;
+m.exports = function(...args) {
+  const r = seq(...args);
+  console.log(args, r);
+  return r;
+};
 
 const fs = require('fs');
 const path = require('path');
