@@ -208,7 +208,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     }, /notexist-app not exists/);
   });
 
-  it('should keep plugin list sorted', () => {
+  it.only('should keep plugin list sorted', () => {
     mm(process.env, 'NODE_ENV', 'development');
     const baseDir = utils.getFilepath('apps/loader-plugin-dep');
     const appLoader = new AppWorkerLoader({
@@ -217,6 +217,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
       logger,
     });
     appLoader.loadConfig();
+    console.log(require('../../../../config/plugin'));
     assert.deepEqual(appLoader.orderPlugins.map(plugin => {
       return plugin.name;
     }), [
