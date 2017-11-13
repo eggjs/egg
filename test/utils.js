@@ -4,7 +4,7 @@ const m = require.cache[require.resolve('egg-core/lib/utils/sequencify')];
 const seq = m.exports;
 m.exports = function(...args) {
   const r = seq(...args);
-  console.log(args, r);
+  console.log(JSON.stringify(args[0], null, 2), r);
   return r;
 };
 
