@@ -384,7 +384,7 @@ exports.robot = {
 // app/service/some.js
 const Service = require('egg').Service;
 
-class SomeService extends app.Service {
+class SomeService extends Service {
   async list() {
     const rule = this.config.robot.ua;
   }
