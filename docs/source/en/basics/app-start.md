@@ -9,9 +9,9 @@ For example, we need to load a list of national cities from the remote server du
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // The lifecycle method runs before the application bootstraps
-    app.cities = yield app.curl('http://example.com/city.json', {
+    app.cities = await app.curl('http://example.com/city.json', {
       method: 'GET',
       dataType: 'json',
     });
@@ -22,9 +22,11 @@ module.exports = app => {
 `cities` attribute has attached on the global `app`. It can be accessed in the controller,
 
 ```js
-// app/controller/city.js
-module.exports = function* (ctx) {
-    // ctx.app.cities // access `cities` property on the global `ctx.app`
+// app/controller/home.js
+class HomeController extends Controller {
+  async index() {
+    // now you can use `ctx.app.cities`
+  }
 }
 ```
 
