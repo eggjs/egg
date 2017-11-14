@@ -13,6 +13,7 @@ describe('test/index.test.js', () => {
       'BaseContextClass',
       'Controller',
       'Service',
+      'Subscription',
       'startCluster',
     ]);
   });

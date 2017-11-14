@@ -59,8 +59,8 @@ For convenience of locating problems, exceptions must be guaranteed to be Error 
 | HTML & TEXT | local & unittest | - | onerror built-in error page |
 | HTML & TEXT | others | YES | redirect to errorPageUrl |
 | HTML & TEXT | others | NO | onerror built-in error page(simple, not recommended) |
-| JSON | local & unittest | - | JSON Object with details |
-| JSON | others | - | JSON object without details |
+| JSON & JSONP | local & unittest | - | JSON Object or JSONP response body with details |
+| JSON & JSONP| others | - | JSON object  or JSONP response body without details |
 
 ### errorPageUrl
 
@@ -78,38 +78,31 @@ module.exports = {
 
 ## Create your universal exception handler
 
-Once the default handler no longer meet your needs, you still can leverage Middleware to create a new handler.
-
-As following implementation, you can create a new file in `app/middleware`, for example `error_handler.js`:
+Once the default handler no longer meet your needs, you still can customize your owner error handler by onerror's configurations.
 
 ```js
-// app/middleware/error_handler.js
-module.exports = () => {
-  return function* errorHandler(next) {
-    try {
-      yield next;
-    } catch (err) {
-      // `app.emit('error', err, this)` should be invoked after exceptions are caught
-      // Exceptions will be caught and printed out.
-      this.app.emit('error', err, this);
-      // Composing the object in handler when exceptions are thrown
-      this.body = {
-        success: false,
-        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
-      };
-    }
-  };
-};
-```
-
-Adding your customized `error_handler` in `config/config.default.js`:
-
-```js
+// config/config.default.js
 module.exports = {
-  middleware: [ 'errorHandler' ],
-  errorHandler: {
-    // errorHandler only handle exceptions from requests under /api/, and onerror will do the same things for the rest.
-    match: '/api',
+  onerror: {
+    all(err, ctx) {
+      // Define an error handler for all type of Response.
+      // Once config.all present, other type of error handers will be ignored.
+      this.body = 'error';
+      this.status = 500;
+    },
+    html(err, ctx) {
+      // html hander
+      this.body = '<h3>error</h3>';
+      this.status = 500;
+    },
+    json(err, ctx) {
+      // json hander
+      this.body = { message: 'error' };
+      this.status = 500;
+    },
+    jsonp(err, ctx) {
+      // Generally, we don't need to customize jsonp error handler.
+      // It will call json error handler and wrap to jsonp type response.
   },
 };
 ```

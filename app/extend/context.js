@@ -1,7 +1,6 @@
 'use strict';
 
 const delegate = require('delegates');
-const co = require('co');
 const { assign } = require('utility');
 
 const HELPER = Symbol('Context#helper');
@@ -197,13 +196,15 @@ const proto = module.exports = {
     const start = Date.now();
     /* istanbul ignore next */
     const taskName = scope.name || '-';
-    co(function* () {
-      yield scope(ctx);
-      ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
-    }).catch(err => {
-      ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
-      ctx.coreLogger.error(err);
-    });
+    // use app.toAsyncFunction to support both generator function and async function
+    ctx.app.toAsyncFunction(scope)(ctx)
+      .then(() => {
+        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
+      })
+      .catch(err => {
+        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
+        ctx.coreLogger.error(err);
+      });
   },
 };
 
