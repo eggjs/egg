@@ -585,7 +585,7 @@ describe('money()', () => {
 });
 ```
 
-## Mock 方法 
+## Mock Function 
 
 Except functions mentioned above, like `app.mockContext()` and `app.mockCsrf()`, egg-mock provides [quite a few mocking functions](https://github.com/eggjs/egg-mock#api) to make writing tests easier.
 
