@@ -8,9 +8,9 @@ title: 启动自定义
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 应用会等待这个函数执行完成才启动
-    app.cities = yield app.curl('http://example.com/city.json', {
+    app.cities = await app.curl('http://example.com/city.json', {
       method: 'GET',
       dataType: 'json',
     });
@@ -21,9 +21,11 @@ module.exports = app => {
 在 Controller 中就可以使用了：
 
 ```js
-// app/controller/city.js
-module.exports = function* (ctx) {
-  // ctx.app.cities 在上面启动期间已经加载，可以直接使用
+// app/controller/home.js
+class HomeController extends Controller {
+  async index() {
+    // ctx.app.cities 在上面启动期间已经加载，可以直接使用
+  }
 }
 ```
 
