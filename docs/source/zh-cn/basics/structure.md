@@ -52,7 +52,7 @@ egg-project
 - `app/public/**` 用于放置静态资源，可选，具体参见内置插件 [egg-static](https://github.com/eggjs/egg-static)。
 - `app/extend/**` 用于框架的扩展，可选，具体参见[框架扩展](./extend.md)。
 - `config/config.{env}.js` 用于编写配置文件，具体参见[配置](./config.md)。
-- `config/plugin.js` 用于配置需要加载的插件，具体参见[插件开发](../advanced/plugin.md)。
+- `config/plugin.js` 用于配置需要加载的插件，具体参见[插件](./plugin.md)。
 - `test/**` 用于单元测试，具体参见[单元测试](../core/unittest.md)。
 - `app.js` 和 `agent.js` 用于自定义启动时的初始化工作，可选，具体参见[启动自定义](./app-start.md)。关于`agent.js`的作用参见[Agent机制](../core/cluster-and-ipc.md#agent-机制)。
 
