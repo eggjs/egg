@@ -71,14 +71,15 @@ is a [controller](../basics/controller.md) and [router](../basics/router.md).
 
 ```js
 // app/controller/home.js
-module.exports = app => {
-  class HomeController extends app.Controller {
-    * index() {
-      this.ctx.body = 'hi, egg';
-    }
+const Controller = require('egg').Controller;
+
+class HomeController extends Controller {
+  async index() {
+    this.ctx.body = 'Hello world';
   }
-  return HomeController;
-};
+}
+
+module.exports = HomeController;
 ```
 
 Then edit the router file and add a mapping.
@@ -212,20 +213,21 @@ Then add a controller and router.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const dataList = {
-        list: [
-          { id: 1, title: 'this is news 1', url: '/news/1' },
-          { id: 2, title: 'this is news 2', url: '/news/2' }
-        ]
-      };
-      yield this.ctx.render('news/list.tpl', dataList);
-    }
+const Controller = require('egg').Controller;
+
+class NewsController extends Controller {
+  async list() {
+    const dataList = {
+      list: [
+        { id: 1, title: 'this is news 1', url: '/news/1' },
+        { id: 2, title: 'this is news 2', url: '/news/2' }
+      ]
+    };
+    await this.ctx.render('news/list.tpl', dataList);
   }
-  return NewsController;
-};
+}
+
+module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
@@ -251,32 +253,35 @@ Let's create a service to fetch data from the
 
 ```js
 // app/service/news.js
-module.exports = app => {
-  class NewsService extends app.Service {
-    * list(page = 1) {
-      // read config
-      const { serverUrl, pageSize } = this.app.config.news;
+const Service = require('egg').Service;
 
-      // use built-in HttpClient to GET hacker-news api
-      const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
-        data: {
-          orderBy: '"$key"',
-          startAt: `"${pageSize * (page - 1)}"`,
-          endAt: `"${pageSize * page - 1}"`,
-        },
-        dataType: 'json',
-      });
+class NewsService extends app.Service {
+  async list(page = 1) {
+    // read config
+    const { serverUrl, pageSize } = this.config.news;
 
-      // parallel GET detail , see `yield {}` from co
-      const newsList = yield Object.keys(idList).map(key => {
+    // use build-in http client to GET hacker-news api
+    const { data: idList } = await this.ctx.curl(`${serverUrl}/topstories.json`, {
+      data: {
+        orderBy: '"$key"',
+        startAt: `"${pageSize * (page - 1)}"`,
+        endAt: `"${pageSize * page - 1}"`,
+      },
+      dataType: 'json',
+    });
+
+    // parallel GET detail
+    const newsList = await Promise.all(
+      Object.keys(idList).map(key => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
         return this.ctx.curl(url, { dataType: 'json' });
-      });
-      return newsList.map(res => res.data);
-    }
+      })
+    );
+    return newsList.map(res => res.data);
   }
-  return NewsService;
-};
+}
+
+module.exports = NewsService;
 ```
 
 > Egg has [HttpClient](../core/httpclient.md) built in in order to help you make HTTP requests.
@@ -285,17 +290,18 @@ Then slightly modify our previous controller.
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const ctx = this.ctx;
-      const page = ctx.query.page || 1;
-      const newsList = yield ctx.service.news.list(page);
-      yield ctx.render('news/list.tpl', { list: newsList });
-    }
+const Controller = require('egg').Controller;
+
+class NewsController extends app.Controller {
+  async list() {
+    const ctx = this.ctx;
+    const page = ctx.query.page || 1;
+    const newsList = await ctx.service.news.list(page);
+    await ctx.render('news/list.tpl', { list: newsList });
   }
-  return NewsController;
-};
+}
+
+module.exports = NewsController;
 ```
 
 And also add config.
@@ -308,9 +314,6 @@ exports.news = {
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
-
-**Note: `async function` is also built-in supported, see [async-function](../tutorials/async-function.md).**
-
 
 ### Add Extensions
 
@@ -349,14 +352,14 @@ that checks the User-Agent.
 // app/middleware/robot.js
 // options === app.config.robot
 module.exports = (options, app) => {
-  return function* robotMiddleware(next) {
-    const source = this.get('user-agent') || '';
+  return async function robotMiddleware(ctx, next) {
+    const source = ctx.get('user-agent') || '';
     const match = options.ua.some(ua => ua.test(source));
     if (match) {
-      this.status = 403;
-      this.message = 'go away, robot';
+      ctx.status = 403;
+      ctx.message = 'Go away, robot.';
     } else {
-      yield next;
+      await next();
     }
   }
 };
@@ -407,14 +410,15 @@ exports.robot = {
 };
 
 // app/service/some.js
-module.exports = app => {
-  class SomeService extends app.Service {
-    * list() {
-      const rule = this.app.config.robot.ua;
-    }
+const Service = require('egg').Service;
+
+class SomeService extends Service {
+  async list() {
+    const rule = this.config.robot.ua;
   }
-  return SomeService;
-};
+}
+
+module.exports = SomeService;
 ```
 
 ### Add Unit Testing
@@ -476,16 +480,14 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 
 We can only touch the tip of the iceberg of Egg with the above short sections.
 Where to go from here? Browse our documentation to better understand the framework.
-- Egg provides a powerful mechanism for extending features. See [Plug-ins](../advanced/plugin.md).
+- Egg provides a powerful mechanism for extending features. See [Plugin](../basics/plugin.md).
 - Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suited their special needs. See more on [Frameworks].(../advanced/framework.md).
 - Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).
 - Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/test.md).
 
-[nvm]: https://github.com/creationix/nvm
-[nvs]: https://github.com/jasongin/nvs
 [Node.js]: http://nodejs.org
-[npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
+[egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
 [egg-development]: https://github.com/eggjs/egg-development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks

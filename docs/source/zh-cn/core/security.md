@@ -265,21 +265,10 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 
 ##### 同步表单的 CSRF 校验
 
-在同步渲染页面时，所有的表单请求中增加一个 name 为 `_csrf` 的隐藏域，值为 `ctx.csrf`，这样用户在提交这个表单的时候会将 CSRF token 提交上来：
+在同步渲染页面时，在表单请求中增加一个 name 为 `_csrf` 的 url query，值为 `ctx.csrf`，这样用户在提交这个表单的时候会将 CSRF token 提交上来：
 
 ```html
-<form method="POST" action="/upload" enctype="multipart/form-data">
-  title: <input name="title" />
-  file: <input name="file" type="file" />
-  <input type="hidden" name="_csrf" value="{{ ctx.csrf }}">
-  <button type="submit">upload</button>
-</form>
-```
-
-CSRF token 也可以通过 url query 传递：
-
-```html
-<form method="POST" action="/upload?_csrf={{ ctx.csrf }}" enctype="multipart/form-data">
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" />
   file: <input name="file" type="file" />
   <button type="submit">upload</button>

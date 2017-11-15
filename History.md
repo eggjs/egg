@@ -1,5 +1,87 @@
 # History
 
+## 2017-11-13, Version 2.0.0-beta.2, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * upgrade built-in plugins to adapt egg@2
+
+* **document**
+  * translate basics/schedule.md, thanks @Azard
+  * change quickstart examples to async function
+  * add document for how to customize error handler
+  * fix typo in async function
+
+### Commits
+
+  * [[`ac55d5e`](http://github.com/eggjs/egg/commit/ac55d5eb0b90e2333e3d92523075615e80835647)] - docs: fix typo in async function (#1657) (BccSafe <<bccsafe5988@gmail.com>>)
+  * [[`9f362d8`](http://github.com/eggjs/egg/commit/9f362d878b61e1144ceab851215dbafb974fb85f)] - docs(basics/schedule.md): translate (#1648) (Weilun Xiong <<azardf4yy@gmail.com>>)
+  * [[`448d094`](http://github.com/eggjs/egg/commit/448d0945c0030d2f2bdf8e0f85ccfcbde4ba2b25)] - deps: upgrade all plugins to adapt egg@2 (#1653) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`4993ee8`](http://github.com/eggjs/egg/commit/4993ee8fae81bf14f92c86ac1d4d952d62e1d165)] - docs(quickstart): generator -> async (#1650) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8c6f16d`](http://github.com/eggjs/egg/commit/8c6f16d64834d46b0689ce079cc5d71155848ac8)] - docs: how to customize error handler (#1651) (Yiyu He <<dead_horse@qq.com>>)
+
+## 2017-11-09, Version 2.0.0-beta.1, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * [BREAKING CHANGE] drop node <8 support
+  * upgrade to egg-core@4(base on koa 2), but still supports all the usages in egg 1
+
+### Commits
+
+  * [[`8e8869a`](http://github.com/eggjs/egg/commit/8e8869a4d73908503cf1f60de3be49461639ca08)] - refactor: upgrade egg-core@4 (#1631) (Yiyu He <<dead_horse@qq.com>>)
+
+## 2017-11-08, Version 1.11.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * export global namespace at d.ts @atian25
+
+### Commits
+
+  * [[`b131a4c`](http://github.com/eggjs/egg/commit/b131a4cec51cc783dcd4ccb8756439063c5b875c)] - feat: export global namespace at d.ts (#1633) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2017-11-08, Version 1.10.1, @dead-horse
+
+### Notable changes
+
+* **fix**
+  * use `app.options` instead of deprecated `app._options`
+* **document**
+  * translate core/cluster-and-ipc.md, thanks @lslxdx
+
+### Commits
+
+  * [[`9eec677`](http://github.com/eggjs/egg/commit/9eec677757ddbde6f7ddcff2c6a698087e07b70e)] - fix: use `app.options` instead of `app._options` (#1625) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`fd1ff63`](http://github.com/eggjs/egg/commit/fd1ff638920fef4a3258767df982b87e70614215)] - test: fix tsc test case (#1620) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`6804bd3`](http://github.com/eggjs/egg/commit/6804bd36cfc7a9bd54b3be2d9ce828d4e951f8b8)] - test: add node 9 and drop node 7 (#1602) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`3878862`](http://github.com/eggjs/egg/commit/38788621ccf06fd6ac8f4068de3e49c5668e1915)] - docs: translate core/cluster-and-ipc.md (#1594) (lslxdx <<lslxdx@163.com>>)
+
+## 2017-10-24, Version 1.10.0, @popomore
+
+### Notable changes
+
+* **feature**
+  * add Subscription @popomore
+* **document**
+  * multipart example @dead_horse
+  * fix document @atian25 @beilunyang
+  * improve schedule document @atian25
+
+### Commits
+
+  * [[`6dd1594a5`](http://github.com/eggjs/egg/commit/6dd1594a5c300f24e668b3679c7ae8df733b6a39)] - docs: fix egg-scripts (#1552) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`46ed6fac9`](http://github.com/eggjs/egg/commit/46ed6fac9f94d300a23903a71cfafdb5c8b1ba91)] - feat: add Subscription (#1469) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`c508f9fa7`](http://github.com/eggjs/egg/commit/c508f9fa7dedbc8c3c4f6319b7233a034db463b4)] - docs: fix csrf (#1551) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`7fb9bbf71`](http://github.com/eggjs/egg/commit/7fb9bbf71219debf35b4e864a65be22e24a0480a)] - docs: fix typo (#1537) (悖论 <<786220806@qq.com>>)
+  * [[`68c0e1a9c`](http://github.com/eggjs/egg/commit/68c0e1a9c053618133d3484043abfb77e3372a22)] - docs: adjust new schedule (#1477) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`aeae948ec`](http://github.com/eggjs/egg/commit/aeae948ec986f5f7204ad6a0f748403b8e6e6fe1)] - docs: adjust middleware config at framework (#1523) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`7b37d2393`](http://github.com/eggjs/egg/commit/7b37d2393f59f3c5efbc84cf1d5f51e9332b0cd8)] - docs: multipart example use yield parts() (#1518) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`6846badc8`](http://github.com/eggjs/egg/commit/6846badc8da89b00483aa7be5c69b1cd2f06d797)] - docs: add plugin.js description (#1499) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2017-09-25, Version 1.9.0, @gxcsoccer
 
 ### Notable changes
