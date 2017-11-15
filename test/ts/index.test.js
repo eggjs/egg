@@ -6,14 +6,17 @@ const runscript = require('runscript');
 const path = require('path');
 const utils = require('../utils');
 const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
+const fs = require('fs');
+const mkdirp = require('mz-modules/mkdirp');
+const rimraf = require('mz-modules/rimraf');
 
 describe('test/ts/index.test.js', () => {
   before(function* () {
-    if (process.env.CI) {
-      yield runscript('tsc && npmlink ../../../../', { cwd: baseDir });
-    } else {
-      yield runscript('tsc && npm link ../../../../', { cwd: baseDir });
-    }
+    yield runscript('tsc', { cwd: baseDir });
+    const dest = path.join(baseDir, 'node_modules/egg');
+    yield rimraf(dest);
+    yield mkdirp(path.dirname(dest));
+    fs.symlinkSync('../../../../../', dest);
   });
 
   describe('compiler code', () => {
@@ -38,4 +41,3 @@ describe('test/ts/index.test.js', () => {
   });
 
 });
-

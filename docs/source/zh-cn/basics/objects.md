@@ -270,6 +270,24 @@ module.exports = {
 
 我们可以在 Controller 和 Service 实例上通过 `this.logger` 获取到它们，它们本质上就是一个 Context Logger，不过在打印日志的时候还会额外的加上文件路径，方便定位日志的打印位置。
 
+## Subscription
+
+订阅模型是一种比较常见的开发模式，譬如消息中间件的消费者或调度任务。因此我们提供了 Subscription 基类来规范化这个模式。
+
+可以通过以下方式来引用 Subscription 基类：
+
+```js
+const Subscription = require('egg').Subscription;
+
+class Schedule extends Subscription {
+  // 需要实现此方法
+  // subscribe 可以为 generator function 或 async function
+  * subscribe() {}
+}
+```
+
+插件开发者可以根据自己的需求基于它定制订阅规范，如[定时任务](./schedule.md)就是使用这种规范实现的。
+
 [Koa]: http://koajs.com
 [Koa.Application]: http://koajs.com/#application
 [Koa.Context]: http://koajs.com/#context

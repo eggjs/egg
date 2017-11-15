@@ -197,22 +197,10 @@ module.exports = app => {
 
 在这个模型下，Master 进程承担了进程管理的工作（类似 [pm2]），不运行任何业务代码，我们只需要运行起一个 Master 进程它就会帮我们搞定所有的 Worker、Agent 进程的初始化以及重启等工作了。
 
-Master 进程的稳定性是极高的，线上运行时我们只需要在后台运行通过 `egg.startCluster` 启动的 Master 进程就可以了，不再需要使用 [pm2] 等进程守护模块。
-
-```js
-// dispatch.js
-const egg = require('egg');
-
-const workers = Number(process.argv[2] || require('os').cpus().length);
-egg.startCluster({
-  workers,
-  baseDir: __dirname,
-});
-```
+Master 进程的稳定性是极高的，线上运行时我们只需要通过 [egg-scripts] 后台运行通过 `egg.startCluster` 启动的 Master 进程就可以了，不再需要使用 [pm2] 等进程守护模块。
 
 ```bash
-# 后台运行 Master 进程
-$ EGG_SERVER_ENV=prod nohup node dispatch.js&
+$ egg-scripts start --daemon
 ```
 
 #### Agent
@@ -444,4 +432,5 @@ module.exports = agent => {
 
 [pm2]: https://github.com/Unitech/pm2
 [egg-cluster]: https://github.com/eggjs/egg-cluster
+[egg-scripts]: https://github.com/eggjs/egg-scripts
 [graceful]: https://github.com/node-modules/graceful

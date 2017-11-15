@@ -6,7 +6,7 @@ title: 快速入门
 ## 环境准备
 
 - 操作系统：支持 macOS，Linux，Windows
-- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 6.x
+- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 6.x，目前我们推荐 8.x 以上版本。
 
 ## 快速初始化
 
@@ -65,14 +65,15 @@ $ npm i egg-bin --save-dev
 
 ```js
 // app/controller/home.js
-module.exports = app => {
-  class HomeController extends app.Controller {
-    * index() {
-      this.ctx.body = 'Hello world';
-    }
+const Controller = require('egg').Controller;
+
+class HomeController extends Controller {
+  async index() {
+    this.ctx.body = 'Hello world';
   }
-  return HomeController;
-};
+}
+
+module.exports = HomeController;
 ```
 
 配置路由映射：
@@ -198,20 +199,21 @@ exports.view = {
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const dataList = {
-        list: [
-          { id: 1, title: 'this is news 1', url: '/news/1' },
-          { id: 2, title: 'this is news 2', url: '/news/2' }
-        ]
-      };
-      yield this.ctx.render('news/list.tpl', dataList);
-    }
+const Controller = require('egg').Controller;
+
+class NewsController extends Controller {
+  async list() {
+    const dataList = {
+      list: [
+        { id: 1, title: 'this is news 1', url: '/news/1' },
+        { id: 2, title: 'this is news 2', url: '/news/2' }
+      ]
+    };
+    await this.ctx.render('news/list.tpl', dataList);
   }
-  return NewsController;
-};
+}
+
+module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
@@ -232,32 +234,35 @@ module.exports = app => {
 
 ```js
 // app/service/news.js
-module.exports = app => {
-  class NewsService extends app.Service {
-    * list(page = 1) {
-      // read config
-      const { serverUrl, pageSize } = this.app.config.news;
+const Service = require('egg').Service;
 
-      // use build-in http client to GET hacker-news api
-      const { data: idList } = yield this.ctx.curl(`${serverUrl}/topstories.json`, {
-        data: {
-          orderBy: '"$key"',
-          startAt: `"${pageSize * (page - 1)}"`,
-          endAt: `"${pageSize * page - 1}"`,
-        },
-        dataType: 'json',
-      });
+class NewsService extends app.Service {
+  async list(page = 1) {
+    // read config
+    const { serverUrl, pageSize } = this.config.news;
 
-      // parallel GET detail, see `yield {}` from co
-      const newsList = yield Object.keys(idList).map(key => {
+    // use build-in http client to GET hacker-news api
+    const { data: idList } = await this.ctx.curl(`${serverUrl}/topstories.json`, {
+      data: {
+        orderBy: '"$key"',
+        startAt: `"${pageSize * (page - 1)}"`,
+        endAt: `"${pageSize * page - 1}"`,
+      },
+      dataType: 'json',
+    });
+
+    // parallel GET detail
+    const newsList = await Promise.all(
+      Object.keys(idList).map(key => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
         return this.ctx.curl(url, { dataType: 'json' });
-      });
-      return newsList.map(res => res.data);
-    }
+      })
+    );
+    return newsList.map(res => res.data);
   }
-  return NewsService;
-};
+}
+
+module.exports = NewsService;
 ```
 
 > 框架提供了内置的 [HttpClient](../core/httpclient.md) 来方便开发者使用 HTTP 请求。
@@ -266,17 +271,18 @@ module.exports = app => {
 
 ```js
 // app/controller/news.js
-module.exports = app => {
-  class NewsController extends app.Controller {
-    * list() {
-      const ctx = this.ctx;
-      const page = ctx.query.page || 1;
-      const newsList = yield ctx.service.news.list(page);
-      yield ctx.render('news/list.tpl', { list: newsList });
-    }
+const Controller = require('egg').Controller;
+
+class NewsController extends app.Controller {
+  async list() {
+    const ctx = this.ctx;
+    const page = ctx.query.page || 1;
+    const newsList = await ctx.service.news.list(page);
+    await ctx.render('news/list.tpl', { list: newsList });
   }
-  return NewsController;
-};
+}
+
+module.exports = NewsController;
 ```
 
 还需增加 `app/service/news.js` 中读取到的配置：
@@ -289,8 +295,6 @@ exports.news = {
   serverUrl: 'https://hacker-news.firebaseio.com/v0',
 };
 ```
-
-**提示：框架本身也支持 `async function`，具体参见 [使用 async function 开发应用](../tutorials/async-function.md)。**
 
 ### 编写扩展
 
@@ -323,14 +327,14 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 // app/middleware/robot.js
 // options === app.config.robot
 module.exports = (options, app) => {
-  return function* robotMiddleware(next) {
-    const source = this.get('user-agent') || '';
+  return async function robotMiddleware(ctx, next) {
+    const source = ctx.get('user-agent') || '';
     const match = options.ua.some(ua => ua.test(source));
     if (match) {
-      this.status = 403;
-      this.message = 'Go away, robot.';
+      ctx.status = 403;
+      ctx.message = 'Go away, robot.';
     } else {
-      yield next;
+      await next();
     }
   }
 };
@@ -378,14 +382,15 @@ exports.robot = {
 };
 
 // app/service/some.js
-module.exports = app => {
-  class SomeService extends app.Service {
-    * list() {
-      const rule = this.app.config.robot.ua;
-    }
+const Service = require('egg').Service;
+
+class SomeService extends Service {
+  async list() {
+    const rule = this.config.robot.ua;
   }
-  return SomeService;
-};
+}
+
+module.exports = SomeService;
 ```
 
 ### 单元测试
@@ -452,10 +457,7 @@ $ npm test
 - 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读 [渐进式开发](../tutorials/progressive.md)。
 - 写单元测试其实很简单的事，Egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
-[nvm]: https://github.com/creationix/nvm
-[nvs]: https://github.com/jasongin/nvs
 [Node.js]: http://nodejs.org
-[npm]: https://www.npmjs.org
 [egg-init]: https://github.com/eggjs/egg-init
 [egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
