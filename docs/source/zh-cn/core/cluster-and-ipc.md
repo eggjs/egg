@@ -391,7 +391,7 @@ exports.task = function* (ctx) {
 };
 ```
 
-在启动自定义文件中监听 `pullRefresh` 事件，并更新数据，所有的 Worker 进程都能收到这个消息，并触发更新，此时我们的方案二也已经大功告成了。
+在启动自定义文件中监听 `refresh` 事件，并更新数据，所有的 Worker 进程都能收到这个消息，并触发更新，此时我们的方案二也已经大功告成了。
 
 ```js
 // app.js
@@ -401,7 +401,7 @@ module.exports = app => {
     // create an anonymous context to access service
     const ctx = app.createAnonymousContext();
     // a convenient way to execute with generator function
-    // can replaced by `co`
+    // can be replaced by `co`
     ctx.runInBackground(function* () {
       yield ctx.service.source.update();
       app.lastUpdateBy = by;

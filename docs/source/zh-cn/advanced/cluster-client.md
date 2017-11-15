@@ -20,7 +20,7 @@ title: 多进程研发模式增强
 
 另外，通过 messenger 传递数据效率是比较低的，因为它会通过 Master 来做中转；万一 IPC 通道出现问题还可能将 Master 进程搞挂。
 
-那么有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。
+那么有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。通过建立 Agent 和 Worker 的 socket 直连跳过 Master 的中转。Agent 作为对外的门面维持多个 Worker 进程的共享连接。
 
 ## 核心思想
 
@@ -35,7 +35,7 @@ title: 多进程研发模式增强
 - 框架启动的时候 Master 会随机选择一个可用的端口作为 Cluster Client 监听的通讯端口，并将它通过参数传递给 Agent 和 App Worker
 - Leader 和 Follower 之间通过 socket 直连（通过通讯端口），不再需要 Master 中转
 
-新的模式下，客户端的启动流程如下：
+新的模式下，客户端的通信方式如下：
 
 ```js
              +-------+
@@ -46,20 +46,14 @@ title: 多进程研发模式增强
       __| port competition |__
 win /   +------------------+  \ lose
    /                           \
-+--------+     tcp conn     +----------+
-| Leader |<---------------->| Follower |
-+--------+                  +----------+
-    |
-+--------+
-| Client |
-+--------+
-    |  \
-    |    \
-    |      \
-    |        \
-+--------+   +--------+
-| Server |   | Server |   ...
-+--------+   +--------+
++---------------+     tcp conn     +-------------------+
+| Leader(Agent) |<---------------->| Follower(Worker1) |
++---------------+                  +-------------------+
+    |            \ tcp conn
+    |             \
++--------+         +-------------------+
+| Client |         | Follower(Worker2) |
++--------+         +-------------------+
 ```
 
 ## 客户端接口类型抽象
@@ -152,6 +146,9 @@ Leader 和 Follower 通过下面的协议进行数据交换：
       |                          |                        |
       |                                subscribe          |
       + ------------------------------------------------> |
+      |                                 publish           |
+      + ------------------------------------------------> |
+      |                                                   |
       |       subscribe result                            |
       | <------------------------------------------------ +
       |                                                   |
@@ -169,8 +166,7 @@ Leader 和 Follower 通过下面的协议进行数据交换：
 - 第一步，我们的客户端最好是符合上面提到过的接口约定，例如：
 
 ```js
-'use strict';
-
+// registry_client.js
 const URL = require('url');
 const Base = require('sdk-base');
 
@@ -245,11 +241,10 @@ class RegistryClient extends Base {
 module.exports = RegistryClient;
 ```
 
-- 第二步，在 `agent.js` 中使用 `agent.cluster` 接口对 RegistryClient 进行封装
+- 第二步，使用 `agent.cluster` 接口对 RegistryClient 进行封装
 
 ```js
-'use strict';
-
+// agent.js
 const RegistryClient = require('registry_client');
 
 module.exports = agent => {
@@ -265,11 +260,10 @@ module.exports = agent => {
 };
 ```
 
-- 第三步，在 `app.js` 中使用 `app.cluster` 接口对 RegistryClient 进行封装
+- 第三步，使用 `app.cluster` 接口对 RegistryClient 进行封装
 
 ```js
-'use strict';
-
+// app.js
 const RegistryClient = require('registry_client');
 
 module.exports = app => {
@@ -368,7 +362,7 @@ module.exports = app => {
 
 大家可能已经发现，ClusterClient 同时带来了一些约束，如果想在各进程暴露同样的方法，那么 RegistryClient 上只能支持 sub/pub 模式以及异步的 API 调用。因为在多进程模型中所有的交互都必须经过 socket 通信，势必带来了这一约束。
 
-假设我们要实现一个同步的 get 方法，subscribe 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比之更复杂。
+假设我们要实现一个同步的 get 方法，subscribe 过的数据直接放入内存，使用 get 方法时直接返回。要怎么实现呢？而真实情况可能比这更复杂。
 
 在这里，我们引入一个 APIClient 的最佳实践。对于有读取缓存数据等同步 API 需求的模块，在 RegistryClient 基础上再封装一个 APIClient 来实现这些与远程服务端交互无关的 API，暴露给用户使用到的是这个 APIClient 的实例。
 
@@ -377,9 +371,10 @@ module.exports = app => {
 - 异步数据获取，通过调用基于 ClusterClient 的 RegistryClient 的 API 实现。
 - 同步调用等与服务端无关的接口在 APIClient 上实现。由于 ClusterClient 的 API 已经抹平了多进程差异，所以在开发 APIClient 调用到 RegistryClient 时也无需关心多进程模型。
 
-例如增加带缓存的 get 同步方法：
+例如在模块的 APIClient 中增加带缓存的 get 同步方法：
 
 ```js
+// some-client/index.js
 const cluster = require('cluster-client');
 const RegistryClient = require('./registry_client');
 
@@ -419,16 +414,12 @@ class APIClient extends Base {
     return this._cache[key];
   }
 }
-```
 
-最终模块向外暴露的是这个 APIClient：
-
-```js
-// index.js
+// 最终模块向外暴露这个 APIClient
 module.exports = APIClient;
 ```
 
-那么在插件中我们就可以这么使用：
+那么我们就可以这么使用该模块：
 
 ```js
 // app.js || agent.js
