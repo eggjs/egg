@@ -22,7 +22,7 @@ Egg 奉行『**约定优于配置**』，按照[一套统一的约定](../advanc
 ## 特性
 
 - 提供基于 Egg [定制上层框架](../advanced/framework.md)的能力
-- 高度可扩展的[插件机制](../advanced/plugin.md)
+- 高度可扩展的[插件机制](../basics/plugin.md)
 - 内置[多进程管理](../advanced/cluster-client.md)
 - 基于 [Koa] 开发，性能优异
 - 框架稳定，测试覆盖率高

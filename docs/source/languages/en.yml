@@ -33,6 +33,7 @@ guide_toc:
   Router: Router
   Controller: Controller
   Service: Service
+  Plugin: Plugin
   Schedule: Schedule
   Extend: Extend
   Custom init: Custom Init
@@ -52,8 +53,8 @@ guide_toc:
   Tutorials: Tutorials
   Advanced: Advanced
   Cluster Client: Cluster Enhancement
+  Plugin Development: Plugin Development
   Framework: Framework
-  Plugin: Plugin
   Progressive:  Progressive
   # Loader:
   Community: Community

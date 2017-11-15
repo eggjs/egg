@@ -178,7 +178,7 @@ Stand alone module plugin can provide rich features with high maintenancability.
 
 [egg-security](https://github.com/eggjs/egg-security) is a typical example.
 
-More about plugin, please check [plugin](../advanced/plugin.md) section.
+More about plugin, please check [Plugin](../basics/plugin.md) section.
 
 ### Roadmap
 
