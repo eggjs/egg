@@ -1,7 +1,7 @@
 title: Progressive Development
 ---
 
-Egg provides both [Plugin](../advanced/plugin.md) and [Framework](../advanced/framework.md), and the former has two loading modes includes `path` and `package`. Then how should we choose?
+Egg provides both [Plugin](../basics/plugin.md) and [Framework](../advanced/framework.md), and the former has two loading modes includes `path` and `package`. Then how should we choose?
 
 Step-by-step example will be provided to demonstrate how to start coding development progressively.
 
@@ -102,7 +102,7 @@ exports.ua = {
 
 The module's functions become more better after a period of developing so we could extract it out as an independent plugin.
 
-We extract an egg-ua plugin and have a quick review as below. Details refer to [Plugin](../advanced/plugin.md).
+We extract an egg-ua plugin and have a quick review as below. Details refer to [Plugin Development](../advanced/plugin.md).
 
 Directory structure:
 

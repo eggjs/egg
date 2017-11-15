@@ -1,7 +1,7 @@
 title: 渐进式开发
 ---
 
-在 Egg 里面，有[插件](../advanced/plugin.md)，也有[框架](../advanced/framework.md)，前者还包括了 `path` 和 `package` 两种加载模式，那我们应该如何选择呢？
+在 Egg 里面，有[插件](../basics/plugin.md)，也有[框架](../advanced/framework.md)，前者还包括了 `path` 和 `package` 两种加载模式，那我们应该如何选择呢？
 
 本文将以实例的方式，一步步给大家演示下，如何渐进式地进行代码演进。
 

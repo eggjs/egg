@@ -11,6 +11,7 @@ Basics:
   Router: /basics/router.html
   Controller: /basics/controller.html
   Service: /basics/service.html
+  Plugin: /basics/plugin.html
   Schedule: /basics/schedule.html
   Extend: /basics/extend.html
   Custom init: /basics/app-start.html
@@ -34,7 +35,7 @@ Tutorials:
   # Passport: /core/passport.html
 Advanced:
   Loader: /advanced/loader.html
-  Plugin: /advanced/plugin.html
+  Plugin Development: /advanced/plugin.html
   Framework: /advanced/framework.html
   Cluster Client: /advanced/cluster-client.html
   View Plugin: /advanced/view-plugin.html

@@ -178,7 +178,7 @@ exports.handler = function* (ctx) {
 
 [egg-security](https://github.com/eggjs/egg-security) 插件就是一个典型的例子。
 
-更多关于插件的内容，请查看[插件](../advanced/plugin.md)章节。
+更多关于插件的内容，请查看[插件](../basics/plugin.md)章节。
 
 ### 升级计划
 
