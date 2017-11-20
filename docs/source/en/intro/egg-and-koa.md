@@ -8,7 +8,7 @@ Node.js is an asynchronous world, asynchronous programming models in official AP
 - [callback hell](http://callbackhell.com/): Notorious "callback hell"ã€‚
 - [release zalgo](https://oren.github.io/blog/zalgo.html): Asynchronous functions may call callback function response data synchronously which would bring inconsistency.
 
-The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise, and Generator with the ability to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function], the official solution has been published in ECMAScript 2017 and landed in node 8.
+The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise, and Generator with the ability to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function], the official solution has been published in ECMAScript 2017 and landed in Node.js 8.
 
 ### Async function
 
@@ -137,7 +137,7 @@ When Egg 1.x released, the Node.js LTS version does not support async functionï¼
 
 #### Egg 2.x
 
-When node 8 became LTS version, async function can used in node without any performance problem. Egg released 2.x based on Koa 2.x, the framework and built-in plugins are all written by async function, and Egg 2.x still keep compatibility with generator function and all the usages in Egg 1.x, applications base on Egg 1.x can migrate to Egg 2.x only by upgrade to node 8.
+When Node.js 8 became LTS version, async function can used in Node.js without any performance problem. Egg released 2.x based on Koa 2.x, the framework and built-in plugins are all written by async function, and Egg 2.x still keep compatibility with generator function and all the usages in Egg 1.x, applications base on Egg 1.x can migrate to Egg 2.x only by upgrade to Node.js 8.
 
 - The underlying will be based on Koa 2.x, asynchronous solution will be based on async function.
 - Official plugin and core of egge will be written in async function.
