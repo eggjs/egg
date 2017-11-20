@@ -2,6 +2,7 @@
 
 const delegate = require('delegates');
 const { assign } = require('utility');
+const eggUtils = require('egg-core').utils;
 
 const HELPER = Symbol('Context#helper');
 const LOCALS = Symbol('Context#locals');
@@ -9,6 +10,7 @@ const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
 const CONTEXT_LOGGERS = Symbol('Context#logger');
 const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
+
 
 const proto = module.exports = {
   get cookies() {
@@ -195,7 +197,7 @@ const proto = module.exports = {
     const ctx = this;
     const start = Date.now();
     /* istanbul ignore next */
-    const taskName = scope.name || '-';
+    const taskName = scope.name || scope._name || eggUtils.getCalleeFromStack(true);
     // use app.toAsyncFunction to support both generator function and async function
     ctx.app.toAsyncFunction(scope)(ctx)
       .then(() => {
