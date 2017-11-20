@@ -241,8 +241,12 @@ describe('test/app/extend/context.test.js', () => {
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
+      assert(/background run anonymous result file size: \d+/.test(log));
       assert(
         /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+      assert(
+        /\[egg:background] task:.*?app\/controller\/home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
