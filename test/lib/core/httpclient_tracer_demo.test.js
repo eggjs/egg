@@ -11,14 +11,14 @@ describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
     app = utils.app('apps/tracer-demo');
     return app.ready();
   });
-  before(function* () {
-    url = yield utils.startLocalServer();
+  before(async () => {
+    url = await utils.startLocalServer();
   });
 
   after(() => app.close());
 
-  it('should send request with ctx.httpclient', function* () {
-    const r = yield app.curl(url + '/get_headers', {
+  it('should send request with ctx.httpclient', async () => {
+    const r = await app.curl(url + '/get_headers', {
       dataType: 'json',
     });
     assert(r.status === 200);

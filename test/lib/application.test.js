@@ -48,10 +48,10 @@ describe('test/lib/application.test.js', () => {
   });
 
   describe('app.keys', () => {
-    it('should throw when config.keys missing on non-local and non-unittest env', function* () {
+    it('should throw when config.keys missing on non-local and non-unittest env', async () => {
       mm.env('test');
       app = utils.app('apps/keys-missing');
-      yield app.ready();
+      await app.ready();
       mm(app.config, 'keys', null);
 
       try {
@@ -62,13 +62,13 @@ describe('test/lib/application.test.js', () => {
       }
 
       // make sure app close
-      yield app.close();
+      await app.close();
     });
 
-    it('should throw when config.keys missing on unittest env', function* () {
+    it('should throw when config.keys missing on unittest env', async () => {
       mm.env('unittest');
       app = utils.app('apps/keys-missing');
-      yield app.ready();
+      await app.ready();
       mm(app.config, 'keys', null);
 
       try {
@@ -79,13 +79,13 @@ describe('test/lib/application.test.js', () => {
       }
 
       // make sure app close
-      yield app.close();
+      await app.close();
     });
 
-    it('should throw when config.keys missing on local env', function* () {
+    it('should throw when config.keys missing on local env', async () => {
       mm.env('local');
       app = utils.app('apps/keys-missing');
-      yield app.ready();
+      await app.ready();
       mm(app.config, 'keys', null);
 
       try {
@@ -96,19 +96,19 @@ describe('test/lib/application.test.js', () => {
       }
 
       // make sure app close
-      yield app.close();
+      await app.close();
     });
 
-    it('should use exists keys', function* () {
+    it('should use exists keys', async () => {
       mm.env('unittest');
       app = utils.app('apps/keys-exists');
-      yield app.ready();
+      await app.ready();
 
       assert(app.keys);
       assert(app.keys);
       assert(app.config.keys === 'my keys');
 
-      yield app.close();
+      await app.close();
     });
   });
 
@@ -120,13 +120,13 @@ describe('test/lib/application.test.js', () => {
     });
     after(() => app.close());
 
-    it('should handle uncaughtException and log it', function* () {
-      yield app.httpRequest()
+    it('should handle uncaughtException and log it', async () => {
+      await app.httpRequest()
         .get('/throw')
         .expect('foo')
         .expect(200);
 
-      yield sleep(1100);
+      await sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('ReferenceError: a is not defined (uncaughtException throw'));
@@ -134,10 +134,10 @@ describe('test/lib/application.test.js', () => {
   });
 
   describe('warn confused configurations', () => {
-    it('should warn if confused configurations exist', function* () {
+    it('should warn if confused configurations exist', async () => {
       const app = utils.app('apps/confused-configuration');
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
       const logs = fs.readFileSync(utils.getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
       assert(logs.match(/Unexpected config key `bodyparser` exists, Please use `bodyParser` instead\./));
       assert(logs.match(/Unexpected config key `notFound` exists, Please use `notfound` instead\./));
@@ -156,7 +156,7 @@ describe('test/lib/application.test.js', () => {
     after(() => app.close());
 
     describe('application.deprecate', () => {
-      it('should get deprecate with namespace egg', function* () {
+      it('should get deprecate with namespace egg', async () => {
         const deprecate = app.deprecate;
         assert(deprecate._namespace === 'egg');
         assert(deprecate === app.deprecate);
@@ -164,21 +164,21 @@ describe('test/lib/application.test.js', () => {
     });
 
     describe('curl()', () => {
-      it('should curl success', function* () {
-        const localServer = yield utils.startLocalServer();
-        const res = yield app.curl(`${localServer}/foo/app`);
+      it('should curl success', async () => {
+        const localServer = await utils.startLocalServer();
+        const res = await app.curl(`${localServer}/foo/app`);
         assert(res.status === 200);
       });
     });
 
     describe('env', () => {
-      it('should return app.config.env', function* () {
+      it('should return app.config.env', async () => {
         assert(app.env === app.config.env);
       });
     });
 
     describe('proxy', () => {
-      it('should delegate app.config.proxy', function* () {
+      it('should delegate app.config.proxy', async () => {
         assert(app.proxy === app.config.proxy);
       });
     });

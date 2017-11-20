@@ -11,24 +11,23 @@ const mkdirp = require('mz-modules/mkdirp');
 const rimraf = require('mz-modules/rimraf');
 
 describe('test/ts/index.test.js', () => {
-  before(function* () {
-    yield runscript('tsc', { cwd: baseDir });
+  before(async () => {
+    await runscript('tsc', { cwd: baseDir });
     const dest = path.join(baseDir, 'node_modules/egg');
-    yield rimraf(dest);
-    yield mkdirp(path.dirname(dest));
+    await rimraf(dest);
+    await mkdirp(path.dirname(dest));
     fs.symlinkSync('../../../../../', dest);
   });
 
   describe('compiler code', () => {
-
     afterEach(mm.restore);
     let app;
-    before(function* () {
+    before(async () => {
       app = utils.app('apps/app-ts');
-      yield app.ready();
+      await app.ready();
     });
-    after(function* () {
-      yield app.close();
+    after(async () => {
+      await app.close();
     });
 
     it('controller run ok', done => {
@@ -39,5 +38,4 @@ describe('test/ts/index.test.js', () => {
         .end(done);
     });
   });
-
 });
