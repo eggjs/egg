@@ -16,15 +16,14 @@ describe('test/app/extend/agent.test.js', () => {
     });
     after(() => app.close());
 
-    it('should add singleton success', function* () {
-      let config = yield app.agent.dataService.get('second').getConfig();
+    it('should add singleton success', async () => {
+      let config = await app.agent.dataService.get('second').getConfig();
       assert(config.foo === 'bar');
       assert(config.foo2 === 'bar2');
 
       const ds = app.agent.dataService.createInstance({ foo: 'barrr' });
-      config = yield ds.getConfig();
+      config = await ds.getConfig();
       assert(config.foo === 'barrr');
     });
   });
-
 });

@@ -58,11 +58,11 @@ describe('test/lib/core/messenger.test.js', () => {
     after(() => app.close());
 
     // use it to record create coverage codes time
-    it('before: should start cluster app', function* () {
+    it('before: should start cluster app', async () => {
       app = utils.cluster('apps/messenger');
       app.coverage(true);
-      yield app.ready();
-      yield sleep(1000);
+      await app.ready();
+      await sleep(1000);
     });
 
     it('app should accept agent message', () => {
@@ -122,8 +122,8 @@ describe('test/lib/core/messenger.test.js', () => {
     });
     after(() => app.close());
 
-    it('app should accept agent message', function* () {
-      yield sleep(10000);
+    it('app should accept agent message', async () => {
+      await sleep(10000);
 
       const m = app.stdout.match(/\d+=\d+/g);
       const map = new Map();
@@ -165,5 +165,4 @@ describe('test/lib/core/messenger.test.js', () => {
       }
     });
   });
-
 });

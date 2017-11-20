@@ -149,7 +149,6 @@ describe('test/lib/core/router.test.js', () => {
         app.router.url('edit_post', { id: [ 10, 11 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
       );
     });
-
   });
 
   describe('router.pathFor', () => {

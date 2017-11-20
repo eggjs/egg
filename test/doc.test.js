@@ -7,24 +7,23 @@ const runscript = require('runscript');
 const utils = require('./utils');
 
 describe('test/doc.test.js', () => {
-
   if (process.platform === 'win32') return;
 
   let app;
-  before(function* () {
-    yield runscript('doctools build', { cwd: path.dirname(__dirname) });
+  before(async () => {
+    await runscript('doctools build', { cwd: path.dirname(__dirname) });
   });
-  before(function* () {
+  before(async () => {
     app = utils.cluster({
       baseDir: 'apps/docapp',
     });
     app.coverage(false);
-    yield app.ready();
+    await app.ready();
   });
   after(() => app.close());
 
-  it('should no broken url', function* () {
-    const result = yield findlinks({ src: app.url, logger: console });
+  it('should no broken url', async () => {
+    const result = await findlinks({ src: app.url, logger: console });
     assert(result.fail === 0);
   });
 });

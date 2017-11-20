@@ -59,29 +59,29 @@ describe('test/app/middleware/notfound.test.js', () => {
 
     afterEach(mm.restore);
 
-    it('should 302 redirect to custom /404 when required html', function* () {
-      yield app.httpRequest()
+    it('should 302 redirect to custom /404 when required html', async () => {
+      await app.httpRequest()
         .get('/test/404')
         .set('Accept', 'test/html')
         .expect('Location', '/404')
         .expect(302);
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/404')
         .expect('Hi, this is 404')
         .expect(200);
     });
 
-    it('should not avoid circular redirects', function* () {
+    it('should not avoid circular redirects', async () => {
       mm(app.config.notfound, 'pageUrl', '/notfound');
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/test/404')
         .set('Accept', 'test/html')
         .expect('Location', '/notfound')
         .expect(302);
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/notfound')
         .expect('<h1>404 Not Found</h1><p><pre><code>config.notfound.pageUrl(/notfound)</code></pre> is unimplemented</p>')
         .expect(404);

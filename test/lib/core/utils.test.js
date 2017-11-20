@@ -4,7 +4,6 @@ const assert = require('assert');
 const utils = require('../../../lib/core/utils');
 
 describe('test/lib/core/utils.test.js', () => {
-
   it('should convert primitive', () => {
     const s = Symbol('symbol');
     const obj = {
