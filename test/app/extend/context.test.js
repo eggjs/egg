@@ -246,7 +246,7 @@ describe('test/app/extend/context.test.js', () => {
         /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
       assert(
-        /\[egg:background] task:.*?app\/controller\/home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 

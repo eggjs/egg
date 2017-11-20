@@ -168,7 +168,7 @@ describe('test/app/extend/application.test.js', () => {
       assert(/mock background run at app result file size: \d+/.test(log));
       assert(/mock background run at app anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:.*?app\/controller\/app\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]app\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
   });
