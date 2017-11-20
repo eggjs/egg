@@ -10,60 +10,9 @@ Node.js is an asynchronous world, asynchronous programming models in official AP
 
 The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise, and Generator with the ability to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function], the official solution has been finalized, and will be published in ECMAScript 2017.
 
-### Generator and co
-
-####  Asynchronous programming model in synchronous way on basis of Generator and Promise.
-
-As metioned before, we can write asynchronous code in synchronous way with the help of Generator and Promise. The most popular library implementing this feature is [co]. the core principle of [co] can be described by lines of code below:
-
-```js
-function run(generator, res) {
-  const ret = generator.next(res);
-  if (ret.done) return;
-  ret.value.then(function (res) {
-    run(generator, res);
-  });
-}
-```
-With the code , you can yield a Promise in Generator Function, and the runtime would execute the following code after being resolved.
-
-```js
-let count = 1;
-function tick(time) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log('tick %s after %s ms', count++, time);
-      resolve();
-    }, time);
-  });
-}
-
-function* main() {
-  console.log('start run...');
-  yield tick(500);
-  yield tick(1000);
-  yield tick(2000);
-}
-
-run(main());
-```
-
-With the run function, asynchronous code can be written in synchronous way in main function in the example above. If you want to know more about Generator, you can have a look at [this document](https://github.com/dead-horse/koa-step-by-step#generator)
-
-Compared with the run function, [co] has `yield [Object / Array / thunk / Generator Function / Generator]`, and builds a Promise with wrapping a Generator Function. [co] is also the underlying library of Koa 1 providing the asynchronous feature. Every middleware in Koa 1 must be a `generator function`.
-
 ### Async function
 
-[Async function] has the similar principles to the [co], it is a syntactic sugar at the language level. The code written in async function looks like that written in co + generator.
-
-```js
-const fn = co(function*() {
-  const user = yield getUser();
-  const posts = yield fetchPosts(user.id);
-  return { user, posts };
-});
-fn().then(res => console.log(res)).catch(err => console.error(err.stack));
-```
+[Async function] is a syntactic sugar at the language level. In async function, we can use `await` to wait a promise resolved(or rejected, which will throw an exception), and Node.js LTS (8.x) is support this feature.
 
 ```js
 const fn = async function() {
@@ -73,10 +22,6 @@ const fn = async function() {
 };
 fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 ```
-
-Other than the features supported by [co], async function can not await a `Promise` array (You can wrap it with `Promise.all`), await `thunk` is not avaliable either.
-
-Though async function has not been published with the spec yet, it is supported in the V8 runtime built in Node.js 7.x, you can use it without flag parameter after 7.6.0 version.
 
 ## Koa
 
@@ -117,13 +62,13 @@ At the same time Request and Response are attached to Context object. Just like 
 Another enormous advantage for writing asynchronous code in synchronous way is that it is quite at ease to handler exception. You can catch all the exceptions thrown in the codes followed the convention with `try catch`. We can easily write a customized exception handlering middleware.
 
 ```js
-function* onerror(next) {
+async function onerror(ctx, next) {
   try {
-    yield next;
+    await next();
   } catch (err) {
-    this.app.emit('error', err);
-    this.body = 'server error';
-    this.status = err.status || 500;
+    ctx.app.emit('error', err);
+    ctx.body = 'server error';
+    ctx.status = err.status || 500;
   }
 }
 ```
@@ -155,8 +100,8 @@ It can be used in controller then:
 
 ```js
 // app/controller/home.js
-exports.handler = function* (ctx) {
-  ctx.body = this.isIOS
+exports.handler = ctx => {
+  ctx.body = ctx.isIOS
     ? 'Your operating system is iOS.'
     : 'Your operating system is not iOS.';
 };
@@ -184,20 +129,20 @@ More about plugin, please check [Plugin](../basics/plugin.md) section.
 
 #### Egg 1.x
 
-The Node.js LTS version now does not support async function，so Egg is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
+When Egg 1.x released, the Node.js LTS version does not support async function，so Egg 1.x is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
 
 - The underlying is based on Koa 1.x, asynchronous solution is based on generator function wrapped by [co].
 - Official plugin and core of Egg are written in generator function,  keep supporting Node.js LTS version, use [co] when necessary to be compatiable with async function.
 - Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+), **we recommend generator function way for ensuring you application can be runned on Node.js LTS version**.
 
-#### Egg next
+#### Egg 2.x
 
-Egg will transfer core to Koa 2.x until Node.js LTS supports async function, compatibility with generator function will also be kept.
+When node 8 became LTS version, async function can used in node without any performance problem. Egg released 2.x based on Koa 2.x, the framework and built-in plugins are all written by async function, and Egg 2.x still keep compatibility with generator function and all the usages in Egg 1.x, applications base on Egg 1.x can migrate to Egg 2.x only by upgrade to node 8.
 
 - The underlying will be based on Koa 2.x, asynchronous solution will be based on async function.
 - Official plugin and core of egge will be written in async function.
 - Recommend user transfer business layer to async function.
-- Node.js 6.x will be no longer supported.
+- Only support Node.js 8+.
 
 [co]: https://github.com/tj/co
 [Async function]: https://github.com/tc39/ecmascript-asyncawait
