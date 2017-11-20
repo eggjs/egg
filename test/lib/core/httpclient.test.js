@@ -25,8 +25,8 @@ describe('test/lib/core/httpclient.test.js', () => {
       info.args.headers['mock-rpcid'] = 'mock-rpcid';
     });
   });
-  before(function* () {
-    url = yield utils.startLocalServer();
+  before(async () => {
+    url = await utils.startLocalServer();
   });
 
   afterEach(mm.restore);
@@ -67,7 +67,7 @@ describe('test/lib/core/httpclient.test.js', () => {
     client.curl(url, args);
   });
 
-  it('should requestThunk ok with log', function* () {
+  it('should requestThunk ok with log', async () => {
     const args = {
       dataType: 'text',
     };
@@ -76,7 +76,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
     });
 
-    yield client.requestThunk(url, args);
+    await client.requestThunk(url, args);
   });
 
   it('should request error with log', done => {
@@ -188,7 +188,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     after(() => app.close());
 
-    it('should app request auto set tracer', function* () {
+    it('should app request auto set tracer', async () => {
       const httpclient = app.httpclient;
 
       let reqTracer;
@@ -202,7 +202,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      let res = yield httpclient.request(url, {
+      let res = await httpclient.request(url, {
         method: 'GET',
       });
 
@@ -215,7 +215,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       reqTracer = null;
       resTracer = null;
 
-      res = yield httpclient.request(url);
+      res = await httpclient.request(url);
 
       assert(res.status === 200);
       assert(reqTracer === resTracer);
@@ -224,7 +224,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(reqTracer.traceId === resTracer.traceId);
     });
 
-    it('should agent request auto set tracer', function* () {
+    it('should agent request auto set tracer', async () => {
       const httpclient = app.agent.httpclient;
 
       let reqTracer;
@@ -238,7 +238,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      const res = yield httpclient.request(url, {
+      const res = await httpclient.request(url, {
         method: 'GET',
       });
 
@@ -249,7 +249,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(reqTracer.traceId === resTracer.traceId);
     });
 
-    it('should app request with ctx and tracer', function* () {
+    it('should app request with ctx and tracer', async () => {
       const httpclient = app.httpclient;
 
       let reqTracer;
@@ -263,7 +263,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracer = options.req.args.tracer;
       });
 
-      let res = yield httpclient.request(url, {
+      let res = await httpclient.request(url, {
         method: 'GET',
       });
 
@@ -274,7 +274,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       reqTracer = null;
       resTracer = null;
-      res = yield httpclient.request(url, {
+      res = await httpclient.request(url, {
         method: 'GET',
         ctx: {},
         tracer: {
@@ -288,7 +288,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       reqTracer = null;
       resTracer = null;
-      res = yield httpclient.request(url, {
+      res = await httpclient.request(url, {
         method: 'GET',
         ctx: {
           tracer: {
@@ -311,7 +311,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     after(() => app.close());
 
-    it('should app request before ready use same tracer', function* () {
+    it('should app request before ready use same tracer', async () => {
       const httpclient = app.httpclient;
 
       let reqTracers = [];
@@ -325,19 +325,18 @@ describe('test/lib/core/httpclient.test.js', () => {
         resTracers.push(options.req.args.tracer);
       });
 
-      let res = yield httpclient.request(url, {
+      let res = await httpclient.request(url, {
         method: 'GET',
       });
       assert(res.status === 200);
 
-
-      res = yield httpclient.request('https://github.com', {
+      res = await httpclient.request('https://github.com', {
         method: 'GET',
       });
 
       assert(res.status === 200);
 
-      res = yield httpclient.request('https://www.npmjs.com', {
+      res = await httpclient.request('https://www.npmjs.com', {
         method: 'GET',
       });
       assert(res.status === 200);
@@ -357,20 +356,19 @@ describe('test/lib/core/httpclient.test.js', () => {
       reqTracers = [];
       resTracers = [];
 
-      yield app.ready();
+      await app.ready();
 
-      res = yield httpclient.request(url, {
+      res = await httpclient.request(url, {
         method: 'GET',
       });
       assert(res.status === 200);
 
-
-      res = yield httpclient.request('https://github.com', {
+      res = await httpclient.request('https://github.com', {
         method: 'GET',
       });
       assert(res.status === 200);
 
-      res = yield httpclient.request('https://www.npmjs.com', {
+      res = await httpclient.request('https://www.npmjs.com', {
         method: 'GET',
       });
       assert(res.status === 200);
@@ -388,5 +386,4 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(reqTracers[0].traceId);
     });
   });
-
 });

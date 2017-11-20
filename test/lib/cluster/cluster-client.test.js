@@ -7,13 +7,13 @@ const utils = require('../../utils');
 
 describe('test/lib/cluster/cluster-client.test.js', () => {
   let app;
-  before(function* () {
+  before(async () => {
     mm.consoleLevel('NONE');
     app = utils.app('apps/cluster_mod_app');
-    yield app.ready();
+    await app.ready();
   });
-  after(function* () {
-    yield app.close();
+  after(async () => {
+    await app.close();
     const agentInnerClient = app.agent.registryClient[innerClient];
     assert(agentInnerClient._realClient.closed === true);
     mm.restore();

@@ -21,19 +21,19 @@ describe('test/lib/plugins/watcher.test.js', () => {
     afterEach(() => app.close());
     afterEach(mm.restore);
 
-    it('should app watcher work', function* () {
+    it('should app watcher work', async () => {
       let count = 0;
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/app-watch')
         .expect(200)
         .expect('app watch success');
 
-      yield sleep(3000);
+      await sleep(3000);
       fs.writeFileSync(file_path1, 'aaa');
-      yield sleep(3000);
+      await sleep(3000);
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/app-msg')
         .expect(200)
         .expect(function(res) {
@@ -43,9 +43,9 @@ describe('test/lib/plugins/watcher.test.js', () => {
         });
 
       fs.writeFileSync(file_path2, 'aaa');
-      yield sleep(3000);
+      await sleep(3000);
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/app-msg')
         .expect(200)
         .expect(function(res) {
@@ -55,17 +55,17 @@ describe('test/lib/plugins/watcher.test.js', () => {
         });
     });
 
-    it('should agent watcher work', function* () {
+    it('should agent watcher work', async () => {
       let count = 0;
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/agent-watch')
         .expect(200)
         .expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
-      yield sleep(3000);
+      await sleep(3000);
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/agent-msg')
         .expect(200)
         .expect(res => {
@@ -86,8 +86,8 @@ describe('test/lib/plugins/watcher.test.js', () => {
 
     after(() => app.close());
 
-    it('should warn user', function* () {
-      yield sleep(3000);
+    it('should warn user', async () => {
+      await sleep(3000);
       const logPath = utils.getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
       assert(content.includes('defaultEventSource watcher will NOT take effect'));

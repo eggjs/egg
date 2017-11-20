@@ -40,7 +40,6 @@ describe('test/app/extend/helper.test.js', () => {
         .expect(/^http:\/\/127\.0\.0\.1:\d+\/home\?foo=1$/)
         .expect(200);
     });
-
   });
 
   describe('escape()', () => {

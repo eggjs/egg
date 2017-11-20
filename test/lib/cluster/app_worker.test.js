@@ -27,16 +27,16 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
     after(() => app.close());
 
-    it('should refuse other ip', function* () {
+    it('should refuse other ip', async () => {
       const url = address.ip() + ':' + app.port;
 
-      yield request(url)
+      await request(url)
         .get('/')
         .expect('done')
         .expect(200);
 
       try {
-        yield request('http://127.0.0.1:17010')
+        await request('http://127.0.0.1:17010')
           .get('/')
           .expect('done')
           .expect(200);
@@ -46,5 +46,4 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       }
     });
   });
-
 });

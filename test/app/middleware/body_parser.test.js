@@ -49,42 +49,42 @@ describe('test/app/middleware/body_parser.test.js', () => {
       .expect(200, done);
   });
 
-  it('should disable body parser', function* () {
+  it('should disable body parser', async () => {
     app1 = utils.app('apps/body_parser_testapp_disable');
-    yield app1.ready();
+    await app1.ready();
 
-    yield app1.httpRequest()
+    await app1.httpRequest()
       .post('/test/body_parser/foo.json')
       .send({ foo: 'bar', ']': 'toString' })
       .expect(204);
   });
 
-  it('should body parser support ignore', function* () {
+  it('should body parser support ignore', async () => {
     app1 = utils.app('apps/body_parser_testapp_ignore');
-    yield app1.ready();
+    await app1.ready();
 
-    yield app1.httpRequest()
+    await app1.httpRequest()
       .post('/test/body_parser/foo.json')
       .send({ foo: 'bar', ']': 'toString' })
       .expect(204);
 
-    yield app1.httpRequest()
+    await app1.httpRequest()
       .post('/test/body_parser/form.json')
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({ foo: 'bar', ']': 'toString' })
       .expect({ foo: 'bar', ']': 'toString' });
   });
 
-  it('should body parser support match', function* () {
+  it('should body parser support match', async () => {
     app1 = utils.app('apps/body_parser_testapp_match');
-    yield app1.ready();
+    await app1.ready();
 
-    yield app1.httpRequest()
+    await app1.httpRequest()
       .post('/test/body_parser/foo.json')
       .send({ foo: 'bar', ']': 'toString' })
       .expect({ foo: 'bar', ']': 'toString' });
 
-    yield app1.httpRequest()
+    await app1.httpRequest()
       .post('/test/body_parser/form.json')
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({ foo: 'bar', ']': 'toString' })

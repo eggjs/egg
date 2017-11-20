@@ -11,20 +11,20 @@ describe('test/lib/core/context_httpclient.test.js', () => {
     app = utils.app('apps/context_httpclient');
     return app.ready();
   });
-  before(function* () {
-    url = yield utils.startLocalServer();
+  before(async () => {
+    url = await utils.startLocalServer();
   });
 
-  it('should send request with ctx.httpclient', function* () {
+  it('should send request with ctx.httpclient', async () => {
     const ctx = app.mockContext();
     const httpclient = ctx.httpclient;
     assert(ctx.httpclient === httpclient);
     assert(httpclient.ctx === ctx);
     assert(typeof httpclient.request === 'function');
     assert(typeof httpclient.curl === 'function');
-    const result = yield ctx.httpclient.request(url);
+    const result = await ctx.httpclient.request(url);
     assert(result.status === 200);
-    const result2 = yield ctx.httpclient.curl(url);
+    const result2 = await ctx.httpclient.curl(url);
     assert(result2.status === 200);
   });
 });

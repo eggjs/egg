@@ -5,7 +5,7 @@ class DataService {
     this.config = config;
   }
 
-  * getConfig() {
+  async getConfig() {
     return this.config;
   }
 
