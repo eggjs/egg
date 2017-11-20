@@ -182,12 +182,12 @@ const proto = module.exports = {
   },
 
   /**
-   * Run generator function in the background
-   * @param {Generator} scope - generator function, the first args is ctx
+   * Run async function in the background
+   * @param {Function} scope - the first args is ctx
    * ```js
    * this.body = 'hi';
    *
-   * this.runInBackground(function* saveUserInfo(ctx) {
+   * this.runInBackground(async ctx => {
    *   yield ctx.mysql.query(sql);
    *   yield ctx.curl(url);
    * });
