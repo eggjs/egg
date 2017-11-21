@@ -34,7 +34,7 @@ Born to build better enterprise frameworks and apps
 $ npm install egg --save
 ```
 
-Node.js >= 6.0.0 required.
+Node.js >= 8.0.0 required.
 
 ## Features
 
