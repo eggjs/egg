@@ -273,7 +273,7 @@ module.exports = NewsService;
 // app/controller/news.js
 const Controller = require('egg').Controller;
 
-class NewsController extends app.Controller {
+class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
@@ -313,7 +313,7 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 在模板里面使用：
 
 ``` html
-<!-- app/views/news/list.tpl -->
+<!-- app/view/news/list.tpl -->
 {{ helper.relativeTime(item.time) }}
 ```
 
