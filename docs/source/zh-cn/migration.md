@@ -1,7 +1,7 @@
 title: Egg@2 升级指南
 ---
 
-随着 Node.js 8 LTS 的发布， 内建了对 ES2017 Async Function 的支持，随后 Koa 也发布了 2.x 正式版。
+随着 Node.js 8 LTS 的发布， 内建了对 ES2017 Async Function 的支持。
 
 因此，Egg 也正式发布 2.x 版：
 - 保持了对 Egg 1.x 以及 `generator function` 的**完全兼容**。
@@ -109,7 +109,7 @@ module.exports = () => {
 直接替换即可：
 
 ```js
-function echo (msg) {
+function echo(msg) {
   return Promise.resolve(msg);
 }
 
@@ -131,7 +131,7 @@ const [ news, user ] = yield [
 
 这种修改起来比较简单，用 `Promise.all()` 包装下即可：
 
-```
+```js
 const [ news, user ] = await Promise.all([
   ctx.service.news.list(topic),
   ctx.service.user.get(uid),
@@ -172,6 +172,10 @@ const { news, user } = await app.toPromise({
 修改为对应的 async function 即可，如果不能修改，则可以用 [app.toAsyncFunction] 简单包装下。
 
 
+### 注意事项
+- [app.toAsyncFunction] 和 [app.toPromise] 实际使用的是 [co] 包装，因此会引入 [co] 本身的性能损耗和堆栈问题，建议开发者还是尽量全链路升级。
+- [app.toAsyncFunction] 在调用 async function 时不会有损失。
+
 ## 插件升级
 
 `应用开发者`只需升级`插件开发者`修改后的依赖版本即可，可以用我们提供的命令 `egg-bin autod` 快速更新。
@@ -188,11 +192,11 @@ const { news, user } = await app.toPromise({
 ### 接口兼容
 
 某些场景下，插件开发者暴露的接口是同时支持 generator 和 async 的，一般是会用 co 包装一层。
-在 2.x 里为了更好的性能和错误堆栈，我们建议修改为 `async-first`。
 
-我们也提供了以下 utils 来方便插件开发者兼容：
-- [`app.toAsyncFunction`](https://github.com/eggjs/egg-core/blob/da4ba1784175c43217125f3d5cd7f0be3d5396bf/lib/egg.js#L344)
-- [`app.toPromise`](https://github.com/eggjs/egg-core/blob/da4ba1784175c43217125f3d5cd7f0be3d5396bf/lib/egg.js#L353)
+- 在 2.x 里为了更好的性能和错误堆栈，我们建议修改为 `async-first`。
+- 我们也提供了以下 utils 来方便插件开发者兼容：
+  - [app.toAsyncFunction]
+  - [app.toPromise]
 
 譬如我们的 1.x 时内置的 [egg-view] 约定具体模板引擎插件提供的 `render()` 方法只需返回 `yieldable` 即可。
 
@@ -230,7 +234,7 @@ await view.render(tpl, locals, options);
 ### 插件发布规则
 
 - **需要发布大版本**
-  - 除非插件提供的接口都是 promise 的，且代码里面不存在 `async`，如 [egg-view-nunjucks]）。
+  - 除非插件提供的接口都是 promise 的，且代码里面不存在 `async`，如 [egg-view-nunjucks] 。
 - 修改 `package.json`
   - 修改 `devDependencies` 依赖的 `egg` 为 `^2.0.0`。
   - 修改 `engines.node` 为 `>=8.0.0`。
