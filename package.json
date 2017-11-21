@@ -110,7 +110,7 @@
     "node": ">= 6.0.0"
   },
   "publishConfig": {
-    "tag": "1.x"
+    "tag": "release-1.x"
   },
   "license": "MIT"
 }
