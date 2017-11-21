@@ -7,16 +7,16 @@ title: Egg@2 升级指南
 - 保持了对 Egg 1.x 以及 `generator function` 的**完全兼容**。
 - 基于 Koa 2.x，异步解决方案基于 `async function`。
 - 只支持 Node.js 8 及以上版本。
-- 去除 [co] 后堆栈信息更清晰，带来 30% 左右的性能提升。（[benchmark](https://eggjs.github.io/benchmark/plot/)）
+- 去除 [co] 后堆栈信息更清晰，带来 30% 左右的性能提升（不含 Node 带来的性能提升），详细参见：[benchmark](https://eggjs.github.io/benchmark/plot/)。
 
-即：应用层只需要升级到 Node.js 8，然后重新安装 Egg 的依赖为 `^2.0.0`， 无需修改任何一行代码，就已经完成了升级。
+即：**应用层只需要升级到 Node.js 8，然后重新安装 Egg 的依赖为 `^2.0.0`， 无需修改任何一行代码，就已经完成了升级。**
 
 不过，为了更好的统一代码风格，以及更佳的性能和错误堆栈，我们建议开发者进一步升级：
 
-- 使用推荐的代码风格。
-- 中间件使用 Koa2 风格。
-- 函数调用的 `yieldable` 转为 `awaitable`。
-- 插件升级为 `async-first`。
+- [使用推荐的代码风格](#代码风格优化)。
+- [中间件使用 Koa2 风格](#中间件使用-Koa2-风格)。
+- [函数调用的 `yieldable` 转为 `awaitable`](#yieldable-->-awaitable)。
+- [插件升级为 `async-first`](#插件升级)。
 
 
 ## 代码风格优化
@@ -49,7 +49,7 @@ class UserService extends Service {
 module.exports = UserService;
 ```
 
-同时，框架开发者需要改变写法如下，否则用户自定义 Service 等基类会有问题：
+同时，`框架开发者`需要改变写法如下，否则`应用开发者`自定义 Service 等基类会有问题：
 
 ```js
 const egg = require('egg');
@@ -84,6 +84,7 @@ module.exports = () => {
 module.exports = () => {
   return async function responseTime(ctx, next) {
     const start = Date.now();
+    // 注意：函数调用
     await next();
     const delta = Math.ceil(Date.now() - start);
     ctx.set('X-Response-Time', delta + 'ms');
