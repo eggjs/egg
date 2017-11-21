@@ -191,44 +191,32 @@ const { news, user } = await app.toPromise({
 
 ### 接口兼容
 
-某些场景下，插件开发者暴露的接口是同时支持 generator 和 async 的，一般是会用 co 包装一层。
+某些场景下，`插件开发者`提供给`应用开发者`的接口是同时支持 generator 和 async 的，一般是会用 co 包装一层。
 
 - 在 2.x 里为了更好的性能和错误堆栈，我们建议修改为 `async-first`。
 - 我们也提供了以下 utils 来方便插件开发者兼容：
   - [app.toAsyncFunction]
   - [app.toPromise]
 
-譬如我们的 1.x 时内置的 [egg-view] 约定具体模板引擎插件提供的 `render()` 方法只需返回 `yieldable` 即可。
-
-所以子插件会有各种实现：
+譬如 [egg-schedule] 插件，支持应用层使用 generator 或 async 定义 task。
 
 ```js
-// egg-view
-yield view.render(tpl, locals, options);
+// {app_root}/app/schedule/cleandb.js
+exports.task = function* (ctx) {
+  yield ctx.service.db.clean();
+};
 
-// egg-view-ejs
-class EjsView {
-  // use generator
-  * render(filename, locals, viewOptions) {}
-}
-
-// egg-view-nunjucks
-class EjsView {
-  // use promise
-  render(filename, locals, viewOptions) {
-    return new Promise(resolve => {
-      // ...
-    });
-  }
-}
+// {app_root}/app/schedule/log.js
+exports.task = async function splitLog(ctx) {
+  await ctx.service.log.split();
+};
 ```
 
-此时若想在不影响开发者情况下，升级 [egg-view] 为 `async`，则仅需如下：
+因此`插件开发者`可以简单包装下原始函数：
 
 ```js
-// egg-view
-view.render = app.toAsyncFunction(view.render);
-await view.render(tpl, locals, options);
+// https://github.com/eggjs/egg-schedule/blob/80252ef/lib/load_schedule.js#L38
+task = app.toAsyncFunction(schedule.task);
 ```
 
 ### 插件发布规则
@@ -244,6 +232,7 @@ await view.render(tpl, locals, options);
 
 
 [co]: https://github.com/tj/co
+[egg-schedule]: https://github.com/eggjs/egg-schedule
 [egg-view]: https://github.com/eggjs/egg-view
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [app.toAsyncFunction]: https://github.com/eggjs/egg-core/blob/da4ba1784175c43217125f3d5cd7f0be3d5396bf/lib/egg.js#L344
