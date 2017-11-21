@@ -141,10 +141,18 @@ const [ news, user ] = await Promise.all([
 ### object - yield {}
 
 ```js
-const { news, user } = yield {
-  news: ctx.service.news.list(topic),
-  user: ctx.service.user.get(uid),
-};
+// app/service/biz.js
+class BizService extends Service {
+  * list(topic, uid) {
+    return {
+      news: ctx.service.news.list(topic),
+      user: ctx.service.user.get(uid),
+    };
+  }
+}
+
+// app/controller/home.js
+const { news, user } = yield ctx.service.biz.list(topic, uid);
 ```
 
 这种方式，由于 `Promise.all` 不支持 Object，会稍微有点复杂。
@@ -154,13 +162,10 @@ const { news, user } = yield {
 临时兼容方式是：
 - 我们提供的 `app.toPromise` 包装一下。
 - Bluebird 提供的 [Promise.props](http://bluebirdjs.com/docs/api/promise.props.html)
-- 但它们都会影响到错误堆栈和性能。
+- **建议尽量改掉，因为包装会影响到堆栈和性能损失。**
 
 ```js
-const { news, user } = await app.toPromise({
-  news: ctx.service.news.list(topic),
-  user: ctx.service.user.get(uid),
-});
+const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 ```
 
 ### 其他
