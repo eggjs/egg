@@ -1,73 +1,52 @@
 title: Egg@2 升级指南
 ---
 
+## 背景
+
 随着 Node.js 8 LTS 的发布， 内建了对 ES2017 Async Function 的支持。
 
-因此，Egg 也正式发布 2.x 版：
+在这之前，TJ 的 [co] 使我们可以提前享受到 `async/await` 的编程体验，但同时它不可避免的也带来一些问题：
+
+- 性能损失
+- [错误堆栈不友好](https://github.com/eggjs/egg/wiki/co-vs-async)
+
+现在 Egg 正式发布了 2.x 版本：
 - 保持了对 Egg 1.x 以及 `generator function` 的**完全兼容**。
 - 基于 Koa 2.x，异步解决方案基于 `async function`。
 - 只支持 Node.js 8 及以上版本。
 - 去除 [co] 后堆栈信息更清晰，带来 30% 左右的性能提升（不含 Node 带来的性能提升），详细参见：[benchmark](https://eggjs.github.io/benchmark/plot/)。
 
-即：**应用层只需要升级到 Node.js 8，然后重新安装 Egg 的依赖为 `^2.0.0`， 无需修改任何一行代码，就已经完成了升级。**
+Egg 的理念之一是`渐进式增强`，故我们为开发者提供`渐进升级`的体验。
+
+- [快速升级](#快速升级)
+- [进一步升级](#进一步升级)
+- [针对`插件开发者`的升级指南](#插件升级)
+
+## 快速升级
+
+- Node.js 使用最新的 LTS 版本（`>=8.9.0`）。
+- 执行 `egg-bin autod`，会自动升级 `egg` 的依赖为 `^2.0.0`，以及其他插件版本。
+- 重新安装依赖，跑单元测试。
+
+**搞定！不需要修改任何一行代码，就已经完成了升级。**
+
+## 进一步升级
+
+得益于 Egg 对 1.x 的**完全兼容**，我们可以如何非常快速的完成升级。
 
 不过，为了更好的统一代码风格，以及更佳的性能和错误堆栈，我们建议开发者进一步升级：
 
-- [使用推荐的代码风格](#代码风格优化)。
-- [中间件使用 Koa2 风格](#中间件使用-Koa2-风格)。
-- [函数调用的 `yieldable` 转为 `awaitable`](#yieldable-->-awaitable)。
-- [插件升级为 `async-first`](#插件升级)。
+- 修改为推荐的代码风格，传送门：[代码风格指南](./style-guide.md)
+- [中间件使用 Koa2 风格](#中间件使用-Koa2-风格)
+- [函数调用的 `yieldable` 转为 `awaitable`](#yieldable-To-awaitable)
 
-
-## 代码风格优化
-
-> 建议开发者使用 `egg-init --type=simple showcase` 来生成并观察最新推荐的项目结构和配置。
-
-对于应用开发者，我们现在推荐使用以下方式，以便获得更好的代码提示：
-
-```js
-// old style
-module.exports = app => {
-  class UserService extends app.Service {
-    async list() {
-      return await this.ctx.curl('https://eggjs.org');
-    }
-  }
-  return UserService;
-};
-```
-
-修改为：
-
-```js
-const Service = require('egg').Service;
-class UserService extends Service {
-  async list() {
-    return await this.ctx.curl('https://eggjs.org');
-  }
-}
-module.exports = UserService;
-```
-
-同时，`框架开发者`需要改变写法如下，否则`应用开发者`自定义 Service 等基类会有问题：
-
-```js
-const egg = require('egg');
-
-module.export = Object.assign(egg, {
-  Application: class MyApplication extends egg.Application {
-    // ...
-  },
-  // ...
-});
-```
-
-## 中间件使用 Koa2 风格
+### 中间件使用 Koa2 风格
 
 > 2.x 仍然保持对 1.x 风格的中间件的兼容，故不修改也能继续使用。
 
-- 返回的函数入参改为 `(ctx, next)`
-- `yield next` 改为函数调用 `await next()`
+- 返回的函数入参改为 `(ctx, next)` 的形式。
+- 不建议使用 `async (ctx, next) => {}` 格式，避免错误堆栈丢失函数名。
+- `yield next` 改为函数调用 `await next()` 的方式。
 
 ```js
 // 1.x
@@ -92,7 +71,9 @@ module.exports = () => {
 };
 ```
 
-## yieldable -> awaitable
+### yieldable To awaitable
+
+> 我们早在 Egg 1.x 时就已经支持 async，故若应用层已经是 async-base 的，就可以跳过本小节内容了。
 
 [co] 支持了 `yieldable` 兼容类型：
 
@@ -103,9 +84,9 @@ module.exports = () => {
 - generators (delegation)
 - generator functions (delegation)
 
-因此 `generator` 改为 `async` 不能只是简单的替换，我们一起来看看各自场景：
+而原生的 `yield` 和 `await` 只支持其中的一部分，故在移除 `co` 后，我们需要根据不同场景自行处理：
 
-### promise
+#### promise
 
 直接替换即可：
 
@@ -119,7 +100,7 @@ yield echo('hi egg');
 await echo('hi egg');
 ```
 
-### array - yield []
+#### array - yield []
 
 `yield []` 常用于并发请求，如：
 
@@ -139,7 +120,9 @@ const [ news, user ] = await Promise.all([
 ]);
 ```
 
-### object - yield {}
+#### object - yield {}
+
+`yield {}` 和 `yield map` 的方式也常用于并发请求，但由于 `Promise.all` 不支持 Object，会稍微有点复杂。
 
 ```js
 // app/service/biz.js
@@ -156,20 +139,57 @@ class BizService extends Service {
 const { news, user } = yield ctx.service.biz.list(topic, uid);
 ```
 
-这种方式，由于 `Promise.all` 不支持 Object，会稍微有点复杂。
+建议修改为 `await Promise.all([])` 的方式：
 
-长远来讲，建议是修改为 Array 的方式。
+```js
+// app/service/biz.js
+class BizService extends Service {
+  * list(topic, uid) {
+    return Promise.all([
+      ctx.service.news.list(topic),
+      ctx.service.user.get(uid),
+    ]);
+  }
+}
 
-临时兼容方式是：
-- 我们提供的 `app.toPromise` 包装一下。
-- Bluebird 提供的 [Promise.props](http://bluebirdjs.com/docs/api/promise.props.html)
-- **建议尽量改掉，因为包装会影响到堆栈和性能损失。**
+// app/controller/home.js
+const [ news, user ] = await ctx.service.biz.list(topic, uid);
+```
+
+如果无法修改对应的接口，以下几种方式可以临时兼容下：
+
+`Promise.props`:
+
+- [Bluebird](http://bluebirdjs.com/docs/api/promise.props.html) 等库会提供类似的 Utils 方法。
+- 只支持 Promise，只支持一层 Object。
+
+```js
+// app/service/biz.js
+const Promise = require("bluebird");
+class BizService extends Service {
+  * list(topic, uid) {
+    return Promise.props({
+      news: ctx.service.news.list(topic),
+      user: ctx.service.user.get(uid),
+    });
+  }
+}
+
+// app/controller/home.js
+const { news, user } = await ctx.service.biz.list(topic, uid);
+```
+
+`app.toPromise`:
+
+- 我们提供的 Utils 方法 [app.toPromise]。
+- 支持所有的 `yieldable`。
+- **建议尽量改掉，因为实际上就是丢给 co，会带回对应的性能损失和堆栈问题。**
 
 ```js
 const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 ```
 
-### 其他
+#### 其他
 
 - thunks (functions)
 - generators (delegation)
@@ -177,10 +197,10 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 
 修改为对应的 async function 即可，如果不能修改，则可以用 [app.toAsyncFunction] 简单包装下。
 
+**注意**
+- [toAsyncFunction][app.toAsyncFunction] 和 [toPromise][app.toPromise] 实际使用的是 [co] 包装，因此会带回对应的性能损失和堆栈问题，建议开发者还是尽量全链路升级。
+- [toAsyncFunction][app.toAsyncFunction] 在调用 async function 时不会有损失。
 
-### 注意事项
-- [app.toAsyncFunction] 和 [app.toPromise] 实际使用的是 [co] 包装，因此会引入 [co] 本身的性能损耗和堆栈问题，建议开发者还是尽量全链路升级。
-- [app.toAsyncFunction] 在调用 async function 时不会有损失。
 
 ## 插件升级
 
@@ -190,9 +210,10 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 
 ### 升级事项
 
-- 所有的 `generator function` 改为 `async function` 格式。
-- 中间件按上文的方式升级。
-- 接口兼容，可选，如下。
+- 完成上面章节提到的升级项。
+  - 所有的 `generator function` 改为 `async function` 格式。
+  - 升级中间件风格。
+- 接口兼容（可选），如下。
 - 发布大版本。
 
 ### 接口兼容
@@ -200,9 +221,7 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 某些场景下，`插件开发者`提供给`应用开发者`的接口是同时支持 generator 和 async 的，一般是会用 co 包装一层。
 
 - 在 2.x 里为了更好的性能和错误堆栈，我们建议修改为 `async-first`。
-- 我们也提供了以下 utils 来方便插件开发者兼容：
-  - [app.toAsyncFunction]
-  - [app.toPromise]
+- 如有需要，使用 [toAsyncFunction][app.toAsyncFunction] 和 [toPromise][app.toPromise] 来兼容。
 
 譬如 [egg-schedule] 插件，支持应用层使用 generator 或 async 定义 task。
 
@@ -218,7 +237,7 @@ exports.task = async function splitLog(ctx) {
 };
 ```
 
-因此`插件开发者`可以简单包装下原始函数：
+`插件开发者`可以简单包装下原始函数：
 
 ```js
 // https://github.com/eggjs/egg-schedule/blob/80252ef/lib/load_schedule.js#L38
@@ -228,13 +247,13 @@ task = app.toAsyncFunction(schedule.task);
 ### 插件发布规则
 
 - **需要发布大版本**
-  - 除非插件提供的接口都是 promise 的，且代码里面不存在 `async`，如 [egg-view-nunjucks] 。
+  - 除非插件提供的接口都是 promise 的，且代码里面不存在 `async`，如 [egg-view-nunjucks]。
 - 修改 `package.json`
   - 修改 `devDependencies` 依赖的 `egg` 为 `^2.0.0`。
   - 修改 `engines.node` 为 `>=8.0.0`。
   - 修改 `ci.version` 为 `8, 9`， 并重新安装依赖以便生成新的 travis 配置文件。
 - 修改 `README.md` 的示例为 async function。
-- [可选] 修改 `test/fixtures` 为 async function，建议分开另一个 PR 方便 Review。
+- 修改 `test/fixtures` 为 async function，可选，建议分开另一个 PR 方便 Review。
 
 
 [co]: https://github.com/tj/co
