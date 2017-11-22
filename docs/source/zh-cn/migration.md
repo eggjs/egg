@@ -144,7 +144,7 @@ const { news, user } = yield ctx.service.biz.list(topic, uid);
 ```js
 // app/service/biz.js
 class BizService extends Service {
-  * list(topic, uid) {
+  list(topic, uid) {
     return Promise.all([
       ctx.service.news.list(topic),
       ctx.service.user.get(uid),
@@ -156,33 +156,9 @@ class BizService extends Service {
 const [ news, user ] = await ctx.service.biz.list(topic, uid);
 ```
 
-如果无法修改对应的接口，以下几种方式可以临时兼容下：
+如果无法修改对应的接口，可以临时兼容下：
 
-`Promise.props`:
-
-- [Bluebird](http://bluebirdjs.com/docs/api/promise.props.html) 等库提供的 Utils 方法。
-- 只支持 Promise，只支持一层 Object。
-
-```js
-// app/service/biz.js
-const Promise = require("bluebird");
-class BizService extends Service {
-  * list(topic, uid) {
-    return Promise.props({
-      news: ctx.service.news.list(topic),
-      user: ctx.service.user.get(uid),
-    });
-  }
-}
-
-// app/controller/home.js
-const { news, user } = await ctx.service.biz.list(topic, uid);
-```
-
-`app.toPromise`:
-
-- 我们提供的 Utils 方法 [app.toPromise]。
-- 支持所有的 `yieldable`。
+- 使用我们提供的 Utils 方法 [app.toPromise]。
 - **建议尽量改掉，因为实际上就是丢给 co，会带回对应的性能损失和堆栈问题。**
 
 ```js
