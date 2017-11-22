@@ -6,7 +6,7 @@ title: 快速入门
 ## 环境准备
 
 - 操作系统：支持 macOS，Linux，Windows
-- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 6.x，目前我们推荐 8.x 以上版本。
+- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 8.x。
 
 ## 快速初始化
 
@@ -273,7 +273,7 @@ module.exports = NewsService;
 // app/controller/news.js
 const Controller = require('egg').Controller;
 
-class NewsController extends app.Controller {
+class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
@@ -313,7 +313,7 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 在模板里面使用：
 
 ``` html
-<!-- app/views/news/list.tpl -->
+<!-- app/view/news/list.tpl -->
 {{ helper.relativeTime(item.time) }}
 ```
 

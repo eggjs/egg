@@ -4,6 +4,9 @@
 
 ### Notable changes
 
+* **performance**
+  * By removing the wrapper code of `co` library, performance increase over 30% (which not include the performance boost coming with Node 8), see [#14](https://github.com/eggjs/benchmark/pull/14) and [benchmark](https://eggjs.github.io/benchmark/plot/)
+
 * **feature**
   * [BREAKING CHANGE] drop node <8 support
   * upgrade to egg-core@4(base on koa 2), but still supports all the usages in egg 1
