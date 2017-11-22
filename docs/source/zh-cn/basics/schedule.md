@@ -123,7 +123,7 @@ module.exports = {
 
 - `cronOptions`: 配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档
 - `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
-- `disable`：配置改参数为 true 时，这个定时任务不会被启动。
+- `disable`：配置该参数为 true 时，这个定时任务不会被启动。
 
 ### 动态配置定时任务
 
