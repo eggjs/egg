@@ -24,6 +24,8 @@ guide_toc:
   What is Egg: Egg.js คืออะไร?
   Egg and Koa: Egg.js และ Koa
   Get Start: เริ่มต้นแบบด่วน
+  Style Guide: คู่มือสไตล์โค้ด
+  Migration: 2.x คู่มือการอัปเกรด
   Basics: ฟังก์ชั่นพื้นฐาน
   Structure: โครงสร้างไดเรกทอรี
   Objects: การสร้างอ๊อบเจ็ค

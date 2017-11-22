@@ -9,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 ## Prerequisites
 
 - Operating System: Linux, OS X or Windows.
-- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][Node.js].
+- Node.js Runtime: 8.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
 ## the Quick Way
 
@@ -292,7 +292,7 @@ Then slightly modify our previous controller.
 // app/controller/news.js
 const Controller = require('egg').Controller;
 
-class NewsController extends app.Controller {
+class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
@@ -336,7 +336,7 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 Then use it in the templates.
 
 ``` html
-<!-- app/views/news/list.tpl -->
+<!-- app/view/news/list.tpl -->
 {{ helper.relativeTime(item.time) }}
 ```
 
