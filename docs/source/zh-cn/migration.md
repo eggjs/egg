@@ -71,7 +71,7 @@ module.exports = () => {
 };
 ```
 
-### yieldable To awaitable
+### yieldable to awaitable
 
 > 我们早在 Egg 1.x 时就已经支持 async，故若应用层已经是 async-base 的，就可以跳过本小节内容了。
 
@@ -160,7 +160,7 @@ const [ news, user ] = await ctx.service.biz.list(topic, uid);
 
 `Promise.props`:
 
-- [Bluebird](http://bluebirdjs.com/docs/api/promise.props.html) 等库会提供类似的 Utils 方法。
+- [Bluebird](http://bluebirdjs.com/docs/api/promise.props.html) 等库提供的 Utils 方法。
 - 只支持 Promise，只支持一层 Object。
 
 ```js
