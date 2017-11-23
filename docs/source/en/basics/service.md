@@ -20,7 +20,7 @@ const Service = require('egg').Service;
 
 class UserService extends Service {
   async find(uid) {
-    const user = await this.ctx.db.query(`select * from user where uid = ${uid}`);
+    const user = await this.ctx.db.query('select * from user where uid = ?', uid);
     return user;
   }
 }
@@ -30,7 +30,7 @@ module.exports = UserService;
 
 ### Properties
 
-The defined Service class initializes a new object for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Service class inherits `egg.Service`.
+Framework will initializes a new Service instance for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Service class inherits `egg.Service`.
 
 - `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 - `this.app`: the instance of [Application](./extend.md#application) for current request, through which we can access global objects and methods provided by the framework.
@@ -93,7 +93,7 @@ class UserService extends Service {
   // }
   async find(uid) {
     // suppose we've got user's id and are going to get detailed user information from databases
-    const user = yield await.ctx.db.query(`select * from user where uid = ${uid}`);
+    const user = await this.ctx.db.query('select * from user where uid = ?', uid);
 
     // suppose some complex processes should be made here, and demanded informations are returned then.
     const picture = await this.getPicture(uid);

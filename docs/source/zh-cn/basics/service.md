@@ -20,7 +20,7 @@ const Service = require('egg').Service;
 
 class UserService extends Service {
   async find(uid) {
-    const user = await this.ctx.db.query(`select * from user where uid = ${uid}`);
+    const user = await this.ctx.db.query('select * from user where uid = ?', uid);
     return user;
   }
 }
@@ -30,7 +30,7 @@ module.exports = UserService;
 
 ### 属性
 
-项目中的 Service 需要继承于 `egg.Service`，它拥有下列属性方便我们进行开发：
+每一次用户请求，框架都会实例化对应的 Service 实例，由于它继承于 `egg.Service`，故拥有下列属性方便我们进行开发：
 
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
@@ -93,7 +93,7 @@ class UserService extends Service {
   // }
   async find(uid) {
     // 假如 我们拿到用户 id 从数据库获取用户详细信息
-    const user = yield await.ctx.db.query(`select * from user where uid = ${uid}`);
+    const user = await this.ctx.db.query('select * from user where uid = ?', uid);
 
     // 假定这里还有一些复杂的计算，然后返回需要的信息。
     const picture = await this.getPicture(uid);
