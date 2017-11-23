@@ -30,7 +30,7 @@ title: controller
 // app/controller/post.js
 const Controller = require('egg').Controller;
 class PostController extends Controller {
-  * create() {
+  async create() {
     const { ctx, service } = this;
     const createRule = {
       title: { type: 'string' },
@@ -42,7 +42,7 @@ class PostController extends Controller {
     const author = ctx.session.userId;
     const req = Object.assign(ctx.request.body, { author });
     // 调用 Service 进行业务处理
-    const res = yield service.post.create(req);
+    const res = await service.post.create(req);
     // 设置响应内容和响应状态码
     ctx.body = { id: res.id };
     ctx.status = 201;
@@ -56,7 +56,8 @@ module.exports = PostController;
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('createPost', '/api/posts', app.controller.post.create);
+  const { router, controller } = app;
+  router.post('createPost', '/api/posts', controller.post.create);
 }
 ```
 
@@ -65,11 +66,11 @@ Controller 支持多级目录，例如如果我们将上面的 Controller 代码
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('createPost', '/api/posts', app.controller.sub.post.create);
+  app.router.post('createPost', '/api/posts', app.controller.sub.post.create);
 }
 ```
 
-定义的 Controller 类，会在每一个请求访问到 server 时实例化一个全新的对象，而项目中的 Controller 类继承于 `app.Controller`，会有下面几个属性挂在 `this` 上。
+定义的 Controller 类，会在每一个请求访问到 server 时实例化一个全新的对象，而项目中的 Controller 类继承于 `egg.Controller`，会有下面几个属性挂在 `this` 上。
 
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
@@ -111,39 +112,37 @@ module.exports = app => {
 
 ```js
 //app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.service.listByUser(this.user);
-      this.success(posts);
-    }
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.service.listByUser(this.user);
+    this.success(posts);
+  }
+}
 ```
 
 ### Controller 方法（不推荐使用，只是为了兼容）
 
-每一个 Controller 都是一个 generator function，它的 `this` 指向请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
+每一个 Controller 都是一个 async function，它的入参为请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的各种便捷属性和方法。
 
 例如我们写一个对应到 `POST /api/posts` 接口的 Controller，我们会在 `app/controller` 目录下创建一个 `post.js` 文件
 
 ```js
 // app/controller/post.js
-exports.create = function* () {
+exports.create = async ctx => {
   const createRule = {
     title: { type: 'string' },
     content: { type: 'string' },
   };
   // 校验参数
-  this.validate(createRule);
+  ctx.validate(createRule);
   // 组装参数
-  const author = this.session.userId;
-  const req = Object.assign(this.request.body, { author });
+  const author = ctx.session.userId;
+  const req = Object.assign(ctx.request.body, { author });
   // 调用 service 进行业务处理
-  const res = yield this.service.post.create(req);
+  const res = await ctx.service.post.create(req);
   // 设置响应内容和响应状态码
-  this.body = { id: res.id };
-  this.status = 201;
+  ctx.body = { id: res.id };
+  ctx.status = 201;
 };
 ```
 
@@ -205,22 +204,21 @@ Connection: keep-alive
 
 ### query
 
-在 URL 中 `?` 后面的部分是一个 Query String，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `context.query` 拿到解析过后的这个参数体
+在 URL 中 `?` 后面的部分是一个 Query String，这一部分经常用于 GET 类型的请求中传递参数。例如 `GET /posts?category=egg&language=node` 中 `category=egg&language=node` 就是用户传递过来的参数。我们可以通过 `ctx.query` 拿到解析过后的这个参数体
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     const query = this.ctx.query;
     // {
     //   category: 'egg',
     //   language: 'node',
     // }
   }
-};
+}
 ```
 
-当 Query String 中的 key 重复时，`context.query` 只取 key 第一次出现时的值，后面再出现的都会被忽略。`GET /posts?category=egg&category=koa` 通过 `context.query` 拿到的值是 `{ category: 'egg' }`。
+当 Query String 中的 key 重复时，`ctx.query` 只取 key 第一次出现时的值，后面再出现的都会被忽略。`GET /posts?category=egg&category=koa` 通过 `ctx.query` 拿到的值是 `{ category: 'egg' }`。
 
 这样处理的原因是为了保持统一性，由于通常情况下我们都不会设计让用户传递 key 相同的 Query String，所以我们经常会写类似下面的代码：
 
@@ -231,44 +229,40 @@ if (key.startsWith('egg')) {
 }
 ```
 
-而如果有人故意发起请求在 Query String 中带上重复的 key 来请求时就会引发系统异常。因此框架保证了从 `context.query` 上获取的参数一旦存在，一定是字符串类型。
+而如果有人故意发起请求在 Query String 中带上重复的 key 来请求时就会引发系统异常。因此框架保证了从 `ctx.query` 上获取的参数一旦存在，一定是字符串类型。
 
 #### queries
 
-有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。针对此类情况，框架提供了 `context.queries` 对象，这个对象也解析了 Query String，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
+有时候我们的系统会设计成让用户传递相同的 key，例如 `GET /posts?category=egg&id=1&id=2&id=3`。针对此类情况，框架提供了 `ctx.queries` 对象，这个对象也解析了 Query String，但是它不会丢弃任何一个重复的数据，而是将他们都放到一个数组中：
 
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
-
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     console.log(this.ctx.queries);
     // {
     //   category: [ 'egg' ],
     //   id: [ '1', '2', '3' ],
     // }
   }
-};
+}
 ```
 
-`context.queries` 上所有的 key 如果有值，也一定会是数组类型。
+`ctx.queries` 上所有的 key 如果有值，也一定会是数组类型。
 
 ### Router params
 
-在 [Router](./router.md) 中，我们介绍了 Router 上也可以申明参数，这些参数都可以通过 `context.params` 获取到。
+在 [Router](./router.md) 中，我们介绍了 Router 上也可以申明参数，这些参数都可以通过 `ctx.params` 获取到。
 
 ```js
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
-
-const Controller = require('egg').Controller;
-module.exports = class AppController extends Controller {
-  * listApp() {
+class AppController extends Controller {
+  async listApp() {
     assert.equal(this.ctx.params.projectId, '1');
     assert.equal(this.ctx.params.appId, '2');
   }
-};
+}
 ```
 
 ### body
@@ -280,7 +274,7 @@ module.exports = class AppController extends Controller {
 
 在前面的 HTTP 请求报文示例中，我们看到在 header 之后还有一个 body 部分，我们通常会在这个部分传递 POST、PUT 和 DELETE 等方法的参数。一般请求中有 body 的时候，客户端（浏览器）会同时发送 `Content-Type` 告诉服务端这次请求的 body 是什么格式的。Web 开发中数据传递最常用的两类格式分别是 JSON 和 Form。
 
-框架内置了 [bodyParser](https://github.com/koajs/bodyparser) 中间件来对这两类格式的请求 body 解析成 object 挂载到 `context.request.body` 上。HTTP 协议中并不建议在通过 GET、HEAD 方法访问时传递 body，所以我们无法在 GET、HEAD 方法中按照此方法获取到内容。
+框架内置了 [bodyParser](https://github.com/koajs/bodyparser) 中间件来对这两类格式的请求 body 解析成 object 挂载到 `ctx.request.body` 上。HTTP 协议中并不建议在通过 GET、HEAD 方法访问时传递 body，所以我们无法在 GET、HEAD 方法中按照此方法获取到内容。
 
 ```js
 // POST /api/posts HTTP/1.1
@@ -288,14 +282,12 @@ module.exports = class AppController extends Controller {
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     assert.equal(this.ctx.request.body.title, 'controller');
     assert.equal(this.ctx.request.body.content, 'what is controller');
   }
-};
+}
 ```
 
 框架对 bodyParser 设置了一些默认参数，配置好之后拥有以下特性：
@@ -304,7 +296,7 @@ module.exports = class PostController extends Controller {
 - 当请求的 Content-Type 为 `application/x-www-form-urlencoded` 时，会按照 form 格式对请求 body 进行解析，并限制 body 最大长度为 `100kb`。
 - 如果解析成功，body 一定会是一个 Object（可能是一个数组）。
 
-一般来说我们最经常调整的配置项就是变更解析时允许的最大长度，可以在 `config/config.default.js` 中覆盖框架的默认值
+一般来说我们最经常调整的配置项就是变更解析时允许的最大长度，可以在 `config/config.default.js` 中覆盖框架的默认值。
 
 ```js
 module.exports = {
@@ -319,11 +311,15 @@ module.exports = {
 
 **注意：在调整 bodyParser 支持的 body 长度时，如果我们应用前面还有一层反向代理（Nginx），可能也需要调整它的配置，确保反向代理也支持同样长度的请求 body。**
 
+**一个常见的错误是把 `ctx.request.body` 和 `ctx.body` 混淆，后者其实是 `ctx.response.body` 的简写。**
+
 ### 获取上传的文件
 
 请求 body 除了可以带参数之外，还可以发送文件，一般来说，浏览器上都是通过 `Multipart/form-data` 格式发送文件的，框架通过内置 [Multipart](https://github.com/eggjs/egg-multipart) 插件来支持获取用户上传的文件。
 
-在 Controller 中，我们可以通过 `context.getFileStream*()` 接口能获取到上传的文件流。
+完整的上传示例参见：[eggjs/examples/multipart](https://github.com/eggjs/examples/tree/master/multipart)。
+
+在 Controller 中，我们可以通过 `ctx.getFileStream()` 接口能获取到上传的文件流。
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
@@ -338,18 +334,18 @@ const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 const Controller = require('egg').Controller;
 
-module.exports = class UploaderController extends Controller {
-  * upload() {
+class UploaderController extends Controller {
+  async upload() {
     const ctx = this.ctx;
-    const stream = yield ctx.getFileStream();
+    const stream = await ctx.getFileStream();
     const name = 'egg-multipart-test/' + path.basename(stream.filename);
     // 文件处理，上传到云存储等等
     let result;
     try {
-      result = yield ctx.oss.put(name, stream);
+      result = await ctx.oss.put(name, stream);
     } catch (err) {
       // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-      yield sendToWormhole(stream);
+      await sendToWormhole(stream);
       throw err;
     }
 
@@ -359,10 +355,12 @@ module.exports = class UploaderController extends Controller {
       fields: stream.fields,
     };
   }
-};
+}
+
+module.exports = UploaderController;
 ```
 
-要通过 `context.getFileStream` 便捷的获取到用户上传的文件，需要满足两个条件：
+要通过 `ctx.getFileStream` 便捷的获取到用户上传的文件，需要满足两个条件：
 
 - 只支持上传一个文件。
 - 上传文件必须在所有其他的 fields 后面，否则在拿到文件流时可能还获取不到 fields。
@@ -373,13 +371,13 @@ module.exports = class UploaderController extends Controller {
 const sendToWormhole = require('stream-wormhole');
 const Controller = require('egg').Controller;
 
-module.exports = class UploaderController extends Controller {
-  * upload() {
+class UploaderController extends Controller {
+  async upload() {
     const ctx = this.ctx;
     const parts = ctx.multipart();
     let part;
     // parts() return a promise
-    while ((part = yield parts()) != null) {
+    while ((part = await parts()) != null) {
       if (part.length) {
         // 如果是数组的话是 filed
         console.log('field: ' + part[0]);
@@ -400,10 +398,10 @@ module.exports = class UploaderController extends Controller {
         // 文件处理，上传到云存储等等
         let result;
         try {
-          result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
+          result = await ctx.oss.put('egg-multipart-test/' + part.filename, part);
         } catch (err) {
           // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
-          yield sendToWormhole(part);
+          await sendToWormhole(part);
           throw err;
         }
         console.log(result);
@@ -411,7 +409,9 @@ module.exports = class UploaderController extends Controller {
     }
     console.log('and we are done parsing the form!');
   }
-};
+}
+
+module.exports = UploaderController;
 ```
 
 为了保证文件上传的安全，框架限制了支持的的文件格式，框架默认支持白名单如下：
@@ -470,21 +470,21 @@ module.exports = {
 
 除了从 URL 和请求 body 上获取参数之外，还有许多参数是通过请求 header 传递的。框架提供了一些辅助属性和方法来获取。
 
-- `context.headers`，`context.header`，`context.request.headers`，`context.request.header`：这几个方法是等价的，都是获取整个 header 对象。
-- `context.get(name)`，`context.request.get(name)`：获取请求 header 中的一个字段的值，如果这个字段不存在，会返回空字符串。
-- 我们建议用 `context.get(name)` 而不是 `context.headers['name']`，因为前者会自动处理大小写。
+- `ctx.headers`，`ctx.header`，`ctx.request.headers`，`ctx.request.header`：这几个方法是等价的，都是获取整个 header 对象。
+- `ctx.get(name)`，`ctx.request.get(name)`：获取请求 header 中的一个字段的值，如果这个字段不存在，会返回空字符串。
+- 我们建议用 `ctx.get(name)` 而不是 `ctx.headers['name']`，因为前者会自动处理大小写。
 
 由于 header 比较特殊，有一些是 `HTTP` 协议规定了具体含义的（例如 `Content-Type`，`Accept`），有些是反向代理设置的，已经约定俗成（X-Forwarded-For），框架也会对他们增加一些便捷的 getter，详细的 getter 可以查看 [API](https://eggjs.org/api/) 文档。
 
 特别是如果我们通过 `config.proxy = true` 设置了应用部署在反向代理（Nginx）之后，有一些 Getter 的内部处理会发生改变。
 
-#### `context.host`
+#### `ctx.host`
 
 优先读通过 `config.hostHeaders` 中配置的 header 的值，读不到时再尝试获取 host 这个 header 的值，如果都获取不到，返回空字符串。
 
 `config.hostHeaders` 默认配置为 `x-forwarded-host`。
 
-#### `context.protocol`
+#### `ctx.protocol`
 
 通过这个 Getter 获取 protocol 时，首先会判断当前连接是否是加密连接，如果是加密连接，返回 https。
 
@@ -492,15 +492,15 @@ module.exports = {
 
 `config.protocolHeaders` 默认配置为 `x-forwarded-proto`。
 
-#### `context.ips`
+#### `ctx.ips`
 
-通过 `context.ips` 获取请求经过所有的中间设备 IP 地址列表，只有在 `config.proxy = true` 时，才会通过读取 `config.ipHeaders` 中配置的 header 的值来获取，获取不到时为空数组。
+通过 `ctx.ips` 获取请求经过所有的中间设备 IP 地址列表，只有在 `config.proxy = true` 时，才会通过读取 `config.ipHeaders` 中配置的 header 的值来获取，获取不到时为空数组。
 
 `config.ipHeaders` 默认配置为 `x-forwarded-for`。
 
-#### `context.ip`
+#### `ctx.ip`
 
-通过 `context.ip` 获取请求发起方的 IP 地址，优先从 `context.ips` 中获取，`context.ips` 为空时使用连接上发起方的 IP 地址。
+通过 `ctx.ip` 获取请求发起方的 IP 地址，优先从 `ctx.ips` 中获取，`ctx.ips` 为空时使用连接上发起方的 IP 地址。
 
 **注意：`ip` 和 `ips` 不同，`ip` 当 `config.proxy = false` 时会返回当前连接发起者的 `ip` 地址，`ips` 此时会为空数组。**
 
@@ -508,12 +508,11 @@ module.exports = {
 
 HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[Cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 Cookie 指定规则的网站时带上对应的 Cookie 来保证安全性）。
 
-通过 `context.cookies`，我们可以在 Controller 中便捷、安全的设置和读取 Cookie。
+通过 `ctx.cookies`，我们可以在 Controller 中便捷、安全的设置和读取 Cookie。
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class CookieController extends Controller {
-  * add() {
+class CookieController extends Controller {
+  async add() {
     const ctx = this.ctx;
     const count = ctx.cookies.get('count');
     count = count ? Number(count) : 0;
@@ -521,32 +520,31 @@ module.exports = class CookieController extends Controller {
     ctx.body = count;
   }
 
-  * remove() {
+  async remove() {
     const ctx = this.ctx;
     const count = ctx.cookies.set('count', null);
     ctx.status = 204;
   }
-};
+}
 ```
 
 Cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的格式可以设置多个键值对。
 
-Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视， [Cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 Cookie 的用法和安全相关的配置项，可以深入阅读了解。
+Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视，[Cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 Cookie 的用法和安全相关的配置项，可以深入阅读了解。
 
 ### Session
 
 通过 Cookie，我们可以给每一个用户设置一个 Session，用来存储用户身份相关的信息，这份信息会加密后存储在 Cookie 中，实现跨请求的用户身份保持。
 
-框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 Session 。
+框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `ctx.session` 来访问或者修改当前用户 Session 。
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *fetchPosts() {
+class PostController extends Controller {
+  async fetchPosts() {
     const ctx = this.ctx;
     // 获取 Session 上的内容
     const userId = ctx.session.userId;
-    const posts = yield ctx.service.post.fetch(userId);
+    const posts = await ctx.service.post.fetch(userId);
     // 修改 Session 的值
     ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
     ctx.body = {
@@ -554,15 +552,14 @@ module.exports = class PostController extends Controller {
       posts,
     };
   }
-};
+}
 ```
 
 Session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 `null`：
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class SessionController extends Controller {
-  * deleteSession() {
+class SessionController extends Controller {
+  async deleteSession() {
     this.ctx.session = null;
   }
 };
@@ -595,12 +592,11 @@ exports.validate = {
 };
 ```
 
-通过 `context.validate(rule, [body])` 直接对参数进行校验：
+通过 `ctx.validate(rule, [body])` 直接对参数进行校验：
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     // 校验参数
     // 如果不传第二个参数会自动校验 `ctx.request.body`
     this.ctx.validate({
@@ -608,15 +604,14 @@ module.exports = class PostController extends Controller {
       content: { type: 'string' },
     });
   }
-};
+}
 ```
 
 当校验异常时，会直接抛出一个异常，异常的状态码为 422，errors 字段包含了详细的验证不通过信息。如果想要自己处理检查的异常，可以通过 `try catch` 来自行捕获。
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     const ctx = this.ctx;
     try {
       ctx.validate(createRule);
@@ -651,9 +646,8 @@ app.validator.addRule('json', (rule, value) => {
 添加完自定义规则之后，就可以在 Controller 中直接使用这条规则来进行参数校验了
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * handler() {
+class PostController extends Controller {
+  async handler() {
     const ctx = this.ctx;
     // query.test 字段必须是 json 字符串
     const rule = { test: 'json' };
@@ -669,18 +663,17 @@ module.exports = class PostController extends Controller {
 在 Controller 中可以调用任何一个 Service 上的任何方法，同时 Service 是懒加载的，只有当访问到它的时候框架才会去实例化它。
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     const ctx = this.ctx;
     const author = ctx.session.userId;
     const req = Object.assign(ctx.request.body, { author });
     // 调用 service 进行业务处理
-    const res = yield ctx.service.post.create(req);
+    const res = await ctx.service.post.create(req);
     ctx.body = { id: res.id };
     ctx.status = 201;
   }
-};
+}
 ```
 
 Service 的具体写法，请查看 [Service](./service.md) 章节。
@@ -696,9 +689,8 @@ HTTP 设计了非常多的[状态码](https://en.wikipedia.org/wiki/List_of_HTTP
 框架提供了一个便捷的 Setter 来进行状态码的设置
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *create() {
+class PostController extends Controller {
+  async create() {
     // 设置状态码为 201
     this.ctx.status = 201;
   }
@@ -714,10 +706,11 @@ module.exports = class PostController extends Controller {
 - 作为一个 RESTful 的 API 接口 controller，我们通常会返回 Content-Type 为 `application/json` 格式的 body，内容是一个 JSON 字符串。
 - 作为一个 html 页面的 controller，我们通常会返回 Content-Type 为 `text/html` 格式的 body，内容是 html 代码段。
 
+**注意：`ctx.body` 是 `ctx.response.body` 的简写，不要和 `ctx.request.body` 混淆了。**
+
 ```js
-const Controller = require('egg').Controller;
-module.exports = class ViewController extends Controller {
-  * show() {
+class ViewController extends Controller {
+  async show() {
     this.ctx.body = {
       name: 'egg',
       category: 'framework',
@@ -725,20 +718,19 @@ module.exports = class ViewController extends Controller {
     };
   }
 
-  * page() {
+  async page() {
     this.ctx.body = '<html><h1>Hello</h1></html>';
   }
-};
+}
 ```
 
-由于 Node.js 的流式特性，我们还有很多场景需要通过 Stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 Stream，并会同时处理好这个 stream 上的错误事件。
+由于 Node.js 的流式特性，我们还有很多场景需要通过 Stream 返回响应，例如返回一个大文件，代理服务器直接返回上游的内容，框架也支持直接将 body 设置成一个 Stream，并会同时处理好这个 Stream 上的错误事件。
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class ProxyController extends Controller {
-  * proxy() {
+class ProxyController extends Controller {
+  async proxy() {
     const ctx = this.ctx;
-    const result = yield ctx.curl(url, {
+    const result = await ctx.curl(url, {
       streaming: true,
     });
     ctx.set(result.header);
@@ -751,7 +743,18 @@ module.exports = class ProxyController extends Controller {
 #### 渲染模板
 
 通常来说，我们不会手写 HTML 页面，而是会通过模板引擎进行生成。
-Egg 自身没有集成任何一个模板引擎，但是约定了 [View 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
+框架自身没有集成任何一个模板引擎，但是约定了 [View 插件的规范](../advanced/view-plugin.md)，通过接入的模板引擎，可以直接使用 `ctx.render(template)` 来渲染模板生成 html。
+
+```js
+class HomeController extends Controller {
+  async index() {
+    const ctx = this.ctx;
+    await ctx.render('home.tpl', { name: 'egg' });
+    // ctx.body = await ctx.renderString('hi, {{ name }}', { name: 'egg' });
+  }
+};
+```
+
 具体示例可以查看[模板渲染](../core/view.md)。
 
 #### JSONP
@@ -766,8 +769,8 @@ Egg 自身没有集成任何一个模板引擎，但是约定了 [View 插件的
 // app/router.js
 module.exports = app => {
   const jsonp = app.jsonp();
-  app.get('/api/posts/:id', jsonp, 'posts.show');
-  app.get('/api/posts', jsonp, 'posts.list');
+  app.router.get('/api/posts/:id', jsonp, app.controller.posts.show);
+  app.router.get('/api/posts', jsonp, app.controller.posts.list);
 };
 ```
 
@@ -775,16 +778,15 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *show() {
+class PostController extends Controller {
+  async show() {
     this.ctx.body = {
       name: 'egg',
       category: 'framework',
       language: 'Node.js',
     };
   }
-};
+}
 ```
 
 用户请求对应的 URL 访问到这个 controller 的时候，如果 query 中有 `_callback=fn` 参数，将会返回 JSONP 格式的数据，否则返回 JSON 格式的数据。
@@ -808,8 +810,9 @@ exports.jsonp = {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/api/posts/:id', app.jsonp({ callback: 'callback' }), 'posts.show');
-  app.get('/api/posts', app.jsonp({ callback: 'cb' }), 'posts.list');
+  const { router, controller, jsonp } = app;
+  router.get('/api/posts/:id', jsonp({ callback: 'callback' }), controller.posts.show);
+  router.get('/api/posts', jsonp({ callback: 'cb' }), controller.posts.list);
 };
 ```
 
@@ -906,16 +909,15 @@ exports.jsonp = {
 
 我们通过状态码标识请求成功与否、状态如何，在 body 中设置响应的内容。而通过响应的 Header，还可以设置一些扩展信息。
 
-通过 `context.set(key, value)` 方法可以设置一个响应头，`context.set(headers)` 设置多个 Header。
+通过 `ctx.set(key, value)` 方法可以设置一个响应头，`ctx.set(headers)` 设置多个 Header。
 
 ```js
 // app/controller/api.js
-const Controller = require('egg').Controller;
-module.exports = class ProxyController extends Controller {
-  * show() {
+class ProxyController extends Controller {
+  async show() {
     const ctx = this.ctx;
     const start = Date.now();
-    ctx.body = yield ctx.service.post.get();
+    ctx.body = await ctx.service.post.get();
     const used = Date.now() - start;
     // 设置一个响应头
     ctx.set('show-response-time', used.toString());
