@@ -81,7 +81,8 @@ module.exports = HomeController;
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
 };
 ```
 
@@ -217,8 +218,9 @@ module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
-  app.get('/news', app.controller.news.list);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
+  router.get('/news', controller.news.list);
 };
 ```
 
@@ -401,28 +403,15 @@ module.exports = SomeService;
 
 ```js
 // test/app/middleware/robot.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  let app;
-  before(() => {
-    // 创建当前应用的 app 实例
-    app = mock.app();
-    // 等待 app 启动成功，才能执行测试用例
-    return app.ready();
-  });
-
-  afterEach(mock.restore);
-
   it('should block robot', () => {
     return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
   });
-
-  // ...
 });
 ```
 
@@ -431,7 +420,8 @@ describe('test/app/middleware/robot.test.js', () => {
 ```json
 {
   "scripts": {
-    "test": "egg-bin test"
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
   }
 }
 ```
