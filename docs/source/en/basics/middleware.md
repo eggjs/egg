@@ -1,35 +1,35 @@
 title: Middleware
 ---
 
-In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on Koa 1, so the form of middleware in Egg is the same as in Koa 1, i.e. they are both based on [the onion model](../intro/egg-and-koa.md#midlleware) of generator function.
+In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on Koa, so the form of middleware in Egg is the same as in Koa, i.e. they are both based on [the onion model](../intro/egg-and-koa.md#midlleware).
 
 ## Writing Middleware
 
 ### How to write
 
-We begin to see how to write a middleware from a simple gzip example.
+Let's take a look at how to write a middleware from a simple gzip example.
 
 ```js
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
-function* gzip(next) {
-  yield next;
+async function gzip(ctx, next) {
+  await next();
 
   // convert the response body to gzip after the completion of the execution of subsequent middleware
-  let body = this.body;
+  let body = ctx.body;
   if (!body) return;
   if (isJSON(body)) body = JSON.stringify(body);
 
   // set gzip body, correct the response header
   const stream = zlib.createGzip();
   stream.end(body);
-  this.body = stream;
-  this.set('Content-Encoding', 'gzip');
+  ctx.body = stream;
+  ctx.set('Content-Encoding', 'gzip');
 }
 ```
 
-You might find that the middleware's writing style in the framework is exactly the same as in Koa, so any middleware in Koa can be used directly by the framework.
+You might find that the middleware's style in the framework is exactly the same as in Koa, yes,  any middleware in Koa can be used directly by the framework.
 
 ### Configuration
 
@@ -41,32 +41,37 @@ Usually the middleware has its own configuration. In the framework, a complete m
 We will do a simple optimization to the gzip middleware above, making it do gzip compression only if the body size is greater than a configured threshold. So, we need to create a new file `gzip.js` in `app/middleware` directory.
 
 ```js
+// app/middleware/gzip.js
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
 module.exports = options => {
-  return function* gzip(next) {
-    yield next;
+  return async function gzip(ctx, next) {
+    await next();
 
     // convert the response body to gzip after the completion of the execution of subsequent middleware
-    let body = this.body;
+    let body = ctx.body;
     if (!body) return;
 
     // support options.threshold
-    if (options.threshold && this.length < options.threshold) return;
+    if (options.threshold && ctx.length < options.threshold) return;
 
     if (isJSON(body)) body = JSON.stringify(body);
 
     // set gzip body, correct the response header
     const stream = zlib.createGzip();
     stream.end(body);
-    this.body = stream;
-    this.set('Content-Encoding', 'gzip');
+    ctx.body = stream;
+    ctx.set('Content-Encoding', 'gzip');
   };
 };
 ```
 
-## Using Middleware in Application
+## Using Middleware
+
+After writing middleware, we also need to mount it.
+
+### Using Middleware in Application
 
 We can load customized middleware completely by configuration in the application, and decide their order.
 If we need to load the gzip middleware in the above,
@@ -93,16 +98,15 @@ Framework and Plugin don't support `config.middleware`, you should mount it in `
 ```js
 // app.js
 module.exports = app => {
-  // 在中间件最前面统计请求时间
+  // put to the first place to count request cost
   app.config.coreMiddleware.unshift('report');
 };
 
 // app/middleware/report.js
 module.exports = () => {
-  return function* (next) {
+  return async function (ctx, next) {
     const startTime = Date.now();
-    yield next;
-    // 上报请求时间
+    await next();
     reportTime(Date.now() - startTime);
   }
 };
@@ -119,7 +123,7 @@ If you do want to take effect on the corresponding routes, you could just mount 
 ```js
 module.exports = app => {
   const gzip = app.middlewares.gzip({ threshold: 1024 });
-  app.get('/needgzip', gzip, app.controller.handler);
+  app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
 
@@ -141,8 +145,9 @@ module.exports = {
 ## Use Koa's Middleware
 
 The framework is compatible with all kinds of middleware of Koa 1.x and 2.x, including:
-- generator function: `function* (next) {}`
+
 - async function: `async (ctx, next) => {}`
+- generator function: `function* (next) {}`
 - common function: `(ctx, next) => {}`
 
 All middleware used by Koa can be directly used by the framework, too.
@@ -163,19 +168,20 @@ We can load the middleware according to the framework specification like this:
 
 ```js
 // app/middleware/compress.js
-
 // interfaces(`(options) => middleware`) exposed by koa-compress match the framework middleware requirements
 module.exports = require('koa-compress');
 ```
 
 ```js
 // config/config.default.js
-
-exports.middleware = [ 'compress' ];
-exports.compress = {
-  threshold: 2048,
+module.exports = {
+  middleware: [ 'compress' ],
+  compress: {
+    threshold: 2048,
+  },
 };
 ```
+
 ## General Configuration
 
 These general config fields are supported by middleware loaded by the application layer or built in by the framework:

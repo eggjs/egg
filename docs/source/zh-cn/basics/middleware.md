@@ -1,7 +1,7 @@
 title: Middleware 中间件
 ---
 
-在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 1 实现的，所以 Egg 的中间件形式和 Koa 1 的中间件形式是一样的，都是基于 generator function 的[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
+在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 实现的，所以 Egg 的中间件形式和 Koa 的中间件形式是一样的，都是基于[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
 
 ## 编写中间件
 
@@ -10,22 +10,23 @@ title: Middleware 中间件
 我们先来通过编写一个简单的 gzip 中间件，来看看中间件的写法。
 
 ```js
+// app/middleware/gzip.js
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
-function* gzip(next) {
-  yield next;
+async function gzip(ctx, next) {
+  await next();
 
   // 后续中间件执行完成后将响应体转换成 gzip
-  let body = this.body;
+  let body = ctx.body;
   if (!body) return;
   if (isJSON(body)) body = JSON.stringify(body);
 
   // 设置 gzip body，修正响应头
   const stream = zlib.createGzip();
   stream.end(body);
-  this.body = stream;
-  this.set('Content-Encoding', 'gzip');
+  ctx.body = stream;
+  ctx.set('Content-Encoding', 'gzip');
 }
 ```
 
@@ -41,32 +42,37 @@ function* gzip(next) {
 我们将上面的 gzip 中间件做一个简单的优化，让它支持指定只有当 body 大于配置的 threshold 时才进行 gzip 压缩，我们要在 `app/middleware` 目录下新建一个文件 `gzip.js`
 
 ```js
+// app/middleware/gzip.js
 const isJSON = require('koa-is-json');
 const zlib = require('zlib');
 
 module.exports = options => {
-  return function* gzip(next) {
-    yield next;
+  return async function gzip(ctx, next) {
+    await next();
 
     // 后续中间件执行完成后将响应体转换成 gzip
-    let body = this.body;
+    let body = ctx.body;
     if (!body) return;
 
     // 支持 options.threshold
-    if (options.threshold && this.length < options.threshold) return;
+    if (options.threshold && ctx.length < options.threshold) return;
 
     if (isJSON(body)) body = JSON.stringify(body);
 
     // 设置 gzip body，修正响应头
     const stream = zlib.createGzip();
     stream.end(body);
-    this.body = stream;
-    this.set('Content-Encoding', 'gzip');
+    ctx.body = stream;
+    ctx.set('Content-Encoding', 'gzip');
   };
 };
 ```
 
-## 在应用中使用中间件
+## 使用中间件
+
+中间件编写完成后，我们还需要手动挂载，支持以下方式：
+
+### 在应用中使用中间件
 
 在应用中，我们可以完全通过配置来加载自定义的中间件，并决定它们的顺序。
 
@@ -86,7 +92,7 @@ module.exports = {
 
 该配置最终将在启动时合并到 `app.config.appMiddleware`。
 
-## 在框架和插件中使用中间件
+### 在框架和插件中使用中间件
 
 框架和插件不支持在 `config.default.js` 中匹配 `middleware`，需要通过以下方式：
 
@@ -99,9 +105,9 @@ module.exports = app => {
 
 // app/middleware/report.js
 module.exports = () => {
-  return function* (next) {
+  return async function (ctx, next) {
     const startTime = Date.now();
-    yield next;
+    await next();
     // 上报请求时间
     reportTime(Date.now() - startTime);
   }
@@ -110,7 +116,7 @@ module.exports = () => {
 
 应用层定义的中间件（`app.config.appMiddleware`）和框架默认中间件（`app.config.coreMiddleware`）都会被加载器加载，并挂载到 `app.middleware` 上。
 
-## router 中使用中间件
+### router 中使用中间件
 
 以上两种方式配置的中间件是全局的，会处理每一次请求。
 如果你只想针对单个路由生效，可以直接在 `app/router.js` 中实例化和挂载，如下：
@@ -118,7 +124,7 @@ module.exports = () => {
 ```js
 module.exports = app => {
   const gzip = app.middlewares.gzip({ threshold: 1024 });
-  app.get('/needgzip', gzip, app.controller.handler);
+  app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
 
@@ -140,8 +146,8 @@ module.exports = {
 
 框架兼容 Koa 1.x 和 2.x 支持的所有形式的中间件，包括：
 
-- generator function: `function* (next) {}`
 - async function: `async (ctx, next) => {}`
+- generator function: `function* (next) {}`
 - common function: `(ctx, next) => {}`
 
 所有可以在 Koa 中使用的中间件都可以直接在框架中使用。
@@ -162,17 +168,17 @@ app.use(compress(options));
 
 ```js
 // app/middleware/compress.js
-
 // koa-compress 暴露的接口(`(options) => middleware`)和框架对中间件要求一致
 module.exports = require('koa-compress');
 ```
 
 ```js
 // config/config.default.js
-
-exports.middleware = [ 'compress' ];
-exports.compress = {
-  threshold: 2048,
+module.exports = {
+  middleware: [ 'compress' ],
+  compress: {
+    threshold: 2048,
+  },
 };
 ```
 
