@@ -433,21 +433,12 @@ All the test files should place at `{app_root}/test/**/*.test.js`.
 const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  before(() => {
-    app = mock.app();
-    return app.ready();
-  });
-
-  afterEach(mock.restore);
-
   it('should block robot', () => {
     return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
   });
-
-  // ...
 });
 ```
 
