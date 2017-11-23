@@ -87,7 +87,8 @@ Then edit the router file and add a mapping.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
 };
 ```
 
@@ -231,8 +232,9 @@ module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
-  app.get('/news', app.controller.news.list);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
+  router.get('/news', controller.news.list);
 };
 ```
 
@@ -347,7 +349,6 @@ Suppose that we wanted to prohibit accesses from Baidu crawlers.
 Smart developers might quickly guess that we can achieve it by adding a [middleware](../basics/middleware.md)
 that checks the User-Agent.
 
-
 ```js
 // app/middleware/robot.js
 // options === app.config.robot
@@ -429,11 +430,9 @@ All the test files should place at `{app_root}/test/**/*.test.js`.
 
 ```js
 // test/app/middleware/robot.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  let app;
   before(() => {
     app = mock.app();
     return app.ready();
@@ -457,7 +456,8 @@ Then add `npm scripts`.
 ```json
 {
   "scripts": {
-    "test": "egg-bin test"
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
   }
 }
 ```
