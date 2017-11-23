@@ -28,7 +28,24 @@ describe('test/lib/egg.test.js', () => {
       assert(json.config.tips === 'hello egg');
       json = require(path.join(baseDir, 'run/application_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
+      // should dump dynamic config
       assert(json.config.tips === 'hello egg started');
+    });
+
+    it('should dump router json', () => {
+      const routers = require(path.join(baseDir, 'run/router.json'));
+      // 13 static routers on app/router.js and 1 dynamic router on app.js
+      assert(routers.length === 14);
+      for (const router of routers) {
+        assert.deepEqual(Object.keys(router), [
+          'name',
+          'methods',
+          'paramNames',
+          'path',
+          'regexp',
+          'stack',
+        ]);
+      }
     });
 
     it('should dump config meta', () => {
@@ -219,7 +236,6 @@ describe('test/lib/egg.test.js', () => {
     after(() => app.close());
 
     it('should access base context properties success', function* () {
-      mm(app.config.logger, 'level', 'DEBUG');
       yield app.httpRequest()
         .get('/')
         .expect('hello')
