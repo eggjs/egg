@@ -2,15 +2,16 @@ title: controller
 ---
 
 ## What is Controller
+
 [The previous chapter](./router.md) says router is mainly used to describe the relationship between the request URL and the Controller that processes the request eventually, so what is a Controller used for?
 
-Simply speaking, a Controller is used for **paring users' input and send back the relative result after processing**, for example
+Simply speaking, a Controller is used for **parsing user input and send back the relative result after processing**, for example:
 
 - In [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) interfaces, Controller accepts parameters from users and sends selected results back to user or modifies data in the database.
 - In HTTP page requests, Controller renders related templates to HTML according to different URLs requested then send back to users.
-- In proxy servers, Controller transfers user quests to other servers and send back process results to users in return.
+- In proxy servers, Controller transfers user queries to other servers and send back process results to users in return.
 
-The framework recommends the Controller layer is responsible for processing request parameters(verification and transformation) from user requests, then calls related business methods in [service](./service.md), encapsulates and send back business result:
+The framework recommends the Controller layer is responsible for processing request parameters(verification and transformation) from user requests, then calls related business methods in [Service](./service.md), encapsulates and send back business result:
 
 1. retrieves parameters passed by HTTP.
 1. verifies and assembles parameters.
@@ -29,7 +30,7 @@ You can write a Controller by defining a Controller class:
 // app/controller/post.js
 const Controller = require('egg').Controller;
 class PostController extends Controller {
-  * create() {
+  async create() {
     const { ctx, service } = this;
     const createRule = {
       title: { type: 'string' },
@@ -41,7 +42,7 @@ class PostController extends Controller {
     const author = ctx.session.userId;
     const req = Object.assign(ctx.request.body, { author });
     // calls Service to handle business
-    const res = yield service.post.create(req);
+    const res = await service.post.create(req);
     // set response content and status code
     ctx.body = { id: res.id };
     ctx.status = 201;
@@ -49,21 +50,33 @@ class PostController extends Controller {
 }
 module.exports = PostController;
 ```
+
 We've defined a `PostController` class above and every method of this Controller can be used in Router.
 
 ```js
 // app/router.js
-module.exports = {
-  app.post('createPost', '/api/posts', 'post.create');
+module.exports = app => {
+  const { router, controller } = app;
+  router.post('createPost', '/api/posts', controller.post.create);
 }
 ```
 
-The defined Controller class initializes a new object for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Controller class inherits `app.Controller`.
+Multi-level directory is supported, for example, put the above code into `app/controller/sub/post.js`, then we could mount it by:
+
+```js
+// app/router.js
+module.exports = app => {
+  app.router.post('createPost', '/api/posts', app.controller.sub.post.create);
+}
+```
+
+The defined Controller class initializes a new object for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Controller class inherits `egg.Controller`.
 
 - `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 - `this.app`: the instance of [Application](./extend.md#application) for current request, through which we can access global objects and methods provided by the framework.
 - `this.service`: [Service](./service.md) defined by the application, through which we can access the abstract business layer, equivalent to `this.ctx.service`.
 - `this.config`: the application's run-time [config](./config.md).
+- `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level log, almost the same as [context logger](../core/logger.md#context-logger), but it will append Controller file path for quickly track.
 
 #### Customized Controller Base Class
 
@@ -99,39 +112,37 @@ Now we can use base class' methods when defining Controllers for the application
 
 ```js
 //app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.service.listByUser(this.user);
-      this.success(posts);
-    }
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.service.listByUser(this.user);
+    this.success(posts);
+  }
+}
 ```
 
 ### Methods Style Controller (not recommend, only for compatbility)
 
-Every Controller is a generation function, whose `this` is point to the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
+Every Controller is an async function, whose argument is the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 
 For example, when we define a Controller relative to `POST /api/posts`, we create a `post.js` file under `app/controller` directory.
 
 ```js
 // app/controller/post.js
-exports.create = function* () {
+exports.create = async ctx => {
   const createRule = {
     title: { type: 'string' },
     content: { type: 'string' },
   };
   // verify parameters
-  this.validate(createRule);
+  ctx.validate(createRule);
   // assemble parameters
-  const author = this.session.userId;
-  const req = Object.assign(this.request.body, { author });
+  const author = ctx.session.userId;
+  const req = Object.assign(ctx.request.body, { author });
   // calls Service to handle business
-  const res = yield this.service.post.create(req);
+  const res = await ctx.service.post.create(req);
   // set response content and status code
-  this.body = { id: res.id };
-  this.status = 201;
+  ctx.body = { id: res.id };
+  ctx.status = 201;
 };
 ```
 
@@ -193,22 +204,21 @@ It can be seen from the above HTTP request examples that there are many places c
 
 ### query
 
-Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `context.query`:
+Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `ctx.query`:
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     const query = this.ctx.query;
     // {
     //   category: 'egg',
     //   language: 'node',
     // }
   }
-};
+}
 ```
 
-If duplicated keys exists in Query String, only the 1st value of this key is used by `context.query` and all other values it appear later will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `context.query` acquires is `{ category: 'egg' }`.
+If duplicated keys exists in Query String, only the 1st value of this key is used by `ctx.query` and all other values it appear later will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `ctx.query` acquires is `{ category: 'egg' }`.
 
 This is for unity reason, since, by design, we usually do not let users pass parameters with same keys in Query String then we write codes like below:
 
@@ -219,44 +229,40 @@ if (key.startsWith('egg')) {
 }
 ```
 
-Or if someone passes parameters with same keys in Query String on purpose, system error may be thrown. To avoid this, the framework guarantee the parameter be of string type whenever it is acquired from `context.query`.
+Or if someone passes parameters with same keys in Query String on purpose, system error may be thrown. To avoid this, the framework guarantee the parameter be of string type whenever it is acquired from `ctx.query`.
 
 #### queries
 
-Sometimes our system is designed to accept same keys sent by users, like `GET /posts?category=egg&id=1&id=2&id=3`. For this situation, the framework provides `context.queries` object that parses Query String and put duplicated data into an array:
+Sometimes our system is designed to accept same keys sent by users, like `GET /posts?category=egg&id=1&id=2&id=3`. For this situation, the framework provides `ctx.queries` object that parses Query String and put duplicated data into an array:
 
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
-
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     console.log(this.ctx.queries);
     // {
     //   category: [ 'egg' ],
     //   id: [ '1', '2', '3' ],
     // }
   }
-};
+}
 ```
 
-The value type for keys in `context.queries` is array for sure if any.
+The value type for keys in `ctx.queries` is array for sure if any.
 
 ### Router params
 
-In [Router](./router.md) part, we say Router is allowed to declare parameters which can be acquired by `context.params`.
+In [Router](./router.md) part, we say Router is allowed to declare parameters which can be acquired by `ctx.params`.
 
 ```js
 // app.get('/projects/:projectId/app/:appId', 'app.listApp');
 // GET /projects/1/app/2
-
-const Controller = require('egg').Controller;
-module.exports = class AppController extends Controller {
-  * listApp() {
+class AppController extends Controller {
+  async listApp() {
     assert.equal(this.ctx.params.projectId, '1');
     assert.equal(this.ctx.params.appId, '2');
   }
-};
+}
 ```
 
 ### body
@@ -268,7 +274,7 @@ Although we can pass parameters through URL, but constraints exist:
 
 In the above HTTP request message example, we can learn, following the header, there's a body part that can be used to put parameters for POST, PUT and DELETE, etc. The `Content-Type` is to be sent by clients(browser) in the same time indicating the type of request body. Two mostly used data format are JSON and Form in Web developing for transferring data.
 
-The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse these 2 kinds of request to be an object mounting to `context.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `context.request.body` cannot be used for GET and HEAD methods.
+The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse these 2 kinds of request to be an object mounting to `ctx.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `ctx.request.body` cannot be used for GET and HEAD methods.
 
 ```js
 // POST /api/posts HTTP/1.1
@@ -276,14 +282,12 @@ The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by 
 // Content-Type: application/json; charset=UTF-8
 //
 // {"title": "controller", "content": "what is controller"}
-
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * listPosts() {
+class PostController extends Controller {
+  async listPosts() {
     assert.equal(this.ctx.request.body.title, 'controller');
     assert.equal(this.ctx.request.body.content, 'what is controller');
   }
-};
+}
 ```
 
 The framework configures the bodyParser using default parameters and features below are available out of the box:
@@ -306,11 +310,15 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 **Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy, if any in front of our application, should be adjusted as well to support the newly configured length of the body.**
 
+**A common mistake is to confuse `ctx.request.body` and `ctx.body`(which is alias for `ctx.response.body`).**
+
 ### Acquire Uploaded Files
 
 Files, too, can be sent by the request body besides parameters, and browsers usually send file in `multipart/form-data` type. The uploaded files can be acquired by the framework built-in plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
-In Controller, we can acquire the file stream of the uploaded file through interface `context.getFileStream*()`.
+For full example, see [eggjs/examples/multipart](https://github.com/eggjs/examples/tree/master/multipart).
+
+In Controller, we can acquire the file stream of the uploaded file through interface `ctx.getFileStream()`.
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
@@ -325,18 +333,18 @@ const path = require('path');
 const sendToWormhole = require('stream-wormhole');
 const Controller = require('egg').Controller;
 
-module.exports = class UploaderController extends Controller {
-  * upload() {
+class UploaderController extends Controller {
+  async upload() {
     const ctx = this.ctx;
-    const stream = yield ctx.getFileStream();
+    const stream = await ctx.getFileStream();
     const name = 'egg-multipart-test/' + path.basename(stream.filename);
     // file processing, e.g. uploading to the cloud storage etc.
     let result;
     try {
-      result = yield ctx.oss.put(name, stream);
+      result = await ctx.oss.put(name, stream);
     } catch (err) {
       // must consume the file stream, or the browser will get stuck
-      yield sendToWormhole(stream);
+      await sendToWormhole(stream);
       throw err;
     }
 
@@ -347,9 +355,11 @@ module.exports = class UploaderController extends Controller {
     };
   }
 };
+
+module.exports = UploaderController;
 ```
 
-To acquire user uploaded files conveniently by `context.getFileStream`, 2 conditions must be matched:
+To acquire user uploaded files conveniently by `ctx.getFileStream`, 2 conditions must be matched:
 
 - only one file can be uploaded in the same time.
 - file uploading must appear after other fields, otherwise we may can't access fields when we got file stream.
@@ -360,13 +370,13 @@ If more than 1 file are to be uploaded, `ctx.getFileStream()` is no longer the w
 const sendToWormhole = require('stream-wormhole');
 const Controller = require('egg').Controller;
 
-module.exports = class UploaderController extends Controller {
-  * upload() {
+class UploaderController extends Controller {
+  async upload() {
     const ctx = this.ctx;
     const parts = ctx.multipart();
     let part;
     // parts() return a promise
-    while ((part = yield parts()) != null) {
+    while ((part = await parts()) != null) {
       if (part.length) {
         // it is field in case of arrays
         console.log('field: ' + part[0]);
@@ -387,10 +397,10 @@ module.exports = class UploaderController extends Controller {
         // file processing, e.g. uploading to the cloud storage etc.
         let result;
         try {
-          result = yield ctx.oss.put('egg-multipart-test/' + part.filename, part);
+          result = await ctx.oss.put('egg-multipart-test/' + part.filename, part);
         } catch (err) {
           // must consume the file stream, or the browser will get stuck
-          yield sendToWormhole(part);
+          await sendToWormhole(part);
           throw err;
         }
         console.log(result);
@@ -399,6 +409,8 @@ module.exports = class UploaderController extends Controller {
     console.log('and we are done parsing the form!');
   }
 };
+
+module.exports = UploaderController;
 ```
 
 To ensure the security of uploading files, the framework limits supported file formats and the whitelist supported by default is below:
@@ -457,21 +469,21 @@ module.exports = {
 
 Apart from URL and request body, some parameters can be sent by request header. The framework provides some helper attributes and methods to retrieve them.
 
-- `context.headers`, `context.header`, `context.request.headers`, `context.request.header`: these methods are equivalent and all of them get the whole header object.
-- `context.get(name)`, `context.request.get(name)`: get the value of one parameter from the request header, if the parameter does not exist, an empty string is returned.
-- We recommend you use `context.get(name)` rather than `context.headers['name']` because the former handles upper/lower case automatically.
+- `ctx.headers`, `ctx.header`, `ctx.request.headers`, `ctx.request.header`: these methods are equivalent and all of them get the whole header object.
+- `ctx.get(name)`, `ctx.request.get(name)`: get the value of one parameter from the request header, if the parameter does not exist, an empty string is returned.
+- We recommend you use `ctx.get(name)` rather than `ctx.headers['name']` because the former handles upper/lower case automatically.
 
 Since header is special, some of which are given specific meanings by the `HTTP` protocol (like `Content-Type`, `Accept`), some are set by the reverse proxy as a convention (X-Forwarded-For), and the framework provides some convenient getters for them as well, for more details please refer to [API](https://eggjs.org/api/).
 
 Specially when we set `config.proxy = true` to deploy the application behind the reverse proxy (Nginx), some Getters' internal process may be changed.
 
-#### `context.host`
+#### `ctx.host`
 
 Reads the header's value configured by `config.hostHeaders` firstly, if fails, then it tries to get the value of host header, if fails again, it returns an empty string.
 
 `config.hostHeaders` defaults to `x-forwarded-host`.
 
-#### `context.protocol`
+#### `ctx.protocol`
 
 When you get protocol through this Getter, it checks whether current connection is an encrypted one or not, if it is, it returns HTTPS.
 
@@ -479,15 +491,15 @@ When current connection is not an encrypted one, it reads the header's value con
 
 `config.protocolHeaders` defaults to `x-forwarded-proto`.
 
-#### `context.ips`
+#### `ctx.ips`
 
-A IP address list of all intermediate equipments that a request go through can be get by `context.ips`, only when `config.proxy = true`, it reads the header's value configured by `config.ipHeaders` instead, if fails, it returns an empty array.
+A IP address list of all intermediate equipments that a request go through can be get by `ctx.ips`, only when `config.proxy = true`, it reads the header's value configured by `config.ipHeaders` instead, if fails, it returns an empty array.
 
 `config.ipHeaders` defaults to `x-forwarded-for`.
 
-#### `context.ip`
+#### `ctx.ip`
 
-The IP address of the sender of the request can be get by `context.ip`, it reads from `context.ips` firstly, if `context.ips` is empty, it returns the connection sender's IP address.
+The IP address of the sender of the request can be get by `ctx.ip`, it reads from `ctx.ips` firstly, if `ctx.ips` is empty, it returns the connection sender's IP address.
 
 **Note: `ip` and `ips` are different, if `config.proxy = false`, `ip` returns the connection sender's IP address while `ips` returns an empty array.**
 
@@ -495,12 +507,11 @@ The IP address of the sender of the request can be get by `context.ip`, it reads
 
 All HTTP requests are stateless but, on the contrary, our Web applications usually need to know who sends the requests. To make it through, the HTTP protocol designs a special request header: [Cookie](https://en.wikipedia.org/wiki/HTTP_cookie). With the response header (set-cookie), the server is able to send a few data to the client, the browser saves these data according to the protocol and brings them along with the next request(according to the protocol and for safety reasons, only when accessing websites that match the rules specified by Cookie does the browser bring related Cookies).
 
-Through `context.cookies`, we can conveniently and safely set and get Cookie in Controller.
+Through `ctx.cookies`, we can conveniently and safely set and get Cookie in Controller.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class CookieController extends Controller {
-  * add() {
+class CookieController extends Controller {
+  async add() {
     const ctx = this.ctx;
     const count = ctx.cookies.get('count');
     count = count ? Number(count) : 0;
@@ -508,12 +519,12 @@ module.exports = class CookieController extends Controller {
     ctx.body = count;
   }
 
-  * remove() {
+  async remove() {
     const ctx = this.ctx;
     const count = ctx.cookies.set('count', null);
     ctx.status = 204;
   }
-};
+}
 ```
 
 Although Cookie is only a header in HTTP, multiple key-value pairs can be set in the format of `foo=bar;foo1=bar1;`.
@@ -524,16 +535,15 @@ In Web applications, Cookie is usually used to send the identity information of 
 
 By using Cookie, we can create an individual Session specific to every user to store user identity information related data which is encrypted then stored in Cookie to perform session persistence across requests.
 
-The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `context.session` for us to get or set current user's Session.
+The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `ctx.session` for us to get or set current user's Session.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *fetchPosts() {
+class PostController extends Controller {
+  async fetchPosts() {
     const ctx = this.ctx;
     // get data from Session
     const userId = ctx.session.userId;
-    const posts = yield ctx.service.post.fetch(userId);
+    const posts = await ctx.service.post.fetch(userId);
     // set value to Session
     ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
     ctx.body = {
@@ -541,15 +551,14 @@ module.exports = class PostController extends Controller {
       posts,
     };
   }
-};
+}
 ```
 
 It's quite intuition to use Session, just get or set directly, and if set it to `null`, it is deleted.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class SessionController extends Controller {
-  * deleteSession() {
+class SessionController extends Controller {
+  async deleteSession() {
     this.ctx.session = null;
   }
 };
@@ -582,12 +591,11 @@ exports.validate = {
 };
 ```
 
-Validate parameters directly through `context.validate(rule, [body])`:
+Validate parameters directly through `ctx.validate(rule, [body])`:
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     // validate parameters
     // if the second parameter is absent, `ctx.request.body` is validated automatically
     this.ctx.validate({
@@ -595,15 +603,14 @@ module.exports = class PostController extends Controller {
       content: { type: 'string' },
     });
   }
-};
+}
 ```
 
 When the validation fails, an exception will be thrown immediately with an error code of 422 and an errors field containing the detailed information why it fails. You can capture this exception through `try catch` and handle it all by yourself.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     const ctx = this.ctx;
     try {
       ctx.validate(createRule);
@@ -615,6 +622,7 @@ module.exports = class PostController extends Controller {
   }
 };
 ```
+
 ### Validation Rules
 
 The parameter validation is done by [Parameter](https://github.com/node-modules/parameter#rule), and all supported validation rules can be found in its document.
@@ -637,15 +645,14 @@ app.validator.addRule('json', (rule, value) => {
 After adding the customized rule, it can be used immediately in Controller to do parameter validation.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * handler() {
+class PostController extends Controller {
+  async handler() {
     const ctx = this.ctx;
     // query.test field must be a json string
     const rule = { test: 'json' };
     ctx.validate(rule, ctx.query);
   }
-};
+}
 ```
 
 ## Using Service
@@ -655,14 +662,13 @@ We do not prefer to implement too many business logics in Controller, so a [Serv
 In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is initialized by the framework on the first time it is accessed.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  * create() {
+class PostController extends Controller {
+  async create() {
     const ctx = this.ctx;
     const author = ctx.session.userId;
     const req = Object.assign(ctx.request.body, { author });
     // using service to handle business logics
-    const res = yield ctx.service.post.create(req);
+    const res = await ctx.service.post.create(req);
     ctx.body = { id: res.id };
     ctx.status = 201;
   }
@@ -682,13 +688,12 @@ HTTP designs many [Status Code](https://en.wikipedia.org/wiki/List_of_HTTP_statu
 The framework provides a convenient Setter to set the status code:
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *create() {
+class PostController extends Controller {
+  async create() {
     // set status code to 201
     this.ctx.status = 201;
   }
-};
+}
 ```
 
 As to which status code should be used for a specific case, please refer to status code meanings on [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
@@ -700,10 +705,11 @@ Most data is sent to receivers through the body and, just like the body in the r
 - for a RESTful API controller, we usually send a body whose Content-Type is `application/json`, indicating it's a JSON string.
 - for a HTML page controller, we usually send a body whose Content-Type is `text/html`, indicating it's a piece of HTML code.
 
+**Note: `ctx.body` is alias of `ctx.response.body`, don't confuse with `ctx.request.body`.**
+
 ```js
-const Controller = require('egg').Controller;
-module.exports = class ViewController extends Controller {
-  * show() {
+class ViewController extends Controller {
+  async show() {
     this.ctx.body = {
       name: 'egg',
       category: 'framework',
@@ -711,33 +717,43 @@ module.exports = class ViewController extends Controller {
     };
   }
 
-  * page() {
+  async page() {
     this.ctx.body = '<html><h1>Hello</h1></html>';
   }
-};
+}
 ```
 
 Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upstream straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
 
 ```js
-const Controller = require('egg').Controller;
-module.exports = class ProxyController extends Controller {
-  * proxy() {
+class ProxyController extends Controller {
+  async proxy() {
     const ctx = this.ctx;
-    const result = yield ctx.curl(url, {
+    const result = await ctx.curl(url, {
       streaming: true,
     });
     ctx.set(result.header);
     // result.res is stream
     ctx.body = result.res;
   }
-};
+}
 ```
 
 #### Rendering Template
 
 Usually we do not write HTML pages by hand, instead we generate them by a template engine.
 Egg itself does not integrate any template engine, but it establishes the [View Plugin Specification](../advanced/view-plugin.md). Once the template engine is loaded, `ctx.render(template)` can be used to render templates to HTML directly.
+
+```js
+class HomeController extends Controller {
+  async index() {
+    const ctx = this.ctx;
+    await ctx.render('home.tpl', { name: 'egg' });
+    // ctx.body = await ctx.renderString('hi, {{ name }}', { name: 'egg' });
+  }
+};
+```
+
 For detailed examples, please refer to [Template Rendering](../core/view.md).
 
 #### JSONP
@@ -752,8 +768,8 @@ Since misuse of JSONP leads to dozens of security issues, the framework supplies
 // app/router.js
 module.exports = app => {
   const jsonp = app.jsonp();
-  app.get('/api/posts/:id', jsonp, 'posts.show');
-  app.get('/api/posts', jsonp, 'posts.list');
+  app.router.get('/api/posts/:id', jsonp, app.controller.posts.show);
+  app.router.get('/api/posts', jsonp, app.controller.posts.list);
 };
 ```
 
@@ -761,16 +777,15 @@ module.exports = app => {
 
 ```js
 // app/controller/posts.js
-const Controller = require('egg').Controller;
-module.exports = class PostController extends Controller {
-  *show() {
+class PostController extends Controller {
+  async show() {
     this.ctx.body = {
       name: 'egg',
       category: 'framework',
       language: 'Node.js',
     };
   }
-};
+}
 ```
 
 When user requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
@@ -794,8 +809,9 @@ Also we can overwrite the default configuration in `app.jsonp()` when creating t
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/api/posts/:id', app.jsonp({ callback: 'callback' }), 'posts.show');
-  app.get('/api/posts', app.jsonp({ callback: 'cb' }), 'posts.list');
+  const { router, controller, jsonp } = app;
+  router.get('/api/posts/:id', jsonp({ callback: 'callback' }), controller.posts.show);
+  router.get('/api/posts', jsonp({ callback: 'cb' }), controller.posts.list);
 };
 ```
 
@@ -891,19 +907,18 @@ exports.jsonp = {
 
 We identify the request success or not, in which state by the status code and set response content in the body. By setting the response header, extended information can be set as well.
 
-`context.set(key, value)` sets one response header and `context.set(headers)` sets many in one time.
+`ctx.set(key, value)` sets one response header and `ctx.set(headers)` sets many in one time.
 
 ```js
 // app/controller/api.js
-const Controller = require('egg').Controller;
-module.exports = class ProxyController extends Controller {
-  * show() {
+class ProxyController extends Controller {
+  async show() {
     const ctx = this.ctx;
     const start = Date.now();
-    ctx.body = yield ctx.service.post.get();
+    ctx.body = await ctx.service.post.get();
     const used = Date.now() - start;
     // set one response header
     ctx.set('show-response-time', used.toString());
   }
-};
+}
 ```
