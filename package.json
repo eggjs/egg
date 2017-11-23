@@ -23,7 +23,7 @@
     "delegates": "^1.0.0",
     "egg-cluster": "^1.12.5",
     "egg-cookies": "^2.2.1",
-    "egg-core": "^4.1.0",
+    "egg-core": "^4.2.0",
     "egg-development": "^2.0.0",
     "egg-i18n": "^2.0.0",
     "egg-jsonp": "^2.0.0",
