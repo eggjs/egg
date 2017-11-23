@@ -1,7 +1,7 @@
 title: Framework Built-in Objects
 ---
 
-Before read it, we first introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extend the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up document.
+At this chapter, we will introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extend the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up document.
 
 ## Application
 
@@ -26,38 +26,32 @@ Almost all files (Controller, Service, Schedule, etc.) loaded by the [Loader] (.
 
   ```js
   // app/controller/user.js
-  module.exports = app => {
-    return class UserController extends app.Controller {
-      * fetch() {
-        this.ctx.body = app.cache.get(this.ctx.query.id);
-      }
-    };
-  };
+  class UserController extends Controller {
+    async fetch() {
+      this.ctx.body = app.cache.get(this.ctx.query.id);
+    }
+  }
   ```
 
 Like the [Koa], on the Context object, we can access the Application object via `ctx.app`. Use the above Controller file as an example:
 
 ```js
 // app/controller/user.js
-module.exports = app => {
-  return class UserController extends app.Controller {
-    * fetch() {
-      this.ctx.body = this.ctx.app.cache.get(this.ctx.query.id);
-    }
-  };
-};
+class UserController extends Controller {
+  async fetch() {
+    this.ctx.body = this.ctx.app.cache.get(this.ctx.query.id);
+  }
+}
 ```
 
 In instance objects that inherit from the Controller and Service base classes, the Application object can be accessed via `this.app`.
 
 ```js
 // app/controller/user.js
-module.exports = app => {
-  return class UserController extends app.Controller {
-    * fetch() {
-      this.ctx.body = this.app.cache.get(this.ctx.query.id);
-    }
-  };
+class UserController extends Controller {
+  async fetch() {
+    this.ctx.body = this.app.cache.get(this.ctx.query.id);
+  }
 };
 ```
 
@@ -91,10 +85,10 @@ In addition to the request can get the Context instance, in some non-request sce
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     const ctx = app.createAnonymousContext();
     // preload before app start
-    yield ctx.service.posts.load();
+    await ctx.service.posts.load();
   });
 }
 ```
@@ -103,8 +97,8 @@ Each task in [Schedule](./schedule.md) takes a Context instance as a parameter s
 
 ```js
 // app/schedule/refresh.js
-exports.task = function* (ctx) {
-  yield ctx.service.posts.refresh();
+exports.task = async ctx => {
+  await ctx.service.posts.refresh();
 };
 ```
 
@@ -120,15 +114,13 @@ We can get the Request(`ctx.request`) and Response (` ctx.response`) instances o
 
 ```js
 // app/controller/user.js
-module.exports = app => {
-  return class UserController extends app.Controller {
-    * fetch() {
-      const { app, ctx } = this;
-      const id = ctx.request.query.id;
-      ctx.response.body = app.cache.get(id);
-    }
-  };
-};
+class UserController extends Controller {
+  async fetch() {
+    const { app, ctx } = this;
+    const id = ctx.request.query.id;
+    ctx.response.body = app.cache.get(id);
+  }
+}
 ```
 
 - [Koa] will proxy some methods and properties of Request and Response on Context, see [Koa.Context].
@@ -150,17 +142,18 @@ In the Controller file, there are two ways to refer to the Controller base class
 ```js
 // app/controller/user.js
 
-// get from app instance (recommend)
+// get from egg (recommend)
+const Controller = require('egg').Controller;
+class UserController extends Controller {
+  // implement
+}
+module.exports = UserController;
+
+// get from app instance
 module.exports = app => {
   return class UserController extends app.Controller {
     // implement
   };
-};
-
-// get from egg
-const egg = require('egg');
-module.exports = class UserController extends egg.Controller {
-  // implement
 };
 ```
 
@@ -173,17 +166,18 @@ The fields of the Service base class are the same as those of the [Controller](#
 ```js
 // app/service/user.js
 
-// get from app instance (recommend)
+// get from egg (recommend)
+const Service = require('egg').Service;
+class UserService extends Service {
+  // implement
+}
+module.exports = UserService;
+
+// get from app instance
 module.exports = app => {
   return class UserService extends app.Service {
     // implement
   };
-};
-
-// get from egg
-const egg = require('egg');
-module.exports = class UserService extends egg.Service {
-  // implement
 };
 ```
 
@@ -199,16 +193,14 @@ We can get the Helper(`ctx.helper`) instance of the current request on the Conte
 
 ```js
 // app/controller/user.js
-module.exports = app => {
-  return class UserController extends app.Controller {
-    * fetch() {
-      const { app, ctx } = this;
-      const id = ctx.query.id;
-      const user = app.cache.get(id);
-      ctx.body = ctx.helper.formatUser(user);
-    }
-  };
-};
+class UserController extends Controller {
+  async fetch() {
+    const { app, ctx } = this;
+    const id = ctx.query.id;
+    const user = app.cache.get(id);
+    ctx.body = ctx.helper.formatUser(user);
+  }
+}
 ```
 
 In addition, Helper instances can also be accessed in template, for example, we can get [security](../core/security.md) plugin provided `shtml` method from template.
@@ -281,8 +273,8 @@ const Subscription = require('egg').Subscription;
 
 class Schedule extends Subscription {
   // This method should be implemented
-  // subscribe can be generator function or async function
-  * subscribe() {}
+  // subscribe can be async function or generator function
+  async subscribe() {}
 }
 ```
 
