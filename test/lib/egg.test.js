@@ -25,8 +25,10 @@ describe('test/lib/egg.test.js', () => {
       let json = require(path.join(baseDir, 'run/agent_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
       assert(json.config.name === 'demo');
+      assert(json.config.tips === 'hello egg');
       json = require(path.join(baseDir, 'run/application_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
+      assert(json.config.tips === 'hello egg started');
     });
 
     it('should dump config meta', () => {
