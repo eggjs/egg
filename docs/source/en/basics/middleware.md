@@ -144,13 +144,7 @@ module.exports = {
 
 ## Use Koa's Middleware
 
-The framework is compatible with all kinds of middleware of Koa 1.x and 2.x, including:
-
-- async function: `async (ctx, next) => {}`
-- generator function: `function* (next) {}`
-- common function: `(ctx, next) => {}`
-
-All middleware used by Koa can be directly used by the framework, too.
+Developer is free to use Koa Middleware, all middleware used by Koa can be directly used by the framework too.
 
 For example, Koa uses [koa-compress](https://github.com/koajs/compress) in this way:
 

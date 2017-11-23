@@ -144,13 +144,7 @@ module.exports = {
 
 ## 使用 Koa 的中间件
 
-框架兼容 Koa 1.x 和 2.x 支持的所有形式的中间件，包括：
-
-- async function: `async (ctx, next) => {}`
-- generator function: `function* (next) {}`
-- common function: `(ctx, next) => {}`
-
-所有可以在 Koa 中使用的中间件都可以直接在框架中使用。
+在框架里面可以非常容易的引入 Koa 中间件生态。
 
 以 [koa-compress](https://github.com/koajs/compress) 为例，在 Koa 中使用时：
 
