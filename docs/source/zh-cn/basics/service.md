@@ -14,23 +14,23 @@ title: Service
 
 ## 定义 Service
 
-- `app/service/user.js`
+```js
+// app/service/user.js
+const Service = require('egg').Service;
 
-  ```js
-  module.exports = app => {
-    class User extends app.Service {
-      * find(uid) {
-        const user = yield this.ctx.db.query(`select * from user where uid = ${uid}`);
-        return user;
-      }
-    }
-    return User;
-  };
-  ```
+class UserService extends Service {
+  async find(uid) {
+    const user = await this.ctx.db.query(`select * from user where uid = ${uid}`);
+    return user;
+  }
+}
+
+module.exports = UserService;
+```
 
 ### 属性
 
-项目中的 Service 需要继承于 `app.Service`，它拥有下列属性方便我们进行开发：
+项目中的 Service 需要继承于 `egg.Service`，它拥有下列属性方便我们进行开发：
 
 - `this.ctx`: 当前请求的上下文 [Context](./extend.md#context) 对象的实例，通过它我们可以拿到框架封装好的处理当前请求的各种便捷属性和方法。
 - `this.app`: 当前应用 [Application](./extend.md#application) 对象的实例，通过它我们可以拿到框架提供的全局对象和方法。
@@ -58,7 +58,7 @@ title: Service
   ```
 
 - 一个 Service 文件只能包含一个类， 这个类需要通过 `module.exports` 的方式返回。
-- Service 需要通过 Class 的方式定义，父类必须是 `app.Service`, `app` 对象会在初始化 Service 的时候通过参数传递进来。
+- Service 需要通过 Class 的方式定义，父类必须是 `egg.Service`。
 - Service 不是单例，是 **请求级别** 的对象，框架在每次请求中首次访问 `ctx.service.xx` 时延迟实例化，所以 Service 中可以通过 this.ctx 获取到当前请求的上下文。
 
 ## 使用 Service
@@ -68,49 +68,49 @@ title: Service
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/user/:id', 'user.info');
+  app.router.get('/user/:id', app.controller.user.info);
 };
 
 // app/controller/user.js
-exports.info = function* (ctx) {
-  const userId = ctx.params.id;
-  const userInfo = yield ctx.service.user.find(userId);
-  ctx.body = userInfo;
-};
+const Controller = require('egg').Controller;
+class UserController extends Controller {
+  async info() {
+    const userId = ctx.params.id;
+    const userInfo = await ctx.service.user.find(userId);
+    ctx.body = userInfo;
+  }
+}
+module.exports = UserController;
 
 // app/service/user.js
-module.exports = app => {
-  class User extends app.Service {
-    // 默认不需要提供构造函数。
-    // constructor(ctx) {
-    //   super(ctx); 如果需要在构造函数做一些处理，一定要有这句话，才能保证后面 `this.ctx`的使用。
-    //   // 就可以直接通过 this.ctx 获取 ctx 了
-    //   // 还可以直接通过 this.app 获取 app 了
-    // }
+const Service = require('egg').Service;
+class UserService extends Service {
+  // 默认不需要提供构造函数。
+  // constructor(ctx) {
+  //   super(ctx); 如果需要在构造函数做一些处理，一定要有这句话，才能保证后面 `this.ctx`的使用。
+  //   // 就可以直接通过 this.ctx 获取 ctx 了
+  //   // 还可以直接通过 this.app 获取 app 了
+  // }
+  async find(uid) {
+    // 假如 我们拿到用户 id 从数据库获取用户详细信息
+    const user = yield await.ctx.db.query(`select * from user where uid = ${uid}`);
 
-    * find(uid) {
-      // 假如 我们拿到用户 id 从数据库获取用户详细信息
-      const user = yield this.ctx.db.query(`select * from user where uid = ${uid}`);
+    // 假定这里还有一些复杂的计算，然后返回需要的信息。
+    const picture = await this.getPicture(uid);
 
-      // 假定这里还有一些复杂的计算，然后返回需要的信息。
-      const picture = yield this.getPicture(uid);
-
-      return {
-        name: user.user_name,
-        age: user.age,
-        picture,
-      };
-    }
-
-    * getPicture(uid) {
-      const result = yield this.ctx.curl(`http://photoserver/uid=${uid}`, {
-        dataType: 'json',
-      });
-      return result.data;
-    }
+    return {
+      name: user.user_name,
+      age: user.age,
+      picture,
+    };
   }
-  return User;
-};
+
+  async getPicture(uid) {
+    const result = await this.ctx.curl(`http://photoserver/uid=${uid}`, { dataType: 'json' });
+    return result.data;
+  }
+}
+module.exports = UserService;
 
 // curl http://127.0.0.1:7001/user/1234
 ```
