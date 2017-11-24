@@ -5,38 +5,41 @@ title: Cookie 与 Session
 
 HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道发起请求的人是谁。为了解决这个问题，HTTP 协议设计了一个特殊的请求头：[Cookie](https://en.wikipedia.org/wiki/HTTP_cookie)。服务端可以通过响应头（set-cookie）将少量数据响应给客户端，浏览器会遵循协议将数据保存，并在下次请求同一个服务的时候带上（浏览器也会遵循协议，只在访问符合 Cookie 指定规则的网站时带上对应的 Cookie 来保证安全性）。
 
-通过 `context.cookies`，我们可以在 controller 中便捷、安全的设置和读取 Cookie。
+通过 `ctx.cookies`，我们可以在 controller 中便捷、安全的设置和读取 Cookie。
 
 ```js
-exports.add = function* (ctx) {
-  let count = ctx.cookies.get('count');
-  count = count ? Number(count) : 0;
-  ctx.cookies.set('count', ++count);
-  ctx.body = count;
-};
-
-exports.remove = function* (ctx) {
-  ctx.cookies.set('count', null);
-  ctx.status = 204;
-};
+class HomeController extends Controller {
+  async add() {
+    const ctx = this.ctx;
+    let count = ctx.cookies.get('count');
+    count = count ? Number(count) : 0;
+    ctx.cookies.set('count', ++count);
+    ctx.body = count;
+  }
+  async remove() {
+    const ctx = this.ctx;
+    ctx.cookies.set('count', null);
+    ctx.status = 204;
+  }
+}
 ```
 
-#### `context.cookies.set(key, value, options)`
+#### `ctx.cookies.set(key, value, options)`
 
 设置 Cookie 其实是通过在 HTTP 响应中设置 set-cookie 头完成的，每一个 set-cookie 都会让浏览器在 Cookie 中存一个键值对。在设置 Cookie 值的同时，协议还支持许多参数来配置这个 Cookie 的传输、存储和权限。
 
-- maxAge (Number): 设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。
-- expires (Date): 设置这个键值对的失效时间，如果设置了 maxAge，expires 将会被覆盖。如果 maxAge 和 expires 都没设置，Cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。
-- path (String): 设置键值对生效的 URL 路径，默认设置在根路径上（`/`），也就是当前域名下的所有 URL 都可以访问这个 Cookie。
-- domain (String): 设置键值对生效的域名，默认没有配置，可以配置成只在指定域名才能访问。
-- httpOnly (Boolean): 设置键值对是否可以被 js 访问，默认为 true，不允许被 js 访问。
-- secure (Boolean): 设置键值对[只在 HTTPS 连接上传输](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work)，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
+- `{Number} maxAge`: 设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。
+- `{Date} expires`: 设置这个键值对的失效时间，如果设置了 maxAge，expires 将会被覆盖。如果 maxAge 和 expires 都没设置，Cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。
+- `{String} path`: 设置键值对生效的 URL 路径，默认设置在根路径上（`/`），也就是当前域名下的所有 URL 都可以访问这个 Cookie。
+- `{String} domain`: 设置键值对生效的域名，默认没有配置，可以配置成只在指定域名才能访问。
+- `{Boolean} httpOnly`: 设置键值对是否可以被 js 访问，默认为 true，不允许被 js 访问。
+- `{Boolean} secure`: 设置键值对[只在 HTTPS 连接上传输](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work)，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
 
 除了这些属性之外，框架另外扩展了 3 个参数的支持：
 
-- overwrite(Boolean)：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。
-- signed（Boolean）：设置是否对 Cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
-- encrypt（Boolean）：设置是否对 Cookie 进行加密，如果设置为 true，则在发送 Cookie 前会对这个键值对的值进行加密，客户端无法读取到 Cookie 的明文值。默认为 false。
+- `{Boolean} overwrite`：设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。
+- `{Boolean} signed`：设置是否对 Cookie 进行签名，如果设置为 true，则设置键值对的时候会同时对这个键值对的值进行签名，后面取的时候做校验，可以防止前端对这个值进行篡改。默认为 true。
+- `{Boolean} encrypt`：设置是否对 Cookie 进行加密，如果设置为 true，则在发送 Cookie 前会对这个键值对的值进行加密，客户端无法读取到 Cookie 的明文值。默认为 false。
 
 在设置 Cookie 时我们需要思考清楚这个 Cookie 的作用，它需要被浏览器保存多久？是否可以被 js 获取到？是否可以被前端修改？
 
@@ -65,7 +68,7 @@ ctx.cookies.set(key, value, {
 1. 由于[浏览器和其他客户端实现的不确定性](http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers)，为了保证 Cookie 可以写入成功，建议 value 通过 base64 编码或者其他形式 encode 之后再写入。
 2. 由于[浏览器对 Cookie 有长度限制限制](http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key)，所以尽量不要设置太长的 Cookie。一般来说不要超过 4093 bytes。当设置的 Cookie value 大于这个值时，框架会打印一条警告日志。
 
-#### `context.cookies.get(key, options)`
+#### `ctx.cookies.get(key, options)`
 
 由于 HTTP 请求中的 Cookie 是在一个 header 中传输过来的，通过框架提供的这个方法可以快速的从整段 Cookie 中获取对应的键值对的值。上面在设置 Cookie 的时候，我们可以设置 `options.signed` 和 `options.encrypt` 来对 Cookie 进行签名或加密，因此对应的在获取 Cookie 的时候也要传相匹配的选项。
 
@@ -93,28 +96,29 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。Cooki
 
 Cookie 在 Web 应用中经常承担标识请求方身份的功能，所以 Web 应用在 Cookie 的基础上封装了 Session 的概念，专门用做用户身份识别。
 
-框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `context.session` 来访问或者修改当前用户 Session 。
+框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，给我们提供了 `ctx.session` 来访问或者修改当前用户 Session 。
 
 ```js
-exports.fetchPosts = function* (ctx) {
-  // 获取 Session 上的内容
-  const userId = ctx.session.userId;
-  const posts = yield ctx.service.post.fetch(userId);
-  // 修改 Session 的值
-  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
-  ctx.body = {
-    success: true,
-    posts,
-  };
-};
+class HomeController extends Controller {
+  async fetchPosts() {
+    const ctx = this.ctx;
+    // 获取 Session 上的内容
+    const userId = ctx.session.userId;
+    const posts = yield ctx.service.post.fetch(userId);
+    // 修改 Session 的值
+    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.body = {
+      success: true,
+      posts,
+    };
+  }
+}
 ```
 
 Session 的使用方法非常直观，直接读取它或者修改它就可以了，如果要删除它，直接将它赋值为 null：
 
 ```js
-exports.deleteSession = function* (ctx) {
-  ctx.session = null;
-};
+ctx.session = null;
 ```
 
 Session 的实现是基于 Cookie 的，默认配置下，用户 Session 的内容加密后直接存储在 Cookie 中的一个字段中，用户每次请求我们网站的时候都会带上这个 Cookie，我们在服务端解密后使用。Session 的默认配置如下：
@@ -143,13 +147,14 @@ Session 默认存放在 Cookie 中，但是如果我们的 Session 对象过于�
 // app.js
 module.exports = app => {
   app.sessionStore = {
-    * get (key) {
+    // support promise / async
+    get (key) {
       // return value;
     },
-    * set (key, value, maxAge) {
+    set (key, value, maxAge) {
       // set key to store
     },
-    * destroy (key) {
+    destroy (key) {
       // destroy key
     },
   };
@@ -176,36 +181,38 @@ exports.sessionRedis = {
 
 #### 修改用户 Session 失效时间
 
-虽然在 Session 的配置中有一项是 maxAge，但是它只能全局设置 Session 的有效期，我们经常可以在一些网站的登陆页上看到有 **记住我** 的选项框，勾选之后可以让登陆用户的 Session 有效期更长。这种针对特定用户的 Session 有效时间设置我们可以通过 `context.session.maxAge=` 来实现。
+虽然在 Session 的配置中有一项是 maxAge，但是它只能全局设置 Session 的有效期，我们经常可以在一些网站的登陆页上看到有 **记住我** 的选项框，勾选之后可以让登陆用户的 Session 有效期更长。这种针对特定用户的 Session 有效时间设置我们可以通过 `ctx.session.maxAge=` 来实现。
 
 ```js
 const ms = require('ms');
-// login 的 controller
-exports.login = function* (ctx) {
-  const { username, password, rememberMe } = ctx.request.body;
-  const user = yield ctx.loginAndGetUser(username, password);
+class UserController extends Controller {
+  async login() {
+    const ctx = this.ctx;
+    const { username, password, rememberMe } = ctx.request.body;
+    const user = await ctx.loginAndGetUser(username, password);
 
-  // 设置 Session
-  this.session.user = user;
-  // 如果用户勾选了 `记住我`，设置 30 天的过期时间
-  if (rememberMe) this.session.maxAge = ms('30d');
-};
+    // 设置 Session
+    ctx.session.user = user;
+    // 如果用户勾选了 `记住我`，设置 30 天的过期时间
+    if (rememberMe) ctx.session.maxAge = ms('30d');
+  }
+}
 ```
 
 #### 延长用户 Session 有效期
 
-默认情况下，当用户请求没有导致 Session 被修改时，框架都不会延长 Session 的有效期，但是在有些场景下，我们希望用户每次访问都刷新 Session 的有效时间，这样用户只有在长期未访问我们的网站的时候才会被登出。这个功能我们可以通过 `context.session.save()` 来实现。
+默认情况下，当用户请求没有导致 Session 被修改时，框架都不会延长 Session 的有效期，但是在有些场景下，我们希望用户每次访问都刷新 Session 的有效时间，这样用户只有在长期未访问我们的网站的时候才会被登出。这个功能我们可以通过 `ctx.session.save()` 来实现。
 
 例如，我们在项目中增加一个中间件，让它在 Session 有值的时候强制保存一次，以达到延长 Session 有效期的目的。
 
 ```js
 // app/middleware/save_session.js
 module.exports = () => {
-  return function* (next) {
-    yield next;
+  return async saveSession(ctx, next) {
+    await next();
     // 如果 Session 是空的，则不保存
-    if (!this.session.populated) return;
-    this.session.save();
+    if (!ctx.session.populated) return;
+    ctx.session.save();
   };
 };
 
