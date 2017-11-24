@@ -231,6 +231,12 @@ task = app.toAsyncFunction(schedule.task);
 - 修改 `README.md` 的示例为 async function。
 - 修改 `test/fixtures` 为 async function，可选，建议分开另一个 PR 方便 Review。
 
+一般还会需要继续维护上一个版本，故需要：
+  - 对上一个版本建立一个 `1.x` 这类的 branch 分支
+  - 修改上一个版本的 `package.json` 的 `publishConfig.tag` 为 `release-1.x`
+  - 这样如果上一个版本有 BugFix 时，npm 版本时就会发布为 `release-1.x` 这个 tag，用户通过 `npm i egg-xx@release-1.x` 来引入旧版本。
+  - 参见 [npm 文档](https://docs.npmjs.com/cli/dist-tag)。
+
 
 [co]: https://github.com/tj/co
 [egg-schedule]: https://github.com/eggjs/egg-schedule
