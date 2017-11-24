@@ -129,11 +129,11 @@ More about plugin, please check [Plugin](../basics/plugin.md) section.
 
 #### Egg 1.x
 
-When Egg 1.x released, the Node.js LTS version does not support async function，so Egg 1.x is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application layer are implemented based on [async function](../tutorials/async-function.md).
+When Egg 1.x released, the Node.js LTS version does not support async function，so Egg 1.x is based on Koa 1.x. On the basis of this, Egg has added full async function support. Egg is completely compatible with middlewares in Koa 2.x, all application could write with `async function`.
 
 - The underlying is based on Koa 1.x, asynchronous solution is based on generator function wrapped by [co].
 - Official plugin and core of Egg are written in generator function,  keep supporting Node.js LTS version, use [co] when necessary to be compatiable with async function.
-- Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+), **we recommend generator function way for ensuring you application can be runned on Node.js LTS version**.
+- Application developers can choose either async function (Node.js 7.6+) or generator function (Node.js 6.0+).
 
 #### Egg 2.x
 
