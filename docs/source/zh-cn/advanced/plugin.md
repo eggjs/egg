@@ -19,8 +19,8 @@ title: 插件开发
 你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
 
 ```bash
-$ egg-init egg-xxx --type=plugin
-$ cd egg-xxx
+$ egg-init --type=plugin egg-hello
+$ cd egg-hello
 $ npm i
 $ npm test
 ```
@@ -30,7 +30,7 @@ $ npm test
 一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样。
 
 ```js
-. hello-plugin
+. egg-hello
 ├── package.json
 ├── app.js (可选)
 ├── agent.js (可选)
@@ -208,8 +208,8 @@ $ npm test
     app.myClient.on('error', err => {
       app.coreLogger.error(err);
     });
-    app.beforeStart(function* () {
-      yield app.myClient.ready();
+    app.beforeStart(async () => {
+      await app.myClient.ready();
       app.coreLogger.info('my client is ready');
     });
   };
@@ -226,8 +226,8 @@ $ npm test
     agent.myClient.on('error', err => {
       agent.coreLogger.error(err);
     });
-    agent.beforeStart(function* () {
-      yield agent.myClient.ready();
+    agent.beforeStart(async () => {
+      await agent.myClient.ready();
       agent.coreLogger.info('my client is ready');
     });
   };
@@ -257,7 +257,7 @@ $ npm test
     // immediate: true,
   };
 
-  exports.task = function* (ctx) {
+  exports.task = async ctx => {
     // your logic code
   };
   ```
@@ -294,8 +294,8 @@ function createMysql(config, app) {
   const client = new Mysql(config);
 
   // 做启动应用前的检查
-  app.beforeStart(function* () {
-    const rows = yield client.query('select now() as currentTime;');
+  app.beforeStart(async function startMysql() {
+    const rows = await client.query('select now() as currentTime;');
     const index = count++;
     app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
   });
@@ -331,13 +331,11 @@ module.exports = {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.mysql.query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.mysql.query(sql, values);
+  },
+}
 ```
 
 ##### 多实例
@@ -372,13 +370,11 @@ exports.mysql = {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.mysql.get('db1').query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.mysql.get('db1').query(sql, values);
+  },
+}
 ```
 
 ##### 动态创建实例
@@ -388,9 +384,9 @@ module.exports = app => {
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 从配置中心获取 MySQL 的配置 { host, post, password, ... }
-    const mysqlConfig = yield app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch('mysql');
     // 动态创建 MySQL 实例
     app.database = app.mysql.createInstance(mysqlConfig);
   });
@@ -401,13 +397,11 @@ module.exports = app => {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.databse.query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.databse.query(sql, values);
+  },
+}
 ```
 
 **注意，在动态创建实例的时候，框架也会读取配置中 `default` 字段内的配置项作为默认配置。**
