@@ -3,7 +3,7 @@ title: Quick Start
 
 # Quick Start
 
-This guide covers getting up and running with Egg using a real example.
+This guide covers getting up and running a real example using Egg.
 By following along with this guide step by step, you can quickly get started with Egg development.
 
 ## Prerequisites
@@ -13,7 +13,7 @@ By following along with this guide step by step, you can quickly get started wit
 
 ## the Quick Way
 
-To begin with, let's quickly initialize the project using a scaffold,
+To begin with, let's quickly initialize the project by using a scaffold,
 which will quickly generate some of the major pieces of the application.
 
 ```bash
@@ -23,7 +23,7 @@ $ cd egg-example
 $ npm i
 ```
 
-Then get up and running using the following commands.
+Then get up and run by using the following commands.
 
 ```bash
 $ npm run dev
@@ -32,7 +32,7 @@ $ open localhost:7001
 
 ## Step by Step
 
-Usually you could just use [egg-init] of the last session,
+Usually you can just use [egg-init] of the previous section,
 choose a scaffold that best fits your business model and quickly generate a project,
 then get started with the development.
 
@@ -112,7 +112,7 @@ egg-example
 └── package.json
 ```
 
-For more infomation about directory structure, see [Directory Structure](../basics/structure.md).
+For more information about directory structure, see [Directory Structure](../basics/structure.md).
 
 Now you can start up the Web Server and see your application in action.
 
@@ -149,9 +149,9 @@ app/public
 In most cases, data are usually read, processed and rendered by the templates before being presented to the user.
 Thus we need to introduce corresponding template engines to handle it.
 
-Egg does not force the use of any particular template engines,
-but instead specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
-to allow the developers to use different plug-ins for their individual needs.
+Egg does not force to use any particular template engines,
+but specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
+to allow the developers to use different plug-ins for their individual needs instead.
 
 For more information, cf. [View](../core/view.md).
 
@@ -185,7 +185,7 @@ exports.view = {
 };
 ```
 
-**Carefull! `config` dir, not `app/config`!**
+**Carefully! `config` dir, not `app/config`!**
 
 Then create a template for the index page.
 This usually goes to the app/view directory.
@@ -247,8 +247,8 @@ You should be able to see the rendered page.
 
 In practice, controllers usually won't generate data on their own,
 neither will they contain complicated business logic.
-Complicated business logic should instead be abstracted as
-a busineess logic layer, i.e., [service](../basics/service.md).
+Complicated business logic should be abstracted as
+a busineess logic layer instead, i.e., [service](../basics/service.md).
 
 Let's create a service to fetch data from the
 [HackerNews](https://github.com/HackerNews/API).
@@ -320,7 +320,7 @@ exports.news = {
 ### Add Extensions
 
 We might encounter a small problem here.
-The time that we fetched are in Unix Time,
+The time that we fetched are Unix Time format,
 whereas we want to present them in a more friendly way to read.
 
 Egg provides us with a quick way to extend its functionalities.
@@ -390,7 +390,7 @@ it is inevitable that we need to manage configurations.
 Egg provides a powerful way to manage them in a merged configuration file.
 
 - Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.
-- Configurations could happen wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will take care of merging and loading them.
+- Configurations could be set wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will be careful to merge and load them.
 - For more information on merging, see [Configurations](../basics/config.md).
 
 ```js
@@ -424,9 +424,9 @@ module.exports = SomeService;
 
 ### Add Unit Testing
 
-Unit Testing is very important, and Egg also provide [egg-bin] to help you write tests painless.
+Unit Testing is very important, and Egg also provides [egg-bin] to help you write tests painless.
 
-All the test files should place at `{app_root}/test/**/*.test.js`.
+All the test files should be placed at `{app_root}/test/**/*.test.js`.
 
 ```js
 // test/app/middleware/robot.test.js
@@ -470,9 +470,9 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 ## Conclusions
 
 We can only touch the tip of the iceberg of Egg with the above short sections.
-Where to go from here? Browse our documentation to better understand the framework.
+Where to go from here? read our documentation to better understand the framework.
 - Egg provides a powerful mechanism for extending features. See [Plugin](../basics/plugin.md).
-- Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suited their special needs. See more on [Frameworks].(../advanced/framework.md).
+- Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suit their special needs. See more on [Frameworks].(../advanced/framework.md).
 - Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).
 - Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/test.md).
 
