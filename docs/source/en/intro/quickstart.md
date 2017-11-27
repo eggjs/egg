@@ -9,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 ## Prerequisites
 
 - Operating System: Linux, OS X or Windows.
-- Node.js Runtime: 6.x or newer; it is recommended that you use [LTS Releases][Node.js].
+- Node.js Runtime: 8.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
 ## the Quick Way
 
@@ -87,7 +87,8 @@ Then edit the router file and add a mapping.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
 };
 ```
 
@@ -231,8 +232,9 @@ module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
-  app.get('/news', app.controller.news.list);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
+  router.get('/news', controller.news.list);
 };
 ```
 
@@ -292,7 +294,7 @@ Then slightly modify our previous controller.
 // app/controller/news.js
 const Controller = require('egg').Controller;
 
-class NewsController extends app.Controller {
+class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
@@ -336,7 +338,7 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 Then use it in the templates.
 
 ``` html
-<!-- app/views/news/list.tpl -->
+<!-- app/view/news/list.tpl -->
 {{ helper.relativeTime(item.time) }}
 ```
 
@@ -346,7 +348,6 @@ Suppose that we wanted to prohibit accesses from Baidu crawlers.
 
 Smart developers might quickly guess that we can achieve it by adding a [middleware](../basics/middleware.md)
 that checks the User-Agent.
-
 
 ```js
 // app/middleware/robot.js
@@ -429,26 +430,15 @@ All the test files should place at `{app_root}/test/**/*.test.js`.
 
 ```js
 // test/app/middleware/robot.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  let app;
-  before(() => {
-    app = mock.app();
-    return app.ready();
-  });
-
-  afterEach(mock.restore);
-
   it('should block robot', () => {
     return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
   });
-
-  // ...
 });
 ```
 
@@ -457,7 +447,8 @@ Then add `npm scripts`.
 ```json
 {
   "scripts": {
-    "test": "egg-bin test"
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
   }
 }
 ```
