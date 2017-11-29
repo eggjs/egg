@@ -238,7 +238,7 @@ module.exports = app => {
 // app/service/news.js
 const Service = require('egg').Service;
 
-class NewsService extends app.Service {
+class NewsService extends Service {
   async list(page = 1) {
     // read config
     const { serverUrl, pageSize } = this.config.news;
