@@ -758,7 +758,7 @@ export interface Context extends KoaApplication.Context {
    * get upload file stream
    * @example
    * ```js
-   * const stream = yield this.getFileStream();
+   * const stream = await this.getFileStream();
    * // get other fields
    * console.log(stream.fields);
    * ```
