@@ -258,7 +258,7 @@ It forces saving session in every request, in order to extend session's expirati
 ```js
 // app/middleware/save_session.js
 module.exports = () => {
-  return async saveSession(ctx, next) {
+  return async function saveSession(ctx, next) {
     await next();
     // if Session is empty, do nothing
     if (!ctx.session.populated) return;

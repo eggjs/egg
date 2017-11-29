@@ -208,7 +208,7 @@ class UserController extends Controller {
 ```js
 // app/middleware/save_session.js
 module.exports = () => {
-  return async saveSession(ctx, next) {
+  return async function saveSession(ctx, next) {
     await next();
     // 如果 Session 是空的，则不保存
     if (!ctx.session.populated) return;
