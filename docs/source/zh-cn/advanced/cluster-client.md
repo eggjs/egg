@@ -102,7 +102,7 @@ class Client extends Base {
    * @param {String} id - id
    * @return {Object} result
    */
-  * getData(id) {
+  async getData(id) {
     // ...
   }
 }
@@ -183,7 +183,7 @@ class RegistryClient extends Base {
   /**
    * 启动逻辑
    */
-  * init() {
+  async init() {
     this.ready(true);
   }
 
@@ -192,7 +192,7 @@ class RegistryClient extends Base {
    * @param {String} dataId - the dataId
    * @return {Object} 配置
    */
-  * getConfig(dataId) {
+  async getConfig(dataId) {
     return this._registered.get(dataId);
   }
 
@@ -253,8 +253,8 @@ module.exports = agent => {
     // create 方法的参数就是 RegistryClient 构造函数的参数
     .create({});
 
-  agent.beforeStart(function* () {
-    yield agent.registryClient.ready();
+  agent.beforeStart(async () => {
+    await agent.registryClient.ready();
     agent.coreLogger.info('registry client is ready');
   });
 };
@@ -268,8 +268,8 @@ const RegistryClient = require('registry_client');
 
 module.exports = app => {
   app.registryClient = app.cluster(RegistryClient).create({});
-  app.beforeStart(function* () {
-    yield app.registryClient.ready();
+  app.beforeStart(async () => {
+    await app.registryClient.ready();
     app.coreLogger.info('registry client is ready');
 
     // 调用 subscribe 进行订阅
@@ -286,7 +286,7 @@ module.exports = app => {
     });
 
     // 调用 getConfig 接口
-    const res = yield app.registryClient.getConfig('demo.DemoService');
+    const res = await app.registryClient.getConfig('demo.DemoService');
     console.log(res);
   });
 };
@@ -306,7 +306,7 @@ class MockClient extends Base {
     this._registered = new Map();
   }
 
-  * init() {
+  async init() {
     this.ready(true);
   }
 
@@ -334,8 +334,8 @@ module.exports = agent => {
     .delegate('sub', 'subscribe')
     .create();
 
-  agent.beforeStart(function* () {
-    yield agent.mockClient.ready();
+  agent.beforeStart(async () => {
+    await agent.mockClient.ready();
   });
 };
 ```
@@ -348,8 +348,8 @@ module.exports = app => {
     .delegate('sub', 'subscribe')
     .create();
 
-  app.beforeStart(function* () {
-    yield app.mockClient.ready();
+  app.beforeStart(async () => {
+    await app.mockClient.ready();
 
     app.sub({ id: 'test-id' }, val => {
       // put your code here
@@ -427,8 +427,8 @@ const APIClient = require('some-client'); // 上面那个模块
 module.exports = app => {
   const config = app.config.apiClient;
   app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster });
-  app.beforeStart(function* () {
-    yield app.apiClient.ready();
+  app.beforeStart(async () => {
+    await app.apiClient.ready();
   });
 };
 
@@ -494,7 +494,7 @@ class APIClient extends APIClientBase {
 
 有兴趣的同学可以看一下[增强多进程研发模式](https://github.com/eggjs/egg/issues/322) 讨论过程。
 
-## 在 Egg 里面 cluster-client 相关的配置项
+## 在框架里面 cluster-client 相关的配置项
 
 ```js
 /**
