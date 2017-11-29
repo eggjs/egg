@@ -380,7 +380,7 @@ exports.robot = {
 
 Now try it using `curl localhost:7001/news -A "Baiduspider"`.
 
-**Note：both Koa1 and Koa2 style middleware is supported, see [Use Koa's Middleware](../basics/middleware.md#Use-Koa's-Middleware)。**
+See [Middleware](../basics/middleware.md) for more details.
 
 
 ### Add Configurations

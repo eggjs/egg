@@ -356,7 +356,7 @@ exports.robot = {
 
 现在可以使用 `curl http://localhost:7001/news -A "Baiduspider"` 看看效果。
 
-**提示：框架同时兼容 Koa1 和 Koa2 形式的中间件，具体参见 [使用 Koa 的中间件](../basics/middleware.md#使用-koa-的中间件)。**
+更多参见[中间件](../basics/middleware.md)文档。
 
 ### 配置文件
 
