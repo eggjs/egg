@@ -1,3 +1,15 @@
+
+1.12.0 / 2017-11-29
+==================
+
+**features**
+  * [[`710defcc0`](http://github.com/eggjs/egg/commit/710defcc06368597706cbeeef5ad212328e9322c)] - feat: dump application router json (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`0854c44d5`](http://github.com/eggjs/egg/commit/0854c44d5e920b2b2265d8c97bca131cb55e95b9)] - fix: run dumpConfig at the last ready callback (fengmk2 <<fengmk2@gmail.com>>)
+
+**others**
+  * [[`2e492c88d`](http://github.com/eggjs/egg/commit/2e492c88d1d175d1e62185f6355981b7d646bd32)] - chore: set publishConfig.tag to release-1.x (#1690) (Yiyu He <<dead_horse@qq.com>>)
 # History
 
 ## 2017-11-08, Version 1.11.0, @dead-horse
