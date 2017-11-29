@@ -132,7 +132,7 @@ Egg 1.x 发布时，Node.js 的 LTS 版本尚不支持 async function，所以 E
 
 - 底层基于 Koa 1.x，异步解决方案基于 [co] 封装的 generator function。
 - 官方插件以及 Egg 核心使用 generator function 编写，保持对 Node.js LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
-- 应用开发者可以选择 async function（Node.js 7.6+） 或者 generator function（Node.js 6.0+）进行编写。
+- 应用开发者可以选择 async function（Node.js 8.x+） 或者 generator function（Node.js 6.x+）进行编写。
 
 #### Egg 2.x
 
