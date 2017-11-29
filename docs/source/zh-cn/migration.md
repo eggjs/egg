@@ -46,7 +46,7 @@ Egg 的理念之一是`渐进式增强`，故我们为开发者提供`渐进升�
 > 2.x 仍然保持对 1.x 风格的中间件的兼容，故不修改也能继续使用。
 
 - 返回的函数入参改为 Koa 2 的 `(ctx, next)` 风格。
-  - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](../basics/extend.md#Context) 的实例。
+  - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](./basics/extend.md#Context) 的实例。
   - 第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
 - 不建议使用 `async (ctx, next) => {}` 格式，避免错误堆栈丢失函数名。
 - `yield next` 改为函数调用 `await next()` 的方式。
