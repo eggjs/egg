@@ -91,10 +91,13 @@ exports.cluster = {
 ### 停止命令
 
 ```bash
-$ egg-scripts stop
+$ egg-scripts stop [--title=egg-server]
 ```
 
 该命令将杀死 master 进程，并通知 worker 和 agent 优雅退出。
+
+支持以下参数：
+- `--title=egg-server` 用于杀死指定的 egg 应用，未传递则会 killapp。
 
 你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
 
