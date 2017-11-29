@@ -334,7 +334,7 @@ app.messenger.once(action, data => {
 
 ```js
 // app/service/source.js
-const memoryCache = {};
+let memoryCache = {};
 
 class SourceService extends Service {
   get(key) {

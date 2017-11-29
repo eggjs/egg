@@ -332,7 +332,7 @@ We put all logics that is used to interact with the remote data source into a Se
 
 ```js
 // app/service/source.js
-const memoryCache = {};
+let memoryCache = {};
 
 class SourceService extends Service {
   get(key) {
