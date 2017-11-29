@@ -126,7 +126,7 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     // get content from session
     const userId = ctx.session.userId;
-    const posts = yield ctx.service.post.fetch(userId);
+    const posts = await ctx.service.post.fetch(userId);
     // modify session value
     ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
     ctx.body = {
@@ -182,13 +182,13 @@ To config it, you can simply set `app.sessionStore`.
 module.exports = app => {
   app.sessionStore = {
     // support promise / async
-    get (key) {
+    async get (key) {
       // return value;
     },
-    set (key, value, maxAge) {
+    async set (key, value, maxAge) {
       // set key to store
     },
-    destroy (key) {
+    async destroy (key) {
       // destroy key
     },
   };

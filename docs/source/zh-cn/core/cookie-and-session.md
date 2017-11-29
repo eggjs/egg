@@ -104,7 +104,7 @@ class HomeController extends Controller {
     const ctx = this.ctx;
     // 获取 Session 上的内容
     const userId = ctx.session.userId;
-    const posts = yield ctx.service.post.fetch(userId);
+    const posts = await ctx.service.post.fetch(userId);
     // 修改 Session 的值
     ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
     ctx.body = {
@@ -148,13 +148,13 @@ Session 默认存放在 Cookie 中，但是如果我们的 Session 对象过于�
 module.exports = app => {
   app.sessionStore = {
     // support promise / async
-    get (key) {
+    async get (key) {
       // return value;
     },
-    set (key, value, maxAge) {
+    async set (key, value, maxAge) {
       // set key to store
     },
-    destroy (key) {
+    async destroy (key) {
       // destroy key
     },
   };
