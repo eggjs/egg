@@ -340,7 +340,7 @@ describe('test/app/service/topics.test.js', () => {
   })
 
   describe('create()', () => {
-    it('should create failed by accesstoken error', () => {
+    it('should create failed by accesstoken error', async () => {
       try {
         // calling service method on ctx directly
         await ctx.service.topics.create({
