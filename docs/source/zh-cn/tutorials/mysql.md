@@ -1,11 +1,11 @@
 title: MySQL
 ---
 
-在 Web 应用方面 MySQL 是最常见，最好的关系型数据库之一。非常多网站都选择 MySQL 作为网站数据库。本篇文档介绍了如何使用 Egg 框架及其插件来访问数据库。
+在 Web 应用方面 MySQL 是最常见，最好的关系型数据库之一。非常多网站都选择 MySQL 作为网站数据库。
 
 ## egg-mysql
 
-我们提供了 [egg-mysql] 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。
+框架提供了 [egg-mysql] 插件来访问 MySQL 数据库。这个插件既可以访问普通的 MySQL 数据库，也可以访问基于 MySQL 协议的在线数据库服务。
 
 ### 安装与配置
 
@@ -57,7 +57,7 @@ exports.mysql = {
 使用方式：
 
 ```js
-yield app.mysql.query(sql, values); // 单实例可以直接通过 app.mysql 访问
+await app.mysql.query(sql, values); // 单实例可以直接通过 app.mysql 访问
 ```
 
 #### 多数据源
@@ -110,10 +110,10 @@ exports.mysql = {
 
 ```js
 const client1 = app.mysql.get('db1');
-yield client1.query(sql, values);
+await client1.query(sql, values);
 
 const client2 = app.mysql.get('db2');
-yield client2.query(sql, values);
+await client2.query(sql, values);
 ```
 
 #### 动态创建
@@ -122,50 +122,47 @@ yield client2.query(sql, values);
 
 ```js
 // {app_root}/app.js
-module.exports = function(app) {
-  app.beforeStart(function* () {
+module.exports = app => {
+  app.beforeStart(async () => {
     // 从配置中心获取 MySQL 的配置
     // { host: 'mysql.com', port: '3306', user: 'test_user', password: 'test_password', database: 'test' }
-    const mysqlConfig = yield app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch('mysql');
     app.database = app.mysql.createInstance(mysqlConfig);
   });
 };
 ```
 
-## service 层
+## Service 层
 
-由于对 MySQL 数据库的访问操作属于 Web 层中的数据处理层，因此我们强烈建议将这部分代码放在 service 层中维护。
+由于对 MySQL 数据库的访问操作属于 Web 层中的数据处理层，因此我们强烈建议将这部分代码放在 Service 层中维护。
 
-下面是一个 service 中访问 MySQL 数据库的例子。
+下面是一个 Service 中访问 MySQL 数据库的例子。
 
-更多 service 层的介绍，可以参考 [service](../basics/service.md)
+更多 Service 层的介绍，可以参考 [Service](../basics/service.md)
 
 ```js
 // app/service/user.js
-module.exports = app => {
-  return class User extends app.Service {
-    * find(uid) {
-      // 假如 我们拿到用户 id 从数据库获取用户详细信息
-      const user = yield app.mysql.get('users', {
-          id: 11,
-      });
-      return {
-        user,
-      };
-    }
+class UserService extends Service {
+  async find(uid) {
+    // 假如 我们拿到用户 id 从数据库获取用户详细信息
+    const user = await this.app.mysql.get('users', { id: 11 });
+    return { user };
   }
-};
+}
 ```
 
-之后可以通过 controller 获取 service 层拿到的数据。
+之后可以通过 Controller 获取 Service 层拿到的数据。
 
 ```js
 // app/controller/user.js
-exports.info = function* (ctx) {
-  const userId = ctx.params.id;
-  const user = yield ctx.service.user.find(userId);
-  ctx.body = user;
-};
+class UserController extends Controller {
+  async info() {
+    const ctx = this.ctx;
+    const userId = ctx.params.id;
+    const user = await ctx.service.user.find(userId);
+    ctx.body = user;
+  }
+}
 ```
 
 ## 如何编写 CRUD 语句
@@ -178,7 +175,7 @@ exports.info = function* (ctx) {
 
 ```js
 // 插入
-const result = yield this.app.mysql.insert('posts', { title: 'Hello World' }); // 在 post 表中，插入 title 为 Hello World 的记录
+const result = await this.app.mysql.insert('posts', { title: 'Hello World' }); // 在 post 表中，插入 title 为 Hello World 的记录
 
 => INSERT INTO `posts`(`title`) VALUES('Hello World');
 
@@ -206,7 +203,7 @@ const insertSuccess = result.affectedRows === 1;
 - 查询一条记录
 
 ```js
-const post = yield this.app.mysql.get('posts', { id: 12 });
+const post = await this.app.mysql.get('posts', { id: 12 });
 
 => SELECT * FROM `posts` WHERE `id` = 12 LIMIT 0, 1;
 ```
@@ -214,7 +211,7 @@ const post = yield this.app.mysql.get('posts', { id: 12 });
 - 查询全表
 
 ```js
-const results = yield this.app.mysql.select('posts');
+const results = await this.app.mysql.select('posts');
 
 => SELECT * FROM `posts`;
 ```
@@ -222,7 +219,7 @@ const results = yield this.app.mysql.select('posts');
 - 条件查询和结果定制
 
 ```js
-const results = yield this.app.mysql.select('posts', { // 搜索 post 表
+const results = await this.app.mysql.select('posts', { // 搜索 post 表
   where: { status: 'draft', author: ['author1', 'author2'] }, // WHERE 条件
   columns: ['author', 'title'], // 要查询的表字段
   orders: [['created_at','desc'], ['id','desc']], // 排序方式
@@ -248,7 +245,7 @@ const row = {
   otherField: 'other field value',    // any other fields u want to update
   modifiedAt: this.app.mysql.literals.now, // `now()` on db server
 };
-const result = yield this.app.mysql.update('posts', row); // 更新 posts 表中的记录
+const result = await this.app.mysql.update('posts', row); // 更新 posts 表中的记录
 
 => UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE id = 123 ;
 
@@ -261,7 +258,7 @@ const updateSuccess = result.affectedRows === 1;
 可以直接使用 `delete` 方法删除数据库记录。
 
 ```js
-const result = yield this.app.mysql.delete('posts', {
+const result = await this.app.mysql.delete('posts', {
   author: 'fengmk2',
 });
 
@@ -280,7 +277,7 @@ const result = yield this.app.mysql.delete('posts', {
 
 ```js
 const postId = 1;
-const results = yield this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
+const results = await this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
 
 => update posts set hits = (hits + 1) where id = 1;
 ```
@@ -303,36 +300,36 @@ egg-mysql 提供了两种类型的事务。
 
 ### 手动控制
 
-- 优点：beginTransaction, commit 或 rollback 都由开发者来完全控制，可以做到非常细粒度的控制。
+- 优点：`beginTransaction`, `commit` 或 `rollback` 都由开发者来完全控制，可以做到非常细粒度的控制。
 - 缺点：手写代码比较多，不是每个人都能写好。忘记了捕获异常和 cleanup 都会导致严重 bug。
 
 ```js
-const conn = yield app.mysql.beginTransaction(); // 初始化事务
+const conn = await app.mysql.beginTransaction(); // 初始化事务
 
 try {
-  yield conn.insert(table, row1);  // 第一步操作
-  yield conn.update(table, row2);  // 第二步操作
-  yield conn.commit(); // 提交事务
+  await conn.insert(table, row1);  // 第一步操作
+  await conn.update(table, row2);  // 第二步操作
+  await conn.commit(); // 提交事务
 } catch (err) {
   // error, rollback
-  yield conn.rollback(); // 一定记得捕获异常后回滚事务！！
+  await conn.rollback(); // 一定记得捕获异常后回滚事务！！
   throw err;
 }
 ```
 
 ### 自动控制：Transaction with scope
 
-- API：`*beginTransactionScope(scope, ctx)`
+- API：`beginTransactionScope(scope, ctx)`
   - `scope`: 一个 generatorFunction，在这个函数里面执行这次事务的所有 sql 语句。
   - `ctx`: 当前请求的上下文对象，传入 ctx 可以保证即便在出现事务嵌套的情况下，一次请求中同时只有一个激活状态的事务。
 - 优点：使用简单，不容易犯错，就感觉事务不存在的样子。
 - 缺点：整个事务要么成功，要么失败，无法做细粒度控制。
 
 ```js
-const result = yield app.mysql.beginTransactionScope(function* (conn) {
+const result = await app.mysql.beginTransactionScope(async conn => {
   // don't commit or rollback by yourself
-  yield conn.insert(table, row1);
-  yield conn.update(table, row2);
+  await conn.insert(table, row1);
+  await conn.update(table, row2);
   return { success: true };
 }, ctx); // ctx 是当前请求的上下文，如果是在 service 文件中，可以从 `this.ctx` 获取到
 // if error throw on scope, will auto rollback
@@ -347,7 +344,7 @@ const result = yield app.mysql.beginTransactionScope(function* (conn) {
 - `NOW()`：数据库当前系统时间，通过 `app.mysql.literals.now` 获取。
 
 ```js
-yield this.app.mysql.insert(table, {
+await this.app.mysql.insert(table, {
   create_time: this.app.mysql.literals.now,
 });
 
@@ -362,7 +359,7 @@ yield this.app.mysql.insert(table, {
 const Literal = this.app.mysql.literals.Literal;
 const first = 'James';
 const last = 'Bond';
-yield this.app.mysql.insert(table, {
+await this.app.mysql.insert(table, {
   id: 123,
   fullname: new Literal(`CONCAT("${first}", "${last}"`),
 });
