@@ -25,7 +25,8 @@ Egg 的理念之一是`渐进式增强`，故我们为开发者提供`渐进升�
 ## 快速升级
 
 - Node.js 使用最新的 LTS 版本（`>=8.9.0`）。
-- 执行 `egg-bin autod`，会自动升级 `egg` 的依赖为 `^2.0.0`，以及其他插件版本。
+- 修改 `package.json` 中 `egg` 的依赖为 `^2.0.0`。
+- 检查相关插件是否发布新版本（可选）。
 - 重新安装依赖，跑单元测试。
 
 **搞定！不需要修改任何一行代码，就已经完成了升级。**
@@ -44,7 +45,9 @@ Egg 的理念之一是`渐进式增强`，故我们为开发者提供`渐进升�
 
 > 2.x 仍然保持对 1.x 风格的中间件的兼容，故不修改也能继续使用。
 
-- 返回的函数入参改为 `(ctx, next)` 的形式。
+- 返回的函数入参改为 Koa 2 的 `(ctx, next)` 风格。
+  - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](./basics/extend.md#Context) 的实例。
+  - 第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
 - 不建议使用 `async (ctx, next) => {}` 格式，避免错误堆栈丢失函数名。
 - `yield next` 改为函数调用 `await next()` 的方式。
 
@@ -63,7 +66,7 @@ module.exports = () => {
 module.exports = () => {
   return async function responseTime(ctx, next) {
     const start = Date.now();
-    // 注意：函数调用
+    // 注意，和 generator function 格式的中间件不同，此时 next 是一个方法，必须要调用它
     await next();
     const delta = Math.ceil(Date.now() - start);
     ctx.set('X-Response-Time', delta + 'ms');
@@ -84,7 +87,7 @@ module.exports = () => {
 - generators (delegation)
 - generator functions (delegation)
 
-而原生的 `yield` 和 `await` 只支持其中的一部分，故在移除 `co` 后，我们需要根据不同场景自行处理：
+尽管 `generator` 和 `async` 两者的编程模型基本一模一样，但由于上述的 `co` 的一些特殊处理，导致在移除 `co` 后，我们需要根据不同场景自行处理：
 
 #### promise
 
@@ -177,10 +180,11 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 - [toAsyncFunction][app.toAsyncFunction] 和 [toPromise][app.toPromise] 实际使用的是 [co] 包装，因此会带回对应的性能损失和堆栈问题，建议开发者还是尽量全链路升级。
 - [toAsyncFunction][app.toAsyncFunction] 在调用 async function 时不会有损失。
 
+@sindresorhus 编写了许多[基于 promise 的 helper 方法](https://github.com/sindresorhus/promise-fun)，灵活的运用它们配合 async function 能让代码更加具有可读性。
 
 ## 插件升级
 
-`应用开发者`只需升级`插件开发者`修改后的依赖版本即可，可以用我们提供的命令 `egg-bin autod` 快速更新。
+`应用开发者`只需升级`插件开发者`修改后的依赖版本即可，也可以用我们提供的命令 `egg-bin autod` 快速更新。
 
 以下内容针对`插件开发者`，指导如何升级插件：
 
@@ -230,6 +234,12 @@ task = app.toAsyncFunction(schedule.task);
   - 修改 `ci.version` 为 `8, 9`， 并重新安装依赖以便生成新的 travis 配置文件。
 - 修改 `README.md` 的示例为 async function。
 - 修改 `test/fixtures` 为 async function，可选，建议分开另一个 PR 方便 Review。
+
+一般还会需要继续维护上一个版本，故需要：
+  - 对上一个版本建立一个 `1.x` 这类的 branch 分支
+  - 修改上一个版本的 `package.json` 的 `publishConfig.tag` 为 `release-1.x`
+  - 这样如果上一个版本有 BugFix 时，npm 版本时就会发布为 `release-1.x` 这个 tag，用户通过 `npm i egg-xx@release-1.x` 来引入旧版本。
+  - 参见 [npm 文档](https://docs.npmjs.com/cli/dist-tag)。
 
 
 [co]: https://github.com/tj/co
