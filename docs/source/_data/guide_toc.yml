@@ -32,7 +32,6 @@ Core:
 Tutorials:
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
-  Async Function: /tutorials/async-function.html
   # Passport: /core/passport.html
 Advanced:
   Loader: /advanced/loader.html

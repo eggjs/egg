@@ -33,8 +33,6 @@ Mocha is our first choice.
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
 
-And it's more efficient to use together with another [co-mocha](https://npmjs.com/co-mocha) module, which provides many advanced features, such as generator function, async and await.
-
 ### AVA
 
 Why not another recently popular framework [AVA](https://github.com/avajs/ava) which looks like faster? AVA is great, but practice of serveral projects tells us the truth that code is harder to write.
@@ -52,7 +50,7 @@ Comments from [@fool2fish](https://github.com/fool2fish)：
 [Assertion libraries](https://www.npmjs.com/search?q=assert&page=1&ranking=popularity), as flourishing as test frameworks, are emerged continuously. The one we used has changed from [assert](https://nodejs.org/api/assert.html) to [should](https://github.com/shouldjs/should.js), and then to [expect](https://github.com/Automattic/expect.js)
 , but we are still trying to find better one.
 
-In the end, we go back to the original assertion library because of the appearance of [power-assert](https://github.com/power-assert-js/power-assert), which best expresses [『No API is the best API』](https://github.com/atian25/blog/issues/16).
+In the end, we go back to the original assertion library because of the appearance of [power-assert], which best expresses [『No API is the best API』](https://github.com/atian25/blog/issues/16).
 
 To be Short, Here are it's advantages:
 - No API is the best API. Assert is all.
@@ -86,7 +84,7 @@ test
 
 ### Test Tool
 
-Consistently using [egg-bin to launch tests](./development.md#unit_testing) , which automaticlly load modules like mocha, co-mocha, power-assert, istanbul into test scripts, so that we can ** concentrate on writing tests ** without wasting time on the choice of various test tools or modules.
+Consistently using [egg-bin to launch tests](./development.md#unit_testing) , which automaticlly load modules like [Mocha], [co-mocha], [power-assert], [nyc] into test scripts, so that we can **concentrate on writing tests** without wasting time on the choice of various test tools or modules.
 
 The only thing you need to do is setting `scripts.test` in `package.json`.
 
@@ -157,7 +155,7 @@ describe('test/controller/home.test.js', () => {
 });
 ```
 
-### ctx 
+### ctx
 
 Except app, tests for Extend, Service and Helper are also taken into consideration. Let's ceate a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by egg-mock.
 
@@ -189,7 +187,7 @@ Since we have got the app and the context, you are free to do a lot of tests.
 
 Pay close attention to testing order, and make sure any chunk of code is executed as you expected.
 
-Common Error: 
+Common Error:
 
 ```js
 // Bad
@@ -229,10 +227,10 @@ Mocha have keywords - before, after, beforeEach and afterEach - to set up precon
 
 ## Asynchronous Test
 
-egg-bin is going to load co-mocha module automaticlly to support asynchronous test, no matter how to implement, such as Promise returned by `app.httpRequest` mentioned above.
+egg-bin support asynchronous test:
 
 ```js
-// return Promise
+// using Promise
 it('should redirect', () => {
   return app.httpRequest()
     .get('/')
@@ -246,15 +244,15 @@ it('should redirect', done => {
     .expect(302, done);
 });
 
-// return generator
-it('should redirect', function* () {
-  yield app.httpRequest()
+// using async
+it('should redirect', async () => {
+  await app.httpRequest()
     .get('/')
     .expect(302);
 });
 ```
 
-According to specific situation, you could make different choice of these ways. Multiple asynchronous test cases could be composed to one test, or divided into several independent tests.
+According to specific situation, you could make different choice of these ways. Multiple asynchronous test cases could be composed to one test with async function, or divided into several independent tests.
 
 ## Controller Test
 
@@ -265,13 +263,16 @@ Here is an `app/controller/home.js` example.
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('homepage', '/', 'home.index');
+  const { router, controller } = app;
+  router.get('homepage', '/', controller.home.index);
 };
 
 // app/controller/home.js
-exports.index = function* (ctx) {
-  ctx.body = 'hello world';
-};
+class HomeController extends Controler {
+  async index() {
+    this.ctx.body = 'hello world';
+  }
+}
 ```
 
 Then a test.
@@ -290,15 +291,14 @@ describe('test/controller/home.test.js', () => {
         .expect('hello world'); // set expectaion of body to 'hello world'
     });
 
-    it('should send multi requests', function* () {
-      // one test could contains multiple request test cases that were yield
-      yield app.httpRequest()
+    it('should send multi requests', async () => {
+      await app.httpRequest()
         .get('/')
         .expect(200) v
         .expect('hello world'); // set expectaion of body to 'hello world'
 
       // once more
-      const result = yield app.httpRequest()
+      const result = await app.httpRequest()
         .get('/')
         .expect(200)
         .expect('hello world');
@@ -314,9 +314,11 @@ describe('test/controller/home.test.js', () => {
 
 ```js
 // app/controller/home.js
-exports.post = function* (ctx) {
-  ctx.body = ctx.request.body;
-};
+class HomeController extends Controler {
+  async post() {
+    this.ctx.body = this.ctx.request.body;
+  }
+}
 
 // test/controller/home.test.js
 it('should status 200 and get the request body', () => {
@@ -359,35 +361,34 @@ return app.httpRequest()
 
 Service is easier to test than Controller. Creating a ctx, and then get the instance of Service via `ctx.service.${serviceName}`, and then use the instance to test.
 
-For example, `app/service/user.js`:
+For example:
 
 ```js
-module.exports = app => {
-  return class User extends app.Service {
-    * get(name) {
-      return yield userDatabase.get(name);
-    }
-  };
-};
+// app/service/user.js
+class UserService extends Service {
+  async get(name) {
+    return await userDatabase.get(name);
+  }
+}
 ```
 
-And a test: 
+And a test:
 
 ```js
 describe('get()', () => {
   // using generator function because of asynchronous invoking
-  it('should get exists user', function* () {
+  it('should get exists user', async () => {
     // create ctx
     const ctx = app.mockContext();
     // get service.user via ctx
-    const user = yield ctx.service.user.get('fengmk2');
+    const user = await ctx.service.user.get('fengmk2');
     assert(user);
     assert(user.name === 'fengmk2');
   });
 
-  it('should get null when user not exists', function* () {
+  it('should get null when user not exists', async () => {
     const ctx = app.mockContext();
-    const user = yield ctx.service.user.get('fengmk1');
+    const user = await ctx.service.user.get('fengmk1');
     assert(!user);
   });
 });
@@ -418,7 +419,7 @@ module.exports = {
 };
 ```
 
-A corresponding test: 
+A corresponding test:
 
 ```js
 describe('get lru', () => {
@@ -447,7 +448,7 @@ module.exports = {
 };
 ```
 
-A corresponding test: 
+A corresponding test:
 
 ```js
 describe('isXHR()', () => {
@@ -490,7 +491,7 @@ module.exports = {
 };
 ```
 
-A corresponding test: 
+A corresponding test:
 
 ```js
 describe('isChrome()', () => {
@@ -528,7 +529,7 @@ module.exports = {
 };
 ```
 
-The corresponding test: 
+The corresponding test:
 
 ```js
 describe('isSuccess()', () => {
@@ -564,7 +565,7 @@ module.exports = {
 };
 ```
 
-A corresponding test: 
+A corresponding test:
 
 ```js
 describe('money()', () => {
@@ -585,7 +586,7 @@ describe('money()', () => {
 });
 ```
 
-## Mock Function 
+## Mock Function
 
 Except functions mentioned above, like `app.mockContext()` and `app.mockCsrf()`, egg-mock provides [quite a few mocking functions](https://github.com/eggjs/egg-mock#api) to make writing tests easier.
 
@@ -614,7 +615,17 @@ describe('GET /session', () => {
 
 Remember to restore mock data in an `afterEach` hook, otherwise it would take effect with all the tests that supposed to be independent to each other.
 
-**When you required `egg-mock/bootstrap`, resetting work would be done automaticly in an `afterEach` hook. Do not write these code any more.**
+```js
+describe('some test', () => {
+  // before hook
+
+  afterEach(mock.restore);
+
+  // it tests
+});
+```
+
+**When you use `egg-mock/bootstrap`, resetting work would be done automaticly in an `afterEach` hook. Do need to write these code any more.**
 
 The following will describe the common usage of egg-mock.
 
@@ -652,7 +663,7 @@ For example, mock the method `get(name)` in `app/service/user` to return a nonex
 
 ```js
 it('should mock fengmk1 exists', () => {
-  app.mockService('user', 'get', function* () {
+  app.mockService('user', 'get', () => {
     return {
       name: 'fengmk1',
     };
@@ -690,10 +701,12 @@ External HTTP requests should be performed though [HttpClient](./httpclient.md),
 For example, we submit a request in `app/controller/home.js`.
 
 ```js
-exports.httpclient = function* (ctx) {
-  const res = ctx.curl('https://eggjs.org');
-  ctx.body = res.data.toString();
-};
+class HomeController extends Controller {
+  async httpclient () {
+    const res = await this.ctx.curl('https://eggjs.org');
+    this.ctx.body = res.data.toString();
+  }
+}
 ```
 
 Then mock it's response.
@@ -717,3 +730,8 @@ describe('GET /httpclient', () => {
 ## Sample Code
 
 All sample code can be found in [eggjs/exmaples/unittest](https://github.com/eggjs/examples/blob/master/unittest)
+
+[Mocha]: https://mochajs.org
+[co-mocha]: https://github.com/blakeembrey/co-mocha
+[nyc]: https://github.com/istanbuljs/nyc
+[power-assert]: https://github.com/power-assert-js/power-assert

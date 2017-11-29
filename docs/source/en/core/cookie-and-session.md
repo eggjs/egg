@@ -12,41 +12,44 @@ and attach the cookie data in future requests.
 For security reason, browsers only attach cookies in the requests that are sent to the same domain.
 Web servers can use `Domain` and `Path` attributes to define the scope of the cookie.
 
-By using `context.cookies`, we can easily and safely read/set cookies in controller.
+By using `ctx.cookies`, we can easily and safely read/set cookies in controller.
 
 ```js
-exports.add = function* (ctx) {
-  let count = ctx.cookies.get('count');
-  count = count ? Number(count) : 0;
-  ctx.cookies.set('count', ++count);
-  ctx.body = count;
-};
-
-exports.remove = function* (ctx) {
-  ctx.cookies.set('count', null);
-  ctx.status = 204;
-};
+class HomeController extends Controller {
+  async add() {
+    const ctx = this.ctx;
+    let count = ctx.cookies.get('count');
+    count = count ? Number(count) : 0;
+    ctx.cookies.set('count', ++count);
+    ctx.body = count;
+  }
+  async remove() {
+    const ctx = this.ctx;
+    ctx.cookies.set('count', null);
+    ctx.status = 204;
+  }
+}
 ```
 
-#### `context.cookies.set(key, value, options)`
+#### `ctx.cookies.set(key, value, options)`
 
 Modifying Cookie is done by setting `Set-Cookie` header in HTTP responses.
 Each `Set-Cookie` creates a key-value pair in client.
 Besides of setting the value of Cookie,
 HTTP protocol supports more attributes to control the transfer, storage and permission of Cookie.
 
-- maxAge (Number): set the lifetime of the cookie in milliseconds. It's the milliseconds since server's "Now". Client discards a cookie after specified lifetime.
-- expires (Date): set the expiration time of the cookie. If `maxAge` is defined, `expires` will be ignored. If neither is defined, Cookie will expire when client session expires, usually it's the time client closed.
-- path (String): set the path of the cookie. By default it's on root path (`/`), which means all URL under the current domain have access to the cookie.
-- domain (String): set the domain of the cookie. By default, it's not defined. If defined, only specified domain have access to the cookie.
-- httpOnly (Boolean): set whether the cookie can be accessed by Javascript. By default it's `true`, which means Javascript cannot access the cookie.
-- secure (Boolean): set whether the cookie can only be accessed under HTTPS. See [explanation](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work) for details. Egg.js auto sets this value to true if the current request is sent over HTTPS.
+- `{Number} maxAge`: set the lifetime of the cookie in milliseconds. It's the milliseconds since server's "Now". Client discards a cookie after specified lifetime.
+- `{Date} expires`: set the expiration time of the cookie. If `maxAge` is defined, `expires` will be ignored. If neither is defined, Cookie will expire when client session expires, usually it's the time client closed.
+- `{String} path`: set the path of the cookie. By default it's on root path (`/`), which means all URL under the current domain have access to the cookie.
+- `{String} domain`: set the domain of the cookie. By default, it's not defined. If defined, only specified domain have access to the cookie.
+- `{Boolean} httpOnly`: set whether the cookie can be accessed by Javascript. By default it's `true`, which means Javascript cannot access the cookie.
+- `{Boolean} secure`: set whether the cookie can only be accessed under HTTPS. See [explanation](http://stackoverflow.com/questions/13729749/how-does-cookie-secure-flag-work) for details. Egg.js auto sets this value to true if the current request is sent over HTTPS.
 
 In addition to these standard Cookie attributes, egg.js supports 3 more parameters:
 
-- overwrite (Boolean): set the way of handling same Cookie key. If true, earlier called values will be overwritten by the last call; otherwise HTTP response will contain multiple `Set-Cookie` headers with the same key.
-- signed (Boolean): set whether the cookie should be signed. If true, the value of the cookie will be signed. So that when the value is being read, server verifies the signature to prevent cookie values modified by client. By default it's true.
-- encrypt（Boolean): set whether the cookie should be encrypted. It true, the cookie value will be encrypted before sending to clients so user clients cannot get raw text of the cookie. By default it's false.
+- `{Boolean} overwrite`: set the way of handling same Cookie key. If true, earlier called values will be overwritten by the last call; otherwise HTTP response will contain multiple `Set-Cookie` headers with the same key.
+- `{Boolean} signed`: set whether the cookie should be signed. If true, the value of the cookie will be signed. So that when the value is being read, server verifies the signature to prevent cookie values modified by client. By default it's true.
+- `{Boolean} encrypt`: set whether the cookie should be encrypted. It true, the cookie value will be encrypted before sending to clients so user clients cannot get raw text of the cookie. By default it's false.
 
 When using Cookie, we need to have a clear idea of the purpose of the cookie,
 how long it needs to be stored in client, can it be accessed by JS, can it be modified by client.
@@ -77,7 +80,7 @@ Note:
 1. Due to [the uncertainty of client's implementation](http://stackoverflow.com/questions/7567154/can-i-use-unicode-characters-in-http-headers), to ensure Cookie can be stored successfully, it's recommended to encode cookie value in base64 or other codec.
 2. Due to [the limitation of Cookie length on client side](http://stackoverflow.com/questions/640938/what-is-the-maximum-size-of-a-web-browsers-cookies-key), do avoid using long Cookie. Generally speaking, no more than 4093 bytes. When Cookie value's length is greater than this value, egg.js prints a warning in log.
 
-#### `context.cookies.get(key, options)`
+#### `ctx.cookies.get(key, options)`
 
 As HTTP Cookie is sent over header,
 we can use this method to easily retrieve the value of given key from Cookie.
@@ -115,20 +118,23 @@ So the concept of Session, which is built on top of Cookie,
 was created to specifically handle user identification.
 
 Egg.js built-in supports Session through [egg-session](https://github.com/eggjs/egg-session) plugin.
-We can use `context.session` to read or modify current user session.
+We can use `ctx.session` to read or modify current user session.
 
 ```js
-exports.fetchPosts = function* (ctx) {
-  // get content from session
-  const userId = ctx.session.userId;
-  const posts = yield ctx.service.post.fetch(userId);
-  // modify session value
-  ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
-  ctx.body = {
-    success: true,
-    posts,
-  };
-};
+class HomeController extends Controller {
+  async fetchPosts() {
+    const ctx = this.ctx;
+    // get content from session
+    const userId = ctx.session.userId;
+    const posts = await ctx.service.post.fetch(userId);
+    // modify session value
+    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.body = {
+      success: true,
+      posts,
+    };
+  }
+}
 ```
 
 It is very intuitive to use Session, simply get or set.
@@ -175,13 +181,14 @@ To config it, you can simply set `app.sessionStore`.
 // app.js
 module.exports = app => {
   app.sessionStore = {
-    * get (key) {
+    // support promise / async
+    async get (key) {
       // return value;
     },
-    * set (key, value, maxAge) {
+    async set (key, value, maxAge) {
       // set key to store
     },
-    * destroy (key) {
+    async destroy (key) {
       // destroy key
     },
   };
@@ -219,20 +226,22 @@ Session config has a attribute `maxAge`, which controls global expiration time o
 
 We often can see a **Remember Me** option on a lot of websites' login page.
 If it's selected, Session of this logged in user can live longer.
-This kind of per-user session expiration time can be set through `context.session.maxAge`:
+This kind of per-user session expiration time can be set through `ctx.session.maxAge`:
 
 ```js
 const ms = require('ms');
-// login controller
-exports.login = function* (ctx) {
-  const { username, password, rememberMe } = ctx.request.body;
-  const user = yield ctx.loginAndGetUser(username, password);
+class UserController extends Controller {
+  async login() {
+    const ctx = this.ctx;
+    const { username, password, rememberMe } = ctx.request.body;
+    const user = await ctx.loginAndGetUser(username, password);
 
-  // set Session
-  this.session.user = user;
-  // if user selected `Remember Me`, set expiration time to 30 days
-  if (rememberMe) this.session.maxAge = ms('30d');
-};
+    // set Session
+    ctx.session.user = user;
+    // if user selected `Remember Me`, set expiration time to 30 days
+    if (rememberMe) ctx.session.maxAge = ms('30d');
+  }
+}
 ```
 
 #### Extend session's expiration time
@@ -241,7 +250,7 @@ By default, if user requests don't result in modification of Session,
 egg.js doesn't extend expiration time of the session.
 But in some scenarios, you may need to refresh expiration time every time user access the website,
 so that users will only be logged out when they don't access website for long time.
-This requirement can be done through `context.session.save()`.
+This requirement can be done through `ctx.session.save()`.
 
 For example, we create a middleware in the application.
 It forces saving session in every request, in order to extend session's expiration time.
@@ -249,11 +258,11 @@ It forces saving session in every request, in order to extend session's expirati
 ```js
 // app/middleware/save_session.js
 module.exports = () => {
-  return function* (next) {
-    yield next;
+  return async function saveSession(ctx, next) {
+    await next();
     // if Session is empty, do nothing
-    if (!this.session.populated) return;
-    this.session.save();
+    if (!ctx.session.populated) return;
+    ctx.session.save();
   };
 };
 

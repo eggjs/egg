@@ -3,12 +3,12 @@ title: 异常处理
 
 ## 异常捕获
 
-得益于框架底层采用的 co 库将异步编码变成了同步模型，同时错误也完全可以用 `try catch` 来捕获。在编写应用代码时，所有地方都可以直接用 `try catch` 来捕获异常。
+得益于框架支持的异步编程模型，错误完全可以用 `try catch` 来捕获。在编写应用代码时，所有地方都可以直接用 `try catch` 来捕获异常。
 
 ```js
 // app/service/test.js
 try {
-  const res = yield this.ctx.curl('http://eggjs.com/api/echo', { dataType: 'json' });
+  const res = await this.ctx.curl('http://eggjs.com/api/echo', { dataType: 'json' });
   if (res.status !== 200) throw new Error('response status is not 200');
   return res.data;
 } catch (err) {
@@ -17,17 +17,19 @@ try {
 }
 ```
 
-按照正常代码写法，所有的异常都可以用这个方式进行捕获并处理，但是一定要注意一些特殊的写法可能带来的问题。打一个不太正式的比方，我们的代码全部都在一个异步调用链上，所有的异步操作都通过 yield 串接起来了，但是只要有一个地方跳出了异步调用链，异常就捕获不到了。
+按照正常代码写法，所有的异常都可以用这个方式进行捕获并处理，但是一定要注意一些特殊的写法可能带来的问题。打一个不太正式的比方，我们的代码全部都在一个异步调用链上，所有的异步操作都通过 await 串接起来了，但是只要有一个地方跳出了异步调用链，异常就捕获不到了。
 
 ```js
-// app/controller/jump.js
-exports.buy = function* (ctx) {
-  const request = {};
-  const config = yield ctx.service.trade.buy(request);
-  // 下单后需要进行一次核对，且不阻塞当前请求
-  setImmediate(() => {
-    ctx.service.trade.check(request).catch(err => ctx.logger.error(err));
-  });
+// app/controller/home.js
+class HomeController extends Controller {
+  async buy () {
+    const request = {};
+    const config = await ctx.service.trade.buy(request);
+    // 下单后需要进行一次核对，且不阻塞当前请求
+    setImmediate(() => {
+      ctx.service.trade.check(request).catch(err => ctx.logger.error(err));
+    });
+  }
 }
 ```
 
@@ -36,14 +38,16 @@ exports.buy = function* (ctx) {
 当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
 
 ```js
-exports.buy = function* (ctx) {
-  const request = {};
-  const config = yield ctx.service.trade.buy(request);
-  // 下单后需要进行一次核对，且不阻塞当前请求
-  ctx.runInBackground(function* () {
-    // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
-    yield ctx.service.trade.check(request);
-  });
+class HomeController extends Controller {
+  async buy () {
+    const request = {};
+    const config = await ctx.service.trade.buy(request);
+    // 下单后需要进行一次核对，且不阻塞当前请求
+    ctx.runInBackground(async () => {
+      // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
+      await ctx.service.trade.check(request);
+    });
+  }
 }
 ```
 
@@ -88,18 +92,18 @@ module.exports = {
     all(err, ctx) {
       // 在此处定义针对所有响应类型的错误处理方法
       // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
-      this.body = 'error';
-      this.status = 500;
+      ctx.body = 'error';
+      ctx.status = 500;
     },
     html(err, ctx) {
       // html hander
-      this.body = '<h3>error</h3>';
-      this.status = 500;
+      ctx.body = '<h3>error</h3>';
+      ctx.status = 500;
     },
     json(err, ctx) {
       // json hander
-      this.body = { message: 'error' };
-      this.status = 500;
+      ctx.body = { message: 'error' };
+      ctx.status = 500;
     },
     jsonp(err, ctx) {
       // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
@@ -142,11 +146,14 @@ module.exports = {
 ```js
 // app/middleware/notfound_handler.js
 module.exports = () => {
-  return function* (next) {
-    yield next;
-    if (this.status === 404 && !this.body) {
-      if (this.acceptJSON) this.body = { error: 'Not Found' };
-      else this.body = '<h1>Page Not Found</h1>';
+  return async notFoundHandler(ctx, next) {
+    await next();
+    if (ctx.status === 404 && !ctx.body) {
+      if (ctx.acceptJSON) {
+        ctx.body = { error: 'Not Found' };
+      } else {
+        ctx.body = '<h1>Page Not Found</h1>';
+      }
     }
   };
 };

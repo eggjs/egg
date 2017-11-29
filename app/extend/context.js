@@ -188,8 +188,8 @@ const proto = module.exports = {
    * this.body = 'hi';
    *
    * this.runInBackground(async ctx => {
-   *   yield ctx.mysql.query(sql);
-   *   yield ctx.curl(url);
+   *   await ctx.mysql.query(sql);
+   *   await ctx.curl(url);
    * });
    * ```
    */

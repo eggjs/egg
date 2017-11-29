@@ -15,9 +15,9 @@ title: HttpClient
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 示例：启动的时候去读取 https://registry.npm.taobao.org/egg/latest 的版本信息
-    const result = yield app.curl('https://registry.npm.taobao.org/egg/latest', {
+    const result = await app.curl('https://registry.npm.taobao.org/egg/latest', {
       dataType: 'json',
     });
     app.logger.info('Egg latest version: %s', result.data.version);
@@ -31,22 +31,26 @@ module.exports = app => {
 这样就可以在有 Context 的地方（如在 controller 中）非常方便地使用 `ctx.curl()` 方法完成一次 HTTP 请求。
 
 ```js
-// app/controller/home.js
-module.exports = function* home(ctx) {
-  // 示例：请求一个 npm 模块信息
-  const result = yield ctx.curl('https://registry.npm.taobao.org/egg/latest', {
-    // 自动解析 JSON response
-    dataType: 'json',
-    // 3 秒超时
-    timeout: 3000,
-  });
+// app/controller/npm.js
+class NpmController extends Controller {
+  async index() {
+    const ctx = this.ctx;
 
-  ctx.body = {
-    status: result.status,
-    headers: result.headers,
-    package: result.data,
-  };
-};
+    // 示例：请求一个 npm 模块信息
+    const result = await ctx.curl('https://registry.npm.taobao.org/egg/latest', {
+      // 自动解析 JSON response
+      dataType: 'json',
+      // 3 秒超时
+      timeout: 3000,
+    });
+
+    ctx.body = {
+      status: result.status,
+      headers: result.headers,
+      package: result.data,
+    };
+  }
+}
 ```
 
 ## 基本 HTTP 请求
@@ -61,13 +65,16 @@ HTTP 已经被广泛大量使用，尽管 HTTP 有多种请求方式，但是万
 读取数据几乎都是使用 GET 请求，它是 HTTP 世界最常见的一种，也是最广泛的一种，它的请求参数也是最容易构造的。
 
 ```js
-// app/controller/get.js
-module.exports = function* get(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/get?foo=bar');
-  ctx.status = result.status;
-  ctx.set(result.headers);
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async get() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/get?foo=bar');
+    ctx.status = result.status;
+    ctx.set(result.headers);
+    ctx.body = result.data;
+  }
+}
 ```
 
 - GET 请求可以不用设置 `options.method` 参数，HttpClient 的默认 method 会设置为 `GET`。
@@ -86,22 +93,25 @@ module.exports = function* get(ctx) {
 以发送 JSON body 的场景举例：
 
 ```js
-// app/controller/post.js
-module.exports = function* post(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // 必须指定 method
-    method: 'POST',
-    // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
-    contentType: 'json',
-    data: {
-      hello: 'world',
-      now: Date.now(),
-    },
-    // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async post() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/post', {
+      // 必须指定 method
+      method: 'POST',
+      // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
+      contentType: 'json',
+      data: {
+        hello: 'world',
+        now: Date.now(),
+      },
+      // 明确告诉 HttpClient 以 JSON 格式处理返回的响应 body
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 下文还会详细讲解以 POST 实现 Form 表单提交和文件上传的功能。
@@ -112,21 +122,24 @@ PUT 与 POST 类似，它更加适合更新数据和替换数据的语义。
 除了 method 参数需要设置为 `PUT`，其他参数几乎跟 POST 一模一样。
 
 ```js
-// app/controller/put.js
-module.exports = function* put(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/put', {
-    // 必须指定 method
-    method: 'PUT',
-    // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
-    contentType: 'json',
-    data: {
-      update: 'foo bar',
-    },
-    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async put() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/put', {
+      // 必须指定 method
+      method: 'PUT',
+      // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
+      contentType: 'json',
+      data: {
+        update: 'foo bar',
+      },
+      // 明确告诉 HttpClient 以 JSON 格式处理响应 body
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 ### DELETE
@@ -134,16 +147,19 @@ module.exports = function* put(ctx) {
 删除数据会选择 DELETE 请求，它通常可以不需要加请求 body，但是 HttpClient 不会限制。
 
 ```js
-// app/controller/delete.js
-module.exports = function* del(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/delete', {
-    // 必须指定 method
-    method: 'DELETE',
-    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async del() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/delete', {
+      // 必须指定 method
+      method: 'DELETE',
+      // 明确告诉 HttpClient 以 JSON 格式处理响应 body
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 ## 高级 HTTP 请求
@@ -156,26 +172,29 @@ module.exports = function* del(ctx) {
 的格式提交请求数据。
 
 ```js
-// app/controller/form.js
-module.exports = function* form(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // 必须指定 method，支持 POST，PUT 和 DELETE
-    method: 'POST',
-    // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
-    data: {
-      now: Date.now(),
-      foo: 'bar',
-    },
-    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-    dataType: 'json',
-  });
-  ctx.body = result.data.form;
-  // 响应最终会是类似以下的结果：
-  // {
-  //   "foo": "bar",
-  //   "now": "1483864184348"
-  // }
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async submit() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/post', {
+      // 必须指定 method，支持 POST，PUT 和 DELETE
+      method: 'POST',
+      // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
+      data: {
+        now: Date.now(),
+        foo: 'bar',
+      },
+      // 明确告诉 HttpClient 以 JSON 格式处理响应 body
+      dataType: 'json',
+    });
+    ctx.body = result.data.form;
+    // 响应最终会是类似以下的结果：
+    // {
+    //   "foo": "bar",
+    //   "now": "1483864184348"
+    // }
+  }
+}
 ```
 
 ### 以 Multipart 方式上传文件
@@ -185,31 +204,34 @@ module.exports = function* form(ctx) {
 这个时候需要引入 [formstream] 这个第三方模块来帮助我们生成可以被 HttpClient 消费的 `form` 对象。
 
 ```js
-// app/controller/multipart.js
+// app/controller/npm.js
 const FormStream = require('formstream');
-module.exports = function* multipart(ctx) {
-  const form = new FormStream();
-  // 设置普通的 key value
-  form.field('foo', 'bar');
-  // 上传当前文件本身用于测试
-  form.file('file', __filename);
+class NpmController extends Controller {
+  async upload() {
+    const ctx = this.ctx;
+    const form = new FormStream();
+    // 设置普通的 key value
+    form.field('foo', 'bar');
+    // 上传当前文件本身用于测试
+    form.file('file', __filename);
 
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // 必须指定 method，支持 POST，PUT
-    method: 'POST',
-    // 生成符合 multipart/form-data 要求的请求 headers
-    headers: form.headers(),
-    // 以 stream 模式提交
-    stream: form,
-    // 明确告诉 HttpClient 以 JSON 格式处理响应 body
-    dataType: 'json',
-  });
-  ctx.body = result.data.files;
-  // 响应最终会是类似以下的结果：
-  // {
-  //   "file": "'use strict';\n\nconst For...."
-  // }
-};
+    const result = await ctx.curl('https://httpbin.org/post', {
+      // 必须指定 method，支持 POST，PUT
+      method: 'POST',
+      // 生成符合 multipart/form-data 要求的请求 headers
+      headers: form.headers(),
+      // 以 stream 模式提交
+      stream: form,
+      // 明确告诉 HttpClient 以 JSON 格式处理响应 body
+      dataType: 'json',
+    });
+    ctx.body = result.data.files;
+    // 响应最终会是类似以下的结果：
+    // {
+    //   "file": "'use strict';\n\nconst For...."
+    // }
+  }
+}
 ```
 
 当然，你还可以继续通过 `form.file()` 添加更多文件以实现一次性上传多个文件的需求。
@@ -226,25 +248,29 @@ form.file('file2', file2);
 Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [HTTP] 模块自动实现的。
 
 ```js
-// app/controller/stream.js
+// app/controller/npm.js
 const fs = require('fs');
-module.exports = function* stream(ctx) {
-  // 上传当前文件本身用于测试
-  const fileStream = fs.createReadStream(__filename);
-  // httpbin.org 不支持 stream 模式，使用本地 stream 接口代替
-  const url = `${ctx.protocol}://${ctx.host}/stream`;
-  const result = yield ctx.curl(url, {
-    // 必须指定 method，支持 POST，PUT
-    method: 'POST',
-    // 以 stream 模式提交
-    stream: fileStream,
-  });
-  ctx.status = result.status;
-  ctx.set(result.headers);
-  ctx.body = result.data;
-  // 响应最终会是类似以下的结果：
-  // {"streamSize":574}
-};
+const FormStream = require('formstream');
+class NpmController extends Controller {
+  async uploadByStream() {
+    const ctx = this.ctx;
+    // 上传当前文件本身用于测试
+    const fileStream = fs.createReadStream(__filename);
+    // httpbin.org 不支持 stream 模式，使用本地 stream 接口代替
+    const url = `${ctx.protocol}://${ctx.host}/stream`;
+    const result = await ctx.curl(url, {
+      // 必须指定 method，支持 POST，PUT
+      method: 'POST',
+      // 以 stream 模式提交
+      stream: fileStream,
+    });
+    ctx.status = result.status;
+    ctx.set(result.headers);
+    ctx.body = result.data;
+    // 响应最终会是类似以下的结果：
+    // {"streamSize":574}
+  }
+}
 ```
 
 ## options 参数详解
@@ -425,12 +451,12 @@ ctx.curl(url, {
 **注意：设置成 `json` 时，如果响应数据解析失败会抛 `JSONResponseFormatError` 异常。**
 
 ```js
-const jsonResult = yield ctx.curl(url, {
+const jsonResult = await ctx.curl(url, {
   dataType: 'json',
 });
 console.log(jsonResult.data);
 
-const htmlResult = yield ctx.curl(url, {
+const htmlResult = await ctx.curl(url, {
   dataType: 'text',
 });
 console.log(htmlResult.data);
@@ -578,7 +604,7 @@ ctx.curl(url, {
 此时 `result.headers` 和 `result.status` 已经可以读取到，只是没有读取 data 数据而已。
 
 ```js
-const result = yield ctx.curl(url, {
+const result = await ctx.curl(url, {
   streaming: true,
 });
 
@@ -616,7 +642,7 @@ timing 各阶段测量值解析：
 - contentDownload：全部响应数据接收完毕耗时
 
 ```js
-const result = yield ctx.curl(url, {
+const result = await ctx.curl(url, {
   timing: true,
 });
 console.log(result.res.timing);

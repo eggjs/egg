@@ -327,17 +327,20 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       let res = await httpclient.request(url, {
         method: 'GET',
+        timeout: 20000,
       });
       assert(res.status === 200);
 
       res = await httpclient.request('https://github.com', {
         method: 'GET',
+        timeout: 20000,
       });
 
       assert(res.status === 200);
 
       res = await httpclient.request('https://www.npmjs.com', {
         method: 'GET',
+        timeout: 20000,
       });
       assert(res.status === 200);
 
@@ -360,16 +363,19 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       res = await httpclient.request(url, {
         method: 'GET',
+        timeout: 20000,
       });
       assert(res.status === 200);
 
       res = await httpclient.request('https://github.com', {
         method: 'GET',
+        timeout: 20000,
       });
       assert(res.status === 200);
 
       res = await httpclient.request('https://www.npmjs.com', {
         method: 'GET',
+        timeout: 20000,
       });
       assert(res.status === 200);
 
