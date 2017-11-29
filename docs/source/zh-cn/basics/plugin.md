@@ -70,10 +70,11 @@ app.mysql.query(sql, values);
 
 ### 参数介绍
 
-`plugin.js` 中的每个配置项支持：
-- `{Boolean} enable` - 是否开启此插件，默认为 true
-- `{String} package` - `npm` 模块名称，通过 `npm` 模块形式引入插件
-- `{String} path` - 插件绝对路径，跟 package 配置互斥
+`plugin.js` 中的每个配置项支持：  
+- `{Boolean} enable` - 是否开启此插件，默认为 true  
+- `{String} package` - `npm` 模块名称，通过 `npm` 模块形式引入插件  
+- `{String} path` - 插件绝对路径，跟 package 配置互斥  
+- `{Array} dep` - 当前插件强依赖的插件列表，改变插件加载顺序，会覆盖插件自身 `package.json` 中的 `eggPlugin.dependencies` 配置  
 - `{Array} env` - 只有在指定运行环境才能开启，会覆盖插件自身 `package.json` 中的配置
 
 ### 开启和关闭
@@ -129,6 +130,28 @@ exports.mysql = {
   package: path.join(__dirname, '../lib/plugin/egg-mysql'),
 };
 ```
+
+### 依赖管理
+
+使用插件时，默认的插件加载顺序不能满足需求时，可以通过修改 `dep` 来改变插件的加载顺序。
+
+```js
+// config/plugin.js
+const path = require('path');
+
+exports.a = {
+  enable: true,
+  package: 'a',
+};
+
+exports.b = {
+  enable: true,
+  package: 'b',
+  dep: ['a'],
+};
+```
+
+可以参见插件开发的[插件的依赖管理](../advanced/plugin.html#插件的依赖管理)
 
 ## 插件配置
 
