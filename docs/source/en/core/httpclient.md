@@ -15,9 +15,9 @@ So you can easily use `app.curl` to complete a HTTP request.
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // example: read the version info on https://registry.npm.taobao.org/egg/latest when it starts
-    const result = yield app.curl('https://registry.npm.taobao.org/egg/latest', {
+    const result = await app.curl('https://registry.npm.taobao.org/egg/latest', {
       dataType: 'json',
     });
     app.logger.info('Egg latest version: %s', result.data.version);
@@ -31,22 +31,26 @@ Framework also provides `ctx.curl(url, options)` and `ctx.httpclient` in Context
 So it's very easy to use `ctx.curl()` to complete a HTTP request in the Context (such as in the controller)
 
 ```js
-// app/controller/home.js
-module.exports = function* home(ctx) {
-  // example: request a npm module's info
-  const result = yield ctx.curl('https://registry.npm.taobao.org/egg/latest', {
-    // parse JSON response
-    dataType: 'json',
-    // timeout of 3s
-    timeout: 3000,
-  });
+// app/controller/npm.js
+class NpmController extends Controller {
+  async index() {
+    const ctx = this.ctx;
 
-  ctx.body = {
-    status: result.status,
-    headers: result.headers,
-    package: result.data,
-  };
-};
+    // example: request a npm module's info
+    const result = await ctx.curl('https://registry.npm.taobao.org/egg/latest', {
+      // parse JSON response
+      dataType: 'json',
+      // timeout of 3s
+      timeout: 3000,
+    });
+
+    ctx.body = {
+      status: result.status,
+      headers: result.headers,
+      package: result.data,
+    };
+  }
+}
 ```
 
 ## Basic HTTP Request
@@ -60,13 +64,16 @@ In the following example, we will complete the request of https://httpbin.org in
 Reading data almost uses GET request. It is the most common type and widely used in the world of HTTP. And it is also easier to construct a request parameter.
 
 ```js
-// app/controller/get.js
-module.exports = function* get(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/get?foo=bar');
-  ctx.status = result.status;
-  ctx.set(result.headers);
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async get() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/get?foo=bar');
+    ctx.status = result.status;
+    ctx.set(result.headers);
+    ctx.body = result.data;
+  }
+}
 ```
 
 - GET request might not need to set `options.method`. HttpClient Defalut method is set to `GET`
@@ -85,22 +92,25 @@ The scenario of creating data generally uses the POST request with body paramete
 Take sending JSON boy as example:
 
 ```js
-// app/controller/post.js
-module.exports = function* post(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // method is needed
-    method: 'POST',
-    // telling HttpClient to send data as JSON by contentType
-    contentType: 'json',
-    data: {
-      hello: 'world',
-      now: Date.now(),
-    },
-    // telling HttpClient to process the return body as JSON format explicitly
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async post() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/post', {
+      // method is required
+      method: 'POST',
+      // telling HttpClient to send data as JSON by contentType
+      contentType: 'json',
+      data: {
+        hello: 'world',
+        now: Date.now(),
+      },
+      // telling HttpClient to process the return body as JSON format explicitly
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 The following will explain POST to achieve Form function of form submission and file upload in detail.
@@ -110,21 +120,24 @@ The following will explain POST to achieve Form function of form submission and 
 Similar to POST, but PUT is better for data updating and replacement. Almost the same parameters as POST except setting method as `PUT`.
 
 ```js
-// app/controller/put.js
-module.exports = function* put(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/put', {
-    // method is needed 
-    method: 'PUT',
-    // telling HttpClient to send data as JSON by contentType
-    contentType: 'json',
-    data: {
-      update: 'foo bar',
-    },
-    // telling HttpClient to process the return body as JSON format explicitly
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async put() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/put', {
+      // method is required
+      method: 'PUT',
+       // telling HttpClient to send data as JSON by contentType
+      contentType: 'json',
+      data: {
+        update: 'foo bar',
+      },
+      // telling HttpClient to process the return body as JSON format explicitly
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 ### DELETE
@@ -132,16 +145,19 @@ module.exports = function* put(ctx) {
 DELETE request is to delete the data, request body don't need to add request body but HttpClient don't have the limitation.
 
 ```js
-// app/controller/delete.js
-module.exports = function* del(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/delete', {
-    // method is needed
-    method: 'DELETE',
-    // telling HttpClient to process the return body as JSON format explicitly
-    dataType: 'json',
-  });
-  ctx.body = result.data;
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async del() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/delete', {
+      // method is required
+      method: 'DELETE',
+      // telling HttpClient to process the return body as JSON format explicitly
+      dataType: 'json',
+    });
+    ctx.body = result.data;
+  }
+}
 ```
 
 ## Advanced HTTP request
@@ -153,26 +169,29 @@ In some real application scenarios, still have some more complex HTTP requests.
 Interfaces of Browser-Oriented Form Submission (without files), usually require `content-type: application/x-www-form-urlencoded` for the data requesting.
 
 ```js
-// app/controller/form.js
-module.exports = function* form(ctx) {
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // method is needed, supports POST，PUT and DELETE 
-    method: 'POST',
-    // contentType is not needed, by default HttpClient will send request in application/x-www-form-urlencoded
-    data: {
-      now: Date.now(),
-      foo: 'bar',
-    },
-    // telling HttpClient to process the return body as JSON format explicitly
-    dataType: 'json',
-  });
-  ctx.body = result.data.form;
-  // final response will similar as below: 
-  // {
-  //   "foo": "bar",
-  //   "now": "1483864184348"
-  // }
-};
+// app/controller/npm.js
+class NpmController extends Controller {
+  async submit() {
+    const ctx = this.ctx;
+    const result = await ctx.curl('https://httpbin.org/post', {
+      // method is required, supports POST，PUT and DELETE
+      method: 'POST',
+      // contentType is not needed, by default HttpClient will send request in application/x-www-form-urlencoded
+      data: {
+        now: Date.now(),
+        foo: 'bar',
+      },
+      // telling HttpClient to process the return body as JSON format explicitly
+      dataType: 'json',
+    });
+    ctx.body = result.data.form;
+    // final response will similar as below:
+    // {
+    //   "foo": "bar",
+    //   "now": "1483864184348"
+    // }
+  }
+}
 ```
 
 ### Uploading Files by Multipart
@@ -181,31 +200,34 @@ Once form submission contains files, submission of requesting data must be [mult
 We need to introduce third party module [formstream] to generate `form` objects that can be consumed by HttpClient.
 
 ```js
-// app/controller/multipart.js
+// app/controller/npm.js
 const FormStream = require('formstream');
-module.exports = function* multipart(ctx) {
-  const form = new FormStream();
-  // set key value
-  form.field('foo', 'bar');
-  // uploading the current file for test propose
-  form.file('file', __filename);
+class NpmController extends Controller {
+  async upload() {
+    const ctx = this.ctx;
+    const form = new FormStream();
+    // set normal field and value
+    form.field('foo', 'bar');
+    // uploading the current file for test propose
+    form.file('file', __filename);
 
-  const result = yield ctx.curl('https://httpbin.org/post', {
-    // method is needed, supports POST，PUT
-    method: 'POST',
-    // generate request headers following the requirements of multipart/form-data
-    headers: form.headers(),
-    // submitted by stream mode
-    stream: form,
-   // telling HttpClient to process the return body as JSON format explicitly
-    dataType: 'json',
-  });
-  ctx.body = result.data.files;
-  // final response will similar as below:
-  // {
-  //   "file": "'use strict';\n\nconst For...."
-  // }
-};
+    const result = await ctx.curl('https://httpbin.org/post', {
+     // method is required, supports POST，PUT
+      method: 'POST',
+      // generate request headers following the requirements of multipart/form-data
+      headers: form.headers(),
+      // submitted as stream mode
+      stream: form,
+      // telling HttpClient to process the return body as JSON format explicitly
+      dataType: 'json',
+    });
+    ctx.body = result.data.files;
+    // final response will similar as below:
+    // {
+    //   "file": "'use strict';\n\nconst For...."
+    // }
+  }
+}
 ```
 
 Of course, you can add more files to achieve the requirements of upload multiple files at one time by `form.file()`
@@ -221,25 +243,29 @@ In fact, Stream is the leading in the world of Node.js.
 If the server supports streaming, the most friendly way is to send the Stream directly. Actually, Stream will be sent in `Transfer-Encoding: chunked` transmission coding format, which is implemented by [HTTP] module automatically.
 
 ```js
-// app/controller/stream.js
+// app/controller/npm.js
 const fs = require('fs');
-module.exports = function* stream(ctx) {
-  // uploading the current file for test propose
-  const fileStream = fs.createReadStream(__filename);
-  // httpbin.org not support stream mode, use the local stream interface instead
-  const url = `${ctx.protocol}://${ctx.host}/stream`;
-  const result = yield ctx.curl(url, {
-    // method is needed, supports POST，PUT
-    method: 'POST',
-    // submitted by stream mode
-    stream: fileStream,
-  });
-  ctx.status = result.status;
-  ctx.set(result.headers);
-  ctx.body = result.data;
-  // final response will similar as below:
-  // {"streamSize":574}
-};
+const FormStream = require('formstream');
+class NpmController extends Controller {
+  async uploadByStream() {
+    const ctx = this.ctx;
+    // uploading the current file for test propose
+    const fileStream = fs.createReadStream(__filename);
+     // httpbin.org not support stream mode, use the local stream interface instead
+    const url = `${ctx.protocol}://${ctx.host}/stream`;
+    const result = await ctx.curl(url, {
+      // method is required, supports POST，PUT
+      method: 'POST',
+      // submitted by stream mode
+      stream: fileStream,
+    });
+    ctx.status = result.status;
+    ctx.set(result.headers);
+    ctx.body = result.data;
+    // final response will similar as below:
+    // {"streamSize":574}
+  }
+}
 ```
 
 ## options Parameters in Detail
@@ -293,7 +319,7 @@ exports.httpclient = {
 };
 ```
 
-Application can overrides the configuration by `config/config.default.js` 
+Application can overrides the configuration by `config/config.default.js`
 
 ### `data: Object`
 
@@ -326,7 +352,7 @@ ctx.curl(url, {
 
 ### `dataAsQueryString: Boolean`
 
-Once `dataAsQueryString=true` is set, even under POST, it will forces `options.data` to be processed by `querystring.stringify` then append to the `url` query parameters 
+Once `dataAsQueryString=true` is set, even under POST, it will forces `options.data` to be processed by `querystring.stringify` then append to the `url` query parameters
 
 The application scenarios that sending data using `stream` and pass additional request parameters by `url` query can be well resolved.
 
@@ -349,7 +375,7 @@ Set request Context, if the parameter is set, it will ignore the `data` paramete
 ```js
 ctx.curl(url, {
   method: 'POST',
-  // Sending the raw xml data without HttpClient's to do processing 
+  // Sending the raw xml data without HttpClient's to do processing
   content: '<xml><hello>world</hello></xml>',
   headers: {
     'content-type': 'text/html',
@@ -409,18 +435,18 @@ ctx.curl(url, {
 
 ### `dataType: String`
 
-Set the response data format, default return the raw buffer formatted data without processing. Support `text` and `json` 
+Set the response data format, default return the raw buffer formatted data without processing. Support `text` and `json`
 
 **Note: If `json` is set，a `JSONResponseFormatError`  error would be thrown if fails to parse the response data.**
 
 
 ```js
-const jsonResult = yield ctx.curl(url, {
+const jsonResult = await ctx.curl(url, {
   dataType: 'json',
 });
 console.log(jsonResult.data);
 
-const htmlResult = yield ctx.curl(url, {
+const htmlResult = await ctx.curl(url, {
   dataType: 'text',
 });
 console.log(htmlResult.data);
@@ -567,7 +593,7 @@ After enable streaming, HttpClient will return immediately after getting the res
 At this moment `result.headers` and `result.status` can be read, but still cannot read the data
 
 ```js
-const result = yield ctx.curl(url, {
+const result = await ctx.curl(url, {
   streaming: true,
 });
 
@@ -597,15 +623,15 @@ After enable the timing, you can get the time measurements of HTTP request (in m
 Through these measurements, we can easily locate the slowest environment in the request, similar to the Chrome network timing.
 
 Measurement timing's analysis of each stage:
-- queuing: allocating socket time consuming 
-- dnslookup: DNS queries time consuming 
-- connected: socket three handshake success time consuming 
-- requestSent: requesting full data time consuming 
-- waiting: first byte to received response time consuming 
+- queuing: allocating socket time consuming
+- dnslookup: DNS queries time consuming
+- connected: socket three handshake success time consuming
+- requestSent: requesting full data time consuming
+- waiting: first byte to received response time consuming
 - contentDownload: full response data time consuming
 
 ```js
-const result = yield ctx.curl(url, {
+const result = await ctx.curl(url, {
   timing: true,
 });
 console.log(result.res.timing);
@@ -664,7 +690,7 @@ Then it works correctly, and all requests that go through HttpClient can be view
 
 ### Connection Timeout
 
-- Exception: `ConnectionTimeoutError` 
+- Exception: `ConnectionTimeoutError`
 - Scene: usually occurred by the DNS query is slow, or the network is slow between the client and server
 - Troubleshooting Suggestion: increase the `timeout` parameter appropriately.
 
