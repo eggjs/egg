@@ -25,7 +25,8 @@ Egg 的理念之一是`渐进式增强`，故我们为开发者提供`渐进升�
 ## 快速升级
 
 - Node.js 使用最新的 LTS 版本（`>=8.9.0`）。
-- 执行 `egg-bin autod`，会自动升级 `egg` 的依赖为 `^2.0.0`，以及其他插件版本。
+- 修改 `package.json` 中 `egg` 的依赖为 `^2.0.0`。
+- 检查相关插件是否发布新版本（可选）。
 - 重新安装依赖，跑单元测试。
 
 **搞定！不需要修改任何一行代码，就已经完成了升级。**
@@ -183,7 +184,7 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 
 ## 插件升级
 
-`应用开发者`只需升级`插件开发者`修改后的依赖版本即可，可以用我们提供的命令 `egg-bin autod` 快速更新。
+`应用开发者`只需升级`插件开发者`修改后的依赖版本即可，也可以用我们提供的命令 `egg-bin autod` 快速更新。
 
 以下内容针对`插件开发者`，指导如何升级插件：
 
@@ -233,6 +234,12 @@ task = app.toAsyncFunction(schedule.task);
   - 修改 `ci.version` 为 `8, 9`， 并重新安装依赖以便生成新的 travis 配置文件。
 - 修改 `README.md` 的示例为 async function。
 - 修改 `test/fixtures` 为 async function，可选，建议分开另一个 PR 方便 Review。
+
+一般还会需要继续维护上一个版本，故需要：
+  - 对上一个版本建立一个 `1.x` 这类的 branch 分支
+  - 修改上一个版本的 `package.json` 的 `publishConfig.tag` 为 `release-1.x`
+  - 这样如果上一个版本有 BugFix 时，npm 版本时就会发布为 `release-1.x` 这个 tag，用户通过 `npm i egg-xx@release-1.x` 来引入旧版本。
+  - 参见 [npm 文档](https://docs.npmjs.com/cli/dist-tag)。
 
 
 [co]: https://github.com/tj/co
