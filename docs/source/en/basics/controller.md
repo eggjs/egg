@@ -86,6 +86,8 @@ In [App Start](./app-start.md), the application is allowed to define a customize
 
 ```js
 // app.js
+const egg = require('egg');
+
 module.exports = app => {
   class CustomController extends app.Controller {
     get user() {
@@ -104,7 +106,7 @@ module.exports = app => {
       this.ctx.throw(404, msg);
     }
   }
-  app.Controller = CustomController;
+  app.Controller = egg.Controller = CustomController;
 }
 ```
 
