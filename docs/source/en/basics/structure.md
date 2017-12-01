@@ -52,7 +52,7 @@ As above, directories by conventions of framework:
 - `app/public/**` used to place static resources, optional, see built-in plugin [egg-static](https://github.com/eggjs/egg-static) for details.
 - `app/extend/**` used for extensions of the framework, optional, see [Extend EGG](./extend.md) for details.
 - `config/config.{env}.js` used to write configuration files, see [Configuration](./config.md) for details.
-- `config/plugin.js` used to configure the plugins that need to be loaded, see [Plugin Development](../advanced/plugin.md) for details.
+- `config/plugin.js` used to configure the plugins that need to be loaded, see [Plugin](./plugin.md) for details.
 - `test/**` used for unit test, see [Unit Test](../core/unittest.md) for details.
 - `app.js` and `agent.js` are used to customize the initialization works at startup, see [Application Startup Configuration](./app-start.md) for details. For the role of `agent.js` see [Agent Mechanism](../core/cluster-and-ipc.md#agent-mechanism).
 

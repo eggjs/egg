@@ -45,8 +45,8 @@ EggCore 可以看做 Koa Application 的升级版，默认内置 [Loader](./load
 你可以直接通过 [egg-init] 选择 [framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架来快速上手。
 
 ```bash
-$ egg-init my-framework --type=framework
-$ cd my-framework
+$ egg-init --type=framework yadan
+$ cd yadan
 $ npm i
 $ npm test
 ```
@@ -94,37 +94,32 @@ startCluster({
 {
   "name": "yadan",
   "dependencies": {
-    "egg": "^1.0.0"
+    "egg": "^2.0.0"
   }
 }
 
 // index.js
-const egg = require('egg');
-// 将所有的 API clone 一份
-Object.assign(exports, egg);
-```
+module.exports = require('./lib/framework.js');
 
-自定义 Application
-
-```js
-// index.js
-// 覆盖了 Egg 的 Application
-exports.Application = require('./lib/application.js');
-
-// lib/application.js
+// lib/framework.js
 const path = require('path');
-const Application = require('egg').Application;
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-class YadanApplication extends Application {
+
+class Application extends egg.Application {
   get [EGG_PATH]() {
     // 返回 framework 路径
     return path.dirname(__dirname);
   }
 }
-module.exports = YadanApplication;
+
+// 覆盖了 Egg 的 Application
+module.exports = Object.assign(egg, {
+  Application,
+});
 ```
 
-启动时需要指定框架名（在 `package.json` 指定 `egg.framework`，默认为 egg），Loader 将从 `node_modules` 找指定模块作为框架，并加载其 export 的 Application。
+应用启动时需要指定框架名（在 `package.json` 指定 `egg.framework`，默认为 egg），Loader 将从 `node_modules` 找指定模块作为框架，并加载其 export 的 Application。
 
 ```json
 {
@@ -180,20 +175,29 @@ app.ready();
 上面的例子自定义了 Application，因为 Egg 是多进程模型，所以还需要定义 Agent，原理是一样的。
 
 ```js
-// index.js
-exports.Agent = require('./lib/agent.js');
-
-// lib/agent.js
+// lib/framework.js
 const path = require('path');
-const Agent = require('egg').Agent;
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-class YadanAgent extends Agent {
+
+class Application extends egg.Application {
   get [EGG_PATH]() {
     // 返回 framework 路径
     return path.dirname(__dirname);
   }
 }
-module.exports = YadanAgent;
+
+class Agent extends egg.Agent {
+  get [EGG_PATH]() {
+    return path.dirname(__dirname);
+  }
+}
+
+// 覆盖了 Egg 的 Application
+module.exports = Object.assign(egg, {
+  Application,
+  Agent,
+});
 ```
 
 **但因为 Agent 和 Application 是两个实例，所以 API 有可能不一致。**
@@ -205,38 +209,38 @@ Loader 应用启动的核心，使用它还能规范应用代码，我们可以�
 自定义 Loader 也是用 `Symbol.for('egg#loader')` 的方式，主要的原因还是使用原型链，上层框架可覆盖底层 Loader，在上面例子的基础上
 
 ```js
-// index.js
-// 自定义的 Loader 也需要 export，上层框架需要基于这个扩展
-exports.AppWorkerLoader = require('./lib/app_worker_loader.js');
-
-// lib/application.js
+// lib/framework.js
 const path = require('path');
-const Application = require('egg').Application;
-const AppWorkerLoader = require('./app_worker_loader');
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-const EGG_LOADER = Symbol.for('egg#loader');
-class YadanApplication extends Application {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
-  }
-  // 覆盖 Egg 的 Loader，启动时使用这个 Loader
-  get [EGG_LOADER]() {
-    return AppWorkerLoader;
-  }
-}
-module.exports = YadanApplication;
 
-// lib/app_worker_loader.js
-class YadanAppWorkerLoader extends AppWorkerLoader {
+class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
     super.load();
     // 自己扩展
   }
 }
-module.exports = YadanAppWorkerLoader;
+
+class Application extends egg.Application {
+  get [EGG_PATH]() {
+    // 返回 framework 路径
+    return path.dirname(__dirname);
+  }
+  // 覆盖 Egg 的 Loader，启动时使用这个 Loader
+  get [EGG_LOADER]() {
+    return YadanAppWorkerLoader;
+  }
+}
+
+// 覆盖了 Egg 的 Application
+module.exports = Object.assign(egg, {
+  Application,
+  // 自定义的 Loader 也需要 export，上层框架需要基于这个扩展
+  AppWorkerLoader: YadanAppWorkerLoader,
+});
 ```
 
-AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加载的文件可以于 AppWorkerLoader 不同，比如 默认加载时，Egg 的 AppWorkerLoader 会加载 `app.js` 而 AgentWorkerLoader 加载的是 `agent.js`。
+AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加载的文件可以于 AppWorkerLoader 不同，比如：默认加载时，Egg 的 AppWorkerLoader 会加载 `app.js` 而 AgentWorkerLoader 加载的是 `agent.js`。
 
 ## 框架启动原理
 
@@ -281,8 +285,8 @@ describe('test/index.test.js', () => {
 
   it('should success', () => {
     return app.httpRequest()
-    .get('/')
-    .expect(200);
+      .get('/')
+      .expect(200);
   });
 });
 ```
@@ -345,8 +349,8 @@ describe('/test/index.test.js', () => {
   afterEach(mock.restore);
   it('should success', () => {
     return app.httpRequest()
-    .get('/')
-    .expect(200);
+      .get('/')
+      .expect(200);
   });
 });
 ```

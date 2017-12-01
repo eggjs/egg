@@ -27,9 +27,9 @@ class UpdateCache extends Subscription {
     };
   }
 
-  // subscribe 是真正定时任务执行时被运行的函数，第一个参数是一个匿名的 Context 实例
-  * subscribe() {
-    const res = yield this.ctx.curl('http://www.api.com/cache', {
+  // subscribe 是真正定时任务执行时被运行的函数
+  async subscribe() {
+    const res = await this.ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     this.ctx.app.cache = res.data;
@@ -47,8 +47,8 @@ module.exports = {
     interval: '1m', // 1 分钟间隔
     type: 'all', // 指定所有的 worker 都需要执行
   },
-  * task(ctx) {
-    const res = yield ctx.curl('http://www.api.com/cache', {
+  async task(ctx) {
+    const res = await ctx.curl('http://www.api.com/cache', {
       dataType: 'json',
     });
     ctx.app.cache = res.data;
@@ -56,12 +56,12 @@ module.exports = {
 };
 ```
 
-编写完这个文件就意味着一个定时任务定义完成了。这个定时任务会在每一个 Worker 进程上每 1 分钟执行一次，将远程数据请求回来挂载到 `app.cache` 上。
+这个定时任务会在每一个 Worker 进程上每 1 分钟执行一次，将远程数据请求回来挂载到 `app.cache` 上。
 
 ### 任务
 
-- `task` 或 `subscribe` 支持 `generator function / async function`。
-- 入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
+- `task` 或 `subscribe` 同时支持 `generator function` 和 `async function`。
+- `task` 的入参为 `ctx`，匿名的 Context 实例，可以通过它调用 `service` 等。
 
 ### 定时方式
 
@@ -123,7 +123,7 @@ module.exports = {
 
 - `cronOptions`: 配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档
 - `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
-- `disable`：配置改参数为 true 时，这个定时任务不会被启动。
+- `disable`：配置该参数为 true 时，这个定时任务不会被启动。
 
 ### 动态配置定时任务
 
@@ -137,8 +137,8 @@ module.exports = app => {
       type: 'all',
       disable: app.config.env === 'local', // 本地开发环境不执行
     },
-    * task(ctx) {
-      const res = yield ctx.curl('http://www.api.com/cache', {
+    async task(ctx) {
+      const res = await ctx.curl('http://www.api.com/cache', {
         contentType: 'json',
       });
       ctx.app.cache = res.data;
@@ -159,10 +159,10 @@ module.exports = app => {
 const mm = require('egg-mock');
 const assert = require('assert');
 
-it('should schedule work fine', function*() {
+it('should schedule work fine', async () => {
   const app = mm.app();
-  yield app.ready();
-  yield app.runSchedule('update_cache');
+  await app.ready();
+  await app.runSchedule('update_cache');
   assert(app.cache);
 });
 ```
@@ -171,10 +171,10 @@ it('should schedule work fine', function*() {
 
 ```js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 保证应用启动监听端口前数据已经准备好了
     // 后续数据的更新由定时任务自动触发
-    yield app.runSchedule('update_cache');
+    await app.runSchedule('update_cache');
   });
 };
 ```

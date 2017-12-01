@@ -4,30 +4,33 @@ title: 插件开发
 
 插件机制是我们框架的一大特色。它不但可以保证框架核心的足够精简、稳定、高效，还可以促进业务逻辑的复用，生态圈的形成。有人可能会问了
 
-> Koa 已经有了中间件的机制，为啥还要插件呢？
-> 中间件、插件、应用它们之间是什么关系，有什么区别？
-> 我该怎么使用一个插件？
-> 如何编写一个插件？
-> ...
+- Koa 已经有了中间件的机制，为啥还要插件呢？
+- 中间件、插件、应用它们之间是什么关系，有什么区别？
+- 我该怎么使用一个插件？
+- 如何编写一个插件？
+- ...
 
-接下来我们就来逐一讨论
+在[使用插件](../basics/plugin.md)章节我们已经讨论过前几点，接下来我们来看看如何开发一个插件。
 
-## 为什么要插件
+## 插件开发
 
-我们在使用 Koa 中间件过程中发现了下面一些问题：
+### 使用脚手架快速开发
 
-1. 中间件加载其实是有先后顺序的，但是中间件自身却无法管理这种顺序，只能交给使用者。这样其实非常不友好，一旦顺序不对，结果可能有天壤之别。
-2. 中间件的定位是拦截用户请求，并在它前后做一些事情，例如：鉴权、安全检查、访问日志等等。但实际情况是，有些功能是和请求无关的，例如：定时任务、消息订阅、后台逻辑等等。
-3. 有些功能包含非常复杂的初始化逻辑，需要在应用启动的时候完成。这显然也不适合放到中间件中去实现。
+你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
 
-综上所述，我们需要一套更加强大的机制，来管理、编排那些相对独立的业务逻辑。
+```bash
+$ egg-init --type=plugin egg-hello
+$ cd egg-hello
+$ npm i
+$ npm test
+```
 
-## 什么是插件
+## 插件的目录结构
 
 一个插件其实就是一个『迷你的应用』，下面展示的是一个插件的目录结构，和应用（app）几乎一样。
 
 ```js
-. hello-plugin
+. egg-hello
 ├── package.json
 ├── app.js (可选)
 ├── agent.js (可选)
@@ -61,7 +64,7 @@ title: 插件开发
     - 一个应用可能依赖很多个插件，如果插件支持路由可能导致路由冲突。
     - 如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现。
 
-2. 插件需要在 `package.json` 中的 `eggPlugin` 节点指定插件特有的信息
+2. 插件需要在 `package.json` 中的 `eggPlugin` 节点指定插件特有的信息：
 
     - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
     - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
@@ -81,6 +84,7 @@ title: 插件开发
     ```
 
   3. 插件没有 `plugin.js`：
+
     - `eggPlugin.dependencies` 只是用于声明依赖关系，而不是引入插件或开启插件。
     - 如果期望统一管理多个插件的开启和配置，可以在[上层框架](./framework.md)处理。
 
@@ -204,8 +208,8 @@ title: 插件开发
     app.myClient.on('error', err => {
       app.coreLogger.error(err);
     });
-    app.beforeStart(function* () {
-      yield app.myClient.ready();
+    app.beforeStart(async () => {
+      await app.myClient.ready();
       app.coreLogger.info('my client is ready');
     });
   };
@@ -222,8 +226,8 @@ title: 插件开发
     agent.myClient.on('error', err => {
       agent.coreLogger.error(err);
     });
-    agent.beforeStart(function* () {
-      yield agent.myClient.ready();
+    agent.beforeStart(async () => {
+      await agent.myClient.ready();
       agent.coreLogger.info('my client is ready');
     });
   };
@@ -253,7 +257,7 @@ title: 插件开发
     // immediate: true,
   };
 
-  exports.task = function* (ctx) {
+  exports.task = async ctx => {
     // your logic code
   };
   ```
@@ -290,8 +294,8 @@ function createMysql(config, app) {
   const client = new Mysql(config);
 
   // 做启动应用前的检查
-  app.beforeStart(function* () {
-    const rows = yield client.query('select now() as currentTime;');
+  app.beforeStart(async function startMysql() {
+    const rows = await client.query('select now() as currentTime;');
     const index = count++;
     app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
   });
@@ -327,13 +331,11 @@ module.exports = {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.mysql.query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.mysql.query(sql, values);
+  },
+}
 ```
 
 ##### 多实例
@@ -368,13 +370,11 @@ exports.mysql = {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.mysql.get('db1').query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.mysql.get('db1').query(sql, values);
+  },
+}
 ```
 
 ##### 动态创建实例
@@ -384,9 +384,9 @@ module.exports = app => {
 ```js
 // app.js
 module.exports = app => {
-  app.beforeStart(function* () {
+  app.beforeStart(async () => {
     // 从配置中心获取 MySQL 的配置 { host, post, password, ... }
-    const mysqlConfig = yield app.configCenter.fetch('mysql');
+    const mysqlConfig = await app.configCenter.fetch('mysql');
     // 动态创建 MySQL 实例
     app.database = app.mysql.createInstance(mysqlConfig);
   });
@@ -397,95 +397,14 @@ module.exports = app => {
 
 ```js
 // app/controller/post.js
-module.exports = app => {
-  return class PostController extends app.Controller {
-    * list() {
-      const posts = yield this.app.databse.query(sql, values);
-    },
-  };
-};
+class PostController extends Controller {
+  async list() {
+    const posts = await this.app.databse.query(sql, values);
+  },
+}
 ```
 
 **注意，在动态创建实例的时候，框架也会读取配置中 `default` 字段内的配置项作为默认配置。**
-
-## 插件使用指南
-
-### 安装
-
-和安装普通 `npm` 包一样
-
-```bash
-$ npm i egg-onerror --save
-```
-
-### 开启和关闭
-
-在应用的 `${app_root}/config/plugin.js` 文件里配置
-
-```js
-module.exports = {
-  onerror: {
-    enable: true,
-    package: 'egg-onerror',
-  },
-};
-```
-
-每个配置项有一下配置参数：
-- `{Boolean} enable` - 是否开启此插件
-- `{String} package` - `npm` 模块名称，允许插件以 `npm` 模块形式引入
-- `{String} path` - 插件绝对路径，跟 package 配置互斥
-- `{Array} env` - 只有在指定运行环境才能开启，会覆盖插件自己的配置
-
-这里稍微讲下 package 和 path 的区别
-
-- package 是 `npm` 方式引入，也是最常见的引入方式
-- path 是绝对路径引入，一般是内置插件，比如：应用内部抽了一个插件，但还没来得及发布到 `npm`，或者是应用自己覆盖了框架的一些插件
-
-_说明：_ 框架内部内置了一些插件，而应用在使用这些插件的时候就不用配置 package 或者 path，只需要指定 enable 与否
-
-```js
-// 对于内置插件，可以用下面的简洁方式开启或关闭
-exports.onerror = false;
-```
-
-框架已内置插件列表：
-
-- [onerror](https://github.com/eggjs/egg-onerror) 统一异常处理
-- [Session](https://github.com/eggjs/egg-session) Session 实现
-- [i18n](https://github.com/eggjs/egg-i18n) 多语言
-- [watcher](https://github.com/eggjs/egg-watcher) 文件和文件夹监控
-- [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
-- [security](https://github.com/eggjs/egg-security) 安全
-- [development](https://github.com/eggjs/egg-development) 开发环境配置
-- [logrotator](https://github.com/eggjs/egg-logrotator) 日志切分
-- [schedule](https://github.com/eggjs/egg-schedule) 定时任务
-- [static](https://github.com/eggjs/egg-static) 静态服务器
-- [jsonp](https://github.com/eggjs/egg-jsonp) jsonp 支持
-- [view](https://github.com/eggjs/egg-view) 模板引擎
-
-### 根据环境配置
-
-插件还支持 `plugin.{env}.js` 这种模式，会根据[运行环境](../basics/env.md)加载插件配置。
-
-比如定义了一个开发环境使用的插件 `egg-dev`，只希望在本地环境加载，可以如下定义
-
-```js
-// package.json
-{
-  "devDependencies": {
-    "egg-dev": "*"
-  }
-}
-
-// config/plugin.local.js
-exports.dev = {
-  enable: true,
-  package: 'egg-dev',
-};
-```
-
-这样在生产环境可以不需要下载 `egg-dev` 的包了。
 
 ### 插件的寻址规则
 
@@ -497,19 +416,6 @@ exports.dev = {
   1. 应用根目录下的 `node_modules`
   2. 应用依赖框架路径下的 `node_modules`
   3. 当前路径下的 `node_modules` （主要是兼容单元测试场景）
-
-## 插件开发
-
-### 使用脚手架快速开发
-
-你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
-
-```bash
-$ egg-init egg-xxx --type=plugin
-$ cd egg-xxx
-$ npm i
-$ npm test
-```
 
 ### 插件规范
 

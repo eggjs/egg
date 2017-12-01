@@ -26,7 +26,7 @@ $ tar -zcvf ../release.tgz .
 
 ## 部署
 
-服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 6.0.0`。
+服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 8.0.0`。
 
 框架内置了 [egg-cluster] 来启动 [Master 进程](./cluster-and-ipc.md#master)，Master 有足够的稳定性，不再需要使用 [pm2] 等进程守护模块。
 
@@ -50,6 +50,8 @@ $ npm i egg-scripts --save
 ```
 
 这样我们就可以通过 `npm start` 和 `npm stop` 命令启动或停止应用。
+
+> 注意：`egg-scripts` 不支持 Windows 系统。
 
 ### 启动命令
 
@@ -89,10 +91,13 @@ exports.cluster = {
 ### 停止命令
 
 ```bash
-$ egg-scripts stop
+$ egg-scripts stop [--title=egg-server]
 ```
 
 该命令将杀死 master 进程，并通知 worker 和 agent 优雅退出。
+
+支持以下参数：
+- `--title=egg-server` 用于杀死指定的 egg 应用，未传递则会终止所有的 Egg 应用。
 
 你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
 

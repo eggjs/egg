@@ -31,7 +31,7 @@
 $ npm install egg --save
 ```
 
-支持 Node.js 6.x 以上版本。
+支持 Node.js 8.x 以上版本。
 
 ## 特性
 

@@ -3,12 +3,12 @@ title: 异常处理
 
 ## 异常捕获
 
-得益于框架底层采用的 co 库将异步编码变成了同步模型，同时错误也完全可以用 `try catch` 来捕获。在编写应用代码时，所有地方都可以直接用 `try catch` 来捕获异常。
+得益于框架支持的异步编程模型，错误完全可以用 `try catch` 来捕获。在编写应用代码时，所有地方都可以直接用 `try catch` 来捕获异常。
 
 ```js
 // app/service/test.js
 try {
-  const res = yield this.ctx.curl('http://eggjs.com/api/echo', { dataType: 'json' });
+  const res = await this.ctx.curl('http://eggjs.com/api/echo', { dataType: 'json' });
   if (res.status !== 200) throw new Error('response status is not 200');
   return res.data;
 } catch (err) {
@@ -17,17 +17,19 @@ try {
 }
 ```
 
-按照正常代码写法，所有的异常都可以用这个方式进行捕获并处理，但是一定要注意一些特殊的写法可能带来的问题。打一个不太正式的比方，我们的代码全部都在一个异步调用链上，所有的异步操作都通过 yield 串接起来了，但是只要有一个地方跳出了异步调用链，异常就捕获不到了。
+按照正常代码写法，所有的异常都可以用这个方式进行捕获并处理，但是一定要注意一些特殊的写法可能带来的问题。打一个不太正式的比方，我们的代码全部都在一个异步调用链上，所有的异步操作都通过 await 串接起来了，但是只要有一个地方跳出了异步调用链，异常就捕获不到了。
 
 ```js
-// app/controller/jump.js
-exports.buy = function* (ctx) {
-  const request = {};
-  const config = yield ctx.service.trade.buy(request);
-  // 下单后需要进行一次核对，且不阻塞当前请求
-  setImmediate(() => {
-    ctx.service.trade.check(request).catch(err => ctx.logger.error(err));
-  });
+// app/controller/home.js
+class HomeController extends Controller {
+  async buy () {
+    const request = {};
+    const config = await ctx.service.trade.buy(request);
+    // 下单后需要进行一次核对，且不阻塞当前请求
+    setImmediate(() => {
+      ctx.service.trade.check(request).catch(err => ctx.logger.error(err));
+    });
+  }
 }
 ```
 
@@ -36,14 +38,16 @@ exports.buy = function* (ctx) {
 当然，框架也考虑到了这类场景，提供了 `ctx.runInBackground(scope)` 辅助方法，通过它又包装了一个异步链，所有在这个 scope 里面的错误都会统一捕获。
 
 ```js
-exports.buy = function* (ctx) {
-  const request = {};
-  const config = yield ctx.service.trade.buy(request);
-  // 下单后需要进行一次核对，且不阻塞当前请求
-  ctx.runInBackground(function* () {
-    // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
-    yield ctx.service.trade.check(request);
-  });
+class HomeController extends Controller {
+  async buy () {
+    const request = {};
+    const config = await ctx.service.trade.buy(request);
+    // 下单后需要进行一次核对，且不阻塞当前请求
+    ctx.runInBackground(async () => {
+      // 这里面的异常都会统统被 Backgroud 捕获掉，并打印错误日志
+      await ctx.service.trade.check(request);
+    });
+  }
 }
 ```
 
@@ -58,8 +62,8 @@ exports.buy = function* (ctx) {
 | HTML & TEXT | local & unittest | - | onerror 自带的错误页面，展示详细的错误信息 |
 | HTML & TEXT | 其他 | 是 | 重定向到 errorPageUrl |
 | HTML & TEXT | 其他 | 否 | onerror 自带的没有错误信息的简单错误页（不推荐） |
-| JSON | local & unittest | - | JSON 对象，带详细的错误信息 |
-| JSON | 其他 | - | json 对象，不带详细的错误信息 |
+| JSON & JSONP | local & unittest | - | JSON 对象或对应的 JSONP 格式响应，带详细的错误信息 |
+| JSON & JSONP | 其他 | - | JSON 对象或对应的 JSONP 格式响应，不带详细的错误信息 |
 
 ### errorPageUrl
 
@@ -79,38 +83,31 @@ module.exports = {
 
 ## 自定义统一异常处理
 
-尽管框架提供了默认的统一异常处理机制，但是应用开发中经常需要对异常时的响应做自定义，特别是在做一些接口开发的时候。这时我们可以通过自定义[中间件](../basics/middleware.md)的方式来自行定义统一的异常处理函数。
-
-例如我们可以在 `app/middleware` 中新增一个 `error_handler.js` 的文件
+尽管框架提供了默认的统一异常处理机制，但是应用开发中经常需要对异常时的响应做自定义，特别是在做一些接口开发的时候。框架自带的 onerror 插件支持自定义配置错误处理方法，可以覆盖默认的错误处理方法。
 
 ```js
-// app/middleware/error_handler.js
-module.exports = () => {
-  return function* errorHandler(next) {
-    try {
-      yield next;
-    } catch (err) {
-      // 注意：自定义的错误统一处理函数捕捉到错误后也要 `app.emit('error', err, this)`
-      // 框架会统一监听，并打印对应的错误日志
-      this.app.emit('error', err, this);
-      // 自定义错误时异常返回的格式
-      this.body = {
-        success: false,
-        message: this.app.config.env === 'prod' ? 'Internal Server Error' : err.message,
-      };
-    }
-  };
-};
-```
-
-然后在 `config/config.default.js` 中引入这个中间件
-
-```js
+// config/config.default.js
 module.exports = {
-  middleware: [ 'errorHandler' ],
-  errorHandler: {
-    // 非 `/api/` 路径不在这里做错误处理，留给默认的 onerror 插件统一处理
-    match: '/api',
+  onerror: {
+    all(err, ctx) {
+      // 在此处定义针对所有响应类型的错误处理方法
+      // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
+      ctx.body = 'error';
+      ctx.status = 500;
+    },
+    html(err, ctx) {
+      // html hander
+      ctx.body = '<h3>error</h3>';
+      ctx.status = 500;
+    },
+    json(err, ctx) {
+      // json hander
+      ctx.body = { message: 'error' };
+      ctx.status = 500;
+    },
+    jsonp(err, ctx) {
+      // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
+    },
   },
 };
 ```
@@ -149,11 +146,14 @@ module.exports = {
 ```js
 // app/middleware/notfound_handler.js
 module.exports = () => {
-  return function* (next) {
-    yield next;
-    if (this.status === 404 && !this.body) {
-      if (this.acceptJSON) this.body = { error: 'Not Found' };
-      else this.body = '<h1>Page Not Found</h1>';
+  return async notFoundHandler(ctx, next) {
+    await next();
+    if (ctx.status === 404 && !ctx.body) {
+      if (ctx.acceptJSON) {
+        ctx.body = { error: 'Not Found' };
+      } else {
+        ctx.body = '<h1>Page Not Found</h1>';
+      }
     }
   };
 };

@@ -13,12 +13,12 @@ describe('test/lib/core/logger.test.js', () => {
   afterEach(mm.restore);
   afterEach(() => sleep(5000).then(() => app.close()));
 
-  it('should got right default config on prod env', function* () {
+  it('should got right default config on prod env', async () => {
     mm.env('prod');
     mm(process.env, 'EGG_LOG', '');
     mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app/config'));
     app = utils.app('apps/mock-production-app');
-    yield app.ready();
+    await app.ready();
 
     // 生产环境默认 _level = info
     assert(app.logger.get('file').options.level === Logger.INFO);
@@ -29,12 +29,12 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.config.logger.disableConsoleAfterReady === true);
   });
 
-  it('should got right level on prod env when set allowDebugAtProd to false', function* () {
+  it('should got right level on prod env when set allowDebugAtProd to false', async () => {
     mm.env('prod');
     mm(process.env, 'EGG_LOG', '');
     mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app-do-not-force/config'));
     app = utils.app('apps/mock-production-app-do-not-force');
-    yield app.ready();
+    await app.ready();
 
     assert(app.config.logger.allowDebugAtProd === false);
 
@@ -44,11 +44,11 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.coreLogger.get('console').options.level === Logger.INFO);
   });
 
-  it('should got right level on local env', function* () {
+  it('should got right level on local env', async () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', '');
     app = utils.app('apps/mock-dev-app');
-    yield app.ready();
+    await app.ready();
 
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.INFO);
@@ -57,11 +57,11 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
-  it('should set EGG_LOG level on local env', function* () {
+  it('should set EGG_LOG level on local env', async () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', 'ERROR');
     app = utils.app('apps/mock-dev-app');
-    yield app.ready();
+    await app.ready();
 
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.ERROR);
@@ -70,11 +70,11 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
-  it('should got right config on unittest env', function* () {
+  it('should got right config on unittest env', async () => {
     mm.env('unittest');
     mm(process.env, 'EGG_LOG', '');
     app = utils.app('apps/mock-dev-app');
-    yield app.ready();
+    await app.ready();
 
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.WARN);
@@ -83,20 +83,20 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.config.logger.disableConsoleAfterReady === false);
   });
 
-  it('should set log.consoleLevel to env.EGG_LOG', function* () {
+  it('should set log.consoleLevel to env.EGG_LOG', async () => {
     mm(process.env, 'EGG_LOG', 'ERROR');
     app = utils.app('apps/mock-dev-app');
-    yield app.ready();
+    await app.ready();
 
     assert(app.logger.get('file').options.level === Logger.INFO);
     assert(app.logger.get('console').options.level === Logger.ERROR);
     return app.ready();
   });
 
-  it('log buffer disable cache on local and unittest env', function* () {
+  it('log buffer disable cache on local and unittest env', async () => {
     mm(process.env, 'EGG_LOG', 'NONE');
     app = utils.app('apps/nobuffer-logger');
-    yield app.ready();
+    await app.ready();
     assert(app.config.logger.disableConsoleAfterReady === false);
 
     const ctx = app.mockContext();
@@ -104,19 +104,19 @@ describe('test/lib/core/logger.test.js', () => {
     // app.config.logger.buffer.should.equal(false);
     ctx.logger.error(new Error('mock nobuffer error'));
 
-    yield sleep(1000);
+    await sleep(1000);
 
     assert(
       fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
     );
   });
 
-  it('log buffer enable cache on non-local and non-unittest env', function* () {
+  it('log buffer enable cache on non-local and non-unittest env', async () => {
     mm(process.env, 'EGG_LOG', 'none');
     mm.env('prod');
     mm(process.env, 'HOME', utils.getFilepath('apps/mock-production-app/config'));
     app = utils.app('apps/mock-production-app');
-    yield app.ready();
+    await app.ready();
 
     assert(app.config.logger.disableConsoleAfterReady === true);
     const ctx = app.mockContext();
@@ -124,22 +124,22 @@ describe('test/lib/core/logger.test.js', () => {
     // app.config.logger.buffer.should.equal(true);
     ctx.logger.error(new Error('mock enable buffer error'));
 
-    yield sleep(1000);
+    await sleep(1000);
 
     assert(fs.readFileSync(logfile, 'utf8').includes(''));
   });
 
-  it('output .json format log', function* () {
+  it('output .json format log', async () => {
     mm(process.env, 'EGG_LOG', 'none');
     mm.env('local');
     app = utils.app('apps/logger-output-json');
-    yield app.ready();
+    await app.ready();
 
     const ctx = app.mockContext();
     const logfile = path.join(app.config.logger.dir, 'logger-output-json-web.json.log');
     ctx.logger.info('json format');
 
-    yield sleep(1000);
+    await sleep(1000);
 
     assert(fs.existsSync(logfile));
     assert(fs.readFileSync(logfile, 'utf8').includes('"message":"json format"'));
@@ -191,16 +191,16 @@ describe('test/lib/core/logger.test.js', () => {
       });
   });
 
-  it('all loggers error should redirect to errorLogger', function* () {
+  it('all loggers error should redirect to errorLogger', async () => {
     app = utils.app('apps/logger');
-    yield app.ready();
+    await app.ready();
 
     app.logger.error(new Error('logger error'));
     app.coreLogger.error(new Error('coreLogger error'));
     app.loggers.errorLogger.error(new Error('errorLogger error'));
     app.loggers.customLogger.error(new Error('customLogger error'));
 
-    yield sleep(1000);
+    await sleep(1000);
 
     const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
     assert(content.includes('nodejs.Error: logger error'));
@@ -209,9 +209,9 @@ describe('test/lib/core/logger.test.js', () => {
     assert(content.includes('nodejs.Error: customLogger error'));
   });
 
-  it('agent\'s logger is same as coreLogger', function* () {
+  it('agent\'s logger is same as coreLogger', async () => {
     app = utils.app('apps/logger');
-    yield app.ready();
+    await app.ready();
 
     assert(app.agent.logger.options.file === app.agent.coreLogger.options.file);
   });

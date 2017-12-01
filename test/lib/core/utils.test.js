@@ -4,7 +4,6 @@ const assert = require('assert');
 const utils = require('../../../lib/core/utils');
 
 describe('test/lib/core/utils.test.js', () => {
-
   it('should convert primitive', () => {
     const s = Symbol('symbol');
     const obj = {
@@ -47,12 +46,14 @@ describe('test/lib/core/utils.test.js', () => {
       /* eslint object-shorthand: 0 */
       anonymousFunction$: function(a) { console.log(a); },
       generatorFunction$: function* a(a) { console.log(a); },
+      asyncFunction$: async function a(a) { console.log(a); },
     };
     utils.convertObject(obj);
     assert(obj.function$ === '<Function a>');
     assert(obj.arrowFunction$ === '<Function arrowFunction$>');
     assert(obj.anonymousFunction$ === '<Function anonymousFunction$>');
     assert(obj.generatorFunction$ === '<GeneratorFunction a>');
+    assert(obj.asyncFunction$ === '<AsyncFunction a>');
   });
 
   it('should convert error', () => {

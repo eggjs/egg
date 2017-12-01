@@ -25,8 +25,27 @@ describe('test/lib/egg.test.js', () => {
       let json = require(path.join(baseDir, 'run/agent_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
       assert(json.config.name === 'demo');
+      assert(json.config.tips === 'hello egg');
       json = require(path.join(baseDir, 'run/application_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
+      // should dump dynamic config
+      assert(json.config.tips === 'hello egg started');
+    });
+
+    it('should dump router json', () => {
+      const routers = require(path.join(baseDir, 'run/router.json'));
+      // 13 static routers on app/router.js and 1 dynamic router on app.js
+      assert(routers.length === 14);
+      for (const router of routers) {
+        assert.deepEqual(Object.keys(router), [
+          'name',
+          'methods',
+          'paramNames',
+          'path',
+          'regexp',
+          'stack',
+        ]);
+      }
     });
 
     it('should dump config meta', () => {
@@ -87,19 +106,19 @@ describe('test/lib/egg.test.js', () => {
     });
     after(() => app.close());
 
-    it('should dump in config', function* () {
+    it('should dump in config', async () => {
       const baseDir = utils.getFilepath('apps/dumpconfig');
       let json;
 
-      yield sleep(100);
+      await sleep(100);
       json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.dynamic === 1);
       json = readJson(path.join(baseDir, 'run/agent_config.json'));
       assert(json.config.dynamic === 0);
 
-      yield app.ready();
+      await app.ready();
 
-      yield sleep(100);
+      await sleep(100);
       json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.dynamic === 2);
       json = readJson(path.join(baseDir, 'run/agent_config.json'));
@@ -129,20 +148,20 @@ describe('test/lib/egg.test.js', () => {
       return app.ready();
     });
 
-    it('should close all listeners', function* () {
+    it('should close all listeners', async () => {
       let index;
       index = process.listeners('unhandledRejection').indexOf(app._unhandledRejectionHandler);
       assert(index !== -1);
       index = process.listeners('unhandledRejection').indexOf(app.agent._unhandledRejectionHandler);
       assert(index !== -1);
-      yield app.close();
+      await app.close();
       index = process.listeners('unhandledRejection').indexOf(app._unhandledRejectionHandler);
       assert(index === -1);
       index = process.listeners('unhandledRejection').indexOf(app.agent._unhandledRejectionHandler);
       assert(index === -1);
     });
 
-    it('should emit close event before exit', function* () {
+    it('should emit close event before exit', async () => {
       let isAppClosed = false;
       let isAgentClosed = false;
       app.once('close', () => {
@@ -151,12 +170,12 @@ describe('test/lib/egg.test.js', () => {
       app.agent.once('close', () => {
         isAgentClosed = true;
       });
-      yield app.close();
+      await app.close();
       assert(isAppClosed === true);
       assert(isAgentClosed === true);
     });
 
-    it('shoud close logger', function* () {
+    it('shoud close logger', async () => {
       const close = spy();
       class TestTransport extends Transport {
         close() {
@@ -167,7 +186,7 @@ describe('test/lib/egg.test.js', () => {
       for (const logger of app.loggers.values()) {
         logger.set('test', transport);
       }
-      yield app.close();
+      await app.close();
       assert(close.called);
     });
   });
@@ -183,21 +202,21 @@ describe('test/lib/egg.test.js', () => {
       return app.ready();
     });
 
-    it('should handle unhandledRejection and log it', function* () {
-      yield app.httpRequest()
+    it('should handle unhandledRejection and log it', async () => {
+      await app.httpRequest()
         .get('/throw-unhandledRejection')
         .expect('foo')
         .expect(200);
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/throw-unhandledRejection-string')
         .expect('foo')
         .expect(200);
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/throw-unhandledRejection-obj')
         .expect('foo')
         .expect(200);
 
-      yield sleep(1100);
+      await sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('nodejs.unhandledRejectionError: foo reject error'));
@@ -216,12 +235,14 @@ describe('test/lib/egg.test.js', () => {
     });
     after(() => app.close());
 
-    it('should access base context properties success', function* () {
+    it('should access base context properties success', async () => {
       mm(app.config.logger, 'level', 'DEBUG');
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/')
         .expect('hello')
         .expect(200);
+
+      await sleep(1000);
 
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');
@@ -234,15 +255,15 @@ describe('test/lib/egg.test.js', () => {
       assert(error.match(/nodejs.Error: some error/));
     });
 
-    it('should get pathName success', function* () {
-      yield app.httpRequest()
+    it('should get pathName success', async () => {
+      await app.httpRequest()
         .get('/pathName')
         .expect('controller.home')
         .expect(200);
     });
 
-    it('should get config success', function* () {
-      yield app.httpRequest()
+    it('should get config success', async () => {
+      await app.httpRequest()
         .get('/config')
         .expect('base-context-class')
         .expect(200);

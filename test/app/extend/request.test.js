@@ -22,23 +22,23 @@ describe('test/app/extend/request.test.js', () => {
     afterEach(mm.restore);
 
     describe('req.host', () => {
-      it('should return host with port', function* () {
+      it('should return host with port', () => {
         mm(req.header, 'host', 'foo.com:3000');
         assert(req.hostname === 'foo.com');
       });
 
-      it('should return "" when no host present', function* () {
+      it('should return "" when no host present', () => {
         assert(typeof req.host === 'string');
         assert(req.host === '');
       });
 
-      it('should return host from X-Forwarded-Host header', function* () {
+      it('should return host from X-Forwarded-Host header', () => {
         mm(req.header, 'x-forwarded-host', 'foo.com');
         assert(typeof req.host === 'string');
         assert(req.host === 'foo.com');
       });
 
-      it('should return host from Host header when proxy=false', function* () {
+      it('should return host from Host header when proxy=false', () => {
         mm(app.config, 'proxy', false);
         mm(req.header, 'x-forwarded-host', 'foo.com');
         mm(req.header, 'host', 'bar.com');
@@ -48,19 +48,19 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('req.hostname', () => {
-      it('should return hostname with port', function* () {
+      it('should return hostname with port', () => {
         mm(req.header, 'host', 'foo.com:3000');
         assert(req.hostname === 'foo.com');
       });
 
-      it('should return "" when no host present', function* () {
+      it('should return "" when no host present', () => {
         assert(typeof req.hostname === 'string');
         assert(req.hostname === '');
       });
     });
 
     describe('req.ip', () => {
-      it('should return ipv4', function* () {
+      it('should return ipv4', () => {
         mm(req.socket, 'remoteAddress', '::ffff:127.0.0.1');
         assert(req.ip === '127.0.0.1');
         assert(req.ip === '127.0.0.1');
@@ -68,25 +68,25 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('req.ips', () => {
-      it('should used x-forwarded-for', function* () {
+      it('should used x-forwarded-for', () => {
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
         assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
       });
 
-      it('should used x-real-ip', function* () {
+      it('should used x-real-ip', () => {
         mm(app.config, 'ipHeaders', 'X-Forwarded-For, X-Real-IP');
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '127.0.0.1,127.0.0.2');
         assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
       });
 
-      it('should return []', function* () {
+      it('should return []', () => {
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '');
         assert.deepEqual(req.ips, []);
       });
 
-      it('should return [] when proxy=false', function* () {
+      it('should return [] when proxy=false', () => {
         mm(app.config, 'proxy', false);
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
         assert.deepEqual(req.ips, []);
@@ -276,12 +276,12 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('request.acceptJSON', () => {
-      it('should true when url path ends with .json', function* () {
+      it('should true when url path ends with .json', async () => {
         mm(req, 'path', 'hello.json');
         assert(req.acceptJSON === true);
       });
 
-      it('should true when response is json', function* () {
+      it('should true when response is json', async () => {
         const context = app.mockContext({
           headers: {
             accept: 'text/html',
@@ -292,7 +292,7 @@ describe('test/app/extend/request.test.js', () => {
         assert(context.request.acceptJSON === true);
       });
 
-      it('should true when accept json', function* () {
+      it('should true when accept json', async () => {
         const context = app.mockContext({
           headers: {
             accept: 'application/json',
@@ -302,7 +302,7 @@ describe('test/app/extend/request.test.js', () => {
         assert(context.request.acceptJSON === true);
       });
 
-      it('should false when do not accept json', function* () {
+      it('should false when do not accept json', async () => {
         const context = app.mockContext({
           headers: {
             accept: 'text/html',
@@ -313,7 +313,6 @@ describe('test/app/extend/request.test.js', () => {
         assert(request.acceptJSON === false);
       });
     });
-
   });
 
   describe('work with egg app', () => {
@@ -355,5 +354,4 @@ describe('test/app/extend/request.test.js', () => {
       });
     });
   });
-
 });

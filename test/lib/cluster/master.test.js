@@ -18,16 +18,16 @@ describe('test/lib/cluster/master.test.js', () => {
     });
     after(() => app.close());
 
-    it('should restart after app worker exit', function* () {
+    it('should restart after app worker exit', async () => {
       try {
-        yield app.httpRequest()
+        await app.httpRequest()
           .get('/exit');
       } catch (_) {
         // do nothing
       }
 
       // wait for app worker restart
-      yield sleep(5000);
+      await sleep(5000);
 
       // error pipe to console
       app.expect('stdout', /app_worker#1:\d+ disconnect/);
@@ -36,16 +36,16 @@ describe('test/lib/cluster/master.test.js', () => {
       app.expect('stdout', /app_worker#2:\d+ started/);
     });
 
-    it('should restart when app worker throw uncaughtException', function* () {
+    it('should restart when app worker throw uncaughtException', async () => {
       try {
-        yield app.httpRequest()
+        await app.httpRequest()
           .get('/uncaughtException');
       } catch (_) {
         // do nothing
       }
 
       // wait for app worker restart
-      yield sleep(5000);
+      await sleep(5000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stdout', /app_worker#\d:\d+ started/);
@@ -131,22 +131,22 @@ describe('test/lib/cluster/master.test.js', () => {
   describe('multi-application in one server', () => {
     let app1;
     let app2;
-    before(function* () {
+    before(async () => {
       mm.consoleLevel('NONE');
       app1 = utils.cluster('apps/cluster_mod_app');
       app1.coverage(false);
       app2 = utils.cluster('apps/cluster_mod_app');
       app2.coverage(false);
-      yield [
+      await Promise.all([
         app1.ready(),
         app2.ready(),
-      ];
+      ]);
     });
-    after(function* () {
-      yield [
+    after(async () => {
+      await Promise.all([
         app1.close(),
         app2.close(),
-      ];
+      ]);
     });
 
     it('should online cluster mode startup success, app1', () => {

@@ -18,3 +18,5 @@ exports.mysql = {
   consumerSecret: 'this is consumerSecret',
   someSecret: null,
 };
+
+exports.tips = 'hello egg';

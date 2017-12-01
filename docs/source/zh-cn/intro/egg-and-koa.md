@@ -8,63 +8,11 @@ Node.js 是一个异步的世界，官方 API 支持的都是 callback 形式的
 - [callback hell](http://callbackhell.com/): 最臭名昭著的 callback 嵌套问题。
 - [release zalgo](https://oren.github.io/blog/zalgo.html): 异步函数中可能同步调用 callback 返回数据，带来不一致性。
 
-因此社区提供了各种异步的解决方案，最终胜出的是 Promise，它也内置到了 ECMAScript 2015 中。而在 Promise 的基础上，结合 Generator 提供的切换上下文能力，出现了 [co] 等第三方类库来让我们用同步写法编写异步代码。同时，[async function] 这个官方解决方案也已经定稿，将于 ECMAScript 2017 中发布。
-
-### Generator 和 co
-
-#### 基于 Generator 和 Promise 提供同步写法的异步模型
-
-上面提到，基于 Promise 和 Generator 可以实现用同步的方式编写异步代码，实现这个功能最广为人知的库就是 [co]，其实它的核心原理就是下面这几行。
-
-```js
-function run(generator, res) {
-  const ret = generator.next(res);
-  if (ret.done) return;
-  ret.value.then(function (res) {
-    run(generator, res);
-  });
-}
-```
-
-通过这段代码，可以在 Generator Function 中来 yield 一个 Promise，并等待它 resolve 之后再执行后面的代码。
-
-```js
-let count = 1;
-function tick(time) {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      console.log('tick %s after %s ms', count++, time);
-      resolve();
-    }, time);
-  });
-}
-
-function* main() {
-  console.log('start run...');
-  yield tick(500);
-  yield tick(1000);
-  yield tick(2000);
-}
-
-run(main());
-```
-
-通过 run 这个驱动器，上面例子中的 main 中的异步代码就可以完全通过同步的写法完成了。对 Generator 更详细的讲解，可以查看[这篇文档和示例](https://github.com/dead-horse/koa-step-by-step#generator)。
-
-[co] 相比于上面提到的那个 run 函数而言，加了支持 `yield [Object / Array / thunk / Generator Function / Generator]`，wrap 一个 Generator Function 成 Promise 等功能。而 co 也是 Koa 1 选择的底层异步库，所有的 Koa 1 的中间件都必须是一个 `generator function`。
+因此社区提供了各种异步的解决方案，最终胜出的是 Promise，它也内置到了 ECMAScript 2015 中。而在 Promise 的基础上，结合 Generator 提供的切换上下文能力，出现了 [co] 等第三方类库来让我们用同步写法编写异步代码。同时，[async function] 这个官方解决方案也于 ECMAScript 2017 中发布，并在 Node.js 8 中实现。
 
 ### async function
 
-[async function] 的原理其实和 [co] 类似，但它是语言层面提供的语法糖，通过 async function 编写的代码和 co + generator 编写的代码看起来很类似。
-
-```js
-const fn = co.wrap(function*() {
-  const user = yield getUser();
-  const posts = yield fetchPosts(user.id);
-  return { user, posts };
-});
-fn().then(res => console.log(res)).catch(err => console.error(err.stack));
-```
+[async function] 是语言层面提供的语法糖，在 async function 中，我们可以通过 `await` 关键字来等待一个 Promise 被 resolve（或者 reject，此时会抛出异常）， Node.js 现在的 LTS 版本（8.x）已原生支持。
 
 ```js
 const fn = async function() {
@@ -74,10 +22,6 @@ const fn = async function() {
 };
 fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 ```
-
-相较于 co 支持的种类，async function 不能直接 await 一个 `Promise` 数组（可以通过 `Promise.all` 来封装），也不能 await `thunk`。
-
-async function 虽然尚未随着规范发布，但是 Node.js 7.x 中带的 V8 版本已经支持，且从 7.6.0 开始将不再需要打开 flag 而直接使用。
 
 ## Koa
 
@@ -118,13 +62,13 @@ Koa 的中间件和 Express 不同，Koa 选择了洋葱圈模型。
 通过同步方式编写异步代码带来的另外一个非常大的好处就是异常处理非常自然，使用 `try catch` 就可以将按照规范编写的代码中的所有错误都捕获到。这样我们可以很便捷的编写一个自定义的错误处理中间件。
 
 ```js
-function* onerror(next) {
+async function onerror(ctx, next) {
   try {
-    yield next;
+    await next();
   } catch (err) {
-    this.app.emit('error', err);
-    this.body = 'server error';
-    this.status = err.status || 500;
+    ctx.app.emit('error', err);
+    ctx.body = 'server error';
+    ctx.status = err.status || 500;
   }
 }
 ```
@@ -155,8 +99,8 @@ module.exports = {
 
 ```js
 // app/controller/home.js
-exports.handler = function* (ctx) {
-  ctx.body = this.isIOS
+exports.handler = ctx => {
+  ctx.body = ctx.isIOS
     ? 'Your operating system is iOS.'
     : 'Your operating system is not iOS.';
 };
@@ -178,26 +122,26 @@ exports.handler = function* (ctx) {
 
 [egg-security](https://github.com/eggjs/egg-security) 插件就是一个典型的例子。
 
-更多关于插件的内容，请查看[插件](../advanced/plugin.md)章节。
+更多关于插件的内容，请查看[插件](../basics/plugin.md)章节。
 
-### 升级计划
+### Egg 与 Koa 的版本关系
 
 #### Egg 1.x
 
-现在 Node.js 的 LTS 版本尚不支持 async function，所以 Egg 仍然基于 Koa 1.x 开发，但是在此基础上，Egg 全面增加了 async function 的支持，再加上 Egg 对 Koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 [async function 来实现](../tutorials/async-function.md)。
+Egg 1.x 发布时，Node.js 的 LTS 版本尚不支持 async function，所以 Egg 1.x 仍然基于 Koa 1.x 开发，但是在此基础上，Egg 全面增加了 async function 的支持，再加上 Egg 对 Koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 `async function` 来开发。
 
 - 底层基于 Koa 1.x，异步解决方案基于 [co] 封装的 generator function。
 - 官方插件以及 Egg 核心使用 generator function 编写，保持对 Node.js LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
-- 应用开发者可以选择 async function（Node.js 7.6+） 或者 generator function（Node.js 6.0+）进行编写，**我们推荐 generator function 方案以确保应用可以运行在 Node.js LTS 版本上**。
+- 应用开发者可以选择 async function（Node.js 8.x+） 或者 generator function（Node.js 6.x+）进行编写。
 
-#### Egg next
+#### Egg 2.x
 
-当 Node.js 的 LTS 版本开始支持 async function 时，Egg 核心将会迁移到 Koa 2.x，并保持对 generator function 的兼容。
+Node.js 8 正式进入 LTS 后，async function 可以在 Node.js 中使用并且没有任何性能问题了，Egg 2.x 基于 Koa 2.x，框架底层以及所有内置插件都使用 async function 编写，并保持了对 Egg 1.x 以及 generator function 的完全兼容，应用层只需要升级到 Node.js 8 即可从 Egg 1.x 迁移到 Egg 2.x。
 
 - 底层基于 Koa 2.x，异步解决方案基于 async function。
 - 官方插件以及 Egg 核心使用 async function 编写。
 - 建议业务层迁移到 async function 方案。
-- 不再支持 Node.js 6.x。
+- 只支持 Node.js 8 及以上的版本。
 
 [co]: https://github.com/tj/co
 [async function]: https://github.com/tc39/ecmascript-asyncawait

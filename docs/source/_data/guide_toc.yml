@@ -2,6 +2,8 @@ Intro:
   What is Egg: /intro/index.html
   Egg and Koa: /intro/egg-and-koa.html
   Get Start: /intro/quickstart.html
+  Progressive: /tutorials/progressive.html
+  Migration: /migration.html
 Basics:
   Structure: /basics/structure.html
   Objects: /basics/objects.html
@@ -11,6 +13,7 @@ Basics:
   Router: /basics/router.html
   Controller: /basics/controller.html
   Service: /basics/service.html
+  Plugin: /basics/plugin.html
   Schedule: /basics/schedule.html
   Extend: /basics/extend.html
   Custom init: /basics/app-start.html
@@ -27,17 +30,16 @@ Core:
   Security: /core/security.html
   i18n: /core/i18n.html
 Tutorials:
-  Progressive: /tutorials/progressive.html
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
-  Async Function: /tutorials/async-function.html
   # Passport: /core/passport.html
 Advanced:
   Loader: /advanced/loader.html
-  Plugin: /advanced/plugin.html
+  Plugin Development: /advanced/plugin.html
   Framework: /advanced/framework.html
   Cluster Client: /advanced/cluster-client.html
   View Plugin: /advanced/view-plugin.html
+  Style Guide: /style-guide.html
 Community:
   Plugin List: /plugins/
   Contributing: /contributing.html

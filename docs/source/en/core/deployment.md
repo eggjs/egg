@@ -25,39 +25,51 @@ Reusable package brings a few pros in:
 
 ## Deploy
 
-Node.js(`>= 6.0.0`) is required so that you should make sure it is pre-installed in runtime environment.
+Node.js(`>= 8.0.0`) is required so that you should make sure it is pre-installed in runtime environment.
 
-Egg takes `egg-cluster` to create [Master](https://github.com/eggjs/egg/blob/master/docs/source/en/core/cluster-and-ipc.md#master) process, which you can rely on to secure the application instead of daemon manager like [pm2](https://github.com/Unitech/pm2). The API is also really convenient for developers to achieve that, just `egg.startCluster`.
+Egg takes `egg-cluster` to create [Master](https://github.com/eggjs/egg/blob/master/docs/source/en/core/cluster-and-ipc.md#master) process, which you can rely on to secure the application instead of daemon manager like [pm2]. The API is also really convenient for developers to achieve that, just `egg.startCluster`.
 
-More about [egg-cluster](https://github.com/eggjs/egg-cluster#options)
+And framework also provide [egg-scripts] for developers to start/stop application at prod mode.
 
-### Dispatch file
-
-Create a new dispatch file in the root directory, for instance `dispatch.js`:
-
-```js
-// dispatch.js
-const egg = require('egg');
-
-egg.startCluster({
-  baseDir: __dirname,
-});
-```
-
-### Dispatch in background
-
-Once you create dispatch file, you can launch the application and redirect standard output to `stdout.log` as well as error details to `stderr.log`, which are really useful for debugging later.
+Firstly, we need to import `egg-scripts` as `dependencies`:
 
 ```bash
-$ EGG_SERVER_ENV=prod nohup node dispatch.js > stdout.log 2> stderr.log &
+$ npm i egg-scripts --save
 ```
 
-IMPORTANT:
-- `EGG_SERVER_ENV` in production must be `prod`, for more information about [runtime environment](https://github.com/eggjs/egg/blob/master/docs/source/en/basics/env.md).
-- Launching directly when the application run in docker instance.
-- Egg usually initialize instances as many as cores, which can leverage the capability of the cpu.
+Then add `npm scripts` to `package.json`:
 
-### Dispatch with arguments
+```json
+{
+  "scripts": {
+    "start": "egg-scripts start --daemon",
+    "stop": "egg-scripts stop"
+  }
+}
+```
+
+Then we are able to use `npm start` and `npm stop` to manage application.
+
+> Note: `egg-scripts` don't support Windows.
+
+### Start
+
+```bash
+$ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
+```
+
+Options:
+
+- `--port=7001` http server port, will use `process.env.PORT`, default to `7001`.
+- `--daemon` whether run at background, so you don't need `nohup`. Ignore this when the application run in docker instance.
+- `--env=prod` then framework env, will use `process.env.EGG_SERVER_ENV`, default to `prod`。
+- `--workers=2` worker count, default to cpu cores, which can leverage the capability of the cpu.
+- `--title=egg-server-showcase` convenient for `ps + grep`, default to `egg-server-${appname}`.
+- `--framework=yadan` config `egg.framework` at `package.json` or pass this args, when you are using [Custom Framework](../advanced/framework.md).
+
+More about [egg-scripts] and [egg-cluster] documents.
+
+#### Dispatch with arguments
 
 Arguments of dispatch can be configured in `config.{env}.js`.
 
@@ -74,17 +86,16 @@ exports.cluster = {
 
 [server.listen](https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) supports arguments including `path`, `port` and `hostname` to change dispatching behavior. One thing you should know is that the `port` in `egg.startCluster` will override the one in application config.
 
-### Dispatch from extended framework
+### Stop
 
-What about dispatch from your framework extended from [Egg's Application](https://github.com/eggjs/egg/blob/master/docs/source/en/advanced/framework.md) like `yadan`? Egg offers `customEgg` to change the entry:
-
-```js
-// dispatch.js
-const path = require('path');
-const egg = require('egg');
-
-egg.startCluster({
-  baseDir: __dirname,
-  customEgg: path.join(__dirname, 'node_modules/yadan'),
-});
+```bash
+$ egg-scripts stop
 ```
+
+This command will kill master process which will handler and notice worker and agent to gracefull exit.
+
+Also you can manually call `ps -eo "pid,command" | grep "--type=egg-server"` to find master process then `kill` without `-9`.
+
+[egg-cluster]: https://github.com/eggjs/egg-cluster
+[egg-scripts]: https://github.com/eggjs/egg-scripts
+[pm2]: https://github.com/Unitech/pm2

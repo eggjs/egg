@@ -220,17 +220,17 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
     assert.deepEqual(appLoader.orderPlugins.map(plugin => {
       return plugin.name;
     }), [
-      'onerror',
       'session',
+      'security',
+      'jsonp',
+      'onerror',
       'i18n',
       'watcher',
       'multipart',
-      'security',
       'development',
       'schedule',
       'logrotator',
       'static',
-      'jsonp',
       'view',
       'b',
       'c1',

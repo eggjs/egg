@@ -1,8 +1,8 @@
 'use strict';
 
 const delegate = require('delegates');
-const co = require('co');
 const { assign } = require('utility');
+const eggUtils = require('egg-core').utils;
 
 const HELPER = Symbol('Context#helper');
 const LOCALS = Symbol('Context#locals');
@@ -10,6 +10,7 @@ const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
 const CONTEXT_LOGGERS = Symbol('Context#logger');
 const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
+
 
 const proto = module.exports = {
   get cookies() {
@@ -181,14 +182,14 @@ const proto = module.exports = {
   },
 
   /**
-   * Run generator function in the background
-   * @param {Generator} scope - generator function, the first args is ctx
+   * Run async function in the background
+   * @param {Function} scope - the first args is ctx
    * ```js
    * this.body = 'hi';
    *
-   * this.runInBackground(function* saveUserInfo(ctx) {
-   *   yield ctx.mysql.query(sql);
-   *   yield ctx.curl(url);
+   * this.runInBackground(async ctx => {
+   *   await ctx.mysql.query(sql);
+   *   await ctx.curl(url);
    * });
    * ```
    */
@@ -196,14 +197,16 @@ const proto = module.exports = {
     const ctx = this;
     const start = Date.now();
     /* istanbul ignore next */
-    const taskName = scope.name || '-';
-    co(function* () {
-      yield scope(ctx);
-      ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
-    }).catch(err => {
-      ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
-      ctx.coreLogger.error(err);
-    });
+    const taskName = scope.name || scope._name || eggUtils.getCalleeFromStack(true);
+    // use app.toAsyncFunction to support both generator function and async function
+    ctx.app.toAsyncFunction(scope)(ctx)
+      .then(() => {
+        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
+      })
+      .catch(err => {
+        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
+        ctx.coreLogger.error(err);
+      });
   },
 };
 

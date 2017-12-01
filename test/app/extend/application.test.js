@@ -55,10 +55,10 @@ describe('test/app/extend/application.test.js', () => {
     let app;
     after(() => app.close());
 
-    it('should log info when plugin is not ready', function* () {
+    it('should log info when plugin is not ready', async () => {
       app = utils.cluster('apps/notready');
       // it won't be ready, so wait for the timeout
-      yield sleep(11000);
+      await sleep(11000);
 
       app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
     });
@@ -113,7 +113,7 @@ describe('test/app/extend/application.test.js', () => {
     });
     after(() => app.close());
 
-    it('should get anonymous context object', function* () {
+    it('should get anonymous context object', async () => {
       const ctx = app.createAnonymousContext({
         socket: {
           remoteAddress: '10.0.0.1',
@@ -138,13 +138,13 @@ describe('test/app/extend/application.test.js', () => {
     });
     after(() => app.close());
 
-    it('should add singleton success', function* () {
-      let config = yield app.dataService.get('first').getConfig();
+    it('should add singleton success', async () => {
+      let config = await app.dataService.get('first').getConfig();
       assert(config.foo === 'bar');
       assert(config.foo1 === 'bar1');
 
       const ds = app.dataService.createInstance({ foo: 'barrr' });
-      config = yield ds.getConfig();
+      config = await ds.getConfig();
       assert(config.foo === 'barrr');
     });
   });
@@ -157,17 +157,18 @@ describe('test/app/extend/application.test.js', () => {
     });
     after(() => app.close());
 
-    it('should run background task success', function* () {
-      yield app.httpRequest()
+    it('should run background task success', async () => {
+      await app.httpRequest()
         .get('/app_background')
         .expect(200)
         .expect('hello app');
-      yield sleep(5000);
+      await sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/mock background run at app result file size: \d+/.test(log));
+      assert(/mock background run at app anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]app\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
   });

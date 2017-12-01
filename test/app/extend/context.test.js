@@ -14,18 +14,18 @@ describe('test/app/extend/context.test.js', () => {
     let app;
     afterEach(() => app.close());
 
-    it('env=local: level => info', function* () {
+    it('env=local: level => info', async () => {
       mm.env('local');
       mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
-      yield app.ready();
+      await app.ready();
       const logdir = app.config.logger.dir;
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/logger?message=foo')
         .expect('logger');
 
-      yield sleep(5000);
+      await sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -42,22 +42,22 @@ describe('test/app/extend/context.test.js', () => {
       assert(coreLoggerContent.includes('core warn foo'));
     });
 
-    it('env=unittest: level => info', function* () {
+    it('env=unittest: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
-      yield app.ready();
+      await app.ready();
       const logdir = app.config.logger.dir;
 
       app.mockContext({
         userId: '123123',
       });
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/logger?message=foo')
         .expect('logger');
 
-      yield sleep(5000);
+      await sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -75,18 +75,18 @@ describe('test/app/extend/context.test.js', () => {
       assert(coreLoggerContent.includes('core warn foo'));
     });
 
-    it('env=prod: level => info', function* () {
+    it('env=prod: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
       app = utils.app('apps/demo', { cache: false });
-      yield app.ready();
+      await app.ready();
       const logdir = app.config.logger.dir;
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/logger?message=foo')
         .expect('logger');
 
-      yield sleep(5000);
+      await sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -118,12 +118,12 @@ describe('test/app/extend/context.test.js', () => {
         .expect('null');
     });
 
-    it('should log with padding message', function* () {
-      yield app.httpRequest()
+    it('should log with padding message', async () => {
+      await app.httpRequest()
         .get('/logger')
         .expect(200);
 
-      yield sleep(100);
+      await sleep(100);
       const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
       assert(
         /\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/.test(fs.readFileSync(logPath, 'utf8'))
@@ -232,27 +232,31 @@ describe('test/app/extend/context.test.js', () => {
     });
     after(() => app.close());
 
-    it('should run background task success', function* () {
-      yield app.httpRequest()
+    it('should run background task success', async () => {
+      await app.httpRequest()
         .get('/')
         .expect(200)
         .expect('hello');
-      yield sleep(5000);
+      await sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
+      assert(/background run anonymous result file size: \d+/.test(log));
       assert(
         /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
+      assert(
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
     });
 
-    it('should run background task error', function* () {
+    it('should run background task error', async () => {
       mm.consoleLevel('NONE');
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/error')
         .expect(200)
         .expect('hello error');
-      yield sleep(5000);
+      await sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
@@ -271,10 +275,10 @@ describe('test/app/extend/context.test.js', () => {
     after(() => app.close());
 
     describe('ctx.curl()', () => {
-      it('should curl ok', function* () {
-        const localServer = yield utils.startLocalServer();
+      it('should curl ok', async () => {
+        const localServer = await utils.startLocalServer();
         const context = app.mockContext();
-        const res = yield context.curl(`${localServer}/foo/bar`);
+        const res = await context.curl(`${localServer}/foo/bar`);
         assert(res.status === 200);
       });
 
@@ -286,7 +290,7 @@ describe('test/app/extend/context.test.js', () => {
     });
 
     describe('ctx.httpclient', () => {
-      it('should only one httpclient on one ctx', function* () {
+      it('should only one httpclient on one ctx', async () => {
         const ctx = app.mockContext();
         const httpclient = ctx.httpclient;
         assert(ctx.httpclient === httpclient);
