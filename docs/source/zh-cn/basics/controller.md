@@ -82,36 +82,35 @@ module.exports = app => {
 
 按照类的方式编写 Controller，不仅可以让我们更好的对 Controller 层代码进行抽象（例如将一些统一的处理抽象成一些私有方法），还可以通过自定义 Controller 基类的方式封装应用中常用的方法。
 
-在[启动自定义](./app-start.md)中，应用可自己定义 Controller 基类，这样在 `app/controller` 中编写 Controller 时就可以使用到定义在基类上的这些方法了。
 
 ```js
-// app.js
-module.exports = app => {
-  class CustomController extends app.Controller {
-    get user() {
-      return this.ctx.session.user;
-    }
-
-    success(data) {
-      this.ctx.body = {
-        success: true,
-        data,
-      };
-    }
-
-    notFound(msg) {
-      msg = msg || 'not found';
-      this.ctx.throw(404, msg);
-    }
+// app/core/base_controller.js
+const { Controller } = require('egg');
+class BaseController extends Controller {
+  get user() {
+    return this.ctx.session.user;
   }
-  app.Controller = CustomController;
+
+  success(data) {
+    this.ctx.body = {
+      success: true,
+      data,
+    };
+  }
+
+  notFound(msg) {
+    msg = msg || 'not found';
+    this.ctx.throw(404, msg);
+  }
 }
+module.exports = BaseController;
 ```
 
-此时在编写应用的 Controller 时，可以直接使用基类上的方法：
+此时在编写应用的 Controller 时，可以继承 BaseController，直接使用基类上的方法：
 
 ```js
 //app/controller/post.js
+const Controller = require('../core/base_controller');
 class PostController extends Controller {
   async list() {
     const posts = await this.service.listByUser(this.user);
