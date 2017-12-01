@@ -82,36 +82,34 @@ The defined Controller class initializes a new object for every request accessin
 
 Defining a Controller class helps us not only abstract the Controller layer codes better(e.g. universal routines can be abstracted as private) but also encapsulate methods that are widely used in the application by defining a customized Controller base class.
 
-In [App Start](./app-start.md), the application is allowed to define a customized Controller base class, and methods in base class can be used by Controllers in `app/controller` therefore.
-
 ```js
-// app.js
-module.exports = app => {
-  class CustomController extends app.Controller {
-    get user() {
-      return this.ctx.session.user;
-    }
-
-    success(data) {
-      this.ctx.body = {
-        success: true,
-        data,
-      };
-    }
-
-    notFound(msg) {
-      msg = msg || 'not found';
-      this.ctx.throw(404, msg);
-    }
+// app/core/base_controller.js
+const { Controller } = require('egg');
+class BaseController extends Controller {
+  get user() {
+    return this.ctx.session.user;
   }
-  app.Controller = CustomController;
+
+  success(data) {
+    this.ctx.body = {
+      success: true,
+      data,
+    };
+  }
+
+  notFound(msg) {
+    msg = msg || 'not found';
+    this.ctx.throw(404, msg);
+  }
 }
+module.exports = BaseController;
 ```
 
-Now we can use base class' methods when defining Controllers for the application:
+Now we can use base class' methods by extends from `BaseController`:
 
 ```js
 //app/controller/post.js
+const Controller = require('../core/base_controller');
 class PostController extends Controller {
   async list() {
     const posts = await this.service.listByUser(this.user);
