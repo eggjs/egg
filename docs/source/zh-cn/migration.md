@@ -62,7 +62,8 @@ while ((part = await parts()) != null) {
 
 ### egg-userrole
 
-不再兼容 1.x 形式的 role 定义，因为 koa-roles 已经无法兼容了，入参需改为 ctx
+不再兼容 1.x 形式的 role 定义，因为 koa-roles 已经无法兼容了。
+请求上下文 `Context` 从 this 传入改成了第一个参数 `ctx` 传入，原有的 `scope` 变成了第二个参数。
 
 ```js
 // old
@@ -71,7 +72,13 @@ app.role.use('user', function() {
 });
 
 // new
-app.role.use('user', ctx => !!ctx.user);
+app.role.use((ctx, scope) => {
+  return !!ctx.user
+});
+
+app.role.use('user', ctx => {
+  return !!ctx.user;
+});
 ```
 
 - [koajs/koa-roles#13](https://github.com/koajs/koa-roles/pull/13)
