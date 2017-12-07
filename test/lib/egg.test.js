@@ -22,14 +22,17 @@ describe('test/lib/egg.test.js', () => {
     after(() => app.close());
 
     it('should dump config and plugins', () => {
-      let json = require(path.join(baseDir, 'run/agent_config.json'));
-      assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
-      assert(json.config.name === 'demo');
-      assert(json.config.tips === 'hello egg');
-      json = require(path.join(baseDir, 'run/application_config.json'));
-      assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
+      let config = require(path.join(baseDir, 'run/agent_config.json'));
+      assert(config.name === 'demo');
+      assert(config.tips === 'hello egg');
+      config = require(path.join(baseDir, 'run/application_config.json'));
       // should dump dynamic config
-      assert(json.config.tips === 'hello egg started');
+      assert(config.tips === 'hello egg started');
+    });
+
+    it('should dump plugins', () => {
+      const json = require(path.join(baseDir, 'run/plugin.json'));
+      assert(/\d+\.\d+\.\d+/.test(json.onerror.version));
     });
 
     it('should dump router json', () => {
@@ -58,26 +61,26 @@ describe('test/lib/egg.test.js', () => {
     });
 
     it('should ignore some type', () => {
-      const json = require(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.mysql.accessId === 'this is accessId');
+      const config = require(path.join(baseDir, 'run/application_config.json'));
+      assert(config.mysql.accessId === 'this is accessId');
 
-      assert(json.config.name === 'demo');
-      assert(json.config.keys === '<String len: 3>');
-      assert(json.config.buffer === '<Buffer len: 4>');
-      assert(json.config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
+      assert(config.name === 'demo');
+      assert(config.keys === '<String len: 3>');
+      assert(config.buffer === '<Buffer len: 4>');
+      assert(config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
 
-      assert(json.config.pass === '<String len: 12>');
-      assert(json.config.pwd === '<String len: 11>');
-      assert(json.config.password === '<String len: 16>');
-      assert(json.config.passwordNew === 'this is passwordNew');
-      assert(json.config.mysql.passd === '<String len: 13>');
-      assert(json.config.mysql.passwd === '<String len: 14>');
-      assert(json.config.mysql.secret === '<String len: 10>');
-      assert(json.config.mysql.secretNumber === '<Number>');
-      assert(json.config.mysql.masterKey === '<String len: 17>');
-      assert(json.config.mysql.accessKey === '<String len: 17>');
-      assert(json.config.mysql.consumerSecret === '<String len: 22>');
-      assert(json.config.mysql.someSecret === null);
+      assert(config.pass === '<String len: 12>');
+      assert(config.pwd === '<String len: 11>');
+      assert(config.password === '<String len: 16>');
+      assert(config.passwordNew === 'this is passwordNew');
+      assert(config.mysql.passd === '<String len: 13>');
+      assert(config.mysql.passwd === '<String len: 14>');
+      assert(config.mysql.secret === '<String len: 10>');
+      assert(config.mysql.secretNumber === '<Number>');
+      assert(config.mysql.masterKey === '<String len: 17>');
+      assert(config.mysql.accessKey === '<String len: 17>');
+      assert(config.mysql.consumerSecret === '<String len: 22>');
+      assert(config.mysql.someSecret === null);
 
       // don't change config
       assert(app.config.keys === 'foo');
@@ -108,21 +111,21 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dump in config', async () => {
       const baseDir = utils.getFilepath('apps/dumpconfig');
-      let json;
+      let config;
 
       await sleep(100);
-      json = readJson(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.dynamic === 1);
-      json = readJson(path.join(baseDir, 'run/agent_config.json'));
-      assert(json.config.dynamic === 0);
+      config = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(config.dynamic === 1);
+      config = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(config.dynamic === 0);
 
       await app.ready();
 
       await sleep(100);
-      json = readJson(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.dynamic === 2);
-      json = readJson(path.join(baseDir, 'run/agent_config.json'));
-      assert(json.config.dynamic === 0);
+      config = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(config.dynamic === 2);
+      config = readJson(path.join(baseDir, 'run/agent_config.json'));
+      assert(config.dynamic === 0);
     });
   });
 
@@ -136,8 +139,8 @@ describe('test/lib/egg.test.js', () => {
     after(() => app.close());
 
     it('should ignore config', () => {
-      const json = require(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.keys === 'test key');
+      const config = require(path.join(baseDir, 'run/application_config.json'));
+      assert(config.keys === 'test key');
     });
   });
 
