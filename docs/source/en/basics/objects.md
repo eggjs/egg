@@ -1,19 +1,19 @@
 title: Framework Built-in Objects
 ---
 
-At this chapter, we will introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extend the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up document.
+At this chapter, we will introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extend the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up documents.
 
 ## Application
 
-Application is a global application object, an application only instantiate one Application, it inherited from [Koa.Application], we can mount some global methods and objects on it. We can easily [extended Application object] (./extend.md#Application) in plugin or application.
+Application is a global application object, an application only instantiates one Application, it is inherited from [Koa.Application], we can mount some global methods and objects on it. We can easily [extend Application object] (./extend.md#Application) in plugin or application.
 
 ### How to Get
 
-Application object can be accessed almost anywhere in application, the following describes a few commonly used way:
+Application object can be accessed almost anywhere in application, here are a few commonly used access ways:
 
 Almost all files (Controller, Service, Schedule, etc.) loaded by the [Loader] (../advanced/loader.md) can export a function that is called by the Loader and uses the app as a parameter:
 
-- [App start script](./app-start.md)
+- [App starts script](./app-start.md)
 
   ```js
   // app.js
@@ -44,7 +44,7 @@ class UserController extends Controller {
 }
 ```
 
-In instance objects that inherit from the Controller and Service base classes, the Application object can be accessed via `this.app`.
+In the instance objects that inherited from the Controller and Service base classes, the Application object can be accessed via `this.app`.
 
 ```js
 // app/controller/user.js
@@ -57,13 +57,13 @@ class UserController extends Controller {
 
 ## Context
 
-Context is a **request level object**, inherited from [Koa.Context]. Whenever receive a request, the framework instantiates a Context object that encapsulates the information requested by the user and provides a number of convenient ways to get the request parameter or set the response information. The framework will mount all of the [Service] on the Context instance, and some plugins will mount some other methods and objects on it ([egg-sequelize] will mount all the models on the Context).
+Context is a **request level object**, inherited from [Koa.Context]. Whenever receives a request, the framework instantiates a Context object that encapsulates the information requested by the user and provides a number of convenient ways to get the request parameter or set the response information. The framework will mount all of the [Service] on the Context instance, and some plugins will mount some other methods and objects on it ([egg-sequelize] will mount all the models on the Context).
 
 ### How to Get
 
 The most common way to get the Context instance is in [Middleware], [Controller], and [Service]. The access method in the Controller is shown in the above example. In the Service, the access way is same as Controller. The access Context method in the Middleware of Egg is same as [Koa] framework gets the Context object in its middleware.
 
-The [Middleware] of Egg also supports Koa v1 and Koa v2 two different middleware coding method, according to different method, the way to access Context instance is also slightly different:
+The [Middleware] of Egg also supports Koa v1 and Koa v2 two different middleware coding methods, according to different method, the way to access Context instance is also slightly different:
 
 ```js
 // Koa v1
@@ -161,7 +161,7 @@ module.exports = app => {
 
 Egg provides a Service base class and recommends that all [Service] inherit from the base class.
 
-The fields of the Service base class are the same as those of the [Controller](#controller) base class, the access method is similar:
+The properties of the Service base class are the same as those of the [Controller](#controller) base class, the access method is similar:
 
 ```js
 // app/service/user.js
@@ -183,9 +183,9 @@ module.exports = app => {
 
 ## Helper
 
-Helper is used to provide some useful utility functions. Its role is that we can put some commonly used functions into helper.js, so we can use JavaScript to write complex logic, avoid the logic scattered everywhere, and can be more convenient to write test cases.
+Helper is used to provide some useful utility functions. Its role is that we can put some commonly used functions into helper.js, so we can use JavaScript to write complex logic, avoid the logic being scattered everywhere, and can be more convenient to write test cases.
 
-The Helper itself is a class that has the same fields as the [Controller](#controller) base class, and it will instantiated at each request so that all functions on the Helper can also get context of the current request.
+The Helper itself is a class that has the same properties as the [Controller](#controller) base class, and it will be instantiated at each request so that all functions on the Helper can also get context of the current request.
 
 ### How to Get
 
@@ -225,7 +225,7 @@ module.exports = {
 
 ## Config
 
-We recommend application development to follow the principle of configuration and code separation, put hard-coded business in configuration file, and the configuration file support different runtime environments using different configurations, the framework, plugin and application-level configurations are available via the Config object. For configuration of Egg, read [Configuration](./config.md) in detail.
+We recommend application development to follow the principle of configuration and code separation, put hard-coded business in configuration file, and the configuration file supports different runtime environments using different configurations, it is very convenient to use it. the framework, plugin and application-level configurations are available via the Config object. For configuration of Egg, read [Configuration](./config.md) in detail.
 
 ### How to Get
 
@@ -233,22 +233,22 @@ We can get the config object from the Application instance via `app.config`, or 
 
 ## Logger
 
-Egg built powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 5 level methods:
+Egg builds in powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 5 level methods:
 
 - `logger.debug()`
 - `logger.info()`
 - `logger.warn()`
 - `logger.error()`
 
-Egg provides a number of Logger object, we simply introduce how to get each Logger and its scenario.
+Egg provides a number of Logger object, we simply introduce how to get each Logger and its usage scenario.
 
 ### App Logger
 
-We can get it via `app.logger`. If we want to do some application-level logging, such as logging some data in the startup phase, logging some business related information, those can be done by App Logger.
+We can get it via `app.logger`. If we want to do some application-level logging, such as logging some datas in the startup phase, logging some business related information, those can be done by App Logger.
 
 ### App CoreLogger
 
-We can get it via `app.coreLogger`, and we should not print logs via CoreLogger when developing applications, the framework and plugins need to print application-level logs to make it easier to distinguish from applications printed logs, the logs printed by the CoreLogger will be placed in a different file than the Logger.
+We can get it via `app.coreLogger`, and we should not print logs via CoreLogger when developing applications, the framework and plugins need to print application-level logs to make it easier to distinguish from logs printed by applications and frameworks, the logs printed by the CoreLogger will be placed in a different file than the Logger.
 
 ### Context Logger
 
