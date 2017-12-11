@@ -176,6 +176,25 @@ module.exports = {
 };
 ```
 
+如果使用到的 Koa 中间件不符合入参规范，则可以自行处理下：
+
+```js
+// config/config.default.js
+module.exports = {
+  webpack: {
+    compiler: {},
+    others: {},
+  },
+};
+
+// app/middleware/webpack.js
+const webpackMiddleware = require('some-koa-middleware');
+
+module.exports = (options, app) => {
+  return webpackMiddleware(options.compiler, options.others);
+}
+```
+
 ## 通用配置
 
 无论是应用层加载的中间件还是框架自带中间件，都支持几个通用的配置项：
