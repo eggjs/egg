@@ -63,7 +63,7 @@ Context is a **request level object**, inherited from [Koa.Context]. Whenever re
 
 The most common way to get the Context instance is in [Middleware], [Controller], and [Service]. The access method in the Controller is shown in the above example. In the Service, the access way is same as Controller. The access Context method in the Middleware of Egg is same as [Koa] framework gets the Context object in its middleware.
 
-The [Middleware] of Egg also supports Koa v1 and Koa v2 two different middleware coding methods, according to different method, the way to access Context instance is also slightly different:
+The [Middleware] of Egg also supports Koa v1 and Koa v2 two different middleware coding formats. use different format, the way to access Context instance is also slightly different:
 
 ```js
 // Koa v1
@@ -240,7 +240,7 @@ Egg builds in powerful [logger](../core/logger.md), it is very convenient to pri
 - `logger.warn()`
 - `logger.error()`
 
-Egg provides a number of Logger object, we simply introduce how to get each Logger and its usage scenario.
+Egg provides a number of Logger object, we simply introduce how to get each Logger and its use scenario.
 
 ### App Logger
 
@@ -248,7 +248,7 @@ We can get it via `app.logger`. If we want to do some application-level logging,
 
 ### App CoreLogger
 
-We can get it via `app.coreLogger`, and we should not print logs via CoreLogger when developing applications, the framework and plugins need to print application-level logs to make it easier to distinguish from logs printed by applications and frameworks, the logs printed by the CoreLogger will be placed in a different file than the Logger.
+We can get it via `app.coreLogger`, and we should not print logs via CoreLogger when developing applications. the framework and plugins need to print application-level logs to make it easier to distinguish from logs printed by applications and logs printed by frameworks, the logs printed by the CoreLogger will be placed in a different file than the Logger.
 
 ### Context Logger
 
