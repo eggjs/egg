@@ -13,7 +13,8 @@ Router 主要用来描述请求 URL 和具体承担执行动作的 Controller �
 ```js
 // app/router.js
 module.exports = app => {
-  app.router.get('/user/:id', app.controller.user.info);
+  const { router, controller } = app;
+  router.get('/user/:id', controller.user.info);
 };
 ```
 
@@ -21,11 +22,13 @@ module.exports = app => {
 
 ```js
 // app/controller/user.js
-exports.info = async ctx => {
-  ctx.body = {
-    name: `hello ${ctx.params.id}`,
-  };
-};
+class UserController extends Controller {
+  async info() {
+    this.ctx.body = {
+      name: `hello ${ctx.params.id}`,
+    };
+  }
+}
 ```
 
 这样就完成了一个最简单的 Router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
@@ -35,10 +38,10 @@ exports.info = async ctx => {
 下面是路由的完整定义，参数可以根据场景的不同，自由选择：
 
 ```js
-router.verb('path-match', app.controller.controller.action);
-router.verb('router-name', 'path-match', app.controller.controller.action);
-router.verb('path-match', middleware1, ..., middlewareN, app.controller.controller.action);
-router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.controller.action);
+router.verb('path-match', app.controller.action);
+router.verb('router-name', 'path-match', app.controller.action);
+router.verb('path-match', middleware1, ..., middlewareN, app.controller.action);
+router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.action);
 ```
 
 路由完整定义主要包括5个主要部分:
@@ -60,15 +63,6 @@ router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.cont
   * `app.controller.user.fetch` - 直接指定一个具体的 controller
   * `'user.fetch'` - 可以简写为字符串形式
 
-### `app.verb` 支持
-
-为了编写路由更简洁，我们也将 router 方法挂载到了 `app` 上，由于 HTTP 方法过多，所以一些方法容易被其他插件覆盖（例如 `app.options` 已被覆盖，不是设置路由的方法），使用时需要注意。
-
-```js
-app.get('/home', app.controller.home);
-// 等价于 app.router.get('/home', app.controller.home);
-```
-
 ### 注意事项
 
 - 在 Router 定义中， 可以支持多个 Middleware 串联执行
@@ -79,14 +73,14 @@ app.get('/home', app.controller.home);
 下面是一些路由定义的方式：
 
 ```js
-// app/rotuer.js
+// app/router.js
 module.exports = app => {
-  const { router } = app;
-  router.get('/home', app.controller.home);
-  router.get('/user/:id', app.controller.user.page);
-  router.post('/admin', isAdmin, app.controller.admin);
-  router.post('/user', isLoginUser, hasAdminPermission, app.controller.user.create);
-  router.post('/api/v1/comments', app.controller.v1.comments.create); // app/controller/v1/comments.js  
+  const { router, controller } = app;
+  router.get('/home', controller.home);
+  router.get('/user/:id', controller.user.page);
+  router.post('/admin', isAdmin, controller.admin);
+  router.post('/user', isLoginUser, hasAdminPermission, controller.user.create);
+  router.post('/api/v1/comments', controller.v1.comments.create); // app/controller/v1/comments.js
 };
 ```
 
@@ -98,9 +92,9 @@ module.exports = app => {
 ```js
 // app/router.js
 module.exports = app => {
-  const { router } = app;
-  router.resources('posts', '/api/posts', app.controller.posts);
-  router.resources('users', '/api/v1/users', app.controller.v1.users); // app/controller/v1/users.js
+  const { router, controller } = app;
+  router.resources('posts', '/api/posts', controller.posts);
+  router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
 };
 ```
 

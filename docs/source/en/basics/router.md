@@ -12,7 +12,8 @@ By unifying routing rules, routing logics are free from scatter that may cause u
 ```js
 // app/router.js
 module.exports = app => {
-  app.router.get('/user/:id', app.controller.user.info);
+  const { router, controller } = app;
+  router.get('/user/:id', controller.user.info);
 };
 ```
 
@@ -20,11 +21,13 @@ module.exports = app => {
 
 ```js
 // app/controller/user.js
-exports.info = async ctx => {
-  ctx.body = {
-    name: `hello ${ctx.params.id}`,
-  };
-};
+class UserController extends Controller {
+  async info() {
+    this.ctx.body = {
+      name: `hello ${ctx.params.id}`,
+    };
+  }
+}
 ```
 This simplest Router is done by now, when users do the request `GET /user/123`, the info function in `user.js` will be invoked.
 
@@ -33,10 +36,10 @@ This simplest Router is done by now, when users do the request `GET /user/123`, 
 Below is the complete definition of router, parameters can be determined depending on different scenes.
 
 ```js
-router.verb('path-match', 'controller.action');
-router.verb('router-name', 'path-match', 'controller.action');
-router.verb('path-match', middleware1, ..., middlewareN, 'controller.action');
-router.verb('router-name', 'path-match', middleware1, ..., middlewareN, 'controller.action');
+router.verb('path-match', app.controller.action);
+router.verb('router-name', 'path-match', app.controller.action);
+router.verb('path-match', middleware1, ..., middlewareN, app.controller.action);
+router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.action);
 ```
 The complete definition of router includes 5 major parts:
 
@@ -57,15 +60,6 @@ The complete definition of router includes 5 major parts:
   * `app.controller.user.fetch` - directly point to a controller
   * `'user.fetch'` - simplified as a string,
 
-### `app.verb` support
-
-To make define routing rules more easier, we also support `abb.verb` like `app.get`, `app.post` to define a routing rule. But because HTTP methods are to much, and some methods are overrided(e.x. `app.options` is overrided).
-
-```js
-app.get('/home', app.controller.home);
-// EQUAL TO app.router.get('/home', app.controller.home);
-```
-
 ### Notices
 
 - multiple Middlewares can be configured to execute serially in Router definition
@@ -76,11 +70,15 @@ app.get('/home', app.controller.home);
 Here are some examples of writing routing rules:
 
 ```js
-app.router.get('/home', app.controller.home);
-app.router.get('/user/:id', app.controller.user.page);
-app.router.post('/admin', isAdmin, app.controller.admin);
-app.router.post('user', '/user', isLoginUser, hasAdminPermission, app.controller.user.create);
-app.router.post('/api/v1/comments', app.controller.v1.comments.create); // app/controller/v1/comments.js
+// app/router.js
+module.exports = app => {
+  const { router, controller } = app;
+  router.get('/home', controller.home);
+  router.get('/user/:id', controller.user.page);
+  router.post('/admin', isAdmin, controller.admin);
+  router.post('/user', isLoginUser, hasAdminPermission, controller.user.create);
+  router.post('/api/v1/comments', controller.v1.comments.create); // app/controller/v1/comments.js
+};
 ```
 
 ### RESTful style URL definition
@@ -90,8 +88,9 @@ We provide `app.resources('router-name', 'path-match', 'controller-name')` to ge
 ```js
 // app/router.js
 module.exports = app => {
-  app.router.resources('posts', '/posts', app.controller.posts);
-  app.router.resources('users', '/api/v1/users', app.controller.v1.users); // app/controller/v1/users.js
+  const { router, controller } = app;
+  router.resources('posts', '/posts', controller.posts);
+  router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
 };
 ```
 
