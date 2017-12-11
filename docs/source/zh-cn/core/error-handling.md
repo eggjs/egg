@@ -146,7 +146,7 @@ module.exports = {
 ```js
 // app/middleware/notfound_handler.js
 module.exports = () => {
-  return async notFoundHandler(ctx, next) {
+  return async function notFoundHandler(ctx, next) {
     await next();
     if (ctx.status === 404 && !ctx.body) {
       if (ctx.acceptJSON) {
