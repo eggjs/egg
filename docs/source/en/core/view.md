@@ -4,20 +4,19 @@ title: View Template Rendering
 In most cases, we need to fetch data, render with templates, then return to users.
 So a view engine is essential.
 
-[egg-view] is the built-in view solution of Egg.js.
-It allows more than one view engine to be used in one application.
-All view engines are imported as plugins, and they provide the same rendering API interface.
-To know more, see [View Plugin](../advanced/view-plugin.md).
+[egg-view] is a built-in plugin to standardize the way of using view engines.
+With [egg-view] developers can use the same API interface to work with different view engines in one application.
+See [View Plugin](../advanced/view-plugin.md) for more details.
 
-Take the officially supported View plugin [egg-view-nunjucks] as example:
+Take the officially supported View plugin [egg-view-nunjucks] as an example:
 
-## Install view plugin
+### Install view engine plugin
 
 ```bash
 $ npm i egg-view-nunjucks --save
 ```
 
-### Register plugin
+### Enable view engine plugin
 
 ```js
 // config/plugin.js
@@ -27,17 +26,17 @@ exports.nunjucks = {
 };
 ```
 
-## Configure plugin
+## Configure view plugins
 
 [egg-view] defines the default configuration of `config.view`
 
 ### root {String}
 
-Root directory for template files. It's absolute path. Default value is `${baseDir}/app/view`.
+Root directory for template files is absolute path. Default value is `${baseDir}/app/view`.
 Multiple directories, separated by `,`, are supported.
 [egg-view] looks for template files from all the directories.
 
-Below is an example of configuring multiple `view` directories:
+The configuration below is an example of multiple view directories:
 
 ```js
 // config/config.default.js
@@ -58,15 +57,16 @@ module.exports = appInfo => {
 
 Cache template file paths, default value is `true`.
 [egg-view] looks for template files from the directories that defined in `root`.
-If a matching is found, the file path will be cached.
-The next time the same path is used,
+When a file matching given template path is found, the full file path will be cached
+and be reused when rendering the same template path afterward.
 [egg-view] won't search all directories again.
 
 ### mapping and defaultViewEngine
 
-Every view engine needs to have a view engine name specified.
-File extension name is used to decide view engines.
-For example, use Nunjucks to render `.nj` files.
+Every view engine has a view engine name defined when the plugin is enabled.
+In view configuration, `mapping` defines the mapping
+from template file's extension name to view engine name.
+For example, use Nunjucks engine to render `.nj` files.
 
 ```js
 module.exports = {
@@ -78,14 +78,13 @@ module.exports = {
 };
 ```
 
-When calling `render()` to render files,
-[egg-view] uses view engine according to extension name.
+[egg-view] uses the corresponding view engine according to the configuration above.
 
 ```js
 await ctx.render('home.nj');
 ```
 
-The mapping from extension name to view engine must be defined.
+The mapping from file extension name to view engine must be defined.
 Otherwise [egg-view] cannot find correct view engine.
 Global configuration can be done with `defaultViewEngine`.
 
@@ -100,8 +99,8 @@ module.exports = {
 
 If a view engine cannot be found according to specified mapping,
 the default view engine will be used.
-For applications that use only one view engine,
-it's suggested to set this option.
+For the applications that use only one view engine,
+it's recommended to set this option.
 
 ### defaultExtension
 
@@ -125,7 +124,7 @@ await ctx.render('home');
 [egg-view] provides three interfaces in Context.
 All three returns a Promise:
 
-- `render(name, locals)` renders template file, and set to value to `ctx.body`.
+- `render(name, locals)` renders template file, and set the value to `ctx.body`.
 - `renderView(name, locals)` renders template file, returns the result and don't set the value to any variable.
 - `renderString(tpl, locals)` renders template string, returns the result and don't set the value to any variable.
 
@@ -149,17 +148,17 @@ class HomeController extends Controller {
 }
 ```
 
-When calling `renderString`, view engine should be specified unless `defaultViewEngine` is defined.
+When calling `renderString`, view engine should be specified unless `defaultViewEngine` has been defined.
 
 ## Locals
 
 In the process of rendering pages,
-we usually need a variable to hold all variables that used in view.
+we usually need a variable to hold all information that is used in view template.
 [egg-view] provides `app.locals` and `ctx.locals`.
 
 - `app.locals` is global, usually configured in `app.js`.
 - `ctx.locals` is per-request, and it merges `app.locals`.
-- set `ctx.locals` with a new object, [egg-view] auto merges the new object into the previous object using setter.
+- `ctx.locals` can be assigned by modifying key/value or assigned with a new object. [egg-view] will merge the new object automatically in corresponding setter.
 
 ```js
 // `app.locals` merged into `ctx.locals`
@@ -167,20 +166,20 @@ ctx.app.locals = { a: 1 };
 ctx.locals.b = 2;
 console.log(ctx.locals); // { a: 1, b: 2 }
 
-// in one request, `app.locals` is merged into `ctx.locals` only at the first time accessed
+// in the processing of a request, `app.locals` is merged into `ctx.locals` only at the first time `ctx.locals` being accessed
 ctx.app.locals = { a: 2 };
 console.log(ctx.locals); // already merged before, so output is still { a: 1, b: 2 }
 
-// pass a new object to `locals`. New object will be merged into `locals`, instead of replacing it. It's done through setter automatically.
+// pass a new object to `locals`. New object will be merged into `locals`, instead of replacing it. It's done by setter automatically.
 ctx.locals.c = 3;
 ctx.locals = { d: 4 };
 console.log(ctx.locals); // { a: 1, b: 2, c: 3, d: 4 }
 ```
 
-In real development, we usually don't directly use these two objects in controller.
+In practical development, we usually don't use these two objects in controller directly.
 Instead, simply call `ctx.render(name, data)`:
-- [egg-view] auto merges `data` into `ctx.locals`.
-- [egg-view] auto injects `ctx`, `request`, `helper` into locals for your convenience.
+- [egg-view] merges `data` into `ctx.locals` automatically.
+- [egg-view] injects `ctx`, `request`, `helper` into locals automatically.
 
 ```js
 ctx.app.locals = { appName: 'showcase' };
@@ -196,12 +195,12 @@ await ctx.renderString('{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.bas
 Note:
 
 - **ctx.locals is cached. app.locals is merged into it only at the first time that ctx.locals is accessed.**
-- due to the ambiguity of naming, the `ctx.state` that is used in Koa is replaced by `locals` in Egg.js, i.e. `ctx.state` and `ctx.locals` are equivalent. It's suggested to use the latter.
+- due to the ambiguity of naming, the `ctx.state` that is used in Koa is replaced by `ctx.locals` in Egg.js, i.e. `ctx.state` and `ctx.locals` are equivalent. It's recommended to use the latter.
 
 ## Helper
 
 All functions that defined in `helper` can be directly used in templates.
-See more details in [Extend](../basics/extend.md).
+See [Extend](../basics/extend.md) for more details.
 
 ```js
 // app/extend/helper.js
@@ -213,7 +212,7 @@ await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 ## Security
 
-The built-in plugin [egg-security] provides common security related functions, including `helper.shtml / surl / sjs` and so on. You're strongly recommended to read [Security](./security.md).
+The built-in plugin [egg-security] provides common security related functions, including `helper.shtml / surl / sjs` and so on. It's strongly recommended to read [Security](./security.md).
 
 [egg-security]: https://github.com/eggjs/egg-security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
