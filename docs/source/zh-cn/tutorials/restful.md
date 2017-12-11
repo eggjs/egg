@@ -158,7 +158,7 @@ class TopicController extends Controller {
     // 如果参数校验未通过，将会抛出一个 status = 422 的异常
     ctx.validate(createRule);
     // 调用 service 创建一个 topic
-    const id = yield ctx.service.topics.create(ctx.request.body);
+    const id = await ctx.service.topics.create(ctx.request.body);
     // 设置响应体和状态码
     ctx.body = {
       topic_id: id,
