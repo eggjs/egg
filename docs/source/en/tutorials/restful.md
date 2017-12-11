@@ -157,7 +157,7 @@ class TopicController extends Controller {
     // status = 422 exception will be thrown if not passing the parameter validation
     ctx.validate(createRule);
     // call service to create a topic
-    const id = yield ctx.service.topics.create(ctx.request.body);
+    const id = await ctx.service.topics.create(ctx.request.body);
     // configure the response body and status code
     ctx.body = {
       topic_id: id,
