@@ -176,6 +176,25 @@ module.exports = {
 };
 ```
 
+If the third-party Koa middleware do not follow the rule, then you can wrap it youself:
+
+```js
+// config/config.default.js
+module.exports = {
+  webpack: {
+    compiler: {},
+    others: {},
+  },
+};
+
+// app/middleware/webpack.js
+const webpackMiddleware = require('some-koa-middleware');
+
+module.exports = (options, app) => {
+  return webpackMiddleware(options.compiler, options.others);
+}
+```
+
 ## General Configuration
 
 These general config fields are supported by middleware loaded by the application layer or built in by the framework:
