@@ -1,11 +1,12 @@
 title: View Template Rendering
 ---
 
-In most cases, we need to fetch data, render with templates, then return to users.
-So a view engine is essential.
+In most cases, we need to fetch data and render with template files.
+So we need to use corresponding view engines.
 
-[egg-view] is a built-in plugin to standardize the way of using view engines.
-With [egg-view] developers can use the same API interface to work with different view engines in one application.
+[egg-view] is a built-in plugin to support using multiple view engines in one application.
+All view engines are imported as plugins.
+With [egg-view] developers can use the same API interface to work with different view engines.
 See [View Plugin](../advanced/view-plugin.md) for more details.
 
 Take the officially supported View plugin [egg-view-nunjucks] as an example:
@@ -32,9 +33,10 @@ exports.nunjucks = {
 
 ### root {String}
 
-Root directory for template files is absolute path. Default value is `${baseDir}/app/view`.
-Multiple directories, separated by `,`, are supported.
-[egg-view] looks for template files from all the directories.
+Root directory for template files is absolute path, with default value `${baseDir}/app/view`.
+
+[egg-view] supports having multiple directories, which are separated by `,`.
+In this case, it looks for template files from all the directories.
 
 The configuration below is an example of multiple view directories:
 
@@ -57,9 +59,9 @@ module.exports = appInfo => {
 
 Cache template file paths, default value is `true`.
 [egg-view] looks for template files from the directories that defined in `root`.
-When a file matching given template path is found, the full file path will be cached
-and be reused when rendering the same template path afterward.
-[egg-view] won't search all directories again.
+When a file matching given template path is found, the file's full path will be cached
+and reused afterward.
+[egg-view] won't search all directories again for the same template path.
 
 ### mapping and defaultViewEngine
 
@@ -153,7 +155,7 @@ When calling `renderString`, view engine should be specified unless `defaultView
 ## Locals
 
 In the process of rendering pages,
-we usually need a variable to hold all information that is used in view template.
+we usually need a variable to contain all information that is used in view template.
 [egg-view] provides `app.locals` and `ctx.locals`.
 
 - `app.locals` is global, usually configured in `app.js`.
@@ -212,7 +214,7 @@ await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 ## Security
 
-The built-in plugin [egg-security] provides common security related functions, including `helper.shtml / surl / sjs` and so on. It's strongly recommended to read [Security](./security.md).
+The built-in plugin [egg-security] provides common security helper functions, including `helper.shtml / surl / sjs` and so on. It's strongly recommended to read [Security](./security.md).
 
 [egg-security]: https://github.com/eggjs/egg-security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
