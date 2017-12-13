@@ -1,15 +1,15 @@
 title: Passport
 ---
 
-**『登录鉴权』**是一个常见的业务场景，包括『账号密码登录方式』和『第三方统一登录』。
+**『登录鉴权』** 是一个常见的业务场景，包括『账号密码登录方式』和『第三方统一登录』。
 
 其中，后者我们经常使用到，如 Google， GitHub，QQ 统一登录，它们都是基于 [OAuth](https://oauth.net/2/) 规范。
 
-[Passport] 是一个扩展性很强的认证中间件，支持 `Github`，`Twitter`，`Facebook` 等知名服务厂商的 `strategy`，同时也支持通过账号密码的方式进行登录授权校验。
+[Passport] 是一个扩展性很强的认证中间件，支持 `Github`，`Twitter`，`Facebook` 等知名服务厂商的 `Strategy`，同时也支持通过账号密码的方式进行登录授权校验。
 
 Egg 在它之上提供了 [egg-passport] 插件，把初始化、鉴权成功后的回调处理等通用逻辑封装掉，使得开发者仅需调用几个 API 即可方便的使用 Passport 。
 
-[Passport] 的时序如下：
+[Passport] 的执行时序如下：
 - 用户访问页面
 - 检查 Session
 - 拦截跳鉴权登录页面
@@ -28,6 +28,8 @@ Egg 在它之上提供了 [egg-passport] 插件，把初始化、鉴权成功后
 $ npm i --save egg-passport
 $ npm i --save egg-passport-github
 ```
+
+更多插件参见 [GitHub Topic - egg-passport](https://github.com/topics/egg-passport) 。
 
 ### 配置
 
@@ -48,7 +50,7 @@ exports.passportGithub = {
 
 **配置:**
 
-注意：[egg-passport] 对配置字段进行的标准化，故这里配置的字段名是 `key` 和 `secret` 。
+注意：[egg-passport] 标准化了配置字段，统一为 `key` 和 `secret` 。
 
 ```js
 // config/default.js
@@ -59,8 +61,10 @@ config.passportGithub = {
 ```
 
 **注意：**
-- 需要创建一个 [GitHub OAuth Apps](https://github.com/settings/applications/new)，得到 `clientID` 和 `clientSecret` 信息。
-- 还需要填写 `callbackURL`，如 `http://127.0.0.1:7001/auth/github/callback` (线上部署时需要更新对应的域名)。
+- 创建一个 [GitHub OAuth Apps](https://github.com/settings/applications/new)，得到 `clientID` 和 `clientSecret` 信息。
+- 填写 `callbackURL`，如 `http://127.0.0.1:7001/passport/github/callback`
+  - 线上部署时需要更新为对应的域名
+  - 路径为配置的 `options.callbackURL`，默认为 `/passport/${strategy}/callback`
 
 ### 挂载路由
 
@@ -69,18 +73,13 @@ config.passportGithub = {
 module.exports = app => {
   const { router, controller } = app;
 
-  router.get('/authCallback', controller.home.githubCallback);
-
   // 挂载鉴权路由
-  app.passport.mount('github', {
-    callbackURL: '/auth/github/callback',
-    successRedirect: '/authCallback'
-  });
+  app.passport.mount('github');
 
   // 上面的 mount 是语法糖，等价于
-  // const github = app.passport.authenticate('github', { successRedirect: '/authCallback' });
+  // const github = app.passport.authenticate('github', {});
   // router.get('/passport/github', github);
-  // router.get('/auth/github/callback', github);
+  // router.get('/passport/github/callback', github);
 }
 ```
 
@@ -141,18 +140,22 @@ module.exports = app => {
 
 [egg-passport] 提供了以下扩展：
 
-- `ctx.user`：获取当前已登录的用户信息
-- `ctx.isAuthenticated()`：检查该请求是否已授权
-- `ctx.login(user, [options])`：为用户启动一个登录的 session
-- `ctx.logout()`：退出，将用户信息从 session 中清除
+- `ctx.user` - 获取当前已登录的用户信息
+- `ctx.isAuthenticated()` - 检查该请求是否已授权
+- `ctx.login(user, [options])` - 为用户启动一个登录的 session
+- `ctx.logout()` - 退出，将用户信息从 session 中清除
+- `ctx.session.returnTo=` - 在跳转验证前设置，可以指定成功后的 redirect 地址
 
 还提供了 API：
 
-- `app.passport.verify(async (ctx, user) => {})`：校验用户
-- `app.passport.serializeUser(async (ctx, user) => {})`： 序列化用户信息后存储进 session
-- `app.passport.deserializeUser(async (ctx, user) => {})`：反序列化后取出用户信息
-- `app.passport.authenticate(strategy, options)`：生成指定的鉴权中间件
-- `app.passport.mount(strategy, options)`： 语法糖，方便开发者配置路由
+- `app.passport.verify(async (ctx, user) => {})` - 校验用户
+- `app.passport.serializeUser(async (ctx, user) => {})` - 序列化用户信息后存储进 session
+- `app.passport.deserializeUser(async (ctx, user) => {})` - 反序列化后取出用户信息
+- `app.passport.authenticate(strategy, options)` - 生成指定的鉴权中间件
+  - `options.successRedirect` - 指定鉴权成功后的 redirect 地址
+  - `options.loginURL` - 跳转登录地址，默认为 `/passport/${strategy}`
+  - `options.callbackURL` - 授权后回调地址，默认为 `/passport/${strategy}/callback`
+- `app.passport.mount(strategy, options)` - 语法糖，方便开发者配置路由
 
 ## 使用 Passport 生态
 
@@ -177,10 +180,13 @@ module.exports = app => {
   app.passport.use(new LocalStrategy({
     passReqToCallback: true,
   }, (req, username, password, done) => {
+    // format user
     const user = {
+      provider: 'local',
       username,
       password,
     };
+    debug('%s %s get user: %j', req.method, req.url, user);
     app.passport.doVerify(req, user, done);
   }));
 
@@ -205,10 +211,9 @@ module.exports = app => {
   // 渲染登录页面，用户输入账号密码
   router.get('/login', controller.home.login);
   // 登录校验
-  router.post('/login', app.passport.authenticate('local', { successReturnToOrRedirect: '/authCallback' }));
+  router.post('/login', app.passport.authenticate('local', { successRedirect: '/authCallback' }));
 };
 ```
-
 
 ## 如何开发一个 egg-passport 插件
 
@@ -247,16 +252,22 @@ exports.passportLocal = {
 };
 ```
 
+注意：[egg-passport] 标准化了配置字段，统一为 `key` 和 `secret`，故若对应的 Passport 中间件属性名不一致时，开发者应该进行转换。
+
 **注册 passport 中间件：**
 
 ```js
 // {plugin_root}/app.js
 const LocalStrategy = require('passport-local').Strategy;
+
 module.exports = app => {
   const config = app.config.passportLocal;
   config.passReqToCallback = true;
+
   app.passport.use(new LocalStrategy(config, (req, username, password, done) => {
+    // 把 Passport 插件返回的数据进行清洗处理，返回 User 对象
     const user = {
+      provider: 'local',
       username,
       password,
     };
