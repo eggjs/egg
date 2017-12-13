@@ -45,7 +45,7 @@ guide_toc:
   Security: Security
   View: View
   View Plugin: View Plugin
-  # Passport:
+  Passport: Passport
   HttpClient: HttpClient
   Logger:  Logger
   Error Handling: Error Handling

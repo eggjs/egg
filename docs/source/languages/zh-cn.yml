@@ -45,7 +45,7 @@ guide_toc:
   Security: 安全
   View: 模板渲染
   View Plugin: 模板插件开发规范
-  # Passport:
+  Passport: Passport 鉴权
   HttpClient: HttpClient
   Logger: 日志
   Error Handling: 异常处理
