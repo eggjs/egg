@@ -1,13 +1,22 @@
 title: Passport
 ---
 
-『登录鉴权』是一个常见的业务场景，包括『账号密码登录方式』和『第三方统一登录』。
+**『登录鉴权』**是一个常见的业务场景，包括『账号密码登录方式』和『第三方统一登录』。
 
 其中，后者我们经常使用到，如 Google， GitHub，QQ 统一登录，它们都是基于 [OAuth](https://oauth.net/2/) 规范。
 
-[Passport] 是一个扩展性很强的认证中间件，支持 `Github`，`Twitter`，`Facebook` 等知名服务厂商的 `strategy`，同时也支持通过用户名和密码的方式进行登录授权校验。
+[Passport] 是一个扩展性很强的认证中间件，支持 `Github`，`Twitter`，`Facebook` 等知名服务厂商的 `strategy`，同时也支持通过账号密码的方式进行登录授权校验。
 
-Egg 在它之上提供了 egg-passport 插件，把初始化、鉴权成功后的回调处理等通用逻辑封装掉，使得开发者仅需调用几个 API 即可方便的使用 Passport 。
+Egg 在它之上提供了 [egg-passport] 插件，把初始化、鉴权成功后的回调处理等通用逻辑封装掉，使得开发者仅需调用几个 API 即可方便的使用 Passport 。
+
+[Passport] 的时序如下：
+- 用户访问页面
+- 检查 Session
+- 拦截跳鉴权登录页面
+- Strategy 鉴权
+- 校验和存储用户信息
+- 序列化用户信息到 Session
+- 跳转到指定页面
 
 ## 使用 egg-passport
 
@@ -52,7 +61,6 @@ config.passportGithub = {
 **注意：**
 - 需要创建一个 [GitHub OAuth Apps](https://github.com/settings/applications/new)，得到 `clientID` 和 `clientSecret` 信息。
 - 还需要填写 `callbackURL`，如 `http://127.0.0.1:7001/auth/github/callback` (线上部署时需要更新对应的域名)。
-
 
 ### 挂载路由
 
@@ -135,7 +143,7 @@ module.exports = app => {
 
 - `ctx.user`：获取当前已登录的用户信息
 - `ctx.isAuthenticated()`：检查该请求是否已授权
-- `ctx.login(user[, options])`：为用户启动一个登录的 session
+- `ctx.login(user, [options])`：为用户启动一个登录的 session
 - `ctx.logout()`：退出，将用户信息从 session 中清除
 
 还提供了 API：
@@ -150,7 +158,7 @@ module.exports = app => {
 
 [Passport] 的中间件很多，不可能都进行二次封装。
 接下来，我们来看看如何在框架中直接使用 Passport 中间件。
-以『账号密码登录方式』的 [passort-local] 为例：
+以『账号密码登录方式』的 [passport-local] 为例：
 
 ### 安装
 
