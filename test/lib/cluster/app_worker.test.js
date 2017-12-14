@@ -62,7 +62,6 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     ]);
   });
 
-
   describe('listen hostname', () => {
     let app;
     before(() => {
