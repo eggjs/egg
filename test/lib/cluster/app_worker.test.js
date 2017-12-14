@@ -19,6 +19,41 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       .expect('true');
   });
 
+  it('should response 400 bad request when HTTP request packet broken', () => {
+    const test = app.httpRequest()
+      // Node.js (http-parser) will occur an error while the raw URI in HTTP
+      // request packet containing space.
+      //
+      // Refs: https://zhuanlan.zhihu.com/p/31966196
+      .get('/foo bar');
+
+    // app.httpRequest().expect() will encode the uri so that we cannot
+    // request the server with raw `/foo bar` to emit 400 status code.
+    //
+    // So we generate `test.req` via `test.request()` first and override the
+    // encoded uri.
+    //
+    // `test.req` will only generated once:
+    //
+    //   ```
+    //   function Request::request() {
+    //     if (this.req) return this.req;
+    //
+    //     // code to generate this.req
+    //
+    //     return this.req;
+    //   }
+    //   ```
+    test.request().path = '/foo bar';
+
+    return test
+      // .expect(
+      //  '<html><head><title>400 Bad Request</title></head><body bgcolor="white">' +
+      //  '<center><h1>400 Bad Request</h1></center><hr><center>❤</center></body></html>')
+      .expect(400);
+  });
+
+
   describe('listen hostname', () => {
     let app;
     before(() => {
