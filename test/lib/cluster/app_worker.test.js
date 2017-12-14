@@ -47,9 +47,13 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     test.request().path = '/foo bar';
 
     return test
-      // .expect(
-      //  '<html><head><title>400 Bad Request</title></head><body bgcolor="white">' +
-      //  '<center><h1>400 Bad Request</h1></center><hr><center>❤</center></body></html>')
+      .expect(`<html>
+  <head><title>400 Bad Request</title></head>
+  <body bgcolor="white">
+  <center><h1>400 Bad Request</h1></center>
+  <hr><center>❤</center>
+  </body>
+  </html>`)
       .expect(400);
   });
 
