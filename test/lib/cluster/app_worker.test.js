@@ -19,14 +19,14 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       .expect('true');
   });
 
-  it('should response 400 bad request when HTTP request packet broken', function* () {
+  it('should response 400 bad request when HTTP request packet broken', async () => {
     const test1 = app.httpRequest()
       // Node.js (http-parser) will occur an error while the raw URI in HTTP
       // request packet containing space.
       //
       // Refs: https://zhuanlan.zhihu.com/p/31966196
       .get('/foo bar');
-    const test2 = app.httpRequest().get('/foo baz')
+    const test2 = app.httpRequest().get('/foo baz');
 
     // app.httpRequest().expect() will encode the uri so that we cannot
     // request the server with raw `/foo bar` to emit 400 status code.
@@ -56,10 +56,10 @@ describe('test/lib/cluster/app_worker.test.js', () => {
   </body>
   </html>`;
 
-    yield [
+    await Promise.all([
       test1.expect(html).expect(400),
-      test2.expect(html).expect(400)
-    ];
+      test2.expect(html).expect(400),
+    ]);
   });
 
 
