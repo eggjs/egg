@@ -13,6 +13,7 @@
 
 * **document**
   * migrate docs to egg 2
+  * add document for passport
 
 ### Commits
 
