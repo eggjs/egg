@@ -4,15 +4,15 @@ title: Framework Development
 During maintaining a number of projects, are your familiar with situations below: 
 
 - Each project contains the same configuration files that need to be copied every time, such as `gulpfile.js`, `webpack.config.js`.
-- Each project has similiar dependances
+- Each project has similiar dependancies.
 - It's difficult to update those projects based on the same spec once the spec has changed? 
 
-Have your team a desire to use:
+Have your team got:
 
-- a uniform technique selection, such as the choice of databases, templates and frontend frameworks as well as middlewares.
-- a uniform default configuration to balance the deviation of different situations, which are not supposed to resolve in code level, like the differences between companies and open communities.
-- a uniform [deployment plan](../core/deployment.md) keeping developers concentrate on code.
-- a uniform code style to decrease code's repetition and optimize code's appearance, which is important for a enterprise level framework.
+- a unifid technique selection, such as the choice of databases, templates, frontend frameworks, and middlewares.
+- a unifid default configuration to balance the deviation of different situations, which are not supposed to resolve in code level, like the differences between companies and open communities.
+- a unifid [deployment plan](../core/deployment.md) keeping developers concentrate on code.
+- a unifid code style to decrease code's repetition and optimize code's appearance, which is important for a enterprise level framework.
 
 To satisfy these demands, Egg endows developers with the capacity of `customazing a framework`. It is just an abstract layer, which is able to construct a higher level framework, supporting inheritance of unlimited times. Futhermore, Egg apply a quantity of coding conventions based on Koa.
 
@@ -45,8 +45,8 @@ We could think about EggCore as the advanced version of Koa Application, which i
 To setup by [egg-init](https://github.com/eggjs/egg-init) with the [framework](https://github.com/eggjs/egg-boilerplate-framework) option is a good way, in which generates a scaffold for you.
 
 ```bash
-$ egg-init my-framework --type=framework
-$ cd my-framework
+$ egg-init --type=framework yadan
+$ cd yadan
 $ npm i
 $ npm test
 ```
@@ -92,34 +92,29 @@ If we consider a framework as a class, then Egg framework is the base class,and 
 {
   "name": "yadan",
   "dependencies": {
-    "egg": "^1.0.0"
+    "egg": "^2.0.0"
   }
 }
 
 // index.js
-const egg = require('egg');
-// clone entire APIs
-Object.assign(exports, egg);
-```
+module.exports = require('./lib/framework.js');
 
-Custom Application
-
-```js
-// index.js
-// rewrite Egg Application
-exports.Application = require('./lib/application.js');
-
-// lib/application.js
+// lib/framework.js
 const path = require('path');
-const Application = require('egg').Application;
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-class YadanApplication extends Application {
+
+class Application extends egg.Application {
   get [EGG_PATH]() {
     // return the path of framework
     return path.dirname(__dirname);
   }
 }
-module.exports = YadanApplication;
+
+// rewrite Egg's Application
+module.exports = Object.assign(egg, {
+  Application,
+});
 ```
 
 The name of framework, default as `egg`, is a indispensable option to launch an application, set by `egg.framwork` of `package.json`, then Loader loads the exported app of a module named it.
@@ -176,20 +171,29 @@ These code are pseudocode to elaborate the framework's loading process, and we h
 Egg's mutilprocess model is composed of Application and Agent. Therefore Agent, another fundamental class similiar to Application, is also required to be implemented.
 
 ```js
-// index.js
-exports.Agent = require('./lib/agent.js');
-
-// lib/agent.js
+// lib/framework.js
 const path = require('path');
-const Agent = require('egg').Agent;
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-class YadanAgent extends Agent {
+
+class Application extends egg.Application {
   get [EGG_PATH]() {
     // return the path of framework
     return path.dirname(__dirname);
   }
 }
-module.exports = YadanAgent;
+
+class Agent extends egg.Agent {
+  get [EGG_PATH]() {
+    return path.dirname(__dirname);
+  }
+}
+
+// rewrite Egg's Application
+module.exports = Object.assign(egg, {
+  Application,
+  Agent,
+});
 ```
 
 ** To be careful about that Agent and Application based on the same Class possess different APIs. **
@@ -201,38 +205,38 @@ Loader, the core of the launch process, is capable of loading data code, adjusti
 As the same as Egg-Path, Loader exposes itself at `Symbol.for('egg#loader')` to ensuer it's accessibility on prototype chain.
 
 ```js
-// index.js
-// custom Loader is also needed to export for the propose of extension
-exports.AppWorkerLoader = require('./lib/app_worker_loader.js');
-
-// lib/application.js
+// lib/framework.js
 const path = require('path');
-const Application = require('egg').Application;
-const AppWorkerLoader = require('./app_worker_loader');
+const egg = require('egg');
 const EGG_PATH = Symbol.for('egg#eggPath');
-const EGG_LOADER = Symbol.for('egg#loader');
-class YadanApplication extends Application {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
-  }
-  // cover default Egg Loader
-  get [EGG_LOADER]() {
-    return AppWorkerLoader;
-  }
-}
-module.exports = YadanApplication;
 
-// lib/app_worker_loader.js
-class YadanAppWorkerLoader extends AppWorkerLoader {
+class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
     super.load();
     // do something
   }
 }
-module.exports = YadanAppWorkerLoader;
+
+class Application extends egg.Application {
+  get [EGG_PATH]() {
+    // return the path of framework
+    return path.dirname(__dirname);
+  }
+    // supplant default Loader
+  get [EGG_LOADER]() {
+    return YadanAppWorkerLoader;
+  }
+}
+
+// rewrite Egg's Application
+module.exports = Object.assign(egg, {
+  Application,
+  // custom Loader, a dependence of the high level frameword, needs to be exported.
+  AppWorkerLoader: YadanAppWorkerLoader,
+});
 ```
 
-AgentworkerLoader is not going to be described because of it's similarity of AppWorkerLoader， but be aware of it's located at `agent.js` instand of `app.js`.
+AgentworkerLoader is not going to be described because of it's similarity of AppWorkerLoader, but be aware of it's located at `agent.js` instand of `app.js`.
 
 ## The principle of Launch
 
@@ -347,7 +351,7 @@ describe('/test/index.test.js', () => {
 });
 ```
 
-Tests of `stdout/stderr` are also avaiable, since `mm.cluster` is based on [coffee](https://github.com/popomore/coffee) in which mutilprocess testing is supported.
+Tests of `stdout/stderr` are also avaiable, since `mm.cluster` is based on [coffee](https://github.com/popomore/coffee) in which multiprocess testing is supported.
 
 ```js
 const mock = require('egg-mock');
