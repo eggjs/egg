@@ -19,7 +19,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       .expect('true');
   });
 
-  it('should response 400 bad request when HTTP request packet broken', async () => {
+  it('should response 400 bad request when HTTP request packet broken', function* () {
     const test1 = app.httpRequest()
       // Node.js (http-parser) will occur an error while the raw URI in HTTP
       // request packet containing space.
@@ -56,10 +56,10 @@ describe('test/lib/cluster/app_worker.test.js', () => {
   </body>
   </html>`;
 
-    await Promise.all([
+    yield [
       test1.expect(html).expect(400),
       test2.expect(html).expect(400),
-    ]);
+    ];
   });
 
   describe('listen hostname', () => {
