@@ -244,7 +244,7 @@ Egg provides a number of Logger object, we simply introduce how to get each Logg
 
 ### App Logger
 
-We can get it via `app.logger`. If we want to do some application-level logging, such as logging some datas in the startup phase, logging some business related information, those can be done by App Logger.
+We can get it via `app.logger`. If we want to do some application-level logging, such as logging some data in the startup phase, logging some business related information, those can be done by App Logger.
 
 ### App CoreLogger
 
