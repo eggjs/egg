@@ -26,11 +26,13 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
 
   ```js
   // app/controller/user.js
-  class UserController extends Controller {
-    async fetch() {
-      this.ctx.body = app.cache.get(this.ctx.query.id);
-    }
-  }
+  module.exports = app => {
+    return class UserController extends Controller {
+      async fetch() {
+        this.ctx.body = app.cache.get(this.ctx.query.id);
+      }
+    };
+  };
   ```
 
 和 [Koa] 一样，在 Context 对象上，可以通过 `ctx.app` 访问到 Application 对象。以上面的 Controller 文件举例：
