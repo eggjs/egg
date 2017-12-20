@@ -27,8 +27,8 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
   ```js
   // app/controller/user.js
   module.exports = app => {
-    return class UserController extends app.Controller {
-      // implement
+    return class UserController extends Controller {
+      this.ctx.body = app.cache.get(this.ctx.query.id);
     };
   };
   ```
