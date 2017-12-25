@@ -166,6 +166,6 @@ Adding yours to `middleware` in config:
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: [ 'notfoundHander' ],
+  middleware: [ 'notfoundHandler' ],
 };
 ```
