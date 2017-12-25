@@ -164,6 +164,6 @@ module.exports = () => {
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: [ 'notfoundHander' ],
+  middleware: [ 'notfoundHandler' ],
 };
 ```
