@@ -1,5 +1,23 @@
 # History
 
+## 2017-12-26, Version 2.2.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * `config.meta.logging` to enable log every request when recieved
+
+* **document**
+  * fix some grammars
+  * add rule for issue
+
+### Commits
+
+* [[`9fe5b85`](http://github.com/eggjs/egg/commit/9fe5b8563958d313b02482e5b3fe69c342acfa71)] - feat: enable request started log on meta middleware (#1877) (fengmk2 <<fengmk2@gmail.com>>)
+* [[`8ce9611`](http://github.com/eggjs/egg/commit/8ce9611e2e2e5098a7a4557e0f8d29cd93ab468c)] - docs(objects): fix some grammars (#1806) (恬竹 <<2632807692@qq.com>>)
+* [[`e43aa2b`](http://github.com/eggjs/egg/commit/e43aa2bad227475744ef6422f376475d0ee266c4)] - docs(error-handling): fix some words (#1874) (Fan <<incomparable9527@foxmail.com>>)
+* [[`4c1617a`](http://github.com/eggjs/egg/commit/4c1617a16ee3df1b455f5eeb1cb31e37e5f593c1)] - docs(faq): add rule for issue (#1861) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2017-12-15, Version 2.1.0, @dead-horse
 
 ### Notable changes
