@@ -212,7 +212,7 @@ In addition, Helper instances can also be accessed in template, for example, we 
 
 ### Custom helper method
 
-In application development, we may often customize some helper methods, such as `formatUser` in the above example, we can use [framework extension](./Extend.md#helper) to customize helper method.
+In application development, we may often customize some helper methods, such as `formatUser` in the above example, we can use [framework extension](./extend.md#helper) to customize helper method.
 
 ```js
 // app/extend/helper.js
