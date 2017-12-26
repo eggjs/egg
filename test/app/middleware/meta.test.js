@@ -32,13 +32,13 @@ describe('test/app/middleware/meta.test.js', () => {
     });
     after(() => app.close());
 
-    it('should get X-Readtime header', async () => {
-      await app.httpRequest()
+    it('should get X-Readtime header', function* () {
+      yield app.httpRequest()
         .get('/?foo=bar')
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
         .expect(200);
-      const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
+      const content = (yield fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
       assert(content.includes('[meta] request started, host: '));
     });
   });
