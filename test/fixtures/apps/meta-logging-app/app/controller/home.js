@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = async ctx => {
-  ctx.body = 'hello world';
+module.exports = function* () {
+  this.body = 'hello world';
 };
