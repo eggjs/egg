@@ -7,7 +7,7 @@ const runscript = require('runscript');
 const utils = require('./utils');
 
 describe('test/doc.test.js', () => {
-  // if (process.platform === 'win32') return;
+  if (process.platform === 'win32') return;
 
   let app;
   before(async () => {
