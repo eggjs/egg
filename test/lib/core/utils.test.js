@@ -88,7 +88,7 @@ describe('test/lib/core/utils.test.js', () => {
     const obj = {
       bufferClass$: Buffer,
       bufferClassExtend$: SlowBuffer,
-      buffer$: new Buffer('123'),
+      buffer$: Buffer.from('123'),
       bufferExtend$: new SlowBuffer('123'),
     };
     utils.convertObject(obj);
