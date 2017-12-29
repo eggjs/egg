@@ -1,7 +1,7 @@
 title: Framework Built-in Objects
 ---
 
-At this chapter, we will introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extend the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up documents.
+At this chapter, we will introduce some built-in basic objects in the framework, including four objects (Application, Context, Request, Response) inherited from [Koa] and some objects that extended by the framework (Controller, Service , Helper, Config, Logger), we will often see them in the follow-up documents.
 
 ## Application
 
@@ -57,7 +57,7 @@ class UserController extends Controller {
 
 ## Context
 
-Context is a **request level object**, inherited from [Koa.Context]. Whenever receives a request, the framework instantiates a Context object that encapsulates the information requested by the user and provides a number of convenient ways to get the request parameter or set the response information. The framework will mount all of the [Service] on the Context instance, and some plugins will mount some other methods and objects on it ([egg-sequelize] will mount all the models on the Context).
+Context is a **request level object**, inherited from [Koa.Context]. When a request is received every time, the framework instantiates a Context object that encapsulates the information requested by the user and provides a number of convenient ways to get the request parameter or set the response information. The framework will mount all of the [Service] on the Context instance, and some plugins will mount some other methods and objects on it ([egg-sequelize] will mount all the models on the Context).
 
 ### How to Get
 
@@ -104,9 +104,9 @@ exports.task = async ctx => {
 
 ## Request & Response
 
-Request is a **request level object**, inherited from [Koa.Request]. Encapsulates the Node.js native HTTP Request object, providing a set of helper methods to get commonly used parameters of HTTP requests.
+Request is a **request level object**, inherited from [Koa.Request]. Encapsulates the Node.js native HTTP Request object, and provides a set of helper methods to get commonly used parameters of HTTP requests.
 
-Response is a **request level object**, inherited from [Koa.Response]. Encapsulates the Node.js native HTTP Response object, providing a set of helper methods to set the HTTP response.
+Response is a **request level object**, inherited from [Koa.Response]. Encapsulates the Node.js native HTTP Response object, and provides a set of helper methods to set the HTTP response.
 
 ### How to Get
 
@@ -137,7 +137,7 @@ Egg provides a Controller base class and recommends that all [Controller] inheri
 - `service` - all [service](./ service.md) of application.
 - `logger` - the encapsulated logger object for the current controller.
 
-In the Controller file, there are two ways to refer to the Controller base class:
+In the Controller file, there are two ways to use the Controller base class:
 
 ```js
 // app/controller/user.js
@@ -203,7 +203,7 @@ class UserController extends Controller {
 }
 ```
 
-In addition, Helper instances can also be accessed in template, for example, we can get [security](../core/security.md) plugin provided `shtml` method from template.
+In addition, Helper instances can also be accessed in template, for example, we can get `shtml` method provided by [security](../core/security.md) plugin  in template.
 
 ```
 // app/view/home.nj
@@ -212,7 +212,7 @@ In addition, Helper instances can also be accessed in template, for example, we 
 
 ### Custom helper method
 
-In application development, we may often customize some helper methods, such as `formatUser` in the above example, we can use [framework extension](./extend.md#helper) to customize helper method.
+In application development, we may often customize some helper methods, such as `formatUser` in the above example, we can customize helper method with a way of [framework extension](./extend.md#helper).
 
 ```js
 // app/extend/helper.js
@@ -244,7 +244,7 @@ Egg provides a number of Logger object, we simply introduce how to get each Logg
 
 ### App Logger
 
-We can get it via `app.logger`. If we want to do some application-level logging, such as logging some data in the startup phase, logging some business related information, those can be done by App Logger.
+We can get it via `app.logger`. If we want to do some application-level logging, such as logging some data in the startup phase, logging some business informations that are unrelated to request, those can be done by App Logger.
 
 ### App CoreLogger
 
@@ -264,9 +264,9 @@ We can get them via `this.logger` in Controller and Service instance, they are e
 
 ## Subscription
 
-Subscription is the model for subscribing, including consumer in message broker or schedule.
+Subscription is a common model for subscribing, for example, the consumer in message broker or schedule, so we provide the Subscription base class to normalize this model.
 
-The base class of Subscription is exported by egg.
+The base class of Subscription can be exported in the following way.
 
 ```js
 const Subscription = require('egg').Subscription;
