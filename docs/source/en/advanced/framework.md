@@ -5,14 +5,14 @@ During maintaining a number of projects, are your familiar with situations below
 
 - Each project contains the same configuration files that need to be copied every time, such as `gulpfile.js`, `webpack.config.js`.
 - Each project has similiar dependancies.
-- It's difficult to update those projects based on the same spec once the spec has changed? 
+- It's difficult to synchronize those projects based on the same configurations like those mentioned above once they have changed? 
 
 Have your team got:
 
-- a unifid technique selection, such as the choice of databases, templates, frontend frameworks, and middlewares.
-- a unifid default configuration to balance the deviation of different situations, which are not supposed to resolve in code level, like the differences between companies and open communities.
-- a unifid [deployment plan](../core/deployment.md) keeping developers concentrate on code.
-- a unifid code style to decrease code's repetition and optimize code's appearance, which is important for a enterprise level framework.
+- a unified technique selection, such as the choice of databases, templates, frontend frameworks, and middlewares.
+- a unified default configuration to balance the deviation of different situations, which are not supposed to resolve in code level, like the differences between companies and open communities.
+- a unified [deployment plan](../core/deployment.md) keeping developers concentrate on code without paying attention to deployment details of connecting the framework and platforms.
+- a unified code style to decrease code's repetition and optimize code's appearance, which is important for a enterprise level framework.
 
 To satisfy these demands, Egg endows developers with the capacity of `customazing a framework`. It is just an abstract layer, which is able to construct a higher level framework, supporting inheritance of unlimited times. Futhermore, Egg apply a quantity of coding conventions based on Koa.
 
