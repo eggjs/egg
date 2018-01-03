@@ -20,6 +20,8 @@ WebSocket 的产生源于 Web 开发中日益增长的实时通信需求，对�
 $ npm i egg-socket.io --save
 ```
 
+### 配置
+
 **开启插件：**
 
 ```js
@@ -49,7 +51,7 @@ exports.io = {
 };
 ```
 
-> 注意：命名空间为 `/` 与 `/example`, 不是 `example `
+> 命名空间为 `/` 与 `/example`, 不是 `example`
 
 **uws:**
 
@@ -176,12 +178,12 @@ const tick = (id, msg) => {
 // {app_root}/app/io/middleware/connection.js
 module.exports = app => {
   return async (ctx, next) => {
-    if(true){
+    if (true) {
       ctx.socket.disconnet();
-        return;
-      }        
-      await next();
-      console.log('disconnection!');
+      return;
+    }
+    await next();
+    console.log('disconnection!');
   };
 };
 ```
@@ -203,7 +205,7 @@ module.exports = app => {
 
 ### Controller
 
-Controller 对客户端发送的 event 进行处理；由于 Controller 类继承于 `egg.Contoller` , 会有如下属性挂在 `this` 上:
+Controller 对客户端发送的 event 进行处理；由于其继承于 `egg.Contoller`, 拥有如下成员对象:
 
 - ctx
 - app
@@ -211,7 +213,7 @@ Controller 对客户端发送的 event 进行处理；由于 Controller 类继�
 - config
 - logger
 
-> 详情参考 [Controller](../basics/controller.html) 文档
+> 详情参考 [Controller](../basics/controller.md) 文档
 
 ```js
 // {app_root}/app/io/controller/default.js
