@@ -66,6 +66,8 @@ Options:
 - `--workers=2` worker count, default to cpu cores, which can leverage the capability of the cpu.
 - `--title=egg-server-showcase` convenient for `ps + grep`, default to `egg-server-${appname}`.
 - `--framework=yadan` config `egg.framework` at `package.json` or pass this args, when you are using [Custom Framework](../advanced/framework.md).
+- `--ignore-stderr` ignore the std err at start up。
+- support all options from [egg-cluster], such as `--https`.
 
 More about [egg-scripts] and [egg-cluster] documents.
 

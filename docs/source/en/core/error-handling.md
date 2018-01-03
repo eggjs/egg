@@ -148,7 +148,7 @@ If you want a customized 404 response, you only need to create a middleware to h
 ```js
 // app/middleware/notfound_handler.js
 module.exports = () => {
-  return async notFoundHandler(ctx, next) {
+  return async function notFoundHandler(ctx, next) {
     await next();
     if (ctx.status === 404 && !ctx.body) {
       if (ctx.acceptJSON) {
@@ -166,6 +166,6 @@ Adding yours to `middleware` in config:
 ```js
 // config/config.default.js
 module.exports = {
-  middleware: [ 'notfoundHander' ],
+  middleware: [ 'notfoundHandler' ],
 };
 ```

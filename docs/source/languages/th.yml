@@ -45,7 +45,7 @@ guide_toc:
   Security: ความปลอดภัย
   View: มุมมอง
   View Plugin: มุมมองปลั๊กอิน
-  # Passport:
+  Passport: Passport
   HttpClient: HttpClient
   Logger: วารสาร
   Error Handling: การจัดการข้อยกเว้น

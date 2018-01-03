@@ -1,7 +1,7 @@
 title: Progressive Development
 ---
 
-Egg provides both [Plugin](../basics/plugin.md) and [Framework](../advanced/framework.md), and the former has two loading modes includes `path` and `package`. Then how should we choose?
+Egg provides both [Plugin](../basics/plugin.md) and [Framework](../advanced/framework.md), and the former has two loading modes which are `path` and `package`. Then how should we choose?
 
 Step-by-step example will be provided to demonstrate how to start coding development progressively.
 
@@ -9,7 +9,7 @@ Find detail codes on [eggjs/examples/progressive](https://github.com/eggjs/examp
 
 ## Getting Started
 
-Assume we are writing a code to analyze UA to implement the function below:
+Assume that we are writing a code to analyze UA to implement the function below:
 
 - `ctx.isAndroid`
 - `ctx.isIOS`
@@ -47,9 +47,9 @@ module.exports = {
 
 Obviously, the logic is universal that can be written as a plugin.
 
-But since function might not perfect at the beginning, it might difficult to maintain if encapsulate into a plugin directly.
+But since function might not be perfect at the beginning, it might be difficult to maintain if encapsulated into a plugin directly.
 
-We can put the code as the format of plugin, but not separate out.
+We can write the code as the format of plugin, but not separate out.
 
 Codes refer to [step2](https://github.com/eggjs/examples/tree/master/progressive/step2).
 
@@ -77,7 +77,7 @@ Core code:
 
 - `app/extend/context.js` move to `lib/plugin/egg-ua/app/extend/context.js`.
 
-- `lib/plugin/egg-ua/package.json` to declare plugin.
+- `lib/plugin/egg-ua/package.json` declares plugin.
 
 ```json
 {
@@ -87,7 +87,7 @@ Core code:
 }
 ```
 
-- `config/plugin.js` use `path` to mount the plugin.
+- `config/plugin.js` uses `path` to mount the plugin.
 
 ```js
 // config/plugin.js
@@ -98,9 +98,9 @@ exports.ua = {
 };
 ```
 
-## Extraction to Independent Plugin
+## Extract to Independent Plugin
 
-The module's functions become more better after a period of developing so we could extract it out as an independent plugin.
+The functions of module become better after a period of developing so we could extract it out as an independent plugin.
 
 We extract an egg-ua plugin and have a quick review as below. Details refer to [Plugin Development](../advanced/plugin.md).
 
@@ -148,9 +148,9 @@ $ npm test
 
 ## Finally: A Framework
 
-After repeating the process above, we accumulate a few plugins and configurations, and might found that most of our team projects are using them.
+After repeating the process above, we accumulate a few plugins and configurations, and might find that most of our team projects are using them.
 
-At that time, you can consider to abstract them as a framework which suitable for business scenarios.
+At that time, you can consider abstracting them as a framework which is suitable for business scenarios.
 
 Firstly, abstract the example-framework as below. Let's have a quick review, details refer to [Framework](../advanced/framework.md).
 
@@ -178,9 +178,9 @@ example-framework
 
 Then modify the application, details refer to [step4/example-app](https://github.com/eggjs/examples/tree/master/progressive/step4/example-app).
 
-- Remove declaring dependencies `egg-ua` in `config/plugin.js`.
-- Remove dependencies `egg-ua` in `package.json`.
-- declare dependencies `example-framework`  in `package.json` and configure the `egg.framework`.
+- Remove `egg-ua` in `config/plugin.js`.
+- Remove `egg-ua` in `package.json`.
+- declare `example-framework`  in `package.json` and configure the `egg.framework`.
 
 ```json
 {
@@ -205,15 +205,15 @@ $ npm i
 $ npm test
 ```
 
-## Last
+## Write in the end
 
-In conclusion, we can see how to make the framework evolution step by step which benefits from Egg provides the powerful plugin mechanism, code co-build, reusability and modularity.
+In conclusion, we can see how to make the framework evolution step by step which benefits from Egg's powerful plugin mechanism, code co-build, reusability and modularity.
 
 
-- in general, put codes into `lib/plugin` if it can be reused in the application.
+- in general, put codes into `lib/plugin` if they can be reused in the application.
 - separate it into a `node module` when plugin becomes stable.
 - application with relatively reusable codes will work as a separate plugin.
-- abstract as framework to release after application become certain solutions of specified business scenario.
-- it would be a great improvement of teamwork after plugins extract, modularize and finally as a framework, beacuase other projects could reuse codes by just `npm install`.
+- abstract it as framework to release after application become certain solutions of specified business scenario.
+- it would be a great improvement in the efficiency of teamwork after plugins were extracted, modularized and finally became a framework, because other projects could reuse codes by just using `npm install`.
 
-- **Note：Whether application/plugin/framework, unittest is a must and try to reach 100% coverage**
+- **Note：Whether it's the application/plugin/framework, unittest is necessary and try to reach 100% coverage**

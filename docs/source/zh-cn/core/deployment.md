@@ -67,6 +67,8 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 - `--workers=2` 框架 worker 线程数，默认会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 - `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
 - `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，可以配置 `package.json` 的 `egg.framework` 或指定该参数。
+- `--ignore-stderr` 忽略启动期的报错。
+- 所有 [egg-cluster] 的 Options 都支持透传，如 `--https` 等。
 
 更多参数可查看 [egg-scripts] 和 [egg-cluster] 文档。
 

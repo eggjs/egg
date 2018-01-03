@@ -32,7 +32,7 @@ Core:
 Tutorials:
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
-  # Passport: /core/passport.html
+  Passport: /tutorials/passport.html
 Advanced:
   Loader: /advanced/loader.html
   Plugin Development: /advanced/plugin.html
