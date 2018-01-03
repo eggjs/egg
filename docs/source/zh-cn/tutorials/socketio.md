@@ -5,36 +5,20 @@ title: Socket.IO
 
 WebSocket 的产生源于 Web 开发中日益增长的实时通信需求，对比基于 http 的轮询方式，它大大节省了网络带宽，同时也降低了服务器的性能消耗； [socket.io] 支持 websocket、polling 两种数据传输方式以兼容浏览器不支持 WebSocket 场景下的通信需求。
 
-框架提供了 [egg-socket.io] 插件，并遵循以下开发规约：
+框架提供了 [egg-socket.io] 插件，增加了以下开发规约：
 
- - namespace 
+ - namespace: 通过配置的方式定义 namespace（命名空间） 
+ - middleware: 对每一次 socket 连接的建立/断开、每一次消息/数据传递进行预处理
+ - controller: 响应 socket.io 的 event 事件
+ - router: 统一了 socket.io 的 event 与 框架路由的处理配置方式
 
-	通过配置的方式定义 namespace（命名空间）
- 
- - middleware 
-	 - connection
-	 - packet
-
-	对每一次 socket 连接的建立/断开、每一次消息/数据传递进行预处理
-	 
- - controller
-	
-	响应 event 事件，同时继承 `egg.Controller`，使得 socket.io 可调用框架的 Controller/Service/Logger 等模块
-	
- - router 
-
-	统一了 socket.io 的 event 与 框架路由的处理配置方式
-
-
-## 安装  egg-socket.io
+## 安装 egg-socket.io
 
 ### 安装
 
 ```bash
 $ npm i egg-socket.io --save
 ```
-
-### 配置
 
 **开启插件：**
 
@@ -46,7 +30,7 @@ exports.io = {
 };
 ```
 
-**配置：**
+**配置插件：**
 
 ```js
 // {app_root}/config/config.${env}.js
@@ -57,34 +41,60 @@ exports.io = {
       connectionMiddleware: [],
       packetMiddleware: [],
     },
+    '/example': {
+      connectionMiddleware: [],
+      packetMiddleware: [],
+    },    
   },
-  redis: {
-    host: '127.0.0.1',
-    port: 6379
-  }
 };
 ```
+
+> 注意：命名空间为 `/` 与 `/example`, 不是 `example `
 
 **uws:**
 
 如果想要使用 [uws] 替代默认的 `us` 可以做如下配置
 
-```
+```js
 // {app_root}/config/config.${env}.js
 exports.io = {
   init: { wsEngine: 'uws' }, // default: us 
 };
 ```
 
+**redis:**
+
+[egg-socket.io] 内置了 `socket.io-redis`，在 cluster 模式下，使用 redis 可以较为简单的实现 clients/rooms 等信息共享
+
+```js
+// {app_root}/config/config.${env}.js
+exports.io = {
+  redis: {
+    host: { redis server host },
+    port: { redis server prot },
+    auth_pass: { redis server password },
+    db: 0,
+  },
+};
+```
+
+> 开启 `redis` 后，程序在启动时会尝试连接到 redis 服务器
+
 ### 部署
 
-**Node 配置**
+框架是以 Cluster 方式启动的，而 socket.io 协议实现需要 sticky 特性支持，否则在多进程模式下无法正常工作。
 
-由于 [socket.io] 的设计，在多进程中服务器必须在 `sticky` 模式下工作，修改 `package.json` 中 `npm scripts` 配置：
+由于 [socket.io] 的设计，在多进程中服务器必须在 `sticky` 模式下工作，故需要给 startCluster 传递 sticky 参数。
 
-```bash
-$ egg-bin dev --sticky
-$ egg-scripts start --sticky
+修改 `package.json` 中 `npm scripts` 脚本：
+
+```
+{
+  "scripts": {
+    "dev": "egg-bin dev --sticky",
+    "start": "egg-scripts start --sticky" 
+  }
+}
 ```
 
 自定义方式启动：
@@ -96,29 +106,24 @@ startCluster({
 });
 ```
 
-**sticky：**
-
-框架是以 Cluster 方式启动的，而 socket.io 协议实现需要 sticky 特性支持，否则在多进程模式下无法正常工作。
-
 **Nginx 配置**
 
 ```
 location / {
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $host;
-    proxy_pass   http://127.0.0.1:{ your node server port };
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Connection "upgrade";
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header Host $host;
+  proxy_pass   http://127.0.0.1:7001;
 }
 ```
 
-## 使用  egg-socket.io
+## 使用 egg-socket.io
 
 开启 [egg-socket.io] 的项目目录结构如下：
 
 ```
 chat
-├── README.md
 ├── app
 │   ├── controller
 │   │   ├── home.js
@@ -131,17 +136,8 @@ chat
 │   │       ├── connection.js
 │   │       └── packet.js
 │   └── router.js
-├── app.js
-├── appveyor.yml
 ├── config
-│   ├── config.default.js
-│   ├── config.local.js
-│   ├── config.prod.js
-│   └── plugin.js
-├── logs
-├── package.json
-├── run
-└── test
+└── package.json
 ```
 
 
@@ -163,40 +159,40 @@ chat
 ```js
 // {app_root}/app/io/middleware/connection.js
 module.exports = app => {
-    return async (ctx, next) => {
-        ctx.socket.emit('res', 'connected!');
-        await next();
-        // execute when disconnect.
-        console.log('disconnection!');
-    };
+  return async (ctx, next) => {
+    ctx.socket.emit('res', 'connected!');
+    await next();
+    // execute when disconnect.
+    console.log('disconnection!');
+  };
 };
 ```
 
 踢出用户示例：
 
-```
+```js
 const tick = (id, msg) => {
-    logger.debug('#tick', id, msg);
-    socket.emit(id, msg);
-    app.io.of('/').adapter.remoteDisconnect(id, true, err => {
-        logger.error(err);
-    });
+  logger.debug('#tick', id, msg);
+  socket.emit(id, msg);
+  app.io.of('/').adapter.remoteDisconnect(id, true, err => {
+    logger.error(err);
+  });
 };
 ```
 
 同时，针对当前的连接也可以简单处理：
 
-```
+```js
 // {app_root}/app/io/middleware/connection.js
 module.exports = app => {
-    return async (ctx, next) => {
-        if(true){
-            ctx.socket.disconnet();
-            return;
-        }        
-        await next();
-        console.log('disconnection!');
-    };
+  return async (ctx, next) => {
+    if(true){
+      ctx.socket.disconnet();
+        return;
+      }        
+      await next();
+      console.log('disconnection!');
+  };
 };
 ```
 
@@ -225,9 +221,9 @@ Controller 对客户端发送的 event 进行处理；由于 Controller 类继�
 - config
 - logger
 
-> 详情参考 [Controller](https://eggjs.org/zh-cn/basics/controller.html) 文档
+> 详情参考 [Controller](../basics/controller.html) 文档
 
-```
+```js
 // {app_root}/app/io/controller/default.js
 'use strict';
 
@@ -308,16 +304,16 @@ exports.io = {
 
 room 存在于 nsp 中，通过 join/leave 方法来加入或者离开; 框架中使用方法相同；
 
-```
+```js
 const room = 'default_room';
 
 module.exports = app => {
-    return async (ctx, next) => {
-        ctx.socket.join(room);
-        ctx.app.io.of('/').to(room).emit('online', { msg: 'welcome', id: ctx.socket.id });
-        await next();
-        console.log('disconnection!');
-    };
+  return async (ctx, next) => {
+    ctx.socket.join(room);
+    ctx.app.io.of('/').to(room).emit('online', { msg: 'welcome', id: ctx.socket.id });
+    await next();
+    console.log('disconnection!');
+  };
 };
 ```
 
@@ -331,7 +327,7 @@ module.exports = app => {
 
 UI 相关的内容不重复写了，通过 window.socket 调用即可
 
-```
+```js
 // browser
 const log = console.log;
 
@@ -388,7 +384,7 @@ window.onload = function () {
 
 #### config
 
-```
+```js
 // {app_root}/config/config.${env}.js
 exports.io = {
   namespace: {
@@ -410,7 +406,7 @@ exports.io = {
 
 框架扩展用于封装数据格式
 
-```
+```js
 // {app_root}/app/extend/helper.js
 
 module.exports = {
@@ -432,18 +428,17 @@ module.exports = {
 
 Format：
 
-```
+```js
 {
   data: {
     action: 'exchange',  // 'deny' || 'exchange' || 'broadcast'
-    payload: {}
+    payload: {},
   },
-  meta:
-    {
-      timestamp: 1512116201597,
-      client: '/webrtc#nNx88r1c5WuHf9XuAAAB',
-      target: '/webrtc#nNx88r1c5WuHf9XuAAAB'
-    }
+  meta:{
+    timestamp: 1512116201597,
+    client: '/webrtc#nNx88r1c5WuHf9XuAAAB',
+    target: '/webrtc#nNx88r1c5WuHf9XuAAAB'
+  },
 }
 ```
 
@@ -451,7 +446,7 @@ Format：
 
 [egg-socket.io] 中间件负责 socket 连接的处理
 
-```
+```js
 // {app_root}/app/io/middleware/auth.js
 
 const PREFIX = 'room';
@@ -548,7 +543,7 @@ module.exports = () => {
 
 p2p 通信，通过 exchange 进行数据交换
 
-```
+```js
 // {app_root}/app/io/controller/nsp.js
 const Controller = require('egg').Controller;
 
@@ -569,7 +564,6 @@ class NspController extends Controller {
       app.logger.error(error);
     }
   }
-
 }
 
 module.exports = NspController;
@@ -577,7 +571,7 @@ module.exports = NspController;
 
 #### router
 
-```
+```js
 // {app_root}/app/router.js
 module.exports = app => {
   const { router, controller, io } = app;
@@ -590,7 +584,7 @@ module.exports = app => {
 
 开两个 tab 页面，并调出控制台：
 
-```
+```js
 socket.emit('exchange', { 
 	target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW', 
 	payload: { 
@@ -605,6 +599,7 @@ socket.emit('exchange', {
 
 - [socket.io](https://socket.io)
 - [egg-socket.io](https://github.com/eggjs/egg-socket.io)
+- [egg-socket.io example](https://github.com/eggjs/egg-socket.io/tree/master/example)
 
 [socket.io]: https://socket.io
 [egg-socket.io]: https://github.com/eggjs/egg-socket.io
