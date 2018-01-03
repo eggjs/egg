@@ -97,15 +97,6 @@ exports.io = {
 }
 ```
 
-自定义方式启动：
-
-```js
-startCluster({
-  sticky: true,
-  ...
-});
-```
-
 **Nginx 配置**
 
 ```
@@ -125,8 +116,6 @@ location / {
 ```
 chat
 ├── app
-│   ├── controller
-│   │   ├── home.js
 │   ├── extend
 │   │   └── helper.js
 │   ├── io
@@ -140,6 +129,7 @@ chat
 └── package.json
 ```
 
+> 注意：对应的文件都在 app/io 目录下
 
 ### Middleware
 
