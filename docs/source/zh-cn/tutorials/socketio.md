@@ -20,8 +20,6 @@ WebSocket 的产生源于 Web 开发中日益增长的实时通信需求，对�
 $ npm i egg-socket.io --save
 ```
 
-### 配置
-
 **开启插件：**
 
 ```js
@@ -32,7 +30,7 @@ exports.io = {
 };
 ```
 
-**配置插件：**
+### 配置
 
 ```js
 // {app_root}/config/config.${env}.js
@@ -135,14 +133,26 @@ chat
 
 ### Middleware
 
-[egg-socket.io] 的 Middleware 有如下两种场景：
+插件中间件有如下两种场景：
 
 - Connection
 - Packet
 
-框架是基于 Koa 实现的，所以框架的中间件形式和 Koa 的中间件形式是一样的，都是基于洋葱圈模型。[egg-socket.io] 的 Middleware 配置于各个命名空间下，不同于框架中间件，其分别作用于上述两种场景中。
+其配置于各个命名空间下，根据上述两种场景分别发生作用。
 
-> Issues：[#1416](https://github.com/eggjs/egg/issues/1416)
+**注意：**
+
+如果我们启用了框架中间件，则会发现项目中有以下目录：
+
+- `app/middleware`：框架中间件
+- `app/io/middleware`：插件中间件
+
+区别：
+
+- 框架中间件基于 http 模型设计，处理 http 请求。
+- 插件中间件基于 socket 模型设计，处理 socket.io 请求。
+
+虽然框架通过插件尽量统一了它们的风格，但务必注意，它们的使用场景是不一样的。详情参见 issue：[#1416](https://github.com/eggjs/egg/issues/1416)
 
 #### Connection
 
