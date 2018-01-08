@@ -6,13 +6,13 @@ Here are some common control tactics:
 
 1. Using platform to manage configurations: while building a new application, you can put the current environment configuration into package and trigger the configuration as long as you run this application. But this certain application won't be able to build several deployments at once, and you will get into trouble whenever you want to use the configuration in localhost.
 2. Using platform to manage configurations: you can pass the current environment configuration via environment variables while starting. This is a relatively elegant approach with higher requirement on operation and support from configuration platform. Moreover, The configuration environment has same flaws as first method.
-3. Using code to manage configurations: you can add some environment configurations in codes and pass them  to current environment arguments while starting. However, it doesn't allow you to configurate globally and you need to alter your code whenever you want to change the configuration.
+3. Using code to manage configurations: you can add some environment configurations in codes and pass them  to current environment arguments while starting. However, it doesn't allow you to configure globally and you need to alter your code whenever you want to change the configuration.
 
-we choose the last strategy, namely **configurate with code**, The change of configuration should be also released after review. The application package itself is capable to be deployed in several environments, only by specifing the running environment.
+we choose the last strategy, namely **configure with code**, The change of configuration should be also released after reviewing. The application package itself is capable to be deployed in several environments, only need to specify the running environment.
 
 ### Multiple environment configuration
 
-This framework suppports loading configuration according to the environment and defining configuration files of multiple enviroments. For more details, please check [env](../basics/env.md).
+This framework supports loading configuration according to the environment and defining configuration files of multiple environments. For more details, please check [env](../basics/env.md).
 
 ```
 config
@@ -31,7 +31,7 @@ The corresponding configuration file will be loaded simultaneously when you set 
 The configuration file returns an object which could overwrite some configurations in the framework. Application can put its own business configuration into it for convenient management.
 
 ```js
-// configurate the catalog of logger，the default configuration of logger is provided by framework
+// configure the catalog of logger，the default configuration of logger is provided by framework
 module.exports = {
   logger: {
     dir: '/home/admin/logs/demoapp',
@@ -51,7 +51,7 @@ exports.logger = {
 The configuration file can also return a function which could receive a parameter called `appInfo`
 
 ```js
-// put the catelog of logger to the catalog of codes
+// put the catalog of logger to the catalog of codes
 const path = require('path');
 module.exports = appInfo => {
   return {
@@ -75,7 +75,7 @@ root       | The application root directory, if the environment is local or unit
 
 ### Sequence of loading configurations
 
-Applications, plugin components and framework are able to define those config. Even though the structure of catalog is identical but there is priority (application > framework > plugin). Besides, the running environment has the highest priority.
+Applications, plugin components and framework are able to define those configs. Even though the structure of catalog is identical but there is priority (application > framework > plugin). Besides, the running environment has the higher priority.
 
 Here is one sequence of loading configurations under "prod" environment, in which the following configuration will overwrite the previous configuration with the same name.
 
@@ -102,7 +102,7 @@ const b = {
 extend(true, a, b);
 // => { arr: [ 3 ] }
 ```
-As demonstrated above, the framework overwirte arrays instead of merging them.
+As demonstrated above, the framework will overwrite arrays instead of merging them.
 
 ## Configuration result
 
@@ -113,7 +113,7 @@ Some fields are hidden in the config file, mainly including 2 types:
 - like passwords, secret keys and other security related fields which can be configured in `config.dump.ignore` and only [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type is accepted. See [Default Configs](https://github.com/eggjs/egg/blob/master/config/config.default.js)
 - like Function, Buffer, etc. whose content converted by `JSON.stringify` will be specially large.
 
-`run/application_config_meta.json` (for worker process）and `run/agent_config_meta.json` (for agent process) will also be dumped that show which file defines the property, see below
+`run/application_config_meta.json` (for worker process）and `run/agent_config_meta.json` (for agent process) will also be dumped in order to check which file defines the property, see below
 
 ```json
 {
