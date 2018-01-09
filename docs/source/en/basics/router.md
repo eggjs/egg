@@ -95,6 +95,7 @@ GET    | /posts/new      | new_post       | app.controllers.posts.new
 GET    | /posts/:id      | post           | app.controllers.posts.show
 GET    | /posts/:id/edit | edit_post      | app.controllers.posts.edit
 POST   | /posts          | posts          | app.controllers.posts.create
+PATCH  | /posts/:id      | post           | app.controllers.posts.patch
 PUT    | /posts/:id      | post           | app.controllers.posts.update
 DELETE | /posts/:id      | post           | app.controllers.posts.destroy
 
@@ -109,6 +110,8 @@ exports.create = function* () {};
 exports.show = function* () {};
 
 exports.edit = function* () {};
+
+exports.patch = function* () {};
 
 exports.update = function* () {};
 
