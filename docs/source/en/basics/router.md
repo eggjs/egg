@@ -119,13 +119,9 @@ exports.show = async () => {};
 
 exports.edit = async () => {};
 
-<<<<<<< HEAD
 exports.patch = function* () {};
 
 exports.update = function* () {};
-=======
-exports.update = async () => {};
->>>>>>> upstream/master
 
 exports.destroy = async () => {};
 ```
