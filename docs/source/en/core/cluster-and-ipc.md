@@ -332,27 +332,25 @@ We put all logics that is used to interact with the remote data source into a Se
 
 ```js
 // app/service/source.js
-module.exports = app => {
-  let memoryCache = {};
+let memoryCache = {};
 
-  return class Source extends app.Service {
-    get(key) {
-      return memoryCache[key];
-    }
+class SourceService extends Service {
+  get(key) {
+    return memoryCache[key];
+  }
 
-    * checkUpdate() {
-      // check if remote data source has changed
-      const updated = yield mockCheck();
-      this.ctx.logger.info('check update response %s', updated);
-      return updated;
-    }
+  async checkUpdate() {
+    // check if remote data source has changed
+    const updated = await mockCheck();
+    this.ctx.logger.info('check update response %s', updated);
+    return updated;
+  }
 
-    * update() {
-      // update memory cache from remote
-      memoryCache = yield mockFetch();
-      this.ctx.logger.info('update memory cache from remote: %j', memoryCache);
-    }
-  };
+  async update() {
+    // update memory cache from remote
+    memoryCache = await mockFetch();
+    this.ctx.logger.info('update memory cache from remote: %j', memoryCache);
+  }
 }
 ```
 
@@ -365,8 +363,8 @@ exports.schedule = {
   type: 'all', // run in all workers
 };
 
-exports.task = function* (ctx) {
-  yield ctx.service.source.update();
+exports.task = async ctx => {
+  await ctx.service.source.update();
   ctx.app.lastUpdateBy = 'force';
 };
 ```
@@ -380,8 +378,8 @@ exports.schedule = {
   type: 'worker', // only run in one worker
 };
 
-exports.task = function* (ctx) {
-  const needRefresh = yield ctx.service.source.checkUpdate();
+exports.task = async ctx => {
+  const needRefresh = await ctx.service.source.checkUpdate();
   if (!needRefresh) return;
 
   // notify all workers to update memory cache from `file`
@@ -398,10 +396,8 @@ module.exports = app => {
     app.logger.info('start update by %s', by);
     // create an anonymous context to access service
     const ctx = app.createAnonymousContext();
-    // a convenient way to execute with generator function
-    // can replaced by `co`
-    ctx.runInBackground(function* () {
-      yield ctx.service.source.update();
+    ctx.runInBackground(async () => {
+      await ctx.service.source.update();
       app.lastUpdateBy = by;
     });
   });

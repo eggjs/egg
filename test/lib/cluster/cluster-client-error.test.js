@@ -8,12 +8,12 @@ const utils = require('../../utils');
 
 describe('test/lib/cluster/cluster-client-error.test.js', () => {
   let app;
-  before(function* () {
+  before(async () => {
     app = utils.app('apps/cluster-client-error');
 
     let err;
     try {
-      yield app.ready();
+      await app.ready();
     } catch (e) {
       err = e;
     }
@@ -24,10 +24,9 @@ describe('test/lib/cluster/cluster-client-error.test.js', () => {
     return app.close();
   });
 
-  it('should follower not throw error', function* () {
-    yield sleep(1000);
+  it('should follower not throw error', async () => {
+    await sleep(1000);
     const cnt = fs.readFileSync(path.join(__dirname, '../../fixtures/apps/cluster-client-error/logs/cluster-client-error/common-error.log'), 'utf8');
     assert(!cnt.includes('ECONNRESET'));
   });
-
 });

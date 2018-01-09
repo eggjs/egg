@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "2.0.0-beta.2",
+  "version": "2.2.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -15,15 +15,15 @@
   "dependencies": {
     "@types/accepts": "^1.3.3",
     "@types/koa": "^2.0.40",
-    "@types/koa-router": "^7.0.24",
+    "@types/koa-router": "^7.0.25",
     "accepts": "^1.3.4",
     "agentkeepalive": "^3.3.0",
     "cluster-client": "^1.7.1",
     "debug": "^3.1.0",
     "delegates": "^1.0.0",
-    "egg-cluster": "^1.12.4",
+    "egg-cluster": "^1.12.5",
     "egg-cookies": "^2.2.1",
-    "egg-core": "^4.0.0",
+    "egg-core": "^4.2.0",
     "egg-development": "^2.0.0",
     "egg-i18n": "^2.0.0",
     "egg-jsonp": "^2.0.0",
@@ -31,7 +31,7 @@
     "egg-logrotator": "^3.0.0",
     "egg-multipart": "^2.0.0",
     "egg-onerror": "^2.0.0",
-    "egg-schedule": "^3.0.0",
+    "egg-schedule": "^3.1.0",
     "egg-security": "^2.0.0",
     "egg-session": "^3.0.0",
     "egg-static": "^2.0.0",
@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "address": "^1.0.3",
-    "autod": "^3.0.0",
+    "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
     "coffee": "^4.1.0",
     "egg-alinode": "^1.0.3",
@@ -107,9 +107,6 @@
   },
   "engines": {
     "node": ">= 8.0.0"
-  },
-  "publishConfig": {
-    "tag": "next"
   },
   "license": "MIT"
 }

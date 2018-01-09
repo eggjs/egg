@@ -160,7 +160,7 @@ module.exports = class MyCustomView {
 }
 ```
 
-具体代码可[查看](https://github.com/eggjs/egg-view-nunjucks/blob/0433cadd3bc7a88e925b01bae08cc85c38a0af71/lib/view.js#L11)
+具体代码可[查看](https://github.com/eggjs/egg-view-nunjucks/blob/2ee5ee992cfd95bc0bb5b822fbd72a6778edb118/lib/view.js#L11)
 
 ### 安全相关
 

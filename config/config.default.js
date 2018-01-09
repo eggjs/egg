@@ -269,6 +269,18 @@ module.exports = appInfo => {
   };
 
   /**
+   * The option of `meta` middleware
+   *
+   * @member Config#meta
+   * @property {Boolean} enable - enable meta or not, default is true
+   * @property {Boolean} logging - enable logging start request, default is false
+   */
+  config.meta = {
+    enable: true,
+    logging: false,
+  };
+
+  /**
    * core enable middlewares
    * @member {Array} Config#middleware
    */

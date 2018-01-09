@@ -3,7 +3,6 @@ title: Tutorials
 - [Quick Start](../intro/quickstart.md)
 - [Progressive Development](./progressive.md)
 - [RESTful API](./restful.md)
-- [Async Function](./async-function.md)
 
 ## Template Engines
 

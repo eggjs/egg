@@ -13,7 +13,8 @@ Router 主要用来描述请求 URL 和具体承担执行动作的 Controller �
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/user/:id', app.controller.user.info);
+  const { router, controller } = app;
+  router.get('/user/:id', controller.user.info);
 };
 ```
 
@@ -21,11 +22,13 @@ module.exports = app => {
 
 ```js
 // app/controller/user.js
-exports.info = function* (ctx) {
-  ctx.body = {
-    name: `hello ${ctx.params.id}`,
-  };
-};
+class UserController extends Controller {
+  async info() {
+    this.ctx.body = {
+      name: `hello ${ctx.params.id}`,
+    };
+  }
+}
 ```
 
 这样就完成了一个最简单的 Router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
@@ -35,24 +38,24 @@ exports.info = function* (ctx) {
 下面是路由的完整定义，参数可以根据场景的不同，自由选择：
 
 ```js
-app.verb('path-match', app.controller.controller.action);
-app.verb('router-name', 'path-match', app.controller.controller.action);
-app.verb('path-match', middleware1, ..., middlewareN, app.controller.controller.action);
-app.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.controller.action);
+router.verb('path-match', app.controller.action);
+router.verb('router-name', 'path-match', app.controller.action);
+router.verb('path-match', middleware1, ..., middlewareN, app.controller.action);
+router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.controller.action);
 ```
 
 路由完整定义主要包括5个主要部分:
 
-- verb - 用户触发动作，支持 get，post 等方法，后面会通过示例详细说明。
-  * app.head - HEAD
-  * app.options - OPTIONS
-  * app.get - GET
-  * app.put - PUT
-  * app.post - POST
-  * app.patch - PATCH
-  * app.delete - DELETE
-  * app.del - 由于 delete 是一个保留字，所以提供了一个 delete 方法的别名。
-  * app.redirect - 可以对 URL 进行重定向处理，比如我们最经常使用的可以把用户访问的根目录路由到某个主页。
+- verb - 用户触发动作，支持 get，post 等所有 HTTP 方法，后面会通过示例详细说明。
+  * router.head - HEAD
+  * router.options - OPTIONS
+  * router.get - GET
+  * router.put - PUT
+  * router.post - POST
+  * router.patch - PATCH
+  * router.delete - DELETE
+  * router.del - 由于 delete 是一个保留字，所以提供了一个 delete 方法的别名。
+  * router.redirect - 可以对 URL 进行重定向处理，比如我们最经常使用的可以把用户访问的根目录路由到某个主页。
 - router-name 给路由设定一个别名，可以通过 Helper 提供的辅助函数 `pathFor` 和 `urlFor` 来生成 URL。(可选)
 - path-match - 路由 URL 路径。
 - middleware1 - 在 Router 里面可以配置多个 Middleware。(可选)
@@ -70,11 +73,15 @@ app.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.control
 下面是一些路由定义的方式：
 
 ```js
-app.get('/home', app.controller.home);
-app.get('/user/:id', app.controller.user.page);
-app.post('/admin', isAdmin, app.controller.admin);
-app.post('/user', isLoginUser, hasAdminPermission, app.controller.user.create);
-app.post('/api/v1/comments', app.controller.v1.comments.create); // app/controller/v1/comments.js
+// app/router.js
+module.exports = app => {
+  const { router, controller } = app;
+  router.get('/home', controller.home);
+  router.get('/user/:id', controller.user.page);
+  router.post('/admin', isAdmin, controller.admin);
+  router.post('/user', isLoginUser, hasAdminPermission, controller.user.create);
+  router.post('/api/v1/comments', controller.v1.comments.create); // app/controller/v1/comments.js
+};
 ```
 
 ### RESTful 风格的 URL 定义
@@ -85,8 +92,9 @@ app.post('/api/v1/comments', app.controller.v1.comments.create); // app/controll
 ```js
 // app/router.js
 module.exports = app => {
-  app.resources('posts', '/api/posts', app.controller.posts);
-  app.resources('users', '/api/v1/users', app.controller.v1.users); // app/controller/v1/users.js
+  const { router, controller } = app;
+  router.resources('posts', '/api/posts', controller.posts);
+  router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
 };
 ```
 
@@ -105,19 +113,19 @@ DELETE | /posts/:id      | post           | app.controllers.posts.destroy
 
 ```js
 // app/controller/posts.js
-exports.index = function* () {};
+exports.index = async () => {};
 
-exports.new = function* () {};
+exports.new = async () => {};
 
-exports.create = function* () {};
+exports.create = async () => {};
 
-exports.show = function* () {};
+exports.show = async () => {};
 
-exports.edit = function* () {};
+exports.edit = async () => {};
 
-exports.update = function* () {};
+exports.update = async () => {};
 
-exports.destroy = function* () {};
+exports.destroy = async () => {};
 ```
 
 如果我们不需要其中的某几个方法，可以不用在 `posts.js` 里面实现，这样对应 URL 路径也不会注册到 Router。
@@ -133,11 +141,11 @@ exports.destroy = function* () {};
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/search', app.controller.search);
+  app.router.get('/search', app.controller.search.index);
 };
 
 // app/controller/search.js
-module.exports = function* (ctx) {
+exports.index = async ctx => {
   ctx.body = `search: ${ctx.query.name}`;
 };
 
@@ -149,11 +157,11 @@ module.exports = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/user/:id/:name', app.controller.user.info);
+  app.router.get('/user/:id/:name', app.controller.user.info);
 };
 
 // app/controller/user.js
-exports.info = function* (ctx) {
+exports.info = async ctx => {
   ctx.body = `user: ${ctx.params.id}, ${ctx.params.name}`;
 };
 
@@ -167,11 +175,11 @@ exports.info = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
+  app.router.get(/^\/package\/([\w-.]+\/[\w-.]+)$/, app.controller.package.detail);
 };
 
 // app/controller/package.js
-exports.detail = function* (ctx) {
+exports.detail = async ctx => {
   // 如果请求 URL 被正则匹配， 可以按照捕获分组的顺序，从 ctx.params 中获取。
   // 按照下面的用户请求，`ctx.params[0]` 的 内容就是 `egg/1.0.0`
   ctx.body = `package:${ctx.params[0]}`;
@@ -185,11 +193,11 @@ exports.detail = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('/form', app.controller.form);
+  app.router.post('/form', app.controller.form.post);
 };
 
 // app/controller/form.js
-module.exports = function* (ctx) {
+exports.post = async ctx => {
   ctx.body = `body: ${JSON.stringify(ctx.request.body)}`;
 };
 
@@ -219,7 +227,7 @@ exports.security = {
 ```js
 // app/router.js
 module.exports = app => {
-  app.post('/user', app.controller.user);
+  app.router.post('/user', app.controller.user);
 };
 
 // app/controller/user.js
@@ -233,7 +241,7 @@ const createRule = {
   },
 };
 
-exports.create = function* (ctx) {
+exports.create = async ctx => {
   // 如果校验报错，会抛出异常
   ctx.validate(createRule);
   ctx.body = ctx.request.body;
@@ -249,12 +257,12 @@ exports.create = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('index', '/home/index', app.controller.home.index);
-  app.redirect('/', '/home/index', 302);
+  app.router.get('index', '/home/index', app.controller.home.index);
+  app.router.redirect('/', '/home/index', 302);
 };
 
 // app/controller/home.js
-exports.index = function* (ctx) {
+exports.index = async ctx => {
   ctx.body = 'hello controller';
 };
 
@@ -266,18 +274,18 @@ exports.index = function* (ctx) {
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/search', app.controller.search);
+  app.router.get('/search', app.controller.search.index);
 };
 
 // app/controller/search.js
-module.exports = function* (ctx) {
+exports.index = async ctx => {
   const type = ctx.query.type;
   const q = ctx.query.q || 'nodejs';
 
   if (type === 'bing') {
-    this.redirect(`http://cn.bing.com/search?q=${q}`);
+    ctx.redirect(`http://cn.bing.com/search?q=${q}`);
   } else {
-    this.redirect(`https://www.google.co.kr/search?q=${q}`);
+    ctx.redirect(`https://www.google.co.kr/search?q=${q}`);
   }
 };
 
@@ -292,21 +300,21 @@ module.exports = function* (ctx) {
 
 ```js
 // app/controller/search.js
-module.exports = function* (ctx) {
+exports.index = async ctx => {
   ctx.body = `search: ${ctx.query.name}`;
 };
 
 // app/middleware/uppercase.js
 module.exports = () => {
-  return function* (next) {
-    this.query.name = this.query.name && this.query.name.toUpperCase();
-    yield next;
+  return async function uppercase(ctx, next) {
+    ctx.query.name = ctx.query.name && ctx.query.name.toUpperCase();
+    await next();
   };
 };
 
 // app/router.js
 module.exports = app => {
-  app.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
+  app.router.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
 };
 
 // curl http://localhost:7001/search2?name=egg
@@ -327,13 +335,13 @@ module.exports = app => {
 
 // app/router/news.js
 module.exports = app => {
-  app.get('/news/list', app.controller.news.list);
-  app.get('/news/detail', app.controller.news.detail);
+  app.router.get('/news/list', app.controller.news.list);
+  app.router.get('/news/detail', app.controller.news.detail);
 };
 
 // app/router/admin.js
 module.exports = app => {
-  app.get('/admin/user', app.controller.admin.user);
-  app.get('/admin/log', app.controller.admin.log);
+  app.router.get('/admin/user', app.controller.admin.user);
+  app.router.get('/admin/log', app.controller.admin.log);
 };
 ```

@@ -6,7 +6,7 @@ title: 快速入门
 ## 环境准备
 
 - 操作系统：支持 macOS，Linux，Windows
-- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 6.x，目前我们推荐 8.x 以上版本。
+- 运行环境：建议选择 [LTS 版本][Node.js]，最低要求 8.x。
 
 ## 快速初始化
 
@@ -81,7 +81,8 @@ module.exports = HomeController;
 ```js
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
 };
 ```
 
@@ -217,8 +218,9 @@ module.exports = NewsController;
 
 // app/router.js
 module.exports = app => {
-  app.get('/', app.controller.home.index);
-  app.get('/news', app.controller.news.list);
+  const { router, controller } = app;
+  router.get('/', controller.home.index);
+  router.get('/news', controller.news.list);
 };
 ```
 
@@ -236,7 +238,7 @@ module.exports = app => {
 // app/service/news.js
 const Service = require('egg').Service;
 
-class NewsService extends app.Service {
+class NewsService extends Service {
   async list(page = 1) {
     // read config
     const { serverUrl, pageSize } = this.config.news;
@@ -273,7 +275,7 @@ module.exports = NewsService;
 // app/controller/news.js
 const Controller = require('egg').Controller;
 
-class NewsController extends app.Controller {
+class NewsController extends Controller {
   async list() {
     const ctx = this.ctx;
     const page = ctx.query.page || 1;
@@ -313,7 +315,7 @@ exports.relativeTime = time => moment(new Date(time * 1000)).fromNow();
 在模板里面使用：
 
 ``` html
-<!-- app/views/news/list.tpl -->
+<!-- app/view/news/list.tpl -->
 {{ helper.relativeTime(item.time) }}
 ```
 
@@ -354,7 +356,7 @@ exports.robot = {
 
 现在可以使用 `curl http://localhost:7001/news -A "Baiduspider"` 看看效果。
 
-**提示：框架同时兼容 Koa1 和 Koa2 形式的中间件，具体参见 [使用 Koa 的中间件](../basics/middleware.md#使用-koa-的中间件)。**
+更多参见[中间件](../basics/middleware.md)文档。
 
 ### 配置文件
 
@@ -401,28 +403,15 @@ module.exports = SomeService;
 
 ```js
 // test/app/middleware/robot.test.js
-const assert = require('assert');
-const mock = require('egg-mock');
+const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  let app;
-  before(() => {
-    // 创建当前应用的 app 实例
-    app = mock.app();
-    // 等待 app 启动成功，才能执行测试用例
-    return app.ready();
-  });
-
-  afterEach(mock.restore);
-
   it('should block robot', () => {
     return app.httpRequest()
       .get('/')
       .set('User-Agent', "Baiduspider")
       .expect(403);
   });
-
-  // ...
 });
 ```
 
@@ -431,7 +420,8 @@ describe('test/app/middleware/robot.test.js', () => {
 ```json
 {
   "scripts": {
-    "test": "egg-bin test"
+    "test": "egg-bin test",
+    "cov": "egg-bin cov"
   }
 }
 ```

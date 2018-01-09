@@ -9,9 +9,9 @@ describe('test/lib/core/loader/load_service.test.js', () => {
   afterEach(() => app.close());
   afterEach(mm.restore);
 
-  it('should load app and plugin services', function* () {
+  it('should load app and plugin services', async () => {
     app = utils.app('apps/loader-plugin');
-    yield app.ready();
+    await app.ready();
     assert(app.serviceClasses.foo);
     assert(app.serviceClasses.foo2);
     assert(!app.serviceClasses.bar1);
@@ -25,7 +25,7 @@ describe('test/lib/core/loader/load_service.test.js', () => {
     assert(ctx.service.bar2);
     assert(ctx.service.foo4);
 
-    yield app.httpRequest()
+    await app.httpRequest()
       .get('/')
       .expect({
         foo2: 'foo2',
@@ -34,20 +34,20 @@ describe('test/lib/core/loader/load_service.test.js', () => {
       .expect(200);
   });
 
-  it('should service support es6', function* () {
+  it('should service support es6', async () => {
     app = utils.app('apps/services_loader_verify');
-    yield app.ready();
+    await app.ready();
     assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
     assert(
       [ 'bar' ].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p))
     );
   });
 
-  it('should support extend app.Service class', function* () {
+  it('should support extend app.Service class', async () => {
     app = utils.app('apps/service-app');
-    yield app.ready();
+    await app.ready();
 
-    yield app.httpRequest()
+    await app.httpRequest()
       .get('/user')
       .expect(res => {
         assert(res.body.user);
@@ -61,11 +61,11 @@ describe('test/lib/core/loader/load_service.test.js', () => {
     afterEach(() => app.close());
     afterEach(mm.restore);
 
-    it('should support top 1 and 2 dirs, ignore others', function* () {
+    it('should support top 1 and 2 dirs, ignore others', async () => {
       app = utils.app('apps/subdir-services');
-      yield app.ready();
+      await app.ready();
 
-      yield app.httpRequest()
+      await app.httpRequest()
         .get('/')
         .expect({
           user: {

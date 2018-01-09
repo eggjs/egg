@@ -63,6 +63,5 @@ describe('test/lib/plugins/development.test.js', () => {
     after(() => {
       fs.writeFileSync(filepath, body);
     });
-
   });
 });

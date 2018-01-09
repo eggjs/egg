@@ -9,7 +9,7 @@ class DataService {
     this.config = config;
   }
 
-  * query() {
+  async query() {
     return {};
   }
 }

@@ -26,7 +26,7 @@ $ tar -zcvf ../release.tgz .
 
 ## 部署
 
-服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 6.0.0`。
+服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 8.0.0`。
 
 框架内置了 [egg-cluster] 来启动 [Master 进程](./cluster-and-ipc.md#master)，Master 有足够的稳定性，不再需要使用 [pm2] 等进程守护模块。
 
@@ -67,6 +67,8 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 - `--workers=2` 框架 worker 线程数，默认会创建和 CPU 核数相当的 app worker 数，可以充分的利用 CPU 资源。
 - `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
 - `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，可以配置 `package.json` 的 `egg.framework` 或指定该参数。
+- `--ignore-stderr` 忽略启动期的报错。
+- 所有 [egg-cluster] 的 Options 都支持透传，如 `--https` 等。
 
 更多参数可查看 [egg-scripts] 和 [egg-cluster] 文档。
 
@@ -91,10 +93,13 @@ exports.cluster = {
 ### 停止命令
 
 ```bash
-$ egg-scripts stop
+$ egg-scripts stop [--title=egg-server]
 ```
 
 该命令将杀死 master 进程，并通知 worker 和 agent 优雅退出。
+
+支持以下参数：
+- `--title=egg-server` 用于杀死指定的 egg 应用，未传递则会终止所有的 Egg 应用。
 
 你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
 

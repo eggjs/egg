@@ -1,36 +1,117 @@
 # History
 
-## 2017-11-13, Version 2.0.0-beta.2, @dead-horse
+## 2017-12-26, Version 2.2.0, @dead-horse
 
 ### Notable changes
 
 * **feature**
-  * upgrade built-in plugins to adapt egg@2
+  * `config.meta.logging` to enable log every request when recieved
 
 * **document**
-  * translate basics/schedule.md, thanks @Azard
-  * change quickstart examples to async function
-  * add document for how to customize error handler
-  * fix typo in async function
+  * fix some grammars
+  * add rule for issue
 
 ### Commits
 
+* [[`9fe5b85`](http://github.com/eggjs/egg/commit/9fe5b8563958d313b02482e5b3fe69c342acfa71)] - feat: enable request started log on meta middleware (#1877) (fengmk2 <<fengmk2@gmail.com>>)
+* [[`8ce9611`](http://github.com/eggjs/egg/commit/8ce9611e2e2e5098a7a4557e0f8d29cd93ab468c)] - docs(objects): fix some grammars (#1806) (恬竹 <<2632807692@qq.com>>)
+* [[`e43aa2b`](http://github.com/eggjs/egg/commit/e43aa2bad227475744ef6422f376475d0ee266c4)] - docs(error-handling): fix some words (#1874) (Fan <<incomparable9527@foxmail.com>>)
+* [[`4c1617a`](http://github.com/eggjs/egg/commit/4c1617a16ee3df1b455f5eeb1cb31e37e5f593c1)] - docs(faq): add rule for issue (#1861) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2017-12-15, Version 2.1.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * add 400 response for broken client request to instead of empty response
+  * dump application router json
+
+* **fix**
+  * fix: run dumpConfig at the last ready callback
+
+* **document**
+  * migrate docs to egg 2
+  * add document for passport
+
+### Commits
+
+* [[`40df153`](http://github.com/eggjs/egg/commit/40df153dd7ca8124a7502ba6cdc838835388a0ae)] - feat: add 400 response for broken client request to instead of empty response (#1829) (Khaidi Chu <<i@2333.moe>>)
+* [[`d0ee9f2`](http://github.com/eggjs/egg/commit/d0ee9f2500e69a1e0662c9ea597bf97db3418041)] - docs(passport): fix some description (#1828) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`f7c6a0a`](http://github.com/eggjs/egg/commit/f7c6a0a835ea950e98e40a0b4b83736912b5ab82)] - docs(passport): add description (#1825) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`f66d9be`](http://github.com/eggjs/egg/commit/f66d9be57807c04058511b47611afa890884b2a5)] - docs(passport): the missing docs for passport (#1824) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`18f93f0`](http://github.com/eggjs/egg/commit/18f93f0b927a08e6bd356f9fcc6a3141e813e85f)] - docs(core/view.md): translation (#1577) (Zhongyuan <<zhang.zhongyuan11@gmail.com>>)
+* [[`7e05669`](http://github.com/eggjs/egg/commit/7e056692506f5801390fd804d75bf6756991a54b)] - 1. docs(error-handle): missing function keywords. (#1819) (M.Y.Akashi <<yanzhi.mo@aliyun.com>>)
+* [[`89e114c`](http://github.com/eggjs/egg/commit/89e114cb88ef1ef96e479001bf0f8250867111c9)] - docs: add AntV links (#1809) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`bdfd3cc`](http://github.com/eggjs/egg/commit/bdfd3cc62b8377cadac2a6c108944d86eaca3df0)] - docs(router): new style & remove app.verb (#1803) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`4c9eacb`](http://github.com/eggjs/egg/commit/4c9eacbb7d4560924602103e5e23ae578ac34a52)] - docs(middleware): add description of import koa middleware (#1805) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`c152dee`](http://github.com/eggjs/egg/commit/c152deec69c3dbb06ce87433a46bab0bc61e295b)] - docs(loader): adjust extends way (#1729) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`289f8cd`](http://github.com/eggjs/egg/commit/289f8cd3d90cc24c55fa51e3d75f5750233af7ee)] - docs(progressive):changes some grammar (#1773) (恬竹 <<2632807692@qq.com>>)
+* [[`ae87460`](http://github.com/eggjs/egg/commit/ae87460d6aacb38f4d60d703450f8085c72d3b0d)] - docs(migration): add description for plugin breakchange (#1766) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`a2788a8`](http://github.com/eggjs/egg/commit/a2788a870175d6c1abdad3c379bbb9adc6c24ba9)] - docs(controller): import base controller directly (#1771) (Yiyu He <<dead_horse@qq.com>>)
+* [[`7ebfc9b`](http://github.com/eggjs/egg/commit/7ebfc9b96b03a6b1bdffc3da65c6940902dc3086)] - docs(quickstart): fix typo in code example (#1765) (Darren Poon <<dyhpoon@gmail.com>>)
+* [[`6ff6998`](http://github.com/eggjs/egg/commit/6ff699824dce6962d7aa9e9e48f41a50a994834f)] - docs: add security english translation (#1691) (Adams <<jtyjty99999@126.com>>)
+* [[`a061f21`](http://github.com/eggjs/egg/commit/a061f21178b2253b587dab780ba74f19605109a4)] - docs(intro): make some changes for egg-and-koa (#1739) (恬竹 <<2632807692@qq.com>>)
+* [[`d752b3b`](http://github.com/eggjs/egg/commit/d752b3b795cc0c5a579770695fcadd3db713ff6f)] - docs(deployment): adjust with new version egg-scripts (#1757) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`1b12b51`](http://github.com/eggjs/egg/commit/1b12b519937e80728d133ea24ff88a2568b72a57)] - docs(cookie-session): use async (#1723) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`5c88026`](http://github.com/eggjs/egg/commit/5c880266f9968a2e9b102db7c0eea2c7b0f09a43)] - docs(plugin): use async (#1730) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`ebb8adf`](http://github.com/eggjs/egg/commit/ebb8adfadcf21ba29997c65d5adc5a92235ffa8d)] - some changes of docs(what is egg) (#1734) (恬竹 <<2632807692@qq.com>>)
+* [[`2da00fc`](http://github.com/eggjs/egg/commit/2da00fca45d9bc161cae5ab9754a3fcc0321b9c7)] - docs(framework): use new way (#1728) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`47fbee5`](http://github.com/eggjs/egg/commit/47fbee574b94d9f6420d44e7a8f0ccec035d94f4)] - docs(cluster-client): use async (#1727) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`1420682`](http://github.com/eggjs/egg/commit/1420682dc5b6fb14342373d9b70614c3de0c015b)] - docs(ipc): use async (#1722) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`503b69b`](http://github.com/eggjs/egg/commit/503b69b2e5c3f59b9c3c307a50e711cd8eb8d967)] - feat: dump application router json (fengmk2 <<fengmk2@gmail.com>>)
+* [[`76ff783`](http://github.com/eggjs/egg/commit/76ff783b80a9d9ffc01db1b434c25fedd6e27ca7)] - fix: run dumpConfig at the last ready callback (fengmk2 <<fengmk2@gmail.com>>)
+* [[`50efe4c`](http://github.com/eggjs/egg/commit/50efe4ceb9a4c8ec902a503db7ad10ffe7819e1a)] - docs(httpclient): use async (#1724) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`d043148`](http://github.com/eggjs/egg/commit/d043148b8ee69614098b39604dd6b7d7e1a84810)] - docs: remove async-function (#1713) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`e3ef3ec`](http://github.com/eggjs/egg/commit/e3ef3ec65c5e2874c813f6cda18b61b630d137be)] - docs(restful): use async (#1709) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`b042937`](http://github.com/eggjs/egg/commit/b042937b1e77b8206206a248c9f3e3ab82b7d6d8)] - docs(error-handling): use async (#1721) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`80ab243`](http://github.com/eggjs/egg/commit/80ab2439d508e9e0574df31061b5bb14988c2e3e)] - docs(i18n): use async (#1720) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`6741999`](http://github.com/eggjs/egg/commit/67419996a3abd403ab8d67755ecb98c3a9b97338)] - docs(logger): use async (#1719) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`f39c105`](http://github.com/eggjs/egg/commit/f39c105067e08fe416f86d0a415f5475ce66ba17)] - docs(view): use async (#1717) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`cf3de0f`](http://github.com/eggjs/egg/commit/cf3de0f248e3435a7d6ac41ece16dea55f5e86c9)] - docs(unittest): use async (#1716) (TZ | 天猪 <<atian25@qq.com>>)
+* [[`cb9c9a4`](http://github.com/eggjs/egg/commit/cb9c9a43015a47347273bf8a09d971205b0d57ec)] - docs(mysql): use async (#1711) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2017-11-20, Version 2.0.0, @dead-horse
+
+### Notable changes
+
+* **performance**
+  * By removing the wrapper code of `co` library, performance increase over 30% (which not include the performance boost coming with Node 8), see [#14](https://github.com/eggjs/benchmark/pull/14) and [benchmark](https://eggjs.github.io/benchmark/plot/)
+
+* **feature**
+  * [BREAKING CHANGE] drop node <8 support
+  * upgrade to egg-core@4(base on koa 2), but still supports all the usages in egg 1
+  * upgrade built-in plugins to adapt egg@2
+  * `runInBackground` use location as scope name when anonymous
+
+* **fix**
+  * dump async function as AsyncFunction
+
+* **document**
+  * migrate some documents to async function
+  * split plugin and plugin development
+  * refactor the description about cluster client @vincenthou
+  * add document for how to customize error handler
+  * translate cookie and session @zhang-z
+  * translate basics/schedule.md, thanks @Azard
+
+### Commits
+
+  * [[`8197826`](http://github.com/eggjs/egg/commit/8197826a8dca062c91ba45c235cec66a93f335a4)] - docs: refine egg-and-koa with egg 2 (#1686) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`757f275`](http://github.com/eggjs/egg/commit/757f275a16741c670f210876408aaeefe5797a23)] - fix: dump async function as AsyncFunction (#1687) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`12edd64`](http://github.com/eggjs/egg/commit/12edd64915164df6b2d5fed9e179e90954f25687)] - test: use async function instead of generator function (#1684) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`5513456`](http://github.com/eggjs/egg/commit/5513456e2c702fdc1b7a500f8d8d58048d1041fa)] - feat: runInBackground use location as scope name when anonymous (#1683) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`212b077`](http://github.com/eggjs/egg/commit/212b077993cff01c08c55fa4545c324adb96322c)] - doc: Add th.yml (#1682) (NatPi <<31546528+NatJNP@users.noreply.github.com>>)
+  * [[`3ddd67f`](http://github.com/eggjs/egg/commit/3ddd67fbbb83a783541118a05d7e0febb2fde7f3)] - docs(advanced/cluster-client): refactor the description about cluster client (#1417) (vincent.hou <<vincenthou365@gmail.com>>)
+  * [[`3d948e4`](http://github.com/eggjs/egg/commit/3d948e44e55fbb88c318a8f14fa7a0b0a8b71b4e)] - docs(plugin): split plugin and plugin development (#1663) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`b1343ad`](http://github.com/eggjs/egg/commit/b1343ad55f08b15f8084104c54db0b5975716323)] - docs(core/unittest): translate unittest.md (#1660) (freebyron <<freexiegd@gmail.com>>)
+  * [[`fb2d96a`](http://github.com/eggjs/egg/commit/fb2d96ae8e1759edc9126a2920f9028b6e4d15df)] - docs(app-start): generator -> async (#1662) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`12c0a8a`](http://github.com/eggjs/egg/commit/12c0a8afb8cd332037670f7db8e8662566c1407f)] - docs(quickstart): fix app.Service (#1661) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`49b0071`](http://github.com/eggjs/egg/commit/49b00712de6eed7c386b07c7c91082ef36cc667f)] - docs(core/cookie-and-session): translate section Cookie (#1562) (Zhongyuan <<zhang.zhongyuan11@gmail.com>>)
   * [[`ac55d5e`](http://github.com/eggjs/egg/commit/ac55d5eb0b90e2333e3d92523075615e80835647)] - docs: fix typo in async function (#1657) (BccSafe <<bccsafe5988@gmail.com>>)
   * [[`9f362d8`](http://github.com/eggjs/egg/commit/9f362d878b61e1144ceab851215dbafb974fb85f)] - docs(basics/schedule.md): translate (#1648) (Weilun Xiong <<azardf4yy@gmail.com>>)
   * [[`448d094`](http://github.com/eggjs/egg/commit/448d0945c0030d2f2bdf8e0f85ccfcbde4ba2b25)] - deps: upgrade all plugins to adapt egg@2 (#1653) (Yiyu He <<dead_horse@qq.com>>)
   * [[`4993ee8`](http://github.com/eggjs/egg/commit/4993ee8fae81bf14f92c86ac1d4d952d62e1d165)] - docs(quickstart): generator -> async (#1650) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`8c6f16d`](http://github.com/eggjs/egg/commit/8c6f16d64834d46b0689ce079cc5d71155848ac8)] - docs: how to customize error handler (#1651) (Yiyu He <<dead_horse@qq.com>>)
-
-## 2017-11-09, Version 2.0.0-beta.1, @dead-horse
-
-### Notable changes
-
-* **feature**
-  * [BREAKING CHANGE] drop node <8 support
-  * upgrade to egg-core@4(base on koa 2), but still supports all the usages in egg 1
-
-### Commits
-
   * [[`8e8869a`](http://github.com/eggjs/egg/commit/8e8869a4d73908503cf1f60de3be49461639ca08)] - refactor: upgrade egg-core@4 (#1631) (Yiyu He <<dead_horse@qq.com>>)
 
 ## 2017-11-08, Version 1.11.0, @dead-horse

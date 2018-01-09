@@ -33,7 +33,7 @@ describe('test/app/extend/response.test.js', () => {
       ctx.body = '1';
       ctx.response.remove('content-length');
       assert(ctx.response.length === 1);
-      ctx.body = new Buffer(2);
+      ctx.body = Buffer.alloc(2);
       ctx.response.remove('content-length');
       assert(ctx.response.length === 2);
       ctx.body = {};

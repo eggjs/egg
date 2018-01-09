@@ -7,15 +7,15 @@ const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/schedule.test.js', () => {
-  it('should schedule work', function* () {
+  it('should schedule work', async () => {
     const app = utils.cluster('apps/schedule', {
       workers: 2,
     });
     app.debug();
     app.coverage(false);
-    yield app.ready();
-    yield sleep(7000);
-    yield app.close();
+    await app.ready();
+    await sleep(7000);
+    await app.close();
     const log = getLogContent('schedule');
     const count = contains(log, 'cron');
     assert(count >= 1);

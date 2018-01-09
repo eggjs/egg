@@ -29,8 +29,8 @@ describe('test/lib/core/view.test.js', () => {
     });
 
     describe('render', () => {
-      it('should render ejs', function* () {
-        const res = yield app.httpRequest()
+      it('should render ejs', async () => {
+        const res = await app.httpRequest()
           .get('/render-ejs')
           .expect(200);
 
@@ -40,8 +40,8 @@ describe('test/lib/core/view.test.js', () => {
         assert(res.body.type === 'ejs');
       });
 
-      it('should render nunjucks', function* () {
-        const res = yield app.httpRequest()
+      it('should render nunjucks', async () => {
+        const res = await app.httpRequest()
           .get('/render-nunjucks')
           .expect(200);
 
@@ -51,8 +51,8 @@ describe('test/lib/core/view.test.js', () => {
         assert(res.body.type === 'nunjucks');
       });
 
-      it('should render with options.viewEngine', function* () {
-        const res = yield app.httpRequest()
+      it('should render with options.viewEngine', async () => {
+        const res = await app.httpRequest()
           .get('/render-with-options')
           .expect(200);
 
@@ -62,8 +62,8 @@ describe('test/lib/core/view.test.js', () => {
     });
 
     describe('renderString', () => {
-      it('should renderString', function* () {
-        const res = yield app.httpRequest()
+      it('should renderString', async () => {
+        const res = await app.httpRequest()
           .get('/render-string')
           .expect(200);
         assert(res.body.tpl === 'hello world');
@@ -72,8 +72,8 @@ describe('test/lib/core/view.test.js', () => {
         assert(res.body.type === 'ejs');
       });
 
-      it('should throw when no viewEngine', function* () {
-        yield app.httpRequest()
+      it('should throw when no viewEngine', async () => {
+        await app.httpRequest()
           .get('/render-string-without-view-engine')
           .expect(500);
       });
@@ -126,5 +126,4 @@ describe('test/lib/core/view.test.js', () => {
         .expect('templateString', done);
     });
   });
-
 });

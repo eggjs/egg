@@ -11,58 +11,58 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   let url;
   let host;
 
-  before(function* () {
+  before(async () => {
     app = utils.app('apps/dnscache_httpclient');
-    yield app.ready();
-    url = yield utils.startLocalServer();
+    await app.ready();
+    url = await utils.startLocalServer();
     url = url.replace('127.0.0.1', 'localhost');
     host = urlparse(url).host;
   });
 
   afterEach(mm.restore);
 
-  it('should ctx.curl work and set host', function* () {
-    yield app.httpRequest()
+  it('should ctx.curl work and set host', async () => {
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);
-    yield app.httpRequest()
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers') + '&host=localhost.foo.com')
       .expect(200)
       .expect(/"host":"localhost\.foo\.com"/);
-    yield app.httpRequest()
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers') + '&Host=localhost2.foo.com')
       .expect(200)
       .expect(/"host":"localhost2\.foo\.com"/);
   });
 
-  it('should throw error when the first dns lookup fail', function* () {
-    yield app.httpRequest()
+  it('should throw error when the first dns lookup fail', async () => {
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent('http://notexists-1111111local-domain.com'))
       .expect(500)
       .expect(/getaddrinfo ENOTFOUND notexists-1111111local-domain\.com/);
   });
 
-  it('should use local cache dns result when dns lookup error', function* () {
-    yield app.httpRequest()
+  it('should use local cache dns result when dns lookup error', async () => {
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);
     // mock local cache expires and mock dns lookup throw error
     app.httpclient.dnsCache.get('localhost').timestamp = 0;
     mm.error(dns, 'lookup', 'mock dns lookup error');
-    yield app.httpRequest()
+    await app.httpRequest()
       .get('/?url=' + encodeURIComponent(url + '/get_headers'))
       .expect(200)
       .expect(/"host":"localhost:\d+"/);
   });
 
-  it('should app.curl work', function* () {
-    const result = yield app.curl(url + '/get_headers', { dataType: 'json' });
+  it('should app.curl work', async () => {
+    const result = await app.curl(url + '/get_headers', { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === host);
 
-    const result2 = yield app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
+    const result2 = await app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
     assert(result2.status === 200);
     assert(result2.data.host === host);
   });
@@ -102,34 +102,34 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     });
   });
 
-  it('should app.curl work on lookup error', function* () {
-    const result = yield app.curl(url + '/get_headers', { dataType: 'json' });
+  it('should app.curl work on lookup error', async () => {
+    const result = await app.curl(url + '/get_headers', { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === host);
 
     // mock local cache expires and mock dns lookup throw error
     app.httpclient.dnsCache.get('localhost').timestamp = 0;
     mm.error(dns, 'lookup', 'mock dns lookup error');
-    const result2 = yield app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
+    const result2 = await app.httpclient.curl(url + '/get_headers', { dataType: 'json' });
     assert(result2.status === 200);
     assert(result2.data.host === host);
   });
 
-  it('should app.curl(obj)', function* () {
+  it('should app.curl(obj)', async () => {
     const obj = urlparse(url + '/get_headers');
-    const result = yield app.curl(obj, { dataType: 'json' });
+    const result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === host);
 
     const obj2 = urlparse(url + '/get_headers');
     // mock obj2.host
     obj2.host = null;
-    const result2 = yield app.curl(obj2, { dataType: 'json' });
+    const result2 = await app.curl(obj2, { dataType: 'json' });
     assert(result2.status === 200);
     assert(result2.data.host === host);
   });
 
-  it('should dnsCacheMaxLength work', function* () {
+  it('should dnsCacheMaxLength work', async () => {
     mm.data(dns, 'lookup', '127.0.0.1');
 
     // reset lru cache
@@ -139,14 +139,14 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     mm(app.httpclient.dnsCache, '_cache', new Map());
 
     let obj = urlparse(url + '/get_headers');
-    let result = yield app.curl(obj, { dataType: 'json' });
+    let result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === host);
 
     assert(app.httpclient.dnsCache.get('localhost'));
 
     obj = urlparse(url.replace('localhost', 'another.com') + '/get_headers');
-    result = yield app.curl(obj, { dataType: 'json' });
+    result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === obj.host);
 
@@ -154,9 +154,9 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(app.httpclient.dnsCache.get('another.com'));
   });
 
-  it('should not cache ip', function* () {
+  it('should not cache ip', async () => {
     const obj = urlparse(url.replace('localhost', '127.0.0.1') + '/get_headers');
-    const result = yield app.curl(obj, { dataType: 'json' });
+    const result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
     assert(result.data.host === obj.host);
     assert(!app.httpclient.dnsCache.get('127.0.0.1'));

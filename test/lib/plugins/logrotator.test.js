@@ -15,9 +15,9 @@ describe('test/lib/plugins/logrotator.test.js', () => {
 
   after(() => app.close());
 
-  it('should rotate log file default', function* () {
+  it('should rotate log file default', async () => {
     const file = require.resolve('egg-logrotator/app/schedule/rotate_by_file.js');
-    yield app.runSchedule(file);
+    await app.runSchedule(file);
     const files = glob.sync(path.join(app.config.logger.dir, '*.log.*'));
     assert(files.length > 0);
     files.forEach(file => {

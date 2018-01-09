@@ -12,8 +12,8 @@ Egg 是一个底层框架，应用可以直接使用，但 Egg 本身的插件�
 // package.json
 {
   "dependencies": {
-    "egg": "^1.0.0",
-    "egg-mysql": "^1.0.0"
+    "egg": "^2.0.0",
+    "egg-mysql": "^3.0.0"
   }
 }
 
@@ -35,8 +35,8 @@ module.exports = {
   "name": "framework1",
   "version": "1.0.0",
   "dependencies": {
-    "egg-mysql": "^1.0.0",
-    "egg-view-nunjucks": "^1.0.0"
+    "egg-mysql": "^3.0.0",
+    "egg-view-nunjucks": "^2.0.0"
   }
 }
 
@@ -216,10 +216,12 @@ Egg 基于 Loader 实现了 [AppWorkerLoader] 和 [AgentWorkerLoader]，上层�
 
 ```js
 // 自定义 AppWorkerLoader
-// lib/loader.js
-const AppWorkerLoader = require('egg').AppWorkerLoader;
+// lib/framework.js
+const path = require('path');
+const egg = require('egg');
+const EGG_PATH = Symbol.for('egg#eggPath');
 
-class CustomAppWorkerLoader extends AppWorkerLoader {
+class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   constructor(opt) {
     super(opt);
     // 自定义初始化
@@ -237,13 +239,21 @@ class CustomAppWorkerLoader extends AppWorkerLoader {
   }
 }
 
-exports.AppWorkerLoader = CustomAppWorkerLoader;
+class Application extends egg.Application {
+  get [EGG_PATH]() {
+    return path.dirname(__dirname);
+  }
+  // 覆盖 Egg 的 Loader，启动时使用这个 Loader
+  get [EGG_LOADER]() {
+    return YadanAppWorkerLoader;
+  }
+}
 
-// index.js
-// 拷贝一份 Egg 的 API
-Object.assign(exports, require('egg'));
-// 将自定义的 Loader exports 出来
-exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
+module.exports = Object.assign(egg, {
+  Application,
+  // 自定义的 Loader 也需要 export，上层框架需要基于这个扩展
+  AppWorkerLoader: YadanAppWorkerLoader,
+});
 ```
 
 通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`， `app/extend/filter.js` 等等。
@@ -302,14 +312,15 @@ module.exports = app => {
 ```js
 // 以下为示例，请使用 loadService
 // app/service/user.js
-module.exports = app => {
-  return class UserService extends app.Service {};
-};
+const Service = require('egg').Service;
+class UserService extends Service {
 
+}
+module.exports = UserService;
+
+// app.js
 // 获取所有的 loadUnit
-const servicePaths = app.loader.getLoadUnits().map(unit => {
-  return path.join(unit.path, 'app/service');
-});
+const servicePaths = app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/service'));
 
 app.loader.loadToContext(servicePaths, 'service', {
   // service 需要继承 app.Service，所以要拿到 app 参数

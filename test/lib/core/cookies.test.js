@@ -37,7 +37,7 @@ describe('test/lib/core/cookies.test.js', () => {
 
     it('should log CookieLimitExceed error when cookie value too long', done => {
       const ctx = app.mockContext();
-      const value = new Buffer(4094).fill(49).toString();
+      const value = Buffer.alloc(4094).fill(49).toString();
       ctx.cookies.set('foo', value);
       setTimeout(() => {
         const logPath = path.join(utils.getFilepath('apps/secure-app'), 'logs/secure-app/common-error.log');

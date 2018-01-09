@@ -3,7 +3,6 @@ title: 教程
 - [快速入门](../intro/quickstart.md)
 - [渐进式开发](./progressive.md)
 - [RESTful API](./restful.md)
-- [Async Function](./async-function.md)
 
 ## 模板引擎
 
@@ -12,6 +11,8 @@ title: 教程
 可使用以下模板引擎，更多[查看](https://github.com/search?utf8=%E2%9C%93&q=topic%3Aegg-view&type=Repositories&ref=searchresults)
 
 - [egg-view-nunjucks]
+- [egg-view-react]
+- [egg-view-vue]
 - [egg-view-ejs]
 - [egg-view-handlebars]
 - [egg-view-pug]
@@ -24,6 +25,7 @@ title: 教程
 - [egg-sequelize]
 - [egg-mongoose]
 - [egg-mysql]，可查看 [MySQL 教程](./mysql.md)
+- [egg-graphql]
 
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
@@ -35,3 +37,6 @@ title: 教程
 [egg-view-handlebars]: https://github.com/eggjs/egg-view-handlebars
 [egg-view-pug]: https://github.com/chrisyip/egg-view-pug
 [egg-view-xtpl]: https://github.com/eggjs/egg-view-xtpl
+[egg-view-react]: https://github.com/eggjs/egg-view-react
+[egg-view-vue]: https://github.com/eggjs/egg-view-vue
+[egg-graphql]: https://github.com/eggjs/egg-graphql
