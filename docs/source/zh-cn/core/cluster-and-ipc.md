@@ -288,7 +288,7 @@ module.exports = app => {
   // 注意，只有在 egg-ready 事件拿到之后才能发送消息
   app.messenger.once('egg-ready', () => {
     app.messenger.sendToAgent('agent-event', { foo: 'bar' });
-    app.messenger.sendToApp('app-egent', { foo: 'bar' });
+    app.messenger.sendToApp('app-event', { foo: 'bar' });
   });
 }
 ```
