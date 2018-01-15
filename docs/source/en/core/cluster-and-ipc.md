@@ -286,7 +286,7 @@ module.exports = app => {
   // Note, only after egg-ready event occurs can the message be sent
   app.messenger.once('egg-ready', () => {
     app.messenger.sendToAgent('agent-event', { foo: 'bar' });
-    app.messenger.sendToApp('app-egent', { foo: 'bar' });
+    app.messenger.sendToApp('app-event', { foo: 'bar' });
   });
 }
 ```
