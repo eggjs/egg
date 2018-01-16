@@ -133,7 +133,7 @@ chat
 
 ### Middleware
 
-插件中间件有如下两种场景：
+中间件有如下两种场景：
 
 - Connection
 - Packet
@@ -479,6 +479,7 @@ module.exports = () => {
     };
 
     // 检查房间是否存在，不存在则踢出用户
+    // 备注：此处 app.redis 与插件无关，可用其他存储代替
     const hasRoom = await app.redis.get(`${PREFIX}:${room}`);
 
     logger.debug('#has_exist', hasRoom);
