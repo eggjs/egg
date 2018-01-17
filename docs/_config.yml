@@ -23,3 +23,7 @@ theme: egg
 
 less:
   compress: true
+
+deer:
+  spmAPos: 'a454'
+  spmBPos: 'b4893'
