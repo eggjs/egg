@@ -77,7 +77,8 @@ Arguments of dispatch can be configured in `config.{env}.js`.
 
 ```js
 // config/config.default.js
-exports.cluster = {
+
+config.cluster = {
   listen: {
     port: 7001,
     hostname: '127.0.0.1',
