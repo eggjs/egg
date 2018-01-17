@@ -78,7 +78,8 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 
 ```js
 // config/config.default.js
-exports.cluster = {
+
+config.cluster = {
   listen: {
     port: 7001,
     hostname: '127.0.0.1',
