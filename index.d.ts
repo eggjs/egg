@@ -351,7 +351,7 @@ export interface Router extends KoaRouter {
   /**
    * restful router api
    */
-  resources(name: string, prefix: string, middleware: any): Router;
+  resources(name: string, prefix: string, ...middleware: any[]): Router;
 
   /**
    * @param {String} name - Router name
