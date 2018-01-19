@@ -559,6 +559,11 @@ export interface Context extends KoaApplication.Context {
   response: Response;
 
   /**
+   * helper
+   */
+  helper: IHelper;
+
+  /**
    * Resource Parameters
    * @example
    * ##### ctx.params.id {string}
@@ -800,5 +805,38 @@ export class Service extends BaseContextClass { }
 export interface IService { }// tslint:disable-line
 
 export interface IController { } // tslint:disable-line
+
+export interface IHelper {
+  /**
+   * Generate URL path(without host) for route. Takes the route name and a map of named params.
+   * @method Helper#pathFor
+   * @param {String} name - Router Name
+   * @param {Object} params - Other params
+   *
+   * @example
+   * ```js
+   * app.get('home', '/index.htm', 'home.index');
+   * ctx.helper.pathFor('home', { by: 'recent', limit: 20 })
+   * => /index.htm?by=recent&limit=20
+   * ```
+   * @return {String} url path(without host)
+   */
+  pathFor(name: string, params?: { [key: string]: any }): string;
+
+  /**
+   * Generate full URL(with host) for route. Takes the route name and a map of named params.
+   * @method Helper#urlFor
+   * @param {String} name - Router name
+   * @param {Object} params - Other params
+   * @example
+   * ```js
+   * app.get('home', '/index.htm', 'home.index');
+   * ctx.helper.urlFor('home', { by: 'recent', limit: 20 })
+   * => http://127.0.0.1:7001/index.htm?by=recent&limit=20
+   * ```
+   * @return {String} full url(with host)
+   */
+  urlFor(name: string, params?: { [key: string]: any }): string;
+}
 
 export as namespace Egg;
