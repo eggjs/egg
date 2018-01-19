@@ -808,7 +808,7 @@ export interface IController { } // tslint:disable-line
 
 export interface IHelper {
   /**
-   * Generate URL path(withoud host) for route. Takes the route name and a map of named params.
+   * Generate URL path(without host) for route. Takes the route name and a map of named params.
    * @method Helper#pathFor
    * @param {String} name - Router Name
    * @param {Object} params - Other params
