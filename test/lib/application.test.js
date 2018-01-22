@@ -200,5 +200,21 @@ describe('test/lib/application.test.js', () => {
           .expect(200);
       });
     });
+
+    describe('on cookieLimitExceed', () => {
+      it('should log error', done => {
+        const ctx = {
+          coreLogger: {
+            error(err) {
+              assert(err.key === 'name');
+              assert(err.cookie === 'value');
+              assert(err.name === 'CookieLimitExceedError');
+              done();
+            },
+          },
+        };
+        app.emit('cookieLimitExceed', { name: 'name', value: 'value', ctx });
+      });
+    });
   });
 });
