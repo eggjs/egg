@@ -1,5 +1,36 @@
 # History
 
+## 2018-01-22, Version 2.2.1, @dead-horse
+
+### Notable changes
+
+* **fix**
+  * log cookie's key when cookie exceed limit length
+
+* **document**
+  * improve english documents, fix some grammars
+  * add link to alicloud node.js perfomance platform
+  * use PATCH method in resource router
+
+### Commits
+
+  * [[`aa46eb2`](http://github.com/eggjs/egg/commit/aa46eb26d45012036c69c524db512ed16fde7b6b)] - fix: log cookie's key when cookie exceed limit length (#1996) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`7993b45`](http://github.com/eggjs/egg/commit/7993b45ec2af8c2d96d82370d877476786504dc8)] - docs(basic-middleware):fix some descriptions of basic-middleware (#1998) (恬竹 <<2632807692@qq.com>>)
+  * [[`b2d09e1`](http://github.com/eggjs/egg/commit/b2d09e150da70a08c1886b00031c0f07eeb7d830)] - docs: put => patch. (#1793) (#1938) (吴建金 <<mosaic101@foxmail.com>>)
+  * [[`dede240`](http://github.com/eggjs/egg/commit/dede240340570c00e3baed8098853a44c902dc21)] - feat: add helper interface in d.ts (#1989) (Axes <<whxaxes@qq.com>>)
+  * [[`19fe608`](http://github.com/eggjs/egg/commit/19fe6085fedabfc09eb9c26534df237decf4d28e)] - docs: add deer stat (#1974) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`cef371e`](http://github.com/eggjs/egg/commit/cef371e4a176c62d9b44c0f1e55668e992921d2d)] - docs(basic-env): fix some descriptions base on the Chinese version (#1930) (恬竹 <<2632807692@qq.com>>)
+  * [[`55d08bd`](http://github.com/eggjs/egg/commit/55d08bded812b81efeee96a0e3465728c7f4f5a2)] - fix(ts): error declare of route.resource (#1959) (AntSworD <<zhengjj.asd@gmail.com>>)
+  * [[`32d7c81`](http://github.com/eggjs/egg/commit/32d7c8199611b00cd5117e6adcf8904ea0b33ff5)] - docs: fix word error (#1965) (jxDeveloper <<896222652@qq.com>>)
+  * [[`3acf45f`](http://github.com/eggjs/egg/commit/3acf45f77ef791b1e6467bd4047511d867d46cc9)] - docs(basic-config): fix some word spelling (#1931) (恬竹 <<2632807692@qq.com>>)
+  * [[`0e90819`](http://github.com/eggjs/egg/commit/0e9081954a765228ee9d590f01f3bfaaf1a4e5d8)] - docs(advanced/framework): translation (#1668) (freebyron <<freexiegd@gmail.com>>)
+  * [[`ab1b08e`](http://github.com/eggjs/egg/commit/ab1b08ef520ab8db4cddd8f6cf52f1aa87d6975f)] - docs: fix en index (#1915) (Weilun Xiong <<azardf4yy@gmail.com>>)
+  * [[`2270f7f`](http://github.com/eggjs/egg/commit/2270f7f0417f9c78958c6b51e70ad7a0d838d6ec)] - docs(basic-objects): fix some descriptions (#1903) (恬竹 <<2632807692@qq.com>>)
+  * [[`c136470`](http://github.com/eggjs/egg/commit/c136470861b35a5f796d4edcdd8f6fbce41f7314)] - test: use Buffer.alloc, Buffer.from. (#1895) (薛定谔的猫 <<hh_2013@foxmail.com>>)
+  * [[`73bc636`](http://github.com/eggjs/egg/commit/73bc636ddb82bd73fa14fb5f56e8ffe6260b46cc)] - docs(links): Add link to alicloud node.js perfomance platform (#1894) (Jackson Tian <<shyvo1987@gmail.com>>)
+  * [[`55d1b0e`](http://github.com/eggjs/egg/commit/55d1b0eb5c4ca27668559b94259f0670b60d57b6)] - docs(deploy): add --ignore-stderr (#1876) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`532110a`](http://github.com/eggjs/egg/commit/532110abbc01cf3f225c47ed6219d9434c48808c)] - fix: fix 404 page url (#1881) (sam <<289623783@qq.com>>)
+
 ## 2017-12-26, Version 2.2.0, @dead-horse
 
 ### Notable changes
