@@ -1,16 +1,33 @@
 
-1.12.0 / 2017-11-29
-==================
-
-**features**
-  * [[`710defcc0`](http://github.com/eggjs/egg/commit/710defcc06368597706cbeeef5ad212328e9322c)] - feat: dump application router json (fengmk2 <<fengmk2@gmail.com>>)
-
-**fixes**
-  * [[`0854c44d5`](http://github.com/eggjs/egg/commit/0854c44d5e920b2b2265d8c97bca131cb55e95b9)] - fix: run dumpConfig at the last ready callback (fengmk2 <<fengmk2@gmail.com>>)
-
-**others**
-  * [[`2e492c88d`](http://github.com/eggjs/egg/commit/2e492c88d1d175d1e62185f6355981b7d646bd32)] - chore: set publishConfig.tag to release-1.x (#1690) (Yiyu He <<dead_horse@qq.com>>)
 # History
+
+## 2018-01-22, Version 1.12.1, @dead-horse
+
+### Notable changes
+
+* **fix**
+  * log cookie's key when cookie exceed limit length
+
+### Commits
+
+  * [[`ba9ecd4`](http://github.com/eggjs/egg/commit/ba9ecd4808b01254ef7e665e4eb2bcf8da92df59)] - fix: log cookie's key when cookie exceed limit length (#1997) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`4f6ec61`](http://github.com/eggjs/egg/commit/4f6ec61acbc2af28795e3e03dbc0c183653719b2)] - feat: add 400 response for broken client request to instead of empty response (#1836) (Khaidi Chu <<i@2333.moe>>)
+
+## 2017-11-29, Version 1.12.0, @fengmk2
+
+### Notable changes
+
+* **feature**
+  * dump application router json
+
+* **fix**
+  * run dumpConfig at the last ready callback
+
+### Commits
+
+  * [[`710defcc0`](http://github.com/eggjs/egg/commit/710defcc06368597706cbeeef5ad212328e9322c)] - feat: dump application router json (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`0854c44d5`](http://github.com/eggjs/egg/commit/0854c44d5e920b2b2265d8c97bca131cb55e95b9)] - fix: run dumpConfig at the last ready callback (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`2e492c88d`](http://github.com/eggjs/egg/commit/2e492c88d1d175d1e62185f6355981b7d646bd32)] - chore: set publishConfig.tag to release-1.x (#1690) (Yiyu He <<dead_horse@qq.com>>)
 
 ## 2017-11-08, Version 1.11.0, @dead-horse
 
