@@ -118,7 +118,7 @@ Middlewares which are defined at Application (`app.config.appMiddleware`) and Fr
 
 The middleware configured in the above ways is global, and it will process every request.
 
-If you do want to take only for single route, you could just instantiate and mount it at `app/router.js`:
+If you do want to take effect only for single route, you could just instantiate and mount it at `app/router.js`:
 
 ```js
 module.exports = app => {
