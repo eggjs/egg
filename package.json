@@ -46,6 +46,7 @@
     "koa-is-json": "^1.0.0",
     "koa-override": "^2.0.0",
     "mime-types": "^2.1.17",
+    "on-finished": "^2.3.0",
     "sendmessage": "^1.1.0",
     "urllib": "^2.25.1",
     "utility": "^1.13.1",
