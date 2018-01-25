@@ -551,7 +551,7 @@ describe('isSuccess()', () => {
 
 Similiar to Service, Helper is avaliable on ctx, which can be tested directly.
 
-Such as `app/helper/format.js`:
+Such as `app/extend/helper.js`:
 
 ```js
 module.exports = {
