@@ -601,7 +601,7 @@ describe('isSuccess()', () => {
 
 Helper 测试方式与 Service 类似，也是通过 ctx 来访问到 Helper，然后调用 Helper 方法测试。
 
-例如 `app/helper/format.js`
+例如 `app/extend/helper.js`
 
 ```js
 module.exports = {
