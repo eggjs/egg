@@ -9,7 +9,7 @@ Application is a global application object, an application only instantiates one
 
 ### Events
 
-Framework will emits some events During server's runtime, application developers or plugin developers can listen on these events to do some job like logging. As application developers, we can listen on these events in [app start script](./app-start.md).
+Framework will emits some events when server running, application developers or plugin developers can listen on these events to do some job like logging. As application developers, we can listen on these events in [app start script](./app-start.md).
 
 - `server`: every worker will only emit once during the runtime, after HTTP server started, framework will expose HTTP server instance by this event.
 - `error`: if any exception catched by onerror plugin, it will emit an `error` event with the exception instance and current context instance(if have), developers can listen on this event to report or logging.
