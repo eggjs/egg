@@ -22,7 +22,6 @@
   * [[`ddbb4b3`](http://github.com/eggjs/egg/commit/ddbb4b3c0ec7cfc5c9b1baa7e678770613bd4761)] - docs(deploy): add alinode (#2025) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`b5d823f`](http://github.com/eggjs/egg/commit/b5d823f52a770f879da46c6968adadd3fa14e8d7)] - docs(core/unittest): fix path of helper.js(#2029) (#2030) (Jiulong Hu <<me@hujiulong.com>>)
   * [[`1e3a4b3`](http://github.com/eggjs/egg/commit/1e3a4b35801e136dd4f1fbaf3c49b771a50c0f72)] - docs(basic-router):fix some places of basic-router (#2012) (恬竹 <<2632807692@qq.com>>)
-  * [[`c4fbf61`](http://github.com/eggjs/egg/commit/c4fbf61d33a1f0ea76e0e836a4bad1a844c2132e)] - release 2.2.1 (#2002) (Yiyu He <<dead_horse@qq.com>>)
 
 ## 2018-01-22, Version 2.2.1, @dead-horse
 
