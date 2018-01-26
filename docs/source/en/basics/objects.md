@@ -23,11 +23,15 @@ module.exports = app => {
     // websocket
   });
   app.on('error', (err, ctx) => {
-    // log
+    // report error
   });
-  app.on('resposne', ctx => {
+  app.on('request', ctx => {
+    // log receive request
+  });
+  app.on('response', ctx => {
+    // ctx.starttime is set by framework
     const used = Date.now() - ctx.starttime;
-    // log used
+    // log total cost
   });
 };
 ```
