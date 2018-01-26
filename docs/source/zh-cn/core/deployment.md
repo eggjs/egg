@@ -157,7 +157,7 @@ exports.alinode = {
 
 ```js
 // config/config.default.js
-config.alinode = {
+exports.alinode = {
   // 从 `Node.js 性能平台` 获取对应的接入参数
   appid: '<YOUR_APPID>',
   secret: '<YOUR_SECRET>',
