@@ -7,6 +7,31 @@ title: 框架内置基础对象
 
 Application 是全局应用对象，在一个应用中，只会实例化一个，它继承自 [Koa.Application]，在它上面我们可以挂载一些全局的方法和对象。我们可以轻松的在插件或者应用中[扩展 Application 对象](./extend.md#Application)。
 
+### 事件
+
+在框架运行时，会在 Application 实例上触发一些事件，应用开发者或者插件开发者可以监听这些事件做一些操作。作为应用开发者，我们一般会在[启动自定义脚本](./app-start.md)中进行监听。
+
+- `server`: 该事件一个 worker 进程只会触发一次，在 HTTP 服务完成启动后，会将 HTTP server 通过这个事件暴露出来给开发者。
+- `error`: 运行时有任何的异常被 onerror 插件捕获后，都会触发 `error` 事件，将错误对象和关联的上下文（如果有）暴露给开发者，可以进行自定义的日志记录上报等处理。
+- `request` 和 `response`: 应用收到请求和响应请求时，分别会触发 `request` 和 `response` 事件，并将当前请求上下文暴露出来，开发者可以监听这两个事件来进行日志记录。
+
+```js
+// app.js
+
+module.exports = app => {
+  app.once('server', server => {
+    // websocket
+  });
+  app.on('error', (err, ctx) => {
+    // log
+  });
+  app.on('resposne', ctx => {
+    const used = Date.now() - ctx.starttime;
+    // log used
+  });
+};
+```
+
 ### 获取方式
 
 Application 对象几乎可以在编写应用时的任何一个地方获取到，下面介绍几个经常用到的获取方式：
