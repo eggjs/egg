@@ -114,13 +114,15 @@ $ egg-scripts stop [--title=egg-server]
 
 ### Node.js 性能平台（alinode）
 
-[Node.js 性能平台](https://www.aliyun.com/product/nodejs) 是面向所有 Node.js 应用提供 性能监控、安全提醒、故障排查、性能优化 等服务的整体性解决方案，凭借对 Node.js 内核深入的理解,提供完善的工具链和服务,协助客户主动、快速发现和定位线上问题。
+[Node.js 性能平台](https://www.aliyun.com/product/nodejs) 是面向所有 Node.js 应用提供 `性能监控、安全提醒、故障排查、性能优化` 等服务的整体性解决方案，提供完善的工具链和服务，协助开发者快速发现和定位线上问题。
 
-#### 安装 runtime
+#### 安装 Runtime
+
+AliNode Runtime 可以直接替换掉 Node.js Runtime，对应版本参见[文档](https://help.aliyun.com/knowledge_detail/60811.html)。
 
 全局安装方式参见[文档](https://help.aliyun.com/document_detail/60338.html)。
 
-有时候，同机会部署多个项目，期望多版本共存时，则可以把 runtime 安装到当前项目：
+有时候，同机会部署多个项目，期望多版本共存时，则可以把 Runtime 安装到当前项目：
 
 ```bash
 $ npm i nodeinstall -g
@@ -129,7 +131,7 @@ $ nodeinstall --install-alinode ^3
 
 [nodeinstall] 会把对应版本的 `alinode` 安装到项目的 `node_modules` 目录下。
 
-注意：打包机的操作系统和线上系统需保持一致，否则对应的 runtime 不一定能正常运行。
+> 注意：打包机的操作系统和线上系统需保持一致，否则对应的 Runtime 不一定能正常运行。
 
 #### 安装及配置
 
@@ -177,7 +179,7 @@ $ [master] alinode version v3.8.4
 
 #### 访问控制台
 
-控制台地址：https://node.console.aliyun.com
+控制台地址：[https://node.console.aliyun.com](https://node.console.aliyun.com)
 
 
 [egg-cluster]: https://github.com/eggjs/egg-cluster
