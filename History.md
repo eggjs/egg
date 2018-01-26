@@ -1,6 +1,17 @@
 
 # History
 
+## 2018-01-26, Version 1.13.0, @dead-horse
+
+### Notable changes
+
+* **feature**
+  * emit `request` and `response` event in every request
+
+### Commits
+
+  * [[`49ec2fc`](http://github.com/eggjs/egg/commit/49ec2fc6e1972760487400a217bf7c3207a23953)] - feat: emit request and response event (#2021) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2018-01-22, Version 1.12.1, @dead-horse
 
 ### Notable changes
