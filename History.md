@@ -9,9 +9,12 @@
 
 * **docs**
   * improve english docs
+  * add alinode usage
 
 ### Commits
 
+  * [[`50a0f8a`](http://github.com/eggjs/egg/commit/50a0f8ac8fe246d664f73f171b8886f9b9c2eda7)] - doc: fix deploy example (dead-horse <<dead_horse@qq.com>>)
+  * [[`3b7a313`](http://github.com/eggjs/egg/commit/3b7a313965f9c8ae6e20a16dd74533b1885f216f)] - docs(deploy): more about alinode (#2036) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`950b9e6`](http://github.com/eggjs/egg/commit/950b9e684f2441674ed85a3c0152002991d2ff86)] - doc: fix deploy docs (dead-horse <<dead_horse@qq.com>>)
   * [[`18d6436`](http://github.com/eggjs/egg/commit/18d6436195ca1a73098c643d39ce4560b20e7d76)] - docs: translate advanced/cluster-client.md (#1839) (学究 <<zsxyz1314@gmail.com>>)
   * [[`287c761`](http://github.com/eggjs/egg/commit/287c7615ad425b130e2c669a41409bfa763feef2)] - Update deployment.md (#1979) (juju <<juju_chen@foxmail.com>>)
@@ -19,6 +22,7 @@
   * [[`ddbb4b3`](http://github.com/eggjs/egg/commit/ddbb4b3c0ec7cfc5c9b1baa7e678770613bd4761)] - docs(deploy): add alinode (#2025) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`b5d823f`](http://github.com/eggjs/egg/commit/b5d823f52a770f879da46c6968adadd3fa14e8d7)] - docs(core/unittest): fix path of helper.js(#2029) (#2030) (Jiulong Hu <<me@hujiulong.com>>)
   * [[`1e3a4b3`](http://github.com/eggjs/egg/commit/1e3a4b35801e136dd4f1fbaf3c49b771a50c0f72)] - docs(basic-router):fix some places of basic-router (#2012) (恬竹 <<2632807692@qq.com>>)
+  * [[`c4fbf61`](http://github.com/eggjs/egg/commit/c4fbf61d33a1f0ea76e0e836a4bad1a844c2132e)] - release 2.2.1 (#2002) (Yiyu He <<dead_horse@qq.com>>)
 
 ## 2018-01-22, Version 2.2.1, @dead-horse
 
