@@ -160,7 +160,7 @@ app
 => app
 ```
 
-plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会优先级于 plugin2/plugin3。因为 plugin2 和 plugin3 的依赖关系，所以交换了位置。framework1 继承了 egg，顺序会晚于 egg。应用最后加载。
+plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会优先于 plugin2/plugin3。因为 plugin2 和 plugin3 的依赖关系，所以交换了位置。framework1 继承了 egg，顺序会晚于 egg。应用最后加载。
 
 请查看 [Loader.getLoadUnits](https://github.com/eggjs/egg-core/blob/65ea778a4f2156a9cebd3951dac12c4f9455e636/lib/loader/egg_loader.js#L233) 方法
 
@@ -169,18 +169,18 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 上面已经列出了默认会加载的文件，Egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
 
 - 加载 [plugin](./plugin.md)，找到应用和框架，加载 `config/plugin.js`
-- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{env}.js`
-- 加载 [extend](../basics/extend.md), 遍历 loadUnit 加载 `app/extend/xx.js`
+- 加载 [config](../basics/config.md)，遍历 loadUnit 加载 `config/config.{env}.js`
+- 加载 [extend](../basics/extend.md)，遍历 loadUnit 加载 `app/extend/xx.js`
 - [自定义初始化](../basics/app-start.md)，遍历 loadUnit 加载 `app.js` 和 `agent.js`
-- 加载 [service](../basics/service.md), 遍历 loadUnit 加载 `app/service` 目录
-- 加载 [middleware](../basics/middleware.md), 遍历 loadUnit 加载 `app/middleware` 目录
-- 加载 [controller](../basics/controller.md), 加载应用的 `app/controller` 目录
-- 加载 [router](../basics/router.md), 加载应用的 `app/router.js`
+- 加载 [service](../basics/service.md)，遍历 loadUnit 加载 `app/service` 目录
+- 加载 [middleware](../basics/middleware.md)，遍历 loadUnit 加载 `app/middleware` 目录
+- 加载 [controller](../basics/controller.md)，加载应用的 `app/controller` 目录
+- 加载 [router](../basics/router.md)，加载应用的 `app/router.js`
 
 注意
 
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
-- [应用完整启动顺序查看框架开发](./framework.md)
+- 应用完整启动顺序查看[框架开发](./framework.md)
 
 ### 文件加载规则
 
