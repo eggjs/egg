@@ -5,13 +5,13 @@ title: controller
 
 [The previous chapter](./router.md) says router is mainly used to describe the relationship between the request URL and the Controller that processes the request eventually, so what is a Controller used for?
 
-Simply speaking, a Controller is used for **parsing user input and send back the relative result after processing**, for example:
+Simply speaking, a Controller is used for **parsing user's input and send back the relative result after processing**, for example:
 
 - In [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) interfaces, Controller accepts parameters from users and sends selected results back to user or modifies data in the database.
-- In HTTP page requests, Controller renders related templates to HTML according to different URLs requested then send back to users.
-- In proxy servers, Controller transfers user queries to other servers and send back process results to users in return.
+- In the HTML page requests, Controller renders related templates to HTML according to different URLs requested and then sends back to users.
+- In the proxy servers, Controller transfers user's requests to other servers and sends back process results to users in return.
 
-The framework recommends the Controller layer is responsible for processing request parameters(verification and transformation) from user requests, then calls related business methods in [Service](./service.md), encapsulates and send back business result:
+The framework recommends that the Controller layer is responsible for processing request parameters(verification and transformation) from user's requests, then calls related business methods in [Service](./service.md), encapsulates and sends back business result:
 
 1. retrieves parameters passed by HTTP.
 1. verifies and assembles parameters.
@@ -20,7 +20,7 @@ The framework recommends the Controller layer is responsible for processing requ
 
 ## How To Write Controller
 
-All Controller files must be put under `app/controller` directory. Controllers can be written in various patterns depending on various project scenarios and develop styles.
+All Controller files must be put under `app/controller` directory, which can support multi-level directory. when accessing, cascading access can be done through directory names. Controllers can be written in various patterns depending on various project scenarios and development styles.
 
 ### Controller Class(Recommended)
 
@@ -51,7 +51,7 @@ class PostController extends Controller {
 module.exports = PostController;
 ```
 
-We've defined a `PostController` class above and every method of this Controller can be used in Router.
+We've defined a `PostController` class above and every method of this Controller can be used in Router, we can locate it from `app.controller` according to the file name and the method name.
 
 ```js
 // app/router.js
@@ -70,17 +70,17 @@ module.exports = app => {
 }
 ```
 
-The defined Controller class initializes a new object for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Controller class inherits `egg.Controller`.
+The defined Controller class will initialize a new object for every request when accessing the server, and some of the following attributes will be attached to `this` since the Controller classes in the project are inherited from `egg.Controller`.
 
-- `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
+- `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods encapsulated by the framework to handle current request conveniently.
 - `this.app`: the instance of [Application](./extend.md#application) for current request, through which we can access global objects and methods provided by the framework.
 - `this.service`: [Service](./service.md) defined by the application, through which we can access the abstract business layer, equivalent to `this.ctx.service`.
 - `this.config`: the application's run-time [config](./config.md).
-- `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level log, almost the same as [context logger](../core/logger.md#context-logger), but it will append Controller file path for quickly track.
+- `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level log, is almost the same as [context logger](../core/logger.md#context-logger), but it will append Controller file path for quickly track.
 
 #### Customized Controller Base Class
 
-Defining a Controller class helps us not only abstract the Controller layer codes better(e.g. universal routines can be abstracted as private) but also encapsulate methods that are widely used in the application by defining a customized Controller base class.
+Defining a Controller class helps us not only abstract the Controller layer codes better(e.g. some unified processing can be abstracted as private) but also encapsulate methods that are widely used in the application by defining a customized Controller base class.
 
 ```js
 // app/core/base_controller.js
@@ -105,7 +105,7 @@ class BaseController extends Controller {
 module.exports = BaseController;
 ```
 
-Now we can use base class' methods by extends from `BaseController`:
+Now we can use base class' methods by inheriting from `BaseController`:
 
 ```js
 //app/controller/post.js
@@ -118,9 +118,9 @@ class PostController extends Controller {
 }
 ```
 
-### Methods Style Controller (not recommend, only for compatbility)
+### Methods Style Controller (It's not recommended, only for compatibility)
 
-Every Controller is an async function, whose argument is the instance of the request [Context](./extend.md#context) through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
+Every Controller is an async function, whose argument is the instance of the request [Context](./extend.md#context) and through which we can access many attributes and methods encapsulated by the framework conveniently.
 
 For example, when we define a Controller relative to `POST /api/posts`, we create a `post.js` file under `app/controller` directory.
 
@@ -144,7 +144,7 @@ exports.create = async ctx => {
 };
 ```
 
-In the above example, we introduce some new concepts, however it's still intuitional and understandable. We'll explain these new concepts in detail soon.
+In the above example, we introduce some new concepts, however it's still intuitive and understandable. We'll explain these new concepts in detail soon.
 
 ## HTTP Basics
 
@@ -166,19 +166,19 @@ Content-Type: application/json; charset=UTF-8
 {"title": "controller", "content": "what is controller"}
 ```
 
-The 1st line of the request contains 3 information, first 2 of which are commonly used:
+The first line of the request contains three information, first two of which are commonly used:
 
 - method: it's `POST` in this example.
-- path: it's `/api/posts`, the query, if any, is placed here too.
+- path: it's `/api/posts`, if the user's request contains query, it will also be placed here.
 
-From the 2nd line to the place where the 1st empty line appears is the Header part of the request and many useful attributes are here including, as you may see, Host, Content-Type and `Cookie`, `User-Agent`, etc. 2 headers in this request:
+From the second line to the place where the first empty line appears is the Header part of the request which includes many useful attributes. as you may see, Host, Content-Type and `Cookie`, `User-Agent`, etc. There are two headers in this request:
 
-- `Host`: when we send a request in the browser, the domain is resolved to server IP by DNS and, as well, the domain and port are send to the server in the Host header by the browser.
+- `Host`: when we send a request in the browser, the domain is resolved to server IP by DNS and, as well, the domain and port are sent to the server in the Host header by the browser.
 - `Content-Type`: when we have a body in our request, the Content-Type is provided to describe the type of our request body.
 
-The whole following content is the request body, which can be set by POST, PUT, DELETE, etc. methods and the server resolves the request body according to Content-Type.
+The whole following content is the request body, which can be brought by POST, PUT, DELETE and other methods. and the server resolves the request body according to Content-Type.
 
-When the sever finishes to process the request, a HTTP response is send back to the client:
+When the sever finishes to process the request, a HTTP response is sent back to the client:
 
 ```
 HTTP/1.1 201 Created
@@ -190,19 +190,19 @@ Connection: keep-alive
 {"id": 1}
 ```
 
-The 1st line contains 3 segments, among which the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) is used mostly, in this case, it's 201 which means the server has created a resource successfully.
+The first line contains three segments, among which the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) is used mostly, in this case, it's 201 which means the server has created a resource successfully.
 
-Similar to the request, the header part begins at the 2nd line and end at the place where the 1st empty line appears, in this case, they are Content-Type and Content-Length indicating the response format is JSON and the length is 8 bytes.
+Similar to the request, the header part begins at the second line and ends at the place where the next empty line appears, in this case, they are Content-Type and Content-Length indicating the response format is JSON and the length is 8 bytes.
 
 The remaining part is the actual content of this response.
 
 ## Acquire HTTP Request Parameters
 
-It can be seen from the above HTTP request examples that there are many places can be used to put user request data. The framework, binding the Context instance to Controllers, provides many convenient methods and attributes to acquire parameters sent by users through HTTP request.
+It can be seen from the above HTTP request examples that there are many places can be used to put user's request data. The framework provides many convenient methods and attributes by binding the Context instance to Controllers to acquire parameters sent by users through HTTP request.
 
 ### query
 
-Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is parameter that user sends. We can acquire this parsed parameter body through `ctx.query`:
+Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is the parameter that user sends. We can acquire this parsed parameter body through `ctx.query`:
 
 ```js
 class PostController extends Controller {
@@ -216,9 +216,9 @@ class PostController extends Controller {
 }
 ```
 
-If duplicated keys exists in Query String, only the 1st value of this key is used by `ctx.query` and all other values it appear later will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `ctx.query` acquires is `{ category: 'egg' }`.
+If duplicated keys exist in Query String, only the first value of this key is used by `ctx.query` and the subsequent appearance will be omitted. That is to say, for request `GET /posts?category=egg&category=koa`, what `ctx.query` acquires is `{ category: 'egg' }`.
 
-This is for unity reason, since, by design, we usually do not let users pass parameters with same keys in Query String then we write codes like below:
+This is for unity reason, because we usually do not design users to pass parameters with same keys in Query String then we write codes like below:
 
 ```js
 const key = ctx.query.key || '';
@@ -227,11 +227,11 @@ if (key.startsWith('egg')) {
 }
 ```
 
-Or if someone passes parameters with same keys in Query String on purpose, system error may be thrown. To avoid this, the framework guarantee the parameter be of string type whenever it is acquired from `ctx.query`.
+Or if someone passes parameters with same keys in Query String on purpose, system error may be thrown. To avoid this, the framework guarantee that the parameter must be a string type whenever it is acquired from `ctx.query`.
 
 #### queries
 
-Sometimes our system is designed to accept same keys sent by users, like `GET /posts?category=egg&id=1&id=2&id=3`. For this situation, the framework provides `ctx.queries` object that parses Query String and put duplicated data into an array:
+Sometimes our system is designed to accept same keys sent by users, like `GET /posts?category=egg&id=1&id=2&id=3`. For this situation, the framework provides `ctx.queries` object to parse Query String and put duplicated data into an array:
 
 ```js
 // GET /posts?category=egg&id=1&id=2&id=3
@@ -246,7 +246,7 @@ class PostController extends Controller {
 }
 ```
 
-The value type for keys in `ctx.queries` is array for sure if any.
+All key on the `ctx.queries` will be an array type if it has a value.
 
 ### Router params
 
@@ -267,12 +267,12 @@ class AppController extends Controller {
 
 Although we can pass parameters through URL, but constraints exist:
 
-- [the browser limits the maximum length of a URL](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers), so parameters cannot be passed that many.
+- [the browser limits the maximum length of a URL](http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers), so too many parameters cannot be passed.
 - the server records the full request URL to log files so it is not safe to pass sensitive data through URL.
 
-In the above HTTP request message example, we can learn, following the header, there's a body part that can be used to put parameters for POST, PUT and DELETE, etc. The `Content-Type` is to be sent by clients(browser) in the same time indicating the type of request body. Two mostly used data format are JSON and Form in Web developing for transferring data.
+In the above HTTP request message example, we can learn, following the header, there's a body part that can be used to put parameters for POST, PUT and DELETE, etc. The `Content-Type` will be sent by clients(browser) in the same time to tell the server the type of request body when there is a body in a general request. Two mostly used data formats are JSON and Form in Web developing for transferring data.
 
-The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse these 2 kinds of request to be an object mounting to `ctx.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `ctx.request.body` cannot be used for GET and HEAD methods.
+The [bodyParser](https://github.com/koajs/bodyparser) middleware is built in by the framework to parse the request body of these two kinds of formats into an object mounted to `ctx.request.body`. Since it's not recommended by the HTTP protocol to pass a body by GET and HEAD methods, `ctx.request.body` cannot be used for GET and HEAD methods.
 
 ```js
 // POST /api/posts HTTP/1.1
@@ -288,7 +288,7 @@ class PostController extends Controller {
 }
 ```
 
-The framework configures the bodyParser using default parameters and features below are available out of the box:
+The framework configures some default parameters for bodyParser and has the following features:
 
 - when Content-Type is `application/json`, `application/json-patch+json`, `application/vnd.api+json` and `application/csp-report`, it parses the request body as JSON format and limits the maximum length of the body down to `100kb`.
 - when Content-Type is `application/x-www-form-urlencoded`, it parses the request body as Form format and limits the maximum length of the body down to `100kb`.
@@ -304,15 +304,15 @@ module.exports = {
   },
 };
 ```
-If user request exceeds the maximum length for parsing that we configured, the framework will throw an exception whose status code is `413`; if request body failed to be parsed(e.g. malformed JSON), an exception with status code `400` will be thrown.
+If user request exceeds the maximum length for parsing that we configured, the framework will throw an exception whose status code is `413`; if request body fails to be parsed(e.g. wrong JSON), an exception with status code `400` will be thrown.
 
-**Note: when adjusting the maximum length of the body for bodyParser, the reverse proxy, if any in front of our application, should be adjusted as well to support the newly configured length of the body.**
+**Note: when adjusting the maximum length of the body for bodyParser, if we have a reverse proxy(Nginx) in front of our application, we may need to adjust its configuration, so that the reverse proxy also supports the same length of request body.**
 
 **A common mistake is to confuse `ctx.request.body` and `ctx.body`(which is alias for `ctx.response.body`).**
 
 ### Acquire Uploaded Files
 
-Files, too, can be sent by the request body besides parameters, and browsers usually send file in `multipart/form-data` type. The uploaded files can be acquired by the framework built-in plugin [Multipart](https://github.com/eggjs/egg-multipart).
+Request body not only can take parameters, but also send files. and browsers usually send file in `Multipart/form-data` type. The uploaded files can be acquired by the framework built-in plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
 For full example, see [eggjs/examples/multipart](https://github.com/eggjs/examples/tree/master/multipart).
 
@@ -357,12 +357,12 @@ class UploaderController extends Controller {
 module.exports = UploaderController;
 ```
 
-To acquire user uploaded files conveniently by `ctx.getFileStream`, 2 conditions must be matched:
+To acquire user uploaded files conveniently by `ctx.getFileStream`, two conditions must be matched:
 
-- only one file can be uploaded in the same time.
+- only one file can be uploaded at the same time.
 - file uploading must appear after other fields, otherwise we may can't access fields when we got file stream.
 
-If more than 1 file are to be uploaded, `ctx.getFileStream()` is no longer the way but the following:
+If more than one files are to be uploaded at the same time, `ctx.getFileStream()` is no longer the way but the following:
 
 ```js
 const sendToWormhole = require('stream-wormhole');
@@ -383,7 +383,7 @@ class UploaderController extends Controller {
         console.log('fieldnameTruncated: ' + part[3]);
       } else {
         if (!part.filename) {
-          // it occurs when user selects no file then click to upload(part represents file, while part.filename is empty)
+          // it occurs when user clicks on the upload without selecting the ile(part represents file, while part.filename is empty)
           // more process should be taken, like giving an error message
           return;
         }
@@ -411,7 +411,7 @@ class UploaderController extends Controller {
 module.exports = UploaderController;
 ```
 
-To ensure the security of uploading files, the framework limits supported file formats and the whitelist supported by default is below:
+To ensure the security of uploading files, the framework limits the formats of supported file and the whitelist supported by default is below:
 
 ```js
 // images
@@ -439,14 +439,14 @@ To ensure the security of uploading files, the framework limits supported file f
 '.avi',
 ```
 
-New file extensions can be add by configuring the `config/config.default.js` file or rewriting the whole whitelist.
+New file extensions can be added by configuring the `config/config.default.js` file or rewriting the whole whitelist.
 
 - add new file extensions
 
 ```js
 module.exports = {
   multipart: {
-    fileExtensions: [ '.apk' ], // supports .apk file extention
+    fileExtensions: [ '.apk' ], // supports .apk file extension
   },
 };
 ```
@@ -468,7 +468,7 @@ module.exports = {
 Apart from URL and request body, some parameters can be sent by request header. The framework provides some helper attributes and methods to retrieve them.
 
 - `ctx.headers`, `ctx.header`, `ctx.request.headers`, `ctx.request.header`: these methods are equivalent and all of them get the whole header object.
-- `ctx.get(name)`, `ctx.request.get(name)`: get the value of one parameter from the request header, if the parameter does not exist, an empty string is returned.
+- `ctx.get(name)`, `ctx.request.get(name)`: get the value of one parameter from the request header, if the parameter does not exist, an empty string will be returned.
 - We recommend you use `ctx.get(name)` rather than `ctx.headers['name']` because the former handles upper/lower case automatically.
 
 Since header is special, some of which are given specific meanings by the `HTTP` protocol (like `Content-Type`, `Accept`), some are set by the reverse proxy as a convention (X-Forwarded-For), and the framework provides some convenient getters for them as well, for more details please refer to [API](https://eggjs.org/api/).
@@ -531,7 +531,7 @@ In Web applications, Cookie is usually used to send the identity information of 
 
 ### Session
 
-By using Cookie, we can create an individual Session specific to every user to store user identity information related data which is encrypted then stored in Cookie to perform session persistence across requests.
+By using Cookie, we can create an individual Session specific to every user to store user identity information, which will be encrypted then stored in Cookie to perform session persistence across requests.
 
 The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `ctx.session` for us to get or set current user's Session.
 
@@ -552,7 +552,7 @@ class PostController extends Controller {
 }
 ```
 
-It's quite intuition to use Session, just get or set directly, and if set it to `null`, it is deleted.
+It's quite intuitional to use Session, just get or set directly, if you want to delete it, you can assign it to `null`:
 
 ```js
 class SessionController extends Controller {
@@ -566,7 +566,7 @@ Like Cookie, Session has many safety related configurations and functions etc., 
 
 #### Configuration
 
-There mainly are these attributes below can be used to configure Session in `config.default.js`:
+There are mainly these attributes below can be used to configure Session in `config.default.js`:
 
 ```js
 module.exports = {
@@ -577,7 +577,7 @@ module.exports = {
 
 ## Parameter Validation
 
-After getting parameters from user requests, in most cases, it is a must to validate these parameters.
+After getting parameters from user requests, in most cases, it is inevitable to validate these parameters.
 
 With the help of the convenient parameter validation mechanism provided by [Validate](https://github.com/eggjs/egg-validate) plugin, with which we can do all kinds of complex parameter validations.
 
@@ -657,7 +657,7 @@ class PostController extends Controller {
 
 We do not prefer to implement too many business logics in Controller, so a [Service](./service.md) layer is provided to encapsulate business logics, which not only increases the reusability of codes but also makes it easy for us to test our business logics.
 
-In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is initialized by the framework on the first time it is accessed.
+In Controller, any method of any Service can be called and, in the meanwhile, Service is lazy loaded which means it is only initialized by the framework on the first time it is accessed.
 
 ```js
 class PostController extends Controller {
@@ -698,7 +698,7 @@ As to which status code should be used for a specific case, please refer to stat
 
 ### Setting Body
 
-Most data is sent to receivers through the body and, just like the body in the request, the body sent by the response demands a set of corresponding Content-Type to inform clients how to parse data.
+Most data is sent to requesters through the body and, just like the body in the request, the body sent by the response demands a set of corresponding Content-Type to inform clients how to parse data.
 
 - for a RESTful API controller, we usually send a body whose Content-Type is `application/json`, indicating it's a JSON string.
 - for a HTML page controller, we usually send a body whose Content-Type is `text/html`, indicating it's a piece of HTML code.
@@ -721,7 +721,7 @@ class ViewController extends Controller {
 }
 ```
 
-Due to the Stream feature of Node.js, we need to send the response by Stream in some cases, e.g., sending a big file, the proxy server returns content from upstream straightforward, the framework, too, endorses setting the body to be a Stream directly and it handles error events on this stream well in the meanwhile.
+Due to the Stream feature of Node.js, we need to return the response by Stream in some cases, e.g., returning a big file, the proxy server returns content from upstream straightforward, the framework also supports setting the body into a Stream directly and handling error events on this stream well in the meanwhile.
 
 ```js
 class ProxyController extends Controller {
@@ -758,9 +758,9 @@ For detailed examples, please refer to [Template Rendering](../core/view.md).
 
 Sometimes we need to provide API services for pages in a different domain, and, for historical reasons, [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) fails to make it through, while [JSONP](https://en.wikipedia.org/wiki/JSONP) does.
 
-Since misuse of JSONP leads to dozens of security issues, the framework supplies a convenient way to respond JSONP data, encapsulating [JSONP XSS Related Security Precautions](../core/security.md#jsonp-xss), supporting the validation of CSRF and referrer.
+Since misuse of JSONP leads to dozens of security issues, the framework supplies a convenient way to respond JSONP data, encapsulating [JSONP XSS Related Security Precautions](../core/security.md#jsonp-xss), and supporting the validation of CSRF and referrer.
 
-- `app.jsonp()` provides a middleware for the controller to respond JSONP data. We may add this middleware for controllers demanding for JSONP supporting in the router:
+- `app.jsonp()` provides a middleware for the controller to respond JSONP data. We may add this middleware to the router that needs to support jsonp:
 
 ```js
 // app/router.js
@@ -786,7 +786,7 @@ class PostController extends Controller {
 }
 ```
 
-When user requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
+When user's requests access this controller through a corresponding URL, if the query contains the `_callback=fn` parameter, data is returned in JSONP format, otherwise in JSON format.
 
 ##### JSONP Configuration
 
@@ -821,7 +821,7 @@ By default, XSS is not defended when responding JSONP, and, in some cases, it is
 2. querying sensitive data, e.g. getting the transaction record of a user.
 3. submitting data and modifying the database, e.g. create a new order for a user.
 
-If our JSONP API provides the last two type services and, without any XSS defense, user sensitive data may be leaked and even user may be phished. Given this, the framework supports the validations of CSRF and referrer by default.
+If our JSONP API provides the last two type services and, without any XSS defense, user's sensitive data may be leaked and even user may be phished. Given this, the framework supports the validations of CSRF and referrer by default.
 
 ##### CSRF
 
@@ -855,7 +855,7 @@ exports.jsonp = {
 ```
 `whileList` can be configured as regular expression, string and array:
 
-- Regular Expression: only requests whose Referrer match the regular expression are allow to access the JSONP API. When composing the regular expression, please also notice the leading `^` and tail `\/` which guarantees the whole domain matches.
+- Regular Expression: only requests whose Referrer match the regular expression are allowed to access the JSONP API. When composing the regular expression, please also notice the leading `^` and tail `\/` which guarantees the whole domain matches.
 
 ```js
 exports.jsonp = {
@@ -903,7 +903,7 @@ exports.jsonp = {
 
 ### Setting Header
 
-We identify the request success or not, in which state by the status code and set response content in the body. By setting the response header, extended information can be set as well.
+We identify whether the request is successful or not by using the status code and set response content in the body. By setting the response header, extended information can be set as well.
 
 `ctx.set(key, value)` sets one response header and `ctx.set(headers)` sets many in one time.
 
