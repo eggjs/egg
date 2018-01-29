@@ -155,7 +155,8 @@ module.exports = {
     if (!cacheQuery) {
       cacheQuery = c[str] = {};
       const isQueries = cacheName === _queriesCache;
-      // querystring.parse 不会解析 a[foo]=1&a[bar]=2 的情况
+      
+      // `querystring.parse` CANNOT parse something like `a[foo]=1&a[bar]=2`
       const query = querystring.parse(str);
       for (const key in query) {
         if (!key) {
@@ -165,7 +166,7 @@ module.exports = {
         const value = filter(query[key]);
         cacheQuery[key] = value;
         if (isQueries && RE_ARRAY_KEY.test(key)) {
-          // 支持兼容 this.queries['key'] => this.queries['key[]']
+          // `this.queries['key'] => this.queries['key[]']` is compatibly supported
           const subkey = key.substring(0, key.length - 2);
 
           if (!cacheQuery[subkey]) {
