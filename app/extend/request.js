@@ -155,7 +155,6 @@ module.exports = {
     if (!cacheQuery) {
       cacheQuery = c[str] = {};
       const isQueries = cacheName === _queriesCache;
-      
       // `querystring.parse` CANNOT parse something like `a[foo]=1&a[bar]=2`
       const query = querystring.parse(str);
       for (const key in query) {
