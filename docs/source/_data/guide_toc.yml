@@ -33,6 +33,7 @@ Tutorials:
   MySQL: /tutorials/mysql.html
   RESTful API: /tutorials/restful.html
   Passport: /tutorials/passport.html
+  Socket.IO: /tutorials/socketio.html
 Advanced:
   Loader: /advanced/loader.html
   Plugin Development: /advanced/plugin.html
