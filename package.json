@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -45,6 +45,7 @@
     "koa-is-json": "^1.0.0",
     "koa-override": "^3.0.0",
     "mime-types": "^2.1.17",
+    "on-finished": "^2.3.0",
     "sendmessage": "^1.1.0",
     "urllib": "^2.25.1",
     "utility": "^1.13.1",

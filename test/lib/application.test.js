@@ -5,6 +5,7 @@ const mm = require('egg-mock');
 const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
+const pedding = require('pedding');
 const Application = require('../../lib/application');
 const utils = require('../utils');
 
@@ -198,6 +199,55 @@ describe('test/lib/application.test.js', () => {
           .get('/class-controller')
           .expect('this is bar!')
           .expect(200);
+      });
+    });
+
+    describe('on cookieLimitExceed', () => {
+      it('should log error', done => {
+        const ctx = {
+          coreLogger: {
+            error(err) {
+              assert(err.key === 'name');
+              assert(err.cookie === 'value');
+              assert(err.name === 'CookieLimitExceedError');
+              done();
+            },
+          },
+        };
+        app.emit('cookieLimitExceed', { name: 'name', value: 'value', ctx });
+      });
+    });
+
+    describe('request and response event', () => {
+      it('should emit when request success', done => {
+        done = pedding(done, 3);
+        app.once('request', ctx => {
+          assert(ctx.path === '/class-controller');
+          done();
+        });
+        app.once('response', ctx => {
+          assert(ctx.status === 200);
+          done();
+        });
+        app.httpRequest()
+          .get('/class-controller')
+          .expect('this is bar!')
+          .expect(200, done);
+      });
+
+      it('should emit when request error', done => {
+        done = pedding(done, 3);
+        app.once('request', ctx => {
+          assert(ctx.path === '/obj-error');
+          done();
+        });
+        app.once('response', ctx => {
+          assert(ctx.status === 500);
+          done();
+        });
+        app.httpRequest()
+          .get('/obj-error')
+          .expect(500, done);
       });
     });
   });
