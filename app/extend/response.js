@@ -17,13 +17,12 @@ module.exports = {
     const body = this.body;
 
     if (len == null) {
-      if (!body) return;
+      if (!body) return undefined;
       if (typeof body === 'string') return Buffer.byteLength(body);
       if (Buffer.isBuffer(body)) return body.length;
       if (isJSON(body)) return Buffer.byteLength(JSON.stringify(body));
-      return;
+      return undefined;
     }
-
     return parseInt(len, 10);
   },
 
