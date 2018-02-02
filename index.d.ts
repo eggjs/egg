@@ -31,11 +31,13 @@ declare class BaseContextClass { // tslint:disable-line
   constructor(ctx: Context);
 }
 
+type LogArgs = string | number | object
+
 export interface Logger {
-  info(info: string, ...args: string[]): void;
-  warn(info: string, ...args: string[]): void;
-  debug(info: string, ...args: string[]): void;
-  error(info: string | Error, ...args: string[]): void;
+  info(info: string, ...args: LogArgs[]): void;
+  warn(info: string, ...args: LogArgs[]): void;
+  debug(info: string, ...args: LogArgs[]): void;
+  error(info: string | Error, ...args: LogArgs[]): void;
 }
 
 export type RequestArrayBody = any[];
@@ -522,7 +524,7 @@ export interface Application extends EggApplication {
   /**
    * restful router api
    */
-  resources(name: string, prefix: string, fn: string): Router;
+  resources(name: string, prefix: string, fn: string | Controller): Router;
 
   redirect(path: string, redirectPath: string): void;
 
