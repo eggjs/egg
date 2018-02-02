@@ -21,9 +21,7 @@ module.exports = {
       if (typeof body === 'string') return Buffer.byteLength(body);
       if (Buffer.isBuffer(body)) return body.length;
       if (isJSON(body)) return Buffer.byteLength(JSON.stringify(body));
-      return;
     }
-
     return parseInt(len, 10);
   },
 
