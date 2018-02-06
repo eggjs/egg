@@ -23,6 +23,18 @@ title: 常见问题
 
 也可参见[配置文件](https://eggjs.org/zh-cn/basics/config.html#配置结果)。
 
+PS：请确认没有写出以下代码，如果遇到了，请回去复习 Node.js 基础。
+
+```js
+// config/config.default.js
+exports.someKeys = '12345';
+module.exports = appInfo => {
+  const config = {};
+  config.keys = '123456';
+  return config;
+};
+```
+
 ## 线上的日志打印去哪里了？
 
 默认配置下，本地开发环境的日志都会打印在应用根目录的 `logs` 文件夹下(`${baseDir}/logs`) ，但是在非开发期的环境（非 local 和 unittest 环境），所有的日志都会打印到 `$HOME/logs` 文件夹下（例如 `/home/admin/logs`）。这样可以让本地开发时应用日志互不影响，服务器运行时又有统一的日志输出目录。
