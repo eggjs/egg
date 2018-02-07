@@ -125,6 +125,12 @@ In addition to the parameters just introduced, scheduled task also supports thes
 - `immediate`: when this parameter is set to true, this scheduled task will be executed immediately after the application is started and ready.
 - `disable`: when this parameter is set to true, this scheduled task will not be executed.
 
+### Logging
+
+Schedule log will write to `${appInfo.root}/logs/egg-schedule.log`, you could custom by config `config.customLogger.scheduleLogger`.
+
+Developer could use `ctx.loggers.scheduleLogger.info()` to write log at schedule task.
+
 ### Dynamically Configure Scheduled Tasks
 
 Sometimes we need to determine the different environment to configure the parameters of scheduled tasks. Scheduled tasks support another development style:
@@ -203,5 +209,5 @@ module.exports = agent => {
 `ScheduleStrategy` base class provides:
 
 - `schedule` - Properties of schedule tasks, `disable` is supported by default, other configurations can be parsed by developers.
-- `this.sendOne()` - Notice worker to execute the task randomly.
-- `this.sendAll()` - Notice all worker to execute the task.
+- `this.sendOne(...args)` - Notice worker to execute the task randomly, `args` will pass to `subscribe(...args)` or `task(ctx, ...args)`.
+- `this.sendAll(...args)` - Notice all worker to execute the task.

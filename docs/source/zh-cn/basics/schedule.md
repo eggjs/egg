@@ -125,6 +125,13 @@ module.exports = {
 - `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
 - `disable`：配置该参数为 true 时，这个定时任务不会被启动。
 
+### 执行日志
+
+执行日志会输出到 `${appInfo.root}/logs/egg-schedule.log`，你也可以通过 `config.customLogger.scheduleLogger` 来自定义。
+
+在任务中也可以通过 `ctx.loggers.scheduleLogger.info()` 来记录日志。
+
+
 ### 动态配置定时任务
 
 有时候我们需要判断不同的环境来配置定时任务的参数。定时任务还有支持另一种写法：
@@ -203,5 +210,5 @@ module.exports = agent => {
 `ScheduleStrategy` 基类提供了：
 
 - `schedule` - 定时任务的属性，`disable`  是默认统一支持的，其他配置可以自行解析。
-- `this.sendOne()` - 随机通知一个 worker 执行 task。
-- `this.sendAll()` - 通知所有的 worker 执行 task。
+- `this.sendOne(...args)` - 随机通知一个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)`。
+- `this.sendAll(...args)` - 通知所有的 worker 执行 task。
