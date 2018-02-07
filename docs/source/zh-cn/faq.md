@@ -27,7 +27,7 @@ PS：请确认没有写出以下代码，如果遇到了，请回去复习 Node.
 
 ```js
 // config/config.default.js
-exports.someKeys = '12345';
+exports.someKeys = 'abc';
 module.exports = appInfo => {
   const config = {};
   config.keys = '123456';

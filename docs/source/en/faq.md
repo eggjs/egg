@@ -25,7 +25,7 @@ Please make sure you don't make mistake like the code below, if do, maybe you ne
 
 ```js
 // config/config.default.js
-exports.someKeys = '12345';
+exports.someKeys = 'abc';
 module.exports = appInfo => {
   const config = {};
   config.keys = '123456';
