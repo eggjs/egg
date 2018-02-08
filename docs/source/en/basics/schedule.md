@@ -127,9 +127,17 @@ In addition to the parameters just introduced, scheduled task also supports thes
 
 ### Logging
 
-Schedule log will write to `${appInfo.root}/logs/egg-schedule.log`, you could custom by config `config.customLogger.scheduleLogger`.
+Schedule log will write to `${appInfo.root}/logs/egg-schedule.log`, but don't log to terminal by default, you could custom by config `config.customLogger.scheduleLogger`.
 
-Developer could use `ctx.loggers.scheduleLogger.info()` to write log at schedule task.
+```js
+// config/config.default.js
+config.customLogger = {
+  scheduleLogger: {
+    consoleLevel: 'NONE',
+    file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+  },
+};
+```
 
 ### Dynamically Configure Scheduled Tasks
 
