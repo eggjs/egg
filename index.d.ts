@@ -840,4 +840,14 @@ export interface IHelper {
   urlFor(name: string, params?: { [key: string]: any }): string;
 }
 
+declare type SubscriptionSchedule = {
+  interval: string,
+  type: string
+}
+
+export abstract class Subscription extends BaseContextClass{
+  static schedule: SubscriptionSchedule;
+  abstract subscribe(): Promise<any> | void;
+}
+
 export as namespace Egg;
