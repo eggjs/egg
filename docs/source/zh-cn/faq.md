@@ -23,7 +23,7 @@ title: 常见问题
 
 也可参见[配置文件](https://eggjs.org/zh-cn/basics/config.html#配置结果)。
 
-PS：请确认没有写出以下代码，如果遇到了，请回去复习 Node.js 基础。
+PS：请确保没有写出以下代码：
 
 ```js
 // config/config.default.js

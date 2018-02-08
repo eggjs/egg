@@ -73,7 +73,7 @@ root       | The application root directory, if the environment is local or unit
 
 `appInfo.root` is an elegant adaption. for example, we tend to use ``/home/admin/logs`` as the catalog of log in the server environment, while we don't want to pollute the user catalog in local development. This adaptation is very good at solving this problem.
 
-Choose the appropriate style according to the specific situation, But please make sure you don't make mistake like the code below, if do, maybe you need to learn Node.js again.
+Choose the appropriate style according to the specific situation, but please make sure you don't make mistake like the code below:
 
 ```js
 // config/config.default.js

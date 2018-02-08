@@ -21,7 +21,7 @@ Framework [Config](./basics/config.md) settings is powerfull, support different 
 
 When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `${root}/run/application_config.json`(workers' configurations) and `${root}/run/agent_config.json`(agent's configurations).(`root` is application's root directory, in `local` and `unittest` environments, it will be project base directory, in other environments will be HOME directory)
 
-Please make sure you don't make mistake like the code below, if do, maybe you need to learn Node.js again.
+Please make sure you don't make mistake like the code below:
 
 ```js
 // config/config.default.js

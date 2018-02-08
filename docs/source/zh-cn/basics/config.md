@@ -77,7 +77,7 @@ root | 应用根目录，只有在 local 和 unittest 环境下为 baseDir，其
 `appInfo.root` 是一个优雅的适配，比如在服务器环境我们会使用 `/home/admin/logs` 作为日志目录，而本地开发时又不想污染用户目录，这样的适配就很好解决这个问题。
 
 
-请根据具体场合选择合适的写法，但请确认没有写出以下代码，否则请回去复习 Node.js 基础。
+请根据具体场合选择合适的写法，但请确保没有写出以下代码：
 
 ```js
 // config/config.default.js
