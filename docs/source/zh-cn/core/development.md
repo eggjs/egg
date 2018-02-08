@@ -289,9 +289,11 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
 
 #### 使用 [VSCode] 进行调试
 
-![VSCode](https://user-images.githubusercontent.com/227713/30421285-dad801e6-996e-11e7-85b6-817165ab5783.png)
+我们提供了一个 [vscode-eggjs] 扩展。
 
-在 Node.js 7.x 及之后的版本，配置 `.vscode/launch.json` 如下，然后 F5 一键启动即可。
+![VSCode](https://user-images.githubusercontent.com/227713/35954428-7f8768ee-0cc4-11e8-90b2-67e623594fa1.png)
+
+如图，会自动生成配置文件 `.vscode/launch.json` 如下，然后 F5 一键启动即可。
 
 ```js
 // .vscode/launch.json
@@ -305,35 +307,16 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "windows": { "runtimeExecutable": "npm.cmd" },
-      "runtimeArgs": [ "run", "debug" ],
+      "runtimeArgs": [ "run", "debug", "--", "--inspect-brk" ],
       "console": "integratedTerminal",
       "protocol": "auto",
       "restart": true,
-      "port": 9999
+      "port": 9229,
+      "autoAttachChildProcesses": true
     }
   ]
 }
 ```
-
-在低于 Node.js 7.x 版本中，**只能在 Terminal 手动执行 `npm run debug`**， 然后通过以下配置进行 attach :
-
-```js
-// .vscode/launch.json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Attach Egg Worker",
-      "type": "node",
-      "request": "attach",
-      "restart": true,
-      "port": 9999
-    }
-  ]
-}
-```
-
-> 后续我们会提供一个 [vscode-eggjs](https://github.com/eggjs/vscode-eggjs) 来简化配置。
 
 更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
@@ -348,3 +331,4 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
 [Inspector Protocol]: https://chromedevtools.github.io/debugger-protocol-viewer/v8
 [DevTools]: https://developer.chrome.com/devtools
 [WebStorm]: https://www.jetbrains.com/webstorm/
+[vscode-eggjs]: https://github.com/eggjs/vscode-eggjs
