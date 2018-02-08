@@ -10,7 +10,7 @@ Simply speaking, Service is an abstract layer which is used to encapsulate busin
 ## Usage Scenario
 
 - Processing complex data, e.g. information to be shown need to be got from databases, and should be processed in specific rules before it can be sent and seen by the user. Or when the process is done, the database should be updated.
-- Calling 3rd party services, e.g. getting Github information etc.
+- Calling third party services, e.g. getting Github information etc.
 
 ## Defining Service
 
@@ -30,17 +30,17 @@ module.exports = UserService;
 
 ### Properties
 
-Framework will initializes a new Service instance for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Service class inherits `egg.Service`.
+Framework will initialize a new Service instance for every request accessing the server, and, for the example above, several attributes are attached to `this` since the Service class inherits `egg.Service`.
 
 - `this.ctx`: the instance of [Context](./extend.md#context) for current request, through which we can access many attributes and methods, encapsulated by the framework, of current request conveniently.
 - `this.app`: the instance of [Application](./extend.md#application) for current request, through which we can access global objects and methods provided by the framework.
 - `this.service`: [Service](./service.md) defined by the application, through which we can access the abstract business layer, equivalent to `this.ctx.service`.
 - `this.config`: the application's run-time [config](./config.md).
-- `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level log, almost the same as [context logger](../core/logger.md#context-logger), but it will append Service file path for quickly track.
+- `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level logs, almost the same as [context logger](../core/logger.md#context-logger), but it will append Service file path for quickly track.
 
 ### Service ctx in Detail
 
-To get the path chain of user request, the request context is injected by us during the Service initialization, so you are able to get context related information directly by `this.ctx` in methods. For detailed information about context, please refer to [Context](./extend.md#context).
+To get the path chain of user request, the request context is injected by us during the Service initialization, so you are able to get the related information of context directly by `this.ctx` in methods. For detailed information about context, please refer to [Context](./extend.md#context).
 With `ctx`, we can get various convenient attributes and methods encapsulated by the framework. For example we can use:
 
 - `this.ctx.curl` to make network calls.
