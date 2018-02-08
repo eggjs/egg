@@ -21,6 +21,18 @@ Framework [Config](./basics/config.md) settings is powerfull, support different 
 
 When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `${root}/run/application_config.json`(workers' configurations) and `${root}/run/agent_config.json`(agent's configurations).(`root` is application's root directory, in `local` and `unittest` environments, it will be project base directory, in other environments will be HOME directory)
 
+Please make sure you don't make mistake like the code below:
+
+```js
+// config/config.default.js
+exports.someKeys = 'abc';
+module.exports = appInfo => {
+  const config = {};
+  config.keys = '123456';
+  return config;
+};
+```
+
 ## Where are my log files in prod environment?
 
 By default, logs will print at `${baseDir}/logs`(baseDir is project's base directory) in local environment.But in non-development environments(neither local nor unittest), the logs will print at `$HOME/logs`(such as `/home/admin/logs`). So the logs won't mix in during development and locate in the same place when run in production environment.
