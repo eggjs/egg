@@ -1,7 +1,9 @@
 import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
-import { Readable } from 'stream';
+import { Readable, Writable } from 'stream';
+import * as http from 'http';
+import * as https from 'https';
 /**
  * BaseContextClass is a base class that can be extended,
  * it's instantiated in context level,
@@ -379,13 +381,13 @@ export interface ICurlOption {
   /** Manually set the content of payload. If set, data will be ignored. */
   content: string | Buffer;
   /** Stream to be pipe to the remote.If set, data and content will be ignored. */
-  stream: stream.Readable;
+  stream: Readable;
   /**
    * A writable stream to be piped by the response stream.
    * Responding data will be write to this stream and callback
    * will be called with data set null after finished writing.
    */
-  writeStream: stream.Writable;
+  writeStream: Writable;
   /** consume the writeStream, invoke the callback after writeStream close. */
   consumeWriteStream: boolean;
   /** Type of request data.Could be json.If it's json, will auto set Content-Type: application/json header. */
