@@ -73,6 +73,18 @@ root       | The application root directory, if the environment is local or unit
 
 `appInfo.root` is an elegant adaption. for example, we tend to use ``/home/admin/logs`` as the catalog of log in the server environment, while we don't want to pollute the user catalog in local development. This adaptation is very good at solving this problem.
 
+Choose the appropriate style according to the specific situation, but please make sure you don't make mistake like the code below:
+
+```js
+// config/config.default.js
+exports.someKeys = 'abc';
+module.exports = appInfo => {
+  const config = {};
+  config.keys = '123456';
+  return config;
+};
+```
+
 ### Sequence of loading configurations
 
 Applications, plugin components and framework are able to define those configs. Even though the structure of catalog is identical but there is priority (application > framework > plugin). Besides, the running environment has the higher priority.
