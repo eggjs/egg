@@ -840,13 +840,24 @@ export interface IHelper {
   urlFor(name: string, params?: { [key: string]: any }): string;
 }
 
-declare type SubscriptionSchedule = {
-  interval: string,
-  type: string
+export type ScheduleCronOptions = {
+  currentDate: Date | string | number;
+  endDate: Date | string | number;
+  iterator: boolean;
+  utc?: boolean;
+  tz?: string;
 }
 
-export abstract class Subscription extends BaseContextClass{
-  static schedule: SubscriptionSchedule;
+export type Schedule = {
+  interval: string,
+  type: string,
+  cronOptions?: ScheduleCronOptions;
+  immediate?: boolean;
+  disable?: boolean;
+}
+
+export abstract class Subscription extends BaseContextClass {
+  static schedule: Schedule;
   abstract subscribe(): Promise<any> | void;
 }
 
