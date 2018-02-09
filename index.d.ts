@@ -851,6 +851,7 @@ export type ScheduleCronOptions = {
 export type Schedule = {
   interval: string,
   type: string,
+  cron?:string;
   cronOptions?: ScheduleCronOptions;
   immediate?: boolean;
   disable?: boolean;
