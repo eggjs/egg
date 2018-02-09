@@ -87,7 +87,7 @@ exports.onerror = false;
 
 ### 根据环境配置
 
-虽然上述有 `env` 字段可以配置，但我们更推荐 `plugin.{env}.js` 这种模式，会根据[运行环境](../basics/env.md)加载插件配置。
+同时，我们还支持 `plugin.{env}.js` 这种模式，会根据[运行环境](../basics/env.md)加载插件配置。
 
 比如定义了一个开发环境使用的插件 `egg-dev`，只希望在本地环境加载，可以安装到 `devDependencies`。
 
@@ -113,7 +113,9 @@ exports.dev = {
 
 这样在生产环境可以 `npm i --production` 不需要下载 `egg-dev` 的包了。
 
-**注意: 不存在 `plugin.default.js`。**
+**注意: **
+- 不存在 `plugin.default.js`
+- **只能在应用层使用，在框架层请勿使用。**
 
 ### package 和 path
 
