@@ -840,4 +840,26 @@ export interface IHelper {
   urlFor(name: string, params?: { [key: string]: any }): string;
 }
 
+export type ScheduleCronOptions = {
+  currentDate: Date | string | number;
+  endDate: Date | string | number;
+  iterator: boolean;
+  utc?: boolean;
+  tz?: string;
+}
+
+export type Schedule = {
+  interval?: string,
+  type: string,
+  cron?: string;
+  cronOptions?: ScheduleCronOptions;
+  immediate?: boolean;
+  disable?: boolean;
+}
+
+export abstract class Subscription extends BaseContextClass {
+  static schedule: Schedule;
+  abstract subscribe(): Promise<any> | void;
+}
+
 export as namespace Egg;
