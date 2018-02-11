@@ -669,7 +669,7 @@ See more detail in [mm API](https://github.com/node-modules/mm#api), include adv
 
 ### Mock Service
 
-Since Service is a standard built-in member of the framework, `app.mockService(service, methodName, fn)` is offered to conveniently mock its result, which is .
+Service is a standard built-in member of the framework, `app.mockService(service, methodName, fn)` is offered to conveniently mock its result.
 
 For example, mock the method `get(name)` in `app/service/user` to return a nonexistent user.
 
