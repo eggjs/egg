@@ -656,11 +656,11 @@ Framework provides [egg-development-proxyagent] plugin to help developers to deb
 Install and enable pulgin:
 
 ```bash
-$ npm i egg-development-proxyagent --save-dev
+$ npm i egg-development-proxyagent --save
 ```
 
 ```js
-// config/plugin.local.js
+// config/plugin.js
 exports.proxyagent = {
   enable: true,
   package: 'egg-development-proxyagent',

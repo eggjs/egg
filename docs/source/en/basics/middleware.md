@@ -122,7 +122,7 @@ If you do want to take effect only for single route, you could just instantiate 
 
 ```js
 module.exports = app => {
-  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  const gzip = app.middleware.gzip({ threshold: 1024 });
   app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
