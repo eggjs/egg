@@ -65,7 +65,7 @@ This scheduled task will be executed every 1 minute on every worker process, the
 
 ### Schedule Mode
 
-Schedule tasks can specify `interval` or `cron` two different schedule mode.
+Schedule tasks can specify `interval` or `cron` two different schedule modes.
 
 #### interval
 
@@ -85,9 +85,9 @@ module.exports = {
 
 #### cron
 
-Configure the scheduled tasks by `schedule.interval`, scheduled tasks will be executed at cron expressions specified timing. cron expressions are parsed by [cron-parser](https://github.com/harrisiirak/cron-parser).
+Configure the scheduled tasks by `schedule.cron`, scheduled tasks will be executed at specified timing according to the cron expressions. cron expressions are parsed by [cron-parser](https://github.com/harrisiirak/cron-parser).
 
-**Note: cron-parser support second (which don't support by linux crontab).**
+**Note: cron-parser supports second (which don't support by linux crontab).**
 
 ```bash
 *    *    *    *    *    *
@@ -114,7 +114,7 @@ module.exports = {
 
 The framework scheduled tasks support two types by default, worker and all. Both worker and all support the above two schedule modes, except when it comes time to execute, the worker who executes the scheduled tasks is different:
 
-- `worker` type: only one worker per machine executes this scheduled task, which worker to execute is random.
+- `worker` type: only one worker per machine executes this scheduled task, the worker to execute is random.
 - `all` type: each worker on each machine executes this scheduled task.
 
 ### Other Parameters
@@ -127,7 +127,7 @@ In addition to the parameters just introduced, scheduled task also supports thes
 
 ### Logging
 
-Schedule log will write to `${appInfo.root}/logs/egg-schedule.log`, but don't log to terminal by default, you could custom by config `config.customLogger.scheduleLogger`.
+Schedule log will be written to `${appInfo.root}/logs/egg-schedule.log`, but won't be logged to terminal by default, you could customize via `config.customLogger.scheduleLogger`.
 
 ```js
 // config/config.default.js
@@ -163,7 +163,7 @@ module.exports = app => {
 
 ## Manually Execute Scheduled Tasks
 
-We can run a scheduled task via `app.runSchedule(schedulePath)`. `app.runSchedule` read a scheduled task file path (either a relative path in `app/schedule` or a complete absolute path), executes the corresponding scheduled task, and returns a Promise.
+We can run a scheduled task via `app.runSchedule(schedulePath)`. `app.runSchedule` reads a scheduled task file path (either a relative path in `app/schedule` or a complete absolute path), executes the corresponding scheduled task, and returns a Promise.
 
 There are some scenarios we may need to manually execute scheduled tasks, for example
 
@@ -186,7 +186,7 @@ When the application starts up, manually perform the scheduled tasks for system 
 ```js
 module.exports = app => {
   app.beforeStart(async () => {
-    // ensure the data is ready before the application start listening port
+    // ensure the data is ready before the application starts listening port
     // follow-up data updates automatically by the scheduled task
     await app.runSchedule('update_cache');
   });
