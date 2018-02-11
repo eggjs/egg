@@ -308,7 +308,7 @@ module.exports = app => {
 };
 
 // app/controller/home.js
-class HomeController extends Controler {
+class HomeController extends Controller {
   async index() {
     this.ctx.body = 'hello world';
   }
@@ -355,7 +355,7 @@ describe('test/controller/home.test.js', () => {
 
 ```js
 // app/controller/home.js
-class HomeController extends Controler {
+class HomeController extends Controller {
   async post() {
     this.ctx.body = this.ctx.request.body;
   }
