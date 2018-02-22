@@ -14,9 +14,9 @@ Let us start with a few questions:
 If you are not sure, you probably need unit testing.
 
 Actually, it brings us tremendous benefits:
-- ensurance of maintaining code quality
-- correct refactoring
-- enhanced confidence
+- guarantee the quality of maintaining code 
+- guarantee the correctness of reconstruction
+- enhance confidence
 - automation
 
 It's more important to use unit tests in a web application during the fast iteration, because each testing case can contribute to the increasing stability of the application. The result of various inputs in each test is definite, so it's obvious to detect whether the changed code has an impact on correctness or not.
@@ -29,16 +29,16 @@ When [searching 'test framework' in npm](https://www.npmjs.com/search?q=test%20f
 
 ### Mocha
 
-Mocha is our first choice.
+We choose and recommend you to use [Mocha](http://mochajs.org), which is very rich in functionality and supports running in Node.js and Browser, what's more, it's very friendly to asynchronous test support.
 
 > Mocha is a feature-rich JavaScript test framework running on Node.js and in the browser, making asynchronous testing simple and fun. Mocha tests run serially, allowing for flexible and accurate reporting, while mapping uncaught exceptions to the correct test cases.
 
 ### AVA
 
-Why not another recently popular framework [AVA](https://github.com/avajs/ava) which looks like faster? AVA is great, but practice of serveral projects tells us the truth that code is harder to write.
+Why not another recently popular framework [AVA](https://github.com/avajs/ava) which looks like faster? AVA is great, but practice of several projects tells us the truth that code is harder to write.
 
 Comments from [@dead-horse](https://github.com/dead-horse):
-> - AVA is not stable enough, for example, CPU capacity is going to be overloaded when plenty of files are running concurrently. The solution of setting parameter controlling concurrent could work, but 'only mode' would be not functioning any more.
+> - AVA is not stable enough, for example, CPU capacity is going to be overloaded when plenty of files are running concurrently. The solution of setting parameter to control concurrent could work, but 'only mode' would be not functioning any more.
 > - Running cases concurrently makes great demands on implementation, because each test has to be independent, especially containing mock.
 > - Considering the expensive initialization of app, it's irrational of AVA to execute each file in an independent process initializing their own app while serial framework does only one time.
 
@@ -63,7 +63,8 @@ You may intentionally make mistakes in order to see these failure messages.
 
 ## Test Rule
 
-Framework defines some fundamental rules on unit testing to keep us forcus on coding rather than assistant work, such as how to execute test cases.
+Framework defines some fundamental rules on unit testing to keep us focus on coding rather than assistant work, such as how to execute test cases.
+Egg does some basic conventions for unit testing.
 
 ### Directory Structure
 
@@ -84,7 +85,7 @@ test
 
 ### Test Tool
 
-Consistently using [egg-bin to launch tests](./development.md#unit_testing) , which automaticlly load modules like [Mocha], [co-mocha], [power-assert], [nyc] into test scripts, so that we can **concentrate on writing tests** without wasting time on the choice of various test tools or modules.
+Consistently using [egg-bin to launch tests](./development.md#unit_testing) , which automatically loads modules like [Mocha], [co-mocha], [power-assert], [nyc] into test scripts, so that we can **concentrate on writing tests** without wasting time on the choice of various test tools or modules.
 
 The only thing you need to do is setting `scripts.test` in `package.json`.
 
@@ -116,15 +117,15 @@ This chapter introduces you how to write test, and introduction of tests for the
 
 ### mock
 
-Generally, a complete application test requires initialization and cleanup, such as deleting temporary files or destroy application. Also, we have to deal with exceptional situations like network problem and inaccessible of server.
+Generally, a complete application test requires initialization and cleanup, such as deleting temporary files or destroy application. Also, we have to deal with exceptional situations like network problem and exception visit of server.
 
 We extracted an [egg-mock](https://github.com/eggjs/egg-mock)module for mock, help for quick implementation of application unit tests, supporting fast creation of ctx to test.
 
 ### app
 
-Before lauching, we have to create an instance of App to test code of application-level like Controller, Middleware or Service.
+Before launching, we have to create an instance of App to test code of application-level like Controller, Middleware or Service.
 
-We can easily create one at Mocha's hook, `before`, through egg-mock.
+We can easily create an app instance with Mocha's `before` hook through egg-mock.
 
 ```js
 // test/controller/home.test.js
@@ -134,7 +135,7 @@ const mock = require('egg-mock');
 describe('test/controller/home.test.js', () => {
   let app;
   before(() => {
-    // create an current app instance
+    // create a current app instance
     app = mock.app();
     // execute tests after app is ready
     return app.ready();
@@ -157,7 +158,7 @@ describe('test/controller/home.test.js', () => {
 
 ### ctx
 
-Except app, tests for Extend, Service and Helper are also taken into consideration. Let's ceate a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by egg-mock.
+Except app, tests for Extend, Service and Helper are also taken into consideration. Let's create a context through [`app.mockContext(options)`](https://github.com/eggjs/egg-mock#appmockcontextoptions) offered by egg-mock.
 
 ```js
 it('should get a ctx', () => {
@@ -167,7 +168,7 @@ it('should get a ctx', () => {
 });
 ```
 
-To mock data on context is also supported.
+If we want to mock the data for `ctx.user`, we can do that by passing the data parameter to mockContext:
 
 ```js
 it('should mock ctx.user', () => {
@@ -225,9 +226,20 @@ describe('good test', () => {
 
 Mocha have keywords - before, after, beforeEach and afterEach - to set up preconditions and clean-up after your tests. These keywords could be multiple and execute in strict order.
 
+```js
+describe('egg test', () => {
+  before(() => console.log('order 1'));
+  before(() => console.log('order 2'));
+  after(() => console.log('order 6'));
+  beforeEach(() => console.log('order 3'));
+  afterEach(() => console.log('order 5'));
+  it('should worker', () => console.log('order 4'));
+});
+```
+
 ## Asynchronous Test
 
-egg-bin support asynchronous test:
+egg-bin supports asynchronous test:
 
 ```js
 // using Promise
@@ -256,7 +268,7 @@ According to specific situation, you could make different choice of these ways. 
 
 ## Controller Test
 
-It's the tough part of all application tests, since it's closely related to router configuration. `app.httpRequest()` returns actually an instance of [SuperTest](https://github.com/visionmedia/supertest), which connects Router and Controller, using to load a real request. It could also help us to examine param verification of Router by loading boundary conditions.
+It's the tough part of all application tests, since it's closely related to router configuration. We need use `app.httpRequest()` to return a real instance [SuperTest](https://github.com/visionmedia/supertest), which connects Router and Controller and could also help us to examine param verification of Router by loading boundary conditions. `app.httpRequest()` is a request instance [SuperTest](https://github.com/visionmedia/supertest) which is encapsulated by [egg-mock](https://github.com/eggjs/egg-mock).
 
 Here is an `app/controller/home.js` example.
 
@@ -268,7 +280,7 @@ module.exports = app => {
 };
 
 // app/controller/home.js
-class HomeController extends Controler {
+class HomeController extends Controller {
   async index() {
     this.ctx.body = 'hello world';
   }
@@ -287,15 +299,15 @@ describe('test/controller/home.test.js', () => {
       // load `GET /` request
       return app.httpRequest()
         .get('/')
-        .expect(200) // set expectaion of status to 200
-        .expect('hello world'); // set expectaion of body to 'hello world'
+        .expect(200) // set expectation of status to 200
+        .expect('hello world'); // set expectation of body to 'hello world'
     });
 
     it('should send multi requests', async () => {
       await app.httpRequest()
         .get('/')
         .expect(200) v
-        .expect('hello world'); // set expectaion of body to 'hello world'
+        .expect('hello world'); // set expectation of body to 'hello world'
 
       // once more
       const result = await app.httpRequest()
@@ -303,18 +315,18 @@ describe('test/controller/home.test.js', () => {
         .expect(200)
         .expect('hello world');
 
-      // varify via assert
+      // verify via assert
       assert(result.status === 200);
     });
   });
 });
 ```
 
-`app.httpRequest` based on SuperTest supports a majority of HTTP methods, and it provides rich interfaces to construct request, such as a JSON POST request.
+`app.httpRequest` based on SuperTest supports a majority of HTTP methods such as GET, POST, PUT, and it provides rich interfaces to construct request, such as a JSON POST request.
 
 ```js
 // app/controller/home.js
-class HomeController extends Controler {
+class HomeController extends Controller {
   async post() {
     this.ctx.body = this.ctx.request.body;
   }
@@ -341,7 +353,7 @@ See details at [SuperTest Document](https://github.com/visionmedia/supertest#get
 
 ### mock CSRF
 
-The security plugin of framework would enable [CSRF prevention](./security.md#csrf-prevention) as default. Typically, tests have to precede with a request of page in order to parse CSRF token from the response, and then use the token in later POST requests. But egg-mock provides the `app.mockCsrf()` function to skip the verifiation of the CSRF token of requests sent by SuperTest.
+The security plugin of framework would enable [CSRF prevention](./security.md#csrf-prevention) as default. Typically, tests have to precede with a request of page in order to parse CSRF token from the response, and then use the token in later POST requests. But egg-mock provides the `app.mockCsrf()` function to skip the verification of the CSRF token of requests sent by SuperTest.
 
 ```js
 app.mockCsrf();
@@ -359,7 +371,7 @@ return app.httpRequest()
 
 ## Service Test
 
-Service is easier to test than Controller. Creating a ctx, and then get the instance of Service via `ctx.service.${serviceName}`, and then use the instance to test.
+Service is easier to test than Controller. We need to create a ctx, and then get the instance of Service via `ctx.service.${serviceName}`, and then use the instance to test.
 
 For example:
 
@@ -394,7 +406,7 @@ describe('get()', () => {
 });
 ```
 
-Of cause it's just a sample, acutal code would probably be more complicated.
+Of course it's just a sample, actual code would probably be more complicated.
 
 ## Extend Test
 
@@ -476,7 +488,7 @@ describe('isXHR()', () => {
 
 Extended properties and function are available on `ctx.request`, so they can be tested directly.
 
-For example, provide a `isChrome` property to `app/extend/request.js` to varify requests whether they are from Chrome or not.
+For example, provide a `isChrome` property to `app/extend/request.js` to verify requests whether they are from Chrome or not.
 
 ```js
 const IS_CHROME = Symbol('Request#isChrome');
@@ -517,7 +529,7 @@ describe('isChrome()', () => {
 
 ### Response
 
-Identical with Request, Response test could be based on `ctx.reponse` directly, accessing all the extended functions and properties.
+Identical with Request, Response test could be based on `ctx.response` directly, accessing all the extended functions and properties.
 
 For example, provide an `isSuccess` property to indicate current status code equal to 200 or not.
 
@@ -549,7 +561,7 @@ describe('isSuccess()', () => {
 
 ### Helper
 
-Similiar to Service, Helper is avaliable on ctx, which can be tested directly.
+Similar to Service, Helper is available on ctx, which can be tested directly.
 
 Such as `app/extend/helper.js`:
 
@@ -625,13 +637,13 @@ describe('some test', () => {
 });
 ```
 
-**When you use `egg-mock/bootstrap`, resetting work would be done automaticly in an `afterEach` hook. Do need to write these code any more.**
+**When you use `egg-mock/bootstrap`, resetting work would be done automatically in an `afterEach` hook, Do not need to write these code any more.**
 
 The following will describe the common usage of egg-mock.
 
 ### Mock Properties And Functions
 
-Egg-mock extended from mm moudle contains full features of it, so we can directly mock any objects' properties and functions.
+Egg-mock is extended from [mm](https://github.com/node-modules/mm) module which contains full features of mm, so we can directly mock any objects' properties and functions.
 
 #### Mock Properties
 
@@ -657,7 +669,7 @@ See more detail in [mm API](https://github.com/node-modules/mm#api), include adv
 
 ### Mock Service
 
-Service, a standard built-in member of the framework, is offered a specialized function to conveniently mock its result, which is `app.mockService(service, methodName, fn)`.
+Service is a standard built-in member of the framework, `app.mockService(service, methodName, fn)` is offered to conveniently mock its result.
 
 For example, mock the method `get(name)` in `app/service/user` to return a nonexistent user.
 
