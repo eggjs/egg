@@ -1,6 +1,7 @@
 import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
+import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 /**
  * BaseContextClass is a base class that can be extended,
@@ -470,7 +471,7 @@ declare interface EggApplication extends KoaApplication { // tslint:disable-line
    * Keep the same api with httpclient.request(url, args).
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
-  curl(url: string, opt: any): Promise<any>;
+  curl(url: string, opt: RequestOptions): Promise<any>;
 
   /**
    * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
@@ -732,7 +733,7 @@ export interface Context extends KoaApplication.Context {
    * Keep the same api with httpclient.request(url, args).
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
-  curl(url: string, opt: any): Promise<any>;
+  curl(url: string, opt: RequestOptions): Promise<any>;
 
   /**
    * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
