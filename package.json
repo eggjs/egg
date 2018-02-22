@@ -16,6 +16,7 @@
     "@types/accepts": "^1.3.3",
     "@types/koa": "^2.0.40",
     "@types/koa-router": "^7.0.25",
+    "@types/urllib": "^2.25.0",
     "accepts": "^1.3.4",
     "agentkeepalive": "^3.3.0",
     "cluster-client": "^1.7.1",
