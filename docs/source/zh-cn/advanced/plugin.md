@@ -399,7 +399,7 @@ module.exports = app => {
 // app/controller/post.js
 class PostController extends Controller {
   async list() {
-    const posts = await this.app.databse.query(sql, values);
+    const posts = await this.app.database.query(sql, values);
   },
 }
 ```
