@@ -127,14 +127,14 @@ module.exports = {
 
 ### 执行日志
 
-执行日志会输出到 `${appInfo.root}/logs/egg-schedule.log`，默认不会输出到控制台，可以通过 `config.customLogger.scheduleLogger` 来自定义。
+执行日志会输出到 `${appInfo.root}/logs/{app_name}/egg-schedule.log`，默认不会输出到控制台，可以通过 `config.customLogger.scheduleLogger` 来自定义。
 
 ```js
 // config/config.default.js
 config.customLogger = {
   scheduleLogger: {
-    consoleLevel: 'NONE',
-    file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+    // consoleLevel: 'NONE',
+    // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
   },
 };
 ```
