@@ -127,14 +127,14 @@ In addition to the parameters just introduced, scheduled task also supports thes
 
 ### Logging
 
-Schedule log will be written to `${appInfo.root}/logs/egg-schedule.log`, but won't be logged to terminal by default, you could customize via `config.customLogger.scheduleLogger`.
+Schedule log will be written to `${appInfo.root}/logs/{app_name}/egg-schedule.log`, but won't be logged to terminal by default, you could customize via `config.customLogger.scheduleLogger`.
 
 ```js
 // config/config.default.js
 config.customLogger = {
   scheduleLogger: {
-    consoleLevel: 'NONE',
-    file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+    // consoleLevel: 'NONE',
+    // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
   },
 };
 ```
