@@ -15,6 +15,10 @@ module.exports = app => {
       method: 'GET',
       dataType: 'json',
     });
+
+    // also could create an anonymous context to call Service
+    // const ctx = app.createAnonymousContext();
+    // app.cities = await ctx.service.cities.load();
   });
 };
 ```
