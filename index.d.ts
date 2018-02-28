@@ -29,6 +29,11 @@ declare class BaseContextClass { // tslint:disable-line
    */
   service: IService;
 
+  /**
+   * logger
+   */
+  logger: Logger;
+
   constructor(ctx: Context);
 }
 
