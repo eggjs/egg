@@ -1,6 +1,6 @@
 # History
 
-## 2018-02-28, Version 2.4.0, @dead-horse
+## 2018-02-28, Version 2.4.0, @fengmk2
 
 ### Notable changes
 
@@ -18,6 +18,7 @@
   * new documents
     * how to call the service
     * socket.io tutorial
+    * add events on application
 
 ### Commits
 
