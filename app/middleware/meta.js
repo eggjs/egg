@@ -4,7 +4,12 @@
 
 'use strict';
 
-module.exports = options => {
+module.exports = (options, app) => {
+  let server;
+  app.once('server', s => {
+    server = s;
+  });
+
   return async function meta(ctx, next) {
     if (options.logging) {
       ctx.coreLogger.info('[meta] request started, host: %s, user-agent: %s', ctx.host, ctx.header['user-agent']);
@@ -12,5 +17,11 @@ module.exports = options => {
     await next();
     // total response time header
     ctx.set('x-readtime', Date.now() - ctx.starttime);
+
+    // try to support Keep-Alive Header
+    if (server && server.keepAliveTimeout && server.keepAliveTimeout >= 1000 && ctx.header.connection !== 'close') {
+      const timeout = parseInt(server.keepAliveTimeout / 1000);
+      ctx.set('keep-alive', `timeout=${timeout}`);
+    }
   };
 };
