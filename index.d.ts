@@ -120,7 +120,7 @@ interface Request extends KoaApplication.Request { // tslint:disable-line
    */
   query: { [key: string]: string };
 
-  body: RequestArrayBody | RequestObjectBody;
+  body: any;
 }
 
 interface Response extends KoaApplication.Response { // tslint:disable-line
@@ -471,7 +471,7 @@ declare interface EggApplication extends KoaApplication { // tslint:disable-line
    * Keep the same api with httpclient.request(url, args).
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
-  curl(url: string, opt: RequestOptions): Promise<any>;
+  curl(url: string, opt?: RequestOptions): Promise<any>;
 
   /**
    * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
@@ -733,7 +733,7 @@ export interface Context extends KoaApplication.Context {
    * Keep the same api with httpclient.request(url, args).
    * See https://github.com/node-modules/urllib#api-doc for more details.
    */
-  curl(url: string, opt: RequestOptions): Promise<any>;
+  curl(url: string, opt?: RequestOptions): Promise<any>;
 
   /**
    * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical

@@ -23,7 +23,8 @@ module.exports = app => {
 // app/controller/user.js
 class UserController extends Controller {
   async info() {
-    this.ctx.body = {
+    const { ctx } = this;
+    ctx.body = {
       name: `hello ${ctx.params.id}`,
     };
   }
