@@ -9,6 +9,6 @@ declare module 'egg' {
 
 export default class FooService extends Service {
   async bar() {
-    return { env: this.config.env };
+    return { env: this.config.env, bar: this.config.bar };
   }
 }

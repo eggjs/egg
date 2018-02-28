@@ -39,8 +39,6 @@ export interface Logger {
   error(info: string | Error, ...args: any[]): void;
 }
 
-export type RequestArrayBody = any[];
-export type RequestObjectBody = { [key: string]: any };
 interface Request extends KoaApplication.Request { // tslint:disable-line
   /**
    * detect if response should be json
@@ -159,6 +157,8 @@ interface ContextView { // tslint:disable-line
 export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
 export interface EggAppConfig {
+  [key: string]: any;
+
   workerStartTimeout: number;
   baseDir: string;
   /**
