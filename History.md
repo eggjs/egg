@@ -1,5 +1,52 @@
 # History
 
+## 2018-02-28, Version 2.4.0, @fengmk2
+
+### Notable changes
+
+* **feature**
+  * support Keep-Alive Header
+
+* **fix**
+  * add logger in base_context_class
+
+* **docs**
+  * Lots of d.ts improved.
+    * add context
+    * add urllib
+    * add resources & logger
+  * new documents
+    * how to call the service
+    * socket.io tutorial
+    * add events on application
+
+### Commits
+
+  * [[`79927324a`](http://github.com/eggjs/egg/commit/79927324a5aeb1f826fc9f133bed253d8324c62e)] - fix: add logger in base_context_class (#2149) (Axes <<whxaxes@qq.com>>)
+  * [[`a73900231`](http://github.com/eggjs/egg/commit/a7390023150ff4d5a7ec069276a94542a7ef67fa)] - feat: support Keep-Alive Header (#2146) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c8284367c`](http://github.com/eggjs/egg/commit/c8284367c727aa2da453a1a485c4d7f97cfb3967)] - docs(ts): fix some d.ts (#2144) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e0282b923`](http://github.com/eggjs/egg/commit/e0282b923375132fcc3b936b471999a84eb1e941)] - docs(router): add definition of ctx (#2136) (重庆 <<1756260160@qq.com>>)
+  * [[`3e7ef6aa5`](http://github.com/eggjs/egg/commit/3e7ef6aa566d800411822d9a4195c9df34634789)] - docs(app-start): how to call service (#2133) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`9472b5828`](http://github.com/eggjs/egg/commit/9472b5828c95cd1dec2910b657d1e6c34372a6a2)] - docs(schedule): fix log dir (#2123) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ede433fc5`](http://github.com/eggjs/egg/commit/ede433fc594c915683a519bf9b409209812806cf)] - docs(unittest):fix some mistakes (#2110) (恬竹 <<2632807692@qq.com>>)
+  * [[`2d03c79a1`](http://github.com/eggjs/egg/commit/2d03c79a1842846c4caf2f3b971a5bae5fc9f24d)] - chore: add urllib declaration support in index.d.ts (#2117) (SoraYama <<sorayamahou@gmail.com>>)
+  * [[`fd6fa2495`](http://github.com/eggjs/egg/commit/fd6fa24955a7a7bceaad7b2f754123282b7e1cbe)] - docs(2.x-advanced-plugin):fix some descriptions (#2111) (恬竹 <<2632807692@qq.com>>)
+  * [[`0a208d741`](http://github.com/eggjs/egg/commit/0a208d7413d77f12048df91b6bdb6e2dfd047c89)] - docs: translation for advanced/plugin.md (#2075) (DukeFightLife <<AdoBeatTheWorld@users.noreply.github.com>>)
+  * [[`42e4ea4c1`](http://github.com/eggjs/egg/commit/42e4ea4c12a542671bac7ca92931e83d0fc439f4)] - docs(schedule):fix some places (#2105) (恬竹 <<2632807692@qq.com>>)
+  * [[`63278c229`](http://github.com/eggjs/egg/commit/63278c2293b0899165386288c38cac44aa7a0b71)] - docs(2.x-basic-extend):fix some mistakes (#2107) (恬竹 <<2632807692@qq.com>>)
+  * [[`7a604d37f`](http://github.com/eggjs/egg/commit/7a604d37f5184c268263779fa2b8ca459e3d6f5b)] - docs(2.x-basic-service):fix some mistakes of service (#2102) (恬竹 <<2632807692@qq.com>>)
+  * [[`a1a4e7dd3`](http://github.com/eggjs/egg/commit/a1a4e7dd32bf040b69e8c8bfbdcae3e483eee335)] - docs(plugin): add description for plugin.local.js (#2104) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`2cdfcc249`](http://github.com/eggjs/egg/commit/2cdfcc249863630dbb298374dbbe2b45864a0e1c)] - docs(development): adjust to new version vscode (#2098) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`bb4b29002`](http://github.com/eggjs/egg/commit/bb4b290027a6dcf8404ae357e29aaa6a76d5413a)] - docs(faq): add the most common mistake of config (#2086) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`5621a8574`](http://github.com/eggjs/egg/commit/5621a8574b60d61dab79f601105b69710559831c)] - docs(schedule): logging && args (#2091) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`03a894439`](http://github.com/eggjs/egg/commit/03a89443904211785ca600ec74f78d75bbf7a299)] - docs: d.ts of resources& logger (#2079) (x22x22 <<wadeking@qq.com>>)
+  * [[`bbfacc5a7`](http://github.com/eggjs/egg/commit/bbfacc5a75984a7ddc111195b51d7da8bd6d0713)] - docs(middleware): use app.middleware instead of app.middlewares (#2077) (x22x22 <<wadeking@qq.com>>)
+  * [[`7e9f330ee`](http://github.com/eggjs/egg/commit/7e9f330eea2efcc26e99eb89ad3fb40c517e0101)] - docs(socket.io): add tutorial (#1913) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`1224dd65f`](http://github.com/eggjs/egg/commit/1224dd65f2e4dadcce70d9a6e8e66122d93fbdd7)] - docs(2.x-basic-controller):fix some descriptions of basic-controller (#2043) (恬竹 <<2632807692@qq.com>>)
+  * [[`fa5bdaeb5`](http://github.com/eggjs/egg/commit/fa5bdaeb5fec6385f81bc4c3781036df3fa6d870)] - style(app/extend/request.js): Some Comments from Chinese To English in union (#2051) (DongWei <<maledong_forwork@foxmail.com>>)
+  * [[`06e7710c7`](http://github.com/eggjs/egg/commit/06e7710c73c5f4ad313d08b770e5874919e21b88)] - docs: add events on application (#2039) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`65e038132`](http://github.com/eggjs/egg/commit/65e038132c9183c66c11fb50e3a8bc6358cdae4c)] - docs(advanced/loader): translate (#1654) (Weilun Xiong <<azardf4yy@gmail.com>>)
+
 ## 2018-01-26, Version 2.3.0, @dead-horse
 
 ### Notable changes
