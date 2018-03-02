@@ -185,13 +185,13 @@ exports.view = {
     <link rel="stylesheet" href="/public/css/news.css" />
   </head>
   <body>
-    <div class="news-view view">
+    <ul class="news-view view">
       {% for item in list %}
-        <div class="item">
+        <li class="item">
           <a href="{{ item.url }}">{{ item.title }}</a>
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </body>
 </html>
 ```
@@ -305,6 +305,10 @@ exports.news = {
 框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见[扩展](../basics/extend.md)。
 
 在这里，我们可以使用 View 插件支持的 Helper 来实现：
+
+```bash
+$ npm i moment --save
+```
 
 ```js
 // app/extend/helper.js
