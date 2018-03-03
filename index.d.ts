@@ -149,7 +149,7 @@ interface ContextView { // tslint:disable-line
    * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
    * @return {Promise<String>} result - return a promise with a render result
    */
-  render(name: string, locals: any, options?: any): Promise<string>;
+  render(name: string, locals?: any, options?: any): Promise<string>;
 
   /**
    * Render a template string by view engine
@@ -158,7 +158,7 @@ interface ContextView { // tslint:disable-line
    * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
    * @return {Promise<String>} result - return a promise with a render result
    */
-  renderString(name: string, locals: any, options?: any): Promise<string>;
+  renderString(name: string, locals?: any, options?: any): Promise<string>;
 }
 
 export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
@@ -752,7 +752,7 @@ export interface Context extends KoaApplication.Context {
    * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
    * @return {Promise<String>} result - return a promise with a render result
    */
-  render(name: string, locals: any, options?: any): Promise<string>;
+  render(name: string, locals?: any, options?: any): Promise<string>;
 
   /**
    * Render a template string by view engine
@@ -761,7 +761,7 @@ export interface Context extends KoaApplication.Context {
    * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
    * @return {Promise<String>} result - return a promise with a render result
    */
-  renderString(name: string, locals: any, options?: any): Promise<string>;
+  renderString(name: string, locals?: any, options?: any): Promise<string>;
 
   __(key: string, ...values: string[]): string;
   gettext(key: string, ...values: string[]): string;
