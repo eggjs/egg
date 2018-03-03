@@ -199,13 +199,13 @@ This usually goes to the app/view directory.
     <link rel="stylesheet" href="/public/css/news.css" />
   </head>
   <body>
-    <div class="news-view view">
+    <ul class="news-view view">
       {% for item in list %}
-        <div class="item">
+        <li class="item">
           <a href="{{ item.url }}">{{ item.title }}</a>
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </body>
 </html>
 ```
@@ -328,6 +328,10 @@ We just need to add extension scripts to the `app/extend` directory.
 For more information, cf. [Extensions](../basics/extend.md).
 
 In the case of view, we can just write a helper as an extension.
+
+```bash
+$ npm i moment --save
+```
 
 ```js
 // app/extend/helper.js
