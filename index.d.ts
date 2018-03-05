@@ -494,6 +494,8 @@ declare interface EggApplication extends KoaApplication { // tslint:disable-line
   url(name: string, params: any): any;
 }
 
+type RouterPath = string | RegExp;
+
 export interface Application extends EggApplication {
   /**
    * global locals for view
@@ -504,26 +506,26 @@ export interface Application extends EggApplication {
   /**
    * HTTP get method
    */
-  get(path: string, fn: string): void;
-  get(path: string, ...middleware: any[]): void;
+  get(path: RouterPath, fn: string): void;
+  get(path: RouterPath, ...middleware: any[]): void;
 
   /**
    * HTTP post method
    */
-  post(path: string, fn: string): void;
-  post(path: string, ...middleware: any[]): void;
+  post(path: RouterPath, fn: string): void;
+  post(path: RouterPath, ...middleware: any[]): void;
 
   /**
    * HTTP put method
    */
-  put(path: string, fn: string): void;
-  put(path: string, ...middleware: any[]): void;
+  put(path: RouterPath, fn: string): void;
+  put(path: RouterPath, ...middleware: any[]): void;
 
   /**
    * HTTP delete method
    */
-  delete(path: string, fn: string): void;
-  delete(path: string, ...middleware: any[]): void;
+  delete(path: RouterPath, fn: string): void;
+  delete(path: RouterPath, ...middleware: any[]): void;
 
   /**
    * restful router api
