@@ -1,5 +1,27 @@
 # History
 
+## 2018-03-05, Version 2.4.1 @dead-horse
+
+### Notable changes
+
+* **fix**
+  * [security] don't allow x-forwarded-host header by default
+  * `ctx.runInBackground` will try to use custom function name first
+
+* **docs**
+  * improve d.ts
+    * add regexp as type of path in Router
+    * fix type of `render`
+  * more semantic and moment installation in quickstart
+
+### Commits
+
+  * [[`0eabce6`](http://github.com/eggjs/egg/commit/0eabce6389190cecc00011512ec7e4e63fd0471e)] - fix: don't allow x-forwarded-host header (#2163) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`f0edf96`](http://github.com/eggjs/egg/commit/f0edf9622b6a18831f285e6ceb5a0e2b25b04fd0)] - fix: try to use custom function name first (#2161) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1a73720`](http://github.com/eggjs/egg/commit/1a73720d8ba14c612cc6fd38d419212e032049f8)] - fix(typings): add regexp as type of path (#2157) (AngrySean <<xujihui1985@gmail.com>>)
+  * [[`b55e908`](http://github.com/eggjs/egg/commit/b55e908643dc2ef1a21c7a4b11559e1785985792)] - doc(quickstart): more semantic and moment installation (#2154) (Kiho · Cham <<monkindey@163.com>>)
+  * [[`951e236`](http://github.com/eggjs/egg/commit/951e236586f3fdc988504f4138351b2c7778e67c)] - Fix type of `render` (#2155) (Arniu Tseng <<arniu2006@gmail.com>>)
+
 ## 2018-02-28, Version 2.4.0, @fengmk2
 
 ### Notable changes
