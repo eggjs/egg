@@ -1,6 +1,20 @@
 
 # History
 
+## 2018-03-05, Version 1.13.1 @dead-horse
+
+### Notable changes
+
+* **fix**
+  * [security] don't allow x-forwarded-host header by default
+  * `ctx.runInBackground` will try to use custom function name first
+
+### Commits
+
+  * [[`70d5898`](http://github.com/eggjs/egg/commit/70d5898fc742f552588865a52f765083be2c7dad)] - fix: don't allow x-forwarded-host header (#2162) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`be618f8`](http://github.com/eggjs/egg/commit/be618f8de31bfa8f1200aa23898f6248dd8d6848)] - fix: try to use custom function name first (#2156) (fengmk2 <<fengmk2@gmail.com>>)
+
+
 ## 2018-01-26, Version 1.13.0, @dead-horse
 
 ### Notable changes
