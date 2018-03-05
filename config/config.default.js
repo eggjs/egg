@@ -72,7 +72,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    hostHeaders: 'x-forwarded-host',
+    hostHeaders: '',
 
     /**
      * package.json
