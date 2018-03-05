@@ -2,7 +2,7 @@
 
 const fs = require('mz/fs');
 
-module.exports = async (ctx) => {
+module.exports = async ctx => {
   ctx.body = 'hello';
   const fn = async function saveUserInfo(ctx) {
     const buf = await fs.readFile(__filename);
