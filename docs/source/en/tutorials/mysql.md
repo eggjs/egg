@@ -235,6 +235,25 @@ const result = await this.app.mysql.update('posts', row); // update records in '
 
 // check if update is success or failure
 const updateSuccess = result.affectedRows === 1;
+
+// if primary key is your custom id,such as custom_id,you should config it in `where`
+const row = {
+  name: 'fengmk2',
+  otherField: 'other field value',    // any other fields u want to update
+  modifiedAt: this.app.mysql.literals.now, // `now()` on db server
+};
+
+const options = {
+  where: {
+    custom_id: 456
+  }
+};
+const result = await this.app.mysql.update('posts', row, options); // update records in 'posts'
+
+=> UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE custom_id = 456 ;
+
+// check if update is success or failure
+const updateSuccess = result.affectedRows === 1;
 ```
 
 ### Delete
