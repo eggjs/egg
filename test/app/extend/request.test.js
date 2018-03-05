@@ -47,6 +47,15 @@ describe('test/app/extend/request.test.js', () => {
         assert(typeof req.host === 'string');
         assert(req.host === 'bar.com');
       });
+
+      it('should custom hostHeaders', function* () {
+        mm(app.config, 'proxy', true);
+        mm(app.config, 'hostHeaders', 'x-forwarded-host');
+        mm(req.header, 'x-forwarded-host', 'foo.com');
+        mm(req.header, 'host', 'bar.com');
+        assert(typeof req.host === 'string');
+        assert(req.host === 'foo.com');
+      });
     });
 
     describe('req.hostname', () => {
