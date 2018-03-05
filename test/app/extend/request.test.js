@@ -33,6 +33,7 @@ describe('test/app/extend/request.test.js', () => {
       });
 
       it('should not allow X-Forwarded-Host header', function* () {
+        mm(app.config, 'proxy', true);
         mm(req.header, 'x-forwarded-host', 'foo.com');
         mm(req.header, 'host', 'bar.com');
         assert(typeof req.host === 'string');
