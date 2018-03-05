@@ -32,10 +32,11 @@ describe('test/app/extend/request.test.js', () => {
         assert(req.host === '');
       });
 
-      it('should return host from X-Forwarded-Host header', function* () {
+      it('should not allow X-Forwarded-Host header', function* () {
         mm(req.header, 'x-forwarded-host', 'foo.com');
+        mm(req.header, 'host', 'bar.com');
         assert(typeof req.host === 'string');
-        assert(req.host === 'foo.com');
+        assert(req.host === 'bar.com');
       });
 
       it('should return host from Host header when proxy=false', function* () {
