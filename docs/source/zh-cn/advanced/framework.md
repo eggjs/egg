@@ -268,6 +268,8 @@ AgentWorkerLoader 扩展也类似，这里不再举例。AgentWorkerLoader 加�
 
 ```js
 const mock = require('egg-mock');
+const assert = require('assert');
+
 describe('test/index.test.js', () => {
   let app;
   before(() => {
@@ -283,10 +285,9 @@ describe('test/index.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
 
-  it('should success', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+  it('should success', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 200);
   });
 });
 ```
@@ -336,6 +337,8 @@ describe('/test/index.test.js', () => {
 
 ```js
 const mock = require('egg-mock');
+const assert = require('assert');
+
 describe('/test/index.test.js', () => {
   let app;
   before(() => {
@@ -347,10 +350,9 @@ describe('/test/index.test.js', () => {
   });
   after(() => app.close());
   afterEach(mock.restore);
-  it('should success', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+  it('should success', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 200);
   });
 });
 ```
