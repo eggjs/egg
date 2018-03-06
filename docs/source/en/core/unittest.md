@@ -14,7 +14,7 @@ Let us start with a few questions:
 If you are not sure, you probably need unit testing.
 
 Actually, it brings us tremendous benefits:
-- guarantee the quality of maintaining code 
+- guarantee the quality of maintaining code
 - guarantee the correctness of reconstruction
 - enhance confidence
 - automation
@@ -192,15 +192,14 @@ Common Error:
 
 ```js
 // Bad
-const { app } = require('egg-mock/bootstrap');
+const { app, assert } = require('egg-mock/bootstrap');
 
 describe('bad test', () => {
   doSomethingBefore();
 
-  it('should redirect', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(302);
+  it('should redirect', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 302);
   });
 });
 ```
@@ -211,15 +210,14 @@ It's supposed to locate in a `before` hook in the suite of a particular test cas
 
 ```js
 // Good
-const { app } = require('egg-mock/bootstrap');
+const { app, assert } = require('egg-mock/bootstrap');
 
 describe('good test', () => {
   before(() => doSomethingBefore());
 
-  it('should redirect', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(302);
+  it('should redirect', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 302);
   });
 });
 ```
@@ -244,15 +242,13 @@ egg-bin supports asynchronous test:
 ```js
 // using Promise
 it('should redirect', () => {
-  return app.httpRequest()
-    .get('/')
+  return app.httpRequest('/')
     .expect(302);
 });
 
 // using callback
 it('should redirect', done => {
-  app.httpRequest()
-    .get('/')
+  app.httpRequest('/')
     .expect(302, done);
 });
 
@@ -261,6 +257,13 @@ it('should redirect', async () => {
   await app.httpRequest()
     .get('/')
     .expect(302);
+});
+
+// using async + assert
+it('should GET /', async () => {
+  const { res, status } = await app.httpRequest('/');
+  assert(status === 200);
+  assert(res.text === 'some text');
 });
 ```
 
@@ -295,23 +298,20 @@ const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/controller/home.test.js', () => {
   describe('GET /', () => {
-    it('should status 200 and get the body', () => {
+  it('should status 200 and get the body', async () => {
       // load `GET /` request
-      return app.httpRequest()
-        .get('/')
-        .expect(200) // set expectation of status to 200
-        .expect('hello world'); // set expectation of body to 'hello world'
+      const { res, status } = await app.httpRequest('/');
+      assert(status === 200); // set expectation of status to 200
+      assert(res.text === 'hello world'); // set expectation of body to 'hello world'
     });
 
     it('should send multi requests', async () => {
-      await app.httpRequest()
-        .get('/')
+      await app.httpRequest('/')
         .expect(200) v
         .expect('hello world'); // set expectation of body to 'hello world'
 
       // once more
-      const result = await app.httpRequest()
-        .get('/')
+      const result = await app.httpRequest('/')
         .expect(200)
         .expect('hello world');
 

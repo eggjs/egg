@@ -215,15 +215,14 @@ it('should mock ctx.user', () => {
 
 ```js
 // Bad
-const { app } = require('egg-mock/bootstrap');
+const { app, assert } = require('egg-mock/bootstrap');
 
 describe('bad test', () => {
   doSomethingBefore();
 
-  it('should redirect', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(302);
+  it('should redirect', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 302);
   });
 });
 ```
@@ -235,15 +234,14 @@ Mocha 刚开始运行的时候会载入所有用例，这时 describe 方法就�
 
 ```js
 // Good
-const { app } = require('egg-mock/bootstrap');
+const { app, assert } = require('egg-mock/bootstrap');
 
 describe('good test', () => {
   before(() => doSomethingBefore());
 
-  it('should redirect', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(302);
+  it('should redirect', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 302);
   });
 });
 ```
@@ -269,15 +267,13 @@ egg-bin 支持测试异步调用，它支持多种写法：
 ```js
 // 使用返回 Promise 的方式
 it('should redirect', () => {
-  return app.httpRequest()
-    .get('/')
+  return app.httpRequest('/')
     .expect(302);
 });
 
 // 使用 callback 的方式
 it('should redirect', done => {
-  app.httpRequest()
-    .get('/')
+  app.httpRequest('/')
     .expect(302, done);
 });
 
@@ -286,6 +282,13 @@ it('should redirect', async () => {
   await app.httpRequest()
     .get('/')
     .expect(302);
+});
+
+// 使用 async + assert
+it('should GET /', async () => {
+  const { res, status } = await app.httpRequest('/');
+  assert(status === 200);
+  assert(res.text === 'some text');
 });
 ```
 
@@ -322,24 +325,21 @@ const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/controller/home.test.js', () => {
   describe('GET /', () => {
-    it('should status 200 and get the body', () => {
+    it('should status 200 and get the body', async () => {
       // 对 app 发起 `GET /` 请求
-      return app.httpRequest()
-        .get('/')
-        .expect(200) // 期望返回 status 200
-        .expect('hello world'); // 期望 body 是 hello world
+      const { res, status } = await app.httpRequest('/');
+      assert(status === 200); // 期望返回 status 200
+      assert(res.text === 'hello world'); // 期望 body 是 hello world
     });
 
     it('should send multi requests', async () => {
-      // 使用 generator function 方式写测试用例，可以在一个用例中串行发起多次请求
-      await app.httpRequest()
-        .get('/')
+      // 使用 async function 方式写测试用例，可以在一个用例中串行发起多次请求
+      await app.httpRequest('/')
         .expect(200) // 期望返回 status 200
         .expect('hello world'); // 期望 body 是 hello world
 
       // 再请求一次
-      const result = await app.httpRequest()
-        .get('/')
+      const result = await app.httpRequest('/')
         .expect(200)
         .expect('hello world');
 

@@ -410,11 +410,11 @@ module.exports = SomeService;
 const { app, mock, assert } = require('egg-mock/bootstrap');
 
 describe('test/app/middleware/robot.test.js', () => {
-  it('should block robot', () => {
-    return app.httpRequest()
-      .get('/')
-      .set('User-Agent', "Baiduspider")
-      .expect(403);
+  it('should block robot', async () => {
+    const { status } = await app.httpRequest('/')
+      .set('User-Agent', "Baiduspider");
+
+    assert(status === 403);
   });
 });
 ```

@@ -1,11 +1,11 @@
 title: Framework Development
 ---
 
-During maintaining a number of projects, are your familiar with situations below: 
+During maintaining a number of projects, are your familiar with situations below:
 
 - Each project contains the same configuration files that need to be copied every time, such as `gulpfile.js`, `webpack.config.js`.
 - Each project has similiar dependancies.
-- It's difficult to synchronize those projects based on the same configurations like those mentioned above once they have changed? 
+- It's difficult to synchronize those projects based on the same configurations like those mentioned above once they have changed?
 
 Have your team got:
 
@@ -264,6 +264,8 @@ Here are some differences between initiation of frameworks.
 
 ```js
 const mock = require('egg-mock');
+const assert = require('assert');
+
 describe('test/index.test.js', () => {
   let app;
   before(() => {
@@ -279,10 +281,9 @@ describe('test/index.test.js', () => {
   after(() => app.close());
   afterEach(mock.restore);
 
-  it('should success', () => {
-    return app.httpRequest()
-    .get('/')
-    .expect(200);
+  it('should success', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 200);
   });
 });
 ```
@@ -332,6 +333,8 @@ The option of `mock.cluster` have no difference with `mm.app` while their APIs a
 
 ```js
 const mock = require('egg-mock');
+const assert = require('assert');
+
 describe('/test/index.test.js', () => {
   let app;
   before(() => {
@@ -343,10 +346,9 @@ describe('/test/index.test.js', () => {
   });
   after(() => app.close());
   afterEach(mock.restore);
-  it('should success', () => {
-    return app.httpRequest()
-    .get('/')
-    .expect(200);
+  it('should success', async () => {
+    const { status } = await app.httpRequest('/');
+    assert(status === 200);
   });
 });
 ```
