@@ -7,7 +7,7 @@ WebSocket 的产生源于 Web 开发中日益增长的实时通信需求，对�
 
 框架提供了 [egg-socket.io] 插件，增加了以下开发规约：
 
- - namespace: 通过配置的方式定义 namespace（命名空间） 
+ - namespace: 通过配置的方式定义 namespace（命名空间）
  - middleware: 对每一次 socket 连接的建立/断开、每一次消息/数据传递进行预处理
  - controller: 响应 socket.io 的 event 事件
  - router: 统一了 socket.io 的 event 与 框架路由的处理配置方式
@@ -44,7 +44,7 @@ exports.io = {
     '/example': {
       connectionMiddleware: [],
       packetMiddleware: [],
-    },    
+    },
   },
 };
 ```
@@ -58,7 +58,7 @@ exports.io = {
 ```js
 // {app_root}/config/config.${env}.js
 exports.io = {
-  init: { wsEngine: 'uws' }, // default: us 
+  init: { wsEngine: 'uws' }, // default: us
 };
 ```
 
@@ -78,7 +78,7 @@ exports.io = {
 };
 ```
 
-> 开启 `redis` 后，程序在启动时会尝试连接到 redis 服务器   
+> 开启 `redis` 后，程序在启动时会尝试连接到 redis 服务器
 > 此处 `redis` 仅用于存储连接实例信息，参见 [#server.adapter](https://socket.io/docs/server-api/#server-adapter-value)
 
 **注意：**
@@ -96,7 +96,7 @@ exports.io = {
 {
   "scripts": {
     "dev": "egg-bin dev --sticky",
-    "start": "egg-scripts start --sticky" 
+    "start": "egg-scripts start --sticky"
   }
 }
 ```
@@ -245,7 +245,7 @@ class DefaultController extends Controller {
 
 module.exports = DefaultController;
 
-// or async functions 
+// or async functions
 
 exports.ping = async function() {
   const message = this.args[0];
@@ -262,10 +262,10 @@ exports.ping = async function() {
 
 module.exports = app => {
   const { router, controller, io } = app;
-  
+
   // default
   router.get('/', controller.home.index);
-  
+
   // socket.io
   io.of('/').route('server', io.controller.home.server);
 };
@@ -273,7 +273,7 @@ module.exports = app => {
 
 **注意：**
 
-nsp 有如下的系统事件: 
+nsp 有如下的系统事件:
 
 - `disconnecting` doing the disconnect
 - `disconnect` connection has disconnected.
@@ -340,13 +340,13 @@ const log = console.log;
 window.onload = function () {
   // init
   const socket = io('/', {
-  
+
     // 实际使用中可以在这里传递参数
     query: {
-      room: 'demo',     
+      room: 'demo',
       userId: `client_${Math.random()}`,
     },
-    
+
     transports: ['websocket']
   });
 
@@ -364,16 +364,16 @@ window.onload = function () {
     socket.on(id, msg => {
       log('#receive,', msg);
     });
- 
+
     // 系统事件
-    socket.on('disconnect', msg => {      
+    socket.on('disconnect', msg => {
       log('#disconnect', msg);
     });
 
     socket.on('disconnecting', () => {
       log('#disconnecting');
     });
-    
+
     socket.on('error', () => {
       log('#error');
     });
@@ -383,6 +383,26 @@ window.onload = function () {
   window.socket = socket;
 };
 ```
+
+#### 微信小程序
+
+微信小程序提供的 API 为 WebSocket ，而 socket.io 是 Websocket 的上层封装，故我们无法直接用小程序的 API 连接，可以使用类似 [wxapp-socket-io](https://github.com/wxsocketio/wxapp-socket-io) 的库来适配。
+
+示例代码如下：
+
+```js
+// 小程序端示例代码
+import io from 'vendor/wxapp-socket-io.js';
+
+const socket = io('ws://127.0.0.1:7001');
+socket.on('connect', function () {
+  socket.emit('chat', 'hello world!');
+});
+socket.on('res', msg => {
+  console.log('res from server: %s!', msg);
+});
+```
+
 
 ### server
 
@@ -399,7 +419,7 @@ exports.io = {
       packetMiddleware: [ ], // 针对消息的处理暂时不实现
     },
   },
-  
+
   // cluster 模式下，通过 redis 实现数据共享
   redis: {
     host: '127.0.0.1',
@@ -472,10 +492,10 @@ module.exports = () => {
 
     const tick = (id, msg) => {
       logger.debug('#tick', id, msg);
-      
+
       // 踢出用户前发送消息
       socket.emit(id, helper.parseMsg('deny', msg));
-      
+
       // 调用 adapter 方法踢出用户，客户端触发 disconnect 事件
       nsp.adapter.remoteDisconnect(id, true, err => {
         logger.error(err);
@@ -498,10 +518,10 @@ module.exports = () => {
 
     // 当用户加入时
     nsp.adapter.clients(rooms, (err, clients) => {
-    
+
        // 追加当前 socket 信息到clients
       clients[id] = query;
-      
+
       // 加入房间
       socket.join(room);
 
@@ -531,7 +551,7 @@ module.exports = () => {
       });
 
       logger.debug('#online_leave', _clients);
-      
+
       // 更新在线用户列表
       nsp.to(room).emit('online', {
         clients: _clients,
@@ -548,7 +568,7 @@ module.exports = () => {
 
 #### controller
 
-p2p 通信，通过 exchange 进行数据交换
+P2P 通信，通过 exchange 进行数据交换
 
 ```js
 // {app_root}/app/io/controller/nsp.js
@@ -583,7 +603,7 @@ module.exports = NspController;
 module.exports = app => {
   const { router, controller, io } = app;
   router.get('/', controller.home.index);
-  
+
   // socket.io
   io.of('/').route('exchange', io.controller.nsp.exchange);
 };
@@ -592,9 +612,9 @@ module.exports = app => {
 开两个 tab 页面，并调出控制台：
 
 ```js
-socket.emit('exchange', { 
-	target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW', 
-	payload: { 
+socket.emit('exchange', {
+	target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+	payload: {
 		msg : 'test'
 	}
 });
