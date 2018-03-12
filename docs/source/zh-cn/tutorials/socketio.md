@@ -613,10 +613,10 @@ module.exports = app => {
 
 ```js
 socket.emit('exchange', {
-	target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
-	payload: {
-		msg : 'test'
-	}
+  target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+  payload: {
+    msg : 'test',
+  },
 });
 ```
 
@@ -624,8 +624,8 @@ socket.emit('exchange', {
 
 ## 参考链接
 
-- [socket.io](https://socket.io)
-- [egg-socket.io](https://github.com/eggjs/egg-socket.io)
+- [socket.io]
+- [egg-socket.io]
 - [egg-socket.io example](https://github.com/eggjs/egg-socket.io/tree/master/example)
 
 [socket.io]: https://socket.io
