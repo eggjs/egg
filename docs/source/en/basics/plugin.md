@@ -5,7 +5,7 @@ Plugin mechanism is a major feature of our framework. Not only can it ensure tha
 * Koa already has a middleware mechanism, why plugins?
 * What are the differences/relationship between middleware and plugins?
 * How do I use a plugin?
-* How do I write a plug-in?
+* How do I write a plugin?
 * ...
 
 ## Why plugins?
@@ -19,7 +19,7 @@ Here are some of the issues we think that can arise when using Koa middleware:
 
 To sum up, we need a more powerful mechanism to manage, orchestrate those relatively independent business logic.
 
-### The relationship between middleware and plugins
+### The relationship between middleware, plugins and application
 
 A plugin is actually a "mini-application", almost the same as an app:
 
@@ -73,16 +73,16 @@ app.mysql.query(sql, values);
 Each configuration item in `plugin.js` supports:
 
 * `{Boolean} enable` - Whether to enable this plugin, the default is true
-* `{String} package` -`npm` module name, plugin via `npm` module
+* `{String} package` -`npm` module name, plugin is imported via `npm` module
 * `{String} path` - The plugin's absolute path, mutually exclusive with package configuration
 * `{Array} env` - Only enable plugin in the specified runtime (environment), overriding the plugin's own configuration in `package.json`
 
 ### Enabling/Disabling plugins
 
-Built in the upper framework of the plugin, the application does not need to use the package or path configuration, you only need to specify enable or not:
+The application does not need the package or path configuration when using the plugins built in the framework. You only need to specify whether they are enabled or not:
 
 ```js
-// For the built-in plug-in, you can use the following simple way to turn on or off
+// For the built-in plugin, you can use the following simple way to turn on or off
 exports.onerror = false;
 ```
 
@@ -112,7 +112,7 @@ exports.dev = {
 };
 ```
 
-This way, `npm i --production` in the production environment does not need to download the`egg-dev` package.
+In this way, `npm i --production` in the production environment does not need to download the`egg-dev` package.
 
 ** Note: **
 
@@ -122,7 +122,7 @@ This way, `npm i --production` in the production environment does not need to do
 
 ### Package name and path
 
-* The `package` is introduced in the `npm` require style which is the most common way to import
+* The `package` is introduced in the `npm` style which is the most common way to import
 * `path` is an absolute path introduced when you want to load the plugin from different location such as when a plugin is still at the development stage or not available on `npm`
 * To see the application of these two scenarios, please see [progressive development] (../ tutorials / progressive.md).
 
@@ -156,7 +156,7 @@ Specific consolidation rules can be found in [Configuration] (. / Config.md).
 
 ## Plugin list
 
-* Framework default built-in enterprise applications [Common plug-in](https://eggjs.org/zh-cn/plugins/):
+* Framework has default built-in plugins for enterprise applications [Common plugins](https://eggjs.org/zh-cn/plugins/):
     - [onerror](https://github.com/eggjs/egg-onerror) Uniform Exception Handling
     - [Session](https://github.com/eggjs/egg-session) Session implementation
     - [i18n](https://github.com/eggjs/egg-i18n) Multilingual
