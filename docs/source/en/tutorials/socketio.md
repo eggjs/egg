@@ -159,7 +159,7 @@ Although the framework tries to unify the style through plugins, it is important
 
 #### Connection
 
-Once a client is connected, you can execute the desired logic. Authentication/Authorization is usually performed in this step to decide which action to take.
+Fires when each client connects or quits. Therefore, we usually perform authorization authentication at this step, and deal with the failed clients.
 
 ```js
 // {app_root} /app/io/middleware/connection.js
