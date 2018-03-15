@@ -26,6 +26,7 @@ Core:
   Cookie and Session: /core/cookie-and-session.html
   Cluster and IPC: /core/cluster-and-ipc.html
   View: /core/view.html
+  Assets: /core/assets.html
   Error Handling: /core/error-handling.html
   Security: /core/security.html
   i18n: /core/i18n.html
