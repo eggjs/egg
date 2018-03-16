@@ -14,7 +14,7 @@ title: 静态资源
 
 ### 使用 assets 模板引擎
 
-assets 模板引擎并非服务端渲染，而是以一个静态资源文件作为入口，使用基础模板渲染出 html，并将这个文件插入到 html 的一种方式，可以先查看[使用 roadhog 的例子](https://github.com/eggjs/examples/tree/master/assets-with-roadhog)。
+assets 模板引擎并非服务端渲染，而是以一个静态资源文件作为入口，使用基础模板渲染出 html，并将这个文件插入到 html 的一种方式，查看[使用 roadhog 的例子](https://github.com/eggjs/examples/tree/master/assets-with-roadhog)。
 
 配置插件
 
@@ -82,7 +82,7 @@ module.exports = appInfo => ({
 
 添加模板文件
 
-```jinja2
+```html
 <!doctype html>
 <html>
   <head>
@@ -99,7 +99,7 @@ module.exports = appInfo => ({
 
 #### 页面自定义 html 模板
 
-支持根据不同页面指定模板
+支持根据不同页面指定模板，可以在 `render` 方法传参
 
 ```javascript
 // app/controller/home.js
@@ -113,15 +113,102 @@ module.exports = class HomeController extends Controller {
 }
 ```
 
+#### 修改静态资源目录
 
+以上例子是将静态资源放到 `app/view` 目录下，但大部分情况希望放到独立目录，如 `app/assets`。因为 assets 模板引擎使用 `egg-view` 的加载器，所以直接修改其配置
+
+```javascript
+// config/config.default.js
+module.exports = appInfo => ({
+  view: {
+    // 如果还有其他模板引擎，需要合并多个目录
+    root: path.join(appInfo.baseDir, 'app/assets'),
+  },
+});
+```
 
 ### 使用其他模板引擎
 
+如果无法满足文件映射，可以配合其他模板引擎使用，这时不需要配置 assets 模板引擎，查看[使用 umi 的例子](https://github.com/eggjs/examples/tree/master/assets-with-umi)。
+
+```javascript
+// config/config.default.js
+exports.view = {
+  mapping: {
+    '.html': 'nunjucks',
+  },
+};
+```
+
+渲染模板
+
+```javascript
+// app/controller/home.js
+module.exports = class HomeController extends Controller {
+  async render() {
+    await this.ctx.render('index.html');
+  }
+}
+```
+
+添加模板文件（简化了 umi 的模板）
+
+```html
+<!doctype html>
+<html>
+  <head>
+    {{ helper.assets.getStyle('umi.css') | safe }}
+  </head>
+  <body>
+    <div id="root"></div>
+    {{ helper.assets.getScript('umi.js') | safe }}
+  </body>
+</html>
+```
+
+**在其他模板中必须添加参数生成需要的静态资源路径**
+
 ### 上下文数据
 
-## 本地开发工具
+有时候前端需要获取服务端数据，所以在渲染页面时会向 window 全局对象设置数据。
 
-### 构建工具约定
+assets 模板引擎可直接传入参数，默认前端代码可以从 `window.context` 获取数据。
+
+```javascript
+// app/controller/home.js
+module.exports = class HomeController extends Controller {
+  async render() {
+    await this.ctx.render('index.js', { data: 1 });
+  }
+}
+```
+
+其他模板引擎需要调用 `helper.assets.getContext(__context__)` 并传入上下文的参数
+
+```javascript
+// app/controller/home.js
+module.exports = class HomeController extends Controller {
+  async render() {
+    await this.ctx.render('index.html', {
+      __context__: { data: 1 },
+    });
+  }
+}
+```
+
+默认属性为 `context`，这个可以通过配置修改
+
+```javascript
+exports.assets = {
+  contextKey: '__context__',
+};
+```
+
+## 构建工具
+
+这种模式最重要的是
+
+### 
 
 ## 部署
 
