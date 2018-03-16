@@ -129,7 +129,7 @@ module.exports = appInfo => ({
 
 ### 使用其他模板引擎
 
-如果无法满足文件映射，可以配合其他模板引擎使用，这时不需要配置 assets 模板引擎，查看[使用 umi 的例子](https://github.com/eggjs/examples/tree/master/assets-with-umi)。
+如果无法满足[文件映射](#映射关系)，可以配合其他模板引擎使用，这时不需要配置 assets 模板引擎，查看[使用 umi 的例子](https://github.com/eggjs/examples/tree/master/assets-with-umi)。
 
 ```javascript
 // config/config.default.js
@@ -206,11 +206,44 @@ exports.assets = {
 
 ## 构建工具
 
-这种模式最重要的是
+这种模式最重要的是和构建工具整合，保证本地开发体验及自动部署，所以构建工具和框架需要有一层约定。
 
-### 
+### 映射关系
 
-## 部署
+构建工具的 entry 配置决定了映射关系，如基于 [webpack] 封装的 [roadhog]、[umi] 等工具内置了映射关系，如果单独使用 [webpack] 需要根据这层映射来选择用哪种方式。
+
+- 文件源码 `app/assets/index.js`，对应的 entry 为 `index.js`
+
+- 本地静态服务接收以此为 entry，如请求 `http://127.0.0.1:8000/index.js`
+
+- 构建生成的文件需要有这层映射关系，如生成 index.{hash}.js 并生成 manifest 文件描述关系如
+
+  ```json
+  {
+    "index.js": "index.{hash}.js"
+  }
+  ```
+
+[roadhog] 完全满足这个映射关系使用 [assets 模板引擎](#使用 assets 模板引擎)。而 [umi] 不满足文件映射，因为他只有一个入口 `umi.js` 文件，所以选择[其他模板引擎](#使用其他模板引擎)的方案。
+
+**其他构建工具的接入需要满足这层映射关系。**
+
+### 本地开发
+
+以 [roadhog] 为例，可查看[示例配置](https://github.com/eggjs/examples/blob/master/assets-with-roadhog/config/config.default.js)
+
+```javascript
+exports.assets = {
+  devServer: {
+    command: 'roadhog dev',
+    port: 8000,
+  },
+};
+```
+
+本地服务配置成 `roadhog dev`，配置 `port` 来检查服务是否启动完成，因为 roadhog 默认启动端口为 8000，所以这里配置成 8000。
+
+### 部署
 
 
 
