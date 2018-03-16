@@ -8,6 +8,12 @@ title: 静态资源
 3. 和模板引擎集成
 4. 在[约定下](#构建工具约定)可使用多种构建工具，如 [webpack]、[roadhog]、[umi] 等
 
+可以先查看示例
+
+- [roadhog 工具示例](https://github.com/eggjs/examples/tree/master/assets-with-roadhog)
+- [umi 工具示例](https://github.com/eggjs/examples/tree/master/assets-with-umi)
+- [Ant Design Pro 示例](https://github.com/eggjs/egg-ant-design-pro)
+
 ## 页面渲染
 
 可通过自动或手动的方式添加静态资源，以下有两种方式
@@ -208,6 +214,8 @@ exports.assets = {
 
 这种模式最重要的是和构建工具整合，保证本地开发体验及自动部署，所以构建工具和框架需要有一层约定。
 
+下面以 [roadhog] 为例
+
 ### 映射关系
 
 构建工具的 entry 配置决定了映射关系，如基于 [webpack] 封装的 [roadhog]、[umi] 等工具内置了映射关系，如果单独使用 [webpack] 需要根据这层映射来选择用哪种方式。
@@ -230,7 +238,7 @@ exports.assets = {
 
 ### 本地开发
 
-以 [roadhog] 为例，可查看[示例配置](https://github.com/eggjs/examples/blob/master/assets-with-roadhog/config/config.default.js)
+查看[示例配置](https://github.com/eggjs/examples/blob/master/assets-with-roadhog/config/config.default.js)，本地服务配置成 `roadhog dev`，配置 `port` 来检查服务是否启动完成，因为 roadhog 默认启动端口为 8000，所以这里配置成 8000。
 
 ```javascript
 exports.assets = {
@@ -241,18 +249,50 @@ exports.assets = {
 };
 ```
 
-本地服务配置成 `roadhog dev`，配置 `port` 来检查服务是否启动完成，因为 roadhog 默认启动端口为 8000，所以这里配置成 8000。
-
 ### 部署
 
+静态资源部署之前需要构建，配置 `roadhog build` 命令，并执行 `npm run build`
 
+```json
+{
+  "scripts": {
+    "build": "SET_PUBLIC_PATH=true roadhog build"
+  }
+}
+```
 
+**注意：这里添加了 `SET_PUBLIC_PATH` 变量是因为 roadhog 这样才能开启 publicPath**
 
+构建的结果根据 `.webpackrc` 配置的 output 决定，示例是放到 `app/public` 目录下，由 `egg-static` 提供服务。
 
-[webpack]:
+同时根据 `.webpackrc` 配置的 manifest 生成一个 `manifest.json` 文件到 `config` 目录下（egg 需要读取这个文件作为映射关系）。
 
-[roadhog]:
+#### 应用提供服务
 
-[umi]:
+现在应用启动后可以通过 `http://127.0.0.1:7001/public/index.{hash}.js` 访问静态资源，发现这里多了一层 public 的路径，所以需要添加 publicPath 配置。
 
-[egg-view-assets]:
+```javascript
+// config/config.prod.js
+exports.assets = {
+  publicPath: '/public/',
+};
+```
+
+#### 使用 CDN
+
+一般静态资源都会发到 CDN，所以在构建完成后需要平台将构建产物发布到 CDN 上，如 `https://cdn/myapp/index.{hash}.js`。
+
+现在除了 publichPath 还需要修改静态资源地址
+
+```javascript
+// config/config.prod.js
+exports.assets = {
+  url: 'https://cdn',
+  publicPath: '/myapp/',
+};
+```
+
+[webpack]: https://webpack.js.org/
+[roadhog]: https://github.com/sorrycc/roadhog
+[umi]: https://umijs.org/
+[egg-view-assets]: https://github.com/eggjs/egg-view-assets
