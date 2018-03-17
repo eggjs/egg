@@ -24,7 +24,7 @@ assets 模板引擎并非服务端渲染，而是以一个静态资源文件作�
 
 配置插件
 
-```javascript
+```js
 // config/plugin.js
 exports.assets = {
   enable: true,
@@ -34,7 +34,7 @@ exports.assets = {
 
 配置 assets 模板引擎
 
-```javascript
+```js
 // config/config.default.js
 exports.view = {
   mapping: {
@@ -45,7 +45,7 @@ exports.view = {
 
 添加静态资源入口文件 `app/view/index.js`，然后调用 render 方法进行渲染
 
-```javascript
+```js
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
@@ -76,7 +76,7 @@ module.exports = class HomeController extends Controller {
 
 一般默认的 html 无法满足需求，可以指定模板路径和模板引擎。
 
-```javascript
+```js
 // config/config.default.js
 module.exports = appInfo => ({
   assets: {
@@ -107,7 +107,7 @@ module.exports = appInfo => ({
 
 支持根据不同页面指定模板，可以在 `render` 方法传参
 
-```javascript
+```js
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
@@ -123,7 +123,7 @@ module.exports = class HomeController extends Controller {
 
 以上例子是将静态资源放到 `app/view` 目录下，但大部分情况希望放到独立目录，如 `app/assets`。因为 assets 模板引擎使用 `egg-view` 的加载器，所以直接修改其配置
 
-```javascript
+```js
 // config/config.default.js
 module.exports = appInfo => ({
   view: {
@@ -137,7 +137,7 @@ module.exports = appInfo => ({
 
 如果无法满足[文件映射](#映射关系)，可以配合其他模板引擎使用，这时不需要配置 assets 模板引擎，查看[使用 umi 的例子](https://github.com/eggjs/examples/tree/master/assets-with-umi)。
 
-```javascript
+```js
 // config/config.default.js
 exports.view = {
   mapping: {
@@ -148,7 +148,7 @@ exports.view = {
 
 渲染模板
 
-```javascript
+```js
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
@@ -180,7 +180,7 @@ module.exports = class HomeController extends Controller {
 
 assets 模板引擎可直接传入参数，默认前端代码可以从 `window.context` 获取数据。
 
-```javascript
+```js
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
@@ -191,7 +191,7 @@ module.exports = class HomeController extends Controller {
 
 其他模板引擎需要调用 `helper.assets.getContext(__context__)` 并传入上下文的参数
 
-```javascript
+```js
 // app/controller/home.js
 module.exports = class HomeController extends Controller {
   async render() {
@@ -204,7 +204,7 @@ module.exports = class HomeController extends Controller {
 
 默认属性为 `context`，这个可以通过配置修改
 
-```javascript
+```js
 exports.assets = {
   contextKey: '__context__',
 };
@@ -240,7 +240,7 @@ exports.assets = {
 
 查看[示例配置](https://github.com/eggjs/examples/blob/master/assets-with-roadhog/config/config.default.js)，本地服务配置成 `roadhog dev`，配置 `port` 来检查服务是否启动完成，因为 roadhog 默认启动端口为 8000，所以这里配置成 8000。
 
-```javascript
+```js
 exports.assets = {
   devServer: {
     command: 'roadhog dev',
@@ -271,7 +271,7 @@ exports.assets = {
 
 现在应用启动后可以通过 `http://127.0.0.1:7001/public/index.{hash}.js` 访问静态资源，发现这里多了一层 public 的路径，所以需要添加 publicPath 配置。
 
-```javascript
+```js
 // config/config.prod.js
 exports.assets = {
   publicPath: '/public/',
@@ -284,7 +284,7 @@ exports.assets = {
 
 现在除了 publichPath 还需要修改静态资源地址
 
-```javascript
+```js
 // config/config.prod.js
 exports.assets = {
   url: 'https://cdn',
