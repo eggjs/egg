@@ -79,7 +79,7 @@ Each configuration item in `plugin.js` supports:
 
 ### Enabling/Disabling plugins
 
-The application does not need the package or path configuration when using the plugins built in the framework. You only need to specify whether they are enabled or not:
+The application does not need the package or path configuration when using the plugins built in the upper framework. You only need to specify whether they are enabled or not:
 
 ```js
 // For the built-in plugin, you can use the following simple way to turn on or off
