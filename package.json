@@ -52,6 +52,7 @@
     "ylru": "^1.2.0"
   },
   "devDependencies": {
+    "@types/urllib": "^2.25.0",
     "address": "^1.0.3",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
