@@ -1,6 +1,6 @@
 ## Title: Passport
 
-** "Login authentication" ** is a common business scenario, including "account password login method" and "third-party unified login."
+**`Login authentication`** is a common business scenario, including "account password login method" and "third-party unified login".
 
 Among them, we often use the latter, such as Google, GitHub, QQ unified login, which are based on [OAuth](https://oauth.net/2/) specification.
 
