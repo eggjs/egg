@@ -64,7 +64,7 @@ describe('test/lib/egg.test.js', () => {
       assert(json.config.name === 'demo');
       assert(json.config.keys === '<String len: 3>');
       assert(json.config.buffer === '<Buffer len: 4>');
-      assert(json.config.siteFile['/favicon.ico'] === '<Buffer len: 14191>');
+      assert(json.config.siteFile['/favicon.ico'].startsWith('<Buffer len:'));
 
       assert(json.config.pass === '<String len: 12>');
       assert(json.config.pwd === '<String len: 11>');
