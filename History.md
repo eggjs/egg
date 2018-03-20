@@ -15,6 +15,7 @@
 
 ### Commits
 
+  * [[`6040d6f8f`](http://github.com/eggjs/egg/commit/6040d6f8f1a67282ff697c6d86945bc0cb487fe6)] - chore: fix spelling error rotator (#2242) (HE ZIQIANG <<heziqiang@qq.com>>)
   * [[`1554da57e`](http://github.com/eggjs/egg/commit/1554da57ef9d8b0fd2cb023a0cc68b50bee6b69f)] - chore: upgrade cluster-client to 2.x (#2236) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
   * [[`9faa052bf`](http://github.com/eggjs/egg/commit/9faa052bfdffe887c1557126a73a62fe2e462dc5)] - feat: tsd add init module (#2233) (Eward Song <<eward.song@gmail.com>>)
   * [[`d5f9059f1`](http://github.com/eggjs/egg/commit/d5f9059f1935a67748033143081755811664df9d)] - docs: translation for basic plugin (#2166) (Cemre Mengu <<cemremengu@gmail.com>>)
