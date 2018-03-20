@@ -1,5 +1,28 @@
 # History
 
+## 2018-03-20, Version 2.5.0 @atian25
+
+### Notable changes
+
+* **feature**
+  * display router when log app (#2230)
+  * update `favicon.png`
+  * upgrade cluster-client to 2.x (#2236)
+
+* **docs**
+  * improve d.ts
+  * add socket.io webchat description (#2198)
+
+### Commits
+
+  * [[`1554da57e`](http://github.com/eggjs/egg/commit/1554da57ef9d8b0fd2cb023a0cc68b50bee6b69f)] - chore: upgrade cluster-client to 2.x (#2236) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+  * [[`9faa052bf`](http://github.com/eggjs/egg/commit/9faa052bfdffe887c1557126a73a62fe2e462dc5)] - feat: tsd add init module (#2233) (Eward Song <<eward.song@gmail.com>>)
+  * [[`d5f9059f1`](http://github.com/eggjs/egg/commit/d5f9059f1935a67748033143081755811664df9d)] - docs: translation for basic plugin (#2166) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`7afc7e24b`](http://github.com/eggjs/egg/commit/7afc7e24b60776a71702ae5495d637b1ac4a3d06)] - feat: display router when log app (#2230) (Kiho · Cham <<monkindey@163.com>>)
+  * [[`5e99fd6fd`](http://github.com/eggjs/egg/commit/5e99fd6fd86be4de5a2eca24bc2025f120cef6aa)] - docs: egg-passsport-local -> egg-passport-local (楊傑文 Chuck Yang <<chuck@ninethreads.com>>)
+  * [[`c042366df`](http://github.com/eggjs/egg/commit/c042366df6a691e56c528f16083516a53e114944)] - docs(socket.io): add webchat description (#2198) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`5cce8795a`](http://github.com/eggjs/egg/commit/5cce8795a733c9096de6e050fec5a87be99b0002)] - chore: fix typo. (#2172) (薛定谔的猫 <<hh_2013@foxmail.com>>)
+
 ## 2018-03-05, Version 2.4.1 @dead-horse
 
 ### Notable changes
