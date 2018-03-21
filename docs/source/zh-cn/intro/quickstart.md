@@ -26,6 +26,15 @@ $ npm run dev
 $ open localhost:7001
 ```
 
+### Type Description
+
+type | Description
+:----: | ----:
+simple | Simple egg app boilerplate 
+empty  | Empty egg app boilerplate 
+plugin | egg plugin boilerplate
+framework | egg framework boilerplate
+
 ## 逐步搭建
 
 通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。

@@ -30,6 +30,15 @@ $ npm run dev
 $ open localhost:7001
 ```
 
+### Type 说明
+
+type | 说明
+:----: | ----:
+simple | 简单 egg 应用程序模板
+empty  | 空的 egg 应用程序模板
+plugin | egg plugin 模板
+framework | egg framework 模板
+
 ## Step by Step
 
 Usually you can just use [egg-init] of the previous section,
