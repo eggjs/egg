@@ -30,14 +30,14 @@ $ npm run dev
 $ open localhost:7001
 ```
 
-### Type 说明
+### Skeleton Type Description
 
-type | 说明
+type | Description
 :----: | ----:
-simple | 简单 egg 应用程序模板
-empty  | 空的 egg 应用程序模板
-plugin | egg plugin 模板
-framework | egg framework 模板
+simple | Simple egg app boilerplate 
+empty  | Empty egg app boilerplate 
+plugin | egg plugin boilerplate
+framework | egg framework boilerplate
 
 ## Step by Step
 

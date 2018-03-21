@@ -26,14 +26,14 @@ $ npm run dev
 $ open localhost:7001
 ```
 
-### Type Description
+### 骨架类型说明
 
-type | Description
+type | 说明
 :----: | ----:
-simple | Simple egg app boilerplate 
-empty  | Empty egg app boilerplate 
-plugin | egg plugin boilerplate
-framework | egg framework boilerplate
+simple | 简单 egg 应用程序模板
+empty  | 空的 egg 应用程序模板
+plugin | egg plugin 模板
+framework | egg framework 模板
 
 ## 逐步搭建
 
