@@ -26,15 +26,6 @@ $ npm run dev
 $ open localhost:7001
 ```
 
-### 骨架类型说明
-
-type | 说明
-:----: | ----:
-simple | 简单 egg 应用程序模板
-empty  | 空的 egg 应用程序模板
-plugin | egg plugin 模板
-framework | egg framework 模板
-
 ## 逐步搭建
 
 通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
@@ -455,6 +446,7 @@ $ npm test
 
 短短几章内容，只能讲 Egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
+- 关于骨架类型，参见[骨架说明](../tutorials/index.md)
 - 提供了强大的扩展机制，参见[插件](../basics/plugin.md)。
 - 一个大规模的团队需要遵循一定的约束和约定，在 Egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
 - 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读 [渐进式开发](../tutorials/progressive.md)。

@@ -30,15 +30,6 @@ $ npm run dev
 $ open localhost:7001
 ```
 
-### Skeleton Type Description
-
-type | Description
-:----: | ----:
-simple | Simple egg app boilerplate 
-empty  | Empty egg app boilerplate 
-plugin | egg plugin boilerplate
-framework | egg framework boilerplate
-
 ## Step by Step
 
 Usually you can just use [egg-init] of the previous section,
@@ -484,6 +475,8 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 
 We can only touch the tip of the iceberg of Egg with the above short sections.
 Where to go from here? read our documentation to better understand the framework.
+
+- About Egg boilerplate type, See [Boilerplate Type Description](../tutorials/index.md).
 - Egg provides a powerful mechanism for extending features. See [Plugin](../basics/plugin.md).
 - Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suit their special needs. See more on [Frameworks].(../advanced/framework.md).
 - Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).

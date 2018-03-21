@@ -4,6 +4,15 @@ title: 教程
 - [渐进式开发](./progressive.md)
 - [RESTful API](./restful.md)
 
+## 骨架类型说明
+
+骨架类型 | 说明
+:----: | ----:
+simple | 简单 egg 应用程序骨架
+empty  | 空的 egg 应用程序骨架
+plugin | egg plugin 骨架
+framework | egg framework 骨架
+
 ## 模板引擎
 
 框架内置 [egg-view] 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。查看[如何使用模板](../core/view.md)，如果想更深入的了解，可以查看[模板插件开发](../advanced/view-plugin.md)。

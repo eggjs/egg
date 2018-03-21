@@ -4,6 +4,15 @@ title: Tutorials
 - [Progressive Development](./progressive.md)
 - [RESTful API](./restful.md)
 
+## Boilerplate Type Description
+
+boilerplate type | Description
+:----: | ----:
+simple | Simple egg app boilerplate 
+empty  | Empty egg app boilerplate 
+plugin | egg plugin boilerplate
+framework | egg framework boilerplate
+
 ## Template Engines
 
 Build in [egg-view] as template engine solution and support multiple render, which is called by plugin but keeping the consistent render API. Refer to [how to use templates](../core/view.md)，More details on [template plugin development](../advanced/view-plugin.md).
