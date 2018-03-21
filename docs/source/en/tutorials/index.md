@@ -6,6 +6,13 @@ title: Tutorials
 
 ## Boilerplate Type Description
 
+You can use boilerplate type like this:
+
+```bash
+$ egg-init --type=simple
+```
+### Options
+
 boilerplate type | Description
 :----: | ----:
 simple | Simple egg app boilerplate 
