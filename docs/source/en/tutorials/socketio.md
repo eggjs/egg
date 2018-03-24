@@ -19,7 +19,7 @@ The framework provides the [egg-socket.io] plugin with the following development
 $ npm i egg-socket.io --save
 ```
 
-** Enabling the plugin: **
+** Enable the plugin: **
 
 ```js
 // {app_root} /config/plugin.js
@@ -63,7 +63,7 @@ exports.io = {
 
 ** redis: **
 
-[egg-socket.io] has built-in redis support via `socket.io-redis`. In cluster mode, the use of redis can make it relatively simple to achieve information sharing of clients/rooms and so on 
+[egg-socket.io] has built-in redis support via `socket.io-redis`. In cluster mode, the use of redis can make it relatively simple to achieve information sharing of clients/rooms and so on
 
 ```js
 // {app_root} / config / config. $ {env} .js
@@ -269,22 +269,22 @@ module.exports = app => {
 
 Nsp has the following system events:
 
-- `disconnecting` doing the disconnect
-- `disconnect` connection has disconnected.
-- `error` Error occured
+* `disconnecting` doing the disconnect
+* `disconnect` connection has disconnected.
+* `error` Error occurred
 
 ### Namespace/Room
 
 #### Namespace (nsp)
 
-The namespace is usually meant to be assigned to different access points or paths. If the client does not specify an nsp, it is assigned to the default namespace "/" by default.
+The namespace is usually meant to be assigned to different access points or paths. If the client does not specify a nsp, it is assigned to "/" by default.
 
 In socket.io we use the `of` to divide the namespace; given that nsp is usually pre-defined and relatively fixed, the framework encapsulates it and uses configuration to partition different namespaces.
 
 ```js
 // socket.io
 var nsp = io.of('/my-namespace');
-nsp.on('connection', function(socket){
+nsp.on('connection', function(socket) {
   console.log('someone connected');
 });
 nsp.emit('hi', 'everyone!');
@@ -294,9 +294,9 @@ exports.io = {
   namespace: {
     '/': {
       connectionMiddleware: [],
-      packetMiddleware: [],
-    },
-  },
+      packetMiddleware: []
+    }
+  }
 };
 ```
 
@@ -308,11 +308,11 @@ Room exists in nsp and is added or left by the join/leave method; the method use
 Const room = 'default_room';
 
 Module.exports = app => {
-   Return async (ctx, next) => {
-     Ctx.socket.join(room);
-     Ctx.app.io.of('/').to(room).emit('online', { msg: 'welcome', id: ctx.socket.id });
-     Await next();
-     Console.log('disconnection!');
+   return async (ctx, next) => {
+     ctx.socket.join(room);
+     ctx.app.io.of('/').to(room).emit('online', { msg: 'welcome', id: ctx.socket.id });
+     await next();
+     console.log('disconnection!');
    };
 };
 ```
@@ -321,7 +321,7 @@ Module.exports = app => {
 
 ## Examples
 
-Here we use [egg-socket.io] to do a small example of supporting p2p chat
+Here we use [egg-socket.io] to do a small example which supports p2p chat
 
 ### client
 
@@ -329,52 +329,47 @@ The UI-related content is not rewritten. It can be called via window.socket
 
 ```js
 // browser
-Const log = console.log;
+const log = console.log;
 
-Window.onload = function () {
-   // init
-   Const socket = io('/', {
+window.onload = function() {
+  // init
+  const socket = io('/', {
+    // Actual use can pass parameters here
+    query: {
+      room: 'demo',
+      userId: `client_${Math.random()}`
+    },
 
-     // Actual use can pass parameters here
-     Query: {
-       Room: 'demo',
-       userId: `client_${Math.random()}`,
-     },
+    transports: ['websocket']
+  });
 
-     Transports: ['websocket']
-   });
+  socket.on('connect', () => {
+    const id = socket.id;
 
-   Socket.on('connect', () => {
-     Const id = socket.id;
+    log('#connect,', id, socket); // Receive online user information
 
-     Log('#connect,', id, socket);
+    socket.on('online', msg => {
+      log('#online,', msg);
+    }); // Listen for its own id to implement p2p communication
 
-     // Receive online user information
-     Socket.on('online', msg => {
-       Log('#online,', msg);
-     });
+    socket.on(id, msg => {
+      log('#receive,', msg);
+    }); // system event
 
-     // Listen for its own id to implement p2p communication
-     Socket.on(id, msg => {
-       Log('#receive,', msg);
-     });
+    socket.on('disconnect', msg => {
+      log('#disconnect', msg);
+    });
 
-     // system event
-     Socket.on('disconnect', msg => {
-       Log('#disconnect', msg);
-     });
+    socket.on('disconnecting', () => {
+      log('#disconnecting');
+    });
 
-     Socket.on('disconnecting', () => {
-       Log('#disconnecting');
-     });
+    socket.on('error', () => {
+      log('#error');
+    });
+  });
 
-     Socket.on('error', () => {
-       Log('#error');
-     });
-
-   });
-
-   Window.socket = socket;
+  window.socket = socket;
 };
 ```
 
@@ -386,14 +381,14 @@ The sample code is as follows:
 
 ```js
 // Small program-side sample code
-Import io from 'vendor/wxapp-socket-io.js';
+import io from 'vendor/wxapp-socket-io.js';
 
-Const socket = io('ws://127.0.0.1:7001');
-Socket.on('connect', function () {
-   Socket.emit('chat', 'hello world!');
+const socket = io('ws://127.0.0.1:7001');
+socket.on('connect', function() {
+  socket.emit('chat', 'hello world!');
 });
-Socket.on('res', msg => {
-   Console.log('res from server: %s!', msg);
+socket.on('res', msg => {
+  console.log('res from server: %s!', msg);
 });
 ```
 
@@ -405,19 +400,18 @@ The following is part of the demo code and explains the role of each method
 
 ```js
 // {app_root}/config/config.${env}.js
-Exports.io = {
-   Namespace: {
-     '/': {
-       connectionMiddleware: [ 'auth' ],
-       packetMiddleware: [ ], // processing for message is not implemented temporarily
-     },
-   },
+exports.io = {
+  namespace: {
+    '/': {
+      connectionMiddleware: ['auth'],
+      packetMiddleware: [] // processing for message is not implemented temporarily
+    }
+  }, // Data sharing through redis in cluster mode
 
-   // Data sharing through redis in cluster mode
-   Redis: {
-     Host: '127.0.0.1',
-     Port: 6379,
-   },
+  redis: {
+    host: '127.0.0.1',
+    port: 6379
+  }
 };
 ```
 
@@ -428,20 +422,24 @@ Framework extensions for encapsulating data formats
 ```js
 // {app_root}/app/extend/helper.js
 
-Module.exports = {
-   parseMsg(action, payload = {}, metadata = {}) {
-     Const meta = Object.assign({}, {
-       Timestamp: Date.now(),
-     }, metadata);
+module.exports = {
+  parseMsg(action, payload = {}, metadata = {}) {
+    const meta = Object.assign(
+      {},
+      {
+        timestamp: Date.now()
+      },
+      metadata
+    );
 
-     Return {
-       Data: {
-         Action,
-         Payload,
-       },
-       Meta,
-     };
-   },
+    return {
+      data: {
+        action,
+        payload
+      },
+      meta
+    };
+  }
 };
 ```
 
@@ -468,147 +466,134 @@ Format：
 ```js
 // {app_root}/app/io/middleware/auth.js
 
-Const PREFIX = 'room';
+const PREFIX = 'room';
 
-Module.exports = () => {
-  Return async (ctx, next) => {
-    Const { app, socket, logger, helper } = ctx;
-    Const id = socket.id;
-    Const nsp = app.io.of('/');
-    Const query = socket.handshake.query;
+module.exports = () => {
+  return async (ctx, next) => {
+    const { app, socket, logger, helper } = ctx;
+    const id = socket.id;
+    const nsp = app.io.of('/');
+    const query = socket.handshake.query; // User Info
 
-    // User Info
-    Const { room, userId } = query;
-    Const rooms = [room];
+    const { room, userId } = query;
+    const rooms = [room];
 
-    Logger.debug('#user_info', id, room, userId);
+    logger.debug('#user_info', id, room, userId);
 
-    Const tick = (id, msg) => {
-      Logger.debug('#tick', id, msg);
+    const tick = (id, msg) => {
+      logger.debug('#tick', id, msg); // Send message before kicking user
 
-      // Send message before kicking user
-      Socket.emit(id, helper.parseMsg('deny', msg));
+      socket.emit(id, helper.parseMsg('deny', msg)); // Call the adapter method to kick out the user and the client triggers the disconnect event
 
-      // Call the adapter method to kick out the user and the client triggers the disconnect event
-      nsp.adapter.remoteDisconnect(id, true, err => {
-        Logger.error(err);
-      });
-    };
+      nsp.adapter.remoteDisconnect(id, true, err => {
+        logger.error(err);
+      });
+    }; // Check if the room exists, kick it out if it doesn't exist // Note: here app.redis has nothing to do with the plugin, it can be replaced by other storage
 
-    // Check if the room exists, kick it out if it doesn't exist
-    // Note: here app.redis has nothing to do with the plugin, it can be replaced by other storage
-    Const hasRoom = await app.redis.get(`${PREFIX}:${room}`);
+    const hasRoom = await app.redis.get(`${PREFIX}:${room}`);
 
-    Logger.debug('#has_exist', hasRoom);
+    logger.debug('#has_exist', hasRoom);
 
-    If (!hasRoom) {
-      Tick(id, {
-        Type: 'deleted',
-        Message: 'deleted, room has been deleted.',
-      });
-      Return;
-    }
+    if (!hasRoom) {
+      tick(id, {
+        type: 'deleted',
+        message: 'deleted, room has been deleted.'
+      });
+      return;
+    } // When the user joins
 
-    // When the user joins
-    Nsp.adapter.clients(rooms, (err, clients) => {
+    nsp.adapter.clients(rooms, (err, clients) => {
+      // Append current socket information to clients
+      clients[id] = query; // Join room
 
-       // Append current socket information to clients
-      Clients[id] = query;
+      socket.join(room);
 
-      // Join room
-      Socket.join(room);
+      logger.debug('#online_join', _clients); // Update online user list
 
-      Logger.debug('#online_join', _clients);
+      nsp.to(room).emit('online', {
+        clients,
+        action: 'join',
+        target: 'participator',
+        message: `User(${id}) joined.`
+      });
+    });
 
-      // Update online user list
-      Nsp.to(room).emit('online', {
-        Clients,
-        Action: 'join',
-        Target: 'participator',
-        Message: `User(${id}) joined.`,
-      });
-    });
+    await next(); // When the user leaves
 
-    Await next();
+    nsp.adapter.clients(rooms, (err, clients) => {
+      logger.debug('#leave', room);
 
-    // When the user leaves
-    Nsp.adapter.clients(rooms, (err, clients) => {
-      Logger.debug('#leave', room);
+      const _clients = {};
+      clients.forEach(client => {
+        const _id = client.split('#')[1];
+        const _client = app.io.sockets.sockets[_id];
+        const _query = _client.handshake.query;
+        _clients[client] = _query;
+      });
 
-      Const _clients = {};
-      clients.forEach(client => {
-        Const _id = client.split('#')[1];
-        Const _client = app.io.sockets.sockets[_id];
-        Const _query = _client.handshake.query;
-        _clients[client] = _query;
-      });
+      logger.debug('#online_leave', _clients); // Update online user list
 
-      Logger.debug('#online_leave', _clients);
-
-      // Update online user list
-      Nsp.to(room).emit('online', {
-        Clients: _clients,
-        Action: 'leave',
-        Target: 'participator',
-        Message: `User(${id}) leaved.`,
-      });
-    });
-
-  };
+      nsp.to(room).emit('online', {
+        clients: _clients,
+        action: 'leave',
+        target: 'participator',
+        message: `User(${id}) leaved.`
+      });
+    });
+  };
 };
 ```
 
 #### controller
 
-P2P communication, data exchange through exchange
+Data exchange of P2P communication is through exchange
 
 ```js
 // {app_root}/app/io/controller/nsp.js
-Const Controller = require('egg').Controller;
+const Controller = require('egg').Controller;
 
-Class NspController extends controller {
-   Async exchange() {
-     Const { ctx, app } = this;
-     Const nsp = app.io.of('/');
-     Const message = ctx.args[0] || {};
-     Const socket = ctx.socket;
-     Const client = socket.id;
+class NspController extends controller {
+  async exchange() {
+    const { ctx, app } = this;
+    const nsp = app.io.of('/');
+    const message = ctx.args[0] || {};
+    const socket = ctx.socket;
+    const client = socket.id;
 
-     Try {
-       Const { target, payload } = message;
-       If (!target) return;
-       Const msg = ctx.helper.parseMsg('exchange', payload, { client, target });
-       Nsp.emit(target, msg);
-     } Catch (error) {
-       App.logger.error(error);
-     }
-   }
+    try {
+      const { target, payload } = message;
+      if (!target) return;
+      const msg = ctx.helper.parseMsg('exchange', payload, { client, target });
+      nsp.emit(target, msg);
+    } catch (error) {
+      app.logger.error(error);
+    }
+  }
 }
 
-Module.exports = NspController;
+module.exports = NspController;
 ```
 
 #### router
 
 ```js
 // {app_root}/app/router.js
-Module.exports = app => {
-   Const { router, controller, io } = app;
-   Router.get('/', controller.home.index);
+module.exports = app => {
+  const { router, controller, io } = app;
+  router.get('/', controller.home.index); // socket.io
 
-   // socket.io
-   Io.of('/').route('exchange', io.controller.nsp.exchange);
+  io.of('/').route('exchange', io.controller.nsp.exchange);
 };
 ```
 
 Open two tab pages and call up the console:
 
 ```js
-Socket.emit('exchange', {
-   Target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
-   Payload: {
-     Msg : 'test',
-   },
+socket.emit('exchange', {
+  target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+  payload: {
+    msg: 'test'
+  }
 });
 ```
 
@@ -616,9 +601,9 @@ Socket.emit('exchange', {
 
 ## Reference Links
 
-- [socket.io]
-- [egg-socket.io]
-- [egg-socket.io example] (https://github.com/eggjs/egg-socket.io/tree/master/example)
+* [socket.io]
+* [egg-socket.io]
+* [egg-socket.io example](https://github.com/eggjs/egg-socket.io/tree/master/example)
 
 [socket.io]: https://socket.io
 [egg-socket.io]: https://github.com/eggjs/egg-socket.io

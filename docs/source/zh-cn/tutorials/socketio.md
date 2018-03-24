@@ -277,7 +277,7 @@ nsp 有如下的系统事件:
 
 - `disconnecting` doing the disconnect
 - `disconnect` connection has disconnected.
-- `error` Error occured
+- `error` Error occurred
 
 ### Namespace/Room
 
