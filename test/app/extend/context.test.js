@@ -250,6 +250,20 @@ describe('test/app/extend/context.test.js', () => {
       );
     });
 
+    it('should use custom task name first', async () => {
+      await app.httpRequest()
+        .get('/custom')
+        .expect(200)
+        .expect('hello');
+      await sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      assert(/background run result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:customTaskName success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+    });
+
     it('should run background task error', async () => {
       mm.consoleLevel('NONE');
       await app.httpRequest()

@@ -80,7 +80,7 @@ module.exports = {
   },
 
   /**
-   * logger file rotater
+   * logger file rotator
    * @member {Object} Plugin#logrotator
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0

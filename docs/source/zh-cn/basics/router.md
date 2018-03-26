@@ -318,7 +318,7 @@ module.exports = app => {
   app.router.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
 };
 
-// curl http://localhost:7001/search2?name=egg
+// curl http://localhost:7001/search?name=egg
 ```
 
 ### 太多路由映射?
