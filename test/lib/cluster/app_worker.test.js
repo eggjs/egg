@@ -62,6 +62,31 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     ]);
   });
 
+  describe('customized client error', () => {
+    let app;
+    before(() => {
+      app = utils.cluster('apps/app-server-customized-client-error');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should do customized request when HTTP request packet broken', async () => {
+      const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
+      let html = '';
+      if ((version[0] === 8 && version[1] >= 10) ||
+        (version[0] === 9 && version[1] >= 4) ||
+        version[0] > 9) {
+        html = new RegExp(
+          'GET /foo bar HTTP/1.1\r\nHost: 127.0.0.1:\\d+\r\nAccept-Encoding: gzip, ' +
+          'deflate\r\nUser-Agent: node-superagent/3.8.2\r\nConnection: close\r\n\r\n');
+      }
+
+      const test = app.httpRequest().get('/foo bar');
+      test.request().path = '/foo bar';
+      await test.expect(html).expect('foo', 'bar').expect(418);
+    });
+  });
+
   describe('listen hostname', () => {
     let app;
     before(() => {
