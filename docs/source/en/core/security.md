@@ -350,7 +350,9 @@ module.exports = {
 };
 ```
 
-#### Ignore JSON request
+#### Ignore JSON request(deprecated)
+
+**Notice: this configure is deprecated, the attacker can bypass it through [flash and 307](https://www.geekboy.ninja/blog/exploiting-json-cross-site-request-forgery-csrf-using-flash/), please don't enable it in production environment!**
 
 With security policy protection [SOP](https://en.wikipedia.org/wiki/Same-origin_policy), basically all modern browsers do not allow cross domain request when content-type is set to JSON, so we can just leave out JSON request.
 
@@ -426,7 +428,7 @@ OK
 
 Then server sets an httpOnly Cookie `a` to 1, it is not possible to get it through the script in the browser environment.
 
-Then we send a TRACE method request to the server with Cookie `curl -X TRACE -b a=1 -i http://127.0.0.1:7001`, and will get response below: 
+Then we send a TRACE method request to the server with Cookie `curl -X TRACE -b a=1 -i http://127.0.0.1:7001`, and will get response below:
 
 ```
   HTTP/1.1 200 OK
@@ -592,7 +594,7 @@ So, if you use the Egg framework to develop web site developers, please be sure 
 
 For HTTPS, one should pay attention to is the HTTP transport security (HSTS) strictly, if you don't use HSTS, when a user input url in the browser without HTTPS, the browser will use HTTP access by default.
 
-Framework provides `HSTS Strict-Transport-security`, this header will be opened by default, then let the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header. 
+Framework provides `HSTS Strict-Transport-security`, this header will be opened by default, then let the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header.
 
 The configuration is as follows:
 
