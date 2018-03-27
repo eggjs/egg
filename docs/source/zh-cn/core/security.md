@@ -343,7 +343,9 @@ module.exports = {
 };
 ```
 
-#### 忽略 JSON 请求
+#### 忽略 JSON 请求(已废弃)
+
+**注意：该选项已废弃，攻击者可以[通过 flash + 307 来攻破](https://www.geekboy.ninja/blog/exploiting-json-cross-site-request-forgery-csrf-using-flash/)，请不要在生产环境打开改选项！**
 
 在 [SOP](https://en.wikipedia.org/wiki/Same-origin_policy) 的安全策略保护下，基本上所有的现代浏览器都不允许跨域发起 content-type 为 JSON 的请求，因此我们可以直接放过类型的 JSON 格式的请求。
 
