@@ -6,37 +6,37 @@ Developers are advised to use `egg-init --type=simple showcase` to generate and 
 
 ```js
 // old style
-Module.exports = app => {
-  Class UserService extends app.Service {
-    Async list() {
-      Return await this.ctx.curl('https://eggjs.org');
+module.exports = app => {
+  class UserService extends app.Service {
+    async list() {
+      return await this.ctx.curl('https://eggjs.org');
     }
   }
-  Return UserService;
+  return UserService;
 };
 ```
 
 change to:
 
 ```js
-Const Service = require('egg').Service;
-Class UserService extends Service {
-  Async list() {
-    Return await this.ctx.curl('https://eggjs.org');
+const Service = require('egg').Service;
+class UserService extends Service {
+  async list() {
+    return await this.ctx.curl('https://eggjs.org');
   }
 }
-Module.exports = UserService;
+module.exports = UserService;
 ```
 
 Additionally, the `framework developer` needs to change the syntax as follows, otherwise the `application developer` will have problems customizing base classes such as Service:
 
 ```js
-Const egg = require('egg');
+const egg = require('egg');
 
-Module.export = Object.assign(egg, {
+module.exports = Object.assign(egg, {
   Application: class MyApplication extends egg.Application {
     // ...
-  },
+  }
   // ...
 });
 ```
@@ -49,15 +49,15 @@ Module.export = Object.assign(egg, {
 
 ```js
 // app/extend/application.js
-Const CACHE = Symbol('Application#cache');
-Const CacheManager = require('../../lib/cache_manager');
+const CACHE = Symbol('Application#cache');
+const CacheManager = require('../../lib/cache_manager');
 
-Module.exports = {
-  Get cache() {
-    If (!this[CACHE]) {
-      This[CACHE] = new CacheManager(this);
+module.exports = {
+  get cache() {
+    if (!this[CACHE]) {
+      this[CACHE] = new CacheManager(this);
     }
-    Return this[CACHE];
-  },
-}
+    return this[CACHE];
+  }
+};
 ```
