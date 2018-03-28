@@ -251,6 +251,25 @@ const result = await this.app.mysql.update('posts', row); // 更新 posts 表中
 
 // 判断更新成功
 const updateSuccess = result.affectedRows === 1;
+
+// 如果主键是自定义的 ID 名称，如 custom_id，则需要在 `where` 里面配置
+const row = {
+  name: 'fengmk2',
+  otherField: 'other field value',    // any other fields u want to update
+  modifiedAt: this.app.mysql.literals.now, // `now()` on db server
+};
+
+const options = {
+  where: {
+    custom_id: 456
+  }
+};
+const result = await this.app.mysql.update('posts', row, options); // 更新 posts 表中的记录
+
+=> UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE custom_id = 456 ;
+
+// 判断更新成功
+const updateSuccess = result.affectedRows === 1;
 ```
 
 ### Delete

@@ -13,7 +13,7 @@ class ApiClient extends APIClientBase {
     };
   }
 
-  * getResponseTimeout() {
+  async getResponseTimeout() {
     return this._client.options.responseTimeout;
   }
 }
