@@ -601,6 +601,47 @@ The configuration is as follows:
 - maxAge one yeah for default `365 * 24 * 3600`。
 - includeSubdomains default is false, you can add subdomain to confirm all subdomains could be accessed by HTTPS.
 
+## SSRF Protection
+
+In a [Server-Side Request Forgery (SSRF)](https://www.owasp.org/index.php/Server_Side_Request_Forgery) attack, the attacker can abuse functionality on the server to read or update internal resources.
+
+Generally, SSRF are common in that developers directly request the URL resources passed in by the client on the server side. Once an attacker passes in some internal URLs, an SSRF attack can be initiated.
+
+### How to Protect
+
+Usually, we will prevent SSRF attacks based on the IP blacklist of intranets. By filtering the IP addresses obtained after resolving domain names, we prohibit access to internal IP addresses to prevent SSRF attacks.
+
+The framework provides the `safeCurl` method on `ctx`, ʻapp` and `agent`, which will filter the specified intranet IP address while doing the network request. In additon of the method are the same as `curl`.
+
+- `ctx.safeCurl(url, options)`
+- `app.safeCurl(url, options)`
+- `agent.safeCurl(url, options)`
+
+#### Configurations
+
+Calling the `safeCurl` method directly does not have any effect. It also needs to work with security configurations.
+
+- `ipBlackList`(Array) - Configure the intranet IP address list. IP addresses on these network segments cannot be accessed.
+- `checkAddress`(Function) - Directly configure a function to check the IP address, and determine whether it is allowed to be accessed in `safeCurl` according to the return value of the function. When returning is not `true`, this IP cannot be accessed. `checkAddress` has a higher priority than `ipBlackList`.
+
+
+```js
+// config/config.default.js
+exports.security = {
+  ssrf: {
+    ipBlackList: [
+      '10.0.0.0/8', // support CIDR subnet
+      '0.0.0.0/32',
+      '127.0.0.1',  // support specific IP address
+    ],
+    // ipBlackList does not take effect when checkAddress is configured
+    checkAddress(ip) {
+      return ip !== '127.0.0.1';
+    },
+  },
+};
+```
+
 ## Other build-in security tools
 
 ### ctx.isSafeDomain(domain)

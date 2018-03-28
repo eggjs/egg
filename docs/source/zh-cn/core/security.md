@@ -592,6 +592,46 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 - maxAge 默认一年 `365 * 24 * 3600`。
 - includeSubdomains 默认 false, 可以添加子域名，保证所有子域名都使用 HTTPS 访问。
 
+## 安全威胁 SSRF 的防范
+
+通过 [Server-Side Request Forgery(SSRF)](https://www.owasp.org/index.php/Server_Side_Request_Forgery) 攻击，攻击者可以发起网络请求访问或者操作内部网络的资源。
+
+一般来说，SSRF 安全漏洞常见于开发者在服务端直接请求客户端传递进来的 URL 资源，一旦攻击者传入一些内部的 URL 即可发起 SSRF 攻击。
+
+### 如何防范
+
+通常我们会基于内网 IP 黑名单的形式来防范 SSRF 攻击，通过对解析域名后得到的 IP 做过滤，禁止访问内部 IP 地址来达到防范 SSRF 攻击的目的。
+
+框架在 `ctx`, `app` 和 `agent` 上都提供了 `safeCurl` 方法，在发起网络请求的同时会对指定的内网 IP 地址过滤，除此之外，该方法和框架提供的 `curl` 方法一致。
+
+- `ctx.safeCurl(url, options)`
+- `app.safeCurl(url, options)`
+- `agent.safeCurl(url, options)`
+
+#### 配置
+
+直接调用 `safeCurl` 方法其实并没有任何作用，还需要配合安全配置项。
+
+- `ipBlackList`(Array) - 配置内网 IP 名单，在这些网段内的 IP 地址无法被访问。
+- `checkAddress`(Function) - 直接配置一个检查 IP 地址的函数，根据函数的返回值来判断是否允许在 `safeCurl` 中被访问，当返回非 `true` 时，该 IP 无法被访问。`checkAddress` 优先级高于 `ipBlackList`。
+
+```js
+// config/config.default.js
+exports.security = {
+  ssrf: {
+    ipBlackList: [
+      '10.0.0.0/8', // 支持 IP 网段
+      '0.0.0.0/32',
+      '127.0.0.1',  // 支持指定 IP 地址
+    ],
+    // 配置了 checkAddress 时，ipBlackList 不会生效
+    checkAddress(ip) {
+      return ip !== '127.0.0.1';
+    },
+  },
+};
+```
+
 ## 其他安全工具
 
 ### ctx.isSafeDomain(domain)
