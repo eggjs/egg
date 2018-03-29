@@ -377,7 +377,7 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  interface EggApplication extends KoaApplication { // tslint:disable-line
+  class EggApplication extends KoaApplication { // tslint:disable-line
     /**
      * The current directory of application
      */
@@ -498,7 +498,7 @@ declare module 'egg' {
 
   type RouterPath = string | RegExp;
 
-  export interface Application extends EggApplication {
+  class Application extends EggApplication {
     /**
      * global locals for view
      * @see Context#locals
