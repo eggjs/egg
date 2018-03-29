@@ -1,13 +1,13 @@
 ## Title: View Plugin Development
 
-In most cases, we need to read the data, render the template and then present it to the user. The framework does not force the use of some template engine. The developer selects the [template](../core/view.md). For details, see [Template Rendering](../core/view.md).
+In most cases, we need to read the data, render the template and then present it to the user. The framework does not force the use of a template engine, allowing developers to select the [template](../core/view.md) themselves. For details, see [Template Rendering](../core/view.md).
 
 This article describes the framework's specification constraints on the View plugin, and we can use this to encapsulate the corresponding template engine plugin. The following takes [egg-view-ejs] as an example
 
 ## Plugin directory structure
 
 ```bash
-Egg-view-ejs
+egg-view-ejs
 ├── config
 │ ├── config.default.js
 │ └── config.local.js
@@ -23,14 +23,27 @@ Egg-view-ejs
 ## Plugin naming convention
 
 * Follow the [plugin development specification](./plugin.md)
-* According to convention, plugin names start with `egg-view-`
-* `package.json` is configured as follows. Plugin names are named after the template engine, such as ejs
+* According to the convention, the name of the plugins start with `egg-view-`
+* `package.json` is configured as follows. Plugins are named after the template engine, such as ejs
 
-`json { "name": "egg-view-ejs", "eggPlugin": { "name": "ejs" }, "keywords": [ "egg", "egg-plugin", "egg-view", "ejs" ], }`
+```json
+{
+  "name": "egg-view-ejs",
+  "eggPlugin": {
+    "name": "ejs"
+  },
+  "keywords": ["egg", "egg-plugin", "egg-view", "ejs"]
+}
+```
 
 * The configuration item is also named after the template engine
 
-`js // config/config.default.js Module.exports = { Ejs: {}, };`
+```js
+// config/config.default.js
+module.exports = {
+  ejs: {}
+};
+```
 
 ## View base class
 
@@ -41,31 +54,30 @@ The base class of the View needs to provide `render` and `renderString` methods 
 The following is a simplified code that can be directly [view source](https://github.com/eggjs/egg-view-ejs/blob/master/lib/view.js)
 
 ```js
-Const ejs = require('ejs');
+const ejs = require('ejs');
 
-Module.exports = class EjsView {
+Mmdule.exports = class EjsView {
+  render(filename, locals) {
+    return new Promise((resolve, reject) => {
+      // Asynchronous API call
+      ejs.renderFile(filename, locals, (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
 
-  Render(filename, locals) {
-    Return new Promise((resolve, reject) => {
-      // Asynchronous API call
-      ejs.renderFile(filename, locals, (err, result) => {
-        If (err) {
-          Reject(err);
-        } Else {
-          Resolve(result);
-        }
-      });
-    });
-  }
-
-  renderString(tpl, locals) {
-    Try {
-      // Synchronous API call
-      Return Promise.resolve(ejs.render(tpl, locals));
-    } Catch (err) {
-      Return Promise.reject(err);
-    }
-  }
+  renderString(tpl, locals) {
+    try {
+      // Synchronous API call
+      return Promise.resolve(ejs.render(tpl, locals));
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
 };
 ```
 
@@ -75,7 +87,7 @@ The three parameters of the `render` method are
 
 * filename: is the path to the complete file. The framework determines if the file exists when it looks for the file. It does not need to be processed here.
 * locals: The data needed for rendering. The data comes from `app.locals`, `ctx.locals` and calls `render` methods. The framework also has built-in `ctx`, `request`, `ctx.helper` objects.
-* viewOptions: The incoming configuration of the user, which overrides the default configuration of the template engine. This can be considered based on the characteristics of the template engine. For example, the cache is enabled by default, and a page does not need to be cached.
+* viewOptions: The incoming configuration of the user, which can override the default configuration of the template engine. This can be considered based on the characteristics of the template engine. For example, the cache is enabled by default but a page does not need to be cached.
 
 The three parameters of the `renderString` method
 
@@ -102,7 +114,7 @@ Module.exports = {
 
 The framework provides `ctx.helper` for developer use, but in some cases we want to override the helper method and only take effect when the template is rendered.
 
-In template rendering, we often need to output a user-supplied html fragment, usually using the `helper.shtml` provided by the `egg-security` plugin.
+In template rendering, we often need to output a user-supplied html fragment, in which case, we often use the `helper.shtml` provided by the `egg-security` plugin.
 
 ```html
 <div>{{ helper.shtml(data.content) | safe }}</div>
@@ -116,14 +128,14 @@ First provide a helper subclass:
 
 ```js
 // {plugin_root}/lib/helper.js
-Module.exports = app => {
-  Return class ViewHelper extends app.Helper {
-    // safe is injected by [egg-view-nunjucks] and will not be escaped during rendering.
-    // Otherwise, the template call shtml will be escaped
-    Shtml(str) {
-      Return this.safe(super.shtml(str));
-    }
-  }
+module.exports = app => {
+  return class ViewHelper extends app.Helper {
+    // safe is injected by [egg-view-nunjucks] and will not be escaped during rendering.
+    // Otherwise, the template call shtml will be escaped
+    shtml(str) {
+      return this.safe(super.shtml(str));
+    }
+  };
 };
 ```
 
@@ -131,15 +143,13 @@ Use a custom helper when rendering
 
 ```js
 // {plugin_root}/lib/view.js
-Const ViewHelper = require('./helper');
+const ViewHelper = require('./helper');
 
-Module.exports = class MyCustomView {
-  Render(filename, locals) {
-    Locals.helper = new ViewHelper(this.ctx);
-
-    // call Nunjucks render
-  }
-}
+module.exports = class MyCustomView {
+  render(filename, locals) {
+    locals.helper = new ViewHelper(this.ctx); // call Nunjucks render
+  }
+};
 ```
 
 You can [view](https://github.com/eggjs/egg-view-nunjucks/blob/2ee5ee992cfd95bc0bb5b822fbd72a6778edb118/lib/view.js#L11) the specific code here
