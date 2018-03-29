@@ -849,4 +849,11 @@ declare module 'egg' {
      */
     urlFor(name: string, params?: { [key: string]: any }): string;
   }
+
+  /**
+   * Singleton instance in Agent Worker, extend {@link EggApplication}
+   */
+  class Agent extends EggApplication {
+    _wrapMessenger():  void
+  }
 }
