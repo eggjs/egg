@@ -405,6 +405,14 @@ declare module 'egg' {
     };
 
     watcher: PlainObject;
+
+    onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
+  }
+
+  export interface ClientErrorResponse {
+    body: string | Buffer;
+    status: number;
+    headers: object;
   }
 
   export interface Router extends KoaRouter {
