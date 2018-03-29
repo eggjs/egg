@@ -5,6 +5,14 @@ const address = require('address');
 const assert = require('assert');
 const utils = require('../../utils');
 
+const DEFAULT_BAD_REQUEST_HTML = `<html>
+  <head><title>400 Bad Request</title></head>
+  <body bgcolor="white">
+  <center><h1>400 Bad Request</h1></center>
+  <hr><center>❤</center>
+  </body>
+  </html>`;
+
 describe('test/lib/cluster/app_worker.test.js', () => {
   let app;
   before(() => {
@@ -48,17 +56,9 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     test1.request().path = '/foo bar';
     test2.request().path = '/foo baz';
 
-    const html = `<html>
-  <head><title>400 Bad Request</title></head>
-  <body bgcolor="white">
-  <center><h1>400 Bad Request</h1></center>
-  <hr><center>❤</center>
-  </body>
-  </html>`;
-
     await Promise.all([
-      test1.expect(html).expect(400),
-      test2.expect(html).expect(400),
+      test1.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
+      test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
     ]);
   });
 
@@ -81,9 +81,15 @@ describe('test/lib/cluster/app_worker.test.js', () => {
           'deflate\r\nUser-Agent: node-superagent/3.8.2\r\nConnection: close\r\n\r\n');
       }
 
-      const test = app.httpRequest().get('/foo bar');
-      test.request().path = '/foo bar';
-      await test.expect(html).expect('foo', 'bar').expect(418);
+      // customized client error response
+      const test1 = app.httpRequest().get('/foo bar');
+      test1.request().path = '/foo bar';
+      await test1.expect(html).expect('foo', 'bar').expect(418);
+
+      // customized client error handle function throws
+      const test2 = app.httpRequest().get('/foo bar');
+      test2.request().path = '/foo bar';
+      await test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400);
     });
   });
 
