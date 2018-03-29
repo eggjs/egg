@@ -3,6 +3,7 @@ import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
+import { Socket } from 'net';
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
