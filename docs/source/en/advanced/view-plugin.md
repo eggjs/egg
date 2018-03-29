@@ -49,7 +49,7 @@ module.exports = {
 
 The next step is to provide a View base class that will be instantiated on each request.
 
-The base class of the View needs to provide `render` and `renderString` methods and support generator and async functions (it can also be a function that returns a Promise). The `render` method is used to render files, and the `renderString` method is used to render template strings.
+The base class of the View needs to provide `render` and `renderString` methods and supports generator and async functions (it can also be a function that returns a Promise). The `render` method is used to render files, and the `renderString` method is used to render template strings.
 
 The following is a simplified code that can be directly [view source](https://github.com/eggjs/egg-view-ejs/blob/master/lib/view.js)
 
