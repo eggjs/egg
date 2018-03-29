@@ -412,7 +412,7 @@ declare module 'egg' {
   export interface ClientErrorResponse {
     body: string | Buffer;
     status: number;
-    headers: object;
+    headers: { [key: string]: string };
   }
 
   export interface Router extends KoaRouter {
