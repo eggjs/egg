@@ -23,7 +23,7 @@ egg-view-ejs
 ## Plugin naming convention
 
 * Follow the [plugin development specification](./plugin.md)
-* According to the convention, the name of the plugins start with `egg-view-`
+* According to the convention, the names of plugins start with `egg-view-`
 * `package.json` is configured as follows. Plugins are named after the template engine, such as ejs
 
 ```json
@@ -86,7 +86,7 @@ Mmdule.exports = class EjsView {
 The three parameters of the `render` method are
 
 * filename: is the path to the complete file. The framework determines if the file exists when it looks for the file. It does not need to be processed here.
-* locals: The data needed for rendering. The data comes from `app.locals`, `ctx.locals` and calls `render` methods. The framework also has built-in `ctx`, `request`, `ctx.helper` objects.
+* locals: The data needed for rendering. The data comes from `app.locals`, `ctx.locals` and calls `render` methods. The framework also has built in `ctx`, `request`, `ctx.helper` objects.
 * viewOptions: The incoming configuration of the user, which can override the default configuration of the template engine. This can be considered based on the characteristics of the template engine. For example, the cache is enabled by default but a page does not need to be cached.
 
 The three parameters of the `renderString` method
@@ -103,9 +103,9 @@ The configuration of the plugin mainly comes from the configuration of the templ
 
 ```js
 // config/config.default.js
-Module.exports = {
-  Ejs: {
-    Cache: true
+module.exports = {
+  ejs: {
+    cache: true
   }
 };
 ```
