@@ -859,13 +859,13 @@ declare module 'egg' {
   export interface ClusterOptions {
     framework: string; // specify framework that can be absolute path or npm package
     baseDir: string; // directory of application, default to `process.cwd()`
-    plugins: object; // customized plugins, for unittest
+    plugins?: object; // customized plugins, for unittest
     workers: number; // numbers of app workers, default to `os.cpus().length`
-    port: number;  // listening port, default to 7001(http) or 8443(https)
-    https: boolean;  // https or not
-    key: string; //ssl key
-    cert: string;  // ssl cert
-    // typescript: boolean;
+    port?: number;  // listening port, default to 7001(http) or 8443(https)
+    https?: boolean;  // https or not
+    key?: string; //ssl key
+    cert?: string;  // ssl cert
+    // typescript?: boolean;
   }
 
   export function startCluster(options: ClusterOptions, callback: () => any): void
