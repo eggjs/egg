@@ -866,7 +866,7 @@ declare module 'egg' {
     https: boolean  // https or not
     key: string //ssl key
     cert: string  // ssl cert
-    typescrip: boolean
+    typescript: boolean
   }
 
   export function startCluster(options: ClusterOptions, callback: () => any): void
