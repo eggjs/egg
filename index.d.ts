@@ -854,7 +854,6 @@ declare module 'egg' {
    * Singleton instance in Agent Worker, extend {@link EggApplication}
    */
   class Agent extends EggApplication {
-    _wrapMessenger():  void;
   }
 
   export interface ClusterOptions {
