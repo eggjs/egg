@@ -269,7 +269,7 @@ $ npm test
 - 在一个应用中同时使用同一个服务的不同实例（连接到两个不同的 MySQL 数据库）。
 - 从其他服务获取配置后动态初始化连接（从配置中心获取到 MySQL 服务地址后再建立连接）。
 
-如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。
+如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。需要注意的是在使用 `app.addSingleton(name, creator)` 方法时，配置文件中一定要有 `client` 或者 `client` 为 key 的配置作为传入 `creator` 函数 的 `config`。
 
 #### 插件写法
 

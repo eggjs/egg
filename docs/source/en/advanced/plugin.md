@@ -269,7 +269,7 @@ Some plugins are made to introduce existing service into framework, like [egg-my
 - Use different instances of the same service in one application(e.g:connect to two different MySQL Databases)
 - Dynamically initialize connection after getting config from other service(gets MySQL server address from configuration center and then creates connection)
 
-If each plugin makes their own implementation, all sorts of configs  and  initializations will be chaotic. So the framework supplies the  `app.addSingleton(name, creator)` API to unify the creation of this kind of services.
+If each plugin makes their own implementation, all sorts of configs  and  initializations will be chaotic. So the framework supplies the  `app.addSingleton(name, creator)` API to unify the creation of this kind of services. Note that while using the `app.addSingleton(name, creator)` method, the configuration file must have the `client` or `clients` key configuration as the `config` to the `creator` function.
 
 #### Writing Plugin
 
