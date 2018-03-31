@@ -6,10 +6,10 @@ module.exports = app => {
   app.post('/publish', app.controller.home.publish);
   app.get('/getHosts', app.controller.home.getHosts);
 
-  app.get('/getDefaultTimeout', function*() {
-    this.body = yield app.apiClient.getResponseTimeout();
+  app.get('/getDefaultTimeout', async function(ctx) {
+    ctx.body = await app.apiClient.getResponseTimeout();
   });
-  app.get('/getOverwriteTimeout', function*() {
-    this.body = yield app.apiClient2.getResponseTimeout();
+  app.get('/getOverwriteTimeout', async function(ctx) {
+    ctx.body = await app.apiClient2.getResponseTimeout();
   });
 };
