@@ -868,5 +868,5 @@ declare module 'egg' {
     // typescript?: boolean;
   }
 
-  export function startCluster(options: ClusterOptions, callback: () => any): void;
+  export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 }
