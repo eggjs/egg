@@ -269,7 +269,7 @@ Some plugins are made to introduce existing service into framework, like [egg-my
 - Use different instances of the same service in one application(e.g:connect to two different MySQL Databases)
 - Dynamically initialize connection after getting config from other service(gets MySQL server address from configuration center and then creates connection)
 
-If each plugin makes their own implementation, all sorts of configs  and  initializations will be chaotic. So the framework supplies the  `app.addSingleton(name, creator)` API to unify the creation of this kind of services.
+If each plugin makes their own implementation, all sorts of configs  and  initializations will be chaotic. So the framework supplies the  `app.addSingleton(name, creator)` API to unify the creation of this kind of services. Note that while using the `app.addSingleton(name, creator)` method, the configuration file must have the `client` or `clients` key configuration as the `config` to the `creator` function.
 
 #### Writing Plugin
 
@@ -340,7 +340,7 @@ class PostController extends Controller {
 
 ##### Multiple Instances
 
-1. Of course we need to configure MySQL in the config file, but different from single instance, we need to add  `clients` in the config to declare the configuration of different instances. meanwhile, the `default` field can be used to configure the shared configuration in multiple instances(e.g. host and port).
+1. Of course we need to configure MySQL in the config file, but different from single instance, we need to add  `clients` in the config to declare the configuration of different instances. meanwhile, the `default` field can be used to configure the shared configuration in multiple instances(e.g. host and port). Note that in this case,should use `get` function to specify the corresponding instance(eg: use `app.mysql.get('db1').query()` instead of using `app.mysql.query()` directly to get a `undefined`).
 
 ```js
 // config/config.default.js
