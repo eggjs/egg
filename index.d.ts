@@ -165,6 +165,18 @@ declare module 'egg' {
 
   export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
+  /**
+   * egg app info
+   * @example
+   * ```js
+   * // config/config.default.ts
+   * import { EggAppInfo } from 'egg';
+   * 
+   * export default (appInfo: EggAppInfo) => {
+   *   return {};
+   * }
+   * ```
+   */
   export interface EggAppInfo {
     pkg: string; // package.json
     name: string; // the application name from package.json
