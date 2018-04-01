@@ -165,6 +165,15 @@ declare module 'egg' {
 
   export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
+  export interface EggAppInfo {
+    pkg: string; // package.json
+    name: string; // the application name from package.json
+    baseDir: string; // current directory of application
+    env: string; // equals to serverEnv
+    HOME: string; // home directory of the OS
+    root: string; // baseDir when local and unittest, HOME when other environment
+  }
+
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
