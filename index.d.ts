@@ -173,7 +173,9 @@ declare module 'egg' {
    * import { EggAppInfo } from 'egg';
    * 
    * export default (appInfo: EggAppInfo) => {
-   *   return {};
+   *   return {
+   *     keys: appInfo.name + '123456',
+   *   };
    * }
    * ```
    */
