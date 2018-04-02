@@ -180,7 +180,7 @@ declare module 'egg' {
    * ```
    */
   export interface EggAppInfo {
-    pkg: string; // package.json
+    pkg: any; // package.json
     name: string; // the application name from package.json
     baseDir: string; // current directory of application
     env: string; // equals to serverEnv
