@@ -377,7 +377,7 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  interface EggApplication extends KoaApplication { // tslint:disable-line
+  class EggApplication extends KoaApplication { // tslint:disable-line
     /**
      * The current directory of application
      */
@@ -498,7 +498,7 @@ declare module 'egg' {
 
   type RouterPath = string | RegExp;
 
-  export interface Application extends EggApplication {
+  class Application extends EggApplication {
     /**
      * global locals for view
      * @see Context#locals
@@ -849,4 +849,25 @@ declare module 'egg' {
      */
     urlFor(name: string, params?: { [key: string]: any }): string;
   }
+
+  /**
+   * Singleton instance in Agent Worker, extend {@link EggApplication}
+   */
+  class Agent extends EggApplication {
+  }
+
+  export interface ClusterOptions {
+    framework?: string; // specify framework that can be absolute path or npm package
+    baseDir?: string; // directory of application, default to `process.cwd()`
+    plugins?: object | null; // customized plugins, for unittest
+    workers?: number; // numbers of app workers, default to `os.cpus().length`
+    port?: number;  // listening port, default to 7001(http) or 8443(https)
+    https?: boolean;  // https or not
+    key?: string; //ssl key
+    cert?: string;  // ssl cert
+    // typescript?: boolean;
+    [prop: string]: any;
+  }
+
+  export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 }
