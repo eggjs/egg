@@ -269,7 +269,7 @@ $ npm test
 - 在一个应用中同时使用同一个服务的不同实例（连接到两个不同的 MySQL 数据库）。
 - 从其他服务获取配置后动态初始化连接（从配置中心获取到 MySQL 服务地址后再建立连接）。
 
-如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。
+如果让插件各自实现，可能会出现各种奇怪的配置方式和初始化方式，所以框架提供了 `app.addSingleton(name, creator)` 方法来统一这一类服务的创建。需要注意的是在使用 `app.addSingleton(name, creator)` 方法时，配置文件中一定要有 `client` 或者 `clients` 为 key 的配置作为传入 `creator` 函数 的 `config`。
 
 #### 插件写法
 
@@ -340,7 +340,7 @@ class PostController extends Controller {
 
 ##### 多实例
 
-1. 同样需要在配置文件中声明 MySQL 的配置，不过和单实例时不同，配置项中需要有一个 `clients` 字段，分别申明不同实例的配置，同时可以通过 `default` 字段来配置多个实例中共享的配置（如 host 和 port）。
+1. 同样需要在配置文件中声明 MySQL 的配置，不过和单实例时不同，配置项中需要有一个 `clients` 字段，分别申明不同实例的配置，同时可以通过 `default` 字段来配置多个实例中共享的配置（如 host 和 port）。需要注意的是在这种情况下要用 `get` 方法指定相应的实例。（例如：使用 `app.mysql.get('db1').query()`，而不是直接使用 `app.mysql.query()` 得到一个 `undefined`）。
 
 ```js
 // config/config.default.js
