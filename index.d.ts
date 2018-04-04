@@ -898,7 +898,7 @@ declare module 'egg' {
    * @example
    * import { PowerPartial, EggAppConfig } from 'egg';
    * 
-   * // { keys?: string, ... }
+   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
   type PowerPartial<T> = {
