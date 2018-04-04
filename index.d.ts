@@ -3,8 +3,23 @@ import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
+import 'egg-onerror';
+import 'egg-session';
+import 'egg-i18n';
+import 'egg-watcher';
+import 'egg-multipart';
+import 'egg-security';
+import 'egg-development';
+import 'egg-logrotator';
+import 'egg-schedule';
+import 'egg-static';
+import 'egg-jsonp';
+import 'egg-view';
 
 declare module 'egg' {
+  // plain object
+  type PlainObject<T = any> = { [key: string]: T };
+
   /**
    * BaseContextClass is a base class that can be extended,
    * it's instantiated in context level,
@@ -40,14 +55,14 @@ declare module 'egg' {
   }
 
   export interface Logger {
-    info(info: string, ...args: any[]): void;
-    warn(info: string, ...args: any[]): void;
-    debug(info: string, ...args: any[]): void;
-    error(info: string | Error, ...args: any[]): void;
+    info(msg: any, ...args: any[]): void;
+    warn(msg: any, ...args: any[]): void;
+    debug(msg: any, ...args: any[]): void;
+    error(msg: any, ...args: any[]): void;
   }
 
   export type RequestArrayBody = any[];
-  export type RequestObjectBody = { [key: string]: any };
+  export type RequestObjectBody = PlainObject;
   interface Request extends KoaApplication.Request { // tslint:disable-line
     /**
      * detect if response should be json
@@ -103,7 +118,7 @@ declare module 'egg' {
      * }
      * ```
      */
-    queries: { [key: string]: string[] };
+    queries: PlainObject<string[]>;
 
     /**
      * get params pass by querystring, all value are String type.
@@ -125,7 +140,7 @@ declare module 'egg' {
      * }
      * ```
      */
-    query: { [key: string]: string };
+    query: PlainObject<string>;
 
     body: any;
   }
@@ -164,6 +179,29 @@ declare module 'egg' {
   }
 
   export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
+
+  /**
+   * egg app info
+   * @example
+   * ```js
+   * // config/config.default.ts
+   * import { EggAppInfo } from 'egg';
+   * 
+   * export default (appInfo: EggAppInfo) => {
+   *   return {
+   *     keys: appInfo.name + '123456',
+   *   };
+   * }
+   * ```
+   */
+  export interface EggAppInfo {
+    pkg: any; // package.json
+    name: string; // the application name from package.json
+    baseDir: string; // current directory of application
+    env: EggEnvType; // equals to serverEnv
+    HOME: string; // home directory of the OS
+    root: string; // baseDir when local and unittest, HOME when other environment
+  }
 
   export interface EggAppConfig {
     workerStartTimeout: number;
@@ -213,7 +251,7 @@ declare module 'egg' {
     logger: {
       dir: string;
       encoding: string;
-      env: string;
+      env: EggEnvType;
       level: LoggerLevel;
       consoleLevel: LoggerLevel;
       outputJSON: boolean;
@@ -258,7 +296,7 @@ declare module 'egg' {
     /**
      * The environment of egg
      */
-    env: string;
+    env: EggEnvType;
 
     /**
      * The current HOME directory
@@ -346,13 +384,27 @@ declare module 'egg' {
       csp: any;
     };
 
-    siteFile: any;
+    siteFile: PlainObject<string | Buffer>;
 
-    static: any;
+    static: {
+      prefix: string;
+      dir: string;
+      // support lazy load
+      dynamic: boolean;
+      preload: boolean;
+      buffer: boolean;
+      maxFiles: number;
+    } & PlainObject;
 
-    view: any;
+    view: {
+      root: string;
+      cache: boolean;
+      defaultExtension: string;
+      defaultViewEngine: string;
+      mapping: PlainObject<string>;
+    };
 
-    watcher: any;
+    watcher: PlainObject;
   }
 
   export interface Router extends KoaRouter {
@@ -391,7 +443,7 @@ declare module 'egg' {
     /**
      * app.env delegate app.config.env
      */
-    env: string;
+    env: EggEnvType;
 
     /**
      * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
@@ -607,7 +659,7 @@ declare module 'egg' {
     /**
      * @see Request#accept
      */
-    queries: { [key: string]: string[] };
+    queries: PlainObject<string[]>;
 
     /**
      * @see Request#accept
@@ -813,7 +865,7 @@ declare module 'egg' {
    *
    * Now I can get ctx.service.foo at controller and other service file.
    */
-  export interface IService { }// tslint:disable-line
+  export interface IService { } // tslint:disable-line
 
   export interface IController { } // tslint:disable-line
 
@@ -832,7 +884,7 @@ declare module 'egg' {
      * ```
      * @return {String} url path(without host)
      */
-    pathFor(name: string, params?: { [key: string]: any }): string;
+    pathFor(name: string, params?: PlainObject): string;
 
     /**
      * Generate full URL(with host) for route. Takes the route name and a map of named params.
@@ -847,7 +899,39 @@ declare module 'egg' {
      * ```
      * @return {String} full url(with host)
      */
-    urlFor(name: string, params?: { [key: string]: any }): string;
+    urlFor(name: string, params?: PlainObject): string;
+  }
+
+  // egg env type
+  type EggEnvType = 'local' | 'unittest' | 'prod' | string;
+
+  /**
+   * plugin config item
+   */
+  interface EggPluginItem {
+    env?: EggEnvType[];
+    path?: string;
+    package?: string;
+    enable?: boolean;
+  }
+
+  /**
+   * build-in plugin list
+   */
+  interface EggPlugin {
+    [key: string]: EggPluginItem;
+    onerror: EggPluginItem;
+    session: EggPluginItem;
+    i18n: EggPluginItem;
+    watcher: EggPluginItem;
+    multipart: EggPluginItem;
+    security: EggPluginItem;
+    development: EggPluginItem;
+    logrotator: EggPluginItem;
+    schedule: EggPluginItem;
+    static: EggPluginItem;
+    jsonp: EggPluginItem;
+    view: EggPluginItem;
   }
 
   /**
@@ -870,4 +954,18 @@ declare module 'egg' {
   }
 
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
+
+  /**
+   * Powerful Partial, Support adding ? modifier to a mapped property in deep level
+   * @example
+   * import { PowerPartial, EggAppConfig } from 'egg';
+   * 
+   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
+   * type EggConfig = PowerPartial<EggAppConfig>
+   */
+  type PowerPartial<T> = {
+    [U in keyof T]?: T[U] extends {}
+      ? PowerPartial<T[U]>
+      : T[U]
+  };
 }
