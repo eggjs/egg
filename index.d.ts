@@ -874,6 +874,52 @@ declare module 'egg' {
   }
 
   /**
+   * Powerful Partial, Support adding ? modifier to a mapped property in three level
+   * @example
+   * import { PowerPartial, EggAppConfig } from 'egg';
+   * 
+   * // { keys?: string, ... }
+   * type EggConfig = PowerPartial<EggAppConfig>
+   */
+  type PowerPartial<T> = {
+    [U in keyof T]?: T[U] extends {}
+      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
+      : T[U]
+  };
+
+  // egg env type
+  type EggEnvType = 'local' | 'unittest' | 'prod';
+
+  /**
+   * plugin config item
+   */
+  interface EggPluginItem {
+    env?: EggEnvType;
+    path?: string;
+    package?: string;
+    enabled?: boolean;
+  }
+
+  /**
+   * build-in plugin list
+   */
+  interface EggPluginList {
+    [key: string]: EggPluginItem;
+    onerror: EggPluginItem;
+    session: EggPluginItem;
+    i18n: EggPluginItem;
+    watcher: EggPluginItem;
+    multipart: EggPluginItem;
+    security: EggPluginItem;
+    development: EggPluginItem;
+    logrotator: EggPluginItem;
+    schedule: EggPluginItem;
+    static: EggPluginItem;
+    jsonp: EggPluginItem;
+    view: EggPluginItem;
+  }
+
+  /**
    * Singleton instance in Agent Worker, extend {@link EggApplication}
    */
   class Agent extends EggApplication {
