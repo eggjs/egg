@@ -3,6 +3,18 @@ import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
+import 'egg-onerror';
+import 'egg-session';
+import 'egg-i18n';
+import 'egg-watcher';
+import 'egg-multipart';
+import 'egg-security';
+import 'egg-development';
+import 'egg-logrotator';
+import 'egg-schedule';
+import 'egg-static';
+import 'egg-jsonp';
+import 'egg-view';
 
 declare module 'egg' {
   // plain object
@@ -948,7 +960,7 @@ declare module 'egg' {
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 
   /**
-   * Powerful Partial, Support adding ? modifier to a mapped property in three level
+   * Powerful Partial, Support adding ? modifier to a mapped property in deep level
    * @example
    * import { PowerPartial, EggAppConfig } from 'egg';
    * 
@@ -957,7 +969,7 @@ declare module 'egg' {
    */
   type PowerPartial<T> = {
     [U in keyof T]?: T[U] extends {}
-      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
+      ? PowerPartial<T[U]>
       : T[U]
   };
 }
