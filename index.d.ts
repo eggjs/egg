@@ -9,20 +9,6 @@ declare module 'egg' {
   type PlainObject<T = any> = { [key: string]: T };
 
   /**
-   * Powerful Partial, Support adding ? modifier to a mapped property in three level
-   * @example
-   * import { PowerPartial, EggAppConfig } from 'egg';
-   * 
-   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
-   * type EggConfig = PowerPartial<EggAppConfig>
-   */
-  type PowerPartial<T> = {
-    [U in keyof T]?: T[U] extends {}
-      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
-      : T[U]
-  };
-
-  /**
    * BaseContextClass is a base class that can be extended,
    * it's instantiated in context level,
    * {@link Helper}, {@link Service} is extending it.
@@ -960,4 +946,18 @@ declare module 'egg' {
   }
 
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
+
+  /**
+   * Powerful Partial, Support adding ? modifier to a mapped property in three level
+   * @example
+   * import { PowerPartial, EggAppConfig } from 'egg';
+   * 
+   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
+   * type EggConfig = PowerPartial<EggAppConfig>
+   */
+  type PowerPartial<T> = {
+    [U in keyof T]?: T[U] extends {}
+      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
+      : T[U]
+  };
 }
