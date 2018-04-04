@@ -37,12 +37,12 @@ $ npm i --save egg-passport-github
 
 ```js
 // config/plugin.js
-exports.passport = {
+module.exports.passport = {
   enable: true,
   package: 'egg-passport',
 };
 
-exports.passportGithub = {
+module.exports.passportGithub = {
   enable: true,
   package: 'egg-passport-github',
 };
@@ -253,7 +253,7 @@ $ egg-init --type=plugin egg-passport-local
 ```js
 // {plugin_root}/config/config.default.js
 // https://github.com/jaredhanson/passport-local
-exports.passportLocal = {
+module.exports.passportLocal = {
 };
 ```
 
