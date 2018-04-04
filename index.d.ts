@@ -917,13 +917,13 @@ declare module 'egg' {
     env?: EggEnvType;
     path?: string;
     package?: string;
-    enabled?: boolean;
+    enable?: boolean;
   }
 
   /**
    * build-in plugin list
    */
-  interface EggPluginList {
+  interface EggPlugin {
     [key: string]: EggPluginItem;
     onerror: EggPluginItem;
     session: EggPluginItem;
