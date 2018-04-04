@@ -594,6 +594,8 @@ declare module 'egg' {
     controller: IController;
 
     Controller: Controller;
+
+    middlewares: IMiddleware;
   }
 
   interface FileStream extends Readable { // tslint:disable-line
@@ -867,9 +869,11 @@ declare module 'egg' {
    *
    * Now I can get ctx.service.foo at controller and other service file.
    */
-  export interface IService { }// tslint:disable-line
+  export interface IService { } // tslint:disable-line
 
   export interface IController { } // tslint:disable-line
+
+  export interface IMiddleware { } // tslint:disable-line
 
   export interface IHelper {
     /**
