@@ -5,6 +5,23 @@ import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 
 declare module 'egg' {
+  // plain object
+  type PlainObject<T = any> = { [key: string]: T };
+
+  /**
+   * Powerful Partial, Support adding ? modifier to a mapped property in three level
+   * @example
+   * import { PowerPartial, EggAppConfig } from 'egg';
+   * 
+   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
+   * type EggConfig = PowerPartial<EggAppConfig>
+   */
+  type PowerPartial<T> = {
+    [U in keyof T]?: T[U] extends {}
+      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
+      : T[U]
+  };
+
   /**
    * BaseContextClass is a base class that can be extended,
    * it's instantiated in context level,
@@ -47,7 +64,7 @@ declare module 'egg' {
   }
 
   export type RequestArrayBody = any[];
-  export type RequestObjectBody = { [key: string]: any };
+  export type RequestObjectBody = PlainObject;
   interface Request extends KoaApplication.Request { // tslint:disable-line
     /**
      * detect if response should be json
@@ -103,7 +120,7 @@ declare module 'egg' {
      * }
      * ```
      */
-    queries: { [key: string]: string[] };
+    queries: PlainObject<string[]>;
 
     /**
      * get params pass by querystring, all value are String type.
@@ -125,7 +142,7 @@ declare module 'egg' {
      * }
      * ```
      */
-    query: { [key: string]: string };
+    query: PlainObject<string>;
 
     body: any;
   }
@@ -369,7 +386,7 @@ declare module 'egg' {
       csp: any;
     };
 
-    siteFile: any;
+    siteFile: PlainObject<string | Buffer>;
 
     static: {
       prefix: string;
@@ -386,16 +403,10 @@ declare module 'egg' {
       cache: boolean;
       defaultExtension: string;
       defaultViewEngine: string;
-      mapping: { [key: string]: string };
+      mapping: PlainObject<string>;
     };
 
-    watcher: {
-      type: string;
-      eventSources: {
-        default: string;
-        development: string;
-      }
-    };
+    watcher: PlainObject;
   }
 
   export interface Router extends KoaRouter {
@@ -650,7 +661,7 @@ declare module 'egg' {
     /**
      * @see Request#accept
      */
-    queries: { [key: string]: string[] };
+    queries: PlainObject<string[]>;
 
     /**
      * @see Request#accept
@@ -875,7 +886,7 @@ declare module 'egg' {
      * ```
      * @return {String} url path(without host)
      */
-    pathFor(name: string, params?: { [key: string]: any }): string;
+    pathFor(name: string, params?: PlainObject): string;
 
     /**
      * Generate full URL(with host) for route. Takes the route name and a map of named params.
@@ -890,22 +901,8 @@ declare module 'egg' {
      * ```
      * @return {String} full url(with host)
      */
-    urlFor(name: string, params?: { [key: string]: any }): string;
+    urlFor(name: string, params?: PlainObject): string;
   }
-
-  /**
-   * Powerful Partial, Support adding ? modifier to a mapped property in three level
-   * @example
-   * import { PowerPartial, EggAppConfig } from 'egg';
-   * 
-   * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
-   * type EggConfig = PowerPartial<EggAppConfig>
-   */
-  type PowerPartial<T> = {
-    [U in keyof T]?: T[U] extends {}
-      ? { [V in keyof T[U]]?: T[U][V] extends {} ? Partial<T[U][V]> : T[U][V] }
-      : T[U]
-  };
 
   // egg env type
   type EggEnvType = 'local' | 'unittest' | 'prod';
