@@ -396,7 +396,7 @@ declare module 'egg' {
       preload: boolean;
       buffer: boolean;
       maxFiles: number;
-    };
+    } & PlainObject;
 
     view: {
       root: string;
