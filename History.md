@@ -1,5 +1,33 @@
 # History
 
+## 2018-04-04, Version 2.6.0 @atian25
+
+### Notable changes
+
+* **feature**
+  * TypeScript tool support (#2272)
+
+* **docs**
+  * improve d.ts with ts support (#2306)
+  * docs improve and translation
+
+### Commits
+
+  * [[`406142758`](http://github.com/eggjs/egg/commit/40614275845f49512e80d1c8c00d1997ee91b113)] - chore: improve d.ts with ts support (#2306) (Axes <<whxaxes@qq.com>>)
+  * [[`7fba689b7`](http://github.com/eggjs/egg/commit/7fba689b73fa46fdf7447844338a7f538ad78665)] - docs(controller): session example bug (#2313) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`e0e7ed146`](http://github.com/eggjs/egg/commit/e0e7ed146adfe932558628b815caa2d8c64d6939)] - chore(typings): change export interface to class definition (#2293) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`161107929`](http://github.com/eggjs/egg/commit/1611079291ddcf8cc82dba40a2406dcad20b75b5)] - docs(plugin): add config notice for `addSingleton`  function (#2305) (Shangbin Yang <<rccoder.net@gmail.com>>)
+  * [[`1c74a8491`](http://github.com/eggjs/egg/commit/1c74a84918869ec035c5767884501a87cce945d5)] - docs: add assets document (#2220) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`e4531e563`](http://github.com/eggjs/egg/commit/e4531e563214472e54b4c467e0d2879e6390cb52)] - docs: EN translation for view plugin dev doc (#2240) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`348ff18d8`](http://github.com/eggjs/egg/commit/348ff18d82e357d9bceba5136c339ef7dfb44bda)] - docs: EN translation for style guide doc (#2239) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`d9c4ec2bb`](http://github.com/eggjs/egg/commit/d9c4ec2bbb3aa29ddcba2efceec6edfa879267d7)] - EN translation for resources doc (#2238) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`46217a5d2`](http://github.com/eggjs/egg/commit/46217a5d2e451433ec86614cfb65336300a074d9)] - docs(security): add ssrf in security (#2274) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`c3586eab5`](http://github.com/eggjs/egg/commit/c3586eab535ee540ffac664f0311c656ef7adca2)] - docs: deprecate ignoreJSON (#2270) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`a86334c59`](http://github.com/eggjs/egg/commit/a86334c595530c5f4e9cf65204a4591dfd26bcf0)] - docs: example for custom id when mysql update (#2165) (OnedayLiu <<onedayliu552@gmail.com>>)
+  * [[`10327e185`](http://github.com/eggjs/egg/commit/10327e185015098c9c29747abbaf79a352f975d7)] - docs: EN translation for socketio tutorial doc (#2167) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`5b059db6a`](http://github.com/eggjs/egg/commit/5b059db6a879abb3ffe7b30e95855afc8a660107)] - docs: add boilerplate type desc (#2250) (QiChang Li <<github@liqichang.com>>)
+  * [[`9007b5847`](http://github.com/eggjs/egg/commit/9007b5847e67b678f6624da4610b6bdff9457c52)] - chore: update package.json for release (#2244) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 ## 2018-03-20, Version 2.5.0 @atian25
 
 ### Notable changes
