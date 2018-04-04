@@ -386,7 +386,7 @@ declare module 'egg' {
       cache: boolean;
       defaultExtension: string;
       defaultViewEngine: string;
-      mapping: any;
+      mapping: { [key: string]: string };
     };
 
     watcher: {
