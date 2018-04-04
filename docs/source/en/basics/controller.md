@@ -543,7 +543,7 @@ class PostController extends Controller {
     const userId = ctx.session.userId;
     const posts = await ctx.service.post.fetch(userId);
     // set value to Session
-    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.session.visited = ctx.session.visited ? ++ctx.session.visited : 1;
     ctx.body = {
       success: true,
       posts,
