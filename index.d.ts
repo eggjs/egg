@@ -595,7 +595,7 @@ declare module 'egg' {
 
     Controller: Controller;
 
-    middlewares: IMiddleware;
+    middleware: IMiddleware;
   }
 
   interface FileStream extends Readable { // tslint:disable-line
