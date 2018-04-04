@@ -40,10 +40,10 @@ declare module 'egg' {
   }
 
   export interface Logger {
-    info(info: string, ...args: any[]): void;
-    warn(info: string, ...args: any[]): void;
-    debug(info: string, ...args: any[]): void;
-    error(info: string | Error, ...args: any[]): void;
+    info(msg: any, ...args: any[]): void;
+    warn(msg: any, ...args: any[]): void;
+    debug(msg: any, ...args: any[]): void;
+    error(msg: any, ...args: any[]): void;
   }
 
   export type RequestArrayBody = any[];
@@ -371,11 +371,31 @@ declare module 'egg' {
 
     siteFile: any;
 
-    static: any;
+    static: {
+      prefix: string;
+      dir: string;
+      // support lazy load
+      dynamic: boolean;
+      preload: boolean;
+      buffer: boolean;
+      maxFiles: number;
+    };
 
-    view: any;
+    view: {
+      root: string;
+      cache: boolean;
+      defaultExtension: string;
+      defaultViewEngine: string;
+      mapping: any;
+    };
 
-    watcher: any;
+    watcher: {
+      type: string;
+      eventSources: {
+        default: string;
+        development: string;
+      }
+    };
   }
 
   export interface Router extends KoaRouter {
