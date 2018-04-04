@@ -592,8 +592,6 @@ declare module 'egg' {
     controller: IController;
 
     Controller: Controller;
-
-    middleware: IMiddleware;
   }
 
   interface FileStream extends Readable { // tslint:disable-line
@@ -870,8 +868,6 @@ declare module 'egg' {
   export interface IService { } // tslint:disable-line
 
   export interface IController { } // tslint:disable-line
-
-  export interface IMiddleware { } // tslint:disable-line
 
   export interface IHelper {
     /**
