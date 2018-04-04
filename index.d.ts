@@ -200,7 +200,7 @@ declare module 'egg' {
     pkg: any; // package.json
     name: string; // the application name from package.json
     baseDir: string; // current directory of application
-    env: string; // equals to serverEnv
+    env: EggEnvType; // equals to serverEnv
     HOME: string; // home directory of the OS
     root: string; // baseDir when local and unittest, HOME when other environment
   }
@@ -253,7 +253,7 @@ declare module 'egg' {
     logger: {
       dir: string;
       encoding: string;
-      env: string;
+      env: EggEnvType;
       level: LoggerLevel;
       consoleLevel: LoggerLevel;
       outputJSON: boolean;
@@ -298,7 +298,7 @@ declare module 'egg' {
     /**
      * The environment of egg
      */
-    env: string;
+    env: EggEnvType;
 
     /**
      * The current HOME directory
@@ -445,7 +445,7 @@ declare module 'egg' {
     /**
      * app.env delegate app.config.env
      */
-    env: string;
+    env: EggEnvType;
 
     /**
      * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
@@ -905,13 +905,13 @@ declare module 'egg' {
   }
 
   // egg env type
-  type EggEnvType = 'local' | 'unittest' | 'prod';
+  type EggEnvType = 'local' | 'unittest' | 'prod' | string;
 
   /**
    * plugin config item
    */
   interface EggPluginItem {
-    env?: EggEnvType;
+    env?: EggEnvType[];
     path?: string;
     package?: string;
     enable?: boolean;
