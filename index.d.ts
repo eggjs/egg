@@ -1092,7 +1092,17 @@ declare module 'egg' {
      * @return {Array} framework directories
      */
     private getEggPaths(): string[];
-
   }
 
+  /**
+   * App worker process Loader, will load plugins
+   * @see https://github.com/eggjs/egg-loader
+   */
+  class AppWorkerLoader extends EggLoader {
+    constructor(options: EggLoaderOptions);
+
+    loadConfig(): void;
+
+    load(): void;
+  }
 }
