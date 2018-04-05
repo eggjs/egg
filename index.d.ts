@@ -1105,4 +1105,16 @@ declare module 'egg' {
 
     load(): void;
   }
+
+  /**
+   * Agent worker process loader
+   * @see https://github.com/eggjs/egg-loader
+   */
+  class AgentWorkerLoader extends EggLoader {
+    constructor(options: EggLoaderOptions);
+
+    loadConfig(): void;
+
+    load(): void;
+  }
 }
