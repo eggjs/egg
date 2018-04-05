@@ -206,6 +206,8 @@ declare module 'egg' {
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
+    middleware: string[];
+
     /**
      * The option of `bodyParser` middleware
      *
@@ -920,18 +922,18 @@ declare module 'egg' {
    */
   interface EggPlugin {
     [key: string]: EggPluginItem;
-    onerror: EggPluginItem;
-    session: EggPluginItem;
-    i18n: EggPluginItem;
-    watcher: EggPluginItem;
-    multipart: EggPluginItem;
-    security: EggPluginItem;
-    development: EggPluginItem;
-    logrotator: EggPluginItem;
-    schedule: EggPluginItem;
-    static: EggPluginItem;
-    jsonp: EggPluginItem;
-    view: EggPluginItem;
+    onerror?: EggPluginItem;
+    session?: EggPluginItem;
+    i18n?: EggPluginItem;
+    watcher?: EggPluginItem;
+    multipart?: EggPluginItem;
+    security?: EggPluginItem;
+    development?: EggPluginItem;
+    logrotator?: EggPluginItem;
+    schedule?: EggPluginItem;
+    static?: EggPluginItem;
+    jsonp?: EggPluginItem;
+    view?: EggPluginItem;
   }
 
   /**
