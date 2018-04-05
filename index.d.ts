@@ -1064,4 +1064,35 @@ declare module 'egg' {
      */
     sendToApp(action: string, data: any): void;
   }
+
+  export interface EggLoaderOptions {
+    baseDir: string;
+    typescript?: boolean;
+    app: Application;
+    logger: Logger;
+    plugins?: any;
+  }
+
+  class EggLoader {
+    options: EggLoaderOptions;
+
+    constructor(options: EggLoaderOptions);
+
+    private getServerEnv(): EggAppInfo['env'];
+
+    private getServerScope(): EggAppInfo['scope'];
+
+    private getAppname(): EggAppInfo['name'];
+
+    getHomedir(): EggAppInfo['HOME']
+
+    getAppInfo(): EggAppInfo;
+
+    /**
+     * @return {Array} framework directories
+     */
+    private getEggPaths(): string[];
+
+  }
+
 }
