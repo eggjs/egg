@@ -420,9 +420,9 @@ declare module 'egg' {
     } & PlainObject;
 
     view: {
-      root: string;
-      cache: boolean;
-      defaultExtension: string;
+      root?: string;
+      cache?: boolean;  // default true
+      defaultExtension?: string;
       defaultViewEngine: string;
       mapping: PlainObject<string>;
     };
