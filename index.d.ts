@@ -966,7 +966,7 @@ declare module 'egg' {
    * type EggConfig = PowerPartial<EggAppConfig>
    */
   type PowerPartial<T> = {
-    [U in keyof T]?: T[U] extends {}
+    [U in keyof T]?: T[U] extends object
       ? PowerPartial<T[U]>
       : T[U]
   };
