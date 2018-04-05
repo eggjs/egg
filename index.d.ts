@@ -1073,12 +1073,13 @@ declare module 'egg' {
     plugins?: any;
   }
 
+  // egg-core
   class EggLoader {
     options: EggLoaderOptions;
 
     constructor(options: EggLoaderOptions);
 
-    private getServerEnv(): EggAppInfo['env'];
+    private getServerEnv(): string; // not exists EggAppInfo['env']
 
     private getServerScope(): EggAppInfo['scope'];
 
