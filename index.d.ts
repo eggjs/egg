@@ -965,7 +965,7 @@ declare module 'egg' {
    * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
-  type PowerPartial<T> = {
+  export type PowerPartial<T> = {
     [U in keyof T]?: T[U] extends object
       ? PowerPartial<T[U]>
       : T[U]
