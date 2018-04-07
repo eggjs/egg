@@ -921,7 +921,7 @@ declare module 'egg' {
    * build-in plugin list
    */
   interface EggPlugin {
-    [key: string]: EggPluginItem;
+    [key: string]: EggPluginItem | undefined;
     onerror?: EggPluginItem;
     session?: EggPluginItem;
     i18n?: EggPluginItem;
