@@ -186,7 +186,7 @@ declare module 'egg' {
    * ```js
    * // config/config.default.ts
    * import { EggAppInfo } from 'egg';
-   * 
+   *
    * export default (appInfo: EggAppInfo) => {
    *   return {
    *     keys: appInfo.name + '123456',
@@ -232,6 +232,12 @@ declare module 'egg' {
         depth: number;
         parameterLimit: number;
       };
+    };
+
+    // plugins egg-cors: https://github.com/eggjs/egg-cors
+    cors: {
+      origin: string | (() => string);
+      allowMethods: string | string[];
     };
 
     /**
@@ -959,7 +965,7 @@ declare module 'egg' {
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
    * @example
    * import { PowerPartial, EggAppConfig } from 'egg';
-   * 
+   *
    * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
