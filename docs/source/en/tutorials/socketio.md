@@ -507,7 +507,7 @@ module.exports = () => {
 
     nsp.adapter.clients(rooms, (err, clients) => {
       
-      logger.debug('#online_join', _clients); // Update online user list
+      logger.debug('#online_join', clients); // Update online user list
 
       nsp.to(room).emit('online', {
         clients,
@@ -524,7 +524,7 @@ module.exports = () => {
       logger.debug('#online_leave', clients); // Update online user list
 
       nsp.to(room).emit('online', {
-        clients: _clients,
+        clients: clients,
         action: 'leave',
         target: 'participator',
         message: `User(${id}) leaved.`
