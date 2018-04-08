@@ -608,7 +608,7 @@ socket.emit('exchange', {
 });
 ```
 
-![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/socketio-console.png)
+![](https://raw.githubusercontent.com/jingmingji/egg/master/docs/assets/socketio-console.png)
 
 ## 参考链接
 
