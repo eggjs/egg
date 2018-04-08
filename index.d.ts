@@ -206,6 +206,8 @@ declare module 'egg' {
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
+    middleware: string[];
+
     /**
      * The option of `bodyParser` middleware
      *
@@ -919,19 +921,19 @@ declare module 'egg' {
    * build-in plugin list
    */
   interface EggPlugin {
-    [key: string]: EggPluginItem;
-    onerror: EggPluginItem;
-    session: EggPluginItem;
-    i18n: EggPluginItem;
-    watcher: EggPluginItem;
-    multipart: EggPluginItem;
-    security: EggPluginItem;
-    development: EggPluginItem;
-    logrotator: EggPluginItem;
-    schedule: EggPluginItem;
-    static: EggPluginItem;
-    jsonp: EggPluginItem;
-    view: EggPluginItem;
+    [key: string]: EggPluginItem | undefined;
+    onerror?: EggPluginItem;
+    session?: EggPluginItem;
+    i18n?: EggPluginItem;
+    watcher?: EggPluginItem;
+    multipart?: EggPluginItem;
+    security?: EggPluginItem;
+    development?: EggPluginItem;
+    logrotator?: EggPluginItem;
+    schedule?: EggPluginItem;
+    static?: EggPluginItem;
+    jsonp?: EggPluginItem;
+    view?: EggPluginItem;
   }
 
   /**
@@ -964,7 +966,7 @@ declare module 'egg' {
    * type EggConfig = PowerPartial<EggAppConfig>
    */
   type PowerPartial<T> = {
-    [U in keyof T]?: T[U] extends {}
+    [U in keyof T]?: T[U] extends object
       ? PowerPartial<T[U]>
       : T[U]
   };
