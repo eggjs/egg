@@ -453,8 +453,8 @@ Format：
   },
   meta:{
     timestamp: 1512116201597,
-    client: '/webrtc#nNx88r1c5WuHf9XuAAAB',
-    target: '/webrtc#nNx88r1c5WuHf9XuAAAB'
+    client: 'nNx88r1c5WuHf9XuAAAB',
+    target: 'nNx88r1c5WuHf9XuAAAB'
   },
 }
 ```
