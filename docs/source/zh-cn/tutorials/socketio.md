@@ -516,15 +516,12 @@ module.exports = () => {
       return;
     }
 
+    // 加入房间
+    socket.join(room);
+    
     // 当用户加入时
     nsp.adapter.clients(rooms, (err, clients) => {
-
-       // 追加当前 socket 信息到clients
-      clients[id] = query;
-
-      // 加入房间
-      socket.join(room);
-
+    
       logger.debug('#online_join', _clients);
 
       // 更新在线用户列表
@@ -540,21 +537,12 @@ module.exports = () => {
 
     // 当用户离开时
     nsp.adapter.clients(rooms, (err, clients) => {
-      logger.debug('#leave', room);
 
-      const _clients = {};
-      clients.forEach(client => {
-        const _id = client.split('#')[1];
-        const _client = app.io.sockets.sockets[_id];
-        const _query = _client.handshake.query;
-        _clients[client] = _query;
-      });
-
-      logger.debug('#online_leave', _clients);
+      logger.debug('#online_leave', clients);
 
       // 更新在线用户列表
       nsp.to(room).emit('online', {
-        clients: _clients,
+        clients,
         action: 'leave',
         target: 'participator',
         message: `User(${id}) leaved.`,
