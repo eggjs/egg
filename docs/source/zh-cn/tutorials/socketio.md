@@ -601,7 +601,7 @@ module.exports = app => {
 
 ```js
 socket.emit('exchange', {
-  target: 'Dkn3UXSu8_jHvKBmAAHW',
+  target: 'v2YwHa8YTSzYajBrAAAB',
   payload: {
     msg : 'test',
   },
