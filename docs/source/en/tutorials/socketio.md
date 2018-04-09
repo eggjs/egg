@@ -453,8 +453,8 @@ Format：
   },
   meta:{
     timestamp: 1512116201597,
-    client: '/webrtc#nNx88r1c5WuHf9XuAAAB',
-    target: '/webrtc#nNx88r1c5WuHf9XuAAAB'
+    client: 'nNx88r1c5WuHf9XuAAAB',
+    target: 'nNx88r1c5WuHf9XuAAAB'
   },
 }
 ```
@@ -500,15 +500,14 @@ module.exports = () => {
         message: 'deleted, room has been deleted.'
       });
       return;
-    } // When the user joins
+    } 
+    
+    socket.join(room);
+    // When the user joins
 
     nsp.adapter.clients(rooms, (err, clients) => {
-      // Append current socket information to clients
-      clients[id] = query; // Join room
-
-      socket.join(room);
-
-      logger.debug('#online_join', _clients); // Update online user list
+      
+      logger.debug('#online_join', clients); // Update online user list
 
       nsp.to(room).emit('online', {
         clients,
@@ -521,20 +520,11 @@ module.exports = () => {
     await next(); // When the user leaves
 
     nsp.adapter.clients(rooms, (err, clients) => {
-      logger.debug('#leave', room);
 
-      const _clients = {};
-      clients.forEach(client => {
-        const _id = client.split('#')[1];
-        const _client = app.io.sockets.sockets[_id];
-        const _query = _client.handshake.query;
-        _clients[client] = _query;
-      });
-
-      logger.debug('#online_leave', _clients); // Update online user list
+      logger.debug('#online_leave', clients); // Update online user list
 
       nsp.to(room).emit('online', {
-        clients: _clients,
+        clients: clients,
         action: 'leave',
         target: 'participator',
         message: `User(${id}) leaved.`
@@ -590,14 +580,14 @@ Open two tab pages and call up the console:
 
 ```js
 socket.emit('exchange', {
-  target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+  target: 'v2YwHa8YTSzYajBrAAAB',
   payload: {
     msg: 'test'
   }
 });
 ```
 
-![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/socketio-console.png)
+![](https://raw.githubusercontent.com/jingmingji/egg/master/docs/assets/socketio-console.png)
 
 ## Reference Links
 
