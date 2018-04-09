@@ -62,7 +62,7 @@ exports.io = {
 };
 ```
 
-> 已知默认 `wsEngine` 在 `Chrome` 浏览器中断开连接存在意见，建议优先使用 [uws]
+> 已知默认 `wsEngine` 在 `Chrome` 浏览器中断开连接存在异常，建议优先使用 [uws]
 
 **redis:**
 
