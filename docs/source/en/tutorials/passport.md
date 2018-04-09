@@ -4,7 +4,7 @@
 
 Among them, we often use the latter, such as Google, GitHub, QQ unified login, which are based on [OAuth](https://oauth.net/2/) specification.
 
-[Passport](http://www.passportjs.org/) is a highly scalable authentication middleware that supports the `Strategy` of `Github` ,`Twitter`,`Facebook`, and other well-known service vendors. It also supports login authorization verification.
+[Passport](http://www.passportjs.org/) is a highly scalable authentication middleware that supports the `Strategy` of `Github` ,`Twitter`,`Facebook`, and other well-known service vendors. It also supports login authorization verification via account passwords.
 
 Egg provides an [egg-passport](https://github.com/eggjs/egg-passport) plugin which encapsulates general logic such as callback processing after initialization and the success of authentication so that the developers can use Passport with just a few API calls.
 
@@ -248,7 +248,7 @@ $ egg-init --type=plugin egg-passport-local
 ```js
 // {plugin_root}/config/config.default.js
 // https://github.com/jaredhanson/passport-local
-module.exports.passportLocal = {
+exports.passportLocal = {
 };
 ```
 
@@ -267,9 +267,9 @@ module.exports = app => {
   app.passport.use(new LocalStrategy(config, (req, username, password, done) => {
     // Cleans up the data returned by the Passport plugin and returns the User object
     const user = {
-      Provider: 'local',
-      Username,
-      Password,
+      provider: 'local',
+      username,
+      password,
     };
     // This does not process application-level logic and passes it to app.passport.verify for unified processing.
     app.passport.doVerify(req, user, done);
