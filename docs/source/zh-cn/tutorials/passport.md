@@ -253,7 +253,7 @@ $ egg-init --type=plugin egg-passport-local
 ```js
 // {plugin_root}/config/config.default.js
 // https://github.com/jaredhanson/passport-local
-module.exports.passportLocal = {
+exports.passportLocal = {
 };
 ```
 
