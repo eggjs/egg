@@ -13,10 +13,6 @@
     "egg"
   ],
   "dependencies": {
-    "@types/accepts": "^1.3.5",
-    "@types/koa": "^2.0.44",
-    "@types/koa-router": "^7.0.27",
-    "@types/urllib": "^2.25.0",
     "accepts": "^1.3.5",
     "agentkeepalive": "^3.4.1",
     "cluster-client": "^2.0.0",
@@ -53,6 +49,10 @@
     "ylru": "^1.2.0"
   },
   "devDependencies": {
+    "@types/accepts": "^1.3.5",
+    "@types/koa": "^2.0.44",
+    "@types/koa-router": "^7.0.27",
+    "@types/urllib": "^2.25.0",
     "address": "^1.0.3",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
