@@ -62,6 +62,8 @@ exports.io = {
 };
 ```
 
+> 已知默认 `wsEngine` 在 `Chrome` 浏览器中断开连接存在意见，建议优先使用 [uws]
+
 **redis:**
 
 [egg-socket.io] 内置了 `socket.io-redis`，在 cluster 模式下，使用 redis 可以较为简单的实现 clients/rooms 等信息共享
@@ -110,6 +112,9 @@ location / {
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_set_header Host $host;
   proxy_pass   http://127.0.0.1:7001;
+
+  # http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_bind
+  # proxy_bind       $remote_addr transparent;
 }
 ```
 
@@ -426,6 +431,16 @@ exports.io = {
     port: 6379,
   },
 };
+
+// 可选
+exports.redis = {
+  client: {
+    port: 6379,
+    host: '127.0.0.1',
+    password: '',
+    db: 0,
+  },
+};
 ```
 
 #### helper
@@ -442,11 +457,11 @@ module.exports = {
     }, metadata);
 
     return {
+      meta,
       data: {
         action,
         payload,
       },
-      meta,
     };
   },
 };
@@ -462,8 +477,8 @@ Format：
   },
   meta:{
     timestamp: 1512116201597,
-    client: '/webrtc#nNx88r1c5WuHf9XuAAAB',
-    target: '/webrtc#nNx88r1c5WuHf9XuAAAB'
+    client: 'nNx88r1c5WuHf9XuAAAB',
+    target: 'nNx88r1c5WuHf9XuAAAB'
   },
 }
 ```
@@ -486,7 +501,7 @@ module.exports = () => {
 
     // 用户信息
     const { room, userId } = query;
-    const rooms = [room];
+    const rooms = [ room ];
 
     logger.debug('#user_info', id, room, userId);
 
@@ -516,16 +531,13 @@ module.exports = () => {
       return;
     }
 
-    // 当用户加入时
+    // 用户加入
+    logger.debug('#join', room);
+    socket.join(room);
+
+    // 在线列表
     nsp.adapter.clients(rooms, (err, clients) => {
-
-       // 追加当前 socket 信息到clients
-      clients[id] = query;
-
-      // 加入房间
-      socket.join(room);
-
-      logger.debug('#online_join', _clients);
+      logger.debug('#online_join', clients);
 
       // 更新在线用户列表
       nsp.to(room).emit('online', {
@@ -538,23 +550,24 @@ module.exports = () => {
 
     await next();
 
-    // 当用户离开时
+    // 用户离开
+    logger.debug('#leave', room);
+
+    // 在线列表
     nsp.adapter.clients(rooms, (err, clients) => {
-      logger.debug('#leave', room);
+      logger.debug('#online_leave', clients);
 
-      const _clients = {};
-      clients.forEach(client => {
-        const _id = client.split('#')[1];
-        const _client = app.io.sockets.sockets[_id];
-        const _query = _client.handshake.query;
-        _clients[client] = _query;
-      });
-
-      logger.debug('#online_leave', _clients);
+      // 获取 client 信息
+      // const clientsDetail = {};
+      // clients.forEach(client => {
+      //   const _client = app.io.sockets.sockets[client];
+      //   const _query = _client.handshake.query;
+      //   clientsDetail[client] = _query;
+      // });
 
       // 更新在线用户列表
       nsp.to(room).emit('online', {
-        clients: _clients,
+        clients,
         action: 'leave',
         target: 'participator',
         message: `User(${id}) leaved.`,
@@ -563,7 +576,6 @@ module.exports = () => {
 
   };
 };
-
 ```
 
 #### controller
@@ -613,7 +625,7 @@ module.exports = app => {
 
 ```js
 socket.emit('exchange', {
-  target: '/webrtc#Dkn3UXSu8_jHvKBmAAHW',
+  target: 'Dkn3UXSu8_jHvKBmAAHW',
   payload: {
     msg : 'test',
   },
@@ -627,6 +639,8 @@ socket.emit('exchange', {
 - [socket.io]
 - [egg-socket.io]
 - [egg-socket.io example](https://github.com/eggjs/egg-socket.io/tree/master/example)
+- [egg-socket.io demo](https://github.com/eggjs-community/demo-egg-socket.io)
+- [nginx proxy_bind](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_bind)
 
 [socket.io]: https://socket.io
 [egg-socket.io]: https://github.com/eggjs/egg-socket.io
