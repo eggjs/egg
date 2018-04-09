@@ -56,7 +56,9 @@ exports.passportGithub = {
 // config/default.js
 config.passportGithub = {
   key: 'your_clientID',
-  secret: 'your_clientSecret'
+  secret: 'your_clientSecret',
+  // callbackURL: '/passport/github/callback',
+  // proxy: false,
 };
 ```
 
@@ -65,6 +67,9 @@ config.passportGithub = {
 - 填写 `callbackURL`，如 `http://127.0.0.1:7001/passport/github/callback`
   - 线上部署时需要更新为对应的域名
   - 路径为配置的 `options.callbackURL`，默认为 `/passport/${strategy}/callback`
+- 如应用部署在 Nginx/HAProxy 之后，需设置插件 `proxy` 选项为 `true`, 并检查以下配置：
+  - 代理附加 HTTP 头字段：`x-forwarded-proto` 与 `x-forwarded-host`
+  - 配置中 `config.proxy` 应设置为 `true`
 
 ### 挂载路由
 

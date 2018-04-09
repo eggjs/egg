@@ -3,6 +3,7 @@ import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
+import { Socket } from 'net';
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
@@ -25,7 +26,7 @@ declare module 'egg' {
    * it's instantiated in context level,
    * {@link Helper}, {@link Service} is extending it.
    */
-  class BaseContextClass { // tslint:disable-line
+  export class BaseContextClass { // tslint:disable-line
     /**
      * request context
      */
@@ -63,7 +64,7 @@ declare module 'egg' {
 
   export type RequestArrayBody = any[];
   export type RequestObjectBody = PlainObject;
-  interface Request extends KoaApplication.Request { // tslint:disable-line
+  export interface Request extends KoaApplication.Request { // tslint:disable-line
     /**
      * detect if response should be json
      * 1. url path ends with `.json`
@@ -145,7 +146,7 @@ declare module 'egg' {
     body: any;
   }
 
-  interface Response extends KoaApplication.Response { // tslint:disable-line
+  export interface Response extends KoaApplication.Response { // tslint:disable-line
     /**
      * read response real status code.
      *
@@ -158,7 +159,7 @@ declare module 'egg' {
     realStatus: number;
   }
 
-  interface ContextView { // tslint:disable-line
+  export interface ContextView { // tslint:disable-line
     /**
      * Render a file by view engine
      * @param {String} name - the file path based on root
@@ -407,6 +408,14 @@ declare module 'egg' {
     };
 
     watcher: PlainObject;
+
+    onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
+  }
+
+  export interface ClientErrorResponse {
+    body: string | Buffer;
+    status: number;
+    headers: { [key: string]: string };
   }
 
   export interface Router extends KoaRouter {
@@ -431,7 +440,7 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  class EggApplication extends KoaApplication { // tslint:disable-line
+  export class EggApplication extends KoaApplication { // tslint:disable-line
     /**
      * The current directory of application
      */
@@ -550,9 +559,9 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  type RouterPath = string | RegExp;
+  export type RouterPath = string | RegExp;
 
-  class Application extends EggApplication {
+  export class Application extends EggApplication {
     /**
      * global locals for view
      * @see Context#locals
@@ -596,7 +605,7 @@ declare module 'egg' {
     Controller: Controller;
   }
 
-  interface FileStream extends Readable { // tslint:disable-line
+  export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
 
     filename: string;
@@ -905,12 +914,12 @@ declare module 'egg' {
   }
 
   // egg env type
-  type EggEnvType = 'local' | 'unittest' | 'prod' | string;
+  export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
 
   /**
    * plugin config item
    */
-  interface EggPluginItem {
+  export interface EggPluginItem {
     env?: EggEnvType[];
     path?: string;
     package?: string;
@@ -920,7 +929,7 @@ declare module 'egg' {
   /**
    * build-in plugin list
    */
-  interface EggPlugin {
+  export interface EggPlugin {
     [key: string]: EggPluginItem | undefined;
     onerror?: EggPluginItem;
     session?: EggPluginItem;
@@ -939,7 +948,7 @@ declare module 'egg' {
   /**
    * Singleton instance in Agent Worker, extend {@link EggApplication}
    */
-  class Agent extends EggApplication {
+  export class Agent extends EggApplication {
   }
 
   export interface ClusterOptions {
@@ -965,7 +974,7 @@ declare module 'egg' {
    * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
-  type PowerPartial<T> = {
+  export type PowerPartial<T> = {
     [U in keyof T]?: T[U] extends object
       ? PowerPartial<T[U]>
       : T[U]
