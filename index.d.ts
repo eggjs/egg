@@ -1079,12 +1079,6 @@ declare module 'egg' {
 
     constructor(options: EggLoaderOptions);
 
-    private getServerEnv(): string; // not exists EggAppInfo['env']
-
-    private getServerScope(): EggAppInfo['scope'];
-
-    private getAppname(): EggAppInfo['name'];
-
     getHomedir(): EggAppInfo['HOME']
 
     getAppInfo(): EggAppInfo;
@@ -1092,7 +1086,13 @@ declare module 'egg' {
     /**
      * @return {Array} framework directories
      */
-    private getEggPaths(): string[];
+    // private getEggPaths(): string[];
+
+    // private getServerEnv(): string; // not exists EggAppInfo['env']
+
+    // private getServerScope(): EggAppInfo['scope'];
+
+    // private getAppname(): EggAppInfo['name'];
   }
 
   /**
