@@ -1074,7 +1074,7 @@ declare module 'egg' {
   }
 
   // egg-core
-  class EggLoader {
+  export class EggLoader {
     options: EggLoaderOptions;
 
     constructor(options: EggLoaderOptions);
@@ -1086,9 +1086,9 @@ declare module 'egg' {
 
   /**
    * App worker process Loader, will load plugins
-   * @see https://github.com/eggjs/egg-loader
+   * @see https://github.com/eggjs/egg-core
    */
-  class AppWorkerLoader extends EggLoader {
+  export class AppWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
 
     loadConfig(): void;
@@ -1100,7 +1100,7 @@ declare module 'egg' {
    * Agent worker process loader
    * @see https://github.com/eggjs/egg-loader
    */
-  class AgentWorkerLoader extends EggLoader {
+  export class AgentWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
 
     loadConfig(): void;
@@ -1108,5 +1108,5 @@ declare module 'egg' {
     load(): void;
   }
 
-  class Subscription extends BaseContextClass { }
+  export class Subscription extends BaseContextClass { }
 }
