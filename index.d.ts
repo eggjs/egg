@@ -1082,17 +1082,6 @@ declare module 'egg' {
     getHomedir(): EggAppInfo['HOME']
 
     getAppInfo(): EggAppInfo;
-
-    /**
-     * @return {Array} framework directories
-     */
-    // private getEggPaths(): string[];
-
-    // private getServerEnv(): string; // not exists EggAppInfo['env']
-
-    // private getServerScope(): EggAppInfo['scope'];
-
-    // private getAppname(): EggAppInfo['name'];
   }
 
   /**
