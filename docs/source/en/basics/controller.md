@@ -934,7 +934,7 @@ If you use the `ctx.redirect` method, you need to configure the application conf
 ```js
 // config/config.default.js
 exports.security = {
-  domainWhiteList:['.domain.com'],  // 安全白名单，以 . 开头
+  domainWhiteList:['.domain.com'],  // Security whitelist, starts with `.`
 };
 ```
 
