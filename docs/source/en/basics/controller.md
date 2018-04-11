@@ -920,3 +920,22 @@ class ProxyController extends Controller {
   }
 }
 ```
+
+### Redirect
+
+The framework overwrites koa's native `ctx.redirect` implementation with a security plugin to provide a more secure redirect.
+
+
+* `ctx.redirect(url)` Forbids redirect if it is not in the configured whitelist domain name.
+* `ctx.unsafeRedirect(url)` does not determine the domain name and redirect directly. Generally, it is not recommended to use it. Use it after clearly understanding the possible risks.
+
+If you use the `ctx.redirect` method, you need to configure the application configuration file as follows:
+
+```js
+// config/config.default.js
+exports.security = {
+  domainWhiteList:['.domain.com'],  // 安全白名单，以 . 开头
+};
+```
+
+If the user does not configure the `domainWhiteList` or the `domainWhiteList` array to be empty, then all redirect requests will be released by default, which is equivalent to `ctx.unsafeRedirect(url)`.

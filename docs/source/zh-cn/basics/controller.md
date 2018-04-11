@@ -923,3 +923,21 @@ class ProxyController extends Controller {
   }
 };
 ```
+
+### 重定向
+
+框架通过 security 插件覆盖了 koa 原生的 `ctx.redirect` 实现，以提供更加安全的重定向。
+
+* `ctx.redirect(url)` 如果不在配置的白名单域名内，则禁止跳转。
+* `ctx.unsafeRedirect(url)` 不判断域名，直接跳转，一般不建议使用，明确了解可能带来的风险后使用。
+
+用户如果使用`ctx.redirect`方法，需要在应用的配置文件中做如下配置：
+
+```js
+// config/config.default.js
+exports.security = {
+  domainWhiteList:['.domain.com'],  // 安全白名单，以 . 开头
+};
+```
+
+若用户没有配置 `domainWhiteList` 或者 `domainWhiteList`数组内为空，则默认会对所有跳转请求放行，即等同于`ctx.unsafeRedirect(url)`
