@@ -667,7 +667,7 @@ console.log(result.res.timing);
 先安装和开启插件：
 
 ```bash
-$ npm i egg-development-proxyagent --save
+$ npm i egg-development-proxyagent --save-dev
 ```
 
 ```js
