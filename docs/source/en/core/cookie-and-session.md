@@ -248,27 +248,15 @@ class UserController extends Controller {
 
 By default, if user requests don't result in modification of Session,
 egg.js doesn't extend expiration time of the session.
-But in some scenarios, you may need to refresh expiration time every time user access the website,
-so that users will only be logged out when they don't access website for long time.
-This requirement can be done through `ctx.session.save()`.
-
-For example, we create a middleware in the application.
-It forces saving session in every request, in order to extend session's expiration time.
+But in some scenarios, we hope that if users visit our site for a long time, then extend their session validity and not let the user exit the login state. The framework provides a `renew` configuration item to implement this feature. It will reset the session's validity period when it finds that the user's session is half the maximum validity period.
 
 ```js
-// app/middleware/save_session.js
-module.exports = () => {
-  return async function saveSession(ctx, next) {
-    await next();
-    // if Session is empty, do nothing
-    if (!ctx.session.populated) return;
-    ctx.session.save();
-  };
-};
-
 // config/config.default.js
-// import the middleware in config file
-exports.middleware = [ 'saveSession' ];
+module.exports = {
+  session: {
+    renew: true,
+  },
+};
 ```
 
 [egg-redis]: https://github.com/eggjs/egg-redis
