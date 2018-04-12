@@ -10,6 +10,8 @@
 
 ### Commits
 
+  * [[`2998bf733`](http://github.com/eggjs/egg/commit/2998bf733268d4d88d5fc77e05943b3fa0f824d4)] - chore(typings): add index signature of EggAppConfig (#2359) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`5f2358bbd`](http://github.com/eggjs/egg/commit/5f2358bbdd6e21a1ab387a8425d0fefc30954227)] - docs: intro session.renew in the doc (#2375) (Yiyu He <<dead_horse@qq.com>>)
   * [[`f0e7773f2`](http://github.com/eggjs/egg/commit/f0e7773f28eb7a233230a847ff2f8bc737aa3c01)] - docs: add TypeScript Guide (#2324) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`cd418f57a`](http://github.com/eggjs/egg/commit/cd418f57a843b504dcac6d8c25b99026e1edf072)] - docs(controller): add ctx.redirect (#2373) (Yiyu He <<dead_horse@qq.com>>)
   * [[`2fafb16b8`](http://github.com/eggjs/egg/commit/2fafb16b8810e41b86d15f51257c2a0531c78357)] - docs(socketio): update demo & solve problem on chrome (#2354) (Suyi <<thonatos@users.noreply.github.com>>)
