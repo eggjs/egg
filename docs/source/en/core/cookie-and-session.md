@@ -248,7 +248,7 @@ class UserController extends Controller {
 
 By default, if user requests don't result in modification of Session,
 egg.js doesn't extend expiration time of the session.
-But in some scenarios, we hope that if users visit our site for a long time, then extend their session validity, not Let the user exit the login state. The framework provides a `renew` configuration item to implement this feature. It will reset the session's validity period when it finds that the user's session is half the maximum validity period.
+But in some scenarios, we hope that if users visit our site for a long time, then extend their session validity and not let the user exit the login state. The framework provides a `renew` configuration item to implement this feature. It will reset the session's validity period when it finds that the user's session is half the maximum validity period.
 
 ```js
 // config/config.default.js
