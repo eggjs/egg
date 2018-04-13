@@ -15,7 +15,15 @@ class DataService {
 }
 
 let count = 0;
-module.exports = function create(config, app) {
+
+exports.sync = (config, app) => {
+  const done = app.readyCallback(`DataService-${count++}`);
+  const dataService = new DataService(config);
+  dataService.ready(done);
+  return dataService;
+};
+
+exports.async = async (config, app) => {
   const done = app.readyCallback(`DataService-${count++}`);
   const dataService = new DataService(config);
   dataService.ready(done);
