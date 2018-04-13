@@ -1,4 +1,25 @@
 # History
+## 2018-04-12, Version 2.6.1 @atian25
+
+### Notable changes
+
+* **docs**
+  * TypeScript Guide (#2324)
+  * fix d.ts with ts support
+  * docs improve
+
+### Commits
+
+  * [[`2998bf733`](http://github.com/eggjs/egg/commit/2998bf733268d4d88d5fc77e05943b3fa0f824d4)] - chore(typings): add index signature of EggAppConfig (#2359) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`5f2358bbd`](http://github.com/eggjs/egg/commit/5f2358bbdd6e21a1ab387a8425d0fefc30954227)] - docs: intro session.renew in the doc (#2375) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`f0e7773f2`](http://github.com/eggjs/egg/commit/f0e7773f28eb7a233230a847ff2f8bc737aa3c01)] - docs: add TypeScript Guide (#2324) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`cd418f57a`](http://github.com/eggjs/egg/commit/cd418f57a843b504dcac6d8c25b99026e1edf072)] - docs(controller): add ctx.redirect (#2373) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`2fafb16b8`](http://github.com/eggjs/egg/commit/2fafb16b8810e41b86d15f51257c2a0531c78357)] - docs(socketio): update demo & solve problem on chrome (#2354) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`ba708ca4e`](http://github.com/eggjs/egg/commit/ba708ca4e911a345d2ee6aea5d4cf5845f93212b)] - feat: support customized client error (#2283) (Khaidi Chu <<i@2333.moe>>)
+  * [[`8697140d6`](http://github.com/eggjs/egg/commit/8697140d6ab10f42980ea301e7122331b6e5573a)] - chore: add export to declarations (#2344) (Axes <<whxaxes@qq.com>>)
+  * [[`441884145`](http://github.com/eggjs/egg/commit/4418841452a20a4fcca212e17dad0fbe9ff97646)] - chore(typings): export PowerPartial (#2327) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`33d39519e`](http://github.com/eggjs/egg/commit/33d39519e1bd9bb1451776abe4986cdf4dee7626)] - docs(passport): config passport-github behind of proxy (#2318) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`84e0dc4e7`](http://github.com/eggjs/egg/commit/84e0dc4e74e4e907d39b5485e1b19c3900aec393)] - fix(d.ts): add modifier to plugin and add middleware to config (#2322) (Axes <<whxaxes@qq.com>>)
 
 ## 2018-04-04, Version 2.6.0 @atian25
 
