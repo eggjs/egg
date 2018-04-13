@@ -265,10 +265,10 @@ export default plugin;
 
 ### Typings
 
-该目录为 TS 的规范，在里面的 `\*\*/\*.d.ts` 文件将被自动识别。
+该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
 
 * 开发者需要手写的建议放在 `typings/index.d.ts` 中。
-* 工具会自动生成 `typings/{app,config}/\*\*.d.ts` ，请勿自行修改，避免被覆盖。（见下文）
+* 工具会自动生成 `typings/{app,config}/**.d.ts` ，请勿自行修改，避免被覆盖。（见下文）
 
 ---
 
