@@ -12,7 +12,7 @@ const rimraf = require('mz-modules/rimraf');
 
 describe('test/ts/index.test.js', () => {
   before(async () => {
-    await runscript('tsc', { cwd: baseDir });
+    await runscript(`tsc -p ${baseDir}/tsconfig.json`, { cwd: baseDir });
     const dest = path.join(baseDir, 'node_modules/egg');
     await rimraf(dest);
     await mkdirp(path.dirname(dest));
