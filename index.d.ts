@@ -3,6 +3,7 @@ import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
+import { Socket } from 'net';
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
@@ -407,6 +408,16 @@ declare module 'egg' {
     };
 
     watcher: PlainObject;
+
+    onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
+
+    [prop: string]: any;
+  }
+
+  export interface ClientErrorResponse {
+    body: string | Buffer;
+    status: number;
+    headers: { [key: string]: string };
   }
 
   export interface Router extends KoaRouter {

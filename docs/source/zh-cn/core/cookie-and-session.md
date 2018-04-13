@@ -201,24 +201,15 @@ class UserController extends Controller {
 
 #### 延长用户 Session 有效期
 
-默认情况下，当用户请求没有导致 Session 被修改时，框架都不会延长 Session 的有效期，但是在有些场景下，我们希望用户每次访问都刷新 Session 的有效时间，这样用户只有在长期未访问我们的网站的时候才会被登出。这个功能我们可以通过 `ctx.session.save()` 来实现。
-
-例如，我们在项目中增加一个中间件，让它在 Session 有值的时候强制保存一次，以达到延长 Session 有效期的目的。
+默认情况下，当用户请求没有导致 Session 被修改时，框架都不会延长 Session 的有效期，但是在有些场景下，我们希望用户如果长时间都在访问我们的站点，则延长他们的 Session 有效期，不让用户退出登录态。框架提供了一个 `renew` 配置项用于实现此功能，它会在发现当用户 Session 的有效期仅剩下最大有效期一半的时候，重置 Session 的有效期。
 
 ```js
-// app/middleware/save_session.js
-module.exports = () => {
-  return async function saveSession(ctx, next) {
-    await next();
-    // 如果 Session 是空的，则不保存
-    if (!ctx.session.populated) return;
-    ctx.session.save();
-  };
-};
-
 // config/config.default.js
-// 在配置文件中引入中间件
-exports.middleware = [ 'saveSession' ];
+module.exports = {
+  session: {
+    renew: true,
+  },
+};
 ```
 
 [egg-redis]: https://github.com/eggjs/egg-redis

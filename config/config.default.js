@@ -321,5 +321,31 @@ module.exports = appInfo => {
     responseTimeout: 60000,
   };
 
+  /**
+   * This function / async function will be called when a client error occurred and return the response.
+   *
+   * The arguments are `err`, `socket` and `application` which indicate current client error object, current socket
+   * object and the application object.
+   *
+   * The response to be returned should include properties below:
+   *
+   * @member {Function} Config#onClientError
+   * @property [body] {String|Buffer} - the response body
+   * @property [status] {Number} - the response status code
+   * @property [headers] {Object} - the response header key-value pairs
+   *
+   * @example
+   * exports.onClientError = async (err, socket, app) => {
+   *   return {
+   *     body: 'error',
+   *     status: 400,
+   *     headers: {
+   *       'powered-by': 'Egg.js',
+   *     }
+   *   };
+   * }
+   */
+  config.onClientError = null;
+
   return config;
 };
