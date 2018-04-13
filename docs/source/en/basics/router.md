@@ -341,3 +341,5 @@ module.exports = app => {
   app.router.get('/admin/log', app.controller.admin.log);
 };
 ```
+
+or using [egg-router-plus](https://github.com/eggjs/egg-router-plus).
