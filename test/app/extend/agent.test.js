@@ -17,9 +17,9 @@ describe('test/app/extend/agent.test.js', () => {
     after(() => app.close());
 
     it('should add singleton success', async () => {
-      let config = await app.agent.dataService.get('first').getConfig();
+      let config = await app.agent.dataService.get('second').getConfig();
       assert(config.foo === 'bar');
-      assert(config.foo1 === 'bar1');
+      assert(config.foo2 === 'bar2');
 
       const ds = app.agent.dataService.createInstance({ foo: 'barrr' });
       config = await ds.getConfig();
@@ -29,9 +29,9 @@ describe('test/app/extend/agent.test.js', () => {
       config = await ds2.getConfig();
       assert(config.foo === 'barrr');
 
-      config = await app.agent.dataServiceAsync.get('first').getConfig();
+      config = await app.agent.dataServiceAsync.get('second').getConfig();
       assert(config.foo === 'bar');
-      assert(config.foo1 === 'bar1');
+      assert(config.foo2 === 'bar2');
 
       try {
         app.agent.dataServiceAsync.createInstance({ foo: 'barrr' });
