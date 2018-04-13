@@ -410,6 +410,8 @@ declare module 'egg' {
     watcher: PlainObject;
 
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
+
+    [prop: string]: any;
   }
 
   export interface ClientErrorResponse {
