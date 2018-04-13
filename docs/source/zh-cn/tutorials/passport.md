@@ -37,12 +37,12 @@ $ npm i --save egg-passport-github
 
 ```js
 // config/plugin.js
-exports.passport = {
+module.exports.passport = {
   enable: true,
   package: 'egg-passport',
 };
 
-exports.passportGithub = {
+module.exports.passportGithub = {
   enable: true,
   package: 'egg-passport-github',
 };
