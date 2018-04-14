@@ -90,3 +90,7 @@ Jetbrains [Safe Write 文档](https://www.jetbrains.com/help/webstorm/2016.3/sys
 > If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
 
 由于使用了重命名导致文件监听的失效。解决办法是关掉 Safe Write 选项。（Settings | Appearance & Behavior | System Settings | Use "safe write" 路径可能根据版本有所不同）
+
+## Webstorm 编辑器，debug 模式下启动后 console 面板没有控制台回显
+
+请检查你的 Webstorm 版本是否为 2018.1.1 ，这是 Webstorm 2018.1.1 的 bug 。将在下一版本修复，在修复前请降级至 2017.3.5 或更早版本使用。

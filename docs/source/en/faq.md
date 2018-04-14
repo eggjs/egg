@@ -88,3 +88,7 @@ According to Jetbrains [Safe Write document](https://www.jetbrains.com/help/webs
 > If this check box is selected, a changed file is first saved in a temporary file. If the save operation succeeds, the file being saved is replaced with the saved file. (Technically, the original file is deleted and the temporary file is renamed.)
 
 Renaming files leads to file watching failure. The solution is simple: just turn of `Safe Write` option. (Settings | Appearance & Behavior | System Settings | Use "safe write", the path may vary in different versions)
+
+## Webstorm editor, Console console doesn't have console echo after startup in debug mode
+
+Please check if your Webstorm version is 2018.1.1. This is a bug of Webstorm 2018.1.1. Will be fixed in the next version, please downgrade to 2017.3.5 or earlier before use.
