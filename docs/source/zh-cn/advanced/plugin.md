@@ -294,10 +294,9 @@ function createMysql(config, app) {
   const client = new Mysql(config);
 
   // 做启动应用前的检查
-  app.beforeStart(async function startMysql() {
+  app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    const index = count++;
-    app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
+    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
   });
 
   return client;
@@ -316,9 +315,7 @@ async function createMysql(config, app) {
 
   // 做启动应用前的检查
   const rows = await client.query('select now() as currentTime;');
-  const index = count++;
-  app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
-  app.beforeStart(async function startMysql() {
+  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
 }
