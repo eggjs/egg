@@ -304,6 +304,26 @@ function createMysql(config, app) {
 }
 ```
 
+初始化方法也支持 `Async function`，便于有些特殊的插件需要异步化获取一些配置文件：
+
+```js
+async function createMysql(config, app) {
+  // 异步获取 mysql 配置
+  const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
+  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
+  // 创建实例
+  const client = new Mysql(mysqlConfig);
+
+  // 做启动应用前的检查
+  const rows = await client.query('select now() as currentTime;');
+  const index = count++;
+  app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
+  app.beforeStart(async function startMysql() {
+
+  return client;
+}
+```
+
 可以看到，插件中我们只需要提供要挂载的字段以及对应服务的初始化方法，所有的配置管理、实例获取方式都由框架封装并统一提供了。
 
 #### 应用层使用方案
@@ -388,7 +408,7 @@ module.exports = app => {
     // 从配置中心获取 MySQL 的配置 { host, post, password, ... }
     const mysqlConfig = await app.configCenter.fetch('mysql');
     // 动态创建 MySQL 实例
-    app.database = app.mysql.createInstance(mysqlConfig);
+    app.database = await app.mysql.createInstanceAsync(mysqlConfig);
   });
 };
 ```
