@@ -126,6 +126,24 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
+  describe('dumpConfig() with circular', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/dumpconfig-circular');
+    });
+    after(() => app.close());
+
+    it('should dump in config', function* () {
+      const baseDir = utils.getFilepath('apps/dumpconfig-circular');
+      yield sleep(100);
+      yield app.ready();
+
+      yield sleep(100);
+      const json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert.deepEqual(json.config.foo, [ '~config~foo' ]);
+    });
+  });
+
   describe('dumpConfig() ignore error', () => {
     const baseDir = utils.getFilepath('apps/dump-ignore-error');
     let app;
