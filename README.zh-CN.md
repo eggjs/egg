@@ -38,7 +38,7 @@ $ npm install egg --save
 - ✔︎ 内置多进程管理
 - ✔︎ 高度可扩展的插件机制
 - ✔︎ 深度框架定制
-- ✔︎ 丰富的[插件](https://eggjs.org/badgeboard/)
+- ✔︎ 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
 ## 文档和社区
 
