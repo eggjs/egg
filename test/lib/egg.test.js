@@ -133,12 +133,12 @@ describe('test/lib/egg.test.js', () => {
     });
     after(() => app.close());
 
-    it('should dump in config', async () => {
+    it('should dump in config', function* () {
       const baseDir = utils.getFilepath('apps/dumpconfig-circular');
-      await sleep(100);
-      await app.ready();
+      yield sleep(100);
+      yield app.ready();
 
-      await sleep(100);
+      yield sleep(100);
       const json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert.deepEqual(json.config.foo, [ '~config~foo' ]);
     });
