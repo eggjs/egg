@@ -304,7 +304,6 @@ function createMysql(config, app) {
 }
 ```
 
-，便于有些特殊的插件需要异步化获取一些配置文件：
 The initialization function also support `Async function`, convenient for some special plugins that need to be asynchronous to get some configuration files.
 
 ```js
