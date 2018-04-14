@@ -45,13 +45,10 @@ Node.js >= 8.0.0 required.
 
 ## Docs & Community
 
-- [Website && Documentations](https://eggjs.org)
+- [Website && Documentations](http://eggjs.org/en/index.html)
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 - [Plugin Dependency](http://uml.mvnsearch.org/github/eggjs/egg/blob/master/docs/plugins.puml)
-
-> All the documentations (comments, README, etc.) are in English, except the tutorials and api documentations are still [being translated](https://github.com/eggjs/egg/issues/363).
-> Feel free to join us and translate egg documentations. It's appreciated.
 
 ## Getting Started
 
