@@ -56,7 +56,7 @@ Plugin is actually a 'mini application', directory of plugin is as below
         └── mw.test.js
 ```
 
-It is almost the same as the application directory, what's the difference?  
+It is almost the same as the application directory, what's the difference?
 
 1. Plugin have no independant router or controller. This is because:
 
@@ -135,7 +135,7 @@ We've discussed what plugin is. Now what can it do?
 
 ### Built-in Objects API Extension
 
-Extend the built-in objects of the framework, just like the application 
+Extend the built-in objects of the framework, just like the application
 
 - `app/extend/request.js` - extends Koa#Request object
 - `app/extend/response.js` - extends Koa#Response object
@@ -173,7 +173,7 @@ Extend the built-in objects of the framework, just like the application
   const assert = require('assert');
 
   module.exports = app => {
-    // insert static middleware before bodyParser 
+    // insert static middleware before bodyParser
     const index = app.config.coreMiddleware.indexOf('bodyParser');
     assert(index >= 0, 'bodyParser highly needed');
 
@@ -273,7 +273,7 @@ If each plugin makes their own implementation, all sorts of configs  and  initia
 
 #### Writing Plugin
 
-We simplify the [egg-mysql] plugin and to see how to write such a plugin: 
+We simplify the [egg-mysql] plugin and to see how to write such a plugin:
 
 ```js
 // egg-mysql/app.js
@@ -284,7 +284,7 @@ module.exports = app => {
 }
 
 /**
- * @param  {Object} config   The config which already processed by the framework. If the application configured multiple MySQL instances, each config would be passed in and call multiple createMysql 
+ * @param  {Object} config   The config which already processed by the framework. If the application configured multiple MySQL instances, each config would be passed in and call multiple createMysql
  * @param  {Application} app  the current application
  * @return {Object}          return the created MySQL instance
  */
@@ -294,11 +294,28 @@ function createMysql(config, app) {
   const client = new Mysql(config);
 
   // check before start the application
-  app.beforeStart(async function startMysql() {
+  app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    const index = count++;
-    app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
+    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
   });
+
+  return client;
+}
+```
+
+The initialization function also support `Async function`, convenient for some special plugins that need to be asynchronous to get some configuration files.
+
+```js
+async function createMysql(config, app) {
+  // get mysql configurations asynchronous
+  const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
+  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
+  // create instance
+  const client = new Mysql(mysqlConfig);
+
+  // check before start the application
+  const rows = await client.query('select now() as currentTime;');
+  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
 }
@@ -366,7 +383,7 @@ exports.mysql = {
 };
 ```
 
-2. Access the corresponding instance by `app.mysql.get('db1')` 
+2. Access the corresponding instance by `app.mysql.get('db1')`
 
 ```js
 // app/controller/post.js
@@ -388,12 +405,12 @@ module.exports = app => {
     //  get MySQL config from configuration center { host, post, password, ... }
     const mysqlConfig = await app.configCenter.fetch('mysql');
     // create MySQL instance dynamically
-    app.database = app.mysql.createInstance(mysqlConfig);
+    app.database = app.mysql.createInstanceAsync(mysqlConfig);
   });
 };
 ```
 
-Access the instance through `app.database` 
+Access the instance through `app.database`
 
 ```js
 // app/controller/post.js
@@ -455,7 +472,7 @@ We are very welcome your contribution to the new plugins, but also hope you foll
 
 Egg defines the plugin name through the `eggPlugin.name`, it is only unique in application or framework, that means **many npm packages might get the same plugin name**, why design in this way?
 
-First, Egg plugin do not only support npm package, it also supports search plugins in local directory. In Chapter [progressive](../tutorials/progressive.md) we mentioned how to make progress by using these two configurations. Directory is more friendly to unit test. So, Egg can not ensure uniqueness through npm package name. 
+First, Egg plugin do not only support npm package, it also supports search plugins in local directory. In Chapter [progressive](../tutorials/progressive.md) we mentioned how to make progress by using these two configurations. Directory is more friendly to unit test. So, Egg can not ensure uniqueness through npm package name.
 
 What's more, Egg can use this feature to make Adapter. For example, the plugin defined in[Template Develop Spec](./view-plugin.md#PluginNameSpecification) was named as view, but there are plugins named `egg-view-nunjucks` and `egg-view-react`, the users only need to change the plugin and modify the templates, no need to modify the Controller, because all these plugins have implemented the same API.
 

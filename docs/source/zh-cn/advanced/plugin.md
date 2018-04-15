@@ -294,11 +294,28 @@ function createMysql(config, app) {
   const client = new Mysql(config);
 
   // 做启动应用前的检查
-  app.beforeStart(async function startMysql() {
+  app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    const index = count++;
-    app.coreLogger.info(`[egg-mysql] instance[${index}] status OK, rds currentTime: ${rows[0].currentTime}`);
+    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
   });
+
+  return client;
+}
+```
+
+初始化方法也支持 `Async function`，便于有些特殊的插件需要异步化获取一些配置文件：
+
+```js
+async function createMysql(config, app) {
+  // 异步获取 mysql 配置
+  const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
+  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
+  // 创建实例
+  const client = new Mysql(mysqlConfig);
+
+  // 做启动应用前的检查
+  const rows = await client.query('select now() as currentTime;');
+  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
 
   return client;
 }
@@ -388,7 +405,7 @@ module.exports = app => {
     // 从配置中心获取 MySQL 的配置 { host, post, password, ... }
     const mysqlConfig = await app.configCenter.fetch('mysql');
     // 动态创建 MySQL 实例
-    app.database = app.mysql.createInstance(mysqlConfig);
+    app.database = await app.mysql.createInstanceAsync(mysqlConfig);
   });
 };
 ```
