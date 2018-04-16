@@ -1,7 +1,7 @@
 
 # History
 
-## 2018-04-16, Version 1.13.2 @dead-horse
+## 2018-04-16, Version 1.13.3 @dead-horse
 
 ### Notable changes
 
