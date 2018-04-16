@@ -1,4 +1,28 @@
 # History
+
+## 2018-04-16, Version 2.7.0 @dead-horse
+
+### Notable changes
+
+* **feature**
+  * singleton support asynchronous create function
+
+* **fix**
+  * dump config support circular json
+
+* **docs**
+  * improve router and typescript
+
+### Commits
+
+  * [[`3d499a9`](http://github.com/eggjs/egg/commit/3d499a90bab7095569e115e223de40e63812f2f5)] - docs(plugin): add singleton support async create function (#2392) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`05d925f`](http://github.com/eggjs/egg/commit/05d925fea4e0b2d8efa48cb01ced2133c0c059cd)] - docs: change English document on Readme (#2397) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`590bd8c`](http://github.com/eggjs/egg/commit/590bd8cb400845706ec7cc84232b812cb468c8ac)] - fix: dumpConfig support circular json (#2394) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`3a489b6`](http://github.com/eggjs/egg/commit/3a489b6f47b39ff2ec31efe936504918300b3f08)] - feat(singleton): support async create function (#2382) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`a5b6731`](http://github.com/eggjs/egg/commit/a5b673133b35e9b005e19c1e3267a2ff3d58e32b)] - docs: chore for router and typescript (#2390) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ee2d2b3`](http://github.com/eggjs/egg/commit/ee2d2b3c33671a822b45a6c474d3710aab5e70d5)] - docs(passport): translation for passport tutorial (#2235) (Cemre Mengu <<cemremengu@gmail.com>>)
+  * [[`6fad4e1`](http://github.com/eggjs/egg/commit/6fad4e1bed3c388e964fc656244e5e606b258085)] - chore: update package.json for release (#2381) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2018-04-12, Version 2.6.1 @atian25
 
 ### Notable changes
