@@ -1,6 +1,17 @@
 
 # History
 
+## 2018-04-16, Version 1.13.2 @dead-horse
+
+### Notable changes
+
+* **fix**
+  * dump config support circular json
+
+### Commits
+
+* [[`8507c5e`](http://github.com/eggjs/egg/commit/8507c5e19c58c0706e0df5858b45bca0b53adf7d)] - fix: dumpConfig support circular json (#2395) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2018-03-05, Version 1.13.1 @dead-horse
 
 ### Notable changes
