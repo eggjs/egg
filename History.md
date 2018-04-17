@@ -1,6 +1,17 @@
 # History
 
-## 2018-04-16, Version 2.7.0 @dead-horse
+## 2018-04-17, Version 2.7.1 @dead-horse
+
+### Notable changes
+
+* **fix**
+  * imporve compatibility of singleton
+
+### Commits
+
+  * [[`e4d219f`](http://github.com/eggjs/egg/commit/e4d219f1aaecbca13601c7813e57c67934e8c32b)] - fix: imporve compatibility of singleton (#2410) (Yiyu He <<dead_horse@qq.com>>)
+
+## 2018-04-16, Version 2.7.0 @dead-horse [DEPRECATED]
 
 ### Notable changes
 
