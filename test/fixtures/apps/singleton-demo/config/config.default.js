@@ -3,9 +3,7 @@
 exports.dataService = {
   clients: {
     first: { foo1: 'bar1' },
-    second: async () => {
-      return { foo2: 'bar2' };
-    },
+    second: { foo2: 'bar2' },
   },
 
   default: {
@@ -16,9 +14,7 @@ exports.dataService = {
 exports.dataServiceAsync = {
   clients: {
     first: { foo1: 'bar1' },
-    second: async () => {
-      return { foo2: 'bar2' };
-    },
+    second: { foo2: 'bar2' },
   },
 
   default: {

@@ -30,13 +30,6 @@ describe('test/lib/core/singleton.test.js', () => {
 
     const clients = [
       { foo: 'bar' },
-      () => {
-        return { foo: 'bar' };
-      },
-      async () => {
-        await sleep(10);
-        return { foo: 'bar' };
-      },
     ];
     for (const client of clients) {
       const app = { config: { dataService: { client } } };
@@ -45,7 +38,7 @@ describe('test/lib/core/singleton.test.js', () => {
         app,
         create,
       });
-      await singleton.init();
+      singleton.init();
       assert(app.dataService instanceof DataService);
       assert(app.dataService.config.foo === 'bar');
       assert(typeof app.dataService.createInstance === 'function');
@@ -57,10 +50,7 @@ describe('test/lib/core/singleton.test.js', () => {
 
     const clients = {
       first: { foo: 'bar1' },
-      async second() {
-        await sleep(10);
-        return { foo: 'bar2' };
-      },
+      second: { foo: 'bar2' },
     };
 
     const app = { config: { dataService: { clients } } };
@@ -69,7 +59,7 @@ describe('test/lib/core/singleton.test.js', () => {
       app,
       create,
     });
-    await singleton.init();
+    singleton.init();
     assert(app.dataService instanceof Singleton);
     assert(app.dataService.get('first').config.foo === 'bar1');
     assert(app.dataService.get('second').config.foo === 'bar2');
@@ -92,7 +82,7 @@ describe('test/lib/core/singleton.test.js', () => {
       app,
       create,
     });
-    await singleton.init();
+    singleton.init();
     assert(app.dataService instanceof DataService);
     assert(app.dataService.config.foo === 'bar');
     assert(app.dataService.config.foo1 === 'bar1');
@@ -118,7 +108,7 @@ describe('test/lib/core/singleton.test.js', () => {
       app,
       create,
     });
-    await singleton.init();
+    singleton.init();
     assert(app.dataService instanceof Singleton);
     assert(app.dataService.get('first').config.foo === 'bar1');
     assert(app.dataService.get('second').config.foo === 'bar');
@@ -140,7 +130,7 @@ describe('test/lib/core/singleton.test.js', () => {
       app,
       create,
     });
-    await singleton.init();
+    singleton.init();
     assert(app.dataService === singleton);
     assert(app.dataService instanceof Singleton);
     app.dataService = app.dataService.createInstance({ foo1: 'bar1' });
@@ -164,7 +154,7 @@ describe('test/lib/core/singleton.test.js', () => {
       app,
       create,
     });
-    await singleton.init();
+    singleton.init();
     assert(app.dataService === singleton);
     assert(app.dataService instanceof Singleton);
     app.dataService = await app.dataService.createInstanceAsync({ foo1: 'bar1' });
@@ -179,13 +169,6 @@ describe('test/lib/core/singleton.test.js', () => {
 
       const clients = [
         { foo: 'bar' },
-        () => {
-          return { foo: 'bar' };
-        },
-        async () => {
-          await sleep(10);
-          return { foo: 'bar' };
-        },
       ];
       for (const client of clients) {
         const app = { config: { dataService: { client } } };
@@ -207,10 +190,7 @@ describe('test/lib/core/singleton.test.js', () => {
 
       const clients = {
         first: { foo: 'bar1' },
-        async second() {
-          await sleep(10);
-          return { foo: 'bar2' };
-        },
+        second: { foo: 'bar2' },
       };
 
       const app = { config: { dataService: { clients } } };
