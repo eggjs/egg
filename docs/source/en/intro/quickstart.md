@@ -1,8 +1,6 @@
 title: Quick Start
 ---
 
-# Quick Start
-
 This guide covers getting up and running a real example using Egg.
 By following along with this guide step by step, you can quickly get started with Egg development.
 
