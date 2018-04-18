@@ -1,6 +1,6 @@
-import * as accepts from 'accepts';
-import * as KoaApplication from 'koa';
-import * as KoaRouter from 'koa-router';
+import accepts from 'accepts';
+import KoaApplication from 'koa';
+import KoaRouter from 'koa-router';
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
