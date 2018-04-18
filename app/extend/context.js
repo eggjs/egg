@@ -205,11 +205,11 @@ const proto = module.exports = {
     ctx.app.toAsyncFunction(scope)(ctx)
       .then(() => {
         const endTime = process.uptime();
-        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, (endTime - startTime)*1000);
+        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, (endTime - startTime) * 1000);
       })
       .catch(err => {
         const endTime = process.uptime();
-        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, (endTime - startTime)*1000);
+        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, (endTime - startTime) * 1000);
         ctx.coreLogger.error(err);
       });
   },
