@@ -198,18 +198,18 @@ const proto = module.exports = {
     // try to use custom function name first
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
-    // notice that we don't use Date.now because this is a system-based function. 
+    // notice that we don't use Date.now because this is a system-based function.
     // We should rely on how much time it ACCURATELY passed. So process.uptime() is more proper here.
     const startTime = process.uptime();
     // use app.toAsyncFunction to support both generator function and async function
     ctx.app.toAsyncFunction(scope)(ctx)
       .then(() => {
         const endTime = process.uptime();
-        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, (endTime-startTime)*1000);
+        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, (endTime - startTime)*1000);
       })
       .catch(err => {
         const endTime = process.uptime();
-        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, (endTime-startTime)*1000);
+        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, (endTime - startTime)*1000);
         ctx.coreLogger.error(err);
       });
   },
