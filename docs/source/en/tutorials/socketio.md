@@ -375,21 +375,27 @@ window.onload = function() {
 
 #### WeChat Applets
 
-The API provided by the WeChat applet is WebSocket, and socket.io is the upper encapsulation of Websocket. Therefore, we cannot directly use the API connection of the applet. You can use something like [wxapp-socket-io] (https://github.com/wxsocketio /wxapp-socket-io) to adapt to the library.
+The API provided by the WeChat applet is WebSocket, and socket.io is the upper encapsulation of Websocket. Therefore, we cannot directly use the API connection of the applet. You can use something like [weapp.socket.io] (https://github.com/wxsocketio/weapp.socket.io) to adapt to the library.
 
 The sample code is as follows:
 
 ```js
 // Small program-side sample code
-import io from 'vendor/wxapp-socket-io.js';
+const io = require('./yout_path/weapp.socket.io.js')
 
-const socket = io('ws://127.0.0.1:7001');
+const socket = io('http://localhost:8000')
+
 socket.on('connect', function() {
-  socket.emit('chat', 'hello world!');
+  console.log('connected');
 });
-socket.on('res', msg => {
-  console.log('res from server: %s!', msg);
-});
+
+socket.on('news', d => {
+  console.log('received news: ', d)
+})
+
+socket.emit('news', {
+  title: 'this is a news'
+})
 ```
 
 ### server
