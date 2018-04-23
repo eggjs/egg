@@ -110,7 +110,7 @@ module.exports = app => {
     // provider | provider name, like github, twitter, facebook, weibo and so on
     // uid      | provider unique id
     // user_id  | current application user id
-    const auth = await ctx.model.Authorization.findOne({
+    const auth = await ctx.model.Authorization.findOneOrCreate({
       uid: user.id,
       provider: user.provider,
     });
