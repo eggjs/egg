@@ -161,7 +161,7 @@ console.log(ctx.locals); // { a: 1, b: 2, c: 3, d: 4 }
 
 ```js
 ctx.app.locals = { appName: 'showcase' };
-const data = { user: 'egg' };
+const data = { name: 'egg' };
 
 // will auto merge `data` to `ctx.locals`, output: egg - showcase
 await ctx.renderString('{{ name }} - {{ appName }}', data);
