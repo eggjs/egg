@@ -114,7 +114,7 @@ module.exports = app => {
       uid: user.id,
       provider: user.provider,
     });
-    if(auth){
+    if (auth) {
       const existsUser = await ctx.model.User.findOne({ id: auth.user_id });
       return existsUser;
     }else{
