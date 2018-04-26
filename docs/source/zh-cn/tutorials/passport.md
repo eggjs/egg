@@ -110,17 +110,18 @@ module.exports = app => {
     // provider | provider name, like github, twitter, facebook, weibo and so on
     // uid      | provider unique id
     // user_id  | current application user id
-    const auth = await ctx.model.Authorization.findOneOrCreate({
+    const auth = await ctx.model.Authorization.findOne({
       uid: user.id,
       provider: user.provider,
     });
-    const existsUser = await ctx.model.User.findOne({ id: auth.user_id });
-    if (existsUser) {
+    if(auth){
+      const existsUser = await ctx.model.User.findOne({ id: auth.user_id });
       return existsUser;
+    }else{
+      // 调用 service 注册新用户
+      const newUser = await ctx.service.user.register(user);
+      return newUser;
     }
-    // 调用 service 注册新用户
-    const newUser = await ctx.service.user.register(user);
-    return newUser;
   });
 
   // 将用户信息序列化后存进 session 里面，一般需要精简，只保存个别字段
