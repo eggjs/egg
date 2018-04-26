@@ -250,7 +250,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }, 'sequencify plugins has problem, missing: [], recursive: [a,b,c,a]');
+    }, /sequencify plugins has problem, missing: \[\], recursive: \[a,b,c,a\]/);
   });
 
   it('should throw error when plugin dep not exists', function() {
@@ -262,7 +262,7 @@ describe('test/lib/core/loader/load_plugin.test.js', () => {
         logger,
       });
       appLoader.loadConfig();
-    }, 'sequencify plugins has problem, missing: [a1], recursive: []\n\t>> Plugin [a1] is disabled or missed, but is required by [c]');
+    }, /sequencify plugins has problem, missing: \[a1\], recursive: \[\]\s+>> Plugin \[a1\] is disabled or missed, but is required by \[c\]/);
   });
 
   it('should auto fill plugin infos', () => {
