@@ -114,13 +114,14 @@ module.exports = app => {
       uid: user.id,
       provider: user.provider,
     });
-    const existsUser = await ctx.model.User.findOne({ id: auth.user_id });
-    if (existsUser) {
+    if (auth) {
+      const existsUser = await ctx.model.User.findOne({ id: auth.user_id });
       return existsUser;
+    }else{
+      // 调用 service 注册新用户
+      const newUser = await ctx.service.user.register(user);
+      return newUser;
     }
-    // 调用 service 注册新用户
-    const newUser = await ctx.service.user.register(user);
-    return newUser;
   });
 
   // 将用户信息序列化后存进 session 里面，一般需要精简，只保存个别字段
