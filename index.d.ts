@@ -605,6 +605,8 @@ declare module 'egg' {
     controller: IController;
 
     Controller: Controller;
+
+    middleware: KoaApplication.Middleware[] & IMiddleware;
   }
 
   export interface FileStream extends Readable { // tslint:disable-line
@@ -878,11 +880,13 @@ declare module 'egg' {
    *
    * Now I can get ctx.service.foo at controller and other service file.
    */
-  export interface IService { } // tslint:disable-line
+  export interface IService extends PlainObject { } // tslint:disable-line
 
-  export interface IController { } // tslint:disable-line
+  export interface IController extends PlainObject { } // tslint:disable-line
 
-  export interface IHelper {
+  export interface IMiddleware extends PlainObject {} // tslint:disable-line
+
+  export interface IHelper extends PlainObject {
     /**
      * Generate URL path(without host) for route. Takes the route name and a map of named params.
      * @method Helper#pathFor
