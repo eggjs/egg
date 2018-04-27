@@ -24,7 +24,7 @@ async function asyncCreate(config) {
   return new DataService(config);
 }
 
-describe.only('test/lib/core/singleton.test.js', () => {
+describe('test/lib/core/singleton.test.js', () => {
   afterEach(() => {
     delete DataService.prototype.createInstance;
     delete DataService.prototype.createInstanceAsync;
