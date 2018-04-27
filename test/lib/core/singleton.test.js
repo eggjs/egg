@@ -225,6 +225,42 @@ describe('test/lib/core/singleton.test.js', () => {
     assert(dataService.config.foo === 'bar');
   });
 
+
+  it('should work with no prototype and frozen', async () => {
+    let warn = false;
+    function create() {
+      const d = Object.create(null);
+      Object.freeze(d);
+      return d;
+    }
+    const app = {
+      config: {
+        dataService: {
+          client: { foo: 'bar' },
+          default: { foo: 'bar' },
+        },
+      },
+      logger: {
+        warn(msg, name) {
+          assert(name === 'dataService');
+          warn = true;
+        },
+      },
+    };
+    const name = 'dataService';
+
+    const singleton = new Singleton({
+      name,
+      app,
+      create,
+    });
+    singleton.init();
+
+    assert(!app.dataService.createInstance);
+    assert(!app.dataService.createInstanceAsync);
+    assert(warn);
+  });
+
   describe('async create', () => {
     it('should init with client', async () => {
       const name = 'dataService';
