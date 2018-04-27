@@ -168,7 +168,7 @@ exports.alinode = {
 
 `npm scripts` 配置的 `start` 指令无需改变，通过 `egg-scripts` 即可。
 
-启动命令需使用 `npm start`，因为 `npm scripts` 执行时会把 `node_module/.bin` 目录加入 `PATH`，故会优先使用当前项目执行的 Node 版本。
+启动命令需使用 `npm start`，因为 `npm scripts` 执行时会把 `node_modules/.bin` 目录加入 `PATH`，故会优先使用当前项目执行的 Node 版本。
 
 启动后会看到 master 日志包含以下内容：
 
