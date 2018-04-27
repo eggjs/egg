@@ -923,34 +923,34 @@ declare module 'egg' {
   export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
 
   /**
-   * plugin config item
+   * plugin config item interface
    */
-  export interface EggPluginItem {
+  export interface IEggPluginItem {
     env?: EggEnvType[];
     path?: string;
     package?: string;
     enable?: boolean;
   }
 
-  type EggPluginValue = EggPluginItem | boolean;
+  export type EggPluginItem = IEggPluginItem | boolean;
 
   /**
    * build-in plugin list
    */
   export interface EggPlugin {
-    [key: string]: EggPluginValue | undefined;
-    onerror?: EggPluginValue;
-    session?: EggPluginValue;
-    i18n?: EggPluginValue;
-    watcher?: EggPluginValue;
-    multipart?: EggPluginValue;
-    security?: EggPluginValue;
-    development?: EggPluginValue;
-    logrotator?: EggPluginValue;
-    schedule?: EggPluginValue;
-    static?: EggPluginValue;
-    jsonp?: EggPluginValue;
-    view?: EggPluginValue;
+    [key: string]: EggPluginItem | undefined;
+    onerror?: EggPluginItem;
+    session?: EggPluginItem;
+    i18n?: EggPluginItem;
+    watcher?: EggPluginItem;
+    multipart?: EggPluginItem;
+    security?: EggPluginItem;
+    development?: EggPluginItem;
+    logrotator?: EggPluginItem;
+    schedule?: EggPluginItem;
+    static?: EggPluginItem;
+    jsonp?: EggPluginItem;
+    view?: EggPluginItem;
   }
 
   /**
