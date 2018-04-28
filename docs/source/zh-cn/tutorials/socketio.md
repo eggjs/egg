@@ -391,21 +391,27 @@ window.onload = function () {
 
 #### 微信小程序
 
-微信小程序提供的 API 为 WebSocket ，而 socket.io 是 Websocket 的上层封装，故我们无法直接用小程序的 API 连接，可以使用类似 [wxapp-socket-io](https://github.com/wxsocketio/wxapp-socket-io) 的库来适配。
+微信小程序提供的 API 为 WebSocket ，而 socket.io 是 Websocket 的上层封装，故我们无法直接用小程序的 API 连接，可以使用类似 [weapp.socket.io](https://github.com/wxsocketio/weapp.socket.io) 的库来适配。
 
 示例代码如下：
 
 ```js
 // 小程序端示例代码
-import io from 'vendor/wxapp-socket-io.js';
+const io = require('./yout_path/weapp.socket.io.js')
 
-const socket = io('ws://127.0.0.1:7001');
+const socket = io('http://localhost:8000')
+
 socket.on('connect', function () {
-  socket.emit('chat', 'hello world!');
+  console.log('connected')
 });
-socket.on('res', msg => {
-  console.log('res from server: %s!', msg);
-});
+
+socket.on('news', d => {
+  console.log('received news: ', d)
+})
+
+socket.emit('news', {
+  title: 'this is a news'
+})
 ```
 
 
