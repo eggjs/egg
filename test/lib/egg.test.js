@@ -12,7 +12,7 @@ const utils = require('../utils');
 describe('test/lib/egg.test.js', () => {
   afterEach(mm.restore);
 
-  describe.only('dumpConfig()', () => {
+  describe('dumpConfig()', () => {
     const baseDir = utils.getFilepath('apps/demo');
     let app;
     before(() => {
