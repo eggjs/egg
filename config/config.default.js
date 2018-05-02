@@ -318,6 +318,7 @@ module.exports = appInfo => {
    * @property {Number} responseTimeout - response timeout, default is 60000
    */
   config.clusterClient = {
+    maxIdleTime: 60000,
     responseTimeout: 60000,
   };
 
