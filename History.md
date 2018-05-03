@@ -1,6 +1,17 @@
 
 # History
 
+## 2018-05-03, Version 1.14.0 @popomore
+
+### Notable changes
+
+* **feature**
+  * add time duration for dump config
+
+### Commits
+
+  * [[`58695707d`](http://github.com/eggjs/egg/commit/58695707dd9e7a393d9ce3b12f9ccd3a352740a5)] - feat: add time duration for dump config (#2485) (#2491) (Haoliang Gao <<sakura9515@gmail.com>>)
+
 ## 2018-04-16, Version 1.13.3 @dead-horse
 
 ### Notable changes
