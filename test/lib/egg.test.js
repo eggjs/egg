@@ -97,6 +97,18 @@ describe('test/lib/egg.test.js', () => {
       });
       app.dumpConfig();
     });
+
+    it('should has log', () => {
+      const eggLogPath = utils.getFilepath('apps/demo/logs/demo/egg-web.log');
+      let content = fs.readFileSync(eggLogPath, 'utf8');
+      assert(/\[egg:core] dump config after load, \d+ms/.test(content));
+      assert(/\[egg:core] dump config after ready, \d+ms/.test(content));
+
+      const agentLogPath = utils.getFilepath('apps/demo/logs/demo/egg-agent.log');
+      content = fs.readFileSync(agentLogPath, 'utf8');
+      assert(/\[egg:core] dump config after load, \d+ms/.test(content));
+      assert(/\[egg:core] dump config after ready, \d+ms/.test(content));
+    });
   });
 
   describe('dumpConfig() dynamically', () => {
