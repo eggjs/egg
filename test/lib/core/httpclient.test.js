@@ -339,7 +339,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       assert(res.status === 200);
 
-      res = yield httpclient.request('https://www.npmjs.com', {
+      res = yield httpclient.request('https://www.alibaba.com', {
         method: 'GET',
         timeout: 20000,
       });
@@ -375,7 +375,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       });
       assert(res.status === 200);
 
-      res = yield httpclient.request('https://www.npmjs.com', {
+      res = yield httpclient.request('https://www.alibaba.com', {
         method: 'GET',
         timeout: 20000,
       });
