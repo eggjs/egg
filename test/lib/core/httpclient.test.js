@@ -179,7 +179,7 @@ describe('test/lib/core/httpclient.test.js', () => {
   });
 
   describe('httpclient tracer', () => {
-    const url = 'https://eggjs.org/';
+    const url = 'https://www.alibaba.com/';
     let app;
     before(() => {
       app = utils.app('apps/httpclient-tracer');
