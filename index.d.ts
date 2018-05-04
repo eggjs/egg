@@ -622,7 +622,7 @@ declare module 'egg' {
      * @see Context#runInBackground
      * @param {Function} scope - the first args is an anonymous ctx
      */
-    runInBackground(scrope: () => void): void;
+    runInBackground(scope: (ctx: Context) => void): void;
   }
 
   export interface FileStream extends Readable { // tslint:disable-line
