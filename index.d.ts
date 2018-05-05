@@ -525,7 +525,7 @@ declare module 'egg' {
      */
     beforeStart(scrope: () => void): void;
 
-    runSchedule(schedulePath: string): void;
+    runSchedule(schedulePath: string): Promise<any>;
 
     /**
      * Close all, it wil close
