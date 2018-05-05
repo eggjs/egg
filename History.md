@@ -1,5 +1,17 @@
 # History
 
+## 2018-05-05, Version 2.8.1 @atian25
+
+### Notable changes
+
+* **docs**
+  * fix missing d.ts
+
+### Commits
+
+  * [[`20356bffc`](http://github.com/eggjs/egg/commit/20356bffcf7e99970b44f230a6fc2a8f9547a380)] - feat(d.ts): add createAnonymousContext & runInBackground (#2501) (Hengfei Zhuang <<zhuanghengfei@gmail.com>>)
+  * [[`c013ef3e6`](http://github.com/eggjs/egg/commit/c013ef3e64e049c6ef48e29d289f6d756b6ca1f7)] - feat(d.ts): add runSchedule & Subscription define (#2504) (Hengfei Zhuang <<zhuanghengfei@gmail.com>>)
+
 ## 2018-05-03, Version 2.8.0 @dead-horse
 
 ### Notable changes
@@ -23,7 +35,7 @@
   * [[`73dac083d`](http://github.com/eggjs/egg/commit/73dac083d2a029f893e9b6737080c921027e308f)] - docs: update wxapp-socket-io project to weapp.socket.io (#2421) (liuguili <<gongzili456@gmail.com>>)
   * [[`1ada8e384`](http://github.com/eggjs/egg/commit/1ada8e3848be9f09680d7cac091fb14206df5a11)] - feat(d.ts): add middleware to Application and other ts improvement (#2465) (Axes <<whxaxes@qq.com>>)
   * [[`437785315`](http://github.com/eggjs/egg/commit/437785315f28a828ea0cf7bece80223d5b796dc5)] - docs: fix the code error of LOCALS in view.md (#2464) (zjz19901029 <<346663801@qq.com>>)
-  * [[`f341b9fb8`](http://github.com/eggjs/egg/commit/f341b9fb8bdf36b6280500578e8448c59aec10f1)] - chore: update title and remove unused files (#2433) (TZ | 
+  * [[`f341b9fb8`](http://github.com/eggjs/egg/commit/f341b9fb8bdf36b6280500578e8448c59aec10f1)] - chore: update title and remove unused files (#2433) (TZ |
 天猪 <<atian25@qq.com>>)
   * [[`a5ab29cbd`](http://github.com/eggjs/egg/commit/a5ab29cbd1de0f5425019085258a496b4bce8b45)] - docs: switch to English document (#2426) (Haoliang Gao <<sakura9515@gmail.com>>)
   * [[`4ab7df25f`](http://github.com/eggjs/egg/commit/4ab7df25f152609d494745eac2794b78e66444f0)] - deps: update dependencies, add @types/urllib to autod config (#2423) (Yiyu He <<dead_horse@qq.com>>)
