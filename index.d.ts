@@ -525,6 +525,8 @@ declare module 'egg' {
      */
     beforeStart(scrope: () => void): void;
 
+    runSchedule(schedulePath: string): Promise<any>;
+
     /**
      * Close all, it wil close
      * - callbacks registered by beforeClose
@@ -860,6 +862,8 @@ declare module 'egg' {
   export class Controller extends BaseContextClass { }
 
   export class Service extends BaseContextClass { }
+
+  export class Subscription extends BaseContextClass { }
 
   /**
    * The empty interface `IService` is a placeholder, for egg
