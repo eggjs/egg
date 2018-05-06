@@ -63,9 +63,9 @@ $ open http://localhost:7001
 
 ## 贡献代码
 
-Please let us know what we can help, check [issues](https://github.com/eggjs/egg/issues) for bug reporting and suggestion.
+请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的Bug或者意见](https://github.com/eggjs/egg/issues)。
 
-If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
+如果你是一个代码贡献者，请参考[代码贡献规范](CONTRIBUTING.md)。
 
 ## 开源协议
 
