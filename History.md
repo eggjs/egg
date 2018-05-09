@@ -1,4 +1,3 @@
-
 # History
 
 ## 2018-05-09, Version 1.15.0 @popomore
