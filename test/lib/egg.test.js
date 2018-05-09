@@ -109,6 +109,29 @@ describe('test/lib/egg.test.js', () => {
       assert(/\[egg:core] dump config after load, \d+ms/.test(content));
       assert(/\[egg:core] dump config after ready, \d+ms/.test(content));
     });
+
+    it('should read timing data', function* () {
+      let json = readJson(path.join(baseDir, `run/agent_timing_${process.pid}.json`));
+      assert(json.length === 29);
+      assert(json[0].name === 'Application Start');
+      assert(json[0].pid === process.pid);
+
+      json = readJson(path.join(baseDir, `run/application_timing_${process.pid}.json`));
+      assert(json.length === 61);
+      assert(json[0].name === 'Application Start');
+      assert(json[0].pid === process.pid);
+    });
+
+    it('should ignore error when dumpTiming', done => {
+      mm(fs, 'writeFileSync', () => {
+        throw new Error('mock error');
+      });
+      mm(app.coreLogger, 'warn', msg => {
+        assert(msg === 'dumpTiming error: mock error');
+        done();
+      });
+      app.dumpTiming();
+    });
   });
 
   describe('dumpConfig() dynamically', () => {
