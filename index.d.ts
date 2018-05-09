@@ -525,6 +525,8 @@ declare module 'egg' {
      */
     beforeStart(scrope: () => void): void;
 
+    runSchedule(schedulePath: string): Promise<any>;
+
     /**
      * Close all, it wil close
      * - callbacks registered by beforeClose
@@ -607,6 +609,22 @@ declare module 'egg' {
     Controller: Controller;
 
     middleware: KoaApplication.Middleware[] & IMiddleware;
+
+    /**
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {String} Application#createAnonymousContext
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {Context} context
+     */
+    createAnonymousContext(req?: Request): Context;
+
+    /**
+     * Run async function in the background
+     * @see Context#runInBackground
+     * @param {Function} scope - the first args is an anonymous ctx
+     */
+    runInBackground(scope: (ctx: Context) => void): void;
   }
 
   export interface FileStream extends Readable { // tslint:disable-line
@@ -860,6 +878,8 @@ declare module 'egg' {
   export class Controller extends BaseContextClass { }
 
   export class Service extends BaseContextClass { }
+
+  export class Subscription extends BaseContextClass { }
 
   /**
    * The empty interface `IService` is a placeholder, for egg

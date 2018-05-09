@@ -95,8 +95,9 @@ module.exports = {
   },
 
   /**
-   * Request remote IPv4 address
+   * Get or set the request remote IPv4 address
    * @member {String} Request#ip
+   * @param {String} ip - IPv4 address
    * @example
    * ```js
    * this.request.ip
@@ -115,10 +116,6 @@ module.exports = {
     return this._ip;
   },
 
-  /**
-   * Set the remote address
-   * @param {String} ip - IPv4 address
-   */
   set ip(ip) {
     this._ip = ip;
   },
@@ -178,7 +175,7 @@ module.exports = {
   },
 
   /**
-   * get params pass by querystring, all value are String type.
+   * get params pass by querystring, all values are of string type.
    * @member {Object} Request#query
    * @example
    * ```js
