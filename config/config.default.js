@@ -32,7 +32,7 @@ module.exports = appInfo => {
     /**
      * The key that signing cookies. It can contain multiple keys seperated by `,`.
      * @member {String} Config#keys
-     * @see https://eggjs.org/zh-cn/basics/controller.html#cookie-秘钥
+     * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
      * @default
      * @since 1.0.0
      */
