@@ -1,5 +1,14 @@
-
 # History
+
+## 2018-05-09, Version 1.15.0 @popomore
+
+### Notable changes
+
+* **feature**
+  * dump timing data for loader trace
+
+### Commits
+* [[`a36387f22`](http://github.com/eggjs/egg/commit/a36387f22dc0cfd00cfed2c696233a4767985ecc)] - feat: dump timing data for loader (#2521) (Haoliang Gao <<sakura9515@gmail.com>>)
 
 ## 2018-05-03, Version 1.14.0 @popomore
 
