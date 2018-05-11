@@ -90,6 +90,14 @@ the corresponding options also need to be used in `get` method.
 - If `signed` is true when `set` Cookie but false when `get` Cookie, egg.js doesn't verify Cookie value, so the value could have been modified by client.
 - If `encrypt` is true when `set` Cookie but false when `get` Cookie, what you get is encrypted text rather than the raw plain text.
 
+If you want to get the cookie set by frontend or other system, you need to specify the parameter `signed` as `false`, avoid varify the cookie and not getting the vlaue.
+
+```js
+ctx.cookies.get('frontend-cookie', {
+  signed: false,
+});
+```
+
 ### Cookie Secret Key
 
 Since we need to sign and encrypt Cookie, a secret key is required.

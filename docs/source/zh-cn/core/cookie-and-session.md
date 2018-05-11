@@ -75,6 +75,14 @@ ctx.cookies.set(key, value, {
 - 如果设置的时候指定为 signed，获取时未指定，则不会在获取时对取到的值做验签，导致可能被客户端篡改。
 - 如果设置的时候指定为 encrypt，获取时未指定，则无法获取到真实的值，而是加密过后的密文。
 
+如果要获取前端或者其他系统设置的 cookie，需要指定参数 `signed` 为 `false`，避免对它做验签导致获取不到 cookie 的值。
+
+```js
+ctx.cookies.get('frontend-cookie', {
+  signed: false,
+});
+```
+
 ### Cookie 秘钥
 
 由于我们在 Cookie 中需要用到加解密和验签，所以需要配置一个秘钥供加密使用。在 `config/config.default.js` 中
