@@ -187,7 +187,7 @@ declare module 'egg' {
    * ```js
    * // config/config.default.ts
    * import { EggAppInfo } from 'egg';
-   * 
+   *
    * export default (appInfo: EggAppInfo) => {
    *   return {
    *     keys: appInfo.name + '123456',
@@ -570,7 +570,7 @@ declare module 'egg' {
      * global locals for view
      * @see Context#locals
      */
-    locals: any;
+    locals: IApplicationLocals;
 
     /**
      * HTTP get method
@@ -626,6 +626,8 @@ declare module 'egg' {
      */
     runInBackground(scope: (ctx: Context) => void): void;
   }
+
+  export interface IApplicationLocals {}
 
   export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
@@ -792,7 +794,7 @@ declare module 'egg' {
      *
      * @member {Object} Context#locals
      */
-    locals: any;
+    locals: IContextLocals;
 
     /**
      * alias to {@link locals}, compatible with koa that use this variable
@@ -874,6 +876,8 @@ declare module 'egg' {
      */
     redirect(url: string, alt?: string): void;
   }
+
+  export interface IContextLocals {}
 
   export class Controller extends BaseContextClass { }
 
@@ -998,7 +1002,7 @@ declare module 'egg' {
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
    * @example
    * import { PowerPartial, EggAppConfig } from 'egg';
-   * 
+   *
    * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
