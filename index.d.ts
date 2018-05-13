@@ -238,7 +238,11 @@ declare module 'egg' {
         parameterLimit: number;
       };
       enableTypes: string[];
-      extendTypes: any;
+      extendTypes: {
+        json?: string[];
+        form?: string[];
+        text?: string[];
+      };
     };
 
     /**
