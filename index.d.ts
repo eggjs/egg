@@ -794,7 +794,7 @@ declare module 'egg' {
      *
      * @member {Object} Context#locals
      */
-    locals: IContextLocals;
+    locals: IApplicationLocals & IContextLocals;
 
     /**
      * alias to {@link locals}, compatible with koa that use this variable
