@@ -627,7 +627,7 @@ declare module 'egg' {
     runInBackground(scope: (ctx: Context) => void): void;
   }
 
-  export interface IApplicationLocals {}
+  export interface IApplicationLocals extends PlainObject {}
 
   export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
@@ -877,7 +877,7 @@ declare module 'egg' {
     redirect(url: string, alt?: string): void;
   }
 
-  export interface IContextLocals {}
+  export interface IContextLocals extends PlainObject {}
 
   export class Controller extends BaseContextClass { }
 
