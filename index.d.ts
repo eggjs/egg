@@ -296,6 +296,18 @@ declare module 'egg' {
        * don't wait all plugins ready, default is true.
        */
       fastReady: boolean;
+      /**
+       * whether reload on debug, default is true.
+       */
+      reloadOnDebug: boolean;
+      /**
+       * whether override default watchDirs, default is false.
+       */
+      overrideDefault: boolean;
+      /**
+       * whether to reload, use https://github.com/sindresorhus/multimatch
+       */
+      reloadPattern: string[] | string;
     };
     /**
      * It will ignore special keys when dumpConfig
