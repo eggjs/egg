@@ -223,6 +223,8 @@ declare module 'egg' {
      * @property {Number} queryString.arrayLimit - from item array length limit, default 100
      * @property {Number} queryString.depth - json value deep lenght, default 5
      * @property {Number} queryString.parameterLimit - paramter number limit ,default 1000
+     * @property {string[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
+     * @property {any} extendTypes - support extend types
      */
     bodyParser: {
       enable: boolean;
@@ -234,6 +236,12 @@ declare module 'egg' {
         arrayLimit: number;
         depth: number;
         parameterLimit: number;
+      };
+      enableTypes: string[];
+      extendTypes: {
+        json?: string[];
+        form?: string[];
+        text?: string[];
       };
     };
 
