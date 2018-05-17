@@ -249,7 +249,7 @@ This is the default way in Egg to cut the logs into files named by `.log.YYYY-MM
 
 ### Size Sharding
 
-The log file also can be cut into ones by size. For example, Egg will process `egg-web.log` when its size reach 2G:
+The log file also can be cut into ones by size. For example, Egg will process `egg-web.log` when its size reach 2M:
 
 ```js
 // config/config.${env}.js
