@@ -261,7 +261,7 @@ module.exports = appInfo => {
       filesRotateBySize: [
         path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
       ],
-      maxFileSize: 2 * 1024 * 1024,
+      maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
 };
