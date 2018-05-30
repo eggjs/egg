@@ -267,7 +267,7 @@ app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ER
 
 ### 按照文件大小切割
 
-我们也可以按照文件大小进行切割。例如，当文件超过 2M 时进行切割。
+我们也可以按照文件大小进行切割。例如，当文件超过 2G 时进行切割。
 
 例如，我们需要把 `egg-web.log` 按照大小进行切割：
 
@@ -281,7 +281,7 @@ module.exports = appInfo => {
       filesRotateBySize: [
         path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
       ],
-      maxFileSize: 2 * 1024 * 1024,
+      maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
 };

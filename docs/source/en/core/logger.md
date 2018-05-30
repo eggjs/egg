@@ -249,7 +249,7 @@ This is the default way in Egg to cut the logs into files named by `.log.YYYY-MM
 
 ### Size Sharding
 
-The log file also can be cut into ones by size. For example, Egg will process `egg-web.log` when its size reach 2M:
+The log file also can be cut into ones by size. For example, Egg will process `egg-web.log` when its size reach 2G:
 
 ```js
 // config/config.${env}.js
@@ -261,7 +261,7 @@ module.exports = appInfo => {
       filesRotateBySize: [
         path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
       ],
-      maxFileSize: 2 * 1024 * 1024,
+      maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
 };
