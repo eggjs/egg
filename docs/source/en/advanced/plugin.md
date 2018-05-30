@@ -71,17 +71,17 @@ It is almost the same as the application directory, what's the difference?
     - `{Array} optionalDependencies` - optional dependencies list of this plugin.(if these plugins are not activated, only warnings would be occurred, and will not affect the startup of the application).
     - `{Array} env` - this option is available only when specify the environment. The list of env please refer to [env](../basics/env.md). This is optional, most time you can leave it.
 
-    ```json
-    {
-      "name": "egg-rpc",
-      "eggPlugin": {
-        "name": "rpc",
-        "dependencies": [ "registry" ],
-        "optionalDependencies": [ "vip" ],
-        "env": [ "local", "test", "unittest", "prod" ]
+      ```json
+      {
+        "name": "egg-rpc",
+        "eggPlugin": {
+          "name": "rpc",
+          "dependencies": [ "registry" ],
+          "optionalDependencies": [ "vip" ],
+          "env": [ "local", "test", "unittest", "prod" ]
+        }
       }
-    }
-    ```
+      ```
 
 3. No `plugin.js`：
 
@@ -148,119 +148,119 @@ Extend the built-in objects of the framework, just like the application
 
 1. First, define and implement middleware under directory `app/middleware`
 
-  ```js
-  'use strict';
+    ```js
+    'use strict';
 
-  const staticCache = require('koa-static-cache');
-  const assert = require('assert');
-  const mkdirp = require('mkdirp');
+    const staticCache = require('koa-static-cache');
+    const assert = require('assert');
+    const mkdirp = require('mkdirp');
 
-  module.exports = (options, app) => {
-    assert.strictEqual(typeof options.dir, 'string', 'Must set `app.config.static.dir` when static plugin enable');
+    module.exports = (options, app) => {
+      assert.strictEqual(typeof options.dir, 'string', 'Must set `app.config.static.dir` when static plugin enable');
 
-    // ensure directory exists
-    mkdirp.sync(options.dir);
+      // ensure directory exists
+      mkdirp.sync(options.dir);
 
-    app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s', options.prefix, options.dir);
+      app.loggers.coreLogger.info('[egg-static] starting static serve %s -> %s', options.prefix, options.dir);
 
-    return staticCache(options);
-  };
-  ```
+      return staticCache(options);
+    };
+    ```
 
 2. Insert middleware to the appropriate position in `app.js`(e.g. insert static middleware before bodyParser )
 
-  ```js
-  const assert = require('assert');
+    ```js
+    const assert = require('assert');
 
-  module.exports = app => {
-    // insert static middleware before bodyParser
-    const index = app.config.coreMiddleware.indexOf('bodyParser');
-    assert(index >= 0, 'bodyParser highly needed');
+    module.exports = app => {
+      // insert static middleware before bodyParser
+      const index = app.config.coreMiddleware.indexOf('bodyParser');
+      assert(index >= 0, 'bodyParser highly needed');
 
-    app.config.coreMiddleware.splice(index, 0, 'static');
-  };
-  ```
+      app.config.coreMiddleware.splice(index, 0, 'static');
+    };
+    ```
 
 ### Initialization on Application Starting
 
 - If you want to read some local config before startup
 
-  ```js
-  // ${plugin_root}/app.js
-  const fs = require('fs');
-  const path = require('path');
+    ```js
+    // ${plugin_root}/app.js
+    const fs = require('fs');
+    const path = require('path');
 
-  module.exports = app => {
-    app.customData = fs.readFileSync(path.join(app.config.baseDir, 'data.bin'));
+    module.exports = app => {
+      app.customData = fs.readFileSync(path.join(app.config.baseDir, 'data.bin'));
 
-    app.coreLogger.info('read data ok');
-  };
-  ```
+      app.coreLogger.info('read data ok');
+    };
+    ```
 
 - If you want to do some async starting business, you can do it with `app.beforeStart` API
 
-  ```js
-  // ${plugin_root}/app.js
-  const MyClient = require('my-client');
+    ```js
+    // ${plugin_root}/app.js
+    const MyClient = require('my-client');
 
-  module.exports = app => {
-    app.myClient = new MyClient();
-    app.myClient.on('error', err => {
-      app.coreLogger.error(err);
-    });
-    app.beforeStart(async () => {
-      await app.myClient.ready();
-      app.coreLogger.info('my client is ready');
-    });
-  };
-  ```
+    module.exports = app => {
+      app.myClient = new MyClient();
+      app.myClient.on('error', err => {
+        app.coreLogger.error(err);
+      });
+      app.beforeStart(async () => {
+        await app.myClient.ready();
+        app.coreLogger.info('my client is ready');
+      });
+    };
+    ```
 
 - You can add starting business of agent with `agent.beforeStart` API
 
-  ```js
-  // ${plugin_root}/agent.js
-  const MyClient = require('my-client');
+    ```js
+    // ${plugin_root}/agent.js
+    const MyClient = require('my-client');
 
-  module.exports = agent => {
-    agent.myClient = new MyClient();
-    agent.myClient.on('error', err => {
-      agent.coreLogger.error(err);
-    });
-    agent.beforeStart(async () => {
-      await agent.myClient.ready();
-      agent.coreLogger.info('my client is ready');
-    });
-  };
-  ```
+    module.exports = agent => {
+      agent.myClient = new MyClient();
+      agent.myClient.on('error', err => {
+        agent.coreLogger.error(err);
+      });
+      agent.beforeStart(async () => {
+        await agent.myClient.ready();
+        agent.coreLogger.info('my client is ready');
+      });
+    };
+    ```
 
 ### Setup Schedule Task
 
 1. Setup dependencies of schedule plugin in `package.json`
 
-  ```json
-  {
-    "name": "your-plugin",
-    "eggPlugin": {
+    ```json
+    {
       "name": "your-plugin",
-      "dependencies": [ "schedule" ]
+      "eggPlugin": {
+        "name": "your-plugin",
+        "dependencies": [ "schedule" ]
+      }
     }
-  }
-  ```
+    ```
 
 2. Create a new file in `${plugin_root}/app/schedule/` directory to edit your schedule task
 
-  ```js
-  exports.schedule = {
-    type: 'worker',
-    cron: '0 0 3 * * *',
-    // interval: '1h',
-    // immediate: true,
-  };
+    ```js
+    exports.schedule = {
+      type: 'worker',
+      cron: '0 0 3 * * *',
+      // interval: '1h',
+      // immediate: true,
+    };
 
-  exports.task = async ctx => {
-    // your logic code
-  };
-  ```
+    exports.task = async ctx => {
+      // your logic code
+    };
+    ```
 
 ### Best Practice of Global Instance Plugin
 
@@ -329,70 +329,70 @@ As you can see, all we need to do for this plugin is passing in the field that n
 
 1. Declare MySQL config in config file
 
-```js
-// config/config.default.js
-module.exports = {
-  mysql: {
-    client: {
-      host: 'mysql.com',
-      port: '3306',
-      user: 'test_user',
-      password: 'test_password',
-      database: 'test',
-    },
-  },
-};
-```
+    ```js
+    // config/config.default.js
+    module.exports = {
+      mysql: {
+        client: {
+          host: 'mysql.com',
+          port: '3306',
+          user: 'test_user',
+          password: 'test_password',
+          database: 'test',
+        },
+      },
+    };
+    ```
 
 2. Access database through `app.mysql` directly
 
-```js
-// app/controller/post.js
-class PostController extends Controller {
-  async list() {
-    const posts = await this.app.mysql.query(sql, values);
-  },
-}
-```
+    ```js
+    // app/controller/post.js
+    class PostController extends Controller {
+      async list() {
+        const posts = await this.app.mysql.query(sql, values);
+      },
+    }
+    ```
 
 ##### Multiple Instances
 
 1. Of course we need to configure MySQL in the config file, but different from single instance, we need to add  `clients` in the config to declare the configuration of different instances. meanwhile, the `default` field can be used to configure the shared configuration in multiple instances(e.g. host and port). Note that in this case,should use `get` function to specify the corresponding instance(eg: use `app.mysql.get('db1').query()` instead of using `app.mysql.query()` directly to get a `undefined`).
 
-```js
-// config/config.default.js
-exports.mysql = {
-  clients: {
-    // clientId, access the client instance by app.mysql.get('clientId')
-    db1: {
-      user: 'user1',
-      password: 'upassword1',
-      database: 'db1',
-    },
-    db2: {
-      user: 'user2',
-      password: 'upassword2',
-      database: 'db2',
-    },
-  },
-  // default configuration for all databases
-  default: {
-    host: 'mysql.com',
-    port: '3306',
-  },
-};
-```
+    ```js
+    // config/config.default.js
+    exports.mysql = {
+      clients: {
+        // clientId, access the client instance by app.mysql.get('clientId')
+        db1: {
+          user: 'user1',
+          password: 'upassword1',
+          database: 'db1',
+        },
+        db2: {
+          user: 'user2',
+          password: 'upassword2',
+          database: 'db2',
+        },
+      },
+      // default configuration for all databases
+      default: {
+        host: 'mysql.com',
+        port: '3306',
+      },
+    };
+    ```
 
 2. Access the corresponding instance by `app.mysql.get('db1')`
 
-```js
-// app/controller/post.js
-class PostController extends Controller {
-  async list() {
-    const posts = await this.app.mysql.get('db1').query(sql, values);
-  },
-}
-```
+    ```js
+    // app/controller/post.js
+    class PostController extends Controller {
+      async list() {
+        const posts = await this.app.mysql.get('db1').query(sql, values);
+      },
+    }
+    ```
 
 ##### Dynamically Instantiate
 
@@ -446,27 +446,27 @@ We are very welcome your contribution to the new plugins, but also hope you foll
   - Add `eggPlugin` property according to the details discussed before.
   - For convenient index, add `egg`,`egg-plugin`,`eggPlugin` in `keywords`.
 
-  ```json
-  {
-    "name": "egg-view-nunjucks",
-    "version": "1.0.0",
-    "description": "view plugin for egg",
-    "eggPlugin": {
-      "name": "nunjucks",
-      "dep": [
-        "security"
-      ]
-    },
-    "keywords": [
-      "egg",
-      "egg-plugin",
-      "eggPlugin",
-      "egg-plugin-view",
-      "egg-view",
-      "nunjucks"
-    ],
-  }
-  ```
+    ```json
+    {
+      "name": "egg-view-nunjucks",
+      "version": "1.0.0",
+      "description": "view plugin for egg",
+      "eggPlugin": {
+        "name": "nunjucks",
+        "dep": [
+          "security"
+        ]
+      },
+      "keywords": [
+        "egg",
+        "egg-plugin",
+        "eggPlugin",
+        "egg-plugin-view",
+        "egg-view",
+        "nunjucks"
+      ],
+    }
+    ```
 
 ##  Why do not use the npm package name as the plugin name?
 
