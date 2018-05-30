@@ -185,7 +185,7 @@ Instead, simply call `ctx.render(name, data)`:
 
 ```js
 ctx.app.locals = { appName: 'showcase' };
-const data = { user: 'egg' };
+const data = { name: 'egg' };
 
 // will auto merge `data` to `ctx.locals`, output: egg - showcase
 await ctx.renderString('{{ name }} - {{ appName }}', data);

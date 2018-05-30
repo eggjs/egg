@@ -32,7 +32,7 @@ module.exports = appInfo => {
     /**
      * The key that signing cookies. It can contain multiple keys seperated by `,`.
      * @member {String} Config#keys
-     * @see https://eggjs.org/zh-cn/basics/controller.html#cookie-秘钥
+     * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
      * @default
      * @since 1.0.0
      */
@@ -226,7 +226,7 @@ module.exports = appInfo => {
     agentLogName: 'egg-agent.log',
     errorLogName: 'common-error.log',
     coreLogger: {},
-    allowDebugAtProd: true,
+    allowDebugAtProd: false,
   };
 
   /**
@@ -318,6 +318,7 @@ module.exports = appInfo => {
    * @property {Number} responseTimeout - response timeout, default is 60000
    */
   config.clusterClient = {
+    maxWaitTime: 60000,
     responseTimeout: 60000,
   };
 

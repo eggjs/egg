@@ -187,7 +187,7 @@ declare module 'egg' {
    * ```js
    * // config/config.default.ts
    * import { EggAppInfo } from 'egg';
-   * 
+   *
    * export default (appInfo: EggAppInfo) => {
    *   return {
    *     keys: appInfo.name + '123456',
@@ -223,6 +223,8 @@ declare module 'egg' {
      * @property {Number} queryString.arrayLimit - from item array length limit, default 100
      * @property {Number} queryString.depth - json value deep lenght, default 5
      * @property {Number} queryString.parameterLimit - paramter number limit ,default 1000
+     * @property {string[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
+     * @property {any} extendTypes - support extend types
      */
     bodyParser: {
       enable: boolean;
@@ -234,6 +236,12 @@ declare module 'egg' {
         arrayLimit: number;
         depth: number;
         parameterLimit: number;
+      };
+      enableTypes: string[];
+      extendTypes: {
+        json?: string[];
+        form?: string[];
+        text?: string[];
       };
     };
 
@@ -288,6 +296,18 @@ declare module 'egg' {
        * don't wait all plugins ready, default is true.
        */
       fastReady: boolean;
+      /**
+       * whether reload on debug, default is true.
+       */
+      reloadOnDebug: boolean;
+      /**
+       * whether override default watchDirs, default is false.
+       */
+      overrideDefault: boolean;
+      /**
+       * whether to reload, use https://github.com/sindresorhus/multimatch
+       */
+      reloadPattern: string[] | string;
     };
     /**
      * It will ignore special keys when dumpConfig
@@ -525,6 +545,8 @@ declare module 'egg' {
      */
     beforeStart(scrope: () => void): void;
 
+    runSchedule(schedulePath: string): Promise<any>;
+
     /**
      * Close all, it wil close
      * - callbacks registered by beforeClose
@@ -568,7 +590,7 @@ declare module 'egg' {
      * global locals for view
      * @see Context#locals
      */
-    locals: any;
+    locals: IApplicationLocals;
 
     /**
      * HTTP get method
@@ -605,7 +627,27 @@ declare module 'egg' {
     controller: IController;
 
     Controller: Controller;
+
+    middleware: KoaApplication.Middleware[] & IMiddleware;
+
+    /**
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {String} Application#createAnonymousContext
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {Context} context
+     */
+    createAnonymousContext(req?: Request): Context;
+
+    /**
+     * Run async function in the background
+     * @see Context#runInBackground
+     * @param {Function} scope - the first args is an anonymous ctx
+     */
+    runInBackground(scope: (ctx: Context) => void): void;
   }
+
+  export interface IApplicationLocals extends PlainObject {}
 
   export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
@@ -772,7 +814,7 @@ declare module 'egg' {
      *
      * @member {Object} Context#locals
      */
-    locals: any;
+    locals: IApplicationLocals & IContextLocals;
 
     /**
      * alias to {@link locals}, compatible with koa that use this variable
@@ -855,9 +897,13 @@ declare module 'egg' {
     redirect(url: string, alt?: string): void;
   }
 
+  export interface IContextLocals extends PlainObject {}
+
   export class Controller extends BaseContextClass { }
 
   export class Service extends BaseContextClass { }
+
+  export class Subscription extends BaseContextClass { }
 
   /**
    * The empty interface `IService` is a placeholder, for egg
@@ -878,11 +924,13 @@ declare module 'egg' {
    *
    * Now I can get ctx.service.foo at controller and other service file.
    */
-  export interface IService { } // tslint:disable-line
+  export interface IService extends PlainObject { } // tslint:disable-line
 
-  export interface IController { } // tslint:disable-line
+  export interface IController extends PlainObject { } // tslint:disable-line
 
-  export interface IHelper {
+  export interface IMiddleware extends PlainObject {} // tslint:disable-line
+
+  export interface IHelper extends PlainObject {
     /**
      * Generate URL path(without host) for route. Takes the route name and a map of named params.
      * @method Helper#pathFor
@@ -919,14 +967,16 @@ declare module 'egg' {
   export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
 
   /**
-   * plugin config item
+   * plugin config item interface
    */
-  export interface EggPluginItem {
+  export interface IEggPluginItem {
     env?: EggEnvType[];
     path?: string;
     package?: string;
     enable?: boolean;
   }
+
+  export type EggPluginItem = IEggPluginItem | boolean;
 
   /**
    * build-in plugin list
@@ -972,7 +1022,7 @@ declare module 'egg' {
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
    * @example
    * import { PowerPartial, EggAppConfig } from 'egg';
-   * 
+   *
    * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
    * type EggConfig = PowerPartial<EggAppConfig>
    */
