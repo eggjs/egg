@@ -181,7 +181,7 @@ module.exports = {
    * ```js
    * GET http://127.0.0.1:7001?name=Foo&age=20&age=21
    * this.query
-   * => { 'name': 'Foo', 'age': 20 }
+   * => { 'name': 'Foo', 'age': '20' }
    *
    * GET http://127.0.0.1:7001?a=b&a=c&o[foo]=bar&b[]=1&b[]=2&e=val
    * this.query
