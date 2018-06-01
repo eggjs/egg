@@ -1,5 +1,35 @@
 # History
 
+## 2018-06-01, Version 2.9.0 @popomore
+
+### Notable changes
+
+* **feature**
+  * dump timing data for loader
+
+* **fix**
+  * the default value of config.allowDebugAtProd is false
+  * make definition of app.locals and ctx.locals definitions merge available
+
+* **docs**
+  * more document improvement
+
+### Commits
+
+ * [[`65a43aa9e`](http://github.com/eggjs/egg/commit/65a43aa9e47ad2f799e328e4e0ab91a63669c5e3)] - feat: dump timing data for loader  (#2521) (#2621) (Haoliang Gao <<sakura9515@gmail.com>>)
+ * [[`48c6d3c9d`](http://github.com/eggjs/egg/commit/48c6d3c9d524e1cbba3e301e6613436741696cc0)] - fix: typo (#2615) (Yanan Che  <<cynosurech@gmail.com>>)
+ * [[`c91e67cc0`](http://github.com/eggjs/egg/commit/c91e67cc0246a22efee126ebd01866b05b8312dc)] - docs(logger): the unit of  maxFileSize should be byte (#2575) (Haoliang Gao <<sakura9515@gmail.com>>)
+ * [[`26c274174`](http://github.com/eggjs/egg/commit/26c274174c9a48ef1636933fbb2be9777d38f522)] - docs: tweek doc style (#2613)  (Haoliang Gao <<sakura9515@gmail.com>>)
+ * [[`3ee7fcf12`](http://github.com/eggjs/egg/commit/3ee7fcf1291a4968197fab4648e951176dfa2714)] - docs: fix quickstart typo error  (#2578) (Zhuxy <<ghostcode521@gmail.com>>)
+ * [[`8b7c8bd35`](http://github.com/eggjs/egg/commit/8b7c8bd35f8695f4459cfd623f9961c276e0d5a6)] - docs(d.ts): add property of  EggAppConfig.development (#2561) (SinaVee <<sinalvee@gmail.com>>)
+ * [[`16a61231d`](http://github.com/eggjs/egg/commit/16a61231d12c91ae609e68509d29aac669e1b83c)] - docs: add d.ts for bodyparser  (#2548) (wangtao0101 <<yuecjn@gmail.com>>)
+ * [[`e7696a7d2`](http://github.com/eggjs/egg/commit/e7696a7d2b4bc8eb6fb984aaaa0e0f2422d1c048)] - fix(d.ts): make app.locals and  ctx.locals definitions merging available (#2546) (Tony Hawking <<ThaGKI9@outlook.com>>)
+ * [[`e5d47524e`](http://github.com/eggjs/egg/commit/e5d47524ef96138172c86e774014a6b26d5cac09)] - chroe: Correct an error syntax of  English (#2544) (DongWei <<maledong_forwork@foxmail.com>>)
+ * [[`c0f4bd12d`](http://github.com/eggjs/egg/commit/c0f4bd12d422554351b1d1e9866a7b9bbc444e76)] - fix: config.allowDebugAtProd  default to false (ZhangJan <<dsonet@msn.com>>)
+ * [[`0723cd230`](http://github.com/eggjs/egg/commit/0723cd230514b623c4454120dae988fd5a68ec44)] - docs(cookie): how to get frontend cookie (#2542) (Yiyu He <<dead_horse@qq.com>>)
+ * [[`9fea64ee9`](http://github.com/eggjs/egg/commit/9fea64ee993de7c3ee2e239d7bba91f5f3b3408a)] - docs: Fix an error link, change a  comment into English (#2535) (DongWei <<maledong_forwork@foxmail.com>>)
+ * [[`e96ddb6a8`](http://github.com/eggjs/egg/commit/e96ddb6a884ef767c8653242c666dcc7381222b7)] - docs: Modifications of comments and full translations (DongWei <<maledong_forwork@foxmail.com>>)
+
 ## 2018-05-05, Version 2.8.1 @atian25
 
 ### Notable changes
