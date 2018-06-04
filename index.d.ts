@@ -668,6 +668,8 @@ declare module 'egg' {
   }
 
   export interface Context extends KoaApplication.Context {
+    [key: string]: any;
+
     app: Application;
 
     service: IService;
