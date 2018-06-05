@@ -331,13 +331,14 @@ The UI-related content is not rewritten. It can be called via window.socket
 // browser
 const log = console.log;
 
-window.onload = function() {
+window.onload = function () {
   // init
   const socket = io('/', {
-    // Actual use can pass parameters here
+
+    // 实际使用中可以在这里传递参数
     query: {
       room: 'demo',
-      userId: `client_${Math.random()}`
+      userId: `client_${Math.random()}`,
     },
 
     transports: ['websocket']
@@ -346,27 +347,30 @@ window.onload = function() {
   socket.on('connect', () => {
     const id = socket.id;
 
-    log('#connect,', id, socket); // Receive online user information
+    log('#connect,', id, socket);
 
-    socket.on('online', msg => {
-      log('#online,', msg);
-    }); // Listen for its own id to implement p2p communication
-
+    // 监听自身 id 以实现 p2p 通讯
     socket.on(id, msg => {
       log('#receive,', msg);
-    }); // system event
-
-    socket.on('disconnect', msg => {
-      log('#disconnect', msg);
     });
+  });
 
-    socket.on('disconnecting', () => {
-      log('#disconnecting');
-    });
+  // 接收在线用户信息
+  socket.on('online', msg => {
+    log('#online,', msg);
+  });
 
-    socket.on('error', () => {
-      log('#error');
-    });
+  // 系统事件
+  socket.on('disconnect', msg => {
+    log('#disconnect', msg);
+  });
+
+  socket.on('disconnecting', () => {
+    log('#disconnecting');
+  });
+
+  socket.on('error', () => {
+    log('#error');
   });
 
   window.socket = socket;
