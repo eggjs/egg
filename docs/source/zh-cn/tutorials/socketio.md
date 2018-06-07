@@ -342,14 +342,14 @@ UI 相关的内容不重复写了，通过 window.socket 调用即可
 // browser
 const log = console.log;
 
-window.onload = function () {
+window.onload = function() {
   // init
   const socket = io('/', {
 
     // 实际使用中可以在这里传递参数
     query: {
       room: 'demo',
-      userId: `client_${Math.random()}`,
+      userId: `client_${Math.random()}`
     },
 
     transports: ['websocket']

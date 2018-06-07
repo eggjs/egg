@@ -331,14 +331,13 @@ The UI-related content is not rewritten. It can be called via window.socket
 // browser
 const log = console.log;
 
-window.onload = function () {
+window.onload = function() {
   // init
   const socket = io('/', {
-
-    // 实际使用中可以在这里传递参数
+    // Actual use can pass parameters here
     query: {
       room: 'demo',
-      userId: `client_${Math.random()}`,
+      userId: `client_${Math.random()}`
     },
 
     transports: ['websocket']
@@ -347,20 +346,19 @@ window.onload = function () {
   socket.on('connect', () => {
     const id = socket.id;
 
-    log('#connect,', id, socket);
+    log('#connect,', id, socket); // receive online user information
 
-    // 监听自身 id 以实现 p2p 通讯
+    // listen for its own id to implement p2p communication
     socket.on(id, msg => {
       log('#receive,', msg);
     });
   });
 
-  // 接收在线用户信息
   socket.on('online', msg => {
     log('#online,', msg);
   });
 
-  // 系统事件
+  // system events
   socket.on('disconnect', msg => {
     log('#disconnect', msg);
   });
