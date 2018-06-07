@@ -1,5 +1,16 @@
 # History
 
+## 2018-06-07, Version 1.15.1 @popomore
+
+### Notable changes
+
+* **feature**
+  * add key any to Context
+
+### Commits
+
+  * [[`c38c359a3`](http://github.com/eggjs/egg/commit/c38c359a3bc79ec41082bf7f49c1e34084742c72)] - fix: add key any to Context (#2650) (#2656) (Khaidi Chu <<i@2333.moe>>)
+
 ## 2018-05-09, Version 1.15.0 @popomore
 
 ### Notable changes
