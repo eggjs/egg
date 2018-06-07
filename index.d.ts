@@ -550,6 +550,8 @@ interface FileStream extends Readable { // tslint:disable-line
 }
 
 export interface Context extends KoaApplication.Context {
+  [key: string]: any;
+
   app: Application;
 
   service: IService;
