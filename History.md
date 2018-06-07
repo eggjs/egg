@@ -4,7 +4,7 @@
 
 ### Notable changes
 
-* **feature**
+* **fix**
   * add key any to Context
 
 ### Commits
