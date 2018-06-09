@@ -26,7 +26,7 @@ TypeScript 的静态类型检查，智能提示，IDE 友好性等特性，对�
 通过骨架快速初始化：
 
 ```bash
-$ npx egg-init --type=ts showcase
+$ npm egg-init --type=ts showcase
 $ cd showcase && npm i
 $ npm run dev
 ```
