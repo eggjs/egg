@@ -337,7 +337,7 @@ window.onload = function() {
     // Actual use can pass parameters here
     query: {
       room: 'demo',
-      userId: `client_${Math.random()}`
+      userId: `client_${Math.random()}`,
     },
 
     transports: ['websocket']
