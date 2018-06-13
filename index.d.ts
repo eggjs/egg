@@ -1108,5 +1108,4 @@ declare module 'egg' {
     load(): void;
   }
 
-  export class Subscription extends BaseContextClass { }
 }
