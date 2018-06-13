@@ -519,7 +519,7 @@ declare module 'egg' {
     /**
      * messenger instance
      */
-    messenger: any;
+    messenger: Messenger;
 
     plugins: any;
 
@@ -1031,4 +1031,35 @@ declare module 'egg' {
       ? PowerPartial<T[U]>
       : T[U]
   };
+
+  // send data can be number|string|boolean|object but not Set|Map
+  export interface Messenger {
+    /**
+     * broadcast to all agent/app processes including itself
+     */
+    broadcast(action: string, data: any): void;
+
+    /**
+     * send to agent from the app,
+     * send to an random app from the agent
+     */
+    sendRandom(action: string, data: any): void;
+
+    /**
+     * send to specified process
+     */
+    sendTo(pid: number, action: string, data: any): void;
+
+    /**
+     * send to agent from the app,
+     * send to itself from the agent
+     */
+    sendToAgent(action: string, data: any): void;
+
+    /**
+     * send to all app including itself from the app,
+     * send to all app from the agent
+     */
+    sendToApp(action: string, data: any): void;
+  }
 }
