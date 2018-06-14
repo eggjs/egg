@@ -1,5 +1,22 @@
 # History
 
+## 2018-06-14, Version 2.9.1 @dead-horse
+
+### Notable changes
+
+* **perf**
+  * improve set type performance
+
+* **docs**
+  * fix socketio's browser demo
+  * add Messenger in tsd
+
+### Commits
+
+  * [[`1a820bd44`](http://github.com/eggjs/egg/commit/1a820bd4408b36cf3e48eda62f392006081c17a3)] - perf: improve set type performance by lru cache (#2697) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`239ce03ef`](http://github.com/eggjs/egg/commit/239ce03efaf60d3d961ced29cf4bf95e44bde2db)] - docs: fix socketio's browser demo (#2645) (xcold <<lxstart@outlook.com>>)
+  * [[`73ca1b7a3`](http://github.com/eggjs/egg/commit/73ca1b7a3ef6546d4f8a3d227055121a93b80188)] - chore(typings): add Messenger (#2688) (waiting <<waiting@xiaozhong.biz>>)
+
 ## 2018-06-01, Version 2.9.0 @popomore
 
 ### Notable changes
