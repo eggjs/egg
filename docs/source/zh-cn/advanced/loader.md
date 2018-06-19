@@ -121,16 +121,20 @@ loadUnit
 
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
-app/router.js | ✔︎ | |
-app/controller | ✔︎ | |
-app/middleware | ✔︎ | ✔︎ | ✔︎
-app/service | ✔︎ | ✔︎ | ✔︎
-app/extend | ✔︎ | ✔︎ | ✔︎
-app.js | ✔︎ | ✔︎ | ✔︎
-agent.js | ✔︎ | ✔︎ | ✔︎
-config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
-config/plugin.js | ✔︎ | ✔︎ |
-package.json | ✔︎ | ✔︎ | ✔︎
+package.json| ✔︎ | ✔︎ | ✔︎ |
+config/plugin.js| ✔︎ | ✔︎ | |
+config/config.{env}.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/app.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/request.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/context.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/helper.js| ✔︎ | ✔︎ | ✔︎ |
+app.js|agent.js| ✔︎ | ✔︎ | ✔︎ |
+app/service| ✔︎ | ✔︎ | ✔︎ |
+app/middleware| ✔︎ | ✔︎ | ✔︎ |
+app/controller| ✔︎ | | |
+app/router.js| ✔︎ | | |
+
+文件按表格内的顺序自上而下加载
 
 在加载过程中，Egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级
 
