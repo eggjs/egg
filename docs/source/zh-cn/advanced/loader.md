@@ -235,7 +235,6 @@ app.beforeStart(async () => {
 app.beforeStart(async () => {
   await sleep(100);
   console.timeEnd('app before start 100ms');
-  
 });
 
 app.on('server', () => {
@@ -243,21 +242,10 @@ app.on('server', () => {
 });
 
 app.ready(() => {
-  console.time('app ready 200ms');
-  console.time('app ready 100ms');
-})
-
-app.ready(async () => {
-  await sleep(200);
-  console.timeEnd('app ready 200ms');
+  console.log('app ready');
   cp.execSync(`kill ${process.ppid}`);
-  console.time('app before close 200ms');
   console.time('app before close 100ms');
-});
-
-app.ready(async () => {
-  await sleep(100);
-  console.timeEnd('app ready 100ms');
+  console.time('app before close 200ms');
 });
 
 app.beforeClose(async () => {
@@ -285,20 +273,9 @@ agent.beforeStart(async () => {
 });
 
 agent.ready(() => {
-  console.time('agent ready 200ms');
-  console.time('agent ready 100ms');
-})
-
-agent.ready(async () => {
-  await sleep(200);
-  console.timeEnd('agent ready 200ms');
+  console.log('agent ready');
   console.time('agent before close 200ms');
   console.time('agent before close 100ms');
-});
-
-agent.ready(async () => {
-  await sleep(100);
-  console.timeEnd('agent ready 100ms');
 });
 
 agent.beforeClose(async () => {
@@ -314,27 +291,23 @@ agent.beforeClose(async () => {
 
 print:
 ```
-agent before start 100ms: 137.731ms
-agent before start 200ms: 235.661ms // 并行执行
+agent before start 100ms: 131.096ms
+agent before start 200ms: 224.396ms // 并行执行
 
-agent ready 100ms: 104.860ms
-agent ready 200ms: 203.127ms // 并行执行
+agent ready
+
+app before start 100ms: 147.546ms
+app before start 200ms: 245.405ms // 并行执行
+
+app ready
 
 // 开流量
 server is ready
 
-// app在agent ready执行开始执行
-
-app before start 100ms: 159.651ms
-app before start 200ms: 259.245ms // 并行执行
-
-app ready 100ms: 102.386ms
-app ready 200ms: 203.347ms // 并行执行
-
-agent before close 100ms: 930.251ms
-app before close 100ms: 105.099ms // LIFO队列
-app before close 200ms: 310.432ms // 顺序执行
-agent before close 200ms: 1135.511ms
+agent before close 100ms: 866.218ms
+app before close 100ms: 108.007ms // LIFO, 后注册先执行
+app before close 200ms: 310.549ms // 串行执行
+agent before close 200ms: 1070.865ms
 ```
 
 可以使用 [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) 来查看加载过程。
