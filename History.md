@@ -1,5 +1,17 @@
 # History
 
+## 2018-06-14, Version 1.15.2 @dead-horse
+
+### Notable changes
+
+* **perf**
+  * improve set type performance
+
+### Commits
+
+  * [[`864faae40`](http://github.com/eggjs/egg/commit/864faae40b99345117eb481a771bf4a63e1ddc07)] - perf: improve set type performance by lru cache (#2698) (fengmk2 <<fengmk2@gmail.com>>)
+
+
 ## 2018-06-07, Version 1.15.1 @popomore
 
 ### Notable changes
