@@ -50,7 +50,7 @@ exports.io = {
 
 > Namespaces are `/` and `/ example`, not`example`
 
-** uws: **
+**uws:**
 
 If you want to use [uws] instead of the default `ws` you can do the following configuration
 
