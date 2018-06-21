@@ -50,14 +50,14 @@ exports.io = {
 
 > Namespaces are `/` and `/ example`, not`example`
 
-** uws: **
+**uws:**
 
-If you want to use [uws] instead of the default `us` you can do the following configuration
+If you want to use [uws] instead of the default `ws` you can do the following configuration
 
 ```js
 // {app_root} / config / config. $ {env} .js
 exports.io = {
-  init: { wsEngine: 'uws' } // default: us
+  init: { wsEngine: 'uws' } // default: ws
 };
 ```
 

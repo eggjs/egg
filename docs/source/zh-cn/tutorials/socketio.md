@@ -53,12 +53,12 @@ exports.io = {
 
 **uws:**
 
-如果想要使用 [uws] 替代默认的 `us` 可以做如下配置
+如果想要使用 [uws] 替代默认的 `ws` 可以做如下配置
 
 ```js
 // {app_root}/config/config.${env}.js
 exports.io = {
-  init: { wsEngine: 'uws' }, // default: us
+  init: { wsEngine: 'uws' }, // default: ws
 };
 ```
 
