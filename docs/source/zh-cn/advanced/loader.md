@@ -122,14 +122,15 @@ loadUnit
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
 package.json| ✔︎ | ✔︎ | ✔︎ |
-config/plugin.js| ✔︎ | ✔︎ | |
+config/plugin.{env}.js| ✔︎ | ✔︎ | |
 config/config.{env}.js| ✔︎ | ✔︎ | ✔︎ |
 app/extend/application.js| ✔︎ | ✔︎ | ✔︎ |
 app/extend/request.js| ✔︎ | ✔︎ | ✔︎ |
 app/extend/response.js| ✔︎ | ✔︎ | ✔︎ |
 app/extend/context.js| ✔︎ | ✔︎ | ✔︎ |
 app/extend/helper.js| ✔︎ | ✔︎ | ✔︎ |
-app.js/agent.js| ✔︎ | ✔︎ | ✔︎ |
+agent.js| ✔︎ | ✔︎ | ✔︎ |
+app.js| ✔︎ | ✔︎ | ✔︎ |
 app/service| ✔︎ | ✔︎ | ✔︎ |
 app/middleware| ✔︎ | ✔︎ | ✔︎ |
 app/controller| ✔︎ | | |
@@ -215,7 +216,7 @@ send egg-ready to master,
 ## beforeStart
 `beforeStart` 方法在 loading 过程中调用, 所有的方法并行执行。 一般用来执行一些异步方法, 例如检查连接状态等, 比如 [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) 就用 `beforeStart` 来检查与 mysql 的连接状态。所有的 `beforeStart` 任务结束后, 状态将会进入 `ready` 。不建议执行一些耗时较长的方法, 可能会导致应用启动超时。
 ## ready
-`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后并行执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。
+`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。
 ## beforeClose
 `beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger , 删除监听方法等。
 
