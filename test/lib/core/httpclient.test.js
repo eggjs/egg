@@ -79,7 +79,7 @@ describe('test/lib/core/httpclient.test.js', () => {
     await client.requestThunk(url, args);
   });
 
-  it('should request error with log', done => {
+  it.skip('should request error with log', done => {
     mm.http.requestError(/.*/i, null, 'mock res error');
 
     client.once('response', info => {
