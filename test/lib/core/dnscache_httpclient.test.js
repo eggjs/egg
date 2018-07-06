@@ -2,7 +2,7 @@
 
 const mm = require('egg-mock');
 const assert = require('assert');
-const dns = require('dns');
+const dns = require('mz/dns');
 const urlparse = require('url').parse;
 const utils = require('../../utils');
 
@@ -130,7 +130,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should dnsCacheMaxLength work', async () => {
-    mm.data(dns, 'lookup', '127.0.0.1');
+    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
 
     // reset lru cache
     mm(app.httpclient.dnsCache, 'max', 1);
