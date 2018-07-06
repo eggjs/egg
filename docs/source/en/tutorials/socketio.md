@@ -50,14 +50,14 @@ exports.io = {
 
 > Namespaces are `/` and `/ example`, not`example`
 
-** uws: **
+**uws:**
 
-If you want to use [uws] instead of the default `us` you can do the following configuration
+If you want to use [uws] instead of the default `ws` you can do the following configuration
 
 ```js
 // {app_root} / config / config. $ {env} .js
 exports.io = {
-  init: { wsEngine: 'uws' } // default: us
+  init: { wsEngine: 'uws' } // default: ws
 };
 ```
 
@@ -337,7 +337,7 @@ window.onload = function() {
     // Actual use can pass parameters here
     query: {
       room: 'demo',
-      userId: `client_${Math.random()}`
+      userId: `client_${Math.random()}`,
     },
 
     transports: ['websocket']
@@ -346,27 +346,29 @@ window.onload = function() {
   socket.on('connect', () => {
     const id = socket.id;
 
-    log('#connect,', id, socket); // Receive online user information
+    log('#connect,', id, socket); // receive online user information
 
-    socket.on('online', msg => {
-      log('#online,', msg);
-    }); // Listen for its own id to implement p2p communication
-
+    // listen for its own id to implement p2p communication
     socket.on(id, msg => {
       log('#receive,', msg);
-    }); // system event
-
-    socket.on('disconnect', msg => {
-      log('#disconnect', msg);
     });
+  });
 
-    socket.on('disconnecting', () => {
-      log('#disconnecting');
-    });
+  socket.on('online', msg => {
+    log('#online,', msg);
+  });
 
-    socket.on('error', () => {
-      log('#error');
-    });
+  // system events
+  socket.on('disconnect', msg => {
+    log('#disconnect', msg);
+  });
+
+  socket.on('disconnecting', () => {
+    log('#disconnecting');
+  });
+
+  socket.on('error', () => {
+    log('#error');
   });
 
   window.socket = socket;

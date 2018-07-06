@@ -25,3 +25,5 @@ package-lock.json
 yarn.lock
 !test/fixtures/apps/loader-plugin/node_modules
 .editorconfig
+*clinic-flame*
+*clinic-doctor*

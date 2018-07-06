@@ -124,6 +124,7 @@ In addition to the parameters just introduced, scheduled task also supports thes
 - `cronOptions`: configure cron time zone and so on, reference [cron-parser](https://github.com/harrisiirak/cron-parser#options)
 - `immediate`: when this parameter is set to true, this scheduled task will be executed immediately after the application is started and ready.
 - `disable`: when this parameter is set to true, this scheduled task will not be executed.
+- `env`: env list to decide whether start this task at current env.
 
 ### Logging
 
@@ -141,15 +142,14 @@ config.customLogger = {
 
 ### Dynamically Configure Scheduled Tasks
 
-Sometimes we need to determine the different environment to configure the parameters of scheduled tasks. Scheduled tasks support another development style:
+Sometimes we need to configure the parameters of scheduled tasks. Scheduled tasks support another development style:
 
 ```js
 module.exports = app => {
   return {
     schedule: {
-      interval: '1m',
+      interval: app.config.cacheTick,
       type: 'all',
-      disable: app.config.env === 'local', // not execute when local dev
     },
     async task(ctx) {
       const res = await ctx.curl('http://www.api.com/cache', {

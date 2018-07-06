@@ -53,12 +53,12 @@ exports.io = {
 
 **uws:**
 
-如果想要使用 [uws] 替代默认的 `us` 可以做如下配置
+如果想要使用 [uws] 替代默认的 `ws` 可以做如下配置
 
 ```js
 // {app_root}/config/config.${env}.js
 exports.io = {
-  init: { wsEngine: 'uws' }, // default: us
+  init: { wsEngine: 'uws' }, // default: ws
 };
 ```
 
@@ -342,7 +342,7 @@ UI 相关的内容不重复写了，通过 window.socket 调用即可
 // browser
 const log = console.log;
 
-window.onload = function () {
+window.onload = function() {
   // init
   const socket = io('/', {
 
@@ -360,29 +360,28 @@ window.onload = function () {
 
     log('#connect,', id, socket);
 
-    // 接收在线用户信息
-    socket.on('online', msg => {
-      log('#online,', msg);
-    });
-
     // 监听自身 id 以实现 p2p 通讯
     socket.on(id, msg => {
       log('#receive,', msg);
     });
+  });
 
-    // 系统事件
-    socket.on('disconnect', msg => {
-      log('#disconnect', msg);
-    });
+  // 接收在线用户信息
+  socket.on('online', msg => {
+    log('#online,', msg);
+  });
 
-    socket.on('disconnecting', () => {
-      log('#disconnecting');
-    });
+  // 系统事件
+  socket.on('disconnect', msg => {
+    log('#disconnect', msg);
+  });
 
-    socket.on('error', () => {
-      log('#error');
-    });
+  socket.on('disconnecting', () => {
+    log('#disconnecting');
+  });
 
+  socket.on('error', () => {
+    log('#error');
   });
 
   window.socket = socket;
