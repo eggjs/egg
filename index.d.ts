@@ -1,6 +1,7 @@
 import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
+import { EventEmitter } from 'events'
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
@@ -1035,7 +1036,7 @@ declare module 'egg' {
   };
 
   // send data can be number|string|boolean|object but not Set|Map
-  export interface Messenger {
+  export interface Messenger extends EventEmitter {
     /**
      * broadcast to all agent/app processes including itself
      */
