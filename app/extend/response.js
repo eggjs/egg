@@ -53,7 +53,6 @@ module.exports = {
     // copy from koa
     // Different:
     //  - change header name to lower case
-    //  - improve mimeType detect by local lru cache
     type = getType(type);
     if (type) {
       this.set('content-type', type);
