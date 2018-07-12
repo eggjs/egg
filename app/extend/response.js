@@ -1,20 +1,9 @@
 'use strict';
 
-const contentType = require('mime-types').contentType;
+const getType = require('cache-content-type');
 const isJSON = require('koa-is-json');
-const LRU = require('ylru');
 
 const REAL_STATUS = Symbol('Context#realStatus');
-
-const typeLRUCache = new LRU(100);
-function getType(type) {
-  let mimeType = typeLRUCache.get(type);
-  if (!mimeType) {
-    mimeType = contentType(type);
-    typeLRUCache.set(type, mimeType);
-  }
-  return mimeType;
-}
 
 module.exports = {
 
@@ -64,7 +53,6 @@ module.exports = {
     // copy from koa
     // Different:
     //  - change header name to lower case
-    //  - improve mimeType detect by local lru cache
     type = getType(type);
     if (type) {
       this.set('content-type', type);
