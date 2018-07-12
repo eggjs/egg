@@ -26,6 +26,7 @@ title: 插件
 一个插件其实就是一个『迷你的应用』，和应用（app）几乎一样：
 - 它包含了 [Service](./service.md)、[中间件](./middleware.md)、[配置](./config.md)、[框架扩展](./extend.md)等等。
 - 它没有独立的 [Router](./router.md) 和 [Controller](./controller.md)。
+- 它没有 `plugin.js`，只能声明跟其他插件的依赖，而**不能决定**其他插件的开启与否。
 
 他们的关系是：
 - 应用可以直接引入 Koa 的中间件。
