@@ -25,6 +25,8 @@ A plugin is actually a "mini-application", almost the same as an app:
 
 * It contains [Services](./service.md), [middleware] (./ middleware.md), [config](./config.md), [framework extensions] (./ extend.md), etc.
 * It does not have separate [Router] (./ router.md) and [Controller](./controller.md).
+* It does not have `plugin.js`, it could only define dependencies with others, but could not deside whether other plugin is enable or not.
+
 
 Their relationship is:
 
