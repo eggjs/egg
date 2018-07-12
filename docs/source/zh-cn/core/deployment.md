@@ -51,7 +51,7 @@ $ npm i egg-scripts --save
 
 这样我们就可以通过 `npm start` 和 `npm stop` 命令启动或停止应用。
 
-> 注意：`egg-scripts` 不支持 Windows 系统。
+> 注意：`egg-scripts` 对 Windows 系统的支持有限，参见 [#22](https://github.com/eggjs/egg-scripts/pull/22)。
 
 ### 启动命令
 
