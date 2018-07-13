@@ -154,6 +154,18 @@ exports.logger = {
 };
 ```
 
+#### DEBUG Log in Prodction Environment
+
+To avoid some plugin's DEBUG logs printing in the production environment causing performance problems, the production environment prohibits printing DEBUG-level logs by default. If there is a need to print DEBUG logs for debugging in the production environment, you need to set `allowDebugAtProd` configuration to `ture`.
+
+```js
+// config/config.prod.js
+exports.logger = {
+  level: 'DEBUG',
+  allowDebugAtProd: true,
+};
+```
+
 ### In terminal
 
 By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. `logger.consoleLevel`(default: `INFO`) is defined as the logger level in terminal. Similarly, it can be changed as following:
