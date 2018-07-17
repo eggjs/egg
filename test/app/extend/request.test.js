@@ -173,6 +173,7 @@ describe('test/app/extend/request.test.js', () => {
       }
 
       it('should get string value', () => {
+        expectQuery('=b', {});
         expectQuery('a=b', { a: 'b' });
         expectQuery('a=&', { a: '' });
         expectQuery('a=b&', { a: 'b' });
