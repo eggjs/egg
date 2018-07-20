@@ -136,7 +136,7 @@ class HomeController extends Controller {
     const userId = ctx.session.userId;
     const posts = await ctx.service.post.fetch(userId);
     // modify session value
-    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.session.visited = ctx.session.visited ? (ctx.session.visited + 1) : 1;
     ctx.body = {
       success: true,
       posts,
