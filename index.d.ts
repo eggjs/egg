@@ -253,12 +253,14 @@ declare module 'egg' {
      * @property {String} encoding - log file encloding, defaults to utf8
      * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
      * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
+     * @property {Boolean} disableConsoleAfterReady - disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`.
      * @property {Boolean} outputJSON - log as JSON or not, defaults to false
      * @property {Boolean} buffer - if enabled, flush logs to disk at a certain frequency to improve performance, defaults to true
      * @property {String} errorLogName - file name of errorLogger
      * @property {String} coreLogName - file name of coreLogger
      * @property {String} agentLogName - file name of agent worker log
      * @property {Object} coreLogger - custom config of coreLogger
+     * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to true
      */
     logger: {
       dir: string;
@@ -266,6 +268,7 @@ declare module 'egg' {
       env: EggEnvType;
       level: LoggerLevel;
       consoleLevel: LoggerLevel;
+      disableConsoleAfterReady: boolean;
       outputJSON: boolean;
       buffer: boolean;
       appLogName: string;
@@ -273,6 +276,7 @@ declare module 'egg' {
       agentLogName: string;
       errorLogName: string;
       coreLogger: any;
+      allowDebugAtProd: boolean;
     };
 
     httpclient: {

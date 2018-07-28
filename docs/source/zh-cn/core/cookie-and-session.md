@@ -114,7 +114,7 @@ class HomeController extends Controller {
     const userId = ctx.session.userId;
     const posts = await ctx.service.post.fetch(userId);
     // 修改 Session 的值
-    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.session.visited = ctx.session.visited ? (ctx.session.visited + 1) : 1;
     ctx.body = {
       success: true,
       posts,
