@@ -198,6 +198,10 @@ const proto = module.exports = {
    * ```
    */
   runInBackground(scope) {
+    // try to use custom function name first
+    /* istanbul ignore next */
+    const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
+    scope._name = taskName;
     this._runInBackground(scope);
   },
 
@@ -206,7 +210,6 @@ const proto = module.exports = {
   _runInBackground(scope) {
     const ctx = this;
     const start = Date.now();
-    // try to use custom function name first
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     // use app.toAsyncFunction to support both generator function and async function
