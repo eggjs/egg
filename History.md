@@ -1,3 +1,12 @@
+
+1.16.0 / 2018-08-06
+==================
+
+**features**
+  * [[`8b2b991f6`](http://github.com/eggjs/egg/commit/8b2b991f6c3f639e271f2198f4191934f04136d0)] - feat: allow runInBackground reuse on plugins (#2874) (fengmk2 <<fengmk2@gmail.com>>)
+
+**fixes**
+  * [[`e0066bb20`](http://github.com/eggjs/egg/commit/e0066bb2039bbe76e6e19c3b2db1089abe3722c8)] - fix: add ms dependencies (#2875) (fengmk2 <<fengmk2@gmail.com>>)
 # History
 
 ## 2018-06-14, Version 1.15.2 @dead-horse
