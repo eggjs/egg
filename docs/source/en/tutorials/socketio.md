@@ -1,6 +1,6 @@
 ## title: Socket.IO
 
-** Socket.IO ** is a real-time application framework based on Node.js, which has a wide range of applications including instant messaging, notification and message push, real-time analysis and other scenarios.
+**Socket.IO** is a real-time application framework based on Node.js, which has a wide range of applications including instant messaging, notification and message push, real-time analysis and other scenarios.
 
 WebSocket originated from the growing demand for real-time communication in web development, compared with http-based polling, which greatly saves network bandwidth and reduces server performance consumption. [Socket.IO] supports both websockets and polling. The data transmission method is compatible with the browser and does not support the communication requirements under the WebSocket scenario.
 
@@ -19,7 +19,7 @@ The framework provides the [egg-socket.io] plugin with the following development
 $ npm i egg-socket.io --save
 ```
 
-** Enable the plugin: **
+**Enable the plugin:**
 
 ```js
 // {app_root} /config/plugin.js
@@ -61,7 +61,9 @@ exports.io = {
 };
 ```
 
-** redis: **
+> As µWS engine has been deprecated, maybe you should consider the default engine.
+
+**redis:**
 
 [egg-socket.io] has built-in redis support via `socket.io-redis`. In cluster mode, the use of redis can make it relatively simple to achieve information sharing of clients/rooms and so on
 
@@ -100,7 +102,7 @@ Modify the `npm scripts` script in`package.json`:
 }
 ```
 
-** Nginx configuration **
+**Nginx configuration**
 
 ```
 location / {
@@ -317,7 +319,7 @@ Module.exports = app => {
 };
 ```
 
-**Note: ** Each socket connection will have a random and unpredictable unique id `Socket#id` and will automatically be added to the room named after this `id`
+**Note:** Each socket connection will have a random and unpredictable unique id `Socket#id` and will automatically be added to the room named after this `id`
 
 ## Examples
 
