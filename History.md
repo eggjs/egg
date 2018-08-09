@@ -1,3 +1,28 @@
+
+2.10.0 / 2018-08-06
+==================
+
+**features**
+  * [[`ff7431d5c`](http://github.com/eggjs/egg/commit/ff7431d5c4ea1e1d40fd7e3656dc5ab52ca55726)] - feat: allow runInBackground reuse on plugins (#2872) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`422b342b1`](http://github.com/eggjs/egg/commit/422b342b1fa419db145323927f4f2d2a8996b7fb)] - feat: Update index.d.ts (#2853) (Ben <<ben@zfben.com>>)
+  * [[`2ca8f0184`](http://github.com/eggjs/egg/commit/2ca8f018473274fa544234c91fc608fa9bf09032)] - feat(typings): define Messenger['on'] and Messenger['once'] (#2763) (waiting <<waiting@xiaozhong.biz>>)
+
+**fixes**
+  * [[`9f8926d7c`](http://github.com/eggjs/egg/commit/9f8926d7cc55ae103b6a37751538870cc70aa12d)] - fix: use cache-content-type (#2793) (Yiyu He <<dead_horse@qq.com>>)
+
+**others**
+  * [[`033fe0ce1`](http://github.com/eggjs/egg/commit/033fe0ce1d39bd63346de1ec60c97b159be867aa)] - docs: optimize egg-validate usage (#2852) (Sean Zou <<405495715@qq.com>>)
+  * [[`c0b0bb834`](http://github.com/eggjs/egg/commit/c0b0bb8345df83bbd2949b0af34bb397b5185e17)] - docs(session): fix bug in example code of modify session value (#2824) (Baffin Lee <<baffinlee@gmail.com>>)
+  * [[`b55b303ed`](http://github.com/eggjs/egg/commit/b55b303eddbaf545cdb06fd81df624fd3070110a)] - test: test on travis with node 10 (#2461) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`38a472f24`](http://github.com/eggjs/egg/commit/38a472f24cf68acb9c64fafa2e4374115d578220)] - docs: add allowDebugAtProd in document (#2803) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`e86669937`](http://github.com/eggjs/egg/commit/e866699379bc570f8bfcef9a090f1bdb5cddee32)] - perf: use Math.floor instead of parseInt (Eason <<tobewhatwewant@gmail.com>>)
+  * [[`67d538e0e`](http://github.com/eggjs/egg/commit/67d538e0e175e96fe2a64b9c8d17b063537236f7)] - docs(plugin): add details for plugin.js (#2780) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8d0b29cc9`](http://github.com/eggjs/egg/commit/8d0b29cc9b0a3b8eefad1ab64a05478c81709144)] - docs(deployment): egg-scripts support windows (#2788) (Baffin Lee <<baffinlee@gmail.com>>)
+  * [[`aaf8faf4f`](http://github.com/eggjs/egg/commit/aaf8faf4fd8d813c7938baa1533d768b9d205fc7)] - test: skip test (#2773) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`eb70335bd`](http://github.com/eggjs/egg/commit/eb70335bd61b6887ffeb33f103340b89c857312a)] - docs(schedule): add env description (#2753) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ef20ff756`](http://github.com/eggjs/egg/commit/ef20ff75633b6e83b115d32af603d0f4f34cb1e1)] - docs: add http://www.sofastack.tech (#2752) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`1ecb521c5`](http://github.com/eggjs/egg/commit/1ecb521c50b6238397f9a0b628448c0d2b5ec4fa)] - doc: add lifecyle doc (#2708) (killa <<killa123@126.com>>)
+  * [[`7930f0419`](http://github.com/eggjs/egg/commit/7930f0419fee741bcf6de73693bcdf1e9986f31e)] - docs: fix ws engine error (#2717) (Suyi <<thonatos@users.noreply.github.com>>)
 # History
 
 ## 2018-06-14, Version 2.9.1 @dead-horse
