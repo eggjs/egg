@@ -17,7 +17,6 @@ This framework supports loading configuration according to the environment and d
 ```
 config
 |- config.default.js
-|- config.test.js
 |- config.prod.js
 |- config.unittest.js
 |- config.local.js
