@@ -163,6 +163,18 @@ exports.logger = {
 };
 ```
 
+#### 生产环境打印 debug 日志
+
+为了避免一些插件的调试日志在生产环境打印导致性能问题，生产环境默认禁止打印 DEBUG 级别的日志，如果确实有需求在生产环境打印 DEBUG 日志进行调试，需要打开 `allowDebugAtProd` 配置项。
+
+```js
+// config/config.prod.js
+exports.logger = {
+  level: 'DEBUG',
+  allowDebugAtProd: true,
+};
+```
+
 ### 终端日志级别
 
 默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。

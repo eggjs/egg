@@ -50,7 +50,7 @@ Then add `npm scripts` to `package.json`:
 
 Then we are able to use `npm start` and `npm stop` to manage application.
 
-> Note: `egg-scripts` don't support Windows.
+> Note: `egg-scripts` has limited support for Windows, see [#22](https://github.com/eggjs/egg-scripts/pull/22).
 
 ### Start
 

@@ -121,16 +121,22 @@ loadUnit
 
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
-app/router.js | ✔︎ | |
-app/controller | ✔︎ | |
-app/middleware | ✔︎ | ✔︎ | ✔︎
-app/service | ✔︎ | ✔︎ | ✔︎
-app/extend | ✔︎ | ✔︎ | ✔︎
-app.js | ✔︎ | ✔︎ | ✔︎
-agent.js | ✔︎ | ✔︎ | ✔︎
-config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
-config/plugin.js | ✔︎ | ✔︎ |
-package.json | ✔︎ | ✔︎ | ✔︎
+package.json| ✔︎ | ✔︎ | ✔︎ |
+config/plugin.{env}.js| ✔︎ | ✔︎ | |
+config/config.{env}.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/application.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/request.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/response.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/context.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/helper.js| ✔︎ | ✔︎ | ✔︎ |
+agent.js| ✔︎ | ✔︎ | ✔︎ |
+app.js| ✔︎ | ✔︎ | ✔︎ |
+app/service| ✔︎ | ✔︎ | ✔︎ |
+app/middleware| ✔︎ | ✔︎ | ✔︎ |
+app/controller| ✔︎ | | |
+app/router.js| ✔︎ | | |
+
+文件按表格内的顺序自上而下加载
 
 在加载过程中，Egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级
 
@@ -181,6 +187,131 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
 - 应用完整启动顺序查看[框架开发](./framework.md)
+
+### 生命周期
+
+Egg提供了应用启动(`beforeStart`), 启动完成(`ready`), 关闭(`beforeClose`)这三个生命周期方法。
+```
+   init master process
+           ⬇
+init agent worker process
+           ⬇
+loader.load | beforeStart
+           ⬇
+ await agent worker ready
+           ⬇
+   call ready callback
+           ⬇
+init app worker processes
+           ⬇
+loader.load | beforeStart
+           ⬇
+ await app workers ready
+           ⬇
+   call ready callback
+           ⬇
+send egg-ready to master,
+    agent,app workers
+```
+## beforeStart
+`beforeStart` 方法在 loading 过程中调用, 所有的方法并行执行。 一般用来执行一些异步方法, 例如检查连接状态等, 比如 [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) 就用 `beforeStart` 来检查与 mysql 的连接状态。所有的 `beforeStart` 任务结束后, 状态将会进入 `ready` 。不建议执行一些耗时较长的方法, 可能会导致应用启动超时。
+## ready
+`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。
+## beforeClose
+`beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger , 删除监听方法等。
+
+__这个方法不建议在生产环境使用, 可能遇到未执行完就结束进程的问题。__
+
+e.g.:
+```js
+// app.js
+console.time('app before start 200ms');
+console.time('app before start 100ms');
+
+app.beforeStart(async () => {
+  await sleep(200);
+  console.timeEnd('app before start 200ms');
+});
+
+app.beforeStart(async () => {
+  await sleep(100);
+  console.timeEnd('app before start 100ms');
+});
+
+app.on('server', () => {
+  console.log('server is ready');
+});
+
+app.ready(() => {
+  console.log('app ready');
+  cp.execSync(`kill ${process.ppid}`);
+  console.time('app before close 100ms');
+  console.time('app before close 200ms');
+});
+
+app.beforeClose(async () => {
+  await sleep(200);
+  console.timeEnd('app before close 200ms');
+});
+
+app.beforeClose(async () => {
+  await sleep(100);
+  console.timeEnd('app before close 100ms');
+});
+
+// agent.js
+console.time('agent before start 200ms');
+console.time('agent before start 100ms');
+
+agent.beforeStart(async () => {
+  await sleep(200);
+  console.timeEnd('agent before start 200ms');
+});
+
+agent.beforeStart(async () => {
+  await sleep(100);
+  console.timeEnd('agent before start 100ms');
+});
+
+agent.ready(() => {
+  console.log('agent ready');
+  console.time('agent before close 200ms');
+  console.time('agent before close 100ms');
+});
+
+agent.beforeClose(async () => {
+  await sleep(200);
+  console.timeEnd('agent before close 200ms');
+});
+
+agent.beforeClose(async () => {
+  await sleep(100);
+  console.timeEnd('agent before close 100ms');
+});
+```
+
+print:
+```
+agent before start 100ms: 131.096ms
+agent before start 200ms: 224.396ms // 并行执行
+
+agent ready
+
+app before start 100ms: 147.546ms
+app before start 200ms: 245.405ms // 并行执行
+
+app ready
+
+// 开流量
+server is ready
+
+agent before close 100ms: 866.218ms
+app before close 100ms: 108.007ms // LIFO, 后注册先执行
+app before close 200ms: 310.549ms // 串行执行
+agent before close 200ms: 1070.865ms
+```
+
+可以使用 [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) 来查看加载过程。
 
 ### 文件加载规则
 

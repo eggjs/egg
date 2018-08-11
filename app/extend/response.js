@@ -1,7 +1,8 @@
 'use strict';
 
-const getType = require('mime-types').contentType;
+const getType = require('cache-content-type');
 const isJSON = require('koa-is-json');
+
 const REAL_STATUS = Symbol('Context#realStatus');
 
 module.exports = {
@@ -50,7 +51,8 @@ module.exports = {
    */
   set type(type) {
     // copy from koa
-    // change header name to lower case
+    // Different:
+    //  - change header name to lower case
     type = getType(type);
     if (type) {
       this.set('content-type', type);
