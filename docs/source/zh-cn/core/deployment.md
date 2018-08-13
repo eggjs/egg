@@ -102,7 +102,7 @@ $ egg-scripts stop [--title=egg-server]
 支持以下参数：
 - `--title=egg-server` 用于杀死指定的 egg 应用，未传递则会终止所有的 Egg 应用。
 
-你也可以直接通过 `ps -eo "pid,command" | grep "--type=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
+你也可以直接通过 `ps -eo "pid,command" | grep -- "--title=egg-server"` 来找到 master 进程，并 `kill` 掉，无需 `kill -9`。
 
 ## 监控
 
