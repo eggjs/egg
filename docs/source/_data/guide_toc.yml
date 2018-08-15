@@ -31,6 +31,7 @@ Core:
   i18n: /core/i18n.html
 Tutorials:
   MySQL: /tutorials/mysql.html
+  Sequelize: /tutorials/sequelize.html
   RESTful API: /tutorials/restful.html
   Passport: /tutorials/passport.html
   Socket.IO: /tutorials/socketio.html
