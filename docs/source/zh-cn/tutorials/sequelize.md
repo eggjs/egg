@@ -407,6 +407,7 @@ describe('test/app/service/users.test.js', () => {
 
 我们也提供了 sequelize 的脚手架，集成了文档中提供的 [egg-sequelize], [sequelize-cli] 与 [factory-girl] 等模块。可以通过 `egg-init --type=sequelize` 来基于它快速初始化一个新的应用。
 
+[mysql2](https://github.com/sidorares/node-mysql2)
 [sequelize](http://docs.sequelizejs.com/)
 [sequelize-cli](https://github.com/sequelize/cli)
 [egg-sequelize](https://github.com/eggjs/egg-sequelize)
