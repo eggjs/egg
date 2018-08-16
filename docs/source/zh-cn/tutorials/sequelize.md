@@ -67,7 +67,7 @@ exports.sequelize = {
 
 ## 初始化数据库和 Migrations
 
-接下来我们先暂时离开 egg 项目的代码，设计和初始化一下我们的数据库。首先我们通过 mysql 命令在本地快速创建开发和测试要用到的两个 database：
+接下来我们先暂时离开 egg 项目的代码，设计和初始化一下我们的数据库。首先我们通过 mysql 命令在本地快速创建开发和测试要用到的两个 database：
 
 ```bash
 mysql -u root -e 'CREATE DATABASE IF NOT EXISTS `egg-sequelize-doc-default`;'
@@ -185,7 +185,7 @@ npx sequelize db:migrate
 
 ## 编写代码
 
-现在终于可以开始编写代码实现业务逻辑了，首先我们来在 `app/model/` 目录下编写 user 这个 Model：
+现在终于可以开始编写代码实现业务逻辑了，首先我们来在 `app/model/` 目录下编写 user 这个 Model：
 
 ```js
 'use strict';
@@ -205,7 +205,7 @@ module.exports = app => {
 };
 ```
 
-这个 Model 就可以在 Controller 和 Service 中通过 `app.model.User` 或者 `ctx.model.User` 访问到了，例如我们编写 `app/controller/users.js`：
+这个 Model 就可以在 Controller 和 Service 中通过 `app.model.User` 或者 `ctx.model.User` 访问到了，例如我们编写 `app/controller/users.js`：
 
 ```js
 // app/controller/users.js
@@ -278,7 +278,7 @@ module.exports = app => {
 };
 ```
 
-针对 `users` 表的 CURD 操作的接口就开发完了，为了验证代码逻辑是否正确，我们接下来需要编写单元测试来验证。
+针对 `users` 表的 CURD 操作的接口就开发完了，为了验证代码逻辑是否正确，我们接下来需要编写单元测试来验证。
 
 ## 单元测试
 
@@ -316,7 +316,7 @@ module.exports = app => {
 };
 ```
 
-- 初始化文件 `test/.setup.js`，引入 factory，并确保测试执行完后清理数据，避免被影响
+- 初始化文件 `test/.setup.js`，引入 factory，并确保测试执行完后清理数据，避免被影响
 
 ```js
 const { app } = require('egg-mock/bootstrap');
