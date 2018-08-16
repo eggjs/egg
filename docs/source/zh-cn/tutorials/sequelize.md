@@ -78,13 +78,13 @@ mysql -u root -e 'CREATE DATABASE IF NOT EXISTS `egg-sequelize-doc-unittest`;'
 
 ```sql
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) DEFAULT NULL,
-  `age` int(11) DEFAULT NULL,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'primary key',
+  `name` varchar(30) DEFAULT NULL COMMENT 'user name',
+  `age` int(11) DEFAULT NULL COMMENT 'user age',
+  `created_at` datetime DEFAULT NULL COMMENT 'created time',
+  `updated_at` datetime DEFAULT NULL COMMENT 'updated time',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='user';
 ```
 
 我们可以直接通过 mysql 命令将表直接建好，但是这并不是一个对多人协作非常友好的开发模式。在项目的演进过程中，每一个迭代都有可能对数据库数据结构做变更，怎样跟踪每一个迭代的数据变更，并在不同的环境（开发、测试、CI）和迭代切换中，快速变更数据结构呢？这时候我们就需要 [Migrations] 来帮我们管理数据结构的变更了。
@@ -181,7 +181,7 @@ npx sequelize db:migrate
 # npx sequelize db:migrate:undo:all
 ```
 
-执行周，我们的数据库初始化就完成了。
+执行之后，我们的数据库初始化就完成了。
 
 ## 编写代码
 
