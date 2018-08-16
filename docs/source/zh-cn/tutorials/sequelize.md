@@ -1,7 +1,7 @@
 title: Sequelize
 ---
 
-[前面的章节中](./mysql)，我们介绍了如何在框架中通过 [egg-mysql] 插件来访问数据库。而在一些较为复杂的应用中，我们可能会需要一个 ORM 框架来帮助我们管理数据层的代码。而在 Node.js 社区中，[sequelize] 是一个广泛使用的 ORM 框架，它支持 MySQL、PostgreSQL、SQLite 和 MSSQL 等多个数据源。
+[前面的章节中](./mysql.html)，我们介绍了如何在框架中通过 [egg-mysql] 插件来访问数据库。而在一些较为复杂的应用中，我们可能会需要一个 ORM 框架来帮助我们管理数据层的代码。而在 Node.js 社区中，[sequelize] 是一个广泛使用的 ORM 框架，它支持 MySQL、PostgreSQL、SQLite 和 MSSQL 等多个数据源。
 
 本章节我们会通过开发一个对 MySQL 中 `users` 表的数据做 CURD 的例子来一步步介绍如何在 egg 项目中使用 sequelize。
 
