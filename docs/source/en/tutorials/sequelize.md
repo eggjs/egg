@@ -1,7 +1,7 @@
 title: Sequelize
 ---
 
-[In the previous section] (./mysql.html), we showed how to access the database through the [egg-mysql] plugin in the framework. In some more complex applications, we may need an ORM framework to help us manage the data layer code. In the Node.js community, [sequelize] is a widely used ORM framework that supports multiple data sources such as MySQL, PostgreSQL, SQLite, and MSSQL.
+[In the previous section](./mysql.html), we showed how to access the database through the [egg-mysql] plugin in the framework. In some more complex applications, we may need an ORM framework to help us manage the data layer code. In the Node.js community, [sequelize] is a widely used ORM framework that supports multiple data sources such as MySQL, PostgreSQL, SQLite, and MSSQL.
 
 In this chapter, we will walk through the steps of how to use sequelize in an egg project by developing an example of doing CURD on the data in the `users` table in MySQL.
 
@@ -408,10 +408,10 @@ A more complete example can be found in [eggjs/examples/sequelize].
 
 We also provide sequelize boilerplate that integrates the modules [egg-sequelize], [sequelize-cli] and [factory-girl] provided in this documentation. You can quickly initialize a new application based on it by `egg-init --type=sequelize`.
 
-[mysql2](https://github.com/sidorares/node-mysql2)
-[sequelize](http://docs.sequelizejs.com/)
-[sequelize-cli](https://github.com/sequelize/cli)
-[egg-sequelize](https://github.com/eggjs/egg-sequelize)
-[Migrations](http://docs.sequelizejs.com/manual/tutorial/migrations.html)
-[factory-girl](https://github.com/aexmachina/factory-girl)
-[eggjs/examples/sequelize](https://github.com/eggjs/examples/tree/master/sequelize)
+[mysql2]: https://github.com/sidorares/node-mysql2
+[sequelize]: http://docs.sequelizejs.com/
+[sequelize-cli]: https://github.com/sequelize/cli
+[egg-sequelize]: https://github.com/eggjs/egg-sequelize
+[Migrations]: http://docs.sequelizejs.com/manual/tutorial/migrations.html
+[factory-girl]: https://github.com/aexmachina/factory-girl
+[eggjs/examples/sequelize]: https://github.com/eggjs/examples/tree/master/sequelize
