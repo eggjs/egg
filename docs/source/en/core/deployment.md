@@ -97,7 +97,7 @@ $ egg-scripts stop
 
 This command will kill master process which will handler and notice worker and agent to gracefull exit.
 
-Also you can manually call `ps -eo "pid,command" | grep "--type=egg-server"` to find master process then `kill` without `-9`.
+Also you can manually call `ps -eo "pid,command" | grep -- "--title=egg-server"` to find master process then `kill` without `-9`.
 
 [egg-cluster]: https://github.com/eggjs/egg-cluster
 [egg-scripts]: https://github.com/eggjs/egg-scripts
