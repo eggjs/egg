@@ -1,8 +1,10 @@
 'use strict';
 
+const net = require('net');
 const request = require('supertest');
 const address = require('address');
 const assert = require('assert');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -66,6 +68,8 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     let app;
     before(() => {
       app = utils.cluster('apps/app-server-customized-client-error');
+      app.debug();
+      console.log(app.port);
       return app.ready();
     });
     after(() => app.close());
@@ -91,6 +95,16 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       test2.request().path = '/foo bar';
       await test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400);
     });
+
+    it.only('should not log when there is no rawPacket', done => {
+      const socket = net.createConnection({ port: app.port }, () => {
+        sleep(5000).then(() => {
+          socket.end('http');
+          done();
+        });
+      });
+    });
+
   });
 
   describe('listen hostname', () => {
