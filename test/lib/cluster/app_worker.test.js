@@ -1,8 +1,10 @@
 'use strict';
 
+const net = require('net');
 const request = require('supertest');
 const address = require('address');
 const assert = require('assert');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -66,8 +68,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     let app;
     before(() => {
       app = utils.cluster('apps/app-server-customized-client-error');
-      app.debug();
-      console.log(app.port);
+      // app.debug();
       return app.ready();
     });
     after(() => app.close());
@@ -94,8 +95,11 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       await test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400);
     });
 
-    it.only('should not log when there is no rawPacket', async () => {
-      await app.httpRequest().get('/client_error');
+    it('should not log when there is no rawPacket', async () => {
+      await connect(app.port);
+      await sleep(5000);
+      app.expect('stderr', /read ECONNRESET/);
+      app.notExpect('stderr', /A client/);
     });
   });
 
@@ -127,3 +131,14 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
   });
 });
+
+function connect(port) {
+  return new Promise(resolve => {
+    const socket = net.createConnection(port, '127.0.0.1', () => {
+      socket.write('GET http://127.0.0.1:8080/ HTTP/1.1\r\nHost: 127.0.0.1:8080\r\nUser-Agent: curl/7.54.0\r\nAccept: */*\r\nProxy-Connection: Keep-Alive\r\n\r\n', () => {
+        socket.destroy();
+        resolve();
+      });
+    });
+  });
+}
