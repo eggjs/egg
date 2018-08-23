@@ -66,12 +66,12 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 
   describe('customized client error', () => {
     let app;
-    before(() => {
+    beforeEach(() => {
       app = utils.cluster('apps/app-server-customized-client-error');
       // app.debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterEach(() => app.close());
 
     it('should do customized request when HTTP request packet broken', async () => {
       const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
