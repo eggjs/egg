@@ -2,8 +2,9 @@
 
 const mm = require('egg-mock');
 const assert = require('assert');
-const dns = require('dns');
+const dns = require('mz/dns');
 const urlparse = require('url').parse;
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/core/dnscache_httpclient.test.js', () => {
@@ -130,7 +131,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should dnsCacheMaxLength work', async () => {
-    mm.data(dns, 'lookup', '127.0.0.1');
+    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
 
     // reset lru cache
     mm(app.httpclient.dnsCache, 'max', 1);
@@ -152,6 +153,33 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
 
     assert(!app.httpclient.dnsCache.get('localhost'));
     assert(app.httpclient.dnsCache.get('another.com'));
+  });
+
+  it('should cache and update', async () => {
+    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
+
+    let obj = urlparse(url + '/get_headers');
+    let result = await app.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    let record = app.httpclient.dnsCache.get('localhost');
+    const timestamp = record.timestamp;
+    assert(record);
+
+    obj = urlparse(url + '/get_headers');
+    result = await app.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    record = app.httpclient.dnsCache.get('localhost');
+    assert(timestamp === record.timestamp);
+
+    await sleep(5000);
+    obj = urlparse(url + '/get_headers');
+    result = await app.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    record = app.httpclient.dnsCache.get('localhost');
+    assert(timestamp !== record.timestamp);
   });
 
   it('should not cache ip', async () => {
