@@ -64,7 +64,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     ]);
   });
 
-  describe.only('customized client error', () => {
+  describe('customized client error', () => {
     let app;
     beforeEach(() => {
       app = utils.cluster('apps/app-server-customized-client-error');
