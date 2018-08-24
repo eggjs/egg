@@ -135,7 +135,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 function connect(port) {
   return new Promise(resolve => {
     const socket = net.createConnection(port, '127.0.0.1', () => {
-      socket.write('GET http://127.0.0.1:8080/ HTTP/1.1\r\nHost: 127.0.0.1:8080\r\nUser-Agent: curl/7.54.0\r\nAccept: */*\r\nProxy-Connection: Keep-Alive\r\n\r\n', () => {
+      socket.write('GET http://127.0.0.1:8080/ HTTP', () => {
         socket.destroy();
         resolve();
       });
