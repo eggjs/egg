@@ -233,6 +233,7 @@ module.exports = appInfo => {
    * The option for httpclient
    * @member Config#httpclient
    * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
+   * @property {Boolean} dnsCacheLookupInterval - minimum interval of DNS query on the same hostname (default 10s).
    *
    * @property {Number} request.timeout - httpclient request default timeout, default is 5000 ms.
    *
@@ -248,8 +249,8 @@ module.exports = appInfo => {
    */
   config.httpclient = {
     enableDNSCache: false,
+    dnsCacheLookupInterval: 10000,
     dnsCacheMaxLength: 1000,
-    dnsCacheMaxAge: 10000,
 
     request: {
       timeout: 5000,

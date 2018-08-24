@@ -1069,4 +1069,48 @@ declare module 'egg' {
      */
     sendToApp(action: string, data: any): void;
   }
+
+  export interface EggLoaderOptions {
+    baseDir: string;
+    typescript?: boolean;
+    app: Application;
+    logger: Logger;
+    plugins?: any;
+  }
+
+  // egg-core
+  export class EggLoader {
+    options: EggLoaderOptions;
+
+    constructor(options: EggLoaderOptions);
+
+    getHomedir(): EggAppInfo['HOME']
+
+    getAppInfo(): EggAppInfo;
+  }
+
+  /**
+   * App worker process Loader, will load plugins
+   * @see https://github.com/eggjs/egg-core
+   */
+  export class AppWorkerLoader extends EggLoader {
+    constructor(options: EggLoaderOptions);
+
+    loadConfig(): void;
+
+    load(): void;
+  }
+
+  /**
+   * Agent worker process loader
+   * @see https://github.com/eggjs/egg-loader
+   */
+  export class AgentWorkerLoader extends EggLoader {
+    constructor(options: EggLoaderOptions);
+
+    loadConfig(): void;
+
+    load(): void;
+  }
+
 }
