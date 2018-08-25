@@ -1,8 +1,10 @@
 'use strict';
 
+const net = require('net');
 const request = require('supertest');
 const address = require('address');
 const assert = require('assert');
+const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -64,11 +66,12 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 
   describe('customized client error', () => {
     let app;
-    before(() => {
+    beforeEach(() => {
       app = utils.cluster('apps/app-server-customized-client-error');
+      app.debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterEach(() => app.close());
 
     it('should do customized request when HTTP request packet broken', async () => {
       const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
@@ -90,6 +93,13 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       const test2 = app.httpRequest().get('/foo bar');
       test2.request().path = '/foo bar';
       await test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400);
+    });
+
+    it('should not log when there is no rawPacket', async () => {
+      await connect(app.port);
+      await sleep(1000);
+      app.expect('stderr', /HPE_INVALID_EOF_STATE/);
+      app.notExpect('stderr', /A client/);
     });
   });
 
@@ -121,3 +131,14 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
   });
 });
+
+function connect(port) {
+  return new Promise(resolve => {
+    const socket = net.createConnection(port, '127.0.0.1', () => {
+      socket.write('GET http://127.0.0.1:8080/ HTTP', () => {
+        socket.destroy();
+        resolve();
+      });
+    });
+  });
+}
