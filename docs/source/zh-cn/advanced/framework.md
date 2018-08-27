@@ -375,5 +375,3 @@ describe('/test/index.test.js', () => {
   });
 });
 ```
-
-[egg-bin]: https://github.com/eggjs/egg-bin

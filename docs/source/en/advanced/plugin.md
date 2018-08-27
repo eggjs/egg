@@ -2,15 +2,15 @@
 title: Plugin Development
 ---
 
-Plugins is the most important feature in Egg framework. It keeps Egg simple, stable and efficient, and also it can make the best reuse of business logic, to build an entire ecosystem. Someone should be confused:
+Plugins are the most important features in Egg framework. They keep Egg simple, stable and efficient, and also they make the best reuse of business logic to build an entire ecosystem. Maybe we want to ask:
 
-- Since Koa already has the mechanism of middleware, what's the point of the Egg's plugins
-- What is the differences between middleware, plugin and application, what is the relationship
-- How can I use the plugin
-- How do I build a plugin
+- Since Koa already has the mechanism of middleware, Why do we need plugins?
+- What are the differences / relationships among middlewares, plugins and applications?
+- How can I use the plugin?
+- How do I build a plugin?
 - ...
 
-As we've already explained some these points in Chapter [using plugins](../basics/plugin.md) before. Now we are going through how to build a plugin.
+As we've already explained some these points in chapter [using plugins](../basics/plugin.md) before. Now we are going through how to build a plugin.
 
 ## Plugin Development
 
@@ -27,7 +27,7 @@ $ npm test
 
 ## Directory of Plugin
 
-Plugin is actually a 'mini application', directory of plugin is as below
+Plugin is actually a `mini application`, directory of plugin is as below:
 
 ```js
 . egg-hello
@@ -56,7 +56,7 @@ Plugin is actually a 'mini application', directory of plugin is as below
         └── mw.test.js
 ```
 
-It is almost the same as the application directory, what's the difference?
+It is almost the same as the application directory, what're the differences?
 
 1. Plugin have no independant router or controller. This is because:
 
@@ -64,12 +64,12 @@ It is almost the same as the application directory, what's the difference?
     - An application might have plenty of dependant plugins, routers of plugin are very possible conflict with others. It would be a disaster.
     - If you really need a general router, you should implement it as middleware of the plugin.
 
-2. The specific information of plugin should be declared in the  `package.json` of `eggPlugin`：
+2. The specific information of plugin should be declared in the `package.json` of `eggPlugin`：
 
-    - `{String} name` - plugin name(required), it must be unique, it will be used in the config of the dependencies of plugin.
-    - `{Array} dependencies` - strong dependant plugins list of current plugin(if one of these plugins here is not found, application's startup will be failed)
+    - `{String} name` - plugin name(required), it must be unique, it will be used in the config of the dependencies of plugins.
+    - `{Array} dependencies` - strong dependent plugins list of the current plugin(if one of these plugins here is not found, application's startup will fail).
     - `{Array} optionalDependencies` - optional dependencies list of this plugin.(if these plugins are not activated, only warnings would be occurred, and will not affect the startup of the application).
-    - `{Array} env` - this option is available only when specify the environment. The list of env please refer to [env](../basics/env.md). This is optional, most time you can leave it.
+    - `{Array} env` - this option is available only when specifying the environment. For the list of env, please refer to [env](../basics/env.md). This is optional, most time you can leave it.
 
       ```json
       {
@@ -90,7 +90,7 @@ It is almost the same as the application directory, what's the difference?
 
 ## Dependencies Management of Plugins
 
-The dependencies are managed by plugin himself, this is different from middleware. Before loading plugins, application will read `eggPlugin > dependencies` and `eggPlugin > optionalDependencies` from `package.json`, and then sort out the loading orders according to their relationships, for example, the loading order of the following plugins is `c => b => a`
+The dependencies are managed by plugin himself, which is different from middlewares. Before loading plugins, application will read `eggPlugin > dependencies` and `eggPlugin > optionalDependencies` from `package.json`, and then sort out the loading orders according to their relationships, for example, the loading order of the following plugins is `c => b => a`:
 
 ```json
 // plugin a
@@ -120,16 +120,16 @@ The dependencies are managed by plugin himself, this is different from middlewar
 }
 ```
 
-** Attention: The values in `dependencies` and `optionalDependencies` are the `eggPlugin.name` of plugins, not `package.name`. **
+**Attention: The values in `dependencies` and `optionalDependencies` are the `eggPlugin.name` of plugins, not `package.name`.**
 
-The `dependencies` and `optionalDependencies` is studied from `npm`, most time we are using `dependencies`, it is recommended. There are about two situations to apply the `optionalDependencies`:
+The `dependencies` and `optionalDependencies` are learnt from `npm`, most time we use `dependencies`, which is recommended. There are about two situations to apply the `optionalDependencies`:
 
-- Only be dependant in specific environment: for example, a authentication plugin, only depends on the mock plugin in development environment.
-- Weakly depending, for example: A depends on B, but without B, A can take other choice
+- Only be dependant in specific environment: for example, an authentication plugin, only depends on the mock plugin in development environment.
+- Weakly depending, for example: A depends on B, but without B, A can take other choices.
 
-Pay attention: if you are using `optionalDependencies`, framework won't verify the activation of these dependencies, they are only for sorting loading orders. In such situation, the plugin will go through other ways such as `interface detection` to decide processing logic.
+Attention: if you are using `optionalDependencies`, framework won't verify the activation of these dependencies, they are only for sorting loading orders. In such situation, the plugin will go through other ways such as `interface detection` to decide processing logic.
 
-## What can plugin do
+## What can plugin do?
 
 We've discussed what plugin is. Now what can it do?
 
@@ -146,7 +146,7 @@ Extend the built-in objects of the framework, just like the application
 
 ### Insert Custom Middlewares
 
-1. First, define and implement middleware under directory `app/middleware`
+1. First, define and implement middleware under directory `app/middleware`:
 
     ```js
     'use strict';
@@ -167,7 +167,7 @@ Extend the built-in objects of the framework, just like the application
     };
     ```
 
-2. Insert middleware to the appropriate position in `app.js`(e.g. insert static middleware before bodyParser )
+2. Insert middleware to the appropriate position in `app.js`(e.g. insert static middleware before bodyParser):
 
     ```js
     const assert = require('assert');
@@ -181,9 +181,9 @@ Extend the built-in objects of the framework, just like the application
     };
     ```
 
-### Initialization on Application Starting
+### Initialization on application starting
 
-- If you want to read some local config before startup
+- If you want to read some local config before startup:
 
     ```js
     // ${plugin_root}/app.js
@@ -197,7 +197,7 @@ Extend the built-in objects of the framework, just like the application
     };
     ```
 
-- If you want to do some async starting business, you can do it with `app.beforeStart` API
+- If you want to do some async starting business, you can do it with `app.beforeStart` API:
 
     ```js
     // ${plugin_root}/app.js
@@ -215,7 +215,7 @@ Extend the built-in objects of the framework, just like the application
     };
     ```
 
-- You can add starting business of agent with `agent.beforeStart` API
+- You can add initialization business of agent with `agent.beforeStart` API:
 
     ```js
     // ${plugin_root}/agent.js
@@ -235,7 +235,7 @@ Extend the built-in objects of the framework, just like the application
 
 ### Setup Schedule Task
 
-1. Setup dependencies of schedule plugin in `package.json`
+1. Setup dependencies of schedule plugin in `package.json`:
 
     ```json
     {
@@ -247,7 +247,7 @@ Extend the built-in objects of the framework, just like the application
     }
     ```
 
-2. Create a new file in `${plugin_root}/app/schedule/` directory to edit your schedule task
+2. Create a new file in `${plugin_root}/app/schedule/` directory to edit your schedule task:
 
     ```js
     exports.schedule = {
@@ -262,18 +262,18 @@ Extend the built-in objects of the framework, just like the application
     };
     ```
 
-### Best Practice of Global Instance Plugin
+### Best Practice of Global Instance Plugins
 
-Some plugins are made to introduce existing service into framework, like [egg-mysql],[egg-oss].They all need to create corresponding instance in application. We notice that there are some common problems when developing this kind of plugins:
+Some plugins are made to introduce existing service into framework, like [egg-mysql], [egg-oss].They all need to create corresponding instances in applications. We notice that there are some common problems when developing plugins of this kind:
 
-- Use different instances of the same service in one application(e.g:connect to two different MySQL Databases)
-- Dynamically initialize connection after getting config from other service(gets MySQL server address from configuration center and then creates connection)
+- Use different instances of the same service in one application (e.g: connect to two different MySQL databases).
+- Dynamically initialize connection after getting config from other service (e.g: get the MySQL server address from configuration center and then create connection).
 
-If each plugin makes their own implementation, all sorts of configs  and  initializations will be chaotic. So the framework supplies the  `app.addSingleton(name, creator)` API to unify the creation of this kind of services. Note that while using the `app.addSingleton(name, creator)` method, the configuration file must have the `client` or `clients` key configuration as the `config` to the `creator` function.
+If each plugin makes their own implementation, all sorts of configs and  initializations will be chaotic. So the framework supplies the `app.addSingleton(name, creator)` API to unify the creation of this kind of services. Note that while using the `app.addSingleton(name, creator)` method, the configuration file must have the `client` or `clients` key configuration as the `config` to the `creator` function.
 
-#### Writing Plugin
+#### Ways of writing plugins
 
-We simplify the [egg-mysql] plugin and to see how to write such a plugin:
+We simplify the [egg-mysql] plugin to see how to write it:
 
 ```js
 // egg-mysql/app.js
@@ -284,7 +284,7 @@ module.exports = app => {
 }
 
 /**
- * @param  {Object} config   The config which already processed by the framework. If the application configured multiple MySQL instances, each config would be passed in and call multiple createMysql
+ * @param  {Object} config   The config is processed by the framework. If the application is configured with multiple MySQL instances, each config would be passed in and call multiple createMysql
  * @param  {Application} app  the current application
  * @return {Object}          return the created MySQL instance
  */
@@ -303,7 +303,7 @@ function createMysql(config, app) {
 }
 ```
 
-The initialization function also support `Async function`, convenient for some special plugins that need to be asynchronous to get some configuration files.
+The initialization function also supports `Async function`, convenient for some special plugins that need to be asynchronous to get some configuration files.
 
 ```js
 async function createMysql(config, app) {
@@ -321,13 +321,13 @@ async function createMysql(config, app) {
 }
 ```
 
-As you can see, all we need to do for this plugin is passing in the field that need to be mounted and the corresponding initialization function. Framework will be in charge of managing all the configs and the ways to access the instances.
+As you can see, all we need to do for this plugin is passing the fields that need to be mounted and the corresponding initialization function. Framework will be in charge of managing all the configs and the ways to access the instances.
 
 #### Application Layer Usage Case
 
 ##### Single Instance
 
-1. Declare MySQL config in config file
+1. Declare MySQL config in config file:
 
     ```js
     // config/config.default.js
@@ -344,7 +344,7 @@ As you can see, all we need to do for this plugin is passing in the field that n
     };
     ```
 
-2. Access database through `app.mysql` directly
+2. Access database through `app.mysql` directly:
 
     ```js
     // app/controller/post.js
@@ -357,7 +357,7 @@ As you can see, all we need to do for this plugin is passing in the field that n
 
 ##### Multiple Instances
 
-1. Of course we need to configure MySQL in the config file, but different from single instance, we need to add  `clients` in the config to declare the configuration of different instances. meanwhile, the `default` field can be used to configure the shared configuration in multiple instances(e.g. host and port). Note that in this case,should use `get` function to specify the corresponding instance(eg: use `app.mysql.get('db1').query()` instead of using `app.mysql.query()` directly to get a `undefined`).
+1. We need to configure MySQL in the config file, but different from single instance, we need to add `clients` in the config to declare the configuration of different instances. Meanwhile, the `default` field can be used to configure the shared configuration in multiple instances (e.g: `host` and `port`). In this case, we should use `get` function to specify the corresponding instance(e.g: use `app.mysql.get('db1').query()` instead of using `app.mysql.query()` directly to get an `undefined`).
 
     ```js
     // config/config.default.js
@@ -383,7 +383,7 @@ As you can see, all we need to do for this plugin is passing in the field that n
     };
     ```
 
-2. Access the corresponding instance by `app.mysql.get('db1')`
+2. Access the corresponding instance by `app.mysql.get('db1')`:
 
     ```js
     // app/controller/post.js
@@ -396,7 +396,7 @@ As you can see, all we need to do for this plugin is passing in the field that n
 
 ##### Dynamically Instantiate
 
-Instead of declaring the configuration in the configuration file in advance, We can dynamically initialize an instance at the runtime of the application.
+Instead of declaring the configuration in the configuration file in advance, we can dynamically initialize an instance at the runtime of the application.
 
 ```js
 // app.js
@@ -421,13 +421,13 @@ class PostController extends Controller {
 }
 ```
 
-**Attention, when creating the instance dynamically, framework would read the `default` configuration in the config file as the default configuration**
+**Attention: when creating the instance dynamically, framework would read the `default` configuration from the config file as the default.**
 
 ### Plugin Locate Rule
 
-When loading the plugins in the framework, it will follow the rules to locate them as below:
+When loading the plugins in the framework, it will follow the rules below:
 
-- If there is the path configuration, load them in path directly
+- If there is the path configuration, load them in path directly.
 - If there is no path configuration, search them with the package name, the search orders are:
 
   1. `node_modules` directory of the application root
@@ -436,15 +436,15 @@ When loading the plugins in the framework, it will follow the rules to locate th
 
 ###  Plugin Specification
 
-We are very welcome your contribution to the new plugins, but also hope you follow some of following specifications:
+It's well welcomed to your contributions to the new plugins, but also hope you follow some of following specifications:
 
-- Naming Rules
-  - `npm` packages must append prefix `egg-`,and all letters must be lowercase,for example:`egg-xxx`. The long names should be concatenated with middle-lines:`egg-foo-bar`.
+- Naming Rules:
+  - `npm` packages must append prefix `egg-`,and all letters must be lowercase, e.g: `egg-xxx`. The long names should be concatenated with middle-lines: `egg-foo-bar`.
   - The corresponding plugin should be named in camel-case. The name should be translated according to the middle-lines of the `npm` name:`egg-foo-bar` => `fooBar`.
-  - The use of middle-lines is not compulsive,for example:userservice(egg-userservice) and user-service(egg-user-service) are both acceptable.
-- `package.json` Rules
+  - The use of middle-lines is not compulsive, e.g: userservice(egg-userservice) and user-service(egg-user-service) are both acceptable.
+- `package.json` Rules:
   - Add `eggPlugin` property according to the details discussed before.
-  - For convenient index, add `egg`,`egg-plugin`,`eggPlugin` in `keywords`.
+  - For convenient index, add `egg`,`egg-plugin`,`eggPlugin` in `keywords`:
 
     ```json
     {
@@ -472,9 +472,9 @@ We are very welcome your contribution to the new plugins, but also hope you foll
 
 Egg defines the plugin name through the `eggPlugin.name`, it is only unique in application or framework, that means **many npm packages might get the same plugin name**, why design in this way?
 
-First, Egg plugin do not only support npm package, it also supports search plugins in local directory. In Chapter [progressive](../tutorials/progressive.md) we mentioned how to make progress by using these two configurations. Directory is more friendly to unit test. So, Egg can not ensure uniqueness through npm package name.
+First, Egg plugin does not only support npm packages, but also supports plugins-searching in local directory. In Chapter [progressive](../tutorials/progressive.md) we've mentioned how to make progress by using these two configurations. Directories are more friendly to unit tests. So, Egg can not ensure uniqueness through npm package names.
 
-What's more, Egg can use this feature to make Adapter. For example, the plugin defined in[Template Develop Spec](./view-plugin.md#PluginNameSpecification) was named as view, but there are plugins named `egg-view-nunjucks` and `egg-view-react`, the users only need to change the plugin and modify the templates, no need to modify the Controller, because all these plugins have implemented the same API.
+What's more, Egg can use this feature to make an adapter, for example, the plugin defined in[Template Develop Spec](./view-plugin.md#PluginNameSpecification) was named as view, but there are plugins named `egg-view-nunjucks` and `egg-view-react`, the users only need to change the plugin and modify the templates, no need to modify the controllers, because all these plugins have implemented the same APIs.
 
 **Giving the same plugin name and the same API to the same plugin can make quick switch between them**. This is really really useful in template and database.
 

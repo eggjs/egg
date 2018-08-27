@@ -1,11 +1,11 @@
 title: Loader
 ---
 
-The most important of Egg enhance Koa is Egg based on a certain agreement, code will be placed in different directories according to the functional differences, it significantly reduce development costs. Loader supports this set of conventions and abstracts that many low-level APIs could be extended.
+The most importance of Egg which enhanced Koa is that it is based on a certain agreement, code will be placed in different directories according to the functional differences, it significantly reduces development costs. Loader supports this set of conventions and abstracts that many low-level APIs could be extended.
 
 ## Application, Framework and Plugin
 
-Egg is a low-level framework, applications could use it directly, but Egg only has a little default plugins, applications need to configure plugins to extend features, such as MySQL.
+Egg is a low-level framework, applications could use it directly, but Egg only has a few default plugins, we need to configure plugins to extend features in application, such as MySQL.
 
 ```js
 // application configuration
@@ -26,7 +26,7 @@ module.exports = {
 }
 ```
 
-With the increase number of applications, we find most of them have similar configurations, then we could extend a new framework based on Egg, which make the application configuration simpler.
+With the increasing number of applications, we find most of them have similar configurations, so we could extend a new framework based on Egg, which makes application configurations simpler.
 
 ```js
 // framework configuration
@@ -68,11 +68,11 @@ module.exports = {
 }
 ```
 
-From the above scene we can see the relationship of application, plugin and framework.
+From the scene above we can see the relationship of application, plugin and framework.
 
-- We implement business logics in application, we need to specify a framework to run, we could configure plugin to meet a special scene feature (such as MySQL).
+- We implement business logics in application, and specify a framework to run, so we could configure plugin to meet a special scene feature (such as MySQL).
 - Plugin only performs specific function, when two separate functions are interdependent, they still need to be separated into two plugins, and requires configuration.
-- Framework is a launcher (default is Egg), which is indispensable to run. Framework is also a wrapper, it aggregates plugins to provide functions unitedly, framework can also configure plugins.
+- Framework is a launcher (default is Egg), which is indispensable to run. Framework is also a wrapper, it aggregates plugins to provide functions unitedly, and it can also configure plugins.
 - We can extend a new framework based on framework, which means that **framework can be inherited infinitely**, like class inheritance.
 
 ```
@@ -91,7 +91,7 @@ From the above scene we can see the relationship of application, plugin and fram
 
 ## loadUnit
 
-Egg regard application, framework and plugin as loadUnit, because they are similar in code structure, here is the directory structure
+Egg regards application, framework and plugin as loadUnit, because they are similar in code structure, here is the directory structure:
 
 ```
 loadUnit
@@ -117,7 +117,7 @@ loadUnit
     └── config.unittest.js
 ```
 
-However, there are still some differences
+However, there are still some differences:
 
 File | Application | Framework | Plugin
 --- | --- | --- | ---
@@ -132,13 +132,13 @@ config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
 config/plugin.js | ✔︎ | ✔︎ |
 package.json | ✔︎ | ✔︎ | ✔︎
 
-During the loading process, Egg will traverse all loadUnits to load the above files (application, framework and plugin are different), the loading process has priority.
+During the loading process, Egg will traverse all loadUnits to load the files above(application, framework and plugin are different), the loading process has priority.
 
-- follow the order Plugin => Framework => Application to load
-- The order of loading plugins depends on the dependencies, depended plugins will be loaded first, no dependencies plugins are loaded by the object key configuration order, see [Plugin](./plugin.md) for details.
+- Load according to `Plugin => Framework => Application`.
+- The order of loading plugin depends on the dependencies, dependent plugins will be loaded first, independent plugins are loaded by the object key configuration order, see [Plugin](./plugin.md) for details.
 - Frameworks are loaded by the order of inheritance, the lower the more priority.
 
-For example, an application is configured with the following dependencies
+For example, an application is configured with the following dependencies:
 
 ```
 app
@@ -149,7 +149,7 @@ app
     └── egg
 ```
 
-The final loading order is
+The final loading order is:
 
 ```
 => plugin1
@@ -160,13 +160,13 @@ The final loading order is
 => app
 ```
 
-The plugin1 is framework1 depended plugin, the object key order of plugin1 after configuration merger is prior to plugin2/plugin3. Because of the dependencies between plugin2 and plugin3, the order is swapped. The framework1 inherits the Egg, so the order it after the egg. The application is the last to be loaded.
+The plugin1 is framework1's dependent plugin, the object key order of plugin1 after configuration merger is prior to plugin2/plugin3. Because of the dependencies between plugin2 and plugin3, the order is swapped. The framework1 inherits the Egg, so the order is after the egg. The application is the last to be loaded.
 
 See [Loader.getLoadUnits](https://github.com/eggjs/egg-core/blob/65ea778a4f2156a9cebd3951dac12c4f9455e636/lib/loader/egg_loader.js#L233) method for details.
 
 ### File order
 
-The above lists default loading files, Egg will load files by the following order, each file or directory will be loaded according to loadUnit order (application, framework and plugin are different).
+The files that will be loaded by default are listed above. Egg will load files by the following order, each file or directory will be loaded according to loadUnit order (application, framework and plugin are different):
 
 - Loading [plugin](./plugin.md), find application and framework, loading `config/plugin.js`
 - Loading [config](../basics/config.md), traverse loadUnit to load `config/config.{env}.js`
@@ -177,7 +177,7 @@ The above lists default loading files, Egg will load files by the following orde
 - Loading [controller](../basics/controller.md), loading application's `app/controller` directory
 - Loading [router](../basics/router.md), loading application's `app/router.js`
 
-Note
+Note:
 
 - Same name will be override in loading, for example, if we want to override `ctx.ip` we could define ip in application's `app/extend/context.js` directly.
 - See [framework development](./framework.md) for detail application launch order.
@@ -186,7 +186,7 @@ Note
 
 The framework will convert file names when loading files, because there is a difference between the file naming style and the API style. We recommend that files use underscores, while APIs use lower camel case. For examplem `app/service/user_info.js` will be converted to `app.service.userInfo`.
 
-The framework also supports hyphens and camel case.
+The framework also supports hyphens and camel case:
 
 - `app/service/user-info.js` => `app.service.userInfo`
 - `app/service/userInfo.js` => `app.service.userInfo`
@@ -258,7 +258,7 @@ module.exports = Object.assign(egg, {
 
 It's convenient for development team to customize loading via the Loader supported APIs. such as `this.model.xx`, `app/extend/filter.js` and so on.
 
-The above is just a description of the Loader wording, see [Framework Development](./framework.md) for details.
+The mention above is just a description of the Loader wording, please see [Framework Development](./framework.md) for details.
 
 ## Loader API
 
@@ -266,7 +266,7 @@ Loader also supports some low level APIs to simplify code when extending, [here]
 
 ### loadFile
 
-Used to load a file, such as loading `app.js` is using this method.
+Used to load a file, such as loading `app/xx.js`:
 
 ```js
 // app/xx.js
@@ -282,7 +282,7 @@ module.exports = app => {
 };
 ```
 
-If the file export a function, then the function will be called with app as a parameter, otherwise using this value directly.
+If the file exports a function, then the function will be called with `app` as its parameter, otherwise uses this value directly.
 
 ### loadToApp
 
@@ -297,17 +297,17 @@ module.exports = app => {
 };
 ```
 
-The method has three parameters `loadToApp(directory, property, LoaderOptions)`
+The method has three parameters `loadToApp(directory, property, LoaderOptions)`:
 
-1. directory could be String or Array, Loader will load files in those directories.
-1. property is app's property.
-1. [LoaderOptions](#LoaderOptions) are some configurations.
+1. Directory could be String or Array, Loader will load files in those directories.
+2. Property is app's property.
+3. [LoaderOptions](#LoaderOptions) are some configurations.
 
 ### loadToContext
 
-The difference between loadToApp and loadToContext is that loadToContext loading files into ctx instead of app, and it is lazy loading. Putting files into a temp object when loading, and instantiate object when calling ctx API.
+The difference between loadToApp and loadToContext is that loadToContext loads files into ctx instead of app, and it's a lazy loading. It puts files into a temp object when loading, and instantiates objects when calling ctx APIs.
 
-For example, service loading is this mode
+We load service in this mode as an example:
 
 ```js
 // The following is just an example, using loadService in practice
@@ -331,14 +331,14 @@ app.loader.loadToContext(servicePaths, 'service', {
 });
 ```
 
-`app.serviceClasses.user` becomes UserService after file loading, instantiating UserService when calling `ctx.service.user`.
-So this class will only be instantiated when first calling, and will be cached after instantiation, multiple calling same request will only instantiating once.
+`app.serviceClasses.user` becomes UserService after file loading, it instantiates UserService when calling `ctx.service.user`.
+So this class will only be instantiated when first calling, and will be cached after instantiation, multiple calling same request will be instantiated only once.
 
 ### LoaderOptions
 
 #### ignore [String]
 
-ignore could ignore some files, supports glob, the default is empty
+`ignore` could ignore some files, supports glob, the default is empty.
 
 ```js
 app.loader.loadToApp(directory, 'controller', {
@@ -349,7 +349,7 @@ app.loader.loadToApp(directory, 'controller', {
 
 #### initializer [Function]
 
-Processing each file exported values, the default is empty. 
+Processing each file exported values, the default is empty.
 
 ```js
 // app/model/user.js
@@ -372,13 +372,13 @@ app.loader.loadToApp(directory, 'model', {
 
 File conversion rules, could be `camel`, `upper`, `lower`, the default is `camel`.
 
-All three convert file name to camel case, but deal with the initials differently.
+All three convert file name to camel case, but deal with the initials differently:
 
 - `camel`: initials unchanged.
 - `upper`: initials upper case.
 - `lower`: initials lower case.
 
-Loading different files using different configurations.
+Loading different files uses different configurations:
 
 File | Configuration
 --- | ---
@@ -388,11 +388,11 @@ app/service | lower
 
 #### override [Boolean]
 
-Overriding or throwing exception when encounter existing files, the default is false
+Overriding or throwing exception when encounter existing files, the default is false.
 
 For example, the `app/service/user.js` is both loaded by the application and the plugin, if the setting is true, the application will override the plugin, otherwise an error will be throwed when loading.
 
-Loading different files using different configurations.
+Loading different files uses different configurations:
 
 File | Configuration
 --- | ---
@@ -404,7 +404,7 @@ app/service | false
 
 Calling when export's object is function, and get the return value, the default is true 
 
-Loading different files using different configurations.
+Loading different files uses different configurations:
 
 File | Configuration
 --- | ---

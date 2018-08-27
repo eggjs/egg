@@ -16,21 +16,21 @@ In the previous [Multi-Process Model chapter](../core/cluster-and-ipc.md), we co
 +--------+   +--------+
 ```
 
-In order to reuse persistent connections as much as possible (because they are very valuable resources for server), we put it into the Agent process to maintain, and then we transmit data to each Worker via messenger. It's feasible but often we need to write a lot of code to encapsulate the interface and to realize data transmission, which is very troublesome.
+In order to reuse persistent connections as much as possible (because they are very valuable resources for server), we put them into the Agent process to maintain, and then we transmit data to each Worker via messenger. It's feasible but we often need to write many codes to encapsulate the interface and realize data transmission, which is very troublesome.
 
 In addition, it's relatively inefficient to transmit data via messenger, since messenger will do the transmission through the Master; In case IPC channel goes wrong, it would probably break Master process down.
 
-Then is there any better way? The answer is yes. We provide a new type of model to reduce the complexity of this type of client encapsulation. The new Model bypasses the Master by establishing a direct socket between Agent and Worker. And as an external interface, Agent maintains shared connection among multiple Worker processes.
+So is there any better way? The answer is: YES! We provide a new type of model to reduce the complexity of this type of client encapsulation. The new Model bypasses the Master by establishing a direct socket between Agent and Worker. And as an external interface, Agent maintains shared connection among multiple Worker processes.
 
 ## core idea
 
-- Inspired by the [Leader/Follower](http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf) model
-- The client is divided into two roles:
-  - Leader: responsible for maintaining the connection with the remote server, only one Leader for the same type of client.
-  - Follower: delegates specific operations to the Leader. A common way is Subscribe-Model (let the Leader interact with remote server and wait for its return).
+- Inspired by the [Leader/Follower](http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf) model.
+- The client is divided into two roles: 
+  - Leader: Be responsible for maintaining the connection with the remote server, only one Leader for the same type of client.
+  - Follower: Delegate specific operations to the Leader. A common way is Subscribe-Model (let the Leader interact with remote server and wait for its return).
 - How to determine who Leader is, who Follower is? There are two modes:
-  - Free competition mode: clients determine the Leader by the competition of the local port when start up. For example: every one tries to monitor port 7777, and finally the only one instance who seizes it will become Leader, the rest will be Followers.
-  - Mandatory mode: the framework designates a Leader and the rest are Followers.
+  - Free competition mode: clients determine the Leader by the competition of the local port when start up. For example: every one tries to monitor port 7777, and finally the only one instance who seizes it will become Leader, the rest will be Followers.
+  - Mandatory mode: the framework designates a Leader and the rest are Followers.
 - we use mandatory mode inside the framework. The Leader can only be created inside the Agent, which is also in line with our positioning of the Agent.
 - When the framework starts up, Master will randomly select an available port as the communication port monitored by the Cluster Client, and passes it by parameter to Agent and App Worker.
 - Leader communicates with Follower through direct socket connection (through communication port), no longer needs Master to transit.
@@ -60,9 +60,9 @@ win /   +------------------+  \ lose
 
 We abstract the client interface into the following two broad categories, which is also a specification of the client interface. For clients that are in line with norms, we can automatically wrap it as Leader / Follower mode.
 
-- Subscribe / Publish Mode
-  - The `subscribe(info, listener)` interface contains two parameters. The first one is the information subscribed and the second one is callback function for subscribe.
-  - The `publish(info)` interface contains a parameter which is the information subscribed.
+- Subscribe / Publish Mode:
+  - The `subscribe(info, listener)` interface contains two parameters. The first one is the information subscribed and the second one is callback function for subscribe.
+  - The `publish(info)` interface contains a parameter which is the information subscribed.
 - Invoke Mode, supports three styles of interface: callback, promise and generator function, but generator function is recommended.
 
 Client example
@@ -131,7 +131,7 @@ Leader and Follower exchange data via the following protocols:
 ```
 
 1. On the communication port Leader starts a Local Server, via which all Leaders / Followers communicate.
-2. After Follower connects Local Server, it will firstly send a register channel packet (introduction of the channel concept is to distinguish between different types of clients)
+2. After Follower connects Local Server, it will firstly send a register channel packet (introduction of the channel concept is to distinguish between different types of clients).
 3. Local Server will assign Follower to a specified Leader (match based on client type).
 4. Follower sends requests to Leader to subscribe and publish.
 5. Leader notifies Follower through the subscribe result packet when the subscription data changes.
@@ -241,7 +241,7 @@ class RegistryClient extends Base {
 module.exports = RegistryClient;
 ```
 
-- The second step is to encapsulate the RegistryClient using the `agent.cluster` interface.
+- The second step is to encapsulate the `RegistryClient` using the `agent.cluster` interface:
 
 ```js
 // agent.js
@@ -260,7 +260,7 @@ module.exports = agent => {
 };
 ```
 
-- The third step, use the `app.cluster` interface to encapsulate RegistryClient
+- The third step, use the `app.cluster` interface to encapsulate `RegistryClient`:
 
 ```js
 // app.js
@@ -292,9 +292,9 @@ module.exports = app => {
 };
 ```
 
-Is not it simple?
+Isn't it so simple?
 
-Of course, if your client is not so 『standard』, then you may need to use some other APIs, for example, your subscription function is not called subscribe, but sub.
+Of course, if your client is not so 『standard』, then you may need to use some other APIs, for example, your subscription function is not named `subscribe`, but `sub`:
 
 ```js
 class MockClient extends Base {
@@ -324,7 +324,7 @@ class MockClient extends Base {
 }
 ```
 
-You need to set it manually with the delegate API
+You need to set it manually with the `delegate` API:
 
 ```js
 // agent.js
@@ -358,20 +358,20 @@ module.exports = app => {
 };
 ```
 
-We've already known that using cluster-client allows us to develop a 『pure』 RegistryClient without understanding the multi-process model. We can only focus on interacting with server, and use the cluster-client with a simple wrap to get a ClusterClient which supports multi-process model. The RegistryClient here is actually a DataClient that is specifically responsible for data communication with remote service.
+We've already known that using `cluster-client` allows us to develop a 『pure』 RegistryClient without understanding the multi-process model. We can only focus on interacting with server, and use the `cluster-client` with a simple wrap to get a `ClusterClient` which supports multi-process model. The `RegistryClient` here is actually a `DataClient` that is specifically responsible for data communication with remote service.
 
-You may have noticed that the ClusterClient brings with several constraints at the same time. If you want to expose the same approach to each process, RegistryClient can only support sub/pub mode and asynchronous API calls. Because all interactions in multi-process model must use socket communications, under which it is bound to bring this constraint.
+You may have noticed that the `ClusterClient` brings with several constraints at the same time. If you want to expose the same approach to each process, `RegistryClient` can only support sub/pub mode and asynchronous API calls. Because all interactions in multi-process model must use socket communications, under which it is bound to bring this constraint.
 
-Suppose we want to realize a synchronous get method. Put subscribed data directly into memory and use the get method to return data directly. How to achieve it? The real situation may be more complicated.
+Suppose we want to realize a synchronous `get` method. Put subscribed data directly into memory and use the `get` method to return data directly. How to achieve it? The real situation may be more complicated.
 
-Here, we introduce an APIClient best practice. For modules that have requirements of synchronous API such as reading cached data, an APIClient is encapsulated base on RegistryClient to implement these APIs that are not related to interaction with the remote server. The APIClient instance is exposed to the user.
+Here, we introduce an `APIClient` best practice. For modules that have requirements of synchronous API such as reading cached data, an `APIClient` is encapsulated base on RegistryClient to implement these APIs that are not related to interaction with the remote server. The `APIClient` instance is exposed to the user.
 
-In APIClient internal implementation:
+In `APIClient` internal implementation:
 
 - To obtain data asynchronously, invoke RegistryClient's API base on ClusterClient.
-- Interfaces that are unrelated to server, such as synchronous call, are to be implemented in APIClient. Since ClusterClient's APIs have flushed multi-process differences, there is no need to concern about multi-process model when calls to RegistryClient during developing APIClient.
+- Interfaces that are unrelated to server, such as synchronous call, are to be implemented in `APIClient`. Since ClusterClient's APIs have flushed multi-process differences, there is no need to concern about multi-process model when calls to RegistryClient during developing `APIClient`.
 
-For example, add a synchronous get method with buffer in the APIClient module:
+For example, add a synchronous get method with buffer in the `APIClient` module:
 
 ```js
 // some-client/index.js
@@ -489,8 +489,8 @@ in conclusion:
 ```
 
 - RegistryClient - responsible for communicating with remote service, to access data, supports for asynchronous APIs only, and does't care about multi-process model.
-- ClusterClient - a client instance that is simply wrapped by the cluster-client module and is responsible for automatically flushing differences in multi-process model.
-- APIClient - internally calls ClusterClient to synchronize data, without the need to concern about multi-process model and is the final exposed module for users. APIs are exposed Through this, and support for synchronization and asynchronization.
+- ClusterClient - a client instance that is simply wrapped by the `cluster-client` module and is responsible for automatically flushing differences in multi-process model.
+- APIClient - internally calls `ClusterClient` to synchronize data, without the need to concern about multi-process model and is the final exposed module for users. APIs are exposed Through this, and support for synchronization and asynchronization.
 
 Students who are interested may have look at [enhanced multi-process development model](https://github.com/eggjs/egg/issues/322) discussion process.
 
@@ -515,7 +515,7 @@ transcode              | function | N/A             | Serialization of interproc
 
 The above is about global configuration. If you want to do a separate setting for a client:
 
-- You can override by setting the second argument `options` in` app/agent.cluster(ClientClass, options) `
+- You can override by setting the second argument `options` in `app/agent.cluster(ClientClass, options)`:
 
 ```js
 app.registryClient = app.cluster(RegistryClient, {
@@ -525,7 +525,7 @@ app.registryClient = app.cluster(RegistryClient, {
 });
 ```
 
-- You can also override the `getter` attribute of `clusterOptions` in `APIClientBase`.
+- You can also override the `getter` attribute of `clusterOptions` in `APIClientBase`:
 
 ```js
 const APIClientBase = require('cluster-client').APIClientBase;
