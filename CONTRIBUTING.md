@@ -70,7 +70,7 @@ Eslint can help to identify styling issues that may exist in your code. Your cod
 
 ### Commit Message Format
 
-You are encouraged to use [angular commit-message-format](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format) to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.
+You are encouraged to use [angular commit-message-format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.
 
 ```xml
 <type>(<scope>): <subject>
