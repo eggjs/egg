@@ -25,7 +25,7 @@
     "debug": "^3.1.0",
     "delegates": "^1.0.0",
     "egg-cluster": "^1.18.0",
-    "egg-cookies": "^2.2.2",
+    "egg-cookies": "^2.2.6",
     "egg-core": "^4.9.1",
     "egg-development": "^2.3.1",
     "egg-i18n": "^2.0.0",
