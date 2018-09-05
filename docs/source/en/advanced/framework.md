@@ -132,7 +132,7 @@ The name of framework, default as `egg`, is a indispensable option to launch an 
 
 As a loadUnit of framework, yadan is going to load specific directories and files, such as `app` and `config`. Find more files loaded at [Loader](./loader.md).
 
-### Princeple of Framework Extension
+### Principle of Framework Extension
 
 The path of framework is set as a varible named as `Symbol.for('egg#eggPath') to expose itself to Loader. Why? It seems that the simplest way is to pass a param to the constructor. The reason is to expose those paths of each level of inherited frameworks and reserve their sequences. Since Egg is a framework capable of unlimited inheritance, each layer has to designate their own eggPath so that all the eggPaths are accessiable through the prototype chain.
 
