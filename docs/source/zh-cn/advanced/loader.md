@@ -190,6 +190,50 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 ### 生命周期
 
+Egg提供了配置文件加载完成(`configDidLoad`), 文件加载完成(`didLoad`), 插件启动完毕(`willReady`), worker 准备就绪(`didReady`), 应用启动完成(`serverDidReady`), 应用即将关闭(`beforeClose`)这些生命周期函数。
+定义过程如下代码
+```js
+// app.js or agent.js
+class AppBootHook {
+  constructor(app) {
+  }
+
+  configDidLoad() {
+    // Config,plugin files have did load.
+  }
+
+  async didLoad() {
+    // All files have did load, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+```
+
+启动过程如图所示:
+
+![](https://user-images.githubusercontent.com/6897780/42219323-24cbd7a8-7efe-11e8-86b9-cf280846aa9f.png)
+
+使用 `beforeClose` 的时候需要注意，在 egg 的 进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。
+如果需要调整超时时间的话，查看[此处文档](https://github.com/eggjs/egg-cluster)。
+
+旧版的使用方法:
+
 Egg提供了应用启动(`beforeStart`), 启动完成(`ready`), 关闭(`beforeClose`)这三个生命周期方法。
 ```
    init master process
