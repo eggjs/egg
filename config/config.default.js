@@ -226,7 +226,7 @@ module.exports = appInfo => {
     agentLogName: 'egg-agent.log',
     errorLogName: 'common-error.log',
     coreLogger: {},
-    allowDebugAtProd: true,
+    allowDebugAtProd: false,
   };
 
   /**
