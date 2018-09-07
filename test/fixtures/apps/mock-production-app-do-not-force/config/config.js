@@ -7,7 +7,7 @@ exports.watcher = {
 
 exports.logger = {
   level: 'DEBUG',
-  allowDebugAtProd: false,
+  allowDebugAtProd: true,
 };
 
 exports.keys = 'foo';
