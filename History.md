@@ -1,5 +1,23 @@
 # History
 
+## 2018-09-10, Version 1.10.0, @atian25
+
+### Notable changes
+
+* **feature**
+  * allow runInBackground reuse on plugins
+* **fix**
+  * config.allowDebugAtProd default to false
+
+### Commits
+
+  * [[`2e75463ee`](http://github.com/eggjs/egg/commit/2e75463eedc87d3cd37331870f1f35b36d9be90f)] - test: temp skip doc test at 1.x (TZ <<atian25@qq.com>>)
+  * [[`27d3e5fbb`](http://github.com/eggjs/egg/commit/27d3e5fbb3631e3f13b2fef5b92c6a1ad57546d7)] - test: fix plugin list sorted (TZ <<atian25@qq.com>>)
+  * [[`d937fd133`](http://github.com/eggjs/egg/commit/d937fd133c4ea4b6e01574b5b1ad11291ea2dfe7)] - test: fix sitefile icon test (TZ <<atian25@qq.com>>)
+  * [[`443b3db8d`](http://github.com/eggjs/egg/commit/443b3db8dcd139534d0b3a692e23e6931199ce6e)] - feat: allow runInBackground reuse on plugins (TZ <<atian25@qq.com>>)
+  * [[`e6289ab30`](http://github.com/eggjs/egg/commit/e6289ab308cf567b00c5034ac162597f2f5cdfa0)] - fix: config.allowDebugAtProd default to false (TZ <<atian25@qq.com>>)
+
+
 ## 2017-09-25, Version 1.9.0, @gxcsoccer
 
 ### Notable changes
