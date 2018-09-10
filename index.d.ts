@@ -5,6 +5,7 @@ import { EventEmitter } from 'events'
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
+import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
@@ -21,6 +22,9 @@ import 'egg-view';
 declare module 'egg' {
   // plain object
   type PlainObject<T = any> = { [key: string]: T };
+
+  // Remove specific property from the specific class
+  type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
   /**
    * BaseContextClass is a base class that can be extended,
@@ -652,7 +656,7 @@ declare module 'egg' {
     runInBackground(scope: (ctx: Context) => void): void;
   }
 
-  export interface IApplicationLocals extends PlainObject {}
+  export interface IApplicationLocals extends PlainObject { }
 
   export interface FileStream extends Readable { // tslint:disable-line
     fields: any;
@@ -672,7 +676,13 @@ declare module 'egg' {
     truncated: boolean;
   }
 
-  export interface Context extends KoaApplication.Context {
+  /**
+  * KoaApplication's Context will carry the default 'cookie' property in
+  * the egg's Context interface, which is wrong here because we have our own
+  * special properties (e.g: encrypted). So we must remove this property and
+  * create our own with the same name.
+  */
+  export interface Context extends RemoveSpecProp<KoaApplication.Context, 'cookies'> {
     [key: string]: any;
 
     app: Application;
@@ -683,9 +693,9 @@ declare module 'egg' {
 
     response: Response;
 
-    /**
-     * helper
-     */
+    // The new 'cookies' instead of Koa's.
+    cookies: EggCookies;
+
     helper: IHelper;
 
     /**
@@ -904,7 +914,7 @@ declare module 'egg' {
     redirect(url: string, alt?: string): void;
   }
 
-  export interface IContextLocals extends PlainObject {}
+  export interface IContextLocals extends PlainObject { }
 
   export class Controller extends BaseContextClass { }
 
@@ -935,7 +945,7 @@ declare module 'egg' {
 
   export interface IController extends PlainObject { } // tslint:disable-line
 
-  export interface IMiddleware extends PlainObject {} // tslint:disable-line
+  export interface IMiddleware extends PlainObject { } // tslint:disable-line
 
   export interface IHelper extends PlainObject {
     /**
