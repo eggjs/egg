@@ -3,7 +3,7 @@ title: View 插件开发
 
 绝大多数情况，我们都需要读取数据后渲染模板，然后呈现给用户，而框架并不强制使用某种模板引擎，由开发者来自行选型，具体参见[模板渲染](../core/view.md)。
 
-本文将阐述框架对 View 插件的规范约束, 我们可以依此来封装对应的模板引擎插件。以下以 [egg-view-ejs] 为例
+本文将阐述框架对 View 插件的规范约束, 我们可以依此来封装对应的模板引擎插件。以下以 [egg-view-ejs] 为例。
 
 ## 插件目录结构
 
@@ -97,15 +97,15 @@ module.exports = class EjsView {
 
 `renderString` 方法的三个参数
 
-- tpl: 模板字符串，没有文件路径
-- locals: 同 `render`
-- viewOptions: 同 `render`
+- tpl: 模板字符串，没有文件路径。
+- locals: 同 `render`。
+- viewOptions: 同 `render`。
 
 ## 插件配置
 
-根据上面的命名约定，配置名一般为模板引擎的名字，比如 ejs
+根据上面的命名约定，配置名一般为模板引擎的名字，比如 ejs。
 
-插件的配置主要来自模板引擎的配置，可根据具体情况定义配置项，如 [ejs 的配置](https://github.com/mde/ejs#options)
+插件的配置主要来自模板引擎的配置，可根据具体情况定义配置项，如 [ejs 的配置](https://github.com/mde/ejs#options)。
 
 ```js
 // config/config.default.js
@@ -130,7 +130,7 @@ module.exports = {
 
 而这样用起来比较麻烦，而且容易遗忘，所以我们可以封装下：
 
-先提供一个 helper 子类：
+- 先提供一个 helper 子类：
 
 ```js
 // {plugin_root}/lib/helper.js
@@ -145,7 +145,7 @@ module.exports = app => {
 };
 ```
 
-在渲染时使用自定义的 helper
+- 在渲染时使用自定义的 helper
 
 ```js
 // {plugin_root}/lib/view.js
@@ -180,7 +180,7 @@ module.exports = class MyCustomView {
 }
 ```
 
-框架提供了 [app.injectCsrf](../core/security.md#appinjectcsrfstr) 和 [app.injectNonce](../core/security.md#appinjectnoncestr)，更多可查看[安全章节](../core/security.md)。
+此外，框架提供了 [app.injectCsrf](../core/security.md#appinjectcsrfstr) 和 [app.injectNonce](../core/security.md#appinjectnoncestr)，更多可查看[安全章节](../core/security.md)。
 
 ### 单元测试
 

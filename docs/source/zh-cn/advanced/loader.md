@@ -397,7 +397,7 @@ Loader 还提供一些底层的 API，在扩展时可以简化代码，全部 AP
 
 ### loadFile
 
-用于加载一个文件，比如加载 `app.js` 就是使用这个方法。
+用于加载一个文件，比如加载 `app/xx.js` 就是使用这个方法。
 
 ```js
 // app/xx.js
@@ -469,7 +469,7 @@ app.loader.loadToContext(servicePaths, 'service', {
 
 #### ignore [String]
 
-ignore 可以忽略一些文件，支持 glob，默认为空
+`ignore` 可以忽略一些文件，支持 glob，默认为空
 
 ```js
 app.loader.loadToApp(directory, 'controller', {
