@@ -57,7 +57,7 @@ At the same time Request and Response are mounted to Context object. Just like E
 - `set response.body`
 - `set response.status`
 
-### Exception handlering
+### Exception handling
 
 Another enormous advantage for writing asynchronous code in synchronous way is that it is quite at ease to handle exception. You can catch all the exceptions thrown in the codes followed the convention with `try catch`. We can easily write a customized exception handling middleware.
 
