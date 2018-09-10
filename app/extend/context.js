@@ -195,8 +195,7 @@ const proto = module.exports = {
   runInBackground(scope) {
     // try to use custom function name first
     /* istanbul ignore next */
-    const taskName = scope._name || scope.name || '-';
-    scope._name = taskName;
+    scope._name = scope._name || scope.name || '-';
     this._runInBackground(scope);
   },
 
@@ -207,7 +206,7 @@ const proto = module.exports = {
     const ctx = this;
     const start = Date.now();
     /* istanbul ignore next */
-    const taskName = scope.name;
+    const taskName = scope._name;
     return co(function* () {
       yield scope(ctx);
       ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
