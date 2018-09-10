@@ -6,7 +6,7 @@ const assert = require('assert');
 const runscript = require('runscript');
 const utils = require('./utils');
 
-describe('test/doc.test.js', () => {
+describe.skip('test/doc.test.js', () => {
 
   if (process.platform === 'win32') return;
 
