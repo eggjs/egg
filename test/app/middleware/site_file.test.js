@@ -14,7 +14,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should GET /favicon.ico 200', () => {
     return app.httpRequest()
       .get('/favicon.ico')
-      .expect('Content-Type', 'image/x-icon')
+      .expect(res => assert(res.headers['content-type'].includes('icon')))
       // .expect(res => console.log(res.headers))
       .expect(200);
   });
@@ -22,7 +22,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should GET /favicon.ico?t=123 200', () => {
     return app.httpRequest()
       .get('/favicon.ico?t=123')
-      .expect('Content-Type', 'image/x-icon')
+      .expect(res => assert(res.headers['content-type'].includes('icon')))
       // .expect(res => console.log(res.headers))
       .expect(200);
   });
