@@ -193,11 +193,22 @@ const proto = module.exports = {
    * ```
    */
   runInBackground(scope) {
+    // try to use custom function name first
+    /* istanbul ignore next */
+    const taskName = scope._name || scope.name || '-';
+    scope._name = taskName;
+    this._runInBackground(scope);
+  },
+
+  // let plugins or frameworks to reuse _runInBackground in some cases.
+  // e.g.: https://github.com/eggjs/egg-mock/pull/78
+  // pick from https://github.com/eggjs/egg/pull/2872
+  _runInBackground(scope) {
     const ctx = this;
     const start = Date.now();
     /* istanbul ignore next */
-    const taskName = scope.name || '-';
-    co(function* () {
+    const taskName = scope.name;
+    return co(function* () {
       yield scope(ctx);
       ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
     }).catch(err => {

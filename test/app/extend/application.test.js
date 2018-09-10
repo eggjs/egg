@@ -149,7 +149,7 @@ describe('test/app/extend/application.test.js', () => {
     });
   });
 
-  describe('app.runInBackground(scope)', () => {
+  describe.only('app.runInBackground(scope)', () => {
     let app;
     before(() => {
       app = utils.app('apps/ctx-background');
