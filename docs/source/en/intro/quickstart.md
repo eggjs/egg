@@ -94,7 +94,7 @@ Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
-exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
+exports.keys = <YOUR_SECURITY_COOKIE_KEYS>;
 ```
 
 The project directory looks like this:
