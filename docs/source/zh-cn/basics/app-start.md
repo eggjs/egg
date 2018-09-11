@@ -28,7 +28,7 @@ module.exports = app => {
 // app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    // ctx.app.cities 在上面启动期间已经加载，可以直接使用
+    // 'app.cities' 在上面启动期间已经加载，可以直接通过 'this.ctx.app.cities' 使用。
   }
 }
 ```
