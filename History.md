@@ -1,13 +1,30 @@
+# History
 
-1.16.0 / 2018-08-06
-==================
+## 2018-09-11, Version 1.16.1 @atian25
 
-**features**
-  * [[`8b2b991f6`](http://github.com/eggjs/egg/commit/8b2b991f6c3f639e271f2198f4191934f04136d0)] - feat: allow runInBackground reuse on plugins (#2874) (fengmk2 <<fengmk2@gmail.com>>)
+### Notable changes
 
 **fixes**
+  * config.allowDebugAtProd default to false
+
+### Commits
+
+  * [[`97241f328`](http://github.com/eggjs/egg/commit/97241f328989f7271cbccdb187e4991af5160e4b)] - fix: config.allowDebugAtProd default to false (#2986) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2018-08-06, Version 1.16.0 @fengmk2
+
+### Notable changes
+
+**features**
+  * allow runInBackground reuse on plugins
+
+**fixes**
+  * add ms dependencies
+
+### Commits
+
+  * [[`8b2b991f6`](http://github.com/eggjs/egg/commit/8b2b991f6c3f639e271f2198f4191934f04136d0)] - feat: allow runInBackground reuse on plugins (#2874) (fengmk2 <<fengmk2@gmail.com>>)
   * [[`e0066bb20`](http://github.com/eggjs/egg/commit/e0066bb2039bbe76e6e19c3b2db1089abe3722c8)] - fix: add ms dependencies (#2875) (fengmk2 <<fengmk2@gmail.com>>)
-# History
 
 ## 2018-06-14, Version 1.15.2 @dead-horse
 
