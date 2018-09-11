@@ -237,7 +237,7 @@ module.exports = AppBootHook;
 使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。
 如果需要调整超时时间的话，查看[此处文档](https://github.com/eggjs/egg-cluster)。
 
-启用的方法:
+弃用的方法:
 
 ## beforeStart
 `beforeStart` 方法在 loading 过程中调用, 所有的方法并行执行。 一般用来执行一些异步方法, 例如检查连接状态等, 比如 [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) 就用 `beforeStart` 来检查与 mysql 的连接状态。所有的 `beforeStart` 任务结束后, 状态将会进入 `ready` 。不建议执行一些耗时较长的方法, 可能会导致应用启动超时。
