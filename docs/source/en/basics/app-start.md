@@ -29,7 +29,7 @@ module.exports = app => {
 // app/controller/home.js
 class HomeController extends Controller {
   async index() {
-    // now you can use `ctx.app.cities`
+    // 'app.cities' is loaded, and you can access it by 'this.ctx.app.cities'
   }
 }
 ```
