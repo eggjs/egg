@@ -21,8 +21,7 @@
   * [[`b02ce1547`](http://github.com/eggjs/egg/commit/b02ce154777fc78a6d344fe45d915d013096bea3)] - chroe(doc): Fix some typos (#2988) (Maledong <<maledong_github@outlook.com>>)
   * [[`688067ae0`](http://github.com/eggjs/egg/commit/688067ae09071316cbf5310b17d92d4fec39b42a)] - docs: fix 2 typos (#2982) (Jeff <<jeff.tian@outlook.com>>)
   * [[`a719fd345`](http://github.com/eggjs/egg/commit/a719fd34507ebbfcf800768fb58adc81aa9c5e36)] - docs: Fix and add missing typos (#2935) (Maledong <<maledong_github@outlook.com>>)
-  * [[`815c27879`](http://github.com/eggjs/egg/commit/815c278792e94ccf85822b3496f10396236e6628)] - fix (typings): Upgrade to the latest version of 'egg-cookie' to fetch (#2958) (Maledong <<maledong_github@outlook.com
->>)
+  * [[`815c27879`](http://github.com/eggjs/egg/commit/815c278792e94ccf85822b3496f10396236e6628)] - fix (typings): Upgrade to the latest version of 'egg-cookie' to fetch (#2958) (Maledong <<maledong_github@outlook.com>>)
   * [[`a2df5ad13`](http://github.com/eggjs/egg/commit/a2df5ad137dea5faf7724d480edcc482a1df9393)] - docs: fixed typo. (#2961) (Ariel Yang <<arielyang@gmail.com>>)
   * [[`b971e6633`](http://github.com/eggjs/egg/commit/b971e66336af4c8e241303866c8fa9acaaf4e66f)] - test: fix sitefile icon test (#2940) (Yiyu He <<dead_horse@qq.com>>)
   * [[`81826ed1a`](http://github.com/eggjs/egg/commit/81826ed1a826a3436f8c42b7b5466295c60f241e)] - docs: fix link to angular commit-message-format (#2939) (Vincent <<santochance@users.noreply.github.com>>)
