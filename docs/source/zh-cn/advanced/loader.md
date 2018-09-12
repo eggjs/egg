@@ -190,126 +190,68 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 ### 生命周期
 
-Egg提供了应用启动(`beforeStart`), 启动完成(`ready`), 关闭(`beforeClose`)这三个生命周期方法。
+框架提供了配置文件加载完成(`configDidLoad`), 文件加载完成(`didLoad`), 插件启动完毕(`willReady`), worker 准备就绪(`didReady`), 应用启动完成(`serverDidReady`), 应用即将关闭(`beforeClose`)这些生命周期函数。
+
+定义如下:
+```js
+// app.js or agent.js
+class AppBootHook {
+  constructor(app) {
+  }
+
+  configDidLoad() {
+    // Config,plugin files have did load.
+  }
+
+  async didLoad() {
+    // All files have did load, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+
+module.exports = AppBootHook;
 ```
-   init master process
-           ⬇
-init agent worker process
-           ⬇
-loader.load | beforeStart
-           ⬇
- await agent worker ready
-           ⬇
-   call ready callback
-           ⬇
-init app worker processes
-           ⬇
-loader.load | beforeStart
-           ⬇
- await app workers ready
-           ⬇
-   call ready callback
-           ⬇
-send egg-ready to master,
-    agent,app workers
-```
+
+开发者使用类的方式定义 `app.js` 和 `agent.js` 之后, 框架会自动加载并实例化这个类, 并且在各个生命周期阶段调用对应的方法。
+
+启动过程如图所示:
+
+![](https://user-images.githubusercontent.com/6897780/42219323-24cbd7a8-7efe-11e8-86b9-cf280846aa9f.png)
+
+使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。
+如果需要调整超时时间的话，查看[此处文档](https://github.com/eggjs/egg-cluster)。
+
+弃用的方法:
+
 ## beforeStart
 `beforeStart` 方法在 loading 过程中调用, 所有的方法并行执行。 一般用来执行一些异步方法, 例如检查连接状态等, 比如 [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) 就用 `beforeStart` 来检查与 mysql 的连接状态。所有的 `beforeStart` 任务结束后, 状态将会进入 `ready` 。不建议执行一些耗时较长的方法, 可能会导致应用启动超时。
+插件开发者应使用 `didLoad` 替换。应用开发者应使用 `willReady` 替换。
+
 ## ready
 `ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。
+开发者应使用 `didReady` 替换。
 ## beforeClose
 `beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger , 删除监听方法等。
+开发者不应该直接使用 `app.beforeClose`, 而是定义类的形式, 实现 `beforeClose` 方法。
 
 __这个方法不建议在生产环境使用, 可能遇到未执行完就结束进程的问题。__
 
-e.g.:
-```js
-// app.js
-console.time('app before start 200ms');
-console.time('app before start 100ms');
-
-app.beforeStart(async () => {
-  await sleep(200);
-  console.timeEnd('app before start 200ms');
-});
-
-app.beforeStart(async () => {
-  await sleep(100);
-  console.timeEnd('app before start 100ms');
-});
-
-app.on('server', () => {
-  console.log('server is ready');
-});
-
-app.ready(() => {
-  console.log('app ready');
-  cp.execSync(`kill ${process.ppid}`);
-  console.time('app before close 100ms');
-  console.time('app before close 200ms');
-});
-
-app.beforeClose(async () => {
-  await sleep(200);
-  console.timeEnd('app before close 200ms');
-});
-
-app.beforeClose(async () => {
-  await sleep(100);
-  console.timeEnd('app before close 100ms');
-});
-
-// agent.js
-console.time('agent before start 200ms');
-console.time('agent before start 100ms');
-
-agent.beforeStart(async () => {
-  await sleep(200);
-  console.timeEnd('agent before start 200ms');
-});
-
-agent.beforeStart(async () => {
-  await sleep(100);
-  console.timeEnd('agent before start 100ms');
-});
-
-agent.ready(() => {
-  console.log('agent ready');
-  console.time('agent before close 200ms');
-  console.time('agent before close 100ms');
-});
-
-agent.beforeClose(async () => {
-  await sleep(200);
-  console.timeEnd('agent before close 200ms');
-});
-
-agent.beforeClose(async () => {
-  await sleep(100);
-  console.timeEnd('agent before close 100ms');
-});
-```
-
-print:
-```
-agent before start 100ms: 131.096ms
-agent before start 200ms: 224.396ms // 并行执行
-
-agent ready
-
-app before start 100ms: 147.546ms
-app before start 200ms: 245.405ms // 并行执行
-
-app ready
-
-// 开流量
-server is ready
-
-agent before close 100ms: 866.218ms
-app before close 100ms: 108.007ms // LIFO, 后注册先执行
-app before close 200ms: 310.549ms // 串行执行
-agent before close 200ms: 1070.865ms
-```
 
 可以使用 [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) 来查看加载过程。
 
