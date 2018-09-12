@@ -182,6 +182,82 @@ Note:
 - Same name will be override in loading, for example, if we want to override `ctx.ip` we could define ip in application's `app/extend/context.js` directly.
 - See [framework development](./framework.md) for detail application launch order.
 
+### Life Cycles
+
+The framework has provided you several functions to handle during the whole life cycle:
+
+- `configDidLoad`: When all the config files are loaded.
+- `didLoad`: When all the files are loaded.
+- `willReady`: When all the plug-ins are ready.
+- `didReady`: When all the workers are ready.
+- `serverDidReady`: When the server is ready.
+- `beforeClose`: Before the application is closed.
+
+Here're the definations:
+
+```js
+// app.js or agent.js
+class AppBootHook {
+  constructor(app) {
+  }
+
+  configDidLoad() {
+    // Config, plugin files have loaded.
+  }
+
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+
+module.exports = AppBootHook;
+```
+
+The framework will automatically load and initialize this class after developers have defined `app.js` and `agenet.js` in the form of class, and it will call the corresponding methods during each of the life cycles.
+
+Here's the image of starting process:
+
+![]( https://user-images.githubusercontent.com/6897780/45463932-bb1f9800-b740-11e8-9f0c-d9649ae8abc0.png)
+
+**Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
+
+If you need to modify the expiring time, please see [this document](https://github.com/eggjs/egg-cluster).
+
+Deprecated methods:
+
+## beforeStart
+
+`beforeStart` is called during the loading process, all of its methods are running in parallel. So we usually execute some asynchronized methods (e.g: Check the state of connection, in [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) we use this method to check the connection state with mysql). When all the tasks in `beforeStart` finished, the state will be `ready`. It's NOT recommended to excute a function that consumes too much time there, which will cause the expiration of application's start.Plug-in developers should use `didLoad` instead, for application developers, `willReady` is the replacer.
+
+## ready
+
+All the methods mounted on `ready` will be executed when load ends, and after all the methods in `beforeStart` have finished executing. By the time Http server's listening also starts. This means all the plug-ins are fully loaded and everything is ready, So we use it to process some tasks after start. For developers now, we use `didReady` instead.
+
+## beforeClose
+
+All the methods mounted on `beforeClose` are called in an inverted order after `close` method in app/agent instance is called. E.g: in [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js), we close logger, remove listening methods ...,ect.Developers SHOULDN'T use `app.beforeClose` directly now, but in the form of class to implement `beforeClose` instead.
+
+__We don't recommend to use this function in a PROD env, because the process may end before it finishes.__
+
+What's more, we can use [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) to see the loading process.
+
 ### Loading File rules
 
 The framework will convert file names when loading files, because there is a difference between the file naming style and the API style. We recommend that files use underscores, while APIs use lower camel case. For examplem `app/service/user_info.js` will be converted to `app.service.userInfo`.
