@@ -5,7 +5,7 @@
 ### Notable changes
 
 * **feature**
-  * support boot lifecyle, see https://github.com/eggjs/egg/issues/2520
+  * support boot lifecycle, see https://github.com/eggjs/egg/issues/2520
   * `dnshttpclient` now use async function instead of Promise
 
 * **fix**
@@ -50,7 +50,7 @@
   * use cache-content-type
 
 * **docs**
-  * add lifecyle doc
+  * add lifecycle doc
   * add sequelize guide
   * add allowDebugAtProd in document
   * egg-scripts support windows
