@@ -182,6 +182,34 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(timestamp !== record.timestamp);
   });
 
+  it('should cache and update with agent', async () => {
+    const agent = app._agent;
+    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
+
+    let obj = urlparse(url + '/get_headers');
+    let result = await agent.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    let record = agent.httpclient.dnsCache.get('localhost');
+    const timestamp = record.timestamp;
+    assert(record);
+
+    obj = urlparse(url + '/get_headers');
+    result = await agent.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    record = agent.httpclient.dnsCache.get('localhost');
+    assert(timestamp === record.timestamp);
+
+    await sleep(5000);
+    obj = urlparse(url + '/get_headers');
+    result = await agent.curl(obj, { dataType: 'json' });
+    assert(result.status === 200);
+    assert(result.data.host === host);
+    record = agent.httpclient.dnsCache.get('localhost');
+    assert(timestamp !== record.timestamp);
+  });
+
   it('should not cache ip', async () => {
     const obj = urlparse(url.replace('localhost', '127.0.0.1') + '/get_headers');
     const result = await app.curl(obj, { dataType: 'json' });
