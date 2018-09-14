@@ -14,7 +14,7 @@
 
   * [[`eed74e861`](http://github.com/eggjs/egg/commit/eed74e8610e1ea189beed1c3526b38f0b59c48ab)] - chore: update deps, debug@4 and coffee@5 (#2995) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`a8a3dfb04`](http://github.com/eggjs/egg/commit/a8a3dfb04f11b1c48ed1f01154e4d4311bfafa4b)] - fix(httpclient): can't use runInBackground in agent (#3003) (Haoliang Gao <<sakura9515@gmail.com>>)
-  * [[`4faf68f4b`](http://github.com/eggjs/egg/commit/4faf68f4b6dad160a151b3d76041a0521261b530)] - doc (loader.md): Add missing Englishtranslations (#2996) (Maledong <<maledong_github@outlook.com>>)
+  * [[`4faf68f4b`](http://github.com/eggjs/egg/commit/4faf68f4b6dad160a151b3d76041a0521261b530)] - doc (loader.md): Add missing English translations (#2996) (Maledong <<maledong_github@outlook.com>>)
 
 ## 2018-09-11, Version 2.11.0 @atian25
 
