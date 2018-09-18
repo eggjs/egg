@@ -209,6 +209,9 @@ declare module 'egg' {
     root: string; // baseDir when local and unittest, HOME when other environment
   }
 
+  type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
+  type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
+
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
@@ -236,17 +239,19 @@ declare module 'egg' {
       encoding: string;
       formLimit: string;
       jsonLimit: string;
-      strict: true;
+      strict: boolean;
       queryString: {
         arrayLimit: number;
         depth: number;
         parameterLimit: number;
       };
+      ignore: IgnoreOrMatch;
+      match: IgnoreOrMatch;
       enableTypes: string[];
       extendTypes: {
-        json?: string[];
-        form?: string[];
-        text?: string[];
+        json: string[];
+        form: string[];
+        text: string[];
       };
     };
 

@@ -63,7 +63,7 @@
     "egg-alinode": "^1.0.3",
     "egg-bin": "^4.8.5",
     "egg-doctools": "^2.4.0",
-    "egg-mock": "^3.20.0",
+    "egg-mock": "^3.20.1",
     "egg-plugin-puml": "^2.4.0",
     "egg-tracer": "^1.1.0",
     "egg-view-nunjucks": "^2.2.0",
