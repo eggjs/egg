@@ -3,12 +3,12 @@ title: TypeScript
 
 > [TypeScript](https://www.typescriptlang.org/) is a typed superset of JavaScript that compiles to plain JavaScript.
 
-For a large number of enterprises' applications, TypeScript's static type checking, intellisenses, friendly IDE are valuable. For more please see [System Research Report For TypeScript](https://juejin.im/post/59c46bc86fb9a00a4636f939) 。
+For a large number of enterprises' applications, TypeScript's static type checking, intellisense, friendly IDE are valuable. For more please see [System Research Report For TypeScript](https://juejin.im/post/59c46bc86fb9a00a4636f939).
 
 However, we've met some problems influencing users' experience when developing Egg in TypeScript: 
 
 * The most outstanding Loader Mechanism (Auto-loading) makes TS not analyze dependencies in static.
-* How to validate and show intellisenses in `config.{env}.js`, when we modify settings by plug-in and these configurations are automatically merged? 
+* How to validate and show intellisense in `config.{env}.js`, when we modify settings by plug-in and these configurations are automatically merged? 
 * During the period of developing, `tsc -w` is created as an independent process to build up codes, it makes us entangled about where to save the temporary files, and the complicated `npm scripts`.
 * How to map to the TS source files instead of compiled js files in unit tests, coverage tests and error stacks online?
 
@@ -17,12 +17,13 @@ This article mainly describes:
 * **Developing principles of TS for the application layer.**
 * **How do we solve the problem for developers with the help of the tool chain so that they  have no scene about it and keep in consistency**
 
-For more about this tossing process, please see [[RFC] TypeScript tool support](https://github.com/eggjs/egg/issues/2272)
+For more about this tossing process, please see [[RFC] TypeScript tool support](https://github.com/eggjs/egg/issues/2272).
 
 ---
 
 ## Quick Start
-Be a quick initialization through the boilerplate:
+
+A quick initialization through the boilerplate:
 
 ```bash
 $ npx egg-init --type=ts showcase
@@ -30,7 +31,7 @@ $ cd showcase && npm i
 $ npm run dev
 ```
 
-The boilerplate above will create a very simple example, for a detailed one please see[eggjs/examples/hackernews-async-ts](https://github.com/eggjs/examples/tree/master/hackernews-async-ts)
+The boilerplate above will create a very simple example, for a detailed one please see [eggjs/examples/hackernews-async-ts](https://github.com/eggjs/examples/tree/master/hackernews-async-ts)
 
 ![tegg.gif](https://user-images.githubusercontent.com/227713/38358019-bf7890fa-38f6-11e8-8955-ea072ac6dc8c.gif)
 
@@ -133,7 +134,7 @@ export default function robotMiddleware() {
 }
 ```
 
-`Middlewares` support input parameters, and the first one is the `config` of the same name. If you have other requirements, a full version is needed:
+Middlewares support input parameters, and the first one is the config of the same name. If you have other requirements, a full version is needed:
 
 ```typescript
 // app/middleware/news.ts
@@ -172,11 +173,11 @@ export default app => {
 
 ### Config
 
-`Config` is a little complicated, because it supports:
+Config is a little complicated, because it supports:
 
-* In Controller, Service we need "multi-layer" intellisense configurations, they are automatically related to each other.
-* In Config, `config.view = {}` will also support intellisenses.
-* In `config.{env}.ts`, we can use customized configuration settings with intellisenses in `config.default.ts`.
+* In Controller and Service, we need "multi-layer" intellisense configurations, they are automatically related to each other.
+* In Config, `config.view = {}` will also support intellisense.
+* In `config.{env}.ts`, we can use customized configuration settings with intellisense in `config.default.ts`.
 
 ```typescript
 // app/config/config.default.ts
@@ -233,7 +234,7 @@ export default () => {
 
 Remarks:
 
-* `Conditional Types` is the KEY to solving config's intellisenses.
+* `Conditional Types` is the KEY to solving config's intellisense.
 * Anyone if interested in this, have a look at the implement of `PowerPartial` at [egg/index.d.ts](https://github.com/eggjs/egg/blob/master/index.d.ts).
 
 ```typescript
@@ -245,7 +246,7 @@ type PowerPartial<T> = {
 };
 ```
 
-### Plugin
+### Plug-in
 
 ```javascript
 // config/plugin.ts
@@ -292,7 +293,7 @@ Developers only need to config in `package.json` simply:
 
 ### egg-ts-helper
 
-Due to the automatic loading mechanism, TS cannot analyze dependencies in static or relationship intellisenses.
+Due to the automatic loading mechanism, TS cannot analyze dependencies in static or relationship intellisense.
 
 Luckily, TS has many tricks to cope with it. We can use [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) to write `d.ts` as a helper.
 
@@ -313,11 +314,11 @@ It's a bit too bothering to write them manually, so we offer you a tool [egg-ts-
 
 What we do is just to do some configs in `package.json`:
 
-```javascript
+```json
 {
-  "devDependencies": {
+  "devDependencies": {
     "egg-ts-helper": "^1"
-  },
+  },
   "scripts": {
     "dev": "egg-bin dev -r egg-ts-helper/register",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -330,7 +331,7 @@ The corresponding `d.ts` files are automatically generated in `typings/{app,conf
 
 > In the future, the tool will also support the analysis of Egg in js, which will improve the experience of js development.
 
-### Unit Test && Cov
+### Unit Test and Cov
 
 Unit Test is a MUST in development:
 
@@ -358,7 +359,7 @@ Run commands as what you do before, and we've built `Error stacks and coverages`
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -374,7 +375,7 @@ There's no main difference for debugging in TS, it can reach correct positions t
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "debug": "egg-bin debug -r egg-ts-helper/register",
     "debug-test": "npm run test-local -- --inspect"
@@ -399,13 +400,13 @@ Configs in `package.json` :
 {
   "egg": {
     "typescript": true
-  }，
+  },
   "scripts": {
-    "start": "egg-scripts start --title=egg-server-showcase",
+    "start": "egg-scripts start --title=egg-server-showcase",
     "stop": "egg-scripts stop --title=egg-server-showcase",
-    "tsc": "ets && tsc -p tsconfig.json",
+    "tsc": "ets && tsc -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
-    "clean": "ets clean"
+    "clean": "ets clean"
   }
 }
 ```
@@ -439,7 +440,7 @@ And the corresponding `tsconfig.json`:
   },
   "exclude": [
     "app/public",
-    "app/web",
+    "app/web",
     "app/views"
   ]
 }
@@ -531,7 +532,7 @@ For developers, they can directly import your framework:
 ```typescript
 // app/service/news.ts
 
-// Developers can get all intellisenses after they import your framework
+// Developers can get all intellisense after they import your framework
 import { Service } from 'duck-egg';
 
 export default class NewsService extends Service {
