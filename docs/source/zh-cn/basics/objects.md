@@ -262,7 +262,7 @@ module.exports = {
 
 ## Logger
 
-框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 5 个级别的方法：
+框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 4 个级别的方法：
 
 - `logger.debug()`
 - `logger.info()`
