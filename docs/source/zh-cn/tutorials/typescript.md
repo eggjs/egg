@@ -44,7 +44,7 @@ $ npm run dev
 * Egg 目前没有计划使用 TS 重写。
 * Egg 以及它对应的插件，会提供对应的 `index.d.ts` 文件方便开发者使用。
 * TypeScript 只是其中一种社区实践，我们通过工具链给予一定程度的支持。
-* TypeScript 最低要求 2.8+ 版本。
+* TypeScript 最低要求：版本 2.8。
 
 整体目录结构上跟 Egg 普通项目没啥区别:
 
@@ -446,10 +446,7 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-**注意：**
-
-* **当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。**
-* 因此在开发期， `egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。
+**注意：当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。**
 
 ### 错误堆栈
 
