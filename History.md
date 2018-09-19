@@ -1,5 +1,19 @@
 # History
 
+## 2018-09-19, Version 2.11.2 @XadillaX
+
+### Notable changes
+
+* **fix**
+  * typescript: add missing 'ignore', 'match'
+* **refactor**
+  * separate dumping config object and config file
+
+### Commits
+
+  * [[`1d30166e0`](http://github.com/eggjs/egg/commit/1d30166e037e8890fc850e51bdba02af76772485)] - refactor: separate dumping config object and config file (#3014) (Khaidi Chu <<i@2333.moe>>)
+  * [[`e3f183e96`](http://github.com/eggjs/egg/commit/e3f183e9658e603c74850376f2257bd88bc4a043)] - fix (typescript): Add missing 'ignore','match' (#3010) (Maledong <<maledong_github@outlook.com>>)
+
 ## 2018-09-14, Version 2.11.1 @popomore
 
 ### Notable changes
