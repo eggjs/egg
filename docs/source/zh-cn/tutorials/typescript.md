@@ -74,7 +74,7 @@ showcase
 └── tslint.json
 ```
 
-### Controller
+### 控制器（Controller）
 
 ```typescript
 // app/controller/home.ts
@@ -90,7 +90,7 @@ export default class HomeController extends Controller {
 }
 ```
 
-### Router
+### 路由（Router）
 
 ```typescript
 // app/router.ts
@@ -102,7 +102,7 @@ export default (app: Application) => {
 };
 ```
 
-### Service
+### 服务（Service）
 
 ```typescript
 // app/service/news.ts
@@ -120,7 +120,7 @@ export interface NewsItem {
 }
 ```
 
-### Middleware
+### 中间件（Middleware）
 
 ```typescript
 // app/middleware/robot.ts
@@ -151,7 +151,7 @@ export default function newsMiddleware(options: BizConfig['news'], app: Applicat
 }
 ```
 
-### Extend
+### 扩展（Extend）
 
 ```typescript
 // app/extend/context.ts
@@ -171,7 +171,7 @@ export default app => {
 };
 ```
 
-### Config
+### 配置（Config）
 
 `Config` 这块稍微有点复杂，因为要支持：
 
@@ -246,7 +246,7 @@ type PowerPartial<T> = {
 };
 ```
 
-### Plugin
+### 插件（Plug-in）
 
 ```javascript
 // config/plugin.ts
@@ -263,7 +263,7 @@ const plugin: EggPlugin = {
 export default plugin;
 ```
 
-### Typings
+### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
 
@@ -314,11 +314,11 @@ declare module 'egg' {
 
 只需配置下 `package.json` :
 
-```javascript
+```json
 {
-  "devDependencies": {
+  "devDependencies": {
     "egg-ts-helper": "^1"
-  },
+  },
   "scripts": {
     "dev": "egg-bin dev -r egg-ts-helper/register",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -331,7 +331,7 @@ declare module 'egg' {
 
 > 后续该工具也会考虑支持  js 版 egg 应用的分析，可以一定程度上提升 js 开发体验。
 
-### Unit Test && Cov
+### 单元测试和覆盖率（Unit Test and Cov）
 
 单元测试当然少不了：
 
@@ -359,7 +359,7 @@ describe('test/app/service/news.test.js', () => {
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -369,13 +369,13 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-### Debug
+### 调试（Debug）
 
 断点调试跟之前也没啥区别，会自动通过 `sourcemap` 断点到正确的位置。
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "debug": "egg-bin debug -r egg-ts-helper/register",
     "debug-test": "npm run test-local -- --inspect"
@@ -388,9 +388,9 @@ describe('test/app/service/news.test.js', () => {
 
 ---
 
-## 部署
+## 部署（Deploy）
 
-### 构建
+### 构建（Build）
 
 * 正式环境下，我们更倾向于把 ts 构建为 js ，建议在 `ci` 上构建并打包。
 
@@ -400,13 +400,13 @@ describe('test/app/service/news.test.js', () => {
 {
   "egg": {
     "typescript": true
-  }，
+  },
   "scripts": {
-    "start": "egg-scripts start --title=egg-server-showcase",
+    "start": "egg-scripts start --title=egg-server-showcase",
     "stop": "egg-scripts stop --title=egg-server-showcase",
-    "tsc": "ets && tsc -p tsconfig.json",
+    "tsc": "ets && tsc -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
-    "clean": "ets clean"
+    "clean": "ets clean"
   }
 }
 ```
@@ -440,7 +440,7 @@ describe('test/app/service/news.test.js', () => {
   },
   "exclude": [
     "app/public",
-    "app/web",
+    "app/web",
     "app/views"
   ]
 }
@@ -448,7 +448,7 @@ describe('test/app/service/news.test.js', () => {
 
 **注意：当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。**
 
-### 错误堆栈
+### 错误堆栈（Error Stack）
 
 线上服务的代码是经过编译后的 js，而我们期望看到的错误堆栈是指向 TS 源码。
 因此：
@@ -463,7 +463,7 @@ describe('test/app/service/news.test.js', () => {
 
 ---
 
-## 插件/框架开发指南
+## 插件 / 框架开发指南
 
 **指导原则：**
 
