@@ -57,7 +57,7 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
   // app/controller/user.js
   class UserController extends Controller {
     async fetch() {
-      this.ctx.body = app.cache.get(this.ctx.query.id);
+      this.ctx.body = this.app.cache.get(this.ctx.query.id);
     }
   }
   ```
@@ -262,7 +262,7 @@ module.exports = {
 
 ## Logger
 
-框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 5 个级别的方法：
+框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 4 个级别的方法：
 
 - `logger.debug()`
 - `logger.info()`
