@@ -11,6 +11,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   let app;
   let url;
   let host;
+  let originalDNSServers;
 
   before(async () => {
     app = utils.app('apps/dnscache_httpclient');
@@ -18,9 +19,13 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     url = await utils.startLocalServer();
     url = url.replace('127.0.0.1', 'localhost');
     host = urlparse(url).host;
+    originalDNSServers = dns.getServers();
   });
 
   afterEach(mm.restore);
+  afterEach(() => {
+    dns.setServers(originalDNSServers);
+  });
 
   it('should ctx.curl work and set host', async () => {
     await app.httpRequest()
@@ -38,6 +43,14 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should throw error when the first dns lookup fail', async () => {
+    if (!process.env.CI) {
+      // Avoid Network service provider DNS pollution
+      // alidns http://www.alidns.com/node-distribution/
+      dns.setServers([
+        '223.5.5.5',
+        '223.6.6.6',
+      ]);
+    }
     await app.httpRequest()
       .get('/?url=' + encodeURIComponent('http://notexists-1111111local-domain.com'))
       .expect(500)
@@ -78,6 +91,14 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should callback style work on domain not exists', done => {
+    if (!process.env.CI) {
+      // Avoid Network service provider DNS pollution
+      // alidns http://www.alidns.com/node-distribution/
+      dns.setServers([
+        '223.5.5.5',
+        '223.6.6.6',
+      ]);
+    }
     app.httpclient.curl('http://notexists-1111111local-domain.com', err => {
       assert(err);
       assert(err.code === 'ENOTFOUND');
@@ -96,6 +117,14 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should thunk style work on domain not exists', done => {
+    if (!process.env.CI) {
+      // Avoid Network service provider DNS pollution
+      // alidns http://www.alidns.com/node-distribution/
+      dns.setServers([
+        '223.5.5.5',
+        '223.6.6.6',
+      ]);
+    }
     app.httpclient.requestThunk('http://notexists-1111111local-domain.com')(err => {
       assert(err);
       assert(err.code === 'ENOTFOUND');
