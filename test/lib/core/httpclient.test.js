@@ -79,22 +79,6 @@ describe('test/lib/core/httpclient.test.js', () => {
     await client.requestThunk(url, args);
   });
 
-  it.skip('should request error with log', done => {
-    mm.http.requestError(/.*/i, null, 'mock res error');
-
-    client.once('response', info => {
-      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
-      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
-      assert(info.error.message.includes('mock res error'));
-      done();
-    });
-
-    client.request(url).catch(() => {
-      // it will print
-      // console.error(e.stack);
-    });
-  });
-
   describe('httpclient.httpAgent.timeout < 30000', () => {
     let app;
     before(() => {
