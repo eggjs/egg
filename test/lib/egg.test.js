@@ -135,12 +135,12 @@ describe('test/lib/egg.test.js', () => {
 
     it('should read timing data', function* () {
       let json = readJson(path.join(baseDir, `run/agent_timing_${process.pid}.json`));
-      assert(json.length === 38);
+      assert(json.length === 32);
       assert(json[0].name === 'Application Start');
       assert(json[0].pid === process.pid);
 
       json = readJson(path.join(baseDir, `run/application_timing_${process.pid}.json`));
-      assert(json.length === 74);
+      assert(json.length === 62);
       assert(json[0].name === 'Application Start');
       assert(json[0].pid === process.pid);
     });

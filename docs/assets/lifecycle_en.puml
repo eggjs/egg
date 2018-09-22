@@ -15,7 +15,7 @@ partition agent {
     ====
     method mode
     beforeStart(deprecate)
-  end note  
+  end note
   fork
   : configDidLoad;
   note left
@@ -25,6 +25,7 @@ partition agent {
   : async didLoad;
   note left
     Files and configs are loaded
+    The same sync logic and execution sequence as in app.js,
     To execute some async tasks
     E.g: Pull configs in async to load client,
     or check the state of client
@@ -34,7 +35,7 @@ partition agent {
     note right
       Tasks mounted on beforeStart
       Running in parallel at this time
-    end note  
+    end note
   endfork
   : async willReady;
   note left
@@ -49,7 +50,7 @@ partition agent {
     and it can work normally
     ====
     The time is the same as 'ready',
-    The original 'ready' doesn't support AsyncFunction    
+    The original 'ready' doesn't support AsyncFunction
   end note
   : emit 'agent-start';
 }
@@ -72,7 +73,7 @@ partition app {
     : configDidLoad;
     note left
       All the files are loaded,
-      The same sync logic as in app.js,
+      The same sync logic and execution sequence as in app.js,
       Some configs can be modified, the order of middlewares
     end note
     : load app/service;

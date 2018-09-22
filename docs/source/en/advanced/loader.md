@@ -233,8 +233,7 @@ module.exports = AppBootHook;
 The framework will automatically load and initialize this class after developers have defined `app.js` and `agenet.js` in the form of class, and it will call the corresponding methods during each of the life cycles.
 
 Here's the image of starting process:
-
-![]( https://user-images.githubusercontent.com/6897780/45463932-bb1f9800-b740-11e8-9f0c-d9649ae8abc0.png)
+![](https://cdn.nlark.com/__puml/da20f7e73aef1984354619fefcfc7ced.svg)
 
 **Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
 
@@ -478,7 +477,7 @@ app/service | false
 
 #### call [Boolean]
 
-Calling when export's object is function, and get the return value, the default is true 
+Calling when export's object is function, and get the return value, the default is true
 
 Loading different files uses different configurations:
 

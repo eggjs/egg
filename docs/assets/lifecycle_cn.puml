@@ -15,12 +15,13 @@ partition agent {
     ====
     方法模式
     beforeStart(deprecate)
-  end note  
+  end note
   fork
   : configDidLoad;
   note left
     文件都已经加载完成,
-    可以执行一些同步逻辑
+    与 agent.js 里的同步逻辑相同，执行顺序也相同
+    可以执行一些同步逻辑。
   end note
   : async didLoad;
   note left
@@ -34,7 +35,7 @@ partition agent {
     note right
       beforeStart注册的任务
       在此时同时并行执行
-    end note  
+    end note
   endfork
   : async willReady;
   note left
@@ -49,7 +50,7 @@ partition agent {
     可以正常工作
     ====
     时间点与原来的ready相同,
-    原来的ready不支持AsyncFunction    
+    原来的ready不支持AsyncFunction
   end note
   : emit 'agent-start';
 }
@@ -72,7 +73,7 @@ partition app {
     : configDidLoad;
     note left
       文件都已经加载完成,
-      与 app.js 里的同步逻辑相同,
+      与 app.js 里的同步逻辑相同，执行顺序也相同
       可以修改一些配置, 修改中间件的顺序
     end note
     : load app/service;

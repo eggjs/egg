@@ -239,7 +239,7 @@ module.exports = AppBootHook;
 
 启动过程如图所示:
 
-![](https://user-images.githubusercontent.com/6897780/42219323-24cbd7a8-7efe-11e8-86b9-cf280846aa9f.png)
+![](https://cdn.nlark.com/__puml/da20f7e73aef1984354619fefcfc7ced.svg)
 
 **使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。**
 
