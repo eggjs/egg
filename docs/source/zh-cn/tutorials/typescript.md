@@ -123,33 +123,76 @@ export interface NewsItem {
 ### 中间件（Middleware）
 
 ```typescript
-// app/middleware/robot.ts
 
 import { Context } from 'egg';
 
-export default function robotMiddleware() {
-  return async (ctx: Context, next: any) => {
+// 这里是你自定义的中间件
+export default function fooMiddleware(): any {
+  return async (ctx: Context, next: () => Promise<any>) => {
+    // 你可以获取 config 的配置：
+    // const config = ctx.app.config;
+    // config.xxx....
     await next();
   };
 }
 ```
 
-因为 Middleware 定义是支持入参的，第一个参数为同名的 Config，如有需求，可以用完整版：
+当某个 Middleware 文件的名称与 config 中某个属性名一致时，Middleware 会自动把这个属性下的所有配置读取过来。
+
+我们假定你有一个 Middleware，名称是 uuid，其 config.default.js 中配置如下：
+
+```javascript
+'use strict';
+
+import { EggAppConfig, PowerPartial } from 'egg';
+
+export default function(appInfo: EggAppConfig) {
+  const config = {} as PowerPartial<EggAppConfig>;
+
+  config.keys = appInfo.name + '123123';
+
+  config.middleware = ['uuid'];
+
+  config.security = {
+    csrf: {
+      ignore: '123',
+    },
+  };
+
+  const bizConfig = {
+    local: {
+      msg: 'local',
+    },
+
+    uuid: {
+      name: 'ebuuid',
+      maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+    },
+  };
+
+  return {
+    ...config,
+    ...bizConfig,
+  };
+}
+
+```
+在对应的 uuid 中间件中：
 
 ```typescript
-// app/middleware/news.ts
+// app/middleware/uuid.ts
 
-import { Context, Application } from 'egg';
-import { BizConfig } from '../../config/config.default';
+import { Context, Application, EggAppConfig } from 'egg';
 
-// 注意，这里必须要用 ['news'] 而不能用 .news，因为 BizConfig 是 type，不是实例
-export default function newsMiddleware(options: BizConfig['news'], app: Application) {
+export default function uuidMiddleWare(options: EggAppConfig['uuid'], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
-    console.info(options.serverUrl);
+    // name 就是 config.default.js 中 uuid 下的属性
+    console.info(options.name);
     await next();
   };
 }
 ```
+**注意：Middleware 目前返回值必须都是 `any`，否则使用 route.get/all 等方法的时候因为 Koa 的 `IRouteContext` 和 Egg 自身的 `Context` 不兼容导致编译报错。**
 
 ### 扩展（Extend）
 

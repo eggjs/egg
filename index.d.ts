@@ -1127,5 +1127,4 @@ declare module 'egg' {
 
     load(): void;
   }
-
 }
