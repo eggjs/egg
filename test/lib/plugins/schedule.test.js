@@ -20,6 +20,9 @@ describe('test/lib/plugins/schedule.test.js', () => {
     const count = contains(log, 'cron');
     assert(count >= 1);
     assert(count <= 2);
+
+    // should support Subscription class on app.Subscription
+    assert(contains(log, 'Info about your task') === 1);
   });
 });
 
