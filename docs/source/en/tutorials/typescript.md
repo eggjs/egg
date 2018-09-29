@@ -127,29 +127,73 @@ export interface NewsItem {
 
 import { Context } from 'egg';
 
-export default function robotMiddleware() {
+// Your own middleware here
+export default function fooMiddleware() {
   return async (ctx: Context, next: any) => {
+    // Get configs like this：
+    // const config = ctx.app.config;
+    // config.xxx....
     await next();
   };
 }
 ```
 
-Middlewares support input parameters, and the first one is the config of the same name. If you have other requirements, a full version is needed:
+When some property's name in config matches your middleware files's, Egg will automatically read out all of its sub properties.
+
+Let's assume you've got a middleware named `uuid`, and its config.default.js is:
+
+```javascript
+'use strict';
+
+import { EggAppConfig, PowerPartial } from 'egg';
+
+export default function(appInfo: EggAppConfig) {
+  const config = {} as PowerPartial<EggAppConfig>;
+
+  config.keys = appInfo.name + '123123';
+
+  config.middleware = ['uuid'];
+
+  config.security = {
+    csrf: {
+      ignore: '123',
+    },
+  };
+
+  const bizConfig = {
+    local: {
+      msg: 'local',
+    },
+
+    uuid: {
+      name: 'ebuuid',
+      maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+    },
+  };
+
+  return {
+    ...config,
+    ...bizConfig,
+  };
+}
+```
+In `uuid` middleware:
 
 ```typescript
-// app/middleware/news.ts
+// app/middleware/uuid.ts
 
-import { Context, Application } from 'egg';
-import { BizConfig } from '../../config/config.default';
+import { Context, Application, EggAppConfig } from 'egg';
 
-// We must use ['news'] instead of '.news', because 'BizConfig' is a type instead of instance
-export default function newsMiddleware(options: BizConfig['news'], app: Application) {
+export default function uuid(options: EggAppConfig['uuid'], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
-    console.info(options.serverUrl);
+    // The 'name' is just the sub prop in uuid in the config.default.js
+    console.info(options.name);
     await next();
   };
 }
 ```
+
+**Notice: The return value of any middleware must be `any` now, otherwise there's a compiling error about the compatibility of context between Koa's context in route.get/all and Egg's Context.**
 
 ### Extend
 
