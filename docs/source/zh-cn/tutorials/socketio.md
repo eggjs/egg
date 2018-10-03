@@ -51,9 +51,11 @@ exports.io = {
 
 > 命名空间为 `/` 与 `/example`, 不是 `example`
 
-**uws:**
+#### uws
 
-如果想要使用 [uws] 替代默认的 `ws` 可以做如下配置
+**Egg Socket 内部默认使用 `ws` 引擎，[uws](https://www.npmjs.com/package/uws) 因为[某些原因](https://github.com/socketio/socket.io/issues/3319)被废止。**
+
+如坚持需要使用，请按照以下配置即可：
 
 ```js
 // {app_root}/config/config.${env}.js
@@ -62,12 +64,7 @@ exports.io = {
 };
 ```
 
-> ~~已知默认 `wsEngine` 在 `Chrome` 浏览器中断开连接存在异常，建议优先使用 [uws]~~
-> 
-> µWS 不再建议使用，请优先考虑默认引擎。
-
-
-**redis:**
+#### redis
 
 [egg-socket.io] 内置了 `socket.io-redis`，在 cluster 模式下，使用 redis 可以较为简单的实现 clients/rooms 等信息共享
 
