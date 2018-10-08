@@ -29,7 +29,7 @@
     "egg-development": "^1.3.2",
     "egg-i18n": "^1.2.0",
     "egg-jsonp": "^1.2.1",
-    "egg-logger": "^1.6.0",
+    "egg-logger": "^2.0.0",
     "egg-logrotator": "^2.3.0",
     "egg-multipart": "^1.5.1",
     "egg-onerror": "^1.5.0",
