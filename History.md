@@ -1,5 +1,37 @@
 # History
 
+## 2018-10-08, Version 2.12.0 @dead-horse
+
+### Notable changes
+
+* **feature**
+  * add Subscription base class on app instance
+
+* **fix**
+  * upgrade to egg-logger@2, don't write log when stream was destroyed.
+  * pin circular-json@0.5.5 to avoid output deprecate message
+
+* **docs**
+  * corrected lots documentation errors, thanks @Maledong
+  * use egg-logger definition
+
+
+### Commits
+
+  * [[`eb1eae736`](http://github.com/eggjs/egg/commit/eb1eae736c0fc541e6d21fb726d52d971d6a95da)] - refactor(typescript): use egg-logger definition (#3078) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`04d9a3b85`](http://github.com/eggjs/egg/commit/04d9a3b85ef54819c0ad3ac505e7806db6a7e9b3)] - deps: egg-logger@2 (#3073) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`886d9ad8f`](http://github.com/eggjs/egg/commit/886d9ad8fd11e1fbbd1712dd53ef464658f525b5)] - feat: add Subscription base class on app instance (#3058) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4c6fb2a17`](http://github.com/eggjs/egg/commit/4c6fb2a175c2481aa61aaad131f6812517bc7022)] - doc (socket.io): Make 'uws' cannot use anymore clear (#3068) (Maledong <<maledong_github@outlook.com>>)
+  * [[`0d6798d22`](http://github.com/eggjs/egg/commit/0d6798d22d0e5016b0f7f25e5fa15ffe6900e16c)] - docs (Controller.md): Add new feat description (#3066) (Maledong <<maledong_github@outlook.com>>)
+  * [[`399902680`](http://github.com/eggjs/egg/commit/39990268081d1da3fdb2d575802ea46cdf67bcd5)] - doc(typescript.md): Clarify the middleware's usages (#3039) (Maledong <<maledong_github@outlook.com>>)
+  * [[`6bf812f73`](http://github.com/eggjs/egg/commit/6bf812f73603e967e405a815dcb2cc94dcb8384c)] - chore: fix middleware docs typo (#3060) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`b13d904d3`](http://github.com/eggjs/egg/commit/b13d904d302639c3b6068f109d4bcfa5aff12c61)] - test: avoid DNS pollution on local env (#3034) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`bace2433b`](http://github.com/eggjs/egg/commit/bace2433bcc96d1507403c34711b2a2e450e6a6a)] - fix: remove loader.loadBootHook (Yiyu He <<dead_horse@qq.com>>)
+  * [[`6a7db2a35`](http://github.com/eggjs/egg/commit/6a7db2a3591a03b187bc3b52c67b37fde7984d34)] - doc (objects.md): Fix number and code errors (#3029) (Maledong <<maledong_github@outlook.com>>)
+  * [[`c65a64899`](http://github.com/eggjs/egg/commit/c65a648991900b95a8ef0b21dcd8e3f715523df7)] - doc (TypeScript): Formation errors with missing translations (#3020) (Maledong <<maledong_github@outlook.com>>)
+  * [[`abd8d1286`](http://github.com/eggjs/egg/commit/abd8d12861e17ff8fe5e950d589c00d17625beae)] - deps: pin circular-json@0.5.5 to avoid output deprecate message (#3023) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`e3ffcbe64`](http://github.com/eggjs/egg/commit/e3ffcbe6449b95b50ea40583a28383e734c72fe1)] - docs (typescript.md): Add missing trans in English for TypeScript (#2998) (Maledong <<maledong_github@outlook.com>>)
+
 ## 2018-09-19, Version 2.11.2 @XadillaX
 
 ### Notable changes
