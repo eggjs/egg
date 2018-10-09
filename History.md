@@ -1,5 +1,19 @@
 # History
 
+## 2018-10-08, Version 1.16.2 @dead-horse
+
+### Notable changes
+
+**fixes**
+  * upgrade to egg-logger@2, don't write log when stream was destroyed
+  * pin circular-json@0.5.5 to avoid output deprecate message
+
+### Commits
+
+  * [[`fd738e01e`](http://github.com/eggjs/egg/commit/fd738e01ef6b07cea689837841fb322ccea9e94a)] - deps: egg-logger@2 (#3074) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`5e189e814`](http://github.com/eggjs/egg/commit/5e189e81462f5021b6cbd901b45d2f0ff8c6869b)] - refactor: separate dumping config object and config file (#3054) (Khaidi Chu <<i@2333.moe>>)
+  * [[`14538a1fd`](http://github.com/eggjs/egg/commit/14538a1fd059f5e24ca5ec7cdf606d51928c7d18)] - deps: pin circular-json@0.5.5 to avoid output deprecate message (#3024) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2018-09-11, Version 1.16.1 @atian25
 
 ### Notable changes
