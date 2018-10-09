@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import { Application, LoggerLevel } from 'egg';
 
 export default (app: Application) => {
   app.logger.info('test');
@@ -11,4 +11,6 @@ export default (app: Application) => {
   ctx.logger.info('test');
   ctx.coreLogger.info('test');
   ctx.getLogger('logger').info('test');
+
+  const level: LoggerLevel = 'DEBUG';
 };

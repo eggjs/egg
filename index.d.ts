@@ -4,7 +4,7 @@ import * as KoaRouter from 'koa-router';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
-import { EggLogger, EggLoggers, LoggerLevel, EggContextLogger } from 'egg-logger';
+import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
 import { HttpClient2, RequestOptions } from 'urllib';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
@@ -184,6 +184,8 @@ declare module 'egg' {
      */
     renderString(name: string, locals?: any, options?: any): Promise<string>;
   }
+
+  export type LoggerLevel = EggLoggerLevel;
 
   /**
    * egg app info
