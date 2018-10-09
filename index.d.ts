@@ -5,6 +5,7 @@ import { EventEmitter } from 'events'
 import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
+import { EggLogger, EggLoggers, LoggerLevel } from 'egg-logger';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -55,16 +56,9 @@ declare module 'egg' {
     /**
      * logger
      */
-    logger: Logger;
+    logger: EggLogger;
 
     constructor(ctx: Context);
-  }
-
-  export interface Logger {
-    info(msg: any, ...args: any[]): void;
-    warn(msg: any, ...args: any[]): void;
-    debug(msg: any, ...args: any[]): void;
-    error(msg: any, ...args: any[]): void;
   }
 
   export type RequestArrayBody = any[];
@@ -183,8 +177,6 @@ declare module 'egg' {
      */
     renderString(name: string, locals?: any, options?: any): Promise<string>;
   }
-
-  export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
 
   /**
    * egg app info
@@ -493,11 +485,6 @@ declare module 'egg' {
     env: EggEnvType;
 
     /**
-     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
-     */
-    coreLogger: Logger;
-
-    /**
      * Alias to https://npmjs.com/package/depd
      */
     deprecate: any;
@@ -523,12 +510,17 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
+     */
+    coreLogger: EggLogger;
 
     /**
      * All loggers contain logger, coreLogger and customLogger
      */
-    loggers: { [loggerName: string]: Logger };
+    loggers: EggLoggers;
 
     /**
      * messenger instance
@@ -584,7 +576,7 @@ declare module 'egg' {
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
      */
-    getLogger(name: string): Logger;
+    getLogger(name: string): EggLogger;
 
     /**
      * print the infomation when console.log(app)
@@ -854,7 +846,12 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
+     */
+    getLogger(name: string): EggLoggers;
 
     /**
      * Request start time
@@ -872,11 +869,6 @@ declare module 'egg' {
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
     curl(url: string, opt?: RequestOptions): Promise<any>;
-
-    /**
-     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
-     */
-    getLogger(name: string): Logger;
 
     /**
      * Render a file by view engine
@@ -1089,7 +1081,7 @@ declare module 'egg' {
     baseDir: string;
     typescript?: boolean;
     app: Application;
-    logger: Logger;
+    logger: EggLogger;
     plugins?: any;
   }
 
