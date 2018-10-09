@@ -2,9 +2,10 @@ import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { EventEmitter } from 'events'
-import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
+import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
+import { HttpClient2, RequestOptions } from 'urllib';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -25,6 +26,13 @@ declare module 'egg' {
 
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
+
+  class EggHttpClient extends HttpClient2 {
+    constructor(app: Application);
+  }
+  class EggContextHttpClient extends HttpClient2 {
+    constructor(ctx: Context);
+  }
 
   /**
    * BaseContextClass is a base class that can be extended,
@@ -55,16 +63,9 @@ declare module 'egg' {
     /**
      * logger
      */
-    logger: Logger;
+    logger: EggLogger;
 
     constructor(ctx: Context);
-  }
-
-  export interface Logger {
-    info(msg: any, ...args: any[]): void;
-    warn(msg: any, ...args: any[]): void;
-    debug(msg: any, ...args: any[]): void;
-    error(msg: any, ...args: any[]): void;
   }
 
   export type RequestArrayBody = any[];
@@ -184,7 +185,7 @@ declare module 'egg' {
     renderString(name: string, locals?: any, options?: any): Promise<string>;
   }
 
-  export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
+  export type LoggerLevel = EggLoggerLevel;
 
   /**
    * egg app info
@@ -493,11 +494,6 @@ declare module 'egg' {
     env: EggEnvType;
 
     /**
-     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
-     */
-    coreLogger: Logger;
-
-    /**
      * Alias to https://npmjs.com/package/depd
      */
     deprecate: any;
@@ -505,7 +501,7 @@ declare module 'egg' {
     /**
      * HttpClient instance
      */
-    httpclient: any;
+    httpclient: EggHttpClient;
 
     /**
      * The loader instance, the default class is EggLoader. If you want define
@@ -523,12 +519,17 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
+     */
+    coreLogger: EggLogger;
 
     /**
      * All loggers contain logger, coreLogger and customLogger
      */
-    loggers: { [loggerName: string]: Logger };
+    loggers: EggLoggers;
 
     /**
      * messenger instance
@@ -541,8 +542,6 @@ declare module 'egg' {
      * get router
      */
     router: Router;
-
-    Service: Service;
 
     /**
      * Whether `application` or `agent`
@@ -584,7 +583,7 @@ declare module 'egg' {
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
      */
-    getLogger(name: string): Logger;
+    getLogger(name: string): EggLogger;
 
     /**
      * print the infomation when console.log(app)
@@ -595,6 +594,18 @@ declare module 'egg' {
      * Alias to Router#url
      */
     url(name: string, params: any): any;
+
+
+    /**
+     * export context base classes, let framework can impl sub class and over context extend easily.
+     */
+    ContextCookies: typeof EggCookies;
+    ContextLogger: typeof EggContextLogger;
+    ContextHttpClient: typeof EggContextHttpClient;
+    HttpClient: typeof EggHttpClient;
+    Subscription: typeof Subscription;
+    Controller: typeof Controller;
+    Service: typeof Service;
   }
 
   export type RouterPath = string | RegExp;
@@ -639,8 +650,6 @@ declare module 'egg' {
     redirect(path: string, redirectPath: string): void;
 
     controller: IController;
-
-    Controller: Controller;
 
     middleware: KoaApplication.Middleware[] & IMiddleware;
 
@@ -854,7 +863,12 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
+     */
+    getLogger(name: string): EggLogger;
 
     /**
      * Request start time
@@ -872,11 +886,6 @@ declare module 'egg' {
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
     curl(url: string, opt?: RequestOptions): Promise<any>;
-
-    /**
-     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
-     */
-    getLogger(name: string): Logger;
 
     /**
      * Render a file by view engine
@@ -1089,7 +1098,7 @@ declare module 'egg' {
     baseDir: string;
     typescript?: boolean;
     app: Application;
-    logger: Logger;
+    logger: EggLogger;
     plugins?: any;
   }
 
