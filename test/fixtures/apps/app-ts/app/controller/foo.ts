@@ -26,4 +26,15 @@ export default class FooController extends Controller {
       this.ctx.logger.error(e);
     }
   }
+  async httpclient() {
+    await this.app.httpclient.request('url', {
+      method: 'POST',
+    });
+    await this.ctx.curl('url', {
+      method: 'POST',
+    });
+    await this.app.curl('url', {
+      method: 'POST',
+    });
+  }
 }

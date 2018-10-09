@@ -2,10 +2,10 @@ import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { EventEmitter } from 'events'
-import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
-import { EggLogger, EggLoggers, LoggerLevel } from 'egg-logger';
+import { EggLogger, EggLoggers, LoggerLevel, EggContextLogger } from 'egg-logger';
+import { HttpClient2, RequestOptions } from 'urllib';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -26,6 +26,13 @@ declare module 'egg' {
 
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
+
+  class EggHttpClient extends HttpClient2 {
+    constructor(app: Application);
+  }
+  class EggContextHttpClient extends HttpClient2 {
+    constructor(ctx: Context);
+  }
 
   /**
    * BaseContextClass is a base class that can be extended,
@@ -492,7 +499,7 @@ declare module 'egg' {
     /**
      * HttpClient instance
      */
-    httpclient: any;
+    httpclient: EggHttpClient;
 
     /**
      * The loader instance, the default class is EggLoader. If you want define
@@ -533,8 +540,6 @@ declare module 'egg' {
      * get router
      */
     router: Router;
-
-    Service: Service;
 
     /**
      * Whether `application` or `agent`
@@ -587,6 +592,18 @@ declare module 'egg' {
      * Alias to Router#url
      */
     url(name: string, params: any): any;
+
+
+    /**
+     * export context base classes, let framework can impl sub class and over context extend easily.
+     */
+    ContextCookies: typeof EggCookies;
+    ContextLogger: typeof EggContextLogger;
+    ContextHttpClient: typeof EggContextHttpClient;
+    HttpClient: typeof EggHttpClient;
+    Subscription: typeof Subscription;
+    Controller: typeof Controller;
+    Service: typeof Service;
   }
 
   export type RouterPath = string | RegExp;
@@ -631,8 +648,6 @@ declare module 'egg' {
     redirect(path: string, redirectPath: string): void;
 
     controller: IController;
-
-    Controller: Controller;
 
     middleware: KoaApplication.Middleware[] & IMiddleware;
 
