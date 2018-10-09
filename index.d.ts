@@ -866,7 +866,7 @@ declare module 'egg' {
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
      */
-    getLogger(name: string): EggLoggers;
+    getLogger(name: string): EggLogger;
 
     /**
      * Request start time
