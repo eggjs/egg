@@ -130,11 +130,11 @@ BREAKING CHANGE:
   Breaks foo.bar api, foo.baz should be used instead
 ```
 
-Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more detials.
+Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more details.
 
 ## Release
 
-egg uses semantic versioning in release process based on [semver].
+Egg uses semantic versioning in release process based on [semver].
 
 ### Branch Strategy
 
@@ -159,14 +159,19 @@ In the release of every stable version, there will be a PM who has the following
 
 - Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.
 - Open a new [Release Proposal MR], and write `History` as [node CHANGELOG]. Don't forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.
-    ```
+    ```bash
     $ npm run commits
     ```
 - Nominate PM for next stable version.
 
 #### During Release
 
-All tags mentioned above refere to adding tags from npm in `package.json`.
+- Back up the stable version (master) onto the branch named after the current major (e.g: `1.x`), and set the tag to `release-{v}.x` (v is the current version like `release-1.x`).
+- Push the `next` branch to `master`, make it to the last stable one and remove `next` tag, change the contents corresponding to the branch in README.
+- Publish the latest stable version to [npm], and notify the previous framework to be upgraded.
+- Before doing `npm publish`, please read [How to deploy an npm package].
+
+All tags mentioned above means the tags of npm in `package.json`.
 
 ```json
 "publishConfig": {
@@ -174,8 +179,9 @@ All tags mentioned above refere to adding tags from npm in `package.json`.
 }
 ```
 
-[semver]: http://semver.org/lang/zh-CN/
-[Release proposal MR]: https://github.com/nodejs/node/pull/4181
+[semver]: https://semver.org/
+[Release Proposal MR]: https://github.com/nodejs/node/pull/4181
 [node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
 [1.x milestone]: https://github.com/eggjs/egg/milestone/1
-[『我是如何发布一个 npm 包的』]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[npm]: http://npmjs.com/
+[How to deploy an npm package]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
