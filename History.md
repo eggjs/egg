@@ -12,7 +12,7 @@
   * pin circular-json@0.5.5 to avoid output deprecate message
 
 * **docs**
-  * corrected lots documentation errors, thanks @Maledong
+  * corrected lots of documentation errors, thanks @Maledong
   * use egg-logger definition
 
 
