@@ -314,7 +314,7 @@ module.exports = {
 
 ### 获取上传的文件
 
-请求 body 除了可以带参数之外，还可以发送文件。一般来说，浏览器上都是通过 `multipart/form-data` 格式发送文件的，在 Egg 的 Multipart 插件中，我们为你提供了两种方式上传和接受文件：
+请求 body 除了可以带参数之外，还可以发送文件，一般来说，浏览器上都是通过 `Multipart/form-data` 格式发送文件的，框架通过内置 [Multipart](https://github.com/eggjs/egg-multipart) 插件来支持获取用户上传的文件，我们为你提供了两种方式：
 
 - #### File 模式：
 如果你完全不知道 Nodejs 中的 Stream 用法，那么 File 模式非常合适你：
