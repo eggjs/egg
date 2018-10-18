@@ -186,6 +186,7 @@ Note:
 
 The framework has provided you several functions to handle during the whole life cycle:
 
+- `configWillLoad`: When all the config files will be loaded, this is the last chance to modify the config.
 - `configDidLoad`: When all the config files are loaded.
 - `didLoad`: When all the files are loaded.
 - `willReady`: When all the plug-ins are ready.
@@ -199,6 +200,11 @@ Here're the definations:
 // app.js or agent.js
 class AppBootHook {
   constructor(app) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+    // Config, plugin files have loaded, this is the last chance to modify the config.
   }
 
   configDidLoad() {
@@ -233,7 +239,7 @@ module.exports = AppBootHook;
 The framework will automatically load and initialize this class after developers have defined `app.js` and `agenet.js` in the form of class, and it will call the corresponding methods during each of the life cycles.
 
 Here's the image of starting process:
-![](https://cdn.nlark.com/__puml/da20f7e73aef1984354619fefcfc7ced.svg)
+![](https://cdn.nlark.com/__puml/f88bcc42abcdcae5f3dd07bd1031b063.svg)
 
 **Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
 

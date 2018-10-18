@@ -192,6 +192,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 框架提供了这些生命周期函数供开发人员处理：
 
+- 配置文件即将加载完成，这是最后动态修改配置的时机（`configWillLoad`）
 - 配置文件加载完成（`configDidLoad`）
 - 文件加载完成（`didLoad`）
 - 插件启动完毕（`willReady`）
@@ -204,6 +205,11 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 // app.js or agent.js
 class AppBootHook {
   constructor(app) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+    // Config, plugin files have loaded, this is the last chance to modify the config.
   }
 
   configDidLoad() {
@@ -239,7 +245,7 @@ module.exports = AppBootHook;
 
 启动过程如图所示:
 
-![](https://cdn.nlark.com/__puml/da20f7e73aef1984354619fefcfc7ced.svg)
+![](https://cdn.nlark.com/__puml/fa8709c4bb1de502410842fd4c199c02.svg)
 
 **使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。**
 
