@@ -310,7 +310,7 @@ export default plugin;
 
 ```typescript
 // app/app.ts
-import { IBoot } from 'egg';
+import { Application, IBoot } from 'egg';
 
 export default class FooBoot implements IBoot {
   private readonly app: Application;
