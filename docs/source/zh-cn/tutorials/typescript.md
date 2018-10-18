@@ -306,6 +306,46 @@ const plugin: EggPlugin = {
 export default plugin;
 ```
 
+### 生命周期（Lifecycle）
+
+```typescript
+// app/app.ts
+import { IBoot } from 'egg';
+
+export default class FooBoot implements IBoot {
+  private readonly app: Application;
+
+  constructor(app: Application) {
+    this.app = app;
+  }
+
+  configDidLoad() {
+    // Config, plugin files have loaded.
+  }
+
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready.
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+```
+
 ### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。

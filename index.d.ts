@@ -1141,7 +1141,7 @@ declare module 'egg' {
     /**
      * Config, plugin files have loaded
      */
-    configDidLoad?();
+    configDidLoad?(): void;
 
     /**
      * All files have loaded, start plugin here

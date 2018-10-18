@@ -11,7 +11,7 @@ const rimraf = require('mz-modules/rimraf');
 const utils = require('../utils');
 const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 
-describe.only('test/ts/index.test.js', () => {
+describe('test/ts/index.test.js', () => {
   before(async () => {
     await runscript(`tsc -p ${baseDir}/tsconfig.json`, { cwd: baseDir });
     const dest = path.join(baseDir, 'node_modules/egg');
