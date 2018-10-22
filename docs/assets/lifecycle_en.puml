@@ -7,6 +7,7 @@ partition agent {
   : load agent.js;
   note right
     class mode
+    configWillLoad
     configDidLoad
     async didLoad
     async willReady
@@ -17,9 +18,14 @@ partition agent {
     beforeStart(deprecate)
   end note
   fork
+  : configWillLoad;
+  note left
+    All the files are loaded,
+    The last chance to modify the config
+  end note
   : configDidLoad;
   note left
-    all the files are loaded
+    All the files are loaded,
     To execute some sync logic
   end note
   : async didLoad;
@@ -60,6 +66,7 @@ partition app {
   : load app.js;
   note right
     class mode
+    configWillLoad
     configDidLoad
     async didLoad
     async willReady
@@ -70,6 +77,11 @@ partition app {
     beforeStart(deprecate)
   end note
   fork
+    : configWillLoad;
+    note left
+      All the files are loaded,
+      The last chance to modify the config
+    end note
     : configDidLoad;
     note left
       All the files are loaded,

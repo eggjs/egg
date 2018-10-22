@@ -7,6 +7,7 @@ partition agent {
   : load agent.js;
   note right
     类模式
+    configWillLoad
     configDidLoad
     async didLoad
     async willReady
@@ -17,6 +18,11 @@ partition agent {
     beforeStart(deprecate)
   end note
   fork
+  : configWillLoad;
+  note left
+    文件都已经加载完成,
+    这是动态修改配置的最后时机。
+  end note
   : configDidLoad;
   note left
     文件都已经加载完成,
@@ -60,6 +66,7 @@ partition app {
   : load app.js;
   note right
     类模式
+    configWillLoad
     configDidLoad
     async didLoad
     async willReady
@@ -70,6 +77,11 @@ partition app {
     beforeStart(deprecate)
   end note
   fork
+    : configWillLoad;
+    note left
+      文件都已经加载完成,
+      这是动态修改配置的最后时机。
+    end note
     : configDidLoad;
     note left
       文件都已经加载完成,
