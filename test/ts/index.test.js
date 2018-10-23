@@ -1,14 +1,15 @@
 'use strict';
 
+const assert = require('assert');
 const request = require('supertest');
 const mm = require('egg-mock');
 const runscript = require('runscript');
 const path = require('path');
-const utils = require('../utils');
-const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 const fs = require('fs');
 const mkdirp = require('mz-modules/mkdirp');
 const rimraf = require('mz-modules/rimraf');
+const utils = require('../utils');
+const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 
 describe('test/ts/index.test.js', () => {
   before(async () => {
@@ -28,6 +29,15 @@ describe('test/ts/index.test.js', () => {
     });
     after(async () => {
       await app.close();
+      assert.deepStrictEqual(app._app.stages, [
+        'configWillLoad',
+        'configDidLoad',
+        'didLoad',
+        'willReady',
+        'didReady',
+        'serverDidReady',
+        'beforeClose',
+      ]);
     });
 
     it('controller run ok', done => {
