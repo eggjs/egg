@@ -320,6 +320,12 @@ export default class FooBoot implements IBoot {
     this.app = app;
   }
 
+  configWillLoad() {
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
+  }
+
   configDidLoad() {
     // Config, plugin files have loaded.
   }

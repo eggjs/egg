@@ -1,7 +1,6 @@
 import { Application, IBoot } from 'egg';
 import testExportClass from './lib/export-class';
 import testLogger from './lib/logger';
-import * as assert from 'assert';
 
 export default class AppBoot implements IBoot {
   private readonly app: Application;
@@ -16,6 +15,10 @@ export default class AppBoot implements IBoot {
       app.stages = [];
     }
     return app.stages;
+  }
+
+  configWillLoad() {
+    this.stages.push('configWillLoad');
   }
 
   configDidLoad() {

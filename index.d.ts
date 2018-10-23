@@ -1139,6 +1139,13 @@ declare module 'egg' {
 
   export interface IBoot {
     /**
+     * Ready to call configDidLoad,
+     * Config, plugin files are referred,
+     * this is the last chance to modify the config.
+     */
+    configWillLoad?(): void;
+
+    /**
      * Config, plugin files have loaded
      */
     configDidLoad?(): void;
