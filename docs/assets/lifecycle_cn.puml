@@ -20,12 +20,12 @@ partition agent {
   fork
   : configWillLoad;
   note left
-    文件都已经加载完成,
-    这是动态修改配置的最后时机。
+   准备调用 configDidLoad
+   这是动态修改配置的最后时机。
   end note
   : configDidLoad;
   note left
-    文件都已经加载完成,
+    相关配置项已经全部加载，
     与 agent.js 里的同步逻辑相同，执行顺序也相同
     可以执行一些同步逻辑。
   end note
@@ -79,14 +79,14 @@ partition app {
   fork
     : configWillLoad;
     note left
-      文件都已经加载完成,
+      准备调用 configDidLoad
       这是动态修改配置的最后时机。
     end note
     : configDidLoad;
     note left
-      文件都已经加载完成,
+      相关配置项已经全部加载，
       与 app.js 里的同步逻辑相同，执行顺序也相同
-      可以修改一些配置, 修改中间件的顺序
+      可以修改一些配置，修改中间件的顺序
     end note
     : load app/service;
     : load app/middleware;

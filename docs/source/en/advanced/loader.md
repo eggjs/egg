@@ -186,9 +186,9 @@ Note:
 
 The framework has provided you several functions to handle during the whole life cycle:
 
-- `configWillLoad`: When all the config files will be loaded, this is the last chance to modify the config.
-- `configDidLoad`: When all the config files are loaded.
-- `didLoad`: When all the files are loaded.
+- `configWillLoad`: All the config files are ready to load, so this is the LAST chance to modify them.
+- `configDidLoad`: When all the config files have been loaded.
+- `didLoad`: When all the files have been loaded.
 - `willReady`: When all the plug-ins are ready.
 - `didReady`: When all the workers are ready.
 - `serverDidReady`: When the server is ready.
@@ -204,11 +204,13 @@ class AppBootHook {
   }
 
   configWillLoad() {
-    // Config, plugin files have loaded, this is the last chance to modify the config.
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
   }
 
   configDidLoad() {
-    // Config, plugin files have loaded.
+    // Config, plugin files have been loaded.
   }
 
   async didLoad() {
@@ -239,7 +241,7 @@ module.exports = AppBootHook;
 The framework will automatically load and initialize this class after developers have defined `app.js` and `agenet.js` in the form of class, and it will call the corresponding methods during each of the life cycles.
 
 Here's the image of starting process:
-![](https://cdn.nlark.com/__puml/f88bcc42abcdcae5f3dd07bd1031b063.svg)
+![](https://user-images.githubusercontent.com/40081831/47344099-3bd79980-d6da-11e8-8bc2-5adad70cdf95.png)
 
 **Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
 

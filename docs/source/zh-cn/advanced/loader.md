@@ -192,7 +192,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 
 框架提供了这些生命周期函数供开发人员处理：
 
-- 配置文件即将加载完成，这是最后动态修改配置的时机（`configWillLoad`）
+- 配置文件即将加载，这是最后动态修改配置的时机（`configWillLoad`）
 - 配置文件加载完成（`configDidLoad`）
 - 文件加载完成（`didLoad`）
 - 插件启动完毕（`willReady`）
@@ -209,11 +209,13 @@ class AppBootHook {
   }
 
   configWillLoad() {
-    // Config, plugin files have loaded, this is the last chance to modify the config.
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
   }
 
   configDidLoad() {
-    // Config, plugin files have loaded.
+    // Config, plugin files have been loaded.
   }
 
   async didLoad() {
@@ -245,7 +247,7 @@ module.exports = AppBootHook;
 
 启动过程如图所示:
 
-![](https://cdn.nlark.com/__puml/fa8709c4bb1de502410842fd4c199c02.svg)
+![](https://user-images.githubusercontent.com/40081831/47344271-a688d500-d6da-11e8-96e9-663fa9f45108.png)
 
 **使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。**
 
