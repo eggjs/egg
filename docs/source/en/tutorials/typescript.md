@@ -5,10 +5,10 @@ title: TypeScript
 
 For a large number of enterprises' applications, TypeScript's static type checking, intellisense, friendly IDE are valuable. For more please see [System Research Report For TypeScript](https://juejin.im/post/59c46bc86fb9a00a4636f939).
 
-However, we've met some problems influencing users' experience when developing Egg in TypeScript: 
+However, we've met some problems influencing users' experience when developing Egg in TypeScript:
 
 * The most outstanding Loader Mechanism (Auto-loading) makes TS not analyze dependencies in static.
-* How to validate and show intellisense in `config.{env}.js`, when we modify settings by plug-in and these configurations are automatically merged? 
+* How to validate and show intellisense in `config.{env}.js`, when we modify settings by plug-in and these configurations are automatically merged?
 * During the period of developing, `tsc -w` is created as an independent process to build up codes, it makes us entangled about where to save the temporary files, and the complicated `npm scripts`.
 * How to map to the TS source files instead of compiled js files in unit tests, coverage tests and error stacks online?
 
@@ -307,6 +307,52 @@ const plugin: EggPlugin = {
 export default plugin;
 ```
 
+### Lifecycle
+
+```typescript
+// app/app.ts
+import { Application, IBoot } from 'egg';
+
+export default class FooBoot implements IBoot {
+  private readonly app: Application;
+
+  constructor(app: Application) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
+  }
+
+  configDidLoad() {
+    // Config, plugin files have loaded.
+  }
+
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready.
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+```
+
 ### Typings
 
 The folder is the principle of TS, where `**/*.d.ts` are automatically recognized.
@@ -341,7 +387,7 @@ Due to the automatic loading mechanism, TS cannot analyze dependencies in static
 
 Luckily, TS has many tricks to cope with it. We can use [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) to write `d.ts` as a helper.
 
-E.g: `app/service/news.ts` will automatically load `ctx.service.news` and recognize it, if you write like this below: 
+E.g: `app/service/news.ts` will automatically load `ctx.service.news` and recognize it, if you write like this below:
 
 ```typescript
 // typings/app/service/index.d.ts
