@@ -20,8 +20,8 @@ partition agent {
   fork
   : configWillLoad;
   note left
-    All the files are loaded,
-    The last chance to modify the config
+    Ready to call configDidLoad,
+    This is the LAST chance to modify the relative configs
   end note
   : configDidLoad;
   note left
@@ -79,12 +79,12 @@ partition app {
   fork
     : configWillLoad;
     note left
-      All the files are loaded,
-      The last chance to modify the config
+    Ready to call configDidLoad,
+    This is the LAST chance to modify the related configs
     end note
     : configDidLoad;
     note left
-      All the files are loaded,
+      All the related config files have been loaded,
       The same sync logic and execution sequence as in app.js,
       Some configs can be modified, the order of middlewares
     end note
