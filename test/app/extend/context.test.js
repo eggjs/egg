@@ -266,10 +266,19 @@ describe('test/app/extend/context.test.js', () => {
 
     it('should run background task error', async () => {
       mm.consoleLevel('NONE');
+
+      let errorHadEmit = false;
+      app.on('error', (err, ctx) => {
+        assert(err.runInBackground);
+        assert(/ENOENT: no such file or directory/.test(err.message));
+        assert(ctx);
+        errorHadEmit = true;
+      });
       await app.httpRequest()
         .get('/error')
         .expect(200)
         .expect('hello error');
+      assert(errorHadEmit);
       await sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');

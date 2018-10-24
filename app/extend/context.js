@@ -218,8 +218,12 @@ const proto = module.exports = {
         ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
       })
       .catch(err => {
+        // background task process log
         ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
-        ctx.coreLogger.error(err);
+
+        // emit error when promise catch, and set err.runInBackground flag
+        err.runInBackground = true;
+        ctx.app.emit('error', err, ctx);
       });
   },
 };
