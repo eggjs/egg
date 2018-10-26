@@ -554,6 +554,11 @@ declare module 'egg' {
     addSingleton(name: string, create: any): void;
 
     /**
+     * Register a function that will be called when app close
+     */
+    beforeClose(fn: () => void): void;
+
+    /**
      * Excute scope after loaded and before app start
      */
     beforeStart(scrope: () => void): void;
