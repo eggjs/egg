@@ -3,7 +3,7 @@
 const net = require('net');
 const request = require('supertest');
 const address = require('address');
-const assert = require('assert');
+const assert = require('assert-extends');
 const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
@@ -62,6 +62,21 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       test1.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
       test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
     ]);
+  });
+
+  describe('server timeout', () => {
+    let app;
+    beforeEach(() => {
+      app = utils.cluster('apps/app-server-timeout');
+      // app.debug();
+      return app.ready();
+    });
+    afterEach(() => app.close());
+
+    it('should timeout', async () => {
+      await app.httpRequest().get('/').expect(200);
+      return assert.asyncThrows(() => app.httpRequest().get('/timeout'), /socket hang up/);
+    });
   });
 
   describe('customized client error', () => {
