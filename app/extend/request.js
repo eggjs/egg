@@ -2,6 +2,8 @@
 
 const querystring = require('querystring');
 const accepts = require('accepts');
+const is = require('is-type-of');
+const assert = require('assert');
 
 const _querycache = Symbol('_querycache');
 const _queriesCache = Symbol('_queriesCache');
@@ -237,6 +239,16 @@ module.exports = {
    */
   set query(obj) {
     this.querystring = querystring.stringify(obj);
+  },
+
+  /**
+   * set timeout for current request.
+   * @param {Number} ms - timeout in milliseconds
+   * @see https://nodejs.org/api/http.html#http_request_settimeout_timeout_callback
+   */
+  setTimeout(ms) {
+    assert(is.number(ms), 'Unexpected type, only allow `Number`.');
+    this.req.setTimeout(ms);
   },
 };
 

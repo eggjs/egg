@@ -73,9 +73,27 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
     afterEach(() => app.close());
 
+    it('should not timeout', () => {
+      return app.httpRequest()
+        .get('/')
+        .expect(200);
+    });
+
     it('should timeout', async () => {
-      await app.httpRequest().get('/').expect(200);
-      return assert.asyncThrows(() => app.httpRequest().get('/timeout'), /socket hang up/);
+      return assert.asyncThrows(() => {
+        return app.httpRequest().get('/timeout');
+      }, /socket hang up/);
+    });
+
+    it('should reqest.setTimeout', async () => {
+      // longer than config
+      await app.httpRequest()
+        .get('/req_timeout?ms=500}')
+        .expect(200);
+
+      return assert.asyncThrows(() => {
+        return app.httpRequest().get('/req_timeout?ms=1000');
+      }, /socket hang up/);
     });
   });
 
