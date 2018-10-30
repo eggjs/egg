@@ -300,11 +300,11 @@ module.exports = appInfo => {
   config.workerStartTimeout = 10 * 60 * 1000;
 
   /**
-   * server timeout in milliseconds. Default to 2 minutes.
+   * server timeout in milliseconds.
    * @member {Number} Config#serverTimeout
    * @see https://nodejs.org/api/http.html#http_server_timeout
    */
-  config.serverTimeout = 2 * 60 * 1000;
+  config.serverTimeout = null;
 
   /**
    *
