@@ -85,19 +85,6 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       }, /socket hang up/);
       app.expect('stdout', /A request `GET \/timeout` timeout with client/);
     });
-
-    it('should reqest.setTimeout', async () => {
-      // longer than config
-      await app.httpRequest()
-        .get('/req_timeout?ms=500}')
-        .expect(200);
-
-      await assert.asyncThrows(() => {
-        return app.httpRequest().get('/req_timeout?ms=1000');
-      }, /socket hang up/);
-
-      app.expect('stdout', /A request `GET \/req_timeout\?ms=1000` timeout with client/);
-    });
   });
 
   describe('customized client error', () => {

@@ -11,10 +11,4 @@ module.exports = app => {
     await sleep(500);
     ctx.body = 'timeout';
   });
-
-  app.get('/req_timeout', async ctx => {
-    ctx.request.setTimeout(500)
-    await sleep(ctx.query.ms);
-    ctx.body = 'ok';
-  });
 };
