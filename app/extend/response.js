@@ -2,8 +2,6 @@
 
 const getType = require('cache-content-type');
 const isJSON = require('koa-is-json');
-const is = require('is-type-of');
-const assert = require('assert');
 
 const REAL_STATUS = Symbol('Context#realStatus');
 
@@ -89,15 +87,5 @@ module.exports = {
 
   set realStatus(status) {
     this[REAL_STATUS] = status;
-  },
-
-  /**
-   * set timeout for current response
-   * @param {Number} ms - timeout in milliseconds
-   * @see https://nodejs.org/api/http.html#http_response_settimeout_msecs_callback
-   */
-  setTimeout(ms) {
-    assert(is.number(ms), 'Unexpected type, only allow `Number`.');
-    this.req.setTimeout(ms);
   },
 };

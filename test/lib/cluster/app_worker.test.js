@@ -68,7 +68,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     let app;
     beforeEach(() => {
       app = utils.cluster('apps/app-server-timeout');
-      app.debug();
+      // app.debug();
       return app.ready();
     });
     afterEach(() => app.close());

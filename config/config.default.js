@@ -304,7 +304,7 @@ module.exports = appInfo => {
    * @member {Number} Config#serverTimeout
    * @see https://nodejs.org/api/http.html#http_server_timeout
    */
-  config.serverTimeout = 2 * 60 * 1000;
+  config.serverTimeout = null;
 
   /**
    *
