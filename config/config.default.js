@@ -301,6 +301,9 @@ module.exports = appInfo => {
 
   /**
    * server timeout in milliseconds, default to 2 minutes.
+   *
+   * for special request, just use `ctx.req.setTimeout(ms)`
+   *
    * @member {Number} Config#serverTimeout
    * @see https://nodejs.org/api/http.html#http_server_timeout
    */
