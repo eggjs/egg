@@ -93,15 +93,11 @@ module.exports = {
 
   /**
    * set timeout for current response
-   *
-   * Recommended not to pass `callback`, but setting `config.serverTimeout` to handler error global.
-   *
    * @param {Number} ms - timeout in milliseconds
-   * @param {Function} callback - Optional function to be called when a timeout occurs.
    * @see https://nodejs.org/api/http.html#http_response_settimeout_msecs_callback
    */
-  setTimeout(ms, callback) {
+  setTimeout(ms) {
     assert(is.number(ms), 'Unexpected type, only allow `Number`.');
-    this.req.setTimeout(ms, callback);
+    this.req.setTimeout(ms);
   },
 };
