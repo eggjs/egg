@@ -68,7 +68,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     let app;
     beforeEach(() => {
       app = utils.cluster('apps/app-server-timeout');
-      // app.debug();
+      app.debug();
       return app.ready();
     });
     afterEach(() => app.close());
@@ -80,9 +80,10 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
 
     it('should timeout', async () => {
-      return assert.asyncThrows(() => {
+      await assert.asyncThrows(() => {
         return app.httpRequest().get('/timeout');
       }, /socket hang up/);
+      app.expect('stdout', /A request `GET \/timeout` timeout with client/);
     });
 
     it('should reqest.setTimeout', async () => {
@@ -91,9 +92,11 @@ describe('test/lib/cluster/app_worker.test.js', () => {
         .get('/req_timeout?ms=500}')
         .expect(200);
 
-      return assert.asyncThrows(() => {
+      await assert.asyncThrows(() => {
         return app.httpRequest().get('/req_timeout?ms=1000');
       }, /socket hang up/);
+
+      app.expect('stdout', /A request `GET \/req_timeout\?ms=1000` timeout with client/);
     });
   });
 
