@@ -83,7 +83,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       await assert.asyncThrows(() => {
         return app.httpRequest().get('/timeout');
       }, /socket hang up/);
-      app.expect('stdout', /A request `GET \/timeout` timeout with client/);
+      app.expect('stdout', /\[http_server] A request `GET \/timeout` timeout with client/);
     });
   });
 
