@@ -133,7 +133,7 @@ In this way, `npm i --production` in the production environment does not need to
 const path = require ('path');
 exports.mysql = {
   enable: true,
-  package: path.join (__ dirname, '../lib/plugin/egg-mysql'),
+  path: path.join (__ dirname, '../lib/plugin/egg-mysql'),
 };
 ```
 
