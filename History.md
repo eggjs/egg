@@ -1,5 +1,35 @@
 # History
 
+## 2018-11-07, Version 2.13.0 @mansonchor
+
+### Notable changes
+
+* **feature**
+  * emit event when runInBackground catch error
+
+* **perf**
+  * better TypeScript support 
+
+* **docs**
+  * supplement documentation
+
+
+### Commits
+
+  * [[`03378b8c3`](https://github.com/mansonchor/egg.git/commit/03378b8c3e48e7000a580a4acf5375f9ffcac4dc)] - docs(plugin.md): fix 'path' declaration example (#3152) (maigozhang <<zhangsnxiang@126.com>>)
+  * [[`3c25221bd`](https://github.com/mansonchor/egg.git/commit/3c25221bd24a0a39cd06540fad46884e4dda363c)] - chore: use is.string() in utils.js for consistency (#3153) (ZYSzys <<zyszys98@gmail.com>>)
+  * [[`a9b0fcec6`](https://github.com/mansonchor/egg.git/commit/a9b0fcec636f7241d0f578dca6b99444dabfeb83)] - chore(typings): add method `beforeClose` in index.d.ts (#3120) (Erona <<erona@loli.bz>>)
+  * [[`4709db746`](https://github.com/mansonchor/egg.git/commit/4709db746d8f97de99c04558f1ba86443e394668)] - feature(context): emit event when runInBackground catch error (#3118) (mansonchor <<mansonchor@126.com>>)
+  * [[`e1dc2a7a4`](https://github.com/mansonchor/egg.git/commit/e1dc2a7a409a8bf56a817773229d5fc6dcde796b)] - docs: add promo logo (#3113) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`51e9c1578`](https://github.com/mansonchor/egg.git/commit/51e9c1578496ed2afb44c47fdfd77867a95fec52)] - chore(typings): add interface IBoot (#3098) (killa <<killa123@126.com>>)
+  * [[`8052d7ff7`](https://github.com/mansonchor/egg.git/commit/8052d7ff7bf6278e8ce4b4de46e0e6324d0d3861)] - doc: Update the `configWillLoad` explainations (#3116) (Maledong <<maledong_github@outlook.com>>)
+  * [[`c3c4e2e3e`](https://github.com/mansonchor/egg.git/commit/c3c4e2e3e04a924595d6837ab15c7b292e3529f6)] - docs: add configWillLoad to lifecycle (#3101) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`4abdb4980`](https://github.com/mansonchor/egg.git/commit/4abdb49801ebb3075b408d6fb3b72eba1a70c056)] - docs(CONTRIBUTION): Add missing link for `Accquire the submitted files` (#3102) (Maledong <<maledong_github@outlook.com>>)
+  * [[`c7061ec62`](https://github.com/mansonchor/egg.git/commit/c7061ec6255faa250c6565a4c102f64c0498683c)] - fix(docs): Grammar of "lots of" (#3100) (waiting <<waiting@xiaozhong.biz>>)
+  * [[`92181e83f`](https://github.com/mansonchor/egg.git/commit/92181e83f98d55bd1a796a871ab5d438d02c8e84)] - doc (CONTRIBUTION): Add missing English translations and clearify dns (#3035) (Maledong <<maledong_github@outlook.com>>)
+  * [[`0a7497987`](https://github.com/mansonchor/egg.git/commit/0a7497987067ce1c3376dfc30676c35f484a5ccc)] - doc(logger.md): Fix incorrect description on default log output level. (#3082) (TX-Kunkun <<eiclkun@gmail.com>>)
+
+
 ## 2018-10-08, Version 2.12.0 @dead-horse
 
 ### Notable changes
