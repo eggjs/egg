@@ -104,8 +104,8 @@ describe('test/lib/core/httpclient.test.js', () => {
     it('should convert compatibility options to agent options', () => {
       // should access httpclient first
       assert(app.httpclient);
-      assert(app.config.httpclient.httpAgent.freeSocketKeepAliveTimeout === 2000);
-      assert(app.config.httpclient.httpsAgent.freeSocketKeepAliveTimeout === 2000);
+      assert(app.config.httpclient.httpAgent.freeSocketTimeout === 2000);
+      assert(app.config.httpclient.httpsAgent.freeSocketTimeout === 2000);
 
       assert(app.config.httpclient.httpAgent.maxSockets === 100);
       assert(app.config.httpclient.httpsAgent.maxSockets === 100);
