@@ -238,12 +238,12 @@ module.exports = appInfo => {
    * @property {Number} request.timeout - httpclient request default timeout, default is 5000 ms.
    *
    * @property {Boolean} httpAgent.keepAlive - Enable http agent keepalive or not, default is true
-   * @property {Number} httpAgent.freeSocketKeepAliveTimeout - http agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpAgent.freeSocketTimeout - http agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpAgent.maxSockets - http agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpAgent.maxFreeSockets - http agent max free socket number of one host, default is 256.
    *
    * @property {Boolean} httpsAgent.keepAlive - Enable https agent keepalive or not, default is true
-   * @property {Number} httpsAgent.freeSocketKeepAliveTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpsAgent.freeSocketTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    */
@@ -257,13 +257,13 @@ module.exports = appInfo => {
     },
     httpAgent: {
       keepAlive: true,
-      freeSocketKeepAliveTimeout: 4000,
+      freeSocketTimeout: 4000,
       maxSockets: Number.MAX_SAFE_INTEGER,
       maxFreeSockets: 256,
     },
     httpsAgent: {
       keepAlive: true,
-      freeSocketKeepAliveTimeout: 4000,
+      freeSocketTimeout: 4000,
       maxSockets: Number.MAX_SAFE_INTEGER,
       maxFreeSockets: 256,
     },

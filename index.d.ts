@@ -291,7 +291,8 @@ declare module 'egg' {
 
     httpclient: {
       keepAlive: boolean;
-      freeSocketKeepAliveTimeout: number;
+      freeSocketKeepAliveTimeout?: number;
+      freeSocketTimeout: number;
       timeout: number;
       maxSockets: number;
       maxFreeSockets: number;
