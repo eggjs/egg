@@ -295,7 +295,7 @@ exports.httpclient = {
     // default enable http KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created
@@ -308,7 +308,7 @@ exports.httpclient = {
     // default enable https KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created

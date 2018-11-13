@@ -27,3 +27,4 @@ yarn.lock
 .editorconfig
 *clinic-flame*
 *clinic-doctor*
+.nyc_output/
