@@ -365,6 +365,22 @@ describe('test/lib/egg.test.js', () => {
       assert(triggerCount === 1);
     });
   });
+
+  describe('createAnonymousContext()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should create anonymous context', async () => {
+      let ctx = app.createAnonymousContext();
+      assert(ctx);
+      ctx = app.agent.createAnonymousContext();
+      assert(ctx);
+    });
+  });
 });
 
 function readJson(p) {
