@@ -300,6 +300,16 @@ module.exports = appInfo => {
   config.workerStartTimeout = 10 * 60 * 1000;
 
   /**
+   * server timeout in milliseconds, default to 2 minutes.
+   *
+   * for special request, just use `ctx.req.setTimeout(ms)`
+   *
+   * @member {Number} Config#serverTimeout
+   * @see https://nodejs.org/api/http.html#http_server_timeout
+   */
+  config.serverTimeout = null;
+
+  /**
    *
    * @member {Object} Config#cluster
    * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
