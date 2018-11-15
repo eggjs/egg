@@ -454,7 +454,7 @@ declare module 'egg' {
      *
      * @see https://nodejs.org/api/http.html#http_server_timeout
      */
-    serverTimeout: Number | null;
+    serverTimeout: number | null;
 
     [prop: string]: any;
   }
