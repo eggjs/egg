@@ -601,6 +601,14 @@ declare module 'egg' {
      */
     url(name: string, params: any): any;
 
+    /**
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {String} EggApplication#createAnonymousContext
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {Context} context
+     */
+    createAnonymousContext(req?: Request): Context;
 
     /**
      * export context base classes, let framework can impl sub class and over context extend easily.
@@ -658,15 +666,6 @@ declare module 'egg' {
     controller: IController;
 
     middleware: KoaApplication.Middleware[] & IMiddleware;
-
-    /**
-     * Create an anonymous context, the context isn't request level, so the request is mocked.
-     * then you can use context level API like `ctx.service`
-     * @member {String} Application#createAnonymousContext
-     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
-     * @return {Context} context
-     */
-    createAnonymousContext(req?: Request): Context;
 
     /**
      * Run async function in the background
