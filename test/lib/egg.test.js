@@ -344,6 +344,22 @@ describe('test/lib/egg.test.js', () => {
         .expect(200);
     });
   });
+
+  describe('createAnonymousContext()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should create anonymous context', () => {
+      let ctx = app.createAnonymousContext();
+      assert(ctx);
+      ctx = app.agent.createAnonymousContext();
+      assert(ctx);
+    });
+  });
 });
 
 function readJson(p) {
