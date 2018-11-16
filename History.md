@@ -1,5 +1,16 @@
 # History
 
+## 2018-11-16, Version 1.17.0 @dead-horse
+
+### Notable changes
+
+**fetures**
+  * add create anonymous context to agent
+
+### Commits
+
+  * [[`40b4ddb65`](http://github.com/eggjs/egg/commit/40b4ddb65b317efcf303c3adb5df42dfa7e97bca)] - backport: add create anonymous context to agent (#3199) (Hongcai Deng <<admin@dhchouse.com>>)
+
 ## 2018-10-08, Version 1.16.2 @dead-horse
 
 ### Notable changes
