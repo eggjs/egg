@@ -1,5 +1,29 @@
 # History
 
+## 2018-11-17, Version 2.14.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * add create anonymous context to agent
+  * support server timeout
+
+* **fixes**
+  * curl: allow request timeout bigger than agent timeout
+  * triggerServerDidReady should be triggered only once
+
+### Commits
+
+  * [[`db999d3f7`](http://github.com/eggjs/egg/commit/db999d3f7afa210c855f3f1a4518e83f7d8c1dc6)] - docs: add serverTimeout to d.ts (#3200) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`a43fef4e1`](http://github.com/eggjs/egg/commit/a43fef4e1828937d3d84469989582df273de1493)] - docs(index.d.ts): curl 增加泛型 (#3197) (The Rock <<simonzhong0924@gmail.com>>)
+  * [[`d40124a25`](http://github.com/eggjs/egg/commit/d40124a25fcd1b52ab862ee297139a022458b81d)] - feat: add create anonymous context to agent (#3193) (Hongcai Deng <<admin@dhchouse.com>>)
+  * [[`9dfd19ead`](http://github.com/eggjs/egg/commit/9dfd19eada8bae7be212155a2989d0ccc410e8eb)] - fix: triggerServerDidReady should be triggered only once (#3190) (killa <<killa123@126.com>>)
+  * [[`7802528e1`](http://github.com/eggjs/egg/commit/7802528e122691eb2cb78174e1c1490d0a382c08)] - feat: support server timeout (#3133) (TZ |
+天猪 <<atian25@qq.com>>)
+  * [[`ff79101b5`](http://github.com/eggjs/egg/commit/ff79101b592d59ad12d110dd26dd7fa3d044b968)] - docs: Update service.md (#3191) (肖金 <<xiaojin1992@126.com>>)
+  * [[`327fa174f`](http://github.com/eggjs/egg/commit/327fa174ffd74a67a77520d839eac282c916e8c0)] - fix: allow request timeout bigger than agent timeout (#3146) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`86093c03a`](http://github.com/eggjs/egg/commit/86093c03a822a2b925de94cfda96198dc8159ade)] - docs: remove promo logo (#3176) (Suyi <<thonatos@users.noreply.github.com>>)
+
 ## 2018-11-07, Version 2.13.0 @mansonchor
 
 ### Notable changes
@@ -8,7 +32,7 @@
   * emit event when runInBackground catch error
 
 * **perf**
-  * better TypeScript support 
+  * better TypeScript support
 
 * **docs**
   * supplement documentation
