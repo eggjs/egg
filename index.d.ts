@@ -447,6 +447,15 @@ declare module 'egg' {
 
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
 
+    /**
+     * server timeout in milliseconds, default to 2 minutes.
+     *
+     * for special request, just use `ctx.req.setTimeout(ms)`
+     *
+     * @see https://nodejs.org/api/http.html#http_server_timeout
+     */
+    serverTimeout: number | null;
+
     [prop: string]: any;
   }
 
