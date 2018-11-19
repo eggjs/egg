@@ -27,9 +27,5 @@ module.exports = {
     '@types/koa-router',
     '@types/urllib',
   ],
-  keep: [
-    // circular-json > 0.5.5 will output some deprecate message, and we don't want to use flatted
-    'circular-json',
-  ],
   test: 'scripts',
 };
