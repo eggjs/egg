@@ -447,6 +447,15 @@ declare module 'egg' {
 
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
 
+    /**
+     * server timeout in milliseconds, default to 2 minutes.
+     *
+     * for special request, just use `ctx.req.setTimeout(ms)`
+     *
+     * @see https://nodejs.org/api/http.html#http_server_timeout
+     */
+    serverTimeout: number | null;
+
     [prop: string]: any;
   }
 
@@ -584,7 +593,7 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl(url: string, opt?: RequestOptions): Promise<any>;
+    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
 
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
@@ -601,6 +610,14 @@ declare module 'egg' {
      */
     url(name: string, params: any): any;
 
+    /**
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {String} EggApplication#createAnonymousContext
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {Context} context
+     */
+    createAnonymousContext(req?: Request): Context;
 
     /**
      * export context base classes, let framework can impl sub class and over context extend easily.
@@ -658,15 +675,6 @@ declare module 'egg' {
     controller: IController;
 
     middleware: KoaApplication.Middleware[] & IMiddleware;
-
-    /**
-     * Create an anonymous context, the context isn't request level, so the request is mocked.
-     * then you can use context level API like `ctx.service`
-     * @member {String} Application#createAnonymousContext
-     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
-     * @return {Context} context
-     */
-    createAnonymousContext(req?: Request): Context;
 
     /**
      * Run async function in the background
@@ -891,7 +899,7 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl(url: string, opt?: RequestOptions): Promise<any>;
+    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
 
     /**
      * Render a file by view engine

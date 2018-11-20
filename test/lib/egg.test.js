@@ -345,6 +345,42 @@ describe('test/lib/egg.test.js', () => {
         .expect(200);
     });
   });
+
+  describe('egg-ready', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+    });
+    after(() => app.close());
+
+    it('should only trigger once', async () => {
+      let triggerCount = 0;
+      mm(app.lifecycle, 'triggerServerDidReady', () => {
+        triggerCount++;
+      });
+      await app.ready();
+      app.messenger.emit('egg-ready');
+      app.messenger.emit('egg-ready');
+      app.messenger.emit('egg-ready');
+      assert(triggerCount === 1);
+    });
+  });
+
+  describe('createAnonymousContext()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should create anonymous context', async () => {
+      let ctx = app.createAnonymousContext();
+      assert(ctx);
+      ctx = app.agent.createAnonymousContext();
+      assert(ctx);
+    });
+  });
 });
 
 function readJson(p) {
