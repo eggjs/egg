@@ -64,7 +64,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     ]);
   });
 
-  describe.only('server timeout', () => {
+  describe('server timeout', () => {
     let app;
     beforeEach(() => {
       app = utils.cluster('apps/app-server-timeout');
