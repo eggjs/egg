@@ -64,7 +64,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     ]);
   });
 
-  describe('server timeout', () => {
+  describe.only('server timeout', () => {
     let app;
     beforeEach(() => {
       app = utils.cluster('apps/app-server-timeout');
@@ -83,6 +83,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       await assert.asyncThrows(() => {
         return app.httpRequest().get('/timeout');
       }, /socket hang up/);
+      app.expect('stdout', /\[http_server] A request `GET \/timeout` timeout with client/);
     });
   });
 
