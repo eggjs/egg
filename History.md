@@ -1,5 +1,20 @@
 # History
 
+## 2018-11-17, Version 2.14.1 @atian25
+
+### Notable changes
+
+* **fixes**
+  * remove timeout log msg
+
+* **others**
+ * use circular-json-for-egg to remove deprecate message
+
+### Commits
+
+   * [[`0fb5a96c0`](http://github.com/eggjs/egg/commit/0fb5a96c023e916cb9c14c5960df62547ed391d8)] - fix: remove timeout log msg (#3229) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`de81caef1`](http://github.com/eggjs/egg/commit/de81caef1d91c229effadd25ddf752297c2a08f5)] - deps: use circular-json-for-egg to remove deprecate message (#3211) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2018-11-17, Version 2.14.0 @dead-horse
 
 ### Notable changes
