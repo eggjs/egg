@@ -8,7 +8,7 @@
   * remove timeout log msg
 
 * **others**
- * use circular-json-for-egg to remove deprecate message
+  * use circular-json-for-egg to remove deprecate message
 
 ### Commits
 
