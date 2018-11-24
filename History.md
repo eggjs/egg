@@ -1,6 +1,6 @@
 # History
 
-## 2018-11-17, Version 2.14.1 @atian25
+## 2018-11-24, Version 2.14.1 @atian25
 
 ### Notable changes
 
