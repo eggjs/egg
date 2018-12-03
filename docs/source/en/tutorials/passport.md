@@ -159,6 +159,10 @@ The API also be provided for:
     - `options.callbackURL` - callback address after authorization, defaults to `/passport/${strategy}/callback`
 * `app.passport.mount(strategy, options)` - Syntactic sugar for developers to configure routing
 
+
+**note:**
+ - `app.passport.authenticate`, if `options.successRedirect` or `options.successReturnToOrRedirect` is null, it will redirect to `/` by default
+
 ## Using Passport Ecosystem
 
 [Passport](http://www.passportjs.org/) has many middleware and it is impossible to have the second encapsulation.
