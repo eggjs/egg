@@ -526,7 +526,7 @@ Framework provides `.surl()` macro to do url filtering.It is Used to parse the u
 
 You can add `helper.surl($value)` in the template to output variable.
 
-**note: in places where you need to parse the url, you must add double quotes outside of surl, or you will result in XSS vulnerabilities.**
+**Note: in places where you need to parse the url, you must add double quotes outside of surl, or you will result in XSS vulnerabilities.**
 
 Do not use `surl`
 
