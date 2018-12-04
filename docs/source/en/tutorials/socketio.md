@@ -82,7 +82,7 @@ exports.io = {
 > When `redis` is turned on, the program tries to connect to the redis server at startup
 > Here `redis` is only used to store connection instance information, see [# server.adapter](https://socket.io/docs/server-api/#server-adapter-value)
 
-**note:**
+**Note:**
 If the project also uses the `egg-redis`, please configure it separately. Do not share it.
 
 ### Deployment
@@ -145,7 +145,7 @@ Middleware has the following two scenarios:
 
 It is configured in each namespace, respectively, according to the scenarios given above.
 
-**note:**
+**Note:**
 
 If we enable the framework middleware, you will find the following directory in the project:
 
@@ -267,7 +267,7 @@ module.exports = app => {
 };
 ```
 
-**note:**
+**Note:**
 
 Nsp has the following system events:
 
