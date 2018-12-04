@@ -783,7 +783,7 @@ app.httpclient.on('response', result => {
 
 ## 示例代码
 
-完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
+完整示例代码可以在 [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js

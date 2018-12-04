@@ -773,7 +773,7 @@ app.httpclient.on('response', result => {
 
 ## Example
 
-Full examples can be found on [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
+Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js
