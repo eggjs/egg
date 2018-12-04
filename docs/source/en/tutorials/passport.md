@@ -60,7 +60,7 @@ config.passportGithub = {
 };
 ```
 
-**note:**
+**Note:**
 
 * Create a [GitHub OAuth Apps](https://github.com/settings/applications/new) to get the `clientID` and `clientSecret` information.
 * Specify a `callbackURL`, such as `http://127.0.0.1:7001/passport/github/callback`
@@ -158,6 +158,10 @@ The API also be provided for:
     - `options.loginURL` - jump login address, defaults to `/passport/${strategy}`
     - `options.callbackURL` - callback address after authorization, defaults to `/passport/${strategy}/callback`
 * `app.passport.mount(strategy, options)` - Syntactic sugar for developers to configure routing
+
+
+**Note:**
+ - `app.passport.authenticate`, if `options.successRedirect` or `options.successReturnToOrRedirect` is null, it will redirect to `/` by default
 
 ## Using Passport Ecosystem
 
