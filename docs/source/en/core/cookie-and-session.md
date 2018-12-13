@@ -154,7 +154,7 @@ exports.deleteSession = function* (ctx) {
 };
 ```
 
-What you need to pay special attention to is that you need to avoid the following situations when setting session properties (which can cause field, See for details [koa-session source code](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47)):
+What you need to pay special attention to is that you need to avoid the following situations when setting session properties (which can cause field loss, See for details [koa-session source code](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47)):
 
 * do not startsWith `_`
 * can not be `isNew`
