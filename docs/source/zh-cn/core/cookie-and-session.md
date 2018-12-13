@@ -129,7 +129,8 @@ Session 的使用方法非常直观，直接读取它或者修改它就可以了
 ctx.session = null;
 ```
 
-需要 **特别注意** 的是 session 的属性设置时需要避免以下几种情况(会造成字段丢失，详见 [koa-session](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47) 源码：
+需要 **特别注意** 的是：设置 session 属性时需要避免以下几种情况（会造成字段丢失，详见 [koa-session](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47) 源码）
+
 
 * 不要以 `_` 开头
 * 不能为 `isNew`
