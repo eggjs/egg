@@ -136,11 +136,12 @@ ctx.session = null;
 * 不能为 `isNew`
 
 ```js
-ctx.session._visited = 1;   // ×   --> 该字段会在下一次请求时丢失
-ctx.session.isNew = 'HeHe'; // ×   --> 为内部关键字, 不应该去更改
+// ❌ 错误的用法
+ctx.session._visited = 1;   //    --> 该字段会在下一次请求时丢失
+ctx.session.isNew = 'HeHe'; //    --> 为内部关键字, 不应该去更改
 
-// 正确的用法
-ctx.session.visited = 1;    // ✅  -->  Everything is all right!
+// ✅ 正确的用法
+ctx.session.visited = 1;    //   -->  此处没有问题
 ```
 
 Session 的实现是基于 Cookie 的，默认配置下，用户 Session 的内容加密后直接存储在 Cookie 中的一个字段中，用户每次请求我们网站的时候都会带上这个 Cookie，我们在服务端解密后使用。Session 的默认配置如下：
