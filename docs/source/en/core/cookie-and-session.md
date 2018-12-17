@@ -156,15 +156,16 @@ exports.deleteSession = function* (ctx) {
 
 What you need to pay special attention to is that you need to avoid the following situations when setting session properties (which can cause field loss, See for details [koa-session source code](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47)):
 
-* do not startsWith `_`
-* can not be `isNew`
+* Don't start with `_`
+* Don't use `isNew`
 
 ```js
-ctx.session._visited = 1;   // ×   --> property will lost
-ctx.session.isNew = 'HeHe'; // ×   --> session keyword, should not write it
+// ❌ Wrong way
+ctx.session._visited = 1;   //   --> property will lost
+ctx.session.isNew = 'HeHe'; //   --> session keyword, should not write it
 
-// right way
-ctx.session.visited = 1;    // ✅  -->  Everything is all right!
+// ✅ Right way
+ctx.session.visited = 1;    //   -->  Everything is all right
 ```
 
 Session is built on top of Cookie.
