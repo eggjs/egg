@@ -122,7 +122,7 @@ extend(true, a, b);
 
 根据上面的例子，框架直接覆盖数组而不是进行合并。
 
-## 配置结果
+### 配置结果
 
 框架在启动时会把合并后的最终配置 dump 到 `run/application_config.json`（worker 进程）和 `run/agent_config.json`（agent 进程）中，可以用来分析问题。
 
