@@ -4,6 +4,7 @@ import * as KoaRouter from 'koa-router';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
+import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
 import { HttpClient2, RequestOptions } from 'urllib';
 import EggCookies = require('egg-cookies');
@@ -710,10 +711,16 @@ declare module 'egg' {
   * special properties (e.g: encrypted). So we must remove this property and
   * create our own with the same name.
   */
-  export interface Context extends RemoveSpecProp<KoaApplication.Context, 'cookies'> {
+  export interface Context extends KoaApplication.BaseContext {
     [key: string]: any;
 
     app: Application;
+
+    // property of koa.Context
+    req: IncomingMessage;
+    res: ServerResponse;
+    originalUrl: string;
+    respond?: boolean;
 
     service: IService;
 
