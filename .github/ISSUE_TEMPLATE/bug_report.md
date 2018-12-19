@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Report a bug
+name: 'Bug report'
+about: 'Report a bug to help us improve'
 title: ''
 labels: ''
 assignees: ''
@@ -19,14 +19,14 @@ https://github.com/YOUR_REPOSITORY_URL
 ## How To Reproduce
 
 **Steps to reproduce the behavior:**
-1. 
-2. 
+1.
+2.
 
 **Expected behavior**
 1.
 2.
 
-## Context 
+## Context
 - **Node Version**:
 - **Egg Version**:
 - **Plugin Name**:

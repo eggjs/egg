@@ -1,13 +1,13 @@
 ---
-name: 缺陷问题反馈
-about: Bug Report zh_CN
+name: '缺陷问题反馈'
+about: '如何正确的提出一个 Issue ：https://github.com/eggjs/egg/issues/3310'
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-<!-- 
+<!--
 如果你是新手，请务必仔细阅读：[如何正确的提出一个 Issue](https://github.com/eggjs/egg/issues/3310)。
 感谢您向我们反馈问题，为了高效的解决问题，我们期望你能提供以下信息：
 -->
@@ -26,7 +26,7 @@ https://github.com/YOUR_REPOSITORY_URL
 <!-- 可以尝试不要锁版本，重新安装依赖试试先 -->
 
 
-## 相关环境信息 
+## 相关环境信息
 - **操作系统**：
 - **Node 版本**：
 - **Egg 版本**：
