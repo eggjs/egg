@@ -1,5 +1,26 @@
 # History
 
+## 2018-12-20, Version 2.14.2 @atian25
+
+### Notable changes
+
+* **fixes**
+  * fix d.ts context declaration not works
+
+* **docs**
+  * more document improvement
+
+### Commits
+  * [[`edfe66093`](http://github.com/eggjs/egg/commit/edfe66093c9ffe730ffd9804da1e2b264a48c38e)] - fix: Add comments for re-writing properties from Koa (#3332) (Maledong <<maledong_github@outlook.com>>)
+  * [[`f312db78f`](http://github.com/eggjs/egg/commit/f312db78fc330da2bfe6efdb0f095d7b3b363beb)] - fix: fix context declaration not works (#3329) (Axes <<whxaxes@qq.com>>)
+  * [[`ef47a2746`](http://github.com/eggjs/egg/commit/ef47a274625a6ae8696857bef01b2c679dd65395)] - docs: fix config heading level (#3327) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`cddd91ded`](http://github.com/eggjs/egg/commit/cddd91ded2fac1395487e2847caaf92afaafcf8e)] - chore: adjust template (TZ <<atian25@qq.com>>)
+  * [[`7319727a0`](http://github.com/eggjs/egg/commit/7319727a0b8a4fa210746ac201631a4b7db4359b)] - chore: Update issue templates (#3326) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`0cb246e26`](http://github.com/eggjs/egg/commit/0cb246e2663a288395a013ee78a1b34ab5b7c641)] - doc: Fix some translations with some icons (#3315) (Maledong <<maledong_github@outlook.com>>)
+  * [[`9dc20377e`](http://github.com/eggjs/egg/commit/9dc20377e18e53278bcfac037e15a5a761cccdb3)] - doc: session special usage tip (#3304) (Jerry Wu <<perzy_wu@163.com>>)
+  * [[`6f4e91274`](http://github.com/eggjs/egg/commit/6f4e91274daa0685ba0ed8983ad5b6fd457322bc)] - docs: Update httpclient.md (#3276) (Albert <<shuaizhexu@gmail.com>>)
+  * [[`64e88abfd`](http://github.com/eggjs/egg/commit/64e88abfd24d50096aa2d4ef442aafd46101429a)] - docs(egg-passport): add redirection desc while auth succeed (#3260) (Suyi <<thonatos@users.noreply.github.com>>)
+
 ## 2018-11-24, Version 2.14.1 @atian25
 
 ### Notable changes
@@ -12,7 +33,7 @@
 
 ### Commits
 
-   * [[`0fb5a96c0`](http://github.com/eggjs/egg/commit/0fb5a96c023e916cb9c14c5960df62547ed391d8)] - fix: remove timeout log msg (#3229) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`0fb5a96c0`](http://github.com/eggjs/egg/commit/0fb5a96c023e916cb9c14c5960df62547ed391d8)] - fix: remove timeout log msg (#3229) (TZ | 天猪 <<atian25@qq.com>>)
   * [[`de81caef1`](http://github.com/eggjs/egg/commit/de81caef1d91c229effadd25ddf752297c2a08f5)] - deps: use circular-json-for-egg to remove deprecate message (#3211) (Yiyu He <<dead_horse@qq.com>>)
 
 ## 2018-11-17, Version 2.14.0 @dead-horse
