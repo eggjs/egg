@@ -5,7 +5,7 @@ When the application starts up, we often need to set up some initialization logi
 
 The framework provides a unified entry file (`app.js`) for boot process customization. This file need returns a Boot class. We can define the initialization process in the startup application by defining the lifecycle method in the Boot class.
 
-The framework has provided you several functions to handle during the whole life cycle:
+The framework has provided you several functions to handle during the whole [life cycle](../advanced/loader.md#life-cycles):
 
 - `configWillLoad`: All the config files are ready to load, so this is the LAST chance to modify them.
 - `configDidLoad`: When all the config files have been loaded.
