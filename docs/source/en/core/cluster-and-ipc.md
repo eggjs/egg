@@ -5,10 +5,10 @@ We know that JavaScript codes are run on single thread, in other words, one Node
 
 > how to squeeze all server resources, taking advantages of multi-cores?
 
-And the official solution provided by Node.js is [Cluster module](https://nodejs.org/api/cluster.html)
+And the official solution provided by Node.js is [Cluster module](https://nodejs.org/api/cluster.html), and there's an introduction:
 
 > A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.
-
+>
 > The cluster module allows you to easily create child processes that all share server ports.
 
 # What is Cluster?
