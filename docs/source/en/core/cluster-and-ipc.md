@@ -62,7 +62,7 @@ Simple like the example above, but as an enterprise-level solution, much more re
 
 Haleness(aka Robustness) of an enterprise-level application must be considered, apart from the guarantee of high quality codes of program itself, the framework level should provide the cache-all mechanism to ensure the availability under extreme circumstance.
 
-Generally, Node.js processes exist for two reasons:
+Generally, Node.js processes exit for two reasons:
 
 #### Uncaught Exception
 
@@ -94,7 +94,7 @@ The process will exit when codes throw an exception but fail to catch it, at thi
 
 #### OOM, System Exception
 
-When a process crashes due to exceptions or is killed due to OOM by the OS, we have no chance to resume the process like uncaught exceptions occurring, the only choice is to exit current process direcly then Master fork a new Worker immediately.
+When a process crashes due to exceptions or is killed due to OOM by the OS, we have no chance to resume the process like uncaught exceptions occurring, the only choice is to exit current process directly then Master forks a new Worker immediately.
 
 In the framework, we use [graceful] and [egg-cluster] 2 modules correspondingly to implement above logics. This solution has been widely deployed in production environment in Alibaba Cor. and Ant Financial Cor. and is long-tested by 'Double 11' big promotion, solid and reliable.
 
@@ -164,7 +164,7 @@ module.exports = agent => {
   // put your initialization logics here
 
   // messages can also be sent by the messenger object to App Worker
-  // but you should wait until App Worker starts up successfully, or the message may be log
+  // but you should wait until App Worker starts up successfully, or the message may be lost
   agent.messenger.on('egg-ready', () => {
     const data = { ... };
     agent.messenger.sendToApp('xxx_action', data);
@@ -291,7 +291,7 @@ module.exports = app => {
 }
 ```
 
-* All methods called on `app.messenger` above can be called on `agent.messenger` too. *
+*All methods called on `app.messenger` above can be called on `agent.messenger` too.*
 
 #### egg-ready
 
@@ -418,9 +418,9 @@ module.exports = agent => {
 };
 ```
 
-With an intelligent use of Agent process, scheduled tasks and IPC, we can easily implement this kind of requisition and reduce pressure on the data source. Detailed example codes refer to[examples/ipc](https://github.com/eggjs/examples/tree/master/ipc).
+With an intelligent use of Agent process, scheduled tasks and IPC, we can easily implement this kind of requisition and reduce pressure on the data source. Detailed example codes refer to [examples/ipc](https://github.com/eggjs/examples/tree/master/ipc).
 
-## More Complexed Scenario
+## More Complex Scenario
 
 In the above example, we runs a subscriber on Agent process to listen messages sent by the message-oriented middleware. What if Worker processes need to listen messages? How to create connections by Agent process and transmit messages to Worker processes? Answers to these questions can be found in [Advanced Multi-Process Developing Pattern](../advanced/cluster-client.md).
 
