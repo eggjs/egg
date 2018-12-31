@@ -242,7 +242,7 @@ The framework will automatically load and initialize this class after developers
 
 Here's the image of starting process:
 
-![](https://user-images.githubusercontent.com/40081831/50545997-4757bb80-0c5b-11e9-83e0-803bbd6576b3.png)
+![](https://user-images.githubusercontent.com/40081831/50559449-2d3cdc80-0d32-11e9-96f2-42b3cc56d5d3.png)
 
 **Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
 
