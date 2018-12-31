@@ -312,7 +312,7 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 ### Acquire the submitted files
 
-The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plug-in [Multipart](https://github.com/eggjs/egg-multipart).
+The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
 - #### `File` Mode:
 If you have no ideas about Nodejs's Stream at all, the `File` mode suits you well:

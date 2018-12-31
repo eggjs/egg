@@ -289,7 +289,7 @@ type PowerPartial<T> = {
 };
 ```
 
-### 插件（Plug-in）
+### 插件（Plugin）
 
 ```javascript
 // config/plugin.ts
