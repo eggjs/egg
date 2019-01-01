@@ -75,5 +75,6 @@ class AppBootHook {
     });
   }
 }
+```
 
 **Note: It is not recommended to do too time-consuming operations in the custom lifecycle function, the framework will have a startup timeout detection.**
