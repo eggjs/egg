@@ -164,7 +164,7 @@ What you need to pay special attention to is that you need to avoid the followin
 ctx.session._visited = 1;   //   --> property will lost
 ctx.session.isNew = 'HeHe'; //   --> session keyword, should not write it
 
-// ✅ Right way
+// ✔️ Right way
 ctx.session.visited = 1;    //   -->  Everything is all right
 ```
 

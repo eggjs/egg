@@ -57,7 +57,7 @@ Then you need to declare it in the `config / plugin.js` application or framework
 
 ```js
 // config / plugin.js
-// Use mysql plug-in
+// Use mysql plugin
 exports.mysql = {
   enable: true,
   package: 'egg-mysql'

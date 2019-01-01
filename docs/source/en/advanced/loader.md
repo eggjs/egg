@@ -189,7 +189,7 @@ The framework has provided you several functions to handle during the whole life
 - `configWillLoad`: All the config files are ready to load, so this is the LAST chance to modify them.
 - `configDidLoad`: When all the config files have been loaded.
 - `didLoad`: When all the files have been loaded.
-- `willReady`: When all the plug-ins are ready.
+- `willReady`: When all the plugins are ready.
 - `didReady`: When all the workers are ready.
 - `serverDidReady`: When the server is ready.
 - `beforeClose`: Before the application is closed.
@@ -241,7 +241,8 @@ module.exports = AppBootHook;
 The framework will automatically load and initialize this class after developers have defined `app.js` and `agenet.js` in the form of class, and it will call the corresponding methods during each of the life cycles.
 
 Here's the image of starting process:
-![](https://user-images.githubusercontent.com/40081831/47344099-3bd79980-d6da-11e8-8bc2-5adad70cdf95.png)
+
+![](https://user-images.githubusercontent.com/40081831/50559449-2d3cdc80-0d32-11e9-96f2-42b3cc56d5d3.png)
 
 **Notice: We have an expiring time limitation when using `beforeClose` to close the processing of the framework. If a worker has accepted the signal of exit but doesn't exit within the limit period, it will be FORCELY closed.**
 
@@ -251,11 +252,11 @@ Deprecated methods:
 
 ## beforeStart
 
-`beforeStart` is called during the loading process, all of its methods are running in parallel. So we usually execute some asynchronized methods (e.g: Check the state of connection, in [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) we use this method to check the connection state with mysql). When all the tasks in `beforeStart` finished, the state will be `ready`. It's NOT recommended to excute a function that consumes too much time there, which will cause the expiration of application's start.Plug-in developers should use `didLoad` instead, for application developers, `willReady` is the replacer.
+`beforeStart` is called during the loading process, all of its methods are running in parallel. So we usually execute some asynchronized methods (e.g: Check the state of connection, in [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) we use this method to check the connection state with mysql). When all the tasks in `beforeStart` finished, the state will be `ready`. It's NOT recommended to excute a function that consumes too much time there, which will cause the expiration of application's start.plugin developers should use `didLoad` instead, for application developers, `willReady` is the replacer.
 
 ## ready
 
-All the methods mounted on `ready` will be executed when load ends, and after all the methods in `beforeStart` have finished executing. By the time Http server's listening also starts. This means all the plug-ins are fully loaded and everything is ready, So we use it to process some tasks after start. For developers now, we use `didReady` instead.
+All the methods mounted on `ready` will be executed when load ends, and after all the methods in `beforeStart` have finished executing. By the time Http server's listening also starts. This means all the plugins are fully loaded and everything is ready, So we use it to process some tasks after start. For developers now, we use `didReady` instead.
 
 ## beforeClose
 

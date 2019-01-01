@@ -140,7 +140,7 @@ ctx.session = null;
 ctx.session._visited = 1;   //    --> 该字段会在下一次请求时丢失
 ctx.session.isNew = 'HeHe'; //    --> 为内部关键字, 不应该去更改
 
-// ✅ 正确的用法
+// ✔️ 正确的用法
 ctx.session.visited = 1;    //   -->  此处没有问题
 ```
 

@@ -20,13 +20,13 @@ The framework itself has a rich solution for common security risks on the Web si
 - customizable white list for safe redirect and url filtering.
 - all kinds of template related tools for preprocessing.
 
-Security plug-ins [egg-security](https://github.com/eggjs/egg-security) are built into the framework, provides default security practices.
+Security plugins [egg-security](https://github.com/eggjs/egg-security) are built into the framework, provides default security practices.
 
 ### Open or close the configuration
 
-Note: it is not recommended to turn off the functions provided by the security plug-ins unless the consequences are clearly confirmed.
+Note: it is not recommended to turn off the functions provided by the security plugins unless the consequences are clearly confirmed.
 
-The security plug-in for the framework opens by default, if we want to close some security protection, directly set the `enable` attribute to false. For example, close xframe precautions:
+The security plugin for the framework opens by default, if we want to close some security protection, directly set the `enable` attribute to false. For example, close xframe precautions:
 
 
 ```js
@@ -296,7 +296,7 @@ module.exports = {
 };
 ```
 
-In order to prevent the [BREACH attack](http://breachattack.com/), CSRF token rendered on the page will be changed everytime request changed, and the view plug-in, such as `egg-view-nunjucks`, will automatically inject the hidden field in Form without any perception of the application developer.
+In order to prevent the [BREACH attack](http://breachattack.com/), CSRF token rendered on the page will be changed everytime request changed, and the view plugin, such as `egg-view-nunjucks`, will automatically inject the hidden field in Form without any perception of the application developer.
 
 ##### AJAX Request
 
