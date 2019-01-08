@@ -414,7 +414,7 @@ declare module 'egg' {
 }
 ```
 
-在 egg-bin@4.10.0 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置
+在最新版本的 egg-bin 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置
 
 ```json
 {
@@ -703,7 +703,7 @@ import 'egg-dashboard';
 
 ### 在 tsconfig.json 中配置了 paths 无效
 
-这个严格来说不属于 egg 的问题，但是问的人不少，因此也在此解答一下。原因是 tsc 将 ts 编译成 js 的时候，并不会去转换 import 的模块路径，因此当你在 tsconfig.json 中配置了 paths 之后，如果你在 ts 中使用 paths import 了对应模块，编译成 js 的时候就有大概率出现模块找不到的情况了。
+这个严格来说不属于 egg 的问题，但是问的人不少，因此也在此解答一下。原因是 tsc 将 ts 编译成 js 的时候，并不会去转换 import 的模块路径，因此当你在 tsconfig.json 中配置了 paths 之后，如果你在 ts 中使用 paths 并 import 了对应模块，编译成 js 的时候就有大概率出现模块找不到的情况了。
 
 解决办法是，要么不用 paths ，要么使用 paths 的时候只用来 import 一些声明而非具体值，再要么就可以使用 [tsconfig-paths](https://github.com/dividab/tsconfig-paths) 来 hook 掉 node 中的模块路径解析逻辑，从而支持 tsconfig.json 中的 paths。
 
