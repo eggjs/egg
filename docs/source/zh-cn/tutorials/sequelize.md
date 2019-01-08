@@ -115,8 +115,7 @@ module.exports = {
 - 初始化 Migrations 配置文件和目录
 
 ```bash
-npx sequelize init:config
-npx sequelize init:migrations
+npx sequelize init
 ```
 
 执行完后会生成 `database/config.json` 文件和 `database/migrations`, `database/seeders`, `app/model` 三个目录，我们修改一下 `database/config.json` 中的内容，将其改成我们项目中使用的数据库配置：
