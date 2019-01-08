@@ -17,7 +17,7 @@ index:
   readmore: "Read More"
 
 header:
-  translations: "切换语言"
+  translations: "Languages"
 
 guide_toc:
   Intro: Guide
@@ -59,7 +59,7 @@ guide_toc:
   Framework: Framework
   Progressive:  Progressive
   Deployment: Deployment
-  # Loader:
+  Loader: Loader
   Community: Community
   Plugin List: Plugin List
   Contributing: Contributing

@@ -8,7 +8,7 @@ For a large number of enterprises' applications, TypeScript's static type checki
 However, we've met some problems influencing users' experience when developing Egg in TypeScript:
 
 * The most outstanding Loader Mechanism (Auto-loading) makes TS not analyze dependencies in static.
-* How to validate and show intellisense in `config.{env}.js`, when we modify settings by plug-in and these configurations are automatically merged?
+* How to validate and show intellisense in `config.{env}.js`, when we modify settings by plugin and these configurations are automatically merged?
 * During the period of developing, `tsc -w` is created as an independent process to build up codes, it makes us entangled about where to save the temporary files, and the complicated `npm scripts`.
 * How to map to the TS source files instead of compiled js files in unit tests, coverage tests and error stacks online?
 
@@ -42,7 +42,7 @@ The boilerplate above will create a very simple example, for a detailed one plea
 **Some constraints:**
 
 * We've no plans for re-writing Egg in TS yet.
-* Egg itself, with its plug-in, will have corresponding `index.d.ts` for users to use easily.
+* Egg itself, with its plugin, will have corresponding `index.d.ts` for users to use easily.
 * TypeScript only belongs to a communication practice. We support it to some extent with our tool chain.
 * TypeScript's version MUST BE 2.8 at least.
 
@@ -241,7 +241,7 @@ export interface BizConfig {
 export default (appInfo: EggAppInfo) => {
   const config = {} as PowerPartial<EggAppConfig> & BizConfig;
 
-  // Override the framework, plug-in's configurations
+  // Override the framework, plugin's configurations
   config.keys = appInfo.name + '123456';
   config.view = {
     defaultViewEngine: 'nunjucks',
@@ -290,7 +290,7 @@ type PowerPartial<T> = {
 };
 ```
 
-### Plug-in
+### Plugin
 
 ```javascript
 // config/plugin.ts
@@ -552,16 +552,16 @@ For more detailed info:
 
 ---
 
-## Guides to the developments of Plug-in/Framework
+## Guides to the developments of Plugin/Framework
 
 **Principles:**
 
-* DO NOT recommend to develop plug-in/framework in TS directly, we should publish them in js to npm.
-* When you write a plug-in/framework, the corresponding `index.d.ts` should be included.
-* By [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) we can inject the functions of plug-in/framework into Egg.
+* DO NOT recommend to develop plugin/framework in TS directly, we should publish them in js to npm.
+* When you write a plugin/framework, the corresponding `index.d.ts` should be included.
+* By [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) we can inject the functions of plugin/framework into Egg.
 * All are mounted on `egg` module, DO NOT use the outer layer.
 
-### Plug-in
+### Plugin
 
 Styles can be referred from the automatically generated `egg-ts-helper`:
 
@@ -606,11 +606,11 @@ Definitions:
 
 import * as Egg from 'egg';
 
-// With 'import' to include the outer framework's plug-in.
+// With 'import' to include the outer framework's plugin.
 import 'my-plugin';
 
 declare module 'egg' {
-  // Extend egg like plug-in...
+  // Extend egg like plugin...
 }
 
 // Export the whole Egg

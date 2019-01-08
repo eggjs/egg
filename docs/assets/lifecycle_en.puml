@@ -45,8 +45,8 @@ partition agent {
   endfork
   : async willReady;
   note left
-    All the plug-ins are loaded,
-    All the plug-ins are normal,
+    All the plugins are loaded,
+    All the plugins are normal,
     To execute some tasks before request enters,
     E.g: Pull some configs for applications
   end note
@@ -108,8 +108,8 @@ partition app {
   end fork
     : async WillReady;
   note left
-    All the plug-ins are loaded,
-    All the plug-ins are normal,
+    All the plugins are loaded,
+    All the plugins are normal,
     To execute some tasks before request enters,
     E.g: Pull some configs for applications
   end note

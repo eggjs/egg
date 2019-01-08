@@ -1,4 +1,4 @@
-title: controller
+title: 控制器（Controller）
 ---
 
 ## 什么是 Controller
