@@ -177,7 +177,7 @@ exports.logger = {
 
 ### 终端日志级别
 
-默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。
+默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。（ 注意：这些日志默认只在 local 和 unittest 环境下会打印到终端 ）
 
 - `logger.consoleLevel`: 输出到终端日志的级别，默认为 `INFO`
 
@@ -198,6 +198,17 @@ exports.logger = {
 // config/config.${env}.js
 exports.logger = {
   consoleLevel: 'NONE',
+};
+```
+
+- `logger.disableConsoleAfterReady`: 在 egg ready 之后禁止终端日志的输出，在 env 为 local 和 unittest 的时候为 `false`，其他为 `true`。
+
+强制开启终端日志（ 不推荐 ）：
+
+```js
+// config/config.${env}.js
+exports.logger = {
+  disableConsoleAfterReady: false,
 };
 ```
 
