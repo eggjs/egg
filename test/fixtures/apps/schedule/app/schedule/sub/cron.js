@@ -6,5 +6,5 @@ exports.schedule = {
 };
 
 exports.task = function* (ctx) {
-  ctx.logger.warn('cron');
+  ctx.logger.warn('cron wow');
 };

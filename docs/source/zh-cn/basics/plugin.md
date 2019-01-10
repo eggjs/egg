@@ -129,7 +129,7 @@ exports.dev = {
 const path = require('path');
 exports.mysql = {
   enable: true,
-  package: path.join(__dirname, '../lib/plugin/egg-mysql'),
+  path: path.join(__dirname, '../lib/plugin/egg-mysql'),
 };
 ```
 

@@ -57,7 +57,7 @@ Almost all files (Controller, Service, Schedule, etc.) loaded by the [Loader] (.
   // app/controller/user.js
   class UserController extends Controller {
     async fetch() {
-      this.ctx.body = app.cache.get(this.ctx.query.id);
+      this.ctx.body = this.app.cache.get(this.ctx.query.id);
     }
   }
   ```
@@ -262,7 +262,7 @@ We can get the config object from the Application instance via `app.config`, or 
 
 ## Logger
 
-Egg builds in powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 5 level methods:
+Egg builds in powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 4 level methods:
 
 - `logger.debug()`
 - `logger.info()`

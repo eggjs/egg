@@ -148,14 +148,14 @@ In most cases, data are usually read, processed and rendered by the templates be
 Thus we need to introduce corresponding template engines to handle it.
 
 Egg does not force to use any particular template engines,
-but specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
-to allow the developers to use different plug-ins for their individual needs instead.
+but specifies the [View Plugins Specification](../advanced/view-plugin.md)
+to allow the developers to use different plugins for their individual needs instead.
 
 For more information, cf. [View](../core/view.md).
 
 In this example, we will use [Nunjucks].
 
-First install the corresponding plug-in [egg-view-nunjucks].
+First install the corresponding plugin [egg-view-nunjucks].
 
 ```bash
 $ npm i egg-view-nunjucks --save
@@ -239,7 +239,7 @@ module.exports = app => {
 Open a browser window and navigate to http://localhost:7001/news.
 You should be able to see the rendered page.
 
-**Tip：In development, Egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, Egg enables the [development][egg-development] plugin by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -392,7 +392,7 @@ it is inevitable that we need to manage configurations.
 Egg provides a powerful way to manage them in a merged configuration file.
 
 - Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.
-- Configurations could be set wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will be careful to merge and load them.
+- Configurations could be set wherever convenient for Applications/Plugins/Framesworks, and Egg will be careful to merge and load them.
 - For more information on merging, see [Configurations](../basics/config.md).
 
 ```js

@@ -295,7 +295,7 @@ exports.httpclient = {
     // default enable http KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created
@@ -308,7 +308,7 @@ exports.httpclient = {
     // default enable https KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created
@@ -773,7 +773,7 @@ app.httpclient.on('response', result => {
 
 ## Example
 
-Full examples can be found on [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
+Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js

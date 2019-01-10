@@ -29,9 +29,9 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect(200)
         .expect('app watch success');
 
-      await sleep(3000);
+      await sleep(5000);
       fs.writeFileSync(file_path1, 'aaa');
-      await sleep(3000);
+      await sleep(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -43,7 +43,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         });
 
       fs.writeFileSync(file_path2, 'aaa');
-      await sleep(3000);
+      await sleep(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -63,7 +63,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
-      await sleep(3000);
+      await sleep(5000);
 
       await app.httpRequest()
         .get('/agent-msg')

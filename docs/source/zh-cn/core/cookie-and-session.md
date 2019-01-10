@@ -129,6 +129,21 @@ Session 的使用方法非常直观，直接读取它或者修改它就可以了
 ctx.session = null;
 ```
 
+需要 **特别注意** 的是：设置 session 属性时需要避免以下几种情况（会造成字段丢失，详见 [koa-session](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47) 源码）
+
+
+* 不要以 `_` 开头
+* 不能为 `isNew`
+
+```js
+// ❌ 错误的用法
+ctx.session._visited = 1;   //    --> 该字段会在下一次请求时丢失
+ctx.session.isNew = 'HeHe'; //    --> 为内部关键字, 不应该去更改
+
+// ✔️ 正确的用法
+ctx.session.visited = 1;    //   -->  此处没有问题
+```
+
 Session 的实现是基于 Cookie 的，默认配置下，用户 Session 的内容加密后直接存储在 Cookie 中的一个字段中，用户每次请求我们网站的时候都会带上这个 Cookie，我们在服务端解密后使用。Session 的默认配置如下：
 
 ```js

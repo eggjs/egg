@@ -310,19 +310,115 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 **A common mistake is to confuse `ctx.request.body` and `ctx.body`(which is alias for `ctx.response.body`).**
 
-### Acquire Uploaded Files
+### Acquire the submitted files
 
-Request body not only can take parameters, but also send files. and browsers usually send file in `Multipart/form-data` type. The uploaded files can be acquired by the framework built-in plugin [Multipart](https://github.com/eggjs/egg-multipart).
+The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
-For full example, see [eggjs/examples/multipart](https://github.com/eggjs/examples/tree/master/multipart).
+- #### `File` Mode:
+If you have no ideas about Nodejs's Stream at all, the `File` mode suits you well:
 
-In Controller, we can acquire the file stream of the uploaded file through interface `ctx.getFileStream()`.
+1) In your config file, enable `file` mode first:
+```js
+// config/config.default.js
+exports.multipart = {
+  mode: 'file',
+};
+```
+
+2) Submitting / Acquiring files:
+
+1. For single file:
+
+Your HTML static front-end codes should look like this below:
+```html
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
+  title: <input name="title" />
+  file: <input name="file" type="file" />
+  <button type="submit">Upload</button>
+</form>
+```
+The corresponding backend codes are:
+```js
+// app/controller/upload.js
+const Controller = require('egg').Controller;
+const fs = require('mz/fs');
+
+module.exports = class extends Controller {
+  async upload() {
+    const { ctx } = this;
+    const file = ctx.request.files[0];
+    const name = 'egg-multipart-test/' + path.basename(file.filename);
+    let result;
+    try {
+      // process file (e.g: upload to cloud storage)
+      result = await ctx.oss.put(name, file.filepath);
+    } finally {
+      // need to remove the tmp file
+      await fs.unlink(file.filepath);
+    }
+
+    ctx.body = {
+      url: result.url,
+      // get all field values
+      requestBody: ctx.request.body,
+    };
+  }
+};
+```
+
+2. For multiple files:
+
+For multiple files, with the help of `ctx.request.files`, we can loop each of them and do what process we like:
+
+Your HTML static front-end codes should look like this below:
+```html
+<form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
+  title: <input name="title" />
+  file1: <input name="file1" type="file" />
+  file2: <input name="file2" type="file" />
+  <button type="submit">Upload</button>
+</form>
+```
+The corresponding backend codes are:
+```js
+// app/controller/upload.js
+const Controller = require('egg').Controller;
+const fs = require('mz/fs');
+
+module.exports = class extends Controller {
+  async upload() {
+    const { ctx } = this;
+    console.log(ctx.request.body);
+    console.log('got %d files', ctx.request.files.length);
+    for (const file of ctx.request.files) {
+      console.log('field: ' + file.fieldname);
+      console.log('filename: ' + file.filename);
+      console.log('encoding: ' + file.encoding);
+      console.log('mime: ' + file.mime);
+      console.log('tmp filepath: ' + file.filepath);
+      let result;
+      try {
+        // process file (e.g: upload to cloud storage)
+        result = await ctx.oss.put('egg-multipart-test/' + file.filename, file.filepath);
+      } finally {
+        // need to remove the tmp file
+        await fs.unlink(file.filepath);
+      }
+      console.log(result);
+    }
+  }
+};
+```
+- #### `Stream` Mode
+If you are very familiar with `Stream` in Nodejs, you can choose this way. In a controller, we can fetch the uploaded files through `ctx.getFileStream()`.
+
+1. For single file：
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
   title: <input name="title" />
   file: <input name="file" type="file" />
-  <button type="submit">上传</button>
+  <button type="submit">Upload</button>
 </form>
 ```
 
@@ -336,33 +432,35 @@ class UploaderController extends Controller {
     const ctx = this.ctx;
     const stream = await ctx.getFileStream();
     const name = 'egg-multipart-test/' + path.basename(stream.filename);
-    // file processing, e.g. uploading to the cloud storage etc.
     let result;
     try {
+      // process file (e.g: upload to cloud storage)
       result = await ctx.oss.put(name, stream);
     } catch (err) {
-      // must consume the file stream, or the browser will get stuck
+      // You MUST consume the file stream, otherwises the browser cannot response any more
       await sendToWormhole(stream);
       throw err;
     }
 
     ctx.body = {
       url: result.url,
-      // all form fields can be acquired by `stream.fields`
+      // All the fields in the form can be fetched through `stream.fields`
       fields: stream.fields,
     };
   }
-};
+}
 
 module.exports = UploaderController;
 ```
 
-To acquire user uploaded files conveniently by `ctx.getFileStream`, two conditions must be matched:
+To acquire the uploaded files easily, there're two conditions at least:
 
-- only one file can be uploaded at the same time.
-- file uploading must appear after other fields, otherwise we may can't access fields when we got file stream.
+- Only ONE file per time.
+- The field of uploading file MUST be after the other fields in a form, otherwise you cannot get other fields after getting the file stream.
 
-If more than one files are to be uploaded at the same time, `ctx.getFileStream()` is no longer the way but the following:
+2. For multiple files:
+
+For multiple files, you should do the following instead of using `ctx.getFileStream()`:
 
 ```js
 const sendToWormhole = require('stream-wormhole');
@@ -376,28 +474,30 @@ class UploaderController extends Controller {
     // parts() return a promise
     while ((part = await parts()) != null) {
       if (part.length) {
-        // it is field in case of arrays
+        // arrays are busboy fields
         console.log('field: ' + part[0]);
         console.log('value: ' + part[1]);
         console.log('valueTruncated: ' + part[2]);
         console.log('fieldnameTruncated: ' + part[3]);
       } else {
         if (!part.filename) {
-          // it occurs when user clicks on the upload without selecting the ile(part represents file, while part.filename is empty)
-          // more process should be taken, like giving an error message
+          // When a user clicks `upload` before choosing a file,
+          // `part` will be file stream, but `part.filename` is empty.
+          // We must handler this by notifying the user that he/she should
+          // choose a file before submitting
           return;
         }
-        // part represents the file stream uploaded
+        // otherwise, it's a fully-filled stream
         console.log('field: ' + part.fieldname);
         console.log('filename: ' + part.filename);
         console.log('encoding: ' + part.encoding);
         console.log('mime: ' + part.mime);
-        // file processing, e.g. uploading to the cloud storage etc.
         let result;
         try {
+          // process file (e.g: upload to cloud storage)
           result = await ctx.oss.put('egg-multipart-test/' + part.filename, part);
         } catch (err) {
-          // must consume the file stream, or the browser will get stuck
+          // You MUST consume the file stream, otherwises the browser cannot response any more
           await sendToWormhole(part);
           throw err;
         }
@@ -406,12 +506,12 @@ class UploaderController extends Controller {
     }
     console.log('and we are done parsing the form!');
   }
-};
+}
 
 module.exports = UploaderController;
 ```
 
-To ensure the security of uploading files, the framework limits the formats of supported file and the whitelist supported by default is below:
+The framework also has the limits for the safety of uploading files, the default white list is:
 
 ```js
 // images
@@ -439,29 +539,31 @@ To ensure the security of uploading files, the framework limits the formats of s
 '.avi',
 ```
 
-New file extensions can be added by configuring the `config/config.default.js` file or rewriting the whole whitelist.
+Users can add new file extensions in `config/config.default.js`, or rewrite a whole white list:
 
-- add new file extensions
-
-```js
-module.exports = {
-  multipart: {
-    fileExtensions: [ '.apk' ], // supports .apk file extension
-  },
-};
-```
-
-- overwrite the whole whitelist
+- Newly-added a file extension:
 
 ```js
 module.exports = {
   multipart: {
-    whitelist: [ '.png' ], // overwrite the whole whitelist, only '.png' is allowed to be uploaded
+    fileExtensions: [ '.apk' ], // Add support for apk files
   },
 };
 ```
 
-**Note: when the whitelist attribute is used, the fileExtensions attribute will be discarded.**
+- Overwriting a whole white list:
+
+```js
+module.exports = {
+  multipart: {
+    whitelist: [ '.png' ] // ONLY files of png is allowed
+  },
+};
+```
+
+**Notice：`fileExtensions` will be IGNORED when `whitelist` is overwritten.**
+
+For more tech details about this, please refer [Egg-Multipart](https://github.com/eggjs/egg-multipart).
 
 ### header
 

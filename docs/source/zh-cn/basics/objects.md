@@ -11,7 +11,7 @@ Application 是全局应用对象，在一个应用中，只会实例化一个�
 
 在框架运行时，会在 Application 实例上触发一些事件，应用开发者或者插件开发者可以监听这些事件做一些操作。作为应用开发者，我们一般会在[启动自定义脚本](./app-start.md)中进行监听。
 
-- `server`: 该事件一个 worker 进程只会触发一次，在 HTTP 服务完成启动后，会将 HTTP server 通过这个事件暴露出来给开发者。
+- `server`: 该事件一个 worker 进程只会触发一次，在 HTTP 服务完成启动后，会将 HTTP server 通过这个事件暴露出来给开发者。
 - `error`: 运行时有任何的异常被 onerror 插件捕获后，都会触发 `error` 事件，将错误对象和关联的上下文（如果有）暴露给开发者，可以进行自定义的日志记录上报等处理。
 - `request` 和 `response`: 应用收到请求和响应请求时，分别会触发 `request` 和 `response` 事件，并将当前请求上下文暴露出来，开发者可以监听这两个事件来进行日志记录。
 
@@ -57,7 +57,7 @@ Application 对象几乎可以在编写应用时的任何一个地方获取到�
   // app/controller/user.js
   class UserController extends Controller {
     async fetch() {
-      this.ctx.body = app.cache.get(this.ctx.query.id);
+      this.ctx.body = this.app.cache.get(this.ctx.query.id);
     }
   }
   ```
@@ -262,7 +262,7 @@ module.exports = {
 
 ## Logger
 
-框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 5 个级别的方法：
+框架内置了功能强大的[日志功能](../core/logger.md)，可以非常方便的打印各种级别的日志到对应的日志文件中，每一个 logger 对象都提供了 4 个级别的方法：
 
 - `logger.debug()`
 - `logger.info()`

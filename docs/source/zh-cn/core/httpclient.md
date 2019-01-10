@@ -301,7 +301,7 @@ exports.httpclient = {
     // 默认开启 http KeepAlive 功能
     keepAlive: true,
     // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
     timeout: 30000,
     // 允许创建的最大 socket 数
@@ -314,7 +314,7 @@ exports.httpclient = {
     // 默认开启 https KeepAlive 功能
     keepAlive: true,
     // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
     timeout: 30000,
     // 允许创建的最大 socket 数
@@ -783,7 +783,7 @@ app.httpclient.on('response', result => {
 
 ## 示例代码
 
-完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
+完整示例代码可以在 [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js

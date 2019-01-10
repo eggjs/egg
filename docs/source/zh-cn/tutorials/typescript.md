@@ -44,7 +44,7 @@ $ npm run dev
 * Egg 目前没有计划使用 TS 重写。
 * Egg 以及它对应的插件，会提供对应的 `index.d.ts` 文件方便开发者使用。
 * TypeScript 只是其中一种社区实践，我们通过工具链给予一定程度的支持。
-* TypeScript 最低要求 2.8+ 版本。
+* TypeScript 最低要求：版本 2.8。
 
 整体目录结构上跟 Egg 普通项目没啥区别:
 
@@ -74,7 +74,7 @@ showcase
 └── tslint.json
 ```
 
-### Controller
+### 控制器（Controller）
 
 ```typescript
 // app/controller/home.ts
@@ -90,7 +90,7 @@ export default class HomeController extends Controller {
 }
 ```
 
-### Router
+### 路由（Router）
 
 ```typescript
 // app/router.ts
@@ -102,7 +102,7 @@ export default (app: Application) => {
 };
 ```
 
-### Service
+### 服务（Service）
 
 ```typescript
 // app/service/news.ts
@@ -120,38 +120,81 @@ export interface NewsItem {
 }
 ```
 
-### Middleware
+### 中间件（Middleware）
 
 ```typescript
-// app/middleware/robot.ts
 
 import { Context } from 'egg';
 
-export default function robotMiddleware() {
-  return async (ctx: Context, next: any) => {
+// 这里是你自定义的中间件
+export default function fooMiddleware(): any {
+  return async (ctx: Context, next: () => Promise<any>) => {
+    // 你可以获取 config 的配置：
+    // const config = ctx.app.config;
+    // config.xxx....
     await next();
   };
 }
 ```
 
-因为 Middleware 定义是支持入参的，第一个参数为同名的 Config，如有需求，可以用完整版：
+当某个 Middleware 文件的名称与 config 中某个属性名一致时，Middleware 会自动把这个属性下的所有配置读取过来。
+
+我们假定你有一个 Middleware，名称是 uuid，其 config.default.js 中配置如下：
+
+```javascript
+'use strict';
+
+import { EggAppConfig, PowerPartial } from 'egg';
+
+export default function(appInfo: EggAppConfig) {
+  const config = {} as PowerPartial<EggAppConfig>;
+
+  config.keys = appInfo.name + '123123';
+
+  config.middleware = ['uuid'];
+
+  config.security = {
+    csrf: {
+      ignore: '123',
+    },
+  };
+
+  const bizConfig = {
+    local: {
+      msg: 'local',
+    },
+
+    uuid: {
+      name: 'ebuuid',
+      maxAge: 1000 * 60 * 60 * 24 * 365 * 10,
+    },
+  };
+
+  return {
+    ...config,
+    ...bizConfig,
+  };
+}
+
+```
+在对应的 uuid 中间件中：
 
 ```typescript
-// app/middleware/news.ts
+// app/middleware/uuid.ts
 
-import { Context, Application } from 'egg';
-import { BizConfig } from '../../config/config.default';
+import { Context, Application, EggAppConfig } from 'egg';
 
-// 注意，这里必须要用 ['news'] 而不能用 .news，因为 BizConfig 是 type，不是实例
-export default function newsMiddleware(options: BizConfig['news'], app: Application) {
+export default function uuidMiddleWare(options: EggAppConfig['uuid'], app: Application): any {
   return async (ctx: Context, next: () => Promise<any>) => {
-    console.info(options.serverUrl);
+    // name 就是 config.default.js 中 uuid 下的属性
+    console.info(options.name);
     await next();
   };
 }
 ```
+**注意：Middleware 目前返回值必须都是 `any`，否则使用 route.get/all 等方法的时候因为 Koa 的 `IRouteContext` 和 Egg 自身的 `Context` 不兼容导致编译报错。**
 
-### Extend
+### 扩展（Extend）
 
 ```typescript
 // app/extend/context.ts
@@ -171,7 +214,7 @@ export default app => {
 };
 ```
 
-### Config
+### 配置（Config）
 
 `Config` 这块稍微有点复杂，因为要支持：
 
@@ -246,7 +289,7 @@ type PowerPartial<T> = {
 };
 ```
 
-### Plugin
+### 插件（Plugin）
 
 ```javascript
 // config/plugin.ts
@@ -263,7 +306,53 @@ const plugin: EggPlugin = {
 export default plugin;
 ```
 
-### Typings
+### 生命周期（Lifecycle）
+
+```typescript
+// app/app.ts
+import { Application, IBoot } from 'egg';
+
+export default class FooBoot implements IBoot {
+  private readonly app: Application;
+
+  constructor(app: Application) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
+  }
+
+  configDidLoad() {
+    // Config, plugin files have loaded.
+  }
+
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready.
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+```
+
+### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
 
@@ -314,11 +403,11 @@ declare module 'egg' {
 
 只需配置下 `package.json` :
 
-```javascript
+```json
 {
-  "devDependencies": {
+  "devDependencies": {
     "egg-ts-helper": "^1"
-  },
+  },
   "scripts": {
     "dev": "egg-bin dev -r egg-ts-helper/register",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -331,7 +420,7 @@ declare module 'egg' {
 
 > 后续该工具也会考虑支持  js 版 egg 应用的分析，可以一定程度上提升 js 开发体验。
 
-### Unit Test && Cov
+### 单元测试和覆盖率（Unit Test and Cov）
 
 单元测试当然少不了：
 
@@ -359,7 +448,7 @@ describe('test/app/service/news.test.js', () => {
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test -r egg-ts-helper/register",
@@ -369,13 +458,13 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-### Debug
+### 调试（Debug）
 
 断点调试跟之前也没啥区别，会自动通过 `sourcemap` 断点到正确的位置。
 
 ```json
 {
-  "name": "showcase",
+  "name": "showcase",
   "scripts": {
     "debug": "egg-bin debug -r egg-ts-helper/register",
     "debug-test": "npm run test-local -- --inspect"
@@ -388,9 +477,9 @@ describe('test/app/service/news.test.js', () => {
 
 ---
 
-## 部署
+## 部署（Deploy）
 
-### 构建
+### 构建（Build）
 
 * 正式环境下，我们更倾向于把 ts 构建为 js ，建议在 `ci` 上构建并打包。
 
@@ -400,13 +489,13 @@ describe('test/app/service/news.test.js', () => {
 {
   "egg": {
     "typescript": true
-  }，
+  },
   "scripts": {
-    "start": "egg-scripts start --title=egg-server-showcase",
+    "start": "egg-scripts start --title=egg-server-showcase",
     "stop": "egg-scripts stop --title=egg-server-showcase",
-    "tsc": "ets && tsc -p tsconfig.json",
+    "tsc": "ets && tsc -p tsconfig.json",
     "ci": "npm run lint && npm run cov && npm run tsc",
-    "clean": "ets clean"
+    "clean": "ets clean"
   }
 }
 ```
@@ -440,18 +529,15 @@ describe('test/app/service/news.test.js', () => {
   },
   "exclude": [
     "app/public",
-    "app/web",
+    "app/web",
     "app/views"
   ]
 }
 ```
 
-**注意：**
+**注意：当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。**
 
-* **当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。**
-* 因此在开发期， `egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。
-
-### 错误堆栈
+### 错误堆栈（Error Stack）
 
 线上服务的代码是经过编译后的 js，而我们期望看到的错误堆栈是指向 TS 源码。
 因此：
@@ -466,7 +552,7 @@ describe('test/app/service/news.test.js', () => {
 
 ---
 
-## 插件/框架开发指南
+## 插件 / 框架开发指南
 
 **指导原则：**
 

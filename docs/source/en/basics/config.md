@@ -115,7 +115,7 @@ extend(true, a, b);
 ```
 As demonstrated above, the framework will overwrite arrays instead of merging them.
 
-## Configuration result
+### Configuration result
 
 The final merged config will be dumped to `run/application_config.json`(for worker process) and `run/agent_config.json`(for agent process) when the framework started, which can help analyzing problems.
 

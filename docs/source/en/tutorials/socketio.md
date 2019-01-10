@@ -50,9 +50,11 @@ exports.io = {
 
 > Namespaces are `/` and `/ example`, not`example`
 
-**uws:**
+#### uws
 
-If you want to use [uws] instead of the default `ws` you can do the following configuration
+**Egg's socket is using `ws`, [uws](https://www.npmjs.com/package/uws) is deprecated due to [some reasons](https://github.com/socketio/socket.io/issues/3319).**
+		
+If you insist using [uws](https://www.npmjs.com/package/uws) instead of the default `ws`, you can config like this:
 
 ```js
 // {app_root} / config / config. $ {env} .js
@@ -61,9 +63,7 @@ exports.io = {
 };
 ```
 
-> As µWS engine has been deprecated, maybe you should consider the default engine.
-
-**redis:**
+#### redis
 
 [egg-socket.io] has built-in redis support via `socket.io-redis`. In cluster mode, the use of redis can make it relatively simple to achieve information sharing of clients/rooms and so on
 
@@ -82,7 +82,7 @@ exports.io = {
 > When `redis` is turned on, the program tries to connect to the redis server at startup
 > Here `redis` is only used to store connection instance information, see [# server.adapter](https://socket.io/docs/server-api/#server-adapter-value)
 
-**note:**
+**Note:**
 If the project also uses the `egg-redis`, please configure it separately. Do not share it.
 
 ### Deployment
@@ -145,7 +145,7 @@ Middleware has the following two scenarios:
 
 It is configured in each namespace, respectively, according to the scenarios given above.
 
-**note:**
+**Note:**
 
 If we enable the framework middleware, you will find the following directory in the project:
 
@@ -267,7 +267,7 @@ module.exports = app => {
 };
 ```
 
-**note:**
+**Note:**
 
 Nsp has the following system events:
 

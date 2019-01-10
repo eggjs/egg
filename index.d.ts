@@ -2,9 +2,11 @@ import * as accepts from 'accepts';
 import * as KoaApplication from 'koa';
 import * as KoaRouter from 'koa-router';
 import { EventEmitter } from 'events'
-import { RequestOptions } from 'urllib';
 import { Readable } from 'stream';
 import { Socket } from 'net';
+import { IncomingMessage, ServerResponse } from 'http';
+import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
+import { HttpClient2, RequestOptions } from 'urllib';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -25,6 +27,13 @@ declare module 'egg' {
 
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
+
+  class EggHttpClient extends HttpClient2 {
+    constructor(app: Application);
+  }
+  class EggContextHttpClient extends HttpClient2 {
+    constructor(ctx: Context);
+  }
 
   /**
    * BaseContextClass is a base class that can be extended,
@@ -55,16 +64,9 @@ declare module 'egg' {
     /**
      * logger
      */
-    logger: Logger;
+    logger: EggLogger;
 
     constructor(ctx: Context);
-  }
-
-  export interface Logger {
-    info(msg: any, ...args: any[]): void;
-    warn(msg: any, ...args: any[]): void;
-    debug(msg: any, ...args: any[]): void;
-    error(msg: any, ...args: any[]): void;
   }
 
   export type RequestArrayBody = any[];
@@ -184,7 +186,7 @@ declare module 'egg' {
     renderString(name: string, locals?: any, options?: any): Promise<string>;
   }
 
-  export type LoggerLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR' | 'NONE';
+  export type LoggerLevel = EggLoggerLevel;
 
   /**
    * egg app info
@@ -208,6 +210,9 @@ declare module 'egg' {
     HOME: string; // home directory of the OS
     root: string; // baseDir when local and unittest, HOME when other environment
   }
+
+  type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
+  type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
   export interface EggAppConfig {
     workerStartTimeout: number;
@@ -236,17 +241,19 @@ declare module 'egg' {
       encoding: string;
       formLimit: string;
       jsonLimit: string;
-      strict: true;
+      strict: boolean;
       queryString: {
         arrayLimit: number;
         depth: number;
         parameterLimit: number;
       };
+      ignore: IgnoreOrMatch;
+      match: IgnoreOrMatch;
       enableTypes: string[];
       extendTypes: {
-        json?: string[];
-        form?: string[];
-        text?: string[];
+        json: string[];
+        form: string[];
+        text: string[];
       };
     };
 
@@ -285,7 +292,8 @@ declare module 'egg' {
 
     httpclient: {
       keepAlive: boolean;
-      freeSocketKeepAliveTimeout: number;
+      freeSocketKeepAliveTimeout?: number;
+      freeSocketTimeout: number;
       timeout: number;
       maxSockets: number;
       maxFreeSockets: number;
@@ -440,6 +448,15 @@ declare module 'egg' {
 
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
 
+    /**
+     * server timeout in milliseconds, default to 2 minutes.
+     *
+     * for special request, just use `ctx.req.setTimeout(ms)`
+     *
+     * @see https://nodejs.org/api/http.html#http_server_timeout
+     */
+    serverTimeout: number | null;
+
     [prop: string]: any;
   }
 
@@ -488,11 +505,6 @@ declare module 'egg' {
     env: EggEnvType;
 
     /**
-     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
-     */
-    coreLogger: Logger;
-
-    /**
      * Alias to https://npmjs.com/package/depd
      */
     deprecate: any;
@@ -500,7 +512,7 @@ declare module 'egg' {
     /**
      * HttpClient instance
      */
-    httpclient: any;
+    httpclient: EggHttpClient;
 
     /**
      * The loader instance, the default class is EggLoader. If you want define
@@ -518,12 +530,17 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * core logger for framework and plugins, log file is $HOME/logs/{appname}/egg-web
+     */
+    coreLogger: EggLogger;
 
     /**
      * All loggers contain logger, coreLogger and customLogger
      */
-    loggers: { [loggerName: string]: Logger };
+    loggers: EggLoggers;
 
     /**
      * messenger instance
@@ -537,8 +554,6 @@ declare module 'egg' {
      */
     router: Router;
 
-    Service: Service;
-
     /**
      * Whether `application` or `agent`
      */
@@ -548,6 +563,11 @@ declare module 'egg' {
      * create a singleton instance
      */
     addSingleton(name: string, create: any): void;
+
+    /**
+     * Register a function that will be called when app close
+     */
+    beforeClose(fn: () => void): void;
 
     /**
      * Excute scope after loaded and before app start
@@ -574,12 +594,12 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl(url: string, opt?: RequestOptions): Promise<any>;
+    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
 
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
      */
-    getLogger(name: string): Logger;
+    getLogger(name: string): EggLogger;
 
     /**
      * print the infomation when console.log(app)
@@ -590,6 +610,26 @@ declare module 'egg' {
      * Alias to Router#url
      */
     url(name: string, params: any): any;
+
+    /**
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {String} EggApplication#createAnonymousContext
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {Context} context
+     */
+    createAnonymousContext(req?: Request): Context;
+
+    /**
+     * export context base classes, let framework can impl sub class and over context extend easily.
+     */
+    ContextCookies: typeof EggCookies;
+    ContextLogger: typeof EggContextLogger;
+    ContextHttpClient: typeof EggContextHttpClient;
+    HttpClient: typeof EggHttpClient;
+    Subscription: typeof Subscription;
+    Controller: typeof Controller;
+    Service: typeof Service;
   }
 
   export type RouterPath = string | RegExp;
@@ -635,18 +675,7 @@ declare module 'egg' {
 
     controller: IController;
 
-    Controller: Controller;
-
     middleware: KoaApplication.Middleware[] & IMiddleware;
-
-    /**
-     * Create an anonymous context, the context isn't request level, so the request is mocked.
-     * then you can use context level API like `ctx.service`
-     * @member {String} Application#createAnonymousContext
-     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
-     * @return {Context} context
-     */
-    createAnonymousContext(req?: Request): Context;
 
     /**
      * Run async function in the background
@@ -681,11 +710,24 @@ declare module 'egg' {
   * the egg's Context interface, which is wrong here because we have our own
   * special properties (e.g: encrypted). So we must remove this property and
   * create our own with the same name.
+  * @see https://github.com/eggjs/egg/pull/2958
+  * 
+  * However, the latest version of Koa has "[key: string]: any" on the
+  * context, and there'll be a type error for "keyof koa.Context".
+  * So we have to directly inherit from "KoaApplication.BaseContext" and
+  * rewrite all the properties to be compatible with types in Koa.
+  * @see https://github.com/eggjs/egg/pull/3329
   */
-  export interface Context extends RemoveSpecProp<KoaApplication.Context, 'cookies'> {
+  export interface Context extends KoaApplication.BaseContext {
     [key: string]: any;
 
     app: Application;
+
+    // properties of koa.Context
+    req: IncomingMessage;
+    res: ServerResponse;
+    originalUrl: string;
+    respond?: boolean;
 
     service: IService;
 
@@ -754,8 +796,7 @@ declare module 'egg' {
     realStatus: number;
 
     /**
-     * 设置返回资源对象
-     * set the ctx.body.data value
+     * Set the ctx.body.data value
      *
      * @member {Object} Context#data=
      * @example
@@ -849,7 +890,12 @@ declare module 'egg' {
      * this.logger.warn('WARNING!!!!');
      * ```
      */
-    logger: Logger;
+    logger: EggLogger;
+
+    /**
+     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
+     */
+    getLogger(name: string): EggLogger;
 
     /**
      * Request start time
@@ -866,12 +912,7 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl(url: string, opt?: RequestOptions): Promise<any>;
-
-    /**
-     * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
-     */
-    getLogger(name: string): Logger;
+    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
 
     /**
      * Render a file by view engine
@@ -1084,7 +1125,7 @@ declare module 'egg' {
     baseDir: string;
     typescript?: boolean;
     app: Application;
-    logger: Logger;
+    logger: EggLogger;
     plugins?: any;
   }
 
@@ -1123,4 +1164,43 @@ declare module 'egg' {
     load(): void;
   }
 
+  export interface IBoot {
+    /**
+     * Ready to call configDidLoad,
+     * Config, plugin files are referred,
+     * this is the last chance to modify the config.
+     */
+    configWillLoad?(): void;
+
+    /**
+     * Config, plugin files have loaded
+     */
+    configDidLoad?(): void;
+
+    /**
+     * All files have loaded, start plugin here
+     */
+    didLoad?(): Promise<void>;
+
+    /**
+     * All plugins have started, can do some thing before app ready
+     */
+    willReady?(): Promise<void>;
+
+    /**
+     * Worker is ready, can do some things,
+     * don't need to block the app boot
+     */
+    didReady?(): Promise<void>;
+
+    /**
+     * Server is listening
+     */
+    serverDidReady?(): Promise<void>;
+
+    /**
+     * Do some thing before app close
+     */
+    beforeClose?(): Promise<void>;
+  }
 }

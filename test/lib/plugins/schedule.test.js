@@ -17,9 +17,12 @@ describe('test/lib/plugins/schedule.test.js', () => {
     await sleep(7000);
     await app.close();
     const log = getLogContent('schedule');
-    const count = contains(log, 'cron');
+    const count = contains(log, 'cron wow');
     assert(count >= 1);
     assert(count <= 2);
+
+    // should support Subscription class on app.Subscription
+    assert(contains(log, 'Info about your task') === 1);
   });
 });
 

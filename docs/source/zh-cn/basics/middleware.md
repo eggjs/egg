@@ -232,8 +232,9 @@ module.exports = {
 match 和 ignore 支持多种类型的配置方式
 
 1. 字符串：当参数为字符串类型时，配置的是一个 url 的路径前缀，所有以配置的字符串作为前缀的 url 都会匹配上。
+当然，你也可以直接使用字符串数组。
 2. 正则：当参数为正则时，直接匹配满足正则验证的 url 的路径。
-3. 函数：当参数为一个函数时，会将请求上下文传递给这个函数，最终取函数返回的结果（ture/false）来判断是否匹配。
+3. 函数：当参数为一个函数时，会将请求上下文传递给这个函数，最终取函数返回的结果（true/false）来判断是否匹配。
 
 ```js
 module.exports = {
@@ -246,3 +247,5 @@ module.exports = {
   },
 };
 ```
+有关更多的 match 和 ignore 配置情况，详见
+[egg-path-matching](https://github.com/eggjs/egg-path-matching).

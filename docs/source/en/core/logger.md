@@ -134,9 +134,9 @@ Logs are designed in 5 levels, including `NONE`, `DEBUG`, `INFO`, `WARN` and `ER
 
 ### Levels
 
-Generally, Egg will only write logs in levels higher than `INFO`, so it means that `NONE` and `DEBUG` information will be lost in files.
+In production environment, Egg will only write logs with level `INFO` and higher, this means `NONE` and `DEBUG` information will be ignored in log files.
 
-If you want to change the level of the logger, you can make it as follow:
+If you want to change logger's default output level, modify in the config as follow:
 
 ```js
 // config/config.${env}.js

@@ -17,11 +17,11 @@ index:
   readmore: "查看更多"
 
 header:
-  translations: "Languages"
+  translations: "切换语言"
 
 guide_toc:
   Intro: 新手指南
-  What is Egg: Egg.js 是什么?
+  What is Egg: Egg.js 是什么？
   Egg and Koa: Egg.js 和 Koa
   Get Start: 快速入门
   Style Guide: 代码风格指南
@@ -32,9 +32,9 @@ guide_toc:
   Environment: 运行环境
   Config: 配置
   Middleware: 中间件
-  Router: Router
-  Controller: Controller
-  Service: Service
+  Router: 路由（Router）
+  Controller: 控制器（Controller）
+  Service: 服务（Service）
   Plugin: 插件
   Schedule: 定时任务
   Extend: 框架扩展
@@ -59,7 +59,7 @@ guide_toc:
   Framework: 框架开发
   Progressive: 渐进式开发
   Deployment: 应用部署
-  # Loader:
+  Loader: 加载器（Loader）
   Community: 社区
   Plugin List: 内置插件列表
   Contributing: 如何贡献

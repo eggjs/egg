@@ -216,6 +216,6 @@ module.exports = agent => {
 
 `ScheduleStrategy` 基类提供了：
 
-- `schedule` - 定时任务的属性，`disable`  是默认统一支持的，其他配置可以自行解析。
+- `schedule` - 定时任务的属性，`disable` 是默认统一支持的，其他配置可以自行解析。
 - `this.sendOne(...args)` - 随机通知一个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)`。
 - `this.sendAll(...args)` - 通知所有的 worker 执行 task。

@@ -11,6 +11,7 @@ declare module 'egg' {
 export default class FooController extends Controller {
   async getData() {
     try {
+      this.ctx.logger.info('getData');
       this.ctx.body = await this.ctx.service.foo.bar();
       this.ctx.proxy.foo.bar();
     } catch (e) {
@@ -24,5 +25,16 @@ export default class FooController extends Controller {
     } catch (e) {
       this.ctx.logger.error(e);
     }
+  }
+  async httpclient() {
+    await this.app.httpclient.request('url', {
+      method: 'POST',
+    });
+    await this.ctx.curl('url', {
+      method: 'POST',
+    });
+    await this.app.curl('url', {
+      method: 'POST',
+    });
   }
 }

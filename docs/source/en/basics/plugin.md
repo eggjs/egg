@@ -57,7 +57,7 @@ Then you need to declare it in the `config / plugin.js` application or framework
 
 ```js
 // config / plugin.js
-// Use mysql plug-in
+// Use mysql plugin
 exports.mysql = {
   enable: true,
   package: 'egg-mysql'
@@ -133,7 +133,7 @@ In this way, `npm i --production` in the production environment does not need to
 const path = require ('path');
 exports.mysql = {
   enable: true,
-  package: path.join (__ dirname, '../lib/plugin/egg-mysql'),
+  path: path.join(__dirname, '../lib/plugin/egg-mysql'),
 };
 ```
 
