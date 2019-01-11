@@ -116,8 +116,7 @@ module.exports = {
 - Init Migrations Configuration Files and Directories
 
 ```bash
-npx sequelize init:config
-npx sequelize init:migrations
+npx sequelize init
 ```
 
 After the execution, the `database/config.json` file and the `database/migrations`, `database/seeders`, `app/model` directories will be generated. We will modify the contents of `database/config.json`. It was changed to the database configuration used in our project:
