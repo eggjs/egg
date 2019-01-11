@@ -201,7 +201,7 @@ exports.logger = {
 };
 ```
 
-- `logger.disableConsoleAfterReady`: 在 egg ready 之后禁止终端日志的输出，在 env 为 local 和 unittest 的时候为 `false`，其他为 `true`。
+- 基于性能的考虑，在正式环境下，默认会关闭终端日志输出。如有需要，你可以通过下面的配置开启。（**不推荐**）
 
 强制开启终端日志（ 不推荐 ）：
 
