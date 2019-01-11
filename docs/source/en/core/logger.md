@@ -190,7 +190,7 @@ exports.logger = {
 };
 ```
 
-- `logger.disableConsoleAfterReady`: ( defaults to `false` on `local` and `unittest` env, others is `true` ) Disable console logger after app ready。
+- Based on performance considerations, console logger will be disabled after app ready at prod mode. however, you could enable it by config. (**Not Recommended**)
 
 Force to enable console logger（ not recommended ）：
 
