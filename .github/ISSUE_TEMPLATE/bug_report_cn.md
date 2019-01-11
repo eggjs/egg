@@ -18,7 +18,7 @@ assignees: ''
 ## 最小可复现仓库
 > 请使用 `egg-init --type=simple bug` 创建，并上传到你的 GitHub 仓库
 
-https://github.com/YOUR_REPOSITORY_URL
+<!-- https://github.com/YOUR_REPOSITORY_URL -->
 
 ## 复现步骤，错误日志以及相关配置
 
