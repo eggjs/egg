@@ -1,4 +1,4 @@
-title: controller
+title: Controller
 ---
 
 ## What is Controller
