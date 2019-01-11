@@ -201,7 +201,7 @@ module.exports = appInfo => {
    * logger options
    * @member Config#logger
    * @property {String} dir - directory of log files
-   * @property {String} encoding - log file encloding, defaults to utf8
+   * @property {String} encoding - log file encoding, defaults to utf8
    * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
    * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
    * @property {Boolean} disableConsoleAfterReady - disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`.
