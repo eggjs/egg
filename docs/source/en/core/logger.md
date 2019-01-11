@@ -168,7 +168,7 @@ exports.logger = {
 
 ### In terminal
 
-By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. ( Notice: It only works on `local` and `unittest` env )
+By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. (Notice: It only works on `local` and `unittest` env)
 
 - `logger.consoleLevel`: (default: `INFO`) Being defined as the logger level in terminal. Similarly, it can be changed as following:
 
@@ -190,9 +190,7 @@ exports.logger = {
 };
 ```
 
-- Based on performance considerations, console logger will be disabled after app ready at prod mode. however, you could enable it by config. (**Not Recommended**)
-
-Force to enable console logger（ not recommended ）：
+- Base on performance considerations, console logger will be disabled after app ready at prod mode. however, you can enable it by config. (**Not Recommended**)
 
 ```js
 // config/config.${env}.js
