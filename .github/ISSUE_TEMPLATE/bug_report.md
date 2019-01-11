@@ -14,7 +14,7 @@ A clear and concise description of what the bug is.
 > Provide a mini GitHub repository which can reproduce the issue.
 > Use `egg-init --type=simple bug` then upload to your GitHub
 
-https://github.com/YOUR_REPOSITORY_URL
+<!-- https://github.com/YOUR_REPOSITORY_URL -->
 
 ## How To Reproduce
 
