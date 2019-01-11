@@ -231,18 +231,18 @@ $ DEBUG=egg* npm run dev
 
 这样我们就可以通过 `npm run debug` 命令来断点调试应用。
 
-`egg-bin` 会智能选择调试协议，在 7.x 之后版本使用 [Inspector Protocol] 协议，低版本使用 [Legacy Protocol]。
+`egg-bin` 会智能选择调试协议，在 8.x 之后版本使用 [Inspector Protocol] 协议，低版本使用 [Legacy Protocol]。
 
 同时也支持自定义调试参数：
 
 ```bash
-$ egg-bin debug --proxy=9999 --inpsect=9229 --inspect-brk
+$ egg-bin debug --inpsect=9229
 ```
 
 - `master` 调试端口为 9229 或 5858（旧协议）
-- `agent` 调试端口固定为 5800
+- `agent` 调试端口固定为 5800，可以传递 `process.env.EGG_AGENT_DEBUG_PORT` 来自定义。
 - `worker` 调试端口为 `master` 调试端口递增。
-- 开发阶段 worker 在代码修改后会热重启，导致调试端口会自增，故 `egg-bin` 启动了代理服务，用户可以直接 attach 9999 端口即可，无需担心重启问题。
+- 开发阶段 worker 在代码修改后会热重启，导致调试端口会自增，参见下文的 IDE 配置以便自动重连。
 
 #### 环境配置
 
@@ -250,7 +250,7 @@ $ egg-bin debug --proxy=9999 --inpsect=9229 --inspect-brk
 
 #### 使用 [DevTools] 进行调试
 
-最新的 DevTools 只支持 [Inspector Protocol] 协议，故你需要使用 Node.js 7.x+ 的版本方能使用。
+最新的 DevTools 只支持 [Inspector Protocol] 协议，故你需要使用 Node.js 8.x+ 的版本方能使用。
 
 执行 `npm run debug` 启动：
 
@@ -289,11 +289,11 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
 
 #### 使用 [VSCode] 进行调试
 
-我们提供了一个 [vscode-eggjs] 扩展。
+可以通过 2 个方式：
 
-![VSCode](https://user-images.githubusercontent.com/227713/35954428-7f8768ee-0cc4-11e8-90b2-67e623594fa1.png)
+方式一：开启 VSCode 配置 `Debug: Toggle Auto Attach`，然后在 Terminal 执行 `npm run debug` 即可。
 
-如图，会自动生成配置文件 `.vscode/launch.json` 如下，然后 F5 一键启动即可。
+方式二：配置 VSCode 的 `.vscode/launch.json`，然后 F5 一键启动即可。（注意，需要关闭方式一中的配置）
 
 ```js
 // .vscode/launch.json
@@ -317,6 +317,11 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
   ]
 }
 ```
+
+我们也提供了一个 [vscode-eggjs] 扩展来自动生成配置。
+
+![VSCode](https://user-images.githubusercontent.com/227713/35954428-7f8768ee-0cc4-11e8-90b2-67e623594fa1.png)
+
 
 更多 VSCode Debug 用法可以参见文档: [Node.js Debugging in VS Code](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
