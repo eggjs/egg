@@ -226,19 +226,8 @@ export default app => {
 // app/config/config.default.ts
 import { EggAppInfo, EggAppConfig, PowerPartial } from 'egg';
 
-// 提供给 config.{env}.ts 使用
-export type DefaultConfig = PowerPartial<EggAppConfig & BizConfig>;
-
-// 应用本身的配置 Scheme
-export interface BizConfig {
-  news: {
-    pageSize: number;
-    serverUrl: string;
-  };
-}
-
 export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig> & BizConfig;
+  const config = {} as PowerPartial<EggAppConfig>;
 
   // 覆盖框架，插件的配置
   config.keys = appInfo.name + '123456';
@@ -250,23 +239,32 @@ export default (appInfo: EggAppInfo) => {
   };
 
   // 应用本身的配置
-  config.news = {
+  const bizConfig = {};
+  bizConfig.news = {
     pageSize: 30,
     serverUrl: 'https://hacker-news.firebaseio.com/v0',
   };
 
-  return config;
+  // 目的是将业务配置属性合并到 EggAppConfig 中返回
+  return {
+    // 如果直接返回 config ，将该类型合并到 EggAppConfig 的时候可能会出现 circulate type 错误。
+    ...config as {},
+    ...bizConfig,
+  };
 };
 ```
 
-简单版：
+注意，上面这种写法，将 config.default.ts 中返回的配置类型合并到 egg 的 EggAppConfig 类型中需要 egg-ts-helper 的配合。
+
+当 EggAppConfig 合并 config.default.ts 的类型后，在其他 config.{env}.ts 中这么写就也可以获得在 config.default.ts 定义的自定义配置的智能提示：
 
 ```typescript
 // app/config/config.local.ts
-import { DefaultConfig } from './config.default';
+import { EggAppConfig, } from 'egg';
 
 export default () => {
-  const config: DefaultConfig = {};
+  const config = {} as PowerPartial<EggAppConfig>;
+  // 这里就可以获得 news 的智能提示了
   config.news = {
     pageSize: 20,
   };
@@ -416,9 +414,27 @@ declare module 'egg' {
 }
 ```
 
+在最新版本的 egg-bin 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置
+
+```json
+{
+  "devDependencies": {
+    "egg-ts-helper": "^1"
+  },
+  "egg": {
+    "require": [ "egg-ts-helper/register" ]
+  },
+  "scripts": {
+    "dev": "egg-bin dev",
+    "test-local": "egg-bin test",
+    "clean": "ets clean"
+  }
+}
+```
+
 开发期将自动生成对应的 `d.ts` 到 `typings/{app,config}/` 下，**请勿自行修改，避免被覆盖**。
 
-> 后续该工具也会考虑支持  js 版 egg 应用的分析，可以一定程度上提升 js 开发体验。
+目前该工具已经能支持 ts 以及 js 的 egg 项目，均能获得相应的智能提示。
 
 ### 单元测试和覆盖率（Unit Test and Cov）
 
@@ -568,6 +584,7 @@ describe('test/app/service/news.test.js', () => {
 ```typescript
 // {plugin_root}/index.d.ts
 
+import 'egg';
 import News from '../../../app/service/News';
 
 declare module 'egg' {
@@ -631,3 +648,107 @@ export default class NewsService extends Service {
   }
 }
 ```
+
+## 常见问题
+
+汇集一些有不少人提过的 issue 问题并统一解答。
+
+### 运行 npm start 不会加载 ts 
+
+npm start 运行的是 `egg-scripts start`，而我们只在 egg-bin 中集成了 ts-node，也就是只有在使用 egg-bin 的时候才允许直接运行 ts 。
+
+egg-scripts 是用于在生产环境下运行 egg 的 cli ，在生产环境下我们建议将 ts 编译成 js 之后再运行，毕竟在线上是需要考虑应用的健壮性和性能的，因此不建议在线上环境使用 ts-node 来运行应用。
+
+而在开发期 ts-node 能降低 tsc 编译产生的文件带来的管理成本，并且 ts-node 带来的性能损耗在开发期几乎可以忽略，所以我们在 egg-bin 集成了 ts-node。
+
+总结：如果项目需要在线上运行，请先使用 tsc 将 ts 编译成 js （ `npm run tsc` ）再运行 `npm start`。
+
+### 使用了 egg 插件后发现没有对应插件挂载的对象
+
+遇到该问题，一般是两种原因：
+
+**1. 该 egg 插件未定义 d.ts 。**
+
+如果要在插件中将某个对象挂载到 egg 的类型中，需要按照上面写的 `插件 / 框架开发指南` 补充声明文件到对应插件中。
+
+如果需要上线想快速解决这个问题，可以直接在项目下新建个声明文件来解决。比如我使用了 `egg-dashboard` 这个插件，这个插件在 egg 的 app 中挂载了个 dashboard 对象，但是这个插件没有声明，直接使用 `app.dashboard` 又会有类型错误，我又急着解决该问题，就可以在项目下的 typings 目录下新建个 `index.d.ts` ，并且写入以下内容
+
+```typescript
+// typings/index.d.ts
+
+import 'egg';
+
+declare module 'egg' {
+  interface Application {
+    dashboard: any;
+  }
+}
+```
+
+即可解决，当然，我们更期望你能给缺少声明的插件提 PR 补声明，方便你我他。
+
+**2. egg 插件定义了 d.ts ，但是没有引入。**
+
+如果 egg 插件中正确无误定义了 d.ts ，也需要在应用或者框架层显式 import 之后 ts 才能加载到对应类型。
+
+如果使用了 egg-ts-helper ，egg-ts-helper 会自动根据应用中开启了什么插件从而生成显式 import 插件的声明。如果未使用，就需要开发者自行在 `d.ts` 中显式 import 对应插件。
+
+```typescript
+// typings/index.d.ts
+
+import 'egg-dashboard';
+```
+
+注意：必须在 d.ts 中 import ，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。
+
+### 在 tsconfig.json 中配置了 paths 无效
+
+这个严格来说不属于 egg 的问题，但是问的人不少，因此也在此解答一下。原因是 tsc 将 ts 编译成 js 的时候，并不会去转换 import 的模块路径，因此当你在 tsconfig.json 中配置了 paths 之后，如果你在 ts 中使用 paths 并 import 了对应模块，编译成 js 的时候就有大概率出现模块找不到的情况了。
+
+解决办法是，要么不用 paths ，要么使用 paths 的时候只用来 import 一些声明而非具体值，再要么就可以使用 [tsconfig-paths](https://github.com/dividab/tsconfig-paths) 来 hook 掉 node 中的模块路径解析逻辑，从而支持 tsconfig.json 中的 paths。
+
+使用 tsconfig-paths 可以直接在 config/plugin.ts 中引入，因为 plugin.ts 不管在 App 中还是在 Agent 中都是第一个加载的，因此在这个代码中引入 tsconfig-paths 即可。
+
+```typescript
+// config/plugin.ts
+
+import 'tsconfig-paths/register';
+
+...
+```
+
+### 给 egg 插件提交声明的时候如何编写单测
+
+由于有不少开发者在给 egg 插件提交声明的时候，不知道如何编写单测来测试声明的准确性，因此也在这里说明一下。
+
+当给一个 egg 插件编写好声明之后，就可以在 `test/fixures` 下创建个使用 ts 写的 egg 应用，参考 （ https://github.com/eggjs/egg-view/tree/master/test/fixtures/apps/ts ），记得在 tsconfig.json 中加入 paths 的配置从而方便在 fixture 中 import ，比如 egg-view 中的
+
+```json
+    "paths": {
+      "egg-view": ["../../../../"]
+    }
+```
+
+同时记住不要在 tsconfig.json 中配置 `"skipLibCheck": true` ，如果配置了该属性为 true ，tsc 编译的时候会忽略 d.ts 中的类型校验，这样单测就无意义了。
+
+然后再添加一个用例用来验证插件的声明使用是否正确即可，还是拿 egg-view 来做示例。
+
+```js
+  describe('typescript', () => {
+    it('should compile ts without error', () => {
+      return coffee.fork(
+        require.resolve('typescript/bin/tsc'),
+        [ '-p', path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json') ]
+      )
+        // .debug()
+        .expect('code', 0)
+        .end();
+    });
+  });
+```
+
+可参考单测的项目：
+
+ - https://github.com/eggjs/egg
+ - https://github.com/eggjs/egg-view
+ - https://github.com/eggjs/egg-logger
