@@ -254,7 +254,7 @@ export default (appInfo: EggAppInfo) => {
 };
 ```
 
-注意，上面这种写法，将 config.default.ts 中返回的配置类型合并到 egg 的 EggAppConfig 类型中需要 egg-ts-helper 的配合。
+**注意，上面这种写法，将 config.default.ts 中返回的配置类型合并到 egg 的 EggAppConfig 类型中需要 egg-ts-helper 的配合。**
 
 当 EggAppConfig 合并 config.default.ts 的类型后，在其他 config.{env}.ts 中这么写就也可以获得在 config.default.ts 定义的自定义配置的智能提示：
 
@@ -414,7 +414,7 @@ declare module 'egg' {
 }
 ```
 
-在最新版本的 egg-bin 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置
+在最新版本的 egg-bin 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置：
 
 ```json
 {
@@ -661,7 +661,7 @@ egg-scripts 是用于在生产环境下运行 egg 的 cli ，在生产环境下�
 
 而在开发期 ts-node 能降低 tsc 编译产生的文件带来的管理成本，并且 ts-node 带来的性能损耗在开发期几乎可以忽略，所以我们在 egg-bin 集成了 ts-node。
 
-总结：如果项目需要在线上运行，请先使用 tsc 将 ts 编译成 js （ `npm run tsc` ）再运行 `npm start`。
+**总结：如果项目需要在线上运行，请先使用 tsc 将 ts 编译成 js （ `npm run tsc` ）再运行 `npm start`。**
 
 ### 使用了 egg 插件后发现没有对应插件挂载的对象
 
@@ -699,7 +699,7 @@ declare module 'egg' {
 import 'egg-dashboard';
 ```
 
-注意：必须在 d.ts 中 import ，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。
+**注意：必须在 d.ts 中 import ，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。**
 
 ### 在 tsconfig.json 中配置了 paths 无效
 
@@ -717,7 +717,7 @@ import 'tsconfig-paths/register';
 ...
 ```
 
-### 给 egg 插件提交声明的时候如何编写单测
+### 给 egg 插件提交声明的时候如何编写单测？
 
 由于有不少开发者在给 egg 插件提交声明的时候，不知道如何编写单测来测试声明的准确性，因此也在这里说明一下。
 
@@ -749,6 +749,6 @@ import 'tsconfig-paths/register';
 
 可参考单测的项目：
 
- - https://github.com/eggjs/egg
- - https://github.com/eggjs/egg-view
- - https://github.com/eggjs/egg-logger
+ - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
+ - [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
+ - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
