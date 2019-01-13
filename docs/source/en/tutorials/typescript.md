@@ -667,7 +667,7 @@ On the contrary, `ts-node` can reduce the cost of management for compiled files 
 
 There're mainly two reasons causing this problem:
 
-**1. No related defination 'd.ts' file for the plugin**
+**1. No related defination `d.ts` file for the plugin**
 
 If you want to load some object into egg, you MUST follow the `Plugin / Framework Development Instructions` below by making a declaration file into your own plugin.
 
@@ -699,11 +699,11 @@ If you use `egg-ts-helper`, it will automatically generate the exclipit importin
 import 'egg-dashboard';
 ```
 
-**Notice: You MUST use 'import' in 'd.ts', because most of egg's plugins are without main entry points. There'll be errors occuring if you import directly in ts.**
+**Notice: You MUST use 'import' in `d.ts`, because most of egg's plugins are without main entry points. There'll be errors occuring if you import directly in ts.**
 
 ### `paths` is invalid in `tsconfig.json`
 
-Strictly speaking, this has nothing to do with egg but with many people's questions, and we'll give our answer to it. The reason is `tsc` WON'T convert the import path when compiling ts to js, so when you config paths in `tsconfig.json` and if you use `paths` to import the related modules, you are running the high risk that you cannot find them when compiled to js.
+Strictly speaking, this has nothing to do with egg but with many people's questions, and we'll give our answer to it. The reason is `tsc` WON'T convert the import path when compiling ts to js, so when you config `paths` in `tsconfig.json` and if you use `paths` to import the related modules, you are running the high risk that you cannot find them when compiled to js.
 
 The solution is either you don't use `paths`, or you can ONLY import some declarations instead of detailed values. Another way is that you can use [tsconfig-paths](https://github.com/dividab/tsconfig-paths) to hook the process logic in node's path module to support `paths` in `tsconfig.json`.
 
