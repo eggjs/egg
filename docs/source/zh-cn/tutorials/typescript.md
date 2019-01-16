@@ -699,7 +699,7 @@ declare module 'egg' {
 import 'egg-dashboard';
 ```
 
-**注意：必须在 d.ts 中 import ，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。**
+**注意：必须在 d.ts 中 import，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。**
 
 ### 在 tsconfig.json 中配置了 paths 无效
 

@@ -89,7 +89,7 @@ module.exports = {
 +-----------------------------------+--------+
 ```
 
-## loadUnit
+## 加载单元（loadUnit）
 
 Egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异，下面是目录结构
 
@@ -183,7 +183,7 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 - 加载 [controller](../basics/controller.md)，加载应用的 `app/controller` 目录
 - 加载 [router](../basics/router.md)，加载应用的 `app/router.js`
 
-注意
+注意：
 
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
 - 应用完整启动顺序查看[框架开发](./framework.md)
