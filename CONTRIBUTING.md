@@ -1,7 +1,7 @@
 # Contribution Guide
 
 If you have any comment or advice, please report your [issue](https://github.com/eggjs/egg/issues),
-or make any change as you wish and submit an [PR](https://github.com/eggjs/egg/pulls).
+or make any change as you wish and submit a [PR](https://github.com/eggjs/egg/pulls).
 
 ## Reporting New Issues
 
