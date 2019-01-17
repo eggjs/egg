@@ -177,7 +177,7 @@ exports.logger = {
 
 ### 终端日志级别
 
-默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。
+默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。（注意：这些日志默认只在 local 和 unittest 环境下会打印到终端）
 
 - `logger.consoleLevel`: 输出到终端日志的级别，默认为 `INFO`
 
@@ -198,6 +198,15 @@ exports.logger = {
 // config/config.${env}.js
 exports.logger = {
   consoleLevel: 'NONE',
+};
+```
+
+- 基于性能的考虑，在正式环境下，默认会关闭终端日志输出。如有需要，你可以通过下面的配置开启。（**不推荐**）
+
+```js
+// config/config.${env}.js
+exports.logger = {
+  disableConsoleAfterReady: false,
 };
 ```
 
