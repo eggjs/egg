@@ -56,7 +56,7 @@
     "ylru": "^1.2.1"
   },
   "devDependencies": {
-    "@types/node": "latest",
+    "@types/node": "^10.12.18",
     "address": "^1.0.3",
     "assert-extends": "^1.0.1",
     "autod": "^3.0.1",
