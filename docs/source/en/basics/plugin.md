@@ -116,7 +116,7 @@ exports.dev = {
 
 In this way, `npm i --production` in the production environment does not need to download the`egg-dev` package.
 
-** Note: **
+**Note:**
 
 * `plugin.default.js` does not exists. Use `local` for dev environments.
 
