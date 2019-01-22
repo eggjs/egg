@@ -261,12 +261,11 @@ module.exports = AppBootHook;
 
 ## ready
 
-`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。
-开发者应使用 `didReady` 替换。
+`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。开发者应使用 `didReady` 替换。
 
 ## beforeClose
 
-`beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger , 删除监听方法等。开发者不应该直接使用 `app.beforeClose`, 而是定义类的形式, 实现 `beforeClose` 方法。
+`beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger、删除监听方法等。开发者不应该直接使用 `app.beforeClose`, 而是定义类的形式, 实现 `beforeClose` 方法。
 
 __这个方法不建议在生产环境使用, 可能遇到未执行完就结束进程的问题。__
 
@@ -285,7 +284,7 @@ Loader 还提供了 [caseStyle](#caseStyle-string) 强制指定首字母大小�
 
 ## 扩展 Loader
 
-[Loader] 是一个基类，并根据文件加载的规则提供了一些内置的方法，但基本本身并不会去调用，而是由继承类调用。
+[Loader] 是一个基类，并根据文件加载的规则提供了一些内置的方法，它本身并不会去调用这些方法，而是由继承类调用。
 
 - loadPlugin()
 - loadConfig()
@@ -346,13 +345,13 @@ module.exports = Object.assign(egg, {
 });
 ```
 
-通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`， `app/extend/filter.js` 等等。
+通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`，`app/extend/filter.js` 等等。
 
 以上只是说明 Loader 的写法，具体可以查看[框架开发](./framework.md)。
 
-## Loader API
+## 加载器函数（Loader API）
 
-Loader 还提供一些底层的 API，在扩展时可以简化代码，全部 API 请[查看](https://github.com/eggjs/egg-core#eggloader)
+Loader 还提供一些底层的 API，在扩展时可以简化代码，[点击此处](https://github.com/eggjs/egg-core#eggloader)查看所有相关 API。
 
 ### loadFile
 

@@ -3,7 +3,9 @@
     "target": "es2017",
     "baseUrl": ".",
     "paths": {
-      "egg": ["../../../../index"]
+      "egg": [
+        "../../../../index"
+      ]
     },
     "module": "commonjs",
     "strict": true,

@@ -1,4 +1,5 @@
-# Application Startup Configuration
+title: Application Startup Configuration
+---
 
 When the application starts up, we often need to set up some initialization logic. The application bootstraps with those specific configurations. It is in a healthy state and be able to take external service requests after those configurations successfully applied. Otherwise, it failed.
 
@@ -78,3 +79,5 @@ class AppBootHook {
 ```
 
 **Note: It is not recommended to do long-time operations in the custom lifecycle function, because the framework has a startup timeout detection.**
+
+If your Egg's life-cycle functions are old, we suggest you upgrading to the "class-method" mode. For more you can refer to [Upgrade your event functions in your lifecycle](../advanced/loaderUpdate.md).
