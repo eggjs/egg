@@ -114,7 +114,7 @@ exports.dev = {
 
 这样在生产环境可以 `npm i --production` 不需要下载 `egg-dev` 的包了。
 
-**注意: **
+**注意:**
 - 不存在 `plugin.default.js`
 - **只能在应用层使用，在框架层请勿使用。**
 
