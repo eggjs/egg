@@ -1204,4 +1204,3 @@ declare module 'egg' {
     beforeClose?(): Promise<void>;
   }
 }
-
