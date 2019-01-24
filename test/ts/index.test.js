@@ -47,5 +47,13 @@ describe('test/ts/index.test.js', () => {
         .expect({ env: 'unittest' })
         .end(done);
     });
+
+    it('controller of app.router run ok', done => {
+      request(app.callback())
+        .get('/test')
+        .expect(200)
+        .expect({ env: 'unittest' })
+        .end(done);
+    });
   });
 });
