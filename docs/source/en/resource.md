@@ -1,4 +1,5 @@
-## Title: Resources
+title: Resources
+---
 
 * [awesome-egg](https://github.com/eggjs/awesome-egg)
 
