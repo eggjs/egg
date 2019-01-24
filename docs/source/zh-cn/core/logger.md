@@ -133,6 +133,15 @@ exports.logger = {
 };
 ```
 
+## 日志文件格式
+设置输出格式为JSON,方便日志监控系统分析
+```js
+// config/config.${env}.js
+exports.logger = {
+  outputJSON: true,
+};
+```
+
 ## 日志级别
 
 日志分为 `NONE`，`DEBUG`，`INFO`，`WARN` 和 `ERROR` 5 个级别。

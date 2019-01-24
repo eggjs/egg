@@ -128,6 +128,15 @@ exports.logger = {
 };
 ```
 
+## Format
+Use JSON as the output log format, make it easier to parse.
+```js
+// config/config.${env}.js
+exports.logger = {
+  outputJSON: true,
+};
+```
+
 ## Log Level
 
 Logs are designed in 5 levels, including `NONE`, `DEBUG`, `INFO`, `WARN` and `ERROR`. For inspecting in development, they will also be written into files and printed into terminal as well.
