@@ -1,4 +1,5 @@
-## Title: Code Style Guide
+title: Code Style Guide
+---
 
 Developers are advised to use `egg-init --type=simple showcase` to generate and observe the recommended project structure and configuration.
 

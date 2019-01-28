@@ -738,7 +738,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 ## 全局 `request` 和 `response` 事件
 
 在企业应用场景，常常会有统一 tracer 日志的需求。
-为了方便在 app 层面统一监听 HttpClient 的请求和响应，我们约定了全局 `request` 和 `response` 事件来暴露这两个时机。
+为了方便在 app 层面统一监听 HttpClient 的请求和响应，我们约定了全局 `request` 和 `response` 来暴露这两个事件。
 
 ```bash
     init options
