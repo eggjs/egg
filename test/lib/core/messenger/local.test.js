@@ -4,7 +4,7 @@ const utils = require('../../../utils');
 const pedding = require('pedding');
 const assert = require('assert');
 
-describe.only('test/lib/core/messenger/local.test.js', () => {
+describe('test/lib/core/messenger/local.test.js', () => {
   let app;
 
   before(async () => {
