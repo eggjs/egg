@@ -73,7 +73,7 @@ exports.io = {
 exports.io = {
   redis: {
     host: {redis server host}
-    port: {redis server prot},
+    port: {redis server port},
     auth_pass: {redis server password},
     db: 0,
   },
