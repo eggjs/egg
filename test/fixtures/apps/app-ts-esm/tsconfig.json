@@ -8,6 +8,7 @@
       ]
     },
     "module": "commonjs",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true
   }
 }

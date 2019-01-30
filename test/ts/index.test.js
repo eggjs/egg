@@ -3,7 +3,7 @@
 const assert = require('assert');
 const request = require('supertest');
 const mm = require('egg-mock');
-const runscript = require('runscript');
+const coffee = require('coffee');
 const path = require('path');
 const fs = require('fs');
 const mkdirp = require('mz-modules/mkdirp');
@@ -13,7 +13,14 @@ const baseDir = path.join(__dirname, '../fixtures/apps/app-ts');
 
 describe('test/ts/index.test.js', () => {
   before(async () => {
-    await runscript(`tsc -p ${baseDir}/tsconfig.json`, { cwd: baseDir });
+    await coffee.fork(
+      require.resolve('typescript/bin/tsc'),
+      [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts/tsconfig.json') ]
+    )
+      // .debug()
+      .expect('code', 0)
+      .end();
+
     const dest = path.join(baseDir, 'node_modules/egg');
     await rimraf(dest);
     await mkdirp(path.dirname(dest));
@@ -54,6 +61,16 @@ describe('test/ts/index.test.js', () => {
         .expect(200)
         .expect({ env: 'unittest' })
         .end(done);
+    });
+
+    it('should compile with esModuleInterop without error', async () => {
+      await coffee.fork(
+        require.resolve('typescript/bin/tsc'),
+        [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-esm/tsconfig.json') ]
+      )
+        // .debug()
+        .expect('code', 0)
+        .end();
     });
   });
 });
