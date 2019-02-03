@@ -5,12 +5,12 @@
 ### Notable changes
 
 * **features**
-  * support single process mode. **EXPERIMENT**
+  * [EXPERIMENT FEATURE] support single process mode
 
 * **fixes**
-  * array supporting for config.static.dir
-  * fix IMiddleware type is incompatible
-  * fix type error while esModuleInterop is true
+  * [TYPE] array supporting for config.static.dir
+  * [TYPE] fix IMiddleware type is incompatible
+  * [TYPE] fix type error while esModuleInterop is true
 
 * **others**
   * more document improvement
@@ -23,8 +23,7 @@
   * [[`e899630e9`](http://github.com/eggjs/egg/commit/e899630e97865701b81d428686a19288b1c87b98)] - fix: array supporting for config.static.dir (#3421) (Gray <<njugray@gmail.com>>)
   * [[`43f2e3c44`](http://github.com/eggjs/egg/commit/43f2e3c449a7b448506d2484ed729618b06bffec)] - fix: IMiddleware type is incompatible (#3419) (吖猩 <<whxaxes@qq.com>>)
   * [[`b3256b54e`](http://github.com/eggjs/egg/commit/b3256b54eeb09b2cee3cfdb75e98d6c090844a10)] - doc：Add new loaderUpdate.md (#3395) (Maledong <<maledong_github@outlook.com>>)
-  * [[`71768002a`](http://github.com/eggjs/egg/commit/71768002a468a8fd30b9516c0bed85fa27b99b0a)] - docs: Wrong words are corrected (#3418) (巧
-克力冰激凌 <<121017405@qq.com>>)
+  * [[`71768002a`](http://github.com/eggjs/egg/commit/71768002a468a8fd30b9516c0bed85fa27b99b0a)] - docs: Wrong words are corrected (#3418) (巧克力冰激凌 <<121017405@qq.com>>)
   * [[`20d56c7a8`](http://github.com/eggjs/egg/commit/20d56c7a83a74bb81ee47b0b8c2785db15519996)] - fix: fix ts ci (#3416) (吖猩 <<whxaxes@qq.com>>)
   * [[`8beacd13e`](http://github.com/eggjs/egg/commit/8beacd13e3bcfff6b6a1e02eea72cafdd343858c)] - docs(logger): add logger.disableConsoleAfterReady to docs (#3384) (吖猩 <<whxaxes@qq.com>>)
   * [[`271bc6372`](http://github.com/eggjs/egg/commit/271bc63722723531556bbec06d621f964ad1db33)] - chore: typo "submit an PR" should be "submit a PR" (#3408) (DAI JIE <<daijie@php.net>>)
