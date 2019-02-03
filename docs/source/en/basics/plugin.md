@@ -1,4 +1,5 @@
-## title: Plugin
+title: Plugin
+---
 
 Plugin mechanism is a major feature of our framework. Not only can it ensure that the core of the framework is sufficiently streamlined, stable and efficient, but also can promote the reuse of business logic and the formation of an ecosystem. In the following sections, we will try to answer questions such as
 
@@ -116,7 +117,7 @@ exports.dev = {
 
 In this way, `npm i --production` in the production environment does not need to download the`egg-dev` package.
 
-** Note: **
+**Note:**
 
 * `plugin.default.js` does not exists. Use `local` for dev environments.
 

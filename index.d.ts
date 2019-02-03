@@ -428,7 +428,7 @@ declare module 'egg' {
 
     static: {
       prefix: string;
-      dir: string;
+      dir: string | string[];
       // support lazy load
       dynamic: boolean;
       preload: boolean;
@@ -466,7 +466,7 @@ declare module 'egg' {
     headers: { [key: string]: string };
   }
 
-  export interface Router extends KoaRouter {
+  export interface Router extends KoaRouter<any, Context> {
     /**
      * restful router api
      */
