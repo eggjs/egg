@@ -6,10 +6,28 @@ const http = require('http');
 const mm = require('egg-mock');
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
+const egg = require('..');
+const request = require('supertest');
 
 exports.app = (name, options) => {
   options = formatOptions(name, options);
   const app = mm.app(options);
+  return app;
+};
+
+/**
+ * start app with single process mode
+ *
+ * @param {String} baseDir - base dir.
+ * @param {Object} [options] - optional
+ * @return {App} app - Application object.
+ */
+exports.singleProcessApp = async (baseDir, options = {}) => {
+  if (!baseDir.startsWith('/')) baseDir = path.join(__dirname, 'fixtures', baseDir);
+  options.env = options.env || 'unittest';
+  options.baseDir = baseDir;
+  const app = await egg.start(options);
+  app.httpRequest = () => request(app.callback());
   return app;
 };
 

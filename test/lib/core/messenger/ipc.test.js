@@ -3,10 +3,10 @@
 const assert = require('assert');
 const mm = require('egg-mock');
 const sleep = require('mz-modules/sleep');
-const utils = require('../../utils');
-const Messenger = require('../../../lib/core/messenger');
+const utils = require('../../../utils');
+const Messenger = require('../../../../lib/core/messenger/ipc');
 
-describe('test/lib/core/messenger.test.js', () => {
+describe('test/lib/core/messenger/ipc.test.js', () => {
   let messenger;
 
   before(() => {
