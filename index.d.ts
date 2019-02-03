@@ -1,6 +1,6 @@
-import * as accepts from 'accepts';
-import * as KoaApplication from 'koa';
-import * as KoaRouter from 'koa-router';
+import accepts = require('accepts');
+import KoaApplication = require('koa');
+import KoaRouter = require('koa-router');
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
