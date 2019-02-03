@@ -9,6 +9,7 @@
     },
     "module": "commonjs",
     "strict": true,
+    "noImplicitAny": false,
     "esModuleInterop": true
   }
 }
