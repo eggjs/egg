@@ -9,13 +9,15 @@
 
 * **fixes**
   * array supporting for config.static.dir
-  * IMiddleware type is incompatible
+  * fix IMiddleware type is incompatible
+  * fix type error while esModuleInterop is true
 
 * **others**
   * more document improvement
 
 ### Commits
 
+  * [[`d79da17bd`](http://github.com/eggjs/egg/commit/d79da17bdbe94f7b78d923caa10abf21e6c5f752)] - fix: type error while esModuleInterop is true (#3436) (吖猩 <<whxaxes@qq.com>>)
  * [[`20ba4632b`](http://github.com/eggjs/egg/commit/20ba4632ba32e3b81e760678b4bbe00cdf05388e)] - feat: support single process mode (#3430) (Yiyu He <<dead_horse@qq.com>>)
   * [[`133616961`](http://github.com/eggjs/egg/commit/133616961e5a2e95d5e2cd1254d7304c846b859c)] - docs: fix typo in socketio.md (#3431) (kilmas <<kilmas@qq.com>>)
   * [[`e899630e9`](http://github.com/eggjs/egg/commit/e899630e97865701b81d428686a19288b1c87b98)] - fix: array supporting for config.static.dir (#3421) (Gray <<njugray@gmail.com>>)
