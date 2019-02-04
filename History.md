@@ -1,5 +1,17 @@
 # History
 
+## 2019-02-04, Version 2.15.1 @dead-horse
+
+### Notable changes
+
+* **fixes**
+  * add missing framework support for single process mode
+
+### Commits
+
+  * [[`277c024cf`](http://github.com/eggjs/egg/commit/277c024cf565948547dbc7a518d39d7f55318f58)] - fix: add missing framework support for single process mode (#3445) (Yiyu He <<dead_horse@qq.com>>)
+
+
 ## 2019-02-03, Version 2.15.0 @dead-horse
 
 ### Notable changes
