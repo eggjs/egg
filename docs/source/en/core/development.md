@@ -31,7 +31,7 @@ And then we may start app by `npm run dev`.
 
 ### Environment Configuration
 
-To start app in local, environment needs to be set as `env: local`. The configuration comes from the combination of both `config.local.js` and `config.default.js`. (No need to translate word by word but just its main meaning to fit for the English manner)
+To start app in local, environment needs to be set as `env: local`. The configuration comes from the combination of both `config.local.js` and `config.default.js`.
 
 ### Port Assignment
 
