@@ -1,9 +1,9 @@
 title: Local Development
 ---
 
-To improve development experience, convenient ways to develop in local environment, debug and run unit testing are provided in egg. 
+We provide convenient ways for development, debugging, and unit tests to improve your development experience.
 
-Here, wo will need to use [egg-bin] module (Only used in local development and unit testing. For production environment, please refer to [Deployment](./deployment.md)).
+Here, wo will need to use [egg-bin] module (Only used in local development and unit tests. For production environment, please refer to [Deployment](./deployment.md)).
 
 First of all, we need to include `egg-bin` module in `devDependencies`:
 
@@ -27,13 +27,13 @@ Add `npm scripts` into `package.json`：
 }
 ```
 
-And then we may start app by command `npm run dev`.
+And then we may start app by `npm run dev`.
 
-### Config Environment
+### Environment Configuration
 
-To start app in local, environment need to be set as `env: local`. The configuration being read is an object combined from `config.local.js` and `config.default.js` files.
+To start app in local, environment needs to be set as `env: local`. The configuration comes from the combination of both `config.local.js` and `config.default.js`. (No need to translate word by word but just its main meaning to fit for the English manner)
 
-### Assign Port
+### Port Assignment
 
 Starting app in local will listen to port 7001 by default. You may assign other port to it like this:
 
@@ -47,7 +47,7 @@ Starting app in local will listen to port 7001 by default. You may assign other 
 
 ## Unit Test
 
-This chapter is mainly about the usage of tools. For more details about unit testing, please refer to [here](./unittest.md).
+Here we mainly cover the usage of the tools, for more details about unit tests, please refer to [here](./unittest.md).
 
 ### Add Script
 
@@ -61,17 +61,17 @@ Add `npm scripts` into `package.json`：
 }
 ```
 
-And then we can run unit testing by command `npm test`.
+And then we can run unit test by `npm test`.
 
-### Config Environment
+### Environment Configuration
 
-To run test cases, environment need to be set as `env: unittest`. The configuration being read is an object combined from `config.local.js` and `config.unittest.js` files.
+To run test cases, environment need to be set as `env: unittest`. The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
-### Run Test On Single File
+### Run specific test file
 
 `npm test` command will look for all the files ended with `.test.js` under test folder (default [glob] matching rule is `test/**/*.test.js`).
 
-However, we would like to run only the test cases that we are working on sometimes. In this case, we may specify a file by following way:
+However, we would like to run only the test cases that we are working on sometimes. In this case, we may specify a file in the following way:
 
 ```bash
 $ TESTS=test/x.test.js npm test
@@ -79,11 +79,11 @@ $ TESTS=test/x.test.js npm test
 
 [glob] expressions are supported here.
 
-### Set Reporter
+### Reporter setting
 
 Mocha supports various reporters. Default reporter is `spec`.
 
-Reporter is allowed to be specified mannually via setting `TEST_REPORTER` environment variable. For example, to use `dot` instead:
+Reporter is allowed to be specified mannually via setting TEST_REPORTER as the environment variable. For example, to use `dot` instead:
 
 ```bash
 $ TEST_REPORTER=dot npm test
@@ -91,7 +91,7 @@ $ TEST_REPORTER=dot npm test
 
 ![image](https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png)
 
-### Set Timeout
+### Timeout setting
 
 The default timeout is 30 seconds. We may set our own timeout (in milliseconds). For example, setting timeout to 5 seconds:
 
@@ -101,7 +101,7 @@ $ TEST_TIMEOUT=5000 npm test
 
 ### Pass Parameters Via argv
 
-Besides to environment variables, `egg-bin test` also supports passing parameters directly, and it supports all mocha parameters. You may refer to [mocha usage](https://mochajs.org/#usage).
+Besides environment variables, `egg-bin test` also supports passing parameters directly, and it supports all mocha parameters. You may refer to [mocha usage](https://mochajs.org/#usage).
 
 ```bash
 $ # Passing parameters via npm need to add an extra `--`, according to https://docs.npmjs.com/cli/run-script
@@ -119,7 +119,7 @@ $ npm test -- -t 30000 --grep="should GET"
 
 ## Code Coverage
 
-egg-bin has build-in [nyc](https://github.com/istanbuljs/nyc) to support calculating code coverage report of unit testing.
+egg-bin has build-in [nyc](https://github.com/istanbuljs/nyc) to support calculating code coverage report of unit test.
 
 Add `npm scripts` into `package.json`：
 
@@ -131,7 +131,7 @@ Add `npm scripts` into `package.json`：
 }
 ```
 
-And then we can get code coverage report of unit testing via command `npm run cov`.
+And then we can get code coverage report of unit test via `npm run cov`.
 
 ```bash
 $ egg-bin cov
@@ -154,17 +154,17 @@ Lines        : 100% ( 41/41 )
 ================================================================================
 ```
 
-And we may open HTML file of complete code coverage report via command `open coverage/lcov-report/index.html`.
+And we may open HTML file of complete code coverage report via `open coverage/lcov-report/index.html`.
 
 ![image](https://cloud.githubusercontent.com/assets/156269/21845201/a9a85ab6-d82c-11e6-8c24-5e85f352be4a.png)
 
-### Config Environment
+### Environment Configuration
 
-Same as `test` script, to run `cov`, environment need to be set to `env: unittest` as well. The configuration is also an object combined from `config.local.js` and `config.unittest.js` files.
+Just like test, the environment needs to be set to `env:unittest` to run cov, and the configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
-### Ignore Files
+### Ignore specific Files
 
-To ignore some files in code coverage rate calculation, you may use `COV_EXCLUDES` environment variable to achieve this:
+To ignore some files in code coverage rate calculation, You may use `COV_EXCLUDES` as the environment variable to ignore some specific files that don't need the test converages:
 
 ```bash
 $ COV_EXCLUDES=app/plugins/c* npm run cov
@@ -172,13 +172,13 @@ $ # Or pass this setting via parameters
 $ npm run cov -- --x=app/plugins/c*
 ```
 
-## Debug
+## Debugging
 
-### Print Logs
+### Log Print
 
-### Use Logger Module
+### Use `Logger` Module
 
-There's built-in [Log](./logger.md) in egg. You may use `logger.debug()` to print out debug information. **It is recommended to be used in your implementation.**
+There's a built-in [Log](./logger.md) in the egg, so you may use logger.debug() to print out debug information. **We recommend you use it in your own code.**
 
 ```js
 // controller
@@ -193,13 +193,13 @@ app.logger.debug('app init');
 
 Levels of logs can be configured via `config.logger.level` for printing into file, and `config.logger.consoleLevel` for printing into console.
 
-### Use Debug Module
+### Use `Debug` Module
 
-[debug](https://www.npmjs.com/package/debug) module is a debug tool which is widely adopted in Node.js community. Plenty of modules are using it to print debug information. Egg community has widely adopted it as well. **It is recommended to be used in framework and plugin development**
+[debug](https://www.npmjs.com/package/debug) module is a debug tool widely adopted in Node.js community, plenty of modules are using it to print debug information. So for the Egg community. **We recommand you use it in your own development of framework and plugins.**
 
-To watch on the running process, we may start with certain code for debugging via `DEBUG` enviroment variable.
+It's easy for us to watch the whole process of test through `DEBUG` as the environment variable to start with certain code.
 
-(Do not confuse debug module and logger module. There are lots more stuff provided by logger module, but the log here we are talking about is debug information.)
+(Do not confuse debug module with logger module, for the latter also has quite a lot of functions, what we mean "log" here is the debug info.)
 
 Turn on log of all modules:
 
@@ -213,7 +213,7 @@ Turn on log of specific module:
 $ DEBUG=egg* npm run dev
 ```
 
-Detail logs of unit testing progress are able to be viewed via `DEBUG=* npm test`.
+Detail logs of unit tests progress are able to be viewed via `DEBUG=* npm test`.
 
 ### Debug With egg-bin
 
@@ -231,9 +231,9 @@ Add `npm scripts` into `package.json`：
 
 And then we may set breakpoints for debugging our app via `npm run debug`.
 
-`egg-bin` will select debug protocol automatically. [Inspector Protocol] will be selected for version 8.x or higher. For version lower than 8.x, it will select [Legacy Protocol].
+`egg-bin` will select debug protocol automatically. [Inspector Protocol] will be selected for version 8.x and later. For earlier ones, [Legacy Protocol] is the choice.
 
-In the meantime, it supports custom debug parameters.
+In the meantime, It also supports customized debug parameters.
 
 ```bash
 $ egg-bin debug --inpsect=9229
@@ -242,11 +242,11 @@ $ egg-bin debug --inpsect=9229
 - Debug port of `master` is 9229 or 5858 (Legacy Protocol).
 - Debug port of `agent` is fixed to 5800, it is customizable via `process.env.EGG_AGENT_DEBUG_PORT`.
 - Debug port number of `worker` will increase from `master` port number.
-- During developing period, worker will be hot reloaded once code changed, which will cause debug port to be self incrementing. Please refer to the following IDE configuration for auto-reconnecting.
+- During developing period, worker will "hot restart" once the code is changed, and it will cause the increase of port. Please refer to the following IDE configuration for auto-reconnecting.
 
-#### Config Environment
+#### Environment Configuration
 
-App is also started by `env: local` when executing `debug` command. The configuration being read is an object combined from `config.local.js` and `config.unittest.js` files.
+App starts by `env: local` when executing debug . The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
 #### Debug With [DevTools] 
 
@@ -291,9 +291,9 @@ Start npm debug in WebStorm：
 
 There are 2 ways:
 
-1st method: open settings in VSCode, turn on `Debug: Toggle Auto Attach`, and then execute `npm run debug` in Terminal.
+1st method: open settings in VSCode, turn on `Debug: Toggle Auto Attach`, and then execute `npm run debug` in the terminal.
 
-2nd method: setup `.vscode/launch.json` in VSCode, and then simply start with F5 key. (Note that this method will need to turn off the settings metioned in the 1st method).
+2nd method: setup `.vscode/launch.json` in VSCode, and then simply start with F5 key. (Note: You have to turn off the settings mentioned in the 1st method before doing it).
 
 ```js
 // .vscode/launch.json
@@ -327,7 +327,7 @@ For more options of setting up debug in VSCode, please refer to [Node.js Debuggi
 
 ## More
 
-If you would like to know more about local development, like customizing a local development tool, please refer to [egg-bin].
+If you would like to know more about local development, like customizing a local development tool for your team, please refer to [egg-bin].
 
 [glob]: https://www.npmjs.com/package/glob
 [egg-bin]: https://github.com/eggjs/egg-bin
