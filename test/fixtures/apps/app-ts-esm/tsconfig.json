@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "baseUrl": ".",
+    "paths": {
+      "egg": [
+        "../../../../index"
+      ]
+    },
+    "module": "commonjs",
+    "strict": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true
+  }
+}
