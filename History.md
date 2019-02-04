@@ -1,5 +1,47 @@
 # History
 
+## 2019-02-03, Version 2.15.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * [EXPERIMENT FEATURE] support single process mode
+
+* **fixes**
+  * [TYPE] array supporting for config.static.dir
+  * [TYPE] fix IMiddleware type is incompatible
+  * [TYPE] fix type error while esModuleInterop is true
+
+* **others**
+  * more document improvement
+
+### Commits
+
+  * [[`83c423a0a`](http://github.com/eggjs/egg/commit/83c423a0a985e701bfaef7f10372268b4ce8cef5)] - docs(development.md): Add English translation (Jennie <<jennie.ji@hotmail.com>>)
+  * [[`d79da17bd`](http://github.com/eggjs/egg/commit/d79da17bdbe94f7b78d923caa10abf21e6c5f752)] - fix: type error while esModuleInterop is true (#3436) (吖猩 <<whxaxes@qq.com>>)
+ * [[`20ba4632b`](http://github.com/eggjs/egg/commit/20ba4632ba32e3b81e760678b4bbe00cdf05388e)] - feat: support single process mode (#3430) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`133616961`](http://github.com/eggjs/egg/commit/133616961e5a2e95d5e2cd1254d7304c846b859c)] - docs: fix typo in socketio.md (#3431) (kilmas <<kilmas@qq.com>>)
+  * [[`e899630e9`](http://github.com/eggjs/egg/commit/e899630e97865701b81d428686a19288b1c87b98)] - fix: array supporting for config.static.dir (#3421) (Gray <<njugray@gmail.com>>)
+  * [[`43f2e3c44`](http://github.com/eggjs/egg/commit/43f2e3c449a7b448506d2484ed729618b06bffec)] - fix: IMiddleware type is incompatible (#3419) (吖猩 <<whxaxes@qq.com>>)
+  * [[`b3256b54e`](http://github.com/eggjs/egg/commit/b3256b54eeb09b2cee3cfdb75e98d6c090844a10)] - doc：Add new loaderUpdate.md (#3395) (Maledong <<maledong_github@outlook.com>>)
+  * [[`71768002a`](http://github.com/eggjs/egg/commit/71768002a468a8fd30b9516c0bed85fa27b99b0a)] - docs: Wrong words are corrected (#3418) (巧克力冰激凌 <<121017405@qq.com>>)
+  * [[`20d56c7a8`](http://github.com/eggjs/egg/commit/20d56c7a83a74bb81ee47b0b8c2785db15519996)] - fix: fix ts ci (#3416) (吖猩 <<whxaxes@qq.com>>)
+  * [[`8beacd13e`](http://github.com/eggjs/egg/commit/8beacd13e3bcfff6b6a1e02eea72cafdd343858c)] - docs(logger): add logger.disableConsoleAfterReady to docs (#3384) (吖猩 <<whxaxes@qq.com>>)
+  * [[`271bc6372`](http://github.com/eggjs/egg/commit/271bc63722723531556bbec06d621f964ad1db33)] - chore: typo "submit an PR" should be "submit a PR" (#3408) (DAI JIE <<daijie@php.net>>)
+  * [[`688f67c9f`](http://github.com/eggjs/egg/commit/688f67c9f329c71ea4469b9d28d5ee41815831ed)] - Chore: Fix some chore issues (#3400) (Maledong <<maledong_github@outlook.com>>)
+  * [[`cfcebc623`](http://github.com/eggjs/egg/commit/cfcebc6234c62780c6aecf84db3862efd74e430c)] - doc (typescript.md): Sync the English translation (#3397) (Maledong <<maledong_github@outlook.com>>)
+  * [[`7e5ef2181`](http://github.com/eggjs/egg/commit/7e5ef21811f98e5d55884f2574092e6f2e7b619b)] - docs(typescript): optimize docs of typescript (#3374) (吖猩 <<whxaxes@qq.com>>)
+  * [[`2a801f789`](http://github.com/eggjs/egg/commit/2a801f789f6e60427657b507951de8fc8e4a830f)] - chore: comments typo fix (#3392) (Jeff <<jeff.tian@outlook.com>>)
+  * [[`9a4b72062`](http://github.com/eggjs/egg/commit/9a4b7206212a27d37a37a1d68b4739be306b1a7a)] - chore: fix issue template (#3369) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`ef73396a5`](http://github.com/eggjs/egg/commit/ef73396a5828c6b4e55c85cd2b27c3830bd306e5)] - docs: improve debug docs (#3370) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`874e57fda`](http://github.com/eggjs/egg/commit/874e57fda480d3295c1b1b30198ca3493f57814d)] - docs(sequelize): fix init (#3372) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`b2152c56f`](http://github.com/eggjs/egg/commit/b2152c56f525a87fe0c1cfe66949005f308e1569)] - Chore: Fix some typo translations (#3361) (Maledong <<maledong_github@outlook.com>>)
+  * [[`d275929d1`](http://github.com/eggjs/egg/commit/d275929d17830c95a2c828611b5ca54ffb747270)] - docs(boot): update app start document (#3348) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`9a8652beb`](http://github.com/eggjs/egg/commit/9a8652bebc29f3d097039196b10daa2575f49695)] - Fix: Change the diagram of "starting process" (#3358) (Maledong <<maledong_github@outlook.com>>)
+  * [[`ac0f13bc6`](http://github.com/eggjs/egg/commit/ac0f13bc604ebfc08185b336a106ec7e5d1bc98f)] - Chore: Add missing links for "Sails" and union the spellings of "Plugin" (#3356) (Maledong <<maledong_github@outlook.com>>)
+  * [[`cd52b063b`](http://github.com/eggjs/egg/commit/cd52b063b60e15bc78c440fdebc00ddd3dca9909)] - docs(cluster-and-ipc.md): fix typos and formatting errors (#3357) (Darren Poon <<dyhpoon@gmail.com>>)
+  * [[`37e3c1aba`](http://github.com/eggjs/egg/commit/37e3c1abab31f47fc492574464657a57ff686b2b)] - Chroe: Fix something in articles (#3349) (Maledong <<maledong_github@outlook.com>>)
+
 ## 2018-12-20, Version 2.14.2 @atian25
 
 ### Notable changes
