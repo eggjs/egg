@@ -4,16 +4,15 @@ const utils = require('../utils');
 const assert = require('assert');
 const path = require('path');
 
-describe('test/lib/start.test.js', () => {
-  describe('start', () => {
-    const baseDir = utils.getFilepath('apps/demo');
-    let app;
-    before(async () => {
-      app = await utils.singleProcessApp('apps/demo');
-    });
-    after(() => app.close());
+let app;
 
-    it('should dump config and plugins', () => {
+describe('test/lib/start.test.js', () => {
+  afterEach(() => app.close());
+
+  describe('start', () => {
+    it('should dump config and plugins', async () => {
+      app = await utils.singleProcessApp('apps/demo');
+      const baseDir = utils.getFilepath('apps/demo');
       let json = require(path.join(baseDir, 'run/agent_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
       assert(json.config.name === 'demo');
@@ -33,6 +32,40 @@ describe('test/lib/start.test.js', () => {
     });
 
     it('should request work', async () => {
+      app = await utils.singleProcessApp('apps/demo');
+      await app.httpRequest().get('/protocol')
+        .expect(200)
+        .expect('http');
+
+      await app.httpRequest().get('/class-controller')
+        .expect(200)
+        .expect('this is bar!');
+    });
+
+    it('should env work', async () => {
+      app = await utils.singleProcessApp('apps/demo', { env: 'prod' });
+      assert(app.config.env === 'prod');
+    });
+  });
+
+  describe('custom framework work', () => {
+    it('should work with options.framework', async () => {
+      app = await utils.singleProcessApp('apps/demo', { framework: path.join(__dirname, '../fixtures/custom-egg') });
+      assert(app.customEgg);
+
+      await app.httpRequest().get('/protocol')
+        .expect(200)
+        .expect('http');
+
+      await app.httpRequest().get('/class-controller')
+        .expect(200)
+        .expect('this is bar!');
+    });
+
+    it('should work with package.egg.framework', async () => {
+      app = await utils.singleProcessApp('apps/custom-framework-demo');
+      assert(app.customEgg);
+
       await app.httpRequest().get('/protocol')
         .expect(200)
         .expect('http');
