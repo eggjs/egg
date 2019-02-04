@@ -5,7 +5,7 @@ In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on 
 
 ## Writing Middleware
 
-### How to write
+### How to Write
 
 Let's take a look at how to write a middleware from a simple gzip example.
 
@@ -215,7 +215,7 @@ module.exports = {
 };
 ```
 
-### match and ignore
+### `match` and `ignore`
 
 match and ignore share the same parameter but do the opposite things. match and ignore cannot be configured in the same time.
 

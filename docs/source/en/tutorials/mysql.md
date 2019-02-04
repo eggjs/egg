@@ -3,9 +3,9 @@ title: MySQL
 
 MySQL is one of the most common and best RDBMS in terms of web applications. It is used in many large-scale websites such as Google and Facebook.
 
-## egg-mysql
+## `egg-mysql`
 
-egg-mysql is provided to access both the MySQL databases and MySQL-based online database service.
+`egg-mysql` is provided to access both the MySQL databases and MySQL-based online database service.
 
 ### Installation and Configuration
 
@@ -116,7 +116,7 @@ module.exports = app => {
 };
 ```
 
-## Service layer
+## Service Layer
 
 Connecting to MySQL is a data processing layer in the Web layer. So it is strongly recommended that keeping the code in the Service layer.
 
@@ -318,7 +318,7 @@ try {
 }
 ```
 
-### Automatic control: Transaction with scope
+### Automatic Control: Transaction with Scope
 
 - API：`beginTransactionScope(scope, ctx)`
   - `scope`: A generatorFunction which will execute all sqls of this transaction.

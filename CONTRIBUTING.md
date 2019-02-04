@@ -132,7 +132,20 @@ BREAKING CHANGE:
 
 Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more details.
 
-## Release
+### Principles of English Translations
+
+We follow the normal principles of English articles when translating, however, due to there're some special principles of titles, we should follow these rules:
+
+- For nouns, verbs, pronouns, adjectives and adverbs, capitalize the first character. For prepsitions, articles, conjections, interjections and auxiliary words, the first character should be in the lower case. *But we MUST make any word's first character in the upper case when it's at the beginning or in the end of the title, no matter what word it is*.
+- For proper nouns such as the direct reference of some variable or the name of some plugin, we must use backtick (underneath the 'Esc') to surround them and keep what they are in origin.
+- For prepsitions more than 5 characters, their first characters should be also capitalized, otherwise not.
+- For some very important titles or some fixed proper nouns such as methods of Http: POST,GET,PUT,DELETE, every charater can be capitalized (USE WITH CAUTION).
+- If the article belongs to the form of O-V (Object-Verb) such as "Config Management", we'd better translate it as "Management Configuration", or "Managing Configuration" in the form of "gerund+noun".
+- If your title is taken as a sentence, write in 'Sentence Case' (e.g: In FAQ, each title is actually an English sentence).
+
+For more info, please refer [English Title Case].
+
+## Release Management
 
 Egg uses semantic versioning in release process based on [semver].
 
@@ -185,3 +198,4 @@ All tags mentioned above means the tags of npm in `package.json`.
 [1.x milestone]: https://github.com/eggjs/egg/milestone/1
 [npm]: http://npmjs.com/
 [How to deploy an npm package]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[English Title Case]: https://headlinecapitalization.com/

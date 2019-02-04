@@ -51,7 +51,7 @@ exports.io = {
 
 > Namespaces are `/` and `/ example`, not`example`
 
-#### uws
+#### `uws`
 
 **Egg's socket is using `ws`, [uws](https://www.npmjs.com/package/uws) is deprecated due to [some reasons](https://github.com/socketio/socket.io/issues/3319).**
 		
@@ -64,7 +64,7 @@ exports.io = {
 };
 ```
 
-#### redis
+#### `redis`
 
 [egg-socket.io] has built-in redis support via `socket.io-redis`. In cluster mode, the use of redis can make it relatively simple to achieve information sharing of clients/rooms and so on
 
@@ -115,7 +115,7 @@ location / {
 }
 ```
 
-## Using egg-socket.io
+## Using `egg-socket.io`
 
 The directory structure of project which has enabled the [egg-socket.io] is as follows:
 
@@ -326,7 +326,7 @@ Module.exports = app => {
 
 Here we use [egg-socket.io] to do a small example which supports p2p chat
 
-### client
+### Client
 
 The UI-related content is not rewritten. It can be called via window.socket
 
@@ -397,11 +397,11 @@ socket.on('res', msg => {
 });
 ```
 
-### server
+### Server
 
-The following is part of the demo code and explains the role of each method
+The following is part of the demo code and explains the role of each method:
 
-#### config
+#### Config
 
 ```js
 // {app_root}/config/config.${env}.js
@@ -420,7 +420,7 @@ exports.io = {
 };
 ```
 
-#### helper
+#### Helper
 
 Framework extensions for encapsulating data formats
 
@@ -464,7 +464,7 @@ Format：
 }
 ```
 
-#### middleware
+#### Middleware
 
 [egg-socket.io] middleware handles socket connection handling
 
@@ -549,7 +549,7 @@ module.exports = () => {
 };
 ```
 
-#### controller
+#### Controller
 
 Data exchange of P2P communication is through exchange
 
@@ -579,7 +579,7 @@ class NspController extends controller {
 module.exports = NspController;
 ```
 
-#### router
+#### Router
 
 ```js
 // {app_root}/app/router.js

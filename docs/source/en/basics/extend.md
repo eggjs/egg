@@ -28,7 +28,7 @@ The object `app` is just the same aspect as the global application object in Koa
    };
    ```
 
-### How to extend 
+### How to Extend 
 
 Egg will merge the object defined in `app/extend/application.js` with the prototype of Application object in Koa, then generate object `app` which is based on the extended prototype when application is started.
 
@@ -134,7 +134,7 @@ So many properties and methods in `ctx` can also be accessed in `request` object
 
 Here are the properties and methods in `ctx` which can also be accessed by Request aliases: [Koa - Request aliases](http://koajs.com/#request-aliases)
 
-### How to extend
+### How to Extend
 
 Egg will merge the object defined in `app/extend/request.js` and the prototype of `request` object built in egg. And it will generate a `request` object which is based on the extended prototype when deal with request.
 
@@ -163,7 +163,7 @@ So many properties and methods in `ctx` can also be accessed in `response` objec
 
 Here are the properties and methods in `ctx` which can also be accessed by Response aliases: [Koa Response aliases](http://koajs.com/#response-aliases)
 
-### How to extend
+### How to Extend
 
 Egg will merge the object defined in `app/extend/response.js` and the prototype of `response` object build in egg. And it will generate a `response` object which is based on the extended prototype after dealt with request.
 
@@ -201,7 +201,7 @@ ctx.helper.pathFor('home', { by: 'recent', limit: 20 })
 // => /?by=recent&limit=20
 ```
 
-### How to extend
+### How to Extend
 
 Egg will merge the object defined in `app/extend/helper.js` and the prototype of `helper` object build in egg. And it will generate a `helper` object which is based on the extended prototype after dealt with request.
 
@@ -217,7 +217,6 @@ module.exports = {
   },
 };
 ```
-
 
 ## Extend according to environment
 

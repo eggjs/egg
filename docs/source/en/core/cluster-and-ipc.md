@@ -183,7 +183,7 @@ module.exports = app => {
 
 In this example, codes of `agent.js` are run in Agent process, codes of `app.js` are run in the Worker process, and they do the Inter-Process Communication(IPC) through the `messenger` object encapsulated by framework. Details about the IPC are explained in later sections.
 
-### Master VS Agent VS Worker
+### Master vs Agent vs Worker
 
 When an application starts up, 3 kinds of processes will be forked.
 
@@ -293,7 +293,7 @@ module.exports = app => {
 
 *All methods called on `app.messenger` above can be called on `agent.messenger` too.*
 
-#### egg-ready
+#### `egg-ready`
 
 We mentioned in the example above that, only after egg-ready event occurs can the message be sent. Only after Master makes sure that all Agent process and Worker processes have been started successfully(and ready), can the `egg-ready` message be sent to all Agent and Worker through messenger, notifying that everything is ready and the IPC channel can be used.
 

@@ -315,7 +315,7 @@ module.exports = app => {
 };
 ```
 
-- 初始化文件 `test/.setup.js`，引入 factory，并确保测试执行完后清理数据，避免被影响
+- 初始化文件 `test/.setup.js`，引入 factory，并确保测试执行完后清理数据，避免被影响。
 
 ```js
 const { app } = require('egg-mock/bootstrap');

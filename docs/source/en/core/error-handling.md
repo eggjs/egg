@@ -55,7 +55,7 @@ class HomeController extends Controller {
 
 For convenience of locating problems, exceptions must be guaranteed to be Error object or object based on Error object, which offers a trace of which functions were called.
 
-## Egg takes charge of exceptions
+## Egg Takes Charge of Exceptions
 
 [egg-onerror](https://github.com/eggjs/egg-onerror), one of Egg's plugin, handles all exceptions thrown in Middleware, Controller and Service, and returns the error as response based on "Accept" in request header field.
 
@@ -67,7 +67,7 @@ For convenience of locating problems, exceptions must be guaranteed to be Error 
 | JSON & JSONP | local & unittest | - | JSON Object or JSONP response body with details |
 | JSON & JSONP| others | - | JSON object  or JSONP response body without details |
 
-### errorPageUrl
+### `errorPageUrl`
 
 Redirecting to your customized error page by setting `errorPageUrl` in `onerror` plugin.
 
@@ -81,7 +81,7 @@ module.exports = {
 };
 ```
 
-## Create your universal exception handler
+## Create Your Universal Exception Handler
 
 Once the default handler no longer meet your needs, you still can customize your owner error handler by onerror's configurations.
 

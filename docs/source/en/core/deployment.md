@@ -71,7 +71,7 @@ Options:
 
 More about [egg-scripts] and [egg-cluster] documents.
 
-#### Dispatch with arguments
+#### Dispatch with Arguments
 
 Arguments of dispatch can be configured in `config.{env}.js`.
 

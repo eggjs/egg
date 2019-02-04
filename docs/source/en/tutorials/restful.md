@@ -44,7 +44,7 @@ A example of `topics` is shown below:
 ]
 ```
 
-### Retrieve one topic
+### Retrieve One Topic
 
 - `GET /api/v2/topics/57ea257b3670ca3f44c5beb6`
 - status code: 200
@@ -65,7 +65,7 @@ A example of `topics` is shown below:
 }
 ```
 
-### Create topics
+### Create Topics
 
 - `POST /api/v2/topics`
 - status code: 201
@@ -77,13 +77,13 @@ A example of `topics` is shown below:
 }
 ```
 
-### Update topics
+### Update Topics
 
 - `PUT /api/v2/topics/57ea257b3670ca3f44c5beb6`
 - status code: 204
 - response body: null
 
-### Error handling
+### Error Handling
 
 When an error is occurring, 4xx status code is returned if occurred by client-side request parameters and 5xx status code is returned if occurred by server-side logic processing. All error objects are used as the description for status exceptions.
 
@@ -99,7 +99,7 @@ For example, passing invalided parameters from the client may return a response 
 
 After interface convention, we begin to create a RESTful API.
 
-### Application initialization
+### Application Initialization
 
 Initializes the application using [egg-init](https://github.com/eggjs/egg-init) in the [quickstart](../intro/quickstart.md)
 
@@ -121,7 +121,7 @@ exports.validate = {
 };
 ```
 
-### Router registry
+### Router Registry
 
 First of all, we follower previous design to register [router](../basics/router.md). The framework provides a simply way to create a RESTful-style router and mapping the resources to the corresponding controllers.
 
@@ -134,7 +134,7 @@ module.exports = app => {
 
 Mapping the 'topics' resource's CRUD interfaces to the `app/controller/topics.js` using `app.resources`
 
-### Developing controller
+### Developing Controller
 
 In [controller](../basics/controller.md), we only need to implement the interface convention of `app.resources` [RESTful style URL definition](../basics/router.md#RESTful-style-URL-definition). For example, creating a 'topics' interface:
 
@@ -174,7 +174,7 @@ As shown above, a Controller mainly implements the following logic:
 2. create a topic by calling service encapsulates business logic using the validated parameters
 3. configure the status code and context according to the interface convention
 
-### Developing service
+### Developing Service
 
 We will more focus on writing effective business logic in [service](../basics/service.md).
 
@@ -220,7 +220,7 @@ module.exports = TopicService;
 
 After developing the Service of topic creation, an interface have been completed from top to bottom.
 
-### Unified error handling
+### Unified Error Handling
 
 Normal business logic has been completed, but exceptions have not yet been processed. Controller and Service may throw an exception as the previous coding, so it is recommended that throwing an exception to interrupt if passing invalided parameters from the client or calling the back-end service with exception.
 
