@@ -15,7 +15,7 @@ Thank you for reporting an issue.
 Most importantly, please understand one thing: the relationship between the `user` and `the maintainer of open source project` is not `Buyer` and `Seller`, the issue is not a customer order either.
 When you're opening an issue, please hold a mentality of "working together to solve this problem." Do not expect us to serve you unilaterally.
 
-## Why my config doesn't work?
+## Why does my config not work?
 
 Framework [Config](./basics/config.md) settings is powerfull, support different environments and different places(framework, plugins, app).
 
