@@ -154,7 +154,7 @@ describe('test/app/extend/context.test.js', () => {
     });
     after(() => app.close());
 
-    describe('ctx.router', () => {
+    describe('ctx.router getter and settter', () => {
       it('should work', () => {
         return app.httpRequest()
           .get('/')
