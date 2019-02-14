@@ -116,10 +116,11 @@ module.exports = {
 - Init Migrations Configuration Files and Directories
 
 ```bash
-npx sequelize init
+npx sequelize init:config
+npx sequelize init:migrations
 ```
 
-After the execution, the `database/config.json` file and the `database/migrations`, `database/seeders`, `app/model` directories will be generated. We will modify the contents of `database/config.json`. It was changed to the database configuration used in our project:
+After the execution, the `database/config.json` file and the `database/migrations` directory will be generated. We will modify the contents of `database/config.json`. It was changed to the database configuration used in our project:
 
 ```
 {
@@ -327,7 +328,6 @@ afterEach(async () => {
   // clear database after each test case
   await Promise.all([
     app.model.User.destroy({ truncate: true, force: true }),
-    app.model.Post.destroy({ truncate: true, force: true }),
   ]);
 });
 ```
@@ -414,3 +414,4 @@ We also provide sequelize boilerplate that integrates the modules [egg-sequelize
 [Migrations]: http://docs.sequelizejs.com/manual/tutorial/migrations.html
 [factory-girl]: https://github.com/aexmachina/factory-girl
 [eggjs/examples/sequelize]: https://github.com/eggjs/examples/tree/master/sequelize
+[egg-mysql]: https://github.com/eggjs/egg-mysql
