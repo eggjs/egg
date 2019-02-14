@@ -1,5 +1,22 @@
 # History
 
+## 2019-02-14, Version 2.16.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  feat: allow ctx.router setter
+* **others**
+  * more document improvement
+
+### Commits
+
+  * [[`0b67c85f6`](http://github.com/eggjs/egg/commit/0b67c85f6f1798b2d3f377fb5ea336c96b60b6e3)] - feat: allow ctx.router setter (#3460) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`ae5f56f3e`](http://github.com/eggjs/egg/commit/ae5f56f3e9b60eaa3507db44736020f3a13ec6f1)] - chore: Add principles for English titles and change all English titles (#3444) (Maledong <<maledong_github@outlook.com>>)
+  * [[`a9bee07da`](http://github.com/eggjs/egg/commit/a9bee07daff1530da7350f9ad1ea56e21aa3eead)] - docs(sequelize): fix init doc (#3456) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`f76c23052`](http://github.com/eggjs/egg/commit/f76c23052c86afcf158087f8b13a7e47ef76f67c)] - docs(logger): add logger.outputJSON to docs (#3425) (FX <<friskfly@gmail.com>>)
+
+
 ## 2019-02-04, Version 2.15.1 @dead-horse
 
 ### Notable changes
