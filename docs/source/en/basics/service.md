@@ -38,7 +38,7 @@ Framework will initialize a new Service instance for every request accessing the
 - `this.config`: the application's run-time [config](./config.md).
 - `this.logger`：logger with `debug`，`info`，`warn`，`error`, use to print different level logs, almost the same as [context logger](../core/logger.md#context-logger), but it will append Service file path for quickly track.
 
-### Service ctx in Detail
+### Service `ctx` in Detail
 
 To get the path chain of user request, the request context is injected by us during the Service initialization, so you are able to get the related information of context directly by `this.ctx` in methods. For detailed information about context, please refer to [Context](./extend.md#context).
 With `ctx`, we can get various convenient attributes and methods encapsulated by the framework. For example we can use:

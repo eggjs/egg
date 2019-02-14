@@ -13,14 +13,13 @@ Plugin mechanism is a major feature of our framework. Not only can it ensure tha
 
 Here are some of the issues we think that can arise when using Koa middleware:
 
-1.  Middleware loading is sequential and it is the user's responsibility to setup the execution sequence since middleware mechanism can not manage the actual order. This, in fact, is not very friendly.
-    When the order is not correct, it can lead to unexpected results.
+1.  Middleware loading is sequential and it is the user's responsibility to setup the execution sequence since middleware mechanism can not manage the actual order. This, in fact, is not very friendly. When the order is not correct, it can lead to unexpected results.
 2.  Middleware positioning is geared towards intercepting user requests to add additional logic before or after such as: authentication, security checks, logging and so on. However, in some cases, such functionality can be unrelated to the request, for example, timing tasks, message subscriptions, back-end logic and so on.
 3.  Some features include very complex initialization logic that needs to be done at application startup. This is obviously not suitable for middleware to achieve.
 
 To sum up, we need a more powerful mechanism to manage, orchestrate those relatively independent business logic.
 
-### The relationship between middleware, plugins and application
+### The Relationship Between Middleware, Plugins and Application
 
 A plugin is actually a "mini-application", almost the same as an app:
 
@@ -36,7 +35,7 @@ Their relationship is:
 * The plugin itself can contain middleware.
 * Multiple plugins can be wrapped as an [upper frame] (../ advanced / framework.md).
 
-## Using plugins
+## Using Plugins
 
 Plugins are usually added via the npm module:
 
@@ -71,7 +70,7 @@ You can directly use the functionality provided by the plugin:
 app.mysql.query(sql, values);
 ```
 
-### Configuring plugins
+### Configuring Plugins
 
 Each configuration item in `plugin.js` supports:
 
@@ -89,7 +88,7 @@ The application does not need the package or path configuration when using the p
 exports.onerror = false;
 ```
 
-### Environment configuration
+### Environment Configuration
 
 We also support `plugin.{Env}.js`, which will load plugin configurations based on [Runtime](../basics/env.md).
 
@@ -123,7 +122,7 @@ In this way, `npm i --production` in the production environment does not need to
 
 * Use this feature only in the application layer. Do not use it in the framework layer.
 
-### Package name and path
+### Package Name and Path
 
 * The `package` is introduced in the `npm` style which is the most common way to import
 * `path` is an absolute path introduced when you want to load the plugin from different location such as when a plugin is still at the development stage or not available on `npm`
@@ -138,7 +137,7 @@ exports.mysql = {
 };
 ```
 
-## Plugin configuration
+## Plugin Configuration
 
 The plugin will usually contain its own default configuration, you can overwrite this in `config.default.js`:
 
@@ -157,7 +156,7 @@ exports.mysql = {
 
 Specific consolidation rules can be found in [Configuration] (. / Config.md).
 
-## Plugin list
+## Plugin List
 
 * Framework has default built-in plugins for enterprise applications [Common plugins](https://eggjs.org/zh-cn/plugins/):
     - [onerror](https://github.com/eggjs/egg-onerror) Uniform Exception Handling
@@ -174,6 +173,6 @@ Specific consolidation rules can be found in [Configuration] (. / Config.md).
     - [view](https://github.com/eggjs/egg-view) Template Engine
 * More community plugins can be found on GitHub [egg-plugin](https://github.com/topics/egg-plugin).
 
-## Developing a plugin
+## Developing a Plugin
 
 See the documentation [plugin development](../advanced/plugin.md).

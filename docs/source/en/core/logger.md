@@ -163,7 +163,7 @@ exports.logger = {
 };
 ```
 
-#### DEBUG Log in Prodction Environment
+#### Debug Log in Production Environment
 
 To avoid some plugin's DEBUG logs printing in the production environment causing performance problems, the production environment prohibits printing DEBUG-level logs by default. If there is a need to print DEBUG logs for debugging in the production environment, you need to set `allowDebugAtProd` configuration to `ture`.
 
@@ -175,7 +175,7 @@ exports.logger = {
 };
 ```
 
-### In terminal
+### In Terminal
 
 By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. (Notice: It only works on `local` and `unittest` env)
 
@@ -208,7 +208,7 @@ exports.logger = {
 };
 ```
 
-## Create your logger
+## Create Your Logger
 
 ### Customized
 

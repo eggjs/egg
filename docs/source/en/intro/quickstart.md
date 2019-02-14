@@ -9,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 - Operating System: Linux, OS X or Windows.
 - Node.js Runtime: 8.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
-## the Quick Way
+## The Quick Way
 
 To begin with, let's quickly initialize the project by using a scaffold,
 which will quickly generate some of the major pieces of the application.
@@ -124,7 +124,7 @@ $ open localhost:7001
 > - You could write `Controller` with `class` or `exports` style, see more detail at [Controller](../basics/controller.md).
 > - And `Config` could write with `module.exports` or `exports` style, see more detail at [Node.js modules docs](https://nodejs.org/api/modules.html#modules_exports_shortcut).
 
-### Add Static Assets
+### Adding Static Assets
 
 Egg has a built-in plugin called [static][egg-static].
 In production, it is recommended that you deploy static assets to CDN instead of using this plugin.
@@ -142,7 +142,7 @@ app/public
     └── news.js
 ```
 
-### Add Templates for Rendering
+### Adding Templates for Rendering
 
 In most cases, data are usually read, processed and rendered by the templates before being presented to the user.
 Thus we need to introduce corresponding template engines to handle it.
@@ -315,7 +315,7 @@ exports.news = {
 };
 ```
 
-### Add Extensions
+### Adding Extensions
 
 We might encounter a small problem here.
 The time that we fetched are Unix Time format,
@@ -344,7 +344,7 @@ Then use it in the templates.
 {{ helper.relativeTime(item.time) }}
 ```
 
-### Add Middlewares
+### Adding Middlewares
 
 Suppose that we wanted to prohibit accesses from Baidu crawlers.
 
@@ -385,7 +385,7 @@ Now try it using `curl localhost:7001/news -A "Baiduspider"`.
 See [Middleware](../basics/middleware.md) for more details.
 
 
-### Add Configurations
+### Adding Configurations
 
 When writing business logic,
 it is inevitable that we need to manage configurations.
@@ -424,7 +424,7 @@ class SomeService extends Service {
 module.exports = SomeService;
 ```
 
-### Add Unit Testing
+### Adding Unit Testing
 
 Unit Testing is very important, and Egg also provides [egg-bin] to help you write tests painless.
 

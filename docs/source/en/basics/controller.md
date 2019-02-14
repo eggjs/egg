@@ -200,7 +200,7 @@ The remaining part is the actual content of this response.
 
 It can be seen from the above HTTP request examples that there are many places can be used to put user's request data. The framework provides many convenient methods and attributes by binding the Context instance to Controllers to acquire parameters sent by users through HTTP request.
 
-### query
+### `query`
 
 Usually the Query String, string following `?` in the URL, is used to send parameters by request of GET type. For example, `category=egg&language=node` in `GET /posts?category=egg&language=node` is the parameter that user sends. We can acquire this parsed parameter body through `ctx.query`:
 
@@ -229,7 +229,7 @@ if (key.startsWith('egg')) {
 
 Or if someone passes parameters with same keys in Query String on purpose, system error may be thrown. To avoid this, the framework guarantee that the parameter must be a string type whenever it is acquired from `ctx.query`.
 
-#### queries
+#### `queries`
 
 Sometimes our system is designed to accept same keys sent by users, like `GET /posts?category=egg&id=1&id=2&id=3`. For this situation, the framework provides `ctx.queries` object to parse Query String and put duplicated data into an array:
 
@@ -248,7 +248,7 @@ class PostController extends Controller {
 
 All key on the `ctx.queries` will be an array type if it has a value.
 
-### Router params
+### Router Params
 
 In [Router](./router.md) part, we say Router is allowed to declare parameters which can be acquired by `ctx.params`.
 
@@ -263,7 +263,7 @@ class AppController extends Controller {
 }
 ```
 
-### body
+### `body`
 
 Although we can pass parameters through URL, but constraints exist:
 
@@ -310,7 +310,7 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 **A common mistake is to confuse `ctx.request.body` and `ctx.body`(which is alias for `ctx.response.body`).**
 
-### Acquire the submitted files
+### Acquiring the Submitted Files
 
 The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
@@ -325,9 +325,9 @@ exports.multipart = {
 };
 ```
 
-2) Submitting / Acquiring files:
+2) Submitting / Acquiring Files:
 
-1. For single file:
+1. For Single File:
 
 Your HTML static front-end codes should look like this below:
 ```html
@@ -366,7 +366,7 @@ module.exports = class extends Controller {
 };
 ```
 
-2. For multiple files:
+2. For Multiple Files:
 
 For multiple files, with the help of `ctx.request.files`, we can loop each of them and do what process we like:
 
@@ -412,7 +412,7 @@ module.exports = class extends Controller {
 - #### `Stream` Mode
 If you are very familiar with `Stream` in Nodejs, you can choose this way. In a controller, we can fetch the uploaded files through `ctx.getFileStream()`.
 
-1. For single file：
+1. For Single File：
 
 ```html
 <form method="POST" action="/upload?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
@@ -458,7 +458,7 @@ To acquire the uploaded files easily, there're two conditions at least:
 - Only ONE file per time.
 - The field of uploading file MUST be after the other fields in a form, otherwise you cannot get other fields after getting the file stream.
 
-2. For multiple files:
+2. For Multiple Files:
 
 For multiple files, you should do the following instead of using `ctx.getFileStream()`:
 
@@ -565,7 +565,7 @@ module.exports = {
 
 For more tech details about this, please refer [Egg-Multipart](https://github.com/eggjs/egg-multipart).
 
-### header
+### `header`
 
 Apart from URL and request body, some parameters can be sent by request header. The framework provides some helper attributes and methods to retrieve them.
 
@@ -727,7 +727,7 @@ class PostController extends Controller {
 
 The parameter validation is done by [Parameter](https://github.com/node-modules/parameter#rule), and all supported validation rules can be found in its document.
 
-#### Customizing validation rules
+#### Customizing Validation Rules
 
 In addition to built-in validation types introduced in the previous section, sometimes we hope to customize several validation rules to make the development more convenient and now customized rules can be added through `app.validator.addRule(type, check)`.
 
@@ -798,7 +798,7 @@ class PostController extends Controller {
 
 As to which status code should be used for a specific case, please refer to status code meanings on [List of HTTP status codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
 
-### Setting Body
+### Body Setting
 
 Most data is sent to requesters through the body and, just like the body in the request, the body sent by the response demands a set of corresponding Content-Type to inform clients how to parse data.
 
@@ -942,7 +942,7 @@ module.exports = {
 
 When the CSRF validation is enabled, the client should bring CSRF token as well when it sends a JSONP request, if the page where the JSONP sender belongs to shares the same domain with our services, CSRF token in Cookie can be read(CSRF can be set manually if it is absent), and is brought together with the request.
 
-##### referrer Validation
+##### Validation Reference
 
 The CSRF way can be used for JSONP request validation only if the main domains are the same, while providing JSONP services for pages in different domains, we can limit JSONP senders into a controllable rang by configuring the referrer whitelist.
 
@@ -1003,7 +1003,7 @@ exports.jsonp = {
 
 **If both CSRF and referrer validation are enabled, the request sender passes any one of them passes the JSONP security validation.**
 
-### Setting Header
+### Header Setting
 
 We identify whether the request is successful or not by using the status code and set response content in the body. By setting the response header, extended information can be set as well.
 

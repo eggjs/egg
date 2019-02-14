@@ -14,7 +14,7 @@ brew install mysql
 brew service start mysql
 ```
 
-## Init
+## Initialization
 
 Init project by `egg-init`:
 
@@ -65,7 +65,7 @@ exports.sequelize = {
 
 After completing the above configuration, a project using sequelize is initialized. [egg-sequelize] and [sequelize] also support more configuration items, which can be found in their documentation.
 
-## Init Database and Migrations
+## Database and Migrations Initialization
 
 Next, let's temporarily leave the code of the egg project, design and initialize our database. First, we quickly create two databases for development and testing locally using the mysql command:
 
@@ -317,7 +317,7 @@ module.exports = app => {
 };
 ```
 
-- Initialize the file `test/.setup.js`, introduce the factory, and ensure that the data is cleaned after the test is executed to avoid being affected.
+- Initialize the file `test/.setup.js`, introduce the factory, and ensure that the data is cleaned after the test is executed to avoid being affected.
 
 ```js
 const { app } = require('egg-mock/bootstrap');

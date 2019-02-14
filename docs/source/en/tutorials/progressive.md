@@ -205,7 +205,7 @@ $ npm i
 $ npm test
 ```
 
-## Write in the end
+## In the End
 
 In conclusion, we can see how to make the framework evolution step by step which benefits from Egg's powerful plugin mechanism, code co-build, reusability and modularity.
 

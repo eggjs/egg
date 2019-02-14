@@ -5,7 +5,7 @@ In most cases, we need to read the data, render the template and then present it
 
 This article describes the framework's specification constraints on the View plugin, and we can use this to encapsulate the corresponding template engine plugin. The following takes [egg-view-ejs] as an example.
 
-## Plugin directory structure
+## Plugin Directory Structure
 
 ```bash
 egg-view-ejs
@@ -21,7 +21,7 @@ egg-view-ejs
 └── package.json
 ```
 
-## Plugin naming convention
+## Plugin Naming Convention
 
 * Follow the [plugin development specification](./plugin.md)
 * According to the convention, the names of plugins start with `egg-view-`
@@ -46,7 +46,7 @@ module.exports = {
 };
 ```
 
-## View base class
+## View Base Class
 
 The next step is to provide a View base class that will be instantiated on each request.
 
@@ -96,7 +96,7 @@ The three parameters of the `renderString` method:
 * locals: same with `render`.
 * viewOptions: same with `render`.
 
-## Plugin configuration
+## Plugin Configuration
 
 According to the naming conventions mentioned above, the configuration name is generally the name of the template engine, such as ejs.
 
@@ -173,7 +173,7 @@ First declare a dependency on [egg-security]:
 
 Besides, the framework provides [app.injectCsrf](../core/security.md#appinjectcsrfstr) and [app.injectNonce](../core/security.md#appinjectnonncestr), for more information on [security section](../core/security.md).
 
-### Unit tests
+### Unit Tests
 
 As a high-quality plugin, perfect unit testing is indispensable, and we also provide lots of auxiliary tools to make it painless for plugin developers to write tests with, see [unit testing](../core/unittest.md) and [plugin](./plugin.md) docs.
 

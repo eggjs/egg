@@ -37,7 +37,7 @@ The boilerplate above will create a very simple example, for a detailed one plea
 
 ---
 
-## Principles of catalogs
+## Principles of Catalogs
 
 **Some constraints:**
 
@@ -568,7 +568,7 @@ For more detailed info:
 
 ---
 
-## Guides to the developments of Plugin/Framework
+## Guides to the Developments of Plugin/Framework
 
 **Principles:**
 
@@ -614,7 +614,7 @@ declare module 'egg' {
 }
 ```
 
-### The outer framework
+### The Outer Framework
 
 Definitions:
 
@@ -653,7 +653,7 @@ export default class NewsService extends Service {
 
 Here're some questions asked by many people with answers one by one:
 
-### ts won't be loaded when running `npm start`
+### `ts` won't be loaded when running `npm start`
 
 `npm start` actually runs `egg-scripts start`, however we ONLY integrate `ts-node` in our `egg-bin`, it means ts won'be loaded until we use `egg-bin`.
 

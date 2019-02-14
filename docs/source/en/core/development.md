@@ -3,7 +3,7 @@ title: Local Development
 
 We provide convenient ways for development, debugging, and unit tests to improve your development experience.
 
-Here, wo will need to use [egg-bin] module (Only used in local development and unit tests. For production environment, please refer to [Deployment](./deployment.md)).
+Here, we need to use [egg-bin] module (Only used in local development and unit tests. For production environment, please refer to [Deployment](./deployment.md)).
 
 First of all, we need to include `egg-bin` module in `devDependencies`:
 
@@ -15,7 +15,7 @@ $ npm i egg-bin --save-dev
 
 Once we have modified code and saved in local development, the app will restart automatically, and our changes will take place right after that. 
 
-### Add Script
+### Adding Script
 
 Add `npm scripts` into `package.json`：
 
@@ -49,7 +49,7 @@ Starting app in local will listen to port 7001 by default. You may assign other 
 
 Here we mainly cover the usage of the tools, for more details about unit tests, please refer to [here](./unittest.md).
 
-### Add Script
+### Adding Script
 
 Add `npm scripts` into `package.json`：
 
@@ -65,7 +65,7 @@ And then we can run unit test by `npm test`.
 
 ### Environment Configuration
 
-To run test cases, environment need to be set as `env: unittest`. The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
+To run test cases, environment needs to be set as `env: unittest`. The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
 ### Run specific test file
 
@@ -79,7 +79,7 @@ $ TESTS=test/x.test.js npm test
 
 [glob] expressions are supported here.
 
-### Reporter setting
+### Reporter Setting
 
 Mocha supports various reporters. Default reporter is `spec`.
 
@@ -91,7 +91,7 @@ $ TEST_REPORTER=dot npm test
 
 ![image](https://cloud.githubusercontent.com/assets/156269/21849809/a6fe6df8-d842-11e6-8507-20da63bc8b62.png)
 
-### Timeout setting
+### Timeout Setting
 
 The default timeout is 30 seconds. We may set our own timeout (in milliseconds). For example, setting timeout to 5 seconds:
 
@@ -99,7 +99,7 @@ The default timeout is 30 seconds. We may set our own timeout (in milliseconds).
 $ TEST_TIMEOUT=5000 npm test
 ```
 
-### Pass Parameters Via argv
+### Pass Parameters via argv
 
 Besides environment variables, `egg-bin test` also supports passing parameters directly, and it supports all mocha parameters. You may refer to [mocha usage](https://mochajs.org/#usage).
 
@@ -162,7 +162,7 @@ And we may open HTML file of complete code coverage report via `open coverage/lc
 
 Just like test, the environment needs to be set to `env:unittest` to run cov, and the configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
-### Ignore specific Files
+### Ignore Specific Files
 
 To ignore some files in code coverage rate calculation, You may use `COV_EXCLUDES` as the environment variable to ignore some specific files that don't need the test converages:
 
@@ -215,9 +215,9 @@ $ DEBUG=egg* npm run dev
 
 Detail logs of unit tests progress are able to be viewed via `DEBUG=* npm test`.
 
-### Debug With egg-bin
+### Debug with `egg-bin`
 
-#### Add Script
+#### Adding Script
 
 Add `npm scripts` into `package.json`：
 
@@ -233,7 +233,7 @@ And then we may set breakpoints for debugging our app via `npm run debug`.
 
 `egg-bin` will select debug protocol automatically. [Inspector Protocol] will be selected for version 8.x and later. For earlier ones, [Legacy Protocol] is the choice.
 
-In the meantime, It also supports customized debug parameters.
+Meanwhile, It also supports customized debug parameters.
 
 ```bash
 $ egg-bin debug --inpsect=9229
@@ -248,7 +248,7 @@ $ egg-bin debug --inpsect=9229
 
 App starts by `env: local` when executing debug . The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
-#### Debug With [DevTools] 
+#### Debug with [DevTools] 
 
 The latest DevTools only supports [Inspector Protocol]. Thus you will need to install Node.js 8.x or higher verions to be able to use it.
 
@@ -279,7 +279,7 @@ And then choose one of the following ways:
 
 ![DevTools](https://user-images.githubusercontent.com/227713/30419047-a54ac592-9967-11e7-8a05-5dbb82088487.png)
 
-#### Debug With WebStorm
+#### Debug with WebStorm
 
 `egg-bin` will read environment variable `$NODE_DEBUG_OPTION` set in WebStorm debug mode.
 
@@ -287,7 +287,7 @@ Start npm debug in WebStorm：
 
 ![WebStorm](https://user-images.githubusercontent.com/227713/30423086-5dd32ac6-9974-11e7-840f-904e49a97694.png)
 
-#### Debug With [VSCode]
+#### Debug with [VSCode]
 
 There are 2 ways:
 

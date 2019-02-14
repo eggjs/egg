@@ -19,7 +19,7 @@ The execution sequence of [Passport](http://www.passportjs.org/) is as follows:
 * Serialize user information to Session
 * Jump to the specified page
 
-## Using egg-passport
+## Using `egg-passport`
 
 Below, we will use GitHub login as an example to demonstrate how to use it.
 

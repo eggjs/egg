@@ -67,7 +67,7 @@ This scheduled task will be executed every 1 minute on every worker process, the
 
 Schedule tasks can specify `interval` or `cron` two different schedule modes.
 
-#### interval
+#### `interval`
 
 Configure the scheduled tasks by `schedule.interval`, scheduled tasks will be executed every specified time interval. `interval` can be configured as
 
@@ -83,7 +83,7 @@ module.exports = {
 };
 ```
 
-#### cron
+#### `cron`
 
 Configure the scheduled tasks by `schedule.cron`, scheduled tasks will be executed at specified timing according to the cron expressions. cron expressions are parsed by [cron-parser](https://github.com/harrisiirak/cron-parser).
 

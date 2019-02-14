@@ -42,7 +42,7 @@ module.exports = Object.assign(egg, {
 });
 ```
 
-## Private properties & Lazy Initialization
+## Private Properties & Lazy Initialization
 
 * Private properties are mounted with `Symbol`.
 * The description of Symbol follows the rules of jsdoc, describing the mapped class name + attribute name.
