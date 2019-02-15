@@ -19,6 +19,7 @@ export default class FooController extends Controller {
       this.app.logger.info(e.name, body.foo);
     }
   }
+
   async getBar() {
     try {
       this.ctx.body = await this.service.foo.bar();
@@ -26,6 +27,7 @@ export default class FooController extends Controller {
       this.ctx.logger.error(e);
     }
   }
+
   async httpclient() {
     await this.app.httpclient.request('url', {
       method: 'POST',
@@ -36,5 +38,19 @@ export default class FooController extends Controller {
     await this.app.curl('url', {
       method: 'POST',
     });
+  }
+
+  async testViewRender() {
+    const { ctx } = this;
+    this.app.logger.info(this.app.view.get('nunjucks'));
+    this.app.logger.info(this.app.config.view.root);
+    this.app.logger.info(this.app.config.view.defaultExtension);
+    ctx.body = await this.ctx.view.render('test.tpl', {
+      test: '123'
+    });
+  }
+
+  async testViewRenderString() {
+    this.ctx.body = await this.ctx.view.renderString('test');
   }
 }

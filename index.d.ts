@@ -166,26 +166,6 @@ declare module 'egg' {
     realStatus: number;
   }
 
-  export interface ContextView { // tslint:disable-line
-    /**
-     * Render a file by view engine
-     * @param {String} name - the file path based on root
-     * @param {Object} [locals] - data used by template
-     * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
-     * @return {Promise<String>} result - return a promise with a render result
-     */
-    render(name: string, locals?: any, options?: any): Promise<string>;
-
-    /**
-     * Render a template string by view engine
-     * @param {String} tpl - template string
-     * @param {Object} [locals] - data used by template
-     * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
-     * @return {Promise<String>} result - return a promise with a render result
-     */
-    renderString(name: string, locals?: any, options?: any): Promise<string>;
-  }
-
   export type LoggerLevel = EggLoggerLevel;
 
   /**
@@ -435,14 +415,6 @@ declare module 'egg' {
       buffer: boolean;
       maxFiles: number;
     } & PlainObject;
-
-    view: {
-      root: string;
-      cache: boolean;
-      defaultExtension: string;
-      defaultViewEngine: string;
-      mapping: PlainObject<string>;
-    };
 
     watcher: PlainObject;
 
@@ -903,34 +875,11 @@ declare module 'egg' {
     starttime: number;
 
     /**
-     * View instance that is created every request
-     */
-    view: ContextView;
-
-    /**
      * http request helper base on httpclient, it will auto save httpclient log.
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
     curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
-
-    /**
-     * Render a file by view engine
-     * @param {String} name - the file path based on root
-     * @param {Object} [locals] - data used by template
-     * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
-     * @return {Promise<String>} result - return a promise with a render result
-     */
-    render(name: string, locals?: any, options?: any): Promise<string>;
-
-    /**
-     * Render a template string by view engine
-     * @param {String} tpl - template string
-     * @param {Object} [locals] - data used by template
-     * @param {Object} [options] - view options, you can use `options.viewEngine` to specify view engine
-     * @return {Promise<String>} result - return a promise with a render result
-     */
-    renderString(name: string, locals?: any, options?: any): Promise<string>;
 
     __(key: string, ...values: string[]): string;
     gettext(key: string, ...values: string[]): string;
