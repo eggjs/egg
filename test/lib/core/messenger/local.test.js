@@ -3,6 +3,7 @@
 const utils = require('../../../utils');
 const pedding = require('pedding');
 const assert = require('assert');
+const mm = require('egg-mock');
 
 describe('test/lib/core/messenger/local.test.js', () => {
   let app;
@@ -14,6 +15,7 @@ describe('test/lib/core/messenger/local.test.js', () => {
   after(() => app.close());
 
   afterEach(() => {
+    mm.restore();
     app.messenger.close();
     app.agent.messenger.close();
   });
@@ -159,6 +161,39 @@ describe('test/lib/core/messenger/local.test.js', () => {
       });
 
       app.agent.messenger.sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+    });
+  });
+
+  describe('send()', () => {
+    it('app.messenger.send should not throw when app.agent not exist', () => {
+      mm(app, 'agent', undefined);
+      app.messenger.send('send-event', { foo: 'bar' });
+    });
+
+    it('app.messenger.send should work', done => {
+      app.agent.messenger.once('send-event', msg => {
+        assert.deepEqual(msg, { foo: 'bar' });
+        done();
+      });
+
+      app.messenger.once('send-event', () => {
+        throw new Error('should not emit on app');
+      });
+
+      app.messenger.send('send-event', { foo: 'bar' });
+    });
+
+    it('agent.messenger.send should work', done => {
+      app.agent.messenger.once('send-event', () => {
+        throw new Error('should not emit on agent');
+      });
+
+      app.messenger.once('send-event', msg => {
+        assert.deepEqual(msg, { foo: 'bar' });
+        done();
+      });
+
+      app.agent.messenger.send('send-event', { foo: 'bar' });
     });
   });
 });
