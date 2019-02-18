@@ -1,11 +1,26 @@
 # History
 
+## 2019-02-15, Version 2.16.1 @atian25
+
+### Notable changes
+
+* **docs**
+  * remove declaration of view
+
+* **others**
+  * update dependencies
+
+### Commits
+  * [[`1e859f2e2`](http://github.com/eggjs/egg/commit/1e859f2e200260cab95ac0b860d85609eb3eec06)] - feat(types): remove declaration of view (#3466) (吖猩 <<whxaxes@qq.com>>)
+  * [[`4a3ab5ac0`](http://github.com/eggjs/egg/commit/4a3ab5ac0324537fc3cdbcc0e84e3085b8a34586)] - deps: update dependencies (#3464) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2019-02-14, Version 2.16.0 @dead-horse
 
 ### Notable changes
 
 * **features**
-  feat: allow ctx.router setter
+  * allow ctx.router setter
+
 * **others**
   * more document improvement
 
@@ -27,7 +42,6 @@
 ### Commits
 
   * [[`277c024cf`](http://github.com/eggjs/egg/commit/277c024cf565948547dbc7a518d39d7f55318f58)] - fix: add missing framework support for single process mode (#3445) (Yiyu He <<dead_horse@qq.com>>)
-
 
 ## 2019-02-03, Version 2.15.0 @dead-horse
 
