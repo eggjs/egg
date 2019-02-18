@@ -1,5 +1,16 @@
 # History
 
+## 2019-02-18, Version 2.16.2 @dead-horse
+
+### Notable changes
+
+* **fixes**
+  * fix: messenger in single process mode support send without `to`
+
+### Commits
+  * [[`eac494184`](http://github.com/eggjs/egg/commit/eac4941846948ca6bb8a357d525ad82737425005)] - fix: support send without to argument (#3472) (Yiyu He <<dead_horse@qq.com>>)
+
+
 ## 2019-02-15, Version 2.16.1 @atian25
 
 ### Notable changes
