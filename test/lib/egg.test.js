@@ -377,6 +377,7 @@ describe('test/lib/egg.test.js', () => {
     it('should create anonymous context', async () => {
       let ctx = app.createAnonymousContext();
       assert(ctx);
+      assert(ctx.host === '127.0.0.1');
       ctx = app.agent.createAnonymousContext();
       assert(ctx);
     });
