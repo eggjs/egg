@@ -307,7 +307,7 @@ export default plugin;
 ### 生命周期（Lifecycle）
 
 ```typescript
-// app/app.ts
+// app.ts
 import { Application, IBoot } from 'egg';
 
 export default class FooBoot implements IBoot {
