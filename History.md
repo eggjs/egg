@@ -1,5 +1,20 @@
 # History
 
+## 2019-02-21, Version 2.17.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * agent context can be extended
+
+* **fixes**
+  * createAnonymousContext add host in headers
+
+### Commits
+* [[`7147b23cf`](http://github.com/eggjs/egg/commit/7147b23cf7edaa98a8f009d98de7ef2aaa5303a0)] - feat: agent context can be extended (#3478) (Hongcai Deng <<admin@dhchouse.com>>)
+* [[`a2f0d9620`](http://github.com/eggjs/egg/commit/a2f0d96204e05f11c5586ff0fa9441f4e3ab5dff)] - fix: createAnonymousContext add host in headers (#3477) (Yiyu He <<dead_horse@qq.com>>)
+* [[`5952d1240`](http://github.com/eggjs/egg/commit/5952d12404ae896a2338ee4ee79d68876ffbb205)] - docs(typescript): fix wrong path of LifeCycle (#3475) (CHANG, TZU-YEN <<try_love_tom@icloud.com>>)
+
 ## 2019-02-18, Version 2.16.2 @dead-horse
 
 ### Notable changes
