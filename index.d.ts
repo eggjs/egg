@@ -44,27 +44,27 @@ declare module 'egg' {
     /**
      * request context
      */
-    ctx: Context;
+    protected ctx: Context;
 
     /**
      * Application
      */
-    app: Application;
+    protected app: Application;
 
     /**
      * Application config object
      */
-    config: EggAppConfig;
+    protected config: EggAppConfig;
 
     /**
      * service
      */
-    service: IService;
+    protected service: IService;
 
     /**
      * logger
      */
-    logger: EggLogger;
+    protected logger: EggLogger;
 
     constructor(ctx: Context);
   }
@@ -937,7 +937,7 @@ declare module 'egg' {
 
   export interface IMiddleware extends PlainObject { } // tslint:disable-line
 
-  export interface IHelper extends PlainObject {
+  export interface IHelper extends PlainObject, BaseContextClass {
     /**
      * Generate URL path(without host) for route. Takes the route name and a map of named params.
      * @method Helper#pathFor
