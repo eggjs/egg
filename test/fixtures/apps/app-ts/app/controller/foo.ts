@@ -12,6 +12,7 @@ export default class FooController extends Controller {
   async getData() {
     try {
       this.ctx.logger.info('getData');
+      this.ctx.helper.test();
       this.ctx.body = await this.ctx.service.foo.bar();
       this.ctx.proxy.foo.bar();
     } catch (e) {
