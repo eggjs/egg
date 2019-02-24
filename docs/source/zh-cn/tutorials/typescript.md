@@ -1,7 +1,7 @@
 title: TypeScript
 ---
 
-> [TypeScript](https://www.typescriptlang.org/) is a typed superset of JavaScript that compiles to plain JavaScript.
+> [TypeScript](https://www.tslang.cn/) 是 JavaScript 类型的超集，它可以编译成纯 JavaScript。
 
 TypeScript 的静态类型检查，智能提示，IDE 友好性等特性，对于大规模企业级应用，是非常的有价值的。详见：[TypeScript体系调研报告](https://juejin.im/post/59c46bc86fb9a00a4636f939) 。
 
