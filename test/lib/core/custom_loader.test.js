@@ -5,7 +5,7 @@ const utils = require('../../utils');
 // const fs = require('fs');
 // const path = require('path');
 
-describe.only('test/lib/core/custom_loader.test.js', () => {
+describe('test/lib/core/custom_loader.test.js', () => {
   afterEach(mock.restore);
 
   let app;
