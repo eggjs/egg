@@ -139,7 +139,7 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'logger-output-json-web.json.log');
     ctx.logger.info('json format');
 
-    await sleep(1000);
+    await sleep(2000);
 
     assert(fs.existsSync(logfile));
     assert(fs.readFileSync(logfile, 'utf8').includes('"message":"json format"'));
