@@ -1,5 +1,22 @@
 # History
 
+## 2019-02-26, Version 2.18.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * cluster-client support single process mode
+
+* **fixes**
+  * fix type defined
+
+### Commits
+
+  * [[`db1093128`](http://github.com/eggjs/egg/commit/db10931281dd39106e5c657e358117abd39b2103)] - feat: cluster-client support single cpu mode (#3497) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+  * [[`f7e6ab535`](http://github.com/eggjs/egg/commit/f7e6ab535df378b35dfe6b6b49d7e009dc2bcf3f)] - doc (typescript.md): Chinese translation for the beginning of TypeScript's Introduction (#3488) (Maledong <<maledong_github@outlook.com>>)
+  * [[`ac7e9a6b6`](http://github.com/eggjs/egg/commit/ac7e9a6b6d732d946dc238d9bad3eaabb81a1b70)] - fix: helper type (#3483) (吖猩 <<whxaxes@qq.com>>)
+
+
 ## 2019-02-21, Version 2.17.0 @dead-horse
 
 ### Notable changes
@@ -23,6 +40,7 @@
   * fix: messenger in single process mode support send without `to`
 
 ### Commits
+
   * [[`eac494184`](http://github.com/eggjs/egg/commit/eac4941846948ca6bb8a357d525ad82737425005)] - fix: support send without to argument (#3472) (Yiyu He <<dead_horse@qq.com>>)
 
 
@@ -37,6 +55,7 @@
   * update dependencies
 
 ### Commits
+
   * [[`1e859f2e2`](http://github.com/eggjs/egg/commit/1e859f2e200260cab95ac0b860d85609eb3eec06)] - feat(types): remove declaration of view (#3466) (吖猩 <<whxaxes@qq.com>>)
   * [[`4a3ab5ac0`](http://github.com/eggjs/egg/commit/4a3ab5ac0324537fc3cdbcc0e84e3085b8a34586)] - deps: update dependencies (#3464) (Yiyu He <<dead_horse@qq.com>>)
 
