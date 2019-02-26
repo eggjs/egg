@@ -65,8 +65,13 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
     });
     after(async () => {
       await app.close();
+
+      assert(app.registryClient.isClusterClientLeader);
+      assert(app.agent.registryClient.isClusterClientLeader);
+      assert(app.registryClient[innerClient] === app.agent.registryClient[innerClient]);
+
       const agentInnerClient = app.agent.registryClient[innerClient];
-      assert(agentInnerClient._realClient.closed === true);
+      assert(agentInnerClient.closed === true);
       mm.restore();
     });
 
