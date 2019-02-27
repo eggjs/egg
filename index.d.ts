@@ -680,14 +680,22 @@ declare module 'egg' {
   interface GetFileStreamOptions {
     requireFile?: boolean // required file submit, default is true
     defCharset?: string
-    limits?: any
+    limits?: {
+      fieldNameSize: number,
+      fieldSize: number,
+      fields: number,
+      fileSize: number,
+      files: number,
+      parts: number,
+      headerPairs: number
+    }
     checkFile?(
-      fieldname: string,
+      fieldname: string;
       file: any,
       filename: string,
       encoding: string,
       mimetype: string
-    ): any
+    ): void | Error
   }
 
   /**
@@ -910,7 +918,7 @@ declare module 'egg' {
      * @return {ReadStream} stream
      * @since 1.0.0
      */
-    getFileStream(options: GetFileStreamOptions): Promise<FileStream>;
+    getFileStream(options?: GetFileStreamOptions): Promise<FileStream>;
 
     /**
      * @see Responce.redirect
