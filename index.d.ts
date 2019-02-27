@@ -681,16 +681,16 @@ declare module 'egg' {
     requireFile?: boolean // required file submit, default is true
     defCharset?: string
     limits?: {
-      fieldNameSize: number,
-      fieldSize: number,
-      fields: number,
-      fileSize: number,
-      files: number,
-      parts: number,
+      fieldNameSize: number
+      fieldSize: number
+      fields: number
+      fileSize: number
+      files: number
+      parts: number
       headerPairs: number
     }
     checkFile?(
-      fieldname: string;
+      fieldname: string,
       file: any,
       filename: string,
       encoding: string,
