@@ -46,6 +46,10 @@ describe('test/lib/start.test.js', () => {
       app = await utils.singleProcessApp('apps/demo', { env: 'prod' });
       assert(app.config.env === 'prod');
     });
+
+    it('should ignoreWarng work', async () => {
+      app = await utils.singleProcessApp('apps/demo', { ignoreWaring: true });
+    });
   });
 
   describe('custom framework work', () => {
