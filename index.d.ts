@@ -676,6 +676,27 @@ declare module 'egg' {
 
     truncated: boolean;
   }
+                   
+  interface GetFileStreamOptions {
+    requireFile?: boolean; // required file submit, default is true
+    defCharset?: string;
+    limits?: {
+      fieldNameSize?: number;
+      fieldSize?: number;
+      fields?: number;
+      fileSize?: number;
+      files?: number;
+      parts?: number;
+      headerPairs?: number;
+    };
+    checkFile?(
+      fieldname: string,
+      file: any,
+      filename: string,
+      encoding: string,
+      mimetype: string
+    ): void | Error;
+  }
 
   /**
   * KoaApplication's Context will carry the default 'cookie' property in
@@ -893,10 +914,11 @@ declare module 'egg' {
      * console.log(stream.fields);
      * ```
      * @method Context#getFileStream
+     * @param {Object} options
      * @return {ReadStream} stream
      * @since 1.0.0
      */
-    getFileStream(): Promise<FileStream>;
+    getFileStream(options?: GetFileStreamOptions): Promise<FileStream>;
 
     /**
      * @see Responce.redirect
