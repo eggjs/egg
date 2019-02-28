@@ -1,5 +1,20 @@
 # History
 
+## 2019-02-28, Version 2.19.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * single mode support ignore warning
+
+* **fixes**
+  * fix type defined
+
+### Commits
+
+  * [[`18efac152`](http://github.com/eggjs/egg/commit/18efac152dd5cf789d1e79b1c1fb1fb4ec2013a1)] - feat: single mode support ignore warning (#3501) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`f9eea2a4d`](http://github.com/eggjs/egg/commit/f9eea2a4da805a1b2f0e8883860266d68eb432ff)] - fix(types): getFileStream options types (#3500) (kayikay <<469797590@qq.com>>)
+
 ## 2019-02-26, Version 2.18.0 @dead-horse
 
 ### Notable changes
