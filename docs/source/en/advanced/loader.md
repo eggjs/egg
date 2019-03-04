@@ -504,7 +504,8 @@ When you define a loader with `loadToApp`
 
 ```js
 // app.js
-// 以下只是示例，加载 controller 请用 loadController
+// This is only the example below, please use 'loadController' instead
+// when loading controller
 module.exports = app => {
   const directory = path.join(app.config.baseDir, 'app/controller');
   app.loader.loadToApp(directory, 'controller');
