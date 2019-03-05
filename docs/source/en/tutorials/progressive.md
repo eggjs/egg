@@ -126,8 +126,8 @@ Codes refer to  [step3/egg-ua](https://github.com/eggjs/examples/tree/master/pro
 Then modify the application, details refer to [step3/example-app](https://github.com/eggjs/examples/tree/master/progressive/step3/example-app).
 
 - Remove directory `lib/plugin/egg-ua`.
-- declare dependencies `egg-ua`  in `package.json`.
-- change type to `package` in `config/plugin.js`.
+- Declare dependencies `egg-ua`  in `package.json`.
+- Change type to `package` in `config/plugin.js`.
 
 ```js
 // config/plugin.js
@@ -210,10 +210,10 @@ $ npm test
 In conclusion, we can see how to make the framework evolution step by step which benefits from Egg's powerful plugin mechanism, code co-build, reusability and modularity.
 
 
-- in general, put codes into `lib/plugin` if they can be reused in the application.
-- separate it into a `node module` when plugin becomes stable.
-- application with relatively reusable codes will work as a separate plugin.
-- abstract it as framework to release after application become certain solutions of specified business scenario.
-- it would be a great improvement in the efficiency of teamwork after plugins were extracted, modularized and finally became a framework, because other projects could reuse codes by just using `npm install`.
+- In general, put codes into `lib/plugin` if they can be reused in the application.
+- Separate it into a `node module` when plugin becomes stable.
+- Application with relatively reusable codes will work as a separate plugin.
+- Abstract it as framework to release after application become certain solutions of specified business scenario.
+- It would be a great improvement in the efficiency of teamwork after plugins were extracted, modularized and finally became a framework, because other projects could reuse codes by just using `npm install`.
 
 - **Note：Whether it's the application/plugin/framework, unittest is necessary and try to reach 100% coverage**

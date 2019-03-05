@@ -5,8 +5,9 @@ Developers are advised to use `egg-init --type=simple showcase` to generate and 
 
 ## Classify
 
+Old Style:
+
 ```js
-// old style
 module.exports = app => {
   class UserService extends app.Service {
     async list() {
