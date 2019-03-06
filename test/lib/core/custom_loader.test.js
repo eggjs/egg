@@ -2,8 +2,6 @@
 
 const mock = require('egg-mock');
 const utils = require('../../utils');
-// const fs = require('fs');
-// const path = require('path');
 
 describe('test/lib/core/custom_loader.test.js', () => {
   afterEach(mock.restore);
@@ -16,11 +14,11 @@ describe('test/lib/core/custom_loader.test.js', () => {
   after(() => app.close());
 
   it('should', async () => {
-    app.httpRequest()
+    await app.httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'docker',
-        repository: 'user',
+        repository: 'popomore',
       })
       .expect(200);
   });
