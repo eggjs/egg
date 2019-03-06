@@ -524,6 +524,8 @@ module.exports = {
       directory: 'app/controller',
       // if inject is ctx, it will use loadToContext
       inject: 'app',
+      // whether load the directory of the framework and plugin
+      loadunit: false,
       // you can also use other LoaderOptions
    }
   },

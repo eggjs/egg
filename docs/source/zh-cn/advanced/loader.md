@@ -528,6 +528,8 @@ module.exports = {
       directory: 'app/controller',
       // 如果是 ctx 则使用 loadToContext
       inject: 'app',
+      // 是否加载框架和插件的目录
+      loadunit: false,
       // 还可以定义其他 LoaderOptions
     }
   },
