@@ -496,6 +496,40 @@ app/controller | true
 app/middleware | false
 app/service | true
 
+## CustomLoader
+
+You can use `customLoader` instead of `loadToContext` and `loadToApp`.
+
+When you define a loader with `loadToApp`
+
+```js
+// app.js
+module.exports = app => {
+  const directory = path.join(app.config.baseDir, 'app/adapter');
+  app.loader.loadToApp(directory, 'adapter');
+};;
+```
+
+Instead, you can define `customLoader`
+
+```js
+// config/config.default.js
+module.exports = {
+  customLoader: {
+    // the property name when load to application, E.X. app.adapter
+    adapter: {
+      // relative to app.config.baseDir
+      directory: 'app/adapter',
+      // if inject is ctx, it will use loadToContext
+      inject: 'app',
+      // whether load the directory of the framework and plugin
+      loadunit: false,
+      // you can also use other LoaderOptions
+   }
+  },
+};
+``
+
 [Loader]: https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js
 [AppWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js
 [AgentWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js

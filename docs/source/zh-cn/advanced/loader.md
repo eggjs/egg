@@ -501,6 +501,40 @@ app/controller | true
 app/middleware | false
 app/service | true
 
+## CustomLoader
+
+`loadToContext` 和 `loadToApp` 可被 `customLoader` 配置替代。
+
+如使用 `loadToApp` 加载的代码如下
+
+```js
+// app.js
+module.exports = app => {
+  const directory = path.join(app.config.baseDir, 'app/adapter');
+  app.loader.loadToApp(directory, 'adapter');
+};;
+```
+
+换成 `customLoader` 后变为
+
+```js
+// config/config.default.js
+module.exports = {
+  customLoader: {
+    // 定义在 app 上的属性名 app.adapter
+    adapter: {
+      // 相对于 app.config.baseDir
+      directory: 'app/adapter',
+      // 如果是 ctx 则使用 loadToContext
+      inject: 'app',
+      // 是否加载框架和插件的目录
+      loadunit: false,
+      // 还可以定义其他 LoaderOptions
+    }
+  },
+};
+```
+
 [Loader]: https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js
 [AppWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js
 [AgentWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js
