@@ -1,5 +1,21 @@
 # History
 
+## 2019-03-07, Version 2.20.0 @popomore
+
+### Notable changes
+
+* **features**
+  * support customLoader
+
+* **chore**
+  * fix typo
+  * fix testcase
+
+### Commits
+  * [[`4cf06da27`](http://github.com/eggjs/egg/commit/4cf06da272a3f71b864efb6780ddfe2e6c1ad37c)] - feat: support customLoader (#3484) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`2f2bd69bb`](http://github.com/eggjs/egg/commit/2f2bd69bb5a5ef5f9d45514c0640f3849bc64293)] - chore：Fix some typos in Chinese and English (#3514) (Maledong <<maledong_github@outlook.com>>)
+  * [[`65bdd158c`](http://github.com/eggjs/egg/commit/65bdd158caf38abfc945de9aad8367a8567b1a18)] - Fix(cluster-client.test.js)：Rollback to previous (#3507) (Maledong <<maledong_github@outlook.com>>)
+
 ## 2019-02-28, Version 2.19.0 @dead-horse
 
 ### Notable changes
