@@ -504,11 +504,9 @@ When you define a loader with `loadToApp`
 
 ```js
 // app.js
-// This is only the example below, please use 'loadController' instead
-// when loading controller
 module.exports = app => {
-  const directory = path.join(app.config.baseDir, 'app/controller');
-  app.loader.loadToApp(directory, 'controller');
+  const directory = path.join(app.config.baseDir, 'app/adapter');
+  app.loader.loadToApp(directory, 'adapter');
 };;
 ```
 
@@ -518,10 +516,10 @@ Instead, you can define `customLoader`
 // config/config.default.js
 module.exports = {
   customLoader: {
-    // the property name when load to application, E.X. app.controller
-    controller: {
+    // the property name when load to application, E.X. app.adapter
+    adapter: {
       // relative to app.config.baseDir
-      directory: 'app/controller',
+      directory: 'app/adapter',
       // if inject is ctx, it will use loadToContext
       inject: 'app',
       // whether load the directory of the framework and plugin

@@ -509,10 +509,9 @@ app/service | true
 
 ```js
 // app.js
-// 以下只是示例，加载 controller 请用 loadController
 module.exports = app => {
-  const directory = path.join(app.config.baseDir, 'app/controller');
-  app.loader.loadToApp(directory, 'controller');
+  const directory = path.join(app.config.baseDir, 'app/adapter');
+  app.loader.loadToApp(directory, 'adapter');
 };;
 ```
 
@@ -522,10 +521,10 @@ module.exports = app => {
 // config/config.default.js
 module.exports = {
   customLoader: {
-    // 定义在 app 上的属性名 app.controller
-    controller: {
+    // 定义在 app 上的属性名 app.adapter
+    adapter: {
       // 相对于 app.config.baseDir
-      directory: 'app/controller',
+      directory: 'app/adapter',
       // 如果是 ctx 则使用 loadToContext
       inject: 'app',
       // 是否加载框架和插件的目录
