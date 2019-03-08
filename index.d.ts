@@ -1174,4 +1174,8 @@ declare module 'egg' {
      */
     beforeClose?(): Promise<void>;
   }
+  
+  export class Singleton<T> {
+    get(id: string): T;
+  }
 }
