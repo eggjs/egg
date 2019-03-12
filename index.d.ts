@@ -306,6 +306,23 @@ declare module 'egg' {
        */
       reloadPattern: string[] | string;
     };
+
+    /**
+     * customLoader config
+     */
+    customLoader: {
+      directory: string;
+      inject: 'ctx' | 'app';
+      loadunit?: boolean;
+      match?: string;
+      ignore?: string;
+      override?: boolean;
+      call?: boolean;
+      caseStyle?: string;
+      initializer?: (obj: any, param: { path: string; pathName: string; }) => any;
+      filter?: (obj: any) => boolean;
+    };
+
     /**
      * It will ignore special keys when dumpConfig
      */
