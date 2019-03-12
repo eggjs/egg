@@ -313,7 +313,7 @@ declare module 'egg' {
     customLoader: {
       [key: string]: {
         directory: string;
-        inject: 'ctx' | 'app';
+        inject?: 'ctx' | 'app';
         loadunit?: boolean;
         match?: string | string[];
         ignore?: string | string[];
