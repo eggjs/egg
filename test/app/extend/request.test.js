@@ -165,6 +165,28 @@ describe('test/app/extend/request.test.js', () => {
       });
     });
 
+    describe('this.query && this.queries can be modified', () => {
+      it('should success with querystring present', () => {
+        req.querystring = 'a=a&b=b1&b=b2';
+        assert.deepEqual(req.query, { a: 'a', b: 'b1' });
+        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'b1', 'b2' ] });
+        req.query.a = 'aa';
+        req.queries.b = [ 'bb' ];
+        assert.deepEqual(req.query, { a: 'aa', b: 'b1' });
+        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'bb' ] });
+      });
+
+      it('should success with empty querystring', () => {
+        req.querystring = '';
+        assert.deepEqual(req.query, {});
+        assert.deepEqual(req.queries, {});
+        req.query.a = 'aa';
+        req.queries.b = [ 'bb' ];
+        assert.deepEqual(req.query, { a: 'aa' });
+        assert.deepEqual(req.queries, { b: [ 'bb' ] });
+      });
+    });
+
     describe('this.query[key] => String', () => {
       function expectQuery(querystring, query) {
         mm(req, 'querystring', querystring);

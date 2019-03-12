@@ -139,11 +139,7 @@ module.exports = {
   // How to read query safely
   // https://github.com/koajs/qs/issues/5
   _customQuery(cacheName, filter) {
-    const str = this.querystring;
-    if (!str) {
-      return {};
-    }
-
+    const str = this.querystring || '';
     let c = this[cacheName];
     if (!c) {
       c = this[cacheName] = {};
@@ -153,7 +149,7 @@ module.exports = {
       cacheQuery = c[str] = {};
       const isQueries = cacheName === _queriesCache;
       // `querystring.parse` CANNOT parse something like `a[foo]=1&a[bar]=2`
-      const query = querystring.parse(str);
+      const query = str ? querystring.parse(str) : {};
       for (const key in query) {
         if (!key) {
           // key is '', like `a=b&`
