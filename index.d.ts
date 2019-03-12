@@ -312,15 +312,45 @@ declare module 'egg' {
      */
     customLoader: {
       [key: string]: {
+        /**
+         * directories to be loaded
+         */
         directory: string;
+        /**
+         * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
+         */
         inject?: 'ctx' | 'app';
+        /**
+         * whether need to load files in plugins or framework, default to false
+         */
         loadunit?: boolean;
+        /**
+         * match the files when load, support glob, default to all js files
+         */
         match?: string | string[];
+        /**
+         * ignore the files when load, support glob
+         */
         ignore?: string | string[];
+        /**
+         * determine whether override the property when get the same name
+         */
         override?: boolean;
+        /**
+         * determine whether invoke when exports is function
+         */
         call?: boolean;
+        /**
+         * set property's case when converting a filepath to property list.
+         */
         caseStyle?: string;
+        /**
+         * custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an `options` object that contain `path`
+         */
         initializer?: (obj: any, param: { path: string; pathName: string; }) => any;
+        /**
+         * a function that filter the exports which can be loaded
+         */
         filter?: (obj: any) => boolean;
       };
     };
