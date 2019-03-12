@@ -315,8 +315,8 @@ declare module 'egg' {
         directory: string;
         inject: 'ctx' | 'app';
         loadunit?: boolean;
-        match?: string;
-        ignore?: string;
+        match?: string | string[];
+        ignore?: string | string[];
         override?: boolean;
         call?: boolean;
         caseStyle?: string;
