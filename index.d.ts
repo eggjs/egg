@@ -7,6 +7,13 @@ import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
 import { HttpClient2, RequestOptions } from 'urllib';
+import { 
+  EggCore,
+  EggLoader as CoreLoader, 
+  EggCoreOptions as CoreOptions, 
+  EggLoaderOptions as CoreLoaderOptions, 
+  BaseContextClass as CoreBaseContextClass,
+} from 'egg-core';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -40,33 +47,11 @@ declare module 'egg' {
    * it's instantiated in context level,
    * {@link Helper}, {@link Service} is extending it.
    */
-  export class BaseContextClass { // tslint:disable-line
-    /**
-     * request context
-     */
-    protected ctx: Context;
-
-    /**
-     * Application
-     */
-    protected app: Application;
-
-    /**
-     * Application config object
-     */
-    protected config: EggAppConfig;
-
-    /**
-     * service
-     */
-    protected service: IService;
-
+  export class BaseContextClass extends CoreBaseContextClass<Context, Application, EggAppConfig, IService> { // tslint:disable-line
     /**
      * logger
      */
     protected logger: EggLogger;
-
-    constructor(ctx: Context);
   }
 
   export type RequestArrayBody = any[];
@@ -460,36 +445,11 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  export class EggApplication extends KoaApplication { // tslint:disable-line
-    /**
-     * The current directory of application
-     */
-    baseDir: string;
-
-    /**
-     * The configuration of application
-     */
-    config: EggAppConfig;
-
-    /**
-     * app.env delegate app.config.env
-     */
-    env: EggEnvType;
-
-    /**
-     * Alias to https://npmjs.com/package/depd
-     */
-    deprecate: any;
-
+  export class EggApplication extends EggCore<EggAppConfig> { // tslint:disable-line
     /**
      * HttpClient instance
      */
     httpclient: EggHttpClient;
-
-    /**
-     * The loader instance, the default class is EggLoader. If you want define
-     */
-    loader: any;
 
     /**
      * Logger for Application, wrapping app.coreLogger with context infomation
@@ -519,47 +479,17 @@ declare module 'egg' {
      */
     messenger: Messenger;
 
-    plugins: any;
-
     /**
      * get router
      */
     router: Router;
 
     /**
-     * Whether `application` or `agent`
-     */
-    type: string;
-
-    /**
      * create a singleton instance
      */
     addSingleton(name: string, create: any): void;
 
-    /**
-     * Register a function that will be called when app close
-     */
-    beforeClose(fn: () => void): void;
-
-    /**
-     * Excute scope after loaded and before app start
-     */
-    beforeStart(scrope: () => void): void;
-
     runSchedule(schedulePath: string): Promise<any>;
-
-    /**
-     * Close all, it wil close
-     * - callbacks registered by beforeClose
-     * - emit `close` event
-     * - remove add listeners
-     *
-     * If error is thrown when it's closing, the promise will reject.
-     * It will also reject after following call.
-     * @return {Promise} promise
-     * @since 1.0.0
-     */
-    close(): Promise<any>;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.
@@ -1092,24 +1022,9 @@ declare module 'egg' {
     sendToApp(action: string, data: any): void;
   }
 
-  export interface EggLoaderOptions {
-    baseDir: string;
-    typescript?: boolean;
-    app: Application;
-    logger: EggLogger;
-    plugins?: any;
-  }
-
-  // egg-core
-  export class EggLoader {
-    options: EggLoaderOptions;
-
-    constructor(options: EggLoaderOptions);
-
-    getHomedir(): EggAppInfo['HOME']
-
-    getAppInfo(): EggAppInfo;
-  }
+  // compatible
+  export interface EggLoaderOptions extends CoreLoaderOptions {}
+  export class EggLoader extends CoreLoader {}
 
   /**
    * App worker process Loader, will load plugins
@@ -1117,10 +1032,7 @@ declare module 'egg' {
    */
   export class AppWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
-
     loadConfig(): void;
-
-    load(): void;
   }
 
   /**
@@ -1129,10 +1041,7 @@ declare module 'egg' {
    */
   export class AgentWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
-
     loadConfig(): void;
-
-    load(): void;
   }
 
   export interface IBoot {
