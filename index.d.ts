@@ -1033,6 +1033,7 @@ declare module 'egg' {
   export class AppWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
     loadConfig(): void;
+    loadAll(): void;
   }
 
   /**
@@ -1042,6 +1043,7 @@ declare module 'egg' {
   export class AgentWorkerLoader extends EggLoader {
     constructor(options: EggLoaderOptions);
     loadConfig(): void;
+    loadAll(): void;
   }
 
   export interface IBoot {
