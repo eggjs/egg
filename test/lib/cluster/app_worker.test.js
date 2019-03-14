@@ -112,7 +112,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       test1.request().path = '/foo bar';
       await test1.expect(html)
         .expect('foo', 'bar')
-        .expect('content-length', 134)
+        .expect('content-length', '134')
         .expect(418);
 
       // customized client error handle function throws
