@@ -196,4 +196,17 @@ describe('test/lib/core/messenger/local.test.js', () => {
       app.agent.messenger.send('send-event', { foo: 'bar' });
     });
   });
+
+  describe('_onMessage()', () => {
+    it('should ignore if message format error', () => {
+      app.messenger._onMessage();
+      app.messenger._onMessage('foo');
+      app.messenger._onMessage({ action: 1 });
+    });
+
+    it('should emit with action', done => {
+      app.messenger.once('test-action', done);
+      app.messenger._onMessage({ action: 'test-action' });
+    });
+  });
 });
