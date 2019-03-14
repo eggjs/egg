@@ -110,7 +110,10 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       // customized client error response
       const test1 = app.httpRequest().get('/foo bar');
       test1.request().path = '/foo bar';
-      await test1.expect(html).expect('foo', 'bar').expect(418);
+      await test1.expect(html)
+        .expect('foo', 'bar')
+        .expect('content-length', 134)
+        .expect(418);
 
       // customized client error handle function throws
       const test2 = app.httpRequest().get('/foo bar');

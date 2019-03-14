@@ -7,7 +7,7 @@ const sleep = require('mz-modules/sleep');
 const assert = require('assert');
 const utils = require('../../utils');
 
-describe.only('test/app/extend/context.test.js', () => {
+describe('test/app/extend/context.test.js', () => {
   afterEach(mm.restore);
 
   describe('ctx.logger', () => {
