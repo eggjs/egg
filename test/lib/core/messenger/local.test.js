@@ -146,7 +146,11 @@ describe('test/lib/core/messenger/local.test.js', () => {
         done();
       });
 
-      app.messenger.sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+      let res = app.messenger.sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+      assert(res === app.messenger);
+      // should ignore if target process is not self
+      res = app.messenger.sendTo(1, 'sendTo-event', { foo: 'bar' });
+      assert(res === app.messenger);
     });
 
     it('agent.messenger.sendTo should work', done => {
