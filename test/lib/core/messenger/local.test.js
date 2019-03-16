@@ -146,7 +146,11 @@ describe('test/lib/core/messenger/local.test.js', () => {
         done();
       });
 
-      app.messenger.sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+      let res = app.messenger.sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+      assert(res === app.messenger);
+      // should ignore if target process is not self
+      res = app.messenger.sendTo(1, 'sendTo-event', { foo: 'bar' });
+      assert(res === app.messenger);
     });
 
     it('agent.messenger.sendTo should work', done => {
@@ -194,6 +198,19 @@ describe('test/lib/core/messenger/local.test.js', () => {
       });
 
       app.agent.messenger.send('send-event', { foo: 'bar' });
+    });
+  });
+
+  describe('_onMessage()', () => {
+    it('should ignore if message format error', () => {
+      app.messenger._onMessage();
+      app.messenger._onMessage('foo');
+      app.messenger._onMessage({ action: 1 });
+    });
+
+    it('should emit with action', done => {
+      app.messenger.once('test-action', done);
+      app.messenger._onMessage({ action: 'test-action' });
     });
   });
 });
