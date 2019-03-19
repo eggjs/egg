@@ -7,8 +7,8 @@ import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
 import { HttpClient2, RequestOptions } from 'urllib';
-import { 
-  EggCore,
+import {
+  EggCoreBase,
   EggLoader as CoreLoader, 
   EggCoreOptions as CoreOptions, 
   EggLoaderOptions as CoreLoaderOptions, 
@@ -35,11 +35,14 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  class EggHttpClient extends HttpClient2 {
-    constructor(app: Application);
+  interface EggHttpClient extends HttpClient2 {}
+  interface EggHttpConstructor {
+    new (app: Application): EggHttpClient;
   }
-  class EggContextHttpClient extends HttpClient2 {
-    constructor(ctx: Context);
+
+  interface EggContextHttpClient extends HttpClient2 {}
+  interface EggContextHttpClientConstructor {
+    new (ctx: Context): EggContextHttpClient;
   }
 
   /**
@@ -445,7 +448,7 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  export class EggApplication extends EggCore<EggAppConfig> { // tslint:disable-line
+  export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:disable-line
     /**
      * HttpClient instance
      */
@@ -527,12 +530,15 @@ declare module 'egg' {
      */
     ContextCookies: typeof EggCookies;
     ContextLogger: typeof EggContextLogger;
-    ContextHttpClient: typeof EggContextHttpClient;
-    HttpClient: typeof EggHttpClient;
+    ContextHttpClient: EggContextHttpClientConstructor;
+    HttpClient: EggHttpConstructor;
     Subscription: typeof Subscription;
     Controller: typeof Controller;
     Service: typeof Service;
   }
+
+  // compatible
+  export class EggApplication {}
 
   export type RouterPath = string | RegExp;
 
@@ -1024,13 +1030,13 @@ declare module 'egg' {
 
   // compatible
   export interface EggLoaderOptions extends CoreLoaderOptions {}
-  export class EggLoader extends CoreLoader {}
+  export interface EggLoader extends CoreLoader {}
 
   /**
    * App worker process Loader, will load plugins
    * @see https://github.com/eggjs/egg-core
    */
-  export class AppWorkerLoader extends EggLoader {
+  export class AppWorkerLoader extends CoreLoader {
     constructor(options: EggLoaderOptions);
     loadConfig(): void;
     load(): void;
@@ -1040,7 +1046,7 @@ declare module 'egg' {
    * Agent worker process loader
    * @see https://github.com/eggjs/egg-loader
    */
-  export class AgentWorkerLoader extends EggLoader {
+  export class AgentWorkerLoader extends CoreLoader {
     constructor(options: EggLoaderOptions);
     loadConfig(): void;
     load(): void;
@@ -1085,8 +1091,8 @@ declare module 'egg' {
      */
     beforeClose?(): Promise<void>;
   }
-  
-  export class Singleton<T> {
+
+  export interface Singleton<T> {
     get(id: string): T;
   }
 }
