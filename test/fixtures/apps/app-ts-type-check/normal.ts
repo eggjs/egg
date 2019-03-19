@@ -75,6 +75,9 @@ class MyService extends Service {
   }
 }
 
+// should allow non-exist function
+app.controller.nonExistFn();
+
 // subscription
 class MySubscription extends Subscription {
   test() {
