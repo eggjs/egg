@@ -538,7 +538,9 @@ declare module 'egg' {
   }
 
   // compatible
-  export class EggApplication {}
+  export class EggApplication {
+    constructor(options?: CoreOptions);
+  }
 
   export type RouterPath = string | RegExp;
 
@@ -1037,7 +1039,6 @@ declare module 'egg' {
    * @see https://github.com/eggjs/egg-core
    */
   export class AppWorkerLoader extends CoreLoader {
-    constructor(options: EggLoaderOptions);
     loadConfig(): void;
     load(): void;
   }
@@ -1047,7 +1048,6 @@ declare module 'egg' {
    * @see https://github.com/eggjs/egg-loader
    */
   export class AgentWorkerLoader extends CoreLoader {
-    constructor(options: EggLoaderOptions);
     loadConfig(): void;
     load(): void;
   }
