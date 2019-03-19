@@ -73,4 +73,31 @@ describe('test/ts/index.test.js', () => {
         .end();
     });
   });
+
+  describe('type check', () => {
+    it('should compile type-check ts without error', async () => {
+      await coffee.fork(
+        require.resolve('typescript/bin/tsc'),
+        [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-type-check/tsconfig.json') ]
+      )
+        // .debug()
+        .expect('code', 0)
+        .end();
+    });
+
+    it('should throw error with type-check-error ts', async () => {
+      await coffee.fork(
+        require.resolve('typescript/bin/tsc'),
+        [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-type-check/tsconfig-error.json') ]
+      )
+        // .debug()
+        .expect('stdout', /Property 'ctx' is protected/)
+        .expect('stdout', /Property 'checkAny' does not exist on type 'string'/)
+        .expect('stdout', /Property 'checkAny' does not exist on type 'Application'/)
+        .expect('stdout', /Expected 1 arguments, but got 0\./)
+        .expect('stdout', /Expected 0-1 arguments, but got 2\./)
+        .expect('code', 2)
+        .end();
+    });
+  });
 });
