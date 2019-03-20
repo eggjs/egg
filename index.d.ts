@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import accepts = require('accepts');
 import KoaApplication = require('koa');
 import KoaRouter = require('koa-router');
