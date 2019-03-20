@@ -1,7 +1,7 @@
 {
   "extends": "../app-ts/tsconfig.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "."
   },
   "exclude": [
     "./error.ts"
