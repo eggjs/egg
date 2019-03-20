@@ -11,9 +11,9 @@ new BaseContextClass({} as Context).ctx;
 
 class MyController extends Controller {
   async test() {
-    this.ctx.locals.test.checkAny();
-    this.app.config.keys.checkAny();
-    this.app.checkAny();
+    this.ctx.locals.test.localsCheckAny();
+    this.app.config.keys.configKeysCheckAny();
+    this.app.appCheckAny();
   }
 }
 new MyController();
@@ -21,9 +21,9 @@ new MyController();
 // service
 class MyService extends Service {
   async test() {
-    this.ctx.locals.test.checkAny();
-    this.app.config.keys.checkAny();
-    this.app.checkAny();
+    this.ctx.locals.test.serviceLocalCheckAny();
+    this.app.config.keys.serviceConfigCheckAny();
+    this.app.serviceAppCheckAny();
   }
 }
 new MyService();
