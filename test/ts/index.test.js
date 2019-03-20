@@ -17,7 +17,7 @@ describe('test/ts/index.test.js', () => {
       require.resolve('typescript/bin/tsc'),
       [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts/tsconfig.json') ]
     )
-      // .debug()
+      .debug()
       .expect('code', 0)
       .end();
 
@@ -68,7 +68,7 @@ describe('test/ts/index.test.js', () => {
         require.resolve('typescript/bin/tsc'),
         [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-esm/tsconfig.json') ]
       )
-        // .debug()
+        .debug()
         .expect('code', 0)
         .end();
     });
@@ -80,7 +80,7 @@ describe('test/ts/index.test.js', () => {
         require.resolve('typescript/bin/tsc'),
         [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-type-check/tsconfig.json') ]
       )
-        // .debug()
+        .debug()
         .expect('code', 0)
         .end();
     });
@@ -90,7 +90,7 @@ describe('test/ts/index.test.js', () => {
         require.resolve('typescript/bin/tsc'),
         [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-type-check/tsconfig-error.json') ]
       )
-        // .debug()
+        .debug()
         .expect('stdout', /Property 'ctx' is protected/)
         .expect('stdout', /Property 'localsCheckAny' does not exist on type 'string'/)
         .expect('stdout', /Property 'configKeysCheckAny' does not exist on type 'string'/)
