@@ -2,14 +2,12 @@
 
 const assert = require('assert');
 const request = require('supertest');
-const mm = require('egg-mock');
 const coffee = require('coffee');
 const path = require('path');
 const utils = require('../utils');
 
 describe('test/ts/index.test.js', () => {
   describe('compiler code', () => {
-    afterEach(mm.restore);
     let app;
     before(async () => {
       await coffee.fork(
