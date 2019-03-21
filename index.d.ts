@@ -10,6 +10,7 @@ import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger 
 import { HttpClient2, RequestOptions } from 'urllib';
 import {
   EggCoreBase,
+  FileLoaderOption,
   EggLoader as CoreLoader, 
   EggCoreOptions as CoreOptions, 
   EggLoaderOptions as CoreLoaderOptions, 
@@ -183,6 +184,18 @@ declare module 'egg' {
   type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
   type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
+  /** Custom Loader Configuration */
+  export interface CustomLoaderConfig extends RemoveSpecProp<FileLoaderOption, 'inject' | 'target'> {
+    /**
+     * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
+     */
+    inject?: 'ctx' | 'app';
+    /**
+     * whether need to load files in plugins or framework, default to false
+     */
+    loadunit?: boolean;
+  }
+
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
@@ -295,6 +308,14 @@ declare module 'egg' {
        */
       reloadPattern: string[] | string;
     };
+
+    /**
+     * customLoader config
+     */
+    customLoader: {
+      [key: string]: CustomLoaderConfig;
+    };
+
     /**
      * It will ignore special keys when dumpConfig
      */

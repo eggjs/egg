@@ -5,6 +5,9 @@ import {
   Agent,
   Controller,
   Service,
+  EggAppConfig,
+  PowerPartial,
+  Singleton,
 } from 'egg';
 
 new BaseContextClass({} as Context).ctx;
@@ -46,3 +49,18 @@ const yadan = new YadanApplication({ baseDir: __dirname, plugins: {}, type: 'app
 new yadan.ContextHttpClient();
 new yadan.HttpClient();
 new YadanAgent(undefined, 1123);
+
+// config
+const config = {} as EggAppConfig;
+config.customLoader = {
+  model: {
+  }
+}
+
+// partial config
+const config2 = {} as PowerPartial<EggAppConfig>;
+console.info(config2.security.csrf);
+
+// singleton
+const redis = {} as Singleton<{ test(): void; }>;
+redis.get('123').checkSingleTon();
