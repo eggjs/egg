@@ -6,6 +6,9 @@ import {
   Controller,
   Service,
   Subscription,
+  EggAppConfig,
+  PowerPartial,
+  Singleton,
 } from 'egg';
 
 // base context class
@@ -85,6 +88,37 @@ class MySubscription extends Subscription {
   }
 }
 new MySubscription({} as Context);
+
+// config
+const config = {} as EggAppConfig;
+config.keys = '123123';
+config.customLoader = {
+  model: {
+    directory: 'app/model',
+    inject: 'app',
+  }
+}
+
+// partial config
+const config2 = {} as PowerPartial<EggAppConfig>;
+config2.keys = '123123';
+config2.customLoader = {
+  model: {
+    directory: 'app/model',
+  }
+}
+config2.customLoader = {
+  model: {
+    inject: 'app',
+  }
+}
+config2.security = {
+  csrf: false,
+}
+
+// singleton
+const redis = {} as Singleton<{ test(): void; }>;
+redis.get('123').test();
 
 // extends egg
 app.config.mySpecConfig.substring(0);

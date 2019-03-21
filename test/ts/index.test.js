@@ -78,7 +78,7 @@ describe('test/ts/index.test.js', () => {
         require.resolve('typescript/bin/tsc'),
         [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-type-check/tsconfig-error.json') ]
       )
-        .debug()
+        // .debug()
         .expect('stdout', /Property 'ctx' is protected/)
         .expect('stdout', /Property 'localsCheckAny' does not exist on type 'string'/)
         .expect('stdout', /Property 'configKeysCheckAny' does not exist on type 'string'/)
@@ -86,7 +86,10 @@ describe('test/ts/index.test.js', () => {
         .expect('stdout', /Property 'serviceLocalCheckAny' does not exist on type 'string'/)
         .expect('stdout', /Property 'serviceConfigCheckAny' does not exist on type 'string'/)
         .expect('stdout', /Property 'serviceAppCheckAny' does not exist on type 'Application'/)
+        .expect('stdout', /Property 'checkSingleTon' does not exist/)
+        .expect('stdout', /Property 'directory' is missing in type '{}' but required in type 'CustomLoaderConfig'/)
         .notExpect('stdout', /Cannot find module 'yadan'/)
+        .expect('stdout', /Object is possibly 'undefined'\./)
         .expect('stdout', /Expected 1 arguments, but got 0\./)
         .expect('stdout', /Expected 0-1 arguments, but got 2\./)
         .expect('code', 2)
