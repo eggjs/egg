@@ -15,7 +15,7 @@ exports.onClientError = async (err, socket, app) => {
 
   return {
     body: err.rawPacket,
-    headers: { foo: 'bar' },
+    headers: { foo: 'bar', 'Content-Length': 100 },
     status: 418,
   };
 };

@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import accepts = require('accepts');
 import KoaApplication = require('koa');
 import KoaRouter = require('koa-router');
@@ -7,6 +8,13 @@ import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
 import { HttpClient2, RequestOptions } from 'urllib';
+import {
+  EggCoreBase,
+  EggLoader as CoreLoader, 
+  EggCoreOptions as CoreOptions, 
+  EggLoaderOptions as CoreLoaderOptions, 
+  BaseContextClass as CoreBaseContextClass,
+} from 'egg-core';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -28,11 +36,14 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  class EggHttpClient extends HttpClient2 {
-    constructor(app: Application);
+  interface EggHttpClient extends HttpClient2 {}
+  interface EggHttpConstructor {
+    new (app: Application): EggHttpClient;
   }
-  class EggContextHttpClient extends HttpClient2 {
-    constructor(ctx: Context);
+
+  interface EggContextHttpClient extends HttpClient2 {}
+  interface EggContextHttpClientConstructor {
+    new (ctx: Context): EggContextHttpClient;
   }
 
   /**
@@ -40,33 +51,11 @@ declare module 'egg' {
    * it's instantiated in context level,
    * {@link Helper}, {@link Service} is extending it.
    */
-  export class BaseContextClass { // tslint:disable-line
-    /**
-     * request context
-     */
-    protected ctx: Context;
-
-    /**
-     * Application
-     */
-    protected app: Application;
-
-    /**
-     * Application config object
-     */
-    protected config: EggAppConfig;
-
-    /**
-     * service
-     */
-    protected service: IService;
-
+  export class BaseContextClass extends CoreBaseContextClass<Context, Application, EggAppConfig, IService> { // tslint:disable-line
     /**
      * logger
      */
     protected logger: EggLogger;
-
-    constructor(ctx: Context);
   }
 
   export type RequestArrayBody = any[];
@@ -509,36 +498,11 @@ declare module 'egg' {
     url(name: string, params: any): any;
   }
 
-  export class EggApplication extends KoaApplication { // tslint:disable-line
-    /**
-     * The current directory of application
-     */
-    baseDir: string;
-
-    /**
-     * The configuration of application
-     */
-    config: EggAppConfig;
-
-    /**
-     * app.env delegate app.config.env
-     */
-    env: EggEnvType;
-
-    /**
-     * Alias to https://npmjs.com/package/depd
-     */
-    deprecate: any;
-
+  export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:disable-line
     /**
      * HttpClient instance
      */
     httpclient: EggHttpClient;
-
-    /**
-     * The loader instance, the default class is EggLoader. If you want define
-     */
-    loader: any;
 
     /**
      * Logger for Application, wrapping app.coreLogger with context infomation
@@ -568,47 +532,17 @@ declare module 'egg' {
      */
     messenger: Messenger;
 
-    plugins: any;
-
     /**
      * get router
      */
     router: Router;
 
     /**
-     * Whether `application` or `agent`
-     */
-    type: string;
-
-    /**
      * create a singleton instance
      */
     addSingleton(name: string, create: any): void;
 
-    /**
-     * Register a function that will be called when app close
-     */
-    beforeClose(fn: () => void): void;
-
-    /**
-     * Excute scope after loaded and before app start
-     */
-    beforeStart(scrope: () => void): void;
-
     runSchedule(schedulePath: string): Promise<any>;
-
-    /**
-     * Close all, it wil close
-     * - callbacks registered by beforeClose
-     * - emit `close` event
-     * - remove add listeners
-     *
-     * If error is thrown when it's closing, the promise will reject.
-     * It will also reject after following call.
-     * @return {Promise} promise
-     * @since 1.0.0
-     */
-    close(): Promise<any>;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.
@@ -646,11 +580,16 @@ declare module 'egg' {
      */
     ContextCookies: typeof EggCookies;
     ContextLogger: typeof EggContextLogger;
-    ContextHttpClient: typeof EggContextHttpClient;
-    HttpClient: typeof EggHttpClient;
+    ContextHttpClient: EggContextHttpClientConstructor;
+    HttpClient: EggHttpConstructor;
     Subscription: typeof Subscription;
     Controller: typeof Controller;
     Service: typeof Service;
+  }
+
+  // compatible
+  export class EggApplication {
+    constructor(options?: CoreOptions);
   }
 
   export type RouterPath = string | RegExp;
@@ -1141,34 +1080,16 @@ declare module 'egg' {
     sendToApp(action: string, data: any): void;
   }
 
-  export interface EggLoaderOptions {
-    baseDir: string;
-    typescript?: boolean;
-    app: Application;
-    logger: EggLogger;
-    plugins?: any;
-  }
-
-  // egg-core
-  export class EggLoader {
-    options: EggLoaderOptions;
-
-    constructor(options: EggLoaderOptions);
-
-    getHomedir(): EggAppInfo['HOME']
-
-    getAppInfo(): EggAppInfo;
-  }
+  // compatible
+  export interface EggLoaderOptions extends CoreLoaderOptions {}
+  export interface EggLoader extends CoreLoader {}
 
   /**
    * App worker process Loader, will load plugins
    * @see https://github.com/eggjs/egg-core
    */
-  export class AppWorkerLoader extends EggLoader {
-    constructor(options: EggLoaderOptions);
-
+  export class AppWorkerLoader extends CoreLoader {
     loadConfig(): void;
-
     load(): void;
   }
 
@@ -1176,11 +1097,8 @@ declare module 'egg' {
    * Agent worker process loader
    * @see https://github.com/eggjs/egg-loader
    */
-  export class AgentWorkerLoader extends EggLoader {
-    constructor(options: EggLoaderOptions);
-
+  export class AgentWorkerLoader extends CoreLoader {
     loadConfig(): void;
-
     load(): void;
   }
 
@@ -1222,5 +1140,9 @@ declare module 'egg' {
      * Do some thing before app close
      */
     beforeClose?(): Promise<void>;
+  }
+
+  export interface Singleton<T> {
+    get(id: string): T;
   }
 }

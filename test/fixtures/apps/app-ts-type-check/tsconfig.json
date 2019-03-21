@@ -1,7 +1,9 @@
 {
   "extends": "../app-ts/tsconfig.json",
   "compilerOptions": {
-    "esModuleInterop": true,
     "baseUrl": "."
-  }
+  },
+  "exclude": [
+    "./error.ts"
+  ]
 }
