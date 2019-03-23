@@ -135,7 +135,7 @@ exports.task = async ctx => {
 
 Request 是一个**请求级别的对象**，继承自 [Koa.Request]。封装了 Node.js 原生的 HTTP Request 对象，提供了一系列辅助方法获取 HTTP 请求常用参数。
 
-Response 是一个**请求级别的对象**，继承自 [Koa.Response]。封装了 Node.js 原生的 HTTP Response 对象，提供了一系列辅助方法设置 HTTP 响应。
+Response 是一个**响应级别的对象**，继承自 [Koa.Response]。封装了 Node.js 原生的 HTTP Response 对象，提供了一系列辅助方法设置 HTTP 响应。
 
 ### 获取方式
 
