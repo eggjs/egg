@@ -135,7 +135,7 @@ exports.task = async ctx => {
 
 Request is a **request level object**, inherited from [Koa.Request]. Encapsulates the Node.js native HTTP Request object, and provides a set of helper methods to get commonly used parameters of HTTP requests.
 
-Response is a **request level object**, inherited from [Koa.Response]. Encapsulates the Node.js native HTTP Response object, and provides a set of helper methods to set the HTTP response.
+Response is a **response level object**, inherited from [Koa.Response]. Encapsulates the Node.js native HTTP Response object, and provides a set of helper methods to set the HTTP response.
 
 ### How to Get
 
