@@ -5,7 +5,7 @@ title: HttpClient
 
 为此框架基于 [urllib] 内置实现了一个 [HttpClient]，应用可以非常便捷地完成任何 HTTP 请求。
 
-## 通过 app 使用 HttpClient
+## 通过 `app` 使用 HttpClient
 
 框架在应用初始化的时候，会自动将 [HttpClient] 初始化到 `app.httpclient`。
 同时增加了一个 `app.curl(url, options)` 方法，它等价于 `app.httpclient.request(url, options)`。
@@ -25,7 +25,7 @@ module.exports = app => {
 };
 ```
 
-## 通过 Context 使用 HttpClient
+## 通过 `ctx` 使用 HttpClient
 
 框架在 Context 中同样提供了 `ctx.curl(url, options)` 和 `ctx.httpclient`，保持跟 app 下的使用体验一致。
 这样就可以在有 Context 的地方（如在 controller 中）非常方便地使用 `ctx.curl()` 方法完成一次 HTTP 请求。
@@ -301,7 +301,7 @@ exports.httpclient = {
     // 默认开启 http KeepAlive 功能
     keepAlive: true,
     // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
     timeout: 30000,
     // 允许创建的最大 socket 数
@@ -314,7 +314,7 @@ exports.httpclient = {
     // 默认开启 https KeepAlive 功能
     keepAlive: true,
     // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
     timeout: 30000,
     // 允许创建的最大 socket 数
@@ -667,11 +667,11 @@ console.log(result.res.timing);
 先安装和开启插件：
 
 ```bash
-$ npm i egg-development-proxyagent --save-dev
+$ npm i egg-development-proxyagent --save
 ```
 
 ```js
-// config/plugin.local.js
+// config/plugin.js
 exports.proxyagent = {
   enable: true,
   package: 'egg-development-proxyagent',
@@ -738,7 +738,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 ## 全局 `request` 和 `response` 事件
 
 在企业应用场景，常常会有统一 tracer 日志的需求。
-为了方便在 app 层面统一监听 HttpClient 的请求和响应，我们约定了全局 `request` 和 `response` 事件来暴露这两个时机。
+为了方便在 app 层面统一监听 HttpClient 的请求和响应，我们约定了全局 `request` 和 `response` 来暴露这两个事件。
 
 ```bash
     init options
@@ -783,7 +783,7 @@ app.httpclient.on('response', result => {
 
 ## 示例代码
 
-完整示例代码可以在 [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
+完整示例代码可以在 [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) 找到。
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js

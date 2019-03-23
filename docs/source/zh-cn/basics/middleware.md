@@ -1,4 +1,4 @@
-title: Middleware 中间件
+title: 中间件（Middleware）
 ---
 
 在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 实现的，所以 Egg 的中间件形式和 Koa 的中间件形式是一样的，都是基于[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
@@ -123,7 +123,7 @@ module.exports = () => {
 
 ```js
 module.exports = app => {
-  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  const gzip = app.middleware.gzip({ threshold: 1024 });
   app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
@@ -232,8 +232,9 @@ module.exports = {
 match 和 ignore 支持多种类型的配置方式
 
 1. 字符串：当参数为字符串类型时，配置的是一个 url 的路径前缀，所有以配置的字符串作为前缀的 url 都会匹配上。
+当然，你也可以直接使用字符串数组。
 2. 正则：当参数为正则时，直接匹配满足正则验证的 url 的路径。
-3. 函数：当参数为一个函数时，会将请求上下文传递给这个函数，最终取函数返回的结果（ture/false）来判断是否匹配。
+3. 函数：当参数为一个函数时，会将请求上下文传递给这个函数，最终取函数返回的结果（true/false）来判断是否匹配。
 
 ```js
 module.exports = {
@@ -246,3 +247,5 @@ module.exports = {
   },
 };
 ```
+有关更多的 match 和 ignore 配置情况，详见
+[egg-path-matching](https://github.com/eggjs/egg-path-matching).

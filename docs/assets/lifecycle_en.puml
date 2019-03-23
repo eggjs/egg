@@ -1,0 +1,144 @@
+@startuml
+start
+: start master;
+partition agent {
+  : fork agent worker;
+  : load plugin.js, config.js, extends;
+  : load agent.js;
+  note right
+    class mode
+    configWillLoad
+    configDidLoad
+    async didLoad
+    async willReady
+    async didReady
+    async serverDidReady
+    ====
+    method mode
+    beforeStart(deprecate)
+  end note
+  fork
+  : configWillLoad;
+  note left
+    Ready to call configDidLoad,
+    This is the LAST chance to modify the relative configs
+  end note
+  : configDidLoad;
+  note left
+    All the files are loaded,
+    To execute some sync logic
+  end note
+  : async didLoad;
+  note left
+    Files and configs are loaded
+    The same sync logic and execution sequence as in app.js,
+    To execute some async tasks
+    E.g: Pull configs in async to load client,
+    or check the state of client
+  end note
+  fork again
+    : beforeStart(deprecate);
+    note right
+      Tasks mounted on beforeStart
+      Running in parallel at this time
+    end note
+  endfork
+  : async willReady;
+  note left
+    All the plugins are loaded,
+    All the plugins are normal,
+    To execute some tasks before request enters,
+    E.g: Pull some configs for applications
+  end note
+  : async didReady;
+  note right
+    agent is ready,
+    and it can work normally
+    ====
+    The time is the same as 'ready',
+    The original 'ready' doesn't support AsyncFunction
+  end note
+  : emit 'agent-start';
+}
+partition app {
+  : start app workers;
+  : load plugin.js, config.js, extends;
+  : load app.js;
+  note right
+    class mode
+    configWillLoad
+    configDidLoad
+    async didLoad
+    async willReady
+    async didReady
+    async serverDidReady
+    ====
+    method mode
+    beforeStart(deprecate)
+  end note
+  fork
+    : configWillLoad;
+    note left
+    Ready to call configDidLoad,
+    This is the LAST chance to modify the related configs
+    end note
+    : configDidLoad;
+    note left
+      All the related config files have been loaded,
+      The same sync logic and execution sequence as in app.js,
+      Some configs can be modified, the order of middlewares
+    end note
+    : load app/service;
+    : load app/middleware;
+    : load app/controller;
+    : load app/router.js;
+    : async DidLoad;
+  note left
+    Files and configs are loaded
+    To execute some async tasks
+    E.g: Pull configs in async to load client,
+    or check the state of client
+  end note
+  fork again
+    : beforeStart(deprecate);
+    note right
+      Tasks mounted on beforeStart
+      Running in parallel at this time
+    end note
+  end fork
+    : async WillReady;
+  note left
+    All the plugins are loaded,
+    All the plugins are normal,
+    To execute some tasks before request enters,
+    E.g: Pull some configs for applications
+  end note
+  : async DidReady;
+  note right
+    app is ready
+    HTTP server starts listening at the port
+    ====
+    The time is the same as 'ready',
+    The original 'ready' doesn't support AsyncFunction
+  end note
+  : emit 'app-start';
+}
+: emit 'egg-ready';
+: async serverDidReady;
+note right
+  agent and all the apps are ready
+  requests are allowed
+end note
+: master receive SIGTERM;
+fork
+: agent beforeClose;
+fork again
+: app beforeClose;
+note right
+  To execute in a reversed order against the inserting
+  DO NOT recommend in PROD env,
+  May not finish before the process ends
+end note
+endfork
+stop
+@enduml

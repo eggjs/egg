@@ -1,0 +1,144 @@
+@startuml
+start
+: start master;
+partition agent {
+  : fork agent worker;
+  : load plugin.js, config.js, extends;
+  : load agent.js;
+  note right
+    类模式
+    configWillLoad
+    configDidLoad
+    async didLoad
+    async willReady
+    async didReady
+    async serverDidReady
+    ====
+    方法模式
+    beforeStart(deprecate)
+  end note
+  fork
+  : configWillLoad;
+  note left
+   准备调用 configDidLoad
+   这是动态修改配置的最后时机。
+  end note
+  : configDidLoad;
+  note left
+    相关配置项已经全部加载，
+    与 agent.js 里的同步逻辑相同，执行顺序也相同
+    可以执行一些同步逻辑。
+  end note
+  : async didLoad;
+  note left
+    文件, 配置已经加载完毕,
+    可以执行一些异步任务,
+    比如异步拉取配置来加载client,
+    或者检查client状态是否正常
+  end note
+  fork again
+    : beforeStart(deprecate);
+    note right
+      beforeStart注册的任务
+      在此时同时并行执行
+    end note
+  endfork
+  : async willReady;
+  note left
+    插件已经完全加载完毕,
+    所有的插件可以正常的使用,
+    执行一些流量进入前的任务,
+    比如拉取应用所需的一些配置
+  end note
+  : async didReady;
+  note right
+    agent进程已经准备完毕,
+    可以正常工作
+    ====
+    时间点与原来的ready相同,
+    原来的ready不支持AsyncFunction
+  end note
+  : emit 'agent-start';
+}
+partition app {
+  : start app workers;
+  : load plugin.js, config.js, extends;
+  : load app.js;
+  note right
+    类模式
+    configWillLoad
+    configDidLoad
+    async didLoad
+    async willReady
+    async didReady
+    async serverDidReady
+    ====
+    方法模式
+    beforeStart(deprecate)
+  end note
+  fork
+    : configWillLoad;
+    note left
+      准备调用 configDidLoad
+      这是动态修改配置的最后时机。
+    end note
+    : configDidLoad;
+    note left
+      相关配置项已经全部加载，
+      与 app.js 里的同步逻辑相同，执行顺序也相同
+      可以修改一些配置，修改中间件的顺序
+    end note
+    : load app/service;
+    : load app/middleware;
+    : load app/controller;
+    : load app/router.js;
+    : async DidLoad;
+  note left
+    文件, 配置已经加载完毕,
+    可以执行一些异步任务,
+    比如异步拉取配置来加载client,
+    或者检查client状态是否正常
+  end note
+  fork again
+    : beforeStart(deprecate);
+    note right
+      beforeStart注册的任务
+      在此时同时并行执行
+    end note
+  end fork
+    : async WillReady;
+  note left
+    插件已经完全加载完毕,
+    所有的插件可以正常的使用,
+    执行一些流量进入前的任务,
+    比如拉取应用所需的一些配置
+  end note
+  : async DidReady;
+  note right
+    app进程已经准备完毕,
+    HTTP server开始监听端口,
+    ====
+    时间点与原来的ready相同,
+    原来的ready不支持AsyncFunction
+  end note
+  : emit 'app-start';
+}
+: emit 'egg-ready';
+: async serverDidReady;
+note right
+  agent进程和所有的app进程已经准备完毕,
+  可以放入流量,
+end note
+: master receive SIGTERM;
+fork
+: agent beforeClose;
+fork again
+: app beforeClose;
+note right
+  以插入顺序逆序同步执行,
+  生产环境中不建议使用,
+  可能在进程结束前没有执行完成
+end note
+endfork
+stop
+@enduml

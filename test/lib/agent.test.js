@@ -27,7 +27,7 @@ describe('test/lib/agent.test.js', () => {
           setTimeout(() => {
             const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
             assert(body.includes('nodejs.unhandledExceptionError: agent error'));
-            app.notExpect(/nodejs.AgentWorkerDiedError/);
+            app.notExpect('stderr', /nodejs.AgentWorkerDiedError/);
             done();
           }, 1000);
         });

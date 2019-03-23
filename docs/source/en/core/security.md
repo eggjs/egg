@@ -20,13 +20,13 @@ The framework itself has a rich solution for common security risks on the Web si
 - customizable white list for safe redirect and url filtering.
 - all kinds of template related tools for preprocessing.
 
-Security plug-ins [egg-security](https://github.com/eggjs/egg-security) are built into the framework, provides default security practices.
+Security plugins [egg-security](https://github.com/eggjs/egg-security) are built into the framework, provides default security practices.
 
-### Open or close the configuration
+### Open or Close the Configuration
 
-Note: it is not recommended to turn off the functions provided by the security plug-ins unless the consequences are clearly confirmed.
+Note: it is not recommended to turn off the functions provided by the security plugins unless the consequences are clearly confirmed.
 
-The security plug-in for the framework opens by default, if we want to close some security protection, directly set the `enable` attribute to false. For example, close xframe precautions:
+The security plugin for the framework opens by default, if we want to close some security protection, directly set the `enable` attribute to false. For example, close xframe precautions:
 
 
 ```js
@@ -37,7 +37,7 @@ exports.security = {
 };
 ```
 
-### match and ignore
+### `match` and `ignore`
 
 Match and ignore methods and formats are the same with[middleware general configuration](../basics/middleware.md#match%20and%20ignore).
 
@@ -84,7 +84,7 @@ exports.security = {
 
 We'll look at specific scenarios to illustrate how to use the security scenarios provided by the framework for Web security precautions.
 
-## Prevention of security threat `XSS`
+## Prevention of Security Threat `XSS`
 
 [XSS](https://www.owasp.org/index.php/Cross-site_Scripting_(XSS))（cross-site scripting）is the most common Web attack, which focus on "cross-domain" and "client-side execution."
 
@@ -224,7 +224,7 @@ Configration:
 * callback - default is `_callback`, you can rename
 * limit - callback function name length limit, default is 50.
 
-### Other XSS precautions
+### Other XSS Precautions
 
 Browser itself has some protection against all kinds of attacks, they generally take effect by opening the Web security headers. The framework has built-in support for some common Web security headers.
 
@@ -296,7 +296,7 @@ module.exports = {
 };
 ```
 
-In order to prevent the [BREACH attack](http://breachattack.com/), CSRF token rendered on the page will be changed everytime request changed, and the view plug-in, such as `egg-view-nunjucks`, will automatically inject the hidden field in Form without any perception of the application developer.
+In order to prevent the [BREACH attack](http://breachattack.com/), CSRF token rendered on the page will be changed everytime request changed, and the view plugin, such as `egg-view-nunjucks`, will automatically inject the hidden field in Form without any perception of the application developer.
 
 ##### AJAX Request
 
@@ -350,7 +350,9 @@ module.exports = {
 };
 ```
 
-#### Ignore JSON request
+#### Ignore JSON Request(deprecated)
+
+**Notice: this configure is deprecated, the attacker can bypass it through [flash and 307](https://www.geekboy.ninja/blog/exploiting-json-cross-site-request-forgery-csrf-using-flash/), please don't enable it in production environment!**
 
 With security policy protection [SOP](https://en.wikipedia.org/wiki/Same-origin_policy), basically all modern browsers do not allow cross domain request when content-type is set to JSON, so we can just leave out JSON request.
 
@@ -426,7 +428,7 @@ OK
 
 Then server sets an httpOnly Cookie `a` to 1, it is not possible to get it through the script in the browser environment.
 
-Then we send a TRACE method request to the server with Cookie `curl -X TRACE -b a=1 -i http://127.0.0.1:7001`, and will get response below: 
+Then we send a TRACE method request to the server with Cookie `curl -X TRACE -b a=1 -i http://127.0.0.1:7001`, and will get response below:
 
 ```
   HTTP/1.1 200 OK
@@ -524,7 +526,7 @@ Framework provides `.surl()` macro to do url filtering.It is Used to parse the u
 
 You can add `helper.surl($value)` in the template to output variable.
 
-**note: in places where you need to parse the url, you must add double quotes outside of surl, or you will result in XSS vulnerabilities.**
+**Note: in places where you need to parse the url, you must add double quotes outside of surl, or you will result in XSS vulnerabilities.**
 
 Do not use `surl`
 
@@ -558,7 +560,7 @@ Framework provides `X-Frame-Options` this security header to prevent iframe Phis
 
 This configuration can be turned off when you need to embed some trusted third-party web pages.
 
-## Prevention of Security threats `HPP`
+## Prevention of Security Threats `HPP`
 
 HTTP protocol allows the parameters of the same name appears many times, due to the implementation of the application is not standard, the attacker from the distribution of parameters of transmission key and the value of different parameters, will cause to bypass the consequences of some protection.
 
@@ -592,14 +594,55 @@ So, if you use the Egg framework to develop web site developers, please be sure 
 
 For HTTPS, one should pay attention to is the HTTP transport security (HSTS) strictly, if you don't use HSTS, when a user input url in the browser without HTTPS, the browser will use HTTP access by default.
 
-Framework provides `HSTS Strict-Transport-security`, this header will be opened by default, then let the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header. 
+Framework provides `HSTS Strict-Transport-security`, this header will be opened by default, then let the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header.
 
 The configuration is as follows:
 
 - maxAge one yeah for default `365 * 24 * 3600`。
 - includeSubdomains default is false, you can add subdomain to confirm all subdomains could be accessed by HTTPS.
 
-## Other build-in security tools
+## SSRF Protection
+
+In a [Server-Side Request Forgery (SSRF)](https://www.owasp.org/index.php/Server_Side_Request_Forgery) attack, the attacker can abuse functionality on the server to read or update internal resources.
+
+Generally, SSRF are common in that developers directly request the URL resources passed in by the client on the server side. Once an attacker passes in some internal URLs, an SSRF attack can be initiated.
+
+### How to Protect
+
+Usually, we will prevent SSRF attacks based on the IP blacklist of intranets. By filtering the IP addresses obtained after resolving domain names, we prohibit access to internal IP addresses to prevent SSRF attacks.
+
+The framework provides the `safeCurl` method on `ctx`, ʻapp` and `agent`, which will filter the specified intranet IP address while doing the network request. In additon of the method are the same as `curl`.
+
+- `ctx.safeCurl(url, options)`
+- `app.safeCurl(url, options)`
+- `agent.safeCurl(url, options)`
+
+#### Configurations
+
+Calling the `safeCurl` method directly does not have any effect. It also needs to work with security configurations.
+
+- `ipBlackList`(Array) - Configure the intranet IP address list. IP addresses on these network segments cannot be accessed.
+- `checkAddress`(Function) - Directly configure a function to check the IP address, and determine whether it is allowed to be accessed in `safeCurl` according to the return value of the function. When returning is not `true`, this IP cannot be accessed. `checkAddress` has a higher priority than `ipBlackList`.
+
+
+```js
+// config/config.default.js
+exports.security = {
+  ssrf: {
+    ipBlackList: [
+      '10.0.0.0/8', // support CIDR subnet
+      '0.0.0.0/32',
+      '127.0.0.1',  // support specific IP address
+    ],
+    // ipBlackList does not take effect when checkAddress is configured
+    checkAddress(ip) {
+      return ip !== '127.0.0.1';
+    },
+  },
+};
+```
+
+## Other Build-in Security Tools
 
 ### ctx.isSafeDomain(domain)
 

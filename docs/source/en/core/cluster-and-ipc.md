@@ -5,10 +5,10 @@ We know that JavaScript codes are run on single thread, in other words, one Node
 
 > how to squeeze all server resources, taking advantages of multi-cores?
 
-And the official solution provided by Node.js is [Cluster module](https://nodejs.org/api/cluster.html)
+And the official solution provided by Node.js is [Cluster module](https://nodejs.org/api/cluster.html), and there's an introduction:
 
 > A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.
-
+>
 > The cluster module allows you to easily create child processes that all share server ports.
 
 # What is Cluster?
@@ -62,7 +62,7 @@ Simple like the example above, but as an enterprise-level solution, much more re
 
 Haleness(aka Robustness) of an enterprise-level application must be considered, apart from the guarantee of high quality codes of program itself, the framework level should provide the cache-all mechanism to ensure the availability under extreme circumstance.
 
-Generally, Node.js processes exist for two reasons:
+Generally, Node.js processes exit for two reasons:
 
 #### Uncaught Exception
 
@@ -94,7 +94,7 @@ The process will exit when codes throw an exception but fail to catch it, at thi
 
 #### OOM, System Exception
 
-When a process crashes due to exceptions or is killed due to OOM by the OS, we have no chance to resume the process like uncaught exceptions occurring, the only choice is to exit current process direcly then Master fork a new Worker immediately.
+When a process crashes due to exceptions or is killed due to OOM by the OS, we have no chance to resume the process like uncaught exceptions occurring, the only choice is to exit current process directly then Master forks a new Worker immediately.
 
 In the framework, we use [graceful] and [egg-cluster] 2 modules correspondingly to implement above logics. This solution has been widely deployed in production environment in Alibaba Cor. and Ant Financial Cor. and is long-tested by 'Double 11' big promotion, solid and reliable.
 
@@ -164,7 +164,7 @@ module.exports = agent => {
   // put your initialization logics here
 
   // messages can also be sent by the messenger object to App Worker
-  // but you should wait until App Worker starts up successfully, or the message may be log
+  // but you should wait until App Worker starts up successfully, or the message may be lost
   agent.messenger.on('egg-ready', () => {
     const data = { ... };
     agent.messenger.sendToApp('xxx_action', data);
@@ -183,7 +183,7 @@ module.exports = app => {
 
 In this example, codes of `agent.js` are run in Agent process, codes of `app.js` are run in the Worker process, and they do the Inter-Process Communication(IPC) through the `messenger` object encapsulated by framework. Details about the IPC are explained in later sections.
 
-### Master VS Agent VS Worker
+### Master vs Agent vs Worker
 
 When an application starts up, 3 kinds of processes will be forked.
 
@@ -291,9 +291,9 @@ module.exports = app => {
 }
 ```
 
-* All methods called on `app.messenger` above can be called on `agent.messenger` too. *
+*All methods called on `app.messenger` above can be called on `agent.messenger` too.*
 
-#### egg-ready
+#### `egg-ready`
 
 We mentioned in the example above that, only after egg-ready event occurs can the message be sent. Only after Master makes sure that all Agent process and Worker processes have been started successfully(and ready), can the `egg-ready` message be sent to all Agent and Worker through messenger, notifying that everything is ready and the IPC channel can be used.
 
@@ -418,9 +418,9 @@ module.exports = agent => {
 };
 ```
 
-With an intelligent use of Agent process, scheduled tasks and IPC, we can easily implement this kind of requisition and reduce pressure on the data source. Detailed example codes refer to[examples/ipc](https://github.com/eggjs/examples/tree/master/ipc).
+With an intelligent use of Agent process, scheduled tasks and IPC, we can easily implement this kind of requisition and reduce pressure on the data source. Detailed example codes refer to [examples/ipc](https://github.com/eggjs/examples/tree/master/ipc).
 
-## More Complexed Scenario
+## More Complex Scenario
 
 In the above example, we runs a subscriber on Agent process to listen messages sent by the message-oriented middleware. What if Worker processes need to listen messages? How to create connections by Agent process and transmit messages to Worker processes? Answers to these questions can be found in [Advanced Multi-Process Developing Pattern](../advanced/cluster-client.md).
 

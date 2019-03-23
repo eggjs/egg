@@ -128,15 +128,24 @@ exports.logger = {
 };
 ```
 
+## Format
+Use JSON as the output log format, make it easier to parse.
+```js
+// config/config.${env}.js
+exports.logger = {
+  outputJSON: true,
+};
+```
+
 ## Log Level
 
 Logs are designed in 5 levels, including `NONE`, `DEBUG`, `INFO`, `WARN` and `ERROR`. For inspecting in development, they will also be written into files and printed into terminal as well.
 
 ### Levels
 
-Generally, Egg will only write logs in levels higher than `INFO`, so it means that `NONE` and `DEBUG` information will be lost in files.
+In production environment, Egg will only write logs with level `INFO` and higher, this means `NONE` and `DEBUG` information will be ignored in log files.
 
-If you want to change the level of the logger, you can make it as follow:
+If you want to change logger's default output level, modify in the config as follow:
 
 ```js
 // config/config.${env}.js
@@ -154,9 +163,23 @@ exports.logger = {
 };
 ```
 
-### In terminal
+#### Debug Log in Production Environment
 
-By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. `logger.consoleLevel`(default: `INFO`) is defined as the logger level in terminal. Similarly, it can be changed as following:
+To avoid some plugin's DEBUG logs printing in the production environment causing performance problems, the production environment prohibits printing DEBUG-level logs by default. If there is a need to print DEBUG logs for debugging in the production environment, you need to set `allowDebugAtProd` configuration to `ture`.
+
+```js
+// config/config.prod.js
+exports.logger = {
+  level: 'DEBUG',
+  allowDebugAtProd: true,
+};
+```
+
+### In Terminal
+
+By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. (Notice: It only works on `local` and `unittest` env)
+
+- `logger.consoleLevel`: (default: `INFO`) Being defined as the logger level in terminal. Similarly, it can be changed as following:
 
 Print logs in all levels:
 
@@ -176,7 +199,16 @@ exports.logger = {
 };
 ```
 
-## Create your logger
+- Base on performance considerations, console logger will be disabled after app ready at prod mode. however, you can enable it by config. (**Not Recommended**)
+
+```js
+// config/config.${env}.js
+exports.logger = {
+  disableConsoleAfterReady: false,
+};
+```
+
+## Create Your Logger
 
 ### Customized
 
@@ -261,7 +293,7 @@ module.exports = appInfo => {
       filesRotateBySize: [
         path.join(appInfo.root, 'logs', appInfo.name, 'egg-web.log'),
       ],
-      maxFileSize: 2 * 1024 * 1024,
+      maxFileSize: 2 * 1024 * 1024 * 1024,
     },
   };
 };

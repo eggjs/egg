@@ -185,13 +185,13 @@ exports.view = {
     <link rel="stylesheet" href="/public/css/news.css" />
   </head>
   <body>
-    <div class="news-view view">
+    <ul class="news-view view">
       {% for item in list %}
-        <div class="item">
+        <li class="item">
           <a href="{{ item.url }}">{{ item.title }}</a>
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </body>
 </html>
 ```
@@ -305,6 +305,10 @@ exports.news = {
 框架提供了一种快速扩展的方式，只需在 `app/extend` 目录下提供扩展脚本即可，具体参见[扩展](../basics/extend.md)。
 
 在这里，我们可以使用 View 插件支持的 Helper 来实现：
+
+```bash
+$ npm i moment --save
+```
 
 ```js
 // app/extend/helper.js
@@ -442,6 +446,7 @@ $ npm test
 
 短短几章内容，只能讲 Egg 的冰山一角，我们建议开发者继续阅读其他章节：
 
+- 关于骨架类型，参见[骨架说明](../tutorials/index.md)
 - 提供了强大的扩展机制，参见[插件](../basics/plugin.md)。
 - 一个大规模的团队需要遵循一定的约束和约定，在 Egg 里我们建议封装适合自己团队的上层框架，参见 [框架开发](../advanced/framework.md)。
 - 这是一个渐进式的框架，代码的共建，复用和下沉，竟然可以这么的无痛，建议阅读 [渐进式开发](../tutorials/progressive.md)。

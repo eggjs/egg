@@ -1,7 +1,7 @@
 title: Egg and Koa
 ---
 
-## Asynchronous programming model
+## Asynchronous Programming Model
 
 Node.js is an asynchronous world, asynchronous programming models in official API support are all in callback form ，it brings many problems. For example:
 
@@ -10,7 +10,7 @@ Node.js is an asynchronous world, asynchronous programming models in official AP
 
 The community has provided many solutions for the problems, the winner is Promise, it is built into ECMAScript 2015. On the basis of Promise, and with the ability of Generator to switch context, we can write asynchronous code in synchronous way with [co] and other third party libraries. Meanwhile [async function], the official solution has been published in ECMAScript 2017 and landed in Node.js 8.
 
-### Async function
+### Async Function
 
 [Async function] is a syntactic sugar at the language level. In async function, we can use `await` to wait for a promise to be resolved(or rejected, which will throw an exception), and Node.js LTS (8.x) has supported this feature.
 
@@ -25,7 +25,7 @@ fn().then(res => console.log(res)).catch(err => console.error(err.stack));
 
 ## Koa
 
-> Koa is a new Web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for Web applications and APIs.
+> [Koa](https://koajs.com/) is a new Web framework designed by the team behind Express, which aims to be a smaller, more expressive, and more robust foundation for Web applications and APIs.
 
 The design styles of Koa and Express are very similar, The underlying basic library is the same, [HTTP library](https://github.com/jshttp). There are several significant differences between them. Besides the asynchronous solution by default mentioned above, there are the following points.
 
@@ -57,7 +57,7 @@ At the same time Request and Response are mounted to Context object. Just like E
 - `set response.body`
 - `set response.status`
 
-### Exception handlering
+### Exception Handling
 
 Another enormous advantage for writing asynchronous code in synchronous way is that it is quite at ease to handle exception. You can catch all the exceptions thrown in the codes followed the convention with `try catch`. We can easily write a customized exception handling middleware.
 
@@ -75,7 +75,7 @@ async function onerror(ctx, next) {
 
  Putting this middleware before others, you can catch all the exceptions thrown by the synchronous or asynchronous code.
 
-## Egg inherits from Koa
+## Egg Inherits from Koa
 
 As described above, Koa is an excellent framework. However, it is not enough to build an enterprise-class application.
 

@@ -1,7 +1,7 @@
 # Contribution Guide
 
 If you have any comment or advice, please report your [issue](https://github.com/eggjs/egg/issues),
-or make any change as you wish and submit an [PR](https://github.com/eggjs/egg/pulls).
+or make any change as you wish and submit a [PR](https://github.com/eggjs/egg/pulls).
 
 ## Reporting New Issues
 
@@ -70,7 +70,7 @@ Eslint can help to identify styling issues that may exist in your code. Your cod
 
 ### Commit Message Format
 
-You are encouraged to use [angular commit-message-format](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit-message-format) to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.
+You are encouraged to use [angular commit-message-format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) to write commit message. In this way, we could have a more trackable history and an automatically generated changelog.
 
 ```xml
 <type>(<scope>): <subject>
@@ -130,11 +130,24 @@ BREAKING CHANGE:
   Breaks foo.bar api, foo.baz should be used instead
 ```
 
-Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more detials.
+Look at [these files](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit) for more details.
 
-## Release
+### Principles of English Translations
 
-egg uses semantic versioning in release process based on [semver].
+We follow the normal principles of English articles when translating, however, due to there're some special principles of titles, we should follow these rules:
+
+- For nouns, verbs, pronouns, adjectives and adverbs, capitalize the first character. For prepsitions, articles, conjections, interjections and auxiliary words, the first character should be in lowercase. **the character of the first word and the last word for title should be capitalized, regardless of what it is**.
+- For proper nouns such as the direct reference of a variable or the name of a plugin, we must use backtick (underneath the 'Esc') to surround them and keep what they are in origin.
+- For prepsitions more than 5 characters, their first characters should be also capitalized, otherwise not.
+- For some very important titles or some fixed proper nouns such as methods of Http: POST,GET,PUT,DELETE, every charater can be capitalized (USE WITH CAUTION).
+- If the article belongs to the form of O-V (Object-Verb) such as "Config Management", we'd better translate it as "Management Configuration", or "Managing Configuration" in the form of "gerund+noun".
+- If your title is taken as a sentence, write in 'Sentence Case' (e.g: In FAQ, each title is actually an English sentence).
+
+For more info, please refer [English Title Case].
+
+## Release Management
+
+Egg uses semantic versioning in release process based on [semver].
 
 ### Branch Strategy
 
@@ -159,14 +172,19 @@ In the release of every stable version, there will be a PM who has the following
 
 - Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.
 - Open a new [Release Proposal MR], and write `History` as [node CHANGELOG]. Don't forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.
-    ```
+    ```bash
     $ npm run commits
     ```
 - Nominate PM for next stable version.
 
 #### During Release
 
-All tags mentioned above refere to adding tags from npm in `package.json`.
+- Back up the stable version (master) onto the branch named after the current major (e.g: `1.x`), and set the tag to `release-{v}.x` (v is the current version like `release-1.x`).
+- Push the `next` branch to `master`, make it to the last stable one and remove `next` tag, change the contents corresponding to the branch in README.
+- Publish the latest stable version to [npm], and notify the previous framework to be upgraded.
+- Before doing `npm publish`, please read [How to deploy an npm package].
+
+All tags mentioned above means the tags of npm in `package.json`.
 
 ```json
 "publishConfig": {
@@ -174,8 +192,10 @@ All tags mentioned above refere to adding tags from npm in `package.json`.
 }
 ```
 
-[semver]: http://semver.org/lang/zh-CN/
-[Release proposal MR]: https://github.com/nodejs/node/pull/4181
+[semver]: https://semver.org/
+[Release Proposal MR]: https://github.com/nodejs/node/pull/4181
 [node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
 [1.x milestone]: https://github.com/eggjs/egg/milestone/1
-[『我是如何发布一个 npm 包的』]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[npm]: http://npmjs.com/
+[How to deploy an npm package]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[English Title Case]: https://headlinecapitalization.com/

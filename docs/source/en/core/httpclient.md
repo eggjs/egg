@@ -5,7 +5,7 @@ Countless services rely on the HTTP-based communication nowadays, and it is a ve
 
 The framework built in [HttpClient] based on [urllib], you can quickly complete any HTTP request.
 
-## Using HttpClient by app
+## Using HttpClient by `app`
 
 [HttpClient] will initialize to `app.httpclient` automatically during the application's initialization.
 Also added an method `app.curl(url, options)`, which is equivalent to the `app.httpclient.request(url, options)`.
@@ -25,7 +25,7 @@ module.exports = app => {
 };
 ```
 
-## Using HttpClient by Context
+## Using HttpClient by `ctx`
 
 Framework also provides `ctx.curl(url, options)` and `ctx.httpclient` in Context, same as app.
 So it's very easy to use `ctx.curl()` to complete a HTTP request in the Context (such as in the controller)
@@ -160,7 +160,7 @@ class NpmController extends Controller {
 }
 ```
 
-## Advanced HTTP request
+## Advanced HTTP Request
 
 In some real application scenarios, still have some more complex HTTP requests.
 
@@ -237,7 +237,7 @@ form.file('file1', file1);
 form.file('file2', file2);
 ```
 
-### Uploading files in Stream Mode
+### Uploading Files in Stream Mode
 
 In fact, Stream is the leading in the world of Node.js.
 If the server supports streaming, the most friendly way is to send the Stream directly. Actually, Stream will be sent in `Transfer-Encoding: chunked` transmission coding format, which is implemented by [HTTP] module automatically.
@@ -268,7 +268,7 @@ class NpmController extends Controller {
 }
 ```
 
-## options Parameters in Detail
+## Options Parameters in Detail
 
 Due to the complexity of HTTP Request, the options parameters of `httpclient.request(url, options)` quite large. The actual usage of each optional parameter will be shown with descriptions and coding as below.
 
@@ -295,7 +295,7 @@ exports.httpclient = {
     // default enable http KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created
@@ -308,7 +308,7 @@ exports.httpclient = {
     // default enable https KeepAlive
     keepAlive: true,
     // idle KeepAlive socket can survive for 4 seconds
-    freeSocketKeepAliveTimeout: 4000,
+    freeSocketTimeout: 4000,
     // when sockets have no activity for more than 30s, it will be processed as timeout
     timeout: 30000,
     // maximum number of sockets allow to be created
@@ -656,11 +656,11 @@ Framework provides [egg-development-proxyagent] plugin to help developers to deb
 Install and enable pulgin:
 
 ```bash
-$ npm i egg-development-proxyagent --save-dev
+$ npm i egg-development-proxyagent --save
 ```
 
 ```js
-// config/plugin.local.js
+// config/plugin.js
 exports.proxyagent = {
   enable: true,
   package: 'egg-development-proxyagent',
@@ -686,7 +686,7 @@ Then it works correctly, and all requests that go through HttpClient can be view
 
 **Note: the pulgin only start in local environments by defalut**
 
-## Known issues
+## Known Issues
 
 ### Connection Timeout
 
@@ -706,25 +706,25 @@ Then it works correctly, and all requests that go through HttpClient can be view
 - Scene: usually the server actively disconnects the socket connection, causing the HTTP request link exceptions.
 - Troubleshooting Suggestion: please check if server has network exception at that time
 
-### Service is unreachable
+### Service is Unreachable
 
 - Exception: `RequestError, code: ECONNREFUSED, status: -1`
 - Scene: usually because the requested URL which attached IP or the port cannot connect successfully.
 - Troubleshooting Suggestion: make sure the IP or port is set correctly
 
-### Domain name is not existing
+### Domain Name is Not Existing
 
 - Exception: `RequestError, code: ENOTFOUND, status: -1`
 - Scene: usually the domain name requested by URL cannot be resolved by DNS successfully.
 - Troubleshooting Suggestion: make sure the domain name exists, and also check to see if the DNS service is properly configured.
 
-### JSON Response data format error
+### JSON Response Data Format Error
 
 - Exception: `JSONResponseFormatError`
 - scene: the `dataType=json` is set and this exception is thrown in response data that does not match JSON format.
 - Troubleshooting Suggestion: make sure that the server no matter what situations are returns the data in JSON format correctly.
 
-## Global `request` and `response` events
+## Global `request` and `response` Events
 
 In enterprise application scenarios, generally a unified tracer log is needed.
 To facilitate monitoring HttpClient requests and responses on the app level, we agreed on global `request` and `response` to expose these two events.
@@ -745,7 +745,7 @@ To facilitate monitoring HttpClient requests and responses on the app level, we 
        end
 ```
 
-### `request` event occurs before the network operation
+### `request` Event Occurs before the Network Operation
 
 A `request` event is triggered before the request is sent, allowing blocking of the request.
 
@@ -758,7 +758,7 @@ app.httpclient.on('request', req => {
 });
 ```
 
-### `response` event occurs after the end of network operation
+### `response` Event Occurs after the End of Network Operation
 
 After the end of request, a `response` event is triggered, so that the external event can be subscribed to the log printing.
 
@@ -773,7 +773,7 @@ app.httpclient.on('response', result => {
 
 ## Example
 
-Full examples can be found on [eggjs/exmaples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
+Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
 [urllib]: https://github.com/node-modules/urllib
 [HttpClient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js

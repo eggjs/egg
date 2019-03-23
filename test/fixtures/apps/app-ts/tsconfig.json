@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es2017",
     "baseUrl": ".",
     "paths": {
-      "egg": ["../../../../index"]
+      "egg": [
+        "../../../../index"
+      ]
     },
+    "types" : ["node"],
     "module": "commonjs",
-    "lib": ["es7"],
-    "strict": true
+    "strict": true,
+    "noImplicitAny": false
   }
 }

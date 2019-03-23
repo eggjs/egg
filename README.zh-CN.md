@@ -31,14 +31,14 @@
 $ npm install egg --save
 ```
 
-支持 Node.js 8.x 以上版本。
+支持 Node.js 8.x 及以上版本。
 
 ## 特性
 
 - ✔︎ 内置多进程管理
 - ✔︎ 高度可扩展的插件机制
 - ✔︎ 深度框架定制
-- ✔︎ 丰富的[插件](https://eggjs.org/badgeboard/)
+- ✔︎ 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
 ## 文档和社区
 
@@ -63,9 +63,9 @@ $ open http://localhost:7001
 
 ## 贡献代码
 
-Please let us know what we can help, check [issues](https://github.com/eggjs/egg/issues) for bug reporting and suggestion.
+请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的Bug或者意见](https://github.com/eggjs/egg/issues)。
 
-If you are a contributor, follow [CONTRIBUTING](CONTRIBUTING.md).
+如果你是一个代码贡献者，请参考[代码贡献规范](CONTRIBUTING.md)。
 
 ## 开源协议
 

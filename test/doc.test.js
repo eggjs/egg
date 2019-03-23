@@ -24,6 +24,7 @@ describe('test/doc.test.js', () => {
 
   it('should no broken url', async () => {
     const result = await findlinks({ src: app.url, logger: console });
+    if (result.fail !== 0) console.log(result);
     assert(result.fail === 0);
   });
 });

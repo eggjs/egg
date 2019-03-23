@@ -124,18 +124,32 @@ module.exports = {
 - `cronOptions`: 配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档
 - `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
 - `disable`：配置该参数为 true 时，这个定时任务不会被启动。
+- `env`：数组，仅在指定的环境下才启动该定时任务。
+
+### 执行日志
+
+执行日志会输出到 `${appInfo.root}/logs/{app_name}/egg-schedule.log`，默认不会输出到控制台，可以通过 `config.customLogger.scheduleLogger` 来自定义。
+
+```js
+// config/config.default.js
+config.customLogger = {
+  scheduleLogger: {
+    // consoleLevel: 'NONE',
+    // file: path.join(appInfo.root, 'logs', appInfo.name, 'egg-schedule.log'),
+  },
+};
+```
 
 ### 动态配置定时任务
 
-有时候我们需要判断不同的环境来配置定时任务的参数。定时任务还有支持另一种写法：
+有时候我们需要配置定时任务的参数。定时任务还有支持另一种写法：
 
 ```js
 module.exports = app => {
   return {
     schedule: {
-      interval: '1m',
+      interval: app.config.cacheTick,
       type: 'all',
-      disable: app.config.env === 'local', // 本地开发环境不执行
     },
     async task(ctx) {
       const res = await ctx.curl('http://www.api.com/cache', {
@@ -202,6 +216,6 @@ module.exports = agent => {
 
 `ScheduleStrategy` 基类提供了：
 
-- `schedule` - 定时任务的属性，`disable`  是默认统一支持的，其他配置可以自行解析。
-- `this.sendOne()` - 随机通知一个 worker 执行 task。
-- `this.sendAll()` - 通知所有的 worker 执行 task。
+- `schedule` - 定时任务的属性，`disable` 是默认统一支持的，其他配置可以自行解析。
+- `this.sendOne(...args)` - 随机通知一个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)`。
+- `this.sendAll(...args)` - 通知所有的 worker 执行 task。

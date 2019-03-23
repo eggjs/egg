@@ -79,22 +79,6 @@ describe('test/lib/core/httpclient.test.js', () => {
     await client.requestThunk(url, args);
   });
 
-  it('should request error with log', done => {
-    mm.http.requestError(/.*/i, null, 'mock res error');
-
-    client.once('response', info => {
-      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
-      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
-      assert(info.error.message.includes('mock res error'));
-      done();
-    });
-
-    client.request(url).catch(() => {
-      // it will print
-      // console.error(e.stack);
-    });
-  });
-
   describe('httpclient.httpAgent.timeout < 30000', () => {
     let app;
     before(() => {
@@ -120,8 +104,8 @@ describe('test/lib/core/httpclient.test.js', () => {
     it('should convert compatibility options to agent options', () => {
       // should access httpclient first
       assert(app.httpclient);
-      assert(app.config.httpclient.httpAgent.freeSocketKeepAliveTimeout === 2000);
-      assert(app.config.httpclient.httpsAgent.freeSocketKeepAliveTimeout === 2000);
+      assert(app.config.httpclient.httpAgent.freeSocketTimeout === 2000);
+      assert(app.config.httpclient.httpsAgent.freeSocketTimeout === 2000);
 
       assert(app.config.httpclient.httpAgent.maxSockets === 100);
       assert(app.config.httpclient.httpsAgent.maxSockets === 100);
@@ -179,7 +163,7 @@ describe('test/lib/core/httpclient.test.js', () => {
   });
 
   describe('httpclient tracer', () => {
-    const url = 'https://eggjs.org/';
+    const url = 'https://www.alibaba.com/';
     let app;
     before(() => {
       app = utils.app('apps/httpclient-tracer');
@@ -390,6 +374,47 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(resTracers[2] !== resTracers[1]);
 
       assert(reqTracers[0].traceId);
+    });
+  });
+
+  describe('compatibility freeSocketKeepAliveTimeout', () => {
+    it('should convert freeSocketKeepAliveTimeout to freeSocketTimeout', () => {
+      let mockApp = {
+        config: {
+          httpclient: {
+            request: {},
+            freeSocketKeepAliveTimeout: 1000,
+            httpAgent: {},
+            httpsAgent: {},
+          },
+        },
+      };
+      let client = new Httpclient(mockApp);
+      assert(client);
+      assert(mockApp.config.httpclient.freeSocketTimeout === 1000);
+      assert(!mockApp.config.httpclient.freeSocketKeepAliveTimeout);
+      assert(mockApp.config.httpclient.httpAgent.freeSocketTimeout === 1000);
+      assert(mockApp.config.httpclient.httpsAgent.freeSocketTimeout === 1000);
+
+      mockApp = {
+        config: {
+          httpclient: {
+            request: {},
+            httpAgent: {
+              freeSocketKeepAliveTimeout: 1001,
+            },
+            httpsAgent: {
+              freeSocketKeepAliveTimeout: 1002,
+            },
+          },
+        },
+      };
+      client = new Httpclient(mockApp);
+      assert(client);
+      assert(mockApp.config.httpclient.httpAgent.freeSocketTimeout === 1001);
+      assert(!mockApp.config.httpclient.httpAgent.freeSocketKeepAliveTimeout);
+      assert(mockApp.config.httpclient.httpsAgent.freeSocketTimeout === 1002);
+      assert(!mockApp.config.httpclient.httpsAgent.freeSocketKeepAliveTimeout);
     });
   });
 });

@@ -7,6 +7,35 @@ At this chapter, we will introduce some built-in basic objects in the framework,
 
 Application is a global application object, an application only instantiates one Application, it is inherited from [Koa.Application], we can mount some global methods and objects on it. We can easily [extend Application object] (./extend.md#Application) in plugin or application.
 
+### Events
+
+Framework will emits some events when server running, application developers or plugin developers can listen on these events to do some job like logging. As application developers, we can listen on these events in [app start script](./app-start.md).
+
+- `server`: every worker will only emit once during the runtime, after HTTP server started, framework will expose HTTP server instance by this event.
+- `error`: if any exception catched by onerror plugin, it will emit an `error` event with the exception instance and current context instance(if have), developers can listen on this event to report or logging.
+- `request` and `response`: application will emit `request` and `response` event when receive requests and ended responses, developers can listen on these events to generate some digest log.
+
+```js
+// app.js
+
+module.exports = app => {
+  app.once('server', server => {
+    // websocket
+  });
+  app.on('error', (err, ctx) => {
+    // report error
+  });
+  app.on('request', ctx => {
+    // log receive request
+  });
+  app.on('response', ctx => {
+    // ctx.starttime is set by framework
+    const used = Date.now() - ctx.starttime;
+    // log total cost
+  });
+};
+```
+
 ### How to Get
 
 Application object can be accessed almost anywhere in application, here are a few commonly used access ways:
@@ -28,7 +57,7 @@ Almost all files (Controller, Service, Schedule, etc.) loaded by the [Loader] (.
   // app/controller/user.js
   class UserController extends Controller {
     async fetch() {
-      this.ctx.body = app.cache.get(this.ctx.query.id);
+      this.ctx.body = this.app.cache.get(this.ctx.query.id);
     }
   }
   ```
@@ -233,7 +262,7 @@ We can get the config object from the Application instance via `app.config`, or 
 
 ## Logger
 
-Egg builds in powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 5 level methods:
+Egg builds in powerful [logger](../core/logger.md), it is very convenient to print a variety of levels of logs to the corresponding log file, each logger object provides 4 level methods:
 
 - `logger.debug()`
 - `logger.info()`

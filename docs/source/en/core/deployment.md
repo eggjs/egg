@@ -50,7 +50,7 @@ Then add `npm scripts` to `package.json`:
 
 Then we are able to use `npm start` and `npm stop` to manage application.
 
-> Note: `egg-scripts` don't support Windows.
+> Note: `egg-scripts` has limited support for Windows, see [#22](https://github.com/eggjs/egg-scripts/pull/22).
 
 ### Start
 
@@ -71,12 +71,13 @@ Options:
 
 More about [egg-scripts] and [egg-cluster] documents.
 
-#### Dispatch with arguments
+#### Dispatch with Arguments
 
 Arguments of dispatch can be configured in `config.{env}.js`.
 
 ```js
 // config/config.default.js
+
 exports.cluster = {
   listen: {
     port: 7001,
@@ -96,7 +97,7 @@ $ egg-scripts stop
 
 This command will kill master process which will handler and notice worker and agent to gracefull exit.
 
-Also you can manually call `ps -eo "pid,command" | grep "--type=egg-server"` to find master process then `kill` without `-9`.
+Also you can manually call `ps -eo "pid,command" | grep -- "--title=egg-server"` to find master process then `kill` without `-9`.
 
 [egg-cluster]: https://github.com/eggjs/egg-cluster
 [egg-scripts]: https://github.com/eggjs/egg-scripts

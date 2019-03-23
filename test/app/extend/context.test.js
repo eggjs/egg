@@ -146,6 +146,21 @@ describe('test/app/extend/context.test.js', () => {
     });
   });
 
+  describe('agent anonymous context can be extended', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/custom-context-getlogger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should extend context as app', () => {
+      const ctx = app.agent.createAnonymousContext();
+      const logger = ctx.getLogger('foo');
+      logger.info('hello');
+    });
+  });
+
   describe('properties', () => {
     let app;
     before(() => {
@@ -154,7 +169,7 @@ describe('test/app/extend/context.test.js', () => {
     });
     after(() => app.close());
 
-    describe('ctx.router', () => {
+    describe('ctx.router getter and settter', () => {
       it('should work', () => {
         return app.httpRequest()
           .get('/')
@@ -250,12 +265,101 @@ describe('test/app/extend/context.test.js', () => {
       );
     });
 
+    it('should use custom task name first', async () => {
+      await app.httpRequest()
+        .get('/custom')
+        .expect(200)
+        .expect('hello');
+      await sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      assert(/background run result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:customTaskName success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+    });
+
     it('should run background task error', async () => {
       mm.consoleLevel('NONE');
+
+      let errorHadEmit = false;
+      app.on('error', (err, ctx) => {
+        assert(err.runInBackground);
+        assert(/ENOENT: no such file or directory/.test(err.message));
+        assert(ctx);
+        errorHadEmit = true;
+      });
       await app.httpRequest()
         .get('/error')
         .expect(200)
         .expect('hello error');
+      assert(errorHadEmit);
+      await sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      assert(/ENOENT: no such file or directory/.test(log));
+      assert(
+        /\[egg:background] task:mockError fail \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+    });
+  });
+
+  describe('ctx.runInBackground(scope) with single process mode', () => {
+    // ctx.runInBackground with egg-mock are overrided
+    // single process mode will use the original ctx.runInBackground
+    let app;
+    before(async () => {
+      app = await utils.singleProcessApp('apps/ctx-background');
+    });
+    after(() => app.close());
+
+    it('should run background task success', async () => {
+      await app.httpRequest()
+        .get('/')
+        .expect(200)
+        .expect('hello');
+      await sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      assert(/background run result file size: \d+/.test(log));
+      assert(/background run anonymous result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+      assert(
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+    });
+
+    it('should use custom task name first', async () => {
+      await app.httpRequest()
+        .get('/custom')
+        .expect(200)
+        .expect('hello');
+      await sleep(5000);
+      const logdir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      assert(/background run result file size: \d+/.test(log));
+      assert(
+        /\[egg:background] task:customTaskName success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+      );
+    });
+
+    it('should run background task error', async () => {
+      mm.consoleLevel('NONE');
+
+      let errorHadEmit = false;
+      app.on('error', (err, ctx) => {
+        assert(err.runInBackground);
+        assert(/ENOENT: no such file or directory/.test(err.message));
+        assert(ctx);
+        errorHadEmit = true;
+      });
+      await app.httpRequest()
+        .get('/error')
+        .expect(200)
+        .expect('hello error');
+      assert(errorHadEmit);
       await sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
@@ -362,6 +466,18 @@ describe('test/app/extend/context.test.js', () => {
         const ctx = app.mockContext();
         const logger = ctx.getLogger('coreLogger');
         assert(ctx.getLogger('coreLogger') === logger);
+      });
+    });
+
+    describe('get router()', () => {
+      it('should alias to app.router', () => {
+        const ctx = app.mockContext();
+        assert(ctx.router === app.router);
+      });
+      it('should work with setter app.router', () => {
+        const ctx = app.mockContext();
+        ctx.router = 'router';
+        assert(ctx.router === 'router');
       });
     });
   });

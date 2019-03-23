@@ -1,8 +1,6 @@
 title: Quick Start
 ---
 
-# Quick Start
-
 This guide covers getting up and running a real example using Egg.
 By following along with this guide step by step, you can quickly get started with Egg development.
 
@@ -11,7 +9,7 @@ By following along with this guide step by step, you can quickly get started wit
 - Operating System: Linux, OS X or Windows.
 - Node.js Runtime: 8.x or newer; it is recommended that you use [LTS Releases][Node.js].
 
-## the Quick Way
+## The Quick Way
 
 To begin with, let's quickly initialize the project by using a scaffold,
 which will quickly generate some of the major pieces of the application.
@@ -96,7 +94,7 @@ Then add a [configuration](../basics/config.md) file:
 
 ```js
 // config/config.default.js
-exports.keys = <YOUR_SECURITY_COOKE_KEYS>;
+exports.keys = <YOUR_SECURITY_COOKIE_KEYS>;
 ```
 
 The project directory looks like this:
@@ -126,7 +124,7 @@ $ open localhost:7001
 > - You could write `Controller` with `class` or `exports` style, see more detail at [Controller](../basics/controller.md).
 > - And `Config` could write with `module.exports` or `exports` style, see more detail at [Node.js modules docs](https://nodejs.org/api/modules.html#modules_exports_shortcut).
 
-### Add Static Assets
+### Adding Static Assets
 
 Egg has a built-in plugin called [static][egg-static].
 In production, it is recommended that you deploy static assets to CDN instead of using this plugin.
@@ -144,20 +142,20 @@ app/public
     └── news.js
 ```
 
-### Add Templates for Rendering
+### Adding Templates for Rendering
 
 In most cases, data are usually read, processed and rendered by the templates before being presented to the user.
 Thus we need to introduce corresponding template engines to handle it.
 
 Egg does not force to use any particular template engines,
-but specifies the [View Plug-ins Specification](../advanced/view-plugin.md)
-to allow the developers to use different plug-ins for their individual needs instead.
+but specifies the [View Plugins Specification](../advanced/view-plugin.md)
+to allow the developers to use different plugins for their individual needs instead.
 
 For more information, cf. [View](../core/view.md).
 
 In this example, we will use [Nunjucks].
 
-First install the corresponding plug-in [egg-view-nunjucks].
+First install the corresponding plugin [egg-view-nunjucks].
 
 ```bash
 $ npm i egg-view-nunjucks --save
@@ -199,13 +197,13 @@ This usually goes to the app/view directory.
     <link rel="stylesheet" href="/public/css/news.css" />
   </head>
   <body>
-    <div class="news-view view">
+    <ul class="news-view view">
       {% for item in list %}
-        <div class="item">
+        <li class="item">
           <a href="{{ item.url }}">{{ item.title }}</a>
-        </div>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </body>
 </html>
 ```
@@ -241,7 +239,7 @@ module.exports = app => {
 Open a browser window and navigate to http://localhost:7001/news.
 You should be able to see the rendered page.
 
-**Tip：In development, Egg enables the [development][egg-development] plug-in by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, Egg enables the [development][egg-development] plugin by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -257,7 +255,7 @@ Let's create a service to fetch data from the
 // app/service/news.js
 const Service = require('egg').Service;
 
-class NewsService extends app.Service {
+class NewsService extends Service {
   async list(page = 1) {
     // read config
     const { serverUrl, pageSize } = this.config.news;
@@ -317,7 +315,7 @@ exports.news = {
 };
 ```
 
-### Add Extensions
+### Adding Extensions
 
 We might encounter a small problem here.
 The time that we fetched are Unix Time format,
@@ -328,6 +326,10 @@ We just need to add extension scripts to the `app/extend` directory.
 For more information, cf. [Extensions](../basics/extend.md).
 
 In the case of view, we can just write a helper as an extension.
+
+```bash
+$ npm i moment --save
+```
 
 ```js
 // app/extend/helper.js
@@ -342,7 +344,7 @@ Then use it in the templates.
 {{ helper.relativeTime(item.time) }}
 ```
 
-### Add Middlewares
+### Adding Middlewares
 
 Suppose that we wanted to prohibit accesses from Baidu crawlers.
 
@@ -383,14 +385,14 @@ Now try it using `curl localhost:7001/news -A "Baiduspider"`.
 See [Middleware](../basics/middleware.md) for more details.
 
 
-### Add Configurations
+### Adding Configurations
 
 When writing business logic,
 it is inevitable that we need to manage configurations.
 Egg provides a powerful way to manage them in a merged configuration file.
 
 - Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.
-- Configurations could be set wherever convenient, e.g. near Applications/Plug-ins/Framesworks, and Egg will be careful to merge and load them.
+- Configurations could be set wherever convenient for Applications/Plugins/Framesworks, and Egg will be careful to merge and load them.
 - For more information on merging, see [Configurations](../basics/config.md).
 
 ```js
@@ -422,7 +424,7 @@ class SomeService extends Service {
 module.exports = SomeService;
 ```
 
-### Add Unit Testing
+### Adding Unit Testing
 
 Unit Testing is very important, and Egg also provides [egg-bin] to help you write tests painless.
 
@@ -471,6 +473,8 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 
 We can only touch the tip of the iceberg of Egg with the above short sections.
 Where to go from here? read our documentation to better understand the framework.
+
+- About Egg boilerplate type, See [Boilerplate Type Description](../tutorials/index.md).
 - Egg provides a powerful mechanism for extending features. See [Plugin](../basics/plugin.md).
 - Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suit their special needs. See more on [Frameworks].(../advanced/framework.md).
 - Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).

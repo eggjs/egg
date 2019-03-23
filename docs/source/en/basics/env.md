@@ -1,33 +1,33 @@
 title: Runtime Environment
 ---
 
-# Runtime Environment
+An web application itself should be stateless and has the ability to set its own according to the runtime environment.
 
-There could be all kinds of difference during various stages of a Web application development, but the application itself should be stateless, so EGG provide environment variables to cope with such difference.
 
-EGG framework provides a variable named `env` for setting up the runtime environment. The `env` could be used to determine which configuration file should be applied, or you can perform any operations by detecting the `env` directly.
+## Configure Runtime Environment
 
-## How to Configure Runtime Environment
-
-There are several ways:
+Egg has two ways to configure runtime environment:
 
 1. Use `config/env` file, usually we use the build tools to generate this file, the content of this file is just the env value, such as `prod`.
-2. Specify the `EGG_SERVER_ENV` environment variable.
+2. use `EGG_SERVER_ENV` environment variable to configure.
 
-
-`EGG_SERVER_ENV` will be more commonly used, defining the environment variable when you start the application is the simplest way, for example, use the code below to start the application in the production environment.
+ The second way will be more commonly used, defining the runtime environment via `EGG_SERVER_ENV` when you start the application is more convenient, for example, use the code below to start the application in the production environment.
 
 ```shell
 EGG_SERVER_ENV=prod npm start
 ```
 
-## How to Use
-You can use `app.config.env` to get the environment variable.
-You can also load different configuration file for different environment by adding a file like  `config/config.{env}.js` with specified configs, please refer to  [config](./config.md) for details.
+## Access to the Runtime Environment in Application
 
-## Difference with NODE_ENV
+Egg provides a variable `app.config.env` to represent the current runtime environment of application.
 
-Lots of Node.js applications use `NODE_ENV` for environment setting, but `EGG_SERVER_ENV`  distinguishes the environments much more specific. Generally speaking, there are local environment, unit test environment, test environment, production environment during the application development. Test and production environment are **Server Environment** and their `NODE_ENV` should be set to `production` , just like how npm make use of `NODE_ENV`. when you depoly applications in test and production environment, you don't install the devDependencies, so `production` should be applied.
+## Configurations of Runtime Environment
+
+Different running environment corresponds to different configurations, read [Configuration of Config](./config.md) in detail.
+
+## Difference from `NODE_ENV`
+
+Lots of Node.js applications use `NODE_ENV` to distinguish the runtime environment, but `EGG_SERVER_ENV`  distinguishes the environments much more specific. Generally speaking, there are local environment, test environment, production environment during the application development. In addition to the local development environment and the test environment, other environments are collectively referred to as the **Server Environment** and their `NODE_ENV` should be set to `production`. What's more, npm will use this variable and will not install the devDependencies when you deploy applications, so `production` should also be applied. 
 
 Default mapping of `EGG_SERVER_ENV` and `NODE_ENV` (will generate `EGG_SERVER_ENV` from `NODE_ENV` setting if `EGG_SERVER_ENV` is not specified)
 
@@ -37,14 +37,14 @@ Default mapping of `EGG_SERVER_ENV` and `NODE_ENV` (will generate `EGG_SERVER_EN
 | test       | unittest       | unit test environment         |
 | production | prod           | production environment        |
 
-For example, `EGG_SERVER_ENV` will be set to prod when `NODE_ENV` is production and `EGG_SERVER_ENV` is not specified.
+For example, `EGG_SERVER_ENV` will be set to prod when `NODE_ENV` is set as `production` and `EGG_SERVER_ENV` is not specified.
 
-## Customize environment
+## Environment Customization
 
-In normal development process, it's not limit to these environments mentioned above. So you can customize environment for you development process, such as SIT (System integration testing).
+In normal development process, it's not limit to these environments mentioned above. So you can customize environment for your development process.
 
-Set `EGG_SERVER_ENV` to `sit` (also set `NODE_ENV = production` as recommend), the framework will load `config/config.sit.js` when lanching, and the runtime environment `app.config.env` will be `sit`.
+For example, if you want to add SIT (System integration testing) to development process, you can set `EGG_SERVER_ENV` to `sit` (also recommend to set `NODE_ENV = production`), the framework will load `config/config.sit.js` when launching, and the runtime environment `app.config.env` will be `sit`.
 
-## Difference with Koa
+## Difference from Koa
 
-We are using `app.env` to distinguishes the environments in Koa, and `app.env` defualt to `process.env.NODE_ENV`. But in Egg (and frameworks base on Egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguishes the environments, `app.env` is no logger used.
+We are using `app.env` to distinguish the environments in Koa, and the default value for `app.env` is `process.env.NODE_ENV`. But in Egg (and frameworks base on Egg), we put all the configurations in `app.config`, so we should use `app.config.env` to distinguish the environments, `app.env` is no longer used.

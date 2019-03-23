@@ -5,11 +5,11 @@ title: 多进程模型和进程间通讯
 
 > 如何榨干服务器资源，利用上多核 CPU 的并发优势？
 
-而 Node.js 官方提供的解决方案是 [Cluster 模块](https://nodejs.org/api/cluster.html)
+而 Node.js 官方提供的解决方案是 [Cluster 模块](https://nodejs.org/api/cluster.html)，其中包含一段简介：
 
-> A single instance of Node.js runs in a single thread. To take advantage of multi-core systems the user will sometimes want to launch a cluster of Node.js processes to handle the load.
-
-> The cluster module allows you to easily create child processes that all share server ports.
+> 单个 Node.js 实例在单线程环境下运行。为了更好地利用多核环境，用户有时希望启动一批 Node.js 进程用于加载。
+>
+> 集群化模块使得你很方便地创建子进程，以便于在服务端口之间共享。
 
 ## Cluster 是什么呢？
 

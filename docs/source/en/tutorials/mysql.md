@@ -3,9 +3,9 @@ title: MySQL
 
 MySQL is one of the most common and best RDBMS in terms of web applications. It is used in many large-scale websites such as Google and Facebook.
 
-## egg-mysql
+## `egg-mysql`
 
-egg-mysql is provided to access both the MySQL databases and MySQL-based online database service.
+`egg-mysql` is provided to access both the MySQL databases and MySQL-based online database service.
 
 ### Installation and Configuration
 
@@ -116,7 +116,7 @@ module.exports = app => {
 };
 ```
 
-## Service layer
+## Service Layer
 
 Connecting to MySQL is a data processing layer in the Web layer. So it is strongly recommended that keeping the code in the Service layer.
 
@@ -235,6 +235,25 @@ const result = await this.app.mysql.update('posts', row); // update records in '
 
 // check if update is success or failure
 const updateSuccess = result.affectedRows === 1;
+
+// if primary key is your custom id,such as custom_id,you should config it in `where`
+const row = {
+  name: 'fengmk2',
+  otherField: 'other field value',    // any other fields u want to update
+  modifiedAt: this.app.mysql.literals.now, // `now()` on db server
+};
+
+const options = {
+  where: {
+    custom_id: 456
+  }
+};
+const result = await this.app.mysql.update('posts', row, options); // update records in 'posts'
+
+=> UPDATE `posts` SET `name` = 'fengmk2', `modifiedAt` = NOW() WHERE custom_id = 456 ;
+
+// check if update is success or failure
+const updateSuccess = result.affectedRows === 1;
 ```
 
 ### Delete
@@ -299,7 +318,7 @@ try {
 }
 ```
 
-### Automatic control: Transaction with scope
+### Automatic Control: Transaction with Scope
 
 - API：`beginTransactionScope(scope, ctx)`
   - `scope`: A generatorFunction which will execute all sqls of this transaction.

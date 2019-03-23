@@ -18,7 +18,6 @@ title: Config 配置
 ```
 config
 |- config.default.js
-|- config.test.js
 |- config.prod.js
 |- config.unittest.js
 `- config.local.js
@@ -76,6 +75,19 @@ root | 应用根目录，只有在 local 和 unittest 环境下为 baseDir，其
 
 `appInfo.root` 是一个优雅的适配，比如在服务器环境我们会使用 `/home/admin/logs` 作为日志目录，而本地开发时又不想污染用户目录，这样的适配就很好解决这个问题。
 
+
+请根据具体场合选择合适的写法，但请确保没有写出以下代码：
+
+```js
+// config/config.default.js
+exports.someKeys = 'abc';
+module.exports = appInfo => {
+  const config = {};
+  config.keys = '123456';
+  return config;
+};
+```
+
 ### 配置加载顺序
 
 应用、插件、框架都可以定义这些配置，而且目录结构都是一致的，但存在优先级（应用 > 框架 > 插件），相对于此运行环境的优先级会更高。
@@ -110,7 +122,7 @@ extend(true, a, b);
 
 根据上面的例子，框架直接覆盖数组而不是进行合并。
 
-## 配置结果
+### 配置结果
 
 框架在启动时会把合并后的最终配置 dump 到 `run/application_config.json`（worker 进程）和 `run/agent_config.json`（agent 进程）中，可以用来分析问题。
 

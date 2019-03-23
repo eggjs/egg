@@ -1,4 +1,4 @@
-title: Service
+title: 服务（Service）
 ---
 
 简单来说，Service 就是在复杂业务场景下用于做业务逻辑封装的一个抽象层，提供这个抽象有以下几个好处：
@@ -75,6 +75,7 @@ module.exports = app => {
 const Controller = require('egg').Controller;
 class UserController extends Controller {
   async info() {
+    const { ctx } = this;
     const userId = ctx.params.id;
     const userInfo = await ctx.service.user.find(userId);
     ctx.body = userInfo;

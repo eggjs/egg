@@ -1,32 +1,32 @@
 title: Framework Development
 ---
 
-During maintaining a number of projects, are your familiar with situations below: 
+If your team have met with these scenarios:
 
 - Each project contains the same configuration files that need to be copied every time, such as `gulpfile.js`, `webpack.config.js`.
-- Each project has similiar dependancies.
-- It's difficult to synchronize those projects based on the same configurations like those mentioned above once they have changed? 
+- Each project has similiar dependencies.
+- It's difficult to synchronize those projects based on the same configurations like those mentioned above once they have been optimized?
 
-Have your team got:
+If your team needs:
 
 - a unified technique selection, such as the choice of databases, templates, frontend frameworks, and middlewares.
 - a unified default configuration to balance the deviation of different situations, which are not supposed to resolve in code level, like the differences between companies and open communities.
 - a unified [deployment plan](../core/deployment.md) keeping developers concentrate on code without paying attention to deployment details of connecting the framework and platforms.
 - a unified code style to decrease code's repetition and optimize code's appearance, which is important for a enterprise level framework.
 
-To satisfy these demands, Egg endows developers with the capacity of `customazing a framework`. It is just an abstract layer, which is able to construct a higher level framework, supporting inheritance of unlimited times. Futhermore, Egg apply a quantity of coding conventions based on Koa.
+To satisfy these demands, Egg endows developers with the capacity of `customazing a framework`. It is just an abstract layer, which can be constructed to a higher level framework, supporting inheritance of unlimited times. Futhermore, Egg apply a quantity of coding conventions based on Koa.
 
-Therefore, a uniform spec can be applied on projects in which the differentiation fulfilled in plugins. And the best practice summed from those projects can continuously extracted from these plugins to the framework, which is available to other project by just updating the dependances' version.
+Therefore, a uniform spec can be applied on projects in which the differentiation fulfilled in plugins. And the best practice summed from those projects can be continuously extracted from these plugins to the framework, which is available to other projects by just updating the dependencies' versions.
 
 See more details in [Progressive Development](../tutorials/progressive.md)。
 
-## Framework And Multiprocess
+## Framework and Multiprocess
 
-The framework extension is applied to Multiprocess Model, as we know [Multiprocess Model](../core/cluster-and-ipc.md) and the diffirences between Agent Worker and App Worker, which have diffirent API and both need to inherit.
+The framework extension is applied to Multiprocess Model, as we know [Multiprocess Model](../core/cluster-and-ipc.md) and the differences between Agent Worker and App Worker, which have different APIs and both need to inherit.
 
 They both are inherited from [EggCore](https://github.com/eggjs/egg-core), and Agent is instantiated during the initiation of Agent Worker, while App is instantiated during the initiation of App Worker.
 
-We could think about EggCore as the advanced version of Koa Application, which integrates built-in features such as [Loader](./loader.md)、[Router](../basics/router.md) and asynchronous launch.
+We could regard EggCore as the advanced version of Koa Application, which integrates built-in features such as [Loader](./loader.md)、[Router](../basics/router.md) and asynchronous launch.
 
 ```
        Koa Application
@@ -40,7 +40,7 @@ We could think about EggCore as the advanced version of Koa Application, which i
  agent worker     app worker
 ```
 
-## How To Customize A Framework
+## How to Customize a Framework
 
 To setup by [egg-init](https://github.com/eggjs/egg-init) with the [framework](https://github.com/eggjs/egg-boilerplate-framework) option is a good way, in which generates a scaffold for you.
 
@@ -132,9 +132,9 @@ The name of framework, default as `egg`, is a indispensable option to launch an 
 
 As a loadUnit of framework, yadan is going to load specific directories and files, such as `app` and `config`. Find more files loaded at [Loader](./loader.md).
 
-### Princeple of Framework Extension
+### Principle of Framework Extension
 
-The path of framework is set as a varible named as `Symbol.for('egg#eggPath') to expose itself to Loader. Why? It seems that the simplest way is to pass a param to the constructor. The reason is to expose those paths of each level of inherited frameworks and reserve their sequences. Since Egg is a framework capable of unlimited inheritance, each layer has to designate their own eggPath so that all the eggPaths are accessiable through the prototype chain.
+The path of framework is set as a varible named as `Symbol.for('egg#eggPath')` to expose itself to Loader. Why? It seems that the simplest way is to pass a param to the constructor. The reason is to expose those paths of each level of inherited frameworks and reserve their sequences. Since Egg is a framework capable of unlimited inheritance, each layer has to designate their own eggPath so that all the eggPaths are accessiable through the prototype chain.
 
 Given a triple-layer framework: department level > enterprise level > Egg
 
@@ -164,7 +164,7 @@ const app = new Application();
 app.ready();
 ```
 
-These code are pseudocode to elaborate the framework's loading process, and we have provided scaffolds to [development](../core/development.md)和[deployment](../core/deployment.md).
+These code are pseudocode to elaborate the framework's loading process, and we have provided scaffolds to [development](../core/development.md) and [deployment](../core/deployment.md).
 
 ### Custom Agent
 
@@ -196,7 +196,7 @@ module.exports = Object.assign(egg, {
 });
 ```
 
-** To be careful about that Agent and Application based on the same Class possess different APIs. **
+**To be careful about that Agent and Application based on the same Class possess different APIs.**
 
 ### Custom Loader
 
@@ -371,5 +371,3 @@ describe('/test/index.test.js', () => {
   });
 });
 ```
-
-[egg-bin]: https://github.com/eggjs/egg-bin

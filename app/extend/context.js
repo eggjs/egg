@@ -10,9 +10,13 @@ const LOCALS_LIST = Symbol('Context#localsList');
 const COOKIES = Symbol('Context#cookies');
 const CONTEXT_LOGGERS = Symbol('Context#logger');
 const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
-
+const CONTEXT_ROUTER = Symbol('Context#router');
 
 const proto = module.exports = {
+
+  /**
+   * Get the current visitor's cookies.
+   */
   get cookies() {
     if (!this[COOKIES]) {
       this[COOKIES] = new this.app.ContextCookies(this, this.app.keys);
@@ -55,9 +59,19 @@ const proto = module.exports = {
    * ```
    */
   get router() {
-    return this.app.router;
+    if (!this[CONTEXT_ROUTER]) {
+      this[CONTEXT_ROUTER] = this.app.router;
+    }
+    return this[CONTEXT_ROUTER];
   },
 
+  /**
+   * Set router to Context, only use on EggRouter
+   * @param {EggRouter} val router instance
+   */
+  set router(val) {
+    this[CONTEXT_ROUTER] = val;
+  },
 
   /**
    * Get helper instance from {@link Application#Helper}
@@ -194,18 +208,32 @@ const proto = module.exports = {
    * ```
    */
   runInBackground(scope) {
+    // try to use custom function name first
+    /* istanbul ignore next */
+    const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
+    scope._name = taskName;
+    this._runInBackground(scope);
+  },
+
+  // let plugins or frameworks to reuse _runInBackground in some cases.
+  // e.g.: https://github.com/eggjs/egg-mock/pull/78
+  _runInBackground(scope) {
     const ctx = this;
     const start = Date.now();
     /* istanbul ignore next */
-    const taskName = scope.name || scope._name || eggUtils.getCalleeFromStack(true);
+    const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     // use app.toAsyncFunction to support both generator function and async function
-    ctx.app.toAsyncFunction(scope)(ctx)
+    return ctx.app.toAsyncFunction(scope)(ctx)
       .then(() => {
         ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
       })
       .catch(err => {
+        // background task process log
         ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
-        ctx.coreLogger.error(err);
+
+        // emit error when promise catch, and set err.runInBackground flag
+        err.runInBackground = true;
+        ctx.app.emit('error', err, ctx);
       });
   },
 };

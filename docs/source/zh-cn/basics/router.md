@@ -1,4 +1,4 @@
-title: Router 路由
+title: 路由（Router）
 ---
 
 Router 主要用来描述请求 URL 和具体承担执行动作的 Controller 的对应关系，
@@ -24,7 +24,8 @@ module.exports = app => {
 // app/controller/user.js
 class UserController extends Controller {
   async info() {
-    this.ctx.body = {
+    const { ctx } = this;
+    ctx.body = {
       name: `hello ${ctx.params.id}`,
     };
   }
@@ -317,10 +318,10 @@ module.exports = app => {
   app.router.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
 };
 
-// curl http://localhost:7001/search2?name=egg
+// curl http://localhost:7001/search?name=egg
 ```
 
-### 太多路由映射?
+### 太多路由映射？
 
 如上所述，我们并不建议把路由规则逻辑散落在多个地方，会给排查问题带来困扰。
 
@@ -345,3 +346,5 @@ module.exports = app => {
   app.router.get('/admin/log', app.controller.admin.log);
 };
 ```
+
+也可直接使用 [egg-router-plus](https://github.com/eggjs/egg-router-plus)。

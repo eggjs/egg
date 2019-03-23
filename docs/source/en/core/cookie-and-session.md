@@ -90,6 +90,14 @@ the corresponding options also need to be used in `get` method.
 - If `signed` is true when `set` Cookie but false when `get` Cookie, egg.js doesn't verify Cookie value, so the value could have been modified by client.
 - If `encrypt` is true when `set` Cookie but false when `get` Cookie, what you get is encrypted text rather than the raw plain text.
 
+If you want to get the cookie set by frontend or other system, you need to specify the parameter `signed` as `false`, avoid varify the cookie and not getting the vlaue.
+
+```js
+ctx.cookies.get('frontend-cookie', {
+  signed: false,
+});
+```
+
 ### Cookie Secret Key
 
 Since we need to sign and encrypt Cookie, a secret key is required.
@@ -128,7 +136,7 @@ class HomeController extends Controller {
     const userId = ctx.session.userId;
     const posts = await ctx.service.post.fetch(userId);
     // modify session value
-    ctx.session.visited = ctx.session.visited ? ctx.session.visited++ : 1;
+    ctx.session.visited = ctx.session.visited ? (ctx.session.visited + 1) : 1;
     ctx.body = {
       success: true,
       posts,
@@ -144,6 +152,20 @@ To delete a session, set its value to null:
 exports.deleteSession = function* (ctx) {
   ctx.session = null;
 };
+```
+
+What you need to pay special attention to is that you need to avoid the following situations when setting session properties (which can cause field loss, See for details [koa-session source code](https://github.com/koajs/session/blob/master/lib/session.js#L37-L47)):
+
+* Don't start with `_`
+* Don't use `isNew`
+
+```js
+// ❌ Wrong way
+ctx.session._visited = 1;   //   --> property will lost
+ctx.session.isNew = 'HeHe'; //   --> session keyword, should not write it
+
+// ✔️ Right way
+ctx.session.visited = 1;    //   -->  Everything is all right
 ```
 
 Session is built on top of Cookie.
@@ -166,7 +188,7 @@ The attributes except of `key` are all standard Cookie attributes.
 With default config, the session cookie is encrypted, not accessible to JS,
 which ensures user cannot access or modify it.
 
-### Store session in other storage
+### Store Session in Other Storage
 
 Session is stored in Cookie by default.
 If a session is too big, there are some troubles.
@@ -220,7 +242,7 @@ Do not put per-user's data cache in Session.**
 
 ### Session Practice
 
-#### Set session's expiration time
+#### Set Session's Expiration Time
 
 Session config has a attribute `maxAge`, which controls global expiration time of all sessions of the application.
 
@@ -244,31 +266,19 @@ class UserController extends Controller {
 }
 ```
 
-#### Extend session's expiration time
+#### Extend Session's Expiration Time
 
 By default, if user requests don't result in modification of Session,
 egg.js doesn't extend expiration time of the session.
-But in some scenarios, you may need to refresh expiration time every time user access the website,
-so that users will only be logged out when they don't access website for long time.
-This requirement can be done through `ctx.session.save()`.
-
-For example, we create a middleware in the application.
-It forces saving session in every request, in order to extend session's expiration time.
+But in some scenarios, we hope that if users visit our site for a long time, then extend their session validity and not let the user exit the login state. The framework provides a `renew` configuration item to implement this feature. It will reset the session's validity period when it finds that the user's session is half the maximum validity period.
 
 ```js
-// app/middleware/save_session.js
-module.exports = () => {
-  return async function saveSession(ctx, next) {
-    await next();
-    // if Session is empty, do nothing
-    if (!ctx.session.populated) return;
-    ctx.session.save();
-  };
-};
-
 // config/config.default.js
-// import the middleware in config file
-exports.middleware = [ 'saveSession' ];
+module.exports = {
+  session: {
+    renew: true,
+  },
+};
 ```
 
 [egg-redis]: https://github.com/eggjs/egg-redis

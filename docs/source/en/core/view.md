@@ -11,13 +11,13 @@ See [View Plugin](../advanced/view-plugin.md) for more details.
 
 Take the officially supported View plugin [egg-view-nunjucks] as an example:
 
-### Install view engine plugin
+### Installing View Engine Plugin
 
 ```bash
 $ npm i egg-view-nunjucks --save
 ```
 
-### Enable view engine plugin
+### Enabling View Engine Plugin
 
 ```js
 // config/plugin.js
@@ -27,7 +27,7 @@ exports.nunjucks = {
 };
 ```
 
-## Configure view plugins
+## Configuring View Plugins
 
 [egg-view] defines the default configuration of `config.view`
 
@@ -63,7 +63,7 @@ When a file matching given template path is found, the file's full path will be 
 and reused afterward.
 [egg-view] won't search all directories again for the same template path.
 
-### mapping and defaultViewEngine
+### `mapping` and `defaultViewEngine`
 
 Every view engine has a view engine name defined when the plugin is enabled.
 In view configuration, `mapping` defines the mapping
@@ -104,7 +104,7 @@ the default view engine will be used.
 For the applications that use only one view engine,
 it's recommended to set this option.
 
-### defaultExtension
+### `defaultExtension`
 
 When calling `render()`, the first argument should contain file extension name,
 unless `defaultExtension` has been configured.
@@ -121,7 +121,7 @@ module.exports = {
 await ctx.render('home');
 ```
 
-## Render Page
+## Rendering Page
 
 [egg-view] provides three interfaces in Context.
 All three returns a Promise:
@@ -152,11 +152,9 @@ class HomeController extends Controller {
 
 When calling `renderString`, view engine should be specified unless `defaultViewEngine` has been defined.
 
-## Locals
+## `locals`
 
-In the process of rendering pages,
-we usually need a variable to contain all information that is used in view template.
-[egg-view] provides `app.locals` and `ctx.locals`.
+In the process of rendering pages, we usually need a variable to contain all information that is used in view template. [egg-view] provides `app.locals` and `ctx.locals`.
 
 - `app.locals` is global, usually configured in `app.js`.
 - `ctx.locals` is per-request, and it merges `app.locals`.
@@ -185,7 +183,7 @@ Instead, simply call `ctx.render(name, data)`:
 
 ```js
 ctx.app.locals = { appName: 'showcase' };
-const data = { user: 'egg' };
+const data = { name: 'egg' };
 
 // will auto merge `data` to `ctx.locals`, output: egg - showcase
 await ctx.renderString('{{ name }} - {{ appName }}', data);

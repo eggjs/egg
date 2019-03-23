@@ -32,10 +32,12 @@ describe('test/app/extend/request.test.js', () => {
         assert(req.host === '');
       });
 
-      it('should return host from X-Forwarded-Host header', () => {
+      it('should not allow X-Forwarded-Host header', () => {
+        mm(app.config, 'proxy', true);
         mm(req.header, 'x-forwarded-host', 'foo.com');
+        mm(req.header, 'host', 'bar.com');
         assert(typeof req.host === 'string');
-        assert(req.host === 'foo.com');
+        assert(req.host === 'bar.com');
       });
 
       it('should return host from Host header when proxy=false', () => {
@@ -44,6 +46,15 @@ describe('test/app/extend/request.test.js', () => {
         mm(req.header, 'host', 'bar.com');
         assert(typeof req.host === 'string');
         assert(req.host === 'bar.com');
+      });
+
+      it('should custom hostHeaders', () => {
+        mm(app.config, 'proxy', true);
+        mm(app.config, 'hostHeaders', 'x-forwarded-host');
+        mm(req.header, 'x-forwarded-host', 'foo.com');
+        mm(req.header, 'host', 'bar.com');
+        assert(typeof req.host === 'string');
+        assert(req.host === 'foo.com');
       });
     });
 
@@ -154,6 +165,28 @@ describe('test/app/extend/request.test.js', () => {
       });
     });
 
+    describe('this.query && this.queries can be modified', () => {
+      it('should success with querystring present', () => {
+        req.querystring = 'a=a&b=b1&b=b2';
+        assert.deepEqual(req.query, { a: 'a', b: 'b1' });
+        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'b1', 'b2' ] });
+        req.query.a = 'aa';
+        req.queries.b = [ 'bb' ];
+        assert.deepEqual(req.query, { a: 'aa', b: 'b1' });
+        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'bb' ] });
+      });
+
+      it('should success with empty querystring', () => {
+        req.querystring = '';
+        assert.deepEqual(req.query, {});
+        assert.deepEqual(req.queries, {});
+        req.query.a = 'aa';
+        req.queries.b = [ 'bb' ];
+        assert.deepEqual(req.query, { a: 'aa' });
+        assert.deepEqual(req.queries, { b: [ 'bb' ] });
+      });
+    });
+
     describe('this.query[key] => String', () => {
       function expectQuery(querystring, query) {
         mm(req, 'querystring', querystring);
@@ -162,6 +195,7 @@ describe('test/app/extend/request.test.js', () => {
       }
 
       it('should get string value', () => {
+        expectQuery('=b', {});
         expectQuery('a=b', { a: 'b' });
         expectQuery('a=&', { a: '' });
         expectQuery('a=b&', { a: 'b' });

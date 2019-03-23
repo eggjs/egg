@@ -5,7 +5,7 @@ In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on 
 
 ## Writing Middleware
 
-### How to write
+### How to Write
 
 Let's take a look at how to write a middleware from a simple gzip example.
 
@@ -33,7 +33,7 @@ You might find that the middleware's style in the framework is exactly the same 
 
 ### Configuration
 
-Usually the middleware has its own configuration. In the framework, a complete middleware is including the configuration process. A middleware is a file in `app/middleware` directory by convention, which needs an exports function that take two parameters:
+Usually the middleware has its own configuration. In the framework, a complete middleware includes the configuration process. A middleware is a single file placed under `app/middleware` directory, which needs to exports a function that accepts two parameters:
 
 - options: the configuration field of the middleware, `app.config[${middlewareName}]` will be passed in by the framework
 - app: the Application instance of current application
@@ -69,7 +69,7 @@ module.exports = options => {
 
 ## Using Middleware
 
-After writing middleware, we also need to mount it.
+After writing middleware, we also need to mount it, there are following ways to support: 
 
 ### Using Middleware in Application
 
@@ -89,11 +89,11 @@ module.exports = {
 };
 ```
 
-This config will merge to `app.config.appMiddleware` on starting up.
+This config will be merged to `app.config.appMiddleware` at starting up.
 
 ## Using Middleware in Framework and Plugin
 
-Framework and Plugin don't support `config.middleware`, you should mount it in `app.js`:
+Framework and Plugin don't support to configure `middleware` in `config.default.js`, you should mount it in `app.js`:
 
 ```js
 // app.js
@@ -112,24 +112,24 @@ module.exports = () => {
 };
 ```
 
-Middlewares which defined at Application (`app.config.coreMiddleware`) and Framework(`app.config.coreMiddleware`) will be merge to `app.middleware` by loader at staring up.
+Middlewares which are defined at Application (`app.config.appMiddleware`) and Framework(`app.config.coreMiddleware`) will be merged to `app.middleware` by loader at staring up.
 
 ## Using Middleware in Router
 
-Both middleware defined by the application layer and the default framework middleware is global, will process every request.
+The middleware configured in the above ways is global, and it will process every request.
 
-If you do want to take effect on the corresponding routes, you could just mount it at `app/router.js`:
+If you do want to take effect only for single route, you could just instantiate and mount it at `app/router.js`:
 
 ```js
 module.exports = app => {
-  const gzip = app.middlewares.gzip({ threshold: 1024 });
+  const gzip = app.middleware.gzip({ threshold: 1024 });
   app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
 
 ## Default Framework Middleware
 
-In addition to the application-level middleware is loaded, the framework itself and other plugins will also load many middleware. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the file name separated by delimiters into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
+In addition to application layer loading middleware, the framework itself and other plugins will also load many middlewares. All the config fields of these built-in middlewares can be modified by modifying the ones with the same name in the config file, for example [Framework Built-in Plugin](https://github.com/eggjs/egg/tree/master/app/middleware) uses a bodyParser middleware(the framework loader will change the various delimiters in the file name into the camel style), and we can add configs below in `config/config.default.js` to modify the bodyParser:
 
 ```js
 module.exports = {
@@ -139,12 +139,12 @@ module.exports = {
 };
 ```
 
-** Note: middleware loaded by the framework and plugins are loaded earlier than those loaded by the application layer, and the application layer cannot overwrite the default framework middleware. If the application layer loads customized middleware that has the same name with default framework middleware, an error will be raised on starting up. **
+** Note: middleware loaded by the framework and plugins are loaded earlier than those loaded by the application layer, and the application-layer middleware cannot overwrite the default framework middleware. If the application layer loads customized middleware that has the same name with default framework middleware, an error will be reported on starting up. **
 
 
 ## Use Koa's Middleware
 
-Developer is free to use Koa Middleware, all middleware used by Koa can be directly used by the framework too.
+Developer is free to use Koa Middleware, all middlewares used in Koa can be directly used in the framework too.
 
 For example, Koa uses [koa-compress](https://github.com/koajs/compress) in this way:
 
@@ -176,7 +176,7 @@ module.exports = {
 };
 ```
 
-If the third-party Koa middleware do not follow the rule, then you can wrap it youself:
+If the third-party Koa middleware do not follow the rule, then you can wrap it yourself:
 
 ```js
 // config/config.default.js
@@ -197,15 +197,15 @@ module.exports = (options, app) => {
 
 ## General Configuration
 
-These general config fields are supported by middleware loaded by the application layer or built in by the framework:
+These general config fields are supported by middleware loaded by the application layer and built in by the framework:
 
 - enable: enable the middleware or not
-- match: set some rules with which only the request match can go through middleware
-- ignore: set some rules with which the request match can't go through this middleware
+- match: set some rules with which only the request matches can go through this middleware
+- ignore: set some rules with which the request matches can't go through this middleware
 
 ### enable
 
-If our application does not need default bodyParser to resolve the request body, we can configure enable to close it.
+If our application does not need default bodyParser to resolve the request body, we can configure enable for false to close it.
 
 ```js
 module.exports = {
@@ -215,7 +215,7 @@ module.exports = {
 };
 ```
 
-### match and ignore
+### `match` and `ignore`
 
 match and ignore share the same parameter but do the opposite things. match and ignore cannot be configured in the same time.
 
@@ -230,9 +230,9 @@ module.exports = {
 ```
 match and ignore support various types of configuration ways:
 
-1. String: when string, it sets the prefix of a url path, and all urls starting with this prefix will match.
-2. Regular expression: when regular expression, all urls satisfy this regular expression will match.
-3. Function: when function, the request context will be passed to it and what it returns(true/false) determines whether the request matches or not.
+1. String: when string, it sets the prefix of a url path, and all urls starting with this prefix will be matched. A string array is also accepted.
+2. Regular expression: when regular expression, all urls satisfy this regular expression will be matched.
+3. Function: when function, the request context will be passed to it and what it returns(true/false) determines whether the request is matched or not.
 
 ```js
 module.exports = {
@@ -245,3 +245,4 @@ module.exports = {
   },
 };
 ```
+For more configs about `match` and `ignore`, please refer to [egg-path-matching](https://github.com/eggjs/egg-path-matching).

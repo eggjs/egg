@@ -60,8 +60,6 @@ $ git commit -m "fix(role): role.use must xxx"
 $ git push origin branch-name
 ```
 
-提交后就可以在 [egg](https://github.com/eggjs/egg/pulls) 创建 Pull Request 了。
-
 由于谁也无法保证过了多久之后还记得多少，为了后期回溯历史的方便，请在提交 MR 时确保提供了以下信息。
 
 1. 需求点（一般关联 issue 或者注释都算）
@@ -136,7 +134,20 @@ BREAKING CHANGE:
   Breaks foo.bar api, foo.baz should be used instead
 ```
 
-查看具体[文档](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit)
+详情请查看具体[文档](https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit)。
+
+### 英语翻译规范
+
+英语正文按照一般英语语法规律书写即可，但标题比较特殊，应该按照以下规范进行书写：
+
+- 名词、动词、代词、形容词、副词等首字母大写，介词、冠词、连词、感叹词和助词首字母小写，*标题第一个单词、最后一个单词无论词性首字母应该大写*。
+- 专有名词（如直接引用某个变量，或者某个插件名称等），必须使用反单引号（键盘上 Esc 正下方）进行引用，并保持原来大小写。
+- 超过5个字母的介词首字母应该大写，否则一律小写。
+- 如果是重要提示性标题，或者是专有名称标题（例如 Http 请求方法：GET，POST，PUT，DELETE），可以全部字母都用大写（慎重考虑）。
+- 如果标题属于“动宾”性质的短语（如“配置管理”），尽量翻译成“宾+动词名词”的形式（Configuration Management），或者是“动名词+宾语”的形式（Managing Configuration）。
+- 如果标题被当做一个完整的英语句子，请按照英语句子的语法格式大小写（如：常见问题 FAQ 中每一个标题都是一个英语句子）。
+
+有关详情，可以参考[英语标题大小写]。
 
 ## 发布管理
 
@@ -175,7 +186,7 @@ egg 基于 [semver] 语义化版本号进行发布。
 - 将老的稳定版本（master）备份到以当前大版本为名字的分支上（例如 `1.x`），并设置 tag 为 `release-{v}.x`（ v 为当前版本，例如 `release-1.x`）。
 - 将 `next` 分支推送到 `master`，成为新的稳定版本分支，并去除 `next` tag，修改 README 中与分支相关的内容。
 - 发布新的稳定版本到 [npm]，并通知上层框架进行更新。
-- `npm publish` 之前，请先阅读[『我是如何发布一个 npm 包的』]。
+- `npm publish` 之前，请先阅读 [我是如何发布一个 npm 包的]。
 
 上述描述中所有的设置 tag 都是指在 `package.json` 中设置 npm 的 tag。
 
@@ -185,9 +196,10 @@ egg 基于 [semver] 语义化版本号进行发布。
 }
 ```
 
-[semver]: http://semver.org/lang/zh-CN/
-[Release proposal MR]: https://github.com/nodejs/node/pull/4181
+[semver]: https://semver.org/lang/zh-CN/
+[Release Proposal MR]: https://github.com/nodejs/node/pull/4181
 [node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
 [1.x milestone]: https://github.com/eggjs/egg/milestone/1
 [npm]: http://npmjs.com/
-[『我是如何发布一个 npm 包的』]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[我是如何发布一个 npm 包的]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
+[英语标题大小写]: https://headlinecapitalization.com/

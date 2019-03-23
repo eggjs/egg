@@ -1,4 +1,4 @@
-title: Loader
+title: 加载器（Loader）
 ---
 
 Egg 在 Koa 的基础上进行增强最重要的就是基于一定的约定，根据功能差异将代码放到不同的目录下管理，对整体团队的开发成本提升有着明显的效果。Loader 实现了这套约定，并抽象了很多底层 API 可以进一步扩展。
@@ -89,7 +89,7 @@ module.exports = {
 +-----------------------------------+--------+
 ```
 
-## loadUnit
+## 加载单元（loadUnit）
 
 Egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异，下面是目录结构
 
@@ -121,16 +121,22 @@ loadUnit
 
 文件 | 应用 | 框架 | 插件
 --- | --- | --- | ---
-app/router.js | ✔︎ | |
-app/controller | ✔︎ | |
-app/middleware | ✔︎ | ✔︎ | ✔︎
-app/service | ✔︎ | ✔︎ | ✔︎
-app/extend | ✔︎ | ✔︎ | ✔︎
-app.js | ✔︎ | ✔︎ | ✔︎
-agent.js | ✔︎ | ✔︎ | ✔︎
-config/config.{env}.js | ✔︎ | ✔︎ | ✔︎
-config/plugin.js | ✔︎ | ✔︎ |
-package.json | ✔︎ | ✔︎ | ✔︎
+package.json| ✔︎ | ✔︎ | ✔︎ |
+config/plugin.{env}.js| ✔︎ | ✔︎ | |
+config/config.{env}.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/application.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/request.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/response.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/context.js| ✔︎ | ✔︎ | ✔︎ |
+app/extend/helper.js| ✔︎ | ✔︎ | ✔︎ |
+agent.js| ✔︎ | ✔︎ | ✔︎ |
+app.js| ✔︎ | ✔︎ | ✔︎ |
+app/service| ✔︎ | ✔︎ | ✔︎ |
+app/middleware| ✔︎ | ✔︎ | ✔︎ |
+app/controller| ✔︎ | | |
+app/router.js| ✔︎ | | |
+
+文件按表格内的顺序自上而下加载
 
 在加载过程中，Egg 会遍历所有的 loadUnit 加载上述的文件（应用、框架、插件各有不同），加载时有一定的优先级
 
@@ -160,7 +166,7 @@ app
 => app
 ```
 
-plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会优先级于 plugin2/plugin3。因为 plugin2 和 plugin3 的依赖关系，所以交换了位置。framework1 继承了 egg，顺序会晚于 egg。应用最后加载。
+plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会优先于 plugin2/plugin3。因为 plugin2 和 plugin3 的依赖关系，所以交换了位置。framework1 继承了 egg，顺序会晚于 egg。应用最后加载。
 
 请查看 [Loader.getLoadUnits](https://github.com/eggjs/egg-core/blob/65ea778a4f2156a9cebd3951dac12c4f9455e636/lib/loader/egg_loader.js#L233) 方法
 
@@ -169,18 +175,101 @@ plugin1 为 framework1 依赖的插件，配置合并后 object key 的顺序会
 上面已经列出了默认会加载的文件，Egg 会按如下文件顺序加载，每个文件或目录再根据 loadUnit 的顺序去加载（应用、框架、插件各有不同）。
 
 - 加载 [plugin](./plugin.md)，找到应用和框架，加载 `config/plugin.js`
-- 加载 [config](../basics/config.md), 遍历 loadUnit 加载 `config/config.{env}.js`
-- 加载 [extend](../basics/extend.md), 遍历 loadUnit 加载 `app/extend/xx.js`
+- 加载 [config](../basics/config.md)，遍历 loadUnit 加载 `config/config.{env}.js`
+- 加载 [extend](../basics/extend.md)，遍历 loadUnit 加载 `app/extend/xx.js`
 - [自定义初始化](../basics/app-start.md)，遍历 loadUnit 加载 `app.js` 和 `agent.js`
-- 加载 [service](../basics/service.md), 遍历 loadUnit 加载 `app/service` 目录
-- 加载 [middleware](../basics/middleware.md), 遍历 loadUnit 加载 `app/middleware` 目录
-- 加载 [controller](../basics/controller.md), 加载应用的 `app/controller` 目录
-- 加载 [router](../basics/router.md), 加载应用的 `app/router.js`
+- 加载 [service](../basics/service.md)，遍历 loadUnit 加载 `app/service` 目录
+- 加载 [middleware](../basics/middleware.md)，遍历 loadUnit 加载 `app/middleware` 目录
+- 加载 [controller](../basics/controller.md)，加载应用的 `app/controller` 目录
+- 加载 [router](../basics/router.md)，加载应用的 `app/router.js`
 
-注意
+注意：
 
 - 加载时如果遇到同名的会覆盖，比如想要覆盖 `ctx.ip` 可以直接在应用的 `app/extend/context.js` 定义 ip 就可以了。
-- [应用完整启动顺序查看框架开发](./framework.md)
+- 应用完整启动顺序查看[框架开发](./framework.md)
+
+### 生命周期
+
+框架提供了这些生命周期函数供开发人员处理：
+
+- 配置文件即将加载，这是最后动态修改配置的时机（`configWillLoad`）
+- 配置文件加载完成（`configDidLoad`）
+- 文件加载完成（`didLoad`）
+- 插件启动完毕（`willReady`）
+- worker 准备就绪（`didReady`）
+- 应用启动完成（`serverDidReady`）
+- 应用即将关闭（`beforeClose`）
+
+定义如下:
+```js
+// app.js or agent.js
+class AppBootHook {
+  constructor(app) {
+    this.app = app;
+  }
+
+  configWillLoad() {
+    // Ready to call configDidLoad,
+    // Config, plugin files are referred,
+    // this is the last chance to modify the config.
+  }
+
+  configDidLoad() {
+    // Config, plugin files have been loaded.
+  }
+
+  async didLoad() {
+    // All files have loaded, start plugin here.
+  }
+
+  async willReady() {
+    // All plugins have started, can do some thing before app ready
+  }
+
+  async didReady() {
+    // Worker is ready, can do some things
+    // don't need to block the app boot.
+  }
+
+  async serverDidReady() {
+    // Server is listening.
+  }
+
+  async beforeClose() {
+    // Do some thing before app close.
+  }
+}
+
+module.exports = AppBootHook;
+```
+
+开发者使用类的方式定义 `app.js` 和 `agent.js` 之后, 框架会自动加载并实例化这个类, 并且在各个生命周期阶段调用对应的方法。
+
+启动过程如图所示:
+
+![](https://user-images.githubusercontent.com/40081831/47344271-a688d500-d6da-11e8-96e9-663fa9f45108.png)
+
+**使用 `beforeClose` 的时候需要注意，在框架的进程关闭处理中是有超时时间的，如果 worker 进程在接收到进程退出信号之后，没有在所规定的时间内退出，将会被强制关闭。**
+
+如果需要调整超时时间的话，查看[此处文档](https://github.com/eggjs/egg-cluster)。
+
+弃用的方法:
+
+## beforeStart
+
+`beforeStart` 方法在 loading 过程中调用, 所有的方法并行执行。 一般用来执行一些异步方法, 例如检查连接状态等, 比如 [`egg-mysql`](https://github.com/eggjs/egg-mysql/blob/master/lib/mysql.js) 就用 `beforeStart` 来检查与 mysql 的连接状态。所有的 `beforeStart` 任务结束后, 状态将会进入 `ready` 。不建议执行一些耗时较长的方法, 可能会导致应用启动超时。插件开发者应使用 `didLoad` 替换。应用开发者应使用 `willReady` 替换。
+
+## ready
+
+`ready` 方法注册的任务在 load 结束并且所有的 `beforeStart` 方法执行结束后顺序执行, HTTP server 监听也是在这个时候开始, 此时代表所有的插件已经加载完毕并且准备工作已经完成, 一般用来执行一些启动的后置任务。开发者应使用 `didReady` 替换。
+
+## beforeClose
+
+`beforeClose` 注册方法在 app/agent 实例的 `close` 方法被调用后, 按注册的逆序执行。一般用于资源的释放操作, 例如 [`egg`](https://github.com/eggjs/egg/blob/master/lib/egg.js) 用来关闭 logger、删除监听方法等。开发者不应该直接使用 `app.beforeClose`, 而是定义类的形式, 实现 `beforeClose` 方法。
+
+__这个方法不建议在生产环境使用, 可能遇到未执行完就结束进程的问题。__
+
+此外，我们可以使用 [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) 来查看加载过程。
 
 ### 文件加载规则
 
@@ -195,7 +284,7 @@ Loader 还提供了 [caseStyle](#caseStyle-string) 强制指定首字母大小�
 
 ## 扩展 Loader
 
-[Loader] 是一个基类，并根据文件加载的规则提供了一些内置的方法，但基本本身并不会去调用，而是由继承类调用。
+[Loader] 是一个基类，并根据文件加载的规则提供了一些内置的方法，它本身并不会去调用这些方法，而是由继承类调用。
 
 - loadPlugin()
 - loadConfig()
@@ -256,17 +345,17 @@ module.exports = Object.assign(egg, {
 });
 ```
 
-通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`， `app/extend/filter.js` 等等。
+通过 Loader 提供的这些 API，可以很方便的定制团队的自定义加载，如 `this.model.xx`，`app/extend/filter.js` 等等。
 
 以上只是说明 Loader 的写法，具体可以查看[框架开发](./framework.md)。
 
-## Loader API
+## 加载器函数（Loader API）
 
-Loader 还提供一些底层的 API，在扩展时可以简化代码，全部 API 请[查看](https://github.com/eggjs/egg-core#eggloader)
+Loader 还提供一些底层的 API，在扩展时可以简化代码，[点击此处](https://github.com/eggjs/egg-core#eggloader)查看所有相关 API。
 
 ### loadFile
 
-用于加载一个文件，比如加载 `app.js` 就是使用这个方法。
+用于加载一个文件，比如加载 `app/xx.js` 就是使用这个方法。
 
 ```js
 // app/xx.js
@@ -338,7 +427,7 @@ app.loader.loadToContext(servicePaths, 'service', {
 
 #### ignore [String]
 
-ignore 可以忽略一些文件，支持 glob，默认为空
+`ignore` 可以忽略一些文件，支持 glob，默认为空
 
 ```js
 app.loader.loadToApp(directory, 'controller', {
@@ -411,6 +500,40 @@ app/service | false
 app/controller | true
 app/middleware | false
 app/service | true
+
+## CustomLoader
+
+`loadToContext` 和 `loadToApp` 可被 `customLoader` 配置替代。
+
+如使用 `loadToApp` 加载的代码如下
+
+```js
+// app.js
+module.exports = app => {
+  const directory = path.join(app.config.baseDir, 'app/adapter');
+  app.loader.loadToApp(directory, 'adapter');
+};;
+```
+
+换成 `customLoader` 后变为
+
+```js
+// config/config.default.js
+module.exports = {
+  customLoader: {
+    // 定义在 app 上的属性名 app.adapter
+    adapter: {
+      // 相对于 app.config.baseDir
+      directory: 'app/adapter',
+      // 如果是 ctx 则使用 loadToContext
+      inject: 'app',
+      // 是否加载框架和插件的目录
+      loadunit: false,
+      // 还可以定义其他 LoaderOptions
+    }
+  },
+};
+```
 
 [Loader]: https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js
 [AppWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js

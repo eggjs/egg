@@ -14,6 +14,7 @@ describe('test/index.test.js', () => {
       'Controller',
       'Service',
       'Subscription',
+      'start',
       'startCluster',
     ]);
   });

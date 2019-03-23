@@ -32,7 +32,7 @@ module.exports = appInfo => {
     /**
      * The key that signing cookies. It can contain multiple keys seperated by `,`.
      * @member {String} Config#keys
-     * @see https://eggjs.org/zh-cn/basics/controller.html#cookie-秘钥
+     * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
      * @default
      * @since 1.0.0
      */
@@ -72,7 +72,7 @@ module.exports = appInfo => {
      * @default
      * @since 1.0.0
      */
-    hostHeaders: 'x-forwarded-host',
+    hostHeaders: '',
 
     /**
      * package.json
@@ -201,7 +201,7 @@ module.exports = appInfo => {
    * logger options
    * @member Config#logger
    * @property {String} dir - directory of log files
-   * @property {String} encoding - log file encloding, defaults to utf8
+   * @property {String} encoding - log file encoding, defaults to utf8
    * @property {String} level - default log level, could be: DEBUG, INFO, WARN, ERROR or NONE, defaults to INFO in production
    * @property {String} consoleLevel - log level of stdout, defaults to INFO in local serverEnv, defaults to WARN in unittest, defaults to NONE elsewise
    * @property {Boolean} disableConsoleAfterReady - disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`.
@@ -226,43 +226,44 @@ module.exports = appInfo => {
     agentLogName: 'egg-agent.log',
     errorLogName: 'common-error.log',
     coreLogger: {},
-    allowDebugAtProd: true,
+    allowDebugAtProd: false,
   };
 
   /**
    * The option for httpclient
    * @member Config#httpclient
    * @property {Boolean} enableDNSCache - Enable DNS lookup from local cache or not, default is false.
+   * @property {Boolean} dnsCacheLookupInterval - minimum interval of DNS query on the same hostname (default 10s).
    *
    * @property {Number} request.timeout - httpclient request default timeout, default is 5000 ms.
    *
    * @property {Boolean} httpAgent.keepAlive - Enable http agent keepalive or not, default is true
-   * @property {Number} httpAgent.freeSocketKeepAliveTimeout - http agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpAgent.freeSocketTimeout - http agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpAgent.maxSockets - http agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpAgent.maxFreeSockets - http agent max free socket number of one host, default is 256.
    *
    * @property {Boolean} httpsAgent.keepAlive - Enable https agent keepalive or not, default is true
-   * @property {Number} httpsAgent.freeSocketKeepAliveTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpsAgent.freeSocketTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    */
   config.httpclient = {
     enableDNSCache: false,
+    dnsCacheLookupInterval: 10000,
     dnsCacheMaxLength: 1000,
-    dnsCacheMaxAge: 10000,
 
     request: {
       timeout: 5000,
     },
     httpAgent: {
       keepAlive: true,
-      freeSocketKeepAliveTimeout: 4000,
+      freeSocketTimeout: 4000,
       maxSockets: Number.MAX_SAFE_INTEGER,
       maxFreeSockets: 256,
     },
     httpsAgent: {
       keepAlive: true,
-      freeSocketKeepAliveTimeout: 4000,
+      freeSocketTimeout: 4000,
       maxSockets: Number.MAX_SAFE_INTEGER,
       maxFreeSockets: 256,
     },
@@ -299,6 +300,16 @@ module.exports = appInfo => {
   config.workerStartTimeout = 10 * 60 * 1000;
 
   /**
+   * server timeout in milliseconds, default to 2 minutes.
+   *
+   * for special request, just use `ctx.req.setTimeout(ms)`
+   *
+   * @member {Number} Config#serverTimeout
+   * @see https://nodejs.org/api/http.html#http_server_timeout
+   */
+  config.serverTimeout = null;
+
+  /**
    *
    * @member {Object} Config#cluster
    * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
@@ -318,8 +329,35 @@ module.exports = appInfo => {
    * @property {Number} responseTimeout - response timeout, default is 60000
    */
   config.clusterClient = {
+    maxWaitTime: 60000,
     responseTimeout: 60000,
   };
+
+  /**
+   * This function / async function will be called when a client error occurred and return the response.
+   *
+   * The arguments are `err`, `socket` and `application` which indicate current client error object, current socket
+   * object and the application object.
+   *
+   * The response to be returned should include properties below:
+   *
+   * @member {Function} Config#onClientError
+   * @property [body] {String|Buffer} - the response body
+   * @property [status] {Number} - the response status code
+   * @property [headers] {Object} - the response header key-value pairs
+   *
+   * @example
+   * exports.onClientError = async (err, socket, app) => {
+   *   return {
+   *     body: 'error',
+   *     status: 400,
+   *     headers: {
+   *       'powered-by': 'Egg.js',
+   *     }
+   *   };
+   * }
+   */
+  config.onClientError = null;
 
   return config;
 };
