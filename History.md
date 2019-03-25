@@ -5,9 +5,11 @@
 ### Notable changes
 
 * **fixes**
+  * onClientError remove content-length header
+  
+* **types**
   * add custom loader typing
   * import types from egg-core
-  * onClientError remove content-length header
 
 ### Commits
 
