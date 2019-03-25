@@ -1,5 +1,20 @@
 # History
 
+## 2019-03-25, Version 2.20.2 @whxaxes
+
+### Notable changes
+
+* **fixes**
+  * add custom loader typing
+  * import types from egg-core
+  * onClientError remove content-length header
+
+### Commits
+
+  * [[`f31cd38aa`](http://github.com/eggjs/egg/commit/f31cd38aa1c1cb58f4fb6b08020b0b49a9b5c1a8)] - fix(types): add custom loader typing (#3533) (吖猩 <<whxaxes@qq.com>>)
+  * [[`a73cfd067`](http://github.com/eggjs/egg/commit/a73cfd067b48b2c2301e50d5ab431dfecebddef4)] - fix(types): import types from egg-core (#3545) (吖猩 <<whxaxes@qq.com>>)
+  * [[`04adb930d`](http://github.com/eggjs/egg/commit/04adb930de61f6c3d1b7b9b4e7f49800e3b49602)] - fix: onClientError remove content-length header (#3544) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2019-03-12, Version 2.20.1 @dead-horse
 
 ### Notable changes
