@@ -662,40 +662,37 @@ console.log(result.res.timing);
 
 ## 调试辅助
 
-框架还提供了 [egg-development-proxyagent] 插件来方便开发者调试。
-
-先安装和开启插件：
-
-```bash
-$ npm i egg-development-proxyagent --save
-```
+如果你需要对 HttpClient 的请求进行抓包调试，可以添加以下配置到 `config.local.js`：
 
 ```js
-// config/plugin.js
-exports.proxyagent = {
-  enable: true,
-  package: 'egg-development-proxyagent',
+// config.local.js
+module.exports = () => {
+  const config = {};
+
+  // add http_proxy to httpclient
+  if (process.env.http_proxy) {
+    config.httpclient = {
+      request: {
+        enableProxy: true,
+        rejectUnauthorized: false,
+        // proxy: process.env.http_proxy,
+      },
+    };
+  }
+
+  return config;
 }
 ```
 
-开启抓包工具，可以用 [charles] 或 [fiddler]，此处我们用 [anyproxy] 来演示下。
+然后启动你的抓包工具，如 [charles] 或 [fiddler]。
 
-```bash
-$ npm install anyproxy -g
-$ anyproxy --port 8888
-```
-
-使用环境变量启动应用：
+最后通过以下指令启动应用：
 
 ```bash
 $ http_proxy=http://127.0.0.1:8888 npm run dev
 ```
 
-然后就可以正常操作了，所有经过 HttpClient 的请求，都可以在 http://localhost:8002 这个控制台中查看到。
-
-![anyproxy](https://cloud.githubusercontent.com/assets/227713/21976937/06a63694-dc0f-11e6-98b5-e9e279c4867c.png)
-
-**注意：该插件默认只在 local 环境下启动。**
+然后就可以正常操作了，所有经过 HttpClient 的请求，都可以你的抓包工具中查看到。
 
 ## 常见错误
 
@@ -790,7 +787,5 @@ app.httpclient.on('response', result => {
 [formstream]: https://github.com/node-modules/formstream
 [HTTP]: https://nodejs.org/api/http.html
 [HTTPS]: https://nodejs.org/api/https.html
-[egg-development-proxyagent]: https://github.com/eggjs/egg-development-proxyagent
 [charles]: https://www.charlesproxy.com/
 [fiddler]: http://www.telerik.com/fiddler
-[anyproxy]: https://github.com/alibaba/anyproxy

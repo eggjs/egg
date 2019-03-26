@@ -651,40 +651,37 @@ These are parameters are passed to the  [HTTPS] modules，details refer to [`htt
 
 ## Debugging Aid
 
-Framework provides [egg-development-proxyagent] plugin to help developers to debug.
-
-Install and enable pulgin:
-
-```bash
-$ npm i egg-development-proxyagent --save
-```
+If you want to debug the httpclient requests, just need to add below code to `config.local.js`:
 
 ```js
-// config/plugin.js
-exports.proxyagent = {
-  enable: true,
-  package: 'egg-development-proxyagent',
+// config.local.js
+module.exports = () => {
+  const config = {};
+
+  // add http_proxy to httpclient
+  if (process.env.http_proxy) {
+    config.httpclient = {
+      request: {
+        enableProxy: true,
+        rejectUnauthorized: false,
+        // proxy: process.env.http_proxy,
+      },
+    };
+  }
+
+  return config;
 }
 ```
 
-Open capture tools, we can use [charles] or [fiddler], here we take to [anyproxy] demonstrate
+then open capture tools(such as [charles] or [fiddler]).
 
-```bash
-$ npm install anyproxy -g
-$ anyproxy --port 8888
-```
-
-Starting application using environment variables:
+after that, just start your application by:
 
 ```bash
 $ http_proxy=http://127.0.0.1:8888 npm run dev
 ```
 
-Then it works correctly, and all requests that go through HttpClient can be viewed in the consle of http://localhost:8002.
-
-![anyproxy](https://cloud.githubusercontent.com/assets/227713/21976937/06a63694-dc0f-11e6-98b5-e9e279c4867c.png)
-
-**Note: the pulgin only start in local environments by defalut**
+Then it works correctly, and all requests that go through HttpClient can be viewed in the capture tools.
 
 ## Known Issues
 
@@ -780,7 +777,5 @@ Full examples can be found on [eggjs/examples/httpclient](https://github.com/egg
 [formstream]: https://github.com/node-modules/formstream
 [HTTP]: https://nodejs.org/api/http.html
 [HTTPS]: https://nodejs.org/api/https.html
-[egg-development-proxyagent]: https://github.com/eggjs/egg-development-proxyagent
 [charles]: https://www.charlesproxy.com/
 [fiddler]: http://www.telerik.com/fiddler
-[anyproxy]: https://github.com/alibaba/anyproxy
