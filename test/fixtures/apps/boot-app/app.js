@@ -1,11 +1,14 @@
 'use strict';
 
+const assert = require('assert');
 const sleep = require('mz-modules/sleep');
+const BaseHookClass = require('../../../../lib/core/base_hook_class');
 
-module.exports = class {
+module.exports = class extends BaseHookClass {
   constructor(app) {
+    super(app);
     app.bootLog = [];
-    this.app = app;
+    assert(this.config);
   }
 
   configDidLoad() {
@@ -25,6 +28,7 @@ module.exports = class {
   async didReady() {
     await sleep(1);
     this.app.bootLog.push('didReady');
+    this.logger.info('app is ready');
   }
 
   async beforeClose() {

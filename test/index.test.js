@@ -11,6 +11,7 @@ describe('test/index.test.js', () => {
       'AppWorkerLoader',
       'Application',
       'BaseContextClass',
+      'Boot',
       'Controller',
       'Service',
       'Subscription',
