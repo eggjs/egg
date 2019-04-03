@@ -9,14 +9,14 @@ title: Tutorials
 You can use boilerplate type like this:
 
 ```bash
-$ egg-init --type=simple
+$ npm init egg --type=simple
 ```
 ### Options
 
 boilerplate type | Description
 :----: | ----:
-simple | Simple egg app boilerplate 
-empty  | Empty egg app boilerplate 
+simple | Simple egg app boilerplate
+empty  | Empty egg app boilerplate
 plugin | egg plugin boilerplate
 framework | egg framework boilerplate
 

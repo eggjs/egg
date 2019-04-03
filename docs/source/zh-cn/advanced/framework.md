@@ -42,11 +42,11 @@ EggCore 可以看做 Koa Application 的升级版，默认内置 [Loader](./load
 
 ## 如何定制一个框架
 
-你可以直接通过 [egg-init] 选择 [framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架来快速上手。
+你可以直接通过 [egg-boilerplate-framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架来快速上手。
 
 ```bash
-$ egg-init --type=framework yadan
-$ cd yadan
+$ mkdir yadan && cd yadan
+$ npm init egg --type=framework
 $ npm i
 $ npm test
 ```

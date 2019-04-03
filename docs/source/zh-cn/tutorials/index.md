@@ -9,7 +9,7 @@ title: 教程
 你可以使用骨架类型，像下面这样:
 
 ```bash
-$ egg-init --type=simple
+$ npm init egg --type=simple
 ```
 
 ### 选项

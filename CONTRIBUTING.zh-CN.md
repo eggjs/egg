@@ -114,7 +114,7 @@ $ git push origin branch-name
 
 - **当有非兼容修改(Breaking Change)时必须在这里描述清楚**
 - 关联相关 issue，如 `Closes #1, Closes #2, #3`
-- 如果功能点有新增或修改的，还需要关联文档 `doc` 和 `egg-init` 的 PR，如 `eggjs/egg-bin#123`
+- 如果功能点有新增或修改的，还需要关联文档 `doc` 和 `egg-core` 的 PR，如 `eggjs/egg-core#123`
 
 示例
 

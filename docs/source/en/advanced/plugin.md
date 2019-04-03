@@ -16,11 +16,11 @@ As we've already explained some these points in chapter [using plugins](../basic
 
 ### Quick Start with Scaffold
 
-You can choose [plugin][egg-boilerplate-plugin] scaffold in [egg-init] for quick start.
+Just use [egg-boilerplate-plugin] to generates a scaffold for you.
 
 ```bash
-$ egg-init --type=plugin egg-hello
-$ cd egg-hello
+$ mkdir egg-hello && cd egg-hello
+$ npm init egg --type=plugin
 $ npm i
 $ npm test
 ```
@@ -478,7 +478,6 @@ What's more, Egg can use this feature to make an adapter, for example, the plugi
 
 **Giving the same plugin name and the same API to the same plugin can make quick switch between them**. This is really really useful in template and database.
 
-[egg-init]: https://github.com/eggjs/egg-init
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
 [egg-mysql]: https://github.com/eggjs/egg-mysql
 [egg-oss]: https://github.com/eggjs/egg-oss

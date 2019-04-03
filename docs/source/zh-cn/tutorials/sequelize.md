@@ -16,12 +16,12 @@ brew service start mysql
 
 ## 初始化项目
 
-通过 egg-init 初始化一个项目:
+通过 `npm` 初始化一个项目:
 
 ```bash
-egg-init --type=simple --dir=sequelize-project
-cd sequelize-project
-npm i
+$ mkdir sequelize-project && cd sequelize-project
+$ npm init egg --type=simple
+$ npm i
 ```
 
 安装并配置 [egg-sequelize] 插件（它会辅助我们将定义好的 Model 对象加载到 app 和 ctx 上）和 [mysql2] 模块：
@@ -404,7 +404,7 @@ describe('test/app/service/users.test.js', () => {
 
 ## 脚手架
 
-我们也提供了 sequelize 的脚手架，集成了文档中提供的 [egg-sequelize], [sequelize-cli] 与 [factory-girl] 等模块。可以通过 `egg-init --type=sequelize` 来基于它快速初始化一个新的应用。
+我们也提供了 sequelize 的脚手架，集成了文档中提供的 [egg-sequelize], [sequelize-cli] 与 [factory-girl] 等模块。可以通过 `npm init egg --type=sequelize` 来基于它快速初始化一个新的应用。
 
 [mysql2]: https://github.com/sidorares/node-mysql2
 [sequelize]: http://docs.sequelizejs.com/

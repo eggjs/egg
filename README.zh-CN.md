@@ -49,8 +49,8 @@ $ npm install egg --save
 ## 快速开始
 
 ```bash
-$ npm install egg-init -g
-$ egg-init --type simple showcase && cd showcase
+$ mkdir showcase && cd showcase
+$ npm init egg --type=simple
 $ npm install
 $ npm run dev
 $ open http://localhost:7001

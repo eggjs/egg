@@ -16,12 +16,12 @@ brew service start mysql
 
 ## Initialization
 
-Init project by `egg-init`:
+Init project by `npm`:
 
 ```bash
-egg-init --type=simple --dir=sequelize-project
-cd sequelize-project
-npm i
+$ mkdir sequelize-project && cd sequelize-project
+$ npm init egg --type=simple
+$ npm i
 ```
 
 Install and configure the [egg-sequelize] plugin (which will help us load the defined Model object onto `app` and `ctx` ) and the [mysql2] module:
@@ -405,7 +405,7 @@ A more complete example can be found in [eggjs/examples/sequelize].
 
 ## Boilerplate
 
-We also provide sequelize boilerplate that integrates the modules [egg-sequelize], [sequelize-cli] and [factory-girl] provided in this documentation. You can quickly initialize a new application based on it by `egg-init --type=sequelize`.
+We also provide sequelize boilerplate that integrates the modules [egg-sequelize], [sequelize-cli] and [factory-girl] provided in this documentation. You can quickly initialize a new application based on it by `npm init egg --type=sequelize`.
 
 [mysql2]: https://github.com/sidorares/node-mysql2
 [sequelize]: http://docs.sequelizejs.com/

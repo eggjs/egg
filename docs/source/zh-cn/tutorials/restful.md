@@ -102,11 +102,11 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 
 ### 初始化项目
 
-还是通过[快速入门](../intro/quickstart.md)章节介绍的 [egg-init](https://github.com/eggjs/egg-init) 工具来初始化我们的应用
+还是通过[快速入门](../intro/quickstart.md)章节介绍的 `npm` 来初始化我们的应用
 
 ```bash
-$ egg-init cnode-api --type=simple
-$ cd cnode-api
+$ mkdir cnode-api && cd cnode-api
+$ npm init egg --type=simple
 $ npm i
 ```
 

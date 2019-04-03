@@ -13,9 +13,8 @@ title: 快速入门
 我们推荐直接使用脚手架，只需几条简单指令，即可快速生成项目:
 
 ```bash
-$ npm i egg-init -g
-$ egg-init egg-example --type=simple
-$ cd egg-example
+$ mkdir egg-example && cd egg-example
+$ npm init egg --type=simple
 $ npm i
 ```
 
@@ -28,7 +27,7 @@ $ open localhost:7001
 
 ## 逐步搭建
 
-通常你可以通过上一节的方式，使用 [egg-init] 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
+通常你可以通过上一节的方式，使用 `npm init egg` 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
 
 但为了让大家更好的了解 Egg.js，接下来，我们将跳过脚手架，手动一步步的搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
 
@@ -453,7 +452,6 @@ $ npm test
 - 写单元测试其实很简单的事，Egg 也提供了非常多的配套辅助，我们强烈建议大家测试驱动开发，具体参见 [单元测试](../core/unittest.md)。
 
 [Node.js]: http://nodejs.org
-[egg-init]: https://github.com/eggjs/egg-init
 [egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
 [egg-development]: https://github.com/eggjs/egg-development

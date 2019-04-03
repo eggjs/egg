@@ -16,11 +16,11 @@ title: 插件开发
 
 ### 使用脚手架快速开发
 
-你可以直接通过 [egg-init] 选择 [plugin][egg-boilerplate-plugin] 脚手架来快速上手。
+你可以直接使用 [egg-boilerplate-plugin] 脚手架来快速上手。
 
 ```bash
-$ egg-init --type=plugin egg-hello
-$ cd egg-hello
+$ mkdir egg-hello && cd egg-hello
+$ npm init egg --type=plugin
 $ npm i
 $ npm test
 ```
@@ -478,7 +478,6 @@ Egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具�
 
 **将相同功能的插件赋予相同的插件名，具备相同的 API，可以快速切换**。这在模板、数据库等领域非常适用。
 
-[egg-init]: https://github.com/eggjs/egg-init
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
 [egg-mysql]: https://github.com/eggjs/egg-mysql
 [egg-oss]: https://github.com/eggjs/egg-oss

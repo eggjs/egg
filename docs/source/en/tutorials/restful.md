@@ -101,11 +101,11 @@ After interface convention, we begin to create a RESTful API.
 
 ### Application Initialization
 
-Initializes the application using [egg-init](https://github.com/eggjs/egg-init) in the [quickstart](../intro/quickstart.md)
+Initializes the application using `npm` in the [quickstart](../intro/quickstart.md)
 
 ```bash
-$ egg-init cnode-api --type=simple
-$ cd cnode-api
+$ mkdir cnode-api && cd cnode-api
+$ npm init egg --type=simple
 $ npm i
 ```
 

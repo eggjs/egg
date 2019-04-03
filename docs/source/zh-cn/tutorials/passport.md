@@ -230,7 +230,7 @@ module.exports = app => {
 **初始化：**
 
 ```bash
-$ egg-init --type=plugin egg-passport-local
+$ npm init egg --type=plugin egg-passport-local
 ```
 
 在 `package.json` 中**配置依赖：**

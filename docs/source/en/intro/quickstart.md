@@ -15,9 +15,8 @@ To begin with, let's quickly initialize the project by using a scaffold,
 which will quickly generate some of the major pieces of the application.
 
 ```bash
-$ npm i egg-init -g
-$ egg-init egg-example --type=simple
-$ cd egg-example
+$ mkdir egg-example && cd egg-example
+$ npm init egg --type=simple
 $ npm i
 ```
 
@@ -30,7 +29,7 @@ $ open localhost:7001
 
 ## Step by Step
 
-Usually you can just use [egg-init] of the previous section,
+Usually you can just use `npm init egg` of the previous section,
 choose a scaffold that best fits your business model and quickly generate a project,
 then get started with the development.
 
@@ -481,7 +480,6 @@ Where to go from here? read our documentation to better understand the framework
 - Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/unittest.md).
 
 [Node.js]: http://nodejs.org
-[egg-init]: https://github.com/eggjs/egg-init
 [egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
 [egg-development]: https://github.com/eggjs/egg-development

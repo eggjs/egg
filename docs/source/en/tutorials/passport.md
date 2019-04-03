@@ -229,7 +229,7 @@ In the previous section, we learned how to use a Passport middleware in the fram
 **initialization:**
 
 ```bash
-$ egg-init --type=plugin egg-passport-local
+$ npm init egg --type=plugin egg-passport-local
 ```
 
 **Configure dependencies in `package.json`:**
