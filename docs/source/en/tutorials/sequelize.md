@@ -11,7 +11,7 @@ In this example, we will use sequelize to connect to the MySQL data source, so w
 
 ```bash
 brew install mysql
-brew service start mysql
+brew services start mysql
 ```
 
 ## Initialization

@@ -11,7 +11,7 @@ title: Sequelize
 
 ```bash
 brew install mysql
-brew service start mysql
+brew services start mysql
 ```
 
 ## 初始化项目
