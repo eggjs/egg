@@ -42,11 +42,11 @@ We could regard EggCore as the advanced version of Koa Application, which integr
 
 ## How to Customize a Framework
 
-To setup by [egg-init](https://github.com/eggjs/egg-init) with the [framework](https://github.com/eggjs/egg-boilerplate-framework) option is a good way, in which generates a scaffold for you.
+Just use [egg-boilerplate-framework](https://github.com/eggjs/egg-boilerplate-framework) to generates a scaffold for you.
 
 ```bash
-$ egg-init --type=framework yadan
-$ cd yadan
+$ mkdir yadan && cd yadan
+$ npm init egg --type=framework
 $ npm i
 $ npm test
 ```

@@ -12,7 +12,7 @@ A clear and concise description of what the bug is.
 
 ## Mini Showcase Repository(REQUIRED)
 > Provide a mini GitHub repository which can reproduce the issue.
-> Use `egg-init --type=simple bug` then upload to your GitHub
+> Use `npm init egg --type=simple bug` then upload to your GitHub
 
 <!-- https://github.com/YOUR_REPOSITORY_URL -->
 

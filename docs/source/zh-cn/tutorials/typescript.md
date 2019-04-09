@@ -26,8 +26,9 @@ TypeScript 的静态类型检查，智能提示，IDE 友好性等特性，对�
 通过骨架快速初始化：
 
 ```bash
-$ npx egg-init --type=ts showcase
-$ cd showcase && npm i
+$ mkdir showcase && cd showcase
+$ npm init egg --type=ts
+$ npm i
 $ npm run dev
 ```
 
@@ -653,7 +654,7 @@ export default class NewsService extends Service {
 
 汇集一些有不少人提过的 issue 问题并统一解答。
 
-### 运行 npm start 不会加载 ts 
+### 运行 npm start 不会加载 ts
 
 npm start 运行的是 `egg-scripts start`，而我们只在 egg-bin 中集成了 ts-node，也就是只有在使用 egg-bin 的时候才允许直接运行 ts 。
 

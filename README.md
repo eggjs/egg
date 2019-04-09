@@ -54,8 +54,8 @@ Node.js >= 8.0.0 required.
 Follow the commands listed below.
 
 ```bash
-$ npm install egg-init -g
-$ egg-init --type simple showcase && cd showcase
+$ mkdir showcase && cd showcase
+$ npm init egg --type=simple
 $ npm install
 $ npm run dev
 $ open http://localhost:7001

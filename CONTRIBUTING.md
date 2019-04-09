@@ -110,7 +110,7 @@ Feel free to add more content in the body, if you think subject is not self-expl
 
 - **If the commit is a Breaking Change, please note it clearly in this part.**
 - related issues, like `Closes #1, Closes #2, #3`
-- If there is a change about an old feaure or a new feature, please associate `doc` and `egg-init`, like `eggjs/egg-bin#123`
+- If there is a change about an old feaure or a new feature, please associate `doc` and `egg-core`, like `eggjs/egg-core#123`
 
 e.g.
 
