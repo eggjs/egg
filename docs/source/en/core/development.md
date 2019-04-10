@@ -13,7 +13,7 @@ $ npm i egg-bin --save-dev
 
 ## Start App
 
-Once we have modified code and saved in local development, the app will restart automatically, and our changes will take place right after that. 
+Once we have modified code and saved in local development, the app will restart automatically, and our changes will take place right after that.
 
 ### Adding Script
 
@@ -248,7 +248,7 @@ $ egg-bin debug --inpsect=9229
 
 App starts by `env: local` when executing debug . The configuration comes from the combination of both `config.local.js` and `config.unittest.js`.
 
-#### Debug with [DevTools] 
+#### Debug with [DevTools]
 
 The latest DevTools only supports [Inspector Protocol]. Thus you will need to install Node.js 8.x or higher verions to be able to use it.
 
@@ -307,7 +307,7 @@ There are 2 ways:
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "windows": { "runtimeExecutable": "npm.cmd" },
-      "runtimeArgs": [ "run", "debug", "--", "--inspect-brk" ],
+      "runtimeArgs": [ "run", "debug" ],
       "console": "integratedTerminal",
       "protocol": "auto",
       "restart": true,

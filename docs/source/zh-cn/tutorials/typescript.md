@@ -404,26 +404,8 @@ declare module 'egg' {
 
 ```json
 {
-  "devDependencies": {
-    "egg-ts-helper": "^1"
-  },
-  "scripts": {
-    "dev": "egg-bin dev -r egg-ts-helper/register",
-    "test-local": "egg-bin test -r egg-ts-helper/register",
-    "clean": "ets clean"
-  }
-}
-```
-
-在最新版本的 egg-bin 中，我们还支持通过配置 `egg.require` 来简化 scripts 配置：
-
-```json
-{
-  "devDependencies": {
-    "egg-ts-helper": "^1"
-  },
   "egg": {
-    "require": [ "egg-ts-helper/register" ]
+    "declarations": true
   },
   "scripts": {
     "dev": "egg-bin dev",
@@ -466,10 +448,13 @@ describe('test/app/service/news.test.js', () => {
 ```json
 {
   "name": "showcase",
+  "egg": {
+    "declarations": true
+  },
   "scripts": {
     "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "egg-bin test -r egg-ts-helper/register",
-    "cov": "egg-bin cov -r egg-ts-helper/register",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
     "lint": "tslint ."
   }
 }
@@ -482,9 +467,12 @@ describe('test/app/service/news.test.js', () => {
 ```json
 {
   "name": "showcase",
+  "egg": {
+    "declarations": true
+  },
   "scripts": {
-    "debug": "egg-bin debug -r egg-ts-helper/register",
-    "debug-test": "npm run test-local -- --inspect"
+    "debug": "egg-bin debug",
+    "debug-test": "npm run test-local"
   }
 }
 ```

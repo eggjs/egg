@@ -405,26 +405,8 @@ What we do is just to do some configs in `package.json`:
 
 ```json
 {
-  "devDependencies": {
-    "egg-ts-helper": "^1"
-  },
-  "scripts": {
-    "dev": "egg-bin dev -r egg-ts-helper/register",
-    "test-local": "egg-bin test -r egg-ts-helper/register",
-    "clean": "ets clean"
-  }
-}
-```
-
-In the latest version of `egg-bin`, we can also support simplify configs of scripts through `egg.require`:
-
-```json
-{
-  "devDependencies": {
-    "egg-ts-helper": "^1"
-  },
   "egg": {
-    "require": [ "egg-ts-helper/register" ]
+    "declarations": true
   },
   "scripts": {
     "dev": "egg-bin dev",
@@ -467,10 +449,13 @@ Run commands as what you do before, and we've built `Error stacks and coverages`
 ```json
 {
   "name": "showcase",
+  "egg": {
+    "declarations": true
+  },
   "scripts": {
     "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "egg-bin test -r egg-ts-helper/register",
-    "cov": "egg-bin cov -r egg-ts-helper/register",
+    "test-local": "egg-bin test",
+    "cov": "egg-bin cov",
     "lint": "tslint ."
   }
 }
@@ -483,8 +468,11 @@ There's no main difference for debugging in TS, it can reach correct positions t
 ```json
 {
   "name": "showcase",
+  "egg": {
+    "declarations": true
+  },
   "scripts": {
-    "debug": "egg-bin debug -r egg-ts-helper/register",
+    "debug": "egg-bin debug",
     "debug-test": "npm run test-local -- --inspect"
   }
 }

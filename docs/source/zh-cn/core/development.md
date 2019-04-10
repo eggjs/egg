@@ -307,7 +307,7 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "windows": { "runtimeExecutable": "npm.cmd" },
-      "runtimeArgs": [ "run", "debug", "--", "--inspect-brk" ],
+      "runtimeArgs": [ "run", "debug" ],
       "console": "integratedTerminal",
       "protocol": "auto",
       "restart": true,
