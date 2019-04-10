@@ -95,9 +95,9 @@ module.exports = {
   },
 
   /**
-   * Get or set the request remote IPv4 address
+   * Get the request remote IPv4 address
    * @member {String} Request#ip
-   * @param {String} ip - IPv4 address
+   * @return {String} IPv4 address
    * @example
    * ```js
    * this.request.ip
@@ -116,6 +116,17 @@ module.exports = {
     return this._ip;
   },
 
+  /**
+   * Set the request remote IPv4 address
+   * @member {String} Request#ip
+   * @param {String} ip - IPv4 address
+   * @example
+   * ```js
+   * this.request.ip
+   * => '127.0.0.1'
+   * => '111.10.2.1'
+   * ```
+   */
   set ip(ip) {
     this._ip = ip;
   },
@@ -226,10 +237,9 @@ module.exports = {
   /**
    * Set query-string as an object.
    *
-   * @method Request#query
+   * @function Request#query
    * @param {Object} obj set querystring and query object for request.
    * @return {void}
-   * @api public
    */
   set query(obj) {
     this.querystring = querystring.stringify(obj);

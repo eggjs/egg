@@ -50,6 +50,7 @@ exports.startLocalServer = () => {
     if (localServer) {
       return resolve('http://127.0.0.1:' + localServer.address().port);
     }
+    let retry = false;
     localServer = http.createServer((req, res) => {
       req.resume();
       req.on('end', () => {
@@ -61,6 +62,16 @@ exports.startLocalServer = () => {
           setTimeout(() => {
             res.end(`${req.method} ${req.url}`);
           }, 10000);
+          return;
+        } else if (req.url === '/retry') {
+          if (!retry) {
+            retry = true;
+            res.statusCode = 500;
+            res.end();
+          } else {
+            res.statusCode = 200;
+            res.end('retry suc');
+          }
           return;
         } else {
           res.end(`${req.method} ${req.url}`);

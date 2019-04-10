@@ -417,4 +417,31 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(!mockApp.config.httpclient.httpsAgent.freeSocketKeepAliveTimeout);
     });
   });
+
+  describe('httpclient retry', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-retry');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should retry when httpclient fail', async () => {
+      let hasRetry = false;
+      const res = await app.httpclient.curl(`${url}/retry`, {
+        retry: 1,
+        retryDelay: 100,
+        isRetry(res) {
+          const shouldRetry = res.status >= 500;
+          if (shouldRetry) {
+            hasRetry = true;
+          }
+          return shouldRetry;
+        },
+      });
+
+      assert(hasRetry);
+      assert(res.status === 200);
+    });
+  });
 });
