@@ -1,5 +1,16 @@
 # History
 
+## 2019-04-10, Version 1.18.0 @atian25
+
+### Notable changes
+
+**fetures**
+  * expose app.server
+
+### Commits
+
+  * [[`9671a354a`](http://github.com/eggjs/egg/commit/9671a354a919cefcab40b7a96208d8d8de5d44ed)] - feat: expose app.server (#3601) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2018-11-16, Version 1.17.0 @dead-horse
 
 ### Notable changes
