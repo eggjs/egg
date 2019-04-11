@@ -345,7 +345,7 @@ describe('test/app/extend/context.test.js', () => {
       );
     });
 
-    it.only('should run background task error', async () => {
+    it('should run background task error', async () => {
       mm.consoleLevel('NONE');
 
       let errorHadEmit = false;
