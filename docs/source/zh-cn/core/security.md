@@ -608,7 +608,7 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 
 ### app.injectHijackingDefense(str)
 
-对于没有开启 HTTPS 的网站，这个函数可以有限的防止运营商劫持。
+对于没有开启 HTTPS 的网站，这个函数可以有效的防止运营商劫持。
 
 
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
