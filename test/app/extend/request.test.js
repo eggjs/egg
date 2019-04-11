@@ -76,12 +76,26 @@ describe('test/app/extend/request.test.js', () => {
         assert(req.ip === '127.0.0.1');
         assert(req.ip === '127.0.0.1');
       });
+
+      it('should work with proxy', () => {
+        mm(req.socket, 'remoteAddress', '::ffff:127.0.0.1');
+        mm(req.header, 'x-forwarded-for', '127.0.0.1, 127.0.0.2, 127.0.0.3');
+        mm(app.config, 'proxy', true);
+        mm(app.config, 'maxProxyCount', 1);
+        assert(req.ip === '127.0.0.2');
+      });
     });
 
     describe('req.ips', () => {
       it('should used x-forwarded-for', () => {
-        mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2');
-        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
+        mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
+        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2', '127.0.0.3' ]);
+      });
+
+      it('should used work with maxProxyCount', () => {
+        mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
+        mm(app.config, 'maxProxyCount', 1);
+        assert.deepEqual(req.ips, [ '127.0.0.2', '127.0.0.3' ]);
       });
 
       it('should used x-real-ip', () => {
