@@ -48,6 +48,16 @@ module.exports = appInfo => {
     proxy: false,
 
     /**
+     * How many proxies the application deployed behind
+     * framework use this to get the clients' real ips
+     * `0` means not limited, for most common usage, it should be `1`
+     * @member {Integer} Config#maxProxyCount
+     * @default
+     * @since 2.21.0
+     */
+    maxProxyCount: 0,
+
+    /**
      * Detect request's protocol from specified headers, not case-sensitive.
      * Only worked when config.proxy set to true.
      * @member {String} Config#protocolHeaders

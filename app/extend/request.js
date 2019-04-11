@@ -91,6 +91,12 @@ module.exports = {
 
     const val = getFromHeaders(this, this.app.config.ipHeaders) || '';
     this[IPS] = val ? val.split(/\s*,\s*/) : [];
+
+    if (this.app.config.maxProxyCount > 0) {
+      // if maxProxyCount present, only keep `maxProxyCount + 1` ips
+      // [ illegalIp, clientRealIp, proxyIp1, proxyIp2 ...]
+      this[IPS] = this[IPS].slice(-(this.app.config.maxProxyCount + 1));
+    }
     return this[IPS];
   },
 
