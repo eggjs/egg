@@ -11,6 +11,7 @@
 * **docs**
   * add how to config egg behind a proxy
   * update http_proxy usage
+  * change `egg-init` to `npm init egg`
 
 ### Commits
 
