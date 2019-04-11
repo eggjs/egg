@@ -37,6 +37,7 @@ Tutorials:
   Socket.IO: /tutorials/socketio.html
   Assets: /tutorials/assets.html
   TypeScript: /tutorials/typescript.html
+  Proxy: /tutorials/proxy.html
 Advanced:
   Loader: /advanced/loader.html
   Plugin Development: /advanced/plugin.html
