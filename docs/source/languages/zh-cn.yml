@@ -68,3 +68,4 @@ guide_toc:
   Resource: 资源
   Assets: 静态资源
   TypeScript: TypeScript
+  Proxy: 前置代理模式
