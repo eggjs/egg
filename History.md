@@ -1,12 +1,35 @@
 # History
 
+## 2019-04-11, Version 2.21.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * support config.maxProxyCount to help get the real client ip
+  * switch httpclient to httpclient2 for retry feature
+
+* **docs**
+  * add how to config egg behind a proxy
+  * update http_proxy usage
+
+### Commits
+
+  * [[`01b9588a3`](http://github.com/eggjs/egg/commit/01b9588a35ba33a7088e79f6d3e08c713c4de963)] - feat: support config.maxProxyCount to help get the real client ip (#3612) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`eead31862`](http://github.com/eggjs/egg/commit/eead318625347bb9de8f9d7ffc6fae5ae1b33901)] - feat: switch httpclient to httpclient2 for retry feature (#3606) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`879fe93a6`](http://github.com/eggjs/egg/commit/879fe93a6dde156101318c766a3c29ca07f1e18d)] - docs: add how to config egg behind a proxy (#3614) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`2357fbc1e`](http://github.com/eggjs/egg/commit/2357fbc1ee18cf0a8ee8692ed2d62d2224acfe3b)] - docs: remove egg-ts-helper && inspect-brk (#3603) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e0a1d8fc6`](http://github.com/eggjs/egg/commit/e0a1d8fc6806acc0a4141bc4cf67149069bfbdf0)] - docs: change egg-init to `npm init egg` (#3588) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`763923cd7`](http://github.com/eggjs/egg/commit/763923cd76be30496fee9f733db9500c1d8188f2)] - chore: remove unused plugins.puml link (#3579) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`b1746468d`](http://github.com/eggjs/egg/commit/b1746468dae2d02aeef37f6e8d85414624c79880)] - docs(httpclient): update http_proxy usage (#3569) (TZ | 天猪 <<atian25@qq.com>>)
+
+
 ## 2019-03-25, Version 2.20.2 @whxaxes
 
 ### Notable changes
 
 * **fixes**
   * onClientError remove content-length header
-  
+
 * **types**
   * add custom loader typing
   * import types from egg-core
