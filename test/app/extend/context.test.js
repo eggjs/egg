@@ -293,8 +293,8 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      assert(errorHadEmit);
       await sleep(5000);
+      assert(errorHadEmit);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
@@ -359,8 +359,8 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      assert(errorHadEmit);
       await sleep(5000);
+      assert(errorHadEmit);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));

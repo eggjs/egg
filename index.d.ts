@@ -7,13 +7,13 @@ import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
-import { HttpClient2, RequestOptions } from 'urllib';
+import { HttpClient2, RequestOptions2 as RequestOptions } from 'urllib';
 import {
   EggCoreBase,
   FileLoaderOption,
-  EggLoader as CoreLoader, 
-  EggCoreOptions as CoreOptions, 
-  EggLoaderOptions as CoreLoaderOptions, 
+  EggLoader as CoreLoader,
+  EggCoreOptions as CoreOptions,
+  EggLoaderOptions as CoreLoaderOptions,
   BaseContextClass as CoreBaseContextClass,
 } from 'egg-core';
 import EggCookies = require('egg-cookies');
@@ -636,7 +636,7 @@ declare module 'egg' {
 
     truncated: boolean;
   }
-                   
+
   interface GetFileStreamOptions {
     requireFile?: boolean; // required file submit, default is true
     defCharset?: string;
@@ -664,7 +664,7 @@ declare module 'egg' {
   * special properties (e.g: encrypted). So we must remove this property and
   * create our own with the same name.
   * @see https://github.com/eggjs/egg/pull/2958
-  * 
+  *
   * However, the latest version of Koa has "[key: string]: any" on the
   * context, and there'll be a type error for "keyof koa.Context".
   * So we have to directly inherit from "KoaApplication.BaseContext" and
