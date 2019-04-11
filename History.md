@@ -1,5 +1,17 @@
 # History
 
+## 2019-04-11, Version 1.19.0 @dead-horse
+
+### Notable changes
+
+**fetures**
+  * support config.maxProxyCount to help get the real client ip
+
+### Commits
+
+  * [[`d56b831a9`](http://github.com/eggjs/egg/commit/d56b831a92d13590c80c898dfbb7263c1d2abe74)] -  feat: support config.maxProxyCount to help get the real client ip (#3615) (Yiyu He <<dead_horse@qq.com>>)
+
+
 ## 2019-04-10, Version 1.18.0 @atian25
 
 ### Notable changes
