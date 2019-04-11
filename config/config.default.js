@@ -53,7 +53,7 @@ module.exports = appInfo => {
      * `0` means not limited, for most common usage, it should be `1`
      * @member {Integer} Config#maxProxyCount
      * @default
-     * @since 2.20.2
+     * @since 1.19.0
      */
     maxProxyCount: 0,
 
