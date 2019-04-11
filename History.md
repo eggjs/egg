@@ -4,7 +4,7 @@
 
 ### Notable changes
 
-**fetures**
+**features**
   * support config.maxProxyCount to help get the real client ip
 
 ### Commits
@@ -16,7 +16,7 @@
 
 ### Notable changes
 
-**fetures**
+**features**
   * expose app.server
 
 ### Commits
@@ -27,7 +27,7 @@
 
 ### Notable changes
 
-**fetures**
+**features**
   * add create anonymous context to agent
 
 ### Commits
