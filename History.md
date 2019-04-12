@@ -1,5 +1,16 @@
 # History
 
+## 2019-04-12, Version 2.21.1 @dead-horse
+
+### Notable changes
+
+* **fixes**
+  * Revert "feat: switch httpclient to httpclient2 for retry feature(which is a breaking change)
+
+### Commits
+
+  * [[`89872a76f`](http://github.com/eggjs/egg/commit/89872a76fc09cefb9ff92221a5c3b9977d206f7c)] - Revert "feat: switch httpclient to httpclient2 for retry feature (#36… (#3622) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2019-04-11, Version 2.21.0 @dead-horse
 
 ### Notable changes
