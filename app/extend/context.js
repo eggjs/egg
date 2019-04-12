@@ -39,7 +39,7 @@ const proto = module.exports = {
   /**
    * Shortcut for httpclient.curl
    *
-   * @function Context#curl
+   * @method Context#curl
    * @param {String|Object} url - request url address.
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
