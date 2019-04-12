@@ -1007,6 +1007,14 @@ declare module 'egg' {
 
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 
+  export interface StartOptions{
+    framework?: string; // specify framework that can be absolute path or npm package
+    baseDir?: string; // directory of application, default to `process.cwd()`
+    ignoreWarning? :boolean // ignore single process mode warning
+  }
+
+  export function start(options?:StartOptions):Promise<Application>
+
   /**
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
    * @example
