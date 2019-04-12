@@ -7,7 +7,7 @@ module.exports = {
 
   /**
    * Generate URL path(without host) for route. Takes the route name and a map of named params.
-   * @function Helper#pathFor
+   * @method Helper#pathFor
    * @param {String} name - Router Name
    * @param {Object} params - Other params
    *
@@ -25,7 +25,7 @@ module.exports = {
 
   /**
    * Generate full URL(with host) for route. Takes the route name and a map of named params.
-   * @function Helper#urlFor
+   * @method Helper#urlFor
    * @param {String} name - Router name
    * @param {Object} params - Other params
    * @example
