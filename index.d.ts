@@ -7,7 +7,7 @@ import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
 import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
-import { HttpClient2, RequestOptions } from 'urllib';
+import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
 import {
   EggCoreBase,
   FileLoaderOption,
@@ -37,12 +37,12 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  interface EggHttpClient extends HttpClient2 {}
+  interface EggHttpClient extends HttpClient<RequestOptions> {}
   interface EggHttpConstructor {
     new (app: Application): EggHttpClient;
   }
 
-  interface EggContextHttpClient extends HttpClient2 {}
+  interface EggContextHttpClient extends HttpClient<RequestOptions> {}
   interface EggContextHttpClientConstructor {
     new (ctx: Context): EggContextHttpClient;
   }
