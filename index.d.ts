@@ -993,24 +993,35 @@ declare module 'egg' {
   }
 
   export interface ClusterOptions {
-    framework?: string; // specify framework that can be absolute path or npm package
-    baseDir?: string; // directory of application, default to `process.cwd()`
-    plugins?: object | null; // customized plugins, for unittest
-    workers?: number; // numbers of app workers, default to `os.cpus().length`
-    port?: number;  // listening port, default to 7001(http) or 8443(https)
-    https?: boolean;  // https or not
-    key?: string; //ssl key
-    cert?: string;  // ssl cert
-    // typescript?: boolean;
+    /** specify framework that can be absolute path or npm package */
+    framework?: string;
+    /** directory of application, default to `process.cwd()` */
+    baseDir?: string;
+    /** customized plugins, for unittest */
+    plugins?: object | null;
+    /** numbers of app workers, default to `os.cpus().length` */
+    workers?: number;
+    /** listening port, default to 7001(http) or 8443(https) */
+    port?: number;
+    /** https or not */
+    https?: boolean;
+    /** ssl key */
+    key?: string;
+    /** ssl cert */
+    cert?: string;
+    /** typescript?: boolean; */
     [prop: string]: any;
   }
 
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 
   export interface StartOptions{
-    framework?: string; // specify framework that can be absolute path or npm package
-    baseDir?: string; // directory of application, default to `process.cwd()`
-    ignoreWarning? :boolean // ignore single process mode warning
+    /** specify framework that can be absolute path or npm package */
+    framework?: string;
+    /** directory of application, default to `process.cwd()` */
+    baseDir?: string; 
+    /** ignore single process mode warning */
+    ignoreWarning? :boolean 
   }
 
   export function start(options?:StartOptions):Promise<Application>
