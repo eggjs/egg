@@ -64,14 +64,13 @@ agent.logger.info(agent.Controller);
 
 // single process mode
 start({ baseDir: __dirname,ignoreWarning: true}).then(app=>{
+  const port= 1002;
   app.logger.info('123');
-  app.middleware.slice(0);
-  app.name.substring(0);
   app.on('egg-ready', () => {});
   app.emit('egg-ready');
   app.getLogger('test').info('123');
   app.inspect();
-  app.listen(1002);
+  app.listen(port);
   app.logger.info(app.locals.test);
   const ctxHttpClient = new app.ContextHttpClient({} as Context);
   ctxHttpClient.request('http://127.0.0.1', { method: 'GET' });
