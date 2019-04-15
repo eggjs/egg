@@ -9,6 +9,7 @@ import {
   EggAppConfig,
   PowerPartial,
   Singleton,
+  start,
 } from 'egg';
 
 // base context class
@@ -60,6 +61,26 @@ agent.listen(1002);
 agent.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
 agent.logger.info(agent.Service);
 agent.logger.info(agent.Controller);
+
+// single process mode
+start({ baseDir: __dirname,ignoreWarning: true}).then(app=>{
+  const port= 1002;
+  app.logger.info('123');
+  app.on('egg-ready', () => {});
+  app.emit('egg-ready');
+  app.getLogger('test').info('123');
+  app.inspect();
+  app.listen(port);
+  app.logger.info(app.locals.test);
+  const ctxHttpClient = new app.ContextHttpClient({} as Context);
+  ctxHttpClient.request('http://127.0.0.1', { method: 'GET' });
+  const appHttpClient = new app.HttpClient(app);
+  appHttpClient.request('http://127.0.0.1', { method: 'GET' });
+  app.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
+  app.logger.info(app.Service);
+  app.logger.info(app.Controller);
+  app.controller.test().then(() => {});
+});
 
 // controller
 class MyController extends Controller {
