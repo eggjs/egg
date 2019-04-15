@@ -1009,7 +1009,6 @@ declare module 'egg' {
     key?: string;
     /** ssl cert */
     cert?: string;
-    /** typescript?: boolean; */
     [prop: string]: any;
   }
 
