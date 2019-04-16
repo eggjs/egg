@@ -63,6 +63,10 @@ exports.startLocalServer = () => {
             res.end(`${req.method} ${req.url}`);
           }, 10000);
           return;
+        } else if (req.url === '/error') {
+          res.statusCode = 500;
+          res.end('this is an error');
+          return;
         } else if (req.url === '/retry') {
           if (!retry) {
             retry = true;

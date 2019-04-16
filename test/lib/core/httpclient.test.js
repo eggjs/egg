@@ -55,6 +55,13 @@ describe('test/lib/core/httpclient.test.js', () => {
     client.request(url, () => {});
   });
 
+  it('should request callback with error', done => {
+    client.request(url + '/error', { dataType: 'json' }, err => {
+      assert(err);
+      done();
+    });
+  });
+
   it('should curl ok with log', done => {
     const args = {
       dataType: 'text',
