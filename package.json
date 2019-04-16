@@ -91,6 +91,7 @@
     "lib",
     "app",
     "config",
+    "agent.js",
     "index.d.ts"
   ],
   "scripts": {

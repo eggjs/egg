@@ -1,39 +1,43 @@
 'use strict';
 
+const assert = require('assert');
 const sleep = require('mz-modules/sleep');
+const BaseHookClass = require('../../../../lib/core/base_hook_class');
 
-module.exports = class {
-  constructor(app) {
-    app.bootLog = [];
-    this.app = app;
+module.exports = class extends BaseHookClass {
+  constructor(agent) {
+    super(agent);
+    agent.bootLog = [];
+    assert(this.config);
   }
 
   configDidLoad() {
-    this.app.bootLog.push('configDidLoad');
+    this.agent.bootLog.push('configDidLoad');
   }
 
   async didLoad() {
     await sleep(1);
-    this.app.bootLog.push('didLoad');
+    this.agent.bootLog.push('didLoad');
   }
 
   async willReady() {
     await sleep(1);
-    this.app.bootLog.push('willReady');
+    this.agent.bootLog.push('willReady');
   }
 
   async didReady() {
     await sleep(1);
-    this.app.bootLog.push('didReady');
+    this.agent.bootLog.push('didReady');
+    this.logger.info('agent is ready');
   }
 
   async beforeClose() {
     await sleep(1);
-    this.app.bootLog.push('beforeClose');
+    this.agent.bootLog.push('beforeClose');
   }
 
   async serverDidReady() {
     await sleep(1);
-    this.app.bootLog.push('serverDidReady');
+    this.agent.bootLog.push('serverDidReady');
   }
 };
