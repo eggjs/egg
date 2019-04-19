@@ -675,7 +675,7 @@ module.exports = () => {
       request: {
         enableProxy: true,
         rejectUnauthorized: false,
-        // proxy: process.env.http_proxy,
+        proxy: process.env.http_proxy,
       },
     };
   }
