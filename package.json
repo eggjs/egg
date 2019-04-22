@@ -62,7 +62,7 @@
     "autod-egg": "^1.1.0",
     "coffee": "^5.2.1",
     "egg-alinode": "^1.0.3",
-    "egg-bin": "^4.11.0",
+    "egg-bin": "^4.12.3",
     "egg-doctools": "^2.8.3",
     "egg-mock": "^3.21.0",
     "egg-plugin-puml": "^2.4.0",
