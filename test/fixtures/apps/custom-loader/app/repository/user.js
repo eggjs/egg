@@ -9,6 +9,10 @@ class UserRepository {
     return this.ctx.params.name;
   }
 
+  async beforeLoad() {
+    return 'beforeLoad';
+  }
+
 }
 
 module.exports = UserRepository;
