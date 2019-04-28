@@ -12,6 +12,10 @@ class UserController {
       repository: await this.ctx.repository.user.get(),
     };
   }
+
+  async beforeLoad() {
+    this.ctx.body = this.app.beforeLoad;
+  }
 }
 
 module.exports = UserController;
