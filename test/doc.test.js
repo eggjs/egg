@@ -7,11 +7,11 @@ const runscript = require('runscript');
 const utils = require('./utils');
 
 describe('test/doc.test.js', () => {
-  if (process.platform === 'win32') return;
 
   let app;
   before(async () => {
-    await runscript('doctools build', { cwd: path.dirname(__dirname) });
+    const doctools = path.join(process.cwd(), 'node_modules/.bin', 'doctools');
+    await runscript(`${doctools} build`, { cwd: path.dirname(__dirname) });
   });
   before(async () => {
     app = utils.cluster({
