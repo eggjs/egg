@@ -1,5 +1,17 @@
 # History
 
+## 2019-04-29, Version 2.22.2 @atian25
+
+### Notable changes
+
+* **fixes**
+  * should restore agent messenger first
+
+### Commits
+
+  * [[`04adcf93b`](http://github.com/eggjs/egg/commit/04adcf93b8f0a8c48c35015e8d2a279fc7d06b24)] - fix: should restore agent messenger first (#3658) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`99eb75398`](http://github.com/eggjs/egg/commit/99eb7539850c117d3d8b05f669cae5a9e9269be8)] - docs: fix history time (#3655) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2019-04-29, Version 2.22.0 @atian25
 
 ### Notable changes
