@@ -9,6 +9,9 @@ module.exports = class extends BaseHookClass {
     super(agent);
     agent.bootLog = [];
     assert(this.config);
+    agent.messenger.on('egg-ready', () => {
+      agent.messenger.sendToApp('agent2app');
+    });
   }
 
   configDidLoad() {
