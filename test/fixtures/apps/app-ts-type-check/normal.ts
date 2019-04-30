@@ -119,6 +119,25 @@ config.customLoader = {
     inject: 'app',
   }
 }
+const httpclientOption = {
+  keepAlive: true,
+  freeSocketKeepAliveTimeout: 10 * 60 * 1000,
+  freeSocketTimeout: 10 * 60 * 1000,
+  timeout: 60 * 1000,
+  maxSockets: 20,
+  maxFreeSockets: 100,
+};
+config.httpclient = {
+  ...httpclientOption,
+  httpAgent: httpclientOption,
+  httpsAgent: httpclientOption,
+  enableProxy: true,
+  request: {
+    method: 'GET',
+  },
+  proxy: 'http://127.0.0.1:8888'
+}
+config.httpclient = httpclientOption;
 
 // partial config
 const config2 = {} as PowerPartial<EggAppConfig>;
