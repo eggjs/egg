@@ -111,6 +111,9 @@ config.httpclient = {
   httpAgent: httpclientOption,
   httpsAgent: httpclientOption,
   enableProxy: true,
+  request: {
+    method: 'GET',
+  },
   proxy: 'http://127.0.0.1:8888'
 }
 config.httpclient = httpclientOption;

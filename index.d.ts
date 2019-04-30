@@ -218,7 +218,7 @@ declare module 'egg' {
     /** https.Agent */
     httpsAgent?: HttpClientBaseConfig;
     /** Default request args for httpclient */
-    request?: PlainObject;
+    request?: RequestOptions;
     /** Whether enable dns cache */
     enableDNSCache?: boolean;
     /** Enable proxy request, default is false. */
