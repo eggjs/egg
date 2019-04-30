@@ -1,5 +1,16 @@
 # History
 
+## 2019-04-30, Version 2.22.2 @atian25
+
+### Notable changes
+
+* **fixes**
+  * optimize declaration of httpclient
+
+### Commits
+
+  * [[`670ba3475`](http://github.com/eggjs/egg/commit/670ba34751af0b3869dd656064b4587affb888ec)] - fix(typings): optimize declaration of httpclient (#3665) (吖猩 <<whxaxes@gmail.com>>)
+
 ## 2019-04-29, Version 2.22.1 @atian25
 
 ### Notable changes
