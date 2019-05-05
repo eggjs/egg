@@ -222,6 +222,37 @@ declare module 'egg' {
     loadunit?: boolean;
   }
 
+  export interface HttpClientBaseConfig {
+    /** Whether use http keepalive */
+    keepAlive?: boolean;
+    /** Free socket after keepalive timeout */
+    freeSocketKeepAliveTimeout?: number;
+    /** Free socket after request timeout */
+    freeSocketTimeout?: number;
+    /** Request timeout */
+    timeout?: number;
+    /** Determines how many concurrent sockets the agent can have open per origin */
+    maxSockets?: number;
+    /** The maximum number of sockets that will be left open in the free state */
+    maxFreeSockets?: number;
+  }
+
+  /** HttpClient config */
+  export interface HttpClientConfig extends HttpClientBaseConfig {
+    /** http.Agent */
+    httpAgent?: HttpClientBaseConfig;
+    /** https.Agent */
+    httpsAgent?: HttpClientBaseConfig;
+    /** Default request args for httpclient */
+    request?: RequestOptions;
+    /** Whether enable dns cache */
+    enableDNSCache?: boolean;
+    /** Enable proxy request, default is false. */
+    enableProxy?: boolean;
+    /** proxy agent uri or options, default is null. */
+    proxy?: string | { [key: string]: any };
+  }
+
   export interface EggAppConfig {
     workerStartTimeout: number;
     baseDir: string;
@@ -298,15 +329,8 @@ declare module 'egg' {
       allowDebugAtProd: boolean;
     };
 
-    httpclient: {
-      keepAlive: boolean;
-      freeSocketKeepAliveTimeout?: number;
-      freeSocketTimeout: number;
-      timeout: number;
-      maxSockets: number;
-      maxFreeSockets: number;
-      enableDNSCache: boolean;
-    };
+    /** Configuration of httpclient in egg. */
+    httpclient: HttpClientConfig;
 
     development: {
       /**

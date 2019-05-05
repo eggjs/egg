@@ -13,13 +13,20 @@ describe('test/lib/core/custom_loader.test.js', () => {
   });
   after(() => app.close());
 
-  it('should', async () => {
+  it('should support customLoader', async () => {
     await app.httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'docker',
         repository: 'popomore',
       })
+      .expect(200);
+  });
+
+  it('should loadCustomLoader before loadCustomApp', async () => {
+    await app.httpRequest()
+      .get('/beforeLoad')
+      .expect('beforeLoad')
       .expect(200);
   });
 

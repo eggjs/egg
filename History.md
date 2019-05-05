@@ -1,5 +1,52 @@
 # History
 
+## 2019-04-30, Version 2.22.2 @atian25
+
+### Notable changes
+
+* **fixes**
+  * optimize declaration of httpclient
+
+### Commits
+
+  * [[`670ba3475`](http://github.com/eggjs/egg/commit/670ba34751af0b3869dd656064b4587affb888ec)] - fix(typings): optimize declaration of httpclient (#3665) (吖猩 <<whxaxes@gmail.com>>)
+
+## 2019-04-29, Version 2.22.1 @atian25
+
+### Notable changes
+
+* **fixes**
+  * should restore agent messenger first
+
+### Commits
+
+  * [[`04adcf93b`](http://github.com/eggjs/egg/commit/04adcf93b8f0a8c48c35015e8d2a279fc7d06b24)] - fix: should restore agent messenger first (#3658) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`99eb75398`](http://github.com/eggjs/egg/commit/99eb7539850c117d3d8b05f669cae5a9e9269be8)] - docs: fix history time (#3655) (TZ | 天猪 <<atian25@qq.com>>)
+
+## 2019-04-29, Version 2.22.0 @atian25
+
+### Notable changes
+
+* **features**
+  * switch httpclient to httpclient2 for retry feature
+  * add BaseHookClass
+
+* **fixes**
+  * loadCustomLoader should be run before loadCustomApp
+
+* **docs**
+  * d.ts for single mode
+
+### Commits
+
+  * [[`d3b1cb5d9`](http://github.com/eggjs/egg/commit/d3b1cb5d9d2dd91330778966ba9813f56476a47b)] - fix: loadCustomLoader should be run before loadCustomApp (#3652) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`7cc8aab02`](http://github.com/eggjs/egg/commit/7cc8aab02d89869b4ce460b2fa186aedcf00b64b)] - chore: update packages,remove 'plugin' and validations of doc generation (#3643) (Maledong <<maledong_github@outlook.com>>)
+  * [[`bffb6448f`](http://github.com/eggjs/egg/commit/bffb6448f201ce0d61bd3a32b91f673cf5c074f4)] - docs: fix httpclient proxy (#3638) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`e7fbd68f3`](http://github.com/eggjs/egg/commit/e7fbd68f32054041b74bc860f11aca05c025c0a9)] - feat: switch httpclient to httpclient2 for retry feature (#3626) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`8bb7c7e7d`](http://github.com/eggjs/egg/commit/8bb7c7e7d59d6aeca4b2ed1eb580368dcb731a4d)] - feat: add BaseHookClass (#3581) (killa <<killa123@126.com>>)
+  * [[`459454354`](http://github.com/eggjs/egg/commit/4594543543290a8c714fe3b9047c84578bf2f9a6)] - feat: index.d.ts添加单进程模式 (#3628) (jasine <<jasinechen@gmail.com>>)
+  * [[`4b13a1ffb`](http://github.com/eggjs/egg/commit/4b13a1ffbed0895731bf38f72d5786d4b15f263f)] - chore: fix jsdocs (#3627) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2019-04-12, Version 2.21.1 @dead-horse
 
 ### Notable changes
