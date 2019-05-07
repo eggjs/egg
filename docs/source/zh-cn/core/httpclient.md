@@ -201,30 +201,33 @@ class NpmController extends Controller {
 
 当一个 Form 表单提交包含文件的时候，请求数据格式就必须以 [multipart/form-data](http://tools.ietf.org/html/rfc2388)
 进行提交了。
-这个时候需要引入 [formstream] 这个第三方模块来帮助我们生成可以被 HttpClient 消费的 `form` 对象。
+
+[urllib] 内置了 [formstream] 模块来帮助我们生成可以被消费的 `form` 对象。
 
 ```js
-// app/controller/npm.js
-const FormStream = require('formstream');
-class NpmController extends Controller {
+// app/controller/http.js
+class HttpController extends Controller {
   async upload() {
-    const ctx = this.ctx;
-    const form = new FormStream();
-    // 设置普通的 key value
-    form.field('foo', 'bar');
-    // 上传当前文件本身用于测试
-    form.file('file', __filename);
+    const { ctx } = this;
 
     const result = await ctx.curl('https://httpbin.org/post', {
-      // 必须指定 method，支持 POST，PUT
       method: 'POST',
-      // 生成符合 multipart/form-data 要求的请求 headers
-      headers: form.headers(),
-      // 以 stream 模式提交
-      stream: form,
-      // 明确告诉 HttpClient 以 JSON 格式处理响应 body
       dataType: 'json',
+      data: {
+        foo: 'bar',
+      },
+
+      // 单文件上传
+      files: __filename,
+
+      // 多文件上传
+      // files: {
+      //   file1: __filename,
+      //   file2: fs.createReadStream(__filename),
+      //   file3: Buffer.from('mock file content'),
+      // },
     });
+
     ctx.body = result.data.files;
     // 响应最终会是类似以下的结果：
     // {
@@ -232,13 +235,6 @@ class NpmController extends Controller {
     // }
   }
 }
-```
-
-当然，你还可以继续通过 `form.file()` 添加更多文件以实现一次性上传多个文件的需求。
-
-```js
-form.file('file1', file1);
-form.file('file2', file2);
 ```
 
 ### 以 Stream 方式上传文件
@@ -386,6 +382,36 @@ ctx.curl(url, {
   content: '<xml><hello>world</hello></xml>',
   headers: {
     'content-type': 'text/html',
+  },
+});
+```
+
+### `files: Mixed`
+
+文件上传，支持格式： `String | ReadStream | Buffer | Array | Object`。
+
+```js
+ctx.curl(url, {
+  method: 'POST',
+  files: '/path/to/read',
+  data: {
+    foo: 'other fields',
+  },
+});
+```
+
+多文件上传：
+
+```js
+ctx.curl(url, {
+  method: 'POST',
+  files: {
+    file1: '/path/to/read',
+    file2: fs.createReadStream(__filename),
+    file3: Buffer.from('mock file content'),
+  },
+  data: {
+    foo: 'other fields',
   },
 });
 ```
