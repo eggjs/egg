@@ -33,8 +33,8 @@ class AppBootHook {
     // For example: the password in the parameter is encrypted, decrypt it here
     this.app.config.mysql.password = decrypt(this.app.config.mysql.password);
     // For example: insert a middleware into the framework's coreMiddleware
-    const statusIdx = app.config.coreMiddleware.indexOf('status');
-    app.config.coreMiddleware.splice(statusIdx + 1, 0, 'limit');
+    const statusIdx = this.app.config.coreMiddleware.indexOf('status');
+    this.app.config.coreMiddleware.splice(statusIdx + 1, 0, 'limit');
   }
 
   async didLoad() {
@@ -46,7 +46,7 @@ class AppBootHook {
     await this.app.queue.init();
 
     // For example: load a custom directory
-    app.loader.loadToContext(path.join(__dirname, 'app/tasks'), 'tasks', {
+    this.app.loader.loadToContext(path.join(__dirname, 'app/tasks'), 'tasks', {
       fieldClass: 'tasksClasses',
     });
   }
@@ -57,7 +57,7 @@ class AppBootHook {
     // Application will start after these operations executed succcessfully
 
     // For example: loading data from the database into the in-memory cache
-    this.app.cacheData = await app.model.query(QUERY_CACHE_SQL);
+    this.app.cacheData = await this.app.model.query(QUERY_CACHE_SQL);
   }
 
   async didReady() {
@@ -71,7 +71,7 @@ class AppBootHook {
     // http / https server has started and begins accepting external requests
     // At this point you can get an instance of server from app.server
 
-    app.server.on('timeout', socket => {
+    this.app.server.on('timeout', socket => {
       // handle socket timeout
     });
   }
