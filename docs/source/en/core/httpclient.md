@@ -197,44 +197,39 @@ class NpmController extends Controller {
 ### Uploading Files by Multipart
 
 Once form submission contains files, submission of requesting data must be [multipart/form-data](http://tools.ietf.org/html/rfc2388)
-We need to introduce third party module [formstream] to generate `form` objects that can be consumed by HttpClient.
+[urllib] has a built-in module [formstream] to generate `form` objects that can be consumed by HttpClient.
 
 ```js
-// app/controller/npm.js
-const FormStream = require('formstream');
-class NpmController extends Controller {
+// app/controller/http.js
+class HttpController extends Controller {
   async upload() {
-    const ctx = this.ctx;
-    const form = new FormStream();
-    // set normal field and value
-    form.field('foo', 'bar');
-    // uploading the current file for test propose
-    form.file('file', __filename);
+    const { ctx } = this;
 
     const result = await ctx.curl('https://httpbin.org/post', {
-     // method is required, supports POST，PUT
       method: 'POST',
-      // generate request headers following the requirements of multipart/form-data
-      headers: form.headers(),
-      // submitted as stream mode
-      stream: form,
-      // telling HttpClient to process the return body as JSON format explicitly
       dataType: 'json',
+      data: {
+        foo: 'bar',
+      },
+
+      // one file
+      files: __filename,
+
+      // many files
+      // files: {
+      //   file1: __filename,
+      //   file2: fs.createReadStream(__filename),
+      //   file3: Buffer.from('mock file content'),
+      // },
     });
+
     ctx.body = result.data.files;
-    // final response will similar as below:
+    // Response:
     // {
     //   "file": "'use strict';\n\nconst For...."
     // }
   }
 }
-```
-
-Of course, you can add more files to achieve the requirements of upload multiple files at one time by `form.file()`
-
-```js
-form.file('file1', file1);
-form.file('file2', file2);
 ```
 
 ### Uploading Files in Stream Mode
@@ -379,6 +374,36 @@ ctx.curl(url, {
   content: '<xml><hello>world</hello></xml>',
   headers: {
     'content-type': 'text/html',
+  },
+});
+```
+
+### `files: Mixed`
+
+File upload, support: `String | ReadStream | Buffer | Array | Object`.
+
+```js
+ctx.curl(url, {
+  method: 'POST',
+  files: '/path/to/read',
+  data: {
+    foo: 'other fields',
+  },
+});
+```
+
+upload multiple files:
+
+```js
+ctx.curl(url, {
+  method: 'POST',
+  files: {
+    file1: '/path/to/read',
+    file2: fs.createReadStream(__filename),
+    file3: Buffer.from('mock file content'),
+  },
+  data: {
+    foo: 'other fields',
   },
 });
 ```
