@@ -28,8 +28,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should 200 when accessing /robots.txt', () => {
     return app.httpRequest()
       .get('/robots.txt')
-      .expect(res => assert.equal(String(res.text)
-        .replace(/\r/g, ''), 'User-agent: Baiduspider\nDisallow: /\n\nUser-agent: baiduspider\nDisallow: /'))
+      .expect(/^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/)
       .expect(200);
   });
 
