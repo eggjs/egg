@@ -42,7 +42,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should support HEAD', () => {
     return app.httpRequest()
       .head('/robots.txt')
-      .expect(res => Number(res.header['content-length']) > 0)
+      .expect(res => assert(Number(res.header['content-length']) > 0))
       // body must be empty for HEAD
       .expect(res => assert.equal(res.text, undefined))
       .expect(200);
