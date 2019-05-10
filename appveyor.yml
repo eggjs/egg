@@ -5,12 +5,10 @@ environment:
     - nodejs_version: '12'
 
 platform:
-  - x86
   - x64
 
 install:
-  # https://www.appveyor.com/docs/lang/nodejs-iojs/#installing-any-version-of-nodejs-or-iojs
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version) $env:PLATFORM  
+  - ps: Install-Product node $env:nodejs_version $env:platform
   - npm i npminstall && node_modules\.bin\npminstall
 
 test_script:
