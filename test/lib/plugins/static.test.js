@@ -1,5 +1,4 @@
 'use strict';
-
 const utils = require('../../utils');
 
 describe('test/lib/plugins/static.test.js', () => {
@@ -12,7 +11,7 @@ describe('test/lib/plugins/static.test.js', () => {
   it('should get exists js file', () => {
     return app.httpRequest()
       .get('/public/foo.js')
-      .expect('alert(\'bar\');\n')
+      .expect(/alert\(\'bar\'\);\r?\n/)
       .expect(200);
   });
 });

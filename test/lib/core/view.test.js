@@ -96,14 +96,19 @@ describe('test/lib/core/view.test.js', () => {
       app.httpRequest()
         .get('/')
         .expect(200)
-        .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .expect(res => assert.equal(String(res.text).replace(/\r/g, ''), `Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`))
+        .end(done)
+
+      ;
     });
 
     it('should render with async function controller', function(done) {
       app.httpRequest()
         .get('/async')
         .expect(200)
-        .expect(`Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .expect(res => assert.equal(String(res.text).replace(/\r/g, ''), `Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`))
+        .end(done)
+      ;
     });
 
     it('should render have helper instance', function(done) {
@@ -116,7 +121,10 @@ describe('test/lib/core/view.test.js', () => {
       app.httpRequest()
         .get('/empty')
         .expect(200)
-        .expect(`Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`, done);
+        .expect(res => assert.equal(String(res.text).replace(/\r/g, ''), `Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`))
+
+        .end(done)
+      ;
     });
 
     it('should render template string', function(done) {

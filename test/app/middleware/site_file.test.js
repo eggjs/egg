@@ -28,7 +28,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should 200 when accessing /robots.txt', () => {
     return app.httpRequest()
       .get('/robots.txt')
-      .expect('User-agent: Baiduspider\nDisallow: /\n\nUser-agent: baiduspider\nDisallow: /')
+      .expect(/^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/)
       .expect(200);
   });
 
@@ -42,7 +42,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   it('should support HEAD', () => {
     return app.httpRequest()
       .head('/robots.txt')
-      .expect('content-length', '72')
+      .expect(res => assert(Number(res.header['content-length']) > 0))
       // body must be empty for HEAD
       .expect(res => assert.equal(res.text, undefined))
       .expect(200);
