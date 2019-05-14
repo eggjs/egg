@@ -162,6 +162,10 @@ config.customLogger = {
     contextFormatter: meta => JSON.stringify(meta),
     buffer: true,
     eol: '\r\n',
+  },
+
+  otherLogger: {
+    file: './other.log',
   }
 }
 
