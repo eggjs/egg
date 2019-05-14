@@ -155,12 +155,14 @@ config.logger = {
   coreLogger: {},
 };
 config.customLogger = {
-  file: './test.log',
-  jsonFile: './test.json',
-  formatter: (meta: any) => (meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message),
-  contextFormatter: meta => JSON.stringify(meta),
-  buffer: true,
-  eol: '\r\n',
+  myLogger: {
+    file: './test.log',
+    jsonFile: './test.json',
+    formatter: (meta: any) => (meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message),
+    contextFormatter: meta => JSON.stringify(meta),
+    buffer: true,
+    eol: '\r\n',
+  }
 }
 
 // partial config

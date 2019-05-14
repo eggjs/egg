@@ -325,7 +325,9 @@ declare module 'egg' {
     logger: EggLoggerConfig;
 
     /** custom logger of egg */
-    customLogger: EggLoggerOptions;
+    customLogger: {
+      [key: string]: EggLoggerOptions;
+    };
 
     /** Configuration of httpclient in egg. */
     httpclient: HttpClientConfig;
