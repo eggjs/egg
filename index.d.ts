@@ -6,7 +6,7 @@ import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
-import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggContextLogger } from 'egg-logger';
+import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggLoggersOptions, EggLoggerOptions, EggContextLogger } from 'egg-logger';
 import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
 import {
   EggCoreBase,
@@ -210,6 +210,14 @@ declare module 'egg' {
   type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
   type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
+  /** logger config of egg */
+  export interface EggLoggerConfig extends RemoveSpecProp<EggLoggersOptions, 'type'> {
+    /** allow debug log at prod, defaults to true */
+    allowDebugAtProd?: boolean;
+    /** disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`. */
+    disableConsoleAfterReady?: boolean;
+  }
+
   /** Custom Loader Configuration */
   export interface CustomLoaderConfig extends RemoveSpecProp<FileLoaderOption, 'inject' | 'target'> {
     /**
@@ -312,22 +320,10 @@ declare module 'egg' {
      * @property {Object} coreLogger - custom config of coreLogger
      * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to true
      */
-    logger: {
-      dir: string;
-      encoding: string;
-      env: EggEnvType;
-      level: LoggerLevel;
-      consoleLevel: LoggerLevel;
-      disableConsoleAfterReady: boolean;
-      outputJSON: boolean;
-      buffer: boolean;
-      appLogName: string;
-      coreLogName: string;
-      agentLogName: string;
-      errorLogName: string;
-      coreLogger: any;
-      allowDebugAtProd: boolean;
-    };
+    logger: EggLoggerConfig;
+
+    /** custom logger of egg */
+    customLogger: EggLoggerOptions;
 
     /** Configuration of httpclient in egg. */
     httpclient: HttpClientConfig;
