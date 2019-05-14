@@ -1,5 +1,4 @@
-title: Sequelize
----
+## title: Sequelize
 
 [In the previous section](./mysql.html), we showed how to access the database through the [egg-mysql] plugin in the framework. In some more complex applications, we may need an ORM framework to help us manage the data layer code. In the Node.js community, [sequelize] is a widely used ORM framework that supports multiple data sources such as MySQL, PostgreSQL, SQLite, and MSSQL.
 
@@ -37,7 +36,7 @@ npm install --save egg-sequelize mysql2
 ```js
 exports.sequelize = {
   enable: true,
-  package: 'egg-sequelize',
+  package: "egg-sequelize"
 };
 ```
 
@@ -45,10 +44,10 @@ exports.sequelize = {
 
 ```js
 config.sequelize = {
-  dialect: 'mysql',
-  host: '127.0.0.1',
+  dialect: "mysql",
+  host: "127.0.0.1",
   port: 3306,
-  database: 'egg-sequelize-doc-default',
+  database: "egg-sequelize-doc-default"
 };
 ```
 
@@ -56,10 +55,10 @@ We can configure different data source addresses in different environment config
 
 ```js
 exports.sequelize = {
-  dialect: 'mysql',
-  host: '127.0.0.1',
+  dialect: "mysql",
+  host: "127.0.0.1",
   port: 3306,
-  database: 'egg-sequelize-doc-unittest',
+  database: "egg-sequelize-doc-unittest"
 };
 ```
 
@@ -68,7 +67,6 @@ After completing the above configuration, a project using sequelize is initializ
 ## Database and Migrations Initialization
 
 Next, let's temporarily leave the code of the egg project, design and initialize our database. First, we quickly create two databases for development and testing locally using the mysql command:
-
 
 ```bash
 mysql -u root -e 'CREATE DATABASE IF NOT EXISTS `egg-sequelize-doc-default`;'
@@ -101,15 +99,15 @@ npm install --save-dev sequelize-cli
 In the egg project, we want to put all the database Migrations related content in the `database` directory, so we create a new `.sequelizerc` configuration file in the project root directory:
 
 ```js
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  config: path.join(__dirname, 'database/config.json'),
-  'migrations-path': path.join(__dirname, 'database/migrations'),
-  'seeders-path': path.join(__dirname, 'database/seeders'),
-  'models-path': path.join(__dirname, 'app/model'),
+  config: path.join(__dirname, "database/config.json"),
+  "migrations-path": path.join(__dirname, "database/migrations"),
+  "seeders-path": path.join(__dirname, "database/seeders"),
+  "models-path": path.join(__dirname, "app/model")
 };
 ```
 
@@ -150,24 +148,24 @@ npx sequelize migration:generate --name=init-users
 After execution, a migration file (`${timestamp}-init-users.js`) is generated in the `database/migrations` directory. We modify it to handle initializing the `users` table:
 
 ```js
-'use strict';
+"use strict";
 
 module.exports = {
   // The function called when performing a database upgrade, create a `users` table
   up: async (queryInterface, Sequelize) => {
     const { INTEGER, DATE, STRING } = Sequelize;
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable("users", {
       id: { type: INTEGER, primaryKey: true, autoIncrement: true },
       name: STRING(30),
       age: INTEGER,
       created_at: DATE,
-      updated_at: DATE,
+      updated_at: DATE
     });
   },
   // The function called when performing a database downgrade, delete the `users` table
   down: async queryInterface => {
-    await queryInterface.dropTable('users');
-  },
+    await queryInterface.dropTable("users");
+  }
 };
 ```
 
@@ -189,17 +187,17 @@ After execution, our database initialization is complete.
 Finally we can start writing code to implement business logic. First, let's write the user model in the `app/model/` directory:
 
 ```js
-'use strict';
+"use strict";
 
 module.exports = app => {
   const { STRING, INTEGER, DATE } = app.Sequelize;
 
-  const User = app.model.define('user', {
+  const User = app.model.define("user", {
     id: { type: INTEGER, primaryKey: true, autoIncrement: true },
     name: STRING(30),
     age: INTEGER,
     created_at: DATE,
-    updated_at: DATE,
+    updated_at: DATE
   });
 
   return User;
@@ -210,10 +208,10 @@ This model can be accessed in the Controller and Service via `app.model.User` or
 
 ```js
 // app/controller/users.js
-const Controller = require('egg').Controller;
+const Controller = require("egg").Controller;
 
 function toInt(str) {
-  if (typeof str === 'number') return str;
+  if (typeof str === "number") return str;
   if (!str) return str;
   return parseInt(str, 10) || 0;
 }
@@ -221,13 +219,16 @@ function toInt(str) {
 class UserController extends Controller {
   async index() {
     const ctx = this.ctx;
-    const query = { limit: toInt(ctx.query.limit), offset: toInt(ctx.query.offset) };
+    const query = {
+      limit: toInt(ctx.query.limit),
+      offset: toInt(ctx.query.offset)
+    };
     ctx.body = await ctx.model.User.findAll(query);
   }
 
   async show() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.User.findById(toInt(ctx.params.id));
+    ctx.body = await ctx.model.User.findByPk(toInt(ctx.params.id));
   }
 
   async create() {
@@ -241,7 +242,7 @@ class UserController extends Controller {
   async update() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.model.User.findByPk(id);
     if (!user) {
       ctx.status = 404;
       return;
@@ -255,7 +256,7 @@ class UserController extends Controller {
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.model.User.findByPk(id);
     if (!user) {
       ctx.status = 404;
       return;
@@ -275,7 +276,7 @@ Finally we will mount this controller on the route:
 // app/router.js
 module.exports = app => {
   const { router, controller } = app;
-  router.resources('users', '/users', controller.users);
+  router.resources("users", "/users", controller.users);
 };
 ```
 
@@ -301,18 +302,18 @@ npm install --save-dev factory-girl
 
 ```js
 // test/factories.js
-'use strict';
+"use strict";
 
-const { factory } = require('factory-girl');
+const { factory } = require("factory-girl");
 
 module.exports = app => {
   // Factory instance can be accessed via app.factory
   app.factory = factory;
 
   // Define user and default data
-  factory.define('user', app.model.User, {
-    name: factory.sequence('User.name', n => `name_${n}`),
-    age: 18,
+  factory.define("user", app.model.User, {
+    name: factory.sequence("User.name", n => `name_${n}`),
+    age: 18
   });
 };
 ```
@@ -320,15 +321,13 @@ module.exports = app => {
 - Initialize the file `test/.setup.js`, introduce the factory, and ensure that the data is cleaned after the test is executed to avoid being affected.
 
 ```js
-const { app } = require('egg-mock/bootstrap');
-const factories = require('./factories');
+const { app } = require("egg-mock/bootstrap");
+const factories = require("./factories");
 
 before(() => factories(app));
 afterEach(async () => {
   // clear database after each test case
-  await Promise.all([
-    app.model.User.destroy({ truncate: true, force: true }),
-  ]);
+  await Promise.all([app.model.User.destroy({ truncate: true, force: true })]);
 });
 ```
 
@@ -336,14 +335,14 @@ Then we can start writing real test cases:
 
 ```js
 // test/app/controller/users.test.js
-const { assert, app } = require('egg-mock/bootstrap');
+const { assert, app } = require("egg-mock/bootstrap");
 
-describe('test/app/service/users.test.js', () => {
-  describe('GET /users', () => {
-    it('should work', async () => {
+describe("test/app/service/users.test.js", () => {
+  describe("GET /users", () => {
+    it("should work", async () => {
       // Quickly create some users object into the database via factory-girl
-      await app.factory.createMany('user', 3);
-      const res = await app.httpRequest().get('/users?limit=2');
+      await app.factory.createMany("user", 3);
+      const res = await app.httpRequest().get("/users?limit=2");
       assert(res.status === 200);
       assert(res.body.length === 2);
       assert(res.body[0].name);
@@ -351,35 +350,37 @@ describe('test/app/service/users.test.js', () => {
     });
   });
 
-  describe('GET /users/:id', () => {
-    it('should work', async () => {
-      const user = await app.factory.create('user');
+  describe("GET /users/:id", () => {
+    it("should work", async () => {
+      const user = await app.factory.create("user");
       const res = await app.httpRequest().get(`/users/${user.id}`);
       assert(res.status === 200);
       assert(res.body.age === user.age);
     });
   });
 
-  describe('POST /users', () => {
-    it('should work', async () => {
+  describe("POST /users", () => {
+    it("should work", async () => {
       app.mockCsrf();
-      let res = await app.httpRequest().post('/users')
+      let res = await app
+        .httpRequest()
+        .post("/users")
         .send({
           age: 10,
-          name: 'name',
+          name: "name"
         });
       assert(res.status === 201);
       assert(res.body.id);
 
       res = await app.httpRequest().get(`/users/${res.body.id}`);
       assert(res.status === 200);
-      assert(res.body.name === 'name');
+      assert(res.body.name === "name");
     });
   });
 
-  describe('DELETE /users/:id', () => {
-    it('should work', async () => {
-      const user = await app.factory.create('user');
+  describe("DELETE /users/:id", () => {
+    it("should work", async () => {
+      const user = await app.factory.create("user");
 
       app.mockCsrf();
       const res = await app.httpRequest().delete(`/users/${user.id}`);
@@ -411,7 +412,7 @@ We also provide sequelize boilerplate that integrates the modules [egg-sequelize
 [sequelize]: http://docs.sequelizejs.com/
 [sequelize-cli]: https://github.com/sequelize/cli
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
-[Migrations]: http://docs.sequelizejs.com/manual/tutorial/migrations.html
+[migrations]: http://docs.sequelizejs.com/manual/tutorial/migrations.html
 [factory-girl]: https://github.com/aexmachina/factory-girl
 [eggjs/examples/sequelize]: https://github.com/eggjs/examples/tree/master/sequelize
 [egg-mysql]: https://github.com/eggjs/egg-mysql
