@@ -180,6 +180,10 @@ config2.logger = {
   encoding: 'utf8',
   env: 'prod',
   level: 'INFO',
+  coreLogger: {
+    file: './test.log',
+    level: 'ALL',
+  }
 }
 
 // singleton
