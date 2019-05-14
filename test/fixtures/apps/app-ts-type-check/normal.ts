@@ -152,6 +152,7 @@ config.logger = {
   agentLogName: 'egg-agent.log',
   errorLogName: 'common-error.log',
   allowDebugAtProd: false,
+  coreLogger: {},
 };
 config.customLogger = {
   file: './test.log',
