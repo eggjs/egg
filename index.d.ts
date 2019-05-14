@@ -213,7 +213,7 @@ declare module 'egg' {
   /** logger config of egg */
   export interface EggLoggerConfig extends RemoveSpecProp<EggLoggersOptions, 'type'> {
     /** custom config of coreLogger */
-    coreLogger: Partial<EggLoggerOptions>;
+    coreLogger?: Partial<EggLoggerOptions>;
     /** allow debug log at prod, defaults to true */
     allowDebugAtProd?: boolean;
     /** disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`. */
