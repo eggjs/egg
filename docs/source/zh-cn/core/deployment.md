@@ -68,7 +68,7 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 - `--title=egg-server-showcase` 用于方便 ps 进程时 grep 用，默认为 `egg-server-${appname}`。
 - `--framework=yadan` 如果应用使用了[自定义框架](../advanced/framework.md)，可以配置 `package.json` 的 `egg.framework` 或指定该参数。
 - `--ignore-stderr` 忽略启动期的报错。
-- `--https.key` 指定https所需密钥文件的路径，应为完整路径，如以https启动web服务，应配置此启动参数。
+- `--https.key` 指定 HTTPS 所需密钥文件的完整路径。
 - `--https.cert` 指定https所需证书文件的路径，应为完整路径，如以https启动web服务，应配置此启动参数。
 
 - 所有 [egg-cluster] 的 Options 都支持透传，如 `--port` 等。
