@@ -76,6 +76,8 @@ class AppBootHook {
     });
   }
 }
+
+module.exports = AppBootHook;
 ```
 
 **Note: It is not recommended to do long-time operations in the custom lifecycle function, because the framework has a startup timeout detection.**

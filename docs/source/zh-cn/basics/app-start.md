@@ -74,6 +74,8 @@ class AppBootHook {
     });
   }
 }
+
+module.exports = AppBootHook;
 ```
 
 **注意：在自定义生命周期函数中不建议做太耗时的操作，框架会有启动的超时检测。**
