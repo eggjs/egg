@@ -338,7 +338,7 @@ Then we can start writing real test cases:
 // test/app/controller/users.test.js
 const { assert, app } = require('egg-mock/bootstrap');
 
-describe('test/app/service/users.test.js', () => {
+describe('test/app/controller/users.test.js', () => {
   describe('GET /users', () => {
     it('should work', async () => {
       // Quickly create some users object into the database via factory-girl
