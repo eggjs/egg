@@ -111,7 +111,7 @@ egg-example
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 > 注意：
