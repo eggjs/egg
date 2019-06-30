@@ -84,14 +84,14 @@
     "webstorm-disable-index": "^1.1.2"
   },
   "main": "index.js",
-  "types": "index.d.ts",
+  "types": "types",
   "files": [
     "index.js",
     "lib",
     "app",
     "config",
     "agent.js",
-    "index.d.ts"
+    "types"
   ],
   "scripts": {
     "lint": "eslint app config lib test *.js",

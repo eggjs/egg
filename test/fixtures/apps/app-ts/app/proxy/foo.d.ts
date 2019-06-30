@@ -1,3 +1,6 @@
+// NOTE
+import 'egg';
+
 declare module 'egg' {
   interface Foo {
     bar(): string;

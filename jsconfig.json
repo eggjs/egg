@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+  },
+  "include": [
+    "**/*.js"
+  ],
+  "exclude": [
+    "./run/**/*.js",
+    "./test/**/*.js"
+  ]
+}
