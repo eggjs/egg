@@ -24,7 +24,7 @@ Then get up and run by using the following commands.
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 ## Step by Step
@@ -115,7 +115,7 @@ Now you can start up the Web Server and see your application in action.
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 > Note：
