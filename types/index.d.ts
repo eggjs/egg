@@ -30,8 +30,12 @@ import 'egg-static';
 import 'egg-jsonp';
 import 'egg-view';
 
+import Singleton, { ISingletonOptions } from './lib/core/singleton';
+
+export { Singleton };
+
 // plain object
-type PlainObject<T = any> = { [key: string]: T };
+export type PlainObject<T = any> = { [key: string]: T };
 
 // Remove specific property from the specific class
 type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
@@ -561,7 +565,7 @@ export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:di
   /**
    * create a singleton instance
    */
-  addSingleton(name: string, create: any): void;
+  addSingleton<N extends string, T>(name: N, create: ISingletonOptions<N, T>['create']): void;
 
   runSchedule(schedulePath: string): Promise<any>;
 
