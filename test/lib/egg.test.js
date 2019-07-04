@@ -272,7 +272,7 @@ describe('test/lib/egg.test.js', () => {
     after(() => app.close());
 
     // use it to record create coverage codes time
-    it('before: should cluster app ready', () => {
+    before('before: should cluster app ready', () => {
       app = utils.cluster('apps/app-throw');
       app.coverage(true);
       return app.ready();
