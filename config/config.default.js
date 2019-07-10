@@ -205,6 +205,10 @@ module.exports = appInfo => {
       depth: 5,
       parameterLimit: 1000,
     },
+    onerror(err) {
+      err.message += ', check bodyParser config';
+      throw err;
+    },
   };
 
   /**
