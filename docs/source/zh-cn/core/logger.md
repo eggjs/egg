@@ -236,12 +236,21 @@ module.exports = appInfo => {
     customLogger: {
       xxLogger: {
         file: path.join(appInfo.root, 'logs/xx.log'),
+        formatter(meta) {
+          const { date, level, pid, paddingMessage, message } = meta;
+          return `${pid} ${date} ${level} ${paddingMessage} ${message}`;
+        },
+        contextFormatter(meta) {
+          const { ctx, date, level, pid, message } = meta;
+          return `[ContextLogger] [${pid}] [${date}] [${level}] [${ctx.url}] ${message}`;
+        },
       },
     },
   };
 };
 ```
 
+formatter是全局格式化，contextFormatter是自定义context logger日志格式化。
 可通过 `app.getLogger('xxLogger')` / `ctx.getLogger('xxLogger')` 获取，最终的打印结果和 coreLogger 类似。
 
 ### 高级自定义日志
