@@ -117,6 +117,8 @@ $ egg-scripts stop [--title=egg-server]
 
 ### Node.js 性能平台（alinode）
 
+**注意：** Node.js 性能平台 (alinode) 目前仅支持 macOS 和 Linux，不支持 Windows。
+
 [Node.js 性能平台](https://www.aliyun.com/product/nodejs) 是面向所有 Node.js 应用提供 `性能监控、安全提醒、故障排查、性能优化` 等服务的整体性解决方案，提供完善的工具链和服务，协助开发者快速发现和定位线上问题。
 
 #### 安装 Runtime
