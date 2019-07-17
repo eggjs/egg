@@ -8,6 +8,18 @@ module.exports = app => {
     }, 1);
   });
 
+  app.get('/throw-error-setter', function* () {
+    this.body = 'foo';
+    setTimeout(() => {
+      const err = new Error('abc');
+      Object.defineProperty(err, "message", {
+        get() { return 'abc' },
+        set: undefined
+      });
+      throw err;
+    }, 1);
+  });
+
   app.get('/throw-unhandledRejection', function* () {
     this.body = 'foo';
     new Promise((resolve, reject) => {

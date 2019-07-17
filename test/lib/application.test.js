@@ -134,6 +134,27 @@ describe('test/lib/application.test.js', () => {
     });
   });
 
+  describe('handle uncaughtException when error has only a getter', () => {
+    let app;
+    before(() => {
+      app = utils.cluster('apps/app-throw');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should handle uncaughtException and log it', async () => {
+      await app.httpRequest()
+        .get('/throw-error-setter')
+        .expect('foo')
+        .expect(200);
+
+      await sleep(1100);
+      const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
+      const body = fs.readFileSync(logfile, 'utf8');
+      assert(body.includes('abc (uncaughtException throw 1 times on pid'));
+    });
+  });
+
   describe('warn confused configurations', () => {
     it('should warn if confused configurations exist', async () => {
       const app = utils.app('apps/confused-configuration');
