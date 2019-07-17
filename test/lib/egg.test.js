@@ -346,7 +346,7 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
-  describe('egg-ready', () => {
+  describe.skip('egg-ready', () => {
     let app;
     before(() => {
       app = utils.app('apps/demo');

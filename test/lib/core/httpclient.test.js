@@ -295,7 +295,7 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
   });
 
-  describe('before app ready multi httpclient request tracer', () => {
+  describe.skip('before app ready multi httpclient request tracer', () => {
     let app;
     before(() => {
       app = utils.app('apps/httpclient-tracer');
