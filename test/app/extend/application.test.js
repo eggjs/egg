@@ -191,4 +191,22 @@ describe('test/app/extend/application.test.js', () => {
       );
     });
   });
+
+  describe('app.handleRequest(ctx, fnMiddleware)', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should wait for middleware resolution', async () => {
+      const ctx = app.createAnonymousContext();
+      await app.handleRequest(ctx, async ctx => {
+        await sleep(100);
+        ctx.body = 'middleware resolution';
+      });
+      assert(ctx.body === 'middleware resolution');
+    });
+  });
 });
