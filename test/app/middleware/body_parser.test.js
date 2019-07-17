@@ -49,6 +49,15 @@ describe('test/app/middleware/body_parser.test.js', () => {
       .expect(200, done);
   });
 
+  it('should 413 when post json body over the limit', () => {
+    app.mockCsrf();
+    return app.httpRequest()
+      .post('/test/body_parser/user')
+      .send({ foo: 'a'.repeat(1024 * 200) })
+      .expect(/request entity too large, check bodyParser config/)
+      .expect(413);
+  });
+
   it('should disable body parser', async () => {
     app1 = utils.app('apps/body_parser_testapp_disable');
     await app1.ready();
