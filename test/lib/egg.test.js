@@ -168,15 +168,8 @@ describe('test/lib/egg.test.js', () => {
       const baseDir = utils.getFilepath('apps/dumpconfig');
       let json;
 
-      await sleep(100);
-      json = readJson(path.join(baseDir, 'run/application_config.json'));
-      assert(json.config.dynamic === 1);
-      json = readJson(path.join(baseDir, 'run/agent_config.json'));
-      assert(json.config.dynamic === 0);
-
       await app.ready();
 
-      await sleep(100);
       json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.dynamic === 2);
       json = readJson(path.join(baseDir, 'run/agent_config.json'));
