@@ -3,7 +3,7 @@ const path = require('path');
 const assert = require('assert');
 const sleep = require('mz-modules/sleep');
 
-function readJson(p) {
+function readJSON(p) {
   return JSON.parse(fs.readFileSync(p));
 }
 
