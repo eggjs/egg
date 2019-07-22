@@ -233,6 +233,30 @@ module.exports = appInfo => {
 
 Now, you can get loggers via `app.getLogger('xxLogger')` or `ctx.getLogger('xxLogger')`, and the logs printed from those loggers are similar to the ones from `coreLogger`.
 
+### Custom logger formatter
+
+```js
+// config/config.${env}.js
+const path = require('path');
+
+module.exports = appInfo => {
+  return {
+    customLogger: {
+      xxLogger: {
+        file: path.join(appInfo.root, 'logs/xx.log'),
+        formatter(meta) {
+          return `[${meta.date}] ${meta.message}`;
+        },
+        // ctx logger
+        contextFormatter(meta) {
+          return `[${meta.date}] [${meta.ctx.method} ${meta.ctx.url}] ${meta.message}`;
+        },
+      },
+    },
+  };
+};
+```
+
 ### Advanced
 
 Logs will be written into files by default. Further, they will also be printed into terminal in development. But what if we need to print those into another place? Creating customized transport can take you there.
