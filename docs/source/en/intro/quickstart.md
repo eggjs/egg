@@ -12,7 +12,7 @@ By following along with this guide step by step, you can quickly get started wit
 ## The Quick Way
 
 To begin with, let's quickly initialize the project by using a scaffold,
-which will quickly generate some of the major pieces of the application.
+which will quickly generate some of the major pieces of the application (`npm >=6.1.0`).
 
 ```bash
 $ mkdir egg-example && cd egg-example
@@ -24,7 +24,7 @@ Then get up and run by using the following commands.
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 ## Step by Step
@@ -115,7 +115,7 @@ Now you can start up the Web Server and see your application in action.
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 > Note：

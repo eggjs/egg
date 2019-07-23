@@ -244,6 +244,30 @@ module.exports = appInfo => {
 
 可通过 `app.getLogger('xxLogger')` / `ctx.getLogger('xxLogger')` 获取，最终的打印结果和 coreLogger 类似。
 
+### 自定义日志格式
+
+```js
+// config/config.${env}.js
+const path = require('path');
+
+module.exports = appInfo => {
+  return {
+    customLogger: {
+      xxLogger: {
+        file: path.join(appInfo.root, 'logs/xx.log'),
+        formatter(meta) {
+          return `[${meta.date}] ${meta.message}`;
+        },
+        // ctx logger
+        contextFormatter(meta) {
+          return `[${meta.date}] [${meta.ctx.method} ${meta.ctx.url}] ${meta.message}`;
+        },
+      },
+    },
+  };
+};
+```
+
 ### 高级自定义日志
 
 日志默认是打印到日志文件中，当本地开发时同时会打印到终端。

@@ -10,7 +10,7 @@ title: 快速入门
 
 ## 快速初始化
 
-我们推荐直接使用脚手架，只需几条简单指令，即可快速生成项目:
+我们推荐直接使用脚手架，只需几条简单指令，即可快速生成项目（`npm >=6.1.0`）:
 
 ```bash
 $ mkdir egg-example && cd egg-example
@@ -22,7 +22,7 @@ $ npm i
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 ## 逐步搭建
@@ -111,7 +111,7 @@ egg-example
 
 ```bash
 $ npm run dev
-$ open localhost:7001
+$ open http://localhost:7001
 ```
 
 > 注意：

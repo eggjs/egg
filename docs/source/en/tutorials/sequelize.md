@@ -227,7 +227,7 @@ class UserController extends Controller {
 
   async show() {
     const ctx = this.ctx;
-    ctx.body = await ctx.model.User.findById(toInt(ctx.params.id));
+    ctx.body = await ctx.model.User.findByPk(toInt(ctx.params.id));
   }
 
   async create() {
@@ -241,7 +241,7 @@ class UserController extends Controller {
   async update() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.model.User.findByPk(id);
     if (!user) {
       ctx.status = 404;
       return;
@@ -255,7 +255,7 @@ class UserController extends Controller {
   async destroy() {
     const ctx = this.ctx;
     const id = toInt(ctx.params.id);
-    const user = await ctx.model.User.findById(id);
+    const user = await ctx.model.User.findByPk(id);
     if (!user) {
       ctx.status = 404;
       return;
@@ -338,7 +338,7 @@ Then we can start writing real test cases:
 // test/app/controller/users.test.js
 const { assert, app } = require('egg-mock/bootstrap');
 
-describe('test/app/service/users.test.js', () => {
+describe('test/app/controller/users.test.js', () => {
   describe('GET /users', () => {
     it('should work', async () => {
       // Quickly create some users object into the database via factory-girl

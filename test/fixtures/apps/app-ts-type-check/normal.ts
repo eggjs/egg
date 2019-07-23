@@ -138,6 +138,36 @@ config.httpclient = {
   proxy: 'http://127.0.0.1:8888'
 }
 config.httpclient = httpclientOption;
+config.logger = {
+  dir: 'logs',
+  encoding: 'utf8',
+  env: 'prod',
+  level: 'INFO',
+  consoleLevel: 'INFO',
+  disableConsoleAfterReady: true,
+  outputJSON: false,
+  buffer: true,
+  appLogName: `app-web.log`,
+  coreLogName: 'egg-web.log',
+  agentLogName: 'egg-agent.log',
+  errorLogName: 'common-error.log',
+  allowDebugAtProd: false,
+  coreLogger: {},
+};
+config.customLogger = {
+  myLogger: {
+    file: './test.log',
+    jsonFile: './test.json',
+    formatter: (meta: any) => (meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message),
+    contextFormatter: meta => JSON.stringify(meta),
+    buffer: true,
+    eol: '\r\n',
+  },
+
+  otherLogger: {
+    file: './other.log',
+  }
+}
 
 // partial config
 const config2 = {} as PowerPartial<EggAppConfig>;
@@ -154,6 +184,16 @@ config2.customLoader = {
 }
 config2.security = {
   csrf: false,
+}
+config2.logger = {
+  dir: 'logs',
+  encoding: 'utf8',
+  env: 'prod',
+  level: 'INFO',
+  coreLogger: {
+    file: './test.log',
+    level: 'ALL',
+  }
 }
 
 // singleton

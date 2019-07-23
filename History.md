@@ -1,5 +1,40 @@
 # History
 
+## 2019-07-17, Version 2.23.0 @atian25
+
+### Notable changes
+
+* **features**
+  * error message rewrite when it has only a getter
+
+* **fixes**
+  * handleRequest method should return a promise
+  * more log for bodyParser
+
+* **docs**
+  * httpclient upload files
+  * typings improve
+
+### Commits
+
+  * [[`6bfc0eb5b`](http://github.com/eggjs/egg/commit/6bfc0eb5b9a6d38c73d46bf641ece6adda3481a1)] - feat: error message rewrite when it has only a getter (#3796) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`489f52b5c`](http://github.com/eggjs/egg/commit/489f52b5ce4078efccefc8837729b42c15828722)] - fix: handleRequest method should return a promise (#3820) (引证 <<browsnet@163.com>>)
+  * [[`29a2f2fd9`](http://github.com/eggjs/egg/commit/29a2f2fd92e4d3e3cf0ee9ff034d8cdce07ee693)] - fix: more log for bodyParser (#3809) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`6dc8a2d14`](http://github.com/eggjs/egg/commit/6dc8a2d14582c774479593f002af2f2b96e0ce96)] - chore: fix ci (#3825) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`e30511eff`](http://github.com/eggjs/egg/commit/e30511effeb77d954e2c15b684c274b85da2c69b)] - docs: add alinode supported platforms (#3821) (hyj1991 <<yeekwanvong@gmail.com>>)
+  * [[`c67ca2059`](http://github.com/eggjs/egg/commit/c67ca2059f2c44140e3a5bc46c38c87f52a08172)] - docs: open should come with protocol (#3787) (zhennann <<zhen.nann@icloud.com>>)
+  * [[`9adcd40f8`](http://github.com/eggjs/egg/commit/9adcd40f81a22670abf2f5f9167d9c8de438ad34)] - docs(lifecyle): add class export in sample code (#3758) (Kermit Xuan <<33770367+Kermit-Xuan@users.noreply.github.com>>)
+  * [[`4ca62734d`](http://github.com/eggjs/egg/commit/4ca62734db829cad7e3ea35bc6394de98c9ad160)] - fix: typos (#3768) (Jeff <<jeff.tian@outlook.com>>)
+  * [[`b1cb5332d`](http://github.com/eggjs/egg/commit/b1cb5332d433c158f59ab4877f3f6ab07bf9fe79)] - chore: remove @types/urllib (#3732) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`3de31f541`](http://github.com/eggjs/egg/commit/3de31f5418503f02afde9e92409d5f40e664c46c)] - fix(typings): add custom logger typings (#3697) (吖猩 <<whxaxes@gmail.com>>)
+  * [[`35af6331c`](http://github.com/eggjs/egg/commit/35af6331c97b2e9c9f831ff193709f8fc984f3a9)] - docs: https options en version (#3702) (liulun <<xland@live.cn>>)
+  * [[`9c23232a4`](http://github.com/eggjs/egg/commit/9c23232a47679bdcb8f071a5cc01f013f443aa05)] - docs(sequelize): replace findById with findByPk (#3700) (Zhao zuoqi <<30346283+Mavericker-1996@users.noreply.github.com>>)
+  * [[`3fccb4f27`](http://github.com/eggjs/egg/commit/3fccb4f275b2982b974a1a1d99cec32795f4efd3)] - docs: https options (#3701) (liulun <<xland@live.cn>>)
+  * [[`5b2dbd5b0`](http://github.com/eggjs/egg/commit/5b2dbd5b097d80b0f9150d1a03ec1d9c73af8dec)] - test: fix some test methods failed on windows platform (#3686) (QingDeng <<zrl412@163.com>>)
+  * [[`409990299`](http://github.com/eggjs/egg/commit/409990299fd3afeb35968bc06b02f4b0137718ba)] - fix：add the doc test on windows (#3654) (Maledong <<maledong_github@outlook.com>>)
+  * [[`17fab1c1d`](http://github.com/eggjs/egg/commit/17fab1c1d645076bda76be351fcb3c6f86cea4ca)] - docs: httpclient upload files (#3682) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`da2d439d6`](http://github.com/eggjs/egg/commit/da2d439d6f79f767055021bf96f7ef73207a751a)] - docs（lifecyle): fix typo (#3681) (+v <<ljw@live.jp>>)
+
 ## 2019-04-30, Version 2.22.2 @atian25
 
 ### Notable changes
