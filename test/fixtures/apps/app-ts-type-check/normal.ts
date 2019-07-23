@@ -197,7 +197,7 @@ config2.logger = {
 }
 
 // singleton
-const redis = {} as Singleton<{ test(): void; }>;
+const redis = {} as Singleton<'redis', { test(): void; }>;
 redis.get('123').test();
 
 // extends egg
