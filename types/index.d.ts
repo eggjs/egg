@@ -30,7 +30,7 @@ import 'egg-static';
 import 'egg-jsonp';
 import 'egg-view';
 
-import Singleton, { ISingletonOptions } from './lib/core/singleton';
+import Singleton, { SingletonOptions } from './lib/core/singleton';
 
 export { Singleton };
 
@@ -565,7 +565,7 @@ export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:di
   /**
    * create a singleton instance
    */
-  addSingleton<N extends string, T>(name: N, create: ISingletonOptions<N, T>['create']): void;
+  addSingleton<N extends string, T>(name: N, create: SingletonOptions<N, T>['create']): void;
 
   runSchedule(schedulePath: string): Promise<any>;
 

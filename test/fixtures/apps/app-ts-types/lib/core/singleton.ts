@@ -1,4 +1,4 @@
-import Singleton, { ISingletonConfig } from 'egg/lib/core/singleton';
+import Singleton, { SingletonConfig } from 'egg/lib/core/singleton';
 import { Application } from 'egg';
 
 const app = new Application();
@@ -10,8 +10,8 @@ interface Foo {
 
 declare module 'egg' {
   interface EggAppConfig {
-    foo: ISingletonConfig<Foo>;
-    bar: ISingletonConfig<string>;
+    foo: SingletonConfig<Foo>;
+    bar: SingletonConfig<string>;
   }
 }
 

@@ -1,6 +1,6 @@
 import { Application, EggAppConfig, PowerPartial } from 'egg';
 
-export type ISingletonConfig<C> = ({
+export type SingletonConfig<C> = ({
   client: PowerPartial<C>,
 } | {
   clients: {
@@ -10,16 +10,16 @@ export type ISingletonConfig<C> = ({
   default?: C,
 };
 
-export interface ISingletonOptions<N extends string, T> {
+export interface SingletonOptions<N extends string, T> {
   name: N;
   app: Application;
-  create: (config: IConfig<N, T>, app: Application) => (T | Promise<T>);
+  create: (config: Config<N, T>, app: Application) => (T | Promise<T>);
 }
 
-type IConfig<N extends string, T> = EggAppConfig[ISingletonOptions<N, T>['name']] extends ISingletonConfig<infer P> ?  P : never;
+type Config<N extends string, T> = EggAppConfig[SingletonOptions<N, T>['name']] extends SingletonConfig<infer P> ?  P : never;
 
 declare class Singleton<N extends string, T> {
-  constructor(options: ISingletonOptions<N, T>);
+  constructor(options: SingletonOptions<N, T>);
 
   public init(): void | Promise<void>;
 
@@ -29,9 +29,9 @@ declare class Singleton<N extends string, T> {
 
   public get(id: string): T;
 
-  public createInstance(config: IConfig<N, T>): T;
+  public createInstance(config: Config<N, T>): T;
 
-  public createInstanceAsync(config: IConfig<N, T>): Promise<T>;
+  public createInstanceAsync(config: Config<N, T>): Promise<T>;
 }
 
 export default Singleton;
