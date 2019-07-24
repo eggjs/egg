@@ -96,4 +96,16 @@ describe('test/ts/index.test.js', () => {
         .end();
     });
   });
+
+  describe('typescript types check', () => {
+    it('typechecking pass', async () => {
+      await coffee.fork(
+        require.resolve('typescript/bin/tsc'),
+        [ '-p', path.resolve(__dirname, '../fixtures/apps/app-ts-types/tsconfig.json') ]
+      )
+        .debug()
+        .expect('code', 0)
+        .end();
+    });
+  });
 });
