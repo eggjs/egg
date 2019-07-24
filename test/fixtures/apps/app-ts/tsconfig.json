@@ -10,7 +10,6 @@
     "types" : ["node"],
     "module": "commonjs",
     "strict": true,
-    "noImplicitAny": false,
-    "allowSyntheticDefaultImports": true
+    "noImplicitAny": false
   }
 }

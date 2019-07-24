@@ -16,7 +16,7 @@ import {
   EggLoaderOptions as CoreLoaderOptions,
   BaseContextClass as CoreBaseContextClass,
 } from 'egg-core';
-import EggCookies from 'egg-cookies';
+import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
