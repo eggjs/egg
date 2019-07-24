@@ -32,8 +32,6 @@ declare class Singleton<N extends string, T> {
   public createInstance(config: IConfig<N, T>): T;
 
   public createInstanceAsync(config: IConfig<N, T>): Promise<T>;
-
-  private _extendDynamicMethods(client: T);
 }
 
 export default Singleton;
