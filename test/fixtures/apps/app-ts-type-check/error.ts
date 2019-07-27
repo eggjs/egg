@@ -62,5 +62,5 @@ const config2 = {} as PowerPartial<EggAppConfig>;
 console.info(config2.security.csrf);
 
 // singleton
-const redis = {} as Singleton<'redis', { test(): void; }>;
+const redis = {} as Singleton<{ test(): void; }>;
 redis.get('123').checkSingleTon();

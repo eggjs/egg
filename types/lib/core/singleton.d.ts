@@ -20,18 +20,18 @@ type SingletonConfig<C> = DefaultSingletonConfig<C> | SingleClientConfig<C> | Mu
 
 type Config<N extends string> = EggAppConfig[N] extends SingletonConfig<infer P> ?  P : never;
 
-type Creator<N extends string, T> = (config: Config<N>, app: Application) => (T | Promise<T>);
+type Creator<T, N extends string> = (config: Config<N>, app: Application) => (T | Promise<T>);
 
-export interface SingletonOptions<N extends string, T> {
+export interface SingletonOptions<T, N extends string> {
   name: N;
   app: Application;
-  create: Creator<N, T>;
+  create: Creator<T, N>;
 }
 
 type MultiClientKeys<N extends string> = EggAppConfig[N] extends MultiClientConfig<infer P> ? (keyof EggAppConfig[N]['clients']) : string;
 
-declare class Singleton<N extends string, T> {
-  constructor(options: SingletonOptions<N, T>);
+declare class Singleton<T, N extends string = string> {
+  constructor(options: SingletonOptions<T, N>);
 
   public init(): void | Promise<void>;
 

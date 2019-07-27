@@ -565,7 +565,7 @@ export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:di
   /**
    * create a singleton instance
    */
-  addSingleton<N extends string, T>(name: N, create: SingletonOptions<N, T>['create']): void;
+  addSingleton<T, N extends string>(name: N, create: SingletonOptions<T, N>['create']): void;
 
   runSchedule(schedulePath: string): Promise<any>;
 
