@@ -10,9 +10,15 @@ workflow "Pull Request" {
 }
 
 ## actions
+action "npm prepare" {
+  uses = "docker://thonatos/github-actions-nodejs"
+  args = "npm i -g npminstall"
+}
+
 action "npm install" {
   uses = "docker://thonatos/github-actions-nodejs"
-  args = "npm install"
+  needs = "npm prepare"
+  args = "npminstall"
 }
 
 action "npm ci" {
