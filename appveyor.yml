@@ -2,9 +2,13 @@ environment:
   matrix:
     - nodejs_version: '8'
     - nodejs_version: '10'
+    - nodejs_version: '12'
+
+platform:
+  - x64
 
 install:
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node $env:nodejs_version $env:platform
   - npm i npminstall && node_modules\.bin\npminstall
 
 test_script:
