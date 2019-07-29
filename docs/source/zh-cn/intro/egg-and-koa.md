@@ -6,7 +6,7 @@ title: Egg.js 与 Koa
 Node.js 是一个异步的世界，官方 API 支持的都是 callback 形式的异步编程模型，这会带来许多问题，例如
 
 - [callback hell](http://callbackhell.com/): 最臭名昭著的 callback 嵌套问题。
-- [release zalgo](https://oren.github.io/blog/zalgo.html): 异步函数中可能同步调用 callback 返回数据，带来不一致性。
+- [release zalgo](https://oren.github.io/#/articles/zalgo/): 异步函数中可能同步调用 callback 返回数据，带来不一致性。
 
 因此社区提供了各种异步的解决方案，最终胜出的是 Promise，它也内置到了 ECMAScript 2015 中。而在 Promise 的基础上，结合 Generator 提供的切换上下文能力，出现了 [co] 等第三方类库来让我们用同步写法编写异步代码。同时，[async function] 这个官方解决方案也于 ECMAScript 2017 中发布，并在 Node.js 8 中实现。
 
