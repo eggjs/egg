@@ -256,7 +256,7 @@ CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全
 通常来说，对于 CSRF 攻击有一些通用的[防范方案](https://www.owasp.org/index.php/Cross-Site_Request_Forgery_%28CSRF%29_Prevention_Cheat_Sheet#CSRF_Specific_Defense)，简单的介绍几种常用的防范方案：
 
 - Synchronizer Tokens：通过响应页面时将 token 渲染到页面上，在 form 表单提交的时候通过隐藏域提交上来。
-- Double Cookie Defense：将 token 设置在 Cookie 中，在提交 post 请求的时候提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。
+- Double Cookie Defense：将 token 设置在 Cookie 中，在提交（POST、PUT、PATCH、DELETE 等）请求时提交 Cookie，并通过 header 或者 body 带上 Cookie 中的 token，服务端进行对比校验。
 - Custom Header：信任带有特定的 header（例如 `X-Requested-With: XMLHttpRequest`）的请求。这个方案可以被绕过，所以 rails 和 django 等框架都[放弃了该防范方式](https://www.djangoproject.com/weblog/2011/feb/08/security/)。
 
 框架结合了上述几种防范方式，提供了一个可配置的 CSRF 防范策略。
