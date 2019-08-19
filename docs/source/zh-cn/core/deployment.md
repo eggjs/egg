@@ -180,7 +180,11 @@ exports.alinode = {
 ```bash
 $ [master] node version v8.9.4
 $ [master] alinode version v3.8.4
+$ [Tue Aug 06 2019 15:54:25 GMT+0800 (China Standard Time)] Connecting to wss://agentserver.node.aliyun.com:8080...
+$ [Tue Aug 06 2019 15:54:26 GMT+0800 (China Standard Time)] agent register ok.
 ```
+
+其中 `agent register ok.` 表示配置的 `egg-alinode` 正确连接上了 Node.js 性能平台服务器。
 
 #### 访问控制台
 
