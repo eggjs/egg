@@ -223,6 +223,6 @@ describe('test/app/extend/application.test.js', () => {
       // `app.keys=` will be ignored
       app.keys = undefined;
       assert.deepEqual(app.keys, [ 'foo' ]);
-    });    
+    });
   });
 });
