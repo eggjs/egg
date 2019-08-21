@@ -198,7 +198,7 @@ const tick = (id, msg) => {
 module.exports = app => {
   return async (ctx, next) => {
     if (true) {
-      ctx.socket.disconnet();
+      ctx.socket.disconnect();
       return;
     }
     await next();
