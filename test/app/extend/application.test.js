@@ -209,4 +209,20 @@ describe('test/app/extend/application.test.js', () => {
       assert(ctx.body === 'middleware resolution');
     });
   });
+
+  describe('app.keys', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work for app.keys and app.keys=', async () => {
+      assert.deepEqual(app.keys, [ 'foo' ]);
+      // `app.keys=` will be ignored
+      app.keys = undefined;
+      assert.deepEqual(app.keys, [ 'foo' ]);
+    });
+  });
 });
