@@ -24,8 +24,8 @@ So is there any better way? The answer is: YES! We provide a new type of model t
 
 ## Core Idea
 
-- Inspired by the [Leader/Follower](http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf) model.
-- The client is divided into two roles: 
+- Inspired by the [Leader/Follower](https://www.dre.vanderbilt.edu/~schmidt/PDF/lf.pdf) model.
+- The client is divided into two roles:
   - Leader: Be responsible for maintaining the connection with the remote server, only one Leader for the same type of client.
   - Follower: Delegate specific operations to the Leader. A common way is Subscribe-Model (let the Leader interact with remote server and wait for its return).
 - How to determine who Leader is, who Follower is? There are two modes:
@@ -173,7 +173,7 @@ const Base = require('sdk-base');
 class RegistryClient extends Base {
   constructor(options) {
     super({
-      // Specify a method for asynchronous start 
+      // Specify a method for asynchronous start
       initMethod: 'init',
     });
     this._options = options;
@@ -494,7 +494,7 @@ in conclusion:
 
 Students who are interested may have look at [enhanced multi-process development model](https://github.com/eggjs/egg/issues/322) discussion process.
 
-## The Configuration Items Related to Cluster-Client in the Framework 
+## The Configuration Items Related to Cluster-Client in the Framework
 
 ```js
 /**
