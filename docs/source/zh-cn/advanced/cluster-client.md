@@ -24,7 +24,7 @@ title: 多进程研发模式增强
 
 ## 核心思想
 
-- 受到 [Leader/Follower](http://www.cs.wustl.edu/~schmidt/PDF/lf.pdf) 模式的启发。
+- 受到 [Leader/Follower](https://www.dre.vanderbilt.edu/~schmidt/PDF/lf.pdf) 模式的启发。
 - 客户端会被区分为两种角色：
   - Leader: 负责和远程服务端维持连接，对于同一类的客户端只有一个 Leader。
   - Follower: 会将具体的操作委托给 Leader，常见的是订阅模型（让 Leader 和远程服务端交互，并等待其返回）。
