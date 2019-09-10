@@ -457,7 +457,7 @@ exports.redis = {
 
 module.exports = {
   parseMsg(action, payload = {}, metadata = {}) {
-    const meta = Object.assign({}, {
+    const meta = Object.assign(Object.create(null), {
       timestamp: Date.now(),
     }, metadata);
 

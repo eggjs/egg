@@ -426,7 +426,7 @@ module.exports = APIClient;
 const APIClient = require('some-client'); // 上面那个模块
 module.exports = app => {
   const config = app.config.apiClient;
-  app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster });
+  app.apiClient = new APIClient(Object.assign(Object.create(null), config, { cluster: app.cluster });
   app.beforeStart(async () => {
     await app.apiClient.ready();
   });

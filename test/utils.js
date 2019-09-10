@@ -109,7 +109,7 @@ function formatOptions(name, options) {
     // name is options
     options = name;
   }
-  return Object.assign({}, {
+  return Object.assign(Object.create(null), {
     baseDir,
     customEgg: eggPath,
     cache: false,
