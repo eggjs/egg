@@ -60,6 +60,10 @@ $ open http://localhost:7001
 
 参见 [egg-examples](https://github.com/eggjs/examples)。
 
+## 贡献者
+
+<embed class="contributors" style="max-width: 100%;" src="https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280" alt="contributors" />
+
 ## 贡献代码
 
 请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的Bug或者意见](https://github.com/eggjs/egg/issues)。

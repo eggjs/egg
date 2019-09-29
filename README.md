@@ -65,6 +65,10 @@ $ open http://localhost:7001
 
 See [egg-examples](https://github.com/eggjs/examples).
 
+## Contributors
+
+<embed class="contributors" style="max-width: 100%;" src="https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280" alt="contributors" />
+
 ## How to Contribute
 
 Please let us know how can we help. Do check out [issues](https://github.com/eggjs/egg/issues) for bug reports or suggestions first.
