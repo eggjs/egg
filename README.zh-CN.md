@@ -62,7 +62,7 @@ $ open http://localhost:7001
 
 ## 贡献者
 
-<embed class="contributors" style="max-width: 100%;" src="https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280" alt="contributors" />
+[![contributors](https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280&size=48&padding=6&type=jpeg)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## 贡献代码
 
