@@ -1,6 +1,6 @@
-![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/egg-logo.png)
-
-为企业级框架和应用而生的 Web 框架
+<div style="text-align:center">
+	<img src="docs/assets/egg-banner.png" />
+</div>
 
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
@@ -25,26 +25,14 @@
 [download-image]: https://img.shields.io/npm/dm/egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg
 
-## 安装
-
-```bash
-$ npm install egg --save
-```
-
-支持 Node.js 8.x 及以上版本。
-
 ## 特性
 
-- ✔︎ 内置多进程管理
-- ✔︎ 高度可扩展的插件机制
-- ✔︎ 深度框架定制
-- ✔︎ 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- 内置多进程管理
+- 高度可扩展的插件机制
+- 深度框架定制
+- 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-## 文档和社区
-
-- [官方站点 && 文档](https://eggjs.org/zh-cn/)
-- [插件列表](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
-- [框架列表](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
+> 支持 Node.js 8.x 及以上版本。
 
 ## 快速开始
 
@@ -56,9 +44,12 @@ $ npm run dev
 $ open http://localhost:7001
 ```
 
-## 示例
+## 文档
 
-参见 [egg-examples](https://github.com/eggjs/examples)。
+- [官方文档](https://eggjs.org/zh-cn/)
+- [插件列表](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- [框架列表](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
+- [官方示例](https://github.com/eggjs/examples)
 
 ## 贡献者
 
