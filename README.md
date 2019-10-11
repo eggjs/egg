@@ -9,6 +9,7 @@
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
+[![Open Collective backers and sponsors][opencollective-img]][opencollective-url]
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
@@ -26,6 +27,8 @@
 [download-url]: https://npmjs.org/package/egg
 [gitter-image]: https://img.shields.io/gitter/room/eggjs/egg.svg?style=flat-square
 [gitter-url]: https://gitter.im/eggjs/egg
+[opencollective-img]:https://img.shields.io/opencollective/all/eggjs?style=flat-square
+[opencollective-url]:https://opencollective.com/eggjs
 
 ## Features
 
@@ -64,6 +67,11 @@ $ open http://localhost:7001
 Please let us know how can we help. Do check out [issues](https://github.com/eggjs/egg/issues) for bug reports or suggestions first.
 
 To become a contributor, please follow our [contributing guide](CONTRIBUTING.md).
+
+## Sponsors and Backers
+
+[![sponsors](https://opencollective.com/eggjs/tiers/sponsors.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
+[![backers](https://opencollective.com/eggjs/tiers/backers.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
 
 ## License
 

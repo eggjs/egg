@@ -9,6 +9,7 @@
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
+[![Open Collective backers and sponsors][opencollective-img]][opencollective-url]
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
@@ -24,6 +25,8 @@
 [snyk-url]: https://snyk.io/test/npm/egg
 [download-image]: https://img.shields.io/npm/dm/egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/egg
+[opencollective-img]:https://img.shields.io/opencollective/all/eggjs?style=flat-square
+[opencollective-url]:https://opencollective.com/eggjs
 
 ## 特性
 
@@ -60,6 +63,11 @@ $ open http://localhost:7001
 请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的Bug或者意见](https://github.com/eggjs/egg/issues)。
 
 如果你是一个代码贡献者，请参考[代码贡献规范](CONTRIBUTING.md)。
+
+## 项目赞助
+
+[![sponsors](https://opencollective.com/eggjs/tiers/sponsors.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
+[![backers](https://opencollective.com/eggjs/tiers/backers.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
 
 ## 开源协议
 
