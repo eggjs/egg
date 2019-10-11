@@ -1,5 +1,40 @@
 # History
 
+## 2019-10-11, Version 2.24.0 @thonatos
+
+### Notable changes
+
+* **features**
+  * feat: set default body-parser limitation to 1mb
+
+* **fixes**
+  * app.keys getter must have a setter either
+  * more log for bodyParser
+
+* **docs**
+  * add opencollective to sponsors list
+  * update lf url
+  * fix hsts docs error
+  * fix typo of socket.io
+  * modify invalid links
+
+### Commits
+
+  * [[`bddf1e183`](http://github.com/eggjs/egg/commit/bddf1e183b5b6fc0f1414f81948ffdedd71e16a9)] - feat: set default body-parser limitation to 1mb (#3903) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`5ddf07c43`](http://github.com/eggjs/egg/commit/5ddf07c435ad81142a6e995583849e20c7348dda)] - docs: update readme (#3968) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`be1b72606`](http://github.com/eggjs/egg/commit/be1b72606a62a8efe88849976126cc8ca61b8d7e)] - docs(security): hsts is disabled by default (#3972) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`e5e948783`](http://github.com/eggjs/egg/commit/e5e948783a45ea138592a33e9ae7faa20a85af26)] - docs: add opencollective to sponsors list (#3971) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`cde921456`](http://github.com/eggjs/egg/commit/cde921456657c16dba81c6fb9c991b62a826d120)] - docs: update lf url (#3922) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`17b22c86b`](http://github.com/eggjs/egg/commit/17b22c86b7f83bc168d9c7176191618e19add1dd)] - docs: fix typo of socket.io (#3895) (lqzhgood <<9134671+lqzhgood@users.noreply.github.com>>)
+  * [[`a9d0cf5c0`](http://github.com/eggjs/egg/commit/a9d0cf5c0d5aadc957e12854f7a3ab6469f83f75)] - fix: app.keys getter must have a setter either (#3891) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`f1707410b`](http://github.com/eggjs/egg/commit/f1707410bc3f703d69aae27965cc622b9a768107)] - docs(deployment): add logs that the egg app has been successfully connected to alinode (#3868) (hyj1991 <<yeekwanvong@gmail.com>>)
+  * [[`24c388b4a`](http://github.com/eggjs/egg/commit/24c388b4a5ec4c717875a1510accbd5882800ad0)] - docs(egg-and-koa): modify invalid links (#3851) (sdjdd <<352207572@qq.com>>)
+  * [[`84894e871`](http://github.com/eggjs/egg/commit/84894e8714747876821447faeaada0dabc2a7147)] - chore: add sponsor config (#3751) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`064616934`](http://github.com/eggjs/egg/commit/064616934b4ff2c044395baae60bd33d3d7dc5ff)] - chore: add node12 for ci (#3196) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`45a966621`](http://github.com/eggjs/egg/commit/45a966621746f9d2c9e8a91fc1b17f75d97033de)] - docs(quickstart): npm version for npm init command (#3836) (QingDeng <<zrl412@163.com>>)
+  * [[`341beda59`](http://github.com/eggjs/egg/commit/341beda59ee99867998e28603f9ed623e49c33aa)] - test: mv assert to fixtures (#3829) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`79dbb14a5`](http://github.com/eggjs/egg/commit/79dbb14a535c27a55daf83b441b47aabff472b06)] - docs(logger): formatter (#3835) (TZ | 天猪 <<atian25@qq.com>>)
+
 ## 2019-07-17, Version 2.23.0 @atian25
 
 ### Notable changes
