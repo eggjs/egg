@@ -1,6 +1,6 @@
-![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/egg-logo.png)
-
-Born to build better enterprise frameworks and apps
+<div style="text-align:center">
+	<img src="docs/assets/egg-banner.png" />
+</div>
 
 [![NPM version][npm-image]][npm-url]
 [![NPM quality][quality-image]][quality-url]
@@ -8,8 +8,8 @@ Born to build better enterprise frameworks and apps
 [![Test coverage][codecov-image]][codecov-url]
 [![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
-[![NPM download][download-image]][download-url]
-[![Gitter][gitter-image]][gitter-url]
+[![npm download][download-image]][download-url]
+[![Open Collective backers and sponsors][opencollective-img]][opencollective-url]
 
 [npm-image]: https://img.shields.io/npm/v/egg.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/egg
@@ -27,29 +27,17 @@ Born to build better enterprise frameworks and apps
 [download-url]: https://npmjs.org/package/egg
 [gitter-image]: https://img.shields.io/gitter/room/eggjs/egg.svg?style=flat-square
 [gitter-url]: https://gitter.im/eggjs/egg
-
-## Installation
-
-```bash
-$ npm install egg --save
-```
-
-Node.js >= 8.0.0 required.
+[opencollective-img]:https://img.shields.io/opencollective/all/eggjs?style=flat-square
+[opencollective-url]:https://opencollective.com/eggjs
 
 ## Features
 
-- ✔︎ Built-in process management
-- ✔︎ Plugin system
-- ✔︎ Framework customization
-- ✔︎ Lots of [plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- Built-in Process Management
+- Plugin System
+- Framework Customization
+- Lots of [plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-## Docs & Community
-
-- [Website && Documentations](https://eggjs.org/en/index.html)
-- [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
-- [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
-
-## Getting Started
+## Quickstart
 
 Follow the commands listed below.
 
@@ -61,15 +49,29 @@ $ npm run dev
 $ open http://localhost:7001
 ```
 
-## Examples
+> Node.js >= 8.0.0 required.
 
-See [egg-examples](https://github.com/eggjs/examples).
+## Documentations
+
+- [Documentations](https://eggjs.org/en/index.html)
+- [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
+- [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
+- [Examples](https://github.com/eggjs/examples)
+
+## Contributors
+
+[![contributors](https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280&size=48&padding=6&type=jpeg)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## How to Contribute
 
 Please let us know how can we help. Do check out [issues](https://github.com/eggjs/egg/issues) for bug reports or suggestions first.
 
 To become a contributor, please follow our [contributing guide](CONTRIBUTING.md).
+
+## Sponsors and Backers
+
+[![sponsors](https://opencollective.com/eggjs/tiers/sponsors.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
+[![backers](https://opencollective.com/eggjs/tiers/backers.svg?avatarHeight=48)](https://opencollective.com/eggjs#support)
 
 ## License
 
