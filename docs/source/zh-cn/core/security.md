@@ -585,7 +585,7 @@ HTTP 是网络应用广泛使用的协议，负责 Web 内容的请求和获取�
 
 对于 HTTPS 来讲，还有一点要注意的是 HTTP 严格传输安全（HSTS），如果不使用 HSTS，当用户在浏览器中输入网址时没有加 HTTPS，浏览器会默认使用 HTTP 访问
 
-框架提供了 `hsts Strict-Transport-Security` 这个头的默认开启。让 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
+框架默认关闭了 `hsts Strict-Transport-Security`。使得 HTTPS 站点不跳转到 HTTP，如果站点支持 HTTPS，请一定要开启。
 
 如果我们的Web 站点是 http 站点，需要关闭这个头。配置如下：
 

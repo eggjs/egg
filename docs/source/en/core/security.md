@@ -594,7 +594,7 @@ So, if you use the Egg framework to develop web site developers, please be sure 
 
 For HTTPS, one should pay attention to is the HTTP transport security (HSTS) strictly, if you don't use HSTS, when a user input url in the browser without HTTPS, the browser will use HTTP access by default.
 
-Framework provides `HSTS Strict-Transport-security`, this header will be opened by default, then let the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header.
+Framework has disableb `HSTS Strict-Transport-security` by default, then make the HTTPS site not redirect to HTTP. If your site supports HTTPS, be sure to open it.If our Web site is an HTTP site, we need to close this header.
 
 The configuration is as follows:
 
