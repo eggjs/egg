@@ -27,8 +27,8 @@ describe('test/app/middleware/body_parser.test.js', () => {
   after(() => app.close());
   afterEach(() => app1 && app1.close());
 
-  it('should 200 when post form body below the limit', done => {
-    app.httpRequest()
+  it('should 200 when post form body below the limit', () => {
+    return app.httpRequest()
       .post('/test/body_parser/user')
       .set('Cookie', cookies)
       .set('Content-Type', 'application/x-www-form-urlencoded')
@@ -36,26 +36,27 @@ describe('test/app/middleware/body_parser.test.js', () => {
     // https://snyk.io/vuln/npm:qs:20170213 test case
       .send(querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' }))
       .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should 200 when post json body below the limit', done => {
-    app.httpRequest()
+  it('should 200 when post json body below the limit', () => {
+    return app.httpRequest()
       .post('/test/body_parser/user')
       .set('Cookie', cookies)
       .set('Content-Type', 'application/json')
       .send({ foo: 'bar', _csrf: csrf, ']': 'toString' })
       .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should 413 when post json body over the limit', done => {
+  it('should 413 when post json body over the limit', () => {
     app.mockCsrf();
-    app.httpRequest()
+    return app.httpRequest()
       .post('/test/body_parser/user')
+      .set('Connection', 'keep-alive')
       .send({ foo: 'a'.repeat(1024 * 200) })
       .expect(/request entity too large, check bodyParser config/)
-      .expect(413, done);
+      .expect(413);
   });
 
   it('should disable body parser', async () => {
