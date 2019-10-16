@@ -50,7 +50,7 @@ describe('test/lib/core/singleton.test.js', () => {
     }
   });
 
-  it('should init with clients', async () => {
+  it.only('should init with clients', async () => {
     const name = 'dataService';
 
     const clients = {
