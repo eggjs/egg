@@ -196,6 +196,54 @@ describe('test/lib/core/singleton.test.js', () => {
     assert(dataService.config.foo === 'bar');
   });
 
+
+  it('should createInstance without client,clients,default', async () => {
+    const app = {
+      config: {
+        dataService: {
+        },
+      },
+    };
+    const name = 'dataService';
+
+    const singleton = new Singleton({
+      name,
+      app,
+      create,
+    });
+
+    try {
+      singleton.init();
+      assert(false, 'should throw error but NOT');
+    } catch (ex) {
+      assert(ex.message && ex.message.includes('empty'));
+    }
+  });
+
+  it('should createInstanceAsync without client,clients,default', async () => {
+    const app = {
+      config: {
+        dataService: {
+        },
+      },
+    };
+    const name = 'dataService';
+
+    const singleton = new Singleton({
+      name,
+      app,
+      create,
+    });
+
+    try {
+      singleton.init();
+      assert(false, 'should throw error but NOT');
+    } catch (ex) {
+      assert(ex.message && ex.message.includes('empty'));
+    }
+  });
+
+
   it('should work with frozen', async () => {
     function create(config) {
       const d = new DataService(config);
