@@ -8,9 +8,12 @@ title: 运行环境
 框架有两种方式指定运行环境：
 
 1. 通过 `config/env` 文件指定，该文件的内容就是运行环境，如 `prod`。一般通过构建工具来生成这个文件。
-2. 通过 `EGG_SERVER_ENV` 环境变量指定。
+```
+// config/env
+prod
+```
 
-其中，方式 2 比较常用，因为通过 `EGG_SERVER_ENV` 环境变量指定运行环境更加方便，比如在生产环境启动应用：
+通过 `EGG_SERVER_ENV` 环境变量指定运行环境更加方便，比如在生产环境启动应用：
 
 ```shell
 EGG_SERVER_ENV=prod npm start

@@ -8,10 +8,13 @@ An web application itself should be stateless and has the ability to set its own
 
 Egg has two ways to configure runtime environment:
 
-1. Use `config/env` file, usually we use the build tools to generate this file, the content of this file is just the env value, such as `prod`.
-2. use `EGG_SERVER_ENV` environment variable to configure.
+1. Use `config/env` file, usually we use the build tools to generate this file, the content of this file is just an env value, such as `prod`.
+```
+// config/env
+prod
+```
 
- The second way will be more commonly used, defining the runtime environment via `EGG_SERVER_ENV` when you start the application is more convenient, for example, use the code below to start the application in the production environment.
+Defining the runtime environment via `EGG_SERVER_ENV` when you start the application is more convenient, for example, use the code below to start the application in the production environment.
 
 ```shell
 EGG_SERVER_ENV=prod npm start
