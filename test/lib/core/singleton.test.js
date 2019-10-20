@@ -261,6 +261,34 @@ describe('test/lib/core/singleton.test.js', () => {
     assert(warn);
   });
 
+  it('should return client name when create', async () => {
+    let success = true;
+    const name = 'dataService';
+    const clientName = 'customClient';
+    function create(config, app, client) {
+      if (client !== clientName) {
+        success = false;
+      }
+    }
+    const app = {
+      config: {
+        dataService: {
+          clients: {
+            customClient: { foo: 'bar1' },
+          },
+        },
+      },
+    };
+    const singleton = new Singleton({
+      name,
+      app,
+      create,
+    });
+    singleton.init();
+
+    assert(success);
+  });
+
   describe('async create', () => {
     it('should init with client', async () => {
       const name = 'dataService';
@@ -352,6 +380,34 @@ describe('test/lib/core/singleton.test.js', () => {
       } catch (err) {
         assert(err.message === 'egg:singleton dataService only support create asynchronous, please use createInstanceAsync');
       }
+    });
+
+    it('should return client name when create', async () => {
+      let success = true;
+      const name = 'dataService';
+      const clientName = 'customClient';
+      async function create(config, app, client) {
+        if (client !== clientName) {
+          success = false;
+        }
+      }
+      const app = {
+        config: {
+          dataService: {
+            clients: {
+              customClient: { foo: 'bar1' },
+            },
+          },
+        },
+      };
+      const singleton = new Singleton({
+        name,
+        app,
+        create,
+      });
+      await singleton.init();
+
+      assert(success);
     });
   });
 });
