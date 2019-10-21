@@ -83,7 +83,7 @@ Arguments of dispatch can be configured in `config.{env}.js`.
 exports.cluster = {
   listen: {
     port: 7001,
-    hostname: '0.0.0.0',
+    hostname: '127.0.0.1', // It is not recommended to set the hostname to '0.0.0.0', which will allow connections from external networks and sources, please use it if you know the risk.
     // path: '/var/run/egg.sock',
   }
 }
