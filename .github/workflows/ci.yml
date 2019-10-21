@@ -5,7 +5,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-2016, macOS-latest]
+        os: [ubuntu-latest, macOS-latest]
         node-version: [8, 10, 12]
     steps:
     - name: Checkout Git Source
