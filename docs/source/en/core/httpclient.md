@@ -298,19 +298,6 @@ exports.httpclient = {
     // maximum number of idle sockets
     maxFreeSockets: 256,
   },
-
-  httpsAgent: {
-    // default enable https KeepAlive
-    keepAlive: true,
-    // idle KeepAlive socket can survive for 4 seconds
-    freeSocketTimeout: 4000,
-    // when sockets have no activity for more than 30s, it will be processed as timeout
-    timeout: 30000,
-    // maximum number of sockets allow to be created
-    maxSockets: Number.MAX_SAFE_INTEGER,
-    // maximum number of idle sockets
-    maxFreeSockets: 256,
-  },
 };
 ```
 
