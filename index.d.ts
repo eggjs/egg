@@ -16,7 +16,6 @@ import {
   EggLoaderOptions as CoreLoaderOptions,
   BaseContextClass as CoreBaseContextClass,
 } from 'egg-core';
-import { EggStaticConfig } from 'egg-static';
 import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
@@ -27,6 +26,7 @@ import 'egg-security';
 import 'egg-development';
 import 'egg-logrotator';
 import 'egg-schedule';
+import "egg-static";
 import 'egg-jsonp';
 import 'egg-view';
 
@@ -465,8 +465,6 @@ declare module 'egg' {
     };
 
     siteFile: PlainObject<string | Buffer>;
-
-    static: EggStaticConfig;
 
     watcher: PlainObject;
 
