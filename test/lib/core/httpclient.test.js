@@ -311,7 +311,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     after(() => app.close());
 
-    it('should app request before ready use same tracer', function* () {
+    it.skip('should app request before ready use same tracer', function* () {
       const httpclient = app.httpclient;
 
       let reqTracers = [];
