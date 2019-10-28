@@ -1,5 +1,24 @@
 # History
 
+## 2019-10-28, Version 2.25.0 @dead-horse
+
+### Notable changes
+
+* **features**
+  * support config.maxIpsCount, deprecate config.maxProxyCount
+  * singleton returns client name when create client
+
+### Commits
+
+  * [[`b3479e8e2`](http://github.com/eggjs/egg/commit/b3479e8e2b6cc74c95eef4334bd6b054fddb6158)] - feat: support config.maxIpsCount (#4014) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`380e7d634`](http://github.com/eggjs/egg/commit/380e7d6344b4f608397fed5dea4f19918ca347f5)] - docs(env): cleanup the document (#3988) (Alpha <<AlphaWong@users.noreply.github.com>>)
+  * [[`2c5e64a50`](http://github.com/eggjs/egg/commit/2c5e64a50edd78522aa5bf83e4ea8ef4d72f5b40)] - docs: add promo link (#3995) (Haoliang Gao <<sakura9515@gmail.com>>)
+  * [[`adca16637`](http://github.com/eggjs/egg/commit/adca1663712acd361dddd1b390ca48dda5a3608e)] - docs(deployment): update the description for hostname (#3994) (Suyi <<thonatos@users.noreply.github.com>>)
+  * [[`27dacb7c9`](http://github.com/eggjs/egg/commit/27dacb7c9dae4b65c1b973d39aae1f8c9a4cd7b1)] - feat:Singleton returns client name when create client (#3905) (暗色调 <<41288382+dark-tone@users.noreply.github.com>>)
+  * [[`d3f68c371`](http://github.com/eggjs/egg/commit/d3f68c3710946a63f640b1885e9c7120db935d8e)] - docs(deployment): modify hostname (#3987) (zfx <<502545703@qq.com>>)
+  * [[`73ad6c086`](http://github.com/eggjs/egg/commit/73ad6c0861d5d6f8235fde2a5ba985ad9f53fcfe)] - chore: use github actions to run CI (#3974) (Suyi <<thonatos@users.noreply.github.com>>)
+
+
 ## 2019-10-11, Version 2.24.0 @thonatos
 
 ### Notable changes
