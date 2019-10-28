@@ -1,15 +1,21 @@
 sudo: false
+os:
+  - linux
+  - osx
 language: node_js
 node_js:
   - '6'
   - '8'
   - '10'
+before_install:
+  - npm install -g npminstall
 install:
-  - npm i npminstall && npminstall
+  - npminstall
+  - npminstall codecov
 script:
   - npm run ci
 after_script:
-  - npminstall codecov && codecov
+  - codecov
   - test $TRAVIS_NODE_VERSION = 8 && travis_wait scripts/doc_travis.sh
 env:
   global:

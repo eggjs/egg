@@ -1,0 +1,27 @@
+name: Continuous integration
+on: [push, pull_request]
+jobs:
+  Runner:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+        node-version: [6, 8, 10]
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@master
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Dependencies
+      run: |
+        npm install
+    - name: Continuous integration
+      run: npm run ci
+    - name: Code Coverage
+      run: |
+        npm install codecov -g
+        codecov
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
