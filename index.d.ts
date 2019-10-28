@@ -468,7 +468,7 @@ declare module 'egg' {
 
     static: {
       prefix: string;
-      dir: string | string[];
+      dir: string | ({prefix: string, dir: string} | string)[];
       // support lazy load
       dynamic: boolean;
       preload: boolean;
