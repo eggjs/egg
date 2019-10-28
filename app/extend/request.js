@@ -96,7 +96,7 @@ module.exports = {
     // Compatible with maxProxyCount logic (previous logic is wrong, only for compatibility with legacy logic)
     if (!maxIpsCount && this.app.config.maxProxyCount) maxIpsCount = this.app.config.maxProxyCount + 1;
 
-    if (maxIpsCount) {
+    if (maxIpsCount > 0) {
       // if maxIpsCount present, only keep `maxIpsCount` ips
       // [ illegalIp, clientRealIp, proxyIp1, proxyIp2 ...]
       this[IPS] = this[IPS].slice(-maxIpsCount);
