@@ -48,12 +48,22 @@ module.exports = appInfo => {
     proxy: false,
 
     /**
-     * How many proxies the application deployed behind
-     * framework use this to get the clients' real ips
-     * `0` means not limited, for most common usage, it should be `1`
+     *
+     * max ips read from proxy ip header, default to 0 (means infinity)
+     * to prevent users from forging client ip addresses via x-forwarded-for
+     * @see https://github.com/koajs/koa/blob/master/docs/api/request.md#requestips
+     * @member {Integer} Config#maxIpsCount
+     * @default
+     * @since 2.25.0
+     */
+    maxIpsCount: 0,
+
+    /**
+     * please use maxIpsCount instead
      * @member {Integer} Config#maxProxyCount
      * @default
      * @since 2.21.0
+     * @deprecated
      */
     maxProxyCount: 0,
 

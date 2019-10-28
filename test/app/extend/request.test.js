@@ -98,6 +98,12 @@ describe('test/app/extend/request.test.js', () => {
         assert.deepEqual(req.ips, [ '127.0.0.2', '127.0.0.3' ]);
       });
 
+      it('should used work with maxIpsCount', () => {
+        mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
+        mm(app.config, 'maxIpsCount', 1);
+        assert.deepEqual(req.ips, [ '127.0.0.3' ]);
+      });
+
       it('should used x-real-ip', () => {
         mm(app.config, 'ipHeaders', 'X-Forwarded-For, X-Real-IP');
         mm(req.header, 'x-forwarded-for', '');
