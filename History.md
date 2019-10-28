@@ -1,5 +1,16 @@
 # History
 
+## 2019-10-28, Version 1.20.0 @dead-horse
+
+### Notable changes
+
+**features**
+  * support config.maxIpsCount, deprecate config.maxProxyCount
+
+### Commits
+
+  * [[`a4013b4e7`](http://github.com/eggjs/egg/commit/a4013b4e7fc6eff44115b790391029c298dc3800)] - feat: support config.maxIpsCount (#4013) (Yiyu He <<dead_horse@qq.com>>)
+
 ## 2019-04-11, Version 1.19.0 @dead-horse
 
 ### Notable changes
