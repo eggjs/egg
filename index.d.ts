@@ -26,7 +26,7 @@ import 'egg-security';
 import 'egg-development';
 import 'egg-logrotator';
 import 'egg-schedule';
-import "egg-static";
+import 'egg-static';
 import 'egg-jsonp';
 import 'egg-view';
 
