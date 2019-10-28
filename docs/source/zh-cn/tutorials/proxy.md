@@ -27,7 +27,7 @@ exports.proxy = true;
 exports.ipHeaders = 'X-Real-Ip, X-Forwarded-For';
 ```
 
-### `config.maxProxyCount`
+### `config.maxIpsCount`
 
 `X-Forwarded-For` 等传递 IP 的头，通用的格式是：
 
@@ -41,13 +41,15 @@ X-Forwarded-For: client, proxy1, proxy2
 X-Forwarded-For: fake, client, proxy1, proxy2
 ```
 
-为了避免此问题，我们可以通过 `config.maxProxyCount` 来配置前置的反向代理数量，这样在获取请求真实 IP 地址时，就会忽略掉用户多传递的伪造 IP 地址了。例如我们将应用部署在一个统一的接入层之后（例如阿里云 SLB），我们可以将此参数配置为 `1`，这样用户就无法通过 `X-Forwarded-For` 请求头来伪造 IP 地址了。
+为了避免此问题，我们可以通过 `config.maxIpsCount` 来配置前置的反向代理数量，这样在获取请求真实 IP 地址时，就会忽略掉用户多传递的伪造 IP 地址了。例如我们将应用部署在一个统一的接入层之后（例如阿里云 SLB），我们可以将此参数配置为 `1`，这样用户就无法通过 `X-Forwarded-For` 请求头来伪造 IP 地址了。
 
 ```js
 // config/config.default.js
 
-exports.maxProxyCount = 1;
+exports.maxIpsCount = 1;
 ```
+
+此配置项与 [koa](https://github.com/koajs/koa/blob/master/docs/api/request.md#requestips) 提供的 `options.maxIpsCount` 作用一致。
 
 ### `config.protocolHeaders`
 

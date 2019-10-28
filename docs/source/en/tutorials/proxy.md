@@ -27,7 +27,7 @@ When the proxy configuration is enabled, the app parses the [X-Forwarded-For](ht
 exports.ipHeaders = 'X-Real-Ip, X-Forwarded-For';
 ```
 
-### `config.maxProxyCount`
+### `config.maxIpsCount`
 
 The general format of the `X-Forwarded-For` field is:
 
@@ -41,13 +41,15 @@ We can use the first IP address as the real IP adderess of the request, but if a
 X-Forwarded-For: fake, client, proxy1, proxy2
 ```
 
-In order to avoid this problem, we can configure the number of reverse proxies through `config.maxProxyCount`, so the fake IP address passed by the user will be ignored. For example, if we deploy the application behind a unified access layer (such as Alibaba Cloud SLB, Amazon ELB), we can configure this configuration to `1` so that users cannot forge IP addresses through the `X-Forwarded-For` request header.
+In order to avoid this problem, we can configure the number of reverse proxies through `config.maxIpsCount`, so the fake IP address passed by the user will be ignored. For example, if we deploy the application behind a unified access layer (such as Alibaba Cloud SLB, Amazon ELB), we can configure this configuration to `1` so that users cannot forge IP addresses through the `X-Forwarded-For` request header.
 
 ```js
 // config/config.default.js
 
-exports.maxProxyCount = 1;
+exports.maxIpsCount = 1;
 ```
+
+This configuration item has the same effect as `options.maxIpsCount` provided by [koa](https://github.com/koajs/koa/blob/master/docs/api/request.md#requestips).
 
 ### `config.protocolHeaders`
 
