@@ -613,7 +613,7 @@ HTTP 请求都是无状态的，但是我们的 Web 应用通常都需要知道�
 class CookieController extends Controller {
   async add() {
     const ctx = this.ctx;
-    const count = ctx.cookies.get('count');
+    let count = ctx.cookies.get('count');
     count = count ? Number(count) : 0;
     ctx.cookies.set('count', ++count);
     ctx.body = count;

@@ -613,7 +613,7 @@ Through `ctx.cookies`, we can conveniently and safely set and get Cookie in Cont
 class CookieController extends Controller {
   async add() {
     const ctx = this.ctx;
-    const count = ctx.cookies.get('count');
+    let count = ctx.cookies.get('count');
     count = count ? Number(count) : 0;
     ctx.cookies.set('count', ++count);
     ctx.body = count;
