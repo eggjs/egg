@@ -14,7 +14,6 @@ describe('test/lib/core/loader/load_boot.test.js', () => {
   });
 
   it('should load app.js', async () => {
-    app.mockLog(app.coreLogger);
     await app.close();
     app.expectLog('app is ready');
 
