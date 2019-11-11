@@ -466,16 +466,6 @@ declare module 'egg' {
 
     siteFile: PlainObject<string | Buffer>;
 
-    static: {
-      prefix: string;
-      dir: string | string[];
-      // support lazy load
-      dynamic: boolean;
-      preload: boolean;
-      buffer: boolean;
-      maxFiles: number;
-    } & PlainObject;
-
     watcher: PlainObject;
 
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
