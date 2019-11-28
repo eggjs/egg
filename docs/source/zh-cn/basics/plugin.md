@@ -83,7 +83,7 @@ app.mysql.query(sql, values);
 
 ```js
 // 对于内置插件，可以用下面的简洁方式开启或关闭
-exports.onerror = false;
+exports.enable = false;
 ```
 
 ### 根据环境配置
