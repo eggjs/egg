@@ -310,7 +310,7 @@ module.exports = () => {
 
 // app/router.js
 module.exports = app => {
-  app.router.get('s', '/search', app.middlewares.uppercase(), app.controller.search)
+  app.router.get('s', '/search', app.middleware.uppercase(), app.controller.search)
 };
 
 // curl http://localhost:7001/search?name=egg
