@@ -14,7 +14,7 @@ Egg has two ways to configure runtime environment:
 prod
 ```
 
-Defining the runtime environment via `EGG_SERVER_ENV` when you start the application is more convenient, for example, use the code below to start the application in the production environment.
+2. Defining the runtime environment via `EGG_SERVER_ENV` when you start the application is more convenient, for example, use the code below to start the application in the production environment.
 
 ```shell
 EGG_SERVER_ENV=prod npm start
