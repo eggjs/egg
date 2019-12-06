@@ -631,6 +631,29 @@ Although Cookie is only a header in HTTP, multiple key-value pairs can be set in
 
 In Web applications, Cookie is usually used to send the identity information of the client, so it has many safety related configurations which can not be ignored, [Cookie](../core/cookie-and-session.md#cookie) explains the usage and safety related configurations of Cookie in detail and is worth being read in depth.
 
+#### Configuration
+
+There are mainly these attributes below can be used to configure default Cookie options in `config.default.js`:
+
+```js
+module.exports = {
+  cookies: {
+    // httpOnly: true | false,
+    // sameSite: 'none|lax|strict',
+  },
+};
+```
+
+e.g.: Configured application level Cookie [SameSite](https://www.ruanyifeng.com/blog/2019/09/cookie-samesite.html) property to `Lax`.
+
+```js
+module.exports = {
+  cookies: {
+    sameSite: 'lax',
+  },
+};
+```
+
 ### Session
 
 By using Cookie, we can create an individual Session specific to every user to store user identity information, which will be encrypted then stored in Cookie to perform session persistence across requests.
