@@ -1,5 +1,21 @@
 # History
 
+## 2019-12-07, Version 2.26.0 @fengmk2
+
+### Notable changes
+
+* **features**
+  * add application level Cookie options, can fix [Cookie SameSite warning on Chrome](https://support.google.com/chrome/thread/16654793?hl=en) now.
+  * use new URL instead of url.parse, avoiding potential security issues.
+
+### Commits
+
+  * [[`b28134e77`](http://github.com/eggjs/egg/commit/b28134e7709c803eb7a7ed071a25bac8a28e3d1f)] - feat: add application level Cookie options (#4086) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`b7718c1cc`](http://github.com/eggjs/egg/commit/b7718c1cc2b94b02ee728088060fdbc85e462b6d)] - fix: use new URL instead of url.parse (#4048) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`afed9105d`](http://github.com/eggjs/egg/commit/afed9105df34aad60c40ecba0e44ddaad1a605dc)] - fix: index.d.ts (#4012) (dxd <<dxd_sjtu@outlook.com>>)
+  * [[`690711bab`](http://github.com/eggjs/egg/commit/690711bab8bd8c838b4dd651baea3bc49a5fa1f1)] - test: fix the testcase error of load_boot.test.js (#4041) (Xin Wang <<wangxinalex@gmail.com>>)
+  * [[`6c55a436b`](http://github.com/eggjs/egg/commit/6c55a436bf2afb7bb99810401a6f92b3a58471ff)] - docs: fix typo (#4028) (Xuehua Cai <<pixcai@163.com>>)
+
 ## 2019-10-28, Version 2.25.0 @dead-horse
 
 ### Notable changes
