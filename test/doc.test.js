@@ -7,11 +7,13 @@ const runscript = require('runscript');
 const utils = require('./utils');
 
 describe('test/doc.test.js', () => {
-
   let app;
   before(async () => {
-    const doctools = path.join(process.cwd(), 'node_modules/.bin', 'doctools');
-    await runscript(`${doctools} build`, { cwd: path.dirname(__dirname) });
+    const cwd = path.dirname(__dirname);
+    const doctools = path.join(cwd, 'node_modules', '.bin', 'doctools');
+    const cmd = `${doctools} build`;
+    console.log('Runing %j on %j', cmd, cwd);
+    await runscript(cmd, { cwd });
   });
   before(async () => {
     app = utils.cluster({
