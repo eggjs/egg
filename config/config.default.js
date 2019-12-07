@@ -39,6 +39,18 @@ module.exports = appInfo => {
     keys: '',
 
     /**
+     * default cookie options
+     *
+     * @member Config#cookies
+     * @property {String} sameSite - SameSite property, defaults is ''
+     * @property {Boolean} httpOnly - httpOnly property, defaults is true
+     */
+    cookies: {
+      // httpOnly: true | false,
+      // sameSite: 'none|lax|strict',
+    },
+
+    /**
      * Whether application deployed after a reverse proxy,
      * when true proxy header fields will be trusted
      * @member {Boolean} Config#proxy

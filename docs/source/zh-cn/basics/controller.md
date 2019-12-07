@@ -631,6 +631,29 @@ Cookie 虽然在 HTTP 中只是一个头，但是通过 `foo=bar;foo1=bar1;` 的
 
 Cookie 在 Web 应用中经常承担了传递客户端身份信息的作用，因此有许多安全相关的配置，不可忽视，[Cookie](../core/cookie-and-session.md#cookie) 文档中详细介绍了 Cookie 的用法和安全相关的配置项，可以深入阅读了解。
 
+#### 配置
+
+对于 Cookie 来说，主要有下面几个属性可以在 `config.default.js` 中进行配置:
+
+```js
+module.exports = {
+  cookies: {
+    // httpOnly: true | false,
+    // sameSite: 'none|lax|strict',
+  },
+};
+```
+
+举例: 配置应用级别的 Cookie [SameSite](https://www.ruanyifeng.com/blog/2019/09/cookie-samesite.html) 属性等于 `Lax`。
+
+```js
+module.exports = {
+  cookies: {
+    sameSite: 'lax',
+  },
+};
+```
+
 ### Session
 
 通过 Cookie，我们可以给每一个用户设置一个 Session，用来存储用户身份相关的信息，这份信息会加密后存储在 Cookie 中，实现跨请求的用户身份保持。
