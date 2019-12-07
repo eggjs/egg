@@ -13,7 +13,7 @@ title: 运行环境
 prod
 ```
 
-通过 `EGG_SERVER_ENV` 环境变量指定运行环境更加方便，比如在生产环境启动应用：
+2. 通过 `EGG_SERVER_ENV` 环境变量指定运行环境更加方便，比如在生产环境启动应用：
 
 ```shell
 EGG_SERVER_ENV=prod npm start
