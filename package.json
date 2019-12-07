@@ -80,8 +80,7 @@
     "spy": "^1.0.0",
     "supertest": "^3.4.2",
     "ts-node": "^8.0.3",
-    "typescript": "^3.3.3333",
-    "webstorm-disable-index": "^1.1.2"
+    "typescript": "^3.3.3333"
   },
   "main": "index.js",
   "types": "index.d.ts",
