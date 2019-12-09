@@ -9,7 +9,7 @@ platform:
 
 install:
   - ps: Install-Product node $env:nodejs_version $env:platform
-  - npm i npminstall && node_modules\.bin\npminstall
+  - npm i npminstall@4 && node_modules\.bin\npminstall
 
 test_script:
   - node --version
