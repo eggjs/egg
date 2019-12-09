@@ -902,8 +902,8 @@ declare module 'egg' {
      */
     curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
 
-    __(key: string, ...values: string[]): string;
-    gettext(key: string, ...values: string[]): string;
+    __(key: string, values?: string[]): string;
+    gettext(key: string, values?: string[]): string;
 
     /**
      * get upload file stream
@@ -1058,9 +1058,9 @@ declare module 'egg' {
     /** specify framework that can be absolute path or npm package */
     framework?: string;
     /** directory of application, default to `process.cwd()` */
-    baseDir?: string; 
+    baseDir?: string;
     /** ignore single process mode warning */
-    ignoreWarning? :boolean 
+    ignoreWarning? :boolean
   }
 
   export function start(options?:StartOptions):Promise<Application>
