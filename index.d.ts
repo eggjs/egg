@@ -632,6 +632,12 @@ declare module 'egg' {
     put(path: RouterPath, ...middleware: any[]): void;
 
     /**
+     * HTTP patch method
+     */
+    patch(path: RouterPath, fn: string): void;
+    patch(path: RouterPath, ...middleware: any[]): void;
+
+    /**
      * HTTP delete method
      */
     delete(path: RouterPath, fn: string): void;
