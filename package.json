@@ -50,7 +50,7 @@
     "mz": "^2.7.0",
     "on-finished": "^2.3.0",
     "sendmessage": "^1.1.0",
-    "urllib": "^2.33.0",
+    "urllib": "^2.34.2",
     "utility": "^1.15.0",
     "ylru": "^1.2.1"
   },
