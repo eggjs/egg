@@ -23,8 +23,8 @@ To sum up, we need a more powerful mechanism to manage, orchestrate those relati
 
 A plugin is actually a "mini-application", almost the same as an app:
 
-* It contains [Services](./service.md), [middleware] (./ middleware.md), [config](./config.md), [framework extensions] (./ extend.md), etc.
-* It does not have separate [Router] (./ router.md) and [Controller](./controller.md).
+* It contains [Services](./service.md), [middleware](./middleware.md), [config](./config.md), [framework extensions](./extend.md), etc.
+* It does not have separate [Router](./router.md) and [Controller](./controller.md).
 * It does not have `plugin.js`, it could only define dependencies with others, but could not deside whether other plugin is enable or not.
 
 
@@ -33,7 +33,7 @@ Their relationship is:
 * Applications can be directly introduced into Koa's middleware.
 * When it comes to the scene mentioned in the previous section, the app needs to import the plugin.
 * The plugin itself can contain middleware.
-* Multiple plugins can be wrapped as an [upper frame] (../ advanced / framework.md).
+* Multiple plugins can be wrapped as an [upper frame](../advanced/framework.md).
 
 ## Using Plugins
 
@@ -43,7 +43,7 @@ Plugins are usually added via the npm module:
 $ npm i egg-mysql --save
 ```
 
-** Note: We recommend introducing dependencies in the `^` way, and locking versions are strongly discouraged. **
+**Note: We recommend introducing dependencies in the `^` way, and locking versions are strongly discouraged.**
 
 ```json
 {
@@ -126,7 +126,7 @@ In this way, `npm i --production` in the production environment does not need to
 
 * The `package` is introduced in the `npm` style which is the most common way to import
 * `path` is an absolute path introduced when you want to load the plugin from different location such as when a plugin is still at the development stage or not available on `npm`
-* To see the application of these two scenarios, please see [progressive development] (../ tutorials / progressive.md).
+* To see the application of these two scenarios, please see [progressive development](../tutorials/progressive.md).
 
 ```js
 // config / plugin.js
@@ -154,7 +154,7 @@ exports.mysql = {
 };
 ```
 
-Specific consolidation rules can be found in [Configuration] (. / Config.md).
+Specific consolidation rules can be found in [Configuration](./config.md).
 
 ## Plugin List
 
