@@ -1055,6 +1055,12 @@ declare module 'egg' {
     key?: string;
     /** ssl cert */
     cert?: string;
+    /**
+     * Advanced serialization for IPC, requires Node.js >= v12.16.0
+     * @default json
+     * @see https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V12.md#advanced-serialization-for-ipc
+     */
+    serialization?: 'json' | 'advanced';
     [prop: string]: any;
   }
 
@@ -1064,9 +1070,9 @@ declare module 'egg' {
     /** specify framework that can be absolute path or npm package */
     framework?: string;
     /** directory of application, default to `process.cwd()` */
-    baseDir?: string; 
+    baseDir?: string;
     /** ignore single process mode warning */
-    ignoreWarning? :boolean 
+    ignoreWarning? :boolean
   }
 
   export function start(options?:StartOptions):Promise<Application>
