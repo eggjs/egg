@@ -19,7 +19,7 @@ module.exports = {
     'egg-bin',
     'egg-doctools',
     'egg-plugin-puml',
-    'egg-view-nunjucks',
+    'egg-view-nunjucks'
   ],
   dep: [
     '@types/accepts',
