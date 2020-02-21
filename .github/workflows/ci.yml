@@ -1,5 +1,5 @@
 name: Continuous integration
-on: [push, pull_request]
+on: [ pull_request]
 jobs:
   Runner:
     runs-on: ${{ matrix.os }}
