@@ -306,7 +306,7 @@ describe('test/controller/home.test.js', () => {
     it('should send multi requests', async () => {
       await app.httpRequest()
         .get('/')
-        .expect(200) v
+        .expect(200)
         .expect('hello world'); // set expectation of body to 'hello world'
 
       // once more
