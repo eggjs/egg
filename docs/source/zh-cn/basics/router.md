@@ -88,7 +88,7 @@ module.exports = app => {
 ### RESTful 风格的 URL 定义
 
 如果想通过 RESTful 的方式来定义路由，
-我们提供了 `app.resources('routerName', 'pathMatch', controller)` 快速在一个路径上生成 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 路由结构。
+我们提供了 `router.resources('routerName', 'pathMatch', controller)` 快速在一个路径上生成 [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) 路由结构。
 
 ```js
 // app/router.js
