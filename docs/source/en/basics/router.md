@@ -84,7 +84,7 @@ module.exports = app => {
 
 ### RESTful Style URL Definition
 
-We provide `app.resources('routerName', 'pathMatch', 'controller')` to generate [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) structures on a path for convenience if you prefer the RESTful style URL definition.
+We provide `app.router.resources('routerName', 'pathMatch', 'controller')` to generate [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) structures on a path for convenience if you prefer the RESTful style URL definition.
 
 ```js
 // app/router.js

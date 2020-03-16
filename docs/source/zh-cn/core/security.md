@@ -650,7 +650,7 @@ exports.security = {
 
 ### app.injectHijackingDefense(str)
 
-对于没有开启 HTTPS 的网站，这个函数可以有限的防止运营商劫持。
+对于没有开启 HTTPS 的网站，这个函数可以有效的防止运营商劫持。
 
 
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
