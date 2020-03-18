@@ -276,8 +276,9 @@ declare module 'egg' {
      * @property {String | RegExp | Function | Array} ignore - won't parse request body when url path hit ignore pattern, can not set `ignore` when `match` presented
      * @property {String | RegExp | Function | Array} match - will parse request body only when url path hit match pattern
      * @property {String} encoding - body encoding config, default utf8
-     * @property {String} formLimit - form body size limit, default 100kb
-     * @property {String} jsonLimit - json body size limit, default 100kb
+     * @property {String} formLimit - form body size limit, default 1mb
+     * @property {String} jsonLimit - json body size limit, default 1mb
+     * @property {String} textLimit - json body size limit, default 1mb
      * @property {Boolean} strict - json body strict mode, if set strict value true, then only receive object and array json body
      * @property {Number} queryString.arrayLimit - from item array length limit, default 100
      * @property {Number} queryString.depth - json value deep lenght, default 5
@@ -290,6 +291,7 @@ declare module 'egg' {
       encoding: string;
       formLimit: string;
       jsonLimit: string;
+      textLimit: string;
       strict: boolean;
       queryString: {
         arrayLimit: number;
