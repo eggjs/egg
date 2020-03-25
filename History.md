@@ -932,7 +932,7 @@
 ### Notable changes
 
 * **feature**
-  * `config.meta.logging` to enable log every request when recieved
+  * `config.meta.logging` to enable log every request when received
 
 * **document**
   * fix some grammars
