@@ -727,7 +727,10 @@ import 'tsconfig-paths/register';
     it('should compile ts without error', () => {
       return coffee.fork(
         require.resolve('typescript/bin/tsc'),
-        [ '-p', path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json') ]
+        [
+          '-p', path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
+          '--noEmit',
+        ]
       )
         // .debug()
         .expect('code', 0)
