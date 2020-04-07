@@ -727,7 +727,10 @@ In the end, add a test case to check whether your declaration works properly or 
     it('should compile ts without error', () => {
       return coffee.fork(
         require.resolve('typescript/bin/tsc'),
-        [ '-p', path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json') ]
+        [
+          '-p', path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
+          '--noEmit',
+        ]
       )
         // .debug()
         .expect('code', 0)
