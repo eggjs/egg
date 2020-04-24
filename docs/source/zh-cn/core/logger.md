@@ -188,7 +188,7 @@ exports.logger = {
 
 默认只会输出 `INFO` 及以上（`WARN` 和 `ERROR`）的日志到终端中。（注意：这些日志默认只在 local 和 unittest 环境下会打印到终端）
 
-- `logger.consoleLevel`: 输出到终端日志的级别，默认为 `INFO`
+- `logger.consoleLevel`: 输出到终端日志的级别。默认为 `INFO`，在 local 和 unittest 环境下默认为 `WARN`。
 
 可通过如下方式配置输出到终端日志的级别：
 

@@ -179,7 +179,9 @@ exports.logger = {
 
 By default, Egg will only print out `INFO`, `WARN` and `ERROR` in terminal. (Notice: It only works on `local` and `unittest` env)
 
-- `logger.consoleLevel`: (default: `INFO`) Being defined as the logger level in terminal. Similarly, it can be changed as following:
+- `logger.consoleLevel`: The logger level in terminal. It defaults to `INFO`, though it defaults to `WARN` on both `local` and `unittest` environments.
+
+Similarly, it can be changed in the following ways:
 
 Print logs in all levels:
 
