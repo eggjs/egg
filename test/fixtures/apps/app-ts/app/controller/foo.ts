@@ -1,4 +1,4 @@
-import { Controller, RequestObjectBody } from 'egg';
+import { Controller, RequestObjectBody, Context, EggLogger } from 'egg';
 
 // add user controller and service
 declare module 'egg' {
@@ -9,6 +9,13 @@ declare module 'egg' {
 
 // controller
 export default class FooController extends Controller {
+  fooLogger: EggLogger;
+
+  constructor(ctx: Context) {
+    super(ctx);
+    this.fooLogger = ctx.getLogger('foo');
+  }
+
   async getData() {
     try {
       this.ctx.logger.info('getData');

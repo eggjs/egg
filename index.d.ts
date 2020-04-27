@@ -6,7 +6,7 @@ import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
-import { EggLogger, EggLoggers, LoggerLevel as EggLoggerLevel, EggLoggersOptions, EggLoggerOptions, EggContextLogger } from 'egg-logger';
+import { EggLogger as Logger, EggLoggers, LoggerLevel as EggLoggerLevel, EggLoggersOptions, EggLoggerOptions, EggContextLogger } from 'egg-logger';
 import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
 import {
   EggCoreBase,
@@ -31,6 +31,7 @@ import 'egg-jsonp';
 import 'egg-view';
 
 declare module 'egg' {
+  export type EggLogger = Logger;
   // plain object
   type PlainObject<T = any> = { [key: string]: T };
 
@@ -183,6 +184,7 @@ declare module 'egg' {
   }
 
   export type LoggerLevel = EggLoggerLevel;
+
 
   /**
    * egg app info
@@ -1066,9 +1068,9 @@ declare module 'egg' {
     /** specify framework that can be absolute path or npm package */
     framework?: string;
     /** directory of application, default to `process.cwd()` */
-    baseDir?: string; 
+    baseDir?: string;
     /** ignore single process mode warning */
-    ignoreWarning? :boolean 
+    ignoreWarning? :boolean;
   }
 
   export function start(options?:StartOptions):Promise<Application>
