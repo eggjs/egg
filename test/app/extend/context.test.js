@@ -252,7 +252,8 @@ describe('test/app/extend/context.test.js', () => {
         .get('/')
         .expect(200)
         .expect('hello');
-      await sleep(5000);
+      await app.backgroundTasksFinished();
+      await sleep(100);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -270,7 +271,8 @@ describe('test/app/extend/context.test.js', () => {
         .get('/custom')
         .expect(200)
         .expect('hello');
-      await sleep(5000);
+      await app.backgroundTasksFinished();
+      await sleep(100);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -293,7 +295,8 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      await sleep(5000);
+      await app.backgroundTasksFinished();
+      await sleep(100);
       assert(errorHadEmit);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
@@ -308,6 +311,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/sync')
         .expect(200);
       assert(Number(res.text) < 99);
+      await app.backgroundTasksFinished();
     });
   });
 
