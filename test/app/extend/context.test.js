@@ -302,6 +302,13 @@ describe('test/app/extend/context.test.js', () => {
         /\[egg:background] task:mockError fail \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
+
+    it('should always execute after setImmediate', async () => {
+      const res = await app.httpRequest()
+        .get('/sync')
+        .expect(200);
+      assert(Number(res.text) < 99);
+    });
   });
 
   describe('ctx.runInBackground(scope) with single process mode', () => {
