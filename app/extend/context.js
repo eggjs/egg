@@ -222,8 +222,9 @@ const proto = module.exports = {
     const start = Date.now();
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
-    // use app.toAsyncFunction to support both generator function and async function
+    // use setImmediate to ensure all sync logic will run async
     return new Promise(resolve => setImmediate(resolve))
+      // use app.toAsyncFunction to support both generator function and async function
       .then(() => ctx.app.toAsyncFunction(scope)(ctx))
       .then(() => {
         ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
