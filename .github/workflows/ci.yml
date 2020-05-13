@@ -6,7 +6,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest]
-        node-version: [8, 10, 12]
+        node-version: [8, 10, 12, 14]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
