@@ -2,8 +2,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const http = require('http');
 const mm = require('egg-mock');
+const sleep = require('mz-modules/sleep');
+const Koa = require('koa');
+const http = require('http');
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
 const egg = require('..');
@@ -51,39 +53,41 @@ exports.startLocalServer = () => {
       return resolve('http://127.0.0.1:' + localServer.address().port);
     }
     let retry = false;
-    localServer = http.createServer((req, res) => {
-      req.resume();
-      req.on('end', () => {
-        res.statusCode = 200;
-        if (req.url === '/get_headers') {
-          res.setHeader('Content-Type', 'json');
-          res.end(JSON.stringify(req.headers));
-        } else if (req.url === '/timeout') {
-          setTimeout(() => {
-            res.end(`${req.method} ${req.url}`);
-          }, 10000);
-          return;
-        } else if (req.url === '/error') {
-          res.statusCode = 500;
-          res.end('this is an error');
-          return;
-        } else if (req.url === '/retry') {
-          if (!retry) {
-            retry = true;
-            res.statusCode = 500;
-            res.end();
-          } else {
-            res.setHeader('x-retry', '1');
-            res.statusCode = 200;
-            res.end('retry suc');
-            retry = false;
-          }
-          return;
+
+    const app = new Koa();
+    app.use(async ctx => {
+      if (ctx.path === '/get_headers') {
+        ctx.body = ctx.request.headers;
+        return;
+      }
+
+      if (ctx.path === '/timeout') {
+        await sleep(10000);
+        ctx.body = `${ctx.method} ${ctx.path}`;
+        return;
+      }
+
+      if (ctx.path === '/error') {
+        ctx.status = 500;
+        ctx.body = 'this is an error';
+        return;
+      }
+
+      if (ctx.path === '/retry') {
+        if (!retry) {
+          retry = true;
+          ctx.status = 500;
         } else {
-          res.end(`${req.method} ${req.url}`);
+          ctx.set('x-retry', '1');
+          ctx.body = 'retry suc';
+          retry = false;
         }
-      });
+        return;
+      }
+
+      ctx.body = `${ctx.method} ${ctx.path}`;
     });
+    localServer = http.createServer(app.callback());
 
     localServer.listen(0, err => {
       if (err) return reject(err);
