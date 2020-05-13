@@ -1,5 +1,32 @@
 # History
 
+## 2020-05-13, Version 2.26.1 @dead-horse
+
+### Notable Changes
+
+* **fixes**
+ * runInBackground always run after setImmediate
+
+* **docs**
+ * imporve docs
+ * imporve typings
+
+### Commits
+
+  * [[`9c67298d6`](http://github.com/eggjs/egg/commit/9c67298d69946d4ba0887c3648d3404e835c6902)] - test: run test on node 14 (#4272) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`427a30a07`](http://github.com/eggjs/egg/commit/427a30a071d248cc2e5e15bb4bad35f3058e867f)] - test: make dnscache test case more stable (#4297) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`64efd076b`](http://github.com/eggjs/egg/commit/64efd076bf9d937e36748f89bada6fce186913cd)] - fix: runInBackground always run after setImmediate (#4296) (Yiyu He <<dead_horse@qq.com>>)
+  * [[`69923977a`](http://github.com/eggjs/egg/commit/69923977a7e5c0825f2fc5c616852b0721411a0c)] - docs: Update doc for config of logger.consoleLevel (#4276) (xuxu <<must414@163.com>>)
+  * [[`7b6e4371c`](http://github.com/eggjs/egg/commit/7b6e4371c7367583627977a0ca4aa2ff66e28429)] - docs(typescript): Add --noEmit to unittest example code (#4250) (Ink <<chceyes@gmail.com>>)
+  * [[`3413e35fd`](http://github.com/eggjs/egg/commit/3413e35fd86408896e5c0b7e77ec2528ac08c9f9)] - chore: fix typo (#4234) (zoomdong <<1344492820@qq.com>>)
+  * [[`b4b9b50af`](http://github.com/eggjs/egg/commit/b4b9b50af1bb842e0138fc236d45882188698123)] - doc (socketio): fix packet middleware bug (#4204) (zfx <<502545703@qq.com>>)
+  * [[`2fcd605c6`](http://github.com/eggjs/egg/commit/2fcd605c6397480b0a5add9c11f7c7d071393de5)] - docs: update bodyParser types and doc (#4192) (sexy pig <<353071655@qq.com>>)
+  * [[`5e2bad0c4`](http://github.com/eggjs/egg/commit/5e2bad0c421952b7c84471df06d2ca80c20fa14c)] - docs: fix typo in router (#4203) (Xuemuyang <<myoungxue@gmail.com>>)
+  * [[`1181a675c`](http://github.com/eggjs/egg/commit/1181a675cae08c2d6952b8c15a3a9375947e220b)] - docs(plugin): format en/basics/plugin.md (#4168) (chs97 <<623528324@qq.com>>)
+  * [[`e9011e8f3`](http://github.com/eggjs/egg/commit/e9011e8f332a97da7e6e112d0f1ded42f0b5db42)] - feat: add http method patch to typings (#4125) (xiaoxu <<xiao.xu515@gmail.com>>)
+  * [[`2109505b4`](http://github.com/eggjs/egg/commit/2109505b40a159cd047075e566e9465b1ad5a365)] - test: fix doctools path on windows (#4090) (fengmk2 <<fengmk2@gmail.com>>)
+
+
 ## 2019-12-07, Version 2.26.0 @fengmk2
 
 ### Notable changes
