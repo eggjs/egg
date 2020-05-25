@@ -563,7 +563,7 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
+    curl: EggHttpClient['request'];
 
     /**
      * Get logger by name, it's equal to app.loggers['name'], but you can extend it with your own logical
@@ -908,7 +908,7 @@ declare module 'egg' {
      * Keep the same api with httpclient.request(url, args).
      * See https://github.com/node-modules/urllib#api-doc for more details.
      */
-    curl<T = any>(url: string, opt?: RequestOptions): Promise<T>;
+    curl: EggHttpClient['request'];
 
     __(key: string, ...values: string[]): string;
     gettext(key: string, ...values: string[]): string;
