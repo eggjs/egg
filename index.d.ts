@@ -38,12 +38,12 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  interface EggHttpClient extends HttpClient<RequestOptions> {}
+  export interface EggHttpClient extends HttpClient<RequestOptions> {}
   interface EggHttpConstructor {
     new (app: Application): EggHttpClient;
   }
 
-  interface EggContextHttpClient extends HttpClient<RequestOptions> {}
+  export interface EggContextHttpClient extends HttpClient<RequestOptions> {}
   interface EggContextHttpClientConstructor {
     new (ctx: Context): EggContextHttpClient;
   }
@@ -934,6 +934,8 @@ declare module 'egg' {
      * @see Responce.redirect
      */
     redirect(url: string, alt?: string): void;
+
+    httpclient: EggContextHttpClient;
   }
 
   export interface IContextLocals extends PlainObject { }

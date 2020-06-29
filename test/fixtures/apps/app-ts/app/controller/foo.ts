@@ -1,4 +1,11 @@
-import { Controller, RequestObjectBody, Context, EggLogger } from 'egg';
+import {
+  Controller,
+  RequestObjectBody,
+  Context,
+  EggLogger,
+  EggHttpClient,
+  EggContextHttpClient,
+} from 'egg';
 
 // add user controller and service
 declare module 'egg' {
@@ -9,10 +16,14 @@ declare module 'egg' {
 
 // controller
 export default class FooController extends Controller {
+  ctxHttpClient: EggHttpClient;
+  appHttpClient: EggContextHttpClient;
   fooLogger: EggLogger;
 
   constructor(ctx: Context) {
     super(ctx);
+    this.appHttpClient = ctx.app.httpclient;
+    this.ctxHttpClient = ctx.httpclient;
     this.fooLogger = ctx.getLogger('foo');
   }
 
@@ -54,7 +65,7 @@ export default class FooController extends Controller {
     this.app.logger.info(this.app.config.view.root);
     this.app.logger.info(this.app.config.view.defaultExtension);
     ctx.body = await this.ctx.view.render('test.tpl', {
-      test: '123'
+      test: '123',
     });
   }
 
