@@ -1,3 +1,13 @@
+
+2.27.0 / 2020-06-29
+==================
+
+**fixes**
+  * [[`b5cc8b6e3`](http://github.com/eggjs/egg/commit/b5cc8b6e361b1ac2e7b4eb509f1e6486fe1dab13)] - fix(dts): fix curl type (#4312) (胡宇航 <<591765099@qq.com>>)
+
+**others**
+  * [[`432128a80`](http://github.com/eggjs/egg/commit/432128a80aefdc8d11a6571da1ff35550e85fd66)] - type: export EggLogger/EggHttpClient/EggContextHttpClient (#4280) (killa <<killa123@126.com>>)
+  * [[`eca6b04c1`](http://github.com/eggjs/egg/commit/eca6b04c1c50bc69c53f9910cc35bb7441c7cb02)] - docs:update docs about how to extends ctx.helper (#4362) (EasonQwQ <<750225883@qq.com>>)
 # History
 
 ## 2020-05-13, Version 2.26.1 @dead-horse
