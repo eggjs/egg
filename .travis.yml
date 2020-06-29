@@ -1,4 +1,6 @@
 sudo: false
+cache:
+  npm: false
 os:
   - linux
   - osx
