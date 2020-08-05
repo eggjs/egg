@@ -43,7 +43,7 @@ Koa 的中间件和 Express 不同，Koa 选择了洋葱圈模型。
 
 所有的请求经过一个中间件的时候都会执行两次，对比 Express 形式的中间件，Koa 的模型可以非常方便的实现后置处理逻辑，对比 Koa 和 Express 的 Compress 中间件就可以明显的感受到 Koa 中间件模型的优势。
 
-- [koa-compress](https://github.com/koajs/compress/blob/master/index.js) for Koa.
+- [koa-compress](https://github.com/koajs/compress/blob/master/lib/index.js) for Koa.
 - [compression](https://github.com/expressjs/compression/blob/master/index.js) for Express.
 
 ### Context
