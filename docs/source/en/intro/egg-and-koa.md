@@ -43,7 +43,7 @@ The middleware in Koa is different from Express, Koa use the onion model:
 
 All the requests will be executed twice during one middleware. Compared to Express middleware, it is very easy to implement post-processing logic. You can obviously feel the advantage of Koa middleware model by comparing the compress middleware implementing in Koa and Express.
 
-- [koa-compress](https://github.com/koajs/compress/blob/master/index.js) for Koa.
+- [koa-compress](https://github.com/koajs/compress/blob/master/lib/index.js) for Koa.
 - [compression](https://github.com/expressjs/compression/blob/master/index.js) for Express.
 
 ### Context
