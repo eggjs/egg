@@ -303,7 +303,7 @@ class NewsController extends Controller {
 module.exports = NewsController;
 ```
 
-And also add config.
+And also add  config.
 
 ```js
 // config/config.default.js
@@ -391,7 +391,7 @@ it is inevitable that we need to manage configurations.
 Egg provides a powerful way to manage them in a merged configuration file.
 
 - Environment-specific configuration files are well supported, e.g. config.local.js, config.prod.js, etc.
-- Configurations could be set wherever convenient for Applications/Plugins/Framesworks, and Egg will be careful to merge and load them.
+- Configurations could be set wherever convenient for Applications/Plugins/Frameworks, and Egg will be careful to merge and load them.
 - For more information on merging, see [Configurations](../basics/config.md).
 
 ```js
