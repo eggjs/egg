@@ -8,7 +8,7 @@ Node.js is an asynchronous world, asynchronous programming models in official AP
 - [callback hell](http://callbackhell.com/): Notorious "callback hell"。
 - [release zalgo](https://oren.github.io/#/articles/zalgo/): Asynchronous functions may call callback function response data synchronously which would bring inconsistency.
 
-The community has provided many solutions for the problems and the winner is Promise. It is built into ECMAScript 2015. On the basis of Promise, and with the ability of Generator to switch context, we can write asynchronous code in synchronous way with [co] and other third-party libraries. Meanwhile [async function], the official solution has been published in ECMAScript 2017 and landed in Node.js v8.
+The community has provided many solutions for the problems and the winner is Promise. It is built into ECMAScript 2015. On the basis of Promise, and with the ability of Generator to switch context, we can write asynchronous code in a synchronous way with [co] and other third-party libraries. Meanwhile [async function], the official solution has been published in ECMAScript 2017 and landed in Node.js 8.
 
 ### Async Function
 
