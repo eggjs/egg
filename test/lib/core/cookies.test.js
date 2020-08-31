@@ -32,7 +32,7 @@ describe('test/lib/core/cookies.test.js', () => {
           done();
         });
     });
-  })
+  });
 
   describe('secure = true', () => {
     let app;
