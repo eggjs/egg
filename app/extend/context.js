@@ -14,7 +14,7 @@ const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
 const proto = module.exports = {
   get cookies() {
     if (!this[COOKIES]) {
-      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys);
+      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
     }
     return this[COOKIES];
   },

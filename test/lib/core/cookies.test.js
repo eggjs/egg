@@ -9,6 +9,31 @@ const path = require('path');
 describe('test/lib/core/cookies.test.js', () => {
   afterEach(mm.restore);
 
+  describe('secure = true, cookies sameSite config test', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/secure-app');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should set secure:true and httponly cookie', done => {
+      mm(app.config, 'cookies', { sameSite: 'none' });
+      app.httpRequest()
+        .get('/?setCookieValue=foobar')
+        .set('Host', 'demo.eggjs.org')
+        .set('X-Forwarded-Proto', 'https')
+        .expect('hello mock secure app')
+        .expect(200, (err, res) => {
+          assert(!err);
+          const cookie = res.headers['set-cookie'][0];
+          assert(cookie);
+          assert.equal(cookie, 'foo-cookie=foobar; path=/; samesite=none; secure; httponly');
+          done();
+        });
+    });
+  })
+
   describe('secure = true', () => {
     let app;
     before(() => {
