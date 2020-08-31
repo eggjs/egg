@@ -1,5 +1,4 @@
 'use strict';
-
 const utils = require('../../utils');
 
 describe('test/lib/plugins/i18n.test.js', () => {
