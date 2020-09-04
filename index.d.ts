@@ -263,6 +263,10 @@ declare module 'egg' {
     enableProxy?: boolean;
     /** proxy agent uri or options, default is null. */
     proxy?: string | { [key: string]: any };
+    /** DNS cache lookup interval */
+    dnsCacheLookupInterval?: number;
+    /** DNS cache max age */
+    dnsCacheMaxLength?: number;
   }
 
   export interface EggAppConfig {
