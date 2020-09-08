@@ -1,25 +1,61 @@
+# History
 
-2.27.0 / 2020-06-29
-==================
+## 2020-09-08, Version 2.28.0 @atian25
 
-**fixes**
+### Notable Changes
+
+* **features**
+  * clear & disable timing after ready
+
+* **fixes**
+  * only set keep-alive header before Node.js 14.8.0
+
+* **typings**
+  * Added missing types in HttpClientConfig
+  * export EggLogger/EggHttpClient/EggContextHttpClient
+
+* **docs**
+  * fixed grammatical and spelling errors
+  * update compress url
+
+### Commits
+
+  * [[`b31b47df1`](http://github.com/eggjs/egg/commit/b31b47df10722bfac7ac13771db534f0200fc6ce)] - feat: clear & disable timing after ready (#4421) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`d25d32e58`](http://github.com/eggjs/egg/commit/d25d32e584b0bfd80f21cc522b91ac465f2852ac)] - fix: only set keep-alive header before Node.js 14.8.0 (#4457) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`a7ae46c84`](http://github.com/eggjs/egg/commit/a7ae46c847db07c0c4af1a85173bc4009d1219d9)] - type: Added missing types in HttpClientConfig (#4388) (Gcaufy <<gcaufy@gmail.com>>)
+  * [[`064cc7a91`](http://github.com/eggjs/egg/commit/064cc7a91a2be89e39d72a833a1cb35cdcd8f201)] - docs: fixed grammatical and spelling errors (#4424) (Hridayesh Sharma <<dev.hridayesh@gmail.com>>)
+  * [[`95776d646`](http://github.com/eggjs/egg/commit/95776d6462080448e946c049f9ad4da4e9fc065e)] - docs: fix spelling mistakes and grammatical errors (#4423) (Hridayesh Sharma <<vyasriday7@gmail.com>>)
+  * [[`50976280f`](http://github.com/eggjs/egg/commit/50976280fcb19ce556ddc46f76da1f5fab46fa4a)] - docs: update compress url  (#4415) (忽如寄 <<594613537@qq.com>>)
+
+
+## 2020-06-29, Version 2.27.0 @killa
+
+### Notable Changes
+
+* **typings**
+  * fix curl type
+  * export EggLogger/EggHttpClient/EggContextHttpClient
+
+* **docs**
+  * update docs about how to extends ctx.helper
+
+### Commits
+
   * [[`b5cc8b6e3`](http://github.com/eggjs/egg/commit/b5cc8b6e361b1ac2e7b4eb509f1e6486fe1dab13)] - fix(dts): fix curl type (#4312) (胡宇航 <<591765099@qq.com>>)
-
-**others**
   * [[`432128a80`](http://github.com/eggjs/egg/commit/432128a80aefdc8d11a6571da1ff35550e85fd66)] - type: export EggLogger/EggHttpClient/EggContextHttpClient (#4280) (killa <<killa123@126.com>>)
   * [[`eca6b04c1`](http://github.com/eggjs/egg/commit/eca6b04c1c50bc69c53f9910cc35bb7441c7cb02)] - docs:update docs about how to extends ctx.helper (#4362) (EasonQwQ <<750225883@qq.com>>)
-# History
+
 
 ## 2020-05-13, Version 2.26.1 @dead-horse
 
 ### Notable Changes
 
 * **fixes**
- * runInBackground always run after setImmediate
+  * runInBackground always run after setImmediate
 
 * **docs**
- * imporve docs
- * imporve typings
+  * imporve docs
+  * imporve typings
 
 ### Commits
 
