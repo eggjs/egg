@@ -1,3 +1,9 @@
+
+1.21.0 / 2020-09-08
+==================
+
+**features**
+  * [[`2e942053c`](http://github.com/eggjs/egg/commit/2e942053c05d7d0114aeee1d22605146fd93bc43)] - feat: egg 1.x support cookies config init (#4444) (sky <<hubcarl@126.com>>)
 # History
 
 ## 2019-10-28, Version 1.20.0 @dead-horse
