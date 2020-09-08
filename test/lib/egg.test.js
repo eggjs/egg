@@ -145,6 +145,15 @@ describe('test/lib/egg.test.js', () => {
       assert(json[0].pid === process.pid);
     });
 
+    it('should disable & clear timing after ready', function* () {
+      const json = app.timing.toJSON();
+      assert(json.length === 0);
+      app.timing.start('a');
+      app.timing.end('a');
+      const json2 = app.timing.toJSON();
+      assert(json2.length === 0);
+    });
+
     it('should ignore error when dumpTiming', done => {
       mm(fs, 'writeFileSync', () => {
         throw new Error('mock error');
