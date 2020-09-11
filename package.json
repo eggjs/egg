@@ -58,6 +58,7 @@
   "devDependencies": {
     "address": "^1.0.3",
     "assert-extends": "^1.0.1",
+    "assert-file": "^1.0.0",
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "coffee": "^5.2.1",
