@@ -4,10 +4,11 @@ const mm = require('egg-mock');
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const sleep = require('mz-modules/sleep');
+const { rimraf, sleep } = require('mz-modules');
 const spy = require('spy');
 const Transport = require('egg-logger').Transport;
 const utils = require('../utils');
+const assertFile = require('assert-file');
 
 describe('test/lib/egg.test.js', () => {
   afterEach(mm.restore);
@@ -135,13 +136,13 @@ describe('test/lib/egg.test.js', () => {
 
     it('should read timing data', function* () {
       let json = readJson(path.join(baseDir, `run/agent_timing_${process.pid}.json`));
-      assert(json.length === 40);
-      assert(json[0].name === 'Application Start');
+      assert(json.length === 41);
+      assert(json[1].name === 'Application Start');
       assert(json[0].pid === process.pid);
 
       json = readJson(path.join(baseDir, `run/application_timing_${process.pid}.json`));
-      assert(json.length === 62);
-      assert(json[0].name === 'Application Start');
+      assert(json.length === 63);
+      assert(json[1].name === 'Application Start');
       assert(json[0].pid === process.pid);
     });
 
@@ -216,6 +217,43 @@ describe('test/lib/egg.test.js', () => {
     it('should ignore config', () => {
       const json = require(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.keys === 'test key');
+    });
+  });
+
+  describe('custom config from env', () => {
+    let app;
+    let baseDir;
+    let runDir;
+    let logDir;
+    before(async () => {
+      baseDir = utils.getFilepath('apps/config-env');
+      runDir = path.join(baseDir, 'custom_rundir');
+      logDir = path.join(baseDir, 'custom_logdir');
+      await rimraf(runDir);
+      await rimraf(logDir);
+      await rimraf(path.join(baseDir, 'run'));
+      await rimraf(path.join(baseDir, 'logs'));
+      mm(process.env, 'EGG_APP_CONFIG', JSON.stringify({
+        logger: {
+          dir: logDir,
+        },
+        rundir: runDir,
+      }));
+
+      app = utils.app('apps/config-env');
+      await app.ready();
+    });
+    after(async () => {
+      await app.close();
+      await rimraf(runDir);
+      await rimraf(logDir);
+    });
+    afterEach(mm.restore);
+
+    it('should custom dir', async () => {
+      assertFile(path.join(runDir, 'application_config.json'));
+      assertFile(path.join(logDir, 'egg-web.log'));
+      assertFile.fail(path.join(baseDir, 'run/application_config.json'));
     });
   });
 
