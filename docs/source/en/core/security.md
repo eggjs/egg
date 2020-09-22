@@ -262,7 +262,7 @@ In general, there are some common [precautions](https://www.owasp.org/index.php/
 
 - Synchronizer Tokens：When the response page is rendered, token is rendered in the page, which will be submitted through a hidden input when a form is submitted.
 
-- Double Cookie Defense：The token will be stored in client Cookie, Cookie will be submitted when you submit a post request, then you can get the token, and submit the token through header or body, service side will compare and check it.
+- Double Cookie Defense：The token will be stored in client Cookie, Cookie will be submitted when you submit a POST/PUT/PATCH/DELETE request, then you can get the token, and submit the token through header or body, service side will compare and check it.
 
 - Custom Header：Trust request with specific header（like `X-Requested-With: XMLHttpRequest`）. This can be bypassed, so frameworks like rails and django [give up the guard](https://www.djangoproject.com/weblog/2011/feb/08/security/).
 
