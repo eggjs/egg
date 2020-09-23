@@ -1,5 +1,26 @@
 # History
 
+## 2020-09-23, Version 2.29.0 @atian25
+
+### Notable Changes
+
+* **features**
+  * feat: dumpconfig also dump disabled plugin
+
+* **docs**
+  * csrf double cookie defense should enabled on all method
+  * test case for env.EGG_APP_CONFIG
+  * optimize multiple env configuration description
+
+### Commits
+
+  * [[`cc80c6ab8`](http://github.com/eggjs/egg/commit/cc80c6ab86c71b1c9ea244065d4766297bfb6c17)] - feat: dumpconfig also dump disabled plugin (#4480) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`1d32771e5`](http://github.com/eggjs/egg/commit/1d32771e5aeb8fa8546ad8bfacf2f438973afae0)] - doc: csrf double cookie defense should enabled on all method (#3881) (Hongcai Deng <<admin@dhchouse.com>>)
+  * [[`504e4bebc`](http://github.com/eggjs/egg/commit/504e4bebcef03830be7c7432210b5b6b1de9d06b)] - test: for env.EGG_APP_CONFIG (#4468) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`ff4dfaa09`](http://github.com/eggjs/egg/commit/ff4dfaa098ad40ab7a0773c44d409829fcbb0e41)] - docs(config): optimize multiple env configuration description (#4406) (Andy <<xiaoxiaocoder@126.com>>)
+  * [[`b283791da`](http://github.com/eggjs/egg/commit/b283791dab3c86beb14506668e2aa3ef21cb78e6)] - docs: update badge to github action (#4463) (TZ | 天猪 <<atian25@qq.com>>)
+
+
 ## 2020-09-08, Version 2.28.0 @atian25
 
 ### Notable Changes
@@ -26,7 +47,6 @@
   * [[`064cc7a91`](http://github.com/eggjs/egg/commit/064cc7a91a2be89e39d72a833a1cb35cdcd8f201)] - docs: fixed grammatical and spelling errors (#4424) (Hridayesh Sharma <<dev.hridayesh@gmail.com>>)
   * [[`95776d646`](http://github.com/eggjs/egg/commit/95776d6462080448e946c049f9ad4da4e9fc065e)] - docs: fix spelling mistakes and grammatical errors (#4423) (Hridayesh Sharma <<vyasriday7@gmail.com>>)
   * [[`50976280f`](http://github.com/eggjs/egg/commit/50976280fcb19ce556ddc46f76da1f5fab46fa4a)] - docs: update compress url  (#4415) (忽如寄 <<594613537@qq.com>>)
-
 
 ## 2020-06-29, Version 2.27.0 @killa
 
