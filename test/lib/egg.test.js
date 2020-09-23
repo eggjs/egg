@@ -167,6 +167,21 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
+  describe('dump disabled plugin', () => {
+    let app;
+    before(async () => {
+      app = utils.app('apps/dumpconfig');
+      await app.ready();
+    });
+    after(() => app.close());
+
+    it('should works', async () => {
+      const baseDir = utils.getFilepath('apps/dumpconfig');
+      const json = readJson(path.join(baseDir, 'run/application_config.json'));
+      assert(!json.plugins.static.enable);
+    });
+  });
+
   describe('dumpConfig() dynamically', () => {
     let app;
     before(() => {

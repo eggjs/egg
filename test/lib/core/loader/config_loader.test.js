@@ -14,7 +14,7 @@ describe('test/lib/core/loader/config_loader.test.js', () => {
   it('should get middlewares', async () => {
     app = utils.app('apps/demo');
     await app.ready();
-    assert.deepEqual(app.config.coreMiddleware.slice(0, 7), [
+    assert.deepStrictEqual(app.config.coreMiddleware.slice(0, 7), [
       'meta',
       'siteFile',
       'notfound',
