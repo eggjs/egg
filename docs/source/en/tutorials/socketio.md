@@ -3,7 +3,7 @@ title: Socket.IO
 
 **Socket.IO** is a real-time application framework based on Node.js, which has a wide range of applications including instant messaging, notification and message push, real-time analysis and other scenarios.
 
-WebSocket originated from the growing demand for real-time communication in web development, compared with http-based polling, which greatly saves network bandwidth and reduces server performance consumption. [Socket.IO] supports both websockets and polling. The data transmission method is compatible with the browser and does not support the communication requirements under the WebSocket scenario.
+WebSocket originated from the growing demand for real-time communication in web development, compared with http-based polling, which greatly saves network bandwidth and reduces server performance consumption. [Socket.IO] supports both websockets and polling. The data transmission method is compatible with the browser that does not support the communication requirements under the WebSocket scenario.
 
 The framework provides the [egg-socket.io] plugin with the following development rules added:
 
