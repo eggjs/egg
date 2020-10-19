@@ -148,11 +148,15 @@ describe('test/lib/egg.test.js', () => {
 
     it('should disable & clear timing after ready', function* () {
       const json = app.timing.toJSON();
-      assert(json.length === 0);
+      const last = json[json.length - 1];
       app.timing.start('a');
       app.timing.end('a');
       const json2 = app.timing.toJSON();
-      assert(json2.length === 0);
+      assert(json2[json.length - 1].name === last.name);
+
+      yield sleep('5s');
+      const json3 = app.timing.toJSON();
+      assert(json3.length === 0);
     });
 
     it('should ignore error when dumpTiming', done => {
