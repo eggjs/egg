@@ -7,8 +7,8 @@
 const semver = require('semver');
 
 module.exports = options => {
-  // Node.js >=14.8.0 will set Keep-Alive Header, see https://github.com/nodejs/node/pull/34561
-  const shouldPatchKeepAliveHeader = semver.lt(process.version, '14.8.0');
+  // Node.js >=14.8.0 and >= 12.19.0 will set Keep-Alive Header, see https://github.com/nodejs/node/pull/34561
+  const shouldPatchKeepAliveHeader = !semver.satisfies(process.version, '>=14.8.0 || ^12.19.0');
 
   return async function meta(ctx, next) {
     if (options.logging) {
