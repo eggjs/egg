@@ -146,13 +146,13 @@ describe('test/lib/egg.test.js', () => {
       assert(json[0].pid === process.pid);
     });
 
-    it('should disable & clear timing after ready', function* () {
+    it('should disable timing after ready', function* () {
       const json = app.timing.toJSON();
-      assert(json.length === 0);
+      const last = json[json.length - 1];
       app.timing.start('a');
       app.timing.end('a');
       const json2 = app.timing.toJSON();
-      assert(json2.length === 0);
+      assert(json2[json.length - 1].name === last.name);
     });
 
     it('should ignore error when dumpTiming', done => {
