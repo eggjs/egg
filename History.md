@@ -1,11 +1,24 @@
 # History
 
+## 2020-10-19, Version 2.29.1 @atian25
+
+### Notable Changes
+
+* **fixes**
+  * revert clear timing after ready, only disable
+  * won't set keep-alive header at Node.js ^12.19.0 || >=14.8.0
+
+### Commits
+
+  * [[`9f653afe7`](http://github.com/eggjs/egg/commit/9f653afe790e0ead44109c68dfffb8353fdca56c)] - fix: remove clear timing && skip keep-alive after 12.19.0 (#4497) (TZ | 天猪 <<atian25@qq.com>>)
+
+
 ## 2020-09-23, Version 2.29.0 @atian25
 
 ### Notable Changes
 
 * **features**
-  * feat: dumpconfig also dump disabled plugin
+  * dumpconfig also dump disabled plugin
 
 * **docs**
   * csrf double cookie defense should enabled on all method
