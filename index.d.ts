@@ -38,14 +38,14 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  export interface EggHttpClient extends HttpClient<RequestOptions> {}
+  export interface EggHttpClient extends HttpClient<RequestOptions> { }
   interface EggHttpConstructor {
-    new (app: Application): EggHttpClient;
+    new(app: Application): EggHttpClient;
   }
 
-  export interface EggContextHttpClient extends HttpClient<RequestOptions> {}
+  export interface EggContextHttpClient extends HttpClient<RequestOptions> { }
   interface EggContextHttpClientConstructor {
-    new (ctx: Context): EggContextHttpClient;
+    new(ctx: Context): EggContextHttpClient;
   }
 
   /**
@@ -361,6 +361,10 @@ declare module 'egg' {
        * whether override default watchDirs, default is false.
        */
       overrideDefault: boolean;
+      /**
+       * whether override default ignoreDirs, default is false.
+       */
+      overrideIgnore: boolean;
       /**
        * whether to reload, use https://github.com/sindresorhus/multimatch
        */
@@ -1070,16 +1074,16 @@ declare module 'egg' {
 
   export function startCluster(options: ClusterOptions, callback: (...args: any[]) => any): void;
 
-  export interface StartOptions{
+  export interface StartOptions {
     /** specify framework that can be absolute path or npm package */
     framework?: string;
     /** directory of application, default to `process.cwd()` */
     baseDir?: string;
     /** ignore single process mode warning */
-    ignoreWarning? :boolean;
+    ignoreWarning?: boolean;
   }
 
-  export function start(options?:StartOptions):Promise<Application>
+  export function start(options?: StartOptions): Promise<Application>
 
   /**
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
@@ -1091,8 +1095,8 @@ declare module 'egg' {
    */
   export type PowerPartial<T> = {
     [U in keyof T]?: T[U] extends object
-      ? PowerPartial<T[U]>
-      : T[U]
+    ? PowerPartial<T[U]>
+    : T[U]
   };
 
   // send data can be number|string|boolean|object but not Set|Map
@@ -1127,8 +1131,8 @@ declare module 'egg' {
   }
 
   // compatible
-  export interface EggLoaderOptions extends CoreLoaderOptions {}
-  export interface EggLoader extends CoreLoader {}
+  export interface EggLoaderOptions extends CoreLoaderOptions { }
+  export interface EggLoader extends CoreLoader { }
 
   /**
    * App worker process Loader, will load plugins
