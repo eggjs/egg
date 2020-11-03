@@ -120,7 +120,7 @@ module.exports = {
       return this._ip;
     }
     const ip = this.ips[0] || this.socket.remoteAddress;
-    // will be '::ffff:x.x.x.x', should conver to standard IPv4 format
+    // will be '::ffff:x.x.x.x', should convert to standard IPv4 format
     // https://zh.wikipedia.org/wiki/IPv6
     this._ip = ip && ip.indexOf('::ffff:') > -1 ? ip.substring(7) : ip;
     return this._ip;
