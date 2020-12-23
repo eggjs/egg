@@ -207,7 +207,7 @@ module.exports = agent => {
     start() {
       // subscribe other distributed scheduling service message, after receiving the message, allow a worker process to execute scheduled tasks
       // the user configures the distributed scheduling scenario in the configuration of the scheduled task
-      agent.mq.subscribe(schedule.scene, () => this.sendOne());
+      agent.mq.subscribe(this.schedule.scene, () => this.sendOne());
     }
   }
   agent.schedule.use('cluster', ClusterStrategy);
@@ -216,6 +216,6 @@ module.exports = agent => {
 
 `ScheduleStrategy` base class provides:
 
-- `schedule` - Properties of schedule tasks, `disable` is supported by default, other configurations can be parsed by developers.
+- `this.schedule` - Properties of schedule tasks, `disable` is supported by default, other configurations can be parsed by developers.
 - `this.sendOne(...args)` - Notice worker to execute the task randomly, `args` will pass to `subscribe(...args)` or `task(ctx, ...args)`.
 - `this.sendAll(...args)` - Notice all worker to execute the task.
