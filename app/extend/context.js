@@ -19,7 +19,16 @@ const proto = module.exports = {
    */
   get cookies() {
     if (!this[COOKIES]) {
-      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
+      const config = Object.assign({}, this.app.config.cookies);
+      if (Array.isArray(config.domain)) {
+        const match = config.domain.find(item => this.hostname.endsWith(item));
+        if (match) {
+          config.domain = match;
+        } else {
+          delete config.domain;
+        }
+      }
+      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys, config);
     }
     return this[COOKIES];
   },
