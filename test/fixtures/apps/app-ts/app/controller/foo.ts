@@ -72,4 +72,20 @@ export default class FooController extends Controller {
   async testViewRenderString() {
     this.ctx.body = await this.ctx.view.renderString('test');
   }
+
+  async testQuery() {
+    this.stringQuery(this.ctx.query.foo);
+  }
+
+  async testQueries() {
+    this.stringArrayQuery(this.ctx.queries.foo);
+  }
+
+  stringQuery(q: string) {
+    console.log(q);
+  }
+
+  stringArrayQuery(q: string[]) {
+    console.log(q);
+  }
 }
