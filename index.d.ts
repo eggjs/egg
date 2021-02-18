@@ -782,7 +782,12 @@ declare module 'egg' {
     params: any;
 
     /**
-     * @see Request#accept
+     * @see Request#query
+     */
+    query: PlainObject<string>;
+
+    /**
+     * @see Request#queries
      */
     queries: PlainObject<string[]>;
 
