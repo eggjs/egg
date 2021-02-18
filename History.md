@@ -1,5 +1,20 @@
 # History
 
+## 2021-02-18, Version 2.29.2 @killa
+
+### Notable Changes
+
+* **fixes**
+  * fix query typing
+  * add overrideIgnore define
+  
+### Commits
+
+  * [[`99682e4bd`](http://github.com/eggjs/egg/commit/99682e4bd5afe1697cab02001e919b967c264869)] - fix: fix query typing (#4611) (killa <<killa123@126.com>>)
+  * [[`26017ee2e`](http://github.com/eggjs/egg/commit/26017ee2e49bd8a42b660baabe31284e00f81bcb)] - chore: fix comment typo at request.js (#4513) (Albert 理斯特 <<shuaizhexu@gmail.com>>)
+  * [[`34048c275`](http://github.com/eggjs/egg/commit/34048c275afe1126716ef4265b667169e9866e53)] - fix: add overrideIgnore define (#4490) (kotot <<317643941@qq.com>>)
+  * [[`d652658d1`](http://github.com/eggjs/egg/commit/d652658d1205d0fbc73b4417c2ae54ee0a24f395)] - docs: d2 ads (#4508) (Suyi <<thonatos.yang@gmail.com>>)
+  
 ## 2020-10-19, Version 2.29.1 @atian25
 
 ### Notable Changes
