@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "2.29.2",
+  "version": "2.29.3",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
