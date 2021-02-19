@@ -170,7 +170,7 @@ declare module 'egg' {
     body: any;
   }
 
-  export interface Response extends KoaApplication.Response { // tslint:disable-line
+  export interface Response<ResponseBodyT = any> extends KoaApplication.Response { // tslint:disable-line
     /**
      * read response real status code.
      *
@@ -181,6 +181,7 @@ declare module 'egg' {
      * @member {Number} Context#realStatus
      */
     realStatus: number;
+    body: ResponseBodyT;
   }
 
   export type LoggerLevel = EggLoggerLevel;
@@ -729,8 +730,9 @@ declare module 'egg' {
   * rewrite all the properties to be compatible with types in Koa.
   * @see https://github.com/eggjs/egg/pull/3329
   */
-  export interface Context extends KoaApplication.BaseContext {
+  export interface Context<ResponseBodyT = any> extends KoaApplication.BaseContext {
     [key: string]: any;
+    body: ResponseBodyT;
 
     app: Application;
 
@@ -744,7 +746,7 @@ declare module 'egg' {
 
     request: Request;
 
-    response: Response;
+    response: Response<ResponseBodyT>;
 
     // The new 'cookies' instead of Koa's.
     cookies: EggCookies;
