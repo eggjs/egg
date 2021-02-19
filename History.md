@@ -1,5 +1,15 @@
 # History
 
+## 2021-02-19, Version 2.29.3 @killa
+
+### Notable Changes
+
+* **fixes**
+  * fix ctx body typing
+
+### Commits
+  * [[`e9fba1b7b`](http://github.com/eggjs/egg/commit/e9fba1b7bbe3f54b023262aeb5487b31047e119e)] - fix: fix ctx body as any (#4613) (killa <<killa123@126.com>>) 
+
 ## 2021-02-18, Version 2.29.2 @killa
 
 ### Notable Changes
