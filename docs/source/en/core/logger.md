@@ -165,7 +165,7 @@ exports.logger = {
 
 #### Debug Log in Production Environment
 
-To avoid some plugin's DEBUG logs printing in the production environment causing performance problems, the production environment prohibits printing DEBUG-level logs by default. If there is a need to print DEBUG logs for debugging in the production environment, you need to set `allowDebugAtProd` configuration to `ture`.
+To avoid some plugin's DEBUG logs printing in the production environment causing performance problems, the production environment prohibits printing DEBUG-level logs by default. If there is a need to print DEBUG logs for debugging in the production environment, you need to set `allowDebugAtProd` configuration to `true`.
 
 ```js
 // config/config.prod.js
