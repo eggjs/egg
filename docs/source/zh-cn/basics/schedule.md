@@ -207,7 +207,7 @@ module.exports = agent => {
     start() {
       // 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
       // 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）
-      agent.mq.subscribe(schedule.scene, () => this.sendOne());
+      agent.mq.subscribe(this.schedule.scene, () => this.sendOne());
     }
   }
   agent.schedule.use('cluster', ClusterStrategy);
@@ -216,6 +216,6 @@ module.exports = agent => {
 
 `ScheduleStrategy` 基类提供了：
 
-- `schedule` - 定时任务的属性，`disable` 是默认统一支持的，其他配置可以自行解析。
+- `this.schedule` - 定时任务的属性，`disable` 是默认统一支持的，其他配置可以自行解析。
 - `this.sendOne(...args)` - 随机通知一个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)`。
 - `this.sendAll(...args)` - 通知所有的 worker 执行 task。
