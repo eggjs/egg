@@ -5,7 +5,7 @@ title: Egg@2 Upgrade guideline
 
 With the official release of Node.js 8 LTS, egg now comes with built-in ES2017 Async Function support. 
 
-Though the TJ [co] has has brought `async/await` programming experience before this, but it also has some inevitable problems:
+Though the TJ [co] has brought `async/await` programming experience before this, but it also has some inevitable problems:
 
 - performance lost
 - [obscure error logs](https://github.com/eggjs/egg/wiki/co-vs-async)
@@ -20,7 +20,7 @@ One of the Egg's concept is `progressive`, hence we provide progressive programm
 
 - [Quick upgrade](#quick_upgrade)
 - [Plugin update](#plugin)
-- [Further upgradation](#forther_upgradation)
+- [Further upgrade](#forther_upgrade)
 - [Upgrade documents for Plugin developers](#upgrade_documents_for_plugin_developers)
 
 ## Quick upgrade
@@ -29,14 +29,14 @@ One of the Egg's concept is `progressive`, hence we provide progressive programm
 - Check if included plugins are the latest version (optional).
 - Reinstall the dependencies, and run unit tests again.
 
-**Done! Upgrade finished without any code changes.**
+**Done! Barely with any code changes**
 
 
 ## Plugin update
 
 ### egg-multipart
 
-`yield parts` nees to change to `await parts()` or `yield poarts()`
+`yield parts` needs to change to `await parts()` or `yield parts()`
 
 ```js
 // old
@@ -62,7 +62,7 @@ while ((part = await parts()) != null) {
 ### egg-userrole
 
 DO NOT support 1.x role definition, because koa-roles is no longer compatible. 
-The `Context` has changed from `this` to the first argument `ctx`, the original `scope` now is the second the argument.
+The `Context` has changed from `this` to the first argument `ctx`, the original `scope` now is the second argument.
 
 ```js
 // old
@@ -83,23 +83,23 @@ app.role.use('user', ctx => {
 - [koajs/koa-roles#13](https://github.com/koajs/koa-roles/pull/13)
 - [eggjs/egg-userrole#9](https://github.com/eggjs/egg-userrole/pull/9)
 
-## Further upgradation
-Due to the complete compatibility to Egg 1.x, we can finish upgrade quickly. 
+## Further upgrade
+Due to the complete compatibility to Egg 1.x, we can finish the upgrade quickly. 
 
-But in order to keep the code pattern consistant, as well as a better performance improvement and more developer-fridently error stack logs, thus we suggest deveopers to do a further upgrade:
+But in order to keep the coding style consistent, as well as a better performance improvement and more developer-friendly error stack logs, we suggest developers to make a further upgrade:
 
 - Use recommended code style, see [Style guide](./style-guide.md)
 - [Use Koa style middleware](#use-koa2-style-middleware)
 - [Change `yieldable` to `awaitable` in function invoke](#yieldable-to-awaitable)
 
-### Use Koa2 style middleware
+### Use Koa2-styled middleware
 
-> 2.x is compatible to 1.x style middleware, so it's still functional without any changes.
+> 2.x is compatible to 1.x-styled middleware, so it's still functional without any changes.
 
 - Use Koa 2's `(ctx, next)` arguments style in callback function
-  - The 1st argument is `ctx`, means context, it is the instance of [Context](./basics/extend.md#Context)
+  - The 1st argument is `ctx`, means context, it is an instance of [Context](./basics/extend.md#Context)
   - The 2nd argument is `next`, use await to execute it for the coming logics.
-- Do not recommend to use `async (ctx, next) => {}`, this is preventing anonymous function in error stack logs 
+- Using `async (ctx, next) => {}` is not recommended, which prevents anonymous function in error stack.
 - Change `yield next` to `await next()`.
 
 ```js
@@ -138,7 +138,7 @@ module.exports = () => {
 - generators (delegation)
 - generator functions (delegation)
 
-Despite both `generator` and `async` have the same program models, but we may still need to adjust our codes dependingly after removing `co` because the above special handling from `co`. 
+Despite both `generator` and `async` have the same program models, but we may still need to refactor our codes correspondingly after removing `co` because of the above special handling from `co`. 
 
 #### promise
 
@@ -210,7 +210,7 @@ class BizService extends Service {
 const [ news, user ] = await ctx.service.biz.list(topic, uid);
 ```
 
-If the interfaces are unchangeable, we can temporarily do:
+If the interfaces are unchangeable, e can do things below as a workaround:
 
 - Use [app.toPromise] method provided by our Utils.
 - **This is built on top of the [co], so it may still cause performance issue and returning inaccurate error stacks, so this is not recommended.**
@@ -225,13 +225,13 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 - generators (delegation)
 - generator functions (delegation)
 
-Use `async function` to replace the above functions, or use [app.toAsyncFunction] to wrap them if async function is not the case.
+Use `async function` to replace the above functions, or use [app.toAsyncFunction] alternatively.
 
 **Note**
 - [toAsyncFunction][app.toAsyncFunction] and [toPromise][app.toPromise] are wrappers of [co], thus it may cause performance lost and error stack problems. So we're recommending developers to use all-chain upgrade.
-- [toAsyncFunction][app.toAsyncFunction] doesn't have lost when invokes async function.
+- [toAsyncFunction][app.toAsyncFunction] doesn't have performance lost when invokes async function.
 
-@sindresorhus has wrote a lot [promise-based helpers](https://github.com/sindresorhus/promise-fun), use them together with async function could make source code more readable.
+@sindresorhus has written a lot [promise-based helpers](https://github.com/sindresorhus/promise-fun), use them together with async function could make source code more readable.
 
 ## Plugin update
 `App developers` just need to update the upgraded plugins by `plugin developers`, or use `egg-bin autod` command we've prepared to quickly update.
@@ -241,16 +241,16 @@ The following content is for `plugin developers`, it shows how to update the plu
 ### Update precautions
 
 - Finish the upgrade items above.
-  - Replace all `generator function` to `async function`.
+  - Replace all `generator function` with `async function`.
   - Upgrade middlewares.
-- Interfaces compabilities (optional), see following.
+- Interfaces compatibility (optional), see following.
 - Release a major version.
 
-### Interfaces compabilities
+### Interfaces compatibility
 In some cases, the interface provided by `Plugin developers` supports both generator and async, normally it's wrapped by co.
 
-- In 2.x, we suggest to change to `async-first` in order to get a better performance and clearer error stacks.
-- If necessary, please use [toAsyncFunction][app.toAsyncFunction] and [toPromise][app.toPromise] for compatibilities.
+- In 2.x, we suggest `async-first` to get a better performance and clearer error stacks.
+- If necessary, please use [toAsyncFunction][app.toAsyncFunction] and [toPromise][app.toPromise] for compatibility.
 
 Like [egg-schedule] plugin, it supports generator or async to define the tasks in application level.
 
@@ -283,12 +283,12 @@ task = app.toAsyncFunction(schedule.task);
   - Change `ci.version` to `8, 9`, reinstall dependencies to generate new travis config files.
 - Update examples in `README.md` with async function.
 - Write instructions for upgrade.
-- (optional) Change `test/fixtures` to async function, recommend to create a PR for code preview. 
+- (optional) Change `test/fixtures` to async function, and it's recommended to create a PR for code preview. 
 
 In case the previous versions still requires maintenance:
   - Create a new branch which based on previous `1.x` version.
   - Change the `publishConfig.tag` property in `package.json` to `release-1.x` in previous version.
-  - If the previous version has new Bugfix, npm will tag it as `release-1.x`, so users may use `npm i egg-xx@release-1` to import the old version. 
+  - If the previous version has new Bugfix, tag it as `release-1.x` when publishing, so users may use `npm i egg-xx@release-1` to import the old version. 
   - See [npm documentations](https://docs.npmjs.com/cli/dist-tag).
 
 
