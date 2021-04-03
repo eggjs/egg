@@ -69,7 +69,7 @@ router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.cont
 - 在 Router 定义中， 可以支持多个 Middleware 串联执行
 - Controller 必须定义在 `app/controller` 目录中。
 - 一个文件里面也可以包含多个 Controller 定义，在定义路由的时候，可以通过 `${fileName}.${functionName}` 的方式指定对应的 Controller。
-- Controller 支持子目录，在定义路由的时候，可以通过 `${directoryName}.${fileName}.${functionName}` 的方式制定对应的 Controller。
+- Controller 支持子目录，在定义路由的时候，可以通过 `${directoryName}.${fileName}.${functionName}` 的方式指定对应的 Controller。
 
 下面是一些路由定义的方式：
 
