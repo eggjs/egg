@@ -60,7 +60,7 @@ class AppBootHook {
   }
 
   async didReady() {
-    // 请将您的 app.beforeStart 中的代码置于此处。
+    // 请将您的 app.ready 中的代码置于此处。
   }
 }
 
