@@ -1,5 +1,23 @@
 # History
 
+## 2021-04-13, Version 2.29.4 @popomore
+
+### Notable Changes
+
+* **fixes**
+  * remove internal interval handler when close agent
+* **docs**
+  * Added english doc to how-to-migrate-from-1.x, Thx @ZixiaoWang
+  * typo improvement
+
+### Commits
+
+  * [[`ce234226b`](http://github.com/eggjs/egg/commit/ce234226bf0c43f03aedf727a7d195ae4175c01f)] - fix: remove internal interval handler when close agent (#4654) (Harry Chen <<czy88840616@gmail.com>>)
+  * [[`6a6d68fb2`](http://github.com/eggjs/egg/commit/6a6d68fb228a3eae9b5cab3ba7afe0892d5e08ea)] - Typo fixture：制定 -> 指定 (#4639) (华晨 <<chanjsq@gmail.com>>)
+  * [[`603c74b58`](http://github.com/eggjs/egg/commit/603c74b581d6b3a9ad80170335425b0876ffcb1f)] - docs: Added english doc to how-to-migrate-from-1.x (#4630) (Jacky Wang <<www.wangzixiao@126.com>>)
+  * [[`693df6066`](http://github.com/eggjs/egg/commit/693df60661735008e8a758258fc2df0bb9783f04)] - docs: fix schedule reference (#4556) (xuxu <<must414@163.com>>)
+  * [[`4ebbe8143`](http://github.com/eggjs/egg/commit/4ebbe814386102377870959129e831a3b20133c1)] - docs: fix typo (#4596) (suinia <<suini_a@163.com>>)
+
 ## 2021-02-19, Version 2.29.3 @killa
 
 ### Notable Changes
@@ -8,7 +26,7 @@
   * fix ctx body typing
 
 ### Commits
-  * [[`e9fba1b7b`](http://github.com/eggjs/egg/commit/e9fba1b7bbe3f54b023262aeb5487b31047e119e)] - fix: fix ctx body as any (#4613) (killa <<killa123@126.com>>) 
+  * [[`e9fba1b7b`](http://github.com/eggjs/egg/commit/e9fba1b7bbe3f54b023262aeb5487b31047e119e)] - fix: fix ctx body as any (#4613) (killa <<killa123@126.com>>)
 
 ## 2021-02-18, Version 2.29.2 @killa
 
@@ -17,14 +35,14 @@
 * **fixes**
   * fix query typing
   * add overrideIgnore define
-  
+
 ### Commits
 
   * [[`99682e4bd`](http://github.com/eggjs/egg/commit/99682e4bd5afe1697cab02001e919b967c264869)] - fix: fix query typing (#4611) (killa <<killa123@126.com>>)
   * [[`26017ee2e`](http://github.com/eggjs/egg/commit/26017ee2e49bd8a42b660baabe31284e00f81bcb)] - chore: fix comment typo at request.js (#4513) (Albert 理斯特 <<shuaizhexu@gmail.com>>)
   * [[`34048c275`](http://github.com/eggjs/egg/commit/34048c275afe1126716ef4265b667169e9866e53)] - fix: add overrideIgnore define (#4490) (kotot <<317643941@qq.com>>)
   * [[`d652658d1`](http://github.com/eggjs/egg/commit/d652658d1205d0fbc73b4417c2ae54ee0a24f395)] - docs: d2 ads (#4508) (Suyi <<thonatos.yang@gmail.com>>)
-  
+
 ## 2020-10-19, Version 2.29.1 @atian25
 
 ### Notable Changes
