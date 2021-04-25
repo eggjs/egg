@@ -747,9 +747,9 @@ import 'tsconfig-paths/register';
 
 ### 编译速度慢？
 
-目前根据我们的实践，ts-node 是目前相对较优的解决方案，即既不用另起终端执行 tsc ，也能获得还能接受的启动速度（ 仅限于 ts-node@7 ，新的版本由于把文件缓存去掉了，导致特别慢（ [#754](https://github.com/TypeStrong/ts-node/issues/754) ），因此未升级 ）。
+根据我们的实践，ts-node 是目前相对较优的解决方案，即既不用另起终端执行 tsc ，也能获得还能接受的启动速度（ 仅限于 ts-node@7 ，新的版本由于把文件缓存去掉了，导致特别慢（ [#754](https://github.com/TypeStrong/ts-node/issues/754) ），因此未升级 ）。
 
-但是如果项目特别庞大，ts-node 的性能也会吃紧，我们提供了以下解决方案供参考：
+但是如果项目特别庞大，ts-node 的性能也会吃紧，我们提供了以下优化方案供参考：
 
 #### 关闭类型检查
 
