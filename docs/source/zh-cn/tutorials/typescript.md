@@ -744,3 +744,73 @@ import 'tsconfig-paths/register';
  - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
  - [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
  - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
+
+### 编译速度慢？
+
+根据我们的实践，ts-node 是目前相对较优的解决方案，既不用另起终端执行 tsc ，也能获得还能接受的启动速度（ 仅限于 ts-node@7 ，新的版本由于把文件缓存去掉了，导致特别慢（ [#754](https://github.com/TypeStrong/ts-node/issues/754) ），因此未升级 ）。
+
+但是如果项目特别庞大，ts-node 的性能也会吃紧，我们提供了以下优化方案供参考：
+
+#### 关闭类型检查
+
+编译耗时大头是在类型检查，如果关闭也能带来一定的性能提升，可以在启动应用的时候带上 `TS_NODE_TRANSPILE_ONLY=true` 环境变量，比如
+
+```bash
+$ TS_NODE_TRANSPILE_ONLY=true egg-bin dev
+```
+
+或者配置 tscompiler 为 ts-node 提供的仅编译的注册器。
+
+```json
+// package.json
+{
+  "name": "demo",
+  "egg": {
+    "typescript": true,
+    "declarations": true,
+    "tscompiler": "ts-node/register/transpile-only"
+  }
+}
+```
+
+#### 更换高性能 compiler
+
+除了 ts-node 之外，业界也有不少支持编译 ts 的项目，比如 esbuild ，可以先安装 [esbuild-register](https://github.com/egoist/esbuild-register) 
+
+```bash
+$ npm install esbuild-register --save-dev
+```
+
+再在 package.json 中配置 `tscompiler`
+
+```json
+// package.json
+{
+  "name": "demo",
+  "egg": {
+    "typescript": true,
+    "declarations": true,
+    "tscompiler": "esbuild-register"
+  }
+}
+```
+
+即可使用 esbuild-register 来编译（ 注意，esbuild-register 不具备 typecheck 功能 ）。
+
+> 如果想用 swc 也一样，安装一下 [@swc-node/register](https://github.com/Brooooooklyn/swc-node#swc-noderegister) ，然后一样配置到 tscompiler 即可
+
+#### 使用 tsc
+
+如果还是觉得这种在运行时动态编译的速度实在无法忍受，也可以直接使用 tsc ，即不需要在 package.json 中配置 typescript 为 true ，在开发期间单独起个终端执行 tsc
+
+```bash
+$ tsc -w
+```
+
+然后再正常启动 egg 应用即可
+
+```bash
+$ egg-bin dev
+```
+
+建议在 .gitignore 中加上对 `**/*.js` 的配置，避免将生成的 js 代码也提交到了远端。
