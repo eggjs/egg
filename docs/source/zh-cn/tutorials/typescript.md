@@ -26,8 +26,8 @@ TypeScript 的静态类型检查，智能提示，IDE 友好性等特性，对�
 通过骨架快速初始化：
 
 ```bash
-$ mkdir showcase && cd showcase
-$ npm init egg --type=ts
+$ npm i -g egg-init
+$ egg-init showcase --type=ts
 $ npm i
 $ npm run dev
 ```
@@ -646,7 +646,7 @@ export default class NewsService extends Service {
 
 npm start 运行的是 `egg-scripts start`，而我们只在 egg-bin 中集成了 ts-node，也就是只有在使用 egg-bin 的时候才允许直接运行 ts 。
 
-egg-scripts 是用于在生产环境下运行 egg 的 cli ，在生产环境下我们建议将 ts 编译成 js 之后再运行，毕竟在线上是需要考虑应用的健壮性和性能的，因此不建议在线上环境使用 ts-node 来运行应用。
+egg-scripts 是用于在生产环境下运行 egg 的 cli ，在生产环境下我们**必须**将 ts 编译成 js 之后再运行，毕竟在线上是需要考虑应用的健壮性和性能的，因此不建议在线上环境使用 ts-node 来运行应用。
 
 而在开发期 ts-node 能降低 tsc 编译产生的文件带来的管理成本，并且 ts-node 带来的性能损耗在开发期几乎可以忽略，所以我们在 egg-bin 集成了 ts-node。
 
