@@ -157,7 +157,7 @@ describe('test/lib/core/singleton.test.js', () => {
     const singleton = new Singleton({
       name,
       app,
-      create: asyncCreate,
+      create,
     });
     singleton.init();
     assert(app.dataService === singleton);
@@ -235,7 +235,7 @@ describe('test/lib/core/singleton.test.js', () => {
     });
 
     try {
-      singleton.init();
+      await singleton.init();
       assert(false, 'should throw error but NOT');
     } catch (ex) {
       assert(ex.message && ex.message.includes('empty'));
