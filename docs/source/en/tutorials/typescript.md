@@ -744,3 +744,83 @@ Some other unit test projects as your references:
  - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
  - [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
  - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
+
+### Slow Compilation?
+
+According to our practice, ts-node is a better solution nowaday because we don't execute
+tsc in a new terminal, and we can accept the start speed (only for ts-node@7, because the 
+new version has removed the cache and it makes the speed too slow ([#754](https://github.com/TypeStrong/ts-node/issues/754)), so that's why we don't upgrade it).
+
+But if your project is extreamly huge, ts-node's performance will be tight as well.
+So here're our optimizations for you:
+
+#### Close typecheck
+
+Most of time in compilation is type checking, so if we close it there'll be
+a bit improvements for performance, with the environment variable 
+`TS_NODE_TRANSPILE_ONLY=true` when starting your app. E.g:
+
+```bash
+$ TS_NODE_TRANSPILE_ONLY=true egg-bin dev
+```
+
+Or you can just make tscompiler as the "Compiling-Only" for tscompiler.
+
+```json
+// package.json
+{
+  "name": "demo",
+  "egg": {
+    "typescript": true,
+    "declarations": true,
+    "tscompiler": "ts-node/register/transpile-only"
+  }
+}
+```
+
+#### Switch for a high efficient compiler
+
+Besides ts-node, There're also many projects supporting ts compilation,
+such as esbuild, we can install it first [esbuild-register](https://github.com/egoist/esbuild-register)
+
+```bash
+$ npm install esbuild-register --save-dev
+```
+
+And then config `tscompiler` like this:
+
+```json
+// package.json
+{
+  "name": "demo",
+  "egg": {
+    "typescript": true,
+    "declarations": true,
+    "tscompiler": "esbuild-register"
+  }
+}
+```
+
+Then you can use esbuild-register to compile (notice: esbulild-register can't
+do typecheck).
+
+> Same for swc, if you want to use it after installation [@swc-node/register](https://github.com/Brooooooklyn/swc-node#swc-noderegister), and then config in tscompiler.
+
+#### Use tsc
+
+If you still cannot bear the speed of the dynamic compilation, you can directly
+use tsc. This means you don't need to config typescript to true in package.json, 
+but just start a new terminal to execute tsc.
+
+```bash
+$ tsc -w
+```
+
+And then start the egg.
+
+```bash
+$ egg-bin dev
+```
+
+We suggest you can add configs for `**/*.js` at .gitignore to avoid
+submitting the generated js files to the remote.
