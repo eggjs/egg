@@ -231,7 +231,7 @@ describe('test/lib/core/singleton.test.js', () => {
     const singleton = new Singleton({
       name,
       app,
-      create,
+      create: asyncCreate,
     });
 
     try {
