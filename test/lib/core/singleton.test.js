@@ -157,7 +157,7 @@ describe('test/lib/core/singleton.test.js', () => {
     const singleton = new Singleton({
       name,
       app,
-      create,
+      create: asyncCreate,
     });
     singleton.init();
     assert(app.dataService === singleton);
@@ -195,7 +195,6 @@ describe('test/lib/core/singleton.test.js', () => {
     assert(dataService.config.foo1 === 'bar1');
     assert(dataService.config.foo === 'bar');
   });
-
 
   it('should createInstance without client,clients,default', async () => {
     const app = {
@@ -242,7 +241,6 @@ describe('test/lib/core/singleton.test.js', () => {
       assert(ex.message && ex.message.includes('empty'));
     }
   });
-
 
   it('should work with frozen', async () => {
     function create(config) {
@@ -307,6 +305,34 @@ describe('test/lib/core/singleton.test.js', () => {
     assert(!app.dataService.createInstance);
     assert(!app.dataService.createInstanceAsync);
     assert(warn);
+  });
+
+  it('should return client name when create', async () => {
+    let success = true;
+    const name = 'dataService';
+    const clientName = 'customClient';
+    function create(config, app, client) {
+      if (client !== clientName) {
+        success = false;
+      }
+    }
+    const app = {
+      config: {
+        dataService: {
+          clients: {
+            customClient: { foo: 'bar1' },
+          },
+        },
+      },
+    };
+    const singleton = new Singleton({
+      name,
+      app,
+      create,
+    });
+    singleton.init();
+
+    assert(success);
   });
 
   describe('async create', () => {
@@ -400,6 +426,34 @@ describe('test/lib/core/singleton.test.js', () => {
       } catch (err) {
         assert(err.message === 'egg:singleton dataService only support create asynchronous, please use createInstanceAsync');
       }
+    });
+
+    it('should return client name when create', async () => {
+      let success = true;
+      const name = 'dataService';
+      const clientName = 'customClient';
+      async function create(config, app, client) {
+        if (client !== clientName) {
+          success = false;
+        }
+      }
+      const app = {
+        config: {
+          dataService: {
+            clients: {
+              customClient: { foo: 'bar1' },
+            },
+          },
+        },
+      };
+      const singleton = new Singleton({
+        name,
+        app,
+        create,
+      });
+      await singleton.init();
+
+      assert(success);
     });
   });
 });
