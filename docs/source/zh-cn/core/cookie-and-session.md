@@ -204,7 +204,7 @@ exports.sessionRedis = {
 
 #### 修改用户 Session 失效时间
 
-虽然在 Session 的配置中有一项是 maxAge，但是它只能全局设置 Session 的有效期，我们经常可以在一些网站的登陆页上看到有 **记住我** 的选项框，勾选之后可以让登陆用户的 Session 有效期更长。这种针对特定用户的 Session 有效时间设置我们可以通过 `ctx.session.maxAge=` 来实现。
+虽然在 Session 的配置中有一项是 maxAge，但是它只能全局设置 Session 的有效期，我们经常可以在一些网站的登录页上看到有 **记住我** 的选项框，勾选之后可以让登录用户的 Session 有效期更长。这种针对特定用户的 Session 有效时间设置我们可以通过 `ctx.session.maxAge=` 来实现。
 
 ```js
 const ms = require('ms');
