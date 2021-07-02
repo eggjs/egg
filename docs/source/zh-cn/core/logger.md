@@ -134,7 +134,7 @@ exports.logger = {
 ```
 
 ## 日志文件格式
-设置输出格式为JSON,方便日志监控系统分析
+设置输出格式为JSON，方便日志监控系统分析
 ```js
 // config/config.${env}.js
 exports.logger = {
