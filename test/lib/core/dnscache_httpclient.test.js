@@ -275,4 +275,41 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result.data.host === obj.host);
     assert(!app.httpclient.dnsCache.get('127.0.0.1'));
   });
+
+  describe('disable DNSCache in one request', () => {
+    beforeEach(() => {
+      mm(app.httpclient.dnsCache, 'size', 0);
+    });
+
+    it('should work', async () => {
+      await app.httpRequest()
+        .get('/?disableDNSCache=true&url=' + encodeURIComponent(url + '/get_headers'))
+        .expect(200)
+        .expect(/"host":"localhost:\d+"/);
+
+      assert(app.httpclient.dnsCache.size === 0);
+    });
+
+    it('should work in callback style', done => {
+      app.httpclient.curl(url + '/get_headers', { enableDNSCache: false }, (err, data, res) => {
+        data = JSON.parse(data);
+        assert(res.status === 200);
+        assert(data.host === host);
+        assert(app.httpclient.dnsCache.size === 0);
+        done();
+      });
+    });
+
+    it('should work in thunk style', done => {
+      app.httpclient.requestThunk(url + '/get_headers', { enableDNSCache: false })((err, result) => {
+        assert(!err);
+        const data = JSON.parse(result.data);
+        assert(result.res.status === 200);
+        assert(data.host === host);
+        assert(app.httpclient.dnsCache.size === 0);
+        done();
+      });
+    });
+  });
+
 });
