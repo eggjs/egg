@@ -1,5 +1,27 @@
 # History
 
+## 2021-08-09, Version 2.30.0 @mansonchor
+
+### Notable Changes
+
+* **features**
+  * support disableDNSCache in one request even though config set to `enableDNSCache: true`
+
+* **docs**
+  * update ts docs, add missing zh-CN doc
+  * typo fix
+
+### Commits
+
+  * [[`13dd55076`](https://github.com/eggjs/egg.git/commit/13dd5507694a57a11e12d1ac6f71ba4a562d88c0)] - feat: support disableDNSCache by request args handle (#4728) (mansonchor.github.com <<mansonchor1987@gmail.com>>)
+  * [[`1b4fde454`](https://github.com/eggjs/egg.git/commit/1b4fde454d2d61200a8b066ba841ad6d81b5b69d)] - unittest: rename and remove some useless tests (#4705) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`156980d36`](https://github.com/eggjs/egg.git/commit/156980d369570531c1ef9cf842f02f513b56fe4a)] - doc: Typo fixture (#4707) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`27aa49b59`](https://github.com/eggjs/egg.git/commit/27aa49b5945f08fa6b636479cf4cba7822e3af2d)] - doc: Typo fixture:「,」->「，」 (#4708) (陈煮酒 <<501205587@qq.com>>)
+  * [[`1f02a8d45`](https://github.com/eggjs/egg.git/commit/1f02a8d4560ca3334425e646c1ac87226aba3a63)] - doc: Add the missing zh-CN trans for typescript (#4703) (Maledong <<52018749+MaledongGit@users.noreply.github.com>>)
+  * [[`f5cf0d965`](https://github.com/eggjs/egg.git/commit/f5cf0d965fa4077da10e87f070e113496077872c)] - doc: "登陆" should be "登录" (#4697) (HOU Ce <<594965698@qq.com>>)
+  * [[`750558400`](https://github.com/eggjs/egg.git/commit/750558400e3bd5f39658dfcbedd4af7bc0bdda2a)] - docs: update ts docs (#4666) (吖猩 <<whxaxes@gmail.com>>)
+  * [[`93d2b04b9`](https://github.com/eggjs/egg.git/commit/93d2b04b985145f27a39335300a78002a61da2a8)] - docs: fix loaderUpdate.md didReady example (#4652) (shadyzoz <<shadyzoz@icloud.com>>)
+
 ## 2021-04-13, Version 2.29.4 @popomore
 
 ### Notable Changes
