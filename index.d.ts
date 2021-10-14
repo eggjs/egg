@@ -466,6 +466,10 @@ declare module 'egg' {
       protocolWhiteList: string[];
       defaultMiddleware: string;
       csrf: any;
+      ssrf: {
+        ipBlackList: string[];
+        checkAddress?(ip: string): boolean;
+      };
       xframe: {
         enable: boolean;
         value: 'SAMEORIGIN' | 'DENY' | 'ALLOW-FROM';
