@@ -184,6 +184,14 @@ config2.customLoader = {
 }
 config2.security = {
   csrf: false,
+  ssrf: {
+    ipBlackList: [
+      '10.0.0.0/8',
+    ],
+    checkAddress (ip) {
+      return ip === '127.0.0.1';
+    }
+  },
 }
 config2.logger = {
   dir: 'logs',
