@@ -1,5 +1,16 @@
 # History
 
+## 2021-10-18, Version 2.31.0 @killagu
+
+### Notable Changes
+
+* **typing**
+  * support ssrf typing in config
+
+### Commits
+
+* [[`debfda7ab`](https://github.com/eggjs/egg/commit/debfda7ab38f4893b6f122abfbf3e5288af1441e)] - feat(config): support ssrf field in security config. (#4778) (Jasin Yip <<yejunxing@gmail.com>>)
+
 ## 2021-08-09, Version 2.30.0 @mansonchor
 
 ### Notable Changes
