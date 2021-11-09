@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
+const urllib = require('urllib');
 const Httpclient = require('../../../lib/core/httpclient');
 const utils = require('../../utils');
 
@@ -85,6 +86,31 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
 
     await client.requestThunk(url, args);
+  });
+
+  it('should mock ENETUNREACH error', async () => {
+    mm(urllib.HttpClient2.prototype, 'request', () => {
+      const err = new Error('connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1)');
+      err.code = 'ENETUNREACH';
+      return Promise.reject(err);
+    });
+    await assert.rejects(async () => {
+      await client.request(url);
+    }, err => {
+      assert(err.name === 'HttpClientError');
+      assert(err.code === 'httpclient_ENETUNREACH');
+      assert(err.message === 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH]');
+      return true;
+    });
+  });
+
+  it('should handle timeout error', async () => {
+    await assert.rejects(async () => {
+      await client.request(url + '/timeout', { timeout: 100 });
+    }, err => {
+      assert(err.name === 'ResponseTimeoutError');
+      return true;
+    });
   });
 
   describe('httpclient.httpAgent.timeout < 30000', () => {

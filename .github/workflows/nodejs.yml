@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        node-version: [ 8, 10, 12, 14 ]
+        node-version: [ 8, 10, 12, 14, 16 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
