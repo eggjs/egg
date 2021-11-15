@@ -1,5 +1,17 @@
 # History
 
+## 2021-11-15, Version 2.32.0 @atian25
+
+### Notable Changes
+
+* **features**
+  * handle ENETUNREACH error on httpclient
+
+### Commits
+
+  * [[`189c47804`](http://github.com/eggjs/egg/commit/189c478048d820b7b1a6ba6e8bce3444604876ff)] - feat: handle ENETUNREACH error on httpclient (#4792) (fengmk2 <<fengmk2@gmail.com>>)
+
+
 ## 2021-10-18, Version 2.31.0 @killagu
 
 ### Notable Changes
@@ -10,6 +22,7 @@
 ### Commits
 
 * [[`debfda7ab`](https://github.com/eggjs/egg/commit/debfda7ab38f4893b6f122abfbf3e5288af1441e)] - feat(config): support ssrf field in security config. (#4778) (Jasin Yip <<yejunxing@gmail.com>>)
+
 
 ## 2021-08-09, Version 2.30.0 @mansonchor
 
