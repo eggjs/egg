@@ -26,6 +26,6 @@ module.exports = app => {
     const res = response.res;
     app.logger.info('[httpclient] [%s] %s %s end, status: %s, use: %s',
       req.ctx.traceId, req.args.method, req.url,
-      res.status, Math.floor((performance.now() - starttime) * 1000) / 1000);
+      res.status, Math.floor((performance.now() - req.starttime) * 1000) / 1000);
   });
 };
