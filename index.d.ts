@@ -217,10 +217,12 @@ declare module 'egg' {
   export interface EggLoggerConfig extends RemoveSpecProp<EggLoggersOptions, 'type'> {
     /** custom config of coreLogger */
     coreLogger?: Partial<EggLoggerOptions>;
-    /** allow debug log at prod, defaults to true */
+    /** allow debug log at prod, defaults to `false` */
     allowDebugAtProd?: boolean;
     /** disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`. */
     disableConsoleAfterReady?: boolean;
+    /** using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to `false`. e.g.: logger will set 1.456ms instead of 1ms. */
+    enablePerformanceTimer?: boolean;
   }
 
   /** Custom Loader Configuration */
@@ -329,7 +331,8 @@ declare module 'egg' {
      * @property {String} coreLogName - file name of coreLogger
      * @property {String} agentLogName - file name of agent worker log
      * @property {Object} coreLogger - custom config of coreLogger
-     * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to true
+     * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
+     * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
      */
     logger: EggLoggerConfig;
 
@@ -923,6 +926,11 @@ declare module 'egg' {
      * Request start time
      */
     starttime: number;
+
+    /**
+     * Request start timer using `performance.now()`
+     */
+    performanceStartTime?: number;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.

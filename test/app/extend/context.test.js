@@ -259,10 +259,10 @@ describe('test/app/extend/context.test.js', () => {
       assert(/background run result file size: \d+/.test(log));
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
       assert(
-        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
@@ -277,7 +277,7 @@ describe('test/app/extend/context.test.js', () => {
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:customTaskName success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
@@ -302,7 +302,7 @@ describe('test/app/extend/context.test.js', () => {
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
-        /\[egg:background] task:mockError fail \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
@@ -335,10 +335,10 @@ describe('test/app/extend/context.test.js', () => {
       assert(/background run result file size: \d+/.test(log));
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:saveUserInfo success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
       assert(
-        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
@@ -352,7 +352,7 @@ describe('test/app/extend/context.test.js', () => {
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:customTaskName success \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
 
@@ -376,7 +376,7 @@ describe('test/app/extend/context.test.js', () => {
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
-        /\[egg:background] task:mockError fail \(\d+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
     });
   });

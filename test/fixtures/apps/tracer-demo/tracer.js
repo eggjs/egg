@@ -13,7 +13,7 @@ module.exports = app => {
     if (!req.ctx.traceId) {
       req.ctx.traceId = uuid.v1();
     }
-    req.starttime = Date.now();
+    req.starttime = performance.now();
     req.args.headers = req.args.headers || {};
     req.args.headers['x-request-id'] = req.ctx.traceId;
     req.args.method = req.args.method || 'GET';
@@ -26,6 +26,6 @@ module.exports = app => {
     const res = response.res;
     app.logger.info('[httpclient] [%s] %s %s end, status: %s, use: %s',
       req.ctx.traceId, req.args.method, req.url,
-      res.status, Date.now() - req.starttime);
+      res.status, Math.floor((performance.now() - starttime) * 1000) / 1000);
   });
 };
