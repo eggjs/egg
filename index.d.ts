@@ -930,7 +930,7 @@ declare module 'egg' {
     /**
      * Request start timer using `performance.now()`
      */
-    performanceStartTime?: number;
+    performanceStarttime?: number;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.
