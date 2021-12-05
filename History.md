@@ -1,3 +1,9 @@
+
+2.33.0 / 2021-12-06
+==================
+
+**features**
+  * [[`0f6589e1d`](http://github.com/eggjs/egg/commit/0f6589e1dc9e538434eb1580327556d5aa264822)] - feat: support better logger timer in precise milliseconds (#4806) (fengmk2 <<fengmk2@gmail.com>>)
 # History
 
 ## 2021-11-15, Version 2.32.0 @atian25
