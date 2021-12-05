@@ -25,7 +25,6 @@ module.exports = {
     '@types/accepts',
     '@types/koa',
     '@types/koa-router',
-    '@types/urllib',
   ],
   test: 'scripts',
 };
