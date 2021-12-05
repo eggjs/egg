@@ -1,5 +1,6 @@
 'use strict';
 
+const { performance } = require('perf_hooks');
 const delegate = require('delegates');
 const { assign } = require('utility');
 const eggUtils = require('egg-core').utils;
@@ -219,7 +220,7 @@ const proto = module.exports = {
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
   _runInBackground(scope) {
     const ctx = this;
-    const start = Date.now();
+    const start = performance.now();
     /* istanbul ignore next */
     const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     // use setImmediate to ensure all sync logic will run async
@@ -227,11 +228,13 @@ const proto = module.exports = {
       // use app.toAsyncFunction to support both generator function and async function
       .then(() => ctx.app.toAsyncFunction(scope)(ctx))
       .then(() => {
-        ctx.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, Date.now() - start);
+        ctx.coreLogger.info('[egg:background] task:%s success (%dms)',
+          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
       })
       .catch(err => {
         // background task process log
-        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, Date.now() - start);
+        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)',
+          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
 
         // emit error when promise catch, and set err.runInBackground flag
         err.runInBackground = true;

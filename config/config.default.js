@@ -249,6 +249,8 @@ module.exports = appInfo => {
    * @property {String} coreLogName - file name of coreLogger
    * @property {String} agentLogName - file name of agent worker log
    * @property {Object} coreLogger - custom config of coreLogger
+   * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
+   * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
    */
   config.logger = {
     dir: path.join(appInfo.root, 'logs', appInfo.name),
@@ -265,6 +267,7 @@ module.exports = appInfo => {
     errorLogName: 'common-error.log',
     coreLogger: {},
     allowDebugAtProd: false,
+    enablePerformanceTimer: false,
   };
 
   /**
