@@ -42,7 +42,7 @@ $ open http://localhost:7001
 
 ## Contributors
 
-[![contributors](https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280&size=48&padding=6&type=jpeg)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.png)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## How to Contribute
 
