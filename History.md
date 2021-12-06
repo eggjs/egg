@@ -1,4 +1,14 @@
 
+2.33.1 / 2021-12-07
+==================
+
+**features**
+  * [[`18dcadc1c`](http://github.com/eggjs/egg/commit/18dcadc1cf6c9837de605916a0d8b161a63e7218)] - feat: meta middleware x-readtime support performanceStarttime (#4827) (fengmk2 <<fengmk2@gmail.com>>)
+
+**others**
+  * [[`8659d4bc3`](http://github.com/eggjs/egg/commit/8659d4bc37e0652d66d04d2e5504fdc0ef2f7f7d)] - docs: update contributors (#4826) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`4d18732c7`](http://github.com/eggjs/egg/commit/4d18732c79e44a84140df05e879b8b5f569c2b4b)] - chore: remove @types/urllib from autod (fengmk2 <<fengmk2@gmail.com>>)
+
 2.33.0 / 2021-12-06
 ==================
 
