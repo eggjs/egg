@@ -24,6 +24,24 @@ describe('test/app/middleware/meta.test.js', () => {
     });
   });
 
+  describe('config.logger.enablePerformanceTimer = true', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/middlewares-meta-enablePerformanceTimer');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get X-Readtime header', async () => {
+      for (let i = 0; i < 10; i++) {
+        await app.httpRequest()
+          .get(`/?i=${i}`)
+          .expect('X-Readtime', /^\d+\.\d{1,3}$/)
+          .expect(200);
+      }
+    });
+  });
+
   describe('meta.logging = true', () => {
     let app;
     before(() => {

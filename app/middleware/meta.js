@@ -4,6 +4,7 @@
 
 'use strict';
 
+const { performance } = require('perf_hooks');
 const semver = require('semver');
 
 module.exports = options => {
@@ -16,7 +17,11 @@ module.exports = options => {
     }
     await next();
     // total response time header
-    ctx.set('x-readtime', Date.now() - ctx.starttime);
+    if (ctx.performanceStarttime) {
+      ctx.set('x-readtime', Math.floor((performance.now() - ctx.performanceStarttime) * 1000) / 1000);
+    } else {
+      ctx.set('x-readtime', Date.now() - ctx.starttime);
+    }
 
     // try to support Keep-Alive Header when < 14.8.0
     const server = ctx.app.server;
