@@ -44,7 +44,7 @@ exports.sequelize = {
 - Write the sequelize configuration in `config/config.default.js`
 
 ```js
-config.sequelize = {
+exports.sequelize = {
   dialect: 'mysql',
   host: '127.0.0.1',
   port: 3306,

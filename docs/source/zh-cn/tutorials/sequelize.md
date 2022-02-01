@@ -44,7 +44,7 @@ exports.sequelize = {
 - 在 `config/config.default.js` 中编写 sequelize 配置
 
 ```js
-config.sequelize = {
+exports.sequelize = {
   dialect: 'mysql',
   host: '127.0.0.1',
   port: 3306,
