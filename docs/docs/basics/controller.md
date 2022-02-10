@@ -1,5 +1,6 @@
 ---
 title: Controller
+order: 7
 ---
 
 ## What is Controller

@@ -1,5 +1,6 @@
 ---
 title: Router
+order: 6
 ---
 
 Router is mainly used to describe the corresponding relationship between the request URL and the Controller that processes the request eventually. All routing rules are unified in the `app/router.js` file by the framework.

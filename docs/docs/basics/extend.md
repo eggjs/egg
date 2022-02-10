@@ -1,5 +1,6 @@
 ---
 title: Extend EGG
+order: 11
 ---
 
 Egg.js is extensible and it provides multiple extension points to enhance the functionality of itself:

@@ -1,6 +1,9 @@
 ---
 title: FAQ
+order: 1
 ---
+
+# FAQ
 
 If you have questions that is not contained below, please check [Egg issues](https://github.com/eggjs/egg/issues).
 

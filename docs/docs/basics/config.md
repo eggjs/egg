@@ -1,5 +1,6 @@
 ---
 title: Configuration
+order: 4
 ---
 
 This framework provides powerful and extensible configuration function, including automatically merging applications, plugins, and framework's configuration. In addition, it allows users to overwrite configuration in sequence and maintain different configs depending on different environments. The result (i.e. merged config) can be accessed from `app.config `.

@@ -1,5 +1,6 @@
 ---
 title: Structure
+order: 1
 ---
 
 In the [Quick Start](../intro/quickstart.md), we should have a preliminary impression on the framework, next let us simply understand the directory convention specification.
