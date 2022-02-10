@@ -36,4 +36,6 @@ test/fixtures/apps/app-ts-type-check/**/*.js
 
 # docs
 .umi
+.umi-production
+docs/dist
 !docs/public
