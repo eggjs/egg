@@ -10,8 +10,8 @@ describe('test/doc.test.js', () => {
   let app;
   before(async () => {
     const cwd = path.dirname(__dirname);
-    const doctools = path.join(cwd, 'node_modules', '.bin', 'doctools');
-    await runscript(`${doctools} build`, { cwd });
+    const dumi = path.join(cwd, 'node_modules', '.bin', 'dumi');
+    await runscript(`APP_ROOT=./docs ${dumi} build`, { cwd });
   });
   before(async () => {
     app = utils.cluster({
