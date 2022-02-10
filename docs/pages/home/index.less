@@ -3,7 +3,6 @@
   margin: 44px auto 100px;
 
   padding: 100px 0;
-  background-color: #fff;
 }
 
 .logo {
@@ -69,6 +68,7 @@
 }
 
 .secondary {
+  background: #fff;
   border: 1px solid #22ab28;
   border-radius: 100px;
   color: #22ab28;
@@ -89,5 +89,20 @@
     font-size: 16px;
     vertical-align: middle;
     text-decoration: none;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .banner {
+    padding: 0;
+
+    .logo {
+      display: none;
+    }
+
+    .info {
+      width: 100%;
+      padding: 0;
+    }
   }
 }
