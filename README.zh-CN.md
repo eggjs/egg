@@ -39,7 +39,7 @@ $ open http://localhost:7001
 
 ## 贡献者
 
-[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.png)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.svg)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## 贡献代码
 

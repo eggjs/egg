@@ -1,5 +1,5 @@
 <div style="text-align:center">
-	<img src="docs/assets/egg-banner.png" />
+	<img src="docs/public/assets/egg-banner.png" />
 </div>
 
 [![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
@@ -43,7 +43,7 @@ $ open http://localhost:7001
 
 ## Contributors
 
-[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.png)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.svg)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## How to Contribute
 
