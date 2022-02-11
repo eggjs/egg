@@ -3,8 +3,6 @@ title: 常见问题
 order: 1
 ---
 
-# 常见问题
-
 如果下面的内容无法解决你的问题，请查看 [Egg issues](https://github.com/eggjs/egg/issues)。
 
 ## 如何高效地反馈问题？

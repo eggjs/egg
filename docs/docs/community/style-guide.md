@@ -2,8 +2,6 @@
 title: Code Style Guide
 ---
 
-# Code Style Guide
-
 Developers are advised to use `npm init egg --type=simple showcase` to generate and observe the recommended project structure and configuration.
 
 ## Classify
