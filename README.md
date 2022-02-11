@@ -1,5 +1,5 @@
 <div style="text-align:center">
-	<img src="docs/assets/egg-banner.png" />
+	<img src="docs/public/assets/egg-banner.png" />
 </div>
 
 [![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
