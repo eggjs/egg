@@ -1,5 +1,6 @@
 ---
 title: View Template Rendering
+order: 8
 ---
 
 In most cases, we need to fetch data and render with template files.

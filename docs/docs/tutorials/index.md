@@ -5,9 +5,9 @@ nav:
   order: 2
 ---
 
-- [Quick Start](../intro/quickstart.md)
-- [Progressive Development](./progressive.md)
-- [RESTful API](./restful.md)
+- [Quick Start](./intro/quickstart.md)
+- [Progressive Development](./intro/progressive.md)
+- [RESTful API](./tutorials/restful.md)
 
 ## Boilerplate Type Description
 
@@ -28,7 +28,7 @@ $ npm init egg --type=simple
 
 ## Template Engines
 
-Build in [egg-view] as template engine solution and support multiple render, which is called by plugin but keeping the consistent render API. Refer to [how to use templates](../core/view.md)，More details on [template plugin development](../advanced/view-plugin.md).
+Build in [egg-view] as template engine solution and support multiple render, which is called by plugin but keeping the consistent render API. Refer to [how to use templates](./core/view.md)，More details on [template plugin development](./advanced/view-plugin.md).
 
 Template engines available as shown below. For more template engines [searching](https://github.com/search?utf8=%E2%9C%93&q=topic%3Aegg-view&type=Repositories&ref=searchresults)
 
@@ -44,7 +44,7 @@ Official [ORM model WIP](https://github.com/eggjs/egg/issues/388)，plugins now 
 
 - [egg-sequelize]
 - [egg-mongoose]
-- [egg-mysql]，refer to [MySQL tutorials](./mysql.md)
+- [egg-mysql]，refer to [MySQL tutorials](./tutorials/mysql.md)
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
 [egg-mongoose]: https://github.com/eggjs/egg-mongoose

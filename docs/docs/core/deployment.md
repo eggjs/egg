@@ -1,5 +1,6 @@
 ---
 title: Deployment
+order: 3
 ---
 
 Launching application via `egg-bin dev` will bring something magical to help people to develop in high efficiency. However, actually, those features are not required in production or any other environment. Let's walk through and learn how to deploy your application in Egg's way.

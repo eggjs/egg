@@ -1,5 +1,6 @@
 ---
 title: Local Development
+order: 1
 ---
 
 We provide convenient ways for development, debugging, and unit tests to improve your development experience.

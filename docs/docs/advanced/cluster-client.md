@@ -1,5 +1,6 @@
 ---
 title: Multi-Process Development Model Enhancement
+order: 4
 ---
 
 In the previous [Multi-Process Model chapter](../core/cluster-and-ipc.md), we covered the multi-process model of the framework in detail, whose Agent process suits for a common class of scenarios: some middleware clients need to establish a persistent connection with server. In theory, a server had better establish only one persistent connection. However, the multi-process model will result in n times (n = number of Worker processes) connections being created.

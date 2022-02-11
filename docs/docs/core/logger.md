@@ -1,5 +1,6 @@
 ---
 title: Logger
+order: 4
 ---
 
 There is no doubt that logs are important part for monitoring application and debugging in Web development.

@@ -1,5 +1,6 @@
 ---
 title: Exception Handling
+order: 9
 ---
 
 ## Exception Capture

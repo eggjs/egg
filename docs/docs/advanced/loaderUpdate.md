@@ -1,5 +1,6 @@
 ---
 title: Upgrade your event functions in your lifecycle
+order: 6
 ---
 
 We've simplified the functions of our lifecycle for your convenience to control when to load application or plugins. Generally speaking, the lifecycle events can be divided into two forms:

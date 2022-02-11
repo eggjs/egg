@@ -1,5 +1,6 @@
 ---
 title: Loader
+order: 1
 ---
 
 The most importance of Egg which enhanced Koa is that it is based on a certain agreement, code will be placed in different directories according to the functional differences, it significantly reduces development costs. Loader supports this set of conventions and abstracts that many low-level APIs could be extended.

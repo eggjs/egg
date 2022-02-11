@@ -1,5 +1,6 @@
 ---
 title: View Plugin Development
+order: 5
 ---
 
 In most cases, we need to read the data, render the template and then present it to the user. The framework does not force to use one template engine, but allows developers to select the [template](../core/view.md) by themselves. For details, see [Template Rendering](../core/view.md).

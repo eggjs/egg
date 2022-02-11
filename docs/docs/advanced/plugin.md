@@ -1,5 +1,6 @@
 ---
 title: Plugin Development
+order: 2
 ---
 
 Plugins are the most important features in Egg framework. They keep Egg simple, stable and efficient, and also they make the best reuse of business logic to build an entire ecosystem. Maybe we want to ask:

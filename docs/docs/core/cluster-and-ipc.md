@@ -1,5 +1,6 @@
 ---
 title: Multi-Process Model and Inter-Process Communication
+order: 7
 ---
 
 We know that JavaScript codes are run on single thread, in other words, one Node.js process only runs on one CPU. So if we use Node.js as a Web Server, we cannot benefit from multi-core any more. As an enterprise-level solution, one problem that must be solved is:

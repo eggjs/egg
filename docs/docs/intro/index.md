@@ -14,7 +14,7 @@ Since we know well that enterprise applications need to consider how to balance 
 
 The plugin mechanism of Egg is very extensible, **one purpose for one plugin**(Eg: [Nunjucks] is encapsulated into [egg-view-nunjucks](https://github.com/eggjs/egg-view-nunjucks), and MySQL is encapsulated into [egg-mysql](https://github.com/eggjs/egg-mysql)). Aggregating the plugins and customizing the configurations according to their own business scenarios greatly reduces the development cost.
 
-Egg is a convention-over-configuration framework, follows the [Loader](../advanced/loader.md) to do the development, it helps to reduce the cost of learning. Developers no longer work as 'nails'. The cost of communication is very high for a team without convention. It is easy to get fault without convention. However convention is not equal to difficult extension, instead, Egg does well in extension part, you can build your own framework according to team convention. [Loader](../advanced/loader.md) can help load different default configuration in a different environment, Egg default convention can also be covered by your own.
+Egg is a convention-over-configuration framework, follows the [Loader](./advanced/loader.md) to do the development, it helps to reduce the cost of learning. Developers no longer work as 'nails'. The cost of communication is very high for a team without convention. It is easy to get fault without convention. However convention is not equal to difficult extension, instead, Egg does well in extension part, you can build your own framework according to team convention. [Loader](./advanced/loader.md) can help load different default configuration in a different environment, Egg default convention can also be covered by your own.
 
 ## Differences Between Community Framework
 
@@ -24,12 +24,12 @@ Egg is a convention-over-configuration framework, follows the [Loader](../advanc
 
 ## Features
 
-- Provide capability to [customizd framework](../advanced/framework.md) base on Egg
-- Highly extensible [plugin mechanism](../basics/plugin.md)
-- Built-in [cluster](../advanced/cluster-client.md)
+- Provide capability to [customizd framework](./advanced/framework.md) base on Egg
+- Highly extensible [plugin mechanism](./basics/plugin.md)
+- Built-in [cluster](./advanced/cluster-client.md)
 - Based on [Koa] with high performance
 - Stable core framework with high test coverage
-- [Progressive development](../tutorials/progressive.md)
+- [Progressive development](./intro/progressive.md)
 
 [sails]: http://sailsjs.com
 [express]: http://expressjs.com

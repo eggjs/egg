@@ -6,8 +6,6 @@ nav:
   order: 4
 ---
 
-**Basic**
-
 - Structure
 - Framework Built-in Objects
 - Runtime Environment

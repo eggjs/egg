@@ -5,9 +5,9 @@ nav:
   order: 2
 ---
 
-- [快速入门](../intro/quickstart.md)
-- [渐进式开发](./progressive.md)
-- [RESTful API](./restful.md)
+- [快速入门](./intro/quickstart.md)
+- [渐进式开发](./intro/progressive.md)
+- [RESTful API](./tutorials/restful.md)
 
 ## 骨架类型说明
 
@@ -28,7 +28,7 @@ $ npm init egg --type=simple
 
 ## 模板引擎
 
-框架内置 [egg-view] 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。查看[如何使用模板](../core/view.md)，如果想更深入的了解，可以查看[模板插件开发](../advanced/view-plugin.md)。
+框架内置 [egg-view] 作为模板解决方案，并支持多模板渲染，每个模板引擎都以插件的方式引入，但保持渲染的 API 一致。查看[如何使用模板](./core/view.md)，如果想更深入的了解，可以查看[模板插件开发](./advanced/view-plugin.md)。
 
 可使用以下模板引擎，更多[查看](https://github.com/search?utf8=%E2%9C%93&q=topic%3Aegg-view&type=Repositories&ref=searchresults)
 
@@ -46,7 +46,7 @@ $ npm init egg --type=simple
 
 - [egg-sequelize]
 - [egg-mongoose]
-- [egg-mysql]，可查看 [MySQL 教程](./mysql.md)
+- [egg-mysql]，可查看 [MySQL 教程](./tutorials/mysql.md)
 - [egg-graphql]
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize

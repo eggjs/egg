@@ -16,7 +16,7 @@ nav:
 
 Egg 的插件机制有很高的可扩展性，**一个插件只做一件事**（比如 [Nunjucks] 模板封装成了 [egg-view-nunjucks](https://github.com/eggjs/egg-view-nunjucks)、MySQL 数据库封装成了 [egg-mysql](https://github.com/eggjs/egg-mysql)）。Egg 通过框架聚合这些插件，并根据自己的业务场景定制配置，这样应用的开发成本就变得很低。
 
-Egg 奉行『**约定优于配置**』，按照[一套统一的约定](../advanced/loader.md)进行应用开发，团队内部采用这种方式可以减少开发人员的学习成本，开发人员不再是『钉子』，可以流动起来。没有约定的团队，沟通成本是非常高的，比如有人会按目录分栈而其他人按目录分功能，开发者认知不一致很容易犯错。但约定不等于扩展性差，相反 Egg 有很高的扩展性，可以按照团队的约定定制框架。使用 [Loader](../advanced/loader.md) 可以让框架根据不同环境定义默认配置，还可以覆盖 Egg 的默认约定。
+Egg 奉行『**约定优于配置**』，按照[一套统一的约定](./advanced/loader.md)进行应用开发，团队内部采用这种方式可以减少开发人员的学习成本，开发人员不再是『钉子』，可以流动起来。没有约定的团队，沟通成本是非常高的，比如有人会按目录分栈而其他人按目录分功能，开发者认知不一致很容易犯错。但约定不等于扩展性差，相反 Egg 有很高的扩展性，可以按照团队的约定定制框架。使用 [Loader](./advanced/loader.md) 可以让框架根据不同环境定义默认配置，还可以覆盖 Egg 的默认约定。
 
 ## 与社区框架的差异
 
@@ -26,12 +26,12 @@ Egg 奉行『**约定优于配置**』，按照[一套统一的约定](../advanc
 
 ## 特性
 
-- 提供基于 Egg [定制上层框架](../advanced/framework.md)的能力
-- 高度可扩展的[插件机制](../basics/plugin.md)
-- 内置[多进程管理](../advanced/cluster-client.md)
+- 提供基于 Egg [定制上层框架](./advanced/framework.md)的能力
+- 高度可扩展的[插件机制](./basics/plugin.md)
+- 内置[多进程管理](./advanced/cluster-client.md)
 - 基于 [Koa] 开发，性能优异
 - 框架稳定，测试覆盖率高
-- [渐进式开发](../tutorials/progressive.md)
+- [渐进式开发](./intro/progressive.md)
 
 [sails]: http://sailsjs.com
 [express]: http://expressjs.com
