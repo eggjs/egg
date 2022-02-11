@@ -24,6 +24,10 @@ export default defineConfig({
     'en-US': [
       null,
       {
+        title: 'API',
+        path: '/api/index.html',
+      },
+      {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',
       },
@@ -38,6 +42,10 @@ export default defineConfig({
     ],
     'zh-CN': [
       null,
+      {
+        title: 'API',
+        path: '/api/index.html',
+      },
       {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',
