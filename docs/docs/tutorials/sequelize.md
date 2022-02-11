@@ -2,7 +2,7 @@
 title: Sequelize
 ---
 
-[In the previous section](./mysql.html), we showed how to access the database through the [egg-mysql] plugin in the framework. In some more complex applications, we may need an ORM framework to help us manage the data layer code. In the Node.js community, [sequelize] is a widely used ORM framework that supports multiple data sources such as MySQL, PostgreSQL, SQLite, and MSSQL.
+[In the previous section](./mysql.md), we showed how to access the database through the [egg-mysql] plugin in the framework. In some more complex applications, we may need an ORM framework to help us manage the data layer code. In the Node.js community, [sequelize] is a widely used ORM framework that supports multiple data sources such as MySQL, PostgreSQL, SQLite, and MSSQL.
 
 In this chapter, we will walk through the steps of how to use sequelize in an egg project by developing an example of doing CURD on the data in the `users` table in MySQL.
 

@@ -489,7 +489,7 @@ class PostController extends Controller {
 
 Egg 是通过 `eggPlugin.name` 来定义插件名的，只在应用或框架具备唯一性，也就是说**多个 npm 包可能有相同的插件名**，为什么这么设计呢？
 
-首先 Egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../tutorials/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 Egg 无法通过 npm 的包名来做唯一性。
+首先 Egg 插件不仅仅支持 npm 包，还支持通过目录来找插件。在[渐进式开发](../intro/progressive.md)章节提到如何使用这两个配置来进行代码演进。目录对单元测试也比较友好。所以 Egg 无法通过 npm 的包名来做唯一性。
 
 更重要的是 Egg 可以使用这种特性来做适配器。比如[模板开发规范](./view-plugin.md#插件命名规范)定义的插件名为 view，而存在 `egg-view-nunjucks`，`egg-view-react` 等插件，使用者只需要更换插件和修改模板，不需要动 Controller， 因为所有的模板插件都实现了相同的 API。
 

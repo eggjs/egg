@@ -83,4 +83,4 @@ module.exports = AppBootHook;
 
 **Note: It is not recommended to do long-time operations in the custom lifecycle function, because the framework has a startup timeout detection.**
 
-If your Egg's life-cycle functions are old, we suggest you upgrading to the "class-method" mode. For more you can refer to [Upgrade your event functions in your lifecycle](../advanced/loaderUpdate.md).
+If your Egg's life-cycle functions are old, we suggest you upgrading to the "class-method" mode. For more you can refer to [Upgrade your event functions in your lifecycle](../advanced/loader-update.md).

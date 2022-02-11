@@ -21,7 +21,7 @@ When you're opening an issue, please hold a mentality of "working together to so
 
 ## Why does my config not work?
 
-Framework [Config](./basics/config.md) settings is powerfull, support different environments and different places(framework, plugins, app).
+Framework [Config](../basics/config.md) settings is powerfull, support different environments and different places(framework, plugins, app).
 
 When you got some trouble, and want to find out what is the final config using at runtime, you can checkout `${root}/run/application_config.json`(workers' configurations) and `${root}/run/agent_config.json`(agent's configurations).(`root` is application's root directory, in `local` and `unittest` environments, it will be project base directory, in other environments will be HOME directory)
 
@@ -45,7 +45,7 @@ By default, logs will print at `${baseDir}/logs`(baseDir is project's base direc
 
 1. `PM2` itself is too complex to issue problems if any.
 2. Deep optimization could be difficult to achieve if choosing PM2.
-3. Pattern like one leader process communicating with remote services, along with several follower processes delegating the request to it ([Cluster](./core/cluster-and-ipc.md)), is a rigid demand for reducing connections and data exchange load, especially when facing applications in very large scale. egg originates from Ant Financial Group and Alibaba Group, we start with applications in that scale at first, so we take these goals into consideration. All of these goals above could be hard to achieve with PM2.
+3. Pattern like one leader process communicating with remote services, along with several follower processes delegating the request to it ([Cluster](../core/cluster-and-ipc.md)), is a rigid demand for reducing connections and data exchange load, especially when facing applications in very large scale. egg originates from Ant Financial Group and Alibaba Group, we start with applications in that scale at first, so we take these goals into consideration. All of these goals above could be hard to achieve with PM2.
 
 Process management is very important. It defines the way we write code, meanwhile relates to deep runtime optimizations. So we think it's better included in the framework itself.
 
@@ -81,7 +81,7 @@ There are two kinds of common csrf errors:
 
 By default [egg-security](https://github.com/eggjs/egg-security/) plugin built in Egg requires CSRF validation against all 'unsafe' request such as `POST`, `PUT`, `DELETE` requests.
 
-The error will disappear in the presence of the correct csrf token in the request. For more implementation details, see [./core/security.md#csrf].
+The error will disappear in the presence of the correct csrf token in the request. For more implementation details, see [../core/security.md#csrf].
 
 ## In the local development Environment, why is the worker process not restarted automatically when files are modified?
 

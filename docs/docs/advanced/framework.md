@@ -20,7 +20,7 @@ To satisfy these demands, Egg endows developers with the capacity of `customazin
 
 Therefore, a uniform spec can be applied on projects in which the differentiation fulfilled in plugins. And the best practice summed from those projects can be continuously extracted from these plugins to the framework, which is available to other projects by just updating the dependencies' versions.
 
-See more details in [Progressive Development](../tutorials/progressive.md)。
+See more details in [Progressive Development](../intro/progressive.md)。
 
 ## Framework and Multiprocess
 

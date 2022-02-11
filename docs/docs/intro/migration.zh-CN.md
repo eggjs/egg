@@ -92,7 +92,7 @@ app.role.use('user', (ctx) => {
 
 不过，为了更好的统一代码风格，以及更佳的性能和错误堆栈，我们建议开发者进一步升级：
 
-- 修改为推荐的代码风格，传送门：[代码风格指南](./style-guide.md)
+- 修改为推荐的代码风格，传送门：[代码风格指南](../community/style-guide.md)
 - [中间件使用 Koa2 风格](#中间件使用-Koa2-风格)
 - [函数调用的 `yieldable` 转为 `awaitable`](#yieldable-To-awaitable)
 
@@ -101,7 +101,7 @@ app.role.use('user', (ctx) => {
 > 2.x 仍然保持对 1.x 风格的中间件的兼容，故不修改也能继续使用。
 
 - 返回的函数入参改为 Koa 2 的 `(ctx, next)` 风格。
-  - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](./basics/extend.md#Context) 的实例。
+  - 第一个参数为 `ctx`，代表当前请求的上下文，是 [Context](../basics/extend.md#Context) 的实例。
   - 第二个参数为 `next`，用 await 执行它来执行后续中间件的逻辑。
 - 不建议使用 `async (ctx, next) => {}` 格式，避免错误堆栈丢失函数名。
 - `yield next` 改为函数调用 `await next()` 的方式。

@@ -15,7 +15,7 @@ const style = {
 export default ({ children, ...props }) => {
   const { meta } = useContext(context);
   const { title, hero } = meta;
-  
+
   const renderTitle = () => {
     if (hero) {
       return null;
@@ -27,7 +27,7 @@ export default ({ children, ...props }) => {
       </div>
     );
   };
-  
+
   return (
     <Layout {...props}>
       {renderTitle()}

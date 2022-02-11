@@ -489,7 +489,7 @@ It's well welcomed to your contributions to the new plugins, but also hope you f
 
 Egg defines the plugin name through the `eggPlugin.name`, it is only unique in application or framework, that means **many npm packages might get the same plugin name**, why design in this way?
 
-First, Egg plugin does not only support npm packages, but also supports plugins-searching in local directory. In Chapter [progressive](../tutorials/progressive.md) we've mentioned how to make progress by using these two configurations. Directories are more friendly to unit tests. So, Egg can not ensure uniqueness through npm package names.
+First, Egg plugin does not only support npm packages, but also supports plugins-searching in local directory. In Chapter [progressive](../intro/progressive.md) we've mentioned how to make progress by using these two configurations. Directories are more friendly to unit tests. So, Egg can not ensure uniqueness through npm package names.
 
 What's more, Egg can use this feature to make an adapter, for example, the plugin defined in[Template Develop Spec](./view-plugin.md#PluginNameSpecification) was named as view, but there are plugins named `egg-view-nunjucks` and `egg-view-react`, the users only need to change the plugin and modify the templates, no need to modify the controllers, because all these plugins have implemented the same APIs.
 

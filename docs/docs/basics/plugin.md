@@ -127,7 +127,7 @@ In this way, `npm i --production` in the production environment does not need to
 
 - The `package` is introduced in the `npm` style which is the most common way to import
 - `path` is an absolute path introduced when you want to load the plugin from different location such as when a plugin is still at the development stage or not available on `npm`
-- To see the application of these two scenarios, please see [progressive development](../tutorials/progressive.md).
+- To see the application of these two scenarios, please see [progressive development](../intro/progressive.md).
 
 ```js
 // config / plugin.js

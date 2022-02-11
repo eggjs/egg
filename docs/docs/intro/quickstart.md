@@ -468,10 +468,10 @@ That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
 We can only touch the tip of the iceberg of Egg with the above short sections.
 Where to go from here? read our documentation to better understand the framework.
 
-- About Egg boilerplate type, See [Boilerplate Type Description](../tutorials/index.md).
+- About Egg boilerplate type, See [Boilerplate Type Description](../tutorials).
 - Egg provides a powerful mechanism for extending features. See [Plugin](../basics/plugin.md).
 - Egg framework allows small or large teams to work together as fast as possible under the well-documented conventions and coding best practices. In addition, the teams can build up logics on top of the framework to better suit their special needs. See more on [Frameworks].(../advanced/framework.md).
-- Egg framework provides code reusabilities and modularities. See details at [Progressive](../tutorials/progressive.md).
+- Egg framework provides code reusabilities and modularities. See details at [Progressive](../intro/progressive.md).
 - Egg framework enables developers to write painless unit testing with many plugins and community-powered toolings. The team should give it a try by using Egg unit testing without worrying about setting up the testing tooling but writing the testing logics. See [Unit Testing](../core/unittest.md).
 
 [node.js]: http://nodejs.org

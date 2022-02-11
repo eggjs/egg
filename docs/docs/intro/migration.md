@@ -92,7 +92,7 @@ Due to the complete compatibility to Egg 1.x, we can finish the upgrade quickly.
 
 But in order to keep the coding style consistent, as well as a better performance improvement and more developer-friendly error stack logs, we suggest developers to make a further upgrade:
 
-- Use recommended code style, see [Style guide](./style-guide.md)
+- Use recommended code style, see [Style guide](../community/style-guide.md)
 - [Use Koa style middleware](#use-koa2-style-middleware)
 - [Change `yieldable` to `awaitable` in function invoke](#yieldable-to-awaitable)
 
@@ -101,7 +101,7 @@ But in order to keep the coding style consistent, as well as a better performanc
 > 2.x is compatible to 1.x-styled middleware, so it's still functional without any changes.
 
 - Use Koa 2's `(ctx, next)` arguments style in callback function
-  - The 1st argument is `ctx`, means context, it is an instance of [Context](./basics/extend.md#Context)
+  - The 1st argument is `ctx`, means context, it is an instance of [Context](../basics/extend.md#Context)
   - The 2nd argument is `next`, use await to execute it for the coming logics.
 - Using `async (ctx, next) => {}` is not recommended, which prevents anonymous function in error stack.
 - Change `yield next` to `await next()`.
