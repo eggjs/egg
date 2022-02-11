@@ -38,7 +38,7 @@ const Intro: React.FC<Props> = (props) => {
           </div>
 
           <div className={styles.promote}>
-            <img src={promo.logo} />
+            {promo.logo ? <img src={promo.logo} /> : null }
             <a href={promo.link}>{promo.title} &gt;</a>
           </div>
         </div>
@@ -57,8 +57,8 @@ interface Props {
       link: string;
     };
     promo: {
-      title: string;
-      logo: string;
+      logo?: string;
+      title: string;      
       link: string;
     };
   };

@@ -2,10 +2,9 @@ export const info = {
   desc: '为企业级框架和应用而生',
 };
 
-export const promo = {
-  logo: 'https://img.alicdn.com/tfs/TB1d5V8n9R26e4jSZFEXXbwuXXa-25-25.png',
-  title: '第十五届 D2 前端技术论坛·无界',
-  link: 'http://d2forum.alibaba-inc.com/',
+export const promo = {  
+  title: '淘宝 NPM 镜像站喊你切换新域名啦',
+  link: 'https://github.com/cnpm/cnpm/issues/361',
 };
 
 export const features = [
