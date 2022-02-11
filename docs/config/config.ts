@@ -9,10 +9,10 @@ export default defineConfig({
   logo: '/logo.svg',
   favicon: '/favicon.png',
 
-  // algolia: {
-  //   apiKey: 'yourapikey',
-  //   indexName: 'egg',
-  // },
+  algolia: {
+    apiKey: '1561de31a86f79507ea00cdb54ce647c',
+    indexName: 'eggjs',
+  },
 
   exportStatic: {},
 
