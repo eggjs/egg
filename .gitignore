@@ -10,16 +10,6 @@ run
 .idea
 .DS_Store
 .tmp
-docs/CONTRIBUTING.md
-docs/node_modules
-docs/README.md
-docs/db.json
-docs/source/release/index.md
-docs/source/member_guide.md
-docs/source/_data/versions.yml
-docs/**/contributing.md
-docs/public
-docs/plugins.png
 
 package-lock.json
 yarn.lock
