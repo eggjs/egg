@@ -1,6 +1,6 @@
 ---
 title: 常见问题
-order: 1
+order: 3
 ---
 
 如果下面的内容无法解决你的问题，请查看 [Egg issues](https://github.com/eggjs/egg/issues)。
