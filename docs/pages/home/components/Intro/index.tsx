@@ -38,8 +38,10 @@ const Intro: React.FC<Props> = (props) => {
           </div>
 
           <div className={styles.promote}>
-            {promo.logo ? <img src={promo.logo} /> : null }
-            <a href={promo.link}>{promo.title} &gt;</a>
+            {promo.logo ? <img src={promo.logo} /> : null}
+            <a href={promo.link} target="_blank">
+              {promo.title} &gt;
+            </a>
           </div>
         </div>
       </div>
@@ -58,7 +60,7 @@ interface Props {
     };
     promo: {
       logo?: string;
-      title: string;      
+      title: string;
       link: string;
     };
   };

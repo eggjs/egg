@@ -4,8 +4,8 @@ import Layout from 'dumi-theme-default/es/layout';
 
 const style = {
   wrap: {
-    borderBottom: '1px solid #eee',
     marginBottom: '1em',
+    boxShadow: '0px 1px 0px rgba(0,0,0,0.1)',
   },
   title: {
     color: '#454d64',

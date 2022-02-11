@@ -2,7 +2,7 @@ export const info = {
   desc: '为企业级框架和应用而生',
 };
 
-export const promo = {  
+export const promo = {
   title: '淘宝 NPM 镜像站喊你切换新域名啦',
   link: 'https://github.com/cnpm/cnpm/issues/361',
 };
