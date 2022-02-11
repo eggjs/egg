@@ -4,6 +4,7 @@ const path = require('path');
 const findlinks = require('findlinks');
 const assert = require('assert');
 const runscript = require('runscript');
+const puppeteer = require('puppeteer');
 const utils = require('./utils');
 
 describe('test/doc.test.js', () => {
@@ -26,8 +27,8 @@ describe('test/doc.test.js', () => {
   after(() => app.close());
 
   it('should no broken url', async () => {
-    const result = await findlinks({ src: app.url, logger: console });
+    const result = await findlinks({ src: app.url, logger: console, puppeteer });
     if (result.fail !== 0) console.log(result);
     assert(result.fail === 0);
-  });
+  }).timeout(5 * 60 * 1000);
 });

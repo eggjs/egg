@@ -83,6 +83,7 @@
     "mz-modules": "^2.1.0",
     "pedding": "^1.1.0",
     "prettier": "^2.5.1",
+    "puppeteer": "^13.3.1",
     "runscript": "^1.3.0",
     "spy": "^1.0.0",
     "supertest": "^3.4.2",
