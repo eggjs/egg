@@ -9,6 +9,11 @@ export default defineConfig({
   logo: '/logo.svg',
   favicon: '/favicon.png',
 
+  // algolia: {
+  //   apiKey: 'yourapikey',
+  //   indexName: 'egg',
+  // },
+
   exportStatic: {},
 
   sitemap: {
@@ -17,7 +22,7 @@ export default defineConfig({
 
   navs: {
     'en-US': [
-      null, // null 值代表保留约定式生成的导航，只做增量配置
+      null,
       {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',
@@ -32,7 +37,7 @@ export default defineConfig({
       },
     ],
     'zh-CN': [
-      null, // null 值代表保留约定式生成的导航，只做增量配置
+      null,
       {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',

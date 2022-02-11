@@ -1,6 +1,10 @@
 import React from 'react';
-import Banner from './banner';
-import { promo } from './config';
+import Intro from './components/Intro';
+import Links from './components/Links';
+import Features from './components/Features';
+import Copyright from './components/Copyright';
+
+import { promo, features } from './conf';
 
 const Home: React.FC<Props> = () => {
   const data = {
@@ -12,7 +16,14 @@ const Home: React.FC<Props> = () => {
     promo,
   };
 
-  return <Banner data={data} />;
+  return (
+    <>
+      <Intro data={data} />
+      <Features data={features} />
+      <Links />
+      <Copyright />
+    </>
+  );
 };
 
 export default Home;

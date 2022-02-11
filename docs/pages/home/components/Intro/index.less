@@ -1,8 +1,10 @@
 .banner {
-  max-width: 1136px;
-  margin: 44px auto 100px;
+  padding: 160px 0 40px 0;
+}
 
-  padding: 100px 0;
+.banner_wrap {
+  max-width: 72rem;
+  margin: 0 auto;
 }
 
 .logo {
@@ -95,6 +97,7 @@
 @media only screen and (max-width: 768px) {
   .banner {
     padding: 0;
+    min-height: calc(100vh - 64px - 50px - 16px);
 
     .logo {
       display: none;
