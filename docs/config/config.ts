@@ -25,7 +25,7 @@ export default defineConfig({
       null,
       {
         title: 'API',
-        path: '/api/index.html',
+        path: 'https://eggjs.org/api/index.html',
       },
       {
         title: 'GitHub',
@@ -44,7 +44,7 @@ export default defineConfig({
       null,
       {
         title: 'API',
-        path: '/api/index.html',
+        path: 'https://eggjs.org/api/index.html',
       },
       {
         title: 'GitHub',
