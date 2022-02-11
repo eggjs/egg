@@ -11,7 +11,10 @@ describe('test/doc.test.js', () => {
   before(async () => {
     const cwd = path.dirname(__dirname);
     const dumi = path.join(cwd, 'node_modules', '.bin', 'dumi');
-    await runscript(`APP_ROOT=./docs ${dumi} build`, { cwd });
+    const crossEnv = path.join(cwd, 'node_modules', '.bin', 'cross-env');
+    await runscript(`${crossEnv} APP_ROOT=docs ${dumi} build`, {
+      cwd,
+    });
   });
   before(async () => {
     app = utils.cluster({

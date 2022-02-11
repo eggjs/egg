@@ -63,6 +63,7 @@
     "autod": "^3.0.1",
     "autod-egg": "^1.1.0",
     "coffee": "^5.2.1",
+    "cross-env": "^7.0.3",
     "dumi": "^1.1.38",
     "egg-alinode": "^1.0.3",
     "egg-bin": "^4.12.3",
