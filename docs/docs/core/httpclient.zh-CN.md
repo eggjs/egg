@@ -18,9 +18,9 @@ order: 5
 // app.js
 module.exports = (app) => {
   app.beforeStart(async () => {
-    // 示例：启动的时候去读取 https://registry.npm.taobao.org/egg/latest 的版本信息
+    // 示例：启动的时候去读取 https://registry.npmmirror.com/egg/latest 的版本信息
     const result = await app.curl(
-      'https://registry.npm.taobao.org/egg/latest',
+      'https://registry.npmmirror.com/egg/latest',
       {
         dataType: 'json',
       },
@@ -43,7 +43,7 @@ class NpmController extends Controller {
 
     // 示例：请求一个 npm 模块信息
     const result = await ctx.curl(
-      'https://registry.npm.taobao.org/egg/latest',
+      'https://registry.npmmirror.com/egg/latest',
       {
         // 自动解析 JSON response
         dataType: 'json',
