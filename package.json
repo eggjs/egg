@@ -111,7 +111,7 @@
     "ci": "npm run lint && egg-bin pkgfiles --check && npm run cov",
     "site:jsdoc": "node ./scripts/jsdoc.js",
     "site:dev": "APP_ROOT=./site dumi dev",
-    "site:build": "APP_ROOT=./site dumi build && npm run docs:jsdoc",
+    "site:build": "APP_ROOT=./site dumi build && npm run site:jsdoc",
     "site:prettier": "prettier --config site/.prettierrc --ignore-path site/.prettierignore --write \"site/**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "autod": "autod",
     "puml": "puml . --dest ./site",
