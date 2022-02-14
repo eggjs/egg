@@ -24,8 +24,9 @@ test/fixtures/apps/app-ts/**/*.js
 test/fixtures/apps/app-ts-esm/**/*.js
 test/fixtures/apps/app-ts-type-check/**/*.js
 
-# docs
+# site
+site/dist
+!site/public
+
 .umi
 .umi-production
-docs/dist
-!docs/public
