@@ -32,7 +32,7 @@ $ npm run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 8.0.0 required.
+> Node.js >= 8.5.0 required.
 
 ## Documentations
 

@@ -18,7 +18,7 @@
 - 深度框架定制
 - 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-> 支持 Node.js 8.x 及以上版本。
+> 支持 Node.js 8.5.x 及以上版本。
 
 ## 快速开始
 
