@@ -9,10 +9,10 @@ export default defineConfig({
   logo: '/logo.svg',
   favicon: '/favicon.png',
 
-  algolia: {
-    apiKey: '1561de31a86f79507ea00cdb54ce647c',
-    indexName: 'eggjs',
-  },
+  // algolia: {
+  //   apiKey: '1561de31a86f79507ea00cdb54ce647c',
+  //   indexName: 'eggjs',
+  // },
 
   exportStatic: {},
 
@@ -64,7 +64,7 @@ export default defineConfig({
   themeConfig: {
     links: [
       {
-        title: '相关资源',
+        title: 'Resources',
         list: [
           {
             name: 'Egg',
@@ -77,7 +77,7 @@ export default defineConfig({
         ],
       },
       {
-        title: '蚂蚁体验科技',
+        title: 'XTech',
         list: [
           { name: 'EggJS - 企业级 Node.js 开发框架', url: 'https://eggjs.org' },
           { name: 'Ant Design - UI 体系', url: 'https://ant.design' },
@@ -89,7 +89,7 @@ export default defineConfig({
         ],
       },
       {
-        title: '社区',
+        title: 'Community',
         list: [
           { name: 'CNode 社区', url: 'https://cnodejs.org/' },
           { name: 'Node.js 专栏', url: 'https://www.yuque.com/egg/nodejs' },
