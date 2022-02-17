@@ -8,22 +8,22 @@ egg:
     desc: better enterprise frameworks and apps with Node.js & Koa
     content: Born to build better enterprise frameworks and apps
   promo:
-    title: 淘宝 NPM 镜像站喊你切换新域名啦
+    title: Taobao NPM mirror is calling you to switch to new domain
     link: https://github.com/cnpm/cnpm/issues/361
   guide:
     title: Get Started
     link: /intro/quickstart
   features:
-    - title: 完善的生态
-      desc: 基于开源生态，专为泛蚂蚁生态定制，一分钟接入后端服务中间件，支持多种部署环境。
+    - title: Complete ecology
+      desc: Based on open source ecology, customized for ant-ecology, can be integrated to backend middleware in one minute, supporting multiple depolyment enviroments.
       icon: /img_egg/icon-3.png
-    - title: 高效自然的研发体验
-      desc: 渐进式开发，学习曲线平滑，提供一站式开发套件，为研发全流程保驾护航。
+    - title: Efficient and natural development experience.
+      desc: Progressive development, smooth learning curve, one-stop development kit, supporting your whole process of development.
       icon: /img_egg/icon-4.png
-    - title: 高质量、可信赖
-      desc: 高质量，完备的测试，内置集团安全策略，双十一等线上大规模顶级流量压力考验。
+    - title: High Quality & Reliability
+      desc: With high-quality, complete tests, built-in security policy, withstanded the larggest amout of traffic like Double 11 Promotion.
       icon: /img_egg/icon-2.png
-    - title: 灵活、高扩展性
-      desc: 约定优于配置，高度灵活的定制性，业界领先的插件机制和上层业务框架机制。
+    - title: Flexiable & High scalability
+      desc: Convention over configuration, highly flexible customization, industry-leading plugin systems and upper-layer business-specific framework systems.
       icon: /img_egg/icon-1.png
 ---
