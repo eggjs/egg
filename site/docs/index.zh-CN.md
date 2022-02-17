@@ -4,7 +4,7 @@ hero:
   desc: Born to build better enterprise frameworks and apps
 egg:
   info:
-    title: Born to build    
+    title: Born to build
     desc: better enterprise frameworks and apps with Node.js & Koa
     content: 为企业级框架和应用而生
   promo:
@@ -25,5 +25,5 @@ egg:
       icon: /img_egg/icon-2.png
     - title: 灵活、高扩展性
       desc: 约定优于配置，高度灵活的定制性，业界领先的插件机制和上层业务框架机制。
-      icon: /img_egg/icon-1.png  
+      icon: /img_egg/icon-1.png
 ---

@@ -2,7 +2,7 @@
 title: egg - Born to build better enterprise frameworks and apps
 hero:
   desc: Born to build better enterprise frameworks and apps
-egg:  
+egg:
   info:
     title: Born to build
     desc: better enterprise frameworks and apps with Node.js & Koa
@@ -10,9 +10,9 @@ egg:
   promo:
     title: 淘宝 NPM 镜像站喊你切换新域名啦
     link: https://github.com/cnpm/cnpm/issues/361
-  guide: 
+  guide:
     title: Get Started
-    link: /intro/quickstart    
+    link: /intro/quickstart
   features:
     - title: 完善的生态
       desc: 基于开源生态，专为泛蚂蚁生态定制，一分钟接入后端服务中间件，支持多种部署环境。
@@ -25,5 +25,5 @@ egg:
       icon: /img_egg/icon-2.png
     - title: 灵活、高扩展性
       desc: 约定优于配置，高度灵活的定制性，业界领先的插件机制和上层业务框架机制。
-      icon: /img_egg/icon-1.png  
+      icon: /img_egg/icon-1.png
 ---
