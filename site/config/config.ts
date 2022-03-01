@@ -14,6 +14,10 @@ export default defineConfig({
   //   indexName: 'eggjs',
   // },
 
+  theme: {
+    '@c-primary': '#22ab28',
+  },
+
   exportStatic: {},
 
   sitemap: {
