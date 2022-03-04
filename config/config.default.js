@@ -190,6 +190,7 @@ module.exports = appInfo => {
    * You can map some files using this options, it will response immdiately when matching.
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
+   * @property {String} cacheControl - files cache , default is public, max-age=2592000
    * @example
    * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
    * config.siteFile = {
@@ -198,6 +199,8 @@ module.exports = appInfo => {
    */
   config.siteFile = {
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.png')),
+    // default cache in 30 days
+    cacheControl: 'public, max-age=2592000',
   };
 
   /**
