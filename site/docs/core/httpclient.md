@@ -19,12 +19,9 @@ So you can easily use `app.curl` to complete a HTTP request.
 module.exports = (app) => {
   app.beforeStart(async () => {
     // example: read the version info on https://registry.npmmirror.com/egg/latest when it starts
-    const result = await app.curl(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        dataType: 'json',
-      },
-    );
+    const result = await app.curl('https://registry.npmmirror.com/egg/latest', {
+      dataType: 'json',
+    });
     app.logger.info('Egg latest version: %s', result.data.version);
   });
 };
@@ -42,15 +39,12 @@ class NpmController extends Controller {
     const ctx = this.ctx;
 
     // example: request a npm module's info
-    const result = await ctx.curl(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        // parse JSON response
-        dataType: 'json',
-        // timeout of 3s
-        timeout: 3000,
-      },
-    );
+    const result = await ctx.curl('https://registry.npmmirror.com/egg/latest', {
+      // parse JSON response
+      dataType: 'json',
+      // timeout of 3s
+      timeout: 3000,
+    });
 
     ctx.body = {
       status: result.status,

@@ -19,12 +19,9 @@ order: 5
 module.exports = (app) => {
   app.beforeStart(async () => {
     // 示例：启动的时候去读取 https://registry.npmmirror.com/egg/latest 的版本信息
-    const result = await app.curl(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        dataType: 'json',
-      },
-    );
+    const result = await app.curl('https://registry.npmmirror.com/egg/latest', {
+      dataType: 'json',
+    });
     app.logger.info('Egg latest version: %s', result.data.version);
   });
 };
@@ -42,15 +39,12 @@ class NpmController extends Controller {
     const ctx = this.ctx;
 
     // 示例：请求一个 npm 模块信息
-    const result = await ctx.curl(
-      'https://registry.npmmirror.com/egg/latest',
-      {
-        // 自动解析 JSON response
-        dataType: 'json',
-        // 3 秒超时
-        timeout: 3000,
-      },
-    );
+    const result = await ctx.curl('https://registry.npmmirror.com/egg/latest', {
+      // 自动解析 JSON response
+      dataType: 'json',
+      // 3 秒超时
+      timeout: 3000,
+    });
 
     ctx.body = {
       status: result.status,
