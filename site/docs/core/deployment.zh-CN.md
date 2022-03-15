@@ -130,7 +130,7 @@ AliNode Runtime 可以直接替换掉 Node.js Runtime，对应版本参见[文�
 
 全局安装方式参见[文档](https://help.aliyun.com/document_detail/60338.html)。
 
-有时候，同机会部署多个项目，期望多版本共存时，则可以把 Runtime 安装到当前项目：
+有时候，同时部署多个项目，期望多版本共存时，则可以把 Runtime 安装到当前项目：
 
 ```bash
 $ npm i nodeinstall -g
