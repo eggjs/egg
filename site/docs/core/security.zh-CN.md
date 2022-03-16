@@ -251,7 +251,7 @@ IE 提供的一些 XSS 检测与防范，默认开启
 
 ## 安全威胁 CSRF 的防范
 
-[CSRF](https://www.owasp.org/index.php/CSRF)（Cross-site request forgery 跨站请求伪造，也被称为 `One Click Attack` 或者 `Session Riding`，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
+[CSRF](https://www.owasp.org/index.php/CSRF)（Cross-site request forgery）跨站请求伪造，也被称为 `One Click Attack` 或者 `Session Riding`，通常缩写为 CSRF 或者 XSRF，是一种对网站的恶意利用。
 CSRF 攻击会对网站发起恶意伪造的请求，严重影响网站的安全。因此框架内置了 CSRF 防范方案。
 
 ### 防范方式
