@@ -95,7 +95,7 @@ describe('test/app/middleware/site_file.test.js', () => {
   describe('siteFile.cacheControl = no-store', () => {
     let app;
     before(() => {
-      app = utils.app('apps/sitefile-custom-cacheControl');
+      app = utils.app('apps/siteFile-custom-cacheControl');
       return app.ready();
     });
     after(() => app.close());
