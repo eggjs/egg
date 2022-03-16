@@ -99,7 +99,7 @@ describe('test/lib/core/httpclient.test.js', () => {
     }, err => {
       assert(err.name === 'HttpClientError');
       assert(err.code === 'httpclient_ENETUNREACH');
-      assert(err.message === 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH]');
+      assert(err.message === 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH ]');
       return true;
     });
   });
