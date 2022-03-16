@@ -1,4 +1,22 @@
 
+2.34.0 / 2022-03-16
+==================
+
+**features**
+  * [[`caacd09c3`](http://github.com/eggjs/egg/commit/caacd09c38aae03fc291febbb97a43c8ecbdc221)] - feat: siteFile support custom control-cache (#4902) (binginsist <<yangbingmail@foxmail.com>>)
+
+**others**
+  * [[`f97fe4a8c`](http://github.com/eggjs/egg/commit/f97fe4a8c8c0b5f8c097055213f9e7177b9ab2dd)] - test: change error code assert (#4907) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`a7aa7f37d`](http://github.com/eggjs/egg/commit/a7aa7f37d901afd4c26a2a9aa57fe938b2109e94)] - docs: typo fix on deployment.zh-CN.md (#4906) (Krryxa <<krryxq@163.com>>)
+  * [[`d3fe13aa2`](http://github.com/eggjs/egg/commit/d3fe13aa25065995cfa9d78461be80194176f183)] - docs: typo fix on security.zh-CN.md (#4905) (Krryxa <<krryxq@163.com>>)
+  * [[`2dc723129`](http://github.com/eggjs/egg/commit/2dc723129614bd727e86871ae3e7cfc60166dd81)] - docs: use egg brand color for site (#4900) (Peach <<scdzwyxst@gmail.com>>)
+  * [[`11bbd8527`](http://github.com/eggjs/egg/commit/11bbd852731b1583cae5a5d519baa20960c0521d)] - docs: enhance (#4884) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`76d014bd5`](http://github.com/eggjs/egg/commit/76d014bd583c6d0b9b9f40ac2e6e7ba9dd66e8ed)] - docs: update node version (#4886) (lxinr <<33972246+lxinr@users.noreply.github.com>>)
+  * [[`9003cb5ad`](http://github.com/eggjs/egg/commit/9003cb5ad370d0c07b2baee88f3b25c597ac3929)] - docs: update https://registry.npm.taobao.org to https://registry.npmmirror.com (#4881) (Non-Official NPM Mirror Bot <<99484857+npmmirror@users.noreply.github.com>>)
+  * [[`b47409770`](http://github.com/eggjs/egg/commit/b47409770d76f03eb1ea0476be9e00207186c42e)] - docs: dumi (#4879) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`56816dbc5`](http://github.com/eggjs/egg/commit/56816dbc59dbb1a4973ca60130c9ff3f5be8b2da)] - docs (sequelize): Changed `config.sequelize` to `exports.sequelize`  in configuration part (#4873) (Aelita <<45784210+xsjcTony@users.noreply.github.com>>)
+  * [[`20842f9c2`](http://github.com/eggjs/egg/commit/20842f9c216ed538924936163b7ed18437c54cd7)] - docs: Add license scan report and status (#4880) (fossabot <<badges@fossa.io>>)
+
 2.33.1 / 2021-12-07
 ==================
 
