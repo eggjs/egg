@@ -22,11 +22,12 @@ describe('test/lib/egg.test.js', () => {
     });
     after(() => app.close());
 
-    it('should dump config and plugins', () => {
+    it('should dump config、plugins、appInfo', () => {
       let json = require(path.join(baseDir, 'run/agent_config.json'));
       assert(/\d+\.\d+\.\d+/.test(json.plugins.onerror.version));
       assert(json.config.name === 'demo');
       assert(json.config.tips === 'hello egg');
+      assert(json.appInfo.name === 'demo');
       json = require(path.join(baseDir, 'run/application_config.json'));
       checkApp(json);
 
@@ -38,6 +39,8 @@ describe('test/lib/egg.test.js', () => {
         assert(json.config.name === 'demo');
         // should dump dynamic config
         assert(json.config.tips === 'hello egg started');
+
+        assert(json.appInfo);
       }
     });
 
