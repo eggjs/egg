@@ -1,3 +1,12 @@
+2.35.0 / 2022-04-01 @mansonchor
+==================
+
+**features**
+  * [[`c1313f5ef`](http://github.com/eggjs/egg/commit/c1313f5ef960e5aaad7f04adb6665679f2ec10e2)] - feat: dumpConfig add appInfo (#4917) (mansonchor.github.com <<mansonchor1987@gmail.com>>)
+
+**others**
+  * [[`4e5309188`](http://github.com/eggjs/egg/commit/4e5309188a60393435d5ab2df65ca67186f31035)] - test: add ChainAlert action (#4908) (fengmk2 <<fengmk2@gmail.com>>)
+
 
 2.34.0 / 2022-03-16
 ==================
