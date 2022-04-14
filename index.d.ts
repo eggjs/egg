@@ -475,7 +475,7 @@ declare module 'egg' {
       };
       xframe: {
         enable: boolean;
-        value: 'SAMEORIGIN' | 'DENY' | 'ALLOW-FROM';
+        value: 'SAMEORIGIN' | 'DENY' | `ALLOW-FROM ${string}`;
       };
       hsts: any;
       methodnoallow: { enable: boolean };
