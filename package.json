@@ -57,7 +57,7 @@
     "ylru": "^1.2.1"
   },
   "devDependencies": {
-    "@umijs/preset-react": "^1.x",
+    "@umijs/preset-react": "^2.1.2",
     "address": "^1.0.3",
     "antd": "^4.18.6",
     "assert-extends": "^1.0.1",
