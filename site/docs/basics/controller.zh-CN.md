@@ -296,6 +296,8 @@ class PostController extends Controller {
 - 当请求的 Content-Type 为 `application/x-www-form-urlencoded` 时，会按照 form 格式对请求 body 进行解析，并限制 body 最大长度为 `100kb`。
 - 如果解析成功，body 一定会是一个 Object（可能是一个数组）。
 
+注意：当请求的 Content-Type 为 application/x-www-form-urlencoded 时，前端传递的 body 应当是形如 key=value 这样的键值对，而不是一个 new FormData() 对象，当多个键值对时，使用 & 连接。注意：当请求的 Content-Type 为 application/x-www-form-urlencoded 时，前端传递的 body 应当是形如 key=value 这样的键值对，而不是一个 new FormData() 对象，当多个键值对时，使用 & 连接。
+
 一般来说我们最经常调整的配置项就是变更解析时允许的最大长度，可以在 `config/config.default.js` 中覆盖框架的默认值。
 
 ```js
