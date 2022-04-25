@@ -15,7 +15,7 @@ app.ready().then(() => {
   console.log('app(%s) ready', app.config.baseDir);
 
   const server = http.createServer(app.callback());
-  // emit server event just like egg-cluster does
+  // emit server event just like egg-cluster
   // https://github.com/eggjs/egg-cluster/blob/master/lib/app_worker.js#L52
   app.emit('server', server);
 
