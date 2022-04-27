@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-<!-- 相关 RFC 示例：https://git.io/fphwy -->
+<!-- 相关 RFC 示例：https://github.com/eggjs/egg/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3A%22type%3A+proposals%22 -->
 
 ## 背景
 
