@@ -79,7 +79,7 @@ describe('test/lib/application.test.js', () => {
         assert(err.message === 'Please set config.keys first');
       }
 
-      // make sure app close
+      // make sure app closed
       await app.close();
     });
 
@@ -96,7 +96,7 @@ describe('test/lib/application.test.js', () => {
         assert(err.message === 'Please set config.keys first');
       }
 
-      // make sure app close
+      // make sure app closed
       await app.close();
     });
 
