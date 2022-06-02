@@ -212,7 +212,7 @@ exports.post = async (ctx) => {
 
 > If you perform a POST request directly, an **error** will occur: 'secret is missing'. This error message comes from [koa-csrf/index.js#L69](https://github.com/koajs/csrf/blob/2.5.0/index.js#L69).
 
-> **Reason**: the framework verifies the CSFR value specially for form POST requests, so please submit the CSRF key as well when you submit a form. Refer to [Keep Away from CSRF Threat](https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范) for more detail.
+> **Reason**: the framework verifies the CSRF value specially for form POST requests, so please submit the CSRF key as well when you submit a form. Refer to [Keep Away from CSRF Threat](https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范) for more detail.
 
 > **Note**: the verification is performed because the framework builds in a security plugin [egg-security](https://github.com/eggjs/egg-security) that provides some default security practices and this plugin is enabled by default. In case you want to disable some security protections, just set the enable attribute to false.
 
