@@ -168,6 +168,16 @@ describe('test/lib/egg.test.js', () => {
       });
       app.dumpTiming();
     });
+
+    it('should dumpTiming when timeout', async () => {
+      const baseDir = utils.getFilepath('apps/dumptiming-timeout');
+      await rimraf(path.join(baseDir, 'run'));
+      await rimraf(path.join(baseDir, 'logs'));
+      const app = utils.app(baseDir);
+      await app.ready();
+      assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
+      assertFile(path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'), /unfinished timing item: {"name":"Did Load in app.js:didLoad"/);
+    });
   });
 
   describe('dump disabled plugin', () => {
