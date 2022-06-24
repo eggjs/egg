@@ -1,3 +1,18 @@
+2.36.0 / 2022-06-17 @atian25
+==================
+
+**features**
+  * [[`e0b93e023`](http://github.com/eggjs/egg/commit/e0b93e023e1258c4037c68dacfc41fc304602bbc)] - feat: should log unfinished timing item (#4968) (TZ | 天猪 <<atian25@qq.com>>)
+
+**others**
+  * [[`7f1689f9f`](http://github.com/eggjs/egg/commit/7f1689f9fbd286bde3b8b5aebf86af09a599359c)] - chore: typo CSRF on router.md (#4962) (Homyee King <<HomyeeKing@gmail.com>>)
+  * [[`e31c09c20`](http://github.com/eggjs/egg/commit/e31c09c2001b15fbc2431f4c36f6e59da5e3ebca)] - chore: fix some comments (#4937) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`b0c17fdd0`](http://github.com/eggjs/egg/commit/b0c17fdd02512f743786203c326dc86be636f9a6)] - chore: remove git.io (#4940) (Baoshuo Ren <<i@baoshuo.ren>>)
+  * [[`12755e275`](http://github.com/eggjs/egg/commit/12755e27555b8f84a745c319c89b1c4d75ae3f78)] - test: Create codeql-analysis.yml (#4935) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`8078917fd`](http://github.com/eggjs/egg/commit/8078917fd66c41d21b0f2c738f77cc7916edfaca)] - chore: package upgrade and unittest fixture (#4933) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`a5a358ceb`](http://github.com/eggjs/egg/commit/a5a358cebc78734d45a450a641913ae242c5dc70)] - chore: fix contributors badges on README.md (#4930) (XiaoRui <<xiangwu619@gmail.com>>)
+
+
 2.35.0 / 2022-04-01 @mansonchor
 ==================
 
