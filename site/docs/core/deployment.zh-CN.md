@@ -45,7 +45,7 @@ $ npm i egg-scripts --save
 ```json
 {
   "scripts": {
-    "start": "egg-scripts start --daemon",
+   "start": "npm run ci && egg-scripts start --daemon",
     "stop": "egg-scripts stop"
   }
 }
