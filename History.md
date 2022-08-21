@@ -1,3 +1,9 @@
+3.0.0 / 2022-08-21 @fengmk2
+==================
+
+**features**
+  * Drop Node.js 8, 10, 12 supports, this release is a LTS version for egg@2, see https://github.com/eggjs/egg/issues/3644#issuecomment-1221460692
+
 2.36.0 / 2022-06-17 @atian25
 ==================
 
