@@ -125,5 +125,8 @@
   "engines": {
     "node": ">= 8.5.0"
   },
+  "publishConfig": {
+    "tag": "latest-2"
+  },
   "license": "MIT"
 }
