@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "2.36.0",
+  "version": "3.0.0",
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
@@ -123,7 +123,7 @@
     "url": "https://github.com/eggjs/egg.git"
   },
   "engines": {
-    "node": ">= 8.5.0"
+    "node": ">= 14.20.0"
   },
   "license": "MIT"
 }
