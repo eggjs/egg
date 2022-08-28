@@ -270,6 +270,8 @@ declare module 'egg' {
     dnsCacheLookupInterval?: number;
     /** DNS cache max age */
     dnsCacheMaxLength?: number;
+    /** use urllib@3 HttpClient */
+    useHttpClientNext?: boolean;
   }
 
   export interface EggAppConfig {

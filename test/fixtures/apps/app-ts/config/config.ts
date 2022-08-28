@@ -14,5 +14,9 @@ export default () => {
     },
   };
 
+  config.httpclient = {
+    useHttpClientNext: false,
+  };
+
   return config;
 }
