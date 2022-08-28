@@ -53,6 +53,7 @@
     "semver": "^7.3.2",
     "sendmessage": "^1.1.0",
     "urllib": "^2.33.0",
+    "urllib-next": "^3.1.1",
     "utility": "^1.15.0",
     "ylru": "^1.2.1"
   },

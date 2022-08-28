@@ -4,10 +4,12 @@ const assert = require('assert');
 const mm = require('egg-mock');
 const urllib = require('urllib');
 const Httpclient = require('../../../lib/core/httpclient');
+const HttpclientNext = require('../../../lib/core/httpclient_next');
 const utils = require('../../utils');
 
 describe('test/lib/core/httpclient.test.js', () => {
   let client;
+  let clientNext;
   let url;
 
   before(() => {
@@ -22,6 +24,19 @@ describe('test/lib/core/httpclient.test.js', () => {
       },
     });
     client.on('request', info => {
+      info.args.headers = info.args.headers || {};
+      info.args.headers['mock-traceid'] = 'mock-traceid';
+      info.args.headers['mock-rpcid'] = 'mock-rpcid';
+    });
+
+    clientNext = new HttpclientNext({
+      config: {
+        httpclient: {
+          request: {},
+        },
+      },
+    });
+    clientNext.on('request', info => {
       info.args.headers = info.args.headers || {};
       info.args.headers['mock-traceid'] = 'mock-traceid';
       info.args.headers['mock-rpcid'] = 'mock-rpcid';
@@ -110,6 +125,55 @@ describe('test/lib/core/httpclient.test.js', () => {
     }, err => {
       assert(err.name === 'ResponseTimeoutError');
       return true;
+    });
+  });
+
+  describe('HttpClientNext', () => {
+    it('should request ok with log', async () => {
+      const args = {
+        dataType: 'text',
+      };
+      let info;
+      clientNext.once('response', meta => {
+        info = meta;
+      });
+      const { status } = await clientNext.request(url, args);
+      assert(status === 200);
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
+      assert(info.req.args.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.args.headers['mock-rpcid'] === 'mock-rpcid');
+    });
+
+    it('should curl ok with log', async () => {
+      const args = {
+        dataType: 'text',
+      };
+      let info;
+      clientNext.once('response', meta => {
+        info = meta;
+      });
+      const { status } = await clientNext.curl(url, args);
+      assert(status === 200);
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
+      assert(info.req.args.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.args.headers['mock-rpcid'] === 'mock-rpcid');
+    });
+
+    it('should request with error', async () => {
+      await assert.rejects(async () => {
+        const response = await clientNext.request(url + '/error', {
+          dataType: 'json',
+        });
+        console.log(response);
+      }, err => {
+        assert.equal(err.name, 'JSONResponseFormatError');
+        assert.match(err.message, /this is an error/);
+        assert(err.res);
+        assert.equal(err.res.status, 500);
+        return true;
+      });
     });
   });
 
@@ -224,6 +288,136 @@ describe('test/lib/core/httpclient.test.js', () => {
       });
 
       assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+
+      reqTracer = null;
+      resTracer = null;
+
+      res = await httpclient.request(url);
+
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+    });
+
+    it('should agent request auto set tracer', async () => {
+      const httpclient = app.agent.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      const res = await httpclient.request(url, {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+    });
+
+    it('should app request with ctx and tracer', async () => {
+      const httpclient = app.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      let res = await httpclient.request(url, {
+        method: 'GET',
+      });
+
+      assert(res.status === 200);
+
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+
+      reqTracer = null;
+      resTracer = null;
+      res = await httpclient.request(url, {
+        method: 'GET',
+        ctx: {},
+        tracer: {
+          id: '1234',
+        },
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer.id === resTracer.id);
+      assert(reqTracer.id === '1234');
+
+      reqTracer = null;
+      resTracer = null;
+      res = await httpclient.request(url, {
+        method: 'GET',
+        ctx: {
+          tracer: {
+            id: '5678',
+          },
+        },
+      });
+
+      assert(res.status === 200);
+      assert(reqTracer.id === resTracer.id);
+      assert(reqTracer.id === '5678');
+    });
+  });
+
+  describe('httpclient next with tracer', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-next-with-tracer');
+      return app.ready();
+    });
+
+    after(() => app.close());
+
+    it('should app request auto set tracer', async () => {
+      const httpclient = app.httpclient;
+
+      let reqTracer;
+      let resTracer;
+
+      httpclient.on('request', function(options) {
+        reqTracer = options.args.tracer;
+      });
+
+      httpclient.on('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      const opaque = { now: Date.now() };
+      let res = await httpclient.request(url, {
+        method: 'GET',
+        dataType: 'text',
+        opaque,
+      });
+      assert(res.opaque === opaque);
+
+      assert(res.status === 200);
+      assert(reqTracer);
+      assert(resTracer);
       assert(reqTracer === resTracer);
 
       assert(reqTracer.traceId);
