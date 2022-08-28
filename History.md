@@ -1,11 +1,22 @@
-3.0.0 / 2022-08-21 @fengmk2
-==================
+# History
+
+## 2022-08-28, Version 3.1.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Support urllib@3 by `config.httpclient.useHttpClientNext = true`, see [#4847](https://github.com/eggjs/egg/issues/4847)
+
+### Commits
+  * [[`2c5ba484a`](http://github.com/eggjs/egg/commit/2c5ba484a2dd8f214b9cdb53aa952688bc54cb2b)] - 🐛 FIX: Add config.httpclient.useHttpClientNext defined (#5001) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`2ffb37ab5`](http://github.com/eggjs/egg/commit/2ffb37ab59395c9b14f153f91abb9f816a5e98ea)] - feat: Support urllib@3 (#5000) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-08-21, Version 3.0.0 @fengmk2
 
 **features**
   * Drop Node.js 8, 10, 12 supports, this release is a LTS version for egg@2, see https://github.com/eggjs/egg/issues/3644#issuecomment-1221460692
 
-2.36.0 / 2022-06-17 @atian25
-==================
+## 2022-06-17, Version 2.36.0 @atian25
 
 **features**
   * [[`e0b93e023`](http://github.com/eggjs/egg/commit/e0b93e023e1258c4037c68dacfc41fc304602bbc)] - feat: should log unfinished timing item (#4968) (TZ | 天猪 <<atian25@qq.com>>)
@@ -18,9 +29,7 @@
   * [[`8078917fd`](http://github.com/eggjs/egg/commit/8078917fd66c41d21b0f2c738f77cc7916edfaca)] - chore: package upgrade and unittest fixture (#4933) (Maledong <<maledong_public@foxmail.com>>)
   * [[`a5a358ceb`](http://github.com/eggjs/egg/commit/a5a358cebc78734d45a450a641913ae242c5dc70)] - chore: fix contributors badges on README.md (#4930) (XiaoRui <<xiangwu619@gmail.com>>)
 
-
-2.35.0 / 2022-04-01 @mansonchor
-==================
+## 2022-04-01, Version 2.35.0 @mansonchor
 
 **features**
   * [[`c1313f5ef`](http://github.com/eggjs/egg/commit/c1313f5ef960e5aaad7f04adb6665679f2ec10e2)] - feat: dumpConfig add appInfo (#4917) (mansonchor.github.com <<mansonchor1987@gmail.com>>)
@@ -28,9 +37,7 @@
 **others**
   * [[`4e5309188`](http://github.com/eggjs/egg/commit/4e5309188a60393435d5ab2df65ca67186f31035)] - test: add ChainAlert action (#4908) (fengmk2 <<fengmk2@gmail.com>>)
 
-
-2.34.0 / 2022-03-16
-==================
+## 2022-03-16, Version 2.34.0
 
 **features**
   * [[`caacd09c3`](http://github.com/eggjs/egg/commit/caacd09c38aae03fc291febbb97a43c8ecbdc221)] - feat: siteFile support custom control-cache (#4902) (binginsist <<yangbingmail@foxmail.com>>)
@@ -47,8 +54,7 @@
   * [[`56816dbc5`](http://github.com/eggjs/egg/commit/56816dbc59dbb1a4973ca60130c9ff3f5be8b2da)] - docs (sequelize): Changed `config.sequelize` to `exports.sequelize`  in configuration part (#4873) (Aelita <<45784210+xsjcTony@users.noreply.github.com>>)
   * [[`20842f9c2`](http://github.com/eggjs/egg/commit/20842f9c216ed538924936163b7ed18437c54cd7)] - docs: Add license scan report and status (#4880) (fossabot <<badges@fossa.io>>)
 
-2.33.1 / 2021-12-07
-==================
+## 2021-12-07, Version 2.33.1
 
 **features**
   * [[`18dcadc1c`](http://github.com/eggjs/egg/commit/18dcadc1cf6c9837de605916a0d8b161a63e7218)] - feat: meta middleware x-readtime support performanceStarttime (#4827) (fengmk2 <<fengmk2@gmail.com>>)
@@ -57,12 +63,10 @@
   * [[`8659d4bc3`](http://github.com/eggjs/egg/commit/8659d4bc37e0652d66d04d2e5504fdc0ef2f7f7d)] - docs: update contributors (#4826) (Suyi <<thonatos.yang@gmail.com>>)
   * [[`4d18732c7`](http://github.com/eggjs/egg/commit/4d18732c79e44a84140df05e879b8b5f569c2b4b)] - chore: remove @types/urllib from autod (fengmk2 <<fengmk2@gmail.com>>)
 
-2.33.0 / 2021-12-06
-==================
+## 2021-12-06, Version 2.33.0
 
 **features**
   * [[`0f6589e1d`](http://github.com/eggjs/egg/commit/0f6589e1dc9e538434eb1580327556d5aa264822)] - feat: support better logger timer in precise milliseconds (#4806) (fengmk2 <<fengmk2@gmail.com>>)
-# History
 
 ## 2021-11-15, Version 2.32.0 @atian25
 
@@ -86,7 +90,6 @@
 ### Commits
 
 * [[`debfda7ab`](https://github.com/eggjs/egg/commit/debfda7ab38f4893b6f122abfbf3e5288af1441e)] - feat(config): support ssrf field in security config. (#4778) (Jasin Yip <<yejunxing@gmail.com>>)
-
 
 ## 2021-08-09, Version 2.30.0 @mansonchor
 
