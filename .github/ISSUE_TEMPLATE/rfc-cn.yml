@@ -1,0 +1,27 @@
+name: 🚀 RFC 提案
+description: 我对 Eggjs 框架技术架构功能层面上有重大新增、改进等。
+labels: [RFC proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        对于 Eggjs 框架功能你是否有重大的新增或改进之类的想法？
+        
+        不过在提交你的新想法或方案之前，麻烦请检阅一下是否之前的帖子中有类似重复的内容。
+  - type: textarea
+    attributes:
+      label: 请详细告知你的新解决思路（Your new RFCs）：
+      placeholder: |
+        1. 描述你希望解决的问题的现状，附上相关的 issue 地址。
+        如果方便的话，请提供截屏或者视频等详细信息。
+        
+        2. 我能够做一些什么（譬如具体相关的的 API，描述思路，最好是能提供一些伪代码帮助实现）。
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: "跟进类型（Follow-up Types）："
+      description: 此议案跟进类型情况：
+      options:
+        - label: 这是某个任务
+        - label: 这是一个具体的 PR 的地址（URL）
