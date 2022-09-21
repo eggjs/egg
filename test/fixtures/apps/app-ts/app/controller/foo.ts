@@ -35,7 +35,7 @@ export default class FooController extends Controller {
       this.ctx.proxy.foo.bar();
     } catch (e) {
       const body: RequestObjectBody = this.ctx.request.body;
-      this.app.logger.info(e.name, body.foo);
+      this.app.logger.info((e as any).name, body.foo);
     }
   }
 

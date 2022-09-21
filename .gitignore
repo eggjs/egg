@@ -11,7 +11,8 @@ run
 .DS_Store
 .tmp
 
-package-lock.json
+*-lock.json
+*-lock.yaml
 yarn.lock
 !test/fixtures/apps/loader-plugin/node_modules
 .editorconfig
