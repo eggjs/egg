@@ -26,7 +26,7 @@ jobs:
       run: npm i -g npminstall && npminstall
 
     - name: Build Documents
-      run: npm run docs:build
+      run: npm run site:build
 
     - name: Code Coverage
       uses: peaceiris/actions-gh-pages@v3
