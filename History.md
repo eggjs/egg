@@ -1,3 +1,15 @@
+
+3.2.0 / 2022-09-21
+==================
+
+**features**
+  * [[`733d66989`](http://github.com/eggjs/egg/commit/733d66989d1f8657ce55b6032944188da635b8f0)] - feat: update egg-multipart 2.x -> 3.x (#5023) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`2ffb37ab5`](http://github.com/eggjs/egg/commit/2ffb37ab59395c9b14f153f91abb9f816a5e98ea)] - feat: Support urllib@3 (#5000) (fengmk2 <<fengmk2@gmail.com>>)
+
+**others**
+  * [[`485781389`](http://github.com/eggjs/egg/commit/485781389e548ff0cf1eb107fea93c1bb01170d7)] - docs: update the version of the required Node (#5021) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`bbd0e432e`](http://github.com/eggjs/egg/commit/bbd0e432e52832cc7a3d4b26a0141d7eb02e3793)] - chore: change the templates of bug/suggestion report (#5019) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`2c5ba484a`](http://github.com/eggjs/egg/commit/2c5ba484a2dd8f214b9cdb53aa952688bc54cb2b)] - 🐛 FIX: Add config.httpclient.useHttpClientNext defined (#5001) (fengmk2 <<fengmk2@gmail.com>>)
 # History
 
 ## 2022-08-28, Version 3.1.0 @fengmk2
