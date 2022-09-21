@@ -7,7 +7,6 @@
         "../../../../index"
       ]
     },
-    "types" : ["node"],
     "module": "commonjs",
     "strict": true,
     "noImplicitAny": false
