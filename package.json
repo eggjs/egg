@@ -79,7 +79,6 @@
     "eslint-config-egg": "^12.0.0",
     "findlinks": "^2.1.0",
     "formstream": "^1.1.1",
-    "glob": "^8",
     "jsdoc": "^3.6.11",
     "koa": "^2.13.4",
     "koa-static": "^5.0.0",
