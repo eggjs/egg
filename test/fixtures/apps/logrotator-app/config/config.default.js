@@ -7,3 +7,9 @@ exports.logrotator = {
 };
 
 exports.keys = 'test key';
+
+exports.customLogger = {
+  scheduleLogger: {
+    consoleLevel: 'DEBUG',
+  },
+};
