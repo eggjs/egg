@@ -1,6 +1,22 @@
+# History
 
-3.2.0 / 2022-09-21
-==================
+## 2022-09-23, Version 3.3.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Support config `serverGracefulIgnoreCode` to ignore error avoid process exit when uncatch error emit
+  See https://github.com/node-modules/graceful/pull/13
+### Commits
+
+  * [[`a0761d65f`](http://github.com/eggjs/egg/commit/a0761d65f5df1002853c169efedab969636247d3)] - feat(graceful): support serverGracefulIgnoreCode (#5027) (hyj1991 <<yeekwanvong@gmail.com>>)
+  * [[`8b8dd3be9`](http://github.com/eggjs/egg/commit/8b8dd3be95bb53ad3c732b8bc9c20566021e955f)] - chore: remove jsdoc and disable vercel comment (#5026) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`f4225339f`](http://github.com/eggjs/egg/commit/f4225339f6235f78fe53d34d1eb0993faa410b36)] - test: fix ci (#5025) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`5de994b9c`](http://github.com/eggjs/egg/commit/5de994b9c4cd17f9ecd4d4083c20b29f399a9e40)] - chore: fix action for gh-pages (#5024) (Suyi <<thonatos.yang@gmail.com>>)
+
+## 2022-09-21, Version 3.2.0 @fengmk2
+
+### Notable Changes
 
 **features**
   * [[`733d66989`](http://github.com/eggjs/egg/commit/733d66989d1f8657ce55b6032944188da635b8f0)] - feat: update egg-multipart 2.x -> 3.x (#5023) (TZ | 天猪 <<atian25@qq.com>>)
@@ -10,7 +26,6 @@
   * [[`485781389`](http://github.com/eggjs/egg/commit/485781389e548ff0cf1eb107fea93c1bb01170d7)] - docs: update the version of the required Node (#5021) (Maledong <<maledong_public@foxmail.com>>)
   * [[`bbd0e432e`](http://github.com/eggjs/egg/commit/bbd0e432e52832cc7a3d4b26a0141d7eb02e3793)] - chore: change the templates of bug/suggestion report (#5019) (Maledong <<maledong_public@foxmail.com>>)
   * [[`2c5ba484a`](http://github.com/eggjs/egg/commit/2c5ba484a2dd8f214b9cdb53aa952688bc54cb2b)] - 🐛 FIX: Add config.httpclient.useHttpClientNext defined (#5001) (fengmk2 <<fengmk2@gmail.com>>)
-# History
 
 ## 2022-08-28, Version 3.1.0 @fengmk2
 
