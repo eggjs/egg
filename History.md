@@ -1,3 +1,12 @@
+
+2.37.0 / 2022-09-23
+==================
+
+**features**
+  * [[`506c8028c`](http://github.com/eggjs/egg/commit/506c8028cbdd9998883f683f460a34961b19f970)] - feat(graceful): support serverGracefulIgnoreCode (#5029) (hyj1991 <<yeekwanvong@gmail.com>>)
+
+**others**
+  * [[`ecea35e65`](http://github.com/eggjs/egg/commit/ecea35e65a43ee574ffdce635d056393694392ba)] - chore: start 2.x branch (fengmk2 <<fengmk2@gmail.com>>)
 2.36.0 / 2022-06-17 @atian25
 ==================
 

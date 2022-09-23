@@ -3,7 +3,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master, 1.x ]
+    branches: [ master, 2.x, 1.x ]
   schedule:
     - cron: '0 2 * * *'
 jobs:
