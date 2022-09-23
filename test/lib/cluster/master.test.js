@@ -52,6 +52,48 @@ describe('test/lib/cluster/master.test.js', () => {
     });
   });
 
+  describe('app worker should not die with matched ignoreCode', () => {
+    let app;
+    before(() => {
+      mm.env('default');
+      app = utils.cluster('apps/app-die-ignore-code');
+      app.coverage(false);
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should not restart when matched uncaughtException happened', async () => {
+      try {
+        await app.httpRequest()
+          .get('/uncaughtException');
+      } catch (_) {
+        // do nothing
+      }
+
+      // wait for app worker restart
+      await sleep(5000);
+
+      // error pipe to console
+      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
+    });
+
+    it('should still log uncaughtException when matched uncaughtException happened', async () => {
+      try {
+        await app.httpRequest()
+          .get('/uncaughtException');
+      } catch (_) {
+        // do nothing
+      }
+
+      // wait for app worker restart
+      await sleep(5000);
+
+      app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
+      app.expect('stderr', /matches ignore list/);
+      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
+    });
+  });
+
   describe('Master start fail', () => {
     let master;
 
