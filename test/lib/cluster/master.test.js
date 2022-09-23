@@ -52,7 +52,7 @@ describe('test/lib/cluster/master.test.js', () => {
     });
   });
 
-  describe('app worker should not die with matched ignoreCode', () => {
+  describe('app worker should not die with matched serverGracefulIgnoreCode', () => {
     let app;
     before(() => {
       mm.env('default');
