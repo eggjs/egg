@@ -1,5 +1,16 @@
 # History
 
+## 2022-09-27, Version 3.3.2 @atian25
+
+### Notable Changes
+
+* **fixes**
+  * fallback egg-multipart@2 to support filename with non-ASCII characters
+
+### Commits
+  * [[`201bfa749`](http://github.com/eggjs/egg/commit/201bfa7492920aafad71b7845e5cc6eaef69f8bc)] - fix: update multipart 3.1.0 (#5034) (TZ | 天猪 <<atian25@qq.com>>)
+
+
 ## 2022-09-26, Version 3.3.1 @fengmk2
 
 ### Notable Changes
