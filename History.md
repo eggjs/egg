@@ -5,7 +5,7 @@
 ### Notable Changes
 
 * **fixes**
-  * fallback egg-multipart@2 to support filename with non-ASCII characters
+  * update multipart 3.1.0, https://github.com/eggjs/egg-multipart/pull/56
 
 ### Commits
   * [[`201bfa749`](http://github.com/eggjs/egg/commit/201bfa7492920aafad71b7845e5cc6eaef69f8bc)] - fix: update multipart 3.1.0 (#5034) (TZ | 天猪 <<atian25@qq.com>>)
