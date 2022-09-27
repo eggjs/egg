@@ -32,7 +32,7 @@
     "egg-jsonp": "^2.0.0",
     "egg-logger": "^2.9.0",
     "egg-logrotator": "^3.1.0",
-    "egg-multipart": "^2.13.1",
+    "egg-multipart": "^3.1.0",
     "egg-onerror": "^2.1.1",
     "egg-schedule": "^3.7.0",
     "egg-security": "^2.11.0",
