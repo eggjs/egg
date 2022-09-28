@@ -260,6 +260,32 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
   });
 
+  describe('overwrite httpclient support useHttpClientNext=true', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-next-overwrite');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should set request default global timeout to 99ms', () => {
+      return app.httpclient.curl(`${url}/timeout`)
+        .catch(err => {
+          assert(err);
+          assert(err.name === 'HttpClientRequestTimeoutError');
+          assert(err.message.includes('Request timeout for 99 ms'));
+        });
+    });
+
+    it('should assert url', () => {
+      return app.httpclient.curl('unknown url')
+        .catch(err => {
+          assert(err);
+          assert(err.message.includes('url should start with http, but got unknown url'));
+        });
+    });
+  });
+
   describe('httpclient tracer', () => {
     let app;
     before(() => {
