@@ -1,5 +1,15 @@
 # History
 
+## 2022-09-28, Version 3.3.3 @fengmk2
+
+### Notable Changes
+
+* **fixes**
+  * Allow override HttpClientNext
+
+### Commits
+  * [[`7ee19e840`](http://github.com/eggjs/egg/commit/7ee19e8402b1d23ecdc1791e044a1902049e14dd)] - 🐛 FIX: Allow override HttpClientNext (#5037) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2022-09-27, Version 3.3.2 @atian25
 
 ### Notable Changes
