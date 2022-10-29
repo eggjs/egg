@@ -13,13 +13,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        node-version: [ 14, 16, 18 ]
+        node-version: [ 14, 16, 18, 19 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
 
     - name: Setup Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 
@@ -30,6 +30,6 @@ jobs:
       run: npm run ci
 
     - name: Code Coverage
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}

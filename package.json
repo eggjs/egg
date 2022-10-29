@@ -68,7 +68,6 @@
     "coffee": "^5.4.0",
     "dumi": "^1.1.47",
     "dumi-theme-egg": "^1.2.2",
-    "egg-alinode": "^2.0.1",
     "egg-bin": "^5",
     "egg-mock": "^4.2.1",
     "egg-plugin-puml": "^2.4.0",
