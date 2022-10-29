@@ -178,6 +178,16 @@ describe('test/lib/egg.test.js', () => {
       assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
       assertFile(path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'), /unfinished timing item: {"name":"Did Load in app.js:didLoad"/);
     });
+
+    it('should dump slow-boot-action warnning log', async () => {
+      const baseDir = utils.getFilepath('apps/dumptiming-slowBootActionMinDuration');
+      await rimraf(path.join(baseDir, 'run'));
+      await rimraf(path.join(baseDir, 'logs'));
+      const app = utils.app(baseDir);
+      await app.ready();
+      await sleep(100);
+      assertFile(path.join(baseDir, 'logs/dumptiming-slowBootActionMinDuration/egg-web.log'), /\[egg:core]\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/);
+    });
   });
 
   describe('dump disabled plugin', () => {

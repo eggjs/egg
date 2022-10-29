@@ -1,6 +1,3 @@
 {
-  "extends": "eslint-config-egg",
-  "parserOptions": {
-    "ecmaVersion": 2017
-  }
+  "extends": "eslint-config-egg"
 }
