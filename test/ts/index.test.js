@@ -1,7 +1,4 @@
-'use strict';
-
 const assert = require('assert');
-const request = require('supertest');
 const coffee = require('coffee');
 const path = require('path');
 const utils = require('../utils');
@@ -36,7 +33,7 @@ describe('test/ts/index.test.js', () => {
     });
 
     it('controller run ok', done => {
-      request(app.callback())
+      app.httpRequest()
         .get('/foo')
         .expect(200)
         .expect({ env: 'unittest' })
@@ -44,7 +41,7 @@ describe('test/ts/index.test.js', () => {
     });
 
     it('controller of app.router run ok', done => {
-      request(app.callback())
+      app.httpRequest()
         .get('/test')
         .expect(200)
         .expect({ env: 'unittest' })
