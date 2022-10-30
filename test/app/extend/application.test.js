@@ -1,7 +1,5 @@
-'use strict';
 
 const assert = require('assert');
-const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
 const utils = require('../../utils');
@@ -58,7 +56,7 @@ describe('test/app/extend/application.test.js', () => {
     it('should log info when plugin is not ready', async () => {
       app = utils.cluster('apps/notready');
       // it won't be ready, so wait for the timeout
-      await sleep(11000);
+      await utils.sleep(11000);
 
       app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
     });
@@ -181,7 +179,7 @@ describe('test/app/extend/application.test.js', () => {
         .get('/app_background')
         .expect(200)
         .expect('hello app');
-      await sleep(5000);
+      await utils.sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/mock background run at app result file size: \d+/.test(log));
@@ -203,7 +201,7 @@ describe('test/app/extend/application.test.js', () => {
     it('should wait for middleware resolution', async () => {
       const ctx = app.createAnonymousContext();
       await app.handleRequest(ctx, async ctx => {
-        await sleep(100);
+        await utils.sleep(100);
         ctx.body = 'middleware resolution';
       });
       assert(ctx.body === 'middleware resolution');

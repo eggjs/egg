@@ -91,18 +91,6 @@ describe('test/lib/core/httpclient.test.js', () => {
     client.curl(url, args);
   });
 
-  it('should requestThunk ok with log', async () => {
-    const args = {
-      dataType: 'text',
-    };
-    client.once('response', info => {
-      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
-      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
-    });
-
-    await client.requestThunk(url, args);
-  });
-
   it('should mock ENETUNREACH error', async () => {
     mm(urllib.HttpClient2.prototype, 'request', () => {
       const err = new Error('connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1)');
@@ -697,26 +685,6 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(res.status === 200);
     });
 
-    it('should callback style retry when httpclient fail', done => {
-      let hasRetry = false;
-      app.httpclient.request(`${url}/retry`, {
-        retry: 1,
-        retryDelay: 100,
-        isRetry(res) {
-          const shouldRetry = res.status >= 500;
-          if (shouldRetry) {
-            hasRetry = true;
-          }
-          return shouldRetry;
-        },
-      }, (err, data, res) => {
-        assert(hasRetry);
-        assert(res.status === 200);
-        assert(data.toString() === 'retry suc');
-        done(err);
-      });
-    });
-
     it('should retry when httpclient fail', async () => {
       let hasRetry = false;
       const res = await app.httpclient.curl(`${url}/retry`, {
@@ -733,48 +701,6 @@ describe('test/lib/core/httpclient.test.js', () => {
 
       assert(hasRetry);
       assert(res.status === 200);
-    });
-
-    it('should callback style retry when httpclient fail', done => {
-      let hasRetry = false;
-      app.httpclient.request(`${url}/retry`, {
-        retry: 1,
-        retryDelay: 100,
-        isRetry(res) {
-          const shouldRetry = res.status >= 500;
-          if (shouldRetry) {
-            hasRetry = true;
-          }
-          return shouldRetry;
-        },
-      }, (err, data, res) => {
-        assert(hasRetry);
-        assert(res.status === 200);
-        assert(data.toString() === 'retry suc');
-        done(err);
-      });
-    });
-
-    it('should thunk style retry when httpclient fail', done => {
-      let hasRetry = false;
-      app.httpclient.requestThunk(`${url}/retry`, {
-        retry: 1,
-        retryDelay: 100,
-        isRetry(res) {
-          const shouldRetry = res.status >= 500;
-          if (shouldRetry) {
-            hasRetry = true;
-          }
-          return shouldRetry;
-        },
-      })((err, { data, status, headers, res }) => {
-        assert(hasRetry);
-        assert(status === 200);
-        assert(res.status === 200);
-        assert(data.toString() === 'retry suc');
-        assert(headers['x-retry'] === '1');
-        done(err);
-      });
     });
   });
 });

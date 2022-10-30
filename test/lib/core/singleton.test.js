@@ -1,10 +1,6 @@
-'use strict';
-
-const sleep = require('mz-modules/sleep');
 const assert = require('assert');
-
 const Singleton = require('../../../lib/core/singleton');
-
+const { sleep } = require('../../utils');
 class DataService {
   constructor(config) {
     this.config = config;

@@ -1,8 +1,5 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../../utils');
 const Messenger = require('../../../../lib/core/messenger/ipc');
 
@@ -62,7 +59,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       app = utils.cluster('apps/messenger');
       app.coverage(true);
       await app.ready();
-      await sleep(1000);
+      await utils.sleep(1000);
     });
 
     it('app should accept agent message', () => {
@@ -94,7 +91,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       app.coverage(false);
       return app.ready();
     });
-    before(() => sleep(1000));
+    before(() => utils.sleep(1000));
     after(() => app.close());
 
     it('should broadcast each other', () => {
@@ -123,7 +120,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     after(() => app.close());
 
     it('app should accept agent message', async () => {
-      await sleep(10000);
+      await utils.sleep(10000);
 
       const m = app.stdout.match(/\d+=\d+/g);
       const map = new Map();

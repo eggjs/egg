@@ -1,10 +1,7 @@
-'use strict';
-
 const mm = require('egg-mock');
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const { rimraf, sleep } = require('mz-modules');
 const spy = require('spy');
 const Transport = require('egg-logger').Transport;
 const utils = require('../utils');
@@ -171,8 +168,8 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dumpTiming when timeout', async () => {
       const baseDir = utils.getFilepath('apps/dumptiming-timeout');
-      await rimraf(path.join(baseDir, 'run'));
-      await rimraf(path.join(baseDir, 'logs'));
+      await utils.rimraf(path.join(baseDir, 'run'));
+      await utils.rimraf(path.join(baseDir, 'logs'));
       const app = utils.app(baseDir);
       await app.ready();
       assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
@@ -224,10 +221,10 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dump in config', async () => {
       const baseDir = utils.getFilepath('apps/dumpconfig-circular');
-      await sleep(100);
+      await utils.sleep(100);
       await app.ready();
 
-      await sleep(100);
+      await utils.sleep(100);
       const json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert.deepEqual(json.config.foo, [ '~config~foo' ]);
     });
@@ -257,10 +254,10 @@ describe('test/lib/egg.test.js', () => {
       baseDir = utils.getFilepath('apps/config-env');
       runDir = path.join(baseDir, 'custom_rundir');
       logDir = path.join(baseDir, 'custom_logdir');
-      await rimraf(runDir);
-      await rimraf(logDir);
-      await rimraf(path.join(baseDir, 'run'));
-      await rimraf(path.join(baseDir, 'logs'));
+      await utils.rimraf(runDir);
+      await utils.rimraf(logDir);
+      await utils.rimraf(path.join(baseDir, 'run'));
+      await utils.rimraf(path.join(baseDir, 'logs'));
       mm(process.env, 'EGG_APP_CONFIG', JSON.stringify({
         logger: {
           dir: logDir,
@@ -273,8 +270,8 @@ describe('test/lib/egg.test.js', () => {
     });
     after(async () => {
       await app.close();
-      await rimraf(runDir);
-      await rimraf(logDir);
+      await utils.rimraf(runDir);
+      await utils.rimraf(logDir);
     });
     afterEach(mm.restore);
 
@@ -360,7 +357,7 @@ describe('test/lib/egg.test.js', () => {
         .expect('foo')
         .expect(200);
 
-      await sleep(1100);
+      await utils.sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('nodejs.unhandledRejectionError: foo reject error'));
@@ -386,7 +383,7 @@ describe('test/lib/egg.test.js', () => {
         .expect('hello')
         .expect(200);
 
-      await sleep(1000);
+      await utils.sleep(1000);
 
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');

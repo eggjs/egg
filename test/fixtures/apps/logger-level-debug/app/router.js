@@ -1,12 +1,10 @@
-'use strict';
-
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../../../../utils');
 
 module.exports = app => {
-  app.get('/', function*() {
+  app.get('/', async function() {
     this.logger.debug('hi %s %s', this.method, this.url);
     // wait for writing to file
-    yield sleep(1000);
+    await sleep(1000);
     this.body = 'ok';
   });
 };
