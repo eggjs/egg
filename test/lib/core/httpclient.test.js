@@ -61,23 +61,6 @@ describe('test/lib/core/httpclient.test.js', () => {
     client.request(url, args);
   });
 
-  it('should request callback with log', done => {
-    client.once('response', info => {
-      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
-      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
-      done();
-    });
-
-    client.request(url, () => {});
-  });
-
-  it('should request callback with error', done => {
-    client.request(url + '/error', { dataType: 'json' }, err => {
-      assert(err);
-      done();
-    });
-  });
-
   it('should curl ok with log', done => {
     const args = {
       dataType: 'text',
