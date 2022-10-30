@@ -28,7 +28,7 @@ $ tar -zcvf ../release.tgz .
 
 ## 部署
 
-服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 8.0.0`。
+服务器需要预装 Node.js，框架支持的 Node 版本为 `>= 14.20.0`。
 
 框架内置了 [egg-cluster] 来启动 [Master 进程](./cluster-and-ipc.md#master)，Master 有足够的稳定性，不再需要使用 [pm2] 等进程守护模块。
 

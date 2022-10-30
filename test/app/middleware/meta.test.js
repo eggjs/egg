@@ -1,8 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 const utils = require('../../utils');
 
 describe('test/app/middleware/meta.test.js', () => {
