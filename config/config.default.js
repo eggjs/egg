@@ -152,6 +152,10 @@ module.exports = appInfo => {
         // ignore any key contains "secret" keyword
         /secret/i,
       ]),
+      timing: {
+        // if boot action >= slowBootActionMinDuration, egg core will print it to warnning log
+        slowBootActionMinDuration: 5000,
+      },
     },
 
     /**
