@@ -13,9 +13,11 @@ describe('test/lib/egg.test.js', () => {
   describe('dumpConfig()', () => {
     const baseDir = utils.getFilepath('apps/demo');
     let app;
-    before(() => {
+    before(async () => {
       app = utils.app('apps/demo');
-      return app.ready();
+      await app.ready();
+      // CI 环境 Windows 写入磁盘需要时间
+      await utils.sleep(1100);
     });
     after(() => app.close());
 
