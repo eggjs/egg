@@ -1,8 +1,5 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
 const pedding = require('pedding');
@@ -127,7 +124,7 @@ describe('test/lib/application.test.js', () => {
         .expect('foo')
         .expect(200);
 
-      await sleep(1100);
+      await utils.sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('ReferenceError: a is not defined (uncaughtException throw'));
@@ -148,7 +145,7 @@ describe('test/lib/application.test.js', () => {
         .expect('foo')
         .expect(200);
 
-      await sleep(1100);
+      await utils.sleep(1100);
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('abc (uncaughtException throw 1 times on pid'));
@@ -159,7 +156,7 @@ describe('test/lib/application.test.js', () => {
     it('should warn if confused configurations exist', async () => {
       const app = utils.app('apps/confused-configuration');
       await app.ready();
-      await sleep(1000);
+      await utils.sleep(1000);
       const logs = fs.readFileSync(utils.getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
       assert(logs.match(/Unexpected config key `bodyparser` exists, Please use `bodyParser` instead\./));
       assert(logs.match(/Unexpected config key `notFound` exists, Please use `notfound` instead\./));

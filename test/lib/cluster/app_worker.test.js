@@ -1,10 +1,7 @@
-'use strict';
-
 const net = require('net');
 const request = require('supertest');
 const address = require('address');
 const assert = require('assert-extends');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -123,7 +120,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 
     it('should not log when there is no rawPacket', async () => {
       await connect(app.port);
-      await sleep(1000);
+      await utils.sleep(1000);
       app.expect('stderr', /HPE_INVALID_EOF_STATE/);
       app.notExpect('stderr', /A client/);
     });

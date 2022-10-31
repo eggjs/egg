@@ -1,8 +1,6 @@
-'use strict';
-
 const assert = require('assert');
-const sleep = require('mz-modules/sleep');
 const BaseHookClass = require('../../../../lib/core/base_hook_class');
+const { sleep } = require('../../../utils');
 
 module.exports = class extends BaseHookClass {
   constructor(app) {
