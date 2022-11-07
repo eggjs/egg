@@ -180,11 +180,11 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dump slow-boot-action warnning log', async () => {
       const baseDir = utils.getFilepath('apps/dumptiming-slowBootActionMinDuration');
-      await rimraf(path.join(baseDir, 'run'));
-      await rimraf(path.join(baseDir, 'logs'));
+      await utils.rimraf(path.join(baseDir, 'run'));
+      await utils.rimraf(path.join(baseDir, 'logs'));
       const app = utils.app(baseDir);
       await app.ready();
-      await sleep(100);
+      await utils.sleep(100);
       assertFile(path.join(baseDir, 'logs/dumptiming-slowBootActionMinDuration/egg-web.log'), /\[egg:core]\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/);
     });
   });

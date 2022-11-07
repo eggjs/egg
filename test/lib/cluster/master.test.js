@@ -296,5 +296,18 @@ describe('test/lib/cluster/master.test.js', () => {
         done();
       }, 10000);
     });
+
+    it('should start without customEgg and worker_threads', done => {
+      app = coffee.fork(utils.getFilepath('apps/master-worker-started-worker_threads/dispatch.js'))
+        .debug()
+        .coverage(false);
+
+      setTimeout(() => {
+        app.emit('close', 0);
+        app.expect('stdout', /agent_worker#1:\d+ started /);
+        app.expect('stdout', /"startMode":"worker_threads"/);
+        done();
+      }, 10000);
+    });
   });
 });
