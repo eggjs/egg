@@ -23,7 +23,7 @@
     "cluster-client": "^3.1.1",
     "debug": "^4.3.4",
     "delegates": "^1.0.0",
-    "egg-cluster": "^1.27.1",
+    "egg-cluster": "^2.0.0",
     "egg-cookies": "^2.6.1",
     "egg-core": "^4.26.1",
     "egg-development": "^2.7.0",

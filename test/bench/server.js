@@ -1,5 +1,3 @@
-'use strict';
-
 const http = require('http');
 const path = require('path');
 const mock = require('egg-mock');
