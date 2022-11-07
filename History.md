@@ -1,5 +1,24 @@
 # History
 
+## 2022-11-07, Version 3.4.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Upgrade egg-cluster v2 to support worker_threads start mode
+  * Drop httpclient callback and thunk style, a breaking change to egg@2
+  * Print warnning log when boot action takes more than 5000ms
+  * Don't need to patch keep-alive header on Node.js >= 14.20.0
+
+### Commits
+
+  * [[`2b5f289bb`](http://github.com/eggjs/egg/commit/2b5f289bba3bd14c2867136b5dcbf3bed5cfdf9e)] - 📦 NEW: Use egg-cluster v2 (#5055) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`610a39e7f`](http://github.com/eggjs/egg/commit/610a39e7f41a17a2123705691d6c1bfdc3e12f88)] - 👌 IMPROVE: Drop httpclient callback and thunk style (#5052) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`3a941d669`](http://github.com/eggjs/egg/commit/3a941d669cc1d2c12a2caad4dd24492e98444348)] - 👌 IMPROVE: Print warnning log when boot action takes more than 5000ms (#5049) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`d820b739b`](http://github.com/eggjs/egg/commit/d820b739b95207bdea8c9b4c3da0f5059bc0113c)] - 👌 IMPROVE: Don't need to patch keep-alive header on Node.js >= 14.20.0 (#5051) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`6ac4cdbfb`](http://github.com/eggjs/egg/commit/6ac4cdbfbb35905f6f315f51122c1badcb913b5c)] - 🤖 TEST: Add Node.js 19 ci runner (#5050) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`d05cc015e`](http://github.com/eggjs/egg/commit/d05cc015e4a748bf41a4dbf46e978d1f4ad44954)] - docs: fix Application description (#5044) (ldc-37 <<34739463+ldc-37@users.noreply.github.com>>)
+
 ## 2022-09-28, Version 3.3.3 @fengmk2
 
 ### Notable Changes
