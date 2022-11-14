@@ -64,8 +64,6 @@
     "antd": "^4.23.2",
     "assert-extends": "^1.0.1",
     "assert-file": "^1.0.0",
-    "autod": "^3.1.2",
-    "autod-egg": "^1.1.0",
     "coffee": "^5.4.0",
     "dumi": "^1.1.47",
     "dumi-theme-egg": "^1.2.2",
@@ -109,7 +107,6 @@
     "site:dev": "APP_ROOT=./site dumi dev",
     "site:build": "APP_ROOT=./site dumi build",
     "site:prettier": "prettier --config site/.prettierrc --ignore-path site/.prettierignore --write \"site/**/*.{js,jsx,tsx,ts,less,md,json}\"",
-    "autod": "autod",
     "puml": "puml . --dest ./site",
     "commits": "./scripts/commits.sh"
   },
