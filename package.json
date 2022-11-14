@@ -23,7 +23,7 @@
     "agentkeepalive": "^4.2.1",
     "cache-content-type": "^1.0.1",
     "circular-json-for-egg": "^1.0.0",
-    "cluster-client": "^3.1.1",
+    "cluster-client": "^3.3.0",
     "debug": "^4.3.4",
     "delegates": "^1.0.0",
     "egg-cluster": "^2.0.0",
