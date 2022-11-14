@@ -1,5 +1,16 @@
 # History
 
+## 2022-11-15, Version 3.5.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Auto disable cluster-client heartbeat checker on debug mode
+
+### Commits
+
+  * [[`6de5cba5d`](http://github.com/eggjs/egg/commit/6de5cba5d0d02d09e9e6ee71f9e7b1cb3d65c24e)] - feat: disable cluster-client heartbeat on debug mode (#5059) (sinkhaha <<1468709106@qq.com>>)
+
 ## 2022-11-07, Version 3.4.0 @fengmk2
 
 ### Notable Changes
