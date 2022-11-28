@@ -1,3 +1,12 @@
+
+3.5.1 / 2022-11-28
+==================
+
+**fixes**
+  * [[`c859506a0`](http://github.com/eggjs/egg/commit/c859506a094181f5f45db16a8501daaaea56b3d3)] - fix: dump config/timing when timeout (#5069) (killa <<killa123@126.com>>)
+
+**others**
+  * [[`ee2f0614a`](http://github.com/eggjs/egg/commit/ee2f0614af85e4293240b768c09b2c4e3da0ec1d)] - chore: Change version to 3.5.0 (fengmk2 <<fengmk2@gmail.com>>),
 # History
 
 ## 2022-11-15, Version 3.5.0 @fengmk2
