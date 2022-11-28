@@ -86,7 +86,6 @@ describe('test/ts/index.test.js', () => {
         .expect('stdout', /Property 'checkSingleTon' does not exist/)
         .expect('stdout', /Property 'directory' is missing in type '{}' but required in type 'CustomLoaderConfig'/)
         .notExpect('stdout', /Cannot find module 'yadan'/)
-        .expect('stdout', /Object is possibly 'undefined'\./)
         .expect('stdout', /Expected 1 arguments, but got 0\./)
         .expect('stdout', /Expected 0-1 arguments, but got 2\./)
         .expect('code', 2)
