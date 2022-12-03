@@ -6,6 +6,10 @@ nav:
   order: 6
 ---
 
+## Groups
+
+[![dingtalk](/img_egg/qrcode_dingtalk.png)](https://www.eggjs.org)
+
 ## Resources
 
 - Frameworks

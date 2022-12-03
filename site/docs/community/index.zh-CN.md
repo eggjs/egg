@@ -6,6 +6,10 @@ nav:
   order: 6
 ---
 
+## 交流群
+
+[![dingtalk](/img_egg/qrcode_dingtalk.png)](https://www.eggjs.org)
+
 ## 资源链接
 
 - 框架
