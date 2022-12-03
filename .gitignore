@@ -31,3 +31,4 @@ site/dist
 
 .umi
 .umi-production
+.vercel
