@@ -97,11 +97,11 @@ export default defineConfig({
         ],
       },
       {
-        title: 'Egg.js Dingtalk',
+        title: 'Egg.js Telegram Channel',
         list: [
           {
             name: '钉钉',
-            qrcode: '/img_egg/qrcode_dingtalk.png',
+            qrcode: '/img_egg/qrcode_egg_channel.png',
           },
         ],
       },
