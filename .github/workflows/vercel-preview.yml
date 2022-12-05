@@ -6,6 +6,8 @@ on:
   push:
     branches-ignore:
       - master
+      - gh-pages
+
 jobs:
   Deploy-Preview:
     runs-on: ubuntu-latest
