@@ -396,11 +396,11 @@ describe('test/lib/core/httpclient.test.js', () => {
       let reqTracer;
       let resTracer;
 
-      httpclient.once('request', function(options) {
+      httpclient.on('request', function(options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.once('response', function(options) {
+      httpclient.on('response', function(options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -426,6 +426,7 @@ describe('test/lib/core/httpclient.test.js', () => {
       res = await httpclient.request(url);
 
       assert(res.status === 200);
+      assert(reqTracer);
       assert(reqTracer === resTracer);
 
       assert(reqTracer.traceId);
