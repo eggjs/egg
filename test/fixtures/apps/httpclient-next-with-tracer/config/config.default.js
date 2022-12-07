@@ -3,4 +3,5 @@ module.exports = {
     useHttpClientNext: true,
     timeout: '5s',
   },
+  keys: 'foo',
 };

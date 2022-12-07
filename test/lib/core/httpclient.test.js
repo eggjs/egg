@@ -396,11 +396,11 @@ describe('test/lib/core/httpclient.test.js', () => {
       let reqTracer;
       let resTracer;
 
-      httpclient.on('request', function(options) {
+      httpclient.once('request', function(options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.once('response', function(options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -438,11 +438,11 @@ describe('test/lib/core/httpclient.test.js', () => {
       let reqTracer;
       let resTracer;
 
-      httpclient.on('request', function(options) {
+      httpclient.once('request', function(options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.once('response', function(options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -508,6 +508,36 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(res.status === 200);
       assert(reqTracer.id === resTracer.id);
       assert(reqTracer.id === '5678');
+    });
+
+    it('should get ctx from app.currentContext on app.httpclient.request', async () => {
+      const httpclient = app.httpclient;
+      let reqTracer;
+      let resTracer;
+
+      let ctx;
+      httpclient.once('request', function(options) {
+        reqTracer = options.args.tracer;
+        ctx = app.currentContext;
+      });
+
+      httpclient.once('response', function(options) {
+        resTracer = options.req.args.tracer;
+      });
+
+      const res = await app.httpRequest()
+        .get('/')
+        .query({ url });
+      assert(res.status === 200);
+      assert(reqTracer === resTracer);
+      assert(reqTracer.traceId);
+      assert(reqTracer.traceId === resTracer.traceId);
+      assert(ctx);
+      assert(ctx.query.url === url);
+
+      assert(res.body.traceId === reqTracer.traceId);
+      assert(res.body.requestUrl === url);
+      assert(res.body.status === 200);
     });
   });
 
