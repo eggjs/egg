@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import accepts from 'accepts';
-import KoaApplication from 'koa';
-import KoaRouter from 'koa-router';
+import accepts = require('accepts');
+import KoaApplication = require('koa');
+import KoaRouter = require('koa-router');
 import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
@@ -24,7 +24,7 @@ import {
   EggLoaderOptions as CoreLoaderOptions,
   BaseContextClass as CoreBaseContextClass,
 } from 'egg-core';
-import EggCookies from 'egg-cookies';
+import EggCookies = require('egg-cookies');
 import 'egg-onerror';
 import 'egg-session';
 import 'egg-i18n';
