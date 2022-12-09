@@ -1,5 +1,30 @@
 # History
 
+## 2022-12-09, Version 3.6.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 🚀🚀🚀 Support `app.ctxStorage` and `app.currentContext` to get current execute ctx, see [koa#1455](https://github.com/koajs/koa/pull/1455)
+
+### Commits
+
+  * [[`bf36904e0`](http://github.com/eggjs/egg/commit/bf36904e0fb1d4477ebb7068dd8ad6726d29182f)] - 📦 NEW: Add ctxStorage and currentContext d.ts (#5079) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c68992ab7`](http://github.com/eggjs/egg/commit/c68992ab71b854f825df0ff3ea4b82e7666ec828)] - chore: ignore gp-pages branch while deploying preview (#5077) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`13906825b`](http://github.com/eggjs/egg/commit/13906825bc3fab260aa0dd8888ce9fd19f2f70c5)] - chore: use actions to deploy vercel project (#5076) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`5d825bb59`](http://github.com/eggjs/egg/commit/5d825bb59ed691bd45c3a8b2f6c222496910e250)] - docs: update communite links (#5073) (Suyi <<thonatos.yang@gmail.com>>)
+
+## 2022-11-28, Version 3.5.1 @killagu
+
+### Notable Changes
+
+* **fixes**
+  * Dump `config/timing` when app start timeout
+
+### Commits
+
+  * [[`c859506a0`](http://github.com/eggjs/egg/commit/c859506a094181f5f45db16a8501daaaea56b3d3)] - fix: dump config/timing when timeout (#5069) (killa <<killa123@126.com>>)
+
 ## 2022-11-15, Version 3.5.0 @fengmk2
 
 ### Notable Changes

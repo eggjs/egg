@@ -2,11 +2,19 @@
 import accepts = require('accepts');
 import KoaApplication = require('koa');
 import KoaRouter = require('koa-router');
+import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
-import { EggLogger as Logger, EggLoggers, LoggerLevel as EggLoggerLevel, EggLoggersOptions, EggLoggerOptions, EggContextLogger } from 'egg-logger';
+import {
+  EggLogger as Logger,
+  EggLoggers,
+  LoggerLevel as EggLoggerLevel,
+  EggLoggersOptions,
+  EggLoggerOptions,
+  EggContextLogger
+} from 'egg-logger';
 import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
 import {
   EggCoreBase,
@@ -683,6 +691,18 @@ declare module 'egg' {
      * @param {Function} scope - the first args is an anonymous ctx
      */
     runInBackground(scope: (ctx: Context) => void): void;
+
+    /**
+     * Get current execute ctx async local storage
+     * @returns {AsyncLocalStorage} localStorage - store current execute Context
+     */
+    get ctxStorage(): AsyncLocalStorage<Context>;
+
+    /**
+     * Get current execute ctx, maybe undefined
+     * @returns {Context} ctx - current execute Context
+     */
+    get currentConext(): Context;
   }
 
   export interface IApplicationLocals extends PlainObject { }
