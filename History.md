@@ -1,5 +1,16 @@
 # History
 
+## 2022-12-12, Version 3.8.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Upgrade egg-schedule@4 to support `app.currentContext` on scheduler
+
+### Commits
+
+  * [[`75d025b24`](http://github.com/eggjs/egg/commit/75d025b24e5e3016f2df84e2ba1901f42156c0b7)] - 👌 IMPROVE: Upgrade egg-schedule to v4 (#5088) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2022-12-11, Version 3.7.0 @fengmk2
 
 ### Notable Changes
