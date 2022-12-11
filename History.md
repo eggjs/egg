@@ -1,6 +1,6 @@
 # History
 
-## 2022-12-11, Version 3.8.0 @fengmk2
+## 2022-12-12, Version 3.8.0 @fengmk2
 
 ### Notable Changes
 
