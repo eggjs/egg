@@ -231,6 +231,8 @@ declare module 'egg' {
     disableConsoleAfterReady?: boolean;
     /** using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to `false`. e.g.: logger will set 1.456ms instead of 1ms. */
     enablePerformanceTimer?: boolean;
+    /** using the app logger instead of EggContextLogger, defaults to `false` */
+    enableFastContextLogger?: boolean;
   }
 
   /** Custom Loader Configuration */
@@ -343,6 +345,7 @@ declare module 'egg' {
      * @property {Object} coreLogger - custom config of coreLogger
      * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
      * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
+     * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
      */
     logger: EggLoggerConfig;
 

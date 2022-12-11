@@ -95,6 +95,9 @@ const proto = module.exports = {
    * @return {Logger} logger
    */
   getLogger(name) {
+    if (this.app.config.logger.enableFastContextLogger) {
+      return this.app.getLogger(name);
+    }
     let cache = this[CONTEXT_LOGGERS];
     if (!cache) {
       cache = this[CONTEXT_LOGGERS] = {};

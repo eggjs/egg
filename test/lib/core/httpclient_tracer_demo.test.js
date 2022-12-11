@@ -35,4 +35,24 @@ describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
       })
       .expect(200);
   });
+
+  it('should app logger support localStorage by default', async () => {
+    const traceId = 'mock-traceId-123123';
+    app.mockContext({
+      tracer: {
+        traceId,
+      },
+    });
+    await app.httpRequest()
+      .get('/foo?url=' + encodeURIComponent(url + '/get_headers'))
+      .expect(res => {
+        assert(res.body.url === url + '/get_headers');
+        assert(res.body.data['x-request-id']);
+        assert(res.body.data['x-request-id'].startsWith('anonymous-'));
+      })
+      .expect(200);
+    // wait for windows log store
+    if (process.platform === 'win32') await utils.sleep(2000);
+    app.expectLog(/ INFO \d+ \[-\/127.0.0.1\/mock-traceId-123123\/\d+ms GET \/foo\?url=http%3A%2F%2F127.0.0.1%3A\d+%2Fget_headers] app logger support traceId/);
+  });
 });
