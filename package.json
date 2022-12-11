@@ -37,7 +37,7 @@
     "egg-logrotator": "^3.1.0",
     "egg-multipart": "^3.1.0",
     "egg-onerror": "^2.1.1",
-    "egg-schedule": "^3.7.0",
+    "egg-schedule": "^4.0.0",
     "egg-security": "^2.11.0",
     "egg-session": "^3.3.0",
     "egg-static": "^2.2.0",

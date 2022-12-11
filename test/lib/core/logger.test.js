@@ -226,6 +226,7 @@ describe('test/lib/core/logger.test.js', () => {
         traceId: 'mock-trace-id-123',
       },
     });
+    if (process.platform === 'win32') await utils.sleep(2000);
     await app.httpRequest()
       .get('/')
       .expect(200)
