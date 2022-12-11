@@ -1,5 +1,17 @@
 # History
 
+## 2022-12-11, Version 3.7.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 📦 NEW: Set `config.logger.enableFastContextLogger = true` to enable faster context logger
+
+### Commits
+
+  * [[`e94c7df63`](http://github.com/eggjs/egg/commit/e94c7df63e1812da672dbaf7200e652cc4537c7b)] - 📦 NEW: Upgrade egg-logger v3 to enable localStorage (#5085) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c76e16cf7`](http://github.com/eggjs/egg/commit/c76e16cf7fb67d5f2c1b19252e01a5e3fed9cf96)] - 📖 DOC: Use @eggjs/tsconfig for tsconfig.json (#5066) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2022-12-09, Version 3.6.0 @fengmk2
 
 ### Notable Changes
