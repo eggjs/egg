@@ -54,6 +54,7 @@ describe('test/app/middleware/meta.test.js', () => {
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
         .expect(200);
+      if (process.platform === 'win32') await utils.sleep(2000);
       const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
       assert(content.includes('[meta] request started, host: '));
     });

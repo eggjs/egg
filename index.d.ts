@@ -1,12 +1,12 @@
 /// <reference types="node" />
 import accepts = require('accepts');
-import KoaApplication = require('koa');
-import KoaRouter = require('koa-router');
 import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
+import KoaApplication = require('koa');
+import KoaRouter = require('koa-router');
 import {
   EggLogger as Logger,
   EggLoggers,
@@ -15,7 +15,9 @@ import {
   EggLoggerOptions,
   EggContextLogger
 } from 'egg-logger';
-import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
+import { RequestOptions2 as RequestOptions, HttpClientResponse } from 'urllib';
+import { RequestURL, RequestOptions as RequestOptionsNext } from 'urllib-next/src/Request';
+import { HttpClientResponse as HttpClientResponseNext } from 'urllib-next/src/Response';
 import {
   EggCoreBase,
   FileLoaderOption,
@@ -46,12 +48,18 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  export interface EggHttpClient extends HttpClient<RequestOptions> { }
+  // Compatible with both urllib@2 and urllib@3 RequestOptions to request
+  export interface EggHttpClient extends EventEmitter {
+    reques<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    request<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    curl<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    curl<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+  }
   interface EggHttpConstructor {
     new(app: Application): EggHttpClient;
   }
 
-  export interface EggContextHttpClient extends HttpClient<RequestOptions> { }
+  export interface EggContextHttpClient extends EggHttpClient { }
   interface EggContextHttpClientConstructor {
     new(ctx: Context): EggContextHttpClient;
   }
