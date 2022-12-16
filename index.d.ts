@@ -50,7 +50,7 @@ declare module 'egg' {
 
   // Compatible with both urllib@2 and urllib@3 RequestOptions to request
   export interface EggHttpClient extends EventEmitter {
-    reques<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    request<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
     request<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
     curl<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
     curl<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
