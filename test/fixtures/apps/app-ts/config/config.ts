@@ -16,6 +16,9 @@ export default () => {
 
   config.httpclient = {
     useHttpClientNext: false,
+    request: {
+      timing: true,
+    },
   };
 
   return config;

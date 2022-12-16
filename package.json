@@ -54,7 +54,7 @@
     "on-finished": "^2.4.1",
     "sendmessage": "^1.1.0",
     "urllib": "^2.33.0",
-    "urllib-next": "^3.1.3",
+    "urllib-next": "^3.8.0",
     "utility": "^1.17.0",
     "ylru": "^1.3.2"
   },
