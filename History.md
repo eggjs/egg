@@ -1,5 +1,24 @@
 # History
 
+## 2022-12-16, Version 3.9.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 📦 NEW: Run async function in the anonymous context scope
+
+  ```js
+  await app.runInAnonymousContextScope(async ctx => {
+    // run with anonymous ctx here
+  });
+  ```
+
+### Commits
+
+  * [[`344139e47`](http://github.com/eggjs/egg/commit/344139e4759f56ab2beca2e2a5c2783160396ba9)] - 🐛 FIX: Typo on HttpClient request (#5097) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1021faf78`](http://github.com/eggjs/egg/commit/1021faf78e5f23fa366c0034a38f81b0f361e9ec)] - 👌 IMPROVE: Keep more compatible d.ts on httpclient request (#5092) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`9d6acfd7c`](http://github.com/eggjs/egg/commit/9d6acfd7c3266ae6a56e45cb7a72473d628f6e16)] - 📦 NEW: Run async function in the anonymous context scope (#5094) (fengmk2 <<fengmk2@gmail.com>>)
+
 ## 2022-12-12, Version 3.8.0 @fengmk2
 
 ### Notable Changes

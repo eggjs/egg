@@ -61,7 +61,10 @@ async function main() {
     await app.httpclient.request('url', {});
     await app.httpclient.request('url');
     await app.httpclient.curl('url', {});
-    await app.httpclient.curl('url');
+    const { res } = await app.httpclient.curl('url', { streaming: true });
+    for await (const chunk of res) {
+      console.log(chunk.toString());
+    }
   });
 }
 main();
