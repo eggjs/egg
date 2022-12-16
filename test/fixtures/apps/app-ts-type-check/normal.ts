@@ -49,6 +49,13 @@ app.logger.info(app.Service);
 app.logger.info(app.Controller);
 app.controller.test().then(() => {});
 
+async function main() {
+  await app.runInAnonymousContextScope(async ctx => {
+    await ctx.httpclient.request('url');
+  });
+}
+main();
+
 // agent
 const agent = new Agent({ baseDir: __dirname, plugins: {}, type: 'agent' });
 agent.logger.info('123');

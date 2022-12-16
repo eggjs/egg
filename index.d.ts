@@ -696,6 +696,13 @@ declare module 'egg' {
     runInBackground(scope: (ctx: Context) => void): void;
 
     /**
+     * Run async function in the anonymous context scope
+     * @see Context#runInAnonymousContextScope
+     * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
+     */
+    runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>): Promise<void>;
+
+    /**
      * Get current execute ctx async local storage
      * @returns {AsyncLocalStorage} localStorage - store current execute Context
      */
