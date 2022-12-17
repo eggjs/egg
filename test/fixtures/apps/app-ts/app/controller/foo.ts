@@ -7,7 +7,7 @@ import {
   EggHttpClient,
   EggContextHttpClient,
 } from 'egg';
-import { RequestOptions as RequestOptionsNext } from 'urllib-next/src/Request';
+import { RequestOptions as RequestOptionsNext } from 'urllib-next';
 import { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service

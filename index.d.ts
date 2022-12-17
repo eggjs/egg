@@ -13,11 +13,13 @@ import {
   LoggerLevel as EggLoggerLevel,
   EggLoggersOptions,
   EggLoggerOptions,
-  EggContextLogger
+  EggContextLogger,
 } from 'egg-logger';
 import { RequestOptions2 as RequestOptions, HttpClientResponse } from 'urllib';
-import { RequestURL, RequestOptions as RequestOptionsNext } from 'urllib-next/src/Request';
-import { HttpClientResponse as HttpClientResponseNext } from 'urllib-next/src/Response';
+import {
+  RequestURL, RequestOptions as RequestOptionsNext,
+  HttpClientResponse as HttpClientResponseNext,
+} from 'urllib-next';
 import {
   EggCoreBase,
   FileLoaderOption,
