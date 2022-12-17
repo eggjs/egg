@@ -1,5 +1,9 @@
 name: Release
 on:
+  # 合并后自动发布
+  push:
+    branches: [ master ]
+
   # 手动发布
   workflow_dispatch: {}
 
@@ -9,5 +13,6 @@ jobs:
     uses: artusjs/github-actions/.github/workflows/node-release.yml@v1
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     with:
       checkTest: false
