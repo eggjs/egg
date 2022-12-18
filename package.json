@@ -68,7 +68,7 @@
     "dumi": "^1.1.47",
     "dumi-theme-egg": "^1.2.2",
     "egg-bin": "^5",
-    "egg-mock": "^4.2.1",
+    "egg-mock": "^5.4.0",
     "egg-plugin-puml": "^2.4.0",
     "egg-tracer": "^1.1.0",
     "egg-view-nunjucks": "^2.3.0",

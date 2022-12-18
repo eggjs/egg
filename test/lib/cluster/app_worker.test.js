@@ -101,7 +101,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
         version[0] > 9) {
         html = new RegExp(
           'GET /foo bar HTTP/1.1\r\nHost: 127.0.0.1:\\d+\r\nAccept-Encoding: gzip, ' +
-          'deflate\r\nUser-Agent: node-superagent/\\d+\\.\\d+\\.\\d+\r\nConnection: close\r\n\r\n');
+          'deflate\r\nConnection: close\r\n\r\n');
       }
 
       // customized client error response
@@ -109,7 +109,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       test1.request().path = '/foo bar';
       await test1.expect(html)
         .expect('foo', 'bar')
-        .expect('content-length', '134')
+        .expect('content-length', '99')
         .expect(418);
 
       // customized client error handle function throws
