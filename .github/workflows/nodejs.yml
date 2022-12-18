@@ -1,35 +1,19 @@
-name: Continuous integration
+name: CI
+
 on:
   push:
     branches: [ master ]
+
   pull_request:
     branches: [ master, 2.x, 1.x ]
-  schedule:
-    - cron: '0 2 * * *'
+
+  workflow_dispatch: {}
+
 jobs:
-  Runner:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, macOS-latest, windows-latest ]
-        node-version: [ 14, 16, 18 ]
-    steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@master
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
-
-    - name: Continuous integration
-      run: npm run ci
-
-    - name: Code Coverage
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+  Job:
+    name: Node.js
+    uses: artusjs/github-actions/.github/workflows/node-test.yml@v1
+    with:
+      os: 'ubuntu-latest, macos-latest, windows-latest'
+      version: '14, 16, 18'
+      install: 'npm install'

@@ -1,10 +1,8 @@
 name: Release
 on:
-  # 合并后自动发布
   push:
     branches: [ master ]
 
-  # 手动发布
   workflow_dispatch: {}
 
 jobs:
@@ -16,3 +14,4 @@ jobs:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     with:
       checkTest: false
+      install: 'npm install'
