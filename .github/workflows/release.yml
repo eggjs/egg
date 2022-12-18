@@ -14,4 +14,4 @@ jobs:
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     with:
       checkTest: false
-      install: 'npm install'
+      install: 'npm install --legacy-peer-deps'
