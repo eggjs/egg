@@ -722,7 +722,7 @@ declare module 'egg' {
      * Get current execute ctx, maybe undefined
      * @returns {Context} ctx - current execute Context
      */
-    get currentConext(): Context;
+    get currentContext(): Context;
   }
 
   export interface IApplicationLocals extends PlainObject { }
