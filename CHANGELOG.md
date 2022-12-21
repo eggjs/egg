@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.9.2](https://github.com/eggjs/egg/compare/v3.9.1...v3.9.2) (2022-12-21)
+
+
+### Bug Fixes
+
+* currentContext typo ([#5107](https://github.com/eggjs/egg/issues/5107)) ([713a081](https://github.com/eggjs/egg/commit/713a081475189ef6d00c85a559849ff97f824d11))
+
 ## [3.9.1](https://github.com/eggjs/egg/compare/v3.9.0...v3.9.1) (2022-12-18)
 
 
