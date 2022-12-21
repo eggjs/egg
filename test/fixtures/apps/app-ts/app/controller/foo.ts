@@ -29,7 +29,7 @@ export default class FooController extends Controller {
     this.ctxHttpClient = ctx.httpclient;
     this.fooLogger = ctx.getLogger('foo');
     assert(ctx.app.ctxStorage);
-    assert(!ctx.app.currentConext);
+    assert(ctx.app.currentContext);
   }
 
   async getData() {
