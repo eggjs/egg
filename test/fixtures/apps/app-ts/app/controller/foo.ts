@@ -59,6 +59,7 @@ export default class FooController extends Controller {
     result = await this.app.httpclient.request('url', request);
     result = await this.ctx.httpclient.curl('url', request);
     result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
   }
 
   async requestWithHttpclient(request: RequestOptions) {
@@ -68,6 +69,7 @@ export default class FooController extends Controller {
     result = await this.app.httpclient.request('url', request);
     result = await this.ctx.httpclient.curl('url', request);
     result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
   }
 
   async requestWithHttpclient2(request: RequestOptions2) {
@@ -77,6 +79,7 @@ export default class FooController extends Controller {
     result = await this.app.httpclient.request('url', request);
     result = await this.ctx.httpclient.curl('url', request);
     result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
   }
 
   async httpclient() {

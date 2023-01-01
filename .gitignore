@@ -24,6 +24,9 @@ test/fixtures/apps/app-ts/**/*.js
 !test/fixtures/apps/app-ts/node_modules/**/*.js
 test/fixtures/apps/app-ts-esm/**/*.js
 test/fixtures/apps/app-ts-type-check/**/*.js
+test/fixtures/apps/app-ts-type-check/**/*.d.ts
+test/fixtures/apps/app-ts/**/*.d.ts
+test/fixtures/apps/app-ts-esm/**/*.d.ts
 
 # site
 site/dist

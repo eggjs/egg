@@ -59,6 +59,8 @@
     "ylru": "^1.3.2"
   },
   "devDependencies": {
+    "@eggjs/tsconfig": "^1.1.0",
+    "@types/node": "^18.11.18",
     "@umijs/preset-react": "^2.1.6",
     "address": "^1.2.1",
     "antd": "^4.23.2",
@@ -82,6 +84,7 @@
     "pedding": "^1.1.0",
     "prettier": "^2.7.1",
     "runscript": "^1.5.3",
+    "sdk-base": "^4.2.1",
     "spy": "^1.0.0",
     "supertest": "^6.2.4",
     "ts-node": "^10.9.1",
