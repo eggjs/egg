@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import accepts = require('accepts');
 import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
