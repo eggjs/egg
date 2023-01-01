@@ -1,9 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
 const fs = require('fs');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 const file_path1 = utils.getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = utils.getFilepath('apps/watcher-development-app/tmp/tmp.txt');
@@ -29,9 +26,9 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect(200)
         .expect('app watch success');
 
-      await sleep(5000);
+      await utils.sleep(5000);
       fs.writeFileSync(file_path1, 'aaa');
-      await sleep(5000);
+      await utils.sleep(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -43,7 +40,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         });
 
       fs.writeFileSync(file_path2, 'aaa');
-      await sleep(5000);
+      await utils.sleep(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -63,7 +60,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
-      await sleep(5000);
+      await utils.sleep(5000);
 
       await app.httpRequest()
         .get('/agent-msg')
@@ -87,7 +84,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
     after(() => app.close());
 
     it('should warn user', async () => {
-      await sleep(3000);
+      await utils.sleep(3000);
       const logPath = utils.getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
       assert(content.includes('defaultEventSource watcher will NOT take effect'));

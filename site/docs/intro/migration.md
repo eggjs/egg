@@ -301,7 +301,6 @@ In case the previous versions still requires maintenance:
 
 [co]: https://github.com/tj/co
 [egg-schedule]: https://github.com/eggjs/egg-schedule
-[egg-view]: https://github.com/eggjs/egg-view
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [app.toasyncfunction]: https://github.com/eggjs/egg-core/blob/da4ba1784175c43217125f3d5cd7f0be3d5396bf/lib/egg.js#L344
 [app.topromise]: https://github.com/eggjs/egg-core/blob/da4ba1784175c43217125f3d5cd7f0be3d5396bf/lib/egg.js#L353

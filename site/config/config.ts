@@ -28,10 +28,6 @@ export default defineConfig({
     'en-US': [
       null,
       {
-        title: 'API',
-        path: 'https://eggjs.org/api/index.html',
-      },
-      {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',
       },
@@ -46,10 +42,6 @@ export default defineConfig({
     ],
     'zh-CN': [
       null,
-      {
-        title: 'API',
-        path: 'https://eggjs.org/api/index.html',
-      },
       {
         title: 'GitHub',
         path: 'https://github.com/eggjs/egg',
@@ -105,11 +97,11 @@ export default defineConfig({
         ],
       },
       {
-        title: 'Egg.js Dingtalk',
+        title: 'Egg.js Telegram Channel',
         list: [
           {
             name: '钉钉',
-            qrcode: '/img_egg/qrcode_dingtalk.png',
+            qrcode: '/img_egg/qrcode_egg_channel.png',
           },
         ],
       },

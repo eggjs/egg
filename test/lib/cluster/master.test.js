@@ -1,8 +1,5 @@
-'use strict';
-
 const mm = require('egg-mock');
 const coffee = require('coffee');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/cluster/master.test.js', () => {
@@ -27,7 +24,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await sleep(5000);
+      await utils.sleep(5000);
 
       // error pipe to console
       app.expect('stdout', /app_worker#1:\d+ disconnect/);
@@ -45,10 +42,52 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await sleep(5000);
+      await utils.sleep(5000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stdout', /app_worker#\d:\d+ started/);
+    });
+  });
+
+  describe('app worker should not die with matched serverGracefulIgnoreCode', () => {
+    let app;
+    before(() => {
+      mm.env('default');
+      app = utils.cluster('apps/app-die-ignore-code');
+      app.coverage(false);
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should not restart when matched uncaughtException happened', async () => {
+      try {
+        await app.httpRequest()
+          .get('/uncaughtException');
+      } catch (_) {
+        // do nothing
+      }
+
+      // wait for app worker restart
+      await utils.sleep(5000);
+
+      // error pipe to console
+      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
+    });
+
+    it('should still log uncaughtException when matched uncaughtException happened', async () => {
+      try {
+        await app.httpRequest()
+          .get('/uncaughtException');
+      } catch (_) {
+        // do nothing
+      }
+
+      // wait for app worker restart
+      await utils.sleep(5000);
+
+      app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
+      app.expect('stderr', /matches ignore list/);
+      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
     });
   });
 
@@ -254,6 +293,19 @@ describe('test/lib/cluster/master.test.js', () => {
       setTimeout(() => {
         app.emit('close', 0);
         app.expect('stdout', /agent_worker#1:\d+ started /);
+        done();
+      }, 10000);
+    });
+
+    it('should start without customEgg and worker_threads', done => {
+      app = coffee.fork(utils.getFilepath('apps/master-worker-started-worker_threads/dispatch.js'))
+        .debug()
+        .coverage(false);
+
+      setTimeout(() => {
+        app.emit('close', 0);
+        app.expect('stdout', /agent_worker#1:\d+ started /);
+        app.expect('stdout', /"startMode":"worker_threads"/);
         done();
       }, 10000);
     });

@@ -1,0 +1,31 @@
+name: 🚀 RFC Proposals
+description: I've got a major improvement (or idea) on the technical architecture of the Eggjs framework.
+labels: [RFC proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Any better new/changable functions for the core technical architecture of the Egg.js framework?
+        
+        But please make sure there's no duplicated issues related to your idea before submitting.
+  - type: textarea
+    attributes:
+      label: "Please describe your idea in detail:"
+      placeholder: |
+        1. Describe the current situation of the problem you want to solve, 
+        and attach the related issue address.
+
+        If it is possible, please provide screenshots or videos in detail.
+
+        2. What can I do (related APIs, Your ideas, better to provide some pseudo code to help implementations).
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Follow-up type
+      description: The type of the RFC proposals.
+      options:
+        - label: Some Task
+        - label: PR URL(s)
+    validations:
+      required: true

@@ -152,6 +152,10 @@ module.exports = appInfo => {
         // ignore any key contains "secret" keyword
         /secret/i,
       ]),
+      timing: {
+        // if boot action >= slowBootActionMinDuration, egg core will print it to warnning log
+        slowBootActionMinDuration: 5000,
+      },
     },
 
     /**
@@ -254,6 +258,7 @@ module.exports = appInfo => {
    * @property {Object} coreLogger - custom config of coreLogger
    * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
    * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
+   * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
    */
   config.logger = {
     dir: path.join(appInfo.root, 'logs', appInfo.name),
@@ -271,6 +276,7 @@ module.exports = appInfo => {
     coreLogger: {},
     allowDebugAtProd: false,
     enablePerformanceTimer: false,
+    enableFastContextLogger: false,
   };
 
   /**
@@ -290,6 +296,7 @@ module.exports = appInfo => {
    * @property {Number} httpsAgent.freeSocketTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
+   * @property {Boolean} useHttpClientNext - use urllib@3 HttpClient
    */
   config.httpclient = {
     enableDNSCache: false,
@@ -311,6 +318,7 @@ module.exports = appInfo => {
       maxSockets: Number.MAX_SAFE_INTEGER,
       maxFreeSockets: 256,
     },
+    useHttpClientNext: false,
   };
 
   /**

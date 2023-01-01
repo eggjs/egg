@@ -1,0 +1,65 @@
+name: 🐛 Egg Bug 反馈
+description: 如发现 Egg 框架中的 Bug，请及时在此汇报。
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: |
+        在此输入你需要反馈的 Bug 具体信息（Bug in Detail）：
+      placeholder: |
+        1. 我做了什么。
+
+        2. 我的预期值。
+
+        3. 我实际得到的结果。
+
+        4. 可以的话，请提供一些截图、视频作为附件以复现症状。
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 可复现问题的仓库地址（Reproduction Repo）
+      description: |
+        1. 请使用 `npm init egg --type=simple bug` 创建最小可复现问题的代码。
+        
+        2. 在 GitHub 中上传该代码项目，并在此处粘贴地址。你也可以直接将你的仓库压缩为 zip 文件直接以附件形式提交。
+      placeholder: |
+        https://github.com/YOUR_REPOSITORY_URL
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Node 版本号：
+      description: |
+        你的当前复现问题的 Node 版本号：
+      placeholder: |
+        使用 “node -v” 命令，在控制台得到版本号（例如：v8.5.0）。
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Eggjs 版本号：
+      description: |
+        你的当前复现问题 Eggjs 版本号：
+      placeholder: |
+        请直接在“package.json”中查阅（例如：3.1.0）。
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "相关插件名称与版本号（PlugIn and Name）："
+      description: |
+        插件名称以及版本号：
+      placeholder: |
+        请直接在“package.json”中查阅（例如：egg-mysql，3.1.1）。
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: "操作平台与版本号（Platform and Version）："
+      description: |
+        你的操作平台与版本号：
+      placeholder: |
+        Windows 10 专业版（21H2）
+    validations:
+      required: true

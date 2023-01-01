@@ -351,7 +351,7 @@ The corresponding backend codes are:
 ```js
 // app/controller/upload.js
 const Controller = require('egg').Controller;
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 
 module.exports = class extends Controller {
   async upload() {
@@ -399,7 +399,7 @@ The corresponding backend codes are:
 ```js
 // app/controller/upload.js
 const Controller = require('egg').Controller;
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 
 module.exports = class extends Controller {
   async upload() {

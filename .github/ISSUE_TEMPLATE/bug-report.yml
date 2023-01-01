@@ -1,0 +1,65 @@
+name: 🐛 Bug Report For Eggjs
+description: Report an issue if something isn't working as expected 🤔.
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: |
+        Your detail info about the Bug:
+      placeholder: |
+        1. What I did. 
+
+        2. What I expected to happen. 
+
+        3. What I actually got.
+
+        4. If possible, images/videos as attachments are welcomed to show the bug.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction Repo
+      description: |
+        1. Please use `npm init egg --type=simple bug` to create your smallest repo.
+        
+        2. Submit it in the GitHub and paste your URL here. You can also attach your zip file directly.
+      placeholder: |
+        https://github.com/YOUR_REPOSITORY_URL or your zip file
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Node Version
+      description: |
+        What's your Node's version?
+      placeholder: |
+        Use "node -v" in your console to get it (e.g: v8.5.0).
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Eggjs Version
+      description: |
+        What's your Eggjs version?
+      placeholder: |
+       See it directly in your "package.json" file (e.g: 3.1.0)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Plugin Name and its version
+      description: |
+        What's your plugin's name and version?
+      placeholder: |
+        See them directly in your "package.json" file (e.g: egg-mysql, 3.1.1)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Platform and its version
+      description: |
+        What's your platform and its version?
+      placeholder: |
+        Windows 10 Professional(21H2)
+    validations:
+      required: true

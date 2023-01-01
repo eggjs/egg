@@ -1,18 +1,18 @@
 'use strict';
 
 const { performance } = require('perf_hooks');
-const uuid = require('uuid');
+const { randomUUID } = require('crypto');
 
 module.exports = app => {
   app.httpclient.on('request', req => {
     if (!req.ctx) {
       // auto set anonymous context
       req.ctx = req.args.ctx = app.createAnonymousContext();
-      req.ctx.traceId = 'anonymous-' + uuid.v1();
+      req.ctx.traceId = 'anonymous-' + randomUUID();
     }
     // set tracer id
     if (!req.ctx.traceId) {
-      req.ctx.traceId = uuid.v1();
+      req.ctx.traceId = randomUUID();
     }
     req.starttime = performance.now();
     req.args.headers = req.args.headers || {};

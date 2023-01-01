@@ -1,7 +1,5 @@
-'use strict';
 
 const assert = require('assert');
-const sleep = require('mz-modules/sleep');
 const fs = require('fs');
 const path = require('path');
 const utils = require('../../utils');
@@ -58,7 +56,7 @@ describe('test/app/extend/application.test.js', () => {
     it('should log info when plugin is not ready', async () => {
       app = utils.cluster('apps/notready');
       // it won't be ready, so wait for the timeout
-      await sleep(11000);
+      await utils.sleep(11000);
 
       app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
     });
@@ -181,7 +179,7 @@ describe('test/app/extend/application.test.js', () => {
         .get('/app_background')
         .expect(200)
         .expect('hello app');
-      await sleep(5000);
+      await utils.sleep(2100);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/mock background run at app result file size: \d+/.test(log));
@@ -189,6 +187,24 @@ describe('test/app/extend/application.test.js', () => {
       assert(
         /\[egg:background] task:.*?app[\/\\]controller[\/\\]app\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
       );
+    });
+  });
+
+  describe('app.runInAnonymousContextScope(scope)', () => {
+    it('should run task in anonymous context scope success', async () => {
+      const app = utils.app('apps/app-runInAnonymousContextScope');
+      await app.ready();
+      await app.close();
+      await utils.sleep(2100);
+      const logdir = app.config.logger.dir;
+      const logs = fs.readFileSync(path.join(logdir, 'app-runInAnonymousContextScope-web.log'), 'utf8').split('\n');
+      // console.log(logs);
+      // 2022-12-15 23:00:08,551 INFO 86728 [-/127.0.0.1/-/1ms GET /] before close on ctx logger
+      // 2022-12-15 23:00:08,551 INFO 86728 [-/127.0.0.1/-/1ms GET /] before close on app logger
+      // 2022-12-15 23:03:16,086 INFO 89216 outside before close on app logger
+      assert.match(logs[0], / INFO \d+ \[-\/127.0.0.1\/-\/\d+ms GET \/] inside before close on ctx logger/);
+      assert.match(logs[1], / INFO \d+ \[-\/127.0.0.1\/-\/\d+ms GET \/] inside before close on app logger/);
+      assert.match(logs[2], / INFO \d+ outside before close on app logger/);
     });
   });
 
@@ -203,7 +219,7 @@ describe('test/app/extend/application.test.js', () => {
     it('should wait for middleware resolution', async () => {
       const ctx = app.createAnonymousContext();
       await app.handleRequest(ctx, async ctx => {
-        await sleep(100);
+        await utils.sleep(100);
         ctx.body = 'middleware resolution';
       });
       assert(ctx.body === 'middleware resolution');

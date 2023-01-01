@@ -1,8 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 const utils = require('../../utils');
 
 describe('test/app/middleware/meta.test.js', () => {
@@ -56,6 +54,7 @@ describe('test/app/middleware/meta.test.js', () => {
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
         .expect(200);
+      if (process.platform === 'win32') await utils.sleep(2000);
       const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
       assert(content.includes('[meta] request started, host: '));
     });

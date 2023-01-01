@@ -427,7 +427,7 @@ declare module 'egg' {
 
 ```typescript
 // test/app/service/news.test.ts
-import * as assert from 'assert';
+import assert from 'assert';
 import { Context } from 'egg';
 import { app } from 'egg-mock/bootstrap';
 
@@ -451,6 +451,7 @@ describe('test/app/service/news.test.js', () => {
 {
   "name": "showcase",
   "egg": {
+    "typescript": true,
     "declarations": true
   },
   "scripts": {
@@ -470,6 +471,7 @@ describe('test/app/service/news.test.js', () => {
 {
   "name": "showcase",
   "egg": {
+    "typescript": true,
     "declarations": true
   },
   "scripts": {
@@ -494,8 +496,12 @@ describe('test/app/service/news.test.js', () => {
 
 ```json
 {
+  "devDependencies": {
+    "@eggjs/tsconfig": "^1.0.0"
+  },
   "egg": {
-    "typescript": true
+    "typescript": true,
+    "declarations": true
   },
   "scripts": {
     "start": "egg-scripts start --title=egg-server-showcase",
@@ -511,29 +517,7 @@ describe('test/app/service/news.test.js', () => {
 
 ```json
 {
-  "compileOnSave": true,
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "strict": true,
-    "noImplicitAny": false,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "charset": "utf8",
-    "allowJs": false,
-    "pretty": true,
-    "noEmitOnError": false,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    "strictPropertyInitialization": false,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "inlineSourceMap": true,
-    "importHelpers": true
-  },
+  "extends": "@eggjs/tsconfig",
   "exclude": ["app/public", "app/web", "app/views"]
 }
 ```

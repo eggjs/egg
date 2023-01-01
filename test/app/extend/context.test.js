@@ -1,9 +1,6 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const assert = require('assert');
 const utils = require('../../utils');
 
@@ -25,7 +22,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await sleep(5000);
+      await utils.sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -57,7 +54,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await sleep(5000);
+      await utils.sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -86,7 +83,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await sleep(5000);
+      await utils.sleep(5000);
 
       const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -123,7 +120,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger')
         .expect(200);
 
-      await sleep(100);
+      await utils.sleep(100);
       const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
       assert(
         /\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/.test(fs.readFileSync(logPath, 'utf8'))
@@ -253,7 +250,7 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello');
       await app.backgroundTasksFinished();
-      await sleep(100);
+      await utils.sleep(100);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -272,7 +269,7 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello');
       await app.backgroundTasksFinished();
-      await sleep(100);
+      await utils.sleep(100);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -296,7 +293,7 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello error');
       await app.backgroundTasksFinished();
-      await sleep(100);
+      await utils.sleep(100);
       assert(errorHadEmit);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
@@ -329,7 +326,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/')
         .expect(200)
         .expect('hello');
-      await sleep(5000);
+      await utils.sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -347,7 +344,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/custom')
         .expect(200)
         .expect('hello');
-      await sleep(5000);
+      await utils.sleep(5000);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -370,7 +367,7 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      await sleep(5000);
+      await utils.sleep(5000);
       assert(errorHadEmit);
       const logdir = app.config.logger.dir;
       const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');

@@ -41,13 +41,33 @@ app.inspect();
 app.listen(1002);
 app.logger.info(app.locals.test);
 const ctxHttpClient = new app.ContextHttpClient({} as Context);
+ctxHttpClient.request('http://127.0.0.1');
 ctxHttpClient.request('http://127.0.0.1', { method: 'GET' });
 const appHttpClient = new app.HttpClient(app);
+appHttpClient.request('http://127.0.0.1');
 appHttpClient.request('http://127.0.0.1', { method: 'GET' });
+app.httpclient.request('http://127.0.0.1').catch(() => {});
 app.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
 app.logger.info(app.Service);
 app.logger.info(app.Controller);
 app.controller.test().then(() => {});
+
+async function main() {
+  await app.runInAnonymousContextScope(async ctx => {
+    await ctx.httpclient.request('url', {});
+    await ctx.httpclient.request('url');
+    await ctx.httpclient.curl('url', {});
+    await ctx.httpclient.curl('url');
+    await app.httpclient.request('url', {});
+    await app.httpclient.request('url');
+    await app.httpclient.curl('url', {});
+    const { res } = await app.httpclient.curl('url', { streaming: true });
+    for await (const chunk of res) {
+      console.log(chunk.toString());
+    }
+  });
+}
+main();
 
 // agent
 const agent = new Agent({ baseDir: __dirname, plugins: {}, type: 'agent' });

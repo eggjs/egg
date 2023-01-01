@@ -1,6 +1,4 @@
-'use strict';
-
-const { sleep } = require('mz-modules');
+const { sleep } = require('../../../../utils');
 
 module.exports = app => {
   app.get('/', async ctx => {

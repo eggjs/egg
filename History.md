@@ -1,5 +1,179 @@
-2.36.0 / 2022-06-17 @atian25
-==================
+# History
+
+## 2022-12-16, Version 3.9.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 📦 NEW: Run async function in the anonymous context scope
+
+  ```js
+  await app.runInAnonymousContextScope(async ctx => {
+    // run with anonymous ctx here
+  });
+  ```
+
+### Commits
+
+  * [[`af1206904`](http://github.com/eggjs/egg/commit/af12069041c1ea11217688c9c17d3712a44d3422)] - chore: update workflow for gh-pages (#5098) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`344139e47`](http://github.com/eggjs/egg/commit/344139e4759f56ab2beca2e2a5c2783160396ba9)] - 🐛 FIX: Typo on HttpClient request (#5097) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`1021faf78`](http://github.com/eggjs/egg/commit/1021faf78e5f23fa366c0034a38f81b0f361e9ec)] - 👌 IMPROVE: Keep more compatible d.ts on httpclient request (#5092) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`9d6acfd7c`](http://github.com/eggjs/egg/commit/9d6acfd7c3266ae6a56e45cb7a72473d628f6e16)] - 📦 NEW: Run async function in the anonymous context scope (#5094) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-12-12, Version 3.8.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Upgrade egg-schedule@4 to support `app.currentContext` on scheduler
+
+### Commits
+
+  * [[`75d025b24`](http://github.com/eggjs/egg/commit/75d025b24e5e3016f2df84e2ba1901f42156c0b7)] - 👌 IMPROVE: Upgrade egg-schedule to v4 (#5088) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-12-11, Version 3.7.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 📦 NEW: Set `config.logger.enableFastContextLogger = true` to enable faster context logger
+
+### Commits
+
+  * [[`e94c7df63`](http://github.com/eggjs/egg/commit/e94c7df63e1812da672dbaf7200e652cc4537c7b)] - 📦 NEW: Upgrade egg-logger v3 to enable localStorage (#5085) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c76e16cf7`](http://github.com/eggjs/egg/commit/c76e16cf7fb67d5f2c1b19252e01a5e3fed9cf96)] - 📖 DOC: Use @eggjs/tsconfig for tsconfig.json (#5066) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-12-09, Version 3.6.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * 🚀🚀🚀 Support `app.ctxStorage` and `app.currentContext` to get current execute ctx, see [koa#1455](https://github.com/koajs/koa/pull/1455)
+
+### Commits
+
+  * [[`bf36904e0`](http://github.com/eggjs/egg/commit/bf36904e0fb1d4477ebb7068dd8ad6726d29182f)] - 📦 NEW: Add ctxStorage and currentContext d.ts (#5079) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`c68992ab7`](http://github.com/eggjs/egg/commit/c68992ab71b854f825df0ff3ea4b82e7666ec828)] - chore: ignore gp-pages branch while deploying preview (#5077) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`13906825b`](http://github.com/eggjs/egg/commit/13906825bc3fab260aa0dd8888ce9fd19f2f70c5)] - chore: use actions to deploy vercel project (#5076) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`5d825bb59`](http://github.com/eggjs/egg/commit/5d825bb59ed691bd45c3a8b2f6c222496910e250)] - docs: update communite links (#5073) (Suyi <<thonatos.yang@gmail.com>>)
+
+## 2022-11-28, Version 3.5.1 @killagu
+
+### Notable Changes
+
+* **fixes**
+  * Dump `config/timing` when app start timeout
+
+### Commits
+
+  * [[`c859506a0`](http://github.com/eggjs/egg/commit/c859506a094181f5f45db16a8501daaaea56b3d3)] - fix: dump config/timing when timeout (#5069) (killa <<killa123@126.com>>)
+
+## 2022-11-15, Version 3.5.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Auto disable cluster-client heartbeat checker on debug mode
+
+### Commits
+
+  * [[`6de5cba5d`](http://github.com/eggjs/egg/commit/6de5cba5d0d02d09e9e6ee71f9e7b1cb3d65c24e)] - feat: disable cluster-client heartbeat on debug mode (#5059) (sinkhaha <<1468709106@qq.com>>)
+
+## 2022-11-07, Version 3.4.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Upgrade egg-cluster v2 to support worker_threads start mode
+  * Drop httpclient callback and thunk style, a breaking change to egg@2
+  * Print warnning log when boot action takes more than 5000ms
+  * Don't need to patch keep-alive header on Node.js >= 14.20.0
+
+### Commits
+
+  * [[`2b5f289bb`](http://github.com/eggjs/egg/commit/2b5f289bba3bd14c2867136b5dcbf3bed5cfdf9e)] - 📦 NEW: Use egg-cluster v2 (#5055) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`610a39e7f`](http://github.com/eggjs/egg/commit/610a39e7f41a17a2123705691d6c1bfdc3e12f88)] - 👌 IMPROVE: Drop httpclient callback and thunk style (#5052) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`3a941d669`](http://github.com/eggjs/egg/commit/3a941d669cc1d2c12a2caad4dd24492e98444348)] - 👌 IMPROVE: Print warnning log when boot action takes more than 5000ms (#5049) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`d820b739b`](http://github.com/eggjs/egg/commit/d820b739b95207bdea8c9b4c3da0f5059bc0113c)] - 👌 IMPROVE: Don't need to patch keep-alive header on Node.js >= 14.20.0 (#5051) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`6ac4cdbfb`](http://github.com/eggjs/egg/commit/6ac4cdbfbb35905f6f315f51122c1badcb913b5c)] - 🤖 TEST: Add Node.js 19 ci runner (#5050) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`d05cc015e`](http://github.com/eggjs/egg/commit/d05cc015e4a748bf41a4dbf46e978d1f4ad44954)] - docs: fix Application description (#5044) (ldc-37 <<34739463+ldc-37@users.noreply.github.com>>)
+
+## 2022-09-28, Version 3.3.3 @fengmk2
+
+### Notable Changes
+
+* **fixes**
+  * Allow override HttpClientNext
+
+### Commits
+  * [[`7ee19e840`](http://github.com/eggjs/egg/commit/7ee19e8402b1d23ecdc1791e044a1902049e14dd)] - 🐛 FIX: Allow override HttpClientNext (#5037) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-09-27, Version 3.3.2 @atian25
+
+### Notable Changes
+
+* **fixes**
+  * update multipart 3.1.0, https://github.com/eggjs/egg-multipart/pull/56
+
+### Commits
+  * [[`201bfa749`](http://github.com/eggjs/egg/commit/201bfa7492920aafad71b7845e5cc6eaef69f8bc)] - fix: update multipart 3.1.0 (#5034) (TZ | 天猪 <<atian25@qq.com>>)
+
+
+## 2022-09-26, Version 3.3.1 @fengmk2
+
+### Notable Changes
+
+* **fixes**
+  * fallback egg-multipart@2 to support filename with non-ASCII characters
+### Commits
+
+  * [[`acadb28e2`](http://github.com/eggjs/egg/commit/acadb28e2814b0b91828e0766673f199d7767f3a)] - fix: fallback egg-multipart to v2 (#5032) (fengmk2 <<fengmk2@gmail.com>>)
+
+
+## 2022-09-23, Version 3.3.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Support config `serverGracefulIgnoreCode` to ignore error avoid process exit when uncatch error emit
+  See https://github.com/node-modules/graceful/pull/13
+### Commits
+
+  * [[`a0761d65f`](http://github.com/eggjs/egg/commit/a0761d65f5df1002853c169efedab969636247d3)] - feat(graceful): support serverGracefulIgnoreCode (#5027) (hyj1991 <<yeekwanvong@gmail.com>>)
+  * [[`8b8dd3be9`](http://github.com/eggjs/egg/commit/8b8dd3be95bb53ad3c732b8bc9c20566021e955f)] - chore: remove jsdoc and disable vercel comment (#5026) (Suyi <<thonatos.yang@gmail.com>>)
+  * [[`f4225339f`](http://github.com/eggjs/egg/commit/f4225339f6235f78fe53d34d1eb0993faa410b36)] - test: fix ci (#5025) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`5de994b9c`](http://github.com/eggjs/egg/commit/5de994b9c4cd17f9ecd4d4083c20b29f399a9e40)] - chore: fix action for gh-pages (#5024) (Suyi <<thonatos.yang@gmail.com>>)
+
+## 2022-09-21, Version 3.2.0 @fengmk2
+
+### Notable Changes
+
+**features**
+  * [[`733d66989`](http://github.com/eggjs/egg/commit/733d66989d1f8657ce55b6032944188da635b8f0)] - feat: update egg-multipart 2.x -> 3.x (#5023) (TZ | 天猪 <<atian25@qq.com>>)
+  * [[`2ffb37ab5`](http://github.com/eggjs/egg/commit/2ffb37ab59395c9b14f153f91abb9f816a5e98ea)] - feat: Support urllib@3 (#5000) (fengmk2 <<fengmk2@gmail.com>>)
+
+**others**
+  * [[`485781389`](http://github.com/eggjs/egg/commit/485781389e548ff0cf1eb107fea93c1bb01170d7)] - docs: update the version of the required Node (#5021) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`bbd0e432e`](http://github.com/eggjs/egg/commit/bbd0e432e52832cc7a3d4b26a0141d7eb02e3793)] - chore: change the templates of bug/suggestion report (#5019) (Maledong <<maledong_public@foxmail.com>>)
+  * [[`2c5ba484a`](http://github.com/eggjs/egg/commit/2c5ba484a2dd8f214b9cdb53aa952688bc54cb2b)] - 🐛 FIX: Add config.httpclient.useHttpClientNext defined (#5001) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-08-28, Version 3.1.0 @fengmk2
+
+### Notable Changes
+
+* **features**
+  * Support urllib@3 by `config.httpclient.useHttpClientNext = true`, see [#4847](https://github.com/eggjs/egg/issues/4847)
+
+### Commits
+  * [[`2c5ba484a`](http://github.com/eggjs/egg/commit/2c5ba484a2dd8f214b9cdb53aa952688bc54cb2b)] - 🐛 FIX: Add config.httpclient.useHttpClientNext defined (#5001) (fengmk2 <<fengmk2@gmail.com>>)
+  * [[`2ffb37ab5`](http://github.com/eggjs/egg/commit/2ffb37ab59395c9b14f153f91abb9f816a5e98ea)] - feat: Support urllib@3 (#5000) (fengmk2 <<fengmk2@gmail.com>>)
+
+## 2022-08-21, Version 3.0.0 @fengmk2
+
+**features**
+  * Drop Node.js 8, 10, 12 supports, this release is a LTS version for egg@2, see https://github.com/eggjs/egg/issues/3644#issuecomment-1221460692
+
+## 2022-06-17, Version 2.36.0 @atian25
 
 **features**
   * [[`e0b93e023`](http://github.com/eggjs/egg/commit/e0b93e023e1258c4037c68dacfc41fc304602bbc)] - feat: should log unfinished timing item (#4968) (TZ | 天猪 <<atian25@qq.com>>)
@@ -12,9 +186,7 @@
   * [[`8078917fd`](http://github.com/eggjs/egg/commit/8078917fd66c41d21b0f2c738f77cc7916edfaca)] - chore: package upgrade and unittest fixture (#4933) (Maledong <<maledong_public@foxmail.com>>)
   * [[`a5a358ceb`](http://github.com/eggjs/egg/commit/a5a358cebc78734d45a450a641913ae242c5dc70)] - chore: fix contributors badges on README.md (#4930) (XiaoRui <<xiangwu619@gmail.com>>)
 
-
-2.35.0 / 2022-04-01 @mansonchor
-==================
+## 2022-04-01, Version 2.35.0 @mansonchor
 
 **features**
   * [[`c1313f5ef`](http://github.com/eggjs/egg/commit/c1313f5ef960e5aaad7f04adb6665679f2ec10e2)] - feat: dumpConfig add appInfo (#4917) (mansonchor.github.com <<mansonchor1987@gmail.com>>)
@@ -22,9 +194,7 @@
 **others**
   * [[`4e5309188`](http://github.com/eggjs/egg/commit/4e5309188a60393435d5ab2df65ca67186f31035)] - test: add ChainAlert action (#4908) (fengmk2 <<fengmk2@gmail.com>>)
 
-
-2.34.0 / 2022-03-16
-==================
+## 2022-03-16, Version 2.34.0
 
 **features**
   * [[`caacd09c3`](http://github.com/eggjs/egg/commit/caacd09c38aae03fc291febbb97a43c8ecbdc221)] - feat: siteFile support custom control-cache (#4902) (binginsist <<yangbingmail@foxmail.com>>)
@@ -41,8 +211,7 @@
   * [[`56816dbc5`](http://github.com/eggjs/egg/commit/56816dbc59dbb1a4973ca60130c9ff3f5be8b2da)] - docs (sequelize): Changed `config.sequelize` to `exports.sequelize`  in configuration part (#4873) (Aelita <<45784210+xsjcTony@users.noreply.github.com>>)
   * [[`20842f9c2`](http://github.com/eggjs/egg/commit/20842f9c216ed538924936163b7ed18437c54cd7)] - docs: Add license scan report and status (#4880) (fossabot <<badges@fossa.io>>)
 
-2.33.1 / 2021-12-07
-==================
+## 2021-12-07, Version 2.33.1
 
 **features**
   * [[`18dcadc1c`](http://github.com/eggjs/egg/commit/18dcadc1cf6c9837de605916a0d8b161a63e7218)] - feat: meta middleware x-readtime support performanceStarttime (#4827) (fengmk2 <<fengmk2@gmail.com>>)
@@ -51,12 +220,10 @@
   * [[`8659d4bc3`](http://github.com/eggjs/egg/commit/8659d4bc37e0652d66d04d2e5504fdc0ef2f7f7d)] - docs: update contributors (#4826) (Suyi <<thonatos.yang@gmail.com>>)
   * [[`4d18732c7`](http://github.com/eggjs/egg/commit/4d18732c79e44a84140df05e879b8b5f569c2b4b)] - chore: remove @types/urllib from autod (fengmk2 <<fengmk2@gmail.com>>)
 
-2.33.0 / 2021-12-06
-==================
+## 2021-12-06, Version 2.33.0
 
 **features**
   * [[`0f6589e1d`](http://github.com/eggjs/egg/commit/0f6589e1dc9e538434eb1580327556d5aa264822)] - feat: support better logger timer in precise milliseconds (#4806) (fengmk2 <<fengmk2@gmail.com>>)
-# History
 
 ## 2021-11-15, Version 2.32.0 @atian25
 
@@ -80,7 +247,6 @@
 ### Commits
 
 * [[`debfda7ab`](https://github.com/eggjs/egg/commit/debfda7ab38f4893b6f122abfbf3e5288af1441e)] - feat(config): support ssrf field in security config. (#4778) (Jasin Yip <<yejunxing@gmail.com>>)
-
 
 ## 2021-08-09, Version 2.30.0 @mansonchor
 

@@ -1,4 +1,4 @@
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../../../utils');
 
 module.exports = app => {
   app.beforeStart(function*() {

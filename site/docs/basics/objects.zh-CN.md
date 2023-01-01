@@ -7,7 +7,7 @@ order: 2
 
 ## Application
 
-Application 是全局应用对象，在一个应用中，只会实例化一个，它继承自 [Koa.Application]，在它上面我们可以挂载一些全局的方法和对象。我们可以轻松的在插件或者应用中[扩展 Application 对象](./extend.md#Application)。
+Application 是全局应用对象。在一个应用中，每个进程只会实例化一个 Application 实例。它继承自 [Koa.Application]，在它上面我们可以挂载一些全局的方法和对象。我们可以轻松的在插件或者应用中[扩展 Application 对象](./extend.md#Application)。
 
 ### 事件
 

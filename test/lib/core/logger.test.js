@@ -1,17 +1,14 @@
-'use strict';
-
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 const mm = require('egg-mock');
 const Logger = require('egg-logger');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
   let app;
   afterEach(mm.restore);
-  afterEach(() => sleep(5000).then(() => app.close()));
+  afterEach(() => utils.sleep(5000).then(() => app.close()));
 
   it('should got right default config on prod env', async () => {
     mm.env('prod');
@@ -104,7 +101,7 @@ describe('test/lib/core/logger.test.js', () => {
     // app.config.logger.buffer.should.equal(false);
     ctx.logger.error(new Error('mock nobuffer error'));
 
-    await sleep(1000);
+    await utils.sleep(1000);
 
     assert(
       fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
@@ -124,7 +121,7 @@ describe('test/lib/core/logger.test.js', () => {
     // app.config.logger.buffer.should.equal(true);
     ctx.logger.error(new Error('mock enable buffer error'));
 
-    await sleep(1000);
+    await utils.sleep(1000);
 
     assert(fs.readFileSync(logfile, 'utf8').includes(''));
   });
@@ -139,7 +136,7 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'logger-output-json-web.json.log');
     ctx.logger.info('json format');
 
-    await sleep(2000);
+    await utils.sleep(2000);
 
     assert(fs.existsSync(logfile));
     assert(fs.readFileSync(logfile, 'utf8').includes('"message":"json format"'));
@@ -174,6 +171,11 @@ describe('test/lib/core/logger.test.js', () => {
   });
 
   it('agent and app error should output to common-error.log', done => {
+    // unstable on Windows, skip it
+    // https://github.com/eggjs/egg/runs/7977866117?check_suite_focus=true
+    if (process.platform === 'win32') {
+      return done();
+    }
     const baseDir = utils.getFilepath('apps/logger');
     mm.env('default');
     mm(process.env, 'EGG_LOG', 'none');
@@ -200,7 +202,7 @@ describe('test/lib/core/logger.test.js', () => {
     app.loggers.errorLogger.error(new Error('errorLogger error'));
     app.loggers.customLogger.error(new Error('customLogger error'));
 
-    await sleep(1000);
+    await utils.sleep(1000);
 
     const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
     assert(content.includes('nodejs.Error: logger error'));
@@ -214,6 +216,24 @@ describe('test/lib/core/logger.test.js', () => {
     await app.ready();
 
     assert(app.agent.logger.options.file === app.agent.coreLogger.options.file);
+  });
+
+  it('should config.logger.enableFastContextLogger = true work', async () => {
+    app = utils.app('apps/app-enableFastContextLogger');
+    await app.ready();
+    app.mockContext({
+      tracer: {
+        traceId: 'mock-trace-id-123',
+      },
+    });
+    if (process.platform === 'win32') await utils.sleep(2000);
+    await app.httpRequest()
+      .get('/')
+      .expect(200)
+      .expect({
+        enableFastContextLogger: true,
+      });
+    app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/\d+ms GET \/] enableFastContextLogger: true/);
   });
 
   describe('logger.level = DEBUG', () => {

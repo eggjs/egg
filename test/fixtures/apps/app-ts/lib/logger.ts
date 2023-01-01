@@ -13,4 +13,5 @@ export default (app: Application) => {
   ctx.getLogger('logger').info('test');
 
   const level: LoggerLevel = 'DEBUG';
+  console.log(level);
 };

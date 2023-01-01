@@ -1,9 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/plugins/schedule.test.js', () => {
@@ -14,7 +11,7 @@ describe('test/lib/plugins/schedule.test.js', () => {
     app.debug();
     app.coverage(false);
     await app.ready();
-    await sleep(7000);
+    await utils.sleep(7000);
     await app.close();
     const log = getLogContent('schedule');
     const count = contains(log, 'cron wow');
