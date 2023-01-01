@@ -88,7 +88,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='user';
 ```
 
-We can build the table directly through the mysql command, but this is not a good practist for multiplayer collaboration. During the evolution of the project, each iteration is possible to make changes to the database data structure, how to track the data changes of each iteration, and quickly change the data structure in different environments (development, testing, CI) and switch bettween iterative? At this point we need [Migrations] to help us manage the changes in the data structure.
+We can build the table directly through the mysql command, but this is not a good practice for multiplayer collaboration. During the evolution of the project, each iteration is possible to make changes to the database data structure, how to track the data changes of each iteration, and quickly change the data structure in different environments (development, testing, CI) and switch bettween iterative? At this point we need [Migrations] to help us manage the changes in the data structure.
 
 Sequelize provides the [sequelize-cli] tool to implement [Migrations], and we can also introduce sequelize-cli in the egg project.
 
