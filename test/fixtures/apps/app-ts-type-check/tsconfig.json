@@ -1,7 +1,13 @@
 {
-  "extends": "../app-ts/tsconfig.json",
+  "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "egg": [
+        "../../../../index"
+      ]
+    },
+    "esModuleInterop": false
   },
   "exclude": [
     "./error.ts"
