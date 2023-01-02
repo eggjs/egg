@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.0](https://github.com/eggjs/egg/compare/v3.10.0...v3.11.0) (2023-01-02)
+
+
+### Features
+
+* add ssrf declaration ([#4687](https://github.com/eggjs/egg/issues/4687)) ([b1414f2](https://github.com/eggjs/egg/commit/b1414f2c749da5ab9bf07abf26ff75eac0b9cb73))
+
 ## [3.10.0](https://github.com/eggjs/egg/compare/v3.9.2...v3.10.0) (2023-01-02)
 
 
