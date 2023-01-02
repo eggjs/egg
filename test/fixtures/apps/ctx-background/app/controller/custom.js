@@ -1,6 +1,4 @@
-'use strict';
-
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 
 module.exports = async ctx => {
   ctx.body = 'hello';

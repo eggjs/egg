@@ -1,5 +1,5 @@
 <div style="text-align:center">
-	<img src="docs/assets/egg-banner.png" />
+	<img src="site/public/assets/egg-banner.png" />
 </div>
 
 [![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
@@ -18,7 +18,7 @@
 - 深度框架定制
 - 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-> 支持 Node.js 8.x 及以上版本。
+> 支持 Node.js 14.20.0 及以上版本。
 
 ## 快速开始
 
@@ -39,7 +39,7 @@ $ open http://localhost:7001
 
 ## 贡献者
 
-[![contributors](https://badges.implements.io/api/contributors?org=eggjs&repo=egg&width=1280&size=48&padding=6&type=jpeg)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=eggjs/egg&max=240&columns=26)](https://github.com/eggjs/egg/graphs/contributors)
 
 ## 贡献代码
 

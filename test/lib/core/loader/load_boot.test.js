@@ -1,8 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const path = require('path');
-const { fs } = require('mz');
+const fs = require('fs/promises');
 const utils = require('../../../utils');
 
 describe('test/lib/core/loader/load_boot.test.js', () => {

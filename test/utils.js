@@ -1,15 +1,24 @@
-'use strict';
-
-const fs = require('fs');
+const { readFileSync } = require('fs');
+const { rm } = require('fs/promises');
 const path = require('path');
 const mm = require('egg-mock');
-const sleep = require('mz-modules/sleep');
 const Koa = require('koa');
 const http = require('http');
+const request = require('supertest');
+const egg = require('..');
+
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
-const egg = require('..');
-const request = require('supertest');
+
+exports.rimraf = async target => {
+  await rm(target, { force: true, recursive: true });
+};
+
+exports.sleep = ms => {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
+};
 
 exports.app = (name, options) => {
   options = formatOptions(name, options);
@@ -62,7 +71,7 @@ exports.startLocalServer = () => {
       }
 
       if (ctx.path === '/timeout') {
-        await sleep(10000);
+        await exports.sleep(10000);
         ctx.body = `${ctx.method} ${ctx.path}`;
         return;
       }
@@ -102,7 +111,7 @@ exports.getFilepath = name => {
 };
 
 exports.getJSON = name => {
-  return JSON.parse(fs.readFileSync(exports.getFilepath(name)));
+  return JSON.parse(readFileSync(exports.getFilepath(name)));
 };
 
 function formatOptions(name, options) {

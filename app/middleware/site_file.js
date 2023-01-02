@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const MAX_AGE = 'public, max-age=2592000'; // 30 days
 
 module.exports = options => {
   return function siteFile(ctx, next) {
@@ -19,7 +18,7 @@ module.exports = options => {
     // '/robots.txt': Buffer <xx..
     // content is buffer
     if (Buffer.isBuffer(content)) {
-      ctx.set('cache-control', MAX_AGE);
+      ctx.set('cache-control', options.cacheControl);
       ctx.body = content;
       ctx.type = path.extname(ctx.path);
       return;

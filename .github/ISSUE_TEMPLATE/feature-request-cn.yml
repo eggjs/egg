@@ -1,0 +1,21 @@
+name: 💡 我有一个新点子
+description: 我对 Eggjs 框架有一个新的想法（或许我想来实现他）……
+labels: [feature request]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        对于 Egg.js 框架，你有一个新的想法？
+        不过在提交你的新点子之前，麻烦请检阅一下是否之前的帖子中有类似重复的内容。
+  - type: textarea
+    attributes:
+      label: 请详细告知你的新点子（Nice Ideas）：
+      placeholder: |
+        1. 您期望能够实现什么功能。
+
+        2. 您的理由（如：我一直被什么问题困扰……）。
+        如果方便的话，请提供截屏或者视频等详细信息。
+        
+        3. 我能够做一些什么（最好是能提供一些伪代码帮助实现）。
+    validations:
+      required: true

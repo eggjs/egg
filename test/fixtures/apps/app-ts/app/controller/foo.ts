@@ -1,3 +1,4 @@
+import { strict as assert } from 'assert';
 import {
   Controller,
   RequestObjectBody,
@@ -6,6 +7,8 @@ import {
   EggHttpClient,
   EggContextHttpClient,
 } from 'egg';
+import { RequestOptions as RequestOptionsNext } from 'urllib-next';
+import { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service
 declare module 'egg' {
@@ -25,6 +28,8 @@ export default class FooController extends Controller {
     this.appHttpClient = ctx.app.httpclient;
     this.ctxHttpClient = ctx.httpclient;
     this.fooLogger = ctx.getLogger('foo');
+    assert(ctx.app.ctxStorage);
+    assert(ctx.app.currentContext);
   }
 
   async getData() {
@@ -35,7 +40,7 @@ export default class FooController extends Controller {
       this.ctx.proxy.foo.bar();
     } catch (e) {
       const body: RequestObjectBody = this.ctx.request.body;
-      this.app.logger.info(e.name, body.foo);
+      this.app.logger.info((e as any).name, body.foo);
     }
   }
 
@@ -45,6 +50,36 @@ export default class FooController extends Controller {
     } catch (e) {
       this.ctx.logger.error(e);
     }
+  }
+
+  async requestWithHttpclientNext(request: RequestOptionsNext) {
+    let result = await this.app.curl('url', request);
+    result = await this.ctx.curl('url', request);
+    result = await this.app.httpclient.curl('url', request);
+    result = await this.app.httpclient.request('url', request);
+    result = await this.ctx.httpclient.curl('url', request);
+    result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
+  }
+
+  async requestWithHttpclient(request: RequestOptions) {
+    let result = await this.app.curl('url', request);
+    result = await this.ctx.curl('url', request);
+    result = await this.app.httpclient.curl('url', request);
+    result = await this.app.httpclient.request('url', request);
+    result = await this.ctx.httpclient.curl('url', request);
+    result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
+  }
+
+  async requestWithHttpclient2(request: RequestOptions2) {
+    let result = await this.app.curl('url', request);
+    result = await this.ctx.curl('url', request);
+    result = await this.app.httpclient.curl('url', request);
+    result = await this.app.httpclient.request('url', request);
+    result = await this.ctx.httpclient.curl('url', request);
+    result = await this.ctx.httpclient.request('url', request);
+    console.log(result);
   }
 
   async httpclient() {

@@ -10,18 +10,9 @@ run
 .idea
 .DS_Store
 .tmp
-docs/CONTRIBUTING.md
-docs/node_modules
-docs/README.md
-docs/db.json
-docs/source/release/index.md
-docs/source/member_guide.md
-docs/source/_data/versions.yml
-docs/**/contributing.md
-docs/public
-docs/plugins.png
 
-package-lock.json
+*-lock.json
+*-lock.yaml
 yarn.lock
 !test/fixtures/apps/loader-plugin/node_modules
 .editorconfig
@@ -33,3 +24,14 @@ test/fixtures/apps/app-ts/**/*.js
 !test/fixtures/apps/app-ts/node_modules/**/*.js
 test/fixtures/apps/app-ts-esm/**/*.js
 test/fixtures/apps/app-ts-type-check/**/*.js
+test/fixtures/apps/app-ts-type-check/**/*.d.ts
+test/fixtures/apps/app-ts/**/*.d.ts
+test/fixtures/apps/app-ts-esm/**/*.d.ts
+
+# site
+site/dist
+!site/public
+
+.umi
+.umi-production
+.vercel

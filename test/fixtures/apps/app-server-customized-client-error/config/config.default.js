@@ -1,6 +1,4 @@
-'use strict';
-
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../../../../utils');
 
 exports.keys = 'my keys';
 

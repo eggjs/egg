@@ -1,10 +1,8 @@
-'use strict';
-
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../../../utils');
 
 class NunjucksView {
-  * render(filename, locals, options) {
-    yield sleep(10);
+  async render(filename, locals, options) {
+    await sleep(10);
     return {
       filename,
       locals,
@@ -13,7 +11,7 @@ class NunjucksView {
     };
   }
 
-  * renderString() {}
+  async renderString() {}
 }
 
 module.exports = NunjucksView;

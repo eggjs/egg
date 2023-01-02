@@ -1,8 +1,6 @@
-'use strict';
-
 const assert = require('assert');
 const mm = require('egg-mock');
-const fs = require('mz/fs');
+const fs = require('fs/promises');
 const utils = require('../../utils');
 
 describe('test/app/middleware/meta.test.js', () => {
@@ -24,6 +22,24 @@ describe('test/app/middleware/meta.test.js', () => {
     });
   });
 
+  describe('config.logger.enablePerformanceTimer = true', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/middlewares-meta-enablePerformanceTimer');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get X-Readtime header', async () => {
+      for (let i = 0; i < 10; i++) {
+        await app.httpRequest()
+          .get(`/?i=${i}`)
+          .expect('X-Readtime', /^\d+\.\d{1,3}$/)
+          .expect(200);
+      }
+    });
+  });
+
   describe('meta.logging = true', () => {
     let app;
     before(() => {
@@ -38,6 +54,7 @@ describe('test/app/middleware/meta.test.js', () => {
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
         .expect(200);
+      if (process.platform === 'win32') await utils.sleep(2000);
       const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
       assert(content.includes('[meta] request started, host: '));
     });

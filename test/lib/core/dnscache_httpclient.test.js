@@ -1,10 +1,7 @@
-'use strict';
-
 const mm = require('egg-mock');
 const assert = require('assert');
-const dns = require('mz/dns');
+const dns = require('dns').promises;
 const urlparse = require('url').parse;
-const sleep = require('mz-modules/sleep');
 const utils = require('../../utils');
 
 describe('test/lib/core/dnscache_httpclient.test.js', () => {
@@ -92,75 +89,6 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result2.data.host === host);
   });
 
-  it('should callback style work', done => {
-    app.httpclient.curl(url + '/get_headers', (err, data, res) => {
-      data = JSON.parse(data);
-      assert(res.status === 200);
-      assert(data.host === host);
-      done();
-    });
-  });
-
-  /**
-   * This test failure can be totally ignored because it depends on how your service provider
-   * deals with the domain when you cannot find that：Some providers will batchly switch
-   * those invalid domains to a certain server. So you can still find the fixed IP by
-   * calling `dns.lookup()`.
-   *
-   * To make sure that your domain exists or not, just use `ping your_domain_here` instead.
-   */
-  it('should callback style work on domain not exists', done => {
-    if (!process.env.CI) {
-      // Avoid Network service provider DNS pollution
-      // alidns http://www.alidns.com/node-distribution/
-      // Not sure it will work for all servers
-      dns.setServers([
-        '223.5.5.5',
-        '223.6.6.6',
-      ]);
-    }
-    app.httpclient.curl('http://notexists-1111111local-domain.com', err => {
-      assert(err);
-      assert(err.code === 'ENOTFOUND');
-      done();
-    });
-  });
-
-  it('should thunk style work', done => {
-    app.httpclient.requestThunk(url + '/get_headers')((err, result) => {
-      assert(!err);
-      const data = JSON.parse(result.data);
-      assert(result.res.status === 200);
-      assert(data.host === host);
-      done();
-    });
-  });
-
-  /**
-   * This test failure can be totally ignored because it depends on how your service provider
-   * deals with the domain when you cannot find that：Some providers will batchly switch
-   * those invalid domains to a certain server. So you can still find the fixed IP by
-   * calling `dns.lookup()`.
-   *
-   * To make sure that your domain exists or not, just use `ping your_domain_here` instead.
-   */
-  it('should thunk style work on domain not exists', done => {
-    if (!process.env.CI) {
-      // Avoid Network service provider DNS pollution
-      // alidns http://www.alidns.com/node-distribution/
-      // Not sure it will work for all servers
-      dns.setServers([
-        '223.5.5.5',
-        '223.6.6.6',
-      ]);
-    }
-    app.httpclient.requestThunk('http://notexists-1111111local-domain.com')(err => {
-      assert(err);
-      assert(err.code === 'ENOTFOUND');
-      done();
-    });
-  });
-
   it('should app.curl work on lookup error', async () => {
     const result = await app.curl(url + '/get_headers', { dataType: 'json' });
     assert(result.status === 200);
@@ -189,7 +117,9 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should dnsCacheMaxLength work', async () => {
-    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
+    mm(dns, 'lookup', async () => {
+      return { address: '127.0.0.1', family: 4 };
+    });
 
     // reset lru cache
     mm(app.httpclient.dnsCache, 'max', 1);
@@ -214,7 +144,9 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
   });
 
   it('should cache and update', async () => {
-    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
+    mm(dns, 'lookup', async () => {
+      return { address: '127.0.0.1', family: 4 };
+    });
 
     let obj = urlparse(url + '/get_headers');
     let result = await app.curl(obj, { dataType: 'json' });
@@ -231,7 +163,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     record = app.httpclient.dnsCache.get('localhost');
     assert(timestamp === record.timestamp);
 
-    await sleep(5500);
+    await utils.sleep(5500);
     obj = urlparse(url + '/get_headers');
     result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
@@ -242,7 +174,9 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
 
   it('should cache and update with agent', async () => {
     const agent = app._agent;
-    mm(dns, 'lookup', async () => [ '127.0.0.1' ]);
+    mm(dns, 'lookup', async () => {
+      return { address: '127.0.0.1', family: 4 };
+    });
 
     let obj = urlparse(url + '/get_headers');
     let result = await agent.curl(obj, { dataType: 'json' });
@@ -259,7 +193,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     record = agent.httpclient.dnsCache.get('localhost');
     assert(timestamp === record.timestamp);
 
-    await sleep(5500);
+    await utils.sleep(5500);
     obj = urlparse(url + '/get_headers');
     result = await agent.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
@@ -274,5 +208,20 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     assert(result.status === 200);
     assert(result.data.host === obj.host);
     assert(!app.httpclient.dnsCache.get('127.0.0.1'));
+  });
+
+  describe('disable DNSCache in one request', () => {
+    beforeEach(() => {
+      mm(app.httpclient.dnsCache, 'size', 0);
+    });
+
+    it('should work', async () => {
+      await app.httpRequest()
+        .get('/?disableDNSCache=true&url=' + encodeURIComponent(url + '/get_headers'))
+        .expect(200)
+        .expect(/"host":"localhost:\d+"/);
+
+      assert(app.httpclient.dnsCache.size === 0);
+    });
   });
 });

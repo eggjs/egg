@@ -1,0 +1,22 @@
+@startuml
+digraph plugins {
+  onerror
+  session
+  i18n
+  watcher
+  multipart
+  security
+  development
+  logrotator
+  schedule
+  static
+  jsonp
+  view
+  onerror -> jsonp [style=dotted]
+  multipart -> schedule [style=dotted]
+  security -> session [style=dotted]
+  development -> watcher
+  logrotator -> schedule
+  jsonp -> security [style=dotted]
+}
+@enduml

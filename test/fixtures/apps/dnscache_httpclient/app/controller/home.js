@@ -10,6 +10,9 @@ module.exports = function* () {
     args = {};
     args.headers = { Host: this.query.Host };
   }
+  if (this.query.disableDNSCache) {
+    args = { enableDNSCache: false };
+  }
   const result = yield this.curl(this.query.url, args);
   this.status = result.status;
   this.set(result.headers);

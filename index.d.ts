@@ -1,13 +1,24 @@
-/// <reference types="node" />
 import accepts = require('accepts');
-import KoaApplication = require('koa');
-import KoaRouter = require('koa-router');
+import { AsyncLocalStorage } from 'async_hooks';
 import { EventEmitter } from 'events'
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
-import { EggLogger as Logger, EggLoggers, LoggerLevel as EggLoggerLevel, EggLoggersOptions, EggLoggerOptions, EggContextLogger } from 'egg-logger';
-import { HttpClient, RequestOptions2 as RequestOptions } from 'urllib';
+import KoaApplication = require('koa');
+import KoaRouter = require('koa-router');
+import {
+  EggLogger as Logger,
+  EggLoggers,
+  LoggerLevel as EggLoggerLevel,
+  EggLoggersOptions,
+  EggLoggerOptions,
+  EggContextLogger,
+} from 'egg-logger';
+import { RequestOptions2 as RequestOptions, HttpClientResponse } from 'urllib';
+import {
+  RequestURL, RequestOptions as RequestOptionsNext,
+  HttpClientResponse as HttpClientResponseNext,
+} from 'urllib-next';
 import {
   EggCoreBase,
   FileLoaderOption,
@@ -38,12 +49,18 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
-  export interface EggHttpClient extends HttpClient<RequestOptions> { }
+  // Compatible with both urllib@2 and urllib@3 RequestOptions to request
+  export interface EggHttpClient extends EventEmitter {
+    request<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    request<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    curl<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    curl<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+  }
   interface EggHttpConstructor {
     new(app: Application): EggHttpClient;
   }
 
-  export interface EggContextHttpClient extends HttpClient<RequestOptions> { }
+  export interface EggContextHttpClient extends EggHttpClient { }
   interface EggContextHttpClientConstructor {
     new(ctx: Context): EggContextHttpClient;
   }
@@ -217,10 +234,14 @@ declare module 'egg' {
   export interface EggLoggerConfig extends RemoveSpecProp<EggLoggersOptions, 'type'> {
     /** custom config of coreLogger */
     coreLogger?: Partial<EggLoggerOptions>;
-    /** allow debug log at prod, defaults to true */
+    /** allow debug log at prod, defaults to `false` */
     allowDebugAtProd?: boolean;
     /** disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`. */
     disableConsoleAfterReady?: boolean;
+    /** using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to `false`. e.g.: logger will set 1.456ms instead of 1ms. */
+    enablePerformanceTimer?: boolean;
+    /** using the app logger instead of EggContextLogger, defaults to `false` */
+    enableFastContextLogger?: boolean;
   }
 
   /** Custom Loader Configuration */
@@ -268,6 +289,8 @@ declare module 'egg' {
     dnsCacheLookupInterval?: number;
     /** DNS cache max age */
     dnsCacheMaxLength?: number;
+    /** use urllib@3 HttpClient */
+    useHttpClientNext?: boolean;
   }
 
   export interface EggAppConfig {
@@ -329,7 +352,9 @@ declare module 'egg' {
      * @property {String} coreLogName - file name of coreLogger
      * @property {String} agentLogName - file name of agent worker log
      * @property {Object} coreLogger - custom config of coreLogger
-     * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to true
+     * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
+     * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
+     * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
      */
     logger: EggLoggerConfig;
 
@@ -466,6 +491,10 @@ declare module 'egg' {
       protocolWhiteList: string[];
       defaultMiddleware: string;
       csrf: any;
+      ssrf: {
+        ipBlackList: string[];
+        checkAddress?(ip: string): boolean;
+      };
       xframe: {
         enable: boolean;
         value: 'SAMEORIGIN' | 'DENY' | 'ALLOW-FROM';
@@ -679,6 +708,25 @@ declare module 'egg' {
      * @param {Function} scope - the first args is an anonymous ctx
      */
     runInBackground(scope: (ctx: Context) => void): void;
+
+    /**
+     * Run async function in the anonymous context scope
+     * @see Context#runInAnonymousContextScope
+     * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
+     */
+    runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>): Promise<void>;
+
+    /**
+     * Get current execute ctx async local storage
+     * @returns {AsyncLocalStorage} localStorage - store current execute Context
+     */
+    get ctxStorage(): AsyncLocalStorage<Context>;
+
+    /**
+     * Get current execute ctx, maybe undefined
+     * @returns {Context} ctx - current execute Context
+     */
+    get currentContext(): Context;
   }
 
   export interface IApplicationLocals extends PlainObject { }
@@ -924,6 +972,11 @@ declare module 'egg' {
      * Request start time
      */
     starttime: number;
+
+    /**
+     * Request start timer using `performance.now()`
+     */
+    performanceStarttime?: number;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.

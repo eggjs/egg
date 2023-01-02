@@ -91,4 +91,20 @@ describe('test/app/middleware/site_file.test.js', () => {
         });
     });
   });
+
+  describe('siteFile.cacheControl = no-store', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/siteFile-custom-cacheControl');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get custom cache-control', async () => {
+      await app.httpRequest()
+        .get('/favicon.ico')
+        .expect(res => assert(res.headers['cache-control'].includes('no-store')))
+        .expect(200);
+    });
+  });
 });

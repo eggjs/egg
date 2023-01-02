@@ -272,13 +272,13 @@ describe('test/app/extend/request.test.js', () => {
         expectQueries('a[]=&a[]=b&a=foo', { 'a[]': [ '', 'b' ], a: [ 'foo' ] });
         expectQueries('a=bar&a[]=&a[]=b&a=foo', { 'a[]': [ '', 'b' ], a: [ 'bar', 'foo' ] });
 
-        // a[][] 这种不支持自动变化为 a
+        // 'a[][]' doesn't support converting to 'a'
         expectQueries('a[][]=&a[][]=b', { 'a[][]': [ '', 'b' ] });
         expectQueries('a][]=&a][]=b', { 'a][]': [ '', 'b' ] });
         expectQueries('a[[]=&a[[]=b', { 'a[[]': [ '', 'b' ] });
         expectQueries('[]=&[]=b', { '[]': [ '', 'b' ] });
 
-        // a[], a 混搭的时候，只返回最后一个 a 的值
+        // 'a[]' only returns the last value when mixed with others
         expectQueries('a[]=a&a=b&a=c', { 'a[]': [ 'a' ], a: [ 'b', 'c' ] });
 
         // object

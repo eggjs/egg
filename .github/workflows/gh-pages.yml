@@ -1,0 +1,35 @@
+name: Github Pages
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Runner:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        node-version: [ 16 ]
+    steps:
+    - name: Checkout Git Source
+      uses: actions/checkout@master
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install Dependencies
+      run: npm i -g npminstall && npminstall
+
+    - name: Build Documents
+      run: npm run site:build && cp vercel.json ./site/dist/vercel.json
+
+    - name: Deploy Documents
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site/dist

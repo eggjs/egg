@@ -1,4 +1,4 @@
-import { Controller, RequestObjectBody } from 'egg';
+import { Controller } from 'egg';
 
 // add user controller and service
 declare module 'egg' {
