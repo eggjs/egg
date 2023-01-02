@@ -477,6 +477,7 @@ declare module 'egg' {
       csp: any;
       ssrf: {
         ipBlackList: string[];
+        ipExceptionList: string[];
         checkAddress(ip: string): boolean;
       };
     };
