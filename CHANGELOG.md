@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.0](https://github.com/eggjs/egg/compare/v3.9.2...v3.10.0) (2023-01-02)
+
+
+### Features
+
+* use egg-core@5 ([#5111](https://github.com/eggjs/egg/issues/5111)) ([7b8edbf](https://github.com/eggjs/egg/commit/7b8edbf322ed59c76ce3a85cd4595605d743fb80))
+
 ## [3.9.2](https://github.com/eggjs/egg/compare/v3.9.1...v3.9.2) (2022-12-21)
 
 
