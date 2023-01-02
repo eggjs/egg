@@ -504,6 +504,11 @@ declare module 'egg' {
       noopen: { enable: boolean; }
       xssProtection: any;
       csp: any;
+      ssrf: {
+        ipBlackList: string[];
+        ipExceptionList: string[];
+        checkAddress(ip: string): boolean;
+      };
     };
 
     siteFile: PlainObject<string | Buffer>;
