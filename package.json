@@ -92,6 +92,7 @@
     "spy": "^1.0.0",
     "supertest": "^6.2.4",
     "ts-node": "^10.9.1",
+    "tsd": "^0.25.0",
     "typescript": "^4.8.3",
     "umi": "^3.5.36"
   },
@@ -107,11 +108,12 @@
   ],
   "scripts": {
     "lint": "eslint app config lib test *.js",
-    "test": "npm run lint -- --fix && egg-bin pkgfiles && npm run test-local",
+    "tsd": "tsd",
+    "test": "npm run lint -- --fix && npm run tsd && npm run test-local",
     "test-local": "egg-bin test",
     "test-local-changed": "egg-bin test --changed",
     "cov": "egg-bin cov --timeout 100000",
-    "ci": "npm run lint && egg-bin pkgfiles --check && npm run cov",
+    "ci": "npm run lint && npm run tsd && npm run cov",
     "site:dev": "APP_ROOT=./site dumi dev",
     "site:build": "APP_ROOT=./site dumi build",
     "site:prettier": "prettier --config site/.prettierrc --ignore-path site/.prettierignore --write \"site/**/*.{js,jsx,tsx,ts,less,md,json}\"",
