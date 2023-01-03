@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.11.1](https://github.com/eggjs/egg/compare/v3.11.0...v3.11.1) (2023-01-03)
+
+
+### Bug Fixes
+
+* remove duplicate identifier ssrf ([#5113](https://github.com/eggjs/egg/issues/5113)) ([2b407eb](https://github.com/eggjs/egg/commit/2b407ebce9112d96e5e8a452eef09bcc70496e92))
+
 ## [3.11.0](https://github.com/eggjs/egg/compare/v3.10.0...v3.11.0) (2023-01-02)
 
 
