@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.12.0](https://github.com/eggjs/egg/compare/v3.11.1...v3.12.0) (2023-01-04)
+
+
+### Features
+
+* siteFile favicon config support async function type ([#5114](https://github.com/eggjs/egg/issues/5114)) ([667684f](https://github.com/eggjs/egg/commit/667684f79d8485ee9d9a03bf99077fa2dfef5507))
+
 ## [3.11.1](https://github.com/eggjs/egg/compare/v3.11.0...v3.11.1) (2023-01-03)
 
 
