@@ -8,16 +8,14 @@ module.exports = options => {
     /* istanbul ignore if */
     if (ctx.path[0] !== '/') return next();
 
-    const content = options[ctx.path];
+    let content = options[ctx.path];
     if (!content) return next();
 
     // '/favicon.ico': 'https://eggjs.org/favicon.ico',
+    // content is function
+    if (typeof content === 'function') content = content(ctx);
     // content is url
     if (typeof content === 'string') return ctx.redirect(content);
-    if (typeof content === 'function') {
-      const faviconUrl = content(ctx);
-      return ctx.redirect(faviconUrl);
-    }
 
     // '/robots.txt': Buffer <xx..
     // content is buffer
