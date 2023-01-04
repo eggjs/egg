@@ -3,15 +3,17 @@
 const path = require('path');
 
 module.exports = options => {
-  return function siteFile(ctx, next) {
+  return async function siteFile(ctx, next) {
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return next();
     /* istanbul ignore if */
     if (ctx.path[0] !== '/') return next();
 
-    const content = options[ctx.path];
+    let content = options[ctx.path];
     if (!content) return next();
 
-    // '/favicon.ico': 'https://eggjs.org/favicon.ico',
+    // '/favicon.ico': 'https://eggjs.org/favicon.ico' or '/favicon.ico': async (ctx) => 'https://eggjs.org/favicon.ico'
+    // content is function
+    if (typeof content === 'function') content = await content(ctx);
     // content is url
     if (typeof content === 'string') return ctx.redirect(content);
 
