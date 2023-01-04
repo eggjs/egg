@@ -11,7 +11,7 @@ module.exports = options => {
     let content = options[ctx.path];
     if (!content) return next();
 
-    // '/favicon.ico': 'https://eggjs.org/favicon.ico',
+    // '/favicon.ico': 'https://eggjs.org/favicon.ico' or '/favicon.ico': (ctx) => 'https://eggjs.org/favicon.ico'
     // content is function
     if (typeof content === 'function') content = content(ctx);
     // content is url
