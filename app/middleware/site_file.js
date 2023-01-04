@@ -14,6 +14,10 @@ module.exports = options => {
     // '/favicon.ico': 'https://eggjs.org/favicon.ico',
     // content is url
     if (typeof content === 'string') return ctx.redirect(content);
+    if (typeof content === 'function') {
+      const faviconUrl = content(ctx);
+      return ctx.redirect(faviconUrl);
+    }
 
     // '/robots.txt': Buffer <xx..
     // content is buffer
