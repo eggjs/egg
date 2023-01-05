@@ -8,8 +8,8 @@ egg:
     desc: better enterprise frameworks and apps with Node.js & Koa
     content: 为企业级框架和应用而生
   promo:
-    title: 淘宝 NPM 镜像站喊你切换新域名啦
-    link: https://github.com/cnpm/cnpm/issues/361
+    title: eggjs 正在招聘中。
+    link: https://talent.antgroup.com/off-campus-position?positionId=1920017
   guide:
     title: 开始使用
     link: /zh-CN/intro/quickstart
