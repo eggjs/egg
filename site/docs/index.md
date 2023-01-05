@@ -8,8 +8,8 @@ egg:
     desc: better enterprise frameworks and apps with Node.js & Koa
     content: Born to build better enterprise frameworks and apps
   promo:
-    title: Taobao NPM mirror is calling you to switch to new domain
-    link: https://github.com/cnpm/cnpm/issues/361
+    title: eggjs is recruiting.
+    link: https://talent.antgroup.com/off-campus-position?positionId=1920017
   guide:
     title: Get Started
     link: /intro/quickstart
