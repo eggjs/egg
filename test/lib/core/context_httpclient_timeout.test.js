@@ -18,7 +18,6 @@ describe('test/lib/core/context_httpclient_timeout.test.js', () => {
     const ctx = app.mockContext();
     await assert.rejects(async () => {
       await ctx.httpclient.request(`${url}/timeout`, { timeout: 1500 });
-      console.log(ctx.httpclient);
     }, /ResponseTimeoutError: Response timeout for 1500ms/);
   });
 });
