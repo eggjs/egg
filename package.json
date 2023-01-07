@@ -64,7 +64,6 @@
     "@umijs/preset-react": "^2.1.6",
     "address": "^1.2.1",
     "antd": "^4.23.2",
-    "assert-extends": "^1.0.1",
     "assert-file": "^1.0.0",
     "coffee": "^5.4.0",
     "dumi": "^1.1.47",
