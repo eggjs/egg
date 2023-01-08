@@ -1,6 +1,4 @@
-'use strict';
-
-const assert = require('assert-extends');
+const assert = require('assert');
 const utils = require('../../utils');
 
 describe('test/lib/core/context_httpclient_timeout.test.js', () => {
@@ -15,10 +13,10 @@ describe('test/lib/core/context_httpclient_timeout.test.js', () => {
     url = await utils.startLocalServer();
   });
 
-  it('should request timeout override agent socket timeout', () => {
+  it('should request timeout override agent socket timeout', async () => {
     app.httpclient.agent.options.timeout = 1000;
     const ctx = app.mockContext();
-    return assert.asyncThrows(async () => {
+    await assert.rejects(async () => {
       await ctx.httpclient.request(`${url}/timeout`, { timeout: 1500 });
     }, /ResponseTimeoutError: Response timeout for 1500ms/);
   });

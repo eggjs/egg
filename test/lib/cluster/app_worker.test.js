@@ -1,7 +1,7 @@
 const net = require('net');
+const assert = require('assert');
 const request = require('supertest');
 const address = require('address');
-const assert = require('assert-extends');
 const utils = require('../../utils');
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -77,8 +77,8 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     });
 
     it('should timeout', async () => {
-      await assert.asyncThrows(() => {
-        return app.httpRequest().get('/timeout');
+      await assert.rejects(async () => {
+        await app.httpRequest().get('/timeout');
       }, /socket hang up/);
       app.expect('stdout', /\[http_server] A request `GET \/timeout` timeout with client/);
     });
