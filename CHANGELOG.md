@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.13.0](https://github.com/eggjs/egg/compare/v3.12.0...v3.13.0) (2023-01-13)
+
+
+### Features
+
+* log app start timeline on coreLogger ([#5122](https://github.com/eggjs/egg/issues/5122)) ([6c4e8bc](https://github.com/eggjs/egg/commit/6c4e8bca1b829ecd47e98cc9b0544c7aa874e755))
+
 ## [3.12.0](https://github.com/eggjs/egg/compare/v3.11.1...v3.12.0) (2023-01-04)
 
 
