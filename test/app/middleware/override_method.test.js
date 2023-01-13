@@ -1,5 +1,3 @@
-'use strict';
-
 const utils = require('../../utils');
 
 describe('test/app/middleware/override_method.test.js', () => {
@@ -29,6 +27,7 @@ describe('test/app/middleware/override_method.test.js', () => {
   });
 
   it('should delete', () => {
+    app.mockCsrf();
     return app.httpRequest()
       .post('/test')
       .send({ _method: 'DELETE' })
