@@ -108,6 +108,13 @@ export default class FooController extends Controller {
     this.ctx.body = await this.ctx.view.renderString('test');
   }
 
+  async testRequest() {
+    this.ctx.body = {
+      name: this.ctx.request.app.config.name,
+      bar: this.ctx.request.ctx.app.config.name
+    };
+  }
+
   async testQuery() {
     this.stringQuery(this.ctx.query.foo);
   }

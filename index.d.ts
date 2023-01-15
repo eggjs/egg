@@ -105,7 +105,11 @@ declare module 'egg' {
 
   export type RequestArrayBody = any[];
   export type RequestObjectBody = PlainObject;
-  export interface Request extends KoaApplication.Request { // tslint:disable-line
+  export interface Request<ResponseBodyT = any> extends Omit<KoaApplication.Request, 'app' | 'ctx'> { // tslint:disable-line
+    // override app and ctx
+    app: Application;
+    ctx: Context<ResponseBodyT>;
+
     /**
      * detect if response should be json
      * 1. url path ends with `.json`
