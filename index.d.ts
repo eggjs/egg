@@ -14,9 +14,13 @@ import {
   EggLoggerOptions,
   EggContextLogger,
 } from 'egg-logger';
-import { RequestOptions2 as RequestOptions, HttpClientResponse } from 'urllib';
 import {
-  RequestURL, RequestOptions as RequestOptionsNext,
+  RequestOptions2 as RequestOptionsOld,
+  HttpClientResponse as HttpClientResponseOld,
+} from 'urllib';
+import {
+  RequestURL,
+  RequestOptions as RequestOptionsNext,
   HttpClientResponse as HttpClientResponseNext,
 } from 'urllib-next';
 import {
@@ -49,13 +53,27 @@ declare module 'egg' {
   // Remove specific property from the specific class
   type RemoveSpecProp<T, P> = Pick<T, Exclude<keyof T, P>>;
 
+  // Usage:
+  // ```ts
+  // import { HttpClientRequestURL, HttpClientRequestOptions, HttpClientResponse } from 'egg';
+  // async function request(url: HttpClientRequestURL, options: HttpClientRequestOptions): Promise<HttpClientResponse> {
+  //   return await app.httpclient.request(url, options);
+  // }
+  // ```
+  export type HttpClientRequestURL = RequestURL;
+  export type HttpClientRequestOptions = RequestOptionsNext;
+  export type HttpClientResponse<T = any> = HttpClientResponseNext<T>;
+
   // Compatible with both urllib@2 and urllib@3 RequestOptions to request
   export interface EggHttpClient extends EventEmitter {
-    request<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
-    request<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
-    curl<T = any>(url: RequestURL): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
-    curl<T = any>(url: RequestURL, options: RequestOptions | RequestOptionsNext): Promise<HttpClientResponse<T> | HttpClientResponseNext>;
+    request<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    request<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    curl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    curl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
   }
+
   interface EggHttpConstructor {
     new(app: Application): EggHttpClient;
   }
@@ -278,7 +296,7 @@ declare module 'egg' {
     /** https.Agent */
     httpsAgent?: HttpClientBaseConfig;
     /** Default request args for httpclient */
-    request?: RequestOptions;
+    request?: HttpClientRequestOptions | RequestOptionsOld;
     /** Whether enable dns cache */
     enableDNSCache?: boolean;
     /** Enable proxy request, default is false. */
