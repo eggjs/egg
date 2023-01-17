@@ -341,7 +341,7 @@ describe('test/app/extend/request.test.js', () => {
             accept: 'text/html',
           },
           url: '/',
-        });
+        }, { reuseCtxStorage: false });
         context.type = 'application/json';
         assert(context.request.acceptJSON === true);
       });
@@ -352,8 +352,8 @@ describe('test/app/extend/request.test.js', () => {
             accept: 'application/json',
           },
           url: '/',
-        });
-        assert(context.request.acceptJSON === true);
+        }, { reuseCtxStorage: false });
+        assert.equal(context.request.acceptJSON, true);
       });
 
       it('should false when do not accept json', async () => {
@@ -362,7 +362,7 @@ describe('test/app/extend/request.test.js', () => {
             accept: 'text/html',
           },
           url: '/',
-        });
+        }, { reuseCtxStorage: false });
         const request = context.request;
         assert(request.acceptJSON === false);
       });
