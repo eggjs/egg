@@ -10,6 +10,9 @@ import {
   PowerPartial,
   Singleton,
   start,
+  HttpClientRequestURL,
+  HttpClientRequestOptions,
+  HttpClientResponse,
 } from 'egg';
 
 // base context class
@@ -81,6 +84,15 @@ agent.listen(1002);
 agent.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
 agent.logger.info(agent.Service);
 agent.logger.info(agent.Controller);
+
+async function request<T = any>(url: HttpClientRequestURL, options: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
+  const response = await agent.httpclient.request<T>(url, options);
+  return response as HttpClientResponse<T>;
+}
+
+request<{ name: 'string' }>('http://127.0.0.1', {}).then(response => {
+  console.log(response.data.name);
+});
 
 // single process mode
 start({ baseDir: __dirname,ignoreWarning: true}).then(app=>{
