@@ -16,4 +16,4 @@ jobs:
     with:
       os: 'ubuntu-latest, macos-latest, windows-latest'
       version: '14, 16, 18'
-      install: 'npm install --legacy-peer-deps --no-package-lock --no-fund'
+      install: 'npm install --no-package-lock --no-fund'
