@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.1](https://github.com/eggjs/egg/compare/v3.14.0...v3.14.1) (2023-01-17)
+
+
+### Bug Fixes
+
+* export urllib types directly ([#5128](https://github.com/eggjs/egg/issues/5128)) ([483bf1d](https://github.com/eggjs/egg/commit/483bf1d12bee5157f9a95e0a5b7403fc7562900e))
+
 ## [3.14.0](https://github.com/eggjs/egg/compare/v3.13.0...v3.14.0) (2023-01-17)
 
 
