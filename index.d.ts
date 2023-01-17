@@ -19,9 +19,9 @@ import {
   HttpClientResponse as HttpClientResponseOld,
 } from 'urllib';
 import {
-  RequestURL,
-  RequestOptions as RequestOptionsNext,
-  HttpClientResponse as HttpClientResponseNext,
+  RequestURL as HttpClientRequestURL,
+  RequestOptions as HttpClientRequestOptions,
+  HttpClientResponse,
 } from 'urllib-next';
 import {
   EggCoreBase,
@@ -60,10 +60,7 @@ declare module 'egg' {
   //   return await app.httpclient.request(url, options);
   // }
   // ```
-  export type HttpClientRequestURL = RequestURL;
-  export type HttpClientRequestOptions = RequestOptionsNext;
-  export type HttpClientResponse<T = any> = HttpClientResponseNext<T>;
-
+  export { HttpClientRequestURL, HttpClientRequestOptions, HttpClientResponse };
   // Compatible with both urllib@2 and urllib@3 RequestOptions to request
   export interface EggHttpClient extends EventEmitter {
     request<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
