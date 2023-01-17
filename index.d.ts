@@ -622,13 +622,24 @@ declare module 'egg' {
     url(name: string, params: any): any;
 
     /**
-     * Create an anonymous context, the context isn't request level, so the request is mocked.
-     * then you can use context level API like `ctx.service`
-     * @member {String} EggApplication#createAnonymousContext
+     * @Deprecated
+     * It's not safe with app.currentContext, please use app.createAnonymousContextScope() instead
+     * @member {Function} EggApplication#createAnonymousContext
      * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
      * @return {Context} context
      */
     createAnonymousContext(req?: Request): Context;
+
+    /**
+     * Same as {@link EggApplication#createAnonymousContext},it's safe with app.currentContext.
+     * Create an anonymous context, the context isn't request level, so the request is mocked.
+     * then you can use context level API like `ctx.service`
+     * @member {Function} EggApplication#createAnonymousContext
+     * @param {AsyncFunction} scope - ctx scope.
+     * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
+     * @return {object} - scope return value
+     */
+    createAnonymousContextScope<R>(scope: (ctx: Context) => Promise<R>, req?: Request): Promise<R>;
 
     /**
      * export context base classes, let framework can impl sub class and over context extend easily.

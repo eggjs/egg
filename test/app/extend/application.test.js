@@ -128,6 +128,32 @@ describe('test/app/extend/application.test.js', () => {
     });
   });
 
+  describe('app.createAnonymousContextScope()', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/demo');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should get anonymous context object', async () => {
+      await app.createAnonymousContextScope(async ctx => {
+        assert(ctx.ip === '10.0.0.1');
+        assert(ctx.url === '/foobar?ok=1');
+        assert(ctx.socket.remoteAddress === '10.0.0.1');
+        assert(ctx.socket.remotePort === 7001);
+      }, {
+        socket: {
+          remoteAddress: '10.0.0.1',
+        },
+        headers: {
+          'x-forwarded-for': '10.0.0.1',
+        },
+        url: '/foobar?ok=1',
+      });
+    });
+  });
+
   describe('app.addSingleton()', () => {
     let app;
     before(() => {
