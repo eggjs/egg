@@ -554,7 +554,7 @@ declare module 'egg' {
 
     /**
      * @param {String} name - Router name
-     * @param {Object} params - more parameters
+     * @param {Object} [params] - more parameters
      * @example
      * ```js
      * router.url('edit_post', { id: 1, name: 'foo', page: 2 })
@@ -565,7 +565,12 @@ declare module 'egg' {
      * @return {String} url by path name and query params.
      * @since 1.0.0
      */
-    url(name: string, params: any): any;
+    url(name: string, params?: any): string;
+    /**
+     * Alias for the url method
+     */
+    pathFor(name: string, params?: any): string;
+    methods: string[];
   }
 
   export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:disable-line
