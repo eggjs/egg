@@ -546,7 +546,7 @@ declare module 'egg' {
     headers: { [key: string]: string };
   }
 
-  export interface Router extends KoaRouter<any, Context> {
+  export interface Router extends Omit<KoaRouter<any, Context>, 'url'> {
     /**
      * restful router api
      */
