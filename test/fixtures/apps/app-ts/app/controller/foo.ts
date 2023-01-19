@@ -34,6 +34,9 @@ export default class FooController extends Controller {
     // router
     console.log(ctx.app.router.url('foo'));
     console.log(ctx.app.router.url('foo', {}));
+    console.log(ctx.app.router.pathFor('foo'));
+    console.log(ctx.app.router.pathFor('foo', {}));
+    console.log(ctx.app.router.methods);
   }
 
   async getData() {
