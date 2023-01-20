@@ -30,6 +30,13 @@ export default class FooController extends Controller {
     this.fooLogger = ctx.getLogger('foo');
     assert(ctx.app.ctxStorage);
     assert(ctx.app.currentContext);
+
+    // router
+    console.log(ctx.app.router.url('foo'));
+    console.log(ctx.app.router.url('foo', {}));
+    console.log(ctx.app.router.pathFor('foo'));
+    console.log(ctx.app.router.pathFor('foo', {}));
+    console.log(ctx.app.router.methods);
   }
 
   async getData() {
