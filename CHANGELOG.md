@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.14.2](https://github.com/eggjs/egg/compare/v3.14.1...v3.14.2) (2023-01-20)
+
+
+### Bug Fixes
+
+* **types:** app.router.url params should be optional ([#5132](https://github.com/eggjs/egg/issues/5132)) ([dda6bb3](https://github.com/eggjs/egg/commit/dda6bb3674af4acbdd7d5eb2f2ca373c714c7d2d))
+
 ## [3.14.1](https://github.com/eggjs/egg/compare/v3.14.0...v3.14.1) (2023-01-17)
 
 
