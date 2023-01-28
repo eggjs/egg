@@ -731,7 +731,7 @@ declare module 'egg' {
      * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
      * @param {Request} req - if you want to mock request like querystring, you can pass an object to this function.
      */
-    runInAnonymousContextScope<R>(scope: (ctx: Context, req?: Request) => Promise<R>): Promise<R>;
+    runInAnonymousContextScope<R>(scope: (ctx: Context) => Promise<R>, req?: Request): Promise<R>;
 
     /**
      * Get current execute ctx async local storage
