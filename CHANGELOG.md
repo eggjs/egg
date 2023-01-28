@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.15.0](https://github.com/eggjs/egg/compare/v3.14.2...v3.15.0) (2023-01-28)
+
+
+### Features
+
+* runInAnonymousContextScope support req ([#5134](https://github.com/eggjs/egg/issues/5134)) ([615d660](https://github.com/eggjs/egg/commit/615d6608ab2fc66af848fb82ce41ed359f41bfb0))
+
 ## [3.14.2](https://github.com/eggjs/egg/compare/v3.14.1...v3.14.2) (2023-01-20)
 
 
