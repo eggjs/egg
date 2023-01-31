@@ -133,4 +133,52 @@ module.exports = {
     enable: true,
     package: 'egg-view',
   },
+
+  /**
+   * tegg config plugin
+   */
+  teggConfig: {
+    package: '@eggjs/tegg-config',
+    enable: false,
+  },
+
+  /**
+   * tegg plugin
+   */
+  tegg: {
+    enable: false,
+    package: '@eggjs/tegg-plugin',
+  },
+
+  /**
+   * tegg aop plugin
+   */
+  aopModule: {
+    package: '@eggjs/tegg-aop-plugin',
+    enable: false,
+  },
+
+  /**
+   * tegg http controller plugin
+   */
+  teggController: {
+    package: '@eggjs/tegg-controller-plugin',
+    enable: false,
+  },
+
+  /**
+   * tegg eventbus plugin
+   */
+  eventbusModule: {
+    package: '@eggjs/tegg-eventbus-plugin',
+    enable: false,
+  },
+
+  /**
+   * tegg schedule plugin
+   */
+  teggSchedule: {
+    package: '@eggjs/tegg-schedule-plugin',
+    enable: false,
+  },
 };
