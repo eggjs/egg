@@ -208,6 +208,21 @@ describe('test/app/extend/application.test.js', () => {
     });
   });
 
+  describe('app.runInAnonymousContextScope(scope,request)', () => {
+    it('should run task in anonymous context scope with req success', async () => {
+      const app = utils.app('apps/app-runInAnonymousContextScope-withRequest');
+      await app.ready();
+      await app.close();
+      await utils.sleep(2100);
+      const logdir = app.config.logger.dir;
+      const logs = fs.readFileSync(path.join(logdir, 'app-runInAnonymousContextScope-withRequest-web.log'), { encoding: 'utf8' }).split('\n');
+
+      assert.match(logs[0], / INFO \d+ \[-\/127.0.0.2\/-\/\d+ms GET \/] inside before close on ctx logger/);
+      assert.match(logs[1], / INFO \d+ \[-\/127.0.0.2\/-\/\d+ms GET \/] inside before close on app logger/);
+      assert.match(logs[2], / INFO \d+ outside before close on app logger/);
+    });
+  });
+
   describe('app.handleRequest(ctx, fnMiddleware)', () => {
     let app;
     before(() => {
