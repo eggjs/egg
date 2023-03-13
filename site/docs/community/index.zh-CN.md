@@ -8,7 +8,8 @@ nav:
 
 ## 交流群
 
-[![dingtalk](/img_egg/qrcode_dingtalk.png)](https://www.eggjs.org)
+- 钉钉群号：21751340，群名：Egg 社区互助交流群
+- 微信群名：Egg 非官方自助交流群
 
 ## 资源链接
 
@@ -30,4 +31,4 @@ nav:
 
 ## 贡献者
 
-[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.svg)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=eggjs/egg&max=240&columns=26)](https://github.com/eggjs/egg/graphs/contributors)
