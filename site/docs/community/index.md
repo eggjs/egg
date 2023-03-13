@@ -6,10 +6,6 @@ nav:
   order: 6
 ---
 
-## Groups
-
-[![dingtalk](/img_egg/qrcode_dingtalk.png)](https://www.eggjs.org)
-
 ## Resources
 
 - Frameworks
@@ -30,4 +26,4 @@ nav:
 
 ## Contributors
 
-[![contributors](https://ergatejs.implements.io/badges/contributors/eggjs/egg.svg)](https://github.com/eggjs/egg/graphs/contributors)
+[![contributors](https://contrib.rocks/image?repo=eggjs/egg&max=240&columns=26)](https://github.com/eggjs/egg/graphs/contributors)
