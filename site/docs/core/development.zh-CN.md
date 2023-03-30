@@ -35,6 +35,29 @@ $ npm i egg-bin --save-dev
 
 本地启动的应用是以 `env: local` 启动的，读取的配置也是 `config.default.js` 和 `config.local.js` 合并的结果。
 
+> 注意：本地开发环境依赖 `egg-development` 插件，默认开启，其他环境下关闭，配置参考 [config/config.default.js](https://github.com/eggjs/egg-development/blob/master/config/config.default.js) 。
+
+### 关于 `Reload` 功能
+
+以下目录（含子目录）下默认会监听开发环境下的文件变化，触发一次Egg开发环境服务器重载：
+
+- ${app_root}/app
+- ${app_root}/config
+- ${app_root}/mocks
+- ${app_root}/mocks_proxy
+- ${app_root}/app.js
+
+> 设置 `config.development.overrideDefault` 为 `true` 将跳过默认合并.
+
+以下目录下（包括子目录）默认忽略开发环境下的文件改动：
+
+- ${app_root}/app/view
+- ${app_root}/app/assets
+- ${app_root}/app/public
+- ${app_root}/app/web
+
+> 设置 `config.development.overrideIgnore` 为 `true` 将跳过默认合并.
+
 ### 指定端口
 
 本地启动应用默认监听 7001 端口，可指定其他端口，例如：
