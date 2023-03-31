@@ -35,6 +35,29 @@ And then we may start app by `npm run dev`.
 
 To start app in local, environment needs to be set as `env: local`. The configuration comes from the combination of both `config.local.js` and `config.default.js`.
 
+> Note: The local development environment relies on 'egg-development' module, enabled by default, and closed other environment, Configuration reference [config/config.default.js](https://github.com/eggjs/egg-development/blob/master/config/config.default.js) 
+
+### About `Reload`
+
+Under the following directory (including subdirectories) will watch file changes under development environment by default, trigger an Egg development environment server reload:
+
+- ${app_root}/app
+- ${app_root}/config
+- ${app_root}/mocks
+- ${app_root}/mocks_proxy
+- ${app_root}/app.js
+
+> set `config.development.overrideDefault` to `true` to skip defaults merge.
+
+Under the following directory (including subdirectories) will ignore file changes under development environment by default:
+
+- ${app_root}/app/view
+- ${app_root}/app/assets
+- ${app_root}/app/public
+- ${app_root}/app/web
+
+> set `config.development.overrideIgnore` to `true` to skip defaults merge.
+
 ### Port Assignment
 
 Starting app in local will listen to port 7001 by default. You may assign other port to it like this:
