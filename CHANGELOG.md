@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.0](https://github.com/eggjs/egg/compare/v3.15.0...v3.16.0) (2023-05-10)
+
+
+### Features
+
+* use egg-security@3.0.0 ([#5182](https://github.com/eggjs/egg/issues/5182)) ([a13b35e](https://github.com/eggjs/egg/commit/a13b35e05ca660fee3663db9381cdf44d63e44a0))
+
 ## [3.15.0](https://github.com/eggjs/egg/compare/v3.14.2...v3.15.0) (2023-01-28)
 
 
