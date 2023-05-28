@@ -36,7 +36,30 @@ All features must be submitted along with documentations. The documentations sho
 All demos should be compiled at [eggjs/examples](https://github.com/eggjs/examples) repository.
 - Please provide essential urls, such as application process, terminology explainations and references.
 
-## Submitting Code
+## Pulling and Submitting Code
+
+### Pulling Code
+
+Please click the "Fork" button in the main page of [Egg](https://github.com/eggjs/egg) to
+fork the latest code into your own repository. Then clone yours to your local machine with
+the help of [git](https://git-scm.com/download/) and work on that.
+
+### Install Dependencies
+
+You can install all the dependencies listed in `package.json` with `npm`,
+when your npm version is 7.X or higher:
+
+```bash
+npm i --legacy-peer-deps
+```
+> Note: If you DON'T ADD `--legacy-peer-deps`, maybe dependency errors will occur
+  during installation.
+
+Otherwise, you can install dependencies with the following command:
+
+```bash
+npm i
+```
 
 ### Pull Request Guide
 
