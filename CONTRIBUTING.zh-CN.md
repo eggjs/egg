@@ -48,19 +48,17 @@
 
 ### 安装依赖
 
-你可使用 Node 自带的 `npm` 包管理工具命令安装所有在“package.json”上的必备依赖，
-当你的 npm 版本高于等于 7.X 时，你可以使用以下命令：
-
-```bash
-npm i --legacy-peer-deps
-```
-
-> 请注意: 如果你不添加 `--legacy-peer-deps`, 安装过程中可能会出现与依赖性相关的错误。
-
-否则可以直接使用以下命令：
+你可使用 Node 自带的 `npm` 包管理工具命令安装所有在“package.json”上的必备依赖：
 
 ```bash
 npm i
+```
+
+> 请注意: 如你安装过程中看到依赖性相关的错误，而导致安装失败，且你的 npm 版本 >=7.X，临时
+解决方案是加上 `--legacy-peer-deps`，然后请及时在 Issues 里边提 PR，告知开发者。
+
+```bash
+npm i --legacy-peer-deps
 ```
 
 ### 提交 Pull Request

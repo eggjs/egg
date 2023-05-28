@@ -46,19 +46,19 @@ the help of [git](https://git-scm.com/download/) and work on that.
 
 ### Install Dependencies
 
-You can install all the dependencies listed in `package.json` with `npm`,
-when your npm version is 7.X or higher:
+You can install all the dependencies listed in `package.json` with `npm`:
 
 ```bash
-npm i --legacy-peer-deps
+npm i
 ```
-> Note: If you DON'T ADD `--legacy-peer-deps`, maybe dependency errors will occur
-  during installation.
+> If there's something wrong related to dependencies happending during the installation,
+you can temporarily solve it by adding `--legacy-peer-deps` when your npm version >= 7.X,
+and you can submit a PR directly in the "Issues" list to notify the author.
 
 Otherwise, you can install dependencies with the following command:
 
 ```bash
-npm i
+npm i --legacy-peer-deps
 ```
 
 ### Pull Request Guide
