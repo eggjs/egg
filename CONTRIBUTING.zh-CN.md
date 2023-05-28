@@ -40,7 +40,26 @@
 - 提供必要的链接，如申请流程，术语解释和参考文档等。
 - 同步修改中英文文档，或者在 PR 里面说明。
 
-## 提交代码
+## 下拉与提交代码
+
+### 下拉代码
+
+请现在 GitHub 上点击 [Egg 项目](https://github.com/eggjs/egg)的“Fork”按钮，将 Egg 项目克隆到自己的仓库中，然后借助 [git](https://git-scm.com/download/) 将代码克隆到本地，以后的开发都在本地进行。
+
+### 安装依赖
+
+你可使用 Node 自带的 `npm` 包管理工具命令安装所有在“package.json”上的必备依赖：
+
+```bash
+npm i
+```
+
+> 请注意: 如你安装过程中看到依赖性相关的错误，而导致安装失败，且你的 npm 版本 >=7.X，临时
+解决方案是加上 `--legacy-peer-deps`，然后请及时在 Issues 里边提 PR，告知开发者。
+
+```bash
+npm i --legacy-peer-deps
+```
 
 ### 提交 Pull Request
 
