@@ -46,7 +46,7 @@ the help of [git](https://git-scm.com/download/) and work on that.
 
 ### Install Dependencies
 
-You can install all the dependencies listed in `package.json` with `npm`，
+You can install all the dependencies listed in `package.json` with `npm`,
 when your npm version is 7.X or higher:
 
 ```bash
