@@ -160,7 +160,7 @@ describe('test/lib/core/logger.test.js', () => {
     mm.env('local');
     app = utils.cluster('apps/logger');
     app
-    // .debug()
+      // .debug()
       .coverage(false)
       .expect('stdout', /agent info/)
       .expect('stdout', /app info/)
@@ -171,20 +171,16 @@ describe('test/lib/core/logger.test.js', () => {
   });
 
   it('agent and app error should output to common-error.log', done => {
-    // unstable on Windows, skip it
-    // https://github.com/eggjs/egg/runs/7977866117?check_suite_focus=true
-    if (process.platform === 'win32') {
-      return done();
-    }
     const baseDir = utils.getFilepath('apps/logger');
     mm.env('default');
     mm(process.env, 'EGG_LOG', 'none');
     mm(process.env, 'EGG_HOME', baseDir);
     app = utils.cluster('apps/logger');
     app
-    // .debug()
+      // .debug()
       .coverage(false)
-      .end(err => {
+      .end(async err => {
+        await utils.sleep(1000);
         assert(!err);
         const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
         assert(content.includes('nodejs.Error: agent error'));
