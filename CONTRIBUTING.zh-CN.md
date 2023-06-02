@@ -1,3 +1,5 @@
+[English](./CONTRIBUTING.md) | 简体中文
+
 # 代码贡献规范
 
 有任何疑问，欢迎提交 [issue](https://github.com/eggjs/egg/issues)，
@@ -55,11 +57,13 @@ npm i
 ```
 
 > 请注意: 如你安装过程中看到依赖性相关的错误，而导致安装失败，且你的 npm 版本 >=7.X，临时
-解决方案是加上 `--legacy-peer-deps`，然后请及时在 Issues 里边提 PR，告知开发者。
+解决方案是加上 `--legacy-peer-deps`：
 
 ```bash
 npm i --legacy-peer-deps
 ```
+
+然后请及时在 Issues 里边提 PR，告知开发者。
 
 ### 提交 Pull Request
 
