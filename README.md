@@ -1,3 +1,5 @@
+English | [简体中文](./README.zh-CN.md)
+
 <div style="text-align:center">
 	<img src="site/public/assets/egg-banner.png" />
 </div>

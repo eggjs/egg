@@ -1,3 +1,5 @@
+English | [简体中文](./CONTRIBUTING.zh-CN.md)
+
 # Contribution Guide
 
 If you have any comment or advice, please report your [issue](https://github.com/eggjs/egg/issues),
@@ -13,7 +15,7 @@ Egg group members will confirm the purpose of the issue, replace more accurate t
 Tags can be divided into two groups, `type` and `scope`.
 
 - type: What kind of issue, e.g. `feature`, `bug`, `documentation`, `performance`, `support` ...
--  scope: What did you modified. Which files are modified, e.g. `core: xx`, `plugin: xx`, `deps: xx`
+- scope: What did you modified. Which files are modified, e.g. `core: xx`, `plugin: xx`, `deps: xx`
 
 ### Useful Tags
 
@@ -51,19 +53,18 @@ You can install all the dependencies listed in `package.json` with `npm`:
 ```bash
 npm i
 ```
-> If there's something wrong related to dependencies happending during the installation,
-you can temporarily solve it by adding `--legacy-peer-deps` when your npm version >= 7.X,
-and you can submit a PR directly in the "Issues" list to notify the author.
-
-Otherwise, you can install dependencies with the following command:
+> If there's something wrong related to dependencies happening during the installation,
+you can temporarily solve it by adding `--legacy-peer-deps` when your npm version >= 7.X:
 
 ```bash
 npm i --legacy-peer-deps
 ```
 
+Then you can submit a PR directly in the "Issues" list to notify the author in time.
+
 ### Pull Request Guide
 
-If you are developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch.
+If you are a developer of egg repo and you are willing to contribute, feel free to create a new branch, finish your modification and submit a PR. Egg group will review your work and merge it to master branch.
 
 ```bash
 # Create a new branch for development. The name of branch should be semantic, avoiding words like 'update' or 'tmp'. We suggest to use feature/xxx, if the modification is about to implement a new feature.
