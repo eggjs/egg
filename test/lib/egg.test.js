@@ -136,7 +136,7 @@ describe('test/lib/egg.test.js', () => {
       assert(/\[egg:core] dump config after ready, \d+ms/.test(content));
     });
 
-    it('should read timing data', function* () {
+    it('should read timing data', () => {
       let json = readJson(path.join(baseDir, `run/agent_timing_${process.pid}.json`));
       assert(json.length === 41);
       assert(json[1].name === 'Application Start');
@@ -148,7 +148,7 @@ describe('test/lib/egg.test.js', () => {
       assert(json[0].pid === process.pid);
     });
 
-    it('should disable timing after ready', function* () {
+    it('should disable timing after ready', () => {
       const json = app.timing.toJSON();
       const last = json[json.length - 1];
       app.timing.start('a');
@@ -170,18 +170,17 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dumpTiming when timeout', async () => {
       const baseDir = utils.getFilepath('apps/dumptiming-timeout');
-      await utils.rimraf(path.join(baseDir, 'run'));
-      await utils.rimraf(path.join(baseDir, 'logs'));
+      await Promise.all([ utils.rimraf(path.join(baseDir, 'run')), utils.rimraf(path.join(baseDir, 'logs')) ]);
       const app = utils.app(baseDir);
       await app.ready();
+      await utils.sleep(100);
       assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
       assertFile(path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'), /unfinished timing item: {"name":"Did Load in app.js:didLoad"/);
     });
 
     it('should dump slow-boot-action warnning log', async () => {
       const baseDir = utils.getFilepath('apps/dumptiming-slowBootActionMinDuration');
-      await utils.rimraf(path.join(baseDir, 'run'));
-      await utils.rimraf(path.join(baseDir, 'logs'));
+      await Promise.all([ utils.rimraf(path.join(baseDir, 'run')), utils.rimraf(path.join(baseDir, 'logs')) ]);
       const app = utils.app(baseDir);
       await app.ready();
       await utils.sleep(100);
@@ -233,9 +232,7 @@ describe('test/lib/egg.test.js', () => {
 
     it('should dump in config', async () => {
       const baseDir = utils.getFilepath('apps/dumpconfig-circular');
-      await utils.sleep(100);
       await app.ready();
-
       await utils.sleep(100);
       const json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert.deepEqual(json.config.foo, [ '~config~foo' ]);
@@ -266,10 +263,9 @@ describe('test/lib/egg.test.js', () => {
       baseDir = utils.getFilepath('apps/config-env');
       runDir = path.join(baseDir, 'custom_rundir');
       logDir = path.join(baseDir, 'custom_logdir');
-      await utils.rimraf(runDir);
-      await utils.rimraf(logDir);
-      await utils.rimraf(path.join(baseDir, 'run'));
-      await utils.rimraf(path.join(baseDir, 'logs'));
+      await Promise.all([ utils.rimraf(runDir), utils.rimraf(logDir),
+        utils.rimraf(path.join(baseDir, 'logs')), utils.rimraf(path.join(baseDir, 'run')) ]);
+
       mm(process.env, 'EGG_APP_CONFIG', JSON.stringify({
         logger: {
           dir: logDir,
@@ -281,9 +277,7 @@ describe('test/lib/egg.test.js', () => {
       await app.ready();
     });
     after(async () => {
-      await app.close();
-      await utils.rimraf(runDir);
-      await utils.rimraf(logDir);
+      await Promise.all([ app.close(), utils.rimraf(runDir), utils.rimraf(logDir) ]);
     });
     afterEach(mm.restore);
 
@@ -356,20 +350,22 @@ describe('test/lib/egg.test.js', () => {
     });
 
     it('should handle unhandledRejection and log it', async () => {
-      await app.httpRequest()
+      const req1 = app.httpRequest()
         .get('/throw-unhandledRejection')
         .expect('foo')
         .expect(200);
-      await app.httpRequest()
+      const req2 = app.httpRequest()
         .get('/throw-unhandledRejection-string')
         .expect('foo')
         .expect(200);
-      await app.httpRequest()
+      const req3 = app.httpRequest()
         .get('/throw-unhandledRejection-obj')
         .expect('foo')
         .expect(200);
 
-      await utils.sleep(1100);
+      await Promise.all([ req1, req2, req3 ]);
+      await utils.sleep(1000);
+
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('nodejs.unhandledRejectionError: foo reject error'));
