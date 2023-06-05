@@ -419,23 +419,25 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
-  describe.skip('egg-ready', () => {
-    let app;
+  describe('egg-ready', () => {
+
+    let app = null;
+
     before(() => {
       app = utils.app('apps/demo');
     });
+
     after(() => app.close());
 
     it('should only trigger once', async () => {
-      let triggerCount = 0;
-      mm(app.lifecycle, 'triggerServerDidReady', () => {
-        triggerCount++;
-      });
+
       await app.ready();
+
       app.messenger.emit('egg-ready');
       app.messenger.emit('egg-ready');
       app.messenger.emit('egg-ready');
-      assert(triggerCount === 1);
+
+      assert(app.triggerCount === 1);
     });
   });
 
