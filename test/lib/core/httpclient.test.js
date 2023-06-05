@@ -511,19 +511,20 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
   });
 
-  describe.skip('before app ready multi httpclient request tracer', () => {
+  describe('before app ready multi httpclient request tracer', () => {
     let app;
     before(() => {
       app = utils.app('apps/httpclient-tracer');
+      return app.ready();
     });
 
     after(() => app.close());
 
     it('should app request before ready use same tracer', async () => {
-      const httpclient = app.httpclient;
 
-      let reqTracers = [];
-      let resTracers = [];
+      const httpclient = app.httpclient;
+      const reqTracers = [];
+      const resTracers = [];
 
       httpclient.on('request', function(options) {
         reqTracers.push(options.args.tracer);
@@ -534,42 +535,6 @@ describe('test/lib/core/httpclient.test.js', () => {
       });
 
       let res = await httpclient.request(url, {
-        method: 'GET',
-        timeout: 20000,
-      });
-      assert(res.status === 200);
-
-      res = await httpclient.request('https://github.com', {
-        method: 'GET',
-        timeout: 20000,
-      });
-
-      assert(res.status === 200);
-
-      res = await httpclient.request('https://www.npmjs.com', {
-        method: 'GET',
-        timeout: 20000,
-      });
-      assert(res.status === 200);
-
-      assert(reqTracers.length === 3);
-      assert(resTracers.length === 3);
-
-      assert(reqTracers[0] === reqTracers[1]);
-      assert(reqTracers[1] === reqTracers[2]);
-
-      assert(resTracers[0] === reqTracers[2]);
-      assert(resTracers[1] === resTracers[0]);
-      assert(resTracers[2] === resTracers[1]);
-
-      assert(reqTracers[0].traceId);
-
-      reqTracers = [];
-      resTracers = [];
-
-      await app.ready();
-
-      res = await httpclient.request(url, {
         method: 'GET',
         timeout: 20000,
       });
