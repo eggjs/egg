@@ -75,7 +75,7 @@
     "egg-view-nunjucks": "^2.3.0",
     "eslint": "^8.23.1",
     "eslint-config-egg": "^12.0.0",
-    "findlinks": "^2.1.0",
+    "findlinks": "^2.2.0",
     "formstream": "^1.1.1",
     "jsdoc": "^3.6.11",
     "koa": "^2.13.4",

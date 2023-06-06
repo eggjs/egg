@@ -276,12 +276,17 @@ describe('test/lib/egg.test.js', () => {
       app = utils.app('apps/config-env');
       await app.ready();
     });
-    after(async () => {
-      await Promise.all([ app.close(), utils.rimraf(runDir), utils.rimraf(logDir) ]);
+    after(() => {
+      app.close();
+      utils.rimraf(runDir);
+      utils.rimraf(logDir);
+      utils.rimraf(path.join(baseDir, 'logs'));
+      utils.rimraf(path.join(baseDir, 'run'));
     });
     afterEach(mm.restore);
 
     it('should custom dir', async () => {
+      await utils.sleep(1000);
       assertFile(path.join(runDir, 'application_config.json'));
       assertFile(path.join(logDir, 'egg-web.log'));
       assertFile.fail(path.join(baseDir, 'run/application_config.json'));
