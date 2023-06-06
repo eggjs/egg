@@ -14,7 +14,7 @@ describe('test/doc.test.js', () => {
    * to generate the whole doc. We only need some of the test cases to check
    * whether the links inside the doc gets fine or not.
    */
-  it('should have no broken urls', async () => {
+  it('should have no broken urls (based on non-windows platform and node\'s version >=18)', async function() {
 
     const mainNodejsVersion = parseInt(process.versions.node.split('.')[0]);
 
@@ -35,7 +35,7 @@ describe('test/doc.test.js', () => {
       assert(result.fail === 0);
       app.close();
     } else {
-      console.log('Skip Doc test for this version of nodejs or this platform.');
+      this.skip();
     }
   }).timeout(10 * 60 * 1000);
 });

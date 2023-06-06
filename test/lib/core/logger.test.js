@@ -214,7 +214,7 @@ describe('test/lib/core/logger.test.js', () => {
     assert(app.agent.logger.options.file === app.agent.coreLogger.options.file);
   });
 
-  it('should config.logger.enableFastContextLogger = true work', async () => {
+  it('should `config.logger.enableFastContextLogger` = true work', async () => {
     app = utils.app('apps/app-enableFastContextLogger');
     await app.ready();
     app.mockContext({
@@ -222,13 +222,13 @@ describe('test/lib/core/logger.test.js', () => {
         traceId: 'mock-trace-id-123',
       },
     });
-    if (process.platform === 'win32') await utils.sleep(2000);
     await app.httpRequest()
       .get('/')
       .expect(200)
       .expect({
         enableFastContextLogger: true,
       });
+    await utils.sleep(1000);
     app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/\d+ms GET \/] enableFastContextLogger: true/);
   });
 
