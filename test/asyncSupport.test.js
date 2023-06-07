@@ -2,9 +2,9 @@
 
 const assert = require('assert');
 const mm = require('egg-mock');
-const utils = require('../utils');
+const utils = require('./utils');
 
-describe('test/async.test.js', () => {
+describe('test/asyncSupport.test.js', () => {
   afterEach(mm.restore);
   let app;
   before(async () => {
@@ -18,7 +18,7 @@ describe('test/async.test.js', () => {
     assert(app.beforeCloseExecuted);
   });
 
-  it('middleware, controller and service support async functions', async () => {
+  it('middleware, controller and service should support async functions', async () => {
     await app.httpRequest()
       .get('/api')
       .expect(200)
