@@ -56,7 +56,7 @@
 npm i
 ```
 
-> 请注意: 如你安装过程中看到依赖性相关的错误，而导致安装失败，且你的 npm 版本 >=7.X，临时
+请注意: 如你安装过程中看到依赖性相关的错误，而导致安装失败，且你的 npm 版本 >=7.X，临时
 解决方案是加上 `--legacy-peer-deps`：
 
 ```bash
@@ -211,16 +211,18 @@ egg 基于 [semver] 语义化版本号进行发布。
 
 #### 准备工作：
 
-- 建立 milestone，确认需求关联 milestone，指派和更新 issues，如 [1.x milestone]。
+- 建立发布里程碑，确认需求关联它，指派和更新已知问题，如 [1.x 发布里程碑]。
 - 从 `master` 分支新建 `next` 分支，并设置 tag 为 `next`。
 
 #### 发布前：
 
-- 确认当前 Milestone 所有的 issue 都已关闭或可延期，完成性能测试。
-- 发起一个新的 [Release Proposal MR]，按照 [node CHANGELOG] 进行 `History` 的编写，修正文档中与版本相关的内容，commits 可以自动生成。
+- 确认当前发布里程碑所有的已知问题都已关闭或可延期，完成性能测试。
+- 发起一个新的 [发布合并请求]，按照 [node 变更日志] 进行 `History` 的编写，修正文档中与版本相关的内容，commits 可以自动生成：
+
     ```bash
     $ npm run commits
     ```
+
 - 指定下一个大版本的 PM。
 
 #### 发布时：
@@ -239,9 +241,9 @@ egg 基于 [semver] 语义化版本号进行发布。
 ```
 
 [semver]: https://semver.org/lang/zh-CN/
-[Release Proposal MR]: https://github.com/nodejs/node/pull/4181
-[node CHANGELOG]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
-[1.x milestone]: https://github.com/eggjs/egg/milestone/1
+[发布合并请求]: https://github.com/nodejs/node/pull/4181
+[node 变更日志]: https://github.com/nodejs/node/blob/master/CHANGELOG.md
+[1.x 发布里程碑]: https://github.com/eggjs/egg/milestone/1
 [npm]: http://npmjs.com/
 [我是如何发布一个 npm 包的]: https://fengmk2.com/blog/2016/how-i-publish-a-npm-package
 [英语标题大小写]: https://headlinecapitalization.com/

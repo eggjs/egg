@@ -53,7 +53,8 @@ You can install all the dependencies listed in `package.json` with `npm`:
 ```bash
 npm i
 ```
-> If there's something wrong related to dependencies happening during the installation,
+
+If there's something wrong related to dependencies happening during the installation,
 you can temporarily solve it by adding `--legacy-peer-deps` when your npm version >= 7.X:
 
 ```bash
@@ -215,9 +216,11 @@ In the release of every stable version, there will be a PM who has the following
 
 - Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.
 - Open a new [Release Proposal MR], and write `History` as [node CHANGELOG]. Don't forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.
+
     ```bash
     $ npm run commits
     ```
+
 - Nominate PM for next stable version.
 
 #### During Release
