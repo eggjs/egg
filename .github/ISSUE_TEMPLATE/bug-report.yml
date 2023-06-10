@@ -7,9 +7,9 @@ body:
       label: |
         Your detail info about the Bug:
       placeholder: |
-        1. What I did. 
+        1. What I did.
 
-        2. What I expected to happen. 
+        2. What I expected to happen.
 
         3. What I actually got.
 
@@ -21,7 +21,7 @@ body:
       label: Reproduction Repo
       description: |
         1. Please use `npm init egg --type=simple bug` to create your smallest repo.
-        
+
         2. Submit it in the GitHub and paste your URL here. You can also attach your zip file directly.
       placeholder: |
         https://github.com/YOUR_REPOSITORY_URL or your zip file
