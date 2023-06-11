@@ -6,13 +6,13 @@ body:
     attributes:
       value: |
         Any better new/changable functions for the core technical architecture of the Egg.js framework?
-        
+
         But please make sure there's no duplicated issues related to your idea before submitting.
   - type: textarea
     attributes:
       label: "Please describe your idea in detail:"
       placeholder: |
-        1. Describe the current situation of the problem you want to solve, 
+        1. Describe the current situation of the problem you want to solve,
         and attach the related issue address.
 
         If it is possible, please provide screenshots or videos in detail.

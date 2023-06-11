@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         You have an idea how to improve the Eggjs?
-        
+
         Before submitting, please have a look at the existing issues if there's already
         something related to your suggestion.
   - type: textarea
@@ -15,9 +15,9 @@ body:
       placeholder: |
         1. What I expected to happen?
 
-        2. Your reason (e.g: I'm always frustrated with...). 
+        2. Your reason (e.g: I'm always frustrated with...).
         If possible, images or videos are welcome.
-        
+
         3. What I plan to do (Optional but better in pseudo codes).
     validations:
       required: true

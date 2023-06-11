@@ -21,7 +21,7 @@ body:
       label: 可复现问题的仓库地址（Reproduction Repo）
       description: |
         1. 请使用 `npm init egg --type=simple bug` 创建最小可复现问题的代码。
-        
+
         2. 在 GitHub 中上传该代码项目，并在此处粘贴地址。你也可以直接将你的仓库压缩为 zip 文件直接以附件形式提交。
       placeholder: |
         https://github.com/YOUR_REPOSITORY_URL

@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         对于 Eggjs 框架功能你是否有重大的新增或改进之类的想法？
-        
+
         不过在提交你的新想法或方案之前，麻烦请检阅一下是否之前的帖子中有类似重复的内容。
   - type: textarea
     attributes:
@@ -14,7 +14,7 @@ body:
       placeholder: |
         1. 描述你希望解决的问题的现状，附上相关的 issue 地址。
         如果方便的话，请提供截屏或者视频等详细信息。
-        
+
         2. 我能够做一些什么（譬如具体相关的的 API，描述思路，最好是能提供一些伪代码帮助实现）。
     validations:
       required: true

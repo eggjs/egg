@@ -35,7 +35,7 @@ And then we may start app by `npm run dev`.
 
 To start app in local, environment needs to be set as `env: local`. The configuration comes from the combination of both `config.local.js` and `config.default.js`.
 
-> Note: The local development environment relies on 'egg-development' module, enabled by default, and closed other environment, Configuration reference [config/config.default.js](https://github.com/eggjs/egg-development/blob/master/config/config.default.js) 
+> Note: The local development environment relies on 'egg-development' module, enabled by default, and closed other environment, Configuration reference [config/config.default.js](https://github.com/eggjs/egg-development/blob/master/config/config.default.js)
 
 ### About `Reload`
 

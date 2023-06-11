@@ -53,7 +53,7 @@ module.exports = app => {
 
     assert(reqTracers[0].traceId);
   });
-  
+
   const done = app.readyCallback('ready');
   setTimeout(done, 5000);
 };
