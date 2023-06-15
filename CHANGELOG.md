@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.16.1](https://github.com/eggjs/egg/compare/v3.16.0...v3.16.1) (2023-06-15)
+
+
+### Bug Fixes
+
+* ipc not work with worker_threads mode ([#5210](https://github.com/eggjs/egg/issues/5210)) ([03c8cf7](https://github.com/eggjs/egg/commit/03c8cf743d1fb56a55dbc633f088b08410423c5a))
+
 ## [3.16.0](https://github.com/eggjs/egg/compare/v3.15.0...v3.16.0) (2023-05-10)
 
 
