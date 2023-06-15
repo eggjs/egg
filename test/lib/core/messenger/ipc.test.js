@@ -162,4 +162,31 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       }
     });
   });
+
+  describe('worker_threads mode', () => {
+    let app;
+    before(() => {
+      mm.env('default');
+      app = utils.cluster('apps/messenger-app-agent', { workers: 1, startMode: 'worker_threads' });
+      app.coverage(false);
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('app should accept agent message', done => {
+      setTimeout(() => {
+        assert(count(app.stdout, 'agent2app') === 1);
+        assert(count(app.stdout, 'app2app') === 1);
+        assert(count(app.stdout, 'agent2agent') === 1);
+        assert(count(app.stdout, 'app2agent') === 1);
+        done();
+      }, 500);
+
+      function count(data, key) {
+        return data.split('\n').filter(line => {
+          return line.indexOf(key) >= 0;
+        }).length;
+      }
+    });
+  });
 });
