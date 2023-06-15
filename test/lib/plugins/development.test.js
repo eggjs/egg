@@ -28,13 +28,16 @@ describe('test/lib/plugins/development.test.js', () => {
         .expect(200);
 
       await app.httpRequest()
-        .get('/public/hello');
+        .get('/public/hello')
+        .expect(404);
 
       await app.httpRequest()
-        .get('/assets/hello');
+        .get('/assets/hello')
+        .expect(404);
 
       await app.httpRequest()
-        .get('/__koa_mock_scene_toolbox/hello');
+        .get('/__koa_mock_scene_toolbox/hello')
+        .expect(404);
     });
   });
 
