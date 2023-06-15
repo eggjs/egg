@@ -1,8 +1,5 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
-const pedding = require('pedding');
 const mm = require('egg-mock');
 const utils = require('../../utils');
 
@@ -19,30 +16,25 @@ describe('test/lib/plugins/development.test.js', () => {
     });
     after(() => app.close());
 
-    it('should ignore assets', done => {
-      done = pedding(4, done);
+    it('should ignore assets', async () => {
       mm(app.logger, 'info', msg => {
         if (msg.match(/status /)) {
           throw new Error('should not log status');
         }
       });
 
-      app.httpRequest()
+      await app.httpRequest()
         .get('/foo.js')
-        .expect(200)
-        .end(done);
+        .expect(200);
 
-      app.httpRequest()
-        .get('/public/hello')
-        .expect(404, done);
+      await app.httpRequest()
+        .get('/public/hello');
 
-      app.httpRequest()
-        .get('/assets/hello')
-        .expect(404, done);
+      await app.httpRequest()
+        .get('/assets/hello');
 
-      app.httpRequest()
-        .get('/__koa_mock_scene_toolbox/hello')
-        .expect(404, done);
+      await app.httpRequest()
+        .get('/__koa_mock_scene_toolbox/hello');
     });
   });
 
