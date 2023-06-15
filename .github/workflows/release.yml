@@ -3,12 +3,10 @@ on:
   push:
     branches: [ master, 2.x, 1.x ]
 
-  workflow_dispatch: {}
-
 jobs:
   release:
     name: Node.js
-    uses: artusjs/github-actions/.github/workflows/node-release.yml@master
+    uses: node-modules/github-actions/.github/workflows/node-release.yml@master
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
