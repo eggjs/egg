@@ -39,6 +39,17 @@ describe('test/app/middleware/body_parser.test.js', () => {
       .expect(200);
   });
 
+  it('should 200 when post json with content-type: application/json;charset=utf-8', () => {
+    app.mockCsrf();
+    return app.httpRequest()
+      .post('/test/body_parser/user')
+      .set('Cookie', cookies)
+      .set('Content-Type', 'application/json;charset=utf-8')
+      .send({ test: 1 })
+      .expect({ test: 1 })
+      .expect(200);
+  });
+
   it('should 200 when post json body below the limit', () => {
     return app.httpRequest()
       .post('/test/body_parser/user')
