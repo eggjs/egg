@@ -115,7 +115,11 @@ describe('test/lib/core/singleton.test.js', () => {
       singleton.init();
       assert(app.dataService instanceof Singleton);
       assert(app.dataService.get('first').config.foo === 'bar1');
+      assert(app.dataService.getSingletonInstance('first').config.foo === 'bar1');
+      assert(app.dataService.get('first'), app.dataService.getSingletonInstance('first'));
       assert(app.dataService.get('second').config.foo === 'bar');
+      assert(app.dataService.getSingletonInstance('second').config.foo === 'bar');
+      assert(app.dataService.get('second'), app.dataService.getSingletonInstance('second'));
       assert(typeof app.dataService.createInstance === 'function');
     });
 
