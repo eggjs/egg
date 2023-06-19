@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.0](https://github.com/eggjs/egg/compare/v3.16.1...v3.17.0) (2023-06-19)
+
+
+### Features
+
+* add getSingletonInstance alias to singleton.get(id) ([#5216](https://github.com/eggjs/egg/issues/5216)) ([9868768](https://github.com/eggjs/egg/commit/98687685bb095d37166d3a66890f0164428a8e53))
+
 ## [3.16.1](https://github.com/eggjs/egg/compare/v3.16.0...v3.16.1) (2023-06-15)
 
 
