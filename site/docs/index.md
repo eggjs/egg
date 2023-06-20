@@ -7,9 +7,6 @@ egg:
     title: Born to build
     desc: better enterprise frameworks and apps with Node.js & Koa
     content: Born to build better enterprise frameworks and apps
-  promo:
-    title: eggjs is recruiting.
-    link: https://talent.antgroup.com/off-campus-position?positionId=1920017
   guide:
     title: Get Started
     link: /intro/quickstart
