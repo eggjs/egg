@@ -1,5 +1,0 @@
-/**
- * 继承 koa 的 Response
- * @class Response
- * @see http://koajs.com/#response
- */
