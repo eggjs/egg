@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.1](https://github.com/eggjs/egg/compare/v3.17.0...v3.17.1) (2023-06-22)
+
+
+### Bug Fixes
+
+* compatible with content-type extra semicolon ([#5217](https://github.com/eggjs/egg/issues/5217)) ([cfdca36](https://github.com/eggjs/egg/commit/cfdca36b4ee84397ed2cb1987982d502a3c8af0a))
+
 ## [3.17.0](https://github.com/eggjs/egg/compare/v3.16.1...v3.17.0) (2023-06-19)
 
 
