@@ -51,7 +51,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   // fix https://github.com/eggjs/egg/issues/5214
-  it.only('should 200 when post json with `content-type: application/json;charset=utf-8;`', () => {
+  it('should 200 when post json with `content-type: application/json;charset=utf-8;`', () => {
     app.mockCsrf();
     return app.httpRequest()
       .post('/test/body_parser/user')

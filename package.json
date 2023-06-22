@@ -46,7 +46,7 @@
     "graceful": "^1.1.0",
     "humanize-ms": "^1.2.1",
     "is-type-of": "^1.2.1",
-    "koa-bodyparser": "^4.3.0",
+    "koa-bodyparser": "^4.4.1",
     "koa-is-json": "^1.0.0",
     "koa-override": "^3.0.0",
     "ms": "^2.1.3",
