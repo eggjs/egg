@@ -3,7 +3,7 @@ title: 中间件（Middleware）
 order: 5
 ---
 
-在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 实现的，所以 Egg 的中间件形式和 Koa 的中间件形式是一样的，都是基于[洋葱圈模型](../intro/egg-and-koa.md#midlleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
+在[前面的章节](../intro/egg-and-koa.md)中，我们介绍了 Egg 是基于 Koa 实现的，所以 Egg 的中间件形式和 Koa 的中间件形式是一样的，都是基于[洋葱圈模型](../intro/egg-and-koa.md#middleware)。每次我们编写一个中间件，就相当于在洋葱外面包了一层。
 
 ## 编写中间件
 

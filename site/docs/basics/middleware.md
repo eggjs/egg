@@ -3,7 +3,7 @@ title: Middleware
 order: 5
 ---
 
-In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on Koa, so the form of middleware in Egg is the same as in Koa, i.e. they are both based on [the onion model](../intro/egg-and-koa.md#midlleware).
+In [the previous chapter](../intro/egg-and-koa.md), we say that Egg is based on Koa, so the form of middleware in Egg is the same as in Koa, i.e. they are both based on [the onion model](../intro/egg-and-koa.md#middleware).
 
 ## Writing Middleware
 
