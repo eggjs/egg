@@ -40,11 +40,13 @@ Template engines available as shown below. For more template engines [searching]
 
 ## Databases
 
-Official [ORM model WIP](https://github.com/eggjs/egg/issues/388)，plugins now available:
+Official maintained ORM model is [egg-orm] base on [Leoric], and the following database plugins are currently available:
 
+- [egg-orm]
 - [egg-sequelize]
 - [egg-mongoose]
 - [egg-mysql]，refer to [MySQL tutorials](./tutorials/mysql.md)
+- [egg-graphql]
 
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
 [egg-mongoose]: https://github.com/eggjs/egg-mongoose
@@ -55,3 +57,5 @@ Official [ORM model WIP](https://github.com/eggjs/egg/issues/388)，plugins now 
 [egg-view-handlebars]: https://github.com/eggjs/egg-view-handlebars
 [egg-view-pug]: https://github.com/chrisyip/egg-view-pug
 [egg-view-xtpl]: https://github.com/eggjs/egg-view-xtpl
+[egg-orm]: https://github.com/eggjs/egg-orm/blob/master/Readme.md
+[Leoric]: https://leoric.js.org

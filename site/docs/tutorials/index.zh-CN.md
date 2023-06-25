@@ -42,8 +42,9 @@ $ npm init egg --type=simple
 
 ## 数据库
 
-官方 [ORM 模型还在设计中](https://github.com/eggjs/egg/issues/388)，但现在可以使用
+官方维护的 ORM 模型是基于 [Leoric] 实现的 [egg-orm]，目前可用的数据库插件：
 
+- [egg-orm]
 - [egg-sequelize]
 - [egg-mongoose]
 - [egg-mysql]，可查看 [MySQL 教程](./tutorials/mysql.md)
@@ -61,3 +62,5 @@ $ npm init egg --type=simple
 [egg-view-react]: https://github.com/eggjs/egg-view-react
 [egg-view-vue]: https://github.com/eggjs/egg-view-vue
 [egg-graphql]: https://github.com/eggjs/egg-graphql
+[egg-orm]: https://github.com/eggjs/egg-orm/blob/master/Readme.zh-CN.md
+[Leoric]: https://leoric.js.org/zh
