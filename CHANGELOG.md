@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.2](https://github.com/eggjs/egg/compare/v3.17.1...v3.17.2) (2023-06-25)
+
+
+### Bug Fixes
+
+* don't require inspector module on production env ([#5228](https://github.com/eggjs/egg/issues/5228)) ([398fe15](https://github.com/eggjs/egg/commit/398fe15eb28c3bbe8d79a0c2b129d55922f45a9a))
+
 ## [3.17.1](https://github.com/eggjs/egg/compare/v3.17.0...v3.17.1) (2023-06-22)
 
 
