@@ -183,6 +183,7 @@ const insertSuccess = result.affectedRows === 1;
 ### Read
 
 Use `get` or `select` to select one or multiple records. `select` method support query criteria and result customization
+Use `count` method to count all rows of the query result
 
 - get one record
 
@@ -214,6 +215,14 @@ const results = await this.app.mysql.select('posts', { // search posts table
 => SELECT `author`, `title` FROM `posts`
   WHERE `status` = 'draft' AND `author` IN('author1','author2')
   ORDER BY `created_at` DESC, `id` DESC LIMIT 0, 10;
+```
+
+- count the number of rows in the query result
+
+```js
+const total = await this.app.mysql.count('posts', { status: 'published' }); // count the number of result rows in the posts table whose status is published
+
+=> SELECT COUNT(*) FROM `posts` WHERE `status` = 'published'
 ```
 
 ### Update

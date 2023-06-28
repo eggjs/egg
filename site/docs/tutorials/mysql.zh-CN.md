@@ -198,6 +198,7 @@ const insertSuccess = result.affectedRows === 1;
 ### Read
 
 可以直接使用 `get` 方法或 `select` 方法获取一条或多条记录。`select` 方法支持条件查询与结果的定制。
+可以使用 `count` 方法对查询结果的所有行进行计数。
 
 - 查询一条记录
 
@@ -229,6 +230,14 @@ const results = await this.app.mysql.select('posts', { // 搜索 post 表
 => SELECT `author`, `title` FROM `posts`
   WHERE `status` = 'draft' AND `author` IN('author1','author2')
   ORDER BY `created_at` DESC, `id` DESC LIMIT 0, 10;
+```
+
+- 统计查询结果的行数
+
+```js
+const total = await this.app.mysql.count('posts', { status: 'published' }); // 统计 posts 表中 status 为 published 的结果行数
+
+=> SELECT COUNT(*) FROM `posts` WHERE `status` = 'published'
 ```
 
 ### Update
