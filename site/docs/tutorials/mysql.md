@@ -182,7 +182,7 @@ const insertSuccess = result.affectedRows === 1;
 
 ### Read
 
-Use `get` or `select` to select one or multiple records. `select` method support query criteria and result customization
+Use `get` or `select` to select one or multiple records. `select` method support query criteria and result customization.
 Use `count` method to count all rows of the query result
 
 - get one record
