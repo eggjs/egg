@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.3](https://github.com/eggjs/egg/compare/v3.17.2...v3.17.3) (2023-06-29)
+
+
+### Bug Fixes
+
+* add missing args definition on runSchedule ([#5232](https://github.com/eggjs/egg/issues/5232)) ([f90763b](https://github.com/eggjs/egg/commit/f90763b164897bf4992b6ec58c4eae20775c0006))
+
 ## [3.17.2](https://github.com/eggjs/egg/compare/v3.17.1...v3.17.2) (2023-06-25)
 
 
