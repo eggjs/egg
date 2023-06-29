@@ -617,7 +617,7 @@ declare module 'egg' {
      */
     addSingleton(name: string, create: any): void;
 
-    runSchedule(schedulePath: string): Promise<any>;
+    runSchedule(schedulePath: string, ...args: any[]): Promise<any>;
 
     /**
      * http request helper base on httpclient, it will auto save httpclient log.
