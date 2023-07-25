@@ -100,12 +100,12 @@ module.exports = {
       ctx.status = 500;
     },
     html(err, ctx) {
-      // html hander
+      // html handler
       ctx.body = '<h3>error</h3>';
       ctx.status = 500;
     },
     json(err, ctx) {
-      // json hander
+      // json handler
       ctx.body = { message: 'error' };
       ctx.status = 500;
     },
