@@ -95,17 +95,17 @@ module.exports = {
   onerror: {
     all(err, ctx) {
       // Define an error handler for all type of Response.
-      // Once config.all present, other type of error handers will be ignored.
+      // Once config.all present, other type of error handlers will be ignored.
       ctx.body = 'error';
       ctx.status = 500;
     },
     html(err, ctx) {
-      // html hander
+      // html handler
       ctx.body = '<h3>error</h3>';
       ctx.status = 500;
     },
     json(err, ctx) {
-      // json hander
+      // json handler
       ctx.body = { message: 'error' };
       ctx.status = 500;
     },
