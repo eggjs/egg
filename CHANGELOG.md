@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.4](https://github.com/eggjs/egg/compare/v3.17.3...v3.17.4) (2023-08-01)
+
+
+### Bug Fixes
+
+* use app.logger instead of ctx.logger ([#5246](https://github.com/eggjs/egg/issues/5246)) ([b700fb9](https://github.com/eggjs/egg/commit/b700fb962a866c6e699f5c88b342960cc5ee0b78)), closes [/github.com/eggjs/egg/issues/5213#issuecomment-1657771583](https://github.com/eggjs//github.com/eggjs/egg/issues/5213/issues/issuecomment-1657771583)
+
 ## [3.17.3](https://github.com/eggjs/egg/compare/v3.17.2...v3.17.3) (2023-06-29)
 
 
