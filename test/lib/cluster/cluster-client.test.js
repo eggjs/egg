@@ -20,10 +20,10 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       mm.restore();
     });
 
-    it('should publish & subscribe ok', () => {
+    it('should publish & subscribe', () => {
       return app.httpRequest()
         .post('/publish')
-        .send({ value: '30.20.78.299' })
+        .send({ value: 'www.testme.com' })
         .expect('ok')
         .expect(200)
         .then(() => {
@@ -34,7 +34,7 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
         .then(() => {
           return app.httpRequest()
             .get('/getHosts')
-            .expect('30.20.78.299:20880')
+            .expect('www.testme.com:20880')
             .expect(200);
         });
     });
@@ -70,10 +70,10 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
       mm.restore();
     });
 
-    it('should publish & subscribe ok', () => {
+    it('should publish & subscribe', () => {
       return app.httpRequest()
         .post('/publish')
-        .send({ value: '30.20.78.299' })
+        .send({ value: 'www.testme.com' })
         .expect('ok')
         .expect(200)
         .then(() => {
@@ -84,7 +84,7 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
         .then(() => {
           return app.httpRequest()
             .get('/getHosts')
-            .expect('30.20.78.299:20880')
+            .expect('www.testme.com:20880')
             .expect(200);
         });
     });

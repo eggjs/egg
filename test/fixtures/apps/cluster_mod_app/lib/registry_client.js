@@ -36,21 +36,16 @@ class RegistryClient extends Base {
    */
   publish(reg) {
     const key = reg.dataId;
-    let changed = false;
 
     if (this._registered.has(key)) {
       const arr = this._registered.get(key);
       if (arr.indexOf(reg.publishData) === -1) {
-        changed = true;
         arr.push(reg.publishData);
       }
     } else {
-      changed = true;
       this._registered.set(key, [reg.publishData]);
     }
-    if (changed) {
-      this.emit(key, this._registered.get(key).map(url => URL.parse(url, true)));
-    }
+    this.emit(key, this._registered.get(key).map(url => new URL.parse(url, true)));
   }
 
   close() {
