@@ -6,7 +6,7 @@ on:
 jobs:
   release:
     name: Node.js
-    uses: node-modules/github-actions/.github/workflows/node-release.yml@master
+    uses: eggjs/github-actions/.github/workflows/node-release.yml@master
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
