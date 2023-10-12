@@ -1,5 +1,3 @@
-'use strict';
-
 const assert = require('assert');
 const querystring = require('querystring');
 const utils = require('../../utils');
@@ -80,6 +78,24 @@ describe('test/app/middleware/body_parser.test.js', () => {
       .send({ foo: 'a'.repeat(1024 * 200) })
       .expect(/request entity too large, check bodyParser config/)
       .expect(413);
+  });
+
+  it('should 400 when GET with invalid body', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .get('/test/body_parser/user')
+      .set('content-type', 'application/json')
+      .set('content-encoding', 'gzip')
+      .expect(/unexpected end of file, check bodyParser config/)
+      .expect(400);
+
+    await app.httpRequest()
+      .get('/test/body_parser/user')
+      .set('content-type', 'application/json')
+      .set('content-encoding', 'gzip')
+      .send({ foo: 'a'.repeat(1024) })
+      .expect(/incorrect header check, check bodyParser config/)
+      .expect(400);
   });
 
   it('should disable body parser', async () => {
