@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.5](https://github.com/eggjs/egg/compare/v3.17.4...v3.17.5) (2023-10-12)
+
+
+### Bug Fixes
+
+* set body parser error to status 400 by default ([#5262](https://github.com/eggjs/egg/issues/5262)) ([5ac26a3](https://github.com/eggjs/egg/commit/5ac26a39b4256b6a3fcd55da947a47a82811c7c1))
+
 ## [3.17.4](https://github.com/eggjs/egg/compare/v3.17.3...v3.17.4) (2023-08-01)
 
 
