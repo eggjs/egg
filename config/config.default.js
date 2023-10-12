@@ -236,8 +236,15 @@ module.exports = appInfo => {
       depth: 5,
       parameterLimit: 1000,
     },
-    onerror(err) {
+    onerror(err, ctx) {
       err.message += ', check bodyParser config';
+      if (ctx.status === 404) {
+        // set default status to 400, meaning client bad request
+        ctx.status = 400;
+        if (!err.status) {
+          err.status = 400;
+        }
+      }
       throw err;
     },
   };
