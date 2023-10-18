@@ -28,7 +28,7 @@ Follow the commands listed below.
 
 ```bash
 $ mkdir showcase && cd showcase
-$ npm init egg --type=simple
+$ npm init egg --type=simple # Optionally pnpm create egg --type=simple
 $ npm install
 $ npm run dev
 $ open http://localhost:7001
