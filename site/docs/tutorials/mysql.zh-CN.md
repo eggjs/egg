@@ -387,7 +387,7 @@ const first = 'James';
 const last = 'Bond';
 await this.app.mysql.insert(table, {
   id: 123,
-  fullname: new Literal(`CONCAT("${first}", "${last}"`),
+  fullname: new Literal(`CONCAT("${first}", "${last}")`),
 });
 
 => INSERT INTO `$table`(`id`, `fullname`) VALUES(123, CONCAT("James", "Bond"))
