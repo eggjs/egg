@@ -77,6 +77,8 @@ $ egg-scripts start --port=7001 --daemon --title=egg-server-showcase
 
 更多参数可查看 [egg-scripts] 和 [egg-cluster] 文档。
 
+> 注意：`--workers` 默认使用 `process.env.EGG_WORKERS`，或者 `os.cpus().length` 值进行设置，但在 docker 中 `os.cpus().length` 不一定等于分配的核数，获得的值可能较大，导致启动失败，需要手动设置下 `--workers`，参见 [#1431](https://github.com/eggjs/egg/issues/1431#issuecomment-573989059)。
+
 #### 启动配置项
 
 你也可以在 `config.{env}.js` 中配置指定启动配置。

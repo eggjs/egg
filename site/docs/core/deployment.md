@@ -76,6 +76,8 @@ Options:
 
 More about [egg-scripts] and [egg-cluster] documents.
 
+> Note: `--workers`, default to `process.env.EGG_WORKERS`, if unset, egg will use `os.cpus().length`. However, in the docker, the `os.cpus().length` may not be equal to the number of allocated cores, and the obtained value may be large, leading to startup failure. Then try to manually set `--workers`, see [#1431](https://github.com/eggjs/egg/issues/1431#issuecomment-573989059).
+
 #### Dispatch with Arguments
 
 Arguments of dispatch can be configured in `config.{env}.js`.
