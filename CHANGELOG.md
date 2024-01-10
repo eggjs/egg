@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.6](https://github.com/eggjs/egg/compare/v3.17.5...v3.17.6) (2024-01-10)
+
+
+### Bug Fixes
+
+* typo on index.d.ts ([#5284](https://github.com/eggjs/egg/issues/5284)) ([17ee60b](https://github.com/eggjs/egg/commit/17ee60b35a48c22eb90f392b688b4347c44b490d))
+
 ## [3.17.5](https://github.com/eggjs/egg/compare/v3.17.4...v3.17.5) (2023-10-12)
 
 
