@@ -35,3 +35,4 @@ site/dist
 .umi
 .umi-production
 .vercel
+package-lock.json
