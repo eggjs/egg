@@ -449,7 +449,7 @@ declare module 'egg' {
       /**
        * i18n resource file dir, not recommend to change default value
        */
-      dir: string;
+      dirs: string[];
       /**
        * custom the locale value field, default `query.locale`, you can modify this config, such as `query.lang`
        */
