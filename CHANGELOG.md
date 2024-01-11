@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.17.7](https://github.com/eggjs/egg/compare/v3.17.6...v3.17.7) (2024-01-11)
+
+
+### Bug Fixes
+
+* omit koa application ctxStorage and currentContext define ([#5285](https://github.com/eggjs/egg/issues/5285)) ([4c24dac](https://github.com/eggjs/egg/commit/4c24dac1e9ec86051d806dd6940c1d5095723b4d))
+
 ## [3.17.6](https://github.com/eggjs/egg/compare/v3.17.5...v3.17.6) (2024-01-10)
 
 
