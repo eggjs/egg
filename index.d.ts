@@ -573,7 +573,7 @@ declare module 'egg' {
     methods: string[];
   }
 
-  export interface EggApplication extends EggCoreBase<EggAppConfig> { // tslint:disable-line
+  export interface EggApplication extends Omit<EggCoreBase<EggAppConfig>, 'ctxStorage' | 'currentContext'> {
     /**
      * HttpClient instance
      */
