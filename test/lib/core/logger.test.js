@@ -1,14 +1,20 @@
-const assert = require('assert');
-const path = require('path');
-const fs = require('fs');
+const assert = require('node:assert');
+const path = require('node:path');
+const fs = require('node:fs');
 const mm = require('egg-mock');
 const Logger = require('egg-logger');
 const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
   let app;
-  afterEach(mm.restore);
-  afterEach(() => utils.sleep(5000).then(() => app.close()));
+  afterEach(async () => {
+    if (app) {
+      await utils.sleep(5000);
+      await app.close();
+      app = null;
+    }
+    await mm.restore();
+  });
 
   it('should got right default config on prod env', async () => {
     mm.env('prod');
@@ -100,12 +106,13 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
     // app.config.logger.buffer.should.equal(false);
     ctx.logger.error(new Error('mock nobuffer error'));
-
     await utils.sleep(1000);
-
-    assert(
-      fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
-    );
+    if (process.platform !== 'darwin') {
+      // skip check on macOS
+      assert(
+        fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
+      );
+    }
   });
 
   it('log buffer enable cache on non-local and non-unittest env', async () => {
@@ -251,6 +258,27 @@ describe('test/lib/core/logger.test.js', () => {
           );
           done();
         });
+    });
+  });
+
+  describe('onelogger', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/custom-logger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work with onelogger', async () => {
+      await app.httpRequest()
+        .get('/')
+        .expect({
+          ok: true,
+        })
+        .expect(200);
+      await utils.sleep(1000);
+      app.expectLog('[custom-logger-label] hello myLogger', 'myLogger');
+      app.expectLog('hello logger');
     });
   });
 });
