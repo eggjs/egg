@@ -10,8 +10,14 @@ const utils = require('../../utils');
 
 describe('test/lib/core/logger.test.js', () => {
   let app;
-  afterEach(mm.restore);
-  afterEach(() => sleep(5000).then(() => app.close()));
+  afterEach(async () => {
+    if (app) {
+      await utils.sleep(3000);
+      await app.close();
+      app = null;
+    }
+    await mm.restore();
+  });
 
   it('should got right default config on prod env', async () => {
     mm.env('prod');
@@ -235,6 +241,26 @@ describe('test/lib/core/logger.test.js', () => {
           );
           done();
         });
+    });
+  });
+
+  describe('onelogger', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/custom-logger');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work with onelogger', async () => {
+      await app.httpRequest()
+        .get('/')
+        .expect({
+          ok: true,
+        })
+        .expect(200);
+      app.expectLog('[custom-logger-label] hello myLogger', 'myLogger');
+      app.expectLog('hello logger');
     });
   });
 });
