@@ -9,7 +9,7 @@ describe('test/lib/core/logger.test.js', () => {
   let app;
   afterEach(async () => {
     if (app) {
-      await utils.sleep(3000);
+      await utils.sleep(5000);
       await app.close();
       app = null;
     }
@@ -106,9 +106,7 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
     // app.config.logger.buffer.should.equal(false);
     ctx.logger.error(new Error('mock nobuffer error'));
-
-    await utils.sleep(1000);
-
+    await utils.sleep(2000);
     assert(
       fs.readFileSync(logfile, 'utf8').includes('nodejs.Error: mock nobuffer error\n')
     );
