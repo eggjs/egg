@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "3.17.7",
+  "version": "3.18.0",
   "publishConfig": {
     "tag": "latest"
   },

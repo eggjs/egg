@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.18.0](https://github.com/eggjs/egg/compare/v3.17.7...v3.18.0) (2024-01-21)
+
+
+### Features
+
+* auto set custom logger with onelogger ([#5287](https://github.com/eggjs/egg/issues/5287)) ([1fd79a2](https://github.com/eggjs/egg/commit/1fd79a2715b4eded47ae77d955de5fa50efa573b))
+
 ## [3.17.7](https://github.com/eggjs/egg/compare/v3.17.6...v3.17.7) (2024-01-11)
 
 
