@@ -275,6 +275,7 @@ describe('test/lib/core/logger.test.js', () => {
           ok: true,
         })
         .expect(200);
+      await utils.sleep(1000);
       app.expectLog('[custom-logger-label] hello myLogger', 'myLogger');
       app.expectLog('hello logger');
     });
