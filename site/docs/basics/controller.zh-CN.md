@@ -317,7 +317,7 @@ module.exports = {
 
 请求 body 除了可以带参数之外，还可以发送文件，一般来说，浏览器上都是通过 `Multipart/form-data` 格式发送文件的，框架通过内置 [Multipart](https://github.com/eggjs/egg-multipart) 插件来支持获取用户上传的文件，我们为你提供了两种方式：
 
-- #### File 模式：
+#### File 模式：
   如果你完全不知道 Nodejs 中的 Stream 用法，那么 File 模式非常合适你：
 
 1）在 config 文件中启用 `file` 模式：
@@ -429,7 +429,7 @@ module.exports = class extends Controller {
 };
 ```
 
-- #### Stream 模式：
+#### Stream 模式：
   如果你对于 Node 中的 Stream 模式非常熟悉，那么你可以选择此模式。在 Controller 中，我们可以通过 `ctx.getFileStream()` 接口能获取到上传的文件流。
 
 1. 上传 / 接受单个文件：
