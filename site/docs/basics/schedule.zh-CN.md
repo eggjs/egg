@@ -6,16 +6,15 @@ order: 10
 虽然我们通过框架开发的 HTTP Server 是请求响应模型的，但是仍然还会有许多场景需要执行一些定时任务，例如：
 
 1. 定时上报应用状态。
-1. 定时从远程接口更新本地缓存。
-1. 定时进行文件切割、临时文件删除。
+2. 定时从远程接口更新本地缓存。
+3. 定时进行文件切割、临时文件删除。
 
 框架提供了一套机制来让定时任务的编写和维护更加优雅。
-
 ## 编写定时任务
 
 所有的定时任务都统一存放在 `app/schedule` 目录下，每一个文件都是一个独立的定时任务，可以配置定时任务的属性和要执行的方法。
 
-一个简单的例子，我们定义一个更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 `update_cache.js` 文件
+一个简单的例子，我们定义一个更新远程数据到内存缓存的定时任务，就可以在 `app/schedule` 目录下创建一个 `update_cache.js` 文件。
 
 ```js
 const Subscription = require('egg').Subscription;
@@ -41,7 +40,7 @@ class UpdateCache extends Subscription {
 module.exports = UpdateCache;
 ```
 
-还可以简写为
+还可以简写为：
 
 ```js
 module.exports = {
@@ -71,7 +70,7 @@ module.exports = {
 
 #### interval
 
-通过 `schedule.interval` 参数来配置定时任务的执行时机，定时任务将会每间隔指定的时间执行一次。interval 可以配置成
+通过 `schedule.interval` 参数来配置定时任务的执行时机，定时任务将会每间隔指定的时间执行一次。interval 可以配置成：
 
 - 数字类型，单位为毫秒数，例如 `5000`。
 - 字符类型，会通过 [ms](https://github.com/zeit/ms) 转换成毫秒数，例如 `5s`。
@@ -92,15 +91,15 @@ module.exports = {
 **注意：cron-parser 支持可选的秒（linux crontab 不支持）。**
 
 ```bash
-*    *    *    *    *    *
-┬    ┬    ┬    ┬    ┬    ┬
-│    │    │    │    │    |
-│    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
-│    │    │    │    └───── month (1 - 12)
-│    │    │    └────────── day of month (1 - 31)
-│    │    └─────────────── hour (0 - 23)
-│    └──────────────────── minute (0 - 59)
-└───────────────────────── second (0 - 59, optional)
+* * * * * *
+┬ ┬ ┬ ┬ ┬ ┬
+│ │ │ │ │ │
+│ │ │ │ │ └─ 周日（0 - 7）（0 或 7 是周日）
+│ │ │ │ └─── 月份（1 - 12）
+│ │ │ └───── 日期（1 - 31）
+│ │ └─────── 小时（0 - 23）
+│ └───────── 分钟（0 - 59）
+└─────────── 秒（0 - 59，可选）
 ```
 
 ```js
@@ -121,10 +120,10 @@ module.exports = {
 
 ### 其他参数
 
-除了刚才介绍到的几个参数之外，定时任务还支持这些参数：
+除了上述介绍的几个参数，定时任务还支持以下参数：
 
-- `cronOptions`: 配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档
-- `immediate`：配置了该参数为 true 时，这个定时任务会在应用启动并 ready 后立刻执行一次这个定时任务。
+- `cronOptions`：配置 cron 的时区等，参见 [cron-parser](https://github.com/harrisiirak/cron-parser#options) 文档。
+- `immediate`：配置该参数为 true 时，这个定时任务会在应用启动并 ready 后立即执行一次这个定时任务。
 - `disable`：配置该参数为 true 时，这个定时任务不会被启动。
 - `env`：数组，仅在指定的环境下才启动该定时任务。
 
@@ -141,10 +140,9 @@ config.customLogger = {
   },
 };
 ```
-
 ### 动态配置定时任务
 
-有时候我们需要配置定时任务的参数。定时任务还有支持另一种写法：
+有时候，我们需要配置定时任务的参数。定时任务还可以支持另一种写法：
 
 ```js
 module.exports = (app) => {
@@ -165,11 +163,11 @@ module.exports = (app) => {
 
 ## 手动执行定时任务
 
-我们可以通过 `app.runSchedule(schedulePath)` 来运行一个定时任务。`app.runSchedule` 接受一个定时任务文件路径（`app/schedule` 目录下的相对路径或者完整的绝对路径），执行对应的定时任务，返回一个 Promise。
+我们可以通过 `app.runSchedule(schedulePath)` 来运行一个定时任务。`app.runSchedule` 接受一个定时任务文件路径（位于 `app/schedule` 目录下的相对路径或者完整的绝对路径），执行对应的定时任务，并返回一个 Promise 对象。
 
-有一些场景我们可能需要手动的执行定时任务，例如
+在以下场景中，我们可能需要手动执行定时任务：
 
-- 通过手动执行定时任务可以更优雅的编写对定时任务的单元测试。
+- 手动执行定时任务可以更优雅地编写定时任务的单元测试。
 
 ```js
 const mm = require('egg-mock');
@@ -183,12 +181,12 @@ it('should schedule work fine', async () => {
 });
 ```
 
-- 应用启动时，手动执行定时任务进行系统初始化，等初始化完毕后再启动应用。参见[应用启动自定义](./app-start.md)章节，我们可以在 `app.js` 中编写初始化逻辑。
+- 应用启动时，可以手动执行定时任务进行系统初始化。在初始化完毕后，再启动应用。具体可以参见[应用启动自定义](./app-start.md)章节。我们可以在 `app.js` 中编写初始化逻辑。
 
 ```js
 module.exports = (app) => {
   app.beforeStart(async () => {
-    // 保证应用启动监听端口前数据已经准备好了
+    // 保证应用启动监听端口前，数据已经准备好
     // 后续数据的更新由定时任务自动触发
     await app.runSchedule('update_cache');
   });
@@ -197,18 +195,18 @@ module.exports = (app) => {
 
 ## 扩展定时任务类型
 
-默认框架提供的定时任务只支持每台机器的单个进程执行和全部进程执行，有些情况下，我们的服务并不是单机部署的，这时候可能有一个集群的某一个进程执行一个定时任务的需求。
+虽然默认的框架提供的定时任务只支持单个进程执行和全部进程执行，但是在某些情况下，比如服务非单机部署时，我们可能需要集群中的某一个进程执行定时任务。
 
-框架并没有直接提供此功能，但开发者可以在上层框架自行扩展新的定时任务类型。
+虽然框架没有直接提供此功能，开发者可在上层框架中自行扩展新的定时任务类型。
 
-在 `agent.js` 中继承 `agent.ScheduleStrategy`，然后通过 `agent.schedule.use()` 注册即可：
+在 `agent.js` 中，继承 `agent.ScheduleStrategy`，然后通过 `agent.schedule.use()` 方法注册即可：
 
 ```js
 module.exports = (agent) => {
   class ClusterStrategy extends agent.ScheduleStrategy {
     start() {
-      // 订阅其他的分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
-      // 用户在定时任务的 schedule 配置中来配置分布式调度的场景（scene）
+      // 订阅其他分布式调度服务发送的消息，收到消息后让一个进程执行定时任务
+      // 用户可以在定时任务的 schedule 属性中配置分布式调度的场景（scene）
       agent.mq.subscribe(this.schedule.scene, () => this.sendOne());
     }
   }
@@ -216,8 +214,8 @@ module.exports = (agent) => {
 };
 ```
 
-`ScheduleStrategy` 基类提供了：
+`ScheduleStrategy` 基类提供了以下方法：
 
-- `this.schedule` - 定时任务的属性，`disable` 是默认统一支持的，其他配置可以自行解析。
-- `this.sendOne(...args)` - 随机通知一个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)`。
+- `this.schedule` - 定时任务的属性，所有任务默认支持的 `disable` 属性，以及其他自定义配置的解析。
+- `this.sendOne(...args)` - 随机通知某个 worker 执行 task，`args` 会传递给 `subscribe(...args)` 或 `task(ctx, ...args)` 方法。
 - `this.sendAll(...args)` - 通知所有的 worker 执行 task。
