@@ -2,13 +2,13 @@
 title: 实现 RESTful API
 ---
 
-通过 Web 技术开发服务给客户端提供接口，可能是各个 Web 框架最广泛的应用之一。这篇文章我们拿 [CNode 社区](https://cnodejs.org/) 的接口来看一看通过 Egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API 给客户端调用。
+通过 Web 技术开发服务，为客户端提供接口，可能是各个 Web 框架最广泛的应用之一。这篇文章我们拿 [CNode 社区](https://cnodejs.org/) 的接口来看一看，通过 Egg 如何实现 [RESTful](https://zh.wikipedia.org/wiki/REST) API，供客户端调用。
 
-CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这篇文章中，我们将基于 CNode V1 的接口，封装一个更符合 RESTful 语义的 V2 版本 API。
+CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这篇文章中，我们将基于 CNode v1 的接口，封装一个更符合 RESTful 语义的 v2 版本 API。
 
 ## 设计响应格式
 
-在 RESTful 风格的设计中，我们会通过响应状态码来标识响应的状态，保持响应的 body 简洁，只返回接口数据。以 `topics` 资源为例：
+在 RESTful 风格的设计中，我们通过响应状态码标识响应的状态，保持响应的 body 简洁，只返回接口数据。以 `topics` 资源为例：
 
 ### 获取主题列表
 
@@ -17,8 +17,7 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 - 响应体：
 
 ```json
-[
-  {
+[{
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -29,8 +28,8 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
     "reply_count": 155,
     "visit_count": 28176,
     "create_at": "2016-09-27T07:53:31.872Z"
-  },
-  {
+},
+{
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -41,8 +40,7 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
     "top": true,
     "reply_count": 193,
     "visit_count": 47633
-  }
-]
+}]
 ```
 
 ### 获取单个主题
@@ -53,16 +51,16 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 
 ```json
 {
-  "id": "57ea257b3670ca3f44c5beb6",
-  "author_id": "541bf9b9ad60405c1f151a03",
-  "tab": "share",
-  "content": "content",
-  "title": "《一起学 Node.js》彻底重写完毕",
-  "last_reply_at": "2017-01-11T10:20:56.496Z",
-  "good": false,
-  "top": true,
-  "reply_count": 193,
-  "visit_count": 47633
+    "id": "57ea257b3670ca3f44c5beb6",
+    "author_id": "541bf9b9ad60405c1f151a03",
+    "tab": "share",
+    "content": "content",
+    "title": "《一起学 Node.js》彻底重写完毕",
+    "last_reply_at": "2017-01-11T10:20:56.496Z",
+    "good": false,
+    "top": true,
+    "reply_count": 193,
+    "visit_count": 47633
 }
 ```
 
@@ -72,9 +70,9 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 - 响应状态码：201
 - 响应体：
 
-```
+```json
 {
-  "topic_id": "57ea257b3670ca3f44c5beb6"
+    "topic_id": "57ea257b3670ca3f44c5beb6"
 }
 ```
 
@@ -86,26 +84,27 @@ CNode 社区现在 v1 版本的接口不是完全符合 RESTful 语义，在这�
 
 ### 错误处理
 
-在接口处理发生错误的时候，如果是客户端请求参数导致的错误，我们会返回 4xx 状态码，如果是服务端自身的处理逻辑错误，我们会返回 5xx 状态码。所有的异常对象都是对这个异常状态的描述，其中 error 字段是错误的描述，detail 字段（可选）是导致错误的详细原因。
+在接口处理发生错误时，如果是客户端请求参数导致的错误，我们返回 4xx 状态码；如果是服务端自身的处理逻辑错误，我们返回 5xx 状态码。所有异常对象都是对这个异常状态的描述，其中 `error` 字段是错误的描述，`detail` 字段（可选）是导致错误的详细原因。
 
 例如，当客户端传递的参数异常时，我们可能返回一个响应，状态码为 422，返回响应体为：
 
 ```json
 {
-  "error": "Validation Failed",
-  "detail": [
-    { "message": "required", "field": "title", "code": "missing_field" }
-  ]
+    "error": "Validation Failed",
+    "detail": [{
+        "message": "required",
+        "field": "title",
+        "code": "missing_field"
+    }]
 }
 ```
-
 ## 实现
 
 在约定好接口之后，我们可以开始动手实现了。
 
 ### 初始化项目
 
-还是通过[快速入门](../intro/quickstart.md)章节介绍的 `npm` 来初始化我们的应用
+还是通过[快速入门](../intro/quickstart.md)章节介绍的 `npm` 来初始化我们的应用：
 
 ```bash
 $ mkdir cnode-api && cd cnode-api
@@ -115,7 +114,7 @@ $ npm i
 
 ### 开启 validate 插件
 
-我们选择 [egg-validate](https://github.com/eggjs/egg-validate) 作为 validate 插件的示例。
+我们选择 [egg-validate](https://github.com/eggjs/egg-validate) 作为验证插件的示例。在 `config/plugin.js` 文件中开启它：
 
 ```js
 // config/plugin.js
@@ -127,20 +126,20 @@ exports.validate = {
 
 ### 注册路由
 
-首先，我们先按照前面的设计来注册[路由](../basics/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中：
+首先，我们先按照前面的设计来注册[路由](../basics/router.md)，框架提供了一个便捷的方式来创建 RESTful 风格的路由，并将一个资源的接口映射到对应的 controller 文件。在 `app/router.js` 中编写：
 
 ```js
 // app/router.js
-module.exports = (app) => {
+module.exports = app => {
   app.router.resources('topics', '/api/v2/topics', app.controller.topics);
 };
 ```
 
-通过 `app.resources` 方法，我们将 topics 这个资源的增删改查接口映射到了 `app/controller/topics.js` 文件。
+通过 `app.resources` 方法，我们将 `topics` 这个资源的增删改查接口映射到了 `app/controller/topics.js` 文件。
 
 ### controller 开发
 
-在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 topics 的接口：
+在 [controller](../basics/controller.md) 中，我们只需要实现 `app.resources` 约定的 [RESTful 风格的 URL 定义](../basics/router.md#restful-风格的-url-定义) 中我们需要提供的接口即可。例如我们来实现创建一个 `topics` 的接口：
 
 ```js
 // app/controller/topics.js
@@ -180,7 +179,7 @@ module.exports = TopicController;
 
 ### service 开发
 
-在 [service](../basics/service.md) 中，我们可以更加专注的编写实际生效的业务逻辑。
+在 [service](../basics/service.md) 中，我们可以更加专注地编写实际生效的业务逻辑。
 
 ```js
 // app/service/topics.js
@@ -209,10 +208,7 @@ class TopicService extends Service {
   // 封装统一的调用检查函数，可以在查询、创建和更新等 Service 中复用
   checkSuccess(result) {
     if (result.status !== 200) {
-      const errorMsg =
-        result.data && result.data.error_msg
-          ? result.data.error_msg
-          : 'unknown error';
+      const errorMsg = result.data && result.data.error_msg ? result.data.error_msg : 'unknown error';
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
@@ -225,19 +221,17 @@ class TopicService extends Service {
 module.exports = TopicService;
 ```
 
-在创建 topic 的 Service 开发完成之后，我们就从上往下的完成了一个接口的开发。
+在创建 `topic` 的 `Service` 开发完成之后，我们就从上往下的完成了一个接口### 统一错误处理
 
-### 统一错误处理
+正常的业务逻辑已经完成，但是异常我们还没有进行处理。在前面编写的代码中，Controller 和 Service 都可能抛出异常，这是我们推荐的编码方式，当发现客户端参数错误或调用后端服务异常时，通过抛出异常的方式来中断操作。
 
-正常的业务逻辑已经正常完成了，但是异常我们还没有进行处理。在前面编写的代码中，Controller 和 Service 都有可能抛出异常，这也是我们推荐的编码方式，当发现客户端参数传递错误或者调用后端服务异常时，通过抛出异常的方式来进行中断。
+- Controller 中通过 `this.ctx.validate()` 进行参数校验，校验失败时抛出异常。
+- Service 中调用了 `this.ctx.curl()` 方法访问 CNode 服务，可能会因网络问题等情况抛出服务端异常。
+- Service 中拿到 CNode 服务端返回的结果后，也可能会收到请求调用失败的返回结果，此时同样会抛出异常。
 
-- Controller 中 `this.ctx.validate()` 进行参数校验，失败抛出异常。
-- Service 中调用 `this.ctx.curl()` 方法访问 CNode 服务，可能由于网络问题等原因抛出服务端异常。
-- Service 中拿到 CNode 服务端返回的结果后，可能会收到请求调用失败的返回结果，此时也会抛出异常。
+尽管框架提供了默认的异常处理方式，但可能与我们之前接口的约定不一致，因此需要自己实现一个统一错误处理的中间件来处理异常。
 
-框架虽然提供了默认的异常处理，但是可能和我们在前面的接口约定不一致，因此我们需要自己实现一个统一错误处理的中间件来对错误进行处理。
-
-在 `app/middleware` 目录下新建一个 `error_handler.js` 的文件来新建一个 [middleware](../basics/middleware.md)
+在 `app/middleware` 目录下新建一个 `error_handler.js` 文件，创建一个中间件：
 
 ```js
 // app/middleware/error_handler.js
@@ -246,17 +240,17 @@ module.exports = () => {
     try {
       await next();
     } catch (err) {
-      // 所有的异常都在 app 上触发一个 error 事件，框架会记录一条错误日志
+      // 所有的异常都会触发 app 上的一个 error 事件，框架会记录一条错误日志
       ctx.app.emit('error', err, ctx);
 
       const status = err.status || 500;
-      // 生产环境时 500 错误的详细错误内容不返回给客户端，因为可能包含敏感信息
+      // 在生产环境中，500 错误的详细内容不返回给客户端，因为可能含有敏感信息
       const error =
         status === 500 && ctx.app.config.env === 'prod'
           ? 'Internal Server Error'
           : err.message;
 
-      // 从 error 对象上读出各个属性，设置到响应中
+      // 从 error 对象读出各属性，设置到响应中
       ctx.body = { error };
       if (status === 422) {
         ctx.body.detail = err.errors;
@@ -267,27 +261,26 @@ module.exports = () => {
 };
 ```
 
-通过这个中间件，我们可以捕获所有异常，并按照我们想要的格式封装了响应。将这个中间件通过配置文件(`config/config.default.js`)加载进来：
+通过这个中间件，可以捕获所有异常，并以我们想要的格式组织响应内容。接下来需在配置文件 (`config/config.default.js`) 中加载这个中间件：
 
 ```js
 // config/config.default.js
 module.exports = {
   // 加载 errorHandler 中间件
   middleware: ['errorHandler'],
-  // 只对 /api 前缀的 url 路径生效
+  // 只对以 /api 为前缀的 URL 路径生效
   errorHandler: {
     match: '/api',
   },
 };
 ```
-
 ## 测试
 
 代码完成只是第一步，我们还需要给代码加上[单元测试](../core/unittest.md)。
 
 ### Controller 测试
 
-我们先来编写 Controller 代码的单元测试。在写 Controller 单测的时候，我们可以适时的模拟 Service 层的实现，因为对 Controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 Service 层按照约定的接口 mock 掉，Service 自身的逻辑可以让 Service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。
+我们先来编写 Controller 代码的单元测试。在写 Controller 单测的时候，我们可以适时地模拟 Service 层的实现，因为对 Controller 的单元测试而言，最重要的部分是测试自身的逻辑，而 Service 层按照约定的接口模拟（mock）掉，Service 自身的逻辑可以让 Service 的单元测试来覆盖，这样我们开发的时候也可以分层进行开发测试。
 
 ```js
 const { app, mock, assert } = require('egg-mock/bootstrap');
@@ -367,7 +360,7 @@ describe('test/app/service/topics.test.js', () => {
 
     it('should create success', async () => {
       // 不影响 CNode 的正常运行，我们可以将对 CNode 的调用按照接口约定模拟掉
-      // app.mockHttpclient 方法可以便捷的对应用发起的 http 请求进行模拟
+      // app.mockHttpclient 方法可以便捷地对应用发起的 http 请求进行模拟
       app.mockHttpclient(`${ctx.service.topics.root}/topics`, 'POST', {
         data: {
           success: true,
@@ -386,7 +379,7 @@ describe('test/app/service/topics.test.js', () => {
 });
 ```
 
-上面对 Service 层的测试中，我们通过 egg-mock 提供的 `app.createContext()` 方法创建了一个 Context 对象，并直接调用 Context 上的 Service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 HTTP 调用的响应，让我们剥离环境的影响而专注于 Service 自身逻辑的测试上。
+上面对 Service 层的测试中，我们通过 egg-mock 提供的 `app.mockContext()` 方法创建了一个 Context 对象，并直接调用 Context 上的 Service 方法进行测试，测试时可以通过 `app.mockHttpclient()` 方法模拟 HTTP 调用的响应，让我们剥离环境的影响而专注于 Service 自身逻辑的测试上。
 
 ---
 
