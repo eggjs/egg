@@ -70,7 +70,7 @@ win /   +------------------+  \ lose
 - 订阅、发布类（subscribe / publish）：
   - `subscribe(info, listener)` 接口包含两个参数，第一个是订阅的信息，第二个是订阅回调函数。
   - `publish(info)` 接口包含一个参数，就是订阅的信息。
-- 调用类（invoke），支持 callback，promise 和 generator function 三种风格的接口，推荐使用 generator function。
+- 调用类（invoke），支持 callback，promise 和 async function 三种风格的接口，推荐使用 async function。
 
 客户端示例
 
