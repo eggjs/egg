@@ -3,7 +3,7 @@ title: 多进程研发模式增强
 order: 4
 ---
 
-在前面的[多进程模型章节](../core/cluster-and-ipc.md)中，我们详细讲述了框架的多进程模型。其中适合使用 Agent 进程的有一类常见的场景：一些中间件客户端需要和服务器建立长连接。理论上，一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）连接被创建。
+在前面的[多进程模型章节](../core/cluster-and-ipc.md)中，我们详细讲述了框架的多进程模型。其中，适合使用 Agent 进程的有一类常见的场景：一些中间件客户端需要和服务器建立长连接。理论上，一台服务器最好只建立一个长连接，但多进程模型会导致 n 倍（n = Worker 进程数）的连接被创建。
 
 ```bash
 +--------+   +--------+
@@ -18,26 +18,30 @@ order: 4
 +--------+   +--------+
 ```
 
-为了尽可能复用长连接（因为它们对服务端来说是非常宝贵的资源），我们会把它放到 Agent 进程里维护，然后通过 messenger 将数据传递给各个 Worker。这种做法是可行的，但往往需要写大量代码去封装接口和实现数据的传递，非常麻烦。
+为了尽可能复用长连接（因为它们对服务端来说是非常宝贵的资源），我们会把它放到 Agent 进程里维护，然后通过 messenger 将数据传递给各个 Worker。这种做法是可行的，但往往需要编写大量代码去封装接口和实现数据的传递，非常麻烦。
 
-另外，通过 messenger 传递数据效率比较低，因为它会通过 Master 来做中转；万一 IPC 通道出现问题，还可能将 Master 进程搞挂。
+另外，通过 messenger 传递数据的效率比较低，因为它需要通过 Master 来做中转；万一 IPC 通道出现问题，还可能导致 Master 进程崩溃。
 
-那么有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。通过建立 Agent 和 Worker 的 socket 直连，跳过 Master 的中转。Agent 作为对外的门面，维持多个 Worker 进程的共享连接。
+那么，有没有更好的方法呢？答案是肯定的，我们提供一种新的模式来降低这类客户端封装的复杂度。通过建立 Agent 和 Worker 的 socket 直连，避开 Master 的中转。Agent 作为对外的门面，维护多个 Worker 进程的共享连接。
+修改后的文档内容如下：
 
-## 核心思想
+核心思想
 
-- 受到 [Leader/Follower 模式](https://www.dre.vanderbilt.edu/~schmidt/PDF/lf.pdf)的启发。
-- 客户端会被区分为两种角色：
-  - Leader：负责和远程服务端维持连接，对于同一类的客户端，只有一个 Leader。
-  - Follower：会将具体的操作委托给 Leader，常见的是订阅模型（让 Leader 和远程服务端交互，并等待其返回）。
-- 如何确定谁是 Leader，谁是 Follower 呢？有两种模式：
-  - 自由竞争模式：客户端启动时通过本地端口的争夺来确定 Leader。例如，大家都尝试监听 7777 端口，最后只会有一个实例抢占到，那它就变成 Leader，其余的都是 Follower。
-  - 强制指定模式：框架指定某一个 Leader，其余的就是 Follower。
-- 框架里我们采用的是强制指定模式，Leader 只能在 Agent 里面创建，这也符合我们对 Agent 的定位。
-- 框架启动时，Master 会随机选择一个可用的端口作为 Cluster Client 监听的通信端口，并将它通过参数传递给 Agent 和 App Worker。
-- Leader 和 Follower 之间通过 socket 直连（通过通信端口），不再需要 Master 中转。
+受到 [Leader/Follower 模式](https://www.dre.vanderbilt.edu/~schmidt/PDF/lf.pdf) 的启发，客户端被区分为两种角色：
 
-新的模式下，客户端的通信方式如下：
+- Leader：负责与远程服务端维持连接。在同一类型的客户端中，仅有一个 Leader。
+- Follower：将具体操作委托给 Leader。常见的是订阅模型（让 Leader 与远程服务端交互，然后等待其返回）。
+
+如何确定谁是 Leader，谁是 Follower 呢？有两种模式：
+
+- 自由竞争模式：客户端启动时，通过本地端口的争夺来确定 Leader。例如，大家都尝试监听 7777 端口，只有一个实例能够抢占成功，它就成为 Leader，其余的则成为 Follower。
+- 强制指定模式：框架强制指定某个 Leader，剩余的客户端自动成为 Follower。
+
+在框架中，我们采用的是强制指定模式。Leader 只能在 Agent 中创建，符合 Agent 的定位。
+
+框架启动时，Master 会随机选择一个可用端口作为 Cluster Client 监听通信的端口，并通过参数传递给 Agent 和 App Worker。Leader 与 Follower 之间通过 socket 直接连接（通过通信端口），不再经由 Master 中转。
+
+新模式下，客户端的通信方式如下图所示：
 
 ```bash
              +-------+
@@ -113,8 +117,8 @@ class Client extends Base {
 
 ## 异常处理
 
-- 如果 Leader “死掉”，会触发新一轮的端口争夺。争夺到端口的实例被推选为新的 Leader。
-- 为保证 Leader 和 Follower 之间的通道健康，需引入定时心跳检查机制。若 Follower 在固定时间内未发送心跳包，Leader 将主动断开 Follower，触发其重新初始化。
+- 如果 Leader "死掉"，将触发新一轮的端口争夺。争夺到端口的实例将被推选为新的 Leader。
+- 为确保 Leader 和 Follower 之间的通道健康，需引入定时心跳检查机制。若 Follower 在规定时间内未发送心跳包，Leader 将主动断开与 Follower 的连接，触发其重新初始化。
 ## 协议和调用时序
 
 Leader 和 Follower 通过下面的协议进行数据交换：
@@ -355,7 +359,7 @@ module.exports = app => {
 - 异步数据获取是通过调用基于 `ClusterClient` 的 `RegistryClient` 的 API 实现的。
 - 同步调用等与服务端无关的接口在 `APIClient` 上实现。由于 `ClusterClient` 的 API 已经抹平了多进程差异，因此在开发 `APIClient` 调用 `RegistryClient` 时也无需关心多进程模型。
 
-例如，在模块的 `APIClient` 中增加一个带缓存的 get 同步方法：
+例如，我们可以在模块的 `APIClient` 中增加一个带缓存的 get 同步方法：
 
 ```js
 // some-client/index.js
@@ -436,7 +440,7 @@ class APIClient extends APIClientBase {
 - APIClient - 内部通过调用 `ClusterClient` 来做数据同步，无需关心多进程模型，用户最终使用的就是这个模块。API 通过它暴露，支持同步和异步。
 
 有兴趣的同学可以看一下[增强多进程研发模式](https://github.com/eggjs/egg/issues/322)讨论过程。
-## 在框架里面 cluster-client 相关的配置项
+## 在框架里面 `cluster-client` 相关的配置项
 
 ```js
 /**
@@ -450,10 +454,10 @@ config.clusterClient = {
 };
 ```
 
-| 配置项          | 类型     | 默认值           | 描述                                                                                                                             |
-| --------------- | -------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| responseTimeout | number   | 60000（一分钟）   | 全局的进程间通讯的超时时长，不宜设置得太短，因为代理的接口本身也有超时设置                                                     |
-| transcode       | function | N/A              | 进程间通讯的序列化方式，默认采用 [serialize-json](https://www.npmjs.com/package/serialize-json)（建议不要自行设置）            |
+| 配置项          | 类型      | 默认值          | 描述                                                                                   |
+| --------------- | --------- | --------------- | -------------------------------------------------------------------------------------- |
+| responseTimeout | Number    | 60000（一分钟） | 全局的进程间通讯的超时时长，不宜设置得太短，因为代理的接口本身也有超时设置           |
+| transcode       | Function  | N/A             | 进程间通讯的序列化方式，默认采用 [serialize-json](https://www.npmjs.com/package/serialize-json)（建议不要自行设置） |
 
 上述是全局的配置方式。如果你想对一个客户端单独设置：
 
@@ -462,10 +466,10 @@ config.clusterClient = {
 ```js
 app.registryClient = app
   .cluster(RegistryClient, {
-    responseTimeout: 120 * 1000, // 这里传入的是与 cluster-client 相关的参数
+    responseTimeout: 120000, // 这里传入的是与 `cluster-client` 相关的参数
   })
   .create({
-    // 这里传入的是 RegistryClient 所需的参数
+    // 这里传入的是 `RegistryClient` 所需的参数
   });
 ```
 
