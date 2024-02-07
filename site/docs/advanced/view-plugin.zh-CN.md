@@ -90,7 +90,12 @@ module.exports = EjsView;
   - `locals`：渲染所需数据，来源包括 `app.locals`、`ctx.locals` 以及调用 `render` 方法传入的数据。框架还内置了 `ctx`、`request` 和 `ctx.helper` 这几个对象。
   - `viewOptions`：用户传入的配置，可以覆盖模板引擎的默认配置。这个可根据模板引擎的特征考虑是否支持。例如，默认开启了缓存，而某个页面不需要缓存。
 
-`renderString` 方法的参数同 `render`。
+- `renderString` 方法的三个参数
+
+  - `tpl`: 模板字符串，没有文件路径。
+  - `locals`: 同 `render`。
+  - `viewOptions`: 同 `render`。
+
 ## 插件配置
 
 根据上述的命名约定，配置名通常为模板引擎的名称，例如 ejs。
