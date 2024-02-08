@@ -60,10 +60,13 @@ The following is a simplified code that can be directly [view source](https://gi
 const ejs = require('ejs');
 
 Mmdule.exports = class EjsView {
-  render(filename, locals) {
+  render(filename, locals, viewOptions) {
+
+    const config = Object.assign({}, this.config, viewOptions, { filename });
+
     return new Promise((resolve, reject) => {
       // Asynchronous API call
-      ejs.renderFile(filename, locals, (err, result) => {
+      ejs.renderFile(filename, locals, config, (err, result) => {
         if (err) {
           reject(err);
         } else {
@@ -73,10 +76,11 @@ Mmdule.exports = class EjsView {
     });
   }
 
-  renderString(tpl, locals) {
+  renderString(tpl, locals, viewOptions) {
+    const config = Object.assign({}, this.config, viewOptions, { cache: null });
     try {
       // Synchronous API call
-      return Promise.resolve(ejs.render(tpl, locals));
+      return Promise.resolve(ejs.render(tpl, locals, config));
     } catch (err) {
       return Promise.reject(err);
     }
@@ -88,15 +92,15 @@ Mmdule.exports = class EjsView {
 
 The three parameters of the `render` method are:
 
-- filename: is the path to the complete file. The framework determines if the file exists when looking for the file. It does not need to be processed here.
-- locals: The data needs rendering. It comes from `app.locals`, `ctx.locals` and calls `render` methods. The framework also has built in `ctx`, `request`, `ctx.helper` objects.
-- viewOptions: The incoming configuration of the user, which can override the default configuration of the template engine. This can be considered based on the characteristics of the template engine. For example, the cache is enabled by default but a page does not need to be cached.
+- `filename`: is the path to the complete file. The framework determines if the file exists when looking for the file. It does not need to be processed here.
+- `locals`: The data needs rendering. It comes from `app.locals`, `ctx.locals` and calls `render` methods. The framework also has built in `ctx`, `request`, `ctx.helper` objects.
+- `viewOptions`: The incoming configuration of the user, which can override the default configuration of the template engine. This can be considered based on the characteristics of the template engine. For example, the cache is enabled by default but a page does not need to be cached.
 
 The three parameters of the `renderString` method:
 
-- tpl: template string, not file path.
-- locals: same with `render`.
-- viewOptions: same with `render`.
+- `tpl`: template string, not file path.
+- `locals`: same with `render`.
+- `viewOptions`: same with `render`.
 
 ## Plugin Configuration
 
