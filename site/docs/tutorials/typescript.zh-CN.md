@@ -2,29 +2,29 @@
 title: TypeScript
 ---
 
-> [TypeScript](https://www.typescriptlang.org/) 是 JavaScript 类型的超集，它可以编译成纯 JavaScript。
+> [TypeScript](https://www.typescriptlang.org/) 是 JavaScript 的一个类型超集，它可以被编译成纯 JavaScript。
 
-TypeScript 的静态类型检查，智能提示，IDE 友好性等特性，对于大规模企业级应用，是非常的有价值的。详见：[TypeScript 体系调研报告](https://juejin.im/post/59c46bc86fb9a00a4636f939) 。
+TypeScript 提供的静态类型检查、智能提示和 IDE 友好性等特性，对于大规模企业级应用来说，具有极高的价值。有关详细信息，请参见：[TypeScript 体系调研报告](https://juejin.im/post/59c46bc86fb9a00a4636f939)。
 
-然而，此前使用 TypeScript 开发 Egg ，会遇到一些影响 **开发者体验** 问题：
+然而，在之前使用 TypeScript 开发 Egg 应用时，会遇到一些影响**开发者体验**的问题：
 
-- Egg 最精髓的 Loader 自动加载机制，导致 TS 无法静态分析出部分依赖。
-- Config 自动合并机制下，如何在 `config.{env}.js` 里面修改插件提供的配置时，能校验并智能提示？
-- 开发期需要独立开一个 `tsc -w` 独立进程来构建代码，带来临时文件位置纠结以及 `npm scripts` 复杂化。
-- 单元测试，覆盖率测试，线上错误堆栈如何指向 TS 源文件，而不是编译后的 js 文件。
+- Egg 特有的 Loader 动态加载机制，使得 TypeScript 无法进行某些依赖的静态分析。
+- 在自动合并配置的机制中，如何在 `config.{env}.js` 中修改插件提供的配置，同时能够进行校验并智能提示？
+- 开发期间需要启动一个单独的 `tsc -w` 进程来构建代码，这将导致临时文件位置的不确定性以及 `npm scripts` 的复杂性。
+- 单元测试、覆盖率测试以及线上错误的堆栈如何指向 TypeScript 源文件，而非编译后的 JavaScript 文件。
 
-本文主要阐述：
+本文主要介绍：
 
-- **应用层 TS 开发规范**
-- **我们在工具链方面的支持，是如何来解决上述问题，让开发者几乎无感知并保持一致性。**
+- **应用层 TypeScript 开发规范**
+- **我们在工具链方面的支持，以解决上述问题，让开发者基本无感知的同时，也保持了一致性的体验。**
 
-具体的折腾过程参见：[[RFC] TypeScript tool support](https://github.com/eggjs/egg/issues/2272)
+关于具体开发过程的详细信息，请参见：[[RFC] TypeScript tool support](https://github.com/eggjs/egg/issues/2272)。
 
 ---
 
 ## 快速入门
 
-通过骨架快速初始化：
+通过骨架快速初始化一个项目：
 
 ```bash
 $ mkdir showcase && cd showcase
@@ -33,7 +33,7 @@ $ npm i
 $ npm run dev
 ```
 
-上述骨架会生成一个极简版的示例，更完整的示例参见：[eggjs/examples/hackernews-async-ts](https://github.com/eggjs/examples/tree/master/hackernews-async-ts)
+上面的骨架会生成一个极简版的示例，更完整的示例请参见：[eggjs/examples/hackernews-async-ts](https://github.com/eggjs/examples/tree/master/hackernews-async-ts)
 
 ![tegg.gif](https://user-images.githubusercontent.com/227713/38358019-bf7890fa-38f6-11e8-8955-ea072ac6dc8c.gif)
 
@@ -41,17 +41,17 @@ $ npm run dev
 
 ## 目录规范
 
-**一些约束：**
+**约束条件：**
 
-- Egg 目前没有计划使用 TS 重写。
-- Egg 以及它对应的插件，会提供对应的 `index.d.ts` 文件方便开发者使用。
-- TypeScript 只是其中一种社区实践，我们通过工具链给予一定程度的支持。
-- TypeScript 最低要求：版本 2.8。
+- Egg 目前没有打算采用 TypeScript 进行重写。
+- Egg 及相关插件会提供 `index.d.ts` 文件以方便开发者使用。
+- TypeScript 是社区的一种实践方式，我们通过工具链提供一定程度的支持。
+- TypeScript 要求版本至少为 2.8。
 
-整体目录结构上跟 Egg 普通项目没啥区别:
+整体的目录结构与一般的 Egg 项目没有太大差异：
 
-- `typescript` 代码风格，后缀名为 `ts`
-- `typings` 目录用于放置 `d.ts` 文件（大部分会自动生成）
+- 采用 `typescript` 代码风格，文件后缀名为 `.ts`。
+- `typings` 目录用于存放 `d.ts` 文件（大部分文件可以自动生成）。
 
 ```bash
 showcase
@@ -121,18 +121,17 @@ export interface NewsItem {
   title: string;
 }
 ```
-
 ### 中间件（Middleware）
 
 ```typescript
 import { Context } from 'egg';
 
-// 这里是你自定义的中间件
+// 这是你自定义的中间件
 export default function fooMiddleware(): any {
   return async (ctx: Context, next: () => Promise<any>) => {
     // 你可以获取 config 的配置：
     // const config = ctx.app.config;
-    // config.xxx....
+    // config.xxx...
     await next();
   };
 }
@@ -140,7 +139,7 @@ export default function fooMiddleware(): any {
 
 当某个 Middleware 文件的名称与 config 中某个属性名一致时，Middleware 会自动把这个属性下的所有配置读取过来。
 
-我们假定你有一个 Middleware，名称是 uuid，其 config.default.js 中配置如下：
+假设你有一个 Middleware，名称是 `uuid`，在 `config.default.js` 中的配置如下：
 
 ```javascript
 'use strict';
@@ -176,10 +175,9 @@ export default function(appInfo: EggAppConfig) {
     ...bizConfig,
   };
 }
-
 ```
 
-在对应的 uuid 中间件中：
+在对应的 `uuid` 中间件中：
 
 ```typescript
 // app/middleware/uuid.ts
@@ -191,14 +189,14 @@ export default function uuidMiddleWare(
   app: Application,
 ): any {
   return async (ctx: Context, next: () => Promise<any>) => {
-    // name 就是 config.default.js 中 uuid 下的属性
+    // name 就是 `config.default.js` 中 `uuid` 下的属性
     console.info(options.name);
     await next();
   };
 }
 ```
 
-**注意：Middleware 目前返回值必须都是 `any`，否则使用 route.get/all 等方法的时候因为 Koa 的 `IRouteContext` 和 Egg 自身的 `Context` 不兼容导致编译报错。**
+**注意：目前中间件的返回值必须是 `any` 类型。这是因为，如果使用 Koa 的 `IRouteContext` 类和 Egg 的 `Context` 类时，它们不兼容，将导致编译报错。**
 
 ### 扩展（Extend）
 
@@ -219,13 +217,12 @@ export default (app) => {
   });
 };
 ```
-
 ### 配置（Config）
 
-`Config` 这块稍微有点复杂，因为要支持：
+`Config` 这部分稍微有点复杂，因为要支持：
 
 - 在 Controller，Service 那边使用配置，需支持多级提示，并自动关联。
-- Config 内部， `config.view = {}` 的写法，也应该支持提示。
+- Config 内部，`config.view = {}` 的写法，也应该支持提示。
 - 在 `config.{env}.ts` 里可以用到 `config.default.ts` 自定义配置的提示。
 
 ```typescript
@@ -241,7 +238,7 @@ export default (appInfo: EggAppInfo) => {
     defaultViewEngine: 'nunjucks',
     mapping: {
       '.tpl': 'nunjucks',
-    },
+    }
   };
 
   // 应用本身的配置
@@ -250,19 +247,19 @@ export default (appInfo: EggAppInfo) => {
     pageSize: 30,
     serverUrl: 'https://hacker-news.firebaseio.com/v0',
   };
-
+  
   // 目的是将业务配置属性合并到 EggAppConfig 中返回
   return {
-    // 如果直接返回 config ，将该类型合并到 EggAppConfig 的时候可能会出现 circulate type 错误。
+    // 如果直接返回 config ，则将该类型合并到 EggAppConfig 的时候可能会出现 circulate type 错误。
     ...(config as {}),
-    ...bizConfig,
+    ...bizConfig
   };
 };
 ```
 
-**注意，上面这种写法，将 config.default.ts 中返回的配置类型合并到 egg 的 EggAppConfig 类型中需要 egg-ts-helper 的配合。**
+**注意，上述写法将 `config.default.ts` 中返回的配置类型合并到 egg 的 `EggAppConfig` 类型中时需要 egg-ts-helper 的配合。**
 
-当 EggAppConfig 合并 config.default.ts 的类型后，在其他 config.{env}.ts 中这么写就也可以获得在 config.default.ts 定义的自定义配置的智能提示：
+当 `EggAppConfig` 合并 `config.default.ts` 的类型后，在其他 `config.{env}.ts` 中这么写就也可以获得在 `config.default.ts` 定义的自定义配置的智能提示：
 
 ```typescript
 // app/config/config.local.ts
@@ -281,7 +278,7 @@ export default () => {
 备注：
 
 - TS 的 `Conditional Types` 是我们能完美解决 Config 提示的关键。
-- 有兴趣的可以看下 [egg/index.d.ts](https://github.com/eggjs/egg/blob/master/index.d.ts) 里面的 `PowerPartial` 实现。
+- 有兴趣的可以浏览 `egg/index.d.ts` 里面 `PowerPartial` 的实现。
 
 ```typescript
 // {egg}/index.d.ts
@@ -321,44 +318,42 @@ export default class FooBoot implements IBoot {
   }
 
   configWillLoad() {
-    // Ready to call configDidLoad,
-    // Config, plugin files are referred,
-    // this is the last chance to modify the config.
+    // 预备调用 configDidLoad，
+    // Config 和 plugin 文件已被引用，
+    // 这是修改配置的最后机会。
   }
 
   configDidLoad() {
-    // Config, plugin files have loaded.
+    // Config 和 plugin 文件已加载。
   }
 
   async didLoad() {
-    // All files have loaded, start plugin here.
+    // 所有文件已加载，此时可以启动插件。
   }
 
   async willReady() {
-    // All plugins have started, can do some thing before app ready.
+    // 所有插件已启动，这里可以执行一些在应用准备好之前的操作。
   }
 
   async didReady() {
-    // Worker is ready, can do some things
-    // don't need to block the app boot.
+    // Worker 已准备好，可以执行一些不会阻塞应用启动的操作。
   }
 
   async serverDidReady() {
-    // Server is listening.
+    // 服务器已监听。
   }
 
   async beforeClose() {
-    // Do some thing before app close.
+    // 应用关闭前执行的操作。
   }
 }
 ```
-
 ### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
 
 - 开发者需要手写的建议放在 `typings/index.d.ts` 中。
-- 工具会自动生成 `typings/{app,config}/**.d.ts` ，请勿自行修改，避免被覆盖。（见下文）
+- 工具会自动生成 `typings/{app,config}/**.d.ts`，请勿自行修改，避免被覆盖（见下文）。
 
 ---
 
@@ -366,11 +361,11 @@ export default class FooBoot implements IBoot {
 
 ### ts-node
 
-`egg-bin` 已经内建了 [ts-node](https://github.com/TypeStrong/ts-node) ，`egg loader` 在开发期会自动加载 `*.ts` 并内存编译。
+`egg-bin` 已经内建了 [ts-node](https://github.com/TypeStrong/ts-node)，`egg loader` 在开发期会自动加载 `*.ts` 并内存编译。
 
-目前已支持 `dev` / `debug` / `test` / `cov` 。
+目前已支持 `dev` / `debug` / `test` / `cov`。
 
-开发者仅需简单配置下 `package.json` ：
+开发者仅需简单配置下 `package.json`：
 
 ```json
 {
@@ -383,11 +378,9 @@ export default class FooBoot implements IBoot {
 
 ### egg-ts-helper
 
-由于 Egg 的自动加载机制，导致 TS 无法静态分析依赖，关联提示。
+由于 Egg 的自动加载机制，导致 TS 无法静态分析依赖，关联提示。幸运的是，TS 黑魔法比较多，我们可以通过 TS 的 [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) 编写 `d.ts` 来辅助。
 
-幸亏 TS 黑魔法比较多，我们可以通过 TS 的 [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) 编写 `d.ts` 来辅助。
-
-譬如 `app/service/news.ts` 会自动挂载为 `ctx.service.news` ，通过如下写法即识别到：
+例如，`app/service/news.ts` 会自动挂载为 `ctx.service.news`，通过如下写法即可识别到：
 
 ```typescript
 // typings/app/service/index.d.ts
@@ -400,9 +393,9 @@ declare module 'egg' {
 }
 ```
 
-手动写这些文件，未免有点繁琐，因此我们提供了 [egg-ts-helper](https://github.com/whxaxes/egg-ts-helper) 工具来自动分析源码生成对应的 `d.ts` 文件。
+手动编写这些文件，未免有点繁琐，因此我们提供了 [egg-ts-helper](https://github.com/whxaxes/egg-ts-helper) 工具来自动分析源代码生成对应的 `d.ts` 文件。
 
-只需配置下 `package.json` :
+只需配置下 `package.json`：
 
 ```json
 {
@@ -417,11 +410,11 @@ declare module 'egg' {
 }
 ```
 
-开发期将自动生成对应的 `d.ts` 到 `typings/{app,config}/` 下，**请勿自行修改，避免被覆盖**。
+开发期将自动生成对应的 `d.ts` 到 `typings/{app,config}/` 下，请勿自行修改，避免被覆盖。
 
 目前该工具已经能支持 ts 以及 js 的 egg 项目，均能获得相应的智能提示。
 
-### 单元测试和覆盖率（Unit Test and Cov）
+### 单元测试和覆盖率（Unit Test and Coverage）
 
 单元测试当然少不了：
 
@@ -445,7 +438,7 @@ describe('test/app/service/news.test.js', () => {
 });
 ```
 
-运行命令也跟之前一样，并内置了 `错误堆栈和覆盖率` 的支持：
+运行命令也跟之前一样，并内置了错误堆栈和覆盖率的支持：
 
 ```json
 {
@@ -465,7 +458,7 @@ describe('test/app/service/news.test.js', () => {
 
 ### 调试（Debug）
 
-断点调试跟之前也没啥区别，会自动通过 `sourcemap` 断点到正确的位置。
+断点调试与之前没有什么区别，会自动通过 `sourcemap` 命中正确的位置。
 
 ```json
 {
@@ -481,18 +474,17 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-- [使用 VSCode 进行调试](https://eggjs.org/zh-cn/core/development.html#%E4%BD%BF%E7%94%A8-vscode-%E8%BF%9B%E8%A1%8C%E8%B0%83%E8%AF%95)
+- [使用 VSCode 进行调试](https://eggjs.org/zh-cn/core/development.html#使用-vscode-进行调试)
 - [VSCode 调试 Egg 完美版 - 进化史](https://github.com/atian25/blog/issues/25)
 
 ---
-
 ## 部署（Deploy）
 
 ### 构建（Build）
 
-- 正式环境下，我们更倾向于把 ts 构建为 js ，建议在 `ci` 上构建并打包。
+- 正式环境下，我们更倾向于把 `ts` 构建为 `js`，建议在 `ci` 上构建并打包。
 
-配置 `package.json` :
+配置 `package.json` ：
 
 ```json
 {
@@ -513,7 +505,7 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-对应的 `tsconfig.json` :
+对应的 `tsconfig.json` ：
 
 ```json
 {
@@ -522,20 +514,19 @@ describe('test/app/service/news.test.js', () => {
 }
 ```
 
-**注意：当有同名的 ts 和 js 文件时，egg 会优先加载 js 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可 `npm run clean` 手动清除。**
+**注意：** 当有同名的 `ts` 和 `js` 文件时，egg 会优先加载 `js` 文件。因此在开发期，`egg-ts-helper` 会自动调用清除同名的 `js` 文件，也可通过 `npm run clean` 手动清除。
 
 ### 错误堆栈（Error Stack）
 
-线上服务的代码是经过编译后的 js，而我们期望看到的错误堆栈是指向 TS 源码。
+线上服务的代码是经过编译后的 `js`，而我们期望看到的错误堆栈是指向 `TS` 源码。
 因此：
 
-- 在构建的时候，需配置 `inlineSourceMap: true` 在 js 底部插入 sourcemap 信息。
+- 在构建的时候，需配置 `inlineSourceMap: true` 在 `js` 底部插入 `sourcemap` 信息。
 - 在 `egg-scripts` 内建了处理，会自动纠正为正确的错误堆栈，应用开发者无需担心。
 
-具体内幕参见：
-
-- [https://zhuanlan.zhihu.com/p/26267678](https://zhuanlan.zhihu.com/p/26267678)
-- [https://github.com/eggjs/egg-scripts/pull/19](https://github.com/eggjs/egg-scripts/pull/19)
+具体内幕参见以下链接：
+- [知乎专栏](https://zhuanlan.zhihu.com/p/26267678)
+- [GitHub PR](https://github.com/eggjs/egg-scripts/pull/19)
 
 ---
 
@@ -543,14 +534,14 @@ describe('test/app/service/news.test.js', () => {
 
 **指导原则：**
 
-- 不建议使用 TS 直接开发插件/框架，发布到 npm 的插件应该是 js 形式。
-- 当你开发了一个插件/框架后，需要提供对应的 `index.d.ts` 。
-- 通过 [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) 将插件/框架的功能注入到 Egg 中。
-- 都挂载到 `egg` 这个 module，不要用上层框架。
+- 不建议使用 `TS` 直接开发插件/框架，发布到 `npm` 的插件应该是 `js` 形式。
+- 当你开发了一个插件/框架后，需要提供对应的 `index.d.ts`。
+- 通过 [Declaration Merging](https://www.typescriptlang.org/docs/handbook/declaration-merging.html) 将插件/框架的功能注入到 `Egg` 中。
+- 都挂载到 `egg` 这个模块，不要用上层框架。
 
 ### 插件
 
-可以参考 `egg-ts-helper` 自动生成的格式
+可以参考 `egg-ts-helper` 自动生成的格式：
 
 ```typescript
 // {plugin_root}/index.d.ts
@@ -591,10 +582,10 @@ import * as Egg from 'egg';
 import 'my-plugin';
 
 declare module 'egg' {
-  // 跟插件一样拓展 egg ...
+  // 跟插件一样扩展 egg ...
 }
 
-// 将 Egg 整个 export 出去
+// 将 `Egg` 整个 export 出去
 export = Egg;
 ```
 
@@ -603,7 +594,7 @@ export = Egg;
 ```typescript
 // app/service/news.ts
 
-// 开发者引入你的框架，也可以使用到提示到所有 Egg 的提示
+// 开发者引入你的框架，也可以使用到提示到所有 `Egg` 的提示
 import { Service } from 'duck-egg';
 
 export default class NewsService extends Service {
@@ -612,30 +603,29 @@ export default class NewsService extends Service {
   }
 }
 ```
-
 ## 常见问题
 
-汇集一些有不少人提过的 issue 问题并统一解答。
+汇集了一些人们频繁提问的 `issue` 问题，并给出了统一的解答。
 
-### 运行 npm start 不会加载 ts
+### 运行 `npm start` 不会加载 `ts`
 
-npm start 运行的是 `egg-scripts start`，而我们只在 egg-bin 中集成了 ts-node，也就是只有在使用 egg-bin 的时候才允许直接运行 ts 。
+运行 `npm start` 实际上是执行了 `egg-scripts start` 命令，而 `ts-node` 只在 `egg-bin` 中被集成，只有使用 `egg-bin` 的时候，才允许直接运行 `ts` 文件。
 
-egg-scripts 是用于在生产环境下运行 egg 的 cli ，在生产环境下我们建议将 ts 编译成 js 之后再运行，毕竟在线上是需要考虑应用的健壮性和性能的，因此不建议在线上环境使用 ts-node 来运行应用。
+`egg-scripts` 是在生产环境下运行 `egg` 的 `CLI` 工具。在生产环境中我们建议先将 `ts` 编译成 `js`，然后再执行，因为在线上环境中，需要考虑应用的健壮性和性能，所以不建议使用 `ts-node`。
 
-而在开发期 ts-node 能降低 tsc 编译产生的文件带来的管理成本，并且 ts-node 带来的性能损耗在开发期几乎可以忽略，所以我们在 egg-bin 集成了 ts-node。
+而在开发环境中，`ts-node` 能减少 `tsc` 编译产生的文件管理成本，且在开发环境中带来的性能损耗几乎可以忽略，因此 `egg-bin` 中集成了 `ts-node`。
 
-**总结：如果项目需要在线上运行，请先使用 tsc 将 ts 编译成 js （ `npm run tsc` ）再运行 `npm start`。**
+**总结：** 如果项目需要在线上环境运行，请先使用 `tsc` 将 `ts` 编译成 `js`（`npm run tsc`），然后再运行 `npm start`。
 
-### 使用了 egg 插件后发现没有对应插件挂载的对象
+### 使用了 `egg` 插件后发现没有对应插件挂载的对象
 
-遇到该问题，一般是两种原因：
+出现这个问题通常有两个原因：
 
-**1. 该 egg 插件未定义 d.ts 。**
+**1. 该 `egg` 插件未定义 `d.ts`。**
 
-如果要在插件中将某个对象挂载到 egg 的类型中，需要按照上面写的 `插件 / 框架开发指南` 补充声明文件到对应插件中。
+如果在插件中想要将某个对象挂载到 `egg` 的类型中，需要按照分节“插件 / 框架开发指南”补充声明文件到相应插件中。
 
-如果需要上线想快速解决这个问题，可以直接在项目下新建个声明文件来解决。比如我使用了 `egg-dashboard` 这个插件，这个插件在 egg 的 app 中挂载了个 dashboard 对象，但是这个插件没有声明，直接使用 `app.dashboard` 又会有类型错误，我又急着解决该问题，就可以在项目下的 typings 目录下新建个 `index.d.ts` ，并且写入以下内容
+如果想要快速上线解决这个问题，可以直接在项目下新建一个声明文件。比如使用了 `egg-dashboard` 插件，该插件在 `egg` 的 `app` 对象中挂载了 `dashboard` 对象，但插件没有提供声明，直接使用 `app.dashboard` 会导致类型错误。此时可以在项目下的 `typings` 目录中新建 `index.d.ts` 文件，并写入以下内容：
 
 ```typescript
 // typings/index.d.ts
@@ -649,13 +639,13 @@ declare module 'egg' {
 }
 ```
 
-即可解决，当然，我们更期望你能给缺少声明的插件提 PR 补声明，方便你我他。
+这样即可暂时解决问题，但我们更希望您能为缺少声明的插件提供 PR，以补充声明帮助更多人。
 
-**2. egg 插件定义了 d.ts ，但是没有引入。**
+**2. `egg` 插件定义了 `d.ts` ，但未被引入。**
 
-如果 egg 插件中正确无误定义了 d.ts ，也需要在应用或者框架层显式 import 之后 ts 才能加载到对应类型。
+即使 `egg` 插件正确地定义了 `d.ts`，也需要在应用或框架层明确地引入它，`ts` 才能加载对应类型。
 
-如果使用了 egg-ts-helper ，egg-ts-helper 会自动根据应用中开启了什么插件从而生成显式 import 插件的声明。如果未使用，就需要开发者自行在 `d.ts` 中显式 import 对应插件。
+如果使用了 `egg-ts-helper`，它会自动根据应用中启用的插件生成显式 `import` 插件声明。如果未使用，就需要开发者在 `d.ts` 中自行显式 `import` 对应插件。
 
 ```typescript
 // typings/index.d.ts
@@ -663,79 +653,76 @@ declare module 'egg' {
 import 'egg-dashboard';
 ```
 
-**注意：必须在 d.ts 中 import，因为 egg 插件大部分没有入口文件，如果在 ts 中 import 的话运行会出问题。**
+**注意：** 必须在 `d.ts` 中 `import`。由于 `egg` 插件大部分没有入口文件，如果在 `ts` 文件中 `import`，运行时可能出现问题。
 
-### 在 tsconfig.json 中配置了 paths 无效
+### 在 `tsconfig.json` 中配置了 `paths` 无效
 
-这个严格来说不属于 egg 的问题，但是问的人不少，因此也在此解答一下。原因是 tsc 将 ts 编译成 js 的时候，并不会去转换 import 的模块路径，因此当你在 tsconfig.json 中配置了 paths 之后，如果你在 ts 中使用 paths 并 import 了对应模块，编译成 js 的时候就有大概率出现模块找不到的情况了。
+此问题严格来说并非 `egg` 特有，但常见，故在此解答。原因是当 `tsc` 将 `ts` 编译成 `js` 时，并不转换 `import` 的模块路径。因此，若您在 `tsconfig.json` 中配置了 `paths` 后，在 `ts` 中使用 `paths` 导入对应模块，编译成 `js` 后可能出现模块找不到的问题。
 
-解决办法是，要么不用 paths ，要么使用 paths 的时候只用来 import 一些声明而非具体值，再要么就可以使用 [tsconfig-paths](https://github.com/dividab/tsconfig-paths) 来 hook 掉 node 中的模块路径解析逻辑，从而支持 tsconfig.json 中的 paths。
+解决方法：不使用 `paths`；或使用 `paths` 时只导入声明，不导入具体值；或使用 [`tsconfig-paths`](https://github.com/dividab/tsconfig-paths) 动态处理。
 
-使用 tsconfig-paths 可以直接在 config/plugin.ts 中引入，因为 plugin.ts 不管在 App 中还是在 Agent 中都是第一个加载的，因此在这个代码中引入 tsconfig-paths 即可。
+使用 `tsconfig-paths` 时，可以直接在 `config/plugin.ts` 中引入，因为它总是最先加载的。在代码中引入该模块，见下例：
 
 ```typescript
 // config/plugin.ts
 
 import 'tsconfig-paths/register';
 
-...
+// 其他代码
 ```
 
-### 给 egg 插件提交声明的时候如何编写单测？
+### 如何为 `egg` 插件编写声明单测？
 
-由于有不少开发者在给 egg 插件提交声明的时候，不知道如何编写单测来测试声明的准确性，因此也在这里说明一下。
+许多开发者在给 `egg` 插件提交声明时，不了解如何编写单元测试来验证声明的准确性。以下是解决方法。
 
-当给一个 egg 插件编写好声明之后，就可以在 `test/fixures` 下创建个使用 ts 写的 egg 应用，参考 （ https://github.com/eggjs/egg-view/tree/master/test/fixtures/apps/ts ），记得在 tsconfig.json 中加入 paths 的配置从而方便在 fixture 中 import ，比如 egg-view 中的
+在编写完 `egg` 插件的声明后，可以在 `test/fixtures` 中创建一个使用 `ts` 编写的 `egg` 应用，类似于 [https://github.com/eggjs/egg-view/tree/master/test/fixtures/apps/ts](https://github.com/eggjs/egg-view/tree/master/test/fixtures/apps/ts) 的样本，并在 `tsconfig.json` 中加入 `paths` 配置，便于在单元测试中 `import` 模块。如 `egg-view` 中配置：
 
 ```json
-    "paths": {
-      "egg-view": ["../../../../"]
-    }
+"paths": {
+  "egg-view": ["../../../../"]
+}
 ```
 
-同时记住不要在 tsconfig.json 中配置 `"skipLibCheck": true` ，如果配置了该属性为 true ，tsc 编译的时候会忽略 d.ts 中的类型校验，这样单测就无意义了。
+同时请勿在 `tsconfig.json` 中设置 `"skipLibCheck": true`。如果设置为 `true`，`tsc` 编译时会忽略 `d.ts` 文件中的类型检查，使单元测试失去意义。
 
-然后再添加一个用例用来验证插件的声明使用是否正确即可，还是拿 egg-view 来做示例。
+接着添加用例验证插件声明的正确性，参考 `egg-view`：
 
 ```js
 describe('typescript', () => {
   it('should compile ts without error', () => {
-    return (
-      coffee
-        .fork(require.resolve('typescript/bin/tsc'), [
-          '-p',
-          path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
-          '--noEmit',
-        ])
-        // .debug()
-        .expect('code', 0)
-        .end()
-    );
+    return coffee
+      .fork(require.resolve('typescript/bin/tsc'), [
+        '-p',
+        path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
+        '--noEmit',
+      ])
+      // .debug()
+      .expect('code', 0)
+      .end();
   });
 });
 ```
 
-可参考单测的项目：
+以下几个项目可作为单元测试参考：
 
 - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
 - [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
 - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
-
 ### 编译速度慢？
 
-根据我们的实践，ts-node 是目前相对较优的解决方案，既不用另起终端执行 tsc ，也能获得还能接受的启动速度（ 仅限于 ts-node@7 ，新的版本由于把文件缓存去掉了，导致特别慢（ [#754](https://github.com/TypeStrong/ts-node/issues/754) ），因此未升级 ）。
+根据我们的实践，`ts-node` 是目前相对较优的解决方案，既不用另起终端执行 `tsc`，也能获得还能接受的启动速度（仅限于 `ts-node@7`，新的版本由于把文件缓存去掉了，导致特别慢（[#754](https://github.com/TypeStrong/ts-node/issues/754)），因此未升级）。
 
-但是如果项目特别庞大，ts-node 的性能也会吃紧，我们提供了以下优化方案供参考：
+但如果项目特别庞大，`ts-node` 的性能也会吃紧，我们提供了以下优化方案供参考：
 
 #### 关闭类型检查
 
-编译耗时大头是在类型检查，如果关闭也能带来一定的性能提升，可以在启动应用的时候带上 `TS_NODE_TRANSPILE_ONLY=true` 环境变量，比如
+编译耗时大头在类型检查。如果关闭，也能带来一定的性能提升。可以在启动应用时带上 `TS_NODE_TRANSPILE_ONLY=true` 环境变量，比如
 
 ```bash
 $ TS_NODE_TRANSPILE_ONLY=true egg-bin dev
 ```
 
-或者配置 tscompiler 为 ts-node 提供的仅编译的注册器。
+或者在 `package.json` 中配置 `tscompiler` 为 `ts-node` 提供的仅编译的注册器。
 
 ```json
 // package.json
@@ -751,13 +738,13 @@ $ TS_NODE_TRANSPILE_ONLY=true egg-bin dev
 
 #### 更换高性能 compiler
 
-除了 ts-node 之外，业界也有不少支持编译 ts 的项目，比如 esbuild ，可以先安装 [esbuild-register](https://github.com/egoist/esbuild-register)
+除了 `ts-node` 之外，业界也有不少支持编译 ts 的项目，比如 `esbuild`。可以先安装 [esbuild-register](https://github.com/egoist/esbuild-register)
 
 ```bash
 $ npm install esbuild-register --save-dev
 ```
 
-再在 package.json 中配置 `tscompiler`
+再在 `package.json` 中配置 `tscompiler`
 
 ```json
 // package.json
@@ -771,22 +758,22 @@ $ npm install esbuild-register --save-dev
 }
 ```
 
-即可使用 esbuild-register 来编译（ 注意，esbuild-register 不具备 typecheck 功能 ）。
+即可使用 `esbuild-register` 来编译（注意，`esbuild-register` 不具备 typecheck 功能）。
 
-> 如果想用 swc 也一样，安装一下 [@swc-node/register](https://github.com/Brooooooklyn/swc-node#swc-noderegister) ，然后一样配置到 tscompiler 即可
+> 如果想用 `swc` 也一样，安装 [@swc-node/register](https://github.com/Brooooooklyn/swc-node#swc-noderegister)，然后配置到 `tscompiler` 即可。
 
-#### 使用 tsc
+#### 使用 `tsc`
 
-如果还是觉得这种在运行时动态编译的速度实在无法忍受，也可以直接使用 tsc ，即不需要在 package.json 中配置 typescript 为 true ，在开发期间单独起个终端执行 tsc
+如果还是觉得这种在运行时动态编译的速度实在无法忍受，也可以直接使用 `tsc`。即不需要在 `package.json` 中配置 `typescript` 为 `true`，在开发期间单独起个终端执行 `tsc`。
 
 ```bash
 $ tsc -w
 ```
 
-然后再正常启动 egg 应用即可
+然后再正常启动 `egg` 应用即可。
 
 ```bash
 $ egg-bin dev
 ```
 
-建议在 .gitignore 中加上对 `**/*.js` 的配置，避免将生成的 js 代码也提交到了远端。
+建议在 `.gitignore` 中加上对 `**/*.js` 的配置，避免将生成的 js 代码也提交到了远端。

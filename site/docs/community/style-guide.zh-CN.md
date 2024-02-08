@@ -31,12 +31,12 @@ class UserService extends Service {
 module.exports = UserService;
 ```
 
-同时，`框架开发者`需要改变写法如下，否则`应用开发者`自定义 Service 等基类会有问题：
+同时，框架开发者需要改变写法如下，否则应用开发者自定义 Service 等基类会有问题：
 
 ```js
 const egg = require('egg');
 
-module.export = Object.assign(egg, {
+module.exports = Object.assign(egg, {
   Application: class MyApplication extends egg.Application {
     // ...
   },
@@ -47,8 +47,8 @@ module.export = Object.assign(egg, {
 ## 私有属性与慢初始化
 
 - 私有属性用 `Symbol` 来挂载。
-- Symbol 的描述遵循 jsdoc 的规则，描述映射后的类名+属性名。
-- 延迟初始化。
+- `Symbol` 的描述遵循 jsdoc 的规则, 描述映射后的类名 + 属性名。
+- 实现延迟初始化。
 
 ```js
 // app/extend/application.js

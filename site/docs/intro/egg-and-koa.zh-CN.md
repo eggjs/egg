@@ -5,16 +5,18 @@ order: 1
 
 ## 异步编程模型
 
-Node.js 是一个异步的世界，官方 API 支持的都是 callback 形式的异步编程模型，这会带来许多问题，例如
+Node.js 是一个异步的世界，官方 API 支持的都是 callback 形式的异步编程模型，这带来了许多问题，例如：
 
-- [callback hell](http://callbackhell.com/): 最臭名昭著的 callback 嵌套问题。
-- [release zalgo](https://oren.github.io/#/articles/zalgo/): 异步函数中可能同步调用 callback 返回数据，带来不一致性。
+- [callback hell](http://callbackhell.com/)：最臭名昭著的 callback 嵌套问题。
+- [release zalgo](https://oren.github.io/#/articles/zalgo/)：异步函数中可能同步调用 callback 返回数据，导致不一致性。
 
-因此社区提供了各种异步的解决方案，最终胜出的是 Promise，它也内置到了 ECMAScript 2015 中。而在 Promise 的基础上，结合 Generator 提供的切换上下文能力，出现了 [co] 等第三方类库来让我们用同步写法编写异步代码。同时，[async function] 这个官方解决方案也于 ECMAScript 2017 中发布，并在 Node.js 8 中实现。
+因此，社区提供了各种异步的解决方案。最终，Promise 胜出，并内置到了 ECMAScript 2015 中。基于 Promise 和 Generator 提供的切换上下文能力，出现了 [co] 等第三方类库，让我们以同步的写法来编写异步代码。同时，[async function] 这个官方解决方案也在 ECMAScript 2017 中发布，并在 Node.js 8 中得到实现。
 
 ### async function
 
-[async function] 是语言层面提供的语法糖，在 async function 中，我们可以通过 `await` 关键字来等待一个 Promise 被 resolve（或者 reject，此时会抛出异常）， Node.js 现在的 LTS 版本（8.x）已原生支持。
+[async function] 是语言层面提供的语法糖。在 async function 中，我们可通过 `await` 关键字等待一个 Promise 被 resolve（或 reject，在此情况下会抛出异常）。
+
+Node.js 现在的 LTS 版本（8.x）已原生支持 async function。
 
 ```js
 const fn = async function () {
@@ -23,15 +25,15 @@ const fn = async function () {
   return { user, posts };
 };
 fn()
-  .then((res) => console.log(res))
-  .catch((err) => console.error(err.stack));
+  .then(res => console.log(res))
+  .catch(err => console.error(err.stack));
 ```
 
 ## Koa
 
-> [Koa](https://koajs.com/) 是一个新的 web 框架，由 Express 幕后的原班人马打造， 致力于成为 web 应用和 API 开发领域中的一个更小、更富有表现力、更健壮的基石。
+> [Koa](https://koajs.com/) 是一个新的 web 框架，由 Express 幕后的原班人马打造，致力于成为 web 应用和 API 开发领域中的更小、更富有表现力、更健壮的基础设施。
 
-Koa 和 Express 的设计风格非常类似，底层也都是共用的[同一套 HTTP 基础库](https://github.com/jshttp)，但是有几个显著的区别，除了上面提到的默认异步解决方案之外，主要的特点还有下面几个。
+Koa 和 Express 的设计风格十分相似，底层也都是共用[同一套 HTTP 基础库](https://github.com/jshttp)。但它们存在几个明显的区别。除了上面提到的默认异步解决方案之外，Koa 的主要特点还包括以下几个：
 
 ### Middleware
 
@@ -45,16 +47,16 @@ Koa 的中间件和 Express 不同，Koa 选择了洋葱圈模型。
 
 ![](https://raw.githubusercontent.com/koajs/koa/a7b6ed0529a58112bac4171e4729b8760a34ab8b/docs/middleware.gif)
 
-所有的请求经过一个中间件的时候都会执行两次，对比 Express 形式的中间件，Koa 的模型可以非常方便的实现后置处理逻辑，对比 Koa 和 Express 的 Compress 中间件就可以明显的感受到 Koa 中间件模型的优势。
+每个请求在经过一个中间件时都会执行两次，与 Express 形式的中间件相对，Koa 的模型可以方便地实现后置处理逻辑。比较 Koa 与 Express 的 Compress 中间件，便可明显感受到 Koa 中间件模型的优势。
 
-- [koa-compress](https://github.com/koajs/compress/blob/master/lib/index.js) for Koa.
-- [compression](https://github.com/expressjs/compression/blob/master/index.js) for Express.
+- [koa-compress](https://github.com/koajs/compress/blob/master/lib/index.js) for Koa。
+- [compression](https://github.com/expressjs/compression/blob/master/index.js) for Express。
 
 ### Context
 
-和 Express 只有 Request 和 Response 两个对象不同，Koa 增加了一个 Context 的对象，作为这次请求的上下文对象（在 Koa 1 中为中间件的 `this`，在 Koa 2 中作为中间件的第一个参数传入）。我们可以将一次请求相关的上下文都挂载到这个对象上。类似 [traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) 这种需要贯穿整个请求（在后续任何一个地方进行其他调用都需要用到）的属性就可以挂载上去。相较于 request 和 response 而言更加符合语义。
+与 Express 只有 Request 和 Response 两个对象不同，Koa 增加了一个 Context 对象，作为该次请求的上下文对象（在 Koa 1 中为中间件的 `this`，在 Koa 2 中作为中间件的第一个参数传入）。我们可将一次请求相关的上下文全部挂载至此对象上。例如，[traceId](https://github.com/eggjs/egg-tracer/blob/1.0.0/lib/tracer.js#L12) 这种需贯穿整个请求（之后在任何地方进行其他调用都需使用）的属性便可挂载上去。这比单独的 request 和 response 对象更加符合语义。
 
-同时 Context 上也挂载了 Request 和 Response 两个对象。和 Express 类似，这两个对象都提供了大量的便捷方法辅助开发，例如
+同时，Context 上也挂载了 Request 和 Response 两个对象。和 Express 类似，两者都提供了许多便捷方法，辅助开发。例如：
 
 - `get request.query`
 - `get request.hostname`
@@ -63,7 +65,7 @@ Koa 的中间件和 Express 不同，Koa 选择了洋葱圈模型。
 
 ### 异常处理
 
-通过同步方式编写异步代码带来的另外一个非常大的好处就是异常处理非常自然，使用 `try catch` 就可以将按照规范编写的代码中的所有错误都捕获到。这样我们可以很便捷的编写一个自定义的错误处理中间件。
+通过同步方式编写异步代码的另一个很大好处是，异常处理变得非常自然。我们可以使用 `try catch` 来捕获规范编写代码中的所有错误，从而非常容易地编写自定义的错误处理中间件。
 
 ```js
 async function onerror(ctx, next) {
@@ -75,21 +77,20 @@ async function onerror(ctx, next) {
     ctx.status = err.status || 500;
   }
 }
+
+只需将此中间件放在其他中间件前，便可捕获所有同步或异步代码中抛出的异常。
 ```
-
-只需要将这个中间件放在其他中间件之前，就可以捕获它们所有的同步或者异步代码中抛出的异常了。
-
 ## Egg 继承于 Koa
 
-如上述，Koa 是一个非常优秀的框架，然而对于企业级应用来说，它还比较基础。
+如上所述，Koa 是一个非常优秀的框架。然而，对于企业级应用来说，它还比较基础。
 
-而 Egg 选择了 Koa 作为其基础框架，在它的模型基础上，进一步对它进行了一些增强。
+而 Egg 选择了 Koa 作为其基础框架，在它的模型基础上，对其进行了进一步的增强。
 
 ### 扩展
 
-在基于 Egg 的框架或者应用中，我们可以通过定义 `app/extend/{application,context,request,response}.js` 来扩展 Koa 中对应的四个对象的原型，通过这个功能，我们可以快速的增加更多的辅助方法，例如我们在 `app/extend/context.js` 中写入下列代码：
+在基于 Egg 的框架或者应用中，我们可以通过定义 `app/extend/{application,context,request,response}.js` 来扩展 Koa 中对应的四个对象的原型。通过这个功能，我们可以快速增加更多的辅助方法。举例，我们在 `app/extend/context.js` 中写入以下代码：
 
-```js
+```javascript
 // app/extend/context.js
 module.exports = {
   get isIOS() {
@@ -99,9 +100,9 @@ module.exports = {
 };
 ```
 
-在 Controller 中，我们就可以使用到刚才定义的这个便捷属性了：
+在 Controller 中，我们就可以使用刚才定义的这个便捷属性了：
 
-```js
+```javascript
 // app/controller/home.js
 exports.handler = (ctx) => {
   ctx.body = ctx.isIOS
@@ -114,17 +115,17 @@ exports.handler = (ctx) => {
 
 ### 插件
 
-众所周知，在 Express 和 Koa 中，经常会引入许许多多的中间件来提供各种各样的功能，例如引入 [koa-session](https://github.com/koajs/session) 提供 Session 的支持，引入 [koa-bodyparser](https://github.com/koajs/bodyparser) 来解析请求 body。而 Egg 提供了一个更加强大的插件机制，让这些独立领域的功能模块可以更加容易编写。
+众所周知，在 Express 和 Koa 中，我们经常会引入众多中间件来提供各种功能，如引入 [koa-session](https://github.com/koajs/session) 提供 Session 支持，引入 [koa-bodyparser](https://github.com/koajs/bodyparser) 解析请求体。Egg 提供了强大的插件机制，让这些独立领域的功能模块更易于编写。
 
-一个插件可以包含
+一个插件可以包含：
 
-- extend：扩展基础对象的上下文，提供各种工具类、属性。
-- middleware：增加一个或多个中间件，提供请求的前置、后置处理逻辑。
-- config：配置各个环境下插件自身的默认配置项。
+- extend：扩展基础对象的上下文，提供工具类、属性等。
+- middleware：加入一个或多个中间件，提供请求的前置、后置逻辑处理。
+- config：配置不同环境下插件的默认配置项。
 
-一个独立领域下的插件实现，可以在代码维护性非常高的情况下实现非常完善的功能，而插件也支持配置各个环境下的默认（最佳）配置，让我们使用插件的时候几乎可以不需要修改配置项。
+在一个独立领域下实现的插件，可以在维护性非常高的情况下提供完善的功能。插件还支持配置各个环境下的默认（最佳）配置，使得使用插件时几乎无需修改配置项。
 
-[egg-security](https://github.com/eggjs/egg-security) 插件就是一个典型的例子。
+[egg-security](https://github.com/eggjs/egg-security) 插件是一个典型的例子。
 
 更多关于插件的内容，请查看[插件](../basics/plugin.md)章节。
 
@@ -132,20 +133,20 @@ exports.handler = (ctx) => {
 
 #### Egg 1.x
 
-Egg 1.x 发布时，Node.js 的 LTS 版本尚不支持 async function，所以 Egg 1.x 仍然基于 Koa 1.x 开发，但是在此基础上，Egg 全面增加了 async function 的支持，再加上 Egg 对 Koa 2.x 的中间件也完全兼容，应用层代码可以完全基于 `async function` 来开发。
+Egg 1.x 发布时，Node.js 的 LTS 版本尚不支持 `async function`，因此 Egg 1.x 基于 Koa 1.x 开发。在此基础上，Egg 全面增加了对 `async function` 的支持。再加上 Egg 对 Koa 2.x 的中间件完全兼容，应用层代码可以完全基于 `async function` 开发。
 
 - 底层基于 Koa 1.x，异步解决方案基于 [co] 封装的 generator function。
-- 官方插件以及 Egg 核心使用 generator function 编写，保持对 Node.js LTS 版本的支持，在必要处通过 co 包装以兼容在 async function 中的使用。
-- 应用开发者可以选择 async function（Node.js 8.x+） 或者 generator function（Node.js 6.x+）进行编写。
+- Egg 核心和官方插件使用 generator function 编写，通过 co 包装兼容 async function。
+- 开发者可以根据 Node.js 版本选择使用 async function 或 generator function。
 
 #### Egg 2.x
 
-Node.js 8 正式进入 LTS 后，async function 可以在 Node.js 中使用并且没有任何性能问题了，Egg 2.x 基于 Koa 2.x，框架底层以及所有内置插件都使用 async function 编写，并保持了对 Egg 1.x 以及 generator function 的完全兼容，应用层只需要升级到 Node.js 8 即可从 Egg 1.x 迁移到 Egg 2.x。
+Node.js 8 正式进入 LTS 后，`async function` 在 Node.js 中无性能问题，Egg 2.x 基于 Koa 2.x 开发。框架底层和所有内置插件都采用 `async function` 编写，对 Egg 1.x 和 generator function 保持完全兼容。应用层只需升级到 Node.js 8，即可从 Egg 1.x 迁移到 Egg 2.x。
 
-- 底层基于 Koa 2.x，异步解决方案基于 async function。
-- 官方插件以及 Egg 核心使用 async function 编写。
-- 建议业务层迁移到 async function 方案。
-- 只支持 Node.js 8 及以上的版本。
+- 底层基于 Koa 2.x，异步解决方案采用 async function。
+- Egg 核心和官方插件使用 async function 编写。
+- 建议业务层迁移到 async function 解决方案。
+- 仅支持 Node.js 8 及以上版本。
 
 [co]: https://github.com/tj/co
 [async function]: https://github.com/tc39/ecmascript-asyncawait
