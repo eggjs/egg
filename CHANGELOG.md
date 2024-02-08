@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.19.0](https://github.com/eggjs/egg/compare/v3.18.0...v3.19.0) (2024-02-08)
+
+
+### Features
+
+* 优化中文文档表达 ([#5290](https://github.com/eggjs/egg/issues/5290)) ([d73046b](https://github.com/eggjs/egg/commit/d73046bb9165c74473b6f28842de23c880e78a87))
+
 ## [3.18.0](https://github.com/eggjs/egg/compare/v3.17.7...v3.18.0) (2024-01-21)
 
 
