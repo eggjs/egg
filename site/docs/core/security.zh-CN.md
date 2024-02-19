@@ -637,3 +637,20 @@ exports.security = {
 对于未开启 HTTPS 的网站，此函数可以有效防止运营商劫持。
 
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
+
+## Revert CVE
+
+在 node.js 的安全修复中可能会造成 Breaking change，例如在 18.9.1 版本中修复了一个安全漏洞，导致了一些加密相关的代码无法正常运行。为了解决这个问题，我们提供了一个 `revert` 的参数，在启动时转换为 `--security-revert` 参数，可以绕过 CVE 的修复。
+
+```json
+// package.json
+{
+  "egg": {
+    // 支持两种配置方式
+    // 一种是直接使用字符串，指定一个 CVE
+    "revert": "CVE-2023-46809",
+    // 另一种是使用字符串数组，可以指定多个 CVE
+    "revert": [ "CVE-2023-46809" ]
+  }
+}
+```
