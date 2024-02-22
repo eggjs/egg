@@ -54,7 +54,7 @@
     "onelogger": "^1.0.0",
     "sendmessage": "^2.0.0",
     "urllib": "^2.33.0",
-    "urllib-next": "^3.9.0",
+    "urllib-next": "npm:urllib@^3.22.4",
     "utility": "^1.17.0",
     "ylru": "^1.3.2"
   },
