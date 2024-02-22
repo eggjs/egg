@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.20.0](https://github.com/eggjs/egg/compare/v3.19.0...v3.20.0) (2024-02-22)
+
+
+### Features
+
+* urllib-next alias to npm:urllib ([#5299](https://github.com/eggjs/egg/issues/5299)) ([61cd51d](https://github.com/eggjs/egg/commit/61cd51d02a86cb6ca8d510fb3ea3a1ed73f7beec))
+
 ## [3.19.0](https://github.com/eggjs/egg/compare/v3.18.0...v3.19.0) (2024-02-08)
 
 
