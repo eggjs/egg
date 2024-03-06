@@ -275,9 +275,9 @@ class NewsService extends Service {
 
     // parallel GET detail
     const newsList = await Promise.all(
-      Object.keys(idList).map((key) => {
+      Object.keys(idList).map(async (key) => {
         const url = `${serverUrl}/item/${idList[key]}.json`;
-        return this.ctx.curl(url, { dataType: 'json' });
+        return await this.ctx.curl(url, { dataType: 'json' });
       }),
     );
     return newsList.map((res) => res.data);
