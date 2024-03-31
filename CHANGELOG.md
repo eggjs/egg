@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.21.0](https://github.com/eggjs/egg/compare/v3.20.0...v3.21.0) (2024-03-31)
+
+
+### Features
+
+* tiny improvements for "convertValue" ([#5302](https://github.com/eggjs/egg/issues/5302)) ([794d7f3](https://github.com/eggjs/egg/commit/794d7f3e89c2a283e38d2082b407b79e480f0b50))
+
 ## [3.20.0](https://github.com/eggjs/egg/compare/v3.19.0...v3.20.0) (2024-02-22)
 
 
