@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.22.0](https://github.com/eggjs/egg/compare/v3.21.0...v3.22.0) (2024-04-12)
+
+
+### Features
+
+* app.httpClient alias to app.httpclient ([#5304](https://github.com/eggjs/egg/issues/5304)) ([a6ebe0f](https://github.com/eggjs/egg/commit/a6ebe0f49a9e1a8506c26a0bb4e89a32528aa727))
+
 ## [3.21.0](https://github.com/eggjs/egg/compare/v3.20.0...v3.21.0) (2024-03-31)
 
 
