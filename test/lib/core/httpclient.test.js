@@ -1,6 +1,4 @@
-'use strict';
-
-const assert = require('assert');
+const assert = require('node:assert');
 const mm = require('egg-mock');
 const urllib = require('urllib');
 const Httpclient = require('../../../lib/core/httpclient');
@@ -268,6 +266,9 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     it('should app request auto set tracer', async () => {
       const httpclient = app.httpclient;
+      // httpClient alias to httpclient
+      assert(app.httpClient);
+      assert.equal(app.httpClient, app.httpclient);
 
       let reqTracer;
       let resTracer;
