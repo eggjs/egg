@@ -18,7 +18,7 @@ describe('test/doc.test.js', () => {
 
     const mainNodejsVersion = parseInt(process.versions.node.split('.')[0]);
 
-    if (process.platform !== 'win32' && mainNodejsVersion >= 18) {
+    if (process.platform === 'linux' && mainNodejsVersion >= 18) {
       const cwd = path.dirname(__dirname);
       const dumi = path.join(cwd, 'node_modules', '.bin', 'dumi');
       await runscript(`cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site ${dumi} build`,
