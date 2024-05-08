@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.23.0](https://github.com/eggjs/egg/compare/v3.22.0...v3.23.0) (2024-05-08)
+
+
+### Features
+
+* use utility@2 ([#5312](https://github.com/eggjs/egg/issues/5312)) ([9bf5f22](https://github.com/eggjs/egg/commit/9bf5f22bfae44a1f44651efba7b3e167f9040714))
+
 ## [3.22.0](https://github.com/eggjs/egg/compare/v3.21.0...v3.22.0) (2024-04-12)
 
 
