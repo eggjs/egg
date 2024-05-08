@@ -11,5 +11,4 @@ jobs:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     with:
-      checkTest: false
       install: 'npm install --legacy-peer-deps --no-package-lock --no-fund'
