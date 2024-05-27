@@ -797,10 +797,12 @@ app.httpclient.on('response', (result) => {
 
 Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
-[urllib]: https://github.com/node-modules/urllib
-[httpclient]: https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js
-[formstream]: https://github.com/node-modules/formstream
-[http]: https://nodejs.org/api/http.html
-[https]: https://nodejs.org/api/https.html
-[charles]: https://www.charlesproxy.com/
-[fiddler]: http://www.telerik.com/fiddler
+
+Other Reference Links
+- [urllib](https://github.com/node-modules/urllib)
+- [httpclient](https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js)
+- [formstream](https://github.com/node-modules/formstream)
+- [http](https://nodejs.org/api/http.html)
+- [https](https://nodejs.org/api/https.html)
+- [charles](https://www.charlesproxy.com/)
+- [fiddler](http://www.telerik.com/fiddler)
