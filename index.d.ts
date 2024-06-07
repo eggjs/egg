@@ -352,7 +352,7 @@ declare module 'egg' {
         form: string[];
         text: string[];
       };
-      /** Default is `'error'`, it will throw a `SyntaxError` when `Prototype-Poisoning` happen. */
+      /** Default is `'error'`, it will return `403` response when `Prototype-Poisoning` happen. */
       onProtoPoisoning: 'error' | 'remove' | 'ignore';
     };
 
