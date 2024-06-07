@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.0](https://github.com/eggjs/egg/compare/v3.23.0...v3.24.0) (2024-06-07)
+
+
+### Features
+
+* add bodyParser.onProtoPoisoning type define ([#5324](https://github.com/eggjs/egg/issues/5324)) ([b3582e0](https://github.com/eggjs/egg/commit/b3582e02d0f5d85edbc03f3f20c4cdcc65619dc1))
+
 ## [3.23.0](https://github.com/eggjs/egg/compare/v3.22.0...v3.23.0) (2024-05-08)
 
 
