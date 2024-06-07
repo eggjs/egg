@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.24.1](https://github.com/eggjs/egg/compare/v3.24.0...v3.24.1) (2024-06-07)
+
+
+### Bug Fixes
+
+* serverTimeout default to 0 (no timeout) ([#5325](https://github.com/eggjs/egg/issues/5325)) ([44ab507](https://github.com/eggjs/egg/commit/44ab507b6299c849a2fe31bee54f3a1909aa9d53))
+
 ## [3.24.0](https://github.com/eggjs/egg/compare/v3.23.0...v3.24.0) (2024-06-07)
 
 
