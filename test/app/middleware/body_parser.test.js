@@ -98,6 +98,16 @@ describe('test/app/middleware/body_parser.test.js', () => {
       .expect(400);
   });
 
+  it('should 400 when POST with Prototype-Poisoning body', async () => {
+    app.mockCsrf();
+    await app.httpRequest()
+      .post('/test/body_parser/user')
+      .set('content-type', 'application/json')
+      .set('content-encoding', 'gzip')
+      .expect(/unexpected end of file, check bodyParser config/)
+      .expect(400);
+  });
+
   it('should disable body parser', async () => {
     app1 = utils.app('apps/body_parser_testapp_disable');
     await app1.ready();

@@ -330,6 +330,7 @@ declare module 'egg' {
      * @property {Number} queryString.parameterLimit - paramter number limit ,default 1000
      * @property {string[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
      * @property {any} extendTypes - support extend types
+     * @property {string} onProtoPoisoning - Defines what action must take when parsing a JSON object with `__proto__`. Possible values are `'error'`, `'remove'` and `'ignore'`. Default is `'error'`, it will throw a `SyntaxError` when `Prototype-Poisoning` happen.
      */
     bodyParser: {
       enable: boolean;
@@ -351,6 +352,8 @@ declare module 'egg' {
         form: string[];
         text: string[];
       };
+      /** Default is `'error'`, it will throw a `SyntaxError` when `Prototype-Poisoning` happen. */
+      onProtoPoisoning: 'error' | 'remove' | 'ignore';
     };
 
     /**
