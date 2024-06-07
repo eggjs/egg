@@ -530,9 +530,9 @@ module.exports = {
    }
   },
 };
-``
-
-[Loader]: https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js
-[AppWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js
-[AgentWorkerLoader]: https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js
 ```
+## Reference Links
+- [Loader](https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js)
+- [AppWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js)
+- [AgentWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js)
+

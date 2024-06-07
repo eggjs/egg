@@ -535,6 +535,6 @@ module.exports = {
 ```
 
 参考链接：
-- [loader]: https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js
-- [appworkerloader]: https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js
-- [agentworkerloader]: https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js
+- [loader](https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js)
+- [appworkerloader](https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js)
+- [agentworkerloader](https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js)
