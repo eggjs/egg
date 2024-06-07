@@ -328,9 +328,9 @@ declare module 'egg' {
      * @property {Number} queryString.arrayLimit - from item array length limit, default 100
      * @property {Number} queryString.depth - json value deep length, default 5
      * @property {Number} queryString.parameterLimit - parameter number limit, default 1000
-     * @property {string[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
-     * @property {any} extendTypes - support extend types
-     * @property {string} onProtoPoisoning - Defines what action must take when parsing a JSON object with `__proto__`. Possible values are `'error'`, `'remove'` and `'ignore'`. Default is `'error'`, it will return `403` response when `Prototype-Poisoning` happen.
+     * @property {String[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
+     * @property {Object} extendTypes - support extend types
+     * @property {String} onProtoPoisoning - Defines what action must take when parsing a JSON object with `__proto__`. Possible values are `'error'`, `'remove'` and `'ignore'`. Default is `'error'`, it will return `403` response when `Prototype-Poisoning` happen.
      */
     bodyParser: {
       enable: boolean;
