@@ -359,7 +359,7 @@ module.exports = appInfo => {
   config.workerStartTimeout = 10 * 60 * 1000;
 
   /**
-   * server timeout in milliseconds, default to 2 minutes.
+   * server timeout in milliseconds, default to 0 (no timeout).
    *
    * for special request, just use `ctx.req.setTimeout(ms)`
    *

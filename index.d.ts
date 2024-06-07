@@ -330,7 +330,7 @@ declare module 'egg' {
      * @property {Number} queryString.parameterLimit - parameter number limit, default 1000
      * @property {String[]} enableTypes - parser will only parse when request type hits enableTypes, default is ['json', 'form']
      * @property {Object} extendTypes - support extend types
-     * @property {String} onProtoPoisoning - Defines what action must take when parsing a JSON object with `__proto__`. Possible values are `'error'`, `'remove'` and `'ignore'`. Default is `'error'`, it will return `403` response when `Prototype-Poisoning` happen.
+     * @property {String} onProtoPoisoning - Defines what action must take when parsing a JSON object with `__proto__`. Possible values are `'error'`, `'remove'` and `'ignore'`. Default is `'error'`, it will return `400` response when `Prototype-Poisoning` happen.
      */
     bodyParser: {
       enable: boolean;
@@ -352,7 +352,7 @@ declare module 'egg' {
         form: string[];
         text: string[];
       };
-      /** Default is `'error'`, it will return `403` response when `Prototype-Poisoning` happen. */
+      /** Default is `'error'`, it will return `400` response when `Prototype-Poisoning` happen. */
       onProtoPoisoning: 'error' | 'remove' | 'ignore';
     };
 
@@ -532,7 +532,7 @@ declare module 'egg' {
     onClientError(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
 
     /**
-     * server timeout in milliseconds, default to 2 minutes.
+     * server timeout in milliseconds, default to 0 (no timeout).
      *
      * for special request, just use `ctx.req.setTimeout(ms)`
      *
