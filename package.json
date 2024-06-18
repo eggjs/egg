@@ -1,8 +1,11 @@
 {
   "name": "egg",
-  "version": "3.24.1",
+  "version": "4.0.0-beta.0",
+  "engines": {
+    "node": ">= 18.19.0"
+  },
   "publishConfig": {
-    "tag": "latest"
+    "tag": "next"
   },
   "description": "A web framework's framework for Node.js",
   "keywords": [
@@ -127,9 +130,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/eggjs/egg.git"
-  },
-  "engines": {
-    "node": ">= 14.20.0"
   },
   "license": "MIT"
 }

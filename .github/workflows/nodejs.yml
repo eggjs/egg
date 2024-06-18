@@ -2,10 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, 2.x, 1.x ]
-
+    branches: [ master ]
   pull_request:
-    branches: [ master, 2.x, 1.x ]
+    branches: [ master ]
 
 jobs:
   Job:
@@ -13,5 +12,6 @@ jobs:
     uses: node-modules/github-actions/.github/workflows/node-test.yml@master
     with:
       os: 'ubuntu-latest, macos-latest, windows-latest'
-      version: '14, 16, 18, 20, 22'
-      install: 'npm i -g npminstall && npminstall'
+      version: '18.19.0, 18, 20, 22'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
