@@ -1,9 +1,7 @@
 {
   "name": "egg",
   "version": "3.24.1",
-  "publishConfig": {
-    "tag": "latest"
-  },
+  "publishConfig": {},
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",

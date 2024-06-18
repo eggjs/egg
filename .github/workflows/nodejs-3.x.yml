@@ -1,11 +1,10 @@
-name: CI
+name: CI for 3.x
 
 on:
   push:
-    branches: [ master, 2.x, 1.x ]
-
+    branches: [ 3.x ]
   pull_request:
-    branches: [ master, 2.x, 1.x ]
+    branches: [ 3.x ]
 
 jobs:
   Job:
@@ -15,3 +14,5 @@ jobs:
       os: 'ubuntu-latest, macos-latest, windows-latest'
       version: '14, 16, 18, 20, 22'
       install: 'npm i -g npminstall && npminstall'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
