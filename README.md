@@ -14,7 +14,6 @@ English | [简体中文](./README.zh-CN.md)
 [![Known Vulnerabilities](https://snyk.io/test/npm/egg/badge.svg?style=flat-square)](https://snyk.io/test/npm/egg)
 [![Open Collective backers and sponsors](https://img.shields.io/opencollective/all/eggjs?style=flat-square)](https://opencollective.com/eggjs)
 
-
 ## Features
 
 - Built-in Process Management
@@ -61,6 +60,5 @@ To become a contributor, please follow our [contributing guide](CONTRIBUTING.md)
 ## License
 
 [MIT](LICENSE)
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feggjs%2Fegg.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Feggjs%2Fegg?ref=badge_large)

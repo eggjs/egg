@@ -1,7 +1,8 @@
 name: Release
+
 on:
   push:
-    branches: [ master, 2.x, 1.x ]
+    branches: [ master ]
 
 jobs:
   release:
@@ -10,5 +11,3 @@ jobs:
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-    with:
-      install: 'npm install --legacy-peer-deps --no-package-lock --no-fund'

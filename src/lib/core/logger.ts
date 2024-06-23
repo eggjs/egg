@@ -1,7 +1,10 @@
-const { EggLoggers } = require('egg-logger');
-const { setCustomLogger } = require('onelogger');
+import { EggLoggers } from 'egg-logger';
+import { setCustomLogger } from 'onelogger';
+import type { EggApplication } from '../egg.js';
 
-module.exports = function createLoggers(app) {
+export type { EggLoggers, EggLogger } from 'egg-logger';
+
+export function createLoggers(app: EggApplication) {
   const loggerConfig = app.config.logger;
   loggerConfig.type = app.type;
   loggerConfig.localStorage = app.ctxStorage;
@@ -16,6 +19,7 @@ module.exports = function createLoggers(app) {
   app.ready(() => {
     if (loggerConfig.disableConsoleAfterReady) {
       loggers.disableConsole();
+      loggers.coreLogger.info('[egg:lib:core:logger] disable console log after app ready');
     }
   });
 
@@ -29,7 +33,6 @@ module.exports = function createLoggers(app) {
       setCustomLogger(loggerName, undefined);
     }
   });
-  loggers.coreLogger.info('[egg:logger] init all loggers with options: %j', loggerConfig);
-
+  loggers.coreLogger.info('[egg:lib:core:logger] init all loggers with options: %j', loggerConfig);
   return loggers;
-};
+}

@@ -1,9 +1,9 @@
-'use strict';
+import assert from 'node:assert';
 
-const assert = require('assert');
 const INSTANCE = Symbol('BaseHookClass#instance');
 
-class BaseHookClass {
+export class BaseHookClass {
+  
 
   constructor(instance) {
     this[INSTANCE] = instance;
@@ -27,5 +27,3 @@ class BaseHookClass {
     return this[INSTANCE];
   }
 }
-
-module.exports = BaseHookClass;
