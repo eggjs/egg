@@ -1,37 +1,92 @@
-const { performance } = require('perf_hooks');
-const path = require('path');
-const fs = require('fs');
-const ms = require('ms');
-const http = require('http');
-const EggCore = require('egg-core').EggCore;
-const cluster = require('cluster-client');
-const extend = require('extend2');
-const ContextLogger = require('egg-logger').EggContextLogger;
-const ContextCookies = require('egg-cookies');
-const CircularJSON = require('circular-json-for-egg');
-const ContextHttpClient = require('./core/context_httpclient');
-const Messenger = require('./core/messenger');
-const DNSCacheHttpClient = require('./core/dnscache_httpclient');
-const HttpClient = require('./core/httpclient');
-const HttpClientNext = require('./core/httpclient_next');
-const createLoggers = require('./core/logger');
-const Singleton = require('./core/singleton');
-const utils = require('./core/utils');
-const BaseContextClass = require('./core/base_context_class');
-const BaseHookClass = require('./core/base_hook_class');
+import { performance } from 'node:perf_hooks';
+import path from 'node:path';
+import fs from 'node:fs';
+import ms from 'ms';
+import http, { type IncomingMessage, type ServerResponse } from 'node:http';
+import inspector from 'node:inspector';
+import { EggCore, type EggCoreContext, type EggCoreOptions } from '@eggjs/core';
+import cluster from 'cluster-client';
+import extend from 'extend2';
+import { EggContextLogger as ContextLogger } from 'egg-logger';
+import { Cookies as ContextCookies } from '@eggjs/cookies';
+import CircularJSON from 'circular-json-for-egg';
+import ContextHttpClient from './core/context_httpclient';
+import Messenger from './core/messenger';
+import {
+  HttpClient, type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
+} from './core/httpclient.js';
+import { createLoggers, type EggLoggers, type EggLogger } from './core/logger';
+import { 
+  Singleton, type SingletonCreateMethod, type SingletonOptions,
+} from './core/singleton.js';
+import utils from './core/utils';
+import { BaseContextClass } from './core/base_context_class.js';
+import { BaseHookClass } from './core/base_hook_class.js';
 
-const HTTPCLIENT = Symbol('EggApplication#httpclient');
-const LOGGERS = Symbol('EggApplication#loggers');
 const EGG_PATH = Symbol.for('egg#eggPath');
 const CLUSTER_CLIENTS = Symbol.for('egg#clusterClients');
+
+export interface EggApplicationOptions extends EggCoreOptions {
+  mode?: 'cluster' | 'single';
+  clusterPort?: number;
+}
 
 /**
  * Based on koa's Application
  * @see https://github.com/eggjs/egg-core
- * @see http://koajs.com/#application
+ * @see https://github.com/eggjs/koa/blob/master/src/application.ts
  * @augments EggCore
  */
-class EggApplication extends EggCore {
+export class EggApplication extends EggCore {
+  // export context base classes, let framework can impl sub class and over context extend easily.
+  ContextCookies = ContextCookies;
+  ContextLogger = ContextLogger;
+  ContextHttpClient = ContextHttpClient;
+  HttpClient = HttpClient;
+  /**
+   * Retrieve base context class
+   * @member {BaseContextClass} BaseContextClass
+   * @since 1.0.0
+   */
+  BaseContextClass = BaseContextClass;
+
+  /**
+   * Retrieve base controller
+   * @member {Controller} Controller
+   * @since 1.0.0
+   */
+  Controller = BaseContextClass;
+
+  /**
+   * Retrieve base service
+   * @member {Service} Service
+   * @since 1.0.0
+   */
+  Service = BaseContextClass;
+
+  /**
+   * Retrieve base subscription
+   * @member {Subscription} Subscription
+   * @since 2.12.0
+   */
+  Subscription = BaseContextClass;
+
+  /**
+   * Retrieve base context class
+   * @member {BaseHookClass} BaseHookClass
+   */
+  BaseHookClass = BaseHookClass;
+
+  /**
+   * Retrieve base boot
+   * @member {Boot}
+   */
+  Boot = BaseHookClass;
+
+  options: EggApplicationOptions;
+
+  #httpClient?: HttpClient;
+  #loggers?: EggLoggers;
 
   /**
    * @class
@@ -41,16 +96,14 @@ class EggApplication extends EggCore {
    *  - {Object} [plugins] - custom plugin config, use it in unittest
    *  - {String} [mode] - process mode, can be cluster / single, default is `cluster`
    */
-  constructor(options = {}) {
-    options.mode = options.mode || 'cluster';
+  constructor(options?: EggApplicationOptions) {
+    options = {
+      mode: 'cluster',
+      type: 'application',
+      baseDir: process.cwd(),
+      ...options,
+    };
     super(options);
-
-    // export context base classes, let framework can impl sub class and over context extend easily.
-    this.ContextCookies = ContextCookies;
-    this.ContextLogger = ContextLogger;
-    this.ContextHttpClient = ContextHttpClient;
-    this.HttpClient = HttpClient;
-    this.HttpClientNext = HttpClientNext;
 
     this.loader.loadConfig();
 
@@ -75,7 +128,7 @@ class EggApplication extends EggCore {
       this.dumpTiming();
       this.coreLogger.info('[egg:core] dump config after ready, %s', ms(Date.now() - dumpStartTime));
     }));
-    this._setupTimeoutTimer();
+    this.#setupTimeoutTimer();
 
     this.console.info('[egg:core] App root: %s', this.baseDir);
     this.console.info('[egg:core] All *.log files save on %j', this.config.logger.dir);
@@ -86,41 +139,6 @@ class EggApplication extends EggCore {
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
     this[CLUSTER_CLIENTS] = [];
-
-    /**
-     * Wrap the Client with Leader/Follower Pattern
-     *
-     * @description almost the same as Agent.cluster API, the only different is that this method create Follower.
-     *
-     * @see https://github.com/node-modules/cluster-client
-     * @param {Function} clientClass - client class function
-     * @param {Object} [options]
-     *   - {Boolean} [autoGenerate] - whether generate delegate rule automatically, default is true
-     *   - {Function} [formatKey] - a method to tranform the subscription info into a string，default is JSON.stringify
-     *   - {Object} [transcode|JSON.stringify/parse]
-     *     - {Function} encode - custom serialize method
-     *     - {Function} decode - custom deserialize method
-     *   - {Boolean} [isBroadcast] - whether broadcast subscrption result to all followers or just one, default is true
-     *   - {Number} [responseTimeout] - response timeout, default is 3 seconds
-     *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
-     * @return {ClientWrapper} wrapper
-     */
-    this.cluster = (clientClass, options) => {
-      options = Object.assign({}, this.config.clusterClient, options, {
-        singleMode: this.options.mode === 'single',
-        // cluster need a port that can't conflict on the environment
-        port: this.options.clusterPort,
-        // agent worker is leader, app workers are follower
-        isLeader: this.type === 'agent',
-        logger: this.coreLogger,
-        // debug mode does not check heartbeat
-        isCheckHeartbeat: this.config.env === 'prod' ? true : require('inspector').url() === undefined,
-      });
-      const client = cluster(clientClass, options);
-      this._patchClusterClient(client);
-      return client;
-    };
-
     // register close function
     this.beforeClose(async () => {
       // single process mode will close agent before app close
@@ -134,46 +152,42 @@ class EggApplication extends EggCore {
       this.messenger.close();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
+  }
 
-    /**
-     * Retreive base context class
-     * @member {BaseContextClass} BaseContextClass
-     * @since 1.0.0
-     */
-    this.BaseContextClass = BaseContextClass;
-
-    /**
-     * Retreive base controller
-     * @member {Controller} Controller
-     * @since 1.0.0
-     */
-    this.Controller = BaseContextClass;
-
-    /**
-     * Retreive base service
-     * @member {Service} Service
-     * @since 1.0.0
-     */
-    this.Service = BaseContextClass;
-
-    /**
-     * Retreive base subscription
-     * @member {Subscription} Subscription
-     * @since 2.12.0
-     */
-    this.Subscription = BaseContextClass;
-
-    /**
-     * Retreive base context class
-     * @member {BaseHookClass} BaseHookClass
-     */
-    this.BaseHookClass = BaseHookClass;
-
-    /**
-     * Retreive base boot
-     * @member {Boot}
-     */
-    this.Boot = BaseHookClass;
+  /**
+   * Wrap the Client with Leader/Follower Pattern
+   *
+   * @description almost the same as Agent.cluster API, the only different is that this method create Follower.
+   *
+   * @see https://github.com/node-modules/cluster-client
+   * @param {Function} clientClass - client class function
+   * @param {Object} [options]
+   *   - {Boolean} [autoGenerate] - whether generate delegate rule automatically, default is true
+   *   - {Function} [formatKey] - a method to transform the subscription info into a string，default is JSON.stringify
+   *   - {Object} [transcode|JSON.stringify/parse]
+   *     - {Function} encode - custom serialize method
+   *     - {Function} decode - custom deserialize method
+   *   - {Boolean} [isBroadcast] - whether broadcast subscription result to all followers or just one, default is true
+   *   - {Number} [responseTimeout] - response timeout, default is 3 seconds
+   *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
+   * @return {ClientWrapper} wrapper
+   */
+  cluster(clientClass, options) {
+    options = {
+      ...this.config.clusterClient,
+      ...options,
+      singleMode: this.options.mode === 'single',
+      // cluster need a port that can't conflict on the environment
+      port: this.options.clusterPort,
+      // agent worker is leader, app workers are follower
+      isLeader: this.type === 'agent',
+      logger: this.coreLogger,
+      // debug mode does not check heartbeat
+      isCheckHeartbeat: this.config.env === 'prod' ? true : inspector.url() === undefined,
+    };
+    const client = cluster(clientClass, options);
+    this._patchClusterClient(client);
+    return client;
   }
 
   /**
@@ -185,7 +199,7 @@ class EggApplication extends EggCore {
    * console.log(app);
    * =>
    * {
-   *   name: 'mockapp',
+   *   name: 'mock-app',
    *   env: 'test',
    *   subdomainOffset: 2,
    *   config: '<egg config>',
@@ -197,14 +211,13 @@ class EggApplication extends EggCore {
    * }
    * ```
    */
-  inspect() {
+  inspect(): any {
     const res = {
       env: this.config.env,
     };
 
     function delegate(res, app, keys) {
       for (const key of keys) {
-        /* istanbul ignore else */
         if (app[key]) {
           res[key] = app[key];
         }
@@ -213,7 +226,6 @@ class EggApplication extends EggCore {
 
     function abbr(res, app, keys) {
       for (const key of keys) {
-        /* istanbul ignore else */
         if (app[key]) {
           res[key] = `<egg ${key}>`;
         }
@@ -254,9 +266,9 @@ class EggApplication extends EggCore {
    * - method {String} - Request method, defaults to GET. Could be GET, POST, DELETE or PUT. Alias 'type'.
    * - data {Object} - Data to be sent. Will be stringify automatically.
    * - dataType {String} - String - Type of response data. Could be `text` or `json`.
-   *   If it's `text`, the callbacked data would be a String.
+   *   If it's `text`, the callback data would be a String.
    *   If it's `json`, the data of callback would be a parsed JSON Object.
-   *   Default callbacked data would be a Buffer.
+   *   Default callback data would be a Buffer.
    * - headers {Object} - Request headers.
    * - timeout {Number} - Request timeout in milliseconds. Defaults to exports.TIMEOUT.
    *   Include remote server connecting timeout and response timeout.
@@ -266,10 +278,10 @@ class EggApplication extends EggCore {
    * - gzip {Boolean} - let you get the res object when request connected, default false. alias customResponse
    * - nestedQuerystring {Boolean} - urllib default use querystring to stringify form data which don't
    *   support nested object, will use qs instead of querystring to support nested object by set this option to true.
-   * - more options see https://www.npmjs.com/package/urllib
+   * - more options see https://github.com/node-modules/urllib
    * @return {Object}
    * - status {Number} - HTTP response status
-   * - headers {Object} - HTTP response seaders
+   * - headers {Object} - HTTP response headers
    * - res {Object} - HTTP response meta
    * - data {Object} - HTTP response body
    *
@@ -282,8 +294,8 @@ class EggApplication extends EggCore {
    * console.log(result.status, result.headers, result.data);
    * ```
    */
-  async curl(url, opts) {
-    return await this.httpclient.request(url, opts);
+  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
+    return await this.httpClient.request<T>(url, options);
   }
 
   /**
@@ -291,37 +303,32 @@ class EggApplication extends EggCore {
    * @see https://github.com/node-modules/urllib
    * @member {HttpClient}
    */
-  get httpclient() {
-    if (!this[HTTPCLIENT]) {
-      if (this.config.httpclient.useHttpClientNext) {
-        this[HTTPCLIENT] = new this.HttpClientNext(this);
-      } else if (this.config.httpclient.enableDNSCache) {
-        this[HTTPCLIENT] = new DNSCacheHttpClient(this);
-      } else {
-        this[HTTPCLIENT] = new this.HttpClient(this);
-      }
+  get httpClient() {
+    if (!this.#httpClient) {
+      this.#httpClient = new this.HttpClient(this);
     }
-    return this[HTTPCLIENT];
+    return this.#httpClient;
   }
 
   /**
-   * @alias httpclient
+   * @deprecated please use httpClient instead
+   * @alias httpClient
    * @member {HttpClient}
    */
-  get httpClient() {
-    return this.httpclient;
+  get httpclient() {
+    return this.httpClient;
   }
 
   /**
-   *  All loggers contain logger, coreLogger and customLogger
+   * All loggers contain logger, coreLogger and customLogger
    * @member {Object}
    * @since 1.0.0
    */
   get loggers() {
-    if (!this[LOGGERS]) {
-      this[LOGGERS] = createLoggers(this);
+    if (!this.#loggers) {
+      this.#loggers = createLoggers(this);
     }
-    return this[LOGGERS];
+    return this.#loggers;
   }
 
   /**
@@ -330,7 +337,7 @@ class EggApplication extends EggCore {
    * @param {String} name - logger name
    * @return {Logger} logger
    */
-  getLogger(name) {
+  getLogger(name: string): EggLogger {
     return this.loggers[name] || null;
   }
 
@@ -352,7 +359,7 @@ class EggApplication extends EggCore {
     return this.getLogger('coreLogger');
   }
 
-  _unhandledRejectionHandler(err) {
+  _unhandledRejectionHandler(err: any) {
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
       // err maybe an object, try to copy the name, message and stack to the new error instance
@@ -374,21 +381,23 @@ class EggApplication extends EggCore {
   /**
    * dump out the config and meta object
    * @private
-   * @return {Object} the result
    */
   dumpConfigToObject() {
-    let ignoreList;
+    let ignoreList: string[];
     try {
       // support array and set
       ignoreList = Array.from(this.config.dump.ignore);
     } catch (_) {
       ignoreList = [];
     }
-
-    const json = extend(true, {}, { config: this.config, plugins: this.loader.allPlugins, appInfo: this.loader.appInfo });
-    utils.convertObject(json, ignoreList);
+    const config = extend(true, {}, {
+      config: this.config,
+      plugins: this.loader.allPlugins,
+      appInfo: this.loader.appInfo,
+    });
+    utils.convertObject(config, ignoreList);
     return {
-      config: json,
+      config,
       meta: this.loader.configMeta,
     };
   }
@@ -403,7 +412,7 @@ class EggApplication extends EggCore {
       /* istanbul ignore if */
       if (!fs.existsSync(rundir)) fs.mkdirSync(rundir);
 
-      // get dumpped object
+      // get dumped object
       const { config, meta } = this.dumpConfigToObject();
 
       // dump config
@@ -427,10 +436,10 @@ class EggApplication extends EggCore {
       this.coreLogger.info(this.timing.toString());
       // only disable, not clear bootstrap timing data.
       this.timing.disable();
-      // show duration >= ${slowBootActionMinDuration}ms action to warnning log
+      // show duration >= ${slowBootActionMinDuration}ms action to warning log
       for (const item of items) {
         // ignore #0 name: Process Start
-        if (item.index > 0 && item.duration >= this.config.dump.timing.slowBootActionMinDuration) {
+        if (item.index > 0 && item.duration && item.duration >= this.config.dump.timing.slowBootActionMinDuration) {
           this.coreLogger.warn('[egg:core][slow-boot-action] #%d %dms, name: %s',
             item.index, item.duration, item.name);
         }
@@ -444,7 +453,7 @@ class EggApplication extends EggCore {
     return path.join(__dirname, '..');
   }
 
-  _setupTimeoutTimer() {
+  #setupTimeoutTimer() {
     const startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
       this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
@@ -489,11 +498,12 @@ class EggApplication extends EggCore {
    * @param {String} name - unique name for singleton
    * @param {Function|AsyncFunction} create - method will be invoked when singleton instance create
    */
-  addSingleton(name, create) {
-    const options = {};
-    options.name = name;
-    options.create = create;
-    options.app = this;
+  addSingleton(name: string, create: SingletonCreateMethod) {
+    const options: SingletonOptions = {
+      name,
+      create,
+      app: this,
+    };
     const singleton = new Singleton(options);
     const initPromise = singleton.init();
     if (initPromise) {
@@ -520,7 +530,7 @@ class EggApplication extends EggCore {
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    * @return {Context} context
    */
-  createAnonymousContext(req) {
+  createAnonymousContext(req?: any) {
     const request = {
       headers: {
         host: '127.0.0.1',
@@ -539,7 +549,7 @@ class EggApplication extends EggCore {
         remoteAddress: '127.0.0.1',
         remotePort: 7001,
       },
-    };
+    } as unknown as IncomingMessage;
     if (req) {
       for (const key in req) {
         if (key === 'headers' || key === 'query' || key === 'socket') {
@@ -560,12 +570,11 @@ class EggApplication extends EggCore {
    * @param  {Res} res - node native Response object
    * @return {Context} context object
    */
-  createContext(req, res) {
-    const app = this;
-    const context = Object.create(app.context);
-    const request = context.request = Object.create(app.request);
-    const response = context.response = Object.create(app.response);
-    context.app = request.app = response.app = app;
+  createContext(req: IncomingMessage, res: ServerResponse) {
+    const context = Object.create(this.context);
+    const request = context.request = Object.create(this.request);
+    const response = context.response = Object.create(this.response);
+    context.app = request.app = response.app = this;
     context.req = request.req = response.req = req;
     context.res = request.res = response.res = res;
     request.ctx = response.ctx = context;
@@ -579,7 +588,6 @@ class EggApplication extends EggCore {
      * @member {Number} Context#starttime
      */
     context.starttime = Date.now();
-
     if (this.config.logger.enablePerformanceTimer) {
       /**
        * Request start timer using `performance.now()`
@@ -587,9 +595,6 @@ class EggApplication extends EggCore {
        */
       context.performanceStarttime = performance.now();
     }
-    return context;
+    return context as unknown as EggCoreContext;
   }
-
 }
-
-module.exports = EggApplication;

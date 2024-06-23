@@ -1,7 +1,13 @@
-'use strict';
+import type { EggCoreContext } from '@eggjs/core';
+import type { Next } from '../../lib/type.js';
 
-module.exports = options => {
-  return async function notfound(ctx, next) {
+export interface NotFoundMiddlewareOptions {
+  enable: boolean;
+  pageUrl: string;
+}
+
+export default (options: NotFoundMiddlewareOptions) => {
+  return async function notfound(ctx: EggCoreContext, next: Next) {
     await next();
 
     if (ctx.status !== 404 || ctx.body) {

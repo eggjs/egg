@@ -1,18 +1,15 @@
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
+import type { EggAppInfo } from '@eggjs/core';
+import type { EggAppConfig } from '../lib/type.js';
 
 /**
  * The configuration of egg application, can be access by `app.config`
  * @class Config
  * @since 1.0.0
  */
-
-module.exports = appInfo => {
-
-  const config = {
-
+export default (appInfo: EggAppInfo) => {
+  const config: Partial<EggAppConfig> = {
     /**
      * The environment of egg
      * @member {String} Config#env
@@ -131,7 +128,7 @@ module.exports = appInfo => {
     HOME: appInfo.HOME,
 
     /**
-     * The directory of server running. You can find `application_config.json` under it that is dumpped from `app.config`.
+     * The directory of server running. You can find `application_config.json` under it that is dumped from `app.config`.
      * @member {String} Config#rundir
      * @default
      * @since 1.0.0
@@ -153,7 +150,7 @@ module.exports = appInfo => {
         /secret/i,
       ]),
       timing: {
-        // if boot action >= slowBootActionMinDuration, egg core will print it to warnning log
+        // if boot action >= slowBootActionMinDuration, egg core will print it to warning log
         slowBootActionMinDuration: 5000,
       },
     },
@@ -176,7 +173,7 @@ module.exports = appInfo => {
   };
 
   /**
-   * The option of `notfound` middleware
+   * The options of `notfound` middleware
    *
    * It will return page or json depend on negotiation when 404,
    * If pageUrl is set, it will redirect to the page.
@@ -185,6 +182,7 @@ module.exports = appInfo => {
    * @property {String} pageUrl - the 404 page url
    */
   config.notfound = {
+    enable: true,
     pageUrl: '',
   };
 
@@ -202,13 +200,14 @@ module.exports = appInfo => {
    * };
    */
   config.siteFile = {
+    enable: true,
     '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.png')),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };
 
   /**
-   * The option of `bodyParser` middleware
+   * The options of `bodyParser` middleware
    *
    * @member Config#bodyParser
    * @property {Boolean} enable - enable bodyParser or not, default is true
@@ -236,8 +235,9 @@ module.exports = appInfo => {
       depth: 5,
       parameterLimit: 1000,
     },
+    onProtoPoisoning: 'error',
     onerror(err, ctx) {
-      err.message += ', check bodyParser config';
+      err.message = `${err.message}, check bodyParser config`;
       if (ctx.status === 404) {
         // set default status to 400, meaning client bad request
         ctx.status = 400;
@@ -264,8 +264,8 @@ module.exports = appInfo => {
    * @property {String} agentLogName - file name of agent worker log
    * @property {Object} coreLogger - custom config of coreLogger
    * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
-   * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
-   * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
+   * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to true. e.g.: logger will set 1.456ms instead of 1ms.
+   * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to true
    */
   config.logger = {
     dir: path.join(appInfo.root, 'logs', appInfo.name),
@@ -282,8 +282,8 @@ module.exports = appInfo => {
     errorLogName: 'common-error.log',
     coreLogger: {},
     allowDebugAtProd: false,
-    enablePerformanceTimer: false,
-    enableFastContextLogger: false,
+    enablePerformanceTimer: true,
+    enableFastContextLogger: true,
   };
 
   /**
@@ -306,34 +306,17 @@ module.exports = appInfo => {
    * @property {Boolean} useHttpClientNext - use urllib@3 HttpClient
    */
   config.httpclient = {
-    enableDNSCache: false,
-    dnsCacheLookupInterval: 10000,
-    dnsCacheMaxLength: 1000,
-
     request: {
       timeout: 5000,
     },
-    httpAgent: {
-      keepAlive: true,
-      freeSocketTimeout: 4000,
-      maxSockets: Number.MAX_SAFE_INTEGER,
-      maxFreeSockets: 256,
-    },
-    httpsAgent: {
-      keepAlive: true,
-      freeSocketTimeout: 4000,
-      maxSockets: Number.MAX_SAFE_INTEGER,
-      maxFreeSockets: 256,
-    },
-    useHttpClientNext: false,
   };
 
   /**
-   * The option of `meta` middleware
+   * The options of `meta` middleware
    *
    * @member Config#meta
-   * @property {Boolean} enable - enable meta or not, default is true
-   * @property {Boolean} logging - enable logging start request, default is false
+   * @property {Boolean} enable - enable meta or not, default is `true`
+   * @property {Boolean} logging - enable logging start request, default is `false`
    */
   config.meta = {
     enable: true,
@@ -369,7 +352,7 @@ module.exports = appInfo => {
   config.serverTimeout = null;
 
   /**
-   *
+   * The options of cluster
    * @member {Object} Config#cluster
    * @property {Object} listen - listen options, see {@link https://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback}
    * @property {String} listen.path - set a unix sock path when server listen
@@ -416,7 +399,7 @@ module.exports = appInfo => {
    *   };
    * }
    */
-  config.onClientError = null;
+  config.onClientError = undefined;
 
   return config;
 };
