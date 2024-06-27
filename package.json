@@ -8,7 +8,7 @@
   "release": {
     "branches": [
       {
-        "name": "3.x",
+        "name": "([0-9]).x",
         "range": ">=3.0.0 < 4.0.0",
         "channel": "release-3.x"
       }
