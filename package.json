@@ -5,6 +5,15 @@
     "tag": "release-3.x",
     "access": "public"
   },
+  "release": {
+    "branches": [
+      {
+        "name": "3.x",
+        "range": ">=3.0.0 < 4.0.0",
+        "channel": "release-3.x"
+      }
+    ]
+  },
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
