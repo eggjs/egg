@@ -1,4 +1,10 @@
 
+3.26.0 / 2024-07-01
+==================
+
+**features**
+  * [[`b0292a8b`](http://github.com/eggjs/egg/commit/b0292a8b7e76d5dbf7441b7164c39441dbae51ec)] - feat: allow to create httpClient from app (#5334) (fengmk2 <<suqian.yf@antgroup.com>>)
+
 3.25.0 / 2024-06-27
 ==================
 
