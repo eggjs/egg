@@ -1,4 +1,5 @@
 const assert = require('node:assert');
+const { sensitiveHeaders } = require('node:http2');
 const mm = require('egg-mock');
 const urllib = require('urllib');
 const Httpclient = require('../../../lib/core/httpclient');
@@ -237,6 +238,12 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
     after(() => app.close());
 
+    it('should work', async () => {
+      const res = await app.httpclient.request(url);
+      assert.equal(res.status, 200);
+      assert.equal(res.data.toString(), 'GET /');
+    });
+
     it('should set request default global timeout to 99ms', () => {
       return app.httpclient.curl(`${url}/timeout`)
         .catch(err => {
@@ -244,6 +251,36 @@ describe('test/lib/core/httpclient.test.js', () => {
           assert(err.name === 'HttpClientRequestTimeoutError');
           assert(err.message.includes('Request timeout for 99 ms'));
         });
+    });
+
+    it('should assert url', () => {
+      return app.httpclient.curl('unknown url')
+        .catch(err => {
+          assert(err);
+          assert(err.message.includes('url should start with http, but got unknown url'));
+        });
+    });
+  });
+
+  describe('overwrite httpclient support allowH2=true', () => {
+    let app;
+    before(() => {
+      app = utils.app('apps/httpclient-http2');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work on http2', async () => {
+      const res = await app.httpclient.request(url);
+      assert.equal(res.status, 200);
+      assert.equal(res.data.toString(), 'GET /');
+      assert.equal(sensitiveHeaders in res.headers, false);
+      const res2 = await app.httpclient.request('https://registry.npmmirror.com/urllib/latest', {
+        dataType: 'json',
+      });
+      assert.equal(res2.status, 200);
+      assert.equal(res2.data.name, 'urllib');
+      assert.equal(sensitiveHeaders in res2.headers, true);
     });
 
     it('should assert url', () => {
