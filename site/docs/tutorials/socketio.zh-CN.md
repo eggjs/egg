@@ -116,7 +116,6 @@ location / {
     # http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_bind
 ```
 
-# proxy_bind       $remote_addr transparent;
 ## 使用 `egg-socket.io`
 
 开启 [egg-socket.io] 的项目目录结构如下：
