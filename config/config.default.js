@@ -304,6 +304,7 @@ module.exports = appInfo => {
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    * @property {Boolean} useHttpClientNext - use urllib@3 HttpClient
+   * @property {Boolean} allowH2 - Allow to use HTTP2 first, only work on `useHttpClientNext = true`
    */
   config.httpclient = {
     enableDNSCache: false,
@@ -326,6 +327,7 @@ module.exports = appInfo => {
       maxFreeSockets: 256,
     },
     useHttpClientNext: false,
+    // allowH2: false,
   };
 
   /**

@@ -296,16 +296,18 @@ declare module 'egg' {
     request?: HttpClientRequestOptions | RequestOptionsOld;
     /** Whether enable dns cache */
     enableDNSCache?: boolean;
-    /** Enable proxy request, default is false. */
+    /** Enable proxy request. Default is `false`. */
     enableProxy?: boolean;
-    /** proxy agent uri or options, default is null. */
+    /** proxy agent uri or options. Default is `null`. */
     proxy?: string | { [key: string]: any };
     /** DNS cache lookup interval */
     dnsCacheLookupInterval?: number;
     /** DNS cache max age */
     dnsCacheMaxLength?: number;
-    /** use urllib@3 HttpClient */
+    /** use urllib@3 HttpClient. Default is `false`  */
     useHttpClientNext?: boolean;
+    /** Allow to use HTTP2 first, only work on `useHttpClientNext = true`. Default is `false` */
+    allowH2?: boolean;
   }
 
   export interface EggAppConfig {
