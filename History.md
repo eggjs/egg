@@ -1,4 +1,13 @@
 
+3.26.1 / 2024-07-04
+==================
+
+**fixes**
+  * [[`872273cb`](http://github.com/eggjs/egg/commit/872273cb23cd6f5d76b3f33528916effade31011)] - fix: xframe value type (#5336) (hongzzz <<hongzzz@foxmail.com>>)
+
+**others**
+  * [[`8ae76d09`](http://github.com/eggjs/egg/commit/8ae76d09db8cf020cbdacfc64fee0750b9612136)] - docs: fix typo (#5330) (Fu Yuchen <<78291982+fyc09@users.noreply.github.com>>)
+
 3.26.0 / 2024-07-01
 ==================
 
