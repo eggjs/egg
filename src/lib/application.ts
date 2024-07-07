@@ -1,17 +1,15 @@
-'use strict';
-
-const path = require('path');
-const fs = require('fs');
-const ms = require('ms');
-const is = require('is-type-of');
-const graceful = require('graceful');
-const http = require('http');
-const cluster = require('cluster-client');
-const onFinished = require('on-finished');
-const { assign } = require('utility');
+import path from 'path';
+import fs from 'fs';
+import ms from 'ms';
+import is from 'is-type-of';
+import graceful from 'graceful';
+import http from 'http';
+import cluster from 'cluster-client';
+import onFinished from 'on-finished';
+import { assign } from 'utility';
 const eggUtils = require('egg-core').utils;
-const EggApplication = require('./egg');
-const AppWorkerLoader = require('./loader').AppWorkerLoader;
+import { EggApplication } from './egg.js';
+import { AppWorkerLoader } from './loader';
 
 const KEYS = Symbol('Application#keys');
 const HELPER = Symbol('Application#Helper');
@@ -19,7 +17,6 @@ const LOCALS = Symbol('Application#locals');
 const BIND_EVENTS = Symbol('Application#bindEvents');
 const WARN_CONFUSED_CONFIG = Symbol('Application#warnConfusedConfig');
 const EGG_LOADER = Symbol.for('egg#loader');
-const EGG_PATH = Symbol.for('egg#eggPath');
 const CLUSTER_CLIENTS = Symbol.for('egg#clusterClients');
 const RESPONSE_RAW = Symbol('Application#responseRaw');
 
@@ -49,7 +46,7 @@ function escapeHeaderValue(value) {
  * Singleton instance in App Worker, extend {@link EggApplication}
  * @augments EggApplication
  */
-class Application extends EggApplication {
+export class Application extends EggApplication {
 
   /**
    * @class
@@ -81,10 +78,6 @@ class Application extends EggApplication {
 
   get [EGG_LOADER]() {
     return AppWorkerLoader;
-  }
-
-  get [EGG_PATH]() {
-    return path.join(__dirname, '..');
   }
 
   [RESPONSE_RAW](socket, raw) {
@@ -345,4 +338,3 @@ class Application extends EggApplication {
   }
 }
 
-module.exports = Application;

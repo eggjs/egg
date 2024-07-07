@@ -1,15 +1,18 @@
-'use strict';
 
-const debug = require('util').debuglog('egg:util:messenger:ipc');
-const is = require('is-type-of');
-const workerThreads = require('worker_threads');
-const sendmessage = require('sendmessage');
-const EventEmitter = require('events');
+import { EventEmitter } from 'node:events';
+import { debuglog } from 'node:util';
+import workerThreads from 'node:worker_threads';
+import sendmessage from 'sendmessage';
+import type { IMessenger } from './IMessenger.js';
+
+const debug = debuglog('egg:lib:core:messenger:ipc');
 
 /**
  * Communication between app worker and agent worker by IPC channel
  */
-class Messenger extends EventEmitter {
+export class Messenger extends EventEmitter implements IMessenger {
+  readonly pid: string;
+  opids: string[] = [];
 
   constructor() {
     super();
@@ -17,14 +20,13 @@ class Messenger extends EventEmitter {
     // pids of agent or app managed by master
     // - retrieve app worker pids when it's an agent worker
     // - retrieve agent worker pids when it's an app worker
-    this.opids = [];
     this.on('egg-pids', pids => {
       this.opids = pids;
     });
     this._onMessage = this._onMessage.bind(this);
     process.on('message', this._onMessage);
     if (!workerThreads.isMainThread) {
-      workerThreads.parentPort.on('message', this._onMessage);
+      workerThreads.parentPort!.on('message', this._onMessage);
     }
   }
 
@@ -34,7 +36,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  broadcast(action, data) {
+  broadcast(action: string, data?: unknown): Messenger {
     debug('[%s] broadcast %s with %j', this.pid, action, data);
     this.send(action, data, 'app');
     this.send(action, data, 'agent');
@@ -48,7 +50,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendTo(pid, action, data) {
+  sendTo(pid: string, action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to %s', this.pid, action, data, pid);
     sendmessage(process, {
       action,
@@ -66,10 +68,11 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendRandom(action, data) {
+  sendRandom(action: string, data?: unknown): Messenger {
     /* istanbul ignore if */
-    if (!this.opids.length) return this;
-    const pid = random(this.opids);
+    if (this.opids.length === 0) return this;
+    const index = Math.floor(Math.random() * this.opids.length);
+    const pid = this.opids[index];
     this.sendTo(String(pid), action, data);
     return this;
   }
@@ -80,7 +83,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendToApp(action, data) {
+  sendToApp(action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to all app', this.pid, action, data);
     this.send(action, data, 'app');
     return this;
@@ -92,7 +95,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendToAgent(action, data) {
+  sendToAgent(action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to all agent', this.pid, action, data);
     this.send(action, data, 'agent');
     return this;
@@ -104,7 +107,7 @@ class Messenger extends EventEmitter {
    * @param {String} to - let master know how to send message
    * @return {Messenger} this
    */
-  send(action, data, to) {
+  send(action: string, data: unknown | undefined, to: string): Messenger {
     sendmessage(process, {
       action,
       data,
@@ -113,8 +116,8 @@ class Messenger extends EventEmitter {
     return this;
   }
 
-  _onMessage(message) {
-    if (message && is.string(message.action)) {
+  _onMessage(message: any) {
+    if (typeof message?.action === 'string') {
       debug('[%s] got message %s with %j, receiverPid: %s',
         this.pid, message.action, message.data, message.receiverPid);
       this.emit(message.action, message.data);
@@ -131,11 +134,4 @@ class Messenger extends EventEmitter {
    * @param {String} action - message key
    * @param {Object} data - message value
    */
-}
-
-module.exports = Messenger;
-
-function random(arr) {
-  const index = Math.floor(Math.random() * arr.length);
-  return arr[index];
 }

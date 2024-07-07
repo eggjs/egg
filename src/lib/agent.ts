@@ -1,18 +1,14 @@
-'use strict';
-
-const path = require('path');
-const ms = require('ms');
-const EggApplication = require('./egg');
-const AgentWorkerLoader = require('./loader').AgentWorkerLoader;
+import ms from 'ms';
+import { EggApplication } from './egg.js';
+import { AgentWorkerLoader } from './loader';
 
 const EGG_LOADER = Symbol.for('egg#loader');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 /**
  * Singleton instance in Agent Worker, extend {@link EggApplication}
  * @augments EggApplication
  */
-class Agent extends EggApplication {
+export class Agent extends EggApplication {
   /**
    * @class
    * @param {Object} options - see {@link EggApplication}
@@ -53,10 +49,6 @@ class Agent extends EggApplication {
     return AgentWorkerLoader;
   }
 
-  get [EGG_PATH]() {
-    return path.join(__dirname, '..');
-  }
-
   _wrapMessenger() {
     for (const methodName of [
       'broadcast',
@@ -91,5 +83,3 @@ class Agent extends EggApplication {
     return super.close();
   }
 }
-
-module.exports = Agent;

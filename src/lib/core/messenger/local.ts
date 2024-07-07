@@ -1,17 +1,21 @@
-'use strict';
+import { debuglog } from 'node:util';
+import EventEmitter from 'node:events';
+import type { IMessenger } from './IMessenger.js';
+import type { EggApplication } from '../../egg.js';
 
-const debug = require('util').debuglog('egg:util:messenger:local');
-const is = require('is-type-of');
-const EventEmitter = require('events');
+const debug = debuglog('egg:lib:core:messenger:local');
 
 /**
  * Communication between app worker and agent worker with EventEmitter
  */
-class Messenger extends EventEmitter {
+export class Messenger extends EventEmitter implements IMessenger {
+  readonly pid: string;
+  readonly egg: EggApplication;
 
-  constructor(egg) {
+  constructor(egg: EggApplication) {
     super();
     this.egg = egg;
+    this.pid = String(process.pid);
   }
 
   /**
@@ -20,7 +24,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  broadcast(action, data) {
+  broadcast(action: string, data?: unknown): Messenger {
     debug('[%s] broadcast %s with %j', this.pid, action, data);
     this.send(action, data, 'both');
     return this;
@@ -35,9 +39,11 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendTo(pid, action, data) {
+  sendTo(pid: string, action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to %s', this.pid, action, data, pid);
-    if (pid !== process.pid) return this;
+    if (String(pid) !== this.pid) {
+      return this;
+    }
     this.send(action, data, 'both');
     return this;
   }
@@ -51,7 +57,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendRandom(action, data) {
+  sendRandom(action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to opposite', this.pid, action, data);
     this.send(action, data, 'opposite');
     return this;
@@ -63,7 +69,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendToApp(action, data) {
+  sendToApp(action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to all app', this.pid, action, data);
     this.send(action, data, 'application');
     return this;
@@ -75,7 +81,7 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendToAgent(action, data) {
+  sendToAgent(action: string, data?: unknown): Messenger {
     debug('[%s] send %s with %j to all agent', this.pid, action, data);
     this.send(action, data, 'agent');
     return this;
@@ -87,7 +93,7 @@ class Messenger extends EventEmitter {
    * @param {String} to - let master know how to send message
    * @return {Messenger} this
    */
-  send(action, data, to) {
+  send(action: string, data: unknown | undefined, to: string): Messenger {
     // use nextTick to keep it async as IPC messenger
     process.nextTick(() => {
       const { egg } = this;
@@ -104,7 +110,9 @@ class Messenger extends EventEmitter {
         application = egg.application;
         opposite = application;
       }
-      if (!to) to = egg.type === 'application' ? 'agent' : 'application';
+      if (!to) {
+        to = egg.type === 'application' ? 'agent' : 'application';
+      }
 
       if (application && application.messenger && (to === 'application' || to === 'both')) {
         application.messenger._onMessage({ action, data });
@@ -120,8 +128,8 @@ class Messenger extends EventEmitter {
     return this;
   }
 
-  _onMessage(message) {
-    if (message && is.string(message.action)) {
+  _onMessage(message: any) {
+    if (typeof message?.action === 'string') {
       debug('[%s] got message %s with %j', this.pid, message.action, message.data);
       this.emit(message.action, message.data);
     }
@@ -137,5 +145,3 @@ class Messenger extends EventEmitter {
    * @param {Object} data - message value
    */
 }
-
-module.exports = Messenger;
