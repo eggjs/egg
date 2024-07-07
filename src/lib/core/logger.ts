@@ -1,23 +1,27 @@
-import { EggLoggers } from 'egg-logger';
+import { EggLoggers, EggLoggersOptions } from 'egg-logger';
 import { setCustomLogger } from 'onelogger';
 import type { EggApplication } from '../egg.js';
 
-export type { EggLoggers, EggLogger } from 'egg-logger';
-
 export function createLoggers(app: EggApplication) {
-  const loggerConfig = app.config.logger;
-  loggerConfig.type = app.type;
-  loggerConfig.localStorage = app.ctxStorage;
+  const loggerOptions = {
+    ...app.config.logger,
+    type: app.type,
+    localStorage: app.ctxStorage,
+  } as EggLoggersOptions;
 
-  if (app.config.env === 'prod' && loggerConfig.level === 'DEBUG' && !loggerConfig.allowDebugAtProd) {
-    loggerConfig.level = 'INFO';
+  // set DEBUG level into INFO on prod env
+  if (app.config.env === 'prod' && loggerOptions.level === 'DEBUG' && !app.config.logger.allowDebugAtProd) {
+    loggerOptions.level = 'INFO';
   }
 
-  const loggers = new EggLoggers(app.config);
+  const loggers = new EggLoggers({
+    logger: loggerOptions,
+    customLogger: app.config.customLogger,
+  });
 
   // won't print to console after started, except for local and unittest
   app.ready(() => {
-    if (loggerConfig.disableConsoleAfterReady) {
+    if (app.config.logger.disableConsoleAfterReady) {
       loggers.disableConsole();
       loggers.coreLogger.info('[egg:lib:core:logger] disable console log after app ready');
     }
@@ -28,11 +32,11 @@ export function createLoggers(app: EggApplication) {
     setCustomLogger(loggerName, loggers[loggerName]);
   }
   // reset global logger on beforeClose hook
-  app.beforeClose(() => {
+  app.lifecycle.registerBeforeClose(() => {
     for (const loggerName of Object.keys(loggers)) {
       setCustomLogger(loggerName, undefined);
     }
   });
-  loggers.coreLogger.info('[egg:lib:core:logger] init all loggers with options: %j', loggerConfig);
+  loggers.coreLogger.info('[egg:lib:core:logger] init all loggers with options: %j', loggerOptions);
   return loggers;
 }

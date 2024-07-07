@@ -31,7 +31,7 @@ export interface ClientErrorResponse {
 export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
 
 /** logger config of egg */
-interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
+export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
   /** custom config of coreLogger */
   coreLogger?: Partial<EggLoggerOptions>;
   /** allow debug log at prod, defaults to `false` */

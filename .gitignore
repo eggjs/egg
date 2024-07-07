@@ -36,3 +36,4 @@ site/dist
 .umi-production
 .vercel
 package-lock.json
+.tshy*

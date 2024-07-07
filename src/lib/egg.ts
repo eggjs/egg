@@ -19,7 +19,7 @@ import { create as createMessenger, IMessenger } from './core/messenger';
 import {
   HttpClient, type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
 } from './core/httpclient.js';
-import { createLoggers, type EggLoggers, type EggLogger } from './core/logger';
+import { createLoggers, type EggLoggers, type EggLogger } from './core/logger.js';
 import {
   Singleton, type SingletonCreateMethod, type SingletonOptions,
 } from './core/singleton.js';
@@ -548,8 +548,8 @@ export class EggApplication extends EggCore {
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    * @return {Context} context
    */
-  createAnonymousContext(req?: unknown): EggCoreContext {
-    const request = {
+  createAnonymousContext(req?: any): EggCoreContext {
+    const request: any = {
       headers: {
         host: '127.0.0.1',
         'x-forwarded-for': '127.0.0.1',
@@ -567,7 +567,7 @@ export class EggApplication extends EggCore {
         remoteAddress: '127.0.0.1',
         remotePort: 7001,
       },
-    } as unknown as IncomingMessage;
+    };
     if (req) {
       for (const key in req) {
         if (key === 'headers' || key === 'query' || key === 'socket') {
