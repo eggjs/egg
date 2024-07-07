@@ -1,6 +1,6 @@
-import ms from 'ms';
-import { EggApplication } from './egg.js';
-import { AgentWorkerLoader } from './loader';
+import { EggLogger } from 'egg-logger';
+import { EggApplication, EggApplicationOptions } from './egg.js';
+import { AgentWorkerLoader } from './loader/index.js';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 
@@ -9,40 +9,22 @@ const EGG_LOADER = Symbol.for('egg#loader');
  * @augments EggApplication
  */
 export class Agent extends EggApplication {
+  readonly #agentAliveHandler: NodeJS.Timeout;
+
   /**
    * @class
    * @param {Object} options - see {@link EggApplication}
    */
-  constructor(options = {}) {
-    options.type = 'agent';
-    super(options);
-
-    this.loader.load();
-
-    // dump config after loaded, ensure all the dynamic modifications will be recorded
-    const dumpStartTime = Date.now();
-    this.dumpConfig();
-    this.coreLogger.info(
-      '[egg:core] dump config after load, %s',
-      ms(Date.now() - dumpStartTime)
-    );
+  constructor(options?: EggApplicationOptions) {
+    super({
+      ...options,
+      type: 'agent',
+    });
 
     // keep agent alive even it doesn't have any io tasks
-    this.agentAliveHandler = setInterval(() => {}, 24 * 60 * 60 * 1000);
-
-    this._uncaughtExceptionHandler = this._uncaughtExceptionHandler.bind(this);
-    process.on('uncaughtException', this._uncaughtExceptionHandler);
-  }
-
-  _uncaughtExceptionHandler(err) {
-    if (!(err instanceof Error)) {
-      err = new Error(String(err));
-    }
-    /* istanbul ignore else */
-    if (err.name === 'Error') {
-      err.name = 'unhandledExceptionError';
-    }
-    this.coreLogger.error(err);
+    this.#agentAliveHandler = setInterval(() => {
+      this.coreLogger.info('[]');
+    }, 24 * 60 * 60 * 1000);
   }
 
   get [EGG_LOADER]() {
@@ -60,16 +42,16 @@ export class Agent extends EggApplication {
       wrapMethod(methodName, this.messenger, this.coreLogger);
     }
 
-    function wrapMethod(methodName, messenger, logger) {
+    function wrapMethod(methodName: string, messenger: any, logger: EggLogger) {
       const originMethod = messenger[methodName];
-      messenger[methodName] = function() {
-        const stack = new Error().stack.split('\n').slice(1).join('\n');
+      messenger[methodName] = function(...args: any[]) {
+        const stack = new Error().stack!.split('\n').slice(1).join('\n');
         logger.warn(
           "agent can't call %s before server started\n%s",
           methodName,
-          stack
+          stack,
         );
-        originMethod.apply(this, arguments);
+        originMethod.apply(this, args);
       };
       messenger.prependOnceListener('egg-ready', () => {
         messenger[methodName] = originMethod;
@@ -77,9 +59,8 @@ export class Agent extends EggApplication {
     }
   }
 
-  close() {
-    process.removeListener('uncaughtException', this._uncaughtExceptionHandler);
-    clearInterval(this.agentAliveHandler);
-    return super.close();
+  async close() {
+    clearInterval(this.#agentAliveHandler);
+    await super.close();
   }
 }

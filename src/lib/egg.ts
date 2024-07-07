@@ -4,12 +4,15 @@ import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import { fileURLToPath } from 'node:url';
-import ms from 'ms';
 import { EggCore, type EggCoreContext, type EggCoreOptions } from '@eggjs/core';
-import cluster from 'cluster-client';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import createClusterClient, { close as closeClusterClient } from 'cluster-client';
 import extend from 'extend2';
 import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.js';
 import type { Application } from './application.js';
@@ -26,13 +29,14 @@ import {
 import { convertObject } from './core/utils.js';
 import { BaseContextClass } from './core/base_context_class.js';
 import { BaseHookClass } from './core/base_hook_class.js';
+import type { EggApplicationLoader } from './loader/index.js';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
-const CLUSTER_CLIENTS = Symbol.for('egg#clusterClients');
 
-export interface EggApplicationOptions extends EggCoreOptions {
+export interface EggApplicationOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';
   clusterPort?: number;
+  baseDir?: string;
 }
 
 export interface EggApplicationContext extends EggCoreContext {
@@ -101,14 +105,16 @@ export class EggApplication extends EggCore {
    */
   Boot = BaseHookClass;
 
-  declare options: EggApplicationOptions;
+  declare options: Required<EggApplicationOptions>;
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
+  #clusterClients: any[] = [];
 
   readonly messenger: IMessenger;
   agent?: Agent;
   application?: Application;
+  declare loader: EggApplicationLoader;
 
   /**
    * @class
@@ -126,9 +132,6 @@ export class EggApplication extends EggCore {
       ...options,
     };
     super(options);
-
-    this.loader.loadConfig();
-
     /**
      * messenger instance
      * @member {Messenger}
@@ -141,14 +144,22 @@ export class EggApplication extends EggCore {
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
+    this.load();
+  }
 
+  protected async loadConfig() {
+    await this.loader.loadConfig();
+  }
+
+  protected async load() {
+    await this.loadConfig();
     // dump config after ready, ensure all the modifications during start will be recorded
     // make sure dumpConfig is the last ready callback
     this.ready(() => process.nextTick(() => {
       const dumpStartTime = Date.now();
       this.dumpConfig();
       this.dumpTiming();
-      this.coreLogger.info('[egg] dump config after ready, %s', ms(Date.now() - dumpStartTime));
+      this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
     }));
     this.#setupTimeoutTimer();
 
@@ -160,9 +171,14 @@ export class EggApplication extends EggCore {
     this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
-    this[CLUSTER_CLIENTS] = [];
     // register close function
-    this.beforeClose(async () => {
+    this.lifecycle.registerBeforeClose(async () => {
+      // close all cluster clients
+      for (const clusterClient of this.#clusterClients) {
+        await closeClusterClient(clusterClient);
+      }
+      this.#clusterClients = [];
+
       // single process mode will close agent before app close
       if (this.type === 'application' && this.options.mode === 'single') {
         await this.agent!.close();
@@ -174,6 +190,8 @@ export class EggApplication extends EggCore {
       this.messenger.close();
       process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
+
+    await this.loader.load();
   }
 
   /**
@@ -194,8 +212,8 @@ export class EggApplication extends EggCore {
    *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
    * @return {ClientWrapper} wrapper
    */
-  cluster(clientClass, options) {
-    options = {
+  cluster(clientClass: unknown, options: object) {
+    const clientClassOptions = {
       ...this.config.clusterClient,
       ...options,
       singleMode: this.options.mode === 'single',
@@ -207,8 +225,8 @@ export class EggApplication extends EggCore {
       // debug mode does not check heartbeat
       isCheckHeartbeat: this.config.env === 'prod' ? true : inspector.url() === undefined,
     };
-    const client = cluster(clientClass, options);
-    this._patchClusterClient(client);
+    const client = createClusterClient(clientClass, clientClassOptions);
+    this.#patchClusterClient(client);
     return client;
   }
 
@@ -431,8 +449,9 @@ export class EggApplication extends EggCore {
   dumpConfig() {
     const rundir = this.config.rundir;
     try {
-      /* istanbul ignore if */
-      if (!fs.existsSync(rundir)) fs.mkdirSync(rundir);
+      if (!fs.existsSync(rundir)) {
+        fs.mkdirSync(rundir);
+      }
 
       // get dumped object
       const { config, meta } = this.dumpConfigToObject();
@@ -444,7 +463,7 @@ export class EggApplication extends EggCore {
       // dump config meta
       const dumpMetaFile = path.join(rundir, `${this.type}_config_meta.json`);
       fs.writeFileSync(dumpMetaFile, CircularJSON.stringify(meta, null, 2));
-    } catch (err) {
+    } catch (err: any) {
       this.coreLogger.warn(`[egg] dumpConfig error: ${err.message}`);
     }
   }
@@ -466,18 +485,18 @@ export class EggApplication extends EggCore {
             item.index, item.duration, item.name);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       this.coreLogger.warn(`[egg] dumpTiming error: ${err.message}`);
     }
   }
 
   get [EGG_PATH]() {
     if (typeof __dirname !== 'undefined') {
-      return __dirname;
+      return path.dirname(__dirname);
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return path.dirname(fileURLToPath(import.meta.url));
+    return path.dirname(path.dirname(fileURLToPath(import.meta.url)));
   }
 
   #setupTimeoutTimer() {
@@ -545,12 +564,11 @@ export class EggApplication extends EggCore {
     }
   }
 
-  _patchClusterClient(client) {
-    const create = client.create;
-    client.create = (...args) => {
-      const realClient = create.apply(client, args);
-      this[CLUSTER_CLIENTS].push(realClient);
-      this.beforeClose(() => cluster.close(realClient));
+  #patchClusterClient(client: any) {
+    const rawCreate = client.create;
+    client.create = (...args: any) => {
+      const realClient = rawCreate.apply(client, args);
+      this.#clusterClients.push(realClient);
       return realClient;
     };
   }
@@ -613,7 +631,7 @@ export class EggApplication extends EggCore {
     request.response = response;
     response.request = request;
     context.onerror = context.onerror.bind(context);
-    context.originalUrl = request.originalUrl = req.url;
+    context.originalUrl = request.originalUrl = req.url as string;
     context.starttime = Date.now();
     context.performanceStarttime = performance.now();
     return context;

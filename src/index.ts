@@ -2,67 +2,69 @@
  * @namespace Egg
  */
 
+import { BaseContextClass } from './lib/core/base_context_class.js';
+
 /**
  * Start egg application with cluster mode
  * @since 1.0.0
  */
-exports.startCluster = require('egg-cluster').startCluster;
+export { startCluster } from 'egg-cluster';
 
 /**
  * Start egg application with single process mode
  * @since 1.0.0
  */
-exports.start = require('./lib/start');
+export { startEgg as start } from './lib/start.js';
 
 /**
  * @member {Application} Egg#Application
  * @since 1.0.0
  */
-exports.Application = require('./lib/application');
+export { Application } from './lib/application.js';
 
 /**
  * @member {Agent} Egg#Agent
  * @since 1.0.0
  */
-exports.Agent = require('./lib/agent');
+export { Agent } from './lib/agent.js';
 
 /**
  * @member {AppWorkerLoader} Egg#AppWorkerLoader
  * @since 1.0.0
  */
-exports.AppWorkerLoader = require('./lib/loader').AppWorkerLoader;
 
 /**
  * @member {AgentWorkerLoader} Egg#AgentWorkerLoader
  * @since 1.0.0
  */
-exports.AgentWorkerLoader = require('./lib/loader').AgentWorkerLoader;
+
+export { AppWorkerLoader, AgentWorkerLoader } from './lib/loader/index.js';
 
 /**
  * @member {Controller} Egg#Controller
  * @since 1.1.0
  */
-exports.Controller = require('./lib/core/base_context_class');
+export const Controller = BaseContextClass;
 
 /**
  * @member {Service} Egg#Service
  * @since 1.1.0
  */
-exports.Service = require('./lib/core/base_context_class');
+export const Service = BaseContextClass;
 
 /**
  * @member {Subscription} Egg#Subscription
  * @since 1.10.0
  */
-exports.Subscription = require('./lib/core/base_context_class');
+export const Subscription = BaseContextClass;
 
 /**
  * @member {BaseContextClass} Egg#BaseContextClass
  * @since 1.2.0
  */
-exports.BaseContextClass = require('./lib/core/base_context_class');
+export { BaseContextClass } from './lib/core/base_context_class.js';
 
 /**
  * @member {Boot} Egg#Boot
  */
-exports.Boot = require('./lib/core/base_hook_class');
+export { BaseHookClass as Boot } from './lib/core/base_hook_class.js';

@@ -1,9 +1,9 @@
-import path from 'path';
-import fs from 'fs';
+import path from 'node:path';
+import fs from 'node:fs';
+import http from 'node:http';
 import ms from 'ms';
 import is from 'is-type-of';
 import graceful from 'graceful';
-import http from 'http';
 import cluster from 'cluster-client';
 import onFinished from 'on-finished';
 import { assign } from 'utility';

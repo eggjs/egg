@@ -17,7 +17,7 @@ export interface StartOptions {
 /**
  * Start egg with single process
  */
-export default async function startEgg(options: StartOptions = {}) {
+export async function startEgg(options: StartOptions = {}) {
   options.baseDir = options.baseDir ?? process.cwd();
   options.mode = 'single';
 
