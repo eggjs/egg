@@ -7,4 +7,4 @@ export default () => {
       buffer: false,
     },
   } satisfies Partial<EggAppConfig>;
-}
+};

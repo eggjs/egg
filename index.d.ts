@@ -1,6 +1,6 @@
 import accepts = require('accepts');
 import { AsyncLocalStorage } from 'async_hooks';
-import { EventEmitter } from 'events'
+import { EventEmitter } from 'events';
 import { Readable } from 'stream';
 import { Socket } from 'net';
 import { IncomingMessage, ServerResponse } from 'http';
@@ -65,10 +65,10 @@ declare module 'egg' {
   export interface EggHttpClient extends EventEmitter {
     request<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
     request<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
-      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
     curl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
     curl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
-      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
   }
 
   interface EggHttpConstructor {
@@ -723,13 +723,13 @@ declare module 'egg' {
 
     /**
      * Get current execute ctx async local storage
-     * @returns {AsyncLocalStorage} localStorage - store current execute Context
+     * @return {AsyncLocalStorage} localStorage - store current execute Context
      */
     get ctxStorage(): AsyncLocalStorage<Context>;
 
     /**
      * Get current execute ctx, maybe undefined
-     * @returns {Context} ctx - current execute Context
+     * @return {Context} ctx - current execute Context
      */
     get currentContext(): Context;
   }
@@ -1001,7 +1001,7 @@ declare module 'egg' {
      * // get other fields
      * console.log(stream.fields);
      * ```
-     * @method Context#getFileStream
+     * @function Context#getFileStream
      * @param {Object} options
      * @return {ReadStream} stream
      * @since 1.0.0
@@ -1052,7 +1052,7 @@ declare module 'egg' {
   export interface IHelper extends PlainObject, BaseContextClass {
     /**
      * Generate URL path(without host) for route. Takes the route name and a map of named params.
-     * @method Helper#pathFor
+     * @function Helper#pathFor
      * @param {String} name - Router Name
      * @param {Object} params - Other params
      *
@@ -1068,7 +1068,7 @@ declare module 'egg' {
 
     /**
      * Generate full URL(with host) for route. Takes the route name and a map of named params.
-     * @method Helper#urlFor
+     * @function Helper#urlFor
      * @param {String} name - Router name
      * @param {Object} params - Other params
      * @example
@@ -1153,7 +1153,7 @@ declare module 'egg' {
     ignoreWarning?: boolean;
   }
 
-  export function start(options?: StartOptions): Promise<Application>
+  export function start(options?: StartOptions): Promise<Application>;
 
   /**
    * Powerful Partial, Support adding ? modifier to a mapped property in deep level
@@ -1165,8 +1165,8 @@ declare module 'egg' {
    */
   export type PowerPartial<T> = {
     [U in keyof T]?: T[U] extends object
-    ? PowerPartial<T[U]>
-    : T[U]
+      ? PowerPartial<T[U]>
+      : T[U]
   };
 
   // send data can be number|string|boolean|object but not Set|Map

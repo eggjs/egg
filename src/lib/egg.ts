@@ -302,7 +302,7 @@ export class EggApplication extends EggCore {
    * See https://github.com/node-modules/urllib#api-doc for more details.
    *
    * @param {String} url request url address.
-   * @param {Object} opts
+   * @param {Object} options
    * - method {String} - Request method, defaults to GET. Could be GET, POST, DELETE or PUT. Alias 'type'.
    * - data {Object} - Data to be sent. Will be stringify automatically.
    * - dataType {String} - String - Type of response data. Could be `text` or `json`.

@@ -8,4 +8,4 @@ export default () => {
       },
     },
   } satisfies Partial<EggAppConfig>;
-}
+};
