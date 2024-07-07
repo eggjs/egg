@@ -8,18 +8,18 @@ import ms from 'ms';
 import { EggCore, type EggCoreContext, type EggCoreOptions } from '@eggjs/core';
 import cluster from 'cluster-client';
 import extend from 'extend2';
-import { EggContextLogger as ContextLogger } from 'egg-logger';
+import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
 import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.js';
 import type { Application } from './application.js';
 import type { EggAppConfig } from './type.js';
-import ContextHttpClient from './core/context_httpclient';
-import { create as createMessenger, IMessenger } from './core/messenger';
+import { create as createMessenger, IMessenger } from './core/messenger/index.js';
+import { ContextHttpClient } from './core/context_httpclient.js';
 import {
   HttpClient, type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
 } from './core/httpclient.js';
-import { createLoggers, type EggLoggers, type EggLogger } from './core/logger.js';
+import { createLoggers } from './core/logger.js';
 import {
   Singleton, type SingletonCreateMethod, type SingletonOptions,
 } from './core/singleton.js';
@@ -33,6 +33,20 @@ const CLUSTER_CLIENTS = Symbol.for('egg#clusterClients');
 export interface EggApplicationOptions extends EggCoreOptions {
   mode?: 'cluster' | 'single';
   clusterPort?: number;
+}
+
+export interface EggApplicationContext extends EggCoreContext {
+  app: EggApplication;
+  /**
+   * Request start time
+   * @member {Number} Context#starttime
+   */
+  starttime: number;
+  /**
+   * Request start timer using `performance.now()`
+   * @member {Number} Context#performanceStarttime
+   */
+  performanceStarttime: number;
 }
 
 /**
@@ -87,7 +101,7 @@ export class EggApplication extends EggCore {
    */
   Boot = BaseHookClass;
 
-  options: EggApplicationOptions;
+  declare options: EggApplicationOptions;
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
@@ -588,8 +602,8 @@ export class EggApplication extends EggCore {
    * @param  {Res} res - node native Response object
    * @return {Context} context object
    */
-  createContext(req: IncomingMessage, res: ServerResponse): EggCoreContext {
-    const context = Object.create(this.context);
+  createContext(req: IncomingMessage, res: ServerResponse): EggApplicationContext {
+    const context = Object.create(this.context) as EggApplicationContext;
     const request = context.request = Object.create(this.request);
     const response = context.response = Object.create(this.response);
     context.app = request.app = response.app = this;
@@ -600,19 +614,8 @@ export class EggApplication extends EggCore {
     response.request = request;
     context.onerror = context.onerror.bind(context);
     context.originalUrl = request.originalUrl = req.url;
-
-    /**
-     * Request start time
-     * @member {Number} Context#starttime
-     */
     context.starttime = Date.now();
-    if (this.config.logger.enablePerformanceTimer) {
-      /**
-       * Request start timer using `performance.now()`
-       * @member {Number} Context#performanceStarttime
-       */
-      context.performanceStarttime = performance.now();
-    }
-    return context as unknown as EggCoreContext;
+    context.performanceStarttime = performance.now();
+    return context;
   }
 }

@@ -38,7 +38,7 @@ export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
   allowDebugAtProd?: boolean;
   /** disable logger console after app ready. defaults to `false` on local and unittest env, others is `true`. */
   disableConsoleAfterReady?: boolean;
-  /** using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to `false`. e.g.: logger will set 1.456ms instead of 1ms. */
+  /** [deprecated] Defaults to `true`. */
   enablePerformanceTimer?: boolean;
   /** using the app logger instead of EggContextLogger, defaults to `false` */
   enableFastContextLogger?: boolean;
@@ -121,7 +121,6 @@ export interface EggAppConfig {
    * @property {String} agentLogName - file name of agent worker log
    * @property {Object} coreLogger - custom config of coreLogger
    * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
-   * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to false. e.g.: logger will set 1.456ms instead of 1ms.
    * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
    */
   logger: Partial<EggLoggerConfig>;

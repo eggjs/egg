@@ -104,7 +104,7 @@ export class Singleton {
     config = {
       ...this.options.default,
       ...config,
-    }
+    };
     return (this.create as SingletonCreateMethod)(config, this.app, clientName);
   }
 
@@ -113,7 +113,7 @@ export class Singleton {
     config = {
       ...this.options.default,
       ...config,
-    }
+    };
     return await this.create(config, this.app, clientName);
   }
 

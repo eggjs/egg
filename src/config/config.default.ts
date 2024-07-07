@@ -264,7 +264,6 @@ export default (appInfo: EggAppInfo) => {
    * @property {String} agentLogName - file name of agent worker log
    * @property {Object} coreLogger - custom config of coreLogger
    * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
-   * @property {Boolean} enablePerformanceTimer - using performance.now() timer instead of Date.now() for more more precise milliseconds, defaults to true. e.g.: logger will set 1.456ms instead of 1ms.
    * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to true
    */
   config.logger = {
@@ -282,7 +281,6 @@ export default (appInfo: EggAppInfo) => {
     errorLogName: 'common-error.log',
     coreLogger: {},
     allowDebugAtProd: false,
-    enablePerformanceTimer: true,
     enableFastContextLogger: true,
   };
 
