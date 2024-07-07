@@ -60,6 +60,7 @@
     "@arethetypeswrong/cli": "^0.15.3",
     "@eggjs/tsconfig": "1",
     "@types/koa-bodyparser": "^4.3.12",
+    "@types/mocha": "^10.0.7",
     "@types/ms": "^0.7.34",
     "@types/node": "20",
     "address": "2",
@@ -117,6 +118,10 @@
       "require": "./dist/commonjs"
     }
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "type": "module",
   "tshy": {
     "exports": {

@@ -1,7 +1,5 @@
-'use strict';
-
-const assert = require('assert');
-const egg = require('..');
+import { strict as assert } from 'node:assert';
+import * as egg from '../src/index.js';
 
 describe('test/index.test.js', () => {
   it('should expose properties', () => {
