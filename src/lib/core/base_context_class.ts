@@ -1,7 +1,6 @@
 import { BaseContextClass as EggCoreBaseContextClass } from '@eggjs/core';
-import { BaseContextLogger } from './base_context_logger';
-
-const LOGGER = Symbol('BaseContextClass#logger');
+import type { EggApplicationContext } from '../egg.js';
+import { BaseContextLogger } from './base_context_logger.js';
 
 /**
  * BaseContextClass is a base class that can be extended,
@@ -9,10 +8,14 @@ const LOGGER = Symbol('BaseContextClass#logger');
  * {@link Helper}, {@link Service} is extending it.
  */
 export class BaseContextClass extends EggCoreBaseContextClass {
+  declare ctx: EggApplicationContext;
   protected pathName?: string;
+  #logger: BaseContextLogger;
 
   get logger() {
-    if (!this[LOGGER]) this[LOGGER] = new BaseContextLogger(this.ctx, this.pathName);
-    return this[LOGGER];
+    if (!this.#logger) {
+      this.#logger = new BaseContextLogger(this.ctx, this.pathName);
+    }
+    return this.#logger;
   }
 }

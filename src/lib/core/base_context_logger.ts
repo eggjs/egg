@@ -1,9 +1,7 @@
-import { type EggCoreContext } from '@eggjs/core';
-
-const CALL = Symbol('BaseContextLogger#call');
+import type { EggApplicationContext } from '../egg.js';
 
 export class BaseContextLogger {
-  readonly #ctx: EggCoreContext;
+  readonly #ctx: EggApplicationContext;
   readonly #pathName?: string;
 
   /**
@@ -12,7 +10,7 @@ export class BaseContextLogger {
    * @param {String} pathName - class path name
    * @since 1.0.0
    */
-  constructor(ctx: EggCoreContext, pathName?: string) {
+  constructor(ctx: EggApplicationContext, pathName?: string) {
     /**
      * @member {Context} BaseContextLogger#ctx
      * @since 1.2.0
@@ -21,7 +19,7 @@ export class BaseContextLogger {
     this.#pathName = pathName;
   }
 
-  [CALL](method: string, args: any[]) {
+  protected _log(method: string, args: any[]) {
     // add `[${pathName}]` in log
     if (this.#pathName && typeof args[0] === 'string') {
       args[0] = `[${this.#pathName}] ${args[0]}`;
@@ -35,7 +33,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   debug(...args: any[]) {
-    this[CALL]('debug', args);
+    this._log('debug', args);
   }
 
   /**
@@ -44,7 +42,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   info(...args: any[]) {
-    this[CALL]('info', args);
+    this._log('info', args);
   }
 
   /**
@@ -53,7 +51,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   warn(...args: any[]) {
-    this[CALL]('warn', args);
+    this._log('warn', args);
   }
 
   /**
@@ -62,6 +60,6 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   error(...args: any[]) {
-    this[CALL]('error', args);
+    this._log('error', args);
   }
 }
