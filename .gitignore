@@ -37,3 +37,4 @@ site/dist
 .vercel
 package-lock.json
 .tshy*
+dist

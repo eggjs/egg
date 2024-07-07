@@ -256,7 +256,7 @@ export class EggApplication extends EggCore {
       env: this.config.env,
     };
 
-    function delegate(res, app, keys) {
+    function delegate(res: any, app: any, keys: string[]) {
       for (const key of keys) {
         if (app[key]) {
           res[key] = app[key];
@@ -264,7 +264,7 @@ export class EggApplication extends EggCore {
       }
     }
 
-    function abbr(res, app, keys) {
+    function abbr(res: any, app: any, keys: string[]) {
       for (const key of keys) {
         if (app[key]) {
           res[key] = `<egg ${key}>`;

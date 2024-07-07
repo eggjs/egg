@@ -38,9 +38,13 @@ export async function startEgg(options: StartOptions = {}) {
     ApplicationClass = framework.Application;
   }
 
-  const agent = new AgentClass(Object.assign({}, options));
+  const agent = new AgentClass({
+    ...options,
+  });
   await agent.ready();
-  const application = new ApplicationClass(Object.assign({}, options));
+  const application = new ApplicationClass({
+    ...options,
+  });
   application.agent = agent;
   agent.application = application;
   await application.ready();

@@ -53,4 +53,6 @@ export interface IMessenger extends EventEmitter {
   send(action: string, data: unknown | undefined, to: string): IMessenger;
 
   close(): void;
+
+  onMessage(message: any): void;
 }

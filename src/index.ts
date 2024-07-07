@@ -8,6 +8,8 @@ import { BaseContextClass } from './lib/core/base_context_class.js';
  * Start egg application with cluster mode
  * @since 1.0.0
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export { startCluster } from 'egg-cluster';
 
 /**

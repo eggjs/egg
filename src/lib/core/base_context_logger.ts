@@ -19,11 +19,13 @@ export class BaseContextLogger {
     this.#pathName = pathName;
   }
 
-  protected _log(method: string, args: any[]) {
+  protected _log(method: 'info' | 'warn' | 'error' | 'debug', args: any[]) {
     // add `[${pathName}]` in log
     if (this.#pathName && typeof args[0] === 'string') {
       args[0] = `[${this.#pathName}] ${args[0]}`;
     }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this.#ctx.app.logger[method](...args);
   }
 

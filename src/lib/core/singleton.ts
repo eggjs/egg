@@ -22,7 +22,7 @@ export class Singleton {
     assert(options.name, '[egg:singleton] Singleton#constructor options.name is required');
     assert(options.app, '[egg:singleton] Singleton#constructor options.app is required');
     assert(options.create, '[egg:singleton] Singleton#constructor options.create is required');
-    assert(!options.app[options.name], `${options.name} is already exists in app`);
+    assert(!(options.name in options.app), `[egg:singleton] ${options.name} is already exists in app`);
     this.app = options.app;
     this.name = options.name;
     this.create = options.create;
@@ -36,12 +36,12 @@ export class Singleton {
   initSync() {
     const options = this.options;
     assert(!(options.client && options.clients),
-      `egg:singleton ${this.name} can not set options.client and options.clients both`);
+      `[egg:singleton] ${this.name} can not set options.client and options.clients both`);
 
     // alias app[name] as client, but still support createInstance method
     if (options.client) {
       const client = this.createInstance(options.client, options.name);
-      this.app[this.name] = client;
+      this.#setClientToApp(client);
       this.#extendDynamicMethods(client);
       return;
     }
@@ -52,23 +52,23 @@ export class Singleton {
         const client = this.createInstance(options.clients[id], id);
         this.clients.set(id, client);
       });
-      this.app[this.name] = this;
+      this.#setClientToApp(this);
       return;
     }
 
     // no config.clients and config.client
-    this.app[this.name] = this;
+    this.#setClientToApp(this);
   }
 
   async initAsync() {
     const options = this.options;
     assert(!(options.client && options.clients),
-      `egg:singleton ${this.name} can not set options.client and options.clients both`);
+      `[egg:singleton] ${this.name} can not set options.client and options.clients both`);
 
     // alias app[name] as client, but still support createInstance method
     if (options.client) {
       const client = await this.createInstanceAsync(options.client, options.name);
-      this.app[this.name] = client;
+      this.#setClientToApp(client);
       this.#extendDynamicMethods(client);
       return;
     }
@@ -79,12 +79,16 @@ export class Singleton {
         return this.createInstanceAsync(options.clients[id], id)
           .then(client => this.clients.set(id, client));
       }));
-      this.app[this.name] = this;
+      this.#setClientToApp(this);
       return;
     }
 
     // no config.clients and config.client
-    this.app[this.name] = this;
+    this.#setClientToApp(this);
+  }
+
+  #setClientToApp(client: unknown) {
+    Reflect.set(this.app, this.name, client);
   }
 
   get(id: string) {
@@ -131,10 +135,10 @@ export class Singleton {
       extendable.createInstance = this.createInstance.bind(this);
       extendable.createInstanceAsync = this.createInstanceAsync.bind(this);
     } catch (err) {
-      this.app.logger.warn(
-        'egg:singleton %s dynamic create is disabled because of client is un-extendable',
+      this.app.coreLogger.warn(
+        '[egg:singleton] %s dynamic create is disabled because of client is un-extendable',
         this.name);
-      this.app.logger.warn(err);
+      this.app.coreLogger.warn(err);
     }
   }
 }

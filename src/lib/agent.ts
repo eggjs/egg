@@ -15,7 +15,7 @@ export class Agent extends EggApplication {
    * @class
    * @param {Object} options - see {@link EggApplication}
    */
-  constructor(options?: EggApplicationOptions) {
+  constructor(options?: Omit<EggApplicationOptions, 'type'>) {
     super({
       ...options,
       type: 'agent',

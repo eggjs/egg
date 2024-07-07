@@ -46,7 +46,7 @@ export class HttpClient extends RawHttpClient {
 
 function normalizeConfig(app: EggApplication) {
   const config = app.config.httpclient;
-  if (typeof config.request.timeout === 'string') {
+  if (typeof config.request?.timeout === 'string') {
     config.request.timeout = ms(config.request.timeout as string);
   }
 }

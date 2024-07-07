@@ -115,20 +115,20 @@ export class Messenger extends EventEmitter implements IMessenger {
       }
 
       if (application && application.messenger && (to === 'application' || to === 'both')) {
-        application.messenger._onMessage({ action, data });
+        application.messenger.onMessage({ action, data });
       }
       if (agent && agent.messenger && (to === 'agent' || to === 'both')) {
-        agent.messenger._onMessage({ action, data });
+        agent.messenger.onMessage({ action, data });
       }
       if (opposite && opposite.messenger && to === 'opposite') {
-        opposite.messenger._onMessage({ action, data });
+        opposite.messenger.onMessage({ action, data });
       }
     });
 
     return this;
   }
 
-  _onMessage(message: any) {
+  onMessage(message: any) {
     if (typeof message?.action === 'string') {
       debug('[%s] got message %s with %j', this.pid, message.action, message.data);
       this.emit(message.action, message.data);

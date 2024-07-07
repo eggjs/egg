@@ -23,10 +23,10 @@ export class Messenger extends EventEmitter implements IMessenger {
     this.on('egg-pids', pids => {
       this.opids = pids;
     });
-    this._onMessage = this._onMessage.bind(this);
-    process.on('message', this._onMessage);
+    this.onMessage = this.onMessage.bind(this);
+    process.on('message', this.onMessage);
     if (!workerThreads.isMainThread) {
-      workerThreads.parentPort!.on('message', this._onMessage);
+      workerThreads.parentPort!.on('message', this.onMessage);
     }
   }
 
@@ -116,7 +116,7 @@ export class Messenger extends EventEmitter implements IMessenger {
     return this;
   }
 
-  _onMessage(message: any) {
+  onMessage(message: any) {
     if (typeof message?.action === 'string') {
       debug('[%s] got message %s with %j, receiverPid: %s',
         this.pid, message.action, message.data, message.receiverPid);
@@ -125,7 +125,7 @@ export class Messenger extends EventEmitter implements IMessenger {
   }
 
   close() {
-    process.removeListener('message', this._onMessage);
+    process.removeListener('message', this.onMessage);
     this.removeAllListeners();
   }
 
