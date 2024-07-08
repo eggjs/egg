@@ -1,19 +1,19 @@
 import assert from 'node:assert';
 import { isAsyncFunction } from 'is-type-of';
-import type { EggApplication } from '../egg.js';
+import type { EggApplicationCore } from '../egg.js';
 
 export type SingletonCreateMethod =
-  (config: Record<string, any>, app: EggApplication, clientName: string) => unknown | Promise<unknown>;
+  (config: Record<string, any>, app: EggApplicationCore, clientName: string) => unknown | Promise<unknown>;
 
 export interface SingletonOptions {
   name: string;
-  app: EggApplication;
+  app: EggApplicationCore;
   create: SingletonCreateMethod;
 }
 
 export class Singleton {
   readonly clients = new Map<string, any>();
-  readonly app: EggApplication;
+  readonly app: EggApplicationCore;
   readonly create: SingletonCreateMethod;
   readonly name: string;
   readonly options: Record<string, any>;

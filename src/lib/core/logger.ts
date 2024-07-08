@@ -1,8 +1,8 @@
 import { EggLoggers, EggLoggersOptions } from 'egg-logger';
 import { setCustomLogger } from 'onelogger';
-import type { EggApplication } from '../egg.js';
+import type { EggApplicationCore } from '../egg.js';
 
-export function createLoggers(app: EggApplication) {
+export function createLoggers(app: EggApplicationCore) {
   const loggerOptions = {
     ...app.config.logger,
     type: app.type,

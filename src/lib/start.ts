@@ -4,7 +4,7 @@ import { importModule } from '@eggjs/utils';
 import { Agent } from './agent.js';
 import { Application } from './application.js';
 
-export interface StartOptions {
+export interface StartEggOptions {
   /** specify framework that can be absolute path or npm package */
   framework?: string;
   /** directory of application, default to `process.cwd()` */
@@ -12,12 +12,13 @@ export interface StartOptions {
   /** ignore single process mode warning */
   ignoreWarning?: boolean;
   mode?: 'single';
+  env?: string;
 }
 
 /**
  * Start egg with single process
  */
-export async function startEgg(options: StartOptions = {}) {
+export async function startEgg(options: StartEggOptions = {}) {
   options.baseDir = options.baseDir ?? process.cwd();
   options.mode = 'single';
 

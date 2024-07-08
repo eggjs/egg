@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
 import EventEmitter from 'node:events';
 import type { IMessenger } from './IMessenger.js';
-import type { EggApplication } from '../../egg.js';
+import type { EggApplicationCore } from '../../egg.js';
 
 const debug = debuglog('egg:lib:core:messenger:local');
 
@@ -10,9 +10,9 @@ const debug = debuglog('egg:lib:core:messenger:local');
  */
 export class Messenger extends EventEmitter implements IMessenger {
   readonly pid: string;
-  readonly egg: EggApplication;
+  readonly egg: EggApplicationCore;
 
-  constructor(egg: EggApplication) {
+  constructor(egg: EggApplicationCore) {
     super();
     this.egg = egg;
     this.pid = String(process.pid);

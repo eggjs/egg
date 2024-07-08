@@ -1,7 +1,7 @@
-import type { EggApplicationContext } from '../egg.js';
+import type { EggContext } from '../egg.js';
 
 export class BaseContextLogger {
-  readonly #ctx: EggApplicationContext;
+  readonly #ctx: EggContext;
   readonly #pathName?: string;
 
   /**
@@ -10,7 +10,7 @@ export class BaseContextLogger {
    * @param {String} pathName - class path name
    * @since 1.0.0
    */
-  constructor(ctx: EggApplicationContext, pathName?: string) {
+  constructor(ctx: EggContext, pathName?: string) {
     /**
      * @member {Context} BaseContextLogger#ctx
      * @since 1.2.0

@@ -5,7 +5,7 @@ import {
   RequestOptions,
 } from 'urllib';
 import ms from 'ms';
-import type { EggApplication } from '../egg.js';
+import type { EggApplicationCore } from '../egg.js';
 
 export type {
   HttpClientResponse,
@@ -18,9 +18,9 @@ export interface HttpClientRequestOptions extends RequestOptions {
 }
 
 export class HttpClient extends RawHttpClient {
-  readonly #app: EggApplication & { tracer?: unknown };
+  readonly #app: EggApplicationCore & { tracer?: unknown };
 
-  constructor(app: EggApplication) {
+  constructor(app: EggApplicationCore) {
     normalizeConfig(app);
     const config = app.config.httpclient;
     super({
@@ -44,7 +44,7 @@ export class HttpClient extends RawHttpClient {
   }
 }
 
-function normalizeConfig(app: EggApplication) {
+function normalizeConfig(app: EggApplicationCore) {
   const config = app.config.httpclient;
   if (typeof config.request?.timeout === 'string') {
     config.request.timeout = ms(config.request.timeout as string);

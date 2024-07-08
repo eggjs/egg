@@ -1,13 +1,13 @@
-import type { EggApplicationContext, EggApplication } from '../egg.js';
+import type { EggContext, EggApplicationCore } from '../egg.js';
 import type {
   HttpClientRequestURL, HttpClientRequestOptions,
 } from './httpclient.js';
 
 export class ContextHttpClient {
-  ctx: EggApplicationContext;
-  app: EggApplication;
+  ctx: EggContext;
+  app: EggApplicationCore;
 
-  constructor(ctx: EggApplicationContext) {
+  constructor(ctx: EggContext) {
     this.ctx = ctx;
     this.app = ctx.app;
   }

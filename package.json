@@ -5,7 +5,7 @@
     "node": ">= 18.19.0"
   },
   "publishConfig": {
-    "tag": "next"
+    "tag": "beta"
   },
   "description": "A web application framework for Node.js",
   "keywords": [
@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
+    "@eggjs/koa": "^2.19.1",
     "@eggjs/tsconfig": "1",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/mocha": "^10.0.7",
@@ -82,13 +83,13 @@
     "sdk-base": "^4.2.1",
     "spy": "^1.0.0",
     "supertest": "^6.2.4",
-    "tshy": "^1.18.0",
-    "tshy-after": "^1.1.1",
+    "tshy": "2",
+    "tshy-after": "1",
     "typescript": "5"
   },
   "scripts": {
     "lint": "eslint src test --ext .ts",
-    "pretest": "npm run lint -- --fix",
+    "pretest": "npm run lint -- --fix && npm run prepublishOnly",
     "test": "egg-bin test",
     "test:changed": "egg-bin test --changed",
     "cov": "egg-bin cov --timeout 100000",
@@ -132,12 +133,10 @@
   "exports": {
     ".": {
       "import": {
-        "source": "./src/index.ts",
         "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.js"
       },
       "require": {
-        "source": "./src/index.ts",
         "types": "./dist/commonjs/index.d.ts",
         "default": "./dist/commonjs/index.js"
       }

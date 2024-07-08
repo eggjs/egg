@@ -33,14 +33,14 @@ import type { EggApplicationLoader } from './loader/index.js';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
 
-export interface EggApplicationOptions extends Omit<EggCoreOptions, 'baseDir'> {
+export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';
   clusterPort?: number;
   baseDir?: string;
 }
 
-export interface EggApplicationContext extends EggCoreContext {
-  app: EggApplication;
+export interface EggContext extends EggCoreContext {
+  app: EggApplicationCore;
   /**
    * Request start time
    * @member {Number} Context#starttime
@@ -59,7 +59,7 @@ export interface EggApplicationContext extends EggCoreContext {
  * @see https://github.com/eggjs/koa/blob/master/src/application.ts
  * @augments EggCore
  */
-export class EggApplication extends EggCore {
+export class EggApplicationCore extends EggCore {
   // export context base classes, let framework can impl sub class and over context extend easily.
   ContextCookies = ContextCookies;
   ContextLogger = ContextLogger;
@@ -105,7 +105,7 @@ export class EggApplication extends EggCore {
    */
   Boot = BaseHookClass;
 
-  declare options: Required<EggApplicationOptions>;
+  declare options: Required<EggApplicationCoreOptions>;
 
   #httpClient?: HttpClient;
   #loggers?: EggLoggers;
@@ -124,7 +124,7 @@ export class EggApplication extends EggCore {
    *  - {Object} [plugins] - custom plugin config, use it in unittest
    *  - {String} [mode] - process mode, can be cluster / single, default is `cluster`
    */
-  constructor(options?: EggApplicationOptions) {
+  constructor(options?: EggApplicationCoreOptions) {
     options = {
       mode: 'cluster',
       type: 'application',
@@ -620,8 +620,8 @@ export class EggApplication extends EggCore {
    * @param  {Res} res - node native Response object
    * @return {Context} context object
    */
-  createContext(req: IncomingMessage, res: ServerResponse): EggApplicationContext {
-    const context = Object.create(this.context) as EggApplicationContext;
+  createContext(req: IncomingMessage, res: ServerResponse): EggContext {
+    const context = Object.create(this.context) as EggContext;
     const request = context.request = Object.create(this.request);
     const response = context.response = Object.create(this.response);
     context.app = request.app = response.app = this;

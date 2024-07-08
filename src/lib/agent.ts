@@ -1,21 +1,21 @@
 import { EggLogger } from 'egg-logger';
-import { EggApplication, EggApplicationOptions } from './egg.js';
+import { EggApplicationCore, EggApplicationCoreOptions } from './egg.js';
 import { AgentWorkerLoader } from './loader/index.js';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 
 /**
- * Singleton instance in Agent Worker, extend {@link EggApplication}
- * @augments EggApplication
+ * Singleton instance in Agent Worker, extend {@link EggApplicationCore}
+ * @augments EggApplicationCore
  */
-export class Agent extends EggApplication {
+export class Agent extends EggApplicationCore {
   readonly #agentAliveHandler: NodeJS.Timeout;
 
   /**
    * @class
-   * @param {Object} options - see {@link EggApplication}
+   * @param {Object} options - see {@link EggApplicationCore}
    */
-  constructor(options?: Omit<EggApplicationOptions, 'type'>) {
+  constructor(options?: Omit<EggApplicationCoreOptions, 'type'>) {
     super({
       ...options,
       type: 'agent',

@@ -3,6 +3,12 @@
  */
 
 import { BaseContextClass } from './lib/core/base_context_class.js';
+import { startEgg } from './lib/start.js';
+
+// export types
+export * from './lib/egg.js';
+export * from './lib/type.js';
+export * from './lib/start.js';
 
 /**
  * Start egg application with cluster mode
@@ -16,7 +22,7 @@ export { startCluster } from 'egg-cluster';
  * Start egg application with single process mode
  * @since 1.0.0
  */
-export { startEgg as start } from './lib/start.js';
+export const start = startEgg;
 
 /**
  * @member {Application} Egg#Application

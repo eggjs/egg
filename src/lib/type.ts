@@ -10,7 +10,7 @@ import type {
   FileLoaderOptions,
 } from '@eggjs/core';
 import type {
-  EggApplication,
+  EggApplicationCore,
 } from './egg.js';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
@@ -301,7 +301,7 @@ export interface EggAppConfig {
 
   watcher: Record<string, any>;
 
-  onClientError?(err: Error, socket: Socket, app: EggApplication): ClientErrorResponse | Promise<ClientErrorResponse>;
+  onClientError?(err: Error, socket: Socket, app: EggApplicationCore): ClientErrorResponse | Promise<ClientErrorResponse>;
 
   /**
    * server timeout in milliseconds, default to 0 (no timeout).

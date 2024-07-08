@@ -7,7 +7,7 @@ import { Socket } from 'node:net';
 import graceful from 'graceful';
 import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
-import { EggApplication, EggApplicationContext, EggApplicationOptions } from './egg.js';
+import { EggApplicationCore, EggContext, EggApplicationCoreOptions } from './egg.js';
 import { AppWorkerLoader } from './loader/index.js';
 import { BaseContextClass } from './core/base_context_class.js';
 
@@ -42,10 +42,10 @@ function escapeHeaderValue(value: string) {
 class HelperClass extends BaseContextClass {}
 
 /**
- * Singleton instance in App Worker, extend {@link EggApplication}
- * @augments EggApplication
+ * Singleton instance in App Worker, extend {@link EggApplicationCore}
+ * @augments EggApplicationCore
  */
-export class Application extends EggApplication {
+export class Application extends EggApplicationCore {
   // will auto set after 'server' event emit
   server?: http.Server;
   #locals: Record<string, any> = {};
@@ -57,9 +57,9 @@ export class Application extends EggApplication {
 
   /**
    * @class
-   * @param {Object} options - see {@link EggApplication}
+   * @param {Object} options - see {@link EggApplicationCore}
    */
-  constructor(options?: Omit<EggApplicationOptions, 'type'>) {
+  constructor(options?: Omit<EggApplicationCoreOptions, 'type'>) {
     super({
       ...options,
       type: 'application',
@@ -228,7 +228,7 @@ export class Application extends EggApplication {
    * @see Context#runInBackground
    * @param {Function} scope - the first args is an anonymous ctx
    */
-  runInBackground(scope: (ctx: EggApplicationContext) => void) {
+  runInBackground(scope: (ctx: EggContext) => void) {
     const ctx = this.createAnonymousContext();
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -244,13 +244,13 @@ export class Application extends EggApplication {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(scope: (ctx: EggApplicationContext) => Promise<void>, req?: unknown) {
+  async runInAnonymousContextScope(scope: (ctx: EggContext) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
     }
     return await this.ctxStorage.run(ctx, async () => {
-      return await scope(ctx as EggApplicationContext);
+      return await scope(ctx as EggContext);
     });
   }
 
