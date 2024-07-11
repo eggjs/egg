@@ -98,6 +98,26 @@ describe('test/lib/core/httpclient.test.js', () => {
     });
   });
 
+  it('should support safeCurl', async () => {
+    let ip;
+    let family;
+    let host;
+    mm(client.app.config, 'security', {
+      ssrf: {
+        checkAddress(aIp, aFamilay, aHost) {
+          ip = aIp;
+          family = aFamilay;
+          host = aHost;
+          return true;
+        },
+      },
+    });
+    await client.safeCurl(url);
+    assert(ip);
+    assert(family);
+    assert(host);
+  });
+
   describe('HttpClientNext', () => {
     it('should request ok with log', async () => {
       const args = {
@@ -144,6 +164,26 @@ describe('test/lib/core/httpclient.test.js', () => {
         assert.equal(err.res.status, 500);
         return true;
       });
+    });
+
+    it('should support safeCurl', async () => {
+      let ip;
+      let family;
+      let host;
+      mm(clientNext.app.config, 'security', {
+        ssrf: {
+          checkAddress(aIp, aFamilay, aHost) {
+            ip = aIp;
+            family = aFamilay;
+            host = aHost;
+            return true;
+          },
+        },
+      });
+      await clientNext.safeCurl(url);
+      assert(ip);
+      assert(family);
+      assert(host);
     });
   });
 
