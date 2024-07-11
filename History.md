@@ -1,4 +1,10 @@
 
+3.27.0 / 2024-07-12
+==================
+
+**features**
+  * [[`68cbd241`](http://github.com/eggjs/egg/commit/68cbd241e2172b8018328d77ea087dd5974a580f)] - feat: impl httpclient.safeCurl (#5339) (killa <<zhubin.gzb@antgroup.com>>)
+
 3.26.1 / 2024-07-04
 ==================
 
