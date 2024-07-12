@@ -69,6 +69,9 @@ declare module 'egg' {
     curl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
     curl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
       Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    safeCurl<T = any>(url: HttpClientRequestURL): Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
+    safeCurl<T = any>(url: HttpClientRequestURL, options: RequestOptionsOld | HttpClientRequestOptions):
+      Promise<HttpClientResponseOld<T> | HttpClientResponse<T>>;
   }
 
   interface EggHttpConstructor {
