@@ -1,4 +1,10 @@
 
+3.27.1 / 2024-07-12
+==================
+
+**fixes**
+  * [[`f3d8df1b`](http://github.com/eggjs/egg/commit/f3d8df1b7c2aef88cca3beec8c753656f8cc629c)] - fix: add httpclient.safeCurl typing (#5341) (killa <<zhubin.gzb@antgroup.com>>)
+
 3.27.0 / 2024-07-12
 ==================
 
