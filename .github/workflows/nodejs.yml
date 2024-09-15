@@ -14,4 +14,3 @@ jobs:
     with:
       os: 'ubuntu-latest, macos-latest, windows-latest'
       version: '14, 16, 18, 20, 22'
-      install: 'npm i -g npminstall && npminstall'
