@@ -55,6 +55,7 @@
     "sendmessage": "^2.0.0",
     "urllib": "^2.33.0",
     "urllib-next": "npm:urllib@^3.22.4",
+    "urllib4": "npm:urllib@^4.3.0",
     "utility": "^2.1.0",
     "ylru": "^1.3.2"
   },
