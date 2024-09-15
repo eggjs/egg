@@ -112,11 +112,8 @@ location / {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header Host $host;
     proxy_pass   http://127.0.0.1:7001;
-
-    # http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_bind
 ```
 
-# proxy_bind       $remote_addr transparent;
 ## 使用 `egg-socket.io`
 
 开启 [egg-socket.io] 的项目目录结构如下：
