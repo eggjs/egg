@@ -304,7 +304,7 @@ module.exports = appInfo => {
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    * @property {Boolean} useHttpClientNext - use urllib@3 HttpClient, default is false
-   * @property {Boolean} allowH2 - use urllib@4 HttpClient and enable H2, default is false
+   * @property {Boolean} allowH2 - use urllib@4 HttpClient and enable H2, default is false. Only works on Node.js >= 18
    */
   config.httpclient = {
     enableDNSCache: false,
