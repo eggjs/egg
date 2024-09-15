@@ -314,7 +314,6 @@ app.messenger.once(action, (data) => {
 ```
 
 _agent 上收消息的方式与 app 相同。_
-现在我将开始根据《优秀技术文档的写作标准》修改全文。
 
 ---
 
