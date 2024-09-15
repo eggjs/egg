@@ -313,7 +313,7 @@ app.messenger.once(action, (data) => {
 });
 ```
 
-_agent 上收消息的方式与 app 相同。
+_agent 上收消息的方式与 app 相同。_
 
 ---
 
