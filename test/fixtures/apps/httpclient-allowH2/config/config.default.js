@@ -1,4 +1,6 @@
 exports.httpclient = {
-  useHttpClientNext: true,
   allowH2: true,
+  request: {
+    timeout: 99,
+  },
 };

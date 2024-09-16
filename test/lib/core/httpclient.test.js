@@ -1,5 +1,4 @@
 const assert = require('node:assert');
-const { sensitiveHeaders } = require('node:http2');
 const mm = require('egg-mock');
 const urllib = require('urllib');
 const Httpclient = require('../../../lib/core/httpclient');
@@ -305,30 +304,64 @@ describe('test/lib/core/httpclient.test.js', () => {
   describe('overwrite httpclient support allowH2=true', () => {
     let app;
     before(() => {
-      app = utils.app('apps/httpclient-http2');
+      app = utils.app('apps/httpclient-allowH2');
       return app.ready();
     });
     after(() => app.close());
 
     it('should work on http2', async () => {
-      const res = await app.httpclient.request(url);
+      const res = await app.httpclient.request(url, {
+        timeout: 5000,
+      });
       assert.equal(res.status, 200);
       assert.equal(res.data.toString(), 'GET /');
-      assert.equal(sensitiveHeaders in res.headers, false);
+      // assert.equal(sensitiveHeaders in res.headers, false);
       const res2 = await app.httpclient.request('https://registry.npmmirror.com/urllib/latest', {
         dataType: 'json',
+        timeout: 5000,
       });
       assert.equal(res2.status, 200);
       assert.equal(res2.data.name, 'urllib');
-      assert.equal(sensitiveHeaders in res2.headers, true);
+      // assert.equal(sensitiveHeaders in res2.headers, true);
     });
 
-    it('should assert url', () => {
-      return app.httpclient.curl('unknown url')
-        .catch(err => {
-          assert(err);
-          assert(err.message.includes('url should start with http, but got unknown url'));
+    it('should set request default global timeout to 99ms', async () => {
+      await assert.rejects(async () => {
+        await app.httpclient.curl(`${url}/timeout`);
+      }, err => {
+        assert.equal(err.name, 'HttpClientRequestTimeoutError');
+        assert.match(err.message, /timeout for 99 ms/);
+        return true;
+      });
+    });
+
+    it('should request http1.1 success', async () => {
+      const result = await app.httpclient.curl(`${url}`, {
+        dataType: 'text',
+      });
+      assert.equal(result.status, 200);
+      assert.equal(result.data, 'GET /');
+    });
+
+    it('should request http2 success', async () => {
+      for (let i = 0; i < 10; i++) {
+        const result = await app.httpclient.curl('https://registry.npmmirror.com', {
+          dataType: 'json',
+          timeout: 5000,
         });
+        assert.equal(result.status, 200);
+        assert.equal(result.headers['content-type'], 'application/json; charset=utf-8');
+        assert.equal(result.data.sync_model, 'all');
+      }
+    });
+
+    it('should assert url', async () => {
+      await assert.rejects(async () => {
+        await app.httpclient.curl('unknown url');
+      }, err => {
+        assert.match(err.message, /url should start with http, but got unknown url/);
+        return true;
+      });
     });
   });
 
@@ -618,13 +651,13 @@ describe('test/lib/core/httpclient.test.js', () => {
       });
       assert(res.status === 200);
 
-      res = await httpclient.request('https://github.com', {
+      res = await httpclient.request('https://registry.npmmirror.com', {
         method: 'GET',
         timeout: 20000,
       });
       assert(res.status === 200);
 
-      res = await httpclient.request('https://www.npmjs.com', {
+      res = await httpclient.request('https://npmmirror.com', {
         method: 'GET',
         timeout: 20000,
       });

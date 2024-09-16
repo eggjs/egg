@@ -28,14 +28,14 @@ module.exports = app => {
     });
     assert(res.status === 200);
 
-    res = await httpclient.request('https://github.com', {
+    res = await httpclient.request('https://registry.npmmirror.com', {
       method: 'GET',
       timeout: 20000,
     });
 
     assert(res.status === 200);
 
-    res = await httpclient.request('https://www.npmjs.com', {
+    res = await httpclient.request('https://npmmirror.com', {
       method: 'GET',
       timeout: 20000,
     });
