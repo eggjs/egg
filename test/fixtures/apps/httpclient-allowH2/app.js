@@ -1,7 +1,7 @@
 const assert = require('assert');
 
 module.exports = app => {
-  class CustomHttpClient extends app.HttpClient4 {
+  class CustomHttpClient extends app.HttpClientAllowH2 {
     request(url, opt) {
       return new Promise(resolve => {
         assert(/^http/.test(url), 'url should start with http, but got ' + url);
@@ -15,5 +15,5 @@ module.exports = app => {
       return this.request(url, opt);
     }
   }
-  app.HttpClient4 = CustomHttpClient;
+  app.HttpClientAllowH2 = CustomHttpClient;
 };
