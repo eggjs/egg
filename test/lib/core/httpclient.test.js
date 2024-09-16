@@ -310,12 +310,15 @@ describe('test/lib/core/httpclient.test.js', () => {
     after(() => app.close());
 
     it('should work on http2', async () => {
-      const res = await app.httpclient.request(url);
+      const res = await app.httpclient.request(url, {
+        timeout: 5000,
+      });
       assert.equal(res.status, 200);
       assert.equal(res.data.toString(), 'GET /');
       // assert.equal(sensitiveHeaders in res.headers, false);
       const res2 = await app.httpclient.request('https://registry.npmmirror.com/urllib/latest', {
         dataType: 'json',
+        timeout: 5000,
       });
       assert.equal(res2.status, 200);
       assert.equal(res2.data.name, 'urllib');
@@ -327,7 +330,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         await app.httpclient.curl(`${url}/timeout`);
       }, err => {
         assert.equal(err.name, 'HttpClientRequestTimeoutError');
-        assert(err.message.includes('Request timeout for 99 ms'));
+        assert.match(err.message, /timeout for 99 ms/);
         return true;
       });
     });
