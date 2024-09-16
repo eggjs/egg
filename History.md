@@ -1,4 +1,10 @@
 
+3.28.0 / 2024-09-16
+==================
+
+**features**
+  * [[`46d3fb222`](http://github.com/eggjs/egg/commit/46d3fb222bcf455d2aee9a99005d18c271f29b16)] - feat: support allowH2 on urllib@4 (#5357) (fengmk2 <<suqian.yf@antgroup.com>>)
+
 3.27.1 / 2024-07-12
 ==================
 

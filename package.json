@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "3.27.1",
+  "version": "3.28.0",
   "publishConfig": {
     "tag": "release-3.x",
     "access": "public"
