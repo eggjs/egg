@@ -25,11 +25,12 @@
 ## 快速开始
 
 ```bash
-$ mkdir showcase && cd showcase
-$ npm init egg --type=simple
-$ npm install
-$ npm run dev
-$ open http://localhost:7001
+mkdir showcase && cd showcase
+npm init egg --type=simple
+npm install
+npm run dev
+
+open http://localhost:7001
 ```
 
 ## 文档
@@ -45,7 +46,7 @@ $ open http://localhost:7001
 
 ## 贡献代码
 
-请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的Bug或者意见](https://github.com/eggjs/egg/issues)。
+请告知我们可以为你做些什么，不过在此之前，请检查一下是否有[已经存在的 Bug 或者意见](https://github.com/eggjs/egg/issues)。
 
 如果你是一个代码贡献者，请参考[代码贡献规范](CONTRIBUTING.md)。
 
