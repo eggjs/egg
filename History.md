@@ -1,4 +1,10 @@
 
+3.29.0 / 2024-11-30
+==================
+
+**features**
+  * [[`e4f706990`](http://github.com/eggjs/egg/commit/e4f7069904b99c842e65692f2531a72543719207)] - feat: use urllib@4.5.0 (#5371) (fengmk2 <<fengmk2@gmail.com>>)
+
 3.28.0 / 2024-09-16
 ==================
 
