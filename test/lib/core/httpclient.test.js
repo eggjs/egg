@@ -1,6 +1,9 @@
 const assert = require('node:assert');
+const { once } = require('node:events');
+const { createSecureServer } = require('node:http2');
 const mm = require('egg-mock');
 const urllib = require('urllib');
+const pem = require('https-pem');
 const Httpclient = require('../../../lib/core/httpclient');
 const HttpclientNext = require('../../../lib/core/httpclient_next');
 const utils = require('../../utils');
@@ -323,6 +326,38 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert.equal(res2.status, 200);
       assert.equal(res2.data.name, 'urllib');
       // assert.equal(sensitiveHeaders in res2.headers, true);
+    });
+
+    it('should work on http2.server with self-signed certificate', async () => {
+      const server = createSecureServer(pem);
+      server.on('stream', (stream, headers) => {
+        assert.equal(headers[':method'], 'GET');
+        stream.respond({
+          'content-type': 'text/plain; charset=utf-8',
+          'x-custom-h2': 'hello',
+          ':status': 200,
+        });
+        stream.end('hello h2!');
+        // console.log(headers);
+        const mainNodejsVersion = parseInt(process.versions.node.split('.')[0]);
+        if (mainNodejsVersion >= 18) {
+          assert.match(headers['user-agent'], /node\-urllib\/4\.\d+\.\d+/);
+        } else {
+          assert.match(headers['user-agent'], /node\-urllib\/3\.\d+\.\d+/);
+        }
+      });
+      server.listen(0);
+      await once(server, 'listening');
+      const response = await app.httpclient.request(`https://localhost:${server.address().port}`, {
+        dataType: 'text',
+        headers: {
+          'x-my-header': 'foo',
+        },
+      });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers['x-custom-h2'], 'hello');
+      assert.equal(response.data, 'hello h2!');
+      server.close();
     });
 
     it('should set request default global timeout to 99ms', async () => {
