@@ -3,4 +3,7 @@ exports.httpclient = {
   request: {
     timeout: 99,
   },
+  connect: {
+    rejectUnauthorized: false,
+  },
 };
