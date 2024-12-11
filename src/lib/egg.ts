@@ -8,7 +8,7 @@ import { EggCore, type EggCoreContext, type EggCoreOptions } from '@eggjs/core';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import createClusterClient, { close as closeClusterClient } from 'cluster-client';
-import extend from 'extend2';
+import { extend } from 'extend2';
 import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

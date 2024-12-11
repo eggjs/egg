@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert';
-import * as utils from './utils.js';
+import { createApp, restore, MockApplication } from './utils.js';
 
 describe('test/asyncSupport.test.ts', () => {
-  afterEach(utils.restore);
-  let app: utils.MockApplication;
+  afterEach(restore);
+  let app: MockApplication;
   before(async () => {
-    app = utils.app('apps/async-app');
+    app = createApp('apps/async-app');
     await app.ready();
     assert.equal(Reflect.get(app, 'beforeStartExecuted'), true);
     assert.equal(Reflect.get(app, 'scheduleExecuted'), true);

@@ -5,7 +5,7 @@ import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
 import mm, { MockOption, MockApplication } from 'egg-mock';
-import Koa from '@eggjs/koa';
+import { Application as Koa } from '@eggjs/koa';
 import request from 'supertest';
 import { startEgg, StartEggOptions, Application } from '../src/index.js';
 
@@ -25,6 +25,8 @@ export function app(name: string | MockOption, options?: MockOption) {
   const app = mm.default.app(options);
   return app;
 }
+
+export const createApp = app;
 
 /**
  * start app with cluster mode

@@ -2,7 +2,7 @@
 import { EventEmitter } from 'node:events';
 import { debuglog } from 'node:util';
 import workerThreads from 'node:worker_threads';
-import sendmessage from 'sendmessage';
+import { sendmessage } from 'sendmessage';
 import type { IMessenger } from './IMessenger.js';
 
 const debug = debuglog('egg:lib:core:messenger:ipc');
