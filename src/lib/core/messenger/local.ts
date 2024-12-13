@@ -93,7 +93,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @param {String} to - let master know how to send message
    * @return {Messenger} this
    */
-  send(action: string, data: unknown | undefined, to: string): Messenger {
+  send(action: string, data: unknown | undefined, to?: string): Messenger {
     // use nextTick to keep it async as IPC messenger
     process.nextTick(() => {
       const { egg } = this;

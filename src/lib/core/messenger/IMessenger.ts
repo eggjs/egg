@@ -50,7 +50,7 @@ export interface IMessenger extends EventEmitter {
    * @param {String} to - let master know how to send message
    * @return {Messenger} this
    */
-  send(action: string, data: unknown | undefined, to: string): IMessenger;
+  send(action: string, data: unknown | undefined, to?: string): IMessenger;
 
   close(): void;
 

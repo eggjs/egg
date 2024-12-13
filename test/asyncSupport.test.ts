@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { createApp, restore, MockApplication } from './utils.js';
 
-describe('test/asyncSupport.test.ts', () => {
+describe.only('test/asyncSupport.test.ts', () => {
   afterEach(restore);
   let app: MockApplication;
   before(async () => {

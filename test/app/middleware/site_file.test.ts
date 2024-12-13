@@ -1,17 +1,15 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { createApp, type MockApplication } from '../../utils.js';
 
-const assert = require('assert');
-const utils = require('../../utils');
-
-describe('test/app/middleware/site_file.test.js', () => {
-  let app;
+describe('test/app/middleware/site_file.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/middlewares');
+    app = createApp('apps/middlewares');
     return app.ready();
   });
   after(() => app.close());
 
-  it('should GET /favicon.ico 200', () => {
+  it.only('should GET /favicon.ico 200', () => {
     return app.httpRequest()
       .get('/favicon.ico')
       .expect(res => assert(res.headers['content-type'].includes('icon')))
@@ -74,9 +72,9 @@ describe('test/app/middleware/site_file.test.js', () => {
   });
 
   describe('custom favicon', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/favicon');
+      app = createApp('apps/favicon');
       return app.ready();
     });
     after(() => app.close());
@@ -87,15 +85,30 @@ describe('test/app/middleware/site_file.test.js', () => {
         .expect(302)
         .expect(res => {
           assert(!res.headers['set-cookie']);
-          assert(res.headers.location === 'https://eggjs.org/favicon.ico');
+          assert.equal(res.headers.location, 'https://eggjs.org/favicon.ico');
         });
     });
   });
 
-  describe('custom favicon with function', () => {
-    let app;
+  describe('custom favicon with Buffer content', () => {
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/favicon-function');
+      app = createApp('apps/favicon-buffer');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should redirect https://eggjs.org/favicon.ico', () => {
+      return app.httpRequest()
+        .get('/favicon.ico')
+        .expect(200);
+    });
+  });
+
+  describe('custom favicon with function', () => {
+    let app: MockApplication;
+    before(() => {
+      app = createApp('apps/favicon-function');
       return app.ready();
     });
     after(() => app.close());
@@ -112,9 +125,9 @@ describe('test/app/middleware/site_file.test.js', () => {
   });
 
   describe('siteFile.cacheControl = no-store', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/siteFile-custom-cacheControl');
+      app = createApp('apps/siteFile-custom-cacheControl');
       return app.ready();
     });
     after(() => app.close());

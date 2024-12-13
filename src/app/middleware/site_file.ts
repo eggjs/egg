@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readFile } from 'node:fs/promises';
 import type { EggCoreContext } from '@eggjs/core';
 import type { Next } from '../../lib/type.js';
 
@@ -7,8 +9,10 @@ export type SiteFileContentFun = (ctx: EggCoreContext) => Promise<Buffer | strin
 export interface SiteFileMiddlewareOptions {
   enable: boolean;
   cacheControl: string;
-  [key: string]: string | Buffer | boolean | SiteFileContentFun;
+  [key: string]: string | Buffer | boolean | SiteFileContentFun | URL;
 }
+
+const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
 
 module.exports = (options: SiteFileMiddlewareOptions) => {
   return async function siteFile(ctx: EggCoreContext, next: Next) {
@@ -33,6 +37,23 @@ module.exports = (options: SiteFileMiddlewareOptions) => {
     // content is url
     if (typeof content === 'string') {
       return ctx.redirect(content);
+    }
+
+    // URL
+    if (content instanceof URL) {
+      if (content.protocol !== 'file:') {
+        return ctx.redirect(content.href);
+      }
+      // protocol = file:
+      let buffer = Reflect.get(content, BUFFER_CACHE) as Buffer;
+      if (!buffer) {
+        buffer = await readFile(fileURLToPath(content));
+        Reflect.set(content, BUFFER_CACHE, buffer);
+      }
+      ctx.set('cache-control', options.cacheControl);
+      ctx.body = content;
+      ctx.type = path.extname(ctx.path);
+      return;
     }
 
     // '/robots.txt': Buffer <xx..

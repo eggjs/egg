@@ -327,3 +327,10 @@ export interface EggAppConfig {
 
   [prop: string]: any;
 }
+
+export type {
+  EggLogger,
+} from 'egg-logger';
+export type {
+  ILifecycleBoot,
+} from '@eggjs/core';

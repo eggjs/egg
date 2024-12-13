@@ -144,7 +144,9 @@ export class EggApplicationCore extends EggCore {
     this.messenger.once('egg-ready', () => {
       this.lifecycle.triggerServerDidReady();
     });
-    this.load();
+    this.lifecycle.registerBeforeStart(async () => {
+      await this.load();
+    }, 'load files');
   }
 
   protected async loadConfig() {

@@ -1,4 +1,3 @@
-
 import { EventEmitter } from 'node:events';
 import { debuglog } from 'node:util';
 import workerThreads from 'node:worker_threads';
@@ -107,7 +106,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @param {String} to - let master know how to send message
    * @return {Messenger} this
    */
-  send(action: string, data: unknown | undefined, to: string): Messenger {
+  send(action: string, data: unknown | undefined, to?: string): Messenger {
     sendmessage(process, {
       action,
       data,

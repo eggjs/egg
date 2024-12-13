@@ -1,5 +1,5 @@
-import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import type { EggAppInfo } from '@eggjs/core';
 import type { EggAppConfig } from '../lib/type.js';
 
@@ -189,7 +189,7 @@ export default (appInfo: EggAppInfo) => {
   /**
    * The option of `siteFile` middleware
    *
-   * You can map some files using this options, it will response immdiately when matching.
+   * You can map some files using this options, it will response immediately when matching.
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
    * @property {String} cacheControl - files cache , default is public, max-age=2592000
@@ -201,7 +201,7 @@ export default (appInfo: EggAppInfo) => {
    */
   config.siteFile = {
     enable: true,
-    '/favicon.ico': fs.readFileSync(path.join(__dirname, 'favicon.png')),
+    '/favicon.ico': pathToFileURL(path.join(__dirname, 'favicon.png')),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };
