@@ -28,14 +28,17 @@ class HomeController extends Controller {
 
 #### `ctx.cookies.set(key, value, options)`
 
-设置 Cookie 其实是通过在 HTTP 响应中设置 set-cookie 头完成的，每一个 set-cookie 都会让浏览器在 Cookie 中存一个键值对。在设置 Cookie 值的同时，协议还支持许多参数来配置这个 Cookie 的传输、存储和权限。
+设置 Cookie 其实是通过在 HTTP 响应中设置 `set-cookie` 头完成的，每一个 `set-cookie` 都会让浏览器在 Cookie 中存一个键值对。在设置 Cookie 值的同时，协议还支持许多参数来配置这个 Cookie 的传输、存储和权限。
 
 - `{Number} maxAge`：设置这个键值对在浏览器的最长保存时间。是一个从服务器当前时刻开始的毫秒数。
-- `{Date} expires`：设置这个键值对的失效时间。如果设置了 maxAge，expires 将会被覆盖。如果 maxAge 和 expires 都没设置，Cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。
+- `{Date} expires`：设置这个键值对的失效时间。如果设置了 `maxAge`，`expires` 将会被覆盖。如果 `maxAge` 和 `expires` 都没设置，Cookie 将会在浏览器的会话失效（一般是关闭浏览器时）的时候失效。
 - `{String} path`：设置键值对生效的 URL 路径，默认设置在根路径上（`/`），也就是当前域名下的所有 URL 都可以访问这个 Cookie。
 - `{String} domain`：设置键值对生效的域名，默认没有配置，可以配置成只在指定域名才能访问。
-- `{Boolean} httpOnly`：设置键值对是否可以被 js 访问，默认为 true，不允许被 js 访问。
-- `{Boolean} secure`：设置键值对只在 HTTPS 连接上传输，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 secure 的值。
+- `{Boolean} httpOnly`：设置键值对是否可以被 JS 访问，默认为 true，不允许被 JS 访问。
+- `{Boolean} secure`：设置键值对只在 HTTPS 连接上传输，框架会帮我们判断当前是否在 HTTPS 连接上自动设置 `secure` 的值。
+- `{Boolean} partitioned`：设置独立分区状态（简称 [CHIPS](https://developers.google.com/privacy-sandbox/3pcd/chips)）的 Cookie。注意，只有 `secure` 为 `true` 时此配置才会生效，并且目前仅 Chrome >=114 和 Firefox >= 131 [支持](https://developer.mozilla.org/en-US/docs/Web/Privacy/Privacy_sandbox/Partitioned_cookies#browser_compatibility)。
+- `{Boolean} removeUnpartitioned`：是否删除非独立分区状态的同名 cookie。注意，只有 `partitioned` 为 `true` 时此配置才会生效。
+- `{Boolean} priority`：设置 Cookie 的优先级，可选值为 `Low`、`Medium`、`High`，目前只有 [Chrome >= 81](https://bugs.chromium.org/p/chromium/issues/detail?id=232693) 实现，可以在 [DevTools 中查看](https://developer.chrome.com/blog/new-in-devtools-81?hl=zh-cn#cookiepriority)。请注意不要和 HTTP 的 [`Priority` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Priority) 混淆。
 
 除了这些属性之外，框架另外扩展了三个参数的支持：
 
