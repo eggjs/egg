@@ -540,7 +540,7 @@ export class EggApplicationCore extends EggCore {
    * @deprecated
    */
   get proxy() {
-    this.deprecate('please use app.config.proxy instead');
+    // this.deprecate('please use app.config.proxy instead');
     return this.config.proxy;
   }
   /* eslint no-empty-function: off */

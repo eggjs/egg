@@ -10,7 +10,7 @@ export class BaseHookClass implements ILifecycleBoot {
     this.#instance = instance;
   }
 
-  get logger() {
+  get logger(): any {
     return this.#instance.logger;
   }
 

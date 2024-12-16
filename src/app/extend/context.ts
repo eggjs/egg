@@ -1,9 +1,7 @@
-'use strict';
-
-const { performance } = require('perf_hooks');
-const delegate = require('delegates');
-const { assign } = require('utility');
-const eggUtils = require('egg-core').utils;
+import { performance } from 'node:perf_hooks';
+import delegate from 'delegates';
+import { assign } from 'utility';
+import { utils } from '@eggjs/core';
 
 const HELPER = Symbol('Context#helper');
 const LOCALS = Symbol('Context#locals');
@@ -13,8 +11,7 @@ const CONTEXT_LOGGERS = Symbol('Context#logger');
 const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
 const CONTEXT_ROUTER = Symbol('Context#router');
 
-const proto = module.exports = {
-
+const Context = {
   /**
    * Get the current visitor's cookies.
    */
@@ -45,7 +42,7 @@ const proto = module.exports = {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  curl(url, options) {
+  curl(url: string, options?: object) {
     return this.httpclient.curl(url, options);
   },
 
@@ -88,13 +85,13 @@ const proto = module.exports = {
   },
 
   /**
-   * Wrap app.loggers with context infomation,
+   * Wrap app.loggers with context information,
    * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
    *
    * @param {String} name - logger name
    * @return {Logger} logger
    */
-  getLogger(name) {
+  getLogger(name: string) {
     if (this.app.config.logger.enableFastContextLogger) {
       return this.app.getLogger(name);
     }
@@ -211,25 +208,22 @@ const proto = module.exports = {
    * });
    * ```
    */
-  runInBackground(scope) {
+  runInBackground(scope: (ctx: any) => Promise<void>) {
     // try to use custom function name first
     /* istanbul ignore next */
-    const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
-    scope._name = taskName;
-    this._runInBackground(scope);
+    const taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
+    this._runInBackground(scope, taskName);
   },
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  _runInBackground(scope) {
+  _runInBackground(scope: (ctx: any) => Promise<void>, taskName: string) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const ctx = this;
     const start = performance.now();
-    /* istanbul ignore next */
-    const taskName = scope._name || scope.name || eggUtils.getCalleeFromStack(true);
     // use setImmediate to ensure all sync logic will run async
     return new Promise(resolve => setImmediate(resolve))
-      // use app.toAsyncFunction to support both generator function and async function
-      .then(() => ctx.app.toAsyncFunction(scope)(ctx))
+      .then(() => scope(ctx))
       .then(() => {
         ctx.coreLogger.info('[egg:background] task:%s success (%dms)',
           taskName, Math.floor((performance.now() - start) * 1000) / 1000);
@@ -244,13 +238,13 @@ const proto = module.exports = {
         ctx.app.emit('error', err, ctx);
       });
   },
-};
+} as any;
 
 /**
  * Context delegation.
  */
 
-delegate(proto, 'request')
+delegate(Context, 'request')
   /**
    * @member {Boolean} Context#acceptJSON
    * @see Request#acceptJSON
@@ -276,10 +270,12 @@ delegate(proto, 'request')
    */
   .access('ip');
 
-delegate(proto, 'response')
+delegate(Context, 'response')
   /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
    * @since 1.0.0
    */
   .access('realStatus');
+
+export default Context;
