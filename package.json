@@ -22,7 +22,7 @@
     "@eggjs/cluster": "beta",
     "@eggjs/cookies": "^3.0.0",
     "@eggjs/core": "^6.1.0",
-    "@eggjs/schedule": "^5.0.0",
+    "@eggjs/schedule": "^5.0.1",
     "@eggjs/utils": "^4.0.2",
     "@types/accepts": "^1.3.5",
     "accepts": "^1.3.8",
