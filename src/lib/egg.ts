@@ -149,6 +149,13 @@ export class EggApplicationCore extends EggCore {
     }, 'load files');
   }
 
+  /**
+   * @deprecated please use `options` property instead
+   */
+  get _options() {
+    return this.options;
+  }
+
   protected async loadConfig() {
     await this.loader.loadConfig();
   }
