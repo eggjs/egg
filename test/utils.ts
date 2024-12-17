@@ -4,7 +4,7 @@ import path from 'node:path';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
-import mm, { MockOption, MockApplication } from 'egg-mock';
+import { mm, MockOption, MockApplication } from 'egg-mock';
 import { Application as Koa } from '@eggjs/koa';
 import request from 'supertest';
 import { startEgg, StartEggOptions, Application } from '../src/index.js';
@@ -18,11 +18,11 @@ export async function rimraf(target: string) {
 }
 
 export { MockOption, MockApplication } from 'egg-mock';
-export const restore = () => mm.default.restore();
+export const restore = () => mm.restore();
 
 export function app(name: string | MockOption, options?: MockOption) {
   options = formatOptions(name, options);
-  const app = mm.default.app(options);
+  const app = mm.app(options);
   return app;
 }
 
@@ -37,7 +37,7 @@ export const createApp = app;
  */
 export function cluster(name: string | MockOption, options: MockOption): MockApplication {
   options = formatOptions(name, options);
-  return mm.default.cluster(options);
+  return mm.cluster(options);
 }
 
 /**

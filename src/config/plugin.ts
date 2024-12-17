@@ -96,7 +96,7 @@ export default {
    */
   schedule: {
     enable: true,
-    package: 'egg-schedule',
+    package: '@eggjs/schedule',
   },
 
   /**

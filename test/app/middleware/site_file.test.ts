@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { createApp, type MockApplication } from '../../utils.js';
+import { createApp, MockApplication } from '../../utils.js';
 
 describe('test/app/middleware/site_file.test.ts', () => {
   let app: MockApplication;
@@ -9,7 +9,7 @@ describe('test/app/middleware/site_file.test.ts', () => {
   });
   after(() => app.close());
 
-  it.only('should GET /favicon.ico 200', () => {
+  it('should GET /favicon.ico 200', () => {
     return app.httpRequest()
       .get('/favicon.ico')
       .expect(res => assert(res.headers['content-type'].includes('icon')))

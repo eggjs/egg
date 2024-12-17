@@ -21,7 +21,8 @@
   "dependencies": {
     "@eggjs/cluster": "beta",
     "@eggjs/cookies": "^3.0.0",
-    "@eggjs/core": "^6.0.3",
+    "@eggjs/core": "^6.1.0",
+    "@eggjs/schedule": "^5.0.0",
     "@eggjs/utils": "^4.0.2",
     "@types/accepts": "^1.3.5",
     "accepts": "^1.3.8",
@@ -33,10 +34,10 @@
     "egg-errors": "^2.3.1",
     "egg-i18n": "^2.1.1",
     "egg-jsonp": "^2.0.0",
+    "egg-logger": "^3.6.0",
     "egg-logrotator": "^3.1.0",
     "egg-multipart": "^3.1.0",
     "egg-onerror": "^2.1.1",
-    "egg-schedule": "^4.0.0",
     "egg-security": "^3.0.0",
     "egg-session": "^3.3.0",
     "egg-static": "^2.2.0",
@@ -69,8 +70,8 @@
     "assert-file": "1",
     "coffee": "5",
     "cross-env": "7",
-    "egg-bin": "^6.13.0",
-    "egg-mock": "5",
+    "egg-bin": "beta",
+    "egg-mock": "beta",
     "egg-plugin-puml": "^2.4.0",
     "egg-tracer": "^2.1.0",
     "egg-view-nunjucks": "^2.3.0",
@@ -80,7 +81,7 @@
     "koa-static": "^5.0.0",
     "pedding": "^1.1.0",
     "prettier": "^2.7.1",
-    "runscript": "2",
+    "runscript": "^2.0.1",
     "sdk-base": "^4.2.1",
     "spy": "^1.0.0",
     "supertest": "^7.0.0",
@@ -93,9 +94,8 @@
     "pretest": "npm run lint -- --fix && npm run prepublishOnly",
     "test": "egg-bin test",
     "test:changed": "egg-bin test --changed",
-    "cov": "egg-bin cov --timeout 100000",
-    "preci": "npm run lint",
-    "ci": "npm run cov && npm run prepublishOnly && attw --pack",
+    "preci": "npm run lint && npm run prepublishOnly && attw --pack",
+    "ci": "egg-bin cov",
     "prepublishOnly": "tshy && tshy-after",
     "site:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site dumi dev",
     "site:devWithNode14-16": "cross-env APP_ROOT=./site dumi dev",
@@ -110,9 +110,6 @@
     "url": "git://github.com/eggjs/egg.git"
   },
   "license": "MIT",
-  "tnpm": {
-    "mode": "npm"
-  },
   "egg": {
     "framework": true,
     "baseDir": {

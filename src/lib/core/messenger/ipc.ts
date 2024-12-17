@@ -54,7 +54,11 @@ export class Messenger extends EventEmitter implements IMessenger {
     sendmessage(process, {
       action,
       data,
+      /**
+       * @deprecated Keep compatible, please use receiverWorkerId instead
+       */
       receiverPid: String(pid),
+      receiverWorkerId: String(pid),
     });
     return this;
   }
@@ -69,7 +73,9 @@ export class Messenger extends EventEmitter implements IMessenger {
    */
   sendRandom(action: string, data?: unknown): Messenger {
     /* istanbul ignore if */
-    if (this.opids.length === 0) return this;
+    if (this.opids.length === 0) {
+      return this;
+    }
     const index = Math.floor(Math.random() * this.opids.length);
     const pid = this.opids[index];
     this.sendTo(String(pid), action, data);
@@ -117,8 +123,8 @@ export class Messenger extends EventEmitter implements IMessenger {
 
   onMessage(message: any) {
     if (typeof message?.action === 'string') {
-      debug('[%s] got message %s with %j, receiverPid: %s',
-        this.pid, message.action, message.data, message.receiverPid);
+      debug('[%s] got message %s with %j, receiverWorkerId: %s',
+        this.pid, message.action, message.data, message.receiverWorkerId ?? message.receiverPid);
       this.emit(message.action, message.data);
     }
   }
