@@ -41,7 +41,7 @@ export default {
    */
   watcher: {
     enable: true,
-    package: 'egg-watcher',
+    package: '@eggjs/watcher',
   },
 
   /**

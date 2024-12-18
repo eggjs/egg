@@ -221,7 +221,7 @@ export class EggApplicationCore extends EggCore {
    *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
    * @return {ClientWrapper} wrapper
    */
-  cluster(clientClass: unknown, options: object) {
+  cluster(clientClass: unknown, options?: object) {
     const clientClassOptions = {
       ...this.config.clusterClient,
       ...options,

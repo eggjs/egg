@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.5",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -24,6 +24,7 @@
     "@eggjs/core": "^6.1.0",
     "@eggjs/schedule": "^5.0.1",
     "@eggjs/utils": "^4.0.2",
+    "@eggjs/watcher": "^4.0.0",
     "@types/accepts": "^1.3.5",
     "accepts": "^1.3.8",
     "cache-content-type": "^2.0.0",
@@ -42,7 +43,6 @@
     "egg-session": "^3.3.0",
     "egg-static": "^2.2.0",
     "egg-view": "^2.1.3",
-    "egg-watcher": "^3.1.1",
     "extend2": "^4.0.0",
     "graceful": "^1.1.0",
     "is-type-of": "^2.1.0",
