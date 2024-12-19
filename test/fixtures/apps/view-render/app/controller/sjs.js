@@ -1,6 +1,6 @@
-module.exports = function* () {
+module.exports = async function () {
   var view = 'sjs.html';
-  yield this.render(view, {
+  await this.render(view, {
     foo: '"hello"'
   });
 };

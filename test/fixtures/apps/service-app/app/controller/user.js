@@ -1,5 +1,5 @@
-module.exports = function* () {
+module.exports = async function () {
   this.body = {
-    user: yield this.service.user.get('123'),
+    user: await this.service.user.get('123'),
   };
 };

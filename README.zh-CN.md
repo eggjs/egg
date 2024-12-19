@@ -7,6 +7,7 @@
 [![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
 [![NPM quality](http://npm.packagequality.com/shield/egg.svg?style=flat-square)](http://packagequality.com/#?package=egg)
 [![NPM download](https://img.shields.io/npm/dm/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
+[![Node.js Version](https://img.shields.io/node/v/egg.svg?style=flat)](https://nodejs.org/en/download/)
 
 [![Continuous Integration](https://github.com/eggjs/egg/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg/actions?query=branch%3Amaster)
 [![Test coverage](https://img.shields.io/codecov/c/github/eggjs/egg.svg?style=flat-square)](https://codecov.io/gh/eggjs/egg)
@@ -25,11 +26,12 @@
 ## 快速开始
 
 ```bash
-$ mkdir showcase && cd showcase
-$ npm init egg --type=simple
-$ npm install
-$ npm run dev
-$ open http://localhost:7001
+mkdir showcase && cd showcase
+npm init egg --type=simple
+npm install
+npm run dev
+
+open http://localhost:7001
 ```
 
 ## 文档

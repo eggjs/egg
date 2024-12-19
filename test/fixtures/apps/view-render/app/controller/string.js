@@ -1,5 +1,5 @@
-module.exports = function* () {
-  this.body = yield this.renderString('{{ context.a }}', {
+module.exports = async function () {
+  this.body = await this.renderString('{{ context.a }}', {
     context: {
       a: 'templateString'
     }

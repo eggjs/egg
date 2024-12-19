@@ -1,7 +1,7 @@
 'use strict';
 
-exports.index = function* () {
-  const r = yield this.curl(this.query.url, {
+exports.index = async function () {
+  const r = await this.curl(this.query.url, {
     dataType: 'json',
   });
   this.body = {

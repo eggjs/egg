@@ -1,4 +1,4 @@
-module.exports = function* () {
+module.exports = function () {
   var err = new Error('test error');
   if (this.query.status) {
     err.status = Number(this.query.status)

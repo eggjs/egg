@@ -3,11 +3,11 @@
 const path = require('path');
 const fs = require('fs');
 
-module.exports = function* () {
+module.exports = async function () {
   var parts = this.multipart();
   var part;
   var fields = {};
-  while (part = yield parts) {
+  while (part = await parts) {
     if (Array.isArray(part)) {
       fields[part[0]] = part[1];
       continue;

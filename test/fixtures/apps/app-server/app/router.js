@@ -1,5 +1,5 @@
 module.exports = app => {
-  app.get('/', function* () {
+  app.get('/', function () {
     this.body = this.app.serverEmit;
   });
 };

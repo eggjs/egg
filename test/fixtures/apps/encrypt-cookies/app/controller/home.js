@@ -1,4 +1,4 @@
-module.exports = function* () {
+module.exports = function () {
   var encrypt = this.cookies.get('foo', {
     encrypt: true
   });
