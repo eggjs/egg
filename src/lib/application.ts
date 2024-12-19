@@ -2,14 +2,16 @@ import path from 'node:path';
 import fs from 'node:fs';
 import http from 'node:http';
 import { Socket } from 'node:net';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import graceful from 'graceful';
+import { graceful } from 'graceful';
 import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
-import { EggApplicationCore, EggContext, EggApplicationCoreOptions } from './egg.js';
+import {
+  EggApplicationCore,
+  type EggApplicationCoreOptions,
+  type ContextDelegation,
+} from './egg.js';
 import { AppWorkerLoader } from './loader/index.js';
-import { BaseContextClass } from './core/base_context_class.js';
+import Helper from '../app/extend/helper.js';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 
@@ -35,13 +37,6 @@ function escapeHeaderValue(value: string) {
 }
 
 /**
- * The Helper class which can be used as utility function.
- * We support developers to extend Helper through ${baseDir}/app/extend/helper.js ,
- * then you can use all method on `ctx.helper` that is a instance of Helper.
- */
-class HelperClass extends BaseContextClass {}
-
-/**
  * Singleton instance in App Worker, extend {@link EggApplicationCore}
  * @augments EggApplicationCore
  */
@@ -53,7 +48,7 @@ export class Application extends EggApplicationCore {
    * reference to {@link Helper}
    * @member {Helper} Application#Helper
    */
-  Helper = HelperClass;
+  Helper = Helper;
 
   /**
    * @class
@@ -77,8 +72,7 @@ export class Application extends EggApplicationCore {
   }
 
   #responseRaw(socket: Socket, raw?: any) {
-    /* istanbul ignore next */
-    if (!socket.writable) return;
+    if (!socket?.writable) return;
     if (!raw) {
       return socket.end(DEFAULT_BAD_REQUEST_RESPONSE);
     }
@@ -152,7 +146,6 @@ export class Application extends EggApplicationCore {
     // set ignore code
     const serverGracefulIgnoreCode = this.config.serverGracefulIgnoreCode || [];
 
-    /* istanbul ignore next */
     graceful({
       server: [ server ],
       error: (err: Error, throwErrorCount: number) => {
@@ -228,13 +221,13 @@ export class Application extends EggApplicationCore {
    * @see Context#runInBackground
    * @param {Function} scope - the first args is an anonymous ctx
    */
-  runInBackground(scope: (ctx: EggContext) => void) {
-    const ctx = this.createAnonymousContext();
+  runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
+    const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
     }
     this.ctxStorage.run(ctx, () => {
-      ctx.runInBackground(scope);
+      return ctx.runInBackground(scope);
     });
   }
 
@@ -244,13 +237,13 @@ export class Application extends EggApplicationCore {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(scope: (ctx: EggContext) => Promise<void>, req?: unknown) {
+  async runInAnonymousContextScope(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
     }
     return await this.ctxStorage.run(ctx, async () => {
-      return await scope(ctx as EggContext);
+      return await scope(ctx);
     });
   }
 

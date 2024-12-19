@@ -72,7 +72,6 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @return {Messenger} this
    */
   sendRandom(action: string, data?: unknown): Messenger {
-    /* istanbul ignore if */
     if (this.opids.length === 0) {
       return this;
     }

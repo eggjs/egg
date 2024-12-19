@@ -17,7 +17,7 @@ export async function rimraf(target: string) {
   await rm(target, { force: true, recursive: true });
 }
 
-export { MockOption, MockApplication } from 'egg-mock';
+export { MockOption, MockApplication, mm } from 'egg-mock';
 export const restore = () => mm.restore();
 
 export function app(name: string | MockOption, options?: MockOption) {
@@ -139,7 +139,7 @@ function formatOptions(name: string | MockOption, options?: MockOption) {
   }
   return {
     baseDir,
-    customEgg: eggPath,
+    framework: eggPath,
     cache: false,
     ...options,
   };

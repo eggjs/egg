@@ -1,9 +1,9 @@
-const utils = require('../../utils');
+import { createApp, MockApplication } from '../../utils.js';
 
-describe('test/app/middleware/override_method.test.js', () => {
-  let app;
+describe('test/app/middleware/override_method.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/override_method');
+    app = createApp('apps/override_method');
     return app.ready();
   });
   after(() => app.close());

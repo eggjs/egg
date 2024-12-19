@@ -1,5 +1,4 @@
-import type { EggCoreContext } from '@eggjs/core';
-import type { Next } from '../../lib/type.js';
+import type { Next, ContextDelegation } from '../../lib/egg.js';
 
 export interface NotFoundMiddlewareOptions {
   enable: boolean;
@@ -7,7 +6,7 @@ export interface NotFoundMiddlewareOptions {
 }
 
 export default (options: NotFoundMiddlewareOptions) => {
-  return async function notfound(ctx: EggCoreContext, next: Next) {
+  return async function notfound(ctx: ContextDelegation, next: Next) {
     await next();
 
     if (ctx.status !== 404 || ctx.body) {

@@ -1,17 +1,21 @@
-'use strict';
+import querystring from 'node:querystring';
+import { Request as EggCoreRequest } from '@eggjs/core';
+import type { Application } from '../../lib/application.js';
+import type { ContextDelegation } from './context.js';
+import Response from './response.js';
 
-const querystring = require('querystring');
-const accepts = require('accepts');
-
-const _querycache = Symbol('_querycache');
-const _queriesCache = Symbol('_queriesCache');
-const PROTOCOL = Symbol('PROTOCOL');
-const HOST = Symbol('HOST');
-const ACCEPTS = Symbol('ACCEPTS');
-const IPS = Symbol('IPS');
+const QUERY_CACHE = Symbol('request query cache');
+const QUERIES_CACHE = Symbol('request queries cache');
+const PROTOCOL = Symbol('request protocol');
+const HOST = Symbol('request host');
+const IPS = Symbol('request ips');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 
-module.exports = {
+export default class Request extends EggCoreRequest {
+  declare app: Application;
+  declare ctx: ContextDelegation;
+  declare response: Response;
+
   /**
    * Parse the "Host" header field host
    * and support X-Forwarded-Host when a
@@ -29,17 +33,19 @@ module.exports = {
    * => 'demo.eggjs.org'
    * ```
    */
-  get host() {
-    if (this[HOST]) return this[HOST];
+  get host(): string {
+    let host = this[HOST] as string | undefined;
+    if (host) {
+      return host;
+    }
 
-    let host;
     if (this.app.config.proxy) {
       host = getFromHeaders(this, this.app.config.hostHeaders);
     }
     host = host || this.get('host') || '';
-    this[HOST] = host.split(/\s*,\s*/)[0];
-    return this[HOST];
-  },
+    this[HOST] = host = host.split(',')[0].trim();
+    return host;
+  }
 
   /**
    * @member {String} Request#protocol
@@ -49,25 +55,28 @@ module.exports = {
    * => 'https'
    * ```
    */
-  get protocol() {
-    if (this[PROTOCOL]) return this[PROTOCOL];
+  get protocol(): string {
+    let protocol = this[PROTOCOL] as string;
+    if (protocol) {
+      return protocol;
+    }
     // detect encrypted socket
-    if (this.socket && this.socket.encrypted) {
-      this[PROTOCOL] = 'https';
-      return this[PROTOCOL];
+    if (this.socket?.encrypted) {
+      this[PROTOCOL] = protocol = 'https';
+      return protocol;
     }
     // get from headers specified in `app.config.protocolHeaders`
     if (this.app.config.proxy) {
       const proto = getFromHeaders(this, this.app.config.protocolHeaders);
       if (proto) {
-        this[PROTOCOL] = proto.split(/\s*,\s*/)[0];
-        return this[PROTOCOL];
+        this[PROTOCOL] = protocol = proto.split(/\s*,\s*/)[0];
+        return protocol;
       }
     }
-    // use protocol specified in `app.conig.protocol`
-    this[PROTOCOL] = this.app.config.protocol || 'http';
-    return this[PROTOCOL];
-  },
+    // use protocol specified in `app.config.protocol`
+    this[PROTOCOL] = protocol = this.app.config.protocol || 'http';
+    return protocol;
+  }
 
   /**
    * Get all pass through ip addresses from the request.
@@ -80,29 +89,34 @@ module.exports = {
    * => ['100.23.1.2', '201.10.10.2']
    * ```
    */
-  get ips() {
-    if (this[IPS]) return this[IPS];
+  get ips(): string[] {
+    let ips = this[IPS] as string[] | undefined;
+    if (ips) {
+      return ips;
+    }
 
     // return empty array when proxy=false
     if (!this.app.config.proxy) {
-      this[IPS] = [];
-      return this[IPS];
+      this[IPS] = ips = [];
+      return ips;
     }
 
-    const val = getFromHeaders(this, this.app.config.ipHeaders) || '';
-    this[IPS] = val ? val.split(/\s*,\s*/) : [];
+    const val = getFromHeaders(this, this.app.config.ipHeaders);
+    this[IPS] = ips = val ? val.split(/\s*,\s*/) : [];
 
     let maxIpsCount = this.app.config.maxIpsCount;
     // Compatible with maxProxyCount logic (previous logic is wrong, only for compatibility with legacy logic)
-    if (!maxIpsCount && this.app.config.maxProxyCount) maxIpsCount = this.app.config.maxProxyCount + 1;
+    if (!maxIpsCount && this.app.config.maxProxyCount) {
+      maxIpsCount = this.app.config.maxProxyCount + 1;
+    }
 
     if (maxIpsCount > 0) {
       // if maxIpsCount present, only keep `maxIpsCount` ips
       // [ illegalIp, clientRealIp, proxyIp1, proxyIp2 ...]
-      this[IPS] = this[IPS].slice(-maxIpsCount);
+      this[IPS] = ips = ips.slice(-maxIpsCount);
     }
-    return this[IPS];
-  },
+    return ips;
+  }
 
   /**
    * Get the request remote IPv4 address
@@ -115,16 +129,16 @@ module.exports = {
    * => '111.10.2.1'
    * ```
    */
-  get ip() {
+  get ip(): string {
     if (this._ip) {
       return this._ip;
     }
-    const ip = this.ips[0] || this.socket.remoteAddress;
+    const ip = this.ips[0] ?? this.socket.remoteAddress;
     // will be '::ffff:x.x.x.x', should convert to standard IPv4 format
     // https://zh.wikipedia.org/wiki/IPv6
-    this._ip = ip && ip.indexOf('::ffff:') > -1 ? ip.substring(7) : ip;
+    this._ip = ip && ip.startsWith('::ffff:') ? ip.substring(7) : ip;
     return this._ip;
-  },
+  }
 
   /**
    * Set the request remote IPv4 address
@@ -137,9 +151,9 @@ module.exports = {
    * => '111.10.2.1'
    * ```
    */
-  set ip(ip) {
+  set ip(ip: string) {
     this._ip = ip;
-  },
+  }
 
   /**
    * detect if response should be json
@@ -150,25 +164,25 @@ module.exports = {
    * @member {Boolean} Request#acceptJSON
    * @since 1.0.0
    */
-  get acceptJSON() {
+  get acceptJSON(): boolean {
     if (this.path.endsWith('.json')) return true;
     if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
     if (this.accepts('html', 'text', 'json') === 'json') return true;
     return false;
-  },
+  }
 
   // How to read query safely
   // https://github.com/koajs/qs/issues/5
-  _customQuery(cacheName, filter) {
+  _customQuery(cacheName: symbol, filter: (value: string | string[]) => string | string[]) {
     const str = this.querystring || '';
-    let c = this[cacheName];
+    let c = this[cacheName] as Record<string, Record<string, string | string[]>>;
     if (!c) {
       c = this[cacheName] = {};
     }
     let cacheQuery = c[str];
     if (!cacheQuery) {
       cacheQuery = c[str] = {};
-      const isQueries = cacheName === _queriesCache;
+      const isQueries = cacheName === QUERIES_CACHE;
       // `querystring.parse` CANNOT parse something like `a[foo]=1&a[bar]=2`
       const query = str ? querystring.parse(str) : {};
       for (const key in query) {
@@ -176,20 +190,19 @@ module.exports = {
           // key is '', like `a=b&`
           continue;
         }
-        const value = filter(query[key]);
+        const value = filter(query[key]!);
         cacheQuery[key] = value;
         if (isQueries && RE_ARRAY_KEY.test(key)) {
           // `this.queries['key'] => this.queries['key[]']` is compatibly supported
-          const subkey = key.substring(0, key.length - 2);
-
-          if (!cacheQuery[subkey]) {
-            cacheQuery[subkey] = value;
+          const subKey = key.substring(0, key.length - 2);
+          if (!cacheQuery[subKey]) {
+            cacheQuery[subKey] = value;
           }
         }
       }
     }
     return cacheQuery;
-  },
+  }
 
   /**
    * get params pass by querystring, all values are of string type.
@@ -212,8 +225,8 @@ module.exports = {
    * ```
    */
   get query() {
-    return this._customQuery(_querycache, firstValue);
-  },
+    return this._customQuery(QUERY_CACHE, firstValue) as Record<string, string>;
+  }
 
   /**
    * get params pass by querystring, all value are Array type. {@link Request#query}
@@ -232,50 +245,39 @@ module.exports = {
    * ```
    */
   get queries() {
-    return this._customQuery(_queriesCache, arrayValue);
-  },
-
-  get accept() {
-    let accept = this[ACCEPTS];
-    if (accept) {
-      return accept;
-    }
-    accept = this[ACCEPTS] = accepts(this.req);
-    return accept;
-  },
+    return this._customQuery(QUERIES_CACHE, arrayValue) as Record<string, string[]>;
+  }
 
   /**
    * Set query-string as an object.
    *
    * @function Request#query
    * @param {Object} obj set querystring and query object for request.
-   * @return {void}
    */
-  set query(obj) {
+  set query(obj: Record<string, string>) {
     this.querystring = querystring.stringify(obj);
-  },
-};
+  }
+}
 
-
-function firstValue(value) {
+function firstValue(value: string | string[]) {
   if (Array.isArray(value)) {
     value = value[0];
   }
   return value;
 }
 
-function arrayValue(value) {
+function arrayValue(value: string | string[]) {
   if (!Array.isArray(value)) {
     value = [ value ];
   }
   return value;
 }
 
-function getFromHeaders(ctx, names) {
+function getFromHeaders(request: Request, names: string) {
   if (!names) return '';
-  names = names.split(/\s*,\s*/);
-  for (const name of names) {
-    const value = ctx.get(name);
+  const fields = names.split(/\s*,\s*/);
+  for (const name of fields) {
+    const value = request.get<string>(name);
     if (value) return value;
   }
   return '';

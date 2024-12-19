@@ -1,17 +1,14 @@
-'use strict';
+import { createApp, MockApplication, restore, mm } from '../../utils.js';
 
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/app/middleware/notfound.test.js', () => {
-  let app;
+describe('test/app/middleware/notfound.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/notfound');
+    app = createApp('apps/notfound');
     return app.ready();
   });
   after(() => app.close());
 
-  afterEach(mm.restore);
+  afterEach(restore);
 
   it('should 302 redirect to 404.html', () => {
     return app.httpRequest()
@@ -25,6 +22,7 @@ describe('test/app/middleware/notfound.test.js', () => {
     return app.httpRequest()
       .get('/test/404.json?ctoken=404')
       .set('Cookie', 'ctoken=404')
+      .expect('content-type', 'application/json; charset=utf-8')
       .expect({
         message: 'Not Found',
       })
@@ -50,9 +48,9 @@ describe('test/app/middleware/notfound.test.js', () => {
   });
 
   describe('config.notfound.pageUrl = "/404"', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/notfound-custom-404');
+      app = createApp('apps/notfound-custom-404');
       return app.ready();
     });
     after(() => app.close());

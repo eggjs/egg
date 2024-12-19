@@ -1,10 +1,12 @@
-'use strict';
+import url from 'node:url';
+import { BaseContextClass } from '../../lib/core/base_context_class.js';
 
-const url = require('url');
-
-
-module.exports = {
-
+/**
+ * The Helper class which can be used as utility function.
+ * We support developers to extend Helper through ${baseDir}/app/extend/helper.js ,
+ * then you can use all method on `ctx.helper` that is a instance of Helper.
+ */
+export default class Helper extends BaseContextClass {
   /**
    * Generate URL path(without host) for route. Takes the route name and a map of named params.
    * @function Helper#pathFor
@@ -19,9 +21,9 @@ module.exports = {
    * ```
    * @return {String} url path(without host)
    */
-  pathFor(name, params) {
+  pathFor(name: string, params: Record<string, any>): string {
     return this.app.router.url(name, params);
-  },
+  }
 
   /**
    * Generate full URL(with host) for route. Takes the route name and a map of named params.
@@ -36,8 +38,7 @@ module.exports = {
    * ```
    * @return {String} full url(with host)
    */
-  urlFor(name, params) {
-    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.app.router.url(name, params));
-  },
-
-};
+  urlFor(name: string, params: Record<string, any>): string {
+    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.pathFor(name, params));
+  }
+}

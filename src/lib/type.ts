@@ -1,5 +1,4 @@
 import type { Socket } from 'node:net';
-import type { EggCoreContext } from '@eggjs/core';
 import type {
   RequestOptions as HttpClientRequestOptions,
 } from 'urllib';
@@ -10,16 +9,14 @@ import type {
   FileLoaderOptions,
 } from '@eggjs/core';
 import type {
-  EggApplicationCore,
+  EggApplicationCore, ContextDelegation,
 } from './egg.js';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 
-type IgnoreItem = string | RegExp | ((ctx: EggCoreContext) => boolean);
+type IgnoreItem = string | RegExp | ((ctx: ContextDelegation) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
-
-export type Next = () => Promise<void>;
 
 export interface ClientErrorResponse {
   body: string | Buffer;
@@ -103,7 +100,7 @@ export interface EggAppConfig {
     };
     /** Default is `'error'`, it will return `400` response when `Prototype-Poisoning` happen. */
     onProtoPoisoning: 'error' | 'remove' | 'ignore';
-    onerror(err: any, ctx: EggCoreContext): void;
+    onerror(err: any, ctx: ContextDelegation): void;
   };
 
   /**
@@ -327,10 +324,3 @@ export interface EggAppConfig {
 
   [prop: string]: any;
 }
-
-export type {
-  EggLogger,
-} from 'egg-logger';
-export type {
-  ILifecycleBoot,
-} from '@eggjs/core';

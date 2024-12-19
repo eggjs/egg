@@ -3,8 +3,7 @@
  */
 
 import { performance } from 'node:perf_hooks';
-import type { EggCoreContext } from '@eggjs/core';
-import type { Next } from '../../lib/type.js';
+import type { ContextDelegation, Next } from '../../lib/egg.js';
 
 export interface MetaMiddlewareOptions {
   enable: boolean;
@@ -12,7 +11,7 @@ export interface MetaMiddlewareOptions {
 }
 
 export default (options: MetaMiddlewareOptions) => {
-  return async function meta(ctx: EggCoreContext, next: Next) {
+  return async function meta(ctx: ContextDelegation, next: Next) {
     if (options.logging) {
       ctx.coreLogger.info('[meta] request started, host: %s, user-agent: %s',
         ctx.host, ctx.header['user-agent']);

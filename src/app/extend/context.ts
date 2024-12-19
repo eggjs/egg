@@ -1,38 +1,75 @@
-import { performance } from 'node:perf_hooks';
 import delegate from 'delegates';
 import { assign } from 'utility';
-import { utils } from '@eggjs/core';
+import { now, diff } from 'performance-ms';
+import {
+  utils, Context as EggCoreContext, Router,
+  type ContextDelegation as EggCoreContextDelegation,
+} from '@eggjs/core';
+import type { Cookies as ContextCookies } from '@eggjs/cookies';
+import type { Application } from '../../lib/application.js';
+import type { ContextHttpClient } from '../../lib/core/context_httpclient.js';
+import type { BaseContextClass } from '../../lib//core/base_context_class.js';
+import Request from './request.js';
+import Response from './response.js';
+import { EggLogger } from 'egg-logger';
 
-const HELPER = Symbol('Context#helper');
-const LOCALS = Symbol('Context#locals');
-const LOCALS_LIST = Symbol('Context#localsList');
-const COOKIES = Symbol('Context#cookies');
-const CONTEXT_LOGGERS = Symbol('Context#logger');
-const CONTEXT_HTTPCLIENT = Symbol('Context#httpclient');
-const CONTEXT_ROUTER = Symbol('Context#router');
+const HELPER = Symbol('ctx helper');
+const LOCALS = Symbol('ctx locals');
+const LOCALS_LIST = Symbol('ctx localsList');
+const COOKIES = Symbol('ctx cookies');
+const CONTEXT_HTTPCLIENT = Symbol('ctx httpclient');
+const CONTEXT_ROUTER = Symbol('ctx router');
 
-const Context = {
+interface Cookies extends ContextCookies {
+  request: any;
+  response: any;
+}
+
+export default class Context extends EggCoreContext {
+  declare app: Application;
+  declare request: Request;
+  declare service: BaseContextClass;
+
+  /**
+   * Request start time
+   * @member {Number} Context#starttime
+   */
+  starttime: number;
+  /**
+   * Request start timer using `performance.now()`
+   * @member {Number} Context#performanceStarttime
+   */
+  performanceStarttime: number;
+
   /**
    * Get the current visitor's cookies.
    */
   get cookies() {
-    if (!this[COOKIES]) {
-      this[COOKIES] = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
+    let cookies = this[COOKIES];
+    if (!cookies) {
+      this[COOKIES] = cookies = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
     }
-    return this[COOKIES];
-  },
+    return cookies as Cookies;
+  }
 
   /**
    * Get a wrapper httpclient instance contain ctx in the hold request process
    *
    * @return {ContextHttpClient} the wrapper httpclient instance
    */
-  get httpclient() {
+  get httpclient(): ContextHttpClient {
     if (!this[CONTEXT_HTTPCLIENT]) {
-      this[CONTEXT_HTTPCLIENT] = new this.app.ContextHttpClient(this);
+      this[CONTEXT_HTTPCLIENT] = new this.app.ContextHttpClient(this as any);
     }
-    return this[CONTEXT_HTTPCLIENT];
-  },
+    return this[CONTEXT_HTTPCLIENT] as ContextHttpClient;
+  }
+
+  /**
+   * Alias to {@link Context#httpclient}
+   */
+  get httpClient(): ContextHttpClient {
+    return this.httpclient;
+  }
 
   /**
    * Shortcut for httpclient.curl
@@ -42,9 +79,9 @@ const Context = {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  curl(url: string, options?: object) {
-    return this.httpclient.curl(url, options);
-  },
+  async curl(url: string, options?: object): ReturnType<ContextHttpClient['curl']> {
+    return await this.httpclient.curl(url, options);
+  }
 
   /**
    * Alias to {@link Application#router}
@@ -56,20 +93,17 @@ const Context = {
    * this.router.pathFor('post', { id: 12 });
    * ```
    */
-  get router() {
-    if (!this[CONTEXT_ROUTER]) {
-      this[CONTEXT_ROUTER] = this.app.router;
-    }
-    return this[CONTEXT_ROUTER];
-  },
+  get router(): Router {
+    return this.app.router;
+  }
 
   /**
    * Set router to Context, only use on EggRouter
-   * @param {EggRouter} val router instance
+   * @param {Router} val router instance
    */
-  set router(val) {
+  set router(val: Router) {
     this[CONTEXT_ROUTER] = val;
-  },
+  }
 
   /**
    * Get helper instance from {@link Application#Helper}
@@ -79,43 +113,25 @@ const Context = {
    */
   get helper() {
     if (!this[HELPER]) {
-      this[HELPER] = new this.app.Helper(this);
+      this[HELPER] = new this.app.Helper(this as any);
     }
     return this[HELPER];
-  },
+  }
 
   /**
    * Wrap app.loggers with context information,
    * if a custom logger is defined by naming aLogger, then you can `ctx.getLogger('aLogger')`
    *
    * @param {String} name - logger name
-   * @return {Logger} logger
    */
-  getLogger(name: string) {
-    if (this.app.config.logger.enableFastContextLogger) {
-      return this.app.getLogger(name);
-    }
-    let cache = this[CONTEXT_LOGGERS];
-    if (!cache) {
-      cache = this[CONTEXT_LOGGERS] = {};
-    }
-
-    // read from cache
-    if (cache[name]) return cache[name];
-
-    // get no exist logger
-    const appLogger = this.app.getLogger(name);
-    if (!appLogger) return null;
-
-    // write to cache
-    cache[name] = new this.app.ContextLogger(this, appLogger);
-    return cache[name];
-  },
+  getLogger(name: string): EggLogger {
+    return this.app.getLogger(name);
+  }
 
   /**
-   * Logger for Application, wrapping app.coreLogger with context infomation
+   * Logger for Application
    *
-   * @member {ContextLogger} Context#logger
+   * @member {Logger} Context#logger
    * @since 1.0.0
    * @example
    * ```js
@@ -123,20 +139,19 @@ const Context = {
    * this.logger.warn('WARNING!!!!');
    * ```
    */
-  get logger() {
+  get logger(): EggLogger {
     return this.getLogger('logger');
-  },
+  }
 
   /**
-   * Logger for frameworks and plugins,
-   * wrapping app.coreLogger with context infomation
+   * Logger for frameworks and plugins
    *
-   * @member {ContextLogger} Context#coreLogger
+   * @member {Logger} Context#coreLogger
    * @since 1.0.0
    */
-  get coreLogger() {
+  get coreLogger(): EggLogger {
     return this.getLogger('coreLogger');
-  },
+  }
 
   /**
    * locals is an object for view, you can use `app.locals` and `ctx.locals` to set variables,
@@ -169,19 +184,18 @@ const Context = {
     if (!this[LOCALS]) {
       this[LOCALS] = assign({}, this.app.locals);
     }
-    if (this[LOCALS_LIST] && this[LOCALS_LIST].length) {
+    if (Array.isArray(this[LOCALS_LIST]) && this[LOCALS_LIST].length > 0) {
       assign(this[LOCALS], this[LOCALS_LIST]);
       this[LOCALS_LIST] = null;
     }
-    return this[LOCALS];
-  },
+    return this[LOCALS] as Record<string, any>;
+  }
 
   set locals(val) {
-    if (!this[LOCALS_LIST]) {
-      this[LOCALS_LIST] = [];
-    }
-    this[LOCALS_LIST].push(val);
-  },
+    const localsList = this[LOCALS_LIST] as Record<string, any>[] ?? [];
+    localsList.push(val);
+    this[LOCALS_LIST] = localsList;
+  }
 
   /**
    * alias to {@link Context#locals}, compatible with koa that use this variable
@@ -190,11 +204,11 @@ const Context = {
    */
   get state() {
     return this.locals;
-  },
+  }
 
   set state(val) {
     this.locals = val;
-  },
+  }
 
   /**
    * Run async function in the background
@@ -208,43 +222,40 @@ const Context = {
    * });
    * ```
    */
-  runInBackground(scope: (ctx: any) => Promise<void>) {
+  runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, taskName?: string): void {
     // try to use custom function name first
-    /* istanbul ignore next */
-    const taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
-    this._runInBackground(scope, taskName);
-  },
+    if (!taskName) {
+      taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
+    }
+    // use setImmediate to ensure all sync logic will run async
+    setImmediate(() => {
+      this._runInBackground(scope, taskName!);
+    });
+  }
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  _runInBackground(scope: (ctx: any) => Promise<void>, taskName: string) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const ctx = this;
-    const start = performance.now();
-    // use setImmediate to ensure all sync logic will run async
-    return new Promise(resolve => setImmediate(resolve))
-      .then(() => scope(ctx))
-      .then(() => {
-        ctx.coreLogger.info('[egg:background] task:%s success (%dms)',
-          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
-      })
-      .catch(err => {
-        // background task process log
-        ctx.coreLogger.info('[egg:background] task:%s fail (%dms)',
-          taskName, Math.floor((performance.now() - start) * 1000) / 1000);
+  async _runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, taskName: string) {
+    const startTime = now();
+    try {
+      await scope(this as any);
+      this.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, diff(startTime));
+    } catch (err: any) {
+      // background task process log
+      this.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, diff(startTime));
 
-        // emit error when promise catch, and set err.runInBackground flag
-        err.runInBackground = true;
-        ctx.app.emit('error', err, ctx);
-      });
-  },
-} as any;
+      // emit error when promise catch, and set err.runInBackground flag
+      err.runInBackground = true;
+      this.app.emit('error', err, this);
+    }
+  }
+}
 
 /**
  * Context delegation.
  */
 
-delegate(Context, 'request')
+delegate(Context.prototype, 'request')
   /**
    * @member {Boolean} Context#acceptJSON
    * @see Request#acceptJSON
@@ -270,7 +281,7 @@ delegate(Context, 'request')
    */
   .access('ip');
 
-delegate(Context, 'response')
+delegate(Context.prototype, 'response')
   /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
@@ -278,4 +289,6 @@ delegate(Context, 'response')
    */
   .access('realStatus');
 
-export default Context;
+export type ContextDelegation = EggCoreContextDelegation & Context
+& Pick<Request, 'acceptJSON' | 'queries' | 'accept' | 'ip'>
+& Pick<Response, 'realStatus'>;

@@ -21,13 +21,10 @@
   "dependencies": {
     "@eggjs/cluster": "beta",
     "@eggjs/cookies": "^3.0.0",
-    "@eggjs/core": "^6.1.0",
+    "@eggjs/core": "^6.2.3",
     "@eggjs/schedule": "^5.0.1",
     "@eggjs/utils": "^4.0.2",
     "@eggjs/watcher": "^4.0.0",
-    "@types/accepts": "^1.3.5",
-    "accepts": "^1.3.8",
-    "cache-content-type": "^2.0.0",
     "circular-json-for-egg": "^1.0.0",
     "cluster-client": "^3.7.0",
     "delegates": "^1.0.0",
@@ -44,13 +41,13 @@
     "egg-static": "^2.2.0",
     "egg-view": "^2.1.3",
     "extend2": "^4.0.0",
-    "graceful": "^1.1.0",
+    "graceful": "^2.0.0",
+    "humanize-ms": "^2.0.0",
     "is-type-of": "^2.1.0",
     "koa-bodyparser": "^4.4.1",
-    "koa-is-json": "^1.0.0",
     "koa-override": "^4.0.0",
-    "ms": "^2.1.3",
     "onelogger": "^1.0.0",
+    "performance-ms": "^1.1.0",
     "sendmessage": "^3.0.1",
     "urllib": "^4.0.0",
     "utility": "^2.1.0",
@@ -112,7 +109,7 @@
   "license": "MIT",
   "egg": {
     "framework": true,
-    "baseDir": {
+    "exports": {
       "import": "./dist/esm",
       "require": "./dist/commonjs"
     }

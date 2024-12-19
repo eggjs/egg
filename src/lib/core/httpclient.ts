@@ -1,11 +1,10 @@
-import { EggCoreContext } from '@eggjs/core';
 import {
   HttpClient as RawHttpClient,
   RequestURL as HttpClientRequestURL,
   RequestOptions,
 } from 'urllib';
-import ms from 'ms';
-import type { EggApplicationCore } from '../egg.js';
+import { ms } from 'humanize-ms';
+import type { EggApplicationCore, ContextDelegation } from '../egg.js';
 
 export type {
   HttpClientResponse,
@@ -13,7 +12,7 @@ export type {
 } from 'urllib';
 
 export interface HttpClientRequestOptions extends RequestOptions {
-  ctx?: EggCoreContext;
+  ctx?: ContextDelegation;
   tracer?: unknown;
 }
 
@@ -47,6 +46,6 @@ export class HttpClient extends RawHttpClient {
 function normalizeConfig(app: EggApplicationCore) {
   const config = app.config.httpclient;
   if (typeof config.request?.timeout === 'string') {
-    config.request.timeout = ms(config.request.timeout as string);
+    config.request.timeout = ms(config.request.timeout);
   }
 }

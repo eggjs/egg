@@ -4,7 +4,18 @@ import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import { fileURLToPath } from 'node:url';
-import { EggCore, type EggCoreContext, type EggCoreOptions } from '@eggjs/core';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import {
+  EggCore,
+  Request as EggCoreRequest,
+  Response as EggCoreResponse,
+  Router,
+} from '@eggjs/core';
+import type {
+  EggCoreOptions,
+  Next, MiddlewareFunc as EggCoreMiddlewareFunc,
+  ILifecycleBoot,
+} from '@eggjs/core';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import createClusterClient, { close as closeClusterClient } from 'cluster-client';
@@ -16,6 +27,7 @@ import { Cookies as ContextCookies } from '@eggjs/cookies';
 import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.js';
 import type { Application } from './application.js';
+import Context, { type ContextDelegation } from '../app/extend/context.js';
 import type { EggAppConfig } from './type.js';
 import { create as createMessenger, IMessenger } from './core/messenger/index.js';
 import { ContextHttpClient } from './core/context_httpclient.js';
@@ -39,19 +51,34 @@ export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir
   baseDir?: string;
 }
 
-export interface EggContext extends EggCoreContext {
-  app: EggApplicationCore;
-  /**
-   * Request start time
-   * @member {Number} Context#starttime
-   */
-  starttime: number;
-  /**
-   * Request start timer using `performance.now()`
-   * @member {Number} Context#performanceStarttime
-   */
-  performanceStarttime: number;
+// export egg classes
+export {
+  Context,
+  Router,
+  EggLogger,
+};
+
+export class Request extends EggCoreRequest {
+  declare app: EggCore;
+  declare response: Response;
+  declare ctx: ContextDelegation;
 }
+
+export class Response extends EggCoreResponse {
+  declare app: EggCore;
+  declare request: Request;
+  declare ctx: ContextDelegation;
+}
+
+// export egg types
+export type {
+  ContextDelegation,
+  ILifecycleBoot,
+  Next,
+};
+// keep compatible with egg version 3.x
+export type EggContext = ContextDelegation;
+export type MiddlewareFunc<T extends ContextDelegation = ContextDelegation> = EggCoreMiddlewareFunc<T>;
 
 /**
  * Based on koa's Application
@@ -60,6 +87,7 @@ export interface EggContext extends EggCoreContext {
  * @augments EggCore
  */
 export class EggApplicationCore extends EggCore {
+  declare ctxStorage: AsyncLocalStorage<ContextDelegation>;
   // export context base classes, let framework can impl sub class and over context extend easily.
   ContextCookies = ContextCookies;
   ContextLogger = ContextLogger;
@@ -412,7 +440,6 @@ export class EggApplicationCore extends EggCore {
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
       // err maybe an object, try to copy the name, message and stack to the new error instance
-      /* istanbul ignore else */
       if (err) {
         if (err.name) newError.name = err.name;
         if (err.message) newError.message = err.message;
@@ -420,7 +447,6 @@ export class EggApplicationCore extends EggCore {
       }
       err = newError;
     }
-    /* istanbul ignore else */
     if (err.name === 'Error') {
       err.name = 'unhandledRejectionError';
     }
@@ -589,7 +615,7 @@ export class EggApplicationCore extends EggCore {
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    * @return {Context} context
    */
-  createAnonymousContext(req?: any): EggCoreContext {
+  createAnonymousContext(req?: any): EggContext {
     const request: any = {
       headers: {
         host: '127.0.0.1',
@@ -633,7 +659,7 @@ export class EggApplicationCore extends EggCore {
     const context = Object.create(this.context) as EggContext;
     const request = context.request = Object.create(this.request);
     const response = context.response = Object.create(this.response);
-    context.app = request.app = response.app = this;
+    context.app = request.app = response.app = this as any;
     context.req = request.req = response.req = req;
     context.res = request.res = response.res = res;
     request.ctx = response.ctx = context;
