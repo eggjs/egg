@@ -1,15 +1,16 @@
-const assert = require('assert');
-const mm = require('egg-mock');
-const fs = require('fs/promises');
-const utils = require('../../utils');
+import { strict as assert } from 'node:assert';
+import fs from 'node:fs/promises';
+import { scheduler } from 'node:timers/promises';
+import { createApp, MockApplication, restore, cluster } from '../../utils.js';
 
-describe('test/app/middleware/meta.test.js', () => {
-  afterEach(mm.restore);
+describe('test/app/middleware/meta.test.ts', () => {
+  afterEach(restore);
+
+  let app: MockApplication;
 
   describe('default config', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/middlewares');
+      app = createApp('apps/middlewares');
       return app.ready();
     });
     after(() => app.close());
@@ -23,9 +24,8 @@ describe('test/app/middleware/meta.test.js', () => {
   });
 
   describe('config.logger.enablePerformanceTimer = true', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/middlewares-meta-enablePerformanceTimer');
+      app = createApp('apps/middlewares-meta-enablePerformanceTimer');
       return app.ready();
     });
     after(() => app.close());
@@ -41,9 +41,8 @@ describe('test/app/middleware/meta.test.js', () => {
   });
 
   describe('meta.logging = true', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/meta-logging-app');
+      app = createApp('apps/meta-logging-app');
       return app.ready();
     });
     after(() => app.close());
@@ -54,16 +53,18 @@ describe('test/app/middleware/meta.test.js', () => {
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
         .expect(200);
-      if (process.platform === 'win32') await utils.sleep(2000);
+      if (process.platform === 'win32') {
+        await scheduler.wait(2000);
+      }
       const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
-      assert(content.includes('[meta] request started, host: '));
+      assert.match(content, /\[meta] request started, host: /);
     });
   });
 
   describe('cluster start', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.cluster('apps/middlewares');
+      app = cluster('apps/middlewares');
       return app.ready();
     });
     after(() => app.close());

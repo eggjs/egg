@@ -1,5 +1,5 @@
 
-module.exports = function* () {
+module.exports = function () {
   if (!this.session.uid) {
     this.session.uid = this.query.uid;
   }

@@ -35,7 +35,7 @@ export const createApp = app;
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export function cluster(name: string | MockOption, options: MockOption): MockApplication {
+export function cluster(name: string | MockOption, options?: MockOption): MockApplication {
   options = formatOptions(name, options);
   return mm.cluster(options);
 }

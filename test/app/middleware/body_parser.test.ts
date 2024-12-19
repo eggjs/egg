@@ -1,25 +1,21 @@
-const assert = require('assert');
-const querystring = require('querystring');
-const utils = require('../../utils');
+import { strict as assert } from 'node:assert';
+import querystring from 'node:querystring';
+import { createApp, MockApplication } from '../../utils.js';
 
-describe('test/app/middleware/body_parser.test.js', () => {
-  let app;
-  let app1;
-  let csrf;
-  let cookies;
-  before(done => {
-    app = utils.app('apps/body_parser_testapp');
-    app.ready(() => {
-      app.httpRequest()
-        .get('/test/body_parser/user')
-        .expect(200, (err, res) => {
-          assert(!err);
-          csrf = res.body.csrf || '';
-          cookies = res.headers['set-cookie'].join(';');
-          assert(csrf);
-          done();
-        });
-    });
+describe('test/app/middleware/body_parser.test.ts', () => {
+  let app: MockApplication;
+  let app1: MockApplication;
+  let csrf: string;
+  let cookies: string;
+  before(async () => {
+    app = createApp('apps/body_parser_testapp');
+    await app.ready();
+    const res = await app.httpRequest()
+      .get('/test/body_parser/user')
+      .expect(200);
+    csrf = res.body.csrf || '';
+    cookies = (res.headers['set-cookie'] as any).join(';');
+    assert(csrf);
   });
 
   after(() => app.close());
@@ -109,7 +105,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   it('should disable body parser', async () => {
-    app1 = utils.app('apps/body_parser_testapp_disable');
+    app1 = createApp('apps/body_parser_testapp_disable');
     await app1.ready();
 
     await app1.httpRequest()
@@ -119,7 +115,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   it('should body parser support ignore', async () => {
-    app1 = utils.app('apps/body_parser_testapp_ignore');
+    app1 = createApp('apps/body_parser_testapp_ignore');
     await app1.ready();
 
     await app1.httpRequest()
@@ -135,7 +131,7 @@ describe('test/app/middleware/body_parser.test.js', () => {
   });
 
   it('should body parser support match', async () => {
-    app1 = utils.app('apps/body_parser_testapp_match');
+    app1 = createApp('apps/body_parser_testapp_match');
     await app1.ready();
 
     await app1.httpRequest()

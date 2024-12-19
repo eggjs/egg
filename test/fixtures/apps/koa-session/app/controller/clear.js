@@ -1,5 +1,5 @@
 
-module.exports = function* () {
+module.exports = function () {
   this.session = null;
   this.body = 'clear';
 };

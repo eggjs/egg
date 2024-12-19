@@ -1,3 +1,3 @@
-module.exports = function* () {
-  yield this.render('index.html');
+module.exports = async function () {
+  await this.render('index.html');
 };
