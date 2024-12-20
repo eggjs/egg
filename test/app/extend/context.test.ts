@@ -63,7 +63,7 @@ describe('test/app/extend/context.test.ts', () => {
       const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
-      assert(/\[123123\/[\d.]+\/-\/\d+ms GET \/logger\?message=foo]/.test(errorContent));
+      assert.match(errorContent, /\[123123\/[\d\.]+\/-\/[\d\.]+ms GET \/logger\?message=foo]/);
 
       const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       assert(!loggerContent.includes('debug foo'));

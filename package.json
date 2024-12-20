@@ -24,7 +24,7 @@
     "@eggjs/core": "^6.2.3",
     "@eggjs/schedule": "^5.0.2",
     "@eggjs/utils": "^4.0.2",
-    "@eggjs/watcher": "^4.0.0",
+    "@eggjs/watcher": "^4.0.1",
     "circular-json-for-egg": "^1.0.0",
     "cluster-client": "^3.7.0",
     "delegates": "^1.0.0",

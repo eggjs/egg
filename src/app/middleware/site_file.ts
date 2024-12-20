@@ -13,7 +13,7 @@ export interface SiteFileMiddlewareOptions {
 
 const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
 
-module.exports = (options: SiteFileMiddlewareOptions) => {
+export default (options: SiteFileMiddlewareOptions) => {
   return async function siteFile(ctx: ContextDelegation, next: Next) {
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
       return next();

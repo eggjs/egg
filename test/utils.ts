@@ -145,6 +145,8 @@ function formatOptions(name: string | MockOption, options?: MockOption) {
     baseDir,
     framework: eggPath,
     cache: false,
+    // change default mockCtxStorage to false because we don't need it in framework test
+    mockCtxStorage: false,
     ...options,
   };
 }

@@ -15,6 +15,9 @@ import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 
+// import @eggjs/watcher types
+// import '@eggjs/watcher';
+
 type IgnoreItem = string | RegExp | ((ctx: ContextDelegation) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 

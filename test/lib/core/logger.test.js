@@ -236,7 +236,7 @@ describe('test/lib/core/logger.test.js', () => {
         enableFastContextLogger: true,
       });
     await utils.sleep(1000);
-    app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/\d+ms GET \/] enableFastContextLogger: true/);
+    app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/[\d\.]+ms GET \/] enableFastContextLogger: true/);
   });
 
   describe('logger.level = DEBUG', () => {

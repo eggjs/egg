@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = async function() {
   const message = this.query.message;
 

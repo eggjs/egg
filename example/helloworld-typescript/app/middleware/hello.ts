@@ -6,5 +6,8 @@ export const hello: MiddlewareFunc = async (ctx, next) => {
   console.log(ctx.performanceStarttime);
   const res = await ctx.curl('https://eggjs.org');
   console.log(res.status);
+
+  // egg watcher
+  // console.log('egg watcher', ctx.app.watcher);
   await next();
 };
