@@ -1,17 +1,13 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { restore, createApp, MockApplication } from '../../utils.js';
 
-const assert = require('assert');
-
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/app/extend/agent.test.js', () => {
-  afterEach(mm.restore);
+describe('test/app/extend/agent.test.ts', () => {
+  afterEach(restore);
 
   describe('agent.addSingleton()', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/singleton-demo');
+      app = createApp('apps/singleton-demo');
       return app.ready();
     });
     after(() => app.close());
@@ -21,28 +17,28 @@ describe('test/app/extend/agent.test.js', () => {
       assert(config.foo === 'bar');
       assert(config.foo2 === 'bar2');
 
-      const ds = app.agent.dataService.createInstance({ foo: 'barrr' });
+      const ds = app.agent.dataService.createInstance({ foo: 'bar2' });
       config = await ds.getConfig();
-      assert(config.foo === 'barrr');
+      assert(config.foo === 'bar2');
 
-      const ds2 = await app.agent.dataService.createInstanceAsync({ foo: 'barrr' });
+      const ds2 = await app.agent.dataService.createInstanceAsync({ foo: 'bar2' });
       config = await ds2.getConfig();
-      assert(config.foo === 'barrr');
+      assert(config.foo === 'bar2');
 
       config = await app.agent.dataServiceAsync.get('second').getConfig();
       assert(config.foo === 'bar');
       assert(config.foo2 === 'bar2');
 
       try {
-        app.agent.dataServiceAsync.createInstance({ foo: 'barrr' });
+        app.agent.dataServiceAsync.createInstance({ foo: 'bar2' });
         throw new Error('should not execute');
-      } catch (err) {
+      } catch (err: any) {
         assert(err.message === 'egg:singleton dataServiceAsync only support create asynchronous, please use createInstanceAsync');
       }
 
-      const ds4 = await app.agent.dataServiceAsync.createInstanceAsync({ foo: 'barrr' });
+      const ds4 = await app.agent.dataServiceAsync.createInstanceAsync({ foo: 'bar2' });
       config = await ds4.getConfig();
-      assert(config.foo === 'barrr');
+      assert(config.foo === 'bar2');
     });
   });
 });
