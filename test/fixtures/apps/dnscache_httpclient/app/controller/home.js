@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function* () {
+module.exports = async function () {
   let args;
   if (this.query.host) {
     args = {};
@@ -13,7 +13,7 @@ module.exports = function* () {
   if (this.query.disableDNSCache) {
     args = { enableDNSCache: false };
   }
-  const result = yield this.curl(this.query.url, args);
+  const result = await this.curl(this.query.url, args);
   this.status = result.status;
   this.set(result.headers);
   this.body = result.data;

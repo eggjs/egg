@@ -17,7 +17,7 @@ describe('test/lib/egg.test.js', () => {
       app = utils.app('apps/demo');
       await app.ready();
       // CI 环境 Windows 写入磁盘需要时间
-      await utils.sleep(1100);
+      await scheduler.wait(1100);
     });
     after(() => app.close());
 
@@ -173,7 +173,7 @@ describe('test/lib/egg.test.js', () => {
       await Promise.all([ utils.rimraf(path.join(baseDir, 'run')), utils.rimraf(path.join(baseDir, 'logs')) ]);
       const app = utils.app(baseDir);
       await app.ready();
-      await utils.sleep(100);
+      await scheduler.wait(100);
       assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
       assertFile(path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'), /unfinished timing item: {"name":"Did Load in app.js:didLoad"/);
     });
@@ -183,7 +183,7 @@ describe('test/lib/egg.test.js', () => {
       await Promise.all([ utils.rimraf(path.join(baseDir, 'run')), utils.rimraf(path.join(baseDir, 'logs')) ]);
       const app = utils.app(baseDir);
       await app.ready();
-      await utils.sleep(100);
+      await scheduler.wait(100);
       assertFile(path.join(baseDir, 'logs/dumptiming-slowBootActionMinDuration/egg-web.log'), /\[egg:core]\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/);
     });
   });
@@ -233,7 +233,7 @@ describe('test/lib/egg.test.js', () => {
     it('should dump in config', async () => {
       const baseDir = utils.getFilepath('apps/dumpconfig-circular');
       await app.ready();
-      await utils.sleep(100);
+      await scheduler.wait(100);
       const json = readJson(path.join(baseDir, 'run/application_config.json'));
       assert.deepEqual(json.config.foo, [ '~config~foo' ]);
     });
@@ -286,7 +286,7 @@ describe('test/lib/egg.test.js', () => {
     afterEach(mm.restore);
 
     it('should custom dir', async () => {
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
       assertFile(path.join(runDir, 'application_config.json'));
       assertFile(path.join(logDir, 'egg-web.log'));
       assertFile.fail(path.join(baseDir, 'run/application_config.json'));
@@ -369,7 +369,7 @@ describe('test/lib/egg.test.js', () => {
         .expect(200);
 
       await Promise.all([ req1, req2, req3 ]);
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
 
       const logfile = path.join(utils.getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
@@ -396,7 +396,7 @@ describe('test/lib/egg.test.js', () => {
         .expect('hello')
         .expect(200);
 
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
 
       const logPath = path.join(utils.getFilepath('apps/base-context-class'), 'logs/base-context-class/base-context-class-web.log');
       const log = fs.readFileSync(logPath, 'utf8');

@@ -1,12 +1,10 @@
-'use strict';
-
 module.exports = function (app) {
   class Certify extends app.Service {
     constructor(ctx) {
       super(ctx);
     }
 
-    * exec(cmd) {
+    async exec(cmd) {
       return {
         cmd: cmd,
         method: this.ctx.method,

@@ -17,9 +17,9 @@ module.exports = function(app) {
   app.apiClient = new ApiClient({ cluster });
   app.apiClient2 = new ApiClient2({ cluster });
 
-  app.beforeStart(function*() {
-    yield app.registryClient.ready();
-    yield app.apiClient.ready();
-    yield app.apiClient2.ready();
+  app.beforeStart(async function() {
+    await app.registryClient.ready();
+    await app.apiClient.ready();
+    await app.apiClient2.ready();
   });
 };

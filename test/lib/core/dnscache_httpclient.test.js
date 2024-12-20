@@ -163,7 +163,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     record = app.httpclient.dnsCache.get('localhost');
     assert(timestamp === record.timestamp);
 
-    await utils.sleep(5500);
+    await scheduler.wait(5500);
     obj = urlparse(url + '/get_headers');
     result = await app.curl(obj, { dataType: 'json' });
     assert(result.status === 200);
@@ -193,7 +193,7 @@ describe('test/lib/core/dnscache_httpclient.test.js', () => {
     record = agent.httpclient.dnsCache.get('localhost');
     assert(timestamp === record.timestamp);
 
-    await utils.sleep(5500);
+    await scheduler.wait(5500);
     obj = urlparse(url + '/get_headers');
     result = await agent.curl(obj, { dataType: 'json' });
     assert(result.status === 200);

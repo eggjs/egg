@@ -26,9 +26,9 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect(200)
         .expect('app watch success');
 
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
       fs.writeFileSync(file_path1, 'aaa');
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -40,7 +40,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         });
 
       fs.writeFileSync(file_path2, 'aaa');
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       await app.httpRequest()
         .get('/app-msg')
@@ -60,7 +60,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       await app.httpRequest()
         .get('/agent-msg')
@@ -84,7 +84,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
     after(() => app.close());
 
     it('should warn user', async () => {
-      await utils.sleep(3000);
+      await scheduler.wait(3000);
       const logPath = utils.getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
       assert(content.includes('defaultEventSource watcher will NOT take effect'));

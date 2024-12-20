@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function*() {
+module.exports = async function() {
   const message = this.query.message;
 
   this.logger.debug('debug %s', message);

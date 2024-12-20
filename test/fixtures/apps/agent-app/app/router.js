@@ -1,19 +1,17 @@
-'use strict';
-
 const sleep = timeout => callback => setTimeout(callback, timeout);
 
 module.exports = app => {
-  app.get('/getData', function*() {
-    this.body = yield app.mockClient.getData('hello');
+  app.get('/getData', async function() {
+    this.body = await app.mockClient.getData('hello');
   });
 
-  app.get('/getDataGenerator', function*() {
-    this.body = yield app.mockClient.getDataGenerator('hello');
+  app.get('/getDataGenerator', async function() {
+    this.body = await app.mockClient.getDataGenerator('hello');
   });
 
-  app.get('/getError', function*() {
+  app.get('/getError', async function() {
     try {
-      yield app.mockClient.getError();
+      await app.mockClient.getError();
     } catch (err) {
       this.body = err.message;
     }
@@ -25,10 +23,10 @@ module.exports = app => {
     };
   }
 
-  app.get('/sub', function*() {
-    const first = yield subThunk();
-    yield sleep(1000);
-    const second = yield subThunk();
+  app.get('/sub', async function() {
+    const first = await subThunk();
+    await sleep(1000);
+    const second = await subThunk();
     this.body = {
       foo: app.foo,
       first,
@@ -36,14 +34,14 @@ module.exports = app => {
     };
   });
 
-  app.get('/save', function*() {
+  app.get('/save', async function() {
     app.mockClient.saveAsync('hello', 'node');
     this.body = 'ok';
   });
 
-  app.get('/timeout', function*() {
+  app.get('/timeout', async function() {
     try {
-      yield app.mockClient.getTimeout();
+      await app.mockClient.getTimeout();
       this.body = 'ok';
     } catch (err) {
       this.body = 'timeout';

@@ -1,3 +1,3 @@
-module.exports = function*() {
-  yield this.render('nonce.html');
+module.exports = async function() {
+  await this.render('nonce.html');
 };

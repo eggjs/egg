@@ -1,12 +1,10 @@
-'use strict';
-
 module.exports = function (app) {
   class UserCif extends app.Service {
     constructor(ctx) {
       super(ctx);
     }
 
-    * get(uid) {
+    async get(uid) {
       return {
         uid: uid,
         cif: true,

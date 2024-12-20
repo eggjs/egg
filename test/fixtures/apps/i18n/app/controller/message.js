@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function* () {
+module.exports = async function () {
   this.body = {
     message: this.__('Hello %s, how are you today? How was your %s.', 'fengmk2', 18),
     empty: this.__(),

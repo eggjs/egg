@@ -1,17 +1,15 @@
-'use strict';
-
-module.exports = app => {
+module.exports = () => {
   return {
-    * bar() {
+    async bar() {
       this.ctx.body = 'this is obj bar!';
     },
 
-    * error() {
+    async error() {
       aaa;
     },
 
     subObj: {
-      * hello() {
+      async hello() {
         this.ctx.body = 'this is subObj hello!';
       },
     },

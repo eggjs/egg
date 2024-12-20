@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function*() {
+module.exports = async function() {
   this.state.foo = 'foo';
   this.locals.bar = 'bar';
-  yield this.render('locals.html');
+  await this.render('locals.html');
 };

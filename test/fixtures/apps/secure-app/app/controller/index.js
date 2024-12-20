@@ -1,4 +1,4 @@
-exports.home = function*() {
+exports.home = async function() {
   if (this.query.cookiedel) {
     if (!this.query.opts) {
       this.cookies.set('cookiedel', null);
@@ -32,6 +32,6 @@ exports.home = function*() {
   this.body = 'hello mock secure app';
 };
 
-exports.getUser = function*() {
+exports.getUser = async function() {
   this.body = { name: 'fengmk2' };
 };

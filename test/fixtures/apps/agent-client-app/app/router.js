@@ -13,9 +13,11 @@ module.exports = function(app) {
     done1();
   });
 
-  app.get('/', function*() {
-    const val = yield cb => app.subClient.subscribe('mock-data', val => {
-      cb(null, val);
+  app.get('/', async function() {
+    const val = await new Promise(resolve => {
+      app.subClient.subscribe('mock-data', val => {
+        resolve(val);
+      });
     });
 
     this.body = {
@@ -24,9 +26,11 @@ module.exports = function(app) {
     };
   });
 
-  app.get('/not-exist', function*() {
-    const val = yield cb => app.subClient.subscribe('not-exist-data', val => {
-      cb(null, val);
+  app.get('/not-exist', async function() {
+    const val = await new Promise(resolve => {
+      app.subClient.subscribe('not-exist-data', val => {
+        resolve(val);
+      });
     });
 
     this.body = {

@@ -1,5 +1,5 @@
-module.exports = function* () {
-  yield this.render('js.html', {
+module.exports = async function () {
+  await this.render('js.html', {
     context: {
       a: this.request.body.a
     }

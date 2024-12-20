@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = function* () {
-  yield this.render('home.html', {
+module.exports = async function () {
+  await this.render('home.html', {
     user: {
       name: 'fengmk2',
     },

@@ -120,7 +120,7 @@ describe('test/lib/cluster/app_worker.test.js', () => {
 
     it('should not log when there is no rawPacket', async () => {
       await connect(app.port);
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
       app.expect('stderr', /HPE_INVALID_EOF_STATE/);
       app.notExpect('stderr', /A client/);
     });

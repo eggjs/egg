@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  app.get('/app_same_ref', function*() {
+  app.get('/app_same_ref', async function() {
     let app1, app2;
     this.app.locals = {
       a: 1
@@ -14,7 +14,7 @@ module.exports = app => {
     this.body = app1 === app2;
   });
 
-  app.get('/app_locals_oom', function*() {
+  app.get('/app_locals_oom', async function() {
     for (let i = 0; i < 1000; i++) {
       app.locals = {
         // 10MB
@@ -24,7 +24,7 @@ module.exports = app => {
     this.body = 'ok';
   });
 
-  app.get('/ctx_same_ref', function*() {
+  app.get('/ctx_same_ref', async function() {
     let ctx1, ctx2;
     this.locals = {
       a: 1
@@ -37,7 +37,7 @@ module.exports = app => {
     this.body = ctx1 === ctx2;
   });
 
-  app.get('/ctx_merge_app', function*() {
+  app.get('/ctx_merge_app', async function() {
     this.app.locals = {
       a: 1
     };
@@ -50,7 +50,7 @@ module.exports = app => {
     }
   });
 
-  app.get('/ctx_override_app', function*() {
+  app.get('/ctx_override_app', async function() {
     this.app.locals = {
       a: 'app.a',
       b: 'app.b',
@@ -73,7 +73,7 @@ module.exports = app => {
     }
   });
 
-  app.get('/ctx_app_update_can_not_affect_ctx', function*() {
+  app.get('/ctx_app_update_can_not_affect_ctx', async function() {
     this.app.locals = {
       a: 'app.a',
       b: 'app.b',
@@ -97,7 +97,7 @@ module.exports = app => {
     };
   });
 
-  app.get('/set_only_support_object', function*() {
+  app.get('/set_only_support_object', async function() {
     let succeed = {};
 
     // 以 object 设置 app.locals
