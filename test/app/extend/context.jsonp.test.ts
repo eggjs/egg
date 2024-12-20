@@ -1,16 +1,12 @@
-'use strict';
+import { createApp, MockApplication } from '../../utils.js';
 
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/app/extend/context.jsonp.test.js', () => {
-  let app;
+describe('test/app/extend/context.jsonp.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/demo');
+    app = createApp('apps/demo');
     return app.ready();
   });
   after(() => app.close());
-  afterEach(mm.restore);
 
   it('should response jsonp', () => {
     return app.httpRequest()

@@ -1,17 +1,15 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { once } from 'node:events';
+import urllib from 'urllib';
+import { createApp, MockApplication, restore, mm } from '../../utils.js';
 
-const assert = require('assert');
-const mm = require('egg-mock');
-const urllib = require('urllib');
-const utils = require('../../utils');
-
-describe('test/app/extend/request.test.js', () => {
+describe('test/app/extend/request.test.ts', () => {
   describe('normal', () => {
-    let app;
+    let app: MockApplication;
     let ctx;
-    let req;
+    let req: any;
     before(() => {
-      app = utils.app('apps/demo');
+      app = createApp('apps/demo');
       return app.ready();
     });
     after(() => app.close());
@@ -19,7 +17,7 @@ describe('test/app/extend/request.test.js', () => {
       ctx = app.mockContext();
       req = ctx.request;
     });
-    afterEach(mm.restore);
+    afterEach(restore);
 
     describe('req.host', () => {
       it('should return host with port', () => {
@@ -180,8 +178,8 @@ describe('test/app/extend/request.test.js', () => {
 
       it('should return value from socket.encrypted', () => {
         const ctx = app.mockContext();
-        ctx.request.socket.encrypted = true;
-        assert(ctx.request.protocol === 'https');
+        (ctx.request as any).socket.encrypted = true;
+        assert.equal(ctx.request.protocol, 'https');
       });
     });
 
@@ -208,7 +206,7 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('this.query[key] => String', () => {
-      function expectQuery(querystring, query) {
+      function expectQuery(querystring: any, query: any) {
         mm(req, 'querystring', querystring);
         assert.deepEqual(req.query, query);
         mm.restore();
@@ -240,7 +238,7 @@ describe('test/app/extend/request.test.js', () => {
     });
 
     describe('this.queries[key] => Array', () => {
-      function expectQueries(querystring, query) {
+      function expectQueries(querystring: any, query: any) {
         mm(req, 'querystring', querystring);
         assert.deepEqual(req.queries, query);
         mm.restore();
@@ -370,41 +368,36 @@ describe('test/app/extend/request.test.js', () => {
   });
 
   describe('work with egg app', () => {
-    let app;
-    let host;
+    let app: MockApplication;
+    let host: string;
     before(() => {
-      app = utils.app('apps/querystring-extended');
+      app = createApp('apps/querystring-extended');
       return app.ready();
     });
-    before(done => {
-      app.listen(0, function() {
-        host = `http://127.0.0.1:${this.address().port}`;
-        done();
-      });
+    before(async () => {
+      const server = app.listen(0);
+      await once(server, 'listening');
+      host = `http://127.0.0.1:${server.address().port}`;
     });
     after(() => app.close());
 
-    it('should return query and queries', done => {
-      urllib.request(`${host}/?p=a,b&p=b,c&a[foo]=bar`, {
+    it('should return query and queries', async () => {
+      const res = await urllib.request(`${host}/?p=a,b&p=b,c&a[foo]=bar`, {
         dataType: 'json',
-      }, (err, body) => {
-        assert.deepEqual(body, {
-          query: { p: 'a,b', 'a[foo]': 'bar' },
-          queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
-        });
-        done(err);
+      });
+      assert.deepEqual(res.data, {
+        query: { p: 'a,b', 'a[foo]': 'bar' },
+        queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
       });
     });
 
-    it('should work with encodeURIComponent', done => {
-      urllib.request(`${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`, {
+    it('should work with encodeURIComponent', async () => {
+      const res = await urllib.request(`${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`, {
         dataType: 'json',
-      }, (err, body) => {
-        assert.deepEqual(body, {
-          query: { p: 'a,b', 'a[foo]': 'bar' },
-          queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
-        });
-        done(err);
+      });
+      assert.deepEqual(res.data, {
+        query: { p: 'a,b', 'a[foo]': 'bar' },
+        queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
       });
     });
   });

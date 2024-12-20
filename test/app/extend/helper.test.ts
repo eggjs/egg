@@ -1,11 +1,9 @@
-'use strict';
+import { createApp, MockApplication } from '../../utils.js';
 
-const utils = require('../../utils');
-
-describe('test/app/extend/helper.test.js', () => {
-  let app;
+describe('test/app/extend/helper.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/helper');
+    app = createApp('apps/helper');
     return app.ready();
   });
   after(() => app.close());
