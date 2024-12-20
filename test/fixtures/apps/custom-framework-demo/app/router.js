@@ -2,11 +2,11 @@ module.exports = app => {
   app.get('home', '/', 'home');
   app.get('/hello', app.controller.hello);
   app.get('/logger', app.controller.logger);
-  app.get('/protocol', function*() {
+  app.get('/protocol', async function() {
     this.body = this.protocol;
   });
 
-  app.get('/user.json', app.jsonp(), function*() {
+  app.get('/user.json', app.jsonp(), async function() {
     this.body = { name: 'fengmk2' };
   });
   app.get('/ip', app.controller.ip);

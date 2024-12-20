@@ -3,7 +3,6 @@ import path from 'node:path';
 import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
-import { fileURLToPath } from 'node:url';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import {
   EggCore,
@@ -42,6 +41,7 @@ import { convertObject } from './core/utils.js';
 import { BaseContextClass } from './core/base_context_class.js';
 import { BaseHookClass } from './core/base_hook_class.js';
 import type { EggApplicationLoader } from './loader/index.js';
+import { getSourceDirname } from './utils.js';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
 
@@ -526,12 +526,7 @@ export class EggApplicationCore extends EggCore {
   }
 
   get [EGG_PATH]() {
-    if (typeof __dirname !== 'undefined') {
-      return path.dirname(__dirname);
-    }
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+    return getSourceDirname();
   }
 
   #setupTimeoutTimer() {

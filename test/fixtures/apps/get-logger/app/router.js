@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = function(app) {
   app.get('/logger', function () {
     this.getLogger('aLogger').info('aaa');

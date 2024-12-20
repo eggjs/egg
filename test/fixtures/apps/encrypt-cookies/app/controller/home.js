@@ -1,4 +1,4 @@
-module.exports = function () {
+module.exports = async function () {
   var encrypt = this.cookies.get('foo', {
     encrypt: true
   });

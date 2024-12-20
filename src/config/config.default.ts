@@ -2,6 +2,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { EggAppInfo } from '@eggjs/core';
 import type { EggAppConfig } from '../lib/type.js';
+import { getSourceFile } from '../lib/utils.js';
 
 /**
  * The configuration of egg application, can be access by `app.config`
@@ -201,7 +202,7 @@ export default (appInfo: EggAppInfo) => {
    */
   config.siteFile = {
     enable: true,
-    '/favicon.ico': pathToFileURL(path.join(__dirname, 'favicon.png')),
+    '/favicon.ico': pathToFileURL(getSourceFile('config/favicon.png')),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };

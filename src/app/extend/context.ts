@@ -94,6 +94,9 @@ export default class Context extends EggCoreContext {
    * ```
    */
   get router(): Router {
+    if (this[CONTEXT_ROUTER]) {
+      return this[CONTEXT_ROUTER] as Router;
+    }
     return this.app.router;
   }
 

@@ -1,3 +1,3 @@
-module.exports = function*() {
-  yield this.render('form_csrf.html');
+module.exports = async function() {
+  await this.render('form_csrf.html');
 };

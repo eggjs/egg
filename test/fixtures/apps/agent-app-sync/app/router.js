@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  app.get('/', function*() {
+  app.get('/', async function() {
     this.body = this.app.arg;
   })
 };

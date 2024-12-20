@@ -1,39 +1,43 @@
-const fs = require('fs');
-const path = require('path');
-const mm = require('egg-mock');
-const assert = require('assert');
-const utils = require('../../utils');
+import fs from 'node:fs';
+import path from 'node:path';
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import {
+  createApp, restore, MockApplication, mm, getFilepath, singleProcessApp,
+  startLocalServer,
+  MockSingleProcessApplication,
+} from '../../utils.js';
 
-describe('test/app/extend/context.test.js', () => {
-  afterEach(mm.restore);
+describe('test/app/extend/context.test.ts', () => {
+  afterEach(restore);
+  let app: MockApplication;
 
   describe('ctx.logger', () => {
-    let app;
     afterEach(() => app.close());
 
     it('env=local: level => info', async () => {
       mm.env('local');
       mm.consoleLevel('NONE');
-      app = utils.app('apps/demo', { cache: false });
+      app = createApp('apps/demo', { cache: false });
       await app.ready();
-      const logdir = app.config.logger.dir;
+      const logDir = app.config.logger.dir;
 
       await app.httpRequest()
         .get('/logger?message=foo')
         .expect('logger');
 
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
-      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
 
-      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       // loggerContent.should.containEql('debug foo');
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       // coreLoggerContent.should.containEql('core debug foo');
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -42,9 +46,9 @@ describe('test/app/extend/context.test.js', () => {
     it('env=unittest: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
-      app = utils.app('apps/demo', { cache: false });
+      app = createApp('apps/demo', { cache: false });
       await app.ready();
-      const logdir = app.config.logger.dir;
+      const logDir = app.config.logger.dir;
 
       app.mockContext({
         userId: '123123',
@@ -54,19 +58,19 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
-      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
       assert(/\[123123\/[\d.]+\/-\/\d+ms GET \/logger\?message=foo]/.test(errorContent));
 
-      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       assert(!loggerContent.includes('debug foo'));
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       assert(!coreLoggerContent.includes('core debug foo'));
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -75,26 +79,26 @@ describe('test/app/extend/context.test.js', () => {
     it('env=prod: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
-      app = utils.app('apps/demo', { cache: false });
+      app = createApp('apps/demo', { cache: false });
       await app.ready();
-      const logdir = app.config.logger.dir;
+      const logDir = app.config.logger.dir;
 
       await app.httpRequest()
         .get('/logger?message=foo')
         .expect('logger');
 
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
-      const errorContent = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
 
-      const loggerContent = fs.readFileSync(path.join(logdir, 'demo-web.log'), 'utf8');
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       assert(!loggerContent.includes('debug foo'));
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8');
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       assert(!coreLoggerContent.includes('core debug foo'));
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -102,9 +106,8 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.getLogger', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/get-logger');
+      app = createApp('apps/get-logger');
       return app.ready();
     });
     after(() => app.close());
@@ -120,18 +123,18 @@ describe('test/app/extend/context.test.js', () => {
         .get('/logger')
         .expect(200);
 
-      await utils.sleep(100);
-      const logPath = utils.getFilepath('apps/get-logger/logs/get-logger/a.log');
-      assert(
-        /\[-\/127.0.0.1\/-\/\d+ms GET \/logger] aaa/.test(fs.readFileSync(logPath, 'utf8'))
+      await scheduler.wait(100);
+      const logPath = getFilepath('apps/get-logger/logs/get-logger/a.log');
+      assert.match(
+        fs.readFileSync(logPath, 'utf8'),
+        /\[-\/127.0.0.1\/-\/[\d\.]+ms GET \/logger] aaa/,
       );
     });
   });
 
   describe('app or framework can override ctx.getLogger', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/custom-context-getlogger');
+      app = createApp('apps/custom-context-getlogger');
       return app.ready();
     });
     after(() => app.close());
@@ -144,9 +147,8 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('agent anonymous context can be extended', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/custom-context-getlogger');
+      app = createApp('apps/custom-context-getlogger');
       return app.ready();
     });
     after(() => app.close());
@@ -159,14 +161,13 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('properties', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/context-config-app');
+      app = createApp('apps/context-config-app');
       return app.ready();
     });
     after(() => app.close());
 
-    describe('ctx.router getter and settter', () => {
+    describe('ctx.router getter and setter', () => {
       it('should work', () => {
         return app.httpRequest()
           .get('/')
@@ -177,9 +178,8 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.locals', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/locals');
+      app = createApp('apps/locals');
       return app.ready();
     });
     after(() => app.close());
@@ -237,9 +237,8 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.runInBackground(scope)', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/ctx-background');
+      app = createApp('apps/ctx-background');
       return app.ready();
     });
     after(() => app.close());
@@ -250,16 +249,16 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello');
       await app.backgroundTasksFinished();
-      await utils.sleep(100);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      await scheduler.wait(100);
+      const logDir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
       assert(
-        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
     });
 
@@ -269,12 +268,12 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello');
       await app.backgroundTasksFinished();
-      await utils.sleep(100);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      await scheduler.wait(100);
+      const logDir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
     });
 
@@ -282,7 +281,7 @@ describe('test/app/extend/context.test.js', () => {
       mm.consoleLevel('NONE');
 
       let errorHadEmit = false;
-      app.on('error', (err, ctx) => {
+      app.on('error', (err: any, ctx: any) => {
         assert(err.runInBackground);
         assert(/ENOENT: no such file or directory/.test(err.message));
         assert(ctx);
@@ -293,13 +292,13 @@ describe('test/app/extend/context.test.js', () => {
         .expect(200)
         .expect('hello error');
       await app.backgroundTasksFinished();
-      await utils.sleep(100);
+      await scheduler.wait(100);
       assert(errorHadEmit);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      const lgoDir = app.config.logger.dir;
+      const log = fs.readFileSync(path.join(lgoDir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
-        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(lgoDir, 'egg-web.log'), 'utf8')),
       );
     });
 
@@ -313,11 +312,11 @@ describe('test/app/extend/context.test.js', () => {
   });
 
   describe('ctx.runInBackground(scope) with single process mode', () => {
-    // ctx.runInBackground with egg-mock are overrided
+    // ctx.runInBackground with egg-mock are override
     // single process mode will use the original ctx.runInBackground
-    let app;
+    let app: MockSingleProcessApplication;
     before(async () => {
-      app = await utils.singleProcessApp('apps/ctx-background');
+      app = await singleProcessApp('apps/ctx-background');
     });
     after(() => app.close());
 
@@ -326,16 +325,16 @@ describe('test/app/extend/context.test.js', () => {
         .get('/')
         .expect(200)
         .expect('hello');
-      await utils.sleep(5000);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      await scheduler.wait(5000);
+      const logDir = app.config.logger.dir!;
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:saveUserInfo success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
       assert(
-        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:.*?app[\/\\]controller[\/\\]home\.js:\d+:\d+ success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
     });
 
@@ -344,12 +343,12 @@ describe('test/app/extend/context.test.js', () => {
         .get('/custom')
         .expect(200)
         .expect('hello');
-      await utils.sleep(5000);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'ctx-background-web.log'), 'utf8');
+      await scheduler.wait(5000);
+      const logDir = app.config.logger.dir!;
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(
-        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:customTaskName success \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
     });
 
@@ -367,35 +366,34 @@ describe('test/app/extend/context.test.js', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
       assert(errorHadEmit);
-      const logdir = app.config.logger.dir;
-      const log = fs.readFileSync(path.join(logdir, 'common-error.log'), 'utf8');
+      const logDir = app.config.logger.dir!;
+      const log = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
-        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logdir, 'egg-web.log'), 'utf8'))
+        /\[egg:background] task:mockError fail \([\d\.]+ms\)/.test(fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')),
       );
     });
   });
 
   describe('tests on apps/demo', () => {
-    let app;
     before(() => {
-      app = utils.app('apps/demo');
+      app = createApp('apps/demo');
       return app.ready();
     });
     after(() => app.close());
 
     describe('ctx.curl()', () => {
       it('should curl ok', async () => {
-        const localServer = await utils.startLocalServer();
+        const localServer = await startLocalServer();
         const context = app.mockContext();
         const res = await context.curl(`${localServer}/foo/bar`);
         assert(res.status === 200);
       });
 
       it('should curl as promise ok', () => {
-        return utils.startLocalServer()
+        return startLocalServer()
           .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
           .then(res => assert(res.status === 200));
       });
@@ -428,7 +426,7 @@ describe('test/app/extend/context.test.js', () => {
 
     describe('ctx.state', () => {
       it('should delegate ctx.locals', () => {
-        const context = app.mockContext();
+        const context = app.mockContext() as any;
         context.locals = { a: 'a', b: 'b' };
         context.state = { a: 'aa', c: 'cc' };
         assert.deepEqual(context.state, { a: 'aa', b: 'b', c: 'cc' });
@@ -480,12 +478,13 @@ describe('test/app/extend/context.test.js', () => {
     describe('get router()', () => {
       it('should alias to app.router', () => {
         const ctx = app.mockContext();
-        assert(ctx.router === app.router);
+        assert.equal(ctx.router, app.router);
       });
+
       it('should work with setter app.router', () => {
         const ctx = app.mockContext();
         ctx.router = 'router';
-        assert(ctx.router === 'router');
+        assert.equal(ctx.router, 'router');
       });
     });
   });

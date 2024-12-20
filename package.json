@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.5",
+  "version": "4.0.0-beta.6",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -22,7 +22,7 @@
     "@eggjs/cluster": "beta",
     "@eggjs/cookies": "^3.0.0",
     "@eggjs/core": "^6.2.3",
-    "@eggjs/schedule": "^5.0.1",
+    "@eggjs/schedule": "^5.0.2",
     "@eggjs/utils": "^4.0.2",
     "@eggjs/watcher": "^4.0.0",
     "circular-json-for-egg": "^1.0.0",

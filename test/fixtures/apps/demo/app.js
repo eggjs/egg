@@ -1,7 +1,4 @@
-'use strict';
 const mm = require('egg-mock');
-const assert = require('assert');
-const utils = require('../../../utils');
 
 class DemoAppTest {
 

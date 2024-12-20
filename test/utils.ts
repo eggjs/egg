@@ -40,6 +40,10 @@ export function cluster(name: string | MockOption, options?: MockOption): MockAp
   return mm.cluster(options);
 }
 
+export interface MockSingleProcessApplication extends Application {
+  httpRequest: () => request.SuperTest<request.Test>;
+}
+
 /**
  * start app with single process mode
  *
@@ -47,7 +51,7 @@ export function cluster(name: string | MockOption, options?: MockOption): MockAp
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<Application> {
+export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<MockSingleProcessApplication> {
   if (!baseDir.startsWith('/')) {
     baseDir = path.join(__dirname, 'fixtures', baseDir);
   }
@@ -55,7 +59,7 @@ export async function singleProcessApp(baseDir: string, options: StartEggOptions
   options.baseDir = baseDir;
   const app = await startEgg(options);
   Reflect.set(app, 'httpRequest', () => request(app.callback()));
-  return app;
+  return app as MockSingleProcessApplication;
 }
 
 let localServer: http.Server | undefined;
