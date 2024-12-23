@@ -172,7 +172,7 @@ There are some scenarios we may need to manually execute scheduled tasks, for ex
 - Executing scheduled tasks manually for more elegant unit testing of scheduled tasks.
 
 ```js
-const mm = require('egg-mock');
+const mm = require('@eggjs/mock');
 const assert = require('assert');
 
 it('should schedule work fine', async () => {

@@ -68,7 +68,7 @@
     "coffee": "5",
     "cross-env": "7",
     "egg-bin": "beta",
-    "egg-mock": "beta",
+    "@eggjs/mock": "beta",
     "egg-plugin-puml": "^2.4.0",
     "egg-tracer": "^2.1.0",
     "egg-view-nunjucks": "^2.3.0",
@@ -76,6 +76,7 @@
     "eslint-config-egg": "14",
     "formstream": "^1.5.1",
     "koa-static": "^5.0.0",
+    "mm": "^3.4.0",
     "pedding": "^1.1.0",
     "prettier": "^2.7.1",
     "runscript": "^2.0.1",
@@ -107,6 +108,9 @@
     "url": "git://github.com/eggjs/egg.git"
   },
   "license": "MIT",
+  "tnpm": {
+    "mode": "npm"
+  },
   "egg": {
     "framework": true,
     "exports": {

@@ -136,7 +136,7 @@ We can easily create an app instance with Mocha's `before` hook through egg-mock
 ```js
 // test/controller/home.test.js
 const assert = require('assert');
-const mock = require('egg-mock');
+const mock = require('@eggjs/mock');
 
 describe('test/controller/home.test.js', () => {
   let app;

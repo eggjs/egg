@@ -11,12 +11,12 @@ export interface IMessenger extends EventEmitter {
 
   /**
    * send message to the specified process
-   * @param {String} pid - the process id of the receiver
+   * @param {String} workerId - the workerId of the receiver
    * @param {String} action - message key
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendTo(pid: string, action: string, data?: unknown): IMessenger;
+  sendTo(workerId: string, action: string, data?: unknown): IMessenger;
 
   /**
    * send message to one app worker by random

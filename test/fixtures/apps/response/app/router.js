@@ -1,5 +1,3 @@
-'use strict';
-
 const assert = require('assert');
 
 module.exports = app => {
@@ -13,5 +11,9 @@ module.exports = app => {
     this.body = 'ok';
     this.type = 'text';
     this.response.type = 'plain/text';
+  });
+
+  app.get('/empty-json', async function () {
+    this.body = {};
   });
 }

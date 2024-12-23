@@ -3,7 +3,7 @@ import EventEmitter from 'node:events';
 import type { IMessenger } from './IMessenger.js';
 import type { EggApplicationCore } from '../../egg.js';
 
-const debug = debuglog('egg:lib:core:messenger:local');
+const debug = debuglog('egg/lib/core/messenger/local');
 
 /**
  * Communication between app worker and agent worker with EventEmitter
@@ -25,7 +25,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @return {Messenger} this
    */
   broadcast(action: string, data?: unknown): Messenger {
-    debug('[%s] broadcast %s with %j', this.pid, action, data);
+    debug('[%s:%s] broadcast %s with %j', this.egg.type, this.pid, action, data);
     this.send(action, data, 'both');
     return this;
   }
@@ -34,14 +34,14 @@ export class Messenger extends EventEmitter implements IMessenger {
    * send message to the specified process
    * Notice: in single process mode, it only can send to self process,
    * and it will send to both agent and app's messengers.
-   * @param {String} pid - the process id of the receiver
+   * @param {String} workerId - the workerId of the receiver
    * @param {String} action - message key
    * @param {Object} data - message value
    * @return {Messenger} this
    */
-  sendTo(pid: string, action: string, data?: unknown): Messenger {
-    debug('[%s] send %s with %j to %s', this.pid, action, data, pid);
-    if (String(pid) !== this.pid) {
+  sendTo(workerId: string, action: string, data?: unknown): Messenger {
+    debug('[%s:%s] send %s with %j to %s', this.egg.type, this.pid, action, data, workerId);
+    if (String(workerId) !== this.pid) {
       return this;
     }
     this.send(action, data, 'both');
@@ -58,7 +58,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @return {Messenger} this
    */
   sendRandom(action: string, data?: unknown): Messenger {
-    debug('[%s] send %s with %j to opposite', this.pid, action, data);
+    debug('[%s:%s] send %s with %j to opposite', this.egg.type, this.pid, action, data);
     this.send(action, data, 'opposite');
     return this;
   }
@@ -70,7 +70,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @return {Messenger} this
    */
   sendToApp(action: string, data?: unknown): Messenger {
-    debug('[%s] send %s with %j to all app', this.pid, action, data);
+    debug('[%s:%s] send %s with %j to all app', this.egg.type, this.pid, action, data);
     this.send(action, data, 'application');
     return this;
   }
@@ -82,7 +82,7 @@ export class Messenger extends EventEmitter implements IMessenger {
    * @return {Messenger} this
    */
   sendToAgent(action: string, data?: unknown): Messenger {
-    debug('[%s] send %s with %j to all agent', this.pid, action, data);
+    debug('[%s:%s] send %s with %j to all agent', this.egg.type, this.pid, action, data);
     this.send(action, data, 'agent');
     return this;
   }
@@ -130,8 +130,10 @@ export class Messenger extends EventEmitter implements IMessenger {
 
   onMessage(message: any) {
     if (typeof message?.action === 'string') {
-      debug('[%s] got message %s with %j', this.pid, message.action, message.data);
+      debug('[%s:%s] got message %s with %j', this.egg.type, this.pid, message.action, message.data);
       this.emit(message.action, message.data);
+    } else {
+      debug('[%s:%s] got an invalid message %j', this.egg.type, this.pid, message);
     }
   }
 

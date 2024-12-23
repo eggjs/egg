@@ -1,4 +1,4 @@
-const mm = require('egg-mock');
+const { mm } = require('@eggjs/mock');
 
 class DemoAppTest {
 

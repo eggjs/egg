@@ -312,7 +312,7 @@ describe('test/app/extend/context.test.ts', () => {
   });
 
   describe('ctx.runInBackground(scope) with single process mode', () => {
-    // ctx.runInBackground with egg-mock are override
+    // ctx.runInBackground with @eggjs/mock are override
     // single process mode will use the original ctx.runInBackground
     let app: MockSingleProcessApplication;
     before(async () => {
@@ -483,7 +483,7 @@ describe('test/app/extend/context.test.ts', () => {
 
       it('should work with setter app.router', () => {
         const ctx = app.mockContext();
-        ctx.router = 'router';
+        (ctx as any).router = 'router';
         assert.equal(ctx.router, 'router');
       });
     });

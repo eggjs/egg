@@ -73,7 +73,7 @@ describe('test/app/middleware/meta.test.ts', () => {
       return app.httpRequest()
         .get('/')
         .expect('X-Readtime', /\d+/)
-        .expect(res => assert(!res.headers['keep-alive']))
+        .expect((res: any) => assert(!res.headers['keep-alive']))
         .expect(200);
     });
 

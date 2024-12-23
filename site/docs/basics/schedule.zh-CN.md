@@ -170,7 +170,7 @@ module.exports = (app) => {
 - 手动执行定时任务可以更优雅地编写定时任务的单元测试。
 
 ```js
-const mm = require('egg-mock');
+const mm = require('@eggjs/mock');
 const assert = require('assert');
 
 it('should schedule work fine', async () => {
