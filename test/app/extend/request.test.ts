@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { once } from 'node:events';
+import type { AddressInfo } from 'node:net';
 import urllib from 'urllib';
 import { createApp, MockApplication, restore, mm } from '../../utils.js';
 
@@ -377,7 +378,7 @@ describe('test/app/extend/request.test.ts', () => {
     before(async () => {
       const server = app.listen(0);
       await once(server, 'listening');
-      host = `http://127.0.0.1:${server.address().port}`;
+      host = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
     });
     after(() => app.close());
 

@@ -6,12 +6,18 @@ import {
   type ContextDelegation as EggCoreContextDelegation,
 } from '@eggjs/core';
 import type { Cookies as ContextCookies } from '@eggjs/cookies';
+import { EggLogger } from 'egg-logger';
 import type { Application } from '../../lib/application.js';
+import type {
+  HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
+} from '../../lib/core/httpclient.js';
 import type { ContextHttpClient } from '../../lib/core/context_httpclient.js';
 import type { BaseContextClass } from '../../lib//core/base_context_class.js';
 import Request from './request.js';
 import Response from './response.js';
-import { EggLogger } from 'egg-logger';
+import type Helper from './helper.js';
+
+import './context.types.js';
 
 const HELPER = Symbol('ctx helper');
 const LOCALS = Symbol('ctx locals');
@@ -79,7 +85,7 @@ export default class Context extends EggCoreContext {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  async curl(url: string, options?: object): ReturnType<ContextHttpClient['curl']> {
+  async curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']> {
     return await this.httpclient.curl(url, options);
   }
 
@@ -114,11 +120,11 @@ export default class Context extends EggCoreContext {
    * @member {Helper} Context#helper
    * @since 1.0.0
    */
-  get helper() {
+  get helper(): Helper {
     if (!this[HELPER]) {
       this[HELPER] = new this.app.Helper(this as any);
     }
-    return this[HELPER];
+    return this[HELPER] as Helper;
   }
 
   /**

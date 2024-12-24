@@ -43,6 +43,8 @@ import { BaseHookClass } from './core/base_hook_class.js';
 import type { EggApplicationLoader } from './loader/index.js';
 import { getSourceDirname } from './utils.js';
 
+import './egg.types.js';
+
 const EGG_PATH = Symbol.for('egg#eggPath');
 
 export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {

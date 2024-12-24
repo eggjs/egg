@@ -234,7 +234,7 @@ describe('test/app/extend/application.test.ts', () => {
 
     it('should wait for middleware resolution', async () => {
       const ctx = app.createAnonymousContext();
-      await app.handleRequest(ctx, async (ctx: any) => {
+      await (app as any).handleRequest(ctx, async (ctx: any) => {
         await scheduler.wait(100);
         ctx.body = 'middleware resolution';
       });

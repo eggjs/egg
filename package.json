@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.6",
+  "version": "4.0.0-beta.7",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -67,7 +67,7 @@
     "assert-file": "1",
     "coffee": "5",
     "cross-env": "7",
-    "egg-bin": "beta",
+    "@eggjs/bin": "beta",
     "@eggjs/mock": "beta",
     "egg-plugin-puml": "^2.4.0",
     "egg-tracer": "^2.1.0",
@@ -83,18 +83,21 @@
     "sdk-base": "^4.2.1",
     "spy": "^1.0.0",
     "supertest": "^7.0.0",
+    "rimraf": "6",
     "tshy": "^3.0.2",
     "tshy-after": "1",
     "typescript": "5"
   },
   "scripts": {
+    "clean": "rimraf dist",
     "lint": "eslint src test --ext .ts",
-    "pretest": "npm run lint -- --fix && npm run prepublishOnly",
+    "pretest": "npm run clean && npm run lint -- --fix",
     "test": "egg-bin test",
+    "test-local": "egg-bin test",
     "test:changed": "egg-bin test --changed",
-    "preci": "npm run lint && npm run prepublishOnly && attw --pack",
-    "ci": "egg-bin cov",
-    "prepublishOnly": "tshy && tshy-after",
+    "preci": "npm run clean &&  npm run lint",
+    "ci": "egg-bin cov && npm run prepublishOnly",
+    "prepublishOnly": "tshy && tshy-after && attw --pack",
     "site:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site dumi dev",
     "site:devWithNode14-16": "cross-env APP_ROOT=./site dumi dev",
     "site:build": "cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site dumi build",
@@ -115,7 +118,8 @@
     "framework": true,
     "exports": {
       "import": "./dist/esm",
-      "require": "./dist/commonjs"
+      "require": "./dist/commonjs",
+      "typescript": "./src"
     }
   },
   "files": [

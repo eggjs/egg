@@ -1,0 +1,10 @@
+{
+  "name": "helloworld-typescript",
+  "type": "module",
+  "egg": {
+    "typescript": true
+  },
+  "dependencies": {
+    "egg": "beta"
+  }
+}
