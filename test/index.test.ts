@@ -16,6 +16,7 @@ describe('test/index.test.ts', () => {
       'Controller',
       'EggApplicationCore',
       'EggLogger',
+      'Helper',
       'Master',
       'Request',
       'Response',
@@ -26,5 +27,7 @@ describe('test/index.test.ts', () => {
       'startCluster',
       'startEgg',
     ]);
+
+    assert(egg.Context);
   });
 });

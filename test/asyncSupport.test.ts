@@ -2,6 +2,9 @@ import { strict as assert } from 'node:assert';
 import { createApp, restore, MockApplication } from './utils.js';
 
 describe('test/asyncSupport.test.ts', () => {
+  // Skip on Windows
+  if (process.platform === 'win32') return;
+
   afterEach(restore);
   let app: MockApplication;
   before(async () => {

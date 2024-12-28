@@ -4,6 +4,10 @@
 
 import { BaseContextClass } from './lib/core/base_context_class.js';
 import { startEgg } from './lib/start.js';
+import Helper from './app/extend/helper.js';
+
+// export extends
+export { Helper };
 
 // export types
 export * from './lib/egg.js';
