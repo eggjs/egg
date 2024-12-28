@@ -407,6 +407,11 @@ describe('test/app/extend/context.test.ts', () => {
         assert(typeof ctx.httpclient.request === 'function');
         assert(typeof ctx.httpclient.curl === 'function');
       });
+
+      it('should httpclient alias to httpClient', async () => {
+        const ctx = app.mockContext();
+        assert.equal(ctx.httpclient, ctx.httpClient);
+      });
     });
 
     describe('ctx.realStatus', () => {
