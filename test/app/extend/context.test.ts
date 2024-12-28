@@ -26,7 +26,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await scheduler.wait(5000);
+      await scheduler.wait(1200);
 
       const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -58,7 +58,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await scheduler.wait(5000);
+      await scheduler.wait(1200);
 
       const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -87,7 +87,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/logger?message=foo')
         .expect('logger');
 
-      await scheduler.wait(5000);
+      await scheduler.wait(2000);
 
       const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
@@ -325,7 +325,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/')
         .expect(200)
         .expect('hello');
-      await scheduler.wait(5000);
+      await scheduler.wait(1200);
       const logDir = app.config.logger.dir!;
       const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -343,7 +343,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/custom')
         .expect(200)
         .expect('hello');
-      await scheduler.wait(5000);
+      await scheduler.wait(1200);
       const logDir = app.config.logger.dir!;
       const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
@@ -366,7 +366,7 @@ describe('test/app/extend/context.test.ts', () => {
         .get('/error')
         .expect(200)
         .expect('hello error');
-      await scheduler.wait(5000);
+      await scheduler.wait(1200);
       assert(errorHadEmit);
       const logDir = app.config.logger.dir!;
       const log = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');

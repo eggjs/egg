@@ -1,8 +1,11 @@
 module.exports = app => {
   app.beforeStart(async () => {
     await Promise.resolve();
-    await app.runSchedule('async');
     app.beforeStartExecuted = true;
+  });
+
+  app.ready(async () => {
+    await app.runSchedule('async');
   });
 
   app.beforeClose(async () => {
