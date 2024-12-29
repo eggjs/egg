@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.8",
+  "version": "4.0.0-beta.11",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -19,9 +19,9 @@
     "egg"
   ],
   "dependencies": {
-    "@eggjs/cluster": "beta",
+    "@eggjs/cluster": "^3.0.0",
     "@eggjs/cookies": "^3.0.0",
-    "@eggjs/core": "beta",
+    "@eggjs/core": "^6.2.5",
     "@eggjs/schedule": "^5.0.2",
     "@eggjs/utils": "^4.1.5",
     "@eggjs/watcher": "^4.0.1",
@@ -49,7 +49,7 @@
     "onelogger": "^1.0.0",
     "performance-ms": "^1.1.0",
     "sendmessage": "^3.0.1",
-    "urllib": "^4.0.0",
+    "urllib": "^4.6.11",
     "utility": "^2.1.0",
     "ylru": "^1.3.2"
   },
@@ -98,7 +98,7 @@
     "preci": "npm run clean &&  npm run lint",
     "ci": "egg-bin cov",
     "postci": "npm run prepublishOnly && npm run clean",
-    "prepublishOnly": "tshy && tshy-after && attw --pack",
+    "prepublishOnly": "tshy && tshy-after && attw --pack --profile node16",
     "site:dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site dumi dev",
     "site:devWithNode14-16": "cross-env APP_ROOT=./site dumi dev",
     "site:build": "cross-env NODE_OPTIONS=--openssl-legacy-provider APP_ROOT=./site dumi build",
@@ -131,6 +131,7 @@
   "tshy": {
     "exports": {
       ".": "./src/index.ts",
+      "./urllib": "./src/urllib.ts",
       "./package.json": "./package.json"
     }
   },
@@ -143,6 +144,16 @@
       "require": {
         "types": "./dist/commonjs/index.d.ts",
         "default": "./dist/commonjs/index.js"
+      }
+    },
+    "./urllib": {
+      "import": {
+        "types": "./dist/esm/urllib.d.ts",
+        "default": "./dist/esm/urllib.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/urllib.d.ts",
+        "default": "./dist/commonjs/urllib.js"
       }
     },
     "./package.json": "./package.json"
