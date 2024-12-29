@@ -4,9 +4,6 @@ import type {
 import type {
   HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
 } from '../../lib/core/httpclient.js';
-import type {
-  ContextHttpClient,
-} from '../../lib/core/context_httpclient.js';
 import type Helper from './helper.js';
 import type { EggLogger } from 'egg-logger';
 
@@ -17,8 +14,8 @@ declare module '@eggjs/core' {
     get router(): Router;
     set router(val: Router);
     get helper(): Helper;
-    get httpclient(): ContextHttpClient;
-    get httpClient(): ContextHttpClient;
+    get httpclient(): HttpClient;
+    get httpClient(): HttpClient;
     getLogger(name: string): EggLogger;
   }
 }

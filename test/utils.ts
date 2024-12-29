@@ -7,13 +7,11 @@ import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
 import {
   mm, MockOptions, MockApplication,
-  // MockApplication as _MockApplication,
 } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import {
-  startEgg, StartEggOptions, Application,
-  // ContextDelegation,
+  startEgg, StartEggOptions,
 } from '../src/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,10 +21,6 @@ const eggPath = path.join(__dirname, '..');
 export async function rimraf(target: string) {
   await rm(target, { force: true, recursive: true });
 }
-
-// export type MockApplication = Omit<_MockApplication, 'mockContext'> & {
-//   mockContext(data?: any, options?: any): ContextDelegation
-// };
 
 export { MockApplication, MockOptions, mm } from '@eggjs/mock';
 export const restore = () => mm.restore();
@@ -52,10 +46,6 @@ export function cluster(name: string | MockOptions, options?: MockOptions): Mock
   return mm.cluster(options) as unknown as MockApplication;
 }
 
-export interface MockSingleProcessApplication extends Application {
-  httpRequest: () => request.SuperTest<request.Test>;
-}
-
 /**
  * start app with single process mode
  *
@@ -63,7 +53,7 @@ export interface MockSingleProcessApplication extends Application {
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<MockSingleProcessApplication> {
+export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<MockApplication> {
   if (!baseDir.startsWith('/')) {
     baseDir = path.join(__dirname, 'fixtures', baseDir);
   }
@@ -71,7 +61,7 @@ export async function singleProcessApp(baseDir: string, options: StartEggOptions
   options.baseDir = baseDir;
   const app = await startEgg(options);
   Reflect.set(app, 'httpRequest', () => request(app.callback()));
-  return app as MockSingleProcessApplication;
+  return app as unknown as MockApplication;
 }
 
 let localServer: http.Server | undefined;

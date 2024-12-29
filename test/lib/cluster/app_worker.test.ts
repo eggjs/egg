@@ -1,8 +1,9 @@
-const net = require('net');
-const assert = require('assert');
-const request = require('supertest');
-const address = require('address');
-const utils = require('../../utils');
+import net from 'node:net';
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import { request } from '@eggjs/supertest';
+import { ip } from 'address';
+import { cluster, MockApplication } from '../../utils.js';
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
   <head><title>400 Bad Request</title></head>
@@ -12,10 +13,10 @@ const DEFAULT_BAD_REQUEST_HTML = `<html>
   </body>
   </html>`;
 
-describe('test/lib/cluster/app_worker.test.js', () => {
-  let app;
+describe('test/lib/cluster/app_worker.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.cluster('apps/app-server');
+    app = cluster('apps/app-server');
     return app.ready();
   });
   after(() => app.close());
@@ -33,7 +34,8 @@ describe('test/lib/cluster/app_worker.test.js', () => {
       //
       // Refs: https://zhuanlan.zhihu.com/p/31966196
       .get('/foo bar');
-    const test2 = app.httpRequest().get('/foo baz');
+    const test2 = app.httpRequest()
+      .get('/foo baz');
 
     // app.httpRequest().expect() will encode the uri so that we cannot
     // request the server with raw `/foo bar` to emit 400 status code.
@@ -52,8 +54,8 @@ describe('test/lib/cluster/app_worker.test.js', () => {
     //     return this.req;
     //   }
     //   ```
-    test1.request().path = '/foo bar';
-    test2.request().path = '/foo baz';
+    (test1 as any).request().path = '/foo bar';
+    (test2 as any).request().path = '/foo baz';
 
     await Promise.all([
       test1.expect(DEFAULT_BAD_REQUEST_HTML).expect(400),
@@ -62,9 +64,9 @@ describe('test/lib/cluster/app_worker.test.js', () => {
   });
 
   describe('server timeout', () => {
-    let app;
+    let app: MockApplication;
     beforeEach(() => {
-      app = utils.cluster('apps/app-server-timeout');
+      app = cluster('apps/app-server-timeout');
       // app.debug();
       return app.ready();
     });
@@ -85,36 +87,36 @@ describe('test/lib/cluster/app_worker.test.js', () => {
   });
 
   describe('customized client error', () => {
-    let app;
+    let app: MockApplication;
     beforeEach(() => {
-      app = utils.cluster('apps/app-server-customized-client-error');
-      app.debug();
+      app = cluster('apps/app-server-customized-client-error');
+      // app.debug();
       return app.ready();
     });
     afterEach(() => app.close());
 
     it('should do customized request when HTTP request packet broken', async () => {
       const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
-      let html = '';
+      let html: string | RegExp = '';
       if ((version[0] === 8 && version[1] >= 10) ||
         (version[0] === 9 && version[1] >= 4) ||
         version[0] > 9) {
         html = new RegExp(
           'GET /foo bar HTTP/1.1\r\nHost: 127.0.0.1:\\d+\r\nAccept-Encoding: gzip, ' +
-          'deflate\r\nuser-agent: egg-mock/\\d+.\\d+.\\d+\r\nConnection: close\r\n\r\n');
+          'deflate\r\nUser-Agent: @eggjs/mock/\\d+.\\d+.\\d+ Node\\.js/v\\d+\.\\d+\.\\d+\r\nConnection: close\r\n\r\n');
       }
 
       // customized client error response
       const test1 = app.httpRequest().get('/foo bar');
-      test1.request().path = '/foo bar';
+      (test1 as any).request().path = '/foo bar';
       await test1.expect(html)
         .expect('foo', 'bar')
-        .expect('content-length', '128')
+        .expect('content-length', '147')
         .expect(418);
 
       // customized client error handle function throws
       const test2 = app.httpRequest().get('/foo bar');
-      test2.request().path = '/foo bar';
+      (test2 as any).request().path = '/foo bar';
       await test2.expect(DEFAULT_BAD_REQUEST_HTML).expect(400);
     });
 
@@ -127,15 +129,15 @@ describe('test/lib/cluster/app_worker.test.js', () => {
   });
 
   describe('listen hostname', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.cluster('apps/app-server-with-hostname');
+      app = cluster('apps/app-server-with-hostname');
       return app.ready();
     });
     after(() => app.close());
 
     it('should refuse other ip', async () => {
-      const url = address.ip() + ':' + app.port;
+      const url = ip() + ':' + app.port;
 
       await request(url)
         .get('/')
@@ -148,15 +150,15 @@ describe('test/lib/cluster/app_worker.test.js', () => {
           .expect('done')
           .expect(200);
         throw new Error('should not run');
-      } catch (err) {
+      } catch (err: any) {
         assert(err.message === 'ECONNREFUSED: Connection refused');
       }
     });
   });
 });
 
-function connect(port) {
-  return new Promise(resolve => {
+function connect(port: number) {
+  return new Promise<void>(resolve => {
     const socket = net.createConnection(port, '127.0.0.1', () => {
       socket.write('GET http://127.0.0.1:8080/ HTTP', () => {
         socket.destroy();

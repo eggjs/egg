@@ -53,13 +53,6 @@ export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir
   baseDir?: string;
 }
 
-// export egg classes
-export {
-  Context,
-  Router,
-  EggLogger,
-};
-
 export class Request extends EggCoreRequest {
   declare app: EggCore;
   declare response: Response;
@@ -81,6 +74,13 @@ export type {
 // keep compatible with egg version 3.x
 export type EggContext = ContextDelegation;
 export type MiddlewareFunc<T extends ContextDelegation = ContextDelegation> = EggCoreMiddlewareFunc<T>;
+
+// export egg classes
+export {
+  Context,
+  Router,
+  EggLogger,
+};
 
 /**
  * Based on koa's Application

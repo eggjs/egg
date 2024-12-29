@@ -1,4 +1,4 @@
-const { sleep } = require('../../../../utils');
+const { scheduler } = require('node:timers/promises');
 
 module.exports = app => {
   app.get('/', async ctx => {
@@ -6,7 +6,7 @@ module.exports = app => {
   });
 
   app.get('/timeout', async ctx => {
-    await sleep(500);
+    await scheduler.wait(500);
     ctx.body = 'timeout';
   });
 };

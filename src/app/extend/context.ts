@@ -11,7 +11,6 @@ import type { Application } from '../../lib/application.js';
 import type {
   HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
 } from '../../lib/core/httpclient.js';
-import type { ContextHttpClient } from '../../lib/core/context_httpclient.js';
 import type { BaseContextClass } from '../../lib//core/base_context_class.js';
 import Request from './request.js';
 import Response from './response.js';
@@ -61,19 +60,19 @@ export default class Context extends EggCoreContext {
   /**
    * Get a wrapper httpclient instance contain ctx in the hold request process
    *
-   * @return {ContextHttpClient} the wrapper httpclient instance
+   * @return {HttpClient} the wrapper httpclient instance
    */
-  get httpclient(): ContextHttpClient {
+  get httpclient(): HttpClient {
     if (!this[CONTEXT_HTTPCLIENT]) {
       this[CONTEXT_HTTPCLIENT] = new this.app.ContextHttpClient(this as any);
     }
-    return this[CONTEXT_HTTPCLIENT] as ContextHttpClient;
+    return this[CONTEXT_HTTPCLIENT] as HttpClient;
   }
 
   /**
    * Alias to {@link Context#httpclient}
    */
-  get httpClient(): ContextHttpClient {
+  get httpClient(): HttpClient {
     return this.httpclient;
   }
 
