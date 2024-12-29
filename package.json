@@ -83,7 +83,6 @@
     "runscript": "^2.0.1",
     "sdk-base": "^4.2.1",
     "spy": "^1.0.0",
-    "supertest": "^7.0.0",
     "tsd": "^0.31.2",
     "tshy": "^3.0.2",
     "tshy-after": "1",

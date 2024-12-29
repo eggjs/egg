@@ -5,7 +5,6 @@ import { scheduler } from 'node:timers/promises';
 import {
   createApp, restore, MockApplication, mm, getFilepath, singleProcessApp,
   startLocalServer,
-  MockSingleProcessApplication,
 } from '../../utils.js';
 
 describe('test/app/extend/context.test.ts', () => {
@@ -314,7 +313,7 @@ describe('test/app/extend/context.test.ts', () => {
   describe('ctx.runInBackground(scope) with single process mode', () => {
     // ctx.runInBackground with @eggjs/mock are override
     // single process mode will use the original ctx.runInBackground
-    let app: MockSingleProcessApplication;
+    let app: MockApplication;
     before(async () => {
       app = await singleProcessApp('apps/ctx-background');
     });
