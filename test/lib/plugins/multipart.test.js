@@ -1,6 +1,4 @@
-'use strict';
-
-const request = require('supertest');
+const request = require('@eggjs/supertest');
 const assert = require('assert');
 const formstream = require('formstream');
 const urllib = require('urllib');

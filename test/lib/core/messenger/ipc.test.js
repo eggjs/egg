@@ -59,7 +59,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       app = utils.cluster('apps/messenger');
       app.coverage(true);
       await app.ready();
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
     });
 
     it('app should accept agent message', () => {
@@ -120,7 +120,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
     after(() => app.close());
 
     it('app should accept agent message', async () => {
-      await utils.sleep(10000);
+      await scheduler.wait(10000);
 
       const m = app.stdout.match(/\d+=\d+/g);
       const map = new Map();

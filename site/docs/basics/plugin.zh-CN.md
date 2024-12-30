@@ -11,6 +11,7 @@ order: 9
 - 如何编写一个插件？
 
 接下来我们就来逐一讨论。
+
 ## 为什么要插件
 
 我们在使用 Koa 中间件过程中发现了下面一些问题：
@@ -35,12 +36,13 @@ order: 9
 - 当遇到上一节提到的场景时，应用需引入插件。
 - 插件本身可以包含中间件。
 - 多个插件可以包装为一个[上层框架](../advanced/framework.md)。
+
 ## 使用插件
 
 插件通常通过 npm 模块的方式进行复用：
 
 ```bash
-$ npm i egg-mysql --save
+npm i egg-mysql --save
 ```
 
 **注意：我们推荐通过 `^` 的方式引入依赖，并且强烈不建议锁定版本。**
@@ -118,7 +120,7 @@ exports.dev = {
 
 **注意:**
 
-- `plugin.default.js` 不存在 
+- `plugin.default.js` 不存在
 - **只能在应用层使用，框架层请勿使用。**
 
 ### package 和 path
@@ -135,6 +137,7 @@ exports.mysql = {
   path: path.join(__dirname, '../lib/plugin/egg-mysql'),
 };
 ```
+
 ## 插件配置
 
 插件一般会包含自己的默认配置。应用开发者可以在 `config.default.js` 中覆盖对应的配置：
@@ -153,6 +156,7 @@ exports.mysql = {
 ```
 
 具体的合并规则可以参见[配置](./config.md)。
+
 ## 插件列表
 
 - 框架默认内置了企业级应用[常用的插件](https://eggjs.org/zh-cn/plugins/)：

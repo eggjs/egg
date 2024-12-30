@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function*() {
+module.exports = async function() {
   this.cookies.set('hi', 'foo');
   this.body = 'hello';
 };

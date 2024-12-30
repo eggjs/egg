@@ -139,7 +139,7 @@ npm test
 ```javascript
 // test/controller/home.test.js
 const assert = require('assert');
-const mock = require('egg-mock');
+const mock = require('@eggjs/mock');
 
 describe('test/controller/home.test.js', () => {
   let app;

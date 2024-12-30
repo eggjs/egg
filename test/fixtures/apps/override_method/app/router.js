@@ -1,17 +1,17 @@
 module.exports = app => {
-  app.get('/test', function* () {
+  app.get('/test', function () {
     this.body = "test-get";
   });
 
-  app.put('/test', function* () {
+  app.put('/test', function () {
     this.body = "test-put";
   });
 
-  app.delete('/test', function* () {
+  app.delete('/test', function () {
     this.body = 'test-delete';
   });
 
-  app.patch('/test', function* () {
+  app.patch('/test', function () {
     this.body = 'test-patch';
   });
 };

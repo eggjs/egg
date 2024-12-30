@@ -259,6 +259,7 @@ AgentWorkerLoader 的扩展也类似，这里不再赘述。AgentWorkerLoader �
    - 单个 App Worker 通过 framework 找到框架目录，实例化该框架的 Application 类。
    - Application 根据 AppWorkerLoader 开始加载，加载顺序类似，会异步等待完成后通知 Master 启动完成。
 4. Master 在等到所有 App Worker 发来的启动成功消息后，完成启动，开始对外提供服务。
+
 ## 框架测试
 
 在看下文之前，请先查看[单元测试章节](../core/unittest.md)。框架测试的大部分使用场景和应用类似。
@@ -268,7 +269,8 @@ AgentWorkerLoader 的扩展也类似，这里不再赘述。AgentWorkerLoader �
 框架的初始化方式有一定差异。
 
 ```js
-const mock = require('egg-mock');
+const mock = require('@eggjs/mock');
+
 describe('test/index.test.js', () => {
   let app;
   before(() => {
@@ -301,8 +303,9 @@ describe('test/index.test.js', () => {
 在测试多环境场景需要使用到 cache 参数，因为 `mock.app` 默认有缓存，当第一次加载后再次加载会直接读取缓存，那么设置的环境也不会生效。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require('@eggjs/mock');
+
+describe('test/index.test.js', () => {
   let app;
   afterEach(() => app.close());
 
@@ -334,8 +337,9 @@ describe('/test/index.test.js', () => {
 多进程测试和 `mock.app` 参数一致，但 app 的 API 完全不同。不过，SuperTest 依然可用。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require('@eggjs/mock');
+
+describe('test/index.test.js', () => {
   let app;
   before(() => {
     app = mock.cluster({
@@ -346,8 +350,11 @@ describe('/test/index.test.js', () => {
   });
   after(() => app.close());
   afterEach(mock.restore);
+
   it('should success', () => {
-    return app.httpRequest().get('/').expect(200);
+    return app.httpRequest()
+      .get('/')
+      .expect(200);
   });
 });
 ```
@@ -355,8 +362,9 @@ describe('/test/index.test.js', () => {
 多进程测试还可以测试 stdout/stderr，因为 `mock.cluster` 是基于 [coffee](https://github.com/popomore/coffee) 扩展的，可进行进程测试。
 
 ```js
-const mock = require('egg-mock');
-describe('/test/index.test.js', () => {
+const mock = require('@eggjs/mock');
+
+describe('test/index.test.js', () => {
   let app;
   before(() => {
     app = mock.cluster({
@@ -366,6 +374,7 @@ describe('/test/index.test.js', () => {
     return app.ready();
   });
   after(() => app.close());
+
   it('should get `started`', () => {
     // 判断终端输出
     app.expect('stdout', /started/);

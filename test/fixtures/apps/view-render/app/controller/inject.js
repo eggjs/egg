@@ -1,5 +1,3 @@
-'use strict';
-
-module.exports = function *(){
-  yield this.render('inject.html');
+module.exports = async function() {
+  await this.render('inject.html');
 };

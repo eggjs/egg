@@ -1,10 +1,8 @@
-'use strict';
-
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const execSync = require('child_process').execSync;
-const mm = require('egg-mock');
+const mm = require('@eggjs/mock');
 const utils = require('../utils');
 
 describe('test/lib/agent.test.js', () => {

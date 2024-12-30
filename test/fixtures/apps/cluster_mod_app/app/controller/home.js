@@ -1,18 +1,18 @@
 'use strict';
 
-exports.index = function*() {
+exports.index = async function() {
   this.body = 'hi cluster';
 };
 
-exports.getClusterPort = function*() {
+exports.getClusterPort = async function() {
   this.body = this.app._options.clusterPort;
 };
 
-exports.getHosts = function*() {
+exports.getHosts = async function() {
   this.body = this.app.val && this.app.val.map(url => url.host).join(',');
 };
 
-exports.publish = function*() {
+exports.publish = async function() {
   const val = this.request.body.value;
   this.app.registryClient.publish({
     dataId: 'demo.DemoService',

@@ -22,7 +22,7 @@ describe('test/lib/cluster/cluster-client-error.test.js', () => {
   });
 
   it('should follower not throw error', async () => {
-    await utils.sleep(1000);
+    await scheduler.wait(1000);
     const cnt = await readFile(path.join(__dirname, '../../fixtures/apps/cluster-client-error/logs/cluster-client-error/common-error.log'), 'utf8');
     assert(!cnt.includes('ECONNRESET'));
   });

@@ -11,7 +11,7 @@ describe('test/lib/plugins/schedule.test.js', () => {
     app.debug();
     app.coverage(false);
     await app.ready();
-    await utils.sleep(7000);
+    await scheduler.wait(7000);
     await app.close();
     const log = getLogContent('schedule');
     const count = contains(log, 'cron wow');

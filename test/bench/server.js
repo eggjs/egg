@@ -1,6 +1,6 @@
 const http = require('http');
 const path = require('path');
-const mock = require('egg-mock');
+const mock = require('@eggjs/mock');
 
 const appName = process.argv[2];
 

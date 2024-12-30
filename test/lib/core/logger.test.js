@@ -9,7 +9,7 @@ describe('test/lib/core/logger.test.js', () => {
   let app;
   afterEach(async () => {
     if (app) {
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
       await app.close();
       app = null;
     }
@@ -106,7 +106,7 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'common-error.log');
     // app.config.logger.buffer.should.equal(false);
     ctx.logger.error(new Error('mock nobuffer error'));
-    await utils.sleep(1000);
+    await scheduler.wait(1000);
     if (process.platform !== 'darwin') {
       // skip check on macOS
       assert(
@@ -128,7 +128,7 @@ describe('test/lib/core/logger.test.js', () => {
     // app.config.logger.buffer.should.equal(true);
     ctx.logger.error(new Error('mock enable buffer error'));
 
-    await utils.sleep(1000);
+    await scheduler.wait(1000);
 
     assert(fs.readFileSync(logfile, 'utf8').includes(''));
   });
@@ -143,7 +143,7 @@ describe('test/lib/core/logger.test.js', () => {
     const logfile = path.join(app.config.logger.dir, 'logger-output-json-web.json.log');
     ctx.logger.info('json format');
 
-    await utils.sleep(2000);
+    await scheduler.wait(2000);
 
     assert(fs.existsSync(logfile));
     assert(fs.readFileSync(logfile, 'utf8').includes('"message":"json format"'));
@@ -187,7 +187,7 @@ describe('test/lib/core/logger.test.js', () => {
       // .debug()
       .coverage(false)
       .end(async err => {
-        await utils.sleep(1000);
+        await scheduler.wait(1000);
         assert(!err);
         const content = fs.readFileSync(path.join(baseDir, 'logs/logger/common-error.log'), 'utf8');
         assert(content.includes('nodejs.Error: agent error'));
@@ -205,7 +205,7 @@ describe('test/lib/core/logger.test.js', () => {
     app.loggers.errorLogger.error(new Error('errorLogger error'));
     app.loggers.customLogger.error(new Error('customLogger error'));
 
-    await utils.sleep(1000);
+    await scheduler.wait(1000);
 
     const content = fs.readFileSync(path.join(app.baseDir, 'logs/logger/common-error.log'), 'utf8');
     assert(content.includes('nodejs.Error: logger error'));
@@ -235,8 +235,8 @@ describe('test/lib/core/logger.test.js', () => {
       .expect({
         enableFastContextLogger: true,
       });
-    await utils.sleep(1000);
-    app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/\d+ms GET \/] enableFastContextLogger: true/);
+    await scheduler.wait(1000);
+    app.expectLog(/ INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/[\d\.]+ms GET \/] enableFastContextLogger: true/);
   });
 
   describe('logger.level = DEBUG', () => {
@@ -276,7 +276,7 @@ describe('test/lib/core/logger.test.js', () => {
           ok: true,
         })
         .expect(200);
-      await utils.sleep(1000);
+      await scheduler.wait(1000);
       app.expectLog('[custom-logger-label] hello myLogger', 'myLogger');
       app.expectLog('hello logger');
     });

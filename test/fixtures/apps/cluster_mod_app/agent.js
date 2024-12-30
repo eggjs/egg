@@ -13,9 +13,9 @@ module.exports = function(agent) {
     cluster: agent.cluster,
   });
 
-  agent.beforeStart(function*() {
-    yield agent.registryClient.ready();
-    yield agent.apiClient.ready();
-    yield agent.apiClient2.ready();
+  agent.beforeStart(async function() {
+    await agent.registryClient.ready();
+    await agent.apiClient.ready();
+    await agent.apiClient2.ready();
   });
 };

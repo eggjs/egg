@@ -1,11 +1,11 @@
-const { sleep } = require('../../../../utils');
+const { scheduler } = require('node:timers/promises');
 
 exports.keys = 'my keys';
 
 let times = 0;
 exports.onClientError = async (err, socket, app) => {
   app.logger.error(err);
-  await sleep(50);
+  await scheduler.wait(50);
 
   times++;
   if (times === 2) times = 0;

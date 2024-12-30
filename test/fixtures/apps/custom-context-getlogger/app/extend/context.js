@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   getLogger(name) {
     console.log('get custom %s logger', name);

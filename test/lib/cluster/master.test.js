@@ -24,7 +24,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       // error pipe to console
       app.expect('stdout', /app_worker#1:\d+ disconnect/);
@@ -42,7 +42,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stdout', /app_worker#\d:\d+ started/);
@@ -68,7 +68,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       // error pipe to console
       app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
@@ -83,7 +83,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await utils.sleep(5000);
+      await scheduler.wait(5000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stderr', /matches ignore list/);
