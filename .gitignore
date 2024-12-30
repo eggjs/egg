@@ -38,3 +38,4 @@ site/dist
 package-lock.json
 .tshy*
 dist
+site/.dumi/
