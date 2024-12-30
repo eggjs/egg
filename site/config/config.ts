@@ -88,7 +88,7 @@ export default defineConfig({
         title: 'Community',
         list: [
           { name: 'Artus.js 官网', url: 'https://artusjs.org' },
-          { name: 'CNode 社区', url: 'https://cnodejs.org/' },          
+          { name: 'CNode 社区', url: 'https://cnodejs.org/' },
           { name: 'Node.js 专栏', url: 'https://www.yuque.com/egg/nodejs' },
           {
             name: '提交反馈',
