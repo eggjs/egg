@@ -1,18 +1,16 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { mm } from '@eggjs/mock';
+import { createApp, MockApplication, getFilepath } from '../../utils.js';
 
-const assert = require('assert');
-const mm = require('egg-mock');
-const utils = require('../../utils');
-const fs = require('fs');
-const path = require('path');
-
-describe('test/lib/core/cookies.test.js', () => {
+describe('test/lib/core/cookies.test.ts', () => {
   afterEach(mm.restore);
 
   describe('secure = true', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/secure-app');
+      app = createApp('apps/secure-app');
       return app.ready();
     });
     after(() => app.close());
@@ -40,7 +38,7 @@ describe('test/lib/core/cookies.test.js', () => {
       const value = Buffer.alloc(4094).fill(49).toString();
       ctx.cookies.set('foo', value);
       setTimeout(() => {
-        const logPath = path.join(utils.getFilepath('apps/secure-app'), 'logs/secure-app/common-error.log');
+        const logPath = path.join(getFilepath('apps/secure-app'), 'logs/secure-app/common-error.log');
         const content = fs.readFileSync(logPath, 'utf8');
         assert(content.match(/CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/));
         done();
@@ -53,7 +51,7 @@ describe('test/lib/core/cookies.test.js', () => {
       assert.throws(() => {
         ctx.cookies.set('foo', 'bar', {
           encrypt: true,
-        });
+        } as any);
       }, /\.keys required for encrypt\/sign cookies/);
     });
 
@@ -64,7 +62,7 @@ describe('test/lib/core/cookies.test.js', () => {
       assert.throws(() => {
         ctx.cookies.get('foo', {
           encrypt: true,
-        });
+        } as any);
       }, /\.keys required for encrypt\/sign cookies/);
     });
 
@@ -125,7 +123,7 @@ describe('test/lib/core/cookies.test.js', () => {
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
           assert.equal(cookie, 'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
-          const expires = cookie.match(/expires=([^;]+);/)[1];
+          const expires = cookie.match(/expires=([^;]+);/)![1];
           assert.equal((new Date() > new Date(expires)), true);
           done();
         });
@@ -139,10 +137,11 @@ describe('test/lib/core/cookies.test.js', () => {
         .set('X-Forwarded-Proto', 'https')
         .expect('hello mock secure app')
         .expect(200, (err, res) => {
+          assert(!err);
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
           assert.equal(cookie, 'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly');
-          const expires = cookie.match(/expires=([^;]+);/)[1];
+          const expires = cookie.match(/expires=([^;]+);/)![1];
           assert.equal((new Date() > new Date(expires)), true);
           done();
         });
@@ -180,9 +179,9 @@ describe('test/lib/core/cookies.test.js', () => {
   });
 
   describe('secure = false', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/demo');
+      app = createApp('apps/demo');
       return app.ready();
     });
     after(() => app.close());
@@ -194,7 +193,8 @@ describe('test/lib/core/cookies.test.js', () => {
         .expect('hello')
         .expect(200, (err, res) => {
           assert(!err);
-          const cookie = res.headers['set-cookie'].join(';');
+          const cookies = res.headers['set-cookie'] as unknown as string[];
+          const cookie = cookies.join(';');
           assert(cookie);
           assert(cookie.match(/hi=foo; path=\/; httponly/));
           done();
@@ -203,10 +203,10 @@ describe('test/lib/core/cookies.test.js', () => {
   });
 
   describe('encrypt = true', () => {
-    let app;
+    let app: MockApplication;
 
     before(() => {
-      app = utils.app('apps/encrypt-cookies');
+      app = createApp('apps/encrypt-cookies');
       return app.ready();
     });
     after(() => app.close());
@@ -227,9 +227,10 @@ describe('test/lib/core/cookies.test.js', () => {
           assert(plainCookie);
           assert.equal(plainCookie, 'plain=text ok; path=/; httponly');
 
+          const cookies = res.headers['set-cookie'] as unknown as string[];
           app.httpRequest()
             .get('/')
-            .set('Cookie', res.headers['set-cookie'].join(';'))
+            .set('Cookie', cookies.join(';'))
             .expect({
               set: 'bar 中文',
               encrypt: 'bar 中文',
