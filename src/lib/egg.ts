@@ -95,6 +95,8 @@ export class EggApplicationCore extends EggCore {
   ContextLogger = ContextLogger;
   ContextHttpClient = ContextHttpClient;
   HttpClient = HttpClient;
+  // keep compatible with egg version 3.x
+  HttpClientNext = HttpClient;
   /**
    * Retrieve base context class
    * @member {BaseContextClass} BaseContextClass

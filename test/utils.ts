@@ -5,6 +5,7 @@ import path from 'node:path';
 import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
+import { scheduler } from 'node:timers/promises';
 import {
   mm, MockOptions, MockApplication,
 } from '@eggjs/mock';
@@ -89,7 +90,7 @@ export async function startLocalServer() {
     }
 
     if (ctx.path === '/timeout') {
-      await exports.sleep(10000);
+      await scheduler.wait(10000);
       ctx.body = `${ctx.method} ${ctx.path}`;
       return;
     }
