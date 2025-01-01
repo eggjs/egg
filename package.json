@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.12",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -78,7 +78,7 @@
     "formstream": "^1.5.1",
     "koa-static": "^5.0.0",
     "mm": "^3.4.0",
-    "pedding": "^1.1.0",
+    "pedding": "^2.0.0",
     "prettier": "^2.7.1",
     "rimraf": "6",
     "runscript": "^2.0.1",

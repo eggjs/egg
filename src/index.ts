@@ -14,6 +14,9 @@ export * from './lib/egg.js';
 export * from './lib/type.js';
 export * from './lib/start.js';
 
+// export errors
+export * from './lib/error/index.js';
+
 /**
  * Start egg application with cluster mode
  * @since 1.0.0

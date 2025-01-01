@@ -12,6 +12,7 @@ import {
 } from './egg.js';
 import { AppWorkerLoader } from './loader/index.js';
 import Helper from '../app/extend/helper.js';
+import { CookieLimitExceedError } from './error/index.js';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 
@@ -272,10 +273,10 @@ export class Application extends EggApplicationCore {
    * @private
    */
   #bindEvents() {
-    // Browser Cookie Limits: http://browsercookielimits.squawky.net/
+    // Browser Cookie Limits: http://browsercookielimits.iain.guru/
+    // https://github.com/eggjs/egg-cookies/blob/58ef4ea497a0eb4dd711d7e9751e56bc5fcee004/src/cookies.ts#L145
     this.on('cookieLimitExceed', ({ name, value, ctx }) => {
-      const err = new Error(`cookie ${name}'s length(${value.length}) exceed the limit(4093)`);
-      err.name = 'CookieLimitExceedError';
+      const err = new CookieLimitExceedError(name, value);
       ctx.coreLogger.error(err);
     });
     // expose server to support websocket
