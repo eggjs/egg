@@ -1,23 +1,23 @@
-const fs = require('fs');
-const path = require('path');
-const mm = require('egg-mock');
-const utils = require('../../utils');
+import path from 'node:path';
+import fs from 'node:fs';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp, cluster, getFilepath } from '../../utils.js';
 
-describe('test/lib/plugins/development.test.js', () => {
+describe('test/lib/plugins/development.test.ts', () => {
   afterEach(mm.restore);
 
   describe('development app', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('local');
       mm(process.env, 'EGG_LOG', 'none');
-      app = utils.app('apps/development');
+      app = createApp('apps/development');
       return app.ready();
     });
     after(() => app.close());
 
     it('should ignore assets', async () => {
-      mm(app.logger, 'info', msg => {
+      mm(app.logger, 'info', (msg: string) => {
         if (msg.match(/status /)) {
           throw new Error('should not log status');
         }
@@ -42,15 +42,15 @@ describe('test/lib/plugins/development.test.js', () => {
   });
 
   describe('reload workers', () => {
-    let app;
-    const baseDir = utils.getFilepath('apps/reload-worker');
+    let app: MockApplication;
+    const baseDir = getFilepath('apps/reload-worker');
     const filepath = path.join(baseDir, 'app/controller/home.js');
     const body = fs.readFileSync(filepath);
 
     before(() => {
       mm.env('local');
-      app = utils.cluster('apps/reload-worker');
-      app.debug();
+      app = cluster('apps/reload-worker');
+      // app.debug();
       app.coverage(false);
       return app.ready();
     });

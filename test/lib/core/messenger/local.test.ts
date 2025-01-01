@@ -1,5 +1,4 @@
 import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
 import { pending } from 'pedding';
 import { singleProcessApp, MockApplication } from '../../../utils.js';
@@ -22,11 +21,11 @@ describe('test/lib/core/messenger/local.test.ts', () => {
   describe('broadcast()', () => {
     it('app.messenger.broadcast should work', done => {
       done = pending(2, done);
-      app.messenger.once('broadcast-event', msg => {
+      app.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
-      app.agent.messenger.once('broadcast-event', msg => {
+      app.agent.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -36,11 +35,11 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
     it('agent.messenger.broadcast should work', done => {
       done = pending(2, done);
-      app.messenger.once('broadcast-event', msg => {
+      app.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
-      app.agent.messenger.once('broadcast-event', msg => {
+      app.agent.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -55,7 +54,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
         throw new Error('should not emit on agent');
       });
 
-      app.messenger.once('sendToApp-event', msg => {
+      app.messenger.once('sendToApp-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -68,7 +67,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
         throw new Error('should not emit on agent');
       });
 
-      app.messenger.once('sendToApp-event', msg => {
+      app.messenger.once('sendToApp-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -79,7 +78,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
   describe('sendToAgent()', () => {
     it('app.messenger.sendToAgent should work', done => {
-      app.agent.messenger.once('sendToAgent-event', msg => {
+      app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -92,7 +91,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('agent.messenger.sendToAgent should work', done => {
-      app.agent.messenger.once('sendToAgent-event', msg => {
+      app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -107,7 +106,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
   describe('sendRandom()', () => {
     it('app.messenger.sendRandom should work', done => {
-      app.agent.messenger.once('sendRandom-event', msg => {
+      app.agent.messenger.once('sendRandom-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -124,7 +123,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
         throw new Error('should not emit on agent');
       });
 
-      app.messenger.once('sendRandom-event', msg => {
+      app.messenger.once('sendRandom-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -136,11 +135,11 @@ describe('test/lib/core/messenger/local.test.ts', () => {
   describe('sendTo(pid)', () => {
     it('app.messenger.sendTo should work', done => {
       done = pending(2, done);
-      app.messenger.once('sendTo-event', msg => {
+      app.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
-      app.agent.messenger.once('sendTo-event', msg => {
+      app.agent.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -153,12 +152,12 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('agent.messenger.sendTo should work', done => {
-      done = pedding(done, 2);
-      app.messenger.once('sendTo-event', msg => {
+      done = pending(done, 2);
+      app.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
-      app.agent.messenger.once('sendTo-event', msg => {
+      app.agent.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -174,7 +173,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('app.messenger.send should work', done => {
-      app.agent.messenger.once('send-event', msg => {
+      app.agent.messenger.once('send-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -191,7 +190,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
         throw new Error('should not emit on agent');
       });
 
-      app.messenger.once('send-event', msg => {
+      app.messenger.once('send-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
       });
@@ -200,16 +199,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
   });
 
-  describe('_onMessage()', () => {
+  describe('onMessage()', () => {
     it('should ignore if message format error', () => {
-      app.messenger._onMessage();
-      app.messenger._onMessage('foo');
-      app.messenger._onMessage({ action: 1 });
+      app.messenger.onMessage();
+      app.messenger.onMessage('foo');
+      app.messenger.onMessage({ action: 1 });
     });
 
     it('should emit with action', done => {
       app.messenger.once('test-action', done);
-      app.messenger._onMessage({ action: 'test-action' });
+      app.messenger.onMessage({ action: 'test-action' });
     });
   });
 });

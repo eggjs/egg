@@ -1,10 +1,9 @@
-'use strict';
-const utils = require('../../utils');
+import { createApp, MockApplication } from '../../utils.js';
 
-describe('test/lib/plugins/static.test.js', () => {
-  let app;
+describe('test/lib/plugins/static.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/static-server');
+    app = createApp('apps/static-server');
     return app.ready();
   });
 

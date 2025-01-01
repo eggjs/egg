@@ -1,13 +1,11 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { mm } from '@eggjs/mock';
+import { createApp, MockApplication } from '../../utils.js';
 
-const assert = require('assert');
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/lib/plugins/session.test.js', () => {
-  let app;
+describe('test/lib/plugins/session.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/koa-session');
+    app = createApp('apps/koa-session');
     return app.ready();
   });
   after(() => app.close());
@@ -27,7 +25,7 @@ describe('test/lib/plugins/session.test.js', () => {
       .expect(200, (err, res) => {
         if (err) return done(err);
         assert(res.headers['set-cookie']);
-        const cookie = res.headers['set-cookie'].join(';');
+        const cookie = (res.headers['set-cookie'] as any).join(';');
         assert(/EGG_SESS=[\w-]+/.test(cookie));
 
         // userId 不变，还是读取到上次的 session 值

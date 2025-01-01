@@ -1,9 +1,7 @@
-'use strict';
+const path = require('node:path');
 
-const utils = require('../../../../utils');
-const file_path1 = utils.getFilepath('apps/watcher-development-app/tmp.txt');
-// const file_path2 = utils.getFilePath('apps/watcher-development-app/tmp/tmp.txt');
-const dir_path = utils.getFilepath('apps/watcher-development-app/tmp');
+const file_path1 = path.join(__dirname, '../tmp.txt');
+const dir_path = path.join(__dirname, '../tmp');
 
 module.exports = function(app) {
   let fileChangeCount = 0;

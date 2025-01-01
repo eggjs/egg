@@ -1,16 +1,13 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp } from '../../utils.js';
 
-const assert = require('assert');
-
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/lib/plugins/depd.test.js', () => {
+describe('test/lib/plugins/depd.test.ts', () => {
   afterEach(mm.restore);
 
-  let app;
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/demo');
+    app = createApp('apps/demo');
     return app.ready();
   });
   after(() => app.close());

@@ -1,14 +1,12 @@
-'use strict';
+import { mm } from '@eggjs/mock';
+import { createApp, MockApplication } from '../../utils.js';
 
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/lib/plugins/onerror.test.js', () => {
-  let app;
+describe('test/lib/plugins/onerror.test.ts', () => {
+  let app: MockApplication;
   before(() => {
     mm.env('local');
-    mm(process.env, 'EGG_LOG', 'none');
-    app = utils.app('apps/onerror');
+    mm(process.env, 'EGG_LOG', 'NONE');
+    app = createApp('apps/onerror');
     return app.ready();
   });
 

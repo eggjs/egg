@@ -1,15 +1,14 @@
-'use strict';
 
-const mm = require('egg-mock');
-const utils = require('../../utils');
+import { mm } from '@eggjs/mock';
+import { createApp, MockApplication } from '../../utils.js';
 
-describe('test/lib/plugins/security.test.js', () => {
+describe('test/lib/plugins/security.test.ts', () => {
   afterEach(mm.restore);
 
   describe('security.csrf = false', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/csrf-disable');
+      app = createApp('apps/csrf-disable');
       return app.ready();
     });
     after(() => app.close());
@@ -27,9 +26,9 @@ describe('test/lib/plugins/security.test.js', () => {
   });
 
   describe('security.csrf = true', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/csrf-enable');
+      app = createApp('apps/csrf-enable');
       return app.ready();
     });
     after(() => app.close());
@@ -44,9 +43,9 @@ describe('test/lib/plugins/security.test.js', () => {
   });
 
   describe('security.csrfIgnore', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/csrf-ignore');
+      app = createApp('apps/csrf-ignore');
       return app.ready();
     });
     after(() => app.close());

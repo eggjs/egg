@@ -78,7 +78,7 @@
     "formstream": "^1.5.1",
     "koa-static": "^5.0.0",
     "mm": "^3.4.0",
-    "pedding": "^2.0.0",
+    "pedding": "^2.0.1",
     "prettier": "^2.7.1",
     "rimraf": "6",
     "runscript": "^2.0.1",

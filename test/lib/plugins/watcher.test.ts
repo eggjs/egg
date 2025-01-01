@@ -1,16 +1,18 @@
-const assert = require('assert');
-const mm = require('egg-mock');
-const fs = require('fs');
-const utils = require('../../utils');
-const file_path1 = utils.getFilepath('apps/watcher-development-app/tmp.txt');
-const file_path2 = utils.getFilepath('apps/watcher-development-app/tmp/tmp.txt');
-const file_path1_agent = utils.getFilepath('apps/watcher-development-app/tmp-agent.txt');
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import fs from 'node:fs';
+import { mm } from '@eggjs/mock';
+import { cluster, MockApplication, getFilepath } from '../../utils.js';
 
-describe('test/lib/plugins/watcher.test.js', () => {
+const file_path1 = getFilepath('apps/watcher-development-app/tmp.txt');
+const file_path2 = getFilepath('apps/watcher-development-app/tmp/tmp.txt');
+const file_path1_agent = getFilepath('apps/watcher-development-app/tmp-agent.txt');
+
+describe('test/lib/plugins/watcher.test.ts', () => {
   describe('default', () => {
-    let app;
+    let app: MockApplication;
     beforeEach(() => {
-      app = utils.cluster('apps/watcher-development-app');
+      app = cluster('apps/watcher-development-app');
       app.coverage(false);
       return app.ready();
     });
@@ -36,7 +38,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect(function(res) {
           const lastCount = count;
           count = parseInt(res.text);
-          assert(count > lastCount);
+          assert(count > lastCount, `count: ${count}, lastCount: ${lastCount}`);
         });
 
       fs.writeFileSync(file_path2, 'aaa');
@@ -48,7 +50,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
         .expect(function(res) {
           const lastCount = count;
           count = parseInt(res.text);
-          assert(count > lastCount);
+          assert(count > lastCount, `count: ${count}, lastCount: ${lastCount}`);
         });
     });
 
@@ -74,9 +76,9 @@ describe('test/lib/plugins/watcher.test.js', () => {
   });
 
   describe('config.watcher.type is default', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.cluster('apps/watcher-type-default');
+      app = cluster('apps/watcher-type-default');
       app.coverage(false);
       return app.ready();
     });
@@ -85,7 +87,7 @@ describe('test/lib/plugins/watcher.test.js', () => {
 
     it('should warn user', async () => {
       await scheduler.wait(3000);
-      const logPath = utils.getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
+      const logPath = getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
       assert(content.includes('defaultEventSource watcher will NOT take effect'));
     });

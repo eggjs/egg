@@ -19,5 +19,6 @@ declare module '@eggjs/core' {
     getLogger(name: string): EggLogger;
     get logger(): EggLogger;
     get coreLogger(): EggLogger;
+    get locals(): Record<string, any>;
   }
 }
