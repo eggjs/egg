@@ -9,7 +9,7 @@ import { BaseContextLogger } from './base_context_logger.js';
  */
 export class BaseContextClass extends EggCoreBaseContextClass {
   declare ctx: ContextDelegation;
-  protected pathName?: string;
+  declare pathName?: string;
   #logger?: BaseContextLogger;
 
   get logger() {

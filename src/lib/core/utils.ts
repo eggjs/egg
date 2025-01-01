@@ -30,7 +30,7 @@ function convertValue(key: string, value: any, ignore: (string | RegExp)[]) {
     }
   }
   if (!hit) {
-    if (isSymbol(value) || isRegExp(value)) {
+    if (isSymbol(value) || isRegExp(value) || value instanceof URL) {
       return value.toString();
     }
     if (isPrimitive(value) || Array.isArray(value)) {
