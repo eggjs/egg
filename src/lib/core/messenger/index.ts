@@ -9,7 +9,8 @@ export type { IMessenger } from './IMessenger.js';
  * @class Messenger
  */
 export function create(egg: EggApplicationCore): IMessenger {
-  return egg.options.mode === 'single'
+  const messenger = egg.options.mode === 'single'
     ? new LocalMessenger(egg)
     : new IPCMessenger(egg);
+  return messenger;
 }

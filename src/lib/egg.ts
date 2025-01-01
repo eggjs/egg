@@ -439,6 +439,7 @@ export class EggApplicationCore extends EggCore {
   }
 
   _unhandledRejectionHandler(err: any) {
+    this.coreLogger.error('[egg:unhandledRejection] %s', err && err.message || err);
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
       // err maybe an object, try to copy the name, message and stack to the new error instance
