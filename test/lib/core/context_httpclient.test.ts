@@ -1,25 +1,23 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { createApp, startLocalServer, MockApplication } from '../../utils.js';
 
-const assert = require('assert');
-const utils = require('../../utils');
-
-describe('test/lib/core/context_httpclient.test.js', () => {
-  let url;
-  let app;
+describe('test/lib/core/context_httpclient.test.ts', () => {
+  let url: string;
+  let app: MockApplication;
 
   before(() => {
-    app = utils.app('apps/context_httpclient');
+    app = createApp('apps/context_httpclient');
     return app.ready();
   });
   before(async () => {
-    url = await utils.startLocalServer();
+    url = await startLocalServer();
   });
 
   it('should send request with ctx.httpclient', async () => {
     const ctx = app.mockContext();
     const httpclient = ctx.httpclient;
     assert(ctx.httpclient === httpclient);
-    assert(httpclient.ctx === ctx);
+    assert((httpclient as any).ctx === ctx);
     assert(typeof httpclient.request === 'function');
     assert(typeof httpclient.curl === 'function');
     const result = await ctx.httpclient.request(url);

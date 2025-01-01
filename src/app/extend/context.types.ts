@@ -17,5 +17,7 @@ declare module '@eggjs/core' {
     get httpclient(): HttpClient;
     get httpClient(): HttpClient;
     getLogger(name: string): EggLogger;
+    get logger(): EggLogger;
+    get coreLogger(): EggLogger;
   }
 }

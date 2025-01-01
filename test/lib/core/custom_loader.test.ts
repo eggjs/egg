@@ -1,14 +1,12 @@
-'use strict';
+import { mm } from '@eggjs/mock';
+import { createApp, MockApplication } from '../../utils.js';
 
-const mock = require('egg-mock');
-const utils = require('../../utils');
+describe('test/lib/core/custom_loader.test.ts', () => {
+  afterEach(mm.restore);
 
-describe('test/lib/core/custom_loader.test.js', () => {
-  afterEach(mock.restore);
-
-  let app;
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/custom-loader');
+    app = createApp('apps/custom-loader');
     return app.ready();
   });
   after(() => app.close());
@@ -29,5 +27,4 @@ describe('test/lib/core/custom_loader.test.js', () => {
       .expect('beforeLoad')
       .expect(200);
   });
-
 });

@@ -1,16 +1,17 @@
-const assert = require('assert');
-const utils = require('../../utils');
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import { createApp, startLocalServer, MockApplication } from '../../utils.js';
 
-describe('test/lib/core/httpclient_tracer_demo.test.js', () => {
-  let url;
-  let app;
+describe('test/lib/core/httpclient_tracer_demo.test.ts', () => {
+  let url: string;
+  let app: MockApplication;
 
   before(() => {
-    app = utils.app('apps/tracer-demo');
+    app = createApp('apps/tracer-demo');
     return app.ready();
   });
   before(async () => {
-    url = await utils.startLocalServer();
+    url = await startLocalServer();
   });
 
   after(() => app.close());
