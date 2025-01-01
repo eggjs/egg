@@ -46,7 +46,7 @@
     "is-type-of": "^2.1.0",
     "koa-bodyparser": "^4.4.1",
     "koa-override": "^4.0.0",
-    "onelogger": "^1.0.0",
+    "onelogger": "^1.0.1",
     "performance-ms": "^1.1.0",
     "sendmessage": "^3.0.1",
     "urllib": "^4.6.11",

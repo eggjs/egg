@@ -1,8 +1,8 @@
-const { sleep } = require('../../../utils');
+const { scheduler } = require('node:timers/promises');
 
 class EjsView {
   async render(filename, locals, options) {
-    await sleep(10);
+    await scheduler.wait(10);
     return {
       filename,
       locals,
@@ -12,7 +12,7 @@ class EjsView {
   }
 
   async renderString(tpl, locals, options) {
-    await sleep(10);
+    await scheduler.wait(10);
     return {
       tpl,
       locals,

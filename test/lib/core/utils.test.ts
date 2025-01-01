@@ -1,7 +1,5 @@
-'use strict';
-
-const assert = require('assert');
-const utils = require('../../../lib/core/utils');
+import { strict as assert } from 'node:assert';
+import * as utils from '../../../src/lib/core/utils.js';
 
 describe('test/lib/core/utils.test.js', () => {
   describe('convertObject()', () => {
@@ -15,46 +13,46 @@ describe('test/lib/core/utils.test.js', () => {
         boolean$: true,
         symbol$: s,
       };
-      utils.convertObject(obj);
+      utils.convertObject(obj, []);
       assert(obj.string$ === 'string');
       assert(obj.number$ === 1);
       assert(obj.null$ === null);
       assert(obj.undefined$ === undefined);
       assert(obj.boolean$ === true);
-      assert(obj.symbol$ === 'Symbol(symbol)');
+      assert.equal(obj.symbol$, 'Symbol(symbol)');
     });
 
     it('should convert regexp', () => {
       const obj = {
         regexp$: /^a$/g,
       };
-      utils.convertObject(obj);
-      assert(obj.regexp$ === '/^a$/g');
+      utils.convertObject(obj, []);
+      assert.equal(obj.regexp$, '/^a$/g');
     });
 
     it('should convert date', () => {
       const obj = {
         date$: new Date(),
       };
-      utils.convertObject(obj);
-      assert(obj.date$ === '<Date>');
+      utils.convertObject(obj, []);
+      assert.equal(obj.date$, '<Date>');
     });
 
     it('should convert function', () => {
       const obj = {
         function$: function a() { console.log(a); },
-        arrowFunction$: a => { console.log(a); },
+        arrowFunction$: (a: any) => { console.log(a); },
         /* eslint object-shorthand: 0 */
-        anonymousFunction$: function(a) { console.log(a); },
-        generatorFunction$: function* a(a) { console.log(a); },
-        asyncFunction$: async function a(a) { console.log(a); },
+        anonymousFunction$: function(a: any) { console.log(a); },
+        generatorFunction$: function* a(a: any) { console.log(a); },
+        asyncFunction$: async function a(a: any) { console.log(a); },
       };
       utils.convertObject(obj);
-      assert(obj.function$ === '<Function a>');
-      assert(obj.arrowFunction$ === '<Function arrowFunction$>');
-      assert(obj.anonymousFunction$ === '<Function anonymousFunction$>');
-      assert(obj.generatorFunction$ === '<GeneratorFunction a>');
-      assert(obj.asyncFunction$ === '<AsyncFunction a>');
+      assert.equal(obj.function$, '<Function a>');
+      assert.equal(obj.arrowFunction$, '<Function arrowFunction$>');
+      assert.equal(obj.anonymousFunction$, '<Function anonymousFunction$>');
+      assert.equal(obj.generatorFunction$, '<GeneratorFunction a>');
+      assert.equal(obj.asyncFunction$, '<AsyncFunction a>');
     });
 
     it('should convert error', () => {
@@ -66,10 +64,10 @@ describe('test/lib/core/utils.test.js', () => {
         errorExtend$: new TestError('a'),
       };
       utils.convertObject(obj);
-      assert(obj.errorClass$ === '<Function Error>');
-      assert(obj.errorClassExtend$ === '<Class TestError>');
-      assert(obj.error$ === '<Error>');
-      assert(obj.errorExtend$ === '<TestError>');
+      assert.equal(obj.errorClass$, '<Function Error>');
+      assert.equal(obj.errorClassExtend$, '<Class TestError>');
+      assert.equal(obj.error$, '<Error>');
+      assert.equal(obj.errorExtend$, '<TestError>');
     });
 
     it('should convert class', () => {
@@ -80,8 +78,8 @@ describe('test/lib/core/utils.test.js', () => {
         classExtend$: Class,
       };
       utils.convertObject(obj);
-      assert(obj.class$ === '<Class BaseClass>');
-      assert(obj.classExtend$ === '<Class Class>');
+      assert.equal(obj.class$, '<Class BaseClass>');
+      assert.equal(obj.classExtend$, '<Class Class>');
     });
 
     it('should convert buffer', () => {
@@ -90,13 +88,13 @@ describe('test/lib/core/utils.test.js', () => {
         bufferClass$: Buffer,
         bufferClassExtend$: SlowBuffer,
         buffer$: Buffer.from('123'),
-        bufferExtend$: new SlowBuffer('123'),
+        bufferExtend$: SlowBuffer.from('123'),
       };
       utils.convertObject(obj);
-      assert(obj.bufferClass$ === '<Function Buffer>');
-      assert(obj.bufferClassExtend$ === '<Class SlowBuffer>');
-      assert(obj.buffer$ === '<Buffer len: 3>');
-      assert(obj.bufferExtend$ === '<Buffer len: 3>');
+      assert.equal(obj.bufferClass$, '<Function Buffer>');
+      assert.equal(obj.bufferClassExtend$, '<Class SlowBuffer>');
+      assert.equal(obj.buffer$, '<Buffer len: 3>');
+      assert.equal(obj.bufferExtend$, '<Buffer len: 3>');
     });
 
     it('should convert ignore', () => {
@@ -119,13 +117,13 @@ describe('test/lib/core/utils.test.js', () => {
         'symbol$',
         'regexp$',
       ]);
-      assert(obj.string$ === '<String len: 6>');
-      assert(obj.number$ === '<Number>');
-      assert(obj.null$ === null);
-      assert(obj.undefined$ === undefined);
-      assert(obj.boolean$ === '<Boolean>');
-      assert(obj.symbol$ === '<Symbol>');
-      assert(obj.regexp$ === '<RegExp>');
+      assert.equal(obj.string$, '<String len: 6>');
+      assert.equal(obj.number$, '<Number>');
+      assert.equal(obj.null$, null);
+      assert.equal(obj.undefined$, undefined);
+      assert.equal(obj.boolean$, '<Boolean>');
+      assert.equal(obj.symbol$, '<Symbol>');
+      assert.equal(obj.regexp$, '<RegExp>');
     });
 
     it('should convert a plain recursive object', () => {
@@ -139,11 +137,11 @@ describe('test/lib/core/utils.test.js', () => {
         },
       };
       utils.convertObject(obj, [ 'ignoreValue' ]);
-      assert(obj.recurisiveObj.value1 === 'string');
-      assert(obj.recurisiveObj.value2 === 1);
-      assert(obj.recurisiveObj.ignoreValue === '<RegExp>');
-      assert(obj.plainObj === 'Plain');
-      assert(obj.Id === 1);
+      assert.equal(obj.recurisiveObj.value1, 'string');
+      assert.equal(obj.recurisiveObj.value2, 1);
+      assert.equal(obj.recurisiveObj.ignoreValue, '<RegExp>');
+      assert.equal(obj.plainObj, 'Plain');
+      assert.equal(obj.Id, 1);
     });
 
     it('should convert an anonymous class', () => {
@@ -152,20 +150,20 @@ describe('test/lib/core/utils.test.js', () => {
         '': class { },
       };
       utils.convertObject(obj);
-      assert(obj.anonymousClassWithPropName === '<Class anonymousClassWithPropName>');
-      assert(obj[''] === '<Class anonymous>');
+      assert.equal(obj.anonymousClassWithPropName, '<Class anonymousClassWithPropName>');
+      assert.equal(obj[''], '<Class anonymous>');
     });
   });
 
   describe('safeParseURL()', () => {
     it('should return null if url invalid', () => {
-      assert(utils.safeParseURL('https://eggjs.org%0a.com') === null);
-      assert(utils.safeParseURL('/path/for') === null);
+      assert.equal(utils.safeParseURL('https://eggjs.org%0a.com'), null);
+      assert.equal(utils.safeParseURL('/path/for'), null);
     });
 
     it('should return parsed url', () => {
-      assert(utils.safeParseURL('https://eggjs.org').hostname === 'eggjs.org');
-      assert(utils.safeParseURL('https://eggjs.org!.foo.com').hostname === 'eggjs.org!.foo.com');
+      assert.equal(utils.safeParseURL('https://eggjs.org')!.hostname, 'eggjs.org');
+      assert.equal(utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname, 'eggjs.org!.foo.com');
     });
   });
 });

@@ -1,13 +1,11 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp } from '../../utils.js';
 
-const assert = require('assert');
-const mm = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/lib/core/router.test.js', () => {
-  let app;
+describe('test/lib/core/router.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app({
+    app = createApp({
       baseDir: 'apps/router-app',
     });
     return app.ready();
@@ -128,25 +126,25 @@ describe('test/lib/core/router.test.js', () => {
       assert(app.router.url('edit_post', { id: 1 }) === '/posts/1/edit');
     });
 
-    it('should work with unknow params', () => {
+    it('should work with unknown params', () => {
       assert(
-        app.router.url('posts', { name: 'foo', page: 2 }) === '/posts?name=foo&page=2'
+        app.router.url('posts', { name: 'foo', page: 2 }) === '/posts?name=foo&page=2',
       );
       assert(
-        app.router.url('posts', { name: 'foo&?', page: 2 }) === '/posts?name=foo%26%3F&page=2'
+        app.router.url('posts', { name: 'foo&?', page: 2 }) === '/posts?name=foo%26%3F&page=2',
       );
       assert(
-        app.router.url('edit_post', { id: 10, page: 2 }) === '/posts/10/edit?page=2'
+        app.router.url('edit_post', { id: 10, page: 2 }) === '/posts/10/edit?page=2',
       );
       assert(app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2');
       assert(
-        app.router.url('edit_post', { id: 10, page: 2, tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        app.router.url('edit_post', { id: 10, page: 2, tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
       assert(
-        app.router.url('edit_post', { id: [ 10 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        app.router.url('edit_post', { id: [ 10 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
       assert(
-        app.router.url('edit_post', { id: [ 10, 11 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        app.router.url('edit_post', { id: [ 10, 11 ], page: [ 2 ], tags: [ 'chair', 'develop' ] }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
     });
   });

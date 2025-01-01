@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';

@@ -1,18 +1,16 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import path from 'node:path';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp, getFilepath } from '../../utils.js';
 
-const assert = require('assert');
-const path = require('path');
-const mock = require('egg-mock');
-const utils = require('../../utils');
-
-describe('test/lib/core/view.test.js', () => {
-  afterEach(mock.restore);
+describe('test/lib/core/view.test.ts', () => {
+  afterEach(mm.restore);
 
   describe('multiple view engine', () => {
-    const baseDir = utils.getFilepath('apps/multiple-view-engine');
-    let app;
+    const baseDir = getFilepath('apps/multiple-view-engine');
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/multiple-view-engine');
+      app = createApp('apps/multiple-view-engine');
       return app.ready();
     });
     after(() => app.close());
@@ -81,9 +79,9 @@ describe('test/lib/core/view.test.js', () => {
   });
 
   describe('nunjucks view', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.app('apps/view-render');
+      app = createApp('apps/view-render');
       return app.ready();
     });
     before(() => {
@@ -121,8 +119,10 @@ describe('test/lib/core/view.test.js', () => {
       app.httpRequest()
         .get('/empty')
         .expect(200)
-        .expect(res => assert.equal(String(res.text).replace(/\r/g, ''), `Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`))
-
+        .expect(res => {
+          assert.equal(String(res.text).replace(/\r/g, ''),
+            `Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`);
+        })
         .end(done)
       ;
     });

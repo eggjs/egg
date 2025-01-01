@@ -5,6 +5,7 @@ import { Socket } from 'node:net';
 import { graceful } from 'graceful';
 import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
+import { isGeneratorFunction } from 'is-type-of';
 import {
   EggApplicationCore,
   type EggApplicationCoreOptions,
@@ -265,6 +266,16 @@ export class Application extends EggApplicationCore {
       this._keys = this.config.keys.split(',').map(s => s.trim());
     }
     return this._keys;
+  }
+
+  /**
+   * @deprecated keep compatible with egg 3.x
+   */
+  toAsyncFunction(fn: (...args: any[]) => any) {
+    if (isGeneratorFunction(fn)) {
+      throw new Error('Generator function is not supported');
+    }
+    return fn;
   }
 
   /**
