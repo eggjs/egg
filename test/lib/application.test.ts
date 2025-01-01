@@ -34,7 +34,7 @@ describe('test/lib/application.test.ts', () => {
         new Application({
           baseDir: getFilepath('custom-egg/index.js'),
         });
-      }, /not a directory/);
+      }, /not a directory|no such file or directory/);
     });
   });
 

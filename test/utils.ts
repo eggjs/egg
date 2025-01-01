@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
 import {
-  mm, MockOptions, MockApplication,
+  mm, MockOptions, MockClusterOptions, MockApplication,
 } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
@@ -23,7 +23,7 @@ export async function rimraf(target: string) {
   await rm(target, { force: true, recursive: true });
 }
 
-export { MockApplication, MockOptions, mm } from '@eggjs/mock';
+export { MockApplication, MockOptions, MockClusterOptions, mm };
 export const restore = () => mm.restore();
 
 export function app(name: string | MockOptions, options?: MockOptions) {
@@ -42,7 +42,7 @@ export const createApp = app;
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export function cluster(name: string | MockOptions, options?: MockOptions): MockApplication {
+export function cluster(name: string | MockClusterOptions, options?: MockClusterOptions): MockApplication {
   options = formatOptions(name, options);
   return mm.cluster(options) as unknown as MockApplication;
 }

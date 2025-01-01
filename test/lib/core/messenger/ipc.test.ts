@@ -1,13 +1,15 @@
-const assert = require('assert');
-const mm = require('egg-mock');
-const utils = require('../../../utils');
-const Messenger = require('../../../../lib/core/messenger/ipc');
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import { mm } from '@eggjs/mock';
+import { cluster, MockApplication } from '../../../utils.js';
+import { Messenger } from '../../../../src/lib/core/messenger/ipc.js';
 
-describe('test/lib/core/messenger/ipc.test.js', () => {
-  let messenger;
+describe('test/lib/core/messenger/ipc.test.ts', () => {
+  let messenger: Messenger;
+  const app: any = {};
 
   before(() => {
-    messenger = new Messenger();
+    messenger = new Messenger(app);
   });
 
   afterEach(mm.restore);
@@ -21,20 +23,20 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
         done();
       });
 
-      process.emit('message', {});
-      process.emit('message', null);
+      process.emit('message', {}, null);
+      process.emit('message', null, null);
       process.emit('message', {
         action: 'messenger-test-on-event',
         data: {
           success: true,
         },
-      });
+      }, null);
     });
   });
 
   describe('close()', () => {
     it('should remove all listeners', () => {
-      const messenger = new Messenger();
+      const messenger = new Messenger(app);
       messenger.on('messenger-test-on-event-2', () => {
         throw new Error('should never emitted');
       });
@@ -46,17 +48,17 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
         data: {
           success: true,
         },
-      });
+      }, null);
     });
   });
 
   describe('cluster messenger', () => {
-    let app;
+    let app: MockApplication;
     after(() => app.close());
 
     // use it to record create coverage codes time
     it('before: should start cluster app', async () => {
-      app = utils.cluster('apps/messenger');
+      app = cluster('apps/messenger');
       app.coverage(true);
       await app.ready();
       await scheduler.wait(1000);
@@ -66,7 +68,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg/);
     });
 
-    it('app should accept agent assgin pid message', () => {
+    it('app should accept agent assign pid message', () => {
       app.expect('stdout', /\[app] agent-to-app agent msg \d+/);
     });
 
@@ -84,14 +86,14 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
   });
 
   describe('broadcast()', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/messenger-broadcast', { workers: 2 });
+      app = cluster('apps/messenger-broadcast', { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
-    before(() => utils.sleep(1000));
+    before(() => scheduler.wait(1000));
     after(() => app.close());
 
     it('should broadcast each other', () => {
@@ -105,15 +107,15 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
       // agent 26494 receive message from app pid 26496
       // agent 26494 receive message from agent pid 26494
       const m = app.stdout.match(/(app|agent) \d+ receive message from (app|agent) pid \d+/g);
-      assert(m.length, 9);
+      assert.equal(m.length, 9);
     });
   });
 
   describe('sendRandom', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/messenger-random', { workers: 4 });
+      app = cluster('apps/messenger-random', { workers: 4 });
       app.coverage(false);
       return app.ready();
     });
@@ -137,10 +139,10 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
   });
 
   describe('sendToApp and sentToAgent', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/messenger-app-agent', { workers: 2 });
+      app = cluster('apps/messenger-app-agent', { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
@@ -155,7 +157,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
         done();
       }, 500);
 
-      function count(data, key) {
+      function count(data: string, key: string) {
         return data.split('\n').filter(line => {
           return line.indexOf(key) >= 0;
         }).length;
@@ -164,10 +166,10 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
   });
 
   describe('worker_threads mode', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/messenger-app-agent', { workers: 1, startMode: 'worker_threads' });
+      app = cluster('apps/messenger-app-agent', { workers: 1, startMode: 'worker_threads' });
       app.coverage(false);
       return app.ready();
     });
@@ -182,7 +184,7 @@ describe('test/lib/core/messenger/ipc.test.js', () => {
         done();
       }, 500);
 
-      function count(data, key) {
+      function count(data: string, key: string) {
         return data.split('\n').filter(line => {
           return line.indexOf(key) >= 0;
         }).length;

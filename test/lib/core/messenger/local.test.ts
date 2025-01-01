@@ -1,15 +1,14 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import { mm } from '@eggjs/mock';
+import { pending } from 'pedding';
+import { singleProcessApp, MockApplication } from '../../../utils.js';
 
-const utils = require('../../../utils');
-const pedding = require('pedding');
-const assert = require('assert');
-const mm = require('egg-mock');
-
-describe('test/lib/core/messenger/local.test.js', () => {
-  let app;
+describe('test/lib/core/messenger/local.test.ts', () => {
+  let app: MockApplication;
 
   before(async () => {
-    app = await utils.singleProcessApp('apps/demo');
+    app = await singleProcessApp('apps/demo');
   });
 
   after(() => app.close());
@@ -22,7 +21,7 @@ describe('test/lib/core/messenger/local.test.js', () => {
 
   describe('broadcast()', () => {
     it('app.messenger.broadcast should work', done => {
-      done = pedding(done, 2);
+      done = pending(2, done);
       app.messenger.once('broadcast-event', msg => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
@@ -36,7 +35,7 @@ describe('test/lib/core/messenger/local.test.js', () => {
     });
 
     it('agent.messenger.broadcast should work', done => {
-      done = pedding(done, 2);
+      done = pending(2, done);
       app.messenger.once('broadcast-event', msg => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();
@@ -136,7 +135,7 @@ describe('test/lib/core/messenger/local.test.js', () => {
 
   describe('sendTo(pid)', () => {
     it('app.messenger.sendTo should work', done => {
-      done = pedding(done, 2);
+      done = pending(2, done);
       app.messenger.once('sendTo-event', msg => {
         assert.deepEqual(msg, { foo: 'bar' });
         done();

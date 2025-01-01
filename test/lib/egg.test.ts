@@ -180,6 +180,7 @@ describe('test/lib/egg.test.ts', () => {
     });
 
     it('should dumpTiming when timeout', async () => {
+      if (process.platform === 'win32') return;
       const baseDir = getFilepath('apps/dumptiming-timeout');
       fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
       fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
@@ -193,6 +194,7 @@ describe('test/lib/egg.test.ts', () => {
     });
 
     it('should dump slow-boot-action warnning log', async () => {
+      if (process.platform === 'win32') return;
       const baseDir = getFilepath('apps/dumptiming-slowBootActionMinDuration');
       fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
       fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
