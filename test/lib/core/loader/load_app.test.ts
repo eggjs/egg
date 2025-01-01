@@ -1,12 +1,10 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { MockApplication, createApp } from '../../../utils.js';
 
-const assert = require('assert');
-const utils = require('../../../utils');
-
-describe('test/lib/core/loader/load_app.test.js', () => {
-  let app;
+describe('test/lib/core/loader/load_app.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/loader-plugin');
+    app = createApp('apps/loader-plugin');
     return app.ready();
   });
   after(() => app.close());

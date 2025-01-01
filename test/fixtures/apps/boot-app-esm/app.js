@@ -1,11 +1,13 @@
-const assert = require('assert');
-const { scheduler } = require('node:timers/promises');
+import assert from 'node:assert';
+import { scheduler } from 'node:timers/promises';
+import { Boot } from '../../../../src/index.js';
 
-module.exports = class CustomBoot {
+export default class CustomBoot extends Boot  {
   constructor(app) {
-    this.app = app;
+    super(app);
     app.bootLog = [];
-    assert(this.app.config);
+    assert(this.config);
+    assert(this.fullPath);
     app.messenger.on('agent2app', () => {
       app.messengerLog = true;
     });
@@ -28,7 +30,7 @@ module.exports = class CustomBoot {
   async didReady() {
     await scheduler.wait(1);
     this.app.bootLog.push('didReady');
-    this.app.logger.info('app is ready');
+    this.logger.info('app is ready');
   }
 
   async beforeClose() {
@@ -40,4 +42,4 @@ module.exports = class CustomBoot {
     await scheduler.wait(1);
     this.app.bootLog.push('serverDidReady');
   }
-};
+}

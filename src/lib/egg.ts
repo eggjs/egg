@@ -134,6 +134,7 @@ export class EggApplicationCore extends EggCore {
   /**
    * Retrieve base boot
    * @member {Boot}
+   * @alias BaseHookClass
    */
   Boot = BaseHookClass;
 

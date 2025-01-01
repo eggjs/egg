@@ -1,12 +1,10 @@
-'use strict';
-
 module.exports = app => {
   return class OK extends app.Service {
     constructor(ctx) {
       super(ctx);
     }
 
-    * get() {
+    async get() {
       return {
         ok: true,
       };

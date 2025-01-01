@@ -1,18 +1,13 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { MockApplication, createApp } from '../../../utils.js';
 
-const assert = require('assert');
-const mm = require('egg-mock');
-const utils = require('../../../utils');
-
-describe('test/lib/core/config/config.cookies.test.js', () => {
-  let app;
+describe('test/lib/core/config/config.cookies.test.ts', () => {
+  let app: MockApplication;
   before(() => {
-    app = utils.app('apps/app-config-cookies');
+    app = createApp('apps/app-config-cookies');
     return app.ready();
   });
   after(() => app.close());
-
-  afterEach(mm.restore);
 
   it('should auto set sameSite cookie', async () => {
     const res = await app.httpRequest()

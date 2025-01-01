@@ -3,14 +3,14 @@ import type { ILifecycleBoot } from '@eggjs/core';
 import type { Application, Agent } from '../../index.js';
 
 export class BaseHookClass implements ILifecycleBoot {
-  fullPath?: string;
+  declare fullPath?: string;
   #instance: Application | Agent;
 
   constructor(instance: Application | Agent) {
     this.#instance = instance;
   }
 
-  get logger(): any {
+  get logger() {
     return this.#instance.logger;
   }
 

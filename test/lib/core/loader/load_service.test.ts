@@ -1,27 +1,20 @@
-const assert = require('node:assert');
-const mm = require('egg-mock');
-const utils = require('../../../utils');
+import { strict as assert } from 'node:assert';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp } from '../../../utils.js';
 
-describe('test/lib/core/loader/load_service.test.js', () => {
-  let app;
+describe('test/lib/core/loader/load_service.test.ts', () => {
+  let app: MockApplication;
   afterEach(() => app.close());
   afterEach(mm.restore);
 
   it('should load app and plugin services', async () => {
-    app = utils.app('apps/loader-plugin');
+    app = createApp('apps/loader-plugin');
     await app.ready();
     assert(app.serviceClasses.foo);
     assert(app.serviceClasses.foo2);
     assert(!app.serviceClasses.bar1);
     assert(app.serviceClasses.bar2);
     assert(app.serviceClasses.foo4);
-
-    // const ctx = app.mockContext();
-    // assert(ctx.service.fooDir.foo5);
-    // assert(ctx.service.foo);
-    // assert(ctx.service.foo2);
-    // assert(ctx.service.bar2);
-    // assert(ctx.service.foo4);
 
     await app.httpRequest()
       .get('/')
@@ -33,16 +26,16 @@ describe('test/lib/core/loader/load_service.test.js', () => {
   });
 
   it('should service support es6', async () => {
-    app = utils.app('apps/services_loader_verify');
+    app = createApp('apps/services_loader_verify');
     await app.ready();
     assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
     assert(
-      [ 'bar' ].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p))
+      [ 'bar' ].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)),
     );
   });
 
   it('should support extend app.Service class', async () => {
-    app = utils.app('apps/service-app');
+    app = createApp('apps/service-app');
     await app.ready();
 
     await app.httpRequest()
@@ -55,12 +48,12 @@ describe('test/lib/core/loader/load_service.test.js', () => {
   });
 
   describe('sub dir', () => {
-    let app;
+    let app: MockApplication;
     afterEach(() => app.close());
     afterEach(mm.restore);
 
     it('should support top 1 and 2 dirs, ignore others', async () => {
-      app = utils.app('apps/subdir-services');
+      app = createApp('apps/subdir-services');
       await app.ready();
 
       await app.httpRequest()
