@@ -1,7 +1,7 @@
 import querystring from 'node:querystring';
 import { Request as EggCoreRequest } from '@eggjs/core';
 import type { Application } from '../../lib/application.js';
-import type { ContextDelegation } from './context.js';
+import type Context from './context.js';
 import Response from './response.js';
 
 const QUERY_CACHE = Symbol('request query cache');
@@ -13,8 +13,13 @@ const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 
 export default class Request extends EggCoreRequest {
   declare app: Application;
-  declare ctx: ContextDelegation;
+  declare ctx: Context;
   declare response: Response;
+
+  /**
+   * Request body, parsed from koa-bodyparser or egg-multipart
+   */
+  declare body: any;
 
   /**
    * Parse the "Host" header field host

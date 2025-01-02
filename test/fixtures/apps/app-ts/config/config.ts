@@ -1,4 +1,4 @@
-import { EggAppConfig } from 'egg';
+import { EggAppConfig } from '../../../../../src/index.js';
 
 export default () => {
   const config = {} as EggAppConfig;

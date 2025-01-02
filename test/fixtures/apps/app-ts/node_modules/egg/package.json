@@ -1,3 +1,4 @@
 {
-  "name": "egg"
+  "name": "egg",
+  "type": "module"
 }
