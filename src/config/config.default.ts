@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { EggAppInfo } from '@eggjs/core';
-import type { EggAppConfig } from '../lib/type.js';
+import type { EggAppConfig } from '../lib/types.js';
 import { getSourceFile } from '../lib/utils.js';
 
 /**

@@ -27,7 +27,7 @@ import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.js';
 import type { Application } from './application.js';
 import Context from '../app/extend/context.js';
-import type { EggAppConfig } from './type.js';
+import type { EggAppConfig } from './types.js';
 import { create as createMessenger, IMessenger } from './core/messenger/index.js';
 import { ContextHttpClient } from './core/context_httpclient.js';
 import {

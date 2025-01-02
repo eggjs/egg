@@ -1082,40 +1082,6 @@
 //     urlFor(name: string, params?: PlainObject): string;
 //   }
 
-//   // egg env type
-//   export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
-
-//   /**
-//    * plugin config item interface
-//    */
-//   export interface IEggPluginItem {
-//     env?: EggEnvType[];
-//     path?: string;
-//     package?: string;
-//     enable?: boolean;
-//   }
-
-//   export type EggPluginItem = IEggPluginItem | boolean;
-
-//   /**
-//    * build-in plugin list
-//    */
-//   export interface EggPlugin {
-//     [key: string]: EggPluginItem | undefined;
-//     onerror?: EggPluginItem;
-//     session?: EggPluginItem;
-//     i18n?: EggPluginItem;
-//     watcher?: EggPluginItem;
-//     multipart?: EggPluginItem;
-//     security?: EggPluginItem;
-//     development?: EggPluginItem;
-//     logrotator?: EggPluginItem;
-//     schedule?: EggPluginItem;
-//     static?: EggPluginItem;
-//     jsonp?: EggPluginItem;
-//     view?: EggPluginItem;
-//   }
-
 //   /**
 //    * Singleton instance in Agent Worker, extend {@link EggApplication}
 //    */

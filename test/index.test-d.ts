@@ -2,6 +2,7 @@ import { expectType } from 'tsd';
 import {
   Context, Application, IBoot, ILifecycleBoot,
   LoggerLevel,
+  EggPlugin,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
@@ -67,3 +68,33 @@ expectType<ILifecycleBoot>(appBoot);
 expectType<string[]>(appBoot.stages);
 
 expectType<LoggerLevel>('DEBUG');
+
+const plugin: EggPlugin = {
+  tegg: {
+    enable: true,
+    package: '@eggjs/tegg-plugin',
+  },
+  teggConfig: {
+    enable: true,
+    package: '@eggjs/tegg-config',
+  },
+  teggController: {
+    enable: true,
+    package: '@eggjs/tegg-controller-plugin',
+  },
+  teggSchedule: {
+    enable: true,
+    package: '@eggjs/tegg-schedule-plugin',
+  },
+  eventbusModule: {
+    enable: true,
+    package: '@eggjs/tegg-eventbus-plugin',
+  },
+  aopModule: {
+    enable: true,
+    package: '@eggjs/tegg-aop-plugin',
+  },
+  onerror: true,
+  logrotator: true,
+};
+expectType<EggPlugin>(plugin);
