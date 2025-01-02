@@ -1,9 +1,9 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
-import type { Next, ContextDelegation } from '../../lib/egg.js';
+import type { Next, Context } from '../../lib/egg.js';
 
-export type SiteFileContentFun = (ctx: ContextDelegation) => Promise<Buffer | string>;
+export type SiteFileContentFun = (ctx: Context) => Promise<Buffer | string>;
 
 export interface SiteFileMiddlewareOptions {
   enable: boolean;
@@ -14,7 +14,7 @@ export interface SiteFileMiddlewareOptions {
 const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
 
 export default (options: SiteFileMiddlewareOptions) => {
-  return async function siteFile(ctx: ContextDelegation, next: Next) {
+  return async function siteFile(ctx: Context, next: Next) {
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
       return next();
     }

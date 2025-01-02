@@ -1,16 +1,15 @@
-'use strict';
+import { strict as assert } from 'node:assert';
+import { mm } from '@eggjs/mock';
+import { MockApplication, createApp, singleProcessApp } from '../../utils.js';
 
-const mm = require('egg-mock');
-const assert = require('assert');
-const innerClient = require('cluster-client/lib/symbol').innerClient;
-const utils = require('../../utils');
+const innerClient = Symbol.for('ClusterClient#innerClient');
 
-let app;
-describe('test/lib/cluster/cluster-client.test.js', () => {
+describe('test/lib/cluster/cluster-client.test.ts', () => {
+  let app: MockApplication;
   describe('common mode', () => {
     before(async () => {
       mm.consoleLevel('NONE');
-      app = utils.app('apps/cluster_mod_app');
+      app = createApp('apps/cluster_mod_app');
       await app.ready();
     });
     after(async () => {
@@ -61,7 +60,7 @@ describe('test/lib/cluster/cluster-client.test.js', () => {
   describe('single process mode', () => {
     before(async () => {
       mm.consoleLevel('NONE');
-      app = await utils.singleProcessApp('apps/cluster_mod_app');
+      app = await singleProcessApp('apps/cluster_mod_app');
     });
     after(async () => {
       await app.close();

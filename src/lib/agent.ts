@@ -1,4 +1,4 @@
-import { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg-logger';
 import { EggApplicationCore, EggApplicationCoreOptions } from './egg.js';
 import { AgentWorkerLoader } from './loader/index.js';
 

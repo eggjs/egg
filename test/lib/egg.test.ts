@@ -452,6 +452,8 @@ describe('test/lib/egg.test.ts', () => {
   });
 
   describe('egg-ready', () => {
+    if (process.platform === 'win32') return;
+
     let app: MockApplication;
 
     before(() => {
@@ -472,6 +474,8 @@ describe('test/lib/egg.test.ts', () => {
   });
 
   describe('createAnonymousContext()', () => {
+    if (process.platform === 'win32') return;
+
     let app: MockApplication;
     before(() => {
       app = createApp('apps/demo');

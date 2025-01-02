@@ -9,7 +9,7 @@ import { isGeneratorFunction } from 'is-type-of';
 import {
   EggApplicationCore,
   type EggApplicationCoreOptions,
-  type ContextDelegation,
+  type Context,
 } from './egg.js';
 import { AppWorkerLoader } from './loader/index.js';
 import Helper from '../app/extend/helper.js';
@@ -223,7 +223,7 @@ export class Application extends EggApplicationCore {
    * @see Context#runInBackground
    * @param {Function} scope - the first args is an anonymous ctx
    */
-  runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
+  runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -239,7 +239,7 @@ export class Application extends EggApplicationCore {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
+  async runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));

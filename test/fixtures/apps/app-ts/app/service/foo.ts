@@ -1,4 +1,5 @@
-import { Service } from 'egg';
+// import { Service } from 'egg';
+import { Service } from '../../../../../../src/index.js';
 
 // add user controller and service
 declare module 'egg' {

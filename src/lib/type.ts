@@ -9,7 +9,7 @@ import type {
   FileLoaderOptions,
 } from '@eggjs/core';
 import type {
-  EggApplicationCore, ContextDelegation,
+  EggApplicationCore, Context,
 } from './egg.js';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
@@ -18,7 +18,7 @@ import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 // import @eggjs/watcher types
 // import '@eggjs/watcher';
 
-type IgnoreItem = string | RegExp | ((ctx: ContextDelegation) => boolean);
+type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
 export interface ClientErrorResponse {
@@ -103,7 +103,7 @@ export interface EggAppConfig {
     };
     /** Default is `'error'`, it will return `400` response when `Prototype-Poisoning` happen. */
     onProtoPoisoning: 'error' | 'remove' | 'ignore';
-    onerror(err: any, ctx: ContextDelegation): void;
+    onerror(err: any, ctx: Context): void;
   };
 
   /**
@@ -136,6 +136,10 @@ export interface EggAppConfig {
     timeout?: number;
     /** Default request args for httpclient */
     request?: HttpClientRequestOptions;
+    /**
+     * @deprecated keep compatible with egg 3.x, no more used
+     */
+    useHttpClientNext?: boolean;
   };
 
   development: {
@@ -327,3 +331,5 @@ export interface EggAppConfig {
 
   [prop: string]: any;
 }
+
+export type RequestObjectBody = Record<string, any>;

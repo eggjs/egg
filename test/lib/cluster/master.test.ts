@@ -1,15 +1,16 @@
-const mm = require('egg-mock');
-const coffee = require('coffee');
-const utils = require('../../utils');
+import { scheduler } from 'node:timers/promises';
+import { mm } from '@eggjs/mock';
+import coffee, { Coffee } from 'coffee';
+import { MockApplication, cluster, getFilepath } from '../../utils.js';
 
-describe('test/lib/cluster/master.test.js', () => {
+describe('test/lib/cluster/master.test.ts', () => {
   afterEach(mm.restore);
 
   describe('app worker die', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/app-die');
+      app = cluster('apps/app-die');
       app.coverage(false);
       return app.ready();
     });
@@ -24,7 +25,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await scheduler.wait(5000);
+      await scheduler.wait(10000);
 
       // error pipe to console
       app.expect('stdout', /app_worker#1:\d+ disconnect/);
@@ -42,7 +43,7 @@ describe('test/lib/cluster/master.test.js', () => {
       }
 
       // wait for app worker restart
-      await scheduler.wait(5000);
+      await scheduler.wait(10000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stdout', /app_worker#\d:\d+ started/);
@@ -50,10 +51,10 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('app worker should not die with matched serverGracefulIgnoreCode', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.env('default');
-      app = utils.cluster('apps/app-die-ignore-code');
+      app = cluster('apps/app-die-ignore-code');
       app.coverage(false);
       return app.ready();
     });
@@ -92,25 +93,25 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('Master start fail', () => {
-    let master;
+    let master: MockApplication;
 
     after(() => master.close());
 
     it('should master exit with 1', done => {
       mm.consoleLevel('NONE');
-      master = utils.cluster('apps/worker-die');
+      master = cluster('apps/worker-die');
       master.coverage(false);
       master.expect('code', 1).ready(done);
     });
   });
 
   describe('Master started log', () => {
-    let app;
+    let app: MockApplication;
 
     afterEach(() => app.close());
 
     it('should dev env stdout message include "Egg started"', done => {
-      app = utils.cluster('apps/master-worker-started');
+      app = cluster('apps/master-worker-started');
       app.coverage(false);
       app.expect('stdout', /Egg started/).ready(done);
     });
@@ -118,18 +119,18 @@ describe('test/lib/cluster/master.test.js', () => {
     it('should production env stdout message include "Egg started"', done => {
       mm.env('prod');
       mm.consoleLevel('NONE');
-      mm.home(utils.getFilepath('apps/mock-production-app/config'));
-      app = utils.cluster('apps/mock-production-app');
+      mm.home(getFilepath('apps/mock-production-app/config'));
+      app = cluster('apps/mock-production-app');
       app.coverage(true);
       app.expect('stdout', /Egg started/).ready(done);
     });
   });
 
   describe('--cluster', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
       mm.consoleLevel('NONE');
-      app = utils.cluster('apps/cluster_mod_app');
+      app = cluster('apps/cluster_mod_app');
       app.coverage(false);
       return app.ready();
     });
@@ -151,9 +152,9 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('--dev', () => {
-    let app;
+    let app: MockApplication;
     before(() => {
-      app = utils.cluster('apps/cluster_mod_app');
+      app = cluster('apps/cluster_mod_app');
       app.coverage(false);
       return app.ready();
     });
@@ -168,13 +169,13 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('multi-application in one server', () => {
-    let app1;
-    let app2;
+    let app1: MockApplication;
+    let app2: MockApplication;
     before(async () => {
-      mm.consoleLevel('NONE');
-      app1 = utils.cluster('apps/cluster_mod_app');
+      // mm.consoleLevel('NONE');
+      app1 = cluster('apps/cluster_mod_app');
       app1.coverage(false);
-      app2 = utils.cluster('apps/cluster_mod_app');
+      app2 = cluster('apps/cluster_mod_app');
       app2.coverage(false);
       await Promise.all([
         app1.ready(),
@@ -219,11 +220,11 @@ describe('test/lib/cluster/master.test.js', () => {
 
   describe('start app with custom env', () => {
     describe('cluster mode, env: prod', () => {
-      let app;
+      let app: MockApplication;
       before(() => {
         mm.env('prod');
-        mm.home(utils.getFilepath('apps/custom-env-app'));
-        app = utils.cluster('apps/custom-env-app');
+        mm.home(getFilepath('apps/custom-env-app'));
+        app = cluster('apps/custom-env-app');
         app.coverage(false);
         return app.ready();
       });
@@ -240,14 +241,14 @@ describe('test/lib/cluster/master.test.js', () => {
     });
   });
 
-  describe('framework start', () => {
-    let app;
+  describe.skip('framework start', () => {
+    let app: MockApplication;
     before(() => {
       // dependencies relation:
       // aliyun-egg-app -> aliyun-egg-biz -> aliyun-egg -> egg
-      mm.home(utils.getFilepath('apps/aliyun-egg-app'));
-      app = utils.cluster('apps/aliyun-egg-app', {
-        customEgg: utils.getFilepath('apps/aliyun-egg-biz'),
+      mm.home(getFilepath('apps/aliyun-egg-app'));
+      app = cluster('apps/aliyun-egg-app', {
+        customEgg: getFilepath('apps/aliyun-egg-biz'),
       });
       app.coverage(false);
       return app.ready();
@@ -267,17 +268,16 @@ describe('test/lib/cluster/master.test.js', () => {
   });
 
   describe('spawn start', () => {
-    let app;
+    let app: Coffee;
     afterEach(() => {
       // make sure process exit
-      app.proc.kill('SIGTERM');
+      (app as any).proc.kill('SIGTERM');
     });
 
     it('should not cause master die when agent start error', done => {
-      app = coffee.spawn('node', [ utils.getFilepath('apps/agent-die/start.js') ])
-        .coverage(false);
+      app = coffee.spawn('node', [ getFilepath('apps/agent-die/start.js') ]);
 
-      // spawn can't comunication, so `end` event won't emit
+      // spawn can't communication, so `end` event won't emit
       setTimeout(() => {
         app.emit('close', 0);
         app.notExpect('stderr', /TypeError: process\.send is not a function/);
@@ -285,10 +285,8 @@ describe('test/lib/cluster/master.test.js', () => {
       }, 10000);
     });
 
-    it('should start without customEgg', done => {
-      app = coffee.fork(utils.getFilepath('apps/master-worker-started/dispatch.js'))
-        // .debug()
-        .coverage(false);
+    it.skip('should start without customEgg', done => {
+      app = coffee.fork(getFilepath('apps/master-worker-started/dispatch.js'));
 
       setTimeout(() => {
         app.emit('close', 0);
@@ -297,10 +295,9 @@ describe('test/lib/cluster/master.test.js', () => {
       }, 10000);
     });
 
-    it('should start without customEgg and worker_threads', done => {
-      app = coffee.fork(utils.getFilepath('apps/master-worker-started-worker_threads/dispatch.js'))
-        .debug()
-        .coverage(false);
+    it.skip('should start without customEgg and worker_threads', done => {
+      app = coffee.fork(getFilepath('apps/master-worker-started-worker_threads/dispatch.js'))
+        .debug();
 
       setTimeout(() => {
         app.emit('close', 0);

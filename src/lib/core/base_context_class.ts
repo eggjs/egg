@@ -1,5 +1,5 @@
 import { BaseContextClass as EggCoreBaseContextClass } from '@eggjs/core';
-import type { ContextDelegation } from '../egg.js';
+import type { Context, EggApplicationCore } from '../egg.js';
 import { BaseContextLogger } from './base_context_logger.js';
 
 /**
@@ -8,8 +8,11 @@ import { BaseContextLogger } from './base_context_logger.js';
  * {@link Helper}, {@link Service} is extending it.
  */
 export class BaseContextClass extends EggCoreBaseContextClass {
-  declare ctx: ContextDelegation;
+  [key: string | symbol]: any;
+  declare ctx: Context;
   declare pathName?: string;
+  declare app: EggApplicationCore;
+  declare service: BaseContextClass;
   #logger?: BaseContextLogger;
 
   get logger() {
