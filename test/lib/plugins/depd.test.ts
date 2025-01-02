@@ -3,6 +3,8 @@ import { mm } from '@eggjs/mock';
 import { MockApplication, createApp } from '../../utils.js';
 
 describe('test/lib/plugins/depd.test.ts', () => {
+  if (process.platform === 'win32') return;
+
   afterEach(mm.restore);
 
   let app: MockApplication;

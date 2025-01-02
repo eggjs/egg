@@ -80,7 +80,6 @@ export type MiddlewareFunc<T extends Context = Context> = EggCoreMiddlewareFunc<
 export {
   Context,
   Router,
-  EggLogger,
 };
 
 /**
@@ -664,8 +663,8 @@ export class EggApplicationCore extends EggCore {
    * @param  {Res} res - node native Response object
    * @return {Context} context object
    */
-  createContext(req: IncomingMessage, res: ServerResponse): EggContext {
-    const context = Object.create(this.context) as EggContext;
+  createContext(req: IncomingMessage, res: ServerResponse): Context {
+    const context = Object.create(this.context) as Context;
     const request = context.request = Object.create(this.request);
     const response = context.response = Object.create(this.response);
     context.app = request.app = response.app = this as any;

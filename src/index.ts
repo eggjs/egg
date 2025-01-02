@@ -9,6 +9,8 @@ import Helper from './app/extend/helper.js';
 // export extends
 export {
   Helper,
+};
+export type {
   // keep compatible with egg v3
   Helper as IHelper,
 };
@@ -24,6 +26,7 @@ export * from './lib/error/index.js';
 // export loggers
 export type {
   LoggerLevel,
+  EggLogger,
 } from 'egg-logger';
 
 // export httpClients

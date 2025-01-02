@@ -44,7 +44,7 @@ export class HttpClient extends RawHttpClient {
 }
 
 // keep compatible
-export {
+export type {
   HttpClient as EggHttpClient,
   HttpClient as EggContextHttpClient,
 };

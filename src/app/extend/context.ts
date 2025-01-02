@@ -4,7 +4,7 @@ import {
   utils, Context as EggCoreContext, Router,
 } from '@eggjs/core';
 import type { Cookies as ContextCookies } from '@eggjs/cookies';
-import { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg-logger';
 import type { Application } from '../../lib/application.js';
 import type {
   HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
