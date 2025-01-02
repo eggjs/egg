@@ -17,7 +17,7 @@ export type {
 
 // export types
 export * from './lib/egg.js';
-export * from './lib/type.js';
+export * from './lib/types.js';
 export * from './lib/start.js';
 
 // export errors

@@ -333,3 +333,35 @@ export interface EggAppConfig {
 }
 
 export type RequestObjectBody = Record<string, any>;
+
+/**
+ * plugin config item interface
+ */
+export interface IEggPluginItem {
+  env?: EggEnvType[];
+  path?: string;
+  package?: string;
+  enable?: boolean;
+}
+
+export type EggPluginItem = IEggPluginItem | boolean;
+
+/**
+ * build-in plugin list
+ */
+export interface EggPlugin {
+  [key: string]: EggPluginItem | undefined;
+  onerror?: EggPluginItem;
+  session?: EggPluginItem;
+  i18n?: EggPluginItem;
+  watcher?: EggPluginItem;
+  multipart?: EggPluginItem;
+  security?: EggPluginItem;
+  development?: EggPluginItem;
+  logrotator?: EggPluginItem;
+  schedule?: EggPluginItem;
+  static?: EggPluginItem;
+  jsonp?: EggPluginItem;
+  view?: EggPluginItem;
+}
+
