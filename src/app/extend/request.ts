@@ -11,6 +11,8 @@ const HOST = Symbol('request host');
 const IPS = Symbol('request ips');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 
+import './request.types.js';
+
 export default class Request extends EggCoreRequest {
   declare app: Application;
   declare ctx: Context;

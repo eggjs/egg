@@ -3,6 +3,7 @@ import {
   Context, Application, IBoot, ILifecycleBoot,
   LoggerLevel,
   EggPlugin,
+  EggAppInfo,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
@@ -98,3 +99,13 @@ const plugin: EggPlugin = {
   logrotator: true,
 };
 expectType<EggPlugin>(plugin);
+
+expectType<EggAppInfo>({
+  name: 'egg',
+  baseDir: 'baseDir',
+  env: 'env',
+  HOME: 'HOME',
+  pkg: {},
+  scope: 'scope',
+  root: 'root',
+});
