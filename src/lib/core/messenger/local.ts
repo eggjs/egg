@@ -1,20 +1,18 @@
 import { debuglog } from 'node:util';
-import EventEmitter from 'node:events';
 import type { IMessenger } from './IMessenger.js';
 import type { EggApplicationCore } from '../../egg.js';
+import { BaseMessenger } from './base.js';
 
 const debug = debuglog('egg/lib/core/messenger/local');
 
 /**
  * Communication between app worker and agent worker with EventEmitter
  */
-export class Messenger extends EventEmitter implements IMessenger {
+export class Messenger extends BaseMessenger implements IMessenger {
   readonly pid: string;
-  readonly egg: EggApplicationCore;
 
   constructor(egg: EggApplicationCore) {
-    super();
-    this.egg = egg;
+    super(egg);
     this.pid = String(process.pid);
   }
 

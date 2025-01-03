@@ -18,7 +18,7 @@ describe('test/app/middleware/meta.test.ts', () => {
     it('should get X-Readtime header', () => {
       return app.httpRequest()
         .get('/')
-        .expect('X-Readtime', /\d+/)
+        .expect('X-Readtime', /^\d+\.\d{1,3}$/)
         .expect(200);
     });
   });

@@ -1,5 +1,3 @@
-'use strict';
-
 const assert = require('assert');
 
 module.exports = app => {
@@ -17,5 +15,5 @@ module.exports = app => {
       return this.request(url, opt);
     }
   }
-  app.HttpClientNext = CustomHttpClient;
+  app.HttpClient = app.HttpClientNext = CustomHttpClient;
 };

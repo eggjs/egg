@@ -2,6 +2,8 @@ import { Response as KoaResponse } from '@eggjs/core';
 
 const REAL_STATUS = Symbol('response realStatus');
 
+import './response.types.js';
+
 export default class Response extends KoaResponse {
   /**
    * Get or set a real status code.

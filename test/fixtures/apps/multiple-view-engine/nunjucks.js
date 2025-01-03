@@ -1,8 +1,8 @@
-const { sleep } = require('../../../utils');
+const { scheduler } = require('node:timers/promises');
 
 class NunjucksView {
   async render(filename, locals, options) {
-    await sleep(10);
+    await scheduler.wait(10);
     return {
       filename,
       locals,

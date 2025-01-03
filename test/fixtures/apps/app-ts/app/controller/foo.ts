@@ -4,10 +4,12 @@ import {
   RequestObjectBody,
   Context,
   EggLogger,
+  // HttpClient,
   EggHttpClient,
   EggContextHttpClient,
-} from 'egg';
-import { RequestOptions as RequestOptionsNext } from 'urllib-next';
+} from '../../../../../../src/index.js';
+
+import { RequestOptions as RequestOptionsNext } from 'urllib';
 import { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service
@@ -19,8 +21,8 @@ declare module 'egg' {
 
 // controller
 export default class FooController extends Controller {
-  ctxHttpClient: EggHttpClient;
-  appHttpClient: EggContextHttpClient;
+  ctxHttpClient: EggContextHttpClient;
+  appHttpClient: EggHttpClient;
   fooLogger: EggLogger;
 
   constructor(ctx: Context) {
@@ -101,19 +103,19 @@ export default class FooController extends Controller {
     });
   }
 
-  async testViewRender() {
-    const { ctx } = this;
-    this.app.logger.info(this.app.view.get('nunjucks'));
-    this.app.logger.info(this.app.config.view.root);
-    this.app.logger.info(this.app.config.view.defaultExtension);
-    ctx.body = await this.ctx.view.render('test.tpl', {
-      test: '123',
-    });
-  }
+  // async testViewRender() {
+  //   const { ctx } = this;
+  //   this.app.logger.info(this.app.view.get('nunjucks'));
+  //   this.app.logger.info(this.app.config.view.root);
+  //   this.app.logger.info(this.app.config.view.defaultExtension);
+  //   ctx.body = await this.ctx.view.render('test.tpl', {
+  //     test: '123',
+  //   });
+  // }
 
-  async testViewRenderString() {
-    this.ctx.body = await this.ctx.view.renderString('test');
-  }
+  // async testViewRenderString() {
+  //   this.ctx.body = await this.ctx.view.renderString('test');
+  // }
 
   async testQuery() {
     this.stringQuery(this.ctx.query.foo);

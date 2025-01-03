@@ -26,8 +26,8 @@ import { Cookies as ContextCookies } from '@eggjs/cookies';
 import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.js';
 import type { Application } from './application.js';
-import Context, { type ContextDelegation } from '../app/extend/context.js';
-import type { EggAppConfig } from './type.js';
+import Context from '../app/extend/context.js';
+import type { EggAppConfig } from './types.js';
 import { create as createMessenger, IMessenger } from './core/messenger/index.js';
 import { ContextHttpClient } from './core/context_httpclient.js';
 import {
@@ -56,30 +56,30 @@ export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir
 export class Request extends EggCoreRequest {
   declare app: EggCore;
   declare response: Response;
-  declare ctx: ContextDelegation;
+  declare ctx: Context;
 }
 
 export class Response extends EggCoreResponse {
   declare app: EggCore;
   declare request: Request;
-  declare ctx: ContextDelegation;
+  declare ctx: Context;
 }
 
 // export egg types
 export type {
-  ContextDelegation,
   ILifecycleBoot,
+  // keep compatible with egg version 3.x
+  ILifecycleBoot as IBoot,
   Next,
 };
 // keep compatible with egg version 3.x
-export type EggContext = ContextDelegation;
-export type MiddlewareFunc<T extends ContextDelegation = ContextDelegation> = EggCoreMiddlewareFunc<T>;
+export type EggContext = Context;
+export type MiddlewareFunc<T extends Context = Context> = EggCoreMiddlewareFunc<T>;
 
 // export egg classes
 export {
   Context,
   Router,
-  EggLogger,
 };
 
 /**
@@ -89,12 +89,14 @@ export {
  * @augments EggCore
  */
 export class EggApplicationCore extends EggCore {
-  declare ctxStorage: AsyncLocalStorage<ContextDelegation>;
+  declare ctxStorage: AsyncLocalStorage<Context>;
   // export context base classes, let framework can impl sub class and over context extend easily.
   ContextCookies = ContextCookies;
   ContextLogger = ContextLogger;
   ContextHttpClient = ContextHttpClient;
   HttpClient = HttpClient;
+  // keep compatible with egg version 3.x
+  HttpClientNext = HttpClient;
   /**
    * Retrieve base context class
    * @member {BaseContextClass} BaseContextClass
@@ -132,6 +134,7 @@ export class EggApplicationCore extends EggCore {
   /**
    * Retrieve base boot
    * @member {Boot}
+   * @alias BaseHookClass
    */
   Boot = BaseHookClass;
 
@@ -234,6 +237,13 @@ export class EggApplicationCore extends EggCore {
   }
 
   /**
+   * Usage: new ApiClient({ cluster: app.cluster })
+   */
+  get cluster() {
+    return this.clusterWrapper.bind(this);
+  }
+
+  /**
    * Wrap the Client with Leader/Follower Pattern
    *
    * @description almost the same as Agent.cluster API, the only different is that this method create Follower.
@@ -251,7 +261,7 @@ export class EggApplicationCore extends EggCore {
    *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
    * @return {ClientWrapper} wrapper
    */
-  cluster(clientClass: unknown, options?: object) {
+  clusterWrapper(clientClass: unknown, options?: object) {
     const clientClassOptions = {
       ...this.config.clusterClient,
       ...options,
@@ -439,6 +449,7 @@ export class EggApplicationCore extends EggCore {
   }
 
   _unhandledRejectionHandler(err: any) {
+    this.coreLogger.error('[egg:unhandledRejection] %s', err && err.message || err);
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
       // err maybe an object, try to copy the name, message and stack to the new error instance
@@ -652,8 +663,8 @@ export class EggApplicationCore extends EggCore {
    * @param  {Res} res - node native Response object
    * @return {Context} context object
    */
-  createContext(req: IncomingMessage, res: ServerResponse): EggContext {
-    const context = Object.create(this.context) as EggContext;
+  createContext(req: IncomingMessage, res: ServerResponse): Context {
+    const context = Object.create(this.context) as Context;
     const request = context.request = Object.create(this.request);
     const response = context.response = Object.create(this.response);
     context.app = request.app = response.app = this as any;

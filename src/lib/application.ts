@@ -5,13 +5,15 @@ import { Socket } from 'node:net';
 import { graceful } from 'graceful';
 import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
+import { isGeneratorFunction } from 'is-type-of';
 import {
   EggApplicationCore,
   type EggApplicationCoreOptions,
-  type ContextDelegation,
+  type Context,
 } from './egg.js';
 import { AppWorkerLoader } from './loader/index.js';
 import Helper from '../app/extend/helper.js';
+import { CookieLimitExceedError } from './error/index.js';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 
@@ -221,7 +223,7 @@ export class Application extends EggApplicationCore {
    * @see Context#runInBackground
    * @param {Function} scope - the first args is an anonymous ctx
    */
-  runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
+  runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -237,7 +239,7 @@ export class Application extends EggApplicationCore {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(scope: (ctx: ContextDelegation) => Promise<void>, req?: unknown) {
+  async runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -267,15 +269,25 @@ export class Application extends EggApplicationCore {
   }
 
   /**
+   * @deprecated keep compatible with egg 3.x
+   */
+  toAsyncFunction(fn: (...args: any[]) => any) {
+    if (isGeneratorFunction(fn)) {
+      throw new Error('Generator function is not supported');
+    }
+    return fn;
+  }
+
+  /**
    * bind app's events
    *
    * @private
    */
   #bindEvents() {
-    // Browser Cookie Limits: http://browsercookielimits.squawky.net/
+    // Browser Cookie Limits: http://browsercookielimits.iain.guru/
+    // https://github.com/eggjs/egg-cookies/blob/58ef4ea497a0eb4dd711d7e9751e56bc5fcee004/src/cookies.ts#L145
     this.on('cookieLimitExceed', ({ name, value, ctx }) => {
-      const err = new Error(`cookie ${name}'s length(${value.length}) exceed the limit(4093)`);
-      err.name = 'CookieLimitExceedError';
+      const err = new CookieLimitExceedError(name, value);
       ctx.coreLogger.error(err);
     });
     // expose server to support websocket

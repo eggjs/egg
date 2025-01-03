@@ -1,24 +1,22 @@
-import { EventEmitter } from 'node:events';
 import { debuglog } from 'node:util';
 import workerThreads from 'node:worker_threads';
 import { sendmessage } from 'sendmessage';
 import type { IMessenger } from './IMessenger.js';
 import type { EggApplicationCore } from '../../egg.js';
+import { BaseMessenger } from './base.js';
 
 const debug = debuglog('egg/lib/core/messenger/ipc');
 
 /**
  * Communication between app worker and agent worker by IPC channel
  */
-export class Messenger extends EventEmitter implements IMessenger {
+export class Messenger extends BaseMessenger implements IMessenger {
   readonly pid: string;
-  readonly egg: EggApplicationCore;
   opids: string[] = [];
 
   constructor(egg: EggApplicationCore) {
-    super();
+    super(egg);
     this.pid = String(process.pid);
-    this.egg = egg;
     // pids of agent or app managed by master
     // - retrieve app worker pids when it's an agent worker
     // - retrieve agent worker pids when it's an app worker

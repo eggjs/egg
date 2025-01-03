@@ -1,12 +1,11 @@
 const assert = require('assert');
-const BaseHookClass = require('../../../../lib/core/base_hook_class');
-const { sleep } = require('../../../utils');
+const { scheduler } = require('node:timers/promises');
 
-module.exports = class extends BaseHookClass {
+module.exports = class CustomBoot {
   constructor(agent) {
-    super(agent);
+    this.agent = agent;
     agent.bootLog = [];
-    assert(this.config);
+    assert(this.agent.config);
     agent.messenger.on('egg-ready', () => {
       agent.messenger.sendToApp('agent2app');
     });
@@ -17,28 +16,28 @@ module.exports = class extends BaseHookClass {
   }
 
   async didLoad() {
-    await sleep(1);
+    await scheduler.wait(1);
     this.agent.bootLog.push('didLoad');
   }
 
   async willReady() {
-    await sleep(1);
+    await scheduler.wait(1);
     this.agent.bootLog.push('willReady');
   }
 
   async didReady() {
-    await sleep(1);
+    await scheduler.wait(1);
     this.agent.bootLog.push('didReady');
-    this.logger.info('agent is ready');
+    this.agent.logger.info('agent is ready');
   }
 
   async beforeClose() {
-    await sleep(1);
+    await scheduler.wait(1);
     this.agent.bootLog.push('beforeClose');
   }
 
   async serverDidReady() {
-    await sleep(1);
+    await scheduler.wait(1);
     this.agent.bootLog.push('serverDidReady');
   }
 };

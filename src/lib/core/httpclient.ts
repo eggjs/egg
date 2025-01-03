@@ -4,7 +4,7 @@ import {
   RequestOptions,
 } from 'urllib';
 import { ms } from 'humanize-ms';
-import type { EggApplicationCore, ContextDelegation } from '../egg.js';
+import type { EggApplicationCore } from '../egg.js';
 
 export type {
   HttpClientResponse,
@@ -12,12 +12,12 @@ export type {
 } from 'urllib';
 
 export interface HttpClientRequestOptions extends RequestOptions {
-  ctx?: ContextDelegation;
-  tracer?: unknown;
+  ctx?: any;
+  tracer?: any;
 }
 
 export class HttpClient extends RawHttpClient {
-  readonly #app: EggApplicationCore & { tracer?: unknown };
+  readonly #app: EggApplicationCore & { tracer?: any };
 
   constructor(app: EggApplicationCore) {
     normalizeConfig(app);
@@ -42,6 +42,12 @@ export class HttpClient extends RawHttpClient {
     return await this.request<T>(url, options);
   }
 }
+
+// keep compatible
+export type {
+  HttpClient as EggHttpClient,
+  HttpClient as EggContextHttpClient,
+};
 
 function normalizeConfig(app: EggApplicationCore) {
   const config = app.config.httpclient;

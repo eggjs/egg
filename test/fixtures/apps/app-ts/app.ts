@@ -1,6 +1,6 @@
-import { Application, IBoot } from 'egg';
-import testExportClass from './lib/export-class';
-import testLogger from './lib/logger';
+import { Application, IBoot } from '../../../../src/index.js';
+import testExportClass from './lib/export-class.js';
+import testLogger from './lib/logger.js';
 
 export default class AppBoot implements IBoot {
   private readonly app: Application;

@@ -1,11 +1,12 @@
-import { IHelper } from 'egg';
+// import { IHelper } from 'egg';
+import { IHelper } from '../../../../../../src/index.js';
 
 export default {
   test(this: IHelper) {
-    this.test2();
+    (this as any).test2();
   },
 
   test2(this: IHelper) {
-    this.ctx.logger.info(this.ctx.test());
+    this.ctx.logger.info('foo');
   }
 }

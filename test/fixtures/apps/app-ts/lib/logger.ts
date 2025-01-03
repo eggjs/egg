@@ -1,4 +1,5 @@
-import { Application, LoggerLevel } from 'egg';
+// import { Application, LoggerLevel } from 'egg';
+import { Application, LoggerLevel } from '../../../../../src/index.js';
 
 export default (app: Application) => {
   app.logger.info('test');

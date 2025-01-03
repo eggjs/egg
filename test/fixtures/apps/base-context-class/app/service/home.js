@@ -1,8 +1,6 @@
-'use strict';
-
 module.exports = app => {
   return class HomeController extends app.Service {
-    * show() {
+    async show() {
       this.ctx.body = 'hello';
       this.logger.debug('debug');
       this.logger.info('appname: %s', this.config.name);

@@ -1,4 +1,4 @@
-import type { EggAppConfig } from '../lib/type.js';
+import type { EggAppConfig } from '../lib/types.js';
 
 export default () => {
   return {
