@@ -218,30 +218,6 @@
 
 //   export type LoggerLevel = EggLoggerLevel;
 
-
-//   /**
-//    * egg app info
-//    * @example
-//    * ```js
-//    * // config/config.default.ts
-//    * import { EggAppInfo } from 'egg';
-//    *
-//    * export default (appInfo: EggAppInfo) => {
-//    *   return {
-//    *     keys: appInfo.name + '123456',
-//    *   };
-//    * }
-//    * ```
-//    */
-//   export interface EggAppInfo {
-//     pkg: any; // package.json
-//     name: string; // the application name from package.json
-//     baseDir: string; // current directory of application
-//     env: EggEnvType; // equals to serverEnv
-//     HOME: string; // home directory of the OS
-//     root: string; // baseDir when local and unittest, HOME when other environment
-//   }
-
 //   type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 //   type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 
