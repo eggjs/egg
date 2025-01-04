@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.0-beta.14",
+  "version": "4.0.0-beta.15",
   "engines": {
     "node": ">= 18.19.0"
   },
@@ -21,10 +21,10 @@
   "dependencies": {
     "@eggjs/cluster": "^3.0.0",
     "@eggjs/cookies": "^3.0.0",
-    "@eggjs/core": "^6.2.11",
+    "@eggjs/core": "^6.2.13",
     "@eggjs/schedule": "^5.0.2",
-    "@eggjs/utils": "^4.1.5",
-    "@eggjs/watcher": "^4.0.1",
+    "@eggjs/utils": "^4.2.4",
+    "@eggjs/watcher": "^4.0.3",
     "circular-json-for-egg": "^1.0.0",
     "cluster-client": "^3.7.0",
     "egg-development": "^3.0.0",

@@ -7,6 +7,7 @@ import type {
 } from 'egg-logger';
 import type {
   FileLoaderOptions,
+  EggAppConfig as EggCoreAppConfig,
 } from '@eggjs/core';
 import type {
   EggApplicationCore, Context,
@@ -16,7 +17,7 @@ import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 
 // import @eggjs/watcher types
-// import '@eggjs/watcher';
+import '@eggjs/watcher';
 
 export type {
   EggAppInfo,
@@ -61,7 +62,7 @@ export interface CustomLoaderConfig extends Omit<FileLoaderOptions, 'inject' | '
   loadunit?: boolean;
 }
 
-export interface EggAppConfig {
+export interface EggAppConfig extends EggCoreAppConfig {
   workerStartTimeout: number;
   baseDir: string;
   middleware: string[];
@@ -147,43 +148,43 @@ export interface EggAppConfig {
     useHttpClientNext?: boolean;
   };
 
-  development: {
-    /**
-     * dirs needed watch, when files under these change, application will reload, use relative path
-     */
-    watchDirs: string[];
-    /**
-     * dirs don't need watch, including subdirectories, use relative path
-     */
-    ignoreDirs: string[];
-    /**
-     * don't wait all plugins ready, default is true.
-     */
-    fastReady: boolean;
-    /**
-     * whether reload on debug, default is true.
-     */
-    reloadOnDebug: boolean;
-    /**
-     * whether override default watchDirs, default is false.
-     */
-    overrideDefault: boolean;
-    /**
-     * whether override default ignoreDirs, default is false.
-     */
-    overrideIgnore: boolean;
-    /**
-     * whether to reload, use https://github.com/sindresorhus/multimatch
-     */
-    reloadPattern: string[] | string;
-  };
+  // development: {
+  //   /**
+  //    * dirs needed watch, when files under these change, application will reload, use relative path
+  //    */
+  //   watchDirs: string[];
+  //   /**
+  //    * dirs don't need watch, including subdirectories, use relative path
+  //    */
+  //   ignoreDirs: string[];
+  //   /**
+  //    * don't wait all plugins ready, default is true.
+  //    */
+  //   fastReady: boolean;
+  //   /**
+  //    * whether reload on debug, default is true.
+  //    */
+  //   reloadOnDebug: boolean;
+  //   /**
+  //    * whether override default watchDirs, default is false.
+  //    */
+  //   overrideDefault: boolean;
+  //   /**
+  //    * whether override default ignoreDirs, default is false.
+  //    */
+  //   overrideIgnore: boolean;
+  //   /**
+  //    * whether to reload, use https://github.com/sindresorhus/multimatch
+  //    */
+  //   reloadPattern: string[] | string;
+  // };
 
   /**
    * customLoader config
    */
-  customLoader: {
-    [key: string]: CustomLoaderConfig;
-  };
+  // customLoader: {
+  //   [key: string]: CustomLoaderConfig;
+  // };
 
   /**
    * It will ignore special keys when dumpConfig
@@ -307,8 +308,6 @@ export interface EggAppConfig {
     enable: boolean;
     allowedMethods: string[];
   };
-
-  watcher: Record<string, any>;
 
   onClientError?(err: Error, socket: Socket, app: EggApplicationCore): ClientErrorResponse | Promise<ClientErrorResponse>;
 

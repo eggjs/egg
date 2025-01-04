@@ -18,6 +18,10 @@ expectType<Context>(ctx);
 expectType<HttpClient>(ctx.httpClient);
 expectType<any>(ctx.request.body);
 
+expectType<object>(app.watcher);
+expectType<string>(app.config.watcher.type);
+expectType<string>(app.config.watcher.eventSources.default);
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 
