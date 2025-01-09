@@ -2,7 +2,7 @@ name: Release for 3.x
 
 on:
   push:
-    branches: [ 3.x ]
+    branches: [ master ]
 
 jobs:
   release:

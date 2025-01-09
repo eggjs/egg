@@ -5,12 +5,6 @@
     "tag": "latest",
     "access": "public"
   },
-  "release": {
-    "branches": [
-      { "name": "master" },
-      { "name": "3.x", "range": "3.x", "channel": "3.x" }
-    ]
-  },
   "description": "A web framework's framework for Node.js",
   "keywords": [
     "web",
