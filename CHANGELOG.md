@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.0](https://github.com/eggjs/egg/compare/v3.29.0...v3.30.0) (2025-01-09)
+
+
+### Features
+
+* dump ignore support key path ([#5380](https://github.com/eggjs/egg/issues/5380)) ([74346c2](https://github.com/eggjs/egg/commit/74346c2d056cab63c3c3a905c1e8afbf857451b4))
+
 ## [3.24.1](https://github.com/eggjs/egg/compare/v3.24.0...v3.24.1) (2024-06-07)
 
 
