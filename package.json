@@ -2,8 +2,13 @@
   "name": "egg",
   "version": "3.29.0",
   "publishConfig": {
-    "tag": "release-3.x",
+    "tag": "latest",
     "access": "public"
+  },
+  "release": {
+    "branches": [
+      { "name": "3.x", "range": "3.x", "channel": "3.x" }
+    ]
   },
   "description": "A web framework's framework for Node.js",
   "keywords": [
