@@ -3,7 +3,11 @@
  */
 
 import { BaseContextClass } from './lib/core/base_context_class.js';
-import { startEgg } from './lib/start.js';
+import {
+  startEgg,
+  SingleModeApplication,
+  SingleModeAgent,
+} from './lib/start.js';
 import Helper from './app/extend/helper.js';
 
 // export extends
@@ -45,6 +49,8 @@ export * from '@eggjs/cluster';
  */
 export {
   startEgg as start,
+  SingleModeApplication,
+  SingleModeAgent,
 };
 
 /**

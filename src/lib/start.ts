@@ -3,6 +3,7 @@ import { readJSON } from 'utility';
 import { importModule } from '@eggjs/utils';
 import { Agent } from './agent.js';
 import { Application } from './application.js';
+import { EggPlugin } from './types.js';
 
 export interface StartEggOptions {
   /** specify framework that can be absolute path or npm package */
@@ -13,6 +14,15 @@ export interface StartEggOptions {
   ignoreWarning?: boolean;
   mode?: 'single';
   env?: string;
+  plugins?: EggPlugin;
+}
+
+export interface SingleModeApplication extends Application {
+  agent: SingleModeAgent;
+}
+
+export interface SingleModeAgent extends Agent {
+  app: SingleModeApplication;
 }
 
 /**
@@ -41,11 +51,11 @@ export async function startEgg(options: StartEggOptions = {}) {
 
   const agent = new AgentClass({
     ...options,
-  });
+  }) as SingleModeAgent;
   await agent.ready();
   const application = new ApplicationClass({
     ...options,
-  });
+  }) as SingleModeApplication;
   application.agent = agent;
   agent.application = application;
   await application.ready();

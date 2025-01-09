@@ -4,6 +4,7 @@ import {
   LoggerLevel,
   EggPlugin,
   EggAppInfo,
+  start, SingleModeApplication, SingleModeAgent,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
@@ -113,3 +114,13 @@ expectType<EggAppInfo>({
   scope: 'scope',
   root: 'root',
 });
+
+const singleApp = await start({
+  baseDir: 'baseDir',
+  framework: 'egg',
+  plugins: plugin,
+});
+
+expectType<SingleModeApplication>(singleApp);
+expectType<SingleModeAgent>(singleApp.agent);
+expectType<SingleModeApplication>(singleApp.agent.app);
