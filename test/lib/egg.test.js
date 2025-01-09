@@ -254,6 +254,26 @@ describe('test/lib/egg.test.js', () => {
     });
   });
 
+  describe('dumpConfig() ignore key path', () => {
+    const baseDir = utils.getFilepath('apps/dump-ignore-key-path');
+    let app;
+    before(() => {
+      app = utils.app('apps/dump-ignore-key-path');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should ignore key path', () => {
+      const json = require(path.join(baseDir, 'run/application_config.json'));
+      assert.deepEqual(json.config.withKeyPaths, {
+        inner: {
+          key1: '<Object>',
+        },
+        key2: '<String len: 3>',
+      });
+    });
+  });
+
   describe('custom config from env', () => {
     let app;
     let baseDir;
