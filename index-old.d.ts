@@ -35,10 +35,8 @@
 // import 'egg-onerror';
 // import 'egg-session';
 // import 'egg-i18n';
-// import '@eggjs/watcher';
 // import 'egg-multipart';
 // import 'egg-security';
-// import 'egg-development';
 // import 'egg-logrotator';
 // import '@eggjs/schedule';
 // import 'egg-static';
@@ -217,30 +215,6 @@
 //   }
 
 //   export type LoggerLevel = EggLoggerLevel;
-
-
-//   /**
-//    * egg app info
-//    * @example
-//    * ```js
-//    * // config/config.default.ts
-//    * import { EggAppInfo } from 'egg';
-//    *
-//    * export default (appInfo: EggAppInfo) => {
-//    *   return {
-//    *     keys: appInfo.name + '123456',
-//    *   };
-//    * }
-//    * ```
-//    */
-//   export interface EggAppInfo {
-//     pkg: any; // package.json
-//     name: string; // the application name from package.json
-//     baseDir: string; // current directory of application
-//     env: EggEnvType; // equals to serverEnv
-//     HOME: string; // home directory of the OS
-//     root: string; // baseDir when local and unittest, HOME when other environment
-//   }
 
 //   type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 //   type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
@@ -1080,40 +1054,6 @@
 //      * @return {String} full url(with host)
 //      */
 //     urlFor(name: string, params?: PlainObject): string;
-//   }
-
-//   // egg env type
-//   export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
-
-//   /**
-//    * plugin config item interface
-//    */
-//   export interface IEggPluginItem {
-//     env?: EggEnvType[];
-//     path?: string;
-//     package?: string;
-//     enable?: boolean;
-//   }
-
-//   export type EggPluginItem = IEggPluginItem | boolean;
-
-//   /**
-//    * build-in plugin list
-//    */
-//   export interface EggPlugin {
-//     [key: string]: EggPluginItem | undefined;
-//     onerror?: EggPluginItem;
-//     session?: EggPluginItem;
-//     i18n?: EggPluginItem;
-//     watcher?: EggPluginItem;
-//     multipart?: EggPluginItem;
-//     security?: EggPluginItem;
-//     development?: EggPluginItem;
-//     logrotator?: EggPluginItem;
-//     schedule?: EggPluginItem;
-//     static?: EggPluginItem;
-//     jsonp?: EggPluginItem;
-//     view?: EggPluginItem;
 //   }
 
 //   /**

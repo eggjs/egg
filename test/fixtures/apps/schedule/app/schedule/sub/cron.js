@@ -1,10 +1,8 @@
-'use strict';
-
 exports.schedule = {
   type: 'worker',
   cron: '*/5 * * * * *',
 };
 
-exports.task = function* (ctx) {
+exports.task = async (ctx) => {
   ctx.logger.warn('cron wow');
 };

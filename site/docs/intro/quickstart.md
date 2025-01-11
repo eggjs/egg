@@ -17,16 +17,16 @@ To begin with, let's quickly initialize the project by using a scaffold,
 which will quickly generate some of the major pieces of the application (`npm >=6.1.0`).
 
 ```bash
-$ mkdir egg-example && cd egg-example
-$ npm init egg --type=simple
-$ npm i
+mkdir egg-example && cd egg-example
+npm init egg --type=simple
+npm i
 ```
 
 Then get up and run by using the following commands.
 
 ```bash
-$ npm run dev
-$ open http://localhost:7001
+npm run dev
+open http://localhost:7001
 ```
 
 ## Step by Step
@@ -44,11 +44,11 @@ However, in this section, instead of using scaffolds we will build a project cal
 First let's create the project directory and initialize its structure.
 
 ```bash
-$ mkdir egg-example
-$ cd egg-example
-$ npm init
-$ npm i egg --save
-$ npm i egg-bin --save-dev
+mkdir egg-example
+cd egg-example
+npm init
+npm i egg --save
+npm i egg-bin --save-dev
 ```
 
 Then add `npm scripts` to `package.json`.
@@ -116,8 +116,8 @@ For more information about directory structure, see [Directory Structure](../bas
 Now you can start up the Web Server and see your application in action.
 
 ```bash
-$ npm run dev
-$ open http://localhost:7001
+npm run dev
+open http://localhost:7001
 ```
 
 > Note：
@@ -159,7 +159,7 @@ In this example, we will use [Nunjucks].
 First install the corresponding plugin [egg-view-nunjucks].
 
 ```bash
-$ npm i egg-view-nunjucks --save
+npm i egg-view-nunjucks --save
 ```
 
 And enable it.
@@ -236,10 +236,10 @@ module.exports = (app) => {
 };
 ```
 
-Open a browser window and navigate to http://localhost:7001/news.
+Open a browser window and navigate to <http://localhost:7001/news>.
 You should be able to see the rendered page.
 
-**Tip：In development, Egg enables the [development][egg-development] plugin by default, which reloads your worker process when changes are made to your back-end code.**
+**Tip：In development, Egg enables the [development][@eggjs/development] plugin by default, which reloads your worker process when changes are made to your back-end code.**
 
 ### Create a Service
 
@@ -331,7 +331,7 @@ For more information, cf. [Extensions](../basics/extend.md).
 In the case of view, we can just write a helper as an extension.
 
 ```bash
-$ npm i moment --save
+npm i moment --save
 ```
 
 ```js
@@ -452,13 +452,13 @@ Then add `npm scripts`.
 Also install dependencies.
 
 ```bash
-$ npm i egg-mock --save-dev
+npm i egg-mock --save-dev
 ```
 
 Run it.
 
 ```bash
-$ npm test
+npm test
 ```
 
 That is all of it, for more detail, see [Unit Testing](../core/unittest.md).
@@ -477,7 +477,6 @@ Where to go from here? read our documentation to better understand the framework
 [node.js]: http://nodejs.org
 [egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
-[egg-development]: https://github.com/eggjs/egg-development
+[@eggjs/development]: https://github.com/eggjs/development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
-[urllib]: https://www.npmjs.com/package/urllib
 [nunjucks]: https://mozilla.github.io/nunjucks/

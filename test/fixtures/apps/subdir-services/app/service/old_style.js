@@ -1,3 +1,3 @@
-exports.url = function* (ctx) {
+exports.url = async (ctx) => {
   return ctx.url;
 };

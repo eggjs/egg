@@ -1,13 +1,12 @@
-'use strict';
-
 const path = require('path');
 const fs = require('fs');
 
 module.exports = async function () {
-  var parts = this.multipart();
-  var part;
-  var fields = {};
-  while (part = await parts) {
+  const parts = this.multipart();
+  let filePart;
+  const fields = {};
+  for await (const part of parts) {
+    filePart = part;
     if (Array.isArray(part)) {
       fields[part[0]] = part[1];
       continue;
@@ -16,7 +15,7 @@ module.exports = async function () {
     }
   }
 
-  if (!part || !part.filename) {
+  if (!filePart || !filePart.filename) {
     this.body = {
       message: 'no file',
     };
@@ -24,9 +23,9 @@ module.exports = async function () {
   }
 
   const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, 'multipart-test-file'));
-  part.pipe(ws);
+  filePart.pipe(ws);
   this.body = {
-    filename: part.filename,
+    filename: filePart.filename,
     fields,
   };
 };

@@ -270,7 +270,7 @@ module.exports = AppBootHook;
 
 **此方法不建议在生产环境使用，因可能会出现未完全执行结束就结束进程的情况。**
 
-另外，我们可以使用 [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) 来查看加载过程。
+另外，我们可以使用 [`@eggjs/development`](https://github.com/eggjs/development#loader-trace) 来查看加载过程。
 
 ### 文件加载规则
 

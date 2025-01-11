@@ -1,19 +1,17 @@
-import delegate from 'delegates';
 import { assign } from 'utility';
 import { now, diff } from 'performance-ms';
 import {
   utils, Context as EggCoreContext, Router,
-  type ContextDelegation as EggCoreContextDelegation,
 } from '@eggjs/core';
 import type { Cookies as ContextCookies } from '@eggjs/cookies';
-import { EggLogger } from 'egg-logger';
+import type { EggLogger } from 'egg-logger';
 import type { Application } from '../../lib/application.js';
 import type {
   HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
 } from '../../lib/core/httpclient.js';
 import type { BaseContextClass } from '../../lib//core/base_context_class.js';
-import Request from './request.js';
-import Response from './response.js';
+import type Request from './request.js';
+import type Response from './response.js';
 import type Helper from './helper.js';
 
 import './context.types.js';
@@ -33,7 +31,9 @@ interface Cookies extends ContextCookies {
 export default class Context extends EggCoreContext {
   declare app: Application;
   declare request: Request;
+  declare response: Response;
   declare service: BaseContextClass;
+  declare proxy: any;
 
   /**
    * Request start time
@@ -230,7 +230,7 @@ export default class Context extends EggCoreContext {
    * });
    * ```
    */
-  runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, taskName?: string): void {
+  runInBackground(scope: (ctx: Context) => Promise<void>, taskName?: string): void {
     // try to use custom function name first
     if (!taskName) {
       taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
@@ -243,7 +243,7 @@ export default class Context extends EggCoreContext {
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  async _runInBackground(scope: (ctx: ContextDelegation) => Promise<void>, taskName: string) {
+  async _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string) {
     const startTime = now();
     try {
       await scope(this as any);
@@ -257,46 +257,52 @@ export default class Context extends EggCoreContext {
       this.app.emit('error', err, this);
     }
   }
-}
 
-/**
- * Context delegation.
- */
-
-delegate(Context.prototype, 'request')
   /**
    * @member {Boolean} Context#acceptJSON
    * @see Request#acceptJSON
    * @since 1.0.0
    */
-  .getter('acceptJSON')
+  get acceptJSON(): boolean {
+    return this.request.acceptJSON;
+  }
+
+  get query(): Record<string, string> {
+    return this.request.query;
+  }
+
   /**
    * @member {Array} Context#queries
    * @see Request#queries
    * @since 1.0.0
    */
-  .getter('queries')
-  /**
-   * @member {Boolean} Context#accept
-   * @see Request#accept
-   * @since 1.0.0
-   */
-  .getter('accept')
+  get queries(): Record<string, string[]> {
+    return this.request.queries;
+  }
+
   /**
    * @member {string} Context#ip
    * @see Request#ip
    * @since 1.0.0
    */
-  .access('ip');
+  get ip(): string {
+    return this.request.ip;
+  }
 
-delegate(Context.prototype, 'response')
+  set ip(val: string) {
+    this.request.ip = val;
+  }
+
   /**
    * @member {Number} Context#realStatus
    * @see Response#realStatus
    * @since 1.0.0
    */
-  .access('realStatus');
+  get realStatus(): number {
+    return this.response.realStatus;
+  }
 
-export type ContextDelegation = EggCoreContextDelegation & Context
-& Pick<Request, 'acceptJSON' | 'queries' | 'accept' | 'ip'>
-& Pick<Response, 'realStatus'>;
+  set realStatus(val: number) {
+    this.response.realStatus = val;
+  }
+}

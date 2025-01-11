@@ -1,5 +1,3 @@
-'use strict';
-
 const ApiClient = require('./lib/api_client');
 const ApiClient2 = require('./lib/api_client_2');
 const RegistryClient = require('./lib/registry_client');

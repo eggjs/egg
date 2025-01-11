@@ -4,8 +4,9 @@
     "baseUrl": ".",
     "paths": {
       "egg": [
-        "../../../../index"
+        "../../../../src/index.ts"
       ]
     }
-  }
+  },
+  "rootDir": ".",
 }

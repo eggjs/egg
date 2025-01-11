@@ -1,4 +1,5 @@
-import { Application } from 'egg';
+// import { Application } from 'egg';
+import { Application } from '../../../../../src/index.js';
 
 export default (app: Application) => {
   const ctx = app.createAnonymousContext();
@@ -22,5 +23,5 @@ export default (app: Application) => {
   new ContextLogger(ctx, app.logger);
 
   class ContextCookies extends app.ContextCookies {};
-  new ContextCookies(ctx);
+  new ContextCookies(ctx, ['foo']);
 };

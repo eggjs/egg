@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = app => {
   app.get('/throw', function () {
     this.body = 'foo';

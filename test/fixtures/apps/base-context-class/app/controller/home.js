@@ -1,9 +1,7 @@
-'use strict';
-
 module.exports = app => {
   return class HomeController extends app.Controller {
-    * show() {
-      yield this.service.home.show();
+    async show() {
+      await this.service.home.show();
       this.ctx.body = 'hello';
       this.logger.debug('debug');
       this.logger.info('appname: %s', this.config.name);

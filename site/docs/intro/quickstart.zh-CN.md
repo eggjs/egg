@@ -228,7 +228,8 @@ module.exports = app => {
 
 在浏览器中启动并访问 [http://localhost:7001/news](http://localhost:7001/news) 即可看到渲染后的页面。
 
-**提示：** 开发期默认开启了 [development][egg-development] 插件，修改后端代码后，会自动重启 Worker 进程。
+**提示：** 开发期默认开启了 [development][@eggjs/development] 插件，修改后端代码后，会自动重启 Worker 进程。
+
 ### 编写 Service
 
 在实际应用中，Controller 一般不会自己产出数据，也不会包含复杂的逻辑，复杂的过程应抽象为业务逻辑层 [Service](../basics/service.md)。
@@ -456,7 +457,7 @@ $ npm test
 [node.js]: http://nodejs.org
 [egg-bin]: https://github.com/eggjs/egg-bin
 [egg-static]: https://github.com/eggjs/egg-static
-[egg-development]: https://github.com/eggjs/egg-development
+[@eggjs/development]: https://github.com/eggjs/development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
 [nunjucks]: https://mozilla.github.io/nunjucks/

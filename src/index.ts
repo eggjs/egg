@@ -3,16 +3,39 @@
  */
 
 import { BaseContextClass } from './lib/core/base_context_class.js';
-import { startEgg } from './lib/start.js';
+import {
+  startEgg,
+  SingleModeApplication,
+  SingleModeAgent,
+} from './lib/start.js';
 import Helper from './app/extend/helper.js';
 
 // export extends
-export { Helper };
+export {
+  Helper,
+};
+export type {
+  // keep compatible with egg v3
+  Helper as IHelper,
+};
 
 // export types
 export * from './lib/egg.js';
-export * from './lib/type.js';
+export * from './lib/types.js';
 export * from './lib/start.js';
+
+// export errors
+export * from './lib/error/index.js';
+
+// export loggers
+export type {
+  LoggerLevel,
+  EggLogger,
+} from 'egg-logger';
+
+// export httpClients
+export * from './lib/core/httpclient.js';
+export * from './lib/core/context_httpclient.js';
 
 /**
  * Start egg application with cluster mode
@@ -24,7 +47,11 @@ export * from '@eggjs/cluster';
  * Start egg application with single process mode
  * @since 1.0.0
  */
-export const start = startEgg;
+export {
+  startEgg as start,
+  SingleModeApplication,
+  SingleModeAgent,
+};
 
 /**
  * @member {Application} Egg#Application
@@ -54,19 +81,25 @@ export { AppWorkerLoader, AgentWorkerLoader } from './lib/loader/index.js';
  * @member {Controller} Egg#Controller
  * @since 1.1.0
  */
-export const Controller = BaseContextClass;
+export {
+  BaseContextClass as Controller,
+};
 
 /**
  * @member {Service} Egg#Service
  * @since 1.1.0
  */
-export const Service = BaseContextClass;
+export {
+  BaseContextClass as Service,
+};
 
 /**
  * @member {Subscription} Egg#Subscription
  * @since 1.10.0
  */
-export const Subscription = BaseContextClass;
+export {
+  BaseContextClass as Subscription,
+};
 
 /**
  * @member {BaseContextClass} Egg#BaseContextClass

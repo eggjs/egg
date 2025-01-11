@@ -74,7 +74,7 @@ export default {
    */
   development: {
     enable: true,
-    package: 'egg-development',
+    package: '@eggjs/development',
   },
 
   /**
