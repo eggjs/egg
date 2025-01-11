@@ -1,6 +1,4 @@
 export default {
-  // enable plugins
-
   /**
    * app global Error Handling
    * @member {Object} Plugin#onerror
@@ -30,7 +28,7 @@ export default {
    */
   i18n: {
     enable: true,
-    package: 'egg-i18n',
+    package: '@eggjs/i18n',
   },
 
   /**
@@ -118,7 +116,7 @@ export default {
    */
   jsonp: {
     enable: true,
-    package: 'egg-jsonp',
+    package: '@eggjs/jsonp',
   },
 
   /**

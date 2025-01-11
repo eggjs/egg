@@ -162,7 +162,7 @@ Specific consolidation rules can be found in [Configuration](./config.md).
 - Framework has default built-in plugins for enterprise applications [Common plugins](https://eggjs.org/zh-cn/plugins/):
     - [onerror](https://github.com/eggjs/egg-onerror) Uniform Exception Handling
     - [Session](https://github.com/eggjs/egg-session) Session implementation
-    - [i18n](https://github.com/eggjs/egg-i18n) Multilingual
+    - [i18n](https://github.com/eggjs/i18n) Multilingual
     - [watcher](https://github.com/eggjs/watcher) File and folder monitoring
     - [multipart](https://github.com/eggjs/egg-multipart) File Streaming Upload
     - [security](https://github.com/eggjs/egg-security) Security
@@ -170,7 +170,7 @@ Specific consolidation rules can be found in [Configuration](./config.md).
     - [logrotator](https://github.com/eggjs/egg-logrotator) Log segmentation
     - [schedule](https://github.com/eggjs/egg-schedule) Timing tasks
     - [static](https://github.com/eggjs/egg-static) Static server
-    - [jsonp](https://github.com/eggjs/egg-jsonp) jsonp support
+    - [jsonp](https://github.com/eggjs/jsonp) jsonp support
     - [view](https://github.com/eggjs/egg-view) Template Engine
 - More community plugins can be found on GitHub [egg-plugin](https://github.com/topics/egg-plugin).
 

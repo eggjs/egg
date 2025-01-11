@@ -5,6 +5,7 @@ import {
   EggPlugin,
   EggAppInfo,
   start, SingleModeApplication, SingleModeAgent,
+  MiddlewareFunc,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
@@ -27,6 +28,26 @@ expectType<string>(app.config.watcher.eventSources.default);
 // development plugin types
 expectType<boolean>(app.config.development.fastReady);
 expectType<string[]>(app.config.development.watchDirs);
+
+// jsonp plugin types
+expectType<boolean>(app.config.jsonp.csrf);
+expectType<string[] | string>(app.config.jsonp.callback);
+expectType<number>(app.config.jsonp.limit);
+expectType<string | RegExp |(string | RegExp)[]>(app.config.jsonp.whiteList!);
+expectType<boolean>(ctx.acceptJSONP);
+expectType<void>(ctx.createJsonpBody({}));
+expectType<MiddlewareFunc>(app.jsonp());
+expectType<MiddlewareFunc>(app.jsonp({ callback: 'callback' }));
+
+// i18n plugin types
+expectType<boolean>(app.config.i18n.writeCookie);
+expectType<string>(app.config.i18n.defaultLocale);
+expectType<string>(app.gettext('en-us', 'email'));
+expectType<boolean>(app.isSupportLocale('en-us'));
+expectType<string>(ctx.__('email'));
+expectType<string>(ctx.gettext('email %s', 'fengmk2'));
+expectType<string>(ctx.locale);
+expectType<string>(ctx.locale = 'en-us');
 
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;

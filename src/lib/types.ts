@@ -19,6 +19,8 @@ import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 // import plugins types
 import '@eggjs/watcher';
 import '@eggjs/development';
+import '@eggjs/jsonp';
+import '@eggjs/i18n';
 
 export type {
   EggAppInfo,
@@ -210,32 +212,6 @@ export interface EggAppConfig extends EggCoreAppConfig {
   hostHeaders: string;
 
   /**
-   * I18n options
-   */
-  i18n: {
-    /**
-     * default value EN_US
-     */
-    defaultLocale: string;
-    /**
-     * i18n resource file dir, not recommend to change default value
-     */
-    dirs: string[];
-    /**
-     * custom the locale value field, default `query.locale`, you can modify this config, such as `query.lang`
-     */
-    queryField: string;
-    /**
-     * The locale value key in the cookie, default is locale.
-     */
-    cookieField: string;
-    /**
-     * Locale cookie expire time, default `1y`, If pass number value, the unit will be ms
-     */
-    cookieMaxAge: string | number;
-  };
-
-  /**
    * Detect request' ip from specified headers, not case-sensitive. Only worked when config.proxy set to true.
    */
   ipHeaders: string;
@@ -247,21 +223,6 @@ export interface EggAppConfig extends EggCoreAppConfig {
   cookies: {
     sameSite?: string;
     httpOnly?: boolean;
-  };
-
-  /**
-   * jsonp options
-   * @member Config#jsonp
-   * @property {String} callback - jsonp callback method key, default to `_callback`
-   * @property {Number} limit - callback method name's max length, default to `50`
-   * @property {Boolean} csrf - enable csrf check or not. default to false
-   * @property {String|RegExp|Array} whiteList - referrer white list
-   */
-  jsonp: {
-    limit: number;
-    callback: string;
-    csrf: boolean;
-    whiteList: string | RegExp | Array<string | RegExp>;
   };
 
   /**

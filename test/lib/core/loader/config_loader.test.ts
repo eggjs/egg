@@ -22,7 +22,6 @@ describe('test/lib/core/loader/config_loader.test.ts', () => {
       'clusterAppMock',
       'session',
       'securities',
-      'i18n',
     ]);
   });
 
