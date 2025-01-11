@@ -163,10 +163,10 @@ Specific consolidation rules can be found in [Configuration](./config.md).
     - [onerror](https://github.com/eggjs/egg-onerror) Uniform Exception Handling
     - [Session](https://github.com/eggjs/egg-session) Session implementation
     - [i18n](https://github.com/eggjs/egg-i18n) Multilingual
-    - [watcher](https://github.com/eggjs/egg-watcher) File and folder monitoring
+    - [watcher](https://github.com/eggjs/watcher) File and folder monitoring
     - [multipart](https://github.com/eggjs/egg-multipart) File Streaming Upload
     - [security](https://github.com/eggjs/egg-security) Security
-    - [development](https://github.com/eggjs/egg-development) Development Environment Configuration
+    - [development](https://github.com/eggjs/development) Development Environment Configuration
     - [logrotator](https://github.com/eggjs/egg-logrotator) Log segmentation
     - [schedule](https://github.com/eggjs/egg-schedule) Timing tasks
     - [static](https://github.com/eggjs/egg-static) Static server

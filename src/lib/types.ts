@@ -16,8 +16,9 @@ import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
 
-// import @eggjs/watcher types
+// import plugins types
 import '@eggjs/watcher';
+import '@eggjs/development';
 
 export type {
   EggAppInfo,

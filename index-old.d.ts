@@ -35,10 +35,8 @@
 // import 'egg-onerror';
 // import 'egg-session';
 // import 'egg-i18n';
-// import '@eggjs/watcher';
 // import 'egg-multipart';
 // import 'egg-security';
-// import 'egg-development';
 // import 'egg-logrotator';
 // import '@eggjs/schedule';
 // import 'egg-static';

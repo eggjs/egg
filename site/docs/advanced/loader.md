@@ -266,7 +266,7 @@ All the methods mounted on `beforeClose` are called in an inverted order after `
 
 **We don't recommend to use this function in a PROD env, because the process may end before it finishes.**
 
-What's more, we can use [`egg-development`](https://github.com/eggjs/egg-development#loader-trace) to see the loading process.
+What's more, we can use [`@eggjs/development`](https://github.com/eggjs/development#loader-trace) to see the loading process.
 
 ### File-Loading Rules
 

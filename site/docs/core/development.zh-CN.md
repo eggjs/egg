@@ -35,7 +35,7 @@ $ npm i egg-bin --save-dev
 
 本地启动的应用是以 `env: local` 启动的，读取的配置是 `config.default.js` 和 `config.local.js` 合并的结果。
 
-> 注意：本地开发环境依赖 `egg-development` 插件，该插件默认开启，而在其他环境下关闭。配置参考 [config/config.default.js](https://github.com/eggjs/egg-development/blob/master/config/config.default.js)。
+> 注意：本地开发环境依赖 `@eggjs/development` 插件，该插件默认开启，而在其他环境下关闭。配置参考 [config/config.default.ts](https://github.com/eggjs/development/blob/master/src/config/config.default.ts)。
 
 ### 关于 `Reload` 功能
 

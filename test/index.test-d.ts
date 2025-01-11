@@ -19,9 +19,14 @@ expectType<Context>(ctx);
 expectType<HttpClient>(ctx.httpClient);
 expectType<any>(ctx.request.body);
 
+// watcher plugin types
 expectType<object>(app.watcher);
 expectType<string>(app.config.watcher.type);
 expectType<string>(app.config.watcher.eventSources.default);
+
+// development plugin types
+expectType<boolean>(app.config.development.fastReady);
+expectType<string[]>(app.config.development.watchDirs);
 
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
