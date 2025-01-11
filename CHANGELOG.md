@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.0.0](https://github.com/eggjs/egg/compare/v3.24.1...v4.0.0) (2025-01-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop Node.js < 18.19.0 support
+
+part of https://github.com/eggjs/egg/issues/3644
+
+Breaking changes:
+ - Drop Node.js < 18.19.0 support
+ - Drop generator function support
+
+use @eggjs/core@4 https://github.com/eggjs/egg-core/pull/265
+
+### Features
+
+* **doc:** cookies 增加 partitioned、removeUnpartitioned 和 priority 选项文档 ([#5376](https://github.com/eggjs/egg/issues/5376)) ([60eb8a1](https://github.com/eggjs/egg/commit/60eb8a1264f74b9690748f339161af7c5106b72d))
+* refactor with typescript to support cjs ane esm both ([#5328](https://github.com/eggjs/egg/issues/5328)) ([a09b1cf](https://github.com/eggjs/egg/commit/a09b1cfcf47cae8b577a8136c927b42d989c58a5))
+
 ## [3.24.1](https://github.com/eggjs/egg/compare/v3.24.0...v3.24.1) (2024-06-07)
 
 
