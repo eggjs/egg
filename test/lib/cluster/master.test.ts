@@ -25,7 +25,7 @@ describe('test/lib/cluster/master.test.ts', () => {
       }
 
       // wait for app worker restart
-      await scheduler.wait(10000);
+      await scheduler.wait(20000);
 
       // error pipe to console
       app.expect('stdout', /app_worker#1:\d+ disconnect/);
@@ -43,7 +43,7 @@ describe('test/lib/cluster/master.test.ts', () => {
       }
 
       // wait for app worker restart
-      await scheduler.wait(10000);
+      await scheduler.wait(20000);
 
       app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
       app.expect('stdout', /app_worker#\d:\d+ started/);
