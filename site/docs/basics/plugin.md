@@ -168,8 +168,8 @@ Specific consolidation rules can be found in [Configuration](./config.md).
     - [security](https://github.com/eggjs/egg-security) Security
     - [development](https://github.com/eggjs/development) Development Environment Configuration
     - [logrotator](https://github.com/eggjs/egg-logrotator) Log segmentation
-    - [schedule](https://github.com/eggjs/egg-schedule) Timing tasks
-    - [static](https://github.com/eggjs/egg-static) Static server
+    - [schedule](https://github.com/eggjs/schedule) Timing tasks
+    - [static](https://github.com/eggjs/static) Static server
     - [jsonp](https://github.com/eggjs/jsonp) jsonp support
     - [view](https://github.com/eggjs/egg-view) Template Engine
 - More community plugins can be found on GitHub [egg-plugin](https://github.com/topics/egg-plugin).

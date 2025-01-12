@@ -105,7 +105,7 @@ export default {
    */
   static: {
     enable: true,
-    package: 'egg-static',
+    package: '@eggjs/static',
   },
 
   /**

@@ -21,6 +21,7 @@ import '@eggjs/watcher';
 import '@eggjs/development';
 import '@eggjs/jsonp';
 import '@eggjs/i18n';
+import '@eggjs/static';
 
 export type {
   EggAppInfo,

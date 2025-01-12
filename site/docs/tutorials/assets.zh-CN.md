@@ -265,7 +265,7 @@ exports.assets = {
 
 **注意**：此处添加了 `SET_PUBLIC_PATH` 变量，因为 roadhog 这样才能开启 publicPath。
 
-构建的结果根据 `.webpackrc` 配置的 output 决定，示例中是放到 `app/public` 目录下，由 `egg-static` 提供服务。
+构建的结果根据 `.webpackrc` 配置的 output 决定，示例中是放到 `app/public` 目录下，由 `@eggjs/static` 提供服务。
 
 同时根据 `.webpackrc` 配置的 manifest 生成一个 `manifest.json` 文件到 `config` 目录下（Egg 读取此文件作为映射关系）。
 

@@ -38,7 +38,6 @@
 // import 'egg-security';
 // import 'egg-logrotator';
 // import '@eggjs/schedule';
-// import 'egg-static';
 // import 'egg-view';
 
 // declare module 'egg' {
