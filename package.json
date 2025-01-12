@@ -23,7 +23,7 @@
     "@eggjs/cookies": "^3.0.0",
     "@eggjs/core": "^6.2.13",
     "@eggjs/development": "^4.0.0",
-    "@eggjs/i18n": "^3.0.0",
+    "@eggjs/i18n": "^3.0.1",
     "@eggjs/jsonp": "^3.0.0",
     "@eggjs/schedule": "^5.0.2",
     "@eggjs/utils": "^4.2.4",

@@ -921,9 +921,6 @@
 //      */
 //     curl: EggHttpClient['request'];
 
-//     __(key: string, ...values: string[]): string;
-//     gettext(key: string, ...values: string[]): string;
-
 //     /**
 //      * get upload file stream
 //      * @example
