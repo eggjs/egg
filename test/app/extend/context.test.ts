@@ -433,7 +433,10 @@ describe('test/app/extend/context.test.ts', () => {
         const context = app.mockContext() as any;
         context.locals = { a: 'a', b: 'b' };
         context.state = { a: 'aa', c: 'cc' };
-        assert.deepEqual(context.state, { a: 'aa', b: 'b', c: 'cc' });
+        assert.equal(context.state.a, 'aa');
+        assert.equal(context.state.b, 'b');
+        assert.equal(context.state.c, 'cc');
+        assert.deepEqual(Object.keys(context.state), [ '__', 'gettext', 'a', 'b', 'c' ]);
         assert(context.state === context.locals);
       });
     });

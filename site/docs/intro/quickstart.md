@@ -127,10 +127,10 @@ open http://localhost:7001
 
 ### Adding Static Assets
 
-Egg has a built-in plugin called [static][egg-static].
+Egg has a built-in plugin called [static][@eggjs/static].
 In production, it is recommended that you deploy static assets to CDN instead of using this plugin.
 
-[static][egg-static] maps `/public/*` to the directory `app/public/*` by default.
+[static][@eggjs/static] maps `/public/*` to the directory `app/public/*` by default.
 
 In this case, we just need to put our static assets into the directory `app/public`.
 
@@ -476,7 +476,7 @@ Where to go from here? read our documentation to better understand the framework
 
 [node.js]: http://nodejs.org
 [egg-bin]: https://github.com/eggjs/egg-bin
-[egg-static]: https://github.com/eggjs/egg-static
+[@eggjs/static]: https://github.com/eggjs/static
 [@eggjs/development]: https://github.com/eggjs/development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [nunjucks]: https://mozilla.github.io/nunjucks/

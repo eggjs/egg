@@ -51,7 +51,7 @@ As above, directories by conventions of framework:
 - `app/controller/**` used to parse the input from user, return the corresponding results after processing, see [Controller](./controller.md) for details.
 - `app/service/**` used for business logic layer, optional, recommend to use，see [Service](./service.md) for details.
 - `app/middleware/**` uesd for middleware, optional, see [Middleware](./middleware.md) for details.
-- `app/public/**` used to place static resources, optional, see built-in plugin [egg-static](https://github.com/eggjs/egg-static) for details.
+- `app/public/**` used to place static resources, optional, see built-in plugin [@eggjs/static](https://github.com/eggjs/static) for details.
 - `app/extend/**` used for extensions of the framework, optional, see [Extend EGG](./extend.md) for details.
 - `config/config.{env}.js` used to write configuration files, see [Configuration](./config.md) for details.
 - `config/plugin.js` used to configure the plugins that need to be loaded, see [Plugin](./plugin.md) for details.
@@ -60,7 +60,7 @@ As above, directories by conventions of framework:
 
 Directories by conventions of built-in plugins:
 
-- `app/public/**` used to place static resources, optional, see built-in plugin [egg-static](https://github.com/eggjs/egg-static) for details.
+- `app/public/**` used to place static resources, optional, see built-in plugin [@eggjs/static](https://github.com/eggjs/static) for details.
 - `app/schedule/**` used for scheduled tasks, optional, see [Scheduled Task](./schedule.md) for details.
 
 **To customize your own directory specification, see [Loader API](../advanced/loader.md)**

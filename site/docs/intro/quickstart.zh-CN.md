@@ -124,7 +124,7 @@ $ open http://localhost:7001
 
 ### 静态资源
 
-Egg 内置了 [static][egg-static] 插件，线上环境建议部署到 CDN，无需该插件。
+Egg 内置了 [static][@eggjs/static] 插件，线上环境建议部署到 CDN，无需该插件。
 
 static 插件默认映射 `/public/* -> app/public/*` 目录。
 
@@ -456,7 +456,7 @@ $ npm test
 
 [node.js]: http://nodejs.org
 [egg-bin]: https://github.com/eggjs/egg-bin
-[egg-static]: https://github.com/eggjs/egg-static
+[@eggjs/static]: https://github.com/eggjs/static
 [@eggjs/development]: https://github.com/eggjs/development
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
