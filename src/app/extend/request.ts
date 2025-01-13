@@ -11,8 +11,6 @@ const HOST = Symbol('request host');
 const IPS = Symbol('request ips');
 const RE_ARRAY_KEY = /[^\[\]]+\[\]$/;
 
-import './request.types.js';
-
 export default class Request extends EggCoreRequest {
   declare app: Application;
   declare ctx: Context;
@@ -263,6 +261,17 @@ export default class Request extends EggCoreRequest {
    */
   set query(obj: Record<string, string>) {
     this.querystring = querystring.stringify(obj);
+  }
+}
+
+declare module '@eggjs/core' {
+  // add Request overrides types
+  interface Request {
+    body: any;
+    get acceptJSON(): boolean;
+    get query(): Record<string, string>;
+    set query(obj: Record<string, string>);
+    get queries(): Record<string, string[]>;
   }
 }
 

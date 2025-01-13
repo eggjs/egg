@@ -14,8 +14,6 @@ import type Request from './request.js';
 import type Response from './response.js';
 import type Helper from './helper.js';
 
-import './context.types.js';
-
 const HELPER = Symbol('ctx helper');
 const LOCALS = Symbol('ctx locals');
 const LOCALS_LIST = Symbol('ctx localsList');
@@ -304,5 +302,21 @@ export default class Context extends EggCoreContext {
 
   set realStatus(val: number) {
     this.response.realStatus = val;
+  }
+}
+
+declare module '@eggjs/core' {
+  // add Context overrides types
+  interface Context {
+    curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']>;
+    get router(): Router;
+    set router(val: Router);
+    get helper(): Helper;
+    get httpclient(): HttpClient;
+    get httpClient(): HttpClient;
+    getLogger(name: string): EggLogger;
+    get logger(): EggLogger;
+    get coreLogger(): EggLogger;
+    get locals(): Record<string, any>;
   }
 }

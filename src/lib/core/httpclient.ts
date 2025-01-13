@@ -2,6 +2,7 @@ import {
   HttpClient as RawHttpClient,
   RequestURL as HttpClientRequestURL,
   RequestOptions,
+  ClientOptions as HttpClientOptions,
 } from 'urllib';
 import { ms } from 'humanize-ms';
 import type { EggApplicationCore } from '../egg.js';
@@ -9,6 +10,7 @@ import type { EggApplicationCore } from '../egg.js';
 export type {
   HttpClientResponse,
   RequestURL as HttpClientRequestURL,
+  ClientOptions as HttpClientOptions,
 } from 'urllib';
 
 export interface HttpClientRequestOptions extends RequestOptions {
@@ -19,12 +21,17 @@ export interface HttpClientRequestOptions extends RequestOptions {
 export class HttpClient extends RawHttpClient {
   readonly #app: EggApplicationCore & { tracer?: any };
 
-  constructor(app: EggApplicationCore) {
+  constructor(app: EggApplicationCore, options: HttpClientOptions = {}) {
     normalizeConfig(app);
     const config = app.config.httpclient;
-    super({
-      defaultArgs: config.request,
-    });
+    const initOptions: HttpClientOptions = {
+      ...options,
+      defaultArgs: {
+        ...config.request,
+        ...options.defaultArgs,
+      },
+    };
+    super(initOptions);
     this.#app = app;
   }
 

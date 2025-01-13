@@ -31,7 +31,9 @@ import type { EggAppConfig } from './types.js';
 import { create as createMessenger, IMessenger } from './core/messenger/index.js';
 import { ContextHttpClient } from './core/context_httpclient.js';
 import {
-  HttpClient, type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
+  HttpClient,
+  type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
+  type HttpClientOptions,
 } from './core/httpclient.js';
 import { createLoggers } from './core/logger.js';
 import {
@@ -42,8 +44,6 @@ import { BaseContextClass } from './core/base_context_class.js';
 import { BaseHookClass } from './core/base_hook_class.js';
 import type { EggApplicationLoader } from './loader/index.js';
 import { getSourceDirname } from './utils.js';
-
-import './egg.types.js';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
 
@@ -388,6 +388,14 @@ export class EggApplicationCore extends EggCore {
   }
 
   /**
+   * Create a new HttpClient instance with custom options
+   * @param {Object} [options] HttpClient init options
+   */
+  createHttpClient(options?: HttpClientOptions) {
+    return new this.HttpClient(this, options);
+  }
+
+  /**
    * HttpClient instance
    * @see https://github.com/node-modules/urllib
    * @member {HttpClient}
@@ -678,5 +686,21 @@ export class EggApplicationCore extends EggCore {
     context.starttime = Date.now();
     context.performanceStarttime = performance.now();
     return context;
+  }
+}
+
+declare module '@eggjs/core' {
+  // add EggApplicationCore overrides types
+  interface EggCore {
+    inspect(): any;
+    get currentContext(): EggContext | undefined;
+    ctxStorage: AsyncLocalStorage<EggContext>;
+    get logger(): EggLogger;
+    get coreLogger(): EggLogger;
+    getLogger(name: string): EggLogger;
+    createHttpClient(options?: HttpClientOptions): HttpClient;
+    HttpClient: typeof HttpClient;
+    httpClient: HttpClient;
+    curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
   }
 }
