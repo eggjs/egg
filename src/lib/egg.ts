@@ -391,7 +391,7 @@ export class EggApplicationCore extends EggCore {
    * Create a new HttpClient instance with custom options
    * @param {Object} [options] HttpClient init options
    */
-  createHttpClient(options?: HttpClientOptions) {
+  createHttpClient(options?: HttpClientOptions): HttpClient {
     return new this.HttpClient(this, options);
   }
 
@@ -400,9 +400,9 @@ export class EggApplicationCore extends EggCore {
    * @see https://github.com/node-modules/urllib
    * @member {HttpClient}
    */
-  get httpClient() {
+  get httpClient(): HttpClient {
     if (!this.#httpClient) {
-      this.#httpClient = new this.HttpClient(this);
+      this.#httpClient = this.createHttpClient();
     }
     return this.#httpClient;
   }
@@ -700,7 +700,7 @@ declare module '@eggjs/core' {
     getLogger(name: string): EggLogger;
     createHttpClient(options?: HttpClientOptions): HttpClient;
     HttpClient: typeof HttpClient;
-    httpClient: HttpClient;
+    get httpClient(): HttpClient;
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
   }
 }
