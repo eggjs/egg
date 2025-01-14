@@ -634,4 +634,23 @@ describe('test/lib/core/httpclient.test.ts', () => {
       assert(res.status === 200);
     });
   });
+
+  describe('app.createHttpClient(options)', () => {
+    let app: MockApplication;
+    before(() => {
+      app = createApp('apps/httpclient-retry');
+      return app.ready();
+    });
+    after(() => app.close());
+
+    it('should work', async () => {
+      const client1 = app.createHttpClient();
+      const client2 = app.createHttpClient();
+      assert.notEqual(client1, client2);
+      const res = await client1.request(url, {
+        method: 'GET',
+      });
+      assert.equal(res.status, 200);
+    });
+  });
 });
