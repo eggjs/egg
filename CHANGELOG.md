@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.1](https://github.com/eggjs/egg/compare/v4.0.0...v4.0.1) (2025-01-14)
+
+
+### Bug Fixes
+
+* add createHttpClient back to app instance ([#5383](https://github.com/eggjs/egg/issues/5383)) ([e5a697e](https://github.com/eggjs/egg/commit/e5a697e14003d6a12a35a4df4d4ebd6f746ef9ef)), closes [/github.com/eggjs/egg/blob/a612e806019402aa217a1562b5ad847a308e843b/lib/egg.js#L293](https://github.com/eggjs//github.com/eggjs/egg/blob/a612e806019402aa217a1562b5ad847a308e843b/lib/egg.js/issues/L293) [/github.com/eggjs/security/blob/e3408408adec5f8d009d37f75126ed082481d0ac/lib/extend/safe_curl.js#L21](https://github.com/eggjs//github.com/eggjs/security/blob/e3408408adec5f8d009d37f75126ed082481d0ac/lib/extend/safe_curl.js/issues/L21)
+
 ## [4.0.0](https://github.com/eggjs/egg/compare/v3.24.1...v4.0.0) (2025-01-11)
 
 
