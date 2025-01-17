@@ -22,6 +22,8 @@ import '@eggjs/development';
 import '@eggjs/jsonp';
 import '@eggjs/i18n';
 import '@eggjs/static';
+import '@eggjs/security';
+import '@eggjs/schedule';
 
 export type {
   EggAppInfo,
@@ -213,27 +215,6 @@ export interface EggAppConfig extends EggCoreAppConfig {
   pkg: Record<string, any>;
 
   rundir: string;
-
-  security: {
-    domainWhiteList: string[];
-    protocolWhiteList: string[];
-    defaultMiddleware: string;
-    csrf: any;
-    ssrf: {
-      ipBlackList: string[];
-      ipExceptionList: string[];
-      checkAddress?(ip: string): boolean;
-    };
-    xframe: {
-      enable: boolean;
-      value: 'SAMEORIGIN' | 'DENY' | 'ALLOW-FROM';
-    };
-    hsts: any;
-    methodnoallow: { enable: boolean };
-    noopen: { enable: boolean; }
-    xssProtection: any;
-    csp: any;
-  };
 
   siteFile: SiteFileMiddlewareOptions;
   meta: MetaMiddlewareOptions;

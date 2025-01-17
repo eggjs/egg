@@ -124,7 +124,7 @@ One plugin can include:
 
 A stand-alone module plugin can provide rich features with high maintainability. You can almost forget the configuration as the plugin supports configuring the default value in different environments.
 
-[egg-security](https://github.com/eggjs/egg-security) is a typical example.
+[@eggjs/security](https://github.com/eggjs/security) is a typical example.
 
 More about plugin, please check [Plugin](../basics/plugin.md) section.
 

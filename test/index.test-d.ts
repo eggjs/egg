@@ -49,6 +49,9 @@ expectType<string>(ctx.gettext('email %s', 'fengmk2'));
 expectType<string>(ctx.locale);
 expectType<string>(ctx.locale = 'en-us');
 
+// security plugin types
+expectType<string>(app.config.security.csrf.headerName);
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 

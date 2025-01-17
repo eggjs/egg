@@ -197,8 +197,8 @@ await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 ## 安全性（Security）
 
-框架内置的 [egg-security] 插件，提供了常见的安全辅助函数，包括 `helper.shtml`、`surl`、`sjs` 等，强烈建议阅读安全性相关的[文档内容](./security.md)。
+框架内置的 [@eggjs/security] 插件，提供了常见的安全辅助函数，包括 `helper.shtml`、`surl`、`sjs` 等，强烈建议阅读安全性相关的[文档内容](./security.md)。
 
-[egg-security]: https://github.com/eggjs/egg-security
+[@eggjs/security]: https://github.com/eggjs/security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view]: https://github.com/eggjs/egg-view

@@ -211,7 +211,7 @@ exports.post = async (ctx) => {
 
 > **原因**：框架内部针对表单 POST 请求均会验证 CSRF 的值，因此我们在表单提交时，需要带上 CSRF key 进行提交。具体可参考[安全威胁 CSRF 的防范](https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范)。
 
-> **注意**：上述校验是因为框架中内置了安全插件 [egg-security](https://github.com/eggjs/egg-security)，提供了一些默认的安全实践，并且框架的安全插件默认是开启的。如果需要关闭一些安全防范，直接设置相应选项的 `enable` 属性为 `false` 即可。
+> **注意**：上述校验是因为框架中内置了安全插件 [@eggjs/security](https://github.com/eggjs/security)，提供了一些默认的安全实践，并且框架的安全插件默认是开启的。如果需要关闭一些安全防范，直接设置相应选项的 `enable` 属性为 `false` 即可。
 
 > 虽然不推荐，但如果确实需要关闭某些安全功能，可以在 `config/config.default.js` 中设置以下代码：
 

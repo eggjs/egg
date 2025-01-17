@@ -214,7 +214,7 @@ exports.post = async (ctx) => {
 
 > **Reason**: the framework verifies the CSRF value specially for form POST requests, so please submit the CSRF key as well when you submit a form. Refer to [Keep Away from CSRF Threat](https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范) for more detail.
 
-> **Note**: the verification is performed because the framework builds in a security plugin [egg-security](https://github.com/eggjs/egg-security) that provides some default security practices and this plugin is enabled by default. In case you want to disable some security protections, just set the enable attribute to false.
+> **Note**: the verification is performed because the framework builds in a security plugin [@eggjs/security](https://github.com/eggjs/security) that provides some default security practices and this plugin is enabled by default. In case you want to disable some security protections, just set the enable attribute to false.
 
 > "Unless you clearly confirm the consequence, it's not recommended to disable functions provided by the security plugin"
 

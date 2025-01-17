@@ -61,7 +61,7 @@ export default {
    */
   security: {
     enable: true,
-    package: 'egg-security',
+    package: '@eggjs/security',
   },
 
   /**

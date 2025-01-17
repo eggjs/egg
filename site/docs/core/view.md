@@ -218,8 +218,8 @@ await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 ## Security
 
-The built-in plugin [egg-security] provides common security helper functions, including `helper.shtml / surl / sjs` and so on. It's strongly recommended to read [Security](./security.md).
+The built-in plugin [@eggjs/security] provides common security helper functions, including `helper.shtml / surl / sjs` and so on. It's strongly recommended to read [Security](./security.md).
 
-[egg-security]: https://github.com/eggjs/egg-security
+[@eggjs/security]: https://github.com/eggjs/security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view]: https://github.com/eggjs/egg-view
