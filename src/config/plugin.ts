@@ -17,7 +17,7 @@ export default {
    */
   session: {
     enable: true,
-    package: 'egg-session',
+    package: '@eggjs/session',
   },
 
   /**

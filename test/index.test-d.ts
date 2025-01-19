@@ -53,6 +53,9 @@ expectType<string>(ctx.locale = 'en-us');
 // security plugin types
 expectType<string>(app.config.security.csrf.headerName);
 
+// session plugin types
+expectType<boolean>(app.config.session.httpOnly);
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 

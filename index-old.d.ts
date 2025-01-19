@@ -33,7 +33,6 @@
 // } from 'egg-core';
 // import EggCookies = require('egg-cookies');
 // import 'egg-onerror';
-// import 'egg-session';
 // import 'egg-multipart';
 // import 'egg-logrotator';
 // import 'egg-view';

@@ -24,6 +24,7 @@ import '@eggjs/i18n';
 import '@eggjs/static';
 import '@eggjs/security';
 import '@eggjs/schedule';
+import '@eggjs/session';
 
 export type {
   EggAppInfo,
