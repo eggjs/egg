@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.30.1](https://github.com/eggjs/egg/compare/v3.30.0...v3.30.1) (2025-01-19)
+
+
+### Bug Fixes
+
+* redefine urllib export types ([#5386](https://github.com/eggjs/egg/issues/5386)) ([02d9fdb](https://github.com/eggjs/egg/commit/02d9fdb7c127f9e8150bdb8f23977a2effeaf6ae))
+
 ## [3.30.0](https://github.com/eggjs/egg/compare/v3.29.0...v3.30.0) (2025-01-09)
 
 
