@@ -29,7 +29,6 @@ export type {
   EggAppInfo,
 } from '@eggjs/core';
 
-
 type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
 

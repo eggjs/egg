@@ -6,6 +6,7 @@ import {
   EggAppInfo,
   start, SingleModeApplication, SingleModeAgent,
   MiddlewareFunc,
+  Singleton,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
@@ -153,3 +154,15 @@ const singleApp = await start({
 expectType<SingleModeApplication>(singleApp);
 expectType<SingleModeAgent>(singleApp.agent);
 expectType<SingleModeApplication>(singleApp.agent.app);
+
+class Redis {
+  get(key: string) {
+    return key;
+  }
+}
+const redis = {} as Redis & Singleton<Redis>;
+expectType<Redis>(redis);
+expectType<string>(redis.get('foo'));
+expectType<string>(redis.getSingletonInstance('client1').get('foo'));
+expectType<Redis>(redis.getSingletonInstance('client1'));
+// expectType<Redis>(redis.get('client1'));

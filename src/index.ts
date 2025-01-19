@@ -23,6 +23,7 @@ export type {
 export * from './lib/egg.js';
 export * from './lib/types.js';
 export * from './lib/start.js';
+export * from './lib/core/singleton.js';
 
 // export errors
 export * from './lib/error/index.js';
