@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.2](https://github.com/eggjs/egg/compare/v4.0.1...v4.0.2) (2025-01-19)
+
+
+### Bug Fixes
+
+* use @eggjs/security and @eggjs/session ([#5384](https://github.com/eggjs/egg/issues/5384)) ([d11ecd3](https://github.com/eggjs/egg/commit/d11ecd3fde8453ef88f8cf79ca98abafc2da151d))
+
 ## [4.0.1](https://github.com/eggjs/egg/compare/v4.0.0...v4.0.1) (2025-01-14)
 
 
