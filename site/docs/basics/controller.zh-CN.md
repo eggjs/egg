@@ -671,7 +671,7 @@ module.exports = {
 
 Cookie 可以存储每个用户的 Session 来保持跨请求的用户身份。这些信息加密后存储在 Cookie 中。
 
-框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，通过 `ctx.session` 访问或修改用户 Session：
+框架内置了 [Session](https://github.com/eggjs/session) 插件，通过 `ctx.session` 访问或修改用户 Session：
 
 ```js
 class PostController extends Controller {

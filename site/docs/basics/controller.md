@@ -684,7 +684,7 @@ module.exports = {
 
 By using Cookie, we can create an individual Session specific to every user to store user identity information, which will be encrypted then stored in Cookie to perform session persistence across requests.
 
-The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `ctx.session` for us to get or set current user's Session.
+The framework builds in [Session](https://github.com/eggjs/session) plugin, which provides `ctx.session` for us to get or set current user's Session.
 
 ```js
 class PostController extends Controller {

@@ -702,5 +702,6 @@ declare module '@eggjs/core' {
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
+    addSingleton(name: string, create: SingletonCreateMethod): void;
   }
 }

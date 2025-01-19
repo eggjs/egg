@@ -127,7 +127,7 @@ In web applications, Cookie is usually used to identify users.
 So the concept of Session, which is built on top of Cookie,
 was created to specifically handle user identification.
 
-Egg.js built-in supports Session through [egg-session](https://github.com/eggjs/egg-session) plugin.
+Egg.js built-in supports Session through [@eggjs/session](https://github.com/eggjs/session) plugin.
 We can use `ctx.session` to read or modify current user session.
 
 ```js

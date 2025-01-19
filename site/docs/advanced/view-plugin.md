@@ -121,7 +121,7 @@ module.exports = {
 
 The framework provides `ctx.helper` for developer use, but in some cases we want to override the helper method and only take effect when the template is rendered.
 
-In template rendering, we often need to output a user-supplied html fragment, in which case, we often use the `helper.shtml` provided by the `egg-security` plugin.
+In template rendering, we often need to output a user-supplied html fragment, in which case, we often use the `helper.shtml` provided by the `@eggjs/security` plugin.
 
 ```html
 <div>{{ helper.shtml(data.content) | safe }}</div>
@@ -163,9 +163,9 @@ You can [view](https://github.com/eggjs/egg-view-nunjucks/blob/2ee5ee992cfd95bc0
 
 ### Security Related
 
-Templates and security are related and [egg-security] also provides some methods for the template. The template engine can be used according to requirements.
+Templates and security are related and [@eggjs/security] also provides some methods for the template. The template engine can be used according to requirements.
 
-First declare a dependency on [egg-security]:
+First declare a dependency on [@eggjs/security]:
 
 ```json
 {
@@ -183,6 +183,6 @@ Besides, the framework provides [app.injectCsrf](../core/security.md#appinjectcs
 
 As a high-quality plugin, perfect unit testing is indispensable, and we also provide lots of auxiliary tools to make it painless for plugin developers to write tests with, see [unit testing](../core/unittest.md) and [plugin](./plugin.md) docs.
 
-[egg-security]: https://github.com/eggjs/egg-security
+[@eggjs/security]: https://github.com/eggjs/security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view-ejs]: https://github.com/eggjs/egg-view-ejs

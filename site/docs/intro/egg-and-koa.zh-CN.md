@@ -125,7 +125,7 @@ exports.handler = (ctx) => {
 
 在一个独立领域下实现的插件，可以在维护性非常高的情况下提供完善的功能。插件还支持配置各个环境下的默认（最佳）配置，使得使用插件时几乎无需修改配置项。
 
-[egg-security](https://github.com/eggjs/egg-security) 插件是一个典型的例子。
+[@eggjs/security](https://github.com/eggjs/security) 插件是一个典型的例子。
 
 更多关于插件的内容，请查看[插件](../basics/plugin.md)章节。
 

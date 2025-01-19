@@ -22,7 +22,7 @@ The framework itself has a rich solution for common security risks on the Web si
 - customizable white list for safe redirect and url filtering.
 - all kinds of template related tools for preprocessing.
 
-Security plugins [egg-security](https://github.com/eggjs/egg-security) are built into the framework, provides default security practices.
+Security plugins [@eggjs/security](https://github.com/eggjs/security) are built into the framework, provides default security practices.
 
 ### Open or Close the Configuration
 

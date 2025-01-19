@@ -161,11 +161,11 @@ exports.mysql = {
 
 - 框架默认内置了企业级应用[常用的插件](https://eggjs.org/zh-cn/plugins/)：
   - [onerror](https://github.com/eggjs/egg-onerror) 统一异常处理
-  - [Session](https://github.com/eggjs/egg-session) Session 实现
+  - [session](https://github.com/eggjs/session) Session 实现
   - [i18n](https://github.com/eggjs/i18n) 多语言
   - [watcher](https://github.com/eggjs/watcher) 文件和文件夹监控
   - [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
-  - [security](https://github.com/eggjs/egg-security) 安全
+  - [security](https://github.com/eggjs/security) 安全
   - [development](https://github.com/eggjs/development) 开发环境配置
   - [logrotator](https://github.com/eggjs/egg-logrotator) 日志切分
   - [schedule](https://github.com/eggjs/schedule) 定时任务

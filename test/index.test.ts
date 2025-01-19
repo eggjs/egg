@@ -25,6 +25,7 @@ describe('test/index.test.ts', () => {
       'Response',
       'Router',
       'Service',
+      'Singleton',
       'Subscription',
       'start',
       'startCluster',

@@ -17,7 +17,7 @@ export default {
    */
   session: {
     enable: true,
-    package: 'egg-session',
+    package: '@eggjs/session',
   },
 
   /**
@@ -61,7 +61,7 @@ export default {
    */
   security: {
     enable: true,
-    package: 'egg-security',
+    package: '@eggjs/security',
   },
 
   /**

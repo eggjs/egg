@@ -116,7 +116,7 @@ module.exports = {
 
 框架本身提供了 `ctx.helper` 供开发者使用。但在某些情况下，我们希望覆盖 helper 方法，使其仅在模板渲染时生效。
 
-在模板渲染中，我们经常需要输出用户提供的 HTML 片段，这通常需要使用 `egg-security` 插件提供的 `helper.shtml` 方法进行清洗：
+在模板渲染中，我们经常需要输出用户提供的 HTML 片段，这通常需要使用 `@eggjs/security` 插件提供的 `helper.shtml` 方法进行清洗：
 
 ```html
 <div>{{ helper.shtml(data.content) | safe }}</div>
@@ -160,9 +160,9 @@ module.exports = class MyCustomView {
 
 ### 安全相关
 
-模板与安全密不可分。[egg-security] 也为模板提供了一些方法。模板引擎可以根据需求使用这些方法。
+模板与安全密不可分。[@eggjs/security] 也为模板提供了一些方法。模板引擎可以根据需求使用这些方法。
 
-首先声明对 [egg-security] 的依赖：
+首先声明对 [@eggjs/security] 的依赖：
 
 ```json
 {
@@ -180,6 +180,6 @@ module.exports = class MyCustomView {
 
 为了确保插件的高质量，完善的单元测试是不可或缺的。我们也提供了很多辅助工具，以帮助插件开发者毫无障碍地编写测试。具体内容请参见[单元测试](../core/unittest.md)与[插件](./plugin.md)相关章节。
 
-[egg-security]: https://github.com/eggjs/egg-security
+[@eggjs/security]: https://github.com/eggjs/security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view-ejs]: https://github.com/eggjs/egg-view-ejs

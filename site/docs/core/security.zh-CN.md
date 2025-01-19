@@ -22,7 +22,7 @@ Web 应用中存在很多安全风险，这些风险可能会被黑客利用。�
 - 可定制的白名单，用于安全跳转和 url 过滤。
 - 各种模板相关的工具函数做预处理。
 
-框架内置了安全插件 [egg-security](https://github.com/eggjs/egg-security)，提供了默认的安全实践。
+框架内置了安全插件 [@eggjs/security](https://github.com/eggjs/security)，提供了默认的安全实践。
 
 ### 开启与关闭配置
 

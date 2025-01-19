@@ -108,7 +108,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。Cooki
 
 Cookie 通常用作 Web 应用中标识请求方身份的功能，基于此，Web 应用封装了 Session 概念，专用于用户身份识别。
 
-框架内置了 [Session](https://github.com/eggjs/egg-session) 插件，提供了 `ctx.session` 用于访问或修改当前用户的 Session。
+框架内置了 [Session](https://github.com/eggjs/session) 插件，提供了 `ctx.session` 用于访问或修改当前用户的 Session。
 
 ```js
 class HomeController extends Controller {

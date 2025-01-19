@@ -19,8 +19,8 @@ describe('test/lib/core/loader/config_loader.test.ts', () => {
       'static',
       'bodyParser',
       'overrideMethod',
-      'clusterAppMock',
       'session',
+      'clusterAppMock',
       'securities',
     ]);
   });

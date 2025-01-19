@@ -1,19 +1,19 @@
 import assert from 'node:assert';
 import { isAsyncFunction } from 'is-type-of';
-import type { EggApplicationCore } from '../egg.js';
+import type { EggCore } from '@eggjs/core';
 
 export type SingletonCreateMethod =
-  (config: Record<string, any>, app: EggApplicationCore, clientName: string) => unknown | Promise<unknown>;
+  (config: Record<string, any>, app: EggCore, clientName: string) => unknown | Promise<unknown>;
 
 export interface SingletonOptions {
   name: string;
-  app: EggApplicationCore;
+  app: EggCore;
   create: SingletonCreateMethod;
 }
 
-export class Singleton {
-  readonly clients = new Map<string, any>();
-  readonly app: EggApplicationCore;
+export class Singleton<T = any> {
+  readonly clients = new Map<string, T>();
+  readonly app: EggCore;
   readonly create: SingletonCreateMethod;
   readonly name: string;
   readonly options: Record<string, any>;
@@ -46,7 +46,7 @@ export class Singleton {
       return;
     }
 
-    // multi client, use app[name].getInstance(id)
+    // multi client, use app[name].getSingletonInstance(id)
     if (options.clients) {
       Object.keys(options.clients).forEach(id => {
         const client = this.createInstance(options.clients[id], id);
@@ -91,13 +91,18 @@ export class Singleton {
     Reflect.set(this.app, this.name, client);
   }
 
+  /**
+   * @deprecated please use `getSingletonInstance(id)` instead
+   */
   get(id: string) {
-    return this.clients.get(id);
+    return this.clients.get(id)!;
   }
 
-  // alias to `get(id)`
+  /**
+   * Get singleton instance by id
+   */
   getSingletonInstance(id: string) {
-    return this.clients.get(id);
+    return this.clients.get(id)!;
   }
 
   createInstance(config: Record<string, any>, clientName: string) {
@@ -109,7 +114,7 @@ export class Singleton {
       ...this.options.default,
       ...config,
     };
-    return (this.create as SingletonCreateMethod)(config, this.app, clientName);
+    return (this.create as SingletonCreateMethod)(config, this.app, clientName) as T;
   }
 
   async createInstanceAsync(config: Record<string, any>, clientName: string) {
@@ -118,7 +123,7 @@ export class Singleton {
       ...this.options.default,
       ...config,
     };
-    return await this.create(config, this.app, clientName);
+    return await this.create(config, this.app, clientName) as T;
   }
 
   #extendDynamicMethods(client: any) {
