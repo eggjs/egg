@@ -6,8 +6,9 @@ import {
   EggLogger,
   EggHttpClient,
   EggContextHttpClient,
+  HttpClientRequestURL,
+  HttpClientRequestOptions as RequestOptionsNext,
 } from 'egg';
-import { RequestOptions as RequestOptionsNext } from 'urllib-next';
 import { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service
@@ -59,8 +60,8 @@ export default class FooController extends Controller {
     }
   }
 
-  async requestWithHttpclientNext(request: RequestOptionsNext) {
-    let result = await this.app.curl('url', request);
+  async requestWithHttpclientNext(request: RequestOptionsNext, url?: HttpClientRequestURL) {
+    let result = await this.app.curl(url ?? 'url', request);
     result = await this.ctx.curl('url', request);
     result = await this.app.httpclient.curl('url', request);
     result = await this.app.httpclient.request('url', request);
