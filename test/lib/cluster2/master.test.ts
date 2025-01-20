@@ -3,7 +3,7 @@ import { mm } from '@eggjs/mock';
 import coffee, { Coffee } from 'coffee';
 import { MockApplication, cluster, getFilepath } from '../../utils.js';
 
-describe('test/lib/cluster/master.test.ts', () => {
+describe('test/lib/cluster2/master.test.ts', () => {
   afterEach(mm.restore);
 
   describe('app worker die', () => {

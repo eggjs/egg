@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { MockApplication, createApp, getFilepath } from '../../utils.js';
 
-describe('test/lib/cluster/cluster-client-error.test.ts', () => {
+describe('test/lib/cluster1/cluster-client-error.test.ts', () => {
   let app: MockApplication;
   before(async () => {
     app = createApp('apps/cluster-client-error');

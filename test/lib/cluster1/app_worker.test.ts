@@ -13,7 +13,7 @@ const DEFAULT_BAD_REQUEST_HTML = `<html>
   </body>
   </html>`;
 
-describe('test/lib/cluster/app_worker.test.ts', () => {
+describe('test/lib/cluster1/app_worker.test.ts', () => {
   let app: MockApplication;
   before(() => {
     app = cluster('apps/app-server');

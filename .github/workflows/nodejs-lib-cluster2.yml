@@ -1,4 +1,4 @@
-name: CI lib/plugins
+name: CI lib/cluster2
 
 on:
   push:
@@ -13,6 +13,6 @@ jobs:
     with:
       os: 'ubuntu-latest, windows-latest'
       version: '18, 20, 22'
-      test: 'npm run ci:lib/plugins'
+      test: 'npm run ci:lib/cluster2'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

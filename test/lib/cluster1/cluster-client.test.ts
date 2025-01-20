@@ -4,7 +4,7 @@ import { MockApplication, createApp, singleProcessApp } from '../../utils.js';
 
 const innerClient = Symbol.for('ClusterClient#innerClient');
 
-describe('test/lib/cluster/cluster-client.test.ts', () => {
+describe('test/lib/cluster1/cluster-client.test.ts', () => {
   let app: MockApplication;
   describe('common mode', () => {
     before(async () => {
