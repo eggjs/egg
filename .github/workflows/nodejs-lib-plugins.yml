@@ -1,0 +1,18 @@
+name: CI lib/plugins
+
+on:
+  push:
+    branches: [ master, next ]
+  pull_request:
+    branches: [ master, next ]
+
+jobs:
+  Job:
+    name: Node.js
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, windows-latest'
+      version: '18, 20'
+      test: 'npm run ci:lib/plugins'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
