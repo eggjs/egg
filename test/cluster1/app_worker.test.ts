@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
-import { cluster, MockApplication } from '../../utils.js';
+import { cluster, MockApplication } from '../utils.js';
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
   <head><title>400 Bad Request</title></head>
@@ -13,7 +13,7 @@ const DEFAULT_BAD_REQUEST_HTML = `<html>
   </body>
   </html>`;
 
-describe('test/lib/cluster1/app_worker.test.ts', () => {
+describe('test/cluster1/app_worker.test.ts', () => {
   let app: MockApplication;
   before(() => {
     app = cluster('apps/app-server');

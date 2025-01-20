@@ -4,11 +4,11 @@ import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
 import { Transport } from 'egg-logger';
-import { createApp, cluster, getFilepath, MockApplication } from '../utils.js';
+import { createApp, cluster, getFilepath, MockApplication } from './utils.js';
 import assertFile from 'assert-file';
 import { readJSONSync } from 'utility';
 
-describe('test/lib/egg.test.ts', () => {
+describe('test/egg.test.ts', () => {
   afterEach(mm.restore);
 
   describe('dumpConfig()', () => {
