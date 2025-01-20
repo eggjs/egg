@@ -29,12 +29,9 @@ describe('test/app/extend/agent.test.ts', () => {
       assert(config.foo === 'bar');
       assert(config.foo2 === 'bar2');
 
-      try {
+      assert.throws(() => {
         app.agent.dataServiceAsync.createInstance({ foo: 'bar2' });
-        throw new Error('should not execute');
-      } catch (err: any) {
-        assert(err.message === 'egg:singleton dataServiceAsync only support create asynchronous, please use createInstanceAsync');
-      }
+      }, /dataServiceAsync only support synchronous creation, please use createInstanceAsync/);
 
       const ds4 = await app.agent.dataServiceAsync.createInstanceAsync({ foo: 'bar2' });
       config = await ds4.getConfig();
