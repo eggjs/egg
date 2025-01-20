@@ -1,4 +1,4 @@
-name: CI app
+name: CI lib/other
 
 on:
   push:
@@ -13,6 +13,6 @@ jobs:
     with:
       os: 'ubuntu-latest, macos-latest, windows-latest'
       version: '18.19.0, 18, 20, 22'
-      test: 'npm run ci:app'
+      test: 'npm run ci:lib/other'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

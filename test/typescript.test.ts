@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
 // import coffee from 'coffee';
 // import { importResolve } from '@eggjs/utils';
-import { MockApplication, createApp } from '../utils.js';
+import { MockApplication, createApp } from './utils.js';
 
-describe('test/ts/index.test.ts', () => {
+describe('test/typescript.test.ts', () => {
   describe('compiler code', () => {
     let app: MockApplication;
     before(async () => {

@@ -23,7 +23,13 @@ export type {
 export * from './lib/egg.js';
 export * from './lib/types.js';
 export * from './lib/start.js';
-export * from './lib/core/singleton.js';
+
+// export singleton
+export {
+  Singleton,
+  type SingletonCreateMethod,
+  type SingletonOptions,
+} from '@eggjs/core';
 
 // export errors
 export * from './lib/error/index.js';

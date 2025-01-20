@@ -36,9 +36,6 @@ import {
   type HttpClientOptions,
 } from './core/httpclient.js';
 import { createLoggers } from './core/logger.js';
-import {
-  Singleton, type SingletonCreateMethod, type SingletonOptions,
-} from './core/singleton.js';
 import { convertObject } from './core/utils.js';
 import { BaseContextClass } from './core/base_context_class.js';
 import { BaseHookClass } from './core/base_hook_class.js';
@@ -595,26 +592,6 @@ export class EggApplicationCore extends EggCore {
   /* eslint no-empty-function: off */
   set proxy(_) {}
 
-  /**
-   * create a singleton instance
-   * @param {String} name - unique name for singleton
-   * @param {Function|AsyncFunction} create - method will be invoked when singleton instance create
-   */
-  addSingleton(name: string, create: SingletonCreateMethod) {
-    const options: SingletonOptions = {
-      name,
-      create,
-      app: this,
-    };
-    const singleton = new Singleton(options);
-    const initPromise = singleton.init();
-    if (initPromise) {
-      this.beforeStart(async () => {
-        await initPromise;
-      });
-    }
-  }
-
   #patchClusterClient(client: any) {
     const rawCreate = client.create;
     client.create = (...args: any) => {
@@ -695,13 +672,10 @@ declare module '@eggjs/core' {
     inspect(): any;
     get currentContext(): EggContext | undefined;
     ctxStorage: AsyncLocalStorage<EggContext>;
-    get logger(): EggLogger;
-    get coreLogger(): EggLogger;
     getLogger(name: string): EggLogger;
     createHttpClient(options?: HttpClientOptions): HttpClient;
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
-    addSingleton(name: string, create: SingletonCreateMethod): void;
   }
 }
