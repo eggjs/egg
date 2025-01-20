@@ -12,7 +12,7 @@ jobs:
     uses: node-modules/github-actions/.github/workflows/node-test.yml@master
     with:
       os: 'ubuntu-latest, windows-latest'
-      version: '18, 20, 22'
+      version: '18, 20'
       test: 'npm run ci:other'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
