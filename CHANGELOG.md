@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.3](https://github.com/eggjs/egg/compare/v4.0.2...v4.0.3) (2025-01-21)
+
+
+### Bug Fixes
+
+* mv single to @eggjs/core ([#5387](https://github.com/eggjs/egg/issues/5387)) ([b223c7a](https://github.com/eggjs/egg/commit/b223c7a1318f56a1eba8bdfd2903f9199a1bbd97))
+
 ## [4.0.2](https://github.com/eggjs/egg/compare/v4.0.1...v4.0.2) (2025-01-19)
 
 
