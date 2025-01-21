@@ -4,10 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 import { pending } from 'pedding';
-import { Application, CookieLimitExceedError } from '../../src/index.js';
-import { MockApplication, cluster, createApp, getFilepath, startLocalServer } from '../utils.js';
+import { Application, CookieLimitExceedError } from '../src/index.js';
+import { MockApplication, cluster, createApp, getFilepath, startLocalServer } from './utils.js';
 
-describe('test/lib/application.test.ts', () => {
+describe('test/application.test.ts', () => {
   let app: MockApplication;
 
   afterEach(mm.restore);

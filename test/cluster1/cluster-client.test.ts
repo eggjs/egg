@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp, singleProcessApp } from '../../utils.js';
+import { MockApplication, createApp, singleProcessApp } from '../utils.js';
 
 const innerClient = Symbol.for('ClusterClient#innerClient');
 
-describe('test/lib/cluster/cluster-client.test.ts', () => {
+describe('test/cluster1/cluster-client.test.ts', () => {
   let app: MockApplication;
   describe('common mode', () => {
     before(async () => {

@@ -168,4 +168,4 @@ expectType<Redis>(redis);
 expectType<string>(redis.get('foo'));
 expectType<string>(redis.getSingletonInstance('client1').get('foo'));
 expectType<Redis>(redis.getSingletonInstance('client1'));
-// expectType<Redis>(redis.get('client1'));
+expectType<Redis>(redis.get('client1') as unknown as Redis);
