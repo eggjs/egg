@@ -84,7 +84,7 @@ exports.io = {
 > 开启 `redis` 后，程序在启动时会尝试连接到 redis 服务器。此处的 `redis` 仅用于存储连接实例信息，详见 [#server.adapter](https://socket.io/docs/server-api/#server-adapter-value)。
 
 **注意：**
-如果项目中同时使用了 `egg-redis`，请分别配置，不可共用。
+如果项目中同时使用了 `@eggjs/redis`，请分别配置，不可共用。
 
 ### 部署
 

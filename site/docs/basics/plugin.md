@@ -160,7 +160,7 @@ Specific consolidation rules can be found in [Configuration](./config.md).
 ## Plugin List
 
 - Framework has default built-in plugins for enterprise applications [Common plugins](https://eggjs.org/zh-cn/plugins/):
-    - [onerror](https://github.com/eggjs/egg-onerror) Uniform Exception Handling
+    - [onerror](https://github.com/eggjs/onerror) Uniform Exception Handling
     - [session](https://github.com/eggjs/session) Session implementation
     - [i18n](https://github.com/eggjs/i18n) Multilingual
     - [watcher](https://github.com/eggjs/watcher) File and folder monitoring

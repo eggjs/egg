@@ -183,17 +183,17 @@ module.exports = app => {
 };
 ```
 
-例如，通过引入 [egg-redis](https://github.com/eggjs/egg-redis) 和 [egg-session-redis](https://github.com/eggjs/egg-session-redis) 插件，可以将 Session 存储到 redis 中。
+例如，通过引入 [@eggjs/redis](https://github.com/eggjs/redis) 和 [@eggjs/session-redis](https://github.com/eggjs/session-redis) 插件，可以将 Session 存储到 redis 中。
 
 ```js
 // plugin.js
 exports.redis = {
   enable: true,
-  package: 'egg-redis',
+  package: '@eggjs/redis',
 };
 exports.sessionRedis = {
   enable: true,
-  package: 'egg-session-redis',
+  package: '@eggjs/session-redis',
 };
 ```
 
@@ -231,6 +231,3 @@ exports.session = {
   renew: true,
 };
 ```
-
-[egg-redis]: https://github.com/eggjs/egg-redis
-[egg-session-redis]: https://github.com/eggjs/egg-session-redis

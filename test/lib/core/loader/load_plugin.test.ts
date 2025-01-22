@@ -54,9 +54,9 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       from: path.join(baseDir, 'config/plugin.js'),
     });
     assert.equal(
-      appLoader.plugins.onerror.path, path.join(EGG_BASE, 'node_modules/egg-onerror'),
+      appLoader.plugins.onerror.path, path.join(EGG_BASE, 'node_modules/@eggjs/onerror/dist/esm'),
     );
-    assert(appLoader.plugins.onerror.package === 'egg-onerror');
+    assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
     assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
     assert(Array.isArray(appLoader.orderPlugins));
   });

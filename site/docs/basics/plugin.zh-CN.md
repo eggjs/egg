@@ -160,7 +160,7 @@ exports.mysql = {
 ## 插件列表
 
 - 框架默认内置了企业级应用[常用的插件](https://eggjs.org/zh-cn/plugins/)：
-  - [onerror](https://github.com/eggjs/egg-onerror) 统一异常处理
+  - [onerror](https://github.com/eggjs/onerror) 统一异常处理
   - [session](https://github.com/eggjs/session) Session 实现
   - [i18n](https://github.com/eggjs/i18n) 多语言
   - [watcher](https://github.com/eggjs/watcher) 文件和文件夹监控

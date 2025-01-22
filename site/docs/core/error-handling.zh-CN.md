@@ -59,7 +59,7 @@ class HomeController extends Controller {
 
 ## 框架层统一异常处理
 
-框架通过 [onerror](https://github.com/eggjs/egg-onerror) 插件提供统一的错误处理机制。此机制将捕获所有处理方法（Middleware、Controller、Service）中抛出的任何异常，并根据请求预期的响应类型返回不同的错误内容。
+框架通过 [@eggjs/onerror](https://github.com/eggjs/onerror) 插件提供统一的错误处理机制。此机制将捕获所有处理方法（Middleware、Controller、Service）中抛出的任何异常，并根据请求预期的响应类型返回不同的错误内容。
 
 | 请求格式需求 | 环境 | `errorPageUrl` 配置 | 返回内容 |
 | ------------ | ---- | ------------------- | -------- |

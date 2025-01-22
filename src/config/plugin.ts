@@ -6,7 +6,7 @@ export default {
    */
   onerror: {
     enable: true,
-    package: 'egg-onerror',
+    package: '@eggjs/onerror',
   },
 
   /**

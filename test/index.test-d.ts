@@ -59,6 +59,10 @@ expectType<string>(app.config.security.csrf.headerName);
 // session plugin types
 expectType<boolean>(app.config.session.httpOnly);
 
+// onerror plugin types
+expectType<(err: any, ctx: any) => void>(app.config.onerror.html!);
+expectType<string>(app.config.onerror.errorPageUrl as string);
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 
@@ -103,7 +107,8 @@ class AppBoot implements ILifecycleBoot {
   }
 }
 
-const appBoot = new AppBoot(app);
+const app1 = {} as Application;
+const appBoot = new AppBoot(app1);
 expectType<IBoot>(appBoot);
 expectType<ILifecycleBoot>(appBoot);
 

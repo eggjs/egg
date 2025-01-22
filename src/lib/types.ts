@@ -25,7 +25,7 @@ import '@eggjs/static';
 import '@eggjs/security';
 import '@eggjs/schedule';
 import '@eggjs/session';
-
+import '@eggjs/onerror';
 export type {
   EggAppInfo,
 } from '@eggjs/core';
