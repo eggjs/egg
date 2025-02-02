@@ -696,5 +696,6 @@ declare module '@eggjs/core' {
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
     createAnonymousContext(req?: any): EggContext;
     runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown): Promise<void>;
+    readonly messenger: IMessenger;
   }
 }

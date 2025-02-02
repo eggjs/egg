@@ -10,8 +10,11 @@ import {
   Singleton,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
+import { IMessenger } from '../src/lib/core/messenger/IMessenger.js';
 
 const app = {} as EggCore;
+expectType<IMessenger>(app.messenger);
+expectType<IMessenger>(app.messenger.broadcast('test'));
 const ctx = app.createAnonymousContext();
 
 expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
