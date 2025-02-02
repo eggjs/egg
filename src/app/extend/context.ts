@@ -318,5 +318,7 @@ declare module '@eggjs/core' {
     get logger(): EggLogger;
     get coreLogger(): EggLogger;
     get locals(): Record<string, any>;
+    get realStatus(): number;
+    set realStatus(val: number);
   }
 }

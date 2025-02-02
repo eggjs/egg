@@ -1,6 +1,7 @@
 import { expectType } from 'tsd';
+import { EggCore, Context } from '@eggjs/core';
 import {
-  Context, Application, IBoot, ILifecycleBoot,
+  Application, IBoot, ILifecycleBoot,
   LoggerLevel,
   EggPlugin,
   EggAppInfo,
@@ -10,7 +11,7 @@ import {
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 
-const app = {} as Application;
+const app = {} as EggCore;
 const ctx = app.createAnonymousContext();
 
 expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
@@ -20,6 +21,8 @@ expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
 expectType<Context>(ctx);
 expectType<HttpClient>(ctx.httpClient);
 expectType<any>(ctx.request.body);
+expectType<number>(ctx.realStatus);
+expectType<number>(ctx.realStatus = 200);
 
 // watcher plugin types
 expectType<object>(app.watcher);

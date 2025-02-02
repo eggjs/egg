@@ -15,6 +15,7 @@ import type {
   Next, MiddlewareFunc as EggCoreMiddlewareFunc,
   ILifecycleBoot,
 } from '@eggjs/core';
+import { utils as eggUtils } from '@eggjs/core';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import createClusterClient, { close as closeClusterClient } from 'cluster-client';
@@ -642,6 +643,22 @@ export class EggApplicationCore extends EggCore {
   }
 
   /**
+   * Run async function in the anonymous context scope
+   * @see Context#runInAnonymousContextScope
+   * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
+   * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
+   */
+  async runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown) {
+    const ctx = this.createAnonymousContext(req);
+    if (!scope.name) {
+      Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
+    }
+    return await this.ctxStorage.run(ctx, async () => {
+      return await scope(ctx);
+    });
+  }
+
+  /**
    * Create egg context
    * @function EggApplication#createContext
    * @param  {Req} req - node native Request object
@@ -677,5 +694,7 @@ declare module '@eggjs/core' {
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
+    createAnonymousContext(req?: any): EggContext;
+    runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown): Promise<void>;
   }
 }
