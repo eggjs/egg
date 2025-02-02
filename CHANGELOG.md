@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.4](https://github.com/eggjs/egg/compare/v4.0.3...v4.0.4) (2025-02-02)
+
+
+### Bug Fixes
+
+* export createAnonymousContext define ([#5388](https://github.com/eggjs/egg/issues/5388)) ([5d15623](https://github.com/eggjs/egg/commit/5d15623e5e7b412065adff0e02f2d2677289c176))
+
 ## [4.0.3](https://github.com/eggjs/egg/compare/v4.0.2...v4.0.3) (2025-01-21)
 
 
