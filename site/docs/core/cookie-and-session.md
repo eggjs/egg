@@ -220,18 +220,18 @@ module.exports = (app) => {
 ```
 
 The implementation of `sessionStore` can also be encapsulated into a plugin.
-For example, [egg-session-redis] stores Session in Redis.
-To apply it, import [egg-redis] and [egg-session-redis] plugin in your application.
+For example, [@eggjs/session-redis] stores Session in Redis.
+To apply it, import [@eggjs/redis] and [@eggjs/session-redis] plugin in your application.
 
 ```js
 // plugin.js
 exports.redis = {
   enable: true,
-  package: 'egg-redis',
+  package: '@eggjs/redis',
 };
 exports.sessionRedis = {
   enable: true,
-  package: 'egg-session-redis',
+  package: '@eggjs/session-redis',
 };
 ```
 
@@ -283,5 +283,5 @@ module.exports = {
 };
 ```
 
-[egg-redis]: https://github.com/eggjs/egg-redis
-[egg-session-redis]: https://github.com/eggjs/egg-session-redis
+[@eggjs/redis]: https://github.com/eggjs/redis
+[@eggjs/session-redis]: https://github.com/eggjs/session-redis

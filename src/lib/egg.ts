@@ -690,11 +690,13 @@ declare module '@eggjs/core' {
     get currentContext(): EggContext | undefined;
     ctxStorage: AsyncLocalStorage<EggContext>;
     getLogger(name: string): EggLogger;
+    get loggers(): EggLoggers;
     createHttpClient(options?: HttpClientOptions): HttpClient;
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;
     curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
     createAnonymousContext(req?: any): EggContext;
     runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown): Promise<void>;
+    readonly messenger: IMessenger;
   }
 }

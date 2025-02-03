@@ -61,7 +61,7 @@ For convenience of locating problems, exceptions must be guaranteed to be Error 
 
 ## Egg Takes Charge of Exceptions
 
-[egg-onerror](https://github.com/eggjs/egg-onerror), one of Egg's plugin, handles all exceptions thrown in Middleware, Controller and Service, and returns the error as response based on "Accept" in request header field.
+[@eggjs/onerror](https://github.com/eggjs/onerror), one of Egg's plugin, handles all exceptions thrown in Middleware, Controller and Service, and returns the error as response based on "Accept" in request header field.
 
 | Accept       | ENV              | errorPageUrl | response                                             |
 | ------------ | ---------------- | ------------ | ---------------------------------------------------- |

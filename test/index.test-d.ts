@@ -10,8 +10,13 @@ import {
   Singleton,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
+import { IMessenger } from '../src/lib/core/messenger/IMessenger.js';
 
 const app = {} as EggCore;
+expectType<IMessenger>(app.messenger);
+expectType<IMessenger>(app.messenger.broadcast('test'));
+expectType<void>(app.loggers.reload());
+
 const ctx = app.createAnonymousContext();
 
 expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
@@ -59,6 +64,10 @@ expectType<string>(app.config.security.csrf.headerName);
 // session plugin types
 expectType<boolean>(app.config.session.httpOnly);
 
+// onerror plugin types
+expectType<(err: any, ctx: any) => void>(app.config.onerror.html!);
+expectType<string>(app.config.onerror.errorPageUrl as string);
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 
@@ -103,7 +112,8 @@ class AppBoot implements ILifecycleBoot {
   }
 }
 
-const appBoot = new AppBoot(app);
+const app1 = {} as Application;
+const appBoot = new AppBoot(app1);
 expectType<IBoot>(appBoot);
 expectType<ILifecycleBoot>(appBoot);
 

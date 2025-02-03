@@ -84,7 +84,7 @@ exports.io = {
 > Here `redis` is only used to store connection instance information, see [# server.adapter](https://socket.io/docs/server-api/#server-adapter-value)
 
 **Note:**
-If the project also uses the `egg-redis`, please configure it separately. Do not share it.
+If the project also uses the `@eggjs/redis`, please configure it separately. Do not share it.
 
 ### Deployment
 
