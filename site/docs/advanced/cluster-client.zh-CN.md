@@ -69,7 +69,7 @@ win /   +------------------+  \ lose
 客户端示例
 
 ```js
-const Base = require('sdk-base');
+const { Base } = require('sdk-base');
 
 class Client extends Base {
   constructor(options) {
@@ -165,8 +165,8 @@ Leader 和 Follower 通过下面的协议进行数据交换：
 
 ```js
 // registry_client.js
-const URL = require('url');
-const Base = require('sdk-base');
+const { parse } = require('node:url');
+const { Base } = require('sdk-base');
 
 class RegistryClient extends Base {
   constructor(options) {
@@ -233,7 +233,7 @@ class RegistryClient extends Base {
     if (changed) {
       this.emit(
         key,
-        this._registered.get(key).map(url => URL.parse(url, true)),
+        this._registered.get(key).map(url => parse(url, true)),
       );
     }
   }

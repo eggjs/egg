@@ -13,6 +13,7 @@ import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
 import {
   startEgg, StartEggOptions,
+  type SingleModeAgent,
 } from '../src/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -24,6 +25,10 @@ export async function rimraf(target: string) {
 }
 
 export { MockApplication, MockOptions, MockClusterOptions, mm };
+export interface SingleModeApplication extends MockApplication {
+  agent: SingleModeAgent;
+}
+
 export const restore = () => mm.restore();
 
 export function app(name: string | MockOptions, options?: MockOptions) {
@@ -54,7 +59,7 @@ export function cluster(name: string | MockClusterOptions, options?: MockCluster
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<MockApplication> {
+export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<SingleModeApplication> {
   if (!baseDir.startsWith('/')) {
     baseDir = path.join(__dirname, 'fixtures', baseDir);
   }
@@ -62,7 +67,7 @@ export async function singleProcessApp(baseDir: string, options: StartEggOptions
   options.baseDir = baseDir;
   const app = await startEgg(options);
   Reflect.set(app, 'httpRequest', () => request(app.callback()));
-  return app as unknown as MockApplication;
+  return app as unknown as SingleModeApplication;
 }
 
 let localServer: http.Server | undefined;

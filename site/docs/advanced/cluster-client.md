@@ -70,7 +70,7 @@ We abstract the client interface into the following two broad categories, which 
 Client example
 
 ```js
-const Base = require('sdk-base');
+const { Base } = require('sdk-base');
 
 class Client extends Base {
   constructor(options) {
@@ -168,8 +168,8 @@ In the following I will use a simple example to introduce how to make a client s
 
 ```js
 // registry_client.js
-const URL = require('url');
-const Base = require('sdk-base');
+const { parse } = require('node:url');
+const { Base } = require('sdk-base');
 
 class RegistryClient extends Base {
   constructor(options) {
@@ -236,7 +236,7 @@ class RegistryClient extends Base {
     if (changed) {
       this.emit(
         key,
-        this._registered.get(key).map((url) => URL.parse(url, true)),
+        this._registered.get(key).map((url) => parse(url, true)),
       );
     }
   }

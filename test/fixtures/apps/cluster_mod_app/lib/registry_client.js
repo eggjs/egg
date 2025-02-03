@@ -1,7 +1,5 @@
-'use strict';
-
-const URL = require('url');
-const Base = require('sdk-base');
+const { parse } = require('node:url');
+const { Base } = require('sdk-base');
 
 class RegistryClient extends Base {
   constructor() {
@@ -45,7 +43,7 @@ class RegistryClient extends Base {
     } else {
       this._registered.set(key, [reg.publishData]);
     }
-    this.emit(key, this._registered.get(key).map(url => new URL.parse(url, true)));
+    this.emit(key, this._registered.get(key).map(url => parse(url, true)));
   }
 
   close() {
