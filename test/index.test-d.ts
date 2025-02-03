@@ -1,5 +1,6 @@
 import { expectType } from 'tsd';
 import { EggCore, Context } from '@eggjs/core';
+import { LogRotator } from '@eggjs/logrotator';
 import {
   Application, IBoot, ILifecycleBoot,
   LoggerLevel,
@@ -16,6 +17,13 @@ const app = {} as EggCore;
 expectType<IMessenger>(app.messenger);
 expectType<IMessenger>(app.messenger.broadcast('test'));
 expectType<void>(app.loggers.reload());
+
+class MyLogRotator extends LogRotator {
+  async getRotateFiles() {
+    return new Map();
+  }
+}
+expectType<LogRotator>(new MyLogRotator({ app }));
 
 const ctx = app.createAnonymousContext();
 

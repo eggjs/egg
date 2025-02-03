@@ -14,11 +14,12 @@ describe('test/lib/plugins/logrotator.test.ts', () => {
   after(() => app.close());
 
   it('should rotate log file default', async () => {
-    const file = importResolve('egg-logrotator/app/schedule/rotate_by_file.js');
+    const file = importResolve('@eggjs/logrotator/dist/esm/app/schedule/rotate_by_file.js');
     // console.log('job', file);
     await app.runSchedule(file);
     await scheduler.wait(1000);
     const files = (await fs.readdir(app.config.logger.dir)).filter(f => f.includes('.log.'));
+    console.log(files);
     assert(files.length > 0);
     files.forEach(file => {
       assert(/\.log\.\d{4}-\d{2}-\d{2}$/.test(file));

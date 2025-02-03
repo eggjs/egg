@@ -312,7 +312,7 @@ Performance is what we always consider as important part in our services so that
 
 ## Log Sharding
 
-One common requirement you can find in enterprise logs is automatic log sharding, which offers a convenient way for management. Luckily, Egg takes [egg-logrotator](https://github.com/eggjs/egg-logrotator) as built-in solution to meet the need.
+One common requirement you can find in enterprise logs is automatic log sharding, which offers a convenient way for management. Luckily, Egg takes [@eggjs/logrotator](https://github.com/eggjs/logrotator) as built-in solution to meet the need.
 
 ### Daily Sharding
 
@@ -369,4 +369,4 @@ Generally, requests are frequent events to Web services, so writing logs into di
 
 > Logs will be firstly transferred into memory, and then Egg will asynchronously write them into files by second.
 
-More about [egg-logger](https://github.com/eggjs/egg-logger) and [egg-logrotator](https://github.com/eggjs/egg-logrotator)。
+More about [egg-logger](https://github.com/eggjs/egg-logger) and [@eggjs/logrotator](https://github.com/eggjs/logrotator)。

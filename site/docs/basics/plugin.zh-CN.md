@@ -167,7 +167,7 @@ exports.mysql = {
   - [multipart](https://github.com/eggjs/egg-multipart) 文件流式上传
   - [security](https://github.com/eggjs/security) 安全
   - [development](https://github.com/eggjs/development) 开发环境配置
-  - [logrotator](https://github.com/eggjs/egg-logrotator) 日志切分
+  - [logrotator](https://github.com/eggjs/logrotator) 日志切分
   - [schedule](https://github.com/eggjs/schedule) 定时任务
   - [static](https://github.com/eggjs/static) 静态服务器
   - [jsonp](https://github.com/eggjs/jsonp) jsonp 支持

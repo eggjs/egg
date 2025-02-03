@@ -306,9 +306,10 @@ app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ER
 ```
 
 上述代码示例中，虽然比较简单，但是在实际使用时需要考虑性能问题。通常采取先暂存至内存，再定时上传的策略，以此优化性能。
+
 ## 日志切割
 
-企业级日志一个最常见的需求之一是对日志进行自动切割，以方便管理。框架对日志切割的支持由 [egg-logrotator](https://github.com/eggjs/egg-logrotator) 插件提供。
+企业级日志一个最常见的需求之一是对日志进行自动切割，以方便管理。框架对日志切割的支持由 [@eggjs/logrotator](https://github.com/eggjs/logrotator) 插件提供。
 
 ### 按天切割
 
@@ -369,4 +370,4 @@ module.exports = (appInfo) => {
 
 > 日志同步写入内存，异步每隔一段时间（默认 1 秒）进行刷盘。
 
-更多细节，请参考 [egg-logger](https://github.com/eggjs/egg-logger) 和 [egg-logrotator](https://github.com/eggjs/egg-logrotator)。
+更多细节，请参考 [egg-logger](https://github.com/eggjs/egg-logger) 和 [@eggjs/logrotator](https://github.com/eggjs/logrotator)。
