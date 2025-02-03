@@ -83,7 +83,7 @@ export default {
    */
   logrotator: {
     enable: true,
-    package: 'egg-logrotator',
+    package: '@eggjs/logrotator',
   },
 
   /**

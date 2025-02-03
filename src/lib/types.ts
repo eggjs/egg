@@ -26,6 +26,8 @@ import '@eggjs/security';
 import '@eggjs/schedule';
 import '@eggjs/session';
 import '@eggjs/onerror';
+import '@eggjs/logrotator';
+
 export type {
   EggAppInfo,
 } from '@eggjs/core';

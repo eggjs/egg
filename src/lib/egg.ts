@@ -698,5 +698,8 @@ declare module '@eggjs/core' {
     createAnonymousContext(req?: any): EggContext;
     runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown): Promise<void>;
     readonly messenger: IMessenger;
+    Subscription: typeof BaseContextClass;
+    BaseHookClass: typeof BaseHookClass;
+    Boot: typeof BaseHookClass;
   }
 }

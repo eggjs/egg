@@ -167,7 +167,7 @@ Specific consolidation rules can be found in [Configuration](./config.md).
     - [multipart](https://github.com/eggjs/egg-multipart) File Streaming Upload
     - [security](https://github.com/eggjs/security) Security
     - [development](https://github.com/eggjs/development) Development Environment Configuration
-    - [logrotator](https://github.com/eggjs/egg-logrotator) Log segmentation
+    - [logrotator](https://github.com/eggjs/logrotator) Log segmentation
     - [schedule](https://github.com/eggjs/schedule) Timing tasks
     - [static](https://github.com/eggjs/static) Static server
     - [jsonp](https://github.com/eggjs/jsonp) jsonp support

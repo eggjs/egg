@@ -1,5 +1,6 @@
 import { expectType } from 'tsd';
 import { EggCore, Context } from '@eggjs/core';
+import { LogRotator } from '@eggjs/logrotator';
 import {
   Application, IBoot, ILifecycleBoot,
   LoggerLevel,
@@ -67,6 +68,22 @@ expectType<boolean>(app.config.session.httpOnly);
 // onerror plugin types
 expectType<(err: any, ctx: any) => void>(app.config.onerror.html!);
 expectType<string>(app.config.onerror.errorPageUrl as string);
+
+// logrotator plugin types
+class MyLogRotator extends LogRotator {
+  async getRotateFiles() {
+    return new Map();
+  }
+}
+expectType<LogRotator>(new MyLogRotator({ app }));
+expectType<boolean>(app.config.logrotator.disableRotateByDay);
+expectType<number>(app.config.logrotator.maxDays);
+expectType<number>(app.config.logrotator.maxFileSize);
+expectType<number>(app.config.logrotator.maxFiles);
+expectType<number>(app.config.logrotator.rotateDuration);
+expectType<boolean>(app.config.logrotator.gzip);
+expectType<string>(app.config.logrotator.hourDelimiter);
+expectType<string[] | null>(app.config.logrotator.filesRotateBySize);
 
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
