@@ -85,6 +85,13 @@ expectType<boolean>(app.config.logrotator.gzip);
 expectType<string>(app.config.logrotator.hourDelimiter);
 expectType<string[] | null>(app.config.logrotator.filesRotateBySize);
 
+// multipart plugin types
+expectType<boolean>(app.config.multipart.cleanSchedule.disable);
+expectType<string>(app.config.multipart.cleanSchedule.cron);
+expectType<string>(app.config.multipart.defaultCharset);
+expectType<'file' | 'stream'>(app.config.multipart.mode);
+
+
 class AppBoot implements ILifecycleBoot {
   private readonly app: Application;
 

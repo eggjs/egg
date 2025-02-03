@@ -311,9 +311,10 @@ module.exports = {
 **注意：调整 bodyParser 支持的 body 长度时，如果应用之前有一层反向代理（如 Nginx），同样需要调整配置确保支持相等长度的请求 body。**
 
 **常见错误：将 `ctx.request.body` 与 `ctx.body` 混淆，后者实际上是 `ctx.response.body` 的简写。**
+
 ### 获取上传的文件
 
-请求体除了可以带参数之外，还可以发送文件。通常情况下，浏览器会通过 `Multipart/form-data` 格式发送文件。通过内置的 [Multipart](https://github.com/eggjs/egg-multipart) 插件，框架支持获取用户上传的文件。我们为你提供了两种方式：
+请求体除了可以带参数之外，还可以发送文件。通常情况下，浏览器会通过 `Multipart/form-data` 格式发送文件。通过内置的 [Multipart](https://github.com/eggjs/multipart) 插件，框架支持获取用户上传的文件。我们为你提供了两种方式：
 
 #### File 模式
 
@@ -579,7 +580,8 @@ module.exports = {
 
 **注意：当重写了 whitelist 时，fileExtensions 不生效。**
 
-欲了解更多有关的技术细节和信息，请参阅 [Egg-Multipart](https://github.com/eggjs/egg-multipart)。
+欲了解更多有关的技术细节和信息，请参阅 [@eggjs/multipart](https://github.com/eggjs/multipart)。
+
 ### Header
 
 除了从 URL 和请求 body 上获取参数之外，还有许多参数是通过请求 header 传递的。框架提供了一些辅助属性和方法来获取：

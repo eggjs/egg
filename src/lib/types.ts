@@ -27,6 +27,7 @@ import '@eggjs/schedule';
 import '@eggjs/session';
 import '@eggjs/onerror';
 import '@eggjs/logrotator';
+import '@eggjs/multipart';
 
 export type {
   EggAppInfo,
@@ -80,6 +81,20 @@ export interface HttpClientConfig {
    */
   useHttpClientNext?: boolean;
 }
+
+/**
+ * Powerful Partial, Support adding ? modifier to a mapped property in deep level
+ * @example
+ * import { PowerPartial, EggAppConfig } from 'egg';
+ *
+ * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
+ * type EggConfig = PowerPartial<EggAppConfig>
+ */
+export type PowerPartial<T> = {
+  [U in keyof T]?: T[U] extends object
+    ? PowerPartial<T[U]>
+    : T[U]
+};
 
 export interface EggAppConfig extends EggCoreAppConfig {
   workerStartTimeout: number;

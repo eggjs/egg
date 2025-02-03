@@ -164,7 +164,7 @@ Specific consolidation rules can be found in [Configuration](./config.md).
     - [session](https://github.com/eggjs/session) Session implementation
     - [i18n](https://github.com/eggjs/i18n) Multilingual
     - [watcher](https://github.com/eggjs/watcher) File and folder monitoring
-    - [multipart](https://github.com/eggjs/egg-multipart) File Streaming Upload
+    - [multipart](https://github.com/eggjs/multipart) File Streaming Upload
     - [security](https://github.com/eggjs/security) Security
     - [development](https://github.com/eggjs/development) Development Environment Configuration
     - [logrotator](https://github.com/eggjs/logrotator) Log segmentation

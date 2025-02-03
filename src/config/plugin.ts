@@ -50,7 +50,7 @@ export default {
    */
   multipart: {
     enable: true,
-    package: 'egg-multipart',
+    package: '@eggjs/multipart',
   },
 
   /**

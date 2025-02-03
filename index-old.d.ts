@@ -32,7 +32,6 @@
 //   BaseContextClass as CoreBaseContextClass,
 // } from 'egg-core';
 // import EggCookies = require('egg-cookies');
-// import 'egg-multipart';
 // import 'egg-view';
 
 // declare module 'egg' {

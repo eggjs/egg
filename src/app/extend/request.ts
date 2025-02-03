@@ -17,7 +17,7 @@ export default class Request extends EggCoreRequest {
   declare response: Response;
 
   /**
-   * Request body, parsed from koa-bodyparser or egg-multipart
+   * Request body, parsed from koa-bodyparser or @eggjs/multipart
    */
   declare body: any;
 
