@@ -18,8 +18,12 @@ describe('test/lib/core/view.test.ts', () => {
     describe('use', () => {
       it('should register success', () => {
         class View {
-          render() {}
-          renderString() {}
+          async render() {
+            return '';
+          }
+          async renderString() {
+            return '';
+          }
         }
         app.view.use('e', View);
         // assert(app.view.has('e'));
