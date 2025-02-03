@@ -690,6 +690,7 @@ declare module '@eggjs/core' {
     get currentContext(): EggContext | undefined;
     ctxStorage: AsyncLocalStorage<EggContext>;
     getLogger(name: string): EggLogger;
+    get loggers(): EggLoggers;
     createHttpClient(options?: HttpClientOptions): HttpClient;
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;

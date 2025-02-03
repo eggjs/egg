@@ -15,6 +15,8 @@ import { IMessenger } from '../src/lib/core/messenger/IMessenger.js';
 const app = {} as EggCore;
 expectType<IMessenger>(app.messenger);
 expectType<IMessenger>(app.messenger.broadcast('test'));
+expectType<void>(app.loggers.reload());
+
 const ctx = app.createAnonymousContext();
 
 expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
