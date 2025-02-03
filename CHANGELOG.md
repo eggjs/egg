@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.6](https://github.com/eggjs/egg/compare/v4.0.5...v4.0.6) (2025-02-03)
+
+
+### Bug Fixes
+
+* use @eggjs/logrotator ([#5390](https://github.com/eggjs/egg/issues/5390)) ([351a022](https://github.com/eggjs/egg/commit/351a0220f15874094f7f99a6cef7bbd50e2b3333))
+
 ## [4.0.5](https://github.com/eggjs/egg/compare/v4.0.4...v4.0.5) (2025-02-03)
 
 
