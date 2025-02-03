@@ -28,6 +28,7 @@ import '@eggjs/session';
 import '@eggjs/onerror';
 import '@eggjs/logrotator';
 import '@eggjs/multipart';
+import '@eggjs/view';
 
 export type {
   EggAppInfo,

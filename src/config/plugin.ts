@@ -127,6 +127,6 @@ export default {
    */
   view: {
     enable: true,
-    package: 'egg-view',
+    package: '@eggjs/view',
   },
 };
