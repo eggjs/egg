@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.5](https://github.com/eggjs/egg/compare/v4.0.4...v4.0.5) (2025-02-03)
+
+
+### Bug Fixes
+
+* use @eggjs/onerror ([#5389](https://github.com/eggjs/egg/issues/5389)) ([762e301](https://github.com/eggjs/egg/commit/762e3015120883212c1266054469ec509e7c369f))
+
 ## [4.0.4](https://github.com/eggjs/egg/compare/v4.0.3...v4.0.4) (2025-02-02)
 
 
