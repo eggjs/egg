@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.9](https://github.com/eggjs/egg/compare/v4.0.8...v4.0.9) (2025-02-04)
+
+
+### Bug Fixes
+
+* logger should not Partial ([#5393](https://github.com/eggjs/egg/issues/5393)) ([8e433d9](https://github.com/eggjs/egg/commit/8e433d9967e73837eedaffc163d42f4a5e167b47))
+
 ## [4.0.8](https://github.com/eggjs/egg/compare/v4.0.7...v4.0.8) (2025-02-04)
 
 
