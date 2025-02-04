@@ -8,6 +8,7 @@ order: 5
 本文将阐述框架对 View 插件的规范约束。我们可以依此来封装对应的模板引擎插件。以下以 [egg-view-ejs](https://github.com/eggjs/egg-view-ejs) 为例。
 
 ## 插件目录结构
+
 ```bash
 egg-view-ejs
 ├── config

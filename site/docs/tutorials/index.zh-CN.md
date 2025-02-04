@@ -53,7 +53,7 @@ $ npm init egg --type=simple
 [egg-sequelize]: https://github.com/eggjs/egg-sequelize
 [egg-mongoose]: https://github.com/eggjs/egg-mongoose
 [egg-mysql]: https://github.com/eggjs/egg-mysql
-[egg-view]: https://github.com/eggjs/egg-view
+[egg-view]: https://github.com/eggjs/view
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 [egg-view-ejs]: https://github.com/eggjs/egg-view-ejs
 [egg-view-handlebars]: https://github.com/eggjs/egg-view-handlebars

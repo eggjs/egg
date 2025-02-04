@@ -706,8 +706,9 @@ describe('typescript', () => {
 以下几个项目可作为单元测试参考：
 
 - [https://github.com/eggjs/egg](https://github.com/eggjs/egg)
-- [https://github.com/eggjs/egg-view](https://github.com/eggjs/egg-view)
+- [https://github.com/eggjs/view](https://github.com/eggjs/view)
 - [https://github.com/eggjs/egg-logger](https://github.com/eggjs/egg-logger)
+
 ### 编译速度慢？
 
 根据我们的实践，`ts-node` 是目前相对较优的解决方案，既不用另起终端执行 `tsc`，也能获得还能接受的启动速度（仅限于 `ts-node@7`，新的版本由于把文件缓存去掉了，导致特别慢（[#754](https://github.com/TypeStrong/ts-node/issues/754)），因此未升级）。

@@ -61,7 +61,7 @@ while ((part = await parts()) != null) {
 }
 ```
 
-- [egg-multipart#upload-multiple-files](https://github.com/eggjs/egg-multipart#upload-multiple-files)
+- [egg-multipart#upload-multiple-files](https://github.com/eggjs/multipart#upload-multiple-files)
 
 ### egg-userrole
 

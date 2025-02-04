@@ -50,7 +50,7 @@ export default {
    */
   multipart: {
     enable: true,
-    package: 'egg-multipart',
+    package: '@eggjs/multipart',
   },
 
   /**
@@ -127,6 +127,6 @@ export default {
    */
   view: {
     enable: true,
-    package: 'egg-view',
+    package: '@eggjs/view',
   },
 };

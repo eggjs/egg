@@ -222,4 +222,4 @@ The built-in plugin [@eggjs/security] provides common security helper functions,
 
 [@eggjs/security]: https://github.com/eggjs/security
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
-[egg-view]: https://github.com/eggjs/egg-view
+[egg-view]: https://github.com/eggjs/view
