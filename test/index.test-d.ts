@@ -146,6 +146,9 @@ class AppBoot implements ILifecycleBoot {
 }
 
 const app1 = {} as Application;
+
+expectType<boolean>(app1.config.httpclient.allowH2!);
+
 const appBoot = new AppBoot(app1);
 expectType<IBoot>(appBoot);
 expectType<ILifecycleBoot>(appBoot);

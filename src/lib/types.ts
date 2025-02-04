@@ -81,6 +81,10 @@ export interface HttpClientConfig {
    * @deprecated keep compatible with egg 3.x, no more used
    */
   useHttpClientNext?: boolean;
+  /**
+   * Allow http2
+   */
+  allowH2?: boolean;
 }
 
 /**
