@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { EggAppInfo } from '@eggjs/core';
-import type { EggAppConfig } from '../lib/types.js';
+import type { EggAppInfo, Context } from '@eggjs/core';
+import type { EggAppConfig, PowerPartial } from '../lib/types.js';
 import { getSourceFile } from '../lib/utils.js';
 
 /**
@@ -10,7 +10,7 @@ import { getSourceFile } from '../lib/utils.js';
  * @since 1.0.0
  */
 export default (appInfo: EggAppInfo) => {
-  const config: Partial<EggAppConfig> = {
+  const config: PowerPartial<EggAppConfig> = {
     /**
      * The environment of egg
      * @member {String} Config#env
@@ -28,7 +28,7 @@ export default (appInfo: EggAppInfo) => {
     name: appInfo.name,
 
     /**
-     * The key that signing cookies. It can contain multiple keys seperated by `,`.
+     * The key that signing cookies. It can contain multiple keys separated by `,`.
      * @member {String} Config#keys
      * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
      * @default
@@ -237,7 +237,7 @@ export default (appInfo: EggAppInfo) => {
       parameterLimit: 1000,
     },
     onProtoPoisoning: 'error',
-    onerror(err, ctx) {
+    onerror(err: any, ctx: Context) {
       err.message = `${err.message}, check bodyParser config`;
       if (ctx.status === 404) {
         // set default status to 400, meaning client bad request
@@ -299,7 +299,7 @@ export default (appInfo: EggAppInfo) => {
    * @property {Number} httpAgent.maxFreeSockets - http agent max free socket number of one host, default is 256.
    *
    * @property {Boolean} httpsAgent.keepAlive - Enable https agent keepalive or not, default is true
-   * @property {Number} httpsAgent.freeSocketTimeout - httpss agent socket keepalive max free time, default is 4000 ms.
+   * @property {Number} httpsAgent.freeSocketTimeout - https agent socket keepalive max free time, default is 4000 ms.
    * @property {Number} httpsAgent.maxSockets - https agent max socket number of one host, default is `Number.MAX_SAFE_INTEGER` @ses https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/MAX_SAFE_INTEGER
    * @property {Number} httpsAgent.maxFreeSockets - https agent max free socket number of one host, default is 256.
    * @property {Boolean} useHttpClientNext - use urllib@3 HttpClient

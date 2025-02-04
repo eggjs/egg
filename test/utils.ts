@@ -26,7 +26,7 @@ export async function rimraf(target: string) {
 
 export { MockApplication, MockOptions, MockClusterOptions, mm };
 export interface SingleModeApplication extends MockApplication {
-  agent: SingleModeAgent;
+  agent: SingleModeAgent & MockApplication['agent'];
 }
 
 export const restore = () => mm.restore();
