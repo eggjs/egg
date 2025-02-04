@@ -1,6 +1,6 @@
 {
   "name": "egg",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "engines": {
     "node": ">= 18.19.0"
   },

@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.7](https://github.com/eggjs/egg/compare/v4.0.6...v4.0.7) (2025-02-04)
+
+
+### Bug Fixes
+
+* use @eggjs/multipart and @eggjs/view ([#5391](https://github.com/eggjs/egg/issues/5391)) ([c464cda](https://github.com/eggjs/egg/commit/c464cda53f1000f65546c9bd53b323fe667bd69f))
+
 ## [4.0.6](https://github.com/eggjs/egg/compare/v4.0.5...v4.0.6) (2025-02-03)
 
 
