@@ -168,7 +168,7 @@ export interface EggAppConfig extends EggCoreAppConfig {
    * @property {Boolean} allowDebugAtProd - allow debug log at prod, defaults to false
    * @property {Boolean} enableFastContextLogger - using the app logger instead of EggContextLogger, defaults to false
    */
-  logger: Partial<EggLoggerConfig>;
+  logger: EggLoggerConfig;
 
   /** custom logger of egg */
   customLogger: {

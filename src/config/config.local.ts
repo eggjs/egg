@@ -1,4 +1,4 @@
-import type { EggAppConfig } from '../lib/types.js';
+import type { EggAppConfig, PowerPartial } from '../lib/types.js';
 
 export default () => {
   return {
@@ -7,5 +7,5 @@ export default () => {
         consoleLevel: 'WARN',
       },
     },
-  } satisfies Partial<EggAppConfig>;
+  } satisfies PowerPartial<EggAppConfig>;
 };

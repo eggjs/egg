@@ -239,6 +239,7 @@ $ npm test
     });
   };
   ```
+
 ### 设置定时任务
 
 1. 在 `package.json` 里设置依赖 schedule 插件
@@ -326,6 +327,7 @@ async function createMysql(config, app) {
 ```
 
 可以看到，插件中我们只需要提供要挂载的字段和服务的初始化方法，所有配置管理、实例获取方式由框架封装并统一提供。
+
 #### 应用层使用方案
 
 ##### 单实例
@@ -435,6 +437,7 @@ class PostController extends Controller {
   1. 应用根目录下的 `node_modules`
   2. 应用依赖框架路径下的 `node_modules`
   3. 当前路径下的 `node_modules`（主要是兼容单元测试场景）
+
 ### 插件规范
 
 我们非常欢迎你贡献新的插件，同时也希望你遵守下面一些规范：
@@ -479,7 +482,4 @@ Egg 通过 `eggPlugin.name` 来定义插件名，只需应用或框架具备唯�
 
 **将相同功能的插件赋予相同的插件名，以及提供相同的 API，可以快速进行切换**。这种做法在模板、数据库等领域非常适用。
 
-
 [egg-boilerplate-plugin]: https://github.com/eggjs/egg-boilerplate-plugin
-[egg-mysql]: https://github.com/eggjs/egg-mysql
-[egg-oss]: https://github.com/eggjs/egg-oss
