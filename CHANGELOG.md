@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.8](https://github.com/eggjs/egg/compare/v4.0.7...v4.0.8) (2025-02-04)
+
+
+### Bug Fixes
+
+* add allowH2 define and more ([#5392](https://github.com/eggjs/egg/issues/5392)) ([413a6f9](https://github.com/eggjs/egg/commit/413a6f905161bc45ae54baccc83ae82170fecd09))
+
 ## [4.0.7](https://github.com/eggjs/egg/compare/v4.0.6...v4.0.7) (2025-02-04)
 
 
