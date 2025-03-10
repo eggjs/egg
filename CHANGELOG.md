@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.10](https://github.com/eggjs/egg/compare/v4.0.9...v4.0.10) (2025-03-10)
+
+
+### Bug Fixes
+
+* add missing tsd on application ([#5406](https://github.com/eggjs/egg/issues/5406)) ([8fa4aec](https://github.com/eggjs/egg/commit/8fa4aec1303b58ac76b41c9861db59b6dbdf912e))
+
 ## [4.0.9](https://github.com/eggjs/egg/compare/v4.0.8...v4.0.9) (2025-02-04)
 
 
