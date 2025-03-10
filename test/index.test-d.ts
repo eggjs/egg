@@ -9,6 +9,8 @@ import {
   start, SingleModeApplication, SingleModeAgent,
   MiddlewareFunc,
   Singleton,
+  PowerPartial,
+  EggAppConfig,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
 import { IMessenger } from '../src/lib/core/messenger/IMessenger.js';
@@ -17,6 +19,9 @@ const app = {} as EggCore;
 expectType<IMessenger>(app.messenger);
 expectType<IMessenger>(app.messenger.broadcast('test'));
 expectType<void>(app.loggers.reload());
+
+const config = {} as PowerPartial<EggAppConfig>;
+expectType<boolean | undefined>(config.static?.gzip);
 
 const ctx = app.createAnonymousContext();
 

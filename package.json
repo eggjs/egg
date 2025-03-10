@@ -55,7 +55,7 @@
     "@arethetypeswrong/cli": "^0.17.3",
     "@eggjs/bin": "^7.0.2",
     "@eggjs/koa": "^2.20.6",
-    "@eggjs/mock": "^6.0.6",
+    "@eggjs/mock": "^6.0.7",
     "@eggjs/supertest": "^8.2.0",
     "@eggjs/tsconfig": "1",
     "@types/koa-bodyparser": "^4.3.12",
