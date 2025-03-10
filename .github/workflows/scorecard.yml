@@ -13,6 +13,8 @@ on:
     - cron: '37 18 * * 1'
   push:
     branches: [ "next", "master" ]
+  pull_request:
+    branches: [ "next", "master" ]
 
 # Declare default permissions as read only.
 permissions: read-all
