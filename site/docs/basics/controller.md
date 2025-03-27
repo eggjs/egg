@@ -315,7 +315,7 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 ### Acquiring the Submitted Files
 
-The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/multipart).
+The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/egg-multipart).
 
 - #### `File` Mode:
   If you have no ideas about Nodejs's Stream at all, the `File` mode suits you well:
@@ -589,7 +589,7 @@ module.exports = {
 
 **Notice：`fileExtensions` will be IGNORED when `whitelist` is overwritten.**
 
-For more tech details about this, please refer [@eggjs/multipart](https://github.com/eggjs/multipart).
+For more tech details about this, please refer [Egg-Multipart](https://github.com/eggjs/egg-multipart).
 
 ### `header`
 
@@ -605,9 +605,10 @@ Specially when we set `config.proxy = true` to deploy the application behind the
 
 #### `ctx.host`
 
-Reads the header's value configured by `config.hostHeaders` firstly, if fails, then it tries to get the value of host header, if fails again, it returns an empty string.
+Reads the header's value configured by `config.hostHeaders` firstly, if fails, then it tries to get the value of `host` header, if fails again, it returns an empty string.
 
-`config.hostHeaders` defaults to `x-forwarded-host`.
+`config.hostHeaders` defaults to `''`.
+If the application is deployed behind a reverse proxy and `config.proxy = true` is configured, a correct value needs to be configured here, such as `x-forwarded-host`. Please configure it according to the actual value of the proxy.
 
 #### `ctx.protocol`
 
@@ -684,7 +685,7 @@ module.exports = {
 
 By using Cookie, we can create an individual Session specific to every user to store user identity information, which will be encrypted then stored in Cookie to perform session persistence across requests.
 
-The framework builds in [Session](https://github.com/eggjs/session) plugin, which provides `ctx.session` for us to get or set current user's Session.
+The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `ctx.session` for us to get or set current user's Session.
 
 ```js
 class PostController extends Controller {
