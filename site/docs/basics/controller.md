@@ -605,9 +605,10 @@ Specially when we set `config.proxy = true` to deploy the application behind the
 
 #### `ctx.host`
 
-Reads the header's value configured by `config.hostHeaders` firstly, if fails, then it tries to get the value of host header, if fails again, it returns an empty string.
+Reads the header's value configured by `config.hostHeaders` firstly, if fails, then it tries to get the value of `host` header, if fails again, it returns an empty string.
 
-`config.hostHeaders` defaults to `x-forwarded-host`.
+`config.hostHeaders` defaults to `''`.
+If the application is deployed behind a reverse proxy and `config.proxy = true` is configured, a correct value needs to be configured here, such as `x-forwarded-host`. Please configure it according to the actual value of the proxy.
 
 #### `ctx.protocol`
 
