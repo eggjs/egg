@@ -598,7 +598,8 @@ module.exports = {
 
 此 Getter 优先读取 `config.hostHeaders` 中配置的 header 值。若无法获取，则尝试读取 `host` 这个 header 的值。若仍旧获取不到，则返回空字符串。
 
-`config.hostHeaders` 的默认配置为 `x-forwarded-host`。
+`config.hostHeaders` 的默认配置为 `''` 空字符串。
+如果应用部署在反向代理后面，并且配置了 `config.proxy = true`，需要在这里配置一个正确的值，例如 `x-forwarded-host`，请按照代理真实值配置。
 
 #### `ctx.protocol`
 
