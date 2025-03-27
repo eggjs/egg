@@ -315,7 +315,7 @@ If user request exceeds the maximum length for parsing that we configured, the f
 
 ### Acquiring the Submitted Files
 
-The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/egg-multipart).
+The `body` in the request can carry parameters as well as files. Generally speaking, our browsers always send files in `multipart/form-data`, and we now have two kinds of ways supporting submitting and acquiring files with the help of the framework's plugin [Multipart](https://github.com/eggjs/multipart).
 
 - #### `File` Mode:
   If you have no ideas about Nodejs's Stream at all, the `File` mode suits you well:
@@ -589,7 +589,7 @@ module.exports = {
 
 **Notice：`fileExtensions` will be IGNORED when `whitelist` is overwritten.**
 
-For more tech details about this, please refer [Egg-Multipart](https://github.com/eggjs/egg-multipart).
+For more tech details about this, please refer [@eggjs/multipart](https://github.com/eggjs/multipart).
 
 ### `header`
 
@@ -685,7 +685,7 @@ module.exports = {
 
 By using Cookie, we can create an individual Session specific to every user to store user identity information, which will be encrypted then stored in Cookie to perform session persistence across requests.
 
-The framework builds in [Session](https://github.com/eggjs/egg-session) plugin, which provides `ctx.session` for us to get or set current user's Session.
+The framework builds in [Session](https://github.com/eggjs/session) plugin, which provides `ctx.session` for us to get or set current user's Session.
 
 ```js
 class PostController extends Controller {
