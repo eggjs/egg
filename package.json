@@ -2,7 +2,7 @@
   "name": "egg",
   "version": "3.30.1",
   "publishConfig": {
-    "tag": "latest",
+    "tag": "release-3.x",
     "access": "public"
   },
   "description": "A web framework's framework for Node.js",

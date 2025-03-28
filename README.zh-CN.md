@@ -4,7 +4,7 @@
 	<img src="site/public/assets/egg-banner.png" />
 </div>
 
-[![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
+[![NPM version](https://img.shields.io/npm/v/egg/release-3.x.svg?style=flat-square)](https://www.npmjs.com/package/egg/v/release-3.x)
 [![NPM quality](http://npm.packagequality.com/shield/egg.svg?style=flat-square)](http://packagequality.com/#?package=egg)
 [![NPM download](https://img.shields.io/npm/dm/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
 
@@ -34,7 +34,7 @@ $ open http://localhost:7001
 
 ## 文档
 
-- [官方文档](https://eggjs.org/zh-cn/)
+- [官方文档](https://v3.eggjs.org/zh-CN/)
 - [插件列表](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [框架列表](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 - [官方示例](https://github.com/eggjs/examples)
