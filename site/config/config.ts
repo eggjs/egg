@@ -21,7 +21,7 @@ export default defineConfig({
   exportStatic: {},
 
   sitemap: {
-    hostname: 'https://eggjs.org',
+    hostname: 'https://v3.eggjs.org',
   },
 
   navs: {
@@ -39,6 +39,10 @@ export default defineConfig({
         title: 'Plugins',
         path: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories',
       },
+      {
+        title: 'v4.x',
+        path: 'https://eggjs.org',
+      },
     ],
     'zh-CN': [
       null,
@@ -53,6 +57,10 @@ export default defineConfig({
       {
         title: '发布日志',
         path: 'https://github.com/eggjs/egg/releases',
+      },
+      {
+        title: 'v4.x',
+        path: 'https://eggjs.org',
       },
     ],
   },

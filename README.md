@@ -4,7 +4,7 @@ English | [简体中文](./README.zh-CN.md)
 	<img src="site/public/assets/egg-banner.png" />
 </div>
 
-[![NPM version](https://img.shields.io/npm/v/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
+[![NPM version](https://img.shields.io/npm/v/egg/release-3.x.svg?style=flat-square)](https://www.npmjs.com/package/egg/v/release-3.x)
 [![NPM quality](http://npm.packagequality.com/shield/egg.svg?style=flat-square)](http://packagequality.com/#?package=egg)
 [![NPM download](https://img.shields.io/npm/dm/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Feggjs%2Fegg.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Feggjs%2Fegg?ref=badge_shield)
@@ -37,7 +37,7 @@ $ open http://localhost:7001
 
 ## Documentations
 
-- [Documentations](https://eggjs.org/en/index.html)
+- [Documentations](https://v3.eggjs.org/)
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 - [Examples](https://github.com/eggjs/examples)
