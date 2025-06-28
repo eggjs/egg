@@ -5,6 +5,7 @@ on:
     branches: [ master, next ]
   pull_request:
     branches: [ master, next ]
+  merge_group:
 
 jobs:
   Job:
