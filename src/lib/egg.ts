@@ -36,6 +36,7 @@ import {
   type HttpClientRequestOptions, type HttpClientRequestURL, type HttpClientResponse,
   type HttpClientOptions,
 } from './core/httpclient.js';
+import { FetchFactory } from 'urllib';
 import { createLoggers } from './core/logger.js';
 import { convertObject } from './core/utils.js';
 import { BaseContextClass } from './core/base_context_class.js';
@@ -146,6 +147,8 @@ export class EggApplicationCore extends EggCore {
   agent?: Agent;
   application?: Application;
   declare loader: EggApplicationLoader;
+  FetchFactory = FetchFactory;
+  fetch = FetchFactory.fetch;
 
   /**
    * @class
@@ -178,6 +181,7 @@ export class EggApplicationCore extends EggCore {
     this.lifecycle.registerBeforeStart(async () => {
       await this.load();
     }, 'load files');
+    this.FetchFactory.setClientOptions({});
   }
 
   /**
