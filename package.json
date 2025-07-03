@@ -59,6 +59,7 @@
     "@eggjs/supertest": "^8.2.0",
     "@eggjs/tsconfig": "1",
     "@types/koa-bodyparser": "^4.3.12",
+    "@types/minimatch": "^5.1.2",
     "@types/mocha": "^10.0.10",
     "@types/node": "22",
     "address": "2",
