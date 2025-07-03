@@ -380,7 +380,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     it('should request http2 success', async () => {
       for (let i = 0; i < 10; i++) {
-        const result = await app.httpclient.curl('https://registry.npmmirror.com', {
+        const result = await app.httpclient.curl('https://r.cnpmjs.org', {
           dataType: 'json',
           timeout: 5000,
         });
