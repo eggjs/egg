@@ -340,7 +340,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         stream.end('hello h2!');
         // console.log(headers);
         const mainNodejsVersion = parseInt(process.versions.node.split('.')[0]);
-        if (mainNodejsVersion >= 18) {
+        if (mainNodejsVersion >= 20) {
           assert.match(headers['user-agent'], /node\-urllib\/4\.\d+\.\d+/);
         } else {
           assert.match(headers['user-agent'], /node\-urllib\/3\.\d+\.\d+/);
