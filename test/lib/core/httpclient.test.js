@@ -340,7 +340,7 @@ describe('test/lib/core/httpclient.test.js', () => {
         stream.end('hello h2!');
         // console.log(headers);
         const mainNodejsVersion = parseInt(process.versions.node.split('.')[0]);
-        if (mainNodejsVersion >= 18) {
+        if (mainNodejsVersion >= 20) {
           assert.match(headers['user-agent'], /node\-urllib\/4\.\d+\.\d+/);
         } else {
           assert.match(headers['user-agent'], /node\-urllib\/3\.\d+\.\d+/);
@@ -380,7 +380,7 @@ describe('test/lib/core/httpclient.test.js', () => {
 
     it('should request http2 success', async () => {
       for (let i = 0; i < 10; i++) {
-        const result = await app.httpclient.curl('https://registry.npmmirror.com', {
+        const result = await app.httpclient.curl('https://r.cnpmjs.org', {
           dataType: 'json',
           timeout: 5000,
         });

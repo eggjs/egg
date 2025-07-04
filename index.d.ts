@@ -24,6 +24,10 @@ import {
   HttpClientResponse as HttpClientResponseNext,
 } from 'urllib-next';
 import {
+  FetchFactory,
+  fetch,
+} from 'urllib4';
+import {
   EggCoreBase,
   FileLoaderOption,
   EggLoader as CoreLoader,
@@ -588,6 +592,12 @@ declare module 'egg' {
      * HttpClient instance
      */
     httpclient: EggHttpClient;
+
+    /**
+     * node fetch
+     */
+    FetchFactory: FetchFactory;
+    fetch: typeof fetch,
 
     /**
      * Logger for Application, wrapping app.coreLogger with context infomation

@@ -25,7 +25,7 @@ jobs:
       run: npm i -g npminstall && npminstall
 
     - name: Build Documents
-      run: npm run site:build && cp vercel.json ./site/dist/vercel.json
+      run: npm run site:build
 
     - name: Deploy Documents
       uses: peaceiris/actions-gh-pages@v3

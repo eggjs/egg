@@ -40,6 +40,10 @@ export default defineConfig({
         path: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories',
       },
       {
+        title: 'v3.x',
+        path: 'https://v3.eggjs.org',
+      },
+      {
         title: 'v4.x',
         path: 'https://eggjs.org',
       },
@@ -51,12 +55,16 @@ export default defineConfig({
         path: 'https://github.com/eggjs/egg',
       },
       {
+        title: '发布日志',
+        path: 'https://github.com/eggjs/egg/releases',
+      },
+      {
         title: '插件列表',
         path: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories',
       },
       {
-        title: '发布日志',
-        path: 'https://github.com/eggjs/egg/releases',
+        title: 'v3.x',
+        path: 'https://v3.eggjs.org',
       },
       {
         title: 'v4.x',
