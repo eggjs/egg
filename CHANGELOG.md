@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.31.0](https://github.com/eggjs/egg/compare/v3.30.1...v3.31.0) (2025-07-04)
+
+
+### Features
+
+* add urllib4 fetch ([#5424](https://github.com/eggjs/egg/issues/5424)) ([63d14da](https://github.com/eggjs/egg/commit/63d14da00170a73c55a7a12ab57dea93b8b2daa1))
+
 ## [3.30.1](https://github.com/eggjs/egg/compare/v3.30.0...v3.30.1) (2025-01-19)
 
 
