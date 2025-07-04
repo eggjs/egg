@@ -2,7 +2,7 @@ name: Github Pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [ 3.x ]
 
 jobs:
   Runner:
