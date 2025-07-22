@@ -187,6 +187,23 @@ describe('test/lib/core/httpclient.test.js', () => {
       assert(family);
       assert(host);
     });
+
+    it('maxRedirections should not throw error when node version is 18', async () => {
+      const args = {
+        dataType: 'text',
+        maxRedirections: 10,
+      };
+      let info;
+      clientNext.once('response', meta => {
+        info = meta;
+      });
+      const { status } = await clientNext.request(url, args);
+      assert(status === 200);
+      assert(info.req.options.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.options.headers['mock-rpcid'] === 'mock-rpcid');
+      assert(info.req.args.headers['mock-traceid'] === 'mock-traceid');
+      assert(info.req.args.headers['mock-rpcid'] === 'mock-rpcid');
+    });
   });
 
   describe('httpclient.httpAgent.timeout < 30000', () => {
