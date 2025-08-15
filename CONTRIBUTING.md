@@ -91,7 +91,7 @@ No one can garantee how much will be remembered about certain PR after some time
 
 ### Style Guide
 
-Eslint can help to identify styling issues that may exist in your code. Your code is required to pass the test from eslint. Run the test locally by `$ npm run lint`.
+oxlint can help to identify styling issues that may exist in your code. Your code is required to pass the test from oxlint. Run the test locally by `$ npm run lint`.
 
 ### Commit Message Format
 

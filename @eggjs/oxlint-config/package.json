@@ -1,0 +1,33 @@
+{
+  "name": "@eggjs/oxlint-config",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Share oxlint config",
+  "keywords": [
+    "oxlint-config"
+  ],
+  "homepage": "https://github.com/eggjs/oxlint-config#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/oxlint-config/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/oxlint-config.git"
+  },
+  "license": "MIT",
+  "author": "fengmk2",
+  "type": "module",
+  "files": [
+    ".oxlintrc.json"
+  ],
+  "scripts": {
+    "test": "oxlint",
+    "ci": "oxlint",
+    "prepublishOnly": "oxlint"
+  },
+  "devDependencies": {
+    "oxlint": "^1.11.0"
+  }
+}
