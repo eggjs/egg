@@ -87,7 +87,7 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "lint": "oxlint src test",
+    "lint": "npx oxlint src test",
     "pretest": "npm run clean && npm run lint",
     "test": "egg-bin test",
     "test-local": "egg-bin test",
