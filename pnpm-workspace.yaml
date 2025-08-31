@@ -4,7 +4,7 @@ packages:
   - site
 
 catalog:
-  '@arethetypeswrong/cli': ^0.17.3
+  '@arethetypeswrong/cli': ^0.18.0
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0

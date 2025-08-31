@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     '@arethetypeswrong/cli':
-      specifier: ^0.17.3
-      version: 0.17.4
+      specifier: ^0.18.0
+      version: 0.18.2
     '@eggjs/bin':
       specifier: ^7.0.2
       version: 7.3.1
@@ -211,7 +211,7 @@ importers:
         version: 3.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.14.2(typescript@5.9.2)
+        version: 0.14.2(@arethetypeswrong/core@0.18.2)(typescript@5.9.2)
 
   examples/helloworld-commonjs:
     dependencies:
@@ -340,7 +340,7 @@ importers:
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: 'catalog:'
-        version: 0.17.4
+        version: 0.18.2
       '@eggjs/bin':
         specifier: 'catalog:'
         version: 7.3.1(@eggjs/mock@6.0.7(mocha@11.7.1))(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@22.18.0)(typescript@5.9.2)
@@ -415,7 +415,7 @@ importers:
         version: 0.31.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.14.2(typescript@5.9.2)
+        version: 0.14.2(@arethetypeswrong/core@0.18.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -454,14 +454,14 @@ packages:
   '@antfu/utils@0.7.10':
     resolution: {integrity: sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==}
 
-  '@arethetypeswrong/cli@0.17.4':
-    resolution: {integrity: sha512-AeiKxtf67XD/NdOqXgBOE5TZWH3EOCt+0GkbUpekOzngc+Q/cRZ5azjWyMxISxxfp0EItgm5NoSld9p7BAA5xQ==}
-    engines: {node: '>=18'}
+  '@arethetypeswrong/cli@0.18.2':
+    resolution: {integrity: sha512-PcFM20JNlevEDKBg4Re29Rtv2xvjvQZzg7ENnrWFSS0PHgdP2njibVFw+dRUhNkPgNfac9iUqO0ohAXqQL4hbw==}
+    engines: {node: '>=20'}
     hasBin: true
 
-  '@arethetypeswrong/core@0.17.4':
-    resolution: {integrity: sha512-Izvir8iIoU+X4SKtDAa5kpb+9cpifclzsbA8x/AZY0k0gIfXYQ1fa1B6Epfe6vNA2YfDX8VtrZFgvnXB6aPEoQ==}
-    engines: {node: '>=18'}
+  '@arethetypeswrong/core@0.18.2':
+    resolution: {integrity: sha512-GiwTmBFOU1/+UVNqqCGzFJYfBXEytUkiI+iRZ6Qx7KmUVtLm00sYySkfe203C9QtPG11yOz1ZaMek8dT/xnlgg==}
+    engines: {node: '>=20'}
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -7987,9 +7987,9 @@ snapshots:
 
   '@antfu/utils@0.7.10': {}
 
-  '@arethetypeswrong/cli@0.17.4':
+  '@arethetypeswrong/cli@0.18.2':
     dependencies:
-      '@arethetypeswrong/core': 0.17.4
+      '@arethetypeswrong/core': 0.18.2
       chalk: 4.1.2
       cli-table3: 0.6.5
       commander: 10.0.1
@@ -7997,13 +7997,13 @@ snapshots:
       marked-terminal: 7.3.0(marked@9.1.6)
       semver: 7.7.2
 
-  '@arethetypeswrong/core@0.17.4':
+  '@arethetypeswrong/core@0.18.2':
     dependencies:
       '@andrewbranch/untar.js': 1.0.3
       '@loaderkit/resolve': 1.0.4
       cjs-module-lexer: 1.4.3
       fflate: 0.8.2
-      lru-cache: 10.4.3
+      lru-cache: 11.1.0
       semver: 7.7.2
       typescript: 5.6.1-rc
       validate-npm-package-name: 5.0.1
@@ -16369,7 +16369,7 @@ snapshots:
       path-exists: 4.0.0
       read-pkg-up: 7.0.1
 
-  tsdown@0.14.2(typescript@5.9.2):
+  tsdown@0.14.2(@arethetypeswrong/core@0.18.2)(typescript@5.9.2):
     dependencies:
       ansis: 4.1.0
       cac: 6.7.14
@@ -16386,6 +16386,7 @@ snapshots:
       tree-kill: 1.2.2
       unconfig: 7.3.3
     optionalDependencies:
+      '@arethetypeswrong/core': 0.18.2
       typescript: 5.9.2
     transitivePeerDependencies:
       - '@typescript/native-preview'
