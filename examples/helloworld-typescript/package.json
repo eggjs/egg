@@ -11,9 +11,9 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "^7.0.2",
-    "@eggjs/tsconfig": "1",
-    "typescript": "5"
+    "@eggjs/bin": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "dev": "egg-bin dev",

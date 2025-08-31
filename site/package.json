@@ -5,11 +5,11 @@
   "description": "Eggjs documentation site",
   "dependencies": {
     "egg": "workspace:*",
-    "dumi": "^2.4.17"
+    "dumi": "catalog:"
   },
   "devDependencies": {
-    "cross-env": "7",
-    "prettier": "^3.4.2"
+    "cross-env": "catalog:",
+    "prettier": "catalog:"
   },
   "scripts": {
     "dev": "cross-env APP_ROOT=. dumi dev",

@@ -7,12 +7,16 @@
   "dependencies": {
     "egg": "workspace:*"
   },
+  "devDependencies": {
+    "@eggjs/bin": "catalog:",
+    "oxlint": "catalog:"
+  },
   "scripts": {
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "egg-bin test",
     "cov": "egg-bin cov",
-    "lint": "eslint . --ext .js",
+    "lint": "oxlint",
     "ci": "pnpm run lint && pnpm run cov",
     "start": "egg-scripts start --daemon",
     "stop": "egg-scripts stop"

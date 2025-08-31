@@ -112,6 +112,7 @@ export class Application extends EggApplicationCore {
     }
 
     if (typeof this.config.onClientError === 'function') {
+      // @ts-ignore onClientError is not typed
       const p = eggUtils.callFn(this.config.onClientError, [ err, socket, this ]);
 
       // the returned object should be something like:

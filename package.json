@@ -8,13 +8,17 @@
   },
   "packageManager": "pnpm@10.15.0",
   "devDependencies": {
+    "@eggjs/tsconfig": "catalog:",
     "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:"
+    "oxlint-tsgolint": "catalog:",
+    "prettier": "catalog:",
+    "tsdown": "catalog:"
   },
   "scripts": {
     "clean": "pnpm -r run clean",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
+    "pretest": "pnpm lint",
     "test": "pnpm -r run test",
     "test:changed": "pnpm -r run test:changed",
     "ci": "pnpm -r run ci",

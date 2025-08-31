@@ -83,12 +83,20 @@ The framework follows a specific loading order:
 
 ## Key Configuration Files
 
-- **`pnpm-workspace.yaml`** - pnpm workspace configuration
+- **`pnpm-workspace.yaml`** - pnpm workspace configuration with catalog dependencies
 - **`package.json`** - Root monorepo configuration with pnpm scripts  
 - **`packages/egg/package.json`** - Main egg package with hybrid CommonJS/ESM exports
 - **`packages/egg/tsconfig.json`** - Extends @eggjs/tsconfig with strict mode enabled  
+- **`packages/egg/tsdown.config.ts`** - tsdown build configuration for unbundled ESM output
 - **`packages/egg/src/config/plugin.ts`** - Built-in plugin configurations
 - **`packages/egg/src/config/config.default.ts`** - Default framework configuration
+
+### pnpm Catalog Usage
+All packages use pnpm catalog mode for centralized dependency management:
+- Dependencies are defined once in `pnpm-workspace.yaml` catalog
+- Individual packages reference them using `"package-name": "catalog:"`
+- This ensures consistent versions across all packages in the monorepo
+- Easy to update versions in one place
 
 ## Framework Concepts
 
@@ -139,7 +147,8 @@ The framework extends Koa's context with Egg-specific features:
 
 ### TypeScript Support
 - Main framework in `packages/egg/` is written in TypeScript with strict mode
-- Uses tshy for dual CommonJS/ESM builds
+- Uses tsdown for unbundled ESM builds (faster development, preserves file structure)
+- Configured with `tsdown.config.ts` for optimal build settings
 - Type definitions are exported for framework users
 - Examples support both .js and .ts application files
 
@@ -151,5 +160,13 @@ The framework extends Koa's context with Egg-specific features:
 
 ### Workspace Dependencies
 - Use `workspace:*` for internal package dependencies
+- Use `catalog:` for external dependencies defined in pnpm-workspace.yaml
 - All packages share common devDependencies from root
 - pnpm automatically handles workspace linking
+
+### Managing Catalog Dependencies
+- Add new dependencies to the `catalog` section in `pnpm-workspace.yaml`
+- Organize by category (linting, build tools, testing, etc.)
+- Update versions in one place to keep consistency across packages  
+- Use `pnpm update --latest` to update catalog entries
+- Reference catalog entries in individual packages with `"package-name": "catalog:"`

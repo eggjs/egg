@@ -45,6 +45,8 @@ This project is structured as a pnpm monorepo with the following packages:
 - `examples/helloworld-typescript` - TypeScript example application
 - `site` - Documentation website
 
+The monorepo uses **pnpm catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
+
 ### Development Commands
 
 ```bash
