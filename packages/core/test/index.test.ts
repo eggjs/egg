@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 // oxlint-disable-next-line no-namespace
-import * as EggCore from '../src/index.js';
-import type { EggAppConfig } from '../src/index.js';
+import * as EggCore from '../src/index.ts';
+import type { EggAppConfig } from '../src/index.ts';
 
 describe('test/index.test.ts', () => {
   it('should expose properties', () => {
@@ -9,8 +9,8 @@ describe('test/index.test.ts', () => {
     assert(EggCore.EggLoader);
     assert(EggCore.BaseContextClass);
     assert(EggCore.utils);
-    console.log(Object.keys(EggCore));
-    assert.deepEqual(Object.keys(EggCore), [
+    // console.log(Object.keys(EggCore));
+    assert.deepEqual(Object.keys(EggCore).sort(), [
       'BaseContextClass',
       'CaseStyle',
       'ClassLoader',
