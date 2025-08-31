@@ -14,6 +14,7 @@ jobs:
     with:
       os: 'ubuntu-latest, windows-latest'
       version: '20'
-      test: 'npm run ci:cluster1'
+      test: 'pnpm run ci:cluster1'
+      install: 'corepack enable pnpm && pnpm install'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

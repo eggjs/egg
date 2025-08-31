@@ -1,0 +1,125 @@
+{
+  "name": "egg",
+  "version": "4.0.10",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "publishConfig": {
+    "tag": "beta"
+  },
+  "description": "A web application framework for Node.js",
+  "keywords": [
+    "web",
+    "app",
+    "http",
+    "application",
+    "framework",
+    "middleware",
+    "koa",
+    "egg"
+  ],
+  "dependencies": {
+    "@eggjs/cluster": "catalog:",
+    "@eggjs/cookies": "catalog:",
+    "@eggjs/core": "catalog:",
+    "@eggjs/development": "catalog:",
+    "@eggjs/i18n": "catalog:",
+    "@eggjs/jsonp": "catalog:",
+    "@eggjs/logrotator": "catalog:",
+    "@eggjs/multipart": "catalog:",
+    "@eggjs/onerror": "catalog:",
+    "@eggjs/schedule": "catalog:",
+    "@eggjs/security": "catalog:",
+    "@eggjs/session": "catalog:",
+    "@eggjs/static": "catalog:",
+    "@eggjs/utils": "catalog:",
+    "@eggjs/view": "catalog:",
+    "@eggjs/watcher": "catalog:",
+    "circular-json-for-egg": "catalog:",
+    "cluster-client": "catalog:",
+    "egg-errors": "catalog:",
+    "egg-logger": "catalog:",
+    "extend2": "catalog:",
+    "graceful": "catalog:",
+    "humanize-ms": "catalog:",
+    "is-type-of": "catalog:",
+    "koa-bodyparser": "catalog:",
+    "koa-override": "catalog:",
+    "onelogger": "catalog:",
+    "performance-ms": "catalog:",
+    "sendmessage": "catalog:",
+    "urllib": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/koa": "catalog:",
+    "@eggjs/mock": "catalog:",
+    "@eggjs/supertest": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/koa-bodyparser": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "address": "catalog:",
+    "assert-file": "catalog:",
+    "coffee": "catalog:",
+    "cross-env": "catalog:",
+    "egg-plugin-puml": "catalog:",
+    "egg-tracer": "catalog:",
+    "egg-view-nunjucks": "catalog:",
+    "formstream": "catalog:",
+    "koa-static": "catalog:",
+    "mm": "catalog:",
+    "pedding": "catalog:",
+    "rimraf": "catalog:",
+    "runscript": "catalog:",
+    "sdk-base": "catalog:",
+    "spy": "catalog:",
+    "tsd": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "pretest": "pnpm run clean", 
+    "test": "egg-bin test",
+    "test-local": "egg-bin test",
+    "test:changed": "egg-bin test --changed",
+    "preci": "pnpm run clean",
+    "ci": "egg-bin cov",
+    "postci": "pnpm run prepublishOnly && pnpm run clean",
+    "prepublishOnly": "pnpm run build && attw --pack --profile node16",
+    "ci:app": "pnpm run ci \"test/app/**/*.test.ts,test/*.test.ts\"",
+    "ci:cluster1": "pnpm run ci \"test/cluster1/**/*.test.ts\"",
+    "ci:cluster2": "pnpm run ci \"test/cluster2/**/*.test.ts\"",
+    "ci:lib/core": "pnpm run ci \"test/lib/core/**/*.test.ts\"",
+    "ci:lib/plugins": "pnpm run ci \"test/lib/plugins/**/*.test.ts\""
+  },
+  "homepage": "https://github.com/eggjs/egg",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/egg"
+  },
+  "license": "MIT",
+  "egg": {
+    "framework": true
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./urllib": {
+      "types": "./dist/urllib.d.ts",
+      "import": "./dist/urllib.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

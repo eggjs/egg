@@ -1,0 +1,27 @@
+{
+  "name": "@examples/helloworld-commonjs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "description": "Hello World example using CommonJS",
+  "dependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "catalog:",
+    "oxlint": "catalog:"
+  },
+  "scripts": {
+    "dev": "egg-bin dev",
+    "debug": "egg-bin debug",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
+    "lint": "oxlint",
+    "ci": "pnpm run lint && pnpm run cov",
+    "start": "egg-scripts start --daemon",
+    "stop": "egg-scripts stop"
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  }
+}

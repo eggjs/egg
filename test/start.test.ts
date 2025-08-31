@@ -1,4 +1,4 @@
-// 'use strict';
+/* oxlint-disable */
 
 // import utils from '../utils';
 // import assert from 'assert';

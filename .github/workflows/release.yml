@@ -8,6 +8,8 @@ jobs:
   release:
     name: Node.js
     uses: eggjs/github-actions/.github/workflows/node-release.yml@master
+    with:
+      install: 'corepack enable pnpm && pnpm install'
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       GIT_TOKEN: ${{ secrets.GIT_TOKEN }}

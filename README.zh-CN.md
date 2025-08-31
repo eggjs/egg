@@ -21,7 +21,7 @@
 - 深度框架定制
 - 丰富的[插件](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 
-> 支持 Node.js 14.20.0 及以上版本。
+> 支持 Node.js >= 20.19.0 及以上版本，[默认支持 `require(esm)`](https://nodejs.org/en/blog/release/v20.19.0)。
 
 ## 快速开始
 

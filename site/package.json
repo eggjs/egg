@@ -1,0 +1,22 @@
+{
+  "name": "@eggjs/site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Eggjs documentation site",
+  "dependencies": {
+    "egg": "workspace:*",
+    "dumi": "catalog:"
+  },
+  "devDependencies": {
+    "cross-env": "catalog:",
+    "prettier": "catalog:"
+  },
+  "scripts": {
+    "dev": "cross-env APP_ROOT=. dumi dev",
+    "build": "cross-env APP_ROOT=. dumi build",
+    "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  }
+}

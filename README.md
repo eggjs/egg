@@ -29,12 +29,41 @@ Follow the commands listed below.
 ```bash
 $ mkdir showcase && cd showcase
 $ npm init egg --type=simple # Optionally pnpm create egg --type=simple
-$ npm install
-$ npm run dev
+$ pnpm install
+$ pnpm run dev
 $ open http://localhost:7001
 ```
 
-> Node.js >= 14.20.0 required.
+> Node.js >= 20.19.0 required, [supports `require(esm)` by default](https://nodejs.org/en/blog/release/v20.19.0).
+
+## Monorepo Structure
+
+This project is structured as a pnpm monorepo with the following packages:
+
+- `packages/egg` - Main Eggjs framework
+- `examples/helloworld-commonjs` - CommonJS example application  
+- `examples/helloworld-typescript` - TypeScript example application
+- `site` - Documentation website
+
+The monorepo uses **pnpm catalog mode** for centralized dependency management, ensuring consistent versions across all packages.
+
+### Development Commands
+
+```bash
+# Install dependencies for all packages
+pnpm install
+
+# Build all packages
+pnpm run build
+
+# Test all packages
+pnpm run test
+
+# Run specific package commands
+pnpm --filter=egg run test
+pnpm --filter=@examples/helloworld-typescript run dev
+pnpm --filter=site run dev
+```
 
 ## Documentations
 
