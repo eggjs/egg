@@ -4,7 +4,6 @@ packages:
   - site
 
 catalog:
-  # Core package dependencies
   '@eggjs/router': ^3.0.5
   '@types/js-yaml': '4'
   'await-event': '2'
@@ -16,9 +15,7 @@ catalog:
   'lint-staged': '15'
   'node-homedir': ^2.0.0
   'ready-callback': ^4.0.0
-  'tsconfig-paths': ^4.2.0
-  
-  '@arethetypeswrong/cli': ^0.17.3
+  'tsconfig-paths': ^4.2.0  
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0
@@ -47,7 +44,6 @@ catalog:
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
   coffee: '5'
-  cross-env: '7'
   dumi: ^2.4.17
   egg-errors: ^2.3.2
   egg-logger: ^3.5.0

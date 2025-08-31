@@ -69,7 +69,6 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
     "@eggjs/bin": "catalog:",
     "@eggjs/koa": "catalog:",
     "@eggjs/mock": "catalog:",
@@ -81,7 +80,6 @@
     "address": "catalog:",
     "assert-file": "catalog:",
     "coffee": "catalog:",
-    "cross-env": "catalog:",
     "egg-plugin-puml": "catalog:",
     "egg-tracer": "catalog:",
     "egg-view-nunjucks": "catalog:",

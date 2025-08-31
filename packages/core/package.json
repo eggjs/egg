@@ -70,7 +70,6 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
     "@eggjs/bin": "catalog:",
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
