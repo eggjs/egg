@@ -14,6 +14,7 @@ jobs:
     with:
       os: 'ubuntu-latest, windows-latest'
       version: '22'
-      test: 'npm run ci:cluster2'
+      test: 'pnpm run ci:cluster2'
+      install-command: 'pnpm install'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

@@ -1,0 +1,15 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "egg": [
+        "../../../../index"
+      ]
+    },
+    "esModuleInterop": false
+  },
+  "exclude": [
+    "./error.ts"
+  ]
+}

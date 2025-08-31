@@ -1,0 +1,12 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "egg": [
+        "../../../../src/index.ts"
+      ]
+    }
+  },
+  "rootDir": ".",
+}

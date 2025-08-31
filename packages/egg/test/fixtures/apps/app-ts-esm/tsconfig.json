@@ -1,0 +1,7 @@
+{
+  "extends": "../app-ts/tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "baseUrl": "."
+  }
+}
