@@ -1,0 +1,79 @@
+{
+  "name": "@eggjs/utils",
+  "version": "4.4.1",
+  "engine": {
+    "node": ">=18.19.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Utils for all egg projects",
+  "scripts": {
+    "lint": "eslint src test --ext ts",
+    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
+    "test": "egg-bin test",
+    "posttest": "npm run clean",
+    "test-local": "egg-bin test",
+    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
+    "ci": "egg-bin cov",
+    "postci": "npm run clean",
+    "clean": "rimraf dist",
+    "prepublishOnly": "tshy && tshy-after && attw --pack"
+  },
+  "keywords": [
+    "egg",
+    "utils"
+  ],
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/utils.git"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.2",
+    "@eggjs/bin": "^7.0.0",
+    "@eggjs/tsconfig": "1",
+    "@types/mocha": "10",
+    "@types/node": "22",
+    "coffee": "5",
+    "eslint": "8",
+    "eslint-config-egg": "14",
+    "mm": "4",
+    "npminstall": "7",
+    "rimraf": "6",
+    "runscript": "2",
+    "snap-shot-it": "^7.9.10",
+    "tshy": "3",
+    "tshy-after": "1",
+    "typescript": "5"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "module": "./dist/esm/index.js"
+}

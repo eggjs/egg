@@ -1,0 +1,64 @@
+{
+  "name": "@eggjs/utils",
+  "version": "4.4.1",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Utils for all egg projects",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "test": "egg-bin test",
+    "posttest": "pnpm run clean",
+    "test-local": "egg-bin test",
+    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "ci": "egg-bin cov",
+    "postci": "pnpm run clean",
+    "prepublishOnly": "pnpm run build && attw --pack"
+  },
+  "keywords": [
+    "egg",
+    "utils"
+  ],
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/utils"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "coffee": "catalog:",
+    "mm": "catalog:",
+    "npminstall": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "runscript": "catalog:",
+    "snap-shot-it": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}

@@ -56,7 +56,7 @@
   "dependencies": {
     "@eggjs/koa": "catalog:",
     "@eggjs/router": "catalog:",
-    "@eggjs/utils": "catalog:",
+    "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
     "egg-path-matching": "catalog:",
     "extend2": "catalog:",

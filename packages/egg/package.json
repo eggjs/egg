@@ -49,7 +49,7 @@
     "@eggjs/security": "catalog:",
     "@eggjs/session": "catalog:",
     "@eggjs/static": "catalog:",
-    "@eggjs/utils": "catalog:",
+    "@eggjs/utils": "workspace:*",
     "@eggjs/view": "catalog:",
     "@eggjs/watcher": "catalog:",
     "circular-json-for-egg": "catalog:",

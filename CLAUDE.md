@@ -16,7 +16,10 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
   - `test/` - Comprehensive test suite with fixtures
 - **`packages/core/`** - Core plugin framework (merged from @eggjs/core)
   - `src/` - Core TypeScript source code
-  - `test/` - Core framework test suite
+  - `test/` - Core framework test suite with vitest
+- **`packages/utils/`** - Utility functions (merged from @eggjs/utils)
+  - `src/` - Utils TypeScript source code
+  - `test/` - Utils test suite
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
