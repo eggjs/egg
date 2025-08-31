@@ -12,7 +12,7 @@ catalog:
   '@eggjs/development': ^4.0.0
   '@eggjs/i18n': ^3.0.1
   '@eggjs/jsonp': ^3.0.0
-  '@eggjs/koa': ^2.20.6
+  '@eggjs/koa': ^3.0.0
   '@eggjs/logrotator': ^4.0.0
   '@eggjs/mock': ^6.0.7
   '@eggjs/multipart': ^4.0.0

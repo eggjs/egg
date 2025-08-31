@@ -31,8 +31,8 @@ catalogs:
       specifier: ^3.0.0
       version: 3.0.0
     '@eggjs/koa':
-      specifier: ^2.20.6
-      version: 2.22.2
+      specifier: ^3.0.0
+      version: 3.0.1
     '@eggjs/logrotator':
       specifier: ^4.0.0
       version: 4.1.0
@@ -346,7 +346,7 @@ importers:
         version: 7.3.1(@eggjs/mock@6.0.7(mocha@11.7.1))(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@22.18.0)(typescript@5.9.2)
       '@eggjs/koa':
         specifier: 'catalog:'
-        version: 2.22.2
+        version: 3.0.1
       '@eggjs/mock':
         specifier: 'catalog:'
         version: 6.0.7(mocha@11.7.1)
@@ -794,6 +794,10 @@ packages:
   '@eggjs/koa@2.22.2':
     resolution: {integrity: sha512-cqubIqo5SCDPVN2qJ/ZiIPsfWl0xvNRvdLc9h1h8s5zdUk33RyNmCP83Ur9WS3GWbew+rDpVkNReJUCPbvrxkg==}
     engines: {node: '>= 18.19.0'}
+
+  '@eggjs/koa@3.0.1':
+    resolution: {integrity: sha512-CFZ01iIKEddxPIf9Mnx52ilj8/F+ThJYUoUrdd2tqC8jascGtEldcHIP9TArtGGcxqkFcmLCSupsHjCsaKE4Jg==}
+    engines: {node: '>= 22.18.0'}
 
   '@eggjs/logrotator@4.1.0':
     resolution: {integrity: sha512-WqvNbslzW99it4aGLuJYsfJdC/t7hWJSE4hvfgp0FVCZ22HyMPehojG04RGFfsxkik2P56MmAUZ/UUfB29z/Hg==}
@@ -8432,6 +8436,28 @@ snapshots:
       utility: 2.5.0
 
   '@eggjs/koa@2.22.2':
+    dependencies:
+      '@types/content-disposition': 0.5.9
+      accepts: 1.3.8
+      cache-content-type: 2.1.0
+      content-disposition: 0.5.4
+      content-type: 1.0.5
+      cookies: 0.9.1
+      destroy: 1.2.0
+      encodeurl: 1.0.2
+      escape-html: 1.0.3
+      fresh: 0.5.2
+      gals: 1.0.2
+      http-errors: 2.0.0
+      is-type-of: 2.2.0
+      koa-compose: 4.1.0
+      on-finished: 2.4.1
+      parseurl: 1.3.3
+      statuses: 2.0.2
+      type-is: 1.6.18
+      vary: 1.1.2
+
+  '@eggjs/koa@3.0.1':
     dependencies:
       '@types/content-disposition': 0.5.9
       accepts: 1.3.8
