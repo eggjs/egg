@@ -16,10 +16,7 @@ catalog:
   'lint-staged': '15'
   'node-homedir': ^2.0.0
   'ready-callback': ^4.0.0
-  'ts-node': '10'
   'tsconfig-paths': ^4.2.0
-  'tshy': '3'
-  'tshy-after': '1'
   
   '@arethetypeswrong/cli': ^0.17.3
   '@eggjs/bin': ^7.0.2
@@ -38,13 +35,13 @@ catalog:
   '@eggjs/session': ^4.0.1
   '@eggjs/static': ^3.0.0
   '@eggjs/supertest': ^8.2.0
-  '@eggjs/tsconfig': 1.3.3
+  '@eggjs/tsconfig': ^2.0.0
   '@eggjs/utils': ^4.2.5
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
   '@types/koa-bodyparser': ^4.3.12
   '@types/mocha': ^10.0.10
-  '@types/node': '22'
+  '@types/node': '24'
   address: '2'
   assert-file: '1'
   circular-json-for-egg: ^1.0.0
