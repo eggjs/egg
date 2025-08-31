@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import os from 'node:os';
 import path from 'node:path';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { mm } from 'mm';
 import { getPlugins } from '@eggjs/utils';
@@ -10,11 +11,11 @@ import { EggLoader } from '../../src/index.js';
 
 describe('test/loader/egg_loader.test.ts', () => {
   let app: Application;
-  before(() => {
+  beforeAll(() => {
     app = createApp('nothing');
   });
 
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should container FileLoader and ContextLoader', () => {
     assert(app.loader.FileLoader);

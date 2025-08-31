@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import { app } from '@eggjs/mock/bootstrap';
 
 describe('example helloworld test', () => {

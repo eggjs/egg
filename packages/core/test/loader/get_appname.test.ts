@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, afterEach } from 'vitest';
 
 import { createApp, getFilepath, type Application } from '../helper.js';
 

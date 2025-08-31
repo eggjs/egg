@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 
@@ -7,7 +8,7 @@ import { createApp, getFilepath, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_middleware.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = createApp('middleware-override');
     await app.loader.loadPlugin();
     await app.loader.loadConfig();
@@ -16,7 +17,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     await app.loader.loadController();
     await app.loader.loadRouter();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should load application, plugin, and default middlewares', () => {
     assert('static' in app.middlewares);
@@ -156,7 +157,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
 
   describe('async functions and common functions', () => {
     let app: Application;
-    before(async () => {
+    beforeAll(async () => {
       app = createApp('middleware-aa');
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
@@ -166,7 +167,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       await app.loader.loadRouter();
     });
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should support config.middleware', async () => {
       await request(app.callback())
@@ -204,7 +205,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
 
   describe('middleware in other directory', () => {
     let app: Application;
-    before(async () => {
+    beforeAll(async () => {
       const baseDir = getFilepath('other-directory');
       app = createApp('other-directory');
       await app.loader.loadPlugin();
@@ -219,7 +220,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should load', () => {
       assert(app.middlewares.user);

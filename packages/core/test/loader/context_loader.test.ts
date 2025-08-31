@@ -1,15 +1,16 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 
 import { createApp, getFilepath, type Application } from '../helper.js';
 
 describe('test/loader/context_loader.test.ts', () => {
   let app: Application;
-  before(() => {
+  beforeAll(() => {
     app = createApp('context-loader');
     return app.loader.loadAll();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 

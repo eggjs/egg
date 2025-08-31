@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 
 import { createApp, type Application } from '../../helper.js';
@@ -5,7 +6,7 @@ import { createApp, type Application } from '../../helper.js';
 describe('test/loader/mixin/load_helper_extend.test.ts', () => {
   describe('helper', () => {
     let app: Application;
-    before(async () => {
+    beforeAll(async () => {
       app = createApp('helper');
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
@@ -16,7 +17,7 @@ describe('test/loader/mixin/load_helper_extend.test.ts', () => {
       await app.loader.loadRouter();
       await app.loader.loadMiddleware();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should load extend from chair, plugin and helper', async () => {
       await request(app.callback())
@@ -44,7 +45,7 @@ describe('test/loader/mixin/load_helper_extend.test.ts', () => {
 
   describe('no Helper', () => {
     let app: Application;
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should not extend helper', async () => {
       app = createApp('no-helper');

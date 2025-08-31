@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
@@ -7,7 +8,7 @@ import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_extend_class.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = createApp('extend-with-class');
     await app.loader.loadPlugin();
     await app.loader.loadConfig();
@@ -19,7 +20,7 @@ describe('test/loader/mixin/load_extend_class.test.ts', () => {
     await app.loader.loadRouter();
     await app.loader.loadMiddleware();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should load app.context app.request app.response', () => {

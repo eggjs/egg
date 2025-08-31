@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 import { isFunction, isAsyncFunction } from 'is-type-of';
@@ -8,12 +9,12 @@ import { createApp, getFilepath, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_controller.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = createApp('controller-app');
     await app.loader.loadAll();
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   describe('when controller is async function', () => {
     it('should use it as middleware', () => {
@@ -460,7 +461,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
 
   describe('controller in other directory', () => {
     let app: Application;
-    before(async () => {
+    beforeAll(async () => {
       const baseDir = getFilepath('other-directory');
       app = createApp('other-directory');
       await app.loader.loadCustomApp();
@@ -469,7 +470,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should load', () => {
       assert(app.controller.user);
@@ -478,12 +479,12 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
 
   describe('when controller.supportParams === true', () => {
     let app: Application;
-    before(async () => {
+    beforeAll(async () => {
       app = createApp('controller-params');
       await app.loader.loadAll();
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should use as controller', async () => {
       await request(app.callback())

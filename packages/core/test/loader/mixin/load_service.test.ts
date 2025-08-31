@@ -1,5 +1,6 @@
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { describe, it, afterEach, beforeAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
@@ -148,7 +149,7 @@ describe('test/loader/mixin/load_service.test.ts', () => {
   });
 
   describe('service in other directory', () => {
-    before(async () => {
+    beforeAll(async () => {
       const baseDir = getFilepath('other-directory');
       app = createApp('other-directory');
       await app.loader.loadCustomApp();

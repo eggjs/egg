@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { describe, it, beforeAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { getAsyncLocalStorage, kGALS } from 'gals';
 import { getFilepath } from './helper.js';
@@ -7,7 +8,7 @@ import { Application } from './fixtures/egg-esm/index.js';
 
 describe('test/asyncLocalStorage.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = new Application({
       baseDir: getFilepath('session-cache-app'),
       type: 'application',

@@ -2,6 +2,7 @@
 
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { describe, it } from 'vitest';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
 import { FileLoader, CaseStyle } from '../../src/loader/file_loader.js';

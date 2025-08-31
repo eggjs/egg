@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, afterEach } from 'vitest';
 
 import { mm } from 'mm';
 

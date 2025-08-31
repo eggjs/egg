@@ -1,15 +1,16 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { createApp } from '../../helper.js';
 
 describe('test/loader/mixin/load_agent_extend.test.ts', () => {
   let agent: any;
-  before(async () => {
+  beforeAll(async () => {
     agent = createApp('agent');
     await agent.loader.loadPlugin();
     await agent.loader.loadConfig();
     await agent.loader.loadAgentExtend();
   });
-  after(() => agent.close());
+  afterAll(() => agent.close());
 
   it('should load extend from chair, plugin and agent', () => {
     assert(agent.poweredBy);

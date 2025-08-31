@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 
@@ -6,12 +7,12 @@ import { createApp, type Application } from '../helper.js';
 
 describe('test/utils/router.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = createApp('router-app');
     await app.loader.loadAll();
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   describe('router.resources', () => {
     describe('normal', () => {
@@ -349,13 +350,13 @@ describe('test/utils/router.test.ts', () => {
   });
 
   describe('router middleware', () => {
-    before(async () => {
+    beforeAll(async () => {
       app = createApp('router-in-app');
       await app.loader.loadAll();
       return app.ready();
     });
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should always load router middleware at last', () => {
       return request(app.callback()).get('/').expect(200).expect('foo');

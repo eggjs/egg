@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { request } from '@eggjs/supertest';
 
@@ -6,7 +7,7 @@ import { createApp, type Application } from '../../helper.js';
 
 describe('test/loader/mixin/load_custom_loader.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = createApp('custom-loader');
     await app.loader.loadPlugin();
     await app.loader.loadConfig();
@@ -15,7 +16,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
     await app.loader.loadMiddleware();
     await app.loader.loadCustomLoader();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should load to app', async () => {
     console.log((app as any).adapter);

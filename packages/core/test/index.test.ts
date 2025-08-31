@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { describe, it } from 'vitest';
 // oxlint-disable-next-line no-namespace
 import * as EggCore from '../src/index.ts';
 import type { EggAppConfig } from '../src/index.ts';
