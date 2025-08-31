@@ -23,7 +23,7 @@ jobs:
         cache: "pnpm"
 
     - name: Install Dependencies
-      run: pnpm install
+      run: corepack enable pnpm && pnpm install
 
     - name: Build Documents
       run: pnpm run site:build && cp vercel.json ./site/dist/vercel.json

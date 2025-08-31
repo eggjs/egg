@@ -15,6 +15,6 @@ jobs:
       os: 'ubuntu-latest, macos-latest, windows-latest'
       version: '20, 22, 24'
       test: 'pnpm run ci:app'
-      install: 'pnpm install'
+      install: 'corepack enable pnpm && pnpm install'
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
