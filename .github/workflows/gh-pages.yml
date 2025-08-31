@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest ]
-        node-version: [ 18 ]
+        node-version: [ 20 ]
     steps:
     - name: Checkout Git Source
       uses: actions/checkout@master
@@ -20,12 +20,13 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
+        cache: "pnpm"
 
     - name: Install Dependencies
-      run: npm i -g npminstall && npminstall
+      run: pnpm install
 
     - name: Build Documents
-      run: npm run site:build && cp vercel.json ./site/dist/vercel.json
+      run: pnpm run site:build && cp vercel.json ./site/dist/vercel.json
 
     - name: Deploy Documents
       uses: peaceiris/actions-gh-pages@v3
