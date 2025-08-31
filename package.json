@@ -22,6 +22,7 @@
     "test": "pnpm -r run test",
     "test:changed": "pnpm -r run test:changed",
     "ci": "pnpm -r run ci",
+    "ci:core": "pnpm --filter=core run ci",
     "ci:app": "pnpm --filter=egg run ci:app",
     "ci:cluster1": "pnpm --filter=egg run ci:cluster1",
     "ci:cluster2": "pnpm --filter=egg run ci:cluster2",

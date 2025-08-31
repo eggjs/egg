@@ -183,15 +183,11 @@ describe('test/egg.test.ts', () => {
         message += util.format(a, b, c);
       });
       app.ready(() => {
-        assert(
-          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/.test(
-            message
-          )
+        assert.match(message,
+          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/
         );
-        assert(
-          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/.test(
-            message
-          )
+        assert.match(message,
+          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/
         );
         // console.log(app.timing.toString());
         done();

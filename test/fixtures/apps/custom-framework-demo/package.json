@@ -1,6 +1,0 @@
-{
-  "name": "custom-framework-demo",
-  "egg": {
-    "framework": "../test/fixtures/custom-egg"
-  }
-}

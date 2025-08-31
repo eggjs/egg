@@ -1,6 +1,0 @@
-{
-  "name": "static-server",
-  "spm": {
-    "less": true
-  }
-}

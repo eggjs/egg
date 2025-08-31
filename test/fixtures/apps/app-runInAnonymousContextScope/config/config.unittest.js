@@ -1,3 +1,0 @@
-exports.logger = {
-  consoleLevel: 'NONE',
-};

@@ -28,11 +28,13 @@
     "build": "tsdown",
     "lint": "oxlint",
     "pretest": "pnpm run clean",
-    "test": "egg-bin test",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
     "posttest": "pnpm run clean",
-    "test-local": "egg-bin test",
+    "test-local": "vitest run",
     "preci": "pnpm run lint",
-    "ci": "egg-bin cov",
+    "ci": "vitest run --coverage",
     "postci": "pnpm run clean && pnpm run build",
     "prepublishOnly": "pnpm run build"
   },
@@ -73,7 +75,6 @@
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
     "@types/js-yaml": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "await-event": "catalog:",
     "coffee": "catalog:",
@@ -88,6 +89,9 @@
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "urllib": "catalog:"
+    "urllib": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
   }
 }
