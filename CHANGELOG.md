@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/eggjs/egg/compare/v4.0.10...v4.1.0) (2025-08-31)
+
+
+### Features
+
+* migrate to pnpm monorepo structure ([#5435](https://github.com/eggjs/egg/issues/5435)) ([7c44571](https://github.com/eggjs/egg/commit/7c445711c4db7c4d8e4238bef5b89f45b3d8d8bc))
+
 ## [4.0.10](https://github.com/eggjs/egg/compare/v4.0.9...v4.0.10) (2025-03-10)
 
 

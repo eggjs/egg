@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/monorepo",
-  "version": "4.0.10",
+  "version": "4.1.0",
   "private": true,
   "description": "Eggjs framework monorepo",
   "engines": {
