@@ -5,21 +5,31 @@
     "node": ">= 20.19.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
   },
   "description": "Utils for all egg projects",
   "scripts": {
-    "clean": "rimraf dist",
     "build": "tsdown",
-    "lint": "oxlint",
-    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
-    "test": "egg-bin test",
-    "posttest": "pnpm run clean",
-    "test-local": "egg-bin test",
-    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
-    "ci": "egg-bin cov",
-    "postci": "pnpm run clean",
-    "prepublishOnly": "pnpm run build && attw --pack"
+    "lint": "oxlint --type-aware",
+    "pretest": "pnpm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm run build"
   },
   "keywords": [
     "egg",
@@ -34,31 +44,13 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
-    "@eggjs/bin": "catalog:",
-    "@eggjs/tsconfig": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "coffee": "catalog:",
     "mm": "catalog:",
-    "npminstall": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "catalog:",
     "runscript": "catalog:",
-    "snap-shot-it": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "type": "module",
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

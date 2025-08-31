@@ -16,7 +16,17 @@ export interface ImportModuleOptions extends ImportResolveOptions {
   importDefaultOnly?: boolean;
 }
 
-export const isESM = typeof require === 'undefined';
+// detect is esm or cjs
+export let isESM = true;
+try {
+  // Accessing import.meta will throw an error in CJS
+  if (typeof import.meta !== 'undefined') {
+    isESM = true;
+  }
+} catch {
+  // If import.meta is not available, it's likely CJS
+  isESM = false;
+}
 const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 const supportImportMetaResolve = nodeMajorVersion >= 18;
 
@@ -183,6 +193,18 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   }
 }
 
+// patch for vitest
+// https://github.com/vitest-dev/vitest/issues/6953#issuecomment-3223548053
+// remove it after vitest fix release https://github.com/vitest-dev/vitest/pull/8493
+const importMetaResolve = (options?: ImportResolveOptions, ...args: Parameters<ImportMeta['resolve']>) => {
+  if (typeof import.meta.resolve !== 'function' && process.env.VITEST === 'true') {
+    // patch for vitest
+    return pathToFileURL(require.resolve(args[0], options)).href;
+  }
+
+  return import.meta.resolve(...args);
+}
+
 export function importResolve(filepath: string, options?: ImportResolveOptions) {
   // find *.json or CommonJS module by require.resolve
   // e.g.: importResolve('egg/package.json', { paths })
@@ -253,9 +275,8 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
   } else {
     if (supportImportMetaResolve) {
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        moduleFilePath = import.meta.resolve(filepath);
+        // moduleFilePath = import.meta.resolve(filepath);
+        moduleFilePath = importMetaResolve(options, filepath);
       } catch (err) {
         throw new ImportResolveError(filepath, paths, err as Error);
       }

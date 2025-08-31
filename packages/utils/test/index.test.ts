@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import snapshot from 'snap-shot-it';
+import { describe, it, expect } from 'vitest';
 
 import { detectType, EggType } from '../src/index.js';
 import * as all from '../src/index.js';
@@ -34,7 +34,7 @@ describe('test/index.test.ts', () => {
 
   describe('export all', () => {
     it('should keep checking', () => {
-      snapshot(Object.keys(all));
+      expect(Object.keys(all)).toMatchSnapshot();
     });
   });
 });

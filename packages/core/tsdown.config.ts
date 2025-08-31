@@ -5,6 +5,7 @@ export default defineConfig({
     index: 'src/index.ts',
   },
   unbundle: true,
+  dts: true,
   exports: {
     devExports: true,
   },

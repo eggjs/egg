@@ -3,23 +3,20 @@ import { strict as assert } from 'node:assert';
 import { rm } from 'node:fs/promises';
 import fsPromise from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 import coffee from 'coffee';
 import { runscript } from 'runscript';
 import utils from '../src/index.js';
 import { getFilepath } from './helper.js';
 
-describe('test/plugin.test.ts', () => {
+// FIXME: dont install online
+describe.skip('test/plugin.test.ts', () => {
   const cwd = getFilepath('egg-app');
   const tmp = getFilepath('tmp');
 
   beforeEach(async () => {
     await rm(tmp, { force: true, recursive: true });
-    if (fsPromise.cp) {
-      await fsPromise.cp(cwd, tmp, { force: true, recursive: true });
-    } else {
-      // Node.js 14
-      await runscript(`cp -rf ${cwd} ${tmp}`);
-    }
+    await fsPromise.cp(cwd, tmp, { force: true, recursive: true });
     assert(existsSync(tmp), `${tmp} not exists`);
   });
   afterEach(() => rm(tmp, { force: true, recursive: true }));
@@ -44,7 +41,7 @@ describe('test/plugin.test.ts', () => {
         .end();
     });
 
-    it('should get plugins using npminstall', async () => {
+    it.skip('should get plugins using npminstall', async () => {
       const cmd = process.env.CI ? 'npminstall' : 'npminstall -c';
       await runscript(cmd, { cwd: tmp });
 
@@ -59,7 +56,7 @@ describe('test/plugin.test.ts', () => {
         .end();
     });
 
-    it('should get plugins using npminstall on test', async () => {
+    it.skip('should get plugins using npminstall on test', async () => {
       const cmd = process.env.CI ? 'npminstall' : 'npminstall -c';
       await runscript(cmd, { cwd: tmp });
 

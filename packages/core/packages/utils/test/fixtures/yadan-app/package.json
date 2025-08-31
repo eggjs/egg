@@ -1,6 +1,0 @@
-{
-  "name": "yadan-app",
-  "egg": {
-    "framework": "yadan"
-  }
-}

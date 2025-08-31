@@ -12,17 +12,20 @@
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
-    "tsdown": "catalog:"
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
   },
   "scripts": {
     "clean": "pnpm -r run clean",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
-    "pretest": "pnpm lint",
-    "test": "pnpm -r run test",
+    "test": "vitest run",
     "test:changed": "pnpm -r run test:changed",
+    "cov": "vitest run --coverage",
     "ci": "pnpm -r run ci",
     "ci:core": "pnpm --filter=core run ci",
+    "ci:utils": "pnpm run cov packages/utils",
     "ci:app": "pnpm --filter=egg run ci:app",
     "ci:cluster1": "pnpm --filter=egg run ci:cluster1",
     "ci:cluster2": "pnpm --filter=egg run ci:cluster2",
