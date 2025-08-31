@@ -2,31 +2,39 @@
   "name": "@eggjs/core",
   "version": "6.5.0",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "engines": {
     "node": ">= 20.19.0"
   },
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
     "clean": "rimraf dist",
+    "build": "tsdown",
     "lint": "oxlint",
-    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "pretest": "pnpm run clean",
     "test": "egg-bin test",
     "posttest": "pnpm run clean",
     "test-local": "egg-bin test",
-    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "preci": "pnpm run lint",
     "ci": "egg-bin cov",
-    "postci": "pnpm run clean",
-    "prepublishOnly": "tshy && tshy-after && attw --pack",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js,json,md,yml}": [
-      "prettier --ignore-unknown --write",
-      "oxlint --fix"
-    ]
+    "postci": "pnpm run clean && pnpm run build",
+    "prepublishOnly": "pnpm run build"
   },
   "repository": {
     "type": "git",
@@ -78,37 +86,8 @@
     "mm": "catalog:",
     "pedding": "catalog:",
     "rimraf": "catalog:",
-    "ts-node": "catalog:",
-    "tshy": "catalog:",
-    "tshy-after": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:"
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "type": "module",
-  "tshy": {
-    "exports": {
-      "./package.json": "./package.json",
-      ".": "./src/index.ts"
-    }
-  },
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      },
-      "require": {
-        "types": "./dist/commonjs/index.d.ts",
-        "default": "./dist/commonjs/index.js"
-      }
-    }
-  },
-  "main": "./dist/commonjs/index.js",
-  "types": "./dist/commonjs/index.d.ts",
-  "module": "./dist/esm/index.js"
+  }
 }

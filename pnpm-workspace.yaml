@@ -25,7 +25,6 @@ catalog:
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0
-  '@eggjs/core': ^6.3.1
   '@eggjs/development': ^4.0.0
   '@eggjs/i18n': ^3.0.1
   '@eggjs/jsonp': ^3.0.0

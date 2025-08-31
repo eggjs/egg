@@ -149,11 +149,12 @@ The framework extends Koa's context with Egg-specific features:
 - Follow existing test patterns for consistency
 
 ### TypeScript Support
-- Main framework in `packages/egg/` is written in TypeScript with strict mode
+- Both `packages/egg/` and `packages/core/` written in TypeScript with strict mode
 - Uses tsdown for unbundled ESM builds (faster development, preserves file structure)
-- Configured with `tsdown.config.ts` for optimal build settings
+- Each package configured with `tsdown.config.ts` for optimal build settings
 - Type definitions are exported for framework users
 - Examples support both .js and .ts application files
+- Cross-package TypeScript references configured for proper module resolution
 
 ### Documentation
 - Main docs are in the `site/` directory using Dumi
