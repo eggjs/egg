@@ -1,0 +1,8 @@
+{
+  "eggPlugin": {
+    "name": "gw",
+    "dependencies": [
+      "rpcServer"
+    ]
+  }
+}

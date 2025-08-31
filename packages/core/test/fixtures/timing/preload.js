@@ -1,0 +1,1 @@
+process.scriptStartTime = Date.now();

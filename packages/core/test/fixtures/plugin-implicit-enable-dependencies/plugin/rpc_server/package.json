@@ -1,0 +1,9 @@
+{
+  "eggPlugin": {
+    "name": "rpcServer",
+    "optionalDependencies": [
+      "ldc",
+      "zoneclient"
+    ]
+  }
+}

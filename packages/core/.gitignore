@@ -1,0 +1,17 @@
+/node_modules
+coverage
+.logs
+npm-debug.log
+.vscode
+.DS_Store
+yarn.lock
+test/fixtures/egg/node_modules/egg-core
+.idea
+.nyc_output
+package-lock.json
+run
+test/fixtures/*/timing.json
+lib/
+.tshy*
+dist
+.package-lock.json

@@ -1,0 +1,10 @@
+{
+  "eggPlugin": {
+    "name": "rpc",
+    "optionalDependencies": [
+      "zookeeper",
+      "vip",
+      "zoneclient"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "eggPlugin": {
+    "name": "gateway",
+    "dependencies": [
+      "rpcServer"
+    ],
+    "optionalDependencies": [
+      "tracelog"
+    ]
+  }
+}

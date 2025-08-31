@@ -1,0 +1,114 @@
+{
+  "name": "@eggjs/core",
+  "version": "6.5.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "description": "A core plugin framework based on @eggjs/koa",
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "test": "egg-bin test",
+    "posttest": "pnpm run clean",
+    "test-local": "egg-bin test",
+    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "ci": "egg-bin cov",
+    "postci": "pnpm run clean",
+    "prepublishOnly": "tshy && tshy-after && attw --pack",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --fix"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "egg",
+    "loader"
+  ],
+  "author": "fengmk2 <fengmk2@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/monorepo/packages/core#readme",
+  "dependencies": {
+    "@eggjs/koa": "catalog:",
+    "@eggjs/router": "catalog:",
+    "@eggjs/utils": "catalog:",
+    "egg-logger": "catalog:",
+    "egg-path-matching": "catalog:",
+    "extend2": "catalog:",
+    "get-ready": "catalog:",
+    "globby": "catalog:",
+    "is-type-of": "catalog:",
+    "node-homedir": "catalog:",
+    "performance-ms": "catalog:",
+    "ready-callback": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/supertest": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/js-yaml": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "await-event": "catalog:",
+    "coffee": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
+    "oxlint": "catalog:",
+    "prettier": "catalog:",
+    "gals": "catalog:",
+    "js-yaml": "catalog:",
+    "mm": "catalog:",
+    "pedding": "catalog:",
+    "rimraf": "catalog:",
+    "ts-node": "catalog:",
+    "tshy": "catalog:",
+    "tshy-after": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "tshy": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.ts"
+    }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "module": "./dist/esm/index.js"
+}

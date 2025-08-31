@@ -1,0 +1,10 @@
+{
+  "eggPlugin": {
+    "name": "ldc",
+    "dependencies": [
+      "rpc",
+      "zoneclient",
+      "vip"
+    ]
+  }
+}

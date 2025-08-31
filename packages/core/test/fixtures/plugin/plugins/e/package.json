@@ -1,0 +1,8 @@
+{
+  "eggPlugin": {
+    "name": "wrong-name",
+    "dep": [
+      "f"
+    ]
+  }
+}

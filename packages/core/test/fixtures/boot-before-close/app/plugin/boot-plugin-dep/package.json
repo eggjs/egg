@@ -1,0 +1,9 @@
+{
+  "name": "bootPluginDep",
+  "eggPlugin": {
+    "name": "bootPluginDep",
+    "deps": [
+      "bootPuginDep"
+    ]
+  }
+}
