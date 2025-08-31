@@ -4,11 +4,21 @@ packages:
   - site
 
 catalog:
-  '@arethetypeswrong/cli': ^0.17.3
+  '@eggjs/router': ^3.0.5
+  '@types/js-yaml': '4'
+  'await-event': '2'
+  'gals': '1'
+  'get-ready': ^3.1.0
+  'globby': ^11.0.2
+  'husky': '9'
+  'js-yaml': '3'
+  'lint-staged': '15'
+  'node-homedir': ^2.0.0
+  'ready-callback': ^4.0.0
+  'tsconfig-paths': ^4.2.0  
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0
-  '@eggjs/core': ^6.3.1
   '@eggjs/development': ^4.0.0
   '@eggjs/i18n': ^3.0.1
   '@eggjs/jsonp': ^3.0.0
@@ -22,22 +32,22 @@ catalog:
   '@eggjs/session': ^4.0.1
   '@eggjs/static': ^3.0.0
   '@eggjs/supertest': ^8.2.0
-  '@eggjs/tsconfig': 1.3.3
+  '@eggjs/tsconfig': ^2.0.0
   '@eggjs/utils': ^4.2.5
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
   '@types/koa-bodyparser': ^4.3.12
   '@types/mocha': ^10.0.10
-  '@types/node': '22'
+  '@types/node': '24'
   address: '2'
   assert-file: '1'
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
   coffee: '5'
-  cross-env: '7'
   dumi: ^2.4.17
   egg-errors: ^2.3.2
-  egg-logger: ^3.6.1
+  egg-logger: ^3.5.0
+  egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
   egg-tracer: ^2.1.0
   egg-view-nunjucks: ^2.3.0
@@ -66,3 +76,8 @@ catalog:
   typescript: '5'
   urllib: ^4.6.11
   utility: ^2.5.0
+  vitest: ^2.0.0
+  '@vitest/ui': ^2.0.0
+  '@vitest/coverage-v8': ^2.0.0
+  'npminstall': '7'
+  'snap-shot-it': ^7.9.10

@@ -11,6 +11,12 @@
   "references": [
     {
       "path": "./packages/egg"
+    },
+    {
+      "path": "./packages/core"
+    },
+    {
+      "path": "./packages/utils"
     }
   ]
 }

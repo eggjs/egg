@@ -1,0 +1,29 @@
+{
+  "name": "helloworld-ts",
+  "dependencies": {
+    "egg": "beta"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "7",
+    "@eggjs/mock": "6",
+    "@eggjs/tsconfig": "1",
+    "@types/mocha": "10",
+    "@types/node": "22",
+    "eslint": "8",
+    "eslint-config-egg": "14",
+    "typescript": "5"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "dev": "egg-bin dev",
+    "pretest": "npm run lint -- --fix",
+    "test": "egg-bin test",
+    "preci": "npm run lint",
+    "ci": "egg-bin cov",
+    "postci": "npm run prepublishOnly && npm run clean",
+    "clean": "tsc -b --clean",
+    "prepublishOnly": "npm run clean && tsc"
+  },
+  "private": true,
+  "repository": "git@github.com:eggjs/examples.git"
+}

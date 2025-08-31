@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, next ]
+  pull_request:
+    branches: [ master, next ]
+  merge_group:
+
+jobs:
+  egg:
+    name: egg
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, macos-latest, windows-latest'
+      version: '20, 22, 24'
+      test: 'pnpm run ci:app'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  egg-cluster1:
+    name: egg-cluster1
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, windows-latest'
+      version: '20'
+      test: 'pnpm run ci:cluster1'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  egg-cluster2:
+    name: egg-cluster2
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, windows-latest'
+      version: '22'
+      test: 'pnpm run ci:cluster2'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  egg-lib-core:
+    name: egg-lib-core
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, windows-latest'
+      version: '20, 22'
+      test: 'pnpm run ci:lib/core'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  egg-lib-plugins:
+    name: egg-lib-plugins
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, windows-latest'
+      version: '20, 22'
+      test: 'pnpm run ci:lib/plugins'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  core:
+    name: "@eggjs/core"
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, macos-latest, windows-latest'
+      version: '20, 22, 24'
+      test: 'pnpm run ci:core'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  utils:
+    name: "@eggjs/utils"
+    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
+    with:
+      os: 'ubuntu-latest, macos-latest, windows-latest'
+      version: '20, 22, 24'
+      test: 'pnpm run ci:utils'
+      install: 'corepack enable pnpm && pnpm install'
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

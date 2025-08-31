@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/index.test.ts > export all > should keep checking 1`] = `
+[
+  "getFrameworkPath",
+  "getPlugins",
+  "getConfig",
+  "getLoadUnits",
+  "getLoader",
+  "findEggCore",
+  "getFrameworkOrEggPath",
+  "isESM",
+  "getExtensions",
+  "isSupportTypeScript",
+  "importResolve",
+  "importModule",
+  "ImportResolveError",
+  "default",
+  "EggType",
+  "detectType",
+]
+`;

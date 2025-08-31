@@ -1,0 +1,56 @@
+{
+  "name": "@eggjs/utils",
+  "version": "4.4.1",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "description": "Utils for all egg projects",
+  "scripts": {
+    "build": "tsdown",
+    "lint": "oxlint --type-aware",
+    "pretest": "pnpm run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "egg",
+    "utils"
+  ],
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/utils"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "coffee": "catalog:",
+    "mm": "catalog:",
+    "oxlint": "catalog:",
+    "runscript": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

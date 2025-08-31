@@ -5,8 +5,25 @@
     "node": ">= 20.19.0"
   },
   "publishConfig": {
-    "tag": "beta"
+    "tag": "beta",
+    "exports": {
+      ".": "./dist/index.js",
+      "./urllib": "./dist/urllib.js",
+      "./package.json": "./package.json"
+    }
   },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./urllib": "./src/urllib.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "description": "A web application framework for Node.js",
   "keywords": [
     "web",
@@ -21,7 +38,7 @@
   "dependencies": {
     "@eggjs/cluster": "catalog:",
     "@eggjs/cookies": "catalog:",
-    "@eggjs/core": "catalog:",
+    "@eggjs/core": "workspace:*",
     "@eggjs/development": "catalog:",
     "@eggjs/i18n": "catalog:",
     "@eggjs/jsonp": "catalog:",
@@ -32,7 +49,7 @@
     "@eggjs/security": "catalog:",
     "@eggjs/session": "catalog:",
     "@eggjs/static": "catalog:",
-    "@eggjs/utils": "catalog:",
+    "@eggjs/utils": "workspace:*",
     "@eggjs/view": "catalog:",
     "@eggjs/watcher": "catalog:",
     "circular-json-for-egg": "catalog:",
@@ -52,7 +69,6 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
     "@eggjs/bin": "catalog:",
     "@eggjs/koa": "catalog:",
     "@eggjs/mock": "catalog:",
@@ -64,7 +80,6 @@
     "address": "catalog:",
     "assert-file": "catalog:",
     "coffee": "catalog:",
-    "cross-env": "catalog:",
     "egg-plugin-puml": "catalog:",
     "egg-tracer": "catalog:",
     "egg-view-nunjucks": "catalog:",
@@ -83,7 +98,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "tsdown",
-    "pretest": "pnpm run clean", 
     "test": "egg-bin test",
     "test-local": "egg-bin test",
     "test:changed": "egg-bin test --changed",
@@ -106,20 +120,5 @@
   "license": "MIT",
   "egg": {
     "framework": true
-  },
-  "files": [
-    "dist"
-  ],
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./urllib": {
-      "types": "./dist/urllib.d.ts",
-      "import": "./dist/urllib.js"
-    },
-    "./package.json": "./package.json"
   }
 }

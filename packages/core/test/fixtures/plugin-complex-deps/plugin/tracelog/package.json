@@ -1,0 +1,9 @@
+{
+  "eggPlugin": {
+    "name": "tracelog",
+    "optionalDependencies": [
+      "gw",
+      "rpcServer"
+    ]
+  }
+}

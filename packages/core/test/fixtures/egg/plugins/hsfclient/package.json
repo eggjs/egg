@@ -1,0 +1,10 @@
+{
+  "eggPlugin": {
+    "name": "hsfclient",
+    "dep": [
+      "eagleeye",
+      "configclient",
+      "diamond"
+    ]
+  }
+}

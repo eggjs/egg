@@ -1,0 +1,8 @@
+{
+  "eggPlugin": {
+    "name": "ddcs",
+    "dependencies": [
+      "zookeeper"
+    ]
+  }
+}

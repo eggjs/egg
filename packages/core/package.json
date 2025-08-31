@@ -1,0 +1,96 @@
+{
+  "name": "@eggjs/core",
+  "version": "6.5.0",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "description": "A core plugin framework based on @eggjs/koa",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "posttest": "pnpm run clean",
+    "test-local": "vitest run",
+    "preci": "pnpm run lint",
+    "ci": "vitest run --coverage",
+    "postci": "pnpm run clean && pnpm run build",
+    "prepublishOnly": "pnpm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "egg",
+    "loader"
+  ],
+  "author": "fengmk2 <fengmk2@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/monorepo/packages/core#readme",
+  "dependencies": {
+    "@eggjs/koa": "catalog:",
+    "@eggjs/router": "catalog:",
+    "@eggjs/utils": "workspace:*",
+    "egg-logger": "catalog:",
+    "egg-path-matching": "catalog:",
+    "extend2": "catalog:",
+    "get-ready": "catalog:",
+    "globby": "catalog:",
+    "is-type-of": "catalog:",
+    "node-homedir": "catalog:",
+    "performance-ms": "catalog:",
+    "ready-callback": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "catalog:",
+    "@eggjs/supertest": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/js-yaml": "catalog:",
+    "@types/node": "catalog:",
+    "await-event": "catalog:",
+    "coffee": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
+    "oxlint": "catalog:",
+    "prettier": "catalog:",
+    "gals": "catalog:",
+    "js-yaml": "catalog:",
+    "mm": "catalog:",
+    "pedding": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
+  }
+}

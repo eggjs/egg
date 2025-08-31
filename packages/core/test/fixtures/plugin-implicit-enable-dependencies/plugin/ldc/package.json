@@ -1,0 +1,8 @@
+{
+  "eggPlugin": {
+    "name": "ldc",
+    "dependencies": [
+      "zoneclient"
+    ]
+  }
+}

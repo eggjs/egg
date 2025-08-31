@@ -1,0 +1,11 @@
+{
+  "eggPlugin": {
+    "name": "g",
+    "exports": {
+      "require": "./dist/commonjs",
+      "import": "./dist/esm",
+      "typescript": "./src"
+    }
+  },
+  "version": "1.0.0"
+}

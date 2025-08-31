@@ -1,1 +1,0 @@
-exports.keys = 'test key';

@@ -1,0 +1,9 @@
+{
+  "eggPlugin": {
+    "name": "zoneclient",
+    "dependencies": [
+      "vip",
+      "ddcs"
+    ]
+  }
+}

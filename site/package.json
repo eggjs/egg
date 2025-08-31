@@ -8,12 +8,11 @@
     "dumi": "catalog:"
   },
   "devDependencies": {
-    "cross-env": "catalog:",
     "prettier": "catalog:"
   },
   "scripts": {
-    "dev": "cross-env APP_ROOT=. dumi dev",
-    "build": "cross-env APP_ROOT=. dumi build",
+    "dev": "APP_ROOT=. dumi dev",
+    "build:skip": "APP_ROOT=. dumi build",
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
   },
   "engines": {
