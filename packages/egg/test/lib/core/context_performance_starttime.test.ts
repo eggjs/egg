@@ -1,10 +1,11 @@
+import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { createApp, MockApplication } from '../../utils.js';
 
 describe('test/lib/core/context_performance_starttime.test.ts', () => {
   let app: MockApplication;
 
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/app-enablePerformanceTimer-true');
     return app.ready();
   });
@@ -13,12 +14,14 @@ describe('test/lib/core/context_performance_starttime.test.ts', () => {
     const ctx = app.mockContext();
     assert(ctx.performanceStarttime);
     assert.equal(typeof ctx.performanceStarttime, 'number');
-    assert(typeof ctx.performanceStarttime === 'number' && ctx.performanceStarttime > 0);
+    assert(
+      typeof ctx.performanceStarttime === 'number' &&
+        ctx.performanceStarttime > 0
+    );
   });
 
   it('should use ctx.performanceStarttime on controller', async () => {
-    const res = await app.httpRequest()
-      .get('/');
+    const res = await app.httpRequest().get('/');
     assert.equal(res.status, 200);
     assert.match(res.text, /hello performanceStarttime: \d+\.\d+/);
   });

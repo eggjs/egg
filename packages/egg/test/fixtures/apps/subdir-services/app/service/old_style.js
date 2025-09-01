@@ -1,3 +1,3 @@
-exports.url = async (ctx) => {
+exports.url = async ctx => {
   return ctx.url;
 };

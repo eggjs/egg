@@ -2,16 +2,16 @@
 
 module.exports = app => {
   return {
-    * bar() {
+    *bar() {
       this.ctx.body = 'this is obj bar!';
     },
 
-    * error() {
+    *error() {
       aaa;
     },
 
     subObj: {
-      * hello() {
+      *hello() {
         this.ctx.body = 'this is subObj hello!';
       },
     },

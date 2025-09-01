@@ -8,7 +8,7 @@ exports.dataService = {
 
   default: {
     foo: 'bar',
-  }
+  },
 };
 
 exports.dataServiceAsync = {
@@ -19,7 +19,7 @@ exports.dataServiceAsync = {
 
   default: {
     foo: 'bar',
-  }
+  },
 };
 
 exports.keys = 'test key';

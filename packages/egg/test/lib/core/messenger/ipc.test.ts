@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
@@ -8,7 +9,7 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
   let messenger: Messenger;
   const app: any = {};
 
-  before(() => {
+  beforeAll(() => {
     messenger = new Messenger(app);
   });
 
@@ -25,12 +26,16 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
 
       process.emit('message', {}, null);
       process.emit('message', null, null);
-      process.emit('message', {
-        action: 'messenger-test-on-event',
-        data: {
-          success: true,
+      process.emit(
+        'message',
+        {
+          action: 'messenger-test-on-event',
+          data: {
+            success: true,
+          },
         },
-      }, null);
+        null
+      );
     });
   });
 
@@ -43,18 +48,22 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
 
       messenger.close();
 
-      process.emit('message', {
-        action: 'messenger-test-on-event-2',
-        data: {
-          success: true,
+      process.emit(
+        'message',
+        {
+          action: 'messenger-test-on-event-2',
+          data: {
+            success: true,
+          },
         },
-      }, null);
+        null
+      );
     });
   });
 
   describe('cluster messenger', () => {
     let app: MockApplication;
-    after(() => app.close());
+    afterAll(() => app.close());
 
     // use it to record create coverage codes time
     it('before: should start cluster app', async () => {
@@ -79,7 +88,10 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
     it('agent should not send message before started', () => {
       app.expect('stdout', /agent can't call sendTo before server started/);
       app.expect('stdout', /agent can't call sendToApp before server started/);
-      app.expect('stdout', /agent can't call sendToAgent before server started/);
+      app.expect(
+        'stdout',
+        /agent can't call sendToAgent before server started/
+      );
       app.expect('stdout', /agent can't call sendRandom before server started/);
       app.expect('stdout', /agent can't call broadcast before server started/);
     });
@@ -87,14 +99,14 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
 
   describe('broadcast()', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/messenger-broadcast', { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
-    before(() => scheduler.wait(1000));
-    after(() => app.close());
+    beforeAll(() => scheduler.wait(1000));
+    afterAll(() => app.close());
 
     it('should broadcast each other', () => {
       // app 26496 receive message from app pid 26495
@@ -106,20 +118,22 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
       // agent 26494 receive message from app pid 26495
       // agent 26494 receive message from app pid 26496
       // agent 26494 receive message from agent pid 26494
-      const m = app.stdout.match(/(app|agent) \d+ receive message from (app|agent) pid \d+/g);
+      const m = app.stdout.match(
+        /(app|agent) \d+ receive message from (app|agent) pid \d+/g
+      );
       assert.equal(m.length, 9);
     });
   });
 
   describe('sendRandom', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/messenger-random', { workers: 4 });
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('app should accept agent message', async () => {
       await scheduler.wait(10000);
@@ -140,13 +154,13 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
 
   describe('sendToApp and sentToAgent', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/messenger-app-agent', { workers: 2 });
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('app should accept agent message', done => {
       setTimeout(() => {
@@ -167,13 +181,16 @@ describe('test/lib/core/messenger/ipc.test.ts', () => {
 
   describe('worker_threads mode', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
-      app = cluster('apps/messenger-app-agent', { workers: 1, startMode: 'worker_threads' });
+      app = cluster('apps/messenger-app-agent', {
+        workers: 1,
+        startMode: 'worker_threads',
+      });
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('app should accept agent message', done => {
       setTimeout(() => {

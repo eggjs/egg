@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import { once } from 'node:events';
 import type { AddressInfo } from 'node:net';
 import urllib from 'urllib';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { createApp, MockApplication, restore, mm } from '../../utils.js';
 
 describe('test/app/extend/request.test.ts', () => {
@@ -9,11 +10,11 @@ describe('test/app/extend/request.test.ts', () => {
     let app: MockApplication;
     let ctx;
     let req: any;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/demo');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
     beforeEach(() => {
       ctx = app.mockContext();
       req = ctx.request;
@@ -88,26 +89,26 @@ describe('test/app/extend/request.test.ts', () => {
     describe('req.ips', () => {
       it('should used x-forwarded-for', () => {
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
-        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2', '127.0.0.3' ]);
+        assert.deepEqual(req.ips, ['127.0.0.1', '127.0.0.2', '127.0.0.3']);
       });
 
       it('should used work with maxProxyCount', () => {
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
         mm(app.config, 'maxProxyCount', 1);
-        assert.deepEqual(req.ips, [ '127.0.0.2', '127.0.0.3' ]);
+        assert.deepEqual(req.ips, ['127.0.0.2', '127.0.0.3']);
       });
 
       it('should used work with maxIpsCount', () => {
         mm(req.header, 'x-forwarded-for', '127.0.0.1,127.0.0.2,127.0.0.3');
         mm(app.config, 'maxIpsCount', 1);
-        assert.deepEqual(req.ips, [ '127.0.0.3' ]);
+        assert.deepEqual(req.ips, ['127.0.0.3']);
       });
 
       it('should used x-real-ip', () => {
         mm(app.config, 'ipHeaders', 'X-Forwarded-For, X-Real-IP');
         mm(req.header, 'x-forwarded-for', '');
         mm(req.header, 'x-real-ip', '127.0.0.1,127.0.0.2');
-        assert.deepEqual(req.ips, [ '127.0.0.1', '127.0.0.2' ]);
+        assert.deepEqual(req.ips, ['127.0.0.1', '127.0.0.2']);
       });
 
       it('should return []', () => {
@@ -126,14 +127,13 @@ describe('test/app/extend/request.test.ts', () => {
     describe('req.protocol', () => {
       it('should return http when it not config and no protocol header', () => {
         mm(app.config, 'protocol', null);
-        return app.httpRequest()
-          .get('/protocol')
-          .expect('http');
+        return app.httpRequest().get('/protocol').expect('http');
       });
 
       it('should return value of X-Custom-Proto', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto, X-Custom-Proto');
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/protocol')
           .set('X-Custom-Proto', 'https')
           .expect('https');
@@ -141,14 +141,16 @@ describe('test/app/extend/request.test.ts', () => {
 
       it('should ignore X-Client-Scheme', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto');
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/protocol')
           .set('X-Client-Scheme', 'https')
           .expect('http');
       });
 
       it('should return value of X-Forwarded-Proto', () => {
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('https');
@@ -156,7 +158,8 @@ describe('test/app/extend/request.test.ts', () => {
 
       it('should ignore X-Forwarded-Proto when proxy=false', () => {
         mm(app.config, 'proxy', false);
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('http');
@@ -164,7 +167,8 @@ describe('test/app/extend/request.test.ts', () => {
 
       it('should ignore X-Forwarded-Proto', () => {
         mm(app.config, 'protocolHeaders', '');
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/protocol')
           .set('x-forwarded-proto', 'https')
           .expect('http');
@@ -172,9 +176,7 @@ describe('test/app/extend/request.test.ts', () => {
 
       it('should return value from config', () => {
         mm(app.config, 'protocol', 'https');
-        return app.httpRequest()
-          .get('/protocol')
-          .expect('https');
+        return app.httpRequest().get('/protocol').expect('https');
       });
 
       it('should return value from socket.encrypted', () => {
@@ -188,11 +190,11 @@ describe('test/app/extend/request.test.ts', () => {
       it('should success with querystring present', () => {
         req.querystring = 'a=a&b=b1&b=b2';
         assert.deepEqual(req.query, { a: 'a', b: 'b1' });
-        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'b1', 'b2' ] });
+        assert.deepEqual(req.queries, { a: ['a'], b: ['b1', 'b2'] });
         req.query.a = 'aa';
-        req.queries.b = [ 'bb' ];
+        req.queries.b = ['bb'];
         assert.deepEqual(req.query, { a: 'aa', b: 'b1' });
-        assert.deepEqual(req.queries, { a: [ 'a' ], b: [ 'bb' ] });
+        assert.deepEqual(req.queries, { a: ['a'], b: ['bb'] });
       });
 
       it('should success with empty querystring', () => {
@@ -200,9 +202,9 @@ describe('test/app/extend/request.test.ts', () => {
         assert.deepEqual(req.query, {});
         assert.deepEqual(req.queries, {});
         req.query.a = 'aa';
-        req.queries.b = [ 'bb' ];
+        req.queries.b = ['bb'];
         assert.deepEqual(req.query, { a: 'aa' });
-        assert.deepEqual(req.queries, { b: [ 'bb' ] });
+        assert.deepEqual(req.queries, { b: ['bb'] });
       });
     });
 
@@ -246,67 +248,79 @@ describe('test/app/extend/request.test.ts', () => {
       }
 
       it('should get array value', () => {
-        expectQueries('', { });
-        expectQueries('a=', { a: [ '' ] });
-        expectQueries('a=&', { a: [ '' ] });
-        expectQueries('a=b&', { a: [ 'b' ] });
-        expectQueries('a.=', { 'a.': [ '' ] });
-        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=', { a: [ '', '', '', '', '', '', '', '' ] });
-        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=&', { a: [ '', '', '', '', '', '', '', '' ] });
-        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=&&&&', { a: [ '', '', '', '', '', '', '', '' ] });
-        expectQueries('a=b', { a: [ 'b' ] });
-        expectQueries('a={}', { a: [ '{}' ] });
-        expectQueries('a=[]', { a: [ '[]' ] });
-        expectQueries('a[]=[]', { 'a[]': [ '[]' ], a: [ '[]' ] });
-        expectQueries('a[]=&a[]=', { 'a[]': [ '', '' ], a: [ '', '' ] });
-        expectQueries('a[]=[]&a[]=[]', { 'a[]': [ '[]', '[]' ], a: [ '[]', '[]' ] });
-        expectQueries('a=b&a=c', { a: [ 'b', 'c' ] });
-        expectQueries('a=&a=c', { a: [ '', 'c' ] });
-        expectQueries('a=c&a=b', { a: [ 'c', 'b' ] });
-        expectQueries('a=c&a=b&b=bb', { a: [ 'c', 'b' ], b: [ 'bb' ] });
-        expectQueries('a[=c&a[=b', { 'a[': [ 'c', 'b' ] });
-        expectQueries('a{=c&a{=b', { 'a{': [ 'c', 'b' ] });
-        expectQueries('a[]=c&a[]=b', { 'a[]': [ 'c', 'b' ], a: [ 'c', 'b' ] });
-        expectQueries('a[]=&a[]=b', { 'a[]': [ '', 'b' ], a: [ '', 'b' ] });
-        expectQueries('a[]=&a[]=b&a=foo', { 'a[]': [ '', 'b' ], a: [ 'foo' ] });
-        expectQueries('a=bar&a[]=&a[]=b&a=foo', { 'a[]': [ '', 'b' ], a: [ 'bar', 'foo' ] });
+        expectQueries('', {});
+        expectQueries('a=', { a: [''] });
+        expectQueries('a=&', { a: [''] });
+        expectQueries('a=b&', { a: ['b'] });
+        expectQueries('a.=', { 'a.': [''] });
+        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=', {
+          a: ['', '', '', '', '', '', '', ''],
+        });
+        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=&', {
+          a: ['', '', '', '', '', '', '', ''],
+        });
+        expectQueries('a=&a=&a=&a=&a=&a=&a=&a=&&&&', {
+          a: ['', '', '', '', '', '', '', ''],
+        });
+        expectQueries('a=b', { a: ['b'] });
+        expectQueries('a={}', { a: ['{}'] });
+        expectQueries('a=[]', { a: ['[]'] });
+        expectQueries('a[]=[]', { 'a[]': ['[]'], a: ['[]'] });
+        expectQueries('a[]=&a[]=', { 'a[]': ['', ''], a: ['', ''] });
+        expectQueries('a[]=[]&a[]=[]', {
+          'a[]': ['[]', '[]'],
+          a: ['[]', '[]'],
+        });
+        expectQueries('a=b&a=c', { a: ['b', 'c'] });
+        expectQueries('a=&a=c', { a: ['', 'c'] });
+        expectQueries('a=c&a=b', { a: ['c', 'b'] });
+        expectQueries('a=c&a=b&b=bb', { a: ['c', 'b'], b: ['bb'] });
+        expectQueries('a[=c&a[=b', { 'a[': ['c', 'b'] });
+        expectQueries('a{=c&a{=b', { 'a{': ['c', 'b'] });
+        expectQueries('a[]=c&a[]=b', { 'a[]': ['c', 'b'], a: ['c', 'b'] });
+        expectQueries('a[]=&a[]=b', { 'a[]': ['', 'b'], a: ['', 'b'] });
+        expectQueries('a[]=&a[]=b&a=foo', { 'a[]': ['', 'b'], a: ['foo'] });
+        expectQueries('a=bar&a[]=&a[]=b&a=foo', {
+          'a[]': ['', 'b'],
+          a: ['bar', 'foo'],
+        });
 
         // 'a[][]' doesn't support converting to 'a'
-        expectQueries('a[][]=&a[][]=b', { 'a[][]': [ '', 'b' ] });
-        expectQueries('a][]=&a][]=b', { 'a][]': [ '', 'b' ] });
-        expectQueries('a[[]=&a[[]=b', { 'a[[]': [ '', 'b' ] });
-        expectQueries('[]=&[]=b', { '[]': [ '', 'b' ] });
+        expectQueries('a[][]=&a[][]=b', { 'a[][]': ['', 'b'] });
+        expectQueries('a][]=&a][]=b', { 'a][]': ['', 'b'] });
+        expectQueries('a[[]=&a[[]=b', { 'a[[]': ['', 'b'] });
+        expectQueries('[]=&[]=b', { '[]': ['', 'b'] });
 
         // 'a[]' only returns the last value when mixed with others
-        expectQueries('a[]=a&a=b&a=c', { 'a[]': [ 'a' ], a: [ 'b', 'c' ] });
+        expectQueries('a[]=a&a=b&a=c', { 'a[]': ['a'], a: ['b', 'c'] });
 
         // object
-        expectQueries('a[foo]=c', { 'a[foo]': [ 'c' ] });
-        expectQueries('a[foo]=c&a=b', { 'a[foo]': [ 'c' ], a: [ 'b' ] });
+        expectQueries('a[foo]=c', { 'a[foo]': ['c'] });
+        expectQueries('a[foo]=c&a=b', { 'a[foo]': ['c'], a: ['b'] });
         expectQueries('a[foo]=c&a=b&b=bb&d=d1&d=d2', {
-          'a[foo]': [ 'c' ],
-          a: [ 'b' ],
-          b: [ 'bb' ],
-          d: [ 'd1', 'd2' ],
+          'a[foo]': ['c'],
+          a: ['b'],
+          b: ['bb'],
+          d: ['d1', 'd2'],
         });
         expectQueries('a[foo]=c&a[]=b&a[]=d', {
-          'a[foo]': [ 'c' ],
-          'a[]': [ 'b', 'd' ],
-          a: [ 'b', 'd' ],
+          'a[foo]': ['c'],
+          'a[]': ['b', 'd'],
+          a: ['b', 'd'],
         });
         expectQueries('a[foo]=c&a[]=b&a[]=d&c=cc&c=c2&c=', {
-          'a[foo]': [ 'c' ],
-          'a[]': [ 'b', 'd' ],
-          a: [ 'b', 'd' ],
-          c: [ 'cc', 'c2', '' ],
+          'a[foo]': ['c'],
+          'a[]': ['b', 'd'],
+          a: ['b', 'd'],
+          c: ['cc', 'c2', ''],
         });
         expectQueries('a[foo][bar]=c', {
-          'a[foo][bar]': [ 'c' ],
+          'a[foo][bar]': ['c'],
         });
       });
 
       it('should get undefined when key not exists', () => {
-        expectQueries('a=b', { a: [ 'b' ] });
+        expectQueries('a=b', { a: ['b'] });
       });
     });
 
@@ -322,7 +336,7 @@ describe('test/app/extend/request.test.ts', () => {
         assert.deepEqual(req.query, { foo: 'bar' });
         assert(req.querystring === 'foo=bar');
 
-        req.query = { array: [ 1, 2 ] };
+        req.query = { array: [1, 2] };
         assert.deepEqual(req.query, { array: '1' });
         assert(req.querystring === 'array=1&array=2');
       });
@@ -335,33 +349,42 @@ describe('test/app/extend/request.test.ts', () => {
       });
 
       it('should true when response is json', async () => {
-        const context = app.mockContext({
-          headers: {
-            accept: 'text/html',
+        const context = app.mockContext(
+          {
+            headers: {
+              accept: 'text/html',
+            },
+            url: '/',
           },
-          url: '/',
-        }, { reuseCtxStorage: false });
+          { reuseCtxStorage: false }
+        );
         context.type = 'application/json';
         assert(context.request.acceptJSON === true);
       });
 
       it('should true when accept json', async () => {
-        const context = app.mockContext({
-          headers: {
-            accept: 'application/json',
+        const context = app.mockContext(
+          {
+            headers: {
+              accept: 'application/json',
+            },
+            url: '/',
           },
-          url: '/',
-        }, { reuseCtxStorage: false });
+          { reuseCtxStorage: false }
+        );
         assert.equal(context.request.acceptJSON, true);
       });
 
       it('should false when do not accept json', async () => {
-        const context = app.mockContext({
-          headers: {
-            accept: 'text/html',
+        const context = app.mockContext(
+          {
+            headers: {
+              accept: 'text/html',
+            },
+            url: '/',
           },
-          url: '/',
-        }, { reuseCtxStorage: false });
+          { reuseCtxStorage: false }
+        );
         const request = context.request;
         assert(request.acceptJSON === false);
       });
@@ -371,16 +394,16 @@ describe('test/app/extend/request.test.ts', () => {
   describe('work with egg app', () => {
     let app: MockApplication;
     let host: string;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/querystring-extended');
       return app.ready();
     });
-    before(async () => {
+    beforeAll(async () => {
       const server = app.listen(0);
       await once(server, 'listening');
       host = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should return query and queries', async () => {
       const res = await urllib.request(`${host}/?p=a,b&p=b,c&a[foo]=bar`, {
@@ -388,17 +411,20 @@ describe('test/app/extend/request.test.ts', () => {
       });
       assert.deepEqual(res.data, {
         query: { p: 'a,b', 'a[foo]': 'bar' },
-        queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
+        queries: { p: ['a,b', 'b,c'], 'a[foo]': ['bar'] },
       });
     });
 
     it('should work with encodeURIComponent', async () => {
-      const res = await urllib.request(`${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`, {
-        dataType: 'json',
-      });
+      const res = await urllib.request(
+        `${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`,
+        {
+          dataType: 'json',
+        }
+      );
       assert.deepEqual(res.data, {
         query: { p: 'a,b', 'a[foo]': 'bar' },
-        queries: { p: [ 'a,b', 'b,c' ], 'a[foo]': [ 'bar' ] },
+        queries: { p: ['a,b', 'b,c'], 'a[foo]': ['bar'] },
       });
     });
   });

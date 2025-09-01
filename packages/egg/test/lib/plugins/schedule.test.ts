@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import path from 'node:path';
 import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
@@ -25,7 +26,13 @@ describe('test/lib/plugins/schedule.test.ts', () => {
 });
 
 function getLogContent(name: string) {
-  const logPath = path.join(getFilepath('apps'), name, 'logs', name, `${name}-web.log`);
+  const logPath = path.join(
+    getFilepath('apps'),
+    name,
+    'logs',
+    name,
+    `${name}-web.log`
+  );
   return fs.readFileSync(logPath, 'utf8');
 }
 

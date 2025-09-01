@@ -1,17 +1,11 @@
 import type { Socket } from 'node:net';
-import type {
-  RequestOptions as HttpClientRequestOptions,
-} from 'urllib';
-import type {
-  EggLoggerOptions, EggLoggersOptions,
-} from 'egg-logger';
+import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
+import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type {
   FileLoaderOptions,
   EggAppConfig as EggCoreAppConfig,
 } from '@eggjs/core';
-import type {
-  EggApplicationCore, Context,
-} from './egg.js';
+import type { EggApplicationCore, Context } from './egg.js';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
@@ -30,9 +24,7 @@ import '@eggjs/logrotator';
 import '@eggjs/multipart';
 import '@eggjs/view';
 
-export type {
-  EggAppInfo,
-} from '@eggjs/core';
+export type { EggAppInfo } from '@eggjs/core';
 
 type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
@@ -61,7 +53,8 @@ export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
 }
 
 /** Custom Loader Configuration */
-export interface CustomLoaderConfig extends Omit<FileLoaderOptions, 'inject' | 'target'> {
+export interface CustomLoaderConfig
+  extends Omit<FileLoaderOptions, 'inject' | 'target'> {
   /**
    * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
    */
@@ -96,9 +89,7 @@ export interface HttpClientConfig {
  * type EggConfig = PowerPartial<EggAppConfig>
  */
 export type PowerPartial<T> = {
-  [U in keyof T]?: T[U] extends object
-    ? PowerPartial<T[U]>
-    : T[U]
+  [U in keyof T]?: T[U] extends object ? PowerPartial<T[U]> : T[U];
 };
 
 export interface EggAppConfig extends EggCoreAppConfig {
@@ -246,7 +237,11 @@ export interface EggAppConfig extends EggCoreAppConfig {
     allowedMethods: string[];
   };
 
-  onClientError?(err: Error, socket: Socket, app: EggApplicationCore): ClientErrorResponse | Promise<ClientErrorResponse>;
+  onClientError?(
+    err: Error,
+    socket: Socket,
+    app: EggApplicationCore
+  ): ClientErrorResponse | Promise<ClientErrorResponse>;
 
   /**
    * server timeout in milliseconds, default to 0 (no timeout).
@@ -259,9 +254,9 @@ export interface EggAppConfig extends EggCoreAppConfig {
 
   cluster: {
     listen: {
-      path: string,
-      port: number,
-      hostname: string,
+      path: string;
+      port: number;
+      hostname: string;
     };
   };
 
@@ -305,4 +300,3 @@ export interface EggPlugin {
   jsonp?: EggPluginItem;
   view?: EggPluginItem;
 }
-

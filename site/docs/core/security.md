@@ -671,7 +671,6 @@ For sites that do not open HTTPS, this function can be limited to preventing ISP
 
 ## Revert CVE
 
-
 In the security fixes of node.js, there may be breaking changes. For example, in version 18.9.1, a security vulnerability was fixed, which caused some encryption-related code to not function properly. To address this issue, we provide a revert parameter, which is converted to the --security-revert parameter at startup, allowing the bypassing of the CVE fix.
 
 ```json
@@ -682,7 +681,7 @@ In the security fixes of node.js, there may be breaking changes. For example, in
     // One is to use a string directly, specifying a CVE
     "revert": "CVE-2023-46809",
     // The other is to use an array of strings, allowing the specification of multiple CVEs
-    "revert": [ "CVE-2023-46809" ]
+    "revert": ["CVE-2023-46809"]
   }
 }
 ```

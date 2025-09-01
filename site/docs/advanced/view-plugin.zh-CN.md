@@ -59,7 +59,6 @@ const ejs = require('ejs');
 
 Mmdule.exports = class EjsView {
   render(filename, locals, viewOptions) {
-
     const config = Object.assign({}, this.config, viewOptions, { filename });
 
     return new Promise((resolve, reject) => {
@@ -89,14 +88,16 @@ Mmdule.exports = class EjsView {
 ### 参数
 
 `render` 方法的参数：
-  - `filename`：是完整文件路径，框架查找文件时已确认文件是否存在，因此这里不需要处理。
-  - `locals`：渲染所需数据，来源包括 `app.locals`、`ctx.locals` 以及调用 `render` 方法传入的数据。框架还内置了 `ctx`、`request` 和 `ctx.helper` 这几个对象。
-  - `viewOptions`：用户传入的配置，可以覆盖模板引擎的默认配置。这个可根据模板引擎的特征考虑是否支持。例如，默认开启了缓存，而某个页面不需要缓存。
+
+- `filename`：是完整文件路径，框架查找文件时已确认文件是否存在，因此这里不需要处理。
+- `locals`：渲染所需数据，来源包括 `app.locals`、`ctx.locals` 以及调用 `render` 方法传入的数据。框架还内置了 `ctx`、`request` 和 `ctx.helper` 这几个对象。
+- `viewOptions`：用户传入的配置，可以覆盖模板引擎的默认配置。这个可根据模板引擎的特征考虑是否支持。例如，默认开启了缓存，而某个页面不需要缓存。
 
 `renderString` 方法的三个参数：
-  - `tpl`: 模板字符串，没有文件路径。
-  - `locals`: 同 `render`。
-  - `viewOptions`: 同 `render`。
+
+- `tpl`: 模板字符串，没有文件路径。
+- `locals`: 同 `render`。
+- `viewOptions`: 同 `render`。
 
 ## 插件配置
 
@@ -108,8 +109,8 @@ Mmdule.exports = class EjsView {
 // config/config.default.js
 module.exports = {
   ejs: {
-    cache: true
-  }
+    cache: true,
+  },
 };
 ```
 

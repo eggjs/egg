@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { createApp, MockApplication, restore, cluster } from '../../utils.js';
 
 describe('test/app/middleware/meta.test.ts', () => {
@@ -9,14 +10,15 @@ describe('test/app/middleware/meta.test.ts', () => {
   let app: MockApplication;
 
   describe('default config', () => {
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/middlewares');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should get X-Readtime header', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect('X-Readtime', /^\d+\.\d{1,3}$/)
         .expect(200);
@@ -24,15 +26,16 @@ describe('test/app/middleware/meta.test.ts', () => {
   });
 
   describe('config.logger.enablePerformanceTimer = true', () => {
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/middlewares-meta-enablePerformanceTimer');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should get X-Readtime header', async () => {
       for (let i = 0; i < 10; i++) {
-        await app.httpRequest()
+        await app
+          .httpRequest()
           .get(`/?i=${i}`)
           .expect('X-Readtime', /^\d+\.\d{1,3}$/)
           .expect(200);
@@ -41,14 +44,15 @@ describe('test/app/middleware/meta.test.ts', () => {
   });
 
   describe('meta.logging = true', () => {
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/meta-logging-app');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should get X-Readtime header', async () => {
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/?foo=bar')
         .expect('X-Readtime', /\d+/)
         .expect('hello world')
@@ -56,21 +60,24 @@ describe('test/app/middleware/meta.test.ts', () => {
       if (process.platform === 'win32') {
         await scheduler.wait(2000);
       }
-      const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
+      const content = (await fs.readFile(app.coreLogger.options.file, 'utf8'))
+        .split('\n')
+        .slice(-2, -1)[0];
       assert.match(content, /\[meta] request started, host: /);
     });
   });
 
   describe('cluster start', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/middlewares');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should ignore keep-alive header when request is not keep-alive', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect('X-Readtime', /\d+/)
         .expect((res: any) => assert(!res.headers['keep-alive']))
@@ -78,7 +85,8 @@ describe('test/app/middleware/meta.test.ts', () => {
     });
 
     it('should return keep-alive header when request is keep-alive', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .set('connection', 'keep-alive')
         .expect('X-Readtime', /\d+/)

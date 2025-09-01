@@ -22,7 +22,7 @@ $ npm i --save egg-mysql
 // config/plugin.js
 exports.mysql = {
   enable: true,
-  package: 'egg-mysql'
+  package: 'egg-mysql',
 };
 ```
 
@@ -46,12 +46,12 @@ exports.mysql = {
     // 密码
     password: 'test_password',
     // 数据库名
-    database: 'test'
+    database: 'test',
   },
   // 是否加载到 app 上，默认开启
   app: true,
   // 是否加载到 agent 上，默认关闭
-  agent: false
+  agent: false,
 };
 ```
 
@@ -75,24 +75,24 @@ exports.mysql = {
       // 端口号
       port: '3306',
       // 用户名
-    user: 'test_user',
+      user: 'test_user',
       // 密码
-    password: 'test_password',
+      password: 'test_password',
       // 数据库名
-    database: 'test'
+      database: 'test',
     },
     db2: {
       // host
-    host: 'mysql2.com',
+      host: 'mysql2.com',
       // 端口号
-    port: '3307',
+      port: '3307',
       // 用户名
-    user: 'test_user',
+      user: 'test_user',
       // 密码
-    password: 'test_password',
+      password: 'test_password',
       // 数据库名
-    database: 'test'
-    }
+      database: 'test',
+    },
     // ...
   },
   // 所有数据库配置的默认值
@@ -101,7 +101,7 @@ exports.mysql = {
   // 是否加载到 app 上，默认开启
   app: true,
   // 是否加载到 agent 上，默认关闭
-  agent: false
+  agent: false,
 };
 ```
 
@@ -121,7 +121,7 @@ await client2.query(sql, values);
 
 ```js
 // {app_root}/app.js
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     // 从配置中心获取 MySQL 的配置
     // { host: 'mysql.com', port: '3306', user: 'test_user', password: 'test_password', database: 'test' }
@@ -131,7 +131,8 @@ module.exports = app => {
 };
 ```
 
-[egg-mysql]: https://github.com/eggjs/egg-mysql "egg-mysql"
+[egg-mysql]: https://github.com/eggjs/egg-mysql 'egg-mysql'
+
 ## Service 层
 
 由于对 MySQL 数据库的访问操作属于 Web 层中的数据处理层，因此我们强烈建议将这部分代码放在 Service 层中维护。
@@ -163,9 +164,10 @@ class UserController extends Controller {
     ctx.body = user;
   }
 }
-``` 
+```
 
 在上述代码中，我们首先在 Service 层中定义了一个名为 `UserService` 的类，该类继承自 Service 基类。在 `UserService` 类中，我们定义了一个异步方法 `find`，该方法通过调用 `this.app.mysql.get` 方法从 `users` 表中获取到了 id 等于 uid 参数的用户数据，在获取数据后将用户信息以对象的形式返回。在 Controller 层，我们定义了一个名为 `UserController` 的类，该类继承自 Controller 基类。在 `UserController` 类中，我们定义了一个异步方法 `info`，该方法从上下文 `ctx` 中获取到了用户 ID，然后通过调用 `ctx.service.user.find` 方法获取到了用户信息，并最终将这个用户信息赋值给响应体 `ctx.body`。通过这种方式，我们就可以在 Controller 层中获取 Service 层提供的数据，从而实现层与层之间的数据传递和业务逻辑的分离。
+
 ## 如何编写 CRUD 语句
 
 下面的语句，若没有特殊注明，默认都书写在 `app/service` 下。
@@ -224,10 +226,14 @@ const results = await this.app.mysql.select('posts');
 - 条件查询和结果定制
 
 ```js
-const results = await this.app.mysql.select('posts', { // 搜索 posts 表
+const results = await this.app.mysql.select('posts', {
+  // 搜索 posts 表
   where: { status: 'draft', author: ['author1', 'author2'] }, // WHERE 条件
   columns: ['author', 'title'], // 要查询的字段
-  orders: [['created_at','desc'], ['id','desc']], // 排序方式
+  orders: [
+    ['created_at', 'desc'],
+    ['id', 'desc'],
+  ], // 排序方式
   limit: 10, // 返回数据量
   offset: 0, // 数据偏移量
 });
@@ -276,8 +282,8 @@ const row2 = {
 
 const options = {
   where: {
-    custom_id: 456
-  }
+    custom_id: 456,
+  },
 };
 const result2 = await this.app.mysql.update('posts', row2, options); // 更新 posts 表中的记录
 
@@ -300,6 +306,7 @@ const result = await this.app.mysql.delete('posts', {
 // SQL 语句相当于
 // DELETE FROM `posts` WHERE `author` = 'fengmk2';
 ```
+
 ## 直接执行 SQL 语句
 
 插件本身也支持拼接与直接执行 SQL 语句。使用 `query` 方法可以执行合法的 SQL 语句。
@@ -312,7 +319,10 @@ const result = await this.app.mysql.delete('posts', {
 
 ```js
 const postId = 1;
-const results = await this.app.mysql.query('update posts set hits = (hits + ?) where id = ?', [1, postId]);
+const results = await this.app.mysql.query(
+  'update posts set hits = (hits + ?) where id = ?',
+  [1, postId],
+);
 
 // => update posts set hits = (hits + 1) where id = 1;
 ```

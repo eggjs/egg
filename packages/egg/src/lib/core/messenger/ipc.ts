@@ -38,7 +38,13 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   broadcast(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] broadcast %s with %j', this.egg.type, this.pid, action, data);
+    debug(
+      '[%s:%s] broadcast %s with %j',
+      this.egg.type,
+      this.pid,
+      action,
+      data
+    );
     this.send(action, data, 'app');
     this.send(action, data, 'agent');
     return this;
@@ -52,7 +58,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendTo(workerId: string, action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to workerId:%s', this.egg.type, this.pid, action, data, workerId);
+    debug(
+      '[%s:%s] send %s with %j to workerId:%s',
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+      workerId
+    );
     sendmessage(process, {
       action,
       data,
@@ -75,7 +88,13 @@ export class Messenger extends BaseMessenger implements IMessenger {
    */
   sendRandom(action: string, data?: unknown): Messenger {
     if (this.opids.length === 0) {
-      debug('[%s:%s] no pids, ignore sendRandom %s with %j', this.egg.type, this.pid, action, data);
+      debug(
+        '[%s:%s] no pids, ignore sendRandom %s with %j',
+        this.egg.type,
+        this.pid,
+        action,
+        data
+      );
       return this;
     }
     const index = Math.floor(Math.random() * this.opids.length);
@@ -91,7 +110,13 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToApp(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to all app', this.egg.type, this.pid, action, data);
+    debug(
+      '[%s:%s] send %s with %j to all app',
+      this.egg.type,
+      this.pid,
+      action,
+      data
+    );
     this.send(action, data, 'app');
     return this;
   }
@@ -103,7 +128,13 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToAgent(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to all agent', this.egg.type, this.pid, action, data);
+    debug(
+      '[%s:%s] send %s with %j to all agent',
+      this.egg.type,
+      this.pid,
+      action,
+      data
+    );
     this.send(action, data, 'agent');
     return this;
   }
@@ -125,11 +156,22 @@ export class Messenger extends BaseMessenger implements IMessenger {
 
   onMessage(message: any) {
     if (typeof message?.action === 'string') {
-      debug('[%s:%s] got message %s with %j, receiverWorkerId: %s',
-        this.egg.type, this.pid, message.action, message.data, message.receiverWorkerId ?? message.receiverPid);
+      debug(
+        '[%s:%s] got message %s with %j, receiverWorkerId: %s',
+        this.egg.type,
+        this.pid,
+        message.action,
+        message.data,
+        message.receiverWorkerId ?? message.receiverPid
+      );
       this.emit(message.action, message.data);
     } else {
-      debug('[%s:%s] got an invalid message %j', this.egg.type, this.pid, message);
+      debug(
+        '[%s:%s] got an invalid message %j',
+        this.egg.type,
+        this.pid,
+        message
+      );
     }
   }
 

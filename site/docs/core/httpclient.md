@@ -797,8 +797,8 @@ app.httpclient.on('response', (result) => {
 
 Full examples can be found on [eggjs/examples/httpclient](https://github.com/eggjs/examples/blob/master/httpclient) .
 
-
 Other Reference Links
+
 - [urllib](https://github.com/node-modules/urllib)
 - [httpclient](https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js)
 - [formstream](https://github.com/node-modules/formstream)

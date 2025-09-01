@@ -110,6 +110,7 @@ $ egg-scripts stop [--title=egg-server]
 - `--title=egg-server`：杀死指定 Egg 应用，未设置则终止所有 Egg 应用。
 
 也可通过 `ps -eo "pid,command" | grep -- "--title=egg-server"` 查找 master 进程，并 `kill` 掉，不需 `kill -9`。
+
 ## 监控
 
 我们还需要对服务进行性能监控、内存泄露分析、故障排除等。

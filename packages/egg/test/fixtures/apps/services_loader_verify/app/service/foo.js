@@ -6,12 +6,12 @@ module.exports = () => {
       console.log(ctx);
     },
 
-    * bar1(ctx) {
+    *bar1(ctx) {
       console.log(ctx);
     },
 
-    aa: function*(ctx) {
+    aa: function* (ctx) {
       console.log(ctx);
-    }
+    },
   };
 };

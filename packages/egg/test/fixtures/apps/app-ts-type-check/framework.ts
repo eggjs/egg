@@ -39,7 +39,11 @@ yadan.listen(1002);
 yadan.logger.info(yadan.locals.test);
 
 // application
-const app = new Application({ baseDir: __dirname, plugins: {}, type: 'application' });
+const app = new Application({
+  baseDir: __dirname,
+  plugins: {},
+  type: 'application',
+});
 app.logger.info('123');
 app.middleware.slice(0);
 app.name.substring(0);
@@ -101,7 +105,6 @@ class MySubscription extends Subscription {
   }
 }
 new MySubscription({} as Context);
-
 
 // extends egg
 app.config.mySpecConfig.substring(0);

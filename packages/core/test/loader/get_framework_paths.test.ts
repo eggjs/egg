@@ -88,17 +88,23 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   });
 
   it('should assert eggPath type', async () => {
-    await assert.rejects(async () => {
-      createApp('eggpath', {
-        Application: await importModule(
-          getFilepath('framework-wrong-eggpath/index.js'),
-          { importDefaultOnly: true }
-        ),
-      });
-    }, (err: any) => {
-      // console.error(err);
-      assert.match(err.message, /Symbol.for\('egg#eggPath'\) should be string/);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        createApp('eggpath', {
+          Application: await importModule(
+            getFilepath('framework-wrong-eggpath/index.js'),
+            { importDefaultOnly: true }
+          ),
+        });
+      },
+      (err: any) => {
+        // console.error(err);
+        assert.match(
+          err.message,
+          /Symbol.for\('egg#eggPath'\) should be string/
+        );
+        return true;
+      }
+    );
   });
 });

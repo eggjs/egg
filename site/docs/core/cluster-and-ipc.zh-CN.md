@@ -52,6 +52,7 @@ if (cluster.isMaster) {
     .listen(8000);
 }
 ```
+
 ## 框架的多进程模型
 
 上面的示例是否很简单呢？但作为企业级应用解决方案，我们需要考虑的问题还有很多。
@@ -177,23 +178,24 @@ module.exports = agent => {
 
 ```js
 // app.js
-module.exports = app => {
-  app.messenger.on('xxx_action', data => {
+module.exports = (app) => {
+  app.messenger.on('xxx_action', (data) => {
     // ...
   });
 };
 ```
 
 这个例子中，`agent.js` 的代码将在 Agent 进程上执行，`app.js` 的代码则在 Worker 进程上执行。它们通过框架封装的 `messenger` 对象进行进程间通信（IPC）。后续章节会对框架的 IPC 进行详细讲解。
+
 ### Master VS Agent VS Worker
 
 应用启动时，会同时创建三类进程。下表概述了每种进程的数量、作用、稳定性以及是否运行业务代码：
 
-| 类型   | 进程数量           | 作用                       | 稳定性 | 是否运行业务代码 |
-| ------ | ------------------ | -------------------------- | ------ | ---------------- |
-| Master | 1                   | 进程管理，进程间消息转发   | 非常高 | 否               |
+| 类型   | 进程数量            | 作用                         | 稳定性 | 是否运行业务代码 |
+| ------ | ------------------- | ---------------------------- | ------ | ---------------- |
+| Master | 1                   | 进程管理，进程间消息转发     | 非常高 | 否               |
 | Agent  | 1                   | 后台运行工作（长连接客户端） | 高     | 少量             |
-| Worker | 通常设置为 CPU 核数  | 执行业务代码                | 一般   | 是               |
+| Worker | 通常设置为 CPU 核数 | 执行业务代码                 | 一般   | 是               |
 
 #### Master
 
@@ -273,12 +275,12 @@ if (cluster.isMaster) {
 
 - `app.messenger.broadcast(action, data)`: 向所有的 agent / app 进程发送消息（包括自己）。
 - `app.messenger.sendToApp(action, data)`: 发送至所有的 app 进程。
-  - app 上调用即发送至自己与其他 app 
+  - app 上调用即发送至自己与其他 app
   - agent 上调用则发送至所有 app 进程。
 - `app.messenger.sendToAgent(action, data)`: 发送消息至 agent 进程。
   - app 上调用即发送至 agent
   - agent 上调用即发送至自己。
-- `agent.messenger.sendRandom(action, data)`: 
+- `agent.messenger.sendRandom(action, data)`:
   - app 上无此方法（Egg 实现与 sentToAgent 类似）
   - agent 随机向某 app 进程发送消息（由 master 控制）。
 - `app.messenger.sendTo(pid, action, data)`: 向指定进程发送消息。
@@ -365,7 +367,7 @@ class SourceService extends Service {
 // app/schedule/force_refresh.js
 exports.schedule = {
   interval: '10m',
-  type: 'all' // 在所有的 workers 中运行
+  type: 'all', // 在所有的 workers 中运行
 };
 
 exports.task = async (ctx) => {
@@ -380,7 +382,7 @@ exports.task = async (ctx) => {
 // app/schedule/pull_refresh.js
 exports.schedule = {
   interval: '10s',
-  type: 'worker' // 只在一个 worker 中运行
+  type: 'worker', // 只在一个 worker 中运行
 };
 
 exports.task = async (ctx) => {

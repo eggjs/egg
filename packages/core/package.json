@@ -24,18 +24,9 @@
   },
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
-    "clean": "rimraf dist",
     "build": "tsdown",
     "lint": "oxlint",
-    "pretest": "pnpm run clean",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "posttest": "pnpm run clean",
-    "test-local": "vitest run",
-    "preci": "pnpm run lint",
-    "ci": "vitest run --coverage",
-    "postci": "pnpm run clean && pnpm run build",
     "prepublishOnly": "pnpm run build"
   },
   "repository": {
@@ -70,7 +61,6 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
     "@types/js-yaml": "catalog:",
@@ -78,19 +68,13 @@
     "await-event": "catalog:",
     "coffee": "catalog:",
     "husky": "catalog:",
-    "lint-staged": "catalog:",
-    "oxlint": "catalog:",
     "prettier": "catalog:",
     "gals": "catalog:",
     "js-yaml": "catalog:",
     "mm": "catalog:",
     "pedding": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "urllib": "catalog:",
-    "vitest": "catalog:",
-    "@vitest/ui": "catalog:",
-    "@vitest/coverage-v8": "catalog:"
+    "urllib": "catalog:"
   }
 }

@@ -6,7 +6,14 @@ import { strict as assert } from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+} from 'vitest';
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import { pending } from 'pedding';
@@ -186,10 +193,12 @@ describe('test/egg.test.ts', () => {
         message += util.format(a, b, c);
       });
       app.ready(() => {
-        assert.match(message,
+        assert.match(
+          message,
           /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/
         );
-        assert.match(message,
+        assert.match(
+          message,
           /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/
         );
         // console.log(app.timing.toString());

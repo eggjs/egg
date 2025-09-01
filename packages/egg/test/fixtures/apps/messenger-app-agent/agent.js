@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(agent) {
+module.exports = function (agent) {
   agent.messenger.on('agent2agent', data => console.log(data));
   agent.messenger.on('app2agent', data => console.log(data));
 

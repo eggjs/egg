@@ -55,7 +55,7 @@ class HomeController extends Controller {
 ```js
 ctx.cookies.set(key, value, {
   httpOnly: false,
-  signed: false
+  signed: false,
 });
 ```
 
@@ -64,7 +64,7 @@ ctx.cookies.set(key, value, {
 ```js
 ctx.cookies.set(key, value, {
   httpOnly: true, // 默认就是 true
-  encrypt: true  // 加密传输
+  encrypt: true, // 加密传输
 });
 ```
 
@@ -84,7 +84,7 @@ ctx.cookies.set(key, value, {
 
 ```js
 ctx.cookies.get('frontend-cookie', {
-  signed: false
+  signed: false,
 });
 ```
 
@@ -94,7 +94,7 @@ ctx.cookies.get('frontend-cookie', {
 
 ```js
 module.exports = {
-  keys: 'key1,key2'
+  keys: 'key1,key2',
 };
 ```
 
@@ -104,6 +104,7 @@ keys 配置成一个字符串，可以按照逗号分隔配置多个 key。Cooki
 - 解密和验签时会遍历 keys 进行解密。
 
 如果我们想要更新 Cookie 的秘钥，但是又不希望之前设置到用户浏览器上的 Cookie 失效，可以将新的秘钥配置到 keys 最前面，等过一段时间之后再删除不需要的秘钥即可。
+
 ## Session
 
 Cookie 通常用作 Web 应用中标识请求方身份的功能，基于此，Web 应用封装了 Session 概念，专用于用户身份识别。
@@ -168,7 +169,7 @@ Session 默认存放在 Cookie 中可能出现问题：浏览器有最大 Cookie
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.sessionStore = {
     async get(key) {
       // 返回值

@@ -1,13 +1,14 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { MockApplication, createApp } from '../../../utils.js';
 
 describe('test/lib/core/loader/load_app.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/loader-plugin');
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should load app.js', () => {
     assert(app.b === 'plugin b');

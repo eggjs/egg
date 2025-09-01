@@ -13,5 +13,5 @@ module.exports = app => {
     async subscribe() {
       this.ctx.logger.info('Info about your task');
     }
-  }
+  };
 };

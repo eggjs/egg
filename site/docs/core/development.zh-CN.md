@@ -69,6 +69,7 @@ $ npm i egg-bin --save-dev
   }
 }
 ```
+
 ## 单元测试
 
 这里主要讲解工具部分的使用，更多关于单元测试的内容请参考[这里](./unittest.md)。
@@ -141,7 +142,6 @@ $ # 支持 mocha 参数，如 grep、require 等
 $ npm test -- -t 30000 --grep="should GET"
 ```
 
-
 ## 代码覆盖率
 
 egg-bin 已内置 [nyc](https://github.com/istanbuljs/nyc) 支持单元测试生成代码覆盖率报告。
@@ -196,6 +196,7 @@ $ COV_EXCLUDES=app/plugins/c* npm run cov
 $ # 或者使用传参方式
 $ npm run cov -- --x=app/plugins/c*
 ```
+
 ## 调试
 
 ### 日志输出
@@ -238,6 +239,7 @@ $ DEBUG=egg* npm run dev
 ```
 
 单元测试也可以使用 `DEBUG=* npm test` 来查看测试用例运行的详细日志。
+
 ### 使用 egg-bin 调试
 
 #### 添加命令
@@ -331,7 +333,7 @@ DevTools → chrome-devtools://devtools/bundled/inspector.html?experiments=true&
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": "npm",
       "windows": { "runtimeExecutable": "npm.cmd" },
-      "runtimeArgs": [ "run", "debug" ],
+      "runtimeArgs": ["run", "debug"],
       "console": "integratedTerminal",
       "protocol": "auto",
       "restart": true,

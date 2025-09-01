@@ -121,6 +121,7 @@ export interface NewsItem {
   title: string;
 }
 ```
+
 ### 中间件（Middleware）
 
 ```typescript
@@ -217,6 +218,7 @@ export default (app) => {
   });
 };
 ```
+
 ### 配置（Config）
 
 `Config` 这部分稍微有点复杂，因为要支持：
@@ -238,7 +240,7 @@ export default (appInfo: EggAppInfo) => {
     defaultViewEngine: 'nunjucks',
     mapping: {
       '.tpl': 'nunjucks',
-    }
+    },
   };
 
   // 应用本身的配置
@@ -247,12 +249,12 @@ export default (appInfo: EggAppInfo) => {
     pageSize: 30,
     serverUrl: 'https://hacker-news.firebaseio.com/v0',
   };
-  
+
   // 目的是将业务配置属性合并到 EggAppConfig 中返回
   return {
     // 如果直接返回 config ，则将该类型合并到 EggAppConfig 的时候可能会出现 circulate type 错误。
     ...(config as {}),
-    ...bizConfig
+    ...bizConfig,
   };
 };
 ```
@@ -348,6 +350,7 @@ export default class FooBoot implements IBoot {
   }
 }
 ```
+
 ### TS 类型定义（Typings）
 
 该目录为 TS 的规范，在里面的 `**/*.d.ts` 文件将被自动识别。
@@ -478,6 +481,7 @@ describe('test/app/service/news.test.js', () => {
 - [VSCode 调试 Egg 完美版 - 进化史](https://github.com/atian25/blog/issues/25)
 
 ---
+
 ## 部署（Deploy）
 
 ### 构建（Build）
@@ -525,6 +529,7 @@ describe('test/app/service/news.test.js', () => {
 - 在 `egg-scripts` 内建了处理，会自动纠正为正确的错误堆栈，应用开发者无需担心。
 
 具体内幕参见以下链接：
+
 - [知乎专栏](https://zhuanlan.zhihu.com/p/26267678)
 - [GitHub PR](https://github.com/eggjs/egg-scripts/pull/19)
 
@@ -603,6 +608,7 @@ export default class NewsService extends Service {
   }
 }
 ```
+
 ## 常见问题
 
 汇集了一些人们频繁提问的 `issue` 问题，并给出了统一的解答。
@@ -690,15 +696,17 @@ import 'tsconfig-paths/register';
 ```js
 describe('typescript', () => {
   it('should compile ts without error', () => {
-    return coffee
-      .fork(require.resolve('typescript/bin/tsc'), [
-        '-p',
-        path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
-        '--noEmit',
-      ])
-      // .debug()
-      .expect('code', 0)
-      .end();
+    return (
+      coffee
+        .fork(require.resolve('typescript/bin/tsc'), [
+          '-p',
+          path.resolve(__dirname, './fixtures/apps/ts/tsconfig.json'),
+          '--noEmit',
+        ])
+        // .debug()
+        .expect('code', 0)
+        .end()
+    );
   });
 });
 ```

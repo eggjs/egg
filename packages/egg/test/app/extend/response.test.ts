@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { restore, MockApplication, createApp } from '../../utils.js';
 
 describe('test/app/extend/response.test.ts', () => {
@@ -6,14 +7,15 @@ describe('test/app/extend/response.test.ts', () => {
 
   describe('length and type', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/response');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should get case sensitive header', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect(200)
         .expect((res: any) => {
@@ -23,12 +25,13 @@ describe('test/app/extend/response.test.ts', () => {
     });
 
     it('should get {} body', async () => {
-      const res = await app.httpRequest()
-        .get('/empty-json')
-        .expect(200);
+      const res = await app.httpRequest().get('/empty-json').expect(200);
       assert.deepEqual(res.body, {});
       assert.equal(res.headers['content-length'], '2');
-      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
+      assert.equal(
+        res.headers['content-type'],
+        'application/json; charset=utf-8'
+      );
     });
 
     it('should get body length', () => {
@@ -67,11 +70,11 @@ describe('test/app/extend/response.test.ts', () => {
 
   describe('test on apps/demo', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/demo');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     describe('response.realStatus', () => {
       it('should get from status ok', () => {
@@ -94,7 +97,10 @@ describe('test/app/extend/response.test.ts', () => {
       it('should remove content-type when type is invalid', () => {
         let ctx = app.mockContext();
         ctx.response.type = 'html';
-        assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
+        assert.equal(
+          ctx.response.header['content-type'],
+          'text/html; charset=utf-8'
+        );
         assert.equal(ctx.response.type, 'text/html');
 
         ctx.response.type = 'xml';
@@ -107,7 +113,10 @@ describe('test/app/extend/response.test.ts', () => {
         assert.equal(ctx.response.type, '');
 
         ctx.response.type = 'html';
-        assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
+        assert.equal(
+          ctx.response.header['content-type'],
+          'text/html; charset=utf-8'
+        );
         assert.equal(ctx.response.type, 'text/html');
       });
     });

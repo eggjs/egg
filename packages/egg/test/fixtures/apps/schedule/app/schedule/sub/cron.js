@@ -3,6 +3,6 @@ exports.schedule = {
   cron: '*/5 * * * * *',
 };
 
-exports.task = async (ctx) => {
+exports.task = async ctx => {
   ctx.logger.warn('cron wow');
 };

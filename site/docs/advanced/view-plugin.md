@@ -61,7 +61,6 @@ const ejs = require('ejs');
 
 Mmdule.exports = class EjsView {
   render(filename, locals, viewOptions) {
-
     const config = Object.assign({}, this.config, viewOptions, { filename });
 
     return new Promise((resolve, reject) => {

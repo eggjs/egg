@@ -10,7 +10,7 @@ module.exports = {
 
   // 标准写法
   b: {
-    enable: true
+    enable: true,
   },
 
   // 会自动补全信息
@@ -18,19 +18,19 @@ module.exports = {
 
   // 别名，app.plugins.d1
   d1: {
-    package: 'd'
+    package: 'd',
   },
 
   e: {
-    path: path.join(__dirname, '../plugins/e')
+    path: path.join(__dirname, '../plugins/e'),
   },
 
   f: {
-    path: path.join(__dirname, '../plugins/f')
+    path: path.join(__dirname, '../plugins/f'),
   },
 
   g: {
-    path: path.join(__dirname, '../plugins/g')
+    path: path.join(__dirname, '../plugins/g'),
   },
 
   // 覆盖内置的

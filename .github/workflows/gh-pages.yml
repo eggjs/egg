@@ -2,7 +2,7 @@ name: Github Pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   Runner:
@@ -10,26 +10,26 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest ]
-        node-version: [ 20 ]
+        os: [ubuntu-latest]
+        node-version: [20]
     steps:
-    - name: Checkout Git Source
-      uses: actions/checkout@master
+      - name: Checkout Git Source
+        uses: actions/checkout@master
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: "pnpm"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
-    - name: Install Dependencies
-      run: corepack enable pnpm && pnpm install
+      - name: Install Dependencies
+        run: corepack enable pnpm && pnpm install
 
-    - name: Build Documents
-      run: pnpm run site:build && cp vercel.json ./site/dist/vercel.json
+      - name: Build Documents
+        run: pnpm run site:build && cp vercel.json ./site/dist/vercel.json
 
-    - name: Deploy Documents
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./site/dist
+      - name: Deploy Documents
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site/dist

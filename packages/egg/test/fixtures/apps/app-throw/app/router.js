@@ -10,9 +10,11 @@ module.exports = app => {
     this.body = 'foo';
     setTimeout(() => {
       const err = new Error('abc');
-      Object.defineProperty(err, "message", {
-        get() { return 'abc' },
-        set: undefined
+      Object.defineProperty(err, 'message', {
+        get() {
+          return 'abc';
+        },
+        set: undefined,
       });
       throw err;
     }, 1);

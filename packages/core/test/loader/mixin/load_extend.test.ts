@@ -89,13 +89,19 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
   });
 
   it('should throw when syntax error', async () => {
-    await assert.rejects(async () => {
-      const app = createApp('load_context_syntax_error');
-      await app.loader.loadContextExtend();
-    }, (err: any) => {
-      assert.match(err.message, /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        const app = createApp('load_context_syntax_error');
+        await app.loader.loadContextExtend();
+      },
+      (err: any) => {
+        assert.match(
+          err.message,
+          /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/
+        );
+        return true;
+      }
+    );
   });
 
   it('should extend symbol', async () => {

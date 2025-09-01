@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
 import { pending } from 'pedding';
@@ -6,11 +7,11 @@ import { singleProcessApp, SingleModeApplication } from '../../../utils.js';
 describe('test/lib/core/messenger/local.test.ts', () => {
   let app: SingleModeApplication;
 
-  before(async () => {
+  beforeAll(async () => {
     app = await singleProcessApp('apps/demo');
   });
 
-  after(() => app.close());
+  afterAll(() => app.close());
 
   afterEach(() => {
     mm.restore();
@@ -145,7 +146,9 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       });
 
       // keep compatible with old code, use process.pid as number
-      let res = (app.messenger as any).sendTo(process.pid, 'sendTo-event', { foo: 'bar' });
+      let res = (app.messenger as any).sendTo(process.pid, 'sendTo-event', {
+        foo: 'bar',
+      });
       assert(res === app.messenger);
       // should ignore if target process is not self
       res = app.messenger.sendTo('1', 'sendTo-event', { foo: 'bar' });
@@ -163,7 +166,9 @@ describe('test/lib/core/messenger/local.test.ts', () => {
         done();
       });
 
-      app.agent.messenger.sendTo(String(process.pid), 'sendTo-event', { foo: 'bar' });
+      app.agent.messenger.sendTo(String(process.pid), 'sendTo-event', {
+        foo: 'bar',
+      });
     });
   });
 

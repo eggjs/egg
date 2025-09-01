@@ -3,10 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "egg": [
-        "../../../../src/index.ts"
-      ]
+      "egg": ["../../../../src/index.ts"]
     }
   },
-  "rootDir": ".",
+  "rootDir": "."
 }

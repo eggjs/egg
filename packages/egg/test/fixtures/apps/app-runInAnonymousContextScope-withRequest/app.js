@@ -4,7 +4,6 @@ module.exports = class Boot {
   }
 
   async beforeClose() {
-
     const request = {
       headers: {
         host: '127.0.0.2',
@@ -30,4 +29,4 @@ module.exports = class Boot {
     }, request);
     this.app.logger.info('outside before close on app logger');
   }
-}
+};

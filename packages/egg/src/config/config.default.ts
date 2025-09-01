@@ -148,7 +148,14 @@ export default (appInfo: EggAppInfo) => {
      */
     dump: {
       ignore: new Set([
-        'pass', 'pwd', 'passd', 'passwd', 'password', 'keys', 'masterKey', 'accessKey',
+        'pass',
+        'pwd',
+        'passd',
+        'passwd',
+        'password',
+        'keys',
+        'masterKey',
+        'accessKey',
         // ignore any key contains "secret" keyword
         /secret/i,
       ]),
@@ -275,7 +282,8 @@ export default (appInfo: EggAppInfo) => {
     env: appInfo.env,
     level: 'INFO',
     consoleLevel: 'INFO',
-    disableConsoleAfterReady: appInfo.env !== 'local' && appInfo.env !== 'unittest',
+    disableConsoleAfterReady:
+      appInfo.env !== 'local' && appInfo.env !== 'unittest',
     outputJSON: false,
     buffer: true,
     appLogName: `${appInfo.name}-web.log`,

@@ -1,5 +1,5 @@
 exports.security = {
-  csrf: false
-}
+  csrf: false,
+};
 
 exports.keys = 'foo';

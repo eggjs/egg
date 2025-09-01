@@ -10,7 +10,9 @@ module.exports = app => {
       if (value < app.foo) {
         throw new Error('subscribe error');
       }
-      setImmediate(() => { app.mockClient.unSubscribe({ id: 'foo' }) });
+      setImmediate(() => {
+        app.mockClient.unSubscribe({ id: 'foo' });
+      });
     });
     app.mockClient.unSubscribe({ id: 'foo' }, listener);
     fooDone();

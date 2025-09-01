@@ -69,6 +69,7 @@ module.exports = (options) => {
   };
 };
 ```
+
 ## 使用中间件
 
 中间件编写完成后，我们还需要手动挂载，支持以下方式：
@@ -86,8 +87,8 @@ module.exports = {
 
   // 配置 gzip 中间件的配置
   gzip: {
-    threshold: 1024 // 小于 1k 的响应体不压缩
-  }
+    threshold: 1024, // 小于 1k 的响应体不压缩
+  },
 };
 ```
 
@@ -99,14 +100,14 @@ module.exports = {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   // 在中间件最前面统计请求时间
   app.config.coreMiddleware.unshift('report');
 };
 
 // app/middleware/report.js
 module.exports = () => {
-  return async function(ctx, next) {
+  return async function (ctx, next) {
     const startTime = Date.now();
     await next();
     // 上报请求时间
@@ -123,11 +124,12 @@ module.exports = () => {
 如果你只想针对单个路由生效，可以直接在 `app/router.js` 中实例化和挂载，如下：
 
 ```js
-module.exports = app => {
+module.exports = (app) => {
   const gzip = app.middleware.gzip({ threshold: 1024 });
   app.router.get('/needgzip', gzip, app.controller.handler);
 };
 ```
+
 ## 框架默认中间件
 
 除了应用层加载中间件之外，框架自身和其他插件也会加载许多中间件。所有这些自带中间件的配置项都可以通过修改配置文件中的同名配置项来进行更改。例如，框架自带的中间件列表中有一个名为 `bodyParser` 的中间件（框架的加载器会将文件名中的分隔符都转换为驼峰形式的变量名）。如果我们想要修改 `bodyParser` 的配置，只需要在 `config/config.default.js` 中编写如下内容：
@@ -141,6 +143,7 @@ module.exports = {
 ```
 
 **注意：框架和插件加载的中间件会在应用层配置的中间件之前被加载。框架默认中间件不能被应用层中间件覆盖。如果应用层有自定义同名中间件，启动时将会报错。**
+
 ## 使用 Koa 的中间件
 
 在框架里面可以非常容易地引入 Koa 中间件生态。
@@ -193,6 +196,7 @@ module.exports = (options, app) => {
   return webpackMiddleware(options.compiler, options.others);
 };
 ```
+
 ## 通用配置
 
 无论是应用层加载的中间件还是框架自带中间件，都支持几个通用的配置项：

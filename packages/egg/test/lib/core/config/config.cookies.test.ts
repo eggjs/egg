@@ -10,8 +10,7 @@ beforeAll(() => {
 afterAll(() => app.close());
 
 test('should auto set sameSite cookie', async () => {
-  const res = await app.httpRequest()
-    .get('/');
+  const res = await app.httpRequest().get('/');
   expect(res.status).toBe(200);
   expect(res.text).toBe('hello');
   const cookies = res.headers['set-cookie'];

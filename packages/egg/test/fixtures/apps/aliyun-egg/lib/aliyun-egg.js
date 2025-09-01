@@ -6,7 +6,6 @@ const Application = egg.Application;
 const AppWorkerLoader = egg.AppWorkerLoader;
 
 class Loader extends AppWorkerLoader {
-
   constructor(options) {
     super(options);
   }
@@ -20,7 +19,6 @@ class Loader extends AppWorkerLoader {
 }
 
 class ChairApplication extends Application {
-
   constructor(options) {
     super(options);
   }

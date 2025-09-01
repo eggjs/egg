@@ -51,9 +51,17 @@ export function isSupportTypeScript() {
   if (_supportTypeScript === undefined) {
     const extensions = getExtensions();
     // enable ts by process.env.EGG_TS_ENABLE or process.env.VITEST
-    _supportTypeScript = extensions['.ts'] !== undefined || process.env.VITEST === 'true' || process.env.EGG_TS_ENABLE === 'true';
-    debug('[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j',
-      _supportTypeScript, Object.keys(extensions), process.env.VITEST, process.env.EGG_TS_ENABLE);
+    _supportTypeScript =
+      extensions['.ts'] !== undefined ||
+      process.env.VITEST === 'true' ||
+      process.env.EGG_TS_ENABLE === 'true';
+    debug(
+      '[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j',
+      _supportTypeScript,
+      Object.keys(extensions),
+      process.env.VITEST,
+      process.env.EGG_TS_ENABLE
+    );
   }
   return _supportTypeScript;
 }
@@ -65,24 +73,40 @@ function tryToResolveFromFile(filepath: string): string | undefined {
   if (type === 'module') {
     mainIndexFile = filepath + '.mjs';
     if (fs.existsSync(mainIndexFile)) {
-      debug('[tryToResolveFromFile] %o, use index.mjs, type: %o', mainIndexFile, type);
+      debug(
+        '[tryToResolveFromFile] %o, use index.mjs, type: %o',
+        mainIndexFile,
+        type
+      );
       return mainIndexFile;
     }
     mainIndexFile = filepath + '.js';
     if (fs.existsSync(mainIndexFile)) {
-      debug('[tryToResolveFromFile] %o, use index.js, type: %o', mainIndexFile, type);
+      debug(
+        '[tryToResolveFromFile] %o, use index.js, type: %o',
+        mainIndexFile,
+        type
+      );
       return mainIndexFile;
     }
   } else {
     // "type": "commonjs", try index.js then index.cjs
     mainIndexFile = filepath + '.cjs';
     if (fs.existsSync(mainIndexFile)) {
-      debug('[tryToResolveFromFile] %o, use index.cjs, type: %o', mainIndexFile, type);
+      debug(
+        '[tryToResolveFromFile] %o, use index.cjs, type: %o',
+        mainIndexFile,
+        type
+      );
       return mainIndexFile;
     }
     mainIndexFile = filepath + '.js';
     if (fs.existsSync(mainIndexFile)) {
-      debug('[tryToResolveFromFile] %o, use index.js, type: %o', mainIndexFile, type);
+      debug(
+        '[tryToResolveFromFile] %o, use index.js, type: %o',
+        mainIndexFile,
+        type
+      );
       return mainIndexFile;
     }
   }
@@ -94,21 +118,32 @@ function tryToResolveFromFile(filepath: string): string | undefined {
   // for the module under development
   mainIndexFile = filepath + '.ts';
   if (fs.existsSync(mainIndexFile)) {
-    debug('[tryToResolveFromFile] %o, use index.ts, type: %o', mainIndexFile, type);
+    debug(
+      '[tryToResolveFromFile] %o, use index.ts, type: %o',
+      mainIndexFile,
+      type
+    );
     return mainIndexFile;
   }
 }
 
-function tryToResolveByDirnameFromPackage(dirname: string, pkg: any): string | undefined {
+function tryToResolveByDirnameFromPackage(
+  dirname: string,
+  pkg: any
+): string | undefined {
   // try to read pkg.main or pkg.module first
   // "main": "./dist/commonjs/index.js",
   // "module": "./dist/esm/index.js"
-  const defaultMainFile = isESM ? pkg.module ?? pkg.main : pkg.main;
+  const defaultMainFile = isESM ? (pkg.module ?? pkg.main) : pkg.main;
   if (defaultMainFile) {
     const mainIndexFilePath = path.join(dirname, defaultMainFile);
     if (fs.existsSync(mainIndexFilePath)) {
-      debug('[tryToResolveByDirnameFromPackage] %o, use pkg.main or pkg.module: %o, isESM: %s',
-        mainIndexFilePath, defaultMainFile, isESM);
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use pkg.main or pkg.module: %o, isESM: %s',
+        mainIndexFilePath,
+        defaultMainFile,
+        isESM
+      );
       return mainIndexFilePath;
     }
   }
@@ -118,24 +153,40 @@ function tryToResolveByDirnameFromPackage(dirname: string, pkg: any): string | u
   if (type === 'module') {
     const mainIndexFilePath = path.join(dirname, 'index.mjs');
     if (fs.existsSync(mainIndexFilePath)) {
-      debug('[tryToResolveByDirnameFromPackage] %o, use index.mjs, pkg.type: %o', mainIndexFilePath, type);
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use index.mjs, pkg.type: %o',
+        mainIndexFilePath,
+        type
+      );
       return mainIndexFilePath;
     }
     const mainIndexMjsFilePath = path.join(dirname, 'index.js');
     if (fs.existsSync(mainIndexMjsFilePath)) {
-      debug('[tryToResolveByDirnameFromPackage] %o, use index.js, pkg.type: %o', mainIndexMjsFilePath, type);
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use index.js, pkg.type: %o',
+        mainIndexMjsFilePath,
+        type
+      );
       return mainIndexMjsFilePath;
     }
   } else {
     // "type": "commonjs", try index.cjs then index.js
     const mainIndexFilePath = path.join(dirname, 'index.cjs');
     if (fs.existsSync(mainIndexFilePath)) {
-      debug('[tryToResolveByDirnameFromPackage] %o, use index.cjs, pkg.type: %o', mainIndexFilePath, type);
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use index.cjs, pkg.type: %o',
+        mainIndexFilePath,
+        type
+      );
       return mainIndexFilePath;
     }
     const mainIndexCjsFilePath = path.join(dirname, 'index.js');
     if (fs.existsSync(mainIndexCjsFilePath)) {
-      debug('[tryToResolveByDirnameFromPackage] %o, use index.js, pkg.type: %o', mainIndexCjsFilePath, type);
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use index.js, pkg.type: %o',
+        mainIndexCjsFilePath,
+        type
+      );
       return mainIndexCjsFilePath;
     }
   }
@@ -168,10 +219,12 @@ function tryToResolveByDirname(dirname: string): string | undefined {
 }
 
 function isRelativePath(filepath: string): boolean {
-  return filepath.startsWith('./')
-    || filepath.startsWith('../')
-    || filepath.startsWith('.\\')
-    || filepath.startsWith('..\\');
+  return (
+    filepath.startsWith('./') ||
+    filepath.startsWith('../') ||
+    filepath.startsWith('.\\') ||
+    filepath.startsWith('..\\')
+  );
 }
 
 function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
@@ -196,20 +249,29 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
 // patch for vitest
 // https://github.com/vitest-dev/vitest/issues/6953#issuecomment-3223548053
 // remove it after vitest fix release https://github.com/vitest-dev/vitest/pull/8493
-const importMetaResolve = (options?: ImportResolveOptions, ...args: Parameters<ImportMeta['resolve']>) => {
-  if (typeof import.meta.resolve !== 'function' && process.env.VITEST === 'true') {
+const importMetaResolve = (
+  options?: ImportResolveOptions,
+  ...args: Parameters<ImportMeta['resolve']>
+) => {
+  if (
+    typeof import.meta.resolve !== 'function' &&
+    process.env.VITEST === 'true'
+  ) {
     // patch for vitest
     return pathToFileURL(require.resolve(args[0], options)).href;
   }
 
   return import.meta.resolve(...args);
-}
+};
 
-export function importResolve(filepath: string, options?: ImportResolveOptions) {
+export function importResolve(
+  filepath: string,
+  options?: ImportResolveOptions
+) {
   // find *.json or CommonJS module by require.resolve
   // e.g.: importResolve('egg/package.json', { paths })
   const cwd = process.cwd();
-  const paths = options?.paths ?? [ cwd ];
+  const paths = options?.paths ?? [cwd];
 
   let moduleFilePath: string | undefined;
   const isAbsolute = path.isAbsolute(filepath);
@@ -224,8 +286,12 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
       const resolvedPath = path.resolve(p, filepath);
       moduleFilePath = tryToResolveFromAbsoluteFile(resolvedPath);
       if (moduleFilePath) {
-        debug('[importResolve:isRelativePath] %o => %o => %o',
-          filepath, resolvedPath, moduleFilePath);
+        debug(
+          '[importResolve:isRelativePath] %o => %o => %o',
+          filepath,
+          resolvedPath,
+          moduleFilePath
+        );
         return moduleFilePath;
       }
     }
@@ -236,8 +302,12 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
     let resolvedPath = path.join(p, 'node_modules', filepath);
     moduleFilePath = tryToResolveFromAbsoluteFile(resolvedPath);
     if (moduleFilePath) {
-      debug('[importResolve:node_modules] %o => %o => %o',
-        filepath, resolvedPath, moduleFilePath);
+      debug(
+        '[importResolve:node_modules] %o => %o => %o',
+        filepath,
+        resolvedPath,
+        moduleFilePath
+      );
       return moduleFilePath;
     }
 
@@ -248,8 +318,12 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
       resolvedPath = path.join(parentPath, filepath);
       moduleFilePath = tryToResolveFromAbsoluteFile(resolvedPath);
       if (moduleFilePath) {
-        debug('[importResolve:node_modules] %o => %o => %o',
-          filepath, resolvedPath, moduleFilePath);
+        debug(
+          '[importResolve:node_modules] %o => %o => %o',
+          filepath,
+          resolvedPath,
+          moduleFilePath
+        );
         return moduleFilePath;
       }
     }
@@ -260,8 +334,12 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
       resolvedPath = path.join(parentPath, filepath);
       moduleFilePath = tryToResolveFromAbsoluteFile(resolvedPath);
       if (moduleFilePath) {
-        debug('[importResolve:node_modules] %o => %o => %o',
-          filepath, resolvedPath, moduleFilePath);
+        debug(
+          '[importResolve:node_modules] %o => %o => %o',
+          filepath,
+          resolvedPath,
+          moduleFilePath
+        );
         return moduleFilePath;
       }
     }
@@ -284,21 +362,35 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
         // resolve will return file:// URL on Linux and MacOS expect on Windows
         moduleFilePath = fileURLToPath(moduleFilePath);
       }
-      debug('[importResolve] import.meta.resolve %o => %o', filepath, moduleFilePath);
+      debug(
+        '[importResolve] import.meta.resolve %o => %o',
+        filepath,
+        moduleFilePath
+      );
       const stat = fs.statSync(moduleFilePath, { throwIfNoEntry: false });
       if (!stat?.isFile()) {
-        throw new TypeError(`Cannot find module ${filepath}, because ${moduleFilePath} does not exists`);
+        throw new TypeError(
+          `Cannot find module ${filepath}, because ${moduleFilePath} does not exists`
+        );
       }
     } else {
       moduleFilePath = getRequire().resolve(filepath);
     }
   }
-  debug('[importResolve] %o, options: %o => %o, isESM: %s',
-    filepath, options, moduleFilePath, isESM);
+  debug(
+    '[importResolve] %o, options: %o => %o, isESM: %s',
+    filepath,
+    options,
+    moduleFilePath,
+    isESM
+  );
   return moduleFilePath;
 }
 
-export async function importModule(filepath: string, options?: ImportModuleOptions) {
+export async function importModule(
+  filepath: string,
+  options?: ImportModuleOptions
+) {
   const moduleFilePath = importResolve(filepath, options);
   let obj: any;
   if (isESM) {
@@ -359,7 +451,11 @@ export async function importModule(filepath: string, options?: ImportModuleOptio
     }
   }
   if (debug.enabled) {
-    debug('[importModule] return %o => keys: %j', filepath, obj ? Object.keys(obj) : obj);
+    debug(
+      '[importModule] return %o => keys: %j',
+      filepath,
+      obj ? Object.keys(obj) : obj
+    );
   }
   return obj;
 }

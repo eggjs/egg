@@ -89,6 +89,6 @@ worker 进程没有自动重启的情形通常发生在使用 Jetbrains 旗下�
 
 Jetbrains [Safe Write 文档](https://www.jetbrains.com/help/webstorm/2016.3/system-settings.html) 中有提到（翻译如下）：
 
->“如果此复选框打钩，变更的文件将首先被存储在一个临时文件中。如果文件保存成功，则临时文件会替换原文件（从技术上讲，原文件被删除，临时文件被重命名）。”
+> “如果此复选框打钩，变更的文件将首先被存储在一个临时文件中。如果文件保存成功，则临时文件会替换原文件（从技术上讲，原文件被删除，临时文件被重命名）。”
 
 由于使用了重命名，文件监听失效。解决方法是关闭 Safe Write 选项。（Settings | Appearance & Behavior | System Settings | Use "safe write"，路径可能因版本不同有所差异）

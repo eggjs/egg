@@ -16,4 +16,4 @@ module.exports = app => {
   app.get('/empty-json', async function () {
     this.body = {};
   });
-}
+};

@@ -8,13 +8,17 @@ import { AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
 import {
-  mm, MockOptions, MockClusterOptions, MockApplication,
+  mm,
+  MockOptions,
+  MockClusterOptions,
+  MockApplication,
 } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
 
 import {
-  startEgg, StartEggOptions,
+  startEgg,
+  StartEggOptions,
   type SingleModeAgent,
 } from '../src/index.ts';
 
@@ -49,7 +53,10 @@ export const createApp = app;
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export function cluster(name: string | MockClusterOptions, options?: MockClusterOptions): MockApplication {
+export function cluster(
+  name: string | MockClusterOptions,
+  options?: MockClusterOptions
+): MockApplication {
   options = formatOptions(name, options);
   return mm.cluster(options) as unknown as MockApplication;
 }
@@ -61,7 +68,10 @@ export function cluster(name: string | MockClusterOptions, options?: MockCluster
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<SingleModeApplication> {
+export async function singleProcessApp(
+  baseDir: string,
+  options: StartEggOptions = {}
+): Promise<SingleModeApplication> {
   if (!baseDir.startsWith('/')) {
     baseDir = path.join(__dirname, 'fixtures', baseDir);
   }

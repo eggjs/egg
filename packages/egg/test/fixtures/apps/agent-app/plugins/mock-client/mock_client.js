@@ -7,9 +7,11 @@ class MockClient extends EventEmitter {
 
     this.cache = new Map();
 
-    setImmediate(function() {
-      this.ready(true);
-    }.bind(this));
+    setImmediate(
+      function () {
+        this.ready(true);
+      }.bind(this)
+    );
   }
 
   ready(flagOrFunction) {
@@ -23,7 +25,7 @@ class MockClient extends EventEmitter {
     }
 
     if (this._ready) {
-      this._readyCallbacks.splice(0, Infinity).forEach(function(callback) {
+      this._readyCallbacks.splice(0, Infinity).forEach(function (callback) {
         process.nextTick(callback);
       });
     }
@@ -31,7 +33,7 @@ class MockClient extends EventEmitter {
   }
 
   getCallback(key, callback) {
-    setTimeout(function() {
+    setTimeout(function () {
       if (id === 'error') {
         callback(new Error('mock error'));
       } else {
@@ -48,17 +50,17 @@ class MockClient extends EventEmitter {
     });
   }
 
-  * getTimeout() {
+  *getTimeout() {
     yield sleep(6000);
     return 'timeout';
   }
 
-  * getDataGenerator(key) {
+  *getDataGenerator(key) {
     yield sleep(100);
     return this.cache.get(key);
   }
 
-  * save(key, value) {
+  *save(key, value) {
     yield sleep(100);
     this.cache.set(key, value);
   }

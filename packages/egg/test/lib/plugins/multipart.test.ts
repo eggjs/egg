@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { request } from '@eggjs/supertest';
 import formstream from 'formstream';
@@ -10,11 +11,11 @@ describe('test/lib/plugins/multipart.test.ts', () => {
   let cookies: string;
   let host: string;
   let server: any;
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/multipart');
     return app.ready();
   });
-  before(done => {
+  beforeAll(done => {
     server = app.listen();
     request(server)
       .get('/')
@@ -26,7 +27,7 @@ describe('test/lib/plugins/multipart.test.ts', () => {
       });
   });
 
-  after(() => {
+  afterAll(() => {
     server.close();
     return app.close();
   });

@@ -351,9 +351,7 @@ describe('test/index.test.js', () => {
   afterEach(mock.restore);
 
   it('should success', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+    return app.httpRequest().get('/').expect(200);
   });
 });
 ```

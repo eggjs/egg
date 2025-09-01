@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import coffee, { Coffee } from 'coffee';
 import { MockApplication, cluster, getFilepath } from '../utils.js';
@@ -28,110 +29,84 @@ describe('test/cluster1/master.test.ts', () => {
 
   describe('--cluster', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.consoleLevel('NONE');
       app = cluster('apps/cluster_mod_app');
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should online cluster mode startup success', () => {
-      return app.httpRequest()
-        .get('/')
-        .expect('hi cluster')
-        .expect(200);
+      return app.httpRequest().get('/').expect('hi cluster').expect(200);
     });
 
     it('should assign a free port by master', () => {
-      return app.httpRequest()
-        .get('/clusterPort')
-        .expect(/\d+/)
-        .expect(200);
+      return app.httpRequest().get('/clusterPort').expect(/\d+/).expect(200);
     });
   });
 
   describe('--dev', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/cluster_mod_app');
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should dev cluster mode startup success', () => {
-      return app.httpRequest()
-        .get('/')
-        .expect('hi cluster')
-        .expect(200);
+      return app.httpRequest().get('/').expect('hi cluster').expect(200);
     });
   });
 
   describe('multi-application in one server', () => {
     let app1: MockApplication;
     let app2: MockApplication;
-    before(async () => {
+    beforeAll(async () => {
       // mm.consoleLevel('NONE');
       app1 = cluster('apps/cluster_mod_app');
       app1.coverage(false);
       app2 = cluster('apps/cluster_mod_app');
       app2.coverage(false);
-      await Promise.all([
-        app1.ready(),
-        app2.ready(),
-      ]);
+      await Promise.all([app1.ready(), app2.ready()]);
     });
-    after(async () => {
-      await Promise.all([
-        app1.close(),
-        app2.close(),
-      ]);
+    afterAll(async () => {
+      await Promise.all([app1.close(), app2.close()]);
     });
 
     it('should online cluster mode startup success, app1', () => {
-      return app1.httpRequest()
-        .get('/')
-        .expect('hi cluster')
-        .expect(200);
+      return app1.httpRequest().get('/').expect('hi cluster').expect(200);
     });
 
     it('should assign a free port by master, app1', () => {
-      return app1.httpRequest()
-        .get('/clusterPort')
-        .expect(/\d+/)
-        .expect(200);
+      return app1.httpRequest().get('/clusterPort').expect(/\d+/).expect(200);
     });
 
     it('should online cluster mode startup success, app2', () => {
-      return app2.httpRequest()
-        .get('/')
-        .expect('hi cluster')
-        .expect(200);
+      return app2.httpRequest().get('/').expect('hi cluster').expect(200);
     });
 
     it('should assign a free port by master, app2', () => {
-      return app2.httpRequest()
-        .get('/clusterPort')
-        .expect(/\d+/)
-        .expect(200);
+      return app2.httpRequest().get('/clusterPort').expect(/\d+/).expect(200);
     });
   });
 
   describe('start app with custom env', () => {
     describe('cluster mode, env: prod', () => {
       let app: MockApplication;
-      before(() => {
+      beforeAll(() => {
         mm.env('prod');
         mm.home(getFilepath('apps/custom-env-app'));
         app = cluster('apps/custom-env-app');
         app.coverage(false);
         return app.ready();
       });
-      after(() => app.close());
+      afterAll(() => app.close());
 
       it('should start with prod env', () => {
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/')
           .expect({
             env: 'prod',
@@ -143,7 +118,7 @@ describe('test/cluster1/master.test.ts', () => {
 
   describe.skip('framework start', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       // dependencies relation:
       // aliyun-egg-app -> aliyun-egg-biz -> aliyun-egg -> egg
       mm.home(getFilepath('apps/aliyun-egg-app'));
@@ -153,10 +128,11 @@ describe('test/cluster1/master.test.ts', () => {
       app.coverage(false);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should start success', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect({
           'aliyun-egg-core': true,
@@ -175,7 +151,7 @@ describe('test/cluster1/master.test.ts', () => {
     });
 
     it('should not cause master die when agent start error', done => {
-      app = coffee.spawn('node', [ getFilepath('apps/agent-die/start.js') ]);
+      app = coffee.spawn('node', [getFilepath('apps/agent-die/start.js')]);
 
       // spawn can't communication, so `end` event won't emit
       setTimeout(() => {
@@ -196,7 +172,10 @@ describe('test/cluster1/master.test.ts', () => {
     });
 
     it.skip('should start without customEgg and worker_threads', done => {
-      app = coffee.fork(getFilepath('apps/master-worker-started-worker_threads/dispatch.js'))
+      app = coffee
+        .fork(
+          getFilepath('apps/master-worker-started-worker_threads/dispatch.js')
+        )
         .debug();
 
       setTimeout(() => {

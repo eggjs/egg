@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
 import { MockApplication, createApp } from '../../utils.js';
@@ -8,11 +9,11 @@ describe('test/lib/plugins/depd.test.ts', () => {
   afterEach(mm.restore);
 
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/demo');
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should use this.locals instead of this.state', () => {
     const ctx = app.mockContext();

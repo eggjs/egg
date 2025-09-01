@@ -23,5 +23,5 @@ export default (app: Application) => {
   new ContextLogger(ctx, app.logger);
 
   class ContextCookies extends app.ContextCookies {}
-  new ContextCookies(ctx, [ 'foo' ]);
+  new ContextCookies(ctx, ['foo']);
 };

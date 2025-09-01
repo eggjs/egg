@@ -41,7 +41,7 @@ $ open http://localhost:7001
 This project is structured as a pnpm monorepo with the following packages:
 
 - `packages/egg` - Main Eggjs framework
-- `examples/helloworld-commonjs` - CommonJS example application  
+- `examples/helloworld-commonjs` - CommonJS example application
 - `examples/helloworld-typescript` - TypeScript example application
 - `site` - Documentation website
 

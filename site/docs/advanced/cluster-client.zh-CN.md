@@ -23,6 +23,7 @@ order: 4
 另外，通过 messenger 传递数据效率较低，因为它会通过 Master 来做中转；万一 IPC 通道出现问题，还可能把 Master 进程弄挂。
 
 那么有没有更好的方法呢？答案是肯定的，我们提供了一种新的模式来降低这类客户端封装的复杂度。通过建立 Agent 和 Worker 的 socket 直连，跳过 Master 的中转，Agent 作为对外的门面，维持多个 Worker 进程的共享连接。
+
 ## 核心思想
 
 - 受到 [Leader/Follower](https://www.dre.vanderbilt.edu/~schmidt/PDF/lf.pdf) 模式的启发。
@@ -56,6 +57,7 @@ win /   +------------------+  \ lose
 | Client |         | Follower(Worker2) |
 +--------+         +-------------------+
 ```
+
 ## 客户端接口类型抽象
 
 我们将客户端接口抽象为以下两大类，这也是对客户端接口的一个规范，对于符合规范的客户端，我们可以自动将其包装为 Leader/Follower 模式。
@@ -108,10 +110,12 @@ class Client extends Base {
   }
 }
 ```
+
 ## 异常处理
 
 - 如果 Leader 实例“死掉”，将触发新一轮的端口争夺。争夺到端口的实例将被推举为新的 Leader。
 - 为了保证 Leader 和 Follower 之间通道的健康，需要引入定时的心跳检查机制。如果 Follower 在固定时间内未发送心跳包，Leader 会将其主动断开，以触发 Follower 的重新初始化。
+
 ## 协议和调用时序
 
 Leader 和 Follower 通过下面的协议进行数据交换：
@@ -157,6 +161,7 @@ Leader 和 Follower 通过下面的协议进行数据交换：
       | <------------------------------------------------ +
       |                                                   |
 ```
+
 ## 具体的使用方法
 
 下面我用一个简单的例子，介绍在框架里面如何让一个客户端支持 Leader/Follower 模式：
@@ -233,7 +238,7 @@ class RegistryClient extends Base {
     if (changed) {
       this.emit(
         key,
-        this._registered.get(key).map(url => parse(url, true)),
+        this._registered.get(key).map((url) => parse(url, true)),
       );
     }
   }
@@ -248,7 +253,7 @@ module.exports = RegistryClient;
 // agent.js
 const RegistryClient = require('./registry_client');
 
-module.exports = agent => {
+module.exports = (agent) => {
   // 对 RegistryClient 进行封装和实例化
   agent.registryClient = agent
     .cluster(RegistryClient)
@@ -268,7 +273,7 @@ module.exports = agent => {
 // app.js
 const RegistryClient = require('./registry_client');
 
-module.exports = app => {
+module.exports = (app) => {
   app.registryClient = app.cluster(RegistryClient).create({});
   app.beforeStart(async () => {
     await app.registryClient.ready();
@@ -279,7 +284,7 @@ module.exports = app => {
       {
         dataId: 'demo.DemoService',
       },
-      val => {
+      (val) => {
         // ...
       },
     );
@@ -333,7 +338,7 @@ class MockClient extends Base {
 
 ```js
 // agent.js
-module.exports = agent => {
+module.exports = (agent) => {
   agent.mockClient = agent
     .cluster(MockClient)
     // 将 sub 代理到 subscribe
@@ -348,7 +353,7 @@ module.exports = agent => {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.mockClient = app
     .cluster(MockClient)
     // 将 sub 代理到 subscribe
@@ -358,7 +363,7 @@ module.exports = app => {
   app.beforeStart(async () => {
     await app.mockClient.ready();
 
-    app.mockClient.sub({ id: 'test-id' }, val => {
+    app.mockClient.sub({ id: 'test-id' }, (val) => {
       // 请把你的代码放在这里
     });
   });
@@ -403,7 +408,7 @@ class APIClient extends Base {
     const subMap = options.subMap;
 
     for (const key in subMap) {
-      this.subscribe(subMap[key], value => {
+      this.subscribe(subMap[key], (value) => {
         this._cache[key] = value;
       });
     }
@@ -431,9 +436,11 @@ module.exports = APIClient;
 ```js
 // app.js 或 agent.js
 const APIClient = require('some-client'); // 上文中的模块
-module.exports = app => {
+module.exports = (app) => {
   const config = app.config.apiClient;
-  app.apiClient = new APIClient(Object.assign({}, config, { cluster: app.cluster }));
+  app.apiClient = new APIClient(
+    Object.assign({}, config, { cluster: app.cluster }),
+  );
   app.beforeStart(async () => {
     await app.apiClient.ready();
   });
@@ -446,7 +453,7 @@ exports.apiClient = {
       id: '',
     },
     // bar...
-  }
+  },
 };
 ```
 
@@ -500,6 +507,7 @@ class APIClient extends APIClientBase {
 - `APIClient` - 内部调用 `ClusterClient` 做数据同步，无需关心多进程模型，用户最终使用的模块。API 通过此处暴露，支持同步和异步。
 
 有兴趣的同学可以查看《增强多进程研发模式》讨论过程。
+
 ## 在框架里面 cluster-client 相关的配置项
 
 ```js
@@ -514,10 +522,10 @@ config.clusterClient = {
 };
 ```
 
-| 配置项          | 类型     | 默认值             | 描述                                                               |
-| --------------- | -------- | ------------------ | ------------------------------------------------------------------ |
-| responseTimeout | number   | 60000（一分钟）    | 全局的进程间通讯的超时时长，因为代理接口本身也有超时设置，所以不宜设置太短 |
-| transcode       | function | 未设置（N/A）      | 进程间通讯的序列化方式，默认使用 [serialize-json](https://www.npmjs.com/package/serialize-json)，建议不要自行设置 |
+| 配置项          | 类型     | 默认值          | 描述                                                                                                              |
+| --------------- | -------- | --------------- | ----------------------------------------------------------------------------------------------------------------- |
+| responseTimeout | number   | 60000（一分钟） | 全局的进程间通讯的超时时长，因为代理接口本身也有超时设置，所以不宜设置太短                                        |
+| transcode       | function | 未设置（N/A）   | 进程间通讯的序列化方式，默认使用 [serialize-json](https://www.npmjs.com/package/serialize-json)，建议不要自行设置 |
 
 上述表格为全局配置方式。如果你想为特定客户端单独设置，可以使用以下方法：
 

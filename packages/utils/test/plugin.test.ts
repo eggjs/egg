@@ -34,7 +34,8 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get all plugins \["onerror",/)
         .expect('code', 0)
@@ -49,7 +50,8 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get all plugins \["onerror",/)
         .expect('code', 0)
@@ -65,7 +67,8 @@ describe.skip('test/plugin.test.ts', () => {
         framework: path.join(tmp, 'node_modules/egg'),
         env: 'test',
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get all plugins \["onerror",/)
         .expect('code', 0)
@@ -93,7 +96,8 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get 11 plugin/)
         .expect('stdout', /get 1 framework/)
@@ -110,7 +114,8 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get 11 plugin/)
         .expect('stdout', /get 1 framework/)
@@ -133,7 +138,8 @@ describe.skip('test/plugin.test.ts', () => {
       const args = JSON.stringify({
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stdout', /get 11 plugin/)
         .expect('stdout', /get 1 framework/)
@@ -143,7 +149,8 @@ describe.skip('test/plugin.test.ts', () => {
     });
 
     it('should throw when no framework', async () => {
-      await coffee.fork(bin, [ '{}' ], { cwd: tmp })
+      await coffee
+        .fork(bin, ['{}'], { cwd: tmp })
         .debug()
         .expect('stderr', /framework is required/)
         .expect('code', 1)
@@ -154,7 +161,8 @@ describe.skip('test/plugin.test.ts', () => {
       const args = JSON.stringify({
         framework: '/noexist',
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
         .expect('stderr', /\/noexist should exist/)
         .expect('code', 1)
@@ -175,9 +183,13 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
-        .expect('stdout', /get app configs \["middleware","coreMiddleware","session"/)
+        .expect(
+          'stdout',
+          /get app configs \["middleware","coreMiddleware","session"/
+        )
         .expect('code', 0)
         .end();
     });
@@ -190,9 +202,13 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/egg'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
-        .expect('stdout', /get app configs \["middleware","coreMiddleware","session"/)
+        .expect(
+          'stdout',
+          /get app configs \["middleware","coreMiddleware","session"/
+        )
         .expect('code', 0)
         .end();
     });
@@ -205,9 +221,13 @@ describe.skip('test/plugin.test.ts', () => {
         baseDir: tmp,
         framework: path.join(tmp, 'node_modules/framework-demo'),
       });
-      await coffee.fork(bin, [ args ], { cwd: tmp })
+      await coffee
+        .fork(bin, [args], { cwd: tmp })
         .debug()
-        .expect('stdout', /get app configs \["middleware","coreMiddleware","session"/)
+        .expect(
+          'stdout',
+          /get app configs \["middleware","coreMiddleware","session"/
+        )
         .expect('code', 0)
         .end();
       const config = await utils.getConfig({

@@ -1,7 +1,6 @@
 const { mm } = require('@eggjs/mock');
 
 class DemoAppTest {
-
   constructor(app) {
     this.app = app;
 

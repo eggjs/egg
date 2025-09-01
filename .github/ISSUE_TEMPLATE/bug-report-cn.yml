@@ -47,7 +47,7 @@ body:
       required: true
   - type: input
     attributes:
-      label: "相关插件名称与版本号（PlugIn and Name）："
+      label: '相关插件名称与版本号（PlugIn and Name）：'
       description: |
         插件名称以及版本号：
       placeholder: |
@@ -56,7 +56,7 @@ body:
       required: true
   - type: input
     attributes:
-      label: "操作平台与版本号（Platform and Version）："
+      label: '操作平台与版本号（Platform and Version）：'
       description: |
         你的操作平台与版本号：
       placeholder: |

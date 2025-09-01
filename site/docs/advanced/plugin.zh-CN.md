@@ -59,13 +59,11 @@ $ npm test
 那区别在哪儿呢？
 
 1. 插件没有独立的 router 和 controller。这主要出于几点考虑：
-
    - 路由一般和应用强绑定的，不具备通用性。
    - 一个应用可能依赖很多个插件，如果插件支持路由可能会导致路由冲突。
    - 如果确实有统一路由的需求，可以考虑在插件里通过中间件来实现。
 
 2. 插件需要在 `package.json` 中的 `eggPlugin` 节点指定插件特有的信息：
-
    - `{String} name` - 插件名（必须配置），具有唯一性，配置依赖关系时会指定依赖插件的 name。
    - `{Array} dependencies` - 当前插件强依赖的插件列表（如果依赖的插件没找到，应用启动失败）。
    - `{Array} optionalDependencies` - 当前插件的可选依赖插件列表（如果依赖的插件未开启，只会 warning，不会影响应用启动）。
@@ -84,7 +82,6 @@ $ npm test
      ```
 
 3. 插件没有 `plugin.js`：
-
    - `eggPlugin.dependencies` 只是用于声明依赖关系，而不是引入插件或开启插件。
    - 如果期望统一管理多个插件的开启和配置，可以在 [上层框架](./framework.md) 处理。
 
@@ -128,6 +125,7 @@ $ npm test
 - 弱依赖，比如：A 依赖 B，但是如果没有 B，A 有相应的降级方案。
 
 需要特别强调的是：如果采用 `optionalDependencies`，那么框架不会校验依赖的插件是否开启，它的作用仅仅是计算加载顺序。所以，这时候依赖方需要通过“接口探测”等方式来决定相应的处理逻辑。
+
 ## 插件能做什么？
 
 上面给出了插件的定义，那插件到底能做什么？
@@ -284,7 +282,7 @@ $ npm test
 
 ```js
 // egg-mysql/app.js
-module.exports = app => {
+module.exports = (app) => {
   app.addSingleton('mysql', createMysql);
 };
 
@@ -301,7 +299,9 @@ function createMysql(config, app) {
   // 应用启动前检查
   app.beforeStart(async () => {
     const rows = await client.query('select now() as currentTime;');
-    app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
+    app.coreLogger.info(
+      `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
+    );
   });
 
   return client;
@@ -314,13 +314,20 @@ function createMysql(config, app) {
 async function createMysql(config, app) {
   // 异步获取 mysql 配置
   const mysqlConfig = await app.configManager.getMysqlConfig(config.mysql);
-  assert(mysqlConfig.host && mysqlConfig.port && mysqlConfig.user && mysqlConfig.database);
+  assert(
+    mysqlConfig.host &&
+      mysqlConfig.port &&
+      mysqlConfig.user &&
+      mysqlConfig.database,
+  );
   // 创建实例
   const client = new Mysql(mysqlConfig);
 
   // 应用启动前检查
   const rows = await client.query('select now() as currentTime;');
-  app.coreLogger.info(`[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`);
+  app.coreLogger.info(
+    `[egg-mysql] init instance success, rds currentTime: ${rows[0].currentTime}`,
+  );
 
   return client;
 }
@@ -405,7 +412,7 @@ async function createMysql(config, app) {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     // 从配置中心获取 MySQL 配置 { host, port, password, ... }
     const mysqlConfig = await app.configCenter.fetch('mysql');
@@ -448,7 +455,6 @@ class PostController extends Controller {
   - 对于既可以加中划线也可以不加的情况，不做强制约定，例如：`userservice`（`egg-userservice`）或 `user-service`（`egg-user-service`）都可。
 
 - `package.json` 书写规范
-
   - 按照上面的文档添加 `eggPlugin` 节点。
   - 在 `keywords` 里添加 `egg`、`egg-plugin`、`eggPlugin` 等关键字，便于索引。
 

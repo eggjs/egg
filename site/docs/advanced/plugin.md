@@ -60,13 +60,11 @@ Plugin is actually a `mini application`, directory of plugin is as below:
 It is almost the same as the application directory, what're the differences?
 
 1. Plugin have no independant router or controller. This is because:
-
    - Usually routers are strongly bound to application, it is not fit here.
    - An application might have plenty of dependant plugins, routers of plugin are very possible conflict with others. It would be a disaster.
    - If you really need a general router, you should implement it as middleware of the plugin.
 
 2. The specific information of plugin should be declared in the `package.json` of `eggPlugin`：
-
    - `{String} name` - plugin name(required), it must be unique, it will be used in the config of the dependencies of plugins.
    - `{Array} dependencies` - strong dependent plugins list of the current plugin(if one of these plugins here is not found, application's startup will fail).
    - `{Array} optionalDependencies` - optional dependencies list of this plugin.(if these plugins are not activated, only warnings would be occurred, and will not affect the startup of the application).
@@ -85,7 +83,6 @@ It is almost the same as the application directory, what're the differences?
      ```
 
 3. No `plugin.js`：
-
    - `eggPlugin.dependencies` is for declaring dependencies only, not for importing, nor activating.
    - If you want to manage multiple plugins, you should do it in[upper framework](./framework.md)
 
@@ -447,7 +444,6 @@ When loading the plugins in the framework, it will follow the rules below:
 
 - If there is the path configuration, load them in path directly.
 - If there is no path configuration, search them with the package name, the search orders are:
-
   1. `node_modules` directory of the application root
   2. `node_modules` directory of the dependencies
   3. `node_modules` of current directory(generally for unit test compatibility)
@@ -461,7 +457,6 @@ It's well welcomed to your contributions to the new plugins, but also hope you f
   - The corresponding plugin should be named in camel-case. The name should be translated according to the middle-lines of the `npm` name:`egg-foo-bar` => `fooBar`.
   - The use of middle-lines is not compulsive, e.g: userservice(egg-userservice) and user-service(egg-user-service) are both acceptable.
 - `package.json` Rules:
-
   - Add `eggPlugin` property according to the details discussed before.
   - For convenient index, add `egg`,`egg-plugin`,`eggPlugin` in `keywords`:
 

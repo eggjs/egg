@@ -150,8 +150,8 @@ exports.mysql = {
     port: '3306',
     user: 'test_user',
     password: 'test_password',
-    database: 'test'
-  }
+    database: 'test',
+  },
 };
 ```
 

@@ -1,20 +1,25 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
 import { MockApplication, createApp, getFilepath } from '../../../utils.js';
-import { AppWorkerLoader, AgentWorkerLoader, EggApplicationCore } from '../../../../src/index.js';
+import {
+  AppWorkerLoader,
+  AgentWorkerLoader,
+  EggApplicationCore,
+} from '../../../../src/index.js';
 
 const EGG_BASE = getFilepath('../..');
 
 describe('test/lib/core/loader/load_plugin.test.ts', () => {
   let app: MockApplication;
   const logger: any = new EggConsoleLogger();
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/empty');
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should loadConfig all plugins', async () => {
@@ -47,14 +52,15 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     assert.deepEqual(appLoader.plugins.e, {
       enable: true,
       name: 'e',
-      dependencies: [ 'f' ],
+      dependencies: ['f'],
       optionalDependencies: [],
       env: [],
       path: path.join(baseDir, 'plugins/e'),
       from: path.join(baseDir, 'config/plugin.js'),
     });
     assert.equal(
-      appLoader.plugins.onerror.path, path.join(EGG_BASE, 'node_modules/@eggjs/onerror/dist/esm'),
+      appLoader.plugins.onerror.path,
+      path.join(EGG_BASE, 'node_modules/@eggjs/onerror/dist/esm')
     );
     assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
     assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
@@ -74,7 +80,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     assert.deepEqual(appLoader.plugins.rds, {
       enable: true,
       name: 'rds',
-      dependencies: [ 'session' ],
+      dependencies: ['session'],
       optionalDependencies: [],
       env: [],
       package: 'rds',
@@ -117,7 +123,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     assert.deepEqual(appLoader.plugins.g, {
       enable: true,
       name: 'g',
-      dependencies: [ 'f' ],
+      dependencies: ['f'],
       optionalDependencies: [],
       env: [],
       path: path.join(baseDir, 'plugins/g'),
@@ -142,7 +148,8 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader.loadConfig();
 
     assert(
-      message === '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)',
+      message ===
+        '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)'
     );
   });
 
@@ -154,7 +161,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
         path: path.join(baseDir, 'node_modules/d'),
       },
       d1: {
-        env: [ 'unittest' ],
+        env: ['unittest'],
       },
     };
     const appLoader = new AppWorkerLoader({
@@ -172,7 +179,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       package: 'd',
       dependencies: [],
       optionalDependencies: [],
-      env: [ 'unittest' ],
+      env: ['unittest'],
       path: path.join(baseDir, 'node_modules/d'),
       from: '<options.plugins>',
     });
@@ -224,28 +231,31 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       logger,
     });
     await appLoader.loadConfig();
-    assert.deepEqual(appLoader.orderPlugins.map(plugin => {
-      return plugin.name;
-    }), [
-      'session',
-      'security',
-      'jsonp',
-      'onerror',
-      'i18n',
-      'watcher',
-      'schedule',
-      'multipart',
-      'development',
-      'logrotator',
-      'static',
-      'view',
-      'b',
-      'c1',
-      'f',
-      'a',
-      'd',
-      'e',
-    ]);
+    assert.deepEqual(
+      appLoader.orderPlugins.map(plugin => {
+        return plugin.name;
+      }),
+      [
+        'session',
+        'security',
+        'jsonp',
+        'onerror',
+        'i18n',
+        'watcher',
+        'schedule',
+        'multipart',
+        'development',
+        'logrotator',
+        'static',
+        'view',
+        'b',
+        'c1',
+        'f',
+        'a',
+        'd',
+        'e',
+      ]
+    );
   });
 
   it('should throw recursive deps error', async () => {
@@ -285,9 +295,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     });
     await appLoader1.loadConfig();
     // unittest disable
-    const keys1 = appLoader1.orderPlugins.map(plugin => {
-      return plugin.name;
-    }).join(',');
+    const keys1 = appLoader1.orderPlugins
+      .map(plugin => {
+        return plugin.name;
+      })
+      .join(',');
     assert(keys1.includes('b,c,d1,f,e'));
     assert(!appLoader1.plugins.a1);
 
@@ -299,16 +311,18 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       logger,
     });
     await appLoader2.loadConfig();
-    const keys2 = appLoader2.orderPlugins.map(plugin => {
-      return plugin.name;
-    }).join(',');
+    const keys2 = appLoader2.orderPlugins
+      .map(plugin => {
+        return plugin.name;
+      })
+      .join(',');
     assert(keys2.includes('d1,a1,b,c,f,e'));
     assert.deepEqual(appLoader2.plugins.a1, {
       enable: true,
       name: 'a1',
-      dependencies: [ 'd1' ],
+      dependencies: ['d1'],
       optionalDependencies: [],
-      env: [ 'local', 'prod' ],
+      env: ['local', 'prod'],
       path: path.join(baseDir, 'node_modules/a1'),
       from: path.join(baseDir, 'config/plugin.js'),
     });

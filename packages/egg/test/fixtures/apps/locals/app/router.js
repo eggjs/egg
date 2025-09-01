@@ -1,56 +1,56 @@
 'use strict';
 
 module.exports = app => {
-  app.get('/app_same_ref', async function() {
+  app.get('/app_same_ref', async function () {
     let app1, app2;
     this.app.locals = {
-      a: 1
+      a: 1,
     };
     app1 = this.app.locals;
     this.app.locals = {
-      b: 1
+      b: 1,
     };
     app2 = this.app.locals;
     this.body = app1 === app2;
   });
 
-  app.get('/app_locals_oom', async function() {
+  app.get('/app_locals_oom', async function () {
     for (let i = 0; i < 1000; i++) {
       app.locals = {
         // 10MB
-        buff: Buffer.alloc(10 * 1024 * 1024).toString()
+        buff: Buffer.alloc(10 * 1024 * 1024).toString(),
       };
     }
     this.body = 'ok';
   });
 
-  app.get('/ctx_same_ref', async function() {
+  app.get('/ctx_same_ref', async function () {
     let ctx1, ctx2;
     this.locals = {
-      a: 1
+      a: 1,
     };
     ctx1 = this.locals;
     this.locals = {
-      b: 1
+      b: 1,
     };
     ctx2 = this.locals;
     this.body = ctx1 === ctx2;
   });
 
-  app.get('/ctx_merge_app', async function() {
+  app.get('/ctx_merge_app', async function () {
     this.app.locals = {
-      a: 1
+      a: 1,
     };
     this.locals = {
-      b: 1
+      b: 1,
     };
     this.body = {
       a: this.locals.a,
       b: this.locals.b,
-    }
+    };
   });
 
-  app.get('/ctx_override_app', async function() {
+  app.get('/ctx_override_app', async function () {
     this.app.locals = {
       a: 'app.a',
       b: 'app.b',
@@ -58,7 +58,7 @@ module.exports = app => {
 
     // this.locals set 的优先级高与 app.locals
     this.locals = {
-      a: 'ctx.a'
+      a: 'ctx.a',
     };
 
     // this.locals 的赋值，会覆盖 app.locals
@@ -70,10 +70,10 @@ module.exports = app => {
     this.body = {
       a,
       b,
-    }
+    };
   });
 
-  app.get('/ctx_app_update_can_not_affect_ctx', async function() {
+  app.get('/ctx_app_update_can_not_affect_ctx', async function () {
     this.app.locals = {
       a: 'app.a',
       b: 'app.b',
@@ -85,7 +85,7 @@ module.exports = app => {
     this.app.locals.a = 'app.a.new';
     // 给 app 新增成员
     this.app.locals = {
-      newProperty: 'new'
+      newProperty: 'new',
     };
     // 删除 app.locals 成员
     delete this.app.locals.b;
@@ -97,31 +97,31 @@ module.exports = app => {
     };
   });
 
-  app.get('/set_only_support_object', async function() {
+  app.get('/set_only_support_object', async function () {
     let succeed = {};
 
     // 以 object 设置 app.locals
     this.app.locals = {
-      'a': 'app.a'
+      a: 'app.a',
     };
     succeed['app.locals.object'] = this.app.locals.a === 'app.a';
 
     // 以 object 设置 ctx.locals
     this.locals = {
-      'b': 'ctx.b'
+      b: 'ctx.b',
     };
     succeed['ctx.locals.object'] = this.locals.b === 'ctx.b';
 
     // 以常见非 object 类型设置 locals
     let targets = {
-      'string': 'locals',
-      'number': 1,
-      'function': function () {
+      string: 'locals',
+      number: 1,
+      function: function () {
         return {
-          'l' : 1,
+          l: 1,
         };
       },
-      'array': ['a', 'b', 'c']
+      array: ['a', 'b', 'c'],
     };
 
     // 设置
@@ -134,6 +134,5 @@ module.exports = app => {
     }
 
     this.body = succeed;
-
   });
 };

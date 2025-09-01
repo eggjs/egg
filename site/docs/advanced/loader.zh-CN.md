@@ -90,6 +90,7 @@ module.exports = {
 |                   Koa                      |
 +-----------------------------------+--------+
 ```
+
 ## 加载单元（loadUnit）
 
 Egg 将应用、框架和插件都称为加载单元（loadUnit），因为在代码结构上几乎没有什么差异。下面是一种典型的目录结构：
@@ -122,20 +123,20 @@ loadUnit
 
 | 文件                      | 应用 | 框架 | 插件 |
 | ------------------------- | ---- | ---- | ---- |
-| package.json              | ✔    | ✔    | ✔    |
-| config/plugin.{env}.js    | ✔    | ✔    |      |
-| config/config.{env}.js    | ✔    | ✔    | ✔    |
-| app/extend/application.js | ✔    | ✔    | ✔    |
-| app/extend/request.js     | ✔    | ✔    | ✔    |
-| app/extend/response.js    | ✔    | ✔    | ✔    |
-| app/extend/context.js     | ✔    | ✔    | ✔    |
-| app/extend/helper.js      | ✔    | ✔    | ✔    |
-| agent.js                  | ✔    | ✔    | ✔    |
-| app.js                    | ✔    | ✔    | ✔    |
-| app/service               | ✔    | ✔    | ✔    |
-| app/middleware            | ✔    | ✔    | ✔    |
-| app/controller            | ✔    |      |      |
-| app/router.js             | ✔    |      |      |
+| package.json              | ✔   | ✔   | ✔   |
+| config/plugin.{env}.js    | ✔   | ✔   |      |
+| config/config.{env}.js    | ✔   | ✔   | ✔   |
+| app/extend/application.js | ✔   | ✔   | ✔   |
+| app/extend/request.js     | ✔   | ✔   | ✔   |
+| app/extend/response.js    | ✔   | ✔   | ✔   |
+| app/extend/context.js     | ✔   | ✔   | ✔   |
+| app/extend/helper.js      | ✔   | ✔   | ✔   |
+| agent.js                  | ✔   | ✔   | ✔   |
+| app.js                    | ✔   | ✔   | ✔   |
+| app/service               | ✔   | ✔   | ✔   |
+| app/middleware            | ✔   | ✔   | ✔   |
+| app/controller            | ✔   |      |      |
+| app/router.js             | ✔   |      |      |
 
 文件按表格内的顺序从上到下加载。
 
@@ -188,6 +189,7 @@ plugin1 是 framework1 依赖的插件。由于 plugin2 和 plugin3 的依赖关
 
 - 加载时如果遇到同名文件将会被覆盖。比如，如果想要覆盖 `ctx.ip`，可以在应用的 `app/extend/context.js` 中直接定义 `ip`。
 - 应用完整启动顺序请查看[框架开发](./framework.md)。
+
 ### 生命周期
 
 框架提供了以下生命周期函数供开发者使用：
@@ -282,6 +284,7 @@ module.exports = AppBootHook;
 - `app/service/userInfo.js` => `app.service.userInfo`
 
 Loader 也提供了 [caseStyle](#caseStyle-string) 设置来强制指定命名方式，如将 model 加载时的 API 首字母大写，`app/model/user.js` => `app.model.User`，可指定 `caseStyle: 'upper'`。
+
 ## 扩展 Loader
 
 `Loader` 是一个基类，并根据文件加载的规则提供了一些内置的方法。它本身并不会去调用这些方法，而是由继承类调用。
@@ -348,6 +351,7 @@ module.exports = Object.assign(egg, {
 通过 `Loader` 提供的这些 API，可以很方便地定制团队的自定义加载，例如 `this.model.xx`，`app/extend/filter.js` 等等。
 
 以上只是说明 `Loader` 的写法，具体可以查看[框架开发](./framework.md)。
+
 ## 加载器函数（Loader API）
 
 Loader 提供了一些基础 API，方便在扩展时简化代码。想了解所有相关 API，请[点击此处](https://github.com/eggjs/egg-core#eggloader)。
@@ -420,6 +424,7 @@ app.loader.loadToContext(servicePaths, 'service', {
 ```
 
 文件加载完成后，`app.serviceClasses.user` 就代表 UserService 类。当调用 `ctx.service.user` 时，会实例化 UserService 类。因此，这个类只有在每次请求中首次被访问时才会实例化。实例化后，对象会被缓存，同一个请求中多次调用也只实例化一次。
+
 ### LoaderOptions
 
 #### ignore [String]
@@ -459,6 +464,7 @@ app.loader.loadToApp(directory, 'model', {
 设置文件命名的转换规则，可选项为 `camel`、`upper` 或 `lower`，默认值为 `camel`。
 
 这些选项都会将文件名转换为驼峰命名，但是首字符的大小写处理不同：
+
 - `camel`：首字母保持不变。
 - `upper`：首字母转为大写。
 - `lower`：首字母转为小写。
@@ -466,23 +472,24 @@ app.loader.loadToApp(directory, 'model', {
 根据不同文件类型设置相应的转换规则，如下表所示：
 
 | 文件类型       | `caseStyle` 配置 |
-| ------------- | -------------- |
-| app/controller | lower          |
-| app/middleware | lower          |
-| app/service    | lower          |
+| -------------- | ---------------- |
+| app/controller | lower            |
+| app/middleware | lower            |
+| app/service    | lower            |
 
 #### override [Boolean]
 
 当存在同名文件时，是否覆盖原有文件，或抛出异常。默认值为 `false`。
 
 例如，当同时加载应用和插件中的 `app/service/user.js` 文件时：
+
 - 若 `override` 设为 `true`，则应用中的文件会覆盖插件中的同名文件。
 - 若设为 `false`，则在尝试加载应用中的文件时会报错。
 
 根据不同文件类型设置 `override` 的配置值，如下表所示：
 
 | 文件类型       | `override` 配置 |
-| ------------- | --------------- |
+| -------------- | --------------- |
 | app/controller | true            |
 | app/middleware | false           |
 | app/service    | false           |
@@ -493,12 +500,11 @@ app.loader.loadToApp(directory, 'model', {
 
 根据不同文件类型设置 `call` 的配置值，如下表所示：
 
-| 文件类型       | `call` 配置   |
-| ------------- | ------------- |
-| app/controller | true          |
-| app/middleware | false         |
-| app/service    | true          |
-
+| 文件类型       | `call` 配置 |
+| -------------- | ----------- |
+| app/controller | true        |
+| app/middleware | false       |
+| app/service    | true        |
 
 ## CustomLoader
 
@@ -535,6 +541,7 @@ module.exports = {
 ```
 
 参考链接：
+
 - [loader](https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js)
 - [appworkerloader](https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js)
 - [agentworkerloader](https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js)

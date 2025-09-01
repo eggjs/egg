@@ -12,7 +12,7 @@ module.exports = app => {
   let json;
 
   app.config.dynamic = 1;
-  app.beforeStart(async function() {
+  app.beforeStart(async function () {
     // dumpConfig() dynamically
     // json = readJSON(path.join(baseDir, 'run/application_config.json'));
     // assert(json.config.dynamic === 1, 'should dump in config');

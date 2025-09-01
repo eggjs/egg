@@ -75,7 +75,6 @@
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
     "@types/koa-bodyparser": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "address": "catalog:",
     "assert-file": "catalog:",
@@ -97,19 +96,10 @@
   },
   "scripts": {
     "clean": "rimraf dist",
+    "lint": "oxlint",
     "build": "tsdown",
-    "test": "egg-bin test",
-    "test-local": "egg-bin test",
-    "test:changed": "egg-bin test --changed",
-    "preci": "pnpm run clean",
-    "ci": "egg-bin cov",
-    "postci": "pnpm run prepublishOnly && pnpm run clean",
-    "prepublishOnly": "pnpm run build && attw --pack --profile node16",
-    "ci:app": "pnpm run ci \"test/app/**/*.test.ts,test/*.test.ts\"",
-    "ci:cluster1": "pnpm run ci \"test/cluster1/**/*.test.ts\"",
-    "ci:cluster2": "pnpm run ci \"test/cluster2/**/*.test.ts\"",
-    "ci:lib/core": "pnpm run ci \"test/lib/core/**/*.test.ts\"",
-    "ci:lib/plugins": "pnpm run ci \"test/lib/plugins/**/*.test.ts\""
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "homepage": "https://github.com/eggjs/egg",
   "repository": {

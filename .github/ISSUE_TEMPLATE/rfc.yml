@@ -10,7 +10,7 @@ body:
         But please make sure there's no duplicated issues related to your idea before submitting.
   - type: textarea
     attributes:
-      label: "Please describe your idea in detail:"
+      label: 'Please describe your idea in detail:'
       placeholder: |
         1. Describe the current situation of the problem you want to solve,
         and attach the related issue address.

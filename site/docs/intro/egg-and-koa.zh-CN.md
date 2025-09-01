@@ -25,8 +25,8 @@ const fn = async function () {
   return { user, posts };
 };
 fn()
-  .then(res => console.log(res))
-  .catch(err => console.error(err.stack));
+  .then((res) => console.log(res))
+  .catch((err) => console.error(err.stack));
 ```
 
 ## Koa
@@ -80,6 +80,7 @@ async function onerror(ctx, next) {
 
 只需将此中间件放在其他中间件前，便可捕获所有同步或异步代码中抛出的异常。
 ```
+
 ## Egg 继承于 Koa
 
 如上所述，Koa 是一个非常优秀的框架。然而，对于企业级应用来说，它还比较基础。

@@ -17,4 +17,4 @@ module.exports = app => {
       this.ctx.body = this.config.name;
     }
   };
-}
+};

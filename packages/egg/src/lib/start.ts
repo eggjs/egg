@@ -44,7 +44,9 @@ export async function startEgg(options: StartEggOptions = {}) {
   let AgentClass = Agent;
   let ApplicationClass = Application;
   if (options.framework) {
-    const framework = await importModule(options.framework, { paths: [ options.baseDir ] });
+    const framework = await importModule(options.framework, {
+      paths: [options.baseDir],
+    });
     AgentClass = framework.Agent;
     ApplicationClass = framework.Application;
   }

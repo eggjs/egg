@@ -6,7 +6,6 @@ const Agent = egg.Agent;
 const AppWorkerLoader = egg.AppWorkerLoader;
 
 class MyAgent extends Agent {
-
   constructor(options) {
     super(options);
   }
