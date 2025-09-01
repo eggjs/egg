@@ -1,9 +1,10 @@
 import { debuglog } from 'node:util';
 import workerThreads from 'node:worker_threads';
-import type { Master } from '../master.js';
-import type { WorkerManager } from './worker_manager.js';
 
-const debug = debuglog('@eggjs/cluster/messenger');
+import type { Master } from '../master.ts';
+import type { WorkerManager } from './worker_manager.ts';
+
+const debug = debuglog('egg/cluster/messenger');
 
 export type MessageCharacter = 'agent' | 'app' | 'master' | 'parent';
 

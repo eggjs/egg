@@ -114,12 +114,10 @@ export default {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  // FIXME: need to add `jsonp` to the plugin config
-  // './node_modules/.pnpm/@eggjs+jsonp@3.0.0/node_modules/@eggjs/jsonp/dist/esm/app'
-  // jsonp: {
-  //   enable: true,
-  //   package: '@eggjs/jsonp',
-  // },
+  jsonp: {
+    enable: true,
+    package: '@eggjs/jsonp',
+  },
 
   /**
    * view plugin
@@ -127,9 +125,8 @@ export default {
    * @property {Boolean} enable - `true` by default
    * @since 1.0.0
    */
-  // FIXME: need to add `view` to the plugin config
-  // view: {
-  //   enable: true,
-  //   package: '@eggjs/view',
-  // },
+  view: {
+    enable: true,
+    package: '@eggjs/view',
+  },
 };

@@ -1,11 +1,14 @@
 import path from 'node:path';
+import { existsSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import type { Worker as ClusterProcessWorker } from 'node:cluster';
 import type { Worker as ThreadWorker } from 'node:worker_threads';
+
 import type { Logger } from 'egg-logger';
-import type { MessageBody, Messenger } from '../../messenger.js';
-import type { MasterOptions } from '../../../master.js';
-import { getSrcDirname } from '../../../dirname.js';
+
+import type { MessageBody, Messenger } from '../../messenger.ts';
+import type { MasterOptions } from '../../../master.ts';
+import { getSrcDirname } from '../../../dirname.ts';
 
 export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   instance: T;
@@ -108,7 +111,11 @@ export abstract class BaseAppUtils extends EventEmitter {
   }
 
   getAppWorkerFile() {
-    return path.join(getSrcDirname(), 'app_worker.js');
+    let appWorkerFile = path.join(getSrcDirname(), 'app_worker.js');
+    if (!existsSync(appWorkerFile)) {
+      appWorkerFile = path.join(getSrcDirname(), 'app_worker.ts');
+    }
+    return appWorkerFile;
   }
 
   fork() {

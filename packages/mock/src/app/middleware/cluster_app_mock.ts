@@ -1,6 +1,6 @@
 import { debuglog } from 'node:util';
 
-import { Context, Next } from '@eggjs/core';
+import { Context, type Next } from '@eggjs/core';
 
 const debug = debuglog('egg/mock/app/middleware/cluster_app_mock');
 

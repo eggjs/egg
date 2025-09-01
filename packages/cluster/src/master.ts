@@ -5,24 +5,26 @@ import path from 'node:path';
 import fs from 'node:fs';
 import net from 'node:net';
 import { debuglog } from 'node:util';
+
 import { ReadyEventEmitter } from 'get-ready';
 import { detectPort } from 'detect-port';
 import { reload } from 'cluster-reload';
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 import { readJSONSync } from 'utility';
 import terminalLink from 'terminal-link';
-import { parseOptions, ClusterOptions, ParsedClusterOptions } from './utils/options.js';
-import { WorkerManager } from './utils/worker_manager.js';
-import { Messenger } from './utils/messenger.js';
+
+import { parseOptions, type ClusterOptions, type ParsedClusterOptions } from './utils/options.ts';
+import { WorkerManager } from './utils/worker_manager.ts';
+import { Messenger } from './utils/messenger.ts';
 import {
   AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker,
-} from './utils/mode/impl/process/agent.js';
-import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.js';
+} from './utils/mode/impl/process/agent.ts';
+import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.ts';
 import {
   AgentThreadWorker, AgentThreadUtils as WorkerThreadsAgentWorker,
-} from './utils/mode/impl/worker_threads/agent.js';
-import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.js';
-import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.js';
+} from './utils/mode/impl/worker_threads/agent.ts';
+import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.ts';
+import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
 
 const debug = debuglog('@eggjs/cluster/master');
 

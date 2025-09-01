@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events';
-import { BaseAgentWorker } from './mode/base/agent.js';
-import { BaseAppWorker } from './mode/base/app.js';
+
+import { BaseAgentWorker } from './mode/base/agent.ts';
+import { BaseAppWorker } from './mode/base/app.ts';
 
 // worker manager to record agent and worker forked by egg-cluster
 // can do some check stuff here to monitor the healthy

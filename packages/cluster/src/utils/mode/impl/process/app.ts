@@ -1,10 +1,12 @@
 import cluster, { type Worker as ClusterProcessWorker } from 'node:cluster';
+
 import { cfork } from 'cfork';
 import { sendmessage } from 'sendmessage';
 import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
-import { BaseAppWorker, BaseAppUtils } from '../../base/app.js';
-import { terminate } from '../../../terminate.js';
-import type { MessageBody } from '../../../messenger.js';
+
+import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
+import { terminate } from '../../../terminate.ts';
+import type { MessageBody } from '../../../messenger.ts';
 
 export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
   get id() {

@@ -2,9 +2,10 @@ import { debuglog } from 'node:util';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { once } from 'node:events';
 import { ChildProcess } from 'node:child_process';
+
 import { pstree } from '@fengmk2/ps-tree';
 
-const debug = debuglog('@eggjs/cluster/utils/terminate');
+const debug = debuglog('egg/cluster/utils/terminate');
 
 interface SubProcess extends ChildProcess {
   process?: ChildProcess;

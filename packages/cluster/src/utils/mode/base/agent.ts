@@ -1,11 +1,14 @@
 import path from 'node:path';
+import { existsSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import type { ChildProcess } from 'node:child_process';
 import type { Worker } from 'node:worker_threads';
+
 import type { Logger } from 'egg-logger';
-import type { MasterOptions } from '../../../master.js';
-import type { MessageBody, Messenger } from '../../messenger.js';
-import { getSrcDirname } from '../../../dirname.js';
+
+import type { MasterOptions } from '../../../master.ts';
+import type { MessageBody, Messenger } from '../../messenger.ts';
+import { getSrcDirname } from '../../../dirname.ts';
 
 export abstract class BaseAgentWorker<T = ChildProcess | Worker> {
   instance: T;
@@ -75,7 +78,11 @@ export abstract class BaseAgentUtils extends EventEmitter {
   }
 
   getAgentWorkerFile() {
-    return path.join(getSrcDirname(), 'agent_worker.js');
+    let agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.js');
+    if (!existsSync(agentWorkerFile)) {
+      agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.ts');
+    }
+    return agentWorkerFile;
   }
 
   fork() {

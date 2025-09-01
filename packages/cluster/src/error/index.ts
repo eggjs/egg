@@ -1,2 +1,2 @@
-export * from './ClusterAgentWorkerError.js';
-export * from './ClusterWorkerExceptionError.js';
+export * from './ClusterAgentWorkerError.ts';
+export * from './ClusterWorkerExceptionError.ts';

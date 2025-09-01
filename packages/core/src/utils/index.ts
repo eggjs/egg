@@ -96,7 +96,7 @@ export default {
         throw e;
       }
       const err = new Error(
-        `[@eggjs/core] load file: ${filepath}, error: ${e.message}`
+        `[egg/core] load file: ${filepath}, error: ${e.message}`
       );
       err.cause = e;
       debug('[loadFile] handle %s error: %s', filepath, e);
