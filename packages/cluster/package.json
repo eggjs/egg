@@ -1,0 +1,88 @@
+{
+  "name": "@eggjs/cluster",
+  "version": "3.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "cluster manager for egg",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "posttest": "pnpm run clean",
+    "test-local": "vitest run",
+    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "ci": "vitest run --coverage",
+    "postci": "pnpm run clean",
+    "prepublishOnly": "pnpm run build && attw --pack"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/cluster"
+  },
+  "keywords": [
+    "egg",
+    "cluster",
+    "process"
+  ],
+  "author": "dead-horse <dead_horse@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eggjs/cluster/issues"
+  },
+  "homepage": "https://github.com/eggjs/cluster#readme",
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "@fengmk2/ps-tree": "catalog:",
+    "cfork": "catalog:",
+    "cluster-reload": "catalog:",
+    "detect-port": "catalog:",
+    "egg-logger": "catalog:",
+    "get-ready": "catalog:",
+    "graceful-process": "catalog:",
+    "sendmessage": "catalog:",
+    "terminal-link": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/supertest": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "address": "catalog:",
+    "coffee": "catalog:",
+    "egg": "workspace:*",
+    "egg-errors": "catalog:",
+    "oxlint": "catalog:",
+    "ts-node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

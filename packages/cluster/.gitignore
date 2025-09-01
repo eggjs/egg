@@ -1,0 +1,15 @@
+/node_modules
+coverage
+.logs
+logs
+run
+.tmp
+*.log
+.vscode
+.nyc_output
+package-lock.json
+.package-lock.json
+.tshy*
+.eslintcache
+dist
+coverage
