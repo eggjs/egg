@@ -72,8 +72,9 @@ describe('test/import.test.ts', () => {
       });
     });
 
-    it('should work on commonjs and require exists', () => {
-      return coffee.fork(getFilepath('cjs/run.js'))
+    it('should work on commonjs and require exists', async () => {
+      const script = getFilepath('cjs/run.js');
+      return await coffee.fork(script)
         // .debug()
         .expect('stdout', /index\.js/)
         .end();

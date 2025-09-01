@@ -1,23 +1,22 @@
-import { strict as assert } from 'node:assert';
-import { MockApplication, createApp } from '../../../utils.js';
+import { test, beforeAll, afterAll, expect } from 'vitest';
 
-describe('test/lib/core/config/config.cookies.test.ts', () => {
-  let app: MockApplication;
-  before(() => {
-    app = createApp('apps/app-config-cookies');
-    return app.ready();
-  });
-  after(() => app.close());
+import { MockApplication, createApp } from '../../../utils.ts';
 
-  it('should auto set sameSite cookie', async () => {
-    const res = await app.httpRequest()
-      .get('/');
-    assert(res.status === 200);
-    assert(res.text === 'hello');
-    const cookies = res.headers['set-cookie'];
-    assert(cookies.length >= 1);
-    for (const cookie of cookies) {
-      assert(cookie.includes('; samesite=lax'));
-    }
-  });
+let app: MockApplication;
+beforeAll(() => {
+  app = createApp('apps/app-config-cookies');
+  return app.ready();
+});
+afterAll(() => app.close());
+
+test('should auto set sameSite cookie', async () => {
+  const res = await app.httpRequest()
+    .get('/');
+  expect(res.status).toBe(200);
+  expect(res.text).toBe('hello');
+  const cookies = res.headers['set-cookie'];
+  expect(cookies.length >= 1);
+  for (const cookie of cookies) {
+    expect(cookie).toMatch('; samesite=lax');
+  }
 });

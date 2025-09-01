@@ -10,10 +10,10 @@ import {
   EggApplicationCore,
   type EggApplicationCoreOptions,
   type Context,
-} from './egg.js';
-import { AppWorkerLoader } from './loader/index.js';
-import Helper from '../app/extend/helper.js';
-import { CookieLimitExceedError } from './error/index.js';
+} from './egg.ts';
+import { AppWorkerLoader } from './loader/index.ts';
+import Helper from '../app/extend/helper.ts';
+import { CookieLimitExceedError } from './error/index.ts';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 

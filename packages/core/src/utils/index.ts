@@ -6,7 +6,7 @@ import BuiltinModule from 'node:module';
 
 import { importResolve, importModule } from '@eggjs/utils';
 
-const debug = debuglog('@eggjs/core/utils');
+const debug = debuglog('egg/core/utils');
 
 export type Fun = (...args: unknown[]) => unknown;
 

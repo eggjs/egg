@@ -64,18 +64,12 @@ The framework follows a specific loading order:
 
 ### Testing
 - `pnpm test` - Run tests in all packages
-- `pnpm run ci` - Run CI tests in all packages
 - `pnpm --filter=egg run test` - Test main egg package
-- `pnpm --filter=egg run ci:app` - Run app-level tests only
-- `pnpm --filter=egg run ci:cluster1` - Run cluster tests (part 1)
-- `pnpm --filter=egg run ci:cluster2` - Run cluster tests (part 2)  
-- `pnpm --filter=egg run ci:lib/core` - Run core library tests
-- `pnpm --filter=egg run ci:lib/plugins` - Run plugin tests
 
 ### Build & Lint
-- `pnpm run build` - Build all packages
-- `pnpm run clean` - Clean dist directories in all packages
-- `pnpm run lint` - Run ESLint in all packages
+- `pnpm -r run build` - Build all packages
+- `pnpm -r run clean` - Clean dist directories in all packages
+- `pnpm lint` - Run ESLint in all packages
 
 ### Examples
 - `pnpm run example:commonjs` - Run CommonJS example

@@ -1,1 +1,1 @@
-export * from './ImportResolveError.js';
+export * from './ImportResolveError.ts';

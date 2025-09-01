@@ -1,4 +1,4 @@
-import { MiddlewareFunc } from '../../../../src/index.js';
+import { MiddlewareFunc } from 'egg';
 
 export const hello: MiddlewareFunc = async (ctx, next) => {
   ctx.body = 'Hello World!';

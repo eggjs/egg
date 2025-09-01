@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll } from 'vitest';
 import { request } from '@eggjs/supertest';
+
 import { getFilepath } from './helper.js';
 import { Application } from './fixtures/egg-esm/index.js';
 

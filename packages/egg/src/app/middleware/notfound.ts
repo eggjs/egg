@@ -1,4 +1,4 @@
-import type { Next, Context } from '../../lib/egg.js';
+import type { Next, Context } from '../../lib/egg.ts';
 
 export interface NotFoundMiddlewareOptions {
   enable: boolean;

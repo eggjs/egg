@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { describe, it, expect } from 'vitest';
 
-import { detectType, EggType } from '../src/index.js';
-import * as all from '../src/index.js';
-import { getFilepath } from './helper.js';
+import { detectType, EggType } from '../src/index.ts';
+import * as all from '../src/index.ts';
+import { getFilepath } from './helper.ts';
 
 describe('test/index.test.ts', () => {
   describe('detectType()', () => {

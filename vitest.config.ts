@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     exclude: [
       '**/test/fixtures/**',
+      '**/node_modules/**',
     ],
   },
 });

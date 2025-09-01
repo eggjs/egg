@@ -3,7 +3,8 @@
  */
 
 import { performance } from 'node:perf_hooks';
-import type { Context, Next } from '../../lib/egg.js';
+
+import type { Context, Next } from '../../lib/egg.ts';
 
 export interface MetaMiddlewareOptions {
   enable: boolean;

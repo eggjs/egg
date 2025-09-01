@@ -1,13 +1,13 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import type { EggCore } from '../src/index.js';
+import type { EggCore } from '../src/index.ts';
 import {
   Application,
   type EggCoreInitOptions,
-} from './fixtures/egg-esm/index.js';
+} from './fixtures/egg-esm/index.ts';
 
-export { Application } from './fixtures/egg-esm/index.js';
+export { Application } from './fixtures/egg-esm/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

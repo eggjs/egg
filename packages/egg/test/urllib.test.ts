@@ -1,33 +1,9 @@
-import { strict as assert } from 'node:assert';
+import { test, expect } from 'vitest';
+
 import * as urllib from '../src/urllib.js';
 
-describe('test/urllib.test.ts', () => {
-  it('should expose properties', () => {
-    assert.deepEqual(Object.keys(urllib).sort(), [
-      'Agent',
-      'Dispatcher',
-      'FetchFactory',
-      'FormData',
-      'Headers',
-      'HttpClient',
-      'HttpClient2',
-      'HttpClientConnectTimeoutError',
-      'HttpClientRequestError',
-      'HttpClientRequestTimeoutError',
-      'MockAgent',
-      'ProxyAgent',
-      'Request',
-      'Response',
-      'USER_AGENT',
-      'WebFormData',
-      'curl',
-      'fetch',
-      'getDefaultHttpClient',
-      'getGlobalDispatcher',
-      'request',
-      'setGlobalDispatcher',
-    ]);
+test('should expose properties', () => {
+  expect(Object.keys(urllib).sort()).toMatchSnapshot();
 
-    assert.equal(typeof urllib.MockAgent, 'function');
-  });
+  expect(typeof urllib.MockAgent).toBe('function');
 });

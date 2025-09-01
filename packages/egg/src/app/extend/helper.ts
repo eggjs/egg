@@ -1,5 +1,6 @@
 import url from 'node:url';
-import { BaseContextClass } from '../../lib/core/base_context_class.js';
+
+import { BaseContextClass } from '../../lib/core/base_context_class.ts';
 
 /**
  * The Helper class which can be used as utility function.

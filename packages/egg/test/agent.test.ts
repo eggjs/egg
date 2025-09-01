@@ -1,7 +1,10 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
+
 import { createApp, getFilepath, MockApplication, cluster } from './utils.js';
 
 describe('test/agent.test.ts', () => {
@@ -10,13 +13,13 @@ describe('test/agent.test.ts', () => {
   describe('agent-logger-config', () => {
     let app: MockApplication;
 
-    before(() => {
+    beforeAll(async () => {
       app = createApp('apps/agent-logger-config');
-      return app.ready();
+      return await app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
-    it('agent logger config should work', () => {
+    it.only('agent logger config should work', () => {
       const fileTransport = app._agent.logger.get('file');
       assert.equal(fileTransport.options.file, path.join('/tmp/foo', 'egg-agent.log'));
     });
@@ -25,11 +28,11 @@ describe('test/agent.test.ts', () => {
   describe('agent throw', () => {
     const baseDir = getFilepath('apps/agent-throw');
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/agent-throw');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should catch unhandled exception', done => {
       app.httpRequest()

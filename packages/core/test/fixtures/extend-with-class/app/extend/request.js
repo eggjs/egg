@@ -1,4 +1,4 @@
-import { Request } from '../../../../../src/index.js';
+import { Request } from '../../../../../src/index.ts';
 
 export default class AppRequest extends Request {
   get appRequest() {

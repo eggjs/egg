@@ -1,8 +1,10 @@
 import querystring from 'node:querystring';
+
 import { Request as EggCoreRequest } from '@eggjs/core';
-import type { Application } from '../../lib/application.js';
-import type Context from './context.js';
-import Response from './response.js';
+
+import type { Application } from '../../lib/application.ts';
+import type Context from './context.ts';
+import Response from './response.ts';
 
 const QUERY_CACHE = Symbol('request query cache');
 const QUERIES_CACHE = Symbol('request queries cache');

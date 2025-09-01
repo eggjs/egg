@@ -3,9 +3,9 @@ import { createRequire } from 'node:module';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
-import { ImportResolveError } from './error/index.js';
+import { ImportResolveError } from './error/index.ts';
 
-const debug = debuglog('@eggjs/utils/import');
+const debug = debuglog('egg/utils/import');
 
 export interface ImportResolveOptions {
   paths?: string[];

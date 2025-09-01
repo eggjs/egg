@@ -6,15 +6,17 @@ import http from 'node:http';
 import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
+
 import {
   mm, MockOptions, MockClusterOptions, MockApplication,
 } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
+
 import {
   startEgg, StartEggOptions,
   type SingleModeAgent,
-} from '../src/index.js';
+} from '../src/index.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtures = path.join(__dirname, 'fixtures');

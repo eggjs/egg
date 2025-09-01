@@ -95,6 +95,10 @@ describe('test/loader/get_framework_paths.test.ts', () => {
           { importDefaultOnly: true }
         ),
       });
-    }, /Symbol.for\('egg#eggPath'\) should be string/);
+    }, (err: any) => {
+      // console.error(err);
+      assert.match(err.message, /Symbol.for\('egg#eggPath'\) should be string/);
+      return true;
+    });
   });
 });

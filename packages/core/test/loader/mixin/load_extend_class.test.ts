@@ -4,7 +4,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { mm } from 'mm';
 
-import { createApp, type Application } from '../../helper.js';
+import { createApp, type Application } from '../../helper.ts';
 
 describe('test/loader/mixin/load_extend_class.test.ts', () => {
   let app: Application;

@@ -2,13 +2,13 @@
  * @namespace Egg
  */
 
-import { BaseContextClass } from './lib/core/base_context_class.js';
+import { BaseContextClass } from './lib/core/base_context_class.ts';
 import {
   startEgg,
   SingleModeApplication,
   SingleModeAgent,
-} from './lib/start.js';
-import Helper from './app/extend/helper.js';
+} from './lib/start.ts';
+import Helper from './app/extend/helper.ts';
 
 // export extends
 export {
@@ -20,9 +20,9 @@ export type {
 };
 
 // export types
-export * from './lib/egg.js';
-export * from './lib/types.js';
-export * from './lib/start.js';
+export * from './lib/egg.ts';
+export * from './lib/types.ts';
+export * from './lib/start.ts';
 
 // export singleton
 export {
@@ -32,7 +32,7 @@ export {
 } from '@eggjs/core';
 
 // export errors
-export * from './lib/error/index.js';
+export * from './lib/error/index.ts';
 
 // export loggers
 export type {
@@ -41,8 +41,8 @@ export type {
 } from 'egg-logger';
 
 // export httpClients
-export * from './lib/core/httpclient.js';
-export * from './lib/core/context_httpclient.js';
+export * from './lib/core/httpclient.ts';
+export * from './lib/core/context_httpclient.ts';
 
 /**
  * Start egg application with cluster mode
@@ -64,13 +64,13 @@ export {
  * @member {Application} Egg#Application
  * @since 1.0.0
  */
-export { Application } from './lib/application.js';
+export { Application } from './lib/application.ts';
 
 /**
  * @member {Agent} Egg#Agent
  * @since 1.0.0
  */
-export { Agent } from './lib/agent.js';
+export { Agent } from './lib/agent.ts';
 
 /**
  * @member {AppWorkerLoader} Egg#AppWorkerLoader
@@ -82,7 +82,7 @@ export { Agent } from './lib/agent.js';
  * @since 1.0.0
  */
 
-export { AppWorkerLoader, AgentWorkerLoader } from './lib/loader/index.js';
+export { AppWorkerLoader, AgentWorkerLoader } from './lib/loader/index.ts';
 
 /**
  * @member {Controller} Egg#Controller
@@ -112,9 +112,9 @@ export {
  * @member {BaseContextClass} Egg#BaseContextClass
  * @since 1.2.0
  */
-export { BaseContextClass } from './lib/core/base_context_class.js';
+export { BaseContextClass } from './lib/core/base_context_class.ts';
 
 /**
  * @member {Boot} Egg#Boot
  */
-export { BaseHookClass as Boot } from './lib/core/base_hook_class.js';
+export { BaseHookClass as Boot } from './lib/core/base_hook_class.ts';

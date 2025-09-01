@@ -3,9 +3,9 @@ import path from 'node:path';
 import assert from 'node:assert';
 import os from 'node:os';
 import { stat, mkdir, writeFile, realpath } from 'node:fs/promises';
-import { importModule } from './import.js';
+import { importModule } from './import.ts';
 
-const debug = debuglog('@eggjs/utils/plugin');
+const debug = debuglog('egg/utils/plugin');
 
 const tmpDir = os.tmpdir();
 

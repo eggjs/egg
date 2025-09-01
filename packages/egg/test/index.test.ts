@@ -1,37 +1,9 @@
-import { strict as assert } from 'node:assert';
+import { test, expect } from 'vitest';
+
 import * as egg from '../src/index.js';
 
-describe('test/index.test.ts', () => {
-  it('should expose properties', () => {
-    assert.deepEqual(Object.keys(egg).sort(), [
-      'Agent',
-      'AgentWorkerLoader',
-      'AppWorkerLoader',
-      'Application',
-      'BaseContextClass',
-      'Boot',
-      'ClusterAgentWorkerError',
-      'ClusterWorkerExceptionError',
-      'Context',
-      'ContextHttpClient',
-      'Controller',
-      'CookieLimitExceedError',
-      'EggApplicationCore',
-      'Helper',
-      'HttpClient',
-      'Master',
-      'MessageUnhandledRejectionError',
-      'Request',
-      'Response',
-      'Router',
-      'Service',
-      'Singleton',
-      'Subscription',
-      'start',
-      'startCluster',
-      'startEgg',
-    ]);
+test('should expose properties', () => {
+  expect(Object.keys(egg).sort()).toMatchSnapshot();
 
-    assert(egg.Context);
-  });
+  expect(egg.Context).toBeDefined();
 });

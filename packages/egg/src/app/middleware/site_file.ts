@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
-import type { Next, Context } from '../../lib/egg.js';
+
+import type { Next, Context } from '../../lib/egg.ts';
 
 export type SiteFileContentFun = (ctx: Context) => Promise<Buffer | string>;
 
