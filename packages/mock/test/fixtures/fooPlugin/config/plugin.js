@@ -1,0 +1,5 @@
+'use strict';
+
+exports.fooPlugin = {
+
+};

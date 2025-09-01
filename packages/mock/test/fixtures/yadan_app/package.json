@@ -1,0 +1,6 @@
+{
+  "name": "custom",
+  "egg": {
+    "framework": "yadan"
+  }
+}

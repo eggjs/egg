@@ -61,6 +61,7 @@
     "utility": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
     "@types/js-yaml": "catalog:",
