@@ -86,3 +86,9 @@ catalog:
   'detect-port': ^2.1.0
   'merge-descriptors': ^2.0.0
   'mocha': ^11.0.1
+  # Cluster package dependencies
+  '@fengmk2/ps-tree': ^2.0.1
+  'cfork': ^2.0.0
+  'cluster-reload': ^2.0.0
+  'graceful-process': ^2.0.0
+  'terminal-link': ^2.1.1
