@@ -2,7 +2,7 @@ import { EOL } from 'node:os';
 import { debuglog } from 'node:util';
 import assert from 'node:assert';
 
-const debug = debuglog('@eggjs/core/utils/timing');
+const debug = debuglog('egg/core/utils/timing');
 
 export interface TimingItem {
   name: string;

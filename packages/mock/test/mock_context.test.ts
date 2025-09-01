@@ -1,16 +1,17 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
 describe('test/mock_context.test.ts', () => {
   let app: MockApplication;
-  before(done => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: 'demo',
     });
-    app.ready(done);
+    await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should work on GET with user login', () => {

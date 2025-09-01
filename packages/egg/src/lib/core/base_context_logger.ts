@@ -1,4 +1,4 @@
-import type { EggContext } from '../egg.js';
+import type { EggContext } from '../egg.ts';
 
 export class BaseContextLogger {
   readonly #ctx: EggContext;

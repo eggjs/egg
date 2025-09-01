@@ -1,7 +1,8 @@
 import { debuglog } from 'node:util';
-import type { IMessenger } from './IMessenger.js';
-import type { EggApplicationCore } from '../../egg.js';
-import { BaseMessenger } from './base.js';
+
+import type { IMessenger } from './IMessenger.ts';
+import type { EggApplicationCore } from '../../egg.ts';
+import { BaseMessenger } from './base.ts';
 
 const debug = debuglog('egg/lib/core/messenger/local');
 

@@ -372,7 +372,7 @@ describe('test/singleton.test.ts', () => {
       assert(app.dataService instanceof Singleton);
       await assert.rejects(async () => {
         await app.dataService.createInstance({ foo1: 'bar1' });
-      }, /\[@eggjs\/core\/singleton\] dataService only support asynchronous creation, please use createInstanceAsync$/);
+      }, /\[egg\/core\/singleton\] dataService only support asynchronous creation, please use createInstanceAsync$/);
     });
 
     it('should return client name when create', async () => {

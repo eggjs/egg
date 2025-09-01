@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import { AsyncLocalStorage } from 'node:async_hooks';
+
 import {
   EggCore,
   Request as EggCoreRequest,
@@ -32,28 +33,29 @@ import { Cookies as ContextCookies } from '@eggjs/cookies';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import CircularJSON from 'circular-json-for-egg';
-import type { Agent } from './agent.js';
-import type { Application } from './application.js';
-import Context from '../app/extend/context.js';
-import type { EggAppConfig } from './types.js';
+
+import type { Agent } from './agent.ts';
+import type { Application } from './application.ts';
+import Context from '../app/extend/context.ts';
+import type { EggAppConfig } from './types.ts';
 import {
   create as createMessenger,
-  IMessenger,
-} from './core/messenger/index.js';
-import { ContextHttpClient } from './core/context_httpclient.js';
+  type IMessenger,
+} from './core/messenger/index.ts';
+import { ContextHttpClient } from './core/context_httpclient.ts';
 import {
   HttpClient,
   type HttpClientRequestOptions,
   type HttpClientRequestURL,
   type HttpClientResponse,
   type HttpClientOptions,
-} from './core/httpclient.js';
-import { createLoggers } from './core/logger.js';
-import { convertObject } from './core/utils.js';
-import { BaseContextClass } from './core/base_context_class.js';
-import { BaseHookClass } from './core/base_hook_class.js';
-import type { EggApplicationLoader } from './loader/index.js';
-import { getSourceDirname } from './utils.js';
+} from './core/httpclient.ts';
+import { createLoggers } from './core/logger.ts';
+import { convertObject } from './core/utils.ts';
+import { BaseContextClass } from './core/base_context_class.ts';
+import { BaseHookClass } from './core/base_hook_class.ts';
+import type { EggApplicationLoader } from './loader/index.ts';
+import { getSourceDirname } from './utils.ts';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
 

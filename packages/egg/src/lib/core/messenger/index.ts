@@ -1,9 +1,9 @@
-import { Messenger as LocalMessenger } from './local.js';
-import { Messenger as IPCMessenger } from './ipc.js';
-import type { IMessenger } from './IMessenger.js';
-import type { EggApplicationCore } from '../../egg.js';
+import { Messenger as LocalMessenger } from './local.ts';
+import { Messenger as IPCMessenger } from './ipc.ts';
+import type { IMessenger } from './IMessenger.ts';
+import type { EggApplicationCore } from '../../egg.ts';
 
-export type { IMessenger } from './IMessenger.js';
+export type { IMessenger } from './IMessenger.ts';
 
 /**
  * @class Messenger

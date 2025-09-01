@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
@@ -143,7 +144,7 @@ describe('test/app.test.ts', () => {
 function call(method: string) {
   let app: MockApplication;
   describe(`mm.${method}()`, () => {
-    before(done => {
+    beforeAll(done => {
       const baseDir = getFixtures('app');
       mm(process, 'cwd', () => baseDir);
       app = (mm as any)[method]({
@@ -152,7 +153,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -291,7 +292,7 @@ function call(method: string) {
 
   describe(`mm.${method}({ baseDir, plugin=string })`, () => {
     const pluginDir = getFixtures('fooPlugin');
-    before(done => {
+    beforeAll(done => {
       mm(process, 'cwd', () => pluginDir);
       app = (mm as any)[method]({
         baseDir: getFixtures('apps/foo'),
@@ -301,7 +302,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -315,7 +316,7 @@ function call(method: string) {
 
   describe(`mm.${method}({ baseDir, plugin=true })`, () => {
     const pluginDir = getFixtures('fooPlugin');
-    before(done => {
+    beforeAll(done => {
       mm(process, 'cwd', () => pluginDir);
       app = (mm as any)[method]({
         baseDir: getFixtures('apps/foo'),
@@ -325,7 +326,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -338,7 +339,7 @@ function call(method: string) {
   });
 
   describe(`mm.${method}({ baseDir, plugins })`, () => {
-    before(done => {
+    beforeAll(done => {
       app = (mm as any)[method]({
         baseDir: getFixtures('apps/foo'),
         plugins: {
@@ -352,7 +353,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -365,7 +366,7 @@ function call(method: string) {
   });
 
   describe(`mm.${method}({ baseDir, framework=fullpath })`, () => {
-    before(done => {
+    beforeAll(done => {
       app = (mm as any)[method]({
         baseDir: 'apps/barapp',
         framework: getFixtures('bar'),
@@ -374,7 +375,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -388,7 +389,7 @@ function call(method: string) {
   });
 
   describe(`mm.${method}({ baseDir, customEgg=true })`, () => {
-    before(done => {
+    beforeAll(done => {
       mm(process, 'cwd', () => {
         return getFixtures('bar');
       });
@@ -400,7 +401,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app && app.close());
+    afterAll(() => app && app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -414,7 +415,7 @@ function call(method: string) {
   });
 
   describe(`mm.${method}({ baseDir, framework=true })`, () => {
-    before(done => {
+    beforeAll(done => {
       mm(process, 'cwd', () => {
         return getFixtures('bar');
       });
@@ -426,7 +427,7 @@ function call(method: string) {
       });
       app.ready(done);
     });
-    after(() => app && app.close());
+    afterAll(() => app && app.close());
 
     it('should work', done => {
       app.httpRequest()
@@ -442,21 +443,21 @@ function call(method: string) {
   describe(`mm.${method}({ baseDir, cache=true })`, () => {
     let app1: MockApplication;
     let app2: MockApplication;
-    before(done => {
+    beforeAll(done => {
       app1 = (mm as any)[method]({
         baseDir: getFixtures('cache'),
         coverage: false,
       });
       app1.ready(done);
     });
-    before(done => {
+    beforeAll(done => {
       app2 = (mm as any)[method]({
         baseDir: getFixtures('cache'),
         coverage: false,
       });
       app2.ready(done);
     });
-    after(async () => {
+    afterAll(async () => {
       await app1.close();
       await app2.close();
     });

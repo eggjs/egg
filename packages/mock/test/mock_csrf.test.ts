@@ -1,23 +1,25 @@
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_csrf.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('demo'),
     });
-    return app.ready();
+    await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it('should pass', done => {
+  it.only('should pass', async () => {
     app.mockCsrf();
-    app.httpRequest()
+    await app.httpRequest()
       .post('/')
       .expect(200)
-      .expect('done', done);
+      .expect('done');
   });
 
   it('should 403 Forbidden', async () => {

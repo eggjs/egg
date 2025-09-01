@@ -1,16 +1,17 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 
 describe('test/mock_request.test.ts', () => {
   describe('app mode', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = mm.app({
         baseDir: 'request',
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
     afterEach(mm.restore);
 
     it('should test app with request', () => {
@@ -93,13 +94,13 @@ describe('test/mock_request.test.ts', () => {
 
   describe('cluster mode', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = mm.cluster({
         baseDir: 'request',
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
     afterEach(mm.restore);
 
     it('should test app with request', () => {

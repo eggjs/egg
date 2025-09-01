@@ -1,3 +1,4 @@
+const { describe, it } = require('vitest');
 const assert = require('assert');
 
 describe('test/parallel_a.test.js', () => {

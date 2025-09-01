@@ -80,6 +80,7 @@ export default {
   },
 
   async loadFile(filepath: string) {
+    debug('[loadFile:start] filepath: %s', filepath);
     try {
       // if not js module, just return content buffer
       const extname = path.extname(filepath);

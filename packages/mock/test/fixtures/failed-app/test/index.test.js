@@ -1,8 +1,9 @@
+const { describe, it, beforeAll, afterAll, beforeEach, afterEach } = require('vitest');
 const assert = require('assert');
 
 describe('test/index.test.ts', () => {
   describe('before error', () => {
-    before(() => {
+    beforeAll(() => {
       throw new Error('before error');
     });
 
@@ -12,7 +13,7 @@ describe('test/index.test.ts', () => {
   });
 
   describe('after error', () => {
-    after(() => {
+    afterAll(() => {
       throw new Error('after error');
     });
 

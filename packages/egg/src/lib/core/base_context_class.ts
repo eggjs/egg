@@ -1,6 +1,7 @@
 import { BaseContextClass as EggCoreBaseContextClass } from '@eggjs/core';
-import type { Context, EggApplicationCore } from '../egg.js';
-import { BaseContextLogger } from './base_context_logger.js';
+
+import type { Context, EggApplicationCore } from '../egg.ts';
+import { BaseContextLogger } from './base_context_logger.ts';
 
 /**
  * BaseContextClass is a base class that can be extended,

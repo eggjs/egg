@@ -1,3 +1,4 @@
+const { describe, it } = require('vitest');
 const mm = require('../../../../../');
 const assert = require('assert');
 

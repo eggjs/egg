@@ -6,5 +6,9 @@ export default defineConfig({
     bootstrap: 'src/bootstrap.ts',
     register: 'src/register.ts',
   },
-  unbundle: true, // unbundle mode - preserves file structure
+  unbundle: true,
+  dts: true,
+  exports: {
+    devExports: true,
+  },
 });

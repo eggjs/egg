@@ -1,3 +1,4 @@
+const { describe, it } = require('vitest');
 const { setGetAppCallback } = require('../../../..');
 
 setGetAppCallback((suite, test) => {

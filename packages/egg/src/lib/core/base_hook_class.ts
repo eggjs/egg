@@ -1,6 +1,8 @@
 import assert from 'node:assert';
+
 import type { ILifecycleBoot } from '@eggjs/core';
-import type { Application, Agent } from '../../index.js';
+
+import type { Application, Agent } from '../../index.ts';
 
 export class BaseHookClass implements ILifecycleBoot {
   declare fullPath?: string;

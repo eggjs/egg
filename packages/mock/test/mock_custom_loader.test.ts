@@ -1,17 +1,18 @@
 import { strict as assert } from 'node:assert';
 // import { importModule } from '@eggjs/utils';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
 describe('test/mock_custom_loader.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('custom-loader'),
     });
     await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should return success', async () => {

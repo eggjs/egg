@@ -1,16 +1,17 @@
 import {
   HttpClient as RawHttpClient,
-  RequestURL as HttpClientRequestURL,
-  RequestOptions,
-  ClientOptions as HttpClientOptions,
+  type RequestURL as HttpClientRequestURL,
+  type RequestOptions,
+  type ClientOptions as HttpClientOptions,
 } from 'urllib';
 import { ms } from 'humanize-ms';
-import type { EggApplicationCore } from '../egg.js';
 
-export type {
-  HttpClientResponse,
-  RequestURL as HttpClientRequestURL,
-  ClientOptions as HttpClientOptions,
+import type { EggApplicationCore } from '../egg.ts';
+
+export {
+  type HttpClientResponse,
+  type RequestURL as HttpClientRequestURL,
+  type ClientOptions as HttpClientOptions,
 } from 'urllib';
 
 export interface HttpClientRequestOptions extends RequestOptions {

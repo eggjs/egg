@@ -2,10 +2,12 @@ import path from 'node:path';
 import fs from 'node:fs';
 import http from 'node:http';
 import { Socket } from 'node:net';
+
 import { graceful } from 'graceful';
 import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
 import { isGeneratorFunction } from 'is-type-of';
+
 import {
   EggApplicationCore,
   type EggApplicationCoreOptions,

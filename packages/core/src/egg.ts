@@ -18,19 +18,19 @@ import {
 } from '@eggjs/router';
 import type { ReadyFunctionArg } from 'get-ready';
 
-import { BaseContextClass } from './base_context_class.js';
-import { Timing } from './utils/timing.js';
-import { Lifecycle } from './lifecycle.js';
-import { EggLoader } from './loader/egg_loader.js';
-import utils, { type Fun } from './utils/index.js';
-import type { EggAppConfig } from './types.js';
+import { BaseContextClass } from './base_context_class.ts';
+import { Timing } from './utils/timing.ts';
+import { Lifecycle } from './lifecycle.ts';
+import { EggLoader } from './loader/egg_loader.ts';
+import utils, { type Fun } from './utils/index.ts';
+import type { EggAppConfig } from './types.ts';
 import {
   Singleton,
   type SingletonCreateMethod,
   type SingletonOptions,
-} from './singleton.js';
+} from './singleton.ts';
 
-const debug = debuglog('@eggjs/core/egg');
+const debug = debuglog('egg/core/egg');
 
 export const EGG_LOADER = Symbol.for('egg#loader');
 
