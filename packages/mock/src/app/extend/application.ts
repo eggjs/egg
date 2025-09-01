@@ -2,6 +2,7 @@ import { debuglog } from 'node:util';
 import http, { IncomingMessage } from 'node:http';
 import fs from 'node:fs';
 import assert from 'node:assert';
+
 import mergeDescriptors from 'merge-descriptors';
 import { isAsyncFunction, isObject } from 'is-type-of';
 import { mock, restore } from 'mm';
@@ -9,16 +10,17 @@ import type { HttpClient } from 'urllib';
 import { Transport, Logger, LoggerLevel, LoggerMeta } from 'egg-logger';
 import { EggCore, type EggCoreOptions, type Context as EggCoreContext } from '@eggjs/core';
 import type { Context as EggContext } from 'egg';
-import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.js';
+
+import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 import {
   createMockHttpClient, MockResultFunction,
   MockResultOptions,
   MockHttpClientMethod,
-} from '../../lib/mock_httpclient.js';
-import { request as supertestRequest, EggTestRequest } from '../../lib/supertest.js';
-import { MockOptions } from '../../lib/types.js';
+} from '../../lib/mock_httpclient.ts';
+import { request as supertestRequest, EggTestRequest } from '../../lib/supertest.ts';
+import { MockOptions } from '../../lib/types.ts';
 
-const debug = debuglog('@eggjs/mock/app/extend/application');
+const debug = debuglog('egg/mock/app/extend/application');
 
 const ORIGIN_TYPES = Symbol('@eggjs/mock originTypes');
 const BACKGROUND_TASKS = Symbol('Application#backgroundTasks');

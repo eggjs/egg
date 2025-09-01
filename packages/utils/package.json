@@ -40,9 +40,7 @@
     "directory": "packages/utils"
   },
   "license": "MIT",
-  "dependencies": {
-    "import-meta-resolve": "catalog:"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "catalog:",
     "coffee": "catalog:",

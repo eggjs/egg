@@ -1,11 +1,12 @@
 import { mock, restore } from 'mm';
 import { EggCore } from '@eggjs/core';
+
 import {
   createMockHttpClient, MockResultFunction,
   MockResultOptions,
   MockHttpClientMethod,
-} from '../../lib/mock_httpclient.js';
-import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.js';
+} from '../../lib/mock_httpclient.ts';
+import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 
 export default abstract class AgentUnittest extends EggCore {
   [key: string]: any;

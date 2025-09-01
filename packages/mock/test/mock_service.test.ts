@@ -1,7 +1,9 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_service.test.ts', () => {
   let app: MockApplication;

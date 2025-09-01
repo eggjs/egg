@@ -2,10 +2,11 @@
 
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
+
 import { importModule } from '@eggjs/utils';
 import { isAsyncFunction } from 'is-type-of';
 
-const debug = debuglog('@eggjs/mock/lib/start-cluster');
+const debug = debuglog('egg/mock/lib/start-cluster');
 
 // if (process.env.EGG_BIN_PREREQUIRE) {
 //   require('./prerequire');

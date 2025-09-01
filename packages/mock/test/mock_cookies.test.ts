@@ -1,54 +1,57 @@
 import { strict as assert } from 'node:assert';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_cookies.test.ts', () => {
   let app: MockApplication;
-  before(done => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/mock_cookies'),
     });
-    app.ready(done);
+    await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it('should not return when don\'t mock cookies', done => {
+  it('should not return when don\'t mock cookies', async () => {
     const ctx = app.mockContext();
     assert(!ctx.cookies.get('foo'));
 
-    app.httpRequest()
+    await app.httpRequest()
       .get('/')
-      .expect(function(res) {
+      .expect((res) => {
         assert.deepEqual(res.body, {});
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should mock cookies', done => {
+  it('should mock cookies', async () => {
     app.mockCookies({
       foo: 'bar cookie',
     });
 
-    app.httpRequest()
+    await app.httpRequest()
       .get('/')
       .expect({
         cookieValue: 'bar cookie',
         cookiesValue: 'bar cookie',
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should pass cookie opt', done => {
+  it('should pass cookie opt', async () => {
     app.mockCookies({});
 
-    app.httpRequest()
+    await app.httpRequest()
       .get('/')
       .set('cookie', 'foo=bar cookie')
       .expect({
         cookieValue: 'bar cookie',
         cookiesValue: 'bar cookie',
       })
-      .expect(200, done);
+      .expect(200);
   });
 });

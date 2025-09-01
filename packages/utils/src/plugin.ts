@@ -107,6 +107,7 @@ export async function getLoader(options: LoaderOptions) {
       path.join(options.baseDir, 'package.json'),
       JSON.stringify({
         name: 'tmp_app',
+        type: 'module',
       })
     );
     debug('[getLoader] create baseDir: %o', options.baseDir);

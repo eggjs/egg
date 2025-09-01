@@ -1,17 +1,19 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
+
 import { Base } from 'sdk-base';
 import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
 import type { EggCore } from '@eggjs/core';
-import { context } from '../context.js';
-import { formatOptions } from '../format_options.js';
-import { MockOptions, MockApplicationOptions } from '../types.js';
-import { sleep, rimraf } from '../utils.js';
-import { setCustomLoader } from '../mock_custom_loader.js';
-import { APP_INIT } from './util.js';
 
-const debug = debuglog('@eggjs/mock/lib/parallel/agent');
+import { context } from '../context.ts';
+import { formatOptions } from '../format_options.ts';
+import { MockOptions, MockApplicationOptions } from '../types.ts';
+import { sleep, rimraf } from '../utils.ts';
+import { setCustomLoader } from '../mock_custom_loader.ts';
+import { APP_INIT } from './util.ts';
+
+const debug = debuglog('egg/mock/lib/parallel/agent');
 
 export class MockAgent extends Base {
   declare options: MockApplicationOptions;

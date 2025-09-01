@@ -457,7 +457,7 @@ export class EggLoader {
       // disable the plugin that not match the serverEnv
       if (env && plugin.env.length > 0 && !plugin.env.includes(env)) {
         this.logger.info(
-          '[@eggjs/core] Plugin %o is disabled by env unmatched, require env(%o) but got env is %o',
+          '[egg/core] Plugin %o is disabled by env unmatched, require env(%o) but got env is %o',
           name,
           plugin.env,
           env
@@ -641,8 +641,8 @@ export class EggLoader {
   //   }
   // }
   async #mergePluginConfig(plugin: EggPluginInfo) {
-    let pkg;
-    let config;
+    let pkg: any;
+    let config: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
     if (await utils.existsPath(pluginPackage)) {
       pkg = await readJSON(pluginPackage);
@@ -837,6 +837,14 @@ export class EggLoader {
           typescript?: string;
         };
       };
+      type?: 'module' | 'commonjs';
+      exports?: {
+        '.'?: string | {
+          import?: string | {
+            default?: string;
+          };
+        };
+      };
     }
   ): Promise<string> {
     let realPluginPath = pluginPath;
@@ -861,6 +869,44 @@ export class EggLoader {
           realPluginPath
         );
       }
+    } else if (pluginPkg.exports?.['.'] && pluginPkg.type === 'module') {
+      // support esm exports
+      let defaultExport = pluginPkg.exports['.'];
+      if (typeof defaultExport === 'string') {
+        // "exports": {
+        //   ".": "./src/index.ts",
+        //   "./app": "./src/app.ts",
+        // }
+        realPluginPath = path.dirname(path.join(pluginPath, defaultExport));
+      } else if (defaultExport?.import) {
+        if (typeof defaultExport.import === 'string') {
+          // {
+          //   "exports": {
+          //     ".": {
+          //       "import": "./src/index.ts",
+          //     },
+          //   }
+          // }
+          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import));
+        } else if (defaultExport.import.default) {
+          // {
+          //   "exports": {
+          //     ".": {
+          //       "import": {
+          //         "default": "./src/index.ts",
+          //       },
+          //     },
+          //   }
+          // }
+          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import.default));
+        }
+      }
+      debug(
+        '[formatPluginPathFromPackageJSON] resolve plugin path from %o to %o, defaultExport: %o',
+        pluginPath,
+        realPluginPath,
+        defaultExport
+      );
     }
     return realPluginPath;
   }
@@ -1301,11 +1347,11 @@ export class EggLoader {
     for (const unit of this.getLoadUnits()) {
       const bootFile = path.join(unit.path, fileName);
       const bootFilePath = this.resolveModule(bootFile);
-      debug('[loadBootHook] %o => %o', bootFile, bootFilePath);
       if (!bootFilePath) {
-        // debug('[loadBootHook] %o not found', bootFile);
+        debug('[loadBootHook:ignore] %o not found', bootFile);
         continue;
       }
+      debug('[loadBootHook:success] %o => %o', bootFile, bootFilePath);
       const bootHook = await this.requireFile(bootFilePath);
       if (isClass(bootHook)) {
         bootHook.prototype.fullPath = bootFilePath;
@@ -1400,6 +1446,7 @@ export class EggLoader {
       'middlewares',
       opt as FileLoaderOptions
     );
+    debug('[loadMiddleware] middlewarePaths: %j', middlewarePaths);
 
     for (const name in app.middlewares) {
       Object.defineProperty(app.middleware, name, {
@@ -1731,7 +1778,7 @@ export class EggLoader {
   /**
    * Load files using {@link FileLoader}, inject to {@link Application}
    * @param {String|Array} directory - see {@link FileLoader}
-   * @param {String} property - see {@link FileLoader}
+   * @param {String} property - see {@link FileLoader}, e.g.: 'controller', 'middlewares'
    * @param {Object} options - see {@link FileLoader}
    * @since 1.0.0
    */
@@ -1808,7 +1855,7 @@ export class EggLoader {
   }
 
   resolveModule(filepath: string) {
-    let fullPath;
+    let fullPath: string | undefined;
     try {
       fullPath = utils.resolvePath(filepath);
     } catch {

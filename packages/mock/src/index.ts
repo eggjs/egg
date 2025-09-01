@@ -1,13 +1,14 @@
 import mm from 'mm';
 import { mock as _mock } from 'mm';
-import { createCluster } from './lib/cluster.js';
-import { createApp } from './lib/app.js';
-// import { getMockAgent } from './lib/mock_agent.js';
-import { restore } from './lib/restore.js';
-import { setGetAppCallback } from './lib/app_handler.js';
-import ApplicationUnittest from './app/extend/application.js';
 
-export * from './lib/types.js';
+import { createCluster } from './lib/cluster.ts';
+import { createApp } from './lib/app.ts';
+// import { getMockAgent } from './lib/mock_agent.js';
+import { restore } from './lib/restore.ts';
+import { setGetAppCallback } from './lib/app_handler.ts';
+import ApplicationUnittest from './app/extend/application.ts';
+
+export * from './lib/types.ts';
 
 // egg-bin will set this flag to require files for instrument
 // if (process.env.EGG_BIN_PREREQUIRE) {

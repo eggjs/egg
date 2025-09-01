@@ -1,16 +1,18 @@
 import { debuglog } from 'node:util';
+
 import { Base } from 'sdk-base';
 import { importModule } from '@eggjs/utils';
 import type { EggCore } from '@eggjs/core';
-import { context } from '../context.js';
-import { formatOptions } from '../format_options.js';
-import { MockOptions, MockApplicationOptions } from '../types.js';
-import { sleep } from '../utils.js';
-import { setCustomLoader } from '../mock_custom_loader.js';
-import { createServer } from '../mock_http_server.js';
-import { proxyApp, APP_INIT } from './util.js';
 
-const debug = debuglog('@eggjs/mock/lib/parallel/app');
+import { context } from '../context.ts';
+import { formatOptions } from '../format_options.ts';
+import { MockOptions, MockApplicationOptions } from '../types.ts';
+import { sleep } from '../utils.ts';
+import { setCustomLoader } from '../mock_custom_loader.ts';
+import { createServer } from '../mock_http_server.ts';
+import { proxyApp, APP_INIT } from './util.ts';
+
+const debug = debuglog('egg/mock/lib/parallel/app');
 
 export class MockParallelApplication extends Base {
   declare options: MockApplicationOptions;

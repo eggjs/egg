@@ -66,7 +66,7 @@ function assertAndReturn(frameworkName: string, moduleDir: string) {
   ]);
   try {
     // find framework from global, especially for monorepo
-    let globalModuleDir;
+    let globalModuleDir: string;
     // if frameworkName is scoped package, like @ali/egg
     if (frameworkName.startsWith('@') && frameworkName.includes('/')) {
       globalModuleDir = path.join(
@@ -86,7 +86,10 @@ function assertAndReturn(frameworkName: string, moduleDir: string) {
   }
   for (const moduleDir of moduleDirs) {
     const frameworkPath = path.join(moduleDir, frameworkName);
-    if (existsSync(frameworkPath)) return frameworkPath;
+    if (existsSync(frameworkPath)) {
+      debug('[assertAndReturn] frameworkPath: %s', frameworkPath);
+      return frameworkPath;
+    }
   }
   throw new Error(`${frameworkName} is not found in ${Array.from(moduleDirs)}`);
 }

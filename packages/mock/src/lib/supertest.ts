@@ -1,8 +1,10 @@
 import path from 'node:path';
+
 import { readJSONSync } from 'utility';
 import { Request, Test } from '@eggjs/supertest';
-import { createServer } from './mock_http_server.js';
-import { getSourceDirname } from './utils.js';
+
+import { createServer } from './mock_http_server.ts';
+import { getSourceDirname } from './utils.ts';
 
 // patch from https://github.com/visionmedia/supertest/blob/199506d8dbfe0bb1434fc07c38cdcd1ab4c7c926/index.js#L19
 

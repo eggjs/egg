@@ -14,7 +14,7 @@ describe('test/mock_csrf.test.ts', () => {
   afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it.only('should pass', async () => {
+  it('should pass', async () => {
     app.mockCsrf();
     await app.httpRequest()
       .post('/')

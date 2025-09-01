@@ -1,15 +1,18 @@
-import mm, { MockApplication } from '../src/index.js';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_cluster_without_security_plugin.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = mm.cluster({
-      baseDir: 'disable-security',
+      baseDir: getFixtures('disable-security'),
       coverage: false,
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   afterEach(mm.restore);
 

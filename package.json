@@ -22,6 +22,7 @@
     "clean": "pnpm -r run clean",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
+    "pretest": "pnpm -r run pretest",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "site:dev": "pnpm --filter=site run dev",

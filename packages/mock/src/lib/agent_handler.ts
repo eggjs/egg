@@ -1,8 +1,9 @@
 import { debuglog } from 'node:util';
-import { createAgent, MockAgent } from './parallel/agent.js';
-import { getEggOptions } from './utils.js';
 
-const debug = debuglog('@eggjs/mock/lib/agent_handler');
+import { createAgent, MockAgent } from './parallel/agent.ts';
+import { getEggOptions } from './utils.ts';
+
+const debug = debuglog('egg/mock/lib/agent_handler');
 
 let agent: MockAgent;
 

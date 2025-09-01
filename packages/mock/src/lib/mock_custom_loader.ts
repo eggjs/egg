@@ -1,6 +1,6 @@
 import { debuglog } from 'node:util';
 
-const debug = debuglog('@eggjs/mock/lib/mock_custom_loader');
+const debug = debuglog('egg/mock/lib/mock_custom_loader');
 
 export function setCustomLoader(app: any) {
   const customLoader = app.config.customLoader;
