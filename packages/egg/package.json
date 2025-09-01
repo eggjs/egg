@@ -71,7 +71,7 @@
   "devDependencies": {
     "@eggjs/bin": "catalog:",
     "@eggjs/koa": "catalog:",
-    "@eggjs/mock": "catalog:",
+    "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
     "@types/koa-bodyparser": "catalog:",

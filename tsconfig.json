@@ -17,6 +17,9 @@
     },
     {
       "path": "./packages/utils"
+    },
+    {
+      "path": "./packages/mock"
     }
   ]
 }

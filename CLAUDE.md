@@ -21,6 +21,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/utils/`** - Utility functions (merged from @eggjs/utils)
   - `src/` - Utils TypeScript source code
   - `test/` - Utils test suite
+- **`packages/mock/`** - Testing utilities (merged from @eggjs/mock)
+  - `src/` - Mock TypeScript source code
+  - `test/` - Mock test suite
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

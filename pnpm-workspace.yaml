@@ -78,3 +78,12 @@ catalog:
   '@vitest/coverage-v8': ^2.0.0
   'husky': '9'
   'lint-staged': '15'
+  # Mock package dependencies
+  '@eggjs/tegg': ^3.2.2
+  '@eggjs/tegg-config': ^3.2.2
+  '@eggjs/tegg-controller-plugin': ^3.2.2
+  '@eggjs/tegg-plugin': ^3.2.2
+  '@types/methods': ^1.1.4
+  'detect-port': ^2.1.0
+  'merge-descriptors': ^2.0.0
+  'mocha': ^11.0.1

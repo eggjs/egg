@@ -1,0 +1,112 @@
+{
+  "name": "@eggjs/mock",
+  "version": "6.0.7",
+  "publishConfig": {
+    "access": "public"
+  },
+  "eggPlugin": {
+    "name": "egg-mock",
+    "exports": {
+      "import": "./dist/esm",
+      "require": "./dist/commonjs"
+    }
+  },
+  "description": "mock server plugin for egg",
+  "homepage": "https://github.com/eggjs/mock",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/mock"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "keywords": [
+    "egg",
+    "mock"
+  ],
+  "author": "popomore <sakura9515@gmail.com>",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "dependencies": {
+    "@eggjs/core": "workspace:*",
+    "@eggjs/supertest": "catalog:",
+    "@eggjs/utils": "workspace:*",
+    "coffee": "catalog:",
+    "detect-port": "catalog:",
+    "egg-logger": "catalog:",
+    "extend2": "catalog:",
+    "get-ready": "catalog:",
+    "globby": "catalog:",
+    "is-type-of": "catalog:",
+    "merge-descriptors": "catalog:",
+    "mm": "catalog:",
+    "sdk-base": "catalog:",
+    "urllib": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "mocha": "^10 || ^11"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "catalog:",
+    "@eggjs/bin": "catalog:",
+    "@eggjs/tegg": "catalog:",
+    "@eggjs/tegg-config": "catalog:",
+    "@eggjs/tegg-controller-plugin": "catalog:",
+    "@eggjs/tegg-plugin": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/methods": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "egg-errors": "catalog:",
+    "egg-tracer": "catalog:",
+    "mocha": "catalog:",
+    "oxlint": "catalog:",
+    "pedding": "catalog:",
+    "rimraf": "catalog:",
+    "tsd": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "posttest": "pnpm run clean",
+    "test-local": "vitest run",
+    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "ci": "vitest run --coverage",
+    "postci": "pnpm run clean",
+    "prepublishOnly": "pnpm run build && attw --pack --profile node16"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./bootstrap": {
+      "types": "./dist/bootstrap.d.ts", 
+      "import": "./dist/bootstrap.js"
+    },
+    "./register": {
+      "types": "./dist/register.d.ts",
+      "import": "./dist/register.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
