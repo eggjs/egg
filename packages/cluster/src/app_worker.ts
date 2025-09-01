@@ -3,13 +3,15 @@ import { createServer as createHttpServer, type Server } from 'node:http';
 import { createServer as createHttpsServer } from 'node:https';
 import type { Socket } from 'node:net';
 import { debuglog } from 'node:util';
+
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 import { importModule } from '@eggjs/utils';
-import { BaseAppWorker } from './utils/mode/base/app.js';
-import { AppThreadWorker } from './utils/mode/impl/worker_threads/app.js';
-import { AppProcessWorker } from './utils/mode/impl/process/app.js';
 
-const debug = debuglog('@eggjs/cluster/app_worker');
+import { BaseAppWorker } from './utils/mode/base/app.ts';
+import { AppThreadWorker } from './utils/mode/impl/worker_threads/app.ts';
+import { AppProcessWorker } from './utils/mode/impl/process/app.ts';
+
+const debug = debuglog('egg/cluster/app_worker');
 
 async function main() {
   // $ node app_worker.js options-json-string

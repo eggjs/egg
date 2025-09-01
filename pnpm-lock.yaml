@@ -9,9 +9,6 @@ catalogs:
     '@eggjs/bin':
       specifier: ^7.0.2
       version: 7.3.1
-    '@eggjs/cluster':
-      specifier: ^3.0.1
-      version: 3.0.1
     '@eggjs/cookies':
       specifier: ^3.1.0
       version: 3.1.0
@@ -75,6 +72,9 @@ catalogs:
     '@eggjs/watcher':
       specifier: ^4.0.4
       version: 4.0.4
+    '@fengmk2/ps-tree':
+      specifier: ^2.0.1
+      version: 2.0.2
     '@types/js-yaml':
       specifier: '4'
       version: 4.0.9
@@ -102,12 +102,18 @@ catalogs:
     await-event:
       specifier: '2'
       version: 2.1.0
+    cfork:
+      specifier: ^2.0.0
+      version: 2.0.0
     circular-json-for-egg:
       specifier: ^1.0.0
       version: 1.0.0
     cluster-client:
       specifier: ^3.7.0
       version: 3.7.0
+    cluster-reload:
+      specifier: ^2.0.0
+      version: 2.0.0
     coffee:
       specifier: '5'
       version: 5.5.1
@@ -153,15 +159,15 @@ catalogs:
     graceful:
       specifier: ^2.0.0
       version: 2.0.0
+    graceful-process:
+      specifier: ^2.0.0
+      version: 2.2.0
     humanize-ms:
       specifier: ^2.0.0
       version: 2.0.0
     husky:
       specifier: '9'
       version: 9.1.7
-    import-meta-resolve:
-      specifier: ^4.2.0
-      version: 4.2.0
     is-type-of:
       specifier: ^2.2.0
       version: 2.2.0
@@ -225,6 +231,9 @@ catalogs:
     spy:
       specifier: ^1.0.0
       version: 1.0.0
+    terminal-link:
+      specifier: ^2.1.1
+      version: 2.1.1
     tsconfig-paths:
       specifier: ^4.2.0
       version: 4.2.0
@@ -307,6 +316,76 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  packages/cluster:
+    dependencies:
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../utils
+      '@fengmk2/ps-tree':
+        specifier: 'catalog:'
+        version: 2.0.2
+      cfork:
+        specifier: 'catalog:'
+        version: 2.0.0
+      cluster-reload:
+        specifier: 'catalog:'
+        version: 2.0.0
+      detect-port:
+        specifier: 'catalog:'
+        version: 2.1.0
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
+      get-ready:
+        specifier: 'catalog:'
+        version: 3.4.0
+      graceful-process:
+        specifier: 'catalog:'
+        version: 2.2.0
+      sendmessage:
+        specifier: 'catalog:'
+        version: 3.0.1
+      terminal-link:
+        specifier: 'catalog:'
+        version: 2.1.1
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/supertest':
+        specifier: 'catalog:'
+        version: 8.2.0
+      '@eggjs/tsconfig':
+        specifier: 'catalog:'
+        version: 2.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.3.0
+      address:
+        specifier: 'catalog:'
+        version: 2.0.3
+      coffee:
+        specifier: 'catalog:'
+        version: 5.5.1
+      egg:
+        specifier: workspace:*
+        version: link:../egg
+      egg-errors:
+        specifier: 'catalog:'
+        version: 2.3.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.14.2(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      urllib:
+        specifier: 'catalog:'
+        version: 4.8.2
 
   packages/core:
     dependencies:
@@ -405,8 +484,8 @@ importers:
   packages/egg:
     dependencies:
       '@eggjs/cluster':
-        specifier: 'catalog:'
-        version: 3.0.1
+        specifier: 'workspace:'
+        version: link:../cluster
       '@eggjs/cookies':
         specifier: 'catalog:'
         version: 3.1.0
@@ -663,10 +742,6 @@ importers:
         version: 5.9.2
 
   packages/utils:
-    dependencies:
-      import-meta-resolve:
-        specifier: 'catalog:'
-        version: 4.2.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1010,10 +1085,6 @@ packages:
     peerDependenciesMeta:
       '@eggjs/mock':
         optional: true
-
-  '@eggjs/cluster@3.0.1':
-    resolution: {integrity: sha512-UbVoGmay0iHUrUN5nF/wMlyD5yQAGc/FWR6rSQ8Gr9ApTkdsn8iz/A732Iv9ww+P/hBfLqdeptyOg2nKMA/JOw==}
-    engines: {node: '>= 18.19.0'}
 
   '@eggjs/compressible@3.0.0':
     resolution: {integrity: sha512-Bz/u+0zhmZ/44xdIL1MLfknaDFQpE+bSfJ4OjCb2NnHpg+LVmmNwEpRW4hUi3v2MhaO3sNWD93gBTtJ00q2iIA==}
@@ -5174,9 +5245,6 @@ packages:
     resolution: {integrity: sha512-rKtvo6a868b5Hu3heneU+L4yEQ4jYKLtjpnPeUdK7h0yzXGmyBTypknlkCvHFBqfX9YlorEiMM6Dnq/5atfHkw==}
     engines: {node: '>=8'}
 
-  import-meta-resolve@4.2.0:
-    resolution: {integrity: sha512-Iqv2fzaTQN28s/FwZAoFq0ZSs/7hMAHJVX+w8PZl3cY19Pxk6jFFalxQoIfW2826i/fDLXv8IiEZRIT0lDuWcg==}
-
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
@@ -9334,20 +9402,6 @@ snapshots:
       - '@types/node'
       - monocart-coverage-reports
       - typescript
-
-  '@eggjs/cluster@3.0.1':
-    dependencies:
-      '@eggjs/utils': 4.4.1
-      '@fengmk2/ps-tree': 2.0.2
-      cfork: 2.0.0
-      cluster-reload: 2.0.0
-      detect-port: 2.1.0
-      egg-logger: 3.6.1
-      get-ready: 3.4.0
-      graceful-process: 2.2.0
-      sendmessage: 3.0.1
-      terminal-link: 2.1.1
-      utility: 2.5.0
 
   '@eggjs/compressible@3.0.0':
     dependencies:
@@ -14516,8 +14570,6 @@ snapshots:
       resolve-from: 4.0.0
 
   import-lazy@4.0.0: {}
-
-  import-meta-resolve@4.2.0: {}
 
   imurmurhash@0.1.4: {}
 

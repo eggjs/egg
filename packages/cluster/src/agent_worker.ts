@@ -1,11 +1,13 @@
 import { debuglog } from 'node:util';
+
 import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
 import { importModule } from '@eggjs/utils';
-import { BaseAgentWorker } from './utils/mode/base/agent.js';
-import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.js';
-import { AgentProcessWorker } from './utils/mode/impl/process/agent.js';
 
-const debug = debuglog('@eggjs/cluster/agent_worker');
+import { BaseAgentWorker } from './utils/mode/base/agent.ts';
+import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.ts';
+import { AgentProcessWorker } from './utils/mode/impl/process/agent.ts';
+
+const debug = debuglog('egg/cluster/agent_worker');
 
 /**
  * agent worker is child_process forked by master.

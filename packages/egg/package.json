@@ -114,7 +114,7 @@
     "egg"
   ],
   "dependencies": {
-    "@eggjs/cluster": "catalog:",
+    "@eggjs/cluster": "workspace:",
     "@eggjs/cookies": "catalog:",
     "@eggjs/core": "workspace:*",
     "@eggjs/development": "catalog:",

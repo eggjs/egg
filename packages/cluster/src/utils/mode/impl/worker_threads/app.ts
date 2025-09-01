@@ -1,8 +1,10 @@
 import { setTimeout as sleep } from 'node:timers/promises';
 import { Worker as ThreadWorker, threadId, parentPort, type WorkerOptions } from 'node:worker_threads';
+
 import type { Options as gracefulExitOptions } from 'graceful-process';
-import { BaseAppWorker, BaseAppUtils } from '../../base/app.js';
-import type { MessageBody } from '../../../messenger.js';
+
+import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
+import type { MessageBody } from '../../../messenger.ts';
 
 export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
   #state = 'none';

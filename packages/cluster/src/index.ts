@@ -1,5 +1,5 @@
-import { Master, MasterOptions } from './master.js';
-import { ClusterOptions, ClusterHTTPSSecureOptions, ClusterStartMode } from './utils/options.js';
+import { Master, type MasterOptions } from './master.ts';
+import { type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode } from './utils/options.ts';
 
 /**
  * cluster start flow:
@@ -19,8 +19,8 @@ export async function startCluster(options: ClusterOptions) {
 }
 
 export {
-  Master, MasterOptions,
-  ClusterOptions, ClusterHTTPSSecureOptions, ClusterStartMode,
+  Master, type MasterOptions,
+  type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode,
 };
 
-export * from './error/index.js';
+export * from './error/index.ts';

@@ -2,27 +2,29 @@
   "name": "@eggjs/cluster",
   "version": "3.0.1",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "description": "cluster manager for egg",
   "scripts": {
-    "clean": "rimraf dist",
     "build": "tsdown",
     "lint": "oxlint",
-    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "posttest": "pnpm run clean",
-    "test-local": "vitest run",
-    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
-    "ci": "vitest run --coverage",
-    "postci": "pnpm run clean",
-    "prepublishOnly": "pnpm run build && attw --pack"
+    "prepublishOnly": "pnpm run build"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -54,35 +56,19 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@arethetypeswrong/cli": "catalog:",
-    "@eggjs/bin": "catalog:",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "catalog:",
     "@eggjs/tsconfig": "catalog:",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "address": "catalog:",
     "coffee": "catalog:",
     "egg": "workspace:*",
     "egg-errors": "catalog:",
-    "oxlint": "catalog:",
-    "ts-node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "urllib": "catalog:",
-    "vitest": "catalog:",
-    "@vitest/ui": "catalog:",
-    "@vitest/coverage-v8": "catalog:"
+    "urllib": "catalog:"
   },
   "engines": {
     "node": ">= 20.19.0"
-  },
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
   }
 }

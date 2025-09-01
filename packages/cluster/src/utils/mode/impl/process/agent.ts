@@ -1,10 +1,12 @@
 import { fork, type ChildProcess, type ForkOptions } from 'node:child_process';
+
 import { sendmessage } from 'sendmessage';
 import { graceful as gracefulExit, type Options as gracefulExitOptions } from 'graceful-process';
-import { BaseAgentWorker, BaseAgentUtils } from '../../base/agent.js';
-import { terminate } from '../../../terminate.js';
-import type { MessageBody } from '../../../messenger.js';
-import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.js';
+
+import { BaseAgentWorker, BaseAgentUtils } from '../../base/agent.ts';
+import { terminate } from '../../../terminate.ts';
+import type { MessageBody } from '../../../messenger.ts';
+import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
 
 export class AgentProcessWorker extends BaseAgentWorker<ChildProcess> {
   get workerId() {

@@ -2,7 +2,8 @@ import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert';
-import { SecureContextOptions } from 'node:tls';
+import { type SecureContextOptions } from 'node:tls';
+
 import { getFrameworkPath, importModule } from '@eggjs/utils';
 
 export interface ClusterHTTPSSecureOptions {

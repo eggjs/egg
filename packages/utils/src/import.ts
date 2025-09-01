@@ -461,7 +461,7 @@ export async function importModule(
     // esm
     const fileUrl = pathToFileURL(moduleFilePath).toString();
     obj = await import(fileUrl);
-    debug('[importModule:success] await import %o, obj: %j', fileUrl, obj);
+    debug('[importModule:success] await import %o', fileUrl);
     // {
     //   default: { foo: 'bar', one: 1 },
     //   foo: 'bar',

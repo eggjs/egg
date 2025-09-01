@@ -2,9 +2,9 @@ import { mock, restore } from 'mm';
 import { EggCore } from '@eggjs/core';
 
 import {
-  createMockHttpClient, MockResultFunction,
-  MockResultOptions,
-  MockHttpClientMethod,
+  createMockHttpClient, type MockResultFunction,
+  type MockResultOptions,
+  type MockHttpClientMethod,
 } from '../../lib/mock_httpclient.ts';
 import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 
