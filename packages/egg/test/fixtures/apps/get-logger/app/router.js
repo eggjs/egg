@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   app.get('/logger', function () {
     this.getLogger('aLogger').info('aaa');
     this.body = 'done';

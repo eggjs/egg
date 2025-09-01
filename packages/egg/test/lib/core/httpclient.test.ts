@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { HttpClient } from 'urllib';
 import { HttpClient as ContextHttpClient } from '../../../src/lib/core/httpclient.js';
@@ -8,7 +9,7 @@ describe('test/lib/core/httpclient.test.ts', () => {
   let client: ContextHttpClient;
   let url: string;
 
-  before(() => {
+  beforeAll(() => {
     client = new ContextHttpClient({
       deprecate: () => {},
       config: {
@@ -25,7 +26,7 @@ describe('test/lib/core/httpclient.test.ts', () => {
       info.args.headers['mock-rpcid'] = 'mock-rpcid';
     });
   });
-  before(async () => {
+  beforeAll(async () => {
     url = await startLocalServer();
   });
 
@@ -38,36 +39,46 @@ describe('test/lib/core/httpclient.test.ts', () => {
       done();
     });
 
-    client.request(url, {
-      dataType: 'text',
-    }).then(res => {
-      assert.equal(res.status, 200);
-    });
+    client
+      .request(url, {
+        dataType: 'text',
+      })
+      .then(res => {
+        assert.equal(res.status, 200);
+      });
   });
 
   it('should mock ENETUNREACH error', async () => {
     mm(HttpClient.prototype, 'request', async () => {
-      const err = new Error('connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1)');
+      const err = new Error(
+        'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1)'
+      );
       (err as any).code = 'ENETUNREACH';
       throw err;
     });
-    await assert.rejects(async () => {
-      await client.request(url);
-    }, (err: any) => {
-      // assert.equal(err.name, 'HttpClientError');
-      assert.equal(err.code, 'ENETUNREACH');
-      // assert.equal(err.message, 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH ]');
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        await client.request(url);
+      },
+      (err: any) => {
+        // assert.equal(err.name, 'HttpClientError');
+        assert.equal(err.code, 'ENETUNREACH');
+        // assert.equal(err.message, 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH ]');
+        return true;
+      }
+    );
   });
 
   it('should handle timeout error', async () => {
-    await assert.rejects(async () => {
-      await client.request(url + '/timeout', { timeout: 100 });
-    }, (err: any) => {
-      assert.equal(err.name, 'HttpClientRequestTimeoutError');
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        await client.request(url + '/timeout', { timeout: 100 });
+      },
+      (err: any) => {
+        assert.equal(err.name, 'HttpClientRequestTimeoutError');
+        return true;
+      }
+    );
   });
 
   it('should request ok with log', async () => {
@@ -101,27 +112,30 @@ describe('test/lib/core/httpclient.test.ts', () => {
   });
 
   it('should request with error', async () => {
-    await assert.rejects(async () => {
-      const response = await client.request(url + '/error', {
-        dataType: 'json',
-      });
-      console.log(response);
-    }, (err: any) => {
-      assert.equal(err.name, 'JSONResponseFormatError');
-      assert.match(err.message, /this is an error/);
-      assert(err.res);
-      assert.equal(err.res.status, 500);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        const response = await client.request(url + '/error', {
+          dataType: 'json',
+        });
+        console.log(response);
+      },
+      (err: any) => {
+        assert.equal(err.name, 'JSONResponseFormatError');
+        assert.match(err.message, /this is an error/);
+        assert(err.res);
+        assert.equal(err.res.status, 500);
+        return true;
+      }
+    );
   });
 
   describe.skip('httpclient.httpAgent.timeout < 30000', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-agent-timeout-3000');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should auto reset httpAgent.timeout to 30000', () => {
       // should access httpclient first
@@ -156,92 +170,115 @@ describe('test/lib/core/httpclient.test.ts', () => {
 
   describe('httpclient.request.timeout = 100', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-request-timeout-100');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should set request default global timeout to 100ms', async () => {
-      await assert.rejects(async () => {
-        await app.httpclient.curl(`${url}/timeout`);
-      }, (err: any) => {
-        assert(err);
-        assert(err.name === 'HttpClientRequestTimeoutError');
-        assert(err.message.includes('Request timeout for 100 ms'));
-        return true;
-      });
+      await assert.rejects(
+        async () => {
+          await app.httpclient.curl(`${url}/timeout`);
+        },
+        (err: any) => {
+          assert(err);
+          assert(err.name === 'HttpClientRequestTimeoutError');
+          assert(err.message.includes('Request timeout for 100 ms'));
+          return true;
+        }
+      );
     });
   });
 
   describe('overwrite httpclient', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-overwrite');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should set request default global timeout to 100ms', async () => {
-      await assert.rejects(async () => {
-        await app.httpclient.curl(`${url}/timeout`);
-      }, (err: any) => {
-        assert(err);
-        assert(err.name === 'HttpClientRequestTimeoutError');
-        assert(err.message.includes('Request timeout for 100 ms'));
-        return true;
-      });
+      await assert.rejects(
+        async () => {
+          await app.httpclient.curl(`${url}/timeout`);
+        },
+        (err: any) => {
+          assert(err);
+          assert(err.name === 'HttpClientRequestTimeoutError');
+          assert(err.message.includes('Request timeout for 100 ms'));
+          return true;
+        }
+      );
     });
 
     it('should assert url', async () => {
-      await assert.rejects(async () => {
-        await app.httpclient.curl('unknown url');
-      }, (err: any) => {
-        assert(err);
-        assert(err.message.includes('url should start with http, but got unknown url'));
-        return true;
-      });
+      await assert.rejects(
+        async () => {
+          await app.httpclient.curl('unknown url');
+        },
+        (err: any) => {
+          assert(err);
+          assert(
+            err.message.includes(
+              'url should start with http, but got unknown url'
+            )
+          );
+          return true;
+        }
+      );
     });
   });
 
   describe('overwrite httpclient support useHttpClientNext=true', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-next-overwrite');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should set request default global timeout to 99ms', async () => {
-      await assert.rejects(async () => {
-        await app.httpclient.curl(`${url}/timeout`);
-      }, (err: any) => {
-        assert(err);
-        assert(err.name === 'HttpClientRequestTimeoutError');
-        assert(err.message.includes('Request timeout for 99 ms'));
-        return true;
-      });
+      await assert.rejects(
+        async () => {
+          await app.httpclient.curl(`${url}/timeout`);
+        },
+        (err: any) => {
+          assert(err);
+          assert(err.name === 'HttpClientRequestTimeoutError');
+          assert(err.message.includes('Request timeout for 99 ms'));
+          return true;
+        }
+      );
     });
 
     it('should assert url', async () => {
-      await assert.rejects(async () => {
-        await app.httpclient.curl('unknown url');
-      }, (err: any) => {
-        assert(err);
-        assert(err.message.includes('url should start with http, but got unknown url'));
-        return true;
-      });
+      await assert.rejects(
+        async () => {
+          await app.httpclient.curl('unknown url');
+        },
+        (err: any) => {
+          assert(err);
+          assert(
+            err.message.includes(
+              'url should start with http, but got unknown url'
+            )
+          );
+          return true;
+        }
+      );
     });
   });
 
   describe('httpclient tracer', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-tracer');
       return app.ready();
     });
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should app request auto set tracer', async () => {
       url = await startLocalServer();
@@ -253,11 +290,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options) {
+      httpclient.on('request', function (options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.on('response', function (options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -289,11 +326,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options: any) {
+      httpclient.on('request', function (options: any) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options: any) {
+      httpclient.on('response', function (options: any) {
         resTracer = options.req.args.tracer;
       });
 
@@ -314,11 +351,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options) {
+      httpclient.on('request', function (options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.on('response', function (options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -364,12 +401,12 @@ describe('test/lib/core/httpclient.test.ts', () => {
 
   describe('httpclient next with tracer', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-next-with-tracer');
       return app.ready();
     });
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should app request auto set tracer', async () => {
       url = await startLocalServer();
@@ -378,11 +415,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options) {
+      httpclient.on('request', function (options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.on('response', function (options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -420,11 +457,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options: any) {
+      httpclient.on('request', function (options: any) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options: any) {
+      httpclient.on('response', function (options: any) {
         resTracer = options.req.args.tracer;
       });
 
@@ -445,11 +482,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
       let reqTracer: any;
       let resTracer: any;
 
-      httpclient.on('request', function(options) {
+      httpclient.on('request', function (options) {
         reqTracer = options.args.tracer;
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.on('response', function (options) {
         resTracer = options.req.args.tracer;
       });
 
@@ -495,25 +532,25 @@ describe('test/lib/core/httpclient.test.ts', () => {
 
   describe('before app ready multi httpclient request tracer', () => {
     let app: MockApplication;
-    before(async () => {
+    beforeAll(async () => {
       const localServerUrl = await startLocalServer();
       mm(process.env, 'localServerUrl', localServerUrl);
       app = createApp('apps/httpclient-tracer');
       await app.ready();
     });
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should app request before ready use same tracer', async () => {
       const httpclient = app.httpclient;
       const reqTracers: any[] = [];
       const resTracers: any[] = [];
 
-      httpclient.on('request', function(options) {
+      httpclient.on('request', function (options) {
         reqTracers.push(options.args.tracer);
       });
 
-      httpclient.on('response', function(options) {
+      httpclient.on('response', function (options) {
         resTracers.push(options.req.args.tracer);
       });
 
@@ -592,11 +629,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
 
   describe('httpclient retry', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-retry');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should retry when httpclient fail', async () => {
       let hasRetry = false;
@@ -637,11 +674,11 @@ describe('test/lib/core/httpclient.test.ts', () => {
 
   describe('app.createHttpClient(options)', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/httpclient-retry');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should work', async () => {
       const client1 = app.createHttpClient();

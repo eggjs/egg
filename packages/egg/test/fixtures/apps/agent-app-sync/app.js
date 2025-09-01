@@ -10,5 +10,5 @@ module.exports = app => {
   test.listen(arg => {
     app.arg = arg;
     done();
-  })
+  });
 };

@@ -18,15 +18,24 @@ module.exports = app => {
     req.args.headers = req.args.headers || {};
     req.args.headers['x-request-id'] = req.ctx.traceId;
     req.args.method = req.args.method || 'GET';
-    app.logger.info('[httpclient] [%s] %s %s start',
-      req.ctx.traceId, req.args.method, req.url);
+    app.logger.info(
+      '[httpclient] [%s] %s %s start',
+      req.ctx.traceId,
+      req.args.method,
+      req.url
+    );
   });
 
   app.httpclient.on('response', response => {
     const req = response.req;
     const res = response.res;
-    app.logger.info('[httpclient] [%s] %s %s end, status: %s, use: %s',
-      req.ctx.traceId, req.args.method, req.url,
-      res.status, Math.floor((performance.now() - req.starttime) * 1000) / 1000);
+    app.logger.info(
+      '[httpclient] [%s] %s %s end, status: %s, use: %s',
+      req.ctx.traceId,
+      req.args.method,
+      req.url,
+      res.status,
+      Math.floor((performance.now() - req.starttime) * 1000) / 1000
+    );
   });
 };

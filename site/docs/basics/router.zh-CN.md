@@ -6,6 +6,7 @@ order: 6
 Router 主要用来描述请求 URL 和具体承担执行动作的 Controller 的对应关系，框架约定了 `app/router.js` 文件用于统一所有路由规则。
 
 通过统一的配置，我们可以避免路由规则逻辑散落在多个地方，从而出现未知的冲突。集中在一起，我们可以更方便地来查看全局的路由规则。
+
 ## 如何定义 Router
 
 - `app/router.js` 里面定义 URL 路由规则
@@ -33,6 +34,7 @@ class UserController extends Controller {
 ```
 
 这样就完成了一个最简单的 Router 定义，当用户执行 `GET /user/123`，`user.js` 这个里面的 info 方法就会执行。
+
 ## Router 详细定义说明
 
 下面是路由的完整定义，参数可以根据场景的不同，自由选择：
@@ -74,7 +76,7 @@ router.verb('router-name', 'path-match', middleware1, ..., middlewareN, app.cont
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
   router.get('/home', controller.home);
   router.get('/user/:id', controller.user.page);
@@ -90,7 +92,7 @@ module.exports = app => {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
   router.resources('posts', '/api/posts', controller.posts);
   router.resources('users', '/api/v1/users', controller.v1.users); // app/controller/v1/users.js
@@ -127,6 +129,7 @@ exports.destroy = async () => {};
 ```
 
 如果我们不需要其中的某些方法，可以省略在 `posts.js` 里面的实现，这样对应的 URL 路径也不会注册到 Router 中。
+
 ## router 实战
 
 下面通过更多实际的例子，来说明 `router` 的用法。
@@ -217,7 +220,7 @@ exports.post = async (ctx) => {
 
 ```javascript
 exports.security = {
-  csrf: false
+  csrf: false,
 };
 ```
 

@@ -35,7 +35,7 @@ All features must be submitted along with documentations. The documentations sho
 
 - Documentations must clarify one or more aspects of the feature, depending on the nature of feature: what it is, why it happens and how it works.
 - It's better to include a series of procedues to explain how to fix the problem. You are also encourgaed to provide **simple, but self-explanatory** demo.
-All demos should be compiled at [eggjs/examples](https://github.com/eggjs/examples) repository.
+  All demos should be compiled at [eggjs/examples](https://github.com/eggjs/examples) repository.
 - Please provide essential urls, such as application process, terminology explainations and references.
 
 ## Pulling and Submitting Code
@@ -217,9 +217,9 @@ In the release of every stable version, there will be a PM who has the following
 - Confirm that performance test is passed and all issues in current Milestone are either closed or can be delayed to later versions.
 - Open a new [Release Proposal MR], and write `History` as [node CHANGELOG]. Don't forget to correct content in documentation which is related to the releasing version. Commits can be generated automatically.
 
-    ```bash
-    $ npm run commits
-    ```
+  ```bash
+  $ npm run commits
+  ```
 
 - Nominate PM for next stable version.
 

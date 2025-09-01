@@ -1,12 +1,20 @@
 import util from 'node:util';
 import {
-  isSymbol, isRegExp, isPrimitive,
-  isClass, isFunction, isGeneratorFunction, isAsyncFunction,
+  isSymbol,
+  isRegExp,
+  isPrimitive,
+  isClass,
+  isFunction,
+  isGeneratorFunction,
+  isAsyncFunction,
 } from 'is-type-of';
 
-export function convertObject(obj: any, ignore: string | RegExp | (string | RegExp)[] = []) {
+export function convertObject(
+  obj: any,
+  ignore: string | RegExp | (string | RegExp)[] = []
+) {
   if (!Array.isArray(ignore)) {
-    ignore = [ ignore ];
+    ignore = [ignore];
   }
   for (const key of Object.keys(obj)) {
     obj[key] = convertValue(key, obj[key], ignore);

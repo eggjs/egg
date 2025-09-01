@@ -13,6 +13,8 @@
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
     "vitest": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
     "@vitest/ui": "catalog:",
     "@vitest/coverage-v8": "catalog:"
   },
@@ -27,7 +29,8 @@
     "site:prettier": "pnpm --filter=site run prettier",
     "puml": "puml . --dest ./site",
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
-    "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev"
+    "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
+    "prepare": "husky"
   },
   "homepage": "https://github.com/eggjs/egg",
   "repository": {

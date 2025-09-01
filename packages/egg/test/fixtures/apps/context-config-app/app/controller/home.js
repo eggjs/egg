@@ -7,6 +7,6 @@ exports.index = async ctx => {
   ctx.body = {
     path: ctx.router.pathFor('home'),
     foo: ctx.foo,
-    bar: ctx.bar()
+    bar: ctx.bar(),
   };
 };

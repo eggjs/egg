@@ -20,7 +20,7 @@ body:
       required: true
   - type: checkboxes
     attributes:
-      label: "跟进类型（Follow-up Types）："
+      label: '跟进类型（Follow-up Types）：'
       description: 此议案跟进类型情况：
       options:
         - label: 这是某个任务

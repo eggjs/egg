@@ -11,14 +11,20 @@ describe('test/framework.test.ts', () => {
 
   it('should get egg by default but not exist', () => {
     const baseDir = getFilepath('noexist');
-    assert.throws(() => {
-      getFrameworkPath({
-        baseDir,
-      });
-    }, (err: Error) => {
-      assert.equal(err.message, `${path.join(baseDir, 'package.json')} should exist`);
-      return true;
-    });
+    assert.throws(
+      () => {
+        getFrameworkPath({
+          baseDir,
+        });
+      },
+      (err: Error) => {
+        assert.equal(
+          err.message,
+          `${path.join(baseDir, 'package.json')} should exist`
+        );
+        return true;
+      }
+    );
   });
 
   it('should get from absolute path', () => {
@@ -34,15 +40,18 @@ describe('test/framework.test.ts', () => {
   it('should get from absolute path but not exist', () => {
     const baseDir = getFilepath('framework-egg-default');
     const frameworkPath = path.join(baseDir, 'noexist');
-    assert.throws(() => {
-      getFrameworkPath({
-        baseDir,
-        framework: frameworkPath,
-      });
-    }, (err: Error) => {
-      assert.equal(err.message, `${frameworkPath} should exist`);
-      return true;
-    });
+    assert.throws(
+      () => {
+        getFrameworkPath({
+          baseDir,
+          framework: frameworkPath,
+        });
+      },
+      (err: Error) => {
+        assert.equal(err.message, `${frameworkPath} should exist`);
+        return true;
+      }
+    );
   });
 
   it('should get from npm package', () => {
@@ -57,19 +66,22 @@ describe('test/framework.test.ts', () => {
 
   it('should get from npm package but not exist', () => {
     const baseDir = getFilepath('framework-egg-default');
-    assert.throws(() => {
-      getFrameworkPath({
-        baseDir,
-        framework: 'noexist',
-      });
-    }, (err: Error) => {
-      const frameworkPaths = [
-        path.join(baseDir, 'node_modules'),
-        path.join(process.cwd(), 'node_modules'),
-      ].join(',');
-      assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
-      return true;
-    });
+    assert.throws(
+      () => {
+        getFrameworkPath({
+          baseDir,
+          framework: 'noexist',
+        });
+      },
+      (err: Error) => {
+        const frameworkPaths = [
+          path.join(baseDir, 'node_modules'),
+          path.join(process.cwd(), 'node_modules'),
+        ].join(',');
+        assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
+        return true;
+      }
+    );
   });
 
   it('should get from pkg.egg.framework', () => {
@@ -82,18 +94,21 @@ describe('test/framework.test.ts', () => {
 
   it('should get from pkg.egg.framework but not exist', () => {
     const baseDir = getFilepath('framework-pkg-egg-noexist');
-    assert.throws(() => {
-      getFrameworkPath({
-        baseDir,
-      });
-    }, (err: Error) => {
-      const frameworkPaths = [
-        path.join(baseDir, 'node_modules'),
-        path.join(process.cwd(), 'node_modules'),
-      ].join(',');
-      assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
-      return true;
-    });
+    assert.throws(
+      () => {
+        getFrameworkPath({
+          baseDir,
+        });
+      },
+      (err: Error) => {
+        const frameworkPaths = [
+          path.join(baseDir, 'node_modules'),
+          path.join(process.cwd(), 'node_modules'),
+        ].join(',');
+        assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
+        return true;
+      }
+    );
   });
 
   it('should get egg by default', () => {
@@ -107,19 +122,22 @@ describe('test/framework.test.ts', () => {
   // FIXME: will get egg from packages/egg
   it.skip('should get egg by default but not exist 2', () => {
     const baseDir = getFilepath('framework-egg-default-noexist');
-    assert.throws(() => {
-      const framework = getFrameworkPath({
-        baseDir,
-      });
-      console.error(framework);
-    }, (err: Error) => {
-      const frameworkPaths = [
-        path.join(baseDir, 'node_modules'),
-        path.join(process.cwd(), 'node_modules'),
-      ].join(',');
-      assert.equal(err.message, `egg is not found in ${frameworkPaths}`);
-      return true;
-    });
+    assert.throws(
+      () => {
+        const framework = getFrameworkPath({
+          baseDir,
+        });
+        console.error(framework);
+      },
+      (err: Error) => {
+        const frameworkPaths = [
+          path.join(baseDir, 'node_modules'),
+          path.join(process.cwd(), 'node_modules'),
+        ].join(',');
+        assert.equal(err.message, `egg is not found in ${frameworkPaths}`);
+        return true;
+      }
+    );
   });
 
   it('should get egg from process.cwd', () => {

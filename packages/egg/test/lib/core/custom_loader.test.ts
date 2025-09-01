@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { createApp, MockApplication } from '../../utils.js';
 
@@ -5,14 +6,15 @@ describe('test/lib/core/custom_loader.test.ts', () => {
   afterEach(mm.restore);
 
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/custom-loader');
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should support customLoader', async () => {
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'docker',
@@ -22,9 +24,6 @@ describe('test/lib/core/custom_loader.test.ts', () => {
   });
 
   it('should loadCustomLoader before loadCustomApp', async () => {
-    await app.httpRequest()
-      .get('/beforeLoad')
-      .expect('beforeLoad')
-      .expect(200);
+    await app.httpRequest().get('/beforeLoad').expect('beforeLoad').expect(200);
   });
 });

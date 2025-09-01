@@ -26,9 +26,7 @@
   "scripts": {
     "build": "tsdown",
     "lint": "oxlint --type-aware",
-    "pretest": "pnpm run build",
     "test": "vitest run",
-    "test:watch": "vitest",
     "prepublishOnly": "pnpm run build"
   },
   "keywords": [
@@ -47,10 +45,8 @@
     "@types/node": "catalog:",
     "coffee": "catalog:",
     "mm": "catalog:",
-    "oxlint": "catalog:",
     "runscript": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:"
+    "typescript": "catalog:"
   }
 }

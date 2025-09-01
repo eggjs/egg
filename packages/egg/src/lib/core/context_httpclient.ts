@@ -1,6 +1,7 @@
 import type { Context, EggApplicationCore } from '../egg.js';
 import type {
-  HttpClientRequestURL, HttpClientRequestOptions,
+  HttpClientRequestURL,
+  HttpClientRequestOptions,
 } from './httpclient.js';
 
 export class ContextHttpClient {
@@ -19,7 +20,10 @@ export class ContextHttpClient {
    * @param {String|Object} url - request url address.
    * @param {Object} [options] - options for request.
    */
-  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async curl<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions
+  ) {
     options = {
       ...options,
       ctx: this.ctx,
@@ -27,7 +31,10 @@ export class ContextHttpClient {
     return await this.app.curl<T>(url, options);
   }
 
-  async request<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async request<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions
+  ) {
     return await this.curl<T>(url, options);
   }
 }

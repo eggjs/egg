@@ -5,7 +5,7 @@ module.exports = app => {
         ctx.traceId = ctx.get('x-traceid');
         ctx.tracer = {
           ...ctx.tracder,
-          traceId:  ctx.get('x-traceid'),
+          traceId: ctx.get('x-traceid'),
         };
       }
       const r = await app.curl(ctx.query.url, {

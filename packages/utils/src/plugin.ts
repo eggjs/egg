@@ -90,17 +90,25 @@ interface IEggLoaderOptions {
   EggCoreClass?: unknown;
 }
 
-type EggLoaderImplClass<T = IEggLoader> = new(options: IEggLoaderOptions) => T;
+type EggLoaderImplClass<T = IEggLoader> = new (options: IEggLoaderOptions) => T;
 
 export async function getLoader(options: LoaderOptions) {
   assert(options.framework, 'framework is required');
   assert(await exists(options.framework), `${options.framework} should exist`);
-  if (!(options.baseDir && await exists(options.baseDir))) {
-    options.baseDir = path.join(tmpDir, 'egg_utils', `${Date.now()}`, 'tmp_app');
+  if (!(options.baseDir && (await exists(options.baseDir)))) {
+    options.baseDir = path.join(
+      tmpDir,
+      'egg_utils',
+      `${Date.now()}`,
+      'tmp_app'
+    );
     await mkdir(options.baseDir, { recursive: true });
-    await writeFile(path.join(options.baseDir, 'package.json'), JSON.stringify({
-      name: 'tmp_app',
-    }));
+    await writeFile(
+      path.join(options.baseDir, 'package.json'),
+      JSON.stringify({
+        name: 'tmp_app',
+      })
+    );
     debug('[getLoader] create baseDir: %o', options.baseDir);
   }
 
@@ -119,10 +127,12 @@ export async function getLoader(options: LoaderOptions) {
   });
 }
 
-export async function findEggCore(options: LoaderOptions): Promise<{ EggCore?: object; EggLoader: EggLoaderImplClass }> {
+export async function findEggCore(
+  options: LoaderOptions
+): Promise<{ EggCore?: object; EggLoader: EggLoaderImplClass }> {
   const baseDirRealpath = await realpath(options.baseDir);
   const frameworkRealpath = await realpath(options.framework);
-  const paths = [ frameworkRealpath, baseDirRealpath ];
+  const paths = [frameworkRealpath, baseDirRealpath];
   // custom framework => egg => @eggjs/core
   try {
     const { EggCore, EggLoader } = await importModule('egg', { paths });
@@ -134,7 +144,7 @@ export async function findEggCore(options: LoaderOptions): Promise<{ EggCore?: o
   }
 
   // egg-core 在 6.2.3 版本中更名为 @eggjs/core，为兼容老版本，支持同时查找两个包，优先使用新名字
-  const names = [ '@eggjs/core', 'egg-core' ];
+  const names = ['@eggjs/core', 'egg-core'];
   for (const name of names) {
     try {
       const { EggCore, EggLoader } = await importModule(name, { paths });
@@ -142,7 +152,12 @@ export async function findEggCore(options: LoaderOptions): Promise<{ EggCore?: o
         return { EggCore, EggLoader };
       }
     } catch (err: any) {
-      debug('[findEggCore] import "%s" from paths:%o error: %o', name, paths, err);
+      debug(
+        '[findEggCore] import "%s" from paths:%o error: %o',
+        name,
+        paths,
+        err
+      );
     }
 
     try {
@@ -163,5 +178,8 @@ export async function findEggCore(options: LoaderOptions): Promise<{ EggCore?: o
     }
   }
 
-  assert(false, `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`);
+  assert(
+    false,
+    `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`
+  );
 }

@@ -43,12 +43,22 @@ describe('test/lib/core/utils.test.js', () => {
 
     it('should convert function', () => {
       const obj = {
-        function$: function a() { console.log(a); },
-        arrowFunction$: (a: any) => { console.log(a); },
-        anonymousFunction$: function(a: any) { console.log(a); },
+        function$: function a() {
+          console.log(a);
+        },
+        arrowFunction$: (a: any) => {
+          console.log(a);
+        },
+        anonymousFunction$: function (a: any) {
+          console.log(a);
+        },
         // oxlint-disable-next-line require-yield
-        generatorFunction$: function* a(a: any) { console.log(a); },
-        asyncFunction$: async function a(a: any) { console.log(a); },
+        generatorFunction$: function* a(a: any) {
+          console.log(a);
+        },
+        asyncFunction$: async function a(a: any) {
+          console.log(a);
+        },
       };
       utils.convertObject(obj);
       assert.equal(obj.function$, '<Function a>');
@@ -59,7 +69,7 @@ describe('test/lib/core/utils.test.js', () => {
     });
 
     it('should convert error', () => {
-      class TestError extends Error { }
+      class TestError extends Error {}
       const obj = {
         errorClass$: Error,
         errorClassExtend$: TestError,
@@ -74,8 +84,8 @@ describe('test/lib/core/utils.test.js', () => {
     });
 
     it('should convert class', () => {
-      class BaseClass { }
-      class Class extends BaseClass { }
+      class BaseClass {}
+      class Class extends BaseClass {}
       const obj = {
         class$: BaseClass,
         classExtend$: Class,
@@ -86,7 +96,7 @@ describe('test/lib/core/utils.test.js', () => {
     });
 
     it('should convert buffer', () => {
-      class SlowBuffer extends Buffer { }
+      class SlowBuffer extends Buffer {}
       const obj = {
         bufferClass$: Buffer,
         bufferClassExtend$: SlowBuffer,
@@ -139,7 +149,7 @@ describe('test/lib/core/utils.test.js', () => {
           ignoreValue: /^[a-z]/,
         },
       };
-      utils.convertObject(obj, [ 'ignoreValue' ]);
+      utils.convertObject(obj, ['ignoreValue']);
       assert.equal(obj.recurisiveObj.value1, 'string');
       assert.equal(obj.recurisiveObj.value2, 1);
       assert.equal(obj.recurisiveObj.ignoreValue, '<RegExp>');
@@ -149,11 +159,14 @@ describe('test/lib/core/utils.test.js', () => {
 
     it('should convert an anonymous class', () => {
       const obj = {
-        anonymousClassWithPropName: class { },
-        '': class { },
+        anonymousClassWithPropName: class {},
+        '': class {},
       };
       utils.convertObject(obj);
-      assert.equal(obj.anonymousClassWithPropName, '<Class anonymousClassWithPropName>');
+      assert.equal(
+        obj.anonymousClassWithPropName,
+        '<Class anonymousClassWithPropName>'
+      );
       assert.equal(obj[''], '<Class anonymous>');
     });
   });
@@ -165,8 +178,14 @@ describe('test/lib/core/utils.test.js', () => {
     });
 
     it('should return parsed url', () => {
-      assert.equal(utils.safeParseURL('https://eggjs.org')!.hostname, 'eggjs.org');
-      assert.equal(utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname, 'eggjs.org!.foo.com');
+      assert.equal(
+        utils.safeParseURL('https://eggjs.org')!.hostname,
+        'eggjs.org'
+      );
+      assert.equal(
+        utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname,
+        'eggjs.org!.foo.com'
+      );
     });
   });
 });

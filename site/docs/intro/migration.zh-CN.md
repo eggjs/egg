@@ -128,6 +128,7 @@ module.exports = () => {
   };
 };
 ```
+
 ### yieldable 到 awaitable 的转换
 
 > 我们在 Egg 1.x 版本时就已经支持了 async，所以如果应用层已经是基于 async 的话，可以跳过这个小节。
@@ -214,7 +215,7 @@ class BizService extends Service {
 }
 
 // app/controller/home.js
-const {news, user} = await ctx.service.biz.list(topic, uid);
+const { news, user } = await ctx.service.biz.list(topic, uid);
 ```
 
 如果无法修改相关接口，可以暂时使用我们提供的工具方法 [app.toPromise] 兼容一下。
@@ -239,6 +240,7 @@ const { news, user } = await app.toPromise(ctx.service.biz.list(topic, uid));
 - 在调用 async 函数时，[toAsyncFunction][app.toasyncfunction] 不会引起额外损失。
 
 @sindresorhus 编写了不少[基于 promise 的辅助方法](https://github.com/sindresorhus/promise-fun)，灵活利用这些方法配合 async 函数可以让代码更加清晰易读。
+
 ## 插件升级
 
 `应用开发者` 只需升级 `插件开发者` 修改后的依赖版本即可，也可以用我们提供的命令 `egg-bin autod` 快速更新。
@@ -299,7 +301,6 @@ task = app.toAsyncFunction(schedule.task);
 - 修改上一个版本的 `package.json` 中的 `publishConfig.tag` 为 `1.x`。
 - 这样，当上一个版本有 BugFix 时，在 npm 版本中会发布为 `release-1.x` 这个 tag，用户通过 `npm i egg-xx@release-1.x` 来引入旧版本。
 - 参见 [npm 文档](https://docs.npmjs.com/cli/dist-tag)。
-
 
 [co]: https://github.com/tj/co
 [egg-schedule]: https://github.com/eggjs/egg-schedule

@@ -5,5 +5,5 @@ module.exports = app => {
   app.messenger.broadcast('custom-aliyun-egg-worker', 123);
   app.messenger.on('custom-aliyun-egg-agent', data => {
     app.agent = data;
-  })
+  });
 };

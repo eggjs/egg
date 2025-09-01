@@ -18,7 +18,8 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
     assert(app.serviceClasses.bar2);
     assert(app.serviceClasses.foo4);
 
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/')
       .expect({
         foo2: 'foo2',
@@ -32,7 +33,9 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
     await app.ready();
     assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
     assert(
-      [ 'bar' ].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)),
+      ['bar'].every(p =>
+        Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)
+      )
     );
   });
 
@@ -40,7 +43,8 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
     app = createApp('apps/service-app');
     await app.ready();
 
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/user')
       .expect(res => {
         assert(res.body.user);
@@ -58,7 +62,8 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
       app = createApp('apps/subdir-services');
       await app.ready();
 
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/')
         .expect({
           user: {

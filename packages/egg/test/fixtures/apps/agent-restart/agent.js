@@ -6,7 +6,7 @@ module.exports = agent => {
   agent.startAgent({
     name: 'mock',
     client: client,
-    subscribe: function(reg, listener) {
+    subscribe: function (reg, listener) {
       console.log('agent subscribe', reg);
     },
   });

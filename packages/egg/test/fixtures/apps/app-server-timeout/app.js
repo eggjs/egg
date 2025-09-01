@@ -7,7 +7,13 @@ module.exports = app => {
     app.server.on('timeout', socket => {
       const req = socket.parser.incoming;
       if (req && socket._httpMessage) {
-        app.coreLogger.warn('[http_server] A request `%s %s` timeout with client (%s:%d)', req.method, req.url, socket.remoteAddress, socket.remotePort);
+        app.coreLogger.warn(
+          '[http_server] A request `%s %s` timeout with client (%s:%d)',
+          req.method,
+          req.url,
+          socket.remoteAddress,
+          socket.remotePort
+        );
       }
       socket.destroy();
     });

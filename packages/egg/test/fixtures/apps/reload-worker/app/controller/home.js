@@ -1,1 +1,3 @@
-module.exports = async function() { this.body = 'change'; };
+module.exports = async function () {
+  this.body = 'change';
+};

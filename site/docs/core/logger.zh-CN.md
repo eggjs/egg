@@ -44,7 +44,7 @@ exports.logger = {
 
 ```js
 // config/config.${env}.js
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     logger: {
       appLogName: `${appInfo.name}-web.log`,
@@ -88,7 +88,7 @@ ctx.coreLogger.info('info');
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.logger.debug('debug info');
   app.logger.info('启动耗时 %d ms', Date.now() - start);
   app.logger.warn('警告！');
@@ -101,7 +101,7 @@ module.exports = app => {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.coreLogger.info('启动耗时 %d ms', Date.now() - start);
 };
 ```
@@ -112,7 +112,7 @@ module.exports = app => {
 
 ```js
 // agent.js
-module.exports = agent => {
+module.exports = (agent) => {
   agent.logger.debug('debug info');
   agent.logger.info('启动耗时 %d ms', Date.now() - start);
   agent.logger.warn('警告！');
@@ -122,6 +122,7 @@ module.exports = agent => {
 ```
 
 如需详细了解 Agent 进程，请参考[多进程模型](./cluster-and-ipc.md)。
+
 ## 日志文件编码
 
 默认编码为 `utf-8`，可通过下面的方式进行覆盖：
@@ -218,6 +219,7 @@ exports.logger = {
   disableConsoleAfterReady: false,
 };
 ```
+
 ## 自定义日志
 
 ### 增加自定义日志
@@ -230,13 +232,13 @@ exports.logger = {
 // config/config.${env}.js
 const path = require('path');
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
-        file: path.join(appInfo.root, 'logs/xx.log')
-      }
-    }
+        file: path.join(appInfo.root, 'logs/xx.log'),
+      },
+    },
   };
 };
 ```
@@ -249,7 +251,7 @@ module.exports = appInfo => {
 // config/config.${env}.js
 const path = require('path');
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       xxLogger: {
@@ -259,9 +261,9 @@ module.exports = appInfo => {
         },
         contextFormatter(meta) {
           return `[${meta.date}] [${meta.ctx.method} ${meta.ctx.url}] ${meta.message}`;
-        }
-      }
-    }
+        },
+      },
+    },
   };
 };
 ```
@@ -287,22 +289,25 @@ class RemoteErrorTransport extends Transport {
         err.name,
         err.message,
         err.stack,
-        process.pid
+        process.pid,
       );
     } else {
       log = util.format(...args);
     }
 
-    this.options.app.curl('http://url/to/remote/error/log/service/logs', {
-      data: log,
-      method: 'POST'
-    })
-    .catch(console.error);
+    this.options.app
+      .curl('http://url/to/remote/error/log/service/logs', {
+        data: log,
+        method: 'POST',
+      })
+      .catch(console.error);
   }
 }
 
 // 在 app.js 中给 errorLogger 添加 transport，这样每条日志就会同时打印到这个 transport。
-app.getLogger('errorLogger').set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
+app
+  .getLogger('errorLogger')
+  .set('remote', new RemoteErrorTransport({ level: 'ERROR', app }));
 ```
 
 上述代码示例中，虽然比较简单，但是在实际使用时需要考虑性能问题。通常采取先暂存至内存，再定时上传的策略，以此优化性能。

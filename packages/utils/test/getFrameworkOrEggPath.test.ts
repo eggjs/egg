@@ -6,7 +6,10 @@ import { getFilepath } from './helper.js';
 describe('test/getFrameworkOrEggPath.test.ts', () => {
   it('get framework dir path success', () => {
     const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app'));
-    assert.equal(dirpath, getFilepath('aliyun-egg-app/node_modules/aliyun-egg'));
+    assert.equal(
+      dirpath,
+      getFilepath('aliyun-egg-app/node_modules/aliyun-egg')
+    );
   });
 
   it('get custom framework dir path success when app set app.framework on package.json', () => {
@@ -15,8 +18,14 @@ describe('test/getFrameworkOrEggPath.test.ts', () => {
   });
 
   it('get custom egg dir path success', () => {
-    const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app'), [ 'my-old-egg', 'my-new-egg' ]);
-    assert.equal(dirpath, getFilepath('aliyun-egg-app/node_modules/my-new-egg'));
+    const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app'), [
+      'my-old-egg',
+      'my-new-egg',
+    ]);
+    assert.equal(
+      dirpath,
+      getFilepath('aliyun-egg-app/node_modules/my-new-egg')
+    );
   });
 
   it('get default egg dir path success', () => {
@@ -25,17 +34,23 @@ describe('test/getFrameworkOrEggPath.test.ts', () => {
   });
 
   it('get "" when egg name not found', () => {
-    const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app'), [ 'my-egg' ]);
+    const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app'), [
+      'my-egg',
+    ]);
     assert.equal(dirpath, '');
   });
 
   it('get "" when node_modules not found', () => {
-    const dirpath = utils.getFrameworkOrEggPath(getFilepath('aliyun-egg-app-not-exists'));
+    const dirpath = utils.getFrameworkOrEggPath(
+      getFilepath('aliyun-egg-app-not-exists')
+    );
     assert.equal(dirpath, '');
   });
 
   it('get "" when framework package.json not exists', () => {
-    const dirpath = utils.getFrameworkOrEggPath(getFilepath('demoframework-app'));
+    const dirpath = utils.getFrameworkOrEggPath(
+      getFilepath('demoframework-app')
+    );
     assert.equal(dirpath, '');
   });
 });

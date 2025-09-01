@@ -19,6 +19,7 @@ Egg 在它之上提供了 [egg-passport] 插件，把初始化、鉴权成功后
 - 校验并存储用户信息；
 - 序列化用户信息到 Session；
 - 跳转到指定页面。
+
 ## 使用 egg-passport
 
 下面，我们将以 GitHub 登录为例，来演示下如何使用。
@@ -77,7 +78,7 @@ exports.passportGithub = {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router } = app;
 
   // 挂载鉴权路由
@@ -99,7 +100,7 @@ module.exports = app => {
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   app.passport.verify(async (ctx, user) => {
     // 检查用户
     assert(user.provider, 'user.provider should exists');
@@ -143,6 +144,7 @@ module.exports = app => {
 ```
 
 至此，我们就完成了所有的配置。完整的示例可以参见：[eggjs/examples/passport](https://github.com/topics/egg-passport)。
+
 ### API
 
 `egg-passport` 提供了以下扩展：
@@ -186,20 +188,22 @@ const LocalStrategy = require('passport-local').Strategy;
 
 module.exports = (app) => {
   // 挂载 strategy
-  app.passport.use(new LocalStrategy(
-    {
-      passReqToCallback: true,
-    },
-    (req, username, password, done) => {
-      // 格式化 user
-      const user = {
-        provider: 'local',
-        username,
-        password,
-      };
-      app.passport.doVerify(req, user, done);
-    },
-  ));
+  app.passport.use(
+    new LocalStrategy(
+      {
+        passReqToCallback: true,
+      },
+      (req, username, password, done) => {
+        // 格式化 user
+        const user = {
+          provider: 'local',
+          username,
+          password,
+        };
+        app.passport.doVerify(req, user, done);
+      },
+    ),
+  );
 
   // 处理用户信息
   app.passport.verify(async (ctx, user) => {});
@@ -222,9 +226,13 @@ module.exports = (app) => {
   // 渲染登录页面，用户输入账号密码
   router.get('/login', controller.home.login);
   // 登录校验
-  router.post('/login', app.passport.authenticate('local', { successRedirect: '/authCallback' }));
+  router.post(
+    '/login',
+    app.passport.authenticate('local', { successRedirect: '/authCallback' }),
+  );
 };
 ```
+
 ## 如何开发一个 egg-passport 插件
 
 在上一节中，我们学会了如何在框架中使用 Passport 中间件，我们可以进一步把它封装成插件，回馈社区。
@@ -271,16 +279,18 @@ module.exports = (app) => {
   const config = app.config.passportLocal;
   config.passReqToCallback = true;
 
-  app.passport.use(new LocalStrategy(config, (req, username, password, done) => {
-    // 把 Passport 插件返回的数据进行清洗处理，返回 User 对象
-    const user = {
-      provider: 'local',
-      username,
-      password
-    };
-    // 这里不处理应用层逻辑，传给 app.passport.verify 统一处理
-    app.passport.doVerify(req, user, done);
-  }));
+  app.passport.use(
+    new LocalStrategy(config, (req, username, password, done) => {
+      // 把 Passport 插件返回的数据进行清洗处理，返回 User 对象
+      const user = {
+        provider: 'local',
+        username,
+        password,
+      };
+      // 这里不处理应用层逻辑，传给 app.passport.verify 统一处理
+      app.passport.doVerify(req, user, done);
+    }),
+  );
 };
 ```
 

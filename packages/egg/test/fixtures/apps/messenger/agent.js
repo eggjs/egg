@@ -1,11 +1,11 @@
 'use strict';
 
-module.exports = function(agent) {
+module.exports = function (agent) {
   agent.messenger.on('egg-ready', () => {
-    agent.messenger.on('app-to-agent', function(msg) {
+    agent.messenger.on('app-to-agent', function (msg) {
       console.log('[agent] app-to-agent', msg);
     });
-    agent.messenger.on('agent-to-app', function(msg) {
+    agent.messenger.on('agent-to-app', function (msg) {
       console.log('[agent] agent-to-app', msg);
     });
 

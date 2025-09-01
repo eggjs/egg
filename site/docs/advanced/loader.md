@@ -123,16 +123,16 @@ However, there are still some differences:
 
 | File                   | Application | Framework | Plugin |
 | ---------------------- | ----------- | --------- | ------ |
-| app/router.js          | ✔︎          |           |
-| app/controller         | ✔︎          |           |
-| app/middleware         | ✔︎          | ✔︎        | ✔︎     |
-| app/service            | ✔︎          | ✔︎        | ✔︎     |
-| app/extend             | ✔︎          | ✔︎        | ✔︎     |
-| app.js                 | ✔︎          | ✔︎        | ✔︎     |
-| agent.js               | ✔︎          | ✔︎        | ✔︎     |
-| config/config.{env}.js | ✔︎          | ✔︎        | ✔︎     |
-| config/plugin.js       | ✔︎          | ✔︎        |
-| package.json           | ✔︎          | ✔︎        | ✔︎     |
+| app/router.js          | ✔︎         |           |
+| app/controller         | ✔︎         |           |
+| app/middleware         | ✔︎         | ✔︎       | ✔︎    |
+| app/service            | ✔︎         | ✔︎       | ✔︎    |
+| app/extend             | ✔︎         | ✔︎       | ✔︎    |
+| app.js                 | ✔︎         | ✔︎       | ✔︎    |
+| agent.js               | ✔︎         | ✔︎       | ✔︎    |
+| config/config.{env}.js | ✔︎         | ✔︎       | ✔︎    |
+| config/plugin.js       | ✔︎         | ✔︎       |
+| package.json           | ✔︎         | ✔︎       | ✔︎    |
 
 During the loading process, Egg will traverse all loadUnits to load the files above(application, framework and plugin are different), the loading process has priority.
 
@@ -527,12 +527,13 @@ module.exports = {
       // whether load the directory of the framework and plugin
       loadunit: false,
       // you can also use other LoaderOptions
-   }
+    },
   },
 };
 ```
+
 ## Reference Links
+
 - [Loader](https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js)
 - [AppWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/app_worker_loader.js)
 - [AgentWorkerLoader](https://github.com/eggjs/egg/blob/master/lib/loader/agent_worker_loader.js)
-

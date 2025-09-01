@@ -17,7 +17,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 - 响应体：
 
 ```json
-[{
+[
+  {
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -28,8 +29,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
     "reply_count": 155,
     "visit_count": 28176,
     "create_at": "2016-09-27T07:53:31.872Z"
-},
-{
+  },
+  {
     "id": "57ea257b3670ca3f44c5beb6",
     "author_id": "541bf9b9ad60405c1f151a03",
     "tab": "share",
@@ -40,7 +41,8 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
     "top": true,
     "reply_count": 193,
     "visit_count": 47633
-}]
+  }
+]
 ```
 
 ### 获取单个主题
@@ -51,16 +53,16 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "id": "57ea257b3670ca3f44c5beb6",
-    "author_id": "541bf9b9ad60405c1f151a03",
-    "tab": "share",
-    "content": "content",
-    "title": "《一起学 Node.js》彻底重写完毕",
-    "last_reply_at": "2017-01-11T10:20:56.496Z",
-    "good": false,
-    "top": true,
-    "reply_count": 193,
-    "visit_count": 47633
+  "id": "57ea257b3670ca3f44c5beb6",
+  "author_id": "541bf9b9ad60405c1f151a03",
+  "tab": "share",
+  "content": "content",
+  "title": "《一起学 Node.js》彻底重写完毕",
+  "last_reply_at": "2017-01-11T10:20:56.496Z",
+  "good": false,
+  "top": true,
+  "reply_count": 193,
+  "visit_count": 47633
 }
 ```
 
@@ -72,7 +74,7 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "topic_id": "57ea257b3670ca3f44c5beb6"
+  "topic_id": "57ea257b3670ca3f44c5beb6"
 }
 ```
 
@@ -90,14 +92,17 @@ CNode 社区现在的 v1 版本接口不是完全符合 RESTful 语义。在这�
 
 ```json
 {
-    "error": "Validation Failed",
-    "detail": [{
-        "message": "required",
-        "field": "title",
-        "code": "missing_field"
-    }]
+  "error": "Validation Failed",
+  "detail": [
+    {
+      "message": "required",
+      "field": "title",
+      "code": "missing_field"
+    }
+  ]
 }
 ```
+
 ## 实现
 
 在约定好接口之后，我们可以开始动手实现了。
@@ -130,7 +135,7 @@ exports.validate = {
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   app.router.resources('topics', '/api/v2/topics', app.controller.topics);
 };
 ```
@@ -208,7 +213,10 @@ class TopicService extends Service {
   // 封装统一的调用检查函数，可以在查询、创建和更新等 Service 中复用
   checkSuccess(result) {
     if (result.status !== 200) {
-      const errorMsg = result.data && result.data.error_msg ? result.data.error_msg : 'unknown error';
+      const errorMsg =
+        result.data && result.data.error_msg
+          ? result.data.error_msg
+          : 'unknown error';
       this.ctx.throw(result.status, errorMsg);
     }
     if (!result.data.success) {
@@ -274,6 +282,7 @@ module.exports = {
   },
 };
 ```
+
 ## 测试
 
 代码完成只是第一步，我们还需要给代码加上[单元测试](../core/unittest.md)。

@@ -1,3 +1,4 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 // import coffee from 'coffee';
 // import { importResolve } from '@eggjs/utils';
@@ -6,7 +7,7 @@ import { MockApplication, createApp } from './utils.js';
 describe('test/typescript.test.ts', () => {
   describe('compiler code', () => {
     let app: MockApplication;
-    before(async () => {
+    beforeAll(async () => {
       // await coffee.fork(
       //   importResolve('typescript/bin/tsc'),
       //   [
@@ -35,7 +36,7 @@ describe('test/typescript.test.ts', () => {
       await app.ready();
     });
 
-    after(async () => {
+    afterAll(async () => {
       await app.close();
       assert.deepStrictEqual(app._app.stages, [
         'configWillLoad',
@@ -49,7 +50,8 @@ describe('test/typescript.test.ts', () => {
     });
 
     it('controller run ok', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/foo')
         .expect(200)
         .expect({ env: 'unittest' })
@@ -57,7 +59,8 @@ describe('test/typescript.test.ts', () => {
     });
 
     it('controller of app.router run ok', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/test')
         .expect(200)
         .expect({ env: 'unittest' })
@@ -75,7 +78,6 @@ describe('test/typescript.test.ts', () => {
     //     .expect('code', 0)
     //     .end();
     // });
-
     // it('should compile type-check ts without error', async () => {
     //   await coffee.fork(
     //     importResolve('typescript/bin/tsc'),
@@ -85,7 +87,6 @@ describe('test/typescript.test.ts', () => {
     //     .expect('code', 0)
     //     .end();
     // });
-
     // it('should throw error with type-check-error ts', async () => {
     //   await coffee.fork(
     //     importResolve('typescript/bin/tsc'),

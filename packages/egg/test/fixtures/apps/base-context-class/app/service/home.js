@@ -7,5 +7,5 @@ module.exports = app => {
       this.logger.warn('warn');
       this.logger.error(new Error('some error'));
     }
-  }
-}
+  };
+};

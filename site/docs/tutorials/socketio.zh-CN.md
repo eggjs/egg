@@ -26,8 +26,8 @@ $ npm i egg-socket.io --save
 ```javascript
 // {app_root}/config/plugin.js
 exports.io = {
-    enable: true,
-    package: 'egg-socket.io',
+  enable: true,
+  package: 'egg-socket.io',
 };
 ```
 
@@ -36,17 +36,17 @@ exports.io = {
 ```javascript
 // {app_root}/config/config.${env}.js
 exports.io = {
-    init: {}, // 传递给 engine.io
-    namespace: {
-        '/': {
-            connectionMiddleware: [],
-            packetMiddleware: [],
-        },
-        '/example': {
-            connectionMiddleware: [],
-            packetMiddleware: [],
-        },
+  init: {}, // 传递给 engine.io
+  namespace: {
+    '/': {
+      connectionMiddleware: [],
+      packetMiddleware: [],
     },
+    '/example': {
+      connectionMiddleware: [],
+      packetMiddleware: [],
+    },
+  },
 };
 ```
 
@@ -61,7 +61,7 @@ exports.io = {
 ```javascript
 // {app_root}/config/config.${env}.js
 exports.io = {
-    init: { wsEngine: 'uws' }, // 默认是 ws
+  init: { wsEngine: 'uws' }, // 默认是 ws
 };
 ```
 
@@ -96,10 +96,10 @@ exports.io = {
 
 ```json
 {
-    "scripts": {
-        "dev": "egg-bin dev --sticky",
-        "start": "egg-scripts start --sticky"
-    }
+  "scripts": {
+    "dev": "egg-bin dev --sticky",
+    "start": "egg-scripts start --sticky"
+  }
 }
 ```
 
@@ -165,7 +165,7 @@ chat
 
 ```js
 // {app_root}/app/io/middleware/connection.js
-module.exports = app => {
+module.exports = (app) => {
   return async (ctx, next) => {
     ctx.socket.emit('res', 'connected!');
     await next();
@@ -181,7 +181,7 @@ module.exports = app => {
 const tick = (id, msg) => {
   logger.debug('#tick', id, msg);
   socket.emit(id, msg);
-  app.io.of('/').adapter.remoteDisconnect(id, true, err => {
+  app.io.of('/').adapter.remoteDisconnect(id, true, (err) => {
     logger.error(err);
   });
 };
@@ -191,7 +191,7 @@ const tick = (id, msg) => {
 
 ```js
 // {app_root}/app/io/middleware/connection.js
-module.exports = app => {
+module.exports = (app) => {
   return async (ctx, next) => {
     if (true) {
       ctx.socket.disconnect();
@@ -209,7 +209,7 @@ module.exports = app => {
 
 ```js
 // {app_root}/app/io/middleware/packet.js
-module.exports = app => {
+module.exports = (app) => {
   return async (ctx, next) => {
     ctx.socket.emit('res', 'packet received!');
     console.log('packet:', ctx.packet);
@@ -217,6 +217,7 @@ module.exports = app => {
   };
 };
 ```
+
 ### Controller
 
 Controller 对客户端发送的 event 进行处理；由于其继承自 `egg.Controller`，拥有以下成员对象：
@@ -253,12 +254,12 @@ module.exports = DefaultController;
 ```js
 // {app_root}/app/router.js
 
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller, io } = app;
-  
+
   // default
   router.get('/', controller.home.index);
-  
+
   // socket.io
   io.of('/').route('server', io.controller.home.server);
 };
@@ -283,7 +284,7 @@ module.exports = app => {
 ```js
 // socket.io
 const nsp = io.of('/my-namespace');
-nsp.on('connection', socket => {
+nsp.on('connection', (socket) => {
   console.log('someone connected');
 });
 nsp.emit('hi', 'everyone!');
@@ -306,7 +307,7 @@ exports.io = {
 ```js
 const room = 'default_room';
 
-module.exports = app => {
+module.exports = (app) => {
   return async (ctx, next) => {
     ctx.socket.join(room);
     ctx.app.io
@@ -320,6 +321,7 @@ module.exports = app => {
 ```
 
 **注意：** 每一个 socket 连接都会拥有一个随机且不可预测的唯一 id `Socket#id`，并且会自动加入到以这个 `id` 命名的 `room` 中。
+
 ## 实例
 
 这里我们使用 [egg-socket.io](https://github.com/eggjs/egg-socket.io) 来做一个支持 P2P 聊天的小例子。
@@ -333,47 +335,47 @@ UI 相关的内容不重复编写，通过 `window.socket` 调用即可。
 const log = console.log;
 
 window.onload = function () {
-    // 初始化
-    const socket = io('/', {
-        // 实际使用中可以在这里传递参数
-        query: {
-            room: 'demo',
-            userId: `client_${Math.random()}`, // 传递了 room 和 userId 两个参数
-        },
+  // 初始化
+  const socket = io('/', {
+    // 实际使用中可以在这里传递参数
+    query: {
+      room: 'demo',
+      userId: `client_${Math.random()}`, // 传递了 room 和 userId 两个参数
+    },
 
-        transports: ['websocket'],
+    transports: ['websocket'],
+  });
+
+  socket.on('connect', () => {
+    const id = socket.id;
+
+    log('#connect,', id, socket);
+
+    // 监听自身 id，以实现 P2P 通讯
+    socket.on(id, (msg) => {
+      log('#receive,', msg);
     });
+  });
 
-    socket.on('connect', () => {
-        const id = socket.id;
+  // 接收在线用户信息
+  socket.on('online', (msg) => {
+    log('#online,', msg);
+  });
 
-        log('#connect,', id, socket);
+  // 系统事件
+  socket.on('disconnect', (msg) => {
+    log('#disconnect', msg);
+  });
 
-        // 监听自身 id，以实现 P2P 通讯
-        socket.on(id, (msg) => {
-            log('#receive,', msg);
-        });
-    });
+  socket.on('disconnecting', () => {
+    log('#disconnecting');
+  });
 
-    // 接收在线用户信息
-    socket.on('online', (msg) => {
-        log('#online,', msg);
-    });
+  socket.on('error', () => {
+    log('#error');
+  });
 
-    // 系统事件
-    socket.on('disconnect', (msg) => {
-        log('#disconnect', msg);
-    });
-
-    socket.on('disconnecting', () => {
-        log('#disconnecting');
-    });
-
-    socket.on('error', () => {
-        log('#error');
-    });
-
-    window.socket = socket;
+  window.socket = socket;
 };
 ```
 
@@ -390,17 +392,18 @@ const io = require('./your_path/weapp.socket.io.js'); // 请替换成实际路�
 const socket = io('http://localhost:8000');
 
 socket.on('connect', function () {
-    console.log('connected');
+  console.log('connected');
 });
 
 socket.on('news', (d) => {
-    console.log('received news:', d);
+  console.log('received news:', d);
 });
 
 socket.emit('news', {
-    title: 'this is a news',
+  title: 'this is a news',
 });
 ```
+
 ### server
 
 以下是 `demo` 的部分代码，并解释了各个方法的作用。
@@ -413,15 +416,15 @@ exports.io = {
   namespace: {
     '/': {
       connectionMiddleware: ['auth'],
-      packetMiddleware: [] // 针对消息的处理暂时不实现
-    }
+      packetMiddleware: [], // 针对消息的处理暂时不实现
+    },
   },
 
   // cluster 模式下，通过 redis 实现数据共享
   redis: {
     host: '127.0.0.1',
-    port: 6379
-  }
+    port: 6379,
+  },
 };
 
 // 可选
@@ -430,8 +433,8 @@ exports.redis = {
     port: 6379,
     host: '127.0.0.1',
     password: '',
-    db: 0
-  }
+    db: 0,
+  },
 };
 ```
 
@@ -450,10 +453,10 @@ module.exports = {
       meta,
       data: {
         action,
-        payload
-      }
+        payload,
+      },
     };
-  }
+  },
 };
 ```
 
@@ -472,6 +475,7 @@ Format：
   }
 }
 ```
+
 #### 中间件
 
 [egg-socket.io] 中间件负责处理 socket 连接。
@@ -516,7 +520,7 @@ module.exports = () => {
     if (!hasRoom) {
       tick(id, {
         type: 'deleted',
-        message: 'deleted, room has been deleted.'
+        message: 'deleted, room has been deleted.',
       });
       return;
     }
@@ -534,7 +538,7 @@ module.exports = () => {
         clients,
         action: 'join',
         target: 'participator',
-        message: `User(${id}) joined.`
+        message: `User(${id}) joined.`,
       });
     });
 
@@ -552,7 +556,7 @@ module.exports = () => {
         clients,
         action: 'leave',
         target: 'participator',
-        message: `User(${id}) leaved.`
+        message: `User(${id}) leaved.`,
       });
     });
   };
@@ -588,6 +592,7 @@ class NspController extends Controller {
 
 module.exports = NspController;
 ```
+
 #### router
 
 ```js
@@ -614,7 +619,6 @@ socket.emit('exchange', {
 
 ![](https://raw.githubusercontent.com/eggjs/egg/master/docs/assets/socketio-console.png)
 
-
 ## 参考链接
 
 - [socket.io](https://socket.io)
@@ -622,7 +626,6 @@ socket.emit('exchange', {
 - [egg-socket.io 示例](https://github.com/eggjs/egg-socket.io/tree/master/example)（egg-socket.io example）
 - [egg-socket.io 演示](https://github.com/eggjs-community/demo-egg-socket.io)（egg-socket.io demo）
 - [nginx 代理绑定](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_bind)（nginx proxy_bind）
-
 
 [socket.io]: https://socket.io
 [egg-socket.io]: https://github.com/eggjs/egg-socket.io

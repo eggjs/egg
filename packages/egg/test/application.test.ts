@@ -4,8 +4,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 import { pending } from 'pedding';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { Application, CookieLimitExceedError } from '../src/index.js';
-import { MockApplication, cluster, createApp, getFilepath, startLocalServer } from './utils.js';
+import {
+  MockApplication,
+  cluster,
+  createApp,
+  getFilepath,
+  startLocalServer,
+} from './utils.js';
 
 describe('test/application.test.ts', () => {
   let app: MockApplication;
@@ -38,9 +45,9 @@ describe('test/application.test.ts', () => {
     });
   });
 
-  describe('app start timeout', function() {
+  describe('app start timeout', function () {
     afterEach(() => app.close());
-    it('should emit `startTimeout` event', function(done) {
+    it('should emit `startTimeout` event', function (done) {
       app = createApp('apps/app-start-timeout');
       app.once('startTimeout', done);
     });
@@ -113,41 +120,49 @@ describe('test/application.test.ts', () => {
 
   describe('handle uncaughtException', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/app-throw');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should handle uncaughtException and log it', async () => {
-      await app.httpRequest()
-        .get('/throw')
-        .expect('foo')
-        .expect(200);
+      await app.httpRequest().get('/throw').expect('foo').expect(200);
 
       await scheduler.wait(1100);
-      const logfile = path.join(getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
+      const logfile = path.join(
+        getFilepath('apps/app-throw'),
+        'logs/app-throw/common-error.log'
+      );
       const body = fs.readFileSync(logfile, 'utf8');
-      assert(body.includes('ReferenceError: a is not defined (uncaughtException throw'));
+      assert(
+        body.includes(
+          'ReferenceError: a is not defined (uncaughtException throw'
+        )
+      );
     });
   });
 
   describe('handle uncaughtException when error has only a getter', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/app-throw');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should handle uncaughtException and log it', async () => {
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .get('/throw-error-setter')
         .expect('foo')
         .expect(200);
 
       await scheduler.wait(1100);
-      const logfile = path.join(getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
+      const logfile = path.join(
+        getFilepath('apps/app-throw'),
+        'logs/app-throw/common-error.log'
+      );
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('abc (uncaughtException throw 1 times on pid'));
     });
@@ -158,22 +173,42 @@ describe('test/application.test.ts', () => {
       const app = createApp('apps/confused-configuration');
       await app.ready();
       await scheduler.wait(1000);
-      const logs = fs.readFileSync(getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'), 'utf8');
-      assert.match(logs, /Unexpected config key `'bodyparser'` exists, Please use `'bodyParser'` instead\./);
-      assert.match(logs, /Unexpected config key `'notFound'` exists, Please use `'notfound'` instead\./);
-      assert.match(logs, /Unexpected config key `'sitefile'` exists, Please use `'siteFile'` instead\./);
-      assert.match(logs, /Unexpected config key `'middlewares'` exists, Please use `'middleware'` instead\./);
-      assert.match(logs, /Unexpected config key `'httpClient'` exists, Please use `'httpclient'` instead\./);
+      const logs = fs.readFileSync(
+        getFilepath(
+          'apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'
+        ),
+        'utf8'
+      );
+      assert.match(
+        logs,
+        /Unexpected config key `'bodyparser'` exists, Please use `'bodyParser'` instead\./
+      );
+      assert.match(
+        logs,
+        /Unexpected config key `'notFound'` exists, Please use `'notfound'` instead\./
+      );
+      assert.match(
+        logs,
+        /Unexpected config key `'sitefile'` exists, Please use `'siteFile'` instead\./
+      );
+      assert.match(
+        logs,
+        /Unexpected config key `'middlewares'` exists, Please use `'middleware'` instead\./
+      );
+      assert.match(
+        logs,
+        /Unexpected config key `'httpClient'` exists, Please use `'httpclient'` instead\./
+      );
     });
   });
 
   describe('test on apps/demo', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/demo');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     describe('application.deprecate', () => {
       it('should get deprecate with namespace egg', async () => {
@@ -212,7 +247,8 @@ describe('test/application.test.ts', () => {
 
     describe('class style controller', () => {
       it('should work with class style controller', () => {
-        return app.httpRequest()
+        return app
+          .httpRequest()
           .get('/class-controller')
           .expect('this is bar!')
           .expect(200);
@@ -228,12 +264,19 @@ describe('test/application.test.ts', () => {
               assert.equal(err.key, 'foo');
               assert.equal(err.cookie, 'value'.repeat(1000));
               assert.equal(err.name, 'CookieLimitExceedError');
-              assert.equal(err.message, 'cookie foo\'s length(5000) exceed the limit(4093)');
+              assert.equal(
+                err.message,
+                "cookie foo's length(5000) exceed the limit(4093)"
+              );
               done();
             },
           },
         };
-        app.emit('cookieLimitExceed', { name: 'foo', value: 'value'.repeat(1000), ctx });
+        app.emit('cookieLimitExceed', {
+          name: 'foo',
+          value: 'value'.repeat(1000),
+          ctx,
+        });
       });
     });
 
@@ -248,7 +291,8 @@ describe('test/application.test.ts', () => {
           assert(ctx.status === 200);
           done();
         });
-        app.httpRequest()
+        app
+          .httpRequest()
           .get('/class-controller')
           .expect('this is bar!')
           .expect(200, done);
@@ -264,9 +308,7 @@ describe('test/application.test.ts', () => {
           assert(ctx.status === 500);
           done();
         });
-        app.httpRequest()
-          .get('/obj-error')
-          .expect(500, done);
+        app.httpRequest().get('/obj-error').expect(500, done);
       });
     });
   });

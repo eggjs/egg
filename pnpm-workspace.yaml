@@ -10,12 +10,10 @@ catalog:
   'gals': '1'
   'get-ready': ^3.1.0
   'globby': ^11.0.2
-  'husky': '9'
   'js-yaml': '3'
-  'lint-staged': '15'
   'node-homedir': ^2.0.0
   'ready-callback': ^4.0.0
-  'tsconfig-paths': ^4.2.0  
+  'tsconfig-paths': ^4.2.0
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0
@@ -33,7 +31,6 @@ catalog:
   '@eggjs/static': ^3.0.0
   '@eggjs/supertest': ^8.2.0
   '@eggjs/tsconfig': ^2.0.0
-  '@eggjs/utils': ^4.2.5
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
   '@types/koa-bodyparser': ^4.3.12
@@ -79,5 +76,5 @@ catalog:
   vitest: ^2.0.0
   '@vitest/ui': ^2.0.0
   '@vitest/coverage-v8': ^2.0.0
-  'npminstall': '7'
-  'snap-shot-it': ^7.9.10
+  'husky': '9'
+  'lint-staged': '15'

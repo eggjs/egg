@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function (app) {
   const done = app.readyCallback('app_subscribe_data');
   app.subClient.subscribe('mock-data', val => {
     app.mockData = val;
@@ -13,7 +13,7 @@ module.exports = function(app) {
     done1();
   });
 
-  app.get('/', async function() {
+  app.get('/', async function () {
     const val = await new Promise(resolve => {
       app.subClient.subscribe('mock-data', val => {
         resolve(val);
@@ -26,7 +26,7 @@ module.exports = function(app) {
     };
   });
 
-  app.get('/not-exist', async function() {
+  app.get('/not-exist', async function () {
     const _val = await new Promise(resolve => {
       app.subClient.subscribe('not-exist-data', val => {
         resolve(val);

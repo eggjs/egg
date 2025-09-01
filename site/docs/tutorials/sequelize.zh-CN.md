@@ -65,6 +65,7 @@ exports.sequelize = {
 ```
 
 完成上述配置之后，一个使用 sequelize 的项目就初始化完成了。[egg-sequelize] 和 [sequelize] 还支持更多的配置项，你可以在他们的文档中找到。
+
 ## 初始化数据库和 Migrations
 
 接下来我们先暂时离开 egg 项目的代码，设计和初始化一下我们的数据库。首先我们通过 MySQL 命令在本地快速创建开发和测试要用到的两个数据库：
@@ -105,10 +106,10 @@ npm install --save-dev sequelize-cli
 const path = require('path');
 
 module.exports = {
-  "config": path.join(__dirname, 'database/config.json'),
-  "migrations-path": path.join(__dirname, 'database/migrations'),
-  "seeders-path": path.join(__dirname, 'database/seeders'),
-  "models-path": path.join(__dirname, 'app/model'),
+  config: path.join(__dirname, 'database/config.json'),
+  'migrations-path': path.join(__dirname, 'database/migrations'),
+  'seeders-path': path.join(__dirname, 'database/seeders'),
+  'models-path': path.join(__dirname, 'app/model'),
 };
 ```
 
@@ -182,6 +183,7 @@ npx sequelize db:migrate
 
 # 可以通过 `db:migrate:undo:all` 回退到初始状态
 ```
+
 # NPX Sequelize DB:Migrate:Undo:All
 
 执行之后，我们的数据库初始化就完成了。
@@ -193,7 +195,7 @@ npx sequelize db:migrate
 ```js
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   const { STRING, INTEGER, DATE } = app.Sequelize;
 
   const User = app.model.define('user', {
@@ -278,13 +280,14 @@ module.exports = UserController;
 
 ```js
 // app/router.js
-module.exports = app => {
+module.exports = (app) => {
   const { router, controller } = app;
   router.resources('users', '/users', controller.users);
 };
 ```
 
 针对 `users` 表的 CURD 操作的接口就开发完了。为了验证代码逻辑是否正确，我们接下来需要编写单元测试来验证。
+
 ## 单元测试
 
 在编写测试之前，由于在前面的 egg 配置中，我们将单元测试环境和开发环境指向了不同的数据库，因此需要通过 Migrations 来初始化测试数据库的数据结构：

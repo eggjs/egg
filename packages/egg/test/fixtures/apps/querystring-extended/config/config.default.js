@@ -1,9 +1,9 @@
 exports.querystring = {
-  mode: 'extended'
+  mode: 'extended',
 };
 
 exports.security = {
-  ctoken: false
+  ctoken: false,
 };
 
 exports.keys = 'foo';

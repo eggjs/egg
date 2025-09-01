@@ -41,6 +41,7 @@ EggCore 可以看做是 Koa `Application` 的升级版，默认内置了 [Loader
       ^               ^
  agent worker     app worker
 ```
+
 ## 如何定制一个框架
 
 你可以直接通过 [egg-boilerplate-framework](https://github.com/eggjs/egg-boilerplate-framework) 脚手架快速上手。
@@ -64,14 +65,17 @@ Egg 的多进程启动器，通过这个方法来启动 Master，主要的功能
 
 ```js
 const startCluster = require('egg').startCluster;
-startCluster({
+startCluster(
+  {
     // 应用的代码目录
     baseDir: '/path/to/app',
     // 需要通过这个参数来指定框架目录
     framework: '/path/to/framework',
-}, () => {
+  },
+  () => {
     console.log('app started');
-});
+  },
+);
 ```
 
 所有参数可以查看 [egg-cluster](https://github.com/eggjs/egg-cluster#options)。
@@ -278,7 +282,7 @@ describe('test/index.test.js', () => {
       // 转换成 test/fixtures/apps/example
       baseDir: 'apps/example',
       // 重要：配置 framework
-      framework: true
+      framework: true,
     });
     return app.ready();
   });
@@ -314,7 +318,7 @@ describe('test/index.test.js', () => {
     app = mock.app({
       baseDir: 'apps/example',
       framework: true,
-      cache: false
+      cache: false,
     });
     return app.ready();
   });
@@ -323,7 +327,7 @@ describe('test/index.test.js', () => {
     app = mock.app({
       baseDir: 'apps/example',
       framework: true,
-      cache: false
+      cache: false,
     });
     return app.ready();
   });
@@ -344,7 +348,7 @@ describe('test/index.test.js', () => {
   before(() => {
     app = mock.cluster({
       baseDir: 'apps/example',
-      framework: true
+      framework: true,
     });
     return app.ready();
   });
@@ -352,9 +356,7 @@ describe('test/index.test.js', () => {
   afterEach(mock.restore);
 
   it('should success', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+    return app.httpRequest().get('/').expect(200);
   });
 });
 ```
@@ -369,7 +371,7 @@ describe('test/index.test.js', () => {
   before(() => {
     app = mock.cluster({
       baseDir: 'apps/example',
-      framework: true
+      framework: true,
     });
     return app.ready();
   });

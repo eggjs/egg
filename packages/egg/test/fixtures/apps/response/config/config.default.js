@@ -1,1 +1,1 @@
-exports.keys = 'f'
+exports.keys = 'f';

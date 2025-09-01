@@ -1,4 +1,4 @@
-
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { createApp, MockApplication } from '../../utils.js';
 
@@ -7,14 +7,15 @@ describe('test/lib/plugins/security.test.ts', () => {
 
   describe('security.csrf = false', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/csrf-disable');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should not check csrf', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -27,14 +28,15 @@ describe('test/lib/plugins/security.test.ts', () => {
 
   describe('security.csrf = true', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/csrf-enable');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should check csrf', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(403)
@@ -44,14 +46,15 @@ describe('test/lib/plugins/security.test.ts', () => {
 
   describe('security.csrfIgnore', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/csrf-ignore');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should not check csrf on /api/*', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -62,7 +65,8 @@ describe('test/lib/plugins/security.test.ts', () => {
     });
 
     it('should not check csrf on /api/*.json', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/api/user.json')
         .send({ name: 'fengmk2' })
         .expect(200)
@@ -75,7 +79,8 @@ describe('test/lib/plugins/security.test.ts', () => {
     it('should check csrf on other.json', () => {
       // use prod env to ignore extends properties like frames
       mm(app.config, 'env', 'prod');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/apiuser.json')
         .set('accept', 'application/json')
         .send({ name: 'fengmk2' })
@@ -86,7 +91,8 @@ describe('test/lib/plugins/security.test.ts', () => {
     });
 
     it('should check csrf on other', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .post('/apiuser')
         .send({ name: 'fengmk2' })
         .expect(/missing csrf token/)

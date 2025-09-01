@@ -22,9 +22,12 @@ export class Agent extends EggApplicationCore {
     });
 
     // keep agent alive even it doesn't have any io tasks
-    this.#agentAliveHandler = setInterval(() => {
-      this.coreLogger.info('[]');
-    }, 24 * 60 * 60 * 1000);
+    this.#agentAliveHandler = setInterval(
+      () => {
+        this.coreLogger.info('[]');
+      },
+      24 * 60 * 60 * 1000
+    );
   }
 
   get [EGG_LOADER]() {
@@ -44,12 +47,12 @@ export class Agent extends EggApplicationCore {
 
     function wrapMethod(methodName: string, messenger: any, logger: EggLogger) {
       const originMethod = messenger[methodName];
-      messenger[methodName] = function(...args: any[]) {
+      messenger[methodName] = function (...args: any[]) {
         const stack = new Error().stack!.split('\n').slice(1).join('\n');
         logger.warn(
           "agent can't call %s before server started\n%s",
           methodName,
-          stack,
+          stack
         );
         originMethod.apply(this, args);
       };

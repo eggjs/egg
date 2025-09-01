@@ -26,7 +26,6 @@ Web 应用中的单元测试更加重要，Web 产品快速迭代的时期，每
 
 所以，应用的 Controller、Service、Helper、Extend 等代码，都必须有对应的单元测试以保证代码质量。当然，框架和插件的每个功能改动和重构都需要有相应的单元测试，并且要求尽量做到修改的代码能被 100% 覆盖到。
 
-
 ## 测试框架
 
 从 [npm 搜索“test framework”](https://www.npmjs.com/search?q=test%20framework&page=1&ranking=popularity) 我们会发现有大量测试框架存在，每个测试框架都有它的独特之处。
@@ -67,6 +66,7 @@ Web 应用中的单元测试更加重要，Web 产品快速迭代的时期，每
 以下是其报错信息的截图，实在太美太详细，让人想一睹其容：
 
 ![](https://cloud.githubusercontent.com/assets/227713/20919940/19e83de8-bbd9-11e6-8951-bf4a332f9b5a.png)
+
 ## 测试约定
 
 为了让我们更多地关注测试用例本身如何编写，而不是耗费时间在如何运行测试脚本等辅助工作上，框架对单元测试做了一些基本约定。
@@ -116,7 +116,6 @@ npm test
 
   1 passing (10ms)
 ```
-
 
 ## 准备测试
 
@@ -193,6 +192,7 @@ it('should mock ctx.user', () => {
 ```
 
 现在我们已经拿到了 app，也知道如何创建一个 ctx，可以开始进行更多的单元测试了。
+
 ## 测试执行顺序
 
 特别需要注意的是执行顺序，应确保在执行某个用例时，相关代码才被执行。
@@ -375,6 +375,7 @@ return app
     foo: 'bar',
   });
 ```
+
 ## Service 层的单元测试
 
 Service 层相比于 Controller 层来说，测试起来更简单。我们只需要首先创建一个 `ctx`，然后通过 `ctx.service.${serviceName}` 取得 Service 实例，接着即可调用 Service 方法进行测试。
@@ -410,6 +411,7 @@ describe('get()', () => {
 ```
 
 当然，实际中的 Service 代码不会像示例中展示的这般简单，这里只是为了演示如何测试 Service。
+
 ## Extend 测试
 
 应用可以对 Application、Request、Response、Context 和 Helper 进行扩展。我们可以对扩展的方法或者属性针对性的编写单元测试。
@@ -528,6 +530,7 @@ describe('isChrome()', () => {
   });
 });
 ```
+
 Response 测试与 Request 完全一致。
 通过 `ctx.response` 来访问 Response 扩展的属性和方法，直接即可进行测试。
 
@@ -558,7 +561,6 @@ describe('isSuccess()', () => {
   });
 });
 ```
-
 
 Helper 测试方式与 Service 类似，也是通过 ctx 来访问到 Helper，然后调用 Helper 方法进行测试。
 例如 `app/extend/helper.js`
@@ -595,6 +597,7 @@ describe('money()', () => {
   });
 });
 ```
+
 ## Mock 方法
 
 `egg-mock` 除了上面介绍过的 `app.mockContext()` 和 `app.mockCsrf()` 方法外，还提供了[非常多的 mock 方法](https://github.com/eggjs/egg-mock#api)帮助我们便捷地写单元测试。
@@ -609,7 +612,8 @@ describe('money()', () => {
         foo: 'bar',
         uid: 123,
       });
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/session')
         .expect(200)
         .expect({
@@ -658,7 +662,7 @@ assert(app.config.baseDir === '/tmp/mockapp');
 mock `fs.readFileSync` 方法，使其返回 `'hello world'`。
 
 ```js
-mock(fs, 'readFileSync', filename => {
+mock(fs, 'readFileSync', (filename) => {
   return 'hello world';
 });
 assert(fs.readFileSync('foo.txt') === 'hello world');
@@ -681,13 +685,16 @@ it('should mock fengmk1 exists', () => {
     };
   });
 
-  return app.httpRequest()
-    .get('/user?name=fengmk1')
-    .expect(200)
-    // 返回了本来不存在的用户信息
-    .expect({
-      name: 'fengmk1',
-    });
+  return (
+    app
+      .httpRequest()
+      .get('/user?name=fengmk1')
+      .expect(200)
+      // 返回了本来不存在的用户信息
+      .expect({
+        name: 'fengmk1',
+      })
+  );
 });
 ```
 
@@ -698,13 +705,17 @@ it('should mock fengmk1 exists', () => {
 ```js
 it('should mock service error', () => {
   app.mockServiceError('user', 'get', 'mock user service error');
-  return app.httpRequest()
-    .get('/user?name=fengmk2')
-    // 由于 service 异常，触发了 500 响应
-    .expect(500)
-    .expect(/mock user service error/);
+  return (
+    app
+      .httpRequest()
+      .get('/user?name=fengmk2')
+      // 由于 service 异常，触发了 500 响应
+      .expect(500)
+      .expect(/mock user service error/)
+  );
 });
 ```
+
 ### Mock HttpClient
 
 框架内置了 HttpClient，应用发起的对外 HTTP 请求基本都是通过它来处理。我们可以通过 `app.mockHttpclient(url, method, data)` 来 mock 掉 `app.curl` 和 `ctx.curl` 方法，从而实现各种网络异常情况。
@@ -739,14 +750,11 @@ describe('GET /httpclient', () => {
 });
 ```
 
-
 ## 示例代码
 
 完整示例代码可以在 [eggjs/examples/unittest](https://github.com/eggjs/examples/blob/master/unittest) 找到。
-
 
 [mocha]: https://mochajs.org
 [co-mocha]: https://github.com/blakeembrey/co-mocha
 [nyc]: https://github.com/istanbuljs/nyc
 [power-assert]: https://github.com/power-assert-js/power-assert
-

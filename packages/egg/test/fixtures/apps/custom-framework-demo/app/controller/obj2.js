@@ -1,17 +1,17 @@
 'use strict';
 
 module.exports = {
-  * bar() {
+  *bar() {
     this.ctx.body = 'this is obj bar!';
   },
 
   subObj: {
-    * hello() {
+    *hello() {
       this.ctx.body = 'this is subObj hello!';
     },
 
     subSubObj: {
-      * hello() {
+      *hello() {
         this.ctx.body = 'this is subSubObj hello!';
       },
     },

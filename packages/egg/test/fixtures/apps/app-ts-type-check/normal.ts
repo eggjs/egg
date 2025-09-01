@@ -33,7 +33,11 @@ class CustomBaseContextClass extends BaseContextClass {
 new CustomBaseContextClass({} as Context).test();
 
 // application
-const app = new Application({ baseDir: __dirname, plugins: {}, type: 'application' });
+const app = new Application({
+  baseDir: __dirname,
+  plugins: {},
+  type: 'application',
+});
 app.logger.info('123');
 app.middleware.slice(0);
 app.name.substring(0);
@@ -85,7 +89,10 @@ agent.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
 agent.logger.info(agent.Service);
 agent.logger.info(agent.Controller);
 
-async function request<T = any>(url: HttpClientRequestURL, options: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
+async function request<T = any>(
+  url: HttpClientRequestURL,
+  options: HttpClientRequestOptions
+): Promise<HttpClientResponse<T>> {
   const response = await agent.httpclient.request<T>(url, options);
   return response as HttpClientResponse<T>;
 }
@@ -190,7 +197,8 @@ config.customLogger = {
   myLogger: {
     file: './test.log',
     jsonFile: './test.json',
-    formatter: (meta: any) => (meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message),
+    formatter: (meta: any) =>
+      meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message,
     contextFormatter: meta => JSON.stringify(meta),
     buffer: true,
     eol: '\r\n',
@@ -217,9 +225,7 @@ config2.customLoader = {
 config2.security = {
   csrf: false,
   ssrf: {
-    ipBlackList: [
-      '10.0.0.0/8',
-    ],
+    ipBlackList: ['10.0.0.0/8'],
     checkAddress(ip) {
       return ip === '127.0.0.1';
     },
@@ -237,7 +243,7 @@ config2.logger = {
 };
 
 // singleton
-const redis = {} as Singleton<{ test(): void; }>;
+const redis = {} as Singleton<{ test(): void }>;
 redis.get('123').test();
 
 // extends egg

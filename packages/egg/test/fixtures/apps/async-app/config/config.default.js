@@ -1,4 +1,4 @@
 'use strict';
 
 exports.keys = 'key';
-exports.middleware = [ 'async' ];
+exports.middleware = ['async'];

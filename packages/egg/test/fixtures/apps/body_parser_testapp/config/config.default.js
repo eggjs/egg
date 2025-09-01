@@ -3,8 +3,8 @@ exports.bodyParser = {
   jsonLimit: '100kb',
   textLimit: '100kb',
   queryString: {
-    arrayLimit: 5
-  }
+    arrayLimit: 5,
+  },
 };
 
 exports.keys = 'foo';

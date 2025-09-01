@@ -39,7 +39,7 @@ exports.nunjucks = {
 // config/config.default.js
 const path = require('path');
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   const config = {};
 
   config.view = {
@@ -135,6 +135,7 @@ class HomeController extends Controller {
 ```
 
 当使用 `renderString` 时需指定模板引擎。如果已定义 `defaultViewEngine`，则可省略。
+
 ## 本地变量（Locals）
 
 在渲染页面的过程中，我们通常需要一个变量来收集需要传递给模板的变量，在框架里面，我们提供了 `app.locals` 和 `ctx.locals`。
@@ -174,7 +175,7 @@ await ctx.renderString('{{ name }} - {{ appName }}', data);
 // `helper`、`ctx`、`request` 将被自动注入。
 await ctx.renderString(
   '{{ name }} - {{ helper.lowercaseFirst(ctx.app.config.baseDir) }}',
-  data
+  data,
 );
 ```
 

@@ -19,5 +19,5 @@ module.exports = appInfo => {
     },
 
     keys: 'test key',
-  }
+  };
 };

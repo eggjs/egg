@@ -99,6 +99,7 @@ exports.ua = {
   path: path.join(__dirname, '../lib/plugin/egg-ua'),
 };
 ```
+
 ## 抽成独立插件
 
 经过一段时间开发后，该模块的功能成熟，此时可以考虑抽出来成为独立的插件。
@@ -134,7 +135,7 @@ egg-ua
 // config/plugin.js
 exports.ua = {
   enable: true,
-  package: 'egg-ua'
+  package: 'egg-ua',
 };
 ```
 

@@ -11,7 +11,7 @@ order: 9
 // app/service/test.js
 try {
   const res = await this.ctx.curl('http://eggjs.com/api/echo', {
-    dataType: 'json'
+    dataType: 'json',
   });
   if (res.status !== 200) throw new Error('response status is not 200');
   return res.data;
@@ -31,7 +31,9 @@ class HomeController extends Controller {
     const config = await this.ctx.service.trade.buy(request);
     // 下单后需要进行一次核对，且不阻塞当前请求
     setImmediate(() => {
-      this.ctx.service.trade.check(request).catch(err => this.ctx.logger.error(err));
+      this.ctx.service.trade
+        .check(request)
+        .catch((err) => this.ctx.logger.error(err));
     });
   }
 }
@@ -61,13 +63,13 @@ class HomeController extends Controller {
 
 框架通过 [@eggjs/onerror](https://github.com/eggjs/onerror) 插件提供统一的错误处理机制。此机制将捕获所有处理方法（Middleware、Controller、Service）中抛出的任何异常，并根据请求预期的响应类型返回不同的错误内容。
 
-| 请求格式需求 | 环境 | `errorPageUrl` 配置 | 返回内容 |
-| ------------ | ---- | ------------------- | -------- |
-| HTML & TEXT  | local & unittest | - | onerror 提供的详细错误页面 |
-| HTML & TEXT  | 其他 | 是 | 重定向至 `errorPageUrl` |
-| HTML & TEXT  | 其他 | 否 | 简易错误页（不含错误信息） |
-| JSON & JSONP | local & unittest | - | 详细错误信息的 JSON 或 JSONP 响应 |
-| JSON & JSONP | 其他 | - | 不含详细错误信息的 JSON 或 JSONP 响应 |
+| 请求格式需求 | 环境             | `errorPageUrl` 配置 | 返回内容                              |
+| ------------ | ---------------- | ------------------- | ------------------------------------- |
+| HTML & TEXT  | local & unittest | -                   | onerror 提供的详细错误页面            |
+| HTML & TEXT  | 其他             | 是                  | 重定向至 `errorPageUrl`               |
+| HTML & TEXT  | 其他             | 否                  | 简易错误页（不含错误信息）            |
+| JSON & JSONP | local & unittest | -                   | 详细错误信息的 JSON 或 JSONP 响应     |
+| JSON & JSONP | 其他             | -                   | 不含详细错误信息的 JSON 或 JSONP 响应 |
 
 ### errorPageUrl
 
@@ -78,8 +80,8 @@ class HomeController extends Controller {
 module.exports = {
   onerror: {
     // 线上发生异常时，重定向到此页面
-    errorPageUrl: '/50x.html'
-  }
+    errorPageUrl: '/50x.html',
+  },
 };
 ```
 
@@ -109,10 +111,11 @@ module.exports = {
     },
     jsonp(err, ctx) {
       // JSONP 错误一般不需特殊处理，自动调用 JSON 方法
-    }
-  }
+    },
+  },
 };
 ```
+
 框架并不会将服务端返回的 404 状态当做异常来处理，但是框架提供了当响应为 404 且没有返回 body 时的默认响应。
 
 - 当请求被框架判定为需要 JSON 格式的响应时，会返回一段 JSON：
@@ -132,9 +135,9 @@ module.exports = {
 ```js
 // config/config.default.js
 module.exports = {
-    notfound: {
-        pageUrl: '/404.html',
-    },
+  notfound: {
+    pageUrl: '/404.html',
+  },
 };
 ```
 
@@ -145,16 +148,16 @@ module.exports = {
 ```js
 // app/middleware/notfound_handler.js
 module.exports = () => {
-    return async function notFoundHandler(ctx, next) {
-        await next();
-        if (ctx.status === 404 && !ctx.body) {
-            if (ctx.acceptJSON) {
-                ctx.body = { error: 'Not Found' };
-            } else {
-                ctx.body = '<h1>Page Not Found</h1>';
-            }
-        }
-    };
+  return async function notFoundHandler(ctx, next) {
+    await next();
+    if (ctx.status === 404 && !ctx.body) {
+      if (ctx.acceptJSON) {
+        ctx.body = { error: 'Not Found' };
+      } else {
+        ctx.body = '<h1>Page Not Found</h1>';
+      }
+    }
+  };
 };
 ```
 
@@ -163,6 +166,6 @@ module.exports = () => {
 ```js
 // config/config.default.js
 module.exports = {
-    middleware: ['notfoundHandler'],
+  middleware: ['notfoundHandler'],
 };
 ```

@@ -2,11 +2,15 @@ import { expectType } from 'tsd';
 import { EggCore, Context } from '@eggjs/core';
 import { LogRotator } from '@eggjs/logrotator';
 import {
-  Application, IBoot, ILifecycleBoot,
+  Application,
+  IBoot,
+  ILifecycleBoot,
   LoggerLevel,
   EggPlugin,
   EggAppInfo,
-  start, SingleModeApplication, SingleModeAgent,
+  start,
+  SingleModeApplication,
+  SingleModeAgent,
   MiddlewareFunc,
   Singleton,
   PowerPartial,
@@ -25,15 +29,17 @@ expectType<boolean | undefined>(config.static?.gzip);
 
 const ctx = app.createAnonymousContext();
 
-expectType<Promise<void>>(app.runInAnonymousContextScope(async ctx => {
-  console.log(ctx);
-}));
+expectType<Promise<void>>(
+  app.runInAnonymousContextScope(async ctx => {
+    console.log(ctx);
+  })
+);
 
 expectType<Context>(ctx);
 expectType<HttpClient>(ctx.httpClient);
 expectType<any>(ctx.request.body);
 expectType<number>(ctx.realStatus);
-expectType<number>(ctx.realStatus = 200);
+expectType<number>((ctx.realStatus = 200));
 
 // watcher plugin types
 expectType<object>(app.watcher);
@@ -48,7 +54,7 @@ expectType<string[]>(app.config.development.watchDirs);
 expectType<boolean>(app.config.jsonp.csrf);
 expectType<string[] | string>(app.config.jsonp.callback);
 expectType<number>(app.config.jsonp.limit);
-expectType<string | RegExp |(string | RegExp)[]>(app.config.jsonp.whiteList!);
+expectType<string | RegExp | (string | RegExp)[]>(app.config.jsonp.whiteList!);
 expectType<boolean>(ctx.acceptJSONP);
 expectType<void>(ctx.createJsonpBody({}));
 expectType<MiddlewareFunc>(app.jsonp());
@@ -62,7 +68,7 @@ expectType<boolean>(app.isSupportLocale('en-us'));
 expectType<string>(ctx.__('email'));
 expectType<string>(ctx.gettext('email %s', 'fengmk2'));
 expectType<string>(ctx.locale);
-expectType<string>(ctx.locale = 'en-us');
+expectType<string>((ctx.locale = 'en-us'));
 
 // security plugin types
 expectType<string>(app.config.security.csrf.headerName);

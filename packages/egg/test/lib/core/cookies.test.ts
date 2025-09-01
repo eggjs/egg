@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { createApp, MockApplication, getFilepath } from '../../utils.js';
 
@@ -9,11 +10,11 @@ describe('test/lib/core/cookies.test.ts', () => {
 
   describe('secure = true', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/secure-app');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should throw TypeError when set secure on not secure request', () => {
       const ctx = app.mockContext();
@@ -38,9 +39,16 @@ describe('test/lib/core/cookies.test.ts', () => {
       const value = Buffer.alloc(4094).fill(49).toString();
       ctx.cookies.set('foo', value);
       setTimeout(() => {
-        const logPath = path.join(getFilepath('apps/secure-app'), 'logs/secure-app/common-error.log');
+        const logPath = path.join(
+          getFilepath('apps/secure-app'),
+          'logs/secure-app/common-error.log'
+        );
         const content = fs.readFileSync(logPath, 'utf8');
-        assert(content.match(/CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/));
+        assert(
+          content.match(
+            /CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/
+          )
+        );
         done();
       }, 100);
     });
@@ -67,7 +75,8 @@ describe('test/lib/core/cookies.test.ts', () => {
     });
 
     it('should not set secure when request protocol is http', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?setCookieValue=foobar')
         .set('Host', 'demo.eggjs.org')
         .set('X-Forwarded-Proto', 'http')
@@ -82,7 +91,8 @@ describe('test/lib/core/cookies.test.ts', () => {
     });
 
     it('should set secure:true and httponly cookie', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?setCookieValue=foobar')
         .set('Host', 'demo.eggjs.org')
         .set('X-Forwarded-Proto', 'https')
@@ -97,7 +107,8 @@ describe('test/lib/core/cookies.test.ts', () => {
     });
 
     it('should set cookie with path: /cookiepath/ok', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?cookiepath=/cookiepath/ok')
         .set('Host', 'demo.eggjs.org')
         .set('X-Forwarded-Proto', 'https')
@@ -106,13 +117,18 @@ describe('test/lib/core/cookies.test.ts', () => {
           assert(!err);
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
-          assert(cookie.match(/^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/));
+          assert(
+            cookie.match(
+              /^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/
+            )
+          );
           done();
         });
     });
 
     it('should delete cookie', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?cookiedel=true')
         .set('Host', 'demo.eggjs.org')
         .set('Cookie', 'cookiedel=true')
@@ -122,33 +138,44 @@ describe('test/lib/core/cookies.test.ts', () => {
           assert(!err);
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
-          assert.equal(cookie, 'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
+          assert.equal(
+            cookie,
+            'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly'
+          );
           const expires = cookie.match(/expires=([^;]+);/)![1];
-          assert.equal((new Date() > new Date(expires)), true);
+          assert.equal(new Date() > new Date(expires), true);
           done();
         });
     });
 
     it('should delete cookie with options', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?cookiedel=true&opts=true')
         .set('Host', 'demo.eggjs.org')
-        .set('Cookie', 'cookiedel=true; path=/hello; domain=eggjs.org; expires=30')
+        .set(
+          'Cookie',
+          'cookiedel=true; path=/hello; domain=eggjs.org; expires=30'
+        )
         .set('X-Forwarded-Proto', 'https')
         .expect('hello mock secure app')
         .expect(200, (err, res) => {
           assert(!err);
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
-          assert.equal(cookie, 'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly');
+          assert.equal(
+            cookie,
+            'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly'
+          );
           const expires = cookie.match(/expires=([^;]+);/)![1];
-          assert.equal((new Date() > new Date(expires)), true);
+          assert.equal(new Date() > new Date(expires), true);
           done();
         });
     });
 
     it('should set cookie with domain: okcookie.eggjs.org', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?cookiedomain=okcookie.eggjs.org&cookiepath=/')
         .set('Host', 'demo.eggjs.org')
         .set('X-Forwarded-Proto', 'https')
@@ -157,13 +184,17 @@ describe('test/lib/core/cookies.test.ts', () => {
           assert(!err);
           const cookie = res.headers['set-cookie'][0];
           assert(cookie);
-          assert.equal(cookie, 'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly');
+          assert.equal(
+            cookie,
+            'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly'
+          );
           done();
         });
     });
 
     it('should not set domain and path', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/?notSetPath=okok')
         .set('Host', 'demo.eggjs.org')
         .set('X-Forwarded-Proto', 'https')
@@ -180,14 +211,15 @@ describe('test/lib/core/cookies.test.ts', () => {
 
   describe('secure = false', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/demo');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should set secure:false cookie', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/hello')
         .set('Host', 'demo.eggjs.org')
         .expect('hello')
@@ -205,14 +237,15 @@ describe('test/lib/core/cookies.test.ts', () => {
   describe('encrypt = true', () => {
     let app: MockApplication;
 
-    before(() => {
+    beforeAll(() => {
       app = createApp('apps/encrypt-cookies');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should get encrypt cookie', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/')
         .expect({
           set: 'bar 中文',
@@ -221,14 +254,18 @@ describe('test/lib/core/cookies.test.ts', () => {
           assert(!err);
           const encryptCookie = res.headers['set-cookie'][0];
           assert(encryptCookie);
-          assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
+          assert.equal(
+            encryptCookie,
+            'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly'
+          );
 
           const plainCookie = res.headers['set-cookie'][1];
           assert(plainCookie);
           assert.equal(plainCookie, 'plain=text ok; path=/; httponly');
 
           const cookies = res.headers['set-cookie'] as unknown as string[];
-          app.httpRequest()
+          app
+            .httpRequest()
             .get('/')
             .set('Cookie', cookies.join(';'))
             .expect({
@@ -242,7 +279,8 @@ describe('test/lib/core/cookies.test.ts', () => {
     });
 
     it('should decode encrypt value fail', done => {
-      app.httpRequest()
+      app
+        .httpRequest()
         .get('/')
         .expect({
           set: 'bar 中文',
@@ -251,9 +289,13 @@ describe('test/lib/core/cookies.test.ts', () => {
           assert(!err);
           const encryptCookie = res.headers['set-cookie'][0];
           assert(encryptCookie);
-          assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
+          assert.equal(
+            encryptCookie,
+            'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly'
+          );
 
-          app.httpRequest()
+          app
+            .httpRequest()
             .get('/')
             .set('Cookie', 'foo=123123; plain=text ok')
             .expect({

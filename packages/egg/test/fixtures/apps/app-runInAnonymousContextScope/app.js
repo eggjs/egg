@@ -10,4 +10,4 @@ module.exports = class Boot {
     });
     this.app.logger.info('outside before close on app logger');
   }
-}
+};

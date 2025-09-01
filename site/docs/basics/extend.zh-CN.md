@@ -20,7 +20,7 @@ order: 11
 ### 访问方式
 
 - `ctx.app`
-  
+
   `ctx.app` 提供了一种访问全局 `app` 对象的方式。
 
 - Controller，Middleware，Helper，Service 中都可以通过 `this.app` 访问到 Application 对象。例如，通过 `this.app.config` 可以访问配置对象。
@@ -29,7 +29,7 @@ order: 11
 
 ```js
 // app.js
-module.exports = app => {
+module.exports = (app) => {
   // 使用 app 对象
 };
 ```
@@ -74,6 +74,7 @@ module.exports = {
   },
 };
 ```
+
 ## Context
 
 Context 指的是 Koa 的请求上下文，这是请求级别的对象，每次请求生成一个 Context 实例，通常我们也简写成 `ctx`。在所有的文档中，Context 和 `ctx` 都是指 Koa 的上下文对象。
@@ -97,7 +98,7 @@ Context 指的是 Koa 的请求上下文，这是请求级别的对象，每次�
 module.exports = {
   foo(param) {
     // this 就是 ctx 对象，在其中可以调用 ctx 上的其他方法，或访问属性
-  }
+  },
 };
 ```
 
@@ -121,9 +122,10 @@ module.exports = {
       this[BAR] = this.get('x-bar');
     }
     return this[BAR];
-  }
+  },
 };
 ```
+
 ## Request 对象
 
 Request 对象和 Koa 的 Request 对象相同，是 **请求级别** 的对象，它提供了大量请求相关的属性和方法供使用。

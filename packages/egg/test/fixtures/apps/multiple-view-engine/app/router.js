@@ -6,5 +6,8 @@ module.exports = app => {
   app.get('/render-with-options', 'view.renderWithOptions');
 
   app.get('/render-string', 'view.renderString');
-  app.get('/render-string-without-view-engine', 'view.renderStringWithoutViewEngine');
+  app.get(
+    '/render-string-without-view-engine',
+    'view.renderStringWithoutViewEngine'
+  );
 };

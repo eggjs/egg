@@ -41,7 +41,6 @@ class AppBootHook {
 module.exports = AppBootHook;
 ```
 
-
 ## ready 函数替代
 
 同样地，我们之前在 `app.ready` 中处理我们的逻辑：
@@ -70,7 +69,6 @@ class AppBootHook {
 
 module.exports = AppBootHook;
 ```
-
 
 ## beforeClose 函数替代
 

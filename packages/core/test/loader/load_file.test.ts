@@ -29,13 +29,19 @@ describe('test/loader/load_file.test.ts', () => {
   });
 
   it('should throw with filepath when file syntax error', async () => {
-    await assert.rejects(async () => {
-      app = createApp('syntaxerror');
-      await app.loader.loadCustomApp();
-    }, (err: any) => {
-      assert.match(err.message, /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        app = createApp('syntaxerror');
+        await app.loader.loadCustomApp();
+      },
+      (err: any) => {
+        assert.match(
+          err.message,
+          /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/
+        );
+        return true;
+      }
+    );
   });
 
   it('should load custom file', async () => {

@@ -14,10 +14,13 @@ describe('test/loader/get_appname.test.ts', () => {
 
   it('should throw when appname is not found', () => {
     const pkg = getFilepath('app-noname/package.json');
-    assert.throws(() => {
-      createApp('app-noname');
-    }, (err: any) => {
-      return err.message.includes(`name is required from ${pkg}`);
-    });
+    assert.throws(
+      () => {
+        createApp('app-noname');
+      },
+      (err: any) => {
+        return err.message.includes(`name is required from ${pkg}`);
+      }
+    );
   });
 });

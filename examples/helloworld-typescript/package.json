@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "egg-bin dev",
-    "debug": "egg-bin debug", 
+    "debug": "egg-bin debug",
     "test": "egg-bin test",
     "cov": "egg-bin cov",
     "lint": "eslint . --ext .ts",

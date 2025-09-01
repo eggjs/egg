@@ -1,14 +1,14 @@
 import { assign } from 'utility';
 import { now, diff } from 'performance-ms';
-import {
-  utils, Context as EggCoreContext, Router,
-} from '@eggjs/core';
+import { utils, Context as EggCoreContext, Router } from '@eggjs/core';
 import type { Cookies as ContextCookies } from '@eggjs/cookies';
 import type { EggLogger } from 'egg-logger';
 
 import type { Application } from '../../lib/application.ts';
 import type {
-  HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
+  HttpClientRequestURL,
+  HttpClientRequestOptions,
+  HttpClient,
 } from '../../lib/core/httpclient.ts';
 import type { BaseContextClass } from '../../lib//core/base_context_class.ts';
 import type Request from './request.ts';
@@ -51,7 +51,11 @@ export default class Context extends EggCoreContext {
   get cookies() {
     let cookies = this[COOKIES];
     if (!cookies) {
-      this[COOKIES] = cookies = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
+      this[COOKIES] = cookies = new this.app.ContextCookies(
+        this,
+        this.app.keys,
+        this.app.config.cookies
+      );
     }
     return cookies as Cookies;
   }
@@ -83,7 +87,10 @@ export default class Context extends EggCoreContext {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  async curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']> {
+  async curl(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions
+  ): ReturnType<HttpClient['request']> {
     return await this.httpclient.curl(url, options);
   }
 
@@ -199,7 +206,7 @@ export default class Context extends EggCoreContext {
   }
 
   set locals(val) {
-    const localsList = this[LOCALS_LIST] as Record<string, any>[] ?? [];
+    const localsList = (this[LOCALS_LIST] as Record<string, any>[]) ?? [];
     localsList.push(val);
     this[LOCALS_LIST] = localsList;
   }
@@ -229,10 +236,16 @@ export default class Context extends EggCoreContext {
    * });
    * ```
    */
-  runInBackground(scope: (ctx: Context) => Promise<void>, taskName?: string): void {
+  runInBackground(
+    scope: (ctx: Context) => Promise<void>,
+    taskName?: string
+  ): void {
     // try to use custom function name first
     if (!taskName) {
-      taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
+      taskName =
+        Reflect.get(scope, '_name') ||
+        scope.name ||
+        utils.getCalleeFromStack(true);
     }
     // use setImmediate to ensure all sync logic will run async
     setImmediate(() => {
@@ -242,14 +255,25 @@ export default class Context extends EggCoreContext {
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  async _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string) {
+  async _runInBackground(
+    scope: (ctx: Context) => Promise<void>,
+    taskName: string
+  ) {
     const startTime = now();
     try {
       await scope(this as any);
-      this.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, diff(startTime));
+      this.coreLogger.info(
+        '[egg:background] task:%s success (%dms)',
+        taskName,
+        diff(startTime)
+      );
     } catch (err: any) {
       // background task process log
-      this.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, diff(startTime));
+      this.coreLogger.info(
+        '[egg:background] task:%s fail (%dms)',
+        taskName,
+        diff(startTime)
+      );
 
       // emit error when promise catch, and set err.runInBackground flag
       err.runInBackground = true;
@@ -312,12 +336,21 @@ declare module '@eggjs/core' {
     proxy: any;
     performanceStarttime: number;
     starttime: number;
-    runInBackground(scope: (ctx: Context) => Promise<void>, taskName?: string): void;
-    _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string): void;
+    runInBackground(
+      scope: (ctx: Context) => Promise<void>,
+      taskName?: string
+    ): void;
+    _runInBackground(
+      scope: (ctx: Context) => Promise<void>,
+      taskName: string
+    ): void;
     get acceptJSON(): boolean;
     get query(): Record<string, string>;
     get queries(): Record<string, string[]>;
-    curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']>;
+    curl(
+      url: HttpClientRequestURL,
+      options?: HttpClientRequestOptions
+    ): ReturnType<HttpClient['request']>;
     get router(): Router;
     set router(val: Router);
     get helper(): Helper;

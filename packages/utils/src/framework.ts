@@ -71,12 +71,12 @@ function assertAndReturn(frameworkName: string, moduleDir: string) {
     if (frameworkName.startsWith('@') && frameworkName.includes('/')) {
       globalModuleDir = path.join(
         importResolve(`${frameworkName}/package.json`),
-        '../../..',
+        '../../..'
       );
     } else {
       globalModuleDir = path.join(
         importResolve(`${frameworkName}/package.json`),
-        '../..',
+        '../..'
       );
     }
     moduleDirs.add(globalModuleDir);

@@ -1,21 +1,23 @@
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
 import { createApp, MockApplication } from '../../utils.js';
 
 describe('test/lib/plugins/session.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/koa-session');
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should work when userId change', done => {
     app.mockContext({
       userId: 's1',
     });
-    app.httpRequest()
+    app
+      .httpRequest()
       .get('/?uid=1')
       .expect({
         userId: 's1',
@@ -32,7 +34,8 @@ describe('test/lib/plugins/session.test.ts', () => {
         app.mockContext({
           userId: 's1',
         });
-        app.httpRequest()
+        app
+          .httpRequest()
           .get('/?uid=2&userId=s1')
           .set('Cookie', cookie)
           .expect({
@@ -48,7 +51,8 @@ describe('test/lib/plugins/session.test.ts', () => {
             app.mockContext({
               userId: 's2',
             });
-            app.httpRequest()
+            app
+              .httpRequest()
               .get('/?uid=2')
               .set('Cookie', cookie)
               .expect({
@@ -61,7 +65,8 @@ describe('test/lib/plugins/session.test.ts', () => {
               })
               .expect(200, err => {
                 if (err) return done(err);
-                app.httpRequest()
+                app
+                  .httpRequest()
                   .get('/clear')
                   .set('Cookie', cookie)
                   .expect('set-cookie', /EGG_SESS=;/, done);

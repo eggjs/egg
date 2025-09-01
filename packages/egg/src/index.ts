@@ -11,9 +11,7 @@ import {
 import Helper from './app/extend/helper.ts';
 
 // export extends
-export {
-  Helper,
-};
+export { Helper };
 export type {
   // keep compatible with egg v3
   Helper as IHelper,
@@ -35,10 +33,7 @@ export {
 export * from './lib/error/index.ts';
 
 // export loggers
-export type {
-  LoggerLevel,
-  EggLogger,
-} from 'egg-logger';
+export type { LoggerLevel, EggLogger } from 'egg-logger';
 
 // export httpClients
 export * from './lib/core/httpclient.ts';
@@ -54,11 +49,7 @@ export * from '@eggjs/cluster';
  * Start egg application with single process mode
  * @since 1.0.0
  */
-export {
-  startEgg as start,
-  SingleModeApplication,
-  SingleModeAgent,
-};
+export { startEgg as start, SingleModeApplication, SingleModeAgent };
 
 /**
  * @member {Application} Egg#Application
@@ -88,25 +79,19 @@ export { AppWorkerLoader, AgentWorkerLoader } from './lib/loader/index.ts';
  * @member {Controller} Egg#Controller
  * @since 1.1.0
  */
-export {
-  BaseContextClass as Controller,
-};
+export { BaseContextClass as Controller };
 
 /**
  * @member {Service} Egg#Service
  * @since 1.1.0
  */
-export {
-  BaseContextClass as Service,
-};
+export { BaseContextClass as Service };
 
 /**
  * @member {Subscription} Egg#Subscription
  * @since 1.10.0
  */
-export {
-  BaseContextClass as Subscription,
-};
+export { BaseContextClass as Subscription };
 
 /**
  * @member {BaseContextClass} Egg#BaseContextClass

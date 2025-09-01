@@ -43,7 +43,10 @@ class RegistryClient extends Base {
     } else {
       this._registered.set(key, [reg.publishData]);
     }
-    this.emit(key, this._registered.get(key).map(url => parse(url, true)));
+    this.emit(
+      key,
+      this._registered.get(key).map(url => parse(url, true))
+    );
   }
 
   close() {

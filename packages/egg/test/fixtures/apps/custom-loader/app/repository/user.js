@@ -12,7 +12,6 @@ class UserRepository {
   async beforeLoad() {
     return 'beforeLoad';
   }
-
 }
 
 module.exports = UserRepository;

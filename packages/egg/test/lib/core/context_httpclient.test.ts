@@ -1,3 +1,4 @@
+import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { createApp, startLocalServer, MockApplication } from '../../utils.js';
 
@@ -5,11 +6,11 @@ describe('test/lib/core/context_httpclient.test.ts', () => {
   let url: string;
   let app: MockApplication;
 
-  before(() => {
+  beforeAll(() => {
     app = createApp('apps/context_httpclient');
     return app.ready();
   });
-  before(async () => {
+  beforeAll(async () => {
     url = await startLocalServer();
   });
 
