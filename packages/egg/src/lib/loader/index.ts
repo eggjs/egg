@@ -1,3 +1,3 @@
-export { EggApplicationLoader } from './EggApplicationLoader.js';
-export * from './AppWorkerLoader.js';
-export * from './AgentWorkerLoader.js';
+export { EggApplicationLoader } from './EggApplicationLoader.ts';
+export * from './AppWorkerLoader.ts';
+export * from './AgentWorkerLoader.ts';

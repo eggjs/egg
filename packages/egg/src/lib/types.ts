@@ -1,14 +1,16 @@
 import type { Socket } from 'node:net';
+
 import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type {
   FileLoaderOptions,
   EggAppConfig as EggCoreAppConfig,
 } from '@eggjs/core';
-import type { EggApplicationCore, Context } from './egg.js';
-import type { MetaMiddlewareOptions } from '../app/middleware/meta.js';
-import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.js';
-import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.js';
+
+import type { EggApplicationCore, Context } from './egg.ts';
+import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
+import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.ts';
+import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.ts';
 
 // import plugins types
 import '@eggjs/watcher';

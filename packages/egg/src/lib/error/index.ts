@@ -1,2 +1,2 @@
-export * from './CookieLimitExceedError.js';
-export * from './MessageUnhandledRejectionError.js';
+export * from './CookieLimitExceedError.ts';
+export * from './MessageUnhandledRejectionError.ts';

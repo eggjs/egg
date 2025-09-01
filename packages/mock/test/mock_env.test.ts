@@ -1,17 +1,18 @@
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
 describe('test/mock_env.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = mm.app({
       baseDir: getFixtures('demo'),
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should mock env success', () => {

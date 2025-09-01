@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import path from 'node:path';
 import { describe, it, expect } from 'vitest';
 import coffee from 'coffee';
 
@@ -210,6 +211,13 @@ describe('test/import.test.ts', () => {
   });
 
   describe('importModule()', () => {
+    it.only('should work on egg', async () => {
+      const obj = await importModule('egg', {
+        paths: [path.join(__dirname, '../../../examples/helloworld-typescript')],
+      });
+      expect(obj.Agent).toBeDefined();
+    });
+
     it('should import extend/index.js from extend on cjs', async () => {
       const obj = await importModule(getFilepath('cjs/extend'));
       assert.equal(obj.extend, true);

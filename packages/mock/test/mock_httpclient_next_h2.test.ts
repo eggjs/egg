@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import { Server, AddressInfo } from 'node:net';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
@@ -10,19 +11,19 @@ describe('test/mock_httpclient_next_h2.test.ts', () => {
   let server: Server;
   let url: string;
   let url2: string;
-  before(() => {
+  beforeAll(() => {
     app = mm.app({
       baseDir: getFixtures('demo_next_h2'),
     });
     return app.ready();
   });
-  before(() => {
+  beforeAll(() => {
     server = app.listen();
     const address = server.address() as AddressInfo;
     url = `http://127.0.0.1:${address.port}/mock_url`;
     url2 = `http://127.0.0.1:${address.port}/mock_url2`;
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should mock url and get response event on urllib', async () => {

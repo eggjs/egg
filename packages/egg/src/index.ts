@@ -5,8 +5,8 @@
 import { BaseContextClass } from './lib/core/base_context_class.ts';
 import {
   startEgg,
-  SingleModeApplication,
-  SingleModeAgent,
+  type SingleModeApplication,
+  type SingleModeAgent,
 } from './lib/start.ts';
 import Helper from './app/extend/helper.ts';
 
@@ -43,13 +43,14 @@ export * from './lib/core/context_httpclient.ts';
  * Start egg application with cluster mode
  * @since 1.0.0
  */
-export * from '@eggjs/cluster';
+// FIXME: need to export the cluster package
+// export * from '@eggjs/cluster';
 
 /**
  * Start egg application with single process mode
  * @since 1.0.0
  */
-export { startEgg as start, SingleModeApplication, SingleModeAgent };
+export { startEgg as start, type SingleModeApplication, type SingleModeAgent };
 
 /**
  * @member {Application} Egg#Application

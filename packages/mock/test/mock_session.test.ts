@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
@@ -7,13 +8,13 @@ describe('test/mock_session.test.ts', () => {
 
   describe('single process mode', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = mm.app({
         baseDir: getFixtures('demo'),
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should mock session', () => {
       const obj = {
@@ -55,13 +56,13 @@ describe('test/mock_session.test.ts', () => {
 
   describe('cluster process mode', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = mm.cluster({
         baseDir: getFixtures('demo'),
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should mock session', () => {
       app.mockSession({

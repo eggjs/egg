@@ -1,6 +1,6 @@
 import { debuglog } from 'node:util';
 
-const debug = debuglog('@eggjs/core/utils/sequencify');
+const debug = debuglog('egg/core/utils/sequencify');
 
 export interface SequencifyResult {
   sequence: string[];

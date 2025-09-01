@@ -1,8 +1,8 @@
-import type { Context, EggApplicationCore } from '../egg.js';
+import type { Context, EggApplicationCore } from '../egg.ts';
 import type {
   HttpClientRequestURL,
   HttpClientRequestOptions,
-} from './httpclient.js';
+} from './httpclient.ts';
 
 export class ContextHttpClient {
   ctx: Context;

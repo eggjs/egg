@@ -1,17 +1,18 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import { request } from '@eggjs/supertest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
 describe('test/mock_headers.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = mm.app({
       baseDir: getFixtures('demo'),
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should not exists without mock', done => {

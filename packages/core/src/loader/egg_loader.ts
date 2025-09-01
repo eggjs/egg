@@ -30,14 +30,14 @@ import {
   CaseStyle,
   FULLPATH,
   FileLoader,
-} from './file_loader.js';
-import { type ContextLoaderOptions, ContextLoader } from './context_loader.js';
-import utils, { type Fun } from '../utils/index.js';
-import { sequencify } from '../utils/sequencify.js';
-import { Timing } from '../utils/timing.js';
-import type { Context, EggCore, MiddlewareFunc } from '../egg.js';
-import type { BaseContextClass } from '../base_context_class.js';
-import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.js';
+} from './file_loader.ts';
+import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
+import utils, { type Fun } from '../utils/index.ts';
+import { sequencify } from '../utils/sequencify.ts';
+import { Timing } from '../utils/timing.ts';
+import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
+import type { BaseContextClass } from '../base_context_class.ts';
+import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
 
 const debug = debuglog('egg/core/loader/egg_loader');
 
@@ -1301,6 +1301,7 @@ export class EggLoader {
     for (const unit of this.getLoadUnits()) {
       const bootFile = path.join(unit.path, fileName);
       const bootFilePath = this.resolveModule(bootFile);
+      debug('[loadBootHook] %o => %o', bootFile, bootFilePath);
       if (!bootFilePath) {
         // debug('[loadBootHook] %o not found', bootFile);
         continue;

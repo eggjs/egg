@@ -1,11 +1,3 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": "./"
-  },
-  "references": [
-    {
-      "path": "../core"
-    }
-  ]
+  "extends": "../../tsconfig.json"
 }

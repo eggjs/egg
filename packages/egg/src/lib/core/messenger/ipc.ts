@@ -1,9 +1,11 @@
 import { debuglog } from 'node:util';
 import workerThreads from 'node:worker_threads';
+
 import { sendmessage } from 'sendmessage';
-import type { IMessenger } from './IMessenger.js';
-import type { EggApplicationCore } from '../../egg.js';
-import { BaseMessenger } from './base.js';
+
+import type { IMessenger } from './IMessenger.ts';
+import type { EggApplicationCore } from '../../egg.ts';
+import { BaseMessenger } from './base.ts';
 
 const debug = debuglog('egg/lib/core/messenger/ipc');
 
@@ -166,12 +168,17 @@ export class Messenger extends BaseMessenger implements IMessenger {
       );
       this.emit(message.action, message.data);
     } else {
-      debug(
-        '[%s:%s] got an invalid message %j',
-        this.egg.type,
-        this.pid,
-        message
-      );
+      if (message?.type === 'Buffer') {
+        // {"type":"Buffer","data":[255,153,....]
+        debug('[%s:%s] got an invalid message: %s', this.egg.type, this.pid, Buffer.from(message.data));
+      } else {
+        debug(
+          '[%s:%s] got an invalid message %j',
+          this.egg.type,
+          this.pid,
+          message
+        );
+      }
     }
   }
 

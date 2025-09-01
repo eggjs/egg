@@ -1,16 +1,17 @@
 import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import mm, { MockApplication } from '../src/index.js';
 import { getFixtures } from './helper.js';
 
 describe('test/mock_service_async.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('demo-async'),
     });
     await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
 
   it('should return from service', done => {

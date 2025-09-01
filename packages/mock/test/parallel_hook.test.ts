@@ -1,11 +1,12 @@
 import coffee from 'coffee';
+import { describe, it, afterAll } from 'vitest';
 import mm from '../src/index.js';
 import { importResolve } from '@eggjs/utils';
 import { getFixtures } from './helper.js';
 
 // TBD: This test case is not working as expected. Need to investigate.
 describe.skip('test/bootstrap-plugin.test.ts', () => {
-  after(() => mm.restore());
+  afterAll(() => mm.restore());
 
   it('should throw', async () => {
     return coffee.fork(importResolve('mocha/bin/mocha'), [

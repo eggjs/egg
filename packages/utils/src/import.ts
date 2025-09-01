@@ -3,6 +3,9 @@ import { createRequire } from 'node:module';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+
+import { resolve as _importMetaResolve } from 'import-meta-resolve'
+
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
@@ -258,7 +261,8 @@ const importMetaResolve = (
     process.env.VITEST === 'true'
   ) {
     // patch for vitest
-    return pathToFileURL(require.resolve(args[0], options)).href;
+    const parentUrl = options?.paths?.[0] ? pathToFileURL(options.paths[0]).href : import.meta.url;
+    return _importMetaResolve(args[0], parentUrl);
   }
 
   return import.meta.resolve(...args);
@@ -272,6 +276,7 @@ export function importResolve(
   // e.g.: importResolve('egg/package.json', { paths })
   const cwd = process.cwd();
   const paths = options?.paths ?? [cwd];
+  debug('[importResolve] filepath: %o, options: %o', filepath, options);
 
   let moduleFilePath: string | undefined;
   const isAbsolute = path.isAbsolute(filepath);
@@ -356,6 +361,7 @@ export function importResolve(
         // moduleFilePath = import.meta.resolve(filepath);
         moduleFilePath = importMetaResolve(options, filepath);
       } catch (err) {
+        debug('[importResolve] import.meta.resolve %o => %o, options: %o', filepath, err, options);
         throw new ImportResolveError(filepath, paths, err as Error);
       }
       if (moduleFilePath.startsWith('file://')) {
@@ -378,7 +384,7 @@ export function importResolve(
     }
   }
   debug(
-    '[importResolve] %o, options: %o => %o, isESM: %s',
+    '[importResolve:success] %o, options: %o => %o, isESM: %s',
     filepath,
     options,
     moduleFilePath,
@@ -397,7 +403,7 @@ export async function importModule(
     // esm
     const fileUrl = pathToFileURL(moduleFilePath).toString();
     obj = await import(fileUrl);
-    debug('[importModule] await import %o', fileUrl);
+    debug('[importModule:success] await import %o, obj: %j', fileUrl, obj);
     // {
     //   default: { foo: 'bar', one: 1 },
     //   foo: 'bar',
@@ -452,9 +458,10 @@ export async function importModule(
   }
   if (debug.enabled) {
     debug(
-      '[importModule] return %o => keys: %j',
+      '[importModule] return %o => keys: %j, typeof obj: %s',
       filepath,
-      obj ? Object.keys(obj) : obj
+      obj ? Object.keys(obj) : obj,
+      typeof obj
     );
   }
   return obj;

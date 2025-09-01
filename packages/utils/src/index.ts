@@ -26,13 +26,13 @@ export default {
   getFrameworkOrEggPath,
 };
 
-// FIXME: better enum
 export const EggType = {
   framework: 'framework',
   plugin: 'plugin',
   application: 'application',
   unknown: 'unknown',
 } as const;
+export type EggType = (typeof EggType)[keyof typeof EggType];
 
 /**
  * Detect the type of egg project

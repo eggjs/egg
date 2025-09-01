@@ -12,18 +12,19 @@ import {
 } from 'is-type-of';
 import { isSupportTypeScript } from '@eggjs/utils';
 
-import utils, { type Fun } from '../utils/index.js';
+import utils, { type Fun } from '../utils/index.ts';
 
-const debug = debuglog('@eggjs/core/file_loader');
+const debug = debuglog('egg/core/file_loader');
 
 export const FULLPATH = Symbol('EGG_LOADER_ITEM_FULLPATH');
 export const EXPORTS = Symbol('EGG_LOADER_ITEM_EXPORTS');
 
-export enum CaseStyle {
-  camel = 'camel',
-  lower = 'lower',
-  upper = 'upper',
-}
+export const CaseStyle = {
+  camel: 'camel',
+  lower: 'lower',
+  upper: 'upper',
+} as const;
+export type CaseStyle = (typeof CaseStyle)[keyof typeof CaseStyle];
 
 export type CaseStyleFunction = (filepath: string) => string[];
 export type FileLoaderInitializer = (

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { execSync } from 'node:child_process';
+import { describe, it } from 'vitest';
 import { __dirname } from './helper.js';
 
 describe.skip('test/tsd.test.ts', () => {

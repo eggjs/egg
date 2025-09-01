@@ -1,9 +1,11 @@
 import path from 'node:path';
+
 import { readJSON } from 'utility';
 import { importModule } from '@eggjs/utils';
+
 import { Agent } from './agent.ts';
 import { Application } from './application.ts';
-import { EggPlugin } from './types.ts';
+import { type EggPlugin } from './types.ts';
 
 export interface StartEggOptions {
   /** specify framework that can be absolute path or npm package */

@@ -1,7 +1,9 @@
 import assert from 'node:assert';
+
 import { isClass, isPrimitive } from 'is-type-of';
-import { FileLoader, EXPORTS, type FileLoaderOptions } from './file_loader.js';
-import type { Context } from '../egg.js';
+
+import { FileLoader, EXPORTS, type FileLoaderOptions } from './file_loader.ts';
+import type { Context } from '../egg.ts';
 
 const CLASS_LOADER = Symbol('classLoader');
 

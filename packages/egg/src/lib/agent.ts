@@ -1,6 +1,7 @@
 import type { EggLogger } from 'egg-logger';
-import { EggApplicationCore, EggApplicationCoreOptions } from './egg.js';
-import { AgentWorkerLoader } from './loader/index.js';
+
+import { EggApplicationCore, type EggApplicationCoreOptions } from './egg.ts';
+import { AgentWorkerLoader } from './loader/index.ts';
 
 const EGG_LOADER = Symbol.for('egg#loader');
 

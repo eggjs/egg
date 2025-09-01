@@ -7,11 +7,11 @@ import { Ready as ReadyObject, type ReadyFunctionArg } from 'get-ready';
 import { Ready } from 'ready-callback';
 import { EggConsoleLogger } from 'egg-logger';
 
-import utils from './utils/index.js';
-import type { Fun } from './utils/index.js';
-import type { EggCore } from './egg.js';
+import utils from './utils/index.ts';
+import type { Fun } from './utils/index.ts';
+import type { EggCore } from './egg.ts';
 
-const debug = debuglog('@eggjs/core/lifecycle');
+const debug = debuglog('egg/core/lifecycle');
 
 export interface ILifecycleBoot {
   // loader auto set 'fullPath' property on boot class
@@ -102,13 +102,13 @@ export class Lifecycle extends EventEmitter {
     this.#initReady();
     this.on('ready_stat', data => {
       this.logger.info(
-        '[@eggjs/core/lifecycle:ready_stat] end ready task %s, remain %j',
+        '[egg/core/lifecycle:ready_stat] end ready task %s, remain %j',
         data.id,
         data.remain
       );
     }).on('ready_timeout', id => {
       this.logger.warn(
-        '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.',
+        '[egg/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.',
         this.readyTimeout / 1000,
         id
       );

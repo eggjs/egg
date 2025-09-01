@@ -1,3 +1,4 @@
+const { describe, it } = require('vitest');
 const assert = require('assert');
 const { app } = require('../../../../dist/commonjs/bootstrap');
 

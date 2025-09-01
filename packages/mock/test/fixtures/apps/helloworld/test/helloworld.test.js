@@ -1,3 +1,4 @@
+import { describe, it } from 'vitest';
 import { app } from '../../../../../dist/esm/bootstrap.js';
 
 describe('bootstrap test', () => {

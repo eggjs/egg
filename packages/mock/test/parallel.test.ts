@@ -1,8 +1,9 @@
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { getFixtures } from './helper.js';
 
 // TBD: This test case is not working as expected. Need to investigate.
 describe.skip('test/parallel.test.ts', () => {
-  before(async () => {
+  beforeAll(async () => {
     const { mochaGlobalSetup } = await import('../src/register.js');
     await mochaGlobalSetup();
     process.env.ENABLE_MOCHA_PARAELLEL = 'true';
@@ -10,7 +11,7 @@ describe.skip('test/parallel.test.ts', () => {
     process.env.EGG_BASE_DIR = getFixtures('apps/foo');
   });
 
-  after(async () => {
+  afterAll(async () => {
     const { mochaGlobalTeardown } = await import('../src/register.js');
     await mochaGlobalTeardown();
     delete process.env.ENABLE_MOCHA_PARAELLEL;
