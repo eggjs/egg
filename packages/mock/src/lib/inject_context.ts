@@ -1,10 +1,11 @@
 import { debuglog } from 'node:util';
 import assert from 'node:assert';
-import { getApp } from './app_handler.js';
+
+import { getApp } from './app_handler.ts';
+
+const debug = debuglog('egg/mock/lib/inject_context');
 
 const MOCHA_SUITE_APP = Symbol.for('mocha#suite#app');
-
-const debug = debuglog('@eggjs/mock/lib/inject_context');
 
 /**
  * Monkey patch the mocha instance with egg context.

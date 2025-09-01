@@ -1,7 +1,8 @@
 import { debuglog } from 'node:util';
+
 import { Context, Next } from '@eggjs/core';
 
-const debug = debuglog('@eggjs/mock/app/middleware/cluster_app_mock');
+const debug = debuglog('egg/mock/app/middleware/cluster_app_mock');
 
 export default () => {
   return async function clusterAppMock(ctx: Context, next: Next) {

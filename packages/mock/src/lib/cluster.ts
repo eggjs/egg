@@ -3,19 +3,29 @@ import path from 'node:path';
 import os from 'node:os';
 import childProcess from 'node:child_process';
 import { once } from 'node:events';
+import { existsSync } from 'node:fs';
+
 import { Coffee } from 'coffee';
 import { Ready } from 'get-ready';
-import { request as supertestRequest } from './supertest.js';
-import { sleep, rimrafSync, getSourceDirname } from './utils.js';
-import { formatOptions } from './format_options.js';
-import type { MockClusterOptions, MockClusterApplicationOptions } from './types.js';
 
-const debug = debuglog('@eggjs/mock/lib/cluster');
+import { request as supertestRequest } from './supertest.ts';
+import { sleep, rimrafSync } from './utils.ts';
+import { formatOptions } from './format_options.ts';
+import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
+
+const debug = debuglog('egg/mock/lib/cluster');
 
 const clusters = new Map();
-const serverBin = path.join(getSourceDirname(), 'lib/start-cluster.js');
-const requestCallFunctionFile = path.join(getSourceDirname(), 'lib/request_call_function.js');
 let masterPort = 17000;
+
+let serverBin = path.join(__dirname, 'start-cluster.js');
+if (!existsSync(serverBin)) {
+  serverBin = path.join(__dirname, 'start-cluster.ts');
+}
+let requestCallFunctionFile = path.join(__dirname, 'request_call_function.js');
+if (!existsSync(requestCallFunctionFile)) {
+  requestCallFunctionFile = path.join(__dirname, 'request_call_function.ts');
+}
 
 /**
  * A cluster version of egg.Application, you can test with supertest
@@ -279,7 +289,7 @@ export class ClusterApplication extends Coffee {
     // if (child.stderr && child.stderr.length > 0) {
     //   console.error(child.stderr.toString());
     // }
-    let result;
+    let result: any;
     if (child.stdout && child.stdout.length > 0) {
       if (needResult) {
         result = JSON.parse(child.stdout.toString());

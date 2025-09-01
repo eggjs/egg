@@ -19,7 +19,7 @@ describe('test/agent.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it.only('agent logger config should work', () => {
+    it('agent logger config should work', () => {
       const fileTransport = app._agent.logger.get('file');
       assert.equal(
         fileTransport.options.file,

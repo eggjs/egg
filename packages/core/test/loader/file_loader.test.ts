@@ -1,8 +1,6 @@
-// oxlint-disable promise/catch-or-return, promise/prefer-catch, promise/prefer-await-to-then, promise/no-callback-in-promise, promise/avoid-new
-
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
 import { FileLoader, CaseStyle } from '../../src/loader/file_loader.js';
@@ -11,6 +9,16 @@ import { getFilepath } from '../helper.js';
 const dirBase = getFilepath('load_dirs');
 
 describe('test/loader/file_loader.test.ts', () => {
+  it('should load files with package.json#exports', async () => {
+    const directory = path.join(__dirname, '../../../mock/src/app/middleware');
+    const services: Record<string, any> = {};
+    await new FileLoader({
+      directory,
+      target: services,
+    }).load();
+    expect(services.clusterAppMock).toBeDefined();
+  });
+
   it('should load files', async () => {
     const services: Record<string, any> = {};
     await new FileLoader({

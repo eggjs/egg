@@ -86,4 +86,3 @@ catalog:
   'detect-port': ^2.1.0
   'merge-descriptors': ^2.0.0
   'mocha': ^11.0.1
-  'import-meta-resolve': ^4.2.0

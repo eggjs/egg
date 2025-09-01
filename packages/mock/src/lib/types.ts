@@ -22,7 +22,7 @@ export interface MockOptions {
   plugin?: boolean;
 
   /**
-   * @deprecated please use framework instead
+   * @deprecated please use `framework` instead
    */
   customEgg?: string | boolean;
 

@@ -1,7 +1,8 @@
 import { debuglog } from 'node:util';
-import { getProperty } from '../utils.js';
 
-const debug = debuglog('@eggjs/mock/lib/parallel/util');
+import { getProperty } from '../utils.ts';
+
+const debug = debuglog('egg/mock/lib/parallel/util');
 
 export const MOCK_APP_METHOD = [
   'ready',

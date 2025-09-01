@@ -1,7 +1,3 @@
-/**
- * @namespace Egg
- */
-
 import { BaseContextClass } from './lib/core/base_context_class.ts';
 import {
   startEgg,
@@ -43,8 +39,7 @@ export * from './lib/core/context_httpclient.ts';
  * Start egg application with cluster mode
  * @since 1.0.0
  */
-// FIXME: need to export the cluster package
-// export * from '@eggjs/cluster';
+export * from '@eggjs/cluster';
 
 /**
  * Start egg application with single process mode

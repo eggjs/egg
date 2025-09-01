@@ -1,12 +1,14 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
+
 import { mm, isMocked } from 'mm';
 import { getFrameworkPath } from '@eggjs/utils';
 import { readJSONSync } from 'utility';
-import { MockOptions, MockApplicationOptions } from './types.js';
-import { getSourceDirname } from './utils.js';
 
-const debug = debuglog('@eggjs/mock/lib/format_options');
+import { MockOptions, MockApplicationOptions } from './types.ts';
+import { getSourceDirname } from './utils.ts';
+
+const debug = debuglog('egg/mock/lib/format_options');
 
 /**
  * format the options
@@ -87,7 +89,7 @@ export function formatOptions(initOptions?: MockOptions) {
     options.cache = false;
   }
 
-  debug('format options: %j', options);
+  debug('[formatOptions] options: %j', options);
   return options;
 }
 

@@ -1,9 +1,10 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
+
 import { readJSONSync } from 'utility';
-import mm, { mock, MockApplication } from './index.js';
-import { getBootstrapApp, setupApp } from './lib/app_handler.js';
-import { getEggOptions } from './lib/utils.js';
+import mm, { mock, MockApplication } from './index.ts';
+import { getBootstrapApp, setupApp } from './lib/app_handler.ts';
+import { getEggOptions } from './lib/utils.ts';
 
 const options = getEggOptions();
 

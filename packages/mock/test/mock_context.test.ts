@@ -1,13 +1,14 @@
 import { strict as assert } from 'node:assert';
-import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_context.test.ts', () => {
   let app: MockApplication;
   beforeAll(async () => {
     app = mm.app({
-      baseDir: 'demo',
+      baseDir: getFixtures('demo'),
     });
     await app.ready();
   });

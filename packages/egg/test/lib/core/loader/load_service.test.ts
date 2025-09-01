@@ -9,7 +9,7 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
   afterEach(() => app.close());
   afterEach(mm.restore);
 
-  it.only('should load app and plugin services', async () => {
+  it('should load app and plugin services', async () => {
     app = createApp('apps/loader-plugin');
     await app.ready();
     assert(app.serviceClasses.foo);

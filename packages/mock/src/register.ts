@@ -1,11 +1,12 @@
 import { debuglog } from 'node:util';
 import { createRequire } from 'node:module';
-import { mock } from './index.js';
-import { setupAgent, closeAgent } from './lib/agent_handler.js';
-import { getApp } from './lib/app_handler.js';
-import { injectContext } from './lib/inject_context.js';
 
-const debug = debuglog('@eggjs/mock/register');
+import { mock } from './index.ts';
+import { setupAgent, closeAgent } from './lib/agent_handler.ts';
+import { getApp } from './lib/app_handler.ts';
+import { injectContext } from './lib/inject_context.ts';
+
+const debug = debuglog('egg/mock/register');
 
 export async function mochaGlobalSetup() {
   debug('mochaGlobalSetup, agent.setupAgent() start');

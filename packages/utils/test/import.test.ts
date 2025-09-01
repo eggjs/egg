@@ -19,6 +19,20 @@ describe('test/import.test.ts', () => {
   });
 
   describe('importResolve()', () => {
+    it('should import file from typescript under development', () => {
+      assert.equal(
+        importResolve(path.join(__dirname, '../../mock/app')),
+        path.join(__dirname, '../../mock/src/app.ts')
+      );
+    });
+
+    it('should import package from typescript under development', () => {
+      assert.equal(
+        importResolve(path.join(__dirname, '../../egg')),
+        path.join(__dirname, '../../egg/src/index.ts')
+      );
+    });
+
     it('should work on cjs', () => {
       assert.equal(
         importResolve(getFilepath('cjs')),
@@ -211,7 +225,7 @@ describe('test/import.test.ts', () => {
   });
 
   describe('importModule()', () => {
-    it.only('should work on egg', async () => {
+    it('should work on egg', async () => {
       const obj = await importModule('egg', {
         paths: [path.join(__dirname, '../../../examples/helloworld-typescript')],
       });

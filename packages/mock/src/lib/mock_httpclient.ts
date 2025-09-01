@@ -1,7 +1,8 @@
 import { mm } from 'mm';
 import { extend } from 'extend2';
 import type { Dispatcher, Headers, BodyInit } from 'urllib';
-import { getMockAgent } from './mock_agent.js';
+
+import { getMockAgent } from './mock_agent.ts';
 
 export interface MockResultOptions {
   data: string | Buffer | Record<string, any>;

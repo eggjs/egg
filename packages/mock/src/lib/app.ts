@@ -2,19 +2,21 @@ import { debuglog } from 'node:util';
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
+
 import { Base } from 'sdk-base';
 import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
-import { sleep, rimraf, getProperty, getSourceDirname } from './utils.js';
-import { formatOptions } from './format_options.js';
-import { context } from './context.js';
-import { setCustomLoader } from './mock_custom_loader.js';
-import { createServer } from './mock_http_server.js';
-import type { MockOptions, MockApplicationOptions } from './types.js';
-import ApplicationUnittest from '../app/extend/application.js';
-import AgentUnittest from '../app/extend/agent.js';
 
-const debug = debuglog('@eggjs/mock/lib/app');
+import { sleep, rimraf, getProperty, getSourceDirname } from './utils.ts';
+import { formatOptions } from './format_options.ts';
+import { context } from './context.ts';
+import { setCustomLoader } from './mock_custom_loader.ts';
+import { createServer } from './mock_http_server.ts';
+import type { MockOptions, MockApplicationOptions } from './types.ts';
+import ApplicationUnittest from '../app/extend/application.ts';
+import AgentUnittest from '../app/extend/agent.ts';
+
+const debug = debuglog('egg/mock/lib/app');
 
 const apps = new Map<string, ApplicationUnittest>();
 const APP_INIT = Symbol('appInit');
@@ -78,7 +80,7 @@ class MockApplicationWorker extends Base {
     }
 
     this.options.clusterPort = await detectPort();
-    debug('get clusterPort %s', this.options.clusterPort);
+    debug('[init] options: %o', this.options);
     const egg = await importModule(this.options.framework);
     assert(egg.Agent, `should export Agent class from framework ${this.options.framework}`);
 
@@ -191,6 +193,7 @@ class MockApplicationWorker extends Base {
 
 export function createApp(createOptions?: MockOptions): ApplicationUnittest {
   const options = formatOptions(createOptions);
+  debug('[createApp] options: %o', options);
   if (options.cache && apps.has(options.baseDir)) {
     const app = apps.get(options.baseDir);
     // return cache when it hasn't been killed

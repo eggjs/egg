@@ -4,7 +4,7 @@ import {
   HttpClient,
 } from 'urllib';
 
-const debug = debuglog('@eggjs/mock/lib/mock_agent');
+const debug = debuglog('egg/mock/lib/mock_agent');
 
 declare namespace globalThis {
   let __mockAgent: MockAgent | null;

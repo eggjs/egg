@@ -1,12 +1,13 @@
 import { debuglog } from 'node:util';
-import { createApp as createParallelApp } from './parallel/app.js';
-import { setupAgent } from './agent_handler.js';
-import { createApp } from './app.js';
-import { restore } from './restore.js';
-import { getEggOptions } from './utils.js';
-import ApplicationUnittest from '../app/extend/application.js';
 
-const debug = debuglog('@eggjs/mock/lib/app_handler');
+import { createApp as createParallelApp } from './parallel/app.ts';
+import { setupAgent } from './agent_handler.ts';
+import { createApp } from './app.ts';
+import { restore } from './restore.ts';
+import { getEggOptions } from './utils.ts';
+import ApplicationUnittest from '../app/extend/application.ts';
+
+const debug = debuglog('egg/mock/lib/app_handler');
 
 declare namespace globalThis {
   let __eggMockAppInstance: ApplicationUnittest | null;

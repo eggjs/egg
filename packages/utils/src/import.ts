@@ -4,8 +4,6 @@ import { pathToFileURL, fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
 
-import { resolve as _importMetaResolve } from 'import-meta-resolve'
-
 import { ImportResolveError } from './error/index.ts';
 
 const debug = debuglog('egg/utils/import');
@@ -150,6 +148,47 @@ function tryToResolveByDirnameFromPackage(
       return mainIndexFilePath;
     }
   }
+  // detect from exports
+  if (pkg.exports?.['.']) {
+    const pkgType: string = pkg.type ?? 'commonjs';
+    const defaultExport = pkg.exports['.'] as string | {
+      import?: string | {
+        default?: string;
+      };
+      require?: string | {
+        default?: string;
+      };
+    };
+    let mainIndexFilePath = '';
+    if (typeof defaultExport === 'string') {
+      mainIndexFilePath = path.join(dirname, defaultExport);
+    } else {
+      // "type": "module",
+      if (pkgType === 'module') {
+        if (typeof defaultExport.import === 'string') {
+          mainIndexFilePath = path.join(dirname, defaultExport.import);
+        } else if (typeof defaultExport.import?.default === 'string') {
+          mainIndexFilePath = path.join(dirname, defaultExport.import.default);
+        }
+      } else {
+        // "type": "commonjs",
+        if (typeof defaultExport.require === 'string') {
+          mainIndexFilePath = path.join(dirname, defaultExport.require);
+        } else if (typeof defaultExport.require?.default === 'string') {
+          mainIndexFilePath = path.join(dirname, defaultExport.require.default);
+        }
+      }
+    }
+    if (mainIndexFilePath && fs.existsSync(mainIndexFilePath)) {
+      debug(
+        '[tryToResolveByDirnameFromPackage] %o, use pkg.exports[.]: %o, pkg.type: %o',
+        mainIndexFilePath,
+        defaultExport,
+        pkgType
+      );
+      return mainIndexFilePath;
+    }
+  }
 
   // "type": "module", try index.mjs then index.js
   const type = pkg?.type ?? (isESM ? 'module' : 'commonjs');
@@ -247,6 +286,24 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   if (moduleFilePath) {
     return moduleFilePath;
   }
+
+  // try to resolve from parent directory and read package.json#exports
+  // e.g: /path/to/mock/app => /path/to/mock/src/app.ts
+  // {
+  //   "exports": {
+  //     "./app": "./src/app.ts"
+  //   }
+  // }
+  const parentDir = path.dirname(filepath);
+  const basename = path.basename(filepath);
+  const pkgFile = path.join(parentDir, 'package.json');
+  if (fs.existsSync(pkgFile)) {
+    const pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf-8'));
+    const key = `./${basename}`;
+    if (pkg.exports?.[key]) {
+      return path.join(parentDir, pkg.exports[key]);
+    }
+  }
 }
 
 // patch for vitest
@@ -261,8 +318,9 @@ const importMetaResolve = (
     process.env.VITEST === 'true'
   ) {
     // patch for vitest
-    const parentUrl = options?.paths?.[0] ? pathToFileURL(options.paths[0]).href : import.meta.url;
-    return _importMetaResolve(args[0], parentUrl);
+    return require.resolve(args[0], {
+      paths: options?.paths,
+    });
   }
 
   return import.meta.resolve(...args);
