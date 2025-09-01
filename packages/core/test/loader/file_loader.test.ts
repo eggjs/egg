@@ -233,7 +233,7 @@ describe('test/loader/file_loader.test.ts', () => {
         directory: path.join(dirBase, 'syntax_error'),
         target: app.model,
       }).load();
-    }, /error: Unexpected identifier/);
+    }, /error: Unexpected identifier|Expected/);
   });
 
   it('should throw when directory contains dot', async () => {

@@ -1,4 +1,4 @@
-import type { EggAppConfig, PowerPartial } from '../lib/types.js';
+import type { EggAppConfig, PowerPartial } from '../lib/types.ts';
 
 export default () => {
   return {

@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should expose properties 1`] = `
+[
+  "Agent",
+  "Dispatcher",
+  "FetchFactory",
+  "FormData",
+  "Headers",
+  "HttpClient",
+  "HttpClient2",
+  "HttpClientConnectTimeoutError",
+  "HttpClientRequestError",
+  "HttpClientRequestTimeoutError",
+  "MockAgent",
+  "ProxyAgent",
+  "Request",
+  "Response",
+  "USER_AGENT",
+  "WebFormData",
+  "curl",
+  "fetch",
+  "getDefaultHttpClient",
+  "getGlobalDispatcher",
+  "request",
+  "setGlobalDispatcher",
+]
+`;

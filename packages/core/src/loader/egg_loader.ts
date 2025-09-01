@@ -39,7 +39,7 @@ import type { Context, EggCore, MiddlewareFunc } from '../egg.js';
 import type { BaseContextClass } from '../base_context_class.js';
 import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.js';
 
-const debug = debuglog('@eggjs/core/loader/egg_loader');
+const debug = debuglog('egg/core/loader/egg_loader');
 
 const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
@@ -1669,7 +1669,6 @@ export class EggLoader {
 
   /**
    * @param {String} filepath - fullpath
-   * @returns {Object} exports
    * @private
    */
   async requireFile(filepath: string) {

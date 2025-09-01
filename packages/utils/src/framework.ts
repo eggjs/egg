@@ -2,10 +2,10 @@ import { debuglog } from 'node:util';
 import path from 'node:path';
 import assert from 'node:assert';
 import { existsSync } from 'node:fs';
-import { readJSONSync } from './utils.js';
-import { importResolve } from './import.js';
+import { readJSONSync } from './utils.ts';
+import { importResolve } from './import.ts';
 
-const debug = debuglog('@eggjs/utils/framework');
+const debug = debuglog('egg/utils/framework');
 
 const initCwd = process.cwd();
 

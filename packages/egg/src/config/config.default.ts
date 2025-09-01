@@ -1,8 +1,10 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+
 import type { EggAppInfo, Context } from '@eggjs/core';
-import type { EggAppConfig, PowerPartial } from '../lib/types.js';
-import { getSourceFile } from '../lib/utils.js';
+
+import type { EggAppConfig, PowerPartial } from '../lib/types.ts';
+import { getSourceFile } from '../lib/utils.ts';
 
 /**
  * The configuration of egg application, can be access by `app.config`

@@ -1,0 +1,34 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should expose properties 1`] = `
+[
+  "Agent",
+  "AgentWorkerLoader",
+  "AppWorkerLoader",
+  "Application",
+  "BaseContextClass",
+  "Boot",
+  "ClusterAgentWorkerError",
+  "ClusterWorkerExceptionError",
+  "Context",
+  "ContextHttpClient",
+  "Controller",
+  "CookieLimitExceedError",
+  "EggApplicationCore",
+  "Helper",
+  "HttpClient",
+  "Master",
+  "MessageUnhandledRejectionError",
+  "Request",
+  "Response",
+  "Router",
+  "Service",
+  "SingleModeAgent",
+  "SingleModeApplication",
+  "Singleton",
+  "Subscription",
+  "start",
+  "startCluster",
+  "startEgg",
+]
+`;

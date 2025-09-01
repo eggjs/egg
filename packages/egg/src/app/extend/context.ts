@@ -5,14 +5,15 @@ import {
 } from '@eggjs/core';
 import type { Cookies as ContextCookies } from '@eggjs/cookies';
 import type { EggLogger } from 'egg-logger';
-import type { Application } from '../../lib/application.js';
+
+import type { Application } from '../../lib/application.ts';
 import type {
   HttpClientRequestURL, HttpClientRequestOptions, HttpClient,
-} from '../../lib/core/httpclient.js';
-import type { BaseContextClass } from '../../lib//core/base_context_class.js';
-import type Request from './request.js';
-import type Response from './response.js';
-import type Helper from './helper.js';
+} from '../../lib/core/httpclient.ts';
+import type { BaseContextClass } from '../../lib//core/base_context_class.ts';
+import type Request from './request.ts';
+import type Response from './response.ts';
+import type Helper from './helper.ts';
 
 const HELPER = Symbol('ctx helper');
 const LOCALS = Symbol('ctx locals');

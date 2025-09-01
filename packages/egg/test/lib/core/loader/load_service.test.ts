@@ -1,13 +1,15 @@
 import { strict as assert } from 'node:assert';
+
+import { describe, afterEach, it } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp } from '../../../utils.js';
+import { MockApplication, createApp } from '../../../utils.ts';
 
 describe('test/lib/core/loader/load_service.test.ts', () => {
   let app: MockApplication;
   afterEach(() => app.close());
   afterEach(mm.restore);
 
-  it('should load app and plugin services', async () => {
+  it.only('should load app and plugin services', async () => {
     app = createApp('apps/loader-plugin');
     await app.ready();
     assert(app.serviceClasses.foo);

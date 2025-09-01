@@ -1,5 +1,8 @@
 import { strict as assert } from 'node:assert';
-import * as utils from '../../../src/lib/core/utils.js';
+
+import { describe, it } from 'vitest';
+
+import * as utils from '../../../src/lib/core/utils.ts';
 
 describe('test/lib/core/utils.test.js', () => {
   describe('convertObject()', () => {
