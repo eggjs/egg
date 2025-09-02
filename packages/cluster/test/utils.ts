@@ -3,7 +3,7 @@ import { mm, type MockClusterOptions } from '@eggjs/mock';
 
 export function cluster(baseDir: string, options: MockClusterOptions = {}) {
   return mm.cluster({
-    baseDir: path.join(import.meta.dirname, 'fixtures', baseDir),
+    baseDir: getFilepath(baseDir),
     framework: path.join(import.meta.dirname, '../../egg'),
     cache: false,
     opt: {

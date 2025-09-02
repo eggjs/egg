@@ -1,13 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    environment: 'node',
     include: ['test/**/*.test.{ts,js}'],
-    exclude: [
-      'test/fixtures/**',
-      '**/node_modules/**',
-      '**/dist/**',
-    ],
+    exclude: ['test/fixtures/**', '**/node_modules/**', '**/dist/**'],
   },
 });
