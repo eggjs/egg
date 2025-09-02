@@ -1,8 +1,10 @@
 import assert from 'node:assert';
+
 import { describe, it, afterEach } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 import { HttpClient } from 'urllib';
-import { getFilepath, cluster } from './utils.js';
+
+import { getFilepath, cluster } from './utils.ts';
 
 const httpclient = new HttpClient({ connect: { rejectUnauthorized: false } });
 

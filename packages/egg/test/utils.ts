@@ -148,7 +148,7 @@ export function getJSON(name: string) {
 }
 
 function formatOptions(name: string | MockOptions, options?: MockOptions) {
-  let baseDir;
+  let baseDir: string;
   if (typeof name === 'string') {
     baseDir = name;
   } else {

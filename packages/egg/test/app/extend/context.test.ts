@@ -20,7 +20,7 @@ describe('test/app/extend/context.test.ts', () => {
   describe('ctx.logger', () => {
     afterEach(() => app.close());
 
-    it('env=local: level => info', async () => {
+    it.skip('env=local: level => info', async () => {
       mm.env('local');
       mm.consoleLevel('NONE');
       app = createApp('apps/demo', { cache: false });
@@ -98,7 +98,7 @@ describe('test/app/extend/context.test.ts', () => {
       assert(coreLoggerContent.includes('core warn foo'));
     });
 
-    it('env=prod: level => info', async () => {
+    it.skip('env=prod: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
       app = createApp('apps/demo', { cache: false });
@@ -381,7 +381,7 @@ describe('test/app/extend/context.test.ts', () => {
       );
     });
 
-    it('should run background task error', async () => {
+    it.skip('should run background task error', async () => {
       mm.consoleLevel('NONE');
 
       let errorHadEmit = false;

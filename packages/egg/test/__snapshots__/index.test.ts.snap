@@ -23,8 +23,6 @@ exports[`should expose properties 1`] = `
   "Response",
   "Router",
   "Service",
-  "SingleModeAgent",
-  "SingleModeApplication",
   "Singleton",
   "Subscription",
   "start",

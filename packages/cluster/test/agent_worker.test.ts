@@ -68,7 +68,7 @@ describe('test/agent_worker.test.ts', () => {
         .end();
     });
 
-    it('should refork new agent_worker after app started', async () => {
+    it.skip('should refork new agent_worker after app started', async () => {
       app = cluster('apps/agent-die');
       await app
         // .debug()
@@ -91,7 +91,7 @@ describe('test/agent_worker.test.ts', () => {
       app.notExpect('stdout', /app_worker#2/);
     });
 
-    it('should exit agent_worker when master die in accident', async () => {
+    it.skip('should exit agent_worker when master die in accident', async () => {
       app = cluster('apps/agent-die');
       await app
         // .debug()

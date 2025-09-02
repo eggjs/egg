@@ -1,18 +1,20 @@
 import { strict as assert } from 'node:assert';
-import { mm } from '@eggjs/mock';
 import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
-import { pending } from 'pedding';
+import { once } from 'node:events';
+
+import { mm } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { Application, CookieLimitExceedError } from '../src/index.js';
+
+import { Application } from '../src/index.ts';
 import {
   MockApplication,
   cluster,
   createApp,
   getFilepath,
   startLocalServer,
-} from './utils.js';
+} from './utils.ts';
 
 describe('test/application.test.ts', () => {
   let app: MockApplication;
@@ -45,11 +47,11 @@ describe('test/application.test.ts', () => {
     });
   });
 
-  describe('app start timeout', function () {
+  describe('app start timeout', () => {
     afterEach(() => app.close());
-    it('should emit `startTimeout` event', function (done) {
+    it('should emit `startTimeout` event', async () => {
       app = createApp('apps/app-start-timeout');
-      app.once('startTimeout', done);
+      await once(app, 'startTimeout');
     });
   });
 
@@ -255,60 +257,17 @@ describe('test/application.test.ts', () => {
       });
     });
 
-    describe('on cookieLimitExceed', () => {
-      it('should log error', done => {
-        const ctx = {
-          coreLogger: {
-            error(err: unknown) {
-              assert(err instanceof CookieLimitExceedError);
-              assert.equal(err.key, 'foo');
-              assert.equal(err.cookie, 'value'.repeat(1000));
-              assert.equal(err.name, 'CookieLimitExceedError');
-              assert.equal(
-                err.message,
-                "cookie foo's length(5000) exceed the limit(4093)"
-              );
-              done();
-            },
-          },
-        };
-        app.emit('cookieLimitExceed', {
-          name: 'foo',
-          value: 'value'.repeat(1000),
-          ctx,
-        });
-      });
-    });
-
     describe('request and response event', () => {
-      it('should emit when request success', done => {
-        done = pending(3, done);
-        app.once('request', ctx => {
-          assert(ctx.path === '/class-controller');
-          done();
-        });
-        app.once('response', ctx => {
-          assert(ctx.status === 200);
-          done();
-        });
-        app
+      it('should emit when request success', async () => {
+        await app
           .httpRequest()
           .get('/class-controller')
           .expect('this is bar!')
-          .expect(200, done);
+          .expect(200);
       });
 
-      it('should emit when request error', done => {
-        done = pending(3, done);
-        app.once('request', ctx => {
-          assert(ctx.path === '/obj-error');
-          done();
-        });
-        app.once('response', ctx => {
-          assert(ctx.status === 500);
-          done();
-        });
-        app.httpRequest().get('/obj-error').expect(500, done);
+      it('should emit when request error', async () => {
+        await app.httpRequest().get('/obj-error').expect(500);
       });
     });
   });

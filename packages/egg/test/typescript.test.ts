@@ -1,8 +1,7 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
-// import coffee from 'coffee';
-// import { importResolve } from '@eggjs/utils';
-import { MockApplication, createApp } from './utils.js';
+
+import { MockApplication, createApp } from './utils.ts';
 
 describe('test/typescript.test.ts', () => {
   describe('compiler code', () => {
@@ -49,22 +48,20 @@ describe('test/typescript.test.ts', () => {
       ]);
     });
 
-    it('controller run ok', done => {
-      app
+    it('controller run ok', async () => {
+      await app
         .httpRequest()
         .get('/foo')
         .expect(200)
-        .expect({ env: 'unittest' })
-        .end(done);
+        .expect({ env: 'unittest' });
     });
 
-    it('controller of app.router run ok', done => {
-      app
+    it('controller of app.router run ok', async () => {
+      await app
         .httpRequest()
         .get('/test')
         .expect(200)
-        .expect({ env: 'unittest' })
-        .end(done);
+        .expect({ env: 'unittest' });
     });
   });
 

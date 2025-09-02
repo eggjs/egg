@@ -147,7 +147,6 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
     "@eggjs/koa": "catalog:",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "catalog:",
@@ -164,7 +163,6 @@
     "koa-static": "catalog:",
     "mm": "catalog:",
     "pedding": "catalog:",
-    "rimraf": "catalog:",
     "runscript": "catalog:",
     "sdk-base": "catalog:",
     "spy": "catalog:",

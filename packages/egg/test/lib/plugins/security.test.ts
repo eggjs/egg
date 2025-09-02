@@ -13,8 +13,8 @@ describe('test/lib/plugins/security.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should not check csrf', () => {
-      return app
+    it('should not check csrf', async () => {
+      await app
         .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
@@ -28,14 +28,14 @@ describe('test/lib/plugins/security.test.ts', () => {
 
   describe('security.csrf = true', () => {
     let app: MockApplication;
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/csrf-enable');
-      return app.ready();
+      await app.ready();
     });
     afterAll(() => app.close());
 
-    it('should check csrf', () => {
-      return app
+    it('should check csrf', async () => {
+      await app
         .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
@@ -46,14 +46,14 @@ describe('test/lib/plugins/security.test.ts', () => {
 
   describe('security.csrfIgnore', () => {
     let app: MockApplication;
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/csrf-ignore');
-      return app.ready();
+      await app.ready();
     });
     afterAll(() => app.close());
 
-    it('should not check csrf on /api/*', () => {
-      return app
+    it('should not check csrf on /api/*', async () => {
+      await app
         .httpRequest()
         .post('/api/user')
         .send({ name: 'fengmk2' })
@@ -64,8 +64,8 @@ describe('test/lib/plugins/security.test.ts', () => {
         });
     });
 
-    it('should not check csrf on /api/*.json', () => {
-      return app
+    it('should not check csrf on /api/*.json', async () => {
+      await app
         .httpRequest()
         .post('/api/user.json')
         .send({ name: 'fengmk2' })
@@ -76,10 +76,10 @@ describe('test/lib/plugins/security.test.ts', () => {
         });
     });
 
-    it('should check csrf on other.json', () => {
+    it('should check csrf on other.json', async () => {
       // use prod env to ignore extends properties like frames
       mm(app.config, 'env', 'prod');
-      return app
+      await app
         .httpRequest()
         .post('/apiuser.json')
         .set('accept', 'application/json')
@@ -90,8 +90,8 @@ describe('test/lib/plugins/security.test.ts', () => {
         .expect(403);
     });
 
-    it('should check csrf on other', () => {
-      return app
+    it('should check csrf on other', async () => {
+      await app
         .httpRequest()
         .post('/apiuser')
         .send({ name: 'fengmk2' })

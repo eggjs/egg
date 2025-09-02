@@ -4,7 +4,7 @@ import { scheduler } from 'node:timers/promises';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
-import { cluster, MockApplication } from '../utils.js';
+import { cluster, MockApplication } from '../utils.ts';
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
   <head><title>400 Bad Request</title></head>

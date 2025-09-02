@@ -1,6 +1,7 @@
 import { describe, it, afterEach } from 'vitest';
 import { MockApplication } from '@eggjs/mock';
-import { cluster } from './utils.js';
+
+import { cluster } from './utils.ts';
 
 describe('test/worker_threads.test.ts', () => {
   let app: MockApplication;
@@ -9,11 +10,11 @@ describe('test/worker_threads.test.ts', () => {
     afterEach(() => app && app.close());
 
     it('support config agent debug port', async () => {
-      app = cluster('apps/agent-worker-threads', { startMode: 'worker_threads' } as any);
+      app = cluster('apps/agent-worker-threads', {
+        startMode: 'worker_threads',
+      });
       app.debug();
-      return app
-        .expect('stdout', /workerId: \d+/)
-        .end();
+      return app.expect('stdout', /workerId: \d+/).end();
     });
 
     it('should exit when emit error during agent worker boot', () => {

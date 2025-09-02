@@ -1,8 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
-import { describe, it, beforeAll, afterAll } from 'vitest';
-import { MockApplication, createApp, getFilepath } from '../utils.js';
+
+import { describe, it, beforeAll } from 'vitest';
+
+import { MockApplication, createApp, getFilepath } from '../utils.ts';
 
 describe('test/cluster1/cluster-client-error.test.ts', () => {
   let app: MockApplication;
