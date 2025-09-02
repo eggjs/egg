@@ -1,15 +1,10 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { mm, MockClusterOptions } from '@eggjs/mock';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { mm, type MockClusterOptions } from '@eggjs/mock';
 
 export function cluster(baseDir: string, options: MockClusterOptions = {}) {
   return mm.cluster({
-    baseDir,
-    framework: path.join(__dirname, 'fixtures/egg'),
-    // eggPath: path.join(__dirname, '../node_modules/egg'),
+    baseDir: path.join(import.meta.dirname, 'fixtures', baseDir),
+    framework: path.join(import.meta.dirname, '../../egg'),
     cache: false,
     opt: {
       // clear execArgv from egg-bin
@@ -21,5 +16,5 @@ export function cluster(baseDir: string, options: MockClusterOptions = {}) {
 }
 
 export function getFilepath(name: string) {
-  return path.join(__dirname, 'fixtures', name);
+  return path.join(import.meta.dirname, 'fixtures', name);
 }

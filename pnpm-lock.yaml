@@ -118,7 +118,7 @@ catalogs:
       specifier: '5'
       version: 5.5.1
     detect-port:
-      specifier: ^2.1.0
+      specifier: 2.1.0
       version: 2.1.0
     dumi:
       specifier: ^2.4.17

@@ -1,10 +1,12 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import { Server, AddressInfo } from 'node:net';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_httpclient_next.test.ts', () => {
   let app: MockApplication;
@@ -68,14 +70,16 @@ describe('test/mock_httpclient_next.test.ts', () => {
 
   it('should mock url using app.mockAgent().intercept()', async () => {
     app.mockCsrf();
-    app.mockAgent()
+    app
+      .mockAgent()
       .get(new URL(url).origin)
       .intercept({
         path: '/mock_url',
         method: 'GET',
       })
       .reply(200, 'mock GET response');
-    app.mockAgent()
+    app
+      .mockAgent()
       .get(new URL(url).origin)
       .intercept({
         path: '/mock_url',
@@ -98,16 +102,14 @@ describe('test/mock_httpclient_next.test.ts', () => {
       data: fs.readFileSync(textFile),
     });
 
-    const res = await request(server)
-      .get('/streaming')
-      .expect(200);
+    const res = await request(server).get('/streaming').expect(200);
     assert.match(res.body.toString(), /should support on streaming/);
     assert.equal(res.body.toString(), fs.readFileSync(textFile, 'utf8'));
   });
 
   it('should mock url support multi method', async () => {
     app.mockCsrf();
-    app.mockHttpclient(url, [ 'get', 'post' ], {
+    app.mockHttpclient(url, ['get', 'post'], {
       data: Buffer.from('mock response'),
     });
 
@@ -262,13 +264,17 @@ describe('test/mock_httpclient_next.test.ts', () => {
       .expect(200);
     await app.mockAgentRestore();
 
-    app.mockAgent().get(new URL(url).origin)
+    app
+      .mockAgent()
+      .get(new URL(url).origin)
       .intercept({
         path: '/mock_url?foo=foo1',
         method: 'GET',
       })
       .reply(200, 'mock new foo1');
-    app.mockAgent().get(new URL(url).origin)
+    app
+      .mockAgent()
+      .get(new URL(url).origin)
       .intercept({
         path: '/mock_url?foo=foo2',
         method: 'GET',
@@ -446,10 +452,7 @@ describe('test/mock_httpclient_next.test.ts', () => {
     app.mockHttpclient(url, {
       data: 'mock url test',
     });
-    await request(server)
-      .get('/mock_urllib')
-      .expect({})
-      .expect(200);
+    await request(server).get('/mock_urllib').expect({}).expect(200);
   });
 
   it('should mock url path support RegExp', async () => {
@@ -469,9 +472,13 @@ describe('test/mock_httpclient_next.test.ts', () => {
 
   it('should mock full url support RegExp', async () => {
     app.mockCsrf();
-    app.mockHttpclient(/http:\/\/127\.0\.0\.1:\d+\/mock_url$/, [ 'get', 'post' ], {
-      data: Buffer.from('mock full 127 url response'),
-    });
+    app.mockHttpclient(
+      /http:\/\/127\.0\.0\.1:\d+\/mock_url$/,
+      ['get', 'post'],
+      {
+        data: Buffer.from('mock full 127 url response'),
+      }
+    );
 
     await request(server)
       .get('/urllib')

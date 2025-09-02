@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/app_proxy.test.ts > messenger binding on cluster() mode > should send message from agent to app 1`] = `
+[
+  "send action to all app",
+  "send data to a random app",
+  "send data to app when server started",
+]
+`;

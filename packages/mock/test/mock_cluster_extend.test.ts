@@ -1,16 +1,19 @@
 import { strict as assert } from 'node:assert';
-import mm, { MockApplication } from '../src/index.js';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_cluster_extend.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = mm.cluster({
-      baseDir: 'demo',
+      baseDir: getFixtures('demo'),
       coverage: false,
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   afterEach(mm.restore);
 

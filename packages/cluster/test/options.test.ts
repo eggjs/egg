@@ -1,15 +1,15 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
+
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
-import { parseOptions } from '../src/utils/options.js';
-import { getFilepath, cluster } from './utils.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { parseOptions } from '../src/utils/options.ts';
+import { getFilepath, cluster } from './utils.ts';
+
+const __dirname = import.meta.dirname;
 
 describe('test/options.test.ts', () => {
   afterEach(mm.restore);
@@ -100,12 +100,12 @@ describe('test/options.test.ts', () => {
       assert(options.isDebug === undefined);
     });
     it('--inspect', async () => {
-      mm(process, 'execArgv', [ '--inspect=9229' ]);
+      mm(process, 'execArgv', ['--inspect=9229']);
       const options = await parseOptions({});
       assert(options.isDebug === true);
     });
     it('--debug', async () => {
-      mm(process, 'execArgv', [ '--debug=5858' ]);
+      mm(process, 'execArgv', ['--debug=5858']);
       const options = await parseOptions({});
       assert(options.isDebug === true);
     });
@@ -195,7 +195,10 @@ describe('test/options.test.ts', () => {
     });
 
     it('should get from pkg.egg.framework but not exist', async () => {
-      const baseDir = path.join(__dirname, 'fixtures/apps/framework-pkg-egg-noexist');
+      const baseDir = path.join(
+        __dirname,
+        'fixtures/apps/framework-pkg-egg-noexist'
+      );
       try {
         await parseOptions({
           baseDir,
@@ -211,7 +214,10 @@ describe('test/options.test.ts', () => {
     });
 
     it('should get egg by default', async () => {
-      const baseDir = path.join(__dirname, 'fixtures/apps/framework-egg-default');
+      const baseDir = path.join(
+        __dirname,
+        'fixtures/apps/framework-egg-default'
+      );
       const options = await parseOptions({
         baseDir,
       });

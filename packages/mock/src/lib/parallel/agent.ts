@@ -8,7 +8,7 @@ import type { EggCore } from '@eggjs/core';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
-import { MockOptions, MockApplicationOptions } from '../types.ts';
+import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep, rimraf } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
 import { APP_INIT } from './util.ts';
@@ -52,9 +52,11 @@ export class MockAgent extends Base {
     this.options.clusterPort = await detectPort();
     process.env.CLUSTER_PORT = String(this.options.clusterPort);
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Agent }: { Agent: typeof EggCore } = await importModule(this.options.framework);
+    const { Agent }: { Agent: typeof EggCore } = await importModule(
+      this.options.framework
+    );
 
-    const agent = this._instance = new Agent({ ...this.options });
+    const agent = (this._instance = new Agent({ ...this.options }));
 
     // egg-mock plugin need to override egg context
     Object.assign(agent.context, context);

@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_env.test.ts', () => {
   let app: MockApplication;
@@ -42,4 +44,3 @@ describe('test/mock_env.test.ts', () => {
     assert.equal(app.config.serverEnv, undefined);
   });
 });
-

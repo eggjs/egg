@@ -55,13 +55,15 @@ export function isSupportTypeScript() {
     _supportTypeScript =
       extensions['.ts'] !== undefined ||
       process.env.VITEST === 'true' ||
-      process.env.EGG_TS_ENABLE === 'true';
+      process.env.EGG_TS_ENABLE === 'true' ||
+      parseInt(process.versions.node.split('.', 1)[0], 10) >= 22;
     debug(
-      '[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j',
+      '[isSupportTypeScript] %o, extensions: %j, process.env.VITEST: %j, process.env.EGG_TS_ENABLE: %j, node version: %s',
       _supportTypeScript,
       Object.keys(extensions),
       process.env.VITEST,
-      process.env.EGG_TS_ENABLE
+      process.env.EGG_TS_ENABLE,
+      process.versions.node
     );
   }
   return _supportTypeScript;

@@ -4,16 +4,6 @@ packages:
   - site
 
 catalog:
-  '@eggjs/router': ^3.0.5
-  '@types/js-yaml': '4'
-  'await-event': '2'
-  'gals': '1'
-  'get-ready': ^3.1.0
-  'globby': ^11.0.2
-  'js-yaml': '3'
-  'node-homedir': ^2.0.0
-  'ready-callback': ^4.0.0
-  'tsconfig-paths': ^4.2.0
   '@eggjs/bin': ^7.0.2
   '@eggjs/cluster': ^3.0.1
   '@eggjs/cookies': ^3.1.0
@@ -25,22 +15,36 @@ catalog:
   '@eggjs/mock': ^6.0.7
   '@eggjs/multipart': ^4.0.0
   '@eggjs/onerror': ^3.0.0
+  '@eggjs/router': ^3.0.5
   '@eggjs/schedule': ^5.0.2
   '@eggjs/security': ^4.0.0
   '@eggjs/session': ^4.0.1
   '@eggjs/static': ^3.0.0
   '@eggjs/supertest': ^8.2.0
+  '@eggjs/tegg': ^3.2.2
+  '@eggjs/tegg-config': ^3.2.2
+  '@eggjs/tegg-controller-plugin': ^3.2.2
+  '@eggjs/tegg-plugin': ^3.2.2
   '@eggjs/tsconfig': ^2.0.0
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
+  '@fengmk2/ps-tree': ^2.0.1
+  '@types/js-yaml': '4'
   '@types/koa-bodyparser': ^4.3.12
+  '@types/methods': ^1.1.4
   '@types/mocha': ^10.0.10
   '@types/node': '24'
+  '@vitest/coverage-v8': beta
+  '@vitest/ui': beta
   address: '2'
   assert-file: '1'
+  await-event: '2'
+  cfork: ^2.0.0
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
+  cluster-reload: ^2.0.0
   coffee: '5'
+  detect-port: ^2.1.0
   dumi: ^2.4.17
   egg-errors: ^2.3.2
   egg-logger: ^3.5.0
@@ -50,45 +54,40 @@ catalog:
   egg-view-nunjucks: ^2.3.0
   extend2: ^4.0.0
   formstream: ^1.5.1
+  gals: '1'
+  get-ready: ^3.1.0
+  globby: ^11.0.2
   graceful: ^2.0.0
+  graceful-process: ^2.0.0
   humanize-ms: ^2.0.0
+  husky: '9'
   is-type-of: ^2.2.0
+  js-yaml: '3'
   koa-bodyparser: ^4.4.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
+  lint-staged: '15'
+  merge-descriptors: ^2.0.0
   mm: ^4.0.2
+  mocha: ^11.0.1
+  node-homedir: ^2.0.0
   onelogger: ^1.0.1
   oxlint: ^1.14.0
   oxlint-tsgolint: ^0.1.5
   pedding: ^2.0.1
   performance-ms: ^1.1.0
   prettier: ^3.4.2
+  ready-callback: ^4.0.0
   rimraf: '6'
   runscript: ^2.0.1
   sdk-base: ^5.0.1
   sendmessage: ^3.0.1
   spy: ^1.0.0
+  terminal-link: ^2.1.1
+  tsconfig-paths: ^4.2.0
   tsd: ^0.31.2
   tsdown: ^0.14.2
   typescript: '5'
   urllib: ^4.6.11
   utility: ^2.5.0
   vitest: beta
-  '@vitest/ui': beta
-  '@vitest/coverage-v8': beta
-  'husky': '9'
-  'lint-staged': '15'
-  '@eggjs/tegg': ^3.2.2
-  '@eggjs/tegg-config': ^3.2.2
-  '@eggjs/tegg-controller-plugin': ^3.2.2
-  '@eggjs/tegg-plugin': ^3.2.2
-  '@types/methods': ^1.1.4
-  'detect-port': ^2.1.0
-  'merge-descriptors': ^2.0.0
-  'mocha': ^11.0.1
-  # Cluster package dependencies
-  '@fengmk2/ps-tree': ^2.0.1
-  'cfork': ^2.0.0
-  'cluster-reload': ^2.0.0
-  'graceful-process': ^2.0.0
-  'terminal-link': ^2.1.1

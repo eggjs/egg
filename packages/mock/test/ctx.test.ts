@@ -1,7 +1,10 @@
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import { getFixtures } from './helper.js';
-import mm, { MockApplication } from '../src/index.js';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import { getFixtures } from './helper.ts';
+import mm, { MockApplication } from '../src/index.ts';
 
 const fixtures = getFixtures('');
 
@@ -9,13 +12,13 @@ describe('test/ctx.test.ts', () => {
   afterEach(mm.restore);
 
   let app: MockApplication;
-  before(done => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: path.join(fixtures, 'demo'),
     });
-    app.ready(done);
+    await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should has logger, app, request', () => {
     const ctx = app.mockContext();

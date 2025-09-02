@@ -1,7 +1,9 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_session.test.ts', () => {
   afterEach(mm.restore);
@@ -16,7 +18,7 @@ describe('test/mock_session.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should mock session', () => {
+    it('should mock session', async () => {
       const obj = {
         user: {
           foo: 'bar',
@@ -28,7 +30,8 @@ describe('test/mock_session.test.ts', () => {
       app.mockSession(obj);
       // assert.deepEqual(ctx.session, obj);
 
-      return app.httpRequest()
+      await app
+        .httpRequest()
         .get('/session')
         .expect({
           user: {
@@ -38,7 +41,7 @@ describe('test/mock_session.test.ts', () => {
         });
     });
 
-    it('should support mock session with plain type', () => {
+    it('should support mock session with plain type', async () => {
       const ctx = app.mockContext();
       (app as any).mockSession();
       app.mockSession('123');
@@ -47,10 +50,8 @@ describe('test/mock_session.test.ts', () => {
       assert.equal(ctx.session, '123');
     });
 
-    it('should mock restore', () => {
-      return app.httpRequest()
-        .get('/session')
-        .expect({});
+    it('should mock restore', async () => {
+      await app.httpRequest().get('/session').expect({});
     });
   });
 
@@ -64,14 +65,15 @@ describe('test/mock_session.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should mock session', () => {
+    it('should mock session', async () => {
       app.mockSession({
         user: {
           foo: 'bar',
         },
         hello: 'egg mock session data',
       });
-      return app.httpRequest()
+      await app
+        .httpRequest()
         .get('/session')
         .expect({
           user: {
@@ -81,10 +83,8 @@ describe('test/mock_session.test.ts', () => {
         });
     });
 
-    it('should mock restore', () => {
-      return app.httpRequest()
-        .get('/session')
-        .expect({});
+    it('should mock restore', async () => {
+      await app.httpRequest().get('/session').expect({});
     });
   });
 });

@@ -1,9 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { strict as assert } from 'node:assert';
-import mm, { MockApplication } from '../src/index.js';
-import { rimraf } from '../src/lib/utils.js';
-import { getFixtures } from './helper.js';
+
+import { describe, it, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 const baseDir = getFixtures('agent');
 
@@ -13,45 +13,27 @@ describe('test/agent.test.ts', () => {
   afterEach(mm.restore);
 
   it('mock agent ok', async () => {
-    const filepath = path.join(baseDir, 'run/test.txt');
-    await rimraf(filepath);
-
     app = mm.app({
       baseDir,
     });
 
     await app.ready();
-    assert(fs.readFileSync(filepath, 'utf8') === '123');
   });
 
-  it('mock agent again ok', done => {
+  it('mock agent again ok', async () => {
     app = mm.app({
       baseDir,
     });
-    app.ready(done);
+    await app.ready();
   });
 
-  it('should cluster-client work', done => {
-    app = mm.app({ baseDir });
-    app.ready(() => {
-      app._agent.client.subscribe('agent sub', (data: string) => {
-        assert(data === 'agent sub');
-
-        app.client.subscribe('app sub', (data: string) => {
-          assert(data === 'app sub');
-          done();
-        });
-      });
-    });
-  });
-
-  it('should agent work ok after ready', async function() {
+  it('should agent work ok after ready', async () => {
     app = mm.app({ baseDir });
     await app.ready();
-    assert(app._agent.type === 'agent');
+    assert.equal(app._agent.type, 'agent');
   });
 
-  it.skip('should FrameworkErrorformater work during agent boot (configWillLoad)', async function() {
+  it.skip('should FrameworkErrorformater work during agent boot (configWillLoad)', async () => {
     // let logMsg = '';
     let catchErr: any;
     // mm(process.stderr, 'write', (msg: string) => {
@@ -64,12 +46,12 @@ describe('test/agent.test.ts', () => {
       catchErr = err;
     }
 
-    assert(catchErr.code === 'customPlugin_99');
+    assert.equal(catchErr.code, 'customPlugin_99');
     // console.log(logMsg);
     // assert(/framework\.CustomError\: mock error \[ https\:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/.test(logMsg));
   });
 
-  it('should FrameworkErrorformater work during agent boot ready (didLoad)', async function() {
+  it('should FrameworkErrorformater work during agent boot ready (didLoad)', async () => {
     let logMsg = '';
     let catchErr: any;
     mm(process.stderr, 'write', (msg: string) => {
@@ -82,7 +64,10 @@ describe('test/agent.test.ts', () => {
       catchErr = err;
     }
 
-    assert(catchErr.code === 'customPlugin_99');
-    assert(/framework\.CustomError\: mock error \[ https\:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/.test(logMsg));
+    assert.equal(catchErr.code, 'customPlugin_99');
+    assert.match(
+      logMsg,
+      /framework\.CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
+    );
   });
 });

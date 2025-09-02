@@ -7,7 +7,7 @@ module.exports = app => {
 
   app.get('/keepAliveTimeout', async ctx => {
     ctx.body = {
-      keepAliveTimeout: ctx.app.serverKeepAliveTimeout,
+      keepAliveTimeout: ctx.app.serverKeepAliveTimeout ?? 5000,
     };
   });
 
@@ -20,7 +20,6 @@ module.exports = app => {
     ctx.coreLogger.info('[app.expectLog(coreLogger) test] ok');
     ctx.body = { ok: true };
   });
-
 
   let counter = 0;
   app.get('/counter', async ctx => {

@@ -1,9 +1,12 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
-import mm from '../src/index.js';
-import { formatOptions } from '../src/lib/format_options.js';
-import { getSourceDirname } from '../src/lib/utils.js';
-import { getFixtures } from './helper.js';
+
+import { describe, it, afterEach } from 'vitest';
+
+import mm from '../src/index.ts';
+import { formatOptions } from '../src/lib/format_options.ts';
+import { getSourceDirname } from '../src/lib/utils.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/format_options.test.ts', () => {
   afterEach(mm.restore);
@@ -28,7 +31,7 @@ describe('test/format_options.test.ts', () => {
       formatOptions();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(/D:[\\|\/]projectWorkSpace[\\|\/]summer/.test(err.message));
+      assert(/D:[\\|/]projectWorkSpace[\\|/]summer/.test(err.message));
     }
   });
 
@@ -59,7 +62,7 @@ describe('test/format_options.test.ts', () => {
   });
 
   it('should return options when set short baseDir', () => {
-    const options = formatOptions({ baseDir: 'apps/foo' });
+    const options = formatOptions({ baseDir: getFixtures('apps/foo') });
     assert(options);
     assert(options.baseDir === getFixtures('apps/foo'));
   });
@@ -132,11 +135,14 @@ describe('test/format_options.test.ts', () => {
     mm(process, 'cwd', () => {
       return baseDir;
     });
-    assert.throws(() => {
-      formatOptions({
-        plugin: true,
-      });
-    }, new RegExp(`should set "eggPlugin" property in ${baseDir}/package.json`));
+    assert.throws(
+      () => {
+        formatOptions({
+          plugin: true,
+        });
+      },
+      new RegExp(`should set "eggPlugin" property in ${baseDir}/package.json`)
+    );
   });
 
   it('should mock process.env.HOME when EGG_SERVER_ENV is default, test, prod', () => {
