@@ -1,9 +1,10 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
+
+import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { createApp, MockApplication, getFilepath } from '../../utils.js';
+import { createApp, MockApplication, getFilepath } from '../../utils.ts';
 
 describe('test/lib/plugins/multipart.test.ts', () => {
   let app: MockApplication;
@@ -11,25 +12,22 @@ describe('test/lib/plugins/multipart.test.ts', () => {
   let cookies: string;
   let host: string;
   let server: any;
-  beforeAll(() => {
+  beforeAll(async () => {
     app = createApp('apps/multipart');
-    return app.ready();
-  });
-  beforeAll(done => {
-    server = app.listen();
-    request(server)
-      .get('/')
-      .expect(200, (err, res) => {
-        csrfToken = res.headers['x-csrf'];
-        cookies = (res.headers['set-cookie'] as any).join(';');
-        host = `http://127.0.0.1:${server.address().port}`;
-        done(err);
-      });
+    await app.ready();
   });
 
-  afterAll(() => {
+  beforeAll(async () => {
+    server = app.listen();
+    const res = await request(server).get('/').expect(200);
+    csrfToken = res.headers['x-csrf'];
+    cookies = (res.headers['set-cookie'] as any).join(';');
+    host = `http://127.0.0.1:${server.address().port}`;
+  });
+
+  afterAll(async () => {
     server.close();
-    return app.close();
+    await app.close();
   });
 
   it('should upload with csrf', async () => {

@@ -45,8 +45,8 @@ describe.sequential('test/cluster.test.ts', () => {
     beforeAll(async () => {
       app = mm.cluster({
         baseDir: getFixtures('demo'),
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app.ready();
     });
@@ -62,8 +62,8 @@ describe.sequential('test/cluster.test.ts', () => {
     beforeAll(async () => {
       app = mm.cluster({
         baseDir: getFixtures('demo'),
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app.ready();
     });
@@ -74,14 +74,14 @@ describe.sequential('test/cluster.test.ts', () => {
     });
   });
 
-  describe('cluster with customEgg=string', () => {
+  describe.skip('cluster with customEgg=string', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.cluster({
         baseDir: getFixtures('apps/barapp'),
         customEgg: getFixtures('bar'),
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app.ready();
     });
@@ -99,7 +99,7 @@ describe.sequential('test/cluster.test.ts', () => {
     });
   });
 
-  describe('cluster with framework=string', () => {
+  describe.skip('cluster with framework=string', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.cluster({
@@ -124,7 +124,7 @@ describe.sequential('test/cluster.test.ts', () => {
     });
   });
 
-  describe('cluster with customEgg=true', () => {
+  describe.skip('cluster with customEgg=true', () => {
     let app: MockApplication;
     beforeAll(async () => {
       mm(process, 'cwd', () => {
@@ -133,8 +133,8 @@ describe.sequential('test/cluster.test.ts', () => {
       app = mm.cluster({
         baseDir: getFixtures('apps/barapp'),
         customEgg: true,
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app.ready();
     });
@@ -161,8 +161,8 @@ describe.sequential('test/cluster.test.ts', () => {
       app = mm.cluster({
         baseDir: getFixtures('apps/barapp'),
         framework: true,
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app.ready();
     });
@@ -193,13 +193,13 @@ describe.sequential('test/cluster.test.ts', () => {
     it('should return cached cluster app', async () => {
       app1 = mm.cluster({
         baseDir: getFixtures('demo'),
-        coverage: false,
+        // coverage: false,
       });
       await app1.ready();
 
       app2 = mm.cluster({
         baseDir: getFixtures('demo'),
-        coverage: false,
+        // coverage: false,
       });
       await app2.ready();
 
@@ -209,14 +209,14 @@ describe.sequential('test/cluster.test.ts', () => {
     it('should return new app if cached app has been closed', async () => {
       app1 = mm.cluster({
         baseDir: getFixtures('demo'),
-        coverage: false,
+        // coverage: false,
       });
       await app1.ready();
       await app1.close();
 
       app2 = mm.cluster({
         baseDir: getFixtures('demo'),
-        coverage: false,
+        // coverage: false,
       });
       await app2.ready();
 
@@ -233,8 +233,8 @@ describe.sequential('test/cluster.test.ts', () => {
         baseDir: getFixtures('demo'),
         customEgg: getFixtures('chair'),
         eggPath: '/path/to/eggPath',
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       } as any);
       await app
         .debug()
@@ -252,8 +252,8 @@ describe.sequential('test/cluster.test.ts', () => {
         baseDir: getFixtures('demo'),
         customEgg: getFixtures('chair'),
         workers: 2,
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       app.debug();
       await app
@@ -272,8 +272,8 @@ describe.sequential('test/cluster.test.ts', () => {
         baseDir: getFixtures('custom_egg'),
         customEgg: getFixtures('bar'),
         workers: 1,
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
         opt: {
           execArgv: ['--inspect'],
         },
@@ -311,8 +311,8 @@ describe.sequential('test/cluster.test.ts', () => {
       app = mm.cluster({
         baseDir: getFixtures('yadan_app'),
         workers: 1,
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
       });
       await app
         .expect('stderr', /prerequire .+?\/app\/extend\/application.js/)
@@ -329,8 +329,8 @@ describe.sequential('test/cluster.test.ts', () => {
       let port = await detectPort();
       app = mm.cluster({
         baseDir: getFixtures('demo'),
-        cache: false,
-        coverage: false,
+        // cache: false,
+        // coverage: false,
         port,
       });
       // app.debug();

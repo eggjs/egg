@@ -196,7 +196,7 @@ export class ClusterApplication extends Coffee {
 
     const proc = this.proc;
     const baseDir = this.baseDir;
-    if (proc.connected) {
+    if (proc?.connected) {
       proc.kill('SIGTERM');
       await once(proc, 'exit');
     }

@@ -40,21 +40,25 @@ export function getFrameworkPath(options: Options): string {
     }
     // 1.2 framework is a npm package that required by application
     // framework: 'frameworkName'
-    return assertAndReturn(framework, moduleDir);
+    return assertAndReturn(framework, moduleDir, baseDir);
   }
 
   const pkg = readJSONSync(pkgPath);
   // 2. framework is not specified
   // 2.1 use framework name from pkg.egg.framework
   if (pkg.egg?.framework) {
-    return assertAndReturn(pkg.egg.framework, moduleDir);
+    return assertAndReturn(pkg.egg.framework, moduleDir, baseDir);
   }
 
   // 2.2 use egg by default
-  return assertAndReturn('egg', moduleDir);
+  return assertAndReturn('egg', moduleDir, baseDir);
 }
 
-function assertAndReturn(frameworkName: string, moduleDir: string) {
+function assertAndReturn(
+  frameworkName: string,
+  moduleDir: string,
+  baseDir: string
+) {
   const moduleDirs = new Set([
     moduleDir,
     // find framework from process.cwd, especially for test,
@@ -70,26 +74,31 @@ function assertAndReturn(frameworkName: string, moduleDir: string) {
     // if frameworkName is scoped package, like @ali/egg
     if (frameworkName.startsWith('@') && frameworkName.includes('/')) {
       globalModuleDir = path.join(
-        importResolve(`${frameworkName}/package.json`),
+        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
         '../../..'
       );
     } else {
       globalModuleDir = path.join(
-        importResolve(`${frameworkName}/package.json`),
+        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
         '../..'
       );
     }
     moduleDirs.add(globalModuleDir);
-  } catch (err) {
+  } catch {
     // ignore
-    debug('importResolve %s on %s error: %s', frameworkName, moduleDir, err);
+    // debug('importResolve %s on %s error: %s', frameworkName, moduleDir, err);
   }
   for (const moduleDir of moduleDirs) {
     const frameworkPath = path.join(moduleDir, frameworkName);
     if (existsSync(frameworkPath)) {
-      debug('[assertAndReturn] frameworkPath: %s', frameworkPath);
+      debug(
+        '[assertAndReturn] frameworkPath: %s, moduleDirs: %o',
+        frameworkPath,
+        moduleDirs
+      );
       return frameworkPath;
     }
   }
+  // console.error('framework: %o is not found in: %j, cwd: %s, baseDir: %s', frameworkName, Array.from(moduleDirs), process.cwd(), baseDir);
   throw new Error(`${frameworkName} is not found in ${Array.from(moduleDirs)}`);
 }

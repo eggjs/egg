@@ -118,7 +118,7 @@ catalogs:
       specifier: '5'
       version: 5.5.1
     detect-port:
-      specifier: 2.1.0
+      specifier: ^2.1.0
       version: 2.1.0
     dumi:
       specifier: ^2.4.17
@@ -579,9 +579,6 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0
     devDependencies:
-      '@eggjs/bin':
-        specifier: 'catalog:'
-        version: 7.3.1(@eggjs/mock@packages+mock)(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@24.3.0)(typescript@5.9.2)
       '@eggjs/koa':
         specifier: 'catalog:'
         version: 2.22.2
@@ -630,9 +627,6 @@ importers:
       pedding:
         specifier: 'catalog:'
         version: 2.0.1
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.0.1
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
@@ -15593,33 +15587,6 @@ snapshots:
       utility: 2.5.0
     optionalDependencies:
       '@eggjs/mock': 6.0.7(mocha@11.7.1)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - monocart-coverage-reports
-      - typescript
-
-  '@eggjs/bin@7.3.1(@eggjs/mock@packages+mock)(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@24.3.0)(typescript@5.9.2)':
-    dependencies:
-      '@eggjs/utils': 4.4.1
-      '@oclif/core': 4.5.2
-      '@types/mocha': 10.0.10
-      '@types/supertest': 6.0.3
-      c8: 10.1.3
-      ci-parallel-vars: 1.0.1
-      detect-port: 2.1.0
-      egg-ts-helper: 3.1.1(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@24.3.0)
-      globby: 11.1.0
-      jest-changed-files: 29.7.0
-      mocha: 11.7.1
-      mochawesome-with-mocha: 8.0.0
-      runscript: 2.0.1
-      ts-node: 10.9.2(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@24.3.0)(typescript@5.9.2)
-      tsconfig-paths: 4.2.0
-      utility: 2.5.0
-    optionalDependencies:
-      '@eggjs/mock': link:packages/mock
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'

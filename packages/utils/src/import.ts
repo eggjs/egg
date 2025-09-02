@@ -314,15 +314,31 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   }
 }
 
+function importMetaResolveWithPaths(packageName: string, paths: string[]) {
+  // let lastError: Error | undefined;
+  // for (const p of paths) {
+  //   try {
+  //     return import.meta.resolve(packageName, pathToFileURL(p).href);
+  //   } catch (err) {
+  //     lastError = err as Error;
+  //   }
+  // }
+  return import.meta.resolve(packageName);
+}
+
 export function importResolve(
   filepath: string,
   options?: ImportResolveOptions
 ) {
   // find *.json or CommonJS module by require.resolve
   // e.g.: importResolve('egg/package.json', { paths })
-  const cwd = process.cwd();
-  const paths = options?.paths ?? [cwd];
-  debug('[importResolve] filepath: %o, options: %o', filepath, options);
+  const paths = options?.paths ?? [process.cwd()];
+  debug(
+    '[importResolve] filepath: %o, options: %j, paths: %j',
+    filepath,
+    options,
+    paths
+  );
 
   let moduleFilePath: string | undefined;
   const isAbsolute = path.isAbsolute(filepath);
@@ -404,7 +420,7 @@ export function importResolve(
   } else {
     if (supportImportMetaResolve) {
       try {
-        moduleFilePath = import.meta.resolve(filepath);
+        moduleFilePath = importMetaResolveWithPaths(filepath, paths);
       } catch (err) {
         debug(
           '[importResolve:error] import.meta.resolve %o => %o, options: %o',

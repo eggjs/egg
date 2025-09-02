@@ -7,7 +7,7 @@ export default defineConfig({
     exclude: ['**/test/fixtures/**', '**/node_modules/**', '**/dist/**'],
     coverage: {
       provider: 'v8',
-      exclude: ['**/test/fixtures/**'],
+      exclude: ['**/test/**'],
     },
   },
 });

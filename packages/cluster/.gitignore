@@ -13,3 +13,4 @@ package-lock.json
 .eslintcache
 dist
 coverage
+!test/fixtures/apps/framework-pkg-egg/node_modules

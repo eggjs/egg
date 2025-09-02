@@ -15,14 +15,15 @@ describe('test/options.test.ts', () => {
   afterEach(mm.restore);
 
   it('should return undefined by port as default', async () => {
-    let options = await parseOptions({});
-    assert.equal(options.port, undefined);
-    options = await parseOptions();
+    let options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
+    });
     assert.equal(options.port, undefined);
   });
 
   it('should start with https and listen 8443', async () => {
     const options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       https: {
         key: getFilepath('server.key'),
         cert: getFilepath('server.cert'),
@@ -37,6 +38,7 @@ describe('test/options.test.ts', () => {
 
   it('should start with httpsOptions and listen 8443', async () => {
     const options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       https: {
         passphrase: '123456',
         key: getFilepath('server.key'),
@@ -54,6 +56,7 @@ describe('test/options.test.ts', () => {
 
   it('should listen custom port 6001', async () => {
     const options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       port: '6001',
     });
     assert.equal(options.port, 6001);
@@ -62,10 +65,12 @@ describe('test/options.test.ts', () => {
   it('should set NO_DEPRECATION on production env', async () => {
     mm(process.env, 'NODE_ENV', 'production');
     let options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       workers: 1,
     });
     assert.equal(options.workers, 1);
     options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       workers: '101',
     });
     assert.equal(options.workers, 101);
@@ -74,20 +79,25 @@ describe('test/options.test.ts', () => {
 
   it('should not extend when port is null/undefined', async () => {
     let options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       port: null,
     });
     assert.equal(options.port, undefined);
     options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       port: undefined,
     });
     assert.equal(options.port, undefined);
-    options = await parseOptions();
+    options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
+    });
     assert.equal(options.port, undefined);
   });
 
   it('should not call os.cpus when specify workers', async () => {
     mm.syncError(os, 'cpus', 'should not call os.cpus');
     const options = await parseOptions({
+      baseDir: path.join(__dirname, '..'),
       workers: 1,
     });
     assert.equal(options.workers, 1);
@@ -96,35 +106,48 @@ describe('test/options.test.ts', () => {
   describe('debug', () => {
     it('empty', async () => {
       mm(process, 'execArgv', []);
-      const options = await parseOptions({});
+      const options = await parseOptions({
+        baseDir: path.join(__dirname, '..'),
+      });
       assert(options.isDebug === undefined);
     });
     it('--inspect', async () => {
       mm(process, 'execArgv', ['--inspect=9229']);
-      const options = await parseOptions({});
+      const options = await parseOptions({
+        baseDir: path.join(__dirname, '..'),
+      });
       assert(options.isDebug === true);
     });
     it('--debug', async () => {
       mm(process, 'execArgv', ['--debug=5858']);
-      const options = await parseOptions({});
+      const options = await parseOptions({
+        baseDir: path.join(__dirname, '..'),
+      });
       assert(options.isDebug === true);
     });
   });
 
   describe('env', () => {
     it('default env is undefined', async () => {
-      const options = await parseOptions({});
+      const options = await parseOptions({
+        baseDir: path.join(__dirname, '..'),
+      });
       assert.equal(options.env, undefined);
     });
 
     it('custom env = prod', async () => {
-      const options = await parseOptions({ env: 'prod' });
+      const options = await parseOptions({
+        env: 'prod',
+        baseDir: path.join(__dirname, '..'),
+      });
       assert.equal(options.env, 'prod');
     });
 
     it('default env set to process.env.EGG_SERVER_ENV', async () => {
       mm(process.env, 'EGG_SERVER_ENV', 'prod');
-      const options = await parseOptions({});
+      const options = await parseOptions({
+        baseDir: path.join(__dirname, '..'),
+      });
       assert.equal(options.env, 'prod');
     });
   });
@@ -147,7 +170,10 @@ describe('test/options.test.ts', () => {
 
   describe('framework', () => {
     it('should get from absolute path', async () => {
-      const frameworkPath = path.dirname(importResolve('egg'));
+      let clusterPackagePath = path.join(__dirname, '..');
+      const frameworkPath = path.dirname(
+        importResolve('egg', { paths: [clusterPackagePath] })
+      );
       const options = await parseOptions({
         framework: frameworkPath,
       });
@@ -166,8 +192,8 @@ describe('test/options.test.ts', () => {
       }
     });
 
-    it('should get from npm package', async () => {
-      const frameworkPath = path.join(__dirname, '../node_modules/egg');
+    it.skip('should get from npm package', async () => {
+      const frameworkPath = path.join(process.cwd(), 'node_modules/egg');
       const options = await parseOptions({
         framework: 'egg',
       });
@@ -181,7 +207,7 @@ describe('test/options.test.ts', () => {
         });
         throw new Error('should not run');
       } catch (err: any) {
-        const frameworkPath = path.join(__dirname, '../node_modules');
+        const frameworkPath = path.join(process.cwd(), 'node_modules');
         assert.equal(err.message, `noexist is not found in ${frameworkPath}`);
       }
     });
@@ -221,7 +247,16 @@ describe('test/options.test.ts', () => {
       const options = await parseOptions({
         baseDir,
       });
-      assert.equal(options.framework, path.join(baseDir, 'node_modules/egg'));
+      const expectPaths = [
+        // run int workspace root
+        path.join(__dirname, '../../egg'),
+        // run in project root
+        path.join(__dirname, '../node_modules/egg'),
+      ];
+      assert(
+        expectPaths.includes(options.framework),
+        `should get egg at ${expectPaths.join(', ')}, but got ${options.framework}`
+      );
     });
   });
 

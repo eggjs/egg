@@ -2,9 +2,12 @@ import os from 'node:os';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert';
+import { debuglog } from 'node:util';
 import { type SecureContextOptions } from 'node:tls';
 
 import { getFrameworkPath, importModule } from '@eggjs/utils';
+
+const debug = debuglog('egg/cluster/utils/options');
 
 export interface ClusterHTTPSSecureOptions {
   key: SecureContextOptions['key'];
@@ -106,16 +109,19 @@ export async function parseOptions(options?: ClusterOptions) {
     // compatible customEgg only when call startCluster directly without framework
     framework: options.framework ?? options.customEgg,
   });
+  debug('[parseOptions] %o', options);
 
   const egg = await importModule(options.framework, {
-    paths: [ options.baseDir! ],
+    paths: [options.baseDir!],
   });
   assert(egg.Application, `should define Application in ${options.framework}`);
   assert(egg.Agent, `should define Agent in ${options.framework}`);
 
   if (options.https === true) {
     // Keep compatible options.key, options.cert
-    console.warn('[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`');
+    console.warn(
+      '[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`'
+    );
     options.https = {
       key: options.key,
       cert: options.cert,
@@ -126,14 +132,23 @@ export async function parseOptions(options?: ClusterOptions) {
   if (options.https) {
     assert(options.https.key, 'options.https.key should exists');
     if (typeof options.https.key === 'string') {
-      assert(fs.existsSync(options.https.key), 'options.https.key file should exists');
+      assert(
+        fs.existsSync(options.https.key),
+        'options.https.key file should exists'
+      );
     }
     assert(options.https.cert, 'options.https.cert should exists');
     if (typeof options.https.cert === 'string') {
-      assert(fs.existsSync(options.https.cert), 'options.https.cert file should exists');
+      assert(
+        fs.existsSync(options.https.cert),
+        'options.https.cert file should exists'
+      );
     }
     if (typeof options.https.ca === 'string') {
-      assert(fs.existsSync(options.https.ca), 'options.https.ca file should exists');
+      assert(
+        fs.existsSync(options.https.ca),
+        'options.https.ca file should exists'
+      );
     }
   }
 
@@ -153,7 +168,7 @@ export async function parseOptions(options?: ClusterOptions) {
 
   if (options.require) {
     if (typeof options.require === 'string') {
-      options.require = [ options.require ];
+      options.require = [options.require];
     }
   }
 
@@ -163,7 +178,9 @@ export async function parseOptions(options?: ClusterOptions) {
     process.env.NO_DEPRECATION = '*';
   }
 
-  const isDebug = process.execArgv.some(argv => argv.includes('--debug') || argv.includes('--inspect'));
+  const isDebug = process.execArgv.some(
+    argv => argv.includes('--debug') || argv.includes('--inspect')
+  );
   if (isDebug) {
     options.isDebug = isDebug;
   }

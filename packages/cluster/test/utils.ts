@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import { mm, type MockClusterOptions } from '@eggjs/mock';
 
 export function cluster(baseDir: string, options: MockClusterOptions = {}) {

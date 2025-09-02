@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp, getFilepath } from '../../utils.js';
+
+import { MockApplication, createApp, getFilepath } from '../../utils.ts';
 
 describe('test/lib/core/view.test.ts', () => {
   afterEach(mm.restore);
@@ -91,58 +93,47 @@ describe('test/lib/core/view.test.ts', () => {
       };
     });
 
-    it('should render with options', function (done) {
-      app
-        .httpRequest()
-        .get('/')
-        .expect(200)
-        .expect(res =>
-          assert.equal(
-            String(res.text).replace(/\r/g, ''),
-            `Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`
-          )
-        )
-        .end(done);
+    it('should render with options', async () => {
+      const res = await app.httpRequest().get('/').expect(200);
+      assert.equal(
+        String(res.text).replace(/\r/g, ''),
+        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      );
     });
 
-    it('should render with async function controller', function (done) {
-      app
-        .httpRequest()
-        .get('/async')
-        .expect(200)
-        .expect(res =>
-          assert.equal(
-            String(res.text).replace(/\r/g, ''),
-            `Hi, mk・2\ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`
-          )
-        )
-        .end(done);
+    it('should render with async function controller', async () => {
+      const res = await app.httpRequest().get('/async').expect(200);
+
+      assert.equal(
+        String(res.text).replace(/\r/g, ''),
+        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      );
     });
 
-    it('should render have helper instance', function (done) {
-      app.httpRequest().get('/').expect(200, done);
+    it('should render have helper instance', async () => {
+      const res = await app.httpRequest().get('/').expect(200);
+
+      assert.equal(
+        String(res.text).replace(/\r/g, ''),
+        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      );
     });
 
-    it('should render with empty', function (done) {
-      app
-        .httpRequest()
-        .get('/empty')
-        .expect(200)
-        .expect(res => {
-          assert.equal(
-            String(res.text).replace(/\r/g, ''),
-            `Hi, \ntest-app-helper: test-bar@${app.config.baseDir}\nraw: <div>dar</div>\n2014 @ mk2 &lt;br&gt;\n`
-          );
-        })
-        .end(done);
+    it('should render with empty', async () => {
+      const res = await app.httpRequest().get('/empty').expect(200);
+
+      assert.equal(
+        String(res.text).replace(/\r/g, ''),
+        `Hi,  test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      );
     });
 
-    it('should render template string', function (done) {
-      app
+    it('should render template string', async () => {
+      await app
         .httpRequest()
         .get('/string')
         .expect(200)
-        .expect('templateString', done);
+        .expect('templateString');
     });
   });
 });

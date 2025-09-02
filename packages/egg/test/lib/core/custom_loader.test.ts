@@ -1,14 +1,15 @@
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { createApp, MockApplication } from '../../utils.js';
+
+import { createApp, MockApplication } from '../../utils.ts';
 
 describe('test/lib/core/custom_loader.test.ts', () => {
   afterEach(mm.restore);
 
   let app: MockApplication;
-  beforeAll(() => {
+  beforeAll(async () => {
     app = createApp('apps/custom-loader');
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 
