@@ -132,7 +132,6 @@
   "scripts": {
     "build": "tsdown",
     "lint": "oxlint",
-    "pretest:skip": "pnpm build",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   }

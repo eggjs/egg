@@ -2,6 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { strict as assert } from 'node:assert';
 import os from 'node:os';
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
 import { parseOptions } from '../src/utils/options.js';
@@ -130,13 +131,13 @@ describe('test/options.test.ts', () => {
 
   describe('options', () => {
     let app: any;
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/options', {
         foo: true,
       } as any).debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should be passed through', () => {
       app.expect('stdout', /app options foo: true/);

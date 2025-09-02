@@ -176,7 +176,6 @@
     "clean": "rimraf dist",
     "lint": "oxlint",
     "build": "tsdown",
-    "pretest:skip": "pnpm build",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },

@@ -9,6 +9,7 @@
   "packageManager": "pnpm@10.15.0",
   "devDependencies": {
     "@eggjs/tsconfig": "catalog:",
+    "rimraf": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
@@ -19,10 +20,10 @@
     "@vitest/coverage-v8": "catalog:"
   },
   "scripts": {
-    "clean": "pnpm -r run clean",
+    "clean": "pnpm -r run clean && rimraf packages/**/dist",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
-    "pretest": "pnpm -r run pretest",
+    "pretest": "pnpm -r run pretest && pnpm run clean",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "site:dev": "pnpm --filter=site run dev",
@@ -32,6 +33,13 @@
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
     "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --type-aware --fix"
+    ]
   },
   "homepage": "https://github.com/eggjs/egg",
   "repository": {

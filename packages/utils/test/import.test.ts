@@ -114,20 +114,19 @@ describe('test/import.test.ts', () => {
       );
     });
 
-    // TODO: vitest import.meta.resolve is not a function
-    it.skip('should throw error when resolve path not exists', () => {
+    it('should throw error when resolve path not exists', () => {
       assert.throws(
         () => {
           importResolve('tsconfig-paths-demo-not-exists/register', {
             paths: [getFilepath('cjs/node_modules/inject')],
           });
         },
-        err => {
+        (err: any) => {
           assert.ok(err instanceof ImportResolveError);
           assert.equal(err.name, 'ImportResolveError');
           assert.equal(err.filepath, 'tsconfig-paths-demo-not-exists/register');
           assert.deepEqual(err.paths, [getFilepath('cjs/node_modules/inject')]);
-          assert.match(err.stack, /Cannot find package/);
+          assert.match(err.stack ?? '', /Cannot find package/);
           assert.match(err.message, /Cannot find package/);
           return true;
         }
@@ -227,7 +226,9 @@ describe('test/import.test.ts', () => {
   describe('importModule()', () => {
     it('should work on egg', async () => {
       const obj = await importModule('egg', {
-        paths: [path.join(__dirname, '../../../examples/helloworld-typescript')],
+        paths: [
+          path.join(__dirname, '../../../examples/helloworld-typescript'),
+        ],
       });
       expect(obj.Agent).toBeDefined();
     });
