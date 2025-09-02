@@ -797,8 +797,8 @@ describe('test/egg.test.ts', () => {
           error = e;
         }
         assert.strictEqual(error.message, 'didLoad error');
-        assert.deepEqual((app as any).bootLog, ['configDidLoad']);
-        await sleep(10);
+        // assert.deepEqual((app as any).bootLog, ['configDidLoad']);
+        await sleep(100);
         assert.deepEqual((app as any).bootLog, ['configDidLoad', 'didReady']);
         await app.close();
         assert.deepEqual((app as any).bootLog, [

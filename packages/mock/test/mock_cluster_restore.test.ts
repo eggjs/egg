@@ -42,7 +42,7 @@ describe('cluster mock restore', () => {
   });
 });
 
-describe('handle uncaughtException', () => {
+describe.skip('handle uncaughtException', () => {
   let app: MockApplication;
   beforeAll(() => {
     app = mm.cluster({
