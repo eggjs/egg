@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { rm } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 import { mm, MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 import urllib from 'urllib';
@@ -13,7 +14,7 @@ describe('test/app_worker.test.ts', () => {
   afterEach(mm.restore);
 
   describe('app worker', () => {
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/app-server');
       return app.ready();
     });
@@ -104,13 +105,13 @@ describe('test/app_worker.test.ts', () => {
   });
 
   describe('app worker error in env === "default"', () => {
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/app-die');
       // app.debug();
       return app.ready();
     });
-    after(mm.restore);
+    afterAll(mm.restore);
 
     it('should restart', async () => {
       await app.httpRequest()
@@ -126,13 +127,13 @@ describe('test/app_worker.test.ts', () => {
   });
 
   describe('app worker error when env === "local"', () => {
-    before(() => {
+    beforeAll(() => {
       mm.env('local');
       app = cluster('apps/app-die');
       // app.debug();
       return app.ready();
     });
-    after(async () => {
+    afterAll(async () => {
       await app.close();
       await mm.restore();
     });
@@ -153,13 +154,13 @@ describe('test/app_worker.test.ts', () => {
   });
 
   describe('app worker kill when env === "local"', () => {
-    before(() => {
+    beforeAll(() => {
       mm.env('local');
       app = cluster('apps/app-kill');
       // app.debug();
       return app.ready();
     });
-    after(mm.restore);
+    afterAll(mm.restore);
 
     it('should exit', async () => {
       try {

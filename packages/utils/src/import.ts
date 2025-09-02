@@ -151,14 +151,20 @@ function tryToResolveByDirnameFromPackage(
   // detect from exports
   if (pkg.exports?.['.']) {
     const pkgType: string = pkg.type ?? 'commonjs';
-    const defaultExport = pkg.exports['.'] as string | {
-      import?: string | {
-        default?: string;
-      };
-      require?: string | {
-        default?: string;
-      };
-    };
+    const defaultExport = pkg.exports['.'] as
+      | string
+      | {
+          import?:
+            | string
+            | {
+                default?: string;
+              };
+          require?:
+            | string
+            | {
+                default?: string;
+              };
+        };
     let mainIndexFilePath = '';
     if (typeof defaultExport === 'string') {
       mainIndexFilePath = path.join(dirname, defaultExport);
@@ -306,26 +312,6 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   }
 }
 
-// patch for vitest
-// https://github.com/vitest-dev/vitest/issues/6953#issuecomment-3223548053
-// remove it after vitest fix release https://github.com/vitest-dev/vitest/pull/8493
-const importMetaResolve = (
-  options?: ImportResolveOptions,
-  ...args: Parameters<ImportMeta['resolve']>
-) => {
-  if (
-    typeof import.meta.resolve !== 'function' &&
-    process.env.VITEST === 'true'
-  ) {
-    // patch for vitest
-    return require.resolve(args[0], {
-      paths: options?.paths,
-    });
-  }
-
-  return import.meta.resolve(...args);
-};
-
 export function importResolve(
   filepath: string,
   options?: ImportResolveOptions
@@ -416,10 +402,14 @@ export function importResolve(
   } else {
     if (supportImportMetaResolve) {
       try {
-        // moduleFilePath = import.meta.resolve(filepath);
-        moduleFilePath = importMetaResolve(options, filepath);
+        moduleFilePath = import.meta.resolve(filepath);
       } catch (err) {
-        debug('[importResolve] import.meta.resolve %o => %o, options: %o', filepath, err, options);
+        debug(
+          '[importResolve:error] import.meta.resolve %o => %o, options: %o',
+          filepath,
+          err,
+          options
+        );
         throw new ImportResolveError(filepath, paths, err as Error);
       }
       if (moduleFilePath.startsWith('file://')) {

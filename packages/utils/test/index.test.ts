@@ -34,7 +34,7 @@ describe('test/index.test.ts', () => {
 
   describe('export all', () => {
     it('should keep checking', () => {
-      expect(Object.keys(all)).toMatchSnapshot();
+      expect(Object.keys(all).sort()).toMatchSnapshot();
     });
   });
 });

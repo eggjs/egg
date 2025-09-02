@@ -1,9 +1,12 @@
 import { strict as assert } from 'node:assert';
 import { readFile } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
+
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import coffee from 'coffee';
 import { mm, MockApplication } from '@eggjs/mock';
-import { cluster, getFilepath } from './utils.js';
+
+import { cluster, getFilepath } from './utils.ts';
 
 describe('test/agent_worker.test.ts', () => {
   let app: MockApplication;
@@ -15,39 +18,54 @@ describe('test/agent_worker.test.ts', () => {
 
     it('support config agent debug port', () => {
       mm(process.env, 'EGG_AGENT_DEBUG_PORT', '15800');
-      app = cluster('apps/agent-debug-port', { isDebug: true, require: [ './inject1.js' ] } as any);
-      return app
-        // .debug()
-        .expect('stdout', /@@inject1\.js run/)
-        .expect('stdout', /=15800/)
-        .end();
+      app = cluster('apps/agent-debug-port', {
+        isDebug: true,
+        require: ['./inject1.js'],
+      } as any);
+      return (
+        app
+          // .debug()
+          .expect('stdout', /@@inject1\.js run/)
+          .expect('stdout', /=15800/)
+          .end()
+      );
     });
 
     it('agent debug port default 5800', () => {
       app = cluster('apps/agent-debug-port', { isDebug: true } as any);
-      return app
-        // .debug()
-        .expect('stdout', /=5800/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('stdout', /=5800/)
+          .end()
+      );
     });
 
     it('should exist when error happened during boot', () => {
       app = cluster('apps/agent-die-onboot');
-      return app
-        // .debug()
-        .expect('code', 1)
-        .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
-        .expect('stderr', /error: app worker throw/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('code', 1)
+          .expect(
+            'stderr',
+            /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
+          )
+          .expect('stderr', /error: app worker throw/)
+          .end()
+      );
     });
 
     it('should not start app when error happened during agent starting', () => {
       app = cluster('apps/agent-die-onboot');
       return app
         .expect('code', 1)
-        .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
+        .expect(
+          'stderr',
+          /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
+        )
         .expect('stderr', /error: app worker throw/)
-        .notExpect('stdout', /agent\-error\-but\-app\-start/)
+        .notExpect('stdout', /agent-error-but-app-start/)
         .end();
     });
 
@@ -66,7 +84,10 @@ describe('test/agent_worker.test.ts', () => {
       await scheduler.wait(5000);
 
       app.expect('stderr', /\[master\] agent_worker#1:\d+ died/);
-      app.expect('stdout', /\[master\] try to start a new agent_worker after 1s .../);
+      app.expect(
+        'stdout',
+        /\[master\] try to start a new agent_worker after 1s .../
+      );
       app.expect('stdout', /\[master\] agent_worker#2:\d+ started/);
       app.notExpect('stdout', /app_worker#2/);
     });
@@ -81,57 +102,83 @@ describe('test/agent_worker.test.ts', () => {
       // kill -9 master
       app.process.kill('SIGKILL');
       await scheduler.wait(5000);
-      app.expect('stderr', /\[app_worker\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/)
-        .expect('stderr', /\[agent_worker\] receive disconnect event on child_process fork mode, exiting with code:110/)
+      app
+        .expect(
+          'stderr',
+          /\[app_worker\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/
+        )
+        .expect(
+          'stderr',
+          /\[agent_worker\] receive disconnect event on child_process fork mode, exiting with code:110/
+        )
         .expect('stderr', /\[agent_worker\] exit with code:110/);
     });
 
     it('should master exit when agent exit during app worker boot', () => {
       app = cluster('apps/agent-die-on-forkapp');
 
-      return app
-        // .debug()
-        .expect('code', 1)
-        .expect('stdout', /\[master\] agent_worker#1:\d+ started/)
-        .expect('stderr', /\[master\] agent_worker#1:\d+ died/)
-        .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
-        .expect('stderr', /\[master\] exit with code:1/)
-        .notExpect('stdout', /app_worker#2/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('code', 1)
+          .expect('stdout', /\[master\] agent_worker#1:\d+ started/)
+          .expect('stderr', /\[master\] agent_worker#1:\d+ died/)
+          .expect(
+            'stderr',
+            /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
+          )
+          .expect('stderr', /\[master\] exit with code:1/)
+          .notExpect('stdout', /app_worker#2/)
+          .end()
+      );
     });
 
     it('should exit when emit error during agent worker boot', () => {
       app = cluster('apps/agent-start-error');
-      return app
-        // .debug()
-        .expect('code', 1)
-        .expect('stderr', /mock error/)
-        .expect('stderr', /\[agent_worker\] start error, exiting with code:1/)
-        .expect('stderr', /\[master\] exit with code:1/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('code', 1)
+          .expect('stderr', /mock error/)
+          .expect('stderr', /\[agent_worker\] start error, exiting with code:1/)
+          .expect('stderr', /\[master\] exit with code:1/)
+          .end()
+      );
     });
 
     it('should FrameworkErrorformater work during agent boot', () => {
       app = cluster('apps/agent-start-framework-error');
-      return app
-        // .debug()
-        .expect('code', 1)
-        .expect('stderr', /CustomError: mock error \[ https\:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('code', 1)
+          .expect(
+            'stderr',
+            /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
+          )
+          .end()
+      );
     });
 
     it('should FrameworkErrorformater work during agent boot ready', () => {
       app = cluster('apps/agent-start-framework-ready-error');
-      return app
-        // .debug()
-        .expect('code', 1)
-        .expect('stderr', /CustomError: mock error \[ https\:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/)
-        .end();
+      return (
+        app
+          // .debug()
+          .expect('code', 1)
+          .expect(
+            'stderr',
+            /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
+          )
+          .end()
+      );
     });
 
     // process.send is not exist if started by spawn
     it('master should not die if spawn error', async () => {
-      app = coffee.spawn('node', [ getFilepath('apps/agent-die/start.js') ]) as any;
+      app = coffee.spawn('node', [
+        getFilepath('apps/agent-die/start.js'),
+      ]) as any;
       // app.debug();
       app.close = async () => app.proc.kill();
 
@@ -143,16 +190,18 @@ describe('test/agent_worker.test.ts', () => {
   });
 
   describe('agent custom loggers', () => {
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/custom-logger');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should support custom logger in agent', async () => {
       await scheduler.wait(1500);
       const content = await readFile(
-        getFilepath('apps/custom-logger/logs/monitor.log'), 'utf8');
+        getFilepath('apps/custom-logger/logs/monitor.log'),
+        'utf8'
+      );
       assert(content === 'hello monitor!\n');
     });
   });

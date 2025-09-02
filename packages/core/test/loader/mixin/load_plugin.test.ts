@@ -510,6 +510,7 @@ describe('test/loader/mixin/load_plugin.test.ts', () => {
       force: true,
       recursive: true,
     });
+    fs.mkdirSync(getFilepath('realpath/node_modules'), { recursive: true });
     fs.symlinkSync('../a', getFilepath('realpath/node_modules/a'), 'dir');
     app = createApp('realpath');
     const loader = app.loader;

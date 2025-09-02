@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { rm } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 import { once } from 'node:events';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll, vi } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { mm, MockApplication } from '@eggjs/mock';
 import { cluster, getFilepath } from './utils.js';
@@ -495,11 +496,11 @@ describe('test/master.test.ts', () => {
   });
 
   describe('--cluster', () => {
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/cluster_mod_app');
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should online cluster mode startup success', () => {
       return app.httpRequest()
@@ -514,7 +515,7 @@ describe('test/master.test.ts', () => {
 
     afterEach(() => app.close());
 
-    before(() => {
+    beforeAll(() => {
       mm.env('prod');
       app = cluster('apps/frameworkapp', {
         framework: getFilepath('apps/frameworkbiz'),
@@ -537,9 +538,9 @@ describe('test/master.test.ts', () => {
   describe('reload worker', () => {
     let app: MockApplication;
 
-    after(() => app.close());
+    afterAll(() => app.close());
 
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/reload-worker', {
         workers: 4,
       });
@@ -562,7 +563,7 @@ describe('test/master.test.ts', () => {
     let app: MockApplication;
     let readyMsg: string;
 
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/egg-ready');
       // app.debug();
@@ -575,7 +576,7 @@ describe('test/master.test.ts', () => {
       }, 1);
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('app/agent should receive egg-ready', async () => {
       // work for message sent
@@ -608,13 +609,13 @@ describe('test/master.test.ts', () => {
 
   describe('agent should receive app worker numbers', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/pid', { workers: 2 });
       // app.debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should every app worker will get message', async () => {
       await scheduler.wait(1000);
@@ -651,14 +652,14 @@ describe('test/master.test.ts', () => {
 
   describe('app should receive agent worker numbers', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       mm.env('default');
       app = cluster('apps/pid');
       app.coverage(false);
       // app.debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('agent start should get message', async () => {
       app.process.send({
@@ -728,9 +729,9 @@ describe('test/master.test.ts', () => {
     describe('debug message', () => {
       const result: any = { app: [], agent: {} };
 
-      after(() => app.close());
+      afterAll(() => app.close());
 
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/egg-ready', {
           workers: 2,
           opt: { execArgv: [ `--${debugProtocol}` ] },
@@ -766,9 +767,9 @@ describe('test/master.test.ts', () => {
     describe('debug message with port', () => {
       const result: any = { app: [], agent: {} };
 
-      after(() => app.close());
+      afterAll(() => app.close());
 
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/egg-ready', { workers: 2, opt: { execArgv: [ `--${debugProtocol}=9000` ] } });
         // app.debug();
         setTimeout(() => {
@@ -801,9 +802,9 @@ describe('test/master.test.ts', () => {
     describe('should not debug message', () => {
       let result: boolean;
 
-      after(() => app.close());
+      afterAll(() => app.close());
 
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/egg-ready');
         // app.debug();
         setTimeout(() => {
@@ -828,9 +829,9 @@ describe('test/master.test.ts', () => {
     describe('kill at debug', () => {
       let workerPid: number;
 
-      after(() => app.close());
+      afterAll(() => app.close());
 
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/egg-ready', { workers: 1, opt: { execArgv: [ `--${debugProtocol}` ] } });
         // app.debug();
         setTimeout(() => {
@@ -858,12 +859,12 @@ describe('test/master.test.ts', () => {
   });
 
   describe('--sticky', () => {
-    before(() => {
+    beforeAll(() => {
       app = cluster('apps/cluster_mod_sticky', { sticky: true, port: 17010 } as any);
       app.debug();
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should online sticky cluster mode startup success', () => {
       app.expect('stdout', /app_worker#\d:\d+ started at (?!9500)/);
@@ -944,14 +945,14 @@ describe('test/master.test.ts', () => {
 
   describe('--require', () => {
     describe('one', () => {
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/options-require', {
           require: getFilepath('apps/options-require/inject.js'),
         } as any);
         // app.debug();
         return app.ready();
       });
-      after(() => app.close());
+      afterAll(() => app.close());
 
       it('should inject', () => {
         app.expect('stdout', /### inject application/);
@@ -959,7 +960,7 @@ describe('test/master.test.ts', () => {
       });
     });
     describe('array', () => {
-      before(() => {
+      beforeAll(() => {
         app = cluster('apps/options-require', {
           require: [
             getFilepath('apps/options-require/inject.js'),
@@ -969,7 +970,7 @@ describe('test/master.test.ts', () => {
         // app.debug();
         return app.ready();
       });
-      after(() => app.close());
+      afterAll(() => app.close());
 
       it('should inject', () => {
         app.expect('stdout', /### inject application/);
