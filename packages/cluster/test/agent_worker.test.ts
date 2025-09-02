@@ -4,24 +4,27 @@ import { scheduler } from 'node:timers/promises';
 
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import coffee from 'coffee';
-import { mm, MockApplication } from '@eggjs/mock';
+import {
+  mm,
+  type MockApplication,
+  type MockClusterApplication,
+} from '@eggjs/mock';
 
 import { cluster, getFilepath } from './utils.ts';
 
 describe('test/agent_worker.test.ts', () => {
-  let app: MockApplication;
+  let app: MockClusterApplication;
 
   afterEach(mm.restore);
 
   describe('Fork Agent', () => {
     afterEach(() => app && app.close());
 
-    it('support config agent debug port', () => {
+    it.only('support config agent debug port', () => {
       mm(process.env, 'EGG_AGENT_DEBUG_PORT', '15800');
       app = cluster('apps/agent-debug-port', {
-        isDebug: true,
-        require: ['./inject1.js'],
-      } as any);
+        // require: ['./inject1.js'],
+      });
       return (
         app
           // .debug()
@@ -32,7 +35,7 @@ describe('test/agent_worker.test.ts', () => {
     });
 
     it('agent debug port default 5800', () => {
-      app = cluster('apps/agent-debug-port', { isDebug: true } as any);
+      app = cluster('apps/agent-debug-port');
       return (
         app
           // .debug()

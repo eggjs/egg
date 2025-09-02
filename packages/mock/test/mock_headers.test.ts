@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
-import { describe, it, beforeAll, afterAll, afterEach, vi } from 'vitest';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_headers.test.ts', () => {
   let app: MockApplication;
@@ -15,40 +17,40 @@ describe('test/mock_headers.test.ts', () => {
   afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it('should not exists without mock', done => {
+  it('should not exists without mock', async () => {
     app.mockContext();
 
-    request(app.callback())
+    await request(app.callback())
       .get('/header')
-      .expect(function(res) {
-        assert(res.body.header === '');
+      .expect(res => {
+        assert.equal(res.body.header, '');
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should mock headers', done => {
+  it('should mock headers', async () => {
     app.mockContext();
     app.mockHeaders({
       customheader: 'customheader',
     });
-    request(app.callback())
+    await request(app.callback())
       .get('/header')
-      .expect(function(res) {
-        assert(res.body.header === 'customheader');
+      .expect(res => {
+        assert.equal(res.body.header, 'customheader');
       })
-      .expect(200, done);
+      .expect(200);
   });
 
-  it('should mock headers that is uppercase', done => {
+  it('should mock headers that is uppercase', async () => {
     app.mockContext();
     app.mockHeaders({
       Customheader: 'customheader',
     });
-    request(app.callback())
+    await request(app.callback())
       .get('/header')
-      .expect(function(res) {
-        assert(res.body.header === 'customheader');
+      .expect(res => {
+        assert.equal(res.body.header, 'customheader');
       })
-      .expect(200, done);
+      .expect(200);
   });
 });

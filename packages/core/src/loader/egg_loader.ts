@@ -584,13 +584,15 @@ export class EggLoader {
       }
 
       if (!filepath) {
+        debug(
+          '[readPluginConfigs:ignore] plugin config not found %o',
+          configPath
+        );
         continue;
       }
 
-      const config = (await utils.loadFile(filepath)) as Record<
-        string,
-        EggPluginInfo
-      >;
+      const config: Record<string, EggPluginInfo> =
+        await utils.loadFile(filepath);
       for (const name in config) {
         this.#normalizePluginConfig(config, name, filepath);
       }
@@ -839,11 +841,15 @@ export class EggLoader {
       };
       type?: 'module' | 'commonjs';
       exports?: {
-        '.'?: string | {
-          import?: string | {
-            default?: string;
-          };
-        };
+        '.'?:
+          | string
+          | {
+              import?:
+                | string
+                | {
+                    default?: string;
+                  };
+            };
       };
     }
   ): Promise<string> {
@@ -887,7 +893,9 @@ export class EggLoader {
           //     },
           //   }
           // }
-          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import));
+          realPluginPath = path.dirname(
+            path.join(pluginPath, defaultExport.import)
+          );
         } else if (defaultExport.import.default) {
           // {
           //   "exports": {
@@ -898,7 +906,9 @@ export class EggLoader {
           //     },
           //   }
           // }
-          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import.default));
+          realPluginPath = path.dirname(
+            path.join(pluginPath, defaultExport.import.default)
+          );
         }
       }
       debug(

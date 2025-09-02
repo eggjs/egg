@@ -1,8 +1,9 @@
 import { strict as assert } from 'node:assert';
-// import { importModule } from '@eggjs/utils';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/mock_custom_loader.test.ts', () => {
   let app: MockApplication;
@@ -16,7 +17,8 @@ describe('test/mock_custom_loader.test.ts', () => {
   afterEach(mm.restore);
 
   it('should return success', async () => {
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'docker',
@@ -28,7 +30,8 @@ describe('test/mock_custom_loader.test.ts', () => {
   it('should return when mock with data', async () => {
     app.mockRepository('user', 'get', 'mock');
     app.mockAdapter('docker', 'inspectDocker', 'mock');
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'mock',
@@ -39,7 +42,8 @@ describe('test/mock_custom_loader.test.ts', () => {
 
   it('should return when mock the instance', async () => {
     app.mockAdapter(app.adapter.docker, 'inspectDocker', 'mock');
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .get('/users/popomore')
       .expect({
         adapter: 'mock',

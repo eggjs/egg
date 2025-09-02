@@ -1,7 +1,7 @@
 import mm from 'mm';
 import { mock as _mock } from 'mm';
 
-import { createCluster } from './lib/cluster.ts';
+import { createCluster, type MockClusterApplication } from './lib/cluster.ts';
 import { createApp } from './lib/app.ts';
 // import { getMockAgent } from './lib/mock_agent.js';
 import { restore } from './lib/restore.ts';
@@ -84,7 +84,8 @@ const proxyMock = new Proxy(_mock, {
     // mm.isMocked(foo, 'bar')
     return Reflect.get(mock, property, receiver);
   },
-}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) & typeof mock;
+}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) &
+  typeof mock;
 
 export default proxyMock;
 
@@ -92,7 +93,8 @@ export {
   proxyMock as mock,
   // alias to mm
   proxyMock as mm,
-  ApplicationUnittest as MockApplication,
+  type ApplicationUnittest as MockApplication,
+  type MockClusterApplication,
   setGetAppCallback,
   createApp,
   createCluster,

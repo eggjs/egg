@@ -1,8 +1,18 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+  afterAll,
+  beforeAll,
+} from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 const baseDir = getFixtures('apps/env-app');
 
@@ -17,7 +27,7 @@ describe('test/mm.test.ts', () => {
     afterEach(() => app.close());
 
     it('should mock unittest', async () => {
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-unittest');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -25,7 +35,7 @@ describe('test/mm.test.ts', () => {
 
     it('should mock test', async () => {
       mm.env('test');
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-test');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -33,7 +43,7 @@ describe('test/mm.test.ts', () => {
 
     it('should mock prod', async () => {
       mm.env('prod');
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-prod');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -41,7 +51,7 @@ describe('test/mm.test.ts', () => {
 
     it('should mock default', async () => {
       mm.env('default');
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-default');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -49,7 +59,7 @@ describe('test/mm.test.ts', () => {
 
     it('should mock unittest', async () => {
       mm.env('unittest');
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-unittest');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -57,7 +67,7 @@ describe('test/mm.test.ts', () => {
 
     it('should mock local', async () => {
       mm.env('local');
-      app = mm.app({ baseDir: 'apps/env-app', cache: false });
+      app = mm.app({ baseDir: getFixtures('apps/env-app'), cache: false });
       await app.ready();
       assert(app.config.fakeplugin.foo === 'bar-default');
       assert(app.config.logger.dir === path.join(baseDir, 'logs/env-app'));
@@ -66,10 +76,13 @@ describe('test/mm.test.ts', () => {
 
   describe('mm.app({ clean: false })', () => {
     let app: MockApplication;
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('keep log dir', async () => {
-      app = mm.app({ baseDir: 'apps/app-not-clean', clean: false });
+      app = mm.app({
+        baseDir: getFixtures('apps/app-not-clean'),
+        clean: false,
+      });
       await app.ready();
       assert(fs.existsSync(getFixtures('apps/app-not-clean/logs/keep')));
     });
@@ -90,12 +103,12 @@ describe('test/mm.test.ts', () => {
   describe('mm.home', () => {
     let app: MockApplication;
     const baseDir = getFixtures('apps/mockhome');
-    before(() => {
+    beforeAll(() => {
       mm.home(baseDir);
-      app = mm.app({ baseDir: 'apps/mockhome', clean: false });
+      app = mm.app({ baseDir: getFixtures('apps/mockhome'), clean: false });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should mock home', () => {
       assert(app.config.HOME === baseDir);
@@ -109,13 +122,13 @@ describe('test/mm.test.ts', () => {
 
   describe('egg-mock', () => {
     let app: MockApplication;
-    before(() => {
+    beforeAll(() => {
       app = mm.app({
-        baseDir: 'apps/no-framework',
+        baseDir: getFixtures('apps/no-framework'),
       });
       return app.ready();
     });
-    after(() => app.close());
+    afterAll(() => app.close());
 
     it('should not be a framework', () => {
       app.mockEnv('prod test not work');

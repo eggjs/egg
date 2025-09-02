@@ -6,7 +6,7 @@ import type { EggCore } from '@eggjs/core';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
-import { MockOptions, MockApplicationOptions } from '../types.ts';
+import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
 import { createServer } from '../mock_http_server.ts';
@@ -41,9 +41,11 @@ export class MockParallelApplication extends Base {
       throw new Error('cannot get env.CLUSTER_PORT, parallel run fail');
     }
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Application }: { Application: typeof EggCore } = await importModule(this.options.framework);
+    const { Application }: { Application: typeof EggCore } = await importModule(
+      this.options.framework
+    );
 
-    const app = this._instance = new Application({ ...this.options });
+    const app = (this._instance = new Application({ ...this.options }));
 
     // egg-mock plugin need to override egg context
     Object.assign(app.context, context);

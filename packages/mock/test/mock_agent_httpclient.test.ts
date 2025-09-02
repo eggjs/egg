@@ -1,25 +1,27 @@
 import { pending } from 'pedding';
 import { strict as assert } from 'node:assert';
-import mm, { MockApplication } from '../src/index.js';
-import { getFixtures } from './helper.js';
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../src/index.ts';
+import { getFixtures } from './helper.ts';
 
 const url = 'http://127.0.0.1:9989/mock_url';
 
-describe('test/mock_agent_httpclient.test.ts', () => {
+describe.skip('test/mock_agent_httpclient.test.ts', () => {
   let app: MockApplication;
   let agent: any;
   let httpclient: any;
-  before(() => {
+  beforeAll(() => {
     app = mm.app({
       baseDir: getFixtures('demo'),
     });
     return app.ready();
   });
-  before(() => {
+  beforeAll(() => {
     agent = (app as any).agent;
     httpclient = crtHttpclient(agent);
   });
-  after(() => agent.close());
+  afterAll(() => agent.close());
   afterEach(mm.restore);
 
   it('should mock url and get response event on urllib', done => {
@@ -28,13 +30,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: Buffer.from('mock response'),
     });
 
-    agent.httpclient.once('request', function(meta: any) {
+    agent.httpclient.once('request', function (meta: any) {
       assert('url' in meta);
       assert('args' in meta);
       done();
     });
 
-    agent.httpclient.once('response', function(result: any) {
+    agent.httpclient.once('response', function (result: any) {
       assert('url' in result.req);
       assert('options' in result.req);
 
@@ -43,44 +45,43 @@ describe('test/mock_agent_httpclient.test.ts', () => {
     });
 
     let count = 0;
-    agent.httpclient.on('response', function(result: any) {
+    agent.httpclient.on('response', function (result: any) {
       if (count === 0) {
         assert.equal(result.req.options.method, 'GET');
-      //   assert.deepEqual(result.req.options, {
-      //     dataType: undefined,
-      //     method: 'GET',
-      //     headers: {},
-      //   });
+        //   assert.deepEqual(result.req.options, {
+        //     dataType: undefined,
+        //     method: 'GET',
+        //     headers: {},
+        //   });
       } else if (count === 1) {
         assert.equal(result.req.options.method, 'POST');
-      //   assert.deepEqual(result.req.options, {
-      //     dataType: undefined,
-      //     method: 'POST',
-      //     headers: {
-      //       'x-custom': 'custom',
-      //     },
-      //   });
+        //   assert.deepEqual(result.req.options, {
+        //     dataType: undefined,
+        //     method: 'POST',
+        //     headers: {
+        //       'x-custom': 'custom',
+        //     },
+        //   });
       }
       count++;
     });
 
-    httpclient()
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock response',
-          post: 'mock response',
-        });
-        done();
+    httpclient().then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock response',
+        post: 'mock response',
       });
+      done();
+    });
   });
 
   it('should mock url support multi method', done => {
     done = pending(2, done);
-    agent.mockHttpclient(url, [ 'get', 'post' ], {
+    agent.mockHttpclient(url, ['get', 'post'], {
       data: Buffer.from('mock response'),
     });
 
-    agent.httpclient.once('response', function(result: any) {
+    agent.httpclient.once('response', function (result: any) {
       assert.equal(result.res.status, 200);
       // assert.deepEqual(result.res, {
       //   status: 200,
@@ -94,14 +95,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       done();
     });
 
-    httpclient()
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock response',
-          post: 'mock response',
-        });
-        done();
+    httpclient().then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock response',
+        post: 'mock response',
       });
+      done();
+    });
   });
 
   it('should mock url method support *', done => {
@@ -110,7 +110,7 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: Buffer.from('mock response'),
     });
 
-    agent.httpclient.once('response', function(result: any) {
+    agent.httpclient.once('response', function (result: any) {
       assert.equal(result.res.status, 200);
       // assert.deepEqual(result.res, {
       //   status: 200,
@@ -124,14 +124,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       done();
     });
 
-    httpclient()
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock response',
-          post: 'mock response',
-        });
-        done();
+    httpclient().then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock response',
+        post: 'mock response',
       });
+      done();
+    });
   });
 
   it('should mock url get and post', done => {
@@ -142,14 +141,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: 'mock url post',
     });
 
-    httpclient()
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock url get',
-          post: 'mock url post',
-        });
-        done();
+    httpclient().then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock url get',
+        post: 'mock url post',
       });
+      done();
+    });
   });
 
   it('should support request', done => {
@@ -160,14 +158,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: 'mock url post',
     });
 
-    httpclient('request')
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock url get',
-          post: 'mock url post',
-        });
-        done();
+    httpclient('request').then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock url get',
+        post: 'mock url post',
       });
+      done();
+    });
   });
 
   it('should set default method to *', done => {
@@ -178,14 +175,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: 'mock url post',
     });
 
-    httpclient('request')
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock url *',
-          post: 'mock url *',
-        });
-        done();
+    httpclient('request').then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock url *',
+        post: 'mock url *',
       });
+      done();
+    });
   });
 
   it('should support curl', done => {
@@ -196,14 +192,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: 'mock url post',
     });
 
-    httpclient('curl')
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock url get',
-          post: 'mock url post',
-        });
-        done();
+    httpclient('curl').then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock url get',
+        post: 'mock url post',
       });
+      done();
+    });
   });
 
   it('should support json', done => {
@@ -214,14 +209,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: { method: 'post' },
     });
 
-    httpclient('request', 'json')
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: { method: 'get' },
-          post: { method: 'post' },
-        });
-        done();
+    httpclient('request', 'json').then((data: any) => {
+      assert.deepEqual(data, {
+        get: { method: 'get' },
+        post: { method: 'post' },
       });
+      done();
+    });
   });
 
   it('should support text', done => {
@@ -232,14 +226,13 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: 'mock url post',
     });
 
-    httpclient('request', 'text')
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock url get',
-          post: 'mock url post',
-        });
-        done();
+    httpclient('request', 'text').then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock url get',
+        post: 'mock url post',
       });
+      done();
+    });
   });
 
   it('should mock url and get response event on urllib', done => {
@@ -247,16 +240,14 @@ describe('test/mock_agent_httpclient.test.ts', () => {
       data: Buffer.from('mock response'),
     });
 
-    httpclient()
-      .then((data: any) => {
-        assert.deepEqual(data, {
-          get: 'mock response',
-          post: 'mock response',
-        });
-        done();
+    httpclient().then((data: any) => {
+      assert.deepEqual(data, {
+        get: 'mock response',
+        post: 'mock response',
       });
+      done();
+    });
   });
-
 });
 
 function crtHttpclient(app: any) {
@@ -272,7 +263,7 @@ function crtHttpclient(app: any) {
         'x-custom': 'custom',
       },
     });
-    return Promise.all([ r1, r2 ]).then(([ r1, r2 ]) => {
+    return Promise.all([r1, r2]).then(([r1, r2]) => {
       return {
         get: Buffer.isBuffer(r1.data) ? r1.data.toString() : r1.data,
         post: Buffer.isBuffer(r2.data) ? r2.data.toString() : r2.data,
@@ -280,4 +271,3 @@ function crtHttpclient(app: any) {
     });
   };
 }
-

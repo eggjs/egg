@@ -122,12 +122,15 @@ export class FileLoader {
     const items = await this.parse();
     const target = this.options.target;
     for (const item of items) {
-      debug('loading item: %o', item);
+      debug(
+        '[load] loading item: fullpath: %s, properties: %o',
+        item.fullpath,
+        item.properties
+      );
       // item { properties: [ 'a', 'b', 'c'], exports }
       // => target.a.b.c = exports
-      // oxlint-disable-next-line unicorn/no-array-reduce
       item.properties.reduce((target, property, index) => {
-        let obj;
+        let obj: any;
         const properties = item.properties.slice(0, index + 1).join('.');
         if (index === item.properties.length - 1) {
           if (property in target && !this.options.override) {
@@ -144,7 +147,14 @@ export class FileLoader {
           obj = target[property] || {};
         }
         target[property] = obj;
-        debug('loaded item properties: %o => %o', properties, obj);
+        if (debug.enabled) {
+          debug(
+            '[load] loaded item properties: %o => keys: %j, index: %d',
+            properties,
+            Object.keys(obj),
+            index
+          );
+        }
         return obj;
       }, target);
     }

@@ -1,20 +1,25 @@
 import { strict as assert } from 'node:assert';
-import mm, { MockApplication } from '../../../src/index.js';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import mm, { MockApplication } from '../../../src/index.ts';
+import { getFixtures } from '../../helper.ts';
 
 describe('test/app/middleware/cluster_app_mock.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     app = mm.app({
-      baseDir: 'demo',
+      baseDir: getFixtures('demo'),
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   afterEach(mm.restore);
 
   it('should return 422 when method missing', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/__egg_mock_call_function')
       .send({})
       .expect(422)
@@ -25,7 +30,8 @@ describe('test/app/middleware/cluster_app_mock.test.ts', () => {
   });
 
   it('should return 422 when args is not Array', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/__egg_mock_call_function')
       .send({ method: 'foo', args: 'hi' })
       .expect(422)
@@ -36,7 +42,8 @@ describe('test/app/middleware/cluster_app_mock.test.ts', () => {
   });
 
   it('should return 422 when method is not exists on app', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/__egg_mock_call_function')
       .send({ method: 'not_exists_method', args: [] })
       .expect(422)
@@ -49,7 +56,10 @@ describe('test/app/middleware/cluster_app_mock.test.ts', () => {
   it('should recover error instance', async () => {
     let called = false;
     let callError: any;
-    mm(app, 'foo', (_a: any, err: Error) => { called = true; callError = err; });
+    mm(app, 'foo', (_a: any, err: Error) => {
+      called = true;
+      callError = err;
+    });
 
     const err = {
       __egg_mock_type: 'error',
@@ -58,9 +68,10 @@ describe('test/app/middleware/cluster_app_mock.test.ts', () => {
       stack: 'error stack',
       foo: 'bar',
     };
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .post('/__egg_mock_call_function')
-      .send({ method: 'foo', args: [ 1, err ] })
+      .send({ method: 'foo', args: [1, err] })
       .expect(200)
       .expect({
         success: true,

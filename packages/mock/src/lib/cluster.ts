@@ -11,20 +11,34 @@ import { Ready } from 'get-ready';
 import { request as supertestRequest } from './supertest.ts';
 import { sleep, rimrafSync } from './utils.ts';
 import { formatOptions } from './format_options.ts';
-import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
+import type {
+  MockClusterOptions,
+  MockClusterApplicationOptions,
+} from './types.ts';
+import type ApplicationUnittest from '../app/extend/application.ts';
 
 const debug = debuglog('egg/mock/lib/cluster');
 
 const clusters = new Map();
-let masterPort = 17000;
-
-let serverBin = path.join(__dirname, 'start-cluster.js');
-if (!existsSync(serverBin)) {
-  serverBin = path.join(__dirname, 'start-cluster.ts');
+declare global {
+  // define the global variable to avoid the port conflict in parallel process mode
+  var eggMockMasterPort: number;
 }
-let requestCallFunctionFile = path.join(__dirname, 'request_call_function.js');
+globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
+
+let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
+if (!existsSync(serverBin)) {
+  serverBin = path.join(import.meta.dirname, 'start-cluster.ts');
+}
+let requestCallFunctionFile = path.join(
+  import.meta.dirname,
+  'request_call_function.js'
+);
 if (!existsSync(requestCallFunctionFile)) {
-  requestCallFunctionFile = path.join(__dirname, 'request_call_function.ts');
+  requestCallFunctionFile = path.join(
+    import.meta.dirname,
+    'request_call_function.ts'
+  );
 }
 
 /**
@@ -58,6 +72,7 @@ export class ClusterApplication extends Coffee {
   port: number;
   baseDir: string;
   closed: boolean;
+  private _address: string | undefined;
 
   /**
    * @class
@@ -76,13 +91,13 @@ export class ClusterApplication extends Coffee {
     delete options.opt;
 
     // incremental port
-    options.port = options.port ?? ++masterPort;
+    options.port = options.port ?? ++globalThis.eggMockMasterPort;
     // Set 1 worker when test
     if (!options.workers) {
       options.workers = 1;
     }
 
-    const args = [ JSON.stringify(options) ];
+    const args = [JSON.stringify(options)];
     debug('fork %s, args: %s, opt: %j', serverBin, args.join(' '), opt);
     super({
       method: 'fork',
@@ -110,6 +125,9 @@ export class ClusterApplication extends Coffee {
         const action = msg && msg.action ? msg.action : msg;
         switch (action) {
           case 'egg-ready':
+            // data: { port: 17703, address: 'http://127.0.0.1:17703', protocol: 'http' }
+            debug('on message egg-ready %o', msg);
+            this._address = msg.data.address;
             this.emit('close', 0);
             break;
           case 'app-worker-died':
@@ -147,6 +165,9 @@ export class ClusterApplication extends Coffee {
    * @private
    */
   get url() {
+    if (this._address) {
+      return this._address;
+    }
     return 'http://127.0.0.1:' + this.port;
   }
 
@@ -156,6 +177,7 @@ export class ClusterApplication extends Coffee {
   address() {
     return {
       port: this.port,
+      address: this._address,
     };
   }
 
@@ -180,7 +202,7 @@ export class ClusterApplication extends Coffee {
     }
 
     clusters.delete(baseDir);
-    debug('delete cluster cache %s, remain %s', baseDir, [ ...clusters.keys() ]);
+    debug('delete cluster cache %s, remain %s', baseDir, [...clusters.keys()]);
 
     if (os.platform() === 'win32') {
       await sleep(1000);
@@ -196,7 +218,7 @@ export class ClusterApplication extends Coffee {
     const self = this;
     return {
       pathFor(url: string) {
-        return self._callFunctionOnAppWorker('pathFor', [ url ], 'router', true);
+        return self._callFunctionOnAppWorker('pathFor', [url], 'router', true);
       },
     };
   }
@@ -217,7 +239,7 @@ export class ClusterApplication extends Coffee {
    */
   mockLog(logger?: string) {
     logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('mockLog', [ logger ], null, true);
+    this._callFunctionOnAppWorker('mockLog', [logger], null, true);
   }
 
   /**
@@ -230,7 +252,7 @@ export class ClusterApplication extends Coffee {
    */
   expectLog(str: string, logger?: string) {
     logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('expectLog', [ str, logger ], null, true);
+    this._callFunctionOnAppWorker('expectLog', [str, logger], null, true);
   }
 
   /**
@@ -243,14 +265,19 @@ export class ClusterApplication extends Coffee {
    */
   notExpectLog(str: string, logger?: string) {
     logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('notExpectLog', [ str, logger ], null, true);
+    this._callFunctionOnAppWorker('notExpectLog', [str, logger], null, true);
   }
 
   httpRequest() {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false) {
+  _callFunctionOnAppWorker(
+    method: string,
+    args: any[] = [],
+    property: any = undefined,
+    needResult = false
+  ) {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (typeof arg === 'function') {
@@ -280,12 +307,13 @@ export class ClusterApplication extends Coffee {
       property,
       needResult,
     };
-    const child = childProcess.spawnSync(process.execPath, [
-      requestCallFunctionFile,
-      JSON.stringify(data),
-    ], {
-      stdio: 'pipe',
-    });
+    const child = childProcess.spawnSync(
+      process.execPath,
+      [requestCallFunctionFile, JSON.stringify(data)],
+      {
+        stdio: 'pipe',
+      }
+    );
     // if (child.stderr && child.stderr.length > 0) {
     //   console.error(child.stderr.toString());
     // }
@@ -309,7 +337,11 @@ export class ClusterApplication extends Coffee {
   }
 }
 
-export function createCluster(initOptions?: MockClusterOptions) {
+export type MockClusterApplication = ClusterApplication & ApplicationUnittest;
+
+export function createCluster(
+  initOptions?: MockClusterOptions
+): MockClusterApplication {
   const options = formatOptions(initOptions) as MockClusterApplicationOptions;
   if (options.cache && clusters.has(options.baseDir)) {
     const clusterApp = clusters.get(options.baseDir);
@@ -343,7 +375,11 @@ export function createCluster(initOptions?: MockClusterOptions) {
       debug('proxy handler.get %s', prop);
       // proxy mockXXX function to app worker
       const method = prop;
-      if (typeof method === 'string' && /^mock\w+$/.test(method) && target[method] === undefined) {
+      if (
+        typeof method === 'string' &&
+        /^mock\w+$/.test(method) &&
+        target[method] === undefined
+      ) {
         return function mockProxy(...args: any[]) {
           return target._callFunctionOnAppWorker(method, args, null, true);
         };
@@ -353,7 +389,7 @@ export function createCluster(initOptions?: MockClusterOptions) {
   });
 
   clusters.set(options.baseDir, clusterApp);
-  return clusterApp;
+  return clusterApp as unknown as MockClusterApplication;
 }
 
 // export to let mm.restore() worked
