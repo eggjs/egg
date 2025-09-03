@@ -1,0 +1,110 @@
+{
+  "name": "@eggjs/koa",
+  "version": "3.0.1",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Koa web app framework for https://eggjs.org",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "lint": "oxlint",
+    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "posttest": "pnpm run clean",
+    "test-local": "vitest run",
+    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
+    "ci": "vitest run --coverage",
+    "postci": "pnpm run clean",
+    "prepublishOnly": "pnpm run build",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown --cache",
+    "*.{ts,js,json,md,yml}": [
+      "prettier --ignore-unknown --write",
+      "oxlint --fix"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/koa"
+  },
+  "keywords": [
+    "web",
+    "app",
+    "http",
+    "application",
+    "framework",
+    "middleware",
+    "rack"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@types/content-disposition": "catalog:",
+    "accepts": "catalog:",
+    "cache-content-type": "catalog:",
+    "content-disposition": "catalog:",
+    "content-type": "catalog:",
+    "cookies": "catalog:",
+    "destroy": "catalog:",
+    "encodeurl": "catalog:",
+    "escape-html": "catalog:",
+    "fresh": "catalog:",
+    "gals": "catalog:",
+    "http-errors": "catalog:",
+    "is-type-of": "catalog:",
+    "koa-compose": "catalog:",
+    "on-finished": "catalog:",
+    "parseurl": "catalog:",
+    "statuses": "catalog:",
+    "type-is": "catalog:",
+    "vary": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/oxlint-config": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/accepts": "catalog:",
+    "@types/content-type": "catalog:",
+    "@types/cookies": "catalog:",
+    "@types/destroy": "catalog:",
+    "@types/encodeurl": "catalog:",
+    "@types/escape-html": "catalog:",
+    "@types/fresh": "catalog:",
+    "@types/http-errors": "catalog:",
+    "@types/koa-compose": "catalog:",
+    "@types/node": "catalog:",
+    "@types/on-finished": "catalog:",
+    "@types/parseurl": "catalog:",
+    "@types/statuses": "catalog:",
+    "@types/supertest": "catalog:",
+    "@types/type-is": "catalog:",
+    "@types/vary": "catalog:",
+    "c8": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
+    "mm": "catalog:",
+    "oxlint": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "supertest": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/coverage-v8": "catalog:"
+  },
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ]
+}

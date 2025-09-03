@@ -1,0 +1,13 @@
+node_modules
+test.js
+coverage
+npm-debug.log
+.idea
+*.iml
+dist
+lib
+!lib/application.test-d.ts
+package-lock.json
+.tshy*
+.eslintcache
+tsconfig.tsbuildinfo
