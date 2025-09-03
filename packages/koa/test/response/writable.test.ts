@@ -1,7 +1,7 @@
 import type { Server } from 'node:http';
 import net, { type AddressInfo } from 'node:net';
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 import Koa from '../../src/index.ts';

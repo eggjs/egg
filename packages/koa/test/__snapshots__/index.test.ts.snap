@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export Koa class 1`] = `
+[
+  "HttpError",
+]
+`;
+
+exports[`should export Koa class 2`] = `
+[
+  "default",
+  "Application",
+  "Context",
+  "Request",
+  "Response",
+]
+`;
