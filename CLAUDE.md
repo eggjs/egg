@@ -27,6 +27,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/cluster/`** - Cluster management (merged from @eggjs/cluster)
   - `src/` - Cluster TypeScript source code
   - `test/` - Cluster test suite
+- **`packages/koa/`** - Koa web framework (merged from @eggjs/koa)
+  - `src/` - Koa TypeScript source code
+  - `test/` - Koa test suite
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

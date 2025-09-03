@@ -1,0 +1,11 @@
+{
+  "name": "@eggjs/koa-example-cjs",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node helloworld.js"
+  },
+  "dependencies": {
+    "@eggjs/koa": "alpha"
+  }
+}

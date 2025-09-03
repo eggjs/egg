@@ -23,6 +23,9 @@
     },
     {
       "path": "./packages/cluster"
+    },
+    {
+      "path": "./packages/koa"
     }
   ]
 }

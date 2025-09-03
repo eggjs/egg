@@ -1,0 +1,12 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  release:
+    name: NPM
+    uses: eggjs/github-actions/.github/workflows/npm-release.yml@master
+    secrets:
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}

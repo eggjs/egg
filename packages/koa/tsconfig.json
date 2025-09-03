@@ -1,0 +1,9 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src"],
+  "exclude": ["test", "example"]
+}

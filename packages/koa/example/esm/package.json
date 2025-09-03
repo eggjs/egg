@@ -1,0 +1,11 @@
+{
+  "name": "@eggjs/koa-example-esm",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node helloworld.js"
+  },
+  "dependencies": {
+    "@eggjs/koa": "alpha"
+  }
+}

@@ -1,0 +1,15 @@
+exports[`should export Koa class 1`] = `
+[
+  "HttpError"
+]
+`;
+
+exports[`should export Koa class 2`] = `
+[
+  "Application",
+  "Context",
+  "Request",
+  "Response",
+  "default"
+]
+`;
