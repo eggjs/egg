@@ -1,16 +1,18 @@
-import { describe, it, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
+
+import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { levels } from 'egg-logger';
+
 import {
   MockApplication,
   createApp,
   cluster,
   getFilepath,
-} from '../../utils.js';
+} from '../../utils.ts';
 
 describe('test/lib/core/logger.test.ts', () => {
   let app: MockApplication;
@@ -175,24 +177,24 @@ describe('test/lib/core/logger.test.ts', () => {
     );
   });
 
-  it('dont output to console after app ready', done => {
+  it('dont output to console after app ready', async () => {
     mm.env('default');
     app = cluster('apps/logger');
-    app
-      .debug(false)
-      .coverage(false)
+    await app
+      // .debug(false)
+      // .coverage(false)
       .expect('stdout', /agent info/)
       .expect('stdout', /app info/)
       .notExpect('stdout', /app info after ready/)
       .expect('stderr', /nodejs.Error: agent error/)
       .expect('stderr', /nodejs.Error: app error/)
-      .end(done);
+      .end();
   });
 
-  it('should still output to console after app ready on local env', done => {
+  it('should still output to console after app ready on local env', async () => {
     mm.env('local');
     app = cluster('apps/logger');
-    app
+    await app
       // .debug()
       .coverage(false)
       .expect('stdout', /agent info/)
@@ -200,29 +202,24 @@ describe('test/lib/core/logger.test.ts', () => {
       .expect('stdout', /app info after ready/)
       .expect('stderr', /nodejs.Error: agent error/)
       .expect('stderr', /nodejs.Error: app error/)
-      .end(done);
+      .end();
   });
 
-  it('agent and app error should output to common-error.log', done => {
+  it('agent and app error should output to common-error.log', async () => {
     const baseDir = getFilepath('apps/logger');
     mm.env('default');
     mm(process.env, 'EGG_LOG', 'none');
     mm(process.env, 'EGG_HOME', baseDir);
     app = cluster('apps/logger');
-    app
-      // .debug()
-      .coverage(false)
-      .end(async (err: any) => {
-        await scheduler.wait(1000);
-        assert(!err);
-        const content = fs.readFileSync(
-          path.join(baseDir, 'logs/logger/common-error.log'),
-          'utf8'
-        );
-        assert(content.includes('nodejs.Error: agent error'));
-        assert(content.includes('nodejs.Error: app error'));
-        done();
-      });
+    await app.ready();
+
+    await scheduler.wait(1000);
+    const content = fs.readFileSync(
+      path.join(baseDir, 'logs/logger/common-error.log'),
+      'utf8'
+    );
+    assert(content.includes('nodejs.Error: agent error'));
+    assert(content.includes('nodejs.Error: app error'));
   });
 
   it('all loggers error should redirect to errorLogger', async () => {
@@ -278,23 +275,16 @@ describe('test/lib/core/logger.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should save debug log to file', done => {
-      app
-        .httpRequest()
-        .get('/')
-        .expect('ok')
-        .end(err => {
-          assert(!err);
-          assert(
-            fs
-              .readFileSync(
-                path.join(app.config.baseDir, 'logs/foo/foo-web.log'),
-                'utf8'
-              )
-              .includes(' DEBUG ')
-          );
-          done();
-        });
+    it('should save debug log to file', async () => {
+      await app.httpRequest().get('/').expect('ok');
+      assert(
+        fs
+          .readFileSync(
+            path.join(app.config.baseDir, 'logs/foo/foo-web.log'),
+            'utf8'
+          )
+          .includes(' DEBUG ')
+      );
     });
   });
 

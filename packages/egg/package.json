@@ -147,10 +147,9 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/koa": "catalog:",
+    "@eggjs/koa": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "catalog:",
-    "@eggjs/tsconfig": "catalog:",
     "@types/koa-bodyparser": "catalog:",
     "@types/node": "catalog:",
     "address": "catalog:",
@@ -171,7 +170,6 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "clean": "rimraf dist",
     "lint": "oxlint",
     "build": "tsdown",
     "test": "vitest run",

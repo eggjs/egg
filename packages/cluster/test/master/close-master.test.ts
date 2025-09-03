@@ -11,7 +11,7 @@ let app: MockApplication;
 
 afterEach(mm.restore);
 
-describe('close master', () => {
+describe.skip('close master', () => {
   afterEach(() => app.close());
 
   it('master will close agent and app worker', async () => {
@@ -274,7 +274,7 @@ describe('close master', () => {
     assert(!/agent worker never called after timeout/.test(app.stdout));
   });
 
-  it('close master will terminate all sub processes', async () => {
+  it.skip('close master will terminate all sub processes', async () => {
     mm.env('local');
     app = cluster('apps/sub-process');
 

@@ -65,8 +65,6 @@
     "vary": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/oxlint-config": "catalog:",
-    "@eggjs/tsconfig": "catalog:",
     "@types/accepts": "catalog:",
     "@types/content-type": "catalog:",
     "@types/cookies": "catalog:",

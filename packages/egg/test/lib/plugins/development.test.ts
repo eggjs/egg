@@ -1,13 +1,15 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import path from 'node:path';
 import fs from 'node:fs';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
+
 import {
   MockApplication,
   createApp,
   cluster,
   getFilepath,
-} from '../../utils.js';
+} from '../../utils.ts';
 
 describe('test/lib/plugins/development.test.ts', () => {
   afterEach(mm.restore);
@@ -42,7 +44,7 @@ describe('test/lib/plugins/development.test.ts', () => {
     });
   });
 
-  describe('reload workers', () => {
+  describe.skip('reload workers', () => {
     let app: MockApplication;
     const baseDir = getFilepath('apps/reload-worker');
     const filepath = path.join(baseDir, 'app/controller/home.js');

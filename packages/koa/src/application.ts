@@ -16,7 +16,7 @@ import { Request } from './request.ts';
 import { Response } from './response.ts';
 import type { CustomError, AnyProto } from './types.ts';
 
-const debug = debuglog('@eggjs/koa/application');
+const debug = debuglog('egg/koa/application');
 
 // oxlint-disable-next-line typescript/no-explicit-any
 export type ProtoImplClass<T = object> = new (...args: any[]) => T;

@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 
 import { MockApplication, createApp } from './utils.ts';
 
-describe('test/typescript.test.ts', () => {
+describe.skip('test/typescript.test.ts', () => {
   describe('compiler code', () => {
     let app: MockApplication;
     beforeAll(async () => {

@@ -3,7 +3,6 @@ import { once } from 'node:events';
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import http from 'node:http';
-import { fileURLToPath } from 'node:url';
 import { AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
@@ -22,7 +21,7 @@ import {
   type SingleModeAgent,
 } from '../src/index.ts';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = import.meta.dirname;
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
 
