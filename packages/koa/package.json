@@ -5,31 +5,28 @@
     "node": ">= 20.19.0"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
-    "clean": "rimraf dist",
     "build": "tsdown",
-    "lint": "oxlint",
-    "pretest": "pnpm run clean && pnpm run lint -- --fix && pnpm run prepublishOnly",
     "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ui": "vitest --ui",
-    "posttest": "pnpm run clean",
-    "test-local": "vitest run",
-    "preci": "pnpm run clean && pnpm run lint && pnpm run prepublishOnly",
-    "ci": "vitest run --coverage",
-    "postci": "pnpm run clean",
-    "prepublishOnly": "pnpm run build",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js,json,md,yml}": [
-      "prettier --ignore-unknown --write",
-      "oxlint --fix"
-    ]
+    "prepublishOnly": "pnpm run build"
   },
   "repository": {
     "type": "git",
@@ -86,25 +83,9 @@
     "@types/supertest": "catalog:",
     "@types/type-is": "catalog:",
     "@types/vary": "catalog:",
-    "c8": "catalog:",
-    "husky": "catalog:",
-    "lint-staged": "catalog:",
     "mm": "catalog:",
-    "oxlint": "catalog:",
-    "prettier": "catalog:",
-    "rimraf": "catalog:",
     "supertest": "catalog:",
     "tsdown": "catalog:",
-    "typescript": "catalog:",
-    "vitest": "catalog:",
-    "@vitest/ui": "catalog:",
-    "@vitest/coverage-v8": "catalog:"
-  },
-  "type": "module",
-  "exports": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "src"
-  ]
+    "typescript": "catalog:"
+  }
 }

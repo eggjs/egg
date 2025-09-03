@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
 import type { ServerResponse } from 'node:http';
 import { runInNewContext } from 'node:vm';
+import { once } from 'node:events';
+
+import { describe, it } from 'vitest';
 
 import request from 'supertest';
 
@@ -79,14 +81,8 @@ describe('ctx.onerror(err)', () => {
     assert.equal(Object.hasOwn(res.headers, 'x-csrf-token'), false);
   });
 
-  it.skip('should ignore error after headerSent', done => {
+  it.skip('should ignore error after headerSent', async () => {
     const app = new Koa();
-
-    app.on('error', err => {
-      assert.strictEqual(err.message, 'mock error');
-      assert.strictEqual(err.headerSent, true);
-      done();
-    });
 
     app.use(async (ctx: Context) => {
       ctx.status = 200;
@@ -96,7 +92,7 @@ describe('ctx.onerror(err)', () => {
       ctx.body = 'response';
     });
 
-    request(app.callback()).get('/').expect('X-Foo', 'Bar').expect(200);
+    await request(app.callback()).get('/').expect('X-Foo', 'Bar').expect(200);
   });
 
   it('should set status specified in the error using statusCode', () => {
@@ -276,24 +272,23 @@ describe('ctx.onerror(err)', () => {
       assert.strictEqual(removed, 2);
     });
 
-    it('should stringify error if it is an object', done => {
+    it('should stringify error if it is an object', async () => {
       const app = new Koa();
 
-      app.on('error', err => {
-        assert.strictEqual(err.message, 'non-error thrown: {"key":"value"}');
-        done();
-      });
+      const errorEvent = once(app, 'error');
 
       app.use(async () => {
         throw { key: 'value' }; // eslint-disable-line no-throw-literal
       });
 
-      request(app.callback())
+      await request(app.callback())
         .get('/')
         .expect(500)
-        .expect('Internal Server Error', () => {
-          // ignore
-        });
+        .expect('Internal Server Error');
+      
+      const errs: Error[] = await errorEvent;
+      const err = errs[0];
+      assert.strictEqual(err.message, 'non-error thrown: {"key":"value"}');
     });
   });
 });

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import type { AddressInfo } from 'node:net';
 import http from 'node:http';
-import { describe, it } from 'node:test';
+import { describe, it } from 'vitest';
 import { once } from 'node:events';
 import { PassThrough } from 'node:stream';
 
