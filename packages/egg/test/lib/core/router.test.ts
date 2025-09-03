@@ -1,17 +1,19 @@
 import { strict as assert } from 'node:assert';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp } from '../../utils.js';
+
+import { MockApplication, createApp, getFilepath } from '../../utils.ts';
 
 describe('test/lib/core/router.test.ts', () => {
   let app: MockApplication;
   beforeAll(() => {
     app = createApp({
-      baseDir: 'apps/router-app',
+      baseDir: getFilepath('apps/router-app'),
     });
     return app.ready();
   });
-  afterAll(() => app.close());
+  afterAll(() => app && app.close());
 
   afterEach(mm.restore);
 

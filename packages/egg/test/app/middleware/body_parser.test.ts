@@ -1,7 +1,9 @@
 import { strict as assert } from 'node:assert';
 import querystring from 'node:querystring';
-import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp, MockApplication } from '../../utils.js';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import { createApp, MockApplication } from '../../utils.ts';
 
 describe('test/app/middleware/body_parser.test.ts', () => {
   let app: MockApplication;

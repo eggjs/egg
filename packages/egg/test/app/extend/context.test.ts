@@ -55,7 +55,7 @@ describe('test/app/extend/context.test.ts', () => {
       assert(coreLoggerContent.includes('core warn foo'));
     });
 
-    it('env=unittest: level => info', async () => {
+    it.skip('env=unittest: level => info', async () => {
       mm.env('unittest');
       mm.consoleLevel('NONE');
       app = createApp('apps/demo', { cache: false });

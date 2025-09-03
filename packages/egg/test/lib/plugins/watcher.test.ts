@@ -1,9 +1,18 @@
-import { describe, it, beforeEach, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import fs from 'node:fs';
+
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from 'vitest';
 import { mm } from '@eggjs/mock';
-import { cluster, MockApplication, getFilepath } from '../../utils.js';
+
+import { cluster, MockApplication, getFilepath } from '../../utils.ts';
 
 const file_path1 = getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = getFilepath('apps/watcher-development-app/tmp/tmp.txt');
@@ -99,9 +108,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
         'apps/watcher-type-default/logs/watcher-type-default/egg-agent.log'
       );
       const content = fs.readFileSync(logPath, 'utf8');
-      assert(
-        content.includes('defaultEventSource watcher will NOT take effect')
-      );
+      assert.match(content, /defaultEventSource watcher will NOT take effect/);
     });
   });
 });

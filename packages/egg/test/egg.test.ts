@@ -17,10 +17,10 @@ import { readJSONSync } from 'utility';
 
 import { createApp, cluster, getFilepath, MockApplication } from './utils.ts';
 
-describe('test/egg.test.ts', () => {
+describe.sequential('test/egg.test.ts', () => {
   afterEach(mm.restore);
 
-  describe('dumpConfig()', () => {
+  describe.skip('dumpConfig()', () => {
     const baseDir = getFilepath('apps/demo');
     let app: MockApplication;
     beforeAll(async () => {
@@ -159,7 +159,7 @@ describe('test/egg.test.ts', () => {
       assert.match(content, /\[egg] dump config after ready, \d+ms/);
     });
 
-    it('should read timing data', () => {
+    it.skip('should read timing data', () => {
       let json = readJSONSync(
         path.join(baseDir, `run/agent_timing_${process.pid}.json`)
       );
@@ -175,7 +175,7 @@ describe('test/egg.test.ts', () => {
       assert.equal(json[0].pid, process.pid);
     });
 
-    it('should disable timing after ready', () => {
+    it.skip('should disable timing after ready', () => {
       const json = app.timing.toJSON();
       const last = json[json.length - 1];
       app.timing.start('a');

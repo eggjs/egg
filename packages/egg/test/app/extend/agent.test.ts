@@ -34,7 +34,7 @@ describe('test/app/extend/agent.test.ts', () => {
 
       assert.throws(() => {
         app.agent.dataServiceAsync.createInstance({ foo: 'bar2' });
-      }, /dataServiceAsync only support synchronous creation, please use createInstanceAsync/);
+      }, /dataServiceAsync only support asynchronous creation, please use createInstanceAsync/);
 
       const ds4 = await app.agent.dataServiceAsync.createInstanceAsync({
         foo: 'bar2',

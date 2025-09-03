@@ -6,6 +6,6 @@
     "start": "node helloworld.js"
   },
   "dependencies": {
-    "@eggjs/koa": "alpha"
+    "@eggjs/koa": "workspace:*"
   }
 }

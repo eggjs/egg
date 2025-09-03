@@ -7,11 +7,11 @@ import { getFixtures } from './helper.ts';
 
 describe('test/mock_service_cluster.test.ts', () => {
   let app: MockApplication;
-  beforeAll(() => {
+  beforeAll(async () => {
     app = mm.cluster({
-      baseDir: getFixtures('demo'),
+      baseDir: getFixtures('demo_mock_service_cluster'),
     });
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 

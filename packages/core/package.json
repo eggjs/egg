@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/eggjs/egg/tree/monorepo/packages/core#readme",
   "dependencies": {
-    "@eggjs/koa": "catalog:",
+    "@eggjs/koa": "workspace:*",
     "@eggjs/router": "catalog:",
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",

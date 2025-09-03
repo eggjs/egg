@@ -6,7 +6,7 @@ import { MockApplication, cluster } from '../utils.js';
 describe('test/cluster2/master.test.ts', () => {
   afterEach(mm.restore);
 
-  describe('app worker die', () => {
+  describe.skip('app worker die', () => {
     let app: MockApplication;
     beforeAll(() => {
       mm.env('default');

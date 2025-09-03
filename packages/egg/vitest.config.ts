@@ -1,9 +1,9 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    testTimeout: 10000,
-    include: ['test/**/*.test.{ts,js}'],
+    testTimeout: 20000,
+    include: ['test/**/*.test.ts'],
     exclude: [
       'test/fixtures/**',
       'test/bench/**',

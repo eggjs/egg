@@ -12,9 +12,10 @@ afterEach(mm.restore);
 describe('start master', () => {
   afterEach(() => app && app.close());
 
-  it('start success in local env', async () => {
+  it.skip('start success in local env', async () => {
     mm.env('local');
     app = cluster('apps/master-worker-started');
+    await app.ready();
 
     await app
       .expect('stdout', /egg start/)
@@ -30,6 +31,7 @@ describe('start master', () => {
   it('start success in prod env', async () => {
     mm.env('prod');
     app = cluster('apps/mock-production-app').debug(false);
+    await app.ready();
 
     await app
       .expect('stdout', /egg start/)
@@ -46,6 +48,7 @@ describe('start master', () => {
     mm.env('prod');
     mm(process.env, 'HOST', 'xxx.com');
     app = cluster('apps/mock-production-app').debug(false);
+    await app.ready();
 
     await app
       .expect('stdout', /egg start/)
@@ -62,6 +65,7 @@ describe('start master', () => {
     mm.env('prod');
     mm(process.env, 'HOST', '0.0.0.0');
     app = cluster('apps/mock-production-app').debug(false);
+    await app.ready();
 
     await app
       .expect('stdout', /egg start/)

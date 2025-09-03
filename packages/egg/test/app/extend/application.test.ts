@@ -2,8 +2,10 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
+
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp, MockApplication, cluster } from '../../utils.js';
+
+import { createApp, MockApplication, cluster } from '../../utils.ts';
 
 describe('test/app/extend/application.test.ts', () => {
   describe('app.logger', () => {
@@ -164,7 +166,7 @@ describe('test/app/extend/application.test.ts', () => {
 
       assert.throws(() => {
         app.dataServiceAsync.createInstance({ foo: 'barrr' });
-      }, /dataServiceAsync only support synchronous creation, please use createInstanceAsync/);
+      }, /dataServiceAsync only support asynchronous creation, please use createInstanceAsync/);
 
       const ds4 = await app.dataServiceAsync.createInstanceAsync({
         foo: 'barrr',

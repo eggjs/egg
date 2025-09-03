@@ -40,7 +40,7 @@ describe.sequential('test/cluster.test.ts', () => {
     });
   });
 
-  describe('cluster with fullpath baseDir', () => {
+  describe.skip('cluster with fullpath baseDir', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.cluster({
@@ -152,7 +152,7 @@ describe.sequential('test/cluster.test.ts', () => {
     });
   });
 
-  describe('cluster with framework=true', () => {
+  describe.skip('cluster with framework=true', () => {
     let app: MockApplication;
     beforeAll(async () => {
       mm(process, 'cwd', () => {

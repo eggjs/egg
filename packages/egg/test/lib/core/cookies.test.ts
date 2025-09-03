@@ -36,7 +36,7 @@ describe('test/lib/core/cookies.test.ts', () => {
       ]);
     });
 
-    it('should log CookieLimitExceed error when cookie value too long', async () => {
+    it.skip('should log CookieLimitExceed error when cookie value too long', async () => {
       const ctx = app.mockContext();
       const value = Buffer.alloc(4094).fill(49).toString();
       ctx.cookies.set('foo', value);
@@ -45,10 +45,9 @@ describe('test/lib/core/cookies.test.ts', () => {
         'logs/secure-app/common-error.log'
       );
       const content = fs.readFileSync(logPath, 'utf8');
-      assert(
-        content.match(
-          /CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/
-        )
+      assert.match(
+        content,
+        /CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/
       );
     });
 

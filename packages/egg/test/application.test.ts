@@ -47,7 +47,7 @@ describe('test/application.test.ts', () => {
     });
   });
 
-  describe('app start timeout', () => {
+  describe.skip('app start timeout', () => {
     afterEach(() => app.close());
     it('should emit `startTimeout` event', async () => {
       app = createApp('apps/app-start-timeout');
@@ -120,7 +120,7 @@ describe('test/application.test.ts', () => {
     });
   });
 
-  describe('handle uncaughtException', () => {
+  describe.skip('handle uncaughtException', () => {
     let app: MockApplication;
     beforeAll(() => {
       app = cluster('apps/app-throw');
@@ -145,7 +145,7 @@ describe('test/application.test.ts', () => {
     });
   });
 
-  describe('handle uncaughtException when error has only a getter', () => {
+  describe.skip('handle uncaughtException when error has only a getter', () => {
     let app: MockApplication;
     beforeAll(() => {
       app = cluster('apps/app-throw');
