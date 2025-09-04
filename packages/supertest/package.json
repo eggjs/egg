@@ -1,0 +1,64 @@
+{
+  "name": "@eggjs/supertest",
+  "description": "SuperAgent driven library for testing HTTP servers",
+  "version": "8.2.0",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "author": "TJ Holowaychuk",
+  "keywords": [
+    "bdd",
+    "http",
+    "request",
+    "superagent",
+    "tdd",
+    "test",
+    "testing"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/supertest"
+  },
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "dependencies": {
+    "@types/superagent": "catalog:",
+    "superagent": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "catalog:",
+    "@types/body-parser": "catalog:",
+    "@types/cookie-parser": "catalog:",
+    "@types/express": "catalog:",
+    "@types/node": "catalog:",
+    "body-parser": "catalog:",
+    "cookie-parser": "catalog:",
+    "express": "catalog:",
+    "nock": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  }
+}

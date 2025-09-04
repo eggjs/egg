@@ -5,7 +5,8 @@
     "noImplicitAny": true,
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true
   },
   "files": [],
   "references": [
@@ -26,6 +27,9 @@
     },
     {
       "path": "./packages/koa"
+    },
+    {
+      "path": "./packages/supertest"
     }
   ]
 }

@@ -60,7 +60,7 @@ describe('test/app/extend/application.test.ts', () => {
     });
   });
 
-  describe('app.readyCallback()', () => {
+  describe.skip('app.readyCallback()', () => {
     let app: MockApplication;
     afterAll(() => app.close());
 

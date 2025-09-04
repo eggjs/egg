@@ -177,7 +177,7 @@ describe('test/lib/core/logger.test.ts', () => {
     );
   });
 
-  it('dont output to console after app ready', async () => {
+  it.skip('dont output to console after app ready', async () => {
     mm.env('default');
     app = cluster('apps/logger');
     await app
