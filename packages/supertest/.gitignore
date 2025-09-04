@@ -1,0 +1,28 @@
+#       OS        #
+###################
+.DS_Store
+.idea
+Thumbs.db
+tmp/
+temp/
+
+
+#     Node.js     #
+###################
+node_modules
+
+
+#       NYC       #
+###################
+coverage
+*.lcov
+.nyc_output
+
+
+#      Files      #
+###################
+*.log
+.tshy*
+.eslintcache
+dist
+coverage

@@ -9,8 +9,8 @@ import {
   EggContextHttpClient,
 } from '../../../../../../src/index.js';
 
-import { RequestOptions as RequestOptionsNext } from 'urllib';
-import { RequestOptions2, RequestOptions } from 'urllib';
+import type { RequestOptions as RequestOptionsNext } from 'urllib';
+import type { RequestOptions2, RequestOptions } from 'urllib';
 
 // add user controller and service
 declare module 'egg' {

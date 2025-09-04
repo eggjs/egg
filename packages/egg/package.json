@@ -149,7 +149,7 @@
   "devDependencies": {
     "@eggjs/koa": "workspace:*",
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "catalog:",
+    "@eggjs/supertest": "workspace:",
     "@types/koa-bodyparser": "catalog:",
     "@types/node": "catalog:",
     "address": "catalog:",

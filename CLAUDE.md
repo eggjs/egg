@@ -30,6 +30,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/koa/`** - Koa web framework (merged from @eggjs/koa)
   - `src/` - Koa TypeScript source code
   - `test/` - Koa test suite
+- **`packages/supertest/`** - HTTP testing utilities (merged from @eggjs/supertest)
+  - `src/` - Supertest TypeScript source code
+  - `test/` - Supertest test suite
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

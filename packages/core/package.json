@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "catalog:",
+    "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "catalog:",
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",

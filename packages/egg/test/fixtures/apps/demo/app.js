@@ -1,4 +1,4 @@
-const { mm } = require('@eggjs/mock');
+const { mm } = require('mm');
 
 class DemoAppTest {
   constructor(app) {
