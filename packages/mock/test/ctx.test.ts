@@ -73,11 +73,11 @@ describe('test/ctx.test.ts', () => {
 
     it('should not conflict with concurrent call', async () => {
       await Promise.all([
-        await app.mockContextScope(async (ctx: any) => {
+        app.mockContextScope(async (ctx: any) => {
           const currentStore = app.ctxStorage.getStore();
           assert(ctx === currentStore);
         }),
-        await app.mockContextScope(async (ctx: any) => {
+        app.mockContextScope(async (ctx: any) => {
           const currentStore = app.ctxStorage.getStore();
           assert(ctx === currentStore);
         }),

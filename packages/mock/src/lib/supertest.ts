@@ -27,7 +27,9 @@ export class EggTestRequest extends Request {
     if (url[0] !== '/') {
       const realUrl = this.#app.router.pathFor(url);
       if (!realUrl) {
-        throw new Error(`Can\'t find router:${url}, please check your \'app/router.js\'`);
+        throw new Error(
+          `Can't find router:${url}, please check your 'app/router.js'`
+        );
       }
       url = realUrl;
     }
@@ -37,7 +39,10 @@ export class EggTestRequest extends Request {
       const pkg = readJSONSync(pkgFile);
       pkgVersion = pkg.version;
     }
-    test.set('User-Agent', `@eggjs/mock/${pkgVersion} Node.js/${process.version}`);
+    test.set(
+      'User-Agent',
+      `@eggjs/mock/${pkgVersion} Node.js/${process.version}`
+    );
     return test;
   }
 }

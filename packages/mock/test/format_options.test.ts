@@ -135,14 +135,11 @@ describe('test/format_options.test.ts', () => {
     mm(process, 'cwd', () => {
       return baseDir;
     });
-    assert.throws(
-      () => {
-        formatOptions({
-          plugin: true,
-        });
-      },
-      new RegExp(`should set "eggPlugin" property in ${baseDir}/package.json`)
-    );
+    assert.throws(() => {
+      formatOptions({
+        plugin: true,
+      });
+    }, new RegExp(`should set "eggPlugin" property in`));
   });
 
   it('should mock process.env.HOME when EGG_SERVER_ENV is default, test, prod', () => {

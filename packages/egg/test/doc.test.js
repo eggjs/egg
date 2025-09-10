@@ -2,7 +2,7 @@
 // const findlinks = require('findlinks');
 // const assert = require('assert');
 // const runscript = require('runscript');
-const { describe, it } = require('vitest');
+const { describe } = require('vitest');
 // const utils = require('./utils');
 // const puppeteer = require('puppeteer');
 

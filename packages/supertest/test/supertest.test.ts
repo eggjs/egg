@@ -80,7 +80,7 @@ describe('request(url)', () => {
       await once(server, 'listening');
       const url = 'http://localhost:' + (server.address() as AddressInfo).port;
       const test = request(url).get('/');
-      const res = await new Promise((resolve, reject) => {
+      await new Promise(resolve => {
         test.end(function (this: Test, err, res) {
           assert.equal(this, test);
           assert.equal(err, null);
@@ -599,13 +599,11 @@ describe('request(app)', () => {
     it('should deep test response object types', async () => {
       const app = express();
       app.get('/', (_req, res) => {
-        res
-          .status(200)
-          .json({
-            stringValue: 'foo',
-            numberValue: 3,
-            nestedObject: { innerString: '5' },
-          });
+        res.status(200).json({
+          stringValue: 'foo',
+          numberValue: 3,
+          nestedObject: { innerString: '5' },
+        });
       });
 
       try {
@@ -1299,7 +1297,7 @@ describe('request.get(url).query(vals) works as expected', function () {
 
     const serverRes = { status: 200 };
 
-    request(app)
+    await request(app)
       .get('/')
       // private api
       .assert(resError, serverRes as any, function (this: Test, err, res) {
@@ -1308,6 +1306,7 @@ describe('request.get(url).query(vals) works as expected', function () {
         expect(err!).toBe(resError);
         expect(res).toBe(serverRes);
         // close the server explicitly (as we are not using expect/end/then)
+        // @ts-expect-error
         this.end();
       });
   });

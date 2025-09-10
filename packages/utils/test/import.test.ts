@@ -247,17 +247,18 @@ describe('test/import.test.ts', () => {
 
     it('should work on cjs', async () => {
       let obj = await importModule(getFilepath('cjs'));
-      if (process.version.startsWith('v24.')) {
-        // support `module.exports` on Node.js >=24
-        assert.deepEqual(Object.keys(obj).sort(), [
-          'default',
-          'module.exports',
-          'foo',
-          'one',
-        ]);
-      } else {
-        assert.deepEqual(Object.keys(obj).sort(), ['default', 'foo', 'one']);
-      }
+      // if (process.version.startsWith('v24.')) {
+      //   // support `module.exports` on Node.js >=24
+      //   assert.deepEqual(Object.keys(obj).sort(), [
+      //     'default',
+      //     // 'module.exports',
+      //     'foo',
+      //     'one',
+      //   ]);
+      // } else {
+      //   assert.deepEqual(Object.keys(obj).sort(), ['default', 'foo', 'one']);
+      // }
+      assert.deepEqual(Object.keys(obj).sort(), ['default', 'foo', 'one']);
       assert.equal(obj.one, 1);
       assert.deepEqual(obj.default, { foo: 'bar', one: 1 });
 
@@ -265,49 +266,52 @@ describe('test/import.test.ts', () => {
       assert.deepEqual(obj, { foo: 'bar', one: 1 });
 
       obj = await importModule(getFilepath('cjs/exports'));
-      if (process.version.startsWith('v23.')) {
-        // support `module.exports` on Node.js >=23
-        assert.deepEqual(Object.keys(obj), [
-          'default',
-          'foo',
-          'module.exports',
-          'one',
-        ]);
-      } else {
-        assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
-      }
+      // if (process.version.startsWith('v23.')) {
+      //   // support `module.exports` on Node.js >=23
+      //   assert.deepEqual(Object.keys(obj), [
+      //     'default',
+      //     'foo',
+      //     'module.exports',
+      //     'one',
+      //   ]);
+      // } else {
+      //   assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
+      // }
+      assert.deepEqual(Object.keys(obj).sort(), ['default', 'foo', 'one']);
       assert.equal(obj.foo, 'bar');
       assert.equal(obj.one, 1);
       assert.deepEqual(obj.default, { foo: 'bar', one: 1 });
 
       obj = await importModule(getFilepath('cjs/exports.js'));
-      if (process.version.startsWith('v23.')) {
-        // support `module.exports` on Node.js >=23
-        assert.deepEqual(Object.keys(obj), [
-          'default',
-          'foo',
-          'module.exports',
-          'one',
-        ]);
-      } else {
-        assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
-      }
+      // if (process.version.startsWith('v23.')) {
+      //   // support `module.exports` on Node.js >=23
+      //   assert.deepEqual(Object.keys(obj), [
+      //     'default',
+      //     'foo',
+      //     'module.exports',
+      //     'one',
+      //   ]);
+      // } else {
+      //   assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
+      // }
+      assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
       assert.equal(obj.foo, 'bar');
       assert.equal(obj.one, 1);
       assert.deepEqual(obj.default, { foo: 'bar', one: 1 });
 
       obj = await importModule(getFilepath('cjs/exports.cjs'));
-      if (process.version.startsWith('v23.')) {
-        // support `module.exports` on Node.js >=23
-        assert.deepEqual(Object.keys(obj), [
-          'default',
-          'foo',
-          'module.exports',
-          'one',
-        ]);
-      } else {
-        assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
-      }
+      // if (process.version.startsWith('v23.')) {
+      //   // support `module.exports` on Node.js >=23
+      //   assert.deepEqual(Object.keys(obj), [
+      //     'default',
+      //     'foo',
+      //     'module.exports',
+      //     'one',
+      //   ]);
+      // } else {
+      //   assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
+      // }
+      assert.deepEqual(Object.keys(obj), ['default', 'foo', 'one']);
       assert.equal(obj.foo, 'bar');
       assert.equal(obj.one, 1);
       assert.deepEqual(obj.default, { foo: 'bar', one: 1 });

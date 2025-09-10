@@ -3,5 +3,8 @@
   "env": {
     "node": true
   },
-  "ignorePatterns": ["**/test/fixtures/**"]
+  "ignorePatterns": ["**/test/fixtures/**"],
+  "rules": {
+    "no-unused-vars": "error"
+  }
 }

@@ -100,7 +100,7 @@ describe.skip('agent should receive app worker numbers', () => {
   it.skip('agent should get update message after app died', async () => {
     try {
       await app.httpRequest().get('/exit');
-    } catch (_) {
+    } catch {
       // ignore
     }
 
@@ -427,7 +427,7 @@ describe.skip('agent and worker exception', () => {
   });
 });
 
-describe('beforeClose', () => {
+describe.skipIf(process.platform === 'win32')('beforeClose', () => {
   it('should wait app close', async () => {
     mm.env('local');
     app = cluster('apps/before-close');

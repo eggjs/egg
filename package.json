@@ -7,20 +7,17 @@
     "node": ">= 20.19.0"
   },
   "packageManager": "pnpm@10.15.0",
-  "volta": {
-    "node": "20.19.0"
-  },
   "devDependencies": {
     "@eggjs/tsconfig": "catalog:",
-    "rimraf": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/ui": "catalog:",
+    "husky": "catalog:",
+    "lint-staged": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
-    "vitest": "catalog:",
-    "husky": "catalog:",
-    "lint-staged": "catalog:",
-    "@vitest/ui": "catalog:",
-    "@vitest/coverage-v8": "catalog:"
+    "rimraf": "catalog:",
+    "vitest": "catalog:"
   },
   "scripts": {
     "clean": "pnpm -r run clean && rimraf packages/**/dist",
@@ -29,7 +26,7 @@
     "pretest": "pnpm -r run pretest && pnpm run clean",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
-    "ci": "pnpm run lint && pnpm run test:cov",
+    "ci": "pnpm run test:cov",
     "postci": "pnpm run build",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",

@@ -105,7 +105,7 @@ function getPluginName(pkgPath: string): string | undefined {
     if (pkg.eggPlugin?.name) {
       return pkg.eggPlugin.name;
     }
-  } catch (_) {
+  } catch {
     // ignore
   }
 }

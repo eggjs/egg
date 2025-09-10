@@ -27,31 +27,3 @@ exports[`should expose properties 1`] = `
   "utils",
 ]
 `;
-
-exports[`test/index.test.ts > should expose properties 1`] = `
-[
-  "BaseContextClass",
-  "CaseStyle",
-  "ClassLoader",
-  "Context",
-  "ContextLoader",
-  "EGG_LOADER",
-  "EXPORTS",
-  "EggCore",
-  "EggLoader",
-  "FULLPATH",
-  "FileLoader",
-  "KoaApplication",
-  "KoaContext",
-  "KoaRequest",
-  "KoaResponse",
-  "Lifecycle",
-  "Request",
-  "Response",
-  "Router",
-  "Singleton",
-  "Timing",
-  "sequencify",
-  "utils",
-]
-`;

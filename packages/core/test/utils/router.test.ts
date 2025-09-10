@@ -10,7 +10,7 @@ describe('test/utils/router.test.ts', () => {
   beforeAll(async () => {
     app = createApp('router-app');
     await app.loader.loadAll();
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 
