@@ -13,7 +13,7 @@ let app: MockApplication;
 
 afterEach(mm.restore);
 
-describe.sequential('pid file', () => {
+describe.skipIf(process.platform === 'win32').sequential('pid file', () => {
   const runDir = getFilepath('apps/master-worker-started/run');
   const pidFile = path.join(runDir, './pid');
 

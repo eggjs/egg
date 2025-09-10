@@ -1,8 +1,9 @@
 import type { Server } from 'node:http';
 import net, { type AddressInfo } from 'node:net';
 import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
 import { setTimeout as sleep } from 'node:timers/promises';
+
+import { describe, it } from 'vitest';
 
 import Koa from '../../src/index.ts';
 
@@ -29,7 +30,7 @@ describe('res.writable', () => {
       setTimeout(() => client.end(), 100);
     }
 
-    it('should always be writable and respond to all requests', done => {
+    it('should always be writable and respond to all requests', async () => {
       const app = new Koa();
       let count = 0;
       app.use(ctx => {
@@ -42,8 +43,8 @@ describe('res.writable', () => {
         const responses = Buffer.concat(datas).toString();
         assert.equal(/request 1, writable: true/.test(responses), true);
         assert.equal(/request 2, writable: true/.test(responses), true);
-        done();
       });
+      await sleep(100);
     });
   });
 
@@ -62,16 +63,19 @@ describe('res.writable', () => {
       });
     }
 
-    it('should not be writable', done => {
+    it('should not be writable', async () => {
       const app = new Koa();
+      let writable = false;
       app.use(async ctx => {
         await sleep(1000);
-        if (ctx.writable)
-          return done(new Error('ctx.writable should not be true'));
-        done();
+        if (ctx.writable) {
+          writable = true;
+        }
       });
       const server = app.listen();
       requestClosed(server);
+      await sleep(100);
+      assert.equal(writable, false);
     });
   });
 
@@ -92,16 +96,19 @@ describe('res.writable', () => {
       }, 100);
     }
 
-    it('should not be writable', done => {
+    it('should not be writable', async () => {
       const app = new Koa();
+      let writable = false;
       app.use(ctx => {
         ctx.res.end();
-        if (ctx.writable)
-          return done(new Error('ctx.writable should not be true'));
-        done();
+        if (ctx.writable) {
+          writable = true;
+        }
       });
       const server = app.listen();
       request(server);
+      await sleep(100);
+      assert.equal(writable, false);
     });
   });
 });

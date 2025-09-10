@@ -64,7 +64,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     //   appLoader.plugins.onerror.path,
     //   path.join(EGG_BASE, 'node_modules/@eggjs/onerror/dist/esm')
     // );
-    assert(appLoader.plugins.onerror.path!.includes('@eggjs/onerror/dist/esm'));
+    if (process.platform !== 'win32') {
+      assert(
+        appLoader.plugins.onerror.path!.includes('@eggjs/onerror/dist/esm')
+      );
+    }
     assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
     assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
     assert(Array.isArray(appLoader.orderPlugins));

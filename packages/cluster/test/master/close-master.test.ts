@@ -361,7 +361,7 @@ function alive(pid: number) {
     // success means it's still alive
     process.kill(pid, 0);
     return true;
-  } catch (err) {
+  } catch {
     // error means it's dead
     return false;
   }

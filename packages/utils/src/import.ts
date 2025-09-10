@@ -314,18 +314,6 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   }
 }
 
-function importMetaResolveWithPaths(packageName: string, paths: string[]) {
-  // let lastError: Error | undefined;
-  // for (const p of paths) {
-  //   try {
-  //     return import.meta.resolve(packageName, pathToFileURL(p).href);
-  //   } catch (err) {
-  //     lastError = err as Error;
-  //   }
-  // }
-  return import.meta.resolve(packageName);
-}
-
 export function importResolve(
   filepath: string,
   options?: ImportResolveOptions
@@ -420,7 +408,7 @@ export function importResolve(
   } else {
     if (supportImportMetaResolve) {
       try {
-        moduleFilePath = importMetaResolveWithPaths(filepath, paths);
+        moduleFilePath = import.meta.resolve(filepath);
       } catch (err) {
         debug(
           '[importResolve:error] import.meta.resolve %o => %o, options: %o',
