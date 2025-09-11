@@ -194,41 +194,47 @@ describe.sequential('test/egg.test.ts', () => {
       app.dumpTiming();
     });
 
-    it('should dumpTiming when timeout', async () => {
-      if (process.platform === 'win32') return;
-      const baseDir = getFilepath('apps/dumptiming-timeout');
-      fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
-      fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
-      const app = createApp(baseDir);
-      await app.ready();
-      await scheduler.wait(100);
-      assertFile(
-        path.join(baseDir, `run/application_timing_${process.pid}.json`)
-      );
-      assertFile(
-        path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'),
-        /unfinished timing item: {"name":"Did Load in app.js:didLoad"/
-      );
-      await app.close();
-    });
+    it.skipIf(process.platform === 'win32')(
+      'should dumpTiming when timeout',
+      async () => {
+        const baseDir = getFilepath('apps/dumptiming-timeout');
+        fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
+        fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
+        const app = createApp(baseDir);
+        await app.ready();
+        await scheduler.wait(100);
+        assertFile(
+          path.join(baseDir, `run/application_timing_${process.pid}.json`)
+        );
+        assertFile(
+          path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'),
+          /unfinished timing item: {"name":"Did Load in app.js:didLoad"/
+        );
+        await app.close();
+      }
+    );
 
-    it('should dump slow-boot-action warnning log', async () => {
-      if (process.platform === 'win32') return;
-      const baseDir = getFilepath('apps/dumptiming-slowBootActionMinDuration');
-      fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
-      fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
-      const app = createApp(baseDir);
-      await app.ready();
-      await scheduler.wait(100);
-      assertFile(
-        path.join(
-          baseDir,
-          'logs/dumptiming-slowBootActionMinDuration/egg-web.log'
-        ),
-        /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/
-      );
-      await app.close();
-    });
+    it.skipIf(process.platform === 'win32')(
+      'should dump slow-boot-action warnning log',
+      async () => {
+        const baseDir = getFilepath(
+          'apps/dumptiming-slowBootActionMinDuration'
+        );
+        fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
+        fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
+        const app = createApp(baseDir);
+        await app.ready();
+        await scheduler.wait(100);
+        assertFile(
+          path.join(
+            baseDir,
+            'logs/dumptiming-slowBootActionMinDuration/egg-web.log'
+          ),
+          /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/
+        );
+        await app.close();
+      }
+    );
   });
 
   describe('dump disabled plugin', () => {
@@ -491,9 +497,7 @@ describe.sequential('test/egg.test.ts', () => {
     });
   });
 
-  describe('egg-ready', () => {
-    if (process.platform === 'win32') return;
-
+  describe.skipIf(process.platform === 'win32')('egg-ready', () => {
     let app: MockApplication;
 
     beforeAll(() => {
@@ -513,22 +517,23 @@ describe.sequential('test/egg.test.ts', () => {
     });
   });
 
-  describe('createAnonymousContext()', () => {
-    if (process.platform === 'win32') return;
+  describe.skipIf(process.platform === 'win32')(
+    'createAnonymousContext()',
+    () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = createApp('apps/demo');
+        return app.ready();
+      });
+      afterAll(() => app.close());
 
-    let app: MockApplication;
-    beforeAll(() => {
-      app = createApp('apps/demo');
-      return app.ready();
-    });
-    afterAll(() => app.close());
-
-    it('should create anonymous context', async () => {
-      let ctx = app.createAnonymousContext();
-      assert(ctx);
-      assert(ctx.host === '127.0.0.1');
-      ctx = app.agent.createAnonymousContext();
-      assert(ctx);
-    });
-  });
+      it('should create anonymous context', async () => {
+        let ctx = app.createAnonymousContext();
+        assert(ctx);
+        assert(ctx.host === '127.0.0.1');
+        ctx = app.agent.createAnonymousContext();
+        assert(ctx);
+      });
+    }
+  );
 });

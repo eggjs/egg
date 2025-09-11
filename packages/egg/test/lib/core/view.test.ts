@@ -1,139 +1,130 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { MockApplication, createApp, getFilepath } from '../../utils.ts';
 
-describe('test/lib/core/view.test.ts', () => {
-  afterEach(mm.restore);
+describe('multiple view engine', () => {
+  const baseDir = getFilepath('apps/multiple-view-engine');
+  let app: MockApplication;
+  beforeAll(() => {
+    app = createApp('apps/multiple-view-engine');
+    return app.ready();
+  });
+  afterAll(() => app.close());
 
-  describe('multiple view engine', () => {
-    const baseDir = getFilepath('apps/multiple-view-engine');
-    let app: MockApplication;
-    beforeAll(() => {
-      app = createApp('apps/multiple-view-engine');
-      return app.ready();
-    });
-    afterAll(() => app.close());
-
-    describe('use', () => {
-      it('should register success', () => {
-        class View {
-          async render() {
-            return '';
-          }
-          async renderString() {
-            return '';
-          }
+  describe('use', () => {
+    it('should register success', () => {
+      class View {
+        async render() {
+          return '';
         }
-        app.view.use('e', View);
-        // assert(app.view.has('e'));
-      });
-    });
-
-    describe('render', () => {
-      it('should render ejs', async () => {
-        const res = await app.httpRequest().get('/render-ejs').expect(200);
-
-        assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.ejs'));
-        assert(res.body.locals.data === 1);
-        assert(res.body.options.opt === 1);
-        assert(res.body.type === 'ejs');
-      });
-
-      it('should render nunjucks', async () => {
-        const res = await app.httpRequest().get('/render-nunjucks').expect(200);
-
-        assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.nj'));
-        assert(res.body.locals.data === 1);
-        assert(res.body.options.opt === 1);
-        assert(res.body.type === 'nunjucks');
-      });
-
-      it('should render with options.viewEngine', async () => {
-        const res = await app
-          .httpRequest()
-          .get('/render-with-options')
-          .expect(200);
-
-        assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.nj'));
-        assert(res.body.type === 'ejs');
-      });
-    });
-
-    describe('renderString', () => {
-      it('should renderString', async () => {
-        const res = await app.httpRequest().get('/render-string').expect(200);
-        assert(res.body.tpl === 'hello world');
-        assert(res.body.locals.data === 1);
-        assert(res.body.options.viewEngine === 'ejs');
-        assert(res.body.type === 'ejs');
-      });
-
-      it('should throw when no viewEngine', async () => {
-        await app
-          .httpRequest()
-          .get('/render-string-without-view-engine')
-          .expect(500);
-      });
+        async renderString() {
+          return '';
+        }
+      }
+      app.view.use('e', View);
+      // assert(app.view.has('e'));
     });
   });
 
-  describe('nunjucks view', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = createApp('apps/view-render');
-      return app.ready();
-    });
-    beforeAll(() => {
-      app.locals = {
-        copyright: '2014 @ mk2 <br>',
-      };
+  describe('render', () => {
+    it('should render ejs', async () => {
+      const res = await app.httpRequest().get('/render-ejs').expect(200);
+
+      assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.ejs'));
+      assert(res.body.locals.data === 1);
+      assert(res.body.options.opt === 1);
+      assert(res.body.type === 'ejs');
     });
 
-    it('should render with options', async () => {
-      const res = await app.httpRequest().get('/').expect(200);
-      assert.equal(
-        String(res.text).replace(/\r/g, ''),
-        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
-      );
+    it('should render nunjucks', async () => {
+      const res = await app.httpRequest().get('/render-nunjucks').expect(200);
+
+      assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.nj'));
+      assert(res.body.locals.data === 1);
+      assert(res.body.options.opt === 1);
+      assert(res.body.type === 'nunjucks');
     });
 
-    it('should render with async function controller', async () => {
-      const res = await app.httpRequest().get('/async').expect(200);
+    it('should render with options.viewEngine', async () => {
+      const res = await app
+        .httpRequest()
+        .get('/render-with-options')
+        .expect(200);
 
-      assert.equal(
-        String(res.text).replace(/\r/g, ''),
-        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
-      );
+      assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.nj'));
+      assert(res.body.type === 'ejs');
+    });
+  });
+
+  describe('renderString', () => {
+    it('should renderString', async () => {
+      const res = await app.httpRequest().get('/render-string').expect(200);
+      assert(res.body.tpl === 'hello world');
+      assert(res.body.locals.data === 1);
+      assert(res.body.options.viewEngine === 'ejs');
+      assert(res.body.type === 'ejs');
     });
 
-    it('should render have helper instance', async () => {
-      const res = await app.httpRequest().get('/').expect(200);
-
-      assert.equal(
-        String(res.text).replace(/\r/g, ''),
-        `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
-      );
-    });
-
-    it('should render with empty', async () => {
-      const res = await app.httpRequest().get('/empty').expect(200);
-
-      assert.equal(
-        String(res.text).replace(/\r/g, ''),
-        `Hi,  test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
-      );
-    });
-
-    it('should render template string', async () => {
+    it('should throw when no viewEngine', async () => {
       await app
         .httpRequest()
-        .get('/string')
-        .expect(200)
-        .expect('templateString');
+        .get('/render-string-without-view-engine')
+        .expect(500);
     });
+  });
+});
+
+describe('nunjucks view', () => {
+  let app: MockApplication;
+  beforeAll(() => {
+    app = createApp('apps/view-render');
+    return app.ready();
+  });
+  beforeAll(() => {
+    app.locals = {
+      copyright: '2014 @ mk2 <br>',
+    };
+  });
+
+  it('should render with options', async () => {
+    const res = await app.httpRequest().get('/').expect(200);
+    assert.equal(
+      String(res.text).replace(/\r/g, ''),
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+    );
+  });
+
+  it('should render with async function controller', async () => {
+    const res = await app.httpRequest().get('/async').expect(200);
+
+    assert.equal(
+      String(res.text).replace(/\r/g, ''),
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+    );
+  });
+
+  it('should render have helper instance', async () => {
+    const res = await app.httpRequest().get('/').expect(200);
+
+    assert.equal(
+      String(res.text).replace(/\r/g, ''),
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+    );
+  });
+
+  it('should render with empty', async () => {
+    const res = await app.httpRequest().get('/empty').expect(200);
+
+    assert.equal(
+      String(res.text).replace(/\r/g, ''),
+      `Hi,  test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+    );
+  });
+
+  it('should render template string', async () => {
+    await app.httpRequest().get('/string').expect(200).expect('templateString');
   });
 });

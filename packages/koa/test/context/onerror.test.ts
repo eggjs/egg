@@ -139,7 +139,7 @@ describe('ctx.onerror(err)', () => {
 
   describe('when invalid err.status', () => {
     describe('not number', () => {
-      it('should respond 500', () => {
+      it('should respond 500', async () => {
         const app = new Koa();
 
         app.use((ctx: Context) => {
@@ -151,7 +151,7 @@ describe('ctx.onerror(err)', () => {
 
         const server = app.listen();
 
-        return request(server)
+        await request(server)
           .get('/')
           .expect(500)
           .expect('Content-Type', 'text/plain; charset=utf-8')
@@ -285,7 +285,7 @@ describe('ctx.onerror(err)', () => {
         .get('/')
         .expect(500)
         .expect('Internal Server Error');
-      
+
       const errs: Error[] = await errorEvent;
       const err = errs[0];
       assert.strictEqual(err.message, 'non-error thrown: {"key":"value"}');

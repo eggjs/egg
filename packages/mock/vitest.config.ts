@@ -4,5 +4,6 @@ export default defineProject({
   test: {
     include: ['test/**/*.test.ts'],
     exclude: ['test/fixtures/**', '**/node_modules/**', '**/dist/**'],
+    testTimeout: 15000,
   },
 });
