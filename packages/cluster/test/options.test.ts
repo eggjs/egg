@@ -154,11 +154,11 @@ describe('test/options.test.ts', () => {
 
   describe('options', () => {
     let app: any;
-    beforeAll(() => {
+    beforeAll(async () => {
       app = cluster('apps/options', {
         foo: true,
       } as any).debug();
-      return app.ready();
+      await app.ready();
     });
     afterAll(() => app.close());
 

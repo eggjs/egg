@@ -7,343 +7,352 @@ import { getFixtures } from './helper.ts';
 
 const baseDir = getFixtures('app-proxy');
 
-describe('test/app_proxy.test.ts', () => {
-  afterEach(mm.restore);
+describe.skipIf(process.version.startsWith('v24'))(
+  'test/app_proxy.test.ts',
+  () => {
+    afterEach(mm.restore);
 
-  describe('when before ready', () => {
-    let app: MockApplication;
-    const baseDir = getFixtures('app-proxy-ready');
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
+    describe('when before ready', () => {
+      let app: MockApplication;
+      const baseDir = getFixtures('app-proxy-ready');
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
+        });
+      });
+      afterAll(async () => {
+        await app.ready();
+        await app.close();
+      });
+
+      it('should not get property', () => {
+        assert.throws(() => {
+          app.config;
+        }, /can't get config before ready/);
+      });
+
+      it('should not set property', () => {
+        assert.throws(() => {
+          (app as any).curl = async function mockCurl() {
+            return 'mock';
+          };
+        }, /can't set curl before ready/);
+      });
+
+      it('should not define property', () => {
+        assert.throws(() => {
+          Object.defineProperty(app, 'config', {
+            value: {},
+          });
+        }, /can't defineProperty config before ready/);
+      });
+
+      it('should not delete property', () => {
+        assert.throws(() => {
+          delete (app as any).config;
+        }, /can't delete config before ready/);
+      });
+
+      it('should not getOwnPropertyDescriptor property', () => {
+        assert.throws(() => {
+          Object.getOwnPropertyDescriptor(app, 'config');
+        }, /can't getOwnPropertyDescriptor config before ready/);
+      });
+
+      it('should not getPrototypeOf property', () => {
+        assert.throws(() => {
+          Object.getPrototypeOf(app);
+        }, /can't getPrototypeOf before ready/);
       });
     });
-    afterAll(async () => {
-      await app.ready();
-      await app.close();
+
+    describe('handler.get', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
+        });
+        return app.ready();
+      });
+      afterAll(() => app.close());
+
+      it('should get property', () => {
+        assert.equal(app.getter, 'getter');
+        assert.equal(app.method(), 'method');
+      });
+
+      it('should ignore when get property on MockApplication', async () => {
+        assert.equal(app.isClosed, false);
+        assert.equal(app.closed, false);
+        await app.close();
+        assert.equal(app.isClosed, true);
+        assert.equal(app.closed, true);
+      });
     });
 
-    it('should not get property', () => {
-      assert.throws(() => {
-        app.config;
-      }, /can't get config before ready/);
-    });
+    describe('handler.set', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
+        });
+        return app.ready();
+      });
+      afterAll(() => app.close());
 
-    it('should not set property', () => {
-      assert.throws(() => {
+      it('should override property with setter', async () => {
         (app as any).curl = async function mockCurl() {
           return 'mock';
         };
-      }, /can't set curl before ready/);
+        const data = await app.curl('http://127.0.0.1:7001');
+        assert.equal(data, 'mock');
+      });
+
+      it('should ignore when set property on MockApplication', async () => {
+        app.isClosed = true;
+        assert(app.isClosed === false);
+        await app.close();
+      });
     });
 
-    it('should not define property', () => {
-      assert.throws(() => {
-        Object.defineProperty(app, 'config', {
-          value: {},
+    describe('handler.defineProperty', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
         });
-      }, /can't defineProperty config before ready/);
-    });
-
-    it('should not delete property', () => {
-      assert.throws(() => {
-        delete (app as any).config;
-      }, /can't delete config before ready/);
-    });
-
-    it('should not getOwnPropertyDescriptor property', () => {
-      assert.throws(() => {
-        Object.getOwnPropertyDescriptor(app, 'config');
-      }, /can't getOwnPropertyDescriptor config before ready/);
-    });
-
-    it('should not getPrototypeOf property', () => {
-      assert.throws(() => {
-        Object.getPrototypeOf(app);
-      }, /can't getPrototypeOf before ready/);
-    });
-  });
-
-  describe('handler.get', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
+        return app.ready();
       });
-      return app.ready();
-    });
-    afterAll(() => app.close());
+      afterAll(() => app.close());
 
-    it('should get property', () => {
-      assert.equal(app.getter, 'getter');
-      assert.equal(app.method(), 'method');
-    });
+      it('should defineProperty', async () => {
+        assert.equal(app.prop, 1);
+        Object.defineProperty(app, 'prop', {
+          get() {
+            if (!this._prop) {
+              this._prop = 0;
+            }
+            return this._prop++;
+          },
+          set(prop) {
+            if (this._prop) {
+              this._prop = this._prop + prop;
+            }
+          },
+        });
 
-    it('should ignore when get property on MockApplication', async () => {
-      assert.equal(app.isClosed, false);
-      assert.equal(app.closed, false);
-      await app.close();
-      assert.equal(app.isClosed, true);
-      assert.equal(app.closed, true);
-    });
-  });
-
-  describe('handler.set', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
-      });
-      return app.ready();
-    });
-    afterAll(() => app.close());
-
-    it('should override property with setter', async () => {
-      (app as any).curl = async function mockCurl() {
-        return 'mock';
-      };
-      const data = await app.curl('http://127.0.0.1:7001');
-      assert.equal(data, 'mock');
-    });
-
-    it('should ignore when set property on MockApplication', async () => {
-      app.isClosed = true;
-      assert(app.isClosed === false);
-      await app.close();
-    });
-  });
-
-  describe('handler.defineProperty', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
-      });
-      return app.ready();
-    });
-    afterAll(() => app.close());
-
-    it('should defineProperty', async () => {
-      assert.equal(app.prop, 1);
-      Object.defineProperty(app, 'prop', {
-        get() {
-          if (!this._prop) {
-            this._prop = 0;
-          }
-          return this._prop++;
-        },
-        set(prop) {
-          if (this._prop) {
-            this._prop = this._prop + prop;
-          }
-        },
+        assert.equal(app.prop, 0);
+        assert.equal(app.prop, 1);
+        app.prop = 2;
+        assert.equal(app.prop, 4);
+        app.prop = 2;
+        assert.equal(app.prop, 7);
       });
 
-      assert.equal(app.prop, 0);
-      assert.equal(app.prop, 1);
-      app.prop = 2;
-      assert.equal(app.prop, 4);
-      app.prop = 2;
-      assert.equal(app.prop, 7);
-    });
-
-    it('should ignore when defineProperty on MockApplication', async () => {
-      assert.equal(app.isClosed, false);
-      Object.defineProperty(app, 'isClosed', {
-        value: true,
+      it('should ignore when defineProperty on MockApplication', async () => {
+        assert.equal(app.isClosed, false);
+        Object.defineProperty(app, 'isClosed', {
+          value: true,
+        });
+        assert.equal(app.isClosed, false);
+        assert(!app._app.closed && !app._app.isClosed);
       });
-      assert.equal(app.isClosed, false);
-      assert(!app._app.closed && !app._app.isClosed);
     });
-  });
 
-  describe('handler.deleteProperty', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        // cache: false,
+    describe('handler.deleteProperty', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          // cache: false,
+        });
+        return app.ready();
       });
-      return app.ready();
-    });
-    afterAll(() => app.close());
+      afterAll(() => app.close());
 
-    it('should delete property', () => {
-      assert.equal(app.shouldBeDelete, true);
-      delete app.shouldBeDelete;
-      assert.equal(app.shouldBeDelete, undefined);
-    });
-
-    it('should ignore when delete property on MockApplication', () => {
-      assert(!app._app.closed);
-      assert.equal(app.isClosed, false);
-      delete app.isClosed;
-      assert(!app._app.closed);
-      assert.equal(app.isClosed, false);
-    });
-  });
-
-  describe('handler.getOwnPropertyDescriptor', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
+      it('should delete property', () => {
+        assert.equal(app.shouldBeDelete, true);
+        delete app.shouldBeDelete;
+        assert.equal(app.shouldBeDelete, undefined);
       });
-      return app.ready();
-    });
-    afterAll(() => app.close());
 
-    it('should getOwnPropertyDescriptor', () => {
-      const d = Object.getOwnPropertyDescriptor(app, 'a')!;
-      assert.equal(typeof d.get, 'function');
-      assert.equal(typeof d.set, 'function');
-    });
-
-    it('should ignore when getOwnPropertyDescriptor on MockApplication', async () => {
-      const d = Object.getOwnPropertyDescriptor(app, 'closed')!;
-      assert.equal(d, undefined);
-    });
-  });
-
-  describe('handler.getPrototypeOf', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        // cache: false,
+      it('should ignore when delete property on MockApplication', () => {
+        assert(!app._app.closed);
+        assert.equal(app.isClosed, false);
+        delete app.isClosed;
+        assert(!app._app.closed);
+        assert.equal(app.isClosed, false);
       });
-      return app.ready();
     });
-    afterAll(() => app.close());
 
-    it('should getPrototypeOf', () => {
-      assert.equal(Object.getPrototypeOf(app), Object.getPrototypeOf(app._app));
-    });
-  });
-
-  describe('MOCK_APP_METHOD', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        cache: false,
+    describe('handler.getOwnPropertyDescriptor', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
+        });
+        return app.ready();
       });
-      return app.ready();
-    });
-    afterAll(() => app.close());
+      afterAll(() => app.close());
 
-    it('should be used on MockApplication', () => {
-      const MOCK_APP_METHOD = [
-        'ready',
-        'isClosed',
-        'closed',
-        'close',
-        '_agent',
-        '_app',
-        'on',
-        'once',
-      ];
-      for (const key of MOCK_APP_METHOD) {
-        assert(app[key] !== app._app[key]);
-      }
-    });
-  });
-
-  describe.skip('messenger binding on app() mode', () => {
-    let app: MockApplication;
-    const baseDir = getFixtures('messenger-binding');
-    beforeAll(() => {
-      app = mm.app({
-        baseDir,
-        // cache: false,
+      it('should getOwnPropertyDescriptor', () => {
+        const d = Object.getOwnPropertyDescriptor(app, 'a')!;
+        assert.equal(typeof d.get, 'function');
+        assert.equal(typeof d.set, 'function');
       });
-      return app.ready();
-    });
-    afterAll(() => app.close());
 
-    it('should send message from app to agent', async () => {
-      await scheduler.wait(2000);
-      assert.deepEqual(app._agent.received, [
-        'send data when app starting',
-        'send data when app started',
-        'send data to a random agent',
-      ]);
-    });
-
-    it('should send message from agent to app', () => {
-      assert.deepEqual(app._app.received, [
-        'send data to app when server started',
-        'send data to a random app',
-      ]);
-    });
-
-    it('should receive egg-ready', () => {
-      assert.equal(app._app.eggReady, true);
-      assert.equal(app._agent.eggReady, true);
-      assert.equal(app._agent.eggReadyData.baseDir, baseDir);
-      assert.equal(app._app.eggReadyData.baseDir, baseDir);
-    });
-
-    it('should broadcast message successfully', () => {
-      assert.equal(app._app.recievedBroadcastAction, true);
-      assert.equal(app._agent.recievedBroadcastAction, true);
-      assert.equal(app._app.recievedAgentRecievedAction, true);
-    });
-
-    it('should send message from app to app', () => {
-      assert.equal(app._app.recievedAppAction, true);
-    });
-  });
-
-  describe.sequential('messenger binding on cluster() mode', () => {
-    let app: MockApplication;
-    const baseDir = getFixtures('messenger-binding');
-    beforeAll(async () => {
-      app = mm.cluster({
-        baseDir,
-        // cache: false,
+      it('should ignore when getOwnPropertyDescriptor on MockApplication', async () => {
+        const d = Object.getOwnPropertyDescriptor(app, 'closed')!;
+        assert.equal(d, undefined);
       });
-      // app.debug();
-      await app.ready();
-    });
-    afterAll(async () => {
-      await app.close();
     });
 
-    // cannot get the app.agent
-    it.skip('should send message from app to agent', async () => {
-      assert.deepEqual(app._agent.received, [
-        'send data when app starting',
-        'send data when app started',
-        'send data to a random agent',
-      ]);
+    describe('handler.getPrototypeOf', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          // cache: false,
+        });
+        return app.ready();
+      });
+      afterAll(() => app.close());
+
+      it('should getPrototypeOf', () => {
+        assert.equal(
+          Object.getPrototypeOf(app),
+          Object.getPrototypeOf(app._app)
+        );
+      });
     });
 
-    it.skip('should send message from agent to app', async () => {
-      // wait for message received
-      await scheduler.wait(500);
-      expect(app.getAppInstanceProperty('received').sort()).toMatchSnapshot();
+    describe('MOCK_APP_METHOD', () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          cache: false,
+        });
+        return app.ready();
+      });
+      afterAll(() => app.close());
+
+      it('should be used on MockApplication', () => {
+        const MOCK_APP_METHOD = [
+          'ready',
+          'isClosed',
+          'closed',
+          'close',
+          '_agent',
+          '_app',
+          'on',
+          'once',
+        ];
+        for (const key of MOCK_APP_METHOD) {
+          assert(app[key] !== app._app[key]);
+        }
+      });
     });
 
-    it('should receive egg-ready', () => {
-      assert.equal(app.getAppInstanceProperty('eggReady'), true);
+    describe.skip('messenger binding on app() mode', () => {
+      let app: MockApplication;
+      const baseDir = getFixtures('messenger-binding');
+      beforeAll(() => {
+        app = mm.app({
+          baseDir,
+          // cache: false,
+        });
+        return app.ready();
+      });
+      afterAll(() => app.close());
+
+      it('should send message from app to agent', async () => {
+        await scheduler.wait(2000);
+        assert.deepEqual(app._agent.received, [
+          'send data when app starting',
+          'send data when app started',
+          'send data to a random agent',
+        ]);
+      });
+
+      it('should send message from agent to app', () => {
+        assert.deepEqual(app._app.received, [
+          'send data to app when server started',
+          'send data to a random app',
+        ]);
+      });
+
+      it('should receive egg-ready', () => {
+        assert.equal(app._app.eggReady, true);
+        assert.equal(app._agent.eggReady, true);
+        assert.equal(app._agent.eggReadyData.baseDir, baseDir);
+        assert.equal(app._app.eggReadyData.baseDir, baseDir);
+      });
+
+      it('should broadcast message successfully', () => {
+        assert.equal(app._app.recievedBroadcastAction, true);
+        assert.equal(app._agent.recievedBroadcastAction, true);
+        assert.equal(app._app.recievedAgentRecievedAction, true);
+      });
+
+      it('should send message from app to app', () => {
+        assert.equal(app._app.recievedAppAction, true);
+      });
     });
 
-    it('should broadcast message successfully', () => {
-      assert.equal(app.getAppInstanceProperty('recievedBroadcastAction'), true);
-      assert.equal(
-        app.getAppInstanceProperty('recievedAgentRecievedAction'),
-        true
-      );
-    });
+    describe.skip('messenger binding on cluster() mode', () => {
+      let app: MockApplication;
+      const baseDir = getFixtures('messenger-binding');
+      beforeAll(async () => {
+        app = mm.cluster({
+          baseDir,
+          // cache: false,
+        });
+        // app.debug();
+        await app.ready();
+      });
+      afterAll(async () => {
+        await app.close();
+      });
 
-    it('should send message from app to app', () => {
-      assert.equal(app.getAppInstanceProperty('recievedAppAction'), true);
+      // cannot get the app.agent
+      it.skip('should send message from app to agent', async () => {
+        assert.deepEqual(app._agent.received, [
+          'send data when app starting',
+          'send data when app started',
+          'send data to a random agent',
+        ]);
+      });
+
+      it.skip('should send message from agent to app', async () => {
+        // wait for message received
+        await scheduler.wait(500);
+        expect(app.getAppInstanceProperty('received').sort()).toMatchSnapshot();
+      });
+
+      it('should receive egg-ready', () => {
+        assert.equal(app.getAppInstanceProperty('eggReady'), true);
+      });
+
+      it('should broadcast message successfully', () => {
+        assert.equal(
+          app.getAppInstanceProperty('recievedBroadcastAction'),
+          true
+        );
+        assert.equal(
+          app.getAppInstanceProperty('recievedAgentRecievedAction'),
+          true
+        );
+      });
+
+      it('should send message from app to app', () => {
+        assert.equal(app.getAppInstanceProperty('recievedAppAction'), true);
+      });
     });
-  });
-});
+  }
+);

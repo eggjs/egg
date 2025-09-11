@@ -1,21 +1,21 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp, MockApplication } from '../../utils.js';
+import { createApp, MockApplication } from '../../utils.ts';
 
 describe('test/app/extend/helper.test.ts', () => {
   let app: MockApplication;
-  beforeAll(() => {
+  beforeAll(async () => {
     app = createApp('apps/helper');
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 
   describe('pathFor()', () => {
-    it('should get home path url', () => {
-      return app.httpRequest().get('/pathFor').expect('/home').expect(200);
+    it('should get home path url', async () => {
+      await app.httpRequest().get('/pathFor').expect('/home').expect(200);
     });
 
-    it('should get home path with params', () => {
-      return app
+    it('should get home path with params', async () => {
+      await app
         .httpRequest()
         .get('/pathFor?foo=bar')
         .expect('/home?foo=bar')
@@ -24,16 +24,16 @@ describe('test/app/extend/helper.test.ts', () => {
   });
 
   describe('urlFor()', () => {
-    it('should get full home url', () => {
-      return app
+    it('should get full home url', async () => {
+      await app
         .httpRequest()
         .get('/urlFor')
         .expect(/^http:\/\/127\.0\.0\.1:\d+\/home$/)
         .expect(200);
     });
 
-    it('should get full home url with params', () => {
-      return app
+    it('should get full home url with params', async () => {
+      await app
         .httpRequest()
         .get('/urlFor?foo=1')
         .expect(/^http:\/\/127\.0\.0\.1:\d+\/home\?foo=1$/)
@@ -42,8 +42,8 @@ describe('test/app/extend/helper.test.ts', () => {
   });
 
   describe('escape()', () => {
-    it('should escape script', () => {
-      return app
+    it('should escape script', async () => {
+      await app
         .httpRequest()
         .get('/escape')
         .expect('&lt;script&gt;')
@@ -52,8 +52,8 @@ describe('test/app/extend/helper.test.ts', () => {
   });
 
   describe('shtml()', () => {
-    it('should ignore attribute if domain not in domainWhiteList', () => {
-      return app
+    it('should ignore attribute if domain not in domainWhiteList', async () => {
+      await app
         .httpRequest()
         .get('/shtml-not-in-domain-whitelist')
         .expect('true')

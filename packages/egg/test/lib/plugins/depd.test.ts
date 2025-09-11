@@ -1,24 +1,27 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
+
+import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp } from '../../utils.js';
 
-describe('test/lib/plugins/depd.test.ts', () => {
-  if (process.platform === 'win32') return;
+import { MockApplication, createApp } from '../../utils.ts';
 
-  afterEach(mm.restore);
+describe.skipIf(process.platform === 'win32')(
+  'test/lib/plugins/depd.test.ts',
+  () => {
+    afterEach(mm.restore);
 
-  let app: MockApplication;
-  beforeAll(() => {
-    app = createApp('apps/demo');
-    return app.ready();
-  });
-  afterAll(() => app.close());
+    let app: MockApplication;
+    beforeAll(() => {
+      app = createApp('apps/demo');
+      return app.ready();
+    });
+    afterAll(() => app.close());
 
-  it('should use this.locals instead of this.state', () => {
-    const ctx = app.mockContext();
-    ctx.locals.test = 'aaa';
-    assert.deepEqual(ctx.locals, ctx.state);
-    assert.deepEqual(ctx.locals.test, ctx.state.test);
-  });
-});
+    it('should use this.locals instead of this.state', () => {
+      const ctx = app.mockContext();
+      ctx.locals.test = 'aaa';
+      assert.deepEqual(ctx.locals, ctx.state);
+      assert.deepEqual(ctx.locals.test, ctx.state.test);
+    });
+  }
+);

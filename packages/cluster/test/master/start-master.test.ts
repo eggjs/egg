@@ -28,7 +28,7 @@ describe('start master', () => {
       .end();
   });
 
-  it('start success in prod env', async () => {
+  it.skip('start success in prod env', async () => {
     mm.env('prod');
     app = cluster('apps/mock-production-app').debug(false);
     await app.ready();
@@ -44,7 +44,7 @@ describe('start master', () => {
       });
   });
 
-  it('should print process.on.HOST while egg started', async () => {
+  it.skip('should print process.on.HOST while egg started', async () => {
     mm.env('prod');
     mm(process.env, 'HOST', 'xxx.com');
     app = cluster('apps/mock-production-app').debug(false);

@@ -66,7 +66,7 @@ describe('test/lib/core/logger.test.ts', () => {
   it('should got right level on local env', async () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', '');
-    app = createApp('apps/mock-dev-app');
+    app = createApp('apps/mock-dev-app1');
     await app.ready();
 
     assert((app.logger.get('file') as any).options.level === levels.INFO);
@@ -81,7 +81,7 @@ describe('test/lib/core/logger.test.ts', () => {
   it('should set EGG_LOG level on local env', async () => {
     mm.env('local');
     mm(process.env, 'EGG_LOG', 'ERROR');
-    app = createApp('apps/mock-dev-app');
+    app = createApp('apps/mock-dev-app2');
     await app.ready();
 
     assert((app.logger.get('file') as any).options.level === levels.INFO);
@@ -96,7 +96,7 @@ describe('test/lib/core/logger.test.ts', () => {
   it('should got right config on unittest env', async () => {
     mm.env('unittest');
     mm(process.env, 'EGG_LOG', '');
-    app = createApp('apps/mock-dev-app');
+    app = createApp('apps/mock-dev-app3');
     await app.ready();
 
     assert((app.logger.get('file') as any).options.level === levels.INFO);
@@ -110,7 +110,7 @@ describe('test/lib/core/logger.test.ts', () => {
 
   it('should set log.consoleLevel to env.EGG_LOG', async () => {
     mm(process.env, 'EGG_LOG', 'ERROR');
-    app = createApp('apps/mock-dev-app');
+    app = createApp('apps/mock-dev-app4');
     await app.ready();
 
     assert((app.logger.get('file') as any).options.level === levels.INFO);
