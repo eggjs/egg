@@ -80,7 +80,7 @@ catalog:
   spy: ^1.0.0
   terminal-link: ^2.1.1
   tsconfig-paths: ^4.2.0
-  tsd: ^0.31.2
+  tsd: ^0.33.0
   tsdown: ^0.14.2
   typescript: '5'
   urllib: ^4.6.11
