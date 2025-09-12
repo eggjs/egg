@@ -68,7 +68,7 @@ catalog:
   node-homedir: ^2.0.0
   onelogger: ^1.0.1
   oxlint: ^1.14.0
-  oxlint-tsgolint: ^0.1.5
+  oxlint-tsgolint: ^0.2.0
   pedding: ^2.0.1
   performance-ms: ^1.1.0
   prettier: ^3.4.2
