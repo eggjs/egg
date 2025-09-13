@@ -1,0 +1,184 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to release from'
+        required: true
+        default: 'next'
+        type: string
+      version_type:
+        description: 'Version bump type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+      prerelease_tag:
+        description: 'Prerelease tag (alpha, beta, rc) - only used with prerelease/pre* types'
+        required: false
+        default: 'beta'
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
+      dry_run:
+        description: 'Dry run (do not publish)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    name: Manual Release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+          # Use GitHub token for checkout and pushing
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Version bump (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          echo "🧪 Running version bump in dry-run mode..."
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
+          fi
+
+      - name: Version bump
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          echo "🚀 Running version bump..."
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }}
+          fi
+
+          # Get the new version tag
+          NEW_TAG=$(git describe --tags --abbrev=0)
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+          # Push changes and tags
+          git push origin ${{ github.event.inputs.branch }} --tags
+
+      - name: Publish packages (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "🧪 Running publish in dry-run mode..."
+          pnpm -r publish --dry-run --no-git-checks
+
+      - name: Publish packages
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "📦 Publishing packages..."
+          pnpm -r publish --no-git-checks
+
+      - name: Create GitHub Release (draft)
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const tag = process.env.NEW_TAG;
+            const versionType = '${{ github.event.inputs.version_type }}';
+
+            // Get package versions from the tag
+            const fs = require('fs');
+            const packagesDir = './packages';
+            const packageFolders = fs.readdirSync(packagesDir);
+
+            let releaseBody = `## 🎉 ${versionType.charAt(0).toUpperCase() + versionType.slice(1)} Release\n\n`;
+            releaseBody += `This release includes ${versionType} version updates for all packages.\n\n`;
+            releaseBody += `### 📦 Published Packages\n\n`;
+
+            for (const folder of packageFolders) {
+              const packageJsonPath = `${packagesDir}/${folder}/package.json`;
+              if (fs.existsSync(packageJsonPath)) {
+                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+                releaseBody += `- **${packageJson.name}** - v${packageJson.version}\n`;
+              }
+            }
+
+            releaseBody += `\n### 🔄 What's Changed\n\n`;
+            releaseBody += `<!-- Please add changelog information here manually -->\n`;
+            releaseBody += `- Add your changelog items here\n`;
+            releaseBody += `- Remove this placeholder text\n\n`;
+            releaseBody += `**Full Changelog**: https://github.com/${{ github.repository }}/compare/v${tag}...${tag}`;
+
+            const release = await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: tag,
+              body: releaseBody,
+              draft: true,
+              prerelease: false
+            });
+
+            core.info(`Created draft release: ${release.data.html_url}`);
+
+      - name: Summary
+        run: |
+          echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Status: **Dry run - no changes made**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
+            echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            echo "- New tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
+            echo "- Packages published to npm" >> $GITHUB_STEP_SUMMARY
+            echo "- Draft GitHub release created" >> $GITHUB_STEP_SUMMARY
+          fi

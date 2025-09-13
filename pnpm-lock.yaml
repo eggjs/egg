@@ -327,6 +327,9 @@ catalogs:
     sdk-base:
       specifier: ^5.0.1
       version: 5.0.1
+    semver:
+      specifier: ^7.6.3
+      version: 7.7.2
     sendmessage:
       specifier: ^3.0.1
       version: 3.0.1
@@ -404,6 +407,9 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.2
       vitest:
         specifier: 'catalog:'
         version: 4.0.0-beta.11(@types/debug@4.1.12)(@types/node@24.3.0)(@vitest/ui@4.0.0-beta.11)(jiti@2.5.1)(less@4.4.1)(lightningcss@1.22.1)(sass@1.91.0)(terser@5.43.1)(yaml@2.8.1)

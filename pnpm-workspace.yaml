@@ -75,6 +75,7 @@ catalog:
   rimraf: '6'
   runscript: ^2.0.1
   sdk-base: ^5.0.1
+  semver: ^7.6.3
   sendmessage: ^3.0.1
   spy: ^1.0.0
   terminal-link: ^2.1.1

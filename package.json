@@ -17,6 +17,7 @@
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
+    "semver": "catalog:",
     "vitest": "catalog:"
   },
   "scripts": {
@@ -34,7 +35,17 @@
     "puml": "puml . --dest ./site",
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
     "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version:patch": "node scripts/version.js patch",
+    "version:minor": "node scripts/version.js minor",
+    "version:major": "node scripts/version.js major",
+    "version:prerelease": "node scripts/version.js prerelease",
+    "version:prepatch": "node scripts/version.js prepatch",
+    "version:preminor": "node scripts/version.js preminor",
+    "version:premajor": "node scripts/version.js premajor",
+    "version:alpha": "node scripts/version.js prerelease --prerelease-tag=alpha",
+    "version:beta": "node scripts/version.js prerelease --prerelease-tag=beta",
+    "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",
