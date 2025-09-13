@@ -8,7 +8,7 @@
   },
   "packageManager": "pnpm@10.16.0",
   "devDependencies": {
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
     "husky": "catalog:",
@@ -54,7 +54,6 @@
       "oxlint --type-aware --fix"
     ]
   },
-  "homepage": "https://github.com/eggjs/egg",
   "repository": {
     "type": "git",
     "url": "git://github.com/eggjs/egg.git"

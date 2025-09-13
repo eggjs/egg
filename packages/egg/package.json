@@ -176,7 +176,6 @@
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
-  "homepage": "https://github.com/eggjs/egg",
   "repository": {
     "type": "git",
     "url": "git://github.com/eggjs/egg.git",

@@ -57,9 +57,6 @@ catalogs:
     '@eggjs/tegg-plugin':
       specifier: ^3.2.2
       version: 3.61.0
-    '@eggjs/tsconfig':
-      specifier: ^2.0.0
-      version: 2.0.0
     '@eggjs/view':
       specifier: ^3.0.1
       version: 3.0.1
@@ -352,8 +349,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     tsd:
-      specifier: ^0.31.2
-      version: 0.31.2
+      specifier: ^0.33.0
+      version: 0.33.0
     tsdown:
       specifier: ^0.14.2
       version: 0.14.2
@@ -381,8 +378,8 @@ importers:
   .:
     devDependencies:
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:packages/tsconfig
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.0.0-beta.11(vitest@4.0.0-beta.11)
@@ -437,8 +434,8 @@ importers:
         specifier: 'catalog:'
         version: 7.3.1(@eggjs/mock@6.0.7(mocha@11.7.1))(@swc/core@1.9.2(@swc/helpers@0.5.1))(@types/node@24.3.0)(typescript@5.9.2)
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -486,8 +483,8 @@ importers:
         specifier: 'workspace:'
         version: link:../supertest
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.3.0
@@ -565,8 +562,8 @@ importers:
         specifier: workspace:*
         version: link:../supertest
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/js-yaml':
         specifier: 'catalog:'
         version: 4.0.9
@@ -759,7 +756,7 @@ importers:
         version: 1.0.0
       tsd:
         specifier: 'catalog:'
-        version: 0.31.2
+        version: 0.33.0
       tsdown:
         specifier: 'catalog:'
         version: 0.14.2(typescript@5.9.2)
@@ -770,8 +767,8 @@ importers:
   packages/extend2:
     devDependencies:
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/node':
         specifier: 'catalog:'
         version: 24.3.0
@@ -970,8 +967,8 @@ importers:
         specifier: 'catalog:'
         version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.5(mysql2@3.14.4)))(leoric@2.13.5(mysql2@3.14.4))
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 2.0.0
+        specifier: workspace:*
+        version: link:../tsconfig
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
@@ -992,7 +989,7 @@ importers:
         version: 2.0.1
       tsd:
         specifier: 'catalog:'
-        version: 0.31.2
+        version: 0.33.0
       tsdown:
         specifier: 'catalog:'
         version: 0.14.2(typescript@5.9.2)
@@ -1042,6 +1039,21 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  packages/tsconfig:
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.3.0
+      coffee:
+        specifier: 'catalog:'
+        version: 5.5.1
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.11(@types/debug@4.1.12)(@types/node@24.3.0)(@vitest/ui@4.0.0-beta.11)(jiti@2.5.1)(less@4.4.1)(lightningcss@1.22.1)(sass@1.91.0)(terser@5.43.1)(yaml@2.8.1)
 
   packages/utils:
     devDependencies:
@@ -1574,10 +1586,6 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@eggjs/tegg-dal-plugin': ^3.60.1
-
-  '@eggjs/tsconfig@2.0.0':
-    resolution: {integrity: sha512-Isxjjkjyoo2EM2iO2oT60fXEyhSQFkGlFZ05FuNjR+6LVHmhs3fbul8y3zW7ymiZWyzGClN11R0nGEFgB1pSgg==}
-    engines: {node: '>=18.19.0'}
 
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
@@ -2932,8 +2940,8 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
-  '@tsd/typescript@5.4.5':
-    resolution: {integrity: sha512-saiCxzHRhUrRxQV2JhH580aQUZiKQUXI38FcAcikcfOomAil4G4lxT0RfrrKywoAYP/rqAdYXYmNRLppcd+hQQ==}
+  '@tsd/typescript@5.9.2':
+    resolution: {integrity: sha512-mSMM0QtEPdMd+rdMDd17yCUYD4yI3pKHap89+jEZrZ3KIO5PhDofBjER0OtgHdvOXF74KMLO3fyD6k3Hz0v03A==}
     engines: {node: '>=14.17'}
 
   '@tybys/wasm-util@0.10.0':
@@ -8943,8 +8951,8 @@ packages:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
 
-  tsd@0.31.2:
-    resolution: {integrity: sha512-VplBAQwvYrHzVihtzXiUVXu5bGcr7uH1juQZ1lmKgkuGNGT+FechUCqmx9/zk7wibcqR2xaNEwCkDyKh+VVZnQ==}
+  tsd@0.33.0:
+    resolution: {integrity: sha512-/PQtykJFVw90QICG7zyPDMIyueOXKL7jOJVoX5pILnb3Ux+7QqynOxfVvarE+K+yi7BZyOSY4r+OZNWSWRiEwQ==}
     engines: {node: '>=14.16'}
     hasBin: true
 
@@ -10356,8 +10364,6 @@ snapshots:
       - leoric
       - supports-color
 
-  '@eggjs/tsconfig@2.0.0': {}
-
   '@eggjs/utils@4.4.1': {}
 
   '@eggjs/view@3.0.1':
@@ -11435,7 +11441,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@tsd/typescript@5.4.5': {}
+  '@tsd/typescript@5.9.2': {}
 
   '@tybys/wasm-util@0.10.0':
     dependencies:
@@ -18940,9 +18946,9 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsd@0.31.2:
+  tsd@0.33.0:
     dependencies:
-      '@tsd/typescript': 5.4.5
+      '@tsd/typescript': 5.9.2
       eslint-formatter-pretty: 4.1.0
       globby: 11.1.0
       jest-diff: 29.7.0

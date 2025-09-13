@@ -1,0 +1,7 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist"
+  }
+}

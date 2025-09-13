@@ -21,7 +21,7 @@ catalog:
   '@eggjs/tegg-config': ^3.2.2
   '@eggjs/tegg-controller-plugin': ^3.2.2
   '@eggjs/tegg-plugin': ^3.2.2
-  '@eggjs/tsconfig': ^2.0.0
+  '@eggjs/tsconfig': ^3.1.0
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
   '@fengmk2/ps-tree': ^2.0.1
