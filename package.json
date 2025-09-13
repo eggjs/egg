@@ -34,7 +34,10 @@
     "puml": "puml . --dest ./site",
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
     "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version:patch": "node scripts/version.js patch",
+    "version:minor": "node scripts/version.js minor",
+    "version:major": "node scripts/version.js major"
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",
