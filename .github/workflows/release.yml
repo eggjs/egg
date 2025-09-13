@@ -112,13 +112,25 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           echo "🧪 Running publish in dry-run mode..."
-          pnpm -r publish --dry-run --no-git-checks
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
+            pnpm -r publish --dry-run --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            echo "Setting npm tag to: latest"
+            pnpm -r publish --dry-run --no-git-checks --tag=latest
+          fi
 
       - name: Publish packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           echo "📦 Publishing packages..."
-          pnpm -r publish --no-git-checks
+          if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+            echo "Setting npm tag to: ${{ github.event.inputs.prerelease_tag }}"
+            pnpm -r publish --no-git-checks --tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            echo "Setting npm tag to: latest"
+            pnpm -r publish --no-git-checks --tag=latest
+          fi
 
       - name: Create GitHub Release (draft)
         if: ${{ github.event.inputs.dry_run != 'true' }}
@@ -159,7 +171,7 @@ jobs:
               name: tag,
               body: releaseBody,
               draft: true,
-              prerelease: false
+              prerelease: versionType.includes('pre')
             });
 
             core.info(`Created draft release: ${release.data.html_url}`);
@@ -172,12 +184,22 @@ jobs:
             echo "### 🧪 Dry Run Completed" >> $GITHUB_STEP_SUMMARY
             echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
             echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "- Status: **Dry run - no changes made**" >> $GITHUB_STEP_SUMMARY
           else
             echo "### ✅ Release Completed" >> $GITHUB_STEP_SUMMARY
             echo "- Version bump: **${{ github.event.inputs.version_type }}**" >> $GITHUB_STEP_SUMMARY
             echo "- Branch: **${{ github.event.inputs.branch }}**" >> $GITHUB_STEP_SUMMARY
             echo "- New tag: **$NEW_TAG**" >> $GITHUB_STEP_SUMMARY
+            if [[ "${{ github.event.inputs.version_type }}" == pre* ]]; then
+              echo "- npm tag: **${{ github.event.inputs.prerelease_tag }}**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "- Packages published to npm" >> $GITHUB_STEP_SUMMARY
             echo "- Draft GitHub release created" >> $GITHUB_STEP_SUMMARY
           fi
