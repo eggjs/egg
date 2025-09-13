@@ -10,9 +10,37 @@ const args = process.argv.slice(2);
 const versionType = args[0];
 const isDryRun = args.includes('--dry-run');
 
-if (!['major', 'minor', 'patch'].includes(versionType)) {
+// Get prerelease tag if provided
+let prereleaseTag = 'beta'; // default
+const prereleaseArg = args.find(arg => arg.startsWith('--prerelease-tag='));
+if (prereleaseArg) {
+  prereleaseTag = prereleaseArg.split('=')[1];
+}
+
+const validVersionTypes = [
+  'major',
+  'minor',
+  'patch',
+  'prerelease',
+  'prepatch',
+  'preminor',
+  'premajor',
+];
+const validPrereleaseTags = ['alpha', 'beta', 'rc'];
+
+if (!validVersionTypes.includes(versionType)) {
   console.error(
-    'Usage: node scripts/version.js [major|minor|patch] [--dry-run]'
+    `Usage: node scripts/version.js [${validVersionTypes.join('|')}] [--prerelease-tag=alpha|beta|rc] [--dry-run]`
+  );
+  process.exit(1);
+}
+
+if (
+  versionType.includes('pre') &&
+  !validPrereleaseTags.includes(prereleaseTag)
+) {
+  console.error(
+    `Invalid prerelease tag: ${prereleaseTag}. Must be one of: ${validPrereleaseTags.join(', ')}`
   );
   process.exit(1);
 }
@@ -59,7 +87,14 @@ packageFolders.forEach(folder => {
     }
 
     const currentVersion = packageJson.version;
-    const newVersion = semver.inc(currentVersion, versionType);
+    let newVersion;
+
+    if (versionType.includes('pre')) {
+      // For prerelease versions, pass the prerelease tag
+      newVersion = semver.inc(currentVersion, versionType, prereleaseTag);
+    } else {
+      newVersion = semver.inc(currentVersion, versionType);
+    }
 
     packageJson.version = newVersion;
 

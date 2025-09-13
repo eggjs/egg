@@ -17,6 +17,19 @@ on:
           - patch
           - minor
           - major
+          - prerelease
+          - prepatch
+          - preminor
+          - premajor
+      prerelease_tag:
+        description: 'Prerelease tag (alpha, beta, rc) - only used with prerelease/pre* types'
+        required: false
+        default: 'beta'
+        type: choice
+        options:
+          - alpha
+          - beta
+          - rc
       dry_run:
         description: 'Dry run (do not publish)'
         required: false
@@ -69,13 +82,21 @@ jobs:
         if: ${{ github.event.inputs.dry_run == 'true' }}
         run: |
           echo "🧪 Running version bump in dry-run mode..."
-          node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }} --dry-run
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }} --dry-run
+          fi
 
       - name: Version bump
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: |
           echo "🚀 Running version bump..."
-          node scripts/version.js ${{ github.event.inputs.version_type }}
+          if [[ "${{ github.event.inputs.version_type }}" == prerelease* ]]; then
+            node scripts/version.js ${{ github.event.inputs.version_type }} --prerelease-tag=${{ github.event.inputs.prerelease_tag }}
+          else
+            node scripts/version.js ${{ github.event.inputs.version_type }}
+          fi
 
           # Get the new version tag
           NEW_TAG=$(git describe --tags --abbrev=0)
