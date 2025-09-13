@@ -15,11 +15,12 @@ import {
 } from '../../utils.ts';
 
 describe('test/lib/core/logger.test.ts', () => {
-  let app: MockApplication;
+  let app: MockApplication | undefined;
   afterEach(async () => {
     if (app && !app.isClosed) {
       await scheduler.wait(500);
       await app.close();
+      app = undefined;
     }
     await mm.restore();
   });
@@ -40,6 +41,8 @@ describe('test/lib/core/logger.test.ts', () => {
       (app.coreLogger.get('console') as any).options.level === levels.INFO
     );
     assert(app.config.logger.disableConsoleAfterReady === true);
+
+    await app.close();
   });
 
   it('should got right level on prod env when set allowDebugAtProd to true', async () => {
@@ -61,6 +64,7 @@ describe('test/lib/core/logger.test.ts', () => {
     assert(
       (app.coreLogger.get('console') as any).options.level === levels.INFO
     );
+    await app.close();
   });
 
   it('should got right level on local env', async () => {
@@ -76,6 +80,8 @@ describe('test/lib/core/logger.test.ts', () => {
       (app.coreLogger.get('console') as any).options.level === levels.WARN
     );
     assert(app.config.logger.disableConsoleAfterReady === false);
+
+    await app.close();
   });
 
   it('should set EGG_LOG level on local env', async () => {
@@ -91,6 +97,8 @@ describe('test/lib/core/logger.test.ts', () => {
       (app.coreLogger.get('console') as any).options.level === levels.ERROR
     );
     assert(app.config.logger.disableConsoleAfterReady === false);
+
+    await app.close();
   });
 
   it('should got right config on unittest env', async () => {
@@ -106,6 +114,8 @@ describe('test/lib/core/logger.test.ts', () => {
       (app.coreLogger.get('console') as any).options.level === levels.WARN
     );
     assert(app.config.logger.disableConsoleAfterReady === false);
+
+    await app.close();
   });
 
   it('should set log.consoleLevel to env.EGG_LOG', async () => {
@@ -115,7 +125,7 @@ describe('test/lib/core/logger.test.ts', () => {
 
     assert((app.logger.get('file') as any).options.level === levels.INFO);
     assert((app.logger.get('console') as any).options.level === levels.ERROR);
-    return app.ready();
+    await app.close();
   });
 
   it('log buffer disable cache on local and unittest env', async () => {
@@ -136,6 +146,8 @@ describe('test/lib/core/logger.test.ts', () => {
       assert.match(content, /nodejs\.Error: mock nobuffer error on logger/);
       assert.match(content, /nodejs\.Error: mock nobuffer error on coreLogger/);
     }
+
+    await app.close();
   });
 
   it('log buffer enable cache on non-local and non-unittest env', async () => {
@@ -154,6 +166,8 @@ describe('test/lib/core/logger.test.ts', () => {
     await scheduler.wait(1000);
 
     assert(fs.readFileSync(logfile, 'utf8').includes(''));
+
+    await app.close();
   });
 
   it('output .json format log', async () => {
@@ -175,6 +189,8 @@ describe('test/lib/core/logger.test.ts', () => {
     assert(
       fs.readFileSync(logfile, 'utf8').includes('"message":"json format"')
     );
+
+    await app.close();
   });
 
   it.skip('dont output to console after app ready', async () => {
@@ -189,6 +205,8 @@ describe('test/lib/core/logger.test.ts', () => {
       .expect('stderr', /nodejs.Error: agent error/)
       .expect('stderr', /nodejs.Error: app error/)
       .end();
+
+    await app.close();
   });
 
   it('should still output to console after app ready on local env', async () => {
@@ -203,6 +221,8 @@ describe('test/lib/core/logger.test.ts', () => {
       .expect('stderr', /nodejs.Error: agent error/)
       .expect('stderr', /nodejs.Error: app error/)
       .end();
+
+    await app.close();
   });
 
   it('agent and app error should output to common-error.log', async () => {
@@ -220,6 +240,8 @@ describe('test/lib/core/logger.test.ts', () => {
     );
     assert(content.includes('nodejs.Error: agent error'));
     assert(content.includes('nodejs.Error: app error'));
+
+    await app.close();
   });
 
   it('all loggers error should redirect to errorLogger', async () => {
@@ -241,6 +263,8 @@ describe('test/lib/core/logger.test.ts', () => {
     assert(content.includes('nodejs.Error: coreLogger error'));
     assert(content.includes('nodejs.Error: errorLogger error'));
     assert(content.includes('nodejs.Error: customLogger error'));
+
+    await app.close();
   });
 
   it("agent's logger is same as coreLogger", async () => {
@@ -248,6 +272,8 @@ describe('test/lib/core/logger.test.ts', () => {
     await app.ready();
 
     assert(app.agent.logger.options.file === app.agent.coreLogger.options.file);
+
+    await app.close();
   });
 
   it('should `config.logger.enableFastContextLogger` = true work', async () => {
@@ -265,13 +291,15 @@ describe('test/lib/core/logger.test.ts', () => {
     app.expectLog(
       / INFO \d+ \[-\/127\.0\.0\.1\/mock-trace-id-123\/[\d.]+ms GET \/] enableFastContextLogger: true/
     );
+
+    await app.close();
   });
 
   describe('logger.level = DEBUG', () => {
     let app: MockApplication;
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/logger-level-debug');
-      return app.ready();
+      await app.ready();
     });
     afterAll(() => app.close());
 
@@ -290,9 +318,9 @@ describe('test/lib/core/logger.test.ts', () => {
 
   describe('onelogger', () => {
     let app: MockApplication;
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/custom-logger');
-      return app.ready();
+      await app.ready();
     });
     afterAll(() => app.close());
 
