@@ -50,7 +50,7 @@
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
     "egg-path-matching": "catalog:",
-    "extend2": "catalog:",
+    "@eggjs/extend2": "workspace:*",
     "get-ready": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",

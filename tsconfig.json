@@ -30,6 +30,9 @@
     },
     {
       "path": "./packages/supertest"
+    },
+    {
+      "path": "./packages/extend2"
     }
   ]
 }

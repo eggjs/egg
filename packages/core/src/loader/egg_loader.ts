@@ -13,7 +13,7 @@ import {
 } from 'is-type-of';
 import type { Logger } from 'egg-logger';
 import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
-import { extend } from 'extend2';
+import { extend } from '@eggjs/extend2';
 import {
   Request,
   Response,

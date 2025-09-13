@@ -33,6 +33,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/supertest/`** - HTTP testing utilities (merged from @eggjs/supertest)
   - `src/` - Supertest TypeScript source code
   - `test/` - Supertest test suite
+- **`packages/extend2/`** - Object extension utility (merged from extend2)
+  - `src/` - Extend2 TypeScript source code
+  - `test/` - Extend2 test suite
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
@@ -84,6 +87,7 @@ The framework follows a specific loading order:
 
 - `pnpm test` - Run tests in all packages
 - `pnpm --filter=egg run test` - Test main egg package
+- `pnpm --filter=@eggjs/extend2 test` - Test extend2 package with vitest
 
 ### Build & Lint
 
@@ -167,16 +171,26 @@ The framework extends Koa's context with Egg-specific features:
 
 1. Create new directory under `packages/`
 2. Add package.json with workspace dependencies using `workspace:*`
-3. Update root pnpm-workspace.yaml if needed
-4. Use `pnpm --filter=<package>` for package-specific commands
+3. Create tsconfig.json that extends from root: `"extends": "../../tsconfig.json"`
+4. Add package reference to root tsconfig.json `references` array
+5. Update root pnpm-workspace.yaml if needed
+6. Use `pnpm --filter=<package>` for package-specific commands
 
 ### Testing Strategy
 
+- **IMPORTANT: All new packages MUST use Vitest for testing** - this is the standard test runner for the monorepo
 - Use `pnpm --filter=egg run test` for framework tests
 - Test fixtures are in `packages/egg/test/fixtures/apps/`
 - Create apps in fixtures to test specific scenarios
 - Use `pnpm test` to run tests across all packages
 - Follow existing test patterns for consistency
+
+#### Vitest Configuration
+
+- Each package should include a `vitest.config.ts` file for test configuration
+- Import test functions from vitest: `import { describe, it } from 'vitest'`
+- Use standard assertions with Node.js built-in `assert` module
+- Test files should follow the pattern `test/**/*.test.ts`
 
 ### TypeScript Support
 
@@ -186,6 +200,14 @@ The framework extends Koa's context with Egg-specific features:
 - Type definitions are exported for framework users
 - Examples support both .js and .ts application files
 - Cross-package TypeScript references configured for proper module resolution
+
+#### TypeScript Configuration Requirements
+
+- **IMPORTANT: All sub-project tsconfig.json files MUST extend from the root project tsconfig.json**
+- Use `"extends": "../../tsconfig.json"` in package tsconfig.json files
+- Include `"baseUrl": "./"` in compilerOptions for proper path resolution
+- Root tsconfig.json must include all packages in the `references` array
+- This ensures consistent TypeScript configuration across the entire monorepo
 
 ### Documentation
 
