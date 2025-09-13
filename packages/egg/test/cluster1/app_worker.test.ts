@@ -143,7 +143,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
     });
   });
 
-  describe('listen hostname', () => {
+  describe.skipIf(process.platform === 'win32')('listen hostname', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = cluster('apps/app-server-with-hostname');
