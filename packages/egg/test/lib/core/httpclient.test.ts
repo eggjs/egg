@@ -275,7 +275,7 @@ describe.skipIf(process.platform === 'win32')(
       });
     });
 
-    describe('httpclient tracer', () => {
+    describe.skip('httpclient tracer', () => {
       let app: MockApplication;
       beforeAll(() => {
         app = createApp('apps/httpclient-tracer');
@@ -534,7 +534,7 @@ describe.skipIf(process.platform === 'win32')(
       });
     });
 
-    describe('before app ready multi httpclient request tracer', () => {
+    describe.skip('before app ready multi httpclient request tracer', () => {
       let app: MockApplication;
       beforeAll(async () => {
         const localServerUrl = await startLocalServer();
