@@ -4,7 +4,7 @@
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/@eggjs/tsconfig.svg?style=flat)](https://nodejs.org/en/download/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/eggjs/:repo)
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/eggjs/egg)
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/tsconfig.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/tsconfig
