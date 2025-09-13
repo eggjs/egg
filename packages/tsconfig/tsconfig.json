@@ -15,7 +15,7 @@
     // Egg compile to in place, will throw can not overwrite js file
     "allowJs": false,
     "pretty": true,
-    "noEmitOnError": false,
+    "noEmitOnError": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowUnreachableCode": false,
