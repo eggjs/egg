@@ -31,7 +31,7 @@
     "directory": "packages/extend2"
   },
   "devDependencies": {
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "oxlint": "catalog:",
     "tsdown": "catalog:",

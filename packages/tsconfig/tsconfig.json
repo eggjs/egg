@@ -1,0 +1,43 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    // https://node.green/#ES2024
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    // Emit '__importStar' and '__importDefault' helpers for runtime babel ecosystem compatibility
+    // and enable '--allowSyntheticDefaultImports' for typesystem compatibility.
+    // Convenient for import assert from 'assert'
+    "esModuleInterop": true,
+    // Allow javascript files to be compiled.
+    // Egg compile to in place, will throw can not overwrite js file
+    "allowJs": false,
+    "pretty": true,
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    // Ensure non-undefined class properties are initialized in the constructor.
+    // When use DI, properties will be implicitly init
+    "strictPropertyInitialization": false,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "inlineSourceMap": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    // Enables experimental support for ES7 decorators.
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useUnknownInCatchVariables": true,
+    "incremental": false,
+    // https://nodejs.org/en/learn/typescript/publishing-a-ts-package#treat-types-like-a-test
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true
+  }
+}

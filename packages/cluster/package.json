@@ -39,9 +39,8 @@
   "author": "dead-horse <dead_horse@qq.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/eggjs/cluster/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/cluster#readme",
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@fengmk2/ps-tree": "catalog:",
@@ -58,7 +57,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:",
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "address": "catalog:",
     "coffee": "catalog:",

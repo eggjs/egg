@@ -493,7 +493,7 @@ describe('test/app/service/news.test.js', () => {
 ```json
 {
   "devDependencies": {
-    "@eggjs/tsconfig": "^1.0.0"
+    "@eggjs/tsconfig": "3"
   },
   "egg": {
     "typescript": true,

@@ -43,7 +43,6 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
-  "homepage": "https://github.com/eggjs/egg/tree/monorepo/packages/core#readme",
   "dependencies": {
     "@eggjs/koa": "workspace:*",
     "@eggjs/router": "catalog:",
@@ -63,7 +62,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "await-event": "catalog:",

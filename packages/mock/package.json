@@ -79,7 +79,6 @@
     "dist"
   ],
   "description": "mock server plugin for egg",
-  "homepage": "https://github.com/eggjs/mock",
   "repository": {
     "type": "git",
     "url": "git://github.com/eggjs/egg.git",
@@ -118,7 +117,7 @@
     "@eggjs/tegg-config": "catalog:",
     "@eggjs/tegg-controller-plugin": "catalog:",
     "@eggjs/tegg-plugin": "catalog:",
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@types/methods": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
