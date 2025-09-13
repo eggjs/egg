@@ -134,7 +134,7 @@
     "cluster-client": "catalog:",
     "egg-errors": "catalog:",
     "egg-logger": "catalog:",
-    "extend2": "catalog:",
+    "@eggjs/extend2": "workspace:*",
     "graceful": "catalog:",
     "humanize-ms": "catalog:",
     "is-type-of": "catalog:",

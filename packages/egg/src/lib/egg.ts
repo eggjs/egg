@@ -23,7 +23,7 @@ import { utils as eggUtils } from '@eggjs/core';
 import createClusterClient, {
   close as closeClusterClient,
 } from 'cluster-client';
-import { extend } from 'extend2';
+import { extend } from '@eggjs/extend2';
 import {
   EggContextLogger as ContextLogger,
   EggLoggers,

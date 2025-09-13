@@ -228,9 +228,6 @@ catalogs:
     express:
       specifier: ^4.18.2
       version: 4.21.2
-    extend2:
-      specifier: ^4.0.0
-      version: 4.0.0
     formstream:
       specifier: ^1.5.1
       version: 1.5.2
@@ -512,6 +509,9 @@ importers:
 
   packages/core:
     dependencies:
+      '@eggjs/extend2':
+        specifier: workspace:*
+        version: link:../extend2
       '@eggjs/koa':
         specifier: workspace:*
         version: link:../koa
@@ -527,9 +527,6 @@ importers:
       egg-path-matching:
         specifier: 'catalog:'
         version: 2.1.0
-      extend2:
-        specifier: 'catalog:'
-        version: 4.0.0
       get-ready:
         specifier: 'catalog:'
         version: 3.4.0
@@ -618,6 +615,9 @@ importers:
       '@eggjs/development':
         specifier: 'catalog:'
         version: 4.0.0
+      '@eggjs/extend2':
+        specifier: workspace:*
+        version: link:../extend2
       '@eggjs/i18n':
         specifier: 'catalog:'
         version: 3.0.1
@@ -666,9 +666,6 @@ importers:
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
-      extend2:
-        specifier: 'catalog:'
-        version: 4.0.0
       graceful:
         specifier: 'catalog:'
         version: 2.0.0
@@ -763,6 +760,27 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  packages/extend2:
+    devDependencies:
+      '@eggjs/tsconfig':
+        specifier: 'catalog:'
+        version: 2.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.3.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.14.0(oxlint-tsgolint@0.2.0)
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.14.2(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.11(@types/debug@4.1.12)(@types/node@24.3.0)(@vitest/ui@4.0.0-beta.11)(jiti@2.5.1)(less@4.4.1)(lightningcss@1.22.1)(sass@1.91.0)(terser@5.43.1)(yaml@2.8.1)
 
   packages/koa:
     dependencies:
@@ -890,6 +908,9 @@ importers:
       '@eggjs/core':
         specifier: workspace:*
         version: link:../core
+      '@eggjs/extend2':
+        specifier: workspace:*
+        version: link:../extend2
       '@eggjs/supertest':
         specifier: 'workspace:'
         version: link:../supertest
@@ -905,9 +926,6 @@ importers:
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
-      extend2:
-        specifier: 'catalog:'
-        version: 4.0.0
       get-ready:
         specifier: 'catalog:'
         version: 3.4.0
@@ -18939,7 +18957,7 @@ snapshots:
       rolldown-plugin-dts: 0.15.10(rolldown@1.0.0-beta.37)(typescript@5.9.2)
       semver: 7.7.2
       tinyexec: 1.0.1
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
       tree-kill: 1.2.2
       unconfig: 7.3.3
     optionalDependencies:

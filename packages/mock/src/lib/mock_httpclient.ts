@@ -1,5 +1,5 @@
 import { mm } from 'mm';
-import { extend } from 'extend2';
+import { extend } from '@eggjs/extend2';
 import type { Dispatcher, Headers, BodyInit } from 'urllib';
 
 import { getMockAgent } from './mock_agent.ts';
@@ -39,8 +39,10 @@ export interface MockResponseCallbackOptions {
   maxRedirections?: number;
 }
 
-export type MockResultFunction =
-  (url: string, options: MockResponseCallbackOptions) => MockResultOptions | string;
+export type MockResultFunction = (
+  url: string,
+  options: MockResponseCallbackOptions
+) => MockResultOptions | string;
 
 function normalizeResult(result: string | MockResultOptions) {
   if (typeof result === 'string') {
@@ -84,15 +86,19 @@ export function createMockHttpClient(app: any) {
    *   - persist - any matching request will always reply with the defined response indefinitely, default is true
    *   - repeats - number, any matching request will reply with the defined response a fixed amount of times
    */
-  return function mockHttpClient(mockUrl: string | RegExp, mockMethod: string | string[] | MockResultOptions | MockResultFunction, mockResult?: MockResultOptions | MockResultFunction | string) {
+  return function mockHttpClient(
+    mockUrl: string | RegExp,
+    mockMethod: string | string[] | MockResultOptions | MockResultFunction,
+    mockResult?: MockResultOptions | MockResultFunction | string
+  ) {
     let mockMethods = mockMethod as string[];
     if (!mockResult) {
       // app.mockHttpclient(mockUrl, mockResult)
       mockResult = mockMethod as MockResultOptions;
-      mockMethods = [ '*' ];
+      mockMethods = ['*'];
     }
     if (!Array.isArray(mockMethods)) {
-      mockMethods = [ mockMethods ];
+      mockMethods = [mockMethods];
     }
     mockMethods = mockMethods.map(method => (method || 'GET').toUpperCase());
 
@@ -138,35 +144,46 @@ export function createMockHttpClient(app: any) {
     }
     const mockPool = originMethod
       ? getMockAgent(app).get(originMethod)
-      : getMockAgent(app).get(originMethod ?? origin as string);
+      : getMockAgent(app).get(originMethod ?? (origin as string));
     // persist default is true
     let persist = true;
-    if (typeof mockResult === 'object' && typeof mockResult.persist === 'boolean') {
+    if (
+      typeof mockResult === 'object' &&
+      typeof mockResult.persist === 'boolean'
+    ) {
       persist = mockResult.persist;
     }
-    mockMethods.forEach(function(method) {
-      const mockScope = mockPool.intercept({
-        path: pathMethod ?? pathname,
-        method: method === '*' ? () => true : method,
-      }).reply(options => {
-        // not support mockResult as an async function
-        const requestUrl = `${options.origin}${options.path}`;
-        let mockRequestResult;
-        if (mockConfigIndex >= 0) {
-          mockResult = mockConfigs[app[MOCK_CONFIG_INDEX]].mockResult;
-          mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
-        } else {
-          mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
-        }
-        const result = extend(true, {}, normalizeResult(mockRequestResult!));
-        return {
-          statusCode: result.status,
-          data: result.data,
-          responseOptions: {
-            headers: result.headers,
-          },
-        };
-      });
+    mockMethods.forEach(function (method) {
+      const mockScope = mockPool
+        .intercept({
+          path: pathMethod ?? pathname,
+          method: method === '*' ? () => true : method,
+        })
+        .reply(options => {
+          // not support mockResult as an async function
+          const requestUrl = `${options.origin}${options.path}`;
+          let mockRequestResult;
+          if (mockConfigIndex >= 0) {
+            mockResult = mockConfigs[app[MOCK_CONFIG_INDEX]].mockResult;
+            mockRequestResult =
+              typeof mockResult === 'function'
+                ? mockResult(requestUrl, options)
+                : mockResult;
+          } else {
+            mockRequestResult =
+              typeof mockResult === 'function'
+                ? mockResult(requestUrl, options)
+                : mockResult;
+          }
+          const result = extend(true, {}, normalizeResult(mockRequestResult!));
+          return {
+            statusCode: result.status,
+            data: result.data,
+            responseOptions: {
+              headers: result.headers,
+            },
+          };
+        });
       if (typeof mockResult === 'object') {
         if (mockResult.delay && mockResult.delay > 0) {
           mockScope.delay(mockResult.delay);
@@ -174,7 +191,11 @@ export function createMockHttpClient(app: any) {
       }
       if (persist) {
         mockScope.persist();
-      } else if (typeof mockResult === 'object' && mockResult.repeats && mockResult.repeats > 0) {
+      } else if (
+        typeof mockResult === 'object' &&
+        mockResult.repeats &&
+        mockResult.repeats > 0
+      ) {
         mockScope.times(mockResult.repeats);
       }
     });

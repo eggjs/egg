@@ -1,0 +1,53 @@
+{
+  "name": "@eggjs/extend2",
+  "author": "popomore <sakura9515@gmail.com>",
+  "version": "4.0.0",
+  "engines": {
+    "node": ">=18.7.0"
+  },
+  "publishConfig": {
+    "tag": "latest",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "Port of jQuery.extend for Node.js",
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "lint": "oxlint",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "keywords": [
+    "extend",
+    "clone",
+    "merge"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "packages/extend2"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "catalog:",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js"
+}
