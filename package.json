@@ -25,7 +25,7 @@
     "lint": "oxlint --type-aware",
     "pretest": "pnpm -r run pretest && pnpm run clean",
     "test": "vitest run",
-    "test:cov": "pnpm run test --coverage",
+    "test:cov": "vitest run --coverage",
     "ci": "pnpm run test:cov",
     "postci": "pnpm run build",
     "site:dev": "pnpm --filter=site run dev",

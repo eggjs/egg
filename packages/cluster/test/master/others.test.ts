@@ -348,21 +348,21 @@ describe.skip('debug', () => {
   });
 });
 
-describe('--sticky', () => {
-  beforeAll(() => {
+describe.skipIf(process.platform !== 'linux')('--sticky', () => {
+  beforeAll(async () => {
     app = cluster('apps/cluster_mod_sticky', {
       sticky: true,
       port: 17010,
     } as any);
     app.debug();
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 
-  it('should online sticky cluster mode startup success', () => {
+  it('should online sticky cluster mode startup success', async () => {
     app.expect('stdout', /app_worker#\d:\d+ started at (?!9500)/);
     app.expect('stdout', /egg started on http:\/\/127.0.0.1:17010/);
-    return request('http://127.0.0.1:17010')
+    await request('http://127.0.0.1:17010')
       .get('/portal/i.htm')
       .expect('hi cluster')
       .expect(200);
