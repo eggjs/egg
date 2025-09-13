@@ -223,7 +223,7 @@ catalogs:
       specifier: ^1.0.3
       version: 1.0.3
     express:
-      specifier: ^4.18.2
+      specifier: ^4.21.2
       version: 4.21.2
     formstream:
       specifier: ^1.5.1

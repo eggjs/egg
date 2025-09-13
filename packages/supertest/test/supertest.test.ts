@@ -2,10 +2,10 @@ import { strict as assert } from 'node:assert';
 import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
-import { AddressInfo } from 'node:net';
+import type { AddressInfo } from 'node:net';
 import { once } from 'node:events';
 
-import express, { Express } from 'express';
+import express, { type Express } from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import nock from 'nock';

@@ -1,14 +1,8 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "allowImportingTsExtensions": true
+    "target": "ES2022"
   },
-  "files": [],
   "references": [
     {
       "path": "./packages/egg"
