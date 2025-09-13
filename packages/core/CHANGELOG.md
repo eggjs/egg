@@ -1,5 +1,10 @@
 # Changelog
 
+> [!IMPORTANT]
+> Moving forwards we are using the GitHub releases page at <https://github.com/eggjs/egg/releases> in combination with [release.yml](https://github.com/eggjs/egg/actions/workflows/release.yml) for publishing releases and their changelogs.
+
+---
+
 ## [6.5.0](https://github.com/eggjs/core/compare/v6.4.1...v6.5.0) (2025-03-28)
 
 ### Features

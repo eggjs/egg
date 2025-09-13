@@ -5,6 +5,7 @@
     "node": ">= 20.19.0"
   },
   "publishConfig": {
+    "access": "public",
     "tag": "beta",
     "exports": {
       ".": "./dist/index.js",

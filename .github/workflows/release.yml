@@ -52,8 +52,8 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-          # Use GitHub token for checkout and pushing
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Use git token for checkout and pushing
+          token: ${{ secrets.GIT_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -105,16 +105,12 @@ jobs:
 
       - name: Publish packages (dry run)
         if: ${{ github.event.inputs.dry_run == 'true' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "🧪 Running publish in dry-run mode..."
           pnpm -r publish --dry-run --no-git-checks
 
       - name: Publish packages
         if: ${{ github.event.inputs.dry_run != 'true' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "📦 Publishing packages..."
           pnpm -r publish --no-git-checks
@@ -123,7 +119,7 @@ jobs:
         if: ${{ github.event.inputs.dry_run != 'true' }}
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_TOKEN }}
           script: |
             const tag = process.env.NEW_TAG;
             const versionType = '${{ github.event.inputs.version_type }}';

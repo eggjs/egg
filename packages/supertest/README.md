@@ -1,8 +1,6 @@
 # @eggjs/supertest
 
 [![NPM version][npm-image]][npm-url]
-[![code coverage][coverage-badge]][coverage]
-[![Node.js CI](https://github.com/eggjs/supertest/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/supertest/actions/workflows/nodejs.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 [![MIT License][license-badge]][license]
 [![npm download][download-image]][download-url]
@@ -10,14 +8,12 @@
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/supertest.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/supertest
-[coverage-badge]: https://img.shields.io/codecov/c/github/eggjs/supertest.svg
-[coverage]: https://codecov.io/gh/eggjs/supertest
 [license-badge]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square
 [license]: https://github.com/eggjs/supertest/blob/master/LICENSE
 [download-image]: https://img.shields.io/npm/dm/@eggjs/supertest.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/supertest
 
-> HTTP assertions made easy via [superagent](http://github.com/ladjs/superagent).  Maintained for [Forward Email](https://github.com/forwardemail) and [Lad](https://github.com/ladjs).
+> HTTP assertions made easy via [superagent](http://github.com/ladjs/superagent). Maintained for [Forward Email](https://github.com/forwardemail) and [Lad](https://github.com/ladjs).
 > Forked for TypeScript friendly
 
 Document see [SuperTest](https://ladjs.github.io/superagent/)
@@ -35,7 +31,7 @@ Install SuperTest as an npm module and save it to your package.json file as a de
 npm install @eggjs/supertest --save-dev
 ```
 
-  Once installed it can now be referenced by simply calling ```require('supertest');```
+Once installed it can now be referenced by simply calling `require('supertest');`
 
 ## Example
 
@@ -52,7 +48,7 @@ const express = require('express');
 
 const app = express();
 
-app.get('/user', function(req, res) {
+app.get('/user', function (req, res) {
   res.status(200).json({ name: 'john' });
 });
 
@@ -61,7 +57,7 @@ request(app)
   .expect('Content-Type', /json/)
   .expect('Content-Length', '15')
   .expect(200)
-  .end(function(err, res) {
+  .end(function (err, res) {
     if (err) throw err;
   });
 ```
@@ -74,7 +70,7 @@ const express = require('express');
 
 const app = express();
 
-app.get('/user', function(req, res) {
+app.get('/user', function (req, res) {
   res.status(200).json({ name: 'john' });
 });
 
@@ -83,16 +79,17 @@ request(app, { http2: true })
   .expect('Content-Type', /json/)
   .expect('Content-Length', '15')
   .expect(200)
-  .end(function(err, res) {
+  .end(function (err, res) {
     if (err) throw err;
   });
 
-request.agent(app, { http2: true })
+request
+  .agent(app, { http2: true })
   .get('/user')
   .expect('Content-Type', /json/)
   .expect('Content-Length', '15')
   .expect(200)
-  .end(function(err, res) {
+  .end(function (err, res) {
     if (err) throw err;
   });
 ```
@@ -100,8 +97,8 @@ request.agent(app, { http2: true })
 Here's an example with mocha, note how you can pass `done` straight to any of the `.expect()` calls:
 
 ```js
-describe('GET /user', function() {
-  it('responds with json', function(done) {
+describe('GET /user', function () {
+  it('responds with json', function (done) {
     request(app)
       .get('/user')
       .set('Accept', 'application/json')
@@ -114,8 +111,8 @@ describe('GET /user', function() {
 You can use `auth` method to pass HTTP username and password in the same way as in the [superagent](http://ladjs.github.io/superagent/#authentication):
 
 ```js
-describe('GET /user', function() {
-  it('responds with json', function(done) {
+describe('GET /user', function () {
+  it('responds with json', function (done) {
     request(app)
       .get('/user')
       .auth('username', 'password')
@@ -135,15 +132,15 @@ not throw - they will return the assertion as an error to the `.end()` callback.
 order to fail the test case, you will need to rethrow or pass `err` to `done()`, as follows:
 
 ```js
-describe('POST /users', function() {
-  it('responds with json', function(done) {
+describe('POST /users', function () {
+  it('responds with json', function (done) {
     request(app)
       .post('/users')
-      .send({name: 'john'})
+      .send({ name: 'john' })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
-      .end(function(err, res) {
+      .end(function (err, res) {
         if (err) return done(err);
         return done();
       });
@@ -154,16 +151,16 @@ describe('POST /users', function() {
 You can also use promises:
 
 ```js
-describe('GET /users', function() {
-  it('responds with json', function() {
+describe('GET /users', function () {
+  it('responds with json', function () {
     return request(app)
       .get('/users')
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200)
       .then(response => {
-         expect(response.body.email).toEqual('foo@bar.com');
-      })
+        expect(response.body.email).toEqual('foo@bar.com');
+      });
   });
 });
 ```
@@ -171,12 +168,12 @@ describe('GET /users', function() {
 Or async/await syntax:
 
 ```js
-describe('GET /users', function() {
-  it('responds with json', async function() {
+describe('GET /users', function () {
+  it('responds with json', async function () {
     const response = await request(app)
       .get('/users')
-      .set('Accept', 'application/json')
-    expect(response.headers["Content-Type"]).toMatch(/json/);
+      .set('Accept', 'application/json');
+    expect(response.headers['Content-Type']).toMatch(/json/);
     expect(response.status).toEqual(200);
     expect(response.body.email).toEqual('foo@bar.com');
   });
@@ -187,20 +184,24 @@ Expectations are run in the order of definition. This characteristic can be used
 to modify the response body or headers before executing an assertion.
 
 ```js
-describe('POST /user', function() {
-  it('user.name should be an case-insensitive match for "john"', function(done) {
+describe('POST /user', function () {
+  it('user.name should be an case-insensitive match for "john"', function (done) {
     request(app)
       .post('/user')
       .send('name=john') // x-www-form-urlencoded upload
       .set('Accept', 'application/json')
-      .expect(function(res) {
+      .expect(function (res) {
         res.body.id = 'some fixed id';
         res.body.name = res.body.name.toLowerCase();
       })
-      .expect(200, {
-        id: 'some fixed id',
-        name: 'john'
-      }, done);
+      .expect(
+        200,
+        {
+          id: 'some fixed id',
+          name: 'john',
+        },
+        done
+      );
   });
 });
 ```
@@ -223,11 +224,11 @@ initialization app or url, a new `Test` is created per `request.VERB()` call.
 ```js
 t = request('http://localhost:5555');
 
-t.get('/').expect(200, function(err){
+t.get('/').expect(200, function (err) {
   console.log(err);
 });
 
-t.get('/').expect('heya', function(err){
+t.get('/').expect('heya', function (err) {
   console.log(err);
 });
 ```
@@ -240,32 +241,28 @@ const should = require('should');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 
-describe('request.agent(app)', function() {
+describe('request.agent(app)', function () {
   const app = express();
   app.use(cookieParser());
 
-  app.get('/', function(req, res) {
+  app.get('/', function (req, res) {
     res.cookie('cookie', 'hey');
     res.send();
   });
 
-  app.get('/return', function(req, res) {
+  app.get('/return', function (req, res) {
     if (req.cookies.cookie) res.send(req.cookies.cookie);
-    else res.send(':(')
+    else res.send(':(');
   });
 
   const testAgent = agent(app);
 
-  it('should save cookies', function(done) {
-    testAgent
-    .get('/')
-    .expect('set-cookie', 'cookie=hey; Path=/', done);
+  it('should save cookies', function (done) {
+    testAgent.get('/').expect('set-cookie', 'cookie=hey; Path=/', done);
   });
 
-  it('should send cookies', function(done) {
-    testAgent
-    .get('/return')
-    .expect('hey', done);
+  it('should send cookies', function (done) {
+    testAgent.get('/return').expect('hey', done);
   });
 });
 ```
@@ -317,14 +314,11 @@ Assert header `field` `value` with a string or regular expression.
 Pass a custom assertion function. It'll be given the response object to check. If the check fails, throw an error.
 
 ```js
-request(app)
-  .get('/')
-  .expect(hasPreviousAndNextKeys)
-  .end(done);
+request(app).get('/').expect(hasPreviousAndNextKeys).end(done);
 
 function hasPreviousAndNextKeys(res) {
-  if (!('next' in res.body)) throw new Error("missing next key");
-  if (!('prev' in res.body)) throw new Error("missing prev key");
+  if (!('next' in res.body)) throw new Error('missing next key');
+  if (!('prev' in res.body)) throw new Error('missing prev key');
 }
 ```
 
@@ -342,6 +336,6 @@ Inspired by [api-easy](https://github.com/flatiron/api-easy) minus vows coupling
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/supertest)](https://github.com/eggjs/supertest/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

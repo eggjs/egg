@@ -6,8 +6,6 @@
 
 [![NPM version](https://img.shields.io/npm/v/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
 [![NPM download](https://img.shields.io/npm/dm/@eggjs/koa.svg?style=flat-square)](https://npmjs.org/package/@eggjs/koa)
-[![Node.js CI](https://github.com/eggjs/koa/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/eggjs/koa/actions/workflows/node.js.yml)
-[![Test coverage](https://img.shields.io/codecov/c/github/eggjs/koa.svg?style=flat-square)](https://codecov.io/gh/eggjs/koa)
 [![Known Vulnerabilities](https://snyk.io/test/npm/@eggjs/koa/badge.svg?style=flat-square)](https://snyk.io/test/npm/@eggjs/koa)
 
 Expressive HTTP middleware framework for node.js to make web applications and APIs more enjoyable to write. Koa's middleware stack flows in a stack-like manner, allowing you to perform actions downstream then filter and manipulate the response upstream.
@@ -183,6 +181,6 @@ To report a security vulnerability, please do not open an issue, as this notifie
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/koa)](https://github.com/eggjs/koa/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

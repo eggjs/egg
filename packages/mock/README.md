@@ -1,16 +1,12 @@
 # @eggjs/mock
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/mock/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/mock/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/@eggjs/mock.svg?style=flat)](https://nodejs.org/en/download/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/mock.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/mock
-[codecov-image]: https://codecov.io/github/eggjs/mock/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/eggjs/mock?branch=master
 [download-image]: https://img.shields.io/npm/dm/@eggjs/mock.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/mock
 
@@ -38,16 +34,14 @@ describe('some test', () => {
   let app;
   before(() => {
     app = mm.app({
-      baseDir: 'apps/foo'
+      baseDir: 'apps/foo',
     });
     return app.ready();
-  })
+  });
   after(() => app.close());
 
   it('should request /', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+    return app.httpRequest().get('/').expect(200);
   });
 });
 ```
@@ -154,9 +148,7 @@ describe('test/app.js', () => {
   after(() => app.close());
 
   it('some test', () => {
-    return app.httpRequest()
-      .get('/config')
-      .expect(200)
+    return app.httpRequest().get('/config').expect(200);
   });
 });
 ```
@@ -213,7 +205,7 @@ The directory of application, default is `process.cwd()`.
 ```js
 mm.app({
   baseDir: path.join(__dirname, 'fixtures/apps/demo'),
-})
+});
 ```
 
 You can use a string based on `$CWD/test/fixtures` for short
@@ -221,7 +213,7 @@ You can use a string based on `$CWD/test/fixtures` for short
 ```js
 mm.app({
   baseDir: 'apps/demo',
-})
+});
 ```
 
 #### framework {String/Boolean}
@@ -232,7 +224,7 @@ The directory of framework
 mm.app({
   baseDir: 'apps/demo',
   framework: path.join(__dirname, 'fixtures/egg'),
-})
+});
 ```
 
 It can be true when test an framework
@@ -244,7 +236,7 @@ The directory of plugin, it's detected automatically.
 ```js
 mm.app({
   baseDir: 'apps/demo',
-})
+});
 ```
 
 #### plugins {Object}
@@ -270,10 +262,7 @@ Using `app.expectLog()` or `app.notExpectLog()` alone requires dependency on the
 ```js
 it('should work', async () => {
   app.mockLog();
-  await app.httpRequest()
-    .get('/')
-    .expect('hello world')
-    .expect(200);
+  await app.httpRequest().get('/').expect('hello world').expect(200);
 
   app.expectLog('foo in logger');
   app.expectLog('foo in coreLogger', 'coreLogger');
@@ -291,10 +280,7 @@ Request current app http server.
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .expect('hello world')
-    .expect(200);
+  return app.httpRequest().get('/').expect('hello world').expect(200);
 });
 ```
 
@@ -306,10 +292,7 @@ Assert current response not contains the specified header
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .unexpectHeader('set-cookie')
-    .expect(200);
+  return app.httpRequest().get('/').unexpectHeader('set-cookie').expect(200);
 });
 ```
 
@@ -319,10 +302,7 @@ Assert current response contains the specified header
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .expectHeader('set-cookie')
-    .expect(200);
+  return app.httpRequest().get('/').expectHeader('set-cookie').expect(200);
 });
 ```
 
@@ -331,8 +311,8 @@ it('should work', () => {
 ```js
 const ctx = app.mockContext({
   user: {
-    name: 'Jason'
-  }
+    name: 'Jason',
+  },
 });
 console.log(ctx.user.name); // Jason
 ```
@@ -340,20 +320,23 @@ console.log(ctx.user.name); // Jason
 ### app.mockContextScope(fn, options)
 
 ```js
-await app.mockContextScope(async ctx => {
-  console.log(ctx.user.name); // Jason
-}, {
-  user: {
-    name: 'Jason'
+await app.mockContextScope(
+  async ctx => {
+    console.log(ctx.user.name); // Jason
+  },
+  {
+    user: {
+      name: 'Jason',
+    },
   }
-});
+);
 ```
 
 ### app.mockCookies(data)
 
 ```js
 app.mockCookies({
-  foo: 'bar'
+  foo: 'bar',
 });
 const ctx = app.mockContext();
 console.log(ctx.getCookie('foo'));
@@ -367,7 +350,7 @@ Mock request header
 
 ```js
 app.mockSession({
-  foo: 'bar'
+  foo: 'bar',
 });
 const ctx = app.mockContext();
 console.log(ctx.session.foo);
@@ -398,9 +381,7 @@ app.mockServiceError('user', 'home', new Error('mock error'));
 ```js
 app.mockCsrf();
 
-return app.httpRequest()
-  .post('/login')
-  .expect(302);
+return app.httpRequest().post('/login').expect(302);
 ```
 
 ### app.mockHttpclient(url, method, data)
@@ -408,7 +389,7 @@ return app.httpRequest()
 Mock httpclient request, e.g.: `ctx.curl`
 
 ```js
-app.get('/', async function() {
+app.get('/', async function () {
   const ret = await this.curl('https://eggjs.org');
   this.body = ret.data.toString();
 });
@@ -425,9 +406,7 @@ app.mockHttpclient('https://eggjs.org', {
 // app.mockHttpclient('https://eggjs.org', mockResponse); // mock all methods by default
 // app.mockHttpclient('https://eggjs.org', 'get', function(url, opt) { return 'xxx' }); // support fn
 
-return app.httpRequest()
-  .post('/')
-  .expect('mock egg');
+return app.httpRequest().post('/').expect('mock egg');
 ```
 
 You can also use Regular Expression for matching url.
@@ -461,7 +440,8 @@ describe('test app', () => {
   it('should request success', () => {
     // mock data will be restored each case
     mock.data(app, 'method', { foo: 'bar' });
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/foo')
       .expect(res => {
         assert(!res.headers.foo);
@@ -471,7 +451,7 @@ describe('test app', () => {
 });
 
 describe('test ctx', () => {
-  it('can use ctx', async function() {
+  it('can use ctx', async function () {
     const res = await this.ctx.service.foo();
     assert(res === 'foo');
   });
@@ -512,17 +492,16 @@ then egg-mock will inject ctx for each test case.
 const mm = require('@eggjs/mock');
 const path = require('path');
 
-before(async function() {
-  const app = this.app = mm.app();
+before(async function () {
+  const app = (this.app = mm.app());
   mm.setGetAppCallback(() => {
     return app;
   });
   await app.ready();
 });
 
-
 // test/index.test.js
-it('should work', function() {
+it('should work', function () {
   // eslint-disable-next-line no-undef
   assert(this.app.currentContext);
 });
@@ -543,6 +522,6 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/mock)](https://github.com/eggjs/mock/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

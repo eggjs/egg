@@ -1,16 +1,12 @@
 # @eggjs/mock
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/mock/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/mock/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/@eggjs/mock.svg?style=flat)](https://nodejs.org/en/download/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/mock.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/mock
-[codecov-image]: https://codecov.io/github/eggjs/mock/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/eggjs/mock?branch=master
 [download-image]: https://img.shields.io/npm/dm/@eggjs/mock.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/mock
 
@@ -38,16 +34,14 @@ describe('some test', () => {
   let app;
   before(() => {
     app = mm.app({
-      baseDir: 'apps/foo'
+      baseDir: 'apps/foo',
     });
     return app.ready();
-  })
+  });
   after(() => app.close());
 
   it('should request /', () => {
-    return app.httpRequest()
-      .get('/')
-      .expect(200);
+    return app.httpRequest().get('/').expect(200);
   });
 });
 ```
@@ -156,9 +150,7 @@ describe('test/app.js', () => {
   after(() => app.close());
 
   it('some test', () => {
-    return app.httpRequest()
-      .get('/config')
-      .expect(200)
+    return app.httpRequest().get('/config').expect(200);
   });
 });
 ```
@@ -249,7 +241,7 @@ mm.app({
 mm.app({
   baseDir: 'apps/demo',
   plugin: true,
-})
+});
 ```
 
 #### plugins {Object}
@@ -278,10 +270,7 @@ mm.app({
 it('should work', async () => {
   // 将日志记录到内存，用于下面的 expectLog
   app.mockLog();
-  await app.httpRequest()
-    .get('/')
-    .expect('hello world')
-    .expect(200);
+  await app.httpRequest().get('/').expect('hello world').expect(200);
 
   app.expectLog('foo in logger');
   app.expectLog('foo in coreLogger', 'coreLogger');
@@ -299,10 +288,7 @@ it('should work', async () => {
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .expect('hello world')
-    .expect(200);
+  return app.httpRequest().get('/').expect('hello world').expect(200);
 });
 ```
 
@@ -314,10 +300,7 @@ it('should work', () => {
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .unexpectHeader('set-cookie')
-    .expect(200);
+  return app.httpRequest().get('/').unexpectHeader('set-cookie').expect(200);
 });
 ```
 
@@ -327,10 +310,7 @@ it('should work', () => {
 
 ```js
 it('should work', () => {
-  return app.httpRequest()
-    .get('/')
-    .expectHeader('set-cookie')
-    .expect(200);
+  return app.httpRequest().get('/').expectHeader('set-cookie').expect(200);
 });
 ```
 
@@ -341,8 +321,8 @@ it('should work', () => {
 ```js
 const ctx = app.mockContext({
   user: {
-    name: 'Jason'
-  }
+    name: 'Jason',
+  },
 });
 console.log(ctx.user.name); // Jason
 ```
@@ -352,20 +332,23 @@ console.log(ctx.user.name); // Jason
 安全的模拟上下文数据，同一用例用多次调用 mockContext 可能会造成 AsyncLocalStorage 污染
 
 ```js
-await app.mockContextScope(async ctx => {
-  console.log(ctx.user.name); // Jason
-}, {
-  user: {
-    name: 'Jason'
+await app.mockContextScope(
+  async ctx => {
+    console.log(ctx.user.name); // Jason
+  },
+  {
+    user: {
+      name: 'Jason',
+    },
   }
-});
+);
 ```
 
 ### app.mockCookies(data)
 
 ```js
 app.mockCookies({
-  foo: 'bar'
+  foo: 'bar',
 });
 const ctx = app.mockContext();
 console.log(ctx.getCookie('foo'));
@@ -379,7 +362,7 @@ console.log(ctx.getCookie('foo'));
 
 ```js
 app.mockSession({
-  foo: 'bar'
+  foo: 'bar',
 });
 const ctx = app.mockContext();
 console.log(ctx.session.foo);
@@ -388,8 +371,8 @@ console.log(ctx.session.foo);
 ### app.mockService(service, methodName, fn)
 
 ```js
-it('should mock user name', async function() {
-  app.mockService('user', 'getName', async function(ctx, methodName, args) {
+it('should mock user name', async function () {
+  app.mockService('user', 'getName', async function (ctx, methodName, args) {
     return 'popomore';
   });
   const ctx = app.mockContext();
@@ -412,9 +395,7 @@ app.mockServiceError('user', 'home', new Error('mock error'));
 ```js
 app.mockCsrf();
 
-return app.httpRequest()
-  .post('/login')
-  .expect(302);
+return app.httpRequest().post('/login').expect(302);
 ```
 
 ### app.mockHttpclient(url, method, data)
@@ -434,9 +415,7 @@ app.mockHttpclient('https://eggjs.org', {
   data: 'mock egg',
 });
 
-return app.httpRequest()
-  .post('/')
-  .expect('mock egg');
+return app.httpRequest().post('/').expect('mock egg');
 ```
 
 ## Bootstrap
@@ -450,7 +429,8 @@ describe('test app', () => {
   it('should request success', () => {
     // mock data will be restored each case
     mock.data(app, 'method', { foo: 'bar' });
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/foo')
       .expect(res => {
         assert(!res.headers.foo);
@@ -460,7 +440,7 @@ describe('test app', () => {
 });
 
 describe('test ctx', () => {
-  it('can use ctx', async function() {
+  it('can use ctx', async function () {
     const res = await this.ctx.service.foo();
     assert(res === 'foo');
   });
@@ -509,6 +489,6 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/mock)](https://github.com/eggjs/mock/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
