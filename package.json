@@ -6,7 +6,7 @@
   "engines": {
     "node": ">= 20.19.0"
   },
-  "packageManager": "pnpm@10.15.0",
+  "packageManager": "pnpm@10.16.0",
   "devDependencies": {
     "@eggjs/tsconfig": "catalog:",
     "@vitest/coverage-v8": "catalog:",
