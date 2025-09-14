@@ -33,6 +33,9 @@
     },
     {
       "path": "./tools/egg-bin"
+    },
+    {
+      "path": "./plugins/development"
     }
   ]
 }

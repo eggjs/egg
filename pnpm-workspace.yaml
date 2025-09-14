@@ -1,12 +1,12 @@
 packages:
   - packages/*
+  - plugins/*
   - examples/*
   - tools/*
   - site
 
 catalog:
   '@eggjs/cookies': ^3.1.0
-  '@eggjs/development': ^4.0.0
   '@eggjs/i18n': ^3.0.1
   '@eggjs/jsonp': ^3.0.0
   '@eggjs/logrotator': ^4.0.0
@@ -73,6 +73,7 @@ catalog:
   cpy: ^8.1.2
   cpy-cli: ^5.0.0
   cross-env: ^7.0.3
+  debounce: ^2.2.0
   destroy: ^1.0.4
   detect-port: ^2.1.0
   dumi: ^2.4.17
@@ -87,6 +88,7 @@ catalog:
   esbuild: ^0.25.0
   esbuild-register: ^3.6.0
   escape-html: ^1.0.3
+  eslint-config-egg: '14'
   express: ^4.21.2
   formstream: ^1.5.1
   fresh: ~0.5.2
@@ -110,6 +112,7 @@ catalog:
   mm: ^4.0.2
   mocha: 11.7.2
   mochawesome-with-mocha: 8.0.0
+  multimatch: ^5.0.0
   nock: ^13.3.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
