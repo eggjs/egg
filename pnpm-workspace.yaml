@@ -51,8 +51,8 @@ catalog:
   '@types/superagent': ^8.1.9
   '@types/type-is': ^1.6.6
   '@types/vary': ^1.1.3
-  '@vitest/coverage-v8': beta
-  '@vitest/ui': beta
+  '@vitest/coverage-v8': 4.0.0-beta.11
+  '@vitest/ui': 4.0.0-beta.11
   accepts: ^1.3.8
   address: '2'
   assert-file: '1'
@@ -99,7 +99,7 @@ catalog:
   graceful-process: ^2.0.0
   http-errors: ^2.0.0
   humanize-ms: ^2.0.0
-  husky: '9'
+  husky: ^9.1.7
   is-type-of: ^2.2.0
   jest-changed-files: ^29.4.2
   js-yaml: '4'
@@ -107,7 +107,7 @@ catalog:
   koa-compose: ^4.1.0
   koa-override: ^4.0.0
   koa-static: ^5.0.0
-  lint-staged: '16'
+  lint-staged: ^16.1.6
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
   mocha: 11.7.2
@@ -118,17 +118,17 @@ catalog:
   npminstall: ^7.12.0
   on-finished: ^2.4.1
   onelogger: ^1.0.1
-  oxlint: ^1.14.0
+  oxlint: ^1.15.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
   pedding: ^2.0.1
   performance-ms: ^1.1.0
-  prettier: ^3.4.2
+  prettier: ^3.6.2
   ready-callback: ^4.0.0
-  rimraf: '6'
+  rimraf: ^6.0.1
   runscript: ^2.0.1
   sdk-base: ^5.0.1
-  semver: ^7.6.3
+  semver: ^7.7.2
   sendmessage: ^3.0.1
   spy: ^1.0.0
   statuses: ^2.0.1
@@ -145,4 +145,4 @@ catalog:
   urllib: ^4.6.11
   utility: ^2.5.0
   vary: ^1.1.2
-  vitest: beta
+  vitest: 4.0.0-beta.11

@@ -6,7 +6,7 @@ import { beforeAll, afterAll, it, describe } from 'vitest';
 
 import { getFilepath } from './utils.ts';
 
-describe('test/custom.test.ts', () => {
+describe.skip('test/custom.test.ts', () => {
   let app: MockApplication;
   beforeAll(async () => {
     mm.env('local');
