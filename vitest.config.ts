@@ -5,6 +5,7 @@ export default defineConfig({
     exclude: ['tools/**'],
     projects: [
       'packages/*',
+      'plugins/*',
       // FIXME: enable this will cause one test file run twice
       // {
       //   extends: true,

@@ -118,7 +118,7 @@
     "@eggjs/cluster": "workspace:*",
     "@eggjs/cookies": "catalog:",
     "@eggjs/core": "workspace:*",
-    "@eggjs/development": "catalog:",
+    "@eggjs/development": "workspace:*",
     "@eggjs/i18n": "catalog:",
     "@eggjs/jsonp": "catalog:",
     "@eggjs/logrotator": "catalog:",

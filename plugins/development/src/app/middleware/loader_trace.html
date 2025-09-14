@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title></title>
+  </head>
+  <body>
+    <div id="mountNode"></div>
+    <script src="https://gw.alipayobjects.com/os/antv/assets/g2/3.0.9/g2.min.js"></script>
+    <script>
+      var data = {{placeholder}};
+
+      const chart = new G2.Chart({
+        container: 'mountNode', // 指定图表容器 ID
+        height: data.length * 22, // 指定图表高度
+        forceFit: true,
+        padding: 'auto',
+      });
+
+      // Step 2: 载入数据源
+      chart.source(data, {
+        range: {
+          type: 'time',
+          mask: 'HH:mm:ss',
+          nice: true,
+        },
+      });
+      chart
+        .coord()
+        .transpose()
+        .scale(1, -1);
+
+      chart.legend({ position: 'top' });
+
+      chart.tooltip({
+        showTitle: false,
+        itemTpl: '<li>{duration}ms: {name} </li>'
+      });
+
+      chart
+        .interval()
+        .position('title*range')
+        .color('type')
+        .tooltip('name*duration', (name, duration) => ({ name, duration }))
+        .size(5);
+
+      chart.render();
+    </script>
+  </body>
+</html>
