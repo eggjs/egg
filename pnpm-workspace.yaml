@@ -59,7 +59,7 @@ catalog:
   koa-bodyparser: ^4.4.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
-  lint-staged: '15'
+  lint-staged: '16'
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
   mocha: ^11.0.1
