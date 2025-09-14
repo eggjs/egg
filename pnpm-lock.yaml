@@ -244,8 +244,8 @@ catalogs:
       specifier: ^2.3.0
       version: 2.3.0
     encodeurl:
-      specifier: ^1.0.2
-      version: 1.0.2
+      specifier: ^2.0.0
+      version: 2.0.0
     esbuild:
       specifier: ^0.25.0
       version: 0.25.9
@@ -870,7 +870,7 @@ importers:
         version: 1.2.0
       encodeurl:
         specifier: 'catalog:'
-        version: 1.0.2
+        version: 2.0.0
       escape-html:
         specifier: 'catalog:'
         version: 1.0.3
