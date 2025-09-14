@@ -44,7 +44,7 @@
     "superagent": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
+    "@eggjs/bin": "workspace:*",
     "@types/body-parser": "catalog:",
     "@types/cookie-parser": "catalog:",
     "@types/express": "catalog:",

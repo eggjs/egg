@@ -97,7 +97,7 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
-    "@eggjs/supertest": "workspace:",
+    "@eggjs/supertest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "coffee": "catalog:",
     "detect-port": "catalog:",

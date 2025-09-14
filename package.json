@@ -6,6 +6,7 @@
   "engines": {
     "node": ">= 20.19.0"
   },
+  "type": "module",
   "packageManager": "pnpm@10.16.1",
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",

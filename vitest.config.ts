@@ -2,6 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    exclude: ['tools/**'],
     projects: [
       'packages/*',
       // FIXME: enable this will cause one test file run twice

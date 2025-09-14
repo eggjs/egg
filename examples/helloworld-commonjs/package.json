@@ -8,7 +8,7 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
+    "@eggjs/bin": "workspace:*",
     "oxlint": "catalog:"
   },
   "scripts": {

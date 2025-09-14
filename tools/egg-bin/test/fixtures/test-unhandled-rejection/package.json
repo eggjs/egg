@@ -1,0 +1,6 @@
+{
+  "name": "test-unhandled-rejection",
+  "files": [
+    "lib"
+  ]
+}

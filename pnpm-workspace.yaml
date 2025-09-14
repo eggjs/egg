@@ -1,10 +1,10 @@
 packages:
   - packages/*
   - examples/*
+  - tools/*
   - site
 
 catalog:
-  '@eggjs/bin': ^7.0.2
   '@eggjs/cookies': ^3.1.0
   '@eggjs/development': ^4.0.0
   '@eggjs/i18n': ^3.0.1
@@ -85,6 +85,24 @@ catalog:
   urllib: ^4.6.11
   utility: ^2.5.0
   vitest: beta
+  '@oclif/core': ^4.2.0
+  '@types/mocha': ^10.0.10
+  c8: ^10.0.0
+  'ci-parallel-vars': ^1.0.1
+  cpy: ^8.1.2
+  'cpy-cli': ^5.0.0
+  'cross-env': ^7.0.3
+  esbuild: ^0.25.0
+  'esbuild-register': ^3.6.0
+  eslint: ^8.57.1
+  'eslint-config-egg': ^14.0.0
+  'egg-ts-helper': ^3.0.0
+  'jest-changed-files': ^29.4.2
+  'mochawesome-with-mocha': ^8.0.0
+  npminstall: ^7.12.0
+  'ts-node': ^10.9.2
+  tshy: ^3.0.0
+  'tshy-after': ^1.0.0
   '@types/accepts': ^1.3.7
   '@types/content-disposition': ^0.5.8
   '@types/content-type': ^1.1.8
@@ -127,3 +145,5 @@ catalog:
   'express': ^4.21.2
   'nock': ^13.3.0
   'superagent': ^9.0.1
+  '@swc-node/register': ^1.11.1
+  '@swc/core': ^1.13.5

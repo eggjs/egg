@@ -1,0 +1,9 @@
+{
+  "name": "demo-app",
+  "egg": {
+    "framework": "aliyun-egg",
+    "require": [
+      "../require-script.cjs"
+    ]
+  }
+}

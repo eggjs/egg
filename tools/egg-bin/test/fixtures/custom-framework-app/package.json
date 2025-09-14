@@ -1,0 +1,6 @@
+{
+  "name": "custom-framework-app",
+  "egg": {
+    "framework": "yadan"
+  }
+}

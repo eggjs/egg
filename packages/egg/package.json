@@ -115,7 +115,7 @@
     "egg"
   ],
   "dependencies": {
-    "@eggjs/cluster": "workspace:",
+    "@eggjs/cluster": "workspace:*",
     "@eggjs/cookies": "catalog:",
     "@eggjs/core": "workspace:*",
     "@eggjs/development": "catalog:",
@@ -150,7 +150,7 @@
   "devDependencies": {
     "@eggjs/koa": "workspace:*",
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "workspace:",
+    "@eggjs/supertest": "workspace:*",
     "@types/koa-bodyparser": "catalog:",
     "@types/node": "catalog:",
     "address": "catalog:",

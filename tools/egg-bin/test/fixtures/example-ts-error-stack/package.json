@@ -1,0 +1,6 @@
+{
+  "name": "example-ts-error-stack",
+  "egg": {
+    "typescript": true
+  }
+}
