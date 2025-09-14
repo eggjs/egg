@@ -1,0 +1,285 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.0-beta.11 [39m[90m/home/runner/work/egg/egg/packages/mock[39m
+
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+ [32m✓[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mnormal[2m > [22mshould have members[32m 243[2mms[22m[39m
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mnormal[2m > [22mshould throw error when mock function not exists[33m 509[2mms[22m[39m
+[31m   → Missing expected exception.[39m
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mnormal[2m > [22mshould listen on port[33m 340[2mms[22m[39m
+[31m   → should match stdout expected `/egg started on http:\/\/127.0.0.1:17\d{3}/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with fullpath baseDir[2m > [22mshould work
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with shortpath baseDir[2m > [22mshould work
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with customEgg=string[2m > [22mshould work
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with framework=string[2m > [22mshould work
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with customEgg=true[2m > [22mshould work
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with framework=true[2m > [22mshould work
+ [32m✓[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with cache[2m > [22mshould return cached cluster app[32m 84[2mms[22m[39m
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+(node:6394) [DEP0129] DeprecationWarning: _channel is deprecated. Use ChildProcess.channel instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32m✓[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with cache[2m > [22mshould return new app if cached app has been closed[32m 178[2mms[22m[39m
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with eggPath[2m > [22mshould get eggPath[33m 380[2mms[22m[39m
+[31m   → should match stdout expected `/\/path\/to\/eggPath/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with workers[2m > [22mshould get 2 workers[33m 408[2mms[22m[39m
+[31m   → should match stdout expected `/app_worker#1:/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with opts.customEgg[2m > [22mshould pass execArgv
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/egg/egg/packages/utils/src/index.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.5
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with egg.framework=yadan[2m > [22mshould pass execArgv[33m 421[2mms[22m[39m
+[31m   → should match stdout expected `/app_worker#1:/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+ [2m[90m↓[39m[22m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mprerequire[2m > [22mshould load files
+ [31m×[39m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcustom port[2m > [22mshould use it[33m 350[2mms[22m[39m
+[31m   → should match stdout expected `/egg started on http:\/\/127.0.0.1:42607/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 6 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mnormal[2m > [22mshould throw error when mock function not exists
+[31m[1mAssertionError[22m: Missing expected exception.[39m
+[36m [2m❯[22m test/cluster.test.ts:[2m35:16[22m[39m
+    [90m 33| [39m
+    [90m 34| [39m      [34mit[39m([32m'should throw error when mock function not exists'[39m[33m,[39m () [33m=>[39m {
+    [90m 35| [39m        assert[33m.[39m[34mthrows[39m(() [33m=>[39m {
+    [90m   | [39m               [31m^[39m
+    [90m 36| [39m          app[33m.[39m[34mmockNotExists[39m()[33m;[39m
+    [90m 37| [39m        }[33m,[39m [36m/method "mockNotExists" not exists on app/[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mnormal[2m > [22mshould listen on port
+[31m[1mAssertionError[22m: should match stdout expected `/egg started on http:\/\/127.0.0.1:17\d{3}/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[90m [2m❯[22m Rule.assert ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m30:14[22m[39m
+[90m [2m❯[22m Rule.validate ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m22:12[22m[39m
+[90m [2m❯[22m Proxy._addAssertion ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m206:12[22m[39m
+[90m [2m❯[22m Proxy.expect ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m136:10[22m[39m
+[36m [2m❯[22m test/cluster.test.ts:[2m41:13[22m[39m
+    [90m 39| [39m
+    [90m 40| [39m      [34mit[39m([32m'should listen on port'[39m[33m,[39m () [33m=>[39m {
+    [90m 41| [39m        app.expect('stdout', /egg started on http:\/\/127.0.0.1:17\d{3…
+    [90m   | [39m            [31m^[39m
+    [90m 42| [39m      })[33m;[39m
+    [90m 43| [39m    })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with eggPath[2m > [22mshould get eggPath
+[31m[1mAssertionError[22m: should match stdout expected `/\/path\/to\/eggPath/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[90m [2m❯[22m Rule.assert ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m30:14[22m[39m
+[90m [2m❯[22m Rule.validate ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m22:12[22m[39m
+[90m [2m❯[22m ClusterApplication.<anonymous> ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m78:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with workers[2m > [22mshould get 2 workers
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcluster with egg.framework=yadan[2m > [22mshould pass execArgv
+[31m[1mAssertionError[22m: should match stdout expected `/app_worker#1:/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[90m [2m❯[22m Rule.assert ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m30:14[22m[39m
+[90m [2m❯[22m Rule.validate ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m22:12[22m[39m
+[90m [2m❯[22m ClusterApplication.<anonymous> ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m78:16[22m[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m test/cluster.test.ts[2m > [22mtest/cluster.test.ts[2m > [22mcustom port[2m > [22mshould use it
+[31m[1mAssertionError[22m: should match stdout expected `/egg started on http:\/\/127.0.0.1:42607/(RegExp)` but actual `(String)`
+
+false !== true
+[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+[90m [2m❯[22m Rule.assert ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m30:14[22m[39m
+[90m [2m❯[22m Rule.validate ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:[2m22:12[22m[39m
+[90m [2m❯[22m Proxy._addAssertion ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m206:12[22m[39m
+[90m [2m❯[22m Proxy.expect ../../node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:[2m136:10[22m[39m
+[36m [2m❯[22m test/cluster.test.ts:[2m341:13[22m[39m
+    [90m339| [39m        [35mawait[39m app[33m.[39m[34mready[39m()[33m;[39m
+    [90m340| [39m
+    [90m341| [39m        app[33m.[39m[34mexpect[39m(
+    [90m   | [39m            [31m^[39m
+    [90m342| [39m          [32m'stdout'[39m[33m,[39m
+    [90m343| [39m          [35mnew[39m [33mRegExp[39m([32m`egg started on http://127.0.0.1:[39m[36m${[39mport[36m}[39m[32m`[39m)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Unhandled Errors [49m[22m[31m⎯⎯⎯⎯⎯⎯[39m
+[31m[1m
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.[22m[39m
+
+[31m⎯⎯⎯⎯[39m[1m[41m Unhandled Rejection [49m[22m[31m⎯⎯⎯⎯⎯[39m
+[31m[1mSubprocessError[22m: Command failed with exit code 1: /usr/local/bin/node /home/runner/work/egg/egg/packages/mock/dist/lib/request_call_function.js '{"port":17395,"method":"mockNotExists","args":[],"property":null,"needResult":true}'[39m
+[90m [2m❯[22m checkFailure ../../node_modules/.pnpm/nano-spawn@1.0.3/node_modules/nano-spawn/source/result.js:[2m40:9[22m[39m
+[90m [2m❯[22m getResult ../../node_modules/.pnpm/nano-spawn@1.0.3/node_modules/nano-spawn/source/result.js:[2m17:3[22m[39m
+[90m [2m❯[22m processTicksAndRejections node:internal/process/task_queues:[2m95:5[22m[39m
+[36m [2m❯[22m ClusterApplication._callFunctionOnAppWorker src/lib/cluster.ts:[2m322:24[22m[39m
+    [90m320| [39m      needResult[33m,[39m
+    [90m321| [39m    }[33m;[39m
+    [90m322| [39m    [35mconst[39m subprocess [33m=[39m [35mawait[39m [34mnanoSpawn[39m(process[33m.[39mexecPath[33m,[39m [
+    [90m   | [39m                       [31m^[39m
+    [90m323| [39m      requestCallFunctionFile[33m,[39m
+    [90m324| [39m      [33mJSON[39m[33m.[39m[34mstringify[39m(data)[33m,[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22m[39m
+[31m[1mSerialized Error:[22m[39m [90m{ exitCode: 1, stdout: '', stderr: 'POST http://127.0.0.1:17395/__egg_mock_call_function error, method: mockNotExists, args: []\nError: connect ECONNREFUSED 127.0.0.1:17395\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)', output: 'POST http://127.0.0.1:17395/__egg_mock_call_function error, method: mockNotExists, args: []\nError: connect ECONNREFUSED 127.0.0.1:17395\n    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1611:16)', command: '/usr/local/bin/node /home/runner/work/egg/egg/packages/mock/dist/lib/request_call_function.js \'{"port":17395,"method":"mockNotExists","args":[],"property":null,"needResult":true}\'', durationMs: 453.879538 }[39m
+[31mThis error originated in "[1mtest/cluster.test.ts[22m" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.[39m
+[31mThe latest test that might've caused the error is "[1mshould throw error when mock function not exists[22m". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.[39m
+[31m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m6 failed[39m[22m[2m | [22m[1m[32m3 passed[39m[22m[2m | [22m[33m8 skipped[39m[90m (17)[39m
+[2m     Errors [22m [1m[31m1 error[39m[22m
+[2m   Start at [22m 01:11:38
+[2m   Duration [22m 5.80s[2m (transform 1.17s, setup 0ms, collect 2.06s, tests 3.02s, environment 0ms, prepare 8ms)[22m
+
+{"numTotalTestSuites":16,"numPassedTestSuites":9,"numFailedTestSuites":7,"numPendingTestSuites":0,"numTotalTests":17,"numPassedTests":3,"numFailedTests":6,"numPendingTests":8,"numTodoTests":0,"snapshot":{"added":0,"failure":false,"filesAdded":0,"filesRemoved":0,"filesRemovedList":[],"filesUnmatched":0,"filesUpdated":0,"matched":0,"total":0,"unchecked":0,"uncheckedKeysByFile":[],"unmatched":0,"updated":0,"didUpdate":false},"startTime":1757812298545,"success":false,"testResults":[{"assertionResults":[{"ancestorTitles":["test/cluster.test.ts","normal"],"fullName":"test/cluster.test.ts normal should have members","status":"passed","title":"should have members","duration":243.42625399999997,"failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","normal"],"fullName":"test/cluster.test.ts normal should throw error when mock function not exists","status":"failed","title":"should throw error when mock function not exists","duration":509.06049299999995,"failureMessages":["AssertionError [ERR_ASSERTION]: Missing expected exception.\n    at /home/runner/work/egg/egg/packages/mock/test/cluster.test.ts:35:16\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:157:11\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:757:26\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1635:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1601:10)\n    at runTest (file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1312:12)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at runSuite (file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1467:8)\n    at runSuite (file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1467:8)"],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","normal"],"fullName":"test/cluster.test.ts normal should listen on port","status":"failed","title":"should listen on port","duration":340.049395,"failureMessages":["AssertionError [ERR_ASSERTION]: should match stdout expected `/egg started on http:\\/\\/127.0.0.1:17\\d{3}/(RegExp)` but actual `(String)`\n\nfalse !== true\n\n    at Rule.assert (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:30:14)\n    at Rule.validate (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:22:12)\n    at Proxy._addAssertion (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:206:12)\n    at Proxy.expect (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:136:10)\n    at /home/runner/work/egg/egg/packages/mock/test/cluster.test.ts:41:13\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:157:11\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:757:26\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1635:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:1601:10)"],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with fullpath baseDir"],"fullName":"test/cluster.test.ts cluster with fullpath baseDir should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with shortpath baseDir"],"fullName":"test/cluster.test.ts cluster with shortpath baseDir should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with customEgg=string"],"fullName":"test/cluster.test.ts cluster with customEgg=string should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with framework=string"],"fullName":"test/cluster.test.ts cluster with framework=string should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with customEgg=true"],"fullName":"test/cluster.test.ts cluster with customEgg=true should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with framework=true"],"fullName":"test/cluster.test.ts cluster with framework=true should work","status":"skipped","title":"should work","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with cache"],"fullName":"test/cluster.test.ts cluster with cache should return cached cluster app","status":"passed","title":"should return cached cluster app","duration":83.86633399999982,"failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with cache"],"fullName":"test/cluster.test.ts cluster with cache should return new app if cached app has been closed","status":"passed","title":"should return new app if cached app has been closed","duration":177.9215549999999,"failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with eggPath"],"fullName":"test/cluster.test.ts cluster with eggPath should get eggPath","status":"failed","title":"should get eggPath","duration":379.9730529999997,"failureMessages":["AssertionError [ERR_ASSERTION]: should match stdout expected `/\\/path\\/to\\/eggPath/(RegExp)` but actual `(String)`\n\nfalse !== true\n\n    at Rule.assert (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:30:14)\n    at Rule.validate (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:22:12)\n    at ClusterApplication.<anonymous> (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:78:16)\n    at Object.onceWrapper (node:events:639:26)\n    at ClusterApplication.emit (node:events:524:28)\n    at Object.onceWrapper (node:events:639:26)\n    at ChildProcess.emit (node:events:524:28)\n    at maybeClose (node:internal/child_process:1104:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:304:5)"],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with workers"],"fullName":"test/cluster.test.ts cluster with workers should get 2 workers","status":"failed","title":"should get 2 workers","duration":407.6482449999994,"failureMessages":["AssertionError [ERR_ASSERTION]: should match stdout expected `/app_worker#1:/(RegExp)` but actual `(String)`\n\nfalse !== true\n\n    at Rule.assert (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:30:14)\n    at Rule.validate (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:22:12)\n    at ClusterApplication.<anonymous> (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:78:16)\n    at Object.onceWrapper (node:events:639:26)\n    at ClusterApplication.emit (node:events:524:28)\n    at Object.onceWrapper (node:events:639:26)\n    at ChildProcess.emit (node:events:524:28)\n    at maybeClose (node:internal/child_process:1104:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:304:5)"],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with opts.customEgg"],"fullName":"test/cluster.test.ts cluster with opts.customEgg should pass execArgv","status":"skipped","title":"should pass execArgv","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","cluster with egg.framework=yadan"],"fullName":"test/cluster.test.ts cluster with egg.framework=yadan should pass execArgv","status":"failed","title":"should pass execArgv","duration":420.9264229999999,"failureMessages":["AssertionError [ERR_ASSERTION]: should match stdout expected `/app_worker#1:/(RegExp)` but actual `(String)`\n\nfalse !== true\n\n    at Rule.assert (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:30:14)\n    at Rule.validate (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:22:12)\n    at ClusterApplication.<anonymous> (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:78:16)\n    at Object.onceWrapper (node:events:639:26)\n    at ClusterApplication.emit (node:events:524:28)\n    at Object.onceWrapper (node:events:639:26)\n    at ChildProcess.emit (node:events:524:28)\n    at maybeClose (node:internal/child_process:1104:16)\n    at Process.ChildProcess._handle.onexit (node:internal/child_process:304:5)"],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","prerequire"],"fullName":"test/cluster.test.ts prerequire should load files","status":"skipped","title":"should load files","failureMessages":[],"meta":{}},{"ancestorTitles":["test/cluster.test.ts","custom port"],"fullName":"test/cluster.test.ts custom port should use it","status":"failed","title":"should use it","duration":350.2067269999998,"failureMessages":["AssertionError [ERR_ASSERTION]: should match stdout expected `/egg started on http:\\/\\/127.0.0.1:42607/(RegExp)` but actual `(String)`\n\nfalse !== true\n\n    at Rule.assert (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:30:14)\n    at Rule.validate (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/rule.js:22:12)\n    at Proxy._addAssertion (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:206:12)\n    at Proxy.expect (/home/runner/work/egg/egg/node_modules/.pnpm/coffee@5.5.1/node_modules/coffee/lib/coffee.js:136:10)\n    at /home/runner/work/egg/egg/packages/mock/test/cluster.test.ts:341:13\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at file:///home/runner/work/egg/egg/node_modules/.pnpm/@vitest+runner@4.0.0-beta.11/node_modules/@vitest/runner/dist/index.js:757:20"],"meta":{}}],"startTime":1757812301018,"endTime":1757812303934.2068,"status":"failed","message":"","name":"/home/runner/work/egg/egg/packages/mock/test/cluster.test.ts"}]}
