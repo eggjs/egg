@@ -4,7 +4,7 @@ import { scheduler } from 'node:timers/promises';
 import fs from 'node:fs/promises';
 
 import { importResolve } from '@eggjs/utils';
-import { MockApplication, createApp } from '../../utils.ts';
+import { type MockApplication, createApp } from '../../utils.ts';
 
 // FIXME: merge @eggjs/logrotator
 describe.skip('test/lib/plugins/logrotator.test.ts', () => {

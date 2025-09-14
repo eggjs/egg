@@ -3,7 +3,7 @@ import { once } from 'node:events';
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
 import http from 'node:http';
-import { AddressInfo } from 'node:net';
+import { type AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
 import {
@@ -17,7 +17,7 @@ import { request } from '@eggjs/supertest';
 
 import {
   startEgg,
-  StartEggOptions,
+  type StartEggOptions,
   type SingleModeAgent,
 } from '../src/index.ts';
 

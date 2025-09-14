@@ -5,7 +5,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { describe, it, beforeAll, afterAll } from 'vitest';
 
-import { createApp, MockApplication, cluster } from '../../utils.ts';
+import { createApp, type MockApplication, cluster } from '../../utils.ts';
 
 describe('test/app/extend/application.test.ts', () => {
   describe('app.logger', () => {

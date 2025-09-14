@@ -1,7 +1,7 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 
-import { MockApplication, createApp } from './utils.ts';
+import { type MockApplication, createApp } from './utils.ts';
 
 describe.skip('test/typescript.test.ts', () => {
   describe('compiler code', () => {

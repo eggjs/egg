@@ -15,7 +15,12 @@ import { mm } from '@eggjs/mock';
 import assertFile from 'assert-file';
 import { readJSONSync } from 'utility';
 
-import { createApp, cluster, getFilepath, MockApplication } from './utils.ts';
+import {
+  createApp,
+  cluster,
+  getFilepath,
+  type MockApplication,
+} from './utils.ts';
 
 describe.sequential('test/egg.test.ts', () => {
   afterEach(mm.restore);

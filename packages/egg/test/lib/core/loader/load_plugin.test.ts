@@ -5,7 +5,11 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
 
-import { MockApplication, createApp, getFilepath } from '../../../utils.ts';
+import {
+  type MockApplication,
+  createApp,
+  getFilepath,
+} from '../../../utils.ts';
 import {
   AppWorkerLoader,
   AgentWorkerLoader,

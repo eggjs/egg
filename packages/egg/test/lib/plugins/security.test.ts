@@ -1,6 +1,6 @@
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { createApp, MockApplication } from '../../utils.js';
+import { createApp, type MockApplication } from '../../utils.js';
 
 describe('test/lib/plugins/security.test.ts', () => {
   afterEach(mm.restore);

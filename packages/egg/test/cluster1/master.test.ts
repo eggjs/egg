@@ -4,7 +4,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import coffee, { Coffee } from 'coffee';
 
-import { MockApplication, cluster, getFilepath } from '../utils.ts';
+import { type MockApplication, cluster, getFilepath } from '../utils.ts';
 
 describe('test/cluster1/master.test.ts', () => {
   afterEach(mm.restore);

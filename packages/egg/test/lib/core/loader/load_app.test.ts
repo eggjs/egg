@@ -1,6 +1,6 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
-import { MockApplication, createApp } from '../../../utils.js';
+import { type MockApplication, createApp } from '../../../utils.js';
 
 describe('test/lib/core/loader/load_app.test.ts', () => {
   let app: MockApplication;

@@ -12,7 +12,7 @@ import {
 } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { cluster, MockApplication, getFilepath } from '../../utils.ts';
+import { cluster, type MockApplication, getFilepath } from '../../utils.ts';
 
 const file_path1 = getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = getFilepath('apps/watcher-development-app/tmp/tmp.txt');

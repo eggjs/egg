@@ -1,5 +1,5 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import { MockApplication, createApp } from '../../utils.js';
+import { type MockApplication, createApp } from '../../utils.js';
 
 describe('test/lib/plugins/i18n.test.ts', () => {
   let app: MockApplication;

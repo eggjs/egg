@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { restore, createApp, MockApplication } from '../../utils.js';
+import { restore, createApp, type MockApplication } from '../../utils.js';
 
 describe('test/app/extend/agent.test.ts', () => {
   afterEach(restore);

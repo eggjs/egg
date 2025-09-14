@@ -2,7 +2,10 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
 import { pending } from 'pedding';
-import { singleProcessApp, SingleModeApplication } from '../../../utils.js';
+import {
+  singleProcessApp,
+  type SingleModeApplication,
+} from '../../../utils.js';
 
 describe('test/lib/core/messenger/local.test.ts', () => {
   let app: SingleModeApplication;
@@ -21,13 +24,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
   describe('broadcast()', () => {
     it('app.messenger.broadcast should work', done => {
+      // @ts-ignore
       done = pending(2, done);
       app.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
       app.agent.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -35,13 +41,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('agent.messenger.broadcast should work', done => {
+      // @ts-ignore
       done = pending(2, done);
       app.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
       app.agent.messenger.once('broadcast-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -57,6 +66,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
       app.messenger.once('sendToApp-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -70,6 +80,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
       app.messenger.once('sendToApp-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -81,6 +92,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     it('app.messenger.sendToAgent should work', done => {
       app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -94,6 +106,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     it('agent.messenger.sendToAgent should work', done => {
       app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -109,6 +122,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     it('app.messenger.sendRandom should work', done => {
       app.agent.messenger.once('sendRandom-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -126,6 +140,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
       app.messenger.once('sendRandom-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -135,13 +150,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
   describe('sendTo(pid)', () => {
     it('app.messenger.sendTo should work', done => {
+      // @ts-ignore
       done = pending(2, done);
       app.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
       app.agent.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -156,13 +174,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('agent.messenger.sendTo should work', done => {
+      // @ts-ignore
       done = pending(done, 2);
       app.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
       app.agent.messenger.once('sendTo-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -181,6 +202,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     it('app.messenger.send should work', done => {
       app.agent.messenger.once('send-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -198,6 +220,7 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
       app.messenger.once('send-event', (msg: unknown) => {
         assert.deepEqual(msg, { foo: 'bar' });
+        // @ts-ignore
         done();
       });
 
@@ -213,7 +236,10 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     });
 
     it('should emit with action', done => {
-      app.messenger.once('test-action', done);
+      app.messenger.once(
+        'test-action', // @ts-ignore
+        done
+      );
       app.messenger.onMessage({ action: 'test-action' });
     });
   });
