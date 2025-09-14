@@ -70,9 +70,9 @@ catalog:
   content-type: ^1.0.5
   cookie-parser: ^1.4.6
   cookies: ^0.9.1
-  cpy: ^8.1.2
-  cpy-cli: ^5.0.0
-  cross-env: ^7.0.3
+  cpy: ^12.0.0
+  cpy-cli: ^6.0.0
+  cross-env: ^10.0.0
   debounce: ^2.2.0
   destroy: ^1.0.4
   detect-port: ^2.1.0
@@ -140,7 +140,7 @@ catalog:
   tsdown: ^0.15.0
   tshy: ^3.0.0
   tshy-after: ^1.0.0
-  type-is: ^1.6.18
+  type-is: ^2.0.0
   typescript: 5.9.2
   urllib: ^4.6.11
   utility: ^2.5.0
