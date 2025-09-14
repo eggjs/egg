@@ -111,7 +111,7 @@ catalog:
   mm: ^4.0.2
   mocha: 11.7.1
   mochawesome-with-mocha: 8.0.0
-  nock: ^13.3.0
+  nock: ^14.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
   on-finished: ^2.4.1
