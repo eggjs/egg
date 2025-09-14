@@ -61,7 +61,7 @@ site/.dumi/
 
 # egg-bin
 tools/egg-bin/test/fixtures/**/node_modules/
-!tools/egg-bin/test/fixtures/demo-app/node_modules/aliyun-egg/node_modules/
+!tools/egg-bin/test/fixtures/demo-app/node_modules/
 !tools/egg-bin/test/fixtures/demo-app-esm/node_modules/
 
 !tools/egg-bin/test/fixtures/ts/node_modules/aliyun-egg/node_modules/
