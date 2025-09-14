@@ -27,7 +27,7 @@ jobs:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['22', '24']
 
-    name: Test egg-bin with Node.js ${{ matrix.node }} on ${{ matrix.os }}
+    name: Test egg-bin (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
