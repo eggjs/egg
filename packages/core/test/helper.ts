@@ -5,8 +5,10 @@ import type { EggCore } from '../src/index.ts';
 import {
   Application,
   type EggCoreInitOptions,
+  // @ts-ignore
 } from './fixtures/egg-esm/index.ts';
 
+// @ts-ignore
 export { Application } from './fixtures/egg-esm/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);

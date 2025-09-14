@@ -14,6 +14,7 @@ exports[`test/index.test.ts > export all > should keep checking 1`] = `
   "getLoadUnits",
   "getLoader",
   "getPlugins",
+  "getRequire",
   "importModule",
   "importResolve",
   "isESM",
