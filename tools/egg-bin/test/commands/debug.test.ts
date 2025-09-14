@@ -1,6 +1,7 @@
 import path from 'node:path';
-import coffee from '../coffee.js';
-import { getFixtures, getRootDirname } from '../helper.js';
+
+import coffee from '../coffee.ts';
+import { getFixtures, getRootDirname } from '../helper.ts';
 
 describe('test/commands/debug.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');

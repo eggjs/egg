@@ -1,22 +1,20 @@
-import coffee from './coffee.js';
-import { getFixtures } from './helper.js';
+import coffee from './coffee.ts';
+import { getFixtures } from './helper.ts';
 
 describe('test/my-egg-bin.test.ts', () => {
   const eggBin = getFixtures('my-egg-bin/bin/run.js');
   const cwd = getFixtures('test-files');
 
   it('should my-egg-bin test success', () => {
-    return (
-      coffee
-        .fork(eggBin, ['test'], { cwd, env: { TESTS: 'test/**/*.test.js' } })
-        // .debug()
-        .expect('stdout', /should success/)
-        .expect('stdout', /a.test.js/)
-        .expect('stdout', /b\/b.test.js/)
-        .notExpect('stdout', /a.js/)
-        .expect('code', 0)
-        .end()
-    );
+    return coffee
+      .fork(eggBin, ['test'], { cwd, env: { TESTS: 'test/**/*.test.js' } })
+      .debug()
+      .expect('stdout', /should success/)
+      .expect('stdout', /a.test.js/)
+      .expect('stdout', /b\/b.test.js/)
+      .notExpect('stdout', /a.js/)
+      .expect('code', 0)
+      .end();
   });
 
   it('should my-egg-bin nsp success', async () => {

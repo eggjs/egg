@@ -1,4 +1,4 @@
-import { BaseCommand, Flags } from '../../../../dist/esm/index.js';
+import { BaseCommand, Flags } from '../../../../dist/index.js';
 
 export default class Nsp<T extends typeof Nsp> extends BaseCommand<T> {
   static override description = 'nsp check';

@@ -1,4 +1,4 @@
-import { Dev } from '../../../../dist/esm/index.js';
+import { Dev } from '../../../../dist/index.js';
 
 export default class MyDev<T extends typeof MyDev> extends Dev<T> {
   static override description = 'Run the development server with my-egg-bin';

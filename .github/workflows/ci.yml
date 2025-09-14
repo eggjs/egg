@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run lint
+        run: pnpm run lint
+
       - name: Run typecheck
         run: pnpm run typecheck
 
@@ -66,7 +69,9 @@ jobs:
         run: pnpm run ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v4
+        # skip on windows, it will hangup on codecov
+        if: ${{ matrix.os != 'windows-latest' }}
+        uses: codecov/codecov-action@v5
         with:
           use_oidc: true
 
@@ -104,6 +109,8 @@ jobs:
         run: pnpm run --filter="@eggjs/bin" ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v4
+        # skip on windows, it will hangup on codecov
+        if: ${{ matrix.os != 'windows-latest' }}
+        uses: codecov/codecov-action@v5
         with:
           use_oidc: true

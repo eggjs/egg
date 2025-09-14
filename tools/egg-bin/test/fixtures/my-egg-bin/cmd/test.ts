@@ -1,3 +1,3 @@
-import { Test } from '../../../../dist/esm/index.js';
+import { Test } from '../../../../dist/index.js';
 
 export default Test;

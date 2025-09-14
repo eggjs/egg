@@ -13,6 +13,7 @@
     "@eggjs/tsconfig": "workspace:*",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
+    "c8": "catalog:",
     "husky": "catalog:",
     "lint-staged": "catalog:",
     "mocha": "catalog:",

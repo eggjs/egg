@@ -1,10 +1,12 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+
 import assertFile from 'assert-file';
 import { mock } from '@eggjs/mock';
-import coffee from '../coffee.js';
-import { getFixtures, getRootDirname } from '../helper.js';
+
+import coffee from '../coffee.ts';
+import { getFixtures, getRootDirname } from '../helper.ts';
 
 const version = Number(process.version.substring(1, 3));
 
@@ -27,7 +29,7 @@ describe('test/commands/cov.test.ts', () => {
           cwd,
           env: { TESTS: 'test/**/*.test.js' },
         })
-        // .debug()
+        .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
         .expect('stdout', /b[/|\\]b\.test\.js/)
