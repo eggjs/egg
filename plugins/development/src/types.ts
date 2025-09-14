@@ -29,7 +29,7 @@ export interface DevelopmentConfig {
   reloadPattern?: string[] | string;
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     development: DevelopmentConfig;

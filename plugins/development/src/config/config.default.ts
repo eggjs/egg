@@ -1,4 +1,4 @@
-import type { DevelopmentConfig } from '../types.js';
+import type { DevelopmentConfig } from '../types.ts';
 
 /**
  * @member Config#development

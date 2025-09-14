@@ -1,40 +1,42 @@
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
-import { getFilepath, DELAY } from './utils.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+
+import { getFilepath } from './utils.ts';
 
 describe('test/custom.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     mm.env('local');
     app = mm.cluster({
-      baseDir: 'custom',
+      baseDir: getFilepath('custom'),
     });
     app.debug();
-    return app.ready();
+    await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
   // for debounce
   afterEach(() => scheduler.wait(500));
 
-  it('should reload with custom detect', async () => {
-    if (process.env.CI) {
-      return;
-    }
+  it.skipIf(process.env.CI)('should reload with custom detect', async () => {
     let filepath;
     filepath = getFilepath('custom/app/service/a.js');
-    await fs.writeFile(filepath, '');
-    await scheduler.wait(DELAY);
+    await fs.writeFile(filepath, 'let a = 1;');
+    await fs.writeFile(filepath, 'let a = 2;');
+    await scheduler.wait(5000);
 
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
     app.expect('stdout', /a\.js/);
 
     filepath = getFilepath('custom/app/service/b.ts');
-    await fs.writeFile(filepath, '');
-    await scheduler.wait(DELAY);
+    await fs.writeFile(filepath, 'let b = 1;');
+    await fs.writeFile(filepath, 'let b = 2;');
+    await scheduler.wait(5000);
 
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
     app.notExpect('stdout', /b\.ts/);
   });
 });

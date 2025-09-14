@@ -48,20 +48,18 @@
     "eggPlugin"
   ],
   "dependencies": {
-    "@eggjs/core": "workspace:*",
     "debounce": "catalog:",
     "multimatch": "catalog:",
     "utility": "catalog:"
   },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
-    "eslint-config-egg": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
@@ -72,11 +70,11 @@
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
-    "pretest": "npm run clean && npm run lint -- --fix",
-    "test": "egg-bin test",
+    "pretest": "pnpm run clean",
+    "test": "vitest run",
     "clean": "rimraf dist",
     "build": "tsdown",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "pnpm run build"
   },
   "repository": {
     "type": "git",

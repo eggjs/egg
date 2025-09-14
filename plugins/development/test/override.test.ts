@@ -1,25 +1,28 @@
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
-import { escape, getFilepath } from './utils.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { escape, getFilepath } from './utils.ts';
 
 describe('test/override.test.ts', () => {
   let app: MockApplication;
 
-  after(() => app && app.close());
+  afterAll(() => app && app.close());
   afterEach(mm.restore);
   // for debounce
   afterEach(() => scheduler.wait(500));
 
   describe('overrideDefault', () => {
-    before(() => {
+    beforeAll(() => {
       mm.env('local');
       app = mm.cluster({
-        baseDir: 'override',
+        baseDir: getFilepath('override'),
       });
       app.debug();
       return app.ready();
     });
+
     it('should reload', async () => {
       const filepath = getFilepath('override/app/service/a.js');
       await fs.writeFile(filepath, '');
@@ -41,14 +44,15 @@ describe('test/override.test.ts', () => {
   });
 
   describe('overrideIgnore', () => {
-    before(() => {
+    beforeAll(() => {
       mm.env('local');
       app = mm.cluster({
-        baseDir: 'override-ignore',
+        baseDir: getFilepath('override-ignore'),
       });
       app.debug();
       return app.ready();
     });
+
     it('should reload', async () => {
       const filepath = getFilepath('override-ignore/app/web/a.js');
       await fs.writeFile(filepath, '');

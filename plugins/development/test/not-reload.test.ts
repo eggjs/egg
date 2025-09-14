@@ -1,22 +1,24 @@
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
-import { escape, getFilepath, DELAY } from './utils.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { escape, getFilepath, DELAY } from './utils.ts';
 
 describe('test/not-reload.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(() => {
     mm.env('local');
     mm(process.env, 'EGG_DEBUG', true);
     app = mm.cluster({
-      baseDir: 'not-reload',
+      baseDir: getFilepath('not-reload'),
       opt: {
         execArgv: ['--inspect'],
       },
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
   // for debounce
   afterEach(() => scheduler.wait(500));

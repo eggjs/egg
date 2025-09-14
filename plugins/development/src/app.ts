@@ -1,9 +1,9 @@
-import type { ILifecycleBoot, EggCore } from '@eggjs/core';
+import type { ILifecycleBoot, Application } from 'egg';
 
 export default class AppBoot implements ILifecycleBoot {
-  #app: EggCore;
+  #app: Application;
 
-  constructor(app: EggCore) {
+  constructor(app: Application) {
     this.#app = app;
     // if true, then don't need to wait at local development mode
     if (app.config.development.fastReady) {

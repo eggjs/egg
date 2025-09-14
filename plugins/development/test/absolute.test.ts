@@ -1,12 +1,15 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
-import { getFilepath } from './utils.js';
+
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+
+import { getFilepath } from './utils.ts';
 
 describe('test/absolute.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     await fs.rm(getFilepath('absolute/lib'), { force: true, recursive: true });
 
     // FIXME: ONLY WATCH EXIST DIR
@@ -16,12 +19,12 @@ describe('test/absolute.test.ts', () => {
 
     mm.env('local');
     app = mm.cluster({
-      baseDir: 'absolute',
+      baseDir: getFilepath('absolute'),
       // debug: true,
     });
     return app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
   afterEach(mm.restore);
   // for debounce
   afterEach(() => scheduler.wait(500));

@@ -1,22 +1,23 @@
 import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { beforeAll, afterAll, it, describe } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFilepath } from './utils.ts';
 
 describe('test/timing.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     mm.env('local');
-    app = mm.cluster({
-      baseDir: 'timing',
+    app = mm.app({
+      baseDir: getFilepath('timing'),
     });
     await app.ready();
   });
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should render page', async () => {
-    await scheduler.wait(1000);
-
-    const res = await app.httpRequest().get('/__loader_trace__');
+    const res = await app.httpRequest().get('/__loader_trace__').expect(200);
 
     const jsonString = res.text.match(/data = (.*?);/);
     assert(jsonString);

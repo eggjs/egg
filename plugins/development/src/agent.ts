@@ -1,15 +1,17 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
+
 import debounce from 'debounce';
 import multimatch from 'multimatch';
 import { exists } from 'utility';
-import type { ILifecycleBoot, EggCore } from '@eggjs/core';
-import { isTimingFile } from './utils.js';
+import type { ILifecycleBoot, Agent } from 'egg';
+
+import { isTimingFile } from './utils.ts';
 
 export default class AgentBoot implements ILifecycleBoot {
-  #agent: EggCore;
+  #agent: Agent;
 
-  constructor(agent: EggCore) {
+  constructor(agent: Agent) {
     this.#agent = agent;
   }
 
@@ -75,7 +77,7 @@ export default class AgentBoot implements ILifecycleBoot {
      *
      * @param {Object} info - changed fileInfo
      */
-    agent.watcher.watch(watchDirs, info => {
+    agent.watcher.watch(watchDirs, (info: any) => {
       if (!config.reloadOnDebug) {
         return;
       }

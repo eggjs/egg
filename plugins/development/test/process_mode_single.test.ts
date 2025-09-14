@@ -1,17 +1,19 @@
-import { request } from '@eggjs/supertest';
 import fs from 'node:fs/promises';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+
+import { beforeAll, afterAll, it, describe } from 'vitest';
+import { request } from '@eggjs/supertest';
 import { mm } from '@eggjs/mock';
 import { start, Application } from 'egg';
-import { getFilepath } from './utils.js';
+import { getFilepath } from './utils.ts';
 
 describe('test/process_mode_single.test.ts', () => {
   let app: Application;
-  before(async () => {
+  beforeAll(async () => {
     app = await start({
       env: 'local',
-      baseDir: getFilepath('development'),
+      baseDir: getFilepath('development-process_mode_single'),
       plugins: {
         development: {
           enable: true,
@@ -20,8 +22,7 @@ describe('test/process_mode_single.test.ts', () => {
       },
     } as any);
   });
-  after(() => app.close());
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   it('should not reload', async () => {
     let warn = false;
@@ -31,13 +32,15 @@ describe('test/process_mode_single.test.ts', () => {
       }
     });
     await request(app.callback()).get('/foo').expect(200).expect('foo');
-    const filepath = getFilepath('development/app/service/a.js');
+    const filepath = getFilepath(
+      'development-process_mode_single/app/service/a.js'
+    );
     await fs.writeFile(filepath, '');
     await scheduler.wait(1000);
 
     await request(app.callback()).get('/foo').expect(200).expect('foo');
 
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
 
     await request(app.callback()).get('/foo').expect(200).expect('foo');
 
