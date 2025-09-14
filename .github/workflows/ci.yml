@@ -22,6 +22,7 @@ jobs:
 
   test-egg-bin:
     strategy:
+      fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['22', '24']
