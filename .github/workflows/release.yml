@@ -44,6 +44,10 @@ jobs:
     name: Manual Release
     runs-on: ubuntu-latest
 
+    concurrency:
+      group: release-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: false
+
     permissions:
       contents: write
       packages: write

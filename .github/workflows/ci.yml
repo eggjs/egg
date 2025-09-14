@@ -13,6 +13,10 @@ permissions:
 jobs:
   typecheck:
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: typecheck-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}
+      cancel-in-progress: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -46,7 +50,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-packages-${{ github.workflow }}-#${{ github.event.pull_request.number || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-packages-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
       cancel-in-progress: true
 
     steps:
@@ -86,7 +90,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
       cancel-in-progress: true
 
     steps:
