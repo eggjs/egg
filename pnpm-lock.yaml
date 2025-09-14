@@ -63,6 +63,9 @@ catalogs:
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
+    '@oclif/core':
+      specifier: ^4.2.0
+      version: 4.5.2
     '@swc-node/register':
       specifier: ^1.11.1
       version: 1.11.1
@@ -135,9 +138,6 @@ catalogs:
     '@types/superagent':
       specifier: ^8.1.9
       version: 8.1.9
-    '@types/supertest':
-      specifier: ^6.0.2
-      version: 6.0.3
     '@types/type-is':
       specifier: ^1.6.6
       version: 1.6.7
@@ -378,9 +378,6 @@ catalogs:
     superagent:
       specifier: ^9.0.1
       version: 9.0.2
-    supertest:
-      specifier: ^3.1.0
-      version: 3.4.2
     terminal-link:
       specifier: ^5.0.0
       version: 5.0.0
@@ -902,6 +899,9 @@ importers:
         specifier: 'catalog:'
         version: 1.1.2
     devDependencies:
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../supertest
       '@types/accepts':
         specifier: 'catalog:'
         version: 1.3.7
@@ -941,9 +941,6 @@ importers:
       '@types/statuses':
         specifier: 'catalog:'
         version: 2.0.6
-      '@types/supertest':
-        specifier: 'catalog:'
-        version: 6.0.3
       '@types/type-is':
         specifier: 'catalog:'
         version: 1.6.7
@@ -953,9 +950,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      supertest:
-        specifier: 'catalog:'
-        version: 3.4.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
@@ -1145,18 +1139,18 @@ importers:
 
   tools/egg-bin:
     dependencies:
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../../packages/supertest
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../../packages/utils
       '@oclif/core':
         specifier: 'catalog:'
-        version: 4.5.3
+        version: 4.5.2
       '@types/mocha':
         specifier: 'catalog:'
         version: 10.0.10
-      '@types/supertest':
-        specifier: 'catalog:'
-        version: 6.0.3
       c8:
         specifier: 'catalog:'
         version: 10.1.3
@@ -1239,9 +1233,6 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
-      supertest:
-        specifier: 'catalog:'
-        version: 3.4.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
@@ -2576,8 +2567,8 @@ packages:
     resolution: {integrity: sha512-NCcr1uQo1k5U+SYlnIrbAh3cxy+OQT1VtqiAbxdymSlptbzBb62AjH2xXgjNCoP073hoa1CfCAcwoZ8k96C4nA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  '@oclif/core@4.5.3':
-    resolution: {integrity: sha512-ISoFlfmsuxJvNKXhabCO4/KqNXDQdLHchZdTPfZbtqAsQbqTw5IKitLVZq9Sz1LWizN37HILp4u0350B8scBjg==}
+  '@oclif/core@4.5.2':
+    resolution: {integrity: sha512-eQcKyrEcDYeZJKu4vUWiu0ii/1Gfev6GF4FsLSgNez5/+aQyAUCjg3ZWlurf491WiYZTXCWyKAxyPWk8DKv2MA==}
     engines: {node: '>=18.0.0'}
 
   '@one-ini/wasm@0.1.1':
@@ -3606,9 +3597,6 @@ packages:
   '@types/superagent@8.1.9':
     resolution: {integrity: sha512-pTVjI73witn+9ILmoJdajHGW2jkSaOzhiFYF1Rd3EQ94kymLqB9PjD9ISg7WaALC7+dCHT0FGe9T2LktLq/3GQ==}
 
-  '@types/supertest@6.0.3':
-    resolution: {integrity: sha512-8WzXq62EXFhJ7QsH3Ocb/iKQ/Ty9ZVWnVzoTKc9tyyFRRF3a74Tk2+TLFgaFFw364Ere+npzHKEJ6ga2LzIL7w==}
-
   '@types/type-is@1.6.7':
     resolution: {integrity: sha512-gEsh7n8824nusZ2Sidh6POxNsIdTSvIAl5gXbeFj+TUaD1CO2r4i7MQYNMfEQkChU42s2bVWAda6x6BzIhtFbQ==}
 
@@ -4097,8 +4085,8 @@ packages:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
     engines: {node: '>=8'}
 
-  ansi-escapes@7.1.0:
-    resolution: {integrity: sha512-YdhtCd19sKRKfAAUsrcC1wzm4JuzJoiX4pOJqIoW2qmKj5WzG/dL8uUJ0361zaXtHqK7gEhOwtAtz7t3Yq3X5g==}
+  ansi-escapes@7.0.0:
+    resolution: {integrity: sha512-GdYO7a61mR0fOlAsvC9/rIHf7L96sBc6dEWzeOu+KAea5bZyQRPIpojrVoI4AXGJS/ycu/fBTdLrUkA4ODrvjw==}
     engines: {node: '>=18'}
 
   ansi-html-community@0.0.8:
@@ -4132,10 +4120,6 @@ packages:
 
   ansi-styles@6.2.1:
     resolution: {integrity: sha512-bN798gFfQX+viw3R7yrGWRqnrN2oRkEkUjjl4JNn4E8GxxbjtG3FbrEIIY3l8/hrwUwIeCZvi4QuOTP4MErVug==}
-    engines: {node: '>=12'}
-
-  ansi-styles@6.2.3:
-    resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
 
   ansis@3.17.0:
@@ -6022,10 +6006,6 @@ packages:
   form-data-encoder@1.9.0:
     resolution: {integrity: sha512-rahaRMkN8P8d/tgK/BLPX+WBVM27NbvdXBxqQujBtkDAIFspaRqN7Od7lfdGQA6KAD+f82fYCLBq1ipvcu8qLw==}
 
-  form-data@2.5.5:
-    resolution: {integrity: sha512-jqdObeR2rxZZbPSGL+3VckHMYtu+f9//KXBsVny6JSX/pa38Fy+bGjuG8eW/H6USNQWhLi8Num++cU2yOCNz4A==}
-    engines: {node: '>= 0.12'}
-
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
@@ -6041,10 +6021,6 @@ packages:
   formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
-
-  formidable@1.2.6:
-    resolution: {integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ==}
-    deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
 
   formidable@3.5.4:
     resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
@@ -9970,10 +9946,6 @@ packages:
     resolution: {integrity: sha512-iq6eVVI64nQQTRYq2KtEg2d2uU7LElhTJwsH4YzIHZshxlgZms/wIc4VoDQTlG/IvVIrBKG06CrZnp0qv7hkcQ==}
     engines: {node: '>=12'}
 
-  strip-ansi@7.1.2:
-    resolution: {integrity: sha512-gmBGslpoQJtgnMAvOVqGZpEz9dyoKTCzy2nfz/n8aIFhN/jCE/rCmcxabB6jOOHV+0WNnylOxaxBQPSvcWklhA==}
-    engines: {node: '>=12'}
-
   strip-bom@3.0.0:
     resolution: {integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==}
     engines: {node: '>=4'}
@@ -10024,20 +9996,10 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
-  superagent@3.8.3:
-    resolution: {integrity: sha512-GLQtLMCoEIK4eDv6OGtkOoSMt3D+oq0y3dsxMuYuDvaNUvuT8eFBuLmfR0iYYzHC1e8hpzC6ZsxbuP6DIalMFA==}
-    engines: {node: '>= 4.0'}
-    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
-
   superagent@9.0.2:
     resolution: {integrity: sha512-xuW7dzkUpcJq7QnhOsnNUgtYp3xRwpt2F7abdRYIpCsAt0hhUqia0EdxyXZQQpNmGtsCzYHryaKSV3q3GJnq7w==}
     engines: {node: '>=14.18.0'}
     deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
-
-  supertest@3.4.2:
-    resolution: {integrity: sha512-WZWbwceHUo2P36RoEIdXvmqfs47idNNZjCuJOqDz6rvtkk8ym56aU5oglORCpPeXGxT7l9rkJ41+O1lffQXYSA==}
-    engines: {node: '>=6.0.0'}
-    deprecated: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   supports-color@10.2.2:
     resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
@@ -12139,7 +12101,7 @@ snapshots:
     dependencies:
       string-width: 5.1.2
       string-width-cjs: string-width@4.2.3
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
       strip-ansi-cjs: strip-ansi@6.0.1
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
@@ -12509,7 +12471,7 @@ snapshots:
       - bluebird
       - supports-color
 
-  '@oclif/core@4.5.3':
+  '@oclif/core@4.5.2':
     dependencies:
       ansi-escapes: 4.3.2
       ansis: 3.17.0
@@ -13395,11 +13357,6 @@ snapshots:
       '@types/node': 24.3.3
       form-data: 4.0.4
 
-  '@types/supertest@6.0.3':
-    dependencies:
-      '@types/methods': 1.1.4
-      '@types/superagent': 8.1.9
-
   '@types/type-is@1.6.7':
     dependencies:
       '@types/node': 24.3.3
@@ -14158,7 +14115,7 @@ snapshots:
     dependencies:
       type-fest: 0.21.3
 
-  ansi-escapes@7.1.0:
+  ansi-escapes@7.0.0:
     dependencies:
       environment: 1.1.0
 
@@ -14181,8 +14138,6 @@ snapshots:
   ansi-styles@5.2.0: {}
 
   ansi-styles@6.2.1: {}
-
-  ansi-styles@6.2.3: {}
 
   ansis@3.17.0: {}
 
@@ -15086,7 +15041,7 @@ snapshots:
       change-case: 3.1.0
       co: 4.6.0
       dargs: 6.1.0
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.1
       is-type-of: 1.4.0
       semver: 5.7.2
       yargs: 13.3.2
@@ -16696,15 +16651,6 @@ snapshots:
 
   form-data-encoder@1.9.0: {}
 
-  form-data@2.5.5:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
-      mime-types: 2.1.35
-      safe-buffer: 5.2.1
-
   form-data@4.0.4:
     dependencies:
       asynckit: 0.4.0
@@ -16723,8 +16669,6 @@ snapshots:
   formdata-polyfill@4.0.10:
     dependencies:
       fetch-blob: 3.2.0
-
-  formidable@1.2.6: {}
 
   formidable@3.5.4:
     dependencies:
@@ -18016,7 +17960,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.4.3(supports-color@8.1.1)
+      debug: 4.4.1
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -18223,7 +18167,7 @@ snapshots:
 
   log-update@6.1.0:
     dependencies:
-      ansi-escapes: 7.1.0
+      ansi-escapes: 7.0.0
       cli-cursor: 5.0.0
       slice-ansi: 7.1.0
       strip-ansi: 7.1.0
@@ -21094,12 +21038,12 @@ snapshots:
 
   slice-ansi@5.0.0:
     dependencies:
-      ansi-styles: 6.2.3
+      ansi-styles: 6.2.1
       is-fullwidth-code-point: 4.0.0
 
   slice-ansi@7.1.0:
     dependencies:
-      ansi-styles: 6.2.3
+      ansi-styles: 6.2.1
       is-fullwidth-code-point: 5.1.0
 
   smart-buffer@4.2.0: {}
@@ -21322,7 +21266,7 @@ snapshots:
     dependencies:
       eastasianwidth: 0.2.0
       emoji-regex: 9.2.2
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
 
   string-width@7.2.0:
     dependencies:
@@ -21395,10 +21339,6 @@ snapshots:
       ansi-regex: 5.0.1
 
   strip-ansi@7.1.0:
-    dependencies:
-      ansi-regex: 6.2.0
-
-  strip-ansi@7.1.2:
     dependencies:
       ansi-regex: 6.2.0
 
@@ -21484,21 +21424,6 @@ snapshots:
       pirates: 4.0.7
       ts-interface-checker: 0.1.13
 
-  superagent@3.8.3:
-    dependencies:
-      component-emitter: 1.3.1
-      cookiejar: 2.1.4
-      debug: 3.2.7
-      extend: 3.0.2
-      form-data: 2.5.5
-      formidable: 1.2.6
-      methods: 1.1.2
-      mime: 1.6.0
-      qs: 6.14.0
-      readable-stream: 2.3.8
-    transitivePeerDependencies:
-      - supports-color
-
   superagent@9.0.2:
     dependencies:
       component-emitter: 1.3.1
@@ -21510,13 +21435,6 @@ snapshots:
       methods: 1.1.2
       mime: 2.6.0
       qs: 6.14.0
-    transitivePeerDependencies:
-      - supports-color
-
-  supertest@3.4.2:
-    dependencies:
-      methods: 1.1.2
-      superagent: 3.8.3
     transitivePeerDependencies:
       - supports-color
 
@@ -22485,9 +22403,9 @@ snapshots:
 
   wrap-ansi@8.1.0:
     dependencies:
-      ansi-styles: 6.2.3
+      ansi-styles: 6.2.1
       string-width: 5.1.2
-      strip-ansi: 7.1.2
+      strip-ansi: 7.1.0
 
   wrap-ansi@9.0.0:
     dependencies:

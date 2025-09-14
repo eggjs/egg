@@ -3,7 +3,7 @@ import { describe, it } from 'vitest';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
 
 import Koa from '../../src/index.ts';

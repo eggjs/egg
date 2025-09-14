@@ -80,11 +80,10 @@
     "@types/on-finished": "catalog:",
     "@types/parseurl": "catalog:",
     "@types/statuses": "catalog:",
-    "@types/supertest": "catalog:",
+    "@eggjs/supertest": "workspace:*",
     "@types/type-is": "catalog:",
     "@types/vary": "catalog:",
     "mm": "catalog:",
-    "supertest": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   }

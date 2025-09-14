@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it, beforeEach } from 'vitest';
 
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import statuses from 'statuses';
 
 import { response } from '../test-helpers/context.ts';
