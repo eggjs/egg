@@ -2,8 +2,9 @@ import { describe, it, afterEach } from 'vitest';
 import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
 import { mm, type MockApplication } from '@eggjs/mock';
-import { getFilePath } from './utils.js';
-import type { ChangeInfo } from '../src/index.js';
+
+import { getFilePath } from './utils.ts';
+import type { ChangeInfo } from '../src/index.ts';
 
 describe('test/watcher.test.ts', () => {
   let app: MockApplication;
@@ -12,7 +13,7 @@ describe('test/watcher.test.ts', () => {
   it('should warn user if config.watcher.type is default', async () => {
     app = mm.app({
       // plugin: 'watcher',
-      baseDir: 'apps/watcher-type-default',
+      baseDir: getFilePath('apps/watcher-type-default'),
     });
     await app.ready();
     const content = fs.readFileSync(
@@ -27,7 +28,7 @@ describe('test/watcher.test.ts', () => {
   it('should work if config.watcher.type is custom', async () => {
     app = mm.app({
       // plugin: 'watcher',
-      baseDir: 'apps/watcher-custom-event-source',
+      baseDir: getFilePath('apps/watcher-custom-event-source'),
     });
     await app.ready();
 
@@ -62,7 +63,7 @@ describe('test/watcher.test.ts', () => {
   it('should work if config.watcher.type is custom(fuzzy)', async () => {
     app = mm.app({
       // plugin: 'watcher',
-      baseDir: 'apps/watcher-custom-event-source-fuzzy',
+      baseDir: getFilePath('apps/watcher-custom-event-source-fuzzy'),
     });
     await app.ready();
 

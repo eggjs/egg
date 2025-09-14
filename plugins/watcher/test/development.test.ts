@@ -23,7 +23,7 @@ describe('test/development.test.ts', () => {
   beforeEach(() => {
     app = mm.app({
       // plugin: 'watcher',
-      baseDir: 'apps/watcher-development-app',
+      baseDir: getFilePath('apps/watcher-development-app'),
     });
     return app.ready();
   });

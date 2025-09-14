@@ -1,6 +1,6 @@
 import path from 'node:path';
-import { getSourceDirname } from '../lib/utils.js';
-import type { WatcherConfig } from '../lib/types.js';
+import { getSourceDirname } from '../lib/utils.ts';
+import type { WatcherConfig } from '../lib/types.ts';
 
 export default {
   /**

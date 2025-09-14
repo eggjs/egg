@@ -1,14 +1,7 @@
-import { describe, it } from 'vitest';
-import { strict as assert } from 'node:assert';
-import * as watcher from '../src/index.js';
+import { test, expect } from 'vitest';
 
-describe('test/index.test.ts', () => {
-  it('should exports work', async () => {
-    assert.deepEqual(Object.keys(watcher), [
-      'BaseEventSource',
-      'DefaultEventSource',
-      'DevelopmentEventSource',
-      'Watcher',
-    ]);
-  });
+import * as watcher from '../src/index.ts';
+
+test('should exports work', async () => {
+  expect(Object.keys(watcher).sort()).toMatchSnapshot();
 });

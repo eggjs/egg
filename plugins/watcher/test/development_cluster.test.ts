@@ -23,7 +23,7 @@ describe('test/development_cluster.test.ts', () => {
   beforeEach(() => {
     app = mm.cluster({
       // plugin: 'watcher',
-      baseDir: 'apps/watcher-development-app',
+      baseDir: getFilePath('apps/watcher-development-app'),
     });
     return app.ready();
   });
