@@ -23,8 +23,11 @@ export function setupApp() {
   }
 
   const options = getEggOptions();
-  debug('env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s',
-    process.env.ENABLE_MOCHA_PARALLEL, process.env.AUTO_AGENT);
+  debug(
+    'env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s',
+    process.env.ENABLE_MOCHA_PARALLEL,
+    process.env.AUTO_AGENT
+  );
   if (process.env.ENABLE_MOCHA_PARALLEL && process.env.AUTO_AGENT) {
     // setup agent first
     app = createParallelApp({
@@ -32,7 +35,10 @@ export function setupApp() {
       beforeInit: async parallelApp => {
         const agent = await setupAgent();
         parallelApp.options.clusterPort = agent.options.clusterPort;
-        debug('mockParallelApp beforeInit get clusterPort: %s', parallelApp.options.clusterPort);
+        debug(
+          'mockParallelApp beforeInit get clusterPort: %s',
+          parallelApp.options.clusterPort
+        );
       },
     });
     debug('mockParallelApp app: %s', !!app);
@@ -46,9 +52,12 @@ export function setupApp() {
       // jest
       beforeAll(() => app.ready());
     }
+    // @ts-ignore mocha tsd
     if (typeof afterEach === 'function') {
       // mocha and jest
+      // @ts-ignore mocha tsd
       afterEach(() => app.backgroundTasksFinished());
+      // @ts-ignore mocha tsd
       afterEach(restore);
     }
   }

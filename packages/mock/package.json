@@ -97,12 +97,12 @@
   },
   "dependencies": {
     "@eggjs/core": "workspace:*",
+    "@eggjs/extend2": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "coffee": "catalog:",
     "detect-port": "catalog:",
     "egg-logger": "catalog:",
-    "@eggjs/extend2": "workspace:*",
     "get-ready": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",
@@ -131,6 +131,7 @@
   "scripts": {
     "build": "tsdown",
     "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   }

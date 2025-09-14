@@ -69,7 +69,8 @@
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.mjs",
-    "lint": "oxlint",
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",
     "cov": "c8 --temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura node bin/run.js test",

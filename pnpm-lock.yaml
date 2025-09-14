@@ -319,10 +319,10 @@ catalogs:
       specifier: ^4.0.2
       version: 4.0.2
     mocha:
-      specifier: ^11.0.1
+      specifier: 11.7.1
       version: 11.7.1
     mochawesome-with-mocha:
-      specifier: ^8.0.0
+      specifier: 8.0.0
       version: 8.0.0
     nock:
       specifier: ^13.3.0
@@ -406,7 +406,7 @@ catalogs:
       specifier: ^1.6.18
       version: 1.6.18
     typescript:
-      specifier: '5'
+      specifier: 5.9.2
       version: 5.9.2
     urllib:
       specifier: ^4.6.11
@@ -440,6 +440,12 @@ importers:
       lint-staged:
         specifier: 'catalog:'
         version: 16.1.6
+      mocha:
+        specifier: 'catalog:'
+        version: 11.7.1
+      mochawesome-with-mocha:
+        specifier: 'catalog:'
+        version: 8.0.0
       oxlint:
         specifier: 'catalog:'
         version: 1.15.0(oxlint-tsgolint@0.2.0)
@@ -455,6 +461,9 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
       vitest:
         specifier: 'catalog:'
         version: 4.0.0-beta.11(@types/debug@4.1.12)(@types/node@24.3.3)(@vitest/ui@4.0.0-beta.11)(jiti@2.5.1)(less@4.4.1)(lightningcss@1.22.1)(sass@1.91.0)(terser@5.44.0)(yaml@2.8.1)

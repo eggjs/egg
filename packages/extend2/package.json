@@ -16,6 +16,7 @@
   "scripts": {
     "build": "tsdown",
     "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"

@@ -24,20 +24,57 @@ catalog:
   '@eggjs/view': ^3.0.1
   '@eggjs/watcher': ^4.0.4
   '@fengmk2/ps-tree': ^2.0.1
+  '@oclif/core': ^4.2.0
+  '@swc-node/register': ^1.11.1
+  '@swc/core': ^1.13.5
+  '@types/accepts': ^1.3.7
+  '@types/body-parser': ^1.19.5
+  '@types/content-disposition': ^0.5.8
+  '@types/content-type': ^1.1.8
+  '@types/cookie-parser': ^1.4.8
+  '@types/cookies': ^0.9.0
+  '@types/destroy': ^1.0.3
+  '@types/encodeurl': ^1.0.2
+  '@types/escape-html': ^1.0.4
+  '@types/express': ^5.0.0
+  '@types/fresh': ^0.5.2
+  '@types/http-errors': ^2.0.4
   '@types/js-yaml': '4'
   '@types/koa-bodyparser': ^4.3.12
+  '@types/koa-compose': ^3.2.8
   '@types/methods': ^1.1.4
+  '@types/mocha': ^10.0.10
   '@types/node': '24'
+  '@types/on-finished': ^2.3.4
+  '@types/parseurl': ^1.3.3
+  '@types/statuses': ^2.0.5
+  '@types/superagent': ^8.1.9
+  '@types/supertest': ^6.0.2
+  '@types/type-is': ^1.6.6
+  '@types/vary': ^1.1.3
   '@vitest/coverage-v8': beta
   '@vitest/ui': beta
+  accepts: ^1.3.8
   address: '2'
   assert-file: '1'
   await-event: '2'
+  body-parser: ^1.20.3
+  c8: ^10.0.0
+  cache-content-type: ^2.0.0
   cfork: ^2.0.0
+  ci-parallel-vars: ^1.0.1
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
   cluster-reload: ^2.0.0
   coffee: '5'
+  content-disposition: ~0.5.4
+  content-type: ^1.0.5
+  cookie-parser: ^1.4.6
+  cookies: ^0.9.1
+  cpy: ^8.1.2
+  cpy-cli: ^5.0.0
+  cross-env: ^7.0.3
+  destroy: ^1.0.4
   detect-port: ^2.1.0
   dumi: ^2.4.17
   egg-errors: ^2.3.2
@@ -45,28 +82,43 @@ catalog:
   egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
   egg-tracer: ^2.1.0
+  egg-ts-helper: ^3.0.0
   egg-view-nunjucks: ^2.3.0
+  encodeurl: ^1.0.2
+  esbuild: ^0.25.0
+  esbuild-register: ^3.6.0
+  escape-html: ^1.0.3
+  express: ^4.21.2
   formstream: ^1.5.1
+  fresh: ~0.5.2
   gals: '1'
   get-ready: ^3.1.0
   globby: ^11.0.2
   graceful: ^2.0.0
   graceful-process: ^2.0.0
+  http-errors: ^2.0.0
   humanize-ms: ^2.0.0
   husky: '9'
   is-type-of: ^2.2.0
+  jest-changed-files: ^29.4.2
   js-yaml: '4'
   koa-bodyparser: ^4.4.1
+  koa-compose: ^4.1.0
   koa-override: ^4.0.0
   koa-static: ^5.0.0
   lint-staged: '16'
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
-  mocha: ^11.0.1
+  mocha: 11.7.1
+  mochawesome-with-mocha: 8.0.0
+  nock: ^13.3.0
   node-homedir: ^2.0.0
+  npminstall: ^7.12.0
+  on-finished: ^2.4.1
   onelogger: ^1.0.1
   oxlint: ^1.14.0
   oxlint-tsgolint: ^0.2.0
+  parseurl: ^1.3.3
   pedding: ^2.0.1
   performance-ms: ^1.1.0
   prettier: ^3.4.2
@@ -77,71 +129,19 @@ catalog:
   semver: ^7.6.3
   sendmessage: ^3.0.1
   spy: ^1.0.0
+  statuses: ^2.0.1
+  superagent: ^9.0.1
+  supertest: ^3.1.0
   terminal-link: ^2.1.1
+  ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
   tsd: ^0.33.0
   tsdown: ^0.15.0
-  typescript: '5'
+  tshy: ^3.0.0
+  tshy-after: ^1.0.0
+  type-is: ^1.6.18
+  typescript: 5.9.2
   urllib: ^4.6.11
   utility: ^2.5.0
-  vitest: beta
-  '@oclif/core': ^4.2.0
-  '@types/mocha': ^10.0.10
-  c8: ^10.0.0
-  'ci-parallel-vars': ^1.0.1
-  cpy: ^8.1.2
-  'cpy-cli': ^5.0.0
-  'cross-env': ^7.0.3
-  esbuild: ^0.25.0
-  'esbuild-register': ^3.6.0
-  'egg-ts-helper': ^3.0.0
-  'jest-changed-files': ^29.4.2
-  'mochawesome-with-mocha': ^8.0.0
-  npminstall: ^7.12.0
-  'ts-node': ^10.9.2
-  tshy: ^3.0.0
-  'tshy-after': ^1.0.0
-  '@types/accepts': ^1.3.7
-  '@types/content-disposition': ^0.5.8
-  '@types/content-type': ^1.1.8
-  '@types/cookies': ^0.9.0
-  '@types/destroy': ^1.0.3
-  '@types/encodeurl': ^1.0.2
-  '@types/escape-html': ^1.0.4
-  '@types/fresh': ^0.5.2
-  '@types/http-errors': ^2.0.4
-  '@types/koa-compose': ^3.2.8
-  '@types/on-finished': ^2.3.4
-  '@types/parseurl': ^1.3.3
-  '@types/statuses': ^2.0.5
-  '@types/supertest': ^6.0.2
-  '@types/type-is': ^1.6.6
-  '@types/vary': ^1.1.3
-  accepts: ^1.3.8
-  'cache-content-type': ^2.0.0
-  'content-disposition': ~0.5.4
-  'content-type': ^1.0.5
-  cookies: ^0.9.1
-  destroy: ^1.0.4
-  encodeurl: ^1.0.2
-  'escape-html': ^1.0.3
-  fresh: ~0.5.2
-  'http-errors': ^2.0.0
-  'koa-compose': ^4.1.0
-  'on-finished': ^2.4.1
-  parseurl: ^1.3.3
-  statuses: ^2.0.1
-  supertest: ^3.1.0
-  'type-is': ^1.6.18
   vary: ^1.1.2
-  '@types/body-parser': ^1.19.5
-  '@types/cookie-parser': ^1.4.8
-  '@types/express': ^5.0.0
-  '@types/superagent': ^8.1.9
-  'body-parser': ^1.20.3
-  'cookie-parser': ^1.4.6
-  'express': ^4.21.2
-  'nock': ^13.3.0
-  'superagent': ^9.0.1
-  '@swc-node/register': ^1.11.1
-  '@swc/core': ^1.13.5
+  vitest: beta

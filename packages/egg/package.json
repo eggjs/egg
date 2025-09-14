@@ -172,6 +172,7 @@
   },
   "scripts": {
     "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
     "build": "tsdown",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"

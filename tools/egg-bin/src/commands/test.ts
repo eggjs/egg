@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 
 import { Args, Flags } from '@oclif/core';
 import globby from 'globby';
-import { importResolve, detectType } from '@eggjs/utils';
+import { importResolve, detectType, EggType } from '@eggjs/utils';
 import { getChangedFilesForRoots } from 'jest-changed-files';
 // @ts-expect-error no types
 import ciParallelVars from 'ci-parallel-vars';
@@ -125,25 +125,31 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     const requires = await this.formatRequires();
     const eggType = await detectType(flags.base);
     debug('eggType: %s', eggType);
-    // FIXME: should auto require @eggjs/mock/register on application project type
-    // if (eggType === EggType.application) {
-    //   try {
-    //     const eggMockRegister = importResolve('@eggjs/mock/register', { paths: [ flags.base ] });
-    //     requires.push(eggMockRegister);
-    //     debug('auto register @eggjs/mock/register: %o', eggMockRegister);
-    //   } catch (err: any) {
-    //     // ignore @eggjs/mock not exists
-    //     debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
-    //       flags.base, err.message);
-    //   }
-    // }
+    if (eggType === EggType.application) {
+      try {
+        const eggMockRegister = importResolve('@eggjs/mock/register', {
+          paths: [flags.base],
+        });
+        requires.push(eggMockRegister);
+        debug('auto register @eggjs/mock/register: %o', eggMockRegister);
+      } catch (err: any) {
+        // ignore @eggjs/mock not exists
+        debug(
+          'auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
+          flags.base,
+          err.message
+        );
+      }
+    }
 
     // handle mochawesome enable
     let reporter = this.env.TEST_REPORTER;
     let reporterOptions = '';
     if (!reporter && flags.mochawesome) {
       // use https://github.com/node-modules/mochawesome/pull/1 instead
-      reporter = importResolve('mochawesome-with-mocha');
+      reporter = importResolve('mochawesome-with-mocha', {
+        paths: [flags.base],
+      });
       reporterOptions = 'reportDir=node_modules/.mochawesome-reports';
       if (flags.parallel) {
         // https://github.com/adamgruber/mochawesome#parallel-mode

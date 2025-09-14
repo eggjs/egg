@@ -3,7 +3,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "composite": true,
-    "incremental": true
+    "incremental": true,
+    "noEmit": true
   },
   "references": [
     {

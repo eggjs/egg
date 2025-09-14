@@ -32,7 +32,7 @@ const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 const supportImportMetaResolve = nodeMajorVersion >= 18;
 
 let _customRequire: NodeRequire;
-function getRequire() {
+export function getRequire() {
   if (!_customRequire) {
     if (typeof require !== 'undefined') {
       _customRequire = require;
