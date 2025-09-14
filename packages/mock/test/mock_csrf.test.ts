@@ -1,6 +1,6 @@
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 describe('test/mock_csrf.test.ts', () => {
@@ -16,14 +16,12 @@ describe('test/mock_csrf.test.ts', () => {
 
   it('should pass', async () => {
     app.mockCsrf();
-    await app.httpRequest()
-      .post('/')
-      .expect(200)
-      .expect('done');
+    await app.httpRequest().post('/').expect(200).expect('done');
   });
 
   it('should 403 Forbidden', async () => {
-    await app.httpRequest()
+    await app
+      .httpRequest()
       .post('/')
       .expect(403)
       .expect(/ForbiddenError: missing csrf token/);

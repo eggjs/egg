@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 // import { app } from '../../../../src/bootstrap.js';
-import { app } from '../../../../dist/commonjs/bootstrap';
-import { LogService } from '../app/modules/foo/LogService';
+import { app } from '../../../../dist/commonjs/bootstrap.js';
+import { LogService } from '../app/modules/foo/LogService.js';
 
 describe('test/tegg.test.ts', () => {
   describe('async function', () => {

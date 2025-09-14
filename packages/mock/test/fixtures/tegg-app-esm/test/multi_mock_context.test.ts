@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { app } from '../../../../dist/commonjs/bootstrap';
+import { app } from '../../../../dist/commonjs/bootstrap.js';
 
 describe('test/multi_mock_context.test.ts', () => {
   describe('mockContext', () => {

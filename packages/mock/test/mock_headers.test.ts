@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 describe('test/mock_headers.test.ts', () => {

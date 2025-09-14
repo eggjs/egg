@@ -425,6 +425,9 @@ importers:
 
   .:
     devDependencies:
+      '@eggjs/bin':
+        specifier: workspace:*
+        version: link:tools/egg-bin
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig

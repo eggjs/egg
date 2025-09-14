@@ -1,11 +1,11 @@
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
-import { Server, AddressInfo } from 'node:net';
+import { Server, type AddressInfo } from 'node:net';
 
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 describe('test/mock_httpclient_next_h2.test.ts', () => {

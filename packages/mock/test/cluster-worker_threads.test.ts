@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { getFixtures } from './helper.ts';
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 
 describe('work on startMode=worker_threads', () => {
   let app: MockApplication;

@@ -1,6 +1,10 @@
 import { expectType } from 'tsd';
 import { Context } from 'egg';
-import { MockApplication, MockAgent, ResultObject } from '../src/index.js';
+import {
+  type MockApplication,
+  type MockAgent,
+  type ResultObject,
+} from '../src/index.js';
 import { getBootstrapApp, mock, mm } from '../src/bootstrap.js';
 
 const app = getBootstrapApp();
@@ -12,22 +16,32 @@ expectType<MockApplication>(mm.app());
 
 expectType<MockAgent>(mm.app().mockAgent());
 
-expectType<MockApplication>(mm.app().mockHttpclient('url', 'post', { data: 'ok' }));
+expectType<MockApplication>(
+  mm.app().mockHttpclient('url', 'post', { data: 'ok' })
+);
 expectType<MockApplication>(mm.app().mockHttpclient('url', 'post', 'data'));
-expectType<MockApplication>(mm.app().mockHttpclient('url', {
-  data: 'mock response',
-  repeats: 1,
-}));
-expectType<MockApplication>(mm.app().mockHttpclient('url', (url) => {
-  return url;
-}));
-expectType<MockApplication>(mm.app().mockHttpclient('url', 'post', (url) => {
-  return url;
-}));
-expectType<MockApplication>(mm.app().mockHttpclient('url', 'get', {
-  data: 'mock response',
-  repeats: 1,
-}));
+expectType<MockApplication>(
+  mm.app().mockHttpclient('url', {
+    data: 'mock response',
+    repeats: 1,
+  })
+);
+expectType<MockApplication>(
+  mm.app().mockHttpclient('url', url => {
+    return url;
+  })
+);
+expectType<MockApplication>(
+  mm.app().mockHttpclient('url', 'post', url => {
+    return url;
+  })
+);
+expectType<MockApplication>(
+  mm.app().mockHttpclient('url', 'get', {
+    data: 'mock response',
+    repeats: 1,
+  })
+);
 
 expectType<void>(app.mockLog());
 expectType<void>(app.mockLog('logger'));
