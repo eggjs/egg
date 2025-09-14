@@ -1,10 +1,11 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
-import fs, { FSWatcher, WatchEventType } from 'node:fs';
-import { BaseEventSource } from './base.js';
-import type { ChangeInfo } from '../types.js';
+import fs, { type FSWatcher, type WatchEventType } from 'node:fs';
 
-const debug = debuglog('@eggjs/watcher/lib/event-sources/development');
+import { BaseEventSource } from './base.ts';
+import type { ChangeInfo } from '../types.ts';
+
+const debug = debuglog('egg-watcher/lib/event-sources/development');
 
 // only used by local dev environment
 export default class DevelopmentEventSource extends BaseEventSource {

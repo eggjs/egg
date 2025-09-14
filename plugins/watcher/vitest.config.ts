@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    testTimeout: 60000,
+    testTimeout: 20000,
   },
 });

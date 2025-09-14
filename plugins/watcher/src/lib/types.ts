@@ -1,5 +1,6 @@
 import type { WatchEventType, Stats } from 'node:fs';
-import type { Watcher } from './watcher.js';
+
+import type { Watcher } from './watcher.ts';
 
 export interface WatcherConfig {
   /**
@@ -24,14 +25,12 @@ export interface ChangeInfo extends Record<string, any> {
   isDirectory?: boolean;
 }
 
-declare module '@eggjs/core' {
-  interface EggCore {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+declare module 'egg' {
+  interface EggApplicationCore {
     watcher: Watcher;
   }
 
   interface EggAppConfig {
-    watcher: WatcherConfig;
+    watcher?: WatcherConfig;
   }
 }

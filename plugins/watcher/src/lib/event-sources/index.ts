@@ -1,5 +1,5 @@
-import { BaseEventSource } from './base.js';
-import DefaultEventSource from './default.js';
-import DevelopmentEventSource from './development.js';
+import { BaseEventSource } from './base.ts';
+import DefaultEventSource from './default.ts';
+import DevelopmentEventSource from './development.ts';
 
 export { BaseEventSource, DefaultEventSource, DevelopmentEventSource };

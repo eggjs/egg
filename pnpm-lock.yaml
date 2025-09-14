@@ -165,6 +165,9 @@ catalogs:
     cache-content-type:
       specifier: ^2.0.0
       version: 2.1.0
+    camelcase:
+      specifier: ^5.0.0
+      version: 5.3.1
     cfork:
       specifier: ^2.0.0
       version: 2.0.0
@@ -1163,9 +1166,15 @@ importers:
 
   plugins/watcher:
     dependencies:
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       camelcase:
-        specifier: ^5.0.0
+        specifier: 'catalog:'
         version: 5.3.1
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       sdk-base:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1173,9 +1182,6 @@ importers:
       '@eggjs/bin':
         specifier: workspace:*
         version: link:../../tools/egg-bin
-      '@eggjs/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../../packages/mock
@@ -1185,15 +1191,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      '@eggjs/utils':
-        specifier: workspace:*
-        version: link:../../packages/utils
       '@types/node':
         specifier: 'catalog:'
         version: 24.4.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1

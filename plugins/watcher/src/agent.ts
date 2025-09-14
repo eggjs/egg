@@ -1,3 +1,3 @@
-import { Boot } from './lib/boot.js';
+import { Boot } from './lib/boot.ts';
 
 export default Boot;

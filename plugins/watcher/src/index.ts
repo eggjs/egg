@@ -1,3 +1,3 @@
-export * from './lib/types.js';
-export * from './lib/watcher.js';
-export * from './lib/event-sources/index.js';
+export * from './lib/types.ts';
+export * from './lib/watcher.ts';
+export * from './lib/event-sources/index.ts';

@@ -1,5 +1,6 @@
 import type { ILifecycleBoot, EggApplicationCore } from 'egg';
-import { Watcher } from './watcher.js';
+
+import { Watcher } from './watcher.ts';
 
 export class Boot implements ILifecycleBoot {
   #app: EggApplicationCore;

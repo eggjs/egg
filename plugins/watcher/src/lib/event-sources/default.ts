@@ -1,4 +1,4 @@
-import { BaseEventSource } from './base.js';
+import { BaseEventSource } from './base.ts';
 
 export default class DefaultEventSource extends BaseEventSource {
   constructor() {

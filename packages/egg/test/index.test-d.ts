@@ -44,8 +44,8 @@ expectType<number>((ctx.realStatus = 200));
 // watcher plugin types
 // @ts-ignore - watcher plugin extends EggCore
 expectType<object>(app.watcher);
-expectType<string>(app.config.watcher.type);
-expectType<string>(app.config.watcher.eventSources.default);
+expectType<string | undefined>(app.config.watcher?.type);
+expectType<string | undefined>(app.config.watcher?.eventSources.default);
 
 // development plugin types
 expectType<boolean>(app.config.development.fastReady);

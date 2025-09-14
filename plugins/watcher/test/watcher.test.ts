@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { strict as assert } from 'node:assert';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { getFilePath } from './utils.js';
-import { ChangeInfo } from '../src/index.js';
+import type { ChangeInfo } from '../src/index.js';
 
 describe('test/watcher.test.ts', () => {
   let app: MockApplication;

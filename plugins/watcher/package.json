@@ -50,22 +50,20 @@
     "node": ">= 20.19.0"
   },
   "dependencies": {
-    "camelcase": "^5.0.0",
+    "@eggjs/utils": "workspace:*",
+    "camelcase": "catalog:",
     "sdk-base": "catalog:"
   },
   "peerDependencies": {
-    "@eggjs/core": "workspace:*",
-    "@eggjs/utils": "workspace:*"
+    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
-    "@eggjs/core": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
