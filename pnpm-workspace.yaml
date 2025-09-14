@@ -59,7 +59,7 @@ catalog:
   koa-bodyparser: ^4.4.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
-  lint-staged: '15'
+  lint-staged: '16'
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
   mocha: ^11.0.1
@@ -80,7 +80,7 @@ catalog:
   terminal-link: ^2.1.1
   tsconfig-paths: ^4.2.0
   tsd: ^0.33.0
-  tsdown: ^0.14.2
+  tsdown: ^0.15.0
   typescript: '5'
   urllib: ^4.6.11
   utility: ^2.5.0

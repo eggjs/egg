@@ -223,3 +223,75 @@ After making changes, always verify:
 4. **Tests Run**: `pnpm run test` executes (some failures expected, focus on your changes)
 
 **Remember**: This is a complex enterprise framework. Always build first, validate incrementally, and focus on the core packages (`egg`, `core`, `utils`) for most development work.
+
+## Commit Message Format
+
+**CRITICAL: All commits MUST follow the [Angular Commit Message Format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) as specified in CONTRIBUTING.md.**
+
+### Required Format Structure
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+### Mandatory Types
+
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation-only changes
+- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests
+- **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
+- **deps**: Updates about dependencies
+
+### Scope Guidelines
+
+- **Package-specific changes**: Use package names like `core`, `mock`, `cluster`, `utils`, `tsconfig`, `extend2`
+- **Cross-package changes**: Use feature areas like `loader`, `plugin`, `config`, `build`
+- **Component-specific**: Use component names like `application`, `agent`, `context`
+
+### Subject Rules
+
+- Use imperative, present tense: "change" not "changed" nor "changes"
+- Don't capitalize first letter
+- No period (.) at the end
+- Be succinct and descriptive
+
+### Examples
+
+```
+feat(tsconfig): integrate package into monorepo with vitest
+
+Merge @eggjs/tsconfig repository into packages/tsconfig/ and refactor
+to use vitest testing framework instead of Node.js test runner.
+
+- Update all consuming packages to use workspace:* dependencies
+- Add vitest configuration and convert test assertions
+- Remove external catalog dependency in favor of workspace package
+
+Closes #123
+```
+
+```
+fix(core): resolve loader initialization race condition
+
+The loader was attempting to initialize plugins before configurations
+were fully loaded, causing intermittent startup failures.
+
+Fixes #456
+```
+
+```
+chore: update dependencies to latest versions
+
+Update catalog dependencies and rebuild packages to ensure
+compatibility with latest versions.
+```
+
+**NEVER commit without following this format - it breaks the project's automated changelog and release process.**
