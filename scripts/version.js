@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
-const semver = require('semver');
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import semver from 'semver';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Get command line arguments
 const args = process.argv.slice(2);
@@ -151,8 +155,8 @@ try {
   console.log('\n📝 Staging changes...');
   execSync('git add .', { stdio: 'inherit' });
 
-  // Create commit message
-  const commitMessage = `chore(release): ${versionType} version bump
+  // Create commit message with [skip ci] to avoid triggering CI for release commits
+  const commitMessage = `chore(release): ${versionType} version bump [skip ci]
 
 ${updatedVersions.map(pkg => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 

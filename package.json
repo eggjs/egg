@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/monorepo",
-  "version": "4.1.0-beta.3",
+  "version": "4.1.0-beta.4",
   "private": true,
   "description": "Eggjs framework monorepo",
   "engines": {
@@ -18,11 +18,11 @@
     "lint-staged": "catalog:",
     "mocha": "catalog:",
     "mochawesome-with-mocha": "catalog:",
+    "semver": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
-    "semver": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
