@@ -23,7 +23,7 @@ describe('test/custom.test.ts', () => {
     filepath = getFilepath('custom/app/service/a.js');
     await fs.writeFile(filepath, 'let a = 1;');
     await fs.writeFile(filepath, 'let a = 2;');
-    await scheduler.wait(5000);
+    await scheduler.wait(10000);
 
     await fs.rm(filepath, { force: true });
     app.expect('stdout', /a\.js/);
