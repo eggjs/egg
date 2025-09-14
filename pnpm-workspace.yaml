@@ -140,7 +140,7 @@ catalog:
   tsdown: ^0.15.0
   tshy: ^3.0.0
   tshy-after: ^1.0.0
-  type-is: ^1.6.18
+  type-is: ^2.0.0
   typescript: 5.9.2
   urllib: ^4.6.11
   utility: ^2.5.0
