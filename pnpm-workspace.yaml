@@ -80,7 +80,7 @@ catalog:
   terminal-link: ^2.1.1
   tsconfig-paths: ^4.2.0
   tsd: ^0.33.0
-  tsdown: ^0.14.2
+  tsdown: ^0.15.0
   typescript: '5'
   urllib: ^4.6.11
   utility: ^2.5.0
