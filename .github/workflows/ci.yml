@@ -66,7 +66,7 @@ jobs:
         run: pnpm run ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
           use_oidc: true
 
@@ -104,6 +104,6 @@ jobs:
         run: pnpm run --filter="@eggjs/bin" ci
 
       - name: Code Coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v4
         with:
           use_oidc: true
