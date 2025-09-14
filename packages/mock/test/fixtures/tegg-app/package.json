@@ -1,5 +1,6 @@
 {
   "name": "app",
+  "type": "module",
   "egg": {
     "typescript": true
   }

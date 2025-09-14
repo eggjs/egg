@@ -1,0 +1,109 @@
+{
+  "name": "@eggjs/bin",
+  "version": "7.3.1-beta.3",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "egg developer tool",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "tools/egg-bin"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "@oclif/core": "catalog:",
+    "@types/mocha": "catalog:",
+    "@types/supertest": "catalog:",
+    "c8": "catalog:",
+    "ci-parallel-vars": "catalog:",
+    "detect-port": "catalog:",
+    "egg-ts-helper": "catalog:",
+    "globby": "catalog:",
+    "jest-changed-files": "catalog:",
+    "mocha": "catalog:",
+    "mochawesome-with-mocha": "catalog:",
+    "runscript": "catalog:",
+    "ts-node": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/mock": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@eggjs/mock": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/node": "catalog:",
+    "assert-file": "catalog:",
+    "coffee": "catalog:",
+    "cpy": "catalog:",
+    "cpy-cli": "catalog:",
+    "cross-env": "catalog:",
+    "egg": "workspace:*",
+    "esbuild": "catalog:",
+    "esbuild-register": "catalog:",
+    "npminstall": "catalog:",
+    "rimraf": "catalog:",
+    "supertest": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.mjs",
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
+    "test": "node bin/run.js test",
+    "cov": "c8 --temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura node bin/run.js test",
+    "preci": "npm run clean && npm run lint && npm run prepublishOnly",
+    "ci": "npm run cov",
+    "clean": "rimraf dist",
+    "copyScripts": "rimraf dist/scripts && cpy scripts dist",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build && npm run copyScripts"
+  },
+  "type": "module",
+  "files": [
+    "bin",
+    "dist",
+    "scripts"
+  ],
+  "bin": {
+    "egg-bin": "./bin/run.js"
+  },
+  "oclif": {
+    "bin": "egg-bin",
+    "commands": "./dist/commands",
+    "dirname": "egg-bin",
+    "topicSeparator": " ",
+    "additionalHelpFlags": [
+      "-h"
+    ]
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  }
+}

@@ -19,7 +19,9 @@ describe('test/agent_worker.test.ts', () => {
     it.skip('support config agent debug port', () => {
       mm(process.env, 'EGG_AGENT_DEBUG_PORT', '15800');
       app = cluster('apps/agent-debug-port', {
-        require: ['./inject1.js'],
+        opt: {
+          require: ['./inject1.js'],
+        },
       });
       return (
         app

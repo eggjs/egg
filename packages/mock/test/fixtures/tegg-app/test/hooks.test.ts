@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import { Context } from 'egg';
 // import { app } from '../../../../src/bootstrap.js';
-import { app } from '../../../../dist/commonjs/bootstrap';
+import { app } from '../../../../dist/commonjs/bootstrap.js';
 
 describe('test/hooks.test.ts', () => {
   let beforeCtx;

@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { readJSONSync } from 'utility';
+
 import mm, { mock, type MockApplication } from './index.ts';
 import { getBootstrapApp, setupApp } from './lib/app_handler.ts';
 import { getEggOptions } from './lib/utils.ts';

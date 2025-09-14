@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "typescript": "*"
+  }
+}

@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { createApp, MockApplication } from '../../utils.ts';
+import { createApp, type MockApplication } from '../../utils.ts';
 
 describe('test/lib/plugins/session.test.ts', () => {
   let app: MockApplication;

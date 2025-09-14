@@ -6,7 +6,12 @@ import { scheduler } from 'node:timers/promises';
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { createApp, getFilepath, MockApplication, cluster } from './utils.ts';
+import {
+  createApp,
+  getFilepath,
+  type MockApplication,
+  cluster,
+} from './utils.ts';
 
 describe('test/agent.test.ts', () => {
   afterEach(mm.restore);

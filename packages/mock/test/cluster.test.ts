@@ -4,7 +4,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { detectPort } from 'detect-port';
 
 import { getFixtures } from './helper.ts';
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 
 describe
   .skipIf(process.platform === 'win32')

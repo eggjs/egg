@@ -2,7 +2,7 @@ import { describe, it, beforeAll, afterAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp, singleProcessApp } from '../utils.ts';
+import { type MockApplication, createApp, singleProcessApp } from '../utils.ts';
 
 const innerClient = Symbol.for('ClusterClient#innerClient');
 

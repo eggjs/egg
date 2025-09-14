@@ -39,6 +39,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
+- **`tools/egg-bin/`** - CLI development tool package (@eggjs/bin)
+  - `src/` - TypeScript source code for CLI commands
+  - `test/` - Comprehensive test suite with mocha
 - **`site/`** - Documentation website built with Dumi
 
 ### Core Architecture (packages/egg/)
@@ -88,6 +91,7 @@ The framework follows a specific loading order:
 - `pnpm test` - Run tests in all packages
 - `pnpm --filter=egg run test` - Test main egg package
 - `pnpm --filter=@eggjs/extend2 test` - Test extend2 package with vitest
+- `pnpm --filter=@eggjs/bin test` - Test egg-bin CLI tool package
 
 ### Build & Lint
 
@@ -169,16 +173,27 @@ The framework extends Koa's context with Egg-specific features:
 
 ### Adding New Packages
 
-1. Create new directory under `packages/`
+1. Create new directory under `packages/` (for framework packages) or `tools/` (for development tools)
 2. Add package.json with workspace dependencies using `workspace:*`
 3. Create tsconfig.json that extends from root: `"extends": "../../tsconfig.json"`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed
 6. Use `pnpm --filter=<package>` for package-specific commands
 
+### Tool Packages Structure
+
+Tool packages (like egg-bin) should be placed in the `tools/` directory:
+
+- **`tools/egg-bin/`** - CLI development tool providing dev, test, and coverage commands
+- Built with @oclif/core framework for robust CLI functionality
+- Supports TypeScript compilation and execution for Egg.js applications
+- Includes comprehensive testing with Mocha and fixtures
+- Uses tsdown for TypeScript compilation to maintain fast development builds
+
 ### Testing Strategy
 
 - **IMPORTANT: All new packages MUST use Vitest for testing** - this is the standard test runner for the monorepo
+- **Exception: egg-bin uses Mocha** - the CLI tool package uses Mocha for consistency with CLI testing patterns
 - Use `pnpm --filter=egg run test` for framework tests
 - Test fixtures are in `packages/egg/test/fixtures/apps/`
 - Create apps in fixtures to test specific scenarios
@@ -191,6 +206,13 @@ The framework extends Koa's context with Egg-specific features:
 - Import test functions from vitest: `import { describe, it } from 'vitest'`
 - Use standard assertions with Node.js built-in `assert` module
 - Test files should follow the pattern `test/**/*.test.ts`
+
+#### Mocha Configuration (egg-bin only)
+
+- The egg-bin package uses Mocha for CLI command testing
+- Test files follow the pattern `test/**/*.test.ts`
+- Uses comprehensive fixtures in `test/fixtures/` for testing various scenarios
+- Includes Coffee.js for process testing and assertion helpers
 
 ### TypeScript Support
 

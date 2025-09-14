@@ -11,7 +11,7 @@ import {
   beforeAll,
 } from 'vitest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 const baseDir = getFixtures('apps/env-app');

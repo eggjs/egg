@@ -67,11 +67,11 @@ export default {
   /**
    * local development helper
    * @member {Object} Plugin#development
-   * @property {Boolean} enable - `true` by default
+   * @property {Boolean} enable - `true` by default. on CI, it's `false` to avoid unexpected errors.
    * @since 1.0.0
    */
   development: {
-    enable: true,
+    enable: process.env.CI ? false : true,
     package: '@eggjs/development',
   },
 

@@ -1,7 +1,7 @@
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { scheduler } from 'node:timers/promises';
 import { mm } from '@eggjs/mock';
-import { MockApplication, cluster } from '../utils.js';
+import { type MockApplication, cluster } from '../utils.js';
 
 // node v24 will hang when test this file
 // FIXME: should enable this test after node v24 is stable

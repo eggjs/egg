@@ -5,7 +5,11 @@ import { mm } from '@eggjs/mock';
 import { HttpClient } from 'urllib';
 
 import { HttpClient as ContextHttpClient } from '../../../src/lib/core/httpclient.ts';
-import { startLocalServer, createApp, MockApplication } from '../../utils.ts';
+import {
+  startLocalServer,
+  createApp,
+  type MockApplication,
+} from '../../utils.ts';
 
 describe.skipIf(process.platform === 'win32')(
   'test/lib/core/httpclient.test.ts',
@@ -40,6 +44,7 @@ describe.skipIf(process.platform === 'win32')(
       client.once('response', info => {
         assert.equal(info.req.options.headers['mock-traceid'], 'mock-traceid');
         assert.equal(info.req.options.headers['mock-rpcid'], 'mock-rpcid');
+        // @ts-ignore
         done();
       });
 

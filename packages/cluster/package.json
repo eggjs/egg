@@ -20,6 +20,7 @@
   "scripts": {
     "build": "tsdown",
     "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },
@@ -56,7 +57,7 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "workspace:",
+    "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
     "address": "catalog:",

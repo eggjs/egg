@@ -11,7 +11,7 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
+    "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "typescript": "catalog:"
   },

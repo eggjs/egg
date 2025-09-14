@@ -5,7 +5,7 @@ import { once } from 'node:events';
 import { describe, it, beforeAll, afterEach, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { cluster, MockApplication } from '../../../utils.ts';
+import { cluster, type MockApplication } from '../../../utils.ts';
 import { Messenger } from '../../../../src/lib/core/messenger/ipc.ts';
 
 describe.skip('test/lib/core/messenger/ipc.test.ts', () => {

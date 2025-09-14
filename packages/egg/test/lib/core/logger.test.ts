@@ -8,7 +8,7 @@ import { mm } from '@eggjs/mock';
 import { levels } from 'egg-logger';
 
 import {
-  MockApplication,
+  type MockApplication,
   createApp,
   cluster,
   getFilepath,

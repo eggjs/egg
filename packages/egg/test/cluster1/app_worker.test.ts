@@ -13,7 +13,7 @@ import {
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
 
-import { cluster, MockApplication } from '../utils.ts';
+import { cluster, type MockApplication } from '../utils.ts';
 
 const DEFAULT_BAD_REQUEST_HTML = `<html>
   <head><title>400 Bad Request</title></head>

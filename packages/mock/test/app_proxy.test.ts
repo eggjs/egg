@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 const baseDir = getFixtures('app-proxy');

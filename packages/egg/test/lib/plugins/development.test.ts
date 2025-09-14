@@ -5,7 +5,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
 import {
-  MockApplication,
+  type MockApplication,
   createApp,
   cluster,
   getFilepath,

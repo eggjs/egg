@@ -6,7 +6,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import {
   createApp,
   restore,
-  MockApplication,
+  type MockApplication,
   mm,
   getFilepath,
   singleProcessApp,

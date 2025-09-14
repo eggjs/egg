@@ -1,5 +1,5 @@
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp, MockApplication } from '../../../utils.js';
+import { createApp, type MockApplication } from '../../../utils.js';
 
 describe('test/lib/core/loader/load_router.test.ts', () => {
   let app: MockApplication;

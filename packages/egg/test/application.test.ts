@@ -9,7 +9,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { Application } from '../src/index.ts';
 import {
-  MockApplication,
+  type MockApplication,
   cluster,
   createApp,
   getFilepath,

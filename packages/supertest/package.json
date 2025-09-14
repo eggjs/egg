@@ -44,6 +44,7 @@
     "superagent": "catalog:"
   },
   "devDependencies": {
+    "@eggjs/bin": "workspace:*",
     "@types/body-parser": "catalog:",
     "@types/cookie-parser": "catalog:",
     "@types/express": "catalog:",
@@ -57,6 +58,8 @@
   "scripts": {
     "build": "tsdown",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
     "prepublishOnly": "pnpm run build"
   }
 }

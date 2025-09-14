@@ -1,0 +1,6 @@
+{
+  "name": "example-ts-custom-compiler",
+  "dependencies": {
+    "ts-node": "10.9.2"
+  }
+}

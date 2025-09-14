@@ -175,6 +175,7 @@ describe('test/egg.test.ts', () => {
         assert.equal(b, 10);
         assert.equal(a, 'a');
         // console.log(app.timing.toString());
+        // @ts-ignore
         done();
       });
       app.loader.loadAll().then(() => {
@@ -202,6 +203,7 @@ describe('test/egg.test.ts', () => {
           /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/
         );
         // console.log(app.timing.toString());
+        // @ts-ignore
         done();
       });
     });
@@ -321,13 +323,25 @@ describe('test/egg.test.ts', () => {
     let app;
 
     it.skip('should emit close event before exit', done => {
+      // @ts-ignore
       done = pending(3, done);
       app = createApp('close');
-      app.loader.loadAll().then(done, done);
+      app.loader.loadAll().then(
+        // @ts-ignore
+        done,
+        // @ts-ignore
+        done
+      );
       app.on('close', () => {
+        // @ts-ignore
         done();
       });
-      app.close().then(done, done);
+      app.close().then(
+        // @ts-ignore
+        done,
+        // @ts-ignore
+        done
+      );
     });
 
     it('should return a promise', async () => {
@@ -338,14 +352,21 @@ describe('test/egg.test.ts', () => {
     });
 
     it.skip('should throw when close error', done => {
+      // @ts-ignore
       done = pending(2, done);
       app = createApp('close');
-      app.loader.loadAll().then(done, done);
+      app.loader.loadAll().then(
+        // @ts-ignore
+        done,
+        // @ts-ignore
+        done
+      );
       mm(app, 'removeAllListeners', () => {
         throw new Error('removeAllListeners error');
       });
       app.close().catch(err => {
         assert.equal(err.message, 'removeAllListeners error');
+        // @ts-ignore
         done();
       });
     });

@@ -1,5 +1,5 @@
 import { describe, it, afterEach } from 'vitest';
-import { MockApplication } from '@eggjs/mock';
+import { type MockApplication } from '@eggjs/mock';
 
 import { cluster } from './utils.ts';
 

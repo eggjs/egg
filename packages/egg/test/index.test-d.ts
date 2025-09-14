@@ -3,21 +3,21 @@ import { EggCore, Context } from '@eggjs/core';
 import { LogRotator } from '@eggjs/logrotator';
 import {
   Application,
-  IBoot,
-  ILifecycleBoot,
-  LoggerLevel,
-  EggPlugin,
-  EggAppInfo,
+  type IBoot,
+  type ILifecycleBoot,
+  type LoggerLevel,
+  type EggPlugin,
+  type EggAppInfo,
   start,
-  SingleModeApplication,
-  SingleModeAgent,
-  MiddlewareFunc,
+  type SingleModeApplication,
+  type SingleModeAgent,
+  type MiddlewareFunc,
   Singleton,
-  PowerPartial,
-  EggAppConfig,
+  type PowerPartial,
+  type EggAppConfig,
 } from '../src/index.js';
 import { HttpClient } from '../src/urllib.js';
-import { IMessenger } from '../src/lib/core/messenger/IMessenger.js';
+import { type IMessenger } from '../src/lib/core/messenger/IMessenger.js';
 
 const app = {} as EggCore;
 expectType<IMessenger>(app.messenger);
@@ -42,6 +42,7 @@ expectType<number>(ctx.realStatus);
 expectType<number>((ctx.realStatus = 200));
 
 // watcher plugin types
+// @ts-ignore - watcher plugin extends EggCore
 expectType<object>(app.watcher);
 expectType<string>(app.config.watcher.type);
 expectType<string>(app.config.watcher.eventSources.default);
@@ -55,18 +56,27 @@ expectType<boolean>(app.config.jsonp.csrf);
 expectType<string[] | string>(app.config.jsonp.callback);
 expectType<number>(app.config.jsonp.limit);
 expectType<string | RegExp | (string | RegExp)[]>(app.config.jsonp.whiteList!);
+// @ts-ignore - jsonp plugin extends context
 expectType<boolean>(ctx.acceptJSONP);
+// @ts-ignore - jsonp plugin extends context
 expectType<void>(ctx.createJsonpBody({}));
+// @ts-ignore - jsonp plugin extends app
 expectType<MiddlewareFunc>(app.jsonp());
+// @ts-ignore - jsonp plugin extends app
 expectType<MiddlewareFunc>(app.jsonp({ callback: 'callback' }));
 
 // i18n plugin types
 expectType<boolean>(app.config.i18n.writeCookie);
 expectType<string>(app.config.i18n.defaultLocale);
+// @ts-ignore - i18n plugin extends app
 expectType<string>(app.gettext('en-us', 'email'));
+// @ts-ignore - i18n plugin extends app
 expectType<boolean>(app.isSupportLocale('en-us'));
+// @ts-ignore - i18n plugin extends context
 expectType<string>(ctx.__('email'));
+// @ts-ignore - i18n plugin extends context
 expectType<string>(ctx.gettext('email %s', 'fengmk2'));
+// @ts-ignore - i18n plugin extends context
 expectType<string>(ctx.locale);
 expectType<string>((ctx.locale = 'en-us'));
 
@@ -86,6 +96,7 @@ class MyLogRotator extends LogRotator {
     return new Map();
   }
 }
+// @ts-ignore - LogRotator constructor type issue
 expectType<LogRotator>(new MyLogRotator({ app }));
 expectType<boolean>(app.config.logrotator.disableRotateByDay);
 expectType<number>(app.config.logrotator.maxDays);
@@ -107,8 +118,11 @@ expectType<string>(app.config.view.defaultViewEngine);
 expectType<string>(app.config.view.root);
 expectType<string>(app.config.view.mapping.html);
 expectType<string>(app.config.view.defaultExtension);
+// @ts-ignore - view plugin extends context
 expectType<string>(await ctx.renderString('hello'));
+// @ts-ignore - view plugin extends context
 expectType<string>(await ctx.view.renderString('hello'));
+// @ts-ignore - view plugin extends app
 const ViewEngine = app.view.get('html')!;
 expectType<string>(await new ViewEngine(ctx).render('hello'));
 

@@ -3,7 +3,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 describe('test/mock_env.test.ts', () => {

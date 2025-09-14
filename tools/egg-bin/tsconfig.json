@@ -1,0 +1,12 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "strict": true,
+    "noImplicitAny": true,
+    "target": "ES2022",
+    "rewriteRelativeImportExtensions": false,
+    "noEmit": true
+  },
+  "exclude": ["test/fixtures/**/*.ts"]
+}

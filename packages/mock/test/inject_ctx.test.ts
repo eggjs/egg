@@ -2,10 +2,10 @@
 import path from 'node:path';
 
 import { describe, it } from 'vitest';
-
 import coffee from 'coffee';
 import { importResolve } from '@eggjs/utils';
-import { getFixtures } from './helper.js';
+
+import { getFixtures } from './helper.ts';
 
 describe.skip('test/inject_ctx.test.ts', () => {
   const eggBinFile = path.join(
@@ -40,18 +40,13 @@ describe.skip('test/inject_ctx.test.ts', () => {
       .end();
   });
 
-  it('should inject ctx to runner with esm', async () => {
+  it.skip('should inject ctx to runner with esm', async () => {
     const fixture = getFixtures('tegg-app-esm');
 
     await coffee
       .fork(
         eggBinFile,
-        [
-          'test',
-          'test/hooks.test.ts',
-          '-r',
-          getFixtures('../../dist/esm/register.js'),
-        ],
+        ['test', 'test/hooks.test.ts', '-r', getFixtures('../../register.ts')],
         {
           cwd: fixture,
           env: {
@@ -62,6 +57,7 @@ describe.skip('test/inject_ctx.test.ts', () => {
       .debug()
       .expect('code', 0)
       .expect('stdout', /\d+ passing/)
+      // .expect('stderr', /should work/)
       .end();
   });
 
@@ -69,13 +65,9 @@ describe.skip('test/inject_ctx.test.ts', () => {
     const fixture = getFixtures('setup-app');
 
     await coffee
-      .fork(
-        eggBinFile,
-        ['test', '-r', importResolve('./dist/commonjs/register.js')],
-        {
-          cwd: fixture,
-        }
-      )
+      .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+        cwd: fixture,
+      })
       // .debug()
       .expect('code', 0)
       // .expect('stdout', /9 passing/)
@@ -86,16 +78,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
     const fixture = getFixtures('failed-app');
 
     await coffee
-      .fork(
-        eggBinFile,
-        ['test', '-r', importResolve('./dist/commonjs/register.js')],
-        {
-          cwd: fixture,
-          env: {
-            EGG_FRAMEWORK: importResolve('egg'),
-          },
-        }
-      )
+      .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+        cwd: fixture,
+        env: {
+          EGG_FRAMEWORK: importResolve('egg'),
+        },
+      })
       // .debug()
       .expect('stdout', /after error test case should print/)
       .expect('stdout', /afterEach error test case should print/)
@@ -125,16 +113,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
       const fixture = getFixtures('get-app-failed');
 
       await coffee
-        .fork(
-          eggBinFile,
-          ['test', '-r', importResolve('./dist/commonjs/register.js')],
-          {
-            cwd: fixture,
-            env: {
-              EGG_FRAMEWORK: importResolve('egg'),
-            },
-          }
-        )
+        .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+          cwd: fixture,
+          env: {
+            EGG_FRAMEWORK: importResolve('egg'),
+          },
+        })
         .debug()
         .expect('code', 1)
         .expect('stdout', /"before all" hook: beforeAll in "{root}"/)
@@ -152,16 +136,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
       const fixture = getFixtures('create-context-failed');
 
       await coffee
-        .fork(
-          eggBinFile,
-          ['test', '-r', importResolve('./dist/commonjs/register.js')],
-          {
-            cwd: fixture,
-            env: {
-              EGG_FRAMEWORK: importResolve('egg'),
-            },
-          }
-        )
+        .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+          cwd: fixture,
+          env: {
+            EGG_FRAMEWORK: importResolve('egg'),
+          },
+        })
         // .debug()
         .expect('code', 1)
         .expect('stdout', /Error: mock create context failed/)
@@ -180,16 +160,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
       const fixture = getFixtures('app-ready-failed');
 
       await coffee
-        .fork(
-          eggBinFile,
-          ['test', '-r', importResolve('./dist/commonjs/register.js')],
-          {
-            cwd: fixture,
-            env: {
-              EGG_FRAMEWORK: importResolve('egg'),
-            },
-          }
-        )
+        .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+          cwd: fixture,
+          env: {
+            EGG_FRAMEWORK: importResolve('egg'),
+          },
+        })
         .debug()
         .expect('code', 1)
         .expect('stdout', /mock app ready failed/)
@@ -209,16 +185,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
       const fixture = getFixtures('test-case-get-app-failed');
 
       await coffee
-        .fork(
-          eggBinFile,
-          ['test', '-r', importResolve('./dist/commonjs/register.js')],
-          {
-            cwd: fixture,
-            env: {
-              EGG_FRAMEWORK: importResolve('egg'),
-            },
-          }
-        )
+        .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+          cwd: fixture,
+          env: {
+            EGG_FRAMEWORK: importResolve('egg'),
+          },
+        })
         // .debug()
         .expect('code', 1)
         .expect('stdout', /Error: mock get app failed/)
@@ -238,16 +210,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
       const fixture = getFixtures('test-case-create-context-failed');
 
       await coffee
-        .fork(
-          eggBinFile,
-          ['test', '-r', importResolve('./dist/commonjs/register.js')],
-          {
-            cwd: fixture,
-            env: {
-              EGG_FRAMEWORK: importResolve('egg'),
-            },
-          }
-        )
+        .fork(eggBinFile, ['test', '-r', importResolve('./register.ts')], {
+          cwd: fixture,
+          env: {
+            EGG_FRAMEWORK: importResolve('egg'),
+          },
+        })
         // .debug()
         .expect('code', 1)
         .expect('stdout', /Error: mock create context failed/)

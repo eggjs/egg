@@ -5,7 +5,7 @@ import path from 'node:path';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { createApp, MockApplication, getFilepath } from '../../utils.ts';
+import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 
 describe('test/lib/core/cookies.test.ts', () => {
   afterEach(mm.restore);

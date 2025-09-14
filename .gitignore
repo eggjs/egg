@@ -58,3 +58,25 @@ site/.dumi/
 !packages/core/test/fixtures/application/node_modules
 !packages/core/test/fixtures/agent/node_modules
 !packages/core/test/fixtures/plugin-pnpm/node_modules
+
+# egg-bin
+tools/egg-bin/test/fixtures/**/node_modules/
+!tools/egg-bin/test/fixtures/demo-app/node_modules/
+!tools/egg-bin/test/fixtures/demo-app-esm/node_modules/
+
+!tools/egg-bin/test/fixtures/ts/node_modules/aliyun-egg/node_modules/
+
+!tools/egg-bin/test/fixtures/example/node_modules/
+!tools/egg-bin/test/fixtures/example-ts-cluster/node_modules/
+!tools/egg-bin/test/fixtures/egg-revert/node_modules/
+!tools/egg-bin/test/fixtures/egg-require/node_modules/
+!tools/egg-bin/test/fixtures/example-ts-simple/node_modules/
+!tools/egg-bin/test/fixtures/test-demo-app/node_modules/
+!tools/egg-bin/test/fixtures/test-demo-app-esm/node_modules/
+
+!tools/egg-bin/test/fixtures/test-postinstall/node_modules/
+
+!tools/egg-bin/test/fixtures/example-declarations/node_modules/
+!tools/egg-bin/test/fixtures/custom-framework-app/node_modules/
+
+*.tsbuildinfo

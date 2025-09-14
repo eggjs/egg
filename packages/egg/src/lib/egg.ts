@@ -18,10 +18,9 @@ import type {
   ILifecycleBoot,
 } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import createClusterClient, {
   close as closeClusterClient,
+  // @ts-ignore Could not find a declaration file for module 'cluster-client'
 } from 'cluster-client';
 import { extend } from '@eggjs/extend2';
 import {

@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { MockApplication, createApp } from '../../utils.ts';
+import { type MockApplication, createApp } from '../../utils.ts';
 
 describe.skipIf(process.platform === 'win32')(
   'test/lib/plugins/depd.test.ts',
