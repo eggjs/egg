@@ -55,7 +55,7 @@ catalog:
   humanize-ms: ^2.0.0
   husky: '9'
   is-type-of: ^2.2.0
-  js-yaml: '3'
+  js-yaml: '4'
   koa-bodyparser: ^4.4.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
