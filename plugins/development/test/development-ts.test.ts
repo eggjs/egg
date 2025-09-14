@@ -25,7 +25,7 @@ describe('test/development-ts.test.ts', () => {
     const filepath = getFilepath('development-ts/app/service/a.ts');
     await fs.writeFile(filepath, '');
     await scheduler.wait(1000);
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
     app.expect(
       'stdout',
@@ -37,7 +37,7 @@ describe('test/development-ts.test.ts', () => {
     const filepath = getFilepath('development-ts/app/assets/b.js');
     await fs.writeFile(filepath, '');
     await scheduler.wait(1000);
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
     app.notExpect(
       'stdout',
@@ -57,8 +57,8 @@ describe('test/development-ts.test.ts', () => {
     await fs.writeFile(filepath1, '');
 
     await scheduler.wait(DELAY / 2);
-    await fs.unlink(filepath);
-    await fs.unlink(filepath1);
+    await fs.rm(filepath, { force: true });
+    await fs.rm(filepath1, { force: true });
 
     assert(count(app.stdout, 'reload worker') >= 1);
   });

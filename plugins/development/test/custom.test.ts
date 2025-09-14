@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { beforeAll, afterAll, it, describe } from 'vitest';
 
 import { getFilepath } from './utils.ts';
 
@@ -17,9 +17,6 @@ describe('test/custom.test.ts', () => {
     await app.ready();
   });
   afterAll(() => app.close());
-  afterEach(mm.restore);
-  // for debounce
-  afterEach(() => scheduler.wait(500));
 
   it.skipIf(process.env.CI)('should reload with custom detect', async () => {
     let filepath;

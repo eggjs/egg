@@ -3,7 +3,7 @@ import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { beforeAll, afterAll, it, describe } from 'vitest';
 
 import { getFilepath } from './utils.ts';
 
@@ -22,12 +22,9 @@ describe('test/absolute.test.ts', () => {
       baseDir: getFilepath('absolute'),
       // debug: true,
     });
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
-  afterEach(mm.restore);
-  // for debounce
-  afterEach(() => scheduler.wait(500));
 
   it('should reload at absolute path', async () => {
     const filepath = getFilepath('absolute/lib/a/b.js');
@@ -35,7 +32,7 @@ describe('test/absolute.test.ts', () => {
     console.log(`write file to ${filepath}`);
     await fs.writeFile(filepath, 'console.log(1);');
     await scheduler.wait(1000);
-    await fs.unlink(filepath);
+    await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
     app.expect('stdout', /reload worker because .*?b\.js/);
   });

@@ -77,7 +77,8 @@ export default class AgentBoot implements ILifecycleBoot {
      *
      * @param {Object} info - changed fileInfo
      */
-    agent.watcher.watch(watchDirs, (info: any) => {
+    // @FIXME: after watcher merge into egg, we can remove this any https://github.com/eggjs/egg/issues/5434
+    (agent as any).watcher.watch(watchDirs, (info: any) => {
       if (!config.reloadOnDebug) {
         return;
       }

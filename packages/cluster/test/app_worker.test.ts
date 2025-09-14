@@ -361,6 +361,7 @@ describe.skipIf(
       await scheduler.wait(10000);
 
       app.expect('stdout', /app_worker#3:\d+ started at \d+/);
+      await app.close();
     });
 
     it('should not refork when starting', async () => {
@@ -371,6 +372,8 @@ describe.skipIf(
       app.expect('stdout', /don't fork/);
       app.expect('stderr', /app_worker#1:\d+ start fail/);
       app.expect('code', 1);
+
+      await app.close();
     });
   });
 });

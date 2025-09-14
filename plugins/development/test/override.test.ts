@@ -2,18 +2,12 @@ import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { beforeAll, afterAll, it, describe } from 'vitest';
 import { escape, getFilepath } from './utils.ts';
 
 describe('test/override.test.ts', () => {
-  let app: MockApplication;
-
-  afterAll(() => app && app.close());
-  afterEach(mm.restore);
-  // for debounce
-  afterEach(() => scheduler.wait(500));
-
   describe('overrideDefault', () => {
+    let app: MockApplication;
     beforeAll(() => {
       mm.env('local');
       app = mm.cluster({
@@ -22,6 +16,7 @@ describe('test/override.test.ts', () => {
       app.debug();
       return app.ready();
     });
+    afterAll(() => app.close());
 
     it('should reload', async () => {
       const filepath = getFilepath('override/app/service/a.js');
@@ -44,6 +39,7 @@ describe('test/override.test.ts', () => {
   });
 
   describe('overrideIgnore', () => {
+    let app: MockApplication;
     beforeAll(() => {
       mm.env('local');
       app = mm.cluster({
@@ -52,6 +48,7 @@ describe('test/override.test.ts', () => {
       app.debug();
       return app.ready();
     });
+    afterAll(() => app.close());
 
     it('should reload', async () => {
       const filepath = getFilepath('override-ignore/app/web/a.js');
