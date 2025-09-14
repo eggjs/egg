@@ -5,7 +5,7 @@ import { rm } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
 import { describe, it, afterEach, beforeEach } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster, getFilepath } from '../utils.ts';
 

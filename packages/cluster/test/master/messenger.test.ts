@@ -1,7 +1,7 @@
 import { scheduler } from 'node:timers/promises';
 
 import { describe, it, afterEach } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster } from '../utils.ts';
 

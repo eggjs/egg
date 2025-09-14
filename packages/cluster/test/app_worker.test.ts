@@ -10,7 +10,7 @@ import {
   beforeAll,
   afterAll,
 } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 import urllib from 'urllib';
 import { ip } from 'address';
@@ -318,7 +318,7 @@ describe.skipIf(
     // app.debug();
     await app.ready();
 
-    let app2;
+    let app2: MockApplication | undefined;
     try {
       app2 = cluster('apps/app-server', { port: 17001 });
       app2.debug();
@@ -331,7 +331,9 @@ describe.skipIf(
       );
       app2.expect('stdout', /don't fork/);
     } finally {
-      await app2.close();
+      if (app2) {
+        await app2.close();
+      }
     }
   });
 

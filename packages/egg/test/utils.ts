@@ -8,9 +8,9 @@ import { scheduler } from 'node:timers/promises';
 
 import {
   mm,
-  MockOptions,
-  MockClusterOptions,
-  MockApplication,
+  type MockOptions,
+  type MockClusterOptions,
+  type MockApplication,
 } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
@@ -29,7 +29,8 @@ export async function rimraf(target: string) {
   await rm(target, { force: true, recursive: true });
 }
 
-export { MockApplication, MockOptions, MockClusterOptions, mm };
+export { mm };
+export type { MockApplication, MockOptions, MockClusterOptions };
 export interface SingleModeApplication extends MockApplication {
   agent: SingleModeAgent & MockApplication['agent'];
 }
