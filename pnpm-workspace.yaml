@@ -84,7 +84,7 @@ catalog:
   egg-tracer: ^2.1.0
   egg-ts-helper: ^3.0.0
   egg-view-nunjucks: ^2.3.0
-  encodeurl: ^1.0.2
+  encodeurl: ^2.0.0
   esbuild: ^0.25.0
   esbuild-register: ^3.6.0
   escape-html: ^1.0.3
