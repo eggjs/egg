@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
 import os from 'node:os';
-import childProcess from 'node:child_process';
+import nanoSpawn from 'nano-spawn';
 import { once } from 'node:events';
 import { existsSync } from 'node:fs';
 
@@ -28,17 +28,29 @@ globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
 
 let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
 if (!existsSync(serverBin)) {
-  serverBin = path.join(import.meta.dirname, 'start-cluster.ts');
+  // Check dist directory relative to the package root
+  const packageRoot = path.join(import.meta.dirname, '../..');
+  const distDir = path.join(packageRoot, 'dist/lib');
+  serverBin = path.join(distDir, 'start-cluster.js');
+  if (!existsSync(serverBin)) {
+    serverBin = path.join(import.meta.dirname, 'start-cluster.ts');
+  }
 }
 let requestCallFunctionFile = path.join(
   import.meta.dirname,
   'request_call_function.js'
 );
 if (!existsSync(requestCallFunctionFile)) {
-  requestCallFunctionFile = path.join(
-    import.meta.dirname,
-    'request_call_function.ts'
-  );
+  // Check dist directory relative to the package root
+  const packageRoot = path.join(import.meta.dirname, '../..');
+  const distDir = path.join(packageRoot, 'dist/lib');
+  requestCallFunctionFile = path.join(distDir, 'request_call_function.js');
+  if (!existsSync(requestCallFunctionFile)) {
+    requestCallFunctionFile = path.join(
+      import.meta.dirname,
+      'request_call_function.ts'
+    );
+  }
 }
 
 /**
@@ -272,7 +284,7 @@ export class ClusterApplication extends Coffee {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(
+  async _callFunctionOnAppWorker(
     method: string,
     args: any[] = [],
     property: any = undefined,
@@ -307,30 +319,18 @@ export class ClusterApplication extends Coffee {
       property,
       needResult,
     };
-    const child = childProcess.spawnSync(
-      process.execPath,
-      [requestCallFunctionFile, JSON.stringify(data)],
-      {
-        stdio: 'pipe',
-      }
-    );
-    // if (child.stderr && child.stderr.length > 0) {
-    //   console.error(child.stderr.toString());
-    // }
-    let result: any;
-    if (child.stdout && child.stdout.length > 0) {
-      if (needResult) {
-        result = JSON.parse(child.stdout.toString());
-      } else {
-        console.error(child.stdout.toString());
-      }
-    }
+    const subprocess = await nanoSpawn(process.execPath, [
+      requestCallFunctionFile,
+      JSON.stringify(data),
+    ]);
 
-    if (child.status !== 0) {
-      throw new Error(child.stderr.toString());
-    }
-    if (child.error) {
-      throw child.error;
+    let result: any;
+    if (subprocess.stdout && subprocess.stdout.length > 0) {
+      if (needResult) {
+        result = JSON.parse(subprocess.stdout);
+      } else {
+        console.error(subprocess.stdout);
+      }
     }
 
     return result;

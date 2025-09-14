@@ -108,6 +108,7 @@
     "is-type-of": "catalog:",
     "merge-descriptors": "catalog:",
     "mm": "catalog:",
+    "nano-spawn": "catalog:",
     "sdk-base": "catalog:",
     "urllib": "catalog:",
     "utility": "catalog:"

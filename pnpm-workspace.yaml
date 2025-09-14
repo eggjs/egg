@@ -63,6 +63,7 @@ catalog:
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
   mocha: ^11.0.1
+  nano-spawn: ^1.0.3
   node-homedir: ^2.0.0
   onelogger: ^1.0.1
   oxlint: ^1.14.0
