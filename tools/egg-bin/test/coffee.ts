@@ -1,4 +1,5 @@
 import type { ForkOptions } from 'node:child_process';
+
 import coffee from 'coffee';
 
 export default {

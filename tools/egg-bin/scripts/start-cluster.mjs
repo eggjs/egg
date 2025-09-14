@@ -1,7 +1,8 @@
 import { debuglog } from 'node:util';
+
 import { importModule } from '@eggjs/utils';
 
-const debug = debuglog('@eggjs/bin/scripts/start-cluster');
+const debug = debuglog('egg-bin/scripts/start-cluster');
 
 async function main() {
   debug('argv: %o', process.argv);

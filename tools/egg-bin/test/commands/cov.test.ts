@@ -35,7 +35,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements {3}:/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'
@@ -57,7 +57,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements {3}:/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'
@@ -75,7 +75,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements\s+: 100% \( \d+\/\d+ \)/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'
@@ -100,7 +100,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements {3}:/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'
@@ -123,7 +123,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements {3}:/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'
@@ -154,7 +154,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('stdout', /Statements {3}:/)
         .expect('code', 0)
         .end();
-      assertCoverage(cwd);
+      await assertCoverage(cwd);
       const lcov = await fs.readFile(
         path.join(cwd, 'coverage/lcov.info'),
         'utf8'

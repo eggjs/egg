@@ -30,6 +30,9 @@
     },
     {
       "path": "./packages/extend2"
+    },
+    {
+      "path": "./tools/egg-bin"
     }
   ]
 }

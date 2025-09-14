@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { debuglog } = require('node:util');
+
 const { importModule } = require('@eggjs/utils');
 
-const debug = debuglog('@eggjs/bin/scripts/start-cluster');
+const debug = debuglog('egg-bin/scripts/start-cluster');
 
 async function main() {
   debug('argv: %o', process.argv);

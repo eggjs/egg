@@ -1,11 +1,12 @@
 import { debuglog } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
 import { runScript } from 'runscript';
 import { readJSON, exists } from 'utility';
 import { importResolve } from '@eggjs/utils';
 
-const debug = debuglog('@eggjs/bin/scripts/postinstall');
+const debug = debuglog('egg-bin/scripts/postinstall');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -58,7 +59,7 @@ async function main() {
         etsBinFile,
         npmRunRoot
       );
-      runScript(`node "${etsBinFile}"`);
+      await runScript(`node "${etsBinFile}"`);
     }
   }
 }
