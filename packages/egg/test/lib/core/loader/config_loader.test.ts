@@ -2,7 +2,11 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 import { describe, it, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
-import { MockApplication, createApp, getFilepath } from '../../../utils.js';
+import {
+  type MockApplication,
+  createApp,
+  getFilepath,
+} from '../../../utils.js';
 
 describe('test/lib/core/loader/config_loader.test.ts', () => {
   let app: MockApplication;

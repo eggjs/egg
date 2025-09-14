@@ -6,7 +6,7 @@ import { once } from 'node:events';
 
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster, getFilepath } from '../utils.ts';
 

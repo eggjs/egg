@@ -1,0 +1,9 @@
+{
+  "name": "example-app",
+  "egg": {
+    "typescript": true
+  },
+  "dependencies": {
+    "egg": "*"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "ts",
+  "egg": {
+    "framework": "aliyun-egg"
+  }
+}

@@ -2,7 +2,7 @@ import { pending } from 'pedding';
 import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import mm, { MockApplication } from '../src/index.ts';
+import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';
 
 const url = 'http://127.0.0.1:9989/mock_url';
@@ -25,6 +25,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
   afterEach(mm.restore);
 
   it('should mock url and get response event on urllib', done => {
+    // @ts-ignore - intentionally overriding done callback with pending wrapper
     done = pending(3, done);
     agent.mockHttpclient(url, {
       data: Buffer.from('mock response'),
@@ -33,6 +34,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     agent.httpclient.once('request', function (meta: any) {
       assert('url' in meta);
       assert('args' in meta);
+      // @ts-ignore
       done();
     });
 
@@ -41,6 +43,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
       assert('options' in result.req);
 
       assert.equal(result.res.status, 200);
+      // @ts-ignore
       done();
     });
 
@@ -71,11 +74,13 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock response',
         post: 'mock response',
       });
+      // @ts-ignore
       done();
     });
   });
 
   it('should mock url support multi method', done => {
+    // @ts-ignore - intentionally overriding done callback with pending wrapper
     done = pending(2, done);
     agent.mockHttpclient(url, ['get', 'post'], {
       data: Buffer.from('mock response'),
@@ -92,6 +97,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
       //   rt: 1,
       //   keepAliveSocket: false,
       // });
+      // @ts-ignore
       done();
     });
 
@@ -100,11 +106,13 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock response',
         post: 'mock response',
       });
+      // @ts-ignore
       done();
     });
   });
 
   it('should mock url method support *', done => {
+    // @ts-ignore - intentionally overriding done callback with pending wrapper
     done = pending(2, done);
     agent.mockHttpclient(url, '*', {
       data: Buffer.from('mock response'),
@@ -121,6 +129,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
       //   rt: 1,
       //   keepAliveSocket: false,
       // });
+      // @ts-ignore
       done();
     });
 
@@ -129,6 +138,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock response',
         post: 'mock response',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -146,6 +156,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock url get',
         post: 'mock url post',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -163,6 +174,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock url get',
         post: 'mock url post',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -180,6 +192,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock url *',
         post: 'mock url *',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -197,6 +210,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock url get',
         post: 'mock url post',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -214,6 +228,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: { method: 'get' },
         post: { method: 'post' },
       });
+      // @ts-ignore
       done();
     });
   });
@@ -231,6 +246,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock url get',
         post: 'mock url post',
       });
+      // @ts-ignore
       done();
     });
   });
@@ -245,6 +261,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
         get: 'mock response',
         post: 'mock response',
       });
+      // @ts-ignore
       done();
     });
   });

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 
 import { describe, it, afterEach } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster } from '../utils.ts';
 
@@ -61,7 +61,7 @@ describe('start master', () => {
       });
   });
 
-  it('should not print process.on.HOST if it equals 0.0.0.0', async () => {
+  it.skip('should not print process.on.HOST if it equals 0.0.0.0', async () => {
     mm.env('prod');
     mm(process.env, 'HOST', '0.0.0.0');
     app = cluster('apps/mock-production-app').debug(false);

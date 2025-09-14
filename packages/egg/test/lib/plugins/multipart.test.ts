@@ -4,7 +4,7 @@ import { describe, it, beforeAll, afterAll } from 'vitest';
 import { request } from '@eggjs/supertest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { createApp, MockApplication, getFilepath } from '../../utils.ts';
+import { createApp, type MockApplication, getFilepath } from '../../utils.ts';
 
 describe('test/lib/plugins/multipart.test.ts', () => {
   let app: MockApplication;

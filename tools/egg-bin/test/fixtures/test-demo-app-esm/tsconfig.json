@@ -1,0 +1,17 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "strict": false,
+    "baseUrl": "."
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
+  }
+}

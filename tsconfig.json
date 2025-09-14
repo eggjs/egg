@@ -1,7 +1,10 @@
 {
   "extends": "@eggjs/tsconfig",
   "compilerOptions": {
-    "target": "ES2022"
+    "target": "ES2022",
+    "composite": true,
+    "incremental": true,
+    "noEmit": true
   },
   "references": [
     {
@@ -27,6 +30,9 @@
     },
     {
       "path": "./packages/extend2"
+    },
+    {
+      "path": "./tools/egg-bin"
     }
   ]
 }

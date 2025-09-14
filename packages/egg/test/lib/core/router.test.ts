@@ -3,7 +3,7 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import { MockApplication, createApp, getFilepath } from '../../utils.ts';
+import { type MockApplication, createApp, getFilepath } from '../../utils.ts';
 
 describe('test/lib/core/router.test.ts', () => {
   let app: MockApplication;

@@ -25,6 +25,8 @@
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
     "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },

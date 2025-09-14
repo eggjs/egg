@@ -2,7 +2,7 @@ import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { MockApplication, createApp } from '../../../utils.js';
+import { type MockApplication, createApp } from '../../../utils.js';
 
 describe('test/lib/core/loader/load_boot.test.ts', () => {
   describe('CommonJS', () => {

@@ -3,7 +3,7 @@ import { describe } from 'vitest';
 // import dns from 'node:dns/promises';
 // import { parse as urlparse } from 'node:url';
 // import { mm } from '@eggjs/mock';
-// import { createApp, MockApplication, startLocalServer } from '../../utils.js';
+// import { createApp, type MockApplication, startLocalServer } from '../../utils.js';
 
 describe.skip('test/lib/core/dnscache_httpclient.test.ts', () => {
   //   let app: MockApplication;

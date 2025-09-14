@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
-import { createApp, restore, MockApplication } from './utils.ts';
+import { createApp, restore, type MockApplication } from './utils.ts';
 
 describe.skipIf(process.platform === 'win32')(
   'test/asyncSupport.test.ts',

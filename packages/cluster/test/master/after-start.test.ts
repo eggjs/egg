@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster } from '../utils.ts';
 

@@ -26,6 +26,7 @@
   "scripts": {
     "build": "tsdown",
     "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },

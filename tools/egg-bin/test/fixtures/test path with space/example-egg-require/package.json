@@ -1,0 +1,8 @@
+{
+  "name": "example-egg-require",
+  "egg": {
+    "require": [
+      "../require script.cjs"
+    ]
+  }
+}

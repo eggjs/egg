@@ -1,6 +1,6 @@
 import { test, beforeAll, afterAll, expect } from 'vitest';
 
-import { MockApplication, createApp } from '../../../utils.ts';
+import { type MockApplication, createApp } from '../../../utils.ts';
 
 let app: MockApplication;
 beforeAll(() => {

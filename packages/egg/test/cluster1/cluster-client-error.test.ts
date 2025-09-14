@@ -4,7 +4,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { describe, it, beforeAll } from 'vitest';
 
-import { MockApplication, createApp, getFilepath } from '../utils.ts';
+import { type MockApplication, createApp, getFilepath } from '../utils.ts';
 
 describe('test/cluster1/cluster-client-error.test.ts', () => {
   let app: MockApplication;

@@ -6,7 +6,7 @@ import { createApp } from './lib/app.ts';
 // import { getMockAgent } from './lib/mock_agent.js';
 import { restore } from './lib/restore.ts';
 import { setGetAppCallback } from './lib/app_handler.ts';
-import ApplicationUnittest from './app/extend/application.ts';
+import type ApplicationUnittest from './app/extend/application.ts';
 
 export * from './lib/types.ts';
 
@@ -52,8 +52,8 @@ const mock = {
    * @see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L78
    */
   env(env: string) {
-    _mock(process.env, 'EGG_MOCK_SERVER_ENV', env);
-    _mock(process.env, 'EGG_SERVER_ENV', env);
+    _mock(process.env, 'EGG_MOCK_SERVER_ENV', env as any);
+    _mock(process.env, 'EGG_SERVER_ENV', env as any);
   },
 
   /**
@@ -62,12 +62,12 @@ const mock = {
    */
   consoleLevel(level: string) {
     level = (level || '').toUpperCase();
-    _mock(process.env, 'EGG_LOG', level);
+    _mock(process.env, 'EGG_LOG', level as any);
   },
 
   home(homePath?: string) {
     if (homePath) {
-      _mock(process.env, 'EGG_HOME', homePath);
+      _mock(process.env, 'EGG_HOME', homePath as any);
     }
   },
 
@@ -93,8 +93,8 @@ export {
   proxyMock as mock,
   // alias to mm
   proxyMock as mm,
-  type ApplicationUnittest as MockApplication,
   type MockClusterApplication,
+  type ApplicationUnittest as MockApplication,
   setGetAppCallback,
   createApp,
   createCluster,

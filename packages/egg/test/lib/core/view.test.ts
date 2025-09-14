@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { describe, it, beforeAll, afterAll } from 'vitest';
 
-import { MockApplication, createApp, getFilepath } from '../../utils.ts';
+import { type MockApplication, createApp, getFilepath } from '../../utils.ts';
 
 describe('multiple view engine', () => {
   const baseDir = getFilepath('apps/multiple-view-engine');

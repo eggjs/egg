@@ -1,3 +1,7 @@
 {
-  "extends": "../../tsconfig.json"
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "./"
+  },
+  "exclude": ["test/fixtures/**/app/**/*.ts", "test/fixtures/**/test/**/*.ts"]
 }

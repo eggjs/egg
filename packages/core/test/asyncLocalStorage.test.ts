@@ -6,6 +6,7 @@ import { request } from '@eggjs/supertest';
 import { getAsyncLocalStorage, kGALS } from 'gals';
 
 import { getFilepath } from './helper.ts';
+// @ts-ignore
 import { Application } from './fixtures/egg-esm/index.ts';
 
 let app: Application;
