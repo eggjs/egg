@@ -19,7 +19,7 @@ jobs:
     
     steps:
       - name: Cancel running workflows on PR close/merge
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const { owner, repo } = context.repo;
