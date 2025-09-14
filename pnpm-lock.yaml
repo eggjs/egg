@@ -63,6 +63,9 @@ catalogs:
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
+    '@oclif/core':
+      specifier: ^4.2.0
+      version: 4.5.3
     '@swc-node/register':
       specifier: ^1.11.1
       version: 1.11.1
@@ -379,8 +382,8 @@ catalogs:
       specifier: ^9.0.1
       version: 9.0.2
     supertest:
-      specifier: ^3.1.0
-      version: 3.4.2
+      specifier: ^7.0.0
+      version: 7.1.4
     terminal-link:
       specifier: ^5.0.0
       version: 5.0.0
@@ -955,7 +958,7 @@ importers:
         version: 4.0.2
       supertest:
         specifier: 'catalog:'
-        version: 3.4.2
+        version: 7.1.4
       tsdown:
         specifier: 'catalog:'
         version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
@@ -1241,7 +1244,7 @@ importers:
         version: 6.0.1
       supertest:
         specifier: 'catalog:'
-        version: 3.4.2
+        version: 7.1.4
       tsdown:
         specifier: 'catalog:'
         version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
@@ -6022,10 +6025,6 @@ packages:
   form-data-encoder@1.9.0:
     resolution: {integrity: sha512-rahaRMkN8P8d/tgK/BLPX+WBVM27NbvdXBxqQujBtkDAIFspaRqN7Od7lfdGQA6KAD+f82fYCLBq1ipvcu8qLw==}
 
-  form-data@2.5.5:
-    resolution: {integrity: sha512-jqdObeR2rxZZbPSGL+3VckHMYtu+f9//KXBsVny6JSX/pa38Fy+bGjuG8eW/H6USNQWhLi8Num++cU2yOCNz4A==}
-    engines: {node: '>= 0.12'}
-
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
@@ -6041,10 +6040,6 @@ packages:
   formdata-polyfill@4.0.10:
     resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
     engines: {node: '>=12.20.0'}
-
-  formidable@1.2.6:
-    resolution: {integrity: sha512-KcpbcpuLNOwrEjnbpMC0gS+X8ciDoZE1kkqzat4a8vrprf+s9pKNQ/QIwWfbfs4ltgmFl3MD177SNTkve3BwGQ==}
-    deprecated: 'Please upgrade to latest, formidable@v2 or formidable@v3! Check these notes: https://bit.ly/2ZEqIau'
 
   formidable@3.5.4:
     resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
@@ -10024,20 +10019,18 @@ packages:
     engines: {node: '>=16 || 14 >=14.17'}
     hasBin: true
 
-  superagent@3.8.3:
-    resolution: {integrity: sha512-GLQtLMCoEIK4eDv6OGtkOoSMt3D+oq0y3dsxMuYuDvaNUvuT8eFBuLmfR0iYYzHC1e8hpzC6ZsxbuP6DIalMFA==}
-    engines: {node: '>= 4.0'}
-    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
+  superagent@10.2.3:
+    resolution: {integrity: sha512-y/hkYGeXAj7wUMjxRbB21g/l6aAEituGXM9Rwl4o20+SX3e8YOSV6BxFXl+dL3Uk0mjSL3kCbNkwURm8/gEDig==}
+    engines: {node: '>=14.18.0'}
 
   superagent@9.0.2:
     resolution: {integrity: sha512-xuW7dzkUpcJq7QnhOsnNUgtYp3xRwpt2F7abdRYIpCsAt0hhUqia0EdxyXZQQpNmGtsCzYHryaKSV3q3GJnq7w==}
     engines: {node: '>=14.18.0'}
     deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
-  supertest@3.4.2:
-    resolution: {integrity: sha512-WZWbwceHUo2P36RoEIdXvmqfs47idNNZjCuJOqDz6rvtkk8ym56aU5oglORCpPeXGxT7l9rkJ41+O1lffQXYSA==}
-    engines: {node: '>=6.0.0'}
-    deprecated: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
+  supertest@7.1.4:
+    resolution: {integrity: sha512-tjLPs7dVyqgItVFirHYqe2T+MfWc2VOBQ8QFKKbWTA3PU7liZR8zoSpAi/C1k1ilm9RsXIKYf197oap9wXGVYg==}
+    engines: {node: '>=14.18.0'}
 
   supports-color@10.2.2:
     resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
@@ -16696,15 +16689,6 @@ snapshots:
 
   form-data-encoder@1.9.0: {}
 
-  form-data@2.5.5:
-    dependencies:
-      asynckit: 0.4.0
-      combined-stream: 1.0.8
-      es-set-tostringtag: 2.1.0
-      hasown: 2.0.2
-      mime-types: 2.1.35
-      safe-buffer: 5.2.1
-
   form-data@4.0.4:
     dependencies:
       asynckit: 0.4.0
@@ -16723,8 +16707,6 @@ snapshots:
   formdata-polyfill@4.0.10:
     dependencies:
       fetch-blob: 3.2.0
-
-  formidable@1.2.6: {}
 
   formidable@3.5.4:
     dependencies:
@@ -21484,18 +21466,17 @@ snapshots:
       pirates: 4.0.7
       ts-interface-checker: 0.1.13
 
-  superagent@3.8.3:
+  superagent@10.2.3:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
-      debug: 3.2.7
-      extend: 3.0.2
-      form-data: 2.5.5
-      formidable: 1.2.6
+      debug: 4.4.3(supports-color@8.1.1)
+      fast-safe-stringify: 2.1.1
+      form-data: 4.0.4
+      formidable: 3.5.4
       methods: 1.1.2
-      mime: 1.6.0
+      mime: 2.6.0
       qs: 6.14.0
-      readable-stream: 2.3.8
     transitivePeerDependencies:
       - supports-color
 
@@ -21513,10 +21494,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  supertest@3.4.2:
+  supertest@7.1.4:
     dependencies:
       methods: 1.1.2
-      superagent: 3.8.3
+      superagent: 10.2.3
     transitivePeerDependencies:
       - supports-color
 
@@ -21627,7 +21608,7 @@ snapshots:
 
   terminal-link@5.0.0:
     dependencies:
-      ansi-escapes: 7.0.0
+      ansi-escapes: 7.1.0
       supports-hyperlinks: 4.1.2
 
   terser-webpack-plugin@5.3.14(webpack@5.101.3):
