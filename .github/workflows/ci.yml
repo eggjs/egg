@@ -109,7 +109,7 @@ jobs:
         run: pnpm run --filter="@eggjs/bin" ci
 
       - name: Code Coverage
-        # skip on windows, it will hangup on codecov
+        # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
         if: ${{ matrix.os != 'windows-latest' }}
         uses: codecov/codecov-action@v5
         with:
