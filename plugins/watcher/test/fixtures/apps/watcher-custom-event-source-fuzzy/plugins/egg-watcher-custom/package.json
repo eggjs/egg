@@ -1,0 +1,9 @@
+{
+  "name": "egg-watcher-custom",
+  "eggPlugin": {
+    "name": "watcherCustom",
+    "dep": [
+      "watcher"
+    ]
+  }
+}

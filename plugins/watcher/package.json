@@ -1,0 +1,98 @@
+{
+  "name": "@eggjs/watcher",
+  "version": "4.0.4",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./config/config.local": "./dist/config/config.local.js",
+      "./config/config.unittest": "./dist/config/config.unittest.js",
+      "./lib/boot": "./dist/lib/boot.js",
+      "./lib/event-sources": "./dist/lib/event-sources/index.js",
+      "./lib/event-sources/base": "./dist/lib/event-sources/base.js",
+      "./lib/event-sources/default": "./dist/lib/event-sources/default.js",
+      "./lib/event-sources/development": "./dist/lib/event-sources/development.js",
+      "./lib/types": "./dist/lib/types.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./lib/watcher": "./dist/lib/watcher.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "file watcher plugin for egg",
+  "eggPlugin": {
+    "name": "watcher"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
+    "pretest": "pnpm run clean",
+    "test": "vitest run",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/master/plugins/watcher#readme",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "plugins/watcher"
+  },
+  "keywords": [
+    "egg-watcher",
+    "egg",
+    "watcher",
+    "watch"
+  ],
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "dependencies": {
+    "camelcase": "^5.0.0",
+    "sdk-base": "catalog:"
+  },
+  "peerDependencies": {
+    "@eggjs/core": "workspace:*",
+    "@eggjs/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/core": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/supertest": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@eggjs/utils": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./config/config.unittest": "./src/config/config.unittest.ts",
+    "./lib/boot": "./src/lib/boot.ts",
+    "./lib/event-sources": "./src/lib/event-sources/index.ts",
+    "./lib/event-sources/base": "./src/lib/event-sources/base.ts",
+    "./lib/event-sources/default": "./src/lib/event-sources/default.ts",
+    "./lib/event-sources/development": "./src/lib/event-sources/development.ts",
+    "./lib/types": "./src/lib/types.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./lib/watcher": "./src/lib/watcher.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
+}
