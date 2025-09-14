@@ -1,5 +1,8 @@
 name: Manual Release
 
+# Fixed: Now properly uses prerelease_tag input for npm publish
+# when version_type starts with 'pre'
+
 on:
   workflow_dispatch:
     inputs:
