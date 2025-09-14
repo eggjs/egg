@@ -44,7 +44,6 @@
     "superagent": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "catalog:",
     "@types/body-parser": "catalog:",
     "@types/cookie-parser": "catalog:",
     "@types/express": "catalog:",
@@ -52,7 +51,6 @@
     "body-parser": "catalog:",
     "cookie-parser": "catalog:",
     "express": "catalog:",
-    "nock": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
