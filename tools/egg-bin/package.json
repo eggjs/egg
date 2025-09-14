@@ -61,8 +61,6 @@
     "egg": "workspace:*",
     "esbuild": "catalog:",
     "esbuild-register": "catalog:",
-    "eslint": "catalog:",
-    "eslint-config-egg": "catalog:",
     "npminstall": "catalog:",
     "rimraf": "catalog:",
     "supertest": "catalog:",
@@ -71,7 +69,7 @@
   },
   "scripts": {
     "postinstall": "node scripts/postinstall.mjs",
-    "lint": "eslint --cache src test --ext .ts",
+    "lint": "oxlint",
     "pretest": "npm run clean && npm run lint -- --fix && npm run prepublishOnly",
     "test": "node bin/run.js test",
     "cov": "c8 --temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura node bin/run.js test",
