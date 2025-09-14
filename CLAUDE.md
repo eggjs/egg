@@ -199,6 +199,70 @@ All Egg framework plugins should be placed in the `plugins/` directory:
   - `src/` - TypeScript source code
   - `test/` - Test suite (use Vitest for new plugins)
   - `package.json` with `eggPlugin` configuration
+  - `tsdown.config.ts` - Build configuration (see standard template below)
+
+#### Standard Plugin tsdown Configuration
+
+**IMPORTANT: All future plugins MUST use this tsdown configuration template** (based on `plugins/development/tsdown.config.ts`):
+
+```typescript
+import { defineConfig } from 'tsdown';
+
+export default defineConfig({
+  entry: 'src/**/*.ts',
+  unbundle: true,
+  dts: true,
+  exports: {
+    devExports: true,
+  },
+});
+```
+
+This configuration ensures:
+
+- **`entry: 'src/**/\*.ts'`\*\* - Processes all TypeScript files in src directory
+- **`unbundle: true`** - Creates unbundled output (preserves file structure)
+- **`dts: true`** - Generates TypeScript declaration files
+- **`exports.devExports: true`** - Enables development-friendly exports
+
+#### Standard Plugin package.json Configuration
+
+Plugins should configure their package.json following this pattern:
+
+```json
+{
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./package.json": "./package.json"
+    // Add other entry points as needed
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./package.json": "./package.json"
+      // Mirror the exports structure for published package
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  }
+}
+```
+
+Key points:
+
+- Development uses TypeScript sources directly (`./src/*.ts`)
+- Published packages use compiled JavaScript (`./dist/*.js`)
+- The `publishConfig.exports` overrides `exports` during npm publish
+- All plugins must include `build`, `clean`, and `prepublishOnly` scripts
 
 ### Tool Packages Structure
 
