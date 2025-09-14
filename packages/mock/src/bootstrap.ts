@@ -3,8 +3,7 @@ import path from 'node:path';
 
 import { readJSONSync } from 'utility';
 
-import mm, { mock } from './index.ts';
-import ApplicationUnittest from './app/extend/application.ts';
+import mm, { mock, type MockApplication } from './index.ts';
 import { getBootstrapApp, setupApp } from './lib/app_handler.ts';
 import { getEggOptions } from './lib/utils.ts';
 
@@ -20,11 +19,4 @@ if (pkgInfo.eggPlugin) {
 
 const app = setupApp();
 
-export {
-  assert,
-  getBootstrapApp,
-  app,
-  mm,
-  mock,
-  ApplicationUnittest as MockApplication,
-};
+export { assert, getBootstrapApp, app, mm, mock, type MockApplication };

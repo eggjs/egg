@@ -52,7 +52,6 @@
     "body-parser": "catalog:",
     "cookie-parser": "catalog:",
     "express": "catalog:",
-    "nock": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

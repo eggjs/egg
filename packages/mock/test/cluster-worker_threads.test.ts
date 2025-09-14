@@ -3,11 +3,11 @@ import { strict as assert } from 'node:assert';
 import { describe, it, beforeAll, afterAll } from 'vitest';
 
 import { getFixtures } from './helper.ts';
-import mm, { type MockApplication } from '../src/index.ts';
+import mm, { type MockClusterApplication } from '../src/index.ts';
 
 describe('work on startMode=worker_threads', () => {
-  let app: MockApplication;
-  beforeAll(() => {
+  let app: MockClusterApplication;
+  beforeAll(async () => {
     app = mm.cluster({
       baseDir: getFixtures('demo'),
       cache: false,
@@ -15,7 +15,7 @@ describe('work on startMode=worker_threads', () => {
       startMode: 'worker_threads',
     });
     // app.debug();
-    return app.ready();
+    await app.ready();
   });
   afterAll(() => app.close());
 
