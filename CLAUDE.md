@@ -230,3 +230,81 @@ The framework extends Koa's context with Egg-specific features:
 - Update versions in one place to keep consistency across packages
 - Use `pnpm update --latest` to update catalog entries
 - Reference catalog entries in individual packages with `"package-name": "catalog:"`
+
+## Commit Message Format
+
+**IMPORTANT: All commits MUST follow the [Angular Commit Message Format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) as specified in CONTRIBUTING.md.**
+
+### Format Structure
+
+```
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+### Required Types
+
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation-only changes
+- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests
+- **chore**: Changes to the build process or auxiliary tools and libraries such as documentation generation
+- **deps**: Updates about dependencies
+
+### Scope Guidelines
+
+- Use package names for package-specific changes: `core`, `mock`, `cluster`, `utils`, etc.
+- Use feature areas for cross-package changes: `loader`, `plugin`, `config`, etc.
+- Use component names for specific functionality: `application`, `agent`, `context`, etc.
+
+### Subject Guidelines
+
+- Use succinct words to describe what you did in the commit change
+- Use imperative, present tense: "change" not "changed" nor "changes"
+- Don't capitalize first letter
+- No period (.) at the end
+
+### Body Guidelines (Optional)
+
+- Add more content if the subject is not self-explanatory enough
+- Explain the purpose or reason for the commit
+- Include motivation for the change and contrasts with previous behavior
+
+### Footer Guidelines
+
+- **Breaking Changes**: Note clearly with "BREAKING CHANGE:" prefix
+- **Related Issues**: Use format like "Closes #1, Closes #2, #3"
+- **Cross-references**: Reference related repos like "eggjs/egg-core#123"
+
+### Examples
+
+```
+feat(core): add support for async configuration loading
+
+Allow configuration files to export async functions for dynamic config loading.
+This enables loading configuration from external services or databases.
+
+Closes #123
+```
+
+```
+fix(mock): resolve memory leak in test cleanup
+
+The mock cleanup process was not properly disposing of event listeners,
+causing memory leaks during test runs.
+
+Fixes #456
+```
+
+```
+docs(tsconfig): update README with vitest integration examples
+
+Add examples showing how to configure vitest with the tsconfig package.
+Include setup instructions and common configuration patterns.
+```
