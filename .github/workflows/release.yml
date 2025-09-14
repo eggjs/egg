@@ -157,7 +157,7 @@ jobs:
               const packageJsonPath = `${packagesDir}/${folder}/package.json`;
               if (fs.existsSync(packageJsonPath)) {
                 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-                releaseBody += `- **${packageJson.name}** - v${packageJson.version} ([npmjs.com](https://www.npmjs.com/package/${packageJson.name}/v/${packageJson.version}))\n`;
+                releaseBody += `- **${packageJson.name}** - [v${packageJson.version}](https://www.npmjs.com/package/${packageJson.name}/v/${packageJson.version})\n`;
               }
             }
 
