@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/lib/core/loader/load_plugin.test.ts > should keep plugin list sorted 1`] = `
+[
+  "session",
+  "security",
+  "jsonp",
+  "onerror",
+  "i18n",
+  "watcher",
+  "schedule",
+  "multipart",
+  "logrotator",
+  "static",
+  "view",
+  "b",
+  "c1",
+  "f",
+  "a",
+  "d",
+  "e",
+]
+`;

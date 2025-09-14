@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
 
@@ -242,31 +242,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       logger,
     });
     await appLoader.loadConfig();
-    assert.deepEqual(
+    expect(
       appLoader.orderPlugins.map(plugin => {
         return plugin.name;
-      }),
-      [
-        'session',
-        'security',
-        'jsonp',
-        'onerror',
-        'i18n',
-        'watcher',
-        'schedule',
-        'multipart',
-        'development',
-        'logrotator',
-        'static',
-        'view',
-        'b',
-        'c1',
-        'f',
-        'a',
-        'd',
-        'e',
-      ]
-    );
+      })
+    ).toMatchSnapshot();
   });
 
   it('should throw recursive deps error', async () => {

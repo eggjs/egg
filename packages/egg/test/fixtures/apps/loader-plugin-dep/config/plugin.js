@@ -35,4 +35,6 @@ module.exports = {
     dependencies: ['c1'],
     path: path.join(__dirname, '../plugins/f'),
   },
+
+  development: false,
 };
