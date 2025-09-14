@@ -5,7 +5,7 @@ import { Flags } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
 
 import Test from './test.ts';
-import { ForkNodeOptions } from '../baseCommand.ts';
+import { type ForkNodeOptions } from '../baseCommand.ts';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

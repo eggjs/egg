@@ -2,14 +2,14 @@ import { debuglog } from 'node:util';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import os from 'node:os';
-import { fork, ForkOptions, ChildProcess } from 'node:child_process';
+import { fork, type ForkOptions, ChildProcess } from 'node:child_process';
 
 import { Command, Flags, Interfaces } from '@oclif/core';
 import { importResolve } from '@eggjs/utils';
 import { runScript } from 'runscript';
 
 import { getSourceDirname, readPackageJSON, hasTsConfig } from './utils.ts';
-import { PackageEgg } from './types.ts';
+import { type PackageEgg } from './types.ts';
 
 const debug = debuglog('egg-bin/baseCommand');
 
@@ -58,7 +58,7 @@ export interface ForkNodeOptions extends ForkOptions {
   dryRun?: boolean;
 }
 
-type Flags<T extends typeof Command> = Interfaces.InferredFlags<
+type CustomFlags<T extends typeof Command> = Interfaces.InferredFlags<
   (typeof BaseCommand)['baseFlags'] & T['flags']
 >;
 type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
@@ -136,7 +136,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }),
   };
 
-  protected flags!: Flags<T>;
+  protected flags!: CustomFlags<T>;
   protected args!: Args<T>;
 
   protected env = { ...process.env };
@@ -155,7 +155,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       args: this.ctor.args,
       strict: this.ctor.strict,
     });
-    this.flags = flags as Flags<T>;
+    this.flags = flags as CustomFlags<T>;
     this.args = args as Args<T>;
 
     await this.#afterInit();
