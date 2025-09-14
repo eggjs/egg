@@ -7,18 +7,47 @@ on:
     branches: [next]
   merge_group:
 
+permissions:
+  id-token: write
+
 jobs:
-  test:
-    name: Test Packages
-    uses: node-modules/github-actions/.github/workflows/node-test.yml@master
-    with:
-      os: 'ubuntu-latest, macos-latest, windows-latest'
-      # node 20 not support import typescript directly
-      #version: '20, 22, 24'
-      version: '22, 24'
-      install: 'corepack enable pnpm && pnpm install'
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  test-packages:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
+        node: ['22', '24']
+
+    name: Test packages (${{ matrix.os }}, ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: test-packages-${{ github.workflow }}-#${{ github.event.pull_request.number || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5 # Use the latest version of setup-node
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'pnpm' # Enable caching for pnpm dependencies
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # Install dependencies using pnpm
+
+      - name: Run tests
+        run: pnpm run ci
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
 
   test-egg-bin:
     strategy:
@@ -52,3 +81,8 @@ jobs:
 
       - name: Run tests
         run: pnpm run --filter="@eggjs/bin" ci
+
+      - name: Code Coverage
+        uses: codecov/codecov-action@v5
+        with:
+          use_oidc: true
