@@ -5,7 +5,7 @@ import { once } from 'node:events';
 
 import { describe, it } from 'vitest';
 
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 
 import Koa, { type Context } from '../../src/index.ts';
 import context from '../test-helpers/context.ts';

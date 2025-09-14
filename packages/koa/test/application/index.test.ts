@@ -3,7 +3,7 @@ import { describe, it } from 'vitest';
 import type { ServerResponse, IncomingMessage } from 'node:http';
 import { once } from 'node:events';
 
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 import createHttpError, { HttpError } from 'http-errors';
 
 import Koa from '../../src/index.ts';

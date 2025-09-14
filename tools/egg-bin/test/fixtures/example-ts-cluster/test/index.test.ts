@@ -1,6 +1,6 @@
 import { scheduler } from 'node:timers/promises';
 import mm, { MockOption } from '@eggjs/mock';
-import request from 'supertest';
+import { request } from '@eggjs/supertest';
 
 describe('example-ts-cluster/test/index.test.ts', () => {
   let app: any;
