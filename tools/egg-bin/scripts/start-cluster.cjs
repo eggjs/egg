@@ -13,4 +13,4 @@ async function main() {
   await startCluster(options);
 }
 
-main();
+void main();

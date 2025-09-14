@@ -111,7 +111,7 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
-    it.only('should success on ts', async () => {
+    it('should success on ts', async () => {
       const cwd = getFixtures('example-ts');
       await coffee
         .fork(eggBin, ['test'], { cwd })

@@ -8,9 +8,6 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "strict": false,
-    "paths": {
-      "@/module/*": ["./app/module/*"]
-    },
     "baseUrl": "."
   },
   "ts-node": {

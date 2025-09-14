@@ -1,5 +1,8 @@
 import { Controller } from 'egg';
-import { Foo } from '@/module/foo';
+
+// import { Foo } from '@/module/foo';
+import { Foo } from '../module/foo.ts';
+
 export default class HomeController extends Controller {
   public async index() {
     const obj: PlainObject = {};

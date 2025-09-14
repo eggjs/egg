@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { app } from '@eggjs/mock/bootstrap';
-import { Foo } from '@/module/foo';
+
+import { Foo } from '../app/module/foo.ts';
 
 describe('example-ts/test/index.test.ts', () => {
   it('should work', async () => {
