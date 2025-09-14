@@ -319,8 +319,8 @@ catalogs:
       specifier: ^4.0.2
       version: 4.0.2
     mocha:
-      specifier: 11.7.1
-      version: 11.7.1
+      specifier: 11.7.2
+      version: 11.7.2
     mochawesome-with-mocha:
       specifier: 8.0.0
       version: 8.0.0
@@ -445,7 +445,7 @@ importers:
         version: 16.1.6
       mocha:
         specifier: 'catalog:'
-        version: 11.7.1
+        version: 11.7.2
       mochawesome-with-mocha:
         specifier: 'catalog:'
         version: 8.0.0
@@ -1180,7 +1180,7 @@ importers:
         version: 29.7.0
       mocha:
         specifier: 'catalog:'
-        version: 11.7.1
+        version: 11.7.2
       mochawesome-with-mocha:
         specifier: 'catalog:'
         version: 8.0.0
@@ -7873,8 +7873,8 @@ packages:
     resolution: {integrity: sha512-vavX9JBrg14kDZRDpQXe8LgxBrfpr8EyMlBCJeOijSsuPf5PZ/D+1m0/2yOtwluoPfwzUobVxvKfdO65JWzW8w==}
     engines: {node: '>= 18.19.0'}
 
-  mocha@11.7.1:
-    resolution: {integrity: sha512-5EK+Cty6KheMS/YLPPMJC64g5V61gIR25KsRItHw6x4hEKT6Njp1n9LOlH4gpevuwMVS66SXaBBpg+RWZkza4A==}
+  mocha@11.7.2:
+    resolution: {integrity: sha512-lkqVJPmqqG/w5jmmFtiRvtA2jkDyNVUcefFJKb2uyX4dekk8Okgqop3cgbFiaIvj8uCRJVTP5x9dfxGyXm2jvQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     hasBin: true
 
@@ -15067,7 +15067,7 @@ snapshots:
       change-case: 3.1.0
       co: 4.6.0
       dargs: 6.1.0
-      debug: 4.4.1
+      debug: 4.4.3(supports-color@8.1.1)
       is-type-of: 1.4.0
       semver: 5.7.2
       yargs: 13.3.2
@@ -17995,7 +17995,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3(supports-color@8.1.1)
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -18895,7 +18895,7 @@ snapshots:
       is-type-of: 2.2.0
       thenify: 3.3.1
 
-  mocha@11.7.1:
+  mocha@11.7.2:
     dependencies:
       browser-stdout: 1.3.1
       chokidar: 4.0.3
@@ -18942,7 +18942,7 @@ snapshots:
       lodash.isfunction: 3.0.9
       lodash.isobject: 3.0.2
       lodash.isstring: 4.0.1
-      mocha: 11.7.1
+      mocha: 11.7.2
       mochawesome-report-generator: 6.2.0
       strip-ansi: 6.0.1
       uuid: 8.3.2

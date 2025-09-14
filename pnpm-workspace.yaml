@@ -109,7 +109,7 @@ catalog:
   lint-staged: '16'
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
-  mocha: 11.7.1
+  mocha: 11.7.2
   mochawesome-with-mocha: 8.0.0
   nock: ^13.3.0
   node-homedir: ^2.0.0
