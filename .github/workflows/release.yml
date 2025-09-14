@@ -157,7 +157,7 @@ jobs:
               const packageJsonPath = `${packagesDir}/${folder}/package.json`;
               if (fs.existsSync(packageJsonPath)) {
                 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-                releaseBody += `- **${packageJson.name}** - v${packageJson.version}\n`;
+                releaseBody += `- **${packageJson.name}** - v${packageJson.version} ([npmjs.com](https://www.npmjs.com/package/${packageJson.name}/v/${packageJson.version}))\n`;
               }
             }
 
@@ -178,6 +178,9 @@ jobs:
             });
 
             core.info(`Created draft release: ${release.data.html_url}`);
+            
+            // Set the release URL as an environment variable for use in summary
+            core.exportVariable('DRAFT_RELEASE_URL', release.data.html_url);
 
       - name: Summary
         run: |
@@ -204,5 +207,5 @@ jobs:
               echo "- npm tag: **latest**" >> $GITHUB_STEP_SUMMARY
             fi
             echo "- Packages published to npm" >> $GITHUB_STEP_SUMMARY
-            echo "- Draft GitHub release created" >> $GITHUB_STEP_SUMMARY
+            echo "- Draft GitHub release created: [View Draft Release]($DRAFT_RELEASE_URL)" >> $GITHUB_STEP_SUMMARY
           fi
