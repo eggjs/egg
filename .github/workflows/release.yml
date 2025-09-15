@@ -14,7 +14,7 @@ on:
       version_type:
         description: 'Version bump type'
         required: true
-        default: 'patch'
+        default: 'prerelease'
         type: choice
         options:
           - patch
