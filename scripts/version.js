@@ -5,6 +5,7 @@ import path from 'path';
 import { execSync } from 'child_process';
 import semver from 'semver';
 import { fileURLToPath } from 'url';
+import yaml from 'js-yaml';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -63,24 +64,64 @@ try {
   process.exit(1);
 }
 
-// Get all publishable packages from multiple directories
-function getPackageFolders(baseDir, subDir) {
-  const fullDir = path.join(baseDir, subDir);
-  if (!fs.existsSync(fullDir)) {
-    return [];
+// Get all publishable packages from pnpm workspace
+function getPublishablePackages(baseDir) {
+  const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');
+  
+  if (!fs.existsSync(workspaceFile)) {
+    throw new Error('pnpm-workspace.yaml not found');
   }
-  return fs
-    .readdirSync(fullDir)
-    .filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory())
-    .map(folder => ({ folder, directory: subDir }));
+
+  const workspaceConfig = yaml.load(fs.readFileSync(workspaceFile, 'utf8'));
+  const packages = workspaceConfig.packages || [];
+  const publishablePackages = [];
+
+  for (const packagePattern of packages) {
+    // Handle glob patterns like 'packages/*', 'tools/*', etc.
+    if (packagePattern.endsWith('/*')) {
+      const dirPath = packagePattern.slice(0, -2); // Remove '/*'
+      const fullDir = path.join(baseDir, dirPath);
+      
+      if (fs.existsSync(fullDir)) {
+        const folders = fs.readdirSync(fullDir)
+          .filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory());
+        
+        for (const folder of folders) {
+          const packageJsonPath = path.join(fullDir, folder, 'package.json');
+          if (fs.existsSync(packageJsonPath)) {
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+            // Include packages that are not explicitly marked as private
+            if (!packageJson.private) {
+              publishablePackages.push({
+                folder,
+                directory: dirPath,
+                name: packageJson.name
+              });
+            }
+          }
+        }
+      }
+    } else {
+      // Handle direct package paths like 'site'
+      const packageJsonPath = path.join(baseDir, packagePattern, 'package.json');
+      if (fs.existsSync(packageJsonPath)) {
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        if (!packageJson.private) {
+          publishablePackages.push({
+            folder: path.basename(packagePattern),
+            directory: path.dirname(packagePattern) || '.',
+            name: packageJson.name
+          });
+        }
+      }
+    }
+  }
+
+  return publishablePackages;
 }
 
 const baseDir = path.join(__dirname, '..');
-const packageFolders = [
-  ...getPackageFolders(baseDir, 'packages'),
-  ...getPackageFolders(baseDir, 'tools'), 
-  ...getPackageFolders(baseDir, 'plugins'),
-];
+const packageFolders = getPublishablePackages(baseDir);
 
 console.log(
   `🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`

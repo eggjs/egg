@@ -437,6 +437,9 @@ importers:
       husky:
         specifier: 'catalog:'
         version: 9.1.7
+      js-yaml:
+        specifier: 'catalog:'
+        version: 4.1.0
       lint-staged:
         specifier: 'catalog:'
         version: 16.1.6

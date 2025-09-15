@@ -15,6 +15,7 @@
     "@vitest/ui": "catalog:",
     "c8": "catalog:",
     "husky": "catalog:",
+    "js-yaml": "catalog:",
     "lint-staged": "catalog:",
     "mocha": "catalog:",
     "mochawesome-with-mocha": "catalog:",
