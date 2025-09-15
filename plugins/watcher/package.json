@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/watcher",
-  "version": "4.0.4",
+  "version": "4.0.5-beta.0",
   "publishConfig": {
     "access": "public",
     "exports": {
