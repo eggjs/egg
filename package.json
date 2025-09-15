@@ -30,7 +30,7 @@
     "clean": "pnpm -r run clean && rimraf packages/**/dist",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
-    "typecheck": "pnpm -r run typecheck",
+    "typecheck": "pnpm clean && pnpm -r run typecheck",
     "pretest": "pnpm -r run pretest && pnpm run clean",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",

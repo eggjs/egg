@@ -72,7 +72,7 @@ export class MockAgent extends Base {
       action: 'egg-ready',
       data: this.options,
     };
-    (agent as any).messenger.onMessage(msg);
+    agent.messenger.onMessage(msg);
     debug('agent ready');
   }
 

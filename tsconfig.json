@@ -36,6 +36,9 @@
     },
     {
       "path": "./plugins/development"
+    },
+    {
+      "path": "./plugins/watcher"
     }
   ]
 }

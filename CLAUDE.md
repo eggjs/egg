@@ -40,6 +40,10 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
   - `development/` - Development plugin for local development (merged from @eggjs/development)
     - Provides development tools and auto-reload functionality
     - Only enabled in local environment
+  - `watcher/` - File watcher plugin (merged from @eggjs/watcher)
+    - Provides file system watching capabilities
+    - Supports multiple event sources for different environments
+    - Used by development plugin for auto-reload functionality
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
