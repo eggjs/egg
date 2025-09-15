@@ -63,11 +63,24 @@ try {
   process.exit(1);
 }
 
-// Get all publishable packages
-const packagesDir = path.join(__dirname, '..', 'packages');
-const packageFolders = fs
-  .readdirSync(packagesDir)
-  .filter(folder => fs.statSync(path.join(packagesDir, folder)).isDirectory());
+// Get all publishable packages from multiple directories
+function getPackageFolders(baseDir, subDir) {
+  const fullDir = path.join(baseDir, subDir);
+  if (!fs.existsSync(fullDir)) {
+    return [];
+  }
+  return fs
+    .readdirSync(fullDir)
+    .filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory())
+    .map(folder => ({ folder, directory: subDir }));
+}
+
+const baseDir = path.join(__dirname, '..');
+const packageFolders = [
+  ...getPackageFolders(baseDir, 'packages'),
+  ...getPackageFolders(baseDir, 'tools'), 
+  ...getPackageFolders(baseDir, 'plugins'),
+];
 
 console.log(
   `🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`
@@ -79,8 +92,8 @@ const updatedVersions = [];
 const backups = [];
 
 // Update each package version
-packageFolders.forEach(folder => {
-  const packageJsonPath = path.join(packagesDir, folder, 'package.json');
+packageFolders.forEach(({ folder, directory }) => {
+  const packageJsonPath = path.join(baseDir, directory, folder, 'package.json');
 
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
