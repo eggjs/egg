@@ -1,8 +1,6 @@
 # @eggjs/onerror
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/onerror/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/onerror/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/@eggjs/onerror.svg?style=flat)](https://nodejs.org/en/download/)
@@ -11,8 +9,6 @@
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/onerror.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/onerror
-[codecov-image]: https://codecov.io/github/eggjs/onerror/coverage.svg?branch=master
-[codecov-url]: https://codecov.io/github/eggjs/onerror?branch=master
 [snyk-image]: https://snyk.io/test/npm/@eggjs/onerror/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/@eggjs/onerror
 [download-image]: https://img.shields.io/npm/dm/@eggjs/onerror.svg?style=flat-square
@@ -58,10 +54,10 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## License
 
-[MIT](https://github.com/eggjs/onerror/blob/master/LICENSE)
+[MIT](LICENSE)
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/onerror)](https://github.com/eggjs/onerror/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
