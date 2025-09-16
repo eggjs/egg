@@ -112,7 +112,7 @@ catalog:
   mm: ^4.0.2
   mocha: 11.7.2
   mochawesome-with-mocha: 8.0.0
-  multimatch: ^5.0.0
+  multimatch: ^7.0.0
   nock: ^13.3.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
