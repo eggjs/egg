@@ -6,10 +6,8 @@ import assert from 'node:assert';
 import mergeDescriptors from 'merge-descriptors';
 import { isAsyncFunction, isObject } from 'is-type-of';
 import { mock, restore } from 'mm';
-import type { HttpClient } from 'urllib';
 import { Transport, Logger, type LoggerLevel, type LoggerMeta } from 'egg-logger';
-import { EggCore, type EggCoreOptions, type Context as EggCoreContext } from '@eggjs/core';
-import type { Context as EggContext } from 'egg';
+import { type Context, Application } from 'egg';
 
 import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 import {
@@ -42,16 +40,14 @@ export interface MockContextData {
   [key: string]: any;
 }
 
-// @ts-expect-error ignore type error
-export interface MockContext extends EggContext, EggCoreContext {
+export interface MockContext extends Context {
   service: any;
 }
 
-export default abstract class ApplicationUnittest extends EggCore {
+export default abstract class ApplicationUnittest extends Application {
   [key: string]: any;
-  declare options: MockOptions & EggCoreOptions;
+  declare options: MockOptions & Application['options'];
   _mockHttpClient?: MockHttpClientMethod;
-  declare httpclient: HttpClient;
 
   /**
    * mock Context

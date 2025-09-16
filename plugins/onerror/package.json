@@ -1,0 +1,85 @@
+{
+  "name": "@eggjs/onerror",
+  "version": "3.0.0",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/error_view": "./dist/lib/error_view.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "error handler for egg",
+  "eggPlugin": {
+    "name": "onerror",
+    "optionalDependencies": [
+      "jsonp"
+    ]
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/master/plugins/onerror#readme",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "plugins/onerror"
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "onerror"
+  ],
+  "author": "dead_horse",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "dependencies": {
+    "cookie": "catalog:",
+    "koa-onerror": "catalog:",
+    "mustache": "catalog:",
+    "stack-trace": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@types/mustache": "catalog:",
+    "@types/node": "catalog:",
+    "@types/stack-trace": "catalog:",
+    "egg": "workspace:*",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
+    "pretest": "pnpm run clean",
+    "test": "vitest run",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/error_view": "./src/lib/error_view.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
+}

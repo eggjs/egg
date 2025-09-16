@@ -117,12 +117,21 @@ catalogs:
     '@types/mocha':
       specifier: ^10.0.10
       version: 10.0.10
+    '@types/mustache':
+      specifier: ^4.2.5
+      version: 4.2.6
+    '@types/node':
+      specifier: '24'
+      version: 24.5.0
     '@types/on-finished':
       specifier: ^2.3.4
       version: 2.3.5
     '@types/parseurl':
       specifier: ^1.3.3
       version: 1.3.3
+    '@types/stack-trace':
+      specifier: ^0.0.33
+      version: 0.0.33
     '@types/statuses':
       specifier: ^2.0.5
       version: 2.0.6
@@ -189,6 +198,9 @@ catalogs:
     content-type:
       specifier: ^1.0.5
       version: 1.0.5
+    cookie:
+      specifier: ^1.0.2
+      version: 1.0.2
     cookie-parser:
       specifier: ^1.4.6
       version: 1.4.7
@@ -297,6 +309,9 @@ catalogs:
     koa-compose:
       specifier: ^4.1.0
       version: 4.1.0
+    koa-onerror:
+      specifier: ^5.0.1
+      version: 5.0.1
     koa-override:
       specifier: ^4.0.0
       version: 4.0.0
@@ -321,6 +336,9 @@ catalogs:
     multimatch:
       specifier: ^7.0.0
       version: 7.0.0
+    mustache:
+      specifier: ^4.2.0
+      version: 4.2.0
     node-homedir:
       specifier: ^2.0.0
       version: 2.0.0
@@ -372,6 +390,9 @@ catalogs:
     spy:
       specifier: ^1.0.0
       version: 1.0.0
+    stack-trace:
+      specifier: ^0.0.10
+      version: 0.0.10
     statuses:
       specifier: ^2.0.1
       version: 2.0.2
@@ -1020,9 +1041,6 @@ importers:
       '@eggjs/tegg-plugin':
         specifier: 'catalog:'
         version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.5(mysql2@3.14.5)))(leoric@2.13.5(mysql2@3.14.5))
-      '@eggjs/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
@@ -1163,6 +1181,49 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  plugins/onerror:
+    dependencies:
+      cookie:
+        specifier: 'catalog:'
+        version: 1.0.2
+      koa-onerror:
+        specifier: 'catalog:'
+        version: 5.0.1
+      mustache:
+        specifier: 'catalog:'
+        version: 4.2.0
+      stack-trace:
+        specifier: 'catalog:'
+        version: 0.0.10
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../../packages/mock
+      '@types/mustache':
+        specifier: 'catalog:'
+        version: 4.2.6
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.0
+      '@types/stack-trace':
+        specifier: 'catalog:'
+        version: 0.0.33
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.11(@types/debug@4.1.12)(@types/node@24.5.0)(@vitest/ui@4.0.0-beta.11)(jiti@2.5.1)(less@4.4.1)(lightningcss@1.22.1)(sass@1.91.0)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/watcher:
     dependencies:
@@ -3610,6 +3671,9 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
+  '@types/mustache@4.2.6':
+    resolution: {integrity: sha512-t+8/QWTAhOFlrF1IVZqKnMRJi84EgkIK5Kh0p2JV4OLywUvCwJPFxbJAl7XAow7DVIHsF+xW9f1MVzg0L6Szjw==}
+
   '@types/node@10.17.60':
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
 
@@ -3663,6 +3727,9 @@ packages:
 
   '@types/serve-static@1.15.8':
     resolution: {integrity: sha512-roei0UY3LhpOJvjbIP6ZZFngyLKl5dskOtDhxY5THRSpO+ZI+nzJ+m5yUMzGrp89YRa7lvknKkMYjqQFGwA7Sg==}
+
+  '@types/stack-trace@0.0.33':
+    resolution: {integrity: sha512-O7in6531Bbvlb2KEsJ0dq0CHZvc3iWSR5ZYMtvGgnHA56VgriAN/AU2LorfmcvAl2xc9N5fbCTRyMRRl8nd74g==}
 
   '@types/statuses@2.0.6':
     resolution: {integrity: sha512-xMAgYwceFhRA2zY+XbEA7mxYbA093wdiW8Vu6gZPGWy9cmOyU9XesH1tNcEWsKFd5Vzrqx5T3D38PWx1FIIXkA==}
@@ -13026,6 +13093,8 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
+  '@types/mustache@4.2.6': {}
+
   '@types/node@10.17.60': {}
 
   '@types/node@17.0.45': {}
@@ -13066,7 +13135,7 @@ snapshots:
 
   '@types/sax@1.2.7':
     dependencies:
-      '@types/node': 17.0.45
+      '@types/node': 24.5.0
 
   '@types/semver@7.7.0': {}
 
@@ -13080,6 +13149,8 @@ snapshots:
       '@types/http-errors': 2.0.5
       '@types/node': 24.5.0
       '@types/send': 0.17.5
+
+  '@types/stack-trace@0.0.33': {}
 
   '@types/statuses@2.0.6': {}
 

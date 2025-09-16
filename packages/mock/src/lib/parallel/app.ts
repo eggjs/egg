@@ -2,7 +2,7 @@ import { debuglog } from 'node:util';
 
 import { Base } from 'sdk-base';
 import { importModule } from '@eggjs/utils';
-import type { EggCore } from '@eggjs/core';
+import { Application as EggApplication } from 'egg';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
@@ -20,7 +20,7 @@ export class MockParallelApplication extends Base {
   [APP_INIT] = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
-  _instance: EggCore;
+  _instance: EggApplication;
 
   constructor(options: MockApplicationOptions) {
     super({ initMethod: '_init' });
@@ -41,7 +41,7 @@ export class MockParallelApplication extends Base {
       throw new Error('cannot get env.CLUSTER_PORT, parallel run fail');
     }
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Application }: { Application: typeof EggCore } = await importModule(
+    const { Application }: { Application: typeof EggApplication } = await importModule(
       this.options.framework
     );
 
