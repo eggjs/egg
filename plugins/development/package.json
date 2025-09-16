@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/development",
-  "version": "4.0.1-beta.0",
+  "version": "4.0.1-beta.1",
   "description": "development tool for egg",
   "publishConfig": {
     "access": "public",
