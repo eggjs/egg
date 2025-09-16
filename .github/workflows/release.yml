@@ -148,23 +148,26 @@ jobs:
             const tag = process.env.NEW_TAG;
             const versionType = '${{ github.event.inputs.version_type }}';
 
-            // Get package versions from the tag
-            const fs = require('fs');
-            const packagesDir = './packages';
-            const packageFolders = fs.readdirSync(packagesDir);
-
             let releaseBody = `## 🎉 ${versionType.charAt(0).toUpperCase() + versionType.slice(1)} Release\n\n`;
             releaseBody += `This release includes ${versionType} version updates for all packages.\n\n`;
             releaseBody += `### 📦 Published Packages\n\n`;
 
-            for (const folder of packageFolders) {
-              const packageJsonPath = `${packagesDir}/${folder}/package.json`;
-              if (fs.existsSync(packageJsonPath)) {
-                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-                releaseBody += `- [${packageJson.name}@${packageJson.version}](https://npmjs.com/package/${packageJson.name}/v/${packageJson.version})\n`;
+            // Get package versions from the tag
+            const fs = require('fs');
+            const packagesDirs = ['./packages', './tools', './plugins'];
+            for (const packagesDir of packagesDirs) {
+              const packageFolders = fs.readdirSync(packagesDir);
+              for (const folder of packageFolders) {
+                const packageJsonPath = `${packagesDir}/${folder}/package.json`;
+                if (fs.existsSync(packageJsonPath)) {
+                  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+                  if (packageJson.private) {
+                    continue;
+                  }
+                  releaseBody += `- [${packageJson.name}@${packageJson.version}](https://npmjs.com/package/${packageJson.name}/v/${packageJson.version})\n`;
+                }
               }
             }
-
             releaseBody += `\n### 🔄 What's Changed\n\n`;
             releaseBody += `<!-- Please add changelog information here manually -->\n`;
             releaseBody += `- Add your changelog items here\n`;
