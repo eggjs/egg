@@ -80,7 +80,7 @@ pnpm --filter=site run dev
 
 Please let us know how can we help. Do check out [issues](https://github.com/eggjs/egg/issues) for bug reports or suggestions first.
 
-To become a contributor, please follow our [contributing guide](CONTRIBUTING.md).
+To become a contributor, please follow our [contributing guide](CONTRIBUTING.md), and review the [repository guidelines](AGENTS.md) for day-to-day development tips.
 
 ## Sponsors and Backers
 

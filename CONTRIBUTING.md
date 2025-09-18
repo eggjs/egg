@@ -3,7 +3,7 @@ English | [简体中文](./CONTRIBUTING.zh-CN.md)
 # Contribution Guide
 
 If you have any comment or advice, please report your [issue](https://github.com/eggjs/egg/issues),
-or make any change as you wish and submit a [PR](https://github.com/eggjs/egg/pulls).
+or make any change as you wish and submit a [PR](https://github.com/eggjs/egg/pulls). For day-to-day workflows, consult the [Repository Guidelines](AGENTS.md).
 
 ## Reporting New Issues
 
