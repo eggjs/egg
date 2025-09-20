@@ -36,7 +36,7 @@ Then follow the prompts!
 You can also directly specify the project name and the template you want to use via additional command line options. For example, to scaffold a Egg.js + TypeScript project, run:
 
 ```bash
-# npm 7+, extra double-dash is needed:
+# npm 7+
 npm create egg@latest my-egg-app -- --template tegg
 
 # yarn
@@ -55,7 +55,7 @@ You can use `.` for the project name to scaffold in the current directory.
 
 ## Community Templates
 
-Check out Awesome Egg.js for [community maintained templates](https://github.com/eggjs/awesome-eggjs#templates) that include other tools or target different frameworks. You can use a tool like [degit](https://github.com/Rich-Harris/degit) to scaffold your project with one of the templates.
+Check out Awesome Egg.js for [community maintained templates](https://github.com/eggjs/awesome-egg#boilerplates) that include other tools or target different frameworks. You can use a tool like [degit](https://github.com/Rich-Harris/degit) to scaffold your project with one of the templates.
 
 ```bash
 npx degit user/project my-project
