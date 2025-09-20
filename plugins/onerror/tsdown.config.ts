@@ -7,4 +7,10 @@ export default defineConfig({
   exports: {
     devExports: true,
   },
+  copy: [
+    {
+      from: 'src/lib/onerror_page.mustache.html',
+      to: 'dist/lib/onerror_page.mustache.html',
+    },
+  ],
 });
