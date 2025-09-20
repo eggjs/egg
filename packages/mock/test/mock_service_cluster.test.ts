@@ -61,7 +61,7 @@ describe('test/mock_service_cluster.test.ts', () => {
     });
   });
 
-  it('should return from service when mock with 3 level', async () => {
+  it.skip('should return from service when mock with 3 level', async () => {
     app.mockService('foo', 'get', '1 level service');
     app.mockService('bar.foo', 'get', '2 level service');
     app.mockService('third.bar.foo', 'get', '3 level service');

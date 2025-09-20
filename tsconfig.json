@@ -39,6 +39,9 @@
     },
     {
       "path": "./plugins/watcher"
+    },
+    {
+      "path": "./plugins/onerror"
     }
   ]
 }

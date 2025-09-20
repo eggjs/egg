@@ -150,29 +150,40 @@ describe.skipIf(process.platform === 'win32')(
         // should access httpclient first
         assert(app.httpclient);
         assert.equal(app.config.httpclient.timeout, 3000);
+        // @ts-expect-error httpAgent has no type definition
         assert.equal(app.config.httpclient.httpAgent.timeout, 30000);
+        // @ts-expect-error httpsAgent has no type definition
         assert.equal(app.config.httpclient.httpsAgent.timeout, 30000);
       });
 
       it('should set request default global timeout to 10s', () => {
         // should access httpclient first
         assert(app.httpclient);
+        // @ts-expect-error request has no type definition
         assert.equal(app.config.httpclient.request.timeout, 10000);
       });
 
       it('should convert compatibility options to agent options', () => {
         // should access httpclient first
         assert(app.httpclient);
+        // @ts-expect-error httpAgent has no type definition
         assert(app.config.httpclient.httpAgent.freeSocketTimeout === 2000);
+        // @ts-expect-error httpsAgent has no type definition
         assert(app.config.httpclient.httpsAgent.freeSocketTimeout === 2000);
 
+        // @ts-expect-error httpAgent has no type definition
         assert(app.config.httpclient.httpAgent.maxSockets === 100);
+        // @ts-expect-error httpsAgent has no type definition
         assert(app.config.httpclient.httpsAgent.maxSockets === 100);
 
+        // @ts-expect-error httpAgent has no type definition
         assert(app.config.httpclient.httpAgent.maxFreeSockets === 100);
+        // @ts-expect-error httpsAgent has no type definition
         assert(app.config.httpclient.httpsAgent.maxFreeSockets === 100);
 
+        // @ts-expect-error httpAgent has no type definition
         assert(app.config.httpclient.httpAgent.keepAlive === false);
+        // @ts-expect-error httpsAgent has no type definition
         assert(app.config.httpclient.httpsAgent.keepAlive === false);
       });
     });

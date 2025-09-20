@@ -114,12 +114,14 @@
     "urllib": "catalog:",
     "utility": "catalog:"
   },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
   "devDependencies": {
     "@eggjs/tegg": "catalog:",
     "@eggjs/tegg-config": "catalog:",
     "@eggjs/tegg-controller-plugin": "catalog:",
     "@eggjs/tegg-plugin": "catalog:",
-    "@eggjs/tsconfig": "workspace:*",
     "@types/methods": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",

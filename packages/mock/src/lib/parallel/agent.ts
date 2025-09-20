@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Base } from 'sdk-base';
 import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
-import type { EggCore } from '@eggjs/core';
+import type { Agent as EggAgent } from 'egg';
 
 import { context } from '../context.ts';
 import { formatOptions } from '../format_options.ts';
@@ -21,7 +21,7 @@ export class MockAgent extends Base {
   [APP_INIT] = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
-  _instance: EggCore;
+  _instance: EggAgent;
 
   constructor(options: MockApplicationOptions) {
     super({ initMethod: '_init' });
@@ -52,7 +52,7 @@ export class MockAgent extends Base {
     this.options.clusterPort = await detectPort();
     process.env.CLUSTER_PORT = String(this.options.clusterPort);
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Agent }: { Agent: typeof EggCore } = await importModule(
+    const { Agent }: { Agent: typeof EggAgent } = await importModule(
       this.options.framework
     );
 

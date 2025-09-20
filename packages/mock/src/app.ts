@@ -1,8 +1,8 @@
-import { type ILifecycleBoot, EggCore } from '@eggjs/core';
+import { type ILifecycleBoot, Application } from 'egg';
 
 export default class Boot implements ILifecycleBoot {
-  #app: EggCore;
-  constructor(app: EggCore) {
+  #app: Application;
+  constructor(app: Application) {
     this.#app = app;
   }
 

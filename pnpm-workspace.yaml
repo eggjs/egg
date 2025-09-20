@@ -68,6 +68,7 @@ catalog:
   coffee: '5'
   content-disposition: ~0.5.4
   content-type: ^1.0.5
+  cookie: ^1.0.2
   cookie-parser: ^1.4.6
   cookies: ^0.9.1
   cpy: ^12.0.0
@@ -105,6 +106,7 @@ catalog:
   js-yaml: '4'
   koa-bodyparser: ^4.4.1
   koa-compose: ^4.1.0
+  koa-onerror: ^5.0.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
   lint-staged: ^16.1.6
@@ -113,6 +115,8 @@ catalog:
   mocha: 11.7.2
   mochawesome-with-mocha: 8.0.0
   multimatch: ^7.0.0
+  mustache: ^4.2.0
+  '@types/mustache': ^4.2.5
   nock: ^13.3.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
@@ -131,6 +135,8 @@ catalog:
   semver: ^7.7.2
   sendmessage: ^3.0.1
   spy: ^1.0.0
+  stack-trace: ^0.0.10
+  '@types/stack-trace': ^0.0.33
   statuses: ^2.0.1
   superagent: ^10.0.0
   terminal-link: ^5.0.0
