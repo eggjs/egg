@@ -277,8 +277,8 @@ catalogs:
       specifier: ^3.1.0
       version: 3.4.0
     globby:
-      specifier: ^11.0.2
-      version: 11.1.0
+      specifier: ^14.0.0
+      version: 14.1.0
     graceful:
       specifier: ^2.0.0
       version: 2.0.0
@@ -613,7 +613,7 @@ importers:
         version: 3.4.0
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 14.1.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1009,7 +1009,7 @@ importers:
         version: 3.4.0
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 14.1.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1306,7 +1306,7 @@ importers:
         version: 3.1.1(@swc/core@1.13.5)(@types/node@24.5.0)
       globby:
         specifier: 'catalog:'
-        version: 11.1.0
+        version: 14.1.0
       jest-changed-files:
         specifier: 'catalog:'
         version: 30.0.5

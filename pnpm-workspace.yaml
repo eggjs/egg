@@ -95,7 +95,7 @@ catalog:
   fresh: ~0.5.2
   gals: '1'
   get-ready: ^3.1.0
-  globby: ^11.0.2
+  globby: ^14.0.0
   graceful: ^2.0.0
   graceful-process: ^2.0.0
   http-errors: ^2.0.0
