@@ -46,25 +46,25 @@ describe('test/development.test.ts', () => {
     );
   });
 
-  it('should reload once when 2 file change', async () => {
-    if (process.env.CI) {
-      return;
+  it.skipIf(process.env.CI)(
+    'should reload once when 2 file change',
+    async () => {
+      const filepath = getFilepath('development/app/service/c.js');
+      const filepath1 = getFilepath('development/app/service/d.js');
+      await fs.writeFile(filepath, 'let c = 1;');
+      await fs.writeFile(filepath, 'let c = 2;');
+      // set a timeout for watcher's interval
+      await scheduler.wait(DELAY / 2);
+      await fs.writeFile(filepath1, 'let d = 1;');
+      await fs.writeFile(filepath1, 'let d = 2;');
+
+      await scheduler.wait(DELAY / 2);
+      await fs.rm(filepath, { force: true });
+      await fs.rm(filepath1, { force: true });
+
+      assert(count(app.stdout, 'reload worker') >= 3);
     }
-    const filepath = getFilepath('development/app/service/c.js');
-    const filepath1 = getFilepath('development/app/service/d.js');
-    await fs.writeFile(filepath, 'let c = 1;');
-    await fs.writeFile(filepath, 'let c = 2;');
-    // set a timeout for watcher's interval
-    await scheduler.wait(DELAY / 2);
-    await fs.writeFile(filepath1, 'let d = 1;');
-    await fs.writeFile(filepath1, 'let d = 2;');
-
-    await scheduler.wait(DELAY / 2);
-    await fs.rm(filepath, { force: true });
-    await fs.rm(filepath1, { force: true });
-
-    assert(count(app.stdout, 'reload worker') >= 3);
-  });
+  );
 });
 
 function count(str: string, match: string) {

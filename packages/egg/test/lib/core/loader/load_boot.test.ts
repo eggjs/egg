@@ -35,6 +35,7 @@ describe('test/lib/core/loader/load_boot.test.ts', () => {
         'serverDidReady',
         'beforeClose',
       ]);
+      // @ts-expect-error bootLog has no type definition
       assert.deepStrictEqual(app.agent.bootLog, [
         'configDidLoad',
         'didLoad',
@@ -76,6 +77,7 @@ describe('test/lib/core/loader/load_boot.test.ts', () => {
         'serverDidReady',
         'beforeClose',
       ]);
+      // @ts-expect-error bootLog has no type definition
       assert.deepStrictEqual(app.agent.bootLog, [
         'configDidLoad',
         'didLoad',
