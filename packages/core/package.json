@@ -44,6 +44,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/core",
   "dependencies": {
     "@eggjs/koa": "workspace:*",
     "@eggjs/router": "catalog:",

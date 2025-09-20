@@ -89,6 +89,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/mock",
   "keywords": [
     "egg",
     "mock"

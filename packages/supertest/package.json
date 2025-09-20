@@ -36,6 +36,7 @@
     "url": "git://github.com/eggjs/egg.git",
     "directory": "packages/supertest"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/supertest",
   "engines": {
     "node": ">= 20.19.0"
   },

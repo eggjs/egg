@@ -82,7 +82,7 @@
     "directory": "plugins/development"
   },
   "bugs": "https://github.com/eggjs/egg/issues",
-  "homepage": "https://github.com/eggjs/egg/tree/master/plugins/development#readme",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/development",
   "author": "jtyjty99999",
   "license": "MIT"
 }
