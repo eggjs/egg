@@ -117,7 +117,6 @@ catalog:
   multimatch: ^7.0.0
   mustache: ^4.2.0
   '@types/mustache': ^4.2.5
-  nock: ^13.3.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
   on-finished: ^2.4.1
