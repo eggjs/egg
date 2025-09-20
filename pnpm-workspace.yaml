@@ -151,3 +151,5 @@ catalog:
   utility: ^2.5.0
   vary: ^1.1.2
   vitest: 4.0.0-beta.11
+
+catalogMode: prefer
