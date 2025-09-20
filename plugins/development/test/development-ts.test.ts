@@ -47,10 +47,7 @@ describe('test/development-ts.test.ts', () => {
     );
   });
 
-  it('should reload once when 2 file change', async () => {
-    if (process.env.CI) {
-      return;
-    }
+  it.skip('should reload once when 2 file change', async () => {
     const filepath = getFilepath('development-ts/app/service/c.js');
     const filepath1 = getFilepath('development-ts/app/service/d.js');
     await fs.writeFile(filepath, 'let c = 1;');

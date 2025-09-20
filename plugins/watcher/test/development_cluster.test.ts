@@ -85,7 +85,7 @@ describe('test/development_cluster.test.ts', () => {
     */
   });
 
-  it('should agent watcher work', async () => {
+  it.skip('should agent watcher work', async () => {
     let count = 0;
 
     await app

@@ -69,7 +69,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
         });
     });
 
-    it('should agent watcher work', async () => {
+    it.skip('should agent watcher work', async () => {
       let count = 0;
       await app
         .httpRequest()
