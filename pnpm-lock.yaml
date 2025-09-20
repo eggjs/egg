@@ -120,6 +120,9 @@ catalogs:
     '@types/mustache':
       specifier: ^4.2.5
       version: 4.2.6
+    '@types/node':
+      specifier: '24'
+      version: 24.5.2
     '@types/on-finished':
       specifier: ^2.3.4
       version: 2.3.5
@@ -408,9 +411,6 @@ catalogs:
     tsd:
       specifier: ^0.33.0
       version: 0.33.0
-    tsdown:
-      specifier: ^0.15.0
-      version: 0.15.1
     type-is:
       specifier: ^2.0.0
       version: 2.0.1
@@ -577,7 +577,7 @@ importers:
         version: 2.3.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -671,7 +671,7 @@ importers:
         version: 3.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -834,7 +834,7 @@ importers:
         version: 0.33.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -852,7 +852,7 @@ importers:
         version: 1.15.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -973,7 +973,7 @@ importers:
         version: 4.0.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1061,7 +1061,7 @@ importers:
         version: 0.33.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1101,7 +1101,7 @@ importers:
         version: 4.21.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1137,7 +1137,7 @@ importers:
         version: 2.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1174,7 +1174,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1211,7 +1211,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1254,7 +1254,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -1373,7 +1373,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
+        version: 0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2)
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
@@ -9245,8 +9245,8 @@ packages:
   rndm@1.2.0:
     resolution: {integrity: sha512-fJhQQI5tLrQvYIYFpOnFinzv9dwmR7hRnUz1XqP3OJ1jIweTNOd6aTO4jwQSgcBSFUB+/KHJxuGneime+FdzOw==}
 
-  rolldown-plugin-dts@0.16.5:
-    resolution: {integrity: sha512-bOAfJ7Tc11xK/Uou7KWYha25/Sy80G0DZkhX8WMYx6l8PUalR+bvVzQNuEqXafpKEisZfUHQrkhS2gZG76Xntw==}
+  rolldown-plugin-dts@0.16.6:
+    resolution: {integrity: sha512-OPQKAft45efpjU3ppcI9GyRHAT0otTIdMv0gcoBlcR9B3QssZvTFH6zbT3Ij5x+7ymX5TCPyHb+VIkRYTJrTaA==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@ts-macro/tsc': ^0.3.6
@@ -10083,8 +10083,8 @@ packages:
     engines: {node: '>=14.16'}
     hasBin: true
 
-  tsdown@0.15.1:
-    resolution: {integrity: sha512-USTr2wS5OIyohR8Sp09rp5mXVwOX4YvVRqarS9I9jIhF+PqgtVSMXG4vBrHGY1OficNcLT5Z75pSoxd2uU+BYg==}
+  tsdown@0.15.3:
+    resolution: {integrity: sha512-51p2z1F3GBAG9+9J+BNo6rYCvajZ9TAGtFMq/hCwjhvxFbzJ/Py4SHmLNltbraR4QFepW694cZwab33Nb7H2Ew==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -20083,7 +20083,7 @@ snapshots:
 
   rndm@1.2.0: {}
 
-  rolldown-plugin-dts@0.16.5(oxc-resolver@11.7.2)(rolldown@1.0.0-beta.38)(typescript@5.9.2):
+  rolldown-plugin-dts@0.16.6(oxc-resolver@11.7.2)(rolldown@1.0.0-beta.38)(typescript@5.9.2):
     dependencies:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.4
@@ -21107,7 +21107,7 @@ snapshots:
       path-exists: 4.0.0
       read-pkg-up: 7.0.1
 
-  tsdown@0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2):
+  tsdown@0.15.3(oxc-resolver@11.7.2)(typescript@5.9.2):
     dependencies:
       ansis: 4.1.0
       cac: 6.7.14
@@ -21117,7 +21117,7 @@ snapshots:
       empathic: 2.0.0
       hookable: 5.5.3
       rolldown: 1.0.0-beta.38
-      rolldown-plugin-dts: 0.16.5(oxc-resolver@11.7.2)(rolldown@1.0.0-beta.38)(typescript@5.9.2)
+      rolldown-plugin-dts: 0.16.6(oxc-resolver@11.7.2)(rolldown@1.0.0-beta.38)(typescript@5.9.2)
       semver: 7.7.2
       tinyexec: 1.0.1
       tinyglobby: 0.2.15
