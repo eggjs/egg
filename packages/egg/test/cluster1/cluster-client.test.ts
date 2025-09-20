@@ -16,6 +16,7 @@ describe('test/cluster1/cluster-client.test.ts', () => {
     });
     afterAll(async () => {
       await app.close();
+      // @ts-expect-error registryClient no type definition
       const agentInnerClient = app.agent.registryClient[innerClient];
       assert.equal(agentInnerClient._realClient.closed, true);
       await mm.restore();
@@ -57,6 +58,7 @@ describe('test/cluster1/cluster-client.test.ts', () => {
     });
     afterAll(async () => {
       await app.close();
+      // @ts-expect-error registryClient no type definition
       const agentInnerClient = app.agent.registryClient[innerClient];
       assert.equal(agentInnerClient._realClient.closed, true);
       mm.restore();

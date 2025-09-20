@@ -6,16 +6,26 @@ import assert from 'node:assert';
 import mergeDescriptors from 'merge-descriptors';
 import { isAsyncFunction, isObject } from 'is-type-of';
 import { mock, restore } from 'mm';
-import { Transport, Logger, type LoggerLevel, type LoggerMeta } from 'egg-logger';
+import {
+  Transport,
+  Logger,
+  type LoggerLevel,
+  type LoggerMeta,
+} from 'egg-logger';
 import { type Context, Application } from 'egg';
+import type { MockAgent } from 'urllib';
 
 import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
 import {
-  createMockHttpClient, type MockResultFunction,
+  createMockHttpClient,
+  type MockResultFunction,
   type MockResultOptions,
   type MockHttpClientMethod,
 } from '../../lib/mock_httpclient.ts';
-import { request as supertestRequest, EggTestRequest } from '../../lib/supertest.ts';
+import {
+  request as supertestRequest,
+  EggTestRequest,
+} from '../../lib/supertest.ts';
 import { type MockOptions } from '../../lib/types.ts';
 
 const debug = debuglog('egg/mock/app/extend/application');
@@ -49,6 +59,9 @@ export default abstract class ApplicationUnittest extends Application {
   declare options: MockOptions & Application['options'];
   _mockHttpClient?: MockHttpClientMethod;
 
+  // agent will always be defined
+  declare agent: NonNullable<Application['agent']>;
+
   /**
    * mock Context
    * @function App#mockContext
@@ -69,7 +82,10 @@ export default abstract class ApplicationUnittest extends Application {
    * };
    * ```
    */
-  mockContext(data?: MockContextData, options?: MockContextOptions): MockContext {
+  mockContext(
+    data?: MockContextData,
+    options?: MockContextOptions
+  ): MockContext {
     data = data ?? {};
     function mockRequest(req: IncomingMessage) {
       for (const key in data?.headers) {
@@ -82,7 +98,10 @@ export default abstract class ApplicationUnittest extends Application {
     const mockCtxStorage = this.options.mockCtxStorage ?? true;
     options = Object.assign({ mockCtxStorage }, options);
 
-    if ('_customMockContext' in this && typeof this._customMockContext === 'function') {
+    if (
+      '_customMockContext' in this &&
+      typeof this._customMockContext === 'function'
+    ) {
       this._customMockContext(data);
     }
 
@@ -108,7 +127,10 @@ export default abstract class ApplicationUnittest extends Application {
     return ctx as MockContext;
   }
 
-  async mockContextScope(fn: (ctx?: MockContext) => Promise<any>, data?: MockContextData) {
+  async mockContextScope(
+    fn: (ctx?: MockContext) => Promise<any>,
+    data?: MockContextData
+  ) {
     const ctx = this.mockContext(data, {
       mockCtxStorage: false,
       reuseCtxStorage: false,
@@ -166,7 +188,11 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String} methodName - method
    * @param {Error} [err] - error information
    */
-  mockServiceError(service: string | any, methodName: string, err?: string | Error) {
+  mockServiceError(
+    service: string | any,
+    methodName: string,
+    err?: string | Error
+  ) {
     if (typeof err === 'string') {
       err = new Error(err);
     }
@@ -180,13 +206,18 @@ export default abstract class ApplicationUnittest extends Application {
 
   _mockFn(obj: any, name: string, data: any) {
     const origin = obj[name];
-    assert(typeof origin === 'function', `property ${name} in original object must be function`);
+    assert(
+      typeof origin === 'function',
+      `property ${name} in original object must be function`
+    );
 
     // keep origin properties' type to support mock multi times
     if (!obj[ORIGIN_TYPES]) obj[ORIGIN_TYPES] = {};
     let type = obj[ORIGIN_TYPES][name];
     if (!type) {
-      type = obj[ORIGIN_TYPES][name] = isAsyncFunction(origin) ? 'async' : 'sync';
+      type = obj[ORIGIN_TYPES][name] = isAsyncFunction(origin)
+        ? 'async'
+        : 'sync';
     }
 
     if (typeof data === 'function') {
@@ -194,7 +225,7 @@ export default abstract class ApplicationUnittest extends Application {
       // if original is async function
       // but the mock function is normal function, need to change it return a promise
       if (type === 'async' && !isAsyncFunction(fn)) {
-        mock(obj, name, function(this: any, ...args: any[]) {
+        mock(obj, name, function (this: any, ...args: any[]) {
           return new Promise(resolve => {
             resolve(fn.apply(this, args));
           });
@@ -267,10 +298,10 @@ export default abstract class ApplicationUnittest extends Application {
       return this;
     }
     const createContext = this.createContext;
-    mock(this, 'createContext', function(this: any, req: any, res: any) {
+    mock(this, 'createContext', function (this: any, req: any, res: any) {
       const ctx = createContext.call(this, req, res);
       const getCookie = ctx.cookies.get;
-      mock(ctx.cookies, 'get', function(this: any, key: string, opts: any) {
+      mock(ctx.cookies, 'get', function (this: any, key: string, opts: any) {
         if (cookies[key]) {
           return cookies[key];
         }
@@ -290,7 +321,7 @@ export default abstract class ApplicationUnittest extends Application {
       return this;
     }
     const getHeader = this.request.get;
-    mock(this.request, 'get', function(this: unknown, field: string) {
+    mock(this.request, 'get', function (this: unknown, field: string) {
       const value = findHeaders(headers, field);
       if (value) return value;
       return getHeader.call(this, field);
@@ -314,7 +345,11 @@ export default abstract class ApplicationUnittest extends Application {
    * @alias mockHttpClient
    * @function App#mockHttpclient
    */
-  mockHttpclient(mockUrl: string | RegExp, mockMethod: string | string[] | MockResultOptions | MockResultFunction, mockResult?: MockResultOptions | MockResultFunction | string) {
+  mockHttpclient(
+    mockUrl: string | RegExp,
+    mockMethod: string | string[] | MockResultOptions | MockResultFunction,
+    mockResult?: MockResultOptions | MockResultFunction | string
+  ) {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
 
@@ -322,7 +357,11 @@ export default abstract class ApplicationUnittest extends Application {
    * mock httpclient
    * @function App#mockHttpClient
    */
-  mockHttpClient(mockUrl: string | RegExp, mockMethod: string | string[] | MockResultOptions | MockResultFunction, mockResult?: MockResultOptions | MockResultFunction | string) {
+  mockHttpClient(
+    mockUrl: string | RegExp,
+    mockMethod: string | string[] | MockResultOptions | MockResultFunction,
+    mockResult?: MockResultOptions | MockResultFunction | string
+  ) {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);
     }
@@ -333,8 +372,14 @@ export default abstract class ApplicationUnittest extends Application {
   /**
    * @deprecated Please use app.mockHttpClient instead of app.mockUrllib
    */
-  mockUrllib(mockUrl: string | RegExp, mockMethod: string | string[] | MockResultOptions | MockResultFunction, mockResult?: MockResultOptions | MockResultFunction | string) {
-    this.deprecate('[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib');
+  mockUrllib(
+    mockUrl: string | RegExp,
+    mockMethod: string | string[] | MockResultOptions | MockResultFunction,
+    mockResult?: MockResultOptions | MockResultFunction | string
+  ) {
+    this.deprecate(
+      '[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib'
+    );
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
 
@@ -342,7 +387,7 @@ export default abstract class ApplicationUnittest extends Application {
    * get mock httpclient agent
    * @function App#mockHttpclientAgent
    */
-  mockAgent() {
+  mockAgent(): MockAgent {
     return getMockAgent(this);
   }
 
@@ -416,11 +461,15 @@ export default abstract class ApplicationUnittest extends Application {
     mock(logger, 'log', (level: LoggerLevel, args: any[], meta: LoggerMeta) => {
       const message = transport.log(level, args, meta);
       mockLogs.push(message);
-      log.apply(logger, [ level, args, meta ]);
+      log.apply(logger, [level, args, meta]);
     });
   }
 
-  __checkExpectLog(expectOrNot: boolean, str: string | RegExp, logger?: string | Logger) {
+  __checkExpectLog(
+    expectOrNot: boolean,
+    str: string | RegExp,
+    logger?: string | Logger
+  ) {
     logger = logger || this.logger;
     if (typeof logger === 'string') {
       logger = this.getLogger(logger);
@@ -442,11 +491,15 @@ export default abstract class ApplicationUnittest extends Application {
       type = 'String';
     }
     if (expectOrNot) {
-      assert(match,
-        `Can't find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`);
+      assert(
+        match,
+        `Can't find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`
+      );
     } else {
-      assert(!match,
-        `Find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`);
+      assert(
+        !match,
+        `Find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`
+      );
     }
   }
 

@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
 import {
   createApp,
   restore,
@@ -11,7 +13,7 @@ import {
   getFilepath,
   singleProcessApp,
   startLocalServer,
-} from '../../utils.js';
+} from '../../utils.ts';
 
 describe('test/app/extend/context.test.ts', () => {
   afterEach(restore);

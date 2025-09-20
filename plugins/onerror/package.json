@@ -51,7 +51,6 @@
     "@types/node": "catalog:",
     "@types/stack-trace": "catalog:",
     "egg": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
@@ -59,9 +58,7 @@
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
-    "pretest": "pnpm run clean",
     "test": "vitest run",
-    "clean": "rimraf dist",
     "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },

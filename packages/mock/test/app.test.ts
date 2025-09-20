@@ -21,6 +21,7 @@ describe.sequential('test/app.test.ts', () => {
     });
     await app.ready();
     assert.equal(app.agent, app._agent);
+    // @ts-expect-error app has no type definition
     assert.equal(app.agent.app, app._app);
   });
 

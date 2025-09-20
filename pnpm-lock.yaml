@@ -1212,9 +1212,6 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.15.1(oxc-resolver@11.7.2)(typescript@5.9.2)
