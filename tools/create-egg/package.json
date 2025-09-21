@@ -1,6 +1,6 @@
 {
   "name": "create-egg",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -22,8 +22,6 @@
   },
   "scripts": {
     "test": "vitest run",
-    "cov": "vitest run --coverage",
-    "ci": "pnpm run cov",
     "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },
