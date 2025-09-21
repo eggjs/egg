@@ -2,7 +2,6 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    exclude: ['tools/egg-bin/**'],
     projects: [
       'packages/*',
       'plugins/*',
