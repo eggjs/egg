@@ -1,6 +1,7 @@
 {
   "name": "{{name}}",
   "description": "Hello Egg.js",
+  "type": "module",
   "private": true,
   "egg": {
     "typescript": true
@@ -22,14 +23,6 @@
   },
   "dependencies": {
     "@eggjs/scripts": "^4.0.0",
-    "@eggjs/tegg": "^3.5.2",
-    "@eggjs/tegg-aop-plugin": "^3.5.2",
-    "@eggjs/tegg-config": "^3.5.2",
-    "@eggjs/tegg-controller-plugin": "^3.5.2",
-    "@eggjs/tegg-eventbus-plugin": "^3.5.2",
-    "@eggjs/tegg-plugin": "^3.5.2",
-    "@eggjs/tegg-schedule-plugin": "^3.5.2",
-    "@eggjs/tracer": "^3.0.0",
     "egg": "beta"
   },
   "devDependencies": {
