@@ -96,7 +96,7 @@ catalog:
   escape-html: ^1.0.3
   eslint-config-egg: '14'
   execa: ^9.6.0
-  express: ^4.21.2
+  express: ^5.0.0
   formstream: ^1.5.1
   fresh: ~0.5.2
   gals: '1'
