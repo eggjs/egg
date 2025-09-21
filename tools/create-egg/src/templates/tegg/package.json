@@ -9,6 +9,7 @@
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
     "stop": "eggctl stop --title=egg-server-{{name}}",
     "dev": "egg-bin dev",
+    "test:local": "vitest run",
     "pretest": "npm run clean && npm run lint -- --fix",
     "test": "vitest run",
     "preci": "npm run clean && npm run lint",
