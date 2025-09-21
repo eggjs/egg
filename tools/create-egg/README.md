@@ -8,6 +8,8 @@
 [download-image]: https://img.shields.io/npm/dm/create-egg.svg?style=flat-square
 [download-url]: https://npmjs.org/package/create-egg
 
+> Fork and refactor from [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite)
+
 ## Scaffolding Your First Egg.js Project
 
 > **Compatibility Note:**

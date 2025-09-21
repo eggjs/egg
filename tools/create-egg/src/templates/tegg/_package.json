@@ -1,0 +1,54 @@
+{
+  "name": "{{name}}",
+  "description": "{{description}}",
+  "private": true,
+  "egg": {
+    "typescript": true
+  },
+  "scripts": {
+    "start": "eggctl start --daemon --title=egg-server-{{name}}",
+    "stop": "eggctl stop --title=egg-server-{{name}}",
+    "dev": "egg-bin dev",
+    "pretest": "npm run clean && npm run lint -- --fix",
+    "test": "vitest run",
+    "preci": "npm run clean && npm run lint",
+    "ci": "vitest run --coverage",
+    "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
+    "lint": "oxlint --type-aware",
+    "tsc": "tsc",
+    "clean": "tsc -b --clean",
+    "prepublishOnly": "npm run clean && npm run tsc"
+  },
+  "dependencies": {
+    "@eggjs/tegg": "^3.5.2",
+    "@eggjs/tegg-aop-plugin": "^3.5.2",
+    "@eggjs/tegg-config": "^3.5.2",
+    "@eggjs/tegg-controller-plugin": "^3.5.2",
+    "@eggjs/tegg-eventbus-plugin": "^3.5.2",
+    "@eggjs/tegg-plugin": "^3.5.2",
+    "@eggjs/tegg-schedule-plugin": "^3.5.2",
+    "egg": "beta",
+    "@eggjs/scripts": "^4.0.0",
+    "@eggjs/tracer": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "10",
+    "@types/node": "22",
+    "@eggjs/tsconfig": "beta",
+    "@eggjs/bin": "beta",
+    "@eggjs/mock": "beta",
+    "oxlint": "1",
+    "typescript": "5",
+    "vitest": "beta"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "packageManager": "pnpm@10.17.0",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "{{author}}",
+  "license": "MIT"
+}

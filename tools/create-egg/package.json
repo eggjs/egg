@@ -2,34 +2,30 @@
   "name": "create-egg",
   "version": "3.0.0",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
+      "./package.json": "./package.json"
+    }
   },
-  "description": "Alias for egg-init, so you could use `npm init egg showcase`.",
-  "type": "commonjs",
-  "dependencies": {
-    "egg-init": "3"
-  },
+  "description": "Scaffolding Your First Egg.js Project",
+  "type": "module",
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
-    "coffee": "catalog:",
-    "eslint-config-egg": "catalog:",
-    "mocha": "catalog:",
-    "c8": "catalog:"
+    "@types/node": "catalog:",
+    "execa": "catalog:",
+    "tsdown": "catalog:"
   },
-  "bin": "./bin/create-egg.js",
   "engines": {
     "node": ">=20.19.0"
   },
   "scripts": {
-    "test": "npm run lint -- --fix && npm run test-local",
-    "test-local": "mocha test/**/*.test.js",
-    "cov": "c8 npm run test-local",
-    "ci": "npm run lint && npm run cov"
+    "test": "vitest run",
+    "cov": "vitest run --coverage",
+    "ci": "pnpm run cov",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
   },
-  "eslintIgnore": [
-    "coverage",
-    "dist"
-  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:eggjs/egg.git",
@@ -40,8 +36,19 @@
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
   "files": [
-    "bin"
+    "dist"
   ],
   "author": "TZ <atian25@qq.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cli": "./src/cli.ts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "create-egg": "./dist/cli.js"
+  }
 }
