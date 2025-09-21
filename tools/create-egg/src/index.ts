@@ -6,7 +6,7 @@ import mri from 'mri';
 import * as prompts from '@clack/prompts';
 import colors from 'picocolors';
 
-const { blueBright, cyan, green, greenBright, magenta, yellow } = colors;
+const { blueBright, green, greenBright, magenta, yellow } = colors;
 
 const argv = mri<{
   template?: string;
@@ -31,9 +31,7 @@ Options:
 
 Available templates:
 ${green('tegg')}                         egg@4 with tegg module
-${yellow('simple')}                       egg@4 with vanilla TypeScript
 ${magenta('egg3-tegg')}                    egg@3 with tegg module
-${cyan('egg3-simple')}                  egg@3 with vanilla TypeScript
 ${yellow('egg3-simple-js')}               egg@3 with vanilla JavaScript
 `;
 
@@ -52,19 +50,9 @@ const TEMPLATES: Template[] = [
     color: green,
   },
   {
-    name: 'simple',
-    display: 'Simple starter, egg@4 with vanilla TypeScript',
-    color: yellow,
-  },
-  {
     name: 'egg3-tegg',
     display: 'Tegg starter, egg@3 with tegg module',
     color: magenta,
-  },
-  {
-    name: 'egg3-simple',
-    display: 'Simple starter, egg@3 with vanilla TypeScript',
-    color: cyan,
   },
   {
     name: 'egg3-simple-js',
