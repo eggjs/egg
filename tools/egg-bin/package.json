@@ -17,6 +17,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/egg-bin",
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
   "engines": {
     "node": ">= 20.19.0"

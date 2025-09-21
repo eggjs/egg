@@ -1,6 +1,5 @@
 {
   "name": "@eggjs/site",
-  "version": "1.0.0",
   "private": true,
   "description": "Eggjs documentation site",
   "dependencies": {

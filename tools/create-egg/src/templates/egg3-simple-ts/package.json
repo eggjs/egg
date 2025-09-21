@@ -1,0 +1,45 @@
+{
+  "name": "{{name}}",
+  "version": "1.0.0",
+  "description": "hello Egg.js",
+  "private": true,
+  "egg": {
+    "typescript": true,
+    "declarations": true
+  },
+  "scripts": {
+    "start": "egg-scripts start --daemon --title=egg-server-{{name}}",
+    "stop": "egg-scripts stop --title=egg-server-{{name}}",
+    "dev": "egg-bin dev",
+    "test-local": "egg-bin test",
+    "test": "npm run lint -- --fix && npm run test-local",
+    "cov": "egg-bin cov",
+    "tsc": "ets && tsc -p tsconfig.json",
+    "ci": "npm run lint && npm run cov && npm run tsc",
+    "lint": "eslint . --ext .ts --resolve-plugins-relative-to .",
+    "clean": "ets clean"
+  },
+  "dependencies": {
+    "egg": "^3.31.0",
+    "egg-scripts": "3"
+  },
+  "devDependencies": {
+    "@types/mocha": "10",
+    "@types/node": "24",
+    "@eggjs/tsconfig": "1",
+    "egg-bin": "6",
+    "egg-mock": "5",
+    "eslint": "8",
+    "eslint-config-egg": "13",
+    "typescript": "5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Author Name <author.name@mail.com>",
+  "license": "MIT"
+}

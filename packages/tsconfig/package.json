@@ -19,6 +19,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/tsconfig",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eggjs/egg.git",

@@ -21,7 +21,7 @@
       "jsonp"
     ]
   },
-  "homepage": "https://github.com/eggjs/egg/tree/master/plugins/onerror#readme",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/onerror",
   "repository": {
     "type": "git",
     "url": "git://github.com/eggjs/egg.git",

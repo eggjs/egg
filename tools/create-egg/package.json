@@ -1,0 +1,59 @@
+{
+  "name": "create-egg",
+  "version": "4.0.0",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./cli": "./dist/cli.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "Scaffolding Your First Egg.js Project",
+  "type": "module",
+  "devDependencies": {
+    "@types/cross-spawn": "catalog:",
+    "@types/node": "catalog:",
+    "execa": "catalog:",
+    "tsdown": "catalog:"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tools/create-egg"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/create-egg",
+  "files": [
+    "dist"
+  ],
+  "author": "TZ <atian25@qq.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cli": "./src/cli.ts",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "create-egg": "./dist/cli.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "catalog:",
+    "cross-spawn": "catalog:",
+    "mri": "catalog:",
+    "picocolors": "catalog:"
+  }
+}

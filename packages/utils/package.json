@@ -40,6 +40,7 @@
     "url": "git://github.com/eggjs/egg.git",
     "directory": "packages/utils"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/utils",
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {

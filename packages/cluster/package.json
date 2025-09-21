@@ -42,6 +42,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cluster",
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@fengmk2/ps-tree": "catalog:",

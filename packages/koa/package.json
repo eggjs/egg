@@ -35,6 +35,7 @@
     "url": "git://github.com/eggjs/egg.git",
     "directory": "packages/koa"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa",
   "keywords": [
     "web",
     "app",

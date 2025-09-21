@@ -182,6 +182,7 @@
     "url": "git://github.com/eggjs/egg.git",
     "directory": "packages/egg"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/egg",
   "license": "MIT",
   "egg": {
     "framework": true
