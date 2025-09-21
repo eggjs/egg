@@ -35,7 +35,7 @@
   "devDependencies": {
     "egg-bin": "^6.13.0",
     "egg-mock": "^5.15.2",
-    "@eggjs/tsconfig": "1",
+    "@eggjs/tsconfig": "3",
     "@types/mocha": "10",
     "@types/node": "24",
     "oxlint": "1",

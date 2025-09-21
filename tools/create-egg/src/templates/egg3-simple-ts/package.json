@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/mocha": "10",
     "@types/node": "24",
-    "@eggjs/tsconfig": "1",
+    "@eggjs/tsconfig": "3",
     "egg-bin": "6",
     "egg-mock": "5",
     "eslint": "8",
