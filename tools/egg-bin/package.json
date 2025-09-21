@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/bin",
-  "version": "7.3.1-beta.6",
+  "version": "7.3.1-beta.7",
   "publishConfig": {
     "access": "public",
     "exports": {
