@@ -1,6 +1,6 @@
 {
   "name": "{{name}}",
-  "description": "{{description}}",
+  "description": "Hello Egg.js",
   "private": true,
   "egg": {
     "typescript": true
@@ -10,9 +10,9 @@
     "stop": "eggctl stop --title=egg-server-{{name}}",
     "dev": "egg-bin dev",
     "pretest": "npm run clean && npm run lint -- --fix",
-    "test": "vitest run",
+    "test": "egg-bin test",
     "preci": "npm run clean && npm run lint",
-    "ci": "vitest run --coverage",
+    "ci": "egg-bin cov",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
     "tsc": "tsc",
@@ -20,6 +20,7 @@
     "prepublishOnly": "npm run clean && npm run tsc"
   },
   "dependencies": {
+    "egg-scripts": "^3.1.0",
     "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-aop-plugin": "^3.5.2",
     "@eggjs/tegg-config": "^3.5.2",
@@ -27,28 +28,31 @@
     "@eggjs/tegg-eventbus-plugin": "^3.5.2",
     "@eggjs/tegg-plugin": "^3.5.2",
     "@eggjs/tegg-schedule-plugin": "^3.5.2",
-    "egg": "beta",
-    "@eggjs/scripts": "^4.0.0",
-    "@eggjs/tracer": "^3.0.0"
+    "egg-scripts": "^2.17.0",
+    "egg-tracer": "^2.0.0",
+    "egg": "^3.31.0"
   },
   "devDependencies": {
+    "egg-bin": "^6.13.0",
+    "egg-mock": "^5.15.2",
+    "@eggjs/tsconfig": "1",
     "@types/mocha": "10",
-    "@types/node": "22",
-    "@eggjs/tsconfig": "beta",
-    "@eggjs/bin": "beta",
-    "@eggjs/mock": "beta",
+    "@types/node": "24",
     "oxlint": "1",
-    "typescript": "5",
-    "vitest": "beta"
+    "oxlint-tsgolint": "^0.2.0",
+    "typescript": "5"
   },
   "engines": {
     "node": ">=20.19.0"
   },
-  "packageManager": "pnpm@10.17.0",
+  "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
+  "bugs": {
+    "url": "https://github.com/YOUR_USERNAME/YOUR_REPO/issues"
+  },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/YOUR_USERNAME/YOUR_REPO.git"
   },
-  "author": "{{author}}",
+  "author": "Author Name <author.name@mail.com>",
   "license": "MIT"
 }

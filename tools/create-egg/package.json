@@ -12,6 +12,7 @@
   "description": "Scaffolding Your First Egg.js Project",
   "type": "module",
   "devDependencies": {
+    "@types/cross-spawn": "catalog:",
     "@types/node": "catalog:",
     "execa": "catalog:",
     "tsdown": "catalog:"
@@ -50,5 +51,11 @@
   },
   "bin": {
     "create-egg": "./dist/cli.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "catalog:",
+    "cross-spawn": "catalog:",
+    "mri": "catalog:",
+    "picocolors": "catalog:"
   }
 }

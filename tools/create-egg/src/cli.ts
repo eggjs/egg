@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { createEgg } from './index.ts';
+import { init } from './index.ts';
 
-createEgg().catch(err => {
+init().catch(err => {
   console.error('create egg failed', err);
   process.exit(1);
 });

@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@clack/prompts':
+      specifier: ^0.11.0
+      version: 0.11.0
     '@eggjs/cookies':
       specifier: ^3.1.0
       version: 3.1.0
@@ -84,6 +87,9 @@ catalogs:
     '@types/cookies':
       specifier: ^0.9.0
       version: 0.9.1
+    '@types/cross-spawn':
+      specifier: ^6.0.6
+      version: 6.0.6
     '@types/destroy':
       specifier: ^1.0.3
       version: 1.0.3
@@ -216,6 +222,9 @@ catalogs:
     cross-env:
       specifier: ^10.0.0
       version: 10.0.0
+    cross-spawn:
+      specifier: ^7.0.6
+      version: 7.0.6
     debounce:
       specifier: ^2.2.0
       version: 2.2.0
@@ -336,6 +345,9 @@ catalogs:
     mochawesome-with-mocha:
       specifier: 8.0.0
       version: 8.0.0
+    mri:
+      specifier: ^1.2.0
+      version: 1.2.0
     multimatch:
       specifier: ^7.0.0
       version: 7.0.0
@@ -369,6 +381,9 @@ catalogs:
     performance-ms:
       specifier: ^1.1.0
       version: 1.1.0
+    picocolors:
+      specifier: ^1.1.1
+      version: 1.1.1
     prettier:
       specifier: ^3.6.2
       version: 3.6.2
@@ -1282,7 +1297,23 @@ importers:
         version: 3.6.2
 
   tools/create-egg:
+    dependencies:
+      '@clack/prompts':
+        specifier: 'catalog:'
+        version: 0.11.0
+      cross-spawn:
+        specifier: 'catalog:'
+        version: 7.0.6
+      mri:
+        specifier: 'catalog:'
+        version: 1.2.0
+      picocolors:
+        specifier: 'catalog:'
+        version: 1.1.1
     devDependencies:
+      '@types/cross-spawn':
+        specifier: 'catalog:'
+        version: 6.0.6
       '@types/node':
         specifier: 'catalog:'
         version: 24.5.2
@@ -1611,6 +1642,12 @@ packages:
 
   '@bloomberg/record-tuple-polyfill@0.0.4':
     resolution: {integrity: sha512-h0OYmPR3A5Dfbetra/GzxBAzQk8sH7LhRkRUTdagX6nrtlUgJGYCTv4bBK33jsTQw9HDd8PE2x1Ma+iRKEDUsw==}
+
+  '@clack/core@0.5.0':
+    resolution: {integrity: sha512-p3y0FIOwaYRUPRcMO7+dlmLh8PSRcrjuTndsiA0WAFbWES0mLZlrjVoBRZ9DzkPFJZG6KGkJmoEAY0ZcVWTkow==}
+
+  '@clack/prompts@0.11.0':
+    resolution: {integrity: sha512-pMN5FcrEw9hUkZA4f+zLlzivQSeQf5dRGJjSUbvVYDLvpKCdQx5OaknvKzgbtXOizhP+SJJJjqEbOe55uKKfAw==}
 
   '@cnpmjs/muk-prop@1.1.1':
     resolution: {integrity: sha512-ZZqkz6pZKQZbO1JusG/HUZ7xNRtf86XevYNG+O3vUVNOlsxrNT0O9A1eVcJbN36PFxjhKUY+WMmoYtKJhHrpVA==}
@@ -3564,6 +3601,9 @@ packages:
 
   '@types/cookies@0.9.1':
     resolution: {integrity: sha512-E/DPgzifH4sM1UMadJMWd6mO2jOd4g1Ejwzx8/uRCDpJis1IrlyQEcGAYEomtAqRYmD5ORbNXMeI9U0RiVGZbg==}
+
+  '@types/cross-spawn@6.0.6':
+    resolution: {integrity: sha512-fXRhhUkG4H3TQk5dBhQ7m/JDdSNHKwR2BBia62lhwEIq9xGiQKLxd6LymNhn47SjXhsUEPmxi+PKw2OkW4LLjA==}
 
   '@types/dargs@5.1.0':
     resolution: {integrity: sha512-2cXlO8pz13kVYMp6Zgr8Z5DACbaGfoBp7svqZqPGcO+qG3LQLWdB5BzPPASj+UI447XxGmFHi6KjLgUB0fzucQ==}
@@ -9573,6 +9613,9 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
+  sisteransi@1.0.5:
+    resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
   sitemap@7.1.2:
     resolution: {integrity: sha512-ARCqzHJ0p4gWt+j7NlU5eDlIO9+Rkr/JhPFZKKQ1l5GCus7rJH4UdrlVAh0xC/gDS/Qir2UMxqYNHtsKr2rpCw==}
     engines: {node: '>=12.0.0', npm: '>=5.6.0'}
@@ -11067,6 +11110,17 @@ snapshots:
   '@bcoe/v8-coverage@1.0.2': {}
 
   '@bloomberg/record-tuple-polyfill@0.0.4': {}
+
+  '@clack/core@0.5.0':
+    dependencies:
+      picocolors: 1.1.1
+      sisteransi: 1.0.5
+
+  '@clack/prompts@0.11.0':
+    dependencies:
+      '@clack/core': 0.5.0
+      picocolors: 1.1.1
+      sisteransi: 1.0.5
 
   '@cnpmjs/muk-prop@1.1.1': {}
 
@@ -12992,6 +13046,10 @@ snapshots:
       '@types/connect': 3.4.38
       '@types/express': 5.0.3
       '@types/keygrip': 1.0.6
+      '@types/node': 24.5.2
+
+  '@types/cross-spawn@6.0.6':
+    dependencies:
       '@types/node': 24.5.2
 
   '@types/dargs@5.1.0': {}
@@ -20538,6 +20596,8 @@ snapshots:
       '@polka/url': 1.0.0-next.29
       mrmime: 2.0.1
       totalist: 3.0.1
+
+  sisteransi@1.0.5: {}
 
   sitemap@7.1.2:
     dependencies:

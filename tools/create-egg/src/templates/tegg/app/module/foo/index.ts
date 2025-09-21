@@ -1,1 +1,1 @@
-export { HelloService } from './service/HelloService';
+export { HelloService } from './service/HelloService.ts';
