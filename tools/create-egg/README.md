@@ -51,7 +51,8 @@ pnpm create egg my-egg-app --template tegg
 Currently supported template presets include:
 
 - `tegg`
-- `simple`
+- `egg3-tegg`
+- `egg3-simple-js`
 
 You can use `.` for the project name to scaffold in the current directory.
 
