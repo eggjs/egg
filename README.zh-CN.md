@@ -9,7 +9,7 @@
 [![NPM download](https://img.shields.io/npm/dm/egg.svg?style=flat-square)](https://npmjs.org/package/egg)
 [![Node.js Version](https://img.shields.io/node/v/egg.svg?style=flat)](https://nodejs.org/en/download/)
 
-[![Continuous Integration](https://github.com/eggjs/egg/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg/actions?query=branch%3Amaster)
+[![Continuous Integration](https://github.com/eggjs/egg/actions/workflows/ci.yml/badge.svg)](https://github.com/eggjs/egg/actions?query=branch%3Amaster)
 [![Test coverage](https://img.shields.io/codecov/c/github/eggjs/egg.svg?style=flat-square)](https://codecov.io/gh/eggjs/egg)
 [![Known Vulnerabilities](https://snyk.io/test/npm/egg/badge.svg?style=flat-square)](https://snyk.io/test/npm/egg)
 [![Open Collective backers and sponsors](https://img.shields.io/opencollective/all/eggjs?style=flat-square)](https://opencollective.com/eggjs)
