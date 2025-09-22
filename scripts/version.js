@@ -22,15 +22,7 @@ if (prereleaseArg) {
   prereleaseTag = prereleaseArg.split('=')[1];
 }
 
-const validVersionTypes = [
-  'major',
-  'minor',
-  'patch',
-  'prerelease',
-  'prepatch',
-  'preminor',
-  'premajor',
-];
+const validVersionTypes = ['major', 'minor', 'patch', 'prerelease', 'prepatch', 'preminor', 'premajor'];
 const validPrereleaseTags = ['alpha', 'beta', 'rc'];
 
 if (!validVersionTypes.includes(versionType)) {
@@ -40,13 +32,8 @@ if (!validVersionTypes.includes(versionType)) {
   process.exit(1);
 }
 
-if (
-  versionType.includes('pre') &&
-  !validPrereleaseTags.includes(prereleaseTag)
-) {
-  console.error(
-    `Invalid prerelease tag: ${prereleaseTag}. Must be one of: ${validPrereleaseTags.join(', ')}`
-  );
+if (versionType.includes('pre') && !validPrereleaseTags.includes(prereleaseTag)) {
+  console.error(`Invalid prerelease tag: ${prereleaseTag}. Must be one of: ${validPrereleaseTags.join(', ')}`);
   process.exit(1);
 }
 
@@ -54,9 +41,7 @@ if (
 try {
   const status = execSync('git status --porcelain', { encoding: 'utf8' });
   if (status.trim() && !isDryRun) {
-    console.error(
-      'Git working directory is not clean. Please commit or stash your changes first.'
-    );
+    console.error('Git working directory is not clean. Please commit or stash your changes first.');
     process.exit(1);
   }
 } catch (error) {
@@ -67,7 +52,7 @@ try {
 // Get all publishable packages from pnpm workspace
 function getPublishablePackages(baseDir) {
   const workspaceFile = path.join(baseDir, 'pnpm-workspace.yaml');
-  
+
   if (!fs.existsSync(workspaceFile)) {
     throw new Error('pnpm-workspace.yaml not found');
   }
@@ -81,11 +66,10 @@ function getPublishablePackages(baseDir) {
     if (packagePattern.endsWith('/*')) {
       const dirPath = packagePattern.slice(0, -2); // Remove '/*'
       const fullDir = path.join(baseDir, dirPath);
-      
+
       if (fs.existsSync(fullDir)) {
-        const folders = fs.readdirSync(fullDir)
-          .filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory());
-        
+        const folders = fs.readdirSync(fullDir).filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory());
+
         for (const folder of folders) {
           const packageJsonPath = path.join(fullDir, folder, 'package.json');
           if (fs.existsSync(packageJsonPath)) {
@@ -95,7 +79,7 @@ function getPublishablePackages(baseDir) {
               publishablePackages.push({
                 folder,
                 directory: dirPath,
-                name: packageJson.name
+                name: packageJson.name,
               });
             }
           }
@@ -110,7 +94,7 @@ function getPublishablePackages(baseDir) {
           publishablePackages.push({
             folder: path.basename(packagePattern),
             directory: path.dirname(packagePattern) || '.',
-            name: packageJson.name
+            name: packageJson.name,
           });
         }
       }
@@ -123,9 +107,7 @@ function getPublishablePackages(baseDir) {
 const baseDir = path.join(__dirname, '..');
 const packageFolders = getPublishablePackages(baseDir);
 
-console.log(
-  `🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`
-);
+console.log(`🚀 ${isDryRun ? '[DRY RUN] ' : ''}Bumping ${versionType} version for all packages...`);
 
 const updatedVersions = [];
 
@@ -157,10 +139,7 @@ packageFolders.forEach(({ folder, directory }) => {
     packageJson.version = newVersion;
 
     if (!isDryRun) {
-      fs.writeFileSync(
-        packageJsonPath,
-        JSON.stringify(packageJson, null, 2) + '\n'
-      );
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n');
     }
 
     updatedVersions.push({
@@ -177,9 +156,7 @@ packageFolders.forEach(({ folder, directory }) => {
 const eggVersion = updatedVersions.find(pkg => pkg.name === 'egg')?.newVersion;
 if (eggVersion) {
   const rootPackageJsonPath = path.join(__dirname, '..', 'package.json');
-  const rootPackageJson = JSON.parse(
-    fs.readFileSync(rootPackageJsonPath, 'utf8')
-  );
+  const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf8'));
   const oldRootVersion = rootPackageJson.version;
 
   if (!isDryRun) {
@@ -188,10 +165,7 @@ if (eggVersion) {
       content: JSON.stringify(rootPackageJson, null, 2) + '\n',
     });
     rootPackageJson.version = eggVersion;
-    fs.writeFileSync(
-      rootPackageJsonPath,
-      JSON.stringify(rootPackageJson, null, 2) + '\n'
-    );
+    fs.writeFileSync(rootPackageJsonPath, JSON.stringify(rootPackageJson, null, 2) + '\n');
   }
 
   console.log(`  📦 @eggjs/monorepo: ${oldRootVersion} → ${eggVersion}`);

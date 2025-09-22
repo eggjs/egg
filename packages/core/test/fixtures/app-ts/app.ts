@@ -2,13 +2,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 const EGG_LOADER = Symbol.for('egg#loader');
 const EGG_PATH = Symbol.for('egg#eggPath');
-import {
-  BaseContextClass,
-  EggCore,
-  EggCoreOptions,
-  EggLoader,
-  EggLoaderOptions,
-} from '../../..';
+import { BaseContextClass, EggCore, EggCoreOptions, EggLoader, EggLoaderOptions } from '../../..';
 
 // normal
 const app = new EggCore<{ env: string }>();
@@ -138,9 +132,7 @@ loader2.loadToContext('dao', 'dao', {
 });
 assert(app5.context.dao);
 assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction')));
-assert(
-  loader2.loadFile(path.resolve(baseDir2, './dao/testFunction'), { abc: 123 })
-);
+assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction'), { abc: 123 }));
 
 // file loader
 const FileLoader = loader.FileLoader;

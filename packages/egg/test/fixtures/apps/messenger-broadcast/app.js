@@ -9,11 +9,6 @@ module.exports = function (app) {
   });
 
   app.messenger.on('broadcast', info => {
-    console.log(
-      'app %s receive message from %s pid %s',
-      process.pid,
-      info.from,
-      info.pid
-    );
+    console.log('app %s receive message from %s pid %s', process.pid, info.from, info.pid);
   });
 };

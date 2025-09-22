@@ -41,9 +41,7 @@ export class MockParallelApplication extends Base {
       throw new Error('cannot get env.CLUSTER_PORT, parallel run fail');
     }
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Application }: { Application: typeof EggApplication } = await importModule(
-      this.options.framework
-    );
+    const { Application }: { Application: typeof EggApplication } = await importModule(this.options.framework);
 
     const app = (this._instance = new Application({ ...this.options }));
 

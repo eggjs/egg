@@ -22,10 +22,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   });
 
   it.skip('should get from framework using symbol', async () => {
-    const Application = await importModule(
-      getFilepath('framework-symbol/index.js'),
-      { importDefaultOnly: true }
-    );
+    const Application = await importModule(getFilepath('framework-symbol/index.js'), { importDefaultOnly: true });
     app = createApp('eggpath', {
       Application,
     });
@@ -37,10 +34,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
   });
 
   it.skip('should throw when one of the Application do not specify symbol', async () => {
-    const AppClass = await importModule(
-      getFilepath('framework-nosymbol/index.js'),
-      { importDefaultOnly: true }
-    );
+    const AppClass = await importModule(getFilepath('framework-nosymbol/index.js'), { importDefaultOnly: true });
     assert.throws(() => {
       const app = createApp('eggpath', {
         Application: AppClass,
@@ -57,10 +51,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
     app = createApp('eggpath', {
       Application,
     });
-    assert.deepEqual(app.loader.eggPaths, [
-      getFilepath('egg'),
-      getFilepath('framework-dulp'),
-    ]);
+    assert.deepEqual(app.loader.eggPaths, [getFilepath('egg'), getFilepath('framework-dulp')]);
   });
 
   it('should when Application do not extend EggCore', () => {
@@ -93,18 +84,12 @@ describe('test/loader/get_framework_paths.test.ts', () => {
     await assert.rejects(
       async () => {
         createApp('eggpath', {
-          Application: await importModule(
-            getFilepath('framework-wrong-eggpath/index.js'),
-            { importDefaultOnly: true }
-          ),
+          Application: await importModule(getFilepath('framework-wrong-eggpath/index.js'), { importDefaultOnly: true }),
         });
       },
       (err: any) => {
         // console.error(err);
-        assert.match(
-          err.message,
-          /Symbol.for\('egg#eggPath'\) should be string/
-        );
+        assert.match(err.message, /Symbol.for\('egg#eggPath'\) should be string/);
         return true;
       }
     );

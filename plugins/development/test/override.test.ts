@@ -56,10 +56,7 @@ describe('test/override.test.ts', () => {
       await scheduler.wait(1000);
       await fs.unlink(filepath);
       await scheduler.wait(5000);
-      app.expect(
-        'stdout',
-        new RegExp(escape(`reload worker because ${filepath}`))
-      );
+      app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
     });
 
     it('should not reload', async () => {
@@ -69,10 +66,7 @@ describe('test/override.test.ts', () => {
       await scheduler.wait(1000);
       await fs.unlink(filepath);
       await scheduler.wait(5000);
-      app.notExpect(
-        'stdout',
-        new RegExp(escape(`reload worker because ${filepath} change`))
-      );
+      app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath} change`)));
     });
   });
 });

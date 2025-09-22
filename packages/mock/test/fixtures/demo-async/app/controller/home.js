@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function (app) {
   class Home extends app.Controller {
     async testService() {
       this.ctx.body = {

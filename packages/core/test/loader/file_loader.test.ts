@@ -74,10 +74,7 @@ describe('test/loader/file_loader.test.ts', () => {
     const app: Record<string, any> = { services: {} };
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: [
-          path.join(dirBase, 'services'),
-          path.join(dirBase, 'overwrite_services'),
-        ],
+        directory: [path.join(dirBase, 'services'), path.join(dirBase, 'overwrite_services')],
         target: app.services,
       }).load();
     }, /can't overwrite property 'foo'/);
@@ -86,10 +83,7 @@ describe('test/loader/file_loader.test.ts', () => {
   it('should overwrite property from loading', async () => {
     const app = { services: {} };
     await new FileLoader({
-      directory: [
-        path.join(dirBase, 'services'),
-        path.join(dirBase, 'overwrite_services'),
-      ],
+      directory: [path.join(dirBase, 'services'), path.join(dirBase, 'overwrite_services')],
       override: true,
       target: app.services,
     }).load();
@@ -131,10 +125,7 @@ describe('test/loader/file_loader.test.ts', () => {
   it('should only load property match the filers', async () => {
     const app: Record<string, any> = { middlewares: {} };
     await new FileLoader({
-      directory: [
-        path.join(dirBase, 'middlewares/default'),
-        path.join(dirBase, 'middlewares/app'),
-      ],
+      directory: [path.join(dirBase, 'middlewares/default'), path.join(dirBase, 'middlewares/app')],
       target: app.middlewares,
       call: false,
       // filters: [ 'm1', 'm2', 'dm1', 'dm2' ],
@@ -190,10 +181,7 @@ describe('test/loader/file_loader.test.ts', () => {
     assert(app.dao.TestClass);
     assert.deepEqual(app.dao.TestClass.user, { name: 'kai.fangk' });
     assert.equal(app.dao.TestClass.app, app);
-    assert.equal(
-      app.dao.TestClass.path,
-      path.join(dirBase, 'dao/TestClass.js')
-    );
+    assert.equal(app.dao.TestClass.path, path.join(dirBase, 'dao/TestClass.js'));
     assert.deepEqual(app.dao.testFunction.user, { name: 'kai.fangk' });
     assert.deepEqual(app.dao.testReturnFunction.user, { name: 'kai.fangk' });
   });

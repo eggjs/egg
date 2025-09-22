@@ -28,10 +28,7 @@ describe('test/development-ts.test.ts', () => {
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.expect(
-      'stdout',
-      new RegExp(escape(`reload worker because ${filepath}`))
-    );
+    app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
   });
 
   it('should not reload when change assets', async () => {
@@ -41,10 +38,7 @@ describe('test/development-ts.test.ts', () => {
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.notExpect(
-      'stdout',
-      new RegExp(escape(`reload worker because ${filepath}`))
-    );
+    app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
   });
 
   it.skip('should reload once when 2 file change', async () => {

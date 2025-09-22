@@ -27,10 +27,7 @@ describe('test/development.test.ts', () => {
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.expect(
-      'stdout',
-      new RegExp(escape(`reload worker because ${filepath}`))
-    );
+    app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
   });
 
   it('should not reload when change assets', async () => {
@@ -40,31 +37,25 @@ describe('test/development.test.ts', () => {
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.notExpect(
-      'stdout',
-      new RegExp(escape(`reload worker because ${filepath}`))
-    );
+    app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
   });
 
-  it.skipIf(process.env.CI)(
-    'should reload once when 2 file change',
-    async () => {
-      const filepath = getFilepath('development/app/service/c.js');
-      const filepath1 = getFilepath('development/app/service/d.js');
-      await fs.writeFile(filepath, 'let c = 1;');
-      await fs.writeFile(filepath, 'let c = 2;');
-      // set a timeout for watcher's interval
-      await scheduler.wait(DELAY / 2);
-      await fs.writeFile(filepath1, 'let d = 1;');
-      await fs.writeFile(filepath1, 'let d = 2;');
+  it.skipIf(process.env.CI)('should reload once when 2 file change', async () => {
+    const filepath = getFilepath('development/app/service/c.js');
+    const filepath1 = getFilepath('development/app/service/d.js');
+    await fs.writeFile(filepath, 'let c = 1;');
+    await fs.writeFile(filepath, 'let c = 2;');
+    // set a timeout for watcher's interval
+    await scheduler.wait(DELAY / 2);
+    await fs.writeFile(filepath1, 'let d = 1;');
+    await fs.writeFile(filepath1, 'let d = 2;');
 
-      await scheduler.wait(DELAY / 2);
-      await fs.rm(filepath, { force: true });
-      await fs.rm(filepath1, { force: true });
+    await scheduler.wait(DELAY / 2);
+    await fs.rm(filepath, { force: true });
+    await fs.rm(filepath1, { force: true });
 
-      assert(count(app.stdout, 'reload worker') >= 3);
-    }
-  );
+    assert(count(app.stdout, 'reload worker') >= 3);
+  });
 });
 
 function count(str: string, match: string) {

@@ -54,7 +54,7 @@ export class WorkerManager extends EventEmitter {
 
   getListeningWorkerIds() {
     const keys = [];
-    for (const [ id, worker ] of this.workers.entries()) {
+    for (const [id, worker] of this.workers.entries()) {
       if (worker.state === 'listening') {
         keys.push(id);
       }

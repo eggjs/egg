@@ -3,12 +3,7 @@ import path from 'node:path';
 import { describe, it, expect } from 'vitest';
 import coffee from 'coffee';
 
-import {
-  importResolve,
-  importModule,
-  ImportResolveError,
-  isESM,
-} from '../src/index.ts';
+import { importResolve, importModule, ImportResolveError, isESM } from '../src/index.ts';
 import { getFilepath } from './helper.js';
 
 describe('test/import.test.ts', () => {
@@ -27,41 +22,26 @@ describe('test/import.test.ts', () => {
     });
 
     it('should import package from typescript under development', () => {
-      assert.equal(
-        importResolve(path.join(__dirname, '../../egg')),
-        path.join(__dirname, '../../egg/src/index.ts')
-      );
+      assert.equal(importResolve(path.join(__dirname, '../../egg')), path.join(__dirname, '../../egg/src/index.ts'));
     });
 
     it('should work on cjs', () => {
-      assert.equal(
-        importResolve(getFilepath('cjs')),
-        getFilepath('cjs/index.js')
-      );
+      assert.equal(importResolve(getFilepath('cjs')), getFilepath('cjs/index.js'));
       assert.equal(
         importResolve('./index.js', {
           paths: [getFilepath('cjs')],
         }),
         getFilepath('cjs/index.js')
       );
-      assert.equal(
-        importResolve(getFilepath('cjs/exports')),
-        getFilepath('cjs/exports.js')
-      );
+      assert.equal(importResolve(getFilepath('cjs/exports')), getFilepath('cjs/exports.js'));
       assert.equal(
         importResolve('./exports', {
           paths: [getFilepath('cjs')],
         }),
         getFilepath('cjs/exports.js')
       );
-      assert.equal(
-        importResolve(getFilepath('cjs-index')),
-        getFilepath('cjs-index/index.cjs')
-      );
-      assert.equal(
-        importResolve(getFilepath('cjs/extend')),
-        getFilepath('cjs/extend/index.js')
-      );
+      assert.equal(importResolve(getFilepath('cjs-index')), getFilepath('cjs-index/index.cjs'));
+      assert.equal(importResolve(getFilepath('cjs/extend')), getFilepath('cjs/extend/index.js'));
       assert.equal(
         importResolve('./extend', {
           paths: [getFilepath('cjs')],
@@ -143,24 +123,15 @@ describe('test/import.test.ts', () => {
     });
 
     it('should work on esm', () => {
-      assert.equal(
-        importResolve(getFilepath('esm')),
-        getFilepath('esm/index.js')
-      );
+      assert.equal(importResolve(getFilepath('esm')), getFilepath('esm/index.js'));
       assert.equal(
         importResolve('./index.js', {
           paths: [getFilepath('esm')],
         }),
         getFilepath('esm/index.js')
       );
-      assert.equal(
-        importResolve(getFilepath('esm-index')),
-        getFilepath('esm-index/index.mjs')
-      );
-      assert.equal(
-        importResolve(getFilepath('esm/config/plugin')),
-        getFilepath('esm/config/plugin.js')
-      );
+      assert.equal(importResolve(getFilepath('esm-index')), getFilepath('esm-index/index.mjs'));
+      assert.equal(importResolve(getFilepath('esm/config/plugin')), getFilepath('esm/config/plugin.js'));
       assert.equal(
         importResolve('./config/plugin', {
           paths: [getFilepath('esm')],
@@ -182,28 +153,16 @@ describe('test/import.test.ts', () => {
     });
 
     it('should work on ts-module', () => {
-      assert.equal(
-        importResolve(getFilepath('ts-module')),
-        getFilepath('ts-module/index.ts')
-      );
-      assert.equal(
-        importResolve(getFilepath('ts-module/extend')),
-        getFilepath('ts-module/extend/index.ts')
-      );
+      assert.equal(importResolve(getFilepath('ts-module')), getFilepath('ts-module/index.ts'));
+      assert.equal(importResolve(getFilepath('ts-module/extend')), getFilepath('ts-module/extend/index.ts'));
     });
 
     it('should work on typescript without dist', () => {
-      assert.equal(
-        importResolve(getFilepath('tshy')),
-        getFilepath('tshy/src/index.ts')
-      );
+      assert.equal(importResolve(getFilepath('tshy')), getFilepath('tshy/src/index.ts'));
     });
 
     it('should work on typescript with dist', () => {
-      assert.equal(
-        importResolve(getFilepath('tshy-dist')),
-        getFilepath('tshy-dist/dist2/esm/index.js')
-      );
+      assert.equal(importResolve(getFilepath('tshy-dist')), getFilepath('tshy-dist/dist2/esm/index.js'));
     });
 
     it('should work on {name}/package.json', () => {
@@ -226,9 +185,7 @@ describe('test/import.test.ts', () => {
   describe('importModule()', () => {
     it('should work on egg', async () => {
       const obj = await importModule('egg', {
-        paths: [
-          path.join(__dirname, '../../../examples/helloworld-typescript'),
-        ],
+        paths: [path.join(__dirname, '../../../examples/helloworld-typescript')],
       });
       expect(obj.Agent).toBeDefined();
     });
@@ -317,13 +274,7 @@ describe('test/import.test.ts', () => {
       assert.deepEqual(obj.default, { foo: 'bar', one: 1 });
 
       obj = await importModule(getFilepath('cjs/es-module-default.js'));
-      assert.deepEqual(Object.keys(obj).sort(), [
-        '__esModule',
-        'default',
-        'fn',
-        'foo',
-        'one',
-      ]);
+      assert.deepEqual(Object.keys(obj).sort(), ['__esModule', 'default', 'fn', 'foo', 'one']);
       assert.equal(obj.default.foo, 'bar');
       assert.equal(obj.default.one, 1);
       assert.equal(typeof obj.default.fn, 'function');

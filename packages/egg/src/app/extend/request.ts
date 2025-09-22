@@ -173,23 +173,16 @@ export default class Request extends EggCoreRequest {
    */
   get acceptJSON(): boolean {
     if (this.path.endsWith('.json')) return true;
-    if (this.response.type && this.response.type.indexOf('json') >= 0)
-      return true;
+    if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
     if (this.accepts('html', 'text', 'json') === 'json') return true;
     return false;
   }
 
   // How to read query safely
   // https://github.com/koajs/qs/issues/5
-  _customQuery(
-    cacheName: symbol,
-    filter: (value: string | string[]) => string | string[]
-  ) {
+  _customQuery(cacheName: symbol, filter: (value: string | string[]) => string | string[]) {
     const str = this.querystring || '';
-    let c = this[cacheName] as Record<
-      string,
-      Record<string, string | string[]>
-    >;
+    let c = this[cacheName] as Record<string, Record<string, string | string[]>>;
     if (!c) {
       c = this[cacheName] = {};
     }
@@ -259,10 +252,7 @@ export default class Request extends EggCoreRequest {
    * ```
    */
   get queries() {
-    return this._customQuery(QUERIES_CACHE, arrayValue) as Record<
-      string,
-      string[]
-    >;
+    return this._customQuery(QUERIES_CACHE, arrayValue) as Record<string, string[]>;
   }
 
   /**

@@ -2,23 +2,14 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import fs from 'node:fs';
 
-import {
-  describe,
-  it,
-  beforeEach,
-  afterEach,
-  beforeAll,
-  afterAll,
-} from 'vitest';
+import { describe, it, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 
 import { cluster, type MockApplication, getFilepath } from '../../utils.ts';
 
 const file_path1 = getFilepath('apps/watcher-development-app/tmp.txt');
 const file_path2 = getFilepath('apps/watcher-development-app/tmp/tmp.txt');
-const file_path1_agent = getFilepath(
-  'apps/watcher-development-app/tmp-agent.txt'
-);
+const file_path1_agent = getFilepath('apps/watcher-development-app/tmp-agent.txt');
 
 describe('test/lib/plugins/watcher.test.ts', () => {
   describe('default', () => {
@@ -35,11 +26,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
     it('should app watcher work', async () => {
       let count = 0;
 
-      await app
-        .httpRequest()
-        .get('/app-watch')
-        .expect(200)
-        .expect('app watch success');
+      await app.httpRequest().get('/app-watch').expect(200).expect('app watch success');
 
       await scheduler.wait(5000);
       fs.writeFileSync(file_path1, 'aaa');
@@ -71,11 +58,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
 
     it.skip('should agent watcher work', async () => {
       let count = 0;
-      await app
-        .httpRequest()
-        .get('/agent-watch')
-        .expect(200)
-        .expect('agent watch success');
+      await app.httpRequest().get('/agent-watch').expect(200).expect('agent watch success');
 
       fs.writeFileSync(file_path1_agent, 'bbb');
       await scheduler.wait(5000);
@@ -104,9 +87,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
 
     it('should warn user', async () => {
       await scheduler.wait(3000);
-      const logPath = getFilepath(
-        'apps/watcher-type-default/logs/watcher-type-default/egg-agent.log'
-      );
+      const logPath = getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
       const content = fs.readFileSync(logPath, 'utf8');
       assert.match(content, /defaultEventSource watcher will NOT take effect/);
     });

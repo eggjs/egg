@@ -25,9 +25,7 @@ describe('ctx.redirect(url)', () => {
     const app = new Koa();
 
     app.use(ctx => {
-      ctx.redirect(
-        'https://google.com/😓?hello=你好(*´▽｀)ノノ&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28'
-      );
+      ctx.redirect('https://google.com/😓?hello=你好(*´▽｀)ノノ&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28');
     });
 
     const res = await request(app.callback()).get('/');
@@ -70,10 +68,7 @@ describe('ctx.redirect(url)', () => {
       ctx.req.headers.host = 'example.com';
       ctx.req.headers.referrer = 'https://example.com/login';
       ctx.redirect('back');
-      assert.strictEqual(
-        ctx.response.header.location,
-        'https://example.com/login'
-      );
+      assert.strictEqual(ctx.response.header.location, 'https://example.com/login');
     });
 
     it('should redirect to root if the same origin referrer is not present', () => {
@@ -91,10 +86,7 @@ describe('ctx.redirect(url)', () => {
       const url = 'http://google.com';
       ctx.header.accept = 'text/html';
       ctx.redirect(url);
-      assert.equal(
-        ctx.response.header['content-type'],
-        'text/html; charset=utf-8'
-      );
+      assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
       assert.equal(ctx.body, `Redirecting to ${url}/.`);
     });
 
@@ -103,10 +95,7 @@ describe('ctx.redirect(url)', () => {
       const url = '<script>';
       ctx.header.accept = 'text/html';
       ctx.redirect(url);
-      assert.equal(
-        ctx.response.header['content-type'],
-        'text/html; charset=utf-8'
-      );
+      assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
       assert.equal(ctx.body, 'Redirecting to &lt;script&gt;.');
     });
 
@@ -115,10 +104,7 @@ describe('ctx.redirect(url)', () => {
       ctx.header.accept = 'text/html';
       // oxlint-disable-next-line no-script-url
       ctx.redirect('javascript:alert(1)');
-      assert.equal(
-        ctx.response.header['content-type'],
-        'text/html; charset=utf-8'
-      );
+      assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
       assert.equal(ctx.body, 'Redirecting to javascript:alert(1).');
     });
   });

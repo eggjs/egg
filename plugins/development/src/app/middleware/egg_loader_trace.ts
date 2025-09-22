@@ -6,10 +6,7 @@ import type { Application, MiddlewareFunc } from 'egg';
 
 import { isTimingFile } from '../../utils.ts';
 
-export default function createEggLoaderTraceMiddleware(
-  _options: unknown,
-  app: Application
-): MiddlewareFunc {
+export default function createEggLoaderTraceMiddleware(_options: unknown, app: Application): MiddlewareFunc {
   return async (ctx, next) => {
     if (ctx.path !== '/__loader_trace__') {
       return await next();

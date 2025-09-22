@@ -33,25 +33,16 @@ describe('test/app/extend/context.test.ts', () => {
 
       await scheduler.wait(1200);
 
-      const errorContent = fs.readFileSync(
-        path.join(logDir, 'common-error.log'),
-        'utf8'
-      );
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
 
-      const loggerContent = fs.readFileSync(
-        path.join(logDir, 'demo-web.log'),
-        'utf8'
-      );
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       // loggerContent.should.containEql('debug foo');
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(
-        path.join(logDir, 'egg-web.log'),
-        'utf8'
-      );
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       // coreLoggerContent.should.containEql('core debug foo');
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -72,29 +63,17 @@ describe('test/app/extend/context.test.ts', () => {
 
       await scheduler.wait(1200);
 
-      const errorContent = fs.readFileSync(
-        path.join(logDir, 'common-error.log'),
-        'utf8'
-      );
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
-      assert.match(
-        errorContent,
-        /\[123123\/[\d.]+\/-\/[\d.]+ms GET \/logger\?message=foo]/
-      );
+      assert.match(errorContent, /\[123123\/[\d.]+\/-\/[\d.]+ms GET \/logger\?message=foo]/);
 
-      const loggerContent = fs.readFileSync(
-        path.join(logDir, 'demo-web.log'),
-        'utf8'
-      );
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       assert(!loggerContent.includes('debug foo'));
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(
-        path.join(logDir, 'egg-web.log'),
-        'utf8'
-      );
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       assert(!coreLoggerContent.includes('core debug foo'));
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -111,25 +90,16 @@ describe('test/app/extend/context.test.ts', () => {
 
       await scheduler.wait(2000);
 
-      const errorContent = fs.readFileSync(
-        path.join(logDir, 'common-error.log'),
-        'utf8'
-      );
+      const errorContent = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(errorContent.includes('nodejs.Error: error foo'));
       assert(errorContent.includes('nodejs.Error: core error foo'));
 
-      const loggerContent = fs.readFileSync(
-        path.join(logDir, 'demo-web.log'),
-        'utf8'
-      );
+      const loggerContent = fs.readFileSync(path.join(logDir, 'demo-web.log'), 'utf8');
       assert(!loggerContent.includes('debug foo'));
       assert(loggerContent.includes('info foo'));
       assert(loggerContent.includes('warn foo'));
 
-      const coreLoggerContent = fs.readFileSync(
-        path.join(logDir, 'egg-web.log'),
-        'utf8'
-      );
+      const coreLoggerContent = fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8');
       assert(!coreLoggerContent.includes('core debug foo'));
       assert(coreLoggerContent.includes('core info foo'));
       assert(coreLoggerContent.includes('core warn foo'));
@@ -152,10 +122,7 @@ describe('test/app/extend/context.test.ts', () => {
 
       await scheduler.wait(100);
       const logPath = getFilepath('apps/get-logger/logs/get-logger/a.log');
-      assert.match(
-        fs.readFileSync(logPath, 'utf8'),
-        /\[-\/127.0.0.1\/-\/[\d.]+ms GET \/logger] aaa/
-      );
+      assert.match(fs.readFileSync(logPath, 'utf8'), /\[-\/127.0.0.1\/-\/[\d.]+ms GET \/logger] aaa/);
     });
   });
 
@@ -194,11 +161,7 @@ describe('test/app/extend/context.test.ts', () => {
 
     describe('ctx.router getter and setter', () => {
       it('should work', () => {
-        return app
-          .httpRequest()
-          .get('/')
-          .expect(200)
-          .expect('{"path":"/","foo":1,"bar":2}');
+        return app.httpRequest().get('/').expect(200).expect('{"path":"/","foo":1,"bar":2}');
       });
     });
   });
@@ -229,14 +192,11 @@ describe('test/app/extend/context.test.ts', () => {
     });
 
     it('should not change this.locals data when app.locals change again', () => {
-      return app
-        .httpRequest()
-        .get('/ctx_app_update_can_not_affect_ctx')
-        .expect({
-          a: 'app.a',
-          b: 'app.b',
-          newPropertyExists: false,
-        });
+      return app.httpRequest().get('/ctx_app_update_can_not_affect_ctx').expect({
+        a: 'app.a',
+        b: 'app.b',
+        newPropertyExists: false,
+      });
     });
 
     it('should locals only support object format', () => {
@@ -267,10 +227,7 @@ describe('test/app/extend/context.test.ts', () => {
       await app.backgroundTasksFinished();
       await scheduler.wait(100);
       const logDir = app.config.logger.dir;
-      const log = fs.readFileSync(
-        path.join(logDir, 'ctx-background-web.log'),
-        'utf8'
-      );
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
@@ -290,10 +247,7 @@ describe('test/app/extend/context.test.ts', () => {
       await app.backgroundTasksFinished();
       await scheduler.wait(100);
       const logDir = app.config.logger.dir;
-      const log = fs.readFileSync(
-        path.join(logDir, 'ctx-background-web.log'),
-        'utf8'
-      );
+      const log = fs.readFileSync(path.join(logDir, 'ctx-background-web.log'), 'utf8');
       assert(/background run result file size: \d+/.test(log));
       assert(
         /\[egg:background] task:customTaskName success \([\d.]+ms\)/.test(
@@ -317,10 +271,7 @@ describe('test/app/extend/context.test.ts', () => {
       await scheduler.wait(100);
       assert(errorHadEmit);
       const lgoDir = app.config.logger.dir;
-      const log = fs.readFileSync(
-        path.join(lgoDir, 'common-error.log'),
-        'utf8'
-      );
+      const log = fs.readFileSync(path.join(lgoDir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
         /\[egg:background] task:mockError fail \([\d.]+ms\)/.test(
@@ -397,10 +348,7 @@ describe('test/app/extend/context.test.ts', () => {
       await scheduler.wait(1200);
       assert(errorHadEmit);
       const logDir = app.config.logger.dir!;
-      const log = fs.readFileSync(
-        path.join(logDir, 'common-error.log'),
-        'utf8'
-      );
+      const log = fs.readFileSync(path.join(logDir, 'common-error.log'), 'utf8');
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
         /\[egg:background] task:mockError fail \([\d.]+ms\)/.test(
@@ -470,13 +418,7 @@ describe('test/app/extend/context.test.ts', () => {
         assert.equal(context.state.a, 'aa');
         assert.equal(context.state.b, 'b');
         assert.equal(context.state.c, 'cc');
-        assert.deepEqual(Object.keys(context.state), [
-          '__',
-          'gettext',
-          'a',
-          'b',
-          'c',
-        ]);
+        assert.deepEqual(Object.keys(context.state), ['__', 'gettext', 'a', 'b', 'c']);
         assert(context.state === context.locals);
       });
     });

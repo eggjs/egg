@@ -8,9 +8,6 @@ module.exports = async function () {
   });
   this.runInBackground(async ctx => {
     const buf = await fs.readFile(__filename);
-    ctx.logger.warn(
-      'mock background run anonymous result file size: %s',
-      buf.length
-    );
+    ctx.logger.warn('mock background run anonymous result file size: %s', buf.length);
   });
 };

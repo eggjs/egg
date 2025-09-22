@@ -16,11 +16,7 @@ describe('ctx.append(name, val)', () => {
 
     ctx.append('Set-Cookie', ['foo=bar', 'fizz=buzz']);
     ctx.append('Set-Cookie', 'hi=again');
-    assert.deepStrictEqual(ctx.response.header['set-cookie'], [
-      'foo=bar',
-      'fizz=buzz',
-      'hi=again',
-    ]);
+    assert.deepStrictEqual(ctx.response.header['set-cookie'], ['foo=bar', 'fizz=buzz', 'hi=again']);
   });
 
   it('should get reset by res.set(field, val)', () => {
@@ -40,9 +36,6 @@ describe('ctx.append(name, val)', () => {
     ctx.set('Link', '<http://localhost/>');
     ctx.append('Link', '<http://localhost:80/>');
 
-    assert.deepStrictEqual(ctx.response.header.link, [
-      '<http://localhost/>',
-      '<http://localhost:80/>',
-    ]);
+    assert.deepStrictEqual(ctx.response.header.link, ['<http://localhost/>', '<http://localhost:80/>']);
   });
 });

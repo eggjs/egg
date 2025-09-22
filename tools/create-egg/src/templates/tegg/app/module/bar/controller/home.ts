@@ -1,10 +1,5 @@
 import { EggLogger } from 'egg';
-import {
-  Inject,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-} from '@eggjs/tegg';
+import { Inject, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
 
 @HTTPController({
   path: '/',

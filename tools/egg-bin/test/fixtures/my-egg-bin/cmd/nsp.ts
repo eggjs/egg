@@ -12,11 +12,7 @@ export default class Nsp<T extends typeof Nsp> extends BaseCommand<T> {
   };
 
   public async run(): Promise<void> {
-    console.log(
-      'run nsp check at baseDir: %s, with %o',
-      this.flags.base,
-      this.args
-    );
+    console.log('run nsp check at baseDir: %s, with %o', this.flags.base, this.args);
     if (this.flags.foo) {
       console.log('foo is true');
     }

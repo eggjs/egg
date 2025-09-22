@@ -1,6 +1,4 @@
-import type {
-  OnerrorConfig,
-} from './config/config.default.ts';
+import type { OnerrorConfig } from './config/config.default.ts';
 
 export type { OnerrorConfig };
 

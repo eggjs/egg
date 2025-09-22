@@ -46,17 +46,16 @@ export class AgentThreadUtils extends BaseAgentUtils {
     this.startTime = Date.now();
 
     // start agent worker
-    const argv = [ JSON.stringify(this.options) ];
+    const argv = [JSON.stringify(this.options)];
     const agentPath = this.getAgentWorkerFile();
-    const worker = this.#worker = new workerThreads.Worker(agentPath, { argv });
+    const worker = (this.#worker = new workerThreads.Worker(agentPath, { argv }));
 
     // wrap agent worker
-    const agentWorker = this.instance = new AgentThreadWorker(worker);
+    const agentWorker = (this.instance = new AgentThreadWorker(worker));
     this.emit('agent_forked', agentWorker);
     agentWorker.status = 'starting';
     agentWorker.id = ++this.#id;
-    this.log('[master] agent_worker#%s:%s start with worker_threads',
-      agentWorker.id, agentWorker.workerId);
+    this.log('[master] agent_worker#%s:%s start with worker_threads', agentWorker.id, agentWorker.workerId);
 
     worker.on('message', msg => {
       if (typeof msg === 'string') {

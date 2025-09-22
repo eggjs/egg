@@ -38,26 +38,18 @@ export default class AgentBoot implements ILifecycleBoot {
     const baseDir = agent.config.baseDir;
     const config = agent.config.development;
 
-    let watchDirs = config.overrideDefault
-      ? []
-      : ['app', 'config', 'mocks', 'mocks_proxy', 'app.js'];
+    let watchDirs = config.overrideDefault ? [] : ['app', 'config', 'mocks', 'mocks_proxy', 'app.js'];
 
-    watchDirs = watchDirs
-      .concat(config.watchDirs)
-      .map(dir => path.resolve(baseDir, dir));
+    watchDirs = watchDirs.concat(config.watchDirs).map(dir => path.resolve(baseDir, dir));
 
     let ignoreReloadFileDirs = config.overrideIgnore
       ? []
       : ['app/views', 'app/view', 'app/assets', 'app/public', 'app/web'];
 
-    ignoreReloadFileDirs = ignoreReloadFileDirs
-      .concat(config.ignoreDirs)
-      .map(dir => path.resolve(baseDir, dir));
+    ignoreReloadFileDirs = ignoreReloadFileDirs.concat(config.ignoreDirs).map(dir => path.resolve(baseDir, dir));
 
     const reloadFile = debounce(function (info) {
-      logger.warn(
-        `[agent:development] reload worker because ${info.path} ${info.event}`
-      );
+      logger.warn(`[agent:development] reload worker because ${info.path} ${info.event}`);
 
       process.send!({
         to: 'master',
@@ -87,10 +79,7 @@ export default class AgentBoot implements ILifecycleBoot {
       }
 
       // don't reload if don't match
-      if (
-        config.reloadPattern &&
-        multimatch(info.path, config.reloadPattern).length === 0
-      ) {
+      if (config.reloadPattern && multimatch(info.path, config.reloadPattern).length === 0) {
         return;
       }
 

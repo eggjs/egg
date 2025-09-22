@@ -23,10 +23,7 @@ describe('res.lastModified', () => {
     const res = response();
     const date = new Date();
     res.lastModified = date;
-    assert.strictEqual(
-      res.lastModified.getTime() / 1000,
-      Math.floor(date.getTime() / 1000)
-    );
+    assert.strictEqual(res.lastModified.getTime() / 1000, Math.floor(date.getTime() / 1000));
   });
 
   describe('when lastModified not set', () => {

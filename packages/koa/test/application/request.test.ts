@@ -35,9 +35,6 @@ describe('app.request', () => {
       ctx.body = ctx.request.ip;
     });
 
-    return request(app.listen())
-      .get('/')
-      .expect(200)
-      .expect('::ffff:127.0.0.1');
+    return request(app.listen()).get('/').expect(200).expect('::ffff:127.0.0.1');
   });
 });

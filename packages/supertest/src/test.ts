@@ -11,10 +11,7 @@ import { AssertError } from './error/AssertError.ts';
 export type TestApplication = Server | string;
 
 export type AssertFunction = (res: Response) => AssertError | void;
-export type CallbackFunction = (
-  err: AssertError | Error | null,
-  res: Response
-) => void;
+export type CallbackFunction = (err: AssertError | Error | null, res: Response) => void;
 export type ResponseError = Error & {
   syscall?: string;
   code?: string;
@@ -40,8 +37,7 @@ export class Test extends Request {
     this.redirects(0);
     this.buffer();
     this.app = app;
-    this.url =
-      typeof app === 'string' ? app + path : this.serverAddress(app, path);
+    this.url = typeof app === 'string' ? app + path : this.serverAddress(app, path);
   }
 
   /**
@@ -56,10 +52,7 @@ export class Test extends Request {
       this._server = app.listen(0);
     }
     const port = (app.address() as AddressInfo).port;
-    const protocol =
-      app instanceof HttpsServer || this._server instanceof HttpsServer
-        ? 'https'
-        : 'http';
+    const protocol = app instanceof HttpsServer || this._server instanceof HttpsServer ? 'https' : 'http';
     return `${protocol}://127.0.0.1:${port}${path}`;
   }
 
@@ -115,11 +108,7 @@ export class Test extends Request {
     }
 
     // multiple statuses
-    if (
-      Array.isArray(a) &&
-      a.length > 0 &&
-      a.every(val => typeof val === 'number')
-    ) {
+    if (Array.isArray(a) && a.length > 0 && a.every(val => typeof val === 'number')) {
       // .expect([200, 300])
       this._asserts.push(wrapAssertFn(this._assertStatusArray.bind(this, a)));
       return this;
@@ -129,11 +118,7 @@ export class Test extends Request {
     if (typeof b === 'string' || typeof b === 'number' || b instanceof RegExp) {
       // .expect('Content-Type', 'application/json')
       // .expect('Content-Type', /json/)
-      this._asserts.push(
-        wrapAssertFn(
-          this._assertHeader.bind(this, { name: String(a), value: b })
-        )
-      );
+      this._asserts.push(wrapAssertFn(this._assertHeader.bind(this, { name: String(a), value: b })));
       return this;
     }
 
@@ -185,22 +170,14 @@ export class Test extends Request {
   _unexpectHeader(name: string, res: Response) {
     const actual = res.headers[name.toLowerCase()];
     if (actual) {
-      return new AssertError(
-        'unexpected "' + name + '" header field, got "' + actual + '"',
-        name,
-        actual
-      );
+      return new AssertError('unexpected "' + name + '" header field, got "' + actual + '"', name, actual);
     }
   }
 
   _expectHeader(name: string, res: Response) {
     const actual = res.headers[name.toLowerCase()];
     if (!actual) {
-      return new AssertError(
-        'expected "' + name + '" header field',
-        name,
-        actual
-      );
+      return new AssertError('expected "' + name + '" header field', name, actual);
     }
   }
 
@@ -244,12 +221,7 @@ export class Test extends Request {
     };
 
     if (!res && resError) {
-      if (
-        resError instanceof Error &&
-        resError.syscall === 'connect' &&
-        resError.code &&
-        sysErrors[resError.code]
-      ) {
+      if (resError instanceof Error && resError.syscall === 'connect' && resError.code && sysErrors[resError.code]) {
         errorObj = new Error(resError.code + ': ' + sysErrors[resError.code]);
       } else {
         errorObj = resError;
@@ -262,19 +234,12 @@ export class Test extends Request {
     }
 
     // set unexpected superagent error if no other error has occurred.
-    if (
-      !errorObj &&
-      resError instanceof Error &&
-      (!res || resError.status !== res.status)
-    ) {
+    if (!errorObj && resError instanceof Error && (!res || resError.status !== res.status)) {
       errorObj = resError;
     }
 
     if (!fn) {
-      console.warn(
-        '[@eggjs/supertest] no callback function provided, fn: %s',
-        typeof fn
-      );
+      console.warn('[@eggjs/supertest] no callback function provided, fn: %s', typeof fn);
       return;
     }
     fn.call(this, errorObj || null, res);
@@ -283,10 +248,7 @@ export class Test extends Request {
   /**
    * Perform assertions on a response body and return an Error upon failure.
    */
-  _assertBody(
-    body: RegExp | string | number | object | null | undefined,
-    res: Response
-  ) {
+  _assertBody(body: RegExp | string | number | object | null | undefined, res: Response) {
     const isRegexp = body instanceof RegExp;
 
     // parsed
@@ -296,12 +258,7 @@ export class Test extends Request {
       } catch (err) {
         const a = inspect(body);
         const b = inspect(res.body);
-        return new AssertError(
-          'expected ' + a + ' response body, got ' + b,
-          body,
-          res.body,
-          { cause: err }
-        );
+        return new AssertError('expected ' + a + ' response body, got ' + b, body, res.body, { cause: err });
       }
     } else if (body !== res.text) {
       // string
@@ -311,18 +268,10 @@ export class Test extends Request {
       // regexp
       if (isRegexp) {
         if (!body.test(res.text)) {
-          return new AssertError(
-            'expected body ' + b + ' to match ' + body,
-            body,
-            res.body
-          );
+          return new AssertError('expected body ' + b + ' to match ' + body, body, res.body);
         }
       } else {
-        return new AssertError(
-          'expected ' + a + ' response body, got ' + b,
-          body,
-          res.body
-        );
+        return new AssertError('expected ' + a + ' response body, got ' + b, body, res.body);
       }
     }
   }
@@ -336,42 +285,23 @@ export class Test extends Request {
     const fieldExpected = header.value;
 
     if (typeof actual === 'undefined') {
-      return new AssertError(
-        'expected "' + field + '" header field',
-        header,
-        actual
-      );
+      return new AssertError('expected "' + field + '" header field', header, actual);
     }
     // This check handles header values that may be a String or single element Array
-    if (
-      (Array.isArray(actual) && actual.toString() === fieldExpected) ||
-      fieldExpected === actual
-    ) {
+    if ((Array.isArray(actual) && actual.toString() === fieldExpected) || fieldExpected === actual) {
       return;
     }
     if (fieldExpected instanceof RegExp) {
       if (!fieldExpected.test(actual)) {
         return new AssertError(
-          'expected "' +
-            field +
-            '" matching ' +
-            fieldExpected +
-            ', got "' +
-            actual +
-            '"',
+          'expected "' + field + '" matching ' + fieldExpected + ', got "' + actual + '"',
           header,
           actual
         );
       }
     } else {
       return new AssertError(
-        'expected "' +
-          field +
-          '" of "' +
-          fieldExpected +
-          '", got "' +
-          actual +
-          '"',
+        'expected "' + field + '" of "' + fieldExpected + '", got "' + actual + '"',
         header,
         actual
       );
@@ -386,15 +316,7 @@ export class Test extends Request {
       const a = STATUS_CODES[status];
       const b = STATUS_CODES[res.status];
       return new AssertError(
-        'expected ' +
-          status +
-          ' "' +
-          a +
-          '", got ' +
-          res.status +
-          ' "' +
-          b +
-          '"',
+        'expected ' + status + ' "' + a + '", got ' + res.status + ' "' + b + '"',
         status,
         res.status
       );
@@ -409,13 +331,7 @@ export class Test extends Request {
       const b = STATUS_CODES[res.status];
       const expectedList = statusArray.join(', ');
       return new AssertError(
-        'expected one of "' +
-          expectedList +
-          '", got ' +
-          res.status +
-          ' "' +
-          b +
-          '"',
+        'expected one of "' + expectedList + '", got ' + res.status + ' "' + b + '"',
         statusArray,
         res.status
       );
@@ -459,11 +375,7 @@ function wrapAssertFn(assertFn: AssertFunction) {
     }
     if (err instanceof Error && err.stack) {
       badStack = err.stack.replace(err.message, '').split('\n').slice(1);
-      err.stack = [err.toString()]
-        .concat(savedStack)
-        .concat('----')
-        .concat(badStack)
-        .join('\n');
+      err.stack = [err.toString()].concat(savedStack).concat('----').concat(badStack).join('\n');
     }
     return err;
   };

@@ -14,19 +14,12 @@ export interface MetaMiddlewareOptions {
 export default (options: MetaMiddlewareOptions) => {
   return async function meta(ctx: Context, next: Next) {
     if (options.logging) {
-      ctx.coreLogger.info(
-        '[meta] request started, host: %s, user-agent: %s',
-        ctx.host,
-        ctx.header['user-agent']
-      );
+      ctx.coreLogger.info('[meta] request started, host: %s, user-agent: %s', ctx.host, ctx.header['user-agent']);
     }
     await next();
     // total response time header
     if (ctx.performanceStarttime) {
-      ctx.set(
-        'x-readtime',
-        Math.floor((performance.now() - ctx.performanceStarttime) * 1000) / 1000
-      );
+      ctx.set('x-readtime', Math.floor((performance.now() - ctx.performanceStarttime) * 1000) / 1000);
     } else {
       ctx.set('x-readtime', Date.now() - ctx.starttime);
     }

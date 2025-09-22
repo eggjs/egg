@@ -99,11 +99,7 @@ Here's an example with mocha, note how you can pass `done` straight to any of th
 ```js
 describe('GET /user', function () {
   it('responds with json', function (done) {
-    request(app)
-      .get('/user')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200, done);
+    request(app).get('/user').set('Accept', 'application/json').expect('Content-Type', /json/).expect(200, done);
   });
 });
 ```
@@ -170,9 +166,7 @@ Or async/await syntax:
 ```js
 describe('GET /users', function () {
   it('responds with json', async function () {
-    const response = await request(app)
-      .get('/users')
-      .set('Accept', 'application/json');
+    const response = await request(app).get('/users').set('Accept', 'application/json');
     expect(response.headers['Content-Type']).toMatch(/json/);
     expect(response.status).toEqual(200);
     expect(response.body.email).toEqual('foo@bar.com');

@@ -32,35 +32,19 @@ describe('test/lib/core/router.test.ts', () => {
       });
 
       it('should GET /posts/:id', () => {
-        return app
-          .httpRequest()
-          .get('/posts/123')
-          .expect(200)
-          .expect('show - 123');
+        return app.httpRequest().get('/posts/123').expect(200).expect('show - 123');
       });
 
       it('should GET /posts/:id/edit', () => {
-        return app
-          .httpRequest()
-          .get('/posts/123/edit')
-          .expect(200)
-          .expect('edit - 123');
+        return app.httpRequest().get('/posts/123/edit').expect(200).expect('edit - 123');
       });
 
       it('should PUT /posts/:id', () => {
-        return app
-          .httpRequest()
-          .put('/posts/123')
-          .expect(200)
-          .expect('update - 123');
+        return app.httpRequest().put('/posts/123').expect(200).expect('update - 123');
       });
 
       it('should DELETE /posts/:id', () => {
-        return app
-          .httpRequest()
-          .delete('/posts/123')
-          .expect(200)
-          .expect('destroy - 123');
+        return app.httpRequest().delete('/posts/123').expect(200).expect('destroy - 123');
       });
     });
 
@@ -70,11 +54,7 @@ describe('test/lib/core/router.test.ts', () => {
       });
 
       it('should GET /members/index', () => {
-        return app
-          .httpRequest()
-          .get('/members/index')
-          .expect(200)
-          .expect('index');
+        return app.httpRequest().get('/members/index').expect(200).expect('index');
       });
 
       it('should GET /members/new', () => {
@@ -82,11 +62,7 @@ describe('test/lib/core/router.test.ts', () => {
       });
 
       it('should GET /members/:id', () => {
-        return app
-          .httpRequest()
-          .get('/members/1231')
-          .expect(200)
-          .expect('show - 1231');
+        return app.httpRequest().get('/members/1231').expect(200).expect('show - 1231');
       });
 
       it('should POST /members', () => {
@@ -115,21 +91,10 @@ describe('test/lib/core/router.test.ts', () => {
     });
 
     it('should work with unknown params', () => {
-      assert(
-        app.router.url('posts', { name: 'foo', page: 2 }) ===
-          '/posts?name=foo&page=2'
-      );
-      assert(
-        app.router.url('posts', { name: 'foo&?', page: 2 }) ===
-          '/posts?name=foo%26%3F&page=2'
-      );
-      assert(
-        app.router.url('edit_post', { id: 10, page: 2 }) ===
-          '/posts/10/edit?page=2'
-      );
-      assert(
-        app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2'
-      );
+      assert(app.router.url('posts', { name: 'foo', page: 2 }) === '/posts?name=foo&page=2');
+      assert(app.router.url('posts', { name: 'foo&?', page: 2 }) === '/posts?name=foo%26%3F&page=2');
+      assert(app.router.url('edit_post', { id: 10, page: 2 }) === '/posts/10/edit?page=2');
+      assert(app.router.url('edit_post', { i: 2, id: 10 }) === '/posts/10/edit?i=2');
       assert(
         app.router.url('edit_post', {
           id: 10,

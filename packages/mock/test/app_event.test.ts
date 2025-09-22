@@ -2,14 +2,7 @@ import assert from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 import { once } from 'node:events';
 
-import {
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  afterEach,
-  beforeEach,
-} from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

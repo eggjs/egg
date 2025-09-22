@@ -33,7 +33,7 @@ export class ErrorView {
   viewTemplate: string;
 
   codeContext = 5;
-  _filterHeaders = [ 'cookie', 'connection' ];
+  _filterHeaders = ['cookie', 'connection'];
 
   constructor(ctx: Context, error: OnerrorError, template: string) {
     this.ctx = ctx;
@@ -280,4 +280,3 @@ export class ErrorView {
     };
   }
 }
-

@@ -44,10 +44,7 @@ describe('app.onerror(err)', () => {
     mm.spy(console, 'error');
     // @ts-expect-error protected method
     app.onerror(err);
-    assert.equal(
-      (console.error as unknown as { called: boolean }).called,
-      undefined
-    );
+    assert.equal((console.error as unknown as { called: boolean }).called, undefined);
   });
 
   it('should do nothing if .silent', () => {
@@ -58,10 +55,7 @@ describe('app.onerror(err)', () => {
     mm.spy(console, 'error');
     // @ts-expect-error protected method
     app.onerror(err);
-    assert.equal(
-      (console.error as unknown as { called: boolean }).called,
-      undefined
-    );
+    assert.equal((console.error as unknown as { called: boolean }).called, undefined);
   });
 
   it('should log the error to stderr', () => {

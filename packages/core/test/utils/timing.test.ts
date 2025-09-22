@@ -113,9 +113,7 @@ describe('test/utils/timing.test.ts', () => {
 
   it('should init process start time', () => {
     const timing = new Timing();
-    const processStart = timing
-      .toJSON()
-      .find(item => item.name === 'Process Start');
+    const processStart = timing.toJSON().find(item => item.name === 'Process Start');
     assert(processStart);
     assert(processStart.start);
     assert(processStart.end);

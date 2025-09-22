@@ -37,13 +37,7 @@ describe('app.currentContext', () => {
       assert.equal(app.currentContext, undefined);
     };
 
-    await Promise.all([
-      requestServer(),
-      requestServer(),
-      requestServer(),
-      requestServer(),
-      requestServer(),
-    ]);
+    await Promise.all([requestServer(), requestServer(), requestServer(), requestServer(), requestServer()]);
   });
 
   it('should get currentContext work', async () => {

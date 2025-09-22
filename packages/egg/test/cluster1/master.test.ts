@@ -165,11 +165,7 @@ describe('test/cluster1/master.test.ts', () => {
     });
 
     it.skip('should start without customEgg and worker_threads', async () => {
-      app = coffee
-        .fork(
-          getFilepath('apps/master-worker-started-worker_threads/dispatch.js')
-        )
-        .debug();
+      app = coffee.fork(getFilepath('apps/master-worker-started-worker_threads/dispatch.js')).debug();
 
       await scheduler.wait(10000);
       app.emit('close', 0);

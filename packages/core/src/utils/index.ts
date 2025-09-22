@@ -61,9 +61,7 @@ export default {
       console.trace('[@eggjs/core/deprecated] %s', message);
     } else {
       console.log('[@eggjs/core/deprecated] %s', message);
-      console.log(
-        '[@eggjs/core/deprecated] set NODE_DEBUG=@eggjs/core/utils can show call stack'
-      );
+      console.log('[@eggjs/core/deprecated] set NODE_DEBUG=@eggjs/core/utils can show call stack');
     }
   },
 
@@ -95,9 +93,7 @@ export default {
         console.trace(e);
         throw e;
       }
-      const err = new Error(
-        `[egg/core] load file: ${filepath}, error: ${e.message}`
-      );
+      const err = new Error(`[egg/core] load file: ${filepath}, error: ${e.message}`);
       err.cause = e;
       debug('[loadFile] handle %s error: %s', filepath, e);
       throw err;

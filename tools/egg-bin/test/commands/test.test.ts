@@ -32,10 +32,7 @@ describe('test/commands/test.test.ts', () => {
           },
         })
         // .debug()
-        .expect(
-          'stdout',
-          /# Split test files in parallel CI jobs: 3\/3, files: 1\/4/
-        )
+        .expect('stdout', /# Split test files in parallel CI jobs: 3\/3, files: 1\/4/)
         .expect('stdout', /should success/)
         .expect('stdout', /no-timeouts\.test\.js/)
         .notExpect('stdout', /a\.test\.js/)
@@ -431,10 +428,7 @@ describe('test/commands/test.test.ts', () => {
           cwd: getFixtures('egg-revert'),
         })
         .debug()
-        .expect(
-          'stdout',
-          /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/
-        )
+        .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
         .expect('code', 0)
         .end();
     });

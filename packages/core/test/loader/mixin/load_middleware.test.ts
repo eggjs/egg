@@ -41,19 +41,9 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       names.push(mw._name);
     }
     try {
-      assert.deepEqual(names, [
-        'status',
-        'static',
-        'custom',
-        'routerMiddleware',
-      ]);
+      assert.deepEqual(names, ['status', 'static', 'custom', 'routerMiddleware']);
     } catch {
-      assert.deepEqual(names, [
-        'statusDebugWrapper',
-        'staticDebugWrapper',
-        'customDebugWrapper',
-        'routerMiddleware',
-      ]);
+      assert.deepEqual(names, ['statusDebugWrapper', 'staticDebugWrapper', 'customDebugWrapper', 'routerMiddleware']);
     }
   });
 
@@ -170,32 +160,19 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
     afterAll(() => app.close());
 
     it('should support config.middleware', async () => {
-      await request(app.callback())
-        .get('/static')
-        .expect('static', 'static')
-        .expect('hello');
+      await request(app.callback()).get('/static').expect('static', 'static').expect('hello');
     });
 
     it('should support app.use', async () => {
-      await request(app.callback())
-        .get('/')
-        .expect('custom', 'custom')
-        .expect('hello');
+      await request(app.callback()).get('/').expect('custom', 'custom').expect('hello');
     });
 
     it('should support with router', async () => {
-      await request(app.callback())
-        .get('/router')
-        .expect('router', 'router')
-        .expect('hello');
+      await request(app.callback()).get('/router').expect('router', 'router').expect('hello');
     });
 
     it('should support with options.match', async () => {
-      await request(app.callback())
-        .get('/match')
-        .expect(200)
-        .expect('match', 'match')
-        .expect('hello');
+      await request(app.callback()).get('/match').expect(200).expect('match', 'match').expect('hello');
     });
 
     it('should support common functions', async () => {
@@ -211,9 +188,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
       await app.loader.loadCustomApp();
-      const directory = app.loader
-        .getLoadUnits()
-        .map(unit => path.join(unit.path, 'app/middleware'));
+      const directory = app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/middleware'));
       directory.push(path.join(baseDir, 'app/other-middleware'));
       await app.loader.loadMiddleware({
         directory,

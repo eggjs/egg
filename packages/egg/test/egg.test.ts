@@ -3,24 +3,12 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { scheduler } from 'node:timers/promises';
 
-import {
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach,
-} from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 import assertFile from 'assert-file';
 import { readJSONSync } from 'utility';
 
-import {
-  createApp,
-  cluster,
-  getFilepath,
-  type MockApplication,
-} from './utils.ts';
+import { createApp, cluster, getFilepath, type MockApplication } from './utils.ts';
 
 describe.sequential('test/egg.test.ts', () => {
   afterEach(mm.restore);
@@ -64,22 +52,9 @@ describe.sequential('test/egg.test.ts', () => {
       assert(routers.length === 14);
       for (const router of routers) {
         if ('name' in router) {
-          assert.deepEqual(Object.keys(router), [
-            'name',
-            'methods',
-            'paramNames',
-            'path',
-            'regexp',
-            'stack',
-          ]);
+          assert.deepEqual(Object.keys(router), ['name', 'methods', 'paramNames', 'path', 'regexp', 'stack']);
         } else {
-          assert.deepEqual(Object.keys(router), [
-            'methods',
-            'paramNames',
-            'path',
-            'regexp',
-            'stack',
-          ]);
+          assert.deepEqual(Object.keys(router), ['methods', 'paramNames', 'path', 'regexp', 'stack']);
         }
       }
     });
@@ -89,9 +64,7 @@ describe.sequential('test/egg.test.ts', () => {
       // assert(json.name === path.join(__dirname, '../../config/config.default.js'));
       assert(json.buffer === path.join(baseDir, 'config/config.default.js'));
 
-      json = readJSONSync(
-        path.join(baseDir, 'run/application_config_meta.json')
-      );
+      json = readJSONSync(path.join(baseDir, 'run/application_config_meta.json'));
       checkApp(json);
 
       const dump = app.dumpConfigToObject();
@@ -104,9 +77,7 @@ describe.sequential('test/egg.test.ts', () => {
     });
 
     it('should ignore some type', () => {
-      const json = readJSONSync(
-        path.join(baseDir, 'run/application_config.json')
-      );
+      const json = readJSONSync(path.join(baseDir, 'run/application_config.json'));
       checkApp(json);
 
       const dump = app.dumpConfigToObject();
@@ -165,16 +136,12 @@ describe.sequential('test/egg.test.ts', () => {
     });
 
     it.skip('should read timing data', () => {
-      let json = readJSONSync(
-        path.join(baseDir, `run/agent_timing_${process.pid}.json`)
-      );
+      let json = readJSONSync(path.join(baseDir, `run/agent_timing_${process.pid}.json`));
       // assert.equal(json.length, 43);
       assert.equal(json[1].name, 'agent Start');
       assert.equal(json[0].pid, process.pid);
 
-      json = readJSONSync(
-        path.join(baseDir, `run/application_timing_${process.pid}.json`)
-      );
+      json = readJSONSync(path.join(baseDir, `run/application_timing_${process.pid}.json`));
       // assert(json.length === 64);
       assert.equal(json[1].name, 'application Start');
       assert.equal(json[0].pid, process.pid);
@@ -199,47 +166,34 @@ describe.sequential('test/egg.test.ts', () => {
       app.dumpTiming();
     });
 
-    it.skipIf(process.platform === 'win32')(
-      'should dumpTiming when timeout',
-      async () => {
-        const baseDir = getFilepath('apps/dumptiming-timeout');
-        fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
-        fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
-        const app = createApp(baseDir);
-        await app.ready();
-        await scheduler.wait(100);
-        assertFile(
-          path.join(baseDir, `run/application_timing_${process.pid}.json`)
-        );
-        assertFile(
-          path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'),
-          /unfinished timing item: {"name":"Did Load in app.js:didLoad"/
-        );
-        await app.close();
-      }
-    );
+    it.skipIf(process.platform === 'win32')('should dumpTiming when timeout', async () => {
+      const baseDir = getFilepath('apps/dumptiming-timeout');
+      fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
+      fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
+      const app = createApp(baseDir);
+      await app.ready();
+      await scheduler.wait(100);
+      assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
+      assertFile(
+        path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'),
+        /unfinished timing item: {"name":"Did Load in app.js:didLoad"/
+      );
+      await app.close();
+    });
 
-    it.skipIf(process.platform === 'win32')(
-      'should dump slow-boot-action warnning log',
-      async () => {
-        const baseDir = getFilepath(
-          'apps/dumptiming-slowBootActionMinDuration'
-        );
-        fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
-        fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
-        const app = createApp(baseDir);
-        await app.ready();
-        await scheduler.wait(100);
-        assertFile(
-          path.join(
-            baseDir,
-            'logs/dumptiming-slowBootActionMinDuration/egg-web.log'
-          ),
-          /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/
-        );
-        await app.close();
-      }
-    );
+    it.skipIf(process.platform === 'win32')('should dump slow-boot-action warnning log', async () => {
+      const baseDir = getFilepath('apps/dumptiming-slowBootActionMinDuration');
+      fs.rmSync(path.join(baseDir, 'run'), { recursive: true, force: true });
+      fs.rmSync(path.join(baseDir, 'logs'), { recursive: true, force: true });
+      const app = createApp(baseDir);
+      await app.ready();
+      await scheduler.wait(100);
+      assertFile(
+        path.join(baseDir, 'logs/dumptiming-slowBootActionMinDuration/egg-web.log'),
+        /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/
+      );
+      await app.close();
+    });
   });
 
   describe('dump disabled plugin', () => {
@@ -252,9 +206,7 @@ describe.sequential('test/egg.test.ts', () => {
 
     it('should works', async () => {
       const baseDir = getFilepath('apps/dumpconfig');
-      const json = readJSONSync(
-        path.join(baseDir, 'run/application_config.json')
-      );
+      const json = readJSONSync(path.join(baseDir, 'run/application_config.json'));
       assert(!json.plugins.static.enable);
     });
   });
@@ -290,9 +242,7 @@ describe.sequential('test/egg.test.ts', () => {
       const baseDir = getFilepath('apps/dumpconfig-circular');
       await app.ready();
       await scheduler.wait(100);
-      const json = readJSONSync(
-        path.join(baseDir, 'run/application_config.json')
-      );
+      const json = readJSONSync(path.join(baseDir, 'run/application_config.json'));
       assert.deepEqual(json.config.foo, ['~config~foo']);
     });
   });
@@ -307,9 +257,7 @@ describe.sequential('test/egg.test.ts', () => {
     afterAll(() => app.close());
 
     it('should ignore config', () => {
-      const json = readJSONSync(
-        path.join(baseDir, 'run/application_config.json')
-      );
+      const json = readJSONSync(path.join(baseDir, 'run/application_config.json'));
       assert(json.config.keys === 'test key');
     });
   });
@@ -370,22 +318,14 @@ describe.sequential('test/egg.test.ts', () => {
     afterEach(() => app.close());
 
     it('should close all listeners', async () => {
-      let index = process
-        .listeners('unhandledRejection')
-        .indexOf(app._unhandledRejectionHandler);
+      let index = process.listeners('unhandledRejection').indexOf(app._unhandledRejectionHandler);
       assert(index !== -1);
-      index = process
-        .listeners('unhandledRejection')
-        .indexOf(app.agent._unhandledRejectionHandler);
+      index = process.listeners('unhandledRejection').indexOf(app.agent._unhandledRejectionHandler);
       assert(index !== -1);
       await app.close();
-      index = process
-        .listeners('unhandledRejection')
-        .indexOf(app._unhandledRejectionHandler);
+      index = process.listeners('unhandledRejection').indexOf(app._unhandledRejectionHandler);
       assert(index === -1);
-      index = process
-        .listeners('unhandledRejection')
-        .indexOf(app.agent._unhandledRejectionHandler);
+      index = process.listeners('unhandledRejection').indexOf(app.agent._unhandledRejectionHandler);
       assert(index === -1);
     });
 
@@ -418,21 +358,9 @@ describe.sequential('test/egg.test.ts', () => {
     afterAll(() => app.close());
 
     it('should handle unhandledRejection and log it', async () => {
-      const req1 = app
-        .httpRequest()
-        .get('/throw-unhandledRejection')
-        .expect('foo')
-        .expect(200);
-      const req2 = app
-        .httpRequest()
-        .get('/throw-unhandledRejection-string')
-        .expect('foo')
-        .expect(200);
-      const req3 = app
-        .httpRequest()
-        .get('/throw-unhandledRejection-obj')
-        .expect('foo')
-        .expect(200);
+      const req1 = app.httpRequest().get('/throw-unhandledRejection').expect('foo').expect(200);
+      const req2 = app.httpRequest().get('/throw-unhandledRejection-string').expect('foo').expect(200);
+      const req3 = app.httpRequest().get('/throw-unhandledRejection-obj').expect('foo').expect(200);
 
       try {
         await Promise.race([req1, req2, req3]);
@@ -469,36 +397,21 @@ describe.sequential('test/egg.test.ts', () => {
         'logs/base-context-class/base-context-class-web.log'
       );
       const log = fs.readFileSync(logPath, 'utf8');
-      assert(
-        log.match(/INFO .*? \[service\.home\] appname: base-context-class/)
-      );
-      assert(
-        log.match(/INFO .*? \[controller\.home\] appname: base-context-class/)
-      );
+      assert(log.match(/INFO .*? \[service\.home\] appname: base-context-class/));
+      assert(log.match(/INFO .*? \[controller\.home\] appname: base-context-class/));
       assert(log.match(/WARN .*? \[service\.home\] warn/));
       assert(log.match(/WARN .*? \[controller\.home\] warn/));
-      const errorPath = path.join(
-        getFilepath('apps/base-context-class'),
-        'logs/base-context-class/common-error.log'
-      );
+      const errorPath = path.join(getFilepath('apps/base-context-class'), 'logs/base-context-class/common-error.log');
       const error = fs.readFileSync(errorPath, 'utf8');
       assert(error.match(/nodejs.Error: some error/));
     });
 
     it('should get pathName success', async () => {
-      await app
-        .httpRequest()
-        .get('/pathName')
-        .expect('controller.home')
-        .expect(200);
+      await app.httpRequest().get('/pathName').expect('controller.home').expect(200);
     });
 
     it('should get config success', async () => {
-      await app
-        .httpRequest()
-        .get('/config')
-        .expect('base-context-class')
-        .expect(200);
+      await app.httpRequest().get('/config').expect('base-context-class').expect(200);
     });
   });
 
@@ -522,23 +435,20 @@ describe.sequential('test/egg.test.ts', () => {
     });
   });
 
-  describe.skipIf(process.platform === 'win32')(
-    'createAnonymousContext()',
-    () => {
-      let app: MockApplication;
-      beforeAll(() => {
-        app = createApp('apps/demo');
-        return app.ready();
-      });
-      afterAll(() => app.close());
+  describe.skipIf(process.platform === 'win32')('createAnonymousContext()', () => {
+    let app: MockApplication;
+    beforeAll(() => {
+      app = createApp('apps/demo');
+      return app.ready();
+    });
+    afterAll(() => app.close());
 
-      it('should create anonymous context', async () => {
-        let ctx = app.createAnonymousContext();
-        assert(ctx);
-        assert(ctx.host === '127.0.0.1');
-        ctx = app.agent.createAnonymousContext();
-        assert(ctx);
-      });
-    }
-  );
+    it('should create anonymous context', async () => {
+      let ctx = app.createAnonymousContext();
+      assert(ctx);
+      assert(ctx.host === '127.0.0.1');
+      ctx = app.agent.createAnonymousContext();
+      assert(ctx);
+    });
+  });
 });

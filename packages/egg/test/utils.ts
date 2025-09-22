@@ -6,20 +6,11 @@ import http from 'node:http';
 import { type AddressInfo } from 'node:net';
 import { scheduler } from 'node:timers/promises';
 
-import {
-  mm,
-  type MockOptions,
-  type MockClusterOptions,
-  type MockApplication,
-} from '@eggjs/mock';
+import { mm, type MockOptions, type MockClusterOptions, type MockApplication } from '@eggjs/mock';
 import { Application as Koa } from '@eggjs/koa';
 import { request } from '@eggjs/supertest';
 
-import {
-  startEgg,
-  type StartEggOptions,
-  type SingleModeAgent,
-} from '../src/index.ts';
+import { startEgg, type StartEggOptions, type SingleModeAgent } from '../src/index.ts';
 
 const __dirname = import.meta.dirname;
 const fixtures = path.join(__dirname, 'fixtures');
@@ -53,10 +44,7 @@ export const createApp = app;
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export function cluster(
-  name: string | MockClusterOptions,
-  options?: MockClusterOptions
-): MockApplication {
+export function cluster(name: string | MockClusterOptions, options?: MockClusterOptions): MockApplication {
   options = formatOptions(name, options);
   return mm.cluster(options) as unknown as MockApplication;
 }
@@ -68,10 +56,7 @@ export function cluster(
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(
-  baseDir: string,
-  options: StartEggOptions = {}
-): Promise<SingleModeApplication> {
+export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<SingleModeApplication> {
   if (!baseDir.startsWith('/')) {
     baseDir = path.join(__dirname, 'fixtures', baseDir);
   }

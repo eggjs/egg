@@ -114,11 +114,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       await loader.loadConfig();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(
-        err.message.includes(
-          `Can not define middleware in ${path.join(pluginDir, 'config/config.default.js')}`
-        )
-      );
+      assert(err.message.includes(`Can not define middleware in ${path.join(pluginDir, 'config/config.default.js')}`));
     }
   });
 
@@ -176,10 +172,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       assert.equal(configMeta.date.toLowerCase(), configPath);
       assert.equal(configMeta.ooooo.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.keepAlive.toLowerCase(), configPath);
-      assert.equal(
-        configMeta.urllib.timeout.toLowerCase(),
-        getFilepath('egg-esm/config/config.default.js')
-      );
+      assert.equal(configMeta.urllib.timeout.toLowerCase(), getFilepath('egg-esm/config/config.default.js'));
       assert.equal(configMeta.urllib.foo.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.n.toLowerCase(), configPath);
       assert.equal(configMeta.urllib.dd.toLowerCase(), configPath);
@@ -197,10 +190,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
       assert.equal(configMeta.date, configPath);
       assert.equal(configMeta.ooooo, configPath);
       assert.equal(configMeta.urllib.keepAlive, configPath);
-      assert.equal(
-        configMeta.urllib.timeout,
-        getFilepath('egg-esm/config/config.default.js')
-      );
+      assert.equal(configMeta.urllib.timeout, getFilepath('egg-esm/config/config.default.js'));
       assert.equal(configMeta.urllib.foo, configPath);
       assert.equal(configMeta.urllib.n, configPath);
       assert.equal(configMeta.urllib.dd, configPath);

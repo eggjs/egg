@@ -147,12 +147,7 @@ Koa doesn't guard against everything that could be put as a response body -- a f
 app.use(async (ctx, next) => {
   await next();
 
-  ctx.assert.equal(
-    'object',
-    typeof ctx.body,
-    500,
-    'some dev did something wrong'
-  );
+  ctx.assert.equal('object', typeof ctx.body, 500, 'some dev did something wrong');
 });
 ```
 
@@ -183,9 +178,7 @@ Here's an example of stream error handling without automatically destroying the 
 const PassThrough = require('stream').PassThrough;
 
 app.use(async ctx => {
-  ctx.body = someHTTPStream
-    .on('error', err => ctx.onerror(err))
-    .pipe(PassThrough());
+  ctx.body = someHTTPStream.on('error', err => ctx.onerror(err)).pipe(PassThrough());
 });
 ```
 

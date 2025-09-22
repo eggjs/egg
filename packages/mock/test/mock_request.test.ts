@@ -25,27 +25,16 @@ describe('test/mock_request.test.ts', () => {
     });
 
     it('should GET session path work', async () => {
-      await app
-        .httpRequest()
-        .get('session')
-        .expect(200)
-        .expect('hello session');
+      await app.httpRequest().get('session').expect(200).expect('hello session');
     });
 
     it('should GET wrong pathFor name throw error', async () => {
       try {
-        await app
-          .httpRequest()
-          .get('session-404')
-          .expect(200)
-          .expect('hello world');
+        await app.httpRequest().get('session-404').expect(200).expect('hello world');
         throw new Error('should not run this');
       } catch (err: any) {
         assert(err);
-        assert(
-          err.message ===
-            "Can't find router:session-404, please check your 'app/router.js'"
-        );
+        assert(err.message === "Can't find router:session-404, please check your 'app/router.js'");
       }
     });
 
@@ -61,27 +50,15 @@ describe('test/mock_request.test.ts', () => {
 
     it('should test with expectHeader(header) and unexpectHeader(header) throw error', async () => {
       try {
-        await app
-          .httpRequest()
-          .get('/')
-          .expect(200)
-          .expect('hello world')
-          .expectHeader('set-cookie1');
+        await app.httpRequest().get('/').expect(200).expect('hello world').expectHeader('set-cookie1');
       } catch (err: any) {
         assert(err.message === 'expected "set-cookie1" header field');
       }
 
       try {
-        await app
-          .httpRequest()
-          .get('/')
-          .expect(200)
-          .expect('hello world')
-          .unexpectHeader('set-cookie');
+        await app.httpRequest().get('/').expect(200).expect('hello world').unexpectHeader('set-cookie');
       } catch (err: any) {
-        assert(
-          err.message.startsWith('unexpected "set-cookie" header field, got "')
-        );
+        assert(err.message.startsWith('unexpected "set-cookie" header field, got "'));
       }
     });
 
@@ -114,27 +91,16 @@ describe('test/mock_request.test.ts', () => {
     });
 
     it('should GET session path work', async () => {
-      await app
-        .httpRequest()
-        .get('session')
-        .expect(200)
-        .expect('hello session');
+      await app.httpRequest().get('session').expect(200).expect('hello session');
     });
 
     it('should GET wrong pathFor name throw error', async () => {
       try {
-        await app
-          .httpRequest()
-          .get('session-404')
-          .expect(200)
-          .expect('hello world');
+        await app.httpRequest().get('session-404').expect(200).expect('hello world');
         throw new Error('should not run this');
       } catch (err: any) {
         assert(err);
-        assert(
-          err.message ===
-            "Can't find router:session-404, please check your 'app/router.js'"
-        );
+        assert(err.message === "Can't find router:session-404, please check your 'app/router.js'");
       }
     });
 
@@ -150,27 +116,15 @@ describe('test/mock_request.test.ts', () => {
 
     it('should test with expectHeader(header) and unexpectHeader(header) throw error', async () => {
       try {
-        await app
-          .httpRequest()
-          .get('/')
-          .expect(200)
-          .expect('hello world')
-          .expectHeader('set-cookie1');
+        await app.httpRequest().get('/').expect(200).expect('hello world').expectHeader('set-cookie1');
       } catch (err: any) {
         assert(err.message === 'expected "set-cookie1" header field');
       }
 
       try {
-        await app
-          .httpRequest()
-          .get('/')
-          .expect(200)
-          .expect('hello world')
-          .unexpectHeader('set-cookie');
+        await app.httpRequest().get('/').expect(200).expect('hello world').unexpectHeader('set-cookie');
       } catch (err: any) {
-        assert(
-          err.message.startsWith('unexpected "set-cookie" header field, got "')
-        );
+        assert(err.message.startsWith('unexpected "set-cookie" header field, got "'));
       }
     });
 

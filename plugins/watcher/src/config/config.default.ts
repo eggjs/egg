@@ -12,12 +12,7 @@ export default {
     type: 'default', // default event source
     eventSources: {
       default: path.join(getSourceDirname(), 'lib', 'event-sources', 'default'),
-      development: path.join(
-        getSourceDirname(),
-        'lib',
-        'event-sources',
-        'development'
-      ),
+      development: path.join(getSourceDirname(), 'lib', 'event-sources', 'development'),
     },
   } as WatcherConfig,
 };

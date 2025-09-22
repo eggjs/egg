@@ -17,9 +17,7 @@ describe('test/watcher.test.ts', () => {
     });
     await app.ready();
     const content = fs.readFileSync(
-      getFilePath(
-        'apps/watcher-type-default/logs/watcher-type-default/egg-agent.log'
-      ),
+      getFilePath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log'),
       'utf8'
     );
     assert.match(content, /defaultEventSource watcher will NOT take effect/);
@@ -39,9 +37,7 @@ describe('test/watcher.test.ts', () => {
         assert.equal(info.foo, 'bar');
 
         const content = fs.readFileSync(
-          getFilePath(
-            'apps/watcher-custom-event-source/logs/watcher-custom-event-source/egg-agent.log'
-          ),
+          getFilePath('apps/watcher-custom-event-source/logs/watcher-custom-event-source/egg-agent.log'),
           'utf8'
         );
         assert.match(content, /warn12345/);
@@ -75,9 +71,7 @@ describe('test/watcher.test.ts', () => {
         assert.equal(info.foo, 'bar');
 
         const content = fs.readFileSync(
-          getFilePath(
-            'apps/watcher-custom-event-source-fuzzy/logs/watcher-custom-event-source-fuzzy/egg-agent.log'
-          ),
+          getFilePath('apps/watcher-custom-event-source-fuzzy/logs/watcher-custom-event-source-fuzzy/egg-agent.log'),
           'utf8'
         );
         assert(content.includes('warn12345'));

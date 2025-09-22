@@ -38,32 +38,14 @@ describe.skip('close master', () => {
     app.proc.kill('SIGTERM');
     await scheduler.wait(6000);
     assert(app.proc.killed === true);
-    app.expect(
-      'stdout',
-      /INFO \d+ \[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.expect('stdout', /INFO \d+ \[master\] master is killed by signal SIGTERM, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
-    app.expect(
-      'stdout',
-      /DEBUG \d+ \[master\] close done, exiting with code:0/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
+    app.expect('stdout', /DEBUG \d+ \[master\] close done, exiting with code:0/);
     app.expect('stdout', /INFO \d+ \[master\] exit with code:0/);
-    app.expect(
-      'stdout',
-      /INFO \d+ \[app_worker\] receive signal SIGTERM, exiting with code:0/
-    );
-    app.expect(
-      'stdout',
-      /INFO \d+ \[agent_worker\] receive signal SIGTERM, exiting with code:0/
-    );
-    app.notExpect(
-      'stderr',
-      /\[app_worker\] receive disconnect event in cluster fork mode/
-    );
+    app.expect('stdout', /INFO \d+ \[app_worker\] receive signal SIGTERM, exiting with code:0/);
+    app.expect('stdout', /INFO \d+ \[agent_worker\] receive signal SIGTERM, exiting with code:0/);
+    app.notExpect('stderr', /\[app_worker\] receive disconnect event in cluster fork mode/);
     app.notExpect('stderr', /\[agent_worker\] receive disconnect event /);
     app.expect('stdout', /INFO \d+ \[app_worker\] exit with code:0/);
     app.expect('stdout', /INFO \d+ \[agent_worker\] exit with code:0/);
@@ -89,10 +71,7 @@ describe.skip('close master', () => {
 
     await scheduler.wait(6000);
     assert(app.proc.killed === true);
-    app.notExpect(
-      'stdout',
-      /\[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.notExpect('stdout', /\[master\] master is killed by signal SIGTERM, closing/);
     app.notExpect('stdout', /\[master\] close done, exiting with code:0/);
     app.notExpect('stdout', /\[master\] exit with code:0/);
     app.expect('stderr', /\[app_worker\] receive disconnect event /);
@@ -119,10 +98,7 @@ describe.skip('close master', () => {
 
     await scheduler.wait(6000);
     assert(app.proc.killed === true);
-    app.notExpect(
-      'stdout',
-      /\[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.notExpect('stdout', /\[master\] master is killed by signal SIGTERM, closing/);
     app.notExpect('stdout', /\[master\] close done, exiting with code:0/);
     app.notExpect('stdout', /\[master\] exit with code:0/);
     app.expect('stderr', /\[app_worker\] receive disconnect event /);
@@ -152,15 +128,9 @@ describe.skip('close master', () => {
     app.proc.kill('SIGTERM');
     await scheduler.wait(6000);
     assert(app.proc.killed === true);
-    app.expect(
-      'stdout',
-      /\[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.expect('stdout', /\[master\] master is killed by signal SIGTERM, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
     app.expect('stdout', /\[master\] exit with code:0/);
   });
 
@@ -179,15 +149,9 @@ describe.skip('close master', () => {
     await scheduler.wait(6000);
 
     assert(app.proc.killed === true);
-    app.expect(
-      'stdout',
-      /\[master\] master is killed by signal SIGQUIT, closing/
-    );
+    app.expect('stdout', /\[master\] master is killed by signal SIGQUIT, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
     app.expect('stdout', /\[master\] exit with code:0/);
   });
 
@@ -206,15 +170,9 @@ describe.skip('close master', () => {
     await scheduler.wait(6000);
 
     assert(app.proc.killed === true);
-    app.expect(
-      'stdout',
-      /\[master\] master is killed by signal SIGINT, closing/
-    );
+    app.expect('stdout', /\[master\] master is killed by signal SIGINT, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
     app.expect('stdout', /\[master\] exit with code:0/);
   });
 
@@ -261,9 +219,7 @@ describe.skip('close master', () => {
     app.expect('stdout', /INFO \d+ \[master\] exit with code:0/);
     app.expect('stdout', /INFO \d+ \[master\] wait 1000ms/);
     const appTimeoutMatch = app.stdout.match(/app worker start close: (\d+)/);
-    const agentTimeoutMatch = app.stdout.match(
-      /agent worker start close: (\d+)/
-    );
+    const agentTimeoutMatch = app.stdout.match(/agent worker start close: (\d+)/);
     const appTimeout = Number(appTimeoutMatch && appTimeoutMatch[1]);
     const agentTimeout = Number(agentTimeoutMatch && agentTimeoutMatch[1]);
     assert(!Number.isNaN(appTimeout));
@@ -292,15 +248,9 @@ describe.skip('close master', () => {
     app.expect('stdout', /worker1 \[\d+\] started/);
     app.expect('stdout', /worker2 \[\d+\] started/);
 
-    app.expect(
-      'stdout',
-      /\[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.expect('stdout', /\[master\] master is killed by signal SIGTERM, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
     app.expect('stdout', /\[master\] exit with code:0/);
     app.expect('stdout', /worker1 on sigterm and exit/);
     app.expect('stdout', /worker2 on sigterm and exit/);
@@ -332,15 +282,9 @@ describe.skip('close master', () => {
     app.expect('stdout', /worker1 \[\d+\] started/);
     app.expect('stdout', /worker2 \[\d+\] started/);
 
-    app.expect(
-      'stdout',
-      /\[master\] master is killed by signal SIGTERM, closing/
-    );
+    app.expect('stdout', /\[master\] master is killed by signal SIGTERM, closing/);
     app.expect('stdout', /\[master\] system memory: total \d+, free \d+/);
-    app.expect(
-      'stdout',
-      /\[master\] process info: heap_limit \d+, heap_used \d+/
-    );
+    app.expect('stdout', /\[master\] process info: heap_limit \d+, heap_used \d+/);
     app.expect('stdout', /\[master\] exit with code:0/);
     app.expect('stdout', /worker1 on sigterm and not exit/);
     app.expect('stdout', /worker2 on sigterm and exit/);

@@ -11,10 +11,7 @@ import { Ready } from 'get-ready';
 import { request as supertestRequest } from './supertest.ts';
 import { sleep, rimrafSync } from './utils.ts';
 import { formatOptions } from './format_options.ts';
-import type {
-  MockClusterOptions,
-  MockClusterApplicationOptions,
-} from './types.ts';
+import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
 import type ApplicationUnittest from '../app/extend/application.ts';
 
 const debug = debuglog('egg/mock/lib/cluster');
@@ -30,15 +27,9 @@ let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
 if (!existsSync(serverBin)) {
   serverBin = path.join(import.meta.dirname, 'start-cluster.ts');
 }
-let requestCallFunctionFile = path.join(
-  import.meta.dirname,
-  'request_call_function.js'
-);
+let requestCallFunctionFile = path.join(import.meta.dirname, 'request_call_function.js');
 if (!existsSync(requestCallFunctionFile)) {
-  requestCallFunctionFile = path.join(
-    import.meta.dirname,
-    'request_call_function.ts'
-  );
+  requestCallFunctionFile = path.join(import.meta.dirname, 'request_call_function.ts');
 }
 
 /**
@@ -272,12 +263,7 @@ export class ClusterApplication extends Coffee {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(
-    method: string,
-    args: any[] = [],
-    property: any = undefined,
-    needResult = false
-  ) {
+  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false) {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (typeof arg === 'function') {
@@ -307,13 +293,9 @@ export class ClusterApplication extends Coffee {
       property,
       needResult,
     };
-    const child = childProcess.spawnSync(
-      process.execPath,
-      [requestCallFunctionFile, JSON.stringify(data)],
-      {
-        stdio: 'pipe',
-      }
-    );
+    const child = childProcess.spawnSync(process.execPath, [requestCallFunctionFile, JSON.stringify(data)], {
+      stdio: 'pipe',
+    });
     // if (child.stderr && child.stderr.length > 0) {
     //   console.error(child.stderr.toString());
     // }
@@ -339,9 +321,7 @@ export class ClusterApplication extends Coffee {
 
 export type MockClusterApplication = ClusterApplication & ApplicationUnittest;
 
-export function createCluster(
-  initOptions?: MockClusterOptions
-): MockClusterApplication {
+export function createCluster(initOptions?: MockClusterOptions): MockClusterApplication {
   const options = formatOptions(initOptions) as MockClusterApplicationOptions;
   if (options.cache && clusters.has(options.baseDir)) {
     const clusterApp = clusters.get(options.baseDir);
@@ -375,11 +355,7 @@ export function createCluster(
       debug('proxy handler.get %s', prop);
       // proxy mockXXX function to app worker
       const method = prop;
-      if (
-        typeof method === 'string' &&
-        /^mock\w+$/.test(method) &&
-        target[method] === undefined
-      ) {
+      if (typeof method === 'string' && /^mock\w+$/.test(method) && target[method] === undefined) {
         return function mockProxy(...args: any[]) {
           return target._callFunctionOnAppWorker(method, args, null, true);
         };

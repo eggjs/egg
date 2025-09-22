@@ -2,7 +2,6 @@
 
 const address = require('address');
 
-
 module.exports = {
   keys: '123',
   cluster: {

@@ -108,10 +108,7 @@ describe('app.use(fn)', () => {
     const app = new Koa();
 
     for (const v of [null, undefined, 0, false, 'not a function']) {
-      assert.throws(
-        () => app.use(v as unknown as MiddlewareFunc),
-        /middleware must be a function!/
-      );
+      assert.throws(() => app.use(v as unknown as MiddlewareFunc), /middleware must be a function!/);
     }
   });
 

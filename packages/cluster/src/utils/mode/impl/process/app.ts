@@ -63,7 +63,7 @@ export class AppProcessUtils extends BaseAppUtils {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
 
-    const args = [ JSON.stringify(this.options) ];
+    const args = [JSON.stringify(this.options)];
     this.log('[master] start appWorker with args %j (process)', args);
     cfork({
       exec: this.getAppWorkerFile(),
@@ -90,9 +90,13 @@ export class AppProcessUtils extends BaseAppUtils {
         msg.from = 'app';
         this.messenger.send(msg);
       });
-      this.log('[master] app_worker#%s:%s start, state: %s, current workers: %j',
-        appWorker.id, appWorker.workerId, appWorker.state,
-        Object.keys(cluster.workers!));
+      this.log(
+        '[master] app_worker#%s:%s start, state: %s, current workers: %j',
+        appWorker.id,
+        appWorker.workerId,
+        appWorker.state,
+        Object.keys(cluster.workers!)
+      );
 
       // send debug message, due to `brk` scene, send here instead of app_worker.js
       if (this.options.isDebug) {
@@ -112,9 +116,14 @@ export class AppProcessUtils extends BaseAppUtils {
     });
     cluster.on('disconnect', worker => {
       const appWorker = new AppProcessWorker(worker);
-      this.log('[master] app_worker#%s:%s disconnect, suicide: %s, state: %s, current workers: %j',
-        appWorker.id, appWorker.workerId, appWorker.exitedAfterDisconnect, appWorker.state,
-        Object.keys(cluster.workers!));
+      this.log(
+        '[master] app_worker#%s:%s disconnect, suicide: %s, state: %s, current workers: %j',
+        appWorker.id,
+        appWorker.workerId,
+        appWorker.exitedAfterDisconnect,
+        appWorker.state,
+        Object.keys(cluster.workers!)
+      );
     });
     cluster.on('exit', (worker, code, signal) => {
       const appWorker = new AppProcessWorker(worker);
@@ -133,10 +142,12 @@ export class AppProcessUtils extends BaseAppUtils {
   }
 
   async kill(timeout: number) {
-    await Promise.all(Object.keys(cluster.workers!).map(id => {
-      const worker = cluster.workers![id]!;
-      Reflect.set(worker, 'disableRefork', true);
-      return terminate(worker.process, timeout);
-    }));
+    await Promise.all(
+      Object.keys(cluster.workers!).map(id => {
+        const worker = cluster.workers![id]!;
+        Reflect.set(worker, 'disableRefork', true);
+        return terminate(worker.process, timeout);
+      })
+    );
   }
 }

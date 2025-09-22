@@ -22,7 +22,6 @@ setGetAppCallback((suite, test) => {
   };
 });
 
-describe('test case create context error', function() {
-  it('should not print', () => {
-  });
+describe('test case create context error', function () {
+  it('should not print', () => {});
 });

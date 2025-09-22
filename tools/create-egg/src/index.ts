@@ -76,9 +76,7 @@ const TEMPLATES: Template[] = [
 const defaultTargetDir = 'egg-project';
 
 export async function init() {
-  const argTargetDir = argv._[0]
-    ? formatTargetDir(String(argv._[0]))
-    : undefined;
+  const argTargetDir = argv._[0] ? formatTargetDir(String(argv._[0])) : undefined;
   const argTemplate = argv.template;
   const argOverwrite = argv.overwrite;
 
@@ -91,9 +89,7 @@ export async function init() {
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent);
   const cancel = () => prompts.cancel('Operation cancelled');
 
-  prompts.intro(
-    `${greenBright('Egg.js')} - Born to build better enterprise application and framework`
-  );
+  prompts.intro(`${greenBright('Egg.js')} - Born to build better enterprise application and framework`);
 
   // 1. Get project name and target dir
   let targetDir = argTargetDir;
@@ -103,9 +99,7 @@ export async function init() {
       defaultValue: defaultTargetDir,
       placeholder: defaultTargetDir,
       validate: value => {
-        return value.length === 0 || formatTargetDir(value).length > 0
-          ? undefined
-          : 'Invalid project name';
+        return value.length === 0 || formatTargetDir(value).length > 0 ? undefined : 'Invalid project name';
       },
     });
     if (prompts.isCancel(projectName)) return cancel();
@@ -118,9 +112,7 @@ export async function init() {
       ? 'yes'
       : await prompts.select({
           message:
-            (targetDir === '.'
-              ? 'Current directory'
-              : `Target directory "${targetDir}"`) +
+            (targetDir === '.' ? 'Current directory' : `Target directory "${targetDir}"`) +
             ` is not empty. Please choose how to proceed:`,
           options: [
             {
@@ -202,26 +194,19 @@ export async function init() {
 
     const [command, ...args] = fullCustomCommand.split(' ');
     // we replace TARGET_DIR here because targetDir may include a space
-    const replacedArgs = args.map(arg =>
-      arg.replace('TARGET_DIR', () => targetDir)
-    );
+    const replacedArgs = args.map(arg => arg.replace('TARGET_DIR', () => targetDir));
     const { status } = spawn.sync(command, replacedArgs, {
       stdio: 'inherit',
     });
     process.exit(status ?? 0);
   }
 
-  prompts.log.step(
-    `Scaffolding project with ${blueBright(template)} in ${root}...`
-  );
+  prompts.log.step(`Scaffolding project with ${blueBright(template)} in ${root}...`);
 
   const templateDir = path.join(import.meta.dirname, `templates/${template}`);
 
   const write = (file: string, content?: string) => {
-    const targetPath = path.join(
-      root,
-      file.startsWith('_') ? file.slice(1) : file
-    );
+    const targetPath = path.join(root, file.startsWith('_') ? file.slice(1) : file);
     if (content) {
       fs.writeFileSync(targetPath, content);
     } else {
@@ -234,10 +219,7 @@ export async function init() {
     write(file);
   }
 
-  let pkgJsonContent = fs.readFileSync(
-    path.join(templateDir, `package.json`),
-    'utf-8'
-  );
+  let pkgJsonContent = fs.readFileSync(path.join(templateDir, `package.json`), 'utf-8');
   pkgJsonContent = pkgJsonContent.replaceAll('{{name}}', packageName);
   const pkg = JSON.parse(pkgJsonContent);
 
@@ -263,9 +245,7 @@ export async function init() {
   let doneMessage = '';
   doneMessage += `Done. Now run:\n`;
   if (root !== cwd) {
-    doneMessage += `\n  cd ${
-      cdProjectName.includes(' ') ? `"${cdProjectName}"` : cdProjectName
-    }`;
+    doneMessage += `\n  cd ${cdProjectName.includes(' ') ? `"${cdProjectName}"` : cdProjectName}`;
   }
   switch (pkgManager) {
     case 'yarn':
@@ -294,9 +274,7 @@ function copy(src: string, dest: string) {
 }
 
 function isValidPackageName(projectName: string) {
-  return /^(?:@[a-z\d\-*~][a-z\d\-*._~]*\/)?[a-z\d\-~][a-z\d\-._~]*$/.test(
-    projectName
-  );
+  return /^(?:@[a-z\d\-*~][a-z\d\-*._~]*\/)?[a-z\d\-~][a-z\d\-._~]*$/.test(projectName);
 }
 
 function toValidPackageName(projectName: string) {
@@ -371,9 +349,7 @@ function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
           return 'pnpm create ';
         }
         // For other package managers, preserve the original format
-        return customCommand.startsWith('npm create -- ')
-          ? `${pkgManager} create -- `
-          : `${pkgManager} create `;
+        return customCommand.startsWith('npm create -- ') ? `${pkgManager} create -- ` : `${pkgManager} create `;
       })
       // Only Yarn 1.x doesn't support `@version` in the `create` command
       .replace('@latest', () => (isYarn1 ? '' : '@latest'))

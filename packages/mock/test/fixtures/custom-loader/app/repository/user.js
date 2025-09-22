@@ -8,7 +8,6 @@ class UserRepository {
   async get() {
     return this.ctx.params.name;
   }
-
 }
 
 module.exports = UserRepository;

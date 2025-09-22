@@ -30,7 +30,7 @@ export function injectContext(mocha: any) {
   }
 
   // Inject ctx for before/after.
-  Runner.prototype.runSuite = async function(suite: any, fn: any) {
+  Runner.prototype.runSuite = async function (suite: any, fn: any) {
     debug('run suite: %s', suite.title);
     let app;
     const self = this;
@@ -51,7 +51,7 @@ export function injectContext(mocha: any) {
     try {
       suite.ctx[MOCHA_SUITE_APP] = app;
       const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
-      await mockContextFun.call(app, async function() {
+      await mockContextFun.call(app, async function () {
         await new Promise<void>(resolve => {
           runSuite.call(self, suite, (aErrSuite: Error) => {
             errSuite = aErrSuite;
@@ -74,7 +74,7 @@ export function injectContext(mocha: any) {
 
   // Inject ctx for beforeEach/it/afterEach.
   // And ctx with before/after is not same as beforeEach/it/afterEach.
-  Runner.prototype.runTests = async function(suite: any, fn: any) {
+  Runner.prototype.runTests = async function (suite: any, fn: any) {
     const tests = suite.tests.slice();
     if (!tests.length) {
       return runTests.call(this, suite, fn);
@@ -97,7 +97,7 @@ export function injectContext(mocha: any) {
       if (!test) {
         return done();
       }
-      suite.tests = [ test ];
+      suite.tests = [test];
 
       let app;
       try {
@@ -111,7 +111,7 @@ export function injectContext(mocha: any) {
 
       try {
         const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
-        await mockContextFun.call(app, async function() {
+        await mockContextFun.call(app, async function () {
           return await new Promise<void>(resolve => {
             runTests.call(self, suite, () => {
               return resolve();

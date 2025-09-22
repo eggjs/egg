@@ -124,10 +124,7 @@ describe('app.respond', () => {
 
       const res = await request(server).head('/').expect(200);
 
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
       assert.equal(res.headers['content-length'], '17');
       assert.ok(!res.text);
     });
@@ -282,11 +279,7 @@ describe('app.respond', () => {
 
         const server = app.listen();
 
-        return request(server)
-          .get('/')
-          .expect(400)
-          .expect('Content-Length', '11')
-          .expect('Bad Request');
+        return request(server).get('/').expect(400).expect('Content-Length', '11').expect('Bad Request');
       });
     });
 
@@ -349,18 +342,11 @@ describe('app.respond', () => {
 
         const server = app.listen();
 
-        const res = await request(server)
-          .get('/')
-          .expect(700)
-          .expect('custom status');
+        const res = await request(server).get('/').expect(700).expect('custom status');
 
         assert.equal(res.statusCode, 700);
         assert.ok((res as unknown as { res: { statusMessage: string } }).res);
-        assert.equal(
-          (res as unknown as { res: { statusMessage: string } }).res
-            .statusMessage,
-          'custom status'
-        );
+        assert.equal((res as unknown as { res: { statusMessage: string } }).res.statusMessage, 'custom status');
       });
     });
 
@@ -379,11 +365,7 @@ describe('app.respond', () => {
 
         assert.equal(res.statusCode, 200);
         assert.ok((res as unknown as { res: { statusMessage: string } }).res);
-        assert.equal(
-          (res as unknown as { res: { statusMessage: string } }).res
-            .statusMessage,
-          'ok'
-        );
+        assert.equal((res as unknown as { res: { statusMessage: string } }).res.statusMessage, 'ok');
       });
     });
 
@@ -502,9 +484,7 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      const res = await request(server)
-        .get('/')
-        .expect('Content-Type', 'application/json; charset=utf-8');
+      const res = await request(server).get('/').expect('Content-Type', 'application/json; charset=utf-8');
 
       assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
       assert.deepEqual(res.body, pkg);
@@ -521,9 +501,7 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      const res = await request(server)
-        .get('/')
-        .expect('Content-Type', 'application/json; charset=utf-8');
+      const res = await request(server).get('/').expect('Content-Type', 'application/json; charset=utf-8');
 
       assert.equal(Object.hasOwn(res.headers, 'content-length'), false);
       assert.deepEqual(res.body, pkg);
@@ -540,9 +518,7 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      const res = await request(server)
-        .get('/')
-        .expect('Content-Type', 'application/json; charset=utf-8');
+      const res = await request(server).get('/').expect('Content-Type', 'application/json; charset=utf-8');
 
       assert.equal(Object.hasOwn(res.headers, 'content-length'), true);
       assert.deepEqual(res.body, pkg);
@@ -561,15 +537,10 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      const res = await request(server)
-        .get('/')
-        .expect('Content-Type', 'application/json; charset=utf-8');
+      const res = await request(server).get('/').expect('Content-Type', 'application/json; charset=utf-8');
 
       assert.equal(Object.hasOwn(res.headers, 'content-length'), true);
-      assert.equal(
-        res.headers['content-length'],
-        `${fs.readFileSync('package.json').length}`
-      );
+      assert.equal(res.headers['content-length'], `${fs.readFileSync('package.json').length}`);
       assert.deepEqual(res.body, pkg);
     });
 
@@ -816,11 +787,7 @@ describe('app.respond', () => {
 
       const server = app.listen();
 
-      const res = await request(server)
-        .get('/')
-        .expect(401)
-        .expect('')
-        .expect({});
+      const res = await request(server).get('/').expect(401).expect('').expect({});
 
       assert.equal(Object.hasOwn(res.headers, 'content-type'), false);
     });

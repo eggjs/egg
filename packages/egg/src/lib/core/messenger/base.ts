@@ -12,9 +12,7 @@ export class BaseMessenger extends EventEmitter {
   }
 
   [captureRejectionSymbol](err: Error, event: string | symbol, ...args: any[]) {
-    this.egg.coreLogger.error(
-      new MessageUnhandledRejectionError(err, event, args)
-    );
+    this.egg.coreLogger.error(new MessageUnhandledRejectionError(err, event, args));
   }
 
   emit(eventName: string | symbol, ...args: any[]): boolean {
@@ -26,9 +24,7 @@ export class BaseMessenger extends EventEmitter {
       if (!(err instanceof Error)) {
         err = new Error(String(err));
       }
-      this.egg.coreLogger.error(
-        new MessageUnhandledRejectionError(err, eventName, args)
-      );
+      this.egg.coreLogger.error(new MessageUnhandledRejectionError(err, eventName, args));
       return hasListeners;
     }
   }

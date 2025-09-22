@@ -21,17 +21,7 @@ const debug = debuglog('egg/mock/lib/app');
 const apps = new Map<string, ApplicationUnittest>();
 const APP_INIT = Symbol('appInit');
 const MESSENGER = Symbol('messenger');
-const MOCK_APP_METHOD = [
-  'ready',
-  'closed',
-  'isClosed',
-  'close',
-  '_agent',
-  '_app',
-  'on',
-  'once',
-  'then',
-];
+const MOCK_APP_METHOD = ['ready', 'closed', 'isClosed', 'close', '_agent', '_app', 'on', 'once', 'then'];
 
 class MockApplicationWorker extends Base {
   _agent: AgentUnittest;
@@ -85,13 +75,13 @@ class MockApplicationWorker extends Base {
     assert(egg.Agent, `should export Agent class from framework ${this.options.framework}`);
 
     const Agent = egg.Agent;
-    const agent = this._agent = new Agent({ ...this.options }) as AgentUnittest;
+    const agent = (this._agent = new Agent({ ...this.options }) as AgentUnittest);
     debug('agent instantiate');
     await agent.ready();
     debug('agent ready');
 
     const ApplicationClass = bindMessenger(egg.Application, agent);
-    const app = this._app = new ApplicationClass({ ...this.options }) as unknown as ApplicationUnittest;
+    const app = (this._app = new ApplicationClass({ ...this.options }) as unknown as ApplicationUnittest);
 
     // https://github.com/eggjs/egg/blob/8bb7c7e7d59d6aeca4b2ed1eb580368dcb731a4d/lib/egg.js#L125
     // egg single mode mount this at start(), so egg-mock should impel it.
@@ -176,7 +166,7 @@ class MockApplicationWorker extends Base {
     }
 
     apps.delete(baseDir);
-    debug('delete app cache %s, remain %s', baseDir, [ ...apps.keys() ]);
+    debug('delete app cache %s, remain %s', baseDir, [...apps.keys()]);
 
     if (os.platform() === 'win32') {
       await sleep(1000);
@@ -255,7 +245,7 @@ export function createApp(createOptions?: MockOptions): ApplicationUnittest {
     },
     getPrototypeOf(target) {
       if (!target[APP_INIT]) {
-        throw new Error('can\'t getPrototypeOf before ready');
+        throw new Error("can't getPrototypeOf before ready");
       }
       debug('proxy handler.getPrototypeOf %s');
       return Object.getPrototypeOf(target._app);
@@ -290,7 +280,7 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
         apply: this._sendMessage.bind(this),
       });
     }
-    _sendMessage(_target: any, _thisArg: unknown, [ action, data, to ]: [ string, unknown | undefined, string]) {
+    _sendMessage(_target: any, _thisArg: unknown, [action, data, to]: [string, unknown | undefined, string]) {
       const appMessenger = this.messenger;
       setImmediate(() => {
         if (to === 'app') {

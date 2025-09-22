@@ -14,15 +14,10 @@ describe('test/lib/plugins/security.test.ts', () => {
     afterAll(() => app.close());
 
     it('should not check csrf', async () => {
-      await app
-        .httpRequest()
-        .post('/api/user')
-        .send({ name: 'fengmk2' })
-        .expect(200)
-        .expect({
-          url: '/api/user',
-          name: 'fengmk2',
-        });
+      await app.httpRequest().post('/api/user').send({ name: 'fengmk2' }).expect(200).expect({
+        url: '/api/user',
+        name: 'fengmk2',
+      });
     });
   });
 
@@ -53,27 +48,17 @@ describe('test/lib/plugins/security.test.ts', () => {
     afterAll(() => app.close());
 
     it('should not check csrf on /api/*', async () => {
-      await app
-        .httpRequest()
-        .post('/api/user')
-        .send({ name: 'fengmk2' })
-        .expect(200)
-        .expect({
-          url: '/api/user',
-          name: 'fengmk2',
-        });
+      await app.httpRequest().post('/api/user').send({ name: 'fengmk2' }).expect(200).expect({
+        url: '/api/user',
+        name: 'fengmk2',
+      });
     });
 
     it('should not check csrf on /api/*.json', async () => {
-      await app
-        .httpRequest()
-        .post('/api/user.json')
-        .send({ name: 'fengmk2' })
-        .expect(200)
-        .expect({
-          url: '/api/user.json',
-          name: 'fengmk2',
-        });
+      await app.httpRequest().post('/api/user.json').send({ name: 'fengmk2' }).expect(200).expect({
+        url: '/api/user.json',
+        name: 'fengmk2',
+      });
     });
 
     it('should check csrf on other.json', async () => {

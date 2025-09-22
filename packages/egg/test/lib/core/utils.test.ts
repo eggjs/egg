@@ -121,15 +121,7 @@ describe('test/lib/core/utils.test.js', () => {
         symbol$: s,
         regexp$: /^a$/g,
       };
-      utils.convertObject(obj, [
-        'string$',
-        'number$',
-        'null$',
-        'undefined$',
-        'boolean$',
-        'symbol$',
-        'regexp$',
-      ]);
+      utils.convertObject(obj, ['string$', 'number$', 'null$', 'undefined$', 'boolean$', 'symbol$', 'regexp$']);
       assert.equal(obj.string$, '<String len: 6>');
       assert.equal(obj.number$, '<Number>');
       assert.equal(obj.null$, null);
@@ -163,10 +155,7 @@ describe('test/lib/core/utils.test.js', () => {
         '': class {},
       };
       utils.convertObject(obj);
-      assert.equal(
-        obj.anonymousClassWithPropName,
-        '<Class anonymousClassWithPropName>'
-      );
+      assert.equal(obj.anonymousClassWithPropName, '<Class anonymousClassWithPropName>');
       assert.equal(obj[''], '<Class anonymous>');
     });
   });
@@ -178,14 +167,8 @@ describe('test/lib/core/utils.test.js', () => {
     });
 
     it('should return parsed url', () => {
-      assert.equal(
-        utils.safeParseURL('https://eggjs.org')!.hostname,
-        'eggjs.org'
-      );
-      assert.equal(
-        utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname,
-        'eggjs.org!.foo.com'
-      );
+      assert.equal(utils.safeParseURL('https://eggjs.org')!.hostname, 'eggjs.org');
+      assert.equal(utils.safeParseURL('https://eggjs.org!.foo.com')!.hostname, 'eggjs.org!.foo.com');
     });
   });
 });

@@ -79,11 +79,11 @@ export interface MockClusterApplicationOptions extends MockClusterOptions {
 }
 
 export type {
-  MockResultOptions, ResultObject,
-  MockResponseCallbackOptions, MockResultFunction,
+  MockResultOptions,
+  ResultObject,
+  MockResponseCallbackOptions,
+  MockResultFunction,
   MockHttpClientMethod,
 } from './mock_httpclient.js';
 
-export type {
-  MockAgent,
-} from 'urllib';
+export type { MockAgent } from 'urllib';

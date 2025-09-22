@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(app) {
+module.exports = function (app) {
   // GET / 302 to /portal/i.htm
   app.redirect('/', '/portal/i.htm', 302);
 

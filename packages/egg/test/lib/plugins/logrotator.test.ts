@@ -17,18 +17,13 @@ describe.skip('test/lib/plugins/logrotator.test.ts', () => {
   afterAll(() => app.close());
 
   it('should rotate log file default', async () => {
-    const file = importResolve(
-      '@eggjs/logrotator/dist/esm/app/schedule/rotate_by_file.js',
-      {
-        paths: [__dirname],
-      }
-    );
+    const file = importResolve('@eggjs/logrotator/dist/esm/app/schedule/rotate_by_file.js', {
+      paths: [__dirname],
+    });
     // console.log('job', file);
     await app.runSchedule(file);
     await scheduler.wait(1000);
-    const files = (await fs.readdir(app.config.logger.dir)).filter(f =>
-      f.includes('.log.')
-    );
+    const files = (await fs.readdir(app.config.logger.dir)).filter(f => f.includes('.log.'));
     console.log(files);
     assert(files.length > 0);
     files.forEach(file => {

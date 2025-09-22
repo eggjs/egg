@@ -61,9 +61,8 @@ export default class Boot implements ILifecycleBoot {
 
       html(err, ctx: Context) {
         const status = detectStatus(err);
-        const errorPageUrl = typeof config.errorPageUrl === 'function'
-          ? config.errorPageUrl(err, ctx)
-          : config.errorPageUrl;
+        const errorPageUrl =
+          typeof config.errorPageUrl === 'function' ? config.errorPageUrl(err, ctx) : config.errorPageUrl;
 
         // keep the real response status
         ctx.realStatus = status;
@@ -72,9 +71,7 @@ export default class Boot implements ILifecycleBoot {
           // 5xx
           if (status >= 500) {
             if (errorPageUrl) {
-              const statusQuery =
-                (errorPageUrl.indexOf('?') > 0 ? '&' : '?') +
-                `real_status=${status}`;
+              const statusQuery = (errorPageUrl.indexOf('?') > 0 ? '&' : '?') + `real_status=${status}`;
               return ctx.redirect(errorPageUrl + statusQuery);
             }
             ctx.status = 500;
@@ -154,7 +151,7 @@ export default class Boot implements ILifecycleBoot {
     };
 
     // support customize error response
-    const keys: (keyof OnerrorConfig)[] = [ 'all', 'html', 'json', 'text', 'js' ];
+    const keys: (keyof OnerrorConfig)[] = ['all', 'html', 'json', 'text', 'js'];
     for (const type of keys) {
       if (config[type]) {
         Reflect.set(errorOptions, type, config[type]);

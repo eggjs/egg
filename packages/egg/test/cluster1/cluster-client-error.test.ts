@@ -27,9 +27,7 @@ describe('test/cluster1/cluster-client-error.test.ts', () => {
   it('should follower not throw error', async () => {
     await scheduler.wait(1000);
     const cnt = await readFile(
-      getFilepath(
-        'apps/cluster-client-error/logs/cluster-client-error/common-error.log'
-      ),
+      getFilepath('apps/cluster-client-error/logs/cluster-client-error/common-error.log'),
       'utf8'
     );
     assert(!cnt.includes('ECONNRESET'));

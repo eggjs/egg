@@ -472,13 +472,9 @@ describe('test/mock_httpclient_next.test.ts', () => {
 
   it('should mock full url support RegExp', async () => {
     app.mockCsrf();
-    app.mockHttpclient(
-      /http:\/\/127\.0\.0\.1:\d+\/mock_url$/,
-      ['get', 'post'],
-      {
-        data: Buffer.from('mock full 127 url response'),
-      }
-    );
+    app.mockHttpclient(/http:\/\/127\.0\.0\.1:\d+\/mock_url$/, ['get', 'post'], {
+      data: Buffer.from('mock full 127 url response'),
+    });
 
     await request(server)
       .get('/urllib')

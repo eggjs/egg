@@ -42,11 +42,7 @@ new app.HttpClient();
 new Agent(undefined, 1123);
 
 // test error in yadan
-import {
-  BaseContextClass as YadanBaseContextClass,
-  Application as YadanApplication,
-  Agent as YadanAgent,
-} from 'yadan';
+import { BaseContextClass as YadanBaseContextClass, Application as YadanApplication, Agent as YadanAgent } from 'yadan';
 
 new YadanBaseContextClass();
 const yadan = new YadanApplication({

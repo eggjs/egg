@@ -40,8 +40,7 @@ export class ClassLoader {
   }
 }
 
-export interface ContextLoaderOptions
-  extends Omit<FileLoaderOptions, 'target'> {
+export interface ContextLoaderOptions extends Omit<FileLoaderOptions, 'target'> {
   /** required inject */
   inject: Record<string, any>;
   /** property name defined to target */
@@ -89,8 +88,7 @@ export class ContextLoader extends FileLoader {
         if (!ctx[CLASS_LOADER]) {
           ctx[CLASS_LOADER] = new Map();
         }
-        const classLoader: Map<string | symbol, ClassLoader> =
-          ctx[CLASS_LOADER];
+        const classLoader: Map<string | symbol, ClassLoader> = ctx[CLASS_LOADER];
         let instance = classLoader.get(property);
         if (!instance) {
           instance = getInstance(target, ctx);

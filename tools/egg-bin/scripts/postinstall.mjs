@@ -54,11 +54,7 @@ async function main() {
       process.env.ETS_CWD = npmRunRoot;
       // https://github.com/eggjs/egg-ts-helper/pull/104
       process.env.ETS_SCRIPT_FRAMEWORK = frameworkPackageName;
-      console.log(
-        '[@eggjs/bin/postinstall] run %s on %s',
-        etsBinFile,
-        npmRunRoot
-      );
+      console.log('[@eggjs/bin/postinstall] run %s on %s', etsBinFile, npmRunRoot);
       await runScript(`node "${etsBinFile}"`);
     }
   }

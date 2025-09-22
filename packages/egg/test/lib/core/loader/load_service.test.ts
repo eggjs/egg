@@ -32,11 +32,7 @@ describe('test/lib/core/loader/load_service.test.ts', () => {
     app = createApp('apps/services_loader_verify');
     await app.ready();
     assert(Object.prototype.hasOwnProperty.call(app.serviceClasses, 'foo'));
-    assert(
-      ['bar'].every(p =>
-        Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)
-      )
-    );
+    assert(['bar'].every(p => Object.prototype.hasOwnProperty.call(app.serviceClasses.foo, p)));
   });
 
   it('should support extend app.Service class', async () => {

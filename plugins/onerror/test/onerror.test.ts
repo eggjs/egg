@@ -44,49 +44,56 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should handle status:-1 as status:500', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/?status=-1')
       .expect(/<h1 class="box">Error in &#x2F;\?status&#x3D;-1<\/h1>/)
       .expect(500);
   });
 
   it('should handle status:undefined as status:500', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/')
       .expect(/<div class="context">test error<\/div>/)
       .expect(500);
   });
 
   it('should handle not exists file in stack without error', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/unknownFile')
       .expect(/<div class="context">test error<\/div>/)
       .expect(500);
   });
 
   it('should handle escape xss', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/?message=<script></script>')
       .expect(/&lt;script&gt;&lt;&#x2F;script&gt;/)
       .expect(500);
   });
 
   it('should handle status:1 as status:500', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/?status=1')
       .expect(/<div class="context">test error<\/div>/)
       .expect(500);
   });
 
   it('should handle status:400', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/?status=400')
       .expect(/<div class="context">test error<\/div>/)
       .expect(400);
   });
 
   it('should return error json format when Accept is json', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user')
       .set('Accept', 'application/json')
       .expect(res => {
@@ -100,7 +107,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should return error json format when request path match *.json', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json')
       .expect(res => {
         assert(res.body);
@@ -117,7 +125,8 @@ describe('test/onerror.test.ts', () => {
       if (ctx.get('x-requested-with') === 'XMLHttpRequest') return 'json';
       return 'html';
     });
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json')
       .set('x-requested-with', 'XMLHttpRequest')
       .expect(/"message":"test error"/)
@@ -127,7 +136,8 @@ describe('test/onerror.test.ts', () => {
 
   it('should return err.stack when unittest', () => {
     mm(app.config, 'env', 'unittest');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json')
       .set('Accept', 'application/json')
       .expect(/"message":"test error"/)
@@ -137,7 +147,8 @@ describe('test/onerror.test.ts', () => {
 
   it('should return err status message', () => {
     mm(app.config, 'env', 'prod');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json')
       .set('Accept', 'application/json')
       .expect({ message: 'Internal Server Error' })
@@ -145,7 +156,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should return err.errors', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json?status=400&errors=test')
       .set('Accept', 'application/json')
       .expect(/test/)
@@ -154,7 +166,8 @@ describe('test/onerror.test.ts', () => {
 
   it('should return err json at prod env', () => {
     mm(app.config, 'env', 'prod');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json?status=400&errors=test')
       .set('Accept', 'application/json')
       .expect(/test/)
@@ -168,7 +181,8 @@ describe('test/onerror.test.ts', () => {
 
   it('should return 4xx html at prod env', () => {
     mm(app.config, 'env', 'prod');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/test?status=400&errors=test')
       .set('Accept', 'text/html')
       .expect('<h2>400 Bad Request</h2>')
@@ -179,7 +193,8 @@ describe('test/onerror.test.ts', () => {
   it('should return 500 html at prod env', () => {
     mm(app.config, 'env', 'prod');
     mm(app.config.onerror, 'errorPageUrl', '');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/test?status=502&errors=test')
       .set('Accept', 'text/html')
       .expect('<h2>Internal Server Error, real status: 502</h2>')
@@ -188,7 +203,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should return err json at non prod env', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/user.json?status=400&errors=test')
       .set('Accept', 'application/json')
       .expect(/test/)
@@ -200,7 +216,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should return parsing json error on html response', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/test?status=400')
       .send({ test: 1 })
       .set('Content-Type', 'application/json')
@@ -210,7 +227,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should ignore secure config on html response', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/test?status=400')
       .send({ test: 1 })
       .set('Content-Type', 'application/json')
@@ -220,7 +238,8 @@ describe('test/onerror.test.ts', () => {
   });
 
   it('should return parsing json error on json response', () => {
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .post('/test?status=400')
       .send({ test: 1 })
       .set('Content-Type', 'application/json')
@@ -234,7 +253,8 @@ describe('test/onerror.test.ts', () => {
 
   it('should redirect to error page', () => {
     mm(app.config, 'env', 'test');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/?status=500')
       .expect('Location', 'https://eggjs.com/500.html?real_status=500')
       .expect(302);
@@ -242,15 +262,13 @@ describe('test/onerror.test.ts', () => {
 
   it('should handle 403 err', () => {
     mm(app.config, 'env', 'prod');
-    return app.httpRequest()
-      .get('/?status=403&code=3')
-      .expect('<h2>403 Forbidden</h2>')
-      .expect(403);
+    return app.httpRequest().get('/?status=403&code=3').expect('<h2>403 Forbidden</h2>').expect(403);
   });
 
   it('should return jsonp style', () => {
     mm(app.config, 'env', 'prod');
-    return app.httpRequest()
+    return app
+      .httpRequest()
       .get('/jsonp?callback=fn')
       .expect('content-type', 'application/javascript; charset=utf-8')
       .expect('/**/ typeof fn === \'function\' && fn({"message":"Internal Server Error"});')
@@ -270,7 +288,8 @@ describe('test/onerror.test.ts', () => {
 
     it('should support customize json style', () => {
       mm(app.config, 'env', 'prod');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/user.json')
         .expect('content-type', 'application/json; charset=utf-8')
         .expect({ msg: 'error' })
@@ -279,7 +298,8 @@ describe('test/onerror.test.ts', () => {
 
     it('should return jsonp style', () => {
       mm(app.config, 'env', 'prod');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/jsonp?callback=fn')
         .expect('content-type', 'application/javascript; charset=utf-8')
         .expect('/**/ typeof fn === \'function\' && fn({"msg":"error"});')
@@ -288,7 +308,8 @@ describe('test/onerror.test.ts', () => {
 
     it('should handle html by default', () => {
       mm(app.config, 'env', 'test');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/?status=500')
         .expect('Location', 'https://eggjs.com/500.html?real_status=500')
         .expect(302);
@@ -303,10 +324,15 @@ describe('test/onerror.test.ts', () => {
         baseDir: getFixtures('onerror-4xx'),
       });
       await app.ready();
-      await app.httpRequest()
+      await app
+        .httpRequest()
         .post('/body_parser')
         .set('Content-Type', 'application/x-www-form-urlencoded')
-        .send({ foo: Buffer.alloc(1024 * 1000).fill(1).toString() })
+        .send({
+          foo: Buffer.alloc(1024 * 1000)
+            .fill(1)
+            .toString(),
+        })
         .expect(/request entity too large/)
         .expect(413);
       await app.close();
@@ -330,7 +356,8 @@ describe('test/onerror.test.ts', () => {
 
     it('should display 500 Internal Server Error', () => {
       mm(app.config, 'env', 'prod');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/?status=500')
         .expect(500)
         .expect(/Internal Server Error, real status: 500/);
@@ -351,25 +378,13 @@ describe('test/onerror.test.ts', () => {
     it('should redirect to error page', async () => {
       mm(app.config, 'env', 'prod');
 
-      await app.httpRequest()
-        .get('/mockerror')
-        .expect('Location', '/500?real_status=500')
-        .expect(302);
+      await app.httpRequest().get('/mockerror').expect('Location', '/500?real_status=500').expect(302);
 
-      await app.httpRequest()
-        .get('/mock4xx')
-        .expect('<h2>400 Bad Request</h2>')
-        .expect(400);
+      await app.httpRequest().get('/mock4xx').expect('<h2>400 Bad Request</h2>').expect(400);
 
-      await app.httpRequest()
-        .get('/500')
-        .expect('hi, this custom 500 page')
-        .expect(500);
+      await app.httpRequest().get('/500').expect('hi, this custom 500 page').expect(500);
 
-      await app.httpRequest()
-        .get('/special')
-        .expect('Location', '/specialerror?real_status=500')
-        .expect(302);
+      await app.httpRequest().get('/special').expect('Location', '/specialerror?real_status=500').expect(302);
     });
   });
 
@@ -386,7 +401,8 @@ describe('test/onerror.test.ts', () => {
     afterAll(() => app.close());
 
     it('should 500 full html', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/error')
         .expect(500)
         .expect(/you can&#x60;t get userId\./);
@@ -405,7 +421,8 @@ describe('test/onerror.test.ts', () => {
     afterAll(() => app.close());
 
     it('should 500 simple html', () => {
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/error')
         .expect(500)
         .expect(/you can`t get userId\./);
@@ -428,9 +445,7 @@ describe('test/onerror.test.ts', () => {
         throw new Error('should not excute');
       });
 
-      return app.httpRequest()
-        .get('/?name=IgnoreError')
-        .expect(500);
+      return app.httpRequest().get('/?name=IgnoreError').expect(500);
     });
 
     it('should custom log error log', async () => {
@@ -438,9 +453,7 @@ describe('test/onerror.test.ts', () => {
       mm(app.logger, 'error', (msg: string) => {
         lastMessage = msg;
       });
-      await app.httpRequest()
-        .get('/?name=CustomError')
-        .expect(500);
+      await app.httpRequest().get('/?name=CustomError').expect(500);
       assert.equal(lastMessage, 'error happened');
     });
 
@@ -450,9 +463,7 @@ describe('test/onerror.test.ts', () => {
         lastError = args[0];
       });
 
-      await app.httpRequest()
-        .get('/?name=OtherError')
-        .expect(500);
+      await app.httpRequest().get('/?name=OtherError').expect(500);
       assert(lastError);
       assert.equal(lastError.name, 'OtherError');
     });
@@ -493,11 +504,11 @@ describe('test/onerror.test.ts', () => {
 
     it('should use custom template', () => {
       mm(app.config, 'env', 'local');
-      return app.httpRequest()
+      return app
+        .httpRequest()
         .get('/')
         .expect(/custom template/)
         .expect(500);
     });
-
   });
 });
