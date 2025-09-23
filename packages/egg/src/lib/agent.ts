@@ -36,13 +36,7 @@ export class Agent extends EggApplicationCore {
   }
 
   _wrapMessenger() {
-    for (const methodName of [
-      'broadcast',
-      'sendTo',
-      'sendToApp',
-      'sendToAgent',
-      'sendRandom',
-    ]) {
+    for (const methodName of ['broadcast', 'sendTo', 'sendToApp', 'sendToAgent', 'sendRandom']) {
       wrapMethod(methodName, this.messenger, this.coreLogger);
     }
 
@@ -50,11 +44,7 @@ export class Agent extends EggApplicationCore {
       const originMethod = messenger[methodName];
       messenger[methodName] = function (...args: any[]) {
         const stack = new Error().stack!.split('\n').slice(1).join('\n');
-        logger.warn(
-          "agent can't call %s before server started\n%s",
-          methodName,
-          stack
-        );
+        logger.warn("agent can't call %s before server started\n%s", methodName, stack);
         originMethod.apply(this, args);
       };
       messenger.prependOnceListener('egg-ready', () => {

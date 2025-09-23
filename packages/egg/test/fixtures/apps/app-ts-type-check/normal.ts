@@ -197,8 +197,7 @@ config.customLogger = {
   myLogger: {
     file: './test.log',
     jsonFile: './test.json',
-    formatter: (meta: any) =>
-      meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message,
+    formatter: (meta: any) => meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message,
     contextFormatter: meta => JSON.stringify(meta),
     buffer: true,
     eol: '\r\n',

@@ -28,10 +28,7 @@ describe('test/app/extend/response.test.ts', () => {
       const res = await app.httpRequest().get('/empty-json').expect(200);
       assert.deepEqual(res.body, {});
       assert.equal(res.headers['content-length'], '2');
-      assert.equal(
-        res.headers['content-type'],
-        'application/json; charset=utf-8'
-      );
+      assert.equal(res.headers['content-type'], 'application/json; charset=utf-8');
     });
 
     it('should get body length', () => {
@@ -97,10 +94,7 @@ describe('test/app/extend/response.test.ts', () => {
       it('should remove content-type when type is invalid', () => {
         let ctx = app.mockContext();
         ctx.response.type = 'html';
-        assert.equal(
-          ctx.response.header['content-type'],
-          'text/html; charset=utf-8'
-        );
+        assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
         assert.equal(ctx.response.type, 'text/html');
 
         ctx.response.type = 'xml';
@@ -113,10 +107,7 @@ describe('test/app/extend/response.test.ts', () => {
         assert.equal(ctx.response.type, '');
 
         ctx.response.type = 'html';
-        assert.equal(
-          ctx.response.header['content-type'],
-          'text/html; charset=utf-8'
-        );
+        assert.equal(ctx.response.header['content-type'], 'text/html; charset=utf-8');
         assert.equal(ctx.response.type, 'text/html');
       });
     });

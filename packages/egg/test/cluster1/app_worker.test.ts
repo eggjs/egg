@@ -2,14 +2,7 @@ import net from 'node:net';
 import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 
-import {
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  afterEach,
-  beforeEach,
-} from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { request } from '@eggjs/supertest';
 import { ip } from 'address';
 
@@ -88,10 +81,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
       await assert.rejects(async () => {
         await app.httpRequest().get('/timeout');
       }, /socket hang up/);
-      app.expect(
-        'stdout',
-        /\[http_server] A request `GET \/timeout` timeout with client/
-      );
+      app.expect('stdout', /\[http_server] A request `GET \/timeout` timeout with client/);
     });
   });
 
@@ -105,15 +95,9 @@ describe('test/cluster1/app_worker.test.ts', () => {
     afterEach(() => app.close());
 
     it('should do customized request when HTTP request packet broken', async () => {
-      const version = process.version
-        .split('.')
-        .map(a => parseInt(a.replace('v', '')));
+      const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
       let html: string | RegExp = '';
-      if (
-        (version[0] === 8 && version[1] >= 10) ||
-        (version[0] === 9 && version[1] >= 4) ||
-        version[0] > 9
-      ) {
+      if ((version[0] === 8 && version[1] >= 10) || (version[0] === 9 && version[1] >= 4) || version[0] > 9) {
         html = new RegExp(
           'GET /foo bar HTTP/1.1\r\nHost: 127.0.0.1:\\d+\r\nAccept-Encoding: gzip, ' +
             'deflate\r\nUser-Agent: @eggjs/mock/\\d+.\\d+.\\d+ Node\\.js/v\\d+.\\d+.\\d+\r\nConnection: close\r\n\r\n'
@@ -123,11 +107,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
       // customized client error response
       const test1 = app.httpRequest().get('/foo bar');
       (test1 as any).request().path = '/foo bar';
-      await test1
-        .expect(html)
-        .expect('foo', 'bar')
-        .expect('content-length', '147')
-        .expect(418);
+      await test1.expect(html).expect('foo', 'bar').expect('content-length', '147').expect(418);
 
       // customized client error handle function throws
       const test2 = app.httpRequest().get('/foo bar');

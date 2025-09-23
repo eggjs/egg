@@ -21,18 +21,12 @@ export class BaseHookClass implements ILifecycleBoot {
   }
 
   get app() {
-    assert(
-      this.#instance.type === 'application',
-      'agent boot should not use app instance'
-    );
+    assert(this.#instance.type === 'application', 'agent boot should not use app instance');
     return this.#instance as Application;
   }
 
   get agent() {
-    assert(
-      this.#instance.type === 'agent',
-      'app boot should not use agent instance'
-    );
+    assert(this.#instance.type === 'agent', 'app boot should not use agent instance');
     return this.#instance as Agent;
   }
 }

@@ -12,9 +12,7 @@ describe('test/app/extend/context.jsonp.test.ts', () => {
   it('should response jsonp', () => {
     return app
       .httpRequest()
-      .get(
-        '/user.json?_callback=$jQuery110208780175377614796_1406016639408&ctoken=123'
-      )
+      .get('/user.json?_callback=$jQuery110208780175377614796_1406016639408&ctoken=123')
       .set('Cookie', 'ctoken=123')
       .expect('Content-Type', 'application/javascript; charset=utf-8')
       .expect('X-Content-Type-Options', 'nosniff')

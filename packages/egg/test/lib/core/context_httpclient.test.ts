@@ -2,11 +2,7 @@ import { strict as assert } from 'node:assert';
 
 import { test, beforeAll, afterAll } from 'vitest';
 
-import {
-  createApp,
-  startLocalServer,
-  type MockApplication,
-} from '../../utils.ts';
+import { createApp, startLocalServer, type MockApplication } from '../../utils.ts';
 
 let url: string;
 let app: MockApplication;

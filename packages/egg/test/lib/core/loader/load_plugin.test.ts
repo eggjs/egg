@@ -5,16 +5,8 @@ import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
 
-import {
-  type MockApplication,
-  createApp,
-  getFilepath,
-} from '../../../utils.ts';
-import {
-  AppWorkerLoader,
-  AgentWorkerLoader,
-  EggApplicationCore,
-} from '../../../../src/index.ts';
+import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
+import { AppWorkerLoader, AgentWorkerLoader, EggApplicationCore } from '../../../../src/index.ts';
 
 // const EGG_BASE = getFilepath('../..');
 
@@ -69,9 +61,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     //   path.join(EGG_BASE, 'node_modules/@eggjs/onerror/dist/esm')
     // );
     if (process.platform !== 'win32') {
-      assert(
-        appLoader.plugins.onerror.path!.includes('@eggjs/onerror/dist/esm')
-      );
+      assert(appLoader.plugins.onerror.path!.includes('@eggjs/onerror/dist/esm'));
     }
     assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
     assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
@@ -158,10 +148,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     });
     await appLoader.loadConfig();
 
-    assert(
-      message ===
-        '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)'
-    );
+    assert(message === '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)');
   });
 
   it('should loadConfig plugins with custom plugins config', async () => {

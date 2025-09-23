@@ -69,10 +69,7 @@ describe('test/app/extend/application.test.ts', () => {
       // it won't be ready, so wait for the timeout
       await scheduler.wait(11000);
 
-      app.expect(
-        'stderr',
-        /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./
-      );
+      app.expect('stderr', /\[egg:core:ready_timeout] 10 seconds later a was still unable to finish./);
     });
   });
 
@@ -185,11 +182,7 @@ describe('test/app/extend/application.test.ts', () => {
     afterAll(() => app.close());
 
     it('should run background task success', async () => {
-      await app
-        .httpRequest()
-        .get('/app_background')
-        .expect(200)
-        .expect('hello app');
+      await app.httpRequest().get('/app_background').expect(200).expect('hello app');
       // await scheduler.wait(2100);
       // const logdir = app.config.logger.dir;
       // const log = fs.readFileSync(
@@ -215,24 +208,13 @@ describe('test/app/extend/application.test.ts', () => {
       await app.close();
       await scheduler.wait(2100);
       const logdir = app.config.logger.dir;
-      const logs = fs
-        .readFileSync(
-          path.join(logdir, 'app-runInAnonymousContextScope-web.log'),
-          'utf8'
-        )
-        .split('\n');
+      const logs = fs.readFileSync(path.join(logdir, 'app-runInAnonymousContextScope-web.log'), 'utf8').split('\n');
       // console.log(logs);
       // 2022-12-15 23:00:08,551 INFO 86728 [-/127.0.0.1/-/1ms GET /] before close on ctx logger
       // 2022-12-15 23:00:08,551 INFO 86728 [-/127.0.0.1/-/1ms GET /] before close on app logger
       // 2022-12-15 23:03:16,086 INFO 89216 outside before close on app logger
-      assert.match(
-        logs[0],
-        / INFO \d+ \[-\/127.0.0.1\/-\/[\d.]+ms GET \/] inside before close on ctx logger/
-      );
-      assert.match(
-        logs[1],
-        / INFO \d+ \[-\/127.0.0.1\/-\/[\d.]+ms GET \/] inside before close on app logger/
-      );
+      assert.match(logs[0], / INFO \d+ \[-\/127.0.0.1\/-\/[\d.]+ms GET \/] inside before close on ctx logger/);
+      assert.match(logs[1], / INFO \d+ \[-\/127.0.0.1\/-\/[\d.]+ms GET \/] inside before close on app logger/);
       assert.match(logs[2], / INFO \d+ outside before close on app logger/);
     });
   });
@@ -245,23 +227,11 @@ describe('test/app/extend/application.test.ts', () => {
       await scheduler.wait(2100);
       const logdir = app.config.logger.dir;
       const logs = fs
-        .readFileSync(
-          path.join(
-            logdir,
-            'app-runInAnonymousContextScope-withRequest-web.log'
-          ),
-          { encoding: 'utf8' }
-        )
+        .readFileSync(path.join(logdir, 'app-runInAnonymousContextScope-withRequest-web.log'), { encoding: 'utf8' })
         .split('\n');
 
-      assert.match(
-        logs[0],
-        / INFO \d+ \[-\/127.0.0.2\/-\/[\d.]+ms GET \/] inside before close on ctx logger/
-      );
-      assert.match(
-        logs[1],
-        / INFO \d+ \[-\/127.0.0.2\/-\/[\d.]+ms GET \/] inside before close on app logger/
-      );
+      assert.match(logs[0], / INFO \d+ \[-\/127.0.0.2\/-\/[\d.]+ms GET \/] inside before close on ctx logger/);
+      assert.match(logs[1], / INFO \d+ \[-\/127.0.0.2\/-\/[\d.]+ms GET \/] inside before close on app logger/);
       assert.match(logs[2], / INFO \d+ outside before close on app logger/);
     });
   });

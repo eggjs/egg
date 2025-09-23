@@ -2,12 +2,7 @@ import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import {
-  createApp,
-  type MockApplication,
-  restore,
-  cluster,
-} from '../../utils.js';
+import { createApp, type MockApplication, restore, cluster } from '../../utils.js';
 
 describe('test/app/middleware/meta.test.ts', () => {
   afterEach(restore);
@@ -56,18 +51,11 @@ describe('test/app/middleware/meta.test.ts', () => {
     afterAll(() => app.close());
 
     it('should get X-Readtime header', async () => {
-      await app
-        .httpRequest()
-        .get('/?foo=bar')
-        .expect('X-Readtime', /\d+/)
-        .expect('hello world')
-        .expect(200);
+      await app.httpRequest().get('/?foo=bar').expect('X-Readtime', /\d+/).expect('hello world').expect(200);
       if (process.platform === 'win32') {
         await scheduler.wait(2000);
       }
-      const content = (await fs.readFile(app.coreLogger.options.file, 'utf8'))
-        .split('\n')
-        .slice(-2, -1)[0];
+      const content = (await fs.readFile(app.coreLogger.options.file, 'utf8')).split('\n').slice(-2, -1)[0];
       assert.match(content, /\[meta] request started, host: /);
     });
   });

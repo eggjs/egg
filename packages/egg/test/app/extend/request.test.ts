@@ -3,14 +3,7 @@ import { once } from 'node:events';
 import type { AddressInfo } from 'node:net';
 
 import urllib from 'urllib';
-import {
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  afterEach,
-  beforeEach,
-} from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 
 import { createApp, type MockApplication, restore, mm } from '../../utils.ts';
 
@@ -141,46 +134,26 @@ describe('test/app/extend/request.test.ts', () => {
 
       it('should return value of X-Custom-Proto', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto, X-Custom-Proto');
-        return app
-          .httpRequest()
-          .get('/protocol')
-          .set('X-Custom-Proto', 'https')
-          .expect('https');
+        return app.httpRequest().get('/protocol').set('X-Custom-Proto', 'https').expect('https');
       });
 
       it('should ignore X-Client-Scheme', () => {
         mm(app.config, 'protocolHeaders', 'X-Forwarded-Proto');
-        return app
-          .httpRequest()
-          .get('/protocol')
-          .set('X-Client-Scheme', 'https')
-          .expect('http');
+        return app.httpRequest().get('/protocol').set('X-Client-Scheme', 'https').expect('http');
       });
 
       it('should return value of X-Forwarded-Proto', () => {
-        return app
-          .httpRequest()
-          .get('/protocol')
-          .set('x-forwarded-proto', 'https')
-          .expect('https');
+        return app.httpRequest().get('/protocol').set('x-forwarded-proto', 'https').expect('https');
       });
 
       it('should ignore X-Forwarded-Proto when proxy=false', () => {
         mm(app.config, 'proxy', false);
-        return app
-          .httpRequest()
-          .get('/protocol')
-          .set('x-forwarded-proto', 'https')
-          .expect('http');
+        return app.httpRequest().get('/protocol').set('x-forwarded-proto', 'https').expect('http');
       });
 
       it('should ignore X-Forwarded-Proto', () => {
         mm(app.config, 'protocolHeaders', '');
-        return app
-          .httpRequest()
-          .get('/protocol')
-          .set('x-forwarded-proto', 'https')
-          .expect('http');
+        return app.httpRequest().get('/protocol').set('x-forwarded-proto', 'https').expect('http');
       });
 
       it('should return value from config', () => {
@@ -425,12 +398,9 @@ describe('test/app/extend/request.test.ts', () => {
     });
 
     it('should work with encodeURIComponent', async () => {
-      const res = await urllib.request(
-        `${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`,
-        {
-          dataType: 'json',
-        }
-      );
+      const res = await urllib.request(`${host}/?p=a,b&p=b,c&${encodeURIComponent('a[foo]')}=bar`, {
+        dataType: 'json',
+      });
       assert.deepEqual(res.data, {
         query: { p: 'a,b', 'a[foo]': 'bar' },
         queries: { p: ['a,b', 'b,c'], 'a[foo]': ['bar'] },

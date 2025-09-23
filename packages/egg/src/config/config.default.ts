@@ -282,8 +282,7 @@ export default (appInfo: EggAppInfo) => {
     env: appInfo.env,
     level: 'INFO',
     consoleLevel: 'INFO',
-    disableConsoleAfterReady:
-      appInfo.env !== 'local' && appInfo.env !== 'unittest',
+    disableConsoleAfterReady: appInfo.env !== 'local' && appInfo.env !== 'unittest',
     outputJSON: false,
     buffer: true,
     appLogName: `${appInfo.name}-web.log`,
@@ -336,13 +335,7 @@ export default (appInfo: EggAppInfo) => {
    * core enable middlewares
    * @member {Array} Config#middleware
    */
-  config.coreMiddleware = [
-    'meta',
-    'siteFile',
-    'notfound',
-    'bodyParser',
-    'overrideMethod',
-  ];
+  config.coreMiddleware = ['meta', 'siteFile', 'notfound', 'bodyParser', 'overrideMethod'];
 
   /**
    * emit `startTimeout` if worker don't ready after `workerStartTimeout` ms

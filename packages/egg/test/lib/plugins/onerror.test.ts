@@ -17,10 +17,6 @@ describe('test/lib/plugins/onerror.test.ts', () => {
 
   it('should redirect to error page', () => {
     mm(app.config, 'env', 'test');
-    return app
-      .httpRequest()
-      .get('/?status=500')
-      .expect('Location', 'http://eggjs.org/500?real_status=500')
-      .expect(302);
+    return app.httpRequest().get('/?status=500').expect('Location', 'http://eggjs.org/500?real_status=500').expect(302);
   });
 });

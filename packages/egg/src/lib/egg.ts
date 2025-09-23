@@ -5,29 +5,15 @@ import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-import {
-  EggCore,
-  Request as EggCoreRequest,
-  Response as EggCoreResponse,
-  Router,
-} from '@eggjs/core';
-import type {
-  EggCoreOptions,
-  Next,
-  MiddlewareFunc as EggCoreMiddlewareFunc,
-  ILifecycleBoot,
-} from '@eggjs/core';
+import { EggCore, Request as EggCoreRequest, Response as EggCoreResponse, Router } from '@eggjs/core';
+import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
 import createClusterClient, {
   close as closeClusterClient,
   // @ts-ignore Could not find a declaration file for module 'cluster-client'
 } from 'cluster-client';
 import { extend } from '@eggjs/extend2';
-import {
-  EggContextLogger as ContextLogger,
-  EggLoggers,
-  EggLogger,
-} from 'egg-logger';
+import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -37,10 +23,7 @@ import type { Agent } from './agent.ts';
 import type { Application } from './application.ts';
 import Context from '../app/extend/context.ts';
 import type { EggAppConfig } from './types.ts';
-import {
-  create as createMessenger,
-  type IMessenger,
-} from './core/messenger/index.ts';
+import { create as createMessenger, type IMessenger } from './core/messenger/index.ts';
 import { ContextHttpClient } from './core/context_httpclient.ts';
 import {
   HttpClient,
@@ -58,8 +41,7 @@ import { getSourceDirname } from './utils.ts';
 
 const EGG_PATH = Symbol.for('egg#eggPath');
 
-export interface EggApplicationCoreOptions
-  extends Omit<EggCoreOptions, 'baseDir'> {
+export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';
   clusterPort?: number;
   baseDir?: string;
@@ -86,8 +68,7 @@ export type {
 };
 // keep compatible with egg version 3.x
 export type EggContext = Context;
-export type MiddlewareFunc<T extends Context = Context> =
-  EggCoreMiddlewareFunc<T>;
+export type MiddlewareFunc<T extends Context = Context> = EggCoreMiddlewareFunc<T>;
 
 // export egg classes
 export { Context, Router };
@@ -212,27 +193,17 @@ export class EggApplicationCore extends EggCore {
         const dumpStartTime = Date.now();
         this.dumpConfig();
         this.dumpTiming();
-        this.coreLogger.info(
-          '[egg] dump config after ready, %sms',
-          Date.now() - dumpStartTime
-        );
+        this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
       })
     );
     this.#setupTimeoutTimer();
 
     this.console.info('[egg] App root: %s', this.baseDir);
-    this.console.info(
-      '[egg] All *.log files save on %j',
-      this.config.logger.dir
-    );
-    this.console.info(
-      '[egg] Loaded enabled plugin %j',
-      this.loader.orderPlugins
-    );
+    this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
+    this.console.info('[egg] Loaded enabled plugin %j', this.loader.orderPlugins);
 
     // Listen the error that promise had not catch, then log it in common-error
-    this._unhandledRejectionHandler =
-      this._unhandledRejectionHandler.bind(this);
+    this._unhandledRejectionHandler = this._unhandledRejectionHandler.bind(this);
     process.on('unhandledRejection', this._unhandledRejectionHandler);
 
     // register close function
@@ -252,10 +223,7 @@ export class EggApplicationCore extends EggCore {
         logger.close();
       }
       this.messenger.close();
-      process.removeListener(
-        'unhandledRejection',
-        this._unhandledRejectionHandler
-      );
+      process.removeListener('unhandledRejection', this._unhandledRejectionHandler);
     });
 
     await this.loader.load();
@@ -297,8 +265,7 @@ export class EggApplicationCore extends EggCore {
       isLeader: this.type === 'agent',
       logger: this.coreLogger,
       // debug mode does not check heartbeat
-      isCheckHeartbeat:
-        this.config.env === 'prod' ? true : inspector.url() === undefined,
+      isCheckHeartbeat: this.config.env === 'prod' ? true : inspector.url() === undefined,
     };
     const client = createClusterClient(clientClass, clientClassOptions);
     this.#patchClusterClient(client);
@@ -349,15 +316,7 @@ export class EggApplicationCore extends EggCore {
 
     delegate(res, this, ['name', 'baseDir', 'subdomainOffset']);
 
-    abbr(res, this, [
-      'config',
-      'controller',
-      'httpclient',
-      'loggers',
-      'middlewares',
-      'router',
-      'serviceClasses',
-    ]);
+    abbr(res, this, ['config', 'controller', 'httpclient', 'loggers', 'middlewares', 'router', 'serviceClasses']);
 
     return res;
   }
@@ -405,10 +364,7 @@ export class EggApplicationCore extends EggCore {
    * console.log(result.status, result.headers, result.data);
    * ```
    */
-  async curl<T = any>(
-    url: HttpClientRequestURL,
-    options?: HttpClientRequestOptions
-  ): Promise<HttpClientResponse<T>> {
+  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
     return await this.httpClient.request<T>(url, options);
   }
 
@@ -482,10 +438,7 @@ export class EggApplicationCore extends EggCore {
   }
 
   _unhandledRejectionHandler(err: any) {
-    this.coreLogger.error(
-      '[egg:unhandledRejection] %s',
-      (err && err.message) || err
-    );
+    this.coreLogger.error('[egg:unhandledRejection] %s', (err && err.message) || err);
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
       // err maybe an object, try to copy the name, message and stack to the new error instance
@@ -560,10 +513,7 @@ export class EggApplicationCore extends EggCore {
     try {
       const items = this.timing.toJSON();
       const rundir = this.config.rundir;
-      const dumpFile = path.join(
-        rundir,
-        `${this.type}_timing_${process.pid}.json`
-      );
+      const dumpFile = path.join(rundir, `${this.type}_timing_${process.pid}.json`);
       fs.writeFileSync(dumpFile, CircularJSON.stringify(items, null, 2));
       this.coreLogger.info(this.timing.toString());
       // only disable, not clear bootstrap timing data.
@@ -571,11 +521,7 @@ export class EggApplicationCore extends EggCore {
       // show duration >= ${slowBootActionMinDuration}ms action to warning log
       for (const item of items) {
         // ignore #0 name: Process Start
-        if (
-          item.index > 0 &&
-          item.duration &&
-          item.duration >= this.config.dump.timing.slowBootActionMinDuration
-        ) {
+        if (item.index > 0 && item.duration && item.duration >= this.config.dump.timing.slowBootActionMinDuration) {
           this.coreLogger.warn(
             '[egg][dumpTiming][slow-boot-action] #%d %dms, name: %s',
             item.index,
@@ -596,16 +542,12 @@ export class EggApplicationCore extends EggCore {
   #setupTimeoutTimer() {
     const startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
-      this.coreLogger.error(
-        `${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`
-      );
+      this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
       // log unfinished
       const items = this.timing.toJSON();
       for (const item of items) {
         if (item.end) continue;
-        this.coreLogger.error(
-          `unfinished timing item: ${CircularJSON.stringify(item)}`
-        );
+        this.coreLogger.error(`unfinished timing item: ${CircularJSON.stringify(item)}`);
       }
       this.coreLogger.error(
         '[egg][setupTimeoutTimer] check run/%s_timing_%s.json for more details.',
@@ -700,10 +642,7 @@ export class EggApplicationCore extends EggCore {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(
-    scope: (ctx: Context) => Promise<void>,
-    req?: unknown
-  ) {
+  async runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown) {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -749,15 +688,9 @@ declare module '@eggjs/core' {
     createHttpClient(options?: HttpClientOptions): HttpClient;
     HttpClient: typeof HttpClient;
     get httpClient(): HttpClient;
-    curl<T = any>(
-      url: HttpClientRequestURL,
-      options?: HttpClientRequestOptions
-    ): Promise<HttpClientResponse<T>>;
+    curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>>;
     createAnonymousContext(req?: any): EggContext;
-    runInAnonymousContextScope(
-      scope: (ctx: Context) => Promise<void>,
-      req?: unknown
-    ): Promise<void>;
+    runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown): Promise<void>;
     readonly messenger: IMessenger;
     Subscription: typeof BaseContextClass;
     BaseHookClass: typeof BaseHookClass;

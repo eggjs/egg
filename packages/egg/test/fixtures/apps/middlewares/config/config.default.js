@@ -7,9 +7,7 @@ exports.security = {
 
 exports.siteFile = {
   '/robots.txt': fs.readFileSync(path.join(__dirname, '../app/robots.txt')),
-  '/crossdomain.xml': fs.readFileSync(
-    path.join(__dirname, '../app/crossdomain.xml')
-  ),
+  '/crossdomain.xml': fs.readFileSync(path.join(__dirname, '../app/crossdomain.xml')),
   '/fake.txt': 123, // wrong config
 };
 
