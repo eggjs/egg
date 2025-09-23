@@ -78,6 +78,9 @@ jobs:
       - name: Run lint
         run: pnpm run lint
 
+      - name: Check dedupe
+        run: pnpm dedupe --check
+
       - name: Run typecheck
         run: pnpm run typecheck
 
