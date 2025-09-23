@@ -6,12 +6,7 @@ import { scheduler } from 'node:timers/promises';
 import { describe, it, afterEach, beforeAll, afterAll } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import {
-  createApp,
-  getFilepath,
-  type MockApplication,
-  cluster,
-} from './utils.ts';
+import { createApp, getFilepath, type MockApplication, cluster } from './utils.ts';
 
 describe('test/agent.test.ts', () => {
   afterEach(mm.restore);
@@ -27,10 +22,7 @@ describe('test/agent.test.ts', () => {
 
     it('agent logger config should work', () => {
       const fileTransport = app._agent.logger.get('file');
-      assert.equal(
-        fileTransport.options.file,
-        path.join('/tmp/foo', 'egg-agent.log')
-      );
+      assert.equal(fileTransport.options.file, path.join('/tmp/foo', 'egg-agent.log'));
     });
   });
 
@@ -46,10 +38,7 @@ describe('test/agent.test.ts', () => {
     it('should catch unhandled exception', async () => {
       await app.httpRequest().get('/agent-throw-async').expect(200);
       await scheduler.wait(1000);
-      const body = fs.readFileSync(
-        path.join(baseDir, 'logs/agent-throw/common-error.log'),
-        'utf8'
-      );
+      const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
         /nodejs\.MessageUnhandledRejectionError: event: agent-throw-async, error: agent error in async function/
@@ -60,10 +49,7 @@ describe('test/agent.test.ts', () => {
     it('should exit on sync error throw', async () => {
       await app.httpRequest().get('/agent-throw').expect(200);
       await scheduler.wait(1000);
-      const body = fs.readFileSync(
-        path.join(baseDir, 'logs/agent-throw/common-error.log'),
-        'utf8'
-      );
+      const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
         /nodejs\.MessageUnhandledRejectionError: event: agent-throw, error: agent error in sync function/
@@ -74,10 +60,7 @@ describe('test/agent.test.ts', () => {
     it('should catch uncaughtException string error', async () => {
       await app.httpRequest().get('/agent-throw-string').expect(200);
       await scheduler.wait(1000);
-      const body = fs.readFileSync(
-        path.join(baseDir, 'logs/agent-throw/common-error.log'),
-        'utf8'
-      );
+      const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
         /nodejs\.MessageUnhandledRejectionError: event: agent-throw-string, error: agent error string/

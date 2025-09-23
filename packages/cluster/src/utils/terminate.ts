@@ -14,20 +14,14 @@ interface SubProcess extends ChildProcess {
 export async function terminate(subProcess: SubProcess, timeout: number) {
   const pid = subProcess.process?.pid ?? subProcess.pid;
   const childPids = await getChildPids(pid!);
-  await Promise.all([
-    killProcess(subProcess, timeout),
-    killChildren(childPids, timeout),
-  ]);
+  await Promise.all([killProcess(subProcess, timeout), killChildren(childPids, timeout)]);
 }
 
 // kill process, if SIGTERM not work, try SIGKILL
 async function killProcess(subProcess: SubProcess, timeout: number) {
   // https://github.com/nodejs/node/pull/34312
   (subProcess.process ?? subProcess).kill('SIGTERM');
-  await Promise.race([
-    once(subProcess, 'exit'),
-    sleep(timeout),
-  ]);
+  await Promise.race([once(subProcess, 'exit'), sleep(timeout)]);
   if (subProcess.killed) {
     return;
   }
@@ -95,4 +89,3 @@ function getUnterminatedProcesses(pids: number[]) {
     }
   });
 }
-

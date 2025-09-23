@@ -1,9 +1,5 @@
 import { BaseContextClass } from './lib/core/base_context_class.ts';
-import {
-  startEgg,
-  type SingleModeApplication,
-  type SingleModeAgent,
-} from './lib/start.ts';
+import { startEgg, type SingleModeApplication, type SingleModeAgent } from './lib/start.ts';
 import Helper from './app/extend/helper.ts';
 
 // export extends
@@ -19,11 +15,7 @@ export * from './lib/types.ts';
 export * from './lib/start.ts';
 
 // export singleton
-export {
-  Singleton,
-  type SingletonCreateMethod,
-  type SingletonOptions,
-} from '@eggjs/core';
+export { Singleton, type SingletonCreateMethod, type SingletonOptions } from '@eggjs/core';
 
 // export errors
 export * from './lib/error/index.ts';

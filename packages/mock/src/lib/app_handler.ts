@@ -35,10 +35,7 @@ export function setupApp() {
       beforeInit: async parallelApp => {
         const agent = await setupAgent();
         parallelApp.options.clusterPort = agent.options.clusterPort;
-        debug(
-          'mockParallelApp beforeInit get clusterPort: %s',
-          parallelApp.options.clusterPort
-        );
+        debug('mockParallelApp beforeInit get clusterPort: %s', parallelApp.options.clusterPort);
       },
     });
     debug('mockParallelApp app: %s', !!app);

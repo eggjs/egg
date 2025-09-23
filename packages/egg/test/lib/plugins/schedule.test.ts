@@ -27,13 +27,7 @@ describe.skip('test/lib/plugins/schedule.test.ts', () => {
 });
 
 function getLogContent(name: string) {
-  const logPath = path.join(
-    getFilepath('apps'),
-    name,
-    'logs',
-    name,
-    `${name}-web.log`
-  );
+  const logPath = path.join(getFilepath('apps'), name, 'logs', name, `${name}-web.log`);
   return fs.readFileSync(logPath, 'utf8');
 }
 

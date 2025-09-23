@@ -18,27 +18,17 @@ describe('test/app/middleware/cluster_app_mock.test.ts', () => {
   afterEach(mm.restore);
 
   it('should return 422 when method missing', () => {
-    return app
-      .httpRequest()
-      .post('/__egg_mock_call_function')
-      .send({})
-      .expect(422)
-      .expect({
-        success: false,
-        error: 'Missing method',
-      });
+    return app.httpRequest().post('/__egg_mock_call_function').send({}).expect(422).expect({
+      success: false,
+      error: 'Missing method',
+    });
   });
 
   it('should return 422 when args is not Array', () => {
-    return app
-      .httpRequest()
-      .post('/__egg_mock_call_function')
-      .send({ method: 'foo', args: 'hi' })
-      .expect(422)
-      .expect({
-        success: false,
-        error: 'args should be an Array instance',
-      });
+    return app.httpRequest().post('/__egg_mock_call_function').send({ method: 'foo', args: 'hi' }).expect(422).expect({
+      success: false,
+      error: 'args should be an Array instance',
+    });
   });
 
   it('should return 422 when method is not exists on app', () => {

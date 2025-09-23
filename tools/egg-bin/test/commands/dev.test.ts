@@ -239,10 +239,7 @@ describe('test/commands/dev.test.ts', () => {
             env: { EGG_BIN_DEFAULT_PORT: String(serverPort) },
           })
           // .debug()
-          .expect(
-            'stderr',
-            /\[@eggjs\/bin] server port \d+ is unavailable, now using port \d+/
-          )
+          .expect('stderr', /\[@eggjs\/bin] server port \d+ is unavailable, now using port \d+/)
           .expect('code', 0)
           .end()
       );
@@ -272,10 +269,7 @@ describe('test/commands/dev.test.ts', () => {
         cwd: getFixtures('egg-revert'),
       })
       .debug()
-      .expect(
-        'stdout',
-        /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/
-      )
+      .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
       .expect('code', 0)
       .end();
   });
@@ -322,17 +316,9 @@ describe('test/commands/dev.test.ts', () => {
     it('should support --require with space in path', () => {
       return (
         coffee
-          .fork(
-            eggBin,
-            [
-              'dev',
-              '--require',
-              getFixtures('test path with space/require script.cjs'),
-            ],
-            {
-              cwd: getFixtures('test path with space/example-require-script'),
-            }
-          )
+          .fork(eggBin, ['dev', '--require', getFixtures('test path with space/require script.cjs')], {
+            cwd: getFixtures('test path with space/example-require-script'),
+          })
           // .debug()
           .expect('stdout', /hey, you require me by --require/)
           .expect('code', 0)
@@ -343,17 +329,9 @@ describe('test/commands/dev.test.ts', () => {
     it('should support --import with space in path', () => {
       return (
         coffee
-          .fork(
-            eggBin,
-            [
-              'dev',
-              '--import',
-              getFixtures('test path with space/require script.mjs'),
-            ],
-            {
-              cwd: getFixtures('test path with space/example-import-script'),
-            }
-          )
+          .fork(eggBin, ['dev', '--import', getFixtures('test path with space/require script.mjs')], {
+            cwd: getFixtures('test path with space/example-import-script'),
+          })
           // .debug()
           .expect('stdout', /hey, you require me by --import/)
           .expect('code', 0)

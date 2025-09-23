@@ -16,12 +16,11 @@ import terminalLink from 'terminal-link';
 import { parseOptions, type ClusterOptions, type ParsedClusterOptions } from './utils/options.ts';
 import { WorkerManager } from './utils/worker_manager.ts';
 import { Messenger } from './utils/messenger.ts';
-import {
-  AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker,
-} from './utils/mode/impl/process/agent.ts';
+import { AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker } from './utils/mode/impl/process/agent.ts';
 import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.ts';
 import {
-  AgentThreadWorker, AgentThreadUtils as WorkerThreadsAgentWorker,
+  AgentThreadWorker,
+  AgentThreadUtils as WorkerThreadsAgentWorker,
 } from './utils/mode/impl/worker_threads/agent.ts';
 import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.ts';
 import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
@@ -51,10 +50,9 @@ export class Master extends ReadyEventEmitter {
 
   constructor(options?: ClusterOptions) {
     super();
-    this.#start(options)
-      .catch(err => {
-        this.ready(err);
-      });
+    this.#start(options).catch(err => {
+      this.ready(err);
+    });
   }
 
   async #start(options?: ClusterOptions) {
@@ -93,13 +91,16 @@ export class Master extends ReadyEventEmitter {
     this.logger.info(`[master] ${frameworkPkg.name} version ${frameworkPkg.version}`);
 
     if (this.isProduction) {
-      this.logger.info('[master] start with options:%s%s',
-        os.EOL, JSON.stringify(this.options, null, 2));
+      this.logger.info('[master] start with options:%s%s', os.EOL, JSON.stringify(this.options, null, 2));
     } else {
       this.log('[master] start with options: %j', this.options);
     }
-    this.log('[master] start with env: isProduction: %s, EGG_SERVER_ENV: %s, NODE_ENV: %s',
-      this.isProduction, this.options.env, process.env.NODE_ENV);
+    this.log(
+      '[master] start with env: isProduction: %s, EGG_SERVER_ENV: %s, NODE_ENV: %s',
+      this.isProduction,
+      this.options.env,
+      process.env.NODE_ENV
+    );
 
     const startTime = Date.now();
 
@@ -107,8 +108,13 @@ export class Master extends ReadyEventEmitter {
       this.isStarted = true;
       const stickyMsg = this.options.sticky ? ' with STICKY MODE!' : '';
       const startedURL = terminalLink(this.#appAddress, this.#appAddress, { fallback: false });
-      this.logger.info('[master] %s started on %s (%sms)%s',
-        frameworkPkg.name, startedURL, Date.now() - startTime, stickyMsg);
+      this.logger.info(
+        '[master] %s started on %s (%sms)%s',
+        frameworkPkg.name,
+        startedURL,
+        Date.now() - startTime,
+        stickyMsg
+      );
       if (this.options.debugPort) {
         const url = getAddress({
           port: this.options.debugPort,
@@ -152,7 +158,6 @@ export class Master extends ReadyEventEmitter {
     this.on('app-start', this.onAppStart.bind(this));
     this.on('reload-worker', this.onReload.bind(this));
 
-
     // fork app workers after agent started
     this.once('agent-start', this.forkAppWorkers.bind(this));
     // get the real port from options and app.config
@@ -184,16 +189,12 @@ export class Master extends ReadyEventEmitter {
       fs.writeFileSync(this.options.pidFile, process.pid.toString(), 'utf-8');
     }
 
-    this.detectPorts()
-      .then(() => {
-        this.forkAgentWorker();
-      });
+    this.detectPorts().then(() => {
+      this.forkAgentWorker();
+    });
 
     // exit when agent or worker exception
-    this.workerManager.on('exception', (count: {
-      agent: number;
-      worker: number;
-    }) => {
+    this.workerManager.on('exception', (count: { agent: number; worker: number }) => {
       const err = new ClusterWorkerExceptionError(count.agent, count.worker);
       this.logger.error(err);
       process.exit(1);
@@ -252,24 +253,29 @@ export class Master extends ReadyEventEmitter {
 
   startMasterSocketServer(cb: (err?: Error) => void) {
     // Create the outside facing server listening on our port.
-    net.createServer({
-      pauseOnConnect: true,
-    }, connection => {
-      // We received a connection and need to pass it to the appropriate
-      // worker. Get the worker for this connection's source IP and pass
-      // it the connection.
+    net
+      .createServer(
+        {
+          pauseOnConnect: true,
+        },
+        connection => {
+          // We received a connection and need to pass it to the appropriate
+          // worker. Get the worker for this connection's source IP and pass
+          // it the connection.
 
-      /* istanbul ignore next */
-      if (!connection.remoteAddress) {
-        // This will happen when a client sends an RST(which is set to 1) right
-        // after the three-way handshake to the server.
-        // Read https://en.wikipedia.org/wiki/TCP_reset_attack for more details.
-        connection.destroy();
-      } else {
-        const worker = this.stickyWorker(connection.remoteAddress) as AppProcessWorker;
-        worker.instance.send('sticky-session:connection', connection);
-      }
-    }).listen(this.#realPort, cb);
+          /* istanbul ignore next */
+          if (!connection.remoteAddress) {
+            // This will happen when a client sends an RST(which is set to 1) right
+            // after the three-way handshake to the server.
+            // Read https://en.wikipedia.org/wiki/TCP_reset_attack for more details.
+            connection.destroy();
+          } else {
+            const worker = this.stickyWorker(connection.remoteAddress) as AppProcessWorker;
+            worker.instance.send('sticky-session:connection', connection);
+          }
+        }
+      )
+      .listen(this.#realPort, cb);
   }
 
   stickyWorker(ip: string) {
@@ -337,8 +343,15 @@ export class Master extends ReadyEventEmitter {
     const agentWorker = this.agentWorker;
     this.workerManager.deleteAgent();
 
-    const err = new Error(util.format('[master] agent_worker#%s:%s died (code: %s, signal: %s)',
-      agentWorker.instance.id, agentWorker.instance.workerId, data.code, data.signal));
+    const err = new Error(
+      util.format(
+        '[master] agent_worker#%s:%s died (code: %s, signal: %s)',
+        agentWorker.instance.id,
+        agentWorker.instance.workerId,
+        data.code,
+        data.signal
+      )
+    );
     err.name = 'AgentWorkerDiedError';
     this.logger.error(err);
 
@@ -356,8 +369,11 @@ export class Master extends ReadyEventEmitter {
         to: 'parent',
       });
     } else {
-      this.logger.error('[master] agent_worker#%s:%s start fail, exiting with code:1',
-        agentWorker.instance.id, agentWorker.instance.workerId);
+      this.logger.error(
+        '[master] agent_worker#%s:%s start fail, exiting with code:1',
+        agentWorker.instance.id,
+        agentWorker.instance.workerId
+      );
       process.exit(1);
     }
   }
@@ -377,7 +393,7 @@ export class Master extends ReadyEventEmitter {
     this.messenger.send({
       action: 'egg-pids',
       to: 'app',
-      data: [ this.agentWorker.instance.workerId ],
+      data: [this.agentWorker.instance.workerId],
     });
     // should send current worker pids when agent restart
     if (this.isStarted) {
@@ -392,19 +408,18 @@ export class Master extends ReadyEventEmitter {
       action: 'agent-start',
       to: 'app',
     });
-    this.logger.info('[master] agent_worker#%s:%s started (%sms)',
-      this.agentWorker.instance.id, this.agentWorker.instance.workerId,
-      Date.now() - this.agentWorker.startTime);
+    this.logger.info(
+      '[master] agent_worker#%s:%s started (%sms)',
+      this.agentWorker.instance.id,
+      this.agentWorker.instance.workerId,
+      Date.now() - this.agentWorker.startTime
+    );
   }
 
   /**
    * App Worker exit handler
    */
-  onAppExit(data: {
-    workerId: number;
-    code: number;
-    signal: string;
-  }) {
+  onAppExit(data: { workerId: number; code: number; signal: string }) {
     if (this.closed) return;
 
     const worker = this.workerManager.getWorker(data.workerId)!;
@@ -412,9 +427,13 @@ export class Master extends ReadyEventEmitter {
       const signal = data.signal;
       const message = util.format(
         '[master] app_worker#%s:%s died (code: %s, signal: %s, suicide: %s, state: %s), current workers: %j',
-        worker.id, worker.workerId, worker.exitCode, signal,
-        worker.exitedAfterDisconnect, worker.state,
-        this.workerManager.listWorkerIds(),
+        worker.id,
+        worker.workerId,
+        worker.exitCode,
+        signal,
+        worker.exitedAfterDisconnect,
+        worker.state,
+        this.workerManager.listWorkerIds()
       );
       if (this.options.isDebug && signal === 'SIGKILL') {
         // exit if died during debug
@@ -446,8 +465,7 @@ export class Master extends ReadyEventEmitter {
       });
     } else {
       // exit if died during startup
-      this.logger.error('[master] app_worker#%s:%s start fail, exiting with code:1',
-        worker.id, worker.workerId);
+      this.logger.error('[master] app_worker#%s:%s start fail, exiting with code:1', worker.id, worker.workerId);
       process.exit(1);
     }
   }
@@ -455,10 +473,7 @@ export class Master extends ReadyEventEmitter {
   /**
    * after app worker
    */
-  onAppStart(data: {
-    workerId: number;
-    address: ListeningAddress;
-  }) {
+  onAppStart(data: { workerId: number; address: ListeningAddress }) {
     const worker = this.workerManager.getWorker(data.workerId)!;
     debug('got app_worker#%s:%s app-start event, data: %j', worker.id, worker.workerId, data);
 
@@ -469,9 +484,11 @@ export class Master extends ReadyEventEmitter {
         return;
       }
       // worker should listen REALPORT when not sticky mode
-    } else if (this.options.startMode !== 'worker_threads' &&
+    } else if (
+      this.options.startMode !== 'worker_threads' &&
       !isUnixSock(address) &&
-      (String(address.port) !== String(this.#realPort))) {
+      String(address.port) !== String(this.#realPort)
+    ) {
       return;
     }
     worker.state = 'listening';
@@ -486,16 +503,21 @@ export class Master extends ReadyEventEmitter {
     this.messenger.send({
       action: 'egg-pids',
       to: 'app',
-      data: [ this.agentWorker.instance.workerId ],
+      data: [this.agentWorker.instance.workerId],
       receiverWorkerId: String(worker.workerId),
       receiverPid: String(worker.workerId),
     });
 
     this.appWorker.startSuccessCount++;
     const remain = this.appWorker.isAllWorkerStarted ? 0 : this.options.workers - this.appWorker.startSuccessCount;
-    this.log('[master] app_worker#%s:%s started at %s, remain %s (%sms)',
-      worker.id, worker.workerId, address.port, remain,
-      Date.now() - this.appWorker.startTime);
+    this.log(
+      '[master] app_worker#%s:%s started at %s, remain %s (%sms)',
+      worker.id,
+      worker.workerId,
+      address.port,
+      remain,
+      Date.now() - this.appWorker.startTime
+    );
 
     // Send egg-ready when app is started after launched
     if (this.appWorker.isAllWorkerStarted) {
@@ -630,12 +652,7 @@ interface ListeningAddress {
   addressType?: number;
 }
 
-function getAddress({
-  addressType,
-  address,
-  port,
-  protocol,
-}: ListeningAddress) {
+function getAddress({ addressType, address, port, protocol }: ListeningAddress) {
   // unix sock
   // https://nodejs.org/api/cluster.html#cluster_event_listening_1
   if (addressType === -1) {

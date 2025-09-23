@@ -12,4 +12,3 @@ exports.keys = 'foo,bar';
 exports.security = {
   csrf: false,
 };
-

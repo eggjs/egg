@@ -56,12 +56,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
     } catch (e) {
       // file not exist, do nothing
       // do not emit error, in case of too many logs
-      this.emit(
-        'warn',
-        '[@eggjs/watcher:DevelopmentEventSource] watch %o error: %s',
-        file,
-        e
-      );
+      this.emit('warn', '[@eggjs/watcher:DevelopmentEventSource] watch %o error: %s', file, e);
     }
   }
 
@@ -79,11 +74,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
 
   #onFsWatchChange(event: WatchEventType, file: string) {
     if (!file) {
-      this.emit(
-        'warn',
-        '[@eggjs/watcher:DevelopmentEventSource] event: %o',
-        event
-      );
+      this.emit('warn', '[@eggjs/watcher:DevelopmentEventSource] event: %o', event);
       return;
     }
     // { event: 'change',

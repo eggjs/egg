@@ -13,10 +13,7 @@ describe('test/app/middleware/body_parser.test.ts', () => {
   beforeAll(async () => {
     app = createApp('apps/body_parser_testapp');
     await app.ready();
-    const res = await app
-      .httpRequest()
-      .get('/test/body_parser/user')
-      .expect(200);
+    const res = await app.httpRequest().get('/test/body_parser/user').expect(200);
     csrf = res.body.csrf || '';
     cookies = (res.headers['set-cookie'] as any).join(';');
     assert(csrf);
@@ -34,9 +31,7 @@ describe('test/app/middleware/body_parser.test.ts', () => {
         .set('Content-Type', 'application/x-www-form-urlencoded')
         .set('Accept', 'application/json')
         // https://snyk.io/vuln/npm:qs:20170213 test case
-        .send(
-          querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' })
-        )
+        .send(querystring.stringify({ foo: 'bar', _csrf: csrf, ']': 'toString' }))
         .expect({ foo: 'bar', _csrf: csrf, ']': 'toString' })
         .expect(200)
     );
@@ -124,22 +119,14 @@ describe('test/app/middleware/body_parser.test.ts', () => {
     app1 = createApp('apps/body_parser_testapp_disable');
     await app1.ready();
 
-    await app1
-      .httpRequest()
-      .post('/test/body_parser/foo.json')
-      .send({ foo: 'bar', ']': 'toString' })
-      .expect(204);
+    await app1.httpRequest().post('/test/body_parser/foo.json').send({ foo: 'bar', ']': 'toString' }).expect(204);
   });
 
   it('should body parser support ignore', async () => {
     app1 = createApp('apps/body_parser_testapp_ignore');
     await app1.ready();
 
-    await app1
-      .httpRequest()
-      .post('/test/body_parser/foo.json')
-      .send({ foo: 'bar', ']': 'toString' })
-      .expect(204);
+    await app1.httpRequest().post('/test/body_parser/foo.json').send({ foo: 'bar', ']': 'toString' }).expect(204);
 
     await app1
       .httpRequest()

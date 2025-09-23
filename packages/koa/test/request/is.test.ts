@@ -84,10 +84,7 @@ describe('ctx.is(type)', () => {
       assert.strictEqual(ctx.is('jpeg'), false);
       assert.strictEqual(ctx.is('.jpeg'), false);
       assert.strictEqual(ctx.is('text/*', 'application/*'), false);
-      assert.strictEqual(
-        ctx.is('text/html', 'text/plain', 'application/json; charset=utf-8'),
-        false
-      );
+      assert.strictEqual(ctx.is('text/html', 'text/plain', 'application/json; charset=utf-8'), false);
     });
   });
 

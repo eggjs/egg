@@ -71,11 +71,7 @@ describe('test/loader/egg_loader.test.ts', () => {
         logger: console,
       } as any);
 
-      let ret = await loader.loadFile(
-        getFilepath('load_file/function.js'),
-        1,
-        2
-      );
+      let ret = await loader.loadFile(getFilepath('load_file/function.js'), 1, 2);
       assert.equal(ret[0], 1);
       assert.equal(ret[1], 2);
 

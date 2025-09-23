@@ -54,11 +54,7 @@ export function getFrameworkPath(options: Options): string {
   return assertAndReturn('egg', moduleDir, baseDir);
 }
 
-function assertAndReturn(
-  frameworkName: string,
-  moduleDir: string,
-  baseDir: string
-) {
+function assertAndReturn(frameworkName: string, moduleDir: string, baseDir: string) {
   const moduleDirs = new Set([
     moduleDir,
     // find framework from process.cwd, especially for test,
@@ -73,15 +69,9 @@ function assertAndReturn(
     let globalModuleDir: string;
     // if frameworkName is scoped package, like @ali/egg
     if (frameworkName.startsWith('@') && frameworkName.includes('/')) {
-      globalModuleDir = path.join(
-        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
-        '../../..'
-      );
+      globalModuleDir = path.join(importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }), '../../..');
     } else {
-      globalModuleDir = path.join(
-        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
-        '../..'
-      );
+      globalModuleDir = path.join(importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }), '../..');
     }
     moduleDirs.add(globalModuleDir);
   } catch {
@@ -91,11 +81,7 @@ function assertAndReturn(
   for (const moduleDir of moduleDirs) {
     const frameworkPath = path.join(moduleDir, frameworkName);
     if (existsSync(frameworkPath)) {
-      debug(
-        '[assertAndReturn] frameworkPath: %s, moduleDirs: %o',
-        frameworkPath,
-        moduleDirs
-      );
+      debug('[assertAndReturn] frameworkPath: %s, moduleDirs: %o', frameworkPath, moduleDirs);
       return frameworkPath;
     }
   }

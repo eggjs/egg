@@ -46,11 +46,7 @@ describe('test/app/middleware/notfound.test.ts', () => {
 
   it('should show 404 page content when antx notfound.pageUrl not set', () => {
     mm(app.config.notfound, 'pageUrl', '');
-    return app
-      .httpRequest()
-      .get('/foo')
-      .expect('<h1>404 Not Found</h1>')
-      .expect(404);
+    return app.httpRequest().get('/foo').expect('<h1>404 Not Found</h1>').expect(404);
   });
 
   describe('config.notfound.pageUrl = "/404"', () => {
@@ -64,12 +60,7 @@ describe('test/app/middleware/notfound.test.ts', () => {
     afterEach(mm.restore);
 
     it('should 302 redirect to custom /404 when required html', async () => {
-      await app
-        .httpRequest()
-        .get('/test/404')
-        .set('Accept', 'test/html')
-        .expect('Location', '/404')
-        .expect(302);
+      await app.httpRequest().get('/test/404').set('Accept', 'test/html').expect('Location', '/404').expect(302);
 
       await app.httpRequest().get('/404').expect('Hi, this is 404').expect(200);
     });
@@ -77,12 +68,7 @@ describe('test/app/middleware/notfound.test.ts', () => {
     it('should not avoid circular redirects', async () => {
       mm(app.config.notfound, 'pageUrl', '/notfound');
 
-      await app
-        .httpRequest()
-        .get('/test/404')
-        .set('Accept', 'test/html')
-        .expect('Location', '/notfound')
-        .expect(302);
+      await app.httpRequest().get('/test/404').set('Accept', 'test/html').expect('Location', '/notfound').expect(302);
 
       await app
         .httpRequest()

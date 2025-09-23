@@ -37,26 +37,10 @@ const deep = {
 
 describe('test/index.test.ts', () => {
   it('missing arguments', () => {
-    assert.deepEqual(
-      extend(undefined, { a: 1 }),
-      { a: 1 },
-      'missing first argument is second argument'
-    );
-    assert.deepEqual(
-      extend({ a: 1 }),
-      { a: 1 },
-      'missing second argument is first argument'
-    );
-    assert.deepEqual(
-      extend(true, undefined, { a: 1 }),
-      { a: 1 },
-      'deep: missing first argument is second argument'
-    );
-    assert.deepEqual(
-      extend(true, { a: 1 }),
-      { a: 1 },
-      'deep: missing second argument is first argument'
-    );
+    assert.deepEqual(extend(undefined, { a: 1 }), { a: 1 }, 'missing first argument is second argument');
+    assert.deepEqual(extend({ a: 1 }), { a: 1 }, 'missing second argument is first argument');
+    assert.deepEqual(extend(true, undefined, { a: 1 }), { a: 1 }, 'deep: missing first argument is second argument');
+    assert.deepEqual(extend(true, { a: 1 }), { a: 1 }, 'deep: missing second argument is first argument');
     assert.deepEqual(extend(), {}, 'no arguments is object');
   });
 
@@ -77,11 +61,7 @@ describe('test/index.test.ts', () => {
 
     assert.equal(ori, 'what u gonna say', 'original string 1 is unchanged');
     assert.equal(str, 'me a test', 'original string 2 is unchanged');
-    assert.deepEqual(
-      target,
-      expectedTarget,
-      'string + string is merged object form of string'
-    );
+    assert.deepEqual(target, expectedTarget, 'string + string is merged object form of string');
   });
 
   it('merge string with number', () => {
@@ -97,11 +77,7 @@ describe('test/index.test.ts', () => {
     const target = extend(ori, arr);
 
     assert.equal(ori, 'what u gonna say', 'original string is unchanged');
-    assert.deepEqual(
-      arr,
-      [1, 'what', new Date(81, 8, 4)],
-      'array is unchanged'
-    );
+    assert.deepEqual(arr, [1, 'what', new Date(81, 8, 4)], 'array is unchanged');
     assert.deepEqual(
       target,
       {
@@ -172,11 +148,7 @@ describe('test/index.test.ts', () => {
   it('merge number with array', () => {
     const target = extend(20, arr);
 
-    assert.deepEqual(
-      arr,
-      [1, 'what', new Date(81, 8, 4)],
-      'array is unchanged'
-    );
+    assert.deepEqual(arr, [1, 'what', new Date(81, 8, 4)], 'array is unchanged');
     assert.deepEqual(
       target,
       {
@@ -216,11 +188,7 @@ describe('test/index.test.ts', () => {
     const ori = [1, 2, 3, 4, 5, 6];
     const target = extend(ori, str);
 
-    assert.deepEqual(
-      ori,
-      str.split(''),
-      'array is changed to be an array of string chars'
-    );
+    assert.deepEqual(ori, str.split(''), 'array is changed to be an array of string chars');
     assert.equal(str, 'me a test', 'string is unchanged');
     assert.equal(target[0], 'm');
     assert.equal(target['0'], 'm');
@@ -242,11 +210,7 @@ describe('test/index.test.ts', () => {
     const testDate = new Date(81, 8, 4);
     const expectedTarget = [1, 'what', testDate, 4, 5, 6];
 
-    assert.deepEqual(
-      ori,
-      expectedTarget,
-      'array + array merges arrays; changes first array'
-    );
+    assert.deepEqual(ori, expectedTarget, 'array + array merges arrays; changes first array');
     assert.deepEqual(arr, [1, 'what', testDate], 'second array is unchanged');
     assert.deepEqual(target, expectedTarget, 'array + array is merged array');
   });
@@ -284,11 +248,7 @@ describe('test/index.test.ts', () => {
 
     assert.equal(target.length, 6, 'target has proper length');
     assert.equal(target.str, obj.str, 'target has obj.str property');
-    assert.equal(
-      target.integer,
-      obj.integer,
-      'target has obj.integer property'
-    );
+    assert.equal(target.integer, obj.integer, 'target has obj.integer property');
     assert.deepEqual(target.arr, obj.arr, 'target has obj.arr property');
     assert.equal(target.date, obj.date, 'target has obj.date property');
   });
@@ -379,11 +339,7 @@ describe('test/index.test.ts', () => {
 
     assert.deepEqual(ori, testObj, 'original object updated');
     assert.equal(str, 'me a test', 'string is unchanged');
-    assert.deepEqual(
-      target,
-      testObj,
-      'object + string is object + object form of string'
-    );
+    assert.deepEqual(target, testObj, 'object + string is object + object form of string');
   });
 
   it('merge object with number', () => {
@@ -477,11 +433,7 @@ describe('test/index.test.ts', () => {
 
     assert.deepEqual(obj, expectedObj, 'obj is unchanged');
     assert.deepEqual(ori, expectedTarget, 'original has been merged');
-    assert.deepEqual(
-      target,
-      expectedTarget,
-      'object + object is merged object'
-    );
+    assert.deepEqual(target, expectedTarget, 'object + object is merged object');
   });
 
   it('deep clone', () => {
@@ -643,25 +595,13 @@ describe('test/index.test.ts', () => {
     (Array as any).isArray = false; // don't delete, to preserve enumerability
     const target: any[] = [];
     const source = [1, [2], { 3: true }];
-    assert.deepEqual(
-      extend(true, target, source),
-      [1, [2], { 3: true }],
-      'It works without Array.isArray'
-    );
+    assert.deepEqual(extend(true, target, source), [1, [2], { 3: true }], 'It works without Array.isArray');
     Array.isArray = savedIsArray;
   });
 
   it('fix __proto__ copy', () => {
-    const r = extend(
-      true,
-      {},
-      JSON.parse('{"__proto__": {"polluted": "yes"}}')
-    );
+    const r = extend(true, {}, JSON.parse('{"__proto__": {"polluted": "yes"}}'));
     assert.deepEqual(JSON.stringify(r), '{}', 'It should not copy __proto__');
-    assert.deepEqual(
-      ('' as any).polluted,
-      undefined,
-      'It should not affect object prototype'
-    );
+    assert.deepEqual(('' as any).polluted, undefined, 'It should not affect object prototype');
   });
 });

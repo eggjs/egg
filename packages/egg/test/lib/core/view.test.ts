@@ -49,10 +49,7 @@ describe('multiple view engine', () => {
     });
 
     it('should render with options.viewEngine', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/render-with-options')
-        .expect(200);
+      const res = await app.httpRequest().get('/render-with-options').expect(200);
 
       assert(res.body.filename === path.join(baseDir, 'app/view/ext/a.nj'));
       assert(res.body.type === 'ejs');
@@ -69,10 +66,7 @@ describe('multiple view engine', () => {
     });
 
     it('should throw when no viewEngine', async () => {
-      await app
-        .httpRequest()
-        .get('/render-string-without-view-engine')
-        .expect(500);
+      await app.httpRequest().get('/render-string-without-view-engine').expect(500);
     });
   });
 });
@@ -93,7 +87,7 @@ describe('nunjucks view', () => {
     const res = await app.httpRequest().get('/').expect(200);
     assert.equal(
       String(res.text).replace(/\r/g, ''),
-      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw: <div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
     );
   });
 
@@ -102,7 +96,7 @@ describe('nunjucks view', () => {
 
     assert.equal(
       String(res.text).replace(/\r/g, ''),
-      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw: <div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
     );
   });
 
@@ -111,7 +105,7 @@ describe('nunjucks view', () => {
 
     assert.equal(
       String(res.text).replace(/\r/g, ''),
-      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      `Hi, mk・2 test-app-helper: test-bar@${app.config.baseDir} raw: <div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
     );
   });
 
@@ -120,7 +114,7 @@ describe('nunjucks view', () => {
 
     assert.equal(
       String(res.text).replace(/\r/g, ''),
-      `Hi,  test-app-helper: test-bar@${app.config.baseDir} raw:\n<div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
+      `Hi,  test-app-helper: test-bar@${app.config.baseDir} raw: <div>dar</div> 2014 @ mk2 &lt;br&gt;\n`
     );
   });
 

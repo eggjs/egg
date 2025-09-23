@@ -4,12 +4,7 @@ import fs from 'node:fs';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mm } from '@eggjs/mock';
 
-import {
-  type MockApplication,
-  createApp,
-  cluster,
-  getFilepath,
-} from '../../utils.ts';
+import { type MockApplication, createApp, cluster, getFilepath } from '../../utils.ts';
 
 describe('test/lib/plugins/development.test.ts', () => {
   afterEach(mm.restore);
@@ -37,10 +32,7 @@ describe('test/lib/plugins/development.test.ts', () => {
 
       await app.httpRequest().get('/assets/hello').expect(404);
 
-      await app
-        .httpRequest()
-        .get('/__koa_mock_scene_toolbox/hello')
-        .expect(404);
+      await app.httpRequest().get('/__koa_mock_scene_toolbox/hello').expect(404);
     });
   });
 

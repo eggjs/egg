@@ -8,8 +8,12 @@ const debug = debuglog('egg/mock/lib/agent_handler');
 let agent: MockAgent;
 
 export async function setupAgent() {
-  debug('setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s',
-    process.env.ENABLE_MOCHA_PARALLEL, process.env.AUTO_AGENT, !!agent);
+  debug(
+    'setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s',
+    process.env.ENABLE_MOCHA_PARALLEL,
+    process.env.AUTO_AGENT,
+    !!agent
+  );
   if (agent) {
     await agent.ready();
     return agent;

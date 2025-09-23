@@ -22,10 +22,7 @@ export function getFilepath(name: string) {
   return filepath;
 }
 
-export function createApp(
-  name: string,
-  options?: EggCoreInitOptions & { Application?: typeof EggCore }
-): Application {
+export function createApp(name: string, options?: EggCoreInitOptions & { Application?: typeof EggCore }): Application {
   const baseDir = getFilepath(name);
   options = options ?? {};
   options.baseDir = baseDir;

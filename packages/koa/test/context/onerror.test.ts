@@ -107,11 +107,7 @@ describe('ctx.onerror(err)', () => {
 
     const server = app.listen();
 
-    return request(server)
-      .get('/')
-      .expect(404)
-      .expect('Content-Type', 'text/plain; charset=utf-8')
-      .expect('Not Found');
+    return request(server).get('/').expect(404).expect('Content-Type', 'text/plain; charset=utf-8').expect('Not Found');
   });
 
   describe('when invalid err.statusCode', () => {
@@ -281,10 +277,7 @@ describe('ctx.onerror(err)', () => {
         throw { key: 'value' }; // eslint-disable-line no-throw-literal
       });
 
-      await request(app.callback())
-        .get('/')
-        .expect(500)
-        .expect('Internal Server Error');
+      await request(app.callback()).get('/').expect(500).expect('Internal Server Error');
 
       const errs: Error[] = await errorEvent;
       const err = errs[0];

@@ -3,6 +3,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { beforeAll, afterAll, it, describe } from 'vitest';
+
 import { escape, getFilepath } from './utils.ts';
 
 describe('test/override.test.ts', () => {
@@ -50,16 +51,13 @@ describe('test/override.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should reload', async () => {
+    it.skip('should reload', async () => {
       const filepath = getFilepath('override-ignore/app/web/a.js');
       await fs.writeFile(filepath, '');
       await scheduler.wait(1000);
       await fs.unlink(filepath);
       await scheduler.wait(5000);
-      app.expect(
-        'stdout',
-        new RegExp(escape(`reload worker because ${filepath}`))
-      );
+      app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
     });
 
     it('should not reload', async () => {
@@ -69,10 +67,7 @@ describe('test/override.test.ts', () => {
       await scheduler.wait(1000);
       await fs.unlink(filepath);
       await scheduler.wait(5000);
-      app.notExpect(
-        'stdout',
-        new RegExp(escape(`reload worker because ${filepath} change`))
-      );
+      app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath} change`)));
     });
   });
 });

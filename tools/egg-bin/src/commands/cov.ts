@@ -31,8 +31,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     }),
     c8: Flags.string({
       description: 'c8 instruments passthrough`',
-      default:
-        '--temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura',
+      default: '--temp-directory node_modules/.c8_output -r text-summary -r json-summary -r json -r lcov -r cobertura',
     }),
   };
 
@@ -53,11 +52,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     ];
   }
 
-  protected override async forkNode(
-    modulePath: string,
-    forkArgs: string[],
-    options: ForkNodeOptions = {}
-  ) {
+  protected override async forkNode(modulePath: string, forkArgs: string[], options: ForkNodeOptions = {}) {
     const { flags } = this;
     if (flags.prerequire) {
       this.env.EGG_BIN_PREREQUIRE = 'true';
@@ -91,12 +86,6 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     this.globalExecArgv = [];
 
     // $ c8 node mocha
-    await super.forkNode(c8File, [
-      ...c8Args,
-      process.execPath,
-      ...execArgv,
-      modulePath,
-      ...forkArgs,
-    ]);
+    await super.forkNode(c8File, [...c8Args, process.execPath, ...execArgv, modulePath, ...forkArgs]);
   }
 }

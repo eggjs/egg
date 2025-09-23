@@ -49,10 +49,7 @@ describe('test/egg-bin.test.ts', () => {
           .fork(eggBin, ['test', '-h', '--base', cwd])
           // .debug()
           .expect('stdout', /Run the test/)
-          .expect(
-            'stdout',
-            /--\[no-]typescript {5}\[default: true] use TypeScript to run the test/
-          )
+          .expect('stdout', /--\[no-]typescript {5}\[default: true] use TypeScript to run the test/)
           .expect('code', 0)
           .end()
       );

@@ -90,10 +90,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
     it('agent should not send message before started', () => {
       app.expect('stdout', /agent can't call sendTo before server started/);
       app.expect('stdout', /agent can't call sendToApp before server started/);
-      app.expect(
-        'stdout',
-        /agent can't call sendToAgent before server started/
-      );
+      app.expect('stdout', /agent can't call sendToAgent before server started/);
       app.expect('stdout', /agent can't call sendRandom before server started/);
       app.expect('stdout', /agent can't call broadcast before server started/);
     });
@@ -120,9 +117,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
       // agent 26494 receive message from app pid 26495
       // agent 26494 receive message from app pid 26496
       // agent 26494 receive message from agent pid 26494
-      const m = app.stdout.match(
-        /(app|agent) \d+ receive message from (app|agent) pid \d+/g
-      );
+      const m = app.stdout.match(/(app|agent) \d+ receive message from (app|agent) pid \d+/g);
       assert.equal(m.length, 9);
     });
   });

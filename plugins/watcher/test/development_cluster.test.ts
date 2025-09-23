@@ -7,15 +7,9 @@ import { getFilePath } from './utils.js';
 
 const file_path1 = getFilePath('apps/watcher-development-app/tmp.txt');
 const file_path2 = getFilePath('apps/watcher-development-app/tmp/tmp.txt');
-const file_path3 = getFilePath(
-  'apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp.txt'
-);
-const file_path4 = getFilePath(
-  'apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp'
-);
-const file_path1_agent = getFilePath(
-  'apps/watcher-development-app/tmp-agent.txt'
-);
+const file_path3 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp.txt');
+const file_path4 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp');
+const file_path1_agent = getFilePath('apps/watcher-development-app/tmp-agent.txt');
 
 describe('test/development_cluster.test.ts', () => {
   let app: MockApplication;
@@ -34,11 +28,7 @@ describe('test/development_cluster.test.ts', () => {
   it('should app watcher work', async () => {
     let count = 0;
 
-    await app
-      .httpRequest()
-      .get('/app-watch')
-      .expect(200)
-      .expect('app watch success');
+    await app.httpRequest().get('/app-watch').expect(200).expect('app watch success');
 
     await scheduler.wait(100);
     fs.writeFileSync(file_path1, 'aaa');
@@ -88,11 +78,7 @@ describe('test/development_cluster.test.ts', () => {
   it.skip('should agent watcher work', async () => {
     let count = 0;
 
-    await app
-      .httpRequest()
-      .get('/agent-watch')
-      .expect(200)
-      .expect('agent watch success');
+    await app.httpRequest().get('/agent-watch').expect(200).expect('agent watch success');
 
     await scheduler.wait(100);
     fs.writeFileSync(file_path1_agent, 'bbb');

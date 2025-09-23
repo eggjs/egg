@@ -6,10 +6,7 @@ module.exports = app => {
   class CustomHttpClient extends app.HttpClient {
     request(url, opt) {
       return new Promise(resolve => {
-        assert(
-          url.startsWith('http'),
-          'url should start with http, but got ' + url
-        );
+        assert(url.startsWith('http'), 'url should start with http, but got ' + url);
         resolve();
       }).then(() => {
         return super.request(url, opt);

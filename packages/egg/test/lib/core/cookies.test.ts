@@ -40,15 +40,9 @@ describe('test/lib/core/cookies.test.ts', () => {
       const ctx = app.mockContext();
       const value = Buffer.alloc(4094).fill(49).toString();
       ctx.cookies.set('foo', value);
-      const logPath = path.join(
-        getFilepath('apps/secure-app'),
-        'logs/secure-app/common-error.log'
-      );
+      const logPath = path.join(getFilepath('apps/secure-app'), 'logs/secure-app/common-error.log');
       const content = fs.readFileSync(logPath, 'utf8');
-      assert.match(
-        content,
-        /CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/
-      );
+      assert.match(content, /CookieLimitExceedError: cookie foo's length\(4094\) exceed the limit\(4093\)/);
     });
 
     it('should throw TypeError when set encrypt on keys not exists', () => {
@@ -108,11 +102,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .expect(200);
       const cookie = res.headers['set-cookie'][0];
       assert(cookie);
-      assert(
-        cookie.match(
-          /^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/
-        )
-      );
+      assert(cookie.match(/^cookiepath=\/cookiepath\/ok; path=\/cookiepath\/ok; secure; httponly$/));
     });
 
     it('should delete cookie', async () => {
@@ -126,10 +116,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .expect(200);
       const cookie = res.headers['set-cookie'][0];
       assert(cookie);
-      assert.equal(
-        cookie,
-        'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly'
-      );
+      assert.equal(cookie, 'cookiedel=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; httponly');
       const expires = cookie.match(/expires=([^;]+);/)![1];
       assert.equal(new Date() > new Date(expires), true);
     });
@@ -139,10 +126,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .httpRequest()
         .get('/?cookiedel=true&opts=true')
         .set('Host', 'demo.eggjs.org')
-        .set(
-          'Cookie',
-          'cookiedel=true; path=/hello; domain=eggjs.org; expires=30'
-        )
+        .set('Cookie', 'cookiedel=true; path=/hello; domain=eggjs.org; expires=30')
         .set('X-Forwarded-Proto', 'https')
         .expect('hello mock secure app')
         .expect(200);
@@ -166,10 +150,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .expect(200);
       const cookie = res.headers['set-cookie'][0];
       assert(cookie);
-      assert.equal(
-        cookie,
-        'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly'
-      );
+      assert.equal(cookie, 'cookiepath=/; path=/; domain=okcookie.eggjs.org; secure; httponly');
     });
 
     it('should not set domain and path', async () => {
@@ -195,12 +176,7 @@ describe('test/lib/core/cookies.test.ts', () => {
     afterAll(() => app.close());
 
     it('should set secure:false cookie', async () => {
-      const res = await app
-        .httpRequest()
-        .get('/hello')
-        .set('Host', 'demo.eggjs.org')
-        .expect('hello')
-        .expect(200);
+      const res = await app.httpRequest().get('/hello').set('Host', 'demo.eggjs.org').expect('hello').expect(200);
       const cookies = res.headers['set-cookie'] as unknown as string[];
       const cookie = cookies.join(';');
       assert(cookie);
@@ -227,10 +203,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .expect(200);
       const encryptCookie = res.headers['set-cookie'][0];
       assert(encryptCookie);
-      assert.equal(
-        encryptCookie,
-        'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly'
-      );
+      assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
 
       const plainCookie = res.headers['set-cookie'][1];
       assert(plainCookie);
@@ -260,10 +233,7 @@ describe('test/lib/core/cookies.test.ts', () => {
         .expect(200);
       const encryptCookie = res.headers['set-cookie'][0];
       assert(encryptCookie);
-      assert.equal(
-        encryptCookie,
-        'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly'
-      );
+      assert.equal(encryptCookie, 'foo=B9om8kiaZ7Xg9dzTUoH-Pw==; path=/; httponly');
 
       await app
         .httpRequest()

@@ -1,5 +1,3 @@
 'use strict';
 
-exports.fooPlugin = {
-
-};
+exports.fooPlugin = {};

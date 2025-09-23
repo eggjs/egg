@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(agent) {
+module.exports = function (agent) {
   agent.messenger.on('throw', () => {
     process.exit(1);
   });

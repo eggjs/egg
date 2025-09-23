@@ -30,7 +30,7 @@ async function main() {
     // inject
     for (const mod of options.require) {
       await importModule(mod, {
-        paths: [ options.baseDir ],
+        paths: [options.baseDir],
       });
     }
   }
@@ -46,7 +46,7 @@ async function main() {
     level: process.env.EGG_APP_WORKER_LOGGER_LEVEL,
   });
   const { Application } = await importModule(options.framework, {
-    paths: [ options.baseDir ],
+    paths: [options.baseDir],
   });
   debug('[app_worker:%s] new Application with options %j', process.pid, options);
   let app: any;
@@ -86,11 +86,17 @@ async function main() {
       ...clusterConfig.https,
       ...options.https,
     };
-    const port = app.options.port = options.port || listenConfig.port;
+    const port = (app.options.port = options.port || listenConfig.port);
     const debugPort = options.debugPort;
-    const protocol = (httpsOptions.key && httpsOptions.cert) ? 'https' : 'http';
-    debug('[app_worker:%s] listenConfig: %j, real port: %o, protocol: %o, debugPort: %o',
-      process.pid, listenConfig, port, protocol, debugPort);
+    const protocol = httpsOptions.key && httpsOptions.cert ? 'https' : 'http';
+    debug(
+      '[app_worker:%s] listenConfig: %j, real port: %o, protocol: %o, debugPort: %o',
+      process.pid,
+      listenConfig,
+      port,
+      protocol,
+      debugPort
+    );
 
     AppWorker.send({
       to: 'master',
@@ -148,12 +154,11 @@ async function main() {
         server.listen(listenConfig.path);
       } else {
         if (typeof port !== 'number') {
-          consoleLogger.error('[app_worker:%s] port should be number, but got %s(%s)',
-            process.pid, port, typeof port);
+          consoleLogger.error('[app_worker:%s] port should be number, but got %s(%s)', process.pid, port, typeof port);
           exitProcess();
           return;
         }
-        const args = [ port ];
+        const args = [port];
         if (listenConfig.hostname) {
           args.push(listenConfig.hostname);
         }

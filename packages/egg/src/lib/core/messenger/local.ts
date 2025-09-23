@@ -24,13 +24,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   broadcast(action: string, data?: unknown): Messenger {
-    debug(
-      '[%s:%s] broadcast %s with %j',
-      this.egg.type,
-      this.pid,
-      action,
-      data
-    );
+    debug('[%s:%s] broadcast %s with %j', this.egg.type, this.pid, action, data);
     this.send(action, data, 'both');
     return this;
   }
@@ -45,14 +39,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendTo(workerId: string, action: string, data?: unknown): Messenger {
-    debug(
-      '[%s:%s] send %s with %j to %s',
-      this.egg.type,
-      this.pid,
-      action,
-      data,
-      workerId
-    );
+    debug('[%s:%s] send %s with %j to %s', this.egg.type, this.pid, action, data, workerId);
     if (String(workerId) !== this.pid) {
       return this;
     }
@@ -70,13 +57,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendRandom(action: string, data?: unknown): Messenger {
-    debug(
-      '[%s:%s] send %s with %j to opposite',
-      this.egg.type,
-      this.pid,
-      action,
-      data
-    );
+    debug('[%s:%s] send %s with %j to opposite', this.egg.type, this.pid, action, data);
     this.send(action, data, 'opposite');
     return this;
   }
@@ -88,13 +69,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToApp(action: string, data?: unknown): Messenger {
-    debug(
-      '[%s:%s] send %s with %j to all app',
-      this.egg.type,
-      this.pid,
-      action,
-      data
-    );
+    debug('[%s:%s] send %s with %j to all app', this.egg.type, this.pid, action, data);
     this.send(action, data, 'application');
     return this;
   }
@@ -106,13 +81,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToAgent(action: string, data?: unknown): Messenger {
-    debug(
-      '[%s:%s] send %s with %j to all agent',
-      this.egg.type,
-      this.pid,
-      action,
-      data
-    );
+    debug('[%s:%s] send %s with %j to all agent', this.egg.type, this.pid, action, data);
     this.send(action, data, 'agent');
     return this;
   }
@@ -144,11 +113,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
         to = egg.type === 'application' ? 'agent' : 'application';
       }
 
-      if (
-        application &&
-        application.messenger &&
-        (to === 'application' || to === 'both')
-      ) {
+      if (application && application.messenger && (to === 'application' || to === 'both')) {
         application.messenger.onMessage({ action, data });
       }
       if (agent && agent.messenger && (to === 'agent' || to === 'both')) {
@@ -164,21 +129,10 @@ export class Messenger extends BaseMessenger implements IMessenger {
 
   onMessage(message: any) {
     if (typeof message?.action === 'string') {
-      debug(
-        '[%s:%s] got message %s with %j',
-        this.egg.type,
-        this.pid,
-        message.action,
-        message.data
-      );
+      debug('[%s:%s] got message %s with %j', this.egg.type, this.pid, message.action, message.data);
       this.emit(message.action, message.data);
     } else {
-      debug(
-        '[%s:%s] got an invalid message %j',
-        this.egg.type,
-        this.pid,
-        message
-      );
+      debug('[%s:%s] got an invalid message %j', this.egg.type, this.pid, message);
     }
   }
 

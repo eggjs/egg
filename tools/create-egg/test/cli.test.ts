@@ -10,16 +10,9 @@ const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
 
 const projectName = 'test-egg-app';
 const genPath = path.join(import.meta.dirname, projectName);
-const genPathWithSubfolder = path.join(
-  import.meta.dirname,
-  'subfolder',
-  projectName
-);
+const genPathWithSubfolder = path.join(import.meta.dirname, 'subfolder', projectName);
 
-const run = <SO extends SyncOptions>(
-  args: string[],
-  options?: SO
-): SyncResult<SO> => {
+const run = <SO extends SyncOptions>(args: string[], options?: SO): SyncResult<SO> => {
   return execaCommandSync(`node ${CLI_PATH} ${args.join(' ')}`, options);
 };
 
@@ -75,9 +68,7 @@ test('prompts for the template on not supplying a value for --template', () => {
 
 test('prompts for the template on supplying an invalid template', () => {
   const { stdout } = run([projectName, '--template', 'unknown']);
-  expect(stdout).toContain(
-    `"unknown" isn't a valid template. Please choose from below:`
-  );
+  expect(stdout).toContain(`"unknown" isn't a valid template. Please choose from below:`);
 });
 
 test('asks to overwrite non-empty target directory', () => {
@@ -91,9 +82,7 @@ test('asks to overwrite non-empty target directory with subfolder', () => {
   const { stdout } = run([`subfolder/${projectName}`], {
     cwd: import.meta.dirname,
   });
-  expect(stdout).toContain(
-    `Target directory "subfolder/${projectName}" is not empty.`
-  );
+  expect(stdout).toContain(`Target directory "subfolder/${projectName}" is not empty.`);
 });
 
 test('asks to overwrite non-empty current directory', () => {

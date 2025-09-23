@@ -50,8 +50,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       description: 'only run tests matching <pattern>',
     }),
     changed: Flags.boolean({
-      description:
-        'only test with changed files and match test/**/*.test.(js|ts)',
+      description: 'only test with changed files and match test/**/*.test.(js|ts)',
       char: 'c',
     }),
     mochawesome: Flags.boolean({
@@ -70,8 +69,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       default: os.cpus().length - 1,
     }),
     'auto-agent': Flags.boolean({
-      description:
-        '[default: true] auto bootstrap agent in mocha master process',
+      description: '[default: true] auto bootstrap agent in mocha master process',
       default: true,
       allowNo: true,
     }),
@@ -87,8 +85,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       throw err;
     }
 
-    const mochaFile =
-      process.env.MOCHA_FILE || importResolve('mocha/bin/_mocha');
+    const mochaFile = process.env.MOCHA_FILE || importResolve('mocha/bin/_mocha');
     if (flags.parallel) {
       this.env.ENABLE_MOCHA_PARALLEL = 'true';
       if (flags['auto-agent']) {
@@ -134,11 +131,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
         debug('auto register @eggjs/mock/register: %o', eggMockRegister);
       } catch (err: any) {
         // ignore @eggjs/mock not exists
-        debug(
-          'auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s',
-          flags.base,
-          err.message
-        );
+        debug('auto register @eggjs/mock fail, can not require @eggjs/mock on %o, error: %s', flags.base, err.message);
       }
     }
 

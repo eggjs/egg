@@ -78,17 +78,8 @@ export class Context {
    * this.assert(this.user, 401, 'Please login!');
    * ```
    */
-  assert(
-    value: unknown,
-    status?: number,
-    errorProps?: Record<string, unknown>
-  ): void;
-  assert(
-    value: unknown,
-    status?: number,
-    errorMessage?: string,
-    errorProps?: Record<string, unknown>
-  ): void;
+  assert(value: unknown, status?: number, errorProps?: Record<string, unknown>): void;
+  assert(value: unknown, status?: number, errorMessage?: string, errorProps?: Record<string, unknown>): void;
   assert(
     value: unknown,
     status?: number,
@@ -143,11 +134,7 @@ export class Context {
   throw(error: Error, errorProps: object): void;
   throw(error: Error, status: number): void;
   throw(error: Error, status: number, errorProps: object): void;
-  throw(
-    arg1: number | string | Error,
-    arg2?: number | string | Error | object,
-    errorProps?: object
-  ) {
+  throw(arg1: number | string | Error, arg2?: number | string | Error | object, errorProps?: object) {
     // oxlint-disable-next-line typescript/no-explicit-any
     const args: any[] = [];
     if (typeof arg2 === 'number') {
@@ -180,9 +167,7 @@ export class Context {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
-    const isNativeError =
-      err instanceof Error ||
-      Object.prototype.toString.call(err) === '[object Error]';
+    const isNativeError = err instanceof Error || Object.prototype.toString.call(err) === '[object Error]';
     if (!isNativeError) {
       err = new Error(util.format('non-error thrown: %j', err));
     }
@@ -266,39 +251,27 @@ export class Context {
   acceptsLanguages(): string[];
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
-  acceptsLanguages(
-    languages?: string | string[],
-    ...others: string[]
-  ): string | string[] | false {
+  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
     return this.request.acceptsLanguages(languages as string, ...others);
   }
 
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
-  acceptsEncodings(
-    encodings?: string | string[],
-    ...others: string[]
-  ): string[] | string | false {
+  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
     return this.request.acceptsEncodings(encodings as string, ...others);
   }
 
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
-  acceptsCharsets(
-    charsets?: string | string[],
-    ...others: string[]
-  ): string[] | string | false {
+  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
     return this.request.acceptsCharsets(charsets as string, ...others);
   }
 
   accepts(args: string[]): string | string[] | false;
   accepts(...args: string[]): string | string[] | false;
-  accepts(
-    args?: string | string[],
-    ...others: string[]
-  ): string | string[] | false {
+  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
     return this.request.accepts(args as string, ...others);
   }
 

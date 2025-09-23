@@ -38,10 +38,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.match(lcov, /ignore[/|\\]a.js/);
     });
 
@@ -60,10 +57,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.match(lcov, /ignore[/|\\]a.js/);
     });
 
@@ -78,10 +72,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.match(lcov, /SF:app\.ts/);
     });
 
@@ -103,20 +94,13 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.doesNotMatch(lcov, /ignore[/|\\]a.js/);
     });
 
     it('should success with -x to ignore one dirs', async () => {
       await coffee
-        .fork(
-          eggBin,
-          ['cov', '-x', 'ignore/', 'test/**/*.test.js', '--ts=false'],
-          { cwd }
-        )
+        .fork(eggBin, ['cov', '-x', 'ignore/', 'test/**/*.test.js', '--ts=false'], { cwd })
         // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
@@ -126,28 +110,13 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.doesNotMatch(lcov, /ignore[/|\\]a.js/);
     });
 
     it('should success with -x to ignore multi dirs', async () => {
       await coffee
-        .fork(
-          eggBin,
-          [
-            'cov',
-            '-x',
-            'ignore2/*',
-            '-x',
-            'ignore/',
-            '--ts=false',
-            'test/**/*.test.js',
-          ],
-          { cwd }
-        )
+        .fork(eggBin, ['cov', '-x', 'ignore2/*', '-x', 'ignore/', '--ts=false', 'test/**/*.test.js'], { cwd })
         // .debug()
         .expect('stdout', /should success/)
         .expect('stdout', /a\.test\.js/)
@@ -157,10 +126,7 @@ describe('test/commands/cov.test.ts', () => {
         .expect('code', 0)
         .end();
       await assertCoverage(cwd);
-      const lcov = await fs.readFile(
-        path.join(cwd, 'coverage/lcov.info'),
-        'utf8'
-      );
+      const lcov = await fs.readFile(path.join(cwd, 'coverage/lcov.info'), 'utf8');
       assert.doesNotMatch(lcov, /ignore[/|\\]a.js/);
     });
 
@@ -284,10 +250,7 @@ describe('test/commands/cov.test.ts', () => {
           cwd: getFixtures('egg-revert'),
         })
         .debug()
-        .expect(
-          'stdout',
-          /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/
-        )
+        .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
         .expect('stdout', /1 passing/)
         .expect('code', 0)
         .end();

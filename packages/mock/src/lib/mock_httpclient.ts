@@ -39,10 +39,7 @@ export interface MockResponseCallbackOptions {
   maxRedirections?: number;
 }
 
-export type MockResultFunction = (
-  url: string,
-  options: MockResponseCallbackOptions
-) => MockResultOptions | string;
+export type MockResultFunction = (url: string, options: MockResponseCallbackOptions) => MockResultOptions | string;
 
 function normalizeResult(result: string | MockResultOptions) {
   if (typeof result === 'string') {
@@ -147,10 +144,7 @@ export function createMockHttpClient(app: any) {
       : getMockAgent(app).get(originMethod ?? (origin as string));
     // persist default is true
     let persist = true;
-    if (
-      typeof mockResult === 'object' &&
-      typeof mockResult.persist === 'boolean'
-    ) {
+    if (typeof mockResult === 'object' && typeof mockResult.persist === 'boolean') {
       persist = mockResult.persist;
     }
     mockMethods.forEach(function (method) {
@@ -165,15 +159,9 @@ export function createMockHttpClient(app: any) {
           let mockRequestResult;
           if (mockConfigIndex >= 0) {
             mockResult = mockConfigs[app[MOCK_CONFIG_INDEX]].mockResult;
-            mockRequestResult =
-              typeof mockResult === 'function'
-                ? mockResult(requestUrl, options)
-                : mockResult;
+            mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
           } else {
-            mockRequestResult =
-              typeof mockResult === 'function'
-                ? mockResult(requestUrl, options)
-                : mockResult;
+            mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
           }
           const result = extend(true, {}, normalizeResult(mockRequestResult!));
           return {
@@ -191,11 +179,7 @@ export function createMockHttpClient(app: any) {
       }
       if (persist) {
         mockScope.persist();
-      } else if (
-        typeof mockResult === 'object' &&
-        mockResult.repeats &&
-        mockResult.repeats > 0
-      ) {
+      } else if (typeof mockResult === 'object' && mockResult.repeats && mockResult.repeats > 0) {
         mockScope.times(mockResult.repeats);
       }
     });

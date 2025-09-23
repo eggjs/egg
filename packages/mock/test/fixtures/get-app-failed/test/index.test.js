@@ -6,6 +6,5 @@ setGetAppCallback(() => {
 });
 
 describe('test case create context error', () => {
-  it('should not print', () => {
-  });
+  it('should not print', () => {});
 });

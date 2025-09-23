@@ -22,6 +22,5 @@ setGetAppCallback((suite, test) => {
 });
 
 describe('test case get app error', () => {
-  it('should not print', () => {
-  });
+  it('should not print', () => {});
 });

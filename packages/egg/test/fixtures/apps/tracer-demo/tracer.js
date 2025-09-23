@@ -18,12 +18,7 @@ module.exports = app => {
     req.args.headers = req.args.headers || {};
     req.args.headers['x-request-id'] = req.ctx.traceId;
     req.args.method = req.args.method || 'GET';
-    app.logger.info(
-      '[httpclient] [%s] %s %s start',
-      req.ctx.traceId,
-      req.args.method,
-      req.url
-    );
+    app.logger.info('[httpclient] [%s] %s %s start', req.ctx.traceId, req.args.method, req.url);
   });
 
   app.httpclient.on('response', response => {

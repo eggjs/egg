@@ -96,12 +96,7 @@ export async function getLoader(options: LoaderOptions) {
   assert(options.framework, 'framework is required');
   assert(await exists(options.framework), `${options.framework} should exist`);
   if (!(options.baseDir && (await exists(options.baseDir)))) {
-    options.baseDir = path.join(
-      tmpDir,
-      'egg_utils',
-      `${Date.now()}`,
-      'tmp_app'
-    );
+    options.baseDir = path.join(tmpDir, 'egg_utils', `${Date.now()}`, 'tmp_app');
     await mkdir(options.baseDir, { recursive: true });
     await writeFile(
       path.join(options.baseDir, 'package.json'),
@@ -153,12 +148,7 @@ export async function findEggCore(
         return { EggCore, EggLoader };
       }
     } catch (err: any) {
-      debug(
-        '[findEggCore] import "%s" from paths:%o error: %o',
-        name,
-        paths,
-        err
-      );
+      debug('[findEggCore] import "%s" from paths:%o error: %o', name, paths, err);
     }
 
     try {
@@ -179,8 +169,5 @@ export async function findEggCore(
     }
   }
 
-  assert(
-    false,
-    `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`
-  );
+  assert(false, `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`);
 }

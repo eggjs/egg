@@ -84,8 +84,7 @@ const proxyMock = new Proxy(_mock, {
     // mm.isMocked(foo, 'bar')
     return Reflect.get(mock, property, receiver);
   },
-}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) &
-  typeof mock;
+}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) & typeof mock;
 
 export default proxyMock;
 

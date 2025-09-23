@@ -40,11 +40,6 @@ export default class Helper extends BaseContextClass {
    * @return {String} full url(with host)
    */
   urlFor(name: string, params: Record<string, any>): string {
-    return (
-      this.ctx.protocol +
-      '://' +
-      this.ctx.host +
-      url.resolve('/', this.pathFor(name, params))
-    );
+    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.pathFor(name, params));
   }
 }

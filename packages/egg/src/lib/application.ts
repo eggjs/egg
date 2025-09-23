@@ -8,11 +8,7 @@ import { assign } from 'utility';
 import { utils as eggUtils } from '@eggjs/core';
 import { isGeneratorFunction } from 'is-type-of';
 
-import {
-  EggApplicationCore,
-  type EggApplicationCoreOptions,
-  type Context,
-} from './egg.ts';
+import { EggApplicationCore, type EggApplicationCoreOptions, type Context } from './egg.ts';
 import { AppWorkerLoader } from './loader/index.ts';
 import Helper from '../app/extend/helper.ts';
 import { CookieLimitExceedError } from './error/index.ts';
@@ -28,9 +24,7 @@ const DEFAULT_BAD_REQUEST_HTML = `<html>
   <hr><center>❤</center>
   </body>
   </html>`;
-const DEFAULT_BAD_REQUEST_HTML_LENGTH = Buffer.byteLength(
-  DEFAULT_BAD_REQUEST_HTML
-);
+const DEFAULT_BAD_REQUEST_HTML_LENGTH = Buffer.byteLength(DEFAULT_BAD_REQUEST_HTML);
 const DEFAULT_BAD_REQUEST_RESPONSE =
   `HTTP/1.1 400 Bad Request\r\nContent-Length: ${DEFAULT_BAD_REQUEST_HTML_LENGTH}` +
   `\r\n\r\n${DEFAULT_BAD_REQUEST_HTML}`;
@@ -175,9 +169,7 @@ export class Application extends EggApplicationCore {
       ignoreCode: serverGracefulIgnoreCode,
     });
 
-    server.on('clientError', (err, socket) =>
-      this.onClientError(err, socket as Socket)
-    );
+    server.on('clientError', (err, socket) => this.onClientError(err, socket as Socket));
 
     // server timeout
     if (typeof this.config.serverTimeout === 'number') {
@@ -218,10 +210,7 @@ export class Application extends EggApplicationCore {
           paramNames: layer.paramNames,
           path: layer.path,
           regexp: layer.regexp.toString(),
-          stack: layer.stack.map(
-            (stack: any) =>
-              stack[FULLPATH] || stack._name || stack.name || 'anonymous'
-          ),
+          stack: layer.stack.map((stack: any) => stack[FULLPATH] || stack._name || stack.name || 'anonymous'),
         });
       }
       fs.writeFileSync(dumpRouterFile, JSON.stringify(routers, null, 2));
@@ -253,10 +242,7 @@ export class Application extends EggApplicationCore {
     if (!this._keys) {
       if (!this.config.keys) {
         if (this.config.env === 'local' || this.config.env === 'unittest') {
-          const configPath = path.join(
-            this.config.baseDir,
-            'config/config.default.js'
-          );
+          const configPath = path.join(this.config.baseDir, 'config/config.default.js');
           console.error('Cookie need secret key to sign and encrypt.');
           console.error('Please add `config.keys` in %s', configPath);
         }
@@ -318,10 +304,7 @@ declare module '@eggjs/core' {
     onClientError(err: any, socket: Socket): void;
     onServer(server: http.Server): void;
     locals: Record<string, any>;
-    runInBackground(
-      scope: (ctx: Context) => Promise<void>,
-      req?: unknown
-    ): void;
+    runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown): void;
     toAsyncFunction(fn: (...args: any[]) => any): (...args: any[]) => any;
     dumpConfig(): void;
     get keys(): string[];

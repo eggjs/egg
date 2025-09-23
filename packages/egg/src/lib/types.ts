@@ -2,10 +2,7 @@ import type { Socket } from 'node:net';
 
 import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
-import type {
-  FileLoaderOptions,
-  EggAppConfig as EggCoreAppConfig,
-} from '@eggjs/core';
+import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig } from '@eggjs/core';
 
 import type { EggApplicationCore, Context } from './egg.ts';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
@@ -55,8 +52,7 @@ export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
 }
 
 /** Custom Loader Configuration */
-export interface CustomLoaderConfig
-  extends Omit<FileLoaderOptions, 'inject' | 'target'> {
+export interface CustomLoaderConfig extends Omit<FileLoaderOptions, 'inject' | 'target'> {
   /**
    * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
    */

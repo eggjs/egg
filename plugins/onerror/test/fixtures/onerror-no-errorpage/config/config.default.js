@@ -1,7 +1,6 @@
 'use strict';
 
-exports.onerror = {
-};
+exports.onerror = {};
 
 exports.logger = {
   level: 'NONE',

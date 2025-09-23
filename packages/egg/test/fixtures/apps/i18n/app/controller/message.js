@@ -1,10 +1,6 @@
 module.exports = async function () {
   this.body = {
-    message: this.__(
-      'Hello %s, how are you today? How was your %s.',
-      'fengmk2',
-      18
-    ),
+    message: this.__('Hello %s, how are you today? How was your %s.', 'fengmk2', 18),
     empty: this.__(),
     notexists_key: this.__('key not exists'),
     empty_string: this.__(''),

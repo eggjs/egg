@@ -8,9 +8,7 @@ function isPlainObject(obj: unknown) {
 
   const hasOwnConstructor = hasOwn.call(obj, 'constructor');
   const hasIsPrototypeOf =
-    obj.constructor &&
-    obj.constructor.prototype &&
-    hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
+    obj.constructor && obj.constructor.prototype && hasOwn.call(obj.constructor.prototype, 'isPrototypeOf');
   // Not own constructor property must be Object
   if (obj.constructor && !hasOwnConstructor && !hasIsPrototypeOf) {
     return false;
@@ -26,10 +24,7 @@ function isPlainObject(obj: unknown) {
   return typeof key === 'undefined' || hasOwn.call(obj, key);
 }
 
-export function extend<T = Record<string, any>>(
-  deepOrTarget?: unknown,
-  ...objects: unknown[]
-): T {
+export function extend<T = Record<string, any>>(deepOrTarget?: unknown, ...objects: unknown[]): T {
   // extend(deep, target, obj1, obj2, ...)
   // extend(target, obj1, obj2, ...)
   let target = deepOrTarget as any;
@@ -44,10 +39,7 @@ export function extend<T = Record<string, any>>(
     target = objects[0] || {};
     // skip the boolean and the target
     i = 1;
-  } else if (
-    (typeof target !== 'object' && typeof target !== 'function') ||
-    target == null
-  ) {
+  } else if ((typeof target !== 'object' && typeof target !== 'function') || target == null) {
     // extend(null, obj1, obj2, ...)
     target = {};
   }

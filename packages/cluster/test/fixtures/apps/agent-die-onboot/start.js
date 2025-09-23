@@ -9,7 +9,7 @@ require('../../../../index').startCluster({
 });
 
 // 循环出错说明 master 没有挂
-setTimeout(function() {
+setTimeout(function () {
   process.exit();
-// coverage 会比较慢
+  // coverage 会比较慢
 }, 5000);

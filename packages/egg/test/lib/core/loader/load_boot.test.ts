@@ -18,13 +18,8 @@ describe('test/lib/core/loader/load_boot.test.ts', () => {
       app.expectLog('app is ready');
 
       // should restore
-      const logContent = await fs.readFile(
-        path.join(app.config.logger.dir, 'egg-agent.log'),
-        'utf-8'
-      );
-      assert(
-        !logContent.includes("agent can't call sendToApp before server started")
-      );
+      const logContent = await fs.readFile(path.join(app.config.logger.dir, 'egg-agent.log'), 'utf-8');
+      assert(!logContent.includes("agent can't call sendToApp before server started"));
       assert(app.messengerLog, 'app.messengerLog should exists');
 
       assert.deepStrictEqual(app.bootLog, [
@@ -60,13 +55,8 @@ describe('test/lib/core/loader/load_boot.test.ts', () => {
       app.expectLog('app is ready');
 
       // should restore
-      const logContent = await fs.readFile(
-        path.join(app.config.logger.dir, 'egg-agent.log'),
-        'utf-8'
-      );
-      assert(
-        !logContent.includes("agent can't call sendToApp before server started")
-      );
+      const logContent = await fs.readFile(path.join(app.config.logger.dir, 'egg-agent.log'), 'utf-8');
+      assert(!logContent.includes("agent can't call sendToApp before server started"));
       assert(app.messengerLog, 'app.messengerLog should exists');
 
       assert.deepStrictEqual(app.bootLog, [

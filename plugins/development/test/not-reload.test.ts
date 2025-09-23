@@ -29,9 +29,6 @@ describe.skip('test/not-reload.test.ts', () => {
     await scheduler.wait(DELAY);
 
     await fs.rm(filepath, { force: true });
-    app.notExpect(
-      'stdout',
-      new RegExp(escape(`reload worker because ${filepath} change`))
-    );
+    app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath} change`)));
   });
 });

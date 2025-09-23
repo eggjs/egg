@@ -279,10 +279,7 @@ describe.skip('test/ts.test.ts', () => {
       }
 
       // copy egg to node_modules
-      await cpy(
-        getFixtures('example-ts-cluster/node_modules/egg'),
-        path.join(cwd, './node_modules/egg')
-      );
+      await cpy(getFixtures('example-ts-cluster/node_modules/egg'), path.join(cwd, './node_modules/egg'));
 
       const { stderr, code } = await coffee
         .fork(eggBin, ['dev', '--tsc', 'ts-node/register'], {
@@ -316,10 +313,7 @@ describe.skip('test/ts.test.ts', () => {
       }
 
       // copy egg to node_modules
-      await cpy(
-        getFixtures('example-ts-cluster/node_modules/egg'),
-        path.join(cwd, './node_modules/egg')
-      );
+      await cpy(getFixtures('example-ts-cluster/node_modules/egg'), path.join(cwd, './node_modules/egg'));
 
       const { stderr, code } = await coffee
         .fork(eggBin, ['dev', '--tscompiler=ts-node/register'], {
@@ -351,10 +345,7 @@ describe.skip('test/ts.test.ts', () => {
       // }
 
       // copy egg to node_modules
-      await cpy(
-        getFixtures('example-ts-cluster/node_modules/egg'),
-        path.join(cwd, './node_modules/egg')
-      );
+      await cpy(getFixtures('example-ts-cluster/node_modules/egg'), path.join(cwd, './node_modules/egg'));
 
       const { stderr, code } = await coffee
         .fork(eggBin, ['dev'], {
@@ -467,10 +458,7 @@ describe.skip('test/ts.test.ts', () => {
       }
 
       // copy egg to node_modules
-      await cpy(
-        getFixtures('example-ts-cluster/node_modules/egg'),
-        path.join(cwd, './node_modules/egg')
-      );
+      await cpy(getFixtures('example-ts-cluster/node_modules/egg'), path.join(cwd, './node_modules/egg'));
 
       const { stdout, code } = await coffee
         .fork(eggBin, ['test', '--tsc', 'ts-node/register'], {

@@ -73,9 +73,7 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       await app.loader.loadCustomLoader();
       throw new Error('should not run');
     } catch (err: any) {
-      assert(
-        err.message === 'directory is required for config.customLoader.custom'
-      );
+      assert(err.message === 'directory is required for config.customLoader.custom');
     } finally {
       app.close();
     }

@@ -6,12 +6,7 @@ import assert from 'node:assert';
 import mergeDescriptors from 'merge-descriptors';
 import { isAsyncFunction, isObject } from 'is-type-of';
 import { mock, restore } from 'mm';
-import {
-  Transport,
-  Logger,
-  type LoggerLevel,
-  type LoggerMeta,
-} from 'egg-logger';
+import { Transport, Logger, type LoggerLevel, type LoggerMeta } from 'egg-logger';
 import { type Context, Application } from 'egg';
 import type { MockAgent } from 'urllib';
 
@@ -22,10 +17,7 @@ import {
   type MockResultOptions,
   type MockHttpClientMethod,
 } from '../../lib/mock_httpclient.ts';
-import {
-  request as supertestRequest,
-  EggTestRequest,
-} from '../../lib/supertest.ts';
+import { request as supertestRequest, EggTestRequest } from '../../lib/supertest.ts';
 import { type MockOptions } from '../../lib/types.ts';
 
 const debug = debuglog('egg/mock/app/extend/application');
@@ -82,10 +74,7 @@ export default abstract class ApplicationUnittest extends Application {
    * };
    * ```
    */
-  mockContext(
-    data?: MockContextData,
-    options?: MockContextOptions
-  ): MockContext {
+  mockContext(data?: MockContextData, options?: MockContextOptions): MockContext {
     data = data ?? {};
     function mockRequest(req: IncomingMessage) {
       for (const key in data?.headers) {
@@ -98,10 +87,7 @@ export default abstract class ApplicationUnittest extends Application {
     const mockCtxStorage = this.options.mockCtxStorage ?? true;
     options = Object.assign({ mockCtxStorage }, options);
 
-    if (
-      '_customMockContext' in this &&
-      typeof this._customMockContext === 'function'
-    ) {
+    if ('_customMockContext' in this && typeof this._customMockContext === 'function') {
       this._customMockContext(data);
     }
 
@@ -127,10 +113,7 @@ export default abstract class ApplicationUnittest extends Application {
     return ctx as MockContext;
   }
 
-  async mockContextScope(
-    fn: (ctx?: MockContext) => Promise<any>,
-    data?: MockContextData
-  ) {
+  async mockContextScope(fn: (ctx?: MockContext) => Promise<any>, data?: MockContextData) {
     const ctx = this.mockContext(data, {
       mockCtxStorage: false,
       reuseCtxStorage: false,
@@ -188,11 +171,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String} methodName - method
    * @param {Error} [err] - error information
    */
-  mockServiceError(
-    service: string | any,
-    methodName: string,
-    err?: string | Error
-  ) {
+  mockServiceError(service: string | any, methodName: string, err?: string | Error) {
     if (typeof err === 'string') {
       err = new Error(err);
     }
@@ -206,18 +185,13 @@ export default abstract class ApplicationUnittest extends Application {
 
   _mockFn(obj: any, name: string, data: any) {
     const origin = obj[name];
-    assert(
-      typeof origin === 'function',
-      `property ${name} in original object must be function`
-    );
+    assert(typeof origin === 'function', `property ${name} in original object must be function`);
 
     // keep origin properties' type to support mock multi times
     if (!obj[ORIGIN_TYPES]) obj[ORIGIN_TYPES] = {};
     let type = obj[ORIGIN_TYPES][name];
     if (!type) {
-      type = obj[ORIGIN_TYPES][name] = isAsyncFunction(origin)
-        ? 'async'
-        : 'sync';
+      type = obj[ORIGIN_TYPES][name] = isAsyncFunction(origin) ? 'async' : 'sync';
     }
 
     if (typeof data === 'function') {
@@ -377,9 +351,7 @@ export default abstract class ApplicationUnittest extends Application {
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
   ) {
-    this.deprecate(
-      '[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib'
-    );
+    this.deprecate('[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib');
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
 
@@ -465,11 +437,7 @@ export default abstract class ApplicationUnittest extends Application {
     });
   }
 
-  __checkExpectLog(
-    expectOrNot: boolean,
-    str: string | RegExp,
-    logger?: string | Logger
-  ) {
+  __checkExpectLog(expectOrNot: boolean, str: string | RegExp, logger?: string | Logger) {
     logger = logger || this.logger;
     if (typeof logger === 'string') {
       logger = this.getLogger(logger);

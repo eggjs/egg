@@ -15,11 +15,7 @@ describe('test/app/extend/helper.test.ts', () => {
     });
 
     it('should get home path with params', async () => {
-      await app
-        .httpRequest()
-        .get('/pathFor?foo=bar')
-        .expect('/home?foo=bar')
-        .expect(200);
+      await app.httpRequest().get('/pathFor?foo=bar').expect('/home?foo=bar').expect(200);
     });
   });
 
@@ -43,21 +39,13 @@ describe('test/app/extend/helper.test.ts', () => {
 
   describe('escape()', () => {
     it('should escape script', async () => {
-      await app
-        .httpRequest()
-        .get('/escape')
-        .expect('&lt;script&gt;')
-        .expect(200);
+      await app.httpRequest().get('/escape').expect('&lt;script&gt;').expect(200);
     });
   });
 
   describe('shtml()', () => {
     it('should ignore attribute if domain not in domainWhiteList', async () => {
-      await app
-        .httpRequest()
-        .get('/shtml-not-in-domain-whitelist')
-        .expect('true')
-        .expect(200);
+      await app.httpRequest().get('/shtml-not-in-domain-whitelist').expect('true').expect(200);
     });
   });
 });

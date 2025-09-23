@@ -6,14 +6,7 @@ import { strict as assert } from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { setTimeout as sleep } from 'node:timers/promises';
 
-import {
-  describe,
-  it,
-  beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach,
-} from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import { pending } from 'pedding';
@@ -108,10 +101,7 @@ describe('test/egg.test.ts', () => {
 
     it('should throw process.env.EGG_READY_TIMEOUT_ENV should be able to parseInt', () => {
       mm(process.env, 'EGG_READY_TIMEOUT_ENV', 'notAnNumber');
-      assert.throws(
-        () => new EggCore(),
-        /process.env.EGG_READY_TIMEOUT_ENV notAnNumber should be able to parseInt/
-      );
+      assert.throws(() => new EggCore(), /process.env.EGG_READY_TIMEOUT_ENV notAnNumber should be able to parseInt/);
     });
   });
 
@@ -168,10 +158,7 @@ describe('test/egg.test.ts', () => {
     it.skip('should log info when plugin is not ready', done => {
       app = createApp('notready');
       mm(app.console, 'warn', (message: string, b: any, a: any) => {
-        assert.equal(
-          message,
-          '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.'
-        );
+        assert.equal(message, '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.');
         assert.equal(b, 10);
         assert.equal(a, 'a');
         // console.log(app.timing.toString());
@@ -194,14 +181,8 @@ describe('test/egg.test.ts', () => {
         message += util.format(a, b, c);
       });
       app.ready(() => {
-        assert.match(
-          message,
-          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/
-        );
-        assert.match(
-          message,
-          /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/
-        );
+        assert.match(message, /\[@eggjs\/core\/lifecycle:ready_stat] end ready task a, remain \["b"]/);
+        assert.match(message, /\[@eggjs\/core\/lifecycle:ready_stat] end ready task b, remain \[]/);
         // console.log(app.timing.toString());
         // @ts-ignore
         done();
@@ -226,26 +207,10 @@ describe('test/egg.test.ts', () => {
       app = createApp('beforestart');
       await app.loader.loadAll();
       await app.ready();
-      assert.equal(
-        (app as any).beforeStartFunction,
-        true,
-        'beforeStartFunction'
-      );
-      assert.equal(
-        (app as any).beforeStartGeneratorFunction,
-        true,
-        'beforeStartGeneratorFunction'
-      );
-      assert.equal(
-        (app as any).beforeStartAsyncFunction,
-        true,
-        'beforeStartAsyncFunction'
-      );
-      assert.equal(
-        (app as any).beforeStartTranslateAsyncFunction,
-        true,
-        'beforeStartTranslateAsyncFunction'
-      );
+      assert.equal((app as any).beforeStartFunction, true, 'beforeStartFunction');
+      assert.equal((app as any).beforeStartGeneratorFunction, true, 'beforeStartGeneratorFunction');
+      assert.equal((app as any).beforeStartAsyncFunction, true, 'beforeStartAsyncFunction');
+      assert.equal((app as any).beforeStartTranslateAsyncFunction, true, 'beforeStartTranslateAsyncFunction');
     });
 
     it('should beforeStart execute success with EGG_READY_TIMEOUT_ENV', async () => {
@@ -253,11 +218,7 @@ describe('test/egg.test.ts', () => {
       app = createApp('beforestart-with-timeout-env');
       await app.loader.loadAll();
       await app.ready();
-      assert.equal(
-        (app as any).beforeStartFunction,
-        true,
-        'beforeStartFunction'
-      );
+      assert.equal((app as any).beforeStartFunction, true, 'beforeStartFunction');
       const timeline = app.timing.toString();
       // console.log(timeline);
       assert.match(timeline, /#14 Before Start in app.js:4:7/);
@@ -425,10 +386,7 @@ describe('test/egg.test.ts', () => {
       assert.equal((app as any).closeAsyncFn, true, 'closeAsyncFn');
       assert.equal((app as any).onlyOnce, false, 'onlyOnce');
       assert.equal((app as any).closeEvent, 'after', 'closeEvent');
-      assert.equal(
-        (app as any).closeOrderArray.join(','),
-        'closeAsyncFn,closeGeneratorFn,closeFn'
-      );
+      assert.equal((app as any).closeOrderArray.join(','), 'closeAsyncFn,closeGeneratorFn,closeFn');
     });
 
     it('should throw when call beforeClose without function', () => {
@@ -461,21 +419,14 @@ describe('test/egg.test.ts', () => {
         .expect(200)
         .expect({ success: true, result: { foo: 'bar' } });
 
-      await request(app.callback())
-        .get('/fail')
-        .expect(200)
-        .expect({ success: false, message: 'something wrong' });
+      await request(app.callback()).get('/fail').expect(200).expect({ success: false, message: 'something wrong' });
     });
   });
 
   describe.skip('run with DEBUG', () => {
     it('should ready', async () => {
       mm(process.env, 'DEBUG', '*');
-      await coffee
-        .fork(getFilepath('run-with-debug/index.js'))
-        .debug()
-        .expect('code', 0)
-        .end();
+      await coffee.fork(getFilepath('run-with-debug/index.js')).debug().expect('code', 0).end();
     });
   });
 
@@ -587,9 +538,7 @@ describe('test/egg.test.ts', () => {
         assert(json[13].name === 'Require(7) app.js');
         assert.equal(json[14].name, 'Before Start in app.js:9:7');
         assert(json[15].name === 'Before Start in mock Block');
-        assert(
-          json[16].name === 'readyCallback in mockReadyCallbackWithoutFunction'
-        );
+        assert(json[16].name === 'readyCallback in mockReadyCallbackWithoutFunction');
 
         assert(json[17].name === 'Load "proxy" to Context');
         assert(json[18].name === 'Load Controller');
@@ -658,14 +607,9 @@ describe('test/egg.test.ts', () => {
           .debug()
           .expect('code', 0)
           .end();
-        const timingJSON = await fs.readFile(
-          path.join(fixtureApp, 'timing.json'),
-          'utf8'
-        );
+        const timingJSON = await fs.readFile(path.join(fixtureApp, 'timing.json'), 'utf8');
         const timing = JSON.parse(timingJSON);
-        const scriptStart = timing.find(
-          (item: any) => item.name === 'Script Start'
-        );
+        const scriptStart = timing.find((item: any) => item.name === 'Script Start');
         assert(scriptStart);
         assert(scriptStart.start);
         assert(scriptStart.end);
@@ -822,11 +766,7 @@ describe('test/egg.test.ts', () => {
         await sleep(100);
         assert.deepEqual((app as any).bootLog, ['configDidLoad', 'didReady']);
         await app.close();
-        assert.deepEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didReady',
-          'beforeClose',
-        ]);
+        assert.deepEqual((app as any).bootLog, ['configDidLoad', 'didReady', 'beforeClose']);
         // console.log(app.timing.toString());
         assert.match(app.timing.toString(), /egg start timeline:/);
         assert.match(app.timing.toString(), /#1 application Start/);
@@ -844,17 +784,10 @@ describe('test/egg.test.ts', () => {
         } catch (e) {
           error = e;
         }
-        assert.deepStrictEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didLoad',
-        ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad', 'didLoad']);
         assert.strictEqual(error.message, 'willReady error');
         await sleep(10);
-        assert.deepStrictEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didLoad',
-          'didReady',
-        ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad', 'didLoad', 'didReady']);
         await app.close();
         // assert.deepStrictEqual(
         //   (app as any).bootLog,
@@ -874,11 +807,7 @@ describe('test/egg.test.ts', () => {
         await app.loader.loadAll();
         await app.ready();
 
-        assert.deepStrictEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didLoad',
-          'willReady',
-        ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad', 'didLoad', 'willReady']);
         let error: any;
         try {
           await new Promise((_resolve, reject) => {
@@ -889,12 +818,7 @@ describe('test/egg.test.ts', () => {
         }
         assert.strictEqual(error.message, 'didReady error');
         await app.close();
-        assert.deepStrictEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didLoad',
-          'willReady',
-          'beforeClose',
-        ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad', 'didLoad', 'willReady', 'beforeClose']);
       });
     });
 
@@ -904,12 +828,7 @@ describe('test/egg.test.ts', () => {
         await app.loader.loadAll();
         await app.ready();
         await sleep(10);
-        assert.deepStrictEqual((app as any).bootLog, [
-          'configDidLoad',
-          'didLoad',
-          'willReady',
-          'didReady',
-        ]);
+        assert.deepStrictEqual((app as any).bootLog, ['configDidLoad', 'didLoad', 'willReady', 'didReady']);
         app.lifecycle.triggerServerDidReady();
         let error: any;
         try {

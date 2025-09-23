@@ -119,9 +119,7 @@ export async function parseOptions(options?: ClusterOptions) {
 
   if (options.https === true) {
     // Keep compatible options.key, options.cert
-    console.warn(
-      '[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`'
-    );
+    console.warn('[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`');
     options.https = {
       key: options.key,
       cert: options.cert,
@@ -132,23 +130,14 @@ export async function parseOptions(options?: ClusterOptions) {
   if (options.https) {
     assert(options.https.key, 'options.https.key should exists');
     if (typeof options.https.key === 'string') {
-      assert(
-        fs.existsSync(options.https.key),
-        'options.https.key file should exists'
-      );
+      assert(fs.existsSync(options.https.key), 'options.https.key file should exists');
     }
     assert(options.https.cert, 'options.https.cert should exists');
     if (typeof options.https.cert === 'string') {
-      assert(
-        fs.existsSync(options.https.cert),
-        'options.https.cert file should exists'
-      );
+      assert(fs.existsSync(options.https.cert), 'options.https.cert file should exists');
     }
     if (typeof options.https.ca === 'string') {
-      assert(
-        fs.existsSync(options.https.ca),
-        'options.https.ca file should exists'
-      );
+      assert(fs.existsSync(options.https.ca), 'options.https.ca file should exists');
     }
   }
 
@@ -178,9 +167,7 @@ export async function parseOptions(options?: ClusterOptions) {
     process.env.NO_DEPRECATION = '*';
   }
 
-  const isDebug = process.execArgv.some(
-    argv => argv.includes('--debug') || argv.includes('--inspect')
-  );
+  const isDebug = process.execArgv.some(argv => argv.includes('--debug') || argv.includes('--inspect'));
   if (isDebug) {
     options.isDebug = isDebug;
   }

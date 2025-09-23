@@ -26,19 +26,16 @@ describe('test/fast_ready_false.test.ts', () => {
     app.expect('stdout', /Server started./);
   });
 
-  it.skipIf(!process.env.CI)(
-    'should set config.development.fastReady to true work',
-    async () => {
-      app = mm.cluster({
-        baseDir: getFilepath('fast-ready'),
-      });
-      app.debug();
-      await app.ready();
-      // We need to wait for log written, because app.logger.info is async.
-      await scheduler.wait(1000);
+  it.skipIf(!process.env.CI)('should set config.development.fastReady to true work', async () => {
+    app = mm.cluster({
+      baseDir: getFilepath('fast-ready'),
+    });
+    app.debug();
+    await app.ready();
+    // We need to wait for log written, because app.logger.info is async.
+    await scheduler.wait(1000);
 
-      app.expect('stdout', /delayed 200ms done./);
-      app.expect('stdout', /Server started./);
-    }
-  );
+    app.expect('stdout', /delayed 200ms done./);
+    app.expect('stdout', /Server started./);
+  });
 });

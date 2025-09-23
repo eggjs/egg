@@ -2,10 +2,7 @@ import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { strict as assert } from 'node:assert';
 import { mm } from '@eggjs/mock';
 import { pending } from 'pedding';
-import {
-  singleProcessApp,
-  type SingleModeApplication,
-} from '../../../utils.js';
+import { singleProcessApp, type SingleModeApplication } from '../../../utils.js';
 
 describe('test/lib/core/messenger/local.test.ts', () => {
   let app: SingleModeApplication;

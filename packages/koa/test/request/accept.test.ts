@@ -8,8 +8,7 @@ import context, { request as createRequest } from '../test-helpers/context.ts';
 describe('ctx.accept', () => {
   it('should return an Accept instance', () => {
     const ctx = context();
-    ctx.req.headers.accept =
-      'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
+    ctx.req.headers.accept = 'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
     assert.ok(ctx.accept instanceof accepts);
   });
 });
@@ -21,14 +20,8 @@ describe('ctx.accept=', () => {
     assert.deepStrictEqual(ctx.accepts(), ['text/plain']);
 
     const request = createRequest();
-    request.req.headers.accept =
-      'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
+    request.req.headers.accept = 'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
     ctx.accept = accepts(request.req);
-    assert.deepStrictEqual(ctx.accepts(), [
-      'text/html',
-      'text/plain',
-      'image/jpeg',
-      'application/*',
-    ]);
+    assert.deepStrictEqual(ctx.accepts(), ['text/html', 'text/plain', 'image/jpeg', 'application/*']);
   });
 });

@@ -14,14 +14,7 @@ describe.skip('test/bootstrap-plugin.test.ts', () => {
       coffee
         .fork(
           importResolve('mocha/bin/mocha'),
-          [
-            '-r',
-            getFixtures('../lib/parallel/agent_register'),
-            '--parallel',
-            '--jobs',
-            '2',
-            '--exit',
-          ],
+          ['-r', getFixtures('../lib/parallel/agent_register'), '--parallel', '--jobs', '2', '--exit'],
           {
             cwd: getFixtures('apps/parallel-test'),
           }

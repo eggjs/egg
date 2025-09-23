@@ -22,9 +22,7 @@ module.exports = async function () {
     return;
   }
 
-  const ws = fs.createWriteStream(
-    path.join(this.app.config.logger.dir, 'multipart-test-file')
-  );
+  const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, 'multipart-test-file'));
   filePart.pipe(ws);
   this.body = {
     filename: filePart.filename,

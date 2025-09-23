@@ -49,19 +49,11 @@ describe.skip('test/typescript.test.ts', () => {
     });
 
     it('controller run ok', async () => {
-      await app
-        .httpRequest()
-        .get('/foo')
-        .expect(200)
-        .expect({ env: 'unittest' });
+      await app.httpRequest().get('/foo').expect(200).expect({ env: 'unittest' });
     });
 
     it('controller of app.router run ok', async () => {
-      await app
-        .httpRequest()
-        .get('/test')
-        .expect(200)
-        .expect({ env: 'unittest' });
+      await app.httpRequest().get('/test').expect(200).expect({ env: 'unittest' });
     });
   });
 

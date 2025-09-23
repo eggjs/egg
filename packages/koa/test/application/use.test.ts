@@ -73,12 +73,12 @@ describe('app.use(fn)', () => {
   });
 
   // https://github.com/koajs/koa/pull/530#issuecomment-148138051
-  it('should catch thrown errors in non-async functions', () => {
+  it('should catch thrown errors in non-async functions', async () => {
     const app = new Koa();
 
     app.use(ctx => ctx.throw('Not Found', 404));
 
-    return request(app.callback()).get('/').expect(404);
+    await request(app.callback()).get('/').expect(404);
   });
 
   it('should throw error on generator middleware', () => {
@@ -108,10 +108,7 @@ describe('app.use(fn)', () => {
     const app = new Koa();
 
     for (const v of [null, undefined, 0, false, 'not a function']) {
-      assert.throws(
-        () => app.use(v as unknown as MiddlewareFunc),
-        /middleware must be a function!/
-      );
+      assert.throws(() => app.use(v as unknown as MiddlewareFunc), /middleware must be a function!/);
     }
   });
 

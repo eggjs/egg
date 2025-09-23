@@ -34,12 +34,7 @@ function graceful(proc: ChildProcess) {
 
     process.once('exit', (code: number) => {
       for (const child of children) {
-        debug(
-          'process exit code: %o, kill child %o with %o',
-          code,
-          child.pid,
-          signal
-        );
+        debug('process exit code: %o, kill child %o with %o', code, child.pid, signal);
         child.kill(signal);
       }
     });
@@ -58,9 +53,7 @@ export interface ForkNodeOptions extends ForkOptions {
   dryRun?: boolean;
 }
 
-type CustomFlags<T extends typeof Command> = Interfaces.InferredFlags<
-  (typeof BaseCommand)['baseFlags'] & T['flags']
->;
+type CustomFlags<T extends typeof Command> = Interfaces.InferredFlags<(typeof BaseCommand)['baseFlags'] & T['flags']>;
 type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
 
 export abstract class BaseCommand<T extends typeof Command> extends Command {
@@ -121,8 +114,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }),
     declarations: Flags.boolean({
       helpGroup: 'GLOBAL',
-      description:
-        'whether create typings, will add `--require egg-ts-helper/register`',
+      description: 'whether create typings, will add `--require egg-ts-helper/register`',
       aliases: ['dts'],
     }),
     // https://nodejs.org/dist/latest-v18.x/docs/api/cli.html#--inspect-brkhostport
@@ -170,8 +162,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     const pkg = await readPackageJSON(flags.base);
     this.pkg = pkg;
     this.pkgEgg = pkg.egg ?? {};
-    flags.tscompiler =
-      flags.tscompiler ?? this.env.TS_COMPILER ?? this.pkgEgg.tscompiler;
+    flags.tscompiler = flags.tscompiler ?? this.env.TS_COMPILER ?? this.pkgEgg.tscompiler;
 
     let typescript: boolean = flags.typescript;
     // keep compatible with old ts flag: `--ts=true` or `--ts=false`
@@ -185,52 +176,28 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       // try to ready EGG_TYPESCRIPT env first, only accept 'true' or 'false' string
       if (this.env.EGG_TYPESCRIPT === 'false') {
         typescript = false;
-        debug(
-          'detect typescript=%o from EGG_TYPESCRIPT=%o',
-          false,
-          this.env.EGG_TYPESCRIPT
-        );
+        debug('detect typescript=%o from EGG_TYPESCRIPT=%o', false, this.env.EGG_TYPESCRIPT);
       } else if (this.env.EGG_TYPESCRIPT === 'true') {
         typescript = true;
-        debug(
-          'detect typescript=%o from EGG_TYPESCRIPT=%o',
-          true,
-          this.env.EGG_TYPESCRIPT
-        );
+        debug('detect typescript=%o from EGG_TYPESCRIPT=%o', true, this.env.EGG_TYPESCRIPT);
       } else if (typeof this.pkgEgg.typescript === 'boolean') {
         // read `egg.typescript` from package.json if not pass argv
         typescript = this.pkgEgg.typescript;
-        debug(
-          'detect typescript=%o from pkg.egg.typescript=%o',
-          typescript,
-          this.pkgEgg.typescript
-        );
+        debug('detect typescript=%o from pkg.egg.typescript=%o', typescript, this.pkgEgg.typescript);
       } else if (pkg.dependencies?.typescript) {
         // auto detect pkg.dependencies.typescript or pkg.devDependencies.typescript
         typescript = true;
-        debug(
-          'detect typescript=%o from pkg.dependencies.typescript=%o',
-          true,
-          pkg.dependencies.typescript
-        );
+        debug('detect typescript=%o from pkg.dependencies.typescript=%o', true, pkg.dependencies.typescript);
       } else if (pkg.devDependencies?.typescript) {
         typescript = true;
-        debug(
-          'detect typescript=%o from pkg.devDependencies.typescript=%o',
-          true,
-          pkg.devDependencies.typescript
-        );
+        debug('detect typescript=%o from pkg.devDependencies.typescript=%o', true, pkg.devDependencies.typescript);
       } else if (await hasTsConfig(flags.base)) {
         // tsconfig.json exists
         typescript = true;
         debug('detect typescript=%o cause tsconfig.json exists', true);
       } else if (flags.tscompiler) {
         typescript = true;
-        debug(
-          'detect typescript=%o from --tscompiler=%o',
-          true,
-          flags.tscompiler
-        );
+        debug('detect typescript=%o from --tscompiler=%o', true, flags.tscompiler);
       }
     }
     flags.typescript = typescript;
@@ -286,10 +253,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
       if (typeof this.pkgEgg.declarations === 'boolean') {
         // read `egg.declarations` from package.json if not pass argv
         flags.declarations = this.pkgEgg.declarations;
-        debug(
-          'detect declarations from pkg.egg.declarations=%o',
-          this.pkgEgg.declarations
-        );
+        debug('detect declarations from pkg.egg.declarations=%o', this.pkgEgg.declarations);
       }
     }
     if (flags.declarations) {
@@ -301,9 +265,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }
 
     if (this.pkgEgg.revert) {
-      const reverts = Array.isArray(this.pkgEgg.revert)
-        ? this.pkgEgg.revert
-        : [this.pkgEgg.revert];
+      const reverts = Array.isArray(this.pkgEgg.revert) ? this.pkgEgg.revert : [this.pkgEgg.revert];
       for (const revert of reverts) {
         this.globalExecArgv.push(`--security-revert=${revert}`);
       }
@@ -324,10 +286,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     } else if (this.env.JB_DEBUG_FILE) {
       // others like WebStorm 2019 will pass NODE_OPTIONS, and @eggjs/bin itself will be debug, so could detect `process.env.JB_DEBUG_FILE`.
       Reflect.set(flags, 'timeout', 0);
-      debug(
-        'set timeout = false when process.env.JB_DEBUG_FILE=%o',
-        this.env.JB_DEBUG_FILE
-      );
+      debug('set timeout = false when process.env.JB_DEBUG_FILE=%o', this.env.JB_DEBUG_FILE);
     }
 
     debug('baseDir: %o, isESM: %o', flags.base, this.isESM);
@@ -382,22 +341,14 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     }
   }
 
-  protected async forkNode(
-    modulePath: string,
-    forkArgs: string[],
-    options: ForkNodeOptions = {}
-  ) {
+  protected async forkNode(modulePath: string, forkArgs: string[], options: ForkNodeOptions = {}) {
     const env = {
       ...this.env,
       ...options.env,
     };
     const forkExecArgv = [...this.globalExecArgv, ...(options.execArgv || [])];
-    const NODE_OPTIONS = env.NODE_OPTIONS
-      ? `NODE_OPTIONS='${env.NODE_OPTIONS}' `
-      : '';
-    const forkExecArgvString = forkExecArgv.length
-      ? ' ' + forkExecArgv.join(' ') + ' '
-      : ' ';
+    const NODE_OPTIONS = env.NODE_OPTIONS ? `NODE_OPTIONS='${env.NODE_OPTIONS}' ` : '';
+    const forkExecArgvString = forkExecArgv.length ? ' ' + forkExecArgv.join(' ') + ' ' : ' ';
     const forkArgsString = forkArgs.map(a => `'${a}'`).join(' ');
     const fullCommand = `${NODE_OPTIONS}${process.execPath}${forkExecArgvString}${modulePath} ${forkArgsString}`;
     if (options.dryRun) {
@@ -421,10 +372,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
         debug('fork pid: %o exit code %o', proc.pid, code);
         children.delete(proc);
         if (code !== 0) {
-          const err = new ForkError(
-            modulePath + ' ' + forkArgs.join(' ') + ' exit with code ' + code,
-            code
-          );
+          const err = new ForkError(modulePath + ' ' + forkArgs.join(' ') + ' exit with code ' + code, code);
           reject(err);
         } else {
           resolve();

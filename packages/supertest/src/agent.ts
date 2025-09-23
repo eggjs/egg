@@ -5,12 +5,7 @@ import type { Server } from 'node:net';
 import { agent as Agent } from 'superagent';
 
 import { Test } from './test.ts';
-import type {
-  AgentOptions,
-  H1RequestListener,
-  H2RequestListener,
-  App,
-} from './types.ts';
+import type { AgentOptions, H1RequestListener, H2RequestListener, App } from './types.ts';
 
 /**
  * Initialize a new `TestAgent`.

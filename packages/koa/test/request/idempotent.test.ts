@@ -6,14 +6,7 @@ import { request } from '../test-helpers/context.ts';
 describe('ctx.idempotent', () => {
   describe('when the request method is idempotent', () => {
     it('should return true', () => {
-      for (const method of [
-        'GET',
-        'HEAD',
-        'PUT',
-        'DELETE',
-        'OPTIONS',
-        'TRACE',
-      ]) {
+      for (const method of ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE']) {
         const req = request();
         req.method = method;
         assert.equal(req.idempotent, true);

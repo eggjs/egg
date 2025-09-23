@@ -26,8 +26,7 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
       default: 1,
     }),
     framework: Flags.string({
-      description:
-        'specify framework that can be absolute path or npm package, default is "egg"',
+      description: 'specify framework that can be absolute path or npm package, default is "egg"',
     }),
     sticky: Flags.boolean({
       description: 'start a sticky cluster server',
@@ -52,10 +51,7 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
       // --import "module path" -> ['--import', 'module path']
       const splitIndex = module.indexOf(' ');
       if (splitIndex !== -1) {
-        execArgv.push(
-          module.slice(0, splitIndex),
-          module.slice(splitIndex + 2, -1)
-        );
+        execArgv.push(module.slice(0, splitIndex), module.slice(splitIndex + 2, -1));
       }
     }
     await this.forkNode(serverBin, args, { execArgv });
@@ -79,28 +75,17 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
         configuredPort = configuration?.cluster?.listen?.port;
       } catch (err) {
         /** skip when failing to read the configuration */
-        debug(
-          'getConfig error: %s, framework: %o, baseDir: %o, env: local',
-          err,
-          flags.framework,
-          flags.base
-        );
+        debug('getConfig error: %s, framework: %o, baseDir: %o, env: local', err, flags.framework, flags.base);
       }
       if (configuredPort) {
         flags.port = configuredPort;
         debug(`use port ${flags.port} from configuration file`);
       } else {
-        const defaultPort = parseInt(
-          process.env.EGG_BIN_DEFAULT_PORT ?? '7001'
-        );
+        const defaultPort = parseInt(process.env.EGG_BIN_DEFAULT_PORT ?? '7001');
         debug('detect available port');
         flags.port = await detect(defaultPort);
         if (flags.port !== defaultPort) {
-          console.warn(
-            '[@eggjs/bin] server port %o is unavailable, now using port %o',
-            defaultPort,
-            flags.port
-          );
+          console.warn('[@eggjs/bin] server port %o is unavailable, now using port %o', defaultPort, flags.port);
         }
         debug(`use available port ${flags.port}`);
       }

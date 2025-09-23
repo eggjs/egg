@@ -11,11 +11,7 @@ export function createLoggers(app: EggApplicationCore) {
   } as EggLoggersOptions;
 
   // set DEBUG level into INFO on prod env
-  if (
-    app.config.env === 'prod' &&
-    loggerOptions.level === 'DEBUG' &&
-    !app.config.logger.allowDebugAtProd
-  ) {
+  if (app.config.env === 'prod' && loggerOptions.level === 'DEBUG' && !app.config.logger.allowDebugAtProd) {
     loggerOptions.level = 'INFO';
   }
 
@@ -28,9 +24,7 @@ export function createLoggers(app: EggApplicationCore) {
   app.ready(() => {
     if (app.config.logger.disableConsoleAfterReady) {
       loggers.disableConsole();
-      loggers.coreLogger.info(
-        '[egg:lib:core:logger] disable console log after app ready'
-      );
+      loggers.coreLogger.info('[egg:lib:core:logger] disable console log after app ready');
     }
   });
 
@@ -44,9 +38,6 @@ export function createLoggers(app: EggApplicationCore) {
       setCustomLogger(loggerName, undefined);
     }
   });
-  loggers.coreLogger.info(
-    '[egg:lib:core:logger] init all loggers with options: %j',
-    loggerOptions
-  );
+  loggers.coreLogger.info('[egg:lib:core:logger] init all loggers with options: %j', loggerOptions);
   return loggers;
 }

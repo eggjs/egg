@@ -8,10 +8,7 @@ import { importResolve } from '@eggjs/utils';
 import { getFixtures } from './helper.ts';
 
 describe.skip('test/inject_ctx.test.ts', () => {
-  const eggBinFile = path.join(
-    importResolve('@eggjs/bin/package.json'),
-    '../bin/run.js'
-  );
+  const eggBinFile = path.join(importResolve('@eggjs/bin/package.json'), '../bin/run.js');
 
   // it('should export register', () => {
   //   assert.equal(importResolve('./dist/commonjs/register.js'), getFixtures('../../dist/commonjs/register.js'));
@@ -24,16 +21,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
     const fixture = getFixtures('tegg-app');
 
     await coffee
-      .fork(
-        eggBinFile,
-        ['test', '-r', getFixtures('../../dist/commonjs/register.js')],
-        {
-          cwd: fixture,
-          env: {
-            EGG_FRAMEWORK: importResolve('egg'),
-          },
-        }
-      )
+      .fork(eggBinFile, ['test', '-r', getFixtures('../../dist/commonjs/register.js')], {
+        cwd: fixture,
+        env: {
+          EGG_FRAMEWORK: importResolve('egg'),
+        },
+      })
       .debug()
       .expect('code', 0)
       .expect('stdout', /\d+ passing/)
@@ -44,16 +37,12 @@ describe.skip('test/inject_ctx.test.ts', () => {
     const fixture = getFixtures('tegg-app-esm');
 
     await coffee
-      .fork(
-        eggBinFile,
-        ['test', 'test/hooks.test.ts', '-r', getFixtures('../../register.ts')],
-        {
-          cwd: fixture,
-          env: {
-            EGG_FRAMEWORK: importResolve('egg'),
-          },
-        }
-      )
+      .fork(eggBinFile, ['test', 'test/hooks.test.ts', '-r', getFixtures('../../register.ts')], {
+        cwd: fixture,
+        env: {
+          EGG_FRAMEWORK: importResolve('egg'),
+        },
+      })
       .debug()
       .expect('code', 0)
       .expect('stdout', /\d+ passing/)

@@ -22,11 +22,7 @@ describe('--cluster', () => {
   afterAll(() => app.close());
 
   it('should online cluster mode startup success', () => {
-    return app
-      .httpRequest()
-      .get('/portal/i.htm')
-      .expect('hi cluster')
-      .expect(200);
+    return app.httpRequest().get('/portal/i.htm').expect('hi cluster').expect(200);
   });
 });
 
@@ -235,12 +231,8 @@ describe.skip('debug', () => {
       assert(result.agent.debugPort === 5800);
       assert(result.app.length === 2);
       assert(result.app[0].pid);
-      assert(
-        result.app[0].debugPort === 5859 || result.app[0].debugPort === 9230
-      );
-      assert(
-        result.app[1].debugPort === 5860 || result.app[1].debugPort === 9231
-      );
+      assert(result.app[0].debugPort === 5859 || result.app[0].debugPort === 9230);
+      assert(result.app[1].debugPort === 5860 || result.app[1].debugPort === 9231);
     });
   });
 
@@ -322,11 +314,7 @@ describe.skip('debug', () => {
       // app.debug();
       setTimeout(() => {
         app.proc.on('message', (msg: any) => {
-          if (
-            msg.to === 'parent' &&
-            msg.action === 'debug' &&
-            msg.from === 'app'
-          ) {
+          if (msg.to === 'parent' && msg.action === 'debug' && msg.from === 'app') {
             workerPid = msg.data.pid;
           }
           if (msg.action === 'egg-ready') {
@@ -362,10 +350,7 @@ describe.skipIf(process.platform !== 'linux')('--sticky', () => {
   it('should online sticky cluster mode startup success', async () => {
     app.expect('stdout', /app_worker#\d:\d+ started at (?!9500)/);
     app.expect('stdout', /egg started on http:\/\/127.0.0.1:17010/);
-    await request('http://127.0.0.1:17010')
-      .get('/portal/i.htm')
-      .expect('hi cluster')
-      .expect(200);
+    await request('http://127.0.0.1:17010').get('/portal/i.htm').expect('hi cluster').expect(200);
   });
 });
 
@@ -464,10 +449,7 @@ describe.skip('--require', () => {
   describe('array', () => {
     beforeAll(() => {
       app = cluster('apps/options-require', {
-        require: [
-          getFilepath('apps/options-require/inject.js'),
-          'ts-node/register',
-        ],
+        require: [getFilepath('apps/options-require/inject.js'), 'ts-node/register'],
       } as any);
       // app.debug();
       return app.ready();

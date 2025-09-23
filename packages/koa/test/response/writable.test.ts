@@ -9,16 +9,9 @@ import Koa from '../../src/index.ts';
 
 describe('res.writable', () => {
   describe('when continuous requests in one persistent connection', () => {
-    function requestTwice(
-      server: Server,
-      done: (err: Error | null, datas: Buffer[]) => void
-    ) {
+    function requestTwice(server: Server, done: (err: Error | null, datas: Buffer[]) => void) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from(
-        'GET / HTTP/1.1\r\nHost: localhost:' +
-          port +
-          '\r\nConnection: keep-alive\r\n\r\n'
-      );
+      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
       const datas: Buffer[] = [];
       client
@@ -51,11 +44,7 @@ describe('res.writable', () => {
   describe('when socket closed before response sent', () => {
     function requestClosed(server: Server) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from(
-        'GET / HTTP/1.1\r\nHost: localhost:' +
-          port +
-          '\r\nConnection: keep-alive\r\n\r\n'
-      );
+      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
       setImmediate(() => {
         client.write(buf);
@@ -82,11 +71,7 @@ describe('res.writable', () => {
   describe('when response finished', () => {
     function request(server: Server) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from(
-        'GET / HTTP/1.1\r\nHost: localhost:' +
-          port +
-          '\r\nConnection: keep-alive\r\n\r\n'
-      );
+      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
       const client = net.connect(port);
       setImmediate(() => {
         client.write(buf);

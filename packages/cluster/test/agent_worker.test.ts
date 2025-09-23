@@ -48,10 +48,7 @@ describe('test/agent_worker.test.ts', () => {
         app
           // .debug()
           .expect('code', 1)
-          .expect(
-            'stderr',
-            /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
-          )
+          .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
           .expect('stderr', /error: app worker throw/)
           .end()
       );
@@ -61,10 +58,7 @@ describe('test/agent_worker.test.ts', () => {
       app = cluster('apps/agent-die-onboot');
       return app
         .expect('code', 1)
-        .expect(
-          'stderr',
-          /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
-        )
+        .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
         .expect('stderr', /error: app worker throw/)
         .notExpect('stdout', /agent-error-but-app-start/)
         .end();
@@ -85,10 +79,7 @@ describe('test/agent_worker.test.ts', () => {
       await scheduler.wait(2000);
 
       app.expect('stderr', /\[master\] agent_worker#1:\d+ died/);
-      app.expect(
-        'stdout',
-        /\[master\] try to start a new agent_worker after 1s .../
-      );
+      app.expect('stdout', /\[master\] try to start a new agent_worker after 1s .../);
       app.expect('stdout', /\[master\] agent_worker#2:\d+ started/);
       app.notExpect('stdout', /app_worker#2/);
     });
@@ -104,14 +95,8 @@ describe('test/agent_worker.test.ts', () => {
       app.process.kill('SIGKILL');
       await scheduler.wait(2000);
       app
-        .expect(
-          'stderr',
-          /\[app_worker\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/
-        )
-        .expect(
-          'stderr',
-          /\[agent_worker\] receive disconnect event on child_process fork mode, exiting with code:110/
-        )
+        .expect('stderr', /\[app_worker\] receive disconnect event in cluster fork mode, exitedAfterDisconnect:false/)
+        .expect('stderr', /\[agent_worker\] receive disconnect event on child_process fork mode, exiting with code:110/)
         .expect('stderr', /\[agent_worker\] exit with code:110/);
     });
 
@@ -124,10 +109,7 @@ describe('test/agent_worker.test.ts', () => {
           .expect('code', 1)
           .expect('stdout', /\[master\] agent_worker#1:\d+ started/)
           .expect('stderr', /\[master\] agent_worker#1:\d+ died/)
-          .expect(
-            'stderr',
-            /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/
-          )
+          .expect('stderr', /\[master\] agent_worker#1:\d+ start fail, exiting with code:1/)
           .expect('stderr', /\[master\] exit with code:1/)
           .notExpect('stdout', /app_worker#2/)
           .end()
@@ -153,10 +135,7 @@ describe('test/agent_worker.test.ts', () => {
         app
           // .debug()
           .expect('code', 1)
-          .expect(
-            'stderr',
-            /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
-          )
+          .expect('stderr', /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/)
           .end()
       );
     });
@@ -167,19 +146,14 @@ describe('test/agent_worker.test.ts', () => {
         app
           // .debug()
           .expect('code', 1)
-          .expect(
-            'stderr',
-            /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
-          )
+          .expect('stderr', /CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/)
           .end()
       );
     });
 
     // process.send is not exist if started by spawn
     it('master should not die if spawn error', async () => {
-      app = coffee.spawn('node', [
-        getFilepath('apps/agent-die/start.js'),
-      ]) as any;
+      app = coffee.spawn('node', [getFilepath('apps/agent-die/start.js')]) as any;
       // app.debug();
       app.close = async () => app.proc.kill();
 
@@ -199,10 +173,7 @@ describe('test/agent_worker.test.ts', () => {
 
     it('should support custom logger in agent', async () => {
       await scheduler.wait(1500);
-      const content = await readFile(
-        getFilepath('apps/custom-logger/logs/monitor.log'),
-        'utf8'
-      );
+      const content = await readFile(getFilepath('apps/custom-logger/logs/monitor.log'), 'utf8');
       assert.match(content, /hello monitor!/);
     });
   });

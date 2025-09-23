@@ -64,18 +64,12 @@ describe('test/loader/context_loader.test.ts', () => {
     const directory = getFilepath('context-loader/app/pathname');
     await app.loader.loadToContext(directory, 'pathname');
 
-    await request(app.callback())
-      .get('/pathname')
-      .expect('pathname.a.b.c')
-      .expect(200);
+    await request(app.callback()).get('/pathname').expect('pathname.a.b.c').expect(200);
 
     await request(app.callback()).get('/config').expect('config').expect(200);
   });
 
   it('should load file with service', () => {
-    return request(app.callback())
-      .get('/BaseContextClass/service')
-      .expect('user:post')
-      .expect(200);
+    return request(app.callback()).get('/BaseContextClass/service').expect('user:post').expect(200);
   });
 });

@@ -1,4 +1,4 @@
-exports.get = async function() {
+exports.get = async function () {
   this.body = {
     cookieValue: this.getCookie('foo') || undefined,
     cookiesValue: this.cookies.get('foo') || undefined,
@@ -6,15 +6,15 @@ exports.get = async function() {
   };
 };
 
-exports.post = async function() {
+exports.post = async function () {
   this.body = 'done';
 };
 
-exports.hello = async function() {
+exports.hello = async function () {
   this.body = 'hi';
 };
 
-exports.service = async function() {
+exports.service = async function () {
   this.body = {
     foo1: await this.service.foo.get(),
     foo2: await this.service.bar.foo.get(),
@@ -23,17 +23,17 @@ exports.service = async function() {
   };
 };
 
-exports.serviceOld = async function() {
+exports.serviceOld = async function () {
   this.body = await this.service.old.test();
 };
 
-exports.header = async function() {
+exports.header = async function () {
   this.body = {
     header: this.get('customheader'),
   };
 };
 
-exports.urllib = async function() {
+exports.urllib = async function () {
   const url = 'http://' + this.host;
   const method = this.query.method || 'request';
   const data = this.query.data ? JSON.parse(this.query.data) : undefined;
@@ -73,7 +73,7 @@ exports.streaming = async ctx => {
   ctx.body = response.res;
 };
 
-exports.mockUrlGet = async function() {
+exports.mockUrlGet = async function () {
   const foo = this.query.foo;
   if (foo) {
     this.body = `url get with foo: ${foo}`;
@@ -82,18 +82,18 @@ exports.mockUrlGet = async function() {
   this.body = 'url get';
 };
 
-exports.mockUrlPost = async function() {
+exports.mockUrlPost = async function () {
   this.body = 'url post';
 };
 
-exports.mockUrllibHeaders = async function() {
+exports.mockUrllibHeaders = async function () {
   const url = 'http://' + this.host;
   const method = this.query.method || 'request';
   const res = await this.app.httpclient[method](url + '/mock_url');
   this.body = res.headers;
 };
 
-exports.dataType = async function() {
+exports.dataType = async function () {
   const url = 'http://' + this.host;
   const res = await this.app.httpclient.request(url + '/mock_url', {
     dataType: 'json',

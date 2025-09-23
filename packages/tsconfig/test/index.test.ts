@@ -5,14 +5,7 @@ import { test, expect } from 'vitest';
 import coffee from 'coffee';
 
 test('should tsc build work', async () => {
-  const tsc = path.join(
-    import.meta.dirname,
-    '..',
-    'node_modules',
-    'typescript',
-    'bin',
-    'tsc'
-  );
+  const tsc = path.join(import.meta.dirname, '..', 'node_modules', 'typescript', 'bin', 'tsc');
   const fixturePath = path.join(import.meta.dirname, 'fixtures/apps/ts-proj');
   const tsconfigPath = path.join(fixturePath, 'tsconfig.json');
   console.log('%s -p %s, cwd: %s', tsc, tsconfigPath, fixturePath);

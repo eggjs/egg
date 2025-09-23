@@ -30,9 +30,7 @@ describe('test/app/middleware/site_file.test.ts', () => {
     return app
       .httpRequest()
       .get('/robots.txt')
-      .expect(
-        /^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/
-      )
+      .expect(/^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/)
       .expect(200);
   });
 
@@ -116,9 +114,7 @@ describe('test/app/middleware/site_file.test.ts', () => {
         .expect(302)
         .expect(res => {
           assert(!res.headers['set-cookie']);
-          assert(
-            res.headers.location === 'https://eggjs.org/function/favicon.ico'
-          );
+          assert(res.headers.location === 'https://eggjs.org/function/favicon.ico');
         });
     });
   });
@@ -135,9 +131,7 @@ describe('test/app/middleware/site_file.test.ts', () => {
       await app
         .httpRequest()
         .get('/favicon.ico')
-        .expect(res =>
-          assert(res.headers['cache-control'].includes('no-store'))
-        )
+        .expect(res => assert(res.headers['cache-control'].includes('no-store')))
         .expect(200);
     });
   });

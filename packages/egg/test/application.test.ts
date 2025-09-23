@@ -8,13 +8,7 @@ import { mm } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 
 import { Application } from '../src/index.ts';
-import {
-  type MockApplication,
-  cluster,
-  createApp,
-  getFilepath,
-  startLocalServer,
-} from './utils.ts';
+import { type MockApplication, cluster, createApp, getFilepath, startLocalServer } from './utils.ts';
 
 describe('test/application.test.ts', () => {
   let app: MockApplication;
@@ -132,16 +126,9 @@ describe('test/application.test.ts', () => {
       await app.httpRequest().get('/throw').expect('foo').expect(200);
 
       await scheduler.wait(1100);
-      const logfile = path.join(
-        getFilepath('apps/app-throw'),
-        'logs/app-throw/common-error.log'
-      );
+      const logfile = path.join(getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
-      assert(
-        body.includes(
-          'ReferenceError: a is not defined (uncaughtException throw'
-        )
-      );
+      assert(body.includes('ReferenceError: a is not defined (uncaughtException throw'));
     });
   });
 
@@ -154,17 +141,10 @@ describe('test/application.test.ts', () => {
     afterAll(() => app.close());
 
     it('should handle uncaughtException and log it', async () => {
-      await app
-        .httpRequest()
-        .get('/throw-error-setter')
-        .expect('foo')
-        .expect(200);
+      await app.httpRequest().get('/throw-error-setter').expect('foo').expect(200);
 
       await scheduler.wait(1100);
-      const logfile = path.join(
-        getFilepath('apps/app-throw'),
-        'logs/app-throw/common-error.log'
-      );
+      const logfile = path.join(getFilepath('apps/app-throw'), 'logs/app-throw/common-error.log');
       const body = fs.readFileSync(logfile, 'utf8');
       assert(body.includes('abc (uncaughtException throw 1 times on pid'));
     });
@@ -176,31 +156,14 @@ describe('test/application.test.ts', () => {
       await app.ready();
       await scheduler.wait(1000);
       const logs = fs.readFileSync(
-        getFilepath(
-          'apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'
-        ),
+        getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'),
         'utf8'
       );
-      assert.match(
-        logs,
-        /Unexpected config key `'bodyparser'` exists, Please use `'bodyParser'` instead\./
-      );
-      assert.match(
-        logs,
-        /Unexpected config key `'notFound'` exists, Please use `'notfound'` instead\./
-      );
-      assert.match(
-        logs,
-        /Unexpected config key `'sitefile'` exists, Please use `'siteFile'` instead\./
-      );
-      assert.match(
-        logs,
-        /Unexpected config key `'middlewares'` exists, Please use `'middleware'` instead\./
-      );
-      assert.match(
-        logs,
-        /Unexpected config key `'httpClient'` exists, Please use `'httpclient'` instead\./
-      );
+      assert.match(logs, /Unexpected config key `'bodyparser'` exists, Please use `'bodyParser'` instead\./);
+      assert.match(logs, /Unexpected config key `'notFound'` exists, Please use `'notfound'` instead\./);
+      assert.match(logs, /Unexpected config key `'sitefile'` exists, Please use `'siteFile'` instead\./);
+      assert.match(logs, /Unexpected config key `'middlewares'` exists, Please use `'middleware'` instead\./);
+      assert.match(logs, /Unexpected config key `'httpClient'` exists, Please use `'httpclient'` instead\./);
     });
   });
 
@@ -249,21 +212,13 @@ describe('test/application.test.ts', () => {
 
     describe('class style controller', () => {
       it('should work with class style controller', () => {
-        return app
-          .httpRequest()
-          .get('/class-controller')
-          .expect('this is bar!')
-          .expect(200);
+        return app.httpRequest().get('/class-controller').expect('this is bar!').expect(200);
       });
     });
 
     describe('request and response event', () => {
       it('should emit when request success', async () => {
-        await app
-          .httpRequest()
-          .get('/class-controller')
-          .expect('this is bar!')
-          .expect(200);
+        await app.httpRequest().get('/class-controller').expect('this is bar!').expect(200);
       });
 
       it('should emit when request error', async () => {
