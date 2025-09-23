@@ -14,7 +14,7 @@
     "egg-bin": "6",
     "egg-mock": "5",
     "eslint": "8",
-    "eslint-config-egg": "13"
+    "eslint-config-egg": "14"
   },
   "engines": {
     "node": ">=18.0.0"
