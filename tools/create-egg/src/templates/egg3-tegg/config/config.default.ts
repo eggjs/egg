@@ -1,19 +1,18 @@
-import { EggAppConfig, EggAppInfo, PowerPartial } from 'egg';
+import { defineConfig, type EggAppInfo } from 'egg';
 
-export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+export default defineConfig((appInfo: EggAppInfo) => {
+  const config = {
+    // use for cookie sign key, should change to your own and keep security
+    keys: appInfo.name + '_{{keys}}',
 
-  // override config from framework / plugin
-  // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_{{keys}}';
+    // add your egg config in here
+    middleware: [] as string[],
 
-  // add your egg config in here
-  config.middleware = [];
-
-  // change multipart mode to file
-  // @see https://github.com/eggjs/multipart/blob/master/src/config/config.default.ts#L104
-  config.multipart = {
-    mode: 'file',
+    // change multipart mode to file
+    // @see https://github.com/eggjs/multipart/blob/master/src/config/config.default.ts#L104
+    multipart: {
+      mode: 'file' as const,
+    },
   };
 
   // add your special config in here
@@ -27,4 +26,4 @@ export default (appInfo: EggAppInfo) => {
     ...config,
     bizConfig,
   };
-};
+});

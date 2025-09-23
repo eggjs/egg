@@ -90,6 +90,36 @@ export type PowerPartial<T> = {
   [U in keyof T]?: T[U] extends object ? PowerPartial<T[U]> : T[U];
 };
 
+/**
+ * Configuration factory function return type
+ */
+export type EggConfigFactory = (appInfo: EggAppInfo) => PowerPartial<EggAppConfig> & Record<string, any>;
+
+/**
+ * Configuration object or factory function
+ */
+export type EggConfig = PowerPartial<EggAppConfig> & Record<string, any> | EggConfigFactory;
+
+/**
+ * Define configuration with type safety
+ * @example
+ * import { defineConfig } from 'egg';
+ *
+ * export default defineConfig({
+ *   keys: 'my-keys',
+ *   middleware: []
+ * });
+ *
+ * // or with function
+ * export default defineConfig((appInfo) => ({
+ *   keys: appInfo.name + '_keys',
+ *   middleware: []
+ * }));
+ */
+export function defineConfig(config: EggConfig): EggConfig {
+  return config;
+}
+
 export interface EggAppConfig extends EggCoreAppConfig {
   workerStartTimeout: number;
   baseDir: string;
