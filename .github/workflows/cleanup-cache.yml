@@ -23,6 +23,7 @@ jobs:
           for cacheKey in $cacheKeysForPR
           do
               gh cache delete $cacheKey
+              echo "Deleted cache: $cacheKey"
           done
           echo "Done"
         env:
