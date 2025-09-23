@@ -28,7 +28,7 @@ Follow the commands listed below.
 
 ```bash
 $ mkdir showcase && cd showcase
-$ npm init egg --type=simple # Optionally pnpm create egg --type=simple
+$ pnpm create egg@beta
 $ pnpm install
 $ pnpm run dev
 $ open http://localhost:7001
@@ -67,7 +67,7 @@ pnpm --filter=site run dev
 
 ## Documentations
 
-- [Documentations](https://eggjs.org/en/index.html)
+- [Documentations](https://eggjs.org/)
 - [Plugins](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [Frameworks](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 - [Examples](https://github.com/eggjs/examples)

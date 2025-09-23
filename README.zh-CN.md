@@ -27,16 +27,16 @@
 
 ```bash
 mkdir showcase && cd showcase
-npm init egg --type=simple
-npm install
-npm run dev
+pnpm create egg@beta
+pnpm install
+pnpm run dev
 
 open http://localhost:7001
 ```
 
 ## 文档
 
-- [官方文档](https://eggjs.org/zh-cn/)
+- [官方文档](https://eggjs.org/zh-CN/)
 - [插件列表](https://github.com/search?q=topic%3Aegg-plugin&type=Repositories)
 - [框架列表](https://github.com/search?q=topic%3Aegg-framework&type=Repositories)
 - [官方示例](https://github.com/eggjs/examples)
