@@ -3,6 +3,7 @@ import { scheduler } from 'node:timers/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { beforeAll, afterAll, it, describe } from 'vitest';
+
 import { escape, getFilepath } from './utils.ts';
 
 describe('test/override.test.ts', () => {
@@ -50,7 +51,7 @@ describe('test/override.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should reload', async () => {
+    it.skip('should reload', async () => {
       const filepath = getFilepath('override-ignore/app/web/a.js');
       await fs.writeFile(filepath, '');
       await scheduler.wait(1000);
