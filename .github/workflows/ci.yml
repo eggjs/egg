@@ -16,19 +16,20 @@ jobs:
   cancel-on-pr-close:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    
+
     steps:
-      - name: Cancel running workflows on PR close/merge
+      - name: Cancel running workflows and cleanup caches on PR close/merge
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const { owner, repo } = context.repo;
             const pr_number = context.payload.pull_request.number;
             const head_sha = context.payload.pull_request.head.sha;
-            
+            const ref = `refs/pull/${pr_number}/merge`;
+
             console.log(`PR #${pr_number} was ${context.payload.pull_request.merged ? 'merged' : 'closed'}`);
             console.log(`Cancelling workflows for SHA: ${head_sha}`);
-            
+
             // Get all workflow runs for this PR's head SHA
             const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
               owner,
@@ -36,9 +37,9 @@ jobs:
               head_sha,
               status: 'in_progress'
             });
-            
+
             console.log(`Found ${runs.workflow_runs.length} in-progress workflow runs`);
-            
+
             // Cancel each running workflow
             for (const run of runs.workflow_runs) {
               if (run.status === 'in_progress') {
@@ -50,8 +51,58 @@ jobs:
                 });
               }
             }
-            
+
             console.log('All running workflows have been cancelled');
+
+            // Clean up caches for this PR
+            console.log(`Cleaning up caches for PR #${pr_number}`);
+
+            try {
+              // Get all caches for this repository
+              const { data: caches } = await github.rest.actions.getActionsCacheList({
+                owner,
+                repo,
+                per_page: 100
+              });
+
+              console.log(`Found ${caches.total_count} total caches`);
+
+              // Filter caches that match this PR's patterns
+              const prCaches = caches.actions_caches.filter(cache => {
+                // Match caches with PR-specific keys
+                return cache.key.includes(`-#${pr_number}`) ||
+                       cache.key.includes(`#${pr_number}-`) ||
+                       cache.ref === ref ||
+                       cache.ref === `refs/pull/${pr_number}/head`;
+              });
+
+              console.log(`Found ${prCaches.length} caches related to PR #${pr_number}`);
+
+              // Delete each PR-related cache
+              for (const cache of prCaches) {
+                console.log(`Deleting cache: ${cache.key} (${cache.id})`);
+                try {
+                  await github.rest.actions.deleteActionsCacheById({
+                    owner,
+                    repo,
+                    cache_id: cache.id
+                  });
+                  console.log(`Successfully deleted cache: ${cache.key}`);
+                } catch (error) {
+                  console.log(`Failed to delete cache ${cache.key}: ${error.message}`);
+                }
+              }
+
+              if (prCaches.length > 0) {
+                console.log(`Successfully cleaned up ${prCaches.length} caches for PR #${pr_number}`);
+              } else {
+                console.log(`No caches found for PR #${pr_number}`);
+              }
+
+            } catch (error) {
+              console.log(`Error during cache cleanup: ${error.message}`);
+              // Don't fail the job if cache cleanup fails
+            }
 
   typecheck:
     runs-on: ubuntu-latest
