@@ -171,9 +171,7 @@ describe('test/options.test.ts', () => {
   describe('framework', () => {
     it('should get from absolute path', async () => {
       let clusterPackagePath = path.join(__dirname, '..');
-      const frameworkPath = path.dirname(
-        importResolve('egg', { paths: [clusterPackagePath] })
-      );
+      const frameworkPath = path.dirname(importResolve('egg', { paths: [clusterPackagePath] }));
       const options = await parseOptions({
         framework: frameworkPath,
       });
@@ -221,29 +219,20 @@ describe('test/options.test.ts', () => {
     });
 
     it('should get from pkg.egg.framework but not exist', async () => {
-      const baseDir = path.join(
-        __dirname,
-        'fixtures/apps/framework-pkg-egg-noexist'
-      );
+      const baseDir = path.join(__dirname, 'fixtures/apps/framework-pkg-egg-noexist');
       try {
         await parseOptions({
           baseDir,
         });
         throw new Error('should not run');
       } catch (err: any) {
-        const frameworkPaths = [
-          path.join(baseDir, 'node_modules'),
-          path.join(process.cwd(), 'node_modules'),
-        ].join(',');
+        const frameworkPaths = [path.join(baseDir, 'node_modules'), path.join(process.cwd(), 'node_modules')].join(',');
         assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
       }
     });
 
     it('should get egg by default', async () => {
-      const baseDir = path.join(
-        __dirname,
-        'fixtures/apps/framework-egg-default'
-      );
+      const baseDir = path.join(__dirname, 'fixtures/apps/framework-egg-default');
       const options = await parseOptions({
         baseDir,
       });

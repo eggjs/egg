@@ -34,13 +34,7 @@ test('should start app with asyncLocalStorage = true by default', async () => {
 test('should access als on global', async () => {
   assert(Reflect.get(global, Symbol.for('gals#asyncLocalStorage')));
   assert(Reflect.get(global, kGALS));
-  assert(
-    Reflect.get(global, Symbol.for('gals#asyncLocalStorage')) instanceof
-      AsyncLocalStorage
-  );
-  assert.equal(
-    app.ctxStorage,
-    Reflect.get(global, Symbol.for('gals#asyncLocalStorage'))
-  );
+  assert(Reflect.get(global, Symbol.for('gals#asyncLocalStorage')) instanceof AsyncLocalStorage);
+  assert.equal(app.ctxStorage, Reflect.get(global, Symbol.for('gals#asyncLocalStorage')));
   assert.equal(app.ctxStorage, getAsyncLocalStorage());
 });

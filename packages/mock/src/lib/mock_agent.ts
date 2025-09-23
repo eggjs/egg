@@ -1,11 +1,5 @@
 import { debuglog } from 'node:util';
-import {
-  MockAgent,
-  setGlobalDispatcher,
-  getGlobalDispatcher,
-  Dispatcher,
-  HttpClient,
-} from 'urllib';
+import { MockAgent, setGlobalDispatcher, getGlobalDispatcher, Dispatcher, HttpClient } from 'urllib';
 
 const debug = debuglog('egg/mock/lib/mock_agent');
 
@@ -24,18 +18,9 @@ export function getMockAgent(app?: { httpClient?: HttpClient }): MockAgent {
     globalThis.__globalDispatcher = getGlobalDispatcher();
     debug('create global dispatcher');
   }
-  if (
-    app?.httpClient &&
-    !globalThis.__httpClientDispatchers.has(app.httpClient)
-  ) {
-    globalThis.__httpClientDispatchers.set(
-      app.httpClient,
-      app.httpClient.getDispatcher()
-    );
-    debug(
-      'add new httpClient, size: %d',
-      globalThis.__httpClientDispatchers.size
-    );
+  if (app?.httpClient && !globalThis.__httpClientDispatchers.has(app.httpClient)) {
+    globalThis.__httpClientDispatchers.set(app.httpClient, app.httpClient.getDispatcher());
+    debug('add new httpClient, size: %d', globalThis.__httpClientDispatchers.size);
   }
   if (!globalThis.__mockAgent) {
     globalThis.__mockAgent = new MockAgent();
@@ -54,10 +39,7 @@ export async function restoreMockAgent() {
     setGlobalDispatcher(globalThis.__globalDispatcher);
     debug('restore global dispatcher');
   }
-  debug(
-    'restore httpClient, size: %d',
-    globalThis.__httpClientDispatchers.size
-  );
+  debug('restore httpClient, size: %d', globalThis.__httpClientDispatchers.size);
   for (const [httpClient, dispatcher] of globalThis.__httpClientDispatchers) {
     httpClient.setDispatcher(dispatcher);
   }

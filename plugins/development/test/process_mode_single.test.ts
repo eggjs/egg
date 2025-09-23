@@ -32,9 +32,7 @@ describe('test/process_mode_single.test.ts', () => {
       }
     });
     await request(app.callback()).get('/foo').expect(200).expect('foo');
-    const filepath = getFilepath(
-      'development-process_mode_single/app/service/a.js'
-    );
+    const filepath = getFilepath('development-process_mode_single/app/service/a.js');
     await fs.writeFile(filepath, '');
     await scheduler.wait(1000);
 

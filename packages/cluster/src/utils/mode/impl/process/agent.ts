@@ -40,7 +40,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
   fork() {
     this.startTime = Date.now();
 
-    const args = [ JSON.stringify(this.options) ];
+    const args = [JSON.stringify(this.options)];
     const forkOptions: ForkOptions & { windowsHide?: boolean } = {};
 
     if (process.platform === 'win32') {
@@ -50,16 +50,20 @@ export class AgentProcessUtils extends BaseAgentUtils {
     // add debug execArgv
     const debugPort = process.env.EGG_AGENT_DEBUG_PORT ?? 5800;
     if (this.options.isDebug) {
-      forkOptions.execArgv = process.execArgv.concat([ `--inspect-port=${debugPort}` ]);
+      forkOptions.execArgv = process.execArgv.concat([`--inspect-port=${debugPort}`]);
     }
 
-    const agentProcess = this.#agentProcess = fork(this.getAgentWorkerFile(), args, forkOptions);
-    const agentWorker = this.instance = new AgentProcessWorker(agentProcess);
+    const agentProcess = (this.#agentProcess = fork(this.getAgentWorkerFile(), args, forkOptions));
+    const agentWorker = (this.instance = new AgentProcessWorker(agentProcess));
     agentWorker.status = 'starting';
     agentWorker.id = ++this.#id;
     this.emit('agent_forked', agentWorker);
-    this.log('[master] agent_worker#%s:%s start with clusterPort:%s',
-      agentWorker.id, agentWorker.workerId, this.options.clusterPort);
+    this.log(
+      '[master] agent_worker#%s:%s start with clusterPort:%s',
+      agentWorker.id,
+      agentWorker.workerId,
+      this.options.clusterPort
+    );
 
     // send debug message
     if (this.options.isDebug) {

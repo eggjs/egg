@@ -8,14 +8,8 @@ describe('ctx.accepts(types)', () => {
     describe('when Accept is populated', () => {
       it('should return all accepted types', () => {
         const ctx = context();
-        ctx.req.headers.accept =
-          'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
-        assert.deepStrictEqual(ctx.accepts(), [
-          'text/html',
-          'text/plain',
-          'image/jpeg',
-          'application/*',
-        ]);
+        ctx.req.headers.accept = 'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
+        assert.deepStrictEqual(ctx.accepts(), ['text/html', 'text/plain', 'image/jpeg', 'application/*']);
       });
     });
   });
@@ -24,8 +18,7 @@ describe('ctx.accepts(types)', () => {
     describe('when Accept is populated', () => {
       it('should return false', () => {
         const ctx = context();
-        ctx.req.headers.accept =
-          'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
+        ctx.req.headers.accept = 'application/*;q=0.2, image/jpeg;q=0.8, text/html, text/plain';
         assert.strictEqual(ctx.accepts('image/png', 'image/tiff'), false);
       });
     });
@@ -33,10 +26,7 @@ describe('ctx.accepts(types)', () => {
     describe('when Accept is not populated', () => {
       it('should return the first type', () => {
         const ctx = context();
-        assert.strictEqual(
-          ctx.accepts('text/html', 'text/plain', 'image/jpeg', 'application/*'),
-          'text/html'
-        );
+        assert.strictEqual(ctx.accepts('text/html', 'text/plain', 'image/jpeg', 'application/*'), 'text/html');
       });
     });
   });

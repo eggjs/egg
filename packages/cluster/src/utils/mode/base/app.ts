@@ -94,14 +94,20 @@ export abstract class BaseAppUtils extends EventEmitter {
   startSuccessCount = 0;
   isAllWorkerStarted = false;
 
-  constructor(options: MasterOptions, {
-    log, logger, messenger, isProduction,
-  }: {
-    log: LogFun;
-    logger: Logger;
-    messenger: Messenger;
-    isProduction: boolean;
-  }) {
+  constructor(
+    options: MasterOptions,
+    {
+      log,
+      logger,
+      messenger,
+      isProduction,
+    }: {
+      log: LogFun;
+      logger: Logger;
+      messenger: Messenger;
+      isProduction: boolean;
+    }
+  ) {
     super();
     this.options = options;
     this.log = log;

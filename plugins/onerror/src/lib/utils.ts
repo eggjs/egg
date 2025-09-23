@@ -3,9 +3,11 @@ import type { OnerrorError } from 'koa-onerror';
 
 export function detectErrorMessage(ctx: Context, err: OnerrorError) {
   // detect json parse error
-  if (err.status === 400 &&
-      err.name === 'SyntaxError' &&
-      ctx.request.is('application/json', 'application/vnd.api+json', 'application/csp-report')) {
+  if (
+    err.status === 400 &&
+    err.name === 'SyntaxError' &&
+    ctx.request.is('application/json', 'application/vnd.api+json', 'application/csp-report')
+  ) {
     return 'Problems parsing JSON';
   }
   return err.message;

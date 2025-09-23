@@ -86,10 +86,7 @@ describe('contentDisposition(filename, options)', () => {
       it('should keep ISO-8859-1 filename', () => {
         const ctx = context();
         ctx.attachment('£ rates.pdf', { fallback: false });
-        assert.equal(
-          ctx.response.header['content-disposition'],
-          'attachment; filename="£ rates.pdf"'
-        );
+        assert.equal(ctx.response.header['content-disposition'], 'attachment; filename="£ rates.pdf"');
       });
     });
 
@@ -106,10 +103,7 @@ describe('contentDisposition(filename, options)', () => {
       it('should pass through ISO-8859-1 filename', () => {
         const ctx = context();
         ctx.attachment('£ rates.pdf', { fallback: true });
-        assert.equal(
-          ctx.response.header['content-disposition'],
-          'attachment; filename="£ rates.pdf"'
-        );
+        assert.equal(ctx.response.header['content-disposition'], 'attachment; filename="£ rates.pdf"');
       });
     });
 
@@ -144,10 +138,7 @@ describe('contentDisposition(filename, options)', () => {
       it('should do nothing if equal to filename', () => {
         const ctx = context();
         ctx.attachment('plans.pdf', { fallback: 'plans.pdf' });
-        assert.equal(
-          ctx.response.header['content-disposition'],
-          'attachment; filename="plans.pdf"'
-        );
+        assert.equal(ctx.response.header['content-disposition'], 'attachment; filename="plans.pdf"');
       });
 
       it('should use the basename of the string', () => {
@@ -198,10 +189,7 @@ describe('contentDisposition(filename, options)', () => {
     it('should create a header with inline type and filename', () => {
       const ctx = context();
       ctx.attachment('plans.pdf', { type: 'inline' });
-      assert.equal(
-        ctx.response.header['content-disposition'],
-        'inline; filename="plans.pdf"'
-      );
+      assert.equal(ctx.response.header['content-disposition'], 'inline; filename="plans.pdf"');
     });
 
     it('should normalize type', () => {

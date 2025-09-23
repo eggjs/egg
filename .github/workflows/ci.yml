@@ -16,7 +16,7 @@ jobs:
   cancel-on-pr-close:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    
+
     steps:
       - name: Cancel running workflows on PR close/merge
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
@@ -25,10 +25,10 @@ jobs:
             const { owner, repo } = context.repo;
             const pr_number = context.payload.pull_request.number;
             const head_sha = context.payload.pull_request.head.sha;
-            
+
             console.log(`PR #${pr_number} was ${context.payload.pull_request.merged ? 'merged' : 'closed'}`);
             console.log(`Cancelling workflows for SHA: ${head_sha}`);
-            
+
             // Get all workflow runs for this PR's head SHA
             const { data: runs } = await github.rest.actions.listWorkflowRunsForRepo({
               owner,
@@ -36,9 +36,9 @@ jobs:
               head_sha,
               status: 'in_progress'
             });
-            
+
             console.log(`Found ${runs.workflow_runs.length} in-progress workflow runs`);
-            
+
             // Cancel each running workflow
             for (const run of runs.workflow_runs) {
               if (run.status === 'in_progress') {
@@ -50,7 +50,7 @@ jobs:
                 });
               }
             }
-            
+
             console.log('All running workflows have been cancelled');
 
   typecheck:

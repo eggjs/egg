@@ -52,9 +52,7 @@ export class MockAgent extends Base {
     this.options.clusterPort = await detectPort();
     process.env.CLUSTER_PORT = String(this.options.clusterPort);
     debug('get clusterPort %s', this.options.clusterPort);
-    const { Agent }: { Agent: typeof EggAgent } = await importModule(
-      this.options.framework
-    );
+    const { Agent }: { Agent: typeof EggAgent } = await importModule(this.options.framework);
 
     const agent = (this._instance = new Agent({ ...this.options }));
 

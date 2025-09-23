@@ -1,6 +1,4 @@
-exports.middleware = [
-  'trigger',
-];
+exports.middleware = ['trigger'];
 
 exports.keys = 'foo,bar';
 

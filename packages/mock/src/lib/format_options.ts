@@ -27,11 +27,7 @@ export function formatOptions(initOptions?: MockOptions) {
   // formatOptions({ baseDir: 'app' }); // baseDir => $PWD/test/fixtures/app
   // ```
   if (!path.isAbsolute(options.baseDir)) {
-    options.baseDir = path.join(
-      process.cwd(),
-      'test/fixtures',
-      options.baseDir
-    );
+    options.baseDir = path.join(process.cwd(), 'test/fixtures', options.baseDir);
   }
 
   let framework = initOptions?.framework ?? initOptions?.customEgg;
@@ -82,10 +78,7 @@ export function formatOptions(initOptions?: MockOptions) {
 
   // mock HOME as baseDir, but ignore if it has been mocked
   const env = process.env.EGG_SERVER_ENV;
-  if (
-    !isMocked(process.env, 'HOME') &&
-    (env === 'default' || env === 'test' || env === 'prod')
-  ) {
+  if (!isMocked(process.env, 'HOME') && (env === 'default' || env === 'test' || env === 'prod')) {
     mm(process.env, 'HOME', options.baseDir);
   }
 

@@ -2,14 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 // import fs from 'node:fs';
 
-import {
-  describe,
-  it,
-  beforeEach,
-  afterEach,
-  afterAll,
-  beforeAll,
-} from 'vitest';
+import { describe, it, beforeEach, afterEach, afterAll, beforeAll } from 'vitest';
 
 import mm, { type MockApplication } from '../src/index.ts';
 import { getFixtures } from './helper.ts';

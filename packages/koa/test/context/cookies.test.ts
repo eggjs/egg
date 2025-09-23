@@ -40,9 +40,7 @@ describe('ctx.cookies', () => {
           }
         });
 
-        return request(app.callback())
-          .get('/')
-          .expect('.keys required for signed cookies');
+        return request(app.callback()).get('/').expect('.keys required for signed cookies');
       });
 
       it('should send a signed cookie', async () => {

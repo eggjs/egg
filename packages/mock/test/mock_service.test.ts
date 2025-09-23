@@ -152,11 +152,7 @@ describe('test/mock_service.test.ts', () => {
     });
 
     it('should return custom mock error', async () => {
-      app.mockServiceError(
-        'foo',
-        'get',
-        new Error('mock service foo.get error2')
-      );
+      app.mockServiceError('foo', 'get', new Error('mock service foo.get error2'));
       await app
         .httpRequest()
         .get('/service')

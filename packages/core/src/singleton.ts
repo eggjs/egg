@@ -24,22 +24,10 @@ export class Singleton<T = any> {
   readonly options: Record<string, any>;
 
   constructor(options: SingletonOptions) {
-    assert(
-      options.name,
-      '[egg/core/singleton] Singleton#constructor options.name is required'
-    );
-    assert(
-      options.app,
-      '[egg/core/singleton] Singleton#constructor options.app is required'
-    );
-    assert(
-      options.create,
-      '[egg/core/singleton] Singleton#constructor options.create is required'
-    );
-    assert(
-      !(options.name in options.app),
-      `[egg/core/singleton] ${options.name} is already exists in app`
-    );
+    assert(options.name, '[egg/core/singleton] Singleton#constructor options.name is required');
+    assert(options.app, '[egg/core/singleton] Singleton#constructor options.app is required');
+    assert(options.create, '[egg/core/singleton] Singleton#constructor options.create is required');
+    assert(!(options.name in options.app), `[egg/core/singleton] ${options.name} is already exists in app`);
     this.app = options.app;
     this.name = options.name;
     this.create = options.create;
@@ -88,10 +76,7 @@ export class Singleton<T = any> {
 
     // alias app[name] as client, but still support createInstance method
     if (options.client) {
-      const client = await this.createInstanceAsync(
-        options.client,
-        options.name
-      );
+      const client = await this.createInstanceAsync(options.client, options.name);
       this.#setClientToApp(client);
       this.#extendDynamicMethods(client);
       return;
@@ -101,9 +86,7 @@ export class Singleton<T = any> {
     if (options.clients) {
       await Promise.all(
         Object.keys(options.clients).map((id: string) => {
-          return this.createInstanceAsync(options.clients[id], id).then(
-            client => this.clients.set(id, client)
-          );
+          return this.createInstanceAsync(options.clients[id], id).then(client => this.clients.set(id, client));
         })
       );
       this.#setClientToApp(this);
@@ -143,11 +126,7 @@ export class Singleton<T = any> {
       ...this.options.default,
       ...config,
     };
-    return (this.create as SingletonCreateMethod)(
-      config,
-      this.app,
-      clientName
-    ) as T;
+    return (this.create as SingletonCreateMethod)(config, this.app, clientName) as T;
   }
 
   async createInstanceAsync(config: Record<string, any>, clientName: string) {
@@ -160,10 +139,7 @@ export class Singleton<T = any> {
   }
 
   #extendDynamicMethods(client: any) {
-    assert(
-      !client.createInstance,
-      '[egg/core/singleton] singleton instance should not have createInstance method'
-    );
+    assert(!client.createInstance, '[egg/core/singleton] singleton instance should not have createInstance method');
     assert(
       !client.createInstanceAsync,
       '[egg/core/singleton] singleton instance should not have createInstanceAsync method'

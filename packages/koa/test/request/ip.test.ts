@@ -15,8 +15,7 @@ describe('req.ip', () => {
       };
       app.proxy = true;
       req.headers['x-forwarded-for'] = '127.0.0.1';
-      (req.socket as unknown as { remoteAddress: string }).remoteAddress =
-        '127.0.0.2';
+      (req.socket as unknown as { remoteAddress: string }).remoteAddress = '127.0.0.2';
       const request = createRequest(req, undefined, app);
       assert.strictEqual(request.ip, '127.0.0.1');
     });
@@ -25,8 +24,7 @@ describe('req.ip', () => {
   describe('with no req.ips present', () => {
     it('should return req.socket.remoteAddress', () => {
       const req = { socket: new Stream.Duplex() };
-      (req.socket as unknown as { remoteAddress: string }).remoteAddress =
-        '127.0.0.2';
+      (req.socket as unknown as { remoteAddress: string }).remoteAddress = '127.0.0.2';
       const request = createRequest(req);
       assert.strictEqual(request.ip, '127.0.0.2');
     });
@@ -47,19 +45,16 @@ describe('req.ip', () => {
 
   it('should be lazy inited and cached', () => {
     const req = { socket: new Stream.Duplex() };
-    (req.socket as unknown as { remoteAddress: string }).remoteAddress =
-      '127.0.0.2';
+    (req.socket as unknown as { remoteAddress: string }).remoteAddress = '127.0.0.2';
     const request = createRequest(req);
     assert.strictEqual(request.ip, '127.0.0.2');
-    (req.socket as unknown as { remoteAddress: string }).remoteAddress =
-      '127.0.0.1';
+    (req.socket as unknown as { remoteAddress: string }).remoteAddress = '127.0.0.1';
     assert.strictEqual(request.ip, '127.0.0.2');
   });
 
   it('should reset ip work', () => {
     const req = { socket: new Stream.Duplex() };
-    (req.socket as unknown as { remoteAddress: string }).remoteAddress =
-      '127.0.0.2';
+    (req.socket as unknown as { remoteAddress: string }).remoteAddress = '127.0.0.2';
     const request = createRequest(req);
     assert.strictEqual(request.ip, '127.0.0.2');
     request.ip = '127.0.0.1';

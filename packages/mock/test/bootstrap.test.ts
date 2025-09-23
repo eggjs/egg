@@ -9,10 +9,7 @@ import { getFixtures } from './helper.ts';
 describe.skip('test/bootstrap.test.ts', () => {
   describe('normal app in ESM', () => {
     it('should work', async () => {
-      const eggBinFile = path.join(
-        importResolve('@eggjs/bin/package.json'),
-        '../bin/run.js'
-      );
+      const eggBinFile = path.join(importResolve('@eggjs/bin/package.json'), '../bin/run.js');
       await coffee
         .fork(
           eggBinFile,

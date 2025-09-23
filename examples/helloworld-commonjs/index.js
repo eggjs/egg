@@ -13,9 +13,7 @@ async function main() {
 
   const server = app.listen(7001);
   await once(server, 'listening');
-  console.log(
-    `egg app server listening at http://localhost:${server.address().port}`
-  );
+  console.log(`egg app server listening at http://localhost:${server.address().port}`);
 }
 
 main();

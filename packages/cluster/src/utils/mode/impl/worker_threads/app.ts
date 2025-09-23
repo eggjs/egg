@@ -148,7 +148,7 @@ export class AppThreadUtils extends BaseAppUtils {
     let i = 0;
     do {
       const options = Object.assign({}, this.options, { port: ports[i] });
-      const argv = [ JSON.stringify(options) ];
+      const argv = [JSON.stringify(options)];
       this.#forkSingle(this.getAppWorkerFile(), { argv }, ++i);
     } while (i < ports.length);
 

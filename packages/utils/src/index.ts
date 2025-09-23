@@ -6,13 +6,7 @@ import { getFrameworkOrEggPath } from './deprecated.ts';
 
 // support import { getFrameworkPath } from '@eggjs/utils'
 export { getFrameworkPath } from './framework.ts';
-export {
-  getPlugins,
-  getConfig,
-  getLoadUnits,
-  getLoader,
-  findEggCore,
-} from './plugin.ts';
+export { getPlugins, getConfig, getLoadUnits, getLoader, findEggCore } from './plugin.ts';
 export { getFrameworkOrEggPath } from './deprecated.ts';
 export * from './import.ts';
 export * from './error/index.ts';
@@ -37,9 +31,7 @@ export type EggType = (typeof EggType)[keyof typeof EggType];
 /**
  * Detect the type of egg project
  */
-export async function detectType(
-  baseDir: string
-): Promise<keyof typeof EggType> {
+export async function detectType(baseDir: string): Promise<keyof typeof EggType> {
   const pkgFile = path.join(baseDir, 'package.json');
   let pkg: {
     egg?: {

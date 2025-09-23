@@ -2,11 +2,11 @@
 
 const pids = {
   master: process.ppid,
-  worker: new Set([ process.pid ]),
+  worker: new Set([process.pid]),
   agent: null,
 };
 
-module.exports = function(app) {
+module.exports = function (app) {
   // from parent
   app.messenger.on('parent2app', msg => console.log(msg));
 

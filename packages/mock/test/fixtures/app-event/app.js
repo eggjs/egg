@@ -13,7 +13,7 @@ module.exports = app => {
     app.emit('appInstantiated');
   });
 
-  app.beforeStart(async function() {
+  app.beforeStart(async function () {
     await scheduler.wait(1000);
   });
 };

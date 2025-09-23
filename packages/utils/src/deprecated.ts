@@ -11,10 +11,7 @@ import { readJSONSync } from './utils.ts';
  * @return {String} framework or egg dir path
  * @deprecated
  */
-export function getFrameworkOrEggPath(
-  cwd: string,
-  eggNames?: string[]
-): string {
+export function getFrameworkOrEggPath(cwd: string, eggNames?: string[]): string {
   eggNames = eggNames || ['egg'];
   const moduleDir = path.join(cwd, 'node_modules');
   if (!existsSync(moduleDir)) {

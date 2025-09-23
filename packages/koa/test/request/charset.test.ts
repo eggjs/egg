@@ -29,8 +29,7 @@ describe('req.charset', () => {
 
     it('should return "" if content-type is invalid', () => {
       const req = request();
-      req.header['content-type'] =
-        'application/json; application/text; charset=utf-8';
+      req.header['content-type'] = 'application/json; application/text; charset=utf-8';
       assert.equal(req.charset, '');
     });
   });

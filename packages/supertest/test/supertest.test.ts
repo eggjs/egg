@@ -328,9 +328,7 @@ describe('request(app)', () => {
       await once(server, 'listening');
       const url = 'http://localhost:' + (server.address() as AddressInfo).port;
 
-      await expect(
-        request(url).get('/').timeout(1).expect(200)
-      ).rejects.toThrow();
+      await expect(request(url).get('/').timeout(1).expect(200)).rejects.toThrow();
 
       server.close();
     });
@@ -360,11 +358,7 @@ describe('request(app)', () => {
         res.send('hey');
       });
 
-      await request(app)
-        .get('/')
-        .expect(200)
-        .expectHeader('Foo-Bar')
-        .expectHeader('content-type');
+      await request(app).get('/').expect(200).expectHeader('Foo-Bar').expectHeader('content-type');
     });
 
     it('should expect header exists with callback', async () => {
@@ -521,9 +515,7 @@ describe('request(app)', () => {
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe(
-          'expected \'hey\' response body, got \'{"foo":"bar"}\''
-        );
+        expect(err.message).toBe('expected \'hey\' response body, got \'{"foo":"bar"}\'');
         shouldIncludeStackWithThisFile(err);
       }
     });
@@ -542,9 +534,7 @@ describe('request(app)', () => {
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe(
-          'expected 200 "OK", got 500 "Internal Server Error"'
-        );
+        expect(err.message).toBe('expected 200 "OK", got 500 "Internal Server Error"');
         shouldIncludeStackWithThisFile(err);
       }
     });
@@ -575,9 +565,7 @@ describe('request(app)', () => {
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe(
-          "expected { foo: 'baz' } response body, got { foo: 'bar' }"
-        );
+        expect(err.message).toBe("expected { foo: 'baz' } response body, got { foo: 'bar' }");
         shouldIncludeStackWithThisFile(err);
       }
 
@@ -590,9 +578,7 @@ describe('request(app)', () => {
         res.status(200).json({ stringValue: 'foo', numberValue: 3 });
       });
 
-      await request(app)
-        .get('/')
-        .expect({ stringValue: 'foo', numberValue: 3 });
+      await request(app).get('/').expect({ stringValue: 'foo', numberValue: 3 });
     });
 
     it('should deep test response object types', async () => {
@@ -712,9 +698,7 @@ describe('.expect(field, value[, fn])', () => {
 
     await expect(async () => {
       await request(app).get('/').expect('Content-Type', 'text/html');
-    }).rejects.toThrow(
-      'expected "Content-Type" of "text/html", got "application/json; charset=utf-8"'
-    );
+    }).rejects.toThrow('expected "Content-Type" of "text/html", got "application/json; charset=utf-8"');
   });
 
   it('should assert multiple fields', async () => {
@@ -724,10 +708,7 @@ describe('.expect(field, value[, fn])', () => {
       res.send('hey');
     });
 
-    await request(app)
-      .get('/')
-      .expect('Content-Type', 'text/html; charset=utf-8')
-      .expect('Content-Length', '3');
+    await request(app).get('/').expect('Content-Type', 'text/html; charset=utf-8').expect('Content-Length', '3');
   });
 
   it('should support regular expressions', async () => {
@@ -741,9 +722,7 @@ describe('.expect(field, value[, fn])', () => {
       await request(app)
         .get('/')
         .expect('Content-Type', /^application/);
-    }).rejects.toThrow(
-      'expected "Content-Type" matching /^application/, got "text/html; charset=utf-8"'
-    );
+    }).rejects.toThrow('expected "Content-Type" matching /^application/, got "text/html; charset=utf-8"');
   });
 
   it('should support numbers', async () => {
@@ -843,9 +822,7 @@ describe('.expect(field, value[, fn])', () => {
     it('plays well with normal assertions - no false positives', async () => {
       await expect(async () => {
         await get.expect(() => {}).expect('Content-Type', /json/);
-      }).rejects.toThrow(
-        'expected "Content-Type" matching /json/, got "text/html; charset=utf-8"'
-      );
+      }).rejects.toThrow('expected "Content-Type" matching /json/, got "text/html; charset=utf-8"');
     });
 
     it('plays well with normal assertions - no false negatives', async () => {
@@ -864,10 +841,7 @@ describe('.expect(field, value[, fn])', () => {
         res.send('hey');
       });
 
-      await request(app)
-        .get('/')
-        .expect('Content-Type', /text/)
-        .expect('Content-Type', /html/);
+      await request(app).get('/').expect('Content-Type', /text/).expect('Content-Type', /html/);
     });
 
     it('should return an error if the first one fails', async () => {
@@ -877,13 +851,8 @@ describe('.expect(field, value[, fn])', () => {
       });
 
       await expect(async () => {
-        await request(app)
-          .get('/')
-          .expect('Content-Type', /bloop/)
-          .expect('Content-Type', /html/);
-      }).rejects.toThrow(
-        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"'
-      );
+        await request(app).get('/').expect('Content-Type', /bloop/).expect('Content-Type', /html/);
+      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
     });
 
     it('should return an error if a middle one fails', async () => {
@@ -898,9 +867,7 @@ describe('.expect(field, value[, fn])', () => {
           .expect('Content-Type', /text/)
           .expect('Content-Type', /bloop/)
           .expect('Content-Type', /html/);
-      }).rejects.toThrow(
-        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"'
-      );
+      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
     });
 
     it('should return an error if the last one fails', async () => {
@@ -915,9 +882,7 @@ describe('.expect(field, value[, fn])', () => {
           .expect('Content-Type', /text/)
           .expect('Content-Type', /html/)
           .expect('Content-Type', /bloop/);
-      }).rejects.toThrow(
-        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"'
-      );
+      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
     });
   });
 });
@@ -1031,9 +996,7 @@ describe('.<http verb> works as expected', () => {
       res.end();
     });
 
-    const res = await request(app)
-      .head('/')
-      .set('accept-encoding', 'gzip, deflate');
+    const res = await request(app).head('/').set('accept-encoding', 'gzip, deflate');
 
     expect(res).toHaveProperty('statusCode', 200);
     expect(res.headers).toHaveProperty('content-length', '1024');
@@ -1056,10 +1019,7 @@ describe('assert ordering by call order', () => {
       .expect(200)
       .end(err => {
         assert(err instanceof Error);
-        expect(err.message).toBe(
-          "expected 'hey' response body, " +
-            'got \'{"message":"something went wrong"}\''
-        );
+        expect(err.message).toBe("expected 'hey' response body, " + 'got \'{"message":"something went wrong"}\'');
         shouldIncludeStackWithThisFile(err);
       });
   });
@@ -1079,9 +1039,7 @@ describe('assert ordering by call order', () => {
       .expect('hey')
       .end(err => {
         assert(err instanceof Error);
-        expect(err.message).toBe(
-          'expected 200 "OK", got 500 "Internal Server Error"'
-        );
+        expect(err.message).toBe('expected 200 "OK", got 500 "Internal Server Error"');
         shouldIncludeStackWithThisFile(err);
       });
   });
@@ -1101,10 +1059,7 @@ describe('assert ordering by call order', () => {
       .expect('hello')
       .end(err => {
         assert(err instanceof Error);
-        expect(err.message).toBe(
-          'expected "content-type" matching /html/, ' +
-            'got "application/json; charset=utf-8"'
-        );
+        expect(err.message).toBe('expected "content-type" matching /html/, ' + 'got "application/json; charset=utf-8"');
         shouldIncludeStackWithThisFile(err);
       });
   });

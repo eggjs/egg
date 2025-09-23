@@ -20,10 +20,7 @@ describe('start master', () => {
     await app
       .expect('stdout', /egg start/)
       .expect('stdout', /egg started/)
-      .notExpect(
-        'stdout',
-        /\[master\] agent_worker#1:\d+ start with clusterPort:\d+/
-      )
+      .notExpect('stdout', /\[master\] agent_worker#1:\d+ start with clusterPort:\d+/)
       .expect('code', 0)
       .end();
   });

@@ -3,10 +3,7 @@ import coffee from './coffee.js';
 import { getRootDirname, getFixtures } from './helper.js';
 
 describe('test/postinstall.test.ts', () => {
-  const postInstallScript = path.join(
-    getRootDirname(),
-    'scripts/postinstall.mjs'
-  );
+  const postInstallScript = path.join(getRootDirname(), 'scripts/postinstall.mjs');
   const NODE_DEBUG = '@eggjs/bin/scripts/postinstall';
 
   // FIXME: Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: ～/egg/packages/core/src/index.ts
@@ -22,23 +19,15 @@ describe('test/postinstall.test.ts', () => {
         },
       })
       .debug()
-      .expect(
-        'stdout',
-        /\[egg-ts-helper\] create typings[/\\]config[/\\]plugin\.d\.ts/
-      )
-      .expect(
-        'stdout',
-        /\[egg-ts-helper\] create typings[/\\]app[/\\]index\.d\.ts/
-      )
+      .expect('stdout', /\[egg-ts-helper\] create typings[/\\]config[/\\]plugin\.d\.ts/)
+      .expect('stdout', /\[egg-ts-helper\] create typings[/\\]app[/\\]index\.d\.ts/)
       .expect('code', 0)
       .end();
   });
 
   it('should work with special path', () => {
     const cwd = getFixtures('test path with space/example-declarations');
-    const tsHelper = getFixtures(
-      'test path with space/example-declarations/node_modules/egg-ts-helper/dist/bin.js'
-    );
+    const tsHelper = getFixtures('test path with space/example-declarations/node_modules/egg-ts-helper/dist/bin.js');
     return (
       coffee
         .fork(postInstallScript, [tsHelper], {

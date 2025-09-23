@@ -28,7 +28,7 @@ async function main() {
     // inject
     for (const mod of options.require) {
       await importModule(mod, {
-        paths: [ options.baseDir ],
+        paths: [options.baseDir],
       });
     }
   }
@@ -42,7 +42,7 @@ async function main() {
 
   const consoleLogger = new ConsoleLogger({ level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL });
   const { Agent } = await importModule(options.framework, {
-    paths: [ options.baseDir ],
+    paths: [options.baseDir],
   });
   debug('new Agent with options %j', options);
   let agent: any;

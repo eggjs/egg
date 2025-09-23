@@ -68,10 +68,7 @@ describe('response.is(type)', () => {
       assert.strictEqual(res.is('jpeg'), false);
       assert.strictEqual(res.is('.jpeg'), false);
       assert.strictEqual(res.is('text/*', 'application/*'), false);
-      assert.strictEqual(
-        res.is('text/html', 'text/plain', 'application/json; charset=utf-8'),
-        false
-      );
+      assert.strictEqual(res.is('text/html', 'text/plain', 'application/json; charset=utf-8'), false);
     });
   });
 

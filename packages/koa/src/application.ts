@@ -87,14 +87,11 @@ export class Application extends Emitter {
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass =
-      class ApplicationContext extends Context {} as ProtoImplClass<Context>;
+    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass =
-      class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
+    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass =
-      class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
+    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
     this.response = this.ResponseClass.prototype;
   }
 
@@ -159,8 +156,7 @@ export class Application extends Emitter {
    * Use the given middleware `fn`.
    */
   use<T extends Context = Context>(fn: MiddlewareFunc<T>) {
-    if (typeof fn !== 'function')
-      throw new TypeError('middleware must be a function!');
+    if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
       throw new TypeError(
@@ -206,10 +202,7 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(
-    ctx: Context,
-    fnMiddleware: (ctx: Context) => Promise<void>
-  ) {
+  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>) {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -246,11 +239,8 @@ export class Application extends Emitter {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
-    const isNativeError =
-      err instanceof Error ||
-      Object.prototype.toString.call(err) === '[object Error]';
-    if (!isNativeError)
-      throw new TypeError(util.format('non-error thrown: %j', err));
+    const isNativeError = err instanceof Error || Object.prototype.toString.call(err) === '[object Error]';
+    if (!isNativeError) throw new TypeError(util.format('non-error thrown: %j', err));
 
     if (err.status === 404 || err.expose) return;
     if (this.silent) return;

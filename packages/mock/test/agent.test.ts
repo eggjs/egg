@@ -65,9 +65,6 @@ describe('test/agent.test.ts', () => {
     }
 
     assert.equal(catchErr.code, 'customPlugin_99');
-    assert.match(
-      logMsg,
-      /framework\.CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/
-    );
+    assert.match(logMsg, /framework\.CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/);
   });
 });

@@ -1,5 +1,5 @@
 module.exports = () => {
-  exports.test = async function() {
+  exports.test = async function () {
     return 'hello';
   };
 

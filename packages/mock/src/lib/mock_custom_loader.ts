@@ -16,11 +16,11 @@ export function setCustomLoader(app: any) {
     const field = loaderConfig.field as string;
     const appMethodName = 'mock' + field.replace(/^[a-z]/i, s => s.toUpperCase());
     if (app[appMethodName]) {
-      app.coreLogger.warn('Can\'t override app.%s', appMethodName);
+      app.coreLogger.warn("Can't override app.%s", appMethodName);
       return;
     }
     debug('[addMethod] %s => %j', appMethodName, loaderConfig);
-    app[appMethodName] = function(service: any, methodName: string, fn: any) {
+    app[appMethodName] = function (service: any, methodName: string, fn: any) {
       if (typeof service === 'string') {
         const arr = service.split('.');
         service = loaderConfig.inject === 'ctx' ? this[field + 'Classes'] : this[field];

@@ -1,6 +1,6 @@
 name: Cleanup github runner caches on closed pull requests
 
-"on":
+'on':
   pull_request:
     types:
       - closed

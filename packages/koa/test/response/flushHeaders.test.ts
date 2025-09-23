@@ -36,11 +36,7 @@ describe('ctx.flushHeaders()', () => {
     });
 
     const server = app.listen();
-    return request(server)
-      .get('/')
-      .expect(200)
-      .expect('Content-Type', 'text/plain')
-      .expect('Body');
+    return request(server).get('/').expect(200).expect('Content-Type', 'text/plain').expect('Body');
   });
 
   it('should send the correct status code', () => {
@@ -54,11 +50,7 @@ describe('ctx.flushHeaders()', () => {
     });
 
     const server = app.listen();
-    return request(server)
-      .get('/')
-      .expect(401)
-      .expect('Content-Type', 'text/plain')
-      .expect('Body');
+    return request(server).get('/').expect(401).expect('Content-Type', 'text/plain').expect('Body');
   });
 
   it('should ignore set header after flushHeaders', async () => {
@@ -75,21 +67,10 @@ describe('ctx.flushHeaders()', () => {
     });
 
     const server = app.listen();
-    const res = await request(server)
-      .get('/')
-      .expect(401)
-      .expect('Content-Type', 'text/plain');
+    const res = await request(server).get('/').expect(401).expect('Content-Type', 'text/plain');
 
-    assert.strictEqual(
-      res.headers['x-shouldnt-work'],
-      undefined,
-      'header set after flushHeaders'
-    );
-    assert.strictEqual(
-      res.headers.vary,
-      undefined,
-      'header set after flushHeaders'
-    );
+    assert.strictEqual(res.headers['x-shouldnt-work'], undefined, 'header set after flushHeaders');
+    assert.strictEqual(res.headers.vary, undefined, 'header set after flushHeaders');
   });
 
   it('should flush headers first and delay to send data', async () => {

@@ -37,34 +37,13 @@ function sequence(
       nest.push(name);
       recursive.push(...nest.slice(0));
       nest.pop();
-    } else if (
-      node.dependencies.length > 0 ||
-      node.optionalDependencies.length > 0
-    ) {
+    } else if (node.dependencies.length > 0 || node.optionalDependencies.length > 0) {
       nest.push(name);
       if (node.dependencies.length > 0) {
-        sequence(
-          tasks,
-          node.dependencies,
-          result,
-          missing,
-          recursive,
-          nest,
-          optional,
-          name
-        );
+        sequence(tasks, node.dependencies, result, missing, recursive, nest, optional, name);
       }
       if (node.optionalDependencies.length > 0) {
-        sequence(
-          tasks,
-          node.optionalDependencies,
-          result,
-          missing,
-          recursive,
-          nest,
-          true,
-          name
-        );
+        sequence(tasks, node.optionalDependencies, result, missing, recursive, nest, true, name);
       }
       nest.pop();
     }
@@ -80,10 +59,7 @@ function sequence(
 
 // tasks: object with keys as task names
 // names: array of task names
-export function sequencify(
-  tasks: Record<string, SequencifyTask>,
-  names: string[]
-) {
+export function sequencify(tasks: Record<string, SequencifyTask>, names: string[]) {
   const result: SequencifyResult = {
     sequence: [],
     requires: {},

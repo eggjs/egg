@@ -1,4 +1,4 @@
-module.exports = function(app) {
+module.exports = function (app) {
   app.get('/', app.controller.home.get);
   app.get('/hello', app.controller.home.hello);
   app.get('/service', app.controller.home.service);

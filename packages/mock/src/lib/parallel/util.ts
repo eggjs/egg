@@ -4,14 +4,7 @@ import { getProperty } from '../utils.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/util');
 
-export const MOCK_APP_METHOD = [
-  'ready',
-  'isClosed',
-  'closed',
-  'close',
-  'on',
-  'once',
-];
+export const MOCK_APP_METHOD = ['ready', 'isClosed', 'closed', 'close', 'on', 'once'];
 
 export const APP_INIT = Symbol('appInit');
 
@@ -58,7 +51,7 @@ export function proxyApp(app: any) {
       return Object.getOwnPropertyDescriptor(target._instance, prop);
     },
     getPrototypeOf(target) {
-      if (!target[APP_INIT]) throw new Error('can\'t getPrototypeOf before ready');
+      if (!target[APP_INIT]) throw new Error("can't getPrototypeOf before ready");
       debug('proxy handler.getPrototypeOf %s');
       return Object.getPrototypeOf(target._instance);
     },

@@ -2,14 +2,7 @@ import { strict as assert } from 'node:assert';
 import { rm } from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 
-import {
-  describe,
-  it,
-  afterEach,
-  beforeEach,
-  beforeAll,
-  afterAll,
-} from 'vitest';
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { request } from '@eggjs/supertest';
 import urllib from 'urllib';
@@ -19,9 +12,7 @@ import { cluster, getFilepath } from './utils.ts';
 
 // node v24 will hang when test this file
 // FIXME: should enable this test after node v24 is stable
-describe.skipIf(
-  process.version.startsWith('v24') || process.platform === 'win32'
-)('test/app_worker.test.ts', () => {
+describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32')('test/app_worker.test.ts', () => {
   let app: MockApplication;
   afterEach(() => app && app.close());
   afterEach(mm.restore);
@@ -166,10 +157,7 @@ describe.skipIf(
       await scheduler.wait(3000);
 
       app.expect('stderr', /worker:\d+ disconnect/);
-      app.expect(
-        'stderr',
-        /don't fork new work \(refork: false, reforkCount: 0\)/
-      );
+      app.expect('stderr', /don't fork new work \(refork: false, reforkCount: 0\)/);
     });
   });
 
@@ -206,10 +194,7 @@ describe.skipIf(
       await app
         // .debug()
         .expect('code', 1)
-        .expect(
-          'stderr',
-          /\[master\] app_worker#1:\d+ start fail, exiting with code:1/
-        )
+        .expect('stderr', /\[master\] app_worker#1:\d+ start fail, exiting with code:1/)
         .expect('stderr', /\[app_worker\] start timeout, exiting with code:1/)
         .expect('stderr', /nodejs.AppWorkerDiedError: \[master\]/)
         .expect('stderr', /app_worker#1:\d+ died/)
@@ -248,20 +233,11 @@ describe.skipIf(
 
       await request('http://0.0.0.0:17010').get('/').expect('done').expect(200);
 
-      await request('http://127.0.0.1:17010')
-        .get('/')
-        .expect('done')
-        .expect(200);
+      await request('http://127.0.0.1:17010').get('/').expect('done').expect(200);
 
-      await request('http://localhost:17010')
-        .get('/')
-        .expect('done')
-        .expect(200);
+      await request('http://localhost:17010').get('/').expect('done').expect(200);
 
-      await request('http://127.0.0.1:17010')
-        .get('/port')
-        .expect('17010')
-        .expect(200);
+      await request('http://127.0.0.1:17010').get('/port').expect('17010').expect(200);
 
       // ipv6
       // await request('http://[::1]:17010')
@@ -325,10 +301,7 @@ describe.skipIf(
       await app2.ready();
 
       app2.expect('code', 1);
-      app2.expect(
-        'stderr',
-        /\[app_worker] server got error: bind EADDRINUSE null:17001, code: EADDRINUSE/
-      );
+      app2.expect('stderr', /\[app_worker] server got error: bind EADDRINUSE null:17001, code: EADDRINUSE/);
       app2.expect('stdout', /don't fork/);
     } finally {
       if (app2) {

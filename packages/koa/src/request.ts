@@ -27,12 +27,7 @@ export class Request {
   response: Response;
   originalUrl: string;
 
-  constructor(
-    app: Application,
-    ctx: Context,
-    req: IncomingMessage,
-    res: ServerResponse
-  ) {
+  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -473,10 +468,7 @@ export class Request {
    */
   accepts(args: string[]): string | string[] | false;
   accepts(...args: string[]): string | string[] | false;
-  accepts(
-    args?: string | string[],
-    ...others: string[]
-  ): string | string[] | false {
+  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
     return this.accept.types(args as string, ...others);
   }
 
@@ -491,10 +483,7 @@ export class Request {
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
-  acceptsEncodings(
-    encodings?: string | string[],
-    ...others: string[]
-  ): string[] | string | false {
+  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
     if (!encodings) {
       return this.accept.encodings();
     }
@@ -517,10 +506,7 @@ export class Request {
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
-  acceptsCharsets(
-    charsets?: string | string[],
-    ...others: string[]
-  ): string[] | string | false {
+  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
     if (!charsets) {
       return this.accept.charsets();
     }
@@ -543,10 +529,7 @@ export class Request {
   acceptsLanguages(): string[];
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
-  acceptsLanguages(
-    languages?: string | string[],
-    ...others: string[]
-  ): string | string[] | false {
+  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
     if (!languages) {
       return this.accept.languages();
     }

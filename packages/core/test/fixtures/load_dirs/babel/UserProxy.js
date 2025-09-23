@@ -36,36 +36,23 @@ function _classCallCheck(instance, Constructor) {
 
 UserProxy = (function () {
   function UserProxy() {
-    _classCallCheck(
-      this,
-      _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) &&
-        UserProxy
-    );
+    _classCallCheck(this, _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) && UserProxy);
 
     this.user = {
       name: 'xiaochen.gaoxc',
     };
   }
 
-  _createClass(
-    _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) &&
-      UserProxy,
-    [
-      {
-        key: 'getUser',
-        value: function getUser() {
-          return this.user;
-        },
+  _createClass(_temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) && UserProxy, [
+    {
+      key: 'getUser',
+      value: function getUser() {
+        return this.user;
       },
-    ]
-  );
+    },
+  ]);
 
-  return (
-    _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) &&
-    UserProxy
-  );
+  return _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) && UserProxy;
 })();
 
-module.exports =
-  _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) &&
-  UserProxy;
+module.exports = _temporalAssertDefined(UserProxy, 'UserProxy', _temporalUndefined) && UserProxy;

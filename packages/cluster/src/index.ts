@@ -18,9 +18,6 @@ export async function startCluster(options: ClusterOptions) {
   await new Master(options).ready();
 }
 
-export {
-  Master, type MasterOptions,
-  type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode,
-};
+export { Master, type MasterOptions, type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode };
 
 export * from './error/index.ts';

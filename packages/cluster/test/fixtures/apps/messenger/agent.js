@@ -6,7 +6,7 @@ const pids = {
   agent: process.pid,
 };
 
-module.exports = function(agent) {
+module.exports = function (agent) {
   // from parent
   agent.messenger.on('parent2agent', msg => console.log(msg));
 

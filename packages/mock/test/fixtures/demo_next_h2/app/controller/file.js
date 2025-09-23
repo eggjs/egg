@@ -1,4 +1,4 @@
-module.exports = async function() {
+module.exports = async function () {
   const stream = await this.getFileStream();
   const fields = stream.fields;
   this.body = {

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function(agent) {
+module.exports = function (agent) {
   let pids;
   agent.messenger.on('egg-pids', data => {
     pids = data;

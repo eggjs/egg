@@ -23,10 +23,7 @@ describe.skip('test/parallel.test.ts', () => {
     const { getBootstrapApp } = await import('../src/bootstrap.js');
     const app = getBootstrapApp();
     await app.ready();
-    await app.httpRequest()
-      .get('/')
-      .expect(200)
-      .expect('foo');
+    await app.httpRequest().get('/').expect(200).expect('foo');
     await app.close();
   });
 });

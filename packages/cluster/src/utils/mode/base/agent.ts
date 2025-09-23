@@ -64,11 +64,18 @@ export abstract class BaseAgentUtils extends EventEmitter {
   // public attrs
   startTime = 0;
 
-  constructor(options: MasterOptions, { log, logger, messenger }: {
-    log: LogFun;
-    logger: Logger;
-    messenger: Messenger;
-  }) {
+  constructor(
+    options: MasterOptions,
+    {
+      log,
+      logger,
+      messenger,
+    }: {
+      log: LogFun;
+      logger: Logger;
+      messenger: Messenger;
+    }
+  ) {
     super();
     this.options = options;
     this.log = log;

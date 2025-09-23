@@ -8,7 +8,6 @@ class DockerAdapter {
   async inspectDocker() {
     return 'docker';
   }
-
 }
 
 module.exports = DockerAdapter;

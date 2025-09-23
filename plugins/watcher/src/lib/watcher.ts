@@ -30,9 +30,7 @@ export class Watcher extends Base {
       // If watcher config is not defined, skip initialization
       return;
     }
-    let EventSource = this.#config.watcher?.eventSources[
-      watcherType
-    ] as unknown as typeof BaseEventSource;
+    let EventSource = this.#config.watcher?.eventSources[watcherType] as unknown as typeof BaseEventSource;
     if (typeof EventSource === 'string') {
       EventSource = await importModule(EventSource, {
         importDefaultOnly: true,
@@ -100,11 +98,7 @@ export class Watcher extends Base {
 
   #onChange(info: ChangeInfo) {
     debug('onChange %o', info);
-    this.emit(
-      'info',
-      '[@eggjs/watcher] Received a change event from eventSource: %j',
-      info
-    );
+    this.emit('info', '[@eggjs/watcher] Received a change event from eventSource: %j', info);
     const path = info.path;
 
     for (const p of this.eventNames()) {
@@ -118,11 +112,7 @@ export class Watcher extends Base {
 
   #onFuzzyChange(info: ChangeInfo) {
     debug('onFuzzyChange %o', info);
-    this.emit(
-      'info',
-      '[@eggjs/watcher] Received a fuzzy-change event from eventSource: %j',
-      info
-    );
+    this.emit('info', '[@eggjs/watcher] Received a fuzzy-change event from eventSource: %j', info);
     const path = info.path;
 
     for (const p of this.eventNames()) {
