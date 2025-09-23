@@ -54,8 +54,8 @@ catalog:
   '@types/superagent': ^8.1.9
   '@types/type-is': ^1.6.6
   '@types/vary': ^1.1.3
-  '@vitest/coverage-v8': 4.0.0-beta.11
-  '@vitest/ui': 4.0.0-beta.11
+  '@vitest/coverage-v8': 4.0.0-beta.12
+  '@vitest/ui': 4.0.0-beta.12
   accepts: ^1.3.8
   address: '2'
   assert-file: '1'
@@ -156,6 +156,6 @@ catalog:
   urllib: ^4.6.11
   utility: ^2.5.0
   vary: ^1.1.2
-  vitest: 4.0.0-beta.11
+  vitest: 4.0.0-beta.12
 
 catalogMode: prefer
