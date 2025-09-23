@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "egg": "^3.17.5",
-    "egg-scripts": "2"
+    "egg-scripts": "3"
   },
   "devDependencies": {
     "egg-bin": "6",
