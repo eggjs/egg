@@ -109,13 +109,13 @@ catalog:
   husky: ^9.1.7
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
-  js-yaml: '4'
+  js-yaml: ^4.1.0
   koa-bodyparser: ^4.4.1
   koa-compose: ^4.1.0
   koa-onerror: ^5.0.1
   koa-override: ^4.0.0
   koa-static: ^5.0.0
-  lint-staged: ^16.1.6
+  lint-staged: ^16.2.0
   merge-descriptors: ^2.0.0
   mm: ^4.0.2
   mocha: 11.7.2
@@ -127,7 +127,7 @@ catalog:
   npminstall: ^7.12.0
   on-finished: ^2.4.1
   onelogger: ^1.0.1
-  oxlint: ^1.15.0
+  oxlint: ^1.16.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
   pedding: ^2.0.1
@@ -159,3 +159,10 @@ catalog:
   vitest: 4.0.0-beta.12
 
 catalogMode: prefer
+
+minimumReleaseAge: 1440
+
+minimumReleaseAgeExclude:
+  - '@eggjs/*'
+  - '@vitest/*'
+  - vitest
