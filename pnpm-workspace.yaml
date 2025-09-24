@@ -148,7 +148,7 @@ catalog:
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
   tsd: ^0.33.0
-  tsdown: 0.15.4
+  tsdown: ^0.15.4
   tshy: ^3.0.0
   tshy-after: ^1.0.0
   type-fest: ^5.0.1
@@ -166,4 +166,8 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - '@eggjs/*'
   - '@vitest/*'
+  - '@rolldown/*'
+  - '@vitejs/*'
+  - '@oxc-project/*'
+  - rolldown
   - vitest
