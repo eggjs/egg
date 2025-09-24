@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { defineConfig, type PartialEggConfig } from '../index.ts';
 
@@ -7,7 +8,7 @@ import { defineConfig, type PartialEggConfig } from '../index.ts';
  * @class Config
  * @since 1.0.0
  */
-export default defineConfig(appInfo => {
+export default defineConfig((appInfo): PartialEggConfig => {
   const config: PartialEggConfig = {
     /**
      * The environment of egg
@@ -28,7 +29,7 @@ export default defineConfig(appInfo => {
     /**
      * The key that signing cookies. It can contain multiple keys separated by `,`.
      * @member {String} Config#keys
-     * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
+     * @see https://eggjs.org/core/cookie-and-session#cookie-secret-key
      * @default
      * @since 1.0.0
      */
@@ -200,14 +201,14 @@ export default defineConfig(appInfo => {
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
    * @property {String} cacheControl - files cache , default is public, max-age=2592000
    * @example
-   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.png',
    * config.siteFile = {
-   *   '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   *   '/favicon.ico': 'https://eggjs.org/favicon.png',
    * };
    */
   config.siteFile = {
     enable: true,
-    '/favicon.ico': path.join(import.meta.dirname, 'favicon.png'),
+    '/favicon.ico': pathToFileURL(path.join(import.meta.dirname, 'favicon.png')),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };
@@ -242,7 +243,7 @@ export default defineConfig(appInfo => {
       parameterLimit: 1000,
     },
     onProtoPoisoning: 'error',
-    onerror(err: any, ctx: Context) {
+    onerror(err, ctx) {
       err.message = `${err.message}, check bodyParser config`;
       if (ctx.status === 404) {
         // set default status to 400, meaning client bad request

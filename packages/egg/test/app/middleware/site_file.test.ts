@@ -1,6 +1,8 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp, type MockApplication } from '../../utils.js';
+
+import { createApp, type MockApplication } from '../../utils.ts';
 
 describe('test/app/middleware/site_file.test.ts', () => {
   let app: MockApplication;
@@ -11,19 +13,11 @@ describe('test/app/middleware/site_file.test.ts', () => {
   afterAll(() => app.close());
 
   it('should GET /favicon.ico 200', () => {
-    return app
-      .httpRequest()
-      .get('/favicon.ico')
-      .expect(res => assert(res.headers['content-type'].includes('icon')))
-      .expect(200);
+    return app.httpRequest().get('/favicon.ico').expect('content-type', 'image/vnd.microsoft.icon').expect(200);
   });
 
   it('should GET /favicon.ico?t=123 200', () => {
-    return app
-      .httpRequest()
-      .get('/favicon.ico?t=123')
-      .expect(res => assert(res.headers['content-type'].includes('icon')))
-      .expect(200);
+    return app.httpRequest().get('/favicon.ico?t=123').expect('content-type', 'image/vnd.microsoft.icon').expect(200);
   });
 
   it('should 200 when accessing /robots.txt', () => {
@@ -128,11 +122,7 @@ describe('test/app/middleware/site_file.test.ts', () => {
     afterAll(() => app.close());
 
     it('should get custom cache-control', async () => {
-      await app
-        .httpRequest()
-        .get('/favicon.ico')
-        .expect(res => assert(res.headers['cache-control'].includes('no-store')))
-        .expect(200);
+      await app.httpRequest().get('/favicon.ico').expect('cache-control', 'no-store').expect(200);
     });
   });
 });

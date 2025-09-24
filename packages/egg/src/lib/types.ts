@@ -99,7 +99,7 @@ export type PartialEggConfig = PartialDeep<EggAppConfig>;
 /**
  * Configuration factory function return type
  */
-export type EggConfigFactory = (appInfo: EggAppInfo) => PartialEggConfig & Record<string, any>;
+export type EggConfigFactory = (appInfo: EggAppInfo) => PartialEggConfig;
 
 /**
  * Define configuration with type safety
