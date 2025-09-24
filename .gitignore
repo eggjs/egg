@@ -27,6 +27,8 @@ test/fixtures/apps/app-ts-esm/**/*.d.ts
 
 # site
 site/dist
+site/.vitepress/cache
+site/.vitepress/dist
 !site/public
 
 .umi
@@ -35,7 +37,6 @@ site/dist
 package-lock.json
 .tshy*
 dist
-site/.dumi/
 !pnpm-lock.yaml
 
 !packages/egg/test/fixtures/apps/loader-plugin/node_modules
