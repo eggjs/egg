@@ -1,17 +1,20 @@
 {
   "name": "@eggjs/site",
   "private": true,
+  "type": "module",
   "description": "Eggjs documentation site",
   "dependencies": {
     "egg": "workspace:*",
-    "dumi": "catalog:"
+    "vitepress": "catalog:"
   },
   "devDependencies": {
     "prettier": "catalog:"
   },
   "scripts": {
-    "dev": "APP_ROOT=. dumi dev",
-    "build:skip": "APP_ROOT=. dumi build",
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "build:skip": "vitepress build docs",
+    "preview": "vitepress preview docs",
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
   },
   "engines": {

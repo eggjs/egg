@@ -174,19 +174,10 @@ For more info, please refer [English Title Case].
 
 If you have changed any file under the "docs" inside "site" folder, you need to regenerate the documents to see the real effect.
 
-If you are using Node version between 14 and 16, please use the following command:
-
-```bash
-$ npm run site:devWithNode14-16
-```
-
-Otherwises please use:
-
 ```bash
 $ npm run site:dev
 ```
 
-Node.js won't work properly after 17.X for the OpenSSL problem, you have to downgrade the version of it as a solution.
 If you just want to build the documents, use `site:build` instead.
 
 ## Release Management
