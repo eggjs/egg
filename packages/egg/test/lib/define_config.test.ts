@@ -1,6 +1,6 @@
-import { describe, it } from 'vitest';
-import assert from 'node:assert';
-import { defineConfig, type EggAppInfo } from '../../src/index.ts';
+import { describe, it, expect } from 'vitest';
+
+import { defineConfig, type EggAppInfo, type PartialEggConfig } from '../../src/index.ts';
 
 describe('test/lib/define_config.test.ts', () => {
   describe('defineConfig', () => {
@@ -9,50 +9,69 @@ describe('test/lib/define_config.test.ts', () => {
         keys: 'my-keys',
         middleware: ['cors'],
         logger: {
-          level: 'INFO',
+          level: 'DEBUG',
+          consoleLevel: 'DEBUG',
+          disableConsoleAfterReady: true,
+        },
+        customLogger: {
+          myLogger: {
+            file: 'my.log',
+          },
+        },
+        dump: {
+          ignore: new Set(['keys']),
+          timing: {
+            slowBootActionMinDuration: 1000,
+          },
+        },
+        appCustomConfig: {
+          myConfig: 'myConfig',
         },
       });
 
-      assert.deepStrictEqual(config, {
-        keys: 'my-keys',
-        middleware: ['cors'],
-        logger: {
-          level: 'INFO',
-        },
-      });
+      expect(config).matchSnapshot();
+      expect(config.appCustomConfig.myConfig).toBe('myConfig');
     });
 
     it('should work with config function', () => {
-      const configFactory = defineConfig((appInfo: EggAppInfo) => ({
+      const configFactory = defineConfig(appInfo => ({
         keys: appInfo.name + '_keys',
         middleware: [],
         env: appInfo.env,
+        logger: {
+          level: 'DEBUG',
+          consoleLevel: 'WARN',
+        },
+        appCustomConfig: {
+          myConfig: 'myConfig',
+        },
       }));
 
-      assert.equal(typeof configFactory, 'function');
+      expect(configFactory).toBeInstanceOf(Function);
 
-      const mockAppInfo: EggAppInfo = {
+      const mockAppInfo = {
         name: 'testapp',
         baseDir: '/tmp/testapp',
         env: 'unittest',
         HOME: '/home/test',
         pkg: { name: 'testapp', version: '1.0.0' },
         root: '/tmp',
-      };
+      } as unknown as EggAppInfo;
 
       const result = configFactory(mockAppInfo);
-      assert.deepStrictEqual(result, {
-        keys: 'testapp_keys',
-        middleware: [],
-        env: 'unittest',
-      });
+      expect(result).matchSnapshot();
     });
 
     it('should work with mixed config and bizConfig', () => {
       const configFactory = defineConfig((appInfo: EggAppInfo) => {
-        const config = {
+        const config: PartialEggConfig = {
           keys: appInfo.name + '_keys',
           middleware: [] as string[],
+          logger: {
+            level: 'DEBUG',
+            consoleLevel: 'INFO',
+            disableConsoleAfterReady: true,
+          },
         };
 
         const bizConfig = {
@@ -66,24 +85,19 @@ describe('test/lib/define_config.test.ts', () => {
         };
       });
 
-      assert.equal(typeof configFactory, 'function');
+      expect(configFactory).toBeInstanceOf(Function);
 
-      const mockAppInfo: EggAppInfo = {
+      const mockAppInfo = {
         name: 'myapp',
         baseDir: '/tmp/myapp',
         env: 'local',
         HOME: '/home/test',
         pkg: { name: 'myapp', version: '1.0.0' },
         root: '/tmp',
-      };
+      } as unknown as EggAppInfo;
 
       const result = configFactory(mockAppInfo);
-      assert.deepStrictEqual(result, {
-        keys: 'myapp_keys',
-        middleware: [],
-        sourceUrl: 'https://example.com/myapp',
-        customSetting: true,
-      });
+      expect(result).matchSnapshot();
     });
 
     it('should preserve type safety for built-in config options', () => {
@@ -100,10 +114,7 @@ describe('test/lib/define_config.test.ts', () => {
         },
       });
 
-      assert.equal(config.keys, 'test-key');
-      assert.deepStrictEqual(config.middleware, ['cors', 'bodyParser']);
-      assert.equal(config.logger?.level, 'DEBUG');
-      assert.equal(config.httpclient?.timeout, 5000);
+      expect(config).matchSnapshot();
     });
   });
 });

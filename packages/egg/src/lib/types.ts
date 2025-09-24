@@ -2,7 +2,8 @@ import type { Socket } from 'node:net';
 
 import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
-import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig } from '@eggjs/core';
+import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
+import type { PartialDeep } from 'type-fest';
 
 import type { EggApplicationCore, Context } from './egg.ts';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
@@ -23,7 +24,7 @@ import '@eggjs/logrotator';
 import '@eggjs/multipart';
 import '@eggjs/view';
 
-export type { EggAppInfo } from '@eggjs/core';
+export type { EggAppInfo, PartialDeep };
 
 type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
@@ -85,20 +86,20 @@ export interface HttpClientConfig {
  *
  * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
  * type EggConfig = PowerPartial<EggAppConfig>
+ *
+ * @deprecated use `PartialDeep` instead
  */
-export type PowerPartial<T> = {
-  [U in keyof T]?: T[U] extends object ? PowerPartial<T[U]> : T[U];
-};
+export type PowerPartial<T> = PartialDeep<T>;
+
+/**
+ * Partial EggAppConfig
+ */
+export type PartialEggConfig = PartialDeep<EggAppConfig>;
 
 /**
  * Configuration factory function return type
  */
-export type EggConfigFactory = (appInfo: EggAppInfo) => PowerPartial<EggAppConfig> & Record<string, any>;
-
-/**
- * Configuration object or factory function
- */
-export type EggConfig = PowerPartial<EggAppConfig> & Record<string, any> | EggConfigFactory;
+export type EggConfigFactory = (appInfo: EggAppInfo) => PartialEggConfig & Record<string, any>;
 
 /**
  * Define configuration with type safety
@@ -116,7 +117,7 @@ export type EggConfig = PowerPartial<EggAppConfig> & Record<string, any> | EggCo
  *   middleware: []
  * }));
  */
-export function defineConfig(config: EggConfig): EggConfig {
+export function defineConfig<T extends PartialEggConfig | EggConfigFactory>(config: T): T {
   return config;
 }
 
