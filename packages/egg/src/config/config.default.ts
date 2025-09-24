@@ -1,18 +1,14 @@
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
-import type { EggAppInfo, Context } from '@eggjs/core';
-
-import type { EggAppConfig, PowerPartial } from '../lib/types.ts';
-import { getSourceFile } from '../lib/utils.ts';
+import { defineConfig, type PartialEggConfig } from '../index.ts';
 
 /**
  * The configuration of egg application, can be access by `app.config`
  * @class Config
  * @since 1.0.0
  */
-export default (appInfo: EggAppInfo) => {
-  const config: PowerPartial<EggAppConfig> = {
+export default defineConfig(appInfo => {
+  const config: PartialEggConfig = {
     /**
      * The environment of egg
      * @member {String} Config#env
@@ -211,7 +207,7 @@ export default (appInfo: EggAppInfo) => {
    */
   config.siteFile = {
     enable: true,
-    '/favicon.ico': pathToFileURL(getSourceFile('config/favicon.png')),
+    '/favicon.ico': path.join(import.meta.dirname, 'favicon.png'),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };
@@ -404,4 +400,4 @@ export default (appInfo: EggAppInfo) => {
   config.onClientError = undefined;
 
   return config;
-};
+});
