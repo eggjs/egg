@@ -1,18 +1,15 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import type { EggAppInfo, Context } from '@eggjs/core';
-
-import type { EggAppConfig, PowerPartial } from '../lib/types.ts';
-import { getSourceFile } from '../lib/utils.ts';
+import { defineConfig, type PartialEggConfig } from '../index.ts';
 
 /**
  * The configuration of egg application, can be access by `app.config`
  * @class Config
  * @since 1.0.0
  */
-export default (appInfo: EggAppInfo) => {
-  const config: PowerPartial<EggAppConfig> = {
+export default defineConfig((appInfo): PartialEggConfig => {
+  const config: PartialEggConfig = {
     /**
      * The environment of egg
      * @member {String} Config#env
@@ -32,7 +29,7 @@ export default (appInfo: EggAppInfo) => {
     /**
      * The key that signing cookies. It can contain multiple keys separated by `,`.
      * @member {String} Config#keys
-     * @see http://eggjs.org/en/core/cookie-and-session.html#cookie-secret-key
+     * @see https://eggjs.org/core/cookie-and-session#cookie-secret-key
      * @default
      * @since 1.0.0
      */
@@ -202,16 +199,18 @@ export default (appInfo: EggAppInfo) => {
    * You can map some files using this options, it will response immediately when matching.
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
-   * @property {String} cacheControl - files cache , default is public, max-age=2592000
+   * @property {String} cacheControl - files cache control, default is `public, max-age=2592000`
    * @example
-   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   * ```ts
+   * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.png',
    * config.siteFile = {
-   *   '/favicon.ico': 'https://eggjs.org/favicon.ico',
+   *   '/favicon.ico': 'https://eggjs.org/favicon.png',
    * };
+   * ```
    */
   config.siteFile = {
     enable: true,
-    '/favicon.ico': pathToFileURL(getSourceFile('config/favicon.png')),
+    '/favicon.ico': pathToFileURL(path.join(import.meta.dirname, 'favicon.png')),
     // default cache in 30 days
     cacheControl: 'public, max-age=2592000',
   };
@@ -246,7 +245,7 @@ export default (appInfo: EggAppInfo) => {
       parameterLimit: 1000,
     },
     onProtoPoisoning: 'error',
-    onerror(err: any, ctx: Context) {
+    onerror(err, ctx) {
       err.message = `${err.message}, check bodyParser config`;
       if (ctx.status === 404) {
         // set default status to 400, meaning client bad request
@@ -404,4 +403,4 @@ export default (appInfo: EggAppInfo) => {
   config.onClientError = undefined;
 
   return config;
-};
+});

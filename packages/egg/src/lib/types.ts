@@ -2,7 +2,8 @@ import type { Socket } from 'node:net';
 
 import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
 import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
-import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig } from '@eggjs/core';
+import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
+import type { PartialDeep } from 'type-fest';
 
 import type { EggApplicationCore, Context } from './egg.ts';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
@@ -23,7 +24,7 @@ import '@eggjs/logrotator';
 import '@eggjs/multipart';
 import '@eggjs/view';
 
-export type { EggAppInfo } from '@eggjs/core';
+export type { EggAppInfo, PartialDeep };
 
 type IgnoreItem = string | RegExp | ((ctx: Context) => boolean);
 type IgnoreOrMatch = IgnoreItem | IgnoreItem[];
@@ -85,10 +86,40 @@ export interface HttpClientConfig {
  *
  * // { view: { defaultEngines: string } } => { view?: { defaultEngines?: string } }
  * type EggConfig = PowerPartial<EggAppConfig>
+ *
+ * @deprecated use `PartialDeep` instead
  */
-export type PowerPartial<T> = {
-  [U in keyof T]?: T[U] extends object ? PowerPartial<T[U]> : T[U];
-};
+export type PowerPartial<T> = PartialDeep<T>;
+
+/**
+ * Partial EggAppConfig
+ */
+export type PartialEggConfig = PartialDeep<EggAppConfig>;
+
+/**
+ * Configuration factory function return type
+ */
+export type EggConfigFactory = (appInfo: EggAppInfo) => PartialEggConfig;
+
+/**
+ * Define configuration with type safety
+ * @example
+ * import { defineConfig } from 'egg';
+ *
+ * export default defineConfig({
+ *   keys: 'my-keys',
+ *   middleware: []
+ * });
+ *
+ * // or with function
+ * export default defineConfig((appInfo) => ({
+ *   keys: appInfo.name + '_keys',
+ *   middleware: []
+ * }));
+ */
+export function defineConfig<T extends PartialEggConfig | EggConfigFactory>(config: T): T {
+  return config;
+}
 
 export interface EggAppConfig extends EggCoreAppConfig {
   workerStartTimeout: number;

@@ -119,6 +119,7 @@
     "@eggjs/cookies": "catalog:",
     "@eggjs/core": "workspace:*",
     "@eggjs/development": "workspace:*",
+    "@eggjs/extend2": "workspace:*",
     "@eggjs/i18n": "catalog:",
     "@eggjs/jsonp": "catalog:",
     "@eggjs/logrotator": "catalog:",
@@ -135,7 +136,6 @@
     "cluster-client": "catalog:",
     "egg-errors": "catalog:",
     "egg-logger": "catalog:",
-    "@eggjs/extend2": "workspace:*",
     "graceful": "catalog:",
     "humanize-ms": "catalog:",
     "is-type-of": "catalog:",
@@ -144,6 +144,7 @@
     "onelogger": "catalog:",
     "performance-ms": "catalog:",
     "sendmessage": "catalog:",
+    "type-fest": "catalog:",
     "urllib": "catalog:",
     "utility": "catalog:"
   },

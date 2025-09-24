@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/lib/define_config.test.ts > defineConfig > should preserve type safety for built-in config options 1`] = `
+{
+  "httpclient": {
+    "timeout": 5000,
+  },
+  "keys": "test-key",
+  "logger": {
+    "consoleLevel": "INFO",
+    "level": "DEBUG",
+  },
+  "middleware": [
+    "cors",
+    "bodyParser",
+  ],
+}
+`;
+
+exports[`test/lib/define_config.test.ts > defineConfig > should work with config function 1`] = `
+{
+  "appCustomConfig": {
+    "myConfig": "myConfig",
+  },
+  "env": "unittest",
+  "keys": "testapp_keys",
+  "logger": {
+    "consoleLevel": "WARN",
+    "level": "DEBUG",
+  },
+  "middleware": [],
+}
+`;
+
+exports[`test/lib/define_config.test.ts > defineConfig > should work with config object 1`] = `
+{
+  "appCustomConfig": {
+    "myConfig": "myConfig",
+  },
+  "customLogger": {
+    "myLogger": {
+      "file": "my.log",
+    },
+  },
+  "dump": {
+    "ignore": Set {
+      "keys",
+    },
+    "timing": {
+      "slowBootActionMinDuration": 1000,
+    },
+  },
+  "keys": "my-keys",
+  "logger": {
+    "consoleLevel": "DEBUG",
+    "disableConsoleAfterReady": true,
+    "level": "DEBUG",
+  },
+  "middleware": [
+    "cors",
+  ],
+}
+`;
+
+exports[`test/lib/define_config.test.ts > defineConfig > should work with mixed config and bizConfig 1`] = `
+{
+  "customSetting": true,
+  "keys": "myapp_keys",
+  "logger": {
+    "consoleLevel": "INFO",
+    "disableConsoleAfterReady": true,
+    "level": "DEBUG",
+  },
+  "middleware": [],
+  "sourceUrl": "https://example.com/myapp",
+}
+`;

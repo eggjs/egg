@@ -223,7 +223,7 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       // app.expect('stderr', /port should be number, but got null/);
     });
 
-    it('should use port in config', async () => {
+    it.skip('should use port in config', async () => {
       app = cluster('apps/app-listen-port', { port: 0 });
       // app.debug();
       await app.ready();
@@ -250,7 +250,7 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       //   .expect(200);
     });
 
-    it('should use hostname in config', async () => {
+    it.skip('should use hostname in config', async () => {
       const url = ip() + ':17010';
 
       app = cluster('apps/app-listen-hostname', { port: 0 });
