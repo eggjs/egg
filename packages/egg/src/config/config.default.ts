@@ -199,12 +199,14 @@ export default defineConfig((appInfo): PartialEggConfig => {
    * You can map some files using this options, it will response immediately when matching.
    *
    * @member {Object} Config#siteFile - key is path, and value is url or buffer.
-   * @property {String} cacheControl - files cache , default is public, max-age=2592000
+   * @property {String} cacheControl - files cache control, default is `public, max-age=2592000`
    * @example
+   * ```ts
    * // specific app's favicon, => '/favicon.ico': 'https://eggjs.org/favicon.png',
    * config.siteFile = {
    *   '/favicon.ico': 'https://eggjs.org/favicon.png',
    * };
+   * ```
    */
   config.siteFile = {
     enable: true,
