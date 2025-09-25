@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`successfully scaffolds a project based on simple-ts starter template 1`] = `
+[
+  ".gitignore",
+  "README.md",
+  "app",
+  "config",
+  "package.json",
+  "test",
+  "tsconfig.json",
+  "typings",
+  "vitest.config.ts",
+]
+`;

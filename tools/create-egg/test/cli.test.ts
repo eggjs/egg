@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 
 import type { SyncOptions, SyncResult } from 'execa';
 import { execaCommandSync } from 'execa';
@@ -24,7 +25,7 @@ const createNonEmptyDir = (overrideFolder?: string) => {
 
   // Create a package.json file
   const pkgJson = path.join(newNonEmptyFolder, 'package.json');
-  fs.writeFileSync(pkgJson, '{ "foo": "bar" }');
+  fs.writeFileSync(pkgJson, '{ "foo": "bar", "type": "module" }');
 };
 
 const templateFiles = fs
@@ -100,6 +101,29 @@ test('successfully scaffolds a project based on tegg starter template', () => {
   // Assertions
   expect(stdout).toContain(`Scaffolding project with`);
   expect(templateFiles).toEqual(generatedFiles);
+});
+
+test('successfully scaffolds a project based on simple-ts starter template', () => {
+  const tempDir = fs.mkdtempSync(tmpdir());
+  const projectName = 'create-egg-test-simple-ts';
+  const { stdout } = run([projectName, '--template', 'simple-ts'], {
+    cwd: tempDir,
+  });
+  const projectDir = path.join(tempDir, projectName);
+  const generatedFiles = fs.readdirSync(projectDir).sort();
+
+  // Assertions
+  expect(stdout).toContain(`Scaffolding project with`);
+  expect(generatedFiles).matchSnapshot();
+
+  // run test
+  const monoRepoDir = path.join(import.meta.dirname, '../../../');
+  const eggDir = path.join(monoRepoDir, 'packages/egg');
+  const mockDir = path.join(monoRepoDir, 'plugins/mock');
+  execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+  const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+  expect(testStdout).toContain('2 passed');
+  fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
 test('works with the -t alias', () => {
