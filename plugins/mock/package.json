@@ -124,7 +124,6 @@
     "@eggjs/tegg-plugin": "catalog:",
     "@types/methods": "catalog:",
     "@types/node": "catalog:",
-    "egg": "workspace:*",
     "egg-errors": "catalog:",
     "egg-tracer": "catalog:",
     "pedding": "catalog:",

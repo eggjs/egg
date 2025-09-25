@@ -1135,6 +1135,9 @@ importers:
       detect-port:
         specifier: 'catalog:'
         version: 2.1.0
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1181,9 +1184,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.5.2
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
@@ -1208,6 +1208,9 @@ importers:
       cookie:
         specifier: 'catalog:'
         version: 1.0.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       koa-onerror:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1230,9 +1233,6 @@ importers:
       '@types/stack-trace':
         specifier: 'catalog:'
         version: 0.0.33
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
