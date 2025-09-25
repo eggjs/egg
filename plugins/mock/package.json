@@ -99,7 +99,6 @@
     "node": ">= 20.19.0"
   },
   "dependencies": {
-    "@eggjs/core": "workspace:*",
     "@eggjs/extend2": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/utils": "workspace:*",

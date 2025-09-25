@@ -67,7 +67,6 @@
     "@types/node": "catalog:",
     "address": "catalog:",
     "coffee": "catalog:",
-    "egg": "workspace:*",
     "egg-errors": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
