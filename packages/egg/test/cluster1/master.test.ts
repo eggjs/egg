@@ -151,7 +151,7 @@ describe('test/cluster1/master.test.ts', () => {
       app = coffee.spawn('node', [getFilepath('apps/agent-die/start.js')]);
 
       // spawn can't communication, so `end` event won't emit
-      scheduler.wait(10000);
+      await scheduler.wait(10000);
       app.emit('close', 0);
       app.notExpect('stderr', /TypeError: process\.send is not a function/);
     });
