@@ -10,7 +10,7 @@
     "start": "eggctl start --daemon --title=egg-server-{{name}}",
     "stop": "eggctl stop --title=egg-server-{{name}}",
     "dev": "egg-bin dev",
-    "test:local": "cross-env NODE_OPTIONS='--import @oxc-node/core/register' vitest run",
+    "test:local": "cross-env NODE_OPTIONS=\"--import @oxc-node/core/register\" vitest run",
     "pretest": "npm run clean && npm run lint -- --fix",
     "test": "npm run test:local",
     "preci": "npm run clean && npm run lint",
