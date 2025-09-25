@@ -1,4 +1,4 @@
-import { defineConfig, type EggAppInfo } from 'egg';
+import { defineConfig, type EggAppInfo, type PartialEggConfig } from 'egg';
 
 export default defineConfig((appInfo: EggAppInfo) => {
   const config = {
@@ -7,7 +7,7 @@ export default defineConfig((appInfo: EggAppInfo) => {
 
     // add your egg config in here
     middleware: [] as string[],
-  };
+  } as PartialEggConfig;
 
   // add your special config in here
   const bizConfig = {

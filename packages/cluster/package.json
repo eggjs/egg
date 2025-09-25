@@ -5,12 +5,16 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./agent_worker": "./dist/agent_worker.js",
+      "./app_worker": "./dist/app_worker.js",
       "./package.json": "./package.json"
     }
   },
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./agent_worker": "./src/agent_worker.ts",
+    "./app_worker": "./src/app_worker.ts",
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
