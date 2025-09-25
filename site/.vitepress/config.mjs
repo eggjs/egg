@@ -1,10 +1,7 @@
 import { defineConfig } from 'vitepress'
 
-// https://vitepress.dev/reference/site-config
 export default defineConfig({
   srcDir: 'docs',
-  title: 'Egg',
-  description: 'Born to build better enterprise frameworks and apps',
   appearance: 'dark',
   ignoreDeadLinks: 'localhostLinks',
   
@@ -13,121 +10,123 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#22ab28' }],
   ],
 
-  themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    logo: '/logo.svg',
-    siteTitle: 'Egg',
-    
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Get Started', link: '/intro/quickstart' },
-      { text: 'GitHub', link: 'https://github.com/eggjs/egg' },
-      { text: 'Release', link: 'https://github.com/eggjs/egg/releases' },
-      { text: 'Plugins', link: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories' }
-    ],
-
-    sidebar: [
-      {
-        text: 'Introduction',
-        items: [
-          { text: 'Overview', link: '/intro/' },
-          { text: 'Quick Start', link: '/intro/quickstart' },
-          { text: 'Egg & Koa', link: '/intro/egg-and-koa' },
-          { text: 'Progressive', link: '/intro/progressive' },
-          { text: 'Migration Guide', link: '/intro/migration' }
-        ]
-      },
-      {
-        text: 'Basics',
-        items: [
-          { text: 'Overview', link: '/basics/' },
-          { text: 'Directory Structure', link: '/basics/structure' },
-          { text: 'Built-in Objects', link: '/basics/objects' },
-          { text: 'Runtime Environment', link: '/basics/env' },
-          { text: 'Configuration', link: '/basics/config' },
-          { text: 'Middleware', link: '/basics/middleware' },
-          { text: 'Router', link: '/basics/router' },
-          { text: 'Controller', link: '/basics/controller' },
-          { text: 'Service', link: '/basics/service' },
-          { text: 'Plugin', link: '/basics/plugin' },
-          { text: 'Scheduled Tasks', link: '/basics/schedule' },
-          { text: 'Extend', link: '/basics/extend' },
-          { text: 'App Start', link: '/basics/app-start' }
-        ]
-      },
-      {
-        text: 'Core Features',
-        items: [
-          { text: 'Overview', link: '/core/' },
-          { text: 'Development', link: '/core/development' },
-          { text: 'Unit Testing', link: '/core/unittest' },
-          { text: 'Logger', link: '/core/logger' },
-          { text: 'HttpClient', link: '/core/httpclient' },
-          { text: 'Cookie & Session', link: '/core/cookie-and-session' },
-          { text: 'Cluster & IPC', link: '/core/cluster-and-ipc' },
-          { text: 'View Template', link: '/core/view' },
-          { text: 'i18n', link: '/core/i18n' },
-          { text: 'Error Handling', link: '/core/error-handling' },
-          { text: 'Security', link: '/core/security' },
-          { text: 'Deployment', link: '/core/deployment' }
-        ]
-      },
-      {
-        text: 'Advanced',
-        items: [
-          { text: 'Overview', link: '/advanced/' },
-          { text: 'Loader', link: '/advanced/loader' },
-          { text: 'Plugin Development', link: '/advanced/plugin' },
-          { text: 'Framework Development', link: '/advanced/framework' },
-          { text: 'Loader Updates', link: '/advanced/loader-update' },
-          { text: 'Cluster Client', link: '/advanced/cluster-client' },
-          { text: 'View Plugin', link: '/advanced/view-plugin' }
-        ]
-      },
-      {
-        text: 'Tutorials',
-        items: [
-          { text: 'Overview', link: '/tutorials/' },
-          { text: 'MySQL', link: '/tutorials/mysql' },
-          { text: 'Sequelize', link: '/tutorials/sequelize' },
-          { text: 'TypeScript', link: '/tutorials/typescript' },
-          { text: 'Socket.IO', link: '/tutorials/socketio' },
-          { text: 'RESTful API', link: '/tutorials/restful' },
-          { text: 'Passport', link: '/tutorials/passport' },
-          { text: 'Proxy', link: '/tutorials/proxy' },
-          { text: 'Assets', link: '/tutorials/assets' }
-        ]
-      },
-      {
-        text: 'Community',
-        items: [
-          { text: 'Overview', link: '/community/' },
-          { text: 'Contributing', link: '/community/CONTRIBUTING' },
-          { text: 'FAQ', link: '/community/faq' },
-          { text: 'Style Guide', link: '/community/style-guide' }
-        ]
-      }
-    ],
-
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/eggjs/egg' }
-    ],
-
-    footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2016-present Eggjs Team'
-    },
-
-    search: {
-      provider: 'local'
-    }
-  },
-
   locales: {
     root: {
       label: 'English',
-      lang: 'en'
+      lang: 'en',
+      title: 'Egg',
+      description: 'Born to build better enterprise frameworks and apps',
+      
+      themeConfig: {
+        logo: '/logo.svg',
+        siteTitle: 'Egg',
+        
+        nav: [
+          { text: 'Home', link: '/' },
+          { text: 'Get Started', link: '/intro/quickstart' },
+          { text: 'GitHub', link: 'https://github.com/eggjs/egg' },
+          { text: 'Release', link: 'https://github.com/eggjs/egg/releases' },
+          { text: 'Plugins', link: 'https://github.com/search?q=topic%3Aegg-plugin&type=Repositories' }
+        ],
+
+        sidebar: [
+          {
+            text: 'Introduction',
+            items: [
+              { text: 'Overview', link: '/intro/' },
+              { text: 'Quick Start', link: '/intro/quickstart' },
+              { text: 'Egg & Koa', link: '/intro/egg-and-koa' },
+              { text: 'Progressive', link: '/intro/progressive' },
+              { text: 'Migration Guide', link: '/intro/migration' }
+            ]
+          },
+          {
+            text: 'Basics',
+            items: [
+              { text: 'Overview', link: '/basics/' },
+              { text: 'Directory Structure', link: '/basics/structure' },
+              { text: 'Built-in Objects', link: '/basics/objects' },
+              { text: 'Runtime Environment', link: '/basics/env' },
+              { text: 'Configuration', link: '/basics/config' },
+              { text: 'Middleware', link: '/basics/middleware' },
+              { text: 'Router', link: '/basics/router' },
+              { text: 'Controller', link: '/basics/controller' },
+              { text: 'Service', link: '/basics/service' },
+              { text: 'Plugin', link: '/basics/plugin' },
+              { text: 'Scheduled Tasks', link: '/basics/schedule' },
+              { text: 'Extend', link: '/basics/extend' },
+              { text: 'App Start', link: '/basics/app-start' }
+            ]
+          },
+          {
+            text: 'Core Features',
+            items: [
+              { text: 'Overview', link: '/core/' },
+              { text: 'Development', link: '/core/development' },
+              { text: 'Unit Testing', link: '/core/unittest' },
+              { text: 'Logger', link: '/core/logger' },
+              { text: 'HttpClient', link: '/core/httpclient' },
+              { text: 'Cookie & Session', link: '/core/cookie-and-session' },
+              { text: 'Cluster & IPC', link: '/core/cluster-and-ipc' },
+              { text: 'View Template', link: '/core/view' },
+              { text: 'i18n', link: '/core/i18n' },
+              { text: 'Error Handling', link: '/core/error-handling' },
+              { text: 'Security', link: '/core/security' },
+              { text: 'Deployment', link: '/core/deployment' }
+            ]
+          },
+          {
+            text: 'Advanced',
+            items: [
+              { text: 'Overview', link: '/advanced/' },
+              { text: 'Loader', link: '/advanced/loader' },
+              { text: 'Plugin Development', link: '/advanced/plugin' },
+              { text: 'Framework Development', link: '/advanced/framework' },
+              { text: 'Loader Updates', link: '/advanced/loader-update' },
+              { text: 'Cluster Client', link: '/advanced/cluster-client' },
+              { text: 'View Plugin', link: '/advanced/view-plugin' }
+            ]
+          },
+          {
+            text: 'Tutorials',
+            items: [
+              { text: 'Overview', link: '/tutorials/' },
+              { text: 'MySQL', link: '/tutorials/mysql' },
+              { text: 'Sequelize', link: '/tutorials/sequelize' },
+              { text: 'TypeScript', link: '/tutorials/typescript' },
+              { text: 'Socket.IO', link: '/tutorials/socketio' },
+              { text: 'RESTful API', link: '/tutorials/restful' },
+              { text: 'Passport', link: '/tutorials/passport' },
+              { text: 'Proxy', link: '/tutorials/proxy' },
+              { text: 'Assets', link: '/tutorials/assets' }
+            ]
+          },
+          {
+            text: 'Community',
+            items: [
+              { text: 'Overview', link: '/community/' },
+              { text: 'Contributing', link: '/community/CONTRIBUTING' },
+              { text: 'FAQ', link: '/community/faq' },
+              { text: 'Style Guide', link: '/community/style-guide' }
+            ]
+          }
+        ],
+
+        socialLinks: [
+          { icon: 'github', link: 'https://github.com/eggjs/egg' }
+        ],
+
+        footer: {
+          message: 'Released under the MIT License.',
+          copyright: 'Copyright © 2016-present Eggjs Team'
+        },
+
+        search: {
+          provider: 'local'
+        }
+      }
     },
+    
     'zh-CN': {
       label: '简体中文',
       lang: 'zh-CN',
@@ -135,6 +134,9 @@ export default defineConfig({
       description: '为企业级框架和应用而生',
       
       themeConfig: {
+        logo: '/logo.svg',
+        siteTitle: 'Egg',
+        
         nav: [
           { text: '首页', link: '/zh-CN/' },
           { text: '快速开始', link: '/zh-CN/intro/quickstart' },
@@ -224,7 +226,20 @@ export default defineConfig({
               { text: '代码风格指南', link: '/zh-CN/community/style-guide' }
             ]
           }
-        ]
+        ],
+
+        socialLinks: [
+          { icon: 'github', link: 'https://github.com/eggjs/egg' }
+        ],
+
+        footer: {
+          message: 'Released under the MIT License.',
+          copyright: 'Copyright © 2016-present Eggjs Team'
+        },
+
+        search: {
+          provider: 'local'
+        }
       }
     }
   },
