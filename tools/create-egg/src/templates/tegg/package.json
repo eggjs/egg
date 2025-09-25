@@ -14,7 +14,7 @@
     "pretest": "npm run clean && npm run lint -- --fix",
     "test": "npm run test:local",
     "preci": "npm run clean && npm run lint",
-    "ci": "npm run test:local --coverage",
+    "ci": "npm run test:local -- --coverage",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
     "tsc": "tsc",
@@ -43,7 +43,8 @@
     "oxlint": "1",
     "oxlint-tsgolint": "^0.2.0",
     "typescript": "5",
-    "vitest": "beta"
+    "vitest": "beta",
+    "@vitest/coverage-v8": "beta"
   },
   "engines": {
     "node": ">=20.19.0"
