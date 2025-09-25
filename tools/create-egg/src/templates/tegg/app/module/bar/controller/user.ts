@@ -1,5 +1,5 @@
 import { Inject, HTTPController, HTTPMethod, HTTPMethodEnum, HTTPQuery } from '@eggjs/tegg';
-import { HelloService } from '@/module/foo';
+import { HelloService } from '../../foo/index.ts';
 
 @HTTPController({
   path: '/bar',

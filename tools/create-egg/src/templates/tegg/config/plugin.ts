@@ -1,4 +1,4 @@
-import { EggPlugin } from 'egg';
+import type { EggPlugin } from 'egg';
 
 const plugin: EggPlugin = {
   tegg: {

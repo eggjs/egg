@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { once } = require('node:events');
 const { Application } = require('../../dist/commonjs/index');
 
@@ -16,4 +15,4 @@ async function main() {
   console.log(`egg app server listening at http://localhost:${server.address().port}`);
 }
 
-main();
+main().catch(console.error);

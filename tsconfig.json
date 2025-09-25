@@ -3,8 +3,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "composite": true,
-    "incremental": true,
-    "noEmit": true
+    "incremental": true
   },
   "references": [
     {
@@ -17,7 +16,7 @@
       "path": "./packages/utils"
     },
     {
-      "path": "./packages/mock"
+      "path": "./plugins/mock"
     },
     {
       "path": "./packages/cluster"

@@ -13,8 +13,8 @@ describe('test/lib/core/messenger/local.test.ts', () => {
 
   afterAll(() => app.close());
 
-  afterEach(() => {
-    mm.restore();
+  afterEach(async () => {
+    await mm.restore();
     app.messenger.close();
     app.agent.messenger.close();
   });

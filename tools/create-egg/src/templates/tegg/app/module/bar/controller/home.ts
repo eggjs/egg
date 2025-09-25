@@ -1,4 +1,4 @@
-import { EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import { Inject, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
 
 @HTTPController({

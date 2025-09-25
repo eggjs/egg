@@ -341,6 +341,229 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 - Use `pnpm update --latest` to update catalog entries
 - Reference catalog entries in individual packages with `"package-name": "catalog:"`
 
+## Code Style and Quality
+
+### Linting and Formatting
+
+- **ESLint** - Used for code linting across all packages
+- **Prettier** - Code formatting (primarily for documentation)
+- Run `pnpm lint` to check code quality
+- Run `pnpm lint:fix` to auto-fix linting issues
+- Each package has its own `.eslintrc.js` extending from root configuration
+
+### TypeScript Best Practices
+
+- Enable strict mode in all TypeScript packages
+- Use explicit return types for public APIs
+- Prefer interfaces over type aliases for object shapes
+- Use readonly modifiers where appropriate
+- Avoid `any` type; use `unknown` when type is truly unknown
+
+### Code Coverage Requirements
+
+- Maintain high test coverage (>90% for core packages)
+- Use `pnpm --filter=<package> run cov` to generate coverage reports
+- Coverage reports are generated in `coverage/` directory
+- Critical paths must have 100% coverage
+
+## Debugging and Development Tips
+
+### Running in Debug Mode
+
+```bash
+# Debug main application
+NODE_OPTIONS='--inspect' pnpm --filter=egg run dev
+
+# Debug tests
+NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
+
+# Debug specific test file
+NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test test/app/extend/context.test.ts
+```
+
+### Environment Variables
+
+- `EGG_SERVER_ENV` - Set server environment (local/test/prod)
+- `NODE_ENV` - Node environment (development/production)
+- `EGG_TYPESCRIPT` - Enable TypeScript support (true/false)
+- `DEBUG` - Enable debug output (egg:\*)
+
+### Common Development Patterns
+
+#### Creating a New Service
+
+```typescript
+// app/service/example.ts
+import { Service } from 'egg';
+
+export default class ExampleService extends Service {
+  async getData(id: string) {
+    const result = await this.ctx.curl(`/api/data/${id}`);
+    return result.data;
+  }
+}
+```
+
+#### Creating a New Controller
+
+```typescript
+// app/controller/example.ts
+import { Controller } from 'egg';
+
+export default class ExampleController extends Controller {
+  async index() {
+    const { ctx } = this;
+    const data = await ctx.service.example.getData('123');
+    ctx.body = { success: true, data };
+  }
+}
+```
+
+#### Creating a New Middleware
+
+```typescript
+// app/middleware/example.ts
+import { Context, Next } from 'egg';
+
+export default function exampleMiddleware() {
+  return async (ctx: Context, next: Next) => {
+    const start = Date.now();
+    await next();
+    ctx.set('X-Response-Time', `${Date.now() - start}ms`);
+  };
+}
+```
+
+## Performance Optimization
+
+### Build Optimization
+
+- Use `pnpm -r run build --parallel` for parallel builds
+- tsdown provides fast unbundled builds
+- Use `pnpm run clean` before builds to ensure clean state
+
+### Runtime Optimization
+
+- Use cluster mode for production deployments
+- Configure worker count based on CPU cores
+- Enable graceful shutdown for zero-downtime deployments
+- Use agent process for background tasks
+
+### Memory Management
+
+- Monitor memory usage with built-in metrics
+- Use weak references for caches when appropriate
+- Implement proper cleanup in lifecycle hooks
+- Avoid global state in worker processes
+
+## Troubleshooting Guide
+
+### Common Issues
+
+#### Package Resolution Issues
+
+```bash
+# Clear pnpm cache
+pnpm store prune
+
+# Reinstall dependencies
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+#### TypeScript Build Errors
+
+```bash
+# Clean all build artifacts
+pnpm -r run clean
+
+# Rebuild TypeScript references
+pnpm run build:ts
+
+# Check TypeScript configuration
+pnpm --filter=<package> run tsc --noEmit
+```
+
+#### Test Failures
+
+```bash
+# Run tests with verbose output
+pnpm --filter=<package> run test -- --verbose
+
+# Run specific test file
+pnpm --filter=egg run test test/app/extend/context.test.ts
+
+# Debug test with inspector
+NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
+```
+
+### Development Workflow Issues
+
+- **Auto-reload not working**: Check if development plugin is enabled
+- **Port already in use**: Change port in config or kill existing process
+- **Module not found**: Ensure proper workspace linking with `pnpm install`
+- **Type errors in IDE**: Restart TypeScript service or reload window
+
+## Security Considerations
+
+### Framework Security Features
+
+- Built-in CSRF protection
+- XSS prevention helpers
+- SQL injection protection via parameterized queries
+- Security headers middleware
+- Cookie encryption and signing
+
+### Security Best Practices
+
+- Never expose sensitive configuration in logs
+- Use environment variables for secrets
+- Validate all user inputs
+- Implement rate limiting for APIs
+- Regular dependency updates via `pnpm update`
+
+## Migration Guide
+
+### Migrating from Egg v2 to v3
+
+1. Update Node.js to v14+ (v18+ recommended)
+2. Migrate to ESM syntax where applicable
+3. Update plugin configurations
+4. Review breaking changes in CHANGELOG.md
+5. Run tests to identify compatibility issues
+
+### Converting CommonJS to ESM
+
+1. Add `"type": "module"` to package.json
+2. Change `require()` to `import`
+3. Change `module.exports` to `export`
+4. Update file extensions to `.mjs` if needed
+5. Update tsconfig.json module settings
+
+## Release Process
+
+### Version Management
+
+- Follow [Semantic Versioning](https://semver.org/)
+- Update CHANGELOG.md with release notes
+- Use conventional commits for automatic changelog generation
+
+### Publishing Packages
+
+```bash
+# Build all packages
+pnpm -r run build
+
+# Run tests
+pnpm test
+
+# Bump versions
+pnpm changeset
+
+# Publish to npm
+pnpm changeset publish
+```
+
 ## Commit Message Format
 
 **IMPORTANT: All commits MUST follow the [Angular Commit Message Format](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines) as specified in CONTRIBUTING.md.**
@@ -418,3 +641,52 @@ docs(tsconfig): update README with vitest integration examples
 Add examples showing how to configure vitest with the tsconfig package.
 Include setup instructions and common configuration patterns.
 ```
+
+## Contributing Guidelines
+
+### Getting Started
+
+1. Fork the repository
+2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/egg.git`
+3. Install dependencies: `pnpm install`
+4. Create a feature branch: `git checkout -b feature/your-feature`
+5. Make changes and add tests
+6. Run tests: `pnpm test`
+7. Submit a pull request
+
+### Pull Request Process
+
+1. Ensure all tests pass
+2. Update documentation if needed
+3. Follow commit message format
+4. Request review from maintainers
+5. Address review feedback promptly
+
+### Code Review Checklist
+
+- [ ] Tests added/updated for changes
+- [ ] Documentation updated
+- [ ] Commit messages follow convention
+- [ ] No breaking changes without discussion
+- [ ] Performance impact considered
+- [ ] Security implications reviewed
+
+## Resources and Links
+
+### Official Documentation
+
+- [Egg.js Official Website](https://www.eggjs.org/)
+- [API Documentation](https://www.eggjs.org/api/)
+- [Plugin Directory](https://github.com/eggjs/awesome-egg)
+
+### Community
+
+- [GitHub Discussions](https://github.com/eggjs/egg/discussions)
+- [Discord Server](https://discord.gg/eggjs)
+- [Stack Overflow Tag](https://stackoverflow.com/questions/tagged/eggjs)
+
+### Related Projects
+
+- [Koa.js](https://koajs.com/) - Underlying web framework
+- [Midway.js](https://midwayjs.org/) - Enterprise Node.js framework
+- [Think.js](https://thinkjs.org/) - Alternative Node.js framework

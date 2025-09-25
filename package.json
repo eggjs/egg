@@ -19,11 +19,11 @@
     "lint-staged": "catalog:",
     "mocha": "catalog:",
     "mochawesome-with-mocha": "catalog:",
-    "semver": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
+    "semver": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

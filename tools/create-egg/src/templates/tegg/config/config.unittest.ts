@@ -1,6 +1,5 @@
-import { EggAppConfig, PowerPartial } from 'egg';
+import type { PartialEggConfig } from 'egg';
 
-export default () => {
-  const config = {} as PowerPartial<EggAppConfig>;
-  return config;
-};
+export default {
+  // add your config here
+} as PartialEggConfig;

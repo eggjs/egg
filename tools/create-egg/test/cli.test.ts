@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { tmpdir } from 'node:os';
 
 import type { SyncOptions, SyncResult } from 'execa';
 import { execaCommandSync } from 'execa';
-import { afterEach, beforeAll, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, expect, test } from 'vitest';
 
 const SRC_PATH = path.join(import.meta.dirname, '../src');
 const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
@@ -11,6 +12,8 @@ const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
 const projectName = 'test-egg-app';
 const genPath = path.join(import.meta.dirname, projectName);
 const genPathWithSubfolder = path.join(import.meta.dirname, 'subfolder', projectName);
+const tempDirPrefix = path.join(tmpdir(), 'my-app-temp-');
+const tempDir = fs.mkdtempSync(tempDirPrefix);
 
 const run = <SO extends SyncOptions>(args: string[], options?: SO): SyncResult<SO> => {
   return execaCommandSync(`node ${CLI_PATH} ${args.join(' ')}`, options);
@@ -24,7 +27,7 @@ const createNonEmptyDir = (overrideFolder?: string) => {
 
   // Create a package.json file
   const pkgJson = path.join(newNonEmptyFolder, 'package.json');
-  fs.writeFileSync(pkgJson, '{ "foo": "bar" }');
+  fs.writeFileSync(pkgJson, '{ "foo": "bar", "type": "module" }');
 };
 
 const templateFiles = fs
@@ -44,6 +47,7 @@ const clearAnyPreviousFolders = () => {
 
 beforeAll(() => clearAnyPreviousFolders());
 afterEach(() => clearAnyPreviousFolders());
+afterAll(() => fs.rmSync(tempDir, { recursive: true, force: true }));
 
 test('prompts for the project name if none supplied', () => {
   const { stdout } = run([]);
@@ -100,6 +104,53 @@ test('successfully scaffolds a project based on tegg starter template', () => {
   // Assertions
   expect(stdout).toContain(`Scaffolding project with`);
   expect(templateFiles).toEqual(generatedFiles);
+});
+
+test.skipIf(process.platform === 'win32')(
+  'successfully scaffolds a project based on simple-ts starter template',
+  () => {
+    const projectName = 'create-egg-test-simple-ts';
+    const { stdout } = run([projectName, '--template', 'simple-ts'], {
+      cwd: tempDir,
+    });
+    const projectDir = path.join(tempDir, projectName);
+    const generatedFiles = fs.readdirSync(projectDir).sort();
+
+    // Assertions
+    expect(stdout).toContain(`Scaffolding project with`);
+    expect(generatedFiles).matchSnapshot();
+
+    // run test
+    const monoRepoDir = path.join(import.meta.dirname, '../../../');
+    const eggDir = path.join(monoRepoDir, 'packages/egg');
+    const mockDir = path.join(monoRepoDir, 'plugins/mock');
+    execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+    const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+    expect(testStdout).toContain('2 passed');
+  }
+);
+
+// FIXME: HelloService.test.skip.ts
+// use "@oxc-node/core/register" to support decorator metadata
+test.skipIf(process.platform === 'win32')('successfully scaffolds a project based on tegg starter template', () => {
+  const projectName = 'create-egg-test-tegg';
+  const { stdout } = run([projectName, '--template', 'tegg'], {
+    cwd: tempDir,
+  });
+  const projectDir = path.join(tempDir, projectName);
+  const generatedFiles = fs.readdirSync(projectDir).sort();
+
+  // Assertions
+  expect(stdout).toContain(`Scaffolding project with`);
+  expect(generatedFiles).matchSnapshot();
+
+  // run test
+  const monoRepoDir = path.join(import.meta.dirname, '../../../');
+  const eggDir = path.join(monoRepoDir, 'packages/egg');
+  const mockDir = path.join(monoRepoDir, 'plugins/mock');
+  execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+  const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+  expect(testStdout).toContain('2 passed');
 });
 
 test('works with the -t alias', () => {
