@@ -1,4 +1,4 @@
-import { EggLogger } from 'egg';
+import type { EggLogger } from 'egg';
 import { SingletonProto, AccessLevel, Inject } from '@eggjs/tegg';
 
 @SingletonProto({

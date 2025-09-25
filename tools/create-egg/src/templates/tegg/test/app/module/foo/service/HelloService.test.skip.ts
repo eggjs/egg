@@ -1,6 +1,7 @@
 import { test, expect } from 'vitest';
 import { app } from '@eggjs/mock/bootstrap';
-import { HelloService } from '@/module/foo/service/HelloService';
+
+import { HelloService } from '../../../../../app/module/foo/index.ts';
 
 test('should hello() work', async () => {
   const helloService = await app.getEggObject(HelloService);
