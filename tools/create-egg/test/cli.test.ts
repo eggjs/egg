@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 
 import type { SyncOptions, SyncResult } from 'execa';
 import { execaCommandSync } from 'execa';
-import { afterEach, beforeAll, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, expect, test } from 'vitest';
 
 const SRC_PATH = path.join(import.meta.dirname, '../src');
 const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
@@ -12,6 +12,8 @@ const CLI_PATH = path.join(SRC_PATH, 'cli.ts');
 const projectName = 'test-egg-app';
 const genPath = path.join(import.meta.dirname, projectName);
 const genPathWithSubfolder = path.join(import.meta.dirname, 'subfolder', projectName);
+const tempDirPrefix = path.join(tmpdir(), 'my-app-temp-');
+const tempDir = fs.mkdtempSync(tempDirPrefix);
 
 const run = <SO extends SyncOptions>(args: string[], options?: SO): SyncResult<SO> => {
   return execaCommandSync(`node ${CLI_PATH} ${args.join(' ')}`, options);
@@ -45,6 +47,7 @@ const clearAnyPreviousFolders = () => {
 
 beforeAll(() => clearAnyPreviousFolders());
 afterEach(() => clearAnyPreviousFolders());
+afterAll(() => fs.rmSync(tempDir, { recursive: true, force: true }));
 
 test('prompts for the project name if none supplied', () => {
   const { stdout } = run([]);
@@ -104,7 +107,6 @@ test('successfully scaffolds a project based on tegg starter template', () => {
 });
 
 test('successfully scaffolds a project based on simple-ts starter template', () => {
-  const tempDir = fs.mkdtempSync(tmpdir());
   const projectName = 'create-egg-test-simple-ts';
   const { stdout } = run([projectName, '--template', 'simple-ts'], {
     cwd: tempDir,
@@ -123,13 +125,11 @@ test('successfully scaffolds a project based on simple-ts starter template', () 
   execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
   const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
   expect(testStdout).toContain('2 passed');
-  fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
 // FIXME: HelloService.test.skip.ts
 // use "@oxc-node/core/register" to support decorator metadata
 test('successfully scaffolds a project based on tegg starter template', () => {
-  const tempDir = fs.mkdtempSync(tmpdir());
   const projectName = 'create-egg-test-tegg';
   const { stdout } = run([projectName, '--template', 'tegg'], {
     cwd: tempDir,
@@ -148,7 +148,6 @@ test('successfully scaffolds a project based on tegg starter template', () => {
   execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
   const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
   expect(testStdout).toContain('2 passed');
-  fs.rmSync(tempDir, { recursive: true, force: true });
 });
 
 test('works with the -t alias', () => {
