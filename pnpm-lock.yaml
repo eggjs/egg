@@ -1291,9 +1291,6 @@ importers:
 
   site:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../packages/egg
       vitepress:
         specifier: 'catalog:'
         version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@24.5.2)(less@4.4.1)(lightningcss@1.22.1)(nprogress@0.2.0)(postcss@8.5.6)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.93.1)(search-insights@2.17.3)(terser@5.44.0)(typescript@5.9.2)
