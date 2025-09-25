@@ -44,7 +44,7 @@ catalogs:
       version: 3.0.0
     '@eggjs/tegg':
       specifier: ^3.2.2
-      version: 3.61.0
+      version: 3.62.0
     '@eggjs/tegg-config':
       specifier: ^3.2.2
       version: 3.61.0
@@ -367,8 +367,8 @@ catalogs:
       specifier: ^1.0.1
       version: 1.0.1
     oxlint:
-      specifier: ^1.16.0
-      version: 1.16.0
+      specifier: ^1.17.0
+      version: 1.17.0
     oxlint-tsgolint:
       specifier: ^0.2.0
       version: 0.2.0
@@ -490,7 +490,7 @@ importers:
         version: 8.0.0
       oxlint:
         specifier: 'catalog:'
-        version: 1.16.0(oxlint-tsgolint@0.2.0)
+        version: 1.17.0(oxlint-tsgolint@0.2.0)
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.2.0
@@ -521,7 +521,7 @@ importers:
         version: link:../../tools/egg-bin
       oxlint:
         specifier: 'catalog:'
-        version: 1.16.0(oxlint-tsgolint@0.2.0)
+        version: 1.17.0(oxlint-tsgolint@0.2.0)
 
   examples/helloworld-typescript:
     dependencies:
@@ -876,7 +876,7 @@ importers:
         version: 24.5.2
       oxlint:
         specifier: 'catalog:'
-        version: 1.16.0(oxlint-tsgolint@0.2.0)
+        version: 1.17.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
@@ -1055,7 +1055,7 @@ importers:
     devDependencies:
       '@eggjs/tegg':
         specifier: 'catalog:'
-        version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+        version: 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
       '@eggjs/tegg-config':
         specifier: 'catalog:'
         version: 3.61.0
@@ -1737,48 +1737,48 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
-  '@eggjs/ajv-decorator@3.61.0':
-    resolution: {integrity: sha512-MiZV1C0RLXAd3nxgxDCsE3qQbZGU7DUT39YSaDXizmyXQXXoEpcAm7II+4kMFQ74OH7dbmqVfSxdYPFj8JvibA==}
+  '@eggjs/ajv-decorator@3.62.0':
+    resolution: {integrity: sha512-tJeBxzabKTf8PQWr6RjWvu/PBWpqMNQxKCibfCjfu82tVRfFi7lIbpBheIAlTTpAW2TqcIQX2spd3uUovEVZvQ==}
     engines: {node: '>=16.0.0'}
 
-  '@eggjs/aop-decorator@3.61.0':
-    resolution: {integrity: sha512-t1ZzzP7yazQdeGeV7eJ3qxaGqzeTAOg+wIkKG8onhecN9D0AATWzfVyQnCdm0T8LoWW3REASBvjYBDa95WzpNQ==}
+  '@eggjs/aop-decorator@3.62.0':
+    resolution: {integrity: sha512-Jl6cz+6w3gwr0jiS1xmxHVoDkaP/jJzBmIkn74XY4akDQa/VVQsZxxvRvAHc1AFgCnGtRJCIsl2F2P6b5OtaNw==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/compressible@3.0.0':
     resolution: {integrity: sha512-Bz/u+0zhmZ/44xdIL1MLfknaDFQpE+bSfJ4OjCb2NnHpg+LVmmNwEpRW4hUi3v2MhaO3sNWD93gBTtJ00q2iIA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/controller-decorator@3.61.0':
-    resolution: {integrity: sha512-05r+F06CMOgioS4tFTcLKz94yvZg7Wy8PXbUes+K7Ha3ln53VsHGfAYDNOmAWBoRzzCMiG4WhyBgDUFZ2vaC4A==}
+  '@eggjs/controller-decorator@3.62.0':
+    resolution: {integrity: sha512-WFvXiLz4DfoWO3dsmEfLWNwlqv8HT98/xp0LUIncLL6DjxI2ZyZOuIE58yu7zkiIqBH9u4vmWc5lgTDwzHtGYg==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/cookies@3.1.0':
     resolution: {integrity: sha512-rFDJqUHYanrsKWtVqYutVYjQSgi60MSYagdG0N5795vGd9LyJdxFQCG9dMOWUzHumRMfxFi4EjcjDZA+CcErdw==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/core-decorator@3.61.0':
-    resolution: {integrity: sha512-TD+/zSny1i5Wuw9Pn3glq3GAmAdKeiSUfBJ5jMGjUcAdstxcUCkdKW0c9c1FaMK+QDFhHjuHLOGehgpro62sfQ==}
+  '@eggjs/core-decorator@3.62.0':
+    resolution: {integrity: sha512-LA4g3BHgsRAChG37LHm667nwqsjlXFsO1tuG9qFbEtuhRSOV9MiwXhGu+FzOna43N+fBgSltrSWPphZj3AifXA==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/core@6.5.0':
     resolution: {integrity: sha512-JwiHVoRihNtt1XekIp9rfs/+M/w7tHiZW5OMUzZV3IpAVh60tiMC+pbWXcDWxTseTDp0HLItrYFXUPLrptMYRQ==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/dal-decorator@3.61.0':
-    resolution: {integrity: sha512-mheFyLTwNG7F3uV4+7zbHl4E3WQtw+QnidmxOu75lL7lFNf+qjSvNDIwIfta2Ofhz/QgmeuQlHS786zs9fDWnQ==}
+  '@eggjs/dal-decorator@3.62.0':
+    resolution: {integrity: sha512-mloAvjR7oE3ZiU3bQ6T7/9ZZ5HyE6sm8pWwW0y56PLVJSVZEcZzWalMORERQz8LYxgdI18wIyxCO5OIg/D5cWg==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/dal-runtime@3.61.0':
-    resolution: {integrity: sha512-t/9ydVY6/37nmu/dODuW5ZyLl25spYmBqppMXoytVTyEo2aScWHBAfoaknC88VjcmOZENMuhliigyUbNkndtXQ==}
+  '@eggjs/dal-runtime@3.62.0':
+    resolution: {integrity: sha512-U80G2avnRPz/NpE6p7yAwsj19IRj2yeX1LMMnCEw5DwgHAitgA7CaHgJpiuG03zeAH8Z3DCisQ1xJ0TDtKP3Pg==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/egg-module-common@3.61.0':
     resolution: {integrity: sha512-u57XuTTWyxqqCg3omd1eAo+ylBtmmQ/c8kbtWHN4307kWaiMpiIRYgzmaF50NyBwrWdkoxgiuXhJ7ODetNMJjA==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/eventbus-decorator@3.61.0':
-    resolution: {integrity: sha512-Qt++qXOR2vvyfz6DQ+CG9Id4BRQNNJxXqQtWCrtbRwyl/AC5DcKRDhGlhJMMpHhawRaWm2C0wJvNYbyonHQ4JA==}
+  '@eggjs/eventbus-decorator@3.62.0':
+    resolution: {integrity: sha512-TxULJWB//1qzzmPbJrrebx8ncz4hI0C4giFv0DD//rI/8hde59YuO1MsvkxE/qPfqGIOO4yfZDLmtnyWuyceaw==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/i18n@3.0.1':
@@ -1841,20 +1841,20 @@ packages:
     resolution: {integrity: sha512-C73mnzcShE2h6YItRCbNjjARP4f02SMdYHFwPwJ8yb5XTDG9KNnIoZ/mOIGpxKoK09h2221zyoI27G91l9TtsA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/standalone-decorator@3.61.0':
-    resolution: {integrity: sha512-qE+eEQKkGNgJ+/6PeGQgobnv+cU6LMe0RtMNlvcY25ovprUmeSqyyEujTSCLcpI1kn5VY5HEX3ZeoEM09dJAiQ==}
+  '@eggjs/standalone-decorator@3.62.0':
+    resolution: {integrity: sha512-1HLOQTlRIKJQ5jlp8n+aeBoS7MNi5tqMzHBUDvlV13T7jg1acfhxkNQtFzLXMFhCIMf1faxEEl6dtQXKFsChBA==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/static@3.0.0':
     resolution: {integrity: sha512-Wch3TYzjxYZp2Cm9/V8gqCn5Th++PzRjFVJkcrlnm3sQt61p9iXtSIlK5Yimx0l08IdZOIgTfLy0t4JL/G3bIg==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/tegg-background-task@3.61.0':
-    resolution: {integrity: sha512-nCFNgaWxt9FpYWE2ckAHaFDgMWxw2XqT/VZj8kZ6GSsf/iUkQlOSd467SVUNsD2wQzcjNu8kSXv0L7o1aT5LMQ==}
+  '@eggjs/tegg-background-task@3.62.0':
+    resolution: {integrity: sha512-EeL/DcY8PaeYowRvoQ+nrlj7zpED0tGOiQW3npTjLwi3C7P1xN5RGYmdw40TlPh/vqm+heVARyBKWQs1dfAj4g==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-common-util@3.61.0':
-    resolution: {integrity: sha512-4D1se3EM6qvcvJeq6j4DLVoj010J1B7NULk9OxWSaTv1ec+nZjvU1LKp81y58RACgVpB07KDdNteuqB2t6yOJQ==}
+  '@eggjs/tegg-common-util@3.62.0':
+    resolution: {integrity: sha512-255UH/MVqlDVwdwWddasr/YNeneRnOllt4TltDGZp63JDJ10BgDpxMll6KeyYQW77AiADdaKt2o+Wd5pjirelA==}
     engines: {node: '>=14.0.0'}
 
   '@eggjs/tegg-config@3.61.0':
@@ -1873,24 +1873,24 @@ packages:
     resolution: {integrity: sha512-gKrBxaFl7uscbjwTBmyGCeOeniWzkJT7p+qclGdYMC7lB+gV052izwYkEvNh1+0UQuiK/ZuzhdIu6LfkMpmJGA==}
     engines: {node: '>=10.0.0'}
 
-  '@eggjs/tegg-dynamic-inject@3.61.0':
-    resolution: {integrity: sha512-07JIQjETr+YrzhqWxfNqco3Y0ZCAyry2Hu1MZ2zCWrqzw/EsXpIR0d4paNcbe5kfNQbaTI0n7ObUWLwBpvJyFw==}
+  '@eggjs/tegg-dynamic-inject@3.62.0':
+    resolution: {integrity: sha512-226CtHoUa3nZv7qEQCP794/NqDTBK961eqjHH7Ujm5C16CUncr6FxPHVw9fud1OQwTa5hBqJDmVcR4C56FLolw==}
     engines: {node: '>=10.0.0'}
 
-  '@eggjs/tegg-lifecycle@3.61.0':
-    resolution: {integrity: sha512-zD4SSX56FmKCtwC/pFEIqgfrCu9RiZ4aWMcoNmCDHutj+amEyaN3lBvfNctgeRpqXpAy26jjwruZzWN1BaLZGg==}
+  '@eggjs/tegg-lifecycle@3.62.0':
+    resolution: {integrity: sha512-xQjTQxyfu8CiLocERdlwNQAmANa5U3ZJ1gUSqn09gdV/2kb19RpY8yuX22ecta+ZL5EiIoGqOrQ1Ndd7fZWWkw==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-loader@3.61.0':
-    resolution: {integrity: sha512-pcbjKxmMq8BMtXzFjcaX79pQlFSd2HKwTLMz0+gQRSobPLvxkq4mA4JfQ9LtxeYt+pwEPp/eQojN9cyGBCOluA==}
+  '@eggjs/tegg-loader@3.62.0':
+    resolution: {integrity: sha512-+AKmP7sXnXbP1ASAsy90UOS4slhSEq2kcyX2gNFeSRV3aHhs+sy09Qao2lPRuIpBvw7YaSIUA/2LypUOrBGGVg==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-metadata@3.61.0':
-    resolution: {integrity: sha512-jMCFVX6vw6czla5oCB0Q3TexKN9PGGn+KJyjlGhygWd5Klw57uln5ViUGmUHMXiAljSF5V187a2+FLp/ptyL9g==}
+  '@eggjs/tegg-metadata@3.62.0':
+    resolution: {integrity: sha512-pWeDqw/l4PL1RLBsp0k5n1+jNwXfLn7iV5cxXdzko/HXM1noyUhJP4x/PNBBt9jEigh7tI3GpowZtxUIDZRHcw==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-orm-decorator@3.61.0':
-    resolution: {integrity: sha512-7ibYM/V0AvThCmpODEEvDqA8At1AiaEoXGZTHTbZ8XLx9azRgDL3bFjzZklriwIxyEbFjBmUHA/wLOJKDA3iHQ==}
+  '@eggjs/tegg-orm-decorator@3.62.0':
+    resolution: {integrity: sha512-qYwRuo20QIJ3iuPEitvrH9zOpbB+RH+19C2hcg7qnAz7/gQVCmn2u4xaA+lssPbfm6KjLQiJkqHG4yrg2UgGMQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       leoric: ^2.6.1
@@ -1899,24 +1899,24 @@ packages:
     resolution: {integrity: sha512-ozi37rAbwMeVBOE44mG5eoeunqZLPmmST+Tzg97HsCMYLx0tvSqNqoLgYYUs+hetMiQU1XkTrM5rPzsIqM6wwg==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-runtime@3.61.0':
-    resolution: {integrity: sha512-jed6dMMRaCHhmm2OA2emeUCXBJP1wslAWB2Ue4GT2Cwgs/6aJj1ipQ8bL/Hp2vn0GI2pa4k6QreCgLsLRrsxGg==}
+  '@eggjs/tegg-runtime@3.62.0':
+    resolution: {integrity: sha512-KWlycj/Hes8PPeGHMjb29qAA9m1MsWE0lBeAWLmsQdGdOY59SGmvN4r+vmD76oRB94ooBpt1L/aM9rZ2mhFTfg==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-schedule-decorator@3.61.0':
-    resolution: {integrity: sha512-hpl2DLm6Cj4Ya0r6eLdVqx82Of7mx2DH55PfmGYM0EGjTbxB/FuBF8ZHhxK6TWup2pP2XeQNJ+MTIYKJpcF4QA==}
+  '@eggjs/tegg-schedule-decorator@3.62.0':
+    resolution: {integrity: sha512-+Q9AHiTNFk/pUhSteMQxVL/sIIkGk223UK8EQGMC/e/Hr3KWPNep3zqwLgX0qLWIYjHLfy/42E6HXyuWaV59Dw==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-transaction-decorator@3.61.0':
-    resolution: {integrity: sha512-gvJizKW9e9ALeP7W6s6K5O3rDFVsacxXJ+AzcGI9vMcW2GTYyk7q51tk3de1mtSJJVYucV+gsVX2ml10IbPCHw==}
+  '@eggjs/tegg-transaction-decorator@3.62.0':
+    resolution: {integrity: sha512-cGCWxITVfo7NQFZFt6DnYCHVIdkZXplL5XEIj2PhQfENcOi0IBnvvG6Wi4m/DT2mq/RwVN9zp533Ty2tYWwPVw==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg-types@3.61.0':
-    resolution: {integrity: sha512-9yF514sRRaFh56oxcGAfzqCcCaJAgevPUuhw6xsD4I/Af37v5xE+x27fAjBsYhwdq8GTrgLqp6jBJSLuXQdR8g==}
+  '@eggjs/tegg-types@3.62.0':
+    resolution: {integrity: sha512-x5ErkDZ9E0ZZ6Y2WX/pNeC6vZXmUFP1h4BWuAgHjYe5Wj4Tex7WdX6mkRvW0+YL8kXmaGyaCv9BVB4dPzfpM+w==}
     engines: {node: '>=14.0.0'}
 
-  '@eggjs/tegg@3.61.0':
-    resolution: {integrity: sha512-MYhX6pxtrcF6GPAQChE1s/CkN9e819MbZLOwDJ3WTPi1946dNaO4K2s8DZCwfT8bpaUzhbLhBHHds+i46BN3Bw==}
+  '@eggjs/tegg@3.62.0':
+    resolution: {integrity: sha512-nODecUrLJm7/PoBJFmmpi623bu2qIwtpj7V9j5MLHNSCWQaQk7yHFXA2nVVGgAG8uxF7qY2Qrm2M+KOneb6nIw==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@eggjs/tegg-dal-plugin': ^3.60.1
@@ -2914,47 +2914,47 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@oxlint/darwin-arm64@1.16.0':
-    resolution: {integrity: sha512-t9sBjbcG15Jgwgw2wY+rtfKEazdkKM/YhcdyjmGYeSjBXaczLfp/gZe03taC2qUHK+t6cxSYNkOLXRLWxaf3tw==}
+  '@oxlint/darwin-arm64@1.17.0':
+    resolution: {integrity: sha512-mVYPFmwUfV0ZNFSKlQtAniKxY9yuTa2p9JrtEwMh5B+vyoRuhjsCl0Z1uEhry+Se5pbh4WHxNP2sJVhuta6P4w==}
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint/darwin-x64@1.16.0':
-    resolution: {integrity: sha512-c9aeLQATeu27TK8gR/p8GfRBsuakx0zs+6UHFq/s8Kux+8tYb3pH1pql/XWUPbxubv48F2MpnD5zgjOrShAgag==}
+  '@oxlint/darwin-x64@1.17.0':
+    resolution: {integrity: sha512-5+oE0tT0IFdHdosLnOibbTBpVhjTaPfdveWc988ooZ4ap8YdAeB6heizhtm1dNa3RZ5rKucZ4SIlNYsh0f9MLw==}
     cpu: [x64]
     os: [darwin]
 
-  '@oxlint/linux-arm64-gnu@1.16.0':
-    resolution: {integrity: sha512-ZoBtxtRHhftbiKKeScpgUKIg4cu9s7rsBPCkjfMCY0uLjhKqm6ShPEaIuP8515+/Csouciz1ViZhbrya5ligAg==}
+  '@oxlint/linux-arm64-gnu@1.17.0':
+    resolution: {integrity: sha512-ljewxrwJzz62sHXLwgJagCtgkPnJ5oAteOaZoZ306QmANkNubkRGx9d1a/SEvl0D6obffVH23pZxETt6oyPQvQ==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/linux-arm64-musl@1.16.0':
-    resolution: {integrity: sha512-a/Dys7CTyj1eZIkD59k9Y3lp5YsHBUeZXR7qHTplKb41H+Ivm5OQPf+rfbCBSLMfCPZCeKQPW36GXOSYLNE1uw==}
+  '@oxlint/linux-arm64-musl@1.17.0':
+    resolution: {integrity: sha512-U1h/0lSXAGdXpMLaJsTF0+CdxcHgd2Rh2Ky8jyOVQ/pCtZahlWeQeUUkZ3CA7ANKpwymlh/iBmJzu1KZl1c2cQ==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/linux-x64-gnu@1.16.0':
-    resolution: {integrity: sha512-rsfv90ytLhl+s7aa8eE8gGwB1XGbiUA2oyUee/RhGRyeoZoe9/hHNtIcE2XndMYlJToROKmGyrTN4MD2c0xxLQ==}
+  '@oxlint/linux-x64-gnu@1.17.0':
+    resolution: {integrity: sha512-38qpK/lfKHYskF5kzebe1I/aBKuAMbI+sCoUYajJIRlQkmHJ3VEXCUGhQj6qtprRVV/ECLlr6Eoo8fHy4jzdYA==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@oxlint/linux-x64-musl@1.16.0':
-    resolution: {integrity: sha512-djwSL4harw46kdCwaORUvApyE9Y6JSnJ7pF5PHcQlJ7S1IusfjzYljXky4hONPO0otvXWdKq1GpJqhmtM0/xbg==}
+  '@oxlint/linux-x64-musl@1.17.0':
+    resolution: {integrity: sha512-pcQ27T+xK49d8SWa52N37y7BxyDG098QEDonkoJDMQ7YOqDegQ25Vrz56VSUhgtkrO25d8B7P2raH/J1PRsW5A==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@oxlint/win32-arm64@1.16.0':
-    resolution: {integrity: sha512-lQBfW4hBiQ47P12UAFXyX3RVHlWCSYp6I89YhG+0zoLipxAfyB37P8G8N43T/fkUaleb8lvt0jyNG6jQTkCmhg==}
+  '@oxlint/win32-arm64@1.17.0':
+    resolution: {integrity: sha512-WEWf89vKYUYc8ODhyh6BFsvbTzzXZ0cCFMwy4l3mMHkLn5nS9wj7+4NrBB6OJ7tlPZbi57039F9UNpH7PvVEbw==}
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint/win32-x64@1.16.0':
-    resolution: {integrity: sha512-B5se3JnM4Xu6uHF78hAY9wdk/sdLFib1YwFsLY6rkQKEMFyi+vMZZlDaAS+s+Dt9q7q881U2OhNznZenJZdPdQ==}
+  '@oxlint/win32-x64@1.17.0':
+    resolution: {integrity: sha512-V6TxSg7JTRqzFrAGymatY3rhIFfH0kyNcTQKe5Od6BhReCBqf6WfGQ0TCGstz9XpGdmmg3lo3zD6/M7ud9aqOA==}
     cpu: [x64]
     os: [win32]
 
@@ -7619,8 +7619,8 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lru-cache@11.2.1:
-    resolution: {integrity: sha512-r8LA6i4LP4EeWOhqBaZZjDWwehd1xUJPCJd9Sv300H0ZmcUER4+JPh7bqqZeqs1o5pgtgvXm+d9UGrB5zZGDiQ==}
+  lru-cache@11.2.2:
+    resolution: {integrity: sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg==}
     engines: {node: 20 || >=22}
 
   lru-cache@5.1.1:
@@ -8419,9 +8419,9 @@ packages:
     resolution: {integrity: sha512-37Hy+FT1sz8hHUo31JIgFDA8NcFndexrg5okutWRPXNejJwB9hKN+pyInaQQIv4XDsgNcQsSR2VJoq99eaGk9g==}
     hasBin: true
 
-  oxlint@1.16.0:
-    resolution: {integrity: sha512-o6z8s6QVw/d7QuxQ7QFfqDMrIcmHyU3J/MewxjqduJmy4vHt/s7OZISk8zEXjHXZzTWrcFakIrLqU/b9IKTcjg==}
-    engines: {node: '>=8.*'}
+  oxlint@1.17.0:
+    resolution: {integrity: sha512-pfafE/o4DDP0E9+AieMebdvgUTCGX5B3hxOqOUXjNapI5Q8DgBGIYHyYIEuwjkgwmMQpGJIaKLENE8/gwcZTKw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
       oxlint-tsgolint: '>=0.2.0'
@@ -11423,30 +11423,30 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@eggjs/ajv-decorator@3.61.0':
+  '@eggjs/ajv-decorator@3.62.0':
     dependencies:
       '@sinclair/typebox': 0.32.35
       ajv: 8.17.1
 
-  '@eggjs/aop-decorator@3.61.0':
+  '@eggjs/aop-decorator@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
   '@eggjs/compressible@3.0.0':
     dependencies:
       mime-db: 1.52.0
 
-  '@eggjs/controller-decorator@3.61.0':
+  '@eggjs/controller-decorator@3.62.0':
     dependencies:
-      '@eggjs/aop-decorator': 3.61.0
+      '@eggjs/aop-decorator': 3.62.0
       '@eggjs/cookies': 3.1.0
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       '@modelcontextprotocol/sdk': 1.18.1
       is-type-of: 1.4.0
       path-to-regexp: 1.9.0
@@ -11461,10 +11461,10 @@ snapshots:
       should-send-same-site-none: 2.0.5
       utility: 2.5.0
 
-  '@eggjs/core-decorator@3.61.0':
+  '@eggjs/core-decorator@3.62.0':
     dependencies:
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       reflect-metadata: 0.1.14
 
   '@eggjs/core@6.5.0':
@@ -11484,19 +11484,19 @@ snapshots:
       tsconfig-paths: 4.2.0
       utility: 2.5.0
 
-  '@eggjs/dal-decorator@3.61.0':
+  '@eggjs/dal-decorator@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       lodash.snakecase: 4.1.1
       pluralize: 8.0.0
 
-  '@eggjs/dal-runtime@3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))':
+  '@eggjs/dal-runtime@3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
       '@eggjs/rds': 1.3.0
-      '@eggjs/tegg': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/tegg': 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-types': 3.62.0
       js-beautify: 1.15.4
       lodash: 4.17.21
       nunjucks: 3.2.4(chokidar@3.6.0)
@@ -11510,11 +11510,11 @@ snapshots:
 
   '@eggjs/egg-module-common@3.61.0': {}
 
-  '@eggjs/eventbus-decorator@3.61.0':
+  '@eggjs/eventbus-decorator@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       typed-emitter: 1.4.0
 
   '@eggjs/i18n@3.0.1':
@@ -11572,7 +11572,7 @@ snapshots:
     dependencies:
       '@eggjs/core': 6.5.0
       '@eggjs/tegg-controller-plugin': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/tegg-types': 3.62.0
       '@modelcontextprotocol/sdk': 1.18.1
       await-event: 2.1.0
       cluster-client: 3.7.0
@@ -11660,9 +11660,9 @@ snapshots:
       koa-session: 7.0.2
       zod: 3.25.76
 
-  '@eggjs/standalone-decorator@3.61.0':
+  '@eggjs/standalone-decorator@3.62.0':
     dependencies:
-      '@eggjs/tegg-common-util': 3.61.0
+      '@eggjs/tegg-common-util': 3.62.0
       reflect-metadata: 0.1.14
 
   '@eggjs/static@3.0.0':
@@ -11674,34 +11674,34 @@ snapshots:
       koa-range: 0.3.0
       ylru: 2.0.0
 
-  '@eggjs/tegg-background-task@3.61.0':
+  '@eggjs/tegg-background-task@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-lifecycle': 3.61.0
-      '@eggjs/tegg-runtime': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-lifecycle': 3.62.0
+      '@eggjs/tegg-runtime': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-common-util@3.61.0':
+  '@eggjs/tegg-common-util@3.62.0':
     dependencies:
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/tegg-types': 3.62.0
       extend2: 1.0.1
       globby: 11.1.0
       js-yaml: 3.14.1
 
   '@eggjs/tegg-config@3.61.0':
     dependencies:
-      '@eggjs/tegg-common-util': 3.61.0
+      '@eggjs/tegg-common-util': 3.62.0
 
   '@eggjs/tegg-controller-plugin@3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
       '@eggjs/egg-module-common': 3.61.0
       '@eggjs/mcp-proxy': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
       '@eggjs/router': 2.2.0
-      '@eggjs/tegg': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-loader': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-runtime': 3.61.0
+      '@eggjs/tegg': 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-loader': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-runtime': 3.62.0
       '@modelcontextprotocol/sdk': 1.18.1
       await-event: 2.1.0
       content-type: 1.0.5
@@ -11719,7 +11719,7 @@ snapshots:
 
   '@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
-      '@eggjs/dal-runtime': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/dal-runtime': 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))
     transitivePeerDependencies:
       - chokidar
       - leoric
@@ -11727,46 +11727,46 @@ snapshots:
 
   '@eggjs/tegg-dynamic-inject-runtime@3.61.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-dynamic-inject': 3.61.0
-      '@eggjs/tegg-lifecycle': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-runtime': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-dynamic-inject': 3.62.0
+      '@eggjs/tegg-lifecycle': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-runtime': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-dynamic-inject@3.61.0':
+  '@eggjs/tegg-dynamic-inject@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-lifecycle@3.61.0':
+  '@eggjs/tegg-lifecycle@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-loader@3.61.0':
+  '@eggjs/tegg-loader@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       globby: 11.1.0
       is-type-of: 1.4.0
 
-  '@eggjs/tegg-metadata@3.61.0':
+  '@eggjs/tegg-metadata@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-lifecycle': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-lifecycle': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       egg-errors: 2.3.2
 
-  '@eggjs/tegg-orm-decorator@3.61.0(leoric@2.13.8(mysql2@3.15.0))':
+  '@eggjs/tegg-orm-decorator@3.62.0(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       leoric: 2.13.8(mysql2@3.15.0)
       lodash: 4.17.21
       pluralize: 8.0.0
@@ -11774,13 +11774,13 @@ snapshots:
   '@eggjs/tegg-plugin@3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
       '@eggjs/egg-module-common': 3.61.0
-      '@eggjs/tegg': 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-background-task': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
+      '@eggjs/tegg': 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-background-task': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
       '@eggjs/tegg-dynamic-inject-runtime': 3.61.0
-      '@eggjs/tegg-loader': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-runtime': 3.61.0
+      '@eggjs/tegg-loader': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-runtime': 3.62.0
       await-event: 2.1.0
       await-first: 1.0.0
       extend2: 1.0.1
@@ -11790,52 +11790,52 @@ snapshots:
       - leoric
       - supports-color
 
-  '@eggjs/tegg-runtime@3.61.0':
+  '@eggjs/tegg-runtime@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-lifecycle': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-lifecycle': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-schedule-decorator@3.61.0':
+  '@eggjs/tegg-schedule-decorator@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
       cron-parser: 2.18.0
 
-  '@eggjs/tegg-transaction-decorator@3.61.0':
+  '@eggjs/tegg-transaction-decorator@3.62.0':
     dependencies:
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
 
-  '@eggjs/tegg-types@3.61.0': {}
+  '@eggjs/tegg-types@3.62.0': {}
 
-  '@eggjs/tegg@3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))':
+  '@eggjs/tegg@3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))':
     dependencies:
-      '@eggjs/ajv-decorator': 3.61.0
-      '@eggjs/aop-decorator': 3.61.0
-      '@eggjs/controller-decorator': 3.61.0
-      '@eggjs/core-decorator': 3.61.0
-      '@eggjs/dal-decorator': 3.61.0
-      '@eggjs/eventbus-decorator': 3.61.0
-      '@eggjs/standalone-decorator': 3.61.0
-      '@eggjs/tegg-background-task': 3.61.0
-      '@eggjs/tegg-common-util': 3.61.0
+      '@eggjs/ajv-decorator': 3.62.0
+      '@eggjs/aop-decorator': 3.62.0
+      '@eggjs/controller-decorator': 3.62.0
+      '@eggjs/core-decorator': 3.62.0
+      '@eggjs/dal-decorator': 3.62.0
+      '@eggjs/eventbus-decorator': 3.62.0
+      '@eggjs/standalone-decorator': 3.62.0
+      '@eggjs/tegg-background-task': 3.62.0
+      '@eggjs/tegg-common-util': 3.62.0
       '@eggjs/tegg-dal-plugin': 3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-dynamic-inject': 3.61.0
-      '@eggjs/tegg-lifecycle': 3.61.0
-      '@eggjs/tegg-loader': 3.61.0
-      '@eggjs/tegg-metadata': 3.61.0
-      '@eggjs/tegg-orm-decorator': 3.61.0(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-runtime': 3.61.0
-      '@eggjs/tegg-schedule-decorator': 3.61.0
-      '@eggjs/tegg-transaction-decorator': 3.61.0
-      '@eggjs/tegg-types': 3.61.0
+      '@eggjs/tegg-dynamic-inject': 3.62.0
+      '@eggjs/tegg-lifecycle': 3.62.0
+      '@eggjs/tegg-loader': 3.62.0
+      '@eggjs/tegg-metadata': 3.62.0
+      '@eggjs/tegg-orm-decorator': 3.62.0(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-runtime': 3.62.0
+      '@eggjs/tegg-schedule-decorator': 3.62.0
+      '@eggjs/tegg-transaction-decorator': 3.62.0
+      '@eggjs/tegg-types': 3.62.0
     transitivePeerDependencies:
       - leoric
       - supports-color
@@ -12708,28 +12708,28 @@ snapshots:
   '@oxlint-tsgolint/win32-x64@0.2.0':
     optional: true
 
-  '@oxlint/darwin-arm64@1.16.0':
+  '@oxlint/darwin-arm64@1.17.0':
     optional: true
 
-  '@oxlint/darwin-x64@1.16.0':
+  '@oxlint/darwin-x64@1.17.0':
     optional: true
 
-  '@oxlint/linux-arm64-gnu@1.16.0':
+  '@oxlint/linux-arm64-gnu@1.17.0':
     optional: true
 
-  '@oxlint/linux-arm64-musl@1.16.0':
+  '@oxlint/linux-arm64-musl@1.17.0':
     optional: true
 
-  '@oxlint/linux-x64-gnu@1.16.0':
+  '@oxlint/linux-x64-gnu@1.17.0':
     optional: true
 
-  '@oxlint/linux-x64-musl@1.16.0':
+  '@oxlint/linux-x64-musl@1.17.0':
     optional: true
 
-  '@oxlint/win32-arm64@1.16.0':
+  '@oxlint/win32-arm64@1.17.0':
     optional: true
 
-  '@oxlint/win32-x64@1.16.0':
+  '@oxlint/win32-x64@1.17.0':
     optional: true
 
   '@paralleldrive/cuid2@2.2.2':
@@ -18244,7 +18244,7 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  lru-cache@11.2.1: {}
+  lru-cache@11.2.2: {}
 
   lru-cache@5.1.1:
     dependencies:
@@ -19452,16 +19452,16 @@ snapshots:
       '@oxlint-tsgolint/win32-arm64': 0.2.0
       '@oxlint-tsgolint/win32-x64': 0.2.0
 
-  oxlint@1.16.0(oxlint-tsgolint@0.2.0):
+  oxlint@1.17.0(oxlint-tsgolint@0.2.0):
     optionalDependencies:
-      '@oxlint/darwin-arm64': 1.16.0
-      '@oxlint/darwin-x64': 1.16.0
-      '@oxlint/linux-arm64-gnu': 1.16.0
-      '@oxlint/linux-arm64-musl': 1.16.0
-      '@oxlint/linux-x64-gnu': 1.16.0
-      '@oxlint/linux-x64-musl': 1.16.0
-      '@oxlint/win32-arm64': 1.16.0
-      '@oxlint/win32-x64': 1.16.0
+      '@oxlint/darwin-arm64': 1.17.0
+      '@oxlint/darwin-x64': 1.17.0
+      '@oxlint/linux-arm64-gnu': 1.17.0
+      '@oxlint/linux-arm64-musl': 1.17.0
+      '@oxlint/linux-x64-gnu': 1.17.0
+      '@oxlint/linux-x64-musl': 1.17.0
+      '@oxlint/win32-arm64': 1.17.0
+      '@oxlint/win32-x64': 1.17.0
       oxlint-tsgolint: 0.2.0
 
   p-event@6.0.1:
@@ -19632,7 +19632,7 @@ snapshots:
 
   path-scurry@2.0.0:
     dependencies:
-      lru-cache: 11.2.1
+      lru-cache: 11.2.2
       minipass: 7.1.2
 
   path-to-regexp@0.1.12: {}
