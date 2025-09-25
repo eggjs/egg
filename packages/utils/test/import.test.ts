@@ -1,10 +1,11 @@
 import { strict as assert } from 'node:assert';
 import path from 'node:path';
+
 import { describe, it, expect } from 'vitest';
 import coffee from 'coffee';
 
 import { importResolve, importModule, ImportResolveError, isESM } from '../src/index.ts';
-import { getFilepath } from './helper.js';
+import { getFilepath } from './helper.ts';
 
 describe('test/import.test.ts', () => {
   describe('isESM', () => {
@@ -16,8 +17,8 @@ describe('test/import.test.ts', () => {
   describe('importResolve()', () => {
     it('should import file from typescript under development', () => {
       assert.equal(
-        importResolve(path.join(__dirname, '../../mock/app')),
-        path.join(__dirname, '../../mock/src/app.ts')
+        importResolve(path.join(__dirname, '../../../plugins/mock/app')),
+        path.join(__dirname, '../../../plugins/mock/src/app.ts')
       );
     });
 

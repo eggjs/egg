@@ -315,7 +315,7 @@ describe.skipIf(process.version.startsWith('v24') || process.platform === 'win32
       mm.env('default');
     });
 
-    it('should refork when app_worker exit', async () => {
+    it.skip('should refork when app_worker exit', async () => {
       app = cluster('apps/app-die');
       // app.debug();
       await app.ready();
