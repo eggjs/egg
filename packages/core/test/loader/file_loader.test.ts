@@ -231,7 +231,7 @@ describe('test/loader/file_loader.test.ts', () => {
         directory: path.join(dirBase, 'syntax_error'),
         target: app.model,
       }).load();
-    }, /error: Unexpected identifier|Expected/);
+    }, /error: Unexpected identifier|Expected|A 'yield' expression is only allowed in a generator body/);
   });
 
   it('should throw when directory contains dot', async () => {
