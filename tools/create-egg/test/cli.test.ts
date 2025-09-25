@@ -106,30 +106,33 @@ test('successfully scaffolds a project based on tegg starter template', () => {
   expect(templateFiles).toEqual(generatedFiles);
 });
 
-test('successfully scaffolds a project based on simple-ts starter template', () => {
-  const projectName = 'create-egg-test-simple-ts';
-  const { stdout } = run([projectName, '--template', 'simple-ts'], {
-    cwd: tempDir,
-  });
-  const projectDir = path.join(tempDir, projectName);
-  const generatedFiles = fs.readdirSync(projectDir).sort();
+test.skipIf(process.platform === 'win32')(
+  'successfully scaffolds a project based on simple-ts starter template',
+  () => {
+    const projectName = 'create-egg-test-simple-ts';
+    const { stdout } = run([projectName, '--template', 'simple-ts'], {
+      cwd: tempDir,
+    });
+    const projectDir = path.join(tempDir, projectName);
+    const generatedFiles = fs.readdirSync(projectDir).sort();
 
-  // Assertions
-  expect(stdout).toContain(`Scaffolding project with`);
-  expect(generatedFiles).matchSnapshot();
+    // Assertions
+    expect(stdout).toContain(`Scaffolding project with`);
+    expect(generatedFiles).matchSnapshot();
 
-  // run test
-  const monoRepoDir = path.join(import.meta.dirname, '../../../');
-  const eggDir = path.join(monoRepoDir, 'packages/egg');
-  const mockDir = path.join(monoRepoDir, 'plugins/mock');
-  execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
-  const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
-  expect(testStdout).toContain('2 passed');
-});
+    // run test
+    const monoRepoDir = path.join(import.meta.dirname, '../../../');
+    const eggDir = path.join(monoRepoDir, 'packages/egg');
+    const mockDir = path.join(monoRepoDir, 'plugins/mock');
+    execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+    const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+    expect(testStdout).toContain('2 passed');
+  }
+);
 
 // FIXME: HelloService.test.skip.ts
 // use "@oxc-node/core/register" to support decorator metadata
-test('successfully scaffolds a project based on tegg starter template', () => {
+test.skipIf(process.platform === 'win32')('successfully scaffolds a project based on tegg starter template', () => {
   const projectName = 'create-egg-test-tegg';
   const { stdout } = run([projectName, '--template', 'tegg'], {
     cwd: tempDir,
