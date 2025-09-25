@@ -596,9 +596,6 @@ importers:
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
-      egg:
-        specifier: workspace:*
-        version: link:../egg
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
@@ -1123,9 +1120,6 @@ importers:
 
   plugins/mock:
     dependencies:
-      '@eggjs/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@eggjs/extend2':
         specifier: workspace:*
         version: link:../../packages/extend2

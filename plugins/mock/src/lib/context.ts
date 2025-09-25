@@ -1,8 +1,6 @@
-import { utils } from '@eggjs/core';
-
 export const context = {
   runInBackground(scope: any) {
-    const taskName = scope._name || scope.name || utils.getCalleeFromStack(true);
+    const taskName = scope._name || scope.name;
     if (taskName) {
       scope._name = taskName;
     }

@@ -170,8 +170,8 @@ describe('test/options.test.ts', () => {
 
   describe('framework', () => {
     it('should get from absolute path', async () => {
-      let clusterPackagePath = path.join(__dirname, '..');
-      const frameworkPath = path.dirname(importResolve('egg', { paths: [clusterPackagePath] }));
+      let eggMockPackagePath = path.join(__dirname, '../../../plugins/mock');
+      const frameworkPath = path.dirname(importResolve('egg', { paths: [eggMockPackagePath] }));
       const options = await parseOptions({
         framework: frameworkPath,
       });

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
 import semver from 'semver';
-import { fileURLToPath } from 'url';
 import yaml from 'js-yaml';
 
 const __filename = fileURLToPath(import.meta.url);
