@@ -577,7 +577,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../mock
+        version: link:../../plugins/mock
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../supertest
@@ -608,6 +608,9 @@ importers:
       urllib:
         specifier: 'catalog:'
         version: 4.8.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(jiti@2.6.0)(less@4.4.1)(lightningcss@1.22.1)(sass@1.93.1)(terser@5.44.0)(yaml@2.8.1)
 
   packages/core:
     dependencies:
@@ -656,7 +659,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../mock
+        version: link:../../plugins/mock
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../supertest
@@ -807,7 +810,7 @@ importers:
         version: link:../koa
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../mock
+        version: link:../../plugins/mock
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../supertest
@@ -1005,94 +1008,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  packages/mock:
-    dependencies:
-      '@eggjs/core':
-        specifier: workspace:*
-        version: link:../core
-      '@eggjs/extend2':
-        specifier: workspace:*
-        version: link:../extend2
-      '@eggjs/supertest':
-        specifier: workspace:*
-        version: link:../supertest
-      '@eggjs/utils':
-        specifier: workspace:*
-        version: link:../utils
-      coffee:
-        specifier: 'catalog:'
-        version: 5.5.1
-      detect-port:
-        specifier: 'catalog:'
-        version: 2.1.0
-      egg-logger:
-        specifier: 'catalog:'
-        version: 3.6.1
-      get-ready:
-        specifier: 'catalog:'
-        version: 3.4.0
-      globby:
-        specifier: 'catalog:'
-        version: 11.1.0
-      is-type-of:
-        specifier: 'catalog:'
-        version: 2.2.0
-      merge-descriptors:
-        specifier: 'catalog:'
-        version: 2.0.0
-      mm:
-        specifier: 'catalog:'
-        version: 4.0.2
-      sdk-base:
-        specifier: 'catalog:'
-        version: 5.0.1
-      urllib:
-        specifier: 'catalog:'
-        version: 4.8.2
-      utility:
-        specifier: 'catalog:'
-        version: 2.5.0
-    devDependencies:
-      '@eggjs/tegg':
-        specifier: 'catalog:'
-        version: 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-config':
-        specifier: 'catalog:'
-        version: 3.61.0
-      '@eggjs/tegg-controller-plugin':
-        specifier: 'catalog:'
-        version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@eggjs/tegg-plugin':
-        specifier: 'catalog:'
-        version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
-      '@types/methods':
-        specifier: 'catalog:'
-        version: 1.1.4
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
-      egg:
-        specifier: workspace:*
-        version: link:../egg
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
-      egg-tracer:
-        specifier: 'catalog:'
-        version: 2.1.0
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
-      tsd:
-        specifier: 'catalog:'
-        version: 0.33.0
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.2
-
   packages/supertest:
     dependencies:
       '@types/superagent':
@@ -1186,7 +1101,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../../packages/mock
+        version: link:../mock
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../../packages/supertest
@@ -1199,6 +1114,94 @@ importers:
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
+  plugins/mock:
+    dependencies:
+      '@eggjs/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@eggjs/extend2':
+        specifier: workspace:*
+        version: link:../../packages/extend2
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../../packages/supertest
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      coffee:
+        specifier: 'catalog:'
+        version: 5.5.1
+      detect-port:
+        specifier: 'catalog:'
+        version: 2.1.0
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
+      get-ready:
+        specifier: 'catalog:'
+        version: 3.4.0
+      globby:
+        specifier: 'catalog:'
+        version: 11.1.0
+      is-type-of:
+        specifier: 'catalog:'
+        version: 2.2.0
+      merge-descriptors:
+        specifier: 'catalog:'
+        version: 2.0.0
+      mm:
+        specifier: 'catalog:'
+        version: 4.0.2
+      sdk-base:
+        specifier: 'catalog:'
+        version: 5.0.1
+      urllib:
+        specifier: 'catalog:'
+        version: 4.8.2
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/tegg':
+        specifier: 'catalog:'
+        version: 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-config':
+        specifier: 'catalog:'
+        version: 3.61.0
+      '@eggjs/tegg-controller-plugin':
+        specifier: 'catalog:'
+        version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@eggjs/tegg-plugin':
+        specifier: 'catalog:'
+        version: 3.61.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.0)))(leoric@2.13.8(mysql2@3.15.0))
+      '@types/methods':
+        specifier: 'catalog:'
+        version: 1.1.4
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      egg-errors:
+        specifier: 'catalog:'
+        version: 2.3.2
+      egg-tracer:
+        specifier: 'catalog:'
+        version: 2.1.0
+      pedding:
+        specifier: 'catalog:'
+        version: 2.0.1
+      tsd:
+        specifier: 'catalog:'
+        version: 0.33.0
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
@@ -1223,7 +1226,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../../packages/mock
+        version: link:../mock
       '@types/mustache':
         specifier: 'catalog:'
         version: 4.2.6
@@ -1266,7 +1269,7 @@ importers:
         version: link:../../tools/egg-bin
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../../packages/mock
+        version: link:../mock
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../../packages/supertest
@@ -1383,7 +1386,7 @@ importers:
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
-        version: link:../../packages/mock
+        version: link:../../plugins/mock
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig

@@ -10,24 +10,24 @@
 [download-image]: https://img.shields.io/npm/dm/@eggjs/mock.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/mock
 
-Mock library for testing Egg applications, plugins and custom Egg frameworks with ease.
-`egg-mock` inherits all APIs from [node_modules/mm](https://github.com/node-modules/mm), offering more flexibility.
+一个数据模拟的库，更方便地测试 Egg 应用、插件及自定义 Egg 框架。
+`@eggjs/mock` 拓展自 [node_modules/mm](https://github.com/node-modules/mm)，你可以使用所有 `mm` 包含的 API。
 
 ## Install
 
 ```bash
-npm i egg-mock --save-dev
+npm i @eggjs/mock --save-dev
 ```
 
 ## Usage
 
-### Create testcase
+### 创建测试用例
 
-Launch a mock server with `mm.app`
+通过 `mm.app` 启动应用，可以使用 App 的 API 模拟数据
 
 ```js
 // test/index.test.js
-const path = require('node:path');
+const path = require('path');
 const mm = require('@eggjs/mock');
 
 describe('some test', () => {
@@ -46,24 +46,26 @@ describe('some test', () => {
 });
 ```
 
-Retrieve Agent instance through `app.agent` after `mm.app` started.
+使用 `mm.app` 启动后可以通过 `app.agent` 访问到 agent 对象。
 
-Using `mm.cluster` launch cluster server, you can use the same API as `mm.app`;
+使用 `mm.cluster` 启动多进程测试，API 与 `mm.app` 一致。
 
-### Test Application
+### 应用开发者
 
-`baseDir` is optional that is `process.cwd()` by default.
+应用开发者不需要传入 baseDir，其为当前路径
 
 ```js
 before(() => {
-  app = mm.app();
+  app = mm.app({
+    framework: path.join(__dirname, '../node_modules/egg'),
+  });
   return app.ready();
 });
 ```
 
-### Test Framework
+### 框架开发者
 
-framework is optional, it's `node_modules/egg` by default.
+框架开发者需要指定 `framework`，会将当前路径指定为框架入口
 
 ```js
 before(() => {
@@ -75,9 +77,9 @@ before(() => {
 });
 ```
 
-### Test Plugin
+### 插件开发者
 
-If `eggPlugin.name` is defined in `package.json`, it's a plugin that will be loaded to plugin list automatically.
+在插件目录下执行测试用例时，只要 `package.json` 中有 `eggPlugin.name` 字段，就会自动把当前目录加到插件列表中。
 
 ```js
 before(() => {
@@ -88,7 +90,7 @@ before(() => {
 });
 ```
 
-You can also test the plugin in different framework, e.g. test [aliyun-egg](https://github.com/eggjs/aliyun-egg) and framework-b in one plugin.
+也可以通过 `framework` 指定其他框架，比如希望在 aliyun-egg 和 framework-b 同时测试此插件。
 
 ```js
 describe('aliyun-egg', () => {
@@ -114,7 +116,7 @@ describe('framework-b', () => {
 });
 ```
 
-If it's detected as an plugin, but you don't want it to be, you can use `plugin = false`.
+如果当前目录确实是一个 egg 插件，但是又不想当它是一个插件来测试，可以通过 `options.plugin` 选项来关闭：
 
 ```js
 before(() => {
@@ -130,11 +132,11 @@ before(() => {
 
 ### mm.app(options)
 
-Create a mock application.
+创建一个 mock 的应用。
 
 ### mm.cluster(options)
 
-Create a mock cluster server, but you can't use API in application, you should test using `supertest`.
+创建一个多进程应用，因为是多进程应用，无法获取 worker 的属性，只能通过 supertest 请求。
 
 ```js
 const mm = require('@eggjs/mock');
@@ -153,7 +155,7 @@ describe('test/app.js', () => {
 });
 ```
 
-You can disable coverage, because it's slow.
+默认会启用覆盖率，因为覆盖率比较慢，可以设置 coverage 关闭
 
 ```js
 mm.cluster({
@@ -163,44 +165,46 @@ mm.cluster({
 
 ### mm.env(env)
 
-Mock env when starting
+设置环境变量，主要用于启动阶段，运行阶段可以使用 app.mockEnv。
 
 ```js
-// production environment
+// 模拟生成环境
 mm.env('prod');
 mm.app({
   cache: false,
 });
 ```
 
-Environment list <https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L82>
+具体值见 <https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L82>
 
 ### mm.consoleLevel(level)
 
-Mock level that print to stdout/stderr
+mock 终端日志打印级别
 
 ```js
-// DON'T log to terminal
+// 不输出到终端
 mm.consoleLevel('NONE');
 ```
 
-level list: `DEBUG`, `INFO`, `WARN`, `ERROR`, `NONE`
+可选 level 为 `DEBUG`, `INFO`, `WARN`, `ERROR`, `NONE`
 
 ### mm.home(homePath)
 
-mock home directory
+模拟操作系统用户目录
 
-### mm.restore()
+### mm.restore
 
-restore all mock data, e.g. `afterEach(mm.restore)`
+还原所有 mock 数据，一般需要结合 `afterEach(mm.restore)` 使用
 
 ### options
 
-Options for `mm.app` and `mm.cluster`
+mm.app 和 mm.cluster 的配置参数
 
 #### baseDir {String}
 
-The directory of application, default is `process.cwd()`.
+当前应用的目录，如果是应用本身的测试可以不填默认为 $CWD。
+
+指定完整路径
 
 ```js
 mm.app({
@@ -208,7 +212,7 @@ mm.app({
 });
 ```
 
-You can use a string based on `$CWD/test/fixtures` for short
+也支持缩写，找 test/fixtures 目录下的
 
 ```js
 mm.app({
@@ -218,7 +222,7 @@ mm.app({
 
 #### framework {String/Boolean}
 
-The directory of framework
+指定框架路径
 
 ```js
 mm.app({
@@ -227,40 +231,44 @@ mm.app({
 });
 ```
 
-It can be true when test an framework
+对于框架的测试用例，可以指定 true，会自动加载当前路径。
 
 #### plugin
 
-The directory of plugin, it's detected automatically.
+指定插件的路径，只用于插件测试。设置为 true 会将当前路径设置到插件列表。
 
 ```js
 mm.app({
   baseDir: 'apps/demo',
+  plugin: true,
 });
 ```
 
 #### plugins {Object}
 
-Define a list of plugins
+传入插件列表，可以自定义多个插件
 
 #### cache {Boolean}
 
-Determine whether enable cache. it's cached by baseDir.
+是否需要缓存，默认开启。
+
+是通过 baseDir 缓存的，如果不需要可以关闭，但速度会慢。
 
 #### clean {Boolean}
 
-Clean all logs directory, default is true.
+是否需要清理 log 目录，默认开启。
 
-If you are using `ava`, disable it.
+如果是通过 ava 等并行测试框架进行测试，需要手动在执行测试前进行统一的日志清理，不能通过 mm 来处理，设置 `clean` 为 `false`。
 
 ### app.mockLog([logger]) and app.expectLog(str[, logger]), app.notExpectLog(str[, logger])
 
-Assert some string value in the logger instance.
-It is recommended to pair `app.mockLog()` with `app.expectLog()` or `app.notExpectLog()`.
-Using `app.expectLog()` or `app.notExpectLog()` alone requires dependency on the write speed of the log. When the server disk is high IO, unstable results will occur.
+断言指定的字符串记录在指定的日志中。
+建议 `app.mockLog()` 和 `app.expectLog()` 或者 `app.notExpectLog()` 配对使用。
+单独使用 `app.expectLog()` 或者 `app.notExpectLog()` 需要依赖日志的写入速度，在服务器磁盘高 IO 的时候，会出现不稳定的结果。
 
 ```js
 it('should work', async () => {
+  // 将日志记录到内存，用于下面的 expectLog
   app.mockLog();
   await app.httpRequest().get('/').expect('hello world').expect(200);
 
@@ -276,7 +284,7 @@ it('should work', async () => {
 
 ### app.httpRequest()
 
-Request current app http server.
+请求当前应用 http 服务的辅助工具。
 
 ```js
 it('should work', () => {
@@ -284,11 +292,11 @@ it('should work', () => {
 });
 ```
 
-See [supertest](https://github.com/visionmedia/supertest) to get more APIs.
+更多信息请查看 [supertest](https://github.com/visionmedia/supertest) 的 API 说明。
 
 #### .unexpectHeader(name)
 
-Assert current response not contains the specified header
+断言当前请求响应不包含指定 header
 
 ```js
 it('should work', () => {
@@ -298,7 +306,7 @@ it('should work', () => {
 
 #### .expectHeader(name)
 
-Assert current response contains the specified header
+断言当前请求响应包含指定 header
 
 ```js
 it('should work', () => {
@@ -307,6 +315,8 @@ it('should work', () => {
 ```
 
 ### app.mockContext(options)
+
+模拟上下文数据
 
 ```js
 const ctx = app.mockContext({
@@ -318,6 +328,8 @@ console.log(ctx.user.name); // Jason
 ```
 
 ### app.mockContextScope(fn, options)
+
+安全的模拟上下文数据，同一用例用多次调用 mockContext 可能会造成 AsyncLocalStorage 污染
 
 ```js
 await app.mockContextScope(
@@ -344,7 +356,7 @@ console.log(ctx.getCookie('foo'));
 
 ### app.mockHeaders(data)
 
-Mock request header
+模拟请求头
 
 ### app.mockSession(data)
 
@@ -370,13 +382,15 @@ it('should mock user name', async function () {
 
 ### app.mockServiceError(service, methodName, error)
 
-You can mock an error for service
+可以模拟一个错误
 
 ```js
 app.mockServiceError('user', 'home', new Error('mock error'));
 ```
 
 ### app.mockCsrf()
+
+模拟 csrf，不用传递 token
 
 ```js
 app.mockCsrf();
@@ -386,52 +400,27 @@ return app.httpRequest().post('/login').expect(302);
 
 ### app.mockHttpclient(url, method, data)
 
-Mock httpclient request, e.g.: `ctx.curl`
+模拟 httpclient 的请求，例如 `ctx.curl`
 
 ```js
-app.get('/', async function () {
-  const ret = await this.curl('https://eggjs.org');
+app.get('/', async ctx => {
+  const ret = await ctx.curl('https://eggjs.org');
   this.body = ret.data.toString();
 });
 
 app.mockHttpclient('https://eggjs.org', {
-  // can be buffer / string / json / function
-  // will auto convert to buffer
-  // follow options.dataType to convert
+  // 模拟的参数，可以是 buffer / string / json / function
+  // 都会转换成 buffer
+  // 按照请求时的 options.dataType 来做对应的转换
   data: 'mock egg',
 });
-// app.mockHttpclient('https://eggjs.org', 'get', mockResponse); // mock get
-// app.mockHttpclient('https://eggjs.org', [ 'get' , 'head' ], mockResponse); // mock get and head
-// app.mockHttpclient('https://eggjs.org', '*', mockResponse); // mock all methods
-// app.mockHttpclient('https://eggjs.org', mockResponse); // mock all methods by default
-// app.mockHttpclient('https://eggjs.org', 'get', function(url, opt) { return 'xxx' }); // support fn
 
 return app.httpRequest().post('/').expect('mock egg');
 ```
 
-You can also use Regular Expression for matching url.
-
-```js
-app.mockHttpclient(/\/users\/[a-z]$/i, {
-  data: {
-    name: 'egg',
-  },
-});
-```
-
-You can alse mock agent.httpclient
-
-```js
-app.agent.mockHttpclient('https://eggjs.org', {
-  data: {
-    name: 'egg',
-  },
-});
-```
-
 ## Bootstrap
 
-We also provide a bootstrap file for applications' unit test to reduce duplicated code:
+我们提供了一个 bootstrap 来减少单测中的重复代码:
 
 ```js
 const { app, mock, assert } = require('@eggjs/mock/bootstrap');
@@ -458,8 +447,8 @@ describe('test ctx', () => {
 });
 ```
 
-We inject ctx to every test case, so you can use `app.currentContext` in your test case.
-and the first call of `app.mockContext` will reuse `app.currentContext`.
+我们将会在每个 case 中自定注入 ctx, 可以通过 `app.currentContext` 来获取当前的 ctx。
+并且第一次使用 `app.mockContext` 会自动复用当前 case 的上下文。
 
 ```js
 const { app, mock, assert } = require('@eggjs/mock/bootstrap');
@@ -472,38 +461,16 @@ describe('test ctx', () => {
 
   it('should reuse ctx', () => {
     const ctx = app.currentContext;
-    // first call will reuse app.currentContext
+    // 第一次调用会复用上下文
     const mockCtx = app.mockContext();
     assert(ctx === mockCtx);
-    // next call will create a new context
-    // multi call app.mockContext will get wrong context with app.currentContext
-    // so we recommend to use app.mockContextScope
+    // 后续调用会新建上下文
+    // 极不建议多次调用 app.mockContext
+    // 这会导致上下文污染
+    // 建议使用 app.mockContextScope
     const mockCtx2 = app.mockContext();
     assert(ctx !== mockCtx);
   });
-});
-```
-
-And if you use mm.app to bootstrap app, you can manually call setGetAppCallback,
-then egg-mock will inject ctx for each test case.
-
-```js
-// test/.setup.js
-const mm = require('@eggjs/mock');
-const path = require('path');
-
-before(async function () {
-  const app = (this.app = mm.app());
-  mm.setGetAppCallback(() => {
-    return app;
-  });
-  await app.ready();
-});
-
-// test/index.test.js
-it('should work', function () {
-  // eslint-disable-next-line no-undef
-  assert(this.app.currentContext);
 });
 ```
 

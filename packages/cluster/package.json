@@ -71,7 +71,8 @@
     "egg-errors": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "urllib": "catalog:"
+    "urllib": "catalog:",
+    "vitest": "catalog:"
   },
   "engines": {
     "node": ">= 20.19.0"

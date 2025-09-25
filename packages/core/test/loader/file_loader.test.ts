@@ -1,16 +1,18 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
+
 import { describe, it, expect } from 'vitest';
 import { isClass } from 'is-type-of';
 import yaml from 'js-yaml';
-import { FileLoader, CaseStyle } from '../../src/loader/file_loader.js';
-import { getFilepath } from '../helper.js';
+
+import { FileLoader, CaseStyle } from '../../src/loader/file_loader.ts';
+import { getFilepath } from '../helper.ts';
 
 const dirBase = getFilepath('load_dirs');
 
 describe('test/loader/file_loader.test.ts', () => {
   it('should load files with package.json#exports', async () => {
-    const directory = path.join(__dirname, '../../../mock/src/app/middleware');
+    const directory = path.join(__dirname, '../../../../plugins/mock/src/app/middleware');
     const services: Record<string, any> = {};
     await new FileLoader({
       directory,
