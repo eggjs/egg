@@ -1,6 +1,6 @@
-import { defineConfig, type EggAppInfo, type PartialEggConfig } from 'egg';
+import { defineConfig, type PartialEggConfig } from 'egg';
 
-export default defineConfig((appInfo: EggAppInfo) => {
+export default defineConfig(appInfo => {
   const config = {
     // use for cookie sign key, should change to your own and keep security
     keys: appInfo.name + '_{{keys}}',
