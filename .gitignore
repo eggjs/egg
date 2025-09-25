@@ -29,6 +29,7 @@ test/fixtures/apps/app-ts-esm/**/*.d.ts
 site/dist
 site/.vitepress/cache
 site/.vitepress/dist
+site/docs/.vitepress/cache
 !site/public
 
 .umi
