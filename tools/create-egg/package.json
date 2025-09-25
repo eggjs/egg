@@ -1,6 +1,6 @@
 {
   "name": "create-egg",
-  "version": "4.1.0-beta.10",
+  "version": "4.1.0-beta.11",
   "publishConfig": {
     "access": "public",
     "exports": {
