@@ -605,9 +605,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       address:
         specifier: 'catalog:'
         version: 2.0.3
@@ -642,9 +639,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       beautify-benchmark:
         specifier: 'catalog:'
         version: 0.2.4
@@ -724,9 +718,6 @@ importers:
       '@types/js-yaml':
         specifier: 'catalog:'
         version: 4.0.9
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       await-event:
         specifier: 'catalog:'
         version: 2.1.0
@@ -872,9 +863,6 @@ importers:
       '@types/koa-bodyparser':
         specifier: 'catalog:'
         version: 4.3.12
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       address:
         specifier: 'catalog:'
         version: 2.0.3
@@ -929,9 +917,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       oxlint:
         specifier: 'catalog:'
         version: 1.18.0(oxlint-tsgolint@0.2.0)
@@ -1035,9 +1020,6 @@ importers:
       '@types/koa-compose':
         specifier: 'catalog:'
         version: 3.2.8
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       '@types/on-finished':
         specifier: 'catalog:'
         version: 2.3.5
@@ -1081,9 +1063,6 @@ importers:
       '@types/express':
         specifier: 'catalog:'
         version: 5.0.3
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       body-parser:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1102,9 +1081,6 @@ importers:
 
   packages/tsconfig:
     devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -1117,9 +1093,6 @@ importers:
 
   packages/utils:
     devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
@@ -1160,9 +1133,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1236,9 +1206,6 @@ importers:
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
@@ -1282,9 +1249,6 @@ importers:
       '@types/mustache':
         specifier: 'catalog:'
         version: 4.2.6
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       '@types/stack-trace':
         specifier: 'catalog:'
         version: 0.0.33
@@ -1331,9 +1295,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       '@types/safe-timers':
         specifier: 'catalog:'
         version: 1.1.2
@@ -1380,9 +1341,6 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -1427,9 +1385,6 @@ importers:
       '@types/cross-spawn':
         specifier: 'catalog:'
         version: 6.0.6
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       execa:
         specifier: 'catalog:'
         version: 9.6.0
@@ -1500,9 +1455,6 @@ importers:
       '@swc/core':
         specifier: 'catalog:'
         version: 1.13.5
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.5.2
       assert-file:
         specifier: 'catalog:'
         version: 1.0.0
