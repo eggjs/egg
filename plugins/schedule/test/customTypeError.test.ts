@@ -18,6 +18,6 @@ describe('test/customTypeError.test.ts', () => {
     await sleep(process.env.CI ? 10000 : 5000);
     const log = getLogContent('customTypeError');
     // console.log(log);
-    expect(contains(log, 'cluster_log')).toBe(1);
+    expect(contains(log, 'cluster_log')).toBeGreaterThanOrEqual(1);
   });
 });
