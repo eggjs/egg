@@ -54,7 +54,8 @@ function getScheduleLoader(app: EggApplicationCore) {
         const realFullpath = importResolve(fullpath);
         target[realFullpath] = {
           schedule: scheduleConfig,
-          scheduleQueryString: stringify(scheduleConfig as any),
+          // @ts-expect-error scheduleConfig may can't be stringified
+          scheduleQueryString: stringify(scheduleConfig),
           task,
           key: realFullpath,
         };

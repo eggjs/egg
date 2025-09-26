@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "types": ["mocha"]
+    "types": ["mocha", "node"]
   },
   "exclude": ["test/fixtures/**/*.ts"]
 }

@@ -51,6 +51,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "assert-file": "catalog:",
@@ -76,9 +77,8 @@
     "preci": "npm run clean && npm run lint && npm run prepublishOnly",
     "ci": "npm run cov",
     "clean": "rimraf dist",
-    "copyScripts": "rimraf dist/scripts && cpy scripts dist",
     "build": "tsdown",
-    "prepublishOnly": "pnpm run build && npm run copyScripts"
+    "prepublishOnly": "pnpm run build"
   },
   "type": "module",
   "files": [
