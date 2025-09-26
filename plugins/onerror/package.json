@@ -48,7 +48,6 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@types/mustache": "catalog:",
-    "@types/node": "catalog:",
     "@types/stack-trace": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

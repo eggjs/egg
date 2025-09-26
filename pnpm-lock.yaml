@@ -27,9 +27,6 @@ catalogs:
     '@eggjs/router':
       specifier: ^3.0.5
       version: 3.0.6
-    '@eggjs/schedule':
-      specifier: ^5.0.2
-      version: 5.0.2
     '@eggjs/security':
       specifier: ^4.0.0
       version: 4.0.1
@@ -132,6 +129,9 @@ catalogs:
     '@types/parseurl':
       specifier: ^1.3.3
       version: 1.3.3
+    '@types/safe-timers':
+      specifier: ^1.1.2
+      version: 1.1.2
     '@types/stack-trace':
       specifier: ^0.0.33
       version: 0.0.33
@@ -222,6 +222,9 @@ catalogs:
     cpy-cli:
       specifier: ^6.0.0
       version: 6.0.0
+    cron-parser:
+      specifier: ^4.9.0
+      version: 4.9.0
     cross-env:
       specifier: ^10.0.0
       version: 10.0.0
@@ -402,6 +405,9 @@ catalogs:
     runscript:
       specifier: ^2.0.1
       version: 2.0.1
+    safe-timers:
+      specifier: ^1.1.0
+      version: 1.1.0
     sdk-base:
       specifier: ^5.0.1
       version: 5.0.1
@@ -476,6 +482,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
       '@vitest/coverage-v8':
         specifier: 'catalog:'
         version: 4.0.0-beta.13(vitest@4.0.0-beta.13)
@@ -785,8 +794,8 @@ importers:
         specifier: 'catalog:'
         version: 3.0.0
       '@eggjs/schedule':
-        specifier: 'catalog:'
-        version: 5.0.2
+        specifier: workspace:*
+        version: link:../../plugins/schedule
       '@eggjs/security':
         specifier: 'catalog:'
         version: 4.0.1
@@ -1279,6 +1288,61 @@ importers:
       '@types/stack-trace':
         specifier: 'catalog:'
         version: 0.0.33
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.1)(terser@5.44.0)(yaml@2.8.1)
+
+  plugins/schedule:
+    dependencies:
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      cron-parser:
+        specifier: 'catalog:'
+        version: 4.9.0
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      humanize-ms:
+        specifier: 'catalog:'
+        version: 2.0.0
+      is-type-of:
+        specifier: 'catalog:'
+        version: 2.2.0
+      safe-timers:
+        specifier: 'catalog:'
+        version: 1.1.0
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/bin':
+        specifier: workspace:*
+        version: link:../../tools/egg-bin
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      '@types/safe-timers':
+        specifier: 'catalog:'
+        version: 1.1.2
+      egg-tracer:
+        specifier: 'catalog:'
+        version: 2.1.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.18.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
@@ -1871,10 +1935,6 @@ packages:
   '@eggjs/router@3.0.6':
     resolution: {integrity: sha512-mqOFkq79x3wGHYoI/lWMwSZ4wqmET9okJ0WU+qeuEgwA7PNMt8HyUmZ9Edz8+o3TjCSl85uMhpC0K4WWfPh7yA==}
     engines: {node: '>= 18.19.0'}
-
-  '@eggjs/schedule@5.0.2':
-    resolution: {integrity: sha512-KwZqFJ9UT3/s3Z57ZYKi9ldojo96vE0WbvgaRN5mPneF2/LCw5pCVML14h+fSgpf2cJdKk2xT2FdDGuMkzKsYQ==}
-    engines: {node: '>=18.19.0'}
 
   '@eggjs/security@4.0.1':
     resolution: {integrity: sha512-D7xrhJjo/hUY6B8bMs75Hpwhxn9AS9ed+tUkJj426sZrrehOYwcmPZ67HiG7COsCZvDxh80fkTn5tLowU3oAjg==}
@@ -3774,6 +3834,9 @@ packages:
 
   '@types/resolve@1.20.6':
     resolution: {integrity: sha512-A4STmOXPhMUtHH+S6ymgE2GiBSMqf4oTvcQZMcHzokuTLVYzXTB8ttjcgxOVaAp2lGwEdzZ0J+cRbbeevQj1UQ==}
+
+  '@types/safe-timers@1.1.2':
+    resolution: {integrity: sha512-NkLK2vnHShzLyef0eCMT5ocUJOQNB3Ppq3nKOCHPoxCs5PAJV/AH5DyWTKYHpaGlicE9qmC3MwNRNvt3oML76w==}
 
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
@@ -11600,15 +11663,6 @@ snapshots:
       urijs: 1.19.11
       utility: 2.5.0
 
-  '@eggjs/schedule@5.0.2':
-    dependencies:
-      '@eggjs/utils': 4.4.1
-      cron-parser: 4.9.0
-      humanize-ms: 2.0.0
-      is-type-of: 2.2.0
-      safe-timers: 1.1.0
-      utility: 2.5.0
-
   '@eggjs/security@4.0.1':
     dependencies:
       '@eggjs/core': 6.5.0
@@ -13392,6 +13446,8 @@ snapshots:
       csstype: 3.1.3
 
   '@types/resolve@1.20.6': {}
+
+  '@types/safe-timers@1.1.2': {}
 
   '@types/sax@1.2.7':
     dependencies:

@@ -48,7 +48,6 @@
     "@types/body-parser": "catalog:",
     "@types/cookie-parser": "catalog:",
     "@types/express": "catalog:",
-    "@types/node": "catalog:",
     "body-parser": "catalog:",
     "cookie-parser": "catalog:",
     "express": "catalog:",

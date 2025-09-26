@@ -3,7 +3,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "composite": true,
-    "incremental": true
+    "incremental": true,
+    "types": ["node"]
   },
   "references": [
     {
@@ -47,6 +48,9 @@
     },
     {
       "path": "./plugins/onerror"
+    },
+    {
+      "path": "./plugins/schedule"
     }
   ]
 }

@@ -63,7 +63,6 @@
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@eggjs/utils": "workspace:*",
-    "@types/node": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

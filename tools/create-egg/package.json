@@ -13,7 +13,6 @@
   "type": "module",
   "devDependencies": {
     "@types/cross-spawn": "catalog:",
-    "@types/node": "catalog:",
     "execa": "catalog:",
     "tsdown": "catalog:"
   },

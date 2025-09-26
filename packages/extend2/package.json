@@ -34,7 +34,6 @@
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/extend2",
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
-    "@types/node": "catalog:",
     "oxlint": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

@@ -77,7 +77,6 @@
     "@types/fresh": "catalog:",
     "@types/http-errors": "catalog:",
     "@types/koa-compose": "catalog:",
-    "@types/node": "catalog:",
     "@types/on-finished": "catalog:",
     "@types/parseurl": "catalog:",
     "@types/statuses": "catalog:",

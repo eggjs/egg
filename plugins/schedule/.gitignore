@@ -1,0 +1,15 @@
+logs/
+npm-debug.log
+node_modules/
+coverage/
+run/
+.vscode
+.nyc_output
+.idea
+
+test/fixtures/symlink/runDir/app/schedule/realFile.js
+test/fixtures/symlink/runDir/app/schedule/tsRealFile.ts
+package-lock.json
+.tshy*
+dist
+.eslintcache

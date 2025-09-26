@@ -44,7 +44,6 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "catalog:",
     "coffee": "catalog:",
     "mm": "catalog:",
     "runscript": "catalog:",
