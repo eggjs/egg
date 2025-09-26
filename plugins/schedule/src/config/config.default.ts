@@ -1,19 +1,13 @@
-import type { PartialEggConfig } from 'egg';
+import { defineConfig } from 'egg';
 
-export default () => {
-  const config = {} as PartialEggConfig;
-
-  config.customLogger = {
+export default defineConfig({
+  customLogger: {
     scheduleLogger: {
       consoleLevel: 'NONE',
       file: 'egg-schedule.log',
     },
-  };
-
-  config.schedule = {
-    // custom additional directory, full path
+  },
+  schedule: {
     directory: [],
-  };
-
-  return config;
-};
+  },
+});
