@@ -1,0 +1,84 @@
+{
+  "name": "@eggjs/static",
+  "version": "4.0.0-beta.11",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/middleware/static": "./dist/app/middleware/static.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./config/config.prod": "./dist/config/config.prod.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "static server plugin for egg",
+  "eggPlugin": {
+    "name": "static"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "plugins/static"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/static",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "static"
+  ],
+  "author": "dead_horse",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/koa-static-cache": "workspace:*",
+    "koa-compose": "catalog:",
+    "koa-range": "catalog:",
+    "ylru": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/koa-compose": "catalog:",
+    "@types/koa-range": "catalog:",
+    "@eggjs/mock": "workspace:*",
+    "oxlint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "ci": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/middleware/static": "./src/app/middleware/static.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.prod": "./src/config/config.prod.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
+}

@@ -17,7 +17,7 @@ exports[`test/lib/define_config.test.ts > defineConfig > should preserve type sa
 }
 `;
 
-exports[`test/lib/define_config.test.ts > defineConfig > should work with config function 1`] = `
+exports[`test/lib/define_config.test.ts > defineConfig > should work with config factory function 1`] = `
 {
   "appCustomConfig": {
     "myConfig": "myConfig",

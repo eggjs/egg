@@ -1,14 +1,14 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-import { defineConfig, type PartialEggConfig } from '../index.ts';
+import { defineConfigFactory, type PartialEggConfig } from '../index.ts';
 
 /**
  * The configuration of egg application, can be access by `app.config`
  * @class Config
  * @since 1.0.0
  */
-export default defineConfig((appInfo): PartialEggConfig => {
+export default defineConfigFactory((appInfo): PartialEggConfig => {
   const config: PartialEggConfig = {
     /**
      * The environment of egg

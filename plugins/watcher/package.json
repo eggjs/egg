@@ -28,9 +28,7 @@
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
-    "pretest": "pnpm run clean",
     "test": "vitest run",
-    "clean": "rimraf dist",
     "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },
@@ -58,12 +56,9 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@eggjs/utils": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

@@ -29,7 +29,7 @@
     "vitest": "catalog:"
   },
   "scripts": {
-    "clean": "pnpm -r run clean && rimraf packages/**/dist",
+    "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
     "typecheck": "pnpm clean && pnpm -r run typecheck",

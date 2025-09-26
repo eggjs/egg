@@ -12,11 +12,9 @@ catalog:
   '@eggjs/jsonp': ^3.0.0
   '@eggjs/logrotator': ^4.0.0
   '@eggjs/multipart': ^4.0.0
-  '@eggjs/onerror': ^3.0.0
   '@eggjs/router': ^3.0.5
   '@eggjs/security': ^4.0.0
   '@eggjs/session': ^4.0.1
-  '@eggjs/static': ^3.0.0
   '@eggjs/tegg': ^3.2.2
   '@eggjs/tegg-config': ^3.2.2
   '@eggjs/tegg-controller-plugin': ^3.2.2
@@ -43,6 +41,7 @@ catalog:
   '@types/js-yaml': '4'
   '@types/koa-bodyparser': ^4.3.12
   '@types/koa-compose': ^3.2.8
+  '@types/koa-range': ^0.3.5
   '@types/methods': ^1.1.4
   '@types/mime-types': ^2.1.4
   '@types/mocha': ^10.0.10
@@ -99,8 +98,6 @@ catalog:
   esbuild: ^0.25.0
   esbuild-register: ^3.6.0
   escape-html: ^1.0.3
-  eslint: ^8.57.0
-  eslint-config-egg: '14'
   execa: ^9.6.0
   express: ^4.21.2
   formstream: ^1.5.1
@@ -122,6 +119,7 @@ catalog:
   koa-compose: ^4.1.0
   koa-onerror: ^5.0.1
   koa-override: ^4.0.0
+  koa-range: ^0.3.0
   koa-static: ^5.0.0
   lint-staged: ^16.2.0
   merge-descriptors: ^2.0.0
@@ -169,6 +167,7 @@ catalog:
   utility: ^2.5.0
   vary: ^1.1.2
   vitest: 4.0.0-beta.13
+  ylru: ^2.0.0
 
 catalogMode: prefer
 

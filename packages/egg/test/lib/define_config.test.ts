@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { defineConfig, type EggAppInfo, type PartialEggConfig } from '../../src/index.ts';
+import { defineConfig, defineConfigFactory, type EggAppInfo, type PartialEggConfig } from '../../src/index.ts';
 
 describe('test/lib/define_config.test.ts', () => {
   describe('defineConfig', () => {
@@ -33,8 +33,8 @@ describe('test/lib/define_config.test.ts', () => {
       expect(config.appCustomConfig.myConfig).toBe('myConfig');
     });
 
-    it('should work with config function', () => {
-      const configFactory = defineConfig(appInfo => ({
+    it('should work with config factory function', () => {
+      const configFactory = defineConfigFactory(appInfo => ({
         keys: appInfo.name + '_keys',
         middleware: [],
         env: appInfo.env,
@@ -63,7 +63,7 @@ describe('test/lib/define_config.test.ts', () => {
     });
 
     it('should work with mixed config and bizConfig', () => {
-      const configFactory = defineConfig((appInfo: EggAppInfo) => {
+      const configFactory = defineConfigFactory((appInfo: EggAppInfo) => {
         const config: PartialEggConfig = {
           keys: appInfo.name + '_keys',
           middleware: [] as string[],
