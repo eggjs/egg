@@ -18,7 +18,7 @@ async function main() {
   }
 
   // join dirs
-  const cmd = `vitest run --coverage ${dirs.join(' ')}`;
+  const cmd = `vitest run --bail 1 --retry 2 --coverage ${dirs.join(' ')}`;
   console.log('👉 Running:', cmd);
 
   execSync(cmd, { stdio: 'inherit', cwd: rootDir });

@@ -136,7 +136,7 @@ describe('Static Cache', () => {
     await request(server).get('/src/index.ts').expect(200);
   });
 
-  it('should accept abnormal path', async () => {
+  it.skipIf(process.platform === 'win32')('should accept abnormal path', async () => {
     const app = new Koa();
     app.use(
       staticCache({

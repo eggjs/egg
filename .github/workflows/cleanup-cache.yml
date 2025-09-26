@@ -1,6 +1,5 @@
 name: Cleanup github runner caches on closed pull requests
-
-'on':
+on:
   pull_request:
     types:
       - closed
@@ -14,8 +13,8 @@ jobs:
       - name: Cleanup
         run: |
           echo "Fetching list of cache keys"
-          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id \
-            --jq '.[].id')
+          cacheKeysForPR=$(gh cache list --ref $BRANCH --limit 100 --json id --jq '.[].id')
+          echo "Cache keys: $cacheKeysForPR"
 
           ## Setting this to not fail the workflow while deleting cache keys.
           set +e
@@ -23,7 +22,6 @@ jobs:
           for cacheKey in $cacheKeysForPR
           do
               gh cache delete $cacheKey
-              echo "Deleted cache: $cacheKey"
           done
           echo "Done"
         env:

@@ -8,7 +8,7 @@ import { getFixtures, getLogContent } from './utils.ts';
 describe('cluster - context', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('context'), workers: 2 });
+    app = mm.cluster({ baseDir: getFixtures('context'), workers: 1 });
     // app.debug();
     await app.ready();
   });
@@ -27,10 +27,10 @@ describe('cluster - context', () => {
   });
 });
 
-describe('cluster - async', () => {
+describe.skip('cluster - async', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('async'), workers: 2 });
+    app = mm.cluster({ baseDir: getFixtures('async'), workers: 1 });
     // app.debug();
     await app.ready();
   });

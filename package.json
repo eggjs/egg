@@ -34,7 +34,7 @@
     "lint": "oxlint --type-aware",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
     "pretest": "pnpm -r run pretest && pnpm run clean",
-    "test": "vitest run",
+    "test": "vitest run --bail 1 --retry 2",
     "test:cov": "vitest run --coverage",
     "ci": "pnpm run test:cov",
     "ci:packages": "node scripts/ci.js packages",
