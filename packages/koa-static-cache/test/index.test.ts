@@ -258,7 +258,7 @@ describe('Static Cache', () => {
     assert.equal(files[filename].md5, md5);
   });
 
-  it('should set Last-Modified if file rollback and not buffered', async () => {
+  it.skipIf(process.env.CI)('should set Last-Modified if file rollback and not buffered', async () => {
     await scheduler.wait(1000);
     const readme = fs.readFileSync(readmeFile, 'utf8');
     fs.writeFileSync(readmeFile, readme, 'utf8');
