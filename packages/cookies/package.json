@@ -1,0 +1,57 @@
+{
+  "name": "@eggjs/cookies",
+  "version": "4.0.0-beta.11",
+  "engines": {
+    "node": ">= 20.19.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "description": "cookies module for egg",
+  "dependencies": {
+    "should-send-same-site-none": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "beautify-benchmark": "catalog:",
+    "benchmark": "catalog:",
+    "cookies": "catalog:",
+    "keygrip": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg-cookies.git"
+  },
+  "homepage": "https://github.com/eggjs/egg-cookies",
+  "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "ci": "vitest run --coverage",
+    "prepublishOnly": "pnpm run build"
+  },
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  }
+}

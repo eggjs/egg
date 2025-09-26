@@ -37,6 +37,9 @@
       "path": "./tools/create-egg"
     },
     {
+      "path": "./packages/cookies"
+    },
+    {
       "path": "./plugins/development"
     },
     {

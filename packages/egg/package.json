@@ -116,7 +116,7 @@
   ],
   "dependencies": {
     "@eggjs/cluster": "workspace:*",
-    "@eggjs/cookies": "catalog:",
+    "@eggjs/cookies": "workspace:*",
     "@eggjs/core": "workspace:*",
     "@eggjs/development": "workspace:*",
     "@eggjs/extend2": "workspace:*",

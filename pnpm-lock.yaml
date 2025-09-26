@@ -9,9 +9,6 @@ catalogs:
     '@clack/prompts':
       specifier: ^0.11.0
       version: 0.11.0
-    '@eggjs/cookies':
-      specifier: ^3.1.0
-      version: 3.1.0
     '@eggjs/i18n':
       specifier: ^3.0.1
       version: 3.0.1
@@ -168,6 +165,12 @@ catalogs:
     await-event:
       specifier: '2'
       version: 2.1.0
+    beautify-benchmark:
+      specifier: ^0.2.4
+      version: 0.2.4
+    benchmark:
+      specifier: ^2.1.4
+      version: 2.1.4
     body-parser:
       specifier: ^2.0.0
       version: 2.2.0
@@ -315,6 +318,9 @@ catalogs:
     js-yaml:
       specifier: ^4.1.0
       version: 4.1.0
+    keygrip:
+      specifier: ^1.0.2
+      version: 1.1.0
     koa-bodyparser:
       specifier: ^4.4.1
       version: 4.4.1
@@ -405,6 +411,9 @@ catalogs:
     sendmessage:
       specifier: ^3.0.1
       version: 3.0.1
+    should-send-same-site-none:
+      specifier: ^2.0.5
+      version: 2.0.5
     spy:
       specifier: ^1.0.0
       version: 1.0.0
@@ -612,6 +621,43 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.1)(terser@5.44.0)(yaml@2.8.1)
 
+  packages/cookies:
+    dependencies:
+      should-send-same-site-none:
+        specifier: 'catalog:'
+        version: 2.0.5
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      beautify-benchmark:
+        specifier: 'catalog:'
+        version: 0.2.4
+      benchmark:
+        specifier: 'catalog:'
+        version: 2.1.4
+      cookies:
+        specifier: 'catalog:'
+        version: 0.9.1
+      keygrip:
+        specifier: 'catalog:'
+        version: 1.1.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.18.0(oxlint-tsgolint@0.2.0)
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+
   packages/core:
     dependencies:
       '@eggjs/extend2':
@@ -712,8 +758,8 @@ importers:
         specifier: workspace:*
         version: link:../cluster
       '@eggjs/cookies':
-        specifier: 'catalog:'
-        version: 3.1.0
+        specifier: workspace:*
+        version: link:../cookies
       '@eggjs/core':
         specifier: workspace:*
         version: link:../core
@@ -4556,6 +4602,12 @@ packages:
   baseline-browser-mapping@2.8.6:
     resolution: {integrity: sha512-wrH5NNqren/QMtKUEEJf7z86YjfqW/2uw3IL3/xpqZUC95SSVIFXYQeeGjL6FT/X68IROu6RMehZQS5foy2BXw==}
     hasBin: true
+
+  beautify-benchmark@0.2.4:
+    resolution: {integrity: sha512-LZiZ6wl0Rs+A4Xv9Vn9W5GOVrBmPlWLP/ns5GszjRCoyQ5gFyLoJ8bCJuVS8fo88Ww+TWF/8UrGEHYnypgp3dQ==}
+
+  benchmark@2.1.4:
+    resolution: {integrity: sha512-l9MlfN4M1K/H2fbhfMy3B7vJd6AGKJVQn2h6Sg/Yx+KckoUA7ewS5Vv6TjSq18ooE1kS9hhAlQRH3AkXIh/aOQ==}
 
   big-integer@1.6.52:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
@@ -8617,6 +8669,9 @@ packages:
   pkce-challenge@5.0.0:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
     engines: {node: '>=16.20.0'}
+
+  platform@1.3.6:
+    resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
   plur@4.0.0:
     resolution: {integrity: sha512-4UGewrYgqDFw9vV6zNV+ADmPAUAfJPKtGvb/VdpQAx25X5f3xXdGdyOEVFwkl8Hl/tl7+xbeHqSEM+D5/TirUg==}
@@ -14502,6 +14557,13 @@ snapshots:
 
   baseline-browser-mapping@2.8.6: {}
 
+  beautify-benchmark@0.2.4: {}
+
+  benchmark@2.1.4:
+    dependencies:
+      lodash: 4.17.21
+      platform: 1.3.6
+
   big-integer@1.6.52: {}
 
   big.js@5.2.2: {}
@@ -19619,6 +19681,8 @@ snapshots:
       '@napi-rs/nice': 1.1.1
 
   pkce-challenge@5.0.0: {}
+
+  platform@1.3.6: {}
 
   plur@4.0.0:
     dependencies:
