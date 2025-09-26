@@ -1,4 +1,5 @@
 import { strict as assert } from 'node:assert';
+import { scheduler } from 'node:timers/promises';
 
 import { describe, it, beforeAll, afterAll } from 'vitest';
 
@@ -26,7 +27,8 @@ describe('work on startMode=worker_threads', () => {
     assert(app.process);
   });
 
-  it('should listen on port', () => {
+  it('should listen on port', async () => {
+    await scheduler.wait(3000);
     app.expect('stdout', /egg started on http:\/\/127.0.0.1:17\d{3}/);
   });
 });

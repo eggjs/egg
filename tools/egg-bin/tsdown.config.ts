@@ -9,4 +9,10 @@ export default defineConfig({
   exports: {
     devExports: true,
   },
+  copy: [
+    {
+      from: 'scripts',
+      to: 'dist/scripts',
+    },
+  ],
 });

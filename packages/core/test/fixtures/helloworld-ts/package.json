@@ -8,7 +8,7 @@
     "@eggjs/mock": "6",
     "@eggjs/tsconfig": "3",
     "@types/mocha": "10",
-    "@types/node": "22",
+    "@types/node": "24",
     "eslint": "8",
     "eslint-config-egg": "14",
     "typescript": "5"

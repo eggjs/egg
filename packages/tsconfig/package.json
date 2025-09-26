@@ -32,7 +32,6 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "catalog:",
     "coffee": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

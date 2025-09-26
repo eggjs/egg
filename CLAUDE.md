@@ -47,6 +47,10 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Provides file system watching capabilities
     - Supports multiple event sources for different environments
     - Used by development plugin for auto-reload functionality
+  - `schedule/` - Task scheduling plugin (merged from @eggjs/schedule)
+    - Provides cron-based task scheduling capabilities
+    - Supports interval and cron expression scheduling
+    - Manages scheduled tasks across worker processes
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
@@ -257,6 +261,9 @@ Plugins should configure their package.json following this pattern:
       // Mirror the exports structure for published package
     }
   },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
   "files": ["dist"],
   "scripts": {
     "build": "tsdown",
@@ -272,6 +279,7 @@ Plugins should configure their package.json following this pattern:
 
 Key points:
 
+- **All plugins must include egg in peerDependencies** - Ensures compatibility with the framework
 - Development uses TypeScript sources directly (`./src/*.ts`)
 - Published packages use compiled JavaScript (`./dist/*.js`)
 - The `publishConfig.exports` overrides `exports` during npm publish

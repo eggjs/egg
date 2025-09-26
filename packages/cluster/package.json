@@ -64,7 +64,6 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "@types/node": "catalog:",
     "address": "catalog:",
     "coffee": "catalog:",
     "egg-errors": "catalog:",

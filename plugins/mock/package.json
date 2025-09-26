@@ -123,7 +123,6 @@
     "@eggjs/tegg-controller-plugin": "catalog:",
     "@eggjs/tegg-plugin": "catalog:",
     "@types/methods": "catalog:",
-    "@types/node": "catalog:",
     "egg-errors": "catalog:",
     "egg-tracer": "catalog:",
     "pedding": "catalog:",

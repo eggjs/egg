@@ -11,6 +11,7 @@
   "devDependencies": {
     "@eggjs/bin": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "@vitest/ui": "catalog:",
     "c8": "catalog:",

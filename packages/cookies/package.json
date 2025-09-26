@@ -22,7 +22,6 @@
     "cookies": "catalog:",
     "keygrip": "catalog:",
     "@eggjs/tsconfig": "workspace:*",
-    "@types/node": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:"

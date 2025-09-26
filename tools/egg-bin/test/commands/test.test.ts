@@ -11,6 +11,7 @@ describe('test/commands/test.test.ts', () => {
 
   describe('egg-bin test', () => {
     it('should success js', async () => {
+      console.log(eggBin, cwd);
       await coffee
         .fork(eggBin, ['test'], { cwd })
         .debug()

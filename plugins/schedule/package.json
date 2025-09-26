@@ -1,0 +1,101 @@
+{
+  "name": "@eggjs/schedule",
+  "version": "6.0.0-beta.11",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/load_schedule": "./dist/lib/load_schedule.js",
+      "./lib/schedule": "./dist/lib/schedule.js",
+      "./lib/schedule_worker": "./dist/lib/schedule_worker.js",
+      "./lib/strategy/all": "./dist/lib/strategy/all.js",
+      "./lib/strategy/base": "./dist/lib/strategy/base.js",
+      "./lib/strategy/timer": "./dist/lib/strategy/timer.js",
+      "./lib/strategy/worker": "./dist/lib/strategy/worker.js",
+      "./lib/types": "./dist/lib/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "description": "schedule plugin for egg, support corn job.",
+  "eggPlugin": {
+    "name": "schedule"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/schedule.git"
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "schedule",
+    "cron"
+  ],
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "cron-parser": "catalog:",
+    "humanize-ms": "catalog:",
+    "is-type-of": "catalog:",
+    "safe-timers": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/safe-timers": "catalog:",
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "egg-tracer": "catalog:",
+    "oxlint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "ci": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "dead_horse",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/load_schedule": "./src/lib/load_schedule.ts",
+    "./lib/schedule": "./src/lib/schedule.ts",
+    "./lib/schedule_worker": "./src/lib/schedule_worker.ts",
+    "./lib/strategy/all": "./src/lib/strategy/all.ts",
+    "./lib/strategy/base": "./src/lib/strategy/base.ts",
+    "./lib/strategy/timer": "./src/lib/strategy/timer.ts",
+    "./lib/strategy/worker": "./src/lib/strategy/worker.ts",
+    "./lib/types": "./src/lib/types.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js"
+}

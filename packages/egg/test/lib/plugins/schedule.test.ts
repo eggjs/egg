@@ -4,6 +4,7 @@ import { strict as assert } from 'node:assert';
 import { scheduler } from 'node:timers/promises';
 
 import { describe, it } from 'vitest';
+
 import { cluster, getFilepath } from '../../utils.ts';
 
 describe.skip('test/lib/plugins/schedule.test.ts', () => {
