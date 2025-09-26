@@ -48,18 +48,19 @@ jobs:
       - name: Run typecheck
         run: pnpm run typecheck
 
-  test-packages:
+  test:
     strategy:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['22', '24']
+        filter: ['packages', 'tools', 'plugins']
 
-    name: Test packages (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.filter }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-packages-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.filter }})
       cancel-in-progress: true
 
     steps:
@@ -79,7 +80,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run ci
+        run: pnpm run ci:${{ matrix.filter }}
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
