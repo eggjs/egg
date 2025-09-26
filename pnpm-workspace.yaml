@@ -44,7 +44,7 @@ catalog:
   '@types/koa-bodyparser': ^4.3.12
   '@types/koa-compose': ^3.2.8
   '@types/methods': ^1.1.4
-  '@types/mime-types': ^2.1.4
+  '@types/mime-types': ^3.0.0
   '@types/mocha': ^10.0.10
   '@types/mustache': ^4.2.5
   '@types/node': 24.5.2
@@ -125,7 +125,7 @@ catalog:
   koa-static: ^5.0.0
   lint-staged: ^16.2.0
   merge-descriptors: ^2.0.0
-  mime-types: ^2.1.35
+  mime-types: ^3.0.0
   mm: ^4.0.2
   mocha: 11.7.2
   mochawesome-with-mocha: 8.0.0
