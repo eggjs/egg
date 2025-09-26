@@ -187,3 +187,4 @@ minimumReleaseAgeExclude:
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
+  less: ^4.4.1
