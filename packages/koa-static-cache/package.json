@@ -14,11 +14,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eggjs/koa-static-cache.git"
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "packages/koa-static-cache"
   },
   "bugs": {
-    "url": "https://github.com/eggjs/koa-static-cache/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa-static-cache",
   "engines": {
     "node": ">= 20.19.0"
   },

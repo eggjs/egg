@@ -31,7 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/schedule.git"
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "plugins/schedule"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/schedule",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "keywords": [
     "egg",
