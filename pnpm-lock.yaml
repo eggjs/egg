@@ -494,6 +494,9 @@ importers:
       c8:
         specifier: 'catalog:'
         version: 10.1.3
+      cross-env:
+        specifier: 'catalog:'
+        version: 10.0.0
       husky:
         specifier: 'catalog:'
         version: 9.1.7
