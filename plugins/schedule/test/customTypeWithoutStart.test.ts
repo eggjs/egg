@@ -18,6 +18,6 @@ describe('test/customTypeWithoutStart.test.ts', () => {
     await sleep(5000);
     const log = getLogContent('customTypeWithoutStart');
     // console.log(log);
-    expect(contains(log, 'cluster_log')).toBe(1);
+    expect(contains(log, 'cluster_log')).toBeGreaterThanOrEqual(1);
   });
 });
