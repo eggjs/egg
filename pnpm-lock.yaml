@@ -1455,6 +1455,9 @@ importers:
       '@swc/core':
         specifier: 'catalog:'
         version: 1.13.5
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
       assert-file:
         specifier: 'catalog:'
         version: 1.0.0
