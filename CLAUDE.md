@@ -27,6 +27,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/cluster/`** - Cluster management (merged from @eggjs/cluster)
   - `src/` - Cluster TypeScript source code
   - `test/` - Cluster test suite
+- **`packages/cookies/`** - Cookie handling utilities (merged from @eggjs/cookies)
+  - `src/` - Cookies TypeScript source code
+  - `test/` - Cookies test suite with Mocha
 - **`packages/koa/`** - Koa web framework (merged from @eggjs/koa)
   - `src/` - Koa TypeScript source code
   - `test/` - Koa test suite
@@ -105,7 +108,9 @@ The framework follows a specific loading order:
 
 - `pnpm -r run build` - Build all packages
 - `pnpm -r run clean` - Clean dist directories in all packages
-- `pnpm lint` - Run ESLint in all packages
+- `pnpm -r run typecheck` - Run TypeScript type checking with `tsc --noEmit`
+- `pnpm lint` - Run oxlint with type-aware checking in all packages
+- `pnpm lint:fix` - Auto-fix linting issues with oxlint
 
 ### Examples
 
@@ -256,6 +261,10 @@ Plugins should configure their package.json following this pattern:
   "scripts": {
     "build": "tsdown",
     "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
     "prepublishOnly": "npm run build"
   }
 }
@@ -281,12 +290,23 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 ### Testing Strategy
 
 - **IMPORTANT: All new packages MUST use Vitest for testing** - this is the standard test runner for the monorepo
-- **Exception: egg-bin uses Mocha** - the CLI tool package uses Mocha for consistency with CLI testing patterns
+- **Exception: egg-bin and cookies use Mocha** - these packages use Mocha for consistency with their testing patterns
 - Use `pnpm --filter=egg run test` for framework tests
 - Test fixtures are in `packages/egg/test/fixtures/apps/`
 - Create apps in fixtures to test specific scenarios
 - Use `pnpm test` to run tests across all packages
 - Follow existing test patterns for consistency
+
+#### Linting and Type Checking Strategy
+
+- **All packages must include TypeScript type checking** - Use `tsc --noEmit` in `typecheck` script
+- **All packages use oxlint for linting** - No ESLint configurations should be present
+- Use `oxlint --type-aware` for enhanced TypeScript checking
+- oxlint automatically respects `.gitignore` patterns for file exclusion
+- Package-specific scripts:
+  - `"typecheck": "tsc --noEmit"` - Pure TypeScript type checking
+  - `"lint": "oxlint --type-aware"` - Linting with type awareness
+- Remove any `.eslintrc` or `.eslintrc.js` files when migrating packages
 
 #### Vitest Configuration
 
@@ -345,11 +365,17 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 
 ### Linting and Formatting
 
-- **ESLint** - Used for code linting across all packages
+- **TypeScript Compiler (tsc)** - Type checking with `tsc --noEmit`
+  - Ensures type safety without generating output files
+  - Run `pnpm -r run typecheck` for all packages
+- **oxlint** - Fast, type-aware linter used across all packages
+  - Provides additional linting rules beyond TypeScript checking
+  - Significantly faster than ESLint with comparable rules
+  - Uses `--type-aware` flag for enhanced TypeScript analysis
 - **Prettier** - Code formatting (primarily for documentation)
-- Run `pnpm lint` to check code quality
+- Run `pnpm lint` to check code quality with oxlint
 - Run `pnpm lint:fix` to auto-fix linting issues
-- Each package has its own `.eslintrc.js` extending from root configuration
+- Each package uses oxlint which automatically respects `.gitignore` patterns
 
 ### TypeScript Best Practices
 
@@ -477,11 +503,14 @@ pnpm install
 # Clean all build artifacts
 pnpm -r run clean
 
+# Check TypeScript types across all packages
+pnpm -r run typecheck
+
+# Check TypeScript configuration for specific package
+pnpm --filter=<package> run typecheck
+
 # Rebuild TypeScript references
 pnpm run build:ts
-
-# Check TypeScript configuration
-pnpm --filter=<package> run tsc --noEmit
 ```
 
 #### Test Failures
@@ -523,6 +552,21 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
 - Regular dependency updates via `pnpm update`
 
 ## Migration Guide
+
+### Migrating from ESLint to oxlint
+
+1. Remove ESLint dependencies from package.json:
+   - Remove `eslint`, `eslint-config-egg`, and any ESLint plugins
+   - Add `"oxlint": "catalog:"` to devDependencies
+2. Delete `.eslintrc`, `.eslintrc.js`, or `.eslintrc.json` files
+3. Update scripts in package.json:
+   - Add `"typecheck": "tsc --noEmit"` for TypeScript type checking
+   - Change `"lint": "eslint ..."` to `"lint": "oxlint --type-aware"`
+   - Add `"lint:fix": "npm run lint -- --fix"`
+4. Ensure both type checking and linting are run:
+   - Use `tsc --noEmit` for pure TypeScript type checking
+   - Use `oxlint --type-aware` for additional linting rules
+5. Run `pnpm install` to update dependencies
 
 ### Migrating from Egg v2 to v3
 
