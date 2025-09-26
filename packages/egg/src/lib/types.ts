@@ -11,7 +11,7 @@ import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.ts';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.ts';
 
 // import plugins types
-import './types.plugin.d.ts';
+import './types.plugin.ts';
 
 export type { EggAppInfo, PartialDeep };
 
