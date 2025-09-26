@@ -51,6 +51,9 @@
     },
     {
       "path": "./plugins/schedule"
+    },
+    {
+      "path": "./packages/koa-static-cache"
     }
   ]
 }
