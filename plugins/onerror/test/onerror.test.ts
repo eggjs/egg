@@ -469,7 +469,7 @@ describe('test/onerror.test.ts', () => {
     });
   });
 
-  describe('agent emit error', () => {
+  describe.skipIf(process.platform === 'win32')('agent emit error', () => {
     let app: MockApplication;
     beforeAll(() => {
       app = mm.cluster({

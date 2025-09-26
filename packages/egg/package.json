@@ -47,6 +47,7 @@
       "./lib/loader/EggApplicationLoader": "./dist/lib/loader/EggApplicationLoader.js",
       "./lib/start": "./dist/lib/start.js",
       "./lib/types": "./dist/lib/types.js",
+      "./lib/types.plugin": "./dist/lib/types.plugin.js",
       "./lib/utils": "./dist/lib/utils.js",
       "./urllib": "./dist/urllib.js",
       "./package.json": "./package.json"
@@ -96,6 +97,7 @@
     "./lib/loader/EggApplicationLoader": "./src/lib/loader/EggApplicationLoader.ts",
     "./lib/start": "./src/lib/start.ts",
     "./lib/types": "./src/lib/types.ts",
+    "./lib/types.plugin": "./src/lib/types.plugin.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./urllib": "./src/urllib.ts",
     "./package.json": "./package.json"
