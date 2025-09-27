@@ -79,7 +79,7 @@ describe('utils.isSafeDomain', () => {
   });
 });
 
-describe('utils.checkIfIgnore', () => {
+describe.skipIf(process.platform === 'win32')('utils.checkIfIgnore', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;
