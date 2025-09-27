@@ -44,6 +44,9 @@
       "path": "./plugins/development"
     },
     {
+      "path": "./plugins/jsonp"
+    },
+    {
       "path": "./plugins/watcher"
     },
     {

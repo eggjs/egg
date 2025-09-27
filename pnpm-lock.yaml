@@ -12,9 +12,6 @@ catalogs:
     '@eggjs/i18n':
       specifier: ^3.0.1
       version: 3.0.1
-    '@eggjs/jsonp':
-      specifier: ^3.0.0
-      version: 3.0.0
     '@eggjs/logrotator':
       specifier: ^4.0.0
       version: 4.1.0
@@ -312,6 +309,9 @@ catalogs:
     js-yaml:
       specifier: ^4.1.0
       version: 4.1.0
+    jsonp-body:
+      specifier: ^2.0.0
+      version: 2.0.0
     keygrip:
       specifier: ^1.0.2
       version: 1.1.0
@@ -774,8 +774,8 @@ importers:
         specifier: 'catalog:'
         version: 3.0.1
       '@eggjs/jsonp':
-        specifier: 'catalog:'
-        version: 3.0.0
+        specifier: workspace:*
+        version: link:../../plugins/jsonp
       '@eggjs/logrotator':
         specifier: 'catalog:'
         version: 4.1.0
@@ -812,9 +812,6 @@ importers:
       cluster-client:
         specifier: 'catalog:'
         version: 3.7.0
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1198,6 +1195,34 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  plugins/jsonp:
+    dependencies:
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      jsonp-body:
+        specifier: 'catalog:'
+        version: 2.0.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/mock:
     dependencies:
@@ -1934,10 +1959,6 @@ packages:
   '@eggjs/ip@2.1.0':
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
     engines: {node: '>= 14.0.0'}
-
-  '@eggjs/jsonp@3.0.0':
-    resolution: {integrity: sha512-cYq+4LI5JtvZHSoyXSKJhSLswPwFOiE4XeCjP5rqszUnFZEnSVldWlcUemtCy54iel5LdcpC+H95SmrLt4MNkw==}
-    engines: {node: '>= 18.19.0'}
 
   '@eggjs/koa@2.22.2':
     resolution: {integrity: sha512-cqubIqo5SCDPVN2qJ/ZiIPsfWl0xvNRvdLc9h1h8s5zdUk33RyNmCP83Ur9WS3GWbew+rDpVkNReJUCPbvrxkg==}
@@ -11574,11 +11595,6 @@ snapshots:
       utility: 2.5.0
 
   '@eggjs/ip@2.1.0': {}
-
-  '@eggjs/jsonp@3.0.0':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      jsonp-body: 2.0.0
 
   '@eggjs/koa@2.22.2':
     dependencies:
