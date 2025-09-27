@@ -121,12 +121,11 @@ test.skipIf(process.platform === 'win32')(
     expect(generatedFiles).matchSnapshot();
 
     // run test
-    console.log('run test', projectDir);
-    // execaCommandSync(`pnpm install`, { cwd: projectDir });
     const monoRepoDir = path.join(import.meta.dirname, '../../../');
     const eggDir = path.join(monoRepoDir, 'packages/egg');
     const mockDir = path.join(monoRepoDir, 'plugins/mock');
-    execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+    const binDir = path.join(monoRepoDir, 'tools/egg-bin');
+    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir}`, { cwd: projectDir });
     const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
     expect(testStdout).toContain('2 passed');
   }
@@ -147,11 +146,11 @@ test.skipIf(process.platform === 'win32')('successfully scaffolds a project base
   expect(generatedFiles).matchSnapshot();
 
   // run test
-  execaCommandSync(`pnpm install`, { cwd: projectDir });
   const monoRepoDir = path.join(import.meta.dirname, '../../../');
   const eggDir = path.join(monoRepoDir, 'packages/egg');
   const mockDir = path.join(monoRepoDir, 'plugins/mock');
-  execaCommandSync(`pnpm link ${mockDir} ${eggDir}`, { cwd: projectDir });
+  const binDir = path.join(monoRepoDir, 'tools/egg-bin');
+  execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir}`, { cwd: projectDir });
   const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
   expect(testStdout).toContain('2 passed');
 });
