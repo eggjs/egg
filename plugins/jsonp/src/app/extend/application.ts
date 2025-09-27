@@ -1,15 +1,17 @@
 import { debuglog } from 'node:util';
 import { parse as urlParse, type UrlWithStringQuery } from 'node:url';
 import type { ParsedUrlQuery } from 'node:querystring';
-import { EggCore, type MiddlewareFunc } from '@eggjs/core';
-import { JSONP_CONFIG } from '../../lib/private_key.js';
-import type { JSONPConfig } from '../../types.js';
-import { JSONPForbiddenReferrerError } from '../../error/JSONPForbiddenReferrerError.js';
-import JSONPContext from './context.js';
 
-const debug = debuglog('@egg/jsonp/app/extend/application');
+import { Application, type MiddlewareFunc } from 'egg';
 
-export default class JSONPApplication extends EggCore {
+import { JSONP_CONFIG } from '../../lib/private_key.ts';
+import type { JSONPConfig } from '../../types.ts';
+import { JSONPForbiddenReferrerError } from '../../error/JSONPForbiddenReferrerError.ts';
+import JSONPContext from './context.ts';
+
+const debug = debuglog('egg/jsonp/app/extend/application');
+
+export default class JSONPApplication extends Application {
   /**
    * return a middleware to enable jsonp response.
    * will do some security check inside.

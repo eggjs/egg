@@ -58,7 +58,6 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
-    "@eggjs/core": "workspace:*",
     "jsonp-body": "catalog:"
   },
   "peerDependencies": {
@@ -68,16 +67,12 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "oxlint": "catalog:",
-    "oxlint-tsgolint": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "scripts": {
     "build": "tsdown",
-    "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",

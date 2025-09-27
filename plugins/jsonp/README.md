@@ -1,8 +1,6 @@
 # @eggjs/jsonp
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/jsonp/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/jsonp/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/@eggjs/jsonp.svg?style=flat)](https://nodejs.org/en/download/)
@@ -10,8 +8,6 @@
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/jsonp.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/jsonp
-[codecov-image]: https://img.shields.io/codecov/c/github/eggjs/jsonp.svg?style=flat-square
-[codecov-url]: https://codecov.io/github/eggjs/jsonp?branch=master
 [snyk-image]: https://snyk.io/test/npm/@eggjs/jsonp/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/@eggjs/jsonp
 [download-image]: https://img.shields.io/npm/dm/@eggjs/jsonp.svg?style=flat-square
@@ -136,6 +132,6 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/jsonp)](https://github.com/eggjs/jsonp/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

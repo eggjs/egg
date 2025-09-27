@@ -1,4 +1,4 @@
-import type { JSONPConfig } from '../types.js';
+import type { PartialEggConfig } from 'egg';
 
 export default {
   jsonp: {
@@ -6,5 +6,5 @@ export default {
     callback: ['_callback', 'callback'],
     csrf: false,
     whiteList: undefined,
-  } as JSONPConfig,
-};
+  },
+} as PartialEggConfig;

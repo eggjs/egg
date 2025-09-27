@@ -1,4 +1,4 @@
-import type { MiddlewareFunc } from '@eggjs/core';
+import type { MiddlewareFunc } from 'egg';
 
 /**
  * jsonp options
@@ -23,7 +23,7 @@ export interface JSONPConfig {
   whiteList?: string | RegExp | (string | RegExp)[];
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     jsonp?: JSONPConfig;
@@ -44,7 +44,7 @@ declare module '@eggjs/core' {
     createJsonpBody(body: any): void;
   }
 
-  interface EggCore {
+  interface Application {
     /**
      * return a middleware to enable jsonp response.
      * will do some security check inside.

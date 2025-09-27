@@ -1,12 +1,15 @@
 import { strict as assert } from 'node:assert';
+import path from 'node:path';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { mm, MockApplication } from '@eggjs/mock';
+
+import { mm, type MockApplication } from '@eggjs/mock';
 
 describe('test/jsonp.test.ts', () => {
   let app: MockApplication;
   beforeAll(() => {
     app = mm.app({
-      baseDir: 'jsonp-test',
+      baseDir: path.join(import.meta.dirname, 'fixtures', 'jsonp-test'),
     });
     return app.ready();
   });

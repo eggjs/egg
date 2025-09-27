@@ -1,13 +1,20 @@
 import { jsonp as jsonpBody } from 'jsonp-body';
-import { Context } from '@eggjs/core';
-import { JSONP_CONFIG } from '../../lib/private_key.js';
+import { Context } from 'egg';
+
+import { JSONP_CONFIG } from '../../lib/private_key.ts';
+import type { JSONPConfig } from '../../types.ts';
 
 export default class JSONPContext extends Context {
+  declare [JSONP_CONFIG]?: {
+    jsonpFunction?: string;
+    options?: JSONPConfig;
+  };
+
   /**
    * detect if response should be jsonp
    */
   get acceptJSONP() {
-    const jsonpConfig = Reflect.get(this, JSONP_CONFIG) as any;
+    const jsonpConfig = this[JSONP_CONFIG];
     return !!jsonpConfig?.jsonpFunction;
   }
 
@@ -19,7 +26,7 @@ export default class JSONPContext extends Context {
    * @private
    */
   createJsonpBody(body: any) {
-    const jsonpConfig = Reflect.get(this, JSONP_CONFIG) as any;
+    const jsonpConfig = this[JSONP_CONFIG];
     if (!jsonpConfig?.jsonpFunction) {
       this.body = body;
       return;
