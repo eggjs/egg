@@ -159,7 +159,7 @@ catalog:
   stack-trace: ^0.0.10
   statuses: ^2.0.1
   superagent: ^10.0.0
-  supertest: ^6.3.3
+  supertest: ^7.0.0
   terminal-link: ^5.0.0
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
