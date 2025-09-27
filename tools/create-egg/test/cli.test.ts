@@ -96,7 +96,7 @@ test('asks to overwrite non-empty current directory', () => {
 });
 
 test('successfully scaffolds a project based on tegg starter template', () => {
-  const { stdout } = run([projectName, '--template', 'tegg'], {
+  const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
     cwd: import.meta.dirname,
   });
   const generatedFiles = fs.readdirSync(genPath).sort();
@@ -110,7 +110,7 @@ test.skipIf(process.platform === 'win32')(
   'successfully scaffolds a project based on simple-ts starter template',
   () => {
     const projectName = 'create-egg-test-simple-ts';
-    const { stdout } = run([projectName, '--template', 'simple-ts'], {
+    const { stdout } = run([projectName, '--template', 'simple-ts', '--overwrite'], {
       cwd: tempDir,
     });
     const projectDir = path.join(tempDir, projectName);
@@ -134,7 +134,7 @@ test.skipIf(process.platform === 'win32')(
 // use "@oxc-node/core/register" to support decorator metadata
 test.skipIf(process.platform === 'win32')('successfully scaffolds a project based on tegg starter template', () => {
   const projectName = 'create-egg-test-tegg';
-  const { stdout } = run([projectName, '--template', 'tegg'], {
+  const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
     cwd: tempDir,
   });
   const projectDir = path.join(tempDir, projectName);
@@ -154,7 +154,7 @@ test.skipIf(process.platform === 'win32')('successfully scaffolds a project base
 });
 
 test('works with the -t alias', () => {
-  const { stdout } = run([projectName, '-t', 'tegg'], {
+  const { stdout } = run([projectName, '-t', 'tegg', '--overwrite'], {
     cwd: import.meta.dirname,
   });
   const generatedFiles = fs.readdirSync(genPath).sort();

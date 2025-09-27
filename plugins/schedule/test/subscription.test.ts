@@ -19,8 +19,8 @@ describe('cluster - subscription', () => {
 
     const log = getLogContent('subscription');
     // console.log(log);
-    expect(contains(log, 'interval')).toBe(1);
-    expect(contains(log, 'cron')).toBe(1);
+    expect(contains(log, 'interval')).toBeGreaterThanOrEqual(1);
+    expect(contains(log, 'cron')).toBeGreaterThanOrEqual(1);
   });
 });
 

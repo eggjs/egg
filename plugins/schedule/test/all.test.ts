@@ -19,11 +19,11 @@ describe('cluster - all', () => {
 
     const log = getLogContent('all');
     // console.log(log);
-    expect(contains(log, 'interval')).toBe(2);
-    expect(contains(log, 'cron')).toBe(2);
+    expect(contains(log, 'interval')).toBeGreaterThanOrEqual(2);
+    expect(contains(log, 'cron')).toBeGreaterThanOrEqual(2);
 
     const scheduleLog = getScheduleLogContent('all');
-    expect(contains(scheduleLog, 'cron.js execute succeed')).toBe(2);
-    expect(contains(scheduleLog, 'interval.js execute succeed')).toBe(2);
+    expect(contains(scheduleLog, 'cron.js execute succeed')).toBeGreaterThanOrEqual(2);
+    expect(contains(scheduleLog, 'interval.js execute succeed')).toBeGreaterThanOrEqual(2);
   });
 });

@@ -451,7 +451,7 @@ catalogs:
       specifier: 5.9.2
       version: 5.9.2
     urllib:
-      specifier: 4.8.2
+      specifier: ^4.8.2
       version: 4.8.2
     utility:
       specifier: ^2.5.0
