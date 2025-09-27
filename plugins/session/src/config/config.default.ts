@@ -15,3 +15,10 @@ export default {
     encrypt: true,
   }),
 };
+
+declare module 'egg' {
+  // add EggAppConfig overrides types
+  interface EggAppConfig {
+    session: SessionConfig;
+  }
+}

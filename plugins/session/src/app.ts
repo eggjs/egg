@@ -1,10 +1,11 @@
-import type { ILifecycleBoot, EggCore } from '@eggjs/core';
-import { SessionConfig } from './config/config.default.js';
+import type { ILifecycleBoot, Application } from 'egg';
+
+import { SessionConfig } from './config/config.default.ts';
 
 export default class AppBoot implements ILifecycleBoot {
   private readonly app;
 
-  constructor(app: EggCore) {
+  constructor(app: Application) {
     this.app = app;
   }
 

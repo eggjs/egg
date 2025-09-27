@@ -1,6 +1,8 @@
 import assert from 'node:assert';
-import { EggCore } from '@eggjs/core';
-import type { SessionConfig } from '../../config/config.default.js';
+
+import { Application } from 'egg';
+
+import type { SessionConfig } from '../../config/config.default.ts';
 
 export type SessionStore = Required<SessionConfig>['store'];
 
@@ -10,7 +12,7 @@ export type SessionStoreOrAppSessionStoreClass =
       new (app: Application): SessionStore;
     };
 
-export default class Application extends EggCore {
+export default class SessionApplication extends Application {
   /**
    * set session external store
    *
@@ -57,5 +59,13 @@ export default class Application extends EggCore {
    */
   get sessionStore(): SessionStore | undefined {
     return this.config.session.store;
+  }
+}
+
+declare module 'egg' {
+  interface Application {
+    // add Application instance property
+    set sessionStore(store: SessionStoreOrAppSessionStoreClass | null | undefined);
+    get sessionStore(): SessionStore | undefined;
   }
 }
