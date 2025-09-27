@@ -126,7 +126,7 @@ catalog:
   koa-range: ^0.3.0
   koa-static: ^5.0.0
   lint-staged: ^16.2.0
-  matcher: ^4.0.0
+  matcher: ^6.0.0
   merge-descriptors: ^2.0.0
   mime-types: ^3.0.0
   mm: ^4.0.2

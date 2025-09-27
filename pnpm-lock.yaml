@@ -349,8 +349,8 @@ catalogs:
       specifier: ^16.2.0
       version: 16.2.0
     matcher:
-      specifier: ^4.0.0
-      version: 4.0.0
+      specifier: ^6.0.0
+      version: 6.0.0
     merge-descriptors:
       specifier: ^2.0.0
       version: 2.0.0
@@ -1444,7 +1444,7 @@ importers:
         version: 4.1.0
       matcher:
         specifier: 'catalog:'
-        version: 4.0.0
+        version: 6.0.0
       nanoid:
         specifier: 'catalog:'
         version: 3.3.11
@@ -7905,9 +7905,9 @@ packages:
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
 
-  matcher@4.0.0:
-    resolution: {integrity: sha512-S6x5wmcDmsDRRU/c2dkccDwQPXoFczc5+HpQ2lON8pnvHlnvHAHj5WlLVvw6n6vNyHuVugYrFohYxbS+pvFpKQ==}
-    engines: {node: '>=10'}
+  matcher@6.0.0:
+    resolution: {integrity: sha512-TzDerdcNtI79w7Av4GT57bLdElPA/VAkjqdMZv8yhuc8geU2z0ljW9anXbX/55aHEMTpYypZb1lxsA/46r9oOQ==}
+    engines: {node: '>=20'}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -18455,9 +18455,9 @@ snapshots:
 
   markdown-table@3.0.4: {}
 
-  matcher@4.0.0:
+  matcher@6.0.0:
     dependencies:
-      escape-string-regexp: 4.0.0
+      escape-string-regexp: 5.0.0
 
   math-intrinsics@1.1.0: {}
 
