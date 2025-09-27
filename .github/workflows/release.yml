@@ -189,6 +189,10 @@ jobs:
             // Set the release URL as an environment variable for use in summary
             core.exportVariable('DRAFT_RELEASE_URL', release.data.html_url);
 
+      - name: Sync to cnpm
+        run: |
+          node scripts/sync-cnpm.js
+
       - name: Summary
         run: |
           echo "## 🎉 Release Summary" >> $GITHUB_STEP_SUMMARY

@@ -163,7 +163,7 @@ catalog:
   type-fest: ^5.0.1
   type-is: ^2.0.0
   typescript: 5.9.2
-  urllib: ^4.6.11
+  urllib: ^4.8.2
   utility: ^2.5.0
   vary: ^1.1.2
   vitest: 4.0.0-beta.13
@@ -185,5 +185,5 @@ minimumReleaseAgeExclude:
   - rolldown-vite
 
 overrides:
-  vite: npm:rolldown-vite@^7.1.13
   less: ^4.4.1
+  vite: npm:rolldown-vite@^7.1.13

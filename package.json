@@ -26,6 +26,7 @@
     "rimraf": "catalog:",
     "semver": "catalog:",
     "typescript": "catalog:",
+    "urllib": "catalog:",
     "vitest": "catalog:"
   },
   "scripts": {

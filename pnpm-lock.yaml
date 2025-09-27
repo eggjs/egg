@@ -451,7 +451,7 @@ catalogs:
       specifier: 5.9.2
       version: 5.9.2
     urllib:
-      specifier: ^4.6.11
+      specifier: 4.8.2
       version: 4.8.2
     utility:
       specifier: ^2.5.0
@@ -525,6 +525,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+      urllib:
+        specifier: 'catalog:'
+        version: 4.8.2
       vitest:
         specifier: 'catalog:'
         version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
