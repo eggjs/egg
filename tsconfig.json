@@ -60,6 +60,9 @@
     },
     {
       "path": "./plugins/static"
+    },
+    {
+      "path": "./plugins/security"
     }
   ]
 }
