@@ -179,6 +179,7 @@ minimumReleaseAgeExclude:
   - '@rolldown/*'
   - '@vitejs/*'
   - '@oxc-project/*'
+  - egg
   - rolldown
   - vitest
   - vite

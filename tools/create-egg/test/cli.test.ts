@@ -121,6 +121,8 @@ test.skipIf(process.platform === 'win32')(
     expect(generatedFiles).matchSnapshot();
 
     // run test
+    console.log('run test', projectDir);
+    // execaCommandSync(`pnpm install`, { cwd: projectDir });
     const monoRepoDir = path.join(import.meta.dirname, '../../../');
     const eggDir = path.join(monoRepoDir, 'packages/egg');
     const mockDir = path.join(monoRepoDir, 'plugins/mock');
@@ -145,6 +147,7 @@ test.skipIf(process.platform === 'win32')('successfully scaffolds a project base
   expect(generatedFiles).matchSnapshot();
 
   // run test
+  execaCommandSync(`pnpm install`, { cwd: projectDir });
   const monoRepoDir = path.join(import.meta.dirname, '../../../');
   const eggDir = path.join(monoRepoDir, 'packages/egg');
   const mockDir = path.join(monoRepoDir, 'plugins/mock');

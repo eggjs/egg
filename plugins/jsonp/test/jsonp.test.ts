@@ -49,7 +49,7 @@ describe('test/jsonp.test.ts', () => {
     await app.httpRequest().get('/disable?_callback=fn').expect(200).expect({ foo: 'bar' });
   });
 
-  it('should not support custom callback name', async () => {
+  it('should support custom callback name', async () => {
     await app
       .httpRequest()
       .get('/fn?fn=fn')
