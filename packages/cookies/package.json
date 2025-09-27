@@ -28,9 +28,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/eggjs/egg-cookies.git"
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/cookies"
   },
-  "homepage": "https://github.com/eggjs/egg-cookies",
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/cookies",
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
   "license": "MIT",
   "scripts": {

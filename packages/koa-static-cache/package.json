@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eggjs/egg.git",
+    "url": "git://github.com/eggjs/egg.git",
     "directory": "packages/koa-static-cache"
   },
   "bugs": {
