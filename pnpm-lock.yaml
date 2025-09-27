@@ -217,8 +217,8 @@ catalogs:
       specifier: ^12.0.0
       version: 12.0.1
     cron-parser:
-      specifier: ^4.9.0
-      version: 4.9.0
+      specifier: ^5.0.0
+      version: 5.4.0
     cross-spawn:
       specifier: ^7.0.6
       version: 7.0.6
@@ -1322,7 +1322,7 @@ importers:
         version: link:../../packages/utils
       cron-parser:
         specifier: 'catalog:'
-        version: 4.9.0
+        version: 5.4.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -5301,9 +5301,9 @@ packages:
     resolution: {integrity: sha512-s4odpheTyydAbTBQepsqd2rNWGa2iV3cyo8g7zbI2QQYGLVsfbhmwukayS1XHppe02Oy1fg7mg6xoaraVJeEcg==}
     engines: {node: '>=0.8'}
 
-  cron-parser@4.9.0:
-    resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
-    engines: {node: '>=12.0.0'}
+  cron-parser@5.4.0:
+    resolution: {integrity: sha512-HxYB8vTvnQFx4dLsZpGRa0uHp6X3qIzS3ZJgJ9v6l/5TJMgeWQbLkR5yiJ5hOxGbc9+jCADDnydIe15ReLZnJA==}
+    engines: {node: '>=18'}
 
   cross-spawn@6.0.6:
     resolution: {integrity: sha512-VqCUuhcd1iB+dsv8gxPttb5iZh/D0iubSP21g36KXdEuf6I5JiioesUVjpCdHV9MZRUfVFlvwtIUyPfxo5trtw==}
@@ -15352,7 +15352,7 @@ snapshots:
       is-nan: 1.3.2
       moment-timezone: 0.5.48
 
-  cron-parser@4.9.0:
+  cron-parser@5.4.0:
     dependencies:
       luxon: 3.7.2
 
