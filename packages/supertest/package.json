@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/supertest",
   "description": "SuperAgent driven library for testing HTTP servers",
-  "version": "8.3.0-beta.11",
+  "version": "9.0.0-beta.11",
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/supertest",
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@types/superagent": "catalog:",

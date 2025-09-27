@@ -5,6 +5,17 @@
 
 ---
 
+## 3.0.0+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
+
 ## <small>3.0.1 (2025-08-08)</small>
 
 * fix: remove --experimental-strip-types (#25) ([0866329](https://github.com/eggjs/koa/commit/0866329)), closes [#25](https://github.com/eggjs/koa/issues/25)

@@ -7,10 +7,14 @@
 
 ## 6.0.0+
 
-
 ### ⚠ BREAKING CHANGES
-* drop Node.js < 20.19.0 support
 
+* drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
 
 ## [5.0.2](https://github.com/eggjs/schedule/compare/v5.0.1...v5.0.2) (2024-12-20)
 

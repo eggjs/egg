@@ -17,7 +17,7 @@
     "eslint-config-egg": "14"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-{{name}}",

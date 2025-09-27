@@ -7,10 +7,12 @@
 
 ## 4.0.0+
 
-### ⚠ BREAKING CHANGES
+* drop Node.js < 22.18.0 support
+* only support egg@4
 
-* drop Node.js < 20.19.0 support
+part of https://github.com/eggjs/egg/issues/5434
 
+---
 
 ## [3.1.0](https://github.com/eggjs/egg-cookies/compare/v3.0.1...v3.1.0) (2024-12-26)
 

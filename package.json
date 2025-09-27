@@ -4,7 +4,7 @@
   "private": true,
   "description": "Eggjs framework monorepo",
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">=22.18.0"
   },
   "type": "module",
   "packageManager": "pnpm@10.17.1",

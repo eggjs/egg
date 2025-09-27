@@ -8,6 +8,12 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 
 **This project is structured as a pnpm monorepo** with multiple packages and uses pnpm workspaces for dependency management.
 
+### Node.js Requirements
+
+**IMPORTANT: All packages in this monorepo require Node.js >= 22.18.0**. This minimum version is enforced across all packages to ensure compatibility with modern JavaScript features and optimal performance.
+
+> Node.js will be able to execute TypeScript files without additional configuration. See https://nodejs.org/en/blog/release/v22.18.0
+
 ## Monorepo Structure
 
 ### Packages
@@ -586,7 +592,7 @@ NODE_OPTIONS='--inspect-brk' pnpm --filter=egg run test
 
 ### Migrating from Egg v2 to v3
 
-1. Update Node.js to v14+ (v18+ recommended)
+1. Update Node.js to v22.18.0+ (required minimum version)
 2. Migrate to ESM syntax where applicable
 3. Update plugin configurations
 4. Review breaking changes in CHANGELOG.md
