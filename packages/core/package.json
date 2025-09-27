@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/core",
-  "version": "7.0.0-beta.13",
+  "version": "7.0.0-beta.14",
   "publishConfig": {
     "access": "public",
     "exports": {
