@@ -312,6 +312,9 @@ catalogs:
     js-yaml:
       specifier: ^4.1.0
       version: 4.1.0
+    jsonp-body:
+      specifier: ^2.0.0
+      version: 2.0.0
     keygrip:
       specifier: ^1.0.2
       version: 1.1.0
@@ -812,9 +815,6 @@ importers:
       cluster-client:
         specifier: 'catalog:'
         version: 3.7.0
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1198,6 +1198,46 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  plugins/jsonp:
+    dependencies:
+      '@eggjs/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      jsonp-body:
+        specifier: 'catalog:'
+        version: 2.0.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.18.0(oxlint-tsgolint@0.2.0)
+      oxlint-tsgolint:
+        specifier: 'catalog:'
+        version: 0.2.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/mock:
     dependencies:

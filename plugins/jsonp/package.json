@@ -1,0 +1,90 @@
+{
+  "name": "@eggjs/jsonp",
+  "version": "4.0.0-beta.13",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./error/JSONPForbiddenReferrerError": "./dist/error/JSONPForbiddenReferrerError.js",
+      "./lib/private_key": "./dist/lib/private_key.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./error/JSONPForbiddenReferrerError": "./src/error/JSONPForbiddenReferrerError.ts",
+    "./lib/private_key": "./src/lib/private_key.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "description": "jsonp support for egg",
+  "eggPlugin": {
+    "name": "jsonp",
+    "optionalDependencies": [
+      "security"
+    ]
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "jsonp",
+    "security"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "plugins/jsonp"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/jsonp",
+  "author": "dead-horse",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/core": "workspace:*",
+    "jsonp-body": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "oxlint-tsgolint": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

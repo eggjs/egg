@@ -136,7 +136,6 @@
     "@eggjs/watcher": "workspace:*",
     "circular-json-for-egg": "catalog:",
     "cluster-client": "catalog:",
-    "egg-errors": "catalog:",
     "egg-logger": "catalog:",
     "graceful": "catalog:",
     "humanize-ms": "catalog:",
