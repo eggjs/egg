@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cookies",
-  "version": "4.0.0-beta.12",
+  "version": "4.0.0-beta.13",
   "engines": {
     "node": ">=22.18.0"
   },
