@@ -1,7 +1,8 @@
-import type { EggCore } from '@eggjs/core';
-import { SizeRotator } from '../../lib/size_rotator.js';
+import type { Application } from 'egg';
 
-export default (app: EggCore) => {
+import { SizeRotator } from '../../lib/size_rotator.ts';
+
+export default (app: Application) => {
   const rotator = new SizeRotator({ app });
 
   return {

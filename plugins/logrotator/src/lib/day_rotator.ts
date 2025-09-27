@@ -5,10 +5,10 @@ import { debuglog } from 'node:util';
 
 import { exists } from 'utility';
 
-import { LogRotator, type RotateFile, type RotatorOptions } from './rotator.js';
-import { walkLoggerFile } from './utils.js';
+import { LogRotator, type RotateFile, type RotatorOptions } from './rotator.ts';
+import { walkLoggerFile } from './utils.ts';
 
-const debug = debuglog('@eggjs/logrotator/lib/day_rotator');
+const debug = debuglog('egg/logrotator/lib/day_rotator');
 
 // rotate log by day
 // rename from foo.log to foo.log.YYYY-MM-DD
@@ -18,8 +18,8 @@ export class DayRotator extends LogRotator {
 
   constructor(options: RotatorOptions) {
     super(options);
-    this.filesRotateBySize = this.app.config.logrotator.filesRotateBySize || [];
-    this.filesRotateByHour = this.app.config.logrotator.filesRotateByHour || [];
+    this.filesRotateBySize = this.app.config.logrotator.filesRotateBySize ?? [];
+    this.filesRotateByHour = this.app.config.logrotator.filesRotateByHour ?? [];
   }
 
   async getRotateFiles() {
@@ -46,7 +46,7 @@ export class DayRotator extends LogRotator {
     const rotateLogDirs = this.app.config.logger.rotateLogDirs;
     if (rotateLogDirs && rotateLogDirs.length > 0) {
       this.app.deprecate(
-        '[egg-logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers'
+        '[@eggjs/logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers'
       );
 
       for (const dir of rotateLogDirs) {

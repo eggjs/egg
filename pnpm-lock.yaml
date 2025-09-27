@@ -294,6 +294,9 @@ catalogs:
     get-ready:
       specifier: ^3.1.0
       version: 3.4.0
+    glob:
+      specifier: ^11.0.0
+      version: 11.0.3
     globby:
       specifier: ^11.0.2
       version: 11.1.0
@@ -366,6 +369,9 @@ catalogs:
     mochawesome-with-mocha:
       specifier: 8.0.0
       version: 8.0.0
+    moment:
+      specifier: ^2.30.1
+      version: 2.30.1
     mri:
       specifier: ^1.2.0
       version: 1.2.0
@@ -1232,6 +1238,46 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.5.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
+  plugins/logrotator:
+    dependencies:
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/schedule':
+        specifier: workspace:*
+        version: link:../schedule
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
+      glob:
+        specifier: 'catalog:'
+        version: 11.0.3
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)

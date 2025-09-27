@@ -72,3 +72,10 @@ export default {
     gzip: false,
   } as LogrotatorConfig,
 };
+
+declare module 'egg' {
+  // add EggAppConfig overrides types
+  interface EggAppConfig {
+    logrotator: LogrotatorConfig;
+  }
+}

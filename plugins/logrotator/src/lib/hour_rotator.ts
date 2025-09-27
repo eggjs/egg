@@ -4,9 +4,9 @@ import { debuglog } from 'node:util';
 
 import { exists } from 'utility';
 
-import { LogRotator, type RotateFile } from './rotator.js';
+import { LogRotator, type RotateFile } from './rotator.ts';
 
-const debug = debuglog('@eggjs/logrotator/lib/hour_rotator');
+const debug = debuglog('egg/logrotator/lib/hour_rotator');
 
 // rotate log by hour
 // rename from foo.log to foo.log.YYYY-MM-DD-HH
@@ -14,7 +14,7 @@ export class HourRotator extends LogRotator {
   async getRotateFiles() {
     const files = new Map<string, RotateFile>();
     const logDir = this.app.config.logger.dir;
-    const filesRotateByHour = this.app.config.logrotator.filesRotateByHour || [];
+    const filesRotateByHour = this.app.config.logrotator.filesRotateByHour ?? [];
 
     for (let logPath of filesRotateByHour) {
       // support relative path

@@ -6,12 +6,12 @@ import { createGzip } from 'node:zlib';
 import { debuglog } from 'node:util';
 
 import { exists } from 'utility';
-import type { EggCore } from '@eggjs/core';
+import type { Application } from 'egg';
 
-const debug = debuglog('@eggjs/logrotator/lib/rotator');
+const debug = debuglog('egg/logrotator/lib/rotator');
 
 export interface RotatorOptions {
-  app: EggCore;
+  app: Application;
 }
 
 export interface RotateFile {
@@ -21,8 +21,8 @@ export interface RotateFile {
 
 export abstract class LogRotator {
   protected readonly options: RotatorOptions;
-  protected readonly app: EggCore;
-  protected readonly logger: EggCore['coreLogger'];
+  protected readonly app: Application;
+  protected readonly logger: Application['coreLogger'];
 
   constructor(options: RotatorOptions) {
     this.options = options;
@@ -44,13 +44,14 @@ export abstract class LogRotator {
         rotatedFiles.push(`${file.srcPath} -> ${file.targetPath}`);
       } catch (e) {
         const err = e as Error;
-        err.message = `[@eggjs/logrotator] rename ${file.srcPath}, found exception: ` + err.message;
+        err.message = `[@eggjs/logrotator] rename ${file.srcPath}, found exception: ${err.message}`;
         this.logger.error(err);
       }
     }
 
     if (rotatedFiles.length > 0) {
       // tell every one to reload logger
+      debug('broadcast log-reload, rotated files: %j', rotatedFiles);
       this.logger.info('[@eggjs/logrotator] broadcast log-reload');
       this.app.messenger.sendToApp('log-reload');
       this.app.messenger.sendToAgent('log-reload');

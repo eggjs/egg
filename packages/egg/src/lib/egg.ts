@@ -42,7 +42,7 @@ import { getSourceDirname } from './utils.ts';
 const EGG_PATH = Symbol.for('egg#eggPath');
 
 export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
-  mode?: 'cluster' | 'single';
+  mode?: 'cluster' | 'single' | 'all-in-one-process';
   clusterPort?: number;
   baseDir?: string;
 }

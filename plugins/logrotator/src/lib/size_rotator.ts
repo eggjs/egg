@@ -4,9 +4,9 @@ import { debuglog } from 'node:util';
 
 import { exists } from 'utility';
 
-import { LogRotator, type RotateFile } from './rotator.js';
+import { LogRotator, type RotateFile } from './rotator.ts';
 
-const debug = debuglog('@eggjs/logrotator/lib/size_rotator');
+const debug = debuglog('egg/logrotator/lib/size_rotator');
 
 // rotate log by size, if the size of file over maxFileSize,
 // it will rename from foo.log to foo.log.1
@@ -15,7 +15,7 @@ export class SizeRotator extends LogRotator {
   async getRotateFiles() {
     const files = new Map<string, RotateFile>();
     const logDir = this.app.config.logger.dir;
-    const filesRotateBySize = this.app.config.logrotator.filesRotateBySize || [];
+    const filesRotateBySize = this.app.config.logrotator.filesRotateBySize ?? [];
     const maxFileSize = this.app.config.logrotator.maxFileSize;
     const maxFiles = this.app.config.logrotator.maxFiles;
     for (let logPath of filesRotateBySize) {
@@ -44,7 +44,7 @@ export class SizeRotator extends LogRotator {
         }
       } catch (e) {
         const err = e as Error;
-        err.message = '[@eggjs/logrotator] ' + err.message;
+        err.message = `[@eggjs/logrotator] ${err.message}`;
         this.logger.error(err);
       }
     }

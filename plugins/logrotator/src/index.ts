@@ -1,3 +1,4 @@
-import './types.js';
+import './config/config.default.ts';
+import './app/extend/application.ts';
 
-export * from './lib/rotator.js';
+export * from './lib/rotator.ts';

@@ -3,12 +3,12 @@ import fs from 'node:fs/promises';
 
 import { exists } from 'utility';
 import moment from 'moment';
-import type { EggCore } from '@eggjs/core';
+import type { Application } from 'egg';
 
-import { walkLoggerFile } from '../../lib/utils.js';
+import { walkLoggerFile } from '../../lib/utils.ts';
 
 // clean all xxx.log.YYYY-MM-DD before expired date.
-export default (app: EggCore) => ({
+export default (app: Application) => ({
   schedule: {
     type: 'worker', // only one worker run this task
     cron: '0 0 * * *', // run every day at 00:00
@@ -37,7 +37,7 @@ export default (app: EggCore) => ({
 });
 
 // remove expired log files: xxx.log.YYYY-MM-DD
-async function removeExpiredLogFiles(logDir: string, maxDays: number, logger: EggCore['coreLogger']) {
+async function removeExpiredLogFiles(logDir: string, maxDays: number, logger: Application['coreLogger']) {
   // ignore not exists dir
   const stat = await exists(logDir);
   if (!stat) {

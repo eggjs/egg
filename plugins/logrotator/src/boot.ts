@@ -1,7 +1,10 @@
-import type { EggCore, ILifecycleBoot } from '@eggjs/core';
+import type { Application, ILifecycleBoot } from 'egg';
 
 export class Boot implements ILifecycleBoot {
-  constructor(private readonly app: EggCore) {}
+  private readonly app;
+  constructor(app: Application) {
+    this.app = app;
+  }
 
   async didLoad() {
     // reload logger to new fd after rotating

@@ -1,7 +1,8 @@
-import type { EggCore } from '@eggjs/core';
-import { HourRotator } from '../../lib/hour_rotator.js';
+import type { Application } from 'egg';
 
-export default (app: EggCore) => {
+import { HourRotator } from '../../lib/hour_rotator.ts';
+
+export default (app: Application) => {
   const rotator = new HourRotator({ app });
 
   return {
