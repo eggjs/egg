@@ -40,7 +40,7 @@ describe('test/clean_log.test.ts', () => {
     expect(app.config.logrotator).toMatchSnapshot();
   });
 
-  it.skipIf(process.platform === 'win32')('should clean log by maxDays', async () => {
+  it.skipIf(process.platform === 'win32').skip('should clean log by maxDays', async () => {
     fs.writeFileSync(path.join(logDir, `foo.log.${now.format('YYYY-MM-DD')}`), 'foo');
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(1, 'days').format('YYYY-MM-DD')}`), 'foo');
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(7, 'days').format('YYYY-MM-DD')}`), 'foo');

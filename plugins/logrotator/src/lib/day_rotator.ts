@@ -43,6 +43,7 @@ export class DayRotator extends LogRotator {
     this._setFile(path.join(logDir, agentLogName), files);
 
     // rotateLogDirs is deprecated
+    // @ts-expect-error rotateLogDirs is not typed
     const rotateLogDirs = this.app.config.logger.rotateLogDirs;
     if (rotateLogDirs && rotateLogDirs.length > 0) {
       this.app.deprecate(
