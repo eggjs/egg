@@ -65,6 +65,14 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Supports multiple static directories
     - Includes cache control and range request support
     - Built on top of koa-static-cache
+  - `security/` - Security plugin (merged from @eggjs/security)
+    - Provides comprehensive security middleware and helpers
+    - CSRF protection with token and referer validation
+    - XSS prevention with content filtering and escape utilities
+    - Path traversal protection and safe redirects
+    - Security headers (HSTS, CSP, X-Frame-Options, etc.)
+    - SSRF protection for HTTP client requests
+    - Configurable security policies per environment
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
