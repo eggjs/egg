@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/xss.test.ts > should set X-XSS-Protection header value 0 when config is number 0 1`] = `
+{
+  "enable": true,
+  "matching": [Function],
+  "value": 0,
+}
+`;

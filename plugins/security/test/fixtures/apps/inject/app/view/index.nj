@@ -1,0 +1,2 @@
+<form><input type="hidden" name="_csrf" value="{{ctx.csrf}}"></form>
+<script nonce="{{ctx.nonce}}"></script><script nonce="{{ctx.nonce}}"></script>

@@ -1,6 +1,5 @@
 // import plugins types
 import '@eggjs/i18n';
-import '@eggjs/security';
 import '@eggjs/session';
 import '@eggjs/logrotator';
 import '@eggjs/multipart';
@@ -13,3 +12,4 @@ import '@eggjs/watcher';
 /// <reference types="@eggjs/static" />
 /// <reference types="@eggjs/onerror" />
 /// <reference types="@eggjs/jsonp" />
+/// <reference types="@eggjs/security" />

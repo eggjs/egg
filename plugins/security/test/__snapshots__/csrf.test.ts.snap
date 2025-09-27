@@ -1,0 +1,72 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`apps/csrf-supported-requests-default-config > should works without error because csrf = false override default config 1`] = `
+{
+  "bodyName": "_csrf",
+  "cookieName": "csrfToken",
+  "cookieOptions": {
+    "httpOnly": false,
+    "overwrite": true,
+    "signed": false,
+  },
+  "enable": false,
+  "headerName": "x-csrf-token",
+  "ignoreJSON": false,
+  "queryName": "_csrf",
+  "refererWhiteList": [],
+  "rotateWhenInvalid": false,
+  "sessionName": "csrfToken",
+  "supportedRequests": [
+    {
+      "methods": [
+        "POST",
+        "PATCH",
+        "DELETE",
+        "PUT",
+        "CONNECT",
+      ],
+      "path": /\\^\\\\//,
+    },
+  ],
+  "type": "ctoken",
+  "useSession": false,
+}
+`;
+
+exports[`test/csrf.test.ts > should update form with csrf token 1`] = `
+{
+  "bodyName": "_csrf",
+  "cookieName": "csrfToken",
+  "cookieOptions": {
+    "httpOnly": false,
+    "overwrite": true,
+    "signed": false,
+  },
+  "enable": true,
+  "headerName": "x-csrf-token",
+  "ignore": [
+    /\\^\\\\/api\\\\//,
+    [Function],
+  ],
+  "ignoreJSON": false,
+  "matching": [Function],
+  "queryName": "_csrf",
+  "refererWhiteList": [],
+  "rotateWhenInvalid": false,
+  "sessionName": "csrfToken",
+  "supportedRequests": [
+    {
+      "methods": [
+        "POST",
+        "PATCH",
+        "DELETE",
+        "PUT",
+        "CONNECT",
+      ],
+      "path": /\\^\\\\//,
+    },
+  ],
+  "type": "ctoken",
+  "useSession": false,
+}
+`;

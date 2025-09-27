@@ -12,6 +12,9 @@ catalogs:
     '@eggjs/i18n':
       specifier: ^3.0.1
       version: 3.0.1
+    '@eggjs/ip':
+      specifier: ^2.1.0
+      version: 2.1.0
     '@eggjs/logrotator':
       specifier: ^4.0.0
       version: 4.1.0
@@ -21,9 +24,6 @@ catalogs:
     '@eggjs/router':
       specifier: ^3.0.5
       version: 3.0.6
-    '@eggjs/security':
-      specifier: ^4.0.0
-      version: 4.0.1
     '@eggjs/session':
       specifier: ^4.0.1
       version: 4.0.1
@@ -39,6 +39,9 @@ catalogs:
     '@eggjs/tegg-plugin':
       specifier: ^3.2.2
       version: 3.62.0
+    '@eggjs/tsconfig':
+      specifier: ^1.3.3
+      version: 1.3.3
     '@eggjs/view':
       specifier: ^3.0.1
       version: 3.0.1
@@ -87,6 +90,9 @@ catalogs:
     '@types/express':
       specifier: ^5.0.0
       version: 5.0.3
+    '@types/extend':
+      specifier: ^3.0.4
+      version: 3.0.4
     '@types/fresh':
       specifier: ^0.5.2
       version: 0.5.3
@@ -219,6 +225,9 @@ catalogs:
     cross-spawn:
       specifier: ^7.0.6
       version: 7.0.6
+    csrf:
+      specifier: ^3.1.0
+      version: 3.1.0
     debounce:
       specifier: ^2.2.0
       version: 2.2.0
@@ -270,6 +279,9 @@ catalogs:
     express:
       specifier: ^4.21.2
       version: 4.21.2
+    extend:
+      specifier: ^3.0.2
+      version: 3.0.2
     formstream:
       specifier: ^1.5.1
       version: 1.5.2
@@ -336,6 +348,9 @@ catalogs:
     lint-staged:
       specifier: ^16.2.0
       version: 16.2.0
+    matcher:
+      specifier: ^4.0.0
+      version: 4.0.0
     merge-descriptors:
       specifier: ^2.0.0
       version: 2.0.0
@@ -357,6 +372,9 @@ catalogs:
     mustache:
       specifier: ^4.2.0
       version: 4.2.0
+    nanoid:
+      specifier: ^3.3.8
+      version: 3.3.11
     node-homedir:
       specifier: ^2.0.0
       version: 2.0.0
@@ -462,9 +480,15 @@ catalogs:
     vitest:
       specifier: 4.0.0-beta.13
       version: 4.0.0-beta.13
+    xss:
+      specifier: ^1.0.15
+      version: 1.0.15
     ylru:
       specifier: ^2.0.0
       version: 2.0.0
+    zod:
+      specifier: ^3.24.1
+      version: 3.25.76
 
 overrides:
   vite: npm:rolldown-vite@^7.1.13
@@ -789,8 +813,8 @@ importers:
         specifier: workspace:*
         version: link:../../plugins/schedule
       '@eggjs/security':
-        specifier: 'catalog:'
-        version: 4.0.1
+        specifier: workspace:*
+        version: link:../../plugins/security
       '@eggjs/session':
         specifier: 'catalog:'
         version: 4.0.1
@@ -1395,6 +1419,94 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
+  plugins/security:
+    dependencies:
+      '@eggjs/ip':
+        specifier: 'catalog:'
+        version: 2.1.0
+      csrf:
+        specifier: 'catalog:'
+        version: 3.1.0
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      egg-path-matching:
+        specifier: 'catalog:'
+        version: 2.1.0
+      escape-html:
+        specifier: 'catalog:'
+        version: 1.0.3
+      extend:
+        specifier: 'catalog:'
+        version: 3.0.2
+      koa-compose:
+        specifier: 'catalog:'
+        version: 4.1.0
+      matcher:
+        specifier: 'catalog:'
+        version: 4.0.0
+      nanoid:
+        specifier: 'catalog:'
+        version: 3.3.11
+      type-is:
+        specifier: 'catalog:'
+        version: 2.0.1
+      xss:
+        specifier: 'catalog:'
+        version: 1.0.15
+      zod:
+        specifier: 'catalog:'
+        version: 3.25.76
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../../packages/supertest
+      '@eggjs/tsconfig':
+        specifier: 'catalog:'
+        version: 1.3.3
+      '@types/escape-html':
+        specifier: 'catalog:'
+        version: 1.0.4
+      '@types/extend':
+        specifier: 'catalog:'
+        version: 3.0.4
+      '@types/koa-compose':
+        specifier: 'catalog:'
+        version: 3.2.8
+      '@types/mocha':
+        specifier: 'catalog:'
+        version: 10.0.10
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      '@types/type-is':
+        specifier: 'catalog:'
+        version: 1.6.7
+      beautify-benchmark:
+        specifier: 'catalog:'
+        version: 0.2.4
+      benchmark:
+        specifier: 'catalog:'
+        version: 2.1.4
+      egg-view-nunjucks:
+        specifier: 'catalog:'
+        version: 2.3.0(chokidar@3.6.0)
+      spy:
+        specifier: 'catalog:'
+        version: 1.0.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
   plugins/static:
     dependencies:
       '@eggjs/koa-static-cache':
@@ -1988,10 +2100,6 @@ packages:
     resolution: {integrity: sha512-mqOFkq79x3wGHYoI/lWMwSZ4wqmET9okJ0WU+qeuEgwA7PNMt8HyUmZ9Edz8+o3TjCSl85uMhpC0K4WWfPh7yA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/security@4.0.1':
-    resolution: {integrity: sha512-D7xrhJjo/hUY6B8bMs75Hpwhxn9AS9ed+tUkJj426sZrrehOYwcmPZ67HiG7COsCZvDxh80fkTn5tLowU3oAjg==}
-    engines: {node: '>= 18.19.0'}
-
   '@eggjs/session@4.0.1':
     resolution: {integrity: sha512-C73mnzcShE2h6YItRCbNjjARP4f02SMdYHFwPwJ8yb5XTDG9KNnIoZ/mOIGpxKoK09h2221zyoI27G91l9TtsA==}
     engines: {node: '>= 18.19.0'}
@@ -2071,6 +2179,10 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@eggjs/tegg-dal-plugin': ^3.60.1
+
+  '@eggjs/tsconfig@1.3.3':
+    resolution: {integrity: sha512-VV7NQlGDEQpt4rJDkx1tCorbhzstqDl2JVGdgSasENOsQjpUD7j3Olfpw84vHQP6PDtXO7atyjKR77Qh/TAB/g==}
+    engines: {node: '>=14.0.0'}
 
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
@@ -3747,6 +3859,9 @@ packages:
 
   '@types/express@5.0.3':
     resolution: {integrity: sha512-wGA0NX93b19/dZC1J18tKWVIYWyyF2ZjT9vin/NRu0qzzvfVzWjs04iq2rQ3H65vCTQYlRqs3YHfY7zjdV+9Kw==}
+
+  '@types/extend@3.0.4':
+    resolution: {integrity: sha512-ArMouDUTJEz1SQRpFsT2rIw7DeqICFv5aaVzLSIYMYQSLcwcGOfT3VyglQs/p7K3F7fT4zxr0NWxYZIdifD6dA==}
 
   '@types/fresh@0.5.3':
     resolution: {integrity: sha512-eZBbataAbl5t/G/klkfp/dyjOD8LlEC5L1zBrSerj500xJZS2SRxG2dsdlaWMADTm4pT7e0CxAU+8S3PfMuZpw==}
@@ -11678,21 +11793,6 @@ snapshots:
       urijs: 1.19.11
       utility: 2.5.0
 
-  '@eggjs/security@4.0.1':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      '@eggjs/ip': 2.1.0
-      csrf: 3.1.0
-      egg-path-matching: 2.1.0
-      escape-html: 1.0.3
-      extend: 3.0.2
-      koa-compose: 4.1.0
-      matcher: 4.0.0
-      nanoid: 3.3.11
-      type-is: 1.6.18
-      xss: 1.0.15
-      zod: 3.25.76
-
   '@eggjs/session@4.0.1':
     dependencies:
       '@eggjs/core': 6.5.0
@@ -11869,6 +11969,8 @@ snapshots:
     transitivePeerDependencies:
       - leoric
       - supports-color
+
+  '@eggjs/tsconfig@1.3.3': {}
 
   '@eggjs/utils@4.4.1': {}
 
@@ -13315,6 +13417,8 @@ snapshots:
       '@types/body-parser': 1.19.6
       '@types/express-serve-static-core': 5.0.7
       '@types/serve-static': 1.15.8
+
+  '@types/extend@3.0.4': {}
 
   '@types/fresh@0.5.3': {}
 

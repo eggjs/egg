@@ -1,0 +1,98 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/csp.test.ts > should ignore path 1`] = `
+{
+  "csp": {
+    "enable": true,
+    "ignore": [
+      "/api/",
+      /\\^\\\\/ignore\\\\//,
+    ],
+    "matching": [Function],
+    "policy": {
+      "frame-ancestors": [
+        "'self'",
+      ],
+      "img-src": [
+        "'self'",
+        "data:",
+        "www.google-analytics.com",
+      ],
+      "report-uri": "http://pointman.domain.com/csp?app=csp",
+      "script-src": [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-eval'",
+        "www.google-analytics.com",
+      ],
+      "style-src": [
+        "'unsafe-inline'",
+        "www.google-analytics.com",
+      ],
+    },
+  },
+  "csrf": {
+    "bodyName": "_csrf",
+    "cookieName": "csrfToken",
+    "cookieOptions": {
+      "httpOnly": false,
+      "overwrite": true,
+      "signed": false,
+    },
+    "enable": true,
+    "headerName": "x-csrf-token",
+    "ignoreJSON": false,
+    "queryName": "_csrf",
+    "refererWhiteList": [],
+    "rotateWhenInvalid": false,
+    "sessionName": "csrfToken",
+    "supportedRequests": [
+      {
+        "methods": [
+          "POST",
+          "PATCH",
+          "DELETE",
+          "PUT",
+          "CONNECT",
+        ],
+        "path": /\\^\\\\//,
+      },
+    ],
+    "type": "ctoken",
+    "useSession": false,
+  },
+  "defaultMiddleware": "csp",
+  "domainWhiteList": [],
+  "dta": {
+    "enable": true,
+  },
+  "hsts": {
+    "enable": false,
+    "includeSubdomains": false,
+    "maxAge": 31536000,
+  },
+  "methodnoallow": {
+    "enable": true,
+  },
+  "noopen": {
+    "enable": true,
+  },
+  "nosniff": {
+    "enable": true,
+  },
+  "protocolWhiteList": [],
+  "referrerPolicy": {
+    "enable": false,
+    "value": "no-referrer-when-downgrade",
+  },
+  "ssrf": {},
+  "xframe": {
+    "enable": true,
+    "value": "SAMEORIGIN",
+  },
+  "xssProtection": {
+    "enable": true,
+    "value": "1; mode=block",
+  },
+}
+`;

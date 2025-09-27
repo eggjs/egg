@@ -1,0 +1,88 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/config/config.default.test.ts > should config default values keep stable 1`] = `
+{
+  "helper": {
+    "shtml": {},
+  },
+  "security": {
+    "csp": {
+      "enable": false,
+      "policy": {},
+    },
+    "csrf": {
+      "bodyName": "_csrf",
+      "cookieName": "csrfToken",
+      "cookieOptions": {
+        "httpOnly": false,
+        "overwrite": true,
+        "signed": false,
+      },
+      "enable": true,
+      "headerName": "x-csrf-token",
+      "ignoreJSON": false,
+      "queryName": "_csrf",
+      "refererWhiteList": [],
+      "rotateWhenInvalid": false,
+      "sessionName": "csrfToken",
+      "supportedRequests": [
+        {
+          "methods": [
+            "POST",
+            "PATCH",
+            "DELETE",
+            "PUT",
+            "CONNECT",
+          ],
+          "path": /\\^\\\\//,
+        },
+      ],
+      "type": "ctoken",
+      "useSession": false,
+    },
+    "defaultMiddleware": [
+      "csrf",
+      "hsts",
+      "methodnoallow",
+      "noopen",
+      "nosniff",
+      "csp",
+      "xssProtection",
+      "xframe",
+      "dta",
+    ],
+    "domainWhiteList": [],
+    "dta": {
+      "enable": true,
+    },
+    "hsts": {
+      "enable": false,
+      "includeSubdomains": false,
+      "maxAge": 31536000,
+    },
+    "methodnoallow": {
+      "enable": true,
+    },
+    "noopen": {
+      "enable": true,
+    },
+    "nosniff": {
+      "enable": true,
+    },
+    "protocolWhiteList": [],
+    "referrerPolicy": {
+      "enable": false,
+      "value": "no-referrer-when-downgrade",
+    },
+    "ssrf": {},
+    "xframe": {
+      "enable": true,
+      "value": "SAMEORIGIN",
+    },
+    "xssProtection": {
+      "enable": true,
+      "value": "1; mode=block",
+    },
+  },
+}
+`;

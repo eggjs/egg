@@ -5,7 +5,6 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./app": "./dist/app.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/extend/context": "./dist/app/extend/context.js",
       "./config/config.default": "./dist/config/config.default.js",
@@ -18,7 +17,6 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./app": "./src/app.ts",
     "./app/extend/application": "./src/app/extend/application.ts",
     "./app/extend/context": "./src/app/extend/context.ts",
     "./config/config.default": "./src/config/config.default.ts",
