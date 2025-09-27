@@ -399,9 +399,6 @@ catalogs:
     parseurl:
       specifier: ^1.3.3
       version: 1.3.3
-    pedding:
-      specifier: ^2.0.1
-      version: 2.0.1
     performance-ms:
       specifier: ^1.1.0
       version: 1.1.0
@@ -764,9 +761,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
@@ -915,9 +909,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
@@ -1320,9 +1311,6 @@ importers:
       egg-tracer:
         specifier: 'catalog:'
         version: 2.1.0
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       tsd:
         specifier: 'catalog:'
         version: 0.33.0
@@ -8890,10 +8878,6 @@ packages:
 
   peberminta@0.9.0:
     resolution: {integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==}
-
-  pedding@2.0.1:
-    resolution: {integrity: sha512-uxQ88Bwwz2ZRXIfgZ+5CCdWcmbsQJJ03itU1/ykLQ960AREBX+chas7a3USCIX3l7JmvYMRpjqipSpiTo7R+fA==}
-    engines: {node: '>= 18.19.0'}
 
   performance-ms@1.1.0:
     resolution: {integrity: sha512-27yI2vaAnCCqIUJx2nijADXNfY9OA5EFIDZavL0ZlMEujnfE6lSs18ENeR2rwYTA1sCLnEci0o6kZi8ekfXT1w==}
@@ -19875,8 +19859,6 @@ snapshots:
       to-buffer: 1.2.2
 
   peberminta@0.9.0: {}
-
-  pedding@2.0.1: {}
 
   performance-ms@1.1.0: {}
 
