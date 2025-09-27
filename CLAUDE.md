@@ -79,7 +79,12 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Built-in memory store for development
     - Configurable session options (maxAge, renew, etc.)
     - Session encryption and signing
-    - Compatible with Redis and other external stores
+  - `logrotator/` - Log rotation plugin (merged from @eggjs/logrotator)
+    - Provides automatic log file rotation based on time or size
+    - Supports daily rotation with configurable patterns
+    - Includes log cleanup to remove old files based on maxDays
+    - Manages all application and custom logger files
+    - Integrates with schedule plugin for automated rotation tasks
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
