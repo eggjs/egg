@@ -127,7 +127,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
-    "@eggjs/tsconfig": "catalog:",
+    "@eggjs/tsconfig": "workspace:*",
     "@types/escape-html": "catalog:",
     "@types/extend": "catalog:",
     "@types/koa-compose": "catalog:",
