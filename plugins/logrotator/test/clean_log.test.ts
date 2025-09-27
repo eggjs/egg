@@ -10,7 +10,7 @@ import { describe, it, beforeEach, afterEach, expect } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 
-const schedule = path.join(import.meta.dirname, '../src/app/schedule/clean_log.ts');
+const schedule = path.join(import.meta.dirname, '../src/app/schedule/clean_log');
 const now = moment().startOf('date');
 
 describe('test/clean_log.test.ts', () => {
@@ -40,7 +40,7 @@ describe('test/clean_log.test.ts', () => {
     expect(app.config.logrotator).toMatchSnapshot();
   });
 
-  it.skipIf(process.platform === 'win32').skip('should clean log by maxDays', async () => {
+  it.skipIf(process.platform === 'win32')('should clean log by maxDays', async () => {
     fs.writeFileSync(path.join(logDir, `foo.log.${now.format('YYYY-MM-DD')}`), 'foo');
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(1, 'days').format('YYYY-MM-DD')}`), 'foo');
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(7, 'days').format('YYYY-MM-DD')}`), 'foo');

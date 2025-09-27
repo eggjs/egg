@@ -15,9 +15,6 @@ catalogs:
     '@eggjs/ip':
       specifier: ^2.1.0
       version: 2.1.0
-    '@eggjs/logrotator':
-      specifier: ^4.0.0
-      version: 4.1.0
     '@eggjs/multipart':
       specifier: ^4.0.0
       version: 4.0.0
@@ -804,8 +801,8 @@ importers:
         specifier: workspace:*
         version: link:../../plugins/jsonp
       '@eggjs/logrotator':
-        specifier: 'catalog:'
-        version: 4.1.0
+        specifier: workspace:*
+        version: link:../../plugins/logrotator
       '@eggjs/multipart':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2148,10 +2145,6 @@ packages:
 
   '@eggjs/koa@2.22.2':
     resolution: {integrity: sha512-cqubIqo5SCDPVN2qJ/ZiIPsfWl0xvNRvdLc9h1h8s5zdUk33RyNmCP83Ur9WS3GWbew+rDpVkNReJUCPbvrxkg==}
-    engines: {node: '>= 18.19.0'}
-
-  '@eggjs/logrotator@4.1.0':
-    resolution: {integrity: sha512-WqvNbslzW99it4aGLuJYsfJdC/t7hWJSE4hvfgp0FVCZ22HyMPehojG04RGFfsxkik2P56MmAUZ/UUfB29z/Hg==}
     engines: {node: '>= 18.19.0'}
 
   '@eggjs/mcp-proxy@3.62.0':
@@ -11830,12 +11823,6 @@ snapshots:
       statuses: 2.0.2
       type-is: 1.6.18
       vary: 1.1.2
-
-  '@eggjs/logrotator@4.1.0':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      moment: 2.30.1
-      utility: 2.5.0
 
   '@eggjs/mcp-proxy@3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.1)))(leoric@2.13.8(mysql2@3.15.1))':
     dependencies:
