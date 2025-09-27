@@ -1,8 +1,6 @@
 # @eggjs/security
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/security/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/security/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 [![Node.js Version](https://img.shields.io/node/v/eggjs/security.svg?style=flat)](https://nodejs.org/en/download/)
@@ -11,8 +9,6 @@
 
 [npm-image]: https://img.shields.io/npm/v/@eggjs/security.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/@eggjs/security
-[codecov-image]: https://codecov.io/gh/eggjs/security/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/eggjs/security
 [snyk-image]: https://snyk.io/test/npm/@eggjs/security/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/@eggjs/security
 [download-image]: https://img.shields.io/npm/dm/@eggjs/security.svg?style=flat-square
@@ -428,6 +424,6 @@ console.log(cmd);
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs/security)](https://github.com/eggjs/security/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).
