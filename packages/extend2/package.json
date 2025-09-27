@@ -15,7 +15,6 @@
   "description": "Port of jQuery.extend for Node.js",
   "scripts": {
     "build": "tsdown",
-    "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "test": "vitest run",

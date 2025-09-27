@@ -26,6 +26,7 @@ exports[`should expose properties 1`] = `
   "Singleton",
   "Subscription",
   "defineConfig",
+  "defineConfigFactory",
   "start",
   "startCluster",
   "startEgg",

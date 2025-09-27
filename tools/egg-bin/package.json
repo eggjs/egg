@@ -57,8 +57,6 @@
     "assert-file": "catalog:",
     "coffee": "catalog:",
     "cpy": "catalog:",
-    "cpy-cli": "catalog:",
-    "cross-env": "catalog:",
     "egg": "workspace:*",
     "esbuild": "catalog:",
     "esbuild-register": "catalog:",

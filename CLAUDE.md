@@ -39,6 +39,9 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/extend2/`** - Object extension utility (merged from extend2)
   - `src/` - Extend2 TypeScript source code
   - `test/` - Extend2 test suite
+- **`packages/koa-static-cache/`** - Static file serving with cache (merged from @eggjs/koa-static-cache)
+  - `src/` - TypeScript source code for static cache middleware
+  - `test/` - Test suite with Vitest
 - **`plugins/`** - Egg framework plugins (all plugins should be located here)
   - `development/` - Development plugin for local development (merged from @eggjs/development)
     - Provides development tools and auto-reload functionality
@@ -51,6 +54,11 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Provides cron-based task scheduling capabilities
     - Supports interval and cron expression scheduling
     - Manages scheduled tasks across worker processes
+  - `static/` - Static file serving plugin (merged from @eggjs/static)
+    - Provides static file serving middleware
+    - Supports multiple static directories
+    - Includes cache control and range request support
+    - Built on top of koa-static-cache
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

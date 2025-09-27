@@ -59,7 +59,6 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
@@ -69,9 +68,7 @@
   "scripts": {
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
-    "pretest": "pnpm run clean",
     "test": "vitest run",
-    "clean": "rimraf dist",
     "build": "tsdown",
     "prepublishOnly": "pnpm run build"
   },

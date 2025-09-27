@@ -93,21 +93,31 @@ export type EggConfigFactory = (appInfo: EggAppInfo) => PartialEggConfig;
 /**
  * Define configuration with type safety
  * @example
+ * ```ts
  * import { defineConfig } from 'egg';
  *
  * export default defineConfig({
  *   keys: 'my-keys',
  *   middleware: []
  * });
- *
- * // or with function
- * export default defineConfig((appInfo) => ({
+ * ```
+ */
+export function defineConfig(config: PartialEggConfig): PartialEggConfig {
+  return config;
+}
+
+/**
+ * Define configuration factory function with type safety
+ * @example
+ * ```ts
+ * export default defineConfigFactory((appInfo): PartialEggConfig => ({
  *   keys: appInfo.name + '_keys',
  *   middleware: []
  * }));
+ * ```
  */
-export function defineConfig<T extends PartialEggConfig | EggConfigFactory>(config: T): T {
-  return config;
+export function defineConfigFactory(configFactory: EggConfigFactory): EggConfigFactory {
+  return configFactory;
 }
 
 export interface EggAppConfig extends EggCoreAppConfig {

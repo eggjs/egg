@@ -54,6 +54,9 @@
     },
     {
       "path": "./packages/koa-static-cache"
+    },
+    {
+      "path": "./plugins/static"
     }
   ]
 }

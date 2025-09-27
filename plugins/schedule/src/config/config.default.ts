@@ -1,6 +1,6 @@
-import { defineConfig } from 'egg';
+import { type PartialEggConfig } from 'egg';
 
-export default defineConfig({
+export default {
   customLogger: {
     scheduleLogger: {
       consoleLevel: 'NONE',
@@ -10,4 +10,4 @@ export default defineConfig({
   schedule: {
     directory: [],
   },
-});
+} as PartialEggConfig;
