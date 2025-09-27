@@ -1,0 +1,80 @@
+{
+  "name": "@eggjs/session",
+  "version": "5.0.0-beta.13",
+  "description": "session plugin for egg",
+  "eggPlugin": {
+    "name": "session"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "plugins/session"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/session#readme",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "author": "dead_horse",
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "session",
+    "cookie"
+  ],
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/middleware/session": "./src/app/middleware/session.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/middleware/session": "./dist/app/middleware/session.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "dependencies": {
+    "koa-session": "catalog:",
+    "zod": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/redis": "catalog:",
+    "@eggjs/tsconfig": "catalog:",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

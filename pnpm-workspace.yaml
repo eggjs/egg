@@ -11,8 +11,8 @@ catalog:
   '@eggjs/i18n': ^3.0.1
   '@eggjs/logrotator': ^4.0.0
   '@eggjs/multipart': ^4.0.0
+  '@eggjs/redis': ^3.0.0
   '@eggjs/router': ^3.0.5
-  '@eggjs/session': ^4.0.1
   '@eggjs/tegg': ^3.2.2
   '@eggjs/tegg-config': ^3.2.2
   '@eggjs/tegg-controller-plugin': ^3.2.2
@@ -124,6 +124,7 @@ catalog:
   koa-onerror: ^5.0.1
   koa-override: ^4.0.0
   koa-range: ^0.3.0
+  koa-session: ^7.0.2
   koa-static: ^5.0.0
   lint-staged: ^16.2.0
   matcher: ^4.0.0
