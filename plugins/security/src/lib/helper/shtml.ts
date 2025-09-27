@@ -16,11 +16,10 @@ export default function shtml(this: BaseContextClass, val: string) {
   }
 
   const securityOptions = this.ctx.securityOptions;
-  const buildInOnTagAttrHandler: SecurityHelperOnTagAttrHandler | undefined = undefined;
   const shtmlConfig = {
     ...this.app.config.helper.shtml,
     ...securityOptions.shtml,
-    [BUILD_IN_ON_TAG_ATTR]: buildInOnTagAttrHandler,
+    [BUILD_IN_ON_TAG_ATTR]: undefined as SecurityHelperOnTagAttrHandler | undefined,
   };
   const domainWhiteList = this.app.config.security.domainWhiteList;
   const app = this.app;

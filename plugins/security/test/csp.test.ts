@@ -85,7 +85,7 @@ describe('test/csp.test.ts', () => {
       const header = res.headers['content-security-policy'];
       const re_nonce = /nonce-([^']+)/;
       const m = re_nonce.exec(header);
-      expect(nonce).toBe(m![1], header);
+      expect(nonce).toBe(m![1]);
     });
 
     it('should have X-CSP-Nonce header', async () => {
