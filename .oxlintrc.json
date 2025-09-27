@@ -5,6 +5,7 @@
   },
   "ignorePatterns": ["**/test/fixtures/**"],
   "rules": {
-    "no-unused-vars": "error"
+    "no-unused-vars": "error",
+    "preserve-caught-error": "error"
   }
 }
