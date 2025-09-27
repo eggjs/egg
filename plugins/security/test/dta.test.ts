@@ -1,22 +1,22 @@
 import { scheduler } from 'node:timers/promises';
-import { mm, MockApplication } from '@eggjs/mock';
-import snapshot from 'snap-shot-it';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, afterAll, beforeAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/dta.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/dta',
+      baseDir: getFixtures('apps/dta'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  afterEach(mm.restore);
-
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should ok when path is normal', () => {
-    snapshot(app.config.security);
+    expect(app.config.security).toMatchSnapshot();
     return app.httpRequest().get('/test').expect(200);
   });
 

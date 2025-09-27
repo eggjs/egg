@@ -1,12 +1,15 @@
 import { debuglog } from 'node:util';
+
 import { nanoid } from 'nanoid/non-secure';
 import Tokens from 'csrf';
-import { Context } from '@eggjs/core';
-import * as utils from '../../lib/utils.js';
-import type { HttpClientRequestURL, HttpClientOptions, HttpClientResponse } from '../../lib/extend/safe_curl.js';
-import type { SecurityConfig, SecurityHelperConfig } from '../../types.js';
+import { Context } from 'egg';
 
-const debug = debuglog('@eggjs/security/app/extend/context');
+import * as utils from '../../lib/utils.ts';
+import type { HttpClientRequestURL, HttpClientOptions, HttpClientResponse } from '../../lib/extend/safe_curl.ts';
+import type { SecurityConfig, SecurityHelperConfig } from '../../types.ts';
+import type SecurityResponse from './response.ts';
+
+const debug = debuglog('egg/security/app/extend/context');
 
 const tokens = new Tokens();
 
@@ -30,6 +33,8 @@ function findToken(obj: Record<string, string>, keys: string | string[]) {
 }
 
 export default class SecurityContext extends Context {
+  declare response: SecurityResponse;
+
   get securityOptions() {
     if (!this[SECURITY_OPTIONS]) {
       this[SECURITY_OPTIONS] = {};
@@ -229,7 +234,7 @@ export default class SecurityContext extends Context {
   [CSRF_REFERER_CHECK]() {
     const { refererWhiteList } = this.app.config.security.csrf;
     // check Origin/Referer headers
-    const referer = (this.headers.referer || this.headers.origin || '').toLowerCase();
+    const referer = (this.headers.referer ?? this.headers.origin ?? '').toLowerCase();
 
     if (!referer) {
       debug('missing csrf referer or origin');
@@ -248,7 +253,9 @@ export default class SecurityContext extends Context {
 
   [LOG_CSRF_NOTICE](msg: string) {
     if (this.app.config.env === 'local') {
-      this.logger.warn(`${msg}. See https://eggjs.org/zh-cn/core/security.html#安全威胁csrf的防范`);
+      this.logger.warn(
+        `${msg}. See https://eggjs.org/zh-CN/core/security/#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81-csrf-%E7%9A%84%E9%98%B2%E8%8C%83`
+      );
     }
   }
 
@@ -261,18 +268,16 @@ export default class SecurityContext extends Context {
   }
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface Context {
-    // @ts-expect-error duplicate identifier
     get securityOptions(): Partial<SecurityConfig & SecurityHelperConfig>;
     isSafeDomain(domain: string, customWhiteList?: string[]): boolean;
-    // @ts-expect-error duplicate identifier
     get nonce(): string;
-    // @ts-expect-error duplicate identifier
     get csrf(): string;
     ensureCsrfSecret(rotate?: boolean): void;
     rotateCsrfSecret(): void;
     assertCsrf(): void;
     safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
+    unsafeRedirect(url: string, alt?: string): void;
   }
 }

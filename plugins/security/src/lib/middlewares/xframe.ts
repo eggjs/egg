@@ -1,9 +1,10 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
 
-export default (options: SecurityConfig['xframe']) => {
-  return async function xframe(ctx: Context, next: Next) {
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
+
+export default (options: SecurityConfig['xframe']): MiddlewareFunc => {
+  return async function xframe(ctx, next) {
     await next();
 
     const opts = {

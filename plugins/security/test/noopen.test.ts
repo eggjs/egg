@@ -1,18 +1,18 @@
-import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, afterAll, beforeAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/noopen.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/noopen',
+      baseDir: getFixtures('apps/noopen'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  after(() => app.close());
-
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   it('should return default download noopen http header', () => {
     return app.httpRequest().get('/').set('accept', 'text/html').expect('X-Download-Options', 'noopen').expect(200);
@@ -20,6 +20,6 @@ describe('test/noopen.test.ts', () => {
 
   it('should not return download noopen http header', async () => {
     const res = await app.httpRequest().get('/disable').set('accept', 'text/html').expect(200);
-    assert.equal(res.headers['x-download-options'], undefined);
+    expect(res.headers['x-download-options']).toBeUndefined();
   });
 });

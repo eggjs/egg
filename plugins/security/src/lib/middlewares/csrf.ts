@@ -1,13 +1,15 @@
 import { debuglog } from 'node:util';
-import type { Context, Next } from '@eggjs/core';
+
+import type { MiddlewareFunc } from 'egg';
 import typeis from 'type-is';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
 
-const debug = debuglog('@eggjs/security/lib/middlewares/csrf');
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
-export default (options: SecurityConfig['csrf']) => {
-  return function csrf(ctx: Context, next: Next) {
+const debug = debuglog('egg/security/lib/middlewares/csrf');
+
+export default (options: SecurityConfig['csrf']): MiddlewareFunc => {
+  return function csrf(ctx, next) {
     if (checkIfIgnore(options, ctx)) {
       return next();
     }

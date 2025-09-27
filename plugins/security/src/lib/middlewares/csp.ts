@@ -1,7 +1,8 @@
 import extend from 'extend';
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
+
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
 const HEADER = ['x-content-security-policy', 'content-security-policy'];
 const REPORT_ONLY_HEADER = ['x-content-security-policy-report-only', 'content-security-policy-report-only'];
@@ -9,8 +10,8 @@ const REPORT_ONLY_HEADER = ['x-content-security-policy-report-only', 'content-se
 // Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
 const MSIE_REGEXP = / MSIE /i;
 
-export default (options: SecurityConfig['csp']) => {
-  return async function csp(ctx: Context, next: Next) {
+export default (options: SecurityConfig['csp']): MiddlewareFunc => {
+  return async function csp(ctx, next) {
     await next();
 
     const opts = {

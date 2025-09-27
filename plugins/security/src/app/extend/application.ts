@@ -1,15 +1,16 @@
-import { EggCore } from '@eggjs/core';
+import { Application } from 'egg';
+
 import {
   safeCurlForApplication,
   type HttpClientRequestURL,
   type HttpClientOptions,
   type HttpClientResponse,
-} from '../../lib/extend/safe_curl.js';
+} from '../../lib/extend/safe_curl.ts';
 
 const INPUT_CSRF = '\r\n<input type="hidden" name="_csrf" value="{{ctx.csrf}}" /></form>';
 const INJECTION_DEFENSE = '<!--for injection--><!--</html>--><!--for injection-->';
 
-export default class SecurityApplication extends EggCore {
+export default class SecurityApplication extends Application {
   injectCsrf(html: string) {
     html = html.replace(/(<form.*?>)([\s\S]*?)<\/form>/gi, (_, $1, $2) => {
       const match = $2;
@@ -40,8 +41,8 @@ export default class SecurityApplication extends EggCore {
   }
 }
 
-declare module '@eggjs/core' {
-  interface EggCore {
+declare module 'egg' {
+  interface Application {
     injectCsrf(html: string): string;
     injectNonce(html: string): string;
     injectHijackingDefense(html: string): string;

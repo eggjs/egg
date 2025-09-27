@@ -1,39 +1,38 @@
-import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
-import snapshot from 'snap-shot-it';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, afterAll, beforeAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/csp.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;
   let app4: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/csp',
+      baseDir: getFixtures('apps/csp'),
     });
     await app.ready();
     app2 = mm.app({
-      baseDir: 'apps/csp-ignore',
+      baseDir: getFixtures('apps/csp-ignore'),
     });
     await app2.ready();
     app3 = mm.app({
-      baseDir: 'apps/csp-reportonly',
+      baseDir: getFixtures('apps/csp-reportonly'),
     });
     await app3.ready();
     app4 = mm.app({
-      baseDir: 'apps/csp-supportie',
+      baseDir: getFixtures('apps/csp-supportie'),
     });
     await app4.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
     await app3.close();
     await app4.close();
   });
-
-  afterEach(mm.restore);
 
   describe('directives', () => {
     it('should support other directives when pattern match', async () => {
@@ -43,19 +42,19 @@ describe('test/csp.test.ts', () => {
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.domain.com www.google-analytics.com 'nonce-" +
         nonce +
         "';style-src 'unsafe-inline' *.domain.com;img-src 'self' data: *.domain.com www.google-analytics.com;frame-ancestors 'self';report-uri http://pointman.domain.com/csp?app=csp";
-      assert.equal(res.headers['content-security-policy'], expectedHeader);
+      expect(res.headers['content-security-policy']).toBe(expectedHeader);
     });
 
     it('should support with custom policy', async () => {
       const res = await app.httpRequest().get('/testcsp/custom').expect(200);
       const nonce = res.text;
       const expectedHeader = `script-src 'self' 'nonce-${nonce}';style-src 'unsafe-inline';img-src 'self';frame-ancestors 'self';report-uri http://pointman.domain.com/csp?app=csp`;
-      assert.equal(res.headers['content-security-policy'], expectedHeader);
+      expect(res.headers['content-security-policy']).toBe(expectedHeader);
     });
 
     it('should support dynamic disable', async () => {
       const res = await app.httpRequest().get('/testcsp/disable').expect(200);
-      assert.equal(res.headers['content-security-policy'], undefined);
+      expect(res.headers['content-security-policy']).toBe(undefined);
     });
 
     it('should support IE', async () => {
@@ -69,13 +68,13 @@ describe('test/csp.test.ts', () => {
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.domain.com www.google-analytics.com 'nonce-" +
         nonce +
         "';style-src 'unsafe-inline' *.domain.com;img-src 'self' data: *.domain.com www.google-analytics.com;frame-ancestors 'self';report-uri http://pointman.domain.com/csp?app=csp";
-      assert.equal(res.headers['x-content-security-policy'], expectedHeader);
+      expect(res.headers['x-content-security-policy']).toBe(expectedHeader);
     });
 
     it('should support report-uri', async () => {
       const res = await app.httpRequest().get('/testcsp').expect(200);
       const headers = JSON.stringify(res.headers);
-      assert.match(headers, /report-uri http:\/\/pointman\.domain\.com\/csp\?app=csp/);
+      expect(headers).toMatch(/report-uri http:\/\/pointman\.domain\.com\/csp\?app=csp/);
     });
   });
 
@@ -86,30 +85,30 @@ describe('test/csp.test.ts', () => {
       const header = res.headers['content-security-policy'];
       const re_nonce = /nonce-([^']+)/;
       const m = re_nonce.exec(header);
-      assert.equal(nonce, m![1], header);
+      expect(nonce).toBe(m![1], header);
     });
 
     it('should have X-CSP-Nonce header', async () => {
       const res = await app.httpRequest().get('/testcsp').expect(200);
       const nonce = res.text;
-      assert.equal(res.headers['x-csp-nonce'], nonce);
+      expect(res.headers['x-csp-nonce']).toBe(nonce);
     });
   });
 
   it('should ignore path', async () => {
-    snapshot(app2.config.security);
+    expect(app2.config.security).toMatchSnapshot();
     const res = await app2.httpRequest().get('/api/update').expect(200);
-    assert.equal(res.headers['x-csp-nonce'], undefined);
+    expect(res.headers['x-csp-nonce']).toBe(undefined);
   });
 
   it('should ignore path by regex rule', async () => {
     const res = await app2.httpRequest().get('/ignore/update').expect(200);
-    assert.equal(res.headers['x-csp-nonce'], undefined);
+    expect(res.headers['x-csp-nonce']).toBe(undefined);
   });
 
   it('should not ignore path when do not match', async () => {
     const res = await app2.httpRequest().get('/testcsp').expect(200);
-    assert(res.headers['x-csp-nonce']);
+    expect(res.headers['x-csp-nonce']).toBeTruthy();
   });
 
   it('should support report only when pattern match and report only config open', async () => {
@@ -119,7 +118,7 @@ describe('test/csp.test.ts', () => {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.domain.com www.google-analytics.com 'nonce-" +
       nonce +
       "';style-src 'unsafe-inline' *.domain.com;img-src 'self' data: *.domain.com www.google-analytics.com;frame-ancestors 'self';report-uri http://pointman.domain.com/csp?app=csp";
-    assert.equal(res.headers['content-security-policy-report-only'], expectedHeader);
+    expect(res.headers['content-security-policy-report-only']).toBe(expectedHeader);
   });
 
   it('should support report only when pattern match and report only config open and support ie', async () => {
@@ -133,6 +132,6 @@ describe('test/csp.test.ts', () => {
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.domain.com www.google-analytics.com 'nonce-" +
       nonce +
       "';style-src 'unsafe-inline' *.domain.com;img-src 'self' data: *.domain.com www.google-analytics.com;frame-ancestors 'self';report-uri http://pointman.domain.com/csp?app=csp";
-    assert.equal(res.headers['x-content-security-policy-report-only'], expectedHeader);
+    expect(res.headers['x-content-security-policy-report-only']).toBe(expectedHeader);
   });
 });

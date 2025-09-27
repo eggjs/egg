@@ -1,11 +1,13 @@
 import assert from 'node:assert';
+
 import compose from 'koa-compose';
 import { pathMatching } from 'egg-path-matching';
-import type { EggCore, MiddlewareFunc } from '@eggjs/core';
-import securityMiddlewares from '../../lib/middlewares/index.js';
-import type { SecurityMiddlewareName } from '../../config/config.default.js';
+import type { Application, MiddlewareFunc } from 'egg';
 
-export default (_: unknown, app: EggCore) => {
+import securityMiddlewares from '../../lib/middlewares/index.ts';
+import type { SecurityMiddlewareName } from '../../config/config.default.ts';
+
+export default (_: unknown, app: Application) => {
   const options = app.config.security;
   const middlewares: MiddlewareFunc[] = [];
   const defaultMiddlewares =

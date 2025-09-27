@@ -1,17 +1,18 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, beforeAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/method_not_allow.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/method',
+      baseDir: getFixtures('apps/method'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  afterEach(mm.restore);
-
-  after(() => app.close());
+  afterAll(() => app.close());
 
   it('should allow', async () => {
     await app.httpRequest().get('/').expect(200);

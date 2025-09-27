@@ -1,9 +1,10 @@
-import { EggCore } from '@eggjs/core';
-import type { SSRFCheckAddressFunction } from '../../types.js';
+import type { EggApplicationCore } from 'egg';
+
+import type { SSRFCheckAddressFunction } from '../../types.ts';
 
 const SSRF_HTTPCLIENT = Symbol('SSRF_HTTPCLIENT');
 
-type HttpClient = EggCore['HttpClient'];
+type HttpClient = EggApplicationCore['HttpClient'];
 type HttpClientParameters = Parameters<HttpClient['prototype']['request']>;
 export type HttpClientRequestURL = HttpClientParameters[0];
 export type HttpClientOptions = HttpClientParameters[1] & { checkAddress?: SSRFCheckAddressFunction };
@@ -13,7 +14,7 @@ export type HttpClientResponse<T = any> = Awaited<ReturnType<HttpClient['prototy
  * safe curl with ssrf protection
  */
 export async function safeCurlForApplication<T = any>(
-  app: EggCore,
+  app: EggApplicationCore,
   url: HttpClientRequestURL,
   options: HttpClientOptions = {}
 ) {
@@ -25,7 +26,7 @@ export async function safeCurlForApplication<T = any>(
   }
 
   if (ssrfConfig?.checkAddress) {
-    let httpClient = app[SSRF_HTTPCLIENT] as ReturnType<EggCore['createHttpClient']>;
+    let httpClient = app[SSRF_HTTPCLIENT] as ReturnType<EggApplicationCore['createHttpClient']>;
     // use the new httpClient init with checkAddress
     if (!httpClient) {
       httpClient = app[SSRF_HTTPCLIENT] = app.createHttpClient({

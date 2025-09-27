@@ -1,5 +1,5 @@
 import z from 'zod';
-import { Context } from '@eggjs/core';
+import { Context } from 'egg';
 
 const CSRFSupportRequestItem = z.object({
   path: z.instanceof(RegExp),

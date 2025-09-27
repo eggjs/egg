@@ -1,25 +1,25 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, beforeAll } from 'vitest';
+import { getFixtures } from './utils.ts';
 
 describe('test/safe_redirect.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/safe_redirect',
+      baseDir: getFixtures('apps/safe_redirect'),
     });
     await app.ready();
     app2 = mm.app({
-      baseDir: 'apps/safe_redirect_noconfig',
+      baseDir: getFixtures('apps/safe_redirect_noconfig'),
     });
     await app2.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
   });
-
-  afterEach(mm.restore);
 
   it('should redirect to / when url is in white list', async () => {
     await app

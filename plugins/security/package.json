@@ -3,6 +3,7 @@
   "version": "5.0.0-beta.13",
   "type": "module",
   "publishConfig": {
+    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./agent": "./dist/agent.js",
@@ -108,7 +109,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@eggjs/core": "workspace:*",
     "@eggjs/ip": "catalog:",
     "csrf": "catalog:",
     "egg-path-matching": "catalog:",
@@ -121,8 +121,10 @@
     "xss": "catalog:",
     "zod": "catalog:"
   },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "catalog:",
@@ -134,33 +136,22 @@
     "@types/type-is": "catalog:",
     "beautify-benchmark": "catalog:",
     "benchmark": "catalog:",
-    "egg": "workspace:*",
     "egg-view-nunjucks": "catalog:",
-    "oxlint": "catalog:",
-    "rimraf": "catalog:",
-    "snap-shot-it": "catalog:",
     "spy": "catalog:",
-    "supertest": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "peerDependencies": {
-    "egg": "workspace:*"
-  },
   "scripts": {
     "build": "tsdown",
-    "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint:fix && vitest",
-    "cov": "vitest run --coverage",
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",

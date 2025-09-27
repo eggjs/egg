@@ -1,8 +1,9 @@
-import snapshot from 'snap-shot-it';
-import config from '../../src/config/config.default.js';
+import { describe, it, expect } from 'vitest';
+
+import config from '../../src/config/config.default.ts';
 
 describe('test/config/config.default.test.ts', () => {
   it('should config default values keep stable', () => {
-    snapshot(config);
+    expect(config).toMatchSnapshot();
   });
 });

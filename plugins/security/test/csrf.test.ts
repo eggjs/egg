@@ -1,24 +1,25 @@
-import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, expect, afterAll, beforeAll, afterEach } from 'vitest';
 import { TestAgent } from '@eggjs/supertest';
-import snapshot from 'snap-shot-it';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/csrf.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/csrf',
+      baseDir: getFixtures('apps/csrf'),
     });
     await app.ready();
     app2 = mm.app({
-      baseDir: 'apps/csrf-multiple',
+      baseDir: getFixtures('apps/csrf-multiple'),
     });
     await app2.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
   });
@@ -27,19 +28,19 @@ describe('test/csrf.test.ts', () => {
 
   it('should throw when session disabled and useSession enabled', async () => {
     try {
-      const app = mm.app({ baseDir: 'apps/csrf-session-disable' });
+      const app = mm.app({ baseDir: getFixtures('apps/csrf-session-disable') });
       await app.ready();
       throw new Error('should not execute');
     } catch (err: any) {
-      assert.equal(err.message, 'csrf.useSession enabled, but session plugin is disabled');
+      expect(err.message).toBe('csrf.useSession enabled, but session plugin is disabled');
     }
   });
 
   it('should update form with csrf token', async () => {
-    snapshot(app.config.security.csrf);
+    expect(app.config.security.csrf).toMatchSnapshot();
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const csrfToken = res.text;
     res = await agent
       .post('/update')
@@ -59,7 +60,7 @@ describe('test/csrf.test.ts', () => {
     const agent = new TestAgent(app.callback());
     await agent.get('/').set('accept', 'text/html').expect(200);
     let res = await agent.get('/rotate').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const csrfToken = res.text;
     res = await agent
       .post('/update')
@@ -83,7 +84,7 @@ describe('test/csrf.test.ts', () => {
       .expect(200)
       .expect('')
       .expect(res => {
-        assert(!res.header['set-cookie']);
+        expect(res.header['set-cookie']).toBeFalsy();
       });
   });
 
@@ -91,7 +92,7 @@ describe('test/csrf.test.ts', () => {
     mm(app.config.security.csrf, 'useSession', true);
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const csrfToken = res.text;
     res = await agent
       .post('/update')
@@ -111,7 +112,7 @@ describe('test/csrf.test.ts', () => {
     mm(app.config.security.csrf, 'useSession', true);
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const csrfToken = res.text;
     res = await agent
       .post('/update')
@@ -129,8 +130,9 @@ describe('test/csrf.test.ts', () => {
   it('should update form with csrf token from cookie and set to header', async () => {
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const cookie = res.headers['set-cookie'][0];
+    expect(cookie).toMatch(/csrfToken=(.*?);/);
     const csrfToken = cookie.match(/csrfToken=(.*?);/)![1];
     res = await agent
       .post('/update')
@@ -147,8 +149,9 @@ describe('test/csrf.test.ts', () => {
   it('should update form with csrf token from cookie and set to query', async () => {
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const cookie = res.headers['set-cookie'][0];
+    expect(cookie).toMatch(/csrfToken=(.*?);/);
     const csrfToken = cookie.match(/csrfToken=(.*?);/)![1];
     res = await agent
       .post(`/update?_csrf=${csrfToken}`)
@@ -164,11 +167,13 @@ describe('test/csrf.test.ts', () => {
   it('should update form with csrf token from cookie and support multiple query input', async () => {
     const agent = new TestAgent(app2.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
-    const cookie = res.headers['set-cookie'] as any;
-    const csrfToken = cookie.join(';').match(/csrfToken=(.*?);/)![1];
-    const ctoken = cookie.join(';').match(/ctoken=(.*?);/)![1];
-    assert.equal(ctoken, csrfToken);
+    expect(res.text).toBeTruthy();
+    const cookie = (res.headers['set-cookie'] as unknown as string[]).join(';');
+    expect(cookie).toMatch(/csrfToken=(.*?);/);
+    expect(cookie).toMatch(/ctoken=(.*?);/);
+    const csrfToken = cookie.match(/csrfToken=(.*?);/)![1];
+    const ctoken = cookie.match(/ctoken=(.*?);/)![1];
+    expect(ctoken).toBe(csrfToken);
     res = await agent
       .post(`/update?_csrf=${csrfToken}`)
       .send({
@@ -214,8 +219,9 @@ describe('test/csrf.test.ts', () => {
   it('should update form with csrf token from cookie and set to body', async () => {
     const agent = new TestAgent(app.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const cookie = res.headers['set-cookie'][0];
+    expect(cookie).toMatch(/csrfToken=(.*?);/);
     const csrfToken = cookie.match(/csrfToken=(.*?);/)![1];
     res = await agent
       .post('/update')
@@ -233,8 +239,9 @@ describe('test/csrf.test.ts', () => {
   it('should update form with csrf token from cookie and and support multiple body input', async () => {
     const agent = new TestAgent(app2.callback());
     let res = await agent.get('/').set('accept', 'text/html').expect(200);
-    assert(res.text);
+    expect(res.text).toBeTruthy();
     const cookie = res.headers['set-cookie'][1];
+    expect(cookie).toMatch(/csrfToken=(.*?);/);
     const csrfToken = cookie.match(/csrfToken=(.*?);/)![1];
     res = await agent
       .post('/update')
@@ -269,11 +276,11 @@ describe('test/csrf.test.ts', () => {
       .set('cookie', 'csrfToken=1')
       .send({ title: 'invalid token' })
       .expect(403)
-      .expect(res => assert(!!res.header['set-cookie']));
+      .expect(res => expect(res.header['set-cookie']).toBeTruthy());
   });
 
   it('should show deprecate message if ignoreJSON = true', async () => {
-    const app = mm.app({ baseDir: 'apps/csrf-ignorejson' });
+    const app = mm.app({ baseDir: getFixtures('apps/csrf-ignorejson') });
     await app.ready();
     // will show deprecate message
   });
@@ -333,7 +340,7 @@ describe('test/csrf.test.ts', () => {
     await agent.get('/').set('accept', 'text/html').expect(200);
 
     const res = await agent.post('/update').set('accept', 'text/html').expect(403);
-    assert.match(res.text, /invalid csrf token/);
+    expect(res.text).toMatch(/invalid csrf token/);
     app.expectLog('invalid csrf token. See http');
   });
 
@@ -427,16 +434,13 @@ describe('test/csrf.test.ts', () => {
     ctx.assertCsrf();
   });
 
-  it('should assertCsrf throw if not ignore', function (done) {
+  it('should assertCsrf throw if not ignore', () => {
     const ctx = app2.mockContext({
       path: '/foo/bar',
     });
-    try {
+    expect(() => {
       ctx.assertCsrf();
-    } catch (err) {
-      assert((err as Error).message, 'missing csrf token');
-      done();
-    }
+    }).toThrow('missing csrf token');
   });
 
   it('should return 200 with correct referer or origin when type is referer', async () => {
@@ -689,109 +693,109 @@ describe('test/csrf.test.ts', () => {
 
   it('should throw with error type', async () => {
     const app = mm.app({
-      baseDir: 'apps/csrf-error-type',
+      baseDir: getFixtures('apps/csrf-error-type'),
     });
-    await assert.rejects(async () => {
+    await expect(async () => {
       await app.ready();
-    }, /Invalid enum value. Expected 'ctoken' \| 'referer' \| 'all' \| 'any', received 'test'/);
+    }).rejects.toThrow(/Invalid enum value. Expected 'ctoken' \| 'referer' \| 'all' \| 'any', received 'test'/);
     await app.close();
   });
 
   it('should works without error with csrf.enable = false', async () => {
     const app = mm.app({
-      baseDir: 'apps/csrf-enable-false',
+      baseDir: getFixtures('apps/csrf-enable-false'),
     });
     await app.ready();
     await app.httpRequest().post('/update').set('accept', 'text/html').expect(200);
     await app.close();
   });
+});
 
-  describe('apps/csrf-supported-requests', () => {
-    let app: MockApplication;
-    before(() => {
-      app = mm.app({
-        baseDir: 'apps/csrf-supported-requests',
-      });
-      return app.ready();
+describe('apps/csrf-supported-requests', () => {
+  let app: MockApplication;
+  beforeAll(async () => {
+    app = mm.app({
+      baseDir: getFixtures('apps/csrf-supported-requests'),
     });
-
-    after(() => app.close());
-
-    it('should works without error', async () => {
-      await app.httpRequest().post('/').set('accept', 'text/html').expect(200);
-    });
-
-    it('should throw with error type', async () => {
-      await app
-        .httpRequest()
-        .post('/update')
-        .set('accept', 'text/html')
-        .expect(403)
-        .expect(/missing csrf token/);
-    });
-
-    it('should throw with error type', async () => {
-      await app
-        .httpRequest()
-        .get('/api/rotate')
-        .set('accept', 'text/html')
-        .expect(403)
-        .expect(/missing csrf token/);
-    });
+    await app.ready();
   });
 
-  describe('apps/csrf-supported-override-default', () => {
-    let app: MockApplication;
-    before(() => {
-      app = mm.app({
-        baseDir: 'apps/csrf-supported-override-default',
-      });
-      return app.ready();
-    });
+  afterAll(() => app.close());
 
-    after(() => app.close());
-
-    it('should works without error', async () => {
-      await app.httpRequest().post('/').set('accept', 'text/html').expect(200);
-
-      await app.httpRequest().post('/update').set('accept', 'text/html').expect(200);
-    });
-
-    it('should throw with error type', async () => {
-      await app
-        .httpRequest()
-        .post('/api/rotate')
-        .set('accept', 'text/html')
-        .expect(403)
-        .expect(/missing csrf token/);
-
-      await app
-        .httpRequest()
-        .post('/api/foo')
-        .set('accept', 'text/html')
-        .expect(403)
-        .expect(/missing csrf token/);
-    });
+  it('should works without error', async () => {
+    await app.httpRequest().post('/').set('accept', 'text/html').expect(200);
   });
 
-  describe('apps/csrf-supported-requests-default-config', () => {
-    let app: MockApplication;
-    before(() => {
-      app = mm.app({
-        baseDir: 'apps/csrf-supported-requests-default-config',
-      });
-      return app.ready();
-    });
+  it('should throw with error type', async () => {
+    await app
+      .httpRequest()
+      .post('/update')
+      .set('accept', 'text/html')
+      .expect(403)
+      .expect(/missing csrf token/);
+  });
 
-    after(() => app.close());
+  it('should throw with error type', async () => {
+    await app
+      .httpRequest()
+      .get('/api/rotate')
+      .set('accept', 'text/html')
+      .expect(403)
+      .expect(/missing csrf token/);
+  });
+});
 
-    it('should works without error because csrf = false override default config', async () => {
-      snapshot(app.config.security.csrf);
-      const res = await app.httpRequest().get('/').set('accept', 'text/html').expect(200);
-      assert.equal(res.body.csrf, '');
-      assert.equal(res.body.env, 'unittest');
-      assert.deepEqual(res.body.supportedRequestsMethods, ['POST', 'PATCH', 'DELETE', 'PUT', 'CONNECT']);
-      await app.httpRequest().post('/update').expect(200);
+describe('apps/csrf-supported-override-default', () => {
+  let app: MockApplication;
+  beforeAll(async () => {
+    app = mm.app({
+      baseDir: getFixtures('apps/csrf-supported-override-default'),
     });
+    await app.ready();
+  });
+
+  afterAll(() => app.close());
+
+  it('should works without error', async () => {
+    await app.httpRequest().post('/').set('accept', 'text/html').expect(200);
+
+    await app.httpRequest().post('/update').set('accept', 'text/html').expect(200);
+  });
+
+  it('should throw with error type', async () => {
+    await app
+      .httpRequest()
+      .post('/api/rotate')
+      .set('accept', 'text/html')
+      .expect(403)
+      .expect(/missing csrf token/);
+
+    await app
+      .httpRequest()
+      .post('/api/foo')
+      .set('accept', 'text/html')
+      .expect(403)
+      .expect(/missing csrf token/);
+  });
+});
+
+describe('apps/csrf-supported-requests-default-config', () => {
+  let app: MockApplication;
+  beforeAll(async () => {
+    app = mm.app({
+      baseDir: getFixtures('apps/csrf-supported-requests-default-config'),
+    });
+    await app.ready();
+  });
+
+  afterAll(() => app.close());
+
+  it('should works without error because csrf = false override default config', async () => {
+    expect(app.config.security.csrf).toMatchSnapshot();
+    const res = await app.httpRequest().get('/').set('accept', 'text/html').expect(200);
+    expect(res.body.csrf).toBe('');
+    expect(res.body.env).toBe('unittest');
+    expect(res.body.supportedRequestsMethods).toEqual(['POST', 'PATCH', 'DELETE', 'PUT', 'CONNECT']);
+    await app.httpRequest().post('/update').expect(200);
   });
 });

@@ -1,4 +1,4 @@
-import type { BaseContextClass } from '@eggjs/core';
+import type { BaseContextClass } from 'egg';
 
 const escapeMap: Record<string, string> = {
   '"': '&quot;',

@@ -1,35 +1,35 @@
-import { mm, MockApplication } from '@eggjs/mock';
-import snapshot from 'snap-shot-it';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/xss.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/xss',
+      baseDir: getFixtures('apps/xss'),
     });
     await app.ready();
 
     app2 = mm.app({
-      baseDir: 'apps/xss-close',
+      baseDir: getFixtures('apps/xss-close'),
     });
     await app2.ready();
 
     app3 = mm.app({
-      baseDir: 'apps/xss-close-zero',
+      baseDir: getFixtures('apps/xss-close-zero'),
     });
     await app3.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
     await app3.close();
   });
-
-  afterEach(mm.restore);
 
   it('should contain default X-XSS-Protection header', () => {
     return app
@@ -49,7 +49,7 @@ describe('test/xss.test.ts', () => {
   });
 
   it('should set X-XSS-Protection header value 0 when config is number 0', () => {
-    snapshot(app3.config.security.xssProtection);
+    expect(app3.config.security.xssProtection).toMatchSnapshot();
     return app3.httpRequest().get('/').set('accept', 'text/html').expect('X-XSS-Protection', '0').expect(200);
   });
 });

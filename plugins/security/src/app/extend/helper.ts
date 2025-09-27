@@ -1,4 +1,4 @@
-import helpers from '../../lib/helper/index.js';
+import helpers from '../../lib/helper/index.ts';
 
 export default {
   ...helpers,

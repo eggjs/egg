@@ -128,7 +128,7 @@
     "@eggjs/multipart": "catalog:",
     "@eggjs/onerror": "workspace:*",
     "@eggjs/schedule": "workspace:*",
-    "@eggjs/security": "catalog:",
+    "@eggjs/security": "workspace:*",
     "@eggjs/session": "catalog:",
     "@eggjs/static": "workspace:*",
     "@eggjs/utils": "workspace:*",

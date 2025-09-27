@@ -1,17 +1,18 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, describe, it } from 'vitest';
+
+import { getFixtures } from '../../utils.ts';
 
 describe('test/app/extends/escapeShellCmd.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/helper-escapeShellCmd-app',
+      baseDir: getFixtures('apps/helper-escapeShellCmd-app'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  after(() => app.close());
-
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   describe('helper.escapeShellCmd()', () => {
     it('should convert chars in blacklists', () => {

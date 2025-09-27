@@ -1,9 +1,10 @@
-import { Response as KoaResponse } from '@eggjs/core';
-import SecurityContext from './context.js';
+import { Response } from 'egg';
 
-const unsafeRedirect = KoaResponse.prototype.redirect;
+import SecurityContext from './context.ts';
 
-export default class SecurityResponse extends KoaResponse {
+const unsafeRedirect = Response.prototype.redirect;
+
+export default class SecurityResponse extends Response {
   declare ctx: SecurityContext;
 
   /**
@@ -86,7 +87,7 @@ export default class SecurityResponse extends KoaResponse {
   }
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   // add Response overrides types
   interface Response {
     unsafeRedirect(url: string, alt?: string): void;

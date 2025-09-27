@@ -1,17 +1,18 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, describe, it } from 'vitest';
+
+import { getFixtures } from '../../utils.ts';
 
 describe('test/app/extends/spath.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/helper-spath-app',
+      baseDir: getFixtures('apps/helper-spath-app'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  after(() => app.close());
-
-  after(mm.restore);
+  afterAll(() => app.close());
 
   describe('helper.spath()', () => {
     it('should pass when filepath is safe', () => {

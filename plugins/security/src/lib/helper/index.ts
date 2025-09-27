@@ -1,12 +1,12 @@
-import cliFilter from './cliFilter.js';
-import escape from './escape.js';
-import escapeShellArg from './escapeShellArg.js';
-import escapeShellCmd from './escapeShellCmd.js';
-import shtml from './shtml.js';
-import sjs from './sjs.js';
-import sjson from './sjson.js';
-import spath from './spath.js';
-import surl from './surl.js';
+import cliFilter from './cliFilter.ts';
+import escape from './escape.ts';
+import escapeShellArg from './escapeShellArg.ts';
+import escapeShellCmd from './escapeShellCmd.ts';
+import shtml from './shtml.ts';
+import sjs from './sjs.ts';
+import sjson from './sjson.ts';
+import spath from './spath.ts';
+import surl from './surl.ts';
 
 export default {
   cliFilter,

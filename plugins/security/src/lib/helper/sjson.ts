@@ -1,4 +1,4 @@
-import sjs from './sjs.js';
+import sjs from './sjs.ts';
 
 /**
  * escape json

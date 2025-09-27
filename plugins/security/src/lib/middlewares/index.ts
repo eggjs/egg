@@ -1,13 +1,13 @@
-import csp from './csp.js';
-import csrf from './csrf.js';
-import dta from './dta.js';
-import hsts from './hsts.js';
-import methodnoallow from './methodnoallow.js';
-import noopen from './noopen.js';
-import nosniff from './nosniff.js';
-import referrerPolicy from './referrerPolicy.js';
-import xframe from './xframe.js';
-import xssProtection from './xssProtection.js';
+import csp from './csp.ts';
+import csrf from './csrf.ts';
+import dta from './dta.ts';
+import hsts from './hsts.ts';
+import methodnoallow from './methodnoallow.ts';
+import noopen from './noopen.ts';
+import nosniff from './nosniff.ts';
+import referrerPolicy from './referrerPolicy.ts';
+import xframe from './xframe.ts';
+import xssProtection from './xssProtection.ts';
 
 export default {
   csp,

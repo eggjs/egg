@@ -1,10 +1,11 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
+
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
 // Set Strict-Transport-Security header
-export default (options: SecurityConfig['hsts']) => {
-  return async function hsts(ctx: Context, next: Next) {
+export default (options: SecurityConfig['hsts']): MiddlewareFunc => {
+  return async function hsts(ctx, next) {
     await next();
 
     const opts = {
@@ -13,11 +14,11 @@ export default (options: SecurityConfig['hsts']) => {
     };
     if (checkIfIgnore(opts, ctx)) return;
 
-    let val = 'max-age=' + opts.maxAge;
+    let val = `max-age=${opts.maxAge}`;
     // If opts.includeSubdomains is defined,
     // the rule is also valid for all the sub domains of the website
     if (opts.includeSubdomains) {
-      val += '; includeSubdomains';
+      val = `${val}; includeSubdomains`;
     }
     ctx.set('strict-transport-security', val);
   };

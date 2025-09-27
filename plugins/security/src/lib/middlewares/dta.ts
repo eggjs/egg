@@ -1,9 +1,9 @@
-import type { Context, Next } from '@eggjs/core';
-import { isSafePath } from '../utils.js';
+import type { MiddlewareFunc } from 'egg';
+import { isSafePath } from '../utils.ts';
 
 // https://en.wikipedia.org/wiki/Directory_traversal_attack
-export default () => {
-  return function dta(ctx: Context, next: Next) {
+export default (): MiddlewareFunc => {
+  return function dta(ctx, next) {
     const path = ctx.path;
     if (!isSafePath(path, ctx)) {
       ctx.throw(400);

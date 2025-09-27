@@ -1,6 +1,7 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
+
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
 // status codes for redirects
 // @see https://github.com/jshttp/statuses/blob/master/index.js#L33
@@ -14,8 +15,8 @@ const RedirectStatus: Record<number, boolean> = {
   308: true,
 };
 
-export default (options: SecurityConfig['nosniff']) => {
-  return async function nosniff(ctx: Context, next: Next) {
+export default (options: SecurityConfig['nosniff']): MiddlewareFunc => {
+  return async function nosniff(ctx, next) {
     await next();
 
     // ignore redirect response

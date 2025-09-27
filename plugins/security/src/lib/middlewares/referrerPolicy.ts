@@ -1,6 +1,7 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
+
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
 // https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Referrer-Policy
 const ALLOWED_POLICIES_ENUM = [
@@ -15,8 +16,8 @@ const ALLOWED_POLICIES_ENUM = [
   '',
 ];
 
-export default (options: SecurityConfig['referrerPolicy']) => {
-  return async function referrerPolicy(ctx: Context, next: Next) {
+export default (options: SecurityConfig['referrerPolicy']): MiddlewareFunc => {
+  return async function referrerPolicy(ctx, next) {
     await next();
 
     const opts = {
@@ -24,14 +25,15 @@ export default (options: SecurityConfig['referrerPolicy']) => {
       // check refererPolicy for backward compatibility
       // typo on the old version
       // @see https://github.com/eggjs/security/blob/e3408408adec5f8d009d37f75126ed082481d0ac/lib/middlewares/referrerPolicy.js#L21C59-L21C72
-      ...(ctx.securityOptions as any).refererPolicy,
+      // @ts-expect-error alias for referrerPolicy
+      ...ctx.securityOptions.refererPolicy,
       ...ctx.securityOptions.referrerPolicy,
     };
     if (checkIfIgnore(opts, ctx)) return;
 
     const policy = opts.value;
     if (!ALLOWED_POLICIES_ENUM.includes(policy)) {
-      throw new Error('"' + policy + '" is not available.');
+      throw new Error(`"${policy}" is not available.`);
     }
 
     ctx.set('referrer-policy', policy);

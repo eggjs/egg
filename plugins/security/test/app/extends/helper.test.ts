@@ -1,34 +1,35 @@
 import { strict as assert } from 'node:assert';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, describe, it } from 'vitest';
+
+import { getFixtures } from '../../utils.ts';
 
 describe('test/app/extends/helper.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/helper-app',
+      baseDir: getFixtures('apps/helper-app'),
     });
     await app.ready();
 
     app2 = mm.app({
-      baseDir: 'apps/helper-config-app',
+      baseDir: getFixtures('apps/helper-config-app'),
     });
     await app2.ready();
 
     app3 = mm.app({
-      baseDir: 'apps/helper-link-app',
+      baseDir: getFixtures('apps/helper-link-app'),
     });
     await app3.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
     await app3.close();
   });
-
-  afterEach(mm.restore);
 
   describe('helper.escape()', () => {
     it('should work', () => {

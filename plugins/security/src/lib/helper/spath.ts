@@ -2,7 +2,7 @@
  * File Inclusion
  */
 
-import type { BaseContextClass } from '@eggjs/core';
+import type { BaseContextClass } from 'egg';
 
 export default function pathFilter(this: BaseContextClass, path: string) {
   if (typeof path !== 'string') return path;

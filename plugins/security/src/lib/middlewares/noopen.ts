@@ -1,10 +1,11 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
+
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
 
 // @see http://blogs.msdn.com/b/ieinternals/archive/2009/06/30/internet-explorer-custom-http-headers.aspx
-export default (options: SecurityConfig['noopen']) => {
-  return async function noopen(ctx: Context, next: Next) {
+export default (options: SecurityConfig['noopen']): MiddlewareFunc => {
+  return async function noopen(ctx, next) {
     await next();
 
     const opts = {

@@ -35,7 +35,7 @@ export default class Response extends KoaResponse {
   }
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   // add Response overrides types
   interface Response {
     get realStatus(): number;

@@ -1,9 +1,10 @@
-import type { Context, Next } from '@eggjs/core';
-import { checkIfIgnore } from '../utils.js';
-import type { SecurityConfig } from '../../types.js';
+import type { MiddlewareFunc } from 'egg';
 
-export default (options: SecurityConfig['xssProtection']) => {
-  return async function xssProtection(ctx: Context, next: Next) {
+import { checkIfIgnore } from '../utils.ts';
+import type { SecurityConfig } from '../../types.ts';
+
+export default (options: SecurityConfig['xssProtection']): MiddlewareFunc => {
+  return async function xssProtection(ctx, next) {
     await next();
 
     const opts = {

@@ -1,12 +1,6 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist",
-    "paths": {
-      "@eggjs/security": ["./src"],
-      "@eggjs/security/*": ["./src/*"]
-    }
-  },
-  "include": ["src/**/*", "test/**/*"]
+    "baseUrl": "./"
+  }
 }

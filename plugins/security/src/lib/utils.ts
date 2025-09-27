@@ -1,9 +1,11 @@
 import { normalize } from 'node:path';
+
 import matcher from 'matcher';
 import IP from '@eggjs/ip';
-import { Context } from '@eggjs/core';
+import type { Context } from 'egg';
 import type { PathMatchingFun } from 'egg-path-matching';
-import type { SecurityConfig } from '../types.js';
+
+import type { SecurityConfig } from '../types.ts';
 
 /**
  * Check whether a domain is in the safe domain white list or not.
@@ -189,10 +191,10 @@ export function preprocessConfig(config: SecurityConfig) {
   });
 }
 
-export function getFromUrl(url: string, prop?: string): string | null {
+export function getFromUrl(url: string, prop: string): string | null {
   try {
     const parsed = new URL(url);
-    return prop ? Reflect.get(parsed, prop) : parsed;
+    return Reflect.get(parsed, prop);
   } catch {
     return null;
   }

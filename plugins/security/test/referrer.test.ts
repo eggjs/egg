@@ -1,32 +1,33 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, beforeAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/referrer.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/referrer',
+      baseDir: getFixtures('apps/referrer'),
     });
     await app.ready();
     app2 = mm.app({
-      baseDir: 'apps/referrer-config',
+      baseDir: getFixtures('apps/referrer-config'),
     });
     await app2.ready();
     app3 = mm.app({
-      baseDir: 'apps/referrer-config-compatibility',
+      baseDir: getFixtures('apps/referrer-config-compatibility'),
     });
     await app3.ready();
   });
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
     await app2.close();
     await app3.close();
   });
-
-  afterEach(mm.restore);
 
   it('should return default referrer-policy http header', () => {
     return app

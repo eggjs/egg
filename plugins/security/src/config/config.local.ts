@@ -1,9 +1,9 @@
-import type { SecurityConfig } from '../types.js';
+import type { PartialEggConfig } from 'egg';
 
 export default {
   security: {
     hsts: {
       enable: false,
     },
-  } as SecurityConfig,
-};
+  },
+} as PartialEggConfig;

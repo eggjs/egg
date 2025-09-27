@@ -1,17 +1,18 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { beforeAll, afterAll, describe, it } from 'vitest';
+
+import { getFixtures } from '../../utils.ts';
 
 describe('test/app/extends/sjson.test.ts', () => {
   let app: MockApplication;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/helper-sjson-app',
+      baseDir: getFixtures('apps/helper-sjson-app'),
     });
-    return app.ready();
+    await app.ready();
   });
 
-  after(() => app.close());
-
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   describe('helper.sjson()', () => {
     it('should not convert json string when json is safe', () => {
