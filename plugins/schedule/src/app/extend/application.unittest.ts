@@ -35,6 +35,11 @@ export default class ApplicationUnittest extends Application {
     try {
       schedule = this.scheduleWorker.scheduleItems[schedulePath];
       if (!schedule) {
+        debug(
+          '[runSchedule] Cannot find schedule %o, scheduleItems: %o',
+          schedulePath,
+          this.scheduleWorker.scheduleItems
+        );
         throw new TypeError(`Cannot find schedule ${schedulePath}`);
       }
     } catch (err: any) {

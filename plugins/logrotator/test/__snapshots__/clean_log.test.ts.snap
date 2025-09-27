@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/clean_log.test.ts > should keep config stable 1`] = `
+{
+  "disableRotateByDay": false,
+  "filesRotateByHour": null,
+  "filesRotateBySize": null,
+  "gzip": false,
+  "hourDelimiter": "-",
+  "maxDays": 31,
+  "maxFileSize": 52428800,
+  "maxFiles": 10,
+  "rotateDuration": 60000,
+}
+`;

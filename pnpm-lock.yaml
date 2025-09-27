@@ -15,9 +15,6 @@ catalogs:
     '@eggjs/ip':
       specifier: ^2.1.0
       version: 2.1.0
-    '@eggjs/logrotator':
-      specifier: ^4.0.0
-      version: 4.1.0
     '@eggjs/multipart':
       specifier: ^4.0.0
       version: 4.0.0
@@ -39,9 +36,6 @@ catalogs:
     '@eggjs/tegg-plugin':
       specifier: ^3.2.2
       version: 3.62.0
-    '@eggjs/tsconfig':
-      specifier: ^1.3.3
-      version: 1.3.3
     '@eggjs/view':
       specifier: ^3.0.1
       version: 3.0.1
@@ -294,6 +288,9 @@ catalogs:
     get-ready:
       specifier: ^3.1.0
       version: 3.4.0
+    glob:
+      specifier: ^11.0.0
+      version: 11.0.3
     globby:
       specifier: ^11.0.2
       version: 11.1.0
@@ -366,6 +363,9 @@ catalogs:
     mochawesome-with-mocha:
       specifier: 8.0.0
       version: 8.0.0
+    moment:
+      specifier: ^2.30.1
+      version: 2.30.1
     mri:
       specifier: ^1.2.0
       version: 1.2.0
@@ -798,8 +798,8 @@ importers:
         specifier: workspace:*
         version: link:../../plugins/jsonp
       '@eggjs/logrotator':
-        specifier: 'catalog:'
-        version: 4.1.0
+        specifier: workspace:*
+        version: link:../../plugins/logrotator
       '@eggjs/multipart':
         specifier: 'catalog:'
         version: 4.0.0
@@ -1242,6 +1242,46 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
+  plugins/logrotator:
+    dependencies:
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      moment:
+        specifier: 'catalog:'
+        version: 2.30.1
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/schedule':
+        specifier: workspace:*
+        version: link:../schedule
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      egg-logger:
+        specifier: 'catalog:'
+        version: 3.6.1
+      glob:
+        specifier: 'catalog:'
+        version: 11.0.3
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
   plugins/mock:
     dependencies:
       '@eggjs/extend2':
@@ -1456,8 +1496,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/supertest
       '@eggjs/tsconfig':
-        specifier: 'catalog:'
-        version: 1.3.3
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       '@types/escape-html':
         specifier: 'catalog:'
         version: 1.0.4
@@ -2104,10 +2144,6 @@ packages:
     resolution: {integrity: sha512-cqubIqo5SCDPVN2qJ/ZiIPsfWl0xvNRvdLc9h1h8s5zdUk33RyNmCP83Ur9WS3GWbew+rDpVkNReJUCPbvrxkg==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/logrotator@4.1.0':
-    resolution: {integrity: sha512-WqvNbslzW99it4aGLuJYsfJdC/t7hWJSE4hvfgp0FVCZ22HyMPehojG04RGFfsxkik2P56MmAUZ/UUfB29z/Hg==}
-    engines: {node: '>= 18.19.0'}
-
   '@eggjs/mcp-proxy@3.62.0':
     resolution: {integrity: sha512-/ZZ+6ZMwumsRssTvyiD8JnE9ESHMmgVvYb6iIIdn8kq6lb8h+60BbkPnHHyCo/uPGnmJHhYRL7H1aiSTYlzQog==}
     engines: {node: '>=18.0.0'}
@@ -2207,10 +2243,6 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@eggjs/tegg-dal-plugin': ^3.60.1
-
-  '@eggjs/tsconfig@1.3.3':
-    resolution: {integrity: sha512-VV7NQlGDEQpt4rJDkx1tCorbhzstqDl2JVGdgSasENOsQjpUD7j3Olfpw84vHQP6PDtXO7atyjKR77Qh/TAB/g==}
-    engines: {node: '>=14.0.0'}
 
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
@@ -11785,12 +11817,6 @@ snapshots:
       type-is: 1.6.18
       vary: 1.1.2
 
-  '@eggjs/logrotator@4.1.0':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      moment: 2.30.1
-      utility: 2.5.0
-
   '@eggjs/mcp-proxy@3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.1)))(leoric@2.13.8(mysql2@3.15.1))':
     dependencies:
       '@eggjs/core': 6.5.0
@@ -12022,8 +12048,6 @@ snapshots:
     transitivePeerDependencies:
       - leoric
       - supports-color
-
-  '@eggjs/tsconfig@1.3.3': {}
 
   '@eggjs/utils@4.4.1': {}
 

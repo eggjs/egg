@@ -1,5 +1,10 @@
 export interface MockOptions {
   /**
+   * The mode of the application
+   */
+  mode?: 'all-in-one-process' | 'cluster' | 'single';
+
+  /**
    * The directory of the application
    */
   baseDir?: string;

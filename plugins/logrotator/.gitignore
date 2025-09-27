@@ -1,0 +1,14 @@
+logs/
+npm-debug.log
+node_modules/
+coverage/
+.idea/
+run/
+.DS_Store
+*.swp
+test/fixtures/**/run
+.tshy*
+.eslintcache
+dist
+package-lock.json
+.package-lock.json

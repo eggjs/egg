@@ -27,7 +27,11 @@ export class Messenger extends BaseMessenger implements IMessenger {
       this.opids = workerIds.map((workerId: number) => String(workerId));
     });
     this.onMessage = this.onMessage.bind(this);
-    process.on('message', this.onMessage);
+    if (this.egg.options.mode === 'all-in-one-process') {
+      process.on('sendmessage-to-self', this.onMessage);
+    } else {
+      process.on('message', this.onMessage);
+    }
     if (!workerThreads.isMainThread) {
       workerThreads.parentPort!.on('message', this.onMessage);
     }
@@ -55,7 +59,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    */
   sendTo(workerId: string, action: string, data?: unknown): Messenger {
     debug('[%s:%s] send %s with %j to workerId:%s', this.egg.type, this.pid, action, data, workerId);
-    sendmessage(process, {
+    const message = {
       action,
       data,
       /**
@@ -63,7 +67,8 @@ export class Messenger extends BaseMessenger implements IMessenger {
        */
       receiverPid: String(workerId),
       receiverWorkerId: String(workerId),
-    });
+    };
+    this.#sendMessage(message);
     return this;
   }
 
@@ -117,12 +122,23 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   send(action: string, data: unknown | undefined, to?: string): Messenger {
-    sendmessage(process, {
+    debug('send message %s with %j to %s', action, data, to);
+    this.#sendMessage({
       action,
       data,
       to,
     });
     return this;
+  }
+
+  #sendMessage(message: any) {
+    debug('[%s:%s] send message %j, mode: %s', this.egg.type, this.pid, message, this.egg.options.mode);
+    if (this.egg.options.mode === 'all-in-one-process') {
+      // @ts-expect-error event `sendmessage-to-self` is not typed
+      process.emit('sendmessage-to-self', message);
+    } else {
+      sendmessage(process, message);
+    }
   }
 
   onMessage(message: any) {

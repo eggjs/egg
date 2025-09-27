@@ -1,0 +1,105 @@
+{
+  "name": "@eggjs/logrotator",
+  "version": "5.0.0-beta.13",
+  "description": "logrotator for egg",
+  "eggPlugin": {
+    "name": "logrotator",
+    "dependencies": [
+      "schedule"
+    ]
+  },
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "logger",
+    "logrotator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "plugins/logrotator"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/logrotator#readme",
+  "author": "tianyi.jiangty",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/agent": "./src/app/extend/agent.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/schedule/clean_log": "./src/app/schedule/clean_log.ts",
+    "./app/schedule/rotate_by_file": "./src/app/schedule/rotate_by_file.ts",
+    "./app/schedule/rotate_by_hour": "./src/app/schedule/rotate_by_hour.ts",
+    "./app/schedule/rotate_by_size": "./src/app/schedule/rotate_by_size.ts",
+    "./boot": "./src/boot.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/day_rotator": "./src/lib/day_rotator.ts",
+    "./lib/hour_rotator": "./src/lib/hour_rotator.ts",
+    "./lib/rotator": "./src/lib/rotator.ts",
+    "./lib/size_rotator": "./src/lib/size_rotator.ts",
+    "./lib/utils": "./src/lib/utils.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./app/extend/agent": "./dist/app/extend/agent.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/schedule/clean_log": "./dist/app/schedule/clean_log.js",
+      "./app/schedule/rotate_by_file": "./dist/app/schedule/rotate_by_file.js",
+      "./app/schedule/rotate_by_hour": "./dist/app/schedule/rotate_by_hour.js",
+      "./app/schedule/rotate_by_size": "./dist/app/schedule/rotate_by_size.js",
+      "./boot": "./dist/boot.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/day_rotator": "./dist/lib/day_rotator.js",
+      "./lib/hour_rotator": "./dist/lib/hour_rotator.js",
+      "./lib/rotator": "./dist/lib/rotator.js",
+      "./lib/size_rotator": "./dist/lib/size_rotator.js",
+      "./lib/utils": "./dist/lib/utils.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "dependencies": {
+    "moment": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/schedule": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "egg-logger": "catalog:",
+    "glob": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
