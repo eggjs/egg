@@ -2,7 +2,7 @@ import { debuglog } from 'node:util';
 import { parse as urlParse, type UrlWithStringQuery } from 'node:url';
 import type { ParsedUrlQuery } from 'node:querystring';
 
-import { Application, type MiddlewareFunc } from 'egg';
+import { Application, type MiddlewareFunc, type Context } from 'egg';
 
 import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type { JSONPConfig } from '../../types.ts';
@@ -112,9 +112,10 @@ function createValidateReferer(whiteList: Required<JSONPConfig>['whiteList']) {
   };
 }
 
-function validateCsrf(ctx: any) {
+function validateCsrf(ctx: Context) {
   try {
     // TODO(fengmk2): remove this when @eggjs/security support ctx.assertCsrf type define
+    // @ts-expect-error TODO: fix this
     ctx.assertCsrf();
     return true;
   } catch (err) {
