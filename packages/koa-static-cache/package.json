@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/koa-static-cache",
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/compressible": "^3.0.0",

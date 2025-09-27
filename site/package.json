@@ -15,6 +15,6 @@
     "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
   },
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">=22.18.0"
   }
 }

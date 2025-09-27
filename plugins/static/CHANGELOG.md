@@ -8,7 +8,13 @@
 ## 4.0.0+
 
 ### ⚠ BREAKING CHANGES
+
 * drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
 
 ## [3.0.0](https://github.com/eggjs/static/compare/v2.3.1...v3.0.0) (2025-01-12)
 

@@ -43,7 +43,7 @@
     "typescript": "5"
   },
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.18.0"
   },
   "homepage": "https://github.com/YOUR_USERNAME/YOUR_REPO#readme",
   "bugs": {

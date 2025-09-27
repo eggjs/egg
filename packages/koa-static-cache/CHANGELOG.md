@@ -9,7 +9,12 @@
 
 ### ⚠ BREAKING CHANGES
 
-* drop Node.js < 20.19.0 support
+* drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
 
 ## [6.1.0](https://github.com/eggjs/koa-static-cache/compare/v6.0.0...v6.1.0) (2025-03-12)
 

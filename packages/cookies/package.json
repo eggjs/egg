@@ -2,7 +2,7 @@
   "name": "@eggjs/cookies",
   "version": "4.0.0-beta.11",
   "engines": {
-    "node": ">= 20.19.0"
+    "node": ">=22.18.0"
   },
   "publishConfig": {
     "access": "public",
