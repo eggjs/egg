@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/mock",
-  "version": "7.0.0-beta.11",
+  "version": "7.0.0-beta.12",
   "publishConfig": {
     "access": "public",
     "exports": {
