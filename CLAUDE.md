@@ -73,6 +73,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Security headers (HSTS, CSP, X-Frame-Options, etc.)
     - SSRF protection for HTTP client requests
     - Configurable security policies per environment
+  - `session/` - Session management plugin (merged from @eggjs/session)
+    - Provides session middleware based on koa-session
+    - Supports both cookie and external session stores
+    - Built-in memory store for development
+    - Configurable session options (maxAge, renew, etc.)
+    - Session encryption and signing
+    - Compatible with Redis and other external stores
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

@@ -125,7 +125,6 @@
     "@types/methods": "catalog:",
     "egg-errors": "catalog:",
     "egg-tracer": "catalog:",
-    "pedding": "catalog:",
     "tsd": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"

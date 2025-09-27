@@ -21,12 +21,12 @@ catalogs:
     '@eggjs/multipart':
       specifier: ^4.0.0
       version: 4.0.0
+    '@eggjs/redis':
+      specifier: ^3.0.0
+      version: 3.1.0
     '@eggjs/router':
       specifier: ^3.0.5
       version: 3.0.6
-    '@eggjs/session':
-      specifier: ^4.0.1
-      version: 4.0.1
     '@eggjs/tegg':
       specifier: ^3.2.2
       version: 3.62.0
@@ -342,6 +342,9 @@ catalogs:
     koa-range:
       specifier: ^0.3.0
       version: 0.3.0
+    koa-session:
+      specifier: ^7.0.2
+      version: 7.0.2
     koa-static:
       specifier: ^5.0.0
       version: 5.0.0
@@ -396,9 +399,6 @@ catalogs:
     parseurl:
       specifier: ^1.3.3
       version: 1.3.3
-    pedding:
-      specifier: ^2.0.1
-      version: 2.0.1
     performance-ms:
       specifier: ^1.1.0
       version: 1.1.0
@@ -761,9 +761,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
@@ -816,8 +813,8 @@ importers:
         specifier: workspace:*
         version: link:../../plugins/security
       '@eggjs/session':
-        specifier: 'catalog:'
-        version: 4.0.1
+        specifier: workspace:*
+        version: link:../../plugins/session
       '@eggjs/static':
         specifier: workspace:*
         version: link:../../plugins/static
@@ -912,9 +909,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       runscript:
         specifier: 'catalog:'
         version: 2.0.1
@@ -1317,9 +1311,6 @@ importers:
       egg-tracer:
         specifier: 'catalog:'
         version: 2.1.0
-      pedding:
-        specifier: 'catalog:'
-        version: 2.0.1
       tsd:
         specifier: 'catalog:'
         version: 0.33.0
@@ -1497,6 +1488,43 @@ importers:
       spy:
         specifier: 'catalog:'
         version: 1.0.0
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
+  plugins/session:
+    dependencies:
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      koa-session:
+        specifier: 'catalog:'
+        version: 7.0.2
+      zod:
+        specifier: 'catalog:'
+        version: 3.25.76
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/redis':
+        specifier: 'catalog:'
+        version: 3.1.0
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../../packages/supertest
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
@@ -2092,16 +2120,16 @@ packages:
     resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
     engines: {node: '>= 16.17.0'}
 
+  '@eggjs/redis@3.1.0':
+    resolution: {integrity: sha512-YqqPE/QOHpDPM+NsUu/dn2OZ7yZCHb02JMFc0nEnIYtVF4o73nhOC13BNn3u0lgNGUJCDYWF+sxtNa87kO00xQ==}
+    engines: {node: '>= 18.19.0'}
+
   '@eggjs/router@2.2.0':
     resolution: {integrity: sha512-EKnOrZ/pHMFQ1gAj3z0Yn1UnGYH/wSsc2jk06H6RrZp6ty9H6RWyP782e7FT8WL3pAevRY+SAQoH7aPh1SDSVA==}
     engines: {node: '>= 8.5.0'}
 
   '@eggjs/router@3.0.6':
     resolution: {integrity: sha512-mqOFkq79x3wGHYoI/lWMwSZ4wqmET9okJ0WU+qeuEgwA7PNMt8HyUmZ9Edz8+o3TjCSl85uMhpC0K4WWfPh7yA==}
-    engines: {node: '>= 18.19.0'}
-
-  '@eggjs/session@4.0.1':
-    resolution: {integrity: sha512-C73mnzcShE2h6YItRCbNjjARP4f02SMdYHFwPwJ8yb5XTDG9KNnIoZ/mOIGpxKoK09h2221zyoI27G91l9TtsA==}
     engines: {node: '>= 18.19.0'}
 
   '@eggjs/standalone-decorator@3.62.0':
@@ -2728,6 +2756,9 @@ packages:
 
   '@iconify/utils@2.1.1':
     resolution: {integrity: sha512-H8xz74JDzDw8f0qLxwIaxFMnFkbXTZNWEufOk3WxaLFHV4h0A2FjIDgNk5LzC0am4jssnjdeJJdRs3UFu3582Q==}
+
+  '@ioredis/commands@1.4.0':
+    resolution: {integrity: sha512-aFT2yemJJo+TZCmieA7qnYGQooOS7QfNmYrzGtsYd3g9j5iDP8AimYYAesf79ohjbLG12XxC4nG5DyEnC88AsQ==}
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -5179,6 +5210,10 @@ packages:
     resolution: {integrity: sha512-n0pLGPWlAjaGDJrLKTenjF1qoHbDjuYFlvX4UBoWCt9NjUTZGQhfNafF6Gw4Rj7oJqqdBGrdiIdHSvtOMQX5AA==}
     engines: {node: '>=14.0.0'}
 
+  cluster-key-slot@1.1.2:
+    resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
+    engines: {node: '>=0.10.0'}
+
   cluster-reload@2.0.0:
     resolution: {integrity: sha512-B3QAtctNWehJgEFACdMxjhgWQtNeOjuVzHePjsKlo4ND0LSqOOsRVIEYj3LC+TzzeAJnzDdapBFuQ9Ol8YocFw==}
     engines: {node: '>= 18.19.0'}
@@ -6993,6 +7028,10 @@ packages:
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
 
+  ioredis@5.8.0:
+    resolution: {integrity: sha512-AUXbKn9gvo9hHKvk6LbZJQSKn/qIfkWXrnsyL9Yrf+oeXmla9Nmf6XEumOddyhM8neynpK5oAV6r9r99KBuwzA==}
+    engines: {node: '>=12.22.0'}
+
   ip-address@10.0.1:
     resolution: {integrity: sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA==}
     engines: {node: '>= 12'}
@@ -7768,6 +7807,12 @@ packages:
   locate-path@6.0.0:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
+
+  lodash.defaults@4.2.0:
+    resolution: {integrity: sha512-qjxPLHd3r5DnsdGacqOMU6pb/avJzdh9tFX2ymgoZE27BmjXrNy/y4LoaiTeAb+O3gL8AfpJGtqfX/ae2leYYQ==}
+
+  lodash.isarguments@3.1.0:
+    resolution: {integrity: sha512-chi4NHZlZqZD18a0imDHnZPrDeBbTtVN7GXMwuGdRH9qotxAjYs3aVLKc7zNOG9eddR5Ksd8rvFEBc9SsggPpg==}
 
   lodash.isempty@4.4.0:
     resolution: {integrity: sha512-oKMuF3xEeqDltrGMfDxAPGIVMSSRv8tbRSODbrs4KGsRRLEhrW8N8Rd4DRgB2+621hY8A8XwwrTVhXWpxFvMzg==}
@@ -8834,10 +8879,6 @@ packages:
   peberminta@0.9.0:
     resolution: {integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==}
 
-  pedding@2.0.1:
-    resolution: {integrity: sha512-uxQ88Bwwz2ZRXIfgZ+5CCdWcmbsQJJ03itU1/ykLQ960AREBX+chas7a3USCIX3l7JmvYMRpjqipSpiTo7R+fA==}
-    engines: {node: '>= 18.19.0'}
-
   performance-ms@1.1.0:
     resolution: {integrity: sha512-27yI2vaAnCCqIUJx2nijADXNfY9OA5EFIDZavL0ZlMEujnfE6lSs18ENeR2rwYTA1sCLnEci0o6kZi8ekfXT1w==}
     engines: {node: '>= 14.0.0'}
@@ -9571,6 +9612,14 @@ packages:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
 
+  redis-errors@1.2.0:
+    resolution: {integrity: sha512-1qny3OExCf0UvUV/5wpYKf2YwPcOqXzkwKKSmKHiE6ZMQs5heeE/c8eXK+PNllPvmjgAbfnsbpkGZWy8cBpn9w==}
+    engines: {node: '>=4'}
+
+  redis-parser@3.0.0:
+    resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
+    engines: {node: '>=4'}
+
   reflect-metadata@0.1.14:
     resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
 
@@ -10206,6 +10255,9 @@ packages:
 
   stackframe@1.3.4:
     resolution: {integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==}
+
+  standard-as-callback@2.1.0:
+    resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
 
   statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
@@ -11770,6 +11822,13 @@ snapshots:
       mysql2: 3.15.1
       sqlstring: 2.3.3
 
+  '@eggjs/redis@3.1.0':
+    dependencies:
+      '@eggjs/core': 6.5.0
+      ioredis: 5.8.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@eggjs/router@2.2.0':
     dependencies:
       co: 4.6.0
@@ -11792,12 +11851,6 @@ snapshots:
       path-to-regexp: 1.9.0
       urijs: 1.19.11
       utility: 2.5.0
-
-  '@eggjs/session@4.0.1':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      koa-session: 7.0.2
-      zod: 3.25.76
 
   '@eggjs/standalone-decorator@3.62.0':
     dependencies:
@@ -12343,6 +12396,8 @@ snapshots:
       local-pkg: 0.4.3
     transitivePeerDependencies:
       - supports-color
+
+  '@ioredis/commands@1.4.0': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -15196,6 +15251,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  cluster-key-slot@1.1.2: {}
+
   cluster-reload@2.0.0: {}
 
   cmd-extension@1.0.2: {}
@@ -17563,6 +17620,20 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
+  ioredis@5.8.0:
+    dependencies:
+      '@ioredis/commands': 1.4.0
+      cluster-key-slot: 1.1.2
+      debug: 4.4.3(supports-color@8.1.1)
+      denque: 2.1.0
+      lodash.defaults: 4.2.0
+      lodash.isarguments: 3.1.0
+      redis-errors: 1.2.0
+      redis-parser: 3.0.0
+      standard-as-callback: 2.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   ip-address@10.0.1: {}
 
   ipaddr.js@1.9.1: {}
@@ -18301,6 +18372,10 @@ snapshots:
   locate-path@6.0.0:
     dependencies:
       p-locate: 5.0.0
+
+  lodash.defaults@4.2.0: {}
+
+  lodash.isarguments@3.1.0: {}
 
   lodash.isempty@4.4.0: {}
 
@@ -19785,8 +19860,6 @@ snapshots:
 
   peberminta@0.9.0: {}
 
-  pedding@2.0.1: {}
-
   performance-ms@1.1.0: {}
 
   picocolors@1.1.1: {}
@@ -20516,6 +20589,12 @@ snapshots:
     dependencies:
       indent-string: 4.0.0
       strip-indent: 3.0.0
+
+  redis-errors@1.2.0: {}
+
+  redis-parser@3.0.0:
+    dependencies:
+      redis-errors: 1.2.0
 
   reflect-metadata@0.1.14: {}
 
@@ -21253,6 +21332,8 @@ snapshots:
   stackback@0.0.2: {}
 
   stackframe@1.3.4: {}
+
+  standard-as-callback@2.1.0: {}
 
   statuses@1.5.0: {}
 

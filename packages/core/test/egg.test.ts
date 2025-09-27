@@ -1,5 +1,3 @@
-// oxlint-disable promise/catch-or-return, promise/prefer-catch, promise/prefer-await-to-then, promise/no-callback-in-promise
-
 import util from 'node:util';
 import path from 'node:path';
 import { strict as assert } from 'node:assert/strict';
@@ -9,7 +7,6 @@ import { setTimeout as sleep } from 'node:timers/promises';
 import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
-import { pending } from 'pedding';
 import coffee from 'coffee';
 
 import { createApp, getFilepath, type Application } from './helper.js';
@@ -283,27 +280,27 @@ describe('test/egg.test.ts', () => {
   describe('app.close(): Promise<void>', () => {
     let app;
 
-    it.skip('should emit close event before exit', done => {
-      // @ts-ignore
-      done = pending(3, done);
-      app = createApp('close');
-      app.loader.loadAll().then(
-        // @ts-ignore
-        done,
-        // @ts-ignore
-        done
-      );
-      app.on('close', () => {
-        // @ts-ignore
-        done();
-      });
-      app.close().then(
-        // @ts-ignore
-        done,
-        // @ts-ignore
-        done
-      );
-    });
+    // it.skip('should emit close event before exit', done => {
+    //   // @ts-ignore
+    //   done = pending(3, done);
+    //   app = createApp('close');
+    //   app.loader.loadAll().then(
+    //     // @ts-ignore
+    //     done,
+    //     // @ts-ignore
+    //     done
+    //   );
+    //   app.on('close', () => {
+    //     // @ts-ignore
+    //     done();
+    //   });
+    //   app.close().then(
+    //     // @ts-ignore
+    //     done,
+    //     // @ts-ignore
+    //     done
+    //   );
+    // });
 
     it('should return a promise', async () => {
       app = createApp('close');
@@ -312,25 +309,25 @@ describe('test/egg.test.ts', () => {
       await promise;
     });
 
-    it.skip('should throw when close error', done => {
-      // @ts-ignore
-      done = pending(2, done);
-      app = createApp('close');
-      app.loader.loadAll().then(
-        // @ts-ignore
-        done,
-        // @ts-ignore
-        done
-      );
-      mm(app, 'removeAllListeners', () => {
-        throw new Error('removeAllListeners error');
-      });
-      app.close().catch(err => {
-        assert.equal(err.message, 'removeAllListeners error');
-        // @ts-ignore
-        done();
-      });
-    });
+    // it.skip('should throw when close error', done => {
+    //   // @ts-ignore
+    //   done = pending(2, done);
+    //   app = createApp('close');
+    //   app.loader.loadAll().then(
+    //     // @ts-ignore
+    //     done,
+    //     // @ts-ignore
+    //     done
+    //   );
+    //   mm(app, 'removeAllListeners', () => {
+    //     throw new Error('removeAllListeners error');
+    //   });
+    //   app.close().catch(err => {
+    //     assert.equal(err.message, 'removeAllListeners error');
+    //     // @ts-ignore
+    //     done();
+    //   });
+    // });
 
     // it('should close only once', done => {
     //   const fn = spy();

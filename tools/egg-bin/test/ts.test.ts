@@ -132,7 +132,7 @@ describe.skip('test/ts.test.ts', () => {
       );
     });
 
-    it('should correct error stack line number in testing app with tscompiler=esbuild-register', () => {
+    it.skip('should correct error stack line number in testing app with tscompiler=esbuild-register', () => {
       return (
         coffee
           .fork(eggBin, ['test', '--tscompiler=esbuild-register'], { cwd })
@@ -160,7 +160,7 @@ describe.skip('test/ts.test.ts', () => {
       );
     });
 
-    it('should support env.TS_COMPILER', () => {
+    it.skip('should support env.TS_COMPILER', () => {
       return (
         coffee
           .fork(eggBin, ['test'], {
