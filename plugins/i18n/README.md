@@ -96,8 +96,8 @@ I18n 为你提供 `__` (Alias: `gettext`) 函数，让你可以轻松获得 loca
 - `ctx.__ = function (key, values)`: 支持数组下标占位符方式，如
 
 ```ts
-ctx.__('{0} {0} {1} {1}'), ['foo', 'bar']);
-ctx.gettext('{0} {0} {1} {1}'), ['foo', 'bar']);
+ctx.__('{0} {0} {1} {1}', ['foo', 'bar']);
+ctx.gettext('{0} {0} {1} {1}', ['foo', 'bar']);
 
 =>
 foo foo bar bar
@@ -121,7 +121,7 @@ export default ctx => {
 ```html
 <li>{{ __('Email') }}: {{ user.email }}</li>
 <li>{{ __('Hello %s, how are you today?', user.name) }}</li>
-<li>{{ __('{0} {0} {1} {1}'), ['foo', 'bar']) }}</li>
+<li>{{ __('{0} {0} {1} {1}', ['foo', 'bar']) }}</li>
 ```
 
 ### 修改应用的默认语言

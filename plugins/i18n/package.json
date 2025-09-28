@@ -77,7 +77,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
+    "test": "vitest run",
     "prepublishOnly": "npm run build"
   },
   "files": [

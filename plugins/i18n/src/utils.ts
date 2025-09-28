@@ -3,6 +3,6 @@ export function isObject(obj: any) {
 }
 
 export function formatLocale(locale: string) {
-  // support zh_CN, en_US => zh-CN, en-US
-  return locale.replace('_', '-').toLowerCase();
+  // support zh_CN, en_US, zh_Hans_CN, zh_Hant_CN => zh-CN, en-US, zh-hans-cn, zh-hant-cn
+  return locale.replaceAll('_', '-').toLowerCase();
 }
