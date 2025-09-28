@@ -1,0 +1,91 @@
+{
+  "name": "@eggjs/multipart",
+  "version": "5.0.0-beta.15",
+  "description": "multipart plugin for egg",
+  "eggPlugin": {
+    "name": "multipart",
+    "optionalDependencies": [
+      "schedule"
+    ]
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "multipart"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "plugins/multipart"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/multipart#readme",
+  "author": "gxcsoccer <gxcsoccer@126.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./app/middleware/multipart": "./src/app/middleware/multipart.ts",
+    "./app/schedule/clean_tmpdir": "./src/app/schedule/clean_tmpdir.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./app/middleware/multipart": "./dist/app/middleware/multipart.js",
+      "./app/schedule/clean_tmpdir": "./dist/app/schedule/clean_tmpdir.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "dependencies": {
+    "bytes": "catalog:",
+    "co-busboy": "catalog:",
+    "dayjs": "catalog:",
+    "egg-path-matching": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/core": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/schedule": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/bytes": "catalog:",
+    "@types/node": "catalog:",
+    "formstream": "catalog:",
+    "is-type-of": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "stream-wormhole": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ]
+}

@@ -85,6 +85,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Includes log cleanup to remove old files based on maxDays
     - Manages all application and custom logger files
     - Integrates with schedule plugin for automated rotation tasks
+  - `multipart/` - Multipart form data handling plugin (merged from @eggjs/multipart)
+    - Provides multipart/form-data parsing for file uploads
+    - Supports both stream and file modes for handling uploads
+    - Built-in file size and type validation
+    - Automatic temporary file cleanup
+    - Configurable whitelist/blacklist for file extensions
+    - Integration with schedule plugin for tmpdir cleanup
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
