@@ -2,5 +2,6 @@
   "name": "a",
   "eggPlugin": {
     "name": "a"
-  }
+  },
+  "type": "module"
 }
