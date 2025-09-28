@@ -27,7 +27,7 @@ const plugin: EggPlugin = {
   },
   tracer: {
     enable: true,
-    package: 'egg-tracer',
+    package: '@eggjs/tracer',
   },
 };
 

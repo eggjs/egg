@@ -255,9 +255,6 @@ catalogs:
     egg-plugin-puml:
       specifier: ^2.4.0
       version: 2.4.0
-    egg-tracer:
-      specifier: ^2.1.0
-      version: 2.1.0
     egg-ts-helper:
       specifier: ^3.0.0
       version: 3.1.1
@@ -921,6 +918,9 @@ importers:
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../supertest
+      '@eggjs/tracer':
+        specifier: workspace:*
+        version: link:../../plugins/tracer
       '@types/koa-bodyparser':
         specifier: 'catalog:'
         version: 4.3.12
@@ -936,9 +936,6 @@ importers:
       egg-plugin-puml:
         specifier: 'catalog:'
         version: 2.4.0
-      egg-tracer:
-        specifier: 'catalog:'
-        version: 2.1.0
       egg-view-nunjucks:
         specifier: 'catalog:'
         version: 2.3.0(chokidar@3.6.0)
@@ -1491,15 +1488,15 @@ importers:
       '@eggjs/tegg-plugin':
         specifier: 'catalog:'
         version: 3.62.0(@eggjs/tegg-dal-plugin@3.61.0(chokidar@3.6.0)(leoric@2.13.8(mysql2@3.15.1)))(leoric@2.13.8(mysql2@3.15.1))
+      '@eggjs/tracer':
+        specifier: workspace:*
+        version: link:../tracer
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
-      egg-tracer:
-        specifier: 'catalog:'
-        version: 2.1.0
       tsd:
         specifier: 'catalog:'
         version: 0.33.0
@@ -1638,9 +1635,6 @@ importers:
       '@types/safe-timers':
         specifier: 'catalog:'
         version: 1.1.2
-      egg-tracer:
-        specifier: 'catalog:'
-        version: 2.1.0
       oxlint:
         specifier: 'catalog:'
         version: 1.18.0(oxlint-tsgolint@0.2.0)
@@ -6225,10 +6219,6 @@ packages:
     resolution: {integrity: sha512-M6ALp4iGFEGP25OWOQ1EGDSUb/GgxOtC/EOpC28oQtiP/7GqWkTzPw/3CY22vW6UoJ6jL+pHELR1z04ul/r1ig==}
     engines: {node: '>= 6.0.0'}
     hasBin: true
-
-  egg-tracer@2.1.0:
-    resolution: {integrity: sha512-DQ0bt+Cl1f+nxq0ieiD2ajInCapcpska/m6Y4kqbwrkf26Ssp5MZXyqP//5nCPVEKT/ueVtX1P7yn5fCtxNHfw==}
-    engines: {node: '>=14.0.0'}
 
   egg-ts-helper@3.1.1:
     resolution: {integrity: sha512-ZzgsNFLs+b5Uca7lh2luYpixa47e+XoZapbH6RYG52kbJhmSd9qgIODBNMVrfasgGuuiBWV+qrs/RSpvISRKEw==}
@@ -16458,8 +16448,6 @@ snapshots:
       mkdirp: 0.5.6
     transitivePeerDependencies:
       - supports-color
-
-  egg-tracer@2.1.0: {}
 
   egg-ts-helper@3.1.1(@swc/core@1.13.19)(@types/node@24.5.2):
     dependencies:

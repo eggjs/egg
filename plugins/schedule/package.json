@@ -62,7 +62,6 @@
     "@types/safe-timers": "catalog:",
     "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
-    "egg-tracer": "catalog:",
     "oxlint": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

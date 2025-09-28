@@ -12,7 +12,7 @@ module.exports = {
     enable: true,
   },
   tracer: {
-    package: 'egg-tracer',
+    package: '@eggjs/tracer',
     enable: true,
   },
 };
