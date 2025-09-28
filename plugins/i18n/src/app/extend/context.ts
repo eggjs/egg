@@ -100,7 +100,7 @@ export default class I18nContext extends Context {
     let localeOrigin = 'query';
 
     // 2. Cookie
-    if (!locale) {
+    if (!locale && cookieLocale) {
       locale = cookieLocale;
       localeOrigin = 'cookie';
     }
@@ -175,7 +175,9 @@ export default class I18nContext extends Context {
   __setLocale(locale: string) {
     this.__locale = locale;
     this.__localeOrigin = 'set';
-    updateCookie(this, locale);
+    if (this.app.config.i18n.writeCookie && !this.headerSent) {
+      updateCookie(this, locale);
+    }
   }
 }
 
