@@ -32,10 +32,7 @@
       "path": "./packages/extend2"
     },
     {
-      "path": "./tools/egg-bin"
-    },
-    {
-      "path": "./tools/create-egg"
+      "path": "./packages/koa-static-cache"
     },
     {
       "path": "./packages/cookies"
@@ -54,9 +51,6 @@
     },
     {
       "path": "./plugins/schedule"
-    },
-    {
-      "path": "./packages/koa-static-cache"
     },
     {
       "path": "./plugins/static"
@@ -78,6 +72,12 @@
     },
     {
       "path": "./plugins/view"
+    },
+    {
+      "path": "./tools/egg-bin"
+    },
+    {
+      "path": "./tools/create-egg"
     }
   ]
 }

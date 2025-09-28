@@ -1,7 +1,9 @@
 import path from 'node:path';
 import assert from 'node:assert';
-import type { Context, EggCore } from '@eggjs/core';
-import { ViewManager, type ViewManagerConfig, type RenderOptions } from './view_manager.js';
+
+import type { Context, Application } from 'egg';
+
+import { ViewManager, type ViewManagerConfig, type RenderOptions } from './view_manager.ts';
 
 const RENDER = Symbol.for('contextView#render');
 const RENDER_STRING = Symbol.for('contextView#renderString');
@@ -16,7 +18,7 @@ const SET_LOCALS = Symbol.for('contextView#setLocals');
  */
 export class ContextView {
   protected ctx: Context;
-  protected app: EggCore;
+  protected app: Application;
   protected viewManager: ViewManager;
   protected config: ViewManagerConfig;
 

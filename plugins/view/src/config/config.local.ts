@@ -1,4 +1,4 @@
-import type { EggAppConfig } from '@eggjs/core';
+import type { EggAppConfig } from 'egg';
 
 export default {
   view: {

@@ -1,10 +1,12 @@
 import assert from 'node:assert';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
+
 import { exists } from 'utility';
-import type { Context, EggCore } from '@eggjs/core';
+import type { Context, Application } from 'egg';
 import { isGeneratorFunction } from 'is-type-of';
-import type { ViewConfig } from '../config/config.default.js';
+
+import type { ViewConfig } from '../config/config.default.ts';
 
 export interface ViewManagerConfig extends Omit<ViewConfig, 'root'> {
   root: string[];
@@ -40,7 +42,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
   /**
    * @param {Application} app - application instance
    */
-  constructor(app: EggCore) {
+  constructor(app: Application) {
     super();
     this.config = app.config.view as any;
     this.config.root = app.config.view.root.split(/\s*,\s*/g).filter(filepath => existsSync(filepath));

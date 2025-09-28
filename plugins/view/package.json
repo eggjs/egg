@@ -8,6 +8,10 @@
       ".": "./dist/index.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/extend/context": "./dist/app/extend/context.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./config/config.local": "./dist/config/config.local.js",
+      "./lib/context_view": "./dist/lib/context_view.js",
+      "./lib/view_manager": "./dist/lib/view_manager.js",
       "./package.json": "./package.json"
     }
   },
@@ -16,6 +20,10 @@
     ".": "./src/index.ts",
     "./app/extend/application": "./src/app/extend/application.ts",
     "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./lib/context_view": "./src/lib/context_view.ts",
+    "./lib/view_manager": "./src/lib/view_manager.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -55,21 +63,16 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "coffee": "catalog:",
-    "rimraf": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "scripts": {
     "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
-    "test": "npm run lint:fix && vitest",
+    "test": "vitest run",
     "build": "tsdown",
-    "clean": "rimraf dist",
     "prepublishOnly": "npm run build"
   }
 }

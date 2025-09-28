@@ -1,6 +1,7 @@
-import { Context } from '@eggjs/core';
-import { ContextView } from '../../lib/context_view.js';
-import { RenderOptions } from '../../lib/view_manager.js';
+import { Context } from 'egg';
+
+import { ContextView } from '../../lib/context_view.ts';
+import { type RenderOptions } from '../../lib/view_manager.ts';
 
 const VIEW = Symbol('Context#view');
 
@@ -52,7 +53,7 @@ export default class ViewContext extends Context {
   }
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface Context {
     view: ContextView;
     render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<void>;
