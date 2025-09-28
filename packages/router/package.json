@@ -1,0 +1,82 @@
+{
+  "name": "@eggjs/router",
+  "version": "4.0.0-beta.15",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/router"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/router",
+  "author": "eggjs",
+  "keywords": [
+    "koa",
+    "middleware",
+    "router",
+    "route"
+  ],
+  "dependencies": {
+    "http-errors": "catalog:",
+    "inflection": "catalog:",
+    "is-type-of": "catalog:",
+    "koa-compose": "catalog:",
+    "methods": "catalog:",
+    "path-to-regexp": "catalog:",
+    "urijs": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/koa": "workspace:*",
+    "@eggjs/supertest": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/http-errors": "catalog:",
+    "@types/koa-compose": "catalog:",
+    "@types/methods": "catalog:",
+    "@types/urijs": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown",
+    "prepublishOnly": "npm run build",
+    "prebench": "npm run build",
+    "bench": "cd bench && make"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./EggRouter": "./src/EggRouter.ts",
+    "./Layer": "./src/Layer.ts",
+    "./Router": "./src/Router.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./EggRouter": "./dist/EggRouter.js",
+      "./Layer": "./dist/Layer.js",
+      "./Router": "./dist/Router.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js"
+}

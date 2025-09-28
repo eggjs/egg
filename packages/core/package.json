@@ -47,7 +47,7 @@
   "homepage": "https://github.com/eggjs/egg/tree/next/packages/core",
   "dependencies": {
     "@eggjs/koa": "workspace:*",
-    "@eggjs/router": "catalog:",
+    "@eggjs/router": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
     "egg-path-matching": "catalog:",

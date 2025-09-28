@@ -10,7 +10,6 @@ catalog:
   '@eggjs/compressible': ^3.0.0
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
-  '@eggjs/router': ^3.0.5
   '@eggjs/scripts': ^4.0.0
   '@eggjs/tegg': ^3.2.2
   '@eggjs/tegg-config': ^3.2.2
@@ -53,6 +52,7 @@ catalog:
   '@types/statuses': ^2.0.5
   '@types/superagent': ^8.1.9
   '@types/type-is': ^1.6.6
+  '@types/urijs': ^1.19.25
   '@types/vary': ^1.1.3
   '@vitest/coverage-v8': 4.0.0-beta.13
   '@vitest/ui': 4.0.0-beta.13
@@ -116,6 +116,7 @@ catalog:
   http-errors: ^2.0.0
   humanize-ms: ^2.0.0
   husky: ^9.1.7
+  inflection: ^3.0.0
   ini: ^5.0.0
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
@@ -132,6 +133,7 @@ catalog:
   lint-staged: ^16.2.0
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
+  methods: ^1.1.2
   mime-types: ^3.0.0
   mm: ^4.0.2
   mocha: 11.7.2
@@ -148,6 +150,7 @@ catalog:
   oxlint: ^1.18.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
+  path-to-regexp: ^1.9.0
   performance-ms: ^1.1.0
   picocolors: ^1.1.1
   prettier: ^3.6.2
@@ -172,6 +175,7 @@ catalog:
   type-fest: ^5.0.1
   type-is: ^2.0.0
   typescript: 5.9.2
+  urijs: ^1.19.11
   urllib: ^4.8.2
   utility: ^2.5.0
   vary: ^1.1.2
