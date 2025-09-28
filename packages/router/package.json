@@ -1,0 +1,76 @@
+{
+  "name": "@eggjs/router",
+  "version": "4.0.0-beta.15",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "packages/router"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "author": "eggjs",
+  "keywords": [
+    "koa",
+    "middleware",
+    "router",
+    "route"
+  ],
+  "dependencies": {
+    "http-errors": "catalog:",
+    "inflection": "catalog:",
+    "is-type-of": "catalog:",
+    "koa-compose": "catalog:",
+    "methods": "catalog:",
+    "path-to-regexp": "catalog:",
+    "urijs": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/koa": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/http-errors": "catalog:",
+    "@types/koa-compose": "catalog:",
+    "@types/methods": "catalog:",
+    "@types/urijs": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run lint:fix && vitest run",
+    "clean": "rimraf dist",
+    "build": "tsdown",
+    "prepublishOnly": "npm run build",
+    "bench": "cd bench && make"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js"
+}

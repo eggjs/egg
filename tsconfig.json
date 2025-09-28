@@ -35,6 +35,9 @@
       "path": "./packages/koa-static-cache"
     },
     {
+      "path": "./packages/router"
+    },
+    {
       "path": "./packages/cookies"
     },
     {

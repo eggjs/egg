@@ -48,6 +48,12 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`packages/koa-static-cache/`** - Static file serving with cache (merged from @eggjs/koa-static-cache)
   - `src/` - TypeScript source code for static cache middleware
   - `test/` - Test suite with Vitest
+- **`packages/router/`** - Router middleware for Koa/Egg (merged from @eggjs/router)
+  - `src/` - TypeScript source code for router implementation
+  - `test/` - Test suite with Vitest
+  - Provides RESTful resource routing and middleware composition
+  - Supports route parameter matching with path-to-regexp
+  - Includes EggRouter class with additional convenience methods
 - **`plugins/`** - Egg framework plugins (all plugins should be located here)
   - `development/` - Development plugin for local development (merged from @eggjs/development)
     - Provides development tools and auto-reload functionality
