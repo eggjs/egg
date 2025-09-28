@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+
 import type { Context } from 'egg';
 
 export class Tracer {

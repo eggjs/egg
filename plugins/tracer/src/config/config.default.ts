@@ -1,11 +1,6 @@
-import { Tracer } from '../lib/tracer.js';
+import { Tracer } from '../lib/tracer.ts';
 
-/**
- * tracer config
- * @member Config#tracer
- * @property {Tracer} Class - tracer class name
- */
-interface TracerConfig {
+export interface TracerConfig {
   Class: typeof Tracer;
 }
 
@@ -14,9 +9,3 @@ export default {
     Class: Tracer,
   } as TracerConfig,
 };
-
-declare module 'egg' {
-  interface EggAppConfig {
-    tracer: TracerConfig;
-  }
-}

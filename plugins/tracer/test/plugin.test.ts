@@ -1,17 +1,18 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/plugin.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/plugin-test',
+      baseDir: getFixtures('apps/plugin-test'),
     });
     await app.ready();
   });
 
-  after(() => app.close());
-
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   it('should GET /', () => {
     return app

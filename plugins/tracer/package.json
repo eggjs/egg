@@ -5,15 +5,15 @@
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./types": "./dist/types.js",
       "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
-      "./boot": "./dist/boot.js",
-      "./lib/tracer": "./dist/lib/tracer.js",
       "./app/extend/agent": "./dist/app/extend/agent.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/extend/context": "./dist/app/extend/context.js",
+      "./boot": "./dist/boot.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./lib/tracer": "./dist/lib/tracer.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -65,15 +65,15 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./types": "./src/types.ts",
     "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
-    "./boot": "./src/boot.ts",
-    "./lib/tracer": "./src/lib/tracer.ts",
     "./app/extend/agent": "./src/app/extend/agent.ts",
     "./app/extend/application": "./src/app/extend/application.ts",
     "./app/extend/context": "./src/app/extend/context.ts",
+    "./boot": "./src/boot.ts",
     "./config/config.default": "./src/config/config.default.ts",
+    "./lib/tracer": "./src/lib/tracer.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [

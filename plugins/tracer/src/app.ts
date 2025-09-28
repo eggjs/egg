@@ -1,3 +1,3 @@
-import { TracerBoot } from './boot.js';
+import { TracerBoot } from './boot.ts';
 
 export default TracerBoot;

@@ -1,8 +1,9 @@
-import { strict as assert } from 'node:assert';
-import { Tracer } from '../src/index.js';
+import { describe, it, expect } from 'vitest';
+
+import { Tracer } from '../src/index.ts';
 
 describe('test/index.test.ts', () => {
   it('should work with lib', () => {
-    assert.equal(typeof Tracer, 'function');
+    expect(Tracer).toBeInstanceOf(Function);
   });
 });

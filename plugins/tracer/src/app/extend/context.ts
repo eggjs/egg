@@ -1,5 +1,7 @@
 import { Context } from 'egg';
-import type { Tracer } from '../../lib/tracer.js';
+
+import type { Tracer } from '../../lib/tracer.ts';
+
 const TRACER = Symbol('context tracer');
 
 export default class TracerContext extends Context {

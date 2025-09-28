@@ -1,25 +1,27 @@
-import { strict as assert } from 'node:assert';
 import { mm, MockApplication } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, expect } from 'vitest';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/error.tracer.test.ts', () => {
   let app: MockApplication;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/error-tracer-test',
+      baseDir: getFixtures('apps/error-tracer-test'),
     });
     await app.ready();
   });
 
-  after(() => app.close());
-
-  afterEach(mm.restore);
+  afterAll(() => app.close());
 
   it('should get app, agent tracer', () => {
-    assert.equal(app.appBeforeReadyTracers.length, 3);
-    assert.equal(app.agent.agentBeforeReadyTracers.length, 3);
+    expect(app.appBeforeReadyTracers.length).toBe(3);
+    // @ts-expect-error agentBeforeReadyTracers is not exist on type Agent
+    expect(app.agent.agentBeforeReadyTracers.length).toBe(3);
 
-    assert.equal(app.appAfterReadyTracers.length, 3);
-    assert.equal(app.agent.agentAfterReadyTracers.length, 3);
+    expect(app.appAfterReadyTracers.length).toBe(3);
+    // @ts-expect-error agentAfterReadyTracers is not exist on type Agent
+    expect(app.agent.agentAfterReadyTracers.length).toBe(3);
   });
 
   it('should GET /', () => {

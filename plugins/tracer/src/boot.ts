@@ -1,8 +1,12 @@
-import type { EggCore, ILifecycleBoot } from 'egg';
-import { isReady } from './app/extend/application.js';
+import type { ILifecycleBoot, EggApplicationCore } from 'egg';
+
+import { isReady } from './app/extend/application.ts';
 
 export class TracerBoot implements ILifecycleBoot {
-  constructor(private app: EggCore) {}
+  private readonly app;
+  constructor(app: EggApplicationCore) {
+    this.app = app;
+  }
 
   async didLoad() {
     this.app[isReady] = true;

@@ -1,10 +1,11 @@
-import { EggCore } from 'egg';
-import type { Tracer } from '../../lib/tracer.js';
+import { Application } from 'egg';
+
+import type { Tracer } from '../../lib/tracer.ts';
 
 const cacheTracer = Symbol('before_ready_tracer');
 export const isReady = Symbol('egg_tracer_is_ready');
 
-export default class TracerApplication extends EggCore {
+export default class TracerApplication extends Application {
   [cacheTracer]: Tracer | undefined;
 
   get tracer(): Tracer {
@@ -17,11 +18,5 @@ export default class TracerApplication extends EggCore {
     }
 
     return this[cacheTracer];
-  }
-}
-
-declare module 'egg' {
-  interface EggCore {
-    tracer: Tracer;
   }
 }
