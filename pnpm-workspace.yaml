@@ -136,7 +136,7 @@ catalog:
   mri: ^1.2.0
   multimatch: ^7.0.0
   mustache: ^4.2.0
-  nanoid: ^3.3.8
+  nanoid: ^5.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
   on-finished: ^2.4.1
