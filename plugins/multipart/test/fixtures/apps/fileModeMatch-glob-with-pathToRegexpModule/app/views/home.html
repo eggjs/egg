@@ -1,0 +1,5 @@
+<form method="POST" action="/upload_file?_csrf={{ ctx.csrf | safe }}" enctype="multipart/form-data">
+  title: <input name="title" /> file1: <input name="file1" type="file" /> file2:
+  <input name="file2" type="file" /> file3: <input name="file3" type="file" /> other: <input name="other" />
+  <button type="submit">上传</button>
+</form>

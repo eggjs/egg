@@ -231,7 +231,7 @@ export default class Request extends EggCoreRequest {
    * }
    * ```
    */
-  get query() {
+  get query(): Record<string, string> {
     return this._customQuery(QUERY_CACHE, firstValue) as Record<string, string>;
   }
 
@@ -251,7 +251,7 @@ export default class Request extends EggCoreRequest {
    * }
    * ```
    */
-  get queries() {
+  get queries(): Record<string, string[]> {
     return this._customQuery(QUERIES_CACHE, arrayValue) as Record<string, string[]>;
   }
 
@@ -263,17 +263,6 @@ export default class Request extends EggCoreRequest {
    */
   set query(obj: Record<string, string>) {
     this.querystring = querystring.stringify(obj);
-  }
-}
-
-declare module '@eggjs/core' {
-  // add Request overrides types
-  interface Request {
-    body: any;
-    get acceptJSON(): boolean;
-    get query(): Record<string, string>;
-    set query(obj: Record<string, string>);
-    get queries(): Record<string, string[]>;
   }
 }
 

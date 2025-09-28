@@ -589,7 +589,7 @@ module.exports = {
 
 **Notice：`fileExtensions` will be IGNORED when `whitelist` is overwritten.**
 
-For more tech details about this, please refer [@eggjs/multipart](https://github.com/eggjs/multipart).
+For more tech details about this, please refer [@eggjs/multipart](https://github.com/eggjs/egg/tree/next/plugins/multipart).
 
 ### `header`
 

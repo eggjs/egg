@@ -34,11 +34,3 @@ export default class Response extends KoaResponse {
     this[REAL_STATUS] = status;
   }
 }
-
-declare module 'egg' {
-  // add Response overrides types
-  interface Response {
-    get realStatus(): number;
-    set realStatus(status: number);
-  }
-}

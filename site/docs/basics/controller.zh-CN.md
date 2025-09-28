@@ -603,7 +603,7 @@ module.exports = {
 
 **注意：当重写了 whitelist 时，fileExtensions 不生效。**
 
-欲了解更多有关的技术细节和信息，请参阅 [@eggjs/multipart](https://github.com/eggjs/multipart)。
+欲了解更多有关的技术细节和信息，请参阅 [@eggjs/multipart](https://github.com/eggjs/egg/tree/next/plugins/multipart)。
 
 ### Header
 

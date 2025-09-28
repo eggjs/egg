@@ -5,7 +5,7 @@ import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
-import { EggCore, Request as EggCoreRequest, Response as EggCoreResponse, Router } from '@eggjs/core';
+import { EggCore, Router } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
 import createClusterClient, {
@@ -22,6 +22,8 @@ import CircularJSON from 'circular-json-for-egg';
 import type { Agent } from './agent.ts';
 import type { Application } from './application.ts';
 import Context from '../app/extend/context.ts';
+import Request from '../app/extend/request.ts';
+import Response from '../app/extend/response.ts';
 import type { EggAppConfig } from './types.ts';
 import { create as createMessenger, type IMessenger } from './core/messenger/index.ts';
 import { ContextHttpClient } from './core/context_httpclient.ts';
@@ -47,17 +49,7 @@ export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir
   baseDir?: string;
 }
 
-export class Request extends EggCoreRequest {
-  declare app: EggCore;
-  declare response: Response;
-  declare ctx: Context;
-}
-
-export class Response extends EggCoreResponse {
-  declare app: EggCore;
-  declare request: Request;
-  declare ctx: Context;
-}
+export { Request, Response };
 
 // export egg types
 export type {

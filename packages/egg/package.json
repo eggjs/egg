@@ -125,7 +125,7 @@
     "@eggjs/i18n": "catalog:",
     "@eggjs/jsonp": "workspace:*",
     "@eggjs/logrotator": "workspace:*",
-    "@eggjs/multipart": "catalog:",
+    "@eggjs/multipart": "workspace:*",
     "@eggjs/onerror": "workspace:*",
     "@eggjs/schedule": "workspace:*",
     "@eggjs/security": "workspace:*",

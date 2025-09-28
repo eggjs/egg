@@ -1,0 +1,15 @@
+logs/
+npm-debug.log
+node_modules/
+coverage/
+test/fixtures/**/run
+.idea/
+.nyc_output/
+.DS_Store
+*-lock.json
+*-lock.yaml
+test/fixtures/apps/ts/tsconfig.tsbuildinfo
+test/fixtures/apps/ts/**/*.d.ts
+.tshy*
+.eslintcache
+dist
