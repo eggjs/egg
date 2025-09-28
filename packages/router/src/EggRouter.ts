@@ -1,10 +1,12 @@
 import assert from 'node:assert';
+
 import { encodeURIComponent as safeEncodeURIComponent } from 'utility';
 import inflection from 'inflection';
 import methods from 'methods';
 import { isGeneratorFunction } from 'is-type-of';
-import { RegisterOptions, Router, RouterMethod, RouterOptions } from './Router.js';
-import { MiddlewareFunc, Next, ResourcesController } from './types.js';
+
+import { type RegisterOptions, Router, type RouterMethod, type RouterOptions } from './Router.ts';
+import { type MiddlewareFunc, type Next, type ResourcesController } from './types.ts';
 
 interface RestfulOptions {
   suffix?: string;

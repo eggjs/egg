@@ -4,9 +4,6 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "description": "Router middleware for egg/koa. Provides RESTful resource routing.",
   "repository": {
     "type": "git",
@@ -16,6 +13,7 @@
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
   },
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/router",
   "author": "eggjs",
   "keywords": [
     "koa",
@@ -35,6 +33,7 @@
   },
   "devDependencies": {
     "@eggjs/koa": "workspace:*",
+    "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/http-errors": "catalog:",
     "@types/koa-compose": "catalog:",
@@ -46,12 +45,11 @@
   },
   "scripts": {
     "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
     "typecheck": "tsc --noEmit",
-    "test": "npm run lint:fix && vitest run",
-    "clean": "rimraf dist",
+    "test": "vitest run",
     "build": "tsdown",
     "prepublishOnly": "npm run build",
+    "prebench": "npm run build",
     "bench": "cd bench && make"
   },
   "license": "MIT",
@@ -61,12 +59,20 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./EggRouter": "./src/EggRouter.ts",
+    "./Layer": "./src/Layer.ts",
+    "./Router": "./src/Router.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
+      "./EggRouter": "./dist/EggRouter.js",
+      "./Layer": "./dist/Layer.js",
+      "./Router": "./dist/Router.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

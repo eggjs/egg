@@ -1,11 +1,13 @@
 import { debuglog } from 'node:util';
+
 import pathToRegExp, { type Key } from 'path-to-regexp';
 import URI from 'urijs';
 import { decodeURIComponent as safeDecodeURIComponent } from 'utility';
 import { isGeneratorFunction } from 'is-type-of';
-import type { MiddlewareFunc, MiddlewareFuncWithParamProperty, ParamMiddlewareFunc } from './types.js';
 
-const debug = debuglog('@eggjs/router:Layer');
+import type { MiddlewareFunc, MiddlewareFuncWithParamProperty, ParamMiddlewareFunc } from './types.ts';
+
+const debug = debuglog('egg/router:Layer');
 
 export interface LayerOptions {
   prefix?: string;

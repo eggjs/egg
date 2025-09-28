@@ -134,6 +134,7 @@ catalog:
   lint-staged: ^16.2.0
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
+  methods: ^1.1.2
   mime-types: ^3.0.0
   mm: ^4.0.2
   mocha: 11.7.2

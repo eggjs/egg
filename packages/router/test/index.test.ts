@@ -1,11 +1,13 @@
-import { strict as assert } from 'node:assert';
-import Router, { KoaRouter, EggRouter } from '../src/index.js';
+import { describe, it, expect } from 'vitest';
+
+import Router, { KoaRouter, EggRouter } from '../src/index.ts';
 
 describe('test/index.test.ts', () => {
   it('should expose Router', () => {
-    assert(typeof Router === 'function');
-    assert(typeof KoaRouter === 'function');
-    assert.equal(Router, KoaRouter);
-    assert(typeof EggRouter === 'function');
+    expect(Router).toBeInstanceOf(Function);
+    expect(KoaRouter).toBeInstanceOf(Function);
+    // KoaRouter is alias of Router
+    expect(KoaRouter).toBe(Router);
+    expect(EggRouter).toBeInstanceOf(Function);
   });
 });

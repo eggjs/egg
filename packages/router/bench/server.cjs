@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { Application } = require('@eggjs/koa');
-const { Router } = require('../dist/commonjs');
+const { Router } = require('..');
 
 const app = new Application();
 const router = new Router();

@@ -7,10 +7,16 @@ import assert from 'node:assert';
 import compose from 'koa-compose';
 import HttpError from 'http-errors';
 import methods from 'methods';
-import { Layer, LayerURLOptions } from './Layer.js';
-import { MiddlewareFunc, MiddlewareFuncWithRouter, Next, ParamMiddlewareFunc, ResourcesController } from './types.js';
+import { Layer, type LayerURLOptions } from './Layer.ts';
+import {
+  type MiddlewareFunc,
+  type MiddlewareFuncWithRouter,
+  type Next,
+  type ParamMiddlewareFunc,
+  type ResourcesController,
+} from './types.ts';
 
-const debug = debuglog('@eggjs/router:Router');
+const debug = debuglog('egg/router:Router');
 
 export type RouterMethod = (typeof methods)[0];
 

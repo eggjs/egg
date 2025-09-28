@@ -1,15 +1,17 @@
-import { strict as assert } from 'node:assert';
 import fs from 'node:fs';
+
 import { Application as Koa } from '@eggjs/koa';
 import methods from 'methods';
-import request from 'supertest';
-import Router from '../src/index.js';
-import { Next } from '../src/types.js';
+import request from '@eggjs/supertest';
+import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
+
+import Router from '../src/index.ts';
+import type { Next } from '../src/types.ts';
 
 describe('test/lib/router.test.js', () => {
   it('creates new router', () => {
     const router = new Router();
-    assert(router instanceof Router);
+    expect(router instanceof Router).toBe(true);
   });
 
   it('shares context between routers (gh-205)', async () => {
@@ -27,7 +29,7 @@ describe('test/lib/router.test.js', () => {
     });
     app.use(router1.routes()).use(router2.routes());
     const res = await request(app.callback()).get('/').expect(200);
-    assert.equal(res.body.foo, 'bar');
+    expect(res.body.foo).toBe('bar');
   });
 
   it('does not register middleware more than once (gh-184)', async () => {
@@ -58,7 +60,7 @@ describe('test/lib/router.test.js', () => {
     app.use(parentRouter.routes());
 
     const res = await request(app.callback()).get('/parent-route/first-nested-route').expect(200);
-    assert.equal(res.body.n, 1);
+    expect(res.body.n).toBe(1);
   });
 
   it('router can be access with ctx', async () => {
@@ -71,7 +73,7 @@ describe('test/lib/router.test.js', () => {
     });
     app.use(router.routes());
     const res = await request(app.callback()).get('/').expect(200);
-    assert.equal(res.body.url, '/');
+    expect(res.body.url).toBe('/');
   });
 
   it('registers multiple middleware for one route', async () => {
@@ -104,7 +106,7 @@ describe('test/lib/router.test.js', () => {
     app.use(router.routes());
 
     const res = await request(app.callback()).get('/double').expect(200);
-    assert.equal(res.body.message, 'Hello World!');
+    expect(res.body.message).toBe('Hello World!');
   });
 
   it('does not break when nested-routes use regexp paths', () => {
@@ -132,14 +134,14 @@ describe('test/lib/router.test.js', () => {
     );
 
     app.use(parentRouter.routes());
-    assert(app);
+    expect(app).toBeDefined();
   });
 
   it('exposes middleware factory', () => {
     const router = new Router();
-    assert.equal(typeof router.routes, 'function');
+    expect(typeof router.routes).toBe('function');
     const middleware = router.routes();
-    assert.equal(typeof middleware, 'function');
+    expect(typeof middleware).toBe('function');
   });
 
   it('supports promises for async/await', async () => {
@@ -158,7 +160,7 @@ describe('test/lib/router.test.js', () => {
 
     app.use(router.routes()).use(router.allowedMethods());
     const res = await request(app.callback()).get('/async').expect(200);
-    assert.equal(res.body.msg, 'promises!');
+    expect(res.body.msg).toBe('promises!');
   });
 
   it('matches middleware only if route was matched (gh-182)', async () => {
@@ -178,8 +180,8 @@ describe('test/lib/router.test.js', () => {
     app.use(router.routes()).use(otherRouter.routes());
 
     const res = await request(app.callback()).get('/bar').expect(200);
-    assert.equal(res.body.foo, 'bar');
-    assert.equal(res.body.bar, undefined);
+    expect(res.body.foo).toBe('bar');
+    expect(res.body.bar).toBeUndefined();
   });
 
   it('matches first to last', async () => {
@@ -198,7 +200,7 @@ describe('test/lib/router.test.js', () => {
       });
 
     const res = await request(app.use(router.routes()).callback()).get('/user/account.jsx').expect(200);
-    assert.equal(res.body.order, 1);
+    expect(res.body.order).toBe(1);
   });
 
   it('does not run subsequent middleware without calling next', async () => {
@@ -245,8 +247,8 @@ describe('test/lib/router.test.js', () => {
     await request(server).get('/forums/1/posts').expect(204);
     await request(server).get('/forums/1').expect(404);
     const res = await request(server).get('/forums/1/posts/2').expect(200);
-    assert.equal(res.body.fid, '1');
-    assert.equal(res.body.pid, '2');
+    expect(res.body.fid).toBe('1');
+    expect(res.body.pid).toBe('2');
   });
 
   it('nests routers with prefixes at path', async () => {
@@ -277,8 +279,8 @@ describe('test/lib/router.test.js', () => {
     await request(server).get('/api/forums/1').expect(404);
 
     const res = await request(server).get('/api/forums/1/posts/2').expect(200);
-    assert.equal(res.body.fid, '1');
-    assert.equal(res.body.pid, '2');
+    expect(res.body.fid).toBe('1');
+    expect(res.body.pid).toBe('2');
   });
 
   it('runs subrouter middleware after parent', async () => {
@@ -298,7 +300,7 @@ describe('test/lib/router.test.js', () => {
       })
       .use(subrouter.routes());
     const res = await request(app.use(router.routes()).callback()).get('/').expect(200);
-    assert.equal(res.body.msg, 'subrouter');
+    expect(res.body.msg).toBe('subrouter');
   });
 
   it('runs parent middleware for subrouter routes', async () => {
@@ -313,7 +315,7 @@ describe('test/lib/router.test.js', () => {
       })
       .use('/parent', subrouter.routes());
     const res = await request(app.use(router.routes()).callback()).get('/parent/sub').expect(200);
-    assert.equal(res.body.msg, 'router');
+    expect(res.body.msg).toBe('router');
   });
 
   it('matches corresponding requests', async () => {
@@ -321,17 +323,17 @@ describe('test/lib/router.test.js', () => {
     const router = new Router();
     app.use(router.routes());
     router.get('/:category/:title', function (ctx) {
-      assert.equal(ctx.params.category, 'programming');
-      assert.equal(ctx.params.title, 'how-to-node');
+      expect(ctx.params.category).toBe('programming');
+      expect(ctx.params.title).toBe('how-to-node');
       ctx.status = 204;
     });
     router.post('/:category', function (ctx) {
-      assert.equal(ctx.params.category, 'programming');
+      expect(ctx.params.category).toBe('programming');
       ctx.status = 204;
     });
     router.put('/:category/not-a-title', function (ctx) {
-      assert.equal(ctx.params.category, 'programming');
-      assert.equal(ctx.params.title, undefined);
+      expect(ctx.params.category).toBe('programming');
+      expect(ctx.params.title).toBeUndefined();
       ctx.status = 204;
     });
     const server = app.callback();
@@ -362,8 +364,8 @@ describe('test/lib/router.test.js', () => {
       }
     );
     const res = await request(app.callback()).get('/match/this').expect(200);
-    assert.equal(res.body.bar, 'baz');
-    assert.equal(res.body.foo, 'bar');
+    expect(res.body.bar).toBe('baz');
+    expect(res.body.foo).toBe('bar');
   });
 
   it('does not match after ctx.throw()', async () => {
@@ -379,7 +381,7 @@ describe('test/lib/router.test.js', () => {
       counter++;
     });
     await request(app.callback()).get('/').expect(403);
-    assert.equal(counter, 1);
+    expect(counter).toBe(1);
   });
 
   it('supports promises for route middleware', async () => {
@@ -417,8 +419,8 @@ describe('test/lib/router.test.js', () => {
       router.get('/users', function () {});
       router.put('/users', function () {});
       const res = await request(app.callback()).options('/users').expect(200);
-      assert.equal(res.headers['content-length'], '0');
-      assert.equal(res.headers.allow, 'HEAD, GET, PUT');
+      expect(res.headers['content-length']).toBe('0');
+      expect(res.headers.allow).toBe('HEAD, GET, PUT');
     });
 
     it('responds with 405 Method Not Allowed', async () => {
@@ -430,7 +432,7 @@ describe('test/lib/router.test.js', () => {
       app.use(router.routes());
       app.use(router.allowedMethods());
       const res = await request(app.callback()).post('/users').expect(405);
-      assert.equal(res.headers.allow, 'HEAD, GET, PUT');
+      expect(res.headers.allow).toBe('HEAD, GET, PUT');
     });
 
     it('responds ignore allowedMethods when status is already set', async () => {
@@ -446,7 +448,7 @@ describe('test/lib/router.test.js', () => {
       app.use(router.routes());
       app.use(router.allowedMethods());
       const res = await request(app.callback()).post('/users').expect(200);
-      assert.equal(res.headers.allow, undefined);
+      expect(res.headers.allow).toBeUndefined();
     });
 
     it('responds with 405 Method Not Allowed using the "throw" option', async () => {
@@ -470,7 +472,7 @@ describe('test/lib/router.test.js', () => {
       router.post('/events', function () {});
       const res = await request(app.callback()).post('/users').expect(405);
       // the 'Allow' header is not set when throwing
-      assert.equal(res.headers.allow, undefined);
+      expect(res.headers.allow).toBeUndefined();
     });
 
     it('responds with user-provided throwable using the "throw" and "methodNotAllowed" options', async () => {
@@ -509,8 +511,8 @@ describe('test/lib/router.test.js', () => {
       router.post('/events', function () {});
       const res = await request(app.callback()).post('/users').expect(405);
       // the 'Allow' header is not set when throwing
-      assert.equal(res.headers.allow, undefined);
-      assert.deepEqual(res.body, {
+      expect(res.headers.allow).toBeUndefined();
+      expect(res.body).toEqual({
         error: 'Custom Not Allowed Error',
         statusCode: 405,
         otherStuff: true,
@@ -524,7 +526,9 @@ describe('test/lib/router.test.js', () => {
       app.use(router.allowedMethods());
       router.get('/users', function () {});
       router.put('/users', function () {});
-      await request(app.callback()).search('/users').expect(501);
+      // await request(app.callback()).search('/users').expect(501);
+      // @ts-expect-error protected method
+      await request(app.callback())._testRequest('search', '/users').expect(501);
     });
 
     it('responds with 501 Not Implemented using the "throw" option', async () => {
@@ -545,9 +549,10 @@ describe('test/lib/router.test.js', () => {
       app.use(router.allowedMethods({ throw: true }));
       router.get('/users', function () {});
       router.put('/users', function () {});
-      const res = await request(app.callback()).search('/users').expect(501);
+      // @ts-expect-error protected method
+      const res = await request(app.callback())._testRequest('search', '/users').expect(501);
       // the 'Allow' header is not set when throwing
-      assert.equal(res.headers.allow, undefined);
+      expect(res.headers.allow).toBeUndefined();
     });
 
     it('responds with user-provided throwable using the "throw" and "notImplemented" options', async () => {
@@ -584,10 +589,11 @@ describe('test/lib/router.test.js', () => {
       );
       router.get('/users', function () {});
       router.put('/users', function () {});
-      const res = await request(app.callback()).search('/users').expect(501);
+      // @ts-expect-error protected method
+      const res = await request(app.callback())._testRequest('search', '/users').expect(501);
       // the 'Allow' header is not set when throwing
-      assert.equal(res.header.allow, undefined);
-      assert.deepEqual(res.body, {
+      expect(res.header.allow).toBeUndefined();
+      expect(res.body).toEqual({
         error: 'Custom Not Implemented Error',
         statusCode: 501,
         otherStuff: true,
@@ -615,7 +621,7 @@ describe('test/lib/router.test.js', () => {
       router.get('/', function () {});
 
       const res = await request(app.callback()).options('/').expect(200);
-      assert.equal(res.header.allow, 'HEAD, GET');
+      expect(res.header.allow).toBe('HEAD, GET');
     });
   });
 
@@ -642,51 +648,39 @@ describe('test/lib/router.test.js', () => {
       const router = new Router();
       app.use(router.routes());
       methods.forEach(function (method) {
-        assert(method in router);
-        assert(typeof Reflect.get(router, method) === 'function');
+        expect(method in router).toBe(true);
+        expect(typeof Reflect.get(router, method) === 'function').toBe(true);
         Reflect.get(router, method).call(router, '/', function () {});
       });
-      assert.equal(router.stack.length, methods.length);
+      expect(router.stack.length).toBe(methods.length);
     });
 
     it('registers route with a regexp path', () => {
       const router = new Router();
       methods.forEach(function (method) {
-        assert.equal(
-          Reflect.get(router, method).call(router, /^\/\w$/i, function () {}),
-          router
-        );
+        expect(Reflect.get(router, method).call(router, /^\/\w$/i, function () {})).toBe(router);
       });
     });
 
     it('registers route with a given name', () => {
       const router = new Router();
       methods.forEach(function (method) {
-        assert.equal(
-          Reflect.get(router, method).call(router, '/', function () {}),
-          router
-        );
+        expect(Reflect.get(router, method).call(router, '/', function () {})).toBe(router);
       });
     });
 
     it('registers route with with a given name and regexp path', () => {
       const router = new Router();
       methods.forEach(function (method) {
-        assert.equal(
-          Reflect.get(router, method).call(router, /^\/$/i, function () {}),
-          router
-        );
+        expect(Reflect.get(router, method).call(router, /^\/$/i, function () {})).toBe(router);
       });
     });
 
     it('enables route chaining', () => {
       const router = new Router();
       methods.forEach(function (method) {
-        assert(Reflect.get(router, method.toLowerCase()), `${method.toLowerCase()} not exists`);
-        assert.equal(
-          Reflect.get(router, method.toLowerCase()).call(router, '/', function () {}),
-          router
-        );
+        expect(Reflect.get(router, method.toLowerCase())).toBeDefined();
+        expect(Reflect.get(router, method.toLowerCase()).call(router, '/', function () {})).toBe(router);
       });
     });
 
@@ -695,9 +689,9 @@ describe('test/lib/router.test.js', () => {
       router.get(['/one', '/two'], function (_ctx, next) {
         return next();
       });
-      assert.equal(router.stack.length, 2);
-      assert.equal(router.stack[0].path, '/one');
-      assert.equal(router.stack[1].path, '/two');
+      expect(router.stack.length).toBe(2);
+      expect(router.stack[0].path).toBe('/one');
+      expect(router.stack[1].path).toBe('/two');
     });
 
     it('resolves non-parameterized routes without attached parameters', async () => {
@@ -722,9 +716,9 @@ describe('test/lib/router.test.js', () => {
 
       app.use(router.routes());
       const res = await request(app.callback()).get('/notparameter').expect(200);
-      assert.equal(res.body.param, undefined);
-      assert.equal(res.body.routerName, undefined);
-      assert.equal(res.body.routerPath, '/notparameter');
+      expect(res.body.param).toBeUndefined();
+      expect(res.body.routerName).toBeUndefined();
+      expect(res.body.routerPath).toBe('/notparameter');
     });
   });
 
@@ -751,7 +745,7 @@ describe('test/lib/router.test.js', () => {
 
       app.use(router.routes());
       const res = await request(app.callback()).get('/foo/bar').expect(200);
-      assert.equal(res.body.foobar, 'foobar');
+      expect(res.body.foobar).toBe('foobar');
     });
 
     it('uses router middleware at given path', async () => {
@@ -771,7 +765,7 @@ describe('test/lib/router.test.js', () => {
 
       app.use(router.routes());
       const res = await request(app.callback()).get('/foo/bar').expect(200);
-      assert.equal(res.body.foobar, 'foobar');
+      expect(res.body.foobar).toBe('foobar');
     });
 
     it('runs router middleware before subrouter middleware', async () => {
@@ -798,7 +792,7 @@ describe('test/lib/router.test.js', () => {
       router.use('/foo', subrouter.routes());
       app.use(router.routes());
       const res = await request(app.callback()).get('/foo/bar').expect(200);
-      assert.equal(res.body.foobar, 'foobar');
+      expect(res.body.foobar).toBe('foobar');
     });
 
     it('assigns middleware to array of paths', async () => {
@@ -825,9 +819,9 @@ describe('test/lib/router.test.js', () => {
 
       app.use(router.routes());
       let res = await request(app.callback()).get('/foo').expect(200);
-      assert.equal(res.body.foobar, 'foobar');
+      expect(res.body.foobar).toBe('foobar');
       res = await request(app.callback()).get('/bar').expect(200);
-      assert.equal(res.body.foobar, 'foobar');
+      expect(res.body.foobar).toBe('foobar');
     });
 
     it('without path, does not set params.0 to the matched path - gh-247', async () => {
@@ -844,11 +838,11 @@ describe('test/lib/router.test.js', () => {
 
       app.use(router.routes());
       const res = await request(app.callback()).get('/foo/815').expect(200);
-      assert.equal(res.body.id, '815');
-      assert.equal(res.body['0'], undefined);
+      expect(res.body.id).toBe('815');
+      expect(res.body['0']).toBeUndefined();
 
       const res2 = await request(app.callback()).get('/foo/1,2,3,4,5').expect(200);
-      assert.equal(res2.body.id, '1,2,3,4,5');
+      expect(res2.body.id).toBe('1,2,3,4,5');
     });
 
     it('does not add an erroneous (.*) to unprefixed nested routers - gh-369 gh-410', async () => {
@@ -873,7 +867,7 @@ describe('test/lib/router.test.js', () => {
       app.use(router.routes());
 
       await request(app.callback()).get('/test').expect(200).expect('test');
-      assert.equal(called, 1);
+      expect(called).toBe(1);
     });
   });
 
@@ -881,12 +875,12 @@ describe('test/lib/router.test.js', () => {
     it('registers new routes', () => {
       const app = new Koa();
       const router = new Router();
-      assert(typeof router.register === 'function');
+      expect(typeof router.register === 'function').toBe(true);
       const route = router.register('/', ['GET', 'POST'], function () {});
-      assert(route);
+      expect(route).toBeDefined();
       app.use(router.routes());
-      assert.equal(router.stack.length, 1);
-      assert.equal(router.stack[0].path, '/');
+      expect(router.stack.length).toBe(1);
+      expect(router.stack[0].path).toBe('/');
     });
   });
 
@@ -894,11 +888,11 @@ describe('test/lib/router.test.js', () => {
     it('registers redirect routes', () => {
       const app = new Koa();
       const router = new Router();
-      assert(typeof router.redirect === 'function');
+      expect(typeof router.redirect === 'function').toBe(true);
       router.redirect('/source', '/destination', 302);
       app.use(router.routes());
-      assert.equal(router.stack.length, 1);
-      assert.equal(router.stack[0].path, '/source');
+      expect(router.stack.length).toBe(1);
+      expect(router.stack[0].path).toBe('/source');
     });
 
     it('redirects using route names', async () => {
@@ -909,18 +903,18 @@ describe('test/lib/router.test.js', () => {
       router.get('sign-up-form', '/sign-up-form', function () {});
       router.redirect('home', 'sign-up-form');
       const res = await request(app.callback()).post('/').expect(301);
-      assert.equal(res.headers.location, '/sign-up-form');
+      expect(res.headers.location).toBe('/sign-up-form');
     });
 
     it('registers redirect not exists routes', () => {
       const router = new Router();
-      assert(typeof router.redirect === 'function');
-      assert.throws(() => {
+      expect(typeof router.redirect === 'function').toBe(true);
+      expect(() => {
         router.redirect('source-not-exists', '/destination', 302);
-      }, /Error: No route found for name: source-not-exists/);
-      assert.throws(() => {
+      }).toThrow(/No route found for name: source-not-exists/);
+      expect(() => {
         router.redirect('/source', 'destination-not-exists');
-      }, /Error: No route found for name: destination-not-exists/);
+      }).toThrow(/No route found for name: destination-not-exists/);
     });
   });
 
@@ -931,8 +925,8 @@ describe('test/lib/router.test.js', () => {
       });
       const router = new Router().use(subrouter.routes());
       const route = router.route('child');
-      assert(route);
-      assert.equal(route.name, 'child');
+      expect(route).toBeDefined();
+      expect(route && route.name).toBe('child');
     });
   });
 
@@ -945,13 +939,12 @@ describe('test/lib/router.test.js', () => {
         ctx.status = 204;
       });
       let url = router.url('books', { category: 'programming', title: 'how to node' });
-      assert.equal(url, '/programming/how%20to%20node');
+      expect(url).toBe('/programming/how%20to%20node');
       url = router.url('books', 'programming', 'how to node');
-      assert.equal(url, '/programming/how%20to%20node');
+      expect(url).toBe('/programming/how%20to%20node');
 
-      const err = router.url('not-exists', { category: 'programming', title: 'how to node' });
-      assert(err instanceof Error);
-      assert.equal(err.message, 'No route found for name: not-exists');
+      const err = router.url('not-exists', { category: 'programming', title: 'how to node' }) as Error;
+      expect(err.message).toBe('No route found for name: not-exists');
     });
 
     it('generates URL for given route name within embedded routers', () => {
@@ -969,9 +962,9 @@ describe('test/lib/router.test.js', () => {
       router.use(embeddedRouter.routes());
       app.use(router.routes());
       let url = router.url('chapters', { chapterName: 'Learning ECMA6', pageNumber: 123 });
-      assert.equal(url, '/books/chapters/Learning%20ECMA6/123');
+      expect(url).toBe('/books/chapters/Learning%20ECMA6/123');
       url = router.url('chapters', 'Learning ECMA6', 123);
-      assert.equal(url, '/books/chapters/Learning%20ECMA6/123');
+      expect(url).toBe('/books/chapters/Learning%20ECMA6/123');
     });
 
     it('generates URL for given route name within two embedded routers', () => {
@@ -992,7 +985,7 @@ describe('test/lib/router.test.js', () => {
       router.use(embeddedRouter.routes());
       app.use(router.routes());
       const url = router.url('chapters', { chapterName: 'Learning ECMA6', pageNumber: 123 });
-      assert.equal(url, '/books/chapters/Learning%20ECMA6/pages/123');
+      expect(url).toBe('/books/chapters/Learning%20ECMA6/pages/123');
     });
 
     it('generates URL for given route name with params and query params', () => {
@@ -1003,11 +996,11 @@ describe('test/lib/router.test.js', () => {
       let url = router.url('books', 'programming', 4, {
         query: { page: 3, limit: 10 },
       });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
       url = router.url('books', { category: 'programming', id: 4 }, { query: { page: 3, limit: 10 } });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
       url = router.url('books', { category: 'programming', id: 4 }, { query: 'page=3&limit=10' });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
     });
 
     it('generates URL for given route name without params and query params', () => {
@@ -1018,7 +1011,7 @@ describe('test/lib/router.test.js', () => {
       const url = router.url('category', {
         query: { page: 3, limit: 10 },
       });
-      assert.equal(url, '/category?page=3&limit=10');
+      expect(url).toBe('/category?page=3&limit=10');
     });
   });
 
@@ -1040,7 +1033,7 @@ describe('test/lib/router.test.js', () => {
           ctx.body = ctx.user;
         });
       const res = await request(app.callback()).get('/users/3').expect(200);
-      assert.equal(res.body.name, 'alex');
+      expect(res.body.name).toBe('alex');
     });
 
     it('runs parameter middleware in order of URL appearance', async () => {
@@ -1074,8 +1067,8 @@ describe('test/lib/router.test.js', () => {
         });
 
       const res = await request(app.use(router.routes()).callback()).get('/first/users/3').expect(200);
-      assert.equal(res.body.name, 'alex');
-      assert.equal(res.body.ordered, 'parameters');
+      expect(res.body.name).toBe('alex');
+      expect(res.body.ordered).toBe('parameters');
     });
 
     it('runs parameter middleware in order of URL appearance even when added in random order', async () => {
@@ -1104,7 +1097,7 @@ describe('test/lib/router.test.js', () => {
         });
 
       const res = await request(app.use(router.routes()).callback()).get('/1/2/3/4').expect(200);
-      assert.deepEqual(res.body, ['1', '2', '3', '4']);
+      expect(res.body).toEqual(['1', '2', '3', '4']);
     });
 
     it('runs parent parameter middleware for subrouter', async () => {
@@ -1129,8 +1122,8 @@ describe('test/lib/router.test.js', () => {
         .use('/:id/children', subrouter.routes());
 
       const res = await request(app.use(router.routes()).callback()).get('/did-not-run/children/2').expect(200);
-      assert.deepEqual(res.body.id, 'ran');
-      assert.deepEqual(res.body.cid, '2');
+      expect(res.body.id).toBe('ran');
+      expect(res.body.cid).toBe('2');
     });
   });
 
@@ -1144,7 +1137,7 @@ describe('test/lib/router.test.js', () => {
         ctx.body = 'hello';
       });
       const res = await request(app.use(router.routes()).callback()).get('/info').expect(200);
-      assert.equal(res.text, 'hello');
+      expect(res.text).toBe('hello');
     });
 
     it('should allow setting a prefix', async () => {
@@ -1156,7 +1149,7 @@ describe('test/lib/router.test.js', () => {
       });
 
       const res = await request(app.use(routes.routes()).callback()).get('/things/1/list').expect(200);
-      assert.equal(res.body.thing_id, '1');
+      expect(res.body.thing_id).toBe('1');
     });
 
     it('responds with 404 when has a trailing slash', async () => {
@@ -1181,7 +1174,7 @@ describe('test/lib/router.test.js', () => {
         ctx.body = 'hello';
       });
       const res = await request(app.use(router.routes()).callback()).get('/info').expect(200);
-      assert.equal(res.text, 'hello');
+      expect(res.text).toBe('hello');
     });
 
     it('responds with 404 when has a trailing slash', async () => {
@@ -1212,29 +1205,29 @@ describe('test/lib/router.test.js', () => {
 
       router.use(middlewareA, middlewareB);
       router.get('/users/:id', function (ctx) {
-        assert(ctx.params.id);
+        expect(ctx.params.id).toBeDefined();
         ctx.body = { hello: 'world' };
       });
 
       const routerMiddleware = router.routes();
-      assert(typeof routerMiddleware === 'function');
+      expect(typeof routerMiddleware === 'function').toBe(true);
 
       const res = await request(app.use(routerMiddleware).callback()).get('/users/1').expect(200);
-      assert.equal(res.body.hello, 'world');
-      assert.equal(middlewareCount, 2);
+      expect(res.body.hello).toBe('world');
+      expect(middlewareCount).toBe(2);
     });
 
     it('places a `_matchedRoute` value on context', async () => {
       const app = new Koa();
       const router = new Router();
       const middleware = function (ctx: any, next: Next) {
-        assert.equal(ctx._matchedRoute, '/users/:id');
+        expect(ctx._matchedRoute).toBe('/users/:id');
         return next();
       };
 
       router.get('/users/:id', middleware, function (ctx) {
-        assert.equal(ctx._matchedRoute, '/users/:id');
-        assert(ctx.params.id);
+        expect(ctx._matchedRoute).toBe('/users/:id');
+        expect(ctx.params.id).toBeDefined();
         ctx.body = { hello: 'world' };
       });
 
@@ -1248,7 +1241,7 @@ describe('test/lib/router.test.js', () => {
       const router = new Router();
 
       router.get('users#show', '/users/:id', function (ctx) {
-        assert.equal(ctx._matchedRouteName, 'users#show');
+        expect(ctx._matchedRouteName).toBe('users#show');
         ctx.status = 200;
       });
 
@@ -1260,7 +1253,7 @@ describe('test/lib/router.test.js', () => {
       const router = new Router();
 
       router.get('/users/:id', function (ctx) {
-        assert.equal(ctx._matchedRouteName, undefined);
+        expect(ctx._matchedRouteName).toBeUndefined();
         ctx.status = 200;
       });
 
@@ -1271,17 +1264,17 @@ describe('test/lib/router.test.js', () => {
       const app = new Koa();
       const router = new Router();
       router.get('name1', '/users/1', function (ctx, next) {
-        assert.equal(ctx._matchedRouteName, 'name1');
-        assert.equal(ctx.routerName, 'name1');
-        assert.equal(ctx._matchedRoute, '/users/1');
-        assert.equal(ctx.routerPath, '/users/1');
+        expect(ctx._matchedRouteName).toBe('name1');
+        expect(ctx.routerName).toBe('name1');
+        expect(ctx._matchedRoute).toBe('/users/1');
+        expect(ctx.routerPath).toBe('/users/1');
         return next();
       });
       router.get('name2', '/users/:id', function (ctx) {
-        assert.equal(ctx._matchedRouteName, 'name2');
-        assert.equal(ctx.routerName, 'name2');
-        assert.equal(ctx._matchedRoute, '/users/:id');
-        assert.equal(ctx.routerPath, '/users/:id');
+        expect(ctx._matchedRouteName).toBe('name2');
+        expect(ctx.routerName).toBe('name2');
+        expect(ctx._matchedRoute).toBe('/users/:id');
+        expect(ctx.routerPath).toBe('/users/:id');
         ctx.status = 200;
       });
 
@@ -1295,23 +1288,23 @@ describe('test/lib/router.test.js', () => {
       const router = new Router();
       console.log(router);
       router.get('/users/:id', function (ctx) {
-        assert(ctx.params.id);
+        expect(ctx.params.id).toBeDefined();
         ctx.body = 'hello';
       });
       app.use(router.routes());
       let res = await request(app.callback()).get('/users/1').expect(200);
-      assert.equal(res.text, 'hello');
+      expect(res.text).toBe('hello');
       res = await request(app.callback()).head('/users/1').expect(200);
-      assert.equal(res.text, '');
+      expect(res.text).toBeUndefined();
     });
   });
 
   describe('Router#prefix', () => {
     it('should set opts.prefix', () => {
       const router = new Router();
-      assert.equal(router.opts.prefix, undefined);
+      expect(router.opts.prefix).toBeUndefined();
       router.prefix('/things/:thing_id');
-      assert.equal(router.opts.prefix, '/things/:thing_id');
+      expect(router.opts.prefix).toBe('/things/:thing_id');
     });
 
     it('should prefix existing routes', () => {
@@ -1321,10 +1314,10 @@ describe('test/lib/router.test.js', () => {
       });
       router.prefix('/things/:thing_id');
       const route = router.stack[0];
-      assert.equal(route.path, '/things/:thing_id/users/:id');
-      assert.equal(route.paramNames.length, 2);
-      assert.equal(route.paramNames[0].name, 'thing_id');
-      assert.equal(route.paramNames[1].name, 'id');
+      expect(route.path).toBe('/things/:thing_id/users/:id');
+      expect(route.paramNames.length).toBe(2);
+      expect(route.paramNames[0].name).toBe('thing_id');
+      expect(route.paramNames[1].name).toBe('id');
     });
 
     describe('when used with .use(fn) - gh-247', () => {
@@ -1344,8 +1337,8 @@ describe('test/lib/router.test.js', () => {
 
         app.use(router.routes());
         const res = await request(app.callback()).get('/things/foo/108').expect(200);
-        assert.equal(res.body.id, '108');
-        assert.equal(res.body['0'], undefined);
+        expect(res.body.id).toBe('108');
+        expect(res.body['0']).toBeUndefined();
       });
     });
 
@@ -1357,7 +1350,7 @@ describe('test/lib/router.test.js', () => {
         let server: any;
         let middlewareCount = 0;
 
-        before(function () {
+        beforeAll(function () {
           const app = new Koa();
           const router = new Router();
 
@@ -1382,20 +1375,20 @@ describe('test/lib/router.test.js', () => {
 
         it('should support root level router middleware', async () => {
           const res = await request(server).get(prefix).expect(200);
-          assert.equal(middlewareCount, 2);
-          assert.equal(res.body.name, 'worked');
+          expect(middlewareCount).toBe(2);
+          expect(res.body.name).toBe('worked');
         });
 
         it('should support requests with a trailing path slash', async () => {
           const res = await request(server).get('/admin/').expect(200);
-          assert.equal(middlewareCount, 2);
-          assert.equal(res.body.name, 'worked');
+          expect(middlewareCount).toBe(2);
+          expect(res.body.name).toBe('worked');
         });
 
         it('should support requests without a trailing path slash', async () => {
           const res = await request(server).get('/admin').expect(200);
-          assert.equal(middlewareCount, 2);
-          assert.equal(res.body.name, 'worked');
+          expect(middlewareCount).toBe(2);
+          expect(res.body.name).toBe('worked');
         });
       };
     }
@@ -1404,30 +1397,30 @@ describe('test/lib/router.test.js', () => {
   describe('Static Router#url()', () => {
     it('generates route URL', () => {
       const url = Router.url('/:category/:title', { category: 'programming', title: 'how-to-node' });
-      assert.equal(url, '/programming/how-to-node');
+      expect(url).toBe('/programming/how-to-node');
     });
 
     it('escapes using encodeURIComponent()', () => {
       const url = Router.url('/:category/:title', { category: 'programming', title: 'how to node' });
-      assert.equal(url, '/programming/how%20to%20node');
+      expect(url).toBe('/programming/how%20to%20node');
     });
 
     it('generates route URL with params and query params', () => {
       let url = Router.url('/books/:category/:id', 'programming', 4, {
         query: { page: 3, limit: 10 },
       });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
       url = Router.url('/books/:category/:id', { category: 'programming', id: 4 }, { query: { page: 3, limit: 10 } });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
       url = Router.url('/books/:category/:id', { category: 'programming', id: 4 }, { query: 'page=3&limit=10' });
-      assert.equal(url, '/books/programming/4?page=3&limit=10');
+      expect(url).toBe('/books/programming/4?page=3&limit=10');
     });
 
     it('generates router URL without params and with with query params', () => {
       const url = Router.url('/category', {
         query: { page: 3, limit: 10 },
       });
-      assert.equal(url, '/category?page=3&limit=10');
+      expect(url).toBe('/category?page=3&limit=10');
     });
   });
 });

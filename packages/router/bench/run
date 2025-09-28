@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+set -e
+
+export FACTOR=$1
+export USE_MIDDLEWARE=$2
+export PORT=3333
+
+host="http://localhost:$PORT"
+
+node "$(dirname $0)/server.cjs" &
+
+pid=$!
+
+curl \
+  --retry-connrefused \
+  --retry 5 \
+  --retry-delay 0 \
+  -s \
+  "$host/_health" \
+  > /dev/null
+
+# siege -c 50 -t 8 "$host/10/child/grandchild/%40"
+wrk "$host/10/child/grandchild/%40" \
+  -d 3 \
+  -c 50 \
+  -t 8 \
+  | grep 'Requests/sec' \
+  | awk '{ print "  " $2 }'
+
+kill $pid

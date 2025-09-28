@@ -1,8 +1,9 @@
-import { strict as assert } from 'node:assert';
 import is from 'is-type-of';
 import { Application } from '@eggjs/koa';
-import request from 'supertest';
-import { EggRouter } from '../src/index.js';
+import request from '@eggjs/supertest';
+import { describe, it, expect } from 'vitest';
+
+import { EggRouter } from '../src/index.ts';
 
 describe('test/EggRouter.test.ts', () => {
   it('auto bind ctx to this on controller', async () => {
@@ -16,16 +17,16 @@ describe('test/EggRouter.test.ts', () => {
     });
     app.use(router.routes());
     const res = await request(app.callback()).get('/').expect(200);
-    assert.equal(res.body.url, '/');
-    assert.equal(res.body.method, 'GET');
+    expect(res.body.url).toBe('/');
+    expect(res.body.method).toBe('GET');
   });
 
   it('creates new router with egg app', () => {
     const app = { controller: {} };
     const router = new EggRouter({}, app);
-    assert(router);
+    expect(router).toBeDefined();
     ['head', 'options', 'get', 'put', 'patch', 'post', 'delete', 'all', 'resources'].forEach(method => {
-      assert.equal(typeof Reflect.get(router, method), 'function');
+      expect(Reflect.get(router, method)).toBeInstanceOf(Function);
     });
   });
 
@@ -45,16 +46,9 @@ describe('test/EggRouter.test.ts', () => {
 
     const router = new EggRouter({}, app);
     router.get('/foo', app.controller.foo);
-    assert.throws(
-      () => {
-        router.post('/hello/world', app.controller.hello.world as any);
-      },
-      (err: TypeError) => {
-        assert(err instanceof TypeError);
-        assert.equal(err.message, 'post `/hello/world`: Please use async function instead of generator function');
-        return true;
-      }
-    );
+    expect(() => {
+      router.post('/hello/world', app.controller.hello.world as any);
+    }).toThrow(/post `\/hello\/world`: Please use async function instead of generator function/);
   });
 
   it('should app.verb(url, controller) work', () => {
@@ -75,12 +69,12 @@ describe('test/EggRouter.test.ts', () => {
     router.get('/foo', app.controller.foo);
     router.post('/hello/world', app.controller.hello.world);
 
-    assert(router.stack[0].path === '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert(router.stack[0].stack.length === 1);
-    assert(router.stack[1].path === '/hello/world');
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert(router.stack[1].stack.length === 1);
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].path).toBe('/hello/world');
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(1);
 
     router.head('/foo-head', app.controller.foo);
     router.options('/foo-options', app.controller.foo);
@@ -108,15 +102,15 @@ describe('test/EggRouter.test.ts', () => {
     router.get(['/foo', '/bar'], app.controller.foo);
     router.post('/hello/world', app.controller.hello.world);
 
-    assert(router.stack[0].path === '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert(router.stack[0].stack.length === 1);
-    assert(router.stack[1].path === '/bar');
-    assert.deepEqual(router.stack[1].methods, ['HEAD', 'GET']);
-    assert(router.stack[2].stack.length === 1);
-    assert(router.stack[2].path === '/hello/world');
-    assert.deepEqual(router.stack[2].methods, ['POST']);
-    assert(router.stack[2].stack.length === 1);
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].path).toBe('/bar');
+    expect(router.stack[1].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[2].stack.length).toBe(1);
+    expect(router.stack[2].path).toBe('/hello/world');
+    expect(router.stack[2].methods).toEqual(['POST']);
+    expect(router.stack[2].stack.length).toBe(1);
   });
 
   it('should app.verb(name, url, controller) work', () => {
@@ -137,14 +131,14 @@ describe('test/EggRouter.test.ts', () => {
     router.get('foo', '/foo', app.controller.foo);
     router.post('hello', '/hello/world', app.controller.hello.world);
 
-    assert(router.stack[0].name === 'foo');
-    assert(router.stack[0].path === '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert(router.stack[0].stack.length === 1);
-    assert(router.stack[1].name === 'hello');
-    assert(router.stack[1].path === '/hello/world');
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert(router.stack[1].stack.length === 1);
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].name).toBe('hello');
+    expect(router.stack[1].path).toBe('/hello/world');
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(1);
   });
 
   it('should app.verb(name, url, controllerString) work', () => {
@@ -165,14 +159,14 @@ describe('test/EggRouter.test.ts', () => {
     router.get('foo', '/foo', 'foo');
     router.post('hello', '/hello/world', 'hello.world');
 
-    assert(router.stack[0].name === 'foo');
-    assert(router.stack[0].path === '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert(router.stack[0].stack.length === 1);
-    assert(router.stack[1].name === 'hello');
-    assert(router.stack[1].path === '/hello/world');
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert(router.stack[1].stack.length === 1);
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].name).toBe('hello');
+    expect(router.stack[1].path).toBe('/hello/world');
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(1);
   });
 
   it('should app.verb(url, controllerString) work', () => {
@@ -193,14 +187,14 @@ describe('test/EggRouter.test.ts', () => {
     router.get('/foo', 'foo');
     router.post('/hello/world', 'hello.world');
 
-    assert.equal(router.stack[0].name, 'foo');
-    assert.equal(router.stack[0].path, '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert.equal(router.stack[0].stack.length, 1);
-    assert.equal(router.stack[1].name, 'hello.world');
-    assert.equal(router.stack[1].path, '/hello/world');
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert.equal(router.stack[1].stack.length, 1);
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].name).toBe('hello.world');
+    expect(router.stack[1].path).toBe('/hello/world');
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(1);
   });
 
   it('should app.verb(urls, controllerString) work', () => {
@@ -222,27 +216,27 @@ describe('test/EggRouter.test.ts', () => {
     router.post('/hello/world', 'hello.world');
     router.put('other', ['/other1', '/other2'], 'foo');
 
-    assert.equal(router.stack[0].name, 'foo');
-    assert.equal(router.stack[0].path, '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert.equal(router.stack[0].stack.length, 1);
-    assert.equal(router.stack[1].name, 'foo');
-    assert.equal(router.stack[1].path, '/bar');
-    assert.deepEqual(router.stack[1].methods, ['HEAD', 'GET']);
-    assert.equal(router.stack[1].stack.length, 1);
-    assert.equal(router.stack[2].name, 'hello.world');
-    assert.equal(router.stack[2].path, '/hello/world');
-    assert.deepEqual(router.stack[2].methods, ['POST']);
-    assert.equal(router.stack[2].stack.length, 1);
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].name).toBe('foo');
+    expect(router.stack[1].path).toBe('/bar');
+    expect(router.stack[1].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[1].stack.length).toBe(1);
+    expect(router.stack[2].name).toBe('hello.world');
+    expect(router.stack[2].path).toBe('/hello/world');
+    expect(router.stack[2].methods).toEqual(['POST']);
+    expect(router.stack[2].stack.length).toBe(1);
 
-    assert.equal(router.stack[3].name, 'other');
-    assert.equal(router.stack[3].path, '/other1');
-    assert.deepEqual(router.stack[3].methods, ['PUT']);
-    assert.equal(router.stack[3].stack.length, 1);
-    assert.equal(router.stack[4].name, 'other');
-    assert.equal(router.stack[4].path, '/other2');
-    assert.deepEqual(router.stack[4].methods, ['PUT']);
-    assert.equal(router.stack[4].stack.length, 1);
+    expect(router.stack[3].name).toBe('other');
+    expect(router.stack[3].path).toBe('/other1');
+    expect(router.stack[3].methods).toEqual(['PUT']);
+    expect(router.stack[3].stack.length).toBe(1);
+    expect(router.stack[4].name).toBe('other');
+    expect(router.stack[4].path).toBe('/other2');
+    expect(router.stack[4].methods).toEqual(['PUT']);
+    expect(router.stack[4].stack.length).toBe(1);
   });
 
   it('should app.verb(urlRegex, controllerString) work', () => {
@@ -264,22 +258,22 @@ describe('test/EggRouter.test.ts', () => {
     router.post(/^\/hello\/world/, 'hello.world');
     router.post(/^\/hello\/world2/, () => {}, 'hello.world');
 
-    assert.equal(router.stack[0].name, 'foo');
-    assert(router.stack[0].path instanceof RegExp);
-    assert.equal(router.stack[0].path.toString(), String(/^\/foo/));
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert.equal(router.stack[0].stack.length, 1);
-    assert.equal(router.stack[1].name, 'hello.world');
-    assert(router.stack[1].path instanceof RegExp);
-    assert.equal(router.stack[1].path.toString(), String(/^\/hello\/world/));
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert.equal(router.stack[1].stack.length, 1);
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path instanceof RegExp).toBe(true);
+    expect(router.stack[0].path.toString()).toBe(String(/^\/foo/));
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(1);
+    expect(router.stack[1].name).toBe('hello.world');
+    expect(router.stack[1].path instanceof RegExp).toBe(true);
+    expect(router.stack[1].path.toString()).toBe(String(/^\/hello\/world/));
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(1);
 
-    assert.equal(router.stack[2].name, undefined);
-    assert(router.stack[2].path instanceof RegExp);
-    assert.equal(router.stack[2].path.toString(), String(/^\/hello\/world2/));
-    assert.deepEqual(router.stack[2].methods, ['POST']);
-    assert.equal(router.stack[2].stack.length, 2);
+    expect(router.stack[2].name).toBe(undefined);
+    expect(router.stack[2].path instanceof RegExp).toBe(true);
+    expect(router.stack[2].path.toString()).toBe(String(/^\/hello\/world2/));
+    expect(router.stack[2].methods).toEqual(['POST']);
+    expect(router.stack[2].stack.length).toBe(2);
   });
 
   it('should app.verb() throw if not found controller', () => {
@@ -297,13 +291,13 @@ describe('test/EggRouter.test.ts', () => {
     };
 
     const router = new EggRouter({}, app);
-    assert.throws(() => {
+    expect(() => {
       router.get('foo', '/foo', 'foobar');
-    }, /app.controller.foobar not exists/);
+    }).toThrow(/app.controller.foobar not exists/);
 
-    assert.throws(() => {
+    expect(() => {
       router.get('/foo', (app as any).bar);
-    }, /controller not exists/);
+    }).toThrow(/controller not exists/);
   });
 
   it('should app.verb(name, url, [middlewares], controllerString) work', () => {
@@ -334,20 +328,20 @@ describe('test/EggRouter.test.ts', () => {
     router.get('foo', '/foo', asyncMiddleware1, asyncMiddleware, commonMiddleware, 'foo');
     router.post('hello', '/hello/world', asyncMiddleware1, asyncMiddleware, commonMiddleware, 'hello.world');
 
-    assert(router.stack[0].name === 'foo');
-    assert(router.stack[0].path === '/foo');
-    assert.deepEqual(router.stack[0].methods, ['HEAD', 'GET']);
-    assert(router.stack[0].stack.length === 4);
-    assert(!is.generatorFunction(router.stack[0].stack[0]));
-    assert(is.asyncFunction(router.stack[0].stack[1]));
-    assert(!is.generatorFunction(router.stack[0].stack[3]));
-    assert(router.stack[1].name === 'hello');
-    assert(router.stack[1].path === '/hello/world');
-    assert.deepEqual(router.stack[1].methods, ['POST']);
-    assert(router.stack[1].stack.length === 4);
-    assert(!is.generatorFunction(router.stack[1].stack[0]));
-    assert(is.asyncFunction(router.stack[1].stack[1]));
-    assert(!is.generatorFunction(router.stack[1].stack[3]));
+    expect(router.stack[0].name).toBe('foo');
+    expect(router.stack[0].path).toBe('/foo');
+    expect(router.stack[0].methods).toEqual(['HEAD', 'GET']);
+    expect(router.stack[0].stack.length).toBe(4);
+    expect(is.generatorFunction(router.stack[0].stack[0])).toBe(false);
+    expect(is.asyncFunction(router.stack[0].stack[1])).toBe(true);
+    expect(is.generatorFunction(router.stack[0].stack[3])).toBe(false);
+    expect(router.stack[1].name).toBe('hello');
+    expect(router.stack[1].path).toBe('/hello/world');
+    expect(router.stack[1].methods).toEqual(['POST']);
+    expect(router.stack[1].stack.length).toBe(4);
+    expect(is.generatorFunction(router.stack[1].stack[0])).toBe(false);
+    expect(is.asyncFunction(router.stack[1].stack[1])).toBe(true);
+    expect(is.generatorFunction(router.stack[1].stack[3])).toBe(false);
   });
 
   it('should app.resource() work', () => {
@@ -379,13 +373,13 @@ describe('test/EggRouter.test.ts', () => {
 
     const router = new EggRouter({}, app);
     router.resources('/post', asyncMiddleware, app.controller.post);
-    assert.equal(router.stack.length, 5);
-    assert.equal(router.stack[0].stack.length, 2);
+    expect(router.stack.length).toBe(5);
+    expect(router.stack[0].stack.length).toBe(2);
 
     router.resources('api_post', '/api/post', app.controller.post);
-    assert.equal(router.stack.length, 10);
-    assert.equal(router.stack[5].stack.length, 1);
-    assert.equal(router.stack[5].name, 'api_posts');
+    expect(router.stack.length).toBe(10);
+    expect(router.stack[5].stack.length).toBe(1);
+    expect(router.stack[5].name).toBe('api_posts');
   });
 
   it('should app.resources() with multiple middlewares work', () => {
@@ -420,13 +414,13 @@ describe('test/EggRouter.test.ts', () => {
 
     const router = new EggRouter({}, app);
     router.resources('/post', asyncMiddleware1, asyncMiddleware2, app.controller.post);
-    assert.equal(router.stack.length, 5);
-    assert.equal(router.stack[0].stack.length, 3);
+    expect(router.stack.length).toBe(5);
+    expect(router.stack[0].stack.length).toBe(3);
 
     router.resources('api_post', '/api/post', asyncMiddleware1, asyncMiddleware2, app.controller.post);
-    assert.equal(router.stack.length, 10);
-    assert.equal(router.stack[5].stack.length, 3);
-    assert.equal(router.stack[5].name, 'api_posts');
+    expect(router.stack.length).toBe(10);
+    expect(router.stack[5].stack.length).toBe(3);
+    expect(router.stack[5].name).toBe('api_posts');
   });
 
   it('should router.url work', () => {
@@ -446,13 +440,13 @@ describe('test/EggRouter.test.ts', () => {
     router.get('post', '/post/:id', app.controller.foo);
     router.get('hello', '/hello/world', app.controller.hello.world);
 
-    assert.equal(router.url('post', { id: 1, foo: [1, 2], bar: 'bar' }), '/post/1?foo=1&foo=2&bar=bar');
-    assert.equal(router.url('post', { foo: [1, 2], bar: 'bar' }), '/post/:id?foo=1&foo=2&bar=bar');
-    assert.equal(router.url('fooo'), '');
-    assert.equal(router.url('hello'), '/hello/world');
+    expect(router.url('post', { id: 1, foo: [1, 2], bar: 'bar' })).toBe('/post/1?foo=1&foo=2&bar=bar');
+    expect(router.url('post', { foo: [1, 2], bar: 'bar' })).toBe('/post/:id?foo=1&foo=2&bar=bar');
+    expect(router.url('fooo')).toBe('');
+    expect(router.url('hello')).toBe('/hello/world');
 
-    assert.equal(router.pathFor('post', { id: 1, foo: [1, 2], bar: 'bar' }), '/post/1?foo=1&foo=2&bar=bar');
-    assert.equal(router.pathFor('fooo'), '');
-    assert.equal(router.pathFor('hello'), '/hello/world');
+    expect(router.pathFor('post', { id: 1, foo: [1, 2], bar: 'bar' })).toBe('/post/1?foo=1&foo=2&bar=bar');
+    expect(router.pathFor('fooo')).toBe('');
+    expect(router.pathFor('hello')).toBe('/hello/world');
   });
 });

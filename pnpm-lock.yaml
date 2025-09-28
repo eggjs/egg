@@ -138,6 +138,9 @@ catalogs:
     '@types/type-is':
       specifier: ^1.6.6
       version: 1.6.7
+    '@types/urijs':
+      specifier: ^1.19.25
+      version: 1.19.25
     '@types/vary':
       specifier: ^1.1.3
       version: 1.1.3
@@ -318,6 +321,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    inflection:
+      specifier: ^3.0.0
+      version: 3.0.2
     ini:
       specifier: ^5.0.0
       version: 5.0.0
@@ -366,6 +372,9 @@ catalogs:
     merge-descriptors:
       specifier: ^2.0.0
       version: 2.0.0
+    methods:
+      specifier: ^1.1.2
+      version: 1.1.2
     mm:
       specifier: ^4.0.2
       version: 4.0.2
@@ -411,6 +420,9 @@ catalogs:
     parseurl:
       specifier: ^1.3.3
       version: 1.3.3
+    path-to-regexp:
+      specifier: ^1.9.0
+      version: 1.9.0
     performance-ms:
       specifier: ^1.1.0
       version: 1.1.0
@@ -483,6 +495,9 @@ catalogs:
     typescript:
       specifier: 5.9.2
       version: 5.9.2
+    urijs:
+      specifier: ^1.19.11
+      version: 1.19.11
     urllib:
       specifier: ^4.8.2
       version: 4.8.2
@@ -1148,6 +1163,64 @@ importers:
       ylru:
         specifier: ^2.0.0
         version: 2.0.0
+
+  packages/router:
+    dependencies:
+      http-errors:
+        specifier: 'catalog:'
+        version: 2.0.0
+      inflection:
+        specifier: 'catalog:'
+        version: 3.0.2
+      is-type-of:
+        specifier: 'catalog:'
+        version: 2.2.0
+      koa-compose:
+        specifier: 'catalog:'
+        version: 4.1.0
+      methods:
+        specifier: 'catalog:'
+        version: 1.1.2
+      path-to-regexp:
+        specifier: 'catalog:'
+        version: 1.9.0
+      urijs:
+        specifier: 'catalog:'
+        version: 1.19.11
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/koa':
+        specifier: workspace:*
+        version: link:../koa
+      '@eggjs/supertest':
+        specifier: workspace:*
+        version: link:../supertest
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/http-errors':
+        specifier: 'catalog:'
+        version: 2.0.5
+      '@types/koa-compose':
+        specifier: 'catalog:'
+        version: 3.2.8
+      '@types/methods':
+        specifier: 'catalog:'
+        version: 1.1.4
+      '@types/urijs':
+        specifier: 'catalog:'
+        version: 1.19.25
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   packages/supertest:
     dependencies:
@@ -4279,6 +4352,9 @@ packages:
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==}
+
+  '@types/urijs@1.19.25':
+    resolution: {integrity: sha512-XOfUup9r3Y06nFAZh3WvO0rBU4OtlfPB/vgxpjg+NRdGU6CN6djdc6OEiH+PcqHCY6eFLo9Ista73uarf4gnBg==}
 
   '@types/vary@1.1.3':
     resolution: {integrity: sha512-XJT8/ZQCL7NUut9QDLf6l24JfAEl7bnNdgxfj50cHIpEPRJLHHDDFOAq6i+GsEmeFfH7NamhBE4c4Thtb2egWg==}
@@ -13907,6 +13983,8 @@ snapshots:
       '@types/node': 24.5.2
 
   '@types/unist@2.0.11': {}
+
+  '@types/urijs@1.19.25': {}
 
   '@types/vary@1.1.3':
     dependencies:
