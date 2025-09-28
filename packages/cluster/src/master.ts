@@ -25,7 +25,7 @@ import {
 import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.ts';
 import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
 
-const debug = debuglog('@eggjs/cluster/master');
+const debug = debuglog('egg/cluster/master');
 
 export interface MasterOptions extends ParsedClusterOptions {
   clusterPort?: number;

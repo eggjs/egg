@@ -2,7 +2,7 @@ import extend from 'extend';
 import type { MiddlewareFunc } from 'egg';
 
 import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 
 const HEADER = ['x-content-security-policy', 'content-security-policy'];
 const REPORT_ONLY_HEADER = ['x-content-security-policy-report-only', 'content-security-policy-report-only'];

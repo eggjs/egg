@@ -18,9 +18,3 @@ export default class ViewApplication extends Application {
     return this[VIEW];
   }
 }
-
-declare module 'egg' {
-  interface Application {
-    get view(): ViewManager;
-  }
-}

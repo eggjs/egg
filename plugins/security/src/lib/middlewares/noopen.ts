@@ -1,7 +1,7 @@
 import type { MiddlewareFunc } from 'egg';
 
 import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 
 // @see http://blogs.msdn.com/b/ieinternals/archive/2009/06/30/internet-explorer-custom-http-headers.aspx
 export default (options: SecurityConfig['noopen']): MiddlewareFunc => {

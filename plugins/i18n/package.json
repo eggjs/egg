@@ -33,6 +33,7 @@
     "./app/extend/context": "./src/app/extend/context.ts",
     "./config/config.default": "./src/config/config.default.ts",
     "./locales": "./src/locales.ts",
+    "./types": "./src/types.ts",
     "./utils": "./src/utils.ts",
     "./package.json": "./package.json"
   },
@@ -45,6 +46,7 @@
       "./app/extend/context": "./dist/app/extend/context.js",
       "./config/config.default": "./dist/config/config.default.js",
       "./locales": "./dist/locales.js",
+      "./types": "./dist/types.js",
       "./utils": "./dist/utils.js",
       "./package.json": "./package.json"
     }

@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs, { type FSWatcher, type WatchEventType } from 'node:fs';
 
 import { BaseEventSource } from './base.ts';
-import type { ChangeInfo } from '../types.ts';
+import type { ChangeInfo } from '../watcher.ts';
 
 const debug = debuglog('egg-watcher/lib/event-sources/development');
 

@@ -15,9 +15,9 @@
       "./lib/event-sources/base": "./dist/lib/event-sources/base.js",
       "./lib/event-sources/default": "./dist/lib/event-sources/default.js",
       "./lib/event-sources/development": "./dist/lib/event-sources/development.js",
-      "./lib/types": "./dist/lib/types.js",
       "./lib/utils": "./dist/lib/utils.js",
       "./lib/watcher": "./dist/lib/watcher.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -76,9 +76,9 @@
     "./lib/event-sources/base": "./src/lib/event-sources/base.ts",
     "./lib/event-sources/default": "./src/lib/event-sources/default.ts",
     "./lib/event-sources/development": "./src/lib/event-sources/development.ts",
-    "./lib/types": "./src/lib/types.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./lib/watcher": "./src/lib/watcher.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [

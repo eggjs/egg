@@ -4,11 +4,11 @@ import path from 'node:path';
 import { importResolve } from '@eggjs/utils';
 
 import type { EggScheduleItem } from '../../lib/types.ts';
-import Application from './application.ts';
+import ScheduleApplication from './application.ts';
 
 const debug = debuglog('egg/schedule/app');
 
-export default class ApplicationUnittest extends Application {
+export default class ScheduleApplicationUnittest extends ScheduleApplication {
   async runSchedule(schedulePath: string, ...args: any[]) {
     debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
     // for test purpose
@@ -55,11 +55,5 @@ export default class ApplicationUnittest extends Application {
     return await this.ctxStorage.run(ctx, async () => {
       return await schedule.task(ctx, ...args);
     });
-  }
-}
-
-declare module '@eggjs/mock' {
-  interface MockApplication {
-    runSchedule(schedulePath: string, ...args: any[]): Promise<any>;
   }
 }

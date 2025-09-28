@@ -86,11 +86,3 @@ export default class SecurityResponse extends Response {
     this.unsafeRedirect(url);
   }
 }
-
-declare module 'egg' {
-  // add Response overrides types
-  interface Response {
-    unsafeRedirect(url: string, alt?: string): void;
-    redirect(url: string, alt?: string): void;
-  }
-}

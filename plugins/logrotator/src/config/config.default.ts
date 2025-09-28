@@ -1,7 +1,3 @@
-/**
- * logrotator options
- * @member Config#logrotator
- */
 export interface LogrotatorConfig {
   /**
    * Disable rotate by day
@@ -72,10 +68,3 @@ export default {
     gzip: false,
   } as LogrotatorConfig,
 };
-
-declare module 'egg' {
-  // add EggAppConfig overrides types
-  interface EggAppConfig {
-    logrotator: LogrotatorConfig;
-  }
-}

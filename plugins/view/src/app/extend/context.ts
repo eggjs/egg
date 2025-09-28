@@ -52,12 +52,3 @@ export default class ViewContext extends Context {
     return this[VIEW];
   }
 }
-
-declare module 'egg' {
-  interface Context {
-    view: ContextView;
-    render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<void>;
-    renderView(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
-    renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
-  }
-}

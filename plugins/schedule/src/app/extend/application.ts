@@ -1,10 +1,10 @@
-import { Application as EggApplication } from 'egg';
+import { Application } from 'egg';
 
 import { ScheduleWorker } from '../../lib/schedule_worker.ts';
 
 const SCHEDULE_WORKER = Symbol('application scheduleWorker');
 
-export default class Application extends EggApplication {
+export default class ScheduleApplication extends Application {
   /**
    * @member app#schedule
    */
@@ -15,9 +15,4 @@ export default class Application extends EggApplication {
     }
     return scheduleWorker;
   }
-
-  /**
-   * For unittest only - run a specific schedule task
-   */
-  runSchedule?(schedulePath: string, ...args: any[]): Promise<any>;
 }

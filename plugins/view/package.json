@@ -10,8 +10,10 @@
       "./app/extend/context": "./dist/app/extend/context.js",
       "./config/config.default": "./dist/config/config.default.js",
       "./config/config.local": "./dist/config/config.local.js",
+      "./lib": "./dist/lib/index.js",
       "./lib/context_view": "./dist/lib/context_view.js",
       "./lib/view_manager": "./dist/lib/view_manager.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -22,8 +24,10 @@
     "./app/extend/context": "./src/app/extend/context.ts",
     "./config/config.default": "./src/config/config.default.ts",
     "./config/config.local": "./src/config/config.local.ts",
+    "./lib": "./src/lib/index.ts",
     "./lib/context_view": "./src/lib/context_view.ts",
     "./lib/view_manager": "./src/lib/view_manager.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [

@@ -1,7 +1,7 @@
 import type { MiddlewareFunc } from 'egg';
 
 import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 
 // Set Strict-Transport-Security header
 export default (options: SecurityConfig['hsts']): MiddlewareFunc => {

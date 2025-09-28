@@ -1,7 +1,7 @@
-import type { WatcherConfig } from '../lib/types.js';
+import type { PartialEggConfig } from 'egg';
 
 export default {
   watcher: {
     type: 'development',
-  } as WatcherConfig,
-};
+  },
+} as PartialEggConfig;

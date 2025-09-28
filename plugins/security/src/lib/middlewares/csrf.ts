@@ -4,7 +4,7 @@ import type { MiddlewareFunc } from 'egg';
 import typeis from 'type-is';
 
 import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 
 const debug = debuglog('egg/security/lib/middlewares/csrf');
 

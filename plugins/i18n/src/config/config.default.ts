@@ -1,7 +1,3 @@
-/**
- * I18n options
- * @member Config#i18n
- */
 export interface I18nConfig {
   /**
    * 默认语言是美式英语，毕竟支持多语言，基本都是以英语为母板
@@ -64,10 +60,3 @@ export default {
     dir: undefined,
   } as I18nConfig,
 };
-
-declare module 'egg' {
-  // add EggAppConfig overrides types
-  interface EggAppConfig {
-    i18n: I18nConfig;
-  }
-}

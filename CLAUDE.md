@@ -293,6 +293,69 @@ This configuration ensures:
 - **`dts: true`** - Generates TypeScript declaration files
 - **`exports.devExports: true`** - Enables development-friendly exports
 
+#### Standard Plugin TypeScript Types
+
+**IMPORTANT: All plugins MUST define a `src/types.ts` file** that extends the Egg module declarations:
+
+```typescript
+// plugins/[plugin-name]/src/types.ts
+import type { PluginConfig } from './config/config.default.ts';
+// Import other necessary types from the plugin
+
+declare module 'egg' {
+  // Extend EggAppConfig with plugin configuration
+  interface EggAppConfig {
+    [pluginName]: PluginConfig;
+  }
+
+  // Extend Application if the plugin adds application-level features
+  interface Application {
+    // Add application extensions
+  }
+
+  // Extend Context if the plugin adds context-level features
+  interface Context {
+    // Add context extensions
+  }
+
+  // Extend other interfaces as needed (Request, Response, Helper, etc.)
+}
+```
+
+Key requirements for plugin types:
+
+- **Must use module augmentation** - Extend the 'egg' module using `declare module 'egg'`
+- **Export configuration types** - Define and extend `EggAppConfig` with the plugin's configuration
+- **Extend appropriate interfaces** - Add type definitions to Application, Context, Request, Response, or Helper as needed
+- **Import from relative paths** - Use `.ts` extensions in imports for proper TypeScript resolution
+- **Document properties** - Add JSDoc comments for configuration properties
+
+Example from the view plugin:
+
+```typescript
+// plugins/view/src/types.ts
+import type { ViewConfig } from './config/config.default.ts';
+import type { ContextView } from './lib/context_view.ts';
+import type { RenderOptions, ViewManager } from './lib/view_manager.ts';
+
+declare module 'egg' {
+  interface EggAppConfig {
+    view: ViewConfig;
+  }
+
+  interface Application {
+    get view(): ViewManager;
+  }
+
+  interface Context {
+    view: ContextView;
+    render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<void>;
+    renderView(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
+    renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
+  }
+}
+```
+
 #### Standard Plugin package.json Configuration
 
 Plugins should configure their package.json following this pattern:
@@ -302,6 +365,7 @@ Plugins should configure their package.json following this pattern:
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./types": "./src/types.ts",
     "./agent": "./src/agent.ts",
     "./app": "./src/app.ts",
     "./package.json": "./package.json"
@@ -310,6 +374,7 @@ Plugins should configure their package.json following this pattern:
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./types": "./dist/types.js",
       "./agent": "./dist/agent.js",
       "./app": "./dist/app.js",
       "./package.json": "./package.json"

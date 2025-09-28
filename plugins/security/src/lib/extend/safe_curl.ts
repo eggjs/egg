@@ -1,6 +1,6 @@
 import type { EggApplicationCore } from 'egg';
 
-import type { SSRFCheckAddressFunction } from '../../types.ts';
+import type { SSRFCheckAddressFunction } from '../../config/config.default.ts';
 
 const SSRF_HTTPCLIENT = Symbol('SSRF_HTTPCLIENT');
 

@@ -6,4 +6,6 @@ export { Agent, Application, ApplicationUnittest };
 export { ScheduleWorker } from './lib/schedule_worker.ts';
 export { Schedule } from './lib/schedule.ts';
 
+import './types.ts';
+
 export * from './lib/types.ts';

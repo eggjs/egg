@@ -68,14 +68,6 @@ export default class I18nApplication extends Application {
   }
 }
 
-declare module 'egg' {
-  interface Application {
-    isSupportLocale(locale: string): boolean;
-    gettext(locale: string, key: string, value?: any, ...args: any[]): string;
-    __(locale: string, key: string, value?: any, ...args: any[]): string;
-  }
-}
-
 const ARRAY_INDEX_RE = /\{(\d+)\}/g;
 function formatWithArray(text: string, values: any[]) {
   return text.replace(ARRAY_INDEX_RE, (original, matched) => {

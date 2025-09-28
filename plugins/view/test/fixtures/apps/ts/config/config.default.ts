@@ -1,12 +1,14 @@
-import * as path from 'path';
-import { EggAppInfo, EggAppConfig, PowerPartial } from 'egg';
+import path from 'node:path';
 
-export default (appInfo: EggAppInfo) => {
-  const config = {} as PowerPartial<EggAppConfig>;
+import { defineConfigFactory, type PartialEggConfig } from 'egg';
+
+export default defineConfigFactory(appInfo => {
+  const config = {} as PartialEggConfig;
 
   config.keys = '123123';
 
   config.view = {
     root: path.resolve(appInfo.baseDir, './'),
   };
-};
+  return config;
+});

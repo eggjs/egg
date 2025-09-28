@@ -1,5 +1,7 @@
 import type { EggLogger } from 'egg';
-import type { EggScheduleConfig, EggScheduleJobInfo } from '../types.ts';
+
+import type { EggScheduleJobInfo } from '../types.ts';
+import type { EggScheduleConfig } from '../../config/config.default.ts';
 import type Agent from '../../app/extend/agent.ts';
 
 export class BaseStrategy {

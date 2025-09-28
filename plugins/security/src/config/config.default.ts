@@ -53,10 +53,6 @@ export type IgnoreOrMatch = z.infer<typeof IgnoreOrMatch>;
 const IgnoreOrMatchOption = z.union([IgnoreOrMatch, IgnoreOrMatch.array()]).optional();
 export type IgnoreOrMatchOption = z.infer<typeof IgnoreOrMatchOption>;
 
-/**
- * security options
- * @member Config#security
- */
 export const SecurityConfig = z.object({
   /**
    * domain white list

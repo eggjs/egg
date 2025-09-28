@@ -1,4 +1,4 @@
-import { Agent as EggAgent } from 'egg';
+import { Agent } from 'egg';
 
 import { BaseStrategy } from '../../lib/strategy/base.ts';
 import { TimerStrategy } from '../../lib/strategy/timer.ts';
@@ -6,7 +6,7 @@ import { Schedule } from '../../lib/schedule.ts';
 
 const SCHEDULE = Symbol('agent schedule');
 
-export default class Agent extends EggAgent {
+export default class ScheduleAgent extends Agent {
   /**
    * @member agent#ScheduleStrategy
    */
