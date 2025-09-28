@@ -122,7 +122,7 @@
     "@eggjs/core": "workspace:*",
     "@eggjs/development": "workspace:*",
     "@eggjs/extend2": "workspace:*",
-    "@eggjs/i18n": "catalog:",
+    "@eggjs/i18n": "workspace:*",
     "@eggjs/jsonp": "workspace:*",
     "@eggjs/logrotator": "workspace:*",
     "@eggjs/multipart": "workspace:*",

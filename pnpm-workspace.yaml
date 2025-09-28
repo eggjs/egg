@@ -8,7 +8,6 @@ packages:
 catalog:
   '@clack/prompts': ^0.11.0
   '@eggjs/compressible': ^3.0.0
-  '@eggjs/i18n': ^3.0.1
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/router': ^3.0.5
@@ -37,6 +36,7 @@ catalog:
   '@types/fresh': ^0.5.2
   '@types/fs-readdir-recursive': ^1.1.3
   '@types/http-errors': ^2.0.4
+  '@types/ini': ^4.1.1
   '@types/js-yaml': '4'
   '@types/koa-bodyparser': ^4.3.12
   '@types/koa-compose': ^3.2.8
@@ -116,6 +116,7 @@ catalog:
   http-errors: ^2.0.0
   humanize-ms: ^2.0.0
   husky: ^9.1.7
+  ini: ^5.0.0
   is-type-of: ^2.2.0
   jest-changed-files: ^30.0.0
   js-yaml: ^4.1.0
