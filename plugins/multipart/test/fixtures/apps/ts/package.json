@@ -1,3 +1,4 @@
 {
-  "name": "multipart-typescript-demo"
+  "name": "multipart-typescript-demo",
+  "type": "module"
 }

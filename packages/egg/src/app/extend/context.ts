@@ -301,29 +301,3 @@ export default class Context extends EggCoreContext {
     this.response.realStatus = val;
   }
 }
-
-declare module '@eggjs/core' {
-  // add Context overrides types
-  interface Context {
-    proxy: any;
-    performanceStarttime: number;
-    starttime: number;
-    runInBackground(scope: (ctx: Context) => Promise<void>, taskName?: string): void;
-    _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string): void;
-    get acceptJSON(): boolean;
-    get query(): Record<string, string>;
-    get queries(): Record<string, string[]>;
-    curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']>;
-    get router(): Router;
-    set router(val: Router);
-    get helper(): Helper;
-    get httpclient(): HttpClient;
-    get httpClient(): HttpClient;
-    getLogger(name: string): EggLogger;
-    get logger(): EggLogger;
-    get coreLogger(): EggLogger;
-    get locals(): Record<string, any>;
-    get realStatus(): number;
-    set realStatus(val: number);
-  }
-}
