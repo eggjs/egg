@@ -1,0 +1,9 @@
+{
+  "framework": "chair",
+  "generatorConfig": {
+    "service": {
+      "enabled": false
+    },
+    "extend": false
+  }
+}

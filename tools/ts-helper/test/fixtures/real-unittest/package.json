@@ -1,0 +1,6 @@
+{
+  "name": "real-app",
+  "nyc": {
+    "sourceMap": false
+  }
+}

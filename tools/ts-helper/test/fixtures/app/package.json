@@ -1,0 +1,6 @@
+{
+  "name": "app",
+  "dependencies": {
+    "egg-cors": "^2.0.0"
+  }
+}

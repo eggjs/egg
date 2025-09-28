@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "egg": [
+        "../../../node_modules/egg"
+      ],
+      "egg-mock": [
+        "../../../node_modules/egg-mock"
+      ]
+    }
+  },
+  "include": [
+    "./**/*"
+  ]
+}

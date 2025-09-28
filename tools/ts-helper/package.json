@@ -1,0 +1,89 @@
+{
+  "name": "@eggjs/ts-helper",
+  "version": "4.0.0-beta.16",
+  "description": "Egg TypeScript helper tool for generating declaration files",
+  "keywords": [
+    "egg",
+    "typescript",
+    "type",
+    "helper",
+    "declaration"
+  ],
+  "author": "wanghx",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/ts-helper",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tools/ts-helper"
+  },
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./register": "./register.js",
+    "./save_egg_info": "./save_egg_info.mjs",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./register": "./register.js",
+      "./save_egg_info": "./save_egg_info.mjs",
+      "./package.json": "./package.json"
+    }
+  },
+  "bin": {
+    "ets": "dist/bin.js"
+  },
+  "files": [
+    "dist",
+    "register.js",
+    "save_egg_info.mjs"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "chalk": "^4.0.0",
+    "chokidar": "^3.0.0",
+    "commander": "^2.15.1",
+    "dot-prop": "^5.3.0",
+    "enquirer": "^2.3.0",
+    "globby": "catalog:",
+    "json5": "^2.2.3",
+    "ts-node": "catalog:",
+    "tslib": "^2.6.1",
+    "typescript": "catalog:",
+    "yn": "^3.0.0"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@types/commander": "^2.12.2",
+    "@types/globby": "^6.1.0",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "egg-sequelize": "^4.3.1",
+    "@eggjs/extend2": "workspace:*",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "vitest": "catalog:"
+  }
+}

@@ -84,6 +84,9 @@
     },
     {
       "path": "./tools/create-egg"
+    },
+    {
+      "path": "./tools/ts-helper"
     }
   ]
 }

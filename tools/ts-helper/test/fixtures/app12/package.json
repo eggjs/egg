@@ -1,0 +1,12 @@
+{
+  "name": "app",
+  "egg": {
+    "tsHelper": {
+      "generatorConfig.model.enabled": false,
+      "generatorConfig.service": false,
+      "generatorConfig.dal": {
+        "interface": "IDAL2"
+      }
+    }
+  }
+}

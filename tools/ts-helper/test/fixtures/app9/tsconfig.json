@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "jsx": "react",
+  },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "node_modules/"
+  ]
+}

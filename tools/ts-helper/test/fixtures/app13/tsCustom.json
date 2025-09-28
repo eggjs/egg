@@ -1,0 +1,6 @@
+{
+  "generatorConfig.dal": {
+    "directory": "app/dal/dao",
+    "caseStyle": "upper"
+  }
+}

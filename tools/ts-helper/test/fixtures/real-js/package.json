@@ -1,0 +1,6 @@
+{
+  "name": "real-js-app",
+  "dependencies": {
+    "egg-ts-helper": "../../../"
+  }
+}

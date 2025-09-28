@@ -1,0 +1,6 @@
+{
+  "name": "app",
+  "egg": {
+    "framework": "larva"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "app",
+  "egg": {
+    "tsHelper": {
+      "framework": "larva"
+    }
+  }
+}
