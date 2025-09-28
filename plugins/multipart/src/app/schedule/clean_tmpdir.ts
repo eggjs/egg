@@ -1,9 +1,10 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import dayjs from 'dayjs';
-import { EggCore } from '@eggjs/core';
 
-export default (app: EggCore): any => {
+import dayjs from 'dayjs';
+import { Application } from 'egg';
+
+export default (app: Application) => {
   return class CleanTmpdir extends app.Subscription {
     static get schedule() {
       return {

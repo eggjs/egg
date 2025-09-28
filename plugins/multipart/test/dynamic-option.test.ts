@@ -1,28 +1,30 @@
-import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
+
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
+
+import { getFixtures } from './utils.ts';
 
 describe('test/dynamic-option.test.ts', () => {
   let app: MockApplication;
   let server: any;
   let host: string;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/dynamic-option',
+      baseDir: getFixtures('apps/dynamic-option'),
     });
-    return app.ready();
-  });
-  before(() => {
+    await app.ready();
     server = app.listen();
     host = 'http://127.0.0.1:' + server.address().port;
   });
-  after(() => {
-    return fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+
+  afterAll(async () => {
+    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
   });
-  after(() => app.close());
-  after(() => server.close());
+  afterAll(() => app.close());
+  afterAll(() => server.close());
   beforeEach(() => app.mockCsrf());
   afterEach(() => mm.restore());
 
@@ -38,7 +40,7 @@ describe('test/dynamic-option.test.ts', () => {
       // dataType: 'json',
     });
 
-    assert.equal(res.status, 413);
-    assert.match(res.data.toString(), /Error: Reach fileSize limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/LimitError: Reach fileSize limit/);
   });
 });

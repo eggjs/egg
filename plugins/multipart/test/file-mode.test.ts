@@ -1,35 +1,37 @@
-import assert from 'node:assert';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
-import { mm, mock, MockApplication } from '@eggjs/mock';
+
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
+import { mm, mock, type MockApplication } from '@eggjs/mock';
 import dayjs from 'dayjs';
 import formstream from 'formstream';
 import urllib from 'urllib';
 
+import { getFixtures } from './utils.ts';
+
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 describe('test/file-mode.test.ts', () => {
   let app: MockApplication;
   let server: any;
   let host: string;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/file-mode',
+      baseDir: getFixtures('apps/file-mode'),
     });
-    return app.ready();
+    await app.ready();
   });
-  before(() => {
+  beforeAll(() => {
     server = app.listen();
     host = 'http://127.0.0.1:' + server.address().port;
   });
-  after(() => {
-    return fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+  afterAll(async () => {
+    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
   });
-  after(() => app.close());
-  after(() => server.close());
+  afterAll(() => app.close());
+  afterAll(() => server.close());
   beforeEach(() => app.mockCsrf());
   afterEach(mm.restore);
 
@@ -38,8 +40,8 @@ describe('test/file-mode.test.ts', () => {
       foo: 'bar',
       n: 1,
     });
-    assert(res.status === 200);
-    assert.deepStrictEqual(res.body, {
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
       body: {
         foo: 'bar',
         n: 1,
@@ -54,7 +56,7 @@ describe('test/file-mode.test.ts', () => {
     form.file('file2', __filename);
     // will ignore empty file
     form.buffer('file3', Buffer.from(''), '', 'application/octet-stream');
-    form.file('bigfile', path.join(__dirname, 'fixtures', 'bigfile.txt'));
+    form.file('bigfile', getFixtures('bigfile.txt'));
     // other form fields
     form.field('work', 'with Node.js');
 
@@ -65,30 +67,30 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert.deepStrictEqual(data.body, { foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
-    assert(data.files.length === 3);
-    assert(data.files[0].field === 'file1');
-    assert.equal(data.files[0].filename, 'foooooooo.js');
-    assert(data.files[0].encoding === '7bit');
-    assert(data.files[0].mime === 'application/javascript');
-    assert(data.files[0].filepath.startsWith(app.config.multipart.tmpdir));
+    expect(data.body).toEqual({ foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    expect(data.files.length).toBe(3);
+    expect(data.files[0].field).toBe('file1');
+    expect(data.files[0].filename).toBe('foooooooo.js');
+    expect(data.files[0].encoding).toBe('7bit');
+    expect(data.files[0].mime).toBe('application/javascript');
+    expect(data.files[0].filepath.startsWith(app.config.multipart.tmpdir)).toBe(true);
 
-    assert(data.files[1].field === 'file2');
-    assert(data.files[1].fieldname === 'file2');
-    assert.equal(data.files[1].filename, 'file-mode.test.ts');
-    assert(data.files[1].encoding === '7bit');
-    assert(data.files[1].transferEncoding === '7bit');
-    assert.equal(data.files[1].mime, 'video/mp2t');
-    assert.equal(data.files[1].mimeType, 'video/mp2t');
-    assert(data.files[1].filepath.startsWith(app.config.multipart.tmpdir));
+    expect(data.files[1].field).toBe('file2');
+    expect(data.files[1].fieldname).toBe('file2');
+    expect(data.files[1].filename).toBe('file-mode.test.ts');
+    expect(data.files[1].encoding).toBe('7bit');
+    expect(data.files[1].transferEncoding).toBe('7bit');
+    expect(data.files[1].mime).toBe('video/mp2t');
+    expect(data.files[1].mimeType).toBe('video/mp2t');
+    expect(data.files[1].filepath.startsWith(app.config.multipart.tmpdir)).toBe(true);
 
-    assert(data.files[2].field === 'bigfile');
-    assert.equal(data.files[2].filename, 'bigfile.txt');
-    assert(data.files[2].encoding === '7bit');
-    assert.equal(data.files[2].mime, 'application/javascript');
-    assert(data.files[2].filepath.startsWith(app.config.multipart.tmpdir));
+    expect(data.files[2].field).toBe('bigfile');
+    expect(data.files[2].filename).toBe('bigfile.txt');
+    expect(data.files[2].encoding).toBe('7bit');
+    expect(data.files[2].mime).toBe('text/plain');
+    expect(data.files[2].filepath.startsWith(app.config.multipart.tmpdir)).toBe(true);
   });
 
   it('should 200 when file size just 10mb', async () => {
@@ -100,16 +102,16 @@ describe('test/file-mode.test.ts', () => {
       headers,
       stream: form as any,
     });
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert.equal(data.files.length, 1);
-    assert.equal(data.files[0].field, 'file');
-    assert.equal(data.files[0].filename, '10mb.js');
-    assert.equal(data.files[0].encoding, '7bit');
-    assert.equal(data.files[0].mime, 'application/octet-stream');
-    assert(data.files[0].filepath.startsWith(app.config.multipart.tmpdir));
+    expect(data.files.length).toBe(1);
+    expect(data.files[0].field).toBe('file');
+    expect(data.files[0].filename).toBe('10mb.js');
+    expect(data.files[0].encoding).toBe('7bit');
+    expect(data.files[0].mime).toBe('application/octet-stream');
+    expect(data.files[0].filepath.startsWith(app.config.multipart.tmpdir)).toBe(true);
     const stat = await fs.stat(data.files[0].filepath);
-    assert.equal(stat.size, 10 * 1024 * 1024 - 1);
+    expect(stat.size).toBe(10 * 1024 * 1024 - 1);
   });
 
   it('should 200 when field size just 100kb', async () => {
@@ -123,9 +125,9 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert(data.body.foo === 'a'.repeat(100 * 1024 - 1));
+    expect(data.body.foo).toBe('a'.repeat(100 * 1024 - 1));
   });
 
   it('should 200 when request fields equal 10', async () => {
@@ -141,9 +143,9 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert(Object.keys(data.body).length === 10);
+    expect(Object.keys(data.body).length).toBe(10);
   });
 
   it('should 200 when request files equal 10', async () => {
@@ -159,16 +161,16 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert(data.files.length === 10);
+    expect(data.files.length).toBe(10);
   });
 
   it('should handle non-ascii filename', async () => {
-    const file = path.join(__dirname, 'fixtures', '中文名.js');
+    const file = getFixtures('中文名.js');
     const res = await app.httpRequest().post('/upload').attach('file', file);
-    assert(res.status === 200);
-    assert(res.body.files[0].filename === '中文名.js');
+    expect(res.status).toBe(200);
+    expect(res.body.files[0].filename).toBe('中文名.js');
   });
 
   it('should throw error when request fields limit', async () => {
@@ -184,8 +186,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 413);
-    assert.match(res.data.toString(), /Error: Reach fields limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/Error: Reach fields limit/);
   });
 
   it('should throw error when request files limit', async () => {
@@ -202,8 +204,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 413);
-    assert.match(res.data.toString(), /Error: Reach files limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/Error: Reach files limit/);
   });
 
   it('should throw error when request field size limit', async () => {
@@ -217,8 +219,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 413);
-    assert.match(res.data.toString(), /Error: Reach fieldSize limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/Error: Reach fieldSize limit/);
   });
 
   // fieldNameSize is TODO on busboy
@@ -234,8 +236,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 413);
-    assert.match(res.data.toString(), /Error: Reach fieldSize limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/Error: Reach fieldSize limit/);
   });
 
   it('should throw error when request file size limit', async () => {
@@ -244,7 +246,7 @@ describe('test/file-mode.test.ts', () => {
     form.file('file1', __filename, 'foooooooo.js');
     form.file('file2', __filename);
     form.buffer('file3', Buffer.alloc(10 * 1024 * 1024 + 1), 'toobigfile.txt', 'application/octet-stream');
-    form.file('bigfile', path.join(__dirname, 'fixtures', 'bigfile.txt'));
+    form.file('bigfile', getFixtures('bigfile.txt'));
     // other form fields
     const headers = form.headers();
     const res = await urllib.request(host + '/upload', {
@@ -253,8 +255,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 413);
-    assert.match(res.data.toString(), /Error: Reach fileSize limit/);
+    expect(res.status).toBe(413);
+    expect(res.data.toString()).toMatch(/Error: Reach fileSize limit/);
   });
 
   it('should throw error when file name invalid', async () => {
@@ -272,8 +274,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 400);
-    assert(res.data.toString().includes('Error: Invalid filename: foooooooo.js.rar'));
+    expect(res.status).toBe(400);
+    expect(res.data.toString()).toMatch(/Error: Invalid filename: foooooooo.js.rar/);
   });
 
   it('should throw error on multipart() invoke twice', async () => {
@@ -290,8 +292,8 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert.equal(res.status, 500);
-    assert(res.data.toString().includes("the multipart request can't be consumed twice"));
+    expect(res.status).toBe(500);
+    expect(res.data.toString()).toMatch(/the multipart request can't be consumed twice/);
   });
 
   it('should use cleanupRequestFiles after request end', async () => {
@@ -308,9 +310,9 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert(data.files.length === 1);
+    expect(data.files.length).toBe(1);
   });
 
   it('should use cleanupRequestFiles in async way', async () => {
@@ -327,9 +329,9 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
     });
 
-    assert(res.status === 200);
+    expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    assert(data.files.length === 1);
+    expect(data.files.length).toBe(1);
   });
 
   describe('schedule/clean_tmpdir', () => {
@@ -337,12 +339,12 @@ describe('test/file-mode.test.ts', () => {
       // [egg-schedule]: register schedule /hello/egg-multipart/app/schedule/clean_tmpdir.js
       const logger = app.loggers.scheduleLogger;
       const content = await fs.readFile(logger.options.file, 'utf8');
-      assert.match(content, /\[@eggjs\/schedule\]: register schedule .+clean_tmpdir\.ts/);
+      expect(content).toMatch(/\[@eggjs\/schedule\]: register schedule .+clean_tmpdir\.ts/);
     });
 
     it('should remove nothing', async () => {
       app.mockLog();
-      await app.runSchedule(path.join(__dirname, '../src/app/schedule/clean_tmpdir'));
+      await app.runSchedule(path.join(import.meta.dirname, '../src/app/schedule/clean_tmpdir'));
       await scheduler.wait(1000);
       app.expectLog('[@eggjs/multipart:CleanTmpdir] start clean tmpdir: "', 'coreLogger');
       app.expectLog('[@eggjs/multipart:CleanTmpdir] end', 'coreLogger');
@@ -383,20 +385,20 @@ describe('test/file-mode.test.ts', () => {
       );
 
       app.mockLog();
-      await app.runSchedule(path.join(__dirname, '../src/app/schedule/clean_tmpdir'));
+      await app.runSchedule(path.join(import.meta.dirname, '../src/app/schedule/clean_tmpdir'));
       for (const dir of oldDirs) {
         const exists = await fs
           .access(dir)
           .then(() => true)
           .catch(() => false);
-        assert(!exists, dir);
+        expect(exists).toBe(false);
       }
       for (const dir of shouldKeepDirs) {
         const exists = await fs
           .access(dir)
           .then(() => true)
           .catch(() => false);
-        assert(exists, dir);
+        expect(exists).toBe(true);
       }
       app.expectLog('[@eggjs/multipart:CleanTmpdir] removing tmpdir: "', 'coreLogger');
       app.expectLog('[@eggjs/multipart:CleanTmpdir:success] tmpdir: "', 'coreLogger');
@@ -416,7 +418,7 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
       dataType: 'json',
     });
-    assert.deepStrictEqual(res.data.body, { foo: 'egg' });
+    expect(res.data.body).toEqual({ foo: 'egg' });
   });
 
   it('should allow array field', async () => {
@@ -432,6 +434,6 @@ describe('test/file-mode.test.ts', () => {
       stream: form as any,
       dataType: 'json',
     });
-    assert.deepStrictEqual(res.data.body, { foo: ['fengmk2', 'like', 'egg'] });
+    expect(res.data.body).toEqual({ foo: ['fengmk2', 'like', 'egg'] });
   });
 });

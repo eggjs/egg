@@ -1,7 +1,8 @@
 import path from 'node:path';
 import assert from 'node:assert';
+
 import bytes from 'bytes';
-import { MultipartConfig } from '../config/config.default.js';
+import type { MultipartConfig } from '../config/config.default.ts';
 
 export const whitelist = [
   // images

@@ -36,6 +36,9 @@
     "./app/middleware/multipart": "./src/app/middleware/multipart.ts",
     "./app/schedule/clean_tmpdir": "./src/app/schedule/clean_tmpdir.ts",
     "./config/config.default": "./src/config/config.default.ts",
+    "./lib/LimitError": "./src/lib/LimitError.ts",
+    "./lib/MultipartFileTooLargeError": "./src/lib/MultipartFileTooLargeError.ts",
+    "./lib/utils": "./src/lib/utils.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -47,6 +50,9 @@
       "./app/middleware/multipart": "./dist/app/middleware/multipart.js",
       "./app/schedule/clean_tmpdir": "./dist/app/schedule/clean_tmpdir.js",
       "./config/config.default": "./dist/config/config.default.js",
+      "./lib/LimitError": "./dist/lib/LimitError.js",
+      "./lib/MultipartFileTooLargeError": "./dist/lib/MultipartFileTooLargeError.js",
+      "./lib/utils": "./dist/lib/utils.js",
       "./package.json": "./package.json"
     }
   },
@@ -60,7 +66,6 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/core": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/schedule": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
@@ -68,8 +73,6 @@
     "@types/node": "catalog:",
     "formstream": "catalog:",
     "is-type-of": "catalog:",
-    "oxlint": "catalog:",
-    "rimraf": "catalog:",
     "stream-wormhole": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
@@ -78,7 +81,6 @@
   },
   "scripts": {
     "build": "tsdown",
-    "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
@@ -87,5 +89,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }

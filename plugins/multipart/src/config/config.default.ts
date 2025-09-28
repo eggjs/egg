@@ -1,6 +1,7 @@
 import os from 'node:os';
 import path from 'node:path';
-import type { Context, EggAppInfo } from '@eggjs/core';
+
+import type { Context, EggAppInfo } from 'egg';
 import type { PathMatchingPattern } from 'egg-path-matching';
 
 export type MatchItem = string | RegExp | ((ctx: Context) => boolean);
@@ -81,7 +82,7 @@ export interface MultipartConfig {
     /**
      * The cron expression for the schedule.
      * Default is `0 30 4 * * *`
-     * @see https://github.com/eggjs/egg-schedule#cron-style-scheduling
+     * @see https://github.com/eggjs/egg/tree/next/plugins/schedule#cron-style-scheduling
      */
     cron: string;
     /**
@@ -116,7 +117,7 @@ export default (appInfo: EggAppInfo) => {
   };
 };
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     multipart: MultipartConfig;

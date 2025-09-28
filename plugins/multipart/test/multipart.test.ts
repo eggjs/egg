@@ -1,30 +1,28 @@
-import path from 'node:path';
 import fs from 'node:fs/promises';
-import assert from 'node:assert';
-import { fileURLToPath } from 'node:url';
 import { scheduler } from 'node:timers/promises';
+
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { getFixtures } from './utils.ts';
 
 describe('test/multipart.test.ts', () => {
   describe('multipart', () => {
     let app: MockApplication;
     let server: any;
     let host: string;
-    before(async () => {
+    beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/multipart',
+        baseDir: getFixtures('apps/multipart'),
       });
       await app.ready();
       server = app.listen();
       host = 'http://127.0.0.1:' + server.address().port;
     });
-    after(() => app.close());
-    after(() => server.close());
+    afterAll(() => app.close());
+    afterAll(() => server.close());
     beforeEach(() => app.mockCsrf());
     afterEach(mm.restore);
 
@@ -33,14 +31,14 @@ describe('test/multipart.test.ts', () => {
         await app.runSchedule('clean_tmpdir');
         throw new Error('should not run this');
       } catch (err: any) {
-        assert.equal(err.message, '[@eggjs/schedule] Cannot find schedule clean_tmpdir');
+        expect(err.message).toBe('[@eggjs/schedule] Cannot find schedule clean_tmpdir');
       }
     });
 
     it('should alway register clean_tmpdir schedule in stream mode', async () => {
       const logger = app.loggers.scheduleLogger;
       const content = await fs.readFile(logger.options.file, 'utf8');
-      assert.match(content, /\[@eggjs\/schedule\]: register schedule .+clean_tmpdir\.ts/);
+      expect(content).toMatch(/\[@eggjs\/schedule\]: register schedule .+clean_tmpdir\.ts/);
     });
 
     it('should upload with csrf', async () => {
@@ -57,9 +55,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert.equal(res.status, 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert.equal(data.filename, 'multipart.test.ts');
+      expect(data.filename).toBe('multipart.test.ts');
     });
 
     it('should upload.json with ctoken', async () => {
@@ -76,9 +74,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert.equal(res.status, 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert.equal(data.filename, 'multipart.test.ts');
+      expect(data.filename).toBe('multipart.test.ts');
     });
 
     it('should handle unread stream and return error response', async () => {
@@ -95,13 +93,13 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert.match(res.data.toString(), /ENOENT:/);
+      expect(res.data.toString()).toMatch(/ENOENT:/);
     });
 
     it('should auto consumed file stream on error throw', async () => {
       for (let i = 0; i < 10; i++) {
         const form = formstream();
-        form.file('file', path.join(__dirname, 'fixtures/bigfile.txt'));
+        form.file('file', getFixtures('bigfile.txt'));
 
         const headers = form.headers();
         const url = host + '/upload?mock_undefined_error=1';
@@ -112,9 +110,9 @@ describe('test/multipart.test.ts', () => {
           dataType: 'json',
         });
 
-        assert(result.status === 500);
+        expect(result.status).toBe(500);
         const data = result.data;
-        assert(data.message === 'part.foo is not a function');
+        expect(data.message).toBe('part.foo is not a function');
         await scheduler.wait(100);
       }
     });
@@ -129,9 +127,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 400);
+      expect(res.status).toBe(400);
       const data = JSON.parse(res.data);
-      assert(data.message === 'Invalid filename: foo.rar');
+      expect(data.message).toBe('Invalid filename: foo.rar');
     });
 
     it('should not throw 400 when file not speicified', async () => {
@@ -145,9 +143,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.message === 'no file');
+      expect(data.message).toBe('no file');
     });
 
     it('should not throw 400 when file stream empty', async () => {
@@ -162,9 +160,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.message === 'no file');
+      expect(data.message).toBe('no file');
     });
 
     it('should upload when extname speicified in fileExtensions', async () => {
@@ -177,9 +175,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar.foo');
+      expect(data.filename).toBe('bar.foo');
     });
 
     it('should upload when extname speicified in fileExtensions and extname is in upper case', async () => {
@@ -192,9 +190,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar.BAR');
+      expect(data.filename).toBe('bar.BAR');
     });
 
     it('should upload when extname speicified in fileExtensions and extname is missing dot', async () => {
@@ -207,9 +205,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar.abc');
+      expect(data.filename).toBe('bar.abc');
     });
 
     it('should upload when extname is not speicified', async () => {
@@ -222,9 +220,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar');
+      expect(data.filename).toBe('bar');
     });
 
     it('should 400 upload with wrong content-type', async () => {
@@ -232,8 +230,8 @@ describe('test/multipart.test.ts', () => {
         method: 'POST',
       });
 
-      assert(res.status === 400);
-      assert(/Content-Type must be multipart/.test(res.data));
+      expect(res.status).toBe(400);
+      expect(res.data.toString()).toMatch(/Content-Type must be multipart/);
     });
 
     it('should 400 upload.json with wrong content-type', async () => {
@@ -242,8 +240,8 @@ describe('test/multipart.test.ts', () => {
         dataType: 'json',
       });
 
-      assert(res.status === 400);
-      assert(res.data.message === 'Content-Type must be multipart/*');
+      expect(res.status).toBe(400);
+      expect(res.data.message).toBe('Content-Type must be multipart/*');
     });
   });
 
@@ -251,16 +249,16 @@ describe('test/multipart.test.ts', () => {
     let app: MockApplication;
     let server: any;
     let host: string;
-    before(async () => {
+    beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/multipart-with-whitelist',
+        baseDir: getFixtures('apps/multipart-with-whitelist'),
       });
       await app.ready();
       server = app.listen();
       host = 'http://127.0.0.1:' + server.address().port;
     });
-    after(() => app.close());
-    after(() => server.close());
+    afterAll(() => app.close());
+    afterAll(() => server.close());
     beforeEach(() => app.mockCsrf());
     afterEach(mm.restore);
 
@@ -274,9 +272,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar.whitelist');
+      expect(data.filename).toBe('bar.whitelist');
     });
 
     it('should upload when extname speicified in whitelist and extname is in upper case', async () => {
@@ -289,9 +287,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar.WHITELIST');
+      expect(data.filename).toBe('bar.WHITELIST');
     });
 
     it('should throw 400 when extname speicified in fileExtensions, but not in whitelist', async () => {
@@ -304,9 +302,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 400);
+      expect(res.status).toBe(400);
       const data = JSON.parse(res.data);
-      assert(data.message === 'Invalid filename: foo.foo');
+      expect(data.message).toBe('Invalid filename: foo.foo');
     });
   });
 
@@ -314,16 +312,16 @@ describe('test/multipart.test.ts', () => {
     let app: MockApplication;
     let server: any;
     let host: string;
-    before(async () => {
+    beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/whitelist-function',
+        baseDir: getFixtures('apps/whitelist-function'),
       });
       await app.ready();
       server = app.listen();
       host = 'http://127.0.0.1:' + server.address().port;
     });
-    after(() => app.close());
-    after(() => server.close());
+    afterAll(() => app.close());
+    afterAll(() => server.close());
     beforeEach(() => app.mockCsrf());
     afterEach(mm.restore);
 
@@ -337,9 +335,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 200);
+      expect(res.status).toBe(200);
       const data = JSON.parse(res.data);
-      assert(data.filename === 'bar');
+      expect(data.filename).toBe('bar');
     });
 
     it('should throw 400 when extname not match whitelist function', async () => {
@@ -352,9 +350,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 400);
+      expect(res.status).toBe(400);
       const data = JSON.parse(res.data);
-      assert(data.message === 'Invalid filename: foo.png');
+      expect(data.message).toBe('Invalid filename: foo.png');
     });
 
     it('should throw 400 when whitelist function throw error', async () => {
@@ -367,9 +365,9 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 400);
+      expect(res.status).toBe(400);
       const data = JSON.parse(res.data);
-      assert(data.message === 'mock checkExt error');
+      expect(data.message).toBe('mock checkExt error');
     });
   });
 
@@ -377,19 +375,19 @@ describe('test/multipart.test.ts', () => {
     let app: MockApplication;
     let server: any;
     let host: string;
-    before(async () => {
+    beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/upload-one-file',
+        baseDir: getFixtures('apps/upload-one-file'),
       });
       await app.ready();
       server = app.listen();
       host = 'http://127.0.0.1:' + server.address().port;
     });
-    before(async () => {
+    beforeAll(async () => {
       await app.httpRequest().get('/upload').expect(200);
     });
-    after(() => app.close());
-    after(() => server.close());
+    afterAll(() => app.close());
+    afterAll(() => server.close());
     beforeEach(() => app.mockCsrf());
     afterEach(mm.restore);
 
@@ -408,14 +406,14 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert.deepEqual(data.fields, {
+      expect(data.fields).toEqual({
         '[': 'toString',
         ']': 'toString',
         foo: 'bar',
       });
-      assert(data.status === 200);
-      assert(typeof data.name === 'string');
-      assert(data.url.includes('http://mockoss.com/egg-multipart-test/'));
+      expect(data.status).toBe(200);
+      expect(typeof data.name).toBe('string');
+      expect(data.url).toContain('http://mockoss.com/egg-multipart-test/');
     });
 
     it('should handle one upload file in simple way with async function controller', async () => {
@@ -432,10 +430,10 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert.deepEqual(data.fields, {});
-      assert(data.status === 200);
-      assert(typeof data.name === 'string');
-      assert(data.url.includes('http://mockoss.com/egg-multipart-test/'));
+      expect(data.fields).toEqual({});
+      expect(data.status).toBe(200);
+      expect(typeof data.name).toBe('string');
+      expect(data.url).toContain('http://mockoss.com/egg-multipart-test/');
     });
 
     it('should handle one upload file and all fields', async () => {
@@ -454,18 +452,18 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert(res.status === 200);
-      assert(data.status === 200);
-      assert(typeof data.name === 'string');
-      assert(data.url.includes('http://mockoss.com/egg-multipart-test/'));
-      assert.deepEqual(data.fields, {
+      expect(res.status).toBe(200);
+      expect(data.status).toBe(200);
+      expect(typeof data.name).toBe('string');
+      expect(data.url).toContain('http://mockoss.com/egg-multipart-test/');
+      expect(data.fields).toEqual({
         f1: 'f1-value',
         f2: 'f2-value-中文',
       });
     });
 
     it('should handle non-ascii filename', async () => {
-      const file = path.join(__dirname, 'fixtures', '中文名.js');
+      const file = getFixtures('中文名.js');
       const form = formstream();
       form.file('file', file);
 
@@ -479,7 +477,7 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert(data.name.includes('中文名'));
+      expect(data.name.includes('中文名')).toBe(true);
     });
 
     it('should 400 when no file upload', async () => {
@@ -494,8 +492,8 @@ describe('test/multipart.test.ts', () => {
         stream: form as any,
       });
 
-      assert(res.status === 400);
-      assert(res.data.toString().includes("Can't found upload file"));
+      expect(res.status).toBe(400);
+      expect(res.data.toString()).toContain("Can't found upload file");
     });
 
     it('should no file upload and only fields', async () => {
@@ -512,8 +510,8 @@ describe('test/multipart.test.ts', () => {
         dataType: 'json',
       });
 
-      assert(res.status === 200);
-      assert.deepEqual(res.data, {
+      expect(res.status).toBe(200);
+      expect(res.data).toEqual({
         fields: {
           hi: 'ok',
           hi2: 'ok2',
@@ -531,14 +529,14 @@ describe('test/multipart.test.ts', () => {
         headers,
         stream: form as any,
       });
-      assert(res.status === 400);
-      assert(res.data.toString().includes("Can't found upload file"));
+      expect(res.status).toBe(400);
+      expect(res.data.toString()).toContain("Can't found upload file");
     });
 
     it('should auto consumed file stream on error throw', async () => {
       for (let i = 0; i < 10; i++) {
         const form = formstream();
-        form.file('file', path.join(__dirname, 'fixtures/bigfile.txt'));
+        form.file('file', getFixtures('bigfile.txt'));
 
         const headers = form.headers();
         const url = host + '/upload/async?foo=error';
@@ -549,9 +547,9 @@ describe('test/multipart.test.ts', () => {
           dataType: 'json',
         });
 
-        assert(result.status === 500);
+        expect(result.status).toBe(500);
         const data = result.data;
-        assert(data.message === 'stream.foo is not a function');
+        expect(data.message).toBe('stream.foo is not a function');
         await scheduler.wait(100);
       }
     });
@@ -568,9 +566,9 @@ describe('test/multipart.test.ts', () => {
         dataType: 'json',
       });
 
-      assert(result.status === 413);
+      expect(result.status).toBe(413);
       const data = result.data;
-      assert(data.message.includes('Request file too large'));
+      expect(data.message).toContain('Request file too large');
     });
 
     it('should file hit limits fileSize (byte)', async () => {
@@ -586,9 +584,9 @@ describe('test/multipart.test.ts', () => {
         dataType: 'json',
       });
 
-      assert(result.status === 413);
+      expect(result.status).toBe(413);
       const data = result.data;
-      assert(data.message.includes('Request file too large'));
+      expect(data.message).toContain('Request file too large');
     });
   });
 
@@ -596,10 +594,10 @@ describe('test/multipart.test.ts', () => {
     let app: MockApplication;
     let server: any;
     let host: string;
-    const bigfile = path.join(__dirname, 'big.js');
-    before(async () => {
+    const bigfile = getFixtures('big.js');
+    beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/upload-limit',
+        baseDir: getFixtures('apps/upload-limit'),
       });
       await app.ready();
       await fs.writeFile(bigfile, Buffer.alloc(1024 * 1024 * 2));
@@ -607,7 +605,7 @@ describe('test/multipart.test.ts', () => {
       host = 'http://127.0.0.1:' + server.address().port;
       await app.httpRequest().get('/upload').expect(200);
     });
-    after(async () => {
+    afterAll(async () => {
       await fs.rm(bigfile, { force: true });
       server.close();
       await app.close();
@@ -630,10 +628,10 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert.equal(res.status, 413);
-      assert(data.message.includes('Request file too large'));
+      expect(res.status).toBe(413);
+      expect(data.message).toContain('Request file too large');
       const content = await fs.readFile(app.coreLogger.options.file, 'utf-8');
-      assert(content.includes('nodejs.MultipartFileTooLargeError: Request file too large'));
+      expect(content).toContain('nodejs.MultipartFileTooLargeError: Request file too large');
       // app.expectLog('nodejs.MultipartFileTooLargeError: Request file too large', 'coreLogger');
     });
 
@@ -652,8 +650,8 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert.equal(res.status, 200);
-      assert(data.url);
+      expect(res.status).toBe(200);
+      expect(data.url).toBeDefined();
 
       app.expectLog('nodejs.MultipartFileTooLargeError: Request file too large', 'coreLogger');
       app.expectLog(/filename: ['"]not-handle-error-event.js['"]/, 'coreLogger');
@@ -674,8 +672,8 @@ describe('test/multipart.test.ts', () => {
       });
 
       const data = res.data;
-      assert(res.status === 200);
-      assert(data.url);
+      expect(res.status).toBe(200);
+      expect(data.url).toBeDefined();
 
       app.expectLog('nodejs.MultipartFileTooLargeError: Request file too large', 'coreLogger');
       app.expectLog(/filename: ['"]not-handle-error-event-and-mock-stream-error.js['"]/, 'coreLogger');

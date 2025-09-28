@@ -15,9 +15,6 @@ catalogs:
     '@eggjs/ip':
       specifier: ^2.1.0
       version: 2.1.0
-    '@eggjs/multipart':
-      specifier: ^4.0.0
-      version: 4.0.0
     '@eggjs/redis':
       specifier: ^3.0.0
       version: 3.1.0
@@ -57,6 +54,9 @@ catalogs:
     '@types/body-parser':
       specifier: ^1.19.5
       version: 1.19.6
+    '@types/bytes':
+      specifier: ^3.1.5
+      version: 3.1.5
     '@types/content-disposition':
       specifier: ^0.5.8
       version: 0.5.9
@@ -168,6 +168,9 @@ catalogs:
     body-parser:
       specifier: ^2.0.0
       version: 2.2.0
+    bytes:
+      specifier: ^3.1.2
+      version: 3.1.2
     c8:
       specifier: 10.1.3
       version: 10.1.3
@@ -192,6 +195,9 @@ catalogs:
     cluster-reload:
       specifier: ^2.0.0
       version: 2.0.0
+    co-busboy:
+      specifier: ^2.0.1
+      version: 2.0.2
     coffee:
       specifier: '5'
       version: 5.5.1
@@ -222,6 +228,9 @@ catalogs:
     csrf:
       specifier: ^3.1.0
       version: 3.1.0
+    dayjs:
+      specifier: ^1.11.13
+      version: 1.11.18
     debounce:
       specifier: ^2.2.0
       version: 2.2.0
@@ -441,6 +450,9 @@ catalogs:
     statuses:
       specifier: ^2.0.1
       version: 2.0.2
+    stream-wormhole:
+      specifier: ^2.0.1
+      version: 2.0.1
     superagent:
       specifier: ^10.0.0
       version: 10.2.3
@@ -801,8 +813,8 @@ importers:
         specifier: workspace:*
         version: link:../../plugins/logrotator
       '@eggjs/multipart':
-        specifier: 'catalog:'
-        version: 4.0.0
+        specifier: workspace:*
+        version: link:../../plugins/multipart
       '@eggjs/onerror':
         specifier: workspace:*
         version: link:../../plugins/onerror
@@ -1360,6 +1372,61 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  plugins/multipart:
+    dependencies:
+      bytes:
+        specifier: 'catalog:'
+        version: 3.1.2
+      co-busboy:
+        specifier: 'catalog:'
+        version: 2.0.2
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.18
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      egg-path-matching:
+        specifier: 'catalog:'
+        version: 2.1.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/schedule':
+        specifier: workspace:*
+        version: link:../schedule
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/bytes':
+        specifier: 'catalog:'
+        version: 3.1.5
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      formstream:
+        specifier: 'catalog:'
+        version: 1.5.2
+      is-type-of:
+        specifier: 'catalog:'
+        version: 2.2.0
+      stream-wormhole:
+        specifier: 'catalog:'
+        version: 2.0.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      urllib:
+        specifier: 'catalog:'
+        version: 4.8.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/onerror:
     dependencies:
@@ -2147,10 +2214,6 @@ packages:
   '@eggjs/mcp-proxy@3.62.0':
     resolution: {integrity: sha512-/ZZ+6ZMwumsRssTvyiD8JnE9ESHMmgVvYb6iIIdn8kq6lb8h+60BbkPnHHyCo/uPGnmJHhYRL7H1aiSTYlzQog==}
     engines: {node: '>=18.0.0'}
-
-  '@eggjs/multipart@4.0.0':
-    resolution: {integrity: sha512-HN/WDTxBbczRFs2L/f6+YXh3KMw5vJ3zjMBpl4wuPWevUV/woh/+0igl+WAKOBbF7Ng340+ZFCuVJUX5YqrMEg==}
-    engines: {node: '>= 18.19.0'}
 
   '@eggjs/rds@1.3.0':
     resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
@@ -3857,6 +3920,9 @@ packages:
 
   '@types/body-parser@1.19.6':
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
+
+  '@types/bytes@3.1.5':
+    resolution: {integrity: sha512-VgZkrJckypj85YxEsEavcMmmSOIzkUHqWmM4CCyia5dc54YwsXzJ5uT4fYxBQNEXx+oF1krlhgCbvfubXqZYsQ==}
 
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
@@ -11835,14 +11901,6 @@ snapshots:
       - leoric
       - supports-color
 
-  '@eggjs/multipart@4.0.0':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      bytes: 3.1.2
-      co-busboy: 2.0.2
-      dayjs: 1.11.18
-      egg-path-matching: 2.1.0
-
   '@eggjs/rds@1.3.0':
     dependencies:
       mysql2: 3.15.1
@@ -13417,6 +13475,8 @@ snapshots:
     dependencies:
       '@types/connect': 3.4.38
       '@types/node': 24.5.2
+
+  '@types/bytes@3.1.5': {}
 
   '@types/chai@5.2.2':
     dependencies:

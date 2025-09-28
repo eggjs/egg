@@ -10,7 +10,6 @@ catalog:
   '@eggjs/compressible': ^3.0.0
   '@eggjs/i18n': ^3.0.1
   '@eggjs/ip': ^2.1.0
-  '@eggjs/multipart': ^4.0.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/router': ^3.0.5
   '@eggjs/tegg': ^3.2.2

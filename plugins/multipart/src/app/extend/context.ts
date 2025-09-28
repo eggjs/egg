@@ -5,13 +5,15 @@ import fs from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
 import { Readable, PassThrough } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
+
 // @ts-expect-error no types
 import parse from 'co-busboy';
 import dayjs from 'dayjs';
-import { Context } from '@eggjs/core';
-import { humanizeBytes } from '../../lib/utils.js';
-import { LimitError } from '../../lib/LimitError.js';
-import { MultipartFileTooLargeError } from '../../lib/MultipartFileTooLargeError.js';
+import { Context } from 'egg';
+
+import { humanizeBytes } from '../../lib/utils.ts';
+import { LimitError } from '../../lib/LimitError.ts';
+import { MultipartFileTooLargeError } from '../../lib/MultipartFileTooLargeError.ts';
 
 const HAS_CONSUMED = Symbol('Context#multipartHasConsumed');
 
@@ -356,7 +358,7 @@ function extractOptions(options: MultipartOptions = {}) {
   return opts;
 }
 
-declare module '@eggjs/core' {
+declare module 'egg' {
   interface Request {
     /**
      * Files Object Array

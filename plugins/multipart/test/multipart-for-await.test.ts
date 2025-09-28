@@ -1,27 +1,24 @@
-import assert from 'node:assert';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it, expect } from 'vitest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { getFixtures } from './utils.ts';
 
 describe('test/multipart-for-await.test.ts', () => {
   let app: MockApplication;
   let server: any;
   let host: string;
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/multipart-for-await',
+      baseDir: getFixtures('apps/multipart-for-await'),
     });
     await app.ready();
     server = app.listen();
     host = 'http://127.0.0.1:' + server.address().port;
   });
-  after(() => app.close());
-  after(() => server.close());
+  afterAll(() => app.close());
+  afterAll(() => server.close());
   beforeEach(() => app.mockCsrf());
   afterEach(mm.restore);
 
@@ -29,8 +26,8 @@ describe('test/multipart-for-await.test.ts', () => {
     const form = formstream();
     form.field('foo', 'bar');
     form.field('love', 'egg');
-    form.file('file1', path.join(__dirname, 'fixtures/中文名.js'));
-    form.file('file2', path.join(__dirname, 'fixtures/testfile.txt'));
+    form.file('file1', getFixtures('中文名.js'));
+    form.file('file2', getFixtures('testfile.txt'));
     // will ignore empty file
     form.buffer('file3', Buffer.from(''), '', 'application/octet-stream');
 
@@ -43,20 +40,20 @@ describe('test/multipart-for-await.test.ts', () => {
 
     const data = res.data;
     // console.log(data);
-    assert.equal(data.fields.foo, 'bar');
-    assert.equal(data.fields.love, 'egg');
-    assert.equal(data.files.file1.fileName, '中文名.js');
-    assert(data.files.file1.content.includes('hello'));
-    assert.equal(data.files.file2.fileName, 'testfile.txt');
-    assert(data.files.file2.content.includes('this is a test file'));
-    assert(!data.files.file3);
+    expect(data.fields.foo).toBe('bar');
+    expect(data.fields.love).toBe('egg');
+    expect(data.files.file1.fileName).toBe('中文名.js');
+    expect(data.files.file1.content).toContain('hello');
+    expect(data.files.file2.fileName).toBe('testfile.txt');
+    expect(data.files.file2.content).toContain('this is a test file');
+    expect(data.files.file3).toBeUndefined();
   });
 
   it('should auto consumed file stream on error throw', async () => {
     const form = formstream();
     form.field('foo', 'bar');
     form.field('love', 'egg');
-    form.file('file2', path.join(__dirname, 'fixtures/testfile.txt'));
+    form.file('file2', getFixtures('testfile.txt'));
 
     const res = await urllib.request(host + '/upload?mock_error=true', {
       method: 'POST',
@@ -65,7 +62,7 @@ describe('test/multipart-for-await.test.ts', () => {
       dataType: 'json',
     });
 
-    assert.equal(res.data.message, 'mock error');
+    expect(res.data.message).toBe('mock error');
   });
 
   describe('should throw when limit', () => {
@@ -73,8 +70,8 @@ describe('test/multipart-for-await.test.ts', () => {
       const form = formstream();
       form.field('foo', 'bar');
       form.field('love', 'egg');
-      form.file('file1', path.join(__dirname, 'fixtures/中文名.js'));
-      form.file('file2', path.join(__dirname, 'fixtures/bigfile.txt'));
+      form.file('file1', getFixtures('中文名.js'));
+      form.file('file2', getFixtures('bigfile.txt'));
 
       const res = await urllib.request(host + '/upload', {
         method: 'POST',
@@ -84,15 +81,15 @@ describe('test/multipart-for-await.test.ts', () => {
       });
 
       const { data, status } = res;
-      assert.equal(status, 413);
-      assert.equal(data.message, 'Reach fileSize limit');
+      expect(status).toBe(413);
+      expect(data.message).toBe('Reach fileSize limit');
     });
 
     it('limit fileSize very small so limit event is miss', async () => {
       const form = formstream();
       form.field('foo', 'bar');
       form.field('love', 'egg');
-      form.file('file2', path.join(__dirname, 'fixtures/bigfile.txt'));
+      form.file('file2', getFixtures('bigfile.txt'));
 
       const res = await urllib.request(host + '/upload?fileSize=10', {
         method: 'POST',
@@ -102,16 +99,16 @@ describe('test/multipart-for-await.test.ts', () => {
       });
 
       const { data, status } = res;
-      assert.equal(status, 413);
-      assert.equal(data.message, 'Reach fileSize limit');
+      expect(status).toBe(413);
+      expect(data.message).toBe('Reach fileSize limit');
     });
 
     it('limit fieldSize', async () => {
       const form = formstream();
       form.field('foo', 'bar');
       form.field('love', 'eggaaaaaaaaaaaaa');
-      form.file('file1', path.join(__dirname, 'fixtures/中文名.js'));
-      form.file('file2', path.join(__dirname, 'fixtures/testfile.txt'));
+      form.file('file1', getFixtures('中文名.js'));
+      form.file('file2', getFixtures('testfile.txt'));
 
       const res = await urllib.request(host + '/upload', {
         method: 'POST',
@@ -121,8 +118,8 @@ describe('test/multipart-for-await.test.ts', () => {
       });
 
       const { data, status } = res;
-      assert.equal(status, 413);
-      assert.equal(data.message, 'Reach fieldSize limit');
+      expect(status).toBe(413);
+      expect(data.message).toBe('Reach fieldSize limit');
     });
 
     // TODO: still not support at busboy 1.x (only support at urlencoded)
@@ -132,8 +129,8 @@ describe('test/multipart-for-await.test.ts', () => {
       const form = formstream();
       form.field('fooaaaaaaaaaaaaaaa', 'bar');
       form.field('love', 'egg');
-      form.file('file1', path.join(__dirname, 'fixtures/中文名.js'));
-      form.file('file2', path.join(__dirname, 'fixtures/testfile.txt'));
+      form.file('file1', getFixtures('中文名.js'));
+      form.file('file2', getFixtures('testfile.txt'));
 
       const res = await urllib.request(host + '/upload', {
         method: 'POST',
@@ -143,8 +140,8 @@ describe('test/multipart-for-await.test.ts', () => {
       });
 
       const { data, status } = res;
-      assert.equal(status, 413);
-      assert.equal(data.message, 'Reach fieldNameSize limit');
+      expect(status).toBe(413);
+      expect(data.message).toBe('Reach fieldNameSize limit');
     });
   });
 });

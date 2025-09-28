@@ -1,8 +1,12 @@
-import type { EggCore, ILifecycleBoot } from '@eggjs/core';
-import { normalizeOptions } from './lib/utils.js';
+import type { Application, ILifecycleBoot } from 'egg';
+
+import { normalizeOptions } from './lib/utils.ts';
 
 export default class AppBootHook implements ILifecycleBoot {
-  constructor(private app: EggCore) {}
+  private readonly app;
+  constructor(app: Application) {
+    this.app = app;
+  }
 
   configWillLoad() {
     this.app.config.multipart = normalizeOptions(this.app.config.multipart);

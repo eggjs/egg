@@ -1,30 +1,32 @@
 import assert from 'node:assert';
+import path from 'node:path';
+import fs from 'node:fs/promises';
+
+import { beforeAll, afterAll, beforeEach, afterEach, describe, it } from 'vitest';
 import formstream from 'formstream';
 import urllib from 'urllib';
-import path from 'node:path';
-import { mm, MockApplication } from '@eggjs/mock';
-import fs from 'node:fs/promises';
+import { mm, type MockApplication } from '@eggjs/mock';
 
 describe.skip('test/enable-pathToRegexpModule.test.ts', () => {
   let app: MockApplication;
   let server: any;
   let host: string;
-  before(() => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: 'apps/fileModeMatch-glob-with-pathToRegexpModule',
       // pathToRegexpModule: require.resolve('path-to-regexp-v8'),
     });
-    return app.ready();
+    await app.ready();
   });
-  before(() => {
+  beforeAll(() => {
     server = app.listen();
     host = 'http://127.0.0.1:' + server.address().port;
   });
-  after(() => {
-    return fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
+  afterAll(async () => {
+    await fs.rm(app.config.multipart.tmpdir, { force: true, recursive: true });
   });
-  after(() => app.close());
-  after(() => server.close());
+  afterAll(() => app.close());
+  afterAll(() => server.close());
   beforeEach(() => app.mockCsrf());
   afterEach(mm.restore);
 
