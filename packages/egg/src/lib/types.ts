@@ -5,7 +5,8 @@ import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
 import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
 import type { PartialDeep } from 'type-fest';
 
-import type { EggApplicationCore, Context } from './egg.ts';
+import type { Context } from './egg.ts';
+import type { Application } from './application.ts';
 import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
 import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.ts';
 import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.ts';
@@ -266,11 +267,7 @@ export interface EggAppConfig extends EggCoreAppConfig {
     allowedMethods: string[];
   };
 
-  onClientError?(
-    err: Error,
-    socket: Socket,
-    app: EggApplicationCore
-  ): ClientErrorResponse | Promise<ClientErrorResponse>;
+  onClientError?(err: Error, socket: Socket, app: Application): ClientErrorResponse | Promise<ClientErrorResponse>;
 
   /**
    * server timeout in milliseconds, default to 0 (no timeout).

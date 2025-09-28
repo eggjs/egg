@@ -297,16 +297,3 @@ export class Application extends EggApplicationCore {
     });
   }
 }
-
-declare module '@eggjs/core' {
-  // add EggApplicationCore overrides types
-  interface EggCore {
-    onClientError(err: any, socket: Socket): void;
-    onServer(server: http.Server): void;
-    locals: Record<string, any>;
-    runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown): void;
-    toAsyncFunction(fn: (...args: any[]) => any): (...args: any[]) => any;
-    dumpConfig(): void;
-    get keys(): string[];
-  }
-}

@@ -1,7 +1,7 @@
 import { expectType } from 'tsd';
-import { EggCore, Context } from '@eggjs/core';
 import { LogRotator } from '@eggjs/logrotator';
 import {
+  Context,
   Application,
   type IBoot,
   type ILifecycleBoot,
@@ -19,7 +19,7 @@ import {
 import { HttpClient } from '../src/urllib.js';
 import { type IMessenger } from '../src/lib/core/messenger/IMessenger.js';
 
-const app = {} as EggCore;
+const app = {} as Application;
 expectType<IMessenger>(app.messenger);
 expectType<IMessenger>(app.messenger.broadcast('test'));
 expectType<void>(app.loggers.reload());
@@ -52,10 +52,10 @@ expectType<boolean>(app.config.development.fastReady);
 expectType<string[]>(app.config.development.watchDirs);
 
 // jsonp plugin types
-expectType<boolean>(app.config.jsonp.csrf);
-expectType<string[] | string>(app.config.jsonp.callback);
-expectType<number>(app.config.jsonp.limit);
-expectType<string | RegExp | (string | RegExp)[]>(app.config.jsonp.whiteList!);
+expectType<boolean>(app.config.jsonp!.csrf);
+expectType<string[] | string>(app.config.jsonp!.callback);
+expectType<number>(app.config.jsonp!.limit);
+expectType<string | RegExp | (string | RegExp)[]>(app.config.jsonp!.whiteList!);
 // @ts-ignore - jsonp plugin extends context
 expectType<boolean>(ctx.acceptJSONP);
 // @ts-ignore - jsonp plugin extends context

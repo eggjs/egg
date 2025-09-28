@@ -4,7 +4,7 @@ import { stringify } from 'node:querystring';
 
 import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 import { importResolve } from '@eggjs/utils';
-import type { EggApplicationCore, EggContext } from 'egg';
+import type { EggApplicationCore, Context } from 'egg';
 
 import type { EggScheduleTask, EggScheduleItem } from './types.ts';
 import type { EggScheduleConfig } from '../config/config.default.ts';
@@ -30,7 +30,7 @@ function getScheduleLoader(app: EggApplicationCore) {
             !isGeneratorFunction(schedule.prototype.subscribe),
             `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`
           );
-          task = async (ctx: EggContext, ...args: any[]) => {
+          task = async (ctx: Context, ...args: any[]) => {
             const instance = new schedule(ctx);
             // s.subscribe = app.toAsyncFunction(s.subscribe);
             return instance.subscribe(...args);
