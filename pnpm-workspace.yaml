@@ -11,6 +11,7 @@ catalog:
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/router': ^3.0.5
+  '@eggjs/scripts': ^4.0.0
   '@eggjs/tegg': ^3.2.2
   '@eggjs/tegg-config': ^3.2.2
   '@eggjs/tegg-controller-plugin': ^3.2.2
@@ -106,9 +107,9 @@ catalog:
   formstream: ^1.5.1
   fresh: ~0.5.2
   fs-readdir-recursive: ^1.1.0
-  glob: ^11.0.0
   gals: '1'
   get-ready: ^3.1.0
+  glob: ^11.0.0
   globby: ^11.0.2
   graceful: ^2.0.0
   graceful-process: ^2.0.0
@@ -134,8 +135,8 @@ catalog:
   mime-types: ^3.0.0
   mm: ^4.0.2
   mocha: 11.7.2
-  moment: ^2.30.1
   mochawesome-with-mocha: 8.0.0
+  moment: ^2.30.1
   mri: ^1.2.0
   multimatch: ^7.0.0
   mustache: ^4.2.0

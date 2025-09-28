@@ -1,7 +1,5 @@
-import { EggAppConfig } from 'egg';
+import { type PartialEggConfig } from 'egg';
 
-export default () => {
-  return {
-    keys: '123456',
-  } as Partial<EggAppConfig>;
-};
+export default {
+  keys: '123456',
+} as PartialEggConfig;

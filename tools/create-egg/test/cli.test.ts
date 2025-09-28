@@ -125,7 +125,8 @@ test.skipIf(process.platform === 'win32')(
     const eggDir = path.join(monoRepoDir, 'packages/egg');
     const mockDir = path.join(monoRepoDir, 'plugins/mock');
     const binDir = path.join(monoRepoDir, 'tools/egg-bin');
-    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir}`, { cwd: projectDir });
+    const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
+    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, { cwd: projectDir });
     const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
     expect(testStdout).toContain('2 passed');
   }
@@ -150,7 +151,8 @@ test.skipIf(process.platform === 'win32')('successfully scaffolds a project base
   const eggDir = path.join(monoRepoDir, 'packages/egg');
   const mockDir = path.join(monoRepoDir, 'plugins/mock');
   const binDir = path.join(monoRepoDir, 'tools/egg-bin');
-  execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir}`, { cwd: projectDir });
+  const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
+  execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, { cwd: projectDir });
   const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
   expect(testStdout).toContain('2 passed');
 });

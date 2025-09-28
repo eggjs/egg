@@ -30,7 +30,7 @@
     "vitest": "catalog:"
   },
   "scripts": {
-    "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist",
+    "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
@@ -39,7 +39,7 @@
     "test:cov": "vitest run --coverage",
     "ci": "pnpm run test:cov",
     "ci:packages": "node scripts/ci.js packages",
-    "ci:tools": "node scripts/ci.js tools",
+    "ci:tools": "node scripts/ci.js tools && pnpm example:typescript:test",
     "ci:plugins": "node scripts/ci.js plugins",
     "postci": "pnpm run build",
     "site:dev": "pnpm --filter=site run dev",
@@ -48,6 +48,7 @@
     "puml": "puml . --dest ./site",
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
     "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
+    "example:typescript:test": "pnpm --filter=@examples/helloworld-typescript run test",
     "prepare": "husky",
     "version:patch": "node scripts/version.js patch",
     "version:minor": "node scripts/version.js minor",

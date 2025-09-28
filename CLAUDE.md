@@ -106,6 +106,12 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Extends context with render() method for template rendering
     - Built-in mapping configuration for file extensions to engines
     - Template engine agnostic - works with ejs, nunjucks, handlebars, etc.
+  - `tracer/` - Request tracing plugin (merged from @eggjs/tracer)
+    - Provides distributed tracing capabilities for Egg applications
+    - Automatically generates and tracks traceId, spanId, and parentSpanId
+    - Extends context with tracer object for request correlation
+    - Supports custom tracer implementations via Class configuration
+    - Integrates with application and agent processes for full tracing coverage
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

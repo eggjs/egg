@@ -241,7 +241,8 @@ export interface EggAppConfig extends EggCoreAppConfig {
   };
 
   /**
-   * The key that signing cookies. It can contain multiple keys separated by .
+   * The key that signing cookies. It can contain multiple keys separated by `.`
+   * @requires Cookie secret key to sign and encrypt, see https://eggjs.org/core/cookie-and-session#cookie-secret-key
    */
   keys: string;
 

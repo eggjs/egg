@@ -74,6 +74,9 @@
       "path": "./plugins/view"
     },
     {
+      "path": "./plugins/tracer"
+    },
+    {
       "path": "./tools/egg-bin"
     },
     {

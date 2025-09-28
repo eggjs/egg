@@ -30,7 +30,7 @@
     "@eggjs/tegg-eventbus-plugin": "beta",
     "@eggjs/tegg-plugin": "beta",
     "@eggjs/tegg-schedule-plugin": "beta",
-    "@eggjs/tracer": "^3.0.0",
+    "@eggjs/tracer": "beta",
     "egg": "beta"
   },
   "devDependencies": {

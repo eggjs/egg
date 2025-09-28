@@ -1,14 +1,14 @@
-import { ILifecycleBoot, Application } from 'egg';
+import { type ILifecycleBoot, Application } from 'egg';
 
 export default class AppBootHook implements ILifecycleBoot {
-  private readonly app: Application;
+  private readonly app;
 
   constructor(app: Application) {
     this.app = app;
   }
 
   async didLoad() {
-    console.error('didLoad');
+    console.error('didLoad %o', this.app.type);
     // Ready to call configDidLoad,
     // Config, plugin files are referred,
     // this is the last chance to modify the config.
