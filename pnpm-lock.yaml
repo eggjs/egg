@@ -9,9 +9,6 @@ catalogs:
     '@clack/prompts':
       specifier: ^0.11.0
       version: 0.11.0
-    '@eggjs/i18n':
-      specifier: ^3.0.1
-      version: 3.0.1
     '@eggjs/ip':
       specifier: ^2.1.0
       version: 2.1.0
@@ -93,6 +90,9 @@ catalogs:
     '@types/http-errors':
       specifier: ^2.0.4
       version: 2.0.5
+    '@types/ini':
+      specifier: ^4.1.1
+      version: 4.1.1
     '@types/js-yaml':
       specifier: '4'
       version: 4.0.9
@@ -318,6 +318,9 @@ catalogs:
     husky:
       specifier: ^9.1.7
       version: 9.1.7
+    ini:
+      specifier: ^5.0.0
+      version: 5.0.0
     is-type-of:
       specifier: ^2.2.0
       version: 2.2.0
@@ -804,8 +807,8 @@ importers:
         specifier: workspace:*
         version: link:../extend2
       '@eggjs/i18n':
-        specifier: 'catalog:'
-        version: 3.0.1
+        specifier: workspace:*
+        version: link:../../plugins/i18n
       '@eggjs/jsonp':
         specifier: workspace:*
         version: link:../../plugins/jsonp
@@ -1225,6 +1228,55 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
+
+  plugins/i18n:
+    dependencies:
+      '@eggjs/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      humanize-ms:
+        specifier: 'catalog:'
+        version: 2.0.0
+      ini:
+        specifier: 'catalog:'
+        version: 5.0.0
+      js-yaml:
+        specifier: 'catalog:'
+        version: 4.1.0
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/ini':
+        specifier: 'catalog:'
+        version: 4.1.1
+      '@types/js-yaml':
+        specifier: 'catalog:'
+        version: 4.0.9
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.5.2
+      egg-view-nunjucks:
+        specifier: 'catalog:'
+        version: 2.3.0(chokidar@3.6.0)
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/jsonp:
     dependencies:
@@ -2198,10 +2250,6 @@ packages:
   '@eggjs/eventbus-decorator@3.62.0':
     resolution: {integrity: sha512-TxULJWB//1qzzmPbJrrebx8ncz4hI0C4giFv0DD//rI/8hde59YuO1MsvkxE/qPfqGIOO4yfZDLmtnyWuyceaw==}
     engines: {node: '>=14.0.0'}
-
-  '@eggjs/i18n@3.0.1':
-    resolution: {integrity: sha512-ejNdBwwB0VFSEsiMdoHA14XmIac0m0aU2+hrwI/W5dbwklMJeaSOc+rY/+xA+XCjUgF7FqgTt2YS/Vu5mUwZTg==}
-    engines: {node: '>= 18.19.0'}
 
   '@eggjs/ip@2.1.0':
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
@@ -4026,6 +4074,9 @@ packages:
 
   '@types/http-errors@2.0.5':
     resolution: {integrity: sha512-r8Tayk8HJnX0FztbZN7oVqGccWgw98T/0neJphO91KkmOzug1KkofZURD4UaD5uH8AqcFLfdPErnBod0u71/qg==}
+
+  '@types/ini@4.1.1':
+    resolution: {integrity: sha512-MIyNUZipBTbyUNnhvuXJTY7B6qNI78meck9Jbv3wk0OgNwRyOOVEKDutAkOs1snB/tx0FafyR6/SN4Ps0hZPeg==}
 
   '@types/istanbul-lib-coverage@2.0.6':
     resolution: {integrity: sha512-2QF/t/auWm0lsy8XtKVPG19v3sSOQlJe/YHZgfjb/KBBHOGSV+J2q/S671rcq9uTBrLAXmZpqJiaQbMT+zNU1w==}
@@ -11855,15 +11906,6 @@ snapshots:
       '@eggjs/tegg-types': 3.62.0
       typed-emitter: 1.4.0
 
-  '@eggjs/i18n@3.0.1':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      '@eggjs/utils': 4.4.1
-      humanize-ms: 2.0.0
-      ini: 5.0.0
-      js-yaml: 4.1.0
-      utility: 2.5.0
-
   '@eggjs/ip@2.1.0': {}
 
   '@eggjs/koa@2.22.2':
@@ -13598,6 +13640,8 @@ snapshots:
   '@types/http-assert@1.5.6': {}
 
   '@types/http-errors@2.0.5': {}
+
+  '@types/ini@4.1.1': {}
 
   '@types/istanbul-lib-coverage@2.0.6': {}
 

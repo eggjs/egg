@@ -1,0 +1,89 @@
+{
+  "name": "@eggjs/i18n",
+  "version": "4.0.0-beta.15",
+  "description": "i18n plugin for egg",
+  "eggPlugin": {
+    "name": "i18n"
+  },
+  "keywords": [
+    "egg",
+    "egg-plugin",
+    "eggPlugin",
+    "i18n"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "plugins/i18n"
+  },
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/i18n#readme",
+  "author": "gxcsoccer <gxcsoccer@126.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./locales": "./src/locales.ts",
+    "./types": "./src/types.ts",
+    "./utils": "./src/utils.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./locales": "./dist/locales.js",
+      "./types": "./dist/types.js",
+      "./utils": "./dist/utils.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "humanize-ms": "catalog:",
+    "ini": "catalog:",
+    "js-yaml": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/ini": "catalog:",
+    "@types/js-yaml": "catalog:",
+    "@types/node": "catalog:",
+    "egg-view-nunjucks": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

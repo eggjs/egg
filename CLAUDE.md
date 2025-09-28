@@ -92,6 +92,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Automatic temporary file cleanup
     - Configurable whitelist/blacklist for file extensions
     - Integration with schedule plugin for tmpdir cleanup
+  - `i18n/` - Internationalization plugin (merged from @eggjs/i18n)
+    - Provides internationalization support for multi-language applications
+    - Supports multiple file formats (JSON, JS, YAML, Properties, INI)
+    - Automatic locale detection from query, cookie, or header
+    - Context-aware translation helpers
+    - Domain-specific locale configurations
+    - Built-in pluralization support
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example
