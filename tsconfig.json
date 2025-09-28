@@ -68,6 +68,15 @@
       "path": "./plugins/session"
     },
     {
+      "path": "./plugins/logrotator"
+    },
+    {
+      "path": "./plugins/multipart"
+    },
+    {
+      "path": "./plugins/i18n"
+    },
+    {
       "path": "./plugins/view"
     }
   ]
