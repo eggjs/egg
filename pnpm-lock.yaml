@@ -1749,18 +1749,9 @@ importers:
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../mock
-      '@eggjs/supertest':
-        specifier: workspace:*
-        version: link:../../packages/supertest
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
-      coffee:
-        specifier: 'catalog:'
-        version: 5.5.1
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
