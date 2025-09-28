@@ -6,11 +6,11 @@ import { getFixtures } from './utils.ts';
 
 describe('test/tracer.test.ts', () => {
   let app: MockApplication;
-  beforeAll(() => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/plugin-test'),
     });
-    return app.ready();
+    await app.ready();
   });
 
   afterAll(() => app.close());
@@ -26,9 +26,9 @@ describe('test/tracer.test.ts', () => {
     expect(appTracer_1).toBe(appTracer_2);
     expect(appTracer_1).toBe(appTracer_3);
 
-    expect(appTracer_1.traceId).toBeInstanceOf(String);
-    expect(appTracer_2.traceId).toBeInstanceOf(String);
-    expect(appTracer_3.traceId).toBeInstanceOf(String);
+    expect(appTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(appTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(appTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(appTracer_1).toBe(appTracer_2);
     expect(appTracer_1).toBe(appTracer_3);
@@ -36,16 +36,16 @@ describe('test/tracer.test.ts', () => {
     expect(appTracer_1.traceId).toBe(appTracer_2.traceId);
     expect(appTracer_1.traceId).toBe(appTracer_3.traceId);
 
-    expect(agentTracer_1.traceId).toBeInstanceOf(String);
-    expect(agentTracer_2.traceId).toBeInstanceOf(String);
-    expect(agentTracer_3.traceId).toBeInstanceOf(String);
+    expect(agentTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(agentTracer_1).toBe(agentTracer_2);
     expect(agentTracer_1).toBe(agentTracer_3);
 
-    expect(agentTracer_1.traceId).toBeInstanceOf(String);
-    expect(agentTracer_2.traceId).toBeInstanceOf(String);
-    expect(agentTracer_3.traceId).toBeInstanceOf(String);
+    expect(agentTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(agentTracer_1.traceId).toBe(agentTracer_2.traceId);
     expect(agentTracer_1.traceId).toBe(agentTracer_3.traceId);
@@ -56,9 +56,9 @@ describe('test/tracer.test.ts', () => {
     expect(appTracer_1).not.toBe(appTracer_2);
     expect(appTracer_1).not.toBe(appTracer_3);
 
-    expect(appTracer_1.traceId).toBeInstanceOf(String);
-    expect(appTracer_2.traceId).toBeInstanceOf(String);
-    expect(appTracer_3.traceId).toBeInstanceOf(String);
+    expect(appTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(appTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(appTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(appTracer_1).not.toBe(appTracer_2);
     expect(appTracer_1).not.toBe(appTracer_3);
@@ -69,16 +69,16 @@ describe('test/tracer.test.ts', () => {
     // agent ready
     // @ts-expect-error agentAfterReadyTracers is not exist on type Agent
     [agentTracer_1, agentTracer_2, agentTracer_3] = app.agent.agentAfterReadyTracers;
-    expect(agentTracer_1.traceId).toBeInstanceOf(String);
-    expect(agentTracer_2.traceId).toBeInstanceOf(String);
-    expect(agentTracer_3.traceId).toBeInstanceOf(String);
+    expect(agentTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(agentTracer_1).not.toBe(agentTracer_2);
     expect(agentTracer_1).not.toBe(agentTracer_3);
 
-    expect(agentTracer_1.traceId).toBeInstanceOf(String);
-    expect(agentTracer_2.traceId).toBeInstanceOf(String);
-    expect(agentTracer_3.traceId).toBeInstanceOf(String);
+    expect(agentTracer_1.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_2.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(agentTracer_3.traceId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
 
     expect(agentTracer_1.traceId).not.toBe(agentTracer_2.traceId);
     expect(agentTracer_1.traceId).not.toBe(agentTracer_3.traceId);
