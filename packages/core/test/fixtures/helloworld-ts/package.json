@@ -24,6 +24,5 @@
     "clean": "tsc -b --clean",
     "prepublishOnly": "npm run clean && tsc"
   },
-  "private": true,
-  "repository": "git@github.com:eggjs/examples.git"
+  "private": true
 }
