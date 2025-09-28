@@ -129,6 +129,8 @@ test.skipIf(process.platform === 'win32')(
     execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, { cwd: projectDir });
     const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
     expect(testStdout).toContain('2 passed');
+    // run typecheck
+    execaCommandSync('pnpm typecheck', { cwd: projectDir });
   }
 );
 
@@ -155,6 +157,8 @@ test.skipIf(process.platform === 'win32')('successfully scaffolds a project base
   execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, { cwd: projectDir });
   const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
   expect(testStdout).toContain('2 passed');
+  // run typecheck
+  execaCommandSync('pnpm typecheck', { cwd: projectDir });
 });
 
 test('works with the -t alias', () => {

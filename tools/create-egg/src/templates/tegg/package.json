@@ -17,6 +17,7 @@
     "ci": "npm run test:local -- --coverage",
     "postci": "npm run prepublishOnly && npm start && sleep 10 && npm stop && npm run clean",
     "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
     "tsc": "tsc",
     "clean": "tsc -b --clean",
     "prepublishOnly": "npm run clean && npm run tsc"
