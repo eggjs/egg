@@ -30,9 +30,6 @@ catalogs:
     '@eggjs/tegg-plugin':
       specifier: ^3.2.2
       version: 3.62.0
-    '@eggjs/view':
-      specifier: ^3.0.1
-      version: 3.0.1
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
@@ -837,8 +834,8 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@eggjs/view':
-        specifier: 'catalog:'
-        version: 3.0.1
+        specifier: workspace:*
+        version: link:../../plugins/view
       '@eggjs/watcher':
         specifier: workspace:*
         version: link:../../plugins/watcher
@@ -1737,6 +1734,34 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
+  plugins/view:
+    dependencies:
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      is-type-of:
+        specifier: 'catalog:'
+        version: 2.2.0
+      utility:
+        specifier: 'catalog:'
+        version: 2.5.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.2)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.13(@types/debug@4.1.12)(@types/node@24.5.2)(@vitest/ui@4.0.0-beta.13)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
   plugins/watcher:
     dependencies:
       '@eggjs/utils':
@@ -2357,10 +2382,6 @@ packages:
 
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
-
-  '@eggjs/view@3.0.1':
-    resolution: {integrity: sha512-ptjQRGZNTw5/HU8Wrm+hD5CiOnkeDgaH7huKq8TJ89mZdyvWjgPxRET+fYFmUHmMPp92OwBNXly/+Vbt/q0Z+A==}
-    engines: {node: '>= 18.19.0'}
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
@@ -12155,12 +12176,6 @@ snapshots:
       - supports-color
 
   '@eggjs/utils@4.4.1': {}
-
-  '@eggjs/view@3.0.1':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      is-type-of: 2.2.0
-      utility: 2.5.0
 
   '@emnapi/core@1.5.0':
     dependencies:

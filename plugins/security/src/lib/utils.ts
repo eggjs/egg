@@ -5,7 +5,7 @@ import IP from '@eggjs/ip';
 import type { Context } from 'egg';
 import type { PathMatchingFun } from 'egg-path-matching';
 
-import type { SecurityConfig } from '../types.ts';
+import type { SecurityConfig } from '../config/config.default.ts';
 
 /**
  * Check whether a domain is in the safe domain white list or not.

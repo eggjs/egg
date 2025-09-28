@@ -12,9 +12,3 @@ export default class SecurityAgent extends Agent {
     return await safeCurlForApplication<T>(this, url, options);
   }
 }
-
-declare module 'egg' {
-  interface Agent {
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
-  }
-}

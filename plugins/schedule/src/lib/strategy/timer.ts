@@ -6,7 +6,7 @@ import { ms } from 'humanize-ms';
 import safeTimers from 'safe-timers';
 import { logDate } from 'utility';
 
-import type { EggScheduleConfig } from '../types.ts';
+import type { EggScheduleConfig } from '../../config/config.default.ts';
 import { BaseStrategy } from './base.ts';
 import type Agent from '../../app/extend/agent.ts';
 

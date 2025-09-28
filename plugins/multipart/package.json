@@ -39,6 +39,7 @@
     "./lib/LimitError": "./src/lib/LimitError.ts",
     "./lib/MultipartFileTooLargeError": "./src/lib/MultipartFileTooLargeError.ts",
     "./lib/utils": "./src/lib/utils.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -53,6 +54,7 @@
       "./lib/LimitError": "./dist/lib/LimitError.js",
       "./lib/MultipartFileTooLargeError": "./dist/lib/MultipartFileTooLargeError.js",
       "./lib/utils": "./dist/lib/utils.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

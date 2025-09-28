@@ -47,6 +47,7 @@
     "./lib/rotator": "./src/lib/rotator.ts",
     "./lib/size_rotator": "./src/lib/size_rotator.ts",
     "./lib/utils": "./src/lib/utils.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -68,6 +69,7 @@
       "./lib/rotator": "./dist/lib/rotator.js",
       "./lib/size_rotator": "./dist/lib/size_rotator.js",
       "./lib/utils": "./dist/lib/utils.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

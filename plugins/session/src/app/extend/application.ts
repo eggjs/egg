@@ -61,11 +61,3 @@ export default class SessionApplication extends Application {
     return this.config.session.store;
   }
 }
-
-declare module 'egg' {
-  interface Application {
-    // add Application instance property
-    set sessionStore(store: SessionStoreOrAppSessionStoreClass | null | undefined);
-    get sessionStore(): SessionStore | undefined;
-  }
-}

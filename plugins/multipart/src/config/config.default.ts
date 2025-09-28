@@ -6,10 +6,6 @@ import type { PathMatchingPattern } from 'egg-path-matching';
 
 export type MatchItem = string | RegExp | ((ctx: Context) => boolean);
 
-/**
- * multipart parser options
- * @member Config#multipart
- */
 export interface MultipartConfig {
   /**
    * which mode to handle multipart request, default is `stream`, the hard way.
@@ -116,10 +112,3 @@ export default (appInfo: EggAppInfo) => {
     } as MultipartConfig,
   };
 };
-
-declare module 'egg' {
-  // add EggAppConfig overrides types
-  interface EggAppConfig {
-    multipart: MultipartConfig;
-  }
-}

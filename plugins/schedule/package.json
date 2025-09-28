@@ -19,6 +19,7 @@
       "./lib/strategy/timer": "./dist/lib/strategy/timer.js",
       "./lib/strategy/worker": "./dist/lib/strategy/worker.js",
       "./lib/types": "./dist/lib/types.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },
@@ -95,6 +96,7 @@
     "./lib/strategy/timer": "./src/lib/strategy/timer.ts",
     "./lib/strategy/worker": "./src/lib/strategy/worker.ts",
     "./lib/types": "./src/lib/types.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [

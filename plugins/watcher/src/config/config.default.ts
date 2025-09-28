@@ -1,6 +1,17 @@
 import path from 'node:path';
-import { getSourceDirname } from '../lib/utils.ts';
-import type { WatcherConfig } from '../lib/types.ts';
+
+export interface WatcherConfig {
+  /**
+   * event source type, default is `default`
+   * can be `default` or `development`
+   */
+  type: string;
+  /**
+   * event sources
+   * key is event source type, value is event source module path
+   */
+  eventSources: Record<string, string>;
+}
 
 export default {
   /**
@@ -11,8 +22,8 @@ export default {
   watcher: {
     type: 'default', // default event source
     eventSources: {
-      default: path.join(getSourceDirname(), 'lib', 'event-sources', 'default'),
-      development: path.join(getSourceDirname(), 'lib', 'event-sources', 'development'),
+      default: path.join(import.meta.dirname, '../lib/event-sources/default'),
+      development: path.join(import.meta.dirname, '../lib/event-sources/development'),
     },
   } as WatcherConfig,
 };

@@ -1,15 +1,14 @@
-// import plugins types
-import '@eggjs/view';
-// FIXME: can't use reference types here, development plugin depends on watcher plugin
-import '@eggjs/watcher';
+// import plugin types only, avoid circular dependency
 
-/// <reference types="@eggjs/schedule" />
-/// <reference types="@eggjs/development" />
-/// <reference types="@eggjs/static" />
-/// <reference types="@eggjs/onerror" />
-/// <reference types="@eggjs/jsonp" />
-/// <reference types="@eggjs/security" />
-/// <reference types="@eggjs/session" />
-/// <reference types="@eggjs/logrotator" />
-/// <reference types="@eggjs/multipart" />
-/// <reference types="@eggjs/i18n" />
+import '@eggjs/development/types';
+import '@eggjs/i18n/types';
+import '@eggjs/jsonp/types';
+import '@eggjs/logrotator/types';
+import '@eggjs/multipart/types';
+import '@eggjs/onerror/types';
+import '@eggjs/schedule/types';
+import '@eggjs/security/types';
+import '@eggjs/session/types';
+import '@eggjs/static/types';
+import '@eggjs/view/types';
+import '@eggjs/watcher/types';

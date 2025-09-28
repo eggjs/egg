@@ -5,7 +5,7 @@ import type { ParsedUrlQuery } from 'node:querystring';
 import { Application, type MiddlewareFunc, type Context } from 'egg';
 
 import { JSONP_CONFIG } from '../../lib/private_key.ts';
-import type { JSONPConfig } from '../../types.ts';
+import type { JSONPConfig } from '../../config/config.default.ts';
 import { JSONPForbiddenReferrerError } from '../../error/JSONPForbiddenReferrerError.ts';
 import JSONPContext from './context.ts';
 
@@ -114,8 +114,6 @@ function createValidateReferer(whiteList: Required<JSONPConfig>['whiteList']) {
 
 function validateCsrf(ctx: Context) {
   try {
-    // TODO(fengmk2): remove this when @eggjs/security support ctx.assertCsrf type define
-    // @ts-expect-error TODO: fix this
     ctx.assertCsrf();
     return true;
   } catch (err) {

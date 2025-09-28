@@ -6,7 +6,7 @@ import { Context } from 'egg';
 
 import * as utils from '../../lib/utils.ts';
 import type { HttpClientRequestURL, HttpClientOptions, HttpClientResponse } from '../../lib/extend/safe_curl.ts';
-import type { SecurityConfig, SecurityHelperConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 import type SecurityResponse from './response.ts';
 
 const debug = debuglog('egg/security/app/extend/context');
@@ -265,19 +265,5 @@ export default class SecurityContext extends Context {
 
   unsafeRedirect(url: string, alt?: string) {
     this.response.unsafeRedirect(url, alt);
-  }
-}
-
-declare module 'egg' {
-  interface Context {
-    get securityOptions(): Partial<SecurityConfig & SecurityHelperConfig>;
-    isSafeDomain(domain: string, customWhiteList?: string[]): boolean;
-    get nonce(): string;
-    get csrf(): string;
-    ensureCsrfSecret(rotate?: boolean): void;
-    rotateCsrfSecret(): void;
-    assertCsrf(): void;
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
-    unsafeRedirect(url: string, alt?: string): void;
   }
 }

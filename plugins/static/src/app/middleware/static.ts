@@ -7,7 +7,7 @@ import type { Application, Context, Next } from 'egg';
 import { staticCache } from '@eggjs/koa-static-cache';
 import { LRU } from 'ylru';
 
-import type { StaticConfig, StaticDirOptions } from '../../types.ts';
+import type { StaticConfig, StaticDirOptions } from '../../config/config.default.ts';
 
 export default (options: StaticConfig, app: Application) => {
   const dirs = (options.dirs ?? []).concat(options.dir);

@@ -1,31 +1,14 @@
 import type { MiddlewareFunc } from 'egg';
 
-/**
- * jsonp options
- * @member Config#jsonp
- */
-export interface JSONPConfig {
-  /**
-   * jsonp callback methods key, default to `['_callback', 'callback' ]`
-   */
-  callback: string[] | string;
-  /**
-   * callback method name's max length, default to `50`
-   */
-  limit: number;
-  /**
-   * enable csrf check or not, default to `false`
-   */
-  csrf: boolean;
-  /**
-   * referrer white list, default to `undefined`
-   */
-  whiteList?: string | RegExp | (string | RegExp)[];
-}
+import type { JSONPConfig } from './config/config.default.ts';
 
 declare module 'egg' {
   // add EggAppConfig overrides types
   interface EggAppConfig {
+    /**
+     * jsonp options
+     * @member Config#jsonp
+     */
     jsonp?: JSONPConfig;
   }
 

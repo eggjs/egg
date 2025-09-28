@@ -1,0 +1,8 @@
+{
+  "extends": "@eggjs/tsconfig",
+  "compilerOptions": {
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": false,
+    "baseUrl": "./"
+  }
+}

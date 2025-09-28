@@ -1,0 +1,82 @@
+{
+  "name": "@eggjs/view",
+  "version": "4.0.0-beta.15",
+  "description": "Base view plugin for egg",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./config/config.local": "./dist/config/config.local.js",
+      "./lib": "./dist/lib/index.js",
+      "./lib/context_view": "./dist/lib/context_view.js",
+      "./lib/view_manager": "./dist/lib/view_manager.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./lib": "./src/lib/index.ts",
+    "./lib/context_view": "./src/lib/context_view.ts",
+    "./lib/view_manager": "./src/lib/view_manager.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "eggPlugin": {
+    "name": "view"
+  },
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "egg-view",
+    "view"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "plugins/view"
+  },
+  "bugs": "https://github.com/eggjs/egg/issues",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view",
+  "author": "popomore <sakura9515@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "is-type-of": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsdown",
+    "prepublishOnly": "npm run build"
+  }
+}

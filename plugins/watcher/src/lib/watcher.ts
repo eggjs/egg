@@ -1,4 +1,5 @@
 import { debuglog } from 'node:util';
+import type { WatchEventType, Stats } from 'node:fs';
 
 import { Base } from 'sdk-base';
 import camelcase from 'camelcase';
@@ -7,9 +8,18 @@ import type { EggAppConfig } from 'egg';
 
 import { BaseEventSource } from './event-sources/base.ts';
 import { isEqualOrParentPath } from './utils.ts';
-import type { ChangeInfo } from './types.ts';
 
 const debug = debuglog('egg-watcher/lib/watcher');
+
+export interface ChangeInfo extends Record<string, any> {
+  event: WatchEventType;
+  /**
+   * file stat if path exists
+   */
+  stat?: Stats;
+  path: string;
+  isDirectory?: boolean;
+}
 
 export type WatchListener = (info: ChangeInfo) => void;
 

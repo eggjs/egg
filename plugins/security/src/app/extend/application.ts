@@ -40,12 +40,3 @@ export default class SecurityApplication extends Application {
     return await safeCurlForApplication<T>(this, url, options);
   }
 }
-
-declare module 'egg' {
-  interface Application {
-    injectCsrf(html: string): string;
-    injectNonce(html: string): string;
-    injectHijackingDefense(html: string): string;
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
-  }
-}

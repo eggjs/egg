@@ -1,7 +1,7 @@
 import type { MiddlewareFunc } from 'egg';
 
 import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../types.ts';
+import type { SecurityConfig } from '../../config/config.default.ts';
 
 // status codes for redirects
 // @see https://github.com/jshttp/statuses/blob/master/index.js#L33

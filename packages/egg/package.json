@@ -132,7 +132,7 @@
     "@eggjs/session": "workspace:*",
     "@eggjs/static": "workspace:*",
     "@eggjs/utils": "workspace:*",
-    "@eggjs/view": "catalog:",
+    "@eggjs/view": "workspace:*",
     "@eggjs/watcher": "workspace:*",
     "circular-json-for-egg": "catalog:",
     "cluster-client": "catalog:",

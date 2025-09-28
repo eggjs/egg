@@ -2,7 +2,7 @@ import type { BaseContextClass } from 'egg';
 import xss from 'xss';
 
 import { isSafeDomain, getFromUrl } from '../utils.ts';
-import type { SecurityHelperOnTagAttrHandler } from '../../types.ts';
+import type { SecurityHelperOnTagAttrHandler } from '../../config/config.default.ts';
 
 const BUILD_IN_ON_TAG_ATTR = Symbol('buildInOnTagAttr');
 

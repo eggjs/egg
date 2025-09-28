@@ -357,18 +357,3 @@ function extractOptions(options: MultipartOptions = {}) {
 
   return opts;
 }
-
-declare module 'egg' {
-  interface Request {
-    /**
-     * Files Object Array
-     */
-    files?: EggFile[];
-  }
-
-  interface Context {
-    saveRequestFiles(options?: MultipartOptions): Promise<void>;
-    getFileStream(options?: MultipartOptions): Promise<MultipartFileStream>;
-    cleanupRequestFiles(files?: EggFile[]): Promise<void>;
-  }
-}

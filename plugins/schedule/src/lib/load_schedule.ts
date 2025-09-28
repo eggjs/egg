@@ -6,7 +6,8 @@ import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
 import { importResolve } from '@eggjs/utils';
 import type { EggApplicationCore, EggContext } from 'egg';
 
-import type { EggScheduleConfig, EggScheduleTask, EggScheduleItem } from './types.ts';
+import type { EggScheduleTask, EggScheduleItem } from './types.ts';
+import type { EggScheduleConfig } from '../config/config.default.ts';
 
 function getScheduleLoader(app: EggApplicationCore) {
   return class ScheduleLoader extends app.loader.FileLoader {

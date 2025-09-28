@@ -15,7 +15,6 @@ catalog:
   '@eggjs/tegg-config': ^3.2.2
   '@eggjs/tegg-controller-plugin': ^3.2.2
   '@eggjs/tegg-plugin': ^3.2.2
-  '@eggjs/view': ^3.0.1
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
   '@swc-node/register': ^1.11.1

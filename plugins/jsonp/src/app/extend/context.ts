@@ -2,7 +2,7 @@ import { jsonp as jsonpBody } from 'jsonp-body';
 import { Context } from 'egg';
 
 import { JSONP_CONFIG } from '../../lib/private_key.ts';
-import type { JSONPConfig } from '../../types.ts';
+import type { JSONPConfig } from '../../config/config.default.ts';
 
 export default class JSONPContext extends Context {
   declare [JSONP_CONFIG]?: {

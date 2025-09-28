@@ -181,23 +181,6 @@ export default class I18nContext extends Context {
   }
 }
 
-declare module 'egg' {
-  interface Context {
-    /**
-     * get and set current request locale
-     * @member Context#locale
-     * @return {String} lower case locale string, e.g.: 'zh-cn', 'en-us'
-     */
-    locale: string;
-
-    gettext(key: string, value?: any, ...args: any[]): string;
-    __(key: string, value?: any, ...args: any[]): string;
-
-    __getLocale(): string;
-    __setLocale(l: string): void;
-  }
-}
-
 function updateCookie(ctx: Context, locale: string) {
   const { cookieMaxAge, cookieField, cookieDomain } = ctx.app.config.i18n;
   const cookieOptions = {
