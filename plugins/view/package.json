@@ -1,0 +1,75 @@
+{
+  "name": "@eggjs/view",
+  "version": "4.0.0-beta.15",
+  "description": "Base view plugin for egg",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "eggPlugin": {
+    "name": "view"
+  },
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "egg-view",
+    "view"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eggjs/egg.git",
+    "directory": "plugins/view"
+  },
+  "bugs": "https://github.com/eggjs/egg/issues",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view",
+  "author": "popomore <sakura9515@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "is-type-of": "catalog:",
+    "utility": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/supertest": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "coffee": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "scripts": {
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run lint:fix && vitest",
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build"
+  }
+}

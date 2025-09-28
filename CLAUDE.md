@@ -99,6 +99,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Context-aware translation helpers
     - Domain-specific locale configurations
     - Built-in pluralization support
+  - `view/` - Base view plugin (merged from @eggjs/view)
+    - Provides template rendering infrastructure for Egg applications
+    - Supports multiple template engines through plugin system
+    - Implements ViewManager for managing template engine instances
+    - Extends context with render() method for template rendering
+    - Built-in mapping configuration for file extensions to engines
+    - Template engine agnostic - works with ejs, nunjucks, handlebars, etc.
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

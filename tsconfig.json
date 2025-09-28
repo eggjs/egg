@@ -66,6 +66,9 @@
     },
     {
       "path": "./plugins/session"
+    },
+    {
+      "path": "./plugins/view"
     }
   ]
 }

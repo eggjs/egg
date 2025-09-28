@@ -1,5 +1,4 @@
 // import plugins types
-import '@eggjs/view';
 // FIXME: can't use reference types here, development plugin depends on watcher plugin
 import '@eggjs/watcher';
 
@@ -13,3 +12,4 @@ import '@eggjs/watcher';
 /// <reference types="@eggjs/logrotator" />
 /// <reference types="@eggjs/multipart" />
 /// <reference types="@eggjs/i18n" />
+/// <reference types="@eggjs/view" />
