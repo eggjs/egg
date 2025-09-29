@@ -69,18 +69,7 @@ class MockApplicationWorker extends Base {
       }
     }
 
-    // try to use process.pid as port on vitest
-    if (process.env.VITEST) {
-      try {
-        this.options.clusterPort = await detectPort(process.pid);
-        debug('[init] use process.pid: %s as port %s', process.pid, this.options.clusterPort);
-      } catch (err) {
-        console.error(`detect port ${process.pid} failed: ${err}`);
-        this.options.clusterPort = await detectPort();
-      }
-    } else {
-      this.options.clusterPort = await detectPort();
-    }
+    this.options.clusterPort = await detectPort();
     debug('[init] options: %o', this.options);
     const egg = await importModule(this.options.framework);
     assert(egg.Agent, `should export Agent class from framework ${this.options.framework}`);
