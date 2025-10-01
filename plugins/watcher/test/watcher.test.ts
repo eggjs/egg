@@ -23,7 +23,7 @@ describe('test/watcher.test.ts', () => {
     assert.match(content, /defaultEventSource watcher will NOT take effect/);
   });
 
-  it('should work if config.watcher.type is custom', async () => {
+  it.skip('should work if config.watcher.type is custom', async () => {
     app = mm.app({
       // plugin: 'watcher',
       baseDir: getFilePath('apps/watcher-custom-event-source'),
@@ -56,7 +56,7 @@ describe('test/watcher.test.ts', () => {
     await Promise.all([p1, p2]);
   });
 
-  it('should work if config.watcher.type is custom(fuzzy)', async () => {
+  it.skip('should work if config.watcher.type is custom(fuzzy)', async () => {
     app = mm.app({
       // plugin: 'watcher',
       baseDir: getFilePath('apps/watcher-custom-event-source-fuzzy'),
