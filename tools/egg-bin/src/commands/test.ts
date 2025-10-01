@@ -53,11 +53,6 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       description: 'only test with changed files and match test/**/*.test.(js|ts)',
       char: 'c',
     }),
-    mochawesome: Flags.boolean({
-      description: '[default: true] enable mochawesome reporter',
-      default: true,
-      allowNo: true,
-    }),
     parallel: Flags.boolean({
       description: 'mocha parallel mode',
       default: false,
@@ -135,21 +130,6 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       }
     }
 
-    // handle mochawesome enable
-    let reporter = this.env.TEST_REPORTER;
-    let reporterOptions = '';
-    if (!reporter && flags.mochawesome) {
-      // use https://github.com/node-modules/mochawesome/pull/1 instead
-      reporter = importResolve('mochawesome-with-mocha', {
-        paths: [flags.base],
-      });
-      reporterOptions = 'reportDir=node_modules/.mochawesome-reports';
-      if (flags.parallel) {
-        // https://github.com/adamgruber/mochawesome#parallel-mode
-        requires.push(path.join(reporter, '../register.js'));
-      }
-    }
-
     const ext = flags.typescript ? 'ts' : 'js';
     let pattern = args.file ? args.file.split(',') : [];
     // changed
@@ -221,8 +201,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       flags.timeout ? `--timeout=${flags.timeout}` : '--no-timeout',
       flags.parallel ? '--parallel' : '',
       flags.parallel && flags.jobs ? `--jobs=${flags.jobs}` : '',
-      reporter ? `--reporter=${reporter}` : '',
-      reporterOptions ? `--reporter-options=${reporterOptions}` : '',
+      this.env.TEST_REPORTER ? `--reporter=${this.env.TEST_REPORTER}` : '',
       ...requires.map(r => `--require=${r}`),
       ...files,
       flags['dry-run'] ? '--dry-run' : '',

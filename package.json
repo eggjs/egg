@@ -19,7 +19,6 @@
     "js-yaml": "catalog:",
     "lint-staged": "catalog:",
     "mocha": "catalog:",
-    "mochawesome-with-mocha": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "prettier": "catalog:",
