@@ -173,7 +173,7 @@ catalog:
   tsdown: ^0.15.4
   type-fest: ^5.0.1
   type-is: ^2.0.0
-  typescript: 5.9.2
+  typescript: 5.9.3
   urijs: ^1.19.11
   urllib: ^4.8.2
   utility: ^2.5.0
