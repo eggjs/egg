@@ -6,7 +6,7 @@ import { mm } from '@eggjs/mock';
 import { EggConsoleLogger } from 'egg-logger';
 
 import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
-import { AppWorkerLoader, AgentWorkerLoader, EggApplicationCore } from '../../../../src/index.ts';
+import { AppWorkerLoader, AgentWorkerLoader } from '../../../../src/index.ts';
 
 // const EGG_BASE = getFilepath('../..');
 
@@ -25,7 +25,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -69,7 +69,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -91,7 +91,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -113,7 +113,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -139,7 +139,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -162,7 +162,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       env: 'unittest',
       baseDir,
       plugins,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -195,7 +195,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       const appLoader = new AppWorkerLoader({
         env: 'unittest',
         baseDir,
-        app: app as unknown as EggApplicationCore,
+        app,
         logger,
       });
       await appLoader.loadConfig();
@@ -208,7 +208,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       const appLoader = new AppWorkerLoader({
         env: 'unittest',
         baseDir,
-        app: app as unknown as EggApplicationCore,
+        app,
         logger,
       });
       await appLoader.loadConfig();
@@ -221,7 +221,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new AppWorkerLoader({
       env: 'local',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -238,7 +238,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       const appLoader = new AppWorkerLoader({
         env: 'unittest',
         baseDir,
-        app: app as unknown as EggApplicationCore,
+        app,
         logger,
       });
       await appLoader.loadConfig();
@@ -251,7 +251,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       const appLoader = new AppWorkerLoader({
         env: 'unittest',
         baseDir,
-        app: app as unknown as EggApplicationCore,
+        app,
         logger,
       });
       await appLoader.loadConfig();
@@ -264,7 +264,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader1 = new AppWorkerLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader1.loadConfig();
@@ -281,7 +281,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader2 = new AppWorkerLoader({
       env: 'local',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader2.loadConfig();
@@ -315,7 +315,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const appLoader = new CustomAppLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await appLoader.loadConfig();
@@ -331,7 +331,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     const agentLoader = new CustomAgentLoader({
       env: 'unittest',
       baseDir,
-      app: app as unknown as EggApplicationCore,
+      app,
       logger,
     });
     await agentLoader.loadConfig();

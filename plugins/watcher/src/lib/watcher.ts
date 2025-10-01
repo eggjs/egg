@@ -9,7 +9,7 @@ import type { EggAppConfig } from 'egg';
 import { BaseEventSource } from './event-sources/base.ts';
 import { isEqualOrParentPath } from './utils.ts';
 
-const debug = debuglog('egg-watcher/lib/watcher');
+const debug = debuglog('egg/watcher/lib/watcher');
 
 export interface ChangeInfo extends Record<string, any> {
   event: WatchEventType;
@@ -36,8 +36,10 @@ export class Watcher extends Base {
 
   protected async _init() {
     const watcherType = this.#config.watcher?.type;
+    debug('init with watcherType %o', watcherType);
     if (!watcherType) {
       // If watcher config is not defined, skip initialization
+      debug('watcherType is not defined, skip initialization');
       return;
     }
     let EventSource = this.#config.watcher?.eventSources[watcherType] as unknown as typeof BaseEventSource;
@@ -65,6 +67,7 @@ export class Watcher extends Base {
   }
 
   watch(path: string | string[], listener: WatchListener) {
+    debug('watch %o', path);
     this.emit('info', '[@eggjs/watcher] Start watching: %j', path);
     if (!path) return;
 

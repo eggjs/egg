@@ -2,18 +2,21 @@ import { describe, it, beforeAll } from 'vitest';
 import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { type MockApplication, createApp } from '../../../utils.js';
+import { scheduler } from 'node:timers/promises';
+
+import { type MockApplication, createApp } from '../../../utils.ts';
 
 describe('test/lib/core/loader/load_boot.test.ts', () => {
   describe('CommonJS', () => {
     let app: MockApplication;
 
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/boot-app');
-      return app.ready();
+      await app.ready();
     });
 
     it('should load app.js', async () => {
+      await scheduler.wait(100);
       await app.close();
       app.expectLog('app is ready');
 
@@ -45,12 +48,13 @@ describe('test/lib/core/loader/load_boot.test.ts', () => {
   describe('ESM', () => {
     let app: MockApplication;
 
-    beforeAll(() => {
+    beforeAll(async () => {
       app = createApp('apps/boot-app-esm');
-      return app.ready();
+      await app.ready();
     });
 
     it('should load app.js', async () => {
+      await scheduler.wait(100);
       await app.close();
       app.expectLog('app is ready');
 

@@ -1,9 +1,10 @@
-import type { Context, EggApplicationCore } from '../egg.ts';
+import type { Context } from '../egg.ts';
+import type { Application } from '../application.ts';
 import type { HttpClientRequestURL, HttpClientRequestOptions } from './httpclient.ts';
 
 export class ContextHttpClient {
   ctx: Context;
-  app: EggApplicationCore;
+  app: Application;
 
   constructor(ctx: Context) {
     this.ctx = ctx;

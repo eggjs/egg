@@ -1,6 +1,7 @@
 import { BaseContextClass as EggCoreBaseContextClass } from '@eggjs/core';
 
-import type { Context, EggApplicationCore } from '../egg.ts';
+import type { Context } from '../egg.ts';
+import type { Application } from '../application.ts';
 import { BaseContextLogger } from './base_context_logger.ts';
 
 /**
@@ -12,7 +13,7 @@ export class BaseContextClass extends EggCoreBaseContextClass {
   [key: string | symbol]: any;
   declare ctx: Context;
   declare pathName?: string;
-  declare app: EggApplicationCore;
+  declare app: Application;
   declare service: BaseContextClass;
   #logger?: BaseContextLogger;
 

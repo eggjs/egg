@@ -129,7 +129,7 @@ catalog:
   koa-range: ^0.3.0
   koa-session: ^7.0.2
   koa-static: ^5.0.0
-  lint-staged: ^16.2.0
+  lint-staged: ^16.2.3
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
   methods: ^1.1.2
@@ -146,7 +146,7 @@ catalog:
   npminstall: ^7.12.0
   on-finished: ^2.4.1
   onelogger: ^1.0.1
-  oxlint: ^1.18.0
+  oxlint: ^1.19.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
   path-to-regexp: ^1.9.0

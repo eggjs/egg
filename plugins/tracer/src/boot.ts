@@ -1,5 +1,6 @@
 import { debuglog } from 'node:util';
-import type { ILifecycleBoot, EggApplicationCore } from 'egg';
+
+import type { ILifecycleBoot, Application } from 'egg';
 
 import { isReady } from './app/extend/application.ts';
 
@@ -7,7 +8,7 @@ const debug = debuglog('egg/tracer/boot');
 
 export class TracerBoot implements ILifecycleBoot {
   private readonly app;
-  constructor(app: EggApplicationCore) {
+  constructor(app: Application) {
     this.app = app;
   }
 
