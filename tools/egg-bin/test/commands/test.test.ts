@@ -120,20 +120,6 @@ describe('test/commands/test.test.ts', () => {
         .end();
     });
 
-    it('should success with --mochawesome', async () => {
-      await coffee
-        .fork(eggBin, ['test', '--mochawesome'], { cwd })
-        // .debug()
-        .expect('stdout', /should success/)
-        .expect('stdout', /a\.test\.js/)
-        .expect('stdout', /b\/b\.test\.js/)
-        .expect('stdout', /\[mochawesome] Report JSON saved to/)
-        .expect('stdout', /mochawesome\.json/)
-        .notExpect('stdout', /\ba\.js/)
-        .expect('code', 0)
-        .end();
-    });
-
     it('should success with --bail', async () => {
       await coffee
         .fork(eggBin, ['test', '--bail'], { cwd })

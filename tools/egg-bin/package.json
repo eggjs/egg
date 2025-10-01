@@ -34,7 +34,6 @@
     "globby": "catalog:",
     "jest-changed-files": "catalog:",
     "mocha": "catalog:",
-    "mochawesome-with-mocha": "catalog:",
     "runscript": "catalog:",
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",

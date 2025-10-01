@@ -136,7 +136,6 @@ You can pass any mocha argv.
 - `--parallel` enable mocha parallel mode, default to `false`.
 - `--auto-agent` auto start agent in mocha master agent.
 - `--jobs` number of jobs to run in parallel, default to `os.cpus().length - 1`.
-- `--mochawesome` enable [mochawesome](https://github.com/adamgruber/mochawesome) reporter, default to `true`.
 
 #### test environment
 
