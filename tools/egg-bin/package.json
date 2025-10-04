@@ -25,8 +25,6 @@
   "dependencies": {
     "@eggjs/utils": "workspace:*",
     "@oclif/core": "catalog:",
-    "@types/mocha": "catalog:",
-    "@eggjs/supertest": "workspace:*",
     "c8": "catalog:",
     "ci-parallel-vars": "catalog:",
     "detect-port": "catalog:",
@@ -48,9 +46,11 @@
     }
   },
   "devDependencies": {
+    "@eggjs/supertest": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
+    "@types/mocha": "catalog:",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "assert-file": "catalog:",

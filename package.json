@@ -25,6 +25,7 @@
     "rimraf": "catalog:",
     "semver": "catalog:",
     "typescript": "catalog:",
+    "unplugin-unused": "catalog:",
     "urllib": "catalog:",
     "vitest": "catalog:"
   },

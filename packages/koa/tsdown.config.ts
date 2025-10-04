@@ -5,6 +5,10 @@ export default defineConfig({
     index: 'src/index.ts',
   },
   unbundle: true,
+  unused: {
+    level: 'error',
+    ignore: ['@types/content-disposition'],
+  },
   exports: {
     devExports: true,
   },

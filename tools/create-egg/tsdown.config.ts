@@ -4,6 +4,9 @@ export default defineConfig({
   entry: ['src/index.ts', 'src/cli.ts'],
   unbundle: true,
   dts: true,
+  unused: {
+    level: 'error',
+  },
   exports: {
     devExports: true,
   },
