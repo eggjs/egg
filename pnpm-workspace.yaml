@@ -109,7 +109,7 @@ catalog:
   gals: '1'
   get-ready: ^3.1.0
   glob: ^11.0.0
-  globby: ^11.0.2
+  globby: ^15.0.0
   graceful: ^2.0.0
   graceful-process: ^2.0.0
   http-errors: ^2.0.0
