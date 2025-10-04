@@ -125,7 +125,6 @@
     "@eggjs/tegg-plugin": "catalog:",
     "@types/methods": "catalog:",
     "egg-errors": "catalog:",
-    "tsd": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },
