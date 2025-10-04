@@ -3,20 +3,19 @@ import path from 'node:path';
 import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
-import { AsyncLocalStorage } from 'node:async_hooks';
+import type { AsyncLocalStorage } from 'node:async_hooks';
 
 import { EggCore, Router } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
-import createClusterClient, {
-  close as closeClusterClient,
-  // @ts-ignore Could not find a declaration file for module 'cluster-client'
-} from 'cluster-client';
+// @ts-expect-error no types for 'cluster-client'
+import createClusterClient from 'cluster-client';
+// @ts-expect-error no types for 'cluster-client'
+import { close as closeClusterClient } from 'cluster-client';
 import { extend } from '@eggjs/extend2';
 import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error no types for circular-json-for-egg
 import CircularJSON from 'circular-json-for-egg';
 
 import type { Agent } from './agent.ts';
