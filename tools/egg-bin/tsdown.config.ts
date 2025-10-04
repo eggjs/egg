@@ -4,7 +4,8 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
-  // unbundle: true,
+  // MEMO: @oclif/core only work on unbundle mode
+  unbundle: true,
   dts: true,
   unused: {
     level: 'error',
