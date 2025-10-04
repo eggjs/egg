@@ -7,7 +7,7 @@ export default defineConfig({
   //   register: 'src/register.ts',
   // },
   entry: 'src/**/*.ts',
-  unbundle: true,
+  // unbundle: true,
   dts: true,
   unused: {
     level: 'error',
