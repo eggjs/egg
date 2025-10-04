@@ -6,7 +6,7 @@ export default defineConfig({
     agent_worker: 'src/agent_worker.ts',
     app_worker: 'src/app_worker.ts',
   },
-  unbundle: true,
+  // unbundle: true,
   dts: true,
   unused: {
     level: 'error',
