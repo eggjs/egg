@@ -19,3 +19,4 @@ app/**/*.map
 test/**/*.map
 config/**/*.map
 .package-lock.json
+.egg/
