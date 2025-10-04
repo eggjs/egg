@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/static",
-  "version": "4.0.0-beta.18",
+  "version": "4.0.0-beta.19",
   "publishConfig": {
     "access": "public",
     "exports": {
