@@ -166,7 +166,6 @@
     "runscript": "catalog:",
     "sdk-base": "catalog:",
     "spy": "catalog:",
-    "tsd": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

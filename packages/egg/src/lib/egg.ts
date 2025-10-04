@@ -73,6 +73,16 @@ export { Context, Router };
  */
 export class EggApplicationCore extends EggCore {
   declare ctxStorage: AsyncLocalStorage<Context>;
+
+  /**
+   * Get the current request context from AsyncLocalStorage.
+   * This provides access to the context object for the current request lifecycle.
+   * @returns {Context | undefined} The current request context, or undefined if not in a request scope.
+   */
+  get currentContext() {
+    return this.ctxStorage.getStore();
+  }
+
   // export context base classes, let framework can impl sub class and over context extend easily.
   ContextCookies = ContextCookies;
   ContextLogger = ContextLogger;
