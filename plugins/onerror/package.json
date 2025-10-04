@@ -57,7 +57,7 @@
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc && cp src/lib/onerror_page.mustache.html dist/lib/onerror_page.mustache.html",
     "prepublishOnly": "pnpm run build"
   },
   "type": "module",

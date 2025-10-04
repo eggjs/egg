@@ -24,7 +24,7 @@
   },
   "description": "Utils for all egg projects",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

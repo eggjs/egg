@@ -47,7 +47,7 @@
     "ylru": "^2.0.0"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
