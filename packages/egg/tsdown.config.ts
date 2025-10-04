@@ -4,7 +4,9 @@ export default defineConfig({
   entry: 'src/**/*.ts',
   dts: true,
   unbundle: true,
-  unused: true,
+  unused: {
+    level: 'error',
+  },
   exports: {
     devExports: true,
   },

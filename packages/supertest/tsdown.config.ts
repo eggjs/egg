@@ -6,7 +6,10 @@ export default defineConfig({
   },
   unbundle: true,
   dts: true,
-  unused: true,
+  unused: {
+    level: 'error',
+    ignore: ['@types/superagent'],
+  },
   exports: {
     devExports: true,
   },
