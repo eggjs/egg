@@ -35,7 +35,7 @@
   "author": "fengmk2 <fengmk2@gmail.com> (https://github.com/fengmk2)",
   "license": "MIT",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",

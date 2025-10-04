@@ -69,7 +69,7 @@
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "prepublishOnly": "pnpm run build"
   },
   "repository": {

@@ -24,7 +24,7 @@
   "module": "./dist/index.js",
   "description": "Koa web app framework for https://eggjs.org",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",

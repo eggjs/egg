@@ -55,7 +55,7 @@
     "typescript": "catalog:"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",

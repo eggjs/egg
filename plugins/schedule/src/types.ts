@@ -8,10 +8,11 @@ declare module 'egg' {
      */
     schedule: EggScheduleConfig;
   }
-}
 
-declare module '@eggjs/mock' {
-  interface MockApplication {
+  interface Application {
+    /**
+     * Run a schedule, only for unit test
+     */
     runSchedule(schedulePath: string, ...args: any[]): Promise<any>;
   }
 }

@@ -172,7 +172,7 @@
   "scripts": {
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "test": "vitest run",
     "prepublishOnly": "pnpm run build"
   },

@@ -24,7 +24,7 @@
   },
   "description": "A core plugin framework based on @eggjs/koa",
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
