@@ -8,6 +8,7 @@ export default defineConfig({
   },
   unbundle: true,
   dts: true,
+  unused: true,
   exports: {
     devExports: true,
   },

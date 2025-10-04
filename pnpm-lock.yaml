@@ -84,6 +84,9 @@ catalogs:
     '@types/fresh':
       specifier: ^0.5.2
       version: 0.5.3
+    '@types/fs-readdir-recursive':
+      specifier: ^1.1.3
+      version: 1.1.3
     '@types/http-errors':
       specifier: ^2.0.4
       version: 2.0.5
@@ -105,6 +108,9 @@ catalogs:
     '@types/methods':
       specifier: ^1.1.4
       version: 1.1.4
+    '@types/mime-types':
+      specifier: ^3.0.0
+      version: 3.0.1
     '@types/mocha':
       specifier: ^10.0.10
       version: 10.0.10
@@ -483,6 +489,9 @@ catalogs:
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
+    unplugin-unused:
+      specifier: ^0.5.3
+      version: 0.5.3
     urijs:
       specifier: ^1.19.11
       version: 1.19.11
@@ -564,6 +573,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
+      unplugin-unused:
+        specifier: 'catalog:'
+        version: 0.5.3
       urllib:
         specifier: 'catalog:'
         version: 4.8.2
@@ -607,7 +619,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -671,7 +683,7 @@ importers:
         version: 2.3.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -711,7 +723,7 @@ importers:
         version: 1.19.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -796,7 +808,7 @@ importers:
         version: 3.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -950,7 +962,7 @@ importers:
         version: 1.0.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -965,7 +977,7 @@ importers:
         version: 1.19.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1083,7 +1095,7 @@ importers:
         version: 4.0.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1116,10 +1128,10 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
       '@types/fs-readdir-recursive':
-        specifier: ^1.1.3
+        specifier: 'catalog:'
         version: 1.1.3
       '@types/mime-types':
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.1
       '@types/node':
         specifier: 'catalog:'
@@ -1135,7 +1147,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1196,7 +1208,7 @@ importers:
         version: 1.19.25
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1233,7 +1245,7 @@ importers:
         version: 4.21.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1263,7 +1275,7 @@ importers:
         version: 2.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1294,7 +1306,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1340,7 +1352,7 @@ importers:
         version: 2.3.0(chokidar@3.6.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1368,7 +1380,7 @@ importers:
         version: 24.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1408,7 +1420,7 @@ importers:
         version: 11.0.3
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1442,9 +1454,6 @@ importers:
       get-ready:
         specifier: 'catalog:'
         version: 3.4.0
-      globby:
-        specifier: 'catalog:'
-        version: 11.1.0
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1487,7 +1496,7 @@ importers:
         version: 2.3.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1536,7 +1545,7 @@ importers:
         version: 2.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1576,7 +1585,7 @@ importers:
         version: 0.0.33
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1625,7 +1634,7 @@ importers:
         version: 1.19.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1713,7 +1722,7 @@ importers:
         version: 1.0.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1750,7 +1759,7 @@ importers:
         version: 24.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1793,7 +1802,7 @@ importers:
         version: 1.19.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1815,7 +1824,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1843,7 +1852,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1874,7 +1883,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1918,7 +1927,7 @@ importers:
         version: 9.6.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
 
   tools/egg-bin:
     dependencies:
@@ -2009,7 +2018,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -5609,6 +5618,9 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
+  confbox@0.2.2:
+    resolution: {integrity: sha512-1NB+BKqhtNipMsov4xI/NnhCKp9XG9NamYp5PVm9klAT0fsrNPjaFICsCFhNhwZJKNh7zB/3q8qXz0E9oaMNtQ==}
+
   config-chain@1.1.13:
     resolution: {integrity: sha512-qj+f8APARXHrM0hraqXYb2/bOVSV4PvJQlNZ/DVj0QrmNM2q2euizkeuVckQ57J+W0mRH6Hvi+k50M4Jul2VRQ==}
 
@@ -6534,6 +6546,9 @@ packages:
   express@5.1.0:
     resolution: {integrity: sha512-DT9ck5YIRU+8GYzzU5kT3eHGA5iL+1Zd0EutOmTE9Dtk+Tvuzd23VBU+ec7HPNSTxXYO55gPV/hq4pSBJDjFpA==}
     engines: {node: '>= 18'}
+
+  exsolve@1.0.7:
+    resolution: {integrity: sha512-VO5fQUzZtI6C+vx4w/4BWJpg3s/5l+6pRQEHzFRM8WFi4XffSP1Z+4qi7GbjWbvRQEbdIco5mIMq+zX4rPuLrw==}
 
   extend-shallow@2.0.1:
     resolution: {integrity: sha512-zCnTtlxNoAiDc3gqY2aYAWFx7XWWiasuF2K8Me5WbN8otHKTUKBwjPtNpRs/rbUZm7KxWAaNj7P1a/p52GbVug==}
@@ -9161,6 +9176,9 @@ packages:
     resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
     engines: {node: '>=16.20.0'}
 
+  pkg-types@2.3.0:
+    resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
+
   platform@1.3.6:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
@@ -11120,6 +11138,14 @@ packages:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
     engines: {node: '>= 0.8'}
 
+  unplugin-unused@0.5.3:
+    resolution: {integrity: sha512-YZ9xXe9UQDRwDg5X4nyptZgVQeHuT84GQBpf0tEap08XGwx5jCT29P1/LTuChqno/A9SFFG14LWE5Bg/YhKeBQ==}
+    engines: {node: '>=20.18.0'}
+
+  unplugin@2.3.10:
+    resolution: {integrity: sha512-6NCPkv1ClwH+/BGE9QeoTIl09nuiAt0gS28nn1PvYXsGKRwM2TCbFA2QiilmehPDTXIe684k4rZI1yl3A1PCUw==}
+    engines: {node: '>=18.12.0'}
+
   unquote@1.1.1:
     resolution: {integrity: sha512-vRCqFv6UhXpWxZPyGDh/F3ZpNv8/qo7w6iufLpQg9aKnQ71qM4B5KiI7Mia9COcjEhrO9LueHpMYjYzsWH3OIg==}
 
@@ -11332,6 +11358,9 @@ packages:
   webpack-sources@3.3.3:
     resolution: {integrity: sha512-yd1RBzSGanHkitROoPFd6qsrxt+oFhg/129YzheDGqeustzX0vTZJZsSsQjVQC4yzBQ56K55XU8gaNCtIzOnTg==}
     engines: {node: '>=10.13.0'}
+
+  webpack-virtual-modules@0.6.2:
+    resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
   webpack@5.102.0:
     resolution: {integrity: sha512-hUtqAR3ZLVEYDEABdBioQCIqSoguHbFn1K7WlPPWSuXmx0031BD73PSE35jKyftdSh4YLDoQNgK4pqBt5Q82MA==}
@@ -15648,6 +15677,8 @@ snapshots:
 
   concat-map@0.0.1: {}
 
+  confbox@0.2.2: {}
+
   config-chain@1.1.13:
     dependencies:
       ini: 1.3.8
@@ -16965,6 +16996,8 @@ snapshots:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
+
+  exsolve@1.0.7: {}
 
   extend-shallow@2.0.1:
     dependencies:
@@ -20123,6 +20156,12 @@ snapshots:
 
   pkce-challenge@5.0.0: {}
 
+  pkg-types@2.3.0:
+    dependencies:
+      confbox: 0.2.2
+      exsolve: 1.0.7
+      pathe: 2.0.3
+
   platform@1.3.6: {}
 
   pluralize@7.0.0: {}
@@ -22045,7 +22084,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsdown@0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3):
+  tsdown@0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
@@ -22063,6 +22102,7 @@ snapshots:
       unconfig: 7.3.3
     optionalDependencies:
       typescript: 5.9.3
+      unplugin-unused: 0.5.3
     transitivePeerDependencies:
       - '@ts-macro/tsc'
       - '@typescript/native-preview'
@@ -22326,6 +22366,20 @@ snapshots:
 
   unpipe@1.0.0: {}
 
+  unplugin-unused@0.5.3:
+    dependencies:
+      js-tokens: 9.0.1
+      picocolors: 1.1.1
+      pkg-types: 2.3.0
+      unplugin: 2.3.10
+
+  unplugin@2.3.10:
+    dependencies:
+      '@jridgewell/remapping': 2.3.5
+      acorn: 8.15.0
+      picomatch: 4.0.3
+      webpack-virtual-modules: 0.6.2
+
   unquote@1.1.1: {}
 
   unset-value@0.1.2:
@@ -22571,6 +22625,8 @@ snapshots:
       javascript-stringify: 2.1.0
 
   webpack-sources@3.3.3: {}
+
+  webpack-virtual-modules@0.6.2: {}
 
   webpack@5.102.0(esbuild@0.25.10):
     dependencies:

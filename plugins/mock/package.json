@@ -106,7 +106,6 @@
     "detect-port": "catalog:",
     "egg-logger": "catalog:",
     "get-ready": "catalog:",
-    "globby": "catalog:",
     "is-type-of": "catalog:",
     "merge-descriptors": "catalog:",
     "mm": "catalog:",
