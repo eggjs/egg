@@ -1,0 +1,84 @@
+{
+  "name": "@eggjs/redis",
+  "version": "4.0.0-beta.25",
+  "description": "Valkey / Redis plugin for egg",
+  "type": "module",
+  "eggPlugin": {
+    "name": "redis"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/redis": "./src/lib/redis.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/redis": "./dist/lib/redis.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "redis",
+    "Valkey",
+    "database"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/redis",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "plugins/redis"
+  },
+  "author": "jtyjty99999",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "clean": "rimraf dist *.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "ioredis": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "detect-port": "^2.1.0",
+    "egg": "workspace:*",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

@@ -70,6 +70,52 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
+      - name: Start Redis (MacOS or Linux)
+        if: ${{ (matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest') && matrix.filter == 'plugins' }}
+        uses: shogo82148/actions-setup-redis@c04803072c41cb7407800faf677b1e3384959c3b # v1
+        with:
+          redis-version: '7'
+          auto-start: 'true'
+
+      - name: Start Redis (Windows via Memurai)
+        if: ${{ matrix.os == 'windows-latest' && matrix.filter == 'plugins' }}
+        shell: pwsh
+        run: |
+          choco install -y memurai-developer.install
+
+          # ensure service exists and running (avoid non-zero return code of net start)
+          $svc = Get-Service -Name Memurai -ErrorAction SilentlyContinue
+          if (-not $svc) {
+            Write-Error "Memurai service not found after install"
+            exit 1
+          }
+          if ($svc.Status -ne 'Running') {
+            Start-Service -Name Memurai -ErrorAction Stop
+            # wait for 20s until Running
+            $svc.WaitForStatus('Running', '00:00:20')
+          } else {
+            Write-Host "Memurai already running."
+          }
+
+          # wait for 6379 port ready (max ~60s)
+          $deadline = (Get-Date).AddSeconds(60)
+          $ready = $false
+          while ((Get-Date) -lt $deadline -and -not $ready) {
+            try {
+              $client = New-Object System.Net.Sockets.TcpClient
+              $async  = $client.BeginConnect('127.0.0.1', 6379, $null, $null)
+              $ok = $async.AsyncWaitHandle.WaitOne(2000)
+              if ($ok -and $client.Connected) { $ready = $true }
+              $client.Close()
+            } catch { }
+          }
+          if (-not $ready) {
+            Write-Error "Memurai (Redis) not ready on 127.0.0.1:6379"
+            exit 1
+          }
+
+          Write-Host "Memurai is ready on 127.0.0.1:6379"
+
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
 

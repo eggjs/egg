@@ -339,6 +339,9 @@ catalogs:
     ini:
       specifier: ^5.0.0
       version: 5.0.0
+    ioredis:
+      specifier: ^5.4.2
+      version: 5.8.0
     is-type-of:
       specifier: ^2.2.0
       version: 2.2.0
@@ -1506,6 +1509,9 @@ importers:
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1592,6 +1598,43 @@ importers:
       '@types/stack-trace':
         specifier: 'catalog:'
         version: 0.0.33
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.16(@types/debug@4.1.12)(@types/node@24.6.2)(@vitest/ui@4.0.0-beta.16)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
+  plugins/redis:
+    dependencies:
+      ioredis:
+        specifier: 'catalog:'
+        version: 5.8.0
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.6.2
+      detect-port:
+        specifier: ^2.1.0
+        version: 2.1.0
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.19.0(oxlint-tsgolint@0.2.0)
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)

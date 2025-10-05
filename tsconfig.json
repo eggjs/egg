@@ -83,6 +83,9 @@
       "path": "./plugins/typebox-validate"
     },
     {
+      "path": "./plugins/redis"
+    },
+    {
       "path": "./tools/egg-bin"
     },
     {

@@ -6,7 +6,7 @@ import type { EggCore } from './egg.ts';
 
 export type SingletonCreateMethod = (
   config: Record<string, any>,
-  app: EggCore,
+  app: any,
   clientName: string
 ) => unknown | Promise<unknown>;
 

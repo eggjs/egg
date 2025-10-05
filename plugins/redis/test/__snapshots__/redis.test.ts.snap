@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/redis.test.ts > default config > should make default config stable 1`] = `
+{
+  "agent": false,
+  "app": true,
+  "client": {
+    "db": "0",
+    "host": "127.0.0.1",
+    "password": "",
+    "port": 6379,
+  },
+  "default": {},
+  "supportTimeCommand": true,
+}
+`;

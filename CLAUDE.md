@@ -125,6 +125,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Includes decorator support for controller validation
     - Supports custom formats and validation rules
     - Re-exports TypeBox for schema definitions
+  - `redis/` - Redis/Valkey plugin (merged from @eggjs/redis)
+    - Provides Redis and Valkey client integration for Egg applications
+    - Built on ioredis for full Redis feature support
+    - Supports single instance, cluster, and sentinel configurations
+    - Multi-client support with singleton pattern
+    - Weak dependency mode for optional Redis connections
+    - Extends Application and Agent with redis property
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

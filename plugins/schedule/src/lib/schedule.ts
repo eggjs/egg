@@ -76,10 +76,10 @@ export class Schedule {
   onJobFinish(info: EggScheduleJobInfo) {
     this.#logger.debug(`[Job#${info.id}] ${info.key} finish event received by agent from worker#${info.workerId}`);
     const instance = this.#strategyInstanceMap.get(info.key);
-    /* istanbul ignore else */
     if (instance) {
       instance.onJobFinish(info);
     }
+    debug('onJobFinish', info);
   }
 
   /**
