@@ -11,12 +11,13 @@ catalog:
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
-  '@eggjs/tegg': ^3.2.2
-  '@eggjs/tegg-config': ^3.2.2
-  '@eggjs/tegg-controller-plugin': ^3.2.2
-  '@eggjs/tegg-plugin': ^3.2.2
+  '@eggjs/tegg': beta
+  '@eggjs/tegg-config': beta
+  '@eggjs/tegg-controller-plugin': beta
+  '@eggjs/tegg-plugin': beta
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
+  '@oxc-node/core': ^0.0.32
   '@sinclair/typebox': ^0.23.0
   '@swc-node/register': ^1.11.1
   '@swc/core': ^1.13.5
