@@ -1,6 +1,5 @@
 import { Context } from 'egg';
 import type { Schema } from 'ajv/dist/2019.js';
-import '../../types.ts';
 
 export default class AjvContext extends Context {
   tValidate(schema: Schema, data: unknown): boolean {
@@ -20,5 +19,12 @@ export default class AjvContext extends Context {
   tValidateWithoutThrow(schema: Schema, data: unknown): boolean {
     const res = this.app.ajv.validate(schema, data);
     return res;
+  }
+}
+
+declare module 'egg' {
+  interface Context {
+    tValidate(schema: Schema, data: unknown): boolean;
+    tValidateWithoutThrow(schema: Schema, data: unknown): boolean;
   }
 }

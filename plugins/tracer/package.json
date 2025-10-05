@@ -59,7 +59,7 @@
     "lint": "oxlint --type-aware",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build"
   },
   "type": "module",

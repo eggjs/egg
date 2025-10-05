@@ -2,7 +2,6 @@ import type { Application, ILifecycleBoot } from 'egg';
 import addFormats from 'ajv-formats';
 import { Ajv2019 as Ajv } from 'ajv/dist/2019.js';
 import keyWords from 'ajv-keywords';
-import './types.ts';
 
 const getAjvInstance = () => {
   const ajv = new Ajv();
@@ -44,5 +43,11 @@ export default class AppBootHook implements ILifecycleBoot {
     if (typeboxValidate) {
       typeboxValidate.patchAjv?.(this.app.ajv);
     }
+  }
+}
+
+declare module 'egg' {
+  interface Application {
+    ajv: Ajv;
   }
 }

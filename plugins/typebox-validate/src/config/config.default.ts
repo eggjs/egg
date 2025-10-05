@@ -9,3 +9,13 @@ export default {
     patchAjv: undefined,
   } as TypeboxValidateConfig,
 };
+
+declare module 'egg' {
+  interface EggAppConfig {
+    /**
+     * typebox validate options
+     * @member Config#typeboxValidate
+     */
+    typeboxValidate: TypeboxValidateConfig;
+  }
+}

@@ -1,18 +1,18 @@
-# egg-typebox-validate
+# @eggjs/typebox-validate
 
 [![NPM version][npm-image]][npm-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/egg-typebox-validate.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-typebox-validate
-[codecov-image]: https://img.shields.io/codecov/c/github/eggjs-community/egg-typebox-validate.svg?style=flat-square
-[codecov-url]: https://codecov.io/github/eggjs-community/egg-typebox-validate?branch=master
-[snyk-image]: https://snyk.io/test/npm/egg-typebox-validate/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-typebox-validate
-[download-image]: https://img.shields.io/npm/dm/egg-typebox-validate.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-typebox-validate
+[npm-image]: https://img.shields.io/npm/v/@eggjs/typebox-validate.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/typebox-validate
+[codecov-image]: https://img.shields.io/codecov/c/github/eggjs-community/@eggjs/typebox-validate.svg?style=flat-square
+[codecov-url]: https://codecov.io/github/eggjs-community/@eggjs/typebox-validate?branch=master
+[snyk-image]: https://snyk.io/test/npm/@eggjs/typebox-validate/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/typebox-validate
+[download-image]: https://img.shields.io/npm/dm/@eggjs/typebox-validate.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/typebox-validate
 
 基于 [typebox](https://github.com/sinclairzx81/typebox) 和 [ajv](https://github.com/ajv-validator/ajv) 封装的 egg validate 插件。
 
@@ -460,6 +460,6 @@ async someFunc() {
 
 ## Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=eggjs-community/egg-typebox-validate)](https://github.com/eggjs-community/egg-typebox-validate/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
 Made with [contributors-img](https://contrib.rocks).

@@ -1,13 +1,15 @@
-import { strict as assert } from 'node:assert';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import path from 'node:path';
+
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mock } from '@eggjs/mock';
+
 import { Ajv } from '../src/index.ts';
 
 describe('test/index.test.ts', () => {
   let app: any;
   beforeAll(async () => {
     app = mock.app({
-      baseDir: 'apps/typebox-validate-test',
+      baseDir: path.join(import.meta.dirname, 'fixtures', 'apps', 'typebox-validate-test'),
     });
     await app.ready();
   });
@@ -16,8 +18,7 @@ describe('test/index.test.ts', () => {
   afterEach(mock.restore);
 
   it('should export Ajv', () => {
-    assert(Ajv);
-    assert.equal(typeof Ajv, 'function');
+    expect(Ajv).toBeInstanceOf(Function);
   });
 
   it('should POST 200 /:id', async () => {
@@ -26,11 +27,11 @@ describe('test/index.test.ts', () => {
       description: 'desc',
       email: 'xiekw2010@gmail.com',
     });
-    assert(res.status === 200);
-    assert(res.body.n === 'xiekw2010');
-    assert(res.body.d === 'desc');
-    assert(res.body.e === 'xiekw2010@gmail.com');
-    assert(res.body.same === true);
+    expect(res.status).toBe(200);
+    expect(res.body.n).toBe('xiekw2010');
+    expect(res.body.d).toBe('desc');
+    expect(res.body.e).toBe('xiekw2010@gmail.com');
+    expect(res.body.same).toBe(true);
   });
 
   it('should POST 422 /:id', async () => {
@@ -38,7 +39,7 @@ describe('test/index.test.ts', () => {
       name: 'xiekw2010',
       email: 'xiekw2010gmail.com',
     });
-    assert(res.status === 422);
+    expect(res.status).toBe(422);
   });
 
   it('should PUT 422 /:id with redirect', async () => {
@@ -46,8 +47,8 @@ describe('test/index.test.ts', () => {
       name: 'xiekw2010',
       email: 'xiekw2010gmail.com',
     });
-    assert(res.status === 302);
-    assert(/Redirecting.*\/422/.test(res.text));
+    expect(res.status).toBe(302);
+    expect(res.text).toMatch(/Redirecting.*\/422/);
   });
 
   it('should POST 200 /:id trim', async () => {
@@ -56,11 +57,11 @@ describe('test/index.test.ts', () => {
       description: 'desc  ',
       email: 'xiekw2010@gmail.com',
     });
-    assert(res.status === 200);
-    assert(res.body.n === 'xiekw2010');
-    assert(res.body.d === 'desc');
-    assert(res.body.e === 'xiekw2010@gmail.com');
-    assert(res.body.same === true);
+    expect(res.status).toBe(200);
+    expect(res.body.n).toBe('xiekw2010');
+    expect(res.body.d).toBe('desc');
+    expect(res.body.e).toBe('xiekw2010@gmail.com');
+    expect(res.body.same).toBe(true);
   });
 
   it('should POST 200 /:id custom format number bype', async () => {
@@ -70,8 +71,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       byte: 4,
     });
-    assert(res.status === 200);
-    assert(res.body.same === true);
+    expect(res.status).toBe(200);
+    expect(res.body.same).toBe(true);
 
     res = await app.httpRequest().post('/someId').send({
       name: 'xiekw2010',
@@ -79,7 +80,7 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       byte: 256,
     });
-    assert(res.status === 422);
+    expect(res.status).toBe(422);
   });
 
   it('should POST 200 /:id custom format string json-string', async () => {
@@ -89,8 +90,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       jsonString: '{"a":1}',
     });
-    assert(res.status === 200);
-    assert(res.body.same === true);
+    expect(res.status).toBe(200);
+    expect(res.body.same).toBe(true);
 
     res = await app.httpRequest().post('/someId').send({
       name: 'xiekw2010',
@@ -98,7 +99,7 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       jsonString: 'a{"a":1}',
     });
-    assert(res.status === 422);
+    expect(res.status).toBe(422);
   });
 
   it('should POST 200 /:id custom format string semver', async () => {
@@ -108,8 +109,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: '1.0.0',
     });
-    assert(res.status === 200);
-    assert(res.body.same === true);
+    expect(res.status).toBe(200);
+    expect(res.body.same).toBe(true);
 
     res = await app.httpRequest().post('/someId').send({
       name: 'xiekw2010',
@@ -117,7 +118,7 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: 'a.b.c',
     });
-    assert(res.status === 422);
+    expect(res.status).toBe(422);
   });
 
   it('should PATCH 200 /:id tValidateWithoutThrow', async () => {
@@ -127,8 +128,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: '1.0.0',
     });
-    assert(res.status === 200);
-    assert(res.body.message === 'ok');
+    expect(res.status).toBe(200);
+    expect(res.body.message).toBe('ok');
 
     res = await app.httpRequest().patch('/someId').send({
       name: 'xiekw2010',
@@ -136,8 +137,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: 'a.b.c',
     });
-    assert(res.status === 422);
-    assert(res.body.errors[0].message.includes('semver'));
+    expect(res.status).toBe(422);
+    expect(res.body.errors[0].message).toContain('semver');
 
     res = await app.httpRequest().patch('/someId').send({
       name: 'xiekw2010',
@@ -145,9 +146,9 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010gmail.com',
       version: 'a.b.c',
     });
-    assert(res.status === 422);
-    assert(res.body.errors.length === 1);
-    assert(res.body.errors[0].message.includes('string'));
+    expect(res.status).toBe(422);
+    expect(res.body.errors.length).toBe(1);
+    expect(res.body.errors[0].message).toContain('string');
   });
 
   it('should DELETE 200 /:id decorator', async () => {
@@ -157,8 +158,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: '1.0.0',
     });
-    assert(res.status === 200);
-    assert(res.body.version === '1.0.0');
+    expect(res.status).toBe(200);
+    expect(res.body.version).toBe('1.0.0');
   });
 
   it('should DELETE 422 /:id decorator', async () => {
@@ -168,8 +169,8 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: 'a.b.c',
     });
-    assert(res.status === 422);
-    assert(res.text.includes('kaiwei custom error: must match format "semver"'));
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('kaiwei custom error: must match format "semver"');
 
     res = await app.httpRequest().delete('/someId').send({
       name: null,
@@ -177,7 +178,7 @@ describe('test/index.test.ts', () => {
       email: 'xiekw2010@gmail.com',
       version: 'a.b.c',
     });
-    assert(res.status === 422);
-    assert(res.text.includes('kaiwei custom error: must be string'));
+    expect(res.status).toBe(422);
+    expect(res.text).toContain('kaiwei custom error: must be string');
   });
 });

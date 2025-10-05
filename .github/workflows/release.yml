@@ -80,9 +80,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build packages
-        run: pnpm build
-
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"

@@ -17,6 +17,7 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -40,6 +41,11 @@
     "eggPlugin",
     "egg-plugin"
   ],
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/typebox-validate",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/eggjs/egg.git",
@@ -50,19 +56,21 @@
     "node": ">= 22.18.0"
   },
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@sinclair/typebox": "catalog:",
     "ajv": "catalog:",
     "ajv-formats": "catalog:",
     "ajv-keywords": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
@@ -75,9 +83,6 @@
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
-  },
-  "peerDependencies": {
-    "egg": "workspace:*"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
