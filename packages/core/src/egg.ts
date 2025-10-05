@@ -44,6 +44,7 @@ export type { Next, KoaMiddlewareFunc };
 
 // export @eggjs/core classes
 export class Request extends KoaRequest {
+  declare ctx: Context;
   declare app: EggCore;
   declare response: Response;
 }

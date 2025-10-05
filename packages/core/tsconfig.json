@@ -1,9 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
-    "rootDir": "./src",
-    "outDir": "./dist"
+    "baseUrl": "./"
   },
-  "exclude": ["test", "dist", "tsdown.config.ts", "vitest.config.ts", "example/**/*.ts"]
+  "exclude": ["test/fixtures/**/*.ts"]
 }

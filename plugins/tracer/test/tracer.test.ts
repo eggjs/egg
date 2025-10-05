@@ -1,4 +1,4 @@
-import { mm, MockApplication } from '@eggjs/mock';
+import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, expect } from 'vitest';
 
 import { isReady } from '../src/app/extend/application.ts';

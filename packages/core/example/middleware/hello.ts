@@ -1,4 +1,4 @@
-import type { MiddlewareFunc } from '../../src/index.js';
+import type { MiddlewareFunc } from '../../src/index.ts';
 
 export const hello: MiddlewareFunc = async (ctx, next) => {
   console.log('Hello middleware');

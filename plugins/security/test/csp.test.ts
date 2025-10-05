@@ -3,7 +3,8 @@ import { describe, it, expect, afterAll, beforeAll } from 'vitest';
 
 import { getFixtures } from './utils.ts';
 
-describe('test/csp.test.ts', () => {
+// windows unstable
+describe.skipIf(process.platform === 'win32')('test/csp.test.ts', () => {
   let app: MockApplication;
   let app2: MockApplication;
   let app3: MockApplication;

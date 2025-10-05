@@ -22,7 +22,7 @@
   "types": "./dist/index.d.ts",
   "description": "cluster manager for egg",
   "scripts": {
-    "build": "tsdown && rimraf dist && tsc -b --clean && tsc",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

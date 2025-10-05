@@ -4,7 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
   },
-  // unbundle: true,
+  unbundle: true,
   unused: {
     level: 'error',
     ignore: ['@types/content-disposition'],

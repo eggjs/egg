@@ -80,6 +80,9 @@
       "path": "./plugins/tracer"
     },
     {
+      "path": "./plugins/typebox-validate"
+    },
+    {
       "path": "./tools/egg-bin"
     },
     {

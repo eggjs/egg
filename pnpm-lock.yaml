@@ -36,6 +36,9 @@ catalogs:
     '@oclif/core':
       specifier: ^4.2.0
       version: 4.5.4
+    '@sinclair/typebox':
+      specifier: ^0.23.0
+      version: 0.23.5
     '@swc-node/register':
       specifier: ^1.11.1
       version: 1.11.1
@@ -159,6 +162,15 @@ catalogs:
     address:
       specifier: '2'
       version: 2.0.3
+    ajv:
+      specifier: ^8.8.2
+      version: 8.17.1
+    ajv-formats:
+      specifier: ^2.1.1
+      version: 2.1.1
+    ajv-keywords:
+      specifier: ^5.1.0
+      version: 5.1.0
     assert-file:
       specifier: '1'
       version: 1.0.0
@@ -1822,6 +1834,52 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.16(@types/debug@4.1.12)(@types/node@24.6.2)(@vitest/ui@4.0.0-beta.16)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
+  plugins/typebox-validate:
+    dependencies:
+      '@sinclair/typebox':
+        specifier: 'catalog:'
+        version: 0.23.5
+      ajv:
+        specifier: 'catalog:'
+        version: 8.17.1
+      ajv-formats:
+        specifier: 'catalog:'
+        version: 2.1.1(ajv@8.17.1)
+      ajv-keywords:
+        specifier: 'catalog:'
+        version: 5.1.0(ajv@8.17.1)
+    devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.6.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.19.0(oxlint-tsgolint@0.2.0)
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      semver:
+        specifier: 'catalog:'
+        version: 7.7.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -3754,6 +3812,9 @@ packages:
   '@sigstore/tuf@1.0.3':
     resolution: {integrity: sha512-2bRovzs0nJZFlCN3rXirE4gwxCn97JNjMmwpecqlbgV9WcxX7WRuIrgzx/X7Ib7MYRbyUTpBYE0s2x6AmZXnlg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  '@sinclair/typebox@0.23.5':
+    resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
 
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
@@ -13358,6 +13419,8 @@ snapshots:
       tuf-js: 1.1.7
     transitivePeerDependencies:
       - supports-color
+
+  '@sinclair/typebox@0.23.5': {}
 
   '@sinclair/typebox@0.27.8': {}
 
