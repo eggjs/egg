@@ -37,8 +37,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.5.4
     '@sinclair/typebox':
-      specifier: ^0.23.0
-      version: 0.23.5
+      specifier: ^0.34.0
+      version: 0.34.41
     '@swc-node/register':
       specifier: ^1.11.1
       version: 1.11.1
@@ -1845,7 +1845,7 @@ importers:
     dependencies:
       '@sinclair/typebox':
         specifier: 'catalog:'
-        version: 0.23.5
+        version: 0.34.41
       ajv:
         specifier: 'catalog:'
         version: 8.17.1
@@ -3802,9 +3802,6 @@ packages:
   '@sigstore/tuf@1.0.3':
     resolution: {integrity: sha512-2bRovzs0nJZFlCN3rXirE4gwxCn97JNjMmwpecqlbgV9WcxX7WRuIrgzx/X7Ib7MYRbyUTpBYE0s2x6AmZXnlg==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
-
-  '@sinclair/typebox@0.23.5':
-    resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
 
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
@@ -13177,8 +13174,6 @@ snapshots:
       tuf-js: 1.1.7
     transitivePeerDependencies:
       - supports-color
-
-  '@sinclair/typebox@0.23.5': {}
 
   '@sinclair/typebox@0.27.8': {}
 
