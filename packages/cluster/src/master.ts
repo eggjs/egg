@@ -248,6 +248,7 @@ export class Master extends ReadyEventEmitter {
   }
 
   log(msg: string, ...args: any[]) {
+    debug(msg, ...args);
     this.logger[this.#logMethod](msg, ...args);
   }
 
@@ -581,11 +582,13 @@ export class Master extends ReadyEventEmitter {
   onSignal(signal: string) {
     if (this.closed) return;
 
-    this.logger.info('[master] master is killed by signal %s, closing', signal);
-    // logger more info
-    const { used_heap_size, heap_size_limit } = v8.getHeapStatistics();
-    this.logger.info('[master] system memory: total %s, free %s', os.totalmem(), os.freemem());
-    this.logger.info('[master] process info: heap_limit %s, heap_used %s', heap_size_limit, used_heap_size);
+    this.log('[master] master is killed by signal %s, closing', signal);
+    if (this.isProduction) {
+      // logger more info
+      const { used_heap_size, heap_size_limit } = v8.getHeapStatistics();
+      this.logger.info('[master] system memory: total %s, free %s', os.totalmem(), os.freemem());
+      this.logger.info('[master] process info: heap_limit %s, heap_used %s', heap_size_limit, used_heap_size);
+    }
 
     this.close();
   }
@@ -603,6 +606,10 @@ export class Master extends ReadyEventEmitter {
 
   async close() {
     this.closed = true;
+    setTimeout(() => {
+      this.log('[master] close timeout, exiting with code:2');
+      process.exit(2);
+    }, 15000);
     try {
       await this._doClose();
       this.log('[master] close done, exiting with code:0');
@@ -631,7 +638,7 @@ export class Master extends ReadyEventEmitter {
     this.logger.info('[master] wait %sms', agentTimeout);
     try {
       await this.killAgentWorker(agentTimeout);
-    } catch (e) /* istanbul ignore next */ {
+    } catch (e) {
       this.logger.error('[master] agent worker exit error: ', e);
     }
   }
