@@ -118,6 +118,13 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Extends context with tracer object for request correlation
     - Supports custom tracer implementations via Class configuration
     - Integrates with application and agent processes for full tracing coverage
+  - `typebox-validate/` - TypeBox validation plugin (merged from egg-typebox-validate)
+    - Provides schema validation for TypeScript Egg projects
+    - Built on Ajv with TypeBox schema definitions
+    - Extends context with tValidate() and tValidateWithoutThrow() methods
+    - Includes decorator support for controller validation
+    - Supports custom formats and validation rules
+    - Re-exports TypeBox for schema definitions
 - **`examples/`** - Example applications
   - `helloworld-commonjs/` - CommonJS example
   - `helloworld-typescript/` - TypeScript example

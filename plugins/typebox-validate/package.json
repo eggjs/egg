@@ -1,0 +1,85 @@
+{
+  "name": "@eggjs/typebox-validate",
+  "version": "4.0.0-beta.22",
+  "description": "another validate for typescript egg projects",
+  "type": "module",
+  "eggPlugin": {
+    "name": "typeboxValidate"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./decorator": "./src/decorator.ts",
+    "./typebox": "./src/typebox.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./decorator": "./dist/decorator.js",
+      "./typebox": "./dist/typebox.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "egg",
+    "eggjs",
+    "validate",
+    "ajv",
+    "typebox",
+    "eggPlugin",
+    "egg-plugin"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "plugins/typebox-validate"
+  },
+  "author": "xiekw2010",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@sinclair/typebox": "catalog:",
+    "ajv": "catalog:",
+    "ajv-formats": "catalog:",
+    "ajv-keywords": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "semver": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
