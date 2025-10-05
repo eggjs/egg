@@ -6,7 +6,7 @@ const SCHEDULE_WORKER = Symbol('application scheduleWorker');
 
 export default class ScheduleApplication extends Application {
   /**
-   * @member app#schedule
+   * @member app#scheduleWorker
    */
   get scheduleWorker() {
     let scheduleWorker = this[SCHEDULE_WORKER] as ScheduleWorker;

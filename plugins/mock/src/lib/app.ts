@@ -184,7 +184,7 @@ class MockApplicationWorker extends Base {
 export function createApp(createOptions?: MockOptions): ApplicationUnittest {
   const options = formatOptions({
     ...createOptions,
-    mode: 'all-in-one-process',
+    mode: 'single',
   });
   debug('[createApp] options: %o', options);
   if (options.cache && apps.has(options.baseDir)) {
