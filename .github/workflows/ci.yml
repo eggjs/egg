@@ -70,7 +70,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
-      - name: Start Redis (${{ matrix.os }})
+      - name: Start Redis (MacOS or Linux)
         if: ${{ (matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest') && matrix.filter == 'plugins' }}
         uses: shogo82148/actions-setup-redis@c04803072c41cb7407800faf677b1e3384959c3b # v1
         with:

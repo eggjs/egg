@@ -70,6 +70,7 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
+    "detect-port": "^2.1.0",
     "egg": "workspace:*",
     "oxlint": "catalog:",
     "rimraf": "catalog:",

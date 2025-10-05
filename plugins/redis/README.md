@@ -269,7 +269,7 @@ docker compose -f docker-compose.yml up -d
 Run the unit tests
 
 ```bash
-CI=true pnpm test
+pnpm test
 ```
 
 Stop test redis service

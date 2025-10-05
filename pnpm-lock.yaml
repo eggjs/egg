@@ -1623,6 +1623,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.6.2
+      detect-port:
+        specifier: ^2.1.0
+        version: 2.1.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg

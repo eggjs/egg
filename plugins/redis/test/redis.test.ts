@@ -3,12 +3,15 @@ import path from 'node:path';
 
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
+import { detectPort } from 'detect-port';
 
 function getFixtures(name: string) {
   return path.resolve(import.meta.dirname, 'fixtures', name);
 }
 
-describe.skipIf(!process.env.CI)('test/redis.test.ts', () => {
+const skip = !process.env.CI && (await detectPort(6379)) === 6379;
+
+describe.skipIf(skip)('test/redis.test.ts', () => {
   describe('default config', () => {
     let app: MockApplication;
     beforeAll(async () => {
