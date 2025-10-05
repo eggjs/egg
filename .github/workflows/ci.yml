@@ -70,6 +70,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
+      - name: Start Redis (${{ matrix.os }})
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        uses: shogo82148/actions-setup-redis@c04803072c41cb7407800faf677b1e3384959c3b # v1
+        with:
+          redis-version: '7'
+          auto-start: 'true'
+
+      - name: Start Redis (Windows via Memurai)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          choco install -y memurai-developer.install
+          # start service 'Memurai'
+          net start Memurai
+          # wait for 6379 port ready
+          $retries=30; $ready=$false
+          while ($retries -gt 0 -and -not $ready) {
+            try {
+              $ready = Test-NetConnection -ComputerName 127.0.0.1 -Port 6379 -InformationLevel Quiet
+            } catch { $ready = $false }
+            if (-not $ready) { Start-Sleep -Seconds 2; $retries-- }
+          }
+          if (-not $ready) { Write-Error "Memurai (Redis) not ready on port 6379" }
+
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
 

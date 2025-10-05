@@ -166,7 +166,6 @@ catalog:
   semver: ^7.7.2
   sendmessage: ^3.0.1
   should-send-same-site-none: ^2.0.5
-  snap-shot-it: ^7.9.10
   spy: ^1.0.0
   stack-trace: ^0.0.10
   statuses: ^2.0.1

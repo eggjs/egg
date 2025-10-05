@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`test/redis.test.js > default config > should make default config stable 1`] = `
+exports[`test/redis.test.ts > default config > should make default config stable 1`] = `
 {
   "agent": false,
   "app": true,

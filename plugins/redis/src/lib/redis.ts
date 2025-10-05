@@ -2,13 +2,14 @@ import assert from 'node:assert';
 import { once } from 'node:events';
 
 import { Redis } from 'ioredis';
-import type { ILifecycleBoot, Application, Agent } from 'egg';
+import type { ILifecycleBoot, EggApplicationCore } from 'egg';
+
 import type { RedisClusterOptions, RedisClientOptions } from '../config/config.default.ts';
 
 export class RedisBoot implements ILifecycleBoot {
-  private readonly app: Application | Agent;
+  private readonly app: EggApplicationCore;
 
-  constructor(app: Application | Agent) {
+  constructor(app: EggApplicationCore) {
     this.app = app;
   }
 
@@ -23,7 +24,7 @@ export class RedisBoot implements ILifecycleBoot {
 }
 
 let count = 0;
-function createClient(options: RedisClusterOptions | RedisClientOptions, app: Application | Agent) {
+function createClient(options: RedisClusterOptions | RedisClientOptions, app: EggApplicationCore) {
   const RedisClass = app.config.redis.Redis ?? Redis;
   let client;
 

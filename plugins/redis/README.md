@@ -33,57 +33,70 @@ If you want to know specific usage, you should refer to the document of [ioredis
 
 ## Configuration
 
-Change `${app_root}/config/plugin.js` to enable redis plugin:
+Change `${app_root}/config/plugin.ts` to enable redis plugin:
 
-```js
-exports.redis = {
-  enable: true,
-  package: '@eggjs/redis',
-};
-```
-
-Configure redis information in `${app_root}/config/config.default.js`:
-
-**Single Client**
-
-```javascript
-config.redis = {
-  client: {
-    port: 6379, // Redis port
-    host: '127.0.0.1', // Redis host
-    password: 'auth',
-    db: 0,
+```ts
+export default {
+  redis: {
+    enable: true,
+    package: '@eggjs/redis',
   },
 };
 ```
 
-**Multi Clients**
+Configure redis information in `${app_root}/config/config.default.ts`:
 
-```javascript
-config.redis = {
-  clients: {
-    foo: {
-      // instanceName. See below
+**Single Client**
+
+```ts
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  redis: {
+    client: {
       port: 6379, // Redis port
       host: '127.0.0.1', // Redis host
       password: 'auth',
       db: 0,
     },
-    bar: {
-      port: 6379,
-      host: '127.0.0.1',
-      password: 'auth',
-      db: 1,
+  },
+});
+```
+
+**Multi Clients**
+
+```ts
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  redis: {
+    clients: {
+      foo: {
+        // instanceName. See below
+        port: 6379, // Redis port
+        host: '127.0.0.1', // Redis host
+        password: 'auth',
+        db: 0,
+      },
+      bar: {
+        port: 6379,
+        host: '127.0.0.1',
+        password: 'auth',
+        db: 1,
+      },
     },
   },
-};
+});
 ```
 
 **Sentinel**
 
-```javascript
-config.redis = {
-  client: {
+```ts
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  redis: {
+    client: {
     // Sentinel instances
     sentinels: [
       {
@@ -123,71 +136,78 @@ See [ioredis API Documentation](https://github.com/redis/ioredis#basic-usage) fo
 `@eggjs/redis` using `ioredis@5` now, if you want to use other version of iovalkey or ioredis,
 you can pass the instance by `config.redis.Redis`:
 
-```js
-// config/config.default.js
-config.redis = {
-  Redis: require('ioredis'), // customize ioredis version, only set when you needed
-  client: {
-    port: 6379, // Redis port
-    host: '127.0.0.1', // Redis host
-    password: 'auth',
-    db: 0,
+```ts
+// config/config.default.ts
+
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  redis: {
+    Redis: require('ioredis'), // customize ioredis version, only set when you needed
+    client: {
+      port: 6379, // Redis port
+      host: '127.0.0.1', // Redis host
+      password: 'auth',
+      db: 0,
+    },
   },
-};
+});
 ```
 
 **weakDependent**
 
-```javascript
-config.redis = {
-  client: {
-    port: 6379, // Redis port
-    host: '127.0.0.1', // Redis host
-    password: 'auth',
-    db: 0,
-    weakDependent: true, // the redis instance won't block app start
+```ts
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  redis: {
+    client: {
+      port: 6379, // Redis port
+      host: '127.0.0.1', // Redis host
+      password: 'auth',
+      db: 0,
+      weakDependent: true, // the redis instance won't block app start
+    },
   },
-};
+});
 ```
 
 ## Usage
 
 In controller, you can use `app.redis` to get the redis instance, check [ioredis](https://github.com/redis/ioredis#basic-usage) to see how to use.
 
-```js
-// app/controller/home.js
+```ts
+// app/controller/home.ts
 
-module.exports = app => {
-  return class HomeController extends app.Controller {
-    async index() {
-      const { ctx, app } = this;
-      // set
-      await app.redis.set('foo', 'bar');
-      // get
-      ctx.body = await app.redis.get('foo');
-    }
-  };
-};
+import { Controller } from 'egg';
+
+export default class HomeController extends Controller {
+  async index() {
+    const { ctx, app } = this;
+    // set
+    await app.redis.set('foo', 'bar');
+    // get
+    ctx.body = await app.redis.get('foo');
+  }
+}
 ```
 
 ### Multi Clients
 
 If your Configure with multi clients, you can use `app.redis.get(instanceName)` to get the specific redis instance and use it like above.
 
-```js
-// app/controller/home.js
+```ts
+// app/controller/home.ts
 
-module.exports = app => {
-  return class HomeController extends app.Controller {
-    async index() {
-      const { ctx, app } = this;
-      // set
-      await app.redis.get('instance1').set('foo', 'bar');
-      // get
-      ctx.body = await app.redis.get('instance1').get('foo');
-    }
-  };
-};
+export default class HomeController extends Controller {
+  async index() {
+    const { ctx, app } = this;
+    // set
+    await app.redis.getSingletonInstance('instance1').set('foo', 'bar');
+    // get
+    ctx.body = await app.redis.getSingletonInstance('instance1').get('foo');
+  }
+}
 ```
 
 ### Clients Depend on Redis Cluster
@@ -196,42 +216,46 @@ Before you start to use Redis Cluster, please checkout the [document](https://re
 
 In controller, you also can use `app.redis` to get the redis instance based on Redis Cluster.
 
-```js
-// app/config/config.default.js
-exports.redis = {
-  client: {
-    cluster: true,
-    nodes: [
-      {
-        host: '127.0.0.1',
-        port: '6379',
-        family: 'user',
-        password: 'password',
-        db: 'db',
-      },
-      {
-        host: '127.0.0.1',
-        port: '6380',
-        family: 'user',
-        password: 'password',
-        db: 'db',
-      },
-    ],
-  },
-};
+```ts
+// app/config/config.default.ts
+import { defineConfig } from 'egg';
 
-// app/controller/home.js
-module.exports = app => {
-  return class HomeController extends app.Controller {
-    async index() {
-      const { ctx, app } = this;
-      // set
-      await app.redis.set('foo', 'bar');
-      // get
-      ctx.body = await app.redis.get('foo');
-    }
-  };
-};
+export default defineConfig({
+  redis: {
+    client: {
+      cluster: true,
+      nodes: [
+        {
+          host: '127.0.0.1',
+          port: '6379',
+          family: 'user',
+          password: 'password',
+          db: 'db',
+        },
+        {
+          host: '127.0.0.1',
+          port: '6380',
+          family: 'user',
+          password: 'password',
+          db: 'db',
+        },
+      ],
+    },
+  },
+});
+
+// app/controller/home.ts
+import { Controller } from 'egg';
+
+export default class HomeController extends Controller {
+  async index() {
+    const { ctx, app } = this;
+    // set
+    await app.redis.set('foo', 'bar');
+    // get
+    ctx.body = await app.redis.get('foo');
+  }
+}
 ```
 
 ## For the local dev
@@ -245,7 +269,7 @@ docker compose -f docker-compose.yml up -d
 Run the unit tests
 
 ```bash
-npm test
+CI=true pnpm test
 ```
 
 Stop test redis service

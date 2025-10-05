@@ -4,12 +4,16 @@ import path from 'node:path';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
-describe('test/redis.test.js', () => {
+function getFixtures(name: string) {
+  return path.resolve(import.meta.dirname, 'fixtures', name);
+}
+
+describe.skipIf(!process.env.CI)('test/redis.test.ts', () => {
   describe('default config', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp-default',
+        baseDir: getFixtures('apps/redisapp-default'),
       });
       await app.ready();
     });
@@ -20,8 +24,8 @@ describe('test/redis.test.js', () => {
       expect(app.config.redis).toMatchSnapshot();
     });
 
-    it('should query', () => {
-      return app.httpRequest().get('/').expect(200).expect('bar');
+    it('should query', async () => {
+      await app.httpRequest().get('/').expect(200).expect('bar');
     });
   });
 
@@ -29,7 +33,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp',
+        baseDir: getFixtures('apps/redisapp'),
       });
       await app.ready();
     });
@@ -45,7 +49,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp-weakdependent',
+        baseDir: getFixtures('apps/redisapp-weakdependent'),
       });
       await app.ready();
     });
@@ -61,7 +65,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp-supportTimeCommand-false',
+        baseDir: getFixtures('apps/redisapp-supportTimeCommand-false'),
       });
       await app.ready();
     });
@@ -77,7 +81,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp-customize',
+        baseDir: getFixtures('apps/redisapp-customize'),
       });
       await app.ready();
     });
@@ -91,7 +95,7 @@ describe('test/redis.test.js', () => {
 
   describe('single client for ts', () => {
     let app: MockApplication;
-    const destPath = path.resolve('./test/fixtures/apps/ts/redisapp-ts');
+    const destPath = getFixtures('apps/ts/redisapp-ts');
     const compilerPath = path.resolve('./node_modules/typescript/bin/tsc');
 
     beforeAll(async () => {
@@ -101,7 +105,7 @@ describe('test/redis.test.js', () => {
         stdio: 'inherit',
       });
       app = mm.app({
-        baseDir: 'apps/ts/redisapp-ts',
+        baseDir: getFixtures('apps/ts/redisapp-ts'),
       });
       await app.ready();
     });
@@ -118,13 +122,13 @@ describe('test/redis.test.js', () => {
 
   describe('multi client for ts', () => {
     let app: MockApplication;
-    const destPath = path.resolve('./test/fixtures/apps/ts-multi');
+    const destPath = getFixtures('apps/ts-multi');
     const compilerPath = path.resolve('./node_modules/typescript/bin/tsc');
     beforeAll(async () => {
       // Add new dynamic compiler to compile from ts to js
       compile.execSync(`node ${compilerPath} -p ${destPath}`);
       app = mm.app({
-        baseDir: 'apps/ts-multi/redisapp-ts',
+        baseDir: getFixtures('apps/ts-multi/redisapp-ts'),
       });
       await app.ready();
     });
@@ -144,7 +148,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redissentinelapp',
+        baseDir: getFixtures('apps/redissentinelapp'),
       });
       await app.ready();
     });
@@ -160,7 +164,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redisapp-disable-offline-queue',
+        baseDir: getFixtures('apps/redisapp-disable-offline-queue'),
       });
       await app.ready();
     });
@@ -177,7 +181,7 @@ describe('test/redis.test.js', () => {
     let app: MockApplication;
     beforeAll(async () => {
       app = mm.app({
-        baseDir: 'apps/redispathapp',
+        baseDir: getFixtures('apps/redispathapp'),
       });
       await app.ready();
     });
