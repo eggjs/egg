@@ -11,7 +11,10 @@ export class ScheduleWorker {
   }
 
   async init() {
-    this.scheduleItems = await loadSchedule(this.#app);
+    const schedules = await loadSchedule(this.#app);
+    for (const key in schedules) {
+      this.scheduleItems[key] = schedules[key];
+    }
   }
 
   registerSchedule(scheduleItem: EggScheduleItem) {
