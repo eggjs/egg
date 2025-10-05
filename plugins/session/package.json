@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/session",
-  "version": "5.0.0-beta.24",
+  "version": "5.0.0-beta.25",
   "description": "session plugin for egg",
   "eggPlugin": {
     "name": "session"
