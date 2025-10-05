@@ -9,6 +9,7 @@ export default class AjvContext extends Context {
       this.throw(422, 'Validation Failed', {
         code: 'invalid_param',
         errorData: data,
+        // TODO: high CPU usage https://github.com/eggjs/egg/pull/5583#discussion_r2404265446
         currentSchema: JSON.stringify(schema),
         errors: ajv.errors,
       });
