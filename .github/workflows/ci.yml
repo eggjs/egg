@@ -82,17 +82,19 @@ jobs:
         shell: pwsh
         run: |
           choco install -y memurai-developer.install
+          refreshenv
           # start service 'Memurai'
-          net start Memurai
+          # net start Memurai
+          try { net start Memurai } catch { Write-Host "Memurai already started" }
           # wait for 6379 port ready
-          # $retries=30; $ready=$false
-          # while ($retries -gt 0 -and -not $ready) {
-          #   try {
-          #     $ready = Test-NetConnection -ComputerName 127.0.0.1 -Port 6379 -InformationLevel Quiet
-          #   } catch { $ready = $false }
-          #   if (-not $ready) { Start-Sleep -Seconds 2; $retries-- }
-          # }
-          # if (-not $ready) { Write-Error "Memurai (Redis) not ready on port 6379" }
+          $retries=30; $ready=$false
+          while ($retries -gt 0 -and -not $ready) {
+            try {
+              $ready = Test-NetConnection -ComputerName 127.0.0.1 -Port 6379 -InformationLevel Quiet
+            } catch { $ready = $false }
+            if (-not $ready) { Start-Sleep -Seconds 2; $retries-- }
+          }
+          if (-not $ready) { Write-Error "Memurai (Redis) not ready on port 6379" }
 
       - name: Install pnpm
         uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
