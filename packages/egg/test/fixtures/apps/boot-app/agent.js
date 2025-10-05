@@ -7,6 +7,7 @@ module.exports = class CustomBoot {
     agent.bootLog = [];
     assert(this.agent.config);
     agent.messenger.on('egg-ready', () => {
+      this.agent.logger.info('agent messenger egg-ready event');
       agent.messenger.sendToApp('agent2app');
     });
   }
