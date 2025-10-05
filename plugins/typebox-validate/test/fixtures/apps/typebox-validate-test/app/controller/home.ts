@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import { Static, Type } from '../../../../../../src/typebox.ts';
+import { type Static, Type } from '../../../../../../src/typebox.ts';
 import { ValidateFactory, Validate } from '../../../../../../src/decorator.ts';
 
 const TYPEBOX_ID = Type.Object({
