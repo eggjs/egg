@@ -286,7 +286,7 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
     _sendMessage(_target: any, _thisArg: unknown, [action, data, to]: [string, unknown | undefined, string]) {
       const appMessenger = this.messenger;
       setImmediate(() => {
-        if (to === 'app') {
+        if (to === 'app' || to === 'application') {
           appMessenger.onMessage({ action, data });
         } else {
           agentMessenger.onMessage({ action, data });

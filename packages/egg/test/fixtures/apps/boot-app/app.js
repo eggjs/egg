@@ -9,6 +9,9 @@ module.exports = class CustomBoot {
     app.messenger.on('agent2app', () => {
       app.messengerLog = true;
     });
+    app.messenger.on('egg-ready', () => {
+      app.logger.info('app messenger egg-ready event');
+    });
   }
 
   configDidLoad() {
