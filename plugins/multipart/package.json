@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/multipart",
-  "version": "5.0.0-beta.22",
+  "version": "5.0.0-beta.23",
   "description": "multipart plugin for egg",
   "eggPlugin": {
     "name": "multipart",
