@@ -2398,8 +2398,8 @@ packages:
     resolution: {integrity: sha512-whxXzdGLAWlqn0jzmPtCMZMms0O4d5XQQG7KzzXnm22+RYIlyyGdZnogQB/c0tvOMjYP7Lg1LCOgsWkFSXwyqw==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/cookies@4.0.0-beta.24':
-    resolution: {integrity: sha512-hLg5BvC0cmj3zo2vovMynsjwn/EsaBxZ26fTD1tbCCWM4c9DyTHZ+gCZoDAyLiLoWxfua94N2oM7FWbDv0X4yQ==}
+  '@eggjs/cookies@4.0.0-beta.25':
+    resolution: {integrity: sha512-od7YR34lIVU9ApEVd/p5byIMSGGimSG3nMICgG6vmYihvJabuSBsTU73lOE42BNqiiUA8k2XauHmOa0htZArTg==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/core-decorator@4.0.0-beta.10':
@@ -2442,8 +2442,8 @@ packages:
     resolution: {integrity: sha512-mqOFkq79x3wGHYoI/lWMwSZ4wqmET9okJ0WU+qeuEgwA7PNMt8HyUmZ9Edz8+o3TjCSl85uMhpC0K4WWfPh7yA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/router@4.0.0-beta.24':
-    resolution: {integrity: sha512-1MpyMB3nozbhfZdUXfZBTVfGjinlCsJmDSIa7bDY5jDhD1ON+bsL03ZbaARkCysxWTKTmNc3Owo6AEU5u2HFxQ==}
+  '@eggjs/router@4.0.0-beta.25':
+    resolution: {integrity: sha512-iiMBPAdjhjoHWMdE1N6LawbB8kx5k2BBCvpLraCTATIIcAtbkRi2/vlPnxyCECzAC0+bjh2Gh8KCg0SJSQdASQ==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/scripts@4.0.0':
@@ -2534,8 +2534,8 @@ packages:
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
 
-  '@eggjs/utils@5.0.0-beta.24':
-    resolution: {integrity: sha512-9Mu77HfQX2YT5Prk04qCDXsMQq4Yrzklf4q6QC5nh1HRwu0fD9cr64gkckWpqCBKKlbETg+jUii+zDhHtivsUQ==}
+  '@eggjs/utils@5.0.0-beta.25':
+    resolution: {integrity: sha512-wEawvfeGD5M5eXzT79VMOj0PkiUSKnAPVYT8dVjIJE0PLo7bXpXtIh4ZTEQObMBGeTiAhbtJ+xvbk9BJhGRlyA==}
     engines: {node: '>=22.18.0'}
 
   '@emnapi/core@1.5.0':
@@ -11823,7 +11823,7 @@ snapshots:
   '@eggjs/controller-decorator@4.0.0-beta.10(egg@packages+egg)':
     dependencies:
       '@eggjs/aop-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/cookies': 4.0.0-beta.24
+      '@eggjs/cookies': 4.0.0-beta.25
       '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
       '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
       '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
@@ -11833,7 +11833,7 @@ snapshots:
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/cookies@4.0.0-beta.24':
+  '@eggjs/cookies@4.0.0-beta.25':
     dependencies:
       should-send-same-site-none: 2.0.5
       utility: 2.5.0
@@ -11930,7 +11930,7 @@ snapshots:
       urijs: 1.19.11
       utility: 2.5.0
 
-  '@eggjs/router@4.0.0-beta.24':
+  '@eggjs/router@4.0.0-beta.25':
     dependencies:
       http-errors: 2.0.0
       inflection: 3.0.2
@@ -11967,7 +11967,7 @@ snapshots:
   '@eggjs/tegg-common-util@4.0.0-beta.10(egg@packages+egg)':
     dependencies:
       '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/utils': 5.0.0-beta.24
+      '@eggjs/utils': 5.0.0-beta.25
       extend2: 4.0.0
       globby: 14.1.0
       js-yaml: 4.1.0
@@ -11978,13 +11978,13 @@ snapshots:
   '@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg)':
     dependencies:
       '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/utils': 5.0.0-beta.24
+      '@eggjs/utils': 5.0.0-beta.25
       egg: link:packages/egg
 
   '@eggjs/tegg-controller-plugin@4.0.0-beta.10(@eggjs/tegg-plugin@4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)':
     dependencies:
       '@eggjs/egg-module-common': 4.0.0-beta.10
-      '@eggjs/router': 4.0.0-beta.24
+      '@eggjs/router': 4.0.0-beta.25
       '@eggjs/tegg': 4.0.0-beta.10(egg@packages+egg)
       '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
       '@eggjs/tegg-loader': 4.0.0-beta.10(egg@packages+egg)
@@ -12122,7 +12122,7 @@ snapshots:
 
   '@eggjs/utils@4.4.1': {}
 
-  '@eggjs/utils@5.0.0-beta.24': {}
+  '@eggjs/utils@5.0.0-beta.25': {}
 
   '@emnapi/core@1.5.0':
     dependencies:
