@@ -57,7 +57,7 @@ export default HomeController;
 这就是这个库想要解决的问题，对于参数校验，写一遍类型就够了：
 
 ```diff
-+ import { Static, Type } from 'egg-typebox-validate/typebox';
++ import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 class HomeController extends Controller {
   async index() {
@@ -108,7 +108,7 @@ export default HomeController;
 针对 `egg@4.x` 及以上版本，使用
 
 ```js
-npm i egg-typebox-validate -S
+npm i @eggjs/typebox-validate -S
 ```
 
 针对 `egg@3.x` 版本，使用
@@ -124,7 +124,7 @@ npm i egg-typebox-validate@3 -S
 const plugin: EggPlugin = {
   typeboxValidate: {
     enable: true,
-    package: 'egg-typebox-validate',
+    package: '@eggjs/typebox-validate',
   },
 };
 ```
@@ -132,7 +132,7 @@ const plugin: EggPlugin = {
 3. 在业务代码中使用
 
 ```diff
-+ import { Static, Type } from 'egg-typebox-validate/typebox';
++ import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 // 写在 controller 外面，静态化，性能更好，下面有 benchmark
 + const paramsSchema = Type.Object({
@@ -280,7 +280,7 @@ Fastest is #ajv define once
 
 ## 总结
 
-切换到 egg-typebox-validate 校验后：
+切换到 `@eggjs/typebox-validate` 校验后：
 
 1. 可以解决 ts 项目中参数校验代码写两遍类型的问题，提升代码重用率，可维护性等问题
 2. 用标准 json-schema 来做参数校验，是更加标准的业界做法，内置更多业界标准模型
@@ -290,7 +290,7 @@ Fastest is #ajv define once
 1. `ctx.tValidate` 参数校验失败后，抛出错误，内部实现（错误码、错误标题等）逻辑和 `ctx.validate` 的保持一致
 
 ```diff
-+ import { Static, Type } from 'egg-typebox-validate/typebox';
++ import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 ctx.tValidate(Type.Object({
   name: Type.String(),
@@ -300,7 +300,7 @@ ctx.tValidate(Type.Object({
 2. `ctx.tValidateWithoutThrow` 直接校验，不抛出错误
 
 ```diff
-+ import { Static, Type } from 'egg-typebox-validate/typebox';
++ import { Static, Type } from '@eggjs/typebox-validate/typebox';
 
 const valid = ctx.tValidateWithoutThrow(Type.Object({
   name: Type.String(),
@@ -318,7 +318,7 @@ if (valid) {
 3. ⭐⭐⭐ 装饰器 decorator `@Validate([ [rule1, ctx => ctx.xx1], [rule2, ctx => ctx.xx2] ])` 调用（写法更干净，推荐使用!️）
 
 ```diff
-+ import { Validate, ValidateFactory } from 'egg-typebox-validate/decorator';
++ import { Validate, ValidateFactory } from '@eggjs/typebox-validate/decorator';
 
 const ValidateWithRedirect = ValidateFactory(ctx => ctx.redirect('/422'));
 
