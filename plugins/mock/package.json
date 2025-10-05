@@ -9,7 +9,10 @@
       "./app/extend/agent": "./dist/app/extend/agent.js",
       "./app/extend/application": "./dist/app/extend/application.js",
       "./app/middleware/cluster_app_mock": "./dist/app/middleware/cluster_app_mock.js",
-      "./bootstrap": "./dist/bootstrap.js",
+      "./bootstrap": {
+        "default": "./dist/bootstrap.js",
+        "types": "./dist/bootstrap.d.ts"
+      },
       "./inject_mocha": "./dist/inject_mocha.js",
       "./lib/agent_handler": "./dist/lib/agent_handler.js",
       "./lib/app": "./dist/lib/app.js",
@@ -124,11 +127,10 @@
     "@eggjs/tegg-plugin": "catalog:",
     "@types/methods": "catalog:",
     "egg-errors": "catalog:",
-    "tsdown": "catalog:",
     "typescript": "catalog:"
   },
   "scripts": {
-    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "build": "rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

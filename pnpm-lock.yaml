@@ -1506,9 +1506,6 @@ importers:
       egg-errors:
         specifier: 'catalog:'
         version: 2.3.2
-      tsdown:
-        specifier: 'catalog:'
-        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

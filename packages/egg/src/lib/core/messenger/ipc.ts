@@ -27,11 +27,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
       this.opids = workerIds.map((workerId: number) => String(workerId));
     });
     this.onMessage = this.onMessage.bind(this);
-    if (this.egg.options.mode === 'all-in-one-process') {
-      process.on('sendmessage-to-self', this.onMessage);
-    } else {
-      process.on('message', this.onMessage);
-    }
+    process.on('message', this.onMessage);
     if (!workerThreads.isMainThread) {
       workerThreads.parentPort!.on('message', this.onMessage);
     }
@@ -133,12 +129,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
 
   #sendMessage(message: any) {
     debug('[%s:%s] send message %j, mode: %s', this.egg.type, this.pid, message, this.egg.options.mode);
-    if (this.egg.options.mode === 'all-in-one-process') {
-      // @ts-expect-error event `sendmessage-to-self` is not typed
-      process.emit('sendmessage-to-self', message);
-    } else {
-      sendmessage(process, message);
-    }
+    sendmessage(process, message);
   }
 
   onMessage(message: any) {
