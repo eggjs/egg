@@ -79,6 +79,7 @@ catalog:
   cluster-reload: ^2.0.0
   co-busboy: ^2.0.1
   coffee: '5'
+  common-bin: ^3.0.1
   content-disposition: ~0.5.4
   content-type: ^1.0.5
   cookie: ^1.0.2
@@ -146,6 +147,8 @@ catalog:
   mri: ^1.2.0
   multimatch: ^7.0.0
   mustache: ^4.2.0
+  mz: ^2.7.0
+  mz-modules: ^2.1.0
   nanoid: ^5.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
@@ -166,6 +169,7 @@ catalog:
   semver: ^7.7.2
   sendmessage: ^3.0.1
   should-send-same-site-none: ^2.0.5
+  source-map-support: ^0.5.21
   spy: ^1.0.0
   stack-trace: ^0.0.10
   statuses: ^2.0.1

@@ -89,6 +89,9 @@
       "path": "./tools/egg-bin"
     },
     {
+      "path": "./tools/scripts"
+    },
+    {
       "path": "./tools/create-egg"
     }
   ]

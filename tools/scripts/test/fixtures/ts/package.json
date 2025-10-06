@@ -1,0 +1,11 @@
+{
+  "name": "ts",
+  "version": "1.0.0",
+  "dependencies": {
+    "egg": "^1.0.0"
+  },
+  "scripts": {
+    "build": "./../../../node_modules/.bin/tsc",
+    "windows-build": "call ../../../node_modules/.bin/tsc.cmd"
+  }
+}

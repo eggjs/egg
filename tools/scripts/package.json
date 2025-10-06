@@ -1,0 +1,96 @@
+{
+  "name": "@eggjs/scripts",
+  "version": "5.0.0-beta.26",
+  "description": "deploy tool for egg project",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./baseCommand": "./src/baseCommand.ts",
+    "./commands/start": "./src/commands/start.ts",
+    "./commands/stop": "./src/commands/stop.ts",
+    "./helper": "./src/helper.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./baseCommand": "./dist/baseCommand.js",
+      "./commands/start": "./dist/commands/start.js",
+      "./commands/stop": "./dist/commands/stop.js",
+      "./helper": "./dist/helper.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "bin": {
+    "egg-scripts": "./bin/run.js",
+    "eggctl": "./bin/run.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "scripts"
+  ],
+  "oclif": {
+    "bin": "eggctl",
+    "commands": "./dist/commands",
+    "dirname": "eggctl",
+    "topicSeparator": " ",
+    "additionalHelpFlags": [
+      "-h"
+    ]
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tools/scripts",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "tools/scripts"
+  },
+  "author": "TZ <atian25@qq.com>",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "npm run lint:fix && vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@eggjs/utils": "workspace:*",
+    "@oclif/core": "catalog:",
+    "node-homedir": "catalog:",
+    "runscript": "catalog:",
+    "source-map-support": "catalog:",
+    "utility": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "coffee": "catalog:",
+    "egg": "workspace:*",
+    "mm": "catalog:",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "ts-node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "urllib": "catalog:",
+    "vitest": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
