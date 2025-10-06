@@ -327,7 +327,7 @@ describe('test/stop.test.ts', () => {
     });
 
     it('should stop error without timeout', async () => {
-      killer = coffee.fork(eggBin, ['stop', '--title=stop-timeout'], { cwd: timeoutPath }) as Coffee;
+      killer = coffee.fork(eggBin, ['stop'], { cwd: timeoutPath }) as Coffee;
       killer.debug();
       killer.expect('code', 0);
       await killer.end();
@@ -348,7 +348,7 @@ describe('test/stop.test.ts', () => {
     });
 
     it('should stop success', async () => {
-      killer = coffee.fork(eggBin, ['stop', '--title=stop-timeout', '--timeout=10000'], { cwd: timeoutPath }) as Coffee;
+      killer = coffee.fork(eggBin, ['stop', '--timeout=10000'], { cwd: timeoutPath }) as Coffee;
       killer.debug();
       killer.expect('code', 0);
 
