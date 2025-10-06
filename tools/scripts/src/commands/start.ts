@@ -1,16 +1,17 @@
 import { debuglog, promisify } from 'node:util';
 import path from 'node:path';
 import { scheduler } from 'node:timers/promises';
-import { spawn, SpawnOptions, ChildProcess, execFile as _execFile } from 'node:child_process';
+import { spawn, type SpawnOptions, type ChildProcess, execFile as _execFile } from 'node:child_process';
 import { mkdir, rename, stat, open } from 'node:fs/promises';
+
 import { homedir } from 'node-homedir';
 import { Args, Flags } from '@oclif/core';
 import { getFrameworkPath, importResolve } from '@eggjs/utils';
 import { readJSON, exists, getDateStringParts } from 'utility';
-import { BaseCommand } from '../baseCommand.ts';
-import { getSourceDirname } from '../helper.ts';
 
-const debug = debuglog('@eggjs/scripts/commands/start');
+import { BaseCommand } from '../baseCommand.ts';
+
+const debug = debuglog('egg/scripts/commands/start');
 
 const execFile = promisify(_execFile);
 
@@ -105,13 +106,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
 
   protected async getServerBin() {
     const serverBinName = this.isESM ? 'start-cluster.mjs' : 'start-cluster.cjs';
-    // for src paths, `./src/commands/start.js`
-    let serverBin = path.join(getSourceDirname(), '../scripts', serverBinName);
-    if (!(await exists(serverBin))) {
-      // for dist paths, `./dist/esm/commands/start.js`
-      serverBin = path.join(getSourceDirname(), '../../scripts', serverBinName);
-    }
-    return serverBin;
+    return path.join(import.meta.dirname, '../../scripts', serverBinName);
   }
 
   public async run(): Promise<void> {
@@ -220,9 +215,10 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       flags.sourcemap = true;
     }
     if (flags.sourcemap) {
-      const sourceMapSupport = importResolve('source-map-support/register.js', {
-        paths: [getSourceDirname()],
+      const sourceMapSupportPkgPath = importResolve('source-map-support/package.json', {
+        paths: [import.meta.dirname],
       });
+      const sourceMapSupport = path.join(path.dirname(sourceMapSupportPkgPath), 'register.js');
       if (this.isESM) {
         execArgv.push('--import', sourceMapSupport);
       } else {

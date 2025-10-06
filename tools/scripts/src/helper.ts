@@ -1,6 +1,4 @@
 import { runScript } from 'runscript';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 
 export const isWindows = process.platform === 'win32';
 
@@ -47,18 +45,4 @@ export function kill(pids: number[], signal?: string | number) {
       }
     }
   });
-}
-
-export function getSourceDirname() {
-  if (typeof __dirname === 'string') {
-    return __dirname;
-  }
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const __filename = fileURLToPath(import.meta.url);
-  return path.dirname(__filename);
-}
-
-export function getSourceFilename(filename: string) {
-  return path.join(getSourceDirname(), filename);
 }

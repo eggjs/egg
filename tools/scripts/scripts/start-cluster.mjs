@@ -1,7 +1,8 @@
 import { debuglog } from 'node:util';
+
 import { importModule } from '@eggjs/utils';
 
-const debug = debuglog('@eggjs/scripts/scripts/start-cluster');
+const debug = debuglog('egg/scripts/start-cluster/esm');
 
 async function main() {
   debug('argv: %o', process.argv);
@@ -11,4 +12,7 @@ async function main() {
   await startCluster(options);
 }
 
-void main();
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -58,11 +58,12 @@
   },
   "scripts": {
     "build": "tsdown",
-    "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
+    "pretest": "npm run build",
+    "test": "vitest run --bail 1 --retry 2 --no-file-parallelism",
+    "ci": "vitest run --bail 1 --retry 2 --no-file-parallelism --coverage",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
@@ -80,6 +81,7 @@
     "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "coffee": "catalog:",
+    "detect-port": "catalog:",
     "egg": "workspace:*",
     "mm": "catalog:",
     "oxlint": "catalog:",

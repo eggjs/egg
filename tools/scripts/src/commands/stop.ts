@@ -1,10 +1,12 @@
 import { debuglog, format } from 'node:util';
 import { scheduler } from 'node:timers/promises';
+
 import { Args, Flags } from '@oclif/core';
+
 import { BaseCommand } from '../baseCommand.ts';
 import { isWindows, findNodeProcess, type NodeProcess, kill } from '../helper.ts';
 
-const debug = debuglog('@eggjs/scripts/commands/stop');
+const debug = debuglog('egg/scripts/commands/stop');
 
 const osRelated = {
   titleTemplate: isWindows ? '\\"title\\":\\"%s\\"' : '"title":"%s"',

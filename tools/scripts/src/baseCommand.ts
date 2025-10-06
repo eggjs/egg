@@ -1,10 +1,12 @@
 import { debuglog } from 'node:util';
-import { Command, Interfaces } from '@oclif/core';
-import type { PackageEgg } from './types.ts';
-import { readJSON } from 'utility';
 import path from 'node:path';
 
-const debug = debuglog('@eggjs/scripts/baseCommand');
+import { Command, Interfaces } from '@oclif/core';
+import { readJSON } from 'utility';
+
+import type { PackageEgg } from './types.ts';
+
+const debug = debuglog('egg/scripts/baseCommand');
 
 type Flags<T extends typeof Command> = Interfaces.InferredFlags<(typeof BaseCommand)['baseFlags'] & T['flags']>;
 type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;

@@ -1,7 +1,9 @@
 import { scheduler } from 'node:timers/promises';
 import { ChildProcess } from 'node:child_process';
+
 import { Coffee as _Coffee } from 'coffee';
-import { isWindows, findNodeProcess } from '../src/helper.js';
+
+import { isWindows, findNodeProcess } from '../src/helper.ts';
 
 export type Coffee = _Coffee & { proc: ChildProcess; stderr: string; stdout: string; code?: number };
 

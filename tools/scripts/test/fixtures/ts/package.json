@@ -2,7 +2,7 @@
   "name": "ts",
   "version": "1.0.0",
   "dependencies": {
-    "egg": "^1.0.0"
+    "egg": "*"
   },
   "scripts": {
     "build": "./../../../node_modules/.bin/tsc",

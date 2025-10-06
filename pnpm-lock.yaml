@@ -20,16 +20,16 @@ catalogs:
       version: 4.0.0
     '@eggjs/tegg':
       specifier: beta
-      version: 4.0.0-beta.10
+      version: 4.0.0-beta.11
     '@eggjs/tegg-config':
       specifier: beta
-      version: 4.0.0-beta.10
+      version: 4.0.0-beta.11
     '@eggjs/tegg-controller-plugin':
       specifier: beta
-      version: 4.0.0-beta.10
+      version: 4.0.0-beta.11
     '@eggjs/tegg-plugin':
       specifier: beta
-      version: 4.0.0-beta.10
+      version: 4.0.0-beta.11
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
@@ -219,9 +219,6 @@ catalogs:
     coffee:
       specifier: '5'
       version: 5.5.1
-    common-bin:
-      specifier: ^3.0.1
-      version: 3.0.1
     content-disposition:
       specifier: ~0.5.4
       version: 0.5.4
@@ -259,7 +256,7 @@ catalogs:
       specifier: ^1.0.4
       version: 1.2.0
     detect-port:
-      specifier: ^2.1.0
+      specifier: 2.1.0
       version: 2.1.0
     dumi:
       specifier: ^2.4.17
@@ -411,12 +408,6 @@ catalogs:
     mustache:
       specifier: ^4.2.0
       version: 4.2.0
-    mz:
-      specifier: ^2.7.0
-      version: 2.7.0
-    mz-modules:
-      specifier: ^2.1.0
-      version: 2.1.0
     nanoid:
       specifier: ^5.0.0
       version: 5.1.6
@@ -1502,16 +1493,16 @@ importers:
     devDependencies:
       '@eggjs/tegg':
         specifier: 'catalog:'
-        version: 4.0.0-beta.10(egg@packages+egg)
+        version: 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/tegg-config':
         specifier: 'catalog:'
-        version: 4.0.0-beta.10(egg@packages+egg)
+        version: 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/tegg-controller-plugin':
         specifier: 'catalog:'
-        version: 4.0.0-beta.10(@eggjs/tegg-plugin@4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)
+        version: 4.0.0-beta.11(@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)
       '@eggjs/tegg-plugin':
         specifier: 'catalog:'
-        version: 4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg)
+        version: 4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)
       '@eggjs/tracer':
         specifier: workspace:*
         version: link:../tracer
@@ -2141,15 +2132,6 @@ importers:
       '@oclif/core':
         specifier: 'catalog:'
         version: 4.5.4
-      common-bin:
-        specifier: 'catalog:'
-        version: 3.0.1
-      mz:
-        specifier: 'catalog:'
-        version: 2.7.0
-      mz-modules:
-        specifier: 'catalog:'
-        version: 2.1.0
       node-homedir:
         specifier: 'catalog:'
         version: 2.0.0
@@ -2181,6 +2163,9 @@ importers:
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
+      detect-port:
+        specifier: 'catalog:'
+        version: 2.1.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
@@ -2513,44 +2498,44 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
-  '@eggjs/ajv-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-6cxFpR9HVPE1G5airPJ04Fxk2GE3f0jLTwqZRnv3I+Nqb676uAwcuPxNURWJhP19+3Zx/b2ic/XAys/B2oayYw==}
+  '@eggjs/ajv-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-6KkM9/tGUZin8Gp3aoVuhCiXFdISXhSDD6+F+zmhnOWKvAFAagWcbM77ADr5cyTTGjAJowKPpqvJb8bjoUz5+g==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/aop-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-WakYPPBXmXfLnJ4j/rjvnmyvRyppGijlPeWoXWR2EsVpnJbNIQDOtSlEFKOL2O8lQO/BqK3zR3hI0U06kUHDDg==}
+  '@eggjs/aop-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-ai4BTvSUWIm9ehOdFRt9nIPl53v0V2cJAOkxOz2ObR2OhOnKHr3shcBbNPZxQt/0WA68NZpQ7wYhk1QKsf/wqw==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/compressible@3.0.0':
     resolution: {integrity: sha512-Bz/u+0zhmZ/44xdIL1MLfknaDFQpE+bSfJ4OjCb2NnHpg+LVmmNwEpRW4hUi3v2MhaO3sNWD93gBTtJ00q2iIA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/controller-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-whxXzdGLAWlqn0jzmPtCMZMms0O4d5XQQG7KzzXnm22+RYIlyyGdZnogQB/c0tvOMjYP7Lg1LCOgsWkFSXwyqw==}
+  '@eggjs/controller-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-ZTo4MzV3UyTAjLua6TWfkC2UdW3pjE6ASw+ONcZS7JZ6uD/MbMJTculRULjpk3WKC8KtU6UrVd5qyr48blACyg==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/cookies@4.0.0-beta.26':
     resolution: {integrity: sha512-3jA9A8tfy4Z6bohmar6lIGv4vOU0kkDyomD4zXIyV5hwqVXmcJNxfXlBLZRXaCEroBBhc1JU7CCC2dWNX7IusQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/core-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-zHFwmfnnNF/sJB3j6wU5D6FMvP87WCBlg2rjSZJWytAfatL5dS0sq927p0hppdTH7ExdoDX5Yi7S5zt+dnlxAQ==}
+  '@eggjs/core-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-WLnBmOTJPjahU9XpNkAacsCB47OWYwuSplVVCxFajsoK4aXEL//BSAKL5MvqpF857FXtBqCdSMRnslbt4y+0gg==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/core@6.5.0':
     resolution: {integrity: sha512-JwiHVoRihNtt1XekIp9rfs/+M/w7tHiZW5OMUzZV3IpAVh60tiMC+pbWXcDWxTseTDp0HLItrYFXUPLrptMYRQ==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/dal-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-i4aTG0WgZ7OvOjj655wW/CNt2dqsMQDWYYmst+MRpACOZGDEhjDR8LfVi0kazLONSrUZz0pqJ2lIKgRh/vjI6Q==}
+  '@eggjs/dal-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-tNf50wuqTqmHHXBzrLahrx7TZiYKIjXZ1mj7GM5ylsG1+EvDLcGkFALHaML3xJ0+UDqFWlnoHlbc9QR2aWeQoQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/egg-module-common@4.0.0-beta.10':
-    resolution: {integrity: sha512-qf5aotSYwdOOom7p9T+15h43iylKesG6uXRClrOdCRF8mdSjMxw74QpABF4+EWaQKslnfnEjXEzGRPp4bMADRQ==}
+  '@eggjs/egg-module-common@4.0.0-beta.11':
+    resolution: {integrity: sha512-dZpsNLcIqxIxLcLtd29WC+oGyF01Jwh14Mo+3+YNVkYpe/WdvKqcoxkvrm+k7WIlz1qj0fzQ8V8k/5nGSHKWlQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/eventbus-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-mTRHJX1HosFwaQj3yVyWsJ8qMxBTyx+myhnmess2ZMir0PSyhRrx3+ZFLxBOSyxQNaAtJlwq/cMQS/nJJq2vug==}
+  '@eggjs/eventbus-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-09glegPlC2O+jgX4UJ6WQ9RQsbgsJZwYMhNowhKl+WPXpW4WUx5g3R8l9owpCUCE/F7+mcF+e7TiRkIbP60sSg==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/ip@2.1.0':
@@ -2582,84 +2567,84 @@ packages:
     engines: {node: '>=18.19.0'}
     hasBin: true
 
-  '@eggjs/standalone-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-x9OQEezsXd7dS0EQ6lK3WbCl8BY4kAmaMVlAQK2fKUiJAL1epU2r8+UCLinibZ8JaIKFV7LCmxwDBDK5XQ7FeQ==}
+  '@eggjs/standalone-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-DfTVJFCv7rc53g6SeIe8MjlC3vzEAdaHnk+TEXyHaPc0oFuvYjIf7ikYrwhn5khaw2U8NS5vZNSCdoHt6qKrPw==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/tegg-background-task@4.0.0-beta.10':
-    resolution: {integrity: sha512-XH/qHdzwgDnbaX3uYTaDSVNKD2BidwQbJ4i3pnvcdSE0gcPhZJ4u9scICnY70JFnv35lUnrmm/3hHyRjSOzixw==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: beta
-
-  '@eggjs/tegg-common-util@4.0.0-beta.10':
-    resolution: {integrity: sha512-0ZSvnq4/Hqk78jY4rXh8pxNKCFJQLPiAgcRHKVWFVDgVeJWuCuzh6INKFgL33fuKF6Z0zBUdbXgcvxzxWmj0dA==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-config@4.0.0-beta.10':
-    resolution: {integrity: sha512-F5h0HtEaX7JdNzH2aVKBEt5a18SFBV5apPkZy4w/UW3DzZaVeuMLufjFce1TQvAnorRJpFKkp19QHprgukXqyQ==}
+  '@eggjs/tegg-background-task@4.0.0-beta.11':
+    resolution: {integrity: sha512-dtATtPZQ2MMwdwdmluAPxylNKu48+JyvLVQta9UdAQQsDwJ3A4e1Jftpuh/FzXSFTSTYNcjkE8+v/DXEFM7FDA==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
       egg: beta
 
-  '@eggjs/tegg-controller-plugin@4.0.0-beta.10':
-    resolution: {integrity: sha512-ZSed8tBEuc1O2WsenRKqAZvqXweXu0t/vjU5iRgFL4rQt/0sttxkVWWNimBf7llivUOFrPANn3zq43AcVeNWKQ==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      '@eggjs/tegg-plugin': 4.0.0-beta.10
-      egg: beta
-
-  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.10':
-    resolution: {integrity: sha512-9T3z2vQYMDvBqxgNVoBPCU9QTrokGfCJ25f8/joMUlv8+5TUOdYPCxJtop8EAr4kxKdfPPplyVZeZh6hikPqLA==}
+  '@eggjs/tegg-common-util@4.0.0-beta.11':
+    resolution: {integrity: sha512-3PeUQc6NQ695Cjb67QVMnpVFmrlpMDYnL8W++yRqhx/MlYJ3714ZTkzUGhSvT4QlY5vVq9+J3sFRxHLfD9YDCQ==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/tegg-dynamic-inject@4.0.0-beta.10':
-    resolution: {integrity: sha512-r2XZolOpEU7swUxpp2NC8j77MEheUERgy9gLtgFDjh0i03KO6jkItuZ7Yfd63Cg3tq6zQC1cbK58nztP/v0mLw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-lifecycle@4.0.0-beta.10':
-    resolution: {integrity: sha512-yfRwWDYHj8qxqiCciifDNrAzp6W4GbTGElkc1SUdKvEGYshwQf/MCBTLzXl6xK2KvVl+ZxeDsXYf7FlxPhMSZg==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-loader@4.0.0-beta.10':
-    resolution: {integrity: sha512-yNUshJWSRRy9Cj+8xDhnkhZdAyE0zOt4yfwKLPMZREYgYbmwGYsTECnnWl7C7a48y1PPbB0F/q0/iWzZI9BsKw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-metadata@4.0.0-beta.10':
-    resolution: {integrity: sha512-79cIE5jhfVH7Ljxz1nuKlV6TLzm6lZc/YZchs50lqw4w1EXkZtIJCWqRZx8m8Bif+8OiPV9Z6bfSVHhA5KOP+g==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-orm-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-zBG+bh97dudLcvh4Drv2n1414XbdzLMbsIniGFZQVFN3wrQjO/SLrthu3FAgXgv8k0dnXuhuAft2iYcgaN3Zmg==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-plugin@4.0.0-beta.10':
-    resolution: {integrity: sha512-oYk+Wa1KFlMzPOi16vjeuNDPrPvhdD7jOPBAbCkNvQaFHZBkD0v4BdcD9yWY5JE7b7n2t/5xwW529BWNqkK7vw==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      '@eggjs/tegg-config': 4.0.0-beta.10
-      egg: beta
-
-  '@eggjs/tegg-runtime@4.0.0-beta.10':
-    resolution: {integrity: sha512-rVGFuXDmwzDxEc2Uovg7oQUzv2qSkAdyA9bw7tWGB/hXGgF65jm5JZNsux+qmkp/o+cQh8x5OJw1e7dxKe4gvw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-schedule-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-UtQtVUpNEBc41klWJe5UyMW3W780R+VAhMHE+3pkP7NxdMA8rbyO//kUHULfddEeOCLOEw61/SI4zkSq4ZkGVA==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-transaction-decorator@4.0.0-beta.10':
-    resolution: {integrity: sha512-z543j5aWIbt1y4G4M9TsHkzOh8d9pUM5fPmjDH44C2Elj4S+8gO3Izyv8EPJqYaEK8ssxYu/S5pswWQsvL+Gig==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-types@4.0.0-beta.10':
-    resolution: {integrity: sha512-UkTuZZ2zX+Cgxc8mrEeWmDEgWs+rLauQsdZPbGHfObFLyTV793zdB8pamRZTZJWe8jLjWArRXilgoiGbso7Xcg==}
+  '@eggjs/tegg-config@4.0.0-beta.11':
+    resolution: {integrity: sha512-kfvI2H0+ndYar4DS6AM7+QvApYNpLI62FfVGxsmGdtSzA6qqoyvEY3VGD8nBa9+uSURRNBdvoFlaI0KKriEDBQ==}
     engines: {node: '>=22.18.0'}
     peerDependencies:
       egg: beta
 
-  '@eggjs/tegg@4.0.0-beta.10':
-    resolution: {integrity: sha512-op9L4FtrGFQ2PdWmXASkafLEKfy8mtHCaE7mVfW/sMralLdcy44PuaWkIljo4D7BSBCOvwrI3hwZ37CJ95jC7w==}
+  '@eggjs/tegg-controller-plugin@4.0.0-beta.11':
+    resolution: {integrity: sha512-tvv/WnZVMR401B6EwwO8XBiRmaKd4hPns+w6haIIbsJ+Ucno+SM2/a4Zr/eFOvNLtGIWP5rGnbKK0SJyc6aNrw==}
+    engines: {node: '>=22.18.0'}
+    peerDependencies:
+      '@eggjs/tegg-plugin': 4.0.0-beta.11
+      egg: beta
+
+  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.11':
+    resolution: {integrity: sha512-XGfsO2GRDOBuWCu2HGgeZXIQKcE7qu9F+bTXfvv6QCX8y9uTtlNcJ1qH0IpAe9d6Kcrt8rtPU4jYSFwsJaJnVQ==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11':
+    resolution: {integrity: sha512-pDsWFR7Wb1IJ3LRuH9RFJklSPZXgXoPwJqN2ixE5hhqOHWCd09N8Yr9C9ksGZUajWJRLO93s98Lx8JQEYrwi1A==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-lifecycle@4.0.0-beta.11':
+    resolution: {integrity: sha512-Pe3mpIeqGwKGib5VT1rsJ2SSO7yuTM7yTPmt/Rx+x5kCijxdn3afyB6eUhF7HaLEiy+CvQVmrihJhX5jS2Y08w==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-loader@4.0.0-beta.11':
+    resolution: {integrity: sha512-w2xD5njLGgJp6jmBHuvaZTW2px+ec6OozKaiAxC2ranwte2FQcY0TL7P38kcBJTvwnbkT/ozVzcdzsBKKE8wPw==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-metadata@4.0.0-beta.11':
+    resolution: {integrity: sha512-xGejj5Pxjw4+TntYVIQ8zOmTaxBQE/uwKOILCoClMyn/gOfm3nuu31Jp/M297xtBCcJaDO3EnrUAlRXksHGpNA==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-orm-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-Sy4OwCMqN8E0ydDCHSKt7uoSTeHd3tSwuU6ClMtiCpGXmbQZe07jncq1RZH2v3BzalzpYfYccnukFex/q2jbYw==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-plugin@4.0.0-beta.11':
+    resolution: {integrity: sha512-F/kZoC3cl5GlhNlpOc/lm/BwNsu0iGzccZk24IuibewAgw+E7InL5bKGOjXm25/x1AxK3qVTkwtXiNOF0jkRuQ==}
+    engines: {node: '>=22.18.0'}
+    peerDependencies:
+      '@eggjs/tegg-config': 4.0.0-beta.11
+      egg: beta
+
+  '@eggjs/tegg-runtime@4.0.0-beta.11':
+    resolution: {integrity: sha512-eqDgvSKgfsbE+CL0pYGS2WrFjaJ2/IG06nhoPmN4TO/kVDRJ5nq4Zi+dbUctdnnOU8wg4rqZ5Gt5HZyNfXWJDQ==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-lZZk6B5lqKzRRaQGrQGDPLOa/tLEUnjC77TnDAokqPo2PSjhqUVlT4dfR5qh/qDdclULDDsUUbYKLfLIw61hKQ==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11':
+    resolution: {integrity: sha512-4LoFyRnk8x2v3fCcBEQ1aaF8lFa6/kSaihqPVIjlIIZm2g3Rz3nAwX2iRPwAHPAGndKoeTY8iElZKfepu4xl0w==}
+    engines: {node: '>=22.18.0'}
+
+  '@eggjs/tegg-types@4.0.0-beta.11':
+    resolution: {integrity: sha512-caHAEGgA3yiaT+5njaO3FaGFQLvasZohqD6QL20E1Ti99Rcw2vhQJT3TrPedqE9lycBsOmJtuE06OwL8bazz2A==}
+    engines: {node: '>=22.18.0'}
+    peerDependencies:
+      egg: beta
+
+  '@eggjs/tegg@4.0.0-beta.11':
+    resolution: {integrity: sha512-YJOX79jwbEmMd1NBDhUu/wdL1T73a377xjR7JqQmXKihXHSG/hchyhVeeKF30aRuGyDByOkeSL4XuxuFw17gjw==}
     engines: {node: '>=22.18.0'}
 
   '@eggjs/utils@4.4.1':
@@ -11934,16 +11919,16 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
-  '@eggjs/ajv-decorator@4.0.0-beta.10':
+  '@eggjs/ajv-decorator@4.0.0-beta.11':
     dependencies:
       '@sinclair/typebox': 0.32.35
       ajv: 8.17.1
 
-  '@eggjs/aop-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/aop-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
@@ -11951,14 +11936,14 @@ snapshots:
     dependencies:
       mime-db: 1.52.0
 
-  '@eggjs/controller-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/controller-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/cookies': 4.0.0-beta.26
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       is-type-of: 2.2.0
       path-to-regexp: 1.9.0
     transitivePeerDependencies:
@@ -11969,10 +11954,10 @@ snapshots:
       should-send-same-site-none: 2.0.5
       utility: 2.5.0
 
-  '@eggjs/core-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/core-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
@@ -11993,24 +11978,24 @@ snapshots:
       tsconfig-paths: 4.2.0
       utility: 2.5.0
 
-  '@eggjs/dal-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/dal-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       lodash.snakecase: 4.1.1
       pluralize: 8.0.0
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/egg-module-common@4.0.0-beta.10': {}
+  '@eggjs/egg-module-common@4.0.0-beta.11': {}
 
-  '@eggjs/eventbus-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/eventbus-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
@@ -12086,18 +12071,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eggjs/standalone-decorator@4.0.0-beta.10': {}
+  '@eggjs/standalone-decorator@4.0.0-beta.11': {}
 
-  '@eggjs/tegg-background-task@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-background-task@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       egg: link:packages/egg
 
-  '@eggjs/tegg-common-util@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-common-util@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/utils': 5.0.0-beta.26
       extend2: 4.0.0
       globby: 14.1.0
@@ -12106,148 +12091,148 @@ snapshots:
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
       '@eggjs/utils': 5.0.0-beta.26
       egg: link:packages/egg
 
-  '@eggjs/tegg-controller-plugin@4.0.0-beta.10(@eggjs/tegg-plugin@4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)':
+  '@eggjs/tegg-controller-plugin@4.0.0-beta.11(@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)':
     dependencies:
-      '@eggjs/egg-module-common': 4.0.0-beta.10
+      '@eggjs/egg-module-common': 4.0.0-beta.11
       '@eggjs/router': 4.0.0-beta.26
-      '@eggjs/tegg': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-plugin': 4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/tegg': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-plugin': 4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       egg: link:packages/egg
       egg-errors: 2.3.2
       globby: 14.1.0
       path-to-regexp: 1.9.0
       sdk-base: 5.0.1
 
-  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-dynamic-inject@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-lifecycle@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-lifecycle@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-loader@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-loader@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       globby: 14.1.0
       is-type-of: 2.2.0
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-metadata@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-metadata@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       egg-errors: 2.3.2
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-orm-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-orm-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
       lodash: 4.17.21
       pluralize: 8.0.0
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-plugin@4.0.0-beta.10(@eggjs/tegg-config@4.0.0-beta.10(egg@packages+egg))(egg@packages+egg)':
+  '@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)':
     dependencies:
-      '@eggjs/egg-module-common': 4.0.0-beta.10
-      '@eggjs/tegg': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-background-task': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-config': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject-runtime': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/egg-module-common': 4.0.0-beta.11
+      '@eggjs/tegg': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-config': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-dynamic-inject-runtime': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
       egg: link:packages/egg
       extend2: 4.0.0
       sdk-base: 5.0.1
 
-  '@eggjs/tegg-runtime@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-runtime@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-schedule-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-transaction-decorator@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/tegg-types@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg-types@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
       egg: link:packages/egg
 
-  '@eggjs/tegg@4.0.0-beta.10(egg@packages+egg)':
+  '@eggjs/tegg@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
-      '@eggjs/ajv-decorator': 4.0.0-beta.10
-      '@eggjs/aop-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/controller-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/core-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/dal-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/eventbus-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/standalone-decorator': 4.0.0-beta.10
-      '@eggjs/tegg-background-task': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-orm-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-schedule-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-transaction-decorator': 4.0.0-beta.10(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.10(egg@packages+egg)
+      '@eggjs/ajv-decorator': 4.0.0-beta.11
+      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/controller-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/eventbus-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/standalone-decorator': 4.0.0-beta.11
+      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-orm-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-schedule-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-transaction-decorator': 4.0.0-beta.11(egg@packages+egg)
+      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
     transitivePeerDependencies:
       - egg
 

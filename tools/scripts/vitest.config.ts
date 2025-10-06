@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     testTimeout: 60000,
     hookTimeout: 60000,
-    globals: true,
+    include: ['test/**/*.test.ts'],
   },
 });
