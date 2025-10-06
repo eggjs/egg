@@ -1,11 +1,10 @@
 import path from 'node:path';
-import { strict as assert } from 'node:assert';
 import fs from 'node:fs/promises';
 import { scheduler } from 'node:timers/promises';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
 import coffee from 'coffee';
 import { request } from 'urllib';
 import { mm, restore } from 'mm';
@@ -57,10 +56,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /@@@ inject script!/);
-      assert.match(app.stdout, /@@@ inject script1/);
-      assert.match(app.stdout, /@@@ inject script2/);
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/@@@ inject script!/);
+      expect(app.stdout).toMatch(/@@@ inject script1/);
+      expect(app.stdout).toMatch(/@@@ inject script2/);
     });
 
     it('inject incorrect script', async () => {
@@ -70,7 +69,7 @@ describe('test/start-without-demon.test.ts', () => {
       }) as Coffee;
       // app.debug();
       await scheduler.wait(waitTime);
-      assert.match(app.stderr, /Cannot find module/);
+      expect(app.stderr).toMatch(/Cannot find module/);
       app.expect('code', 1);
     });
   });
@@ -98,10 +97,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /@@@ inject script!/);
-      assert.match(app.stdout, /@@@ inject script1/);
-      assert.match(app.stdout, /@@@ inject script2/);
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/@@@ inject script!/);
+      expect(app.stdout).toMatch(/@@@ inject script1/);
+      expect(app.stdout).toMatch(/@@@ inject script2/);
     });
 
     it('inject incorrect script', async () => {
@@ -109,7 +108,7 @@ describe('test/start-without-demon.test.ts', () => {
       app = coffee.fork(eggBin, ['start', '--workers=1', `--require=${script}`], { cwd: fixturePath }) as Coffee;
       // app.debug();
       await scheduler.wait(waitTime);
-      assert.match(app.stderr, /Cannot find module/);
+      expect(app.stderr).toMatch(/Cannot find module/);
       app.expect('code', 1);
     });
   });
@@ -134,7 +133,7 @@ describe('test/start-without-demon.test.ts', () => {
       app.expect('code', 0);
 
       await scheduler.wait(waitTime);
-      assert.doesNotMatch(app.stdout, /--require .*\/node_modules\/.*source-map-support/);
+      expect(app.stdout).not.toMatch(/--require .*\/node_modules\/.*source-map-support/);
     });
   });
 
@@ -158,15 +157,15 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
       // assert(!app.stdout.includes('DeprecationWarning:'));
-      assert(app.stdout.includes('--title=egg-server-example'));
-      assert(app.stdout.includes('"title":"egg-server-example"'));
-      assert.match(app.stdout, /custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
-      assert.match(app.stdout, /app_worker#2:/);
-      assert.doesNotMatch(app.stdout, /app_worker#3:/);
+      expect(app.stdout).toMatch(/--title=egg-server-example/);
+      expect(app.stdout).toMatch(/"title":"egg-server-example"/);
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
+      expect(app.stdout).toMatch(/app_worker#2:/);
+      expect(app.stdout).not.toMatch(/app_worker#3:/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
 
     it('should start --trace-warnings work', async () => {
@@ -178,7 +177,7 @@ describe('test/start-without-demon.test.ts', () => {
 
       // assert.match(app.stderr, /MaxListenersExceededWarning:/);
       // assert.match(app.stderr, /app.js:10:9/); // should had trace
-      assert.doesNotMatch(app.stdout, /DeprecationWarning:/);
+      expect(app.stdout).not.toMatch(/DeprecationWarning:/);
     });
 
     it.skip('should get ready', async () => {
@@ -193,13 +192,13 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.includes('READY!!!'));
-      assert(app.stdout.includes('--title=egg-server-example'));
-      assert(app.stdout.includes('"title":"egg-server-example"'));
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:7001/));
-      assert(app.stdout.includes('app_worker#2:'));
-      assert(!app.stdout.includes('app_worker#3:'));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/READY!!!/);
+      expect(app.stdout).toMatch(/--title=egg-server-example/);
+      expect(app.stdout).toMatch(/"title":"egg-server-example"/);
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:7001/);
+      expect(app.stdout).toMatch(/app_worker#2:/);
+      expect(app.stdout).not.toMatch(/app_worker#3:/);
     });
   });
 
@@ -223,7 +222,7 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
       server.close();
-      assert.equal(app.code, 1);
+      expect(app.code).toBe(1);
     });
   });
 
@@ -252,10 +251,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -279,10 +278,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -306,10 +305,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/yadan started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/yadan started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, yadan');
+      expect(result.data.toString()).toBe('hi, yadan');
     });
   });
 
@@ -333,14 +332,14 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.includes('--title=egg-test'));
-      assert(app.stdout.includes('"title":"egg-test"'));
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
-      assert(app.stdout.includes('app_worker#2:'));
-      assert(!app.stdout.includes('app_worker#3:'));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/--title=egg-test/);
+      expect(app.stdout).toMatch(/"title":"egg-test"/);
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
+      expect(app.stdout).toMatch(/app_worker#2:/);
+      expect(app.stdout).not.toMatch(/app_worker#3:/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -364,10 +363,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -393,10 +392,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -420,10 +419,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}/env`);
-      assert.equal(result.data.toString(), 'pre, true');
+      expect(result.data.toString()).toBe('pre, true');
     });
   });
 
@@ -448,15 +447,15 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.includes('## EGG_SERVER_ENV is not pass'));
-      assert(app.stdout.includes('## CUSTOM_ENV: pre'));
-      assert(app.stdout.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/## EGG_SERVER_ENV is not pass/);
+      expect(app.stdout).toMatch(/## CUSTOM_ENV: pre/);
+      expect(app.stdout).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       let result = await request(`http://127.0.0.1:${port}/env`);
-      assert.equal(result.data.toString(), 'pre, true');
+      expect(result.data.toString()).toBe('pre, true');
       result = await request(`http://127.0.0.1:${port}/path`);
       const appBinPath = path.join(fixturePath, 'node_modules/.bin');
-      assert(result.data.toString().startsWith(`${appBinPath}${path.delimiter}`));
+      expect(result.data.toString()).toContain(`${appBinPath}${path.delimiter}`);
     });
   });
 
@@ -497,10 +496,10 @@ describe('test/start-without-demon.test.ts', () => {
       await scheduler.wait(waitTime);
 
       let content = await fs.readFile(stdout, 'utf-8');
-      assert.match(content, /custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
+      expect(content).toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
 
       content = await fs.readFile(stderr, 'utf-8');
-      assert.equal(content, '');
+      expect(content).toBe('');
     });
 
     it('should start with insecurity --stderr argument', async () => {
@@ -525,11 +524,11 @@ describe('test/start-without-demon.test.ts', () => {
       await scheduler.wait(waitTime);
 
       const content = await fs.readFile(stdout, 'utf-8');
-      assert(!content.match(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(content).not.toMatch(/custom-framework started on http:\/\/127\.0\.0\.1:\d+/);
       let stats = await exists(stderr);
-      assert(!stats);
+      expect(stats).toBe(false);
       stats = await exists(malicious);
-      assert(!stats);
+      expect(stats).toBe(false);
     });
   });
 
@@ -562,10 +561,10 @@ describe('test/start-without-demon.test.ts', () => {
 
         await scheduler.wait(waitTime);
 
-        assert.equal(replaceWeakRefMessage(app.stderr), '');
-        assert(app.stdout.match(/yadan started on http:\/\/127\.0\.0\.1:\d+/));
+        expect(replaceWeakRefMessage(app.stderr)).toBe('');
+        expect(app.stdout).toMatch(/yadan started on http:\/\/127\.0\.0\.1:\d+/);
         const result = await request(`http://127.0.0.1:${port}`);
-        assert.equal(result.data.toString(), 'hi, yadan');
+        expect(result.data.toString()).toBe('hi, yadan');
       });
 
       it('should error if node path invalid', async () => {
@@ -581,7 +580,7 @@ describe('test/start-without-demon.test.ts', () => {
         app.expect('code', 1);
 
         await scheduler.wait(3000);
-        assert.match(app.stderr, /spawn invalid ENOENT/);
+        expect(app.stderr).toMatch(/spawn invalid ENOENT/);
       });
     });
 
@@ -601,10 +600,10 @@ describe('test/start-without-demon.test.ts', () => {
 
         await scheduler.wait(waitTime);
 
-        assert.equal(replaceWeakRefMessage(app.stderr), '');
-        assert(app.stdout.match(/yadan started on http:\/\/127\.0\.0\.1:\d+/));
+        expect(replaceWeakRefMessage(app.stderr)).toBe('');
+        expect(app.stdout).toMatch(/yadan started on http:\/\/127\.0\.0\.1:\d+/);
         const result = await request(`http://127.0.0.1:${port}`);
-        assert.equal(result.data.toString(), 'hi, yadan');
+        expect(result.data.toString()).toBe('hi, yadan');
       });
 
       it('should error if node path invalid', async () => {
@@ -619,7 +618,7 @@ describe('test/start-without-demon.test.ts', () => {
         app.expect('code', 1);
 
         await scheduler.wait(3000);
-        assert.match(app.stderr, /spawn invalid ENOENT/);
+        expect(app.stderr).toMatch(/spawn invalid ENOENT/);
       });
     });
   });
@@ -645,11 +644,11 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/egg started on http:\/\/127\.0\.0\.1:8000/));
-      assert(!app.stdout.includes('app_worker#3:'));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:8000/);
+      expect(app.stdout).not.toMatch(/app_worker#3:/);
       const result = await request('http://127.0.0.1:8000');
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -674,8 +673,8 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /maxHeaderSize: 20000/);
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/maxHeaderSize: 20000/);
     });
   });
 
@@ -702,8 +701,8 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/);
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/);
     });
   });
 
@@ -729,10 +728,10 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert(app.stdout.match(/egg started on http:\/\/127\.0\.0\.1:\d+/));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert.equal(result.data.toString(), 'hi, egg');
+      expect(result.data.toString()).toBe('hi, egg');
     });
   });
 
@@ -761,11 +760,11 @@ describe('test/start-without-demon.test.ts', () => {
 
       await scheduler.wait(waitTime);
 
-      assert.equal(replaceWeakRefMessage(app.stderr), '');
-      assert.match(app.stdout, /egg started on http:\/\/127\.0\.0\.1:\d+/);
-      assert(!app.stdout.includes('app_worker#3:'));
+      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
+      expect(app.stdout).not.toMatch(/app_worker#3:/);
       const result = await request(`http://127.0.0.1:${port}`);
-      assert(result.data.toString().startsWith(`hi, ${expectPATH}`));
+      expect(result.data.toString()).toContain(`hi, ${expectPATH}`);
     });
   });
 
@@ -788,9 +787,9 @@ describe('test/start-without-demon.test.ts', () => {
       app.proc.kill('SIGTERM');
       const [code] = await exitEvent;
       if (isWindows) {
-        assert(code === null);
+        expect(code).toBe(null);
       } else {
-        assert.equal(code, 0);
+        expect(code).toBe(0);
       }
     });
   });

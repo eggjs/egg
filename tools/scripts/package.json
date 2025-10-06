@@ -75,18 +75,13 @@
     "utility": "catalog:"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
-    "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "coffee": "catalog:",
     "detect-port": "catalog:",
     "egg": "workspace:*",
     "mm": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "catalog:",
-    "ts-node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",
