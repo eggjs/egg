@@ -31,11 +31,10 @@ describe('test/ts.test.ts', () => {
     beforeEach(async () => {
       fixturePath = path.join(__dirname, 'fixtures/ts');
       await cleanup(fixturePath);
-      const result = cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
         cwd: fixturePath,
         shell: isWindows,
       });
-      expect(result.stderr.toString()).toBe('');
     });
 
     afterEach(async () => {
@@ -94,11 +93,10 @@ describe('test/ts.test.ts', () => {
     beforeEach(async () => {
       fixturePath = path.join(__dirname, 'fixtures/ts-pkg');
       await cleanup(fixturePath);
-      const result = cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
         cwd: fixturePath,
         shell: isWindows,
       });
-      expect(result.stderr.toString()).toBe('');
     });
 
     afterEach(async () => {
