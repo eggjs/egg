@@ -210,7 +210,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter="@eggjs/scripts" cov
+        run: pnpm run --filter="@eggjs/scripts" ci
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}

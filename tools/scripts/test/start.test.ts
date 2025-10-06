@@ -80,7 +80,7 @@ describe('test/start.test.ts', () => {
       const port = await detectPort();
       await coffee
         .fork(eggBin, ['start', '--daemon', '--workers=2', `--port=${port}`, cwd])
-        // .debug()
+        .debug()
         .expect('stdout', /Starting egg application/)
         .expect('stdout', /egg started on http:\/\/127\.0\.0\.1:\d+/)
         .expect('code', 0)

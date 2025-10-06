@@ -60,11 +60,12 @@
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "pretest": "npm run build",
+    "pretest": "pnpm run build",
     "test": "vitest run --bail 1 --retry 2 --no-file-parallelism",
-    "ci": "vitest run --bail 1 --retry 2 --no-file-parallelism --coverage",
-    "prepublishOnly": "npm run build"
+    "precov": "pnpm run build",
+    "cov": "pnpm test --coverage",
+    "ci": "pnpm run cov",
+    "prepublishOnly": "pnpm run build"
   },
   "dependencies": {
     "@eggjs/utils": "workspace:*",
