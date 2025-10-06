@@ -93,7 +93,7 @@ catalog:
   dayjs: ^1.11.13
   debounce: ^2.2.0
   destroy: ^1.0.4
-  detect-port: 2.1.0
+  detect-port: ^2.1.0
   dumi: ^2.4.17
   egg-errors: ^2.3.2
   egg-logger: ^3.5.0

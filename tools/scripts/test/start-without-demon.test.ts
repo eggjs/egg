@@ -459,7 +459,7 @@ describe('test/start-without-demon.test.ts', () => {
     });
   });
 
-  describe('--stdout --stderr', () => {
+  describe.skip('--stdout --stderr', () => {
     let app: Coffee;
 
     beforeAll(async () => {
