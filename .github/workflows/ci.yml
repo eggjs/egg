@@ -145,12 +145,14 @@ jobs:
         # os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         os: ['ubuntu-latest', 'windows-latest']
         node: ['22']
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
 
-    name: Test egg-bin (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test egg-bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-egg-bin-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
       cancel-in-progress: true
 
     steps:
@@ -171,6 +173,9 @@ jobs:
 
       - name: Run tests
         run: pnpm run --filter="@eggjs/bin" ci
+        env:
+          CI_NODE_INDEX: ${{ matrix.shardIndex }}
+          CI_NODE_TOTAL: ${{ matrix.shardTotal }}
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov https://github.com/codecov/codecov-action/issues/1787
@@ -212,7 +217,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter="@eggjs/scripts" ci --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm run --filter="@eggjs/scripts" ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}
