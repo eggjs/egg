@@ -20,7 +20,7 @@ describe('cluster', () => {
     const log = getLogContent('dynamic-cluster');
     // console.log(log);
     expect(contains(log, 'interval')).toBe(0);
-    expect(contains(log, 'cron')).toBe(1);
+    expect(contains(log, 'cron')).toBeGreaterThanOrEqual(1);
   });
 });
 

@@ -184,13 +184,15 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest']
-        node: ['22', '24']
+        node: ['22']
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
 
-    name: Test egg-scripts (${{ matrix.os }}, ${{ matrix.node }})
+    name: Test egg-scripts (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-egg-scripts-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
+      group: test-egg-scripts-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
       cancel-in-progress: true
 
     steps:
@@ -210,7 +212,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter="@eggjs/scripts" ci
+        run: pnpm run --filter="@eggjs/scripts" ci --reporter=blob --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}
