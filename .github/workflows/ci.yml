@@ -57,13 +57,15 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'macos-latest', 'windows-latest']
         node: ['22', '24']
-        filter: ['packages', 'tools', 'plugins']
+        # 1-based index
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
 
-    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.filter }})
+    name: Test (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.filter }})
+      group: test-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
       cancel-in-progress: true
 
     steps:
@@ -71,14 +73,14 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Start Redis (MacOS or Linux)
-        if: ${{ (matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest') && matrix.filter == 'plugins' }}
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
         uses: shogo82148/actions-setup-redis@c04803072c41cb7407800faf677b1e3384959c3b # v1
         with:
           redis-version: '7'
           auto-start: 'true'
 
       - name: Start Redis (Windows via Memurai)
-        if: ${{ matrix.os == 'windows-latest' && matrix.filter == 'plugins' }}
+        if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
         run: |
           choco install -y memurai-developer.install
@@ -129,7 +131,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run ci:${{ matrix.filter }}
+        run: pnpm run ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Code Coverage
         # skip on windows, it will hangup on codecov
@@ -175,6 +177,7 @@ jobs:
       - name: Run tests
         run: pnpm run --filter="@eggjs/bin" ci
         env:
+          # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
           CI_NODE_TOTAL: ${{ matrix.shardTotal }}
 
