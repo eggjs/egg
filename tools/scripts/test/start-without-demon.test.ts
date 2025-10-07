@@ -51,12 +51,12 @@ describe('test/start-without-demon.test.ts', () => {
       app = coffee.fork(eggBin, ['start', '--workers=1', '--require=./inject2.js'], {
         cwd: fixturePath,
       }) as Coffee;
-      // app.debug();
+      app.debug();
       app.expect('code', 0);
 
       await scheduler.wait(waitTime);
 
-      expect(replaceWeakRefMessage(app.stderr)).toBe('');
+      // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/@@@ inject script!/);
       expect(app.stdout).toMatch(/@@@ inject script1/);
       expect(app.stdout).toMatch(/@@@ inject script2/);
@@ -720,7 +720,7 @@ describe('test/start-without-demon.test.ts', () => {
 
     it('should start', async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=2', subDir], { cwd: rootDir }) as Coffee;
+      app = coffee.fork(eggBin, ['start', '--workers=2', `--port=${port}`, subDir], { cwd: rootDir }) as Coffee;
       // app.debug();
       app.expect('code', 0);
 

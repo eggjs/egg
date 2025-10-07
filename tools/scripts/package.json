@@ -61,7 +61,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "pretest": "pnpm run build",
-    "test": "vitest run --no-file-parallelism",
+    "test": "vitest run --bail 1 --no-file-parallelism",
     "cov": "pnpm test --coverage",
     "ci": "pnpm run cov",
     "prepublishOnly": "pnpm run build"
