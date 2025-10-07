@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class UnorderedCollectionError extends HttpError {
+export class UnorderedCollectionError extends HttpError {
   constructor(message?: string) {
     const status = 425;
     const code = 'UNORDERED_COLLECTION';
-    message = message || 'Unordered Collection';
+    message = message ?? 'Unordered Collection';
 
     super({ code, message, status });
   }
 }
-
-export default UnorderedCollectionError;

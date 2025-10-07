@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class BandwidthLimitExceededError extends HttpError {
+export class BandwidthLimitExceededError extends HttpError {
   constructor(message?: string) {
     const status = 509;
     const code = 'BANDWIDTH_LIMIT_EXCEEDED';
-    message = message || 'Bandwidth Limit Exceeded';
+    message = message ?? 'Bandwidth Limit Exceeded';
 
     super({ code, message, status });
   }
 }
-
-export default BandwidthLimitExceededError;

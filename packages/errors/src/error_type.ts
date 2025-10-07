@@ -1,7 +1,18 @@
-enum ErrorType {
-  BUILTIN = 'BUILTIN',
-  ERROR = 'ERROR',
-  EXCEPTION = 'EXCEPTION',
-}
+const ErrorType = {
+  /**
+   * Built-in Error
+   */
+  BUILTIN: 'BUILTIN',
+  /**
+   * Egg Error
+   */
+  ERROR: 'ERROR',
+  /**
+   * Egg Exception
+   */
+  EXCEPTION: 'EXCEPTION',
+} as const;
 
-export default ErrorType;
+type ErrorType = (typeof ErrorType)[keyof typeof ErrorType];
+
+export { ErrorType };

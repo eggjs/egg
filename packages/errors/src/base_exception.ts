@@ -1,15 +1,10 @@
-import BaseError from './base';
-import ErrorOptions from './error_options';
-import ErrorType from './error_type';
+import { BaseError, TYPE } from './base.ts';
+import { ErrorOptions } from './error_options.ts';
+import { ErrorType } from './error_type.ts';
 
-const TYPE = Symbol.for('BaseError#type');
-
-class EggBaseException<T extends ErrorOptions> extends BaseError<T> {
+export class EggBaseException<T extends ErrorOptions> extends BaseError<T> {
   constructor(options?: T) {
     super(options);
-
-    (this as any)[TYPE] = ErrorType.EXCEPTION;
+    this[TYPE] = ErrorType.EXCEPTION;
   }
 }
-
-export default EggBaseException;

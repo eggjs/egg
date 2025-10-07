@@ -1,8 +1,10 @@
-import { EggBaseError, ErrorOptions } from '../index.ts';
-import { FrameworkErrorFormater } from './formatter.ts';
-import { ok as assert } from 'assert';
+import assert from 'node:assert';
 
-export const FRAMEWORK_ERROR_SYMBOL: symbol = Symbol.for('FrameworkBaseError');
+import { EggBaseError } from '../base_error.ts';
+import { ErrorOptions } from '../error_options.ts';
+import { FrameworkErrorFormater } from './formatter.ts';
+
+export const FRAMEWORK_ERROR_SYMBOL = Symbol.for('FrameworkBaseError');
 
 export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
   public readonly serialNumber: string;
@@ -17,11 +19,11 @@ export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
     assert(message, 'message is required');
     assert(serialNumber, 'serialNumber is required');
 
-    this.serialNumber = String(serialNumber);
-    this.errorContext = errorContext || '';
+    this.serialNumber = `${serialNumber}`;
+    this.errorContext = errorContext ?? '';
     this.code = `${this.module}_${this.serialNumber}`;
-
-    (this as any)[FRAMEWORK_ERROR_SYMBOL] = true;
+    // @ts-expect-error ignore
+    this[FRAMEWORK_ERROR_SYMBOL] = true;
   }
 
   // create a new frameworkError with format
@@ -32,6 +34,7 @@ export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
   }
 
   static isFrameworkError(err: Error): err is FrameworkBaseError {
-    return (err as any)[FRAMEWORK_ERROR_SYMBOL] === true;
+    // @ts-expect-error ignore
+    return err[FRAMEWORK_ERROR_SYMBOL] === true;
   }
 }

@@ -1,3 +1,30 @@
+# Changelog
+
+> [!IMPORTANT]
+> Moving forwards we are using the GitHub releases page at <https://github.com/eggjs/egg/releases> in combination with [release.yml](https://github.com/eggjs/egg/actions/workflows/release.yml) for publishing releases and their changelogs. 
+
+---
+
+## 3.0.0+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node.js < 22.18.0 support
+* only support egg@4
+
+part of https://github.com/eggjs/egg/issues/5434
+
+---
+
+## [2.3.2](https://github.com/eggjs/egg-errors/compare/v2.3.1...v2.3.2) (2022-12-18)
+
+
+### Bug Fixes
+
+* replace all single quote in message ([#15](https://github.com/eggjs/egg-errors/issues/15)) ([8bf8f4d](https://github.com/eggjs/egg-errors/commit/8bf8f4dd337a3111054246e71a73e9057c9c0691))
+
+---
+
 # 2.3.1 / 2022-02-22
 
 **features**

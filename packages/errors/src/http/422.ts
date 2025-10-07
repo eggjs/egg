@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class UnprocessableEntityError extends HttpError {
+export class UnprocessableEntityError extends HttpError {
   constructor(message?: string) {
     const status = 422;
     const code = 'UNPROCESSABLE_ENTITY';
-    message = message || 'Unprocessable Entity';
+    message = message ?? 'Unprocessable Entity';
 
     super({ code, message, status });
   }
 }
-
-export default UnprocessableEntityError;

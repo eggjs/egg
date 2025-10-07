@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class ConflictError extends HttpError {
+export class ConflictError extends HttpError {
   constructor(message?: string) {
     const status = 409;
     const code = 'CONFLICT';
-    message = message || 'Conflict';
+    message = message ?? 'Conflict';
 
     super({ code, message, status });
   }
 }
-
-export default ConflictError;

@@ -1,3 +1,3 @@
-export default interface HttpHeader {
+export interface HttpHeader {
   [key: string]: any;
 }

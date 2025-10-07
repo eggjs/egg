@@ -1,13 +1,11 @@
-import ErrorOptions from './error_options';
-import EggBaseException from './base_exception';
+import { ErrorOptions } from './error_options.ts';
+import { EggBaseException } from './base_exception.ts';
 
-class EggException extends EggBaseException<ErrorOptions> {
+export class EggException extends EggBaseException<ErrorOptions> {
   constructor(message?: string) {
     super({
       code: 'EGG_EXCEPTION',
-      message: message || '',
+      message: message ?? '',
     });
   }
 }
-
-export default EggException;

@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class BadRequestError extends HttpError {
+export class BadRequestError extends HttpError {
   constructor(message?: string) {
     const status = 400;
     const code = 'BAD_REQUEST';
-    message = message || 'Bad Request';
+    message = message ?? 'Bad Request';
 
     super({ code, message, status });
   }
 }
-
-export default BadRequestError;

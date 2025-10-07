@@ -1,5 +1,4 @@
-import { strict as assert } from 'assert';
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   EggBaseError,
   EggBaseException,
@@ -14,9 +13,9 @@ describe('test/error.test.ts', () => {
   describe('base error', () => {
     it('should instantiate without params', () => {
       const err = new EggBaseError();
-      assert(err.code === '');
-      assert(err.message === '');
-      assert(err.name === 'EggBaseError');
+      expect(err.code).toBe('');
+      expect(err.message).toBe('');
+      expect(err.name).toBe('EggBaseError');
     });
 
     it('should instantiate with object', () => {
@@ -24,34 +23,34 @@ describe('test/error.test.ts', () => {
         code: 'CODE',
         message: 'error',
       });
-      assert(err.code === 'CODE');
-      assert(err.message === 'error');
-      assert(err.name === 'EggBaseError');
+      expect(err.code).toBe('CODE');
+      expect(err.message).toBe('error');
+      expect(err.name).toBe('EggBaseError');
     });
   });
 
   describe('error', () => {
     it('should instantiate without params', () => {
       const err = new EggError();
-      assert(err.code === 'EGG_ERROR');
-      assert(err.message === '');
-      assert(err.name === 'EggError');
+      expect(err.code).toBe('EGG_ERROR');
+      expect(err.message).toBe('');
+      expect(err.name).toBe('EggError');
     });
 
     it('should instantiate with object', () => {
       const err = new EggError('egg error');
-      assert(err.code === 'EGG_ERROR');
-      assert(err.message === 'egg error');
-      assert(err.name === 'EggError');
+      expect(err.code).toBe('EGG_ERROR');
+      expect(err.message).toBe('egg error');
+      expect(err.name).toBe('EggError');
     });
   });
 
   describe('base exception', () => {
     it('should instantiate without params', () => {
       const err = new EggBaseException();
-      assert(err.code === '');
-      assert(err.message === '');
-      assert(err.name === 'EggBaseException');
+      expect(err.code).toBe('');
+      expect(err.message).toBe('');
+      expect(err.name).toBe('EggBaseException');
     });
 
     it('should instantiate with object', () => {
@@ -59,42 +58,42 @@ describe('test/error.test.ts', () => {
         code: 'CODE',
         message: 'error',
       });
-      assert(err.code === 'CODE');
-      assert(err.message === 'error');
-      assert(err.name === 'EggBaseException');
+      expect(err.code).toBe('CODE');
+      expect(err.message).toBe('error');
+      expect(err.name).toBe('EggBaseException');
     });
   });
 
   describe('exception', () => {
     it('should instantiate without params', () => {
       const err = new EggException();
-      assert(err.code === 'EGG_EXCEPTION');
-      assert(err.message === '');
-      assert(err.name === 'EggException');
+      expect(err.code).toBe('EGG_EXCEPTION');
+      expect(err.message).toBe('');
+      expect(err.name).toBe('EggException');
     });
 
     it('should instantiate with object', () => {
       const err = new EggException('egg exception');
-      assert(err.code === 'EGG_EXCEPTION');
-      assert(err.message === 'egg exception');
-      assert(err.name === 'EggException');
+      expect(err.code).toBe('EGG_EXCEPTION');
+      expect(err.message).toBe('egg exception');
+      expect(err.name).toBe('EggException');
     });
   });
 
   describe('getType', () => {
     it('should return ERROR', () => {
       const err = new EggBaseError();
-      assert(EggBaseError.getType(err) === 'ERROR');
+      expect(EggBaseError.getType(err)).toBe('ERROR');
     });
 
     it('should return EXCEPTION', () => {
       const err = new EggBaseException();
-      assert(EggBaseError.getType(err) === 'EXCEPTION');
+      expect(EggBaseError.getType(err)).toBe('EXCEPTION');
     });
 
     it('should return BUILTIN', () => {
       const err = new Error();
-      assert(EggBaseError.getType(err) === 'BUILTIN');
+      expect(EggBaseError.getType(err)).toBe('BUILTIN');
     });
   });
 
@@ -102,24 +101,25 @@ describe('test/error.test.ts', () => {
     it('should create Error', () => {
       const now = Date.now();
       const err = new Error('error message');
+      // @ts-expect-error test
       err.time = now;
       const err2 = EggBaseError.from(err);
-      assert(err2.code === '');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'EggBaseError');
-      assert(err2.stack === err.stack);
-      assert(err2.time === now);
-      assert(EggBaseError.getType(err2) === 'ERROR');
+      expect(err2.code).toBe('');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('EggBaseError');
+      expect(err2.stack).toBe(err.stack);
+      expect(err2.time).toBe(now);
+      expect(EggBaseError.getType(err2)).toBe('ERROR');
     });
 
     it('should create Exception', () => {
       const err = new Error('error message');
       const err2 = EggBaseException.from(err);
-      assert(err2.code === '');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'EggBaseException');
-      assert(err2.stack === err.stack);
-      assert(EggBaseException.getType(err2) === 'EXCEPTION');
+      expect(err2.code).toBe('');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('EggBaseException');
+      expect(err2.stack).toBe(err.stack);
+      expect(EggBaseException.getType(err2)).toBe('EXCEPTION');
     });
 
     it('should create custom Error', () => {
@@ -128,10 +128,10 @@ describe('test/error.test.ts', () => {
       }
       const err = new Error('error message');
       const err2 = CustomError.from(err);
-      assert(err2.code === '');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'CustomError');
-      assert(err2.stack === err.stack);
+      expect(err2.code).toBe('');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('CustomError');
+      expect(err2.stack).toBe(err.stack);
     });
 
     it('should create custom Error whit constructor params', () => {
@@ -148,11 +148,11 @@ describe('test/error.test.ts', () => {
       }
       const err = new Error('error message');
       const err2 = CustomError.from(err, { code: 'CustomCode', message: 'custom message', add: '' }, true);
-      assert(err2.code === 'CustomCode');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'CustomError');
-      assert(err2.stack === err.stack);
-      assert(err2.custom === true);
+      expect(err2.code).toBe('CustomCode');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('CustomError');
+      expect(err2.stack).toBe(err.stack);
+      expect(err2.custom).toBe(true);
     });
 
     it('should create custom Error not whit constructor params', () => {
@@ -169,20 +169,20 @@ describe('test/error.test.ts', () => {
       }
       const err = new Error('error message');
       const err2 = CustomError.from(err);
-      assert(err2.code === '');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'CustomError');
-      assert(err2.stack === err.stack);
-      assert(err2.custom === undefined);
+      expect(err2.code).toBe('');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('CustomError');
+      expect(err2.stack).toBe(err.stack);
+      expect(err2.custom).toBe(undefined);
     });
 
     it('should create http Error', () => {
       const err = new Error('error message');
       const err2 = InternalServerError.from(err);
-      assert(err2.code === 'INTERNAL_SERVER_ERROR');
-      assert(err2.message === 'error message');
-      assert(err2.name === 'InternalServerError');
-      assert(err2.stack === err.stack);
+      expect(err2.code).toBe('INTERNAL_SERVER_ERROR');
+      expect(err2.message).toBe('error message');
+      expect(err2.name).toBe('InternalServerError');
+      expect(err2.stack).toBe(err.stack);
     });
   });
 
@@ -193,9 +193,9 @@ describe('test/error.test.ts', () => {
         code: 'CODE',
         message: 'error',
       });
-      assert(err.code === 'CODE');
-      assert(err.message === 'error');
-      assert(err.name === 'CustomError');
+      expect(err.code).toBe('CODE');
+      expect(err.message).toBe('error');
+      expect(err.name).toBe('CustomError');
     });
 
     it('custom error with options', () => {
@@ -204,10 +204,10 @@ describe('test/error.test.ts', () => {
       }
       class CustomError extends EggBaseError<CustomErrorOptions> {
         public data: object;
-        protected options: CustomErrorOptions;
+        declare protected options: CustomErrorOptions;
 
-        constructor(message?: CustomErrorOptions) {
-          super(message);
+        constructor(options?: CustomErrorOptions) {
+          super(options);
           this.data = this.options.data;
         }
       }
@@ -216,10 +216,10 @@ describe('test/error.test.ts', () => {
         data: { a: 1 },
         message: 'error',
       });
-      assert(err.code === 'CODE');
-      assert(err.message === 'error');
-      assert(err.name === 'CustomError');
-      assert.deepEqual(err.data, { a: 1 });
+      expect(err.code).toBe('CODE');
+      expect(err.message).toBe('error');
+      expect(err.name).toBe('CustomError');
+      expect(err.data).toEqual({ a: 1 });
     });
   });
 

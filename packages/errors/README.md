@@ -1,23 +1,19 @@
-# egg-errors
+# @eggjs/errors
 
 [![NPM version][npm-image]][npm-url]
-[![Node.js CI](https://github.com/eggjs/egg-errors/actions/workflows/nodejs.yml/badge.svg)](https://github.com/eggjs/egg-errors/actions/workflows/nodejs.yml)
-[![Test coverage][codecov-image]][codecov-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/egg-errors.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-errors
-[codecov-image]: https://codecov.io/gh/eggjs/egg-errors/branch/master/graph/badge.svg
-[codecov-url]: https://codecov.io/gh/eggjs/egg-errors
-[snyk-image]: https://snyk.io/test/npm/egg-errors/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-errors
-[download-image]: https://img.shields.io/npm/dm/egg-errors.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-errors
+[npm-image]: https://img.shields.io/npm/v/@eggjs/errors.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/errors
+[snyk-image]: https://snyk.io/test/npm/@eggjs/errors/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/errors
+[download-image]: https://img.shields.io/npm/dm/@eggjs/errors.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/errors
 
 Errors for [Egg.js](https://eggjs.org)
 
-egg-errors provide two kinds of errors that is Error and Exception.
+`@eggjs/errors` provide two kinds of errors that is Error and Exception.
 
 - Exception is system error that egg will log an error and throw exception, but it will be catched by onerror plugin.
 - Error is business error that egg will transform it to response.
@@ -25,7 +21,7 @@ egg-errors provide two kinds of errors that is Error and Exception.
 ## Install
 
 ```bash
-$ npm i egg-errors --save
+$ npm i @eggjs/errors --save
 ```
 
 ## Usage
@@ -33,7 +29,7 @@ $ npm i egg-errors --save
 Create an Error
 
 ```js
-const { EggError, EggException } = require('egg-errors');
+const { EggError, EggException } = require('@eggjs/errors');
 let err = new EggError('egg error');
 console.log(EggError.getType(err)); // ERROR
 ```
@@ -59,7 +55,7 @@ console.log(EggError.getType(err)); // ERROR
 Error can be extendable.
 
 ```js
-const { EggBaseError } = require('egg-errors');
+const { EggBaseError } = require('@eggjs/errors');
 
 class CustomError extends EggBaseError {
   constructor(message) {
@@ -71,11 +67,12 @@ class CustomError extends EggBaseError {
 or using typescript you can customize ErrorOptions.
 
 ```js
-import { EggBaseError, ErrorOptions } from 'egg-errors';
+import { EggBaseError, ErrorOptions } from '@eggjs/errors';
 
 class CustomErrorOptions extends ErrorOptions {
   public data: object;
 }
+
 class CustomError extends EggBaseError<CustomErrorOptions> {
   public data: object;
   protected options: CustomErrorOptions;
@@ -87,14 +84,15 @@ class CustomError extends EggBaseError<CustomErrorOptions> {
 }
 ```
 
-Recommend use message instead of options in user land that it can be easily understood by developer, see [http error](https://github.com/eggjs/egg-errors/blob/master/lib/http/400.ts).
+Recommend use message instead of options in user land that it can be easily understood by developer, see [http error](https://github.com/eggjs/egg/blob/master/packages/errors/src/http/400.ts).
 
 ### HTTP Errors
 
 HTTP Errors is BUILTIN errors that transform 400 ~ 500 status code to error objects. HttpError extends EggBaseError providing two properties which is `status` and `headers`;
 
 ```js
-const { ForbiddenError } = require('egg-errors');
+const { ForbiddenError } = require('@eggjs/errors');
+
 const err = new ForbiddenError('your request is forbidden');
 console.log(err.status); // 403
 ```
@@ -102,7 +100,8 @@ console.log(err.status); // 403
 Support short name too:
 
 ```js
-const { E403 } = require('egg-errors');
+const { E403 } = require('@eggjs/errors');
+
 const err = new E403('your request is forbidden');
 console.log(err.status); // 403
 ```
@@ -116,7 +115,7 @@ FrameworkBaseError extends EggBaseError providing three properties which is `mod
 FrameworkBaseError could not be used directly, framework/plugin should extends like this
 
 ```js
-const { FrameworkBaseError } = require('egg-errors');
+const { FrameworkBaseError } = require('@eggjs/errors');
 
 class EggMysqlError extends FrameworkBaseError {
   // module should be implement
@@ -137,7 +136,7 @@ console.log(err.errorContext); // { traceId: 'xxx' }
 use the static method `.create(message: string, serialNumber: string | number, errorContext?: any)` to new a frameworkError and format it convenient
 
 ```js
-const { FrameworkBaseError } = require('egg-errors');
+const { FrameworkBaseError } = require('@eggjs/errors');
 
 class EggMysqlError extends FrameworkBaseError {
   // module should be implement
@@ -159,7 +158,7 @@ FrameworkErrorFormater will append a faq guide url in error message.this would b
 the faq guide url format: `${faqPrefix}/${err.module}/${err.serialNumber}`, `faqPrefix` is `https://eggjs.org/zh-cn/faq` by default. can be extendable or set `process.env.EGG_FRAMEWORK_ERR_FAQ_PERFIX` to override it.
 
 ```js
-const { FrameworkErrorFormater } = require('egg-errors');
+const { FrameworkErrorFormater } = require('@eggjs/errors');
 
 class CustomErrorFormatter extends FrameworkErrorFormater {
   static faqPrefix = 'http://www.custom.com/faq';
@@ -171,7 +170,7 @@ class CustomErrorFormatter extends FrameworkErrorFormater {
 format error to message, it will not effect origin error
 
 ```js
-const { FrameworkBaseError, FrameworkErrorFormater } = require('egg-errors');
+const { FrameworkBaseError, FrameworkErrorFormater } = require('@eggjs/errors');
 
 class EggMysqlError extends FrameworkBaseError {
   // module should be implement
@@ -209,7 +208,7 @@ framework.EggMysqlError: error message [ http://www.custom.com/faq/EGG_MYSQL/01 
 append faq guide url to err.message
 
 ```js
-const { FrameworkBaseError, FrameworkErrorFormater } = require('egg-errors');
+const { FrameworkBaseError, FrameworkErrorFormater } = require('@eggjs/errors');
 
 class EggMysqlError extends FrameworkBaseError {
   // module should be implement
@@ -246,13 +245,8 @@ Please open an issue [here](https://github.com/eggjs/egg/issues?q=is%3Aissue+is%
 
 [MIT](LICENSE)
 
-<!-- GITCONTRIBUTOR_START -->
-
 ## Contributors
 
-| [<img src="https://avatars.githubusercontent.com/u/360661?v=4" width="100px;"/><br/><sub><b>popomore</b></sub>](https://github.com/popomore)<br/> | [<img src="https://avatars.githubusercontent.com/u/2160731?v=4" width="100px;"/><br/><sub><b>mansonchor</b></sub>](https://github.com/mansonchor)<br/> | [<img src="https://avatars.githubusercontent.com/u/156269?v=4" width="100px;"/><br/><sub><b>fengmk2</b></sub>](https://github.com/fengmk2)<br/> | [<img src="https://avatars.githubusercontent.com/u/12657964?v=4" width="100px;"/><br/><sub><b>beliefgp</b></sub>](https://github.com/beliefgp)<br/> | [<img src="https://avatars.githubusercontent.com/u/19644997?v=4" width="100px;"/><br/><sub><b>sm2017</b></sub>](https://github.com/sm2017)<br/> |
-| :-----------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------: |
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
 
-This project follows the git-contributor [spec](https://github.com/xudafeng/git-contributor), auto updated at `Tue Feb 22 2022 11:32:47 GMT+0800`.
-
-<!-- GITCONTRIBUTOR_END -->
+Made with [contributors-img](https://contrib.rocks).

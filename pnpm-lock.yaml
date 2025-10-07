@@ -261,9 +261,6 @@ catalogs:
     dumi:
       specifier: ^2.4.17
       version: 2.4.21
-    egg-errors:
-      specifier: ^2.3.2
-      version: 2.3.2
     egg-logger:
       specifier: ^3.5.0
       version: 3.6.1
@@ -489,9 +486,6 @@ catalogs:
     terminal-link:
       specifier: ^5.0.0
       version: 5.0.0
-    toidentifier:
-      specifier: ^1.0.0
-      version: 1.0.1
     ts-node:
       specifier: ^10.9.2
       version: 10.9.2
@@ -684,6 +678,9 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0
     devDependencies:
+      '@eggjs/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@eggjs/mock':
         specifier: workspace:*
         version: link:../../plugins/mock
@@ -699,9 +696,6 @@ importers:
       coffee:
         specifier: 'catalog:'
         version: 5.5.1
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -996,21 +990,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.6.2
-      mm:
-        specifier: 'catalog:'
-        version: 4.0.2
       oxlint:
         specifier: 'catalog:'
         version: 1.19.0(oxlint-tsgolint@0.2.0)
-      rimraf:
-        specifier: 'catalog:'
-        version: 6.0.1
-      statuses:
-        specifier: 'catalog:'
-        version: 2.0.2
-      toidentifier:
-        specifier: 'catalog:'
-        version: 1.0.1
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
@@ -1527,6 +1509,9 @@ importers:
         specifier: 'catalog:'
         version: 2.5.0
     devDependencies:
+      '@eggjs/errors':
+        specifier: workspace:*
+        version: link:../../packages/errors
       '@eggjs/tegg':
         specifier: 'catalog:'
         version: 4.0.0-beta.11(egg@packages+egg)
@@ -1545,9 +1530,6 @@ importers:
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)

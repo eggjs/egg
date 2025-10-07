@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class ForbiddenError extends HttpError {
+export class ForbiddenError extends HttpError {
   constructor(message?: string) {
     const status = 403;
     const code = 'FORBIDDEN';
-    message = message || 'Forbidden';
+    message = message ?? 'Forbidden';
 
     super({ code, message, status });
   }
 }
-
-export default ForbiddenError;

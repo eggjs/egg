@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class GoneError extends HttpError {
+export class GoneError extends HttpError {
   constructor(message?: string) {
     const status = 410;
     const code = 'GONE';
-    message = message || 'Gone';
+    message = message ?? 'Gone';
 
     super({ code, message, status });
   }
 }
-
-export default GoneError;

@@ -1,4 +1,4 @@
-export default class ErrorOptions {
+export class ErrorOptions {
   public code?: string;
   public message: string;
   [key: string]: any;

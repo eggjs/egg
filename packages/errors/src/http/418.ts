@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class ImATeapotError extends HttpError {
+export class ImATeapotError extends HttpError {
   constructor(message?: string) {
     const status = 418;
     const code = 'IMA_TEAPOT';
-    message = message || "I'm a teapot";
+    message = message ?? "I'm a teapot";
 
     super({ code, message, status });
   }
 }
-
-export default ImATeapotError;

@@ -1,13 +1,11 @@
-import HttpError from './http_error';
+import { HttpError } from './http_error.ts';
 
-class NotAcceptableError extends HttpError {
+export class NotAcceptableError extends HttpError {
   constructor(message?: string) {
     const status = 406;
     const code = 'NOT_ACCEPTABLE';
-    message = message || 'Not Acceptable';
+    message = message ?? 'Not Acceptable';
 
     super({ code, message, status });
   }
 }
-
-export default NotAcceptableError;

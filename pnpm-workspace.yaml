@@ -95,7 +95,6 @@ catalog:
   destroy: ^1.0.4
   detect-port: ^2.1.0
   dumi: ^2.4.17
-  egg-errors: ^2.3.2
   egg-logger: ^3.5.0
   egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
@@ -175,7 +174,6 @@ catalog:
   stream-wormhole: ^2.0.1
   superagent: ^10.0.0
   terminal-link: ^5.0.0
-  toidentifier: ^1.0.0
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
   tsdown: ^0.15.4
