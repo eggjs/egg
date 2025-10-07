@@ -1,0 +1,6 @@
+{
+  "name": "example",
+  "dependencies": {
+    "egg": "^1.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "example-stop",
+  "version": "1.0.0",
+  "dependencies": {
+    "egg": "*"
+  },
+  "egg": {
+    "framework": "custom-framework"
+  }
+}

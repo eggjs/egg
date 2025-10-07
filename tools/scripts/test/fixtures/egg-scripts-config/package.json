@@ -1,0 +1,15 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "dependencies": {
+    "egg": "^1.0.0"
+  },
+  "egg": {
+    "framework": "custom-framework"
+  },
+  "eggScriptsConfig": {
+    "ignore-stderr": true,
+    "daemon": true,
+    "workers": 1
+  }
+}

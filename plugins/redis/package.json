@@ -53,8 +53,7 @@
     "node": ">= 22.18.0"
   },
   "scripts": {
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",

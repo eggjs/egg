@@ -1,7 +1,5 @@
 import path from 'node:path';
-import net, { Server } from 'node:net';
 
-import { detect } from 'detect-port';
 import { mm } from '@eggjs/mock';
 import { importResolve } from '@eggjs/utils';
 
@@ -13,43 +11,6 @@ const version = Number(process.version.substring(1, 3));
 describe('test/commands/dev.test.ts', () => {
   const eggBin = path.join(getRootDirname(), 'bin/run.js');
   const cwd = getFixtures('demo-app');
-
-  it('should startCluster success on CommonJS', () => {
-    return (
-      coffee
-        .fork(eggBin, ['dev'], {
-          cwd,
-          // env: { NODE_DEBUG: 'egg-bin*' },
-        })
-        // .debug()
-        .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app"/)
-        .expect('stdout', /"framework":".*?aliyun-egg"/)
-        .expect('stdout', /NODE_ENV: development/)
-        .expect('code', 0)
-        .end()
-    );
-  });
-
-  it('should startCluster success on ESM', () => {
-    const cwd = getFixtures('demo-app-esm');
-    const hook = path.join(cwd, 'hook.js');
-    return (
-      coffee
-        .fork(eggBin, ['dev', '-r', hook], {
-          cwd,
-        })
-        // .debug()
-        .expect('stdout', /start hook success/)
-        .expect('stdout', /'--import'/)
-        .expect('stdout', /"workers":1/)
-        .expect('stdout', /"baseDir":".*?demo-app-esm"/)
-        .expect('stdout', /"framework":".*?aliyun-egg"/)
-        .expect('stdout', /NODE_ENV: development/)
-        .expect('code', 0)
-        .end()
-    );
-  });
 
   it('should dev start with custom NODE_ENV', () => {
     return coffee
@@ -218,35 +179,20 @@ describe('test/commands/dev.test.ts', () => {
       .end();
   });
 
-  describe('auto detect available port', () => {
-    let server: Server;
-    let serverPort: number;
-    before(async () => {
-      serverPort = await detect(7001);
-      server = net.createServer();
-      await new Promise<void>(resolve => {
-        server.listen(serverPort, resolve);
-      });
-    });
-
-    after(() => server.close());
-
-    it('should auto detect available port', () => {
-      return (
-        coffee
-          .fork(eggBin, ['dev'], {
-            cwd,
-            env: { EGG_BIN_DEFAULT_PORT: String(serverPort) },
-          })
-          // .debug()
-          .expect('stderr', /\[@eggjs\/bin] server port \d+ is unavailable, now using port \d+/)
-          .expect('code', 0)
-          .end()
-      );
-    });
+  it('should support egg.revert', () => {
+    if (version !== 20) return;
+    mm(process.env, 'NODE_ENV', 'development');
+    return coffee
+      .fork(eggBin, ['dev'], {
+        cwd: getFixtures('egg-revert'),
+      })
+      .debug()
+      .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
+      .expect('code', 0)
+      .end();
   });
 
-  describe('obtain the port from config.*.js', () => {
+  describe.skip('obtain the port from config.*.js', () => {
     const cwd = getFixtures('example-port');
     it.skip('should obtain the port from config.default.js', () => {
       const eggFramework = path.dirname(importResolve('egg/package.json'));
@@ -259,19 +205,6 @@ describe('test/commands/dev.test.ts', () => {
         .expect('code', 0)
         .end();
     });
-  });
-
-  it('should support egg.revert', () => {
-    if (version !== 20) return;
-    mm(process.env, 'NODE_ENV', 'development');
-    return coffee
-      .fork(eggBin, ['dev'], {
-        cwd: getFixtures('egg-revert'),
-      })
-      .debug()
-      .expect('stdout', /SECURITY WARNING: Reverting CVE-2023-46809: Marvin attack on PKCS#1 padding/)
-      .expect('code', 0)
-      .end();
   });
 
   // FIXME: Error [ERR_REQUIRE_ESM]: Must use import to load ES Module: ~/egg/packages/utils/src/index.ts

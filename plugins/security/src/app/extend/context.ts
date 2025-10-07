@@ -207,6 +207,7 @@ export default class SecurityContext extends Context {
         this.throw(403, `both ctoken and referer check error: ${messages.join(', ')}`);
         break;
       default:
+        // @oxlint-disable-next-line Invalid type "never" of template literal expression
         this.throw(`invalid type ${type}`);
     }
   }

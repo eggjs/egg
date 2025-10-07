@@ -1,0 +1,11 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "dependencies": {
+    "egg": "^1.0.0"
+  },
+  "eggScriptsConfig": {
+    "workers": 1,
+    "node-options--max-http-header-size": "20000"
+  }
+}

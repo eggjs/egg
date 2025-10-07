@@ -254,7 +254,7 @@ describe('Static Cache', () => {
     assert(res.headers['last-modified']);
     assert(!res.headers.etag);
     assert.deepEqual(files[filename].mtime, mtime);
-    await scheduler.wait(10);
+    await scheduler.wait(1000);
     assert.equal(files[filename].md5, md5);
   });
 
@@ -270,7 +270,7 @@ describe('Static Cache', () => {
     assert(res.headers['last-modified']);
     assert(!res.headers.etag);
     assert.deepEqual(files[filename].mtime, mtime);
-    await scheduler.wait(10);
+    await scheduler.wait(1000);
     assert.equal(files[filename].md5, md5);
   });
 
