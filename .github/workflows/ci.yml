@@ -151,7 +151,7 @@ jobs:
         shardIndex: [0, 1, 2, 3, 4]
         shardTotal: [5]
 
-    name: Test egg-bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: Test bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
@@ -198,7 +198,7 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5]
         shardTotal: [5]
 
-    name: Test egg-scripts (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: Test scripts (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
