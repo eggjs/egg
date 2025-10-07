@@ -41,7 +41,6 @@
     "ci:packages": "node scripts/ci.js packages",
     "ci:tools": "node scripts/ci.js tools && pnpm example:typescript:test",
     "ci:plugins": "node scripts/ci.js plugins",
-    "postci": "pnpm run build",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",
     "site:prettier": "pnpm --filter=site run prettier",
