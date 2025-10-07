@@ -1,5 +1,5 @@
-export class ErrorOptions {
-  public code?: string;
-  public message: string;
+export interface ErrorOptions {
+  code?: string;
+  message: string;
   [key: string]: any;
 }

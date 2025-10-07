@@ -1,4 +1,4 @@
-import { ErrorOptions } from './error_options.ts';
+import type { ErrorOptions } from './error_options.ts';
 import { ErrorType } from './error_type.ts';
 
 export const TYPE: symbol = Symbol.for('BaseError#type');

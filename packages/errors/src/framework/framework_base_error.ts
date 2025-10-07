@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { EggBaseError } from '../base_error.ts';
-import { ErrorOptions } from '../error_options.ts';
+import type { ErrorOptions } from '../error_options.ts';
 import { FrameworkErrorFormater } from './formatter.ts';
 
 export const FRAMEWORK_ERROR_SYMBOL = Symbol.for('FrameworkBaseError');

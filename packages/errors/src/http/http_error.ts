@@ -1,5 +1,5 @@
 import { EggBaseError } from '../base_error.ts';
-import { HttpErrorOptions } from './http_error_options.ts';
+import type { HttpErrorOptions } from './http_error_options.ts';
 import type { HttpHeader } from './http_header.ts';
 
 export class HttpError extends EggBaseError<HttpErrorOptions> {

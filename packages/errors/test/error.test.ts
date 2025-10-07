@@ -4,7 +4,7 @@ import {
   EggBaseException,
   EggError,
   EggException,
-  ErrorOptions,
+  type ErrorOptions,
   NotFoundError,
   InternalServerError,
 } from '../src/index.ts';
@@ -199,8 +199,8 @@ describe('test/error.test.ts', () => {
     });
 
     it('custom error with options', () => {
-      class CustomErrorOptions extends ErrorOptions {
-        public data: object;
+      interface CustomErrorOptions extends ErrorOptions {
+        data: object;
       }
       class CustomError extends EggBaseError<CustomErrorOptions> {
         public data: object;
