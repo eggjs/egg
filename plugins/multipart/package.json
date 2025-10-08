@@ -59,10 +59,10 @@
     }
   },
   "dependencies": {
+    "@eggjs/path-matching": "workspace:*",
     "bytes": "catalog:",
     "co-busboy": "catalog:",
-    "dayjs": "catalog:",
-    "egg-path-matching": "catalog:"
+    "dayjs": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"

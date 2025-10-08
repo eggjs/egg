@@ -96,7 +96,6 @@ catalog:
   detect-port: ^2.1.0
   dumi: ^2.4.17
   egg-logger: ^3.5.0
-  egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
   egg-ts-helper: ^3.0.0
   egg-view-nunjucks: ^2.3.0

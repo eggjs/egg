@@ -3,7 +3,7 @@ import { normalize } from 'node:path';
 import matcher from 'matcher';
 import IP from '@eggjs/ip';
 import type { Context } from 'egg';
-import type { PathMatchingFun } from 'egg-path-matching';
+import type { PathMatchingFun } from '@eggjs/path-matching';
 
 import type { SecurityConfig } from '../config/config.default.ts';
 

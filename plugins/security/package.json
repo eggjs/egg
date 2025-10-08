@@ -110,8 +110,8 @@
   },
   "dependencies": {
     "@eggjs/ip": "catalog:",
+    "@eggjs/path-matching": "workspace:*",
     "csrf": "catalog:",
-    "egg-path-matching": "catalog:",
     "escape-html": "catalog:",
     "extend": "catalog:",
     "koa-compose": "catalog:",

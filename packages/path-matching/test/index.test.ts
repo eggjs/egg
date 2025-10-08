@@ -1,8 +1,10 @@
 import { strict as assert } from 'node:assert';
+
 import { describe, it } from 'vitest';
+
 import { pathMatching as match } from '../src/index.ts';
 
-describe('egg-path-matching', () => {
+describe('index.test.ts', () => {
   it('options.match and options.ignore both present should throw', () => {
     try {
       match({ ignore: '/api', match: '/dashboard' });

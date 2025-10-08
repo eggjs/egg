@@ -12,9 +12,6 @@ catalogs:
     '@eggjs/ip':
       specifier: ^2.1.0
       version: 2.1.0
-    '@eggjs/redis':
-      specifier: ^3.0.0
-      version: 3.1.0
     '@eggjs/scripts':
       specifier: ^4.0.0
       version: 4.0.0
@@ -264,9 +261,6 @@ catalogs:
     egg-logger:
       specifier: ^3.5.0
       version: 3.6.1
-    egg-path-matching:
-      specifier: ^2.0.0
-      version: 2.1.0
     egg-plugin-puml:
       specifier: ^2.4.0
       version: 2.4.0
@@ -751,6 +745,9 @@ importers:
       '@eggjs/koa':
         specifier: workspace:*
         version: link:../koa
+      '@eggjs/path-matching':
+        specifier: workspace:*
+        version: link:../path-matching
       '@eggjs/router':
         specifier: workspace:*
         version: link:../router
@@ -760,9 +757,6 @@ importers:
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
-      egg-path-matching:
-        specifier: 'catalog:'
-        version: 2.1.0
       get-ready:
         specifier: 'catalog:'
         version: 3.4.0
@@ -1570,6 +1564,9 @@ importers:
 
   plugins/multipart:
     dependencies:
+      '@eggjs/path-matching':
+        specifier: workspace:*
+        version: link:../../packages/path-matching
       bytes:
         specifier: 'catalog:'
         version: 3.1.2
@@ -1582,9 +1579,6 @@ importers:
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      egg-path-matching:
-        specifier: 'catalog:'
-        version: 2.1.0
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -1751,15 +1745,15 @@ importers:
       '@eggjs/ip':
         specifier: 'catalog:'
         version: 2.1.0
+      '@eggjs/path-matching':
+        specifier: workspace:*
+        version: link:../../packages/path-matching
       csrf:
         specifier: 'catalog:'
         version: 3.1.0
       egg:
         specifier: workspace:*
         version: link:../../packages/egg
-      egg-path-matching:
-        specifier: 'catalog:'
-        version: 2.1.0
       escape-html:
         specifier: 'catalog:'
         version: 1.0.3
@@ -1850,8 +1844,8 @@ importers:
         specifier: workspace:*
         version: link:../mock
       '@eggjs/redis':
-        specifier: 'catalog:'
-        version: 3.1.0
+        specifier: workspace:*
+        version: link:../redis
       '@eggjs/supertest':
         specifier: workspace:*
         version: link:../../packages/supertest
@@ -2556,10 +2550,6 @@ packages:
     resolution: {integrity: sha512-WLnBmOTJPjahU9XpNkAacsCB47OWYwuSplVVCxFajsoK4aXEL//BSAKL5MvqpF857FXtBqCdSMRnslbt4y+0gg==}
     engines: {node: '>=22.18.0'}
 
-  '@eggjs/core@6.5.0':
-    resolution: {integrity: sha512-JwiHVoRihNtt1XekIp9rfs/+M/w7tHiZW5OMUzZV3IpAVh60tiMC+pbWXcDWxTseTDp0HLItrYFXUPLrptMYRQ==}
-    engines: {node: '>= 18.19.0'}
-
   '@eggjs/dal-decorator@4.0.0-beta.11':
     resolution: {integrity: sha512-tNf50wuqTqmHHXBzrLahrx7TZiYKIjXZ1mj7GM5ylsG1+EvDLcGkFALHaML3xJ0+UDqFWlnoHlbc9QR2aWeQoQ==}
     engines: {node: '>=22.18.0'}
@@ -2576,21 +2566,9 @@ packages:
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
     engines: {node: '>= 14.0.0'}
 
-  '@eggjs/koa@2.22.2':
-    resolution: {integrity: sha512-cqubIqo5SCDPVN2qJ/ZiIPsfWl0xvNRvdLc9h1h8s5zdUk33RyNmCP83Ur9WS3GWbew+rDpVkNReJUCPbvrxkg==}
-    engines: {node: '>= 18.19.0'}
-
   '@eggjs/rds@1.3.0':
     resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
     engines: {node: '>= 16.17.0'}
-
-  '@eggjs/redis@3.1.0':
-    resolution: {integrity: sha512-YqqPE/QOHpDPM+NsUu/dn2OZ7yZCHb02JMFc0nEnIYtVF4o73nhOC13BNn3u0lgNGUJCDYWF+sxtNa87kO00xQ==}
-    engines: {node: '>= 18.19.0'}
-
-  '@eggjs/router@3.0.6':
-    resolution: {integrity: sha512-mqOFkq79x3wGHYoI/lWMwSZ4wqmET9okJ0WU+qeuEgwA7PNMt8HyUmZ9Edz8+o3TjCSl85uMhpC0K4WWfPh7yA==}
-    engines: {node: '>= 18.19.0'}
 
   '@eggjs/router@4.0.0-beta.27':
     resolution: {integrity: sha512-Ie1dZYIeAbS9TskRbOuJF2EN0hVbPqoD8TUJG/YVNjtm6zVWHW4XQd8aF46ZBs0o78pdAh0hszVVUdHEZNHfag==}
@@ -6442,9 +6420,6 @@ packages:
   egg-logger@3.6.1:
     resolution: {integrity: sha512-lGiEumARJAT7NiwMm577NFiOEBMX9FlZzfuBsLLS6eu14R9udcTI1IzXLGJ63SrCmFIXB+zsWLQv5U11e8fq0Q==}
     engines: {node: '>=14.17.0'}
-
-  egg-path-matching@2.1.0:
-    resolution: {integrity: sha512-g2V2ohTSf/WN1UNtUdeUAhu/xbA97uAJHgqRpRInR2KT77MRxrG4XtcsjbZudQmB5XRPvYSbnny/1m/57+UadA==}
 
   egg-plugin-puml@2.4.0:
     resolution: {integrity: sha512-M6ALp4iGFEGP25OWOQ1EGDSUb/GgxOtC/EOpC28oQtiP/7GqWkTzPw/3CY22vW6UoJ6jL+pHELR1z04ul/r1ig==}
@@ -12096,23 +12071,6 @@ snapshots:
     transitivePeerDependencies:
       - egg
 
-  '@eggjs/core@6.5.0':
-    dependencies:
-      '@eggjs/koa': 2.22.2
-      '@eggjs/router': 3.0.6
-      '@eggjs/utils': 4.4.1
-      egg-logger: 3.6.1
-      egg-path-matching: 2.1.0
-      extend2: 4.0.0
-      get-ready: 3.4.0
-      globby: 11.1.0
-      is-type-of: 2.2.0
-      node-homedir: 2.0.0
-      performance-ms: 1.1.0
-      ready-callback: 4.0.0
-      tsconfig-paths: 4.2.0
-      utility: 2.5.0
-
   '@eggjs/dal-decorator@4.0.0-beta.11(egg@packages+egg)':
     dependencies:
       '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
@@ -12136,50 +12094,10 @@ snapshots:
 
   '@eggjs/ip@2.1.0': {}
 
-  '@eggjs/koa@2.22.2':
-    dependencies:
-      '@types/content-disposition': 0.5.9
-      accepts: 1.3.8
-      cache-content-type: 2.1.0
-      content-disposition: 0.5.4
-      content-type: 1.0.5
-      cookies: 0.9.1
-      destroy: 1.2.0
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      fresh: 0.5.2
-      gals: 1.0.2
-      http-errors: 2.0.0
-      is-type-of: 2.2.0
-      koa-compose: 4.1.0
-      on-finished: 2.4.1
-      parseurl: 1.3.3
-      statuses: 2.0.2
-      type-is: 1.6.18
-      vary: 1.1.2
-
   '@eggjs/rds@1.3.0':
     dependencies:
       mysql2: 3.15.1
       sqlstring: 2.3.3
-
-  '@eggjs/redis@3.1.0':
-    dependencies:
-      '@eggjs/core': 6.5.0
-      ioredis: 5.8.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@eggjs/router@3.0.6':
-    dependencies:
-      http-errors: 2.0.0
-      inflection: 3.0.2
-      is-type-of: 2.2.0
-      koa-compose: 4.1.0
-      methods: 1.1.2
-      path-to-regexp: 1.9.0
-      urijs: 1.19.11
-      utility: 2.5.0
 
   '@eggjs/router@4.0.0-beta.27':
     dependencies:
@@ -16425,10 +16343,6 @@ snapshots:
       egg-errors: 2.3.2
       iconv-lite: 0.6.3
       utility: 2.5.0
-
-  egg-path-matching@2.1.0:
-    dependencies:
-      path-to-regexp: 6.3.0
 
   egg-plugin-puml@2.4.0:
     dependencies:

@@ -1,8 +1,8 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: 'src/**/*.ts',
-  // unbundle: true,
+  entry: ['src/index.ts'],
+  unbundle: true,
   unused: {
     level: 'error',
   },

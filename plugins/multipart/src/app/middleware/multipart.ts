@@ -1,4 +1,4 @@
-import { pathMatching } from 'egg-path-matching';
+import { pathMatching } from '@eggjs/path-matching';
 import type { Application, MiddlewareFunc } from 'egg';
 
 import type { MultipartConfig } from '../../config/config.default.ts';
