@@ -134,7 +134,7 @@ describe('test/error.test.ts', () => {
       expect(err2.stack).toBe(err.stack);
     });
 
-    it('should create custom Error whit constructor params', () => {
+    it('should create custom Error with constructor params', () => {
       interface CustomErrorOptions extends ErrorOptions {
         add: string;
       }
