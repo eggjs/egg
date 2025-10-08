@@ -424,8 +424,8 @@ catalogs:
       specifier: ^1.3.3
       version: 1.3.3
     path-to-regexp:
-      specifier: ^6.3.0
-      version: 6.3.0
+      specifier: ^8.0.0
+      version: 8.3.0
     performance-ms:
       specifier: ^1.1.0
       version: 1.1.0
@@ -1192,7 +1192,7 @@ importers:
     dependencies:
       path-to-regexp:
         specifier: 'catalog:'
-        version: 6.3.0
+        version: 8.3.0
     devDependencies:
       '@eggjs/tsconfig':
         specifier: workspace:*
@@ -1237,8 +1237,8 @@ importers:
         specifier: 'catalog:'
         version: 1.1.2
       path-to-regexp:
-        specifier: ^1.9.0
-        version: 1.9.0
+        specifier: ^8.0.0
+        version: 8.3.0
       urijs:
         specifier: 'catalog:'
         version: 1.19.11
@@ -9234,9 +9234,6 @@ packages:
 
   path-to-regexp@1.9.0:
     resolution: {integrity: sha512-xIp7/apCFJuUHdDLWe8O1HIkb0kQrOMb/0u6FXQjemHn/ii5LrIzU6bdECnsiTF/GjZkMEKg1xdiZwNqDYlZ6g==}
-
-  path-to-regexp@6.3.0:
-    resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
 
   path-to-regexp@8.3.0:
     resolution: {integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==}
@@ -19933,8 +19930,6 @@ snapshots:
   path-to-regexp@1.9.0:
     dependencies:
       isarray: 0.0.1
-
-  path-to-regexp@6.3.0: {}
 
   path-to-regexp@8.3.0: {}
 
