@@ -10,7 +10,6 @@ export class HttpError extends EggBaseError<HttpErrorOptions> {
   constructor(options?: HttpErrorOptions) {
     super(options);
 
-    this.headers = {};
     this.status = this.options.status;
     this.headers = this.options.headers ?? {};
   }
