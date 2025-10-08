@@ -155,7 +155,7 @@ framework.EggMysqlError: error message [ https://eggjs.org/zh-cn/faq/EGG_MYSQL/0
 
 FrameworkErrorFormater will append a faq guide url in error message.this would be helpful when developer encountered a framework error
 
-the faq guide url format: `${faqPrefix}/${err.module}/${err.serialNumber}`, `faqPrefix` is `https://eggjs.org/zh-cn/faq` by default. can be extendable or set `process.env.EGG_FRAMEWORK_ERR_FAQ_PERFIX` to override it.
+the faq guide url format: `${faqPrefix}/${err.module}/${err.serialNumber}`, `faqPrefix` is `https://eggjs.org/zh-cn/faq` by default. It can be extended or overridden by setting `process.env.EGG_FRAMEWORK_ERR_FAQ_PREFIX` (recommended) or, for backward compatibility, `process.env.EGG_FRAMEWORK_ERR_FAQ_PERFIX` (legacy typo).
 
 ```js
 const { FrameworkErrorFormater } = require('@eggjs/errors');
