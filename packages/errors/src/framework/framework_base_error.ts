@@ -11,7 +11,7 @@ export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
   public readonly errorContext?: any;
 
   get module(): string {
-    throw new Error('module should be implement');
+    throw new Error('module should be implemented');
   }
 
   constructor(message: string, serialNumber: string | number, errorContext?: any) {
