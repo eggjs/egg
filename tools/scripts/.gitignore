@@ -1,0 +1,16 @@
+logs/
+npm-debug.log
+node_modules
+coverage/
+.idea/
+run/
+.DS_Store
+*.swp
+test/fixtures/ts/app/controller/home.js
+test/fixtures/ts-pkg/app/controller/home.js
+!test/fixtures/**/node_modules
+package-lock.json
+.package-lock.json
+.tshy*
+.eslintcache
+dist

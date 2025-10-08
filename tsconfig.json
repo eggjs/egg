@@ -14,6 +14,9 @@
       "path": "./packages/core"
     },
     {
+      "path": "./packages/errors"
+    },
+    {
       "path": "./packages/utils"
     },
     {
@@ -87,6 +90,9 @@
     },
     {
       "path": "./tools/egg-bin"
+    },
+    {
+      "path": "./tools/scripts"
     },
     {
       "path": "./tools/create-egg"

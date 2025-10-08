@@ -304,7 +304,7 @@ import { defineConfig } from 'tsdown';
 
 export default defineConfig({
   entry: 'src/**/*.ts',
-  // unbundle: true,
+  unbundle: true,
   unused: {
     level: 'error',
   },
@@ -415,13 +415,11 @@ Plugins should configure their package.json following this pattern:
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsdown",
-    "clean": "rimraf dist",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
-    "lint:fix": "npm run lint -- --fix",
-    "test": "npm run lint:fix && vitest",
-    "prepublishOnly": "npm run build"
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
   }
 }
 ```

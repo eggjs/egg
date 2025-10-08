@@ -1,0 +1,14 @@
+{
+  "name": "example-esm",
+  "version": "1.0.0",
+  "egg": {
+    "framework": "custom-framework"
+  },
+  "eggScriptsConfig": {
+    "require": [
+      "./inject1.js",
+      "inject"
+    ]
+  },
+  "type": "module"
+}

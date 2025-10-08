@@ -95,7 +95,6 @@ catalog:
   destroy: ^1.0.4
   detect-port: ^2.1.0
   dumi: ^2.4.17
-  egg-errors: ^2.3.2
   egg-logger: ^3.5.0
   egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
@@ -146,6 +145,8 @@ catalog:
   mri: ^1.2.0
   multimatch: ^7.0.0
   mustache: ^4.2.0
+  mz: ^2.7.0
+  mz-modules: ^2.1.0
   nanoid: ^5.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
@@ -166,6 +167,7 @@ catalog:
   semver: ^7.7.2
   sendmessage: ^3.0.1
   should-send-same-site-none: ^2.0.5
+  source-map-support: ^0.5.21
   spy: ^1.0.0
   stack-trace: ^0.0.10
   statuses: ^2.0.1

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/cluster",
-  "version": "4.0.0-beta.26",
+  "version": "4.0.0-beta.27",
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -62,11 +62,11 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/errors": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "address": "catalog:",
     "coffee": "catalog:",
-    "egg-errors": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",

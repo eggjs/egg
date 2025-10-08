@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/redis",
-  "version": "4.0.0-beta.26",
+  "version": "4.0.0-beta.27",
   "description": "Valkey / Redis plugin for egg",
   "type": "module",
   "eggPlugin": {
@@ -53,8 +53,7 @@
     "node": ">= 22.18.0"
   },
   "scripts": {
-    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint --type-aware",
     "test": "vitest run",

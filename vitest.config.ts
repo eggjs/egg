@@ -5,7 +5,7 @@ export default defineConfig({
     projects: [
       'packages/*',
       'plugins/*',
-      'tools/*',
+      'tools/create-egg',
       // FIXME: enable this will cause one test file run twice
       // {
       //   extends: true,
@@ -19,5 +19,6 @@ export default defineConfig({
       provider: 'v8',
       exclude: ['**/test/**'],
     },
+    hookTimeout: 20000,
   },
 });

@@ -1,0 +1,11 @@
+{
+  "name": "pkg-config-sourcemap",
+  "version": "1.0.0",
+  "egg": {
+    "typescript": true,
+    "framework": "custom-framework"
+  },
+  "eggScriptsConfig": {
+    "sourcemap": false
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/schedule",
-  "version": "6.0.0-beta.26",
+  "version": "6.0.0-beta.27",
   "publishConfig": {
     "access": "public",
     "exports": {
