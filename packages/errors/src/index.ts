@@ -11,6 +11,11 @@ export * from './exception.ts';
 // framework error and formatter
 export * from './framework/framework_base_error.ts';
 export * from './framework/formatter.ts';
+/**
+ * @deprecated use FrameworkErrorFormatter instead
+ * keep this for compatible
+ */
+export { FrameworkErrorFormatter as FrameworkErrorFormater } from './framework/formatter.ts';
 
 // http error
 export * from './http/http_error.ts';

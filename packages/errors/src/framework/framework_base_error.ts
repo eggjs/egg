@@ -2,7 +2,7 @@ import assert from 'node:assert';
 
 import { EggBaseError } from '../base_error.ts';
 import type { ErrorOptions } from '../error_options.ts';
-import { FrameworkErrorFormater } from './formatter.ts';
+import { FrameworkErrorFormatter } from './formatter.ts';
 
 export const FRAMEWORK_ERROR_SYMBOL = Symbol.for('FrameworkBaseError');
 
@@ -28,7 +28,7 @@ export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
 
   // create a new frameworkError with format
   static create(message: string, serialNumber: string | number, errorContext?: any) {
-    const err = FrameworkErrorFormater.formatError(new this(message, serialNumber, errorContext));
+    const err = FrameworkErrorFormatter.formatError(new this(message, serialNumber, errorContext));
     Error.captureStackTrace(err, this.create);
     return err;
   }

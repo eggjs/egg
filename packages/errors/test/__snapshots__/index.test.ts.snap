@@ -62,6 +62,7 @@ exports[`export all should stable 1`] = `
   "ForbiddenError": [Function],
   "FrameworkBaseError": [Function],
   "FrameworkErrorFormater": [Function],
+  "FrameworkErrorFormatter": [Function],
   "GatewayTimeoutError": [Function],
   "GoneError": [Function],
   "HTTPVersionNotSupportedError": [Function],
