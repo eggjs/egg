@@ -11,7 +11,7 @@ import { extend } from '@eggjs/extend2';
 import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
 import { register as tsconfigPathsRegister } from 'tsconfig-paths';
 import { isESM, isSupportTypeScript } from '@eggjs/utils';
-import { pathMatching, type PathMatchingOptions } from 'egg-path-matching';
+import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
 import { now, diff } from 'performance-ms';
 
 import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';

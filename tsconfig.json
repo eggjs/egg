@@ -17,6 +17,9 @@
       "path": "./packages/errors"
     },
     {
+      "path": "./packages/path-matching"
+    },
+    {
       "path": "./packages/utils"
     },
     {

@@ -1,0 +1,66 @@
+{
+  "name": "@eggjs/path-matching",
+  "version": "3.0.0-beta.27",
+  "description": "match or ignore url path",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "url",
+    "match",
+    "ignore"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/path-matching",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "packages/path-matching"
+  },
+  "author": {
+    "name": "dead-horse",
+    "email": "dead_horse@qq.com",
+    "url": "http://deadhorse.me"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "path-to-regexp": "catalog:"
+  },
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "path-to-regexp-v8": "npm:path-to-regexp@^8.3.0",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

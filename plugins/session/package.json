@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
-    "@eggjs/redis": "catalog:",
+    "@eggjs/redis": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",

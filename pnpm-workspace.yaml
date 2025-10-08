@@ -96,7 +96,6 @@ catalog:
   detect-port: ^2.1.0
   dumi: ^2.4.17
   egg-logger: ^3.5.0
-  egg-path-matching: ^2.0.0
   egg-plugin-puml: ^2.4.0
   egg-ts-helper: ^3.0.0
   egg-view-nunjucks: ^2.3.0
@@ -155,7 +154,7 @@ catalog:
   oxlint: ^1.19.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
-  path-to-regexp: ^1.9.0
+  path-to-regexp: ^6.3.0
   performance-ms: ^1.1.0
   picocolors: ^1.1.1
   prettier: ^3.6.2

@@ -2,7 +2,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import type { Context, EggAppInfo } from 'egg';
-import type { PathMatchingPattern } from 'egg-path-matching';
+import type { PathMatchingPattern } from '@eggjs/path-matching';
 
 export type MatchItem = string | RegExp | ((ctx: Context) => boolean);
 

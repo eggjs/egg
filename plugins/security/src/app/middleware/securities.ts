@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import compose from 'koa-compose';
-import { pathMatching } from 'egg-path-matching';
+import { pathMatching } from '@eggjs/path-matching';
 import type { Application, MiddlewareFunc } from 'egg';
 
 import securityMiddlewares from '../../lib/middlewares/index.ts';

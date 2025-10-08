@@ -249,4 +249,4 @@ module.exports = {
 };
 ```
 
-有关更多的 `match` 和 `ignore` 配置情况，详见 [egg-path-matching](https://github.com/eggjs/egg-path-matching)。
+有关更多的 `match` 和 `ignore` 配置情况，详见 [@eggjs/path-matching](https://github.com/eggjs/egg/tree/next/packages/path-matching)。

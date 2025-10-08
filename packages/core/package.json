@@ -50,7 +50,7 @@
     "@eggjs/router": "workspace:*",
     "@eggjs/utils": "workspace:*",
     "egg-logger": "catalog:",
-    "egg-path-matching": "catalog:",
+    "@eggjs/path-matching": "workspace:*",
     "@eggjs/extend2": "workspace:*",
     "get-ready": "catalog:",
     "globby": "catalog:",
