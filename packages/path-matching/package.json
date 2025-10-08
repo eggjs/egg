@@ -48,7 +48,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "path-to-regexp": "^6.3.0"
+    "path-to-regexp": "catalog:"
   },
   "devDependencies": {
     "@eggjs/tsconfig": "workspace:*",
