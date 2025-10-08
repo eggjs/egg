@@ -1,0 +1,53 @@
+{
+  "name": "@eggjs/errors",
+  "version": "3.0.0-beta.27",
+  "description": "@eggjs/errors provide two kinds of errors that is Error and Exception.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/packages/errors",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eggjs/egg.git",
+    "directory": "packages/errors"
+  },
+  "author": "popomore",
+  "engines": {
+    "node": ">= 22.18.0"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "oxlint": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

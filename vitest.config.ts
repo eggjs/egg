@@ -19,5 +19,6 @@ export default defineConfig({
       provider: 'v8',
       exclude: ['**/test/**'],
     },
+    hookTimeout: 20000,
   },
 });

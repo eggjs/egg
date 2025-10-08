@@ -62,11 +62,11 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/errors": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "address": "catalog:",
     "coffee": "catalog:",
-    "egg-errors": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "urllib": "catalog:",

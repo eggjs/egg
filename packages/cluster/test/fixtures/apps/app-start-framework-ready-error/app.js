@@ -1,6 +1,5 @@
-'use strict';
+const { FrameworkBaseError } = require('@eggjs/errors');
 
-const { FrameworkBaseError } = require('egg-errors');
 class CustomError extends FrameworkBaseError {
   get module() {
     return 'customPlugin';

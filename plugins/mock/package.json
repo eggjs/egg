@@ -118,12 +118,12 @@
   },
   "devDependencies": {
     "@eggjs/tracer": "workspace:*",
+    "@eggjs/errors": "workspace:*",
     "@eggjs/tegg": "catalog:",
     "@eggjs/tegg-config": "catalog:",
     "@eggjs/tegg-controller-plugin": "catalog:",
     "@eggjs/tegg-plugin": "catalog:",
     "@types/methods": "catalog:",
-    "egg-errors": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:"
   },
