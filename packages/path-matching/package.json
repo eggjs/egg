@@ -38,7 +38,7 @@
     "url": "http://deadhorse.me"
   },
   "engines": {
-    "node": ">= 22.18.0"
+    "node": ">=22.18.0"
   },
   "scripts": {
     "build": "tsdown",
