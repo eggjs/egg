@@ -10,7 +10,7 @@ export class FrameworkErrorFormater {
   /**
    * Custom framework error FAQ prefix
    */
-  private static faqPrefixEnv = process.env.EGG_FRAMEWORK_ERR_FAQ_PERFIX;
+  private static faqPrefixEnv = process.env.EGG_FRAMEWORK_ERR_FAQ_PREFIX ?? process.env.EGG_FRAMEWORK_ERR_FAQ_PERFIX;
 
   static format(err: Error): string {
     const faqPrefix = this.faqPrefixEnv ?? this.faqPrefix;
