@@ -1194,6 +1194,37 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
 
+  packages/path-matching:
+    dependencies:
+      path-to-regexp:
+        specifier: ^6.3.0
+        version: 6.3.0
+    devDependencies:
+      '@eggjs/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.6.2
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.19.0(oxlint-tsgolint@0.2.0)
+      path-to-regexp-v8:
+        specifier: npm:path-to-regexp@^8.3.0
+        version: path-to-regexp@8.3.0
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.0.1
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.4(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.0.0-beta.17(@types/debug@4.1.12)(@types/node@24.6.2)(@vitest/ui@4.0.0-beta.17)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
+
   packages/router:
     dependencies:
       http-errors:
@@ -9231,6 +9262,9 @@ packages:
 
   path-to-regexp@6.3.0:
     resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
+
+  path-to-regexp@8.3.0:
+    resolution: {integrity: sha512-7jdwVIRtsP8MYpdXSwOS0YdD0Du+qOoF/AEPIt88PcCFrZCzx41oxku1jD88hZBwbNUIEfpqvuhjFaMAqMTWnA==}
 
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
@@ -19987,6 +20021,8 @@ snapshots:
       isarray: 0.0.1
 
   path-to-regexp@6.3.0: {}
+
+  path-to-regexp@8.3.0: {}
 
   path-type@4.0.0: {}
 
