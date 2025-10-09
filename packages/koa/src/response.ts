@@ -463,7 +463,7 @@ export class Response {
    * Tests for the existence of the socket
    * as node sometimes does not set it.
    */
-  get writable() {
+  get writable(): boolean {
     // can't write any more after response finished
     // response.writableEnded is available since Node > 12.9
     // https://nodejs.org/api/http.html#http_response_writableended
@@ -481,7 +481,7 @@ export class Response {
   /**
    * Inspect implementation.
    */
-  inspect() {
+  inspect(): object {
     if (!this.res) return;
     const o = this.toJSON();
     Reflect.set(o, 'body', this.body);

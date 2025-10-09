@@ -36,7 +36,7 @@ export class Application extends Emitter {
    * Make HttpError available to consumers of the library so that consumers don't
    * have a direct dependency upon `http-errors`
    */
-  static HttpError = HttpError;
+  static HttpError: typeof HttpError = HttpError;
 
   protected _proxy: boolean;
   protected _env: string;
@@ -123,7 +123,7 @@ export class Application extends Emitter {
    *    http.createServer(app.callback()).listen(...)
    */
   // oxlint-disable-next-line typescript/no-explicit-any
-  listen(...args: any[]) {
+  listen(...args: any[]): http.Server {
     debug('listen with args: %o', args);
     const server = http.createServer(this.callback());
     return server.listen(...args);
@@ -133,7 +133,7 @@ export class Application extends Emitter {
    * Return JSON representation.
    * We only bother showing settings.
    */
-  toJSON() {
+  toJSON(): object {
     return {
       subdomainOffset: this.subdomainOffset,
       proxy: this.proxy,
@@ -144,7 +144,7 @@ export class Application extends Emitter {
   /**
    * Inspect implementation.
    */
-  inspect() {
+  inspect(): object {
     return this.toJSON();
   }
 

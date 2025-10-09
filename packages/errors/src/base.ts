@@ -1,11 +1,14 @@
 import type { ErrorOptions } from './error_options.ts';
 import { ErrorType } from './error_type.ts';
 
-export const TYPE: symbol = Symbol.for('BaseError#type');
+export const TYPE: unique symbol = Symbol.for('BaseError#type');
+
+export interface BaseError<T extends ErrorOptions> {
+  [TYPE]: ErrorType | undefined;
+}
 
 export class BaseError<T extends ErrorOptions> extends Error {
   [key: string]: any;
-  [TYPE]?: ErrorType;
 
   public static getType(err: Error): ErrorType {
     // @ts-expect-error ignore

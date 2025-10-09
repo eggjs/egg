@@ -337,7 +337,7 @@ export class Request {
    * a reverse proxy that supplies https for you this
    * may be enabled.
    */
-  get protocol() {
+  get protocol(): string {
     if (this.socket.encrypted) {
       return 'https';
     }
@@ -356,7 +356,7 @@ export class Request {
    *
    *    this.protocol == 'https'
    */
-  get secure() {
+  get secure(): boolean {
     return this.protocol === 'https';
   }
 
@@ -368,7 +368,7 @@ export class Request {
    * you would receive the array `["client", "proxy1", "proxy2"]`
    * where "proxy2" is the furthest down-stream.
    */
-  get ips() {
+  get ips(): string[] {
     const proxy = this.app.proxy;
     const val = this.get<string>(this.app.proxyIpHeader);
     let ips = proxy && val ? splitCommaSeparatedValues(val) : [];
@@ -407,7 +407,7 @@ export class Request {
    * `["ferrets", "tobi"]`.
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
    */
-  get subdomains() {
+  get subdomains(): string[] {
     const offset = this.app.subdomainOffset;
     const hostname = this.hostname;
     if (net.isIP(hostname)) return [];
@@ -574,7 +574,7 @@ export class Request {
    * Return the request mime type void of
    * parameters such as "charset".
    */
-  get type() {
+  get type(): string {
     const type = this.get<string>('Content-Type');
     if (!type) return '';
     return type.split(';')[0];
@@ -613,7 +613,7 @@ export class Request {
   /**
    * Inspect implementation.
    */
-  inspect() {
+  inspect(): object {
     if (!this.req) return;
     return this.toJSON();
   }
