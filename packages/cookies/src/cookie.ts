@@ -108,11 +108,11 @@ export class Cookie {
     }
   }
 
-  toString() {
+  toString(): string {
     return this.name + '=' + this.value;
   }
 
-  toHeader() {
+  toHeader(): string {
     let header = this.toString();
     const attrs = this.attrs;
     if (attrs.path) {

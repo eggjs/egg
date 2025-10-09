@@ -26,38 +26,38 @@ export class Request {
     }
   }
 
-  protected _testRequest(method: string, url: string) {
+  protected _testRequest(method: string, url: string): Test {
     const req = new Test(this.app, method.toUpperCase(), url);
     if (this.#http2) {
       req.http2();
     }
     return req;
   }
-  delete(url: string) {
+  delete(url: string): Test {
     return this._testRequest('delete', url);
   }
-  del(url: string) {
+  del(url: string): Test {
     return this._testRequest('delete', url);
   }
-  get(url: string) {
+  get(url: string): Test {
     return this._testRequest('get', url);
   }
-  head(url: string) {
+  head(url: string): Test {
     return this._testRequest('head', url);
   }
-  put(url: string) {
+  put(url: string): Test {
     return this._testRequest('put', url);
   }
-  post(url: string) {
+  post(url: string): Test {
     return this._testRequest('post', url);
   }
-  patch(url: string) {
+  patch(url: string): Test {
     return this._testRequest('patch', url);
   }
-  options(url: string) {
+  options(url: string): Test {
     return this._testRequest('options', url);
   }
-  trace(url: string) {
+  trace(url: string): Test {
     return this._testRequest('trace', url);
   }
 }

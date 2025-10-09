@@ -75,7 +75,7 @@ const TEMPLATES: Template[] = [
 
 const defaultTargetDir = 'egg-project';
 
-export async function init() {
+export async function init(): Promise<void> {
   const argTargetDir = argv._[0] ? formatTargetDir(String(argv._[0])) : undefined;
   const argTemplate = argv.template;
   const argOverwrite = argv.overwrite;

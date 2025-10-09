@@ -18,6 +18,12 @@ export default {
   getConfig,
   getLoadUnits,
   getFrameworkOrEggPath,
+} as {
+  getFrameworkPath: typeof getFrameworkPath;
+  getPlugins: typeof getPlugins;
+  getConfig: typeof getConfig;
+  getLoadUnits: typeof getLoadUnits;
+  getFrameworkOrEggPath: typeof getFrameworkOrEggPath;
 };
 
 export const EggType = {

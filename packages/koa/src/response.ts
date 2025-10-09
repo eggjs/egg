@@ -36,21 +36,21 @@ export class Response {
   /**
    * Return the request socket.
    */
-  get socket() {
+  get socket(): ServerResponse['socket'] {
     return this.res.socket;
   }
 
   /**
    * Return response header.
    */
-  get header() {
+  get header(): Record<string, string | string[] | undefined> {
     return this.res.getHeaders() || {};
   }
 
   /**
    * Return response header, alias as response.header
    */
-  get headers() {
+  get headers(): Record<string, string | string[] | undefined> {
     return this.header;
   }
 
@@ -205,19 +205,19 @@ export class Response {
   /**
    * Check if a header has been written to the socket.
    */
-  get headerSent() {
+  get headerSent(): boolean {
     return this.res.headersSent;
   }
 
   /**
    * Vary on `field`.
    */
-  vary(field: string) {
+  vary(field: string): void {
     if (this.headerSent) return;
     vary(this.res, field);
   }
 
-  _getBackReferrer() {
+  _getBackReferrer(): string | undefined {
     const referrer = this.ctx.get<string>('Referrer');
     if (referrer) {
       // referrer is a relative path
@@ -247,7 +247,7 @@ export class Response {
    *    this.redirect('/login');
    *    this.redirect('http://google.com'); // will format to 'http://google.com/'
    */
-  redirect(url: string, alt?: string) {
+  redirect(url: string, alt?: string): void {
     // location
     if (url === 'back') {
       url = this._getBackReferrer() || alt || '/';
@@ -277,7 +277,7 @@ export class Response {
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
    */
-  attachment(filename?: string, options?: ContentDispositionOptions) {
+  attachment(filename?: string, options?: ContentDispositionOptions): void {
     if (filename) this.type = extname(filename);
     this.set('Content-Disposition', contentDisposition(filename, options));
   }
@@ -398,7 +398,7 @@ export class Response {
    *     this.get('content-type');
    *     // => true
    */
-  has(field: string) {
+  has(field: string): boolean {
     return this.res.hasHeader(field);
   }
 
@@ -412,7 +412,7 @@ export class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | Record<string, string>, val?: string | number | unknown[]) {
+  set(field: string | Record<string, string>, val?: string | number | unknown[]): void {
     if (this.headerSent) return;
     if (typeof field === 'string') {
       let value = val as string | string[];
@@ -439,7 +439,7 @@ export class Response {
    * this.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
    * this.append('Warning', '199 Miscellaneous warning');
    */
-  append(field: string, val: string | string[]) {
+  append(field: string, val: string | string[]): void {
     const prev = this.get<string | string[]>(field);
 
     let value = val;
@@ -453,7 +453,7 @@ export class Response {
   /**
    * Remove header `field`.
    */
-  remove(field: string) {
+  remove(field: string): void {
     if (this.headerSent) return;
     this.res.removeHeader(field);
   }

@@ -39,7 +39,7 @@ export class Context {
    * util.inspect() implementation, which
    * just returns the JSON output.
    */
-  inspect() {
+  inspect(): object {
     return this.toJSON();
   }
 

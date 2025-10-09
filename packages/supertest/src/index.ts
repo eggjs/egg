@@ -6,7 +6,7 @@ import type { App, AgentOptions } from './types.ts';
  * Test against the given `app`,
  * returning a new `Test`.
  */
-export function request(app: App, options: RequestOptions = {}) {
+export function request(app: App, options: RequestOptions = {}): Request {
   return new Request(app, options);
 }
 

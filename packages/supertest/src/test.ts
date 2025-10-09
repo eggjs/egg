@@ -137,7 +137,7 @@ export class Test extends Request {
    *   .unexpectHeader('Content-Type')
    *   .unexpectHeader('Content-Type', fn)
    */
-  unexpectHeader(name: string, fn?: CallbackFunction) {
+  unexpectHeader(name: string, fn?: CallbackFunction): this {
     if (typeof fn === 'function') {
       this.end(fn);
     }
@@ -155,7 +155,7 @@ export class Test extends Request {
    *   .expectHeader('Content-Type')
    *   .expectHeader('Content-Type', fn)
    */
-  expectHeader(name: string, fn?: CallbackFunction) {
+  expectHeader(name: string, fn?: CallbackFunction): this {
     if (typeof fn === 'function') {
       this.end(fn);
     }
@@ -167,14 +167,14 @@ export class Test extends Request {
     return this;
   }
 
-  _unexpectHeader(name: string, res: Response) {
+  _unexpectHeader(name: string, res: Response): AssertError | void {
     const actual = res.headers[name.toLowerCase()];
     if (actual) {
       return new AssertError('unexpected "' + name + '" header field, got "' + actual + '"', name, actual);
     }
   }
 
-  _expectHeader(name: string, res: Response) {
+  _expectHeader(name: string, res: Response): AssertError | void {
     const actual = res.headers[name.toLowerCase()];
     if (!actual) {
       return new AssertError('expected "' + name + '" header field', name, actual);
@@ -185,7 +185,7 @@ export class Test extends Request {
    * Defer invoking superagent's `.end()` until
    * the server is listening.
    */
-  end(fn: CallbackFunction) {
+  end(fn: CallbackFunction): this {
     const server = this._server;
 
     super.end((err, res) => {
@@ -206,7 +206,7 @@ export class Test extends Request {
   /**
    * Perform assertions and invoke `fn(err, res)`.
    */
-  assert(resError: ResponseError | null, res: Response, fn: CallbackFunction) {
+  assert(resError: ResponseError | null, res: Response, fn: CallbackFunction): void {
     let errorObj: Error | undefined;
 
     // check for unexpected network errors or server not running/reachable errors
@@ -248,7 +248,7 @@ export class Test extends Request {
   /**
    * Perform assertions on a response body and return an Error upon failure.
    */
-  _assertBody(body: RegExp | string | number | object | null | undefined, res: Response) {
+  _assertBody(body: RegExp | string | number | object | null | undefined, res: Response): AssertError | void {
     const isRegexp = body instanceof RegExp;
 
     // parsed
@@ -279,7 +279,7 @@ export class Test extends Request {
   /**
    * Perform assertions on a response header and return an Error upon failure.
    */
-  _assertHeader(header: ExpectHeader, res: Response) {
+  _assertHeader(header: ExpectHeader, res: Response): AssertError | void {
     const field = header.name;
     const actual = res.header[field.toLowerCase()];
     const fieldExpected = header.value;
@@ -311,7 +311,7 @@ export class Test extends Request {
   /**
    * Perform assertions on the response status and return an Error upon failure.
    */
-  _assertStatus(status: number, res: Response) {
+  _assertStatus(status: number, res: Response): AssertError | void {
     if (res.status !== status) {
       const a = STATUS_CODES[status];
       const b = STATUS_CODES[res.status];
@@ -326,7 +326,7 @@ export class Test extends Request {
   /**
    * Perform assertions on the response status and return an Error upon failure.
    */
-  _assertStatusArray(statusArray: number[], res: Response) {
+  _assertStatusArray(statusArray: number[], res: Response): AssertError | void {
     if (!statusArray.includes(res.status)) {
       const b = STATUS_CODES[res.status];
       const expectedList = statusArray.join(', ');
@@ -341,7 +341,7 @@ export class Test extends Request {
   /**
    * Performs an assertion by calling a function and return an Error upon failure.
    */
-  _assertFunction(fn: AssertFunction, res: Response) {
+  _assertFunction(fn: AssertFunction, res: Response): Error | undefined {
     let err;
     try {
       err = fn(res);
