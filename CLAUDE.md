@@ -213,8 +213,10 @@ The framework follows a specific loading order:
 
 - **`pnpm-workspace.yaml`** - pnpm workspace configuration with catalog dependencies
 - **`package.json`** - Root monorepo configuration with pnpm scripts
+- **`tsconfig.json`** - Root TypeScript configuration for all packages (extends @eggjs/tsconfig)
+- **`tsconfig.build.json`** - Root build configuration (extends tsconfig.json)
 - **`packages/egg/package.json`** - Main egg package with hybrid CommonJS/ESM exports
-- **`packages/egg/tsconfig.json`** - Extends @eggjs/tsconfig with strict mode enabled
+- **`packages/egg/tsconfig.json`** - Extends workspace root tsconfig.json
 - **`packages/egg/tsdown.config.ts`** - tsdown build configuration for unbundled ESM output
 - **`packages/egg/src/config/plugin.ts`** - Built-in plugin configurations
 - **`packages/egg/src/config/config.default.ts`** - Default framework configuration
@@ -276,7 +278,9 @@ The framework extends Koa's context with Egg-specific features:
    - `plugins/` - for Egg plugins
    - `tools/` - for development tools
 2. Add package.json with workspace dependencies using `workspace:*`
-3. Create tsconfig.json that extends from root: `"extends": "../../tsconfig.json"`
+3. Create minimal TypeScript config files:
+   - `tsconfig.json` → `{"extends": "../../tsconfig.json"}`
+   - `tsconfig.build.json` → `{"extends": "../../tsconfig.build.json"}`
 4. Add package reference to root tsconfig.json `references` array
 5. Update root pnpm-workspace.yaml if needed (plugins/\* is already included)
 6. Use `pnpm --filter=<package>` for package-specific commands
@@ -488,11 +492,52 @@ Tool packages (like egg-bin) should be placed in the `tools/` directory:
 
 #### TypeScript Configuration Requirements
 
-- **IMPORTANT: All sub-project tsconfig.json files MUST extend from the root project tsconfig.json**
-- Use `"extends": "../../tsconfig.json"` in package tsconfig.json files
-- Include `"baseUrl": "./"` in compilerOptions for proper path resolution
-- Root tsconfig.json must include all packages in the `references` array
-- This ensures consistent TypeScript configuration across the entire monorepo
+**IMPORTANT: The monorepo uses a standardized TypeScript configuration pattern where all sub-projects extend from the workspace root.**
+
+**Root Configuration Files:**
+
+- `tsconfig.json` - Base TypeScript configuration for all packages
+  - Extends from `@eggjs/tsconfig` with common compiler options
+  - Uses `${configDir}` variable for dynamic path resolution
+  - Includes project `references` array listing all sub-packages
+  - Sets `composite: true` and `incremental: true` for project references
+- `tsconfig.build.json` - Build-specific configuration
+  - Extends from root `tsconfig.json`
+  - Defines `rootDir` as `${configDir}/src` and `outDir` as `${configDir}/dist`
+  - Excludes test files, dist directories, and config files
+
+**Sub-Project Configuration Pattern:**
+
+All packages, plugins, and tools MUST follow this minimal pattern:
+
+```json
+// packages/*/tsconfig.json, plugins/*/tsconfig.json, tools/*/tsconfig.json
+{
+  "extends": "../../tsconfig.json"
+}
+```
+
+```json
+// packages/*/tsconfig.build.json, plugins/*/tsconfig.build.json
+{
+  "extends": "../../tsconfig.build.json"
+}
+```
+
+**Key Requirements:**
+
+- **Keep it minimal** - Sub-project configs should ONLY contain the `extends` field
+- **No additional options** - Don't add `compilerOptions`, `baseUrl`, or other settings
+- **Centralized configuration** - All settings are managed at the workspace root
+- **Use ${configDir}** - Root configs use this variable for per-package path resolution
+- **Update references** - When adding new packages, add them to root tsconfig.json `references` array
+
+This approach ensures:
+
+- Consistent TypeScript configuration across all 31+ sub-projects
+- Easy maintenance (change once at root, applies everywhere)
+- Proper TypeScript project references for fast builds
+- Clean and readable per-package configuration files
 
 ### Documentation
 

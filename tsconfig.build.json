@@ -4,6 +4,7 @@
     "rootDir": "${configDir}/src",
     "outDir": "${configDir}/dist"
   },
+  "include": ["${configDir}/src"],
   "exclude": [
     "${configDir}/test",
     "${configDir}/dist",
