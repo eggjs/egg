@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "${configDir}/src",
+    "outDir": "${configDir}/dist"
+  },
+  "exclude": [
+    "${configDir}/test",
+    "${configDir}/dist",
+    "${configDir}/tsdown.config.ts",
+    "${configDir}/vitest.config.ts"
+  ]
+}
