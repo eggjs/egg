@@ -5,8 +5,8 @@ import { mm } from 'mm';
 import { request } from '@eggjs/supertest';
 import coffee from 'coffee';
 
-import { utils } from '../src/index.js';
-import { createApp, getFilepath, type Application } from './helper.js';
+import { utils } from '../src/index.ts';
+import { createApp, getFilepath, type Application } from './helper.ts';
 
 describe('test/egg-ts.test.ts', () => {
   let app: Application | undefined;
