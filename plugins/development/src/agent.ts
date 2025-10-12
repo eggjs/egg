@@ -15,7 +15,7 @@ export default class AgentBoot implements ILifecycleBoot {
     this.#agent = agent;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     // clean all timing json
     const rundir = this.#agent.config.rundir;
     const stat = await exists(rundir);
@@ -27,7 +27,7 @@ export default class AgentBoot implements ILifecycleBoot {
     }
   }
 
-  async serverDidReady() {
+  async serverDidReady(): Promise<void> {
     const agent = this.#agent;
     // single process mode don't watch and reload
     if (agent.options && Reflect.get(agent.options, 'mode') === 'single') {

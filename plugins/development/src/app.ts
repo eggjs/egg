@@ -11,7 +11,7 @@ export default class AppBoot implements ILifecycleBoot {
     }
   }
 
-  async configWillLoad() {
+  async configWillLoad(): Promise<void> {
     this.#app.config.coreMiddleware.push('eggLoaderTrace');
   }
 }
