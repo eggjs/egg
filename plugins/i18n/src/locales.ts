@@ -14,7 +14,7 @@ import { formatLocale, isObject } from './utils.ts';
 
 const debug = debuglog('egg/i18n/locales');
 
-export async function loadLocaleResources(app: Application, options: I18nConfig) {
+export async function loadLocaleResources(app: Application, options: I18nConfig): Promise<void> {
   const localeDirs = options.dirs;
   const resources: Record<string, Record<string, string>> = {};
 

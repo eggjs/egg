@@ -65,7 +65,7 @@ export default class I18n implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     const i18nConfig = this.app.config.i18n;
     i18nConfig.defaultLocale = formatLocale(i18nConfig.defaultLocale);
     i18nConfig.cookieMaxAge = ms(i18nConfig.cookieMaxAge);
@@ -89,7 +89,7 @@ export default class I18n implements ILifecycleBoot {
     await loadLocaleResources(this.app, i18nConfig);
 
     const app = this.app;
-    function gettextInContext(key: string, ...args: any[]) {
+    function gettextInContext(key: string, ...args: any[]): string {
       const ctx = app.ctxStorage.getStore()!;
       return ctx.gettext(key, ...args);
     }

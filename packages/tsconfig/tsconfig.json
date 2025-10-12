@@ -40,6 +40,6 @@
     "rewriteRelativeImportExtensions": true,
     "allowImportingTsExtensions": true,
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#isolated-declarations
-    "isolatedDeclarations": true
+    "isolatedDeclarations": false
   }
 }

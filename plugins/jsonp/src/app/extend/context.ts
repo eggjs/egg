@@ -4,17 +4,17 @@ import { Context } from 'egg';
 import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type { JSONPConfig } from '../../config/config.default.ts';
 
-export default class JSONPContext extends Context {
-  declare [JSONP_CONFIG]?: {
-    jsonpFunction?: string;
-    options?: JSONPConfig;
-  };
+interface JSONPConfigData {
+  jsonpFunction?: string;
+  options?: JSONPConfig;
+}
 
+export default class JSONPContext extends Context {
   /**
    * detect if response should be jsonp
    */
-  get acceptJSONP() {
-    const jsonpConfig = this[JSONP_CONFIG];
+  get acceptJSONP(): boolean {
+    const jsonpConfig = (this as any)[JSONP_CONFIG] as JSONPConfigData | undefined;
     return !!jsonpConfig?.jsonpFunction;
   }
 
@@ -25,8 +25,8 @@ export default class JSONPContext extends Context {
    * @param {Object} body response body
    * @private
    */
-  createJsonpBody(body: any) {
-    const jsonpConfig = this[JSONP_CONFIG];
+  createJsonpBody(body: any): void {
+    const jsonpConfig = (this as any)[JSONP_CONFIG] as JSONPConfigData | undefined;
     if (!jsonpConfig?.jsonpFunction) {
       this.body = body;
       return;
