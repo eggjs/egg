@@ -33,7 +33,7 @@ export class ErrorView {
   viewTemplate: string;
 
   codeContext = 5;
-  _filterHeaders = ['cookie', 'connection'];
+  _filterHeaders: string[] = ['cookie', 'connection'];
 
   constructor(ctx: Context, error: OnerrorError, template: string) {
     this.ctx = ctx;
@@ -70,7 +70,7 @@ export class ErrorView {
    * @param {String} tpl - template
    * @param {Object} locals - data used by template
    */
-  compileView(tpl: string, locals: Record<string, unknown>) {
+  compileView(tpl: string, locals: Record<string, unknown>): string {
     return Mustache.render(tpl, locals);
   }
 
@@ -79,7 +79,7 @@ export class ErrorView {
    *
    * @param {Frame} frame - current frame
    */
-  isNode(frame: Frame) {
+  isNode(frame: Frame): boolean {
     if (frame.isNative()) {
       return true;
     }
@@ -92,7 +92,7 @@ export class ErrorView {
    *
    * @param {Object} frame - current frame
    */
-  isApp(frame: Frame) {
+  isApp(frame: Frame): boolean {
     if (this.isNode(frame)) {
       return false;
     }
@@ -106,7 +106,7 @@ export class ErrorView {
    * @param {String} key - assert key
    * @param {String} value - assert content
    */
-  setAssets(key: string, value: string) {
+  setAssets(key: string, value: string): void {
     this.assets.set(key, value);
   }
 
@@ -115,7 +115,7 @@ export class ErrorView {
    *
    * @param {String} key - assert key
    */
-  getAssets(key: string) {
+  getAssets(key: string): string | undefined {
     return this.assets.get(key);
   }
 
@@ -144,7 +144,7 @@ export class ErrorView {
   /**
    * parse error and return frame stack
    */
-  parseError() {
+  parseError(): Frame[] {
     const stack = stackTrace.parse(this.error);
     return stack.map((frame: Frame) => {
       if (!this.isNode(frame)) {
@@ -159,7 +159,7 @@ export class ErrorView {
    *
    * @param {Object} frame - current frame
    */
-  getContext(frame: Frame) {
+  getContext(frame: Frame): { start?: number; pre?: string; line?: string; post?: string } {
     if (!frame.context) {
       return {};
     }
@@ -178,7 +178,7 @@ export class ErrorView {
    * @param {any} frame - current frame
    * @param {any} index - current index
    */
-  getFrameClasses(frame: Frame, index: number) {
+  getFrameClasses(frame: Frame, index: number): string {
     const classes: string[] = [];
     if (index === 0) {
       classes.push('active');
@@ -196,7 +196,15 @@ export class ErrorView {
    *
    * @param {Object} frame - current frame
    */
-  serializeFrame(frame: Frame) {
+  serializeFrame(frame: Frame): {
+    extname: string;
+    file: string;
+    method: string | null;
+    line: number | null;
+    column: number | null;
+    context: { start?: number; pre?: string; line?: string; post?: string };
+    classes: string;
+  } {
     const filename = frame.getFileName();
     const relativeFileName = filename.includes(process.cwd())
       ? filename.replace(process.cwd(), '').replace(startingSlashRegex, '')
@@ -220,7 +228,16 @@ export class ErrorView {
    * @param {Object} stack - frame stack
    * @param {Function} frameFormatter - frame formatter function
    */
-  serializeData(stack: Frame[], frameFormatter: (frame: Frame, index: number) => any) {
+  serializeData(
+    stack: Frame[],
+    frameFormatter: (frame: Frame, index: number) => any
+  ): {
+    code: any;
+    message: string;
+    name: string;
+    status: number | undefined;
+    frames: any[];
+  } {
     const code = Reflect.get(this.error, 'code') ?? Reflect.get(this.error, 'type');
     let message = detectErrorMessage(this.ctx, this.error);
     if (code) {
@@ -238,7 +255,14 @@ export class ErrorView {
   /**
    * serialize request object
    */
-  serializeRequest() {
+  serializeRequest(): {
+    url: string;
+    httpVersion: string;
+    method: string;
+    connection: string | string[] | undefined;
+    headers: { key: string; value: string | string[] | undefined }[];
+    cookies: { key: string; value: string | undefined }[];
+  } {
     const headers: { key: string; value: string | string[] | undefined }[] = [];
 
     Object.keys(this.request.headers).forEach(key => {
@@ -269,14 +293,17 @@ export class ErrorView {
   /**
    * serialize app info object
    */
-  serializeAppInfo() {
+  serializeAppInfo(): {
+    baseDir: string;
+    config: string;
+  } {
     let config = this.app.config;
     if ('dumpConfigToObject' in this.app && typeof this.app.dumpConfigToObject === 'function') {
       config = this.app.dumpConfigToObject().config.config;
     }
     return {
       baseDir: this.app.config.baseDir as string,
-      config: util.inspect(config),
+      config: util.inspect(config) satisfies string as string,
     };
   }
 }

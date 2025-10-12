@@ -20,7 +20,7 @@ export default class Boot implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     // logging error
     const config = this.app.config.onerror;
     const viewTemplate = fs.readFileSync(config.templatePath, 'utf8');
