@@ -1,4 +1,4 @@
-import { type ILifecycleBoot, Application } from 'egg';
+import type { ILifecycleBoot, Application } from 'egg';
 
 export default class AppBootHook implements ILifecycleBoot {
   private readonly app;
@@ -7,7 +7,7 @@ export default class AppBootHook implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad(): Promise<void> {
+  async didLoad() {
     console.error('didLoad %o', this.app.type);
     // Ready to call configDidLoad,
     // Config, plugin files are referred,
@@ -15,20 +15,20 @@ export default class AppBootHook implements ILifecycleBoot {
     // throw new Error('Method not implemented.');
   }
 
-  async willReady(): Promise<void> {
+  async willReady() {
     // All plugins have started, can do some thing before app ready
   }
 
-  async didReady(): Promise<void> {
+  async didReady() {
     // Worker is ready, can do some things
     // don't need to block the app boot process
   }
 
-  async serverDidReady(): Promise<void> {
+  async serverDidReady() {
     // Server is listening.
   }
 
-  async beforeClose(): Promise<void> {
+  async beforeClose() {
     // Do some thing before app close.
   }
 }
