@@ -117,11 +117,11 @@ export class FileManager {
     }
   }
 
-  get(key: string) {
+  get(key: string): unknown {
     return this.store ? this.store.get(key) : this.map![key];
   }
 
-  set(key: string, value: FileMeta) {
+  set(key: string, value: FileMeta): void {
     if (this.store) {
       return this.store.set(key, value);
     }
