@@ -1,7 +1,9 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
-export default defineConfig({
+const config: UserWorkspaceConfig = defineConfig({
   test: {
     include: ['test/**/*.test.ts'],
   },
 });
+
+export default config;
