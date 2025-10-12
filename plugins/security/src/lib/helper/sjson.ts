@@ -25,7 +25,7 @@ function sanitizeKey(obj: any) {
   return obj;
 }
 
-export default function jsonEscape(obj: any) {
+export default function jsonEscape(obj: any): string {
   return JSON.stringify(sanitizeKey(obj), (_k, v) => {
     if (typeof v === 'string') {
       return sjs(v);

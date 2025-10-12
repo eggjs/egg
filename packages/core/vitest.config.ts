@@ -1,12 +1,11 @@
-import { defineProject, type UserProjectConfigExport } from 'vitest/config';
+import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
 
-const config: UserProjectConfigExport = {
+const config: UserWorkspaceConfig = defineProject({
   test: {
     testTimeout: 10000,
     include: ['test/**/*.test.ts'],
     exclude: ['test/fixtures/**', 'test/benchmark/**', '**/node_modules/**', '**/dist/**'],
   },
-};
+});
 
-const exportedConfig: UserProjectConfigExport = defineProject(config);
-export default exportedConfig;
+export default config;

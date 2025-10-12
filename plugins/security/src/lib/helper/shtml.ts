@@ -10,7 +10,7 @@ const BUILD_IN_ON_TAG_ATTR = Symbol('buildInOnTagAttr');
 // add domain filter based on xss module
 // custom options http://jsxss.com/zh/options.html
 // eg: support a tag，filter attributes except for title : whiteList: {a: ['title']}
-export default function shtml(this: BaseContextClass, val: string) {
+export default function shtml(this: BaseContextClass, val: string): string {
   if (typeof val !== 'string') {
     return val;
   }

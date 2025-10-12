@@ -17,7 +17,7 @@ export async function safeCurlForApplication<T = any>(
   app: EggApplicationCore,
   url: HttpClientRequestURL,
   options: HttpClientOptions = {}
-) {
+): Promise<HttpClientResponse<T>> {
   const ssrfConfig = app.config.security.ssrf;
   if (ssrfConfig?.checkAddress) {
     options.checkAddress = ssrfConfig.checkAddress;

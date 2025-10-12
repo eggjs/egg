@@ -7,7 +7,7 @@ import type { Application, MiddlewareFunc } from 'egg';
 import securityMiddlewares from '../../lib/middlewares/index.ts';
 import type { SecurityMiddlewareName } from '../../config/config.default.ts';
 
-export default (_: unknown, app: Application) => {
+export default (_: unknown, app: Application): MiddlewareFunc => {
   const options = app.config.security;
   const middlewares: MiddlewareFunc[] = [];
   const defaultMiddlewares =

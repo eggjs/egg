@@ -7,7 +7,7 @@ const escapeMap: Record<string, string> = {
   "'": '&#x27;',
 };
 
-export default function surl(this: BaseContextClass, val: string) {
+export default function surl(this: BaseContextClass, val: string): string {
   // Just get the converted the protocolWhiteList in `Set` mode,
   // Avoid conversions in `foreach`
   const protocolWhiteListSet = this.app.config.security.__protocolWhiteListSet!;

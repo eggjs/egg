@@ -17,7 +17,7 @@ const map: Record<string, string> = {
   '\r': '\\r',
 };
 
-export default function escapeJavaScript(text: string) {
+export default function escapeJavaScript(text: string): string {
   const str = '' + text;
   const match = MATCH_VULNERABLE_REGEXP.exec(str);
 

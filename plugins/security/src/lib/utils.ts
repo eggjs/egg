@@ -36,7 +36,7 @@ export function isSafeDomain(domain: string, whiteList: string[]): boolean {
   });
 }
 
-export function isSafePath(path: string, ctx: Context) {
+export function isSafePath(path: string, ctx: Context): boolean {
   path = '.' + path;
   if (path.includes('%')) {
     try {
@@ -52,7 +52,7 @@ export function isSafePath(path: string, ctx: Context) {
   return !(normalizePath.startsWith('../') || normalizePath.startsWith('..\\'));
 }
 
-export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFun }, ctx: Context) {
+export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFun }, ctx: Context): boolean {
   // check opts.enable first
   if (!opts.enable) return true;
   return !opts.matching?.(ctx);
@@ -64,7 +64,7 @@ const topDomains: Record<string, number> = {};
   topDomains[item] = 2 - item.split('.').length;
 });
 
-export function getCookieDomain(hostname: string) {
+export function getCookieDomain(hostname: string): string {
   // TODO(fengmk2): support ipv6
   if (IP_RE.test(hostname)) {
     return hostname;
@@ -92,7 +92,7 @@ function getDomain(splits: string[], index: number) {
   return '.' + splits.slice(index).join('.');
 }
 
-export function merge(origin: Record<string, any>, opts?: Record<string, any>) {
+export function merge(origin: Record<string, any>, opts?: Record<string, any>): Record<string, any> {
   if (!opts) {
     return origin;
   }
@@ -112,7 +112,7 @@ export function merge(origin: Record<string, any>, opts?: Record<string, any>) {
   return res;
 }
 
-export function preprocessConfig(config: SecurityConfig) {
+export function preprocessConfig(config: SecurityConfig): void {
   // transfer ssrf.ipBlackList to ssrf.checkAddress
   // ssrf.ipExceptionList can easily pick out unwanted ips from ipBlackList
   // checkAddress has higher priority than ipBlackList

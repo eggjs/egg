@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile } from 'node:fs/promises';
 
-import type { Next, Context } from '../../lib/egg.ts';
+import type { Context, MiddlewareFunc } from '../../lib/egg.ts';
 
 export type SiteFileContentFun = (ctx: Context) => Promise<Buffer | string>;
 
@@ -14,8 +14,8 @@ export interface SiteFileMiddlewareOptions {
 
 const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
 
-export default (options: SiteFileMiddlewareOptions): ((ctx: Context, next: Next) => Promise<void>) => {
-  return async function siteFile(ctx: Context, next: Next): Promise<void> {
+export default (options: SiteFileMiddlewareOptions): MiddlewareFunc => {
+  return async function siteFile(ctx, next): Promise<void> {
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
       return next();
     }

@@ -9,7 +9,18 @@ import referrerPolicy from './referrerPolicy.ts';
 import xframe from './xframe.ts';
 import xssProtection from './xssProtection.ts';
 
-export default {
+const middlewares: {
+  csp: typeof csp;
+  csrf: typeof csrf;
+  dta: typeof dta;
+  hsts: typeof hsts;
+  methodnoallow: typeof methodnoallow;
+  noopen: typeof noopen;
+  nosniff: typeof nosniff;
+  referrerPolicy: typeof referrerPolicy;
+  xframe: typeof xframe;
+  xssProtection: typeof xssProtection;
+} = {
   csp,
   csrf,
   dta,
@@ -21,3 +32,5 @@ export default {
   xframe,
   xssProtection,
 };
+
+export default middlewares;

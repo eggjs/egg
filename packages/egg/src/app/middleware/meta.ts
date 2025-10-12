@@ -4,15 +4,15 @@
 
 import { performance } from 'node:perf_hooks';
 
-import type { Context, Next } from '../../lib/egg.ts';
+import type { MiddlewareFunc } from '../../lib/egg.ts';
 
 export interface MetaMiddlewareOptions {
   enable: boolean;
   logging: boolean;
 }
 
-export default (options: MetaMiddlewareOptions): ((ctx: Context, next: Next) => Promise<void>) => {
-  return async function meta(ctx: Context, next: Next): Promise<void> {
+export default (options: MetaMiddlewareOptions): MiddlewareFunc => {
+  return async function meta(ctx, next): Promise<void> {
     if (options.logging) {
       ctx.coreLogger.info('[meta] request started, host: %s, user-agent: %s', ctx.host, ctx.header['user-agent']);
     }

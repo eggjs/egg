@@ -9,7 +9,7 @@ export default class AgentBoot implements ILifecycleBoot {
     this.agent = agent;
   }
 
-  async configWillLoad() {
+  async configWillLoad(): Promise<void> {
     preprocessConfig(this.agent.config.security);
   }
 }

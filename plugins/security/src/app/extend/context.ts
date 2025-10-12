@@ -16,12 +16,9 @@ const tokens = new Tokens();
 const CSRF_SECRET = Symbol('egg-security#CSRF_SECRET');
 const _CSRF_SECRET = Symbol('egg-security#_CSRF_SECRET');
 const NEW_CSRF_SECRET = Symbol('egg-security#NEW_CSRF_SECRET');
-const LOG_CSRF_NOTICE = Symbol('egg-security#LOG_CSRF_NOTICE');
 const INPUT_TOKEN = Symbol('egg-security#INPUT_TOKEN');
 const NONCE_CACHE = Symbol('egg-security#NONCE_CACHE');
 const SECURITY_OPTIONS = Symbol('egg-security#SECURITY_OPTIONS');
-const CSRF_REFERER_CHECK = Symbol('egg-security#CSRF_REFERER_CHECK');
-const CSRF_CTOKEN_CHECK = Symbol('egg-security#CSRF_CTOKEN_CHECK');
 
 function findToken(obj: Record<string, string>, keys: string | string[]) {
   if (!obj) return;
@@ -85,7 +82,7 @@ export default class SecurityContext extends Context {
    * @return {String} csrf secret
    * @private
    */
-  get [CSRF_SECRET](): string {
+  private getCsrfSecret(): string {
     if (this[_CSRF_SECRET]) {
       return this[_CSRF_SECRET] as string;
     }
@@ -108,12 +105,16 @@ export default class SecurityContext extends Context {
     return this[_CSRF_SECRET] as string;
   }
 
+  private get [CSRF_SECRET]() {
+    return this.getCsrfSecret();
+  }
+
   /**
    * ensure csrf secret exists in session or cookie.
    * @param {Boolean} [rotate] reset secret even if the secret exists
    * @public
    */
-  ensureCsrfSecret(rotate?: boolean) {
+  ensureCsrfSecret(rotate?: boolean): void {
     if (this[CSRF_SECRET] && !rotate) return;
     debug('ensure csrf secret, exists: %s, rotate; %s', this[CSRF_SECRET], rotate);
     const secret = tokens.secretSync();
@@ -147,7 +148,7 @@ export default class SecurityContext extends Context {
     }
   }
 
-  get [INPUT_TOKEN]() {
+  private getInputToken(): string | undefined {
     const { headerName, bodyName, queryName } = this.app.config.security.csrf;
     // try order: query, body, header
     const token =
@@ -158,12 +159,16 @@ export default class SecurityContext extends Context {
     return token;
   }
 
+  private get [INPUT_TOKEN]() {
+    return this.getInputToken();
+  }
+
   /**
    * rotate csrf secret exists in session or cookie.
    * must rotate the secret when user login
    * @public
    */
-  rotateCsrfSecret() {
+  rotateCsrfSecret(): void {
     if (!this[NEW_CSRF_SECRET] && this[CSRF_SECRET]) {
       this.ensureCsrfSecret(true);
     }
@@ -173,7 +178,7 @@ export default class SecurityContext extends Context {
    * assert csrf token/referer is present
    * @public
    */
-  assertCsrf() {
+  assertCsrf(): void {
     if (utils.checkIfIgnore(this.app.config.security.csrf, this)) {
       debug('%s, ignore by csrf options', this.path);
       return;
@@ -184,24 +189,24 @@ export default class SecurityContext extends Context {
     const messages = [];
     switch (type) {
       case 'ctoken':
-        message = this[CSRF_CTOKEN_CHECK]();
+        message = this.csrfCtokenCheck();
         if (message) this.throw(403, message);
         break;
       case 'referer':
-        message = this[CSRF_REFERER_CHECK]();
+        message = this.csrfRefererCheck();
         if (message) this.throw(403, message);
         break;
       case 'all':
-        message = this[CSRF_CTOKEN_CHECK]();
+        message = this.csrfCtokenCheck();
         if (message) this.throw(403, message);
-        message = this[CSRF_REFERER_CHECK]();
+        message = this.csrfRefererCheck();
         if (message) this.throw(403, message);
         break;
       case 'any':
-        message = this[CSRF_CTOKEN_CHECK]();
+        message = this.csrfCtokenCheck();
         if (!message) return;
         messages.push(message);
-        message = this[CSRF_REFERER_CHECK]();
+        message = this.csrfRefererCheck();
         if (!message) return;
         messages.push(message);
         this.throw(403, `both ctoken and referer check error: ${messages.join(', ')}`);
@@ -212,18 +217,18 @@ export default class SecurityContext extends Context {
     }
   }
 
-  [CSRF_CTOKEN_CHECK]() {
+  private csrfCtokenCheck(): string | undefined {
     if (!this[CSRF_SECRET]) {
       debug('missing csrf token');
-      this[LOG_CSRF_NOTICE]('missing csrf token');
+      this.logCsrfNotice('missing csrf token');
       return 'missing csrf token';
     }
     const token = this[INPUT_TOKEN];
     // AJAX requests get csrf token from cookie, in this situation token will equal to secret
     // synchronize form requests' token always changing to protect against BREACH attacks
-    if (token !== this[CSRF_SECRET] && !tokens.verify(this[CSRF_SECRET], token)) {
+    if (token !== this[CSRF_SECRET] && !tokens.verify(this[CSRF_SECRET] as string, token as string)) {
       debug('verify secret and token error');
-      this[LOG_CSRF_NOTICE]('invalid csrf token');
+      this.logCsrfNotice('invalid csrf token');
       const { rotateWhenInvalid } = this.app.config.security.csrf;
       if (rotateWhenInvalid) {
         this.rotateCsrfSecret();
@@ -232,14 +237,14 @@ export default class SecurityContext extends Context {
     }
   }
 
-  [CSRF_REFERER_CHECK]() {
+  private csrfRefererCheck(): string | undefined {
     const { refererWhiteList } = this.app.config.security.csrf;
     // check Origin/Referer headers
     const referer = (this.headers.referer ?? this.headers.origin ?? '').toLowerCase();
 
     if (!referer) {
       debug('missing csrf referer or origin');
-      this[LOG_CSRF_NOTICE]('missing csrf referer or origin');
+      this.logCsrfNotice('missing csrf referer or origin');
       return 'missing csrf referer or origin';
     }
 
@@ -247,12 +252,12 @@ export default class SecurityContext extends Context {
     const domainList = refererWhiteList.concat(this.host);
     if (!host || !utils.isSafeDomain(host, domainList)) {
       debug('verify referer or origin error');
-      this[LOG_CSRF_NOTICE]('invalid csrf referer or origin');
+      this.logCsrfNotice('invalid csrf referer or origin');
       return 'invalid csrf referer or origin';
     }
   }
 
-  [LOG_CSRF_NOTICE](msg: string) {
+  private logCsrfNotice(msg: string): void {
     if (this.app.config.env === 'local') {
       this.logger.warn(
         `${msg}. See https://eggjs.org/zh-CN/core/security/#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81-csrf-%E7%9A%84%E9%98%B2%E8%8C%83`
@@ -264,7 +269,7 @@ export default class SecurityContext extends Context {
     return await this.app.safeCurl<T>(url, options);
   }
 
-  unsafeRedirect(url: string, alt?: string) {
+  unsafeRedirect(url: string, alt?: string): void {
     this.response.unsafeRedirect(url, alt);
   }
 }

@@ -1,10 +1,9 @@
-import type { EggAppConfig, PowerPartial } from '../lib/types.ts';
+import type { PartialEggConfig } from '../lib/types.ts';
 
-export default (): PowerPartial<EggAppConfig> => {
-  return {
-    logger: {
-      consoleLevel: 'WARN',
-      buffer: false,
-    },
-  } satisfies PowerPartial<EggAppConfig>;
-};
+export default {
+  logger: {
+    consoleLevel: 'WARN',
+    // disable buffer for unittest
+    buffer: false,
+  },
+} as PartialEggConfig;

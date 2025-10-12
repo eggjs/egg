@@ -1,5 +1,7 @@
 import helpers from '../../lib/helper/index.ts';
 
-export default {
+const securityHelpers: typeof helpers = {
   ...helpers,
 };
+
+export default securityHelpers;
