@@ -19,7 +19,7 @@ import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import utils, { type Fun } from '../utils/index.ts';
 import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
-import { Lifecycle } from '../lifecycle.ts';
+import type { Lifecycle } from '../lifecycle.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
@@ -106,6 +106,8 @@ export class EggLoader {
         );
       }
     }
+
+    debug('-------------------- type: %s --------------------', this.app.type);
 
     /**
      * All framework directories.
@@ -324,9 +326,6 @@ export class EggLoader {
     if (this.app.customEggPaths) {
       // @ts-expect-error customEggPaths is protected
       eggPaths = this.app.customEggPaths();
-      if (eggPaths.length > 0) {
-        return eggPaths;
-      }
     }
 
     // try to get egg paths from old way
@@ -949,8 +948,10 @@ export class EggLoader {
 
     // load env from process.env.EGG_APP_CONFIG
     const envConfig = this.#loadConfigFromEnv();
-    debug('[loadConfig] Loaded config from env, %j', envConfig);
-    extend(true, target, envConfig);
+    if (envConfig) {
+      debug('[loadConfig] Loaded config from env, %j', envConfig);
+      extend(true, target, envConfig);
+    }
 
     // You can manipulate the order of app.config.coreMiddleware and app.config.appMiddleware in app.js
     target.coreMiddleware = target.coreMiddleware || [];
@@ -962,7 +963,7 @@ export class EggLoader {
     target.appMiddlewares = target.appMiddleware;
 
     this.config = target;
-    debug('[loadConfig] all config: %o', this.config);
+    debug('[loadConfig] type: %s, all config: %o', this.app.type, this.config);
     this.timing.end('Load Config');
   }
 

@@ -8,7 +8,7 @@ export default class AppBootHook implements ILifecycleBoot {
   }
 
   async didLoad() {
-    console.error('didLoad %o', this.app.type);
+    console.trace('didLoad %o', this.app.type);
     // Ready to call configDidLoad,
     // Config, plugin files are referred,
     // this is the last chance to modify the config.

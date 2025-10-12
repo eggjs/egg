@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import type { AsyncLocalStorage } from 'node:async_hooks';
+import assert from 'node:assert';
 
 import { EggCore, Router } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
@@ -196,6 +197,7 @@ export class EggApplicationCore extends EggCore {
 
     this.console.info('[egg] App root: %s', this.baseDir);
     this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
+    assert(this.config.logger.dir, 'logger.dir is required');
     this.console.info('[egg] Loaded enabled plugin %j', this.loader.orderPlugins);
 
     // Listen the error that promise had not catch, then log it in common-error

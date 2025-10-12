@@ -9,9 +9,9 @@ exports[`should export Koa class 1`] = `
 exports[`should export Koa class 2`] = `
 [
   "default",
-  "Application",
   "Context",
   "Request",
   "Response",
+  "Application",
 ]
 `;

@@ -1,16 +1,16 @@
 import { debuglog } from 'node:util';
 
-import { Context, type Next } from 'egg';
+import type { MiddlewareFunc } from 'egg';
 
 const debug = debuglog('egg/mock/app/middleware/cluster_app_mock');
 
-export default (): ((ctx: Context, next: Next) => Promise<void>) => {
-  return async function clusterAppMock(ctx: Context, next: Next): Promise<void> {
+export default (): MiddlewareFunc => {
+  return async function clusterAppMock(ctx, next) {
     // use originalUrl to make sure other middlewares can't change request url
     if (ctx.originalUrl !== '/__egg_mock_call_function') {
       return next();
     }
-    const body = (ctx.request as any).body;
+    const body = ctx.request.body;
     debug('%s %s, body: %j', ctx.method, ctx.url, body);
     const { method, property, args, needResult } = body;
     if (!method) {
@@ -45,7 +45,8 @@ export default (): ((ctx: Context, next: Next) => Promise<void>) => {
         return;
       }
 
-      if (!ctx.app[property] || typeof (ctx.app as any)[property][method] !== 'function') {
+      // @ts-expect-error dynamic property
+      if (!ctx.app[property] || typeof ctx.app[property][method] !== 'function') {
         debug('property %s.%s not exists on app', property, method);
         ctx.status = 422;
         ctx.body = {
@@ -89,7 +90,8 @@ export default (): ((ctx: Context, next: Next) => Promise<void>) => {
       }
     }
 
-    const target: any = property ? ctx.app[property] : ctx.app;
+    const target = property ? ctx.app[property] : ctx.app;
+    // @ts-expect-error dynamic property
     const fn = target[method];
     try {
       Promise.resolve(fn.call(target, ...args)).then(result => {

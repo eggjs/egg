@@ -369,7 +369,7 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work', async () => {
+    it('should work with old way', async () => {
       await app
         .httpRequest()
         .get('/')

@@ -46,7 +46,8 @@ export class Response {
    * Return response header.
    */
   get header(): OutgoingHttpHeaders {
-    return this.res.getHeaders();
+    // res.getHeaders will return null if not set
+    return this.res.getHeaders() ?? {};
   }
 
   /**
