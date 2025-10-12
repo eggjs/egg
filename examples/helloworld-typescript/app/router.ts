@@ -1,5 +1,7 @@
 import { Application } from 'egg';
 
-export default (app: Application) => {
+const router = (app: Application): void => {
   app.get('/', 'home.index');
 };
+
+export default router;
