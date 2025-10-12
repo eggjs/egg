@@ -1,6 +1,6 @@
-import { defineProject, type UserProjectConfigExport } from 'vitest/config';
+import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
 
-const config: UserProjectConfigExport = defineProject({
+const config: UserWorkspaceConfig = defineProject({
   test: {
     testTimeout: 20000,
     hookTimeout: 20000,
