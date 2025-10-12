@@ -2,15 +2,22 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 
 import dayjs from 'dayjs';
-import { Application } from 'egg';
+import { Application, Subscription } from 'egg';
 
-export default (app: Application) => {
+interface CleanSchedule {
+  type: 'worker';
+  cron: string;
+  disable: boolean;
+  immediate: boolean;
+}
+
+export default (app: Application): typeof Subscription => {
   return class CleanTmpdir extends app.Subscription {
-    static get schedule() {
+    static get schedule(): CleanSchedule {
       return {
         type: 'worker',
-        cron: app.config.multipart.cleanSchedule.cron,
-        disable: app.config.multipart.cleanSchedule.disable,
+        cron: app.config.multipart.cleanSchedule.cron as string,
+        disable: app.config.multipart.cleanSchedule.disable as boolean,
         immediate: false,
       };
     }

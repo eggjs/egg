@@ -1,6 +1,6 @@
-import { defineConfigFactory, type PartialEggConfig } from 'egg';
+import { defineConfigFactory, type EggConfigFactory, type PartialEggConfig } from 'egg';
 
-export default defineConfigFactory(appInfo => {
+const config: EggConfigFactory = defineConfigFactory(appInfo => {
   const config = {
     keys: 'multipart-ts-test',
     appInfo: appInfo,
@@ -10,3 +10,5 @@ export default defineConfigFactory(appInfo => {
   } as PartialEggConfig;
   return config;
 });
+
+export default config;

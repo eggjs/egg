@@ -168,7 +168,7 @@ export default class MultipartContext extends Context {
    * @function Context#saveRequestFiles
    * @param {Object} options - { limits, checkFile, ... }
    */
-  async saveRequestFiles(options: MultipartOptions = {}) {
+  async saveRequestFiles(options: MultipartOptions = {}): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const ctx = this;
 
@@ -302,7 +302,7 @@ export default class MultipartContext extends Context {
    * @function Context#cleanupRequestFiles
    * @param {Array<String>} [files] - file paths need to cleanup, default is `ctx.request.files`.
    */
-  async cleanupRequestFiles(files?: EggFile[]) {
+  async cleanupRequestFiles(files?: EggFile[]): Promise<void> {
     if (!files || !files.length) {
       files = this.request.files;
     }

@@ -8,7 +8,7 @@ export default class AppBootHook implements ILifecycleBoot {
     this.app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.app.config.multipart = normalizeOptions(this.app.config.multipart);
     const options = this.app.config.multipart;
 
