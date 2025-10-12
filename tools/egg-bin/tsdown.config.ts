@@ -1,6 +1,6 @@
 import { defineConfig } from 'tsdown';
 
-export default defineConfig({
+const config = defineConfig({
   entry: {
     index: 'src/index.ts',
   },
@@ -21,3 +21,5 @@ export default defineConfig({
     },
   ],
 });
+
+export default config;

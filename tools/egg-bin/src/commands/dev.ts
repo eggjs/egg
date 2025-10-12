@@ -57,7 +57,15 @@ export default class Dev<T extends typeof Dev> extends BaseCommand<T> {
     await this.forkNode(serverBin, args, { execArgv });
   }
 
-  protected async formatEggStartOptions() {
+  protected async formatEggStartOptions(): Promise<{
+    baseDir: string;
+    workers: number;
+    port: number;
+    framework: string;
+    typescript: boolean;
+    tscompiler: string | undefined;
+    sticky: boolean | undefined;
+  }> {
     const { flags } = this;
     flags.framework = getFrameworkPath({
       framework: flags.framework,

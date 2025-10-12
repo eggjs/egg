@@ -35,7 +35,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
     }),
   };
 
-  protected get defaultExcludes() {
+  protected get defaultExcludes(): string[] {
     return [
       'example/',
       'examples/',

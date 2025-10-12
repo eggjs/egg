@@ -101,7 +101,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     await this.runMocha(mochaFile, mochaArgs);
   }
 
-  protected async runMocha(mochaFile: string, mochaArgs: string[]) {
+  protected async runMocha(mochaFile: string, mochaArgs: string[]): Promise<void> {
     await this.forkNode(mochaFile, mochaArgs, {
       execArgv: [
         ...process.execArgv,
@@ -111,7 +111,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     });
   }
 
-  protected async formatMochaArgs() {
+  protected async formatMochaArgs(): Promise<string[] | undefined> {
     const { args, flags } = this;
     // collect require
     const requires = await this.formatRequires();
@@ -208,7 +208,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
     ].filter(a => a.trim());
   }
 
-  protected async getChangedTestFiles(dir: string, ext: string) {
+  protected async getChangedTestFiles(dir: string, ext: string): Promise<string[]> {
     const res = await getChangedFilesForRoots([path.join(dir, 'test')], {});
     const changedFiles = res.changedFiles;
     const files: string[] = [];
