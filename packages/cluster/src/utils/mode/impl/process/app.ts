@@ -9,57 +9,57 @@ import { terminate } from '../../../terminate.ts';
 import type { MessageBody } from '../../../messenger.ts';
 
 export class AppProcessWorker extends BaseAppWorker<ClusterProcessWorker> {
-  get id() {
+  get id(): number {
     return this.instance.id;
   }
 
-  get workerId() {
+  get workerId(): number {
     return this.instance.process.pid!;
   }
 
-  get exitedAfterDisconnect() {
+  get exitedAfterDisconnect(): boolean {
     return this.instance.exitedAfterDisconnect;
   }
 
-  get exitCode() {
+  get exitCode(): number {
     return this.instance.process.exitCode!;
   }
 
-  send(message: MessageBody) {
+  send(message: MessageBody): void {
     sendmessage(this.instance, message);
   }
 
-  clean() {
+  clean(): void {
     this.instance.removeAllListeners();
   }
 
   // static methods use on src/app_worker.ts
 
-  static get workerId() {
+  static get workerId(): number {
     return process.pid;
   }
 
-  static on(event: string, listener: (...args: any[]) => void) {
+  static on(event: string, listener: (...args: any[]) => void): void {
     process.on(event, listener);
   }
 
-  static send(message: MessageBody) {
+  static send(message: MessageBody): void {
     message.senderWorkerId = String(process.pid);
     process.send!(message);
   }
 
-  static kill() {
+  static kill(): void {
     process.exitCode = 1;
     process.kill(process.pid);
   }
 
-  static gracefulExit(options: gracefulExitOptions) {
+  static gracefulExit(options: gracefulExitOptions): void {
     gracefulExit(options);
   }
 }
 
 export class AppProcessUtils extends BaseAppUtils {
-  fork() {
+  fork(): this {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
 
@@ -141,7 +141,7 @@ export class AppProcessUtils extends BaseAppUtils {
     return this;
   }
 
-  async kill(timeout: number) {
+  async kill(timeout: number): Promise<void> {
     await Promise.all(
       Object.keys(cluster.workers!).map(id => {
         const worker = cluster.workers![id]!;

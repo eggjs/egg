@@ -17,7 +17,7 @@ export class BaseContextClass extends EggCoreBaseContextClass {
   declare service: BaseContextClass;
   #logger?: BaseContextLogger;
 
-  get logger() {
+  get logger(): BaseContextLogger {
     if (!this.#logger) {
       this.#logger = new BaseContextLogger(this.ctx, this.pathName);
     }

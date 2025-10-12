@@ -33,6 +33,8 @@ export class Request {
     this.res = res;
     this.ctx = ctx;
     this.originalUrl = req.url ?? '/';
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   /**
@@ -613,26 +615,19 @@ export class Request {
   /**
    * Inspect implementation.
    */
-  inspect(): object {
+  inspect(): object | undefined {
     if (!this.req) return;
     return this.toJSON();
   }
 
   /**
-   * Custom inspection implementation for newer Node.js versions.
-   */
-  [util.inspect.custom]() {
-    return this.inspect();
-  }
-
-  /**
    * Return JSON representation.
    */
-  toJSON() {
+  toJSON(): object {
     return {
       method: this.method,
       url: this.url,
-      header: this.header,
+      header: this.header satisfies IncomingMessage['headers'] as IncomingMessage['headers'],
     };
   }
 }

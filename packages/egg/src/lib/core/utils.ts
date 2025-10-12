@@ -1,7 +1,7 @@
 import util from 'node:util';
 import { isSymbol, isRegExp, isPrimitive, isClass, isFunction, isGeneratorFunction, isAsyncFunction } from 'is-type-of';
 
-export function convertObject(obj: any, ignore: string | RegExp | (string | RegExp)[] = []) {
+export function convertObject(obj: any, ignore: string | RegExp | (string | RegExp)[] = []): any {
   if (!Array.isArray(ignore)) {
     ignore = [ignore];
   }
@@ -65,7 +65,7 @@ function convertValue(key: string, value: any, ignore: (string | RegExp)[]) {
   return util.format(value);
 }
 
-export function safeParseURL(url: string) {
+export function safeParseURL(url: string): URL | null {
   try {
     return new URL(url);
   } catch {

@@ -7,7 +7,7 @@ import { BaseAppWorker } from './mode/base/app.ts';
 // can do some check stuff here to monitor the healthy
 export class WorkerManager extends EventEmitter {
   agent: BaseAgentWorker | null;
-  workers = new Map<number, BaseAppWorker>();
+  workers: Map<number, BaseAppWorker> = new Map<number, BaseAppWorker>();
   exception = 0;
   timer: NodeJS.Timeout;
 
@@ -16,43 +16,43 @@ export class WorkerManager extends EventEmitter {
     this.agent = null;
   }
 
-  getWorkers() {
+  getWorkers(): number[] {
     return Array.from(this.workers.keys());
   }
 
-  setAgent(agent: BaseAgentWorker) {
+  setAgent(agent: BaseAgentWorker): void {
     this.agent = agent;
   }
 
-  getAgent() {
+  getAgent(): BaseAgentWorker | null {
     return this.agent;
   }
 
-  deleteAgent() {
+  deleteAgent(): void {
     this.agent = null;
   }
 
-  setWorker(worker: BaseAppWorker) {
+  setWorker(worker: BaseAppWorker): void {
     this.workers.set(worker.workerId, worker);
   }
 
-  getWorker(workerId: number) {
+  getWorker(workerId: number): BaseAppWorker | undefined {
     return this.workers.get(workerId);
   }
 
-  deleteWorker(workerId: number) {
+  deleteWorker(workerId: number): void {
     this.workers.delete(workerId);
   }
 
-  listWorkerIds() {
+  listWorkerIds(): number[] {
     return Array.from(this.workers.keys());
   }
 
-  listWorkers() {
+  listWorkers(): BaseAppWorker[] {
     return Array.from(this.workers.values());
   }
 
-  getListeningWorkerIds() {
+  getListeningWorkerIds(): number[] {
     const keys = [];
     for (const [id, worker] of this.workers.entries()) {
       if (worker.state === 'listening') {
@@ -62,7 +62,7 @@ export class WorkerManager extends EventEmitter {
     return keys;
   }
 
-  count() {
+  count(): { agent: number; worker: number } {
     return {
       agent: this.agent?.status === 'started' ? 1 : 0,
       worker: this.listWorkerIds().length,
@@ -71,7 +71,7 @@ export class WorkerManager extends EventEmitter {
 
   // check agent and worker must both alive
   // if exception appear 3 times, emit an exception event
-  startCheck() {
+  startCheck(): void {
     this.timer = setInterval(() => {
       const count = this.count();
       if (count.agent > 0 && count.worker > 0) {

@@ -15,59 +15,59 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
     this.#id = id;
   }
 
-  get id() {
+  get id(): number {
     return this.#id;
   }
 
-  get workerId() {
+  get workerId(): number {
     return this.instance.threadId;
   }
 
-  get state() {
+  get state(): string {
     return this.#state;
   }
 
-  set state(val) {
+  set state(val: string) {
     this.#state = val;
   }
 
-  get exitedAfterDisconnect() {
+  get exitedAfterDisconnect(): boolean {
     return true;
   }
 
-  get exitCode() {
+  get exitCode(): number {
     return 0;
     // return this.instance.exitCode;
   }
 
-  send(message: MessageBody) {
+  send(message: MessageBody): void {
     this.instance.postMessage(message);
   }
 
-  clean() {
+  clean(): void {
     this.instance.removeAllListeners();
   }
 
   // static methods use on src/app_worker.ts
 
-  static get workerId() {
+  static get workerId(): number {
     return threadId;
   }
 
-  static on(event: string, listener: (...args: any[]) => void) {
+  static on(event: string, listener: (...args: any[]) => void): void {
     parentPort!.on(event, listener);
   }
 
-  static send(message: MessageBody) {
+  static send(message: MessageBody): void {
     message.senderWorkerId = String(threadId);
     parentPort!.postMessage(message);
   }
 
-  static kill() {
+  static kill(): void {
     process.exit(1);
   }
 
-  static gracefulExit(options: gracefulExitOptions) {
+  static gracefulExit(options: gracefulExitOptions): void {
     process.on('exit', async code => {
       if (typeof options.beforeExit === 'function') {
         await options.beforeExit();
@@ -80,7 +80,7 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
 export class AppThreadUtils extends BaseAppUtils {
   #workers: ThreadWorker[] = [];
 
-  #forkSingle(appPath: string, options: WorkerOptions, id: number) {
+  #forkSingle(appPath: string, options: WorkerOptions, id: number): void {
     // start app worker
     const worker = new ThreadWorker(appPath, options);
     this.#workers.push(worker);
@@ -136,7 +136,7 @@ export class AppThreadUtils extends BaseAppUtils {
     });
   }
 
-  fork() {
+  fork(): this {
     this.startTime = Date.now();
     this.startSuccessCount = 0;
 
@@ -155,7 +155,7 @@ export class AppThreadUtils extends BaseAppUtils {
     return this;
   }
 
-  async kill() {
+  async kill(): Promise<void> {
     for (const worker of this.#workers) {
       const id = Reflect.get(worker, 'id');
       this.log(`[master] kill app worker#${id} (worker_threads) by worker.terminate()`);

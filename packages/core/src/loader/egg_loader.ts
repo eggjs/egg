@@ -318,8 +318,17 @@ export class EggLoader {
   protected getEggPaths(): string[] {
     // avoid require recursively
     const EggCore = this.options.EggCoreClass;
-    const eggPaths: string[] = [];
+    let eggPaths: string[] = [];
+    // @ts-expect-error customEggPaths is protected
+    if (this.app.customEggPaths) {
+      // @ts-expect-error customEggPaths is protected
+      eggPaths = this.app.customEggPaths();
+      if (eggPaths.length > 0) {
+        return eggPaths;
+      }
+    }
 
+    // try to get egg paths from old way
     let proto = this.app;
 
     // Loop for the prototype chain
@@ -331,12 +340,18 @@ export class EggLoader {
       if (proto === Object.prototype || proto === EggCore?.prototype) {
         break;
       }
-      const eggPath = Reflect.get(proto, Symbol.for('egg#eggPath'));
+      let eggPath: string;
+      eggPath = Reflect.get(proto, Symbol.for('egg#eggPath')) as string;
       if (!eggPath) {
         // if (EggCore) {
         //   throw new TypeError('Symbol.for(\'egg#eggPath\') is required on Application');
         // }
         continue;
+      }
+      if (this.app.deprecate) {
+        this.app.deprecate(
+          'Symbol.for(\'egg#eggPath\') is deprecated, please use "override the `customEggPaths()` method" instead'
+        );
       }
       assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
       assert(fs.existsSync(eggPath), `${eggPath} not exists`);

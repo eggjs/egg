@@ -205,11 +205,11 @@ export default class Context extends EggCoreContext {
    * @member {Object} state
    * @see Context#locals
    */
-  get state() {
+  get state(): Record<string, any> {
     return this.locals;
   }
 
-  set state(val) {
+  set state(val: Record<string, any>) {
     this.locals = val;
   }
 
@@ -238,7 +238,7 @@ export default class Context extends EggCoreContext {
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  async _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string) {
+  async _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string): Promise<void> {
     const startTime = now();
     try {
       await scope(this as any);

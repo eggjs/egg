@@ -69,7 +69,13 @@ function normalizeResult(result: string | MockResultOptions) {
 const MOCK_CONFIGS = Symbol('MOCK_CONFIGS');
 const MOCK_CONFIG_INDEX = Symbol('MOCK_CONFIG_INDEX');
 
-export function createMockHttpClient(app: any) {
+export type MockHttpClientMethod = (
+  mockUrl: string | RegExp,
+  mockMethod: string | string[] | MockResultOptions | MockResultFunction,
+  mockResult?: MockResultOptions | MockResultFunction | string
+) => void;
+
+export function createMockHttpClient(app: any): MockHttpClientMethod {
   /**
    * mock httpclient
    * @function mockHttpclient
@@ -87,7 +93,7 @@ export function createMockHttpClient(app: any) {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): void {
     let mockMethods = mockMethod as string[];
     if (!mockResult) {
       // app.mockHttpclient(mockUrl, mockResult)
@@ -185,5 +191,3 @@ export function createMockHttpClient(app: any) {
     });
   };
 }
-
-export type MockHttpClientMethod = ReturnType<typeof createMockHttpClient>;

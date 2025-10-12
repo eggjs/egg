@@ -12,11 +12,11 @@ export class BaseHookClass implements ILifecycleBoot {
     this.#instance = instance;
   }
 
-  get logger() {
+  get logger(): import('egg-logger').EggLogger {
     return this.#instance.logger;
   }
 
-  get config() {
+  get config(): import('../../index.ts').EggAppConfig {
     return this.#instance.config;
   }
 

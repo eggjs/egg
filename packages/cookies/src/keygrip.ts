@@ -34,7 +34,7 @@ export class Keygrip {
   }
 
   // encrypt a message
-  encrypt(data: string, key?: string): string {
+  encrypt(data: string, key?: string): Buffer {
     key = key || this.#keys[0];
     const password = keyToPassword(key);
     const cipher = crypto.createCipheriv(this.#cipher, password.key, password.iv);
@@ -93,13 +93,13 @@ export class Keygrip {
   }
 }
 
-function crypt(cipher: Cipheriv, data: string | Buffer) {
+function crypt(cipher: Cipheriv, data: string | Buffer): Buffer {
   const text = Buffer.isBuffer(data) ? cipher.update(data) : cipher.update(data, 'utf-8');
   const pad = cipher.final();
   return Buffer.concat([text, pad]);
 }
 
-function keyToPassword(key: string) {
+function keyToPassword(key: string): { key: Buffer; iv: Buffer } {
   if (passwordCache.has(key)) {
     return passwordCache.get(key);
   }

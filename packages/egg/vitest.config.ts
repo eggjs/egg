@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config';
+import { defineProject, type UserProjectConfigExport } from 'vitest/config';
 
-export default defineProject({
+const config: UserProjectConfigExport = defineProject({
   test: {
     testTimeout: 20000,
     hookTimeout: 20000,
@@ -8,3 +8,5 @@ export default defineProject({
     exclude: ['test/fixtures/**', 'test/bench/**', '**/node_modules/**', '**/dist/**'],
   },
 });
+
+export default config;

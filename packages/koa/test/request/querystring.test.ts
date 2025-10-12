@@ -14,8 +14,8 @@ describe('ctx.querystring', () => {
   describe('when ctx.req not present', () => {
     it('should return an empty string', () => {
       const ctx = context();
-      // @ts-expect-error for testing
-      ctx.request.req = null;
+      // oxlint-disable-next-line typescript/no-explicit-any
+      (ctx.request as any).req = null;
       assert.equal(ctx.querystring, '');
     });
   });

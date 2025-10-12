@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { extname } from 'node:path';
 import util from 'node:util';
 import Stream from 'node:stream';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'node:http';
 
 import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
 import { getType } from 'cache-content-type';
@@ -31,6 +31,8 @@ export class Response {
     this.req = req;
     this.res = res;
     this.ctx = ctx;
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   /**
@@ -43,14 +45,14 @@ export class Response {
   /**
    * Return response header.
    */
-  get header(): Record<string, string | string[] | undefined> {
-    return this.res.getHeaders() || {};
+  get header(): OutgoingHttpHeaders {
+    return this.res.getHeaders();
   }
 
   /**
    * Return response header, alias as response.header
    */
-  get headers(): Record<string, string | string[] | undefined> {
+  get headers(): OutgoingHttpHeaders {
     return this.header;
   }
 
@@ -217,7 +219,7 @@ export class Response {
     vary(this.res, field);
   }
 
-  _getBackReferrer(): string | undefined {
+  protected _getBackReferrer(): string | undefined {
     const referrer = this.ctx.get<string>('Referrer');
     if (referrer) {
       // referrer is a relative path
@@ -481,32 +483,31 @@ export class Response {
   /**
    * Inspect implementation.
    */
-  inspect(): object {
+  inspect(): object | undefined {
     if (!this.res) return;
     const o = this.toJSON();
     Reflect.set(o, 'body', this.body);
     return o;
   }
 
-  [util.inspect.custom]() {
-    return this.inspect();
-  }
-
   /**
    * Return JSON representation.
    */
-  toJSON() {
+  toJSON(): object {
     return {
-      status: this.status,
-      message: this.message,
-      header: this.header,
+      status: this.status satisfies number as number,
+      message: this.message satisfies string as string,
+      header: this.header satisfies Record<string, string | string[] | number | undefined> as Record<
+        string,
+        string | string[] | number | undefined
+      >,
     };
   }
 
   /**
    * Flush any set headers and begin the body
    */
-  flushHeaders() {
+  flushHeaders(): void {
     this.res.flushHeaders();
   }
 }

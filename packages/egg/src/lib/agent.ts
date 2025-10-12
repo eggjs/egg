@@ -3,8 +3,6 @@ import type { EggLogger } from 'egg-logger';
 import { EggApplicationCore, type EggApplicationCoreOptions } from './egg.ts';
 import { AgentWorkerLoader } from './loader/index.ts';
 
-const EGG_LOADER = Symbol.for('egg#loader');
-
 /**
  * Singleton instance in Agent Worker, extend {@link EggApplicationCore}
  * @augments EggApplicationCore
@@ -31,18 +29,18 @@ export class Agent extends EggApplicationCore {
     );
   }
 
-  get [EGG_LOADER]() {
+  protected override customEggLoader(): typeof AgentWorkerLoader {
     return AgentWorkerLoader;
   }
 
-  _wrapMessenger() {
+  _wrapMessenger(): void {
     for (const methodName of ['broadcast', 'sendTo', 'sendToApp', 'sendToAgent', 'sendRandom']) {
       wrapMethod(methodName, this.messenger, this.coreLogger);
     }
 
-    function wrapMethod(methodName: string, messenger: any, logger: EggLogger) {
+    function wrapMethod(methodName: string, messenger: any, logger: EggLogger): void {
       const originMethod = messenger[methodName];
-      messenger[methodName] = function (...args: any[]) {
+      messenger[methodName] = function (...args: any[]): void {
         const stack = new Error().stack!.split('\n').slice(1).join('\n');
         logger.warn("agent can't call %s before server started\n%s", methodName, stack);
         originMethod.apply(this, args);
@@ -53,7 +51,7 @@ export class Agent extends EggApplicationCore {
     }
   }
 
-  async close() {
+  async close(): Promise<void> {
     clearInterval(this.#agentAliveHandler);
     await super.close();
   }

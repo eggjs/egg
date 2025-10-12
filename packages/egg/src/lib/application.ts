@@ -13,8 +13,6 @@ import { AppWorkerLoader } from './loader/index.ts';
 import Helper from '../app/extend/helper.ts';
 import { CookieLimitExceedError } from './error/index.ts';
 
-const EGG_LOADER = Symbol.for('egg#loader');
-
 // client error => 400 Bad Request
 // Refs: https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_event_clienterror
 const DEFAULT_BAD_REQUEST_HTML = `<html>
@@ -48,7 +46,7 @@ export class Application extends EggApplicationCore {
    * reference to {@link Helper}
    * @member {Helper} Application#Helper
    */
-  Helper = Helper;
+  Helper: typeof Helper = Helper;
 
   /**
    * @class
@@ -61,20 +59,21 @@ export class Application extends EggApplicationCore {
     });
   }
 
-  protected async load() {
+  protected override customEggLoader(): typeof AppWorkerLoader {
+    return AppWorkerLoader;
+  }
+
+  protected async load(): Promise<void> {
     await super.load();
     this.#warnConfusedConfig();
     this.#bindEvents();
   }
 
-  get [EGG_LOADER]() {
-    return AppWorkerLoader;
-  }
-
-  #responseRaw(socket: Socket, raw?: any) {
+  #responseRaw(socket: Socket, raw?: any): void {
     if (!socket?.writable) return;
     if (!raw) {
-      return socket.end(DEFAULT_BAD_REQUEST_RESPONSE);
+      socket.end(DEFAULT_BAD_REQUEST_RESPONSE);
+      return;
     }
 
     const body = raw.body == null ? DEFAULT_BAD_REQUEST_HTML : raw.body;
@@ -99,7 +98,7 @@ export class Application extends EggApplicationCore {
     socket.end(`${firstLine}\r\n${responseHeaderLines}\r\n${body.toString()}`);
   }
 
-  onClientError(err: any, socket: Socket) {
+  onClientError(err: any, socket: Socket): void {
     // ignore when there is no http body, it almost like an ECONNRESET
     if (err.rawPacket) {
       this.logger.warn(
@@ -143,7 +142,7 @@ export class Application extends EggApplicationCore {
     }
   }
 
-  onServer(server: http.Server) {
+  onServer(server: http.Server): void {
     // expose app.server
     this.server = server;
     // set ignore code
@@ -194,7 +193,7 @@ export class Application extends EggApplicationCore {
    * save routers to `run/router.json`
    * @private
    */
-  dumpConfig() {
+  dumpConfig(): void {
     super.dumpConfig();
 
     // dump routers to router.json
@@ -224,7 +223,7 @@ export class Application extends EggApplicationCore {
    * @see Context#runInBackground
    * @param {Function} scope - the first args is an anonymous ctx
    */
-  runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown) {
+  runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown): void {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
@@ -238,7 +237,7 @@ export class Application extends EggApplicationCore {
    * secret key for Application
    * @member {String} Application#keys
    */
-  get keys() {
+  get keys(): string[] {
     if (!this._keys) {
       if (!this.config.keys) {
         if (this.config.env === 'local' || this.config.env === 'unittest') {
@@ -256,7 +255,7 @@ export class Application extends EggApplicationCore {
   /**
    * @deprecated keep compatible with egg 3.x
    */
-  toAsyncFunction(fn: (...args: any[]) => any) {
+  toAsyncFunction(fn: (...args: any[]) => any): (...args: any[]) => any {
     if (isGeneratorFunction(fn)) {
       throw new Error('Generator function is not supported');
     }
@@ -268,7 +267,7 @@ export class Application extends EggApplicationCore {
    *
    * @private
    */
-  #bindEvents() {
+  #bindEvents(): void {
     // Browser Cookie Limits: http://browsercookielimits.iain.guru/
     // https://github.com/eggjs/egg-cookies/blob/58ef4ea497a0eb4dd711d7e9751e56bc5fcee004/src/cookies.ts#L145
     this.on('cookieLimitExceed', ({ name, value, ctx }) => {
@@ -284,7 +283,7 @@ export class Application extends EggApplicationCore {
    *
    * @private
    */
-  #warnConfusedConfig() {
+  #warnConfusedConfig(): void {
     const confusedConfigurations = this.config.confusedConfigurations;
     Object.keys(confusedConfigurations).forEach(key => {
       if (this.config[key] !== undefined) {

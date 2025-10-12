@@ -311,7 +311,6 @@ Loader 也提供了 [caseStyle](#caseStyle-string) 设置来强制指定命名�
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   constructor(opt) {
@@ -332,11 +331,11 @@ class YadanAppWorkerLoader extends egg.AppWorkerLoader {
 }
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
+  protected override customEggPaths() {
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
   // 覆盖 Egg 的 Loader，启动时使用这个 Loader
-  get [EGG_LOADER]() {
+  protected override customEggLoader() {
     return YadanAppWorkerLoader;
   }
 }

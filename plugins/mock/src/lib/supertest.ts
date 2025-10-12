@@ -42,6 +42,6 @@ export class EggTestRequest extends Request {
   }
 }
 
-export function request(app: any) {
+export function request(app: any): EggTestRequest {
   return new EggTestRequest(app);
 }

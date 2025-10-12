@@ -4,8 +4,8 @@ import { Context, type Next } from 'egg';
 
 const debug = debuglog('egg/mock/app/middleware/cluster_app_mock');
 
-export default () => {
-  return async function clusterAppMock(ctx: Context, next: Next) {
+export default (): ((ctx: Context, next: Next) => Promise<void>) => {
+  return async function clusterAppMock(ctx: Context, next: Next): Promise<void> {
     // use originalUrl to make sure other middlewares can't change request url
     if (ctx.originalUrl !== '/__egg_mock_call_function') {
       return next();

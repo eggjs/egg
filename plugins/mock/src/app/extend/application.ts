@@ -113,7 +113,7 @@ export default abstract class ApplicationUnittest extends Application {
     return ctx as MockContext;
   }
 
-  async mockContextScope(fn: (ctx?: MockContext) => Promise<any>, data?: MockContextData) {
+  async mockContextScope(fn: (ctx?: MockContext) => Promise<any>, data?: MockContextData): Promise<any> {
     const ctx = this.mockContext(data, {
       mockCtxStorage: false,
       reuseCtxStorage: false,
@@ -128,7 +128,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @function App#mockSession
    * @param {Object} data - session object
    */
-  mockSession(data: any) {
+  mockSession(data: any): this {
     if (!data) {
       return this;
     }
@@ -151,7 +151,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String} methodName - method
    * @param {Object|Function|Error} fn - mock you data
    */
-  mockService(service: string | any, methodName: string, fn: any) {
+  mockService(service: string | any, methodName: string, fn: any): this {
     if (typeof service === 'string') {
       const splits = service.split('.');
       service = this.serviceClasses;
@@ -171,7 +171,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String} methodName - method
    * @param {Error} [err] - error information
    */
-  mockServiceError(service: string | any, methodName: string, err?: string | Error) {
+  mockServiceError(service: string | any, methodName: string, err?: string | Error): this {
     if (typeof err === 'string') {
       err = new Error(err);
     }
@@ -183,7 +183,7 @@ export default abstract class ApplicationUnittest extends Application {
     return this;
   }
 
-  _mockFn(obj: any, name: string, data: any) {
+  _mockFn(obj: any, name: string, data: any): void {
     const origin = obj[name];
     assert(typeof origin === 'function', `property ${name} in original object must be function`);
 
@@ -234,7 +234,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @function App#mockRequest
    * @param {Request} req - mock request
    */
-  mockRequest(req: MockContextData) {
+  mockRequest(req: MockContextData): IncomingMessage {
     req = { ...req };
     const headers = req.headers ?? {};
     for (const key in req.headers) {
@@ -267,7 +267,7 @@ export default abstract class ApplicationUnittest extends Application {
    * mock cookies
    * @function App#mockCookies
    */
-  mockCookies(cookies: Record<string, string | string[]>) {
+  mockCookies(cookies: Record<string, string | string[]>): this {
     if (!cookies) {
       return this;
     }
@@ -290,7 +290,7 @@ export default abstract class ApplicationUnittest extends Application {
    * mock header
    * @function App#mockHeaders
    */
-  mockHeaders(headers: Record<string, string | string[]>) {
+  mockHeaders(headers: Record<string, string | string[]>): this {
     if (!headers) {
       return this;
     }
@@ -308,7 +308,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @function App#mockCsrf
    * @since 1.11
    */
-  mockCsrf() {
+  mockCsrf(): this {
     mock(this.context, 'assertCSRF', () => {});
     mock(this.context, 'assertCsrf', () => {});
     return this;
@@ -323,7 +323,7 @@ export default abstract class ApplicationUnittest extends Application {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): this {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
 
@@ -335,7 +335,7 @@ export default abstract class ApplicationUnittest extends Application {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): this {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);
     }
@@ -350,7 +350,7 @@ export default abstract class ApplicationUnittest extends Application {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): this {
     this.deprecate('[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib');
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
@@ -363,7 +363,7 @@ export default abstract class ApplicationUnittest extends Application {
     return getMockAgent(this);
   }
 
-  async mockAgentRestore() {
+  async mockAgentRestore(): Promise<void> {
     await restoreMockAgent();
   }
 
@@ -371,7 +371,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @see mm#restore
    * @function App#mockRestore
    */
-  async mockRestore() {
+  async mockRestore(): Promise<void> {
     await this.mockAgentRestore();
     restore();
   }
@@ -380,7 +380,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @see mm
    * @function App#mm
    */
-  get mm() {
+  get mm(): typeof mock {
     return mock;
   }
 
@@ -388,14 +388,14 @@ export default abstract class ApplicationUnittest extends Application {
    * override loadAgent
    * @function App#loadAgent
    */
-  loadAgent() {}
+  loadAgent(): void {}
 
   /**
    * mock serverEnv
    * @function App#mockEnv
    * @param {String} env - serverEnv
    */
-  mockEnv(env: string) {
+  mockEnv(env: string): this {
     mock(this.config, 'env', env);
     mock(this.config, 'serverEnv', env);
     debug('mock env: %o', env);
@@ -417,7 +417,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String|Logger} [logger] - logger instance, default is `app.logger`
    * @function App#mockLog
    */
-  mockLog(logger?: string | Logger) {
+  mockLog(logger?: string | Logger): void {
     logger = logger ?? this.logger;
     if (typeof logger === 'string') {
       logger = this.getLogger(logger);
@@ -437,7 +437,7 @@ export default abstract class ApplicationUnittest extends Application {
     });
   }
 
-  __checkExpectLog(expectOrNot: boolean, str: string | RegExp, logger?: string | Logger) {
+  __checkExpectLog(expectOrNot: boolean, str: string | RegExp, logger?: string | Logger): void {
     logger = logger || this.logger;
     if (typeof logger === 'string') {
       logger = this.getLogger(logger);
@@ -477,7 +477,7 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String|Logger} [logger] - logger instance, default is `ctx.logger`
    * @function App#expectLog
    */
-  expectLog(str: string | RegExp, logger?: string | Logger) {
+  expectLog(str: string | RegExp, logger?: string | Logger): void {
     this.__checkExpectLog(true, str, logger);
   }
 
@@ -487,11 +487,11 @@ export default abstract class ApplicationUnittest extends Application {
    * @param {String|Logger} [logger] - logger instance, default is `ctx.logger`
    * @function App#notExpectLog
    */
-  notExpectLog(str: string | RegExp, logger?: string | Logger) {
+  notExpectLog(str: string | RegExp, logger?: string | Logger): void {
     this.__checkExpectLog(false, str, logger);
   }
 
-  async backgroundTasksFinished() {
+  async backgroundTasksFinished(): Promise<void> {
     const tasks = this._backgroundTasks;
     debug('waiting %d background tasks', tasks.length);
     if (tasks.length === 0) return;

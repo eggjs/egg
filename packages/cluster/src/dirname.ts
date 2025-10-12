@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-export function getSrcDirname() {
+export function getSrcDirname(): string {
   if (typeof __dirname !== 'undefined') {
     return __dirname;
   }

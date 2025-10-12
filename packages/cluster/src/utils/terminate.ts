@@ -11,7 +11,7 @@ interface SubProcess extends ChildProcess {
   process?: ChildProcess;
 }
 
-export async function terminate(subProcess: SubProcess, timeout: number) {
+export async function terminate(subProcess: SubProcess, timeout: number): Promise<void> {
   const pid = subProcess.process?.pid ?? subProcess.pid;
   const childPids = await getChildPids(pid!);
   await Promise.all([killProcess(subProcess, timeout), killChildren(childPids, timeout)]);

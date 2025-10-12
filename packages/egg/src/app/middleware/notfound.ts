@@ -5,8 +5,8 @@ export interface NotFoundMiddlewareOptions {
   pageUrl: string;
 }
 
-export default (options: NotFoundMiddlewareOptions) => {
-  return async function notfound(ctx: Context, next: Next) {
+export default (options: NotFoundMiddlewareOptions): ((ctx: Context, next: Next) => Promise<void>) => {
+  return async function notfound(ctx: Context, next: Next): Promise<void> {
     await next();
 
     if (ctx.status !== 404 || ctx.body) {

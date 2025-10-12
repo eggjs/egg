@@ -11,8 +11,8 @@ export interface MetaMiddlewareOptions {
   logging: boolean;
 }
 
-export default (options: MetaMiddlewareOptions) => {
-  return async function meta(ctx: Context, next: Next) {
+export default (options: MetaMiddlewareOptions): ((ctx: Context, next: Next) => Promise<void>) => {
+  return async function meta(ctx: Context, next: Next): Promise<void> {
     if (options.logging) {
       ctx.coreLogger.info('[meta] request started, host: %s, user-agent: %s', ctx.host, ctx.header['user-agent']);
     }

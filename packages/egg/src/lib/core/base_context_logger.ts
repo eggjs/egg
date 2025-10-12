@@ -19,7 +19,7 @@ export class BaseContextLogger {
     this.#pathName = pathName;
   }
 
-  protected _log(method: 'info' | 'warn' | 'error' | 'debug', args: any[]) {
+  protected _log(method: 'info' | 'warn' | 'error' | 'debug', args: any[]): void {
     // add `[${pathName}]` in log
     if (this.#pathName && typeof args[0] === 'string') {
       args[0] = `[${this.#pathName}] ${args[0]}`;
@@ -34,7 +34,7 @@ export class BaseContextLogger {
    * @param {...any} args - log msg
    * @since 1.2.0
    */
-  debug(...args: any[]) {
+  debug(...args: any[]): void {
     this._log('debug', args);
   }
 
@@ -43,7 +43,7 @@ export class BaseContextLogger {
    * @param {...any} args - log msg
    * @since 1.2.0
    */
-  info(...args: any[]) {
+  info(...args: any[]): void {
     this._log('info', args);
   }
 
@@ -52,7 +52,7 @@ export class BaseContextLogger {
    * @param {...any} args - log msg
    * @since 1.2.0
    */
-  warn(...args: any[]) {
+  warn(...args: any[]): void {
     this._log('warn', args);
   }
 
@@ -61,7 +61,7 @@ export class BaseContextLogger {
    * @param {...any} args - log msg
    * @since 1.2.0
    */
-  error(...args: any[]) {
+  error(...args: any[]): void {
     this._log('error', args);
   }
 }

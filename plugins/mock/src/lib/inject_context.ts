@@ -12,7 +12,7 @@ const MOCHA_SUITE_APP = Symbol.for('mocha#suite#app');
  *
  * @param {Function} mocha - the module of mocha
  */
-export function injectContext(mocha: any) {
+export function injectContext(mocha: any): void {
   if (mocha._injectContextLoaded) {
     debug('mocha already injected context, skip it');
     return;

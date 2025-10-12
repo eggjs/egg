@@ -91,7 +91,7 @@ export interface ParsedClusterOptions extends ClusterOptions {
   startMode: ClusterStartMode;
 }
 
-export async function parseOptions(options?: ClusterOptions) {
+export async function parseOptions(options?: ClusterOptions): Promise<ParsedClusterOptions> {
   options = {
     baseDir: process.cwd(),
     port: options?.https ? 8443 : undefined,

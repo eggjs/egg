@@ -15,7 +15,7 @@ declare namespace globalThis {
 
 globalThis.__eggMockAppInstance = null;
 
-export function setupApp() {
+export function setupApp(): ApplicationUnittest {
   let app = globalThis.__eggMockAppInstance!;
   if (app) {
     debug('return exists app');
@@ -64,11 +64,11 @@ export function setupApp() {
 
 let getAppCallback: (suite: unknown, test?: unknown) => any;
 
-export function setGetAppCallback(cb: (suite: unknown, test?: unknown) => any) {
+export function setGetAppCallback(cb: (suite: unknown, test?: unknown) => any): void {
   getAppCallback = cb;
 }
 
-export async function getApp(suite?: unknown, test?: unknown) {
+export async function getApp(suite?: unknown, test?: unknown): Promise<ApplicationUnittest> {
   if (getAppCallback) {
     return getAppCallback(suite, test);
   }
@@ -79,6 +79,6 @@ export async function getApp(suite?: unknown, test?: unknown) {
   return app;
 }
 
-export function getBootstrapApp() {
+export function getBootstrapApp(): ApplicationUnittest {
   return globalThis.__eggMockAppInstance!;
 }

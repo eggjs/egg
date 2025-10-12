@@ -1,9 +1,11 @@
 import stream from 'node:stream';
 
-import { Application as Koa } from '../../src/application.ts';
+import { Application as Koa, type Context } from '../../src/application.ts';
+import type { Request } from '../../src/request.ts';
+import type { Response } from '../../src/response.ts';
 
 // oxlint-disable-next-line typescript/no-explicit-any
-export default function context(req?: any, res?: any, app?: Koa) {
+export default function context(req?: any, res?: any, app?: Koa): Context {
   const socket = new stream.Duplex();
   req = { headers: {}, socket, ...stream.Readable.prototype, ...req };
   res = { _headers: {}, socket, ...stream.Writable.prototype, ...res };
@@ -22,10 +24,10 @@ export default function context(req?: any, res?: any, app?: Koa) {
   return app.createContext(req, res);
 }
 
-export function request(...args: unknown[]) {
+export function request(...args: unknown[]): Request {
   return context(...args).request;
 }
 
-export function response(...args: unknown[]) {
+export function response(...args: unknown[]): Response {
   return context(...args).response;
 }

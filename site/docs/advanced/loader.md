@@ -305,7 +305,6 @@ Egg implements [AppWorkerLoader] and [AgentWorkerLoader] based on the Loader, in
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   constructor(opt) {
@@ -326,11 +325,11 @@ class YadanAppWorkerLoader extends egg.AppWorkerLoader {
 }
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
+  protected override customEggPaths() {
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
   // override Egg's Loader, use this Loader when launching
-  get [EGG_LOADER]() {
+  protected override customEggLoader() {
     return YadanAppWorkerLoader;
   }
 }

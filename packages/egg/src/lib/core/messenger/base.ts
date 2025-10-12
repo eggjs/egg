@@ -9,9 +9,11 @@ export class BaseMessenger extends EventEmitter {
   constructor(egg: EggApplicationCore) {
     super({ captureRejections: true });
     this.egg = egg;
+
+    this[captureRejectionSymbol] = this.onRejection.bind(this);
   }
 
-  [captureRejectionSymbol](err: Error, event: string | symbol, ...args: any[]) {
+  private onRejection(err: Error, event: string | symbol, ...args: any[]): void {
     this.egg.coreLogger.error(new MessageUnhandledRejectionError(err, event, args));
   }
 

@@ -7,7 +7,7 @@ const debug = debuglog('egg/mock/lib/agent_handler');
 
 let agent: MockAgent;
 
-export async function setupAgent() {
+export async function setupAgent(): Promise<MockAgent> {
   debug(
     'setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s',
     process.env.ENABLE_MOCHA_PARALLEL,
@@ -25,7 +25,7 @@ export async function setupAgent() {
   return agent;
 }
 
-export async function closeAgent() {
+export async function closeAgent(): Promise<void> {
   debug('setupAgent call, agent: %s', !!agent);
   if (agent) {
     await agent.close();

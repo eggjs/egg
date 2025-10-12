@@ -18,7 +18,7 @@ const debug = debuglog('egg/mock/lib/parallel/agent');
 export class MockAgent extends Base {
   declare options: MockApplicationOptions;
   baseDir: string;
-  [APP_INIT] = false;
+  '__APP_INIT__': boolean = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
   _instance: EggAgent;
@@ -29,7 +29,7 @@ export class MockAgent extends Base {
     this.baseDir = this.options.baseDir;
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     if (this.options.beforeInit) {
       await this.options.beforeInit(this);
       delete this.options.beforeInit;
@@ -74,7 +74,7 @@ export class MockAgent extends Base {
     debug('agent ready');
   }
 
-  #bindEvents() {
+  #bindEvents(): void {
     debug('bind cache events to agent');
     for (const args of this.#initOnListeners) {
       debug('on(%s), use cache and pass to agent', args);
@@ -88,7 +88,7 @@ export class MockAgent extends Base {
     }
   }
 
-  on(...args: any[]) {
+  on(...args: any[]): this {
     if (this[APP_INIT]) {
       debug('on(%s), pass to agent', args);
       this._instance.on(args[0], args[1]);
@@ -100,7 +100,7 @@ export class MockAgent extends Base {
     return this;
   }
 
-  once(...args: any[]) {
+  once(...args: any[]): this {
     if (this[APP_INIT]) {
       debug('once(%s), pass to agent', args);
       this._instance.once(args[0], args[1]);
@@ -115,7 +115,7 @@ export class MockAgent extends Base {
   /**
    * close agent
    */
-  async _close() {
+  async _close(): Promise<void> {
     if (this._instance) {
       await this._instance.close();
     } else {
@@ -125,6 +125,6 @@ export class MockAgent extends Base {
   }
 }
 
-export function createAgent(options: MockOptions) {
+export function createAgent(options: MockOptions): MockAgent {
   return new MockAgent(formatOptions(options));
 }

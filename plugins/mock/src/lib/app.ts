@@ -303,8 +303,8 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
       this[MESSENGER] = m;
     }
 
-    get [Symbol.for('egg#eggPath')]() {
-      return path.join(getSourceDirname(), 'lib/tmp');
+    customEggPaths() {
+      return [path.join(getSourceDirname(), 'lib/tmp')];
     }
   };
 }

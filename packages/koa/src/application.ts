@@ -16,6 +16,9 @@ import { Request } from './request.ts';
 import { Response } from './response.ts';
 import type { CustomError, AnyProto } from './types.ts';
 
+// Re-export for external use
+export { Context, Request, Response };
+
 const debug = debuglog('egg/koa/application');
 
 // oxlint-disable-next-line typescript/no-explicit-any
@@ -93,6 +96,8 @@ export class Application extends Emitter {
     this.request = this.RequestClass.prototype;
     this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
     this.response = this.ResponseClass.prototype;
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   get keys() {
@@ -148,14 +153,10 @@ export class Application extends Emitter {
     return this.toJSON();
   }
 
-  [util.inspect.custom]() {
-    return this.inspect();
-  }
-
   /**
    * Use the given middleware `fn`.
    */
-  use<T extends Context = Context>(fn: MiddlewareFunc<T>) {
+  use<T extends Context = Context>(fn: MiddlewareFunc<T>): this {
     if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
     const name = fn._name || fn.name || '-';
     if (isGeneratorFunction(fn)) {
@@ -174,7 +175,7 @@ export class Application extends Emitter {
    * Return a request handler callback
    * for node's native http server.
    */
-  callback() {
+  callback(): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
     const fn = compose(this.middleware);
 
     if (!this.listenerCount('error')) {
@@ -194,7 +195,7 @@ export class Application extends Emitter {
   /**
    * return current context from async local storage
    */
-  get currentContext() {
+  get currentContext(): Context | undefined {
     return this.ctxStorage.getStore();
   }
 
@@ -202,7 +203,7 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>) {
+  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>): Promise<void> {
     this.emit('request', ctx);
     const res = ctx.res;
     res.statusCode = 404;
@@ -226,7 +227,7 @@ export class Application extends Emitter {
    * Initialize a new context.
    * @private
    */
-  createContext(req: IncomingMessage, res: ServerResponse) {
+  createContext(req: IncomingMessage, res: ServerResponse): Context {
     const context = new this.ContextClass(this, req, res);
     return context;
   }
@@ -235,7 +236,7 @@ export class Application extends Emitter {
    * Default error handler.
    * @private
    */
-  protected onerror(err: CustomError) {
+  protected onerror(err: CustomError): void {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
@@ -253,7 +254,7 @@ export class Application extends Emitter {
   /**
    * Response helper.
    */
-  protected _respond(ctx: Context) {
+  protected _respond(ctx: Context): void {
     // allow bypassing koa
     if (ctx.respond === false) return;
 
@@ -267,7 +268,8 @@ export class Application extends Emitter {
     if (statuses.empty[code]) {
       // strip headers
       ctx.body = null;
-      return res.end();
+      res.end();
+      return;
     }
 
     if (ctx.method === 'HEAD') {
@@ -275,7 +277,8 @@ export class Application extends Emitter {
         const { length } = ctx.response;
         if (Number.isInteger(length)) ctx.length = length;
       }
-      return res.end();
+      res.end();
+      return;
     }
 
     // status body
@@ -283,7 +286,8 @@ export class Application extends Emitter {
       if (ctx.response._explicitNullBody) {
         ctx.response.remove('Content-Type');
         ctx.response.remove('Transfer-Encoding');
-        return res.end();
+        res.end();
+        return;
       }
       if (ctx.req.httpVersionMajor >= 2) {
         body = String(code);
@@ -294,13 +298,23 @@ export class Application extends Emitter {
         ctx.type = 'text';
         ctx.length = Buffer.byteLength(body);
       }
-      return res.end(body);
+      res.end(body);
+      return;
     }
 
     // responses
-    if (Buffer.isBuffer(body)) return res.end(body);
-    if (typeof body === 'string') return res.end(body);
-    if (body instanceof Stream) return body.pipe(res);
+    if (Buffer.isBuffer(body)) {
+      res.end(body);
+      return;
+    }
+    if (typeof body === 'string') {
+      res.end(body);
+      return;
+    }
+    if (body instanceof Stream) {
+      body.pipe(res);
+      return;
+    }
 
     // body: json
     body = JSON.stringify(body);

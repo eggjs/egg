@@ -14,7 +14,7 @@ import { type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartM
  * @function Egg#startCluster
  * @param {Object} options {@link Master}
  */
-export async function startCluster(options: ClusterOptions) {
+export async function startCluster(options: ClusterOptions): Promise<void> {
   await new Master(options).ready();
 }
 

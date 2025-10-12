@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { scheduler } from 'node:timers/promises';
 
-export function getSourceDirname() {
+export function getSourceDirname(): string {
   if (typeof __dirname !== 'undefined') {
     return path.dirname(__dirname);
   }
@@ -13,19 +13,19 @@ export function getSourceDirname() {
   return path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 }
 
-export async function sleep(delay: number) {
+export async function sleep(delay: number): Promise<void> {
   await scheduler.wait(delay);
 }
 
-export async function rimraf(filepath: string) {
+export async function rimraf(filepath: string): Promise<void> {
   await rm(filepath, { force: true, recursive: true });
 }
 
-export function rimrafSync(filepath: string) {
+export function rimrafSync(filepath: string): void {
   rmSync(filepath, { force: true, recursive: true });
 }
 
-export function getProperty(target: any, prop: PropertyKey) {
+export function getProperty(target: any, prop: PropertyKey): any {
   const member = target[prop];
   if (typeof member === 'function') {
     return member.bind(target);
@@ -33,7 +33,7 @@ export function getProperty(target: any, prop: PropertyKey) {
   return member;
 }
 
-export function getEggOptions() {
+export function getEggOptions(): { baseDir: string; framework?: string } {
   const options = {
     baseDir: process.env.EGG_BASE_DIR ?? process.cwd(),
     framework: process.env.EGG_FRAMEWORK,

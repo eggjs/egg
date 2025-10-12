@@ -25,6 +25,6 @@ describe('res.message=', () => {
     res.status = 200;
     res.message = 'ok';
     assert.equal(res.res.statusMessage, 'ok');
-    assert.equal(res.inspect()?.message, 'ok');
+    assert.equal((res.inspect() as any)?.message, 'ok');
   });
 });

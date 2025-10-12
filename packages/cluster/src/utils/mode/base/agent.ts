@@ -21,35 +21,35 @@ export abstract class BaseAgentWorker<T = ChildProcess | Worker> {
 
   abstract get workerId(): number;
 
-  get id() {
+  get id(): number {
     return this.#instanceId;
   }
 
-  set id(id) {
+  set id(id: number) {
     this.#instanceId = id;
   }
 
-  get status() {
+  get status(): string {
     return this.#instanceStatus;
   }
 
-  set status(status) {
+  set status(status: string) {
     this.#instanceStatus = status;
   }
 
   abstract send(message: MessageBody): void;
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static send(_message: MessageBody) {
+  static send(_message: MessageBody): void {
     throw new Error('BaseAgentWorker should implement send.');
   }
 
-  static kill() {
+  static kill(): void {
     throw new Error('BaseAgentWorker should implement kill.');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static gracefulExit(_options: any) {
+  static gracefulExit(_options: any): void {
     throw new Error('BaseAgentWorker should implement gracefulExit.');
   }
 }
@@ -84,7 +84,7 @@ export abstract class BaseAgentUtils extends EventEmitter {
     // this.instance = null;
   }
 
-  getAgentWorkerFile() {
+  getAgentWorkerFile(): string {
     let agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.js');
     if (!existsSync(agentWorkerFile)) {
       agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.ts');
@@ -92,11 +92,11 @@ export abstract class BaseAgentUtils extends EventEmitter {
     return agentWorkerFile;
   }
 
-  fork() {
+  fork(): void {
     throw new Error('BaseAgent should implement fork.');
   }
 
-  clean() {
+  clean(): void {
     throw new Error('BaseAgent should implement clean.');
   }
 

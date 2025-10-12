@@ -8,12 +8,12 @@ export class AgentWorkerLoader extends EggApplicationLoader {
   /**
    * loadPlugin first, then loadConfig
    */
-  async loadConfig() {
+  async loadConfig(): Promise<void> {
     await this.loadPlugin();
     await super.loadConfig();
   }
 
-  async load() {
+  async load(): Promise<void> {
     await this.loadAgentExtend();
     await this.loadContextExtend();
     await this.loadCustomAgent();

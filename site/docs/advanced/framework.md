@@ -107,12 +107,11 @@ module.exports = require('./lib/framework.js');
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // return the path of framework
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
@@ -139,16 +138,17 @@ As a loadUnit of framework, yadan is going to load specific directories and file
 
 ### Principle of Framework Extension
 
-The path of framework is set as a variable named as `Symbol.for('egg#eggPath')` to expose itself to Loader. Why? It seems that the simplest way is to pass a param to the constructor. The reason is to expose those paths of each level of inherited frameworks and reserve their sequences. Since Egg is a framework capable of unlimited inheritance, each layer has to designate their own eggPath so that all the eggPaths are accessible through the prototype chain.
+The path of framework is override `customEggPaths()` method to expose itself to Loader. Why? It seems that the simplest way is to pass a param to the constructor. The reason is to expose those paths of each level of inherited frameworks and reserve their sequences. Since Egg is a framework capable of unlimited inheritance, each layer has to designate their own eggPath so that all the eggPaths are accessible through the prototype chain.
 
 Given a triple-layer framework: department level > enterprise level > Egg
 
 ```js
 // enterprise
 const Application = require('egg').Application;
+
 class Enterprise extends Application {
-  get [EGG_PATH]() {
-    return '/path/to/enterprise';
+  protected override customEggPaths() {
+    return ['/path/to/enterprise', ...super.customEggPaths()];
   }
 }
 // Customize Application
@@ -156,10 +156,11 @@ exports.Application = Enterprise;
 
 // department
 const Application = require('enterprise').Application;
+
 // extend enterprise's Application
 class department extends Application {
-  get [EGG_PATH]() {
-    return '/path/to/department';
+  protected override customEggPaths() {
+    return ['/path/to/department', ...super.customEggPaths()];
   }
 }
 
@@ -179,18 +180,17 @@ Egg's multiprocess model is composed of Application and Agent. Therefore Agent, 
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // return the path of framework
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
 class Agent extends egg.Agent {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
+  protected override customEggPaths() {
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
@@ -207,14 +207,12 @@ module.exports = Object.assign(egg, {
 
 Loader, the core of the launch process, is capable of loading data code, adjusting loading orders or even strengthen regulation of code.
 
-As the same as Egg-Path, Loader exposes itself at `Symbol.for('egg#loader')` to ensure it's accessibility on prototype chain.
+As the same as Egg-Path, Loader exposes itself at `customEggLoader()` to ensure it's accessibility on prototype chain.
 
 ```js
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
@@ -224,12 +222,12 @@ class YadanAppWorkerLoader extends egg.AppWorkerLoader {
 }
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // return the path of framework
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
   // supplant default Loader
-  get [EGG_LOADER]() {
+  protected override customEggLoader() {
     return YadanAppWorkerLoader;
   }
 }

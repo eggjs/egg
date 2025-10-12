@@ -6,7 +6,7 @@ export default class Boot implements ILifecycleBoot {
     this.#app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     // make sure clusterAppMock position before securities
     const index = this.#app.config.coreMiddleware.indexOf('securities');
     if (index >= 0) {

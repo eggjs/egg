@@ -3,7 +3,7 @@ import { setCustomLogger } from 'onelogger';
 
 import type { EggApplicationCore } from '../egg.ts';
 
-export function createLoggers(app: EggApplicationCore) {
+export function createLoggers(app: EggApplicationCore): EggLoggers {
   const loggerOptions = {
     ...app.config.logger,
     type: app.type,

@@ -16,7 +16,7 @@ const __dirname = import.meta.dirname;
 const fixtures = path.join(__dirname, 'fixtures');
 const eggPath = path.join(__dirname, '..');
 
-export async function rimraf(target: string) {
+export async function rimraf(target: string): Promise<void> {
   await rm(target, { force: true, recursive: true });
 }
 
@@ -26,16 +26,16 @@ export interface SingleModeApplication extends MockApplication {
   agent: SingleModeAgent & MockApplication['agent'];
 }
 
-export const restore = () => mm.restore();
+export const restore: () => void = () => mm.restore();
 
-export function app(name: string | MockOptions, options?: MockOptions) {
+export function app(name: string | MockOptions, options?: MockOptions): MockApplication {
   options = formatOptions(name, options);
   const app = mm.app(options);
   return app;
   // return app as unknown as MockApplication;
 }
 
-export const createApp = app;
+export const createApp: typeof app = app;
 
 /**
  * start app with cluster mode
@@ -77,7 +77,7 @@ process.once('exit', () => {
   localServer = undefined;
 });
 
-export async function startLocalServer() {
+export async function startLocalServer(): Promise<string> {
   if (localServer) {
     const address = localServer.address() as AddressInfo;
     return `http://127.0.0.1:${address.port}`;
@@ -124,11 +124,11 @@ export async function startLocalServer() {
   return `http://127.0.0.1:${address.port}`;
 }
 
-export function getFilepath(name: string) {
+export function getFilepath(name: string): string {
   return path.join(fixtures, name);
 }
 
-export function getJSON(name: string) {
+export function getJSON(name: string): any {
   return JSON.parse(readFileSync(getFilepath(name), 'utf-8'));
 }
 

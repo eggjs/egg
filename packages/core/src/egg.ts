@@ -1,4 +1,3 @@
-/* eslint-disable prefer-spread */
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
 
@@ -201,8 +200,16 @@ export class EggCore extends KoaApplication {
      * @member {EggLoader} EggCore#loader
      * @since 1.0.0
      */
-    const Loader = this[EGG_LOADER];
-    assert(Loader, "Symbol.for('egg#loader') is required");
+
+    let Loader: typeof EggLoader;
+    if (EGG_LOADER in this) {
+      this.deprecate(
+        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead'
+      );
+      Loader = this[EGG_LOADER] as typeof EggLoader;
+    } else {
+      Loader = this.customEggLoader();
+    }
     this.loader = new Loader({
       baseDir: options.baseDir,
       app: this,
@@ -538,7 +545,45 @@ export class EggCore extends KoaApplication {
     return this;
   }
 
-  get [EGG_LOADER]() {
+  /**
+   * Override this method to customize the loader
+   *
+   * ```ts
+   * // src/ExampleApplication.ts
+   * import { Application } from 'egg';
+   *
+   * class ExampleApplication extends Application {
+   *   protected override customEggLoader() {
+   *     return ExampleLoader;
+   *   }
+   * }
+   * ```
+   *
+   * @since 4.0.0
+   * @returns {typeof EggLoader}
+   */
+  protected customEggLoader(): typeof EggLoader {
     return EggLoader;
+  }
+
+  /**
+   * Override this method to customize the egg paths
+   *
+   * ```ts
+   * // src/ExampleApplication.ts
+   * import { Application } from 'egg';
+   *
+   * class ExampleApplication extends Application {
+   *   protected override customEggPaths() {
+   *     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
+   *   }
+   * }
+   * ```
+   *
+   * @since 4.0.0
+   * @returns {string[]}
+   */
+  protected customEggPaths(): string[] {
+    return [];
   }
 }

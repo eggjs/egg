@@ -7,7 +7,7 @@ import { restore as clusterRestore } from './cluster.ts';
 
 const debug = debuglog('egg/mock/lib/restore');
 
-export async function restore() {
+export async function restore(): Promise<void> {
   // keep mm.restore execute in the current event loop
   mmRestore();
   await clusterRestore();

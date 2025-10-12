@@ -127,12 +127,12 @@ export class Messenger extends BaseMessenger implements IMessenger {
     return this;
   }
 
-  #sendMessage(message: any) {
+  #sendMessage(message: any): void {
     debug('[%s:%s] send message %j, mode: %s', this.egg.type, this.pid, message, this.egg.options.mode);
     sendmessage(process, message);
   }
 
-  onMessage(message: any) {
+  onMessage(message: any): void {
     if (typeof message?.action === 'string') {
       debug(
         '[%s:%s] got message %s with %j, receiverWorkerId: %s',
@@ -153,7 +153,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
     }
   }
 
-  close() {
+  close(): void {
     process.removeListener('message', this.onMessage);
     this.removeAllListeners();
   }

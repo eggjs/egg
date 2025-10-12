@@ -2,7 +2,7 @@ import { debuglog } from 'node:util';
 
 const debug = debuglog('egg/mock/lib/mock_custom_loader');
 
-export function setCustomLoader(app: any) {
+export function setCustomLoader(app: any): void {
   const customLoader = app.config.customLoader;
   if (!customLoader) return;
 

@@ -14,8 +14,8 @@ export interface SiteFileMiddlewareOptions {
 
 const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
 
-export default (options: SiteFileMiddlewareOptions) => {
-  return async function siteFile(ctx: Context, next: Next) {
+export default (options: SiteFileMiddlewareOptions): ((ctx: Context, next: Next) => Promise<void>) => {
+  return async function siteFile(ctx: Context, next: Next): Promise<void> {
     if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
       return next();
     }
