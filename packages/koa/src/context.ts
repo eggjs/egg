@@ -8,7 +8,7 @@ import Cookies from 'cookies';
 import type { Accepts } from 'accepts';
 
 import type { Application } from './application.ts';
-import type { Request } from './request.ts';
+import type { Request, RequestSocket } from './request.ts';
 import type { Response } from './response.ts';
 import type { CustomError, AnyProto } from './types.ts';
 
@@ -291,7 +291,7 @@ export class Context {
     return this.request.idempotent;
   }
 
-  get socket(): import('./request.ts').RequestSocket {
+  get socket(): RequestSocket {
     return this.request.socket;
   }
 
