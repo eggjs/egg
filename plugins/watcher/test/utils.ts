@@ -5,6 +5,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const fixtures = path.join(__dirname, 'fixtures');
 
-export function getFilePath(filename: string) {
+export function getFilePath(filename: string): string {
   return path.join(fixtures, filename);
 }

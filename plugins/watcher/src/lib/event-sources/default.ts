@@ -8,11 +8,11 @@ export default class DefaultEventSource extends BaseEventSource {
     this.ready(true);
   }
 
-  watch() {
+  watch(): void {
     this.emit('info', '[@eggjs/watcher] using defaultEventSource watcher.watch() does NOTHING');
   }
 
-  unwatch() {
+  unwatch(): void {
     this.emit('info', '[@eggjs/watcher] using defaultEventSource watcher.unwatch() does NOTHING');
   }
 }

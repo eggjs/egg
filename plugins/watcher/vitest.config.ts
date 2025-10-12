@@ -1,7 +1,9 @@
-import { defineProject } from 'vitest/config';
+import { defineProject, type UserProjectConfigExport } from 'vitest/config';
 
-export default defineProject({
+const config: UserProjectConfigExport = defineProject({
   test: {
     testTimeout: 20000,
   },
 });
+
+export default config;

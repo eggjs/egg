@@ -67,7 +67,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    * @param {String} name - the name of view engine
    * @param {Object} viewEngine - the class of view engine
    */
-  use(name: string, viewEngine: ViewEngineClass) {
+  use(name: string, viewEngine: ViewEngineClass): void {
     assert(name, 'name is required');
     assert(!this.has(name), `${name} has been registered`);
 

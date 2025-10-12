@@ -627,7 +627,7 @@ export class Request {
     return {
       method: this.method,
       url: this.url,
-      header: this.header satisfies IncomingMessage['headers'] as IncomingMessage['headers'],
+      header: this.header,
     };
   }
 }

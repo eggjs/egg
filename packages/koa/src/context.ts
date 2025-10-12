@@ -56,9 +56,9 @@ export class Context {
 
   toJSON(): object {
     return {
-      request: this.request.toJSON() satisfies object as object,
-      response: this.response.toJSON() satisfies object as object,
-      app: this.app.toJSON() satisfies object as object,
+      request: this.request.toJSON(),
+      response: this.response.toJSON(),
+      app: this.app.toJSON(),
       originalUrl: this.originalUrl,
       req: '<original node req>',
       res: '<original node res>',

@@ -1,14 +1,16 @@
 import { Application } from 'egg';
 
-export default (app: Application) => {
+const setupApp = (app: Application): void => {
   app.view.use('newEngine', NewEngine);
 };
 
+export default setupApp;
+
 class NewEngine {
-  render() {
+  render(): Promise<string> {
     return Promise.resolve('');
   }
-  renderString() {
+  renderString(): Promise<string> {
     return Promise.resolve('666');
   }
 }

@@ -34,7 +34,7 @@ export class Watcher extends Base {
     this.#config = config;
   }
 
-  protected async _init() {
+  protected async _init(): Promise<void> {
     const watcherType = this.#config.watcher?.type;
     debug('init with watcherType %o', watcherType);
     if (!watcherType) {
@@ -66,7 +66,7 @@ export class Watcher extends Base {
     await this.#eventSource.ready();
   }
 
-  watch(path: string | string[], listener: WatchListener) {
+  watch(path: string | string[], listener: WatchListener): void {
     debug('watch %o', path);
     this.emit('info', '[@eggjs/watcher] Start watching: %j', path);
     if (!path) return;

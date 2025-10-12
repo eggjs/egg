@@ -495,12 +495,9 @@ export class Response {
    */
   toJSON(): object {
     return {
-      status: this.status satisfies number as number,
-      message: this.message satisfies string as string,
-      header: this.header satisfies Record<string, string | string[] | number | undefined> as Record<
-        string,
-        string | string[] | number | undefined
-      >,
+      status: this.status,
+      message: this.message,
+      header: this.header,
     };
   }
 
