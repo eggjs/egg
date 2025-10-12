@@ -23,7 +23,7 @@ import { Singleton, type SingletonCreateMethod, type SingletonOptions } from './
 
 const debug = debuglog('egg/core/egg');
 
-export const EGG_LOADER = Symbol.for('egg#loader');
+export const EGG_LOADER: symbol = Symbol.for('egg#loader');
 
 export interface EggCoreOptions {
   baseDir: string;

@@ -14,7 +14,7 @@ export { Application } from './fixtures/egg-esm/index.ts';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function getFilepath(name: string) {
+export function getFilepath(name: string): string {
   const filepath = path.join(__dirname, 'fixtures', name);
   if (process.platform === 'win32') {
     return filepath.toLowerCase();
@@ -32,6 +32,8 @@ export function createApp(name: string, options?: EggCoreInitOptions & { Applica
   return new CustomApplication(options) as Application;
 }
 
-export const symbol = {
+export const symbol: {
+  view: symbol;
+} = {
   view: Symbol('view'),
 };
