@@ -30,13 +30,15 @@ export function ValidateFactory(
   };
 }
 
-export const Validate = ValidateFactory((ctx, data, schema, customError) => {
-  const app = ctx.app;
-  const message = customError ? customError(ctx, app.ajv.errors!) : 'Validation Failed';
-  ctx.throw(422, message, {
-    code: 'invalid_param',
-    errorData: data,
-    currentSchema: JSON.stringify(schema),
-    errors: app.ajv.errors,
-  });
-});
+export const Validate: (rules: ValidateRule[]) => MethodDecorator = ValidateFactory(
+  (ctx, data, schema, customError) => {
+    const app = ctx.app;
+    const message = customError ? customError(ctx, app.ajv.errors!) : 'Validation Failed';
+    ctx.throw(422, message, {
+      code: 'invalid_param',
+      errorData: data,
+      currentSchema: JSON.stringify(schema),
+      errors: app.ajv.errors,
+    });
+  }
+);

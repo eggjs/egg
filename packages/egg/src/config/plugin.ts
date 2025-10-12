@@ -1,6 +1,6 @@
-import type { IEggPluginItem } from '../index.ts';
+import type { EggPluginItem } from '../index.ts';
 
-const plugins: Record<string, IEggPluginItem> = {
+const plugins: Record<string, EggPluginItem> = {
   /**
    * app global Error Handling
    * @member {Object} Plugin#onerror

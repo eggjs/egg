@@ -1,7 +1,10 @@
 import z from 'zod';
 import { Context } from 'egg';
 
-const CSRFSupportRequestItem = z.object({
+const CSRFSupportRequestItem: z.ZodObject<{
+  path: z.ZodType<RegExp>;
+  methods: z.ZodArray<z.ZodString>;
+}> = z.object({
   path: z.instanceof(RegExp),
   methods: z.array(z.string()),
 });
@@ -10,11 +13,29 @@ export type CSRFSupportRequestItem = z.infer<typeof CSRFSupportRequestItem>;
 export const LookupAddress = z.object({
   address: z.string(),
   family: z.number(),
-});
+}) satisfies z.ZodObject<{
+  address: z.ZodString;
+  family: z.ZodNumber;
+}> as z.ZodObject<{
+  address: z.ZodString;
+  family: z.ZodNumber;
+}>;
 export type LookupAddress = z.infer<typeof LookupAddress>;
 
-const LookupAddressAndStringArray = z.union([z.string(), LookupAddress]).array();
-const SSRFCheckAddressFunction = z
+const LookupAddressAndStringArray: z.ZodArray<z.ZodUnion<[z.ZodString, typeof LookupAddress]>> = z
+  .union([z.string(), LookupAddress])
+  .array();
+const SSRFCheckAddressFunction: z.ZodFunction<
+  z.ZodTuple<
+    [
+      z.ZodUnion<[z.ZodString, typeof LookupAddress, typeof LookupAddressAndStringArray]>,
+      z.ZodUnion<[z.ZodNumber, z.ZodString]>,
+      z.ZodString,
+    ],
+    z.ZodUnknown
+  >,
+  z.ZodBoolean
+> = z
   .function()
   .args(
     z.union([z.string(), LookupAddress, LookupAddressAndStringArray]),
@@ -28,32 +49,33 @@ const SSRFCheckAddressFunction = z
  */
 export type SSRFCheckAddressFunction = z.infer<typeof SSRFCheckAddressFunction>;
 
-export const SecurityMiddlewareName = z.enum([
-  'csrf',
-  'hsts',
-  'methodnoallow',
-  'noopen',
-  'nosniff',
-  'csp',
-  'xssProtection',
-  'xframe',
-  'dta',
-]);
+export const SecurityMiddlewareName: z.ZodEnum<
+  ['csrf', 'hsts', 'methodnoallow', 'noopen', 'nosniff', 'csp', 'xssProtection', 'xframe', 'dta']
+> = z.enum(['csrf', 'hsts', 'methodnoallow', 'noopen', 'nosniff', 'csp', 'xssProtection', 'xframe', 'dta']);
 export type SecurityMiddlewareName = z.infer<typeof SecurityMiddlewareName>;
 
 /**
  * (ctx) => boolean
  */
-const IgnoreOrMatchHandler = z.function().args(z.instanceof(Context)).returns(z.boolean());
+const IgnoreOrMatchHandler: z.ZodFunction<z.ZodTuple<[z.ZodType<Context>], z.ZodUnknown>, z.ZodBoolean> = z
+  .function()
+  .args(z.instanceof(Context))
+  .returns(z.boolean());
 export type IgnoreOrMatchHandler = z.infer<typeof IgnoreOrMatchHandler>;
 
-const IgnoreOrMatch = z.union([z.string(), z.instanceof(RegExp), IgnoreOrMatchHandler]);
+const IgnoreOrMatch: z.ZodUnion<[z.ZodString, z.ZodType<RegExp>, typeof IgnoreOrMatchHandler]> = z.union([
+  z.string(),
+  z.instanceof(RegExp),
+  IgnoreOrMatchHandler,
+]);
 export type IgnoreOrMatch = z.infer<typeof IgnoreOrMatch>;
 
-const IgnoreOrMatchOption = z.union([IgnoreOrMatch, IgnoreOrMatch.array()]).optional();
+const IgnoreOrMatchOption: z.ZodOptional<z.ZodUnion<[typeof IgnoreOrMatch, z.ZodArray<typeof IgnoreOrMatch>]>> = z
+  .union([IgnoreOrMatch, IgnoreOrMatch.array()])
+  .optional();
 export type IgnoreOrMatchOption = z.infer<typeof IgnoreOrMatchOption>;
 
-export const SecurityConfig = z.object({
+export const SecurityConfig: z.ZodObject<any> = z.object({
   /**
    * domain white list
    *
@@ -364,7 +386,10 @@ export const SecurityConfig = z.object({
 });
 export type SecurityConfig = z.infer<typeof SecurityConfig>;
 
-const SecurityHelperOnTagAttrHandler = z
+const SecurityHelperOnTagAttrHandler: z.ZodFunction<
+  z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodBoolean], z.ZodUnknown>,
+  z.ZodUnion<[z.ZodString, z.ZodVoid]>
+> = z
   .function()
   .args(z.string(), z.string(), z.string(), z.boolean())
   .returns(z.union([z.string(), z.void()]));
@@ -374,7 +399,7 @@ const SecurityHelperOnTagAttrHandler = z
  */
 export type SecurityHelperOnTagAttrHandler = z.infer<typeof SecurityHelperOnTagAttrHandler>;
 
-export const SecurityHelperConfig = z.object({
+export const SecurityHelperConfig: z.ZodObject<any> = z.object({
   shtml: z
     .object({
       /**
@@ -395,7 +420,14 @@ export const SecurityHelperConfig = z.object({
 });
 export type SecurityHelperConfig = z.infer<typeof SecurityHelperConfig>;
 
-export default {
-  security: SecurityConfig.parse({}),
-  helper: SecurityHelperConfig.parse({}),
-};
+interface PluginConfig {
+  security: SecurityConfig;
+  helper: SecurityHelperConfig;
+}
+
+const config = {
+  security: SecurityConfig.parse({}) satisfies SecurityConfig as SecurityConfig,
+  helper: SecurityHelperConfig.parse({}) satisfies SecurityHelperConfig as SecurityHelperConfig,
+} satisfies PluginConfig as PluginConfig;
+
+export default config;

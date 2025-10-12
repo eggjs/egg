@@ -25,7 +25,12 @@ export default function shtml(this: BaseContextClass, val: string): string {
   const app = this.app;
   // filter href and src attribute if not in domain white list
   if (!shtmlConfig[BUILD_IN_ON_TAG_ATTR]) {
-    shtmlConfig[BUILD_IN_ON_TAG_ATTR] = (_tag, name, value, isWhiteAttr) => {
+    shtmlConfig[BUILD_IN_ON_TAG_ATTR] = (
+      _tag: string,
+      name: string,
+      value: string,
+      isWhiteAttr: boolean
+    ): string | void => {
       if (isWhiteAttr && (name === 'href' || name === 'src')) {
         if (!value) {
           return;
@@ -62,7 +67,7 @@ export default function shtml(this: BaseContextClass, val: string): string {
     // avoid overriding user configuration 'onTagAttr'
     if (shtmlConfig.onTagAttr) {
       const customOnTagAttrHandler = shtmlConfig.onTagAttr;
-      shtmlConfig.onTagAttr = function (tag, name, value, isWhiteAttr) {
+      shtmlConfig.onTagAttr = function (tag: string, name: string, value: string, isWhiteAttr: boolean): string | void {
         const result = customOnTagAttrHandler.apply(this, [tag, name, value, isWhiteAttr]);
         if (result !== undefined) {
           return result;

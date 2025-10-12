@@ -28,7 +28,7 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
     options.csrf.cookieDomain = () => originalCookieDomain;
   }
 
-  defaultMiddlewares.forEach(middlewareName => {
+  defaultMiddlewares.forEach((middlewareName: SecurityMiddlewareName) => {
     const opt = Reflect.get(options, middlewareName) as any;
     if (opt === false) {
       app.coreLogger.warn(
@@ -67,7 +67,7 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
     // set matching function to security middleware options
     opt.matching = pathMatching(opt);
 
-    const createMiddleware = securityMiddlewares[middlewareName];
+    const createMiddleware = securityMiddlewares[middlewareName as keyof typeof securityMiddlewares];
     const fn = createMiddleware(opt);
     middlewares.push(fn);
     app.coreLogger.info('[@eggjs/security/middleware/securities] use %s middleware', middlewareName);

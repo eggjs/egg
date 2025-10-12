@@ -13,10 +13,8 @@ const debug = debuglog('egg/security/app/extend/context');
 
 const tokens = new Tokens();
 
-const CSRF_SECRET = Symbol('egg-security#CSRF_SECRET');
 const _CSRF_SECRET = Symbol('egg-security#_CSRF_SECRET');
 const NEW_CSRF_SECRET = Symbol('egg-security#NEW_CSRF_SECRET');
-const INPUT_TOKEN = Symbol('egg-security#INPUT_TOKEN');
 const NONCE_CACHE = Symbol('egg-security#NONCE_CACHE');
 const SECURITY_OPTIONS = Symbol('egg-security#SECURITY_OPTIONS');
 
@@ -68,8 +66,8 @@ export default class SecurityContext extends Context {
    */
   get csrf(): string {
     // csrfSecret can be rotate, use NEW_CSRF_SECRET first
-    const secret = this[NEW_CSRF_SECRET] || this[CSRF_SECRET];
-    debug('get csrf token, NEW_CSRF_SECRET: %s, _CSRF_SECRET: %s', this[NEW_CSRF_SECRET], this[CSRF_SECRET]);
+    const secret = this[NEW_CSRF_SECRET] || this.getCsrfSecret();
+    debug('get csrf token, NEW_CSRF_SECRET: %s, _CSRF_SECRET: %s', this[NEW_CSRF_SECRET], this.getCsrfSecret());
     //  In order to protect against BREACH attacks,
     //  the token is not simply the secret;
     //  a random salt is prepended to the secret and used to scramble it.
@@ -105,18 +103,17 @@ export default class SecurityContext extends Context {
     return this[_CSRF_SECRET] as string;
   }
 
-  private get [CSRF_SECRET]() {
-    return this.getCsrfSecret();
-  }
-
   /**
    * ensure csrf secret exists in session or cookie.
    * @param {Boolean} [rotate] reset secret even if the secret exists
    * @public
    */
   ensureCsrfSecret(rotate?: boolean): void {
-    if (this[CSRF_SECRET] && !rotate) return;
-    debug('ensure csrf secret, exists: %s, rotate; %s', this[CSRF_SECRET], rotate);
+    const csrfSecret = this.getCsrfSecret();
+    if (csrfSecret && !rotate) {
+      return;
+    }
+    debug('ensure csrf secret, exists: %s, rotate; %s', csrfSecret, rotate);
     const secret = tokens.secretSync();
     this[NEW_CSRF_SECRET] = secret;
     let {
@@ -155,12 +152,8 @@ export default class SecurityContext extends Context {
       findToken(this.request.query, queryName) ||
       findToken(this.request.body, bodyName) ||
       (headerName && this.request.get<string>(headerName));
-    debug('get token: %j, secret: %j', token, this[CSRF_SECRET]);
+    debug('get token: %j, secret: %j', token, this.getCsrfSecret());
     return token;
-  }
-
-  private get [INPUT_TOKEN]() {
-    return this.getInputToken();
   }
 
   /**
@@ -169,7 +162,7 @@ export default class SecurityContext extends Context {
    * @public
    */
   rotateCsrfSecret(): void {
-    if (!this[NEW_CSRF_SECRET] && this[CSRF_SECRET]) {
+    if (!this[NEW_CSRF_SECRET] && this.getCsrfSecret()) {
       this.ensureCsrfSecret(true);
     }
   }
@@ -218,15 +211,16 @@ export default class SecurityContext extends Context {
   }
 
   private csrfCtokenCheck(): string | undefined {
-    if (!this[CSRF_SECRET]) {
+    const csrfSecret = this.getCsrfSecret();
+    if (!csrfSecret) {
       debug('missing csrf token');
       this.logCsrfNotice('missing csrf token');
       return 'missing csrf token';
     }
-    const token = this[INPUT_TOKEN];
+    const token = this.getInputToken();
     // AJAX requests get csrf token from cookie, in this situation token will equal to secret
     // synchronize form requests' token always changing to protect against BREACH attacks
-    if (token !== this[CSRF_SECRET] && !tokens.verify(this[CSRF_SECRET] as string, token as string)) {
+    if (token !== csrfSecret && !tokens.verify(csrfSecret, token as string)) {
       debug('verify secret and token error');
       this.logCsrfNotice('invalid csrf token');
       const { rotateWhenInvalid } = this.app.config.security.csrf;

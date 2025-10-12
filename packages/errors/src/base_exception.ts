@@ -1,10 +1,12 @@
-import { BaseError, TYPE } from './base.ts';
+import { BaseError } from './base.ts';
 import type { ErrorOptions } from './error_options.ts';
 import { ErrorType } from './error_type.ts';
 
-export class EggBaseException<T extends ErrorOptions> extends BaseError<T> {
+export class EggBaseException<T extends ErrorOptions = ErrorOptions> extends BaseError<T> {
   constructor(options?: T) {
-    super(options);
-    this[TYPE] = ErrorType.EXCEPTION;
+    super({
+      errorType: ErrorType.EXCEPTION,
+      ...options,
+    } as T);
   }
 }

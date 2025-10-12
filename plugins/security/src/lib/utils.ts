@@ -5,7 +5,7 @@ import IP from '@eggjs/ip';
 import type { Context } from 'egg';
 import type { PathMatchingFun } from '@eggjs/path-matching';
 
-import type { SecurityConfig } from '../config/config.default.ts';
+import type { SecurityConfig, LookupAddress } from '../config/config.default.ts';
 
 /**
  * Check whether a domain is in the safe domain white list or not.
@@ -88,7 +88,7 @@ export function getCookieDomain(hostname: string): string {
   return domain;
 }
 
-function getDomain(splits: string[], index: number) {
+function getDomain(splits: string[], index: number): string {
   return '.' + splits.slice(index).join('.');
 }
 
@@ -121,7 +121,11 @@ export function preprocessConfig(config: SecurityConfig): void {
     const blackList = ssrf.ipBlackList.map(getContains);
     const exceptionList = (ssrf.ipExceptionList || []).map(getContains);
     const hostnameExceptionList = ssrf.hostnameExceptionList;
-    ssrf.checkAddress = (ipAddresses, _family, hostname) => {
+    ssrf.checkAddress = (
+      ipAddresses: string | LookupAddress | (string | LookupAddress)[],
+      _family: number | string,
+      hostname: string
+    ): boolean => {
       // Check white hostname first
       if (hostname && hostnameExceptionList) {
         if (hostnameExceptionList.includes(hostname)) {
@@ -200,7 +204,7 @@ export function getFromUrl(url: string, prop: string): string | null {
   }
 }
 
-function getContains(ip: string) {
+function getContains(ip: string): (address: string) => boolean {
   if (IP.isV4Format(ip) || IP.isV6Format(ip)) {
     return (address: string) => address === ip;
   }
