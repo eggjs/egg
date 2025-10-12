@@ -14,7 +14,7 @@ export default class JSONPContext extends Context {
    * detect if response should be jsonp
    */
   get acceptJSONP(): boolean {
-    const jsonpConfig = (this as any)[JSONP_CONFIG] as JSONPConfigData | undefined;
+    const jsonpConfig = this[JSONP_CONFIG] as JSONPConfigData | undefined;
     return !!jsonpConfig?.jsonpFunction;
   }
 
@@ -26,7 +26,7 @@ export default class JSONPContext extends Context {
    * @private
    */
   createJsonpBody(body: any): void {
-    const jsonpConfig = (this as any)[JSONP_CONFIG] as JSONPConfigData | undefined;
+    const jsonpConfig = this[JSONP_CONFIG] as JSONPConfigData | undefined;
     if (!jsonpConfig?.jsonpFunction) {
       this.body = body;
       return;
