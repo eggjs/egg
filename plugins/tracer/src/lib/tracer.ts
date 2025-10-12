@@ -10,7 +10,7 @@ export class Tracer {
     this.ctx = ctx;
   }
 
-  get traceId() {
+  get traceId(): string {
     if (!this.#traceId) {
       this.#traceId = randomUUID();
     }

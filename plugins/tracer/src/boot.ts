@@ -12,7 +12,7 @@ export class TracerBoot implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     debug('didLoad %o', this.app.type);
     this.app[isReady] = true;
   }

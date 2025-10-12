@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EggLoader, EggCore, type EggCoreInitOptions } from '../../../src/index.js';
+
+import { EggLoader, EggCore, type EggCoreInitOptions } from '../../../src/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,21 +27,18 @@ export class Application extends EggCore {
 
   constructor(options: EggCoreInitOptions = {}) {
     super(options);
-    // Define computed property symbols directly
-    Object.defineProperty(this, Symbol.for('egg#eggPath'), {
-      get: () => __dirname,
-      enumerable: true,
-      configurable: true,
-    });
-    Object.defineProperty(this, Symbol.for('egg#loader'), {
-      get: () => AppLoader,
-      enumerable: true,
-      configurable: true,
-    });
     this.on('error', (err: any) => {
       console.error(err);
     });
   }
+
+  protected override customEggPaths(): string[] {
+    return [__dirname, ...super.customEggPaths()];
+  }
+
+  protected override customEggLoader(): typeof EggLoader {
+    return AppLoader;
+  }
 }
 
-export { type EggCoreInitOptions } from '../../../src/index.js';
+export { type EggCoreInitOptions } from '../../../src/index.ts';
