@@ -12,7 +12,7 @@ const debug = debuglog('egg/logrotator/lib/size_rotator');
 // it will rename from foo.log to foo.log.1
 // if foo.log.1 exists, foo.log.1 will rename to foo.log.2
 export class SizeRotator extends LogRotator {
-  async getRotateFiles() {
+  async getRotateFiles(): Promise<Map<string, RotateFile>> {
     const files = new Map<string, RotateFile>();
     const logDir = this.app.config.logger.dir;
     const filesRotateBySize = this.app.config.logrotator.filesRotateBySize ?? [];
@@ -51,7 +51,7 @@ export class SizeRotator extends LogRotator {
     return files;
   }
 
-  _setFile(logPath: string, files: Map<string, RotateFile>) {
+  _setFile(logPath: string, files: Map<string, RotateFile>): void {
     const maxFiles = this.app.config.logrotator.maxFiles;
     if (files.has(logPath)) {
       return;

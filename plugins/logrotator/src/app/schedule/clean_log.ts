@@ -14,7 +14,7 @@ export default (app: Application) => ({
     cron: '0 0 * * *', // run every day at 00:00
   },
 
-  async task() {
+  async task(): Promise<void> {
     const logger = app.coreLogger;
     const logDirs = new Set<string>();
     const loggerFiles = walkLoggerFile(app.loggers);

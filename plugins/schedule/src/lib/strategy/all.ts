@@ -1,7 +1,7 @@
 import { TimerStrategy } from './timer.ts';
 
 export class AllStrategy extends TimerStrategy {
-  handler() {
+  handler(): void {
     this.sendAll();
   }
 }

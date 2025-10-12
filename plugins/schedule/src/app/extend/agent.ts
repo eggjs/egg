@@ -10,21 +10,21 @@ export default class ScheduleAgent extends Agent {
   /**
    * @member agent#ScheduleStrategy
    */
-  get ScheduleStrategy() {
+  get ScheduleStrategy(): typeof BaseStrategy {
     return BaseStrategy;
   }
 
   /**
    * @member agent#TimerScheduleStrategy
    */
-  get TimerScheduleStrategy() {
+  get TimerScheduleStrategy(): typeof TimerStrategy {
     return TimerStrategy;
   }
 
   /**
    * @member agent#schedule
    */
-  get schedule() {
+  get schedule(): Schedule {
     let schedule = this[SCHEDULE] as Schedule;
     if (!schedule) {
       this[SCHEDULE] = schedule = new Schedule(this);

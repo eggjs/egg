@@ -8,7 +8,7 @@ export default class ScheduleApplication extends Application {
   /**
    * @member app#scheduleWorker
    */
-  get scheduleWorker() {
+  get scheduleWorker(): ScheduleWorker {
     let scheduleWorker = this[SCHEDULE_WORKER] as ScheduleWorker;
     if (!scheduleWorker) {
       this[SCHEDULE_WORKER] = scheduleWorker = new ScheduleWorker(this);

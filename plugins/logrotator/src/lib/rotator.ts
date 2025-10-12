@@ -33,7 +33,7 @@ export abstract class LogRotator {
 
   abstract getRotateFiles(): Promise<Map<string, RotateFile>>;
 
-  async rotate() {
+  async rotate(): Promise<void> {
     const files = await this.getRotateFiles();
     assert(files instanceof Map, 'getRotateFiles should return a Map');
     const rotatedFiles: string[] = [];

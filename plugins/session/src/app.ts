@@ -9,7 +9,7 @@ export default class AppBoot implements ILifecycleBoot {
     this.app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     const app = this.app;
     SessionConfig.parse(app.config.session);
 

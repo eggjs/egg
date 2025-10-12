@@ -34,11 +34,11 @@ export abstract class TimerStrategy extends BaseStrategy {
     }
   }
 
-  protected handler() {
+  protected handler(): void {
     throw new TypeError(`[@eggjs/schedule] ${this.key} strategy should override \`handler()\` method`);
   }
 
-  async start() {
+  async start(): Promise<void> {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) return;
 
@@ -50,7 +50,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     }
   }
 
-  #scheduleNext() {
+  #scheduleNext(): void {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) return;
 
@@ -66,7 +66,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     }
   }
 
-  onJobStart() {
+  onJobStart(): void {
     // Next execution will trigger task at a fix rate, regardless of its execution time.
     this.#scheduleNext();
   }
@@ -104,8 +104,8 @@ export abstract class TimerStrategy extends BaseStrategy {
     // won\'t run here
   }
 
-  protected safeTimeout(handler: () => void, delay: number, ...args: any[]) {
+  protected safeTimeout(handler: () => void, delay: number, ...args: any[]): number | ReturnType<typeof setTimeout> {
     const fn = delay < safeTimers.maxInterval ? setTimeout : safeTimers.setTimeout;
-    return fn(handler, delay, ...args);
+    return fn(handler, delay, ...args) as number | ReturnType<typeof setTimeout>;
   }
 }

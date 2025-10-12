@@ -27,7 +27,7 @@ export class Schedule {
    * @param {String} type - strategy type
    * @param {Strategy} clz - Strategy class
    */
-  use(type: string, clz: typeof BaseStrategy) {
+  use(type: string, clz: typeof BaseStrategy): void {
     this.#strategyClassMap.set(type, clz);
     debug('use type: %o', type);
   }
@@ -35,14 +35,14 @@ export class Schedule {
   /**
    * load all schedule jobs, then initialize and register special strategy
    */
-  async init() {
+  async init(): Promise<void> {
     const scheduleItems = await loadSchedule(this.#agent);
     for (const scheduleItem of Object.values(scheduleItems)) {
       this.registerSchedule(scheduleItem);
     }
   }
 
-  registerSchedule(scheduleItem: EggScheduleItem) {
+  registerSchedule(scheduleItem: EggScheduleItem): void {
     const { key, schedule } = scheduleItem;
     const type = schedule.type;
     if (schedule.disable) {
@@ -63,7 +63,7 @@ export class Schedule {
     debug('registerSchedule type: %o, config: %o, key: %o', type, schedule, key);
   }
 
-  unregisterSchedule(key: string) {
+  unregisterSchedule(key: string): boolean {
     debug('unregisterSchedule key: %o', key);
     return this.#strategyInstanceMap.delete(key);
   }
@@ -73,7 +73,7 @@ export class Schedule {
    *
    * @param {Object} info - { id, key, success, message, workerId }
    */
-  onJobFinish(info: EggScheduleJobInfo) {
+  onJobFinish(info: EggScheduleJobInfo): void {
     this.#logger.debug(`[Job#${info.id}] ${info.key} finish event received by agent from worker#${info.workerId}`);
     const instance = this.#strategyInstanceMap.get(info.key);
     if (instance) {
@@ -85,7 +85,7 @@ export class Schedule {
   /**
    * start schedule
    */
-  async start() {
+  async start(): Promise<void> {
     debug('start');
     this.closed = false;
     for (const instance of this.#strategyInstanceMap.values()) {
@@ -93,7 +93,7 @@ export class Schedule {
     }
   }
 
-  async close() {
+  async close(): Promise<void> {
     this.closed = true;
     for (const instance of this.#strategyInstanceMap.values()) {
       await instance.close();

@@ -6,11 +6,11 @@ import { isObject } from '../../utils.ts';
 
 const debug = debuglog('egg/i18n/app/extend/application');
 
-export const I18N_RESOURCES: unique symbol = Symbol('Application i18n resources');
+export default class I18nApplication extends Application {
+  _I18N_RESOURCES!: Record<string, Record<string, string>>;
 
-class I18nApplication extends Application {
   isSupportLocale(locale: string): boolean {
-    return !!(this as any)[I18N_RESOURCES][locale];
+    return !!this._I18N_RESOURCES[locale];
   }
 
   gettext(locale: string, key: string, value?: any, ...args: any[]): string {
@@ -20,7 +20,7 @@ class I18nApplication extends Application {
       return '';
     }
 
-    const resource = (this as any)[I18N_RESOURCES][locale] || {};
+    const resource = this._I18N_RESOURCES[locale] ?? {};
 
     let text = resource[key];
     if (text === undefined) {
@@ -89,5 +89,3 @@ function formatWithObject(text: string, values: Record<string, any>) {
     return original;
   });
 }
-
-export default I18nApplication;

@@ -11,7 +11,7 @@ const debug = debuglog('egg/logrotator/lib/hour_rotator');
 // rotate log by hour
 // rename from foo.log to foo.log.YYYY-MM-DD-HH
 export class HourRotator extends LogRotator {
-  async getRotateFiles() {
+  async getRotateFiles(): Promise<Map<string, RotateFile>> {
     const files = new Map<string, RotateFile>();
     const logDir = this.app.config.logger.dir;
     const filesRotateByHour = this.app.config.logrotator.filesRotateByHour ?? [];
@@ -31,11 +31,11 @@ export class HourRotator extends LogRotator {
     return files;
   }
 
-  get hourDelimiter() {
+  get hourDelimiter(): string {
     return this.app.config.logrotator.hourDelimiter;
   }
 
-  _setFile(srcPath: string, files: Map<string, RotateFile>) {
+  _setFile(srcPath: string, files: Map<string, RotateFile>): void {
     if (!files.has(srcPath)) {
       const ext = this.app.config.logrotator.gzip === true ? '.gz' : '';
       const targetPath = srcPath + moment().subtract(1, 'hours').format(`.YYYY-MM-DD${this.hourDelimiter}HH`) + ext;

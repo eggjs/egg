@@ -1,5 +1,9 @@
 import { LogRotator } from '../../lib/rotator.ts';
 
-export default {
+const extensions: {
+  LogRotator: typeof LogRotator;
+} = {
   LogRotator,
 };
+
+export default extensions;

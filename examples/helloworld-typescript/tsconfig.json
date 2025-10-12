@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "@eggjs/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
     "isolatedDeclarations": false

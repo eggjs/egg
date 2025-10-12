@@ -2,7 +2,16 @@ import type { Application } from 'egg';
 
 import { HourRotator } from '../../lib/hour_rotator.ts';
 
-export default (app: Application) => {
+interface ScheduleConfig {
+  schedule: {
+    type: string;
+    cron: string;
+    disable: boolean;
+  };
+  task(): Promise<void>;
+}
+
+export default (app: Application): ScheduleConfig => {
   const rotator = new HourRotator({ app });
 
   return {
@@ -12,7 +21,7 @@ export default (app: Application) => {
       disable: (app.config.logrotator.filesRotateByHour || []).length === 0,
     },
 
-    async task() {
+    async task(): Promise<void> {
       await rotator.rotate();
     },
   };

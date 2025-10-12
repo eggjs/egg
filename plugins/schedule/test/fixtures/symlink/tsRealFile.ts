@@ -3,6 +3,6 @@ export const schedule = {
   interval: '4s',
 };
 
-export async function task(ctx: any) {
+export async function task(ctx: any): Promise<void> {
   ctx.logger.info('interval');
 }

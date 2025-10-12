@@ -3,8 +3,9 @@ import { debuglog } from 'node:util';
 
 import { exists } from 'utility';
 import { ms } from 'humanize-ms';
-import type { ILifecycleBoot, Application } from 'egg';
+import type { ILifecycleBoot } from 'egg';
 
+import type I18nApplication from './app/extend/application.ts';
 import { loadLocaleResources } from './locales.ts';
 import { formatLocale } from './utils.ts';
 
@@ -61,7 +62,7 @@ const debug = debuglog('egg/i18n/app');
 export default class I18n implements ILifecycleBoot {
   private readonly app;
 
-  constructor(app: Application) {
+  constructor(app: I18nApplication) {
     this.app = app;
   }
 

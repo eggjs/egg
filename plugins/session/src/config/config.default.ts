@@ -3,11 +3,11 @@ import { SessionOptions } from 'koa-session';
 
 export const SessionConfig = SessionOptions.extend({
   logValue: z.boolean().default(true),
-});
+}) satisfies z.ZodType as z.ZodType<typeof SessionOptions._type & { logValue: boolean }>;
 
 export type SessionConfig = z.infer<typeof SessionConfig>;
 
-export default {
+const config: { session: SessionConfig } = {
   session: SessionConfig.parse({
     maxAge: 24 * 3600 * 1000, // ms, one day
     key: 'EGG_SESS',
@@ -15,3 +15,5 @@ export default {
     encrypt: true,
   }),
 };
+
+export default config;
