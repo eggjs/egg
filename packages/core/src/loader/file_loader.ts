@@ -11,8 +11,8 @@ import utils, { type Fun } from '../utils/index.ts';
 
 const debug = debuglog('egg/core/file_loader');
 
-export const FULLPATH = Symbol('EGG_LOADER_ITEM_FULLPATH');
-export const EXPORTS = Symbol('EGG_LOADER_ITEM_EXPORTS');
+export const FULLPATH: unique symbol = Symbol('EGG_LOADER_ITEM_FULLPATH');
+export const EXPORTS: unique symbol = Symbol('EGG_LOADER_ITEM_EXPORTS');
 
 export const CaseStyle = {
   camel: 'camel',
@@ -62,11 +62,11 @@ export interface FileLoaderParseItem {
  * @since 1.0.0
  */
 export class FileLoader {
-  static get FULLPATH() {
+  static get FULLPATH(): typeof FULLPATH {
     return FULLPATH;
   }
 
-  static get EXPORTS() {
+  static get EXPORTS(): typeof EXPORTS {
     return EXPORTS;
   }
 
@@ -235,7 +235,7 @@ export class FileLoader {
 
 // convert file path to an array of properties
 // a/b/c.js => ['a', 'b', 'c']
-function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunction) {
+function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunction): string[] {
   // if caseStyle is function, return the result of function
   if (typeof caseStyle === 'function') {
     const result = caseStyle(filepath);
@@ -248,7 +248,7 @@ function getProperties(filepath: string, caseStyle: CaseStyle | CaseStyleFunctio
 
 // Get exports from filepath
 // If exports is null/undefined, it will be ignored
-async function getExports(fullpath: string, options: FileLoaderOptions, pathName: string) {
+async function getExports(fullpath: string, options: FileLoaderOptions, pathName: string): Promise<any> {
   let exports = await utils.loadFile(fullpath);
   // process exports as you like
   if (options.initializer) {
@@ -285,7 +285,7 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
   return exports;
 }
 
-function defaultCamelize(filepath: string, caseStyle: CaseStyle) {
+function defaultCamelize(filepath: string, caseStyle: CaseStyle): string[] {
   const properties = filepath.slice(0, filepath.lastIndexOf('.')).split('/');
   return properties.map(property => {
     if (!/^[a-z][a-z0-9_-]*$/i.test(property)) {

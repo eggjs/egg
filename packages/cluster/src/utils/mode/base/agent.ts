@@ -8,7 +8,6 @@ import type { Logger } from 'egg-logger';
 
 import type { MasterOptions } from '../../../master.ts';
 import type { MessageBody, Messenger } from '../../messenger.ts';
-import { getSrcDirname } from '../../../dirname.ts';
 
 export abstract class BaseAgentWorker<T = ChildProcess | Worker> {
   instance: T;
@@ -85,9 +84,10 @@ export abstract class BaseAgentUtils extends EventEmitter {
   }
 
   getAgentWorkerFile(): string {
-    let agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.js');
+    const srcDirname = path.join(import.meta.dirname, '../../..');
+    let agentWorkerFile = path.join(srcDirname, 'agent_worker.js');
     if (!existsSync(agentWorkerFile)) {
-      agentWorkerFile = path.join(getSrcDirname(), 'agent_worker.ts');
+      agentWorkerFile = path.join(srcDirname, 'agent_worker.ts');
     }
     return agentWorkerFile;
   }

@@ -19,6 +19,7 @@ import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
 import utils, { type Fun } from '../utils/index.ts';
 import { sequencify } from '../utils/sequencify.ts';
 import { Timing } from '../utils/timing.ts';
+import { Lifecycle } from '../lifecycle.ts';
 import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
 import type { BaseContextClass } from '../base_context_class.ts';
 import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
@@ -151,15 +152,15 @@ export class EggLoader {
     this.appInfo = this.getAppInfo();
   }
 
-  get app() {
+  get app(): EggCore {
     return this.options.app;
   }
 
-  get lifecycle() {
+  get lifecycle(): Lifecycle {
     return this.app.lifecycle;
   }
 
-  get logger() {
+  get logger(): Logger {
     return this.options.logger;
   }
 
@@ -419,7 +420,7 @@ export class EggLoader {
    * @function EggLoader#loadPlugin
    * @since 1.0.0
    */
-  async loadPlugin() {
+  async loadPlugin(): Promise<void> {
     this.timing.start('Load Plugin');
 
     this.lookupDirs = this.getLookupDirs();
@@ -480,7 +481,7 @@ export class EggLoader {
     this.timing.end('Load Plugin');
   }
 
-  protected async loadAppPlugins() {
+  protected async loadAppPlugins(): Promise<Record<string, EggPluginInfo>> {
     // loader plugins from application
     const appPlugins = await this.readPluginConfigs(path.join(this.options.baseDir, 'config/plugin.default'));
     debug(
@@ -490,7 +491,7 @@ export class EggLoader {
     return appPlugins;
   }
 
-  protected async loadEggPlugins() {
+  protected async loadEggPlugins(): Promise<Record<string, EggPluginInfo>> {
     // loader plugins from framework
     const eggPluginConfigPaths = this.eggPaths.map(eggPath => path.join(eggPath, 'config/plugin.default'));
     const eggPlugins = await this.readPluginConfigs(eggPluginConfigPaths);
@@ -501,7 +502,7 @@ export class EggLoader {
     return eggPlugins;
   }
 
-  protected loadCustomPlugins() {
+  protected loadCustomPlugins(): Record<string, EggPluginInfo> {
     // loader plugins from process.env.EGG_PLUGINS
     let customPlugins: Record<string, EggPluginInfo> = {};
     const configPaths: string[] = [];
@@ -536,7 +537,7 @@ export class EggLoader {
   /*
    * Read plugin.js from multiple directory
    */
-  protected async readPluginConfigs(configPaths: string[] | string) {
+  protected async readPluginConfigs(configPaths: string[] | string): Promise<Record<string, EggPluginInfo>> {
     if (!Array.isArray(configPaths)) {
       configPaths = [configPaths];
     }
@@ -578,7 +579,7 @@ export class EggLoader {
     return plugins;
   }
 
-  #normalizePluginConfig(plugins: Record<string, EggPluginInfo | boolean>, name: string, configPath: string) {
+  #normalizePluginConfig(plugins: Record<string, EggPluginInfo | boolean>, name: string, configPath: string): void {
     const plugin = plugins[name];
 
     // plugin_name: false
@@ -614,7 +615,7 @@ export class EggLoader {
   //     "strict": true, whether check plugin name, default to true.
   //   }
   // }
-  async #mergePluginConfig(plugin: EggPluginInfo) {
+  async #mergePluginConfig(plugin: EggPluginInfo): Promise<void> {
     let pkg: any;
     let config: any;
     const pluginPackage = path.join(plugin.path as string, 'package.json');
@@ -658,7 +659,7 @@ export class EggLoader {
     allPlugins: Record<string, EggPluginInfo>,
     enabledPluginNames: string[],
     appPlugins: Record<string, EggPluginInfo>
-  ) {
+  ): EggPluginInfo[] {
     // no plugins enabled
     if (enabledPluginNames.length === 0) {
       return [];
@@ -733,7 +734,7 @@ export class EggLoader {
     return result.sequence.map(name => allPlugins[name]);
   }
 
-  protected getLookupDirs() {
+  protected getLookupDirs(): Set<string> {
     const lookupDirs = new Set<string>();
 
     // try to locate the plugin in the following directories's node_modules
@@ -752,7 +753,7 @@ export class EggLoader {
   }
 
   // Get the real plugin path
-  protected getPluginPath(plugin: EggPluginInfo) {
+  protected getPluginPath(plugin: EggPluginInfo): string {
     if (plugin.path) {
       return plugin.path;
     }
@@ -766,7 +767,7 @@ export class EggLoader {
     return this.#resolvePluginPath(plugin);
   }
 
-  #resolvePluginPath(plugin: EggPluginInfo) {
+  #resolvePluginPath(plugin: EggPluginInfo): string {
     const name = plugin.package || plugin.name;
     try {
       // should find the plugin directory
@@ -868,7 +869,7 @@ export class EggLoader {
     return realPluginPath;
   }
 
-  #extendPlugins(targets: Record<string, EggPluginInfo>, plugins: Record<string, EggPluginInfo>) {
+  #extendPlugins(targets: Record<string, EggPluginInfo>, plugins: Record<string, EggPluginInfo>): void {
     if (!plugins) {
       return;
     }
@@ -916,7 +917,7 @@ export class EggLoader {
    * @function EggLoader#loadConfig
    * @since 1.0.0
    */
-  async loadConfig() {
+  async loadConfig(): Promise<void> {
     this.timing.start('Load Config');
     this.configMeta = {};
 
@@ -965,7 +966,7 @@ export class EggLoader {
     this.timing.end('Load Config');
   }
 
-  async #preloadAppConfig() {
+  async #preloadAppConfig(): Promise<Record<string, any>> {
     const names = ['config.default', `config.${this.serverEnv}`];
     const target: Record<string, any> = {};
     for (const filename of names) {
@@ -978,7 +979,12 @@ export class EggLoader {
     return target;
   }
 
-  async #loadConfig(dirpath: string, filename: string, extraInject: object | undefined, type: EggDirInfoType) {
+  async #loadConfig(
+    dirpath: string,
+    filename: string,
+    extraInject: object | undefined,
+    type: EggDirInfoType
+  ): Promise<Record<string, any> | undefined> {
     const isPlugin = type === 'plugin';
     const isApp = type === 'app';
 
@@ -1003,7 +1009,7 @@ export class EggLoader {
     return config;
   }
 
-  #loadConfigFromEnv() {
+  #loadConfigFromEnv(): Record<string, unknown> | undefined {
     const envConfigStr = process.env.EGG_APP_CONFIG;
     if (!envConfigStr) return;
     try {
@@ -1015,13 +1021,13 @@ export class EggLoader {
     }
   }
 
-  #setConfigMeta(config: Record<string, unknown>, filepath: string) {
+  #setConfigMeta(config: Record<string, unknown>, filepath: string): void {
     config = extend(true, {}, config);
     this.#setConfig(config, filepath);
     extend(true, this.configMeta, config);
   }
 
-  #setConfig(obj: Record<string, any>, filepath: string) {
+  #setConfig(obj: Record<string, any>, filepath: string): void {
     for (const key of Object.keys(obj)) {
       const val = obj[key];
       // ignore console
@@ -1044,7 +1050,7 @@ export class EggLoader {
    * @function EggLoader#loadAgentExtend
    * @since 1.0.0
    */
-  async loadAgentExtend() {
+  async loadAgentExtend(): Promise<void> {
     await this.loadExtend('agent', this.app);
   }
 
@@ -1053,7 +1059,7 @@ export class EggLoader {
    * @function EggLoader#loadApplicationExtend
    * @since 1.0.0
    */
-  async loadApplicationExtend() {
+  async loadApplicationExtend(): Promise<void> {
     await this.loadExtend('application', this.app);
   }
 
@@ -1062,7 +1068,7 @@ export class EggLoader {
    * @function EggLoader#loadRequestExtend
    * @since 1.0.0
    */
-  async loadRequestExtend() {
+  async loadRequestExtend(): Promise<void> {
     await this.loadExtend('request', this.app.request);
   }
 
@@ -1071,7 +1077,7 @@ export class EggLoader {
    * @function EggLoader#loadResponseExtend
    * @since 1.0.0
    */
-  async loadResponseExtend() {
+  async loadResponseExtend(): Promise<void> {
     await this.loadExtend('response', this.app.response);
   }
 
@@ -1080,7 +1086,7 @@ export class EggLoader {
    * @function EggLoader#loadContextExtend
    * @since 1.0.0
    */
-  async loadContextExtend() {
+  async loadContextExtend(): Promise<void> {
     await this.loadExtend('context', this.app.context);
   }
 
@@ -1089,7 +1095,7 @@ export class EggLoader {
    * @function EggLoader#loadHelperExtend
    * @since 1.0.0
    */
-  async loadHelperExtend() {
+  async loadHelperExtend(): Promise<void> {
     if (this.app.Helper) {
       await this.loadExtend('helper', this.app.Helper.prototype);
     }
@@ -1114,7 +1120,7 @@ export class EggLoader {
    * @param {Object} proto - prototype that mixed
    * @since 1.0.0
    */
-  async loadExtend(name: string, proto: object) {
+  async loadExtend(name: string, proto: object): Promise<void> {
     this.timing.start(`Load extend/${name}.js`);
     // All extend files
     const filepaths = this.getExtendFilePaths(name);
@@ -1219,7 +1225,7 @@ export class EggLoader {
    * }
    * @since 1.0.0
    */
-  async loadCustomApp() {
+  async loadCustomApp(): Promise<void> {
     await this.#loadBootHook('app');
     this.lifecycle.triggerConfigWillLoad();
   }
@@ -1227,17 +1233,17 @@ export class EggLoader {
   /**
    * Load agent.js, same as {@link EggLoader#loadCustomApp}
    */
-  async loadCustomAgent() {
+  async loadCustomAgent(): Promise<void> {
     await this.#loadBootHook('agent');
     this.lifecycle.triggerConfigWillLoad();
   }
 
   // FIXME: no logger used after egg removed
-  loadBootHook() {
+  loadBootHook(): void {
     // do nothing
   }
 
-  async #loadBootHook(fileName: string) {
+  async #loadBootHook(fileName: string): Promise<void> {
     this.timing.start(`Load ${fileName}.js`);
     for (const unit of this.getLoadUnits()) {
       const bootFile = path.join(unit.path, fileName);
@@ -1275,7 +1281,7 @@ export class EggLoader {
    * @param {Object} options - LoaderOptions
    * @since 1.0.0
    */
-  async loadService(options?: Partial<ContextLoaderOptions>) {
+  async loadService(options?: Partial<ContextLoaderOptions>): Promise<void> {
     this.timing.start('Load Service');
     // 载入到 app.serviceClasses
     const servicePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/service'));
@@ -1312,7 +1318,7 @@ export class EggLoader {
    * ```
    * @since 1.0.0
    */
-  async loadMiddleware(opt?: Partial<FileLoaderOptions>) {
+  async loadMiddleware(opt?: Partial<FileLoaderOptions>): Promise<void> {
     this.timing.start('Load Middleware');
     const app = this.app;
 
@@ -1393,7 +1399,7 @@ export class EggLoader {
    * @param {Object} opt - LoaderOptions
    * @since 1.0.0
    */
-  async loadController(opt?: Partial<FileLoaderOptions>) {
+  async loadController(opt?: Partial<FileLoaderOptions>): Promise<void> {
     this.timing.start('Load Controller');
     const controllerBase = path.join(this.options.baseDir, 'app/controller');
     opt = {
@@ -1444,7 +1450,7 @@ export class EggLoader {
    * @function EggLoader#loadRouter
    * @since 1.0.0
    */
-  async loadRouter() {
+  async loadRouter(): Promise<void> {
     this.timing.start('Load Router');
     await this.loadFile(path.join(this.options.baseDir, 'app/router'));
     this.timing.end('Load Router');
@@ -1452,7 +1458,7 @@ export class EggLoader {
   /** end Router loader */
 
   /** start CustomLoader loader */
-  async loadCustomLoader() {
+  async loadCustomLoader(): Promise<void> {
     assert(this.config, 'should loadConfig first');
     const customLoader = this.config.customLoader || {};
 
@@ -1516,7 +1522,7 @@ export class EggLoader {
    * ```
    * @since 1.0.0
    */
-  async loadFile(filepath: string, ...inject: unknown[]) {
+  async loadFile(filepath: string, ...inject: unknown[]): Promise<any> {
     const fullpath = filepath && this.resolveModule(filepath);
     if (!fullpath) {
       return null;
@@ -1540,7 +1546,7 @@ export class EggLoader {
    * @param {String} filepath - fullpath
    * @private
    */
-  async requireFile(filepath: string) {
+  async requireFile(filepath: string): Promise<any> {
     const timingKey = `Require(${this.#requiredCount++}) ${utils.getResolvedFilename(filepath, this.options.baseDir)}`;
     this.timing.start(timingKey);
     const mod = await utils.loadFile(filepath);
@@ -1607,7 +1613,7 @@ export class EggLoader {
     directory: string | string[],
     property: string | symbol,
     options?: Omit<FileLoaderOptions, 'inject' | 'target'>
-  ) {
+  ): Promise<void> {
     const target = {};
     Reflect.set(this.app, property, target);
     const loadOptions: FileLoaderOptions = {
@@ -1634,7 +1640,7 @@ export class EggLoader {
     directory: string | string[],
     property: string | symbol,
     options?: Omit<ContextLoaderOptions, 'inject' | 'property'>
-  ) {
+  ): Promise<void> {
     const loadOptions: ContextLoaderOptions = {
       ...options,
       directory: options?.directory || directory,
@@ -1652,7 +1658,7 @@ export class EggLoader {
    * @member {FileLoader} EggLoader#FileLoader
    * @since 1.0.0
    */
-  get FileLoader() {
+  get FileLoader(): typeof FileLoader {
     return FileLoader;
   }
 
@@ -1660,11 +1666,11 @@ export class EggLoader {
    * @member {ContextLoader} EggLoader#ContextLoader
    * @since 1.0.0
    */
-  get ContextLoader() {
+  get ContextLoader(): typeof ContextLoader {
     return ContextLoader;
   }
 
-  getTypeFiles(filename: string) {
+  getTypeFiles(filename: string): string[] {
     const files = [`${filename}.default`];
     if (this.serverScope) files.push(`${filename}.${this.serverScope}`);
     if (this.serverEnv === 'default') return files;
@@ -1675,7 +1681,7 @@ export class EggLoader {
     return files;
   }
 
-  resolveModule(filepath: string) {
+  resolveModule(filepath: string): string | undefined {
     let fullPath: string | undefined;
     try {
       fullPath = utils.resolvePath(filepath);

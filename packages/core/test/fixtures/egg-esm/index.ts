@@ -26,16 +26,20 @@ export class Application extends EggCore {
 
   constructor(options: EggCoreInitOptions = {}) {
     super(options);
+    // Define computed property symbols directly
+    Object.defineProperty(this, Symbol.for('egg#eggPath'), {
+      get: () => __dirname,
+      enumerable: true,
+      configurable: true,
+    });
+    Object.defineProperty(this, Symbol.for('egg#loader'), {
+      get: () => AppLoader,
+      enumerable: true,
+      configurable: true,
+    });
     this.on('error', (err: any) => {
       console.error(err);
     });
-  }
-
-  get [Symbol.for('egg#eggPath')](): string {
-    return __dirname;
-  }
-  get [Symbol.for('egg#loader')](): typeof AppLoader {
-    return AppLoader;
   }
 }
 

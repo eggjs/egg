@@ -8,4 +8,5 @@ const config: UserProjectConfigExport = {
   },
 };
 
-export default defineProject(config);
+const exportedConfig: UserProjectConfigExport = defineProject(config);
+export default exportedConfig;

@@ -8,7 +8,6 @@ import type { Logger } from 'egg-logger';
 
 import type { MessageBody, Messenger } from '../../messenger.ts';
 import type { MasterOptions } from '../../../master.ts';
-import { getSrcDirname } from '../../../dirname.ts';
 
 export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   instance: T;
@@ -117,9 +116,10 @@ export abstract class BaseAppUtils extends EventEmitter {
   }
 
   getAppWorkerFile(): string {
-    let appWorkerFile = path.join(getSrcDirname(), 'app_worker.js');
+    const srcDirname = path.join(import.meta.dirname, '../../..');
+    let appWorkerFile = path.join(srcDirname, 'app_worker.js');
     if (!existsSync(appWorkerFile)) {
-      appWorkerFile = path.join(getSrcDirname(), 'app_worker.ts');
+      appWorkerFile = path.join(srcDirname, 'app_worker.ts');
     }
     return appWorkerFile;
   }

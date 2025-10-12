@@ -21,7 +21,7 @@ const extensions = (Module as any)._extensions;
 const extensionNames = Object.keys(extensions).concat(['.cjs', '.mjs']);
 debug('Module extensions: %j', extensionNames);
 
-function getCalleeFromStack(withLine?: boolean, stackIndex?: number) {
+function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
   stackIndex = stackIndex === undefined ? 2 : stackIndex;
   const limit = Error.stackTraceLimit;
   const prep = Error.prepareStackTrace;
@@ -55,8 +55,8 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number) {
   return `${fileName}:${callSite.getLineNumber()}:${callSite.getColumnNumber()}`;
 }
 
-export default {
-  deprecated(message: string) {
+const utils = {
+  deprecated(message: string): void {
     if (debug.enabled) {
       console.trace('[@eggjs/core/deprecated] %s', message);
     } else {
@@ -65,10 +65,10 @@ export default {
     }
   },
 
-  extensions,
-  extensionNames,
+  extensions: extensions as Record<string, any>,
+  extensionNames: extensionNames as string[],
 
-  async existsPath(filepath: string) {
+  async existsPath(filepath: string): Promise<boolean> {
     try {
       await stat(filepath);
       return true;
@@ -77,7 +77,7 @@ export default {
     }
   },
 
-  async loadFile(filepath: string) {
+  async loadFile(filepath: string): Promise<any> {
     debug('[loadFile:start] filepath: %s', filepath);
     try {
       // if not js module, just return content buffer
@@ -100,30 +100,32 @@ export default {
     }
   },
 
-  resolvePath(filepath: string, options?: { paths?: string[] }) {
+  resolvePath(filepath: string, options?: { paths?: string[] }): string {
     return importResolve(filepath, options);
   },
 
-  methods: ['head', 'options', 'get', 'put', 'patch', 'post', 'delete'],
+  methods: ['head', 'options', 'get', 'put', 'patch', 'post', 'delete'] as const,
 
-  async callFn(fn: Fun, args?: unknown[], ctx?: unknown) {
+  async callFn(fn: Fun, args?: unknown[], ctx?: unknown): Promise<unknown> {
     args = args || [];
     if (typeof fn !== 'function') return;
     return ctx ? fn.call(ctx, ...args) : fn(...args);
   },
 
-  getCalleeFromStack,
+  getCalleeFromStack: getCalleeFromStack as (withLine?: boolean, stackIndex?: number) => string,
 
-  getResolvedFilename(filepath: string, baseDir: string) {
+  getResolvedFilename(filepath: string, baseDir: string): string {
     const reg = /[/\\]/g;
     return filepath.replace(baseDir + path.sep, '').replace(reg, '/');
   },
 };
 
+export default utils;
+
 /**
  * Capture call site stack from v8.
  * https://github.com/v8/v8/wiki/Stack-Trace-API
  */
-function prepareObjectStackTrace(_obj: unknown, stack: unknown) {
+function prepareObjectStackTrace(_obj: unknown, stack: unknown): unknown {
   return stack;
 }
