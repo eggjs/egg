@@ -13,7 +13,7 @@ export default class ScheduleApplicationUnittest extends ScheduleApplication {
     debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
     // for test purpose
     const config = this.config;
-    const directory = [path.join(config.baseDir, 'app/schedule'), ...config.schedule.directory];
+    const directory = [path.join(config.baseDir, 'app/schedule'), ...(config.schedule.directory ?? [])];
 
     // resolve real path
     if (path.isAbsolute(schedulePath)) {

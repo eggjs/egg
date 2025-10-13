@@ -4,11 +4,12 @@ import fs from 'node:fs/promises';
 import { exists } from 'utility';
 import moment from 'moment';
 import type { Application } from 'egg';
+import type { EggScheduleHandler } from 'egg/schedule';
 
 import { walkLoggerFile } from '../../lib/utils.ts';
 
 // clean all xxx.log.YYYY-MM-DD before expired date.
-export default (app: Application) => ({
+export default (app: Application): EggScheduleHandler => ({
   schedule: {
     type: 'worker', // only one worker run this task
     cron: '0 0 * * *', // run every day at 00:00

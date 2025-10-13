@@ -1,17 +1,9 @@
 import type { Application } from 'egg';
+import type { EggScheduleHandler } from 'egg/schedule';
 
 import { SizeRotator } from '../../lib/size_rotator.ts';
 
-interface ScheduleConfig {
-  schedule: {
-    type: string;
-    interval: number | string;
-    disable: boolean;
-  };
-  task(): Promise<void>;
-}
-
-export default (app: Application): ScheduleConfig => {
+export default (app: Application): EggScheduleHandler => {
   const rotator = new SizeRotator({ app });
 
   return {

@@ -48,6 +48,7 @@
       "./lib/start": "./dist/lib/start.js",
       "./lib/types": "./dist/lib/types.js",
       "./lib/types.plugin": "./dist/lib/types.plugin.js",
+      "./schedule": "./dist/schedule.js",
       "./urllib": "./dist/urllib.js",
       "./package.json": "./package.json"
     }
@@ -97,6 +98,7 @@
     "./lib/start": "./src/lib/start.ts",
     "./lib/types": "./src/lib/types.ts",
     "./lib/types.plugin": "./src/lib/types.plugin.ts",
+    "./schedule": "./src/schedule.ts",
     "./urllib": "./src/urllib.ts",
     "./package.json": "./package.json"
   },

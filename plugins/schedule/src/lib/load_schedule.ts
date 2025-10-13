@@ -69,7 +69,7 @@ function getScheduleLoader(app: EggApplicationCore) {
 export async function loadSchedule(app: EggApplicationCore): Promise<Record<string, EggScheduleItem>> {
   const dirs = [
     ...app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/schedule')),
-    ...app.config.schedule.directory,
+    ...(app.config.schedule.directory ?? []),
   ];
 
   const Loader = getScheduleLoader(app);
