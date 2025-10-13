@@ -1,7 +1,6 @@
-import { defineConfig } from 'vitest/config';
-import type { ViteUserConfigExport } from 'vitest/config';
+import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
 
-const config: ViteUserConfigExport = defineConfig({
+const config: UserWorkspaceConfig = defineProject({
   test: {
     hookTimeout: 20000,
     include: ['test/**/*.test.ts'],

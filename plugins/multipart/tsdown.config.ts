@@ -1,6 +1,6 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig, type UserConfig } from 'tsdown';
 
-const config = defineConfig({
+const config: UserConfig = defineConfig({
   entry: 'src/**/*.ts',
   unbundle: true,
   dts: true,
@@ -10,6 +10,6 @@ const config = defineConfig({
   exports: {
     devExports: true,
   },
-}) as ReturnType<typeof defineConfig>;
+});
 
 export default config;
