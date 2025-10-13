@@ -11,14 +11,13 @@ import { formatOptions } from '../format_options.ts';
 import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep, rimraf } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
-import { APP_INIT } from './util.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/agent');
 
 export class MockAgent extends Base {
   declare options: MockApplicationOptions;
   baseDir: string;
-  '__APP_INIT__': boolean = false;
+  __APP_INIT__ = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
   _instance: EggAgent;
@@ -61,7 +60,7 @@ export class MockAgent extends Base {
     setCustomLoader(agent);
 
     debug('agent instantiate');
-    this[APP_INIT] = true;
+    this.__APP_INIT__ = true;
     debug('this[APP_INIT] = true');
     this.#bindEvents();
     await agent.ready();
@@ -89,7 +88,7 @@ export class MockAgent extends Base {
   }
 
   on(...args: any[]): this {
-    if (this[APP_INIT]) {
+    if (this.__APP_INIT__) {
       debug('on(%s), pass to agent', args);
       this._instance.on(args[0], args[1]);
     } else {
@@ -101,7 +100,7 @@ export class MockAgent extends Base {
   }
 
   once(...args: any[]): this {
-    if (this[APP_INIT]) {
+    if (this.__APP_INIT__) {
       debug('once(%s), pass to agent', args);
       this._instance.once(args[0], args[1]);
     } else {
