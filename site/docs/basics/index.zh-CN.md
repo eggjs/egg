@@ -11,7 +11,7 @@ nav:
 - [controller](./basics/controller.md)
 - [HTTP Controller](./basics/httpcontroller.md)
 - [MCP Controller](./basics/mcpcontroller.md)
-- [Schedule Controller](./basics/mcpcontroller.md)
+- [Schedule Controller](./basics/schedule.md)
 - [参数校验](./basics/ajv.md)
 - [切面编程](./basics/aop.md)
 - [异步任务](./basics/backgroundTask.md)

@@ -184,7 +184,7 @@ it('msg should work', async () => {
   const helloEvent = eventWaiter.await('hello');
   fooProducer.trigger('01');
   await helloEvent;
-  assert.eqaul(msg, '01');
+  assert.equal(msg, '01');
 });
 ```
 

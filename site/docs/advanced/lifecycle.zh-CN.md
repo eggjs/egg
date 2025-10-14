@@ -67,7 +67,7 @@ export class HelloService {
 }
 ```
 
-## 使用场景
+## 示例
 
 ### 自定义初始化
 通过 `CustomUserInfo` 实现自定义的用户信息，在 `init` 生命周期中调用了 rpc 获取用户详细信息。
@@ -109,18 +109,16 @@ export class CustomUserInfo {
 
 ```ts
 import {
-  Inject,
   ContextProto,
   AccessLevel,
-  LifecycleInit,
-  User,
+  LifecyclePreDestroy,
 } from 'egg';
 import { clearInterval } from 'node:timers';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
-export class CustomUserInfo {
+export class ContextTimer {
   timer: number;
 
   constructor() {

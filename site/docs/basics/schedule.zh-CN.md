@@ -72,7 +72,7 @@ export class IntervalScheduler {
 例如下列代码将会每日 3 点在每台机器上执行一次。
 
 ```typescript
-import { CronParams, Inject, Logger, Schedule, ScheduleType } from 'tegg';
+import { CronParams, Inject, Logger, Schedule, ScheduleType } from 'egg';
 
 @Schedule<CronParams>({
   type: ScheduleType.WORKER,
