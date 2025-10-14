@@ -19,36 +19,42 @@ npm i @eggjs/view
 ## Usage
 
 ```js
-// {app_root}/config/plugin.js
-exports.view = {
-  enable: true,
-  package: '@eggjs/view',
+// {app_root}/config/plugin.ts
+export default {
+  view: {
+    enable: true,
+    package: '@eggjs/view',
+  },
 };
 ```
 
 ## Use a template engine
 
-[egg-view] don't have build-in view engine, So you should choose a template engine like [ejs], and install [egg-view-ejs] plugin.
+[@eggjs/view] don't have build-in view engine, So you should choose a template engine like [ejs], and install [egg-view-ejs] plugin.
 
 You can choose a template engine first, link [ejs], so we use [egg-view-ejs] plugin.
 
 `egg-view` is in [eggjs], so you just need configure [egg-view-ejs].
 
 ```js
-// config/plugin.js
-exports.ejs = {
-  enable: true,
-  package: 'egg-view-ejs',
+// config/plugin.ts
+export default {
+  ejs: {
+    enable: true,
+    package: 'egg-view-ejs',
+  },
 };
 ```
 
 Configure the mapping, the file with `.ejs` extension will be rendered by ejs.
 
 ```js
-// config/config.default.js
-exports.view = {
-  mapping: {
-    '.ejs': 'ejs',
+// config/config.default.ts
+export default {
+  view: {
+    mapping: {
+      '.ejs': 'ejs',
+    },
   },
 };
 ```
@@ -56,20 +62,20 @@ exports.view = {
 In controller, you can call `ctx.render`.
 
 ```js
-module.exports = app => {
+export default (app: Application) => {
   return class UserController extends app.Controller {
     async list() {
       const { ctx } = this;
       await ctx.render('user.ejs');
     }
   };
-};
+}
 ```
 
 If you call `ctx.renderString`, you should specify viewEngine in viewOptions.
 
 ```js
-module.exports = app => {
+export default (app: Application) => {
   return class UserController extends app.Controller {
     async list() {
       const { ctx } = this;
@@ -82,7 +88,7 @@ module.exports = app => {
       );
     }
   };
-};
+}
 ```
 
 ## Use multiple view engine
@@ -94,11 +100,27 @@ If you want add another template engine like [nunjucks], then you can add [egg-v
 Configure the plugin and mapping
 
 ```js
-// config/config.default.js
-exports.view = {
-  mapping: {
-    '.ejs': 'ejs',
-    '.nj': 'nunjucks',
+// config/plugin.ts
+export default {
+  ejs: {
+    enable: true,
+    package: 'egg-view-ejs',
+  },
+  nunjucks: {
+    enable: true,
+    package: 'egg-view-nunjucks',
+  },
+};
+```
+
+```js
+// config/config.default.ts
+export default {
+  view: {
+    mapping: {
+      '.ejs': 'ejs',
+      '.nj': 'nunjucks',
+    },
   },
 };
 ```
@@ -111,28 +133,29 @@ await ctx.render('user.nj');
 
 ## How to write a view plugin
 
-You can use [egg-view]' API to register a plugin.
+You can use [@eggjs/view]'s API to register a plugin.
 
 ### View engine
 
-Create a view engine class first, and implement `render` and `renderString`, if the template engine don't support, just throw an error. The view engine is context level, so it receive ctx in `constructor`.
+Create a view engine class first, and implement `render` and `renderString`, if the template engine don't support, just throw an error.
+The view engine is context level, so it receive ctx in `constructor`.
 
 ```js
-// lib/view.js
-module.exports = class MyView {
+// lib/view.ts
+export default class MyView {
   constructor(ctx) {
     // do some initialize
     // get the plugin config from `ctx.app.config`
   }
 
-  async render(fullpath, locals) {
+  async render(fullpath: string, locals: Record<string, any>) {
     return myengine.render(fullpath, locals);
   }
 
   async renderString() {
     throw new Error('not implement');
   }
-};
+}
 ```
 
 `render` and `renderString` support generator function, async function, or normal function return a promise.
@@ -178,17 +201,20 @@ These methods receive three arguments, `renderString` will pass tpl as the first
 After define a view engine, you can register it.
 
 ```js
-// app.js
-module.exports = app => {
-  app.view.use('myName', require('./lib/view'));
-};
+// app.ts
+import type { Application } from 'egg';
+import MyView from './lib/view';
+
+export default (app: Application) => {
+  app.view.use('myName', MyView);
+}
 ```
 
 You can define a view engine name, normally it's a template name.
 
 ### Configure
 
-Define plugin name and depend on [egg-view]
+Define plugin name and depend on [@eggjs/view]
 
 ```json
 {
@@ -199,10 +225,12 @@ Define plugin name and depend on [egg-view]
 }
 ```
 
-Set default config in `config/config.default.js`, the name is equals to plugin name.
+Set default config in `config/config.default.ts`, the name is equals to plugin name.
 
 ```js
-exports.myName = {},
+export default {
+  myName: {},
+};
 ```
 
 See some examples
@@ -214,39 +242,43 @@ See some examples
 
 ### Root
 
-Root is `${baseDir}/app/view` by default, but you can define multiple directory, seperated by `,`. [egg-view] will find a file from all root directories.
+Root is `${baseDir}/app/view` by default, but you can define multiple directory, seperated by `,`.
+[@eggjs/view] will find a file from all root directories.
 
 ```js
-module.exports = appInfo => {
+export default (appInfo: EggAppInfo) => {
   const baseDir = appInfo.baseDir;
   return {
     view: {
       root: `${baseDir}/app/view,${baseDir}/app/view2`,
     },
   };
-};
+}
 ```
 
 ### defaultExtension
 
-When render a file, you should specify a extension that let [egg-view] know whitch engine you want to use. However you can define `defaultExtension` without write the extension.
+When render a file, you should specify a extension that let [@eggjs/view] know whitch engine you want to use.
+However you can define `defaultExtension` without write the extension.
 
 ```js
-// config/config.default.js
-exports.view = {
-  defaultExtension: '.html',
+// config/config.default.ts
+export default {
+  view: {
+    defaultExtension: '.html',
+  },
 };
 
 // controller
-module.exports = app => {
+export default (app: Application) => {
   return class UserController extends app.Controller {
     async list() {
       const { ctx } = this;
       // render user.html
       await ctx.render('user');
     }
-  };
-};
+  }
+}
 ```
 
 ### viewEngine and defaultViewEngine
@@ -256,9 +288,11 @@ If you are using `renderString`, you should specify viewEngine in view config, s
 However, you can define `defaultViewEngine` without set each time.
 
 ```js
-// config/config.default.js
-exports.view = {
-  defaultViewEngine: 'ejs',
+// config/config.default.ts
+export default {
+  view: {
+    defaultViewEngine: 'ejs',
+  },
 };
 ```
 
@@ -281,6 +315,6 @@ Made with [contributors-img](https://contrib.rocks).
 [eggjs]: https://eggjs.org
 [ejs]: https://github.com/mde/ejs
 [egg-view-ejs]: https://github.com/eggjs/egg-view-ejs
-[egg-view]: https://github.com/eggjs/view
+[@eggjs/view]: https://github.com/eggjs/egg/tree/next/plugins/view
 [nunjucks]: http://mozilla.github.io/nunjucks
 [egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks

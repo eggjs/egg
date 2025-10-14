@@ -44,7 +44,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    */
   constructor(app: Application) {
     super();
-    this.config = app.config.view as any;
+    this.config = app.config.view as unknown as ViewManagerConfig;
     this.config.root = app.config.view.root.split(/\s*,\s*/g).filter(filepath => existsSync(filepath));
     this.extMap = new Map();
     this.fileMap = new Map();

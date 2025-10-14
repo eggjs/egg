@@ -3,7 +3,7 @@ import { Context } from 'egg';
 import { ContextView } from '../../lib/context_view.ts';
 import { type RenderOptions } from '../../lib/view_manager.ts';
 
-const VIEW: unique symbol = Symbol('Context#view');
+const VIEW = Symbol('Context#view');
 
 export default class ViewContext extends Context {
   /**
@@ -44,9 +44,9 @@ export default class ViewContext extends Context {
    * @member {ContextView} Context#view
    */
   get view(): ContextView {
-    if (!(this as any)[VIEW]) {
-      (this as any)[VIEW] = new ContextView(this);
+    if (!this[VIEW]) {
+      this[VIEW] = new ContextView(this);
     }
-    return (this as any)[VIEW];
+    return this[VIEW] as ContextView;
   }
 }
