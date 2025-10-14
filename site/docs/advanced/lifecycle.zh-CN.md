@@ -17,6 +17,8 @@ import {
   LifecycleInit,
   LifecyclePreDestroy,
   LifecycleDestroy,
+  SingletonProto,
+  AccessLevel,
 } from 'egg';
 
 @SingletonProto({
@@ -61,8 +63,7 @@ export class HelloService {
   }
 
   async hello(user: User) {
-    const echoResponse = await this.echoAdapter.echo({ name: user.name });
-    return `hello, ${echoResponse.name}`;
+    return `hello, ${user.name}`;
   }
 }
 ```
@@ -113,13 +114,13 @@ import {
   AccessLevel,
   LifecyclePreDestroy,
 } from 'egg';
-import { clearInterval } from 'node:timers';
+import { setInterval, clearInterval } from 'node:timers';
 
 @ContextProto({
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ContextTimer {
-  timer: number;
+  timer: NodeJS.Timeout;
 
   constructor() {
     this.timer = setInterval(() => {

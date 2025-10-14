@@ -22,6 +22,7 @@ title: 切面编程
 
 ```ts
 import { Advice, IAdvice, AdviceContext } from 'egg/aop';
+import { Inject } from 'egg';
 
 @Advice()
 export class AdviceExample implements IAdvice {
@@ -131,7 +132,7 @@ export class CrosscutExample {
 
 
 ### AdviceContext
-所有切面函数的第一个入参都是一个 `AdivceContext` 变量，这个变量的数据结构如下：
+所有切面函数的第一个入参都是一个 `AdviceContext` 变量，这个变量的数据结构如下：
 
 ```typescript
 interface AdviceContext<T = object, K = any> {
@@ -175,27 +176,27 @@ class PointcutAdvice implements IAdvice<Hello> {
 
   // 修改被切函数的入参
   async beforeCall(ctx: AdviceContext<Hello>): Promise<void> {
-  	ctx.args = [ 'for', 'bar' ];
+    ctx.args = [ 'for', 'bar' ];
   }
 
   // 修改被切函数的返回值
   async afterReturn(ctx: AdviceContext<Hello>, result: any): Promise<void> {
-  	result.foo = 'bar';
+    result.foo = 'bar';
   }
 
   // 记录调用异常
   async afterThrow(ctx: AdviceContext<Hello, any>, error: Error): Promise<void> {
-		this.logger.info(`${ctx.that.constructor.name}.${ctx.method.name} throw an error: %j`, error);
+    this.logger.info(`${ctx.that.constructor.name}.${ctx.method.name} throw an error: %j`, error);
   }
 
   // 打个调用结束的日志
   async afterFinally(ctx: AdviceContext<Hello>): Promise<void> {
-		this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method.name}, params: %j`, args);
+    this.logger.info(`called ${ctx.that.constructor.name}.${ctx.method.name}, params: %j`, args);
   }
 
   // 修改被切函数的调用过程，比如将被切函数放到事务中执行
   async around(ctx: AdviceContext<Hello>, next: () => Promise<any>): Promise<any> {
-  	await this.runInTransaction(next);
+    await this.runInTransaction(next);
   }
 
 }
@@ -251,7 +252,7 @@ export class Hello {
 
 ```typescript
 import { SingletonProto, Inject, Logger, Tracer } from 'egg';
-import { Advice, IAdvice } from 'egg/aop';
+import { Advice, IAdvice, AdviceContext } from 'egg/aop';
 
 @Advice()
 class MethodLogAdvice implements IAdvice {
@@ -287,7 +288,7 @@ class MethodLogAdvice implements IAdvice {
 }
 ```
 
-#### 使用 Adivce
+#### 使用 Advice
 ```typescript
 import { Pointcut, SingletonProto, Inject } from 'egg';
 import { MethodLogAdvice } from './MethodLogAdvice';

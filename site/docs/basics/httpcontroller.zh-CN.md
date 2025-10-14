@@ -123,7 +123,7 @@ export default class ArgsController {
 
 ### HTTPQuery/HTTPQueries
 
-`HTTPQuery/HTTPQuries` 装饰器用于获取 HTTP 请求中 querystring 参数。`HTTPQuery` 只取第一个参数，类型必须为 `string`；`HTTPQueries` 以数组形式注入参数，数组包含一个或多个值，类型为 `string[]`。
+`HTTPQuery/HTTPQueries` 装饰器用于获取 HTTP 请求中 querystring 参数。`HTTPQuery` 只取第一个参数，类型必须为 `string`；`HTTPQueries` 以数组形式注入参数，数组包含一个或多个值，类型为 `string[]`。
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPQuery, HTTPQueries } from 'egg';

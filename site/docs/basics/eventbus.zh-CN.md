@@ -5,7 +5,7 @@ title: 消息中枢
 # EventBus
 
 ## 使用场景
-在业务开发中，经常回需要解耦的异步操作，简单的做法可以通过 `backgroundTaskHelper` 的方式来执行。但是这种方法无法实现代码直接的解耦。需要明确的在 backgrouTask 的回调里面编写异步的逻辑。这时候我们就需要引入事件。
+在业务开发中，经常会需要解耦的异步操作，简单做法可以通过 `backgroundTaskHelper` 执行。但这种方法无法实现代码间的解耦，需要在 `backgroundTask` 的回调中编写异步逻辑。这时引入事件更合适。
 
 ## 代码对比
 ### 使用 backgroundTaskHelper
@@ -14,7 +14,7 @@ import { BackgroundTaskHelper } from 'egg';
 
 export class TriggerService {
   @Inject()
-  private backgroundTaskHelper: BackgroundTaskHelper
+  private backgroundTaskHelper: BackgroundTaskHelper;
   
   @Inject()
   private fooService;
@@ -25,8 +25,8 @@ export class TriggerService {
   async trigger() {
     this.backgroundTaskHelper.run(async () => {
       // do the background task
-      fooService.call();
-      barService.call();
+      this.fooService.call();
+      this.barService.call();
     });
   }
 }
@@ -135,13 +135,13 @@ export class FooHandler {
 并且可以通过 EventContext 注解，注入 EventContext。（可选）
 
 ```typescript
-import { EggLogger, Event, Inject } from 'egg';
+import { EggLogger, Event, Inject, EventContext } from 'egg';
 
 // ts 会检查事件是否在 Events 中存在，并且会检查 handle 的参数是否符合对应事件的类型定义
 @Event('hello')
 @Event('hi')
 export class Handler {
-  async handle(@EventContext() ctx: IEventContext, msg: string):Promise<void> {
+  async handle(@EventContext() ctx: IEventContext, msg: string): Promise<void> {
     console.log('eventName: ', ctx.eventName);
     console.log('msg: ', msg);
   }
@@ -151,7 +151,7 @@ export class Handler {
 @Event('hello')
 @Event('hi')
 export class Handler {
-  async handle(msg: string):Promise<void> {
+  async handle(msg: string): Promise<void> {
     console.log('msg: ', msg);
   }
 }

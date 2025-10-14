@@ -74,7 +74,8 @@ const SyncPackageTaskSchema = Type.Object({
   registryName: Type.Optional(Type.String()),
 });
 
-type SyncPackageTaskType = Static<typeof SyncPackageTaskSchema>;
+interface SyncPackageTaskType extends Static<typeof SyncPackageTaskSchema> {
+}
 
 @HTTPController()
 export class HelloController {

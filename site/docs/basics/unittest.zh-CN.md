@@ -8,7 +8,7 @@ title: 单元测试
 ```typescript
 import path from 'node:path';
 import assert from 'node:assert';
-import { app } from 'egg-bin/unittest';
+import { app } from 'egg-bin/bootstrap';
 import { FooService } from '../app/foo';
 
 describe('test/xxx.test.ts', () => {
@@ -90,10 +90,10 @@ export class HelloService {
 
 // xxx.test.ts
 import { app } from 'egg-bin/bootstrap';
-import HelloService from '../app/module/foo/HelloService.ts';
+import { HelloService } from '../app/module/foo/HelloService.ts';
 
 describe('test', () => {
-  it('test', () => {
+  it('test', async () => {
     const helloService = await app.getEggObject(HelloService);
     await helloService.foo();
   });
@@ -127,6 +127,7 @@ export class FooService {
 
 // xxx.test.ts
 import { app, mm } from 'egg-bin/bootstrap';
+import assert from 'node:assert/strict';
 import { HelloService } from '../app/module/foo/HelloService.ts';
 import { FooService } from '../app/module/foo/FooService.ts';
 

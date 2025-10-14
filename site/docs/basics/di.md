@@ -331,7 +331,7 @@ class FooService {
   @Inject()
   coreLogger: EggLogger;
   
-  // 注入 customeLogger 名字为 fooLogger
+  // 注入 customLogger 名字为 fooLogger
   @Inject()
   fooLogger: EggLogger;
 }

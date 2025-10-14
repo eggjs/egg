@@ -24,6 +24,6 @@ egg 提供了不同的 Controller 装饰器，用于实现不同类型的接口�
 
 | Controller 装饰器                                                | 说明                                                          |
 |---------------------------------------------------------------|-------------------------------------------------------------|
-| [@HTTPController / @HTTPMethod](./HTTPController)             | 用于实现 HTTP 接口<br/>函数应用中若只需返回 JSON 类型数据时，推荐使用 WebGWController |
-| [@MCPController](./MCPCotroller)             | 用于实现 MCP Server |
-| [@Schedule](./Scheduler)                                       | 用于**标准应用**实现定时任务接口                                          |
+| [@HTTPController / @HTTPMethod](./httpcontroller)             | 用于实现 HTTP 接口<br/>函数应用中若只需返回 JSON 类型数据时，推荐使用 WebGWController |
+| [@MCPController](./mcpcontroller)             | 用于实现 MCP Server |
+| [@Schedule](./schedule)                                       | 用于**标准应用**实现定时任务接口                                          |
