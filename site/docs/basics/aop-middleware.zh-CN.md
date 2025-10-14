@@ -6,7 +6,7 @@ title: 中间件
 
 一个请求进来后，会执行一系列的处理，然后返回响应给用户。 这个过程就像一条管道，管道的每一个切面逻辑，我们称之为 `Middleware`。这种模型也被形象地称为 `洋葱模型`。
 
-![洋葱模型](https://mass-office.alipay.com/huamei_koqzbu/afts/img/kBVsT6LP2KUAAAAAAAAAABAAenV5AQBr/fmt.webp)
+![洋葱模型](https://mdn.alipayobjects.com/huamei_1jxgeu/afts/img/cwwCRpOnomgAAAAARSAAAAgADpOHAQFr/original)
 
 `Middleware` 非常适合用于实现例如日志记录、安全校验等和具体业务无关的横线切面逻辑。
 

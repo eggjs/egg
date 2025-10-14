@@ -303,46 +303,6 @@ export default class MCPDemoHTTPController {
 
 ```
 
-### SSE (不推荐)
-#### 线上
-在线可使用 sse 进行调用，地址为
-
-`https://uniomcpproxy{预发需要加-pre}.antgroup-inc.cn/mcp/proxy/{你的appname}/init`
-
-可以在 mcp inspector 调用测试
-
-[https://mcpinspector.antgroup-inc.cn/#tools](https://mcpinspector.antgroup-inc.cn/#tools)
-
-![](https://mass-office.alipay.com/huamei_koqzbu/afts/img/4K5zR6z8QKAAAAAAAAAAABAAenV5AQBr/original)
-
-#### 线下
-线下可直接连本机的url，地址为`/mcp/sse`，举个简单的调用🌰：
-
-```typescript
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import {
-  SSEClientTransport,
-} from "@modelcontextprotocol/sdk/client/sse.js";
-
-
-const client = new Client({
-  name: "example-client",
-  version: "1.0.0",
-});
-
-const transport = new SSEClientTransport(
-  new URL("http://425925.dev.alipay.net:7001/mcp/sse"),
-);
-await client.connect(transport);
-
-const res = await client.listTools();
-
-console.log(res);
-
-await client.close();
-
-```
-
 ## 单元测试
 > ⚠️ 注意：MCP 只支持 node >= 18。
 >

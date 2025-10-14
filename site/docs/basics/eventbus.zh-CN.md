@@ -106,7 +106,7 @@ export class FooProducer {
 
 会神奇地发现 emit 会及时出现正确的类型提示
 
-![](https://mass-office.alipay.com/huamei_koqzbu/afts/img/E6KMR7aG18kAAAAAAAAAABAAenV5AQBr/original)
+![](https://mdn.alipayobjects.com/huamei_1jxgeu/afts/img/cwwCRpOnomgAAAAARSAAAAgADpOHAQFr/original)
 
 ### 消费事件
 为一个类添加 Event 注解，即可实现事件消费。
