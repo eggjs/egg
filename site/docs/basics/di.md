@@ -142,7 +142,7 @@ export class WorldService {
 
 ```ts
 import { Inject, ContextProto } from 'egg';
-import { HelloService, WorldService } from './service.ts';
+import { HelloService, WorldService } from './service';
 
 @ContextProto()
 export class UseProtoDemo {

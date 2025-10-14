@@ -8,7 +8,7 @@ title: 单元测试
 ```typescript
 import path from 'node:path';
 import assert from 'node:assert';
-import { app } from 'egg-bin/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 import { FooService } from '../app/foo';
 
 describe('test/xxx.test.ts', () => {
@@ -44,7 +44,7 @@ export interface Application {
 使用例子
 
 ```typescript
-import { app } from 'egg-bin/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 
 describe('test', () => {
   let ctx;
@@ -89,7 +89,7 @@ export class HelloService {
 }
 
 // xxx.test.ts
-import { app } from 'egg-bin/bootstrap';
+import { app } from 'egg-mock/bootstrap';
 import { HelloService } from '../app/module/foo/HelloService.ts';
 
 describe('test', () => {
@@ -126,7 +126,7 @@ export class FooService {
 }
 
 // xxx.test.ts
-import { app, mm } from 'egg-bin/bootstrap';
+import { app, mm } from 'egg-mock/bootstrap';
 import assert from 'node:assert/strict';
 import { HelloService } from '../app/module/foo/HelloService.ts';
 import { FooService } from '../app/module/foo/FooService.ts';
