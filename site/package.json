@@ -9,6 +9,7 @@
     "vitepress": "catalog:"
   },
   "devDependencies": {
+    "oxc-minify": "catalog:",
     "prettier": "catalog:"
   },
   "scripts": {

@@ -150,6 +150,7 @@ catalog:
   npminstall: ^7.12.0
   on-finished: ^2.4.1
   onelogger: ^1.0.1
+  oxc-minify: ^0.94.0
   oxlint: ^1.22.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
