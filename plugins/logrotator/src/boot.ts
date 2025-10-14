@@ -6,7 +6,7 @@ export class Boot implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     // reload logger to new fd after rotating
     this.app.messenger.on('log-reload', () => {
       this.app.loggers.reload();

@@ -34,7 +34,7 @@ export class Keygrip {
   }
 
   // encrypt a message
-  encrypt(data: string, key?: string) {
+  encrypt(data: string, key?: string): Buffer {
     key = key || this.#keys[0];
     const password = keyToPassword(key);
     const cipher = crypto.createCipheriv(this.#cipher, password.key, password.iv);
@@ -66,7 +66,7 @@ export class Keygrip {
     }
   }
 
-  sign(data: string | Buffer, key?: string) {
+  sign(data: string | Buffer, key?: string): string {
     // default to the first key
     key = key || this.#keys[0];
 
@@ -80,7 +80,7 @@ export class Keygrip {
       });
   }
 
-  verify(data: string, digest: string) {
+  verify(data: string, digest: string): number {
     const keys = this.#keys;
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
@@ -93,13 +93,13 @@ export class Keygrip {
   }
 }
 
-function crypt(cipher: Cipheriv, data: string | Buffer) {
+function crypt(cipher: Cipheriv, data: string | Buffer): Buffer {
   const text = Buffer.isBuffer(data) ? cipher.update(data) : cipher.update(data, 'utf-8');
   const pad = cipher.final();
   return Buffer.concat([text, pad]);
 }
 
-function keyToPassword(key: string) {
+function keyToPassword(key: string): { key: Buffer; iv: Buffer } {
   if (passwordCache.has(key)) {
     return passwordCache.get(key);
   }

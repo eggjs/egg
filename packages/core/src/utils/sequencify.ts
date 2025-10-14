@@ -22,7 +22,7 @@ function sequence(
   nest: string[],
   optional: boolean,
   parent: string
-) {
+): void {
   for (const name of names) {
     if (result.requires[name]) {
       continue;
@@ -59,7 +59,14 @@ function sequence(
 
 // tasks: object with keys as task names
 // names: array of task names
-export function sequencify(tasks: Record<string, SequencifyTask>, names: string[]) {
+export function sequencify(
+  tasks: Record<string, SequencifyTask>,
+  names: string[]
+): {
+  sequence: string[];
+  missingTasks: string[];
+  recursiveDependencies: string[];
+} {
   const result: SequencifyResult = {
     sequence: [],
     requires: {},

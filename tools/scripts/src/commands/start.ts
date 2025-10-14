@@ -86,11 +86,11 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
   isReady = false;
   #child: ChildProcess;
 
-  protected async getFrameworkPath(options: FrameworkOptions) {
+  protected async getFrameworkPath(options: FrameworkOptions): Promise<string> {
     return getFrameworkPath(options);
   }
 
-  protected async getFrameworkName(frameworkPath: string) {
+  protected async getFrameworkName(frameworkPath: string): Promise<string> {
     const pkgPath = path.join(frameworkPath, 'package.json');
     let name = 'egg';
     try {
@@ -104,7 +104,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     return name;
   }
 
-  protected async getServerBin() {
+  protected async getServerBin(): Promise<string> {
     const serverBinName = this.isESM ? 'start-cluster.mjs' : 'start-cluster.cjs';
     return path.join(import.meta.dirname, '../../scripts', serverBinName);
   }
@@ -297,7 +297,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     }
   }
 
-  protected async checkStatus() {
+  protected async checkStatus(): Promise<void> {
     let count = 0;
     let hasError = false;
     let isSuccess = true;

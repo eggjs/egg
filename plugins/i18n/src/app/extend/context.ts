@@ -25,7 +25,7 @@ export default class I18nContext extends Context {
    * @see {@link Context#__}
    * @function Context#gettext
    */
-  gettext(key: string, value?: any, ...args: any[]) {
+  gettext(key: string, value?: any, ...args: any[]): string {
     return this.app.gettext(this.locale, key, value, ...args);
   }
 
@@ -79,7 +79,7 @@ export default class I18nContext extends Context {
    * - cookie: `locale=zh-TW`
    * - header: `Accept-Language: zh-CN,zh;q=0.5`
    */
-  __(key: string, value?: any, ...args: any[]) {
+  __(key: string, value?: any, ...args: any[]): string {
     return this.gettext(key, value, ...args);
   }
 
@@ -164,7 +164,7 @@ export default class I18nContext extends Context {
   }
 
   declare __localeOrigin: string;
-  __getLocaleOrigin() {
+  __getLocaleOrigin(): string {
     if (this.__localeOrigin) {
       return this.__localeOrigin;
     }
@@ -172,7 +172,7 @@ export default class I18nContext extends Context {
     return this.__localeOrigin;
   }
 
-  __setLocale(locale: string) {
+  __setLocale(locale: string): void {
     this.__locale = locale;
     this.__localeOrigin = 'set';
     if (this.app.config.i18n.writeCookie && !this.headerSent) {

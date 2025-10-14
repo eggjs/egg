@@ -8,7 +8,7 @@ import Cookies from 'cookies';
 import type { Accepts } from 'accepts';
 
 import type { Application } from './application.ts';
-import type { Request } from './request.ts';
+import type { Request, RequestSocket } from './request.ts';
 import type { Response } from './response.ts';
 import type { CustomError, AnyProto } from './types.ts';
 
@@ -33,21 +33,16 @@ export class Context {
     this.request.response = this.response;
     this.response.request = this.request;
     this.originalUrl = req.url ?? '/';
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   /**
    * util.inspect() implementation, which
    * just returns the JSON output.
    */
-  inspect() {
+  inspect(): object {
     return this.toJSON();
-  }
-
-  /**
-   * Custom inspection implementation for newer Node.js versions.
-   */
-  [util.inspect.custom]() {
-    return this.inspect();
   }
 
   /**
@@ -59,7 +54,7 @@ export class Context {
    * clone() to fail.
    */
 
-  toJSON() {
+  toJSON(): object {
     return {
       request: this.request.toJSON(),
       response: this.response.toJSON(),
@@ -158,7 +153,7 @@ export class Context {
    * Default error handling.
    * @private
    */
-  onerror(err: CustomError) {
+  onerror(err: CustomError): void {
     // don't do anything if there is no error.
     // this allows you to pass `this.onerror`
     // to node-style callbacks.
@@ -240,7 +235,8 @@ export class Context {
     this._cookies = cookies;
   }
 
-  get state() {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  get state(): Record<string, any> {
     return this.#state;
   }
 
@@ -295,7 +291,7 @@ export class Context {
     return this.request.idempotent;
   }
 
-  get socket() {
+  get socket(): RequestSocket {
     return this.request.socket;
   }
 
@@ -375,11 +371,11 @@ export class Context {
     return this.request.URL;
   }
 
-  get header() {
+  get header(): IncomingMessage['headers'] {
     return this.request.header;
   }
 
-  get headers() {
+  get headers(): IncomingMessage['headers'] {
     return this.request.headers;
   }
 
@@ -407,35 +403,35 @@ export class Context {
    * Response delegation.
    */
 
-  attachment(...args: Parameters<Response['attachment']>) {
+  attachment(...args: Parameters<Response['attachment']>): void {
     return this.response.attachment(...args);
   }
 
-  redirect(...args: Parameters<Response['redirect']>) {
+  redirect(...args: Parameters<Response['redirect']>): void {
     return this.response.redirect(...args);
   }
 
-  remove(...args: Parameters<Response['remove']>) {
+  remove(...args: Parameters<Response['remove']>): void {
     return this.response.remove(...args);
   }
 
-  vary(...args: Parameters<Response['vary']>) {
+  vary(...args: Parameters<Response['vary']>): void {
     return this.response.vary(...args);
   }
 
-  has(...args: Parameters<Response['has']>) {
+  has(...args: Parameters<Response['has']>): boolean {
     return this.response.has(...args);
   }
 
-  set(...args: Parameters<Response['set']>) {
+  set(...args: Parameters<Response['set']>): void {
     return this.response.set(...args);
   }
 
-  append(...args: Parameters<Response['append']>) {
+  append(...args: Parameters<Response['append']>): void {
     return this.response.append(...args);
   }
 
-  flushHeaders(...args: Parameters<Response['flushHeaders']>) {
+  flushHeaders(...args: Parameters<Response['flushHeaders']>): void {
     return this.response.flushHeaders(...args);
   }
 
@@ -497,11 +493,11 @@ export class Context {
     this.response.etag = val;
   }
 
-  get headerSent() {
+  get headerSent(): boolean {
     return this.response.headerSent;
   }
 
-  get writable() {
+  get writable(): boolean {
     return this.response.writable;
   }
 }

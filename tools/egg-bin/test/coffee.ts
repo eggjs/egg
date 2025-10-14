@@ -2,8 +2,8 @@ import type { ForkOptions } from 'node:child_process';
 
 import coffee from 'coffee';
 
-export default {
-  fork(modulePath: string, args: string[], options: ForkOptions = {}) {
+const coffeeFork = {
+  fork(modulePath: string, args: string[], options: ForkOptions = {}): ReturnType<typeof coffee.fork> {
     options.execArgv = [
       // '--require', 'ts-node/register/transpile-only',
       '--import',
@@ -21,4 +21,6 @@ export default {
     // console.error('fork env: %o', options.env);
     return coffee.fork(modulePath, args, options);
   },
-};
+} as const;
+
+export default coffeeFork;

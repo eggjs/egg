@@ -8,7 +8,6 @@ import type { Logger } from 'egg-logger';
 
 import type { MessageBody, Messenger } from '../../messenger.ts';
 import type { MasterOptions } from '../../../master.ts';
-import { getSrcDirname } from '../../../dirname.ts';
 
 export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   instance: T;
@@ -51,7 +50,7 @@ export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
 
   abstract send(data: MessageBody): void;
 
-  clean() {
+  clean(): void {
     throw new Error('BaseAppWorker should implement clean.');
   }
 
@@ -62,21 +61,21 @@ export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static on(..._args: any[]) {
+  static on(..._args: any[]): void {
     throw new Error('BaseAppWorker should implement on.');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static send(_message: MessageBody) {
+  static send(_message: MessageBody): void {
     throw new Error('BaseAgentWorker should implement send.');
   }
 
-  static kill() {
+  static kill(): void {
     throw new Error('BaseAppWorker should implement kill.');
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  static gracefulExit(_options: any) {
+  static gracefulExit(_options: any): void {
     throw new Error('BaseAgentWorker should implement gracefulExit.');
   }
 }
@@ -116,15 +115,16 @@ export abstract class BaseAppUtils extends EventEmitter {
     this.isProduction = isProduction;
   }
 
-  getAppWorkerFile() {
-    let appWorkerFile = path.join(getSrcDirname(), 'app_worker.js');
+  getAppWorkerFile(): string {
+    const srcDirname = path.join(import.meta.dirname, '../../..');
+    let appWorkerFile = path.join(srcDirname, 'app_worker.js');
     if (!existsSync(appWorkerFile)) {
-      appWorkerFile = path.join(getSrcDirname(), 'app_worker.ts');
+      appWorkerFile = path.join(srcDirname, 'app_worker.ts');
     }
     return appWorkerFile;
   }
 
-  fork() {
+  fork(): void {
     throw new Error('BaseApp should implement fork.');
   }
 

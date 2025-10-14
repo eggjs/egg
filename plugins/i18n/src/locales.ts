@@ -6,15 +6,14 @@ import ini from 'ini';
 import yaml from 'js-yaml';
 import { exists, readJSON } from 'utility';
 import { importModule } from '@eggjs/utils';
-import type { Application } from 'egg';
 
 import type { I18nConfig } from './config/config.default.ts';
-import { I18N_RESOURCES } from './app/extend/application.ts';
+import type I18nApplication from './app/extend/application.ts';
 import { formatLocale, isObject } from './utils.ts';
 
 const debug = debuglog('egg/i18n/locales');
 
-export async function loadLocaleResources(app: Application, options: I18nConfig) {
+export async function loadLocaleResources(app: I18nApplication, options: I18nConfig): Promise<void> {
   const localeDirs = options.dirs;
   const resources: Record<string, Record<string, string>> = {};
 
@@ -55,7 +54,7 @@ export async function loadLocaleResources(app: Application, options: I18nConfig)
   }
 
   debug('Init locales with %j, got %j resources', options, Object.keys(resources));
-  app[I18N_RESOURCES] = resources;
+  app._I18N_RESOURCES = resources;
 }
 
 function flattening(data: any) {

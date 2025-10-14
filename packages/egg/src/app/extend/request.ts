@@ -180,7 +180,10 @@ export default class Request extends EggCoreRequest {
 
   // How to read query safely
   // https://github.com/koajs/qs/issues/5
-  _customQuery(cacheName: symbol, filter: (value: string | string[]) => string | string[]) {
+  _customQuery(
+    cacheName: symbol,
+    filter: (value: string | string[]) => string | string[]
+  ): Record<string, string | string[]> {
     const str = this.querystring || '';
     let c = this[cacheName] as Record<string, Record<string, string | string[]>>;
     if (!c) {

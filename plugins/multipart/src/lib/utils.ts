@@ -4,7 +4,7 @@ import assert from 'node:assert';
 import bytes from 'bytes';
 import type { MultipartConfig } from '../config/config.default.ts';
 
-export const whitelist = [
+export const whitelist: string[] = [
   // images
   '.jpg',
   '.jpeg', // image/jpeg
@@ -36,14 +36,14 @@ export const whitelist = [
   '.avi',
 ];
 
-export function humanizeBytes(size: number | string) {
+export function humanizeBytes(size: number | string): number {
   if (typeof size === 'number') {
     return size;
   }
   return bytes(size) as number;
 }
 
-export function normalizeOptions(options: MultipartConfig) {
+export function normalizeOptions(options: MultipartConfig): MultipartConfig {
   // make sure to cast the value of config **Size to number
   options.fileSize = humanizeBytes(options.fileSize);
   options.fieldSize = humanizeBytes(options.fieldSize);

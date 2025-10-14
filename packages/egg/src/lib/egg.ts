@@ -4,14 +4,13 @@ import fs from 'node:fs';
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import inspector from 'node:inspector';
 import type { AsyncLocalStorage } from 'node:async_hooks';
+import assert from 'node:assert';
 
 import { EggCore, Router } from '@eggjs/core';
 import type { EggCoreOptions, Next, MiddlewareFunc as EggCoreMiddlewareFunc, ILifecycleBoot } from '@eggjs/core';
 import { utils as eggUtils } from '@eggjs/core';
 // @ts-expect-error no types for 'cluster-client'
-import createClusterClient from 'cluster-client';
-// @ts-expect-error no types for 'cluster-client'
-import { close as closeClusterClient } from 'cluster-client';
+import createClusterClient, { close as closeClusterClient } from 'cluster-client';
 import { extend } from '@eggjs/extend2';
 import { EggContextLogger as ContextLogger, EggLoggers, EggLogger } from 'egg-logger';
 import { Cookies as ContextCookies } from '@eggjs/cookies';
@@ -38,9 +37,6 @@ import { convertObject } from './core/utils.ts';
 import { BaseContextClass } from './core/base_context_class.ts';
 import { BaseHookClass } from './core/base_hook_class.ts';
 import type { EggApplicationLoader } from './loader/index.ts';
-import { getSourceDirname } from './utils.ts';
-
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 export interface EggApplicationCoreOptions extends Omit<EggCoreOptions, 'baseDir'> {
   mode?: 'cluster' | 'single';
@@ -78,57 +74,57 @@ export class EggApplicationCore extends EggCore {
    * This provides access to the context object for the current request lifecycle.
    * @returns {Context | undefined} The current request context, or undefined if not in a request scope.
    */
-  get currentContext() {
+  get currentContext(): Context | undefined {
     return this.ctxStorage.getStore();
   }
 
   // export context base classes, let framework can impl sub class and over context extend easily.
-  ContextCookies = ContextCookies;
-  ContextLogger = ContextLogger;
-  ContextHttpClient = ContextHttpClient;
-  HttpClient = HttpClient;
+  ContextCookies: typeof ContextCookies = ContextCookies;
+  ContextLogger: typeof ContextLogger = ContextLogger;
+  ContextHttpClient: typeof ContextHttpClient = ContextHttpClient;
+  HttpClient: typeof HttpClient = HttpClient;
   // keep compatible with egg version 3.x
-  HttpClientNext = HttpClient;
+  HttpClientNext: typeof HttpClient = HttpClient;
   /**
    * Retrieve base context class
    * @member {BaseContextClass} BaseContextClass
    * @since 1.0.0
    */
-  BaseContextClass = BaseContextClass;
+  BaseContextClass: typeof BaseContextClass = BaseContextClass;
 
   /**
    * Retrieve base controller
    * @member {Controller} Controller
    * @since 1.0.0
    */
-  Controller = BaseContextClass;
+  Controller: typeof BaseContextClass = BaseContextClass;
 
   /**
    * Retrieve base service
    * @member {Service} Service
    * @since 1.0.0
    */
-  Service = BaseContextClass;
+  Service: typeof BaseContextClass = BaseContextClass;
 
   /**
    * Retrieve base subscription
    * @member {Subscription} Subscription
    * @since 2.12.0
    */
-  Subscription = BaseContextClass;
+  Subscription: typeof BaseContextClass = BaseContextClass;
 
   /**
    * Retrieve base context class
    * @member {BaseHookClass} BaseHookClass
    */
-  BaseHookClass = BaseHookClass;
+  BaseHookClass: typeof BaseHookClass = BaseHookClass;
 
   /**
    * Retrieve base boot
    * @member {Boot}
    * @alias BaseHookClass
    */
-  Boot = BaseHookClass;
+  Boot: typeof BaseHookClass = BaseHookClass;
 
   declare options: Required<EggApplicationCoreOptions>;
 
@@ -177,15 +173,15 @@ export class EggApplicationCore extends EggCore {
   /**
    * @deprecated please use `options` property instead
    */
-  get _options() {
+  get _options(): Required<EggApplicationCoreOptions> {
     return this.options;
   }
 
-  protected async loadConfig() {
+  protected async loadConfig(): Promise<void> {
     await this.loader.loadConfig();
   }
 
-  protected async load() {
+  protected async load(): Promise<void> {
     await this.loadConfig();
     // dump config after ready, ensure all the modifications during start will be recorded
     // make sure dumpConfig is the last ready callback
@@ -201,6 +197,7 @@ export class EggApplicationCore extends EggCore {
 
     this.console.info('[egg] App root: %s', this.baseDir);
     this.console.info('[egg] All *.log files save on %j', this.config.logger.dir);
+    assert(this.config.logger.dir, 'logger.dir is required');
     this.console.info('[egg] Loaded enabled plugin %j', this.loader.orderPlugins);
 
     // Listen the error that promise had not catch, then log it in common-error
@@ -233,7 +230,7 @@ export class EggApplicationCore extends EggCore {
   /**
    * Usage: new ApiClient({ cluster: app.cluster })
    */
-  get cluster() {
+  get cluster(): (clientClass: unknown, options?: object) => any {
     return this.clusterWrapper.bind(this);
   }
 
@@ -255,7 +252,7 @@ export class EggApplicationCore extends EggCore {
    *   - {Number} [maxWaitTime|30000] - leader startup max time, default is 30 seconds
    * @return {ClientWrapper} wrapper
    */
-  clusterWrapper(clientClass: unknown, options?: object) {
+  clusterWrapper(clientClass: unknown, options?: object): any {
     const clientClassOptions = {
       ...this.config.clusterClient,
       ...options,
@@ -322,7 +319,7 @@ export class EggApplicationCore extends EggCore {
     return res;
   }
 
-  toJSON() {
+  toJSON(): any {
     return this.inspect();
   }
 
@@ -394,7 +391,7 @@ export class EggApplicationCore extends EggCore {
    * @alias httpClient
    * @member {HttpClient}
    */
-  get httpclient() {
+  get httpclient(): HttpClient {
     return this.httpClient;
   }
 
@@ -403,7 +400,7 @@ export class EggApplicationCore extends EggCore {
    * @member {Object}
    * @since 1.0.0
    */
-  get loggers() {
+  get loggers(): EggLoggers {
     if (!this.#loggers) {
       this.#loggers = createLoggers(this);
     }
@@ -425,7 +422,7 @@ export class EggApplicationCore extends EggCore {
    * @member {Logger}
    * @since 1.0.0
    */
-  get logger() {
+  get logger(): EggLogger {
     return this.getLogger('logger');
   }
 
@@ -434,11 +431,11 @@ export class EggApplicationCore extends EggCore {
    * @member {Logger}
    * @since 1.0.0
    */
-  get coreLogger() {
+  get coreLogger(): EggLogger {
     return this.getLogger('coreLogger');
   }
 
-  _unhandledRejectionHandler(err: any) {
+  _unhandledRejectionHandler(err: any): void {
     this.coreLogger.error('[egg:unhandledRejection] %s', (err && err.message) || err);
     if (!(err instanceof Error)) {
       const newError = new Error(String(err));
@@ -460,7 +457,7 @@ export class EggApplicationCore extends EggCore {
    * dump out the config and meta object
    * @private
    */
-  dumpConfigToObject() {
+  dumpConfigToObject(): { config: any; meta: any } {
     let ignoreList: (string | RegExp)[];
     try {
       // support array and set
@@ -488,7 +485,7 @@ export class EggApplicationCore extends EggCore {
    * save app.config to `run/${type}_config.json`
    * @private
    */
-  dumpConfig() {
+  dumpConfig(): void {
     const rundir = this.config.rundir;
     try {
       if (!fs.existsSync(rundir)) {
@@ -510,7 +507,7 @@ export class EggApplicationCore extends EggCore {
     }
   }
 
-  dumpTiming() {
+  dumpTiming(): void {
     try {
       const items = this.timing.toJSON();
       const rundir = this.config.rundir;
@@ -536,11 +533,11 @@ export class EggApplicationCore extends EggCore {
     }
   }
 
-  get [EGG_PATH]() {
-    return getSourceDirname();
+  protected override customEggPaths(): string[] {
+    return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
   }
 
-  #setupTimeoutTimer() {
+  #setupTimeoutTimer(): void {
     const startTimeoutTimer = setTimeout(() => {
       this.coreLogger.error(this.timing.toString());
       this.coreLogger.error(`${this.type} still doesn't ready after ${this.config.workerStartTimeout} ms.`);
@@ -570,27 +567,27 @@ export class EggApplicationCore extends EggCore {
    * app.env delegate app.config.env
    * @deprecated
    */
-  get env() {
+  get env(): string {
     this.deprecate('please use app.config.env instead');
     return this.config.env;
   }
   /* eslint no-empty-function: off */
-  set env(_) {}
+  set env(_: any) {}
 
   /**
    * app.proxy delegate app.config.proxy
    * @deprecated
    */
-  get proxy() {
+  get proxy(): boolean {
     // this.deprecate('please use app.config.proxy instead');
     return this.config.proxy;
   }
   /* eslint no-empty-function: off */
-  set proxy(_) {}
+  set proxy(_: any) {}
 
-  #patchClusterClient(client: any) {
+  #patchClusterClient(client: any): void {
     const rawCreate = client.create;
-    client.create = (...args: any) => {
+    client.create = (...args: any): any => {
       const realClient = rawCreate.apply(client, args);
       this.#clusterClients.push(realClient);
       return realClient;
@@ -643,7 +640,7 @@ export class EggApplicationCore extends EggCore {
    * @param {Function} scope - the first args is an anonymous ctx, scope should be async function
    * @param {Request} [req] - if you want to mock request like querystring, you can pass an object to this function.
    */
-  async runInAnonymousContextScope(scope: (ctx: Context) => Promise<void>, req?: unknown) {
+  async runInAnonymousContextScope<T = void>(scope: (ctx: Context) => Promise<T>, req?: unknown): Promise<T> {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
       Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));

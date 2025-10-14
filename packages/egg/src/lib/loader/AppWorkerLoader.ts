@@ -9,7 +9,7 @@ export class AppWorkerLoader extends EggApplicationLoader {
    * loadPlugin first, then loadConfig
    * @since 1.0.0
    */
-  async loadConfig() {
+  async loadConfig(): Promise<void> {
     await this.loadPlugin();
     await super.loadConfig();
   }
@@ -18,7 +18,7 @@ export class AppWorkerLoader extends EggApplicationLoader {
    * Load all directories in convention
    * @since 1.0.0
    */
-  async load() {
+  async load(): Promise<void> {
     // app > plugin > core
     await this.loadApplicationExtend();
     await this.loadRequestExtend();

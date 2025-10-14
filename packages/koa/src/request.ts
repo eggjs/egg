@@ -33,13 +33,15 @@ export class Request {
     this.res = res;
     this.ctx = ctx;
     this.originalUrl = req.url ?? '/';
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   /**
    * Return request header.
    */
 
-  get header() {
+  get header(): IncomingMessage['headers'] {
     return this.req.headers;
   }
 
@@ -55,7 +57,7 @@ export class Request {
    * Return request header, alias as request.header
    */
 
-  get headers() {
+  get headers(): IncomingMessage['headers'] {
     return this.req.headers;
   }
 
@@ -71,7 +73,7 @@ export class Request {
    * Get request URL.
    */
 
-  get url() {
+  get url(): string {
     return this.req.url ?? '/';
   }
 
@@ -95,7 +97,7 @@ export class Request {
    * Get full request URL.
    */
 
-  get href() {
+  get href(): string {
     // support: `GET http://example.com/foo`
     if (/^https?:\/\//i.test(this.originalUrl)) {
       return this.originalUrl;
@@ -209,7 +211,7 @@ export class Request {
    * proxy is enabled.
    * return `hostname:port` format
    */
-  get host() {
+  get host(): string {
     const proxy = this.app.proxy;
     let host = proxy ? this.get<string>('X-Forwarded-Host') : '';
     if (host) {
@@ -231,7 +233,7 @@ export class Request {
    * and support X-Forwarded-Host when a
    * proxy is enabled.
    */
-  get hostname() {
+  get hostname(): string {
     const host = this.host;
     if (!host) {
       return '';
@@ -265,7 +267,7 @@ export class Request {
    * Last-Modified and/or the ETag
    * still match.
    */
-  get fresh() {
+  get fresh(): boolean {
     const method = this.method;
     const status = this.response.status;
 
@@ -287,14 +289,14 @@ export class Request {
    * "Last-Modified" and / or the "ETag" for the
    * resource has changed.
    */
-  get stale() {
+  get stale(): boolean {
     return !this.fresh;
   }
 
   /**
    * Check if the request is idempotent.
    */
-  get idempotent() {
+  get idempotent(): boolean {
     const methods = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'];
     return methods.includes(this.method);
   }
@@ -309,7 +311,7 @@ export class Request {
   /**
    * Get the charset when present or undefined.
    */
-  get charset() {
+  get charset(): string | undefined {
     try {
       const { parameters } = contentType.parse(this.req);
       return parameters.charset || '';
@@ -321,7 +323,7 @@ export class Request {
   /**
    * Return parsed Content-Length when present.
    */
-  get length() {
+  get length(): number | undefined {
     const len = this.get<string>('Content-Length');
     if (len === '') {
       return;
@@ -337,7 +339,7 @@ export class Request {
    * a reverse proxy that supplies https for you this
    * may be enabled.
    */
-  get protocol() {
+  get protocol(): string {
     if (this.socket.encrypted) {
       return 'https';
     }
@@ -356,7 +358,7 @@ export class Request {
    *
    *    this.protocol == 'https'
    */
-  get secure() {
+  get secure(): boolean {
     return this.protocol === 'https';
   }
 
@@ -368,7 +370,7 @@ export class Request {
    * you would receive the array `["client", "proxy1", "proxy2"]`
    * where "proxy2" is the furthest down-stream.
    */
-  get ips() {
+  get ips(): string[] {
     const proxy = this.app.proxy;
     const val = this.get<string>(this.app.proxyIpHeader);
     let ips = proxy && val ? splitCommaSeparatedValues(val) : [];
@@ -407,7 +409,7 @@ export class Request {
    * `["ferrets", "tobi"]`.
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
    */
-  get subdomains() {
+  get subdomains(): string[] {
     const offset = this.app.subdomainOffset;
     const hostname = this.hostname;
     if (net.isIP(hostname)) return [];
@@ -574,7 +576,7 @@ export class Request {
    * Return the request mime type void of
    * parameters such as "charset".
    */
-  get type() {
+  get type(): string {
     const type = this.get<string>('Content-Type');
     if (!type) return '';
     return type.split(';')[0];
@@ -613,22 +615,15 @@ export class Request {
   /**
    * Inspect implementation.
    */
-  inspect() {
+  inspect(): object | undefined {
     if (!this.req) return;
     return this.toJSON();
   }
 
   /**
-   * Custom inspection implementation for newer Node.js versions.
-   */
-  [util.inspect.custom]() {
-    return this.inspect();
-  }
-
-  /**
    * Return JSON representation.
    */
-  toJSON() {
+  toJSON(): object {
     return {
       method: this.method,
       url: this.url,

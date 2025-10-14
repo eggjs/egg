@@ -11,7 +11,7 @@ const INPUT_CSRF = '\r\n<input type="hidden" name="_csrf" value="{{ctx.csrf}}" /
 const INJECTION_DEFENSE = '<!--for injection--><!--</html>--><!--for injection-->';
 
 export default class SecurityApplication extends Application {
-  injectCsrf(html: string) {
+  injectCsrf(html: string): string {
     html = html.replace(/(<form.*?>)([\s\S]*?)<\/form>/gi, (_, $1, $2) => {
       const match = $2;
       if (match.indexOf('name="_csrf"') !== -1 || match.indexOf("name='_csrf'") !== -1) {
@@ -22,7 +22,7 @@ export default class SecurityApplication extends Application {
     return html;
   }
 
-  injectNonce(html: string) {
+  injectNonce(html: string): string {
     html = html.replace(/<script(.*?)>([\s\S]*?)<\/script[^>]*?>/gi, (_, $1, $2) => {
       if (!$1.includes('nonce=')) {
         $1 += ' nonce="{{ctx.nonce}}"';
@@ -32,7 +32,7 @@ export default class SecurityApplication extends Application {
     return html;
   }
 
-  injectHijackingDefense(html: string) {
+  injectHijackingDefense(html: string): string {
     return INJECTION_DEFENSE + html + INJECTION_DEFENSE;
   }
 

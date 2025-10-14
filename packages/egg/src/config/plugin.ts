@@ -1,4 +1,6 @@
-export default {
+import type { EggPluginItem } from '../index.ts';
+
+const plugins: Record<string, EggPluginItem> = {
   /**
    * app global Error Handling
    * @member {Object} Plugin#onerror
@@ -130,3 +132,5 @@ export default {
     package: '@eggjs/view',
   },
 };
+
+export default plugins;

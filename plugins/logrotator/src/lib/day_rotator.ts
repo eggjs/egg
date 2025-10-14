@@ -22,7 +22,7 @@ export class DayRotator extends LogRotator {
     this.filesRotateByHour = this.app.config.logrotator.filesRotateByHour ?? [];
   }
 
-  async getRotateFiles() {
+  async getRotateFiles(): Promise<Map<string, RotateFile>> {
     const files = new Map<string, RotateFile>();
     const logDir = this.app.config.logger.dir;
     const loggers = this.app.loggers;
@@ -71,7 +71,7 @@ export class DayRotator extends LogRotator {
     return files;
   }
 
-  _setFile(srcPath: string, files: Map<string, RotateFile>) {
+  _setFile(srcPath: string, files: Map<string, RotateFile>): void {
     // don't rotate logPath in filesRotateBySize
     if (this.filesRotateBySize.includes(srcPath)) {
       return;

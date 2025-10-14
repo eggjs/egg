@@ -109,12 +109,11 @@ module.exports = require('./lib/framework.js');
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // 返回框架路径
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
@@ -141,7 +140,7 @@ module.exports = Object.assign(egg, {
 
 ### 框架继承原理
 
-使用 `Symbol.for('egg#eggPath')` 来指定当前框架的路径，目的是让 Loader 能探测到框架路径。为什么采取这种实现方式？本可以将框架路径直接传给 Loader，但为了实现多级框架继承，每一层框架都要提供自己的路径，且继承有其顺序。
+使用 `customEggPaths()` 来指定当前框架的路径，目的是让 Loader 能探测到框架路径。为什么采取这种实现方式？本可以将框架路径直接传给 Loader，但为了实现多级框架继承，每一层框架都要提供自己的路径，且继承有其顺序。
 
 现在的实现方案是基于类继承的。每一层框架都必须继承上一层框架，并且指定 eggPath，之后遍历原型链，就可以获取到每一层框架的路径了。
 
@@ -151,8 +150,8 @@ module.exports = Object.assign(egg, {
 // enterprise
 const Application = require('egg').Application;
 class EnterpriseApplication extends Application {
-  get [EGG_PATH]() {
-    return '/path/to/enterprise';
+  protected override customEggPaths() {
+    return ['/path/to/enterprise', ...super.customEggPaths()];
   }
 }
 // 自定义模块的 Application
@@ -162,8 +161,8 @@ exports.Application = EnterpriseApplication;
 const EnterpriseApplication = require('enterprise').Application;
 // 继承自 enterprise 的 Application
 class DepartmentApplication extends EnterpriseApplication {
-  get [EGG_PATH]() {
-    return '/path/to/department';
+  protected override customEggPaths() {
+    return ['/path/to/department', ...super.customEggPaths()];
   }
 }
 
@@ -184,18 +183,17 @@ app.ready();
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // 返回 framework 路径
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
 class Agent extends egg.Agent {
-  get [EGG_PATH]() {
-    return path.dirname(__dirname);
+  protected override customEggPaths() {
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
 }
 
@@ -212,13 +210,12 @@ module.exports = Object.assign(egg, {
 
 Loader 是应用启动的核心。利用它，我们不仅能规范应用代码，还能基于这个类扩展更多功能，比如加载数据模型。扩展 Loader 还可以覆盖默认的实现，或调整现有的加载顺序等。
 
-我们使用 `Symbol.for('egg#loader')` 来自定义 Loader，主要原因还是为了使用原型链。这样，上层框架可以覆盖底层 Loader。在上面的例子基础上：
+我们使用 `customEggLoader()` 来自定义 Loader，主要原因还是为了使用原型链。这样，上层框架可以覆盖底层 Loader。在上面的例子基础上：
 
 ```js
 // lib/framework.js
 const path = require('path');
 const egg = require('egg');
-const EGG_PATH = Symbol.for('egg#eggPath');
 
 class YadanAppWorkerLoader extends egg.AppWorkerLoader {
   load() {
@@ -228,12 +225,12 @@ class YadanAppWorkerLoader extends egg.AppWorkerLoader {
 }
 
 class Application extends egg.Application {
-  get [EGG_PATH]() {
+  protected override customEggPaths() {
     // 返回 framework 路径
-    return path.dirname(__dirname);
+    return [path.dirname(__dirname), ...super.customEggPaths()];
   }
   // 覆盖 Egg 的 Loader，启动时将使用这个 Loader
-  get [EGG_LOADER]() {
+  protected override customEggLoader() {
     return YadanAppWorkerLoader;
   }
 }

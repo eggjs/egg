@@ -5,7 +5,7 @@ export default class AppBoot implements ILifecycleBoot {
   constructor(app: Application) {
     this.app = app;
   }
-  async configWillLoad() {
+  async configWillLoad(): Promise<void> {
     const app = this.app;
     // make sure static middleware is before bodyParser
     const index = app.config.coreMiddleware.indexOf('bodyParser');

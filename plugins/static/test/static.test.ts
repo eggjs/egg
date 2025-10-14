@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { mock, type MockApplication } from '@eggjs/mock';
 
-export function getFixtures(filename: string) {
+export function getFixtures(filename: string): string {
   return path.join(import.meta.dirname, 'fixtures', filename);
 }
 

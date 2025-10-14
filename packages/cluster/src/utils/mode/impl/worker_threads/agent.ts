@@ -7,26 +7,26 @@ import type { MessageBody } from '../../../messenger.ts';
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
 
 export class AgentThreadWorker extends BaseAgentWorker<Worker> {
-  get workerId() {
+  get workerId(): number {
     return this.instance.threadId;
   }
 
-  send(message: MessageBody) {
+  send(message: MessageBody): void {
     this.instance.postMessage(message);
   }
 
-  static send(message: MessageBody) {
+  static send(message: MessageBody): void {
     message.senderWorkerId = String(workerThreads.threadId);
     workerThreads.parentPort!.postMessage(message);
   }
 
-  static kill() {
+  static kill(): void {
     // in worker_threads, process.exit
     // does not stop the whole program, just the single thread
     process.exit(1);
   }
 
-  static gracefulExit(options: gracefulExitOptions) {
+  static gracefulExit(options: gracefulExitOptions): void {
     const { beforeExit } = options;
     process.on('exit', async code => {
       if (typeof beforeExit === 'function') {
@@ -42,7 +42,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
   #id = 0;
   instance: AgentThreadWorker;
 
-  fork() {
+  fork(): void {
     this.startTime = Date.now();
 
     // start agent worker
@@ -86,11 +86,11 @@ export class AgentThreadUtils extends BaseAgentUtils {
     });
   }
 
-  clean() {
+  clean(): void {
     this.#worker.removeAllListeners();
   }
 
-  async kill() {
+  async kill(): Promise<void> {
     if (this.#worker) {
       this.log(`[master] kill agent worker#${this.#id} (worker_threads) by worker.terminate()`);
       this.clean();

@@ -6,12 +6,10 @@ import type { Tracer } from '../../lib/tracer.ts';
 
 const debug = debuglog('egg/tracer/app/extend/application');
 
-const cacheTracer = Symbol('before_ready_tracer');
-export const isReady = Symbol('egg_tracer_is_ready');
+const cacheTracer: unique symbol = Symbol('before_ready_tracer');
+export const isReady: unique symbol = Symbol('egg_tracer_is_ready');
 
 export default class TracerApplication extends Application {
-  [cacheTracer]: Tracer | undefined;
-
   get tracer(): Tracer {
     if (this[isReady]) {
       return new this.config.tracer.Class(this.createAnonymousContext());
@@ -22,6 +20,6 @@ export default class TracerApplication extends Application {
     }
 
     debug('use cached tracer before ready, type: %o', this.type);
-    return this[cacheTracer];
+    return this[cacheTracer] as Tracer;
   }
 }

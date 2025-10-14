@@ -240,7 +240,7 @@ export class Router {
   /**
    * @alias to routes()
    */
-  middleware() {
+  middleware(): MiddlewareFuncWithRouter<Router> {
     return this.routes();
   }
 
@@ -607,7 +607,11 @@ export class Router {
     nameOrPath: string | RegExp | (string | RegExp)[],
     pathOrMiddleware: string | RegExp | (string | RegExp)[] | MiddlewareFunc | ResourcesController,
     middlewares: (MiddlewareFunc | string | ResourcesController)[]
-  ) {
+  ): {
+    path: string | RegExp | (string | RegExp)[];
+    middlewares: (MiddlewareFunc | string | ResourcesController)[];
+    options: RegisterOptions;
+  } {
     const options: RegisterOptions = {};
     let path: string | RegExp | (string | RegExp)[];
     if (typeof nameOrPath === 'string' && nameOrPath.startsWith('/')) {

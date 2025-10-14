@@ -3,12 +3,7 @@ import assert from 'node:assert';
 
 import type { Context, Application } from 'egg';
 
-import { ViewManager, type ViewManagerConfig, type RenderOptions } from './view_manager.ts';
-
-const RENDER = Symbol.for('contextView#render');
-const RENDER_STRING = Symbol.for('contextView#renderString');
-const GET_VIEW_ENGINE = Symbol.for('contextView#getViewEngine');
-const SET_LOCALS = Symbol.for('contextView#setLocals');
+import { ViewManager, type ViewManagerConfig, type RenderOptions, type ViewEngine } from './view_manager.ts';
 
 /**
  * View instance for each request.
@@ -37,7 +32,7 @@ export class ContextView {
    * @return {Promise<String>} result - return a promise with a render result
    */
   async render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string> {
-    return await this[RENDER](name, locals, options);
+    return await this._render(name, locals, options);
   }
 
   /**
@@ -48,11 +43,11 @@ export class ContextView {
    * @return {Promise<String>} result - return a promise with a render result
    */
   async renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string> {
-    return await this[RENDER_STRING](tpl, locals, options);
+    return await this._renderString(tpl, locals, options);
   }
 
   // ext -> viewEngineName -> viewEngine
-  async [RENDER](name: string, locals?: Record<string, any>, options: RenderOptions = {}) {
+  private async _render(name: string, locals?: Record<string, any>, options: RenderOptions = {}): Promise<string> {
     // retrieve fullpath matching name from `config.root`
     const filename = await this.viewManager.resolve(name);
     options.name = name;
@@ -73,11 +68,11 @@ export class ContextView {
     assert(viewEngineName, `Can't find viewEngine for ${filename}`);
 
     // get view engine and render
-    const viewEngine = this[GET_VIEW_ENGINE](viewEngineName);
-    return await viewEngine.render(filename, this[SET_LOCALS](locals), options);
+    const viewEngine = this._getViewEngine(viewEngineName);
+    return await viewEngine.render(filename, this._setLocals(locals), options);
   }
 
-  async [RENDER_STRING](tpl: string, locals?: Record<string, any>, options?: RenderOptions) {
+  private async _renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string> {
     let viewEngineName = options && options.viewEngine;
     if (!viewEngineName) {
       viewEngineName = this.config.defaultViewEngine;
@@ -85,11 +80,11 @@ export class ContextView {
     assert(viewEngineName, "Can't find viewEngine");
 
     // get view engine and render
-    const viewEngine = this[GET_VIEW_ENGINE](viewEngineName);
-    return await viewEngine.renderString(tpl, this[SET_LOCALS](locals), options);
+    const viewEngine = this._getViewEngine(viewEngineName);
+    return await viewEngine.renderString(tpl, this._setLocals(locals), options);
   }
 
-  [GET_VIEW_ENGINE](name: string) {
+  private _getViewEngine(name: string): ViewEngine {
     // get view engine
     const ViewEngine = this.viewManager.get(name);
     assert(ViewEngine, `Can't find ViewEngine "${name}"`);
@@ -103,7 +98,7 @@ export class ContextView {
    * set locals for view, inject `locals.ctx`, `locals.request`, `locals.helper`
    * @private
    */
-  [SET_LOCALS](locals?: Record<string, any>) {
+  private _setLocals(locals?: Record<string, any>): Record<string, any> {
     return Object.assign(
       {
         ctx: this.ctx,

@@ -4,7 +4,7 @@
 
 import type { BaseContextClass } from 'egg';
 
-export default function pathFilter(this: BaseContextClass, path: string) {
+export default function pathFilter(this: BaseContextClass, path: string): string | null {
   if (typeof path !== 'string') return path;
 
   const pathSource = path;

@@ -10,18 +10,18 @@ export class ScheduleWorker {
     this.#app = app;
   }
 
-  async init() {
+  async init(): Promise<void> {
     const schedules = await loadSchedule(this.#app);
     for (const key in schedules) {
       this.scheduleItems[key] = schedules[key];
     }
   }
 
-  registerSchedule(scheduleItem: EggScheduleItem) {
+  registerSchedule(scheduleItem: EggScheduleItem): void {
     this.scheduleItems[scheduleItem.key] = scheduleItem;
   }
 
-  unregisterSchedule(key: string) {
+  unregisterSchedule(key: string): void {
     delete this.scheduleItems[key];
   }
 }

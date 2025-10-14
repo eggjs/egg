@@ -3,6 +3,7 @@ import {
   type RequestURL as HttpClientRequestURL,
   type RequestOptions,
   type ClientOptions as HttpClientOptions,
+  type HttpClientResponse,
 } from 'urllib';
 import { ms } from 'humanize-ms';
 
@@ -36,7 +37,10 @@ export class HttpClient extends RawHttpClient {
     this.#app = app;
   }
 
-  async request<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async request<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions
+  ): Promise<HttpClientResponse<T>> {
     options = options ?? {};
     if (options.ctx?.tracer) {
       options.tracer = options.ctx.tracer;
@@ -46,7 +50,7 @@ export class HttpClient extends RawHttpClient {
     return await super.request<T>(url, options);
   }
 
-  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
     return await this.request<T>(url, options);
   }
 }

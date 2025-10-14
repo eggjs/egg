@@ -1,12 +1,12 @@
-import type { Next, Context } from '../../lib/egg.ts';
+import type { MiddlewareFunc } from '../../lib/egg.ts';
 
 export interface NotFoundMiddlewareOptions {
   enable: boolean;
   pageUrl: string;
 }
 
-export default (options: NotFoundMiddlewareOptions) => {
-  return async function notfound(ctx: Context, next: Next) {
+export default (options: NotFoundMiddlewareOptions): MiddlewareFunc => {
+  return async function notfound(ctx, next): Promise<void> {
     await next();
 
     if (ctx.status !== 404 || ctx.body) {

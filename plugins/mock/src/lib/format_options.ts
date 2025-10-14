@@ -13,7 +13,7 @@ const debug = debuglog('egg/mock/lib/format_options');
 /**
  * format the options
  */
-export function formatOptions(initOptions?: MockOptions) {
+export function formatOptions(initOptions?: MockOptions): MockApplicationOptions {
   const options = {
     baseDir: process.cwd(),
     cache: true,

@@ -2,11 +2,12 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 
 import dayjs from 'dayjs';
-import { Application } from 'egg';
+import type { Application, Subscription } from 'egg';
+import type { EggScheduleTaskOptions } from 'egg/schedule';
 
-export default (app: Application) => {
+export default (app: Application): typeof Subscription => {
   return class CleanTmpdir extends app.Subscription {
-    static get schedule() {
+    static get schedule(): EggScheduleTaskOptions {
       return {
         type: 'worker',
         cron: app.config.multipart.cleanSchedule.cron,
@@ -28,7 +29,6 @@ export default (app: Application) => {
           await fs.rm(dir, { force: true, recursive: true });
           ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir:success] tmpdir: %j has been removed', dir);
         } catch (err) {
-          /* c8 ignore next 3 */
           ctx.coreLogger.error('[@eggjs/multipart:CleanTmpdir:error] remove tmpdir: %j error: %s', dir, err);
           ctx.coreLogger.error(err);
         }

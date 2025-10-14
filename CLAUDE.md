@@ -585,6 +585,80 @@ This approach ensures:
 - Use readonly modifiers where appropriate
 - Avoid `any` type; use `unknown` when type is truly unknown
 
+### TypeScript isolatedDeclarations Support
+
+**IMPORTANT: All packages in this monorepo support TypeScript's `--isolatedDeclarations` flag**, which enables faster type checking and better DTS generation.
+
+#### Requirements for isolatedDeclarations
+
+When writing code, you MUST follow these patterns:
+
+1. **Explicit Return Types**: All exported functions, methods, and getters must have explicit return type annotations
+
+   ```typescript
+   // ✅ Good
+   export function getData(): Promise<string> { ... }
+   export class Foo {
+     getBar(): string { ... }
+   }
+
+   // ❌ Bad - missing return type
+   export function getData() { ... }
+   ```
+
+2. **Config File Exports**: Use typed intermediate variables for tsdown and vitest configs
+
+   ```typescript
+   // tsdown.config.ts
+   import { defineConfig, type UserConfig } from 'tsdown';
+
+   const config: UserConfig = defineConfig({...});
+   export default config;
+
+   // vitest.config.ts
+   import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
+
+   const config: UserWorkspaceConfig = defineProject({...});
+   export default config;
+   ```
+
+3. **Symbol-Based Properties**: Avoid computed property names with symbols in class declarations
+
+   ```typescript
+   // ✅ Good - use override methods
+   protected override customEggLoader(): typeof AppWorkerLoader {
+     return AppWorkerLoader;
+   }
+
+   // ❌ Bad - computed property not supported
+   get [EGG_LOADER]() { return AppWorkerLoader; }
+   ```
+
+4. **Explicit Property Types**: Add type annotations for class properties when needed
+
+   ```typescript
+   // ✅ Good
+   Helper: typeof Helper = Helper;
+   mockRestore: typeof restore = restore;
+
+   // ❌ Bad - missing type annotation
+   mockRestore = restore;
+   ```
+
+5. **Symbol Constants**: Use `unique symbol` type for exported symbols
+
+   ```typescript
+   // ✅ Good
+   export const MY_SYMBOL: unique symbol = Symbol('my-symbol');
+
+   // ❌ Bad - missing type annotation
+   export const MY_SYMBOL = Symbol('my-symbol');
+   ```
+
+#### Exceptions
+
+- **@oclif CLI tools** (tools/egg-bin, tools/scripts) have `isolatedDeclarations: false` in their tsconfig.json because @oclif's Flags API is incompatible with this strict mode
+
 ### Code Coverage Requirements
 
 - Maintain high test coverage (>90% for core packages)

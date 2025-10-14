@@ -13,7 +13,7 @@ export interface ClassLoaderOptions {
 }
 
 export class ClassLoader {
-  readonly _cache = new Map();
+  readonly _cache: Map<string, any> = new Map();
   _ctx: Context;
 
   constructor(options: ClassLoaderOptions) {
@@ -26,7 +26,7 @@ export class ClassLoader {
     }
   }
 
-  #defineProperty(property: string, values: any) {
+  #defineProperty(property: string, values: any): void {
     Object.defineProperty(this, property, {
       get() {
         let instance: any = this._cache.get(property);
@@ -100,7 +100,7 @@ export class ContextLoader extends FileLoader {
   }
 }
 
-function getInstance(values: any, ctx: Context) {
+function getInstance(values: any, ctx: Context): any {
   // it's a directory when it has no exports
   // then use ClassLoader
   const Class = values[EXPORTS] ? values : null;

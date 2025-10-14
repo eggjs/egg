@@ -1,5 +1,6 @@
 import { mock, restore } from 'mm';
 import { Agent } from 'egg';
+import type { MockAgent } from 'urllib';
 
 import {
   createMockHttpClient,
@@ -22,7 +23,7 @@ export default abstract class AgentUnittest extends Agent {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): this {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
 
@@ -34,22 +35,23 @@ export default abstract class AgentUnittest extends Agent {
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
     mockResult?: MockResultOptions | MockResultFunction | string
-  ) {
+  ): this {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);
     }
-    return this._mockHttpClient(mockUrl, mockMethod, mockResult);
+    this._mockHttpClient(mockUrl, mockMethod, mockResult);
+    return this;
   }
 
   /**
    * get mock httpclient agent
    * @function Agent#mockHttpclientAgent
    */
-  mockAgent() {
+  mockAgent(): MockAgent {
     return getMockAgent(this as any);
   }
 
-  async mockAgentRestore() {
+  async mockAgentRestore(): Promise<void> {
     await restoreMockAgent();
   }
 
@@ -57,11 +59,11 @@ export default abstract class AgentUnittest extends Agent {
    * @see mm#restore
    * @function Agent#mockRestore
    */
-  mockRestore = restore;
+  mockRestore: typeof restore = restore;
 
   /**
    * @see mm
    * @function Agent#mm
    */
-  mm = mock;
+  mm: typeof mock = mock;
 }

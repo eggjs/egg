@@ -3,13 +3,13 @@ import { mkdirSync, existsSync } from 'node:fs';
 
 import range from 'koa-range';
 import compose from 'koa-compose';
-import type { Application, Context, Next } from 'egg';
+import type { Application, Context, Next, MiddlewareFunc } from 'egg';
 import { staticCache } from '@eggjs/koa-static-cache';
 import { LRU } from 'ylru';
 
 import type { StaticConfig, StaticDirOptions } from '../../config/config.default.ts';
 
-export default (options: StaticConfig, app: Application) => {
+export default (options: StaticConfig, app: Application): MiddlewareFunc => {
   const dirs = (options.dirs ?? []).concat(options.dir);
 
   const prefixes: string[] = [];

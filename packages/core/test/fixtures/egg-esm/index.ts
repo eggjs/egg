@@ -1,12 +1,13 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { EggLoader, EggCore, type EggCoreInitOptions } from '../../../src/index.js';
+
+import { EggLoader, EggCore, type EggCoreInitOptions } from '../../../src/index.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 class AppLoader extends EggLoader {
-  async loadAll() {
+  async loadAll(): Promise<void> {
     await this.loadPlugin();
     await this.loadConfig();
     await this.loadApplicationExtend();
@@ -31,12 +32,13 @@ export class Application extends EggCore {
     });
   }
 
-  get [Symbol.for('egg#eggPath')]() {
-    return __dirname;
+  protected override customEggPaths(): string[] {
+    return [__dirname, ...super.customEggPaths()];
   }
-  get [Symbol.for('egg#loader')]() {
+
+  protected override customEggLoader(): typeof EggLoader {
     return AppLoader;
   }
 }
 
-export { type EggCoreInitOptions } from '../../../src/index.js';
+export { type EggCoreInitOptions } from '../../../src/index.ts';

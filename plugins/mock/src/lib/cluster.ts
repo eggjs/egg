@@ -139,14 +139,14 @@ export class ClusterApplication extends Coffee {
    * the process that forked
    * @member {ChildProcess}
    */
-  get process() {
+  get process(): childProcess.ChildProcess {
     return this.proc;
   }
 
   /**
    * Compatible API for supertest
    */
-  callback() {
+  callback(): this {
     return this;
   }
 
@@ -155,7 +155,7 @@ export class ClusterApplication extends Coffee {
    * @member {String} url
    * @private
    */
-  get url() {
+  get url(): string {
     if (this._address) {
       return this._address;
     }
@@ -165,7 +165,7 @@ export class ClusterApplication extends Coffee {
   /**
    * Compatible API for supertest
    */
-  address() {
+  address(): { port: number; address: string | undefined } {
     return {
       port: this.port,
       address: this._address,
@@ -175,14 +175,14 @@ export class ClusterApplication extends Coffee {
   /**
    * Compatible API for supertest
    */
-  listen() {
+  listen(): this {
     return this;
   }
 
   /**
    * kill the process
    */
-  async close() {
+  async close(): Promise<void> {
     this.closed = true;
 
     const proc = this.proc;
@@ -200,15 +200,15 @@ export class ClusterApplication extends Coffee {
     }
   }
 
-  get isClosed() {
+  get isClosed(): boolean {
     return this.closed;
   }
 
   // mock app.router.pathFor(name) api
-  get router() {
+  get router(): { pathFor: (url: string) => any } {
     const self = this;
     return {
-      pathFor(url: string) {
+      pathFor(url: string): any {
         return self._callFunctionOnAppWorker('pathFor', [url], 'router', true);
       },
     };
@@ -217,7 +217,7 @@ export class ClusterApplication extends Coffee {
   /**
    * get app[property] value in app worker
    */
-  getAppInstanceProperty(property: string) {
+  getAppInstanceProperty(property: string): any {
     return this._callFunctionOnAppWorker('__getter__', [], property, true);
   }
 
@@ -228,7 +228,7 @@ export class ClusterApplication extends Coffee {
    * @param {String} [logger] - logger instance name, default is `logger`
    * @function ClusterApplication#expectLog
    */
-  mockLog(logger?: string) {
+  mockLog(logger?: string): void {
     logger = logger ?? 'logger';
     this._callFunctionOnAppWorker('mockLog', [logger], null, true);
   }
@@ -241,7 +241,7 @@ export class ClusterApplication extends Coffee {
    * @param {String} [logger] - logger instance name, default is `logger`
    * @function ClusterApplication#expectLog
    */
-  expectLog(str: string, logger?: string) {
+  expectLog(str: string, logger?: string): void {
     logger = logger ?? 'logger';
     this._callFunctionOnAppWorker('expectLog', [str, logger], null, true);
   }
@@ -254,16 +254,16 @@ export class ClusterApplication extends Coffee {
    * @param {String} [logger] - logger instance name, default is `logger`
    * @function ClusterApplication#notExpectLog
    */
-  notExpectLog(str: string, logger?: string) {
+  notExpectLog(str: string, logger?: string): void {
     logger = logger ?? 'logger';
     this._callFunctionOnAppWorker('notExpectLog', [str, logger], null, true);
   }
 
-  httpRequest() {
+  httpRequest(): ReturnType<typeof supertestRequest> {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false) {
+  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false): any {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
       if (typeof arg === 'function') {
@@ -369,7 +369,7 @@ export function createCluster(initOptions?: MockClusterOptions): MockClusterAppl
 }
 
 // export to let mm.restore() worked
-export async function restore() {
+export async function restore(): Promise<void> {
   for (const clusterApp of clusters.values()) {
     // will proxy to app.mockRestore()
     await clusterApp.mockRestore();

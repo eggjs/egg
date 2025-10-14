@@ -91,7 +91,7 @@ export class Messenger {
    *  - {String} from from who
    *  - {String} to to who
    */
-  send(data: MessageBody) {
+  send(data: MessageBody): void {
     if (!data.from) {
       data.from = 'master';
     }
@@ -161,7 +161,7 @@ export class Messenger {
    * send message to master self
    * @param {Object} data message body
    */
-  sendToMaster(data: MessageBody) {
+  sendToMaster(data: MessageBody): void {
     // e.g: master.on('app-start', data => {})
     this.#master.emit(data.action, data.data);
   }
@@ -170,7 +170,7 @@ export class Messenger {
    * send message to parent process
    * @param {Object} data message body
    */
-  sendToParent(data: MessageBody) {
+  sendToParent(data: MessageBody): void {
     if (!this.#hasParent) {
       return;
     }
@@ -181,7 +181,7 @@ export class Messenger {
    * send message to app worker
    * @param {Object} data message body
    */
-  sendToAppWorker(data: MessageBody) {
+  sendToAppWorker(data: MessageBody): void {
     for (const worker of this.#workerManager.listWorkers()) {
       if (worker.state === 'disconnected') {
         continue;
@@ -199,7 +199,7 @@ export class Messenger {
    * send message to agent worker
    * @param {Object} data message body
    */
-  sendToAgentWorker(data: MessageBody) {
+  sendToAgentWorker(data: MessageBody): void {
     const agent = this.#workerManager.getAgent();
     if (agent) {
       agent.send(data);

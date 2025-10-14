@@ -51,7 +51,7 @@ export class Cookies {
     this.app = ctx.app;
   }
 
-  get keys() {
+  get keys(): Keygrip {
     if (!this.#keys) {
       assert(Array.isArray(this.#keysArray), '.keys required for encrypt/sign cookies');
       const cache = keyCache.get(this.#keysArray);
@@ -82,7 +82,7 @@ export class Cookies {
     return value;
   }
 
-  _get(name: string, opts: CookieGetOptions) {
+  _get(name: string, opts: CookieGetOptions): string | undefined {
     const signed = computeSigned(opts);
     const header: string = this.ctx.get('cookie');
     if (!header) return;
@@ -119,7 +119,7 @@ export class Cookies {
     return res ? res.value.toString() : undefined;
   }
 
-  set(name: string, value: string | null, opts?: CookieSetOptions) {
+  set(name: string, value: string | null, opts?: CookieSetOptions): this {
     opts = {
       ...this.#defaultCookieOptions,
       ...opts,
@@ -254,7 +254,7 @@ export class Cookies {
     return this.#parseChromiumResult;
   }
 
-  isSameSiteNoneCompatible(userAgent: string) {
+  isSameSiteNoneCompatible(userAgent: string): boolean {
     // Chrome >= 80.0.0.0
     const result = this.#parseChromiumAndMajorVersion(userAgent);
     if (result.chromium) {
@@ -263,7 +263,7 @@ export class Cookies {
     return isSameSiteNoneCompatible(userAgent);
   }
 
-  isPartitionedCompatible(userAgent: string) {
+  isPartitionedCompatible(userAgent: string): boolean {
     // support: Chrome >= 114.0.0.0
     // default enable: Chrome >= 118.0.0.0
     // https://developers.google.com/privacy-sandbox/3pcd/chips

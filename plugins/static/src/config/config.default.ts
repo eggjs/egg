@@ -55,7 +55,9 @@ export interface StaticConfig extends Omit<StaticDirOptions, 'dir'> {
   dirs?: Array<string | StaticDirOptions>;
 }
 
-export default defineConfigFactory((appInfo): PartialEggConfig => {
+import type { EggConfigFactory } from 'egg';
+
+const config: EggConfigFactory = defineConfigFactory((appInfo): PartialEggConfig => {
   return {
     static: {
       prefix: '/public/',
@@ -69,3 +71,5 @@ export default defineConfigFactory((appInfo): PartialEggConfig => {
     },
   };
 });
+
+export default config;

@@ -21,7 +21,7 @@ export default class SecurityResponse extends Response {
    * ctx.unsafeRedirect('http://www.domain.com');
    * ```
    */
-  unsafeRedirect(url: string, alt?: string) {
+  unsafeRedirect(url: string, alt?: string): void {
     unsafeRedirect.call(this, url, alt);
   }
 
@@ -41,7 +41,7 @@ export default class SecurityResponse extends Response {
    * ctx.redirect('/login');
    * ```
    */
-  redirect(url: string, alt?: string) {
+  redirect(url: string, alt?: string): void {
     url = (url || '/').trim();
 
     // Process with `//`

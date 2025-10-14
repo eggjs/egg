@@ -13,7 +13,7 @@ export class RedisBoot implements ILifecycleBoot {
     this.app = app;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     const app = this.app;
     if (app.type === 'application' && app.config.redis.app) {
       app.addSingleton('redis', createClient);

@@ -9,25 +9,25 @@ import type { MessageBody } from '../../../messenger.ts';
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
 
 export class AgentProcessWorker extends BaseAgentWorker<ChildProcess> {
-  get workerId() {
+  get workerId(): number {
     return this.instance.pid!;
   }
 
-  send(message: MessageBody) {
+  send(message: MessageBody): void {
     sendmessage(this.instance, message);
   }
 
-  static send(message: MessageBody) {
+  static send(message: MessageBody): void {
     message.senderWorkerId = String(process.pid);
     process.send!(message);
   }
 
-  static kill() {
+  static kill(): void {
     process.exitCode = 1;
     process.kill(process.pid);
   }
 
-  static gracefulExit(options: gracefulExitOptions) {
+  static gracefulExit(options: gracefulExitOptions): void {
     gracefulExit(options);
   }
 }
@@ -37,7 +37,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
   #id = 0;
   instance: AgentProcessWorker;
 
-  fork() {
+  fork(): this {
     this.startTime = Date.now();
 
     const args = [JSON.stringify(this.options)];
@@ -111,11 +111,11 @@ export class AgentProcessUtils extends BaseAgentUtils {
     return this;
   }
 
-  clean() {
+  clean(): void {
     this.#agentProcess.removeAllListeners();
   }
 
-  async kill(timeout: number) {
+  async kill(timeout: number): Promise<void> {
     if (this.#agentProcess) {
       this.log('[master] kill agent worker with signal SIGTERM');
       this.clean();

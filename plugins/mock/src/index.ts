@@ -15,6 +15,17 @@ export * from './lib/types.ts';
 //   require('./lib/prerequire');
 // }
 
+// Define the extended mock type
+interface ExtendedMock {
+  restore: typeof restore;
+  app: typeof createApp;
+  cluster: typeof createCluster;
+  env: (env: string) => void;
+  consoleLevel: (level: string) => void;
+  home: (homePath?: string) => void;
+  setGetAppCallback: typeof setGetAppCallback;
+}
+
 // inherit & extends mm
 const mock = {
   ...mm,
@@ -51,7 +62,7 @@ const mock = {
    * @param {String} env - contain default, test, prod, local, unittest
    * @see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L78
    */
-  env(env: string) {
+  env(env: string): void {
     _mock(process.env, 'EGG_MOCK_SERVER_ENV', env as any);
     _mock(process.env, 'EGG_SERVER_ENV', env as any);
   },
@@ -60,12 +71,12 @@ const mock = {
    * mock console level
    * @param {String} level - logger level
    */
-  consoleLevel(level: string) {
+  consoleLevel(level: string): void {
     level = (level || '').toUpperCase();
     _mock(process.env, 'EGG_LOG', level as any);
   },
 
-  home(homePath?: string) {
+  home(homePath?: string): void {
     if (homePath) {
       _mock(process.env, 'EGG_HOME', homePath as any);
     }
@@ -84,7 +95,7 @@ const proxyMock = new Proxy(_mock, {
     // mm.isMocked(foo, 'bar')
     return Reflect.get(mock, property, receiver);
   },
-}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) & typeof mock;
+}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) & ExtendedMock & typeof mm;
 
 export default proxyMock;
 

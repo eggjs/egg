@@ -37,7 +37,7 @@ export default class AppBootHook implements ILifecycleBoot {
     this.app.ajv = getAjvInstance();
   }
 
-  async configDidLoad() {
+  async configDidLoad(): Promise<void> {
     const config = this.app.config;
     const typeboxValidate = config.typeboxValidate;
     if (typeboxValidate) {

@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { extname } from 'node:path';
 import util from 'node:util';
 import Stream from 'node:stream';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import type { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'node:http';
 
 import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
 import { getType } from 'cache-content-type';
@@ -31,26 +31,29 @@ export class Response {
     this.req = req;
     this.res = res;
     this.ctx = ctx;
+    // Set up custom inspect
+    this[util.inspect.custom] = this.inspect.bind(this);
   }
 
   /**
    * Return the request socket.
    */
-  get socket() {
+  get socket(): ServerResponse['socket'] {
     return this.res.socket;
   }
 
   /**
    * Return response header.
    */
-  get header() {
-    return this.res.getHeaders() || {};
+  get header(): OutgoingHttpHeaders {
+    // res.getHeaders will return null if not set
+    return this.res.getHeaders() ?? {};
   }
 
   /**
    * Return response header, alias as response.header
    */
-  get headers() {
+  get headers(): OutgoingHttpHeaders {
     return this.header;
   }
 
@@ -205,19 +208,19 @@ export class Response {
   /**
    * Check if a header has been written to the socket.
    */
-  get headerSent() {
+  get headerSent(): boolean {
     return this.res.headersSent;
   }
 
   /**
    * Vary on `field`.
    */
-  vary(field: string) {
+  vary(field: string): void {
     if (this.headerSent) return;
     vary(this.res, field);
   }
 
-  _getBackReferrer() {
+  protected _getBackReferrer(): string | undefined {
     const referrer = this.ctx.get<string>('Referrer');
     if (referrer) {
       // referrer is a relative path
@@ -247,7 +250,7 @@ export class Response {
    *    this.redirect('/login');
    *    this.redirect('http://google.com'); // will format to 'http://google.com/'
    */
-  redirect(url: string, alt?: string) {
+  redirect(url: string, alt?: string): void {
     // location
     if (url === 'back') {
       url = this._getBackReferrer() || alt || '/';
@@ -277,7 +280,7 @@ export class Response {
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
    */
-  attachment(filename?: string, options?: ContentDispositionOptions) {
+  attachment(filename?: string, options?: ContentDispositionOptions): void {
     if (filename) this.type = extname(filename);
     this.set('Content-Disposition', contentDisposition(filename, options));
   }
@@ -398,7 +401,7 @@ export class Response {
    *     this.get('content-type');
    *     // => true
    */
-  has(field: string) {
+  has(field: string): boolean {
     return this.res.hasHeader(field);
   }
 
@@ -412,7 +415,7 @@ export class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | Record<string, string>, val?: string | number | unknown[]) {
+  set(field: string | Record<string, string>, val?: string | number | unknown[]): void {
     if (this.headerSent) return;
     if (typeof field === 'string') {
       let value = val as string | string[];
@@ -439,7 +442,7 @@ export class Response {
    * this.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly');
    * this.append('Warning', '199 Miscellaneous warning');
    */
-  append(field: string, val: string | string[]) {
+  append(field: string, val: string | string[]): void {
     const prev = this.get<string | string[]>(field);
 
     let value = val;
@@ -453,7 +456,7 @@ export class Response {
   /**
    * Remove header `field`.
    */
-  remove(field: string) {
+  remove(field: string): void {
     if (this.headerSent) return;
     this.res.removeHeader(field);
   }
@@ -463,7 +466,7 @@ export class Response {
    * Tests for the existence of the socket
    * as node sometimes does not set it.
    */
-  get writable() {
+  get writable(): boolean {
     // can't write any more after response finished
     // response.writableEnded is available since Node > 12.9
     // https://nodejs.org/api/http.html#http_response_writableended
@@ -481,21 +484,17 @@ export class Response {
   /**
    * Inspect implementation.
    */
-  inspect() {
+  inspect(): object | undefined {
     if (!this.res) return;
     const o = this.toJSON();
     Reflect.set(o, 'body', this.body);
     return o;
   }
 
-  [util.inspect.custom]() {
-    return this.inspect();
-  }
-
   /**
    * Return JSON representation.
    */
-  toJSON() {
+  toJSON(): object {
     return {
       status: this.status,
       message: this.message,
@@ -506,7 +505,7 @@ export class Response {
   /**
    * Flush any set headers and begin the body
    */
-  flushHeaders() {
+  flushHeaders(): void {
     this.res.flushHeaders();
   }
 }

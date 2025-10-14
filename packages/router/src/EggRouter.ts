@@ -5,6 +5,7 @@ import inflection from 'inflection';
 import methods from 'methods';
 import { isGeneratorFunction } from 'is-type-of';
 
+import { Layer } from './Layer.ts';
 import { type RegisterOptions, Router, type RouterMethod, type RouterOptions } from './Router.ts';
 import { type MiddlewareFunc, type Next, type ResourcesController } from './types.ts';
 
@@ -80,7 +81,7 @@ export class EggRouter extends Router {
     nameOrPath: string | RegExp | (string | RegExp)[],
     pathOrMiddleware: string | RegExp | (string | RegExp)[] | MiddlewareFunc,
     ...middleware: (MiddlewareFunc | string)[]
-  ) {
+  ): Router {
     const { path, middlewares, options } = this._formatRouteParams(nameOrPath, pathOrMiddleware, middleware);
     if (typeof method === 'string') {
       method = [method];
@@ -176,7 +177,7 @@ export class EggRouter extends Router {
     methods: string[],
     middleware: MiddlewareFunc | string | (MiddlewareFunc | string | ResourcesController)[],
     opts?: RegisterOptions
-  ) {
+  ): Layer | Layer[] {
     // patch register to support bind ctx function middleware and string controller
     middleware = Array.isArray(middleware) ? middleware : [middleware];
     for (const mw of middleware) {
@@ -335,7 +336,7 @@ export class EggRouter extends Router {
   /**
    * @alias to url()
    */
-  pathFor(name: string, params?: Record<string, string | number | (string | number)[]>) {
+  pathFor(name: string, params?: Record<string, string | number | (string | number)[]>): string {
     return this.url(name, params);
   }
 }

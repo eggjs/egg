@@ -10,6 +10,7 @@ import { EggConsoleLogger } from 'egg-logger';
 import utils from './utils/index.ts';
 import type { Fun } from './utils/index.ts';
 import type { EggCore } from './egg.ts';
+import type { Timing } from './utils/timing.ts';
 
 const debug = debuglog('egg/core/lifecycle');
 
@@ -124,19 +125,19 @@ export class Lifecycle extends EventEmitter {
     return this.#readyObject.ready(flagOrFunction);
   }
 
-  get app() {
+  get app(): EggCore {
     return this.options.app;
   }
 
-  get logger() {
+  get logger(): EggConsoleLogger {
     return this.options.logger;
   }
 
-  get timing() {
+  get timing(): Timing {
     return this.app.timing;
   }
 
-  legacyReadyCallback(name: string, opt?: object) {
+  legacyReadyCallback(name: string, opt?: object): (...args: unknown[]) => void {
     const timingKeyPrefix = 'readyCallback';
     const timing = this.timing;
     const cb = this.loadReady.readyCallback(name, opt);
@@ -150,12 +151,12 @@ export class Lifecycle extends EventEmitter {
     };
   }
 
-  addBootHook(bootHootOrBootClass: BootImplClass | ILifecycleBoot) {
+  addBootHook(bootHootOrBootClass: BootImplClass | ILifecycleBoot): void {
     assert(this.#init === false, 'do not add hook when lifecycle has been initialized');
     this.#bootHooks.push(bootHootOrBootClass);
   }
 
-  addFunctionAsBootHook<T = EggCore>(hook: (app: T) => void, fullPath?: string) {
+  addFunctionAsBootHook<T = EggCore>(hook: (app: T) => void, fullPath?: string): void {
     assert(this.#init === false, 'do not add hook when lifecycle has been initialized');
     // app.js is exported as a function
     // call this function in configDidLoad
@@ -165,7 +166,7 @@ export class Lifecycle extends EventEmitter {
       constructor(app: T) {
         this.app = app;
       }
-      configDidLoad() {
+      configDidLoad(): void {
         hook(this.app);
       }
     }
@@ -176,7 +177,7 @@ export class Lifecycle extends EventEmitter {
   /**
    * init boots and trigger config did config
    */
-  init() {
+  init(): void {
     debug('%s init lifecycle', this.app.type);
     assert(this.#init === false, 'lifecycle have been init');
     this.#init = true;
@@ -193,7 +194,7 @@ export class Lifecycle extends EventEmitter {
     });
   }
 
-  registerBeforeStart(scope: Fun, name: string) {
+  registerBeforeStart(scope: Fun, name: string): void {
     debug('%s add registerBeforeStart, name: %o', this.options.app.type, name);
     this.#registerReadyCallback({
       scope,
@@ -203,7 +204,7 @@ export class Lifecycle extends EventEmitter {
     });
   }
 
-  registerBeforeClose(fn: FunWithFullPath, fullPath?: string) {
+  registerBeforeClose(fn: FunWithFullPath, fullPath?: string): void {
     assert(typeof fn === 'function', 'argument should be function');
     assert(this.#isClosed === false, 'app has been closed');
     if (fullPath) {
@@ -213,7 +214,7 @@ export class Lifecycle extends EventEmitter {
     debug('%s register beforeClose at %o, count: %d', this.app.type, fullPath, this.#closeFunctionSet.size);
   }
 
-  async close() {
+  async close(): Promise<void> {
     // close in reverse order: first created, last closed
     const closeFns = Array.from(this.#closeFunctionSet);
     debug('%s start trigger %d beforeClose functions', this.app.type, closeFns.length);
@@ -230,7 +231,7 @@ export class Lifecycle extends EventEmitter {
     debug('%s closed', this.app.type);
   }
 
-  triggerConfigWillLoad() {
+  triggerConfigWillLoad(): void {
     debug('trigger configWillLoad start');
     for (const boot of this.#boots) {
       if (typeof boot.configWillLoad === 'function') {
@@ -242,7 +243,7 @@ export class Lifecycle extends EventEmitter {
     this.triggerConfigDidLoad();
   }
 
-  triggerConfigDidLoad() {
+  triggerConfigDidLoad(): void {
     debug('trigger configDidLoad start');
     for (const boot of this.#boots) {
       if (typeof boot.configDidLoad === 'function') {
@@ -259,7 +260,7 @@ export class Lifecycle extends EventEmitter {
     this.triggerDidLoad();
   }
 
-  triggerDidLoad() {
+  triggerDidLoad(): void {
     debug('trigger didLoad start');
     debug('loadReady start');
     this.loadReady.start();
@@ -276,7 +277,7 @@ export class Lifecycle extends EventEmitter {
     }
   }
 
-  triggerWillReady() {
+  triggerWillReady(): void {
     debug('trigger willReady start');
     debug('bootReady start');
     this.bootReady.start();
@@ -293,7 +294,7 @@ export class Lifecycle extends EventEmitter {
     }
   }
 
-  triggerDidReady(err?: Error) {
+  triggerDidReady(err?: Error): Promise<void> {
     debug('trigger didReady start');
     return (async () => {
       for (const boot of this.#boots) {
@@ -311,7 +312,7 @@ export class Lifecycle extends EventEmitter {
     })();
   }
 
-  triggerServerDidReady() {
+  triggerServerDidReady(): Promise<void> {
     debug('trigger serverDidReady start');
     return (async () => {
       for (const boot of this.#boots) {
@@ -330,7 +331,7 @@ export class Lifecycle extends EventEmitter {
     })();
   }
 
-  #initReady() {
+  #initReady(): void {
     debug('loadReady init');
     this.loadReady = new Ready({ timeout: this.readyTimeout, lazyStart: true });
     this.#delegateReadyEvent(this.loadReady);
@@ -354,14 +355,14 @@ export class Lifecycle extends EventEmitter {
     });
   }
 
-  #delegateReadyEvent(ready: Ready) {
+  #delegateReadyEvent(ready: Ready): void {
     ready.once('error', (err?: Error) => ready.ready(err));
     ready.on('ready_timeout', (id: unknown) => this.emit('ready_timeout', id));
     ready.on('ready_stat', (data: unknown) => this.emit('ready_stat', data));
     ready.on('error', (err?: Error) => this.emit('error', err));
   }
 
-  #registerReadyCallback(args: { scope: Fun; ready: Ready; timingKeyPrefix: string; scopeFullName?: string }) {
+  #registerReadyCallback(args: { scope: Fun; ready: Ready; timingKeyPrefix: string; scopeFullName?: string }): void {
     const { scope, ready, timingKeyPrefix, scopeFullName } = args;
     if (typeof scope !== 'function') {
       throw new TypeError('boot only support function');

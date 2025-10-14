@@ -2,7 +2,7 @@ import path from 'node:path';
 
 import { mm, type MockClusterOptions } from '@eggjs/mock';
 
-export function cluster(baseDir: string, options: MockClusterOptions = {}) {
+export function cluster(baseDir: string, options: MockClusterOptions = {}): ReturnType<typeof mm.cluster> {
   return mm.cluster({
     baseDir: getFilepath(baseDir),
     framework: path.join(import.meta.dirname, '../../egg'),
@@ -16,6 +16,6 @@ export function cluster(baseDir: string, options: MockClusterOptions = {}) {
   });
 }
 
-export function getFilepath(name: string) {
+export function getFilepath(name: string): string {
   return path.join(import.meta.dirname, 'fixtures', name);
 }

@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export async function readPackageJSON(baseDir: string) {
+export async function readPackageJSON(baseDir: string): Promise<Record<string, any>> {
   const pkgFile = path.join(baseDir, 'package.json');
   try {
     const pkgJSON = await fs.readFile(pkgFile, 'utf8');
@@ -12,7 +12,7 @@ export async function readPackageJSON(baseDir: string) {
   }
 }
 
-export async function hasTsConfig(baseDir: string) {
+export async function hasTsConfig(baseDir: string): Promise<boolean> {
   const pkgFile = path.join(baseDir, 'tsconfig.json');
   try {
     await fs.access(pkgFile);
@@ -22,7 +22,7 @@ export async function hasTsConfig(baseDir: string) {
   }
 }
 
-export function getSourceDirname() {
+export function getSourceDirname(): string {
   if (typeof __dirname === 'string') {
     return __dirname;
   }
@@ -32,6 +32,6 @@ export function getSourceDirname() {
   return path.dirname(__filename);
 }
 
-export function getSourceFilename(filename: string) {
+export function getSourceFilename(filename: string): string {
   return path.join(getSourceDirname(), filename);
 }

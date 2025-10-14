@@ -132,7 +132,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
     return this;
   }
 
-  onMessage(message: any) {
+  onMessage(message: any): void {
     if (typeof message?.action === 'string') {
       debug('[%s:%s] got message %s with %j', this.egg.type, this.pid, message.action, message.data);
       this.emit(message.action, message.data);
@@ -141,7 +141,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
     }
   }
 
-  close() {
+  close(): void {
     this.removeAllListeners();
   }
 

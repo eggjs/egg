@@ -1,8 +1,9 @@
 import type { Application } from 'egg';
+import type { EggScheduleHandler } from 'egg/schedule';
 
 import { SizeRotator } from '../../lib/size_rotator.ts';
 
-export default (app: Application) => {
+export default (app: Application): EggScheduleHandler => {
   const rotator = new SizeRotator({ app });
 
   return {
@@ -12,7 +13,7 @@ export default (app: Application) => {
       disable: (app.config.logrotator.filesRotateBySize || []).length === 0,
     },
 
-    async task() {
+    async task(): Promise<void> {
       await rotator.rotate();
     },
   };

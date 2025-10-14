@@ -25,7 +25,7 @@ export class Timing {
     this.init();
   }
 
-  init() {
+  init(): void {
     // process start time
     this.start('Process Start', Date.now() - Math.floor(process.uptime() * 1000));
     this.end('Process Start');
@@ -37,7 +37,7 @@ export class Timing {
     }
   }
 
-  start(name?: string, start?: number) {
+  start(name?: string, start?: number): TimingItem | undefined {
     if (!name || !this.#enable) return;
 
     if (this.#map.has(name)) {
@@ -60,7 +60,7 @@ export class Timing {
     return item;
   }
 
-  end(name?: string) {
+  end(name?: string): TimingItem | undefined {
     if (!name || !this.#enable) return;
     const item = this.#map.get(name);
     assert(item, `should run timing.start('${name}') first`);
@@ -70,24 +70,24 @@ export class Timing {
     return item;
   }
 
-  enable() {
+  enable(): void {
     this.#enable = true;
   }
 
-  disable() {
+  disable(): void {
     this.#enable = false;
   }
 
-  clear() {
+  clear(): void {
     this.#map.clear();
     this.#list = [];
   }
 
-  toJSON() {
+  toJSON(): TimingItem[] {
     return this.#list;
   }
 
-  itemToString(timelineEnd: number, item: TimingItem, times: number) {
+  itemToString(timelineEnd: number, item: TimingItem, times: number): string {
     const isEnd = typeof item.duration === 'number';
     const duration = isEnd ? (item.duration as number) : timelineEnd - item.start;
     const offset = item.start - this.#startTime;
@@ -99,7 +99,7 @@ export class Timing {
     return ' '.repeat(timespan) + '▇'.repeat(timeline) + ` [${status}] - ${message}`;
   }
 
-  toString(prefix = 'egg start timeline:', width = 50) {
+  toString(prefix = 'egg start timeline:', width = 50): string {
     const timelineEnd = Date.now();
     const timelineDuration = timelineEnd - this.#startTime;
     let times = 1;

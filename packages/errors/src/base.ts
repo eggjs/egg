@@ -5,10 +5,9 @@ export const TYPE: symbol = Symbol.for('BaseError#type');
 
 export class BaseError<T extends ErrorOptions> extends Error {
   [key: string]: any;
-  [TYPE]?: ErrorType;
 
   public static getType(err: Error): ErrorType {
-    // @ts-expect-error ignore
+    // @ts-expect-error `err[TYPE]` is only available on BaseError
     return err[TYPE] ?? ErrorType.BUILTIN;
   }
 
@@ -34,7 +33,7 @@ export class BaseError<T extends ErrorOptions> extends Error {
     return newErr as InstanceType<S>;
   }
 
-  public code: string;
+  code: string;
   protected options: T;
 
   constructor(options?: T) {
@@ -43,5 +42,9 @@ export class BaseError<T extends ErrorOptions> extends Error {
     this.message = this.options.message ?? '';
     this.code = this.options.code ?? '';
     this.name = this.constructor.name;
+    if (this.options.errorType) {
+      // @ts-expect-error `this[TYPE]` is only available on BaseError
+      this[TYPE] = this.options.errorType;
+    }
   }
 }

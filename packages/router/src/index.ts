@@ -5,5 +5,5 @@ export * from './Layer.ts';
 export * from './Router.ts';
 export * from './EggRouter.ts';
 
-export const KoaRouter = Router;
+export const KoaRouter: typeof Router = Router;
 export default Router;

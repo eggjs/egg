@@ -6,23 +6,21 @@ import { isObject } from '../../utils.ts';
 
 const debug = debuglog('egg/i18n/app/extend/application');
 
-export const I18N_RESOURCES = Symbol('Application i18n resources');
-
 export default class I18nApplication extends Application {
-  declare [I18N_RESOURCES]: Record<string, Record<string, string>>;
+  _I18N_RESOURCES!: Record<string, Record<string, string>>;
 
-  isSupportLocale(locale: string) {
-    return !!this[I18N_RESOURCES][locale];
+  isSupportLocale(locale: string): boolean {
+    return !!this._I18N_RESOURCES[locale];
   }
 
-  gettext(locale: string, key: string, value?: any, ...args: any[]) {
+  gettext(locale: string, key: string, value?: any, ...args: any[]): string {
     if (!locale || !key) {
       // __()
       // __('en')
       return '';
     }
 
-    const resource = this[I18N_RESOURCES][locale] || {};
+    const resource = this._I18N_RESOURCES[locale] ?? {};
 
     let text = resource[key];
     if (text === undefined) {
@@ -63,7 +61,7 @@ export default class I18nApplication extends Application {
     return format(text, value, ...args);
   }
 
-  __(locale: string, key: string, value?: any, ...args: any[]) {
+  __(locale: string, key: string, value?: any, ...args: any[]): string {
     return this.gettext(locale, key, value, ...args);
   }
 }

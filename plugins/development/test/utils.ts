@@ -4,12 +4,12 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const fixtures = path.join(__dirname, 'fixtures');
 
-export function getFilepath(name: string) {
+export function getFilepath(name: string): string {
   return path.join(fixtures, name);
 }
 
-export function escape(str: string) {
+export function escape(str: string): string {
   return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
 }
 
-export const DELAY = process.env.CI ? 30000 : 5500;
+export const DELAY: number = process.env.CI ? 30000 : 5500;

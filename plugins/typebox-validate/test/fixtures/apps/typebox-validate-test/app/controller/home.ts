@@ -1,5 +1,5 @@
 import { Controller } from 'egg';
-import { type Static, Type } from '../../../../../../src/typebox.ts';
+import { type Static, type TObject, type TProperties, Type } from '../../../../../../src/typebox.ts';
 import { ValidateFactory, Validate } from '../../../../../../src/decorator.ts';
 
 const TYPEBOX_ID = Type.Object({
@@ -10,7 +10,7 @@ const ValidateWithRedirect = ValidateFactory(ctx => {
   ctx.redirect('/422');
 });
 
-export const TYPEBOX_BODY = Type.Object({
+export const TYPEBOX_BODY: TObject<TProperties> = Type.Object({
   name: Type.String(),
   description: Type.Optional(Type.String({ transform: ['trim', 'toLowerCase'], minLength: 1, maxLength: 4 })),
   email: Type.String({ format: 'email' }),
@@ -21,7 +21,7 @@ export const TYPEBOX_BODY = Type.Object({
 
 export default class HomeController extends Controller {
   @Validate([[TYPEBOX_ID, ctx => ctx.params]])
-  public async create() {
+  public async create(): Promise<void> {
     const { ctx } = this;
     const res1 = ctx.tValidate(TYPEBOX_BODY, ctx.request.body);
     const res2 = ctx.tValidateWithoutThrow(TYPEBOX_BODY, ctx.request.body);
@@ -34,7 +34,7 @@ export default class HomeController extends Controller {
     };
   }
 
-  public async update() {
+  public async update(): Promise<void> {
     const { ctx } = this;
     const valid = ctx.tValidateWithoutThrow(TYPEBOX_BODY, ctx.request.body);
     if (valid) {
@@ -58,7 +58,7 @@ export default class HomeController extends Controller {
       (_ctx, errors) => 'kaiwei custom error: ' + errors.map(e => e.message).join(':'),
     ],
   ])
-  public async delete() {
+  public async delete(): Promise<void> {
     const { ctx } = this;
     const p: Static<typeof TYPEBOX_BODY> = ctx.request.body;
     const res = await ctx.service.home.index({

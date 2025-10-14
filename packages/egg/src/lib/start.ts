@@ -30,7 +30,7 @@ export interface SingleModeAgent extends Agent {
 /**
  * Start egg with single process
  */
-export async function startEgg(options: StartEggOptions = {}) {
+export async function startEgg(options: StartEggOptions = {}): Promise<SingleModeApplication> {
   options.baseDir = options.baseDir ?? process.cwd();
   options.mode = 'single';
 

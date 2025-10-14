@@ -5,7 +5,7 @@ import IP from '@eggjs/ip';
 import type { Context } from 'egg';
 import type { PathMatchingFun } from '@eggjs/path-matching';
 
-import type { SecurityConfig } from '../config/config.default.ts';
+import type { SecurityConfig, LookupAddress } from '../config/config.default.ts';
 
 /**
  * Check whether a domain is in the safe domain white list or not.
@@ -36,7 +36,7 @@ export function isSafeDomain(domain: string, whiteList: string[]): boolean {
   });
 }
 
-export function isSafePath(path: string, ctx: Context) {
+export function isSafePath(path: string, ctx: Context): boolean {
   path = '.' + path;
   if (path.includes('%')) {
     try {
@@ -52,7 +52,7 @@ export function isSafePath(path: string, ctx: Context) {
   return !(normalizePath.startsWith('../') || normalizePath.startsWith('..\\'));
 }
 
-export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFun }, ctx: Context) {
+export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFun }, ctx: Context): boolean {
   // check opts.enable first
   if (!opts.enable) return true;
   return !opts.matching?.(ctx);
@@ -64,7 +64,7 @@ const topDomains: Record<string, number> = {};
   topDomains[item] = 2 - item.split('.').length;
 });
 
-export function getCookieDomain(hostname: string) {
+export function getCookieDomain(hostname: string): string {
   // TODO(fengmk2): support ipv6
   if (IP_RE.test(hostname)) {
     return hostname;
@@ -88,11 +88,11 @@ export function getCookieDomain(hostname: string) {
   return domain;
 }
 
-function getDomain(splits: string[], index: number) {
+function getDomain(splits: string[], index: number): string {
   return '.' + splits.slice(index).join('.');
 }
 
-export function merge(origin: Record<string, any>, opts?: Record<string, any>) {
+export function merge(origin: Record<string, any>, opts?: Record<string, any>): Record<string, any> {
   if (!opts) {
     return origin;
   }
@@ -112,7 +112,7 @@ export function merge(origin: Record<string, any>, opts?: Record<string, any>) {
   return res;
 }
 
-export function preprocessConfig(config: SecurityConfig) {
+export function preprocessConfig(config: SecurityConfig): void {
   // transfer ssrf.ipBlackList to ssrf.checkAddress
   // ssrf.ipExceptionList can easily pick out unwanted ips from ipBlackList
   // checkAddress has higher priority than ipBlackList
@@ -121,7 +121,11 @@ export function preprocessConfig(config: SecurityConfig) {
     const blackList = ssrf.ipBlackList.map(getContains);
     const exceptionList = (ssrf.ipExceptionList || []).map(getContains);
     const hostnameExceptionList = ssrf.hostnameExceptionList;
-    ssrf.checkAddress = (ipAddresses, _family, hostname) => {
+    ssrf.checkAddress = (
+      ipAddresses: string | LookupAddress | (string | LookupAddress)[],
+      _family: number | string,
+      hostname: string
+    ): boolean => {
       // Check white hostname first
       if (hostname && hostnameExceptionList) {
         if (hostnameExceptionList.includes(hostname)) {
@@ -200,7 +204,7 @@ export function getFromUrl(url: string, prop: string): string | null {
   }
 }
 
-function getContains(ip: string) {
+function getContains(ip: string): (address: string) => boolean {
   if (IP.isV4Format(ip) || IP.isV6Format(ip)) {
     return (address: string) => address === ip;
   }

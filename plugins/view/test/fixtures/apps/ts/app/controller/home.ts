@@ -1,7 +1,7 @@
 import { Controller } from 'egg';
 
 export default class HomeController extends Controller {
-  async index() {
+  async index(): Promise<void> {
     const { ctx } = this;
     this.app.logger.info(this.app.config.view.root);
     this.app.logger.info(this.app.config.view.defaultExtension);
@@ -10,7 +10,7 @@ export default class HomeController extends Controller {
     });
   }
 
-  async other() {
+  async other(): Promise<void> {
     this.ctx.body = await this.ctx.renderString('./test.tpl');
   }
 }

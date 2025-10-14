@@ -12,7 +12,7 @@ declare module 'egg' {
 }
 
 export default class HomeController extends Controller {
-  async index() {
+  async index(): Promise<void> {
     const { ctx, app } = this;
     const redis = app.redis;
     await redis.set('foo', 'bar');

@@ -259,14 +259,29 @@ export interface EggAppConfig extends EggCoreAppConfig {
 
   rundir: string;
 
+  /**
+   * siteFile middleware options
+   */
   siteFile: SiteFileMiddlewareOptions;
+  /**
+   * meta middleware options
+   */
   meta: MetaMiddlewareOptions;
+  /**
+   * notfound middleware options
+   */
   notfound: NotFoundMiddlewareOptions;
+  /**
+   * overrideMethod middleware options
+   */
   overrideMethod: {
     enable: boolean;
     allowedMethods: string[];
   };
 
+  /**
+   * onClientError handler
+   */
   onClientError?(err: Error, socket: Socket, app: Application): ClientErrorResponse | Promise<ClientErrorResponse>;
 
   /**

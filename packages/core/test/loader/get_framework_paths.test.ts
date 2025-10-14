@@ -4,8 +4,8 @@ import { describe, it, afterEach } from 'vitest';
 import { mm } from 'mm';
 import { importModule } from '@eggjs/utils';
 
-import { createApp, getFilepath, type Application } from '../helper.js';
-import { EggLoader, EggCore } from '../../src/index.js';
+import { createApp, getFilepath, type Application } from '../helper.ts';
+import { EggLoader, EggCore } from '../../src/index.ts';
 
 describe('test/loader/get_framework_paths.test.ts', () => {
   let app: Application;
@@ -54,7 +54,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
     assert.deepEqual(app.loader.eggPaths, [getFilepath('egg'), getFilepath('framework-dulp')]);
   });
 
-  it('should when Application do not extend EggCore', () => {
+  it('should when Application do not extend EggCore in old way', () => {
     class CustomApplication {
       loader: EggLoader;
       constructor() {
@@ -69,6 +69,33 @@ describe('test/loader/get_framework_paths.test.ts', () => {
         return getFilepath('egg-esm');
       }
       close() {
+        // empty
+      }
+    }
+
+    app = createApp('eggpath', {
+      Application: CustomApplication as any,
+    });
+    assert.equal(app.loader.eggPaths.length, 1);
+    assert.equal(app.loader.eggPaths[0], getFilepath('egg-esm'));
+  });
+
+  it('should when Application do not extend EggCore in new way', () => {
+    class CustomApplication extends EggCore {
+      loader: EggLoader;
+      constructor() {
+        super();
+        this.loader = new EggLoader({
+          baseDir: getFilepath('eggpath'),
+          app: this,
+          logger: console,
+          EggCoreClass: EggCore,
+        } as any);
+      }
+      protected override customEggPaths() {
+        return [getFilepath('egg-esm'), ...super.customEggPaths()];
+      }
+      async close() {
         // empty
       }
     }

@@ -10,14 +10,14 @@ import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
 import { createServer } from '../mock_http_server.ts';
-import { proxyApp, APP_INIT } from './util.ts';
+import { proxyApp } from './util.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/app');
 
 export class MockParallelApplication extends Base {
   declare options: MockApplicationOptions;
   baseDir: string;
-  [APP_INIT] = false;
+  __APP_INIT__ = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
   _instance: EggApplication;
@@ -28,7 +28,7 @@ export class MockParallelApplication extends Base {
     this.baseDir = options.baseDir;
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     if (this.options.beforeInit) {
       await this.options.beforeInit(this);
       delete this.options.beforeInit;
@@ -50,7 +50,7 @@ export class MockParallelApplication extends Base {
     setCustomLoader(app);
 
     debug('app instantiate');
-    this[APP_INIT] = true;
+    this.__APP_INIT__ = true;
     debug('this[APP_INIT] = true');
     this.#bindEvents();
     debug('http server instantiate');
@@ -65,7 +65,7 @@ export class MockParallelApplication extends Base {
     debug('app ready');
   }
 
-  #bindEvents() {
+  #bindEvents(): void {
     for (const args of this.#initOnListeners) {
       debug('on(%s), use cache and pass to app', args);
       this._instance.on(args[0], args[1]);
@@ -78,8 +78,8 @@ export class MockParallelApplication extends Base {
     }
   }
 
-  on(...args: any[]) {
-    if (this[APP_INIT]) {
+  on(...args: any[]): this {
+    if (this.__APP_INIT__) {
       debug('on(%s), pass to app', args);
       this._instance.on(args[0], args[1]);
     } else {
@@ -92,8 +92,8 @@ export class MockParallelApplication extends Base {
     return this;
   }
 
-  once(...args: any[]) {
-    if (this[APP_INIT]) {
+  once(...args: any[]): this {
+    if (this.__APP_INIT__) {
       debug('once(%s), pass to app', args);
       this._instance.once(args[0], args[1]);
     } else {
@@ -109,7 +109,7 @@ export class MockParallelApplication extends Base {
   /**
    * close app
    */
-  async _close() {
+  async _close(): Promise<void> {
     if (this._instance) {
       await this._instance.close();
     } else {
@@ -119,7 +119,7 @@ export class MockParallelApplication extends Base {
   }
 }
 
-export function createApp(initOptions: MockOptions) {
+export function createApp(initOptions: MockOptions): ReturnType<typeof proxyApp> {
   const app = new MockParallelApplication(formatOptions(initOptions));
   return proxyApp(app);
 }

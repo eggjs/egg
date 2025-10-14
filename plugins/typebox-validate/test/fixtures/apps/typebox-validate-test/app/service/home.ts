@@ -11,6 +11,6 @@ const ServiceParamsBox = Type.Pick(TYPEBOX_BODY, ['version']);
 export default class HomeService extends Service {
   @Validate([[ServiceParamsBox, (_, args) => args[0]]])
   public async index(p: ServiceParamsType): Promise<string> {
-    return p.version || '';
+    return (p.version as string | undefined) || '';
   }
 }

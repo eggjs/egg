@@ -9,11 +9,11 @@ import ScheduleApplication from './application.ts';
 const debug = debuglog('egg/schedule/app');
 
 export default class ScheduleApplicationUnittest extends ScheduleApplication {
-  async runSchedule(schedulePath: string, ...args: any[]) {
+  async runSchedule(schedulePath: string, ...args: any[]): Promise<any> {
     debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
     // for test purpose
     const config = this.config;
-    const directory = [path.join(config.baseDir, 'app/schedule'), ...config.schedule.directory];
+    const directory = [path.join(config.baseDir, 'app/schedule'), ...(config.schedule.directory ?? [])];
 
     // resolve real path
     if (path.isAbsolute(schedulePath)) {

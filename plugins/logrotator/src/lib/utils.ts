@@ -7,7 +7,7 @@ interface LoggerTransport {
 /**
  * Walk all logger files from loggers
  */
-export function walkLoggerFile(loggers: Record<string, Map<string, LoggerTransport>>) {
+export function walkLoggerFile(loggers: Record<string, Map<string, LoggerTransport>>): string[] {
   const files: string[] = [];
   for (const registeredLogger of Object.values(loggers)) {
     for (const transport of registeredLogger.values()) {

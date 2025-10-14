@@ -17,7 +17,7 @@ export interface SingletonOptions {
 }
 
 export class Singleton<T = any> {
-  readonly clients = new Map<string, T>();
+  readonly clients: Map<string, T> = new Map<string, T>();
   readonly app: EggCore;
   readonly create: SingletonCreateMethod;
   readonly name: string;
@@ -34,11 +34,11 @@ export class Singleton<T = any> {
     this.options = options.app.config[this.name] ?? {};
   }
 
-  init() {
+  init(): void | Promise<void> {
     return isAsyncFunction(this.create) ? this.initAsync() : this.initSync();
   }
 
-  initSync() {
+  initSync(): void {
     const options = this.options;
     assert(
       !(options.client && options.clients),
@@ -67,7 +67,7 @@ export class Singleton<T = any> {
     this.#setClientToApp(this);
   }
 
-  async initAsync() {
+  async initAsync(): Promise<void> {
     const options = this.options;
     assert(
       !(options.client && options.clients),
@@ -97,7 +97,7 @@ export class Singleton<T = any> {
     this.#setClientToApp(this);
   }
 
-  #setClientToApp(client: unknown) {
+  #setClientToApp(client: unknown): void {
     Reflect.set(this.app, this.name, client);
   }
 
@@ -129,7 +129,7 @@ export class Singleton<T = any> {
     return (this.create as SingletonCreateMethod)(config, this.app, clientName) as T;
   }
 
-  async createInstanceAsync(config: Record<string, any>, clientName: string) {
+  async createInstanceAsync(config: Record<string, any>, clientName: string): Promise<T> {
     // options.default will be merge in to options.clients[id]
     config = {
       ...this.options.default,
@@ -138,7 +138,7 @@ export class Singleton<T = any> {
     return (await this.create(config, this.app, clientName)) as T;
   }
 
-  #extendDynamicMethods(client: any) {
+  #extendDynamicMethods(client: any): void {
     assert(!client.createInstance, '[egg/core/singleton] singleton instance should not have createInstance method');
     assert(
       !client.createInstanceAsync,

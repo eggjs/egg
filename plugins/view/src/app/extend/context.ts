@@ -6,8 +6,6 @@ import { type RenderOptions } from '../../lib/view_manager.ts';
 const VIEW = Symbol('Context#view');
 
 export default class ViewContext extends Context {
-  [VIEW]: ContextView;
-
   /**
    * Render a file by view engine, then set to body
    * @param {String} name - the file path based on root
@@ -45,10 +43,10 @@ export default class ViewContext extends Context {
    * View instance that is created every request
    * @member {ContextView} Context#view
    */
-  get view() {
+  get view(): ContextView {
     if (!this[VIEW]) {
       this[VIEW] = new ContextView(this);
     }
-    return this[VIEW];
+    return this[VIEW] as ContextView;
   }
 }

@@ -44,7 +44,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    */
   constructor(app: Application) {
     super();
-    this.config = app.config.view as any;
+    this.config = app.config.view as unknown as ViewManagerConfig;
     this.config.root = app.config.view.root.split(/\s*,\s*/g).filter(filepath => existsSync(filepath));
     this.extMap = new Map();
     this.fileMap = new Map();
@@ -67,7 +67,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    * @param {String} name - the name of view engine
    * @param {Object} viewEngine - the class of view engine
    */
-  use(name: string, viewEngine: ViewEngineClass) {
+  use(name: string, viewEngine: ViewEngineClass): void {
     assert(name, 'name is required');
     assert(!this.has(name), `${name} has been registered`);
 

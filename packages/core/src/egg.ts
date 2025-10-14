@@ -1,4 +1,3 @@
-/* eslint-disable prefer-spread */
 import assert from 'node:assert';
 import { debuglog } from 'node:util';
 
@@ -24,7 +23,7 @@ import { Singleton, type SingletonCreateMethod, type SingletonOptions } from './
 
 const debug = debuglog('egg/core/egg');
 
-export const EGG_LOADER = Symbol.for('egg#loader');
+export const EGG_LOADER: symbol = Symbol.for('egg#loader');
 
 export interface EggCoreOptions {
   baseDir: string;
@@ -201,8 +200,16 @@ export class EggCore extends KoaApplication {
      * @member {EggLoader} EggCore#loader
      * @since 1.0.0
      */
-    const Loader = this[EGG_LOADER];
-    assert(Loader, "Symbol.for('egg#loader') is required");
+
+    let Loader: typeof EggLoader;
+    if (EGG_LOADER in this) {
+      this.deprecate(
+        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead'
+      );
+      Loader = this[EGG_LOADER] as typeof EggLoader;
+    } else {
+      Loader = this.customEggLoader();
+    }
     this.loader = new Loader({
       baseDir: options.baseDir,
       app: this,
@@ -227,7 +234,7 @@ export class EggCore extends KoaApplication {
    * @param {String} name - unique name for singleton
    * @param {Function|AsyncFunction} create - method will be invoked when singleton instance create
    */
-  addSingleton(name: string, create: SingletonCreateMethod) {
+  addSingleton(name: string, create: SingletonCreateMethod): void {
     const options: SingletonOptions = {
       name,
       create,
@@ -246,7 +253,7 @@ export class EggCore extends KoaApplication {
    * override koa's app.use, support generator function
    * @since 1.0.0
    */
-  use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>) {
+  use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>): this {
     assert(typeof fn === 'function', 'app.use() requires a function');
     debug('[use] add middleware: %o', fn._name || fn.name || '-');
     this.middleware.push(fn as unknown as KoaMiddlewareFunc);
@@ -258,7 +265,7 @@ export class EggCore extends KoaApplication {
    * @member {String}
    * @since 1.0.0
    */
-  get type() {
+  get type(): 'application' | 'agent' {
     return this.options.type;
   }
 
@@ -268,7 +275,7 @@ export class EggCore extends KoaApplication {
    * @see {@link AppInfo#baseDir}
    * @since 1.0.0
    */
-  get baseDir() {
+  get baseDir(): string {
     return this.options.baseDir;
   }
 
@@ -277,7 +284,7 @@ export class EggCore extends KoaApplication {
    * @member {Function}
    * @since 1.0.0
    */
-  get deprecate() {
+  get deprecate(): (message: string) => void {
     return utils.deprecated;
   }
 
@@ -287,7 +294,7 @@ export class EggCore extends KoaApplication {
    * @see {@link AppInfo#name}
    * @since 1.0.0
    */
-  get name() {
+  get name(): string {
     return this.loader ? this.loader.pkg.name : '';
   }
 
@@ -296,7 +303,7 @@ export class EggCore extends KoaApplication {
    * @member {Object}
    * @since 1.0.0
    */
-  get plugins() {
+  get plugins(): Record<string, any> {
     return this.loader ? this.loader.plugins : {};
   }
 
@@ -322,7 +329,7 @@ export class EggCore extends KoaApplication {
    * @param  {Function} scope function will execute before app start
    * @param {string} [name] scope name, default is empty string
    */
-  beforeStart(scope: Fun, name?: string) {
+  beforeStart(scope: Fun, name?: string): void {
     this.deprecate(
       '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
     );
@@ -367,7 +374,7 @@ export class EggCore extends KoaApplication {
    * const done = app.readyCallback('mysql');
    * mysql.ready(done);
    */
-  readyCallback(name: string, opts: object) {
+  readyCallback(name: string, opts: object): (...args: unknown[]) => void {
     this.deprecate(
       '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
     );
@@ -386,7 +393,7 @@ export class EggCore extends KoaApplication {
    *
    * @param {Function} fn - the function that can be generator function or async function.
    */
-  beforeClose(fn: Fun, name?: string) {
+  beforeClose(fn: Fun, name?: string): void {
     this.deprecate(
       '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
     );
@@ -415,7 +422,7 @@ export class EggCore extends KoaApplication {
    * @member {Router} EggCore#router
    * @since 1.0.0
    */
-  get router() {
+  get router(): Router {
     if (this.#router) {
       return this.#router;
     }
@@ -523,7 +530,7 @@ export class EggCore extends KoaApplication {
     return this;
   }
 
-  redirect(source: string, destination: string, status = 301) {
+  redirect(source: string, destination: string, status = 301): this {
     this.router.redirect(source, destination, status);
     return this;
   }
@@ -533,12 +540,50 @@ export class EggCore extends KoaApplication {
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
     opts?: RegisterOptions
-  ) {
+  ): this {
     this.router.register(path, methods, middleware, opts);
     return this;
   }
 
-  get [EGG_LOADER]() {
+  /**
+   * Override this method to customize the loader
+   *
+   * ```ts
+   * // src/ExampleApplication.ts
+   * import { Application } from 'egg';
+   *
+   * class ExampleApplication extends Application {
+   *   protected override customEggLoader() {
+   *     return ExampleLoader;
+   *   }
+   * }
+   * ```
+   *
+   * @since 4.0.0
+   * @returns {typeof EggLoader}
+   */
+  protected customEggLoader(): typeof EggLoader {
     return EggLoader;
+  }
+
+  /**
+   * Override this method to customize the egg paths
+   *
+   * ```ts
+   * // src/ExampleApplication.ts
+   * import { Application } from 'egg';
+   *
+   * class ExampleApplication extends Application {
+   *   protected override customEggPaths() {
+   *     return [path.dirname(import.meta.dirname), ...super.customEggPaths()];
+   *   }
+   * }
+   * ```
+   *
+   * @since 4.0.0
+   * @returns {string[]}
+   */
+  protected customEggPaths(): string[] {
+    return [];
   }
 }

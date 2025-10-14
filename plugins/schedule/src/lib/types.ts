@@ -1,9 +1,20 @@
+import type { Context } from 'egg';
+
 import type { EggScheduleConfig } from '../config/config.default.ts';
 
-export type EggScheduleTask = (ctx: any, ...args: any[]) => Promise<void>;
+export type EggScheduleTaskOptions = Omit<EggScheduleConfig, 'directory'>;
+export type EggScheduleTask = (ctx: Context, ...args: any[]) => Promise<void>;
+
+/**
+ * Schedule handler interface
+ */
+export interface EggScheduleHandler {
+  schedule: EggScheduleTaskOptions;
+  task: EggScheduleTask;
+}
 
 export interface EggScheduleItem {
-  schedule: EggScheduleConfig;
+  schedule: EggScheduleTaskOptions;
   scheduleQueryString: string;
   task: EggScheduleTask;
   key: string;

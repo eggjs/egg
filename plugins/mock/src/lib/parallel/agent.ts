@@ -11,14 +11,13 @@ import { formatOptions } from '../format_options.ts';
 import type { MockOptions, MockApplicationOptions } from '../types.ts';
 import { sleep, rimraf } from '../utils.ts';
 import { setCustomLoader } from '../mock_custom_loader.ts';
-import { APP_INIT } from './util.ts';
 
 const debug = debuglog('egg/mock/lib/parallel/agent');
 
 export class MockAgent extends Base {
   declare options: MockApplicationOptions;
   baseDir: string;
-  [APP_INIT] = false;
+  __APP_INIT__ = false;
   #initOnListeners = new Set<any[]>();
   #initOnceListeners = new Set<any[]>();
   _instance: EggAgent;
@@ -29,7 +28,7 @@ export class MockAgent extends Base {
     this.baseDir = this.options.baseDir;
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     if (this.options.beforeInit) {
       await this.options.beforeInit(this);
       delete this.options.beforeInit;
@@ -61,7 +60,7 @@ export class MockAgent extends Base {
     setCustomLoader(agent);
 
     debug('agent instantiate');
-    this[APP_INIT] = true;
+    this.__APP_INIT__ = true;
     debug('this[APP_INIT] = true');
     this.#bindEvents();
     await agent.ready();
@@ -74,7 +73,7 @@ export class MockAgent extends Base {
     debug('agent ready');
   }
 
-  #bindEvents() {
+  #bindEvents(): void {
     debug('bind cache events to agent');
     for (const args of this.#initOnListeners) {
       debug('on(%s), use cache and pass to agent', args);
@@ -88,8 +87,8 @@ export class MockAgent extends Base {
     }
   }
 
-  on(...args: any[]) {
-    if (this[APP_INIT]) {
+  on(...args: any[]): this {
+    if (this.__APP_INIT__) {
       debug('on(%s), pass to agent', args);
       this._instance.on(args[0], args[1]);
     } else {
@@ -100,8 +99,8 @@ export class MockAgent extends Base {
     return this;
   }
 
-  once(...args: any[]) {
-    if (this[APP_INIT]) {
+  once(...args: any[]): this {
+    if (this.__APP_INIT__) {
       debug('once(%s), pass to agent', args);
       this._instance.once(args[0], args[1]);
     } else {
@@ -115,7 +114,7 @@ export class MockAgent extends Base {
   /**
    * close agent
    */
-  async _close() {
+  async _close(): Promise<void> {
     if (this._instance) {
       await this._instance.close();
     } else {
@@ -125,6 +124,6 @@ export class MockAgent extends Base {
   }
 }
 
-export function createAgent(options: MockOptions) {
+export function createAgent(options: MockOptions): MockAgent {
   return new MockAgent(formatOptions(options));
 }

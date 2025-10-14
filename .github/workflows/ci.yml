@@ -229,3 +229,14 @@ jobs:
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5
         with:
           use_oidc: true
+
+  done:
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - test-egg-bin
+      - test-egg-scripts
+      - typecheck
+    steps:
+      - run: exit 1
+        if: ${{ always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) }}

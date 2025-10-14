@@ -32,7 +32,7 @@ const nodeMajorVersion = parseInt(process.versions.node.split('.', 1)[0], 10);
 const supportImportMetaResolve = nodeMajorVersion >= 18;
 
 let _customRequire: NodeRequire;
-export function getRequire() {
+export function getRequire(): NodeRequire {
   if (!_customRequire) {
     if (typeof require !== 'undefined') {
       _customRequire = require;
@@ -43,12 +43,12 @@ export function getRequire() {
   return _customRequire;
 }
 
-export function getExtensions() {
+export function getExtensions(): NodeJS.RequireExtensions {
   return getRequire().extensions;
 }
 
 let _supportTypeScript: boolean | undefined;
-export function isSupportTypeScript() {
+export function isSupportTypeScript(): boolean {
   if (_supportTypeScript === undefined) {
     const extensions = getExtensions();
     // enable ts by process.env.EGG_TS_ENABLE or process.env.VITEST
@@ -272,7 +272,7 @@ function tryToResolveFromAbsoluteFile(filepath: string): string | undefined {
   }
 }
 
-export function importResolve(filepath: string, options?: ImportResolveOptions) {
+export function importResolve(filepath: string, options?: ImportResolveOptions): string {
   // find *.json or CommonJS module by require.resolve
   // e.g.: importResolve('egg/package.json', { paths })
   const paths = options?.paths ?? [process.cwd()];
@@ -360,7 +360,7 @@ export function importResolve(filepath: string, options?: ImportResolveOptions) 
   return moduleFilePath;
 }
 
-export async function importModule(filepath: string, options?: ImportModuleOptions) {
+export async function importModule(filepath: string, options?: ImportModuleOptions): Promise<any> {
   const moduleFilePath = importResolve(filepath, options);
   let obj: any;
   if (isESM) {

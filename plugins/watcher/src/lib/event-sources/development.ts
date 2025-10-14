@@ -16,7 +16,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
     this.ready(true);
   }
 
-  watch(file: string) {
+  watch(file: string): void {
     try {
       const stat = fs.statSync(file, { throwIfNoEntry: false });
       if (!stat) {
@@ -60,7 +60,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
     }
   }
 
-  unwatch(file: string) {
+  unwatch(file: string): void {
     if (!file) return;
 
     const h = this.#fileWatching.get(file);

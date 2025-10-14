@@ -101,7 +101,7 @@ export default {
 };
 ```
 
-see [config/config.default.ts](https://github.com/eggjs/jsonp/blob/master/src/config/config.default.ts) for more detail.
+see [config/config.default.ts](https://github.com/eggjs/egg/blob/master/plugins/jsonp/src/config/config.default.ts) for more detail.
 
 ## API
 

@@ -2,16 +2,14 @@ import { Context } from 'egg';
 
 import type { Tracer } from '../../lib/tracer.ts';
 
-const TRACER = Symbol('context tracer');
+const TRACER: unique symbol = Symbol('context tracer');
 
 export default class TracerContext extends Context {
-  [TRACER]: Tracer | undefined;
-
   get tracer(): Tracer {
     if (!this[TRACER]) {
       this[TRACER] = new this.app.config.tracer.Class(this);
     }
-    return this[TRACER];
+    return this[TRACER] as Tracer;
   }
 
   get traceId(): string {

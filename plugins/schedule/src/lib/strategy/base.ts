@@ -24,26 +24,26 @@ export class BaseStrategy {
     return this.scheduleConfig;
   }
 
-  async start() {
+  async start(): Promise<void> {
     // empty loop by default
   }
 
-  async close() {
+  async close(): Promise<void> {
     this.closed = true;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onJobStart(_info: EggScheduleJobInfo) {}
+  onJobStart(_info: EggScheduleJobInfo): void {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onJobFinish(_info: EggScheduleJobInfo) {}
+  onJobFinish(_info: EggScheduleJobInfo): void {}
 
   /**
    * trigger one worker
    *
    * @param {...any} args - pass to job task
    */
-  sendOne(...args: any[]) {
+  sendOne(...args: any[]): void {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) {
       this.logger.warn(`${this.key} skip due to schedule closed`);
@@ -68,7 +68,7 @@ export class BaseStrategy {
    *
    * @param {...any} args - pass to job task
    */
-  sendAll(...args: any[]) {
+  sendAll(...args: any[]): void {
     /* istanbul ignore next */
     if (this.agent.schedule.closed) {
       this.logger.warn(`${this.key} skip due to schedule closed`);
@@ -88,7 +88,7 @@ export class BaseStrategy {
     this.onJobStart(info);
   }
 
-  getSeqId() {
+  getSeqId(): string {
     return `${Date.now()}${process.hrtime().join('')}${this.count}`;
   }
 }

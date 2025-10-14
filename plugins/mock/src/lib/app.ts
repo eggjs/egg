@@ -7,7 +7,7 @@ import { Base } from 'sdk-base';
 import { detectPort } from 'detect-port';
 import { importModule } from '@eggjs/utils';
 
-import { sleep, rimraf, getProperty, getSourceDirname } from './utils.ts';
+import { sleep, rimraf, getProperty } from './utils.ts';
 import { formatOptions } from './format_options.ts';
 import { context } from './context.ts';
 import { setCustomLoader } from './mock_custom_loader.ts';
@@ -303,8 +303,8 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
       this[MESSENGER] = m;
     }
 
-    get [Symbol.for('egg#eggPath')]() {
-      return path.join(getSourceDirname(), 'lib/tmp');
-    }
+    // customEggPaths() {
+    //   return [path.join(getSourceDirname(), 'lib/tmp')];
+    // }
   };
 }

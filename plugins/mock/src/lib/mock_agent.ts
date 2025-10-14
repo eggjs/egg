@@ -33,7 +33,7 @@ export function getMockAgent(app?: { httpClient?: HttpClient }): MockAgent {
   return globalThis.__mockAgent;
 }
 
-export async function restoreMockAgent() {
+export async function restoreMockAgent(): Promise<void> {
   debug('restoreMockAgent start');
   if (globalThis.__globalDispatcher) {
     setGlobalDispatcher(globalThis.__globalDispatcher);

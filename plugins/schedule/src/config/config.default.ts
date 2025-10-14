@@ -12,7 +12,7 @@ export interface EggScheduleConfig {
   /**
    * custom additional directory, full path
    */
-  directory: string[];
+  directory?: string[];
 }
 
 export default {

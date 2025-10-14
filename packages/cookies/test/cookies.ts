@@ -6,7 +6,7 @@ export default function createCookie(
   req?: any,
   options?: { keys?: string[] | null; secure?: boolean } | null,
   defaultCookieOptions?: DefaultCookieOptions
-) {
+): Cookies {
   options = options || {};
   let keys = options.keys;
   keys = keys === undefined ? ['key', 'keys'] : keys;

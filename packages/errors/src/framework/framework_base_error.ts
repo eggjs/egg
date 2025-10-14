@@ -4,7 +4,7 @@ import { EggBaseError } from '../base_error.ts';
 import type { ErrorOptions } from '../error_options.ts';
 import { FrameworkErrorFormatter } from './formatter.ts';
 
-export const FRAMEWORK_ERROR_SYMBOL = Symbol.for('FrameworkBaseError');
+export const FRAMEWORK_ERROR_SYMBOL: unique symbol = Symbol.for('FrameworkBaseError');
 
 export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
   public readonly serialNumber: string;
@@ -27,7 +27,7 @@ export class FrameworkBaseError extends EggBaseError<ErrorOptions> {
   }
 
   // create a new frameworkError with format
-  static create(message: string, serialNumber: string | number, errorContext?: any) {
+  static create(message: string, serialNumber: string | number, errorContext?: any): FrameworkBaseError {
     const err = FrameworkErrorFormatter.formatError(new this(message, serialNumber, errorContext));
     Error.captureStackTrace(err, this.create);
     return err;

@@ -39,7 +39,7 @@ export interface Plugin {
 /**
  * @see https://github.com/eggjs/egg-core/blob/2920f6eade07959d25f5c4f96b154d3fbae877db/lib/loader/mixin/plugin.js#L203
  */
-export async function getPlugins(options: LoaderOptions) {
+export async function getPlugins(options: LoaderOptions): Promise<Record<string, Plugin>> {
   const loader = await getLoader(options);
   await loader.loadPlugin();
   return loader.allPlugins;
@@ -53,13 +53,13 @@ interface Unit {
 /**
  * @see https://github.com/eggjs/egg-core/blob/2920f6eade07959d25f5c4f96b154d3fbae877db/lib/loader/egg_loader.js#L348
  */
-export async function getLoadUnits(options: LoaderOptions) {
+export async function getLoadUnits(options: LoaderOptions): Promise<Unit[]> {
   const loader = await getLoader(options);
   await loader.loadPlugin();
   return loader.getLoadUnits();
 }
 
-export async function getConfig(options: LoaderOptions) {
+export async function getConfig(options: LoaderOptions): Promise<Record<string, any>> {
   const loader = await getLoader(options);
   await loader.loadPlugin();
   await loader.loadConfig();
@@ -92,7 +92,7 @@ interface IEggLoaderOptions {
 
 type EggLoaderImplClass<T = IEggLoader> = new (options: IEggLoaderOptions) => T;
 
-export async function getLoader(options: LoaderOptions) {
+export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
   assert(options.framework, 'framework is required');
   assert(await exists(options.framework), `${options.framework} should exist`);
   if (!(options.baseDir && (await exists(options.baseDir)))) {

@@ -4,10 +4,10 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function getRootDirname() {
+export function getRootDirname(): string {
   return path.join(__dirname, '..');
 }
 
-export function getFixtures(filename: string) {
+export function getFixtures(filename: string): string {
   return path.join(__dirname, 'fixtures', filename);
 }

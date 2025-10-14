@@ -1,6 +1,6 @@
 import { Application } from 'egg';
 
-export default (app: Application) => {
+const router = (app: Application): void => {
   app.get('/foo.js', async ctx => {
     ctx.body = 'foo.js';
   });
@@ -9,3 +9,5 @@ export default (app: Application) => {
     ctx.body = 'foo';
   });
 };
+
+export default router;

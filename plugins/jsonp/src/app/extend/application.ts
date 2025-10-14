@@ -2,12 +2,12 @@ import { debuglog } from 'node:util';
 import { parse as urlParse, type UrlWithStringQuery } from 'node:url';
 import type { ParsedUrlQuery } from 'node:querystring';
 
-import { Application, type MiddlewareFunc, type Context } from 'egg';
+import { Application, type MiddlewareFunc } from 'egg';
 
 import { JSONP_CONFIG } from '../../lib/private_key.ts';
 import type { JSONPConfig } from '../../config/config.default.ts';
 import { JSONPForbiddenReferrerError } from '../../error/JSONPForbiddenReferrerError.ts';
-import JSONPContext from './context.ts';
+import type JSONPContext from './context.ts';
 
 const debug = debuglog('egg/jsonp/app/extend/application');
 
@@ -44,8 +44,6 @@ export default class JSONPApplication extends Application {
      * 1. hit referrer white list
      * 2. or pass csrf check
      * 3. both check are disabled
-     *
-     * @param {Context} ctx request context
      */
     function securityAssert(ctx: JSONPContext) {
       // all disabled. don't need check
@@ -112,7 +110,7 @@ function createValidateReferer(whiteList: Required<JSONPConfig>['whiteList']) {
   };
 }
 
-function validateCsrf(ctx: Context) {
+function validateCsrf(ctx: JSONPContext) {
   try {
     ctx.assertCsrf();
     return true;

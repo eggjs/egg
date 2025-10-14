@@ -1,6 +1,6 @@
 import type { Context } from '../egg.ts';
 import type { Application } from '../application.ts';
-import type { HttpClientRequestURL, HttpClientRequestOptions } from './httpclient.ts';
+import type { HttpClientRequestURL, HttpClientRequestOptions, HttpClientResponse } from './httpclient.ts';
 
 export class ContextHttpClient {
   ctx: Context;
@@ -18,7 +18,7 @@ export class ContextHttpClient {
    * @param {String|Object} url - request url address.
    * @param {Object} [options] - options for request.
    */
-  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
     options = {
       ...options,
       ctx: this.ctx,
@@ -26,7 +26,10 @@ export class ContextHttpClient {
     return await this.app.curl<T>(url, options);
   }
 
-  async request<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions) {
+  async request<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions
+  ): Promise<HttpClientResponse<T>> {
     return await this.curl<T>(url, options);
   }
 }
