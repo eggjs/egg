@@ -1,31 +1,37 @@
 ---
-title: 控制器（Controller）
-order: 7
+title: Controller
 ---
 
-## 什么是 Controller
+## 使用场景
 
-[前面章节](./router.md) 提到，我们通过 Router 将用户的请求基于 method 和 URL 分发到了对应的 Controller，那么 Controller 主要有什么职责呢？
+通常 Web 应用会采用 `MVC` 架构，其中 C 即为控制器 (Controller)，负责解析用户的输入，处理后返回相应的结果。通俗来说，当需要在应用中增加一个对外提供服务的 HTTP 等类型的接口时，使用对应的 Controller 装饰器进行定义和实现。
 
-简单地说，Controller 负责**解析用户的输入，处理后返回相应的结果**。例如：
+应用实现 HTTPController 后，客户端可通过 HTTP 协议请求服务端的控制器，控制器处理结束后响应客户端，这是一个最基础的 ”请求 - 响应“ 流程。
 
-- 在 [RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer) 接口中，Controller 接受用户的参数，从数据库中查找内容返回给用户，或将用户的请求更新到数据库中。
-- 在 HTML 页面请求中，Controller 根据用户访问不同的 URL，渲染不同的模板得到 HTML，后返回给用户。
-- 在代理服务器中，Controller 将用户的请求转发到其他服务器，之后将那些服务器的处理结果返回给用户。
+## 最佳实践
 
-框架推荐的 Controller 层主要流程是：首先对用户通过 HTTP 传递过来的请求参数进行处理（校验、转换），然后调用对应的 [service](./service.md) 方法处理业务，在必要时把 Service 的返回结果处理转换，使之满足用户需求，最后通过 HTTP 将结果响应给用户。具体步骤如下：
+一般而言，Controller 不应该包含太多的业务逻辑，仅进行和协议相关的处理逻辑。
 
+<<<<<<< HEAD
 1. 获取用户通过 HTTP 传递过来的请求参数。
 2. 校验、组装参数。
 3. 调用 Service 进行业务处理，必要时处理转换 Service 的返回结果，让它适应用户的需求。
 4. 通过 HTTP 将结果响应给用户。
 
 ## 如何编写 Controller
+=======
+- 获取客户端传递的请求参数，例如在 HTTPController 中通过 HTTPHeader 或 HTTPBody 等等装饰器获取请求参数。
+- 对请求参数进行校验和组装，确保后续业务逻辑中处理的参数符合预期。
+- 调用 Service 进行业务处理。
+- 对 Service 返回的结果进行转换，例如渲染为 HTML。
+- 基于通信协议，组装响应数据，返回给客户端。
+>>>>>>> 5dcf1d64 (doc: add tegg docs)
 
-所有的 Controller 文件都必须放在 `app/controller` 目录下，可以支持多级目录，访问的时候可以通过目录名级联访问。Controller 支持多种形式进行编写，可以根据不同的项目场景和开发习惯来选择。
+## 支持的类型
 
-### Controller 类（推荐）
+egg 提供了不同的 Controller 装饰器，用于实现不同类型的接口，可依据需求场景进行选择。
 
+<<<<<<< HEAD
 我们可以通过定义 Controller 类的方式来编写代码：
 
 ```javascript
@@ -1106,3 +1112,10 @@ exports.security = {
 ```
 
 如果没有配置 `domainWhiteList` 或 `domainWhiteList` 数组为空，则默认允许所有跳转请求，等同于使用 `ctx.unsafeRedirect(url)`。
+=======
+| Controller 装饰器                                                | 说明                                                          |
+|---------------------------------------------------------------|-------------------------------------------------------------|
+| [@HTTPController / @HTTPMethod](./HTTPController)             | 用于实现 HTTP 接口<br/>函数应用中若只需返回 JSON 类型数据时，推荐使用 WebGWController |
+| [@MCPController](./MCPCotroller)             | 用于实现 MCP Server |
+| [@Schedule](./Scheduler)                                       | 用于**标准应用**实现定时任务接口                                          |
+>>>>>>> 5dcf1d64 (doc: add tegg docs)
