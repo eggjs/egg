@@ -94,7 +94,6 @@ catalog:
   debounce: ^2.2.0
   destroy: ^1.0.4
   detect-port: ^2.1.0
-  dumi: ^2.4.17
   egg-logger: ^3.5.0
   egg-plugin-puml: ^2.4.0
   egg-ts-helper: ^3.0.0
@@ -184,6 +183,7 @@ catalog:
   urllib: ^4.8.2
   utility: ^2.5.0
   vary: ^1.1.2
+  vitepress: 2.0.0-alpha.12
   vitest: 4.0.0-beta.17
   xss: ^1.0.15
   ylru: ^2.0.0
