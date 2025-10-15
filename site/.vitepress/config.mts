@@ -96,7 +96,7 @@ export default defineConfig({
 
     footer: {
       message: 'Born to build better enterprise frameworks and apps',
-      copyright: 'Copyright © 2017-present Eggjs',
+      copyright: 'Copyright © 2017-present Egg.js',
     },
 
     search: {
@@ -131,7 +131,17 @@ function nav(): DefaultTheme.NavItem[] {
     { text: 'Advanced', link: '/advanced/', activeMatch: '/advanced/' },
     { text: 'Core', link: '/core/', activeMatch: '/core/' },
     { text: 'Tutorials', link: '/tutorials/', activeMatch: '/tutorials/' },
-    { text: 'Community', link: '/community/', activeMatch: '/community/' },
+    {
+      text: 'Community',
+      activeMatch: '/community/',
+      items: [
+        { text: 'Community', link: '/community/' },
+        { text: 'Contributing', link: '/community/contributing' },
+        { text: 'Frequently Asked Questions', link: '/community/faq' },
+        { text: 'CNode Community', link: 'https://cnodejs.org/' },
+        { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
+      ],
+    },
     {
       text: `v${version}`,
       items: [
@@ -178,8 +188,14 @@ function navZhCN(): DefaultTheme.NavItem[] {
     },
     {
       text: '社区',
-      link: '/zh-CN/community/',
       activeMatch: '/zh-CN/community/',
+      items: [
+        { text: '社区', link: '/zh-CN/community/' },
+        { text: '参与贡献', link: '/zh-CN/community/contributing' },
+        { text: '常见问题', link: '/zh-CN/community/faq' },
+        { text: 'CNode 社区', link: 'https://cnodejs.org/' },
+        { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
+      ],
     },
     {
       text: `v${version}`,

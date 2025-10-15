@@ -1,7 +1,5 @@
 # Advanced
 
----
-
 - [Loader](./loader.md)
 - [Plugin Development](./plugin.md)
 - [Framework Development](./framework.md)

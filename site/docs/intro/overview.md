@@ -18,7 +18,7 @@ Egg is a convention-over-configuration framework, follows the [Loader](../advanc
 
 ## Features
 
-- Provide capability to [customizd framework](../advanced/framework.md) base on Egg
+- Provide capability to [customized framework](../advanced/framework.md) base on Egg
 - Highly extensible [plugin mechanism](../basics/plugin.md)
 - Built-in [cluster](../advanced/cluster-client.md)
 - Based on [Koa] with high performance
