@@ -1,17 +1,17 @@
-'use strict';
+"use strict";
 
-const client = require('./client');
+const client = require("./client");
 
-module.exports = agent => {
+module.exports = (agent) => {
   agent.startAgent({
-    name: 'mock',
+    name: "mock",
     client: client,
     subscribe: function (reg, listener) {
-      console.log('agent subscribe', reg);
+      console.log("agent subscribe", reg);
     },
   });
 
-  agent.messenger.on('die', () => {
+  agent.messenger.on("die", () => {
     process.exit(1);
   });
 };

@@ -1,18 +1,22 @@
-import type { Socket } from 'node:net';
+import type { Socket } from "node:net";
 
-import type { RequestOptions as HttpClientRequestOptions } from 'urllib';
-import type { EggLoggerOptions, EggLoggersOptions } from 'egg-logger';
-import type { FileLoaderOptions, EggAppConfig as EggCoreAppConfig, EggAppInfo } from '@eggjs/core';
-import type { PartialDeep } from 'type-fest';
+import type { RequestOptions as HttpClientRequestOptions } from "urllib";
+import type { EggLoggerOptions, EggLoggersOptions } from "egg-logger";
+import type {
+  FileLoaderOptions,
+  EggAppConfig as EggCoreAppConfig,
+  EggAppInfo,
+} from "@eggjs/core";
+import type { PartialDeep } from "type-fest";
 
-import type { Context } from './egg.ts';
-import type { Application } from './application.ts';
-import type { MetaMiddlewareOptions } from '../app/middleware/meta.ts';
-import type { NotFoundMiddlewareOptions } from '../app/middleware/notfound.ts';
-import type { SiteFileMiddlewareOptions } from '../app/middleware/site_file.ts';
+import type { Context } from "./egg.ts";
+import type { Application } from "./application.ts";
+import type { MetaMiddlewareOptions } from "../app/middleware/meta.ts";
+import type { NotFoundMiddlewareOptions } from "../app/middleware/notfound.ts";
+import type { SiteFileMiddlewareOptions } from "../app/middleware/site_file.ts";
 
 // import plugins types
-import './types.plugin.ts';
+import "./types.plugin.ts";
 
 export type { EggAppInfo, PartialDeep };
 
@@ -26,10 +30,10 @@ export interface ClientErrorResponse {
 }
 
 /** egg env type */
-export type EggEnvType = 'local' | 'unittest' | 'prod' | string;
+export type EggEnvType = "local" | "unittest" | "prod" | string;
 
 /** logger config of egg */
-export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
+export interface EggLoggerConfig extends Omit<EggLoggersOptions, "type"> {
   /** custom config of coreLogger */
   coreLogger?: Partial<EggLoggerOptions>;
   /** allow debug log at prod, defaults to `false` */
@@ -43,11 +47,12 @@ export interface EggLoggerConfig extends Omit<EggLoggersOptions, 'type'> {
 }
 
 /** Custom Loader Configuration */
-export interface CustomLoaderConfig extends Omit<FileLoaderOptions, 'inject' | 'target'> {
+export interface CustomLoaderConfig
+  extends Omit<FileLoaderOptions, "inject" | "target"> {
   /**
    * an object you wanner load to, value can only be 'ctx' or 'app'. default to app
    */
-  inject?: 'ctx' | 'app';
+  inject?: "ctx" | "app";
   /**
    * whether need to load files in plugins or framework, default to false
    */
@@ -117,7 +122,9 @@ export function defineConfig(config: PartialEggConfig): PartialEggConfig {
  * }));
  * ```
  */
-export function defineConfigFactory(configFactory: EggConfigFactory): EggConfigFactory {
+export function defineConfigFactory(
+  configFactory: EggConfigFactory,
+): EggConfigFactory {
   return configFactory;
 }
 
@@ -167,7 +174,7 @@ export interface EggAppConfig extends EggCoreAppConfig {
       text: string[];
     };
     /** Default is `'error'`, it will return `400` response when `Prototype-Poisoning` happen. */
-    onProtoPoisoning: 'error' | 'remove' | 'ignore';
+    onProtoPoisoning: "error" | "remove" | "ignore";
     onerror(err: any, ctx: Context): void;
   };
 
@@ -282,7 +289,11 @@ export interface EggAppConfig extends EggCoreAppConfig {
   /**
    * onClientError handler
    */
-  onClientError?(err: Error, socket: Socket, app: Application): ClientErrorResponse | Promise<ClientErrorResponse>;
+  onClientError?(
+    err: Error,
+    socket: Socket,
+    app: Application,
+  ): ClientErrorResponse | Promise<ClientErrorResponse>;
 
   /**
    * server timeout in milliseconds, default to 0 (no timeout).

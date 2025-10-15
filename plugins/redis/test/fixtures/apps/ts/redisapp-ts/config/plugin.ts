@@ -1,6 +1,6 @@
 export default {
   redis: {
     enable: true,
-    package: '@eggjs/redis',
+    package: "@eggjs/redis",
   },
 };

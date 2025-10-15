@@ -1,18 +1,18 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import { Base } from 'sdk-base';
-import { importModule } from '@eggjs/utils';
-import { Application as EggApplication } from 'egg';
+import { Base } from "sdk-base";
+import { importModule } from "@eggjs/utils";
+import { Application as EggApplication } from "egg";
 
-import { context } from '../context.ts';
-import { formatOptions } from '../format_options.ts';
-import type { MockOptions, MockApplicationOptions } from '../types.ts';
-import { sleep } from '../utils.ts';
-import { setCustomLoader } from '../mock_custom_loader.ts';
-import { createServer } from '../mock_http_server.ts';
-import { proxyApp } from './util.ts';
+import { context } from "../context.ts";
+import { formatOptions } from "../format_options.ts";
+import type { MockOptions, MockApplicationOptions } from "../types.ts";
+import { sleep } from "../utils.ts";
+import { setCustomLoader } from "../mock_custom_loader.ts";
+import { createServer } from "../mock_http_server.ts";
+import { proxyApp } from "./util.ts";
 
-const debug = debuglog('egg/mock/lib/parallel/app');
+const debug = debuglog("egg/mock/lib/parallel/app");
 
 export class MockParallelApplication extends Base {
   declare options: MockApplicationOptions;
@@ -23,7 +23,7 @@ export class MockParallelApplication extends Base {
   _instance: EggApplication;
 
   constructor(options: MockApplicationOptions) {
-    super({ initMethod: '_init' });
+    super({ initMethod: "_init" });
     this.options = options;
     this.baseDir = options.baseDir;
   }
@@ -38,10 +38,11 @@ export class MockParallelApplication extends Base {
       this.options.clusterPort = parseInt(process.env.CLUSTER_PORT!);
     }
     if (!this.options.clusterPort) {
-      throw new Error('cannot get env.CLUSTER_PORT, parallel run fail');
+      throw new Error("cannot get env.CLUSTER_PORT, parallel run fail");
     }
-    debug('get clusterPort %s', this.options.clusterPort);
-    const { Application }: { Application: typeof EggApplication } = await importModule(this.options.framework);
+    debug("get clusterPort %s", this.options.clusterPort);
+    const { Application }: { Application: typeof EggApplication } =
+      await importModule(this.options.framework);
 
     const app = (this._instance = new Application({ ...this.options }));
 
@@ -49,30 +50,30 @@ export class MockParallelApplication extends Base {
     Object.assign(app.context, context);
     setCustomLoader(app);
 
-    debug('app instantiate');
+    debug("app instantiate");
     this.__APP_INIT__ = true;
-    debug('this[APP_INIT] = true');
+    debug("this[APP_INIT] = true");
     this.#bindEvents();
-    debug('http server instantiate');
+    debug("http server instantiate");
     createServer(app);
     await app.ready();
 
     const msg = {
-      action: 'egg-ready',
+      action: "egg-ready",
       data: this.options,
     };
     (app as any).messenger.onMessage(msg);
-    debug('app ready');
+    debug("app ready");
   }
 
   #bindEvents(): void {
     for (const args of this.#initOnListeners) {
-      debug('on(%s), use cache and pass to app', args);
+      debug("on(%s), use cache and pass to app", args);
       this._instance.on(args[0], args[1]);
       this.removeListener(args[0], args[1]);
     }
     for (const args of this.#initOnceListeners) {
-      debug('once(%s), use cache and pass to app', args);
+      debug("once(%s), use cache and pass to app", args);
       this._instance.once(args[0], args[1]);
       this.removeListener(args[0], args[1]);
     }
@@ -80,10 +81,10 @@ export class MockParallelApplication extends Base {
 
   on(...args: any[]): this {
     if (this.__APP_INIT__) {
-      debug('on(%s), pass to app', args);
+      debug("on(%s), pass to app", args);
       this._instance.on(args[0], args[1]);
     } else {
-      debug('on(%s), cache it because app has not init', args);
+      debug("on(%s), cache it because app has not init", args);
       if (this.#initOnListeners) {
         this.#initOnListeners.add(args);
       }
@@ -94,10 +95,10 @@ export class MockParallelApplication extends Base {
 
   once(...args: any[]): this {
     if (this.__APP_INIT__) {
-      debug('once(%s), pass to app', args);
+      debug("once(%s), pass to app", args);
       this._instance.once(args[0], args[1]);
     } else {
-      debug('once(%s), cache it because app has not init', args);
+      debug("once(%s), cache it because app has not init", args);
       if (this.#initOnceListeners) {
         this.#initOnceListeners.add(args);
       }
@@ -119,7 +120,9 @@ export class MockParallelApplication extends Base {
   }
 }
 
-export function createApp(initOptions: MockOptions): ReturnType<typeof proxyApp> {
+export function createApp(
+  initOptions: MockOptions,
+): ReturnType<typeof proxyApp> {
   const app = new MockParallelApplication(formatOptions(initOptions));
   return proxyApp(app);
 }

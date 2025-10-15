@@ -1,4 +1,4 @@
-const { scheduler } = require('node:timers/promises');
+const { scheduler } = require("node:timers/promises");
 
 class AsyncView {
   render(filename, locals, options) {
@@ -6,7 +6,7 @@ class AsyncView {
       filename,
       locals,
       options,
-      type: 'async',
+      type: "async",
     };
     return scheduler.wait(10).then(() => ret);
   }
@@ -16,7 +16,7 @@ class AsyncView {
       tpl,
       locals,
       options,
-      type: 'async',
+      type: "async",
     };
     return scheduler.wait(10).then(() => ret);
   }

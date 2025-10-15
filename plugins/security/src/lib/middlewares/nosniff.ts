@@ -1,7 +1,7 @@
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../config/config.default.ts';
+import { checkIfIgnore } from "../utils.ts";
+import type { SecurityConfig } from "../../config/config.default.ts";
 
 // status codes for redirects
 // @see https://github.com/jshttp/statuses/blob/master/index.js#L33
@@ -15,7 +15,7 @@ const RedirectStatus: Record<number, boolean> = {
   308: true,
 };
 
-export default (options: SecurityConfig['nosniff']): MiddlewareFunc => {
+export default (options: SecurityConfig["nosniff"]): MiddlewareFunc => {
   return async function nosniff(ctx, next) {
     await next();
 
@@ -28,6 +28,6 @@ export default (options: SecurityConfig['nosniff']): MiddlewareFunc => {
     };
     if (checkIfIgnore(opts, ctx)) return;
 
-    ctx.set('x-content-type-options', 'nosniff');
+    ctx.set("x-content-type-options", "nosniff");
   };
 };

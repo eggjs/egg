@@ -1,13 +1,13 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import { defineConfig, type UserConfig } from "tsdown";
 
 const config: UserConfig = defineConfig({
   entry: {
-    index: 'src/index.ts',
+    index: "src/index.ts",
   },
   unbundle: true,
   dts: true,
   unused: {
-    level: 'error',
+    level: "error",
   },
   exports: {
     devExports: true,

@@ -1,16 +1,16 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import { request } from '../test-helpers/context.ts';
+import { request } from "../test-helpers/context.ts";
 
-describe('ctx.length', () => {
-  it('should return length in content-length', () => {
+describe("ctx.length", () => {
+  it("should return length in content-length", () => {
     const req = request();
-    req.header['content-length'] = '10';
+    req.header["content-length"] = "10";
     assert.strictEqual(req.length, 10);
   });
 
-  it('should return undefined with no content-length present', () => {
+  it("should return undefined with no content-length present", () => {
     const req = request();
     assert.strictEqual(req.length, undefined);
   });

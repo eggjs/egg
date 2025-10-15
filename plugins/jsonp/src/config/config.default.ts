@@ -1,4 +1,4 @@
-import type { PartialEggConfig } from 'egg';
+import type { PartialEggConfig } from "egg";
 
 export interface JSONPConfig {
   /**
@@ -22,7 +22,7 @@ export interface JSONPConfig {
 export default {
   jsonp: {
     limit: 50,
-    callback: ['_callback', 'callback'],
+    callback: ["_callback", "callback"],
     csrf: false,
     whiteList: undefined,
   },

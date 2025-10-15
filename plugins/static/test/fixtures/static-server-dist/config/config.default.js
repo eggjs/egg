@@ -1,9 +1,9 @@
-module.exports = info => {
+module.exports = (info) => {
   return {
-    keys: 'test key',
+    keys: "test key",
     static: {
-      prefix: '/static',
-      dir: info.baseDir + '/dist/static',
+      prefix: "/static",
+      dir: info.baseDir + "/dist/static",
       buffer: true,
     },
   };

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-import { Application } from 'egg';
+import { Application } from "egg";
 
 export default (app: Application) => {
-  app.router.get('/', app.controller.home.index);
+  app.router.get("/", app.controller.home.index);
 };

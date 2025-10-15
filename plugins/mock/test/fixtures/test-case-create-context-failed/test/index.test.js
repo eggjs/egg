@@ -1,16 +1,16 @@
-const { describe, it } = require('vitest');
-const { setGetAppCallback } = require('../../../..');
+const { describe, it } = require("vitest");
+const { setGetAppCallback } = require("../../../..");
 
 setGetAppCallback((suite, test) => {
   return {
     ready: async () => {
       // ...
     },
-    mockContextScope: async scope => {
+    mockContextScope: async (scope) => {
       if (!test) {
         await scope({});
       } else {
-        throw new Error('mock create context failed');
+        throw new Error("mock create context failed");
       }
     },
     backgroundTasksFinished: async () => {
@@ -22,6 +22,6 @@ setGetAppCallback((suite, test) => {
   };
 });
 
-describe('test case create context error', function () {
-  it('should not print', () => {});
+describe("test case create context error", function () {
+  it("should not print", () => {});
 });

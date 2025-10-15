@@ -1,8 +1,8 @@
-const egg = require('egg');
+const egg = require("egg");
 
 class Application extends egg.Application {
   constructor() {
-    throw new Error('start error');
+    throw new Error("start error");
   }
 }
 

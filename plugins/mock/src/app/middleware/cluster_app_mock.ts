@@ -1,23 +1,23 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-const debug = debuglog('egg/mock/app/middleware/cluster_app_mock');
+const debug = debuglog("egg/mock/app/middleware/cluster_app_mock");
 
 export default (): MiddlewareFunc => {
   return async function clusterAppMock(ctx, next) {
     // use originalUrl to make sure other middlewares can't change request url
-    if (ctx.originalUrl !== '/__egg_mock_call_function') {
+    if (ctx.originalUrl !== "/__egg_mock_call_function") {
       return next();
     }
     const body = ctx.request.body;
-    debug('%s %s, body: %j', ctx.method, ctx.url, body);
+    debug("%s %s, body: %j", ctx.method, ctx.url, body);
     const { method, property, args, needResult } = body;
     if (!method) {
       ctx.status = 422;
       ctx.body = {
         success: false,
-        error: 'Missing method',
+        error: "Missing method",
       };
       return;
     }
@@ -25,15 +25,15 @@ export default (): MiddlewareFunc => {
       ctx.status = 422;
       ctx.body = {
         success: false,
-        error: 'args should be an Array instance',
+        error: "args should be an Array instance",
       };
       return;
     }
     if (property) {
       // method: '__getter__' and property: 'config'
-      if (method === '__getter__') {
+      if (method === "__getter__") {
         if (!ctx.app[property]) {
-          debug('property %s not exists on app', property);
+          debug("property %s not exists on app", property);
           ctx.status = 422;
           ctx.body = {
             success: false,
@@ -46,8 +46,8 @@ export default (): MiddlewareFunc => {
       }
 
       // @ts-expect-error dynamic property
-      if (!ctx.app[property] || typeof ctx.app[property][method] !== 'function') {
-        debug('property %s.%s not exists on app', property, method);
+      if (!ctx.app[property] || typeof ctx.app[property][method] !== "function") {
+        debug("property %s.%s not exists on app", property, method);
         ctx.status = 422;
         ctx.body = {
           success: false,
@@ -56,8 +56,8 @@ export default (): MiddlewareFunc => {
         return;
       }
     } else {
-      if (typeof ctx.app[method] !== 'function') {
-        debug('method %s not exists on app', method);
+      if (typeof ctx.app[method] !== "function") {
+        debug("method %s not exists on app", method);
         ctx.status = 422;
         ctx.body = {
           success: false,
@@ -67,21 +67,26 @@ export default (): MiddlewareFunc => {
       }
     }
 
-    debug('call %s with %j', method, args);
+    debug("call %s with %j", method, args);
 
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-      if (arg && typeof arg === 'object') {
+      if (arg && typeof arg === "object") {
         // convert __egg_mock_type back to function
-        if (arg.__egg_mock_type === 'function') {
+        if (arg.__egg_mock_type === "function") {
           // eslint-disable-next-line
           args[i] = eval(`(function() { return ${arg.value} })()`);
-        } else if (arg.__egg_mock_type === 'error') {
+        } else if (arg.__egg_mock_type === "error") {
           const err: any = new Error(arg.message);
           err.name = arg.name;
           err.stack = arg.stack;
           for (const key in arg) {
-            if (key !== 'name' && key !== 'message' && key !== 'stack' && key !== '__egg_mock_type') {
+            if (
+              key !== "name" &&
+              key !== "message" &&
+              key !== "stack" &&
+              key !== "__egg_mock_type"
+            ) {
               err[key] = arg[key];
             }
           }
@@ -94,7 +99,7 @@ export default (): MiddlewareFunc => {
     // @ts-expect-error dynamic property
     const fn = target[method];
     try {
-      Promise.resolve(fn.call(target, ...args)).then(result => {
+      Promise.resolve(fn.call(target, ...args)).then((result) => {
         ctx.body = needResult ? { success: true, result } : { success: true };
       });
     } catch (err: any) {

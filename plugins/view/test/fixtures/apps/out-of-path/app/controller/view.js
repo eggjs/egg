@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.render = ctx => ctx.render('../a.html');
+exports.render = (ctx) => ctx.render("../a.html");

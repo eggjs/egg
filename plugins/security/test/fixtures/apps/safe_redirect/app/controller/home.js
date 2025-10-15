@@ -1,6 +1,6 @@
 exports.safeRedirect = async function () {
   const goto = this.query.goto;
-  console.log('%j, %s', goto, goto);
+  console.log("%j, %s", goto, goto);
   this.redirect(goto);
 };
 

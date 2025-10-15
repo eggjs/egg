@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 class PluginA {
   getName() {
-    return 'plugina';
+    return "plugina";
   }
 }
 

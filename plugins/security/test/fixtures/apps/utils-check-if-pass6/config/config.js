@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'xframe',
+  defaultMiddleware: "xframe",
   xframe: {
-    match: ['/match1', '/match2'],
+    match: ["/match1", "/match2"],
     enable: true,
   },
 };

@@ -1,4 +1,4 @@
-import { Tracer } from '../lib/tracer.ts';
+import { Tracer } from "../lib/tracer.ts";
 
 export interface TracerConfig {
   Class: typeof Tracer;

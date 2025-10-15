@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   return class AdminConfig extends app.Controller {
     async getName() {
       this.ctx.body = this.pathName;

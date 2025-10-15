@@ -1,1 +1,1 @@
-export const name = 'no-package-json';
+export const name = "no-package-json";

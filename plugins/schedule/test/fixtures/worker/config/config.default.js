@@ -1,8 +1,8 @@
 exports.logger = {
-  level: 'DEBUG',
-  consoleLevel: 'DEBUG',
+  level: "DEBUG",
+  consoleLevel: "DEBUG",
   coreLogger: {
-    level: 'DEBUG',
-    consoleLevel: 'DEBUG',
+    level: "DEBUG",
+    consoleLevel: "DEBUG",
   },
 };

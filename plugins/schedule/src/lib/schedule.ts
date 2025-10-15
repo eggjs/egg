@@ -1,13 +1,13 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import type { EggLogger } from 'egg';
+import type { EggLogger } from "egg";
 
-import { loadSchedule } from './load_schedule.ts';
-import type { EggScheduleItem, EggScheduleJobInfo } from './types.ts';
-import type { BaseStrategy } from './strategy/base.ts';
-import type Agent from '../app/extend/agent.ts';
+import { loadSchedule } from "./load_schedule.ts";
+import type { EggScheduleItem, EggScheduleJobInfo } from "./types.ts";
+import type { BaseStrategy } from "./strategy/base.ts";
+import type Agent from "../app/extend/agent.ts";
 
-const debug = debuglog('egg/schedule/lib/schedule');
+const debug = debuglog("egg/schedule/lib/schedule");
 
 export class Schedule {
   closed = false;
@@ -19,7 +19,7 @@ export class Schedule {
 
   constructor(agent: Agent) {
     this.#agent = agent;
-    this.#logger = agent.getLogger('scheduleLogger');
+    this.#logger = agent.getLogger("scheduleLogger");
   }
 
   /**
@@ -29,7 +29,7 @@ export class Schedule {
    */
   use(type: string, clz: typeof BaseStrategy): void {
     this.#strategyClassMap.set(type, clz);
-    debug('use type: %o', type);
+    debug("use type: %o", type);
   }
 
   /**
@@ -53,18 +53,23 @@ export class Schedule {
     const Strategy = this.#strategyClassMap.get(type!);
     if (!Strategy) {
       const err = new Error(`schedule type [${type}] is not defined`);
-      err.name = 'EggScheduleError';
+      err.name = "EggScheduleError";
       throw err;
     }
 
     // Initialize strategy and register
     const instance = new Strategy(schedule, this.#agent, key);
     this.#strategyInstanceMap.set(key, instance);
-    debug('registerSchedule type: %o, config: %o, key: %o', type, schedule, key);
+    debug(
+      "registerSchedule type: %o, config: %o, key: %o",
+      type,
+      schedule,
+      key,
+    );
   }
 
   unregisterSchedule(key: string): boolean {
-    debug('unregisterSchedule key: %o', key);
+    debug("unregisterSchedule key: %o", key);
     return this.#strategyInstanceMap.delete(key);
   }
 
@@ -74,19 +79,21 @@ export class Schedule {
    * @param {Object} info - { id, key, success, message, workerId }
    */
   onJobFinish(info: EggScheduleJobInfo): void {
-    this.#logger.debug(`[Job#${info.id}] ${info.key} finish event received by agent from worker#${info.workerId}`);
+    this.#logger.debug(
+      `[Job#${info.id}] ${info.key} finish event received by agent from worker#${info.workerId}`,
+    );
     const instance = this.#strategyInstanceMap.get(info.key);
     if (instance) {
       instance.onJobFinish(info);
     }
-    debug('onJobFinish', info);
+    debug("onJobFinish", info);
   }
 
   /**
    * start schedule
    */
   async start(): Promise<void> {
-    debug('start');
+    debug("start");
     this.closed = false;
     for (const instance of this.#strategyInstanceMap.values()) {
       instance.start();
@@ -98,6 +105,6 @@ export class Schedule {
     for (const instance of this.#strategyInstanceMap.values()) {
       await instance.close();
     }
-    debug('close');
+    debug("close");
   }
 }

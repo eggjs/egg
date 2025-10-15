@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'hsts',
+  defaultMiddleware: "hsts",
   hsts: {
     includeSubdomains: true,
   },

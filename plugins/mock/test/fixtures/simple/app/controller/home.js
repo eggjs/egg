@@ -1,3 +1,3 @@
-exports.hello = ctx => {
-  ctx.body = 'hi';
+exports.hello = (ctx) => {
+  ctx.body = "hi";
 };

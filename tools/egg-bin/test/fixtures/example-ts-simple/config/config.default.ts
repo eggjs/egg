@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-export const key = '12345';
+export const key = "12345";

@@ -1,7 +1,7 @@
 module.exports = () => {
   return {
     async bar() {
-      this.ctx.body = 'this is obj bar!';
+      this.ctx.body = "this is obj bar!";
     },
 
     async error() {
@@ -10,7 +10,7 @@ module.exports = () => {
 
     subObj: {
       async hello() {
-        this.ctx.body = 'this is subObj hello!';
+        this.ctx.body = "this is subObj hello!";
       },
     },
   };

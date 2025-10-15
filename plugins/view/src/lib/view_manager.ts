@@ -1,14 +1,14 @@
-import assert from 'node:assert';
-import path from 'node:path';
-import { existsSync } from 'node:fs';
+import assert from "node:assert";
+import path from "node:path";
+import { existsSync } from "node:fs";
 
-import { exists } from 'utility';
-import type { Context, Application } from 'egg';
-import { isGeneratorFunction } from 'is-type-of';
+import { exists } from "utility";
+import type { Context, Application } from "egg";
+import { isGeneratorFunction } from "is-type-of";
 
-import type { ViewConfig } from '../config/config.default.ts';
+import type { ViewConfig } from "../config/config.default.ts";
 
-export interface ViewManagerConfig extends Omit<ViewConfig, 'root'> {
+export interface ViewManagerConfig extends Omit<ViewConfig, "root"> {
   root: string[];
 }
 
@@ -22,8 +22,16 @@ export interface RenderOptions extends PlainObject {
 }
 
 export interface ViewEngine {
-  render: (name: string, locals?: Record<string, any>, options?: RenderOptions) => Promise<string>;
-  renderString: (tpl: string, locals?: Record<string, any>, options?: RenderOptions) => Promise<string>;
+  render: (
+    name: string,
+    locals?: Record<string, any>,
+    options?: RenderOptions,
+  ) => Promise<string>;
+  renderString: (
+    tpl: string,
+    locals?: Record<string, any>,
+    options?: RenderOptions,
+  ) => Promise<string>;
 }
 
 export type ViewEngineClass = new (app: Context) => ViewEngine;
@@ -45,7 +53,9 @@ export class ViewManager extends Map<string, ViewEngineClass> {
   constructor(app: Application) {
     super();
     this.config = app.config.view as unknown as ViewManagerConfig;
-    this.config.root = app.config.view.root.split(/\s*,\s*/g).filter(filepath => existsSync(filepath));
+    this.config.root = app.config.view.root
+      .split(/\s*,\s*/g)
+      .filter((filepath) => existsSync(filepath));
     this.extMap = new Map();
     this.fileMap = new Map();
     for (const ext of Object.keys(this.config.mapping)) {
@@ -68,19 +78,25 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    * @param {Object} viewEngine - the class of view engine
    */
   use(name: string, viewEngine: ViewEngineClass): void {
-    assert(name, 'name is required');
+    assert(name, "name is required");
     assert(!this.has(name), `${name} has been registered`);
 
-    assert(viewEngine, 'viewEngine is required');
-    assert(viewEngine.prototype.render, 'viewEngine should implement `render` method');
+    assert(viewEngine, "viewEngine is required");
+    assert(
+      viewEngine.prototype.render,
+      "viewEngine should implement `render` method",
+    );
     assert(
       !isGeneratorFunction(viewEngine.prototype.render),
-      'viewEngine `render` method should not be generator function'
+      "viewEngine `render` method should not be generator function",
     );
-    assert(viewEngine.prototype.renderString, 'viewEngine should implement `renderString` method');
+    assert(
+      viewEngine.prototype.renderString,
+      "viewEngine should implement `renderString` method",
+    );
     assert(
       !isGeneratorFunction(viewEngine.prototype.renderString),
-      'viewEngine `renderString` method should not be generator function'
+      "viewEngine `renderString` method should not be generator function",
     );
 
     this.set(name, viewEngine);
@@ -101,8 +117,11 @@ export class ViewManager extends Map<string, ViewEngineClass> {
     if (config.cache && filename) return filename;
 
     // try find it with default extension
-    filename = await resolvePath([name, name + config.defaultExtension], config.root);
-    assert(filename, `Can't find ${name} from ${config.root.join(',')}`);
+    filename = await resolvePath(
+      [name, name + config.defaultExtension],
+      config.root,
+    );
+    assert(filename, `Can't find ${name} from ${config.root.join(",")}`);
 
     // set cache
     this.fileMap.set(name, filename);

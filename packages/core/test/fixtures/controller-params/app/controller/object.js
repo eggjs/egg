@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = {
   async callFunction(...args) {
-    this.body = 'done';
+    this.body = "done";
     return args;
   },
 };

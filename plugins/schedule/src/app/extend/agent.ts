@@ -1,10 +1,10 @@
-import { Agent } from 'egg';
+import { Agent } from "egg";
 
-import { BaseStrategy } from '../../lib/strategy/base.ts';
-import { TimerStrategy } from '../../lib/strategy/timer.ts';
-import { Schedule } from '../../lib/schedule.ts';
+import { BaseStrategy } from "../../lib/strategy/base.ts";
+import { TimerStrategy } from "../../lib/strategy/timer.ts";
+import { Schedule } from "../../lib/schedule.ts";
 
-const SCHEDULE = Symbol('agent schedule');
+const SCHEDULE = Symbol("agent schedule");
 
 export default class ScheduleAgent extends Agent {
   /**

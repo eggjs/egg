@@ -6,24 +6,24 @@ module.exports = class Boot {
   async willReady() {
     const app = this.app;
     app.received = [];
-    app.messenger.on('action', data => {
+    app.messenger.on("action", (data) => {
       app.received.push(data);
-      console.error('app.js received action data: %o', data);
+      console.error("app.js received action data: %o", data);
     });
 
-    app.messenger.on('app-action', () => {
+    app.messenger.on("app-action", () => {
       app.recievedAppAction = true;
     });
 
-    app.messenger.on('broadcast-action', () => {
+    app.messenger.on("broadcast-action", () => {
       app.recievedBroadcastAction = true;
     });
 
-    app.messenger.on('agent-recieved-broadcast-action', () => {
+    app.messenger.on("agent-recieved-broadcast-action", () => {
       app.recievedAgentRecievedAction = true;
     });
 
-    app.messenger.sendToAgent('action', 'send data to agent when app starting');
+    app.messenger.sendToAgent("action", "send data to agent when app starting");
 
     // app.ready(() => {
     //   app.messenger.sendToAgent('action', 'send data when app started');
@@ -40,16 +40,16 @@ module.exports = class Boot {
   async didReady() {
     const app = this.app;
     app.eggReady = true;
-    app.messenger.sendToAgent('action', 'send data to agent when app started');
+    app.messenger.sendToAgent("action", "send data to agent when app started");
   }
 
   async serverDidReady() {
     const app = this.app;
     // only can send message to agent when server started
-    app.messenger.sendRandom('action', 'send data to a random agent');
-    app.messenger.broadcast('broadcast-action', 'broadcast action');
-    app.messenger.sendToApp('app-action', 'send action to app');
-    app.messenger.sendToApp('action', 'send action to all app');
+    app.messenger.sendRandom("action", "send data to a random agent");
+    app.messenger.broadcast("broadcast-action", "broadcast action");
+    app.messenger.sendToApp("app-action", "send action to app");
+    app.messenger.sendToApp("action", "send action to all app");
     app.serverReady = true;
   }
 };

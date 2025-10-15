@@ -1,2 +1,2 @@
-import 'egg';
-import '@eggjs/tegg-plugin';
+import "egg";
+import "@eggjs/tegg-plugin";

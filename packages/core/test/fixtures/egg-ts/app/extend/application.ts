@@ -1,5 +1,5 @@
 module.exports = {
   applicationShow() {
-    return 'from extend application';
+    return "from extend application";
   },
 };

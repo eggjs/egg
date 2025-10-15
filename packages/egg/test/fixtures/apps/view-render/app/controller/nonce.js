@@ -1,3 +1,3 @@
 module.exports = async function () {
-  await this.render('nonce.html');
+  await this.render("nonce.html");
 };

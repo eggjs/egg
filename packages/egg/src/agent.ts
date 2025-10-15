@@ -1,4 +1,4 @@
-import { BaseHookClass } from './lib/core/base_hook_class.ts';
+import { BaseHookClass } from "./lib/core/base_hook_class.ts";
 
 export default class EggAgentHook extends BaseHookClass {
   configDidLoad(): void {

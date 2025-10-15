@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const EggApplication = require('../egg').Application;
-const utils = require('../../utils');
+const EggApplication = require("../egg").Application;
+const utils = require("../../utils");
 
 class Application extends EggApplication {
-  get [Symbol.for('egg#eggPath')]() {
+  get [Symbol.for("egg#eggPath")]() {
     return __dirname;
   }
   toJSON() {
@@ -19,9 +19,12 @@ class Application extends EggApplication {
   }
 }
 
-const app = utils.createApp('application', { Application });
+const app = utils.createApp("application", { Application });
 app.loader.loadAll();
-app.ready(err => {
-  fs.writeFileSync(path.join(__dirname, 'timing.json'), JSON.stringify(app.timing.toJSON()));
+app.ready((err) => {
+  fs.writeFileSync(
+    path.join(__dirname, "timing.json"),
+    JSON.stringify(app.timing.toJSON()),
+  );
   process.exit(err ? 1 : 0);
 });

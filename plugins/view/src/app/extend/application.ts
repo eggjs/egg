@@ -1,8 +1,8 @@
-import { Application } from 'egg';
+import { Application } from "egg";
 
-import { ViewManager } from '../../lib/view_manager.ts';
+import { ViewManager } from "../../lib/view_manager.ts";
 
-const VIEW = Symbol('Application#view');
+const VIEW = Symbol("Application#view");
 
 export default class ViewApplication extends Application {
   /**

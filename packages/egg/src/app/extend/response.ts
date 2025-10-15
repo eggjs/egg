@@ -1,6 +1,6 @@
-import { Response as KoaResponse } from '@eggjs/core';
+import { Response as KoaResponse } from "@eggjs/core";
 
-const REAL_STATUS = Symbol('response realStatus');
+const REAL_STATUS = Symbol("response realStatus");
 
 export default class Response extends KoaResponse {
   /**

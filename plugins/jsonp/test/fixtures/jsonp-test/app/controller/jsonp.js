@@ -1,13 +1,13 @@
-exports.index = ctx => {
-  ctx.body = { foo: 'bar' };
+exports.index = (ctx) => {
+  ctx.body = { foo: "bar" };
 };
 
 exports.empty = function () {};
 
-exports.mark = ctx => {
+exports.mark = (ctx) => {
   ctx.body = { jsonpFunction: ctx.acceptJSONP };
 };
 
 exports.error = async () => {
-  throw new Error('jsonpFunction is error');
+  throw new Error("jsonpFunction is error");
 };

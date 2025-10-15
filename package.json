@@ -19,9 +19,9 @@
     "js-yaml": "catalog:",
     "lint-staged": "catalog:",
     "mocha": "catalog:",
+    "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
-    "prettier": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
     "typescript": "catalog:",
@@ -43,7 +43,7 @@
     "ci:plugins": "node scripts/ci.js plugins",
     "site:dev": "pnpm --filter=site run dev",
     "site:build": "pnpm --filter=site run build",
-    "site:prettier": "pnpm --filter=site run prettier",
+    "site:fmt": "pnpm --filter=site run fmt",
     "puml": "puml . --dest ./site",
     "example:commonjs": "pnpm --filter=@examples/helloworld-commonjs run dev",
     "example:typescript": "pnpm --filter=@examples/helloworld-typescript run dev",
@@ -61,9 +61,8 @@
     "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
   },
   "lint-staged": {
-    "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js,json,md,yml}": [
-      "prettier --ignore-unknown --write",
+    "*.{ts,js,jsx,tsx}": [
+      "oxfmt",
       "oxlint --type-aware --fix"
     ]
   },

@@ -1,29 +1,29 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
 
-import mm, { type MockApplication } from '../src/index.ts';
-import { getFixtures } from './helper.ts';
+import mm, { type MockApplication } from "../src/index.ts";
+import { getFixtures } from "./helper.ts";
 
-describe('test/mock_session.test.ts', () => {
+describe("test/mock_session.test.ts", () => {
   afterEach(mm.restore);
 
-  describe('single process mode', () => {
+  describe("single process mode", () => {
     let app: MockApplication;
     beforeAll(() => {
       app = mm.app({
-        baseDir: getFixtures('demo'),
+        baseDir: getFixtures("demo"),
       });
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should mock session', async () => {
+    it("should mock session", async () => {
       const obj = {
         user: {
-          foo: 'bar',
+          foo: "bar",
         },
-        hello: 'egg mock session data',
+        hello: "egg mock session data",
       };
 
       // const ctx = app.mockContext();
@@ -32,59 +32,59 @@ describe('test/mock_session.test.ts', () => {
 
       await app
         .httpRequest()
-        .get('/session')
+        .get("/session")
         .expect({
           user: {
-            foo: 'bar',
+            foo: "bar",
           },
-          hello: 'egg mock session data',
+          hello: "egg mock session data",
         });
     });
 
-    it('should support mock session with plain type', async () => {
+    it("should support mock session with plain type", async () => {
       const ctx = app.mockContext();
       (app as any).mockSession();
-      app.mockSession('123');
+      app.mockSession("123");
       assert(ctx.session);
       assert(!(ctx as any).session.save);
-      assert.equal(ctx.session, '123');
+      assert.equal(ctx.session, "123");
     });
 
-    it('should mock restore', async () => {
-      await app.httpRequest().get('/session').expect({});
+    it("should mock restore", async () => {
+      await app.httpRequest().get("/session").expect({});
     });
   });
 
-  describe('cluster process mode', () => {
+  describe("cluster process mode", () => {
     let app: MockApplication;
     beforeAll(() => {
       app = mm.cluster({
-        baseDir: getFixtures('demo'),
+        baseDir: getFixtures("demo"),
       });
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should mock session', async () => {
+    it("should mock session", async () => {
       app.mockSession({
         user: {
-          foo: 'bar',
+          foo: "bar",
         },
-        hello: 'egg mock session data',
+        hello: "egg mock session data",
       });
       await app
         .httpRequest()
-        .get('/session')
+        .get("/session")
         .expect({
           user: {
-            foo: 'bar',
+            foo: "bar",
           },
-          hello: 'egg mock session data',
+          hello: "egg mock session data",
         });
     });
 
-    it('should mock restore', async () => {
-      await app.httpRequest().get('/session').expect({});
+    it("should mock restore", async () => {
+      await app.httpRequest().get("/session").expect({});
     });
   });
 });

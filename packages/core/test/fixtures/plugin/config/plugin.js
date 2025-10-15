@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   // 插件简写
@@ -18,25 +18,25 @@ module.exports = {
 
   // 别名，app.plugins.d1
   d1: {
-    package: 'd',
+    package: "d",
   },
 
   e: {
-    path: path.join(__dirname, '../plugins/e'),
+    path: path.join(__dirname, "../plugins/e"),
   },
 
   f: {
-    path: path.join(__dirname, '../plugins/f'),
+    path: path.join(__dirname, "../plugins/f"),
   },
 
   g: {
-    path: path.join(__dirname, '../plugins/g'),
+    path: path.join(__dirname, "../plugins/g"),
   },
 
   // 覆盖内置的
   rds: {
     enable: true,
-    dep: ['session'],
-    package: 'rds',
+    dep: ["session"],
+    package: "rds",
   },
 };

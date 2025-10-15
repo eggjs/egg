@@ -1,3 +1,3 @@
 export default {
-  keys: '123456',
+  keys: "123456",
 };

@@ -1,5 +1,5 @@
 export default {
-  foo: 'bar',
+  foo: "bar",
 };
 
 export const one = 1;

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 export default async function () {
-  return { clients: 'Test Config' };
+  return { clients: "Test Config" };
 }

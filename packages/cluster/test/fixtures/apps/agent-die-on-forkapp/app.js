@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   process.send({
-    action: 'kill-agent',
+    action: "kill-agent",
   });
-  setTimeout(app.readyCallback('kill-agent-callback'), 2000);
+  setTimeout(app.readyCallback("kill-agent-callback"), 2000);
 };

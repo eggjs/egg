@@ -1,4 +1,4 @@
-import { EggApplicationLoader } from './EggApplicationLoader.ts';
+import { EggApplicationLoader } from "./EggApplicationLoader.ts";
 
 /**
  * Agent worker process loader

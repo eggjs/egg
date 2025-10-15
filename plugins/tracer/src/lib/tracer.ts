@@ -1,6 +1,6 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
-import type { Context } from 'egg';
+import type { Context } from "egg";
 
 export class Tracer {
   readonly ctx: Context;

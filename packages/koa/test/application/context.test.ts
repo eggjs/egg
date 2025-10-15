@@ -1,48 +1,48 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import { request } from '@eggjs/supertest';
+import { request } from "@eggjs/supertest";
 
-import { Application, Context } from '../../src/index.ts';
+import { Application, Context } from "../../src/index.ts";
 
-describe('app.context', () => {
+describe("app.context", () => {
   const app1 = new Application();
-  app1.context.msg = 'hello app1';
+  app1.context.msg = "hello app1";
   const app2 = new Application();
-  app2.request.foo = 'bar';
+  app2.request.foo = "bar";
 
-  it('should the context between apps is isolated', () => {
+  it("should the context between apps is isolated", () => {
     assert.notEqual(app1.context, app2.context);
-    assert.equal(app1.context.msg, 'hello app1');
+    assert.equal(app1.context.msg, "hello app1");
     assert.equal(app1.request.foo, undefined);
     assert.equal(app2.context.msg, undefined);
-    assert.equal(app2.request.foo, 'bar');
+    assert.equal(app2.request.foo, "bar");
   });
 
-  it('should merge properties', () => {
-    app1.use(ctx => {
-      assert.equal(ctx.msg, 'hello app1');
+  it("should merge properties", () => {
+    app1.use((ctx) => {
+      assert.equal(ctx.msg, "hello app1");
       assert.equal(ctx.request.foo, undefined);
       ctx.status = 204;
     });
 
-    return request(app1.listen()).get('/').expect(204);
+    return request(app1.listen()).get("/").expect(204);
   });
 
-  it('should not affect the original prototype', () => {
-    app2.use(ctx => {
+  it("should not affect the original prototype", () => {
+    app2.use((ctx) => {
       assert.equal(ctx.msg, undefined);
-      assert.equal(ctx.request.foo, 'bar');
+      assert.equal(ctx.request.foo, "bar");
       ctx.status = 204;
     });
 
-    return request(app2.listen()).get('/').expect(204);
+    return request(app2.listen()).get("/").expect(204);
   });
 
-  describe('Sub Class', () => {
+  describe("Sub Class", () => {
     class MyContext extends Context {
       getMsg() {
-        return 'world';
+        return "world";
       }
     }
 
@@ -58,8 +58,8 @@ describe('app.context', () => {
       ctx.body = `hello, ${ctx.getMsg()}`;
     });
 
-    it('should work with sub class', () => {
-      return request(app.listen()).get('/').expect(200, 'hello, world');
+    it("should work with sub class", () => {
+      return request(app.listen()).get("/").expect(200, "hello, world");
     });
   });
 });

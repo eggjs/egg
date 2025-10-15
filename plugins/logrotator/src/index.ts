@@ -1,5 +1,5 @@
-import './config/config.default.ts';
-import './app/extend/application.ts';
-import './types.ts';
+import "./config/config.default.ts";
+import "./app/extend/application.ts";
+import "./types.ts";
 
-export * from './lib/rotator.ts';
+export * from "./lib/rotator.ts";

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'foo',
+  mode: "foo",
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

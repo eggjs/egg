@@ -1,8 +1,8 @@
-export default app => {
-  app.get('/', async function () {
+export default (app) => {
+  app.get("/", async function () {
     this.body = {
       fooPlugin: app.fooPlugin,
-      foo: 'bar',
+      foo: "bar",
     };
   });
 };

@@ -1,14 +1,14 @@
-import { mock, restore } from 'mm';
-import { Agent } from 'egg';
-import type { MockAgent } from 'urllib';
+import { mock, restore } from "mm";
+import { Agent } from "egg";
+import type { MockAgent } from "urllib";
 
 import {
   createMockHttpClient,
   type MockResultFunction,
   type MockResultOptions,
   type MockHttpClientMethod,
-} from '../../lib/mock_httpclient.ts';
-import { getMockAgent, restoreMockAgent } from '../../lib/mock_agent.ts';
+} from "../../lib/mock_httpclient.ts";
+import { getMockAgent, restoreMockAgent } from "../../lib/mock_agent.ts";
 
 export default abstract class AgentUnittest extends Agent {
   [key: string]: any;
@@ -22,7 +22,7 @@ export default abstract class AgentUnittest extends Agent {
   mockHttpclient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
@@ -34,7 +34,7 @@ export default abstract class AgentUnittest extends Agent {
   mockHttpClient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);

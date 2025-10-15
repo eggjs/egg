@@ -1,5 +1,5 @@
 exports.siteFile = {
-  '/favicon.ico': 'https://eggjs.org/favicon.ico',
+  "/favicon.ico": "https://eggjs.org/favicon.ico",
 };
 
-exports.keys = 'foo';
+exports.keys = "foo";

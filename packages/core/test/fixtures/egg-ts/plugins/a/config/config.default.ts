@@ -1,5 +1,5 @@
 module.exports = () => {
   return {
-    testFromA: 'from plugins',
+    testFromA: "from plugins",
   };
 };

@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-require('../../../../index').startCluster({
+require("../../../../index").startCluster({
   baseDir: __dirname,
-  eggPath: path.dirname(require.resolve('@ali/egg')),
+  eggPath: path.dirname(require.resolve("@ali/egg")),
   workers: 1,
 });

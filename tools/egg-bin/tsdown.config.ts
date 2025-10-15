@@ -1,23 +1,23 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from "tsdown";
 
 const config = defineConfig({
   entry: {
-    index: 'src/index.ts',
+    index: "src/index.ts",
   },
   // MEMO: @oclif/core only work on unbundle mode
   unbundle: true,
   dts: true,
   unused: {
-    level: 'error',
-    ignore: ['utility'],
+    level: "error",
+    ignore: ["utility"],
   },
   exports: {
     devExports: true,
   },
   copy: [
     {
-      from: 'scripts',
-      to: 'dist/scripts',
+      from: "scripts",
+      to: "dist/scripts",
     },
   ],
 });

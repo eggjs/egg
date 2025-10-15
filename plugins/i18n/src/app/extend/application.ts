@@ -1,10 +1,10 @@
-import { debuglog, format } from 'node:util';
+import { debuglog, format } from "node:util";
 
-import { Application } from 'egg';
+import { Application } from "egg";
 
-import { isObject } from '../../utils.ts';
+import { isObject } from "../../utils.ts";
 
-const debug = debuglog('egg/i18n/app/extend/application');
+const debug = debuglog("egg/i18n/app/extend/application");
 
 export default class I18nApplication extends Application {
   _I18N_RESOURCES!: Record<string, Record<string, string>>;
@@ -17,7 +17,7 @@ export default class I18nApplication extends Application {
     if (!locale || !key) {
       // __()
       // __('en')
-      return '';
+      return "";
     }
 
     const resource = this._I18N_RESOURCES[locale] ?? {};
@@ -27,9 +27,9 @@ export default class I18nApplication extends Application {
       text = key;
     }
 
-    debug('%s: %j => %j', locale, key, text);
+    debug("%s: %j => %j", locale, key, text);
     if (!text) {
-      return '';
+      return "";
     }
 
     if (value === undefined) {

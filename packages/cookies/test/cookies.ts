@@ -1,15 +1,15 @@
-import { EventEmitter } from 'node:events';
+import { EventEmitter } from "node:events";
 
-import { Cookies, type DefaultCookieOptions } from '../src/index.ts';
+import { Cookies, type DefaultCookieOptions } from "../src/index.ts";
 
 export default function createCookie(
   req?: any,
   options?: { keys?: string[] | null; secure?: boolean } | null,
-  defaultCookieOptions?: DefaultCookieOptions
+  defaultCookieOptions?: DefaultCookieOptions,
 ): Cookies {
   options = options || {};
   let keys = options.keys;
-  keys = keys === undefined ? ['key', 'keys'] : keys;
+  keys = keys === undefined ? ["key", "keys"] : keys;
   const ctx: Record<string, any> = {
     secure: options.secure,
     app: new EventEmitter(),

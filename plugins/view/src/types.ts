@@ -1,8 +1,8 @@
-import type { ViewConfig } from './config/config.default.ts';
-import type { ContextView } from './lib/context_view.ts';
-import type { RenderOptions, ViewManager } from './lib/view_manager.ts';
+import type { ViewConfig } from "./config/config.default.ts";
+import type { ContextView } from "./lib/context_view.ts";
+import type { RenderOptions, ViewManager } from "./lib/view_manager.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     /**
@@ -23,8 +23,20 @@ declare module 'egg' {
 
   interface Context {
     view: ContextView;
-    render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<void>;
-    renderView(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
-    renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
+    render(
+      name: string,
+      locals?: Record<string, any>,
+      options?: RenderOptions,
+    ): Promise<void>;
+    renderView(
+      name: string,
+      locals?: Record<string, any>,
+      options?: RenderOptions,
+    ): Promise<string>;
+    renderString(
+      tpl: string,
+      locals?: Record<string, any>,
+      options?: RenderOptions,
+    ): Promise<string>;
   }
 }

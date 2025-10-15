@@ -1,34 +1,34 @@
-import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
+import { strict as assert } from "node:assert";
+import { scheduler } from "node:timers/promises";
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from "vitest";
 
-import { getFixtures } from './helper.ts';
-import mm, { type MockClusterApplication } from '../src/index.ts';
+import { getFixtures } from "./helper.ts";
+import mm, { type MockClusterApplication } from "../src/index.ts";
 
-describe('work on startMode=worker_threads', () => {
+describe("work on startMode=worker_threads", () => {
   let app: MockClusterApplication;
   beforeAll(async () => {
     app = mm.cluster({
-      baseDir: getFixtures('demo'),
+      baseDir: getFixtures("demo"),
       cache: false,
       coverage: false,
-      startMode: 'worker_threads',
+      startMode: "worker_threads",
     });
     // app.debug();
     await app.ready();
   });
   afterAll(() => app.close());
 
-  it('should have members', async () => {
+  it("should have members", async () => {
     assert.equal(app.callback(), app);
     assert.equal(app.listen(), app);
     await app.ready();
     assert(app.process);
   });
 
-  it('should listen on port', async () => {
+  it("should listen on port", async () => {
     await scheduler.wait(3000);
-    app.expect('stdout', /egg started on http:\/\/127.0.0.1:17\d{3}/);
+    app.expect("stdout", /egg started on http:\/\/127.0.0.1:17\d{3}/);
   });
 });

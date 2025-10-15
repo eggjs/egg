@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 exports.watcher = {
-  type: 'development',
+  type: "development",
 };
 
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
 };
 
-exports.keys = 'keys,foo';
+exports.keys = "keys,foo";

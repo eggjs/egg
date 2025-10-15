@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-module.exports = app => {
+module.exports = (app) => {
   return {
-    keys: '123',
+    keys: "123",
     cluster: {
       listen: {
-        path: path.join(app.baseDir, 'my.sock'),
+        path: path.join(app.baseDir, "my.sock"),
       },
     },
   };

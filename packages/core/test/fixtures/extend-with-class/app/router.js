@@ -1,3 +1,3 @@
-export default app => {
-  app.get('/', app.controller.home);
+export default (app) => {
+  app.get("/", app.controller.home);
 };

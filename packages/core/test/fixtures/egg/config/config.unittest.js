@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  egg: 'egg-unittest',
+  egg: "egg-unittest",
 };

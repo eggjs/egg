@@ -1,7 +1,7 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ['app.ts', 'config/**/*.ts', 'app/**/*.ts'],
+  entry: ["app.ts", "config/**/*.ts", "app/**/*.ts"],
   unbundle: true,
   dts: true,
   exports: {

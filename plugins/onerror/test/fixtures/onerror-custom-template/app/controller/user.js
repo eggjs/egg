@@ -1,5 +1,5 @@
-module.exports = async ctx => {
-  const err = new Error('test error');
+module.exports = async (ctx) => {
+  const err = new Error("test error");
   if (ctx.query.status) {
     err.status = Number(ctx.query.status);
   }

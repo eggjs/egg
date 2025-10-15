@@ -1,50 +1,58 @@
-import path from 'node:path';
-import fs from 'node:fs';
+import path from "node:path";
+import fs from "node:fs";
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { mm } from '@eggjs/mock';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
+import { mm } from "@eggjs/mock";
 
-import { type MockApplication, createApp, cluster, getFilepath } from '../../utils.ts';
+import {
+  type MockApplication,
+  createApp,
+  cluster,
+  getFilepath,
+} from "../../utils.ts";
 
-describe('test/lib/plugins/development.test.ts', () => {
+describe("test/lib/plugins/development.test.ts", () => {
   afterEach(mm.restore);
 
-  describe('development app', () => {
+  describe("development app", () => {
     let app: MockApplication;
     beforeAll(() => {
-      mm.env('local');
-      mm(process.env, 'EGG_LOG', 'none');
-      app = createApp('apps/development');
+      mm.env("local");
+      mm(process.env, "EGG_LOG", "none");
+      app = createApp("apps/development");
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should ignore assets', async () => {
-      mm(app.logger, 'info', (msg: string) => {
+    it("should ignore assets", async () => {
+      mm(app.logger, "info", (msg: string) => {
         if (msg.match(/status /)) {
-          throw new Error('should not log status');
+          throw new Error("should not log status");
         }
       });
 
-      await app.httpRequest().get('/foo.js').expect(200);
+      await app.httpRequest().get("/foo.js").expect(200);
 
-      await app.httpRequest().get('/public/hello').expect(404);
+      await app.httpRequest().get("/public/hello").expect(404);
 
-      await app.httpRequest().get('/assets/hello').expect(404);
+      await app.httpRequest().get("/assets/hello").expect(404);
 
-      await app.httpRequest().get('/__koa_mock_scene_toolbox/hello').expect(404);
+      await app
+        .httpRequest()
+        .get("/__koa_mock_scene_toolbox/hello")
+        .expect(404);
     });
   });
 
-  describe.skip('reload workers', () => {
+  describe.skip("reload workers", () => {
     let app: MockApplication;
-    const baseDir = getFilepath('apps/reload-worker');
-    const filepath = path.join(baseDir, 'app/controller/home.js');
+    const baseDir = getFilepath("apps/reload-worker");
+    const filepath = path.join(baseDir, "app/controller/home.js");
     const body = fs.readFileSync(filepath);
 
     beforeAll(() => {
-      mm.env('local');
-      app = cluster('apps/reload-worker');
+      mm.env("local");
+      app = cluster("apps/reload-worker");
       // app.debug();
       app.coverage(false);
       return app.ready();

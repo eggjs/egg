@@ -1,33 +1,33 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 exports.rpc = {
   enable: true,
-  path: path.join(__dirname, '../plugin/rpc'),
+  path: path.join(__dirname, "../plugin/rpc"),
 };
 
 exports.ldc = {
   enable: true,
-  path: path.join(__dirname, '../plugin/ldc'),
+  path: path.join(__dirname, "../plugin/ldc"),
 };
 
 exports.zoneclient = {
   enable: true,
-  path: path.join(__dirname, '../plugin/zoneclient'),
+  path: path.join(__dirname, "../plugin/zoneclient"),
 };
 
 exports.zookeeper = {
   enable: true,
-  path: path.join(__dirname, '../plugin/zookeeper'),
+  path: path.join(__dirname, "../plugin/zookeeper"),
 };
 
 exports.vip = {
   enable: true,
-  path: path.join(__dirname, '../plugin/vip'),
+  path: path.join(__dirname, "../plugin/vip"),
 };
 
 exports.ddcs = {
   enable: true,
-  path: path.join(__dirname, '../plugin/ddcs'),
+  path: path.join(__dirname, "../plugin/ddcs"),
 };

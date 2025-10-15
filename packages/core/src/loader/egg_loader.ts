@@ -1,30 +1,46 @@
-import fs from 'node:fs';
-import path from 'node:path';
-import assert from 'node:assert';
-import { debuglog, inspect } from 'node:util';
+import fs from "node:fs";
+import path from "node:path";
+import assert from "node:assert";
+import { debuglog, inspect } from "node:util";
 
-import { homedir } from 'node-homedir';
-import { isAsyncFunction, isClass, isGeneratorFunction, isObject, isPromise } from 'is-type-of';
-import type { Logger } from 'egg-logger';
-import { getParamNames, readJSONSync, readJSON, exists } from 'utility';
-import { extend } from '@eggjs/extend2';
-import { Request, Response, Application, Context as KoaContext } from '@eggjs/koa';
-import { register as tsconfigPathsRegister } from 'tsconfig-paths';
-import { isESM, isSupportTypeScript } from '@eggjs/utils';
-import { pathMatching, type PathMatchingOptions } from '@eggjs/path-matching';
-import { now, diff } from 'performance-ms';
+import { homedir } from "node-homedir";
+import {
+  isAsyncFunction,
+  isClass,
+  isGeneratorFunction,
+  isObject,
+  isPromise,
+} from "is-type-of";
+import type { Logger } from "egg-logger";
+import { getParamNames, readJSONSync, readJSON, exists } from "utility";
+import { extend } from "@eggjs/extend2";
+import {
+  Request,
+  Response,
+  Application,
+  Context as KoaContext,
+} from "@eggjs/koa";
+import { register as tsconfigPathsRegister } from "tsconfig-paths";
+import { isESM, isSupportTypeScript } from "@eggjs/utils";
+import { pathMatching, type PathMatchingOptions } from "@eggjs/path-matching";
+import { now, diff } from "performance-ms";
 
-import { type FileLoaderOptions, CaseStyle, FULLPATH, FileLoader } from './file_loader.ts';
-import { type ContextLoaderOptions, ContextLoader } from './context_loader.ts';
-import utils, { type Fun } from '../utils/index.ts';
-import { sequencify } from '../utils/sequencify.ts';
-import { Timing } from '../utils/timing.ts';
-import type { Lifecycle } from '../lifecycle.ts';
-import type { Context, EggCore, MiddlewareFunc } from '../egg.ts';
-import type { BaseContextClass } from '../base_context_class.ts';
-import type { EggAppConfig, EggAppInfo, EggPluginInfo } from '../types.ts';
+import {
+  type FileLoaderOptions,
+  CaseStyle,
+  FULLPATH,
+  FileLoader,
+} from "./file_loader.ts";
+import { type ContextLoaderOptions, ContextLoader } from "./context_loader.ts";
+import utils, { type Fun } from "../utils/index.ts";
+import { sequencify } from "../utils/sequencify.ts";
+import { Timing } from "../utils/timing.ts";
+import type { Lifecycle } from "../lifecycle.ts";
+import type { Context, EggCore, MiddlewareFunc } from "../egg.ts";
+import type { BaseContextClass } from "../base_context_class.ts";
+import type { EggAppConfig, EggAppInfo, EggPluginInfo } from "../types.ts";
 
-const debug = debuglog('egg/core/loader/egg_loader');
+const debug = debuglog("egg/core/loader/egg_loader");
 
 const originalPrototypes: Record<string, unknown> = {
   request: Request.prototype,
@@ -49,7 +65,7 @@ export interface EggLoaderOptions {
   plugins?: Record<string, EggPluginInfo>;
 }
 
-export type EggDirInfoType = 'app' | 'plugin' | 'framework';
+export type EggDirInfoType = "app" | "plugin" | "framework";
 
 export interface EggDirInfo {
   path: string;
@@ -78,9 +94,12 @@ export class EggLoader {
    */
   constructor(options: EggLoaderOptions) {
     this.options = options;
-    assert(fs.existsSync(this.options.baseDir), `${this.options.baseDir} not exists`);
-    assert(this.options.app, 'options.app is required');
-    assert(this.options.logger, 'options.logger is required');
+    assert(
+      fs.existsSync(this.options.baseDir),
+      `${this.options.baseDir} not exists`,
+    );
+    assert(this.options.app, "options.app is required");
+    assert(this.options.logger, "options.logger is required");
 
     this.timing = this.app.timing || new Timing();
 
@@ -89,25 +108,28 @@ export class EggLoader {
      * @see {@link AppInfo#pkg}
      * @since 1.0.0
      */
-    this.pkg = readJSONSync(path.join(this.options.baseDir, 'package.json'));
+    this.pkg = readJSONSync(path.join(this.options.baseDir, "package.json"));
 
     // auto require('tsconfig-paths/register') on typescript app
     // support env.EGG_TYPESCRIPT = true or { "egg": { "typescript": true } } on package.json
-    if (process.env.EGG_TYPESCRIPT === 'true' || (this.pkg.egg && this.pkg.egg.typescript)) {
+    if (
+      process.env.EGG_TYPESCRIPT === "true" ||
+      (this.pkg.egg && this.pkg.egg.typescript)
+    ) {
       // skip require tsconfig-paths if tsconfig.json not exists
-      const tsConfigFile = path.join(this.options.baseDir, 'tsconfig.json');
+      const tsConfigFile = path.join(this.options.baseDir, "tsconfig.json");
       if (fs.existsSync(tsConfigFile)) {
         // @ts-expect-error only cwd is required
         tsconfigPathsRegister({ cwd: this.options.baseDir });
       } else {
         this.logger.info(
           '[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
-          tsConfigFile
+          tsConfigFile,
         );
       }
     }
 
-    debug('-------------------- type: %s --------------------', this.app.type);
+    debug("-------------------- type: %s --------------------", this.app.type);
 
     /**
      * All framework directories.
@@ -131,7 +153,7 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.eggPaths = this.getEggPaths();
-    debug('Loaded eggPaths %j', this.eggPaths);
+    debug("Loaded eggPaths %j", this.eggPaths);
 
     /**
      * @member {String} EggLoader#serverEnv
@@ -139,7 +161,7 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.serverEnv = this.getServerEnv();
-    debug('Loaded serverEnv %j', this.serverEnv);
+    debug("Loaded serverEnv %j", this.serverEnv);
 
     /**
      * @member {String} EggLoader#serverScope
@@ -176,9 +198,9 @@ export class EggLoader {
   protected getServerEnv(): string {
     let serverEnv = this.options.env;
 
-    const envPath = path.join(this.options.baseDir, 'config/env');
+    const envPath = path.join(this.options.baseDir, "config/env");
     if (!serverEnv && fs.existsSync(envPath)) {
-      serverEnv = fs.readFileSync(envPath, 'utf8').trim();
+      serverEnv = fs.readFileSync(envPath, "utf8").trim();
     }
 
     if (!serverEnv && process.env.EGG_SERVER_ENV) {
@@ -189,12 +211,12 @@ export class EggLoader {
       serverEnv = serverEnv.trim();
     } else {
       // oxlint-disable-next-line eslint/no-lonely-if
-      if (process.env.NODE_ENV === 'test') {
-        serverEnv = 'unittest';
-      } else if (process.env.NODE_ENV === 'production') {
-        serverEnv = 'prod';
+      if (process.env.NODE_ENV === "test") {
+        serverEnv = "unittest";
+      } else if (process.env.NODE_ENV === "production") {
+        serverEnv = "prod";
       } else {
-        serverEnv = 'local';
+        serverEnv = "local";
       }
     }
 
@@ -207,7 +229,7 @@ export class EggLoader {
    * @private
    */
   protected getServerScope(): string {
-    return process.env.EGG_SERVER_SCOPE ?? '';
+    return process.env.EGG_SERVER_SCOPE ?? "";
   }
 
   /**
@@ -218,10 +240,10 @@ export class EggLoader {
    */
   getAppname(): string {
     if (this.pkg.name) {
-      debug('Loaded appname(%s) from package.json', this.pkg.name);
+      debug("Loaded appname(%s) from package.json", this.pkg.name);
       return this.pkg.name;
     }
-    const pkg = path.join(this.options.baseDir, 'package.json');
+    const pkg = path.join(this.options.baseDir, "package.json");
     throw new Error(`name is required from ${pkg}`);
   }
 
@@ -232,7 +254,7 @@ export class EggLoader {
    */
   getHomedir(): string {
     // EGG_HOME for test
-    return process.env.EGG_HOME || homedir() || '/home/admin';
+    return process.env.EGG_HOME || homedir() || "/home/admin";
   }
 
   /**
@@ -307,7 +329,7 @@ export class EggLoader {
        * keep root directory in baseDir when local and unittest
        * @member {String} AppInfo#root
        */
-      root: env === 'local' || env === 'unittest' ? baseDir : home,
+      root: env === "local" || env === "unittest" ? baseDir : home,
     };
   }
 
@@ -341,7 +363,7 @@ export class EggLoader {
         break;
       }
       let eggPath: string;
-      eggPath = Reflect.get(proto, Symbol.for('egg#eggPath')) as string;
+      eggPath = Reflect.get(proto, Symbol.for("egg#eggPath")) as string;
       if (!eggPath) {
         // if (EggCore) {
         //   throw new TypeError('Symbol.for(\'egg#eggPath\') is required on Application');
@@ -350,10 +372,13 @@ export class EggLoader {
       }
       if (this.app.deprecate) {
         this.app.deprecate(
-          'Symbol.for(\'egg#eggPath\') is deprecated, please use "override the `customEggPaths()` method" instead'
+          "Symbol.for('egg#eggPath') is deprecated, please use \"override the `customEggPaths()` method\" instead",
         );
       }
-      assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
+      assert(
+        typeof eggPath === "string",
+        "Symbol.for('egg#eggPath') should be string",
+      );
       assert(fs.existsSync(eggPath), `${eggPath} not exists`);
       const realpath = fs.realpathSync(eggPath);
       if (!eggPaths.includes(realpath)) {
@@ -420,7 +445,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadPlugin(): Promise<void> {
-    this.timing.start('Load Plugin');
+    this.timing.start("Load Plugin");
 
     this.lookupDirs = this.getLookupDirs();
     this.allPlugins = {};
@@ -447,10 +472,10 @@ export class EggLoader {
       // disable the plugin that not match the serverEnv
       if (env && plugin.env.length > 0 && !plugin.env.includes(env)) {
         this.logger.info(
-          '[egg/core] Plugin %o is disabled by env unmatched, require env(%o) but got env is %o',
+          "[egg/core] Plugin %o is disabled by env unmatched, require env(%o) but got env is %o",
           name,
           plugin.env,
-          env
+          env,
         );
         plugin.enable = false;
         continue;
@@ -463,13 +488,17 @@ export class EggLoader {
     }
 
     // retrieve the ordered plugins
-    this.orderPlugins = this.getOrderPlugins(plugins, enabledPluginNames, this.appPlugins);
+    this.orderPlugins = this.getOrderPlugins(
+      plugins,
+      enabledPluginNames,
+      this.appPlugins,
+    );
 
     const enablePlugins: Record<string, EggPluginInfo> = {};
     for (const plugin of this.orderPlugins) {
       enablePlugins[plugin.name] = plugin;
     }
-    debug('Loaded enable plugins: %j', Object.keys(enablePlugins));
+    debug("Loaded enable plugins: %j", Object.keys(enablePlugins));
 
     /**
      * Retrieve enabled plugins
@@ -477,26 +506,30 @@ export class EggLoader {
      * @since 1.0.0
      */
     this.plugins = enablePlugins;
-    this.timing.end('Load Plugin');
+    this.timing.end("Load Plugin");
   }
 
   protected async loadAppPlugins(): Promise<Record<string, EggPluginInfo>> {
     // loader plugins from application
-    const appPlugins = await this.readPluginConfigs(path.join(this.options.baseDir, 'config/plugin.default'));
+    const appPlugins = await this.readPluginConfigs(
+      path.join(this.options.baseDir, "config/plugin.default"),
+    );
     debug(
-      'Loaded app plugins: %j',
-      Object.keys(appPlugins).map(k => `${k}:${appPlugins[k].enable}`)
+      "Loaded app plugins: %j",
+      Object.keys(appPlugins).map((k) => `${k}:${appPlugins[k].enable}`),
     );
     return appPlugins;
   }
 
   protected async loadEggPlugins(): Promise<Record<string, EggPluginInfo>> {
     // loader plugins from framework
-    const eggPluginConfigPaths = this.eggPaths.map(eggPath => path.join(eggPath, 'config/plugin.default'));
+    const eggPluginConfigPaths = this.eggPaths.map((eggPath) =>
+      path.join(eggPath, "config/plugin.default"),
+    );
     const eggPlugins = await this.readPluginConfigs(eggPluginConfigPaths);
     debug(
-      'Loaded egg plugins: %j',
-      Object.keys(eggPlugins).map(k => `${k}:${eggPlugins[k].enable}`)
+      "Loaded egg plugins: %j",
+      Object.keys(eggPlugins).map((k) => `${k}:${eggPlugins[k].enable}`),
     );
     return eggPlugins;
   }
@@ -508,9 +541,9 @@ export class EggLoader {
     if (process.env.EGG_PLUGINS) {
       try {
         customPlugins = JSON.parse(process.env.EGG_PLUGINS);
-        configPaths.push('<process.env.EGG_PLUGINS>');
+        configPaths.push("<process.env.EGG_PLUGINS>");
       } catch (e) {
-        debug('parse EGG_PLUGINS failed, %s', e);
+        debug("parse EGG_PLUGINS failed, %s", e);
       }
     }
 
@@ -520,15 +553,15 @@ export class EggLoader {
         ...customPlugins,
         ...this.options.plugins,
       };
-      configPaths.push('<options.plugins>');
+      configPaths.push("<options.plugins>");
     }
 
     if (customPlugins) {
-      const configPath = configPaths.join(' or ');
+      const configPath = configPaths.join(" or ");
       for (const name in customPlugins) {
         this.#normalizePluginConfig(customPlugins, name, configPath);
       }
-      debug('Loaded custom plugins: %o', customPlugins);
+      debug("Loaded custom plugins: %o", customPlugins);
     }
     return customPlugins;
   }
@@ -536,7 +569,9 @@ export class EggLoader {
   /*
    * Read plugin.js from multiple directory
    */
-  protected async readPluginConfigs(configPaths: string[] | string): Promise<Record<string, EggPluginInfo>> {
+  protected async readPluginConfigs(
+    configPaths: string[] | string,
+  ): Promise<Record<string, EggPluginInfo>> {
     if (!Array.isArray(configPaths)) {
       configPaths = [configPaths];
     }
@@ -547,7 +582,7 @@ export class EggLoader {
     // plugin.${env}.js
     // plugin.${scope}_${env}.js
     const newConfigPaths: string[] = [];
-    for (const filename of this.getTypeFiles('plugin')) {
+    for (const filename of this.getTypeFiles("plugin")) {
       for (let configPath of configPaths) {
         configPath = path.join(path.dirname(configPath), filename);
         newConfigPaths.push(configPath);
@@ -559,16 +594,22 @@ export class EggLoader {
       let filepath = this.resolveModule(configPath);
 
       // let plugin.js compatible
-      if (configPath.endsWith('plugin.default') && !filepath) {
-        filepath = this.resolveModule(configPath.replace(/plugin\.default$/, 'plugin'));
+      if (configPath.endsWith("plugin.default") && !filepath) {
+        filepath = this.resolveModule(
+          configPath.replace(/plugin\.default$/, "plugin"),
+        );
       }
 
       if (!filepath) {
-        debug('[readPluginConfigs:ignore] plugin config not found %o', configPath);
+        debug(
+          "[readPluginConfigs:ignore] plugin config not found %o",
+          configPath,
+        );
         continue;
       }
 
-      const config: Record<string, EggPluginInfo> = await utils.loadFile(filepath);
+      const config: Record<string, EggPluginInfo> =
+        await utils.loadFile(filepath);
       for (const name in config) {
         this.#normalizePluginConfig(config, name, filepath);
       }
@@ -578,11 +619,15 @@ export class EggLoader {
     return plugins;
   }
 
-  #normalizePluginConfig(plugins: Record<string, EggPluginInfo | boolean>, name: string, configPath: string): void {
+  #normalizePluginConfig(
+    plugins: Record<string, EggPluginInfo | boolean>,
+    name: string,
+    configPath: string,
+  ): void {
     const plugin = plugins[name];
 
     // plugin_name: false
-    if (typeof plugin === 'boolean') {
+    if (typeof plugin === "boolean") {
       plugins[name] = {
         name,
         enable: plugin,
@@ -594,8 +639,8 @@ export class EggLoader {
       return;
     }
 
-    if (!('enable' in plugin)) {
-      Reflect.set(plugin, 'enable', true);
+    if (!("enable" in plugin)) {
+      Reflect.set(plugin, "enable", true);
     }
     plugin.name = name;
     plugin.dependencies = plugin.dependencies || [];
@@ -617,7 +662,7 @@ export class EggLoader {
   async #mergePluginConfig(plugin: EggPluginInfo): Promise<void> {
     let pkg: any;
     let config: any;
-    const pluginPackage = path.join(plugin.path as string, 'package.json');
+    const pluginPackage = path.join(plugin.path as string, "package.json");
     if (await utils.existsPath(pluginPackage)) {
       pkg = await readJSON(pluginPackage);
       config = pkg.eggPlugin;
@@ -625,12 +670,17 @@ export class EggLoader {
         plugin.version = pkg.version;
       }
       // support commonjs and esm dist files
-      plugin.path = await this.#formatPluginPathFromPackageJSON(plugin.path as string, pkg);
+      plugin.path = await this.#formatPluginPathFromPackageJSON(
+        plugin.path as string,
+        pkg,
+      );
     }
 
     const logger = this.options.logger;
     if (!config) {
-      logger.warn(`[@eggjs/core/egg_loader] pkg.eggPlugin is missing in ${pluginPackage}`);
+      logger.warn(
+        `[@eggjs/core/egg_loader] pkg.eggPlugin is missing in ${pluginPackage}`,
+      );
       return;
     }
 
@@ -638,14 +688,14 @@ export class EggLoader {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
       logger.warn(
-        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`
+        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`,
       );
     }
 
     // dep compatible
     depCompatible(config);
 
-    for (const key of ['dependencies', 'optionalDependencies', 'env']) {
+    for (const key of ["dependencies", "optionalDependencies", "env"]) {
       const values = config[key];
       const existsValues = Reflect.get(plugin, key);
       if (Array.isArray(values) && !existsValues?.length) {
@@ -657,7 +707,7 @@ export class EggLoader {
   protected getOrderPlugins(
     allPlugins: Record<string, EggPluginInfo>,
     enabledPluginNames: string[],
-    appPlugins: Record<string, EggPluginInfo>
+    appPlugins: Record<string, EggPluginInfo>,
   ): EggPluginInfo[] {
     // no plugins enabled
     if (enabledPluginNames.length === 0) {
@@ -665,12 +715,12 @@ export class EggLoader {
     }
 
     const result = sequencify(allPlugins, enabledPluginNames);
-    debug('Got plugins %j after sequencify', result);
+    debug("Got plugins %j after sequencify", result);
 
     // catch error when result.sequence is empty
     if (result.sequence.length === 0) {
       const err = new Error(
-        `sequencify plugins has problem, missing: [${result.missingTasks}], recursive: [${result.recursiveDependencies}]`
+        `sequencify plugins has problem, missing: [${result.missingTasks}], recursive: [${result.recursiveDependencies}]`,
       );
       // find plugins which is required by the missing plugin
       for (const missName of result.missingTasks) {
@@ -683,7 +733,7 @@ export class EggLoader {
         err.message += `\n\t>> Plugin [${missName}] is disabled or missed, but is required by [${requires}]`;
       }
 
-      err.name = 'PluginSequencifyError';
+      err.name = "PluginSequencifyError";
       throw err;
     }
 
@@ -715,22 +765,28 @@ export class EggLoader {
     //   - monitor required by [rpcClient]
     //   - diamond required by [rpcClient]
     if (implicitEnabledPlugins.length > 0) {
-      let message = implicitEnabledPlugins.map(name => `  - ${name} required by [${requireMap[name]}]`).join('\n');
-      this.options.logger.info(`Following plugins will be enabled implicitly.\n${message}`);
+      let message = implicitEnabledPlugins
+        .map((name) => `  - ${name} required by [${requireMap[name]}]`)
+        .join("\n");
+      this.options.logger.info(
+        `Following plugins will be enabled implicitly.\n${message}`,
+      );
 
       // should warn when the plugin is disabled by app
       const disabledPlugins = implicitEnabledPlugins.filter(
-        name => appPlugins[name] && appPlugins[name].enable === false
+        (name) => appPlugins[name] && appPlugins[name].enable === false,
       );
       if (disabledPlugins.length > 0) {
-        message = disabledPlugins.map(name => `  - ${name} required by [${requireMap[name]}]`).join('\n');
+        message = disabledPlugins
+          .map((name) => `  - ${name} required by [${requireMap[name]}]`)
+          .join("\n");
         this.options.logger.warn(
-          `Following plugins will be enabled implicitly that is disabled by application.\n${message}`
+          `Following plugins will be enabled implicitly that is disabled by application.\n${message}`,
         );
       }
     }
 
-    return result.sequence.map(name => allPlugins[name]);
+    return result.sequence.map((name) => allPlugins[name]);
   }
 
   protected getLookupDirs(): Set<string> {
@@ -760,7 +816,7 @@ export class EggLoader {
     if (plugin.package) {
       assert(
         isValidatePackageName(plugin.package),
-        `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`
+        `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`,
       );
     }
     return this.#resolvePluginPath(plugin);
@@ -780,10 +836,13 @@ export class EggLoader {
       });
       return path.dirname(pluginPkgFile);
     } catch (err) {
-      debug('[resolvePluginPath] error: %o, plugin info: %o', err, plugin);
-      throw new Error(`Can not find plugin ${name} in "${[...this.lookupDirs].join(', ')}"`, {
-        cause: err,
-      });
+      debug("[resolvePluginPath] error: %o, plugin info: %o", err, plugin);
+      throw new Error(
+        `Can not find plugin ${name} in "${[...this.lookupDirs].join(", ")}"`,
+        {
+          cause: err,
+        },
+      );
     }
   }
 
@@ -797,9 +856,9 @@ export class EggLoader {
           typescript?: string;
         };
       };
-      type?: 'module' | 'commonjs';
+      type?: "module" | "commonjs";
       exports?: {
-        '.'?:
+        "."?:
           | string
           | {
               import?:
@@ -809,7 +868,7 @@ export class EggLoader {
                   };
             };
       };
-    }
+    },
   ): Promise<string> {
     let realPluginPath = pluginPath;
     const exports = pluginPkg.eggPlugin?.exports;
@@ -821,22 +880,29 @@ export class EggLoader {
       } else if (exports.require) {
         realPluginPath = path.join(pluginPath, exports.require);
       }
-      if (exports.typescript && isSupportTypeScript() && !(await exists(realPluginPath))) {
+      if (
+        exports.typescript &&
+        isSupportTypeScript() &&
+        !(await exists(realPluginPath))
+      ) {
         // if require/import path not exists, use typescript path for development stage
         realPluginPath = path.join(pluginPath, exports.typescript);
-        debug('[formatPluginPathFromPackageJSON] use typescript path %o', realPluginPath);
+        debug(
+          "[formatPluginPathFromPackageJSON] use typescript path %o",
+          realPluginPath,
+        );
       }
-    } else if (pluginPkg.exports?.['.'] && pluginPkg.type === 'module') {
+    } else if (pluginPkg.exports?.["."] && pluginPkg.type === "module") {
       // support esm exports
-      let defaultExport = pluginPkg.exports['.'];
-      if (typeof defaultExport === 'string') {
+      let defaultExport = pluginPkg.exports["."];
+      if (typeof defaultExport === "string") {
         // "exports": {
         //   ".": "./src/index.ts",
         //   "./app": "./src/app.ts",
         // }
         realPluginPath = path.dirname(path.join(pluginPath, defaultExport));
       } else if (defaultExport?.import) {
-        if (typeof defaultExport.import === 'string') {
+        if (typeof defaultExport.import === "string") {
           // {
           //   "exports": {
           //     ".": {
@@ -844,7 +910,9 @@ export class EggLoader {
           //     },
           //   }
           // }
-          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import));
+          realPluginPath = path.dirname(
+            path.join(pluginPath, defaultExport.import),
+          );
         } else if (defaultExport.import.default) {
           // {
           //   "exports": {
@@ -855,20 +923,25 @@ export class EggLoader {
           //     },
           //   }
           // }
-          realPluginPath = path.dirname(path.join(pluginPath, defaultExport.import.default));
+          realPluginPath = path.dirname(
+            path.join(pluginPath, defaultExport.import.default),
+          );
         }
       }
       debug(
-        '[formatPluginPathFromPackageJSON] resolve plugin path from %o to %o, defaultExport: %o',
+        "[formatPluginPathFromPackageJSON] resolve plugin path from %o to %o, defaultExport: %o",
         pluginPath,
         realPluginPath,
-        defaultExport
+        defaultExport,
       );
     }
     return realPluginPath;
   }
 
-  #extendPlugins(targets: Record<string, EggPluginInfo>, plugins: Record<string, EggPluginInfo>): void {
+  #extendPlugins(
+    targets: Record<string, EggPluginInfo>,
+    plugins: Record<string, EggPluginInfo>,
+  ): void {
     if (!plugins) {
       return;
     }
@@ -881,10 +954,10 @@ export class EggLoader {
       }
       if (targetPlugin.package && targetPlugin.package === plugin.package) {
         this.logger.warn(
-          '[@eggjs/core] plugin %s has been defined that is %j, but you define again in %s',
+          "[@eggjs/core] plugin %s has been defined that is %j, but you define again in %s",
           name,
           targetPlugin,
-          plugin.from
+          plugin.from,
         );
       }
       if (plugin.path || plugin.package) {
@@ -895,7 +968,11 @@ export class EggLoader {
         if (value === undefined) {
           continue;
         }
-        if (Reflect.get(targetPlugin, prop) && Array.isArray(value) && value.length === 0) {
+        if (
+          Reflect.get(targetPlugin, prop) &&
+          Array.isArray(value) &&
+          value.length === 0
+        ) {
           continue;
         }
         Reflect.set(targetPlugin, prop, value);
@@ -917,7 +994,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadConfig(): Promise<void> {
-    this.timing.start('Load Config');
+    this.timing.start("Load Config");
     this.configMeta = {};
 
     const target: EggAppConfig = {
@@ -934,14 +1011,24 @@ export class EggLoader {
     //         plugin config.{env}
     //           framework config.{env}
     //             app config.{env}
-    for (const filename of this.getTypeFiles('config')) {
+    for (const filename of this.getTypeFiles("config")) {
       for (const unit of this.getLoadUnits()) {
-        const isApp = unit.type === 'app';
-        const config = await this.#loadConfig(unit.path, filename, isApp ? undefined : appConfig, unit.type);
+        const isApp = unit.type === "app";
+        const config = await this.#loadConfig(
+          unit.path,
+          filename,
+          isApp ? undefined : appConfig,
+          unit.type,
+        );
         if (!config) {
           continue;
         }
-        debug('[loadConfig] Loaded config %s/%s, %j', unit.path, filename, config);
+        debug(
+          "[loadConfig] Loaded config %s/%s, %j",
+          unit.path,
+          filename,
+          config,
+        );
         extend(true, target, config);
       }
     }
@@ -949,7 +1036,7 @@ export class EggLoader {
     // load env from process.env.EGG_APP_CONFIG
     const envConfig = this.#loadConfigFromEnv();
     if (envConfig) {
-      debug('[loadConfig] Loaded config from env, %j', envConfig);
+      debug("[loadConfig] Loaded config from env, %j", envConfig);
       extend(true, target, envConfig);
     }
 
@@ -963,15 +1050,20 @@ export class EggLoader {
     target.appMiddlewares = target.appMiddleware;
 
     this.config = target;
-    debug('[loadConfig] type: %s, all config: %o', this.app.type, this.config);
-    this.timing.end('Load Config');
+    debug("[loadConfig] type: %s, all config: %o", this.app.type, this.config);
+    this.timing.end("Load Config");
   }
 
   async #preloadAppConfig(): Promise<Record<string, any>> {
-    const names = ['config.default', `config.${this.serverEnv}`];
+    const names = ["config.default", `config.${this.serverEnv}`];
     const target: Record<string, any> = {};
     for (const filename of names) {
-      const config = await this.#loadConfig(this.options.baseDir, filename, undefined, 'app');
+      const config = await this.#loadConfig(
+        this.options.baseDir,
+        filename,
+        undefined,
+        "app",
+      );
       if (!config) {
         continue;
       }
@@ -984,26 +1076,33 @@ export class EggLoader {
     dirpath: string,
     filename: string,
     extraInject: object | undefined,
-    type: EggDirInfoType
+    type: EggDirInfoType,
   ): Promise<Record<string, any> | undefined> {
-    const isPlugin = type === 'plugin';
-    const isApp = type === 'app';
+    const isPlugin = type === "plugin";
+    const isApp = type === "app";
 
-    let filepath = this.resolveModule(path.join(dirpath, 'config', filename));
+    let filepath = this.resolveModule(path.join(dirpath, "config", filename));
     // let config.js compatible
-    if (filename === 'config.default' && !filepath) {
-      filepath = this.resolveModule(path.join(dirpath, 'config/config'));
+    if (filename === "config.default" && !filepath) {
+      filepath = this.resolveModule(path.join(dirpath, "config/config"));
     }
     if (!filepath) {
       return;
     }
-    const config: Record<string, any> = await this.loadFile(filepath, this.appInfo, extraInject);
+    const config: Record<string, any> = await this.loadFile(
+      filepath,
+      this.appInfo,
+      extraInject,
+    );
     if (!config) return;
     if (isPlugin || isApp) {
-      assert(!config.coreMiddleware, 'Can not define coreMiddleware in app or plugin');
+      assert(
+        !config.coreMiddleware,
+        "Can not define coreMiddleware in app or plugin",
+      );
     }
     if (!isApp) {
-      assert(!config.middleware, 'Can not define middleware in ' + filepath);
+      assert(!config.middleware, "Can not define middleware in " + filepath);
     }
     // store config meta, check where is the property of config come from.
     this.#setConfigMeta(config, filepath);
@@ -1015,10 +1114,13 @@ export class EggLoader {
     if (!envConfigStr) return;
     try {
       const envConfig: Record<string, unknown> = JSON.parse(envConfigStr);
-      this.#setConfigMeta(envConfig, '<process.env.EGG_APP_CONFIG>');
+      this.#setConfigMeta(envConfig, "<process.env.EGG_APP_CONFIG>");
       return envConfig;
     } catch {
-      this.options.logger.warn('[egg-loader] process.env.EGG_APP_CONFIG is not invalid JSON: %s', envConfigStr);
+      this.options.logger.warn(
+        "[egg-loader] process.env.EGG_APP_CONFIG is not invalid JSON: %s",
+        envConfigStr,
+      );
     }
   }
 
@@ -1032,11 +1134,20 @@ export class EggLoader {
     for (const key of Object.keys(obj)) {
       const val = obj[key];
       // ignore console
-      if (key === 'console' && val && typeof val.Console === 'function' && val.Console === console.Console) {
+      if (
+        key === "console" &&
+        val &&
+        typeof val.Console === "function" &&
+        val.Console === console.Console
+      ) {
         obj[key] = filepath;
         continue;
       }
-      if (val && Object.getPrototypeOf(val) === Object.prototype && Object.keys(val).length > 0) {
+      if (
+        val &&
+        Object.getPrototypeOf(val) === Object.prototype &&
+        Object.keys(val).length > 0
+      ) {
         this.#setConfig(val, filepath);
         continue;
       }
@@ -1052,7 +1163,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadAgentExtend(): Promise<void> {
-    await this.loadExtend('agent', this.app);
+    await this.loadExtend("agent", this.app);
   }
 
   /**
@@ -1061,7 +1172,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadApplicationExtend(): Promise<void> {
-    await this.loadExtend('application', this.app);
+    await this.loadExtend("application", this.app);
   }
 
   /**
@@ -1070,7 +1181,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadRequestExtend(): Promise<void> {
-    await this.loadExtend('request', this.app.request);
+    await this.loadExtend("request", this.app.request);
   }
 
   /**
@@ -1079,7 +1190,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadResponseExtend(): Promise<void> {
-    await this.loadExtend('response', this.app.response);
+    await this.loadExtend("response", this.app.response);
   }
 
   /**
@@ -1088,7 +1199,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadContextExtend(): Promise<void> {
-    await this.loadExtend('context', this.app.context);
+    await this.loadExtend("context", this.app.context);
   }
 
   /**
@@ -1098,7 +1209,7 @@ export class EggLoader {
    */
   async loadHelperExtend(): Promise<void> {
     if (this.app.Helper) {
-      await this.loadExtend('helper', this.app.Helper.prototype);
+      await this.loadExtend("helper", this.app.Helper.prototype);
     }
   }
 
@@ -1111,7 +1222,9 @@ export class EggLoader {
    * @private
    */
   protected getExtendFilePaths(name: string): string[] {
-    return this.getLoadUnits().map(unit => path.join(unit.path, 'app/extend', name));
+    return this.getLoadUnits().map((unit) =>
+      path.join(unit.path, "app/extend", name),
+    );
   }
 
   /**
@@ -1126,16 +1239,17 @@ export class EggLoader {
     // All extend files
     const filepaths = this.getExtendFilePaths(name);
     // if use mm.env and serverEnv is not unittest
-    const needUnittest = 'EGG_MOCK_SERVER_ENV' in process.env && this.serverEnv !== 'unittest';
+    const needUnittest =
+      "EGG_MOCK_SERVER_ENV" in process.env && this.serverEnv !== "unittest";
     const length = filepaths.length;
     for (let i = 0; i < length; i++) {
       const filepath = filepaths[i];
       filepaths.push(filepath + `.${this.serverEnv}`);
       if (needUnittest) {
-        filepaths.push(filepath + '.unittest');
+        filepaths.push(filepath + ".unittest");
       }
     }
-    debug('loadExtend %s, filepaths: %j', name, filepaths);
+    debug("loadExtend %s, filepaths: %j", name, filepaths);
 
     const mergeRecord = new Map();
     for (const rawFilepath of filepaths) {
@@ -1144,10 +1258,14 @@ export class EggLoader {
         // debug('loadExtend %o not found', rawFilepath);
         continue;
       }
-      if (filepath.endsWith('/index.js')) {
-        this.app.deprecate(`app/extend/${name}/index.js is deprecated, use app/extend/${name}.js instead`);
-      } else if (filepath.endsWith('/index.ts')) {
-        this.app.deprecate(`app/extend/${name}/index.ts is deprecated, use app/extend/${name}.ts instead`);
+      if (filepath.endsWith("/index.js")) {
+        this.app.deprecate(
+          `app/extend/${name}/index.js is deprecated, use app/extend/${name}.js instead`,
+        );
+      } else if (filepath.endsWith("/index.ts")) {
+        this.app.deprecate(
+          `app/extend/${name}/index.ts is deprecated, use app/extend/${name}.ts instead`,
+        );
       }
 
       let ext = await this.requireFile(filepath);
@@ -1157,7 +1275,7 @@ export class EggLoader {
       }
       const properties = Object.getOwnPropertyNames(ext)
         .concat(Object.getOwnPropertySymbols(ext) as unknown as string[])
-        .filter(name => name !== 'constructor'); // ignore class constructor for extend
+        .filter((name) => name !== "constructor"); // ignore class constructor for extend
 
       for (const property of properties) {
         if (mergeRecord.has(property)) {
@@ -1165,18 +1283,27 @@ export class EggLoader {
             'Property: "%s" already exists in "%s"，it will be redefined by "%s"',
             property,
             mergeRecord.get(property),
-            filepath
+            filepath,
           );
         }
 
         // Copy descriptor
-        let descriptor = Object.getOwnPropertyDescriptor(ext, property) as PropertyDescriptor;
-        let originalDescriptor = Object.getOwnPropertyDescriptor(proto, property);
+        let descriptor = Object.getOwnPropertyDescriptor(
+          ext,
+          property,
+        ) as PropertyDescriptor;
+        let originalDescriptor = Object.getOwnPropertyDescriptor(
+          proto,
+          property,
+        );
         if (!originalDescriptor) {
           // try to get descriptor from originalPrototypes
           const originalProto = originalPrototypes[name];
           if (originalProto) {
-            originalDescriptor = Object.getOwnPropertyDescriptor(originalProto, property);
+            originalDescriptor = Object.getOwnPropertyDescriptor(
+              originalProto,
+              property,
+            );
           }
         }
         if (originalDescriptor) {
@@ -1194,7 +1321,7 @@ export class EggLoader {
         Object.defineProperty(proto, property, descriptor);
         mergeRecord.set(property, filepath);
       }
-      debug('merge %j to %s from %s', properties, name, filepath);
+      debug("merge %j to %s from %s", properties, name, filepath);
     }
     this.timing.end(`Load extend/${name}.js`);
   }
@@ -1227,7 +1354,7 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadCustomApp(): Promise<void> {
-    await this.#loadBootHook('app');
+    await this.#loadBootHook("app");
     this.lifecycle.triggerConfigWillLoad();
   }
 
@@ -1235,7 +1362,7 @@ export class EggLoader {
    * Load agent.js, same as {@link EggLoader#loadCustomApp}
    */
   async loadCustomAgent(): Promise<void> {
-    await this.#loadBootHook('agent');
+    await this.#loadBootHook("agent");
     this.lifecycle.triggerConfigWillLoad();
   }
 
@@ -1250,23 +1377,26 @@ export class EggLoader {
       const bootFile = path.join(unit.path, fileName);
       const bootFilePath = this.resolveModule(bootFile);
       if (!bootFilePath) {
-        debug('[loadBootHook:ignore] %o not found', bootFile);
+        debug("[loadBootHook:ignore] %o not found", bootFile);
         continue;
       }
-      debug('[loadBootHook:success] %o => %o', bootFile, bootFilePath);
+      debug("[loadBootHook:success] %o => %o", bootFile, bootFilePath);
       const bootHook = await this.requireFile(bootFilePath);
       if (isClass(bootHook)) {
         bootHook.prototype.fullPath = bootFilePath;
         // if is boot class, add to lifecycle
         this.lifecycle.addBootHook(bootHook);
-        debug('[loadBootHook] add BootHookClass from %o', bootFilePath);
-      } else if (typeof bootHook === 'function') {
+        debug("[loadBootHook] add BootHookClass from %o", bootFilePath);
+      } else if (typeof bootHook === "function") {
         // if is boot function, wrap to class
         // for compatibility
         this.lifecycle.addFunctionAsBootHook(bootHook, bootFilePath);
-        debug('[loadBootHook] add bootHookFunction from %o', bootFilePath);
+        debug("[loadBootHook] add bootHookFunction from %o", bootFilePath);
       } else {
-        this.options.logger.warn('[@eggjs/core/egg_loader] %s must exports a boot class', bootFilePath);
+        this.options.logger.warn(
+          "[@eggjs/core/egg_loader] %s must exports a boot class",
+          bootFilePath,
+        );
       }
     }
     // init boots
@@ -1283,19 +1413,25 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadService(options?: Partial<ContextLoaderOptions>): Promise<void> {
-    this.timing.start('Load Service');
+    this.timing.start("Load Service");
     // 载入到 app.serviceClasses
-    const servicePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/service'));
+    const servicePaths = this.getLoadUnits().map((unit) =>
+      path.join(unit.path, "app/service"),
+    );
     options = {
       call: true,
       caseStyle: CaseStyle.lower,
-      fieldClass: 'serviceClasses',
+      fieldClass: "serviceClasses",
       directory: servicePaths,
       ...options,
     };
-    debug('[loadService] options: %o', options);
-    await this.loadToContext(servicePaths, 'service', options as ContextLoaderOptions);
-    this.timing.end('Load Service');
+    debug("[loadService] options: %o", options);
+    await this.loadToContext(
+      servicePaths,
+      "service",
+      options as ContextLoaderOptions,
+    );
+    this.timing.end("Load Service");
   }
   /** end Service loader */
 
@@ -1320,11 +1456,13 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadMiddleware(opt?: Partial<FileLoaderOptions>): Promise<void> {
-    this.timing.start('Load Middleware');
+    this.timing.start("Load Middleware");
     const app = this.app;
 
     // load middleware to app.middleware
-    const middlewarePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/middleware'));
+    const middlewarePaths = this.getLoadUnits().map((unit) =>
+      path.join(unit.path, "app/middleware"),
+    );
     opt = {
       call: false,
       override: true,
@@ -1332,8 +1470,12 @@ export class EggLoader {
       directory: middlewarePaths,
       ...opt,
     };
-    await this.loadToApp(middlewarePaths, 'middlewares', opt as FileLoaderOptions);
-    debug('[loadMiddleware] middlewarePaths: %j', middlewarePaths);
+    await this.loadToApp(
+      middlewarePaths,
+      "middlewares",
+      opt as FileLoaderOptions,
+    );
+    debug("[loadMiddleware] middlewarePaths: %j", middlewarePaths);
 
     for (const name in app.middlewares) {
       Object.defineProperty(app.middleware, name, {
@@ -1345,12 +1487,20 @@ export class EggLoader {
       });
     }
 
-    this.options.logger.info('Use coreMiddleware order: %j', this.config.coreMiddleware);
-    this.options.logger.info('Use appMiddleware order: %j', this.config.appMiddleware);
+    this.options.logger.info(
+      "Use coreMiddleware order: %j",
+      this.config.coreMiddleware,
+    );
+    this.options.logger.info(
+      "Use appMiddleware order: %j",
+      this.config.appMiddleware,
+    );
 
     // use middleware ordered by app.config.coreMiddleware and app.config.appMiddleware
-    const middlewareNames = this.config.coreMiddleware.concat(this.config.appMiddleware);
-    debug('[loadMiddleware] middlewareNames: %j', middlewareNames);
+    const middlewareNames = this.config.coreMiddleware.concat(
+      this.config.appMiddleware,
+    );
+    debug("[loadMiddleware] middlewareNames: %j", middlewareNames);
     const middlewaresMap = new Map<string, boolean>();
     for (const name of middlewareNames) {
       const createMiddleware = app.middlewares[name];
@@ -1363,10 +1513,15 @@ export class EggLoader {
       middlewaresMap.set(name, true);
       const options = this.config[name] || {};
       let mw: MiddlewareFunc | null = createMiddleware(options, app);
-      assert(typeof mw === 'function', `Middleware ${name} must be a function, but actual is ${inspect(mw)}`);
+      assert(
+        typeof mw === "function",
+        `Middleware ${name} must be a function, but actual is ${inspect(mw)}`,
+      );
       if (isGeneratorFunction(mw)) {
         const fullpath = Reflect.get(createMiddleware, FULLPATH);
-        throw new TypeError(`Support for generators was removed, middleware: ${name}, fullpath: ${fullpath}`);
+        throw new TypeError(
+          `Support for generators was removed, middleware: ${name}, fullpath: ${fullpath}`,
+        );
       }
       mw._name = name;
       // middlewares support options.enable, options.ignore and options.match
@@ -1377,19 +1532,32 @@ export class EggLoader {
           mw = debugMiddlewareWrapper(mw);
         }
         app.use(mw);
-        debug('[loadMiddleware] Use middleware: %s with options: %j', name, options);
-        this.options.logger.info('[@eggjs/core/egg_loader] Use middleware: %s', name);
+        debug(
+          "[loadMiddleware] Use middleware: %s with options: %j",
+          name,
+          options,
+        );
+        this.options.logger.info(
+          "[@eggjs/core/egg_loader] Use middleware: %s",
+          name,
+        );
       } else {
-        this.options.logger.info('[@eggjs/core/egg_loader] Disable middleware: %s', name);
+        this.options.logger.info(
+          "[@eggjs/core/egg_loader] Disable middleware: %s",
+          name,
+        );
       }
     }
 
-    this.options.logger.info('[@eggjs/core/egg_loader] Loaded middleware from %j', middlewarePaths);
-    this.timing.end('Load Middleware');
+    this.options.logger.info(
+      "[@eggjs/core/egg_loader] Loaded middleware from %j",
+      middlewarePaths,
+    );
+    this.timing.end("Load Middleware");
 
     // add router middleware, make sure router is the last middleware
     const mw = this.app.router.middleware();
-    Reflect.set(mw, '_name', 'routerMiddleware');
+    Reflect.set(mw, "_name", "routerMiddleware");
     this.app.use(mw);
   }
   /** end Middleware loader */
@@ -1401,8 +1569,8 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadController(opt?: Partial<FileLoaderOptions>): Promise<void> {
-    this.timing.start('Load Controller');
-    const controllerBase = path.join(this.options.baseDir, 'app/controller');
+    this.timing.start("Load Controller");
+    const controllerBase = path.join(this.options.baseDir, "app/controller");
     opt = {
       caseStyle: CaseStyle.lower,
       directory: controllerBase,
@@ -1414,13 +1582,21 @@ export class EggLoader {
         // }
         // ```
         if (isGeneratorFunction(obj)) {
-          throw new TypeError(`Support for generators was removed, fullpath: ${opt.path}`);
+          throw new TypeError(
+            `Support for generators was removed, fullpath: ${opt.path}`,
+          );
         }
-        if (!isClass(obj) && !isAsyncFunction(obj) && typeof obj === 'function') {
+        if (
+          !isClass(obj) &&
+          !isAsyncFunction(obj) &&
+          typeof obj === "function"
+        ) {
           obj = obj(this.app);
-          debug('[loadController] after init(app) => %o, meta: %j', obj, opt);
+          debug("[loadController] after init(app) => %o, meta: %j", obj, opt);
           if (isGeneratorFunction(obj)) {
-            throw new TypeError(`Support for generators was removed, fullpath: ${opt.path}`);
+            throw new TypeError(
+              `Support for generators was removed, fullpath: ${opt.path}`,
+            );
           }
         }
         if (isClass(obj)) {
@@ -1432,16 +1608,25 @@ export class EggLoader {
           return wrapObject(obj, opt.path);
         }
         if (isAsyncFunction(obj)) {
-          return wrapObject({ 'module.exports': obj }, opt.path)['module.exports'];
+          return wrapObject({ "module.exports": obj }, opt.path)[
+            "module.exports"
+          ];
         }
         return obj;
       },
       ...opt,
     };
-    await this.loadToApp(controllerBase, 'controller', opt as FileLoaderOptions);
-    debug('[loadController] app.controller => %o', this.app.controller);
-    this.options.logger.info('[@eggjs/core/egg_loader] Controller loaded: %s', controllerBase);
-    this.timing.end('Load Controller');
+    await this.loadToApp(
+      controllerBase,
+      "controller",
+      opt as FileLoaderOptions,
+    );
+    debug("[loadController] app.controller => %o", this.app.controller);
+    this.options.logger.info(
+      "[@eggjs/core/egg_loader] Controller loaded: %s",
+      controllerBase,
+    );
+    this.timing.end("Load Controller");
   }
   /** end Controller loader */
 
@@ -1452,34 +1637,47 @@ export class EggLoader {
    * @since 1.0.0
    */
   async loadRouter(): Promise<void> {
-    this.timing.start('Load Router');
-    await this.loadFile(path.join(this.options.baseDir, 'app/router'));
-    this.timing.end('Load Router');
+    this.timing.start("Load Router");
+    await this.loadFile(path.join(this.options.baseDir, "app/router"));
+    this.timing.end("Load Router");
   }
   /** end Router loader */
 
   /** start CustomLoader loader */
   async loadCustomLoader(): Promise<void> {
-    assert(this.config, 'should loadConfig first');
+    assert(this.config, "should loadConfig first");
     const customLoader = this.config.customLoader || {};
 
     for (const property of Object.keys(customLoader)) {
       const loaderConfig = {
         ...customLoader[property],
       };
-      assert(loaderConfig.directory, `directory is required for config.customLoader.${property}`);
+      assert(
+        loaderConfig.directory,
+        `directory is required for config.customLoader.${property}`,
+      );
       let directory: string | string[];
       if (loaderConfig.loadunit === true) {
-        directory = this.getLoadUnits().map(unit => path.join(unit.path, loaderConfig.directory));
+        directory = this.getLoadUnits().map((unit) =>
+          path.join(unit.path, loaderConfig.directory),
+        );
       } else {
         directory = path.join(this.appInfo.baseDir, loaderConfig.directory);
       }
-      const inject = loaderConfig.inject || 'app';
-      debug('[loadCustomLoader] loaderConfig: %o, inject: %o, directory: %o', loaderConfig, inject, directory);
+      const inject = loaderConfig.inject || "app";
+      debug(
+        "[loadCustomLoader] loaderConfig: %o, inject: %o, directory: %o",
+        loaderConfig,
+        inject,
+        directory,
+      );
 
       switch (inject) {
-        case 'ctx': {
-          assert(!(property in this.app.context), `customLoader should not override ctx.${property}`);
+        case "ctx": {
+          assert(
+            !(property in this.app.context),
+            `customLoader should not override ctx.${property}`,
+          );
           const options = {
             caseStyle: CaseStyle.lower,
             fieldClass: `${property}Classes`,
@@ -1489,8 +1687,11 @@ export class EggLoader {
           await this.loadToContext(directory, property, options);
           break;
         }
-        case 'app': {
-          assert(!(property in this.app), `customLoader should not override app.${property}`);
+        case "app": {
+          assert(
+            !(property in this.app),
+            `customLoader should not override app.${property}`,
+          );
           const options = {
             caseStyle: CaseStyle.lower,
             initializer: (Clazz: unknown) => {
@@ -1503,7 +1704,7 @@ export class EggLoader {
           break;
         }
         default:
-          throw new Error('inject only support app or ctx');
+          throw new Error("inject only support app or ctx");
       }
     }
   }
@@ -1534,7 +1735,7 @@ export class EggLoader {
       inject = [this.app];
     }
     let mod = await this.requireFile(fullpath);
-    if (typeof mod === 'function' && !isClass(mod)) {
+    if (typeof mod === "function" && !isClass(mod)) {
       mod = mod(...inject);
       if (isPromise(mod)) {
         mod = await mod;
@@ -1580,7 +1781,7 @@ export class EggLoader {
       for (const plugin of this.orderPlugins) {
         this.dirs.push({
           path: plugin.path as string,
-          type: 'plugin',
+          type: "plugin",
         });
       }
     }
@@ -1589,17 +1790,17 @@ export class EggLoader {
     for (const eggPath of this.eggPaths) {
       this.dirs.push({
         path: eggPath,
-        type: 'framework',
+        type: "framework",
       });
     }
 
     // application
     this.dirs.push({
       path: this.options.baseDir,
-      type: 'app',
+      type: "app",
     });
 
-    debug('Loaded dirs %j', this.dirs);
+    debug("Loaded dirs %j", this.dirs);
     return this.dirs;
   }
 
@@ -1613,7 +1814,7 @@ export class EggLoader {
   async loadToApp(
     directory: string | string[],
     property: string | symbol,
-    options?: Omit<FileLoaderOptions, 'inject' | 'target'>
+    options?: Omit<FileLoaderOptions, "inject" | "target">,
   ): Promise<void> {
     const target = {};
     Reflect.set(this.app, property, target);
@@ -1640,7 +1841,7 @@ export class EggLoader {
   async loadToContext(
     directory: string | string[],
     property: string | symbol,
-    options?: Omit<ContextLoaderOptions, 'inject' | 'property'>
+    options?: Omit<ContextLoaderOptions, "inject" | "property">,
   ): Promise<void> {
     const loadOptions: ContextLoaderOptions = {
       ...options,
@@ -1674,7 +1875,7 @@ export class EggLoader {
   getTypeFiles(filename: string): string[] {
     const files = [`${filename}.default`];
     if (this.serverScope) files.push(`${filename}.${this.serverScope}`);
-    if (this.serverEnv === 'default') return files;
+    if (this.serverEnv === "default") return files;
     files.push(`${filename}.${this.serverEnv}`);
     if (this.serverScope) {
       files.push(`${filename}.${this.serverScope}_${this.serverEnv}`);
@@ -1698,7 +1899,10 @@ export class EggLoader {
 }
 
 function depCompatible(plugin: EggPluginInfo & { dep?: string[] }) {
-  if (plugin.dep && !(Array.isArray(plugin.dependencies) && plugin.dependencies.length > 0)) {
+  if (
+    plugin.dep &&
+    !(Array.isArray(plugin.dependencies) && plugin.dependencies.length > 0)
+  ) {
     plugin.dependencies = plugin.dep;
     delete plugin.dep;
   }
@@ -1706,16 +1910,16 @@ function depCompatible(plugin: EggPluginInfo & { dep?: string[] }) {
 
 function isValidatePackageName(name: string) {
   // only check file path style
-  if (name.startsWith('.')) return false;
-  if (name.startsWith('/')) return false;
-  if (name.includes(':')) return false;
+  if (name.startsWith(".")) return false;
+  if (name.startsWith("/")) return false;
+  if (name.includes(":")) return false;
   return true;
 }
 
 // support pathMatching on middleware
 function wrapMiddleware(
   mw: MiddlewareFunc,
-  options: PathMatchingOptions & { enable?: boolean }
+  options: PathMatchingOptions & { enable?: boolean },
 ): MiddlewareFunc | null {
   // support options.enable
   if (options.enable === false) {
@@ -1739,17 +1943,31 @@ function wrapMiddleware(
 function debugMiddlewareWrapper(mw: MiddlewareFunc): MiddlewareFunc {
   const fn: MiddlewareFunc = async (ctx, next) => {
     const startTime = now();
-    debug('[debugMiddlewareWrapper] [%s %s] enter middleware: %s', ctx.method, ctx.url, mw._name);
+    debug(
+      "[debugMiddlewareWrapper] [%s %s] enter middleware: %s",
+      ctx.method,
+      ctx.url,
+      mw._name,
+    );
     await mw(ctx, next);
     const rt = diff(startTime);
-    debug('[debugMiddlewareWrapper] [%s %s] after middleware: %s [%sms]', ctx.method, ctx.url, mw._name, rt);
+    debug(
+      "[debugMiddlewareWrapper] [%s %s] after middleware: %s [%sms]",
+      ctx.method,
+      ctx.url,
+      mw._name,
+      rt,
+    );
   };
   fn._name = `${mw._name}DebugWrapper`;
   return fn;
 }
 
 // wrap the controller class, yield a object with middlewares
-function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: string) {
+function wrapControllerClass(
+  Controller: typeof BaseContextClass,
+  fullPath: string,
+) {
   let proto = Controller.prototype;
   const ret: Record<string, any> = {};
   // tracing the prototype chain
@@ -1758,17 +1976,17 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
     for (const key of keys) {
       // getOwnPropertyNames will return constructor
       // that should be ignored
-      if (key === 'constructor') {
+      if (key === "constructor") {
         continue;
       }
       // skip getter, setter & non-function properties
       const d = Object.getOwnPropertyDescriptor(proto, key);
       // prevent to override sub method
-      if (typeof d?.value === 'function' && !Object.hasOwn(ret, key)) {
+      if (typeof d?.value === "function" && !Object.hasOwn(ret, key)) {
         const controllerMethodName = `${Controller.name}.${key}`;
         if (isGeneratorFunction(d.value)) {
           throw new TypeError(
-            `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`
+            `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`,
           );
         }
         ret[key] = controllerMethodToMiddleware(Controller, key);
@@ -1780,7 +1998,10 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
   return ret;
 }
 
-function controllerMethodToMiddleware(Controller: typeof BaseContextClass, key: string) {
+function controllerMethodToMiddleware(
+  Controller: typeof BaseContextClass,
+  key: string,
+) {
   return function classControllerMiddleware(this: Context, ...args: unknown[]) {
     const controller = new Controller(this);
     if (!this.app.config.controller?.supportParams) {
@@ -1792,22 +2013,28 @@ function controllerMethodToMiddleware(Controller: typeof BaseContextClass, key: 
 }
 
 // wrap the method of the object, method can receive ctx as it's first argument
-function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string) {
+function wrapObject(
+  obj: Record<string, any>,
+  fullPath: string,
+  prefix?: string,
+) {
   const keys = Object.keys(obj);
   const ret: Record<string, any> = {};
-  prefix = prefix ?? '';
+  prefix = prefix ?? "";
   for (const key of keys) {
     const controllerMethodName = `${prefix}${key}`;
     const item = obj[key];
     if (isGeneratorFunction(item)) {
       throw new TypeError(
-        `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`
+        `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`,
       );
     }
-    if (typeof item === 'function') {
+    if (typeof item === "function") {
       const names = getParamNames(item);
-      if (names[0] === 'next') {
-        throw new Error(`controller \`${controllerMethodName}\` should not use next as argument from file ${fullPath}`);
+      if (names[0] === "next") {
+        throw new Error(
+          `controller \`${controllerMethodName}\` should not use next as argument from file ${fullPath}`,
+        );
       }
       ret[key] = objectFunctionToMiddleware(item);
       ret[key][FULLPATH] = `${fullPath}#${controllerMethodName}()`;
@@ -1815,7 +2042,7 @@ function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string)
       ret[key] = wrapObject(item, fullPath, `${controllerMethodName}.`);
     }
   }
-  debug('[wrapObject] fullPath: %s, prefix: %s => %o', fullPath, prefix, ret);
+  debug("[wrapObject] fullPath: %s, prefix: %s => %o", fullPath, prefix, ret);
   return ret;
 }
 

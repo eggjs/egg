@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 exports.watcher = {
-  type: 'custom',
+  type: "custom",
 };
 
 exports.watcherCustom = {
-  foo: 'bar',
+  foo: "bar",
 };
 
-exports.keys = 'testkey';
+exports.keys = "testkey";

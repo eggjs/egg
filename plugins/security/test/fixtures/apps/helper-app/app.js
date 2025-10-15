@@ -1,4 +1,4 @@
-const assert = require('assert');
+const assert = require("assert");
 
 module.exports = class Boot {
   constructor(app) {
@@ -7,6 +7,6 @@ module.exports = class Boot {
 
   async willReady() {
     const helper = this.app.createAnonymousContext().helper;
-    assert(!helper.surl('foo://foo/bar'));
+    assert(!helper.surl("foo://foo/bar"));
   }
 };

@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 exports.router = async function () {
-  await this.render('locals/router.html');
+  await this.render("locals/router.html");
 };

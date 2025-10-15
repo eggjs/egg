@@ -1,7 +1,7 @@
-import type { Context } from 'egg';
+import type { Context } from "egg";
 
-import type { TSchema } from './typebox.ts';
-import type { ErrorObject } from 'ajv/dist/2019.js';
+import type { TSchema } from "./typebox.ts";
+import type { ErrorObject } from "ajv/dist/2019.js";
 
 type CustomErrorMessage = (ctx: Context, errors: ErrorObject[]) => string;
 type GetData = (ctx: Context, args: unknown[]) => unknown;
@@ -13,7 +13,12 @@ export type ValidateDecorator = (rules: ValidateRule[]) => MethodDecorator;
  * Validate decorator factory
  */
 export function ValidateFactory(
-  customHandler: (ctx: Context, data?: unknown, schema?: TSchema, customError?: CustomErrorMessage) => void
+  customHandler: (
+    ctx: Context,
+    data?: unknown,
+    schema?: TSchema,
+    customError?: CustomErrorMessage,
+  ) => void,
 ): ValidateDecorator {
   return function Validate(rules: ValidateRule[]): MethodDecorator {
     return (_, __, descriptor: PropertyDescriptor): PropertyDescriptor => {
@@ -47,13 +52,17 @@ export function ValidateFactory(
  * }
  * ```
  */
-export const Validate: ValidateDecorator = ValidateFactory((ctx, data, schema, customError) => {
-  const app = ctx.app;
-  const message = customError ? customError(ctx, app.ajv.errors!) : 'Validation Failed';
-  ctx.throw(422, message, {
-    code: 'invalid_param',
-    errorData: data,
-    currentSchema: JSON.stringify(schema),
-    errors: app.ajv.errors,
-  });
-});
+export const Validate: ValidateDecorator = ValidateFactory(
+  (ctx, data, schema, customError) => {
+    const app = ctx.app;
+    const message = customError
+      ? customError(ctx, app.ajv.errors!)
+      : "Validation Failed";
+    ctx.throw(422, message, {
+      code: "invalid_param",
+      errorData: data,
+      currentSchema: JSON.stringify(schema),
+      errors: app.ajv.errors,
+    });
+  },
+);

@@ -1,4 +1,4 @@
-import type { EggPluginItem } from '../index.ts';
+import type { EggPluginItem } from "../index.ts";
 
 const plugins: Record<string, EggPluginItem> = {
   /**
@@ -8,7 +8,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   onerror: {
     enable: true,
-    package: '@eggjs/onerror',
+    package: "@eggjs/onerror",
   },
 
   /**
@@ -19,7 +19,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   session: {
     enable: true,
-    package: '@eggjs/session',
+    package: "@eggjs/session",
   },
 
   /**
@@ -30,7 +30,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   i18n: {
     enable: true,
-    package: '@eggjs/i18n',
+    package: "@eggjs/i18n",
   },
 
   /**
@@ -41,7 +41,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   watcher: {
     enable: true,
-    package: '@eggjs/watcher',
+    package: "@eggjs/watcher",
   },
 
   /**
@@ -52,7 +52,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   multipart: {
     enable: true,
-    package: '@eggjs/multipart',
+    package: "@eggjs/multipart",
   },
 
   /**
@@ -63,7 +63,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   security: {
     enable: true,
-    package: '@eggjs/security',
+    package: "@eggjs/security",
   },
 
   /**
@@ -74,7 +74,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   development: {
     enable: process.env.CI ? false : true,
-    package: '@eggjs/development',
+    package: "@eggjs/development",
   },
 
   /**
@@ -85,7 +85,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   logrotator: {
     enable: true,
-    package: '@eggjs/logrotator',
+    package: "@eggjs/logrotator",
   },
 
   /**
@@ -96,7 +96,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   schedule: {
     enable: true,
-    package: '@eggjs/schedule',
+    package: "@eggjs/schedule",
   },
 
   /**
@@ -107,7 +107,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   static: {
     enable: true,
-    package: '@eggjs/static',
+    package: "@eggjs/static",
   },
 
   /**
@@ -118,7 +118,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   jsonp: {
     enable: true,
-    package: '@eggjs/jsonp',
+    package: "@eggjs/jsonp",
   },
 
   /**
@@ -129,7 +129,7 @@ const plugins: Record<string, EggPluginItem> = {
    */
   view: {
     enable: true,
-    package: '@eggjs/view',
+    package: "@eggjs/view",
   },
 };
 

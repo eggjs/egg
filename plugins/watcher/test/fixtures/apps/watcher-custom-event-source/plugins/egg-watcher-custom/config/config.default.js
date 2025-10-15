@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.watcher = {
   eventSources: {
-    custom: require('../custom'),
+    custom: require("../custom"),
   },
 };

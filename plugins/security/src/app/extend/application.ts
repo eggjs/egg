@@ -1,21 +1,26 @@
-import { Application } from 'egg';
+import { Application } from "egg";
 
 import {
   safeCurlForApplication,
   type HttpClientRequestURL,
   type HttpClientOptions,
   type HttpClientResponse,
-} from '../../lib/extend/safe_curl.ts';
+} from "../../lib/extend/safe_curl.ts";
 
-const INPUT_CSRF = '\r\n<input type="hidden" name="_csrf" value="{{ctx.csrf}}" /></form>';
-const INJECTION_DEFENSE = '<!--for injection--><!--</html>--><!--for injection-->';
+const INPUT_CSRF =
+  '\r\n<input type="hidden" name="_csrf" value="{{ctx.csrf}}" /></form>';
+const INJECTION_DEFENSE =
+  "<!--for injection--><!--</html>--><!--for injection-->";
 
 export default class SecurityApplication extends Application {
   injectCsrf(html: string): string {
     html = html.replace(/(<form.*?>)([\s\S]*?)<\/form>/gi, (_, $1, $2) => {
       const match = $2;
-      if (match.indexOf('name="_csrf"') !== -1 || match.indexOf("name='_csrf'") !== -1) {
-        return $1 + match + '</form>';
+      if (
+        match.indexOf('name="_csrf"') !== -1 ||
+        match.indexOf("name='_csrf'") !== -1
+      ) {
+        return $1 + match + "</form>";
       }
       return $1 + match + INPUT_CSRF;
     });
@@ -23,12 +28,15 @@ export default class SecurityApplication extends Application {
   }
 
   injectNonce(html: string): string {
-    html = html.replace(/<script(.*?)>([\s\S]*?)<\/script[^>]*?>/gi, (_, $1, $2) => {
-      if (!$1.includes('nonce=')) {
-        $1 += ' nonce="{{ctx.nonce}}"';
-      }
-      return '<script' + $1 + '>' + $2 + '</script>';
-    });
+    html = html.replace(
+      /<script(.*?)>([\s\S]*?)<\/script[^>]*?>/gi,
+      (_, $1, $2) => {
+        if (!$1.includes("nonce=")) {
+          $1 += ' nonce="{{ctx.nonce}}"';
+        }
+        return "<script" + $1 + ">" + $2 + "</script>";
+      },
+    );
     return html;
   }
 
@@ -36,7 +44,10 @@ export default class SecurityApplication extends Application {
     return INJECTION_DEFENSE + html + INJECTION_DEFENSE;
   }
 
-  async safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>> {
+  async safeCurl<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientOptions,
+  ): Promise<HttpClientResponse<T>> {
     return await safeCurlForApplication<T>(this, url, options);
   }
 }

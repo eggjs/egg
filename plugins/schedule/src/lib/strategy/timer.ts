@@ -1,14 +1,14 @@
-import assert from 'node:assert';
+import assert from "node:assert";
 
-import type { CronExpression } from 'cron-parser';
-import cronParser from 'cron-parser';
-import { ms } from 'humanize-ms';
-import safeTimers from 'safe-timers';
-import { logDate } from 'utility';
+import type { CronExpression } from "cron-parser";
+import cronParser from "cron-parser";
+import { ms } from "humanize-ms";
+import safeTimers from "safe-timers";
+import { logDate } from "utility";
 
-import type { EggScheduleConfig } from '../../config/config.default.ts';
-import { BaseStrategy } from './base.ts';
-import type Agent from '../../app/extend/agent.ts';
+import type { EggScheduleConfig } from "../../config/config.default.ts";
+import { BaseStrategy } from "./base.ts";
+import type Agent from "../../app/extend/agent.ts";
 
 export abstract class TimerStrategy extends BaseStrategy {
   protected cronInstance?: CronExpression;
@@ -19,7 +19,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     const { interval, cron, cronOptions, immediate } = this.scheduleConfig;
     assert(
       interval || cron || immediate,
-      `[@eggjs/schedule] ${this.key} \`schedule.interval\` or \`schedule.cron\` or \`schedule.immediate\` must be present`
+      `[@eggjs/schedule] ${this.key} \`schedule.interval\` or \`schedule.cron\` or \`schedule.immediate\` must be present`,
     );
 
     // init cron parser
@@ -27,15 +27,20 @@ export abstract class TimerStrategy extends BaseStrategy {
       try {
         this.cronInstance = cronParser.parseExpression(cron, cronOptions);
       } catch (err: any) {
-        throw new TypeError(`[@eggjs/schedule] ${this.key} parse cron instruction(${cron}) error: ${err.message}`, {
-          cause: err,
-        });
+        throw new TypeError(
+          `[@eggjs/schedule] ${this.key} parse cron instruction(${cron}) error: ${err.message}`,
+          {
+            cause: err,
+          },
+        );
       }
     }
   }
 
   protected handler(): void {
-    throw new TypeError(`[@eggjs/schedule] ${this.key} strategy should override \`handler()\` method`);
+    throw new TypeError(
+      `[@eggjs/schedule] ${this.key} strategy should override \`handler()\` method`,
+    );
   }
 
   async start(): Promise<void> {
@@ -58,7 +63,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     const nextTick = this.getNextTick();
     if (nextTick) {
       this.logger.info(
-        `[Timer] ${this.key} next time will execute after ${nextTick}ms at ${logDate(new Date(Date.now() + nextTick))}`
+        `[Timer] ${this.key} next time will execute after ${nextTick}ms at ${logDate(new Date(Date.now() + nextTick))}`,
       );
       this.safeTimeout(() => this.handler(), nextTick);
     } else {
@@ -95,7 +100,10 @@ export abstract class TimerStrategy extends BaseStrategy {
           nextTick = nextInterval.getTime();
         } catch (err) {
           // Error: Out of the timespan range
-          this.logger.info(`[Timer] ${this.key} cron out of the timespan range, error: %s`, err);
+          this.logger.info(
+            `[Timer] ${this.key} cron out of the timespan range, error: %s`,
+            err,
+          );
           return;
         }
       } while (now >= nextTick);
@@ -104,8 +112,15 @@ export abstract class TimerStrategy extends BaseStrategy {
     // won\'t run here
   }
 
-  protected safeTimeout(handler: () => void, delay: number, ...args: any[]): number | ReturnType<typeof setTimeout> {
-    const fn = delay < safeTimers.maxInterval ? setTimeout : safeTimers.setTimeout;
-    return fn(handler, delay, ...args) as number | ReturnType<typeof setTimeout>;
+  protected safeTimeout(
+    handler: () => void,
+    delay: number,
+    ...args: any[]
+  ): number | ReturnType<typeof setTimeout> {
+    const fn =
+      delay < safeTimers.maxInterval ? setTimeout : safeTimers.setTimeout;
+    return fn(handler, delay, ...args) as
+      | number
+      | ReturnType<typeof setTimeout>;
   }
 }

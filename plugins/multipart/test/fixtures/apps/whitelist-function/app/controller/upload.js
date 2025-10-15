@@ -1,5 +1,5 @@
-const path = require('node:path');
-const fs = require('node:fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 // keep one generator function test case
 module.exports = async function () {
@@ -13,7 +13,9 @@ module.exports = async function () {
     }
   }
 
-  const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, 'multipart-test-file'));
+  const ws = fs.createWriteStream(
+    path.join(this.app.config.logger.dir, "multipart-test-file"),
+  );
   part.pipe(ws);
   this.body = {
     filename: part.filename,

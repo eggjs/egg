@@ -1,3 +1,3 @@
 module.exports = (app: any) => {
-  app.fromCustomApp = 'from custom app';
+  app.fromCustomApp = "from custom app";
 };

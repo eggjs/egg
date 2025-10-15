@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-exports.keys = 'keys';
+exports.keys = "keys";
 exports.session = {
-  sameSite: 'none',
+  sameSite: "none",
 };
 
 exports.proxy = true;

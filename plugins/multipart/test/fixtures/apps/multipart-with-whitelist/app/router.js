@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.post('/upload.json', 'upload');
+module.exports = (app) => {
+  app.post("/upload.json", "upload");
 };

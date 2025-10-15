@@ -1,13 +1,17 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import pathToRegExp, { type Key } from 'path-to-regexp';
-import URI from 'urijs';
-import { decodeURIComponent as safeDecodeURIComponent } from 'utility';
-import { isGeneratorFunction } from 'is-type-of';
+import pathToRegExp, { type Key } from "path-to-regexp";
+import URI from "urijs";
+import { decodeURIComponent as safeDecodeURIComponent } from "utility";
+import { isGeneratorFunction } from "is-type-of";
 
-import type { MiddlewareFunc, MiddlewareFuncWithParamProperty, ParamMiddlewareFunc } from './types.ts';
+import type {
+  MiddlewareFunc,
+  MiddlewareFuncWithParamProperty,
+  ParamMiddlewareFunc,
+} from "./types.ts";
 
-const debug = debuglog('egg/router:Layer');
+const debug = debuglog("egg/router:Layer");
 
 export interface LayerOptions {
   prefix?: string;
@@ -50,44 +54,44 @@ export class Layer {
     path: string | RegExp,
     methods: string[],
     middlewares: MiddlewareFunc | MiddlewareFunc[],
-    opts?: LayerOptions | string
+    opts?: LayerOptions | string,
   ) {
-    if (typeof opts === 'string') {
+    if (typeof opts === "string") {
       // new Layer(path, methods, middlewares, name);
       opts = { name: opts };
     }
     this.opts = opts ?? {};
-    this.opts.prefix = this.opts.prefix ?? '';
+    this.opts.prefix = this.opts.prefix ?? "";
     this.name = this.opts.name;
     this.stack = Array.isArray(middlewares) ? middlewares : [middlewares];
 
     for (const method of methods) {
       const l = this.methods.push(method.toUpperCase());
-      if (this.methods[l - 1] === 'GET') {
-        this.methods.unshift('HEAD');
+      if (this.methods[l - 1] === "GET") {
+        this.methods.unshift("HEAD");
       }
     }
 
     // ensure middleware is a function
-    this.stack.forEach(fn => {
+    this.stack.forEach((fn) => {
       const type = typeof fn;
-      if (type !== 'function') {
+      if (type !== "function") {
         throw new TypeError(
           methods.toString() +
-            ' `' +
+            " `" +
             (this.opts.name || path) +
-            '`: `middleware` ' +
-            'must be a function, not `' +
+            "`: `middleware` " +
+            "must be a function, not `" +
             type +
-            '`'
+            "`",
         );
       }
       if (isGeneratorFunction(fn)) {
         throw new TypeError(
           methods.toString() +
-            ' `' +
+            " `" +
             (this.opts.name || path) +
-            '`: Please use async function instead of generator function'
+            "`: Please use async function instead of generator function",
         );
       }
     });
@@ -95,7 +99,7 @@ export class Layer {
     this.path = path;
     this.regexp = pathToRegExp(path, this.paramNames, this.opts);
 
-    debug('defined route %s %s', this.methods, this.opts.prefix + this.path);
+    debug("defined route %s %s", this.methods, this.opts.prefix + this.path);
   }
 
   /**
@@ -118,7 +122,11 @@ export class Layer {
    * @return {Object} params object
    * @private
    */
-  params(_path: string, captures: Array<string>, existingParams?: Record<string, string>): Record<string, string> {
+  params(
+    _path: string,
+    captures: Array<string>,
+    existingParams?: Record<string, string>,
+  ): Record<string, string> {
     const params = existingParams ?? {};
 
     for (let len = captures.length, i = 0; i < len; i++) {
@@ -162,24 +170,30 @@ export class Layer {
    * @return {String} url string
    * @private
    */
-  url(params?: string | number | object, ...paramsOrOptions: (string | number | object | LayerURLOptions)[]): string {
+  url(
+    params?: string | number | object,
+    ...paramsOrOptions: (string | number | object | LayerURLOptions)[]
+  ): string {
     let args: Array<string | number | object> | object = params as object;
-    const url = (this.path as string).replace(/\(\.\*\)/g, '');
+    const url = (this.path as string).replace(/\(\.\*\)/g, "");
     const toPath = pathToRegExp.compile(url);
     let options: LayerURLOptions | undefined;
 
-    if (params !== undefined && typeof params !== 'object') {
+    if (params !== undefined && typeof params !== "object") {
       args = [params, ...paramsOrOptions];
       // route.url(stringOrNumber, params1, ..., options);
       if (Array.isArray(args)) {
         const lastIndex = args.length - 1;
-        if (typeof args[lastIndex] === 'object') {
+        if (typeof args[lastIndex] === "object") {
           options = args[lastIndex];
           args = args.slice(0, lastIndex);
         }
       }
-    } else if (typeof params === 'object') {
-      if (typeof paramsOrOptions[0] === 'object' && 'query' in paramsOrOptions[0]) {
+    } else if (typeof params === "object") {
+      if (
+        typeof paramsOrOptions[0] === "object" &&
+        "query" in paramsOrOptions[0]
+      ) {
         // route.url(param, options);
         options = paramsOrOptions[0];
       }
@@ -191,11 +205,13 @@ export class Layer {
     if (Array.isArray(args)) {
       for (let len = tokens.length, i = 0, j = 0; i < len; i++) {
         const token = tokens[i];
-        if (typeof token === 'object' && token.name) {
+        if (typeof token === "object" && token.name) {
           replace[token.name] = args[j++];
         }
       }
-    } else if (tokens.some(token => typeof token === 'object' && token.name)) {
+    } else if (
+      tokens.some((token) => typeof token === "object" && token.name)
+    ) {
       // route.url(params);
       replace = params as object;
     } else {
@@ -239,12 +255,16 @@ export class Layer {
   param(param: string, fn: ParamMiddlewareFunc): Layer {
     const stack = this.stack;
     const params = this.paramNames;
-    const middleware: MiddlewareFuncWithParamProperty = function (this: any, ctx, next) {
+    const middleware: MiddlewareFuncWithParamProperty = function (
+      this: any,
+      ctx,
+      next,
+    ) {
       return fn.call(this, ctx.params[param], ctx, next);
     };
     middleware.param = param;
 
-    const names = params.map(p => {
+    const names = params.map((p) => {
       return p.name;
     });
 

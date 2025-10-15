@@ -1,8 +1,8 @@
-const path = require('node:path');
-const fs = require('node:fs');
-const { sendToWormhole } = require('stream-wormhole');
+const path = require("node:path");
+const fs = require("node:fs");
+const { sendToWormhole } = require("stream-wormhole");
 
-module.exports = async ctx => {
+module.exports = async (ctx) => {
   const parts = ctx.multipart();
   let part;
   while ((part = await parts()) != null) {
@@ -15,14 +15,17 @@ module.exports = async ctx => {
 
   if (!part || !part.filename) {
     ctx.body = {
-      message: 'no file',
+      message: "no file",
     };
     return;
   }
 
   if (ctx.query.mock_stream_error) {
     // mock save stream error
-    const filepath = path.join(ctx.app.config.logger.dir, 'not-exists-dir/dir2/testfile');
+    const filepath = path.join(
+      ctx.app.config.logger.dir,
+      "not-exists-dir/dir2/testfile",
+    );
     try {
       await saveStream(part, filepath);
     } catch (err) {
@@ -39,7 +42,7 @@ module.exports = async ctx => {
     part.foo();
   }
 
-  const filepath = path.join(ctx.app.config.logger.dir, 'multipart-test-file');
+  const filepath = path.join(ctx.app.config.logger.dir, "multipart-test-file");
   await saveStream(part, filepath);
   ctx.body = {
     filename: part.filename,
@@ -50,7 +53,7 @@ function saveStream(stream, filepath) {
   return new Promise((resolve, reject) => {
     const ws = fs.createWriteStream(filepath);
     stream.pipe(ws);
-    ws.on('error', reject);
-    ws.on('finish', resolve);
+    ws.on("error", reject);
+    ws.on("finish", resolve);
   });
 }

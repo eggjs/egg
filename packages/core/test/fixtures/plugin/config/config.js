@@ -1,3 +1,3 @@
-exports.plugin = 'override plugin';
+exports.plugin = "override plugin";
 
 exports.middleware = [];

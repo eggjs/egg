@@ -1,19 +1,19 @@
-import { strict as assert } from 'node:assert';
-import https from 'node:https';
-import fs from 'node:fs';
-import path from 'node:path';
-import type { AddressInfo } from 'node:net';
-import { once } from 'node:events';
+import { strict as assert } from "node:assert";
+import https from "node:https";
+import fs from "node:fs";
+import path from "node:path";
+import type { AddressInfo } from "node:net";
+import { once } from "node:events";
 
-import express, { type Express } from 'express';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
-import { describe, it, beforeEach, beforeAll, expect } from 'vitest';
+import express, { type Express } from "express";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import { describe, it, beforeEach, beforeAll, expect } from "vitest";
 
-import request, { Test } from '../src/index.ts';
-import { throwError } from './throwError.ts';
+import request, { Test } from "../src/index.ts";
+import { throwError } from "./throwError.ts";
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 const __dirname = import.meta.dirname;
 
@@ -23,67 +23,67 @@ function shouldIncludeStackWithThisFile(err: Error) {
   expect(err.stack).toMatch(new RegExp(`^${err.name}:`));
 }
 
-describe('request(url)', () => {
-  it('should be supported', async () => {
+describe("request(url)", () => {
+  it("should be supported", async () => {
     const app = express();
 
-    app.get('/', function (_req, res) {
-      res.send('hello');
+    app.get("/", function (_req, res) {
+      res.send("hello");
     });
 
     const server = app.listen();
-    await once(server, 'listening');
-    const url = 'http://localhost:' + (server.address() as AddressInfo).port;
-    await request(url).get('/').expect('hello');
+    await once(server, "listening");
+    const url = "http://localhost:" + (server.address() as AddressInfo).port;
+    await request(url).get("/").expect("hello");
     server.close();
   });
 
-  it('should promise style', async () => {
+  it("should promise style", async () => {
     const app = express();
 
-    app.get('/', function (_req, res) {
-      res.send('hello');
+    app.get("/", function (_req, res) {
+      res.send("hello");
     });
 
     const server = app.listen();
-    await once(server, 'listening');
-    const url = 'http://localhost:' + (server.address() as AddressInfo).port;
-    await request(url).get('/').expect('hello');
+    await once(server, "listening");
+    const url = "http://localhost:" + (server.address() as AddressInfo).port;
+    await request(url).get("/").expect("hello");
     server.close();
   });
 
-  it('should async await', async () => {
+  it("should async await", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hello async await');
+    app.get("/", (_req, res) => {
+      res.send("hello async await");
     });
 
     const server = app.listen();
-    await once(server, 'listening');
-    const url = 'http://localhost:' + (server.address() as AddressInfo).port;
-    await request(url).get('/').expect('hello async await');
+    await once(server, "listening");
+    const url = "http://localhost:" + (server.address() as AddressInfo).port;
+    await request(url).get("/").expect("hello async await");
 
-    await request.agent(url).get('/').expect('hello async await');
+    await request.agent(url).get("/").expect("hello async await");
   });
 
-  describe('.end(cb)', () => {
-    it('should set `this` to the test object when calling cb', async () => {
+  describe(".end(cb)", () => {
+    it("should set `this` to the test object when calling cb", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('hello');
+      app.get("/", (_req, res) => {
+        res.send("hello");
       });
 
       const server = app.listen();
-      await once(server, 'listening');
-      const url = 'http://localhost:' + (server.address() as AddressInfo).port;
-      const test = request(url).get('/');
-      await new Promise(resolve => {
+      await once(server, "listening");
+      const url = "http://localhost:" + (server.address() as AddressInfo).port;
+      const test = request(url).get("/");
+      await new Promise((resolve) => {
         test.end(function (this: Test, err, res) {
           assert.equal(this, test);
           assert.equal(err, null);
-          assert.equal(res.text, 'hello');
+          assert.equal(res.text, "hello");
           resolve(res);
         });
       });
@@ -92,170 +92,170 @@ describe('request(url)', () => {
   });
 });
 
-describe('request(app)', () => {
-  it('should fire up the app on an ephemeral port', async () => {
+describe("request(app)", () => {
+  it("should fire up the app on an ephemeral port", async () => {
     const app = express();
 
-    app.get('/', function (_req, res) {
-      res.send('hey');
+    app.get("/", function (_req, res) {
+      res.send("hey");
     });
 
-    const res = await request(app).get('/');
+    const res = await request(app).get("/");
 
     expect(res.status).toBe(200);
-    expect(res.text).toBe('hey');
+    expect(res.text).toBe("hey");
   });
 
-  it('should work with an active server', async () => {
+  it("should work with an active server", async () => {
     const app = express();
 
-    app.get('/', function (_req, res) {
-      res.send('hey');
-    });
-
-    const server = app.listen();
-    await once(server, 'listening');
-    const res = await request(server).get('/');
-
-    expect(res.status).toBe(200);
-    expect(res.text).toBe('hey');
-    server.close();
-  });
-
-  it('should work with remote server', async () => {
-    const app = express();
-
-    app.get('/', function (_req, res) {
-      res.send('hey');
+    app.get("/", function (_req, res) {
+      res.send("hey");
     });
 
     const server = app.listen();
-    await once(server, 'listening');
-    const url = 'http://localhost:' + (server.address() as AddressInfo).port;
-    const res = await request(url).get('/');
+    await once(server, "listening");
+    const res = await request(server).get("/");
 
     expect(res.status).toBe(200);
-    expect(res.text).toBe('hey');
+    expect(res.text).toBe("hey");
     server.close();
   });
 
-  it('should work with a https server', async () => {
+  it("should work with remote server", async () => {
     const app = express();
-    const fixtures = path.join(__dirname, 'fixtures');
+
+    app.get("/", function (_req, res) {
+      res.send("hey");
+    });
+
+    const server = app.listen();
+    await once(server, "listening");
+    const url = "http://localhost:" + (server.address() as AddressInfo).port;
+    const res = await request(url).get("/");
+
+    expect(res.status).toBe(200);
+    expect(res.text).toBe("hey");
+    server.close();
+  });
+
+  it("should work with a https server", async () => {
+    const app = express();
+    const fixtures = path.join(__dirname, "fixtures");
     const server = https.createServer(
       {
-        key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
-        cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem')),
+        key: fs.readFileSync(path.join(fixtures, "test_key.pem")),
+        cert: fs.readFileSync(path.join(fixtures, "test_cert.pem")),
       },
-      app
+      app,
     );
 
-    app.get('/', (_req, res) => {
-      res.send('hey');
+    app.get("/", (_req, res) => {
+      res.send("hey");
     });
 
-    const res = await request(server).get('/');
+    const res = await request(server).get("/");
 
     expect(res.status).toBe(200);
-    expect(res.text).toBe('hey');
+    expect(res.text).toBe("hey");
   });
 
-  it('should work with .send() etc', async () => {
+  it("should work with .send() etc", async () => {
     const app = express();
 
     app.use(bodyParser.json());
 
-    app.post('/', (req, res) => {
+    app.post("/", (req, res) => {
       res.send(req.body.name);
     });
 
-    await request(app).post('/').send({ name: 'john' }).expect('john');
+    await request(app).post("/").send({ name: "john" }).expect("john");
   });
 
-  it('should work when unbuffered', async () => {
+  it("should work when unbuffered", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.end('Hello');
+    app.get("/", (_req, res) => {
+      res.end("Hello");
     });
 
-    await request(app).get('/').expect('Hello');
+    await request(app).get("/").expect("Hello");
   });
 
-  it('should work on trace method', async () => {
+  it("should work on trace method", async () => {
     const app = express();
 
-    app.trace('/', (_req, res) => {
-      res.end('Hello');
+    app.trace("/", (_req, res) => {
+      res.end("Hello");
     });
 
-    await request(app).trace('/').expect('Hello');
+    await request(app).trace("/").expect("Hello");
   });
 
-  it('should default redirects to 0', async () => {
+  it("should default redirects to 0", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.redirect('/login');
+    app.get("/", (_req, res) => {
+      res.redirect("/login");
     });
 
-    await request(app).get('/').expect(302);
+    await request(app).get("/").expect(302);
   });
 
-  it('should handle redirects', async () => {
+  it("should handle redirects", async () => {
     const app = express();
 
-    app.get('/login', (_req, res) => {
-      res.end('Login');
+    app.get("/login", (_req, res) => {
+      res.end("Login");
     });
 
-    app.get('/', (_req, res) => {
-      res.redirect('/login');
+    app.get("/", (_req, res) => {
+      res.redirect("/login");
     });
 
-    const res = await request(app).get('/').redirects(1);
+    const res = await request(app).get("/").redirects(1);
 
     expect(res).toBeDefined();
     expect(res.status).toBe(200);
-    expect(res.text).toBe('Login');
+    expect(res.text).toBe("Login");
   });
 
-  it('should handle socket errors', async () => {
+  it("should handle socket errors", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
+    app.get("/", (_req, res) => {
       res.destroy();
     });
 
-    await expect(request(app).get('/')).rejects.toThrow();
+    await expect(request(app).get("/")).rejects.toThrow();
   });
 
-  describe('.end(fn)', () => {
-    it('should close server', async () => {
+  describe(".end(fn)", () => {
+    it("should close server", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('supertest FTW!');
+      app.get("/", (_req, res) => {
+        res.send("supertest FTW!");
       });
 
       const test = request(app)
-        .get('/')
+        .get("/")
         .end(() => {});
 
-      await once(test._server, 'close');
+      await once(test._server, "close");
     });
 
-    it('should wait for server to close before invoking fn', async () => {
+    it("should wait for server to close before invoking fn", async () => {
       const app = express();
       let closed = false;
 
-      app.get('/', (_req, res) => {
-        res.send('supertest FTW!');
+      app.get("/", (_req, res) => {
+        res.send("supertest FTW!");
       });
 
-      const test = request(app).get('/');
+      const test = request(app).get("/");
 
-      test._server.on('close', () => {
+      test._server.on("close", () => {
         closed = true;
       });
 
@@ -263,33 +263,33 @@ describe('request(app)', () => {
       expect(closed).toBe(true);
     });
 
-    it('should support nested requests', async () => {
+    it("should support nested requests", async () => {
       const app = express();
       const test = request(app);
 
-      app.get('/', (_req, res) => {
-        res.send('supertest FTW!');
+      app.get("/", (_req, res) => {
+        res.send("supertest FTW!");
       });
 
-      await test.get('/');
+      await test.get("/");
 
-      const res = await test.get('/');
+      const res = await test.get("/");
       expect(res.status).toBe(200);
-      expect(res.text).toBe('supertest FTW!');
+      expect(res.text).toBe("supertest FTW!");
     });
 
-    it('should include the response in the error callback', async () => {
+    it("should include the response in the error callback", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('whatever');
+      app.get("/", (_req, res) => {
+        res.send("whatever");
       });
 
       try {
         await request(app)
-          .get('/')
+          .get("/")
           .expect(() => {
-            throw new Error('Some error');
+            throw new Error("Some error");
           });
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
@@ -299,112 +299,118 @@ describe('request(app)', () => {
       }
     });
 
-    it('should set `this` to the test object when calling the error callback', async () => {
+    it("should set `this` to the test object when calling the error callback", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('whatever');
+      app.get("/", (_req, res) => {
+        res.send("whatever");
       });
 
       await expect(async () => {
         await request(app)
-          .get('/')
+          .get("/")
           .expect(() => {
-            throw new Error('Some error');
+            throw new Error("Some error");
           });
-      }).rejects.toThrow('Some error');
+      }).rejects.toThrow("Some error");
     });
 
-    it('should handle an undefined Response', async () => {
+    it("should handle an undefined Response", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
+      app.get("/", (_req, res) => {
         setTimeout(function () {
           res.end();
         }, 20);
       });
 
       const server = app.listen();
-      await once(server, 'listening');
-      const url = 'http://localhost:' + (server.address() as AddressInfo).port;
+      await once(server, "listening");
+      const url = "http://localhost:" + (server.address() as AddressInfo).port;
 
-      await expect(request(url).get('/').timeout(1).expect(200)).rejects.toThrow();
+      await expect(
+        request(url).get("/").timeout(1).expect(200),
+      ).rejects.toThrow();
 
       server.close();
     });
 
-    it('should handle error returned when server goes down', async () => {
+    it("should handle error returned when server goes down", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
+      app.get("/", (_req, res) => {
         res.end();
       });
 
       const server = app.listen();
-      await once(server, 'listening');
-      const url = 'http://localhost:' + (server.address() as AddressInfo).port;
+      await once(server, "listening");
+      const url = "http://localhost:" + (server.address() as AddressInfo).port;
       server.close();
 
-      await expect(request(url).get('/').expect(200)).rejects.toThrow();
+      await expect(request(url).get("/").expect(200)).rejects.toThrow();
     });
   });
 
-  describe('.expectHeader(name, fn)', () => {
-    it('should expect header exists', async () => {
+  describe(".expectHeader(name, fn)", () => {
+    it("should expect header exists", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.setHeader('Foo-Bar', 'ok');
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.setHeader("Foo-Bar", "ok");
+        res.send("hey");
       });
 
-      await request(app).get('/').expect(200).expectHeader('Foo-Bar').expectHeader('content-type');
+      await request(app)
+        .get("/")
+        .expect(200)
+        .expectHeader("Foo-Bar")
+        .expectHeader("content-type");
     });
 
-    it('should expect header exists with callback', async () => {
+    it("should expect header exists with callback", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.setHeader('Foo-Bar', 'ok');
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.setHeader("Foo-Bar", "ok");
+        res.send("hey");
       });
 
-      await request(app).get('/').expect(200).expectHeader('Foo-Bar');
-    });
-  });
-
-  describe('.unexpectHeader(name, fn)', () => {
-    it('should expect header not exists', async () => {
-      const app = express();
-
-      app.get('/', (_req, res) => {
-        res.send('hey');
-      });
-
-      await request(app).get('/').expect(200).unexpectHeader('Foo-Bar');
-    });
-
-    it('should expect header not exists with callback', async () => {
-      const app = express();
-
-      app.get('/', (_req, res) => {
-        res.send('hey');
-      });
-
-      await request(app).get('/').expect(200).unexpectHeader('Foo-Bar');
+      await request(app).get("/").expect(200).expectHeader("Foo-Bar");
     });
   });
 
-  describe('.expect(status[, fn])', () => {
-    it('should assert the response status', async () => {
+  describe(".unexpectHeader(name, fn)", () => {
+    it("should expect header not exists", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
+      });
+
+      await request(app).get("/").expect(200).unexpectHeader("Foo-Bar");
+    });
+
+    it("should expect header not exists with callback", async () => {
+      const app = express();
+
+      app.get("/", (_req, res) => {
+        res.send("hey");
+      });
+
+      await request(app).get("/").expect(200).unexpectHeader("Foo-Bar");
+    });
+  });
+
+  describe(".expect(status[, fn])", () => {
+    it("should assert the response status", async () => {
+      const app = express();
+
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
       try {
-        await request(app).get('/').expect(404);
+        await request(app).get("/").expect(404);
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
@@ -414,52 +420,52 @@ describe('request(app)', () => {
     });
   });
 
-  describe('.expect(status)', () => {
-    it('should handle connection error', async () => {
-      const req = request.agent('http://127.0.0.1:1234');
+  describe(".expect(status)", () => {
+    it("should handle connection error", async () => {
+      const req = request.agent("http://127.0.0.1:1234");
 
       try {
-        await req.get('/').expect(200);
+        await req.get("/").expect(200);
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe('ECONNREFUSED: Connection refused');
+        expect(err.message).toBe("ECONNREFUSED: Connection refused");
       }
     });
   });
 
-  describe('.expect(status)', () => {
-    it('should assert only status', async () => {
+  describe(".expect(status)", () => {
+    it("should assert only status", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
-      await request(app).get('/').expect(200);
+      await request(app).get("/").expect(200);
     });
   });
 
-  describe('.expect(statusArray)', () => {
-    it('should assert only status', async () => {
+  describe(".expect(statusArray)", () => {
+    it("should assert only status", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
-      await request(app).get('/').expect([200, 404]);
+      await request(app).get("/").expect([200, 404]);
     });
 
-    it('should reject if status is not in valid statuses array', async () => {
+    it("should reject if status is not in valid statuses array", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
       try {
-        await request(app).get('/').expect([500, 404]);
+        await request(app).get("/").expect([500, 404]);
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
@@ -469,27 +475,27 @@ describe('request(app)', () => {
     });
   });
 
-  describe('.expect(status, body[, fn])', () => {
-    it('should assert the response body and status', async () => {
+  describe(".expect(status, body[, fn])", () => {
+    it("should assert the response body and status", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('foo');
+      app.get("/", (_req, res) => {
+        res.send("foo");
       });
 
-      await request(app).get('/').expect(200, 'foo');
+      await request(app).get("/").expect(200, "foo");
     });
 
-    describe('when the body argument is an empty string', () => {
-      it('should not quietly pass on failure', async () => {
+    describe("when the body argument is an empty string", () => {
+      it("should not quietly pass on failure", async () => {
         const app = express();
 
-        app.get('/', (_req, res) => {
-          res.send('foo');
+        app.get("/", (_req, res) => {
+          res.send("foo");
         });
 
         try {
-          await request(app).get('/').expect(200, '');
+          await request(app).get("/").expect(200, "");
           expect(true).toBe(false); // Should not reach here
         } catch (err: any) {
           expect(err instanceof Error).toBe(true);
@@ -500,269 +506,284 @@ describe('request(app)', () => {
     });
   });
 
-  describe('.expect(body[, fn])', () => {
-    it('should assert the response body', async () => {
+  describe(".expect(body[, fn])", () => {
+    it("should assert the response body", async () => {
       const app = express();
 
-      app.set('json spaces', 0);
+      app.set("json spaces", 0);
 
-      app.get('/', (_req, res) => {
-        res.send({ foo: 'bar' });
+      app.get("/", (_req, res) => {
+        res.send({ foo: "bar" });
       });
 
       try {
-        await request(app).get('/').expect('hey');
+        await request(app).get("/").expect("hey");
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe('expected \'hey\' response body, got \'{"foo":"bar"}\'');
+        expect(err.message).toBe(
+          "expected 'hey' response body, got '{\"foo\":\"bar\"}'",
+        );
         shouldIncludeStackWithThisFile(err);
       }
     });
 
-    it('should assert the status before the body', async () => {
+    it("should assert the status before the body", async () => {
       const app = express();
 
-      app.set('json spaces', 0);
+      app.set("json spaces", 0);
 
-      app.get('/', (_req, res) => {
-        res.status(500).send({ message: 'something went wrong' });
+      app.get("/", (_req, res) => {
+        res.status(500).send({ message: "something went wrong" });
       });
 
       try {
-        await request(app).get('/').expect(200).expect('hey');
+        await request(app).get("/").expect(200).expect("hey");
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe('expected 200 "OK", got 500 "Internal Server Error"');
+        expect(err.message).toBe(
+          'expected 200 "OK", got 500 "Internal Server Error"',
+        );
         shouldIncludeStackWithThisFile(err);
       }
     });
 
-    it('should assert the response text', async () => {
+    it("should assert the response text", async () => {
       const app = express();
 
-      app.set('json spaces', 0);
+      app.set("json spaces", 0);
 
-      app.get('/', (_req, res) => {
-        res.send({ foo: 'bar' });
+      app.get("/", (_req, res) => {
+        res.send({ foo: "bar" });
       });
 
-      await request(app).get('/').expect('{"foo":"bar"}');
+      await request(app).get("/").expect('{"foo":"bar"}');
     });
 
-    it('should assert the parsed response body', async () => {
+    it("should assert the parsed response body", async () => {
       const app = express();
 
-      app.set('json spaces', 0);
+      app.set("json spaces", 0);
 
-      app.get('/', (_req, res) => {
-        res.send({ foo: 'bar' });
+      app.get("/", (_req, res) => {
+        res.send({ foo: "bar" });
       });
 
       try {
-        await request(app).get('/').expect({ foo: 'baz' });
+        await request(app).get("/").expect({ foo: "baz" });
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message).toBe("expected { foo: 'baz' } response body, got { foo: 'bar' }");
+        expect(err.message).toBe(
+          "expected { foo: 'baz' } response body, got { foo: 'bar' }",
+        );
         shouldIncludeStackWithThisFile(err);
       }
 
-      await request(app).get('/').expect({ foo: 'bar' });
+      await request(app).get("/").expect({ foo: "bar" });
     });
 
-    it('should test response object types', async () => {
+    it("should test response object types", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
-        res.status(200).json({ stringValue: 'foo', numberValue: 3 });
+      app.get("/", (_req, res) => {
+        res.status(200).json({ stringValue: "foo", numberValue: 3 });
       });
 
-      await request(app).get('/').expect({ stringValue: 'foo', numberValue: 3 });
+      await request(app)
+        .get("/")
+        .expect({ stringValue: "foo", numberValue: 3 });
     });
 
-    it('should deep test response object types', async () => {
+    it("should deep test response object types", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
+      app.get("/", (_req, res) => {
         res.status(200).json({
-          stringValue: 'foo',
+          stringValue: "foo",
           numberValue: 3,
-          nestedObject: { innerString: '5' },
+          nestedObject: { innerString: "5" },
         });
       });
 
       try {
         await request(app)
-          .get('/')
+          .get("/")
           .expect({
-            stringValue: 'foo',
+            stringValue: "foo",
             numberValue: 3,
             nestedObject: { innerString: 5 },
           });
         expect(true).toBe(false); // Should not reach here
       } catch (err: any) {
         expect(err instanceof Error).toBe(true);
-        expect(err.message.replace(/[^a-zA-Z]/g, '')).toBe(
+        expect(err.message.replace(/[^a-zA-Z]/g, "")).toBe(
           "expected {\n  stringValue: 'foo',\n  numberValue: 3,\n  nestedObject: { innerString: 5 }\n} response body, got {\n  stringValue: 'foo',\n  numberValue: 3,\n  nestedObject: { innerString: '5' }\n}".replace(
             /[^a-zA-Z]/g,
-            ''
-          )
+            "",
+          ),
         ); // eslint-disable-line max-len
         shouldIncludeStackWithThisFile(err);
       }
 
       await request(app)
-        .get('/')
+        .get("/")
         .expect({
-          stringValue: 'foo',
+          stringValue: "foo",
           numberValue: 3,
-          nestedObject: { innerString: '5' },
+          nestedObject: { innerString: "5" },
         });
     });
 
-    it('should support parsed response arrays', async () => {
+    it("should support parsed response arrays", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
-        res.status(200).json(['a', { id: 1 }]);
+      app.get("/", (_req, res) => {
+        res.status(200).json(["a", { id: 1 }]);
       });
 
       await request(app)
-        .get('/')
-        .expect(['a', { id: 1 }]);
+        .get("/")
+        .expect(["a", { id: 1 }]);
     });
 
-    it('should support empty array responses', async () => {
+    it("should support empty array responses", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
+      app.get("/", (_req, res) => {
         res.status(200).json([]);
       });
 
-      await request(app).get('/').expect([]);
+      await request(app).get("/").expect([]);
     });
 
-    it('should support regular expressions', async () => {
+    it("should support regular expressions", async () => {
       const app = express();
 
-      app.get('/', (_req, res) => {
-        res.send('foobar');
+      app.get("/", (_req, res) => {
+        res.send("foobar");
       });
 
       await expect(async () => {
-        await request(app).get('/').expect(/^bar/);
+        await request(app).get("/").expect(/^bar/);
       }).rejects.toThrow("expected body 'foobar' to match /^bar/");
     });
   });
 
-  it('should assert response body multiple times', async () => {
+  it("should assert response body multiple times", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hey tj');
+    app.get("/", (_req, res) => {
+      res.send("hey tj");
     });
 
     await expect(async () => {
-      await request(app).get('/').expect(/tj/).expect('hey').expect('hey tj');
+      await request(app).get("/").expect(/tj/).expect("hey").expect("hey tj");
     }).rejects.toThrow("expected 'hey' response body, got 'hey tj'");
   });
 
-  it('should assert response body multiple times with no exception', async () => {
+  it("should assert response body multiple times with no exception", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hey tj');
+    app.get("/", (_req, res) => {
+      res.send("hey tj");
     });
 
-    await request(app).get('/').expect(/tj/).expect(/^hey/).expect('hey tj');
+    await request(app).get("/").expect(/tj/).expect(/^hey/).expect("hey tj");
   });
 });
 
-describe('.expect(field, value[, fn])', () => {
-  it('should assert the header field presence', async () => {
+describe(".expect(field, value[, fn])", () => {
+  it("should assert the header field presence", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send({ foo: 'bar' });
+    app.get("/", (_req, res) => {
+      res.send({ foo: "bar" });
     });
 
     await expect(async () => {
-      await request(app).get('/').expect('Content-Foo', 'bar');
+      await request(app).get("/").expect("Content-Foo", "bar");
     }).rejects.toThrow('expected "Content-Foo" header field');
   });
 
-  it('should assert the header field value', async () => {
+  it("should assert the header field value", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send({ foo: 'bar' });
+    app.get("/", (_req, res) => {
+      res.send({ foo: "bar" });
     });
 
     await expect(async () => {
-      await request(app).get('/').expect('Content-Type', 'text/html');
-    }).rejects.toThrow('expected "Content-Type" of "text/html", got "application/json; charset=utf-8"');
+      await request(app).get("/").expect("Content-Type", "text/html");
+    }).rejects.toThrow(
+      'expected "Content-Type" of "text/html", got "application/json; charset=utf-8"',
+    );
   });
 
-  it('should assert multiple fields', async () => {
+  it("should assert multiple fields", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hey');
+    app.get("/", (_req, res) => {
+      res.send("hey");
     });
 
-    await request(app).get('/').expect('Content-Type', 'text/html; charset=utf-8').expect('Content-Length', '3');
+    await request(app)
+      .get("/")
+      .expect("Content-Type", "text/html; charset=utf-8")
+      .expect("Content-Length", "3");
   });
 
-  it('should support regular expressions', async () => {
+  it("should support regular expressions", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hey');
+    app.get("/", (_req, res) => {
+      res.send("hey");
     });
 
     await expect(async () => {
       await request(app)
-        .get('/')
-        .expect('Content-Type', /^application/);
-    }).rejects.toThrow('expected "Content-Type" matching /^application/, got "text/html; charset=utf-8"');
+        .get("/")
+        .expect("Content-Type", /^application/);
+    }).rejects.toThrow(
+      'expected "Content-Type" matching /^application/, got "text/html; charset=utf-8"',
+    );
   });
 
-  it('should support numbers', async () => {
+  it("should support numbers", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.send('hey');
+    app.get("/", (_req, res) => {
+      res.send("hey");
     });
 
     await expect(async () => {
-      await request(app).get('/').expect('Content-Length', 4);
+      await request(app).get("/").expect("Content-Length", 4);
     }).rejects.toThrow('expected "Content-Length" of "4", got "3"');
   });
 
-  describe('handling arbitrary expect functions', () => {
+  describe("handling arbitrary expect functions", () => {
     let app: Express;
     let get: Test;
 
     beforeAll(() => {
       app = express();
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
     });
 
     beforeEach(() => {
-      get = request(app).get('/');
+      get = request(app).get("/");
     });
 
-    it('reports errors', async () => {
+    it("reports errors", async () => {
       await expect(async () => {
-        await get.expect(throwError('failed'));
-      }).rejects.toThrow('failed');
+        await get.expect(throwError("failed"));
+      }).rejects.toThrow("failed");
     });
 
     // this scenario should never happen after https://github.com/ladjs/supertest/pull/767
     // meant for test coverage for lib/test.js#287
     // https://github.com/ladjs/supertest/blob/e064b5ae71e1dfa3e1a74745fda527ac542e1878/lib/test.js#L287
-    it.skip('_assertFunction should catch and return error', async () => {
-      const error = new Error('failed');
+    it.skip("_assertFunction should catch and return error", async () => {
+      const error = new Error("failed");
       const returnedError = get
         // private api
         ._assertFunction(() => {
@@ -771,23 +792,23 @@ describe('.expect(field, value[, fn])', () => {
       get.end(() => {
         assert(returnedError instanceof Error);
         expect(returnedError).toBe(error);
-        expect(returnedError.message).toBe('failed');
+        expect(returnedError.message).toBe("failed");
         shouldIncludeStackWithThisFile(returnedError);
       });
     });
 
-    it.skip('ensures truthy non-errors returned from asserts are not promoted to errors', async () => {
+    it.skip("ensures truthy non-errors returned from asserts are not promoted to errors", async () => {
       await expect(async () => {
         await get.expect(function () {
-          return 'some descriptive error';
+          return "some descriptive error";
         });
-      }).rejects.toThrow('some descriptive error');
+      }).rejects.toThrow("some descriptive error");
     });
 
-    it('ensures truthy errors returned from asserts are throw to end', async () => {
+    it("ensures truthy errors returned from asserts are throw to end", async () => {
       await expect(async () => {
-        await get.expect(throwError('some descriptive error'));
-      }).rejects.toThrow('some descriptive error');
+        await get.expect(throwError("some descriptive error"));
+      }).rejects.toThrow("some descriptive error");
     });
 
     it("doesn't create false negatives", async () => {
@@ -797,14 +818,14 @@ describe('.expect(field, value[, fn])', () => {
     it("doesn't create false negatives on non error objects", async () => {
       const handler = {
         get() {
-          throw Error('Should not be called for non Error objects');
+          throw Error("Should not be called for non Error objects");
         },
       };
       const proxy = new Proxy({}, handler); // eslint-disable-line no-undef
       await get.expect(() => proxy);
     });
 
-    it('handles multiple asserts', async () => {
+    it("handles multiple asserts", async () => {
       const calls: number[] = [];
       await get
         .expect(function () {
@@ -819,264 +840,288 @@ describe('.expect(field, value[, fn])', () => {
       expect(calls).toEqual([1, 1, 1]);
     });
 
-    it('plays well with normal assertions - no false positives', async () => {
+    it("plays well with normal assertions - no false positives", async () => {
       await expect(async () => {
-        await get.expect(() => {}).expect('Content-Type', /json/);
-      }).rejects.toThrow('expected "Content-Type" matching /json/, got "text/html; charset=utf-8"');
+        await get.expect(() => {}).expect("Content-Type", /json/);
+      }).rejects.toThrow(
+        'expected "Content-Type" matching /json/, got "text/html; charset=utf-8"',
+      );
     });
 
-    it('plays well with normal assertions - no false negatives', async () => {
+    it("plays well with normal assertions - no false negatives", async () => {
       get
         .expect(function () {})
-        .expect('Content-Type', /html/)
+        .expect("Content-Type", /html/)
         .expect(function () {})
-        .expect('Content-Type', /text/);
+        .expect("Content-Type", /text/);
     });
   });
 
-  describe('handling multiple assertions per field', () => {
-    it('should work', async () => {
+  describe("handling multiple assertions per field", () => {
+    it("should work", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
-      await request(app).get('/').expect('Content-Type', /text/).expect('Content-Type', /html/);
+      await request(app)
+        .get("/")
+        .expect("Content-Type", /text/)
+        .expect("Content-Type", /html/);
     });
 
-    it('should return an error if the first one fails', async () => {
+    it("should return an error if the first one fails", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
-        res.send('hey');
-      });
-
-      await expect(async () => {
-        await request(app).get('/').expect('Content-Type', /bloop/).expect('Content-Type', /html/);
-      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
-    });
-
-    it('should return an error if a middle one fails', async () => {
-      const app = express();
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
       await expect(async () => {
         await request(app)
-          .get('/')
-          .expect('Content-Type', /text/)
-          .expect('Content-Type', /bloop/)
-          .expect('Content-Type', /html/);
-      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
+          .get("/")
+          .expect("Content-Type", /bloop/)
+          .expect("Content-Type", /html/);
+      }).rejects.toThrow(
+        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"',
+      );
     });
 
-    it('should return an error if the last one fails', async () => {
+    it("should return an error if a middle one fails", async () => {
       const app = express();
-      app.get('/', (_req, res) => {
-        res.send('hey');
+      app.get("/", (_req, res) => {
+        res.send("hey");
       });
 
       await expect(async () => {
         await request(app)
-          .get('/')
-          .expect('Content-Type', /text/)
-          .expect('Content-Type', /html/)
-          .expect('Content-Type', /bloop/);
-      }).rejects.toThrow('expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"');
+          .get("/")
+          .expect("Content-Type", /text/)
+          .expect("Content-Type", /bloop/)
+          .expect("Content-Type", /html/);
+      }).rejects.toThrow(
+        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"',
+      );
+    });
+
+    it("should return an error if the last one fails", async () => {
+      const app = express();
+      app.get("/", (_req, res) => {
+        res.send("hey");
+      });
+
+      await expect(async () => {
+        await request(app)
+          .get("/")
+          .expect("Content-Type", /text/)
+          .expect("Content-Type", /html/)
+          .expect("Content-Type", /bloop/);
+      }).rejects.toThrow(
+        'expected "Content-Type" matching /bloop/, got "text/html; charset=utf-8"',
+      );
     });
   });
 });
 
-describe('request.agent(app)', () => {
+describe("request.agent(app)", () => {
   const app = express();
-  const agent = request.agent(app).set('header', 'hey');
+  const agent = request.agent(app).set("header", "hey");
 
   app.use(cookieParser());
 
-  app.get('/', (_req, res) => {
-    res.cookie('cookie', 'hey');
+  app.get("/", (_req, res) => {
+    res.cookie("cookie", "hey");
     res.send();
   });
 
-  app.trace('/', (_req, res) => {
-    res.cookie('cookie', 'hey');
-    res.send('trace method');
+  app.trace("/", (_req, res) => {
+    res.cookie("cookie", "hey");
+    res.send("trace method");
   });
 
-  app.get('/return_cookies', (req, res) => {
+  app.get("/return_cookies", (req, res) => {
     if (req.cookies.cookie) res.send(req.cookies.cookie);
-    else res.send(':(');
+    else res.send(":(");
   });
 
-  app.get('/return_headers', (req, res) => {
-    if (req.get('header')) res.send(req.get('header'));
-    else res.send(':(');
+  app.get("/return_headers", (req, res) => {
+    if (req.get("header")) res.send(req.get("header"));
+    else res.send(":(");
   });
 
-  it('should save cookies', async () => {
-    await agent.get('/').expect('set-cookie', 'cookie=hey; Path=/');
+  it("should save cookies", async () => {
+    await agent.get("/").expect("set-cookie", "cookie=hey; Path=/");
   });
 
-  it('should send cookies', async () => {
-    await agent.get('/return_cookies').expect('hey');
+  it("should send cookies", async () => {
+    await agent.get("/return_cookies").expect("hey");
   });
 
-  it('should send global agent headers', async () => {
-    await agent.get('/return_headers').expect('hey');
+  it("should send global agent headers", async () => {
+    await agent.get("/return_headers").expect("hey");
   });
 
-  it('should trace method work', async () => {
-    await agent.trace('/').expect('trace method');
+  it("should trace method work", async () => {
+    await agent.trace("/").expect("trace method");
   });
 });
 
-describe('agent.host(host)', () => {
-  it('should set request hostname', async () => {
+describe("agent.host(host)", () => {
+  it("should set request hostname", async () => {
     const app = express();
     const agent = request.agent(app);
 
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
       res.send({ hostname: req.hostname });
     });
 
-    const res = await agent.host('something.test').get('/');
+    const res = await agent.host("something.test").get("/");
 
-    expect(res.body.hostname).toBe('something.test');
+    expect(res.body.hostname).toBe("something.test");
   });
 });
 
-describe('.<http verb> works as expected', () => {
-  it('.delete should work', async () => {
+describe(".<http verb> works as expected", () => {
+  it(".delete should work", async () => {
     const app = express();
-    app.delete('/', (_req, res) => {
+    app.delete("/", (_req, res) => {
       res.sendStatus(200);
     });
 
-    await request(app).delete('/').expect(200);
+    await request(app).delete("/").expect(200);
   });
-  it('.del should work', async () => {
+  it(".del should work", async () => {
     const app = express();
-    app.delete('/', (_req, res) => {
+    app.delete("/", (_req, res) => {
       res.sendStatus(200);
     });
 
-    await request(app).del('/').expect(200);
+    await request(app).del("/").expect(200);
   });
-  it('.get should work', async () => {
+  it(".get should work", async () => {
     const app = express();
-    app.get('/', (_req, res) => {
+    app.get("/", (_req, res) => {
       res.sendStatus(200);
     });
 
-    await request(app).get('/').expect(200);
+    await request(app).get("/").expect(200);
   });
-  it('.post should work', async () => {
+  it(".post should work", async () => {
     const app = express();
-    app.post('/', (_req, res) => {
+    app.post("/", (_req, res) => {
       res.sendStatus(200);
     });
 
-    await request(app).post('/').expect(200);
+    await request(app).post("/").expect(200);
   });
-  it('.put should work', async () => {
+  it(".put should work", async () => {
     const app = express();
-    app.put('/', (_req, res) => {
+    app.put("/", (_req, res) => {
       res.sendStatus(200);
     });
 
-    await request(app).put('/').expect(200);
+    await request(app).put("/").expect(200);
   });
-  it('.head should work', async () => {
+  it(".head should work", async () => {
     const app = express();
-    app.head('/', (_req, res) => {
+    app.head("/", (_req, res) => {
       res.statusCode = 200;
-      res.set('Content-Encoding', 'gzip');
-      res.set('Content-Length', '1024');
+      res.set("Content-Encoding", "gzip");
+      res.set("Content-Length", "1024");
       res.status(200);
       res.end();
     });
 
-    const res = await request(app).head('/').set('accept-encoding', 'gzip, deflate');
+    const res = await request(app)
+      .head("/")
+      .set("accept-encoding", "gzip, deflate");
 
-    expect(res).toHaveProperty('statusCode', 200);
-    expect(res.headers).toHaveProperty('content-length', '1024');
+    expect(res).toHaveProperty("statusCode", 200);
+    expect(res.headers).toHaveProperty("content-length", "1024");
   });
 });
 
-describe('assert ordering by call order', () => {
-  it('should assert the body before status', async () => {
+describe("assert ordering by call order", () => {
+  it("should assert the body before status", async () => {
     const app = express();
 
-    app.set('json spaces', 0);
+    app.set("json spaces", 0);
 
-    app.get('/', (_req, res) => {
-      res.status(500).json({ message: 'something went wrong' });
+    app.get("/", (_req, res) => {
+      res.status(500).json({ message: "something went wrong" });
     });
 
     request(app)
-      .get('/')
-      .expect('hey')
+      .get("/")
+      .expect("hey")
       .expect(200)
-      .end(err => {
+      .end((err) => {
         assert(err instanceof Error);
-        expect(err.message).toBe("expected 'hey' response body, " + 'got \'{"message":"something went wrong"}\'');
+        expect(err.message).toBe(
+          "expected 'hey' response body, " +
+            'got \'{"message":"something went wrong"}\'',
+        );
         shouldIncludeStackWithThisFile(err);
       });
   });
 
-  it('should assert the status before body', async () => {
+  it("should assert the status before body", async () => {
     const app = express();
 
-    app.set('json spaces', 0);
+    app.set("json spaces", 0);
 
-    app.get('/', (_req, res) => {
-      res.status(500).json({ message: 'something went wrong' });
+    app.get("/", (_req, res) => {
+      res.status(500).json({ message: "something went wrong" });
     });
 
     request(app)
-      .get('/')
+      .get("/")
       .expect(200)
-      .expect('hey')
-      .end(err => {
+      .expect("hey")
+      .end((err) => {
         assert(err instanceof Error);
-        expect(err.message).toBe('expected 200 "OK", got 500 "Internal Server Error"');
+        expect(err.message).toBe(
+          'expected 200 "OK", got 500 "Internal Server Error"',
+        );
         shouldIncludeStackWithThisFile(err);
       });
   });
 
-  it('should assert the fields before body and status', async () => {
+  it("should assert the fields before body and status", async () => {
     const app = express();
 
-    app.set('json spaces', 0);
+    app.set("json spaces", 0);
 
-    app.get('/', (_req, res) => {
-      res.status(200).json({ hello: 'world' });
+    app.get("/", (_req, res) => {
+      res.status(200).json({ hello: "world" });
     });
 
     request(app)
-      .get('/')
-      .expect('content-type', /html/)
-      .expect('hello')
-      .end(err => {
+      .get("/")
+      .expect("content-type", /html/)
+      .expect("hello")
+      .end((err) => {
         assert(err instanceof Error);
-        expect(err.message).toBe('expected "content-type" matching /html/, ' + 'got "application/json; charset=utf-8"');
+        expect(err.message).toBe(
+          'expected "content-type" matching /html/, ' +
+            'got "application/json; charset=utf-8"',
+        );
         shouldIncludeStackWithThisFile(err);
       });
   });
 
-  it('should call the expect function in order', async () => {
+  it("should call the expect function in order", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
+    app.get("/", (_req, res) => {
       res.status(200).json({});
     });
 
     request(app)
-      .get('/')
-      .expect(res => {
+      .get("/")
+      .expect((res) => {
         res.body.first = 1;
       })
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.first === 1).toBe(true);
         res.body.second = 2;
       })
@@ -1087,16 +1132,16 @@ describe('assert ordering by call order', () => {
       });
   });
 
-  it('should call expect(fn) and expect(status, fn) in order', async () => {
+  it("should call expect(fn) and expect(status, fn) in order", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
+    app.get("/", (_req, res) => {
       res.status(200).json({});
     });
 
     request(app)
-      .get('/')
-      .expect(res => {
+      .get("/")
+      .expect((res) => {
         res.body.first = 1;
       })
       .expect(200, (err, res) => {
@@ -1105,107 +1150,107 @@ describe('assert ordering by call order', () => {
       });
   });
 
-  it('should call expect(fn) and expect(header,value) in order', async () => {
+  it("should call expect(fn) and expect(header,value) in order", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.set('X-Some-Header', 'Some value').send();
+    app.get("/", (_req, res) => {
+      res.set("X-Some-Header", "Some value").send();
     });
 
     request(app)
-      .get('/')
-      .expect('X-Some-Header', 'Some value')
-      .expect(res => {
-        res.headers['x-some-header'] = '';
+      .get("/")
+      .expect("X-Some-Header", "Some value")
+      .expect((res) => {
+        res.headers["x-some-header"] = "";
       })
-      .expect('X-Some-Header', '');
+      .expect("X-Some-Header", "");
   });
 
-  it('should call expect(fn) and expect(body) in order', async () => {
+  it("should call expect(fn) and expect(body) in order", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.json({ somebody: 'some body value' });
+    app.get("/", (_req, res) => {
+      res.json({ somebody: "some body value" });
     });
 
     request(app)
-      .get('/')
+      .get("/")
       .expect(/some body value/)
-      .expect(res => {
-        res.body.somebody = 'nobody';
+      .expect((res) => {
+        res.body.somebody = "nobody";
       })
       .expect(/some body value/) // res.text should not be modified.
-      .expect({ somebody: 'nobody' })
-      .expect(res => {
-        res.text = 'gone';
+      .expect({ somebody: "nobody" })
+      .expect((res) => {
+        res.text = "gone";
       })
-      .expect('gone')
+      .expect("gone")
       .expect(/gone/)
-      .expect({ somebody: 'nobody' }) // res.body should not be modified
-      .expect('gone');
+      .expect({ somebody: "nobody" }) // res.body should not be modified
+      .expect("gone");
   });
 });
 
-describe('request.get(url).query(vals) works as expected', function () {
-  it('normal single query string value works', async () => {
+describe("request.get(url).query(vals) works as expected", function () {
+  it("normal single query string value works", async () => {
     const app = express();
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
       res.status(200).send(req.query.val);
     });
 
     request(app)
-      .get('/')
-      .query({ val: 'Test1' })
+      .get("/")
+      .query({ val: "Test1" })
       .expect(200, (err, res) => {
         assert.equal(err, null);
-        expect(res.text).toBe('Test1');
+        expect(res.text).toBe("Test1");
       });
   });
 
-  it('array query string value works', async () => {
+  it("array query string value works", async () => {
     const app = express();
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
       res.status(200).send(Array.isArray(req.query.val));
     });
 
     request(app)
-      .get('/')
-      .query({ 'val[]': ['Test1', 'Test2'] })
+      .get("/")
+      .query({ "val[]": ["Test1", "Test2"] })
       .expect(200, (err, res: any) => {
         assert.equal(err, null);
-        expect(res.req.path).toBe('/?val%5B%5D=Test1&val%5B%5D=Test2');
-        expect(res.text).toBe('true');
+        expect(res.req.path).toBe("/?val%5B%5D=Test1&val%5B%5D=Test2");
+        expect(res.text).toBe("true");
       });
   });
 
-  it('array query string value work even with single value', async () => {
+  it("array query string value work even with single value", async () => {
     const app = express();
-    app.get('/', (req, res) => {
+    app.get("/", (req, res) => {
       res.status(200).send(Array.isArray(req.query.val));
     });
 
     request(app)
-      .get('/')
-      .query({ 'val[]': ['Test1'] })
+      .get("/")
+      .query({ "val[]": ["Test1"] })
       .expect(200, (err, res: any) => {
         assert.equal(err, null);
-        expect(res.req.path).toBe('/?val%5B%5D=Test1');
-        expect(res.text).toBe('true');
+        expect(res.req.path).toBe("/?val%5B%5D=Test1");
+        expect(res.text).toBe("true");
       });
   });
 
-  it('object query string value works', async () => {
+  it("object query string value works", async () => {
     const app = express();
-    app.get('/', (req: any, res) => {
+    app.get("/", (req: any, res) => {
       res.status(200).send(req.query.val.test);
     });
 
     request(app)
-      .get('/')
-      .query({ val: { test: 'Test1' } })
+      .get("/")
+      .query({ val: { test: "Test1" } })
       .expect(200, (err, res) => {
         assert.equal(err, null);
-        expect(res.text).toBe('Test1');
+        expect(res.text).toBe("Test1");
       });
   });
 
@@ -1239,11 +1284,11 @@ describe('request.get(url).query(vals) works as expected', function () {
   // there shouldn't be any res if there is an err
   // meant for test coverage for lib/test.js#169
   // https://github.com/ladjs/supertest/blob/5543d674cf9aa4547927ba6010d31d9474950dec/lib/test.js#L169
-  it('handles unknown errors (err with res)', async () => {
+  it("handles unknown errors (err with res)", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
-      res.status(200).send('OK');
+    app.get("/", (_req, res) => {
+      res.status(200).send("OK");
     });
 
     const resError = new Error();
@@ -1252,7 +1297,7 @@ describe('request.get(url).query(vals) works as expected', function () {
     const serverRes = { status: 200 };
 
     await request(app)
-      .get('/')
+      .get("/")
       // private api
       .assert(resError, serverRes as any, function (this: Test, err, res) {
         expect(err).toBeDefined();
@@ -1265,17 +1310,17 @@ describe('request.get(url).query(vals) works as expected', function () {
       });
   });
 
-  it('should assert using promises', async () => {
+  it("should assert using promises", async () => {
     const app = express();
 
-    app.get('/', (_req, res) => {
+    app.get("/", (_req, res) => {
       res.status(400).send({ promise: true });
     });
 
     request(app)
-      .get('/')
+      .get("/")
       .expect(400)
-      .then(res => {
+      .then((res) => {
         expect(res.body.promise).toBe(true);
       });
   });

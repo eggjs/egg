@@ -1,19 +1,19 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ['src/index.ts', 'src/cli.ts'],
+  entry: ["src/index.ts", "src/cli.ts"],
   // unbundle: true,
   dts: true,
   unused: {
-    level: 'error',
+    level: "error",
   },
   exports: {
     devExports: true,
   },
   copy: [
     {
-      from: 'src/templates',
-      to: 'dist/templates',
+      from: "src/templates",
+      to: "dist/templates",
     },
   ],
 });

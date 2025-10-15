@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = class Four {
   constructor(ctx) {
@@ -6,6 +6,6 @@ module.exports = class Four {
   }
 
   get() {
-    return this.ctx.name + ':four';
+    return this.ctx.name + ":four";
   }
 };

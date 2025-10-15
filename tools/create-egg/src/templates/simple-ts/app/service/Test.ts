@@ -1,4 +1,4 @@
-import { Service } from 'egg';
+import { Service } from "egg";
 
 /**
  * Test Service

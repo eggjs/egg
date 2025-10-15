@@ -1,33 +1,33 @@
-import type { EggPlugin } from 'egg';
+import type { EggPlugin } from "egg";
 
 const plugin: EggPlugin = {
   tegg: {
     enable: true,
-    package: '@eggjs/tegg-plugin',
+    package: "@eggjs/tegg-plugin",
   },
   teggConfig: {
     enable: true,
-    package: '@eggjs/tegg-config',
+    package: "@eggjs/tegg-config",
   },
   teggController: {
     enable: true,
-    package: '@eggjs/tegg-controller-plugin',
+    package: "@eggjs/tegg-controller-plugin",
   },
   teggSchedule: {
     enable: true,
-    package: '@eggjs/tegg-schedule-plugin',
+    package: "@eggjs/tegg-schedule-plugin",
   },
   eventbusModule: {
     enable: true,
-    package: '@eggjs/tegg-eventbus-plugin',
+    package: "@eggjs/tegg-eventbus-plugin",
   },
   aopModule: {
     enable: true,
-    package: '@eggjs/tegg-aop-plugin',
+    package: "@eggjs/tegg-aop-plugin",
   },
   tracer: {
     enable: true,
-    package: '@eggjs/tracer',
+    package: "@eggjs/tracer",
   },
 };
 

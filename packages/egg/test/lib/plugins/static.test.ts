@@ -1,17 +1,17 @@
-import { describe, it, beforeAll } from 'vitest';
-import { createApp, type MockApplication } from '../../utils.js';
+import { describe, it, beforeAll } from "vitest";
+import { createApp, type MockApplication } from "../../utils.js";
 
-describe('test/lib/plugins/static.test.ts', () => {
+describe("test/lib/plugins/static.test.ts", () => {
   let app: MockApplication;
   beforeAll(() => {
-    app = createApp('apps/static-server');
+    app = createApp("apps/static-server");
     return app.ready();
   });
 
-  it('should get exists js file', () => {
+  it("should get exists js file", () => {
     return app
       .httpRequest()
-      .get('/public/foo.js')
+      .get("/public/foo.js")
       .expect(/alert\('bar'\);\r?\n/)
       .expect(200);
   });

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class User extends app.Service {
@@ -7,7 +7,7 @@ module.exports = function (app) {
     }
 
     async get(uid) {
-      return '123mock';
+      return "123mock";
     }
   }
 

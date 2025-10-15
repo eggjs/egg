@@ -1,8 +1,8 @@
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
   interval: 2000,
 };
 
 exports.task = async function () {
-  throw new Error('interval error');
+  throw new Error("interval error");
 };

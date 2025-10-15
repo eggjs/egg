@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
 module.exports = {
   a: {
     enable: true,
-    package: '@ali/a',
+    package: "@ali/a",
   },
   b: {
     enable: true,
-    package: '@ali/b',
+    package: "@ali/b",
   },
 };

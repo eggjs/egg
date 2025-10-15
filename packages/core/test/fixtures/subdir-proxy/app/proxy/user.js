@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class User extends app.Service {

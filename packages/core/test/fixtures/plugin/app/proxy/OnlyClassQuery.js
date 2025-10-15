@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const Proxy = require('../../../egg/proxy');
+const Proxy = require("../../../egg/proxy");
 
 class OnlyCLassQuery extends Proxy {
   constructor(ctx) {
@@ -9,7 +9,7 @@ class OnlyCLassQuery extends Proxy {
 
   *query() {
     return {
-      foo: 'clz',
+      foo: "clz",
     };
   }
 }

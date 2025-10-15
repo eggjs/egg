@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'all',
-  cron: '*/5 * * * * *',
+  type: "all",
+  cron: "*/5 * * * * *",
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('cron');
+  ctx.logger.info("cron");
 };

@@ -1,23 +1,29 @@
-import { describe, it, beforeEach, afterEach } from 'vitest';
-import fs from 'node:fs';
-import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
-import { mm, type MockApplication } from '@eggjs/mock';
-import { getFilePath } from './utils.js';
+import { describe, it, beforeEach, afterEach } from "vitest";
+import fs from "node:fs";
+import { strict as assert } from "node:assert";
+import { scheduler } from "node:timers/promises";
+import { mm, type MockApplication } from "@eggjs/mock";
+import { getFilePath } from "./utils.js";
 
-const file_path1 = getFilePath('apps/watcher-development-app/tmp.txt');
-const file_path2 = getFilePath('apps/watcher-development-app/tmp/tmp.txt');
-const file_path3 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp.txt');
-const file_path4 = getFilePath('apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp');
-const file_path1_agent = getFilePath('apps/watcher-development-app/tmp-agent.txt');
+const file_path1 = getFilePath("apps/watcher-development-app/tmp.txt");
+const file_path2 = getFilePath("apps/watcher-development-app/tmp/tmp.txt");
+const file_path3 = getFilePath(
+  "apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp.txt",
+);
+const file_path4 = getFilePath(
+  "apps/watcher-development-app/tmp/t1/t2/t3/t4/tmp",
+);
+const file_path1_agent = getFilePath(
+  "apps/watcher-development-app/tmp-agent.txt",
+);
 
-describe('test/development.test.ts', () => {
+describe("test/development.test.ts", () => {
   let app: MockApplication;
 
   beforeEach(() => {
     app = mm.app({
       // plugin: 'watcher',
-      baseDir: getFilePath('apps/watcher-development-app'),
+      baseDir: getFilePath("apps/watcher-development-app"),
     });
     return app.ready();
   });
@@ -25,29 +31,33 @@ describe('test/development.test.ts', () => {
   afterEach(() => app.close());
   afterEach(mm.restore);
 
-  it('should app watcher work', async () => {
+  it("should app watcher work", async () => {
     let count = 0;
 
-    await app.httpRequest().get('/app-watch').expect(200).expect('app watch success');
+    await app
+      .httpRequest()
+      .get("/app-watch")
+      .expect(200)
+      .expect("app watch success");
 
     await scheduler.wait(100);
-    fs.writeFileSync(file_path1, 'aaa');
+    fs.writeFileSync(file_path1, "aaa");
     await scheduler.wait(100);
 
-    let res = await app.httpRequest().get('/app-msg').expect(200);
+    let res = await app.httpRequest().get("/app-msg").expect(200);
 
     let lastCount = count;
     count = parseInt(res.text);
     assert(count > lastCount, `count: ${count}, lastCount: ${lastCount}`);
 
-    fs.writeFileSync(file_path2, 'aaa');
-    fs.writeFileSync(file_path3, 'aaa');
+    fs.writeFileSync(file_path2, "aaa");
+    fs.writeFileSync(file_path3, "aaa");
     fs.mkdirSync(file_path4, { recursive: true });
     fs.rmdirSync(file_path4);
     fs.rmSync(file_path4, { force: true });
     await scheduler.wait(100);
 
-    res = await app.httpRequest().get('/app-msg').expect(200);
+    res = await app.httpRequest().get("/app-msg").expect(200);
 
     lastCount = count;
     count = parseInt(res.text);
@@ -55,11 +65,11 @@ describe('test/development.test.ts', () => {
 
     await app
       .httpRequest()
-      .get('/app-hasDir')
+      .get("/app-hasDir")
       .expect(200)
       .expect({
         // work on windows
-        hasDir: process.platform === 'win32',
+        hasDir: process.platform === "win32",
       });
 
     /*
@@ -85,16 +95,20 @@ describe('test/development.test.ts', () => {
   });
 
   // not work on cluster message
-  it.skip('should agent watcher work', async () => {
+  it.skip("should agent watcher work", async () => {
     let count = 0;
 
-    await app.httpRequest().get('/agent-watch').expect(200).expect('agent watch success');
+    await app
+      .httpRequest()
+      .get("/agent-watch")
+      .expect(200)
+      .expect("agent watch success");
 
     await scheduler.wait(100);
-    fs.writeFileSync(file_path1_agent, 'bbb');
+    fs.writeFileSync(file_path1_agent, "bbb");
     await scheduler.wait(100);
 
-    const res = await app.httpRequest().get('/agent-msg').expect(200);
+    const res = await app.httpRequest().get("/agent-msg").expect(200);
 
     const lastCount = count;
     count = parseInt(res.text);

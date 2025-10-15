@@ -1,13 +1,13 @@
-import { debuglog } from 'node:util';
-import workerThreads from 'node:worker_threads';
+import { debuglog } from "node:util";
+import workerThreads from "node:worker_threads";
 
-import { sendmessage } from 'sendmessage';
+import { sendmessage } from "sendmessage";
 
-import type { IMessenger } from './IMessenger.ts';
-import type { EggApplicationCore } from '../../egg.ts';
-import { BaseMessenger } from './base.ts';
+import type { IMessenger } from "./IMessenger.ts";
+import type { EggApplicationCore } from "../../egg.ts";
+import { BaseMessenger } from "./base.ts";
 
-const debug = debuglog('egg/lib/core/messenger/ipc');
+const debug = debuglog("egg/lib/core/messenger/ipc");
 
 /**
  * Communication between app worker and agent worker by IPC channel
@@ -22,14 +22,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
     // pids of agent or app managed by master
     // - retrieve app worker pids when it's an agent worker
     // - retrieve agent worker pids when it's an app worker
-    this.on('egg-pids', workerIds => {
-      debug('[%s:%s] got egg-pids %j', this.egg.type, this.pid, workerIds);
+    this.on("egg-pids", (workerIds) => {
+      debug("[%s:%s] got egg-pids %j", this.egg.type, this.pid, workerIds);
       this.opids = workerIds.map((workerId: number) => String(workerId));
     });
     this.onMessage = this.onMessage.bind(this);
-    process.on('message', this.onMessage);
+    process.on("message", this.onMessage);
     if (!workerThreads.isMainThread) {
-      workerThreads.parentPort!.on('message', this.onMessage);
+      workerThreads.parentPort!.on("message", this.onMessage);
     }
   }
 
@@ -40,9 +40,15 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   broadcast(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] broadcast %s with %j', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'app');
-    this.send(action, data, 'agent');
+    debug(
+      "[%s:%s] broadcast %s with %j",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "app");
+    this.send(action, data, "agent");
     return this;
   }
 
@@ -54,7 +60,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendTo(workerId: string, action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to workerId:%s', this.egg.type, this.pid, action, data, workerId);
+    debug(
+      "[%s:%s] send %s with %j to workerId:%s",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+      workerId,
+    );
     const message = {
       action,
       data,
@@ -78,7 +91,13 @@ export class Messenger extends BaseMessenger implements IMessenger {
    */
   sendRandom(action: string, data?: unknown): Messenger {
     if (this.opids.length === 0) {
-      debug('[%s:%s] no pids, ignore sendRandom %s with %j', this.egg.type, this.pid, action, data);
+      debug(
+        "[%s:%s] no pids, ignore sendRandom %s with %j",
+        this.egg.type,
+        this.pid,
+        action,
+        data,
+      );
       return this;
     }
     const index = Math.floor(Math.random() * this.opids.length);
@@ -94,8 +113,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToApp(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to all app', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'app');
+    debug(
+      "[%s:%s] send %s with %j to all app",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "app");
     return this;
   }
 
@@ -106,8 +131,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToAgent(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to all agent', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'agent');
+    debug(
+      "[%s:%s] send %s with %j to all agent",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "agent");
     return this;
   }
 
@@ -118,7 +149,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   send(action: string, data: unknown | undefined, to?: string): Messenger {
-    debug('send message %s with %j to %s', action, data, to);
+    debug("send message %s with %j to %s", action, data, to);
     this.#sendMessage({
       action,
       data,
@@ -128,33 +159,49 @@ export class Messenger extends BaseMessenger implements IMessenger {
   }
 
   #sendMessage(message: any): void {
-    debug('[%s:%s] send message %j, mode: %s', this.egg.type, this.pid, message, this.egg.options.mode);
+    debug(
+      "[%s:%s] send message %j, mode: %s",
+      this.egg.type,
+      this.pid,
+      message,
+      this.egg.options.mode,
+    );
     sendmessage(process, message);
   }
 
   onMessage(message: any): void {
-    if (typeof message?.action === 'string') {
+    if (typeof message?.action === "string") {
       debug(
-        '[%s:%s] got message %s with %j, receiverWorkerId: %s',
+        "[%s:%s] got message %s with %j, receiverWorkerId: %s",
         this.egg.type,
         this.pid,
         message.action,
         message.data,
-        message.receiverWorkerId ?? message.receiverPid
+        message.receiverWorkerId ?? message.receiverPid,
       );
       this.emit(message.action, message.data);
     } else {
-      if (message?.type === 'Buffer') {
+      if (message?.type === "Buffer") {
         // {"type":"Buffer","data":[255,153,....]
-        debug('[%s:%s] got an invalid message: %s', this.egg.type, this.pid, Buffer.from(message.data));
+        debug(
+          "[%s:%s] got an invalid message: %s",
+          this.egg.type,
+          this.pid,
+          Buffer.from(message.data),
+        );
       } else {
-        debug('[%s:%s] got an invalid message %j', this.egg.type, this.pid, message);
+        debug(
+          "[%s:%s] got an invalid message %j",
+          this.egg.type,
+          this.pid,
+          message,
+        );
       }
     }
   }
 
   close(): void {
-    process.removeListener('message', this.onMessage);
+    process.removeListener("message", this.onMessage);
     this.removeAllListeners();
   }
 

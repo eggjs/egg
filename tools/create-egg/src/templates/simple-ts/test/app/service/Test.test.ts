@@ -1,9 +1,9 @@
-import { test, expect } from 'vitest';
+import { test, expect } from "vitest";
 
-import { app } from '@eggjs/mock/bootstrap';
+import { app } from "@eggjs/mock/bootstrap";
 
-test('sayHi should return hi, egg', async () => {
+test("sayHi should return hi, egg", async () => {
   const ctx = app.mockContext();
-  const result = await ctx.service.test.sayHi('egg');
-  expect(result).toBe('hi, egg, TypeScript');
+  const result = await ctx.service.test.sayHi("egg");
+  expect(result).toBe("hi, egg, TypeScript");
 });

@@ -1,4 +1,4 @@
-import type { MiddlewareFunc } from '../../lib/egg.ts';
+import type { MiddlewareFunc } from "../../lib/egg.ts";
 
 export interface NotFoundMiddlewareOptions {
   enable: boolean;
@@ -18,12 +18,12 @@ export default (options: NotFoundMiddlewareOptions): MiddlewareFunc => {
 
     if (ctx.acceptJSON) {
       ctx.body = {
-        message: 'Not Found',
+        message: "Not Found",
       };
       return;
     }
 
-    const notFoundHtml = '<h1>404 Not Found</h1>';
+    const notFoundHtml = "<h1>404 Not Found</h1>";
 
     // notfound handler is unimplemented
     if (options.pageUrl && ctx.path === options.pageUrl) {

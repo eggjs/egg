@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
   /**
@@ -11,7 +11,7 @@ exports.security = {
   },
 
   csrf: {
-    type: 'referer',
+    type: "referer",
     refererWhiteList: [],
   },
 };

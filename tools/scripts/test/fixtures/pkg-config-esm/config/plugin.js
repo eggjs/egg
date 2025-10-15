@@ -8,8 +8,8 @@ export default {
    */
   onerror: {
     enable: false,
-    package: 'egg-onerror',
-    path: 'xxxxx',
+    package: "egg-onerror",
+    path: "xxxxx",
   },
 
   /**
@@ -20,8 +20,8 @@ export default {
    */
   session: {
     enable: false,
-    package: 'egg-session',
-    path: 'xxxxx',
+    package: "egg-session",
+    path: "xxxxx",
   },
 
   /**
@@ -32,8 +32,8 @@ export default {
    */
   i18n: {
     enable: false,
-    package: 'egg-i18n',
-    path: 'xxxxx',
+    package: "egg-i18n",
+    path: "xxxxx",
   },
 
   /**
@@ -44,8 +44,8 @@ export default {
    */
   watcher: {
     enable: false,
-    package: 'egg-watcher',
-    path: 'xxxxx',
+    package: "egg-watcher",
+    path: "xxxxx",
   },
 
   /**
@@ -56,8 +56,8 @@ export default {
    */
   multipart: {
     enable: false,
-    package: 'egg-multipart',
-    path: 'xxxxx',
+    package: "egg-multipart",
+    path: "xxxxx",
   },
 
   /**
@@ -68,8 +68,8 @@ export default {
    */
   security: {
     enable: false,
-    package: 'egg-security',
-    path: 'xxxxx',
+    package: "egg-security",
+    path: "xxxxx",
   },
 
   /**
@@ -80,8 +80,8 @@ export default {
    */
   development: {
     enable: false,
-    package: 'egg-development',
-    path: 'xxxxx',
+    package: "egg-development",
+    path: "xxxxx",
   },
 
   /**
@@ -92,8 +92,8 @@ export default {
    */
   logrotator: {
     enable: false,
-    package: 'egg-logrotator',
-    path: 'xxxxx',
+    package: "egg-logrotator",
+    path: "xxxxx",
   },
 
   /**
@@ -104,8 +104,8 @@ export default {
    */
   schedule: {
     enable: false,
-    package: 'egg-schedule',
-    path: 'xxxxx',
+    package: "egg-schedule",
+    path: "xxxxx",
   },
 
   /**
@@ -116,8 +116,8 @@ export default {
    */
   static: {
     enable: false,
-    package: 'egg-static',
-    path: 'xxxxx',
+    package: "egg-static",
+    path: "xxxxx",
   },
 
   /**
@@ -128,8 +128,8 @@ export default {
    */
   jsonp: {
     enable: false,
-    package: 'egg-jsonp',
-    path: 'xxxxx',
+    package: "egg-jsonp",
+    path: "xxxxx",
   },
 
   /**
@@ -140,7 +140,7 @@ export default {
    */
   view: {
     enable: false,
-    package: 'egg-view',
-    path: 'xxxxx',
+    package: "egg-view",
+    path: "xxxxx",
   },
 };

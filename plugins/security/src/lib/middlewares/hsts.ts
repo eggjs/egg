@@ -1,10 +1,10 @@
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../config/config.default.ts';
+import { checkIfIgnore } from "../utils.ts";
+import type { SecurityConfig } from "../../config/config.default.ts";
 
 // Set Strict-Transport-Security header
-export default (options: SecurityConfig['hsts']): MiddlewareFunc => {
+export default (options: SecurityConfig["hsts"]): MiddlewareFunc => {
   return async function hsts(ctx, next) {
     await next();
 
@@ -20,6 +20,6 @@ export default (options: SecurityConfig['hsts']): MiddlewareFunc => {
     if (opts.includeSubdomains) {
       val = `${val}; includeSubdomains`;
     }
-    ctx.set('strict-transport-security', val);
+    ctx.set("strict-transport-security", val);
   };
 };

@@ -1,3 +1,3 @@
 module.exports = async function () {
-  this.body = 'hello home';
+  this.body = "hello home";
 };

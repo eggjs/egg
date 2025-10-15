@@ -6,7 +6,7 @@ module.exports = function (app) {
 
     async get(uid) {
       return {
-        userId: '123mock',
+        userId: "123mock",
       };
     }
   }

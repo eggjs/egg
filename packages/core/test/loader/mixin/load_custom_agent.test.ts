@@ -1,21 +1,21 @@
-import { strict as assert } from 'node:assert';
-import { describe, it, beforeAll, afterAll } from 'vitest';
-import { createApp } from '../../helper.js';
+import { strict as assert } from "node:assert";
+import { describe, it, beforeAll, afterAll } from "vitest";
+import { createApp } from "../../helper.js";
 
-describe('test/loader/mixin/load_custom_agent.test.ts', () => {
+describe("test/loader/mixin/load_custom_agent.test.ts", () => {
   let agent: any;
   beforeAll(async () => {
-    agent = createApp('plugin');
+    agent = createApp("plugin");
     await agent.loader.loadPlugin();
     await agent.loader.loadConfig();
     await agent.loader.loadCustomAgent();
   });
   afterAll(() => agent.close());
 
-  it('should load agent.js', () => {
-    assert(agent.b === 'plugin b');
-    assert(agent.c === 'plugin c');
-    assert(agent.agent === 'agent');
+  it("should load agent.js", () => {
+    assert(agent.b === "plugin b");
+    assert(agent.c === "plugin c");
+    assert(agent.agent === "agent");
   });
 
   it("should agent.js of plugin before application's", () => {
@@ -23,7 +23,7 @@ describe('test/loader/mixin/load_custom_agent.test.ts', () => {
     assert(agent.dateC <= agent.date);
   });
 
-  it('should not load plugin that is disabled', () => {
+  it("should not load plugin that is disabled", () => {
     assert(!agent.a);
   });
 });

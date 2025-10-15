@@ -1,9 +1,9 @@
-import assert from 'node:assert';
+import assert from "node:assert";
 
-import type { ILifecycleBoot } from '@eggjs/core';
-import type { EggLogger } from 'egg-logger';
+import type { ILifecycleBoot } from "@eggjs/core";
+import type { EggLogger } from "egg-logger";
 
-import type { Application, Agent, EggAppConfig } from '../../index.ts';
+import type { Application, Agent, EggAppConfig } from "../../index.ts";
 
 export class BaseHookClass implements ILifecycleBoot {
   declare fullPath?: string;
@@ -22,12 +22,18 @@ export class BaseHookClass implements ILifecycleBoot {
   }
 
   get app(): Application {
-    assert(this.#instance.type === 'application', 'agent boot should not use app instance');
+    assert(
+      this.#instance.type === "application",
+      "agent boot should not use app instance",
+    );
     return this.#instance as Application;
   }
 
   get agent(): Agent {
-    assert(this.#instance.type === 'agent', 'app boot should not use agent instance');
+    assert(
+      this.#instance.type === "agent",
+      "app boot should not use agent instance",
+    );
     return this.#instance as Agent;
   }
 }

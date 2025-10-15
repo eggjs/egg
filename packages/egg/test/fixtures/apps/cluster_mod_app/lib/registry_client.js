@@ -1,5 +1,5 @@
-const { parse } = require('node:url');
-const { Base } = require('sdk-base');
+const { parse } = require("node:url");
+const { Base } = require("sdk-base");
 
 class RegistryClient extends Base {
   constructor() {
@@ -45,7 +45,7 @@ class RegistryClient extends Base {
     }
     this.emit(
       key,
-      this._registered.get(key).map(url => parse(url, true))
+      this._registered.get(key).map((url) => parse(url, true)),
     );
   }
 

@@ -1,6 +1,6 @@
-import { Request, type RequestOptions } from './request.ts';
-import { TestAgent, proxyAgent } from './agent.ts';
-import type { App, AgentOptions } from './types.ts';
+import { Request, type RequestOptions } from "./request.ts";
+import { TestAgent, proxyAgent } from "./agent.ts";
+import type { App, AgentOptions } from "./types.ts";
 
 /**
  * Test against the given `app`,
@@ -19,7 +19,7 @@ export {
   proxyAgent as agent,
 };
 
-export * from './test.ts';
+export * from "./test.ts";
 
 // import request from '@eggjs/supertest';
 // request()
@@ -30,7 +30,7 @@ export default new Proxy(request, {
   get(target, property, receiver) {
     // import request from '@eggjs/supertest';
     // request.agent()
-    if (property === 'agent') {
+    if (property === "agent") {
       return proxyAgent;
     }
     return Reflect.get(target, property, receiver);

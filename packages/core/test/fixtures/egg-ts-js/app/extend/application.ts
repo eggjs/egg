@@ -1,3 +1,3 @@
 module.exports = {
-  appExtend: 'hello',
+  appExtend: "hello",
 };

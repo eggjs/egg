@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  fileExtensions: ['.foo', '.BAR', 'abc', ''],
+  fileExtensions: [".foo", ".BAR", "abc", ""],
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

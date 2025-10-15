@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  name: 'context',
+  name: "context",
 };

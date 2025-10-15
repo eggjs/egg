@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   class View {
     async render(name, locals, options) {
       return {
@@ -12,5 +12,5 @@ module.exports = app => {
       return name;
     }
   }
-  app.view.use('html', View);
+  app.view.use("html", View);
 };

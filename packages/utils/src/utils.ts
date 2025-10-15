@@ -1,16 +1,16 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 
 export function readJSONSync(file: string): any {
   if (!existsSync(file)) {
     throw new Error(`${file} is not found`);
   }
-  return JSON.parse(readFileSync(file, 'utf-8'));
+  return JSON.parse(readFileSync(file, "utf-8"));
 }
 
 export function getDirname(): string {
-  if (typeof __dirname !== 'undefined') {
+  if (typeof __dirname !== "undefined") {
     return __dirname;
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -1,10 +1,10 @@
-const { describe, it } = require('vitest');
-const { setGetAppCallback } = require('../../../..');
+const { describe, it } = require("vitest");
+const { setGetAppCallback } = require("../../../..");
 
 setGetAppCallback(() => {
-  throw new Error('mock get app failed');
+  throw new Error("mock get app failed");
 });
 
-describe('test case create context error', () => {
-  it('should not print', () => {});
+describe("test case create context error", () => {
+  it("should not print", () => {});
 });

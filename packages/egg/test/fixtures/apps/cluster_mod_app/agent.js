@@ -1,6 +1,6 @@
-const ApiClient = require('./lib/api_client');
-const ApiClient2 = require('./lib/api_client_2');
-const RegistryClient = require('./lib/registry_client');
+const ApiClient = require("./lib/api_client");
+const ApiClient2 = require("./lib/api_client_2");
+const RegistryClient = require("./lib/registry_client");
 
 module.exports = class Boot {
   constructor(agent) {

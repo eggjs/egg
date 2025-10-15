@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const utils = require('../../../utils');
+const utils = require("../../../utils");
 
-require('../../../../index').startCluster({
+require("../../../../index").startCluster({
   baseDir: __dirname,
   workers: 1,
 });

@@ -1,7 +1,11 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { EggLoader, EggCore, type EggCoreInitOptions } from '../../../src/index.ts';
+import {
+  EggLoader,
+  EggCore,
+  type EggCoreInitOptions,
+} from "../../../src/index.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,7 +31,7 @@ export class Application extends EggCore {
 
   constructor(options: EggCoreInitOptions = {}) {
     super(options);
-    this.on('error', (err: any) => {
+    this.on("error", (err: any) => {
       console.error(err);
     });
   }
@@ -41,4 +45,4 @@ export class Application extends EggCore {
   }
 }
 
-export { type EggCoreInitOptions } from '../../../src/index.ts';
+export { type EggCoreInitOptions } from "../../../src/index.ts";

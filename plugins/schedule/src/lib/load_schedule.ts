@@ -1,13 +1,13 @@
-import path from 'node:path';
-import assert from 'node:assert';
-import { stringify } from 'node:querystring';
+import path from "node:path";
+import assert from "node:assert";
+import { stringify } from "node:querystring";
 
-import { isClass, isFunction, isGeneratorFunction } from 'is-type-of';
-import { importResolve } from '@eggjs/utils';
-import type { EggApplicationCore, Context } from 'egg';
+import { isClass, isFunction, isGeneratorFunction } from "is-type-of";
+import { importResolve } from "@eggjs/utils";
+import type { EggApplicationCore, Context } from "egg";
 
-import type { EggScheduleTask, EggScheduleItem } from './types.ts';
-import type { EggScheduleConfig } from '../config/config.default.ts';
+import type { EggScheduleTask, EggScheduleItem } from "./types.ts";
+import type { EggScheduleConfig } from "../config/config.default.ts";
 
 function getScheduleLoader(app: EggApplicationCore) {
   return class ScheduleLoader extends app.loader.FileLoader {
@@ -15,20 +15,26 @@ function getScheduleLoader(app: EggApplicationCore) {
       const target = this.options.target as Record<string, EggScheduleItem>;
       const items = await this.parse();
       for (const item of items) {
-        const schedule = item.exports as { schedule: EggScheduleConfig; task: EggScheduleTask };
+        const schedule = item.exports as {
+          schedule: EggScheduleConfig;
+          task: EggScheduleTask;
+        };
         const fullpath = item.fullpath;
         const scheduleConfig = schedule.schedule;
-        assert(scheduleConfig, `schedule(${fullpath}): must have "schedule" and "task" properties`);
+        assert(
+          scheduleConfig,
+          `schedule(${fullpath}): must have "schedule" and "task" properties`,
+        );
         assert(
           isClass(schedule) || isFunction(schedule.task),
-          `schedule(${fullpath}: \`schedule.task\` should be function or \`schedule\` should be class`
+          `schedule(${fullpath}: \`schedule.task\` should be function or \`schedule\` should be class`,
         );
 
         let task: EggScheduleTask;
         if (isClass(schedule)) {
           assert(
             !isGeneratorFunction(schedule.prototype.subscribe),
-            `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`
+            `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`,
           );
           task = async (ctx: Context, ...args: any[]) => {
             const instance = new schedule(ctx);
@@ -38,7 +44,7 @@ function getScheduleLoader(app: EggApplicationCore) {
         } else {
           assert(
             !isGeneratorFunction(schedule.task),
-            `schedule(${fullpath}): "task" generator function is not support, should use async function instead`
+            `schedule(${fullpath}): "task" generator function is not support, should use async function instead`,
           );
           task = schedule.task;
           // task = app.toAsyncFunction(schedule.task);
@@ -47,7 +53,9 @@ function getScheduleLoader(app: EggApplicationCore) {
         const env = app.config.env;
         const envList = schedule.schedule.env;
         if (Array.isArray(envList) && !envList.includes(env)) {
-          app.coreLogger.info(`[@eggjs/schedule]: ignore schedule ${fullpath} due to \`schedule.env\` not match`);
+          app.coreLogger.info(
+            `[@eggjs/schedule]: ignore schedule ${fullpath} due to \`schedule.env\` not match`,
+          );
           continue;
         }
 
@@ -66,9 +74,13 @@ function getScheduleLoader(app: EggApplicationCore) {
   };
 }
 
-export async function loadSchedule(app: EggApplicationCore): Promise<Record<string, EggScheduleItem>> {
+export async function loadSchedule(
+  app: EggApplicationCore,
+): Promise<Record<string, EggScheduleItem>> {
   const dirs = [
-    ...app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/schedule')),
+    ...app.loader
+      .getLoadUnits()
+      .map((unit) => path.join(unit.path, "app/schedule")),
     ...(app.config.schedule.directory ?? []),
   ];
 
@@ -79,6 +91,6 @@ export async function loadSchedule(app: EggApplicationCore): Promise<Record<stri
     target: schedules,
     inject: app,
   }).load();
-  Reflect.set(app, 'schedules', schedules);
+  Reflect.set(app, "schedules", schedules);
   return schedules;
 }

@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = function (agent) {
-  agent.loggers.monitorLogger.info('hello monitor!');
+  agent.loggers.monitorLogger.info("hello monitor!");
 };

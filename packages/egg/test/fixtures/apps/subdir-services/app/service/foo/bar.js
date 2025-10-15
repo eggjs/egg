@@ -7,7 +7,7 @@ module.exports = function (app) {
     async get(name) {
       return {
         name: name,
-        bar: 'bar1',
+        bar: "bar1",
       };
     }
   }

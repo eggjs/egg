@@ -1,16 +1,16 @@
 // modify from https://github.com/poppinss/youch/blob/develop/src/Youch/index.js
 
-import fs from 'node:fs';
-import path from 'node:path';
-import util from 'node:util';
+import fs from "node:fs";
+import path from "node:path";
+import util from "node:util";
 
-import { parse } from 'cookie';
-import Mustache from 'mustache';
-import stackTrace, { type StackFrame } from 'stack-trace';
-import type { OnerrorError } from 'koa-onerror';
+import { parse } from "cookie";
+import Mustache from "mustache";
+import stackTrace, { type StackFrame } from "stack-trace";
+import type { OnerrorError } from "koa-onerror";
 
-import { detectErrorMessage } from './utils.ts';
-import type { Context } from 'egg';
+import { detectErrorMessage } from "./utils.ts";
+import type { Context } from "egg";
 
 const startingSlashRegex = /\\|\//;
 
@@ -27,13 +27,13 @@ export interface Frame extends StackFrame {
 export class ErrorView {
   ctx: Context;
   error: OnerrorError;
-  request: Context['request'];
-  app: Context['app'];
+  request: Context["request"];
+  app: Context["app"];
   assets: Map<string, string>;
   viewTemplate: string;
 
   codeContext = 5;
-  _filterHeaders: string[] = ['cookie', 'connection'];
+  _filterHeaders: string[] = ["cookie", "connection"];
 
   constructor(ctx: Context, error: OnerrorError, template: string) {
     this.ctx = ctx;
@@ -83,8 +83,8 @@ export class ErrorView {
     if (frame.isNative()) {
       return true;
     }
-    const filename = frame.getFileName() || '';
-    return !path.isAbsolute(filename) && filename[0] !== '.';
+    const filename = frame.getFileName() || "";
+    return !path.isAbsolute(filename) && filename[0] !== ".";
   }
 
   /**
@@ -96,8 +96,8 @@ export class ErrorView {
     if (this.isNode(frame)) {
       return false;
     }
-    const filename = frame.getFileName() || '';
-    return !filename.includes('node_modules' + path.sep);
+    const filename = frame.getFileName() || "";
+    return !filename.includes("node_modules" + path.sep);
   }
 
   /**
@@ -129,13 +129,18 @@ export class ErrorView {
     const lineNumber = frame.getLineNumber();
     let contents = this.getAssets(filename);
     if (!contents) {
-      contents = fs.existsSync(filename) ? fs.readFileSync(filename, 'utf8') : '';
+      contents = fs.existsSync(filename)
+        ? fs.readFileSync(filename, "utf8")
+        : "";
       this.setAssets(filename, contents);
     }
     const lines = contents.split(/\r?\n/);
 
     return {
-      pre: lines.slice(Math.max(0, lineNumber - (this.codeContext + 1)), lineNumber - 1),
+      pre: lines.slice(
+        Math.max(0, lineNumber - (this.codeContext + 1)),
+        lineNumber - 1,
+      ),
       line: lines[lineNumber - 1],
       post: lines.slice(lineNumber, lineNumber + this.codeContext),
     };
@@ -159,16 +164,21 @@ export class ErrorView {
    *
    * @param {Object} frame - current frame
    */
-  getContext(frame: Frame): { start?: number; pre?: string; line?: string; post?: string } {
+  getContext(frame: Frame): {
+    start?: number;
+    pre?: string;
+    line?: string;
+    post?: string;
+  } {
     if (!frame.context) {
       return {};
     }
 
     return {
       start: frame.getLineNumber() - (frame.context.pre || []).length,
-      pre: frame.context.pre.join('\n'),
+      pre: frame.context.pre.join("\n"),
       line: frame.context.line,
-      post: frame.context.post.join('\n'),
+      post: frame.context.post.join("\n"),
     };
   }
 
@@ -181,14 +191,14 @@ export class ErrorView {
   getFrameClasses(frame: Frame, index: number): string {
     const classes: string[] = [];
     if (index === 0) {
-      classes.push('active');
+      classes.push("active");
     }
 
     if (!this.isApp(frame)) {
-      classes.push('native-frame');
+      classes.push("native-frame");
     }
 
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
   /**
@@ -207,9 +217,9 @@ export class ErrorView {
   } {
     const filename = frame.getFileName();
     const relativeFileName = filename.includes(process.cwd())
-      ? filename.replace(process.cwd(), '').replace(startingSlashRegex, '')
+      ? filename.replace(process.cwd(), "").replace(startingSlashRegex, "")
       : filename;
-    const extname = path.extname(filename).replace('.', '');
+    const extname = path.extname(filename).replace(".", "");
 
     return {
       extname,
@@ -218,7 +228,7 @@ export class ErrorView {
       line: frame.getLineNumber(),
       column: frame.getColumnNumber(),
       context: this.getContext(frame),
-      classes: '',
+      classes: "",
     };
   }
 
@@ -230,7 +240,7 @@ export class ErrorView {
    */
   serializeData(
     stack: Frame[],
-    frameFormatter: (frame: Frame, index: number) => any
+    frameFormatter: (frame: Frame, index: number) => any,
   ): {
     code: any;
     message: string;
@@ -238,7 +248,8 @@ export class ErrorView {
     status: number | undefined;
     frames: any[];
   } {
-    const code = Reflect.get(this.error, 'code') ?? Reflect.get(this.error, 'type');
+    const code =
+      Reflect.get(this.error, "code") ?? Reflect.get(this.error, "type");
     let message = detectErrorMessage(this.ctx, this.error);
     if (code) {
       message = `${message} (code: ${code})`;
@@ -248,7 +259,10 @@ export class ErrorView {
       message,
       name: this.error.name,
       status: this.error.status,
-      frames: stack instanceof Array ? stack.filter(frame => frame.getFileName()).map(frameFormatter) : [],
+      frames:
+        stack instanceof Array
+          ? stack.filter((frame) => frame.getFileName()).map(frameFormatter)
+          : [],
     };
   }
 
@@ -265,7 +279,7 @@ export class ErrorView {
   } {
     const headers: { key: string; value: string | string[] | undefined }[] = [];
 
-    Object.keys(this.request.headers).forEach(key => {
+    Object.keys(this.request.headers).forEach((key) => {
       if (this._filterHeaders.includes(key)) {
         return;
       }
@@ -275,8 +289,8 @@ export class ErrorView {
       });
     });
 
-    const parsedCookies = parse(this.request.headers.cookie || '');
-    const cookies = Object.keys(parsedCookies).map(key => {
+    const parsedCookies = parse(this.request.headers.cookie || "");
+    const cookies = Object.keys(parsedCookies).map((key) => {
       return { key, value: parsedCookies[key] };
     });
 
@@ -298,7 +312,10 @@ export class ErrorView {
     config: string;
   } {
     let config = this.app.config;
-    if ('dumpConfigToObject' in this.app && typeof this.app.dumpConfigToObject === 'function') {
+    if (
+      "dumpConfigToObject" in this.app &&
+      typeof this.app.dumpConfigToObject === "function"
+    ) {
       config = this.app.dumpConfigToObject().config.config;
     }
     return {

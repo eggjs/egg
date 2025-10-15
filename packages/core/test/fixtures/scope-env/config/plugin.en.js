@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
 module.exports = {
   a: {
     enable: false,
-    package: 'a',
+    package: "a",
   },
   b: {
     enable: true,
-    package: 'b',
+    package: "b",
   },
 };

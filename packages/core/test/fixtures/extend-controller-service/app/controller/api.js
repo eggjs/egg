@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   return class ApiController extends app.Controller {
     async successAction() {
       const res = await this.service.api.get();
@@ -6,7 +6,7 @@ module.exports = app => {
     }
 
     async failAction() {
-      this.fail('something wrong');
+      this.fail("something wrong");
     }
   };
 };

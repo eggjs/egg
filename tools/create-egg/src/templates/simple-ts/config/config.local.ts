@@ -1,4 +1,4 @@
-import type { PartialEggConfig } from 'egg';
+import type { PartialEggConfig } from "egg";
 
 export default {
   // add your config here

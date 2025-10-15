@@ -1,11 +1,11 @@
-import assert from 'node:assert';
+import assert from "node:assert";
 
-import { base64decode, base64encode } from 'utility';
-import { isSameSiteNoneCompatible } from 'should-send-same-site-none';
+import { base64decode, base64encode } from "utility";
+import { isSameSiteNoneCompatible } from "should-send-same-site-none";
 
-import { Keygrip } from './keygrip.ts';
-import { Cookie, type CookieSetOptions } from './cookie.ts';
-import { CookieError } from './error.ts';
+import { Keygrip } from "./keygrip.ts";
+import { Cookie, type CookieSetOptions } from "./cookie.ts";
+import { CookieError } from "./error.ts";
 
 const keyCache = new Map<string[], Keygrip>();
 
@@ -41,7 +41,11 @@ export class Cookies {
   readonly secure: boolean;
   #parseChromiumResult?: ParseChromiumResult;
 
-  constructor(ctx: Record<string, any>, keys: string[], defaultCookieOptions?: DefaultCookieOptions) {
+  constructor(
+    ctx: Record<string, any>,
+    keys: string[],
+    defaultCookieOptions?: DefaultCookieOptions,
+  ) {
     this.#keysArray = keys;
     // default cookie options
     this.#defaultCookieOptions = defaultCookieOptions;
@@ -53,7 +57,10 @@ export class Cookies {
 
   get keys(): Keygrip {
     if (!this.#keys) {
-      assert(Array.isArray(this.#keysArray), '.keys required for encrypt/sign cookies');
+      assert(
+        Array.isArray(this.#keysArray),
+        ".keys required for encrypt/sign cookies",
+      );
       const cache = keyCache.get(this.#keysArray);
       if (cache) {
         this.#keys = cache;
@@ -84,7 +91,7 @@ export class Cookies {
 
   _get(name: string, opts: CookieGetOptions): string | undefined {
     const signed = computeSigned(opts);
-    const header: string = this.ctx.get('cookie');
+    const header: string = this.ctx.get("cookie");
     if (!header) return;
 
     const match = header.match(getPattern(name));
@@ -95,26 +102,29 @@ export class Cookies {
 
     // signed
     if (signed) {
-      const sigName = name + '.sig';
+      const sigName = name + ".sig";
       const sigValue = this.get(sigName, { signed: false });
       if (!sigValue) return;
 
-      const raw = name + '=' + value;
+      const raw = name + "=" + value;
       const index = this.keys.verify(raw, sigValue);
       if (index < 0) {
         // can not match any key, remove ${name}.sig
-        this.set(sigName, null, { path: '/', signed: false, overwrite: true });
+        this.set(sigName, null, { path: "/", signed: false, overwrite: true });
         return;
       }
       if (index > 0) {
         // not signed by the first key, update sigValue
-        this.set(sigName, this.keys.sign(raw), { signed: false, overwrite: true });
+        this.set(sigName, this.keys.sign(raw), {
+          signed: false,
+          overwrite: true,
+        });
       }
       return value;
     }
 
     // encrypt
-    value = base64decode(value, true, 'buffer') as string;
+    value = base64decode(value, true, "buffer") as string;
     const res = this.keys.decrypt(value);
     return res ? res.value.toString() : undefined;
   }
@@ -126,14 +136,16 @@ export class Cookies {
     };
     const signed = computeSigned(opts);
     const shouldIgnoreSecureError = opts && opts.ignoreSecureError;
-    value = value || '';
+    value = value || "";
     if (!shouldIgnoreSecureError) {
       if (!this.secure && opts.secure) {
-        throw new CookieError('Cannot send secure cookie over unencrypted connection');
+        throw new CookieError(
+          "Cannot send secure cookie over unencrypted connection",
+        );
       }
     }
 
-    let headers: string[] = this.ctx.response.get('set-cookie') || [];
+    let headers: string[] = this.ctx.response.get("set-cookie") || [];
     if (!Array.isArray(headers)) {
       headers = [headers];
     }
@@ -145,18 +157,26 @@ export class Cookies {
 
     // http://browsercookielimits.squawky.net/
     if (value.length > 4093) {
-      this.app.emit('cookieLimitExceed', { name, value, ctx: this.ctx });
+      this.app.emit("cookieLimitExceed", { name, value, ctx: this.ctx });
     }
 
     // https://github.com/linsight/should-send-same-site-none
     // fixed SameSite=None: Known Incompatible Clients
-    const userAgent: string | undefined = this.ctx.get('user-agent');
+    const userAgent: string | undefined = this.ctx.get("user-agent");
     let isSameSiteNone = false;
     // disable autoChips if partitioned enable
     let autoChips = !opts.partitioned && this.#autoChips;
-    if (opts.sameSite && typeof opts.sameSite === 'string' && opts.sameSite.toLowerCase() === 'none') {
+    if (
+      opts.sameSite &&
+      typeof opts.sameSite === "string" &&
+      opts.sameSite.toLowerCase() === "none"
+    ) {
       isSameSiteNone = true;
-      if (opts.secure === false || !this.secure || (userAgent && !this.isSameSiteNoneCompatible(userAgent))) {
+      if (
+        opts.secure === false ||
+        !this.secure ||
+        (userAgent && !this.isSameSiteNoneCompatible(userAgent))
+      ) {
         // Non-secure context or Incompatible clients, don't send SameSite=None property
         opts.sameSite = false;
         isSameSiteNone = false;
@@ -187,7 +207,7 @@ export class Cookies {
         ...opts,
         partitioned: false,
       };
-      const removeUnpartitionedCookie = new Cookie(name, '', removeCookieOpts);
+      const removeUnpartitionedCookie = new Cookie(name, "", removeCookieOpts);
       // if user not set secure, reset secure to ctx.secure
       if (opts.secure === undefined) {
         removeUnpartitionedCookie.attrs.secure = this.secure;
@@ -196,11 +216,11 @@ export class Cookies {
       headers = pushCookie(headers, removeUnpartitionedCookie);
       // signed
       if (signed) {
-        removeUnpartitionedCookie.name += '.sig';
+        removeUnpartitionedCookie.name += ".sig";
         headers = ignoreCookiesByNameAndPath(
           headers,
           removeUnpartitionedCookie.name,
-          removeUnpartitionedCookie.attrs.path
+          removeUnpartitionedCookie.attrs.path,
         );
         headers = pushCookie(headers, removeUnpartitionedCookie);
       }
@@ -211,16 +231,26 @@ export class Cookies {
         ...opts,
         partitioned: true,
       };
-      const newPartitionedCookie = new Cookie(newCookieName, value, newCookieOpts);
+      const newPartitionedCookie = new Cookie(
+        newCookieName,
+        value,
+        newCookieOpts,
+      );
       // if user not set secure, reset secure to ctx.secure
-      if (opts.secure === undefined) newPartitionedCookie.attrs.secure = this.secure;
+      if (opts.secure === undefined)
+        newPartitionedCookie.attrs.secure = this.secure;
 
       headers = pushCookie(headers, newPartitionedCookie);
       // signed
       if (signed) {
-        newPartitionedCookie.value = value && this.keys.sign(newPartitionedCookie.toString());
-        newPartitionedCookie.name += '.sig';
-        headers = ignoreCookiesByNameAndPath(headers, newPartitionedCookie.name, newPartitionedCookie.attrs.path);
+        newPartitionedCookie.value =
+          value && this.keys.sign(newPartitionedCookie.toString());
+        newPartitionedCookie.name += ".sig";
+        headers = ignoreCookiesByNameAndPath(
+          headers,
+          newPartitionedCookie.name,
+          newPartitionedCookie.attrs.path,
+        );
         headers = pushCookie(headers, newPartitionedCookie);
       }
     }
@@ -235,11 +265,11 @@ export class Cookies {
     // signed
     if (signed) {
       cookie.value = value && this.keys.sign(cookie.toString());
-      cookie.name += '.sig';
+      cookie.name += ".sig";
       headers = pushCookie(headers, cookie);
     }
 
-    this.ctx.set('set-cookie', headers);
+    this.ctx.set("set-cookie", headers);
     return this;
   }
 
@@ -296,7 +326,9 @@ function getPattern(name: string) {
   if (cache) {
     return cache;
   }
-  const reg = new RegExp('(?:^|;) *' + name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&') + '=([^;]*)');
+  const reg = new RegExp(
+    "(?:^|;) *" + name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + "=([^;]*)",
+  );
   _patternCache.set(name, reg);
   return reg;
 }
@@ -318,10 +350,14 @@ function pushCookie(cookies: string[], cookie: Cookie) {
 
 function ignoreCookiesByName(cookies: string[], name: string) {
   const prefix = `${name}=`;
-  return cookies.filter(c => !c.startsWith(prefix));
+  return cookies.filter((c) => !c.startsWith(prefix));
 }
 
-function ignoreCookiesByNameAndPath(cookies: string[], name: string, path: string | null | undefined) {
+function ignoreCookiesByNameAndPath(
+  cookies: string[],
+  name: string,
+  path: string | null | undefined,
+) {
   if (!path) {
     return ignoreCookiesByName(cookies, name);
   }
@@ -330,7 +366,7 @@ function ignoreCookiesByNameAndPath(cookies: string[], name: string, path: strin
   const includedPath = `; path=${path};`;
   // foo=hello; path=/path1
   const endsWithPath = `; path=${path}`;
-  return cookies.filter(c => {
+  return cookies.filter((c) => {
     if (c.startsWith(prefix)) {
       if (c.includes(includedPath) || c.endsWith(endsWithPath)) {
         return false;

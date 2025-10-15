@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-throw 'should not load';
+throw "should not load";

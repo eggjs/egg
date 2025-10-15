@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-process.on('message', function (msg) {
-  if (msg.action === 'kill-agent') process.exit(1);
+process.on("message", function (msg) {
+  if (msg.action === "kill-agent") process.exit(1);
 });

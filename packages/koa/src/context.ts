@@ -1,16 +1,16 @@
-import util from 'node:util';
-import type { IncomingMessage, ServerResponse } from 'node:http';
-import type { ParsedUrlQuery } from 'node:querystring';
+import util from "node:util";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import type { ParsedUrlQuery } from "node:querystring";
 
-import createError from 'http-errors';
-import statuses from 'statuses';
-import Cookies from 'cookies';
-import type { Accepts } from 'accepts';
+import createError from "http-errors";
+import statuses from "statuses";
+import Cookies from "cookies";
+import type { Accepts } from "accepts";
 
-import type { Application } from './application.ts';
-import type { Request, RequestSocket } from './request.ts';
-import type { Response } from './response.ts';
-import type { CustomError, AnyProto } from './types.ts';
+import type { Application } from "./application.ts";
+import type { Request, RequestSocket } from "./request.ts";
+import type { Response } from "./response.ts";
+import type { CustomError, AnyProto } from "./types.ts";
 
 export class Context {
   [key: symbol | string]: unknown;
@@ -32,7 +32,7 @@ export class Context {
     this.response = new app.ResponseClass(app, this, req, res);
     this.request.response = this.response;
     this.response.request = this.request;
-    this.originalUrl = req.url ?? '/';
+    this.originalUrl = req.url ?? "/";
     // Set up custom inspect
     this[util.inspect.custom] = this.inspect.bind(this);
   }
@@ -60,9 +60,9 @@ export class Context {
       response: this.response.toJSON(),
       app: this.app.toJSON(),
       originalUrl: this.originalUrl,
-      req: '<original node req>',
-      res: '<original node res>',
-      socket: '<original node socket>',
+      req: "<original node req>",
+      res: "<original node res>",
+      socket: "<original node socket>",
     };
   }
 
@@ -73,19 +73,28 @@ export class Context {
    * this.assert(this.user, 401, 'Please login!');
    * ```
    */
-  assert(value: unknown, status?: number, errorProps?: Record<string, unknown>): void;
-  assert(value: unknown, status?: number, errorMessage?: string, errorProps?: Record<string, unknown>): void;
+  assert(
+    value: unknown,
+    status?: number,
+    errorProps?: Record<string, unknown>,
+  ): void;
+  assert(
+    value: unknown,
+    status?: number,
+    errorMessage?: string,
+    errorProps?: Record<string, unknown>,
+  ): void;
   assert(
     value: unknown,
     status?: number,
     errorMessageOrProps?: string | Record<string, unknown>,
-    errorProps?: Record<string, unknown>
+    errorProps?: Record<string, unknown>,
   ) {
     if (value) {
       return;
     }
     status = status ?? 500;
-    if (typeof errorMessageOrProps === 'string') {
+    if (typeof errorMessageOrProps === "string") {
       // assert(value, status, errorMessage, errorProps?)
       throw createError(status, errorMessageOrProps, errorProps ?? {});
     }
@@ -129,10 +138,14 @@ export class Context {
   throw(error: Error, errorProps: object): void;
   throw(error: Error, status: number): void;
   throw(error: Error, status: number, errorProps: object): void;
-  throw(arg1: number | string | Error, arg2?: number | string | Error | object, errorProps?: object) {
+  throw(
+    arg1: number | string | Error,
+    arg2?: number | string | Error | object,
+    errorProps?: object,
+  ) {
     // oxlint-disable-next-line typescript/no-explicit-any
     const args: any[] = [];
-    if (typeof arg2 === 'number') {
+    if (typeof arg2 === "number") {
       // throw(error, status)
       args.push(arg2);
       args.push(arg1);
@@ -162,9 +175,11 @@ export class Context {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
-    const isNativeError = err instanceof Error || Object.prototype.toString.call(err) === '[object Error]';
+    const isNativeError =
+      err instanceof Error ||
+      Object.prototype.toString.call(err) === "[object Error]";
     if (!isNativeError) {
-      err = new Error(util.format('non-error thrown: %j', err));
+      err = new Error(util.format("non-error thrown: %j", err));
     }
 
     let headerSent = false;
@@ -174,7 +189,7 @@ export class Context {
     }
 
     // delegate
-    this.app.emit('error', err, this);
+    this.app.emit("error", err, this);
 
     // nothing we can do here other
     // than delegate to the app-level
@@ -196,17 +211,17 @@ export class Context {
     }
 
     // force text/plain
-    this.response.type = 'text';
+    this.response.type = "text";
 
     let statusCode = err.status || err.statusCode;
 
     // ENOENT support
-    if (err.code === 'ENOENT') {
+    if (err.code === "ENOENT") {
       statusCode = 404;
     }
 
     // default to 500
-    if (typeof statusCode !== 'number' || !statuses.message[statusCode]) {
+    if (typeof statusCode !== "number" || !statuses.message[statusCode]) {
       statusCode = 500;
     }
 
@@ -247,27 +262,39 @@ export class Context {
   acceptsLanguages(): string[];
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
-  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
+  acceptsLanguages(
+    languages?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     return this.request.acceptsLanguages(languages as string, ...others);
   }
 
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
-  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsEncodings(
+    encodings?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     return this.request.acceptsEncodings(encodings as string, ...others);
   }
 
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
-  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsCharsets(
+    charsets?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     return this.request.acceptsCharsets(charsets as string, ...others);
   }
 
   accepts(args: string[]): string | string[] | false;
   accepts(...args: string[]): string | string[] | false;
-  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
+  accepts(
+    args?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     return this.request.accepts(args as string, ...others);
   }
 
@@ -371,11 +398,11 @@ export class Context {
     return this.request.URL;
   }
 
-  get header(): IncomingMessage['headers'] {
+  get header(): IncomingMessage["headers"] {
     return this.request.header;
   }
 
-  get headers(): IncomingMessage['headers'] {
+  get headers(): IncomingMessage["headers"] {
     return this.request.headers;
   }
 
@@ -403,35 +430,35 @@ export class Context {
    * Response delegation.
    */
 
-  attachment(...args: Parameters<Response['attachment']>): void {
+  attachment(...args: Parameters<Response["attachment"]>): void {
     return this.response.attachment(...args);
   }
 
-  redirect(...args: Parameters<Response['redirect']>): void {
+  redirect(...args: Parameters<Response["redirect"]>): void {
     return this.response.redirect(...args);
   }
 
-  remove(...args: Parameters<Response['remove']>): void {
+  remove(...args: Parameters<Response["remove"]>): void {
     return this.response.remove(...args);
   }
 
-  vary(...args: Parameters<Response['vary']>): void {
+  vary(...args: Parameters<Response["vary"]>): void {
     return this.response.vary(...args);
   }
 
-  has(...args: Parameters<Response['has']>): boolean {
+  has(...args: Parameters<Response["has"]>): boolean {
     return this.response.has(...args);
   }
 
-  set(...args: Parameters<Response['set']>): void {
+  set(...args: Parameters<Response["set"]>): void {
     return this.response.set(...args);
   }
 
-  append(...args: Parameters<Response['append']>): void {
+  append(...args: Parameters<Response["append"]>): void {
     return this.response.append(...args);
   }
 
-  flushHeaders(...args: Parameters<Response['flushHeaders']>): void {
+  flushHeaders(...args: Parameters<Response["flushHeaders"]>): void {
     return this.response.flushHeaders(...args);
   }
 

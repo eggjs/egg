@@ -1,3 +1,3 @@
-exports.foobar = 'bar';
+exports.foobar = "bar";
 
-exports.keys = '123';
+exports.keys = "123";

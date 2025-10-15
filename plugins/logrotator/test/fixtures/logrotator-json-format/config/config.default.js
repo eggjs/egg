@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = () => {
   const exports = {
@@ -9,25 +9,25 @@ module.exports = () => {
     },
     logrotator: {
       filesRotateByHour: [
-        path.join(__dirname, '../logs', 'logrotator', 'hour.log'),
-        path.join(__dirname, '../logs', 'logrotator', 'hour.json.log'),
+        path.join(__dirname, "../logs", "logrotator", "hour.log"),
+        path.join(__dirname, "../logs", "logrotator", "hour.json.log"),
       ],
       filesRotateBySize: [
-        path.join(__dirname, '../logs', 'logrotator', 'size.log'),
-        path.join(__dirname, '../logs', 'logrotator', 'size.json.log'),
+        path.join(__dirname, "../logs", "logrotator", "size.log"),
+        path.join(__dirname, "../logs", "logrotator", "size.json.log"),
       ],
       maxFileSize: 1,
       maxFiles: 2,
     },
     customLogger: {
       dayLogger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'day.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "day.log"),
       },
       sizeLogger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'size.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "size.log"),
       },
       hourLogger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'hour.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "hour.log"),
       },
     },
   };

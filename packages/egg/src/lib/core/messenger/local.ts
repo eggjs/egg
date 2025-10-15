@@ -1,10 +1,10 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import type { IMessenger } from './IMessenger.ts';
-import type { EggApplicationCore } from '../../egg.ts';
-import { BaseMessenger } from './base.ts';
+import type { IMessenger } from "./IMessenger.ts";
+import type { EggApplicationCore } from "../../egg.ts";
+import { BaseMessenger } from "./base.ts";
 
-const debug = debuglog('egg/lib/core/messenger/local');
+const debug = debuglog("egg/lib/core/messenger/local");
 
 /**
  * Communication between app worker and agent worker with EventEmitter
@@ -24,8 +24,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   broadcast(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] broadcast %s with %j', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'both');
+    debug(
+      "[%s:%s] broadcast %s with %j",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "both");
     return this;
   }
 
@@ -39,11 +45,18 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendTo(workerId: string, action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %j to %s', this.egg.type, this.pid, action, data, workerId);
+    debug(
+      "[%s:%s] send %s with %j to %s",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+      workerId,
+    );
     if (String(workerId) !== this.pid) {
       return this;
     }
-    this.send(action, data, 'both');
+    this.send(action, data, "both");
     return this;
   }
 
@@ -57,8 +70,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendRandom(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %o to opposite', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'opposite');
+    debug(
+      "[%s:%s] send %s with %o to opposite",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "opposite");
     return this;
   }
 
@@ -69,8 +88,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToApp(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %o to all app', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'application');
+    debug(
+      "[%s:%s] send %s with %o to all app",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "application");
     return this;
   }
 
@@ -81,8 +106,14 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   sendToAgent(action: string, data?: unknown): Messenger {
-    debug('[%s:%s] send %s with %o to all agent', this.egg.type, this.pid, action, data);
-    this.send(action, data, 'agent');
+    debug(
+      "[%s:%s] send %s with %o to all agent",
+      this.egg.type,
+      this.pid,
+      action,
+      data,
+    );
+    this.send(action, data, "agent");
     return this;
   }
 
@@ -93,9 +124,9 @@ export class Messenger extends BaseMessenger implements IMessenger {
    * @return {Messenger} this
    */
   send(action: string, data: unknown, to?: string): Messenger {
-    if (to === 'app') {
+    if (to === "app") {
       // alias app to application
-      to = 'application';
+      to = "application";
     }
     // use nextTick to keep it async as IPC messenger
     process.nextTick(() => {
@@ -104,7 +135,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
       let agent;
       let opposite;
 
-      if (egg.type === 'application') {
+      if (egg.type === "application") {
         application = egg;
         agent = egg.agent;
         opposite = agent;
@@ -114,17 +145,28 @@ export class Messenger extends BaseMessenger implements IMessenger {
         opposite = application;
       }
       if (!to) {
-        to = egg.type === 'application' ? 'agent' : 'application';
+        to = egg.type === "application" ? "agent" : "application";
       }
-      debug('[%s:%s] send action:%s with %o to %s', this.egg.type, this.pid, action, data, to);
+      debug(
+        "[%s:%s] send action:%s with %o to %s",
+        this.egg.type,
+        this.pid,
+        action,
+        data,
+        to,
+      );
 
-      if (application && application.messenger && (to === 'application' || to === 'both')) {
+      if (
+        application &&
+        application.messenger &&
+        (to === "application" || to === "both")
+      ) {
         application.messenger.onMessage({ action, data });
       }
-      if (agent && agent.messenger && (to === 'agent' || to === 'both')) {
+      if (agent && agent.messenger && (to === "agent" || to === "both")) {
         agent.messenger.onMessage({ action, data });
       }
-      if (opposite && opposite.messenger && to === 'opposite') {
+      if (opposite && opposite.messenger && to === "opposite") {
         opposite.messenger.onMessage({ action, data });
       }
     });
@@ -133,11 +175,22 @@ export class Messenger extends BaseMessenger implements IMessenger {
   }
 
   onMessage(message: any): void {
-    if (typeof message?.action === 'string') {
-      debug('[%s:%s] got message %s with %j', this.egg.type, this.pid, message.action, message.data);
+    if (typeof message?.action === "string") {
+      debug(
+        "[%s:%s] got message %s with %j",
+        this.egg.type,
+        this.pid,
+        message.action,
+        message.data,
+      );
       this.emit(message.action, message.data);
     } else {
-      debug('[%s:%s] got an invalid message %j', this.egg.type, this.pid, message);
+      debug(
+        "[%s:%s] got an invalid message %j",
+        this.egg.type,
+        this.pid,
+        message,
+      );
     }
   }
 

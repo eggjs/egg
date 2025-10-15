@@ -1,18 +1,18 @@
-import fs from 'node:fs/promises';
-import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
+import fs from "node:fs/promises";
+import { strict as assert } from "node:assert";
+import { scheduler } from "node:timers/promises";
 
-import { mm, type MockApplication } from '@eggjs/mock';
-import { beforeAll, afterAll, it, describe, afterEach } from 'vitest';
+import { mm, type MockApplication } from "@eggjs/mock";
+import { beforeAll, afterAll, it, describe, afterEach } from "vitest";
 
-import { escape, getFilepath, DELAY } from './utils.ts';
+import { escape, getFilepath, DELAY } from "./utils.ts";
 
-describe('test/development.test.ts', () => {
+describe("test/development.test.ts", () => {
   let app: MockApplication;
   beforeAll(() => {
-    mm.env('local');
+    mm.env("local");
     app = mm.cluster({
-      baseDir: getFilepath('development'),
+      baseDir: getFilepath("development"),
     });
     return app.ready();
   });
@@ -20,45 +20,54 @@ describe('test/development.test.ts', () => {
   // for debounce
   afterEach(() => scheduler.wait(500));
 
-  it('should reload when change service', async () => {
-    const filepath = getFilepath('development/app/service/a.js');
-    await fs.writeFile(filepath, 'let a = 1;');
-    await fs.writeFile(filepath, 'let a = 2;');
+  it("should reload when change service", async () => {
+    const filepath = getFilepath("development/app/service/a.js");
+    await fs.writeFile(filepath, "let a = 1;");
+    await fs.writeFile(filepath, "let a = 2;");
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.expect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
+    app.expect(
+      "stdout",
+      new RegExp(escape(`reload worker because ${filepath}`)),
+    );
   });
 
-  it('should not reload when change assets', async () => {
-    const filepath = getFilepath('development/app/assets/b.js');
-    await fs.writeFile(filepath, 'let b = 1;');
-    await fs.writeFile(filepath, 'let b = 2;');
+  it("should not reload when change assets", async () => {
+    const filepath = getFilepath("development/app/assets/b.js");
+    await fs.writeFile(filepath, "let b = 1;");
+    await fs.writeFile(filepath, "let b = 2;");
     await scheduler.wait(1000);
     await fs.rm(filepath, { force: true });
     await scheduler.wait(5000);
-    app.notExpect('stdout', new RegExp(escape(`reload worker because ${filepath}`)));
+    app.notExpect(
+      "stdout",
+      new RegExp(escape(`reload worker because ${filepath}`)),
+    );
   });
 
-  it.skipIf(process.env.CI)('should reload once when 2 file change', async () => {
-    const filepath = getFilepath('development/app/service/c.js');
-    const filepath1 = getFilepath('development/app/service/d.js');
-    await fs.writeFile(filepath, 'let c = 1;');
-    await fs.writeFile(filepath, 'let c = 2;');
-    // set a timeout for watcher's interval
-    await scheduler.wait(DELAY / 2);
-    await fs.writeFile(filepath1, 'let d = 1;');
-    await fs.writeFile(filepath1, 'let d = 2;');
+  it.skipIf(process.env.CI)(
+    "should reload once when 2 file change",
+    async () => {
+      const filepath = getFilepath("development/app/service/c.js");
+      const filepath1 = getFilepath("development/app/service/d.js");
+      await fs.writeFile(filepath, "let c = 1;");
+      await fs.writeFile(filepath, "let c = 2;");
+      // set a timeout for watcher's interval
+      await scheduler.wait(DELAY / 2);
+      await fs.writeFile(filepath1, "let d = 1;");
+      await fs.writeFile(filepath1, "let d = 2;");
 
-    await scheduler.wait(DELAY / 2);
-    await fs.rm(filepath, { force: true });
-    await fs.rm(filepath1, { force: true });
+      await scheduler.wait(DELAY / 2);
+      await fs.rm(filepath, { force: true });
+      await fs.rm(filepath1, { force: true });
 
-    assert(count(app.stdout, 'reload worker') >= 3);
-  });
+      assert(count(app.stdout, "reload worker") >= 3);
+    },
+  );
 });
 
 function count(str: string, match: string) {
-  const m = str.match(new RegExp(match, 'g'));
+  const m = str.match(new RegExp(match, "g"));
   return m ? m.length : 0;
 }

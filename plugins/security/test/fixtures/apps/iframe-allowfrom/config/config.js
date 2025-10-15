@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'xframe',
+  defaultMiddleware: "xframe",
   xframe: {
-    value: 'ALLOW-FROM http://www.domain.com',
-    ignore: ['/hello', '/world/:id'],
+    value: "ALLOW-FROM http://www.domain.com",
+    ignore: ["/hello", "/world/:id"],
   },
 };

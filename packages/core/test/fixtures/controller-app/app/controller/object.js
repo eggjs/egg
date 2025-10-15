@@ -1,6 +1,6 @@
 module.exports = {
   callFunction() {
-    this.body = 'done';
+    this.body = "done";
   },
 
   async callGeneratorFunction() {
@@ -31,6 +31,6 @@ module.exports = {
   },
 
   get nofunction() {
-    return 'done';
+    return "done";
   },
 };

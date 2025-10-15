@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'stream',
-  fileModeMatch: '/upload_file',
+  mode: "stream",
+  fileModeMatch: "/upload_file",
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

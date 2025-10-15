@@ -1,6 +1,6 @@
-import type { StaticConfig } from './config/config.default.ts';
+import type { StaticConfig } from "./config/config.default.ts";
 
-declare module 'egg' {
+declare module "egg" {
   /**
    * Static file serve
    * @member Config#static

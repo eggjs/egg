@@ -1,4 +1,4 @@
-import type { EggCore, Context } from './egg.ts';
+import type { EggCore, Context } from "./egg.ts";
 
 /**
  * BaseContextClass is a base class that can be extended,

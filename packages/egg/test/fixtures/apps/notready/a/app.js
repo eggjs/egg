@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.readyCallback('a');
+module.exports = (app) => {
+  app.readyCallback("a");
 };

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 exports.Helper = class Helper {
   constructor(ctx) {

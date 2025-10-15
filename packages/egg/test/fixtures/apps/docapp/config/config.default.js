@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
-  keys: 'test key',
-  middleware: ['koastatic'],
+  keys: "test key",
+  middleware: ["koastatic"],
 };

@@ -1,9 +1,9 @@
-import assert from 'node:assert';
-import { Context } from 'egg';
+import assert from "node:assert";
+import { Context } from "egg";
 // import { app } from '../../../../src/bootstrap.js';
-import { app } from '../../../../dist/esm/bootstrap.js';
+import { app } from "../../../../dist/esm/bootstrap.js";
 
-describe('test/hooks.test.ts', () => {
+describe("test/hooks.test.ts", () => {
   let beforeCtx;
   let afterCtx;
   const beforeEachCtxList: Record<string, Context> = {};
@@ -24,12 +24,12 @@ describe('test/hooks.test.ts', () => {
     assert(beforeEachCtxList.foo === itCtxList.foo);
   });
 
-  describe('foo', () => {
+  describe("foo", () => {
     beforeEach(() => {
       beforeEachCtxList.foo = app.currentContext as Context;
     });
 
-    it('should work', () => {
+    it("should work", () => {
       itCtxList.foo = app.currentContext as Context;
     });
 
@@ -38,12 +38,12 @@ describe('test/hooks.test.ts', () => {
     });
   });
 
-  describe('bar', () => {
+  describe("bar", () => {
     beforeEach(() => {
       beforeEachCtxList.bar = app.currentContext as Context;
     });
 
-    it('should work', () => {
+    it("should work", () => {
       itCtxList.bar = app.currentContext as Context;
     });
 
@@ -52,14 +52,14 @@ describe('test/hooks.test.ts', () => {
     });
   });
 
-  describe('multi it', () => {
+  describe("multi it", () => {
     const itCtxList: Array<Context> = [];
 
-    it('should work 1', () => {
+    it("should work 1", () => {
       itCtxList.push(app.currentContext as Context);
     });
 
-    it('should work 2', () => {
+    it("should work 2", () => {
       itCtxList.push(app.currentContext as Context);
     });
 

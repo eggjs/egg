@@ -1,7 +1,7 @@
-const Client = require('./client');
+const Client = require("./client");
 
 module.exports = function (app) {
-  const done = app.readyCallback('agent:app');
+  const done = app.readyCallback("agent:app");
   setTimeout(() => {
     done();
   }, 100);

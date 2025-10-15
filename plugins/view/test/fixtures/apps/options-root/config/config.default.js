@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 module.exports = () => ({
-  keys: '123',
+  keys: "123",
   view: {
-    defaultViewEngine: 'html',
+    defaultViewEngine: "html",
   },
 });

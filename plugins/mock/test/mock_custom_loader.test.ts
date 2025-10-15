@@ -1,62 +1,62 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
 
-import mm, { type MockApplication } from '../src/index.ts';
-import { getFixtures } from './helper.ts';
+import mm, { type MockApplication } from "../src/index.ts";
+import { getFixtures } from "./helper.ts";
 
-describe('test/mock_custom_loader.test.ts', () => {
+describe("test/mock_custom_loader.test.ts", () => {
   let app: MockApplication;
   beforeAll(async () => {
     app = mm.app({
-      baseDir: getFixtures('custom-loader'),
+      baseDir: getFixtures("custom-loader"),
     });
     await app.ready();
   });
   afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it('should return success', async () => {
+  it("should return success", async () => {
     await app
       .httpRequest()
-      .get('/users/popomore')
+      .get("/users/popomore")
       .expect({
-        adapter: 'docker',
-        repository: 'popomore',
+        adapter: "docker",
+        repository: "popomore",
       })
       .expect(200);
   });
 
-  it('should return when mock with data', async () => {
-    app.mockRepository('user', 'get', 'mock');
-    app.mockAdapter('docker', 'inspectDocker', 'mock');
+  it("should return when mock with data", async () => {
+    app.mockRepository("user", "get", "mock");
+    app.mockAdapter("docker", "inspectDocker", "mock");
     await app
       .httpRequest()
-      .get('/users/popomore')
+      .get("/users/popomore")
       .expect({
-        adapter: 'mock',
-        repository: 'mock',
+        adapter: "mock",
+        repository: "mock",
       })
       .expect(200);
   });
 
-  it('should return when mock the instance', async () => {
-    app.mockAdapter(app.adapter.docker, 'inspectDocker', 'mock');
+  it("should return when mock the instance", async () => {
+    app.mockAdapter(app.adapter.docker, "inspectDocker", "mock");
     await app
       .httpRequest()
-      .get('/users/popomore')
+      .get("/users/popomore")
       .expect({
-        adapter: 'mock',
-        repository: 'popomore',
+        adapter: "mock",
+        repository: "popomore",
       })
       .expect(200);
   });
 
-  it('should not override the existing API', async () => {
+  it("should not override the existing API", async () => {
     // const mod = await importModule(getFixtures('../../dist/commonjs/app/extend/application.js'), {
     //   importDefaultOnly: true,
     // });
-    assert.equal(typeof app.mockEnv, 'function');
+    assert.equal(typeof app.mockEnv, "function");
     // assert.equal(app.mockEnv, mod.prototype.mockEnv);
   });
 });

@@ -1,4 +1,4 @@
-exports.keys = 'foo';
+exports.keys = "foo";
 
 /**
  * tracer config

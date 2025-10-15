@@ -1,6 +1,6 @@
-import url from 'node:url';
+import url from "node:url";
 
-import { BaseContextClass } from '../../lib/core/base_context_class.ts';
+import { BaseContextClass } from "../../lib/core/base_context_class.ts";
 
 /**
  * The Helper class which can be used as utility function.
@@ -40,6 +40,11 @@ export default class Helper extends BaseContextClass {
    * @return {String} full url(with host)
    */
   urlFor(name: string, params: Record<string, any>): string {
-    return this.ctx.protocol + '://' + this.ctx.host + url.resolve('/', this.pathFor(name, params));
+    return (
+      this.ctx.protocol +
+      "://" +
+      this.ctx.host +
+      url.resolve("/", this.pathFor(name, params))
+    );
   }
 }

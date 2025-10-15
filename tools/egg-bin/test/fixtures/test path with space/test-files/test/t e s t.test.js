@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const assert = require('assert');
+const assert = require("assert");
 
-describe('test', () => {
-  it('should success', () => {
+describe("test", () => {
+  it("should success", () => {
     assert(true);
   });
 });

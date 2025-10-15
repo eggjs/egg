@@ -1,4 +1,4 @@
-import { Base } from 'sdk-base';
+import { Base } from "sdk-base";
 
 export abstract class BaseEventSource extends Base {
   abstract watch(file: string): void;

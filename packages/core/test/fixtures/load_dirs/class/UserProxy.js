@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 class UserProxy {
   constructor() {
     this.user = {
-      name: 'xiaochen.gaoxc',
+      name: "xiaochen.gaoxc",
     };
   }
 

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-exports.keys = 'multipart';
+exports.keys = "multipart";
 
 exports.multipart = {
-  fileSize: '1mb',
+  fileSize: "1mb",
   fileExtensions: null,
 };

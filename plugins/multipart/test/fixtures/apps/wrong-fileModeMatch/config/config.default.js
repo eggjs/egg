@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'file',
+  mode: "file",
   fileModeMatch: /^\/upload$/,
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

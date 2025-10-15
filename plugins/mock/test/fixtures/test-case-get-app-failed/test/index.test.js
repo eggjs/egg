@@ -1,15 +1,15 @@
-const { describe, it } = require('vitest');
-const { setGetAppCallback } = require('../../../..');
+const { describe, it } = require("vitest");
+const { setGetAppCallback } = require("../../../..");
 
 setGetAppCallback((suite, test) => {
   if (test) {
-    throw new Error('mock get app failed');
+    throw new Error("mock get app failed");
   }
   return {
     ready: async () => {
       // ...
     },
-    mockContextScope: async scope => {
+    mockContextScope: async (scope) => {
       await scope({});
     },
     backgroundTasksFinished: async () => {
@@ -21,6 +21,6 @@ setGetAppCallback((suite, test) => {
   };
 });
 
-describe('test case get app error', () => {
-  it('should not print', () => {});
+describe("test case get app error", () => {
+  it("should not print", () => {});
 });

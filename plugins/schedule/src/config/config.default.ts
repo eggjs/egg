@@ -1,8 +1,8 @@
-import { type PartialEggConfig } from 'egg';
-import type { ParserOptions as CronOptions } from 'cron-parser';
+import { type PartialEggConfig } from "egg";
+import type { ParserOptions as CronOptions } from "cron-parser";
 
 export interface EggScheduleConfig {
-  type?: 'worker' | 'all';
+  type?: "worker" | "all";
   interval?: string | number;
   cron?: string;
   cronOptions?: CronOptions;
@@ -18,8 +18,8 @@ export interface EggScheduleConfig {
 export default {
   customLogger: {
     scheduleLogger: {
-      consoleLevel: 'NONE',
-      file: 'egg-schedule.log',
+      consoleLevel: "NONE",
+      file: "egg-schedule.log",
     },
   },
   schedule: {

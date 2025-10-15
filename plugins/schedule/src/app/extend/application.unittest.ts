@@ -1,19 +1,22 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
+import { debuglog } from "node:util";
+import path from "node:path";
 
-import { importResolve } from '@eggjs/utils';
+import { importResolve } from "@eggjs/utils";
 
-import type { EggScheduleItem } from '../../lib/types.ts';
-import ScheduleApplication from './application.ts';
+import type { EggScheduleItem } from "../../lib/types.ts";
+import ScheduleApplication from "./application.ts";
 
-const debug = debuglog('egg/schedule/app');
+const debug = debuglog("egg/schedule/app");
 
 export default class ScheduleApplicationUnittest extends ScheduleApplication {
   async runSchedule(schedulePath: string, ...args: any[]): Promise<any> {
-    debug('[runSchedule] start schedulePath: %o, args: %o', schedulePath, args);
+    debug("[runSchedule] start schedulePath: %o, args: %o", schedulePath, args);
     // for test purpose
     const config = this.config;
-    const directory = [path.join(config.baseDir, 'app/schedule'), ...(config.schedule.directory ?? [])];
+    const directory = [
+      path.join(config.baseDir, "app/schedule"),
+      ...(config.schedule.directory ?? []),
+    ];
 
     // resolve real path
     if (path.isAbsolute(schedulePath)) {
@@ -25,20 +28,24 @@ export default class ScheduleApplicationUnittest extends ScheduleApplication {
           schedulePath = importResolve(trySchedulePath);
           break;
         } catch (err) {
-          debug('[runSchedule] importResolve %o error: %s', trySchedulePath, err);
+          debug(
+            "[runSchedule] importResolve %o error: %s",
+            trySchedulePath,
+            err,
+          );
         }
       }
     }
 
-    debug('[runSchedule] resolve schedulePath: %o', schedulePath);
+    debug("[runSchedule] resolve schedulePath: %o", schedulePath);
     let schedule: EggScheduleItem;
     try {
       schedule = this.scheduleWorker.scheduleItems[schedulePath];
       if (!schedule) {
         debug(
-          '[runSchedule] Cannot find schedule %o, scheduleItems: %o',
+          "[runSchedule] Cannot find schedule %o, scheduleItems: %o",
           schedulePath,
-          this.scheduleWorker.scheduleItems
+          this.scheduleWorker.scheduleItems,
         );
         throw new TypeError(`Cannot find schedule ${schedulePath}`);
       }
@@ -49,7 +56,7 @@ export default class ScheduleApplicationUnittest extends ScheduleApplication {
 
     // run with anonymous context
     const ctx = this.createAnonymousContext({
-      method: 'SCHEDULE',
+      method: "SCHEDULE",
       url: `/__schedule?path=${schedulePath}&${schedule.scheduleQueryString}`,
     });
     return await this.ctxStorage.run(ctx, async () => {

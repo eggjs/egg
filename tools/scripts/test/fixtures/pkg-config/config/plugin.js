@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   // enable plugins
@@ -10,8 +10,8 @@ module.exports = {
    */
   onerror: {
     enable: false,
-    package: 'egg-onerror',
-    path: 'xxxxx',
+    package: "egg-onerror",
+    path: "xxxxx",
   },
 
   /**
@@ -22,8 +22,8 @@ module.exports = {
    */
   session: {
     enable: false,
-    package: 'egg-session',
-    path: 'xxxxx',
+    package: "egg-session",
+    path: "xxxxx",
   },
 
   /**
@@ -34,8 +34,8 @@ module.exports = {
    */
   i18n: {
     enable: false,
-    package: 'egg-i18n',
-    path: 'xxxxx',
+    package: "egg-i18n",
+    path: "xxxxx",
   },
 
   /**
@@ -46,8 +46,8 @@ module.exports = {
    */
   watcher: {
     enable: false,
-    package: 'egg-watcher',
-    path: 'xxxxx',
+    package: "egg-watcher",
+    path: "xxxxx",
   },
 
   /**
@@ -58,8 +58,8 @@ module.exports = {
    */
   multipart: {
     enable: false,
-    package: 'egg-multipart',
-    path: 'xxxxx',
+    package: "egg-multipart",
+    path: "xxxxx",
   },
 
   /**
@@ -70,8 +70,8 @@ module.exports = {
    */
   security: {
     enable: false,
-    package: 'egg-security',
-    path: 'xxxxx',
+    package: "egg-security",
+    path: "xxxxx",
   },
 
   /**
@@ -82,8 +82,8 @@ module.exports = {
    */
   development: {
     enable: false,
-    package: 'egg-development',
-    path: 'xxxxx',
+    package: "egg-development",
+    path: "xxxxx",
   },
 
   /**
@@ -94,8 +94,8 @@ module.exports = {
    */
   logrotator: {
     enable: false,
-    package: 'egg-logrotator',
-    path: 'xxxxx',
+    package: "egg-logrotator",
+    path: "xxxxx",
   },
 
   /**
@@ -106,8 +106,8 @@ module.exports = {
    */
   schedule: {
     enable: false,
-    package: 'egg-schedule',
-    path: 'xxxxx',
+    package: "egg-schedule",
+    path: "xxxxx",
   },
 
   /**
@@ -118,8 +118,8 @@ module.exports = {
    */
   static: {
     enable: false,
-    package: 'egg-static',
-    path: 'xxxxx',
+    package: "egg-static",
+    path: "xxxxx",
   },
 
   /**
@@ -130,8 +130,8 @@ module.exports = {
    */
   jsonp: {
     enable: false,
-    package: 'egg-jsonp',
-    path: 'xxxxx',
+    package: "egg-jsonp",
+    path: "xxxxx",
   },
 
   /**
@@ -142,7 +142,7 @@ module.exports = {
    */
   view: {
     enable: false,
-    package: 'egg-view',
-    path: 'xxxxx',
+    package: "egg-view",
+    path: "xxxxx",
   },
 };

@@ -1,15 +1,15 @@
-import { readFile } from 'node:fs/promises';
-import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
+import { readFile } from "node:fs/promises";
+import { strict as assert } from "node:assert";
+import { scheduler } from "node:timers/promises";
 
-import { describe, it, beforeAll } from 'vitest';
+import { describe, it, beforeAll } from "vitest";
 
-import { type MockApplication, createApp, getFilepath } from '../utils.ts';
+import { type MockApplication, createApp, getFilepath } from "../utils.ts";
 
-describe('test/cluster1/cluster-client-error.test.ts', () => {
+describe("test/cluster1/cluster-client-error.test.ts", () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = createApp('apps/cluster-client-error');
+    app = createApp("apps/cluster-client-error");
 
     let err;
     try {
@@ -20,16 +20,18 @@ describe('test/cluster1/cluster-client-error.test.ts', () => {
     assert(err);
   });
 
-  it('should close even if app throw error', () => {
+  it("should close even if app throw error", () => {
     return app.close();
   });
 
-  it('should follower not throw error', async () => {
+  it("should follower not throw error", async () => {
     await scheduler.wait(1000);
     const cnt = await readFile(
-      getFilepath('apps/cluster-client-error/logs/cluster-client-error/common-error.log'),
-      'utf8'
+      getFilepath(
+        "apps/cluster-client-error/logs/cluster-client-error/common-error.log",
+      ),
+      "utf8",
     );
-    assert(!cnt.includes('ECONNRESET'));
+    assert(!cnt.includes("ECONNRESET"));
   });
 });

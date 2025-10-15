@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const address = require('address');
+const address = require("address");
 
 module.exports = {
-  keys: '123',
+  keys: "123",
   cluster: {
     listen: {
       port: 17010,

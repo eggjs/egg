@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = 'not function';
+module.exports = "not function";

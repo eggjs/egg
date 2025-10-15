@@ -1,73 +1,81 @@
-const Benchmark = require('benchmark');
-const benchmarks = require('beautify-benchmark');
-const Cookies = require('cookies');
-const Keygrip = require('keygrip');
-const { Cookies: EggCookies } = require('..');
+const Benchmark = require("benchmark");
+const benchmarks = require("beautify-benchmark");
+const Cookies = require("cookies");
+const Keygrip = require("keygrip");
+const { Cookies: EggCookies } = require("..");
 
 const suite = new Benchmark.Suite();
 
-const keys = ['this is a very very loooooooooooooooooooooooooooooooooooooong key'];
+const keys = [
+  "this is a very very loooooooooooooooooooooooooooooooooooooong key",
+];
 const keygrip = new Keygrip(keys);
 
 const eggCookie = createEggCookie();
 const cookie = createCookie();
 
-console.log('------------get test----------');
-console.log(eggCookie.get('eggSign', { signed: true }));
-console.log(eggCookie.get('eggSign'));
-console.log(eggCookie.get('eggEncrypt', { encrypt: true }));
-console.log(cookie.get('sign', { signed: true }));
-console.log(cookie.get('sign'));
+console.log("------------get test----------");
+console.log(eggCookie.get("eggSign", { signed: true }));
+console.log(eggCookie.get("eggSign"));
+console.log(eggCookie.get("eggEncrypt", { encrypt: true }));
+console.log(cookie.get("sign", { signed: true }));
+console.log(cookie.get("sign"));
 
-console.log('------------set test----------');
-eggCookie.set('eggSign', 'egg signed cookie', { signed: true });
-cookie.set('sign', 'signed cookie', { signed: true });
-eggCookie.set('eggEncrypt', 'egg encrypt cookie', { encrypt: true });
+console.log("------------set test----------");
+eggCookie.set("eggSign", "egg signed cookie", { signed: true });
+cookie.set("sign", "signed cookie", { signed: true });
+eggCookie.set("eggEncrypt", "egg encrypt cookie", { encrypt: true });
 console.log(eggCookie.ctx.response.headers);
 console.log(cookie.response.headers);
 
-console.log('------------benchmark start----------');
+console.log("------------benchmark start----------");
 
 suite
-  .add('create EggCookie', function () {
+  .add("create EggCookie", function () {
     createEggCookie();
   })
-  .add('create Cookie', function () {
+  .add("create Cookie", function () {
     createCookie();
   })
-  .add('EggCookies.set with signed', function () {
-    createEggCookie().set('foo', 'bar', { signed: true });
+  .add("EggCookies.set with signed", function () {
+    createEggCookie().set("foo", "bar", { signed: true });
   })
-  .add('Cookies.set with signed', function () {
-    createCookie().set('foo', 'bar', { signed: true });
+  .add("Cookies.set with signed", function () {
+    createCookie().set("foo", "bar", { signed: true });
   })
-  .add('EggCookies.set without signed', function () {
-    createEggCookie().set('foo', 'bar', { signed: false });
+  .add("EggCookies.set without signed", function () {
+    createEggCookie().set("foo", "bar", { signed: false });
   })
-  .add('Cookies.set without signed', function () {
-    createCookie().set('foo', 'bar', { signed: false });
+  .add("Cookies.set without signed", function () {
+    createCookie().set("foo", "bar", { signed: false });
   })
-  .add('EggCookies.set with encrypt', function () {
-    createEggCookie().set('foo', 'bar', { encrypt: true });
+  .add("EggCookies.set with encrypt", function () {
+    createEggCookie().set("foo", "bar", { encrypt: true });
   })
-  .add('EggCookies.get with signed', function () {
-    createEggCookie().get('eggSign', { signed: true });
+  .add("EggCookies.get with signed", function () {
+    createEggCookie().get("eggSign", { signed: true });
   })
-  .add('Cookies.get with signed', function () {
-    createCookie().get('sign', { signed: true });
+  .add("Cookies.get with signed", function () {
+    createCookie().get("sign", { signed: true });
   })
-  .add('EggCookies.get without signed', function () {
-    createEggCookie().get('eggSign', { signed: false });
+  .add("EggCookies.get without signed", function () {
+    createEggCookie().get("eggSign", { signed: false });
   })
-  .add('Cookies.get without signed', function () {
-    createCookie().get('sign', { signed: false });
+  .add("Cookies.get without signed", function () {
+    createCookie().get("sign", { signed: false });
   })
-  .add('EggCookies.get with encrypt', function () {
-    createEggCookie().get('eggEncrypt', { encrypt: true });
+  .add("EggCookies.get with encrypt", function () {
+    createEggCookie().get("eggEncrypt", { encrypt: true });
   })
-  .on('cycle', event => benchmarks.add(event.target))
-  .on('start', () => console.log('\n  node version: %s, date: %s\n  Starting...', process.version, Date()))
-  .on('complete', () => {
+  .on("cycle", (event) => benchmarks.add(event.target))
+  .on("start", () =>
+    console.log(
+      "\n  node version: %s, date: %s\n  Starting...",
+      process.version,
+      Date(),
+    ),
+  )
+  .on("complete", () => {
     benchmarks.log();
     process.exit(0);
   })
@@ -77,7 +85,7 @@ function createCtx(egg) {
   const request = {
     headers: {
       cookie:
-        'eggSign=egg signed cookie; eggSign.sig=SQ4wyGWr8vhSg7XCiz_MSxpHQ2GImbxE24fg4JVz7-o; sign=signed cookie; sign.sig=PvhhL9qTxML8uYSOaG_4Fr6EIEE; eggEncrypt=EpfmKzY4tX5OhafZS-onWOEIL0-CR6N_uGkFUFDCUno=;',
+        "eggSign=egg signed cookie; eggSign.sig=SQ4wyGWr8vhSg7XCiz_MSxpHQ2GImbxE24fg4JVz7-o; sign=signed cookie; sign.sig=PvhhL9qTxML8uYSOaG_4Fr6EIEE; eggEncrypt=EpfmKzY4tX5OhafZS-onWOEIL0-CR6N_uGkFUFDCUno=;",
     },
     get(key) {
       return this.headers[key.toLowerCase()];
@@ -85,7 +93,7 @@ function createCtx(egg) {
     getHeader(key) {
       return this.get(key);
     },
-    protocol: 'https',
+    protocol: "https",
     secure: true,
   };
   const response = {

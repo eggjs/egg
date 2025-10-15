@@ -1,7 +1,14 @@
-import type { SecurityConfig, SecurityHelperConfig } from './config/config.default.ts';
-import type { HttpClientRequestURL, HttpClientResponse, HttpClientOptions } from './lib/extend/safe_curl.ts';
+import type {
+  SecurityConfig,
+  SecurityHelperConfig,
+} from "./config/config.default.ts";
+import type {
+  HttpClientRequestURL,
+  HttpClientResponse,
+  HttpClientOptions,
+} from "./lib/extend/safe_curl.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     /**
@@ -13,14 +20,20 @@ declare module 'egg' {
   }
 
   interface Agent {
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
+    safeCurl<T = any>(
+      url: HttpClientRequestURL,
+      options?: HttpClientOptions,
+    ): Promise<HttpClientResponse<T>>;
   }
 
   interface Application {
     injectCsrf(html: string): string;
     injectNonce(html: string): string;
     injectHijackingDefense(html: string): string;
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
+    safeCurl<T = any>(
+      url: HttpClientRequestURL,
+      options?: HttpClientOptions,
+    ): Promise<HttpClientResponse<T>>;
   }
 
   interface Context {
@@ -31,7 +44,10 @@ declare module 'egg' {
     ensureCsrfSecret(rotate?: boolean): void;
     rotateCsrfSecret(): void;
     assertCsrf(): void;
-    safeCurl<T = any>(url: HttpClientRequestURL, options?: HttpClientOptions): Promise<HttpClientResponse<T>>;
+    safeCurl<T = any>(
+      url: HttpClientRequestURL,
+      options?: HttpClientOptions,
+    ): Promise<HttpClientResponse<T>>;
     unsafeRedirect(url: string, alt?: string): void;
   }
 

@@ -1,5 +1,5 @@
-'use strict';
-var util = require('./util/bar');
+"use strict";
+var util = require("./util/bar");
 
 module.exports = function () {
   return {

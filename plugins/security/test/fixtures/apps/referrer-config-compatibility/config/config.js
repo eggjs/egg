@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'referrerPolicy',
+  defaultMiddleware: "referrerPolicy",
   referrerPolicy: {
-    value: 'origin',
+    value: "origin",
     enable: true,
   },
 };

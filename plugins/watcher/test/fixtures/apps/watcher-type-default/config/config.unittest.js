@@ -1,5 +1,5 @@
 exports.watcher = {
-  type: 'default',
+  type: "default",
 };
 
-exports.keys = 'testkey';
+exports.keys = "testkey";

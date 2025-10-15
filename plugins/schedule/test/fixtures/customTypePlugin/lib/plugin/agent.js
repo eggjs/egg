@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (agent) {
   class ClusterStrategy extends agent.ScheduleStrategy {
@@ -8,5 +8,5 @@ module.exports = function (agent) {
       }, this.schedule.interval);
     }
   }
-  agent.schedule.use('cluster', ClusterStrategy);
+  agent.schedule.use("cluster", ClusterStrategy);
 };

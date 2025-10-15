@@ -1,6 +1,6 @@
 exports.logger = {
-  consoleLevel: 'NONE',
+  consoleLevel: "NONE",
   coreLogger: {
-    consoleLevel: 'NONE',
+    consoleLevel: "NONE",
   },
 };

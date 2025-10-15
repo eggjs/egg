@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  egg: 'config-default',
+  egg: "config-default",
   foo: {
-    bar: 'a',
-    bar2: 'b',
+    bar: "a",
+    bar2: "b",
   },
 };

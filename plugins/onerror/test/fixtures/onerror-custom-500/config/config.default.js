@@ -1,10 +1,10 @@
 exports.onerror = {
-  errorPageUrl: (_, ctx) => ctx.errorPageUrl || '/500',
+  errorPageUrl: (_, ctx) => ctx.errorPageUrl || "/500",
 };
 
-exports.keys = 'foo,bar';
+exports.keys = "foo,bar";
 
 exports.logger = {
-  level: 'NONE',
-  consoleLevel: 'NONE',
+  level: "NONE",
+  consoleLevel: "NONE",
 };

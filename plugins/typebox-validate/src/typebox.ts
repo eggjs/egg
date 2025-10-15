@@ -1,1 +1,1 @@
-export * from '@sinclair/typebox';
+export * from "@sinclair/typebox";

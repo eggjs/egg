@@ -1,10 +1,14 @@
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
 export const hello: MiddlewareFunc = async (ctx, next) => {
-  ctx.body = 'Hello World!';
-  console.log(ctx.app.type, ctx.app.server, ctx.app.ctxStorage.getStore()?.performanceStarttime);
+  ctx.body = "Hello World!";
+  console.log(
+    ctx.app.type,
+    ctx.app.server,
+    ctx.app.ctxStorage.getStore()?.performanceStarttime,
+  );
   console.log(ctx.performanceStarttime);
-  const res = await ctx.curl('https://eggjs.org');
+  const res = await ctx.curl("https://eggjs.org");
   console.log(res.status);
 
   // egg watcher

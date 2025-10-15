@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-exports.keys = 'my';
+exports.keys = "my";
 
 exports.security = {
   csrf: {

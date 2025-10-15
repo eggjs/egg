@@ -1,4 +1,4 @@
-import type { ILifecycleBoot, Application } from 'egg';
+import type { ILifecycleBoot, Application } from "egg";
 
 export default class AppBoot implements ILifecycleBoot {
   private readonly app;
@@ -8,11 +8,11 @@ export default class AppBoot implements ILifecycleBoot {
   async configWillLoad(): Promise<void> {
     const app = this.app;
     // make sure static middleware is before bodyParser
-    const index = app.config.coreMiddleware.indexOf('bodyParser');
+    const index = app.config.coreMiddleware.indexOf("bodyParser");
     if (index === -1) {
-      app.config.coreMiddleware.push('static');
+      app.config.coreMiddleware.push("static");
     } else {
-      app.config.coreMiddleware.splice(index, 0, 'static');
+      app.config.coreMiddleware.splice(index, 0, "static");
     }
   }
 }

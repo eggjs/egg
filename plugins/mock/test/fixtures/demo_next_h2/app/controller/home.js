@@ -1,17 +1,17 @@
 exports.get = async function () {
   this.body = {
-    cookieValue: this.getCookie('foo') || undefined,
-    cookiesValue: this.cookies.get('foo') || undefined,
+    cookieValue: this.getCookie("foo") || undefined,
+    cookiesValue: this.cookies.get("foo") || undefined,
     sessionValue: this.session.foo,
   };
 };
 
 exports.post = async function () {
-  this.body = 'done';
+  this.body = "done";
 };
 
 exports.hello = async function () {
-  this.body = 'hi';
+  this.body = "hi";
 };
 
 exports.service = async function () {
@@ -29,17 +29,17 @@ exports.serviceOld = async function () {
 
 exports.header = async function () {
   this.body = {
-    header: this.get('customheader'),
+    header: this.get("customheader"),
   };
 };
 
 exports.urllib = async function () {
-  const url = 'http://' + this.host;
-  const method = this.query.method || 'request';
+  const url = "http://" + this.host;
+  const method = this.query.method || "request";
   const data = this.query.data ? JSON.parse(this.query.data) : undefined;
   const dataType = this.query.dataType;
   const foo = this.query.foo;
-  let requestUrl = url + (this.query.mock_url || '/mock_url');
+  let requestUrl = url + (this.query.mock_url || "/mock_url");
   if (foo) {
     requestUrl = `${requestUrl}?foo=${foo}`;
   }
@@ -47,14 +47,14 @@ exports.urllib = async function () {
     dataType,
     data,
   });
-  if (method === 'request') r = r.then(d => d);
+  if (method === "request") r = r.then((d) => d);
   const r1 = await r;
   const r2 = await this.app.httpclient[method](requestUrl, {
-    method: 'POST',
+    method: "POST",
     dataType,
     data,
     headers: {
-      'x-custom': 'custom',
+      "x-custom": "custom",
     },
   });
   this.body = {
@@ -63,10 +63,10 @@ exports.urllib = async function () {
   };
 };
 
-exports.streaming = async ctx => {
-  const url = 'http://' + ctx.host;
-  const response = await ctx.httpclient.request(url + '/mock_url', {
-    method: 'GET',
+exports.streaming = async (ctx) => {
+  const url = "http://" + ctx.host;
+  const response = await ctx.httpclient.request(url + "/mock_url", {
+    method: "GET",
     streaming: true,
   });
   ctx.status = response.status;
@@ -79,24 +79,24 @@ exports.mockUrlGet = async function () {
     this.body = `url get with foo: ${foo}`;
     return;
   }
-  this.body = 'url get';
+  this.body = "url get";
 };
 
 exports.mockUrlPost = async function () {
-  this.body = 'url post';
+  this.body = "url post";
 };
 
 exports.mockUrllibHeaders = async function () {
-  const url = 'http://' + this.host;
-  const method = this.query.method || 'request';
-  const res = await this.app.httpclient[method](url + '/mock_url');
+  const url = "http://" + this.host;
+  const method = this.query.method || "request";
+  const res = await this.app.httpclient[method](url + "/mock_url");
   this.body = res.headers;
 };
 
 exports.dataType = async function () {
-  const url = 'http://' + this.host;
-  const res = await this.app.httpclient.request(url + '/mock_url', {
-    dataType: 'json',
+  const url = "http://" + this.host;
+  const res = await this.app.httpclient.request(url + "/mock_url", {
+    dataType: "json",
   });
   this.body = res.data;
 };

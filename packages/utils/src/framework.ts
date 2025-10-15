@@ -1,11 +1,11 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import assert from 'node:assert';
-import { existsSync } from 'node:fs';
-import { readJSONSync } from './utils.ts';
-import { importResolve } from './import.ts';
+import { debuglog } from "node:util";
+import path from "node:path";
+import assert from "node:assert";
+import { existsSync } from "node:fs";
+import { readJSONSync } from "./utils.ts";
+import { importResolve } from "./import.ts";
 
-const debug = debuglog('egg/utils/framework');
+const debug = debuglog("egg/utils/framework");
 
 const initCwd = process.cwd();
 
@@ -26,9 +26,9 @@ interface Options {
  */
 export function getFrameworkPath(options: Options): string {
   const { framework, baseDir } = options;
-  const pkgPath = path.join(baseDir, 'package.json');
+  const pkgPath = path.join(baseDir, "package.json");
   assert(existsSync(pkgPath), `${pkgPath} should exist`);
-  const moduleDir = path.join(baseDir, 'node_modules');
+  const moduleDir = path.join(baseDir, "node_modules");
 
   // 1. pass framework or customEgg
   if (framework) {
@@ -51,27 +51,37 @@ export function getFrameworkPath(options: Options): string {
   }
 
   // 2.2 use egg by default
-  return assertAndReturn('egg', moduleDir, baseDir);
+  return assertAndReturn("egg", moduleDir, baseDir);
 }
 
-function assertAndReturn(frameworkName: string, moduleDir: string, baseDir: string) {
+function assertAndReturn(
+  frameworkName: string,
+  moduleDir: string,
+  baseDir: string,
+) {
   const moduleDirs = new Set([
     moduleDir,
     // find framework from process.cwd, especially for test,
     // the application is in test/fixtures/app,
     // and framework is install in ${cwd}/node_modules
-    path.join(process.cwd(), 'node_modules'),
+    path.join(process.cwd(), "node_modules"),
     // prevent from mocking process.cwd
-    path.join(initCwd, 'node_modules'),
+    path.join(initCwd, "node_modules"),
   ]);
   try {
     // find framework from global, especially for monorepo
     let globalModuleDir: string;
     // if frameworkName is scoped package, like @ali/egg
-    if (frameworkName.startsWith('@') && frameworkName.includes('/')) {
-      globalModuleDir = path.join(importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }), '../../..');
+    if (frameworkName.startsWith("@") && frameworkName.includes("/")) {
+      globalModuleDir = path.join(
+        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
+        "../../..",
+      );
     } else {
-      globalModuleDir = path.join(importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }), '../..');
+      globalModuleDir = path.join(
+        importResolve(`${frameworkName}/package.json`, { paths: [baseDir] }),
+        "../..",
+      );
     }
     moduleDirs.add(globalModuleDir);
   } catch {
@@ -81,7 +91,11 @@ function assertAndReturn(frameworkName: string, moduleDir: string, baseDir: stri
   for (const moduleDir of moduleDirs) {
     const frameworkPath = path.join(moduleDir, frameworkName);
     if (existsSync(frameworkPath)) {
-      debug('[assertAndReturn] frameworkPath: %s, moduleDirs: %o', frameworkPath, moduleDirs);
+      debug(
+        "[assertAndReturn] frameworkPath: %s, moduleDirs: %o",
+        frameworkPath,
+        moduleDirs,
+      );
       return frameworkPath;
     }
   }

@@ -1,124 +1,142 @@
-import assert from 'node:assert/strict';
-import { describe, it, afterEach } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it, afterEach } from "vitest";
 
-import { mm } from 'mm';
-import { importModule } from '@eggjs/utils';
+import { mm } from "mm";
+import { importModule } from "@eggjs/utils";
 
-import { createApp, getFilepath, type Application } from '../helper.ts';
-import { EggLoader, EggCore } from '../../src/index.ts';
+import { createApp, getFilepath, type Application } from "../helper.ts";
+import { EggLoader, EggCore } from "../../src/index.ts";
 
-describe('test/loader/get_framework_paths.test.ts', () => {
+describe("test/loader/get_framework_paths.test.ts", () => {
   let app: Application;
   afterEach(mm.restore);
   afterEach(() => app && app.close());
 
-  it('should get from parameter', () => {
-    app = createApp('eggpath');
+  it("should get from parameter", () => {
+    app = createApp("eggpath");
     let eggPaths = app.loader.eggPaths;
-    if (process.platform === 'win32') {
-      eggPaths = eggPaths.map(filepath => filepath.toLowerCase());
+    if (process.platform === "win32") {
+      eggPaths = eggPaths.map((filepath) => filepath.toLowerCase());
     }
-    assert.deepEqual(eggPaths, [getFilepath('egg-esm')]);
+    assert.deepEqual(eggPaths, [getFilepath("egg-esm")]);
   });
 
-  it.skip('should get from framework using symbol', async () => {
-    const Application = await importModule(getFilepath('framework-symbol/index.js'), { importDefaultOnly: true });
-    app = createApp('eggpath', {
+  it.skip("should get from framework using symbol", async () => {
+    const Application = await importModule(
+      getFilepath("framework-symbol/index.js"),
+      { importDefaultOnly: true },
+    );
+    app = createApp("eggpath", {
       Application,
     });
     assert.deepEqual(app.loader.eggPaths, [
-      getFilepath('egg'),
-      getFilepath('framework-symbol/node_modules/framework2'),
-      getFilepath('framework-symbol'),
+      getFilepath("egg"),
+      getFilepath("framework-symbol/node_modules/framework2"),
+      getFilepath("framework-symbol"),
     ]);
   });
 
-  it.skip('should throw when one of the Application do not specify symbol', async () => {
-    const AppClass = await importModule(getFilepath('framework-nosymbol/index.js'), { importDefaultOnly: true });
+  it.skip("should throw when one of the Application do not specify symbol", async () => {
+    const AppClass = await importModule(
+      getFilepath("framework-nosymbol/index.js"),
+      { importDefaultOnly: true },
+    );
     assert.throws(() => {
-      const app = createApp('eggpath', {
+      const app = createApp("eggpath", {
         Application: AppClass,
       });
       console.log(app);
     }, /Symbol.for\('egg#eggPath'\) is required on Application/);
   });
 
-  it.skip('should remove dulplicate eggPath', async () => {
-    const Application = await importModule(getFilepath('framework-dulp/index.js'), {
-      importDefaultOnly: true,
-    });
+  it.skip("should remove dulplicate eggPath", async () => {
+    const Application = await importModule(
+      getFilepath("framework-dulp/index.js"),
+      {
+        importDefaultOnly: true,
+      },
+    );
     console.log(Application);
-    app = createApp('eggpath', {
+    app = createApp("eggpath", {
       Application,
     });
-    assert.deepEqual(app.loader.eggPaths, [getFilepath('egg'), getFilepath('framework-dulp')]);
+    assert.deepEqual(app.loader.eggPaths, [
+      getFilepath("egg"),
+      getFilepath("framework-dulp"),
+    ]);
   });
 
-  it('should when Application do not extend EggCore in old way', () => {
+  it("should when Application do not extend EggCore in old way", () => {
     class CustomApplication {
       loader: EggLoader;
       constructor() {
         this.loader = new EggLoader({
-          baseDir: getFilepath('eggpath'),
+          baseDir: getFilepath("eggpath"),
           app: this,
           logger: console,
           EggCoreClass: EggCore,
         } as any);
       }
-      get [Symbol.for('egg#eggPath')]() {
-        return getFilepath('egg-esm');
+      get [Symbol.for("egg#eggPath")]() {
+        return getFilepath("egg-esm");
       }
       close() {
         // empty
       }
     }
 
-    app = createApp('eggpath', {
+    app = createApp("eggpath", {
       Application: CustomApplication as any,
     });
     assert.equal(app.loader.eggPaths.length, 1);
-    assert.equal(app.loader.eggPaths[0], getFilepath('egg-esm'));
+    assert.equal(app.loader.eggPaths[0], getFilepath("egg-esm"));
   });
 
-  it('should when Application do not extend EggCore in new way', () => {
+  it("should when Application do not extend EggCore in new way", () => {
     class CustomApplication extends EggCore {
       loader: EggLoader;
       constructor() {
         super();
         this.loader = new EggLoader({
-          baseDir: getFilepath('eggpath'),
+          baseDir: getFilepath("eggpath"),
           app: this,
           logger: console,
           EggCoreClass: EggCore,
         } as any);
       }
       protected override customEggPaths() {
-        return [getFilepath('egg-esm'), ...super.customEggPaths()];
+        return [getFilepath("egg-esm"), ...super.customEggPaths()];
       }
       async close() {
         // empty
       }
     }
 
-    app = createApp('eggpath', {
+    app = createApp("eggpath", {
       Application: CustomApplication as any,
     });
     assert.equal(app.loader.eggPaths.length, 1);
-    assert.equal(app.loader.eggPaths[0], getFilepath('egg-esm'));
+    assert.equal(app.loader.eggPaths[0], getFilepath("egg-esm"));
   });
 
-  it.skip('should assert eggPath type', async () => {
+  it.skip("should assert eggPath type", async () => {
     await assert.rejects(
       async () => {
-        createApp('eggpath', {
-          Application: await importModule(getFilepath('framework-wrong-eggpath/index.js'), { importDefaultOnly: true }),
+        createApp("eggpath", {
+          Application: await importModule(
+            getFilepath("framework-wrong-eggpath/index.js"),
+            { importDefaultOnly: true },
+          ),
         });
       },
       (err: any) => {
         // console.error(err);
-        assert.match(err.message, /Symbol.for\('egg#eggPath'\) should be string/);
+        assert.match(
+          err.message,
+          /Symbol.for\('egg#eggPath'\) should be string/,
+        );
         return true;
-      }
+      },
     );
   });
 });

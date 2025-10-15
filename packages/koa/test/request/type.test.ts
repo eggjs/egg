@@ -1,17 +1,17 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import { request } from '../test-helpers/context.ts';
+import { request } from "../test-helpers/context.ts";
 
-describe('req.type', () => {
-  it('should return type void of parameters', () => {
+describe("req.type", () => {
+  it("should return type void of parameters", () => {
     const req = request();
-    req.header['content-type'] = 'text/html; charset=utf-8';
-    assert.strictEqual(req.type, 'text/html');
+    req.header["content-type"] = "text/html; charset=utf-8";
+    assert.strictEqual(req.type, "text/html");
   });
 
-  it('should return empty string with no host present', () => {
+  it("should return empty string with no host present", () => {
     const req = request();
-    assert.strictEqual(req.type, '');
+    assert.strictEqual(req.type, "");
   });
 });

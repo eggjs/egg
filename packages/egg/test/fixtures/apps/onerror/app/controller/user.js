@@ -1,5 +1,5 @@
 module.exports = async function () {
-  var err = new Error('test error');
+  var err = new Error("test error");
   if (this.query.status) {
     err.status = Number(this.query.status);
   }

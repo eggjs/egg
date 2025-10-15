@@ -1,128 +1,144 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import { describe, it, beforeAll, afterAll } from "vitest";
 
-import { createApp, type MockApplication } from '../../utils.ts';
+import { createApp, type MockApplication } from "../../utils.ts";
 
-describe('test/app/middleware/site_file.test.ts', () => {
+describe("test/app/middleware/site_file.test.ts", () => {
   let app: MockApplication;
   beforeAll(() => {
-    app = createApp('apps/middlewares');
+    app = createApp("apps/middlewares");
     return app.ready();
   });
   afterAll(() => app.close());
 
-  it('should GET /favicon.ico 200', () => {
-    return app.httpRequest().get('/favicon.ico').expect('content-type', 'image/vnd.microsoft.icon').expect(200);
-  });
-
-  it('should GET /favicon.ico?t=123 200', () => {
-    return app.httpRequest().get('/favicon.ico?t=123').expect('content-type', 'image/vnd.microsoft.icon').expect(200);
-  });
-
-  it('should 200 when accessing /robots.txt', () => {
+  it("should GET /favicon.ico 200", () => {
     return app
       .httpRequest()
-      .get('/robots.txt')
-      .expect(/^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/)
+      .get("/favicon.ico")
+      .expect("content-type", "image/vnd.microsoft.icon")
       .expect(200);
   });
 
-  it('should 200 when accessing crossdomain.xml', () => {
-    return app.httpRequest().get('/crossdomain.xml').expect('xxx').expect(200);
+  it("should GET /favicon.ico?t=123 200", () => {
+    return app
+      .httpRequest()
+      .get("/favicon.ico?t=123")
+      .expect("content-type", "image/vnd.microsoft.icon")
+      .expect(200);
   });
 
-  it('should support HEAD', () => {
+  it("should 200 when accessing /robots.txt", () => {
+    return app
+      .httpRequest()
+      .get("/robots.txt")
+      .expect(
+        /^User-agent: Baiduspider\r?\nDisallow: \/\r?\n\r?\nUser-agent: baiduspider\r?\nDisallow: \/$/,
+      )
+      .expect(200);
+  });
+
+  it("should 200 when accessing crossdomain.xml", () => {
+    return app.httpRequest().get("/crossdomain.xml").expect("xxx").expect(200);
+  });
+
+  it("should support HEAD", () => {
     return (
       app
         .httpRequest()
-        .head('/robots.txt')
-        .expect(res => assert(Number(res.header['content-length']) > 0))
+        .head("/robots.txt")
+        .expect((res) => assert(Number(res.header["content-length"]) > 0))
         // body must be empty for HEAD
-        .expect(res => assert.equal(res.text, undefined))
+        .expect((res) => assert.equal(res.text, undefined))
         .expect(200)
     );
   });
 
-  it('should ignore POST', () => {
-    return app.httpRequest().post('/robots.txt').expect(404);
+  it("should ignore POST", () => {
+    return app.httpRequest().post("/robots.txt").expect(404);
   });
 
-  it('normal router should work', () => {
-    return app.httpRequest().get('/').expect('home').expect(200);
+  it("normal router should work", () => {
+    return app.httpRequest().get("/").expect("home").expect(200);
   });
 
-  it('not defined router should 404', () => {
-    return app.httpRequest().get('/xxx').expect(404);
+  it("not defined router should 404", () => {
+    return app.httpRequest().get("/xxx").expect(404);
   });
 
-  it('should 404 when accessing fake.txt using wrong config', () => {
-    return app.httpRequest().get('/fake.txt').expect(404);
+  it("should 404 when accessing fake.txt using wrong config", () => {
+    return app.httpRequest().get("/fake.txt").expect(404);
   });
 
-  describe('custom favicon', () => {
+  describe("custom favicon", () => {
     let app: MockApplication;
     beforeAll(() => {
-      app = createApp('apps/favicon');
+      app = createApp("apps/favicon");
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should redirect https://eggjs.org/favicon.ico', () => {
+    it("should redirect https://eggjs.org/favicon.ico", () => {
       return app
         .httpRequest()
-        .get('/favicon.ico')
+        .get("/favicon.ico")
         .expect(302)
-        .expect(res => {
-          assert(!res.headers['set-cookie']);
-          assert.equal(res.headers.location, 'https://eggjs.org/favicon.ico');
+        .expect((res) => {
+          assert(!res.headers["set-cookie"]);
+          assert.equal(res.headers.location, "https://eggjs.org/favicon.ico");
         });
     });
   });
 
-  describe('custom favicon with Buffer content', () => {
+  describe("custom favicon with Buffer content", () => {
     let app: MockApplication;
     beforeAll(() => {
-      app = createApp('apps/favicon-buffer');
+      app = createApp("apps/favicon-buffer");
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should redirect https://eggjs.org/favicon.ico', () => {
-      return app.httpRequest().get('/favicon.ico').expect(200);
+    it("should redirect https://eggjs.org/favicon.ico", () => {
+      return app.httpRequest().get("/favicon.ico").expect(200);
     });
   });
 
-  describe('custom favicon with function', () => {
+  describe("custom favicon with function", () => {
     let app: MockApplication;
     beforeAll(() => {
-      app = createApp('apps/favicon-function');
+      app = createApp("apps/favicon-function");
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should redirect https://eggjs.org/favicon.ico', () => {
+    it("should redirect https://eggjs.org/favicon.ico", () => {
       return app
         .httpRequest()
-        .get('/favicon.ico')
+        .get("/favicon.ico")
         .expect(302)
-        .expect(res => {
-          assert(!res.headers['set-cookie']);
-          assert(res.headers.location === 'https://eggjs.org/function/favicon.ico');
+        .expect((res) => {
+          assert(!res.headers["set-cookie"]);
+          assert(
+            res.headers.location === "https://eggjs.org/function/favicon.ico",
+          );
         });
     });
   });
 
-  describe('siteFile.cacheControl = no-store', () => {
+  describe("siteFile.cacheControl = no-store", () => {
     let app: MockApplication;
     beforeAll(() => {
-      app = createApp('apps/siteFile-custom-cacheControl');
+      app = createApp("apps/siteFile-custom-cacheControl");
       return app.ready();
     });
     afterAll(() => app.close());
 
-    it('should get custom cache-control', async () => {
-      await app.httpRequest().get('/favicon.ico').expect('cache-control', 'no-store').expect(200);
+    it("should get custom cache-control", async () => {
+      await app
+        .httpRequest()
+        .get("/favicon.ico")
+        .expect("cache-control", "no-store")
+        .expect(200);
     });
   });
 });

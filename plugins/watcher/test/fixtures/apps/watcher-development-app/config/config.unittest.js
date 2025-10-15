@@ -1,7 +1,7 @@
-exports.env = 'local';
+exports.env = "local";
 
 exports.watcher = {
-  type: 'development',
+  type: "development",
 };
 
-exports.keys = 'testkey';
+exports.keys = "testkey";

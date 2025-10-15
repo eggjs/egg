@@ -1,3 +1,3 @@
-import { Cov } from '../../../../dist/index.js';
+import { Cov } from "../../../../dist/index.js";
 
 export default Cov;

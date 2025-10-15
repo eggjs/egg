@@ -1,83 +1,83 @@
-import { strict as assert } from 'node:assert';
-import path from 'node:path';
+import { strict as assert } from "node:assert";
+import path from "node:path";
 
-import { describe, it, afterEach } from 'vitest';
+import { describe, it, afterEach } from "vitest";
 
-import mm from '../src/index.ts';
-import { formatOptions } from '../src/lib/format_options.ts';
-import { getSourceDirname } from '../src/lib/utils.ts';
-import { getFixtures } from './helper.ts';
+import mm from "../src/index.ts";
+import { formatOptions } from "../src/lib/format_options.ts";
+import { getSourceDirname } from "../src/lib/utils.ts";
+import { getFixtures } from "./helper.ts";
 
-describe('test/format_options.test.ts', () => {
+describe("test/format_options.test.ts", () => {
   afterEach(mm.restore);
 
-  it('should return the default options', () => {
+  it("should return the default options", () => {
     const options = formatOptions();
     assert(options);
     assert(options.coverage === true);
     assert(options.cache === true);
     assert(options.baseDir === process.cwd());
-    assert.deepEqual(options.plugins['egg-mock'], {
+    assert.deepEqual(options.plugins["egg-mock"], {
       enable: true,
-      path: path.join(getSourceDirname(), '..'),
+      path: path.join(getSourceDirname(), ".."),
     });
   });
 
-  it('should return baseDir when on windows', () => {
-    const baseDir = 'D:\\projectWorkSpace\\summer';
-    mm(path, 'isAbsolute', path.win32.isAbsolute);
-    mm(process, 'cwd', () => baseDir);
+  it("should return baseDir when on windows", () => {
+    const baseDir = "D:\\projectWorkSpace\\summer";
+    mm(path, "isAbsolute", path.win32.isAbsolute);
+    mm(process, "cwd", () => baseDir);
     try {
       formatOptions();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
       assert(/D:[\\|/]projectWorkSpace[\\|/]summer/.test(err.message));
     }
   });
 
-  it('should set cache', () => {
+  it("should set cache", () => {
     const options = formatOptions({ cache: false });
     assert(options);
     assert(options.cache === false);
   });
 
-  it('should disable cache when call mm.env', () => {
-    mm.env('prod');
+  it("should disable cache when call mm.env", () => {
+    mm.env("prod");
     const options = formatOptions();
     assert(options);
     assert(options.cache === false);
   });
 
-  it('should set coverage', () => {
+  it("should set coverage", () => {
     const options = formatOptions({ coverage: false });
     assert(options);
     assert(options.coverage === false);
   });
 
-  it('should return options when set full baseDir', () => {
-    const baseDir = getFixtures('app');
+  it("should return options when set full baseDir", () => {
+    const baseDir = getFixtures("app");
     const options = formatOptions({ baseDir });
     assert(options);
     assert(options.baseDir === baseDir);
   });
 
-  it('should return options when set short baseDir', () => {
-    const options = formatOptions({ baseDir: getFixtures('apps/foo') });
+  it("should return options when set short baseDir", () => {
+    const options = formatOptions({ baseDir: getFixtures("apps/foo") });
     assert(options);
-    assert(options.baseDir === getFixtures('apps/foo'));
+    assert(options.baseDir === getFixtures("apps/foo"));
   });
 
-  it('should return options when set customEgg', () => {
-    const customEgg = getFixtures('bar');
+  it("should return options when set customEgg", () => {
+    const customEgg = getFixtures("bar");
     const options = formatOptions({ customEgg });
     assert(options);
     assert(options.customEgg === customEgg);
     assert(options.framework === customEgg);
   });
 
-  it('should return options when set customEgg=true', () => {
-    const baseDir = getFixtures('bar');
-    mm(process, 'cwd', () => {
+  it("should return options when set customEgg=true", () => {
+    const baseDir = getFixtures("bar");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     const options = formatOptions({ customEgg: true });
@@ -86,9 +86,9 @@ describe('test/format_options.test.ts', () => {
     assert.equal(options.customEgg, baseDir);
   });
 
-  it('should return options when set framework=true', () => {
-    const baseDir = getFixtures('bar');
-    mm(process, 'cwd', () => {
+  it("should return options when set framework=true", () => {
+    const baseDir = getFixtures("bar");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     const options = formatOptions({ framework: true });
@@ -97,9 +97,9 @@ describe('test/format_options.test.ts', () => {
     assert.equal(options.customEgg, baseDir);
   });
 
-  it('should push plugins when in plugin dir', () => {
-    const baseDir = getFixtures('plugin');
-    mm(process, 'cwd', () => {
+  it("should push plugins when in plugin dir", () => {
+    const baseDir = getFixtures("plugin");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     const options = formatOptions();
@@ -110,9 +110,9 @@ describe('test/format_options.test.ts', () => {
     });
   });
 
-  it('should not push plugins when in plugin dir but options.plugin = false', () => {
-    const baseDir = getFixtures('plugin');
-    mm(process, 'cwd', () => {
+  it("should not push plugins when in plugin dir but options.plugin = false", () => {
+    const baseDir = getFixtures("plugin");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     const options = formatOptions({
@@ -122,17 +122,17 @@ describe('test/format_options.test.ts', () => {
     assert(!options.plugins.plugin1);
   });
 
-  it('should not throw when no eggPlugin', () => {
-    const baseDir = getFixtures('plugin_throw');
-    mm(process, 'cwd', () => {
+  it("should not throw when no eggPlugin", () => {
+    const baseDir = getFixtures("plugin_throw");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     formatOptions();
   });
 
-  it('should throw when no eggPlugin and options.plugin === true', () => {
-    const baseDir = getFixtures('plugin_throw');
-    mm(process, 'cwd', () => {
+  it("should throw when no eggPlugin and options.plugin === true", () => {
+    const baseDir = getFixtures("plugin_throw");
+    mm(process, "cwd", () => {
       return baseDir;
     });
     assert.throws(() => {
@@ -142,29 +142,29 @@ describe('test/format_options.test.ts', () => {
     }, new RegExp(`should set "eggPlugin" property in`));
   });
 
-  it('should mock process.env.HOME when EGG_SERVER_ENV is default, test, prod', () => {
+  it("should mock process.env.HOME when EGG_SERVER_ENV is default, test, prod", () => {
     const baseDir = process.cwd();
 
-    mm(process.env, 'EGG_SERVER_ENV', 'local');
+    mm(process.env, "EGG_SERVER_ENV", "local");
     assert.notEqual(process.env.HOME, baseDir);
 
-    mm(process.env, 'EGG_SERVER_ENV', 'default');
+    mm(process.env, "EGG_SERVER_ENV", "default");
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
 
-    mm(process.env, 'EGG_SERVER_ENV', 'test');
+    mm(process.env, "EGG_SERVER_ENV", "test");
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
 
-    mm(process.env, 'EGG_SERVER_ENV', 'prod');
+    mm(process.env, "EGG_SERVER_ENV", "prod");
     formatOptions();
     assert.equal(process.env.HOME, baseDir);
   });
 
-  it('should not mock process.env.HOME when it has mocked', () => {
+  it("should not mock process.env.HOME when it has mocked", () => {
     const baseDir = process.cwd();
-    mm(process.env, 'HOME', '/mockpath');
-    mm(process.env, 'EGG_SERVER_ENV', 'default');
+    mm(process.env, "HOME", "/mockpath");
+    mm(process.env, "EGG_SERVER_ENV", "default");
     formatOptions();
     assert.notEqual(process.env.HOME, baseDir);
   });

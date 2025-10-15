@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = agent => {
-  agent.messenger.on('egg-ready', () => {
+module.exports = (agent) => {
+  agent.messenger.on("egg-ready", () => {
     process.exit(1);
   });
 };

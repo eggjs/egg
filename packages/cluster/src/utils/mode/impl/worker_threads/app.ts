@@ -1,13 +1,18 @@
-import { setTimeout as sleep } from 'node:timers/promises';
-import { Worker as ThreadWorker, threadId, parentPort, type WorkerOptions } from 'node:worker_threads';
+import { setTimeout as sleep } from "node:timers/promises";
+import {
+  Worker as ThreadWorker,
+  threadId,
+  parentPort,
+  type WorkerOptions,
+} from "node:worker_threads";
 
-import type { Options as gracefulExitOptions } from 'graceful-process';
+import type { Options as gracefulExitOptions } from "graceful-process";
 
-import { BaseAppWorker, BaseAppUtils } from '../../base/app.ts';
-import type { MessageBody } from '../../../messenger.ts';
+import { BaseAppWorker, BaseAppUtils } from "../../base/app.ts";
+import type { MessageBody } from "../../../messenger.ts";
 
 export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
-  #state = 'none';
+  #state = "none";
   #id: number;
 
   constructor(instance: ThreadWorker, id: number) {
@@ -68,8 +73,8 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
   }
 
   static gracefulExit(options: gracefulExitOptions): void {
-    process.on('exit', async code => {
-      if (typeof options.beforeExit === 'function') {
+    process.on("exit", async (code) => {
+      if (typeof options.beforeExit === "function") {
         await options.beforeExit();
       }
       process.exit(code);
@@ -87,28 +92,32 @@ export class AppThreadUtils extends BaseAppUtils {
 
     // wrap app worker
     const appWorker = new AppThreadWorker(worker, id);
-    this.emit('worker_forked', appWorker);
+    this.emit("worker_forked", appWorker);
     appWorker.disableRefork = true;
-    worker.on('message', (msg: MessageBody) => {
-      if (typeof msg === 'string') {
+    worker.on("message", (msg: MessageBody) => {
+      if (typeof msg === "string") {
         msg = {
           action: msg,
           data: msg,
         };
       }
-      msg.from = 'app';
+      msg.from = "app";
       this.messenger.send(msg);
     });
-    this.log('[master] app_worker#%s (tid:%s) start', appWorker.id, appWorker.workerId);
+    this.log(
+      "[master] app_worker#%s (tid:%s) start",
+      appWorker.id,
+      appWorker.workerId,
+    );
 
     // send debug message, due to `brk` scene, send here instead of app_worker.js
     let debugPort = process.debugPort;
     if (this.options.isDebug) {
       debugPort++;
       this.messenger.send({
-        to: 'parent',
-        from: 'app',
-        action: 'debug',
+        to: "parent",
+        from: "app",
+        action: "debug",
         data: {
           debugPort,
           pid: appWorker.workerId,
@@ -118,16 +127,16 @@ export class AppThreadUtils extends BaseAppUtils {
     }
 
     // handle worker exit
-    worker.on('exit', async code => {
-      appWorker.state = 'dead';
+    worker.on("exit", async (code) => {
+      appWorker.state = "dead";
       this.messenger.send({
-        action: 'app-exit',
+        action: "app-exit",
         data: {
           workerId: appWorker.workerId,
           code,
         },
-        to: 'master',
-        from: 'app',
+        to: "master",
+        from: "app",
       });
 
       // refork app worker
@@ -157,8 +166,10 @@ export class AppThreadUtils extends BaseAppUtils {
 
   async kill(): Promise<void> {
     for (const worker of this.#workers) {
-      const id = Reflect.get(worker, 'id');
-      this.log(`[master] kill app worker#${id} (worker_threads) by worker.terminate()`);
+      const id = Reflect.get(worker, "id");
+      this.log(
+        `[master] kill app worker#${id} (worker_threads) by worker.terminate()`,
+      );
       worker.removeAllListeners();
       worker.terminate();
     }

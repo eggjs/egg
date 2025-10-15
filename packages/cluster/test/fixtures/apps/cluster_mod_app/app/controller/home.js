@@ -1,3 +1,3 @@
-exports.index = ctx => {
-  ctx.body = 'hi cluster';
+exports.index = (ctx) => {
+  ctx.body = "hi cluster";
 };

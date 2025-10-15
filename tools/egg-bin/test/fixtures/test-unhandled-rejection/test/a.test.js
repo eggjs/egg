@@ -1,5 +1,5 @@
-describe('a.test.js', () => {
-  it('should success', () => {
-    Promise.reject(new Error('mock error'));
+describe("a.test.js", () => {
+  it("should success", () => {
+    Promise.reject(new Error("mock error"));
   });
 });

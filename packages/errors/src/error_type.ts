@@ -2,15 +2,15 @@ const ErrorType = {
   /**
    * Built-in Error
    */
-  BUILTIN: 'BUILTIN',
+  BUILTIN: "BUILTIN",
   /**
    * Egg Error
    */
-  ERROR: 'ERROR',
+  ERROR: "ERROR",
   /**
    * Egg Exception
    */
-  EXCEPTION: 'EXCEPTION',
+  EXCEPTION: "EXCEPTION",
 } as const;
 
 type ErrorType = (typeof ErrorType)[keyof typeof ErrorType];

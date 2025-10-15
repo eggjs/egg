@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.middleware = ['foo'];
+exports.middleware = ["foo"];

@@ -1,9 +1,9 @@
-import type { Singleton } from 'egg';
-import type { Redis } from 'ioredis';
+import type { Singleton } from "egg";
+import type { Redis } from "ioredis";
 
-import type { RedisConfig } from './config/config.default.ts';
+import type { RedisConfig } from "./config/config.default.ts";
 
-declare module 'egg' {
+declare module "egg" {
   interface EggAppConfig {
     /**
      * Redis plugin config

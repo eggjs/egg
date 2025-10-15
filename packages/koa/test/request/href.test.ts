@@ -1,29 +1,29 @@
-import assert from 'node:assert/strict';
-import Stream from 'node:stream';
+import assert from "node:assert/strict";
+import Stream from "node:stream";
 // import http from 'node:http';
 // import type { AddressInfo } from 'node:net';
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
 // import Koa from '../../src/index.ts';
-import context from '../test-helpers/context.ts';
+import context from "../test-helpers/context.ts";
 
-describe('ctx.href', () => {
-  it('should return the full request url', () => {
+describe("ctx.href", () => {
+  it("should return the full request url", () => {
     const socket = new Stream.Duplex();
     const req = {
-      url: '/users/1?next=/dashboard',
+      url: "/users/1?next=/dashboard",
       headers: {
-        host: 'localhost',
+        host: "localhost",
       },
       socket,
       __proto__: Stream.Readable.prototype,
     };
     const ctx = context(req);
-    assert.strictEqual(ctx.href, 'http://localhost/users/1?next=/dashboard');
+    assert.strictEqual(ctx.href, "http://localhost/users/1?next=/dashboard");
     // change it also work
-    ctx.url = '/foo/users/1?next=/dashboard';
-    assert.strictEqual(ctx.href, 'http://localhost/users/1?next=/dashboard');
+    ctx.url = "/foo/users/1?next=/dashboard";
+    assert.strictEqual(ctx.href, "http://localhost/users/1?next=/dashboard");
   });
 
   // it.skip('should work with `GET http://example.com/foo`', done => {

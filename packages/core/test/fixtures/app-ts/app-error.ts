@@ -1,4 +1,4 @@
-import { BaseContextClass, EggCore } from '../../..';
+import { BaseContextClass, EggCore } from "../../..";
 
 // normal
 const app = new EggCore<{ env: string }>();

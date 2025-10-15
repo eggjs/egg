@@ -1,12 +1,12 @@
-import mm from '../src/index.ts';
-import { getFixtures } from './helper.ts';
+import mm from "../src/index.ts";
+import { getFixtures } from "./helper.ts";
 
 const app = mm.cluster({
-  baseDir: getFixtures('simple'),
+  baseDir: getFixtures("simple"),
 });
 await app.ready();
 
-const res = await app.httpRequest().get('/').expect('hi');
+const res = await app.httpRequest().get("/").expect("hi");
 
 console.log(res.statusCode, res.headers, res.text);
 

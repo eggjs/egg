@@ -1,15 +1,15 @@
-'use strict';
+"use strict";
 
-const APIClientBase = require('cluster-client').APIClientBase;
+const APIClientBase = require("cluster-client").APIClientBase;
 
 class ApiClient2 extends APIClientBase {
   get DataClient() {
-    return require('./registry_client');
+    return require("./registry_client");
   }
 
   get clusterOptions() {
     return {
-      name: 'ApiClient2',
+      name: "ApiClient2",
       responseTimeout: 1000,
     };
   }

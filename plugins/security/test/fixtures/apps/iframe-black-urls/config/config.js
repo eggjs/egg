@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'xframe',
+  defaultMiddleware: "xframe",
   xframe: {
-    blackUrls: ['/hello', '/world/:id'],
+    blackUrls: ["/hello", "/world/:id"],
   },
 };

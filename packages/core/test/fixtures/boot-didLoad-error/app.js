@@ -1,4 +1,4 @@
-const { scheduler } = require('node:timers/promises');
+const { scheduler } = require("node:timers/promises");
 
 module.exports = class {
   constructor(app) {
@@ -7,26 +7,26 @@ module.exports = class {
   }
 
   configDidLoad() {
-    this.app.bootLog.push('configDidLoad');
+    this.app.bootLog.push("configDidLoad");
   }
 
   async didLoad() {
     await scheduler.wait(1);
-    throw new Error('didLoad error');
+    throw new Error("didLoad error");
   }
 
   async willReady() {
     await scheduler.wait(1);
-    this.app.bootLog.push('willReady');
+    this.app.bootLog.push("willReady");
   }
 
   async didReady() {
     await scheduler.wait(1);
-    this.app.bootLog.push('didReady');
+    this.app.bootLog.push("didReady");
   }
 
   async beforeClose() {
     await scheduler.wait(1);
-    this.app.bootLog.push('beforeClose');
+    this.app.bootLog.push("beforeClose");
   }
 };

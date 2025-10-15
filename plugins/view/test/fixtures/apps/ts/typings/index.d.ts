@@ -1,8 +1,8 @@
-import 'egg';
+import "egg";
 
-import HomeController from '../app/controller/home.ts';
+import HomeController from "../app/controller/home.ts";
 
-declare module 'egg' {
+declare module "egg" {
   interface IController {
     home: HomeController;
   }

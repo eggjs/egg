@@ -1,7 +1,7 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   agg: {
-    path: path.join(__dirname, '../plugins/g'),
+    path: path.join(__dirname, "../plugins/g"),
   },
 };

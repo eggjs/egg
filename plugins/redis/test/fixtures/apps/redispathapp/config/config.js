@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 exports.redis = {
   client: {
-    path: '/tmp/redis.sock',
+    path: "/tmp/redis.sock",
   },
   agent: true,
 };
 
-exports.keys = 'keys';
+exports.keys = "keys";

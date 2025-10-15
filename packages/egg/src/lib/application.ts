@@ -1,17 +1,21 @@
-import path from 'node:path';
-import fs from 'node:fs';
-import http from 'node:http';
-import { Socket } from 'node:net';
+import path from "node:path";
+import fs from "node:fs";
+import http from "node:http";
+import { Socket } from "node:net";
 
-import { graceful } from 'graceful';
-import { assign } from 'utility';
-import { utils as eggUtils } from '@eggjs/core';
-import { isGeneratorFunction } from 'is-type-of';
+import { graceful } from "graceful";
+import { assign } from "utility";
+import { utils as eggUtils } from "@eggjs/core";
+import { isGeneratorFunction } from "is-type-of";
 
-import { EggApplicationCore, type EggApplicationCoreOptions, type Context } from './egg.ts';
-import { AppWorkerLoader } from './loader/index.ts';
-import Helper from '../app/extend/helper.ts';
-import { CookieLimitExceedError } from './error/index.ts';
+import {
+  EggApplicationCore,
+  type EggApplicationCoreOptions,
+  type Context,
+} from "./egg.ts";
+import { AppWorkerLoader } from "./loader/index.ts";
+import Helper from "../app/extend/helper.ts";
+import { CookieLimitExceedError } from "./error/index.ts";
 
 // client error => 400 Bad Request
 // Refs: https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_event_clienterror
@@ -22,7 +26,9 @@ const DEFAULT_BAD_REQUEST_HTML = `<html>
   <hr><center>❤</center>
   </body>
   </html>`;
-const DEFAULT_BAD_REQUEST_HTML_LENGTH = Buffer.byteLength(DEFAULT_BAD_REQUEST_HTML);
+const DEFAULT_BAD_REQUEST_HTML_LENGTH = Buffer.byteLength(
+  DEFAULT_BAD_REQUEST_HTML,
+);
 const DEFAULT_BAD_REQUEST_RESPONSE =
   `HTTP/1.1 400 Bad Request\r\nContent-Length: ${DEFAULT_BAD_REQUEST_HTML_LENGTH}` +
   `\r\n\r\n${DEFAULT_BAD_REQUEST_HTML}`;
@@ -31,7 +37,7 @@ const DEFAULT_BAD_REQUEST_RESPONSE =
 function escapeHeaderValue(value: string) {
   // Protect against response splitting. The regex test is there to
   // minimize the performance impact in the common case.
-  return /[\r\n]/.test(value) ? value.replace(/[\r\n]+[ \t]*/g, '') : value;
+  return /[\r\n]/.test(value) ? value.replace(/[\r\n]+[ \t]*/g, "") : value;
 }
 
 /**
@@ -52,10 +58,10 @@ export class Application extends EggApplicationCore {
    * @class
    * @param {Object} options - see {@link EggApplicationCore}
    */
-  constructor(options?: Omit<EggApplicationCoreOptions, 'type'>) {
+  constructor(options?: Omit<EggApplicationCoreOptions, "type">) {
     super({
       ...options,
-      type: 'application',
+      type: "application",
     });
   }
 
@@ -80,13 +86,13 @@ export class Application extends EggApplicationCore {
     const headers = raw.headers || {};
     const status = raw.status || 400;
 
-    let responseHeaderLines = '';
-    const firstLine = `HTTP/1.1 ${status} ${http.STATUS_CODES[status] || 'Unknown'}`;
+    let responseHeaderLines = "";
+    const firstLine = `HTTP/1.1 ${status} ${http.STATUS_CODES[status] || "Unknown"}`;
 
     // Not that safe because no validation for header keys.
     // Refs: https://github.com/nodejs/node/blob/b38c81/lib/_http_outgoing.js#L451
     for (const key of Object.keys(headers)) {
-      if (key.toLowerCase() === 'content-length') {
+      if (key.toLowerCase() === "content-length") {
         delete headers[key];
         continue;
       }
@@ -102,15 +108,15 @@ export class Application extends EggApplicationCore {
     // ignore when there is no http body, it almost like an ECONNRESET
     if (err.rawPacket) {
       this.logger.warn(
-        '[egg:application] A client (%s:%d) error [%s] occurred: %s',
+        "[egg:application] A client (%s:%d) error [%s] occurred: %s",
         socket.remoteAddress,
         socket.remotePort,
         err.code,
-        err.message
+        err.message,
       );
     }
 
-    if (typeof this.config.onClientError === 'function') {
+    if (typeof this.config.onClientError === "function") {
       // @ts-ignore onClientError is not typed
       const p = eggUtils.callFn(this.config.onClientError, [err, socket, this]);
 
@@ -129,9 +135,9 @@ export class Application extends EggApplicationCore {
       // + body: ''
       // + headers: {}
       // + status: 400
-      p.then(ret => {
+      p.then((ret) => {
         this.#responseRaw(socket, ret || {});
-      }).catch(err => {
+      }).catch((err) => {
         this.logger.error(err);
         this.#responseRaw(socket);
       });
@@ -155,7 +161,7 @@ export class Application extends EggApplicationCore {
         if (originMessage) {
           // shouldjs will override error property but only getter
           // https://github.com/shouldjs/should.js/blob/889e22ebf19a06bc2747d24cf34b25cc00b37464/lib/assertion-error.js#L26
-          Object.defineProperty(err, 'message', {
+          Object.defineProperty(err, "message", {
             get() {
               return `${originMessage} (uncaughtException throw ${throwErrorCount} times on pid: ${process.pid})`;
             },
@@ -168,10 +174,12 @@ export class Application extends EggApplicationCore {
       ignoreCode: serverGracefulIgnoreCode,
     });
 
-    server.on('clientError', (err, socket) => this.onClientError(err, socket as Socket));
+    server.on("clientError", (err, socket) =>
+      this.onClientError(err, socket as Socket),
+    );
 
     // server timeout
-    if (typeof this.config.serverTimeout === 'number') {
+    if (typeof this.config.serverTimeout === "number") {
       server.setTimeout(this.config.serverTimeout);
     }
   }
@@ -200,7 +208,7 @@ export class Application extends EggApplicationCore {
     const rundir = this.config.rundir;
     const FULLPATH = this.loader.FileLoader.FULLPATH;
     try {
-      const dumpRouterFile = path.join(rundir, 'router.json');
+      const dumpRouterFile = path.join(rundir, "router.json");
       const routers = [];
       for (const layer of this.router.stack) {
         routers.push({
@@ -209,7 +217,10 @@ export class Application extends EggApplicationCore {
           paramNames: layer.paramNames,
           path: layer.path,
           regexp: layer.regexp.toString(),
-          stack: layer.stack.map((stack: any) => stack[FULLPATH] || stack._name || stack.name || 'anonymous'),
+          stack: layer.stack.map(
+            (stack: any) =>
+              stack[FULLPATH] || stack._name || stack.name || "anonymous",
+          ),
         });
       }
       fs.writeFileSync(dumpRouterFile, JSON.stringify(routers, null, 2));
@@ -226,7 +237,7 @@ export class Application extends EggApplicationCore {
   runInBackground(scope: (ctx: Context) => Promise<void>, req?: unknown): void {
     const ctx = this.createAnonymousContext(req);
     if (!scope.name) {
-      Reflect.set(scope, '_name', eggUtils.getCalleeFromStack(true));
+      Reflect.set(scope, "_name", eggUtils.getCalleeFromStack(true));
     }
     this.ctxStorage.run(ctx, () => {
       return ctx.runInBackground(scope);
@@ -240,14 +251,17 @@ export class Application extends EggApplicationCore {
   get keys(): string[] {
     if (!this._keys) {
       if (!this.config.keys) {
-        if (this.config.env === 'local' || this.config.env === 'unittest') {
-          const configPath = path.join(this.config.baseDir, 'config/config.default.js');
-          console.error('Cookie need secret key to sign and encrypt.');
-          console.error('Please add `config.keys` in %s', configPath);
+        if (this.config.env === "local" || this.config.env === "unittest") {
+          const configPath = path.join(
+            this.config.baseDir,
+            "config/config.default.js",
+          );
+          console.error("Cookie need secret key to sign and encrypt.");
+          console.error("Please add `config.keys` in %s", configPath);
         }
-        throw new Error('Please set config.keys first');
+        throw new Error("Please set config.keys first");
       }
-      this._keys = this.config.keys.split(',').map(s => s.trim());
+      this._keys = this.config.keys.split(",").map((s) => s.trim());
     }
     return this._keys;
   }
@@ -257,7 +271,7 @@ export class Application extends EggApplicationCore {
    */
   toAsyncFunction(fn: (...args: any[]) => any): (...args: any[]) => any {
     if (isGeneratorFunction(fn)) {
-      throw new Error('Generator function is not supported');
+      throw new Error("Generator function is not supported");
     }
     return fn;
   }
@@ -270,12 +284,12 @@ export class Application extends EggApplicationCore {
   #bindEvents(): void {
     // Browser Cookie Limits: http://browsercookielimits.iain.guru/
     // https://github.com/eggjs/egg-cookies/blob/58ef4ea497a0eb4dd711d7e9751e56bc5fcee004/src/cookies.ts#L145
-    this.on('cookieLimitExceed', ({ name, value, ctx }) => {
+    this.on("cookieLimitExceed", ({ name, value, ctx }) => {
       const err = new CookieLimitExceedError(name, value);
       ctx.coreLogger.error(err);
     });
     // expose server to support websocket
-    this.once('server', (server: http.Server) => this.onServer(server));
+    this.once("server", (server: http.Server) => this.onServer(server));
   }
 
   /**
@@ -285,12 +299,12 @@ export class Application extends EggApplicationCore {
    */
   #warnConfusedConfig(): void {
     const confusedConfigurations = this.config.confusedConfigurations;
-    Object.keys(confusedConfigurations).forEach(key => {
+    Object.keys(confusedConfigurations).forEach((key) => {
       if (this.config[key] !== undefined) {
         this.logger.warn(
-          '[egg:application] Unexpected config key `%o` exists, Please use `%o` instead.',
+          "[egg:application] Unexpected config key `%o` exists, Please use `%o` instead.",
           key,
-          confusedConfigurations[key]
+          confusedConfigurations[key],
         );
       }
     });

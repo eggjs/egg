@@ -1,7 +1,7 @@
-import { EggLoggers, type EggLoggersOptions } from 'egg-logger';
-import { setCustomLogger } from 'onelogger';
+import { EggLoggers, type EggLoggersOptions } from "egg-logger";
+import { setCustomLogger } from "onelogger";
 
-import type { EggApplicationCore } from '../egg.ts';
+import type { EggApplicationCore } from "../egg.ts";
 
 export function createLoggers(app: EggApplicationCore): EggLoggers {
   const loggerOptions = {
@@ -11,8 +11,12 @@ export function createLoggers(app: EggApplicationCore): EggLoggers {
   } as EggLoggersOptions;
 
   // set DEBUG level into INFO on prod env
-  if (app.config.env === 'prod' && loggerOptions.level === 'DEBUG' && !app.config.logger.allowDebugAtProd) {
-    loggerOptions.level = 'INFO';
+  if (
+    app.config.env === "prod" &&
+    loggerOptions.level === "DEBUG" &&
+    !app.config.logger.allowDebugAtProd
+  ) {
+    loggerOptions.level = "INFO";
   }
 
   const loggers = new EggLoggers({
@@ -24,7 +28,9 @@ export function createLoggers(app: EggApplicationCore): EggLoggers {
   app.ready(() => {
     if (app.config.logger.disableConsoleAfterReady) {
       loggers.disableConsole();
-      loggers.coreLogger.info('[egg:lib:core:logger] disable console log after app ready');
+      loggers.coreLogger.info(
+        "[egg:lib:core:logger] disable console log after app ready",
+      );
     }
   });
 
@@ -38,6 +44,9 @@ export function createLoggers(app: EggApplicationCore): EggLoggers {
       setCustomLogger(loggerName, undefined);
     }
   });
-  loggers.coreLogger.info('[egg:lib:core:logger] init all loggers with options: %j', loggerOptions);
+  loggers.coreLogger.info(
+    "[egg:lib:core:logger] init all loggers with options: %j",
+    loggerOptions,
+  );
   return loggers;
 }

@@ -1,12 +1,12 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import util from 'node:util';
+import util from "node:util";
 
-import context from '../test-helpers/context.ts';
+import context from "../test-helpers/context.ts";
 
-describe('ctx.inspect()', () => {
-  it('should return a json representation', () => {
+describe("ctx.inspect()", () => {
+  it("should return a json representation", () => {
     const ctx = context();
     const toJSON = ctx.toJSON();
 

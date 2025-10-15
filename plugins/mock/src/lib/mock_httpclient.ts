@@ -1,8 +1,8 @@
-import { mm } from 'mm';
-import { extend } from '@eggjs/extend2';
-import type { Dispatcher, Headers, BodyInit } from 'urllib';
+import { mm } from "mm";
+import { extend } from "@eggjs/extend2";
+import type { Dispatcher, Headers, BodyInit } from "urllib";
 
-import { getMockAgent } from './mock_agent.ts';
+import { getMockAgent } from "./mock_agent.ts";
 
 export interface MockResultOptions {
   data: string | Buffer | Record<string, any>;
@@ -35,14 +35,17 @@ export interface MockResponseCallbackOptions {
   method: string;
   headers?: Headers | Record<string, string>;
   origin?: string;
-  body?: BodyInit | Dispatcher.DispatchOptions['body'] | null;
+  body?: BodyInit | Dispatcher.DispatchOptions["body"] | null;
   maxRedirections?: number;
 }
 
-export type MockResultFunction = (url: string, options: MockResponseCallbackOptions) => MockResultOptions | string;
+export type MockResultFunction = (
+  url: string,
+  options: MockResponseCallbackOptions,
+) => MockResultOptions | string;
 
 function normalizeResult(result: string | MockResultOptions) {
-  if (typeof result === 'string') {
+  if (typeof result === "string") {
     result = { data: result };
   }
 
@@ -50,29 +53,29 @@ function normalizeResult(result: string | MockResultOptions) {
     result.status = 200;
   }
 
-  result.data = result.data || '';
+  result.data = result.data || "";
   if (Buffer.isBuffer(result.data)) {
     // do nothing
-  } else if (typeof result.data === 'object') {
+  } else if (typeof result.data === "object") {
     // json
     result.data = Buffer.from(JSON.stringify(result.data));
-  } else if (typeof result.data === 'string') {
+  } else if (typeof result.data === "string") {
     // string
     result.data = Buffer.from(result.data);
   } else {
-    throw new Error('`mockResult.data` must be buffer, string or json');
+    throw new Error("`mockResult.data` must be buffer, string or json");
   }
   result.headers = result.headers ?? {};
   return result;
 }
 
-const MOCK_CONFIGS = Symbol('MOCK_CONFIGS');
-const MOCK_CONFIG_INDEX = Symbol('MOCK_CONFIG_INDEX');
+const MOCK_CONFIGS = Symbol("MOCK_CONFIGS");
+const MOCK_CONFIG_INDEX = Symbol("MOCK_CONFIG_INDEX");
 
 export type MockHttpClientMethod = (
   mockUrl: string | RegExp,
   mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-  mockResult?: MockResultOptions | MockResultFunction | string
+  mockResult?: MockResultOptions | MockResultFunction | string,
 ) => void;
 
 export function createMockHttpClient(app: any): MockHttpClientMethod {
@@ -92,18 +95,18 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
   return function mockHttpClient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): void {
     let mockMethods = mockMethod as string[];
     if (!mockResult) {
       // app.mockHttpclient(mockUrl, mockResult)
       mockResult = mockMethod as MockResultOptions;
-      mockMethods = ['*'];
+      mockMethods = ["*"];
     }
     if (!Array.isArray(mockMethods)) {
       mockMethods = [mockMethods];
     }
-    mockMethods = mockMethods.map(method => (method || 'GET').toUpperCase());
+    mockMethods = mockMethods.map((method) => (method || "GET").toUpperCase());
 
     // use MockAgent on undici
     let mockConfigs = app[MOCK_CONFIGS];
@@ -117,23 +120,23 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
     let originMethod: ((value: string) => boolean) | undefined;
     const pathname = mockUrl;
     let pathMethod: (path: string) => boolean;
-    if (typeof mockUrl === 'string') {
+    if (typeof mockUrl === "string") {
       const urlObject = new URL(mockUrl);
       origin = urlObject.origin;
       const originalPathname = urlObject.pathname;
-      pathMethod = path => {
+      pathMethod = (path) => {
         if (path === originalPathname) return true;
         // should match /foo?a=1 including query
-        if (path.includes('?')) return path.startsWith(originalPathname);
+        if (path.includes("?")) return path.startsWith(originalPathname);
         return false;
       };
     } else if (mockUrl instanceof RegExp) {
-      let requestOrigin = '';
-      originMethod = value => {
+      let requestOrigin = "";
+      originMethod = (value) => {
         requestOrigin = value;
         return true;
       };
-      pathMethod = path => {
+      pathMethod = (path) => {
         for (const config of mockConfigs) {
           if (config.mockUrl.test(`${requestOrigin}${path}`)) {
             mm(app, MOCK_CONFIG_INDEX, config.mockConfigIndex);
@@ -150,24 +153,33 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
       : getMockAgent(app).get(originMethod ?? (origin as string));
     // persist default is true
     let persist = true;
-    if (typeof mockResult === 'object' && typeof mockResult.persist === 'boolean') {
+    if (
+      typeof mockResult === "object" &&
+      typeof mockResult.persist === "boolean"
+    ) {
       persist = mockResult.persist;
     }
     mockMethods.forEach(function (method) {
       const mockScope = mockPool
         .intercept({
           path: pathMethod ?? pathname,
-          method: method === '*' ? () => true : method,
+          method: method === "*" ? () => true : method,
         })
-        .reply(options => {
+        .reply((options) => {
           // not support mockResult as an async function
           const requestUrl = `${options.origin}${options.path}`;
           let mockRequestResult;
           if (mockConfigIndex >= 0) {
             mockResult = mockConfigs[app[MOCK_CONFIG_INDEX]].mockResult;
-            mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
+            mockRequestResult =
+              typeof mockResult === "function"
+                ? mockResult(requestUrl, options)
+                : mockResult;
           } else {
-            mockRequestResult = typeof mockResult === 'function' ? mockResult(requestUrl, options) : mockResult;
+            mockRequestResult =
+              typeof mockResult === "function"
+                ? mockResult(requestUrl, options)
+                : mockResult;
           }
           const result = extend(true, {}, normalizeResult(mockRequestResult!));
           return {
@@ -178,14 +190,18 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
             },
           };
         });
-      if (typeof mockResult === 'object') {
+      if (typeof mockResult === "object") {
         if (mockResult.delay && mockResult.delay > 0) {
           mockScope.delay(mockResult.delay);
         }
       }
       if (persist) {
         mockScope.persist();
-      } else if (typeof mockResult === 'object' && mockResult.repeats && mockResult.repeats > 0) {
+      } else if (
+        typeof mockResult === "object" &&
+        mockResult.repeats &&
+        mockResult.repeats > 0
+      ) {
         mockScope.times(mockResult.repeats);
       }
     });

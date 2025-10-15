@@ -1,15 +1,17 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
+import { debuglog } from "node:util";
+import path from "node:path";
 
-import { Command, Interfaces } from '@oclif/core';
-import { readJSON } from 'utility';
+import { Command, Interfaces } from "@oclif/core";
+import { readJSON } from "utility";
 
-import type { PackageEgg } from './types.ts';
+import type { PackageEgg } from "./types.ts";
 
-const debug = debuglog('egg/scripts/baseCommand');
+const debug = debuglog("egg/scripts/baseCommand");
 
-type Flags<T extends typeof Command> = Interfaces.InferredFlags<(typeof BaseCommand)['baseFlags'] & T['flags']>;
-type Args<T extends typeof Command> = Interfaces.InferredArgs<T['args']>;
+type Flags<T extends typeof Command> = Interfaces.InferredFlags<
+  (typeof BaseCommand)["baseFlags"] & T["flags"]
+>;
+type Args<T extends typeof Command> = Interfaces.InferredArgs<T["args"]>;
 
 export abstract class BaseCommand<T extends typeof Command> extends Command {
   // add the --json flag
@@ -36,7 +38,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
 
   public async init(): Promise<void> {
     await super.init();
-    debug('[init] raw args: %o, NODE_ENV: %o', this.argv, this.env.NODE_ENV);
+    debug("[init] raw args: %o, NODE_ENV: %o", this.argv, this.env.NODE_ENV);
     const { args, flags } = await this.parse({
       flags: this.ctor.flags,
       baseFlags: (super.ctor as typeof BaseCommand).baseFlags,
@@ -49,11 +51,16 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
   }
 
   protected async initBaseInfo(baseDir: string) {
-    const pkg = await readJSON(path.join(baseDir, 'package.json'));
+    const pkg = await readJSON(path.join(baseDir, "package.json"));
     this.pkg = pkg;
     this.pkgEgg = pkg.egg ?? {};
-    this.isESM = pkg.type === 'module';
-    debug('[initBaseInfo] baseDir: %o, pkgEgg: %o, isESM: %o', baseDir, this.pkgEgg, this.isESM);
+    this.isESM = pkg.type === "module";
+    debug(
+      "[initBaseInfo] baseDir: %o, pkgEgg: %o, isESM: %o",
+      baseDir,
+      this.pkgEgg,
+      this.isESM,
+    );
   }
 
   protected async catch(err: Error & { exitCode?: number }): Promise<any> {

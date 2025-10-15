@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const path = require('path');
-const egg = require('../../../../..');
+const path = require("path");
+const egg = require("../../../../..");
 const Application = egg.Application;
 const AppWorkerLoader = egg.AppWorkerLoader;
 
@@ -23,11 +23,11 @@ class ChairApplication extends Application {
     super(options);
   }
 
-  get [Symbol.for('egg#eggPath')]() {
-    return path.join(__dirname, '..');
+  get [Symbol.for("egg#eggPath")]() {
+    return path.join(__dirname, "..");
   }
 
-  get [Symbol.for('egg#loader')]() {
+  get [Symbol.for("egg#loader")]() {
     return Loader;
   }
 }

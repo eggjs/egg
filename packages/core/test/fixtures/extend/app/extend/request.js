@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  appRequest: 'app request',
+  appRequest: "app request",
 };

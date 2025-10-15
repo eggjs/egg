@@ -1,25 +1,25 @@
-'use strict';
+"use strict";
 
 exports.dataService = {
   clients: {
-    first: { foo1: 'bar1' },
-    second: { foo2: 'bar2' },
+    first: { foo1: "bar1" },
+    second: { foo2: "bar2" },
   },
 
   default: {
-    foo: 'bar',
+    foo: "bar",
   },
 };
 
 exports.dataServiceAsync = {
   clients: {
-    first: { foo1: 'bar1' },
-    second: { foo2: 'bar2' },
+    first: { foo1: "bar1" },
+    second: { foo2: "bar2" },
   },
 
   default: {
-    foo: 'bar',
+    foo: "bar",
   },
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

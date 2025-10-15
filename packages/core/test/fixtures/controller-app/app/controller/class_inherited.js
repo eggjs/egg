@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class BaseController {
   constructor(ctx) {
@@ -6,16 +6,16 @@ class BaseController {
   }
 
   callInheritedFunction() {
-    this.ctx.body = 'inherited';
+    this.ctx.body = "inherited";
   }
 
   callOverriddenFunction() {
-    this.ctx.body = 'base';
+    this.ctx.body = "base";
   }
 }
 
 module.exports = class HomeController extends BaseController {
   callOverriddenFunction() {
-    this.ctx.body = 'own';
+    this.ctx.body = "own";
   }
 };

@@ -1,17 +1,17 @@
 exports.get = async function () {
   this.body = {
-    cookieValue: this.getCookie('foo') || undefined,
-    cookiesValue: this.cookies.get('foo') || undefined,
+    cookieValue: this.getCookie("foo") || undefined,
+    cookiesValue: this.cookies.get("foo") || undefined,
     sessionValue: this.session.foo,
   };
 };
 
 exports.post = async function () {
-  this.body = 'done';
+  this.body = "done";
 };
 
 exports.hello = async function () {
-  this.body = 'hi';
+  this.body = "hi";
 };
 
 exports.service = async function () {
@@ -29,21 +29,21 @@ exports.serviceOld = async function () {
 
 exports.header = async function () {
   this.body = {
-    header: this.get('customheader'),
+    header: this.get("customheader"),
   };
 };
 
 exports.urllib = async function () {
-  const url = 'http://' + this.host;
-  const method = this.query.method || 'request';
+  const url = "http://" + this.host;
+  const method = this.query.method || "request";
   const dataType = this.query.dataType;
-  let r = this.app.httpclient[method](url + '/mock_url', {
+  let r = this.app.httpclient[method](url + "/mock_url", {
     dataType,
   });
-  if (method === 'request') r = r.then(d => d);
+  if (method === "request") r = r.then((d) => d);
   const r1 = await r;
-  const r2 = await this.app.httpclient[method](url + '/mock_url', {
-    method: 'POST',
+  const r2 = await this.app.httpclient[method](url + "/mock_url", {
+    method: "POST",
     dataType,
   });
   this.body = {
@@ -53,16 +53,16 @@ exports.urllib = async function () {
 };
 
 exports.mockUrlGet = async function () {
-  this.body = 'url get';
+  this.body = "url get";
 };
 
 exports.mockUrlPost = async function () {
-  this.body = 'url post';
+  this.body = "url post";
 };
 
 exports.mockUrllibHeaders = async function () {
-  const url = 'http://' + this.host;
-  const method = this.query.method || 'request';
-  const res = await this.app.httpclient[method](url + '/mock_url');
+  const url = "http://" + this.host;
+  const method = this.query.method || "request";
+  const res = await this.app.httpclient[method](url + "/mock_url");
   this.body = res.headers;
 };

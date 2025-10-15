@@ -1,5 +1,5 @@
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'dta',
+  defaultMiddleware: "dta",
 };

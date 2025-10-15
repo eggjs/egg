@@ -1,9 +1,9 @@
-import type { PartialEggConfig } from '../lib/types.ts';
+import type { PartialEggConfig } from "../lib/types.ts";
 
 export default {
   logger: {
     coreLogger: {
-      consoleLevel: 'WARN',
+      consoleLevel: "WARN",
     },
   },
 } as PartialEggConfig;

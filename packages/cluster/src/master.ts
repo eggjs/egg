@@ -1,31 +1,44 @@
-import os from 'node:os';
-import v8 from 'node:v8';
-import util from 'node:util';
-import path from 'node:path';
-import fs from 'node:fs';
-import net from 'node:net';
-import { debuglog } from 'node:util';
+import os from "node:os";
+import v8 from "node:v8";
+import util from "node:util";
+import path from "node:path";
+import fs from "node:fs";
+import net from "node:net";
+import { debuglog } from "node:util";
 
-import { ReadyEventEmitter } from 'get-ready';
-import { detectPort } from 'detect-port';
-import { reload } from 'cluster-reload';
-import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
-import { readJSONSync } from 'utility';
-import terminalLink from 'terminal-link';
+import { ReadyEventEmitter } from "get-ready";
+import { detectPort } from "detect-port";
+import { reload } from "cluster-reload";
+import { EggConsoleLogger as ConsoleLogger } from "egg-logger";
+import { readJSONSync } from "utility";
+import terminalLink from "terminal-link";
 
-import { parseOptions, type ClusterOptions, type ParsedClusterOptions } from './utils/options.ts';
-import { WorkerManager } from './utils/worker_manager.ts';
-import { Messenger } from './utils/messenger.ts';
-import { AgentProcessWorker, AgentProcessUtils as ProcessAgentWorker } from './utils/mode/impl/process/agent.ts';
-import { AppProcessWorker, AppProcessUtils as ProcessAppWorker } from './utils/mode/impl/process/app.ts';
+import {
+  parseOptions,
+  type ClusterOptions,
+  type ParsedClusterOptions,
+} from "./utils/options.ts";
+import { WorkerManager } from "./utils/worker_manager.ts";
+import { Messenger } from "./utils/messenger.ts";
+import {
+  AgentProcessWorker,
+  AgentProcessUtils as ProcessAgentWorker,
+} from "./utils/mode/impl/process/agent.ts";
+import {
+  AppProcessWorker,
+  AppProcessUtils as ProcessAppWorker,
+} from "./utils/mode/impl/process/app.ts";
 import {
   AgentThreadWorker,
   AgentThreadUtils as WorkerThreadsAgentWorker,
-} from './utils/mode/impl/worker_threads/agent.ts';
-import { AppThreadWorker, AppThreadUtils as WorkerThreadsAppWorker } from './utils/mode/impl/worker_threads/app.ts';
-import { ClusterWorkerExceptionError } from './error/ClusterWorkerExceptionError.ts';
+} from "./utils/mode/impl/worker_threads/agent.ts";
+import {
+  AppThreadWorker,
+  AppThreadUtils as WorkerThreadsAppWorker,
+} from "./utils/mode/impl/worker_threads/app.ts";
+import { ClusterWorkerExceptionError } from "./error/ClusterWorkerExceptionError.ts";
 
-const debug = debuglog('egg/cluster/master');
+const debug = debuglog("egg/cluster/master");
 
 export interface MasterOptions extends ParsedClusterOptions {
   clusterPort?: number;
@@ -43,14 +56,14 @@ export class Master extends ReadyEventEmitter {
   logger: ConsoleLogger;
   agentWorker: ProcessAgentWorker | WorkerThreadsAgentWorker;
   appWorker: ProcessAppWorker | WorkerThreadsAppWorker;
-  #logMethod: 'info' | 'debug';
+  #logMethod: "info" | "debug";
   #realPort?: number;
   #protocol: string;
   #appAddress: string;
 
   constructor(options?: ClusterOptions) {
     super();
-    this.#start(options).catch(err => {
+    this.#start(options).catch((err) => {
       this.ready(err);
     });
   }
@@ -61,73 +74,92 @@ export class Master extends ReadyEventEmitter {
     this.messenger = new Messenger(this, this.workerManager);
     this.isProduction = isProduction(this.options);
     this.#realPort = this.options.port;
-    this.#protocol = this.options.https ? 'https' : 'http';
+    this.#protocol = this.options.https ? "https" : "http";
 
     // app started or not
     this.isStarted = false;
-    this.logger = new ConsoleLogger({ level: process.env.EGG_MASTER_LOGGER_LEVEL ?? 'INFO' });
-    this.#logMethod = 'info';
-    if (this.options.env === 'local' || process.env.NODE_ENV === 'development') {
-      this.#logMethod = 'debug';
+    this.logger = new ConsoleLogger({
+      level: process.env.EGG_MASTER_LOGGER_LEVEL ?? "INFO",
+    });
+    this.#logMethod = "info";
+    if (
+      this.options.env === "local" ||
+      process.env.NODE_ENV === "development"
+    ) {
+      this.#logMethod = "debug";
     }
 
     // get the real framework info
     const frameworkPath = this.options.framework;
-    const frameworkPkg = readJSONSync(path.join(frameworkPath, 'package.json'));
+    const frameworkPkg = readJSONSync(path.join(frameworkPath, "package.json"));
 
     // set app & agent worker impl
-    if (this.options.startMode === 'worker_threads') {
+    if (this.options.startMode === "worker_threads") {
       this.startByWorkerThreads();
     } else {
       this.startByProcess();
     }
 
-    this.log(`[master] =================== ${frameworkPkg.name} start 🥚🥚🥚🥚 =====================`);
+    this.log(
+      `[master] =================== ${frameworkPkg.name} start 🥚🥚🥚🥚 =====================`,
+    );
     this.logger.info(`[master] node version ${process.version}`);
     /* istanbul ignore next */
-    if ('alinode' in process) {
+    if ("alinode" in process) {
       this.logger.info(`[master] alinode version ${process.alinode}`);
     }
-    this.logger.info(`[master] ${frameworkPkg.name} version ${frameworkPkg.version}`);
+    this.logger.info(
+      `[master] ${frameworkPkg.name} version ${frameworkPkg.version}`,
+    );
 
     if (this.isProduction) {
-      this.logger.info('[master] start with options:%s%s', os.EOL, JSON.stringify(this.options, null, 2));
+      this.logger.info(
+        "[master] start with options:%s%s",
+        os.EOL,
+        JSON.stringify(this.options, null, 2),
+      );
     } else {
-      this.log('[master] start with options: %j', this.options);
+      this.log("[master] start with options: %j", this.options);
     }
     this.log(
-      '[master] start with env: isProduction: %s, EGG_SERVER_ENV: %s, NODE_ENV: %s',
+      "[master] start with env: isProduction: %s, EGG_SERVER_ENV: %s, NODE_ENV: %s",
       this.isProduction,
       this.options.env,
-      process.env.NODE_ENV
+      process.env.NODE_ENV,
     );
 
     const startTime = Date.now();
 
     this.ready(() => {
       this.isStarted = true;
-      const stickyMsg = this.options.sticky ? ' with STICKY MODE!' : '';
-      const startedURL = terminalLink(this.#appAddress, this.#appAddress, { fallback: false });
+      const stickyMsg = this.options.sticky ? " with STICKY MODE!" : "";
+      const startedURL = terminalLink(this.#appAddress, this.#appAddress, {
+        fallback: false,
+      });
       this.logger.info(
-        '[master] %s started on %s (%sms)%s',
+        "[master] %s started on %s (%sms)%s",
         frameworkPkg.name,
         startedURL,
         Date.now() - startTime,
-        stickyMsg
+        stickyMsg,
       );
       if (this.options.debugPort) {
         const url = getAddress({
           port: this.options.debugPort,
-          protocol: 'http',
+          protocol: "http",
         });
         const debugPortURL = terminalLink(url, url, { fallback: false });
-        this.logger.info('[master] %s started debug port on %s', frameworkPkg.name, debugPortURL);
+        this.logger.info(
+          "[master] %s started debug port on %s",
+          frameworkPkg.name,
+          debugPortURL,
+        );
       }
 
-      const action = 'egg-ready';
+      const action = "egg-ready";
       this.messenger.send({
         action,
-        to: 'parent',
+        to: "parent",
         data: {
           port: this.#realPort,
           debugPort: this.options.debugPort,
@@ -137,12 +169,12 @@ export class Master extends ReadyEventEmitter {
       });
       this.messenger.send({
         action,
-        to: 'app',
+        to: "app",
         data: this.options,
       });
       this.messenger.send({
         action,
-        to: 'agent',
+        to: "agent",
         data: this.options,
       });
 
@@ -152,17 +184,17 @@ export class Master extends ReadyEventEmitter {
       }
     });
 
-    this.on('agent-exit', this.onAgentExit.bind(this));
-    this.on('agent-start', this.onAgentStart.bind(this));
-    this.on('app-exit', this.onAppExit.bind(this));
-    this.on('app-start', this.onAppStart.bind(this));
-    this.on('reload-worker', this.onReload.bind(this));
+    this.on("agent-exit", this.onAgentExit.bind(this));
+    this.on("agent-start", this.onAgentStart.bind(this));
+    this.on("app-exit", this.onAppExit.bind(this));
+    this.on("app-start", this.onAppStart.bind(this));
+    this.on("reload-worker", this.onReload.bind(this));
 
     // fork app workers after agent started
-    this.once('agent-start', this.forkAppWorkers.bind(this));
+    this.once("agent-start", this.forkAppWorkers.bind(this));
     // get the real port from options and app.config
     // app worker will send after loading
-    this.on('realport', ({ port, protocol }) => {
+    this.on("realport", ({ port, protocol }) => {
       // this.logger.info('[master] got realport: %s, protocol: %s', port, protocol);
       if (port) {
         this.#realPort = port;
@@ -175,18 +207,18 @@ export class Master extends ReadyEventEmitter {
     // https://nodejs.org/api/process.html#process_signal_events
     // https://en.wikipedia.org/wiki/Unix_signal
     // kill(2) Ctrl-C
-    process.once('SIGINT', this.onSignal.bind(this, 'SIGINT'));
+    process.once("SIGINT", this.onSignal.bind(this, "SIGINT"));
     // kill(3) Ctrl-\
-    process.once('SIGQUIT', this.onSignal.bind(this, 'SIGQUIT'));
+    process.once("SIGQUIT", this.onSignal.bind(this, "SIGQUIT"));
     // kill(15) default
-    process.once('SIGTERM', this.onSignal.bind(this, 'SIGTERM'));
+    process.once("SIGTERM", this.onSignal.bind(this, "SIGTERM"));
 
-    process.once('exit', this.onExit.bind(this));
+    process.once("exit", this.onExit.bind(this));
 
     // write pid to file if provided
     if (this.options.pidFile) {
       fs.mkdirSync(path.dirname(this.options.pidFile), { recursive: true });
-      fs.writeFileSync(this.options.pidFile, process.pid.toString(), 'utf-8');
+      fs.writeFileSync(this.options.pidFile, process.pid.toString(), "utf-8");
     }
 
     this.detectPorts().then(() => {
@@ -194,11 +226,14 @@ export class Master extends ReadyEventEmitter {
     });
 
     // exit when agent or worker exception
-    this.workerManager.on('exception', (count: { agent: number; worker: number }) => {
-      const err = new ClusterWorkerExceptionError(count.agent, count.worker);
-      this.logger.error(err);
-      process.exit(1);
-    });
+    this.workerManager.on(
+      "exception",
+      (count: { agent: number; worker: number }) => {
+        const err = new ClusterWorkerExceptionError(count.agent, count.worker);
+        this.logger.error(err);
+        process.exit(1);
+      },
+    );
   }
 
   startByProcess(): void {
@@ -259,7 +294,7 @@ export class Master extends ReadyEventEmitter {
         {
           pauseOnConnect: true,
         },
-        connection => {
+        (connection) => {
           // We received a connection and need to pass it to the appropriate
           // worker. Get the worker for this connection's source IP and pass
           // it the connection.
@@ -271,10 +306,12 @@ export class Master extends ReadyEventEmitter {
             // Read https://en.wikipedia.org/wiki/TCP_reset_attack for more details.
             connection.destroy();
           } else {
-            const worker = this.stickyWorker(connection.remoteAddress) as AppProcessWorker;
-            worker.instance.send('sticky-session:connection', connection);
+            const worker = this.stickyWorker(
+              connection.remoteAddress,
+            ) as AppProcessWorker;
+            worker.instance.send("sticky-session:connection", connection);
           }
-        }
+        },
       )
       .listen(this.#realPort, cb);
   }
@@ -283,27 +320,35 @@ export class Master extends ReadyEventEmitter {
     const workerNumbers = this.options.workers;
     const ws = this.workerManager.listWorkerIds();
 
-    let s = '';
+    let s = "";
     for (let i = 0; i < ip.length; i++) {
       if (!isNaN(parseInt(ip[i]))) {
         s += ip[i];
       }
     }
     const pid = ws[Number(s) % workerNumbers];
-    return this.workerManager.getWorker(pid)! as AppProcessWorker | AppThreadWorker;
+    return this.workerManager.getWorker(pid)! as
+      | AppProcessWorker
+      | AppThreadWorker;
   }
 
   forkAgentWorker(): void {
-    this.agentWorker.on('agent_forked', (agent: AgentProcessWorker | AgentThreadWorker) => {
-      this.workerManager.setAgent(agent);
-    });
+    this.agentWorker.on(
+      "agent_forked",
+      (agent: AgentProcessWorker | AgentThreadWorker) => {
+        this.workerManager.setAgent(agent);
+      },
+    );
     this.agentWorker.fork();
   }
 
   forkAppWorkers(): void {
-    this.appWorker.on('worker_forked', (worker: AppProcessWorker | AppThreadWorker) => {
-      this.workerManager.setWorker(worker);
-    });
+    this.appWorker.on(
+      "worker_forked",
+      (worker: AppProcessWorker | AppThreadWorker) => {
+        this.workerManager.setWorker(worker);
+      },
+    );
     this.appWorker.fork();
   }
 
@@ -337,8 +382,8 @@ export class Master extends ReadyEventEmitter {
     if (this.closed) return;
 
     this.messenger.send({
-      action: 'egg-pids',
-      to: 'app',
+      action: "egg-pids",
+      to: "app",
       data: [],
     });
     const agentWorker = this.agentWorker;
@@ -346,74 +391,74 @@ export class Master extends ReadyEventEmitter {
 
     const err = new Error(
       util.format(
-        '[master] agent_worker#%s:%s died (code: %s, signal: %s)',
+        "[master] agent_worker#%s:%s died (code: %s, signal: %s)",
         agentWorker.instance.id,
         agentWorker.instance.workerId,
         data.code,
-        data.signal
-      )
+        data.signal,
+      ),
     );
-    err.name = 'AgentWorkerDiedError';
+    err.name = "AgentWorkerDiedError";
     this.logger.error(err);
 
     // remove all listeners to avoid memory leak
     agentWorker.clean();
 
     if (this.isStarted) {
-      this.log('[master] try to start a new agent_worker after 1s ...');
+      this.log("[master] try to start a new agent_worker after 1s ...");
       setTimeout(() => {
-        this.logger.info('[master] new agent_worker starting...');
+        this.logger.info("[master] new agent_worker starting...");
         this.forkAgentWorker();
       }, 1000);
       this.messenger.send({
-        action: 'agent-worker-died',
-        to: 'parent',
+        action: "agent-worker-died",
+        to: "parent",
       });
     } else {
       this.logger.error(
-        '[master] agent_worker#%s:%s start fail, exiting with code:1',
+        "[master] agent_worker#%s:%s start fail, exiting with code:1",
         agentWorker.instance.id,
-        agentWorker.instance.workerId
+        agentWorker.instance.workerId,
       );
       process.exit(1);
     }
   }
 
   onAgentStart(): void {
-    this.agentWorker.instance.status = 'started';
+    this.agentWorker.instance.status = "started";
 
     // Send egg-ready when agent is started after launched
     if (this.appWorker.isAllWorkerStarted) {
       this.messenger.send({
-        action: 'egg-ready',
-        to: 'agent',
+        action: "egg-ready",
+        to: "agent",
         data: this.options,
       });
     }
 
     this.messenger.send({
-      action: 'egg-pids',
-      to: 'app',
+      action: "egg-pids",
+      to: "app",
       data: [this.agentWorker.instance.workerId],
     });
     // should send current worker pids when agent restart
     if (this.isStarted) {
       this.messenger.send({
-        action: 'egg-pids',
-        to: 'agent',
+        action: "egg-pids",
+        to: "agent",
         data: this.workerManager.getListeningWorkerIds(),
       });
     }
 
     this.messenger.send({
-      action: 'agent-start',
-      to: 'app',
+      action: "agent-start",
+      to: "app",
     });
     this.logger.info(
-      '[master] agent_worker#%s:%s started (%sms)',
+      "[master] agent_worker#%s:%s started (%sms)",
       this.agentWorker.instance.id,
       this.agentWorker.instance.workerId,
-      Date.now() - this.agentWorker.startTime
+      Date.now() - this.agentWorker.startTime,
     );
   }
 
@@ -427,23 +472,23 @@ export class Master extends ReadyEventEmitter {
     if (!worker.isDevReload) {
       const signal = data.signal;
       const message = util.format(
-        '[master] app_worker#%s:%s died (code: %s, signal: %s, suicide: %s, state: %s), current workers: %j',
+        "[master] app_worker#%s:%s died (code: %s, signal: %s, suicide: %s, state: %s), current workers: %j",
         worker.id,
         worker.workerId,
         worker.exitCode,
         signal,
         worker.exitedAfterDisconnect,
         worker.state,
-        this.workerManager.listWorkerIds()
+        this.workerManager.listWorkerIds(),
       );
-      if (this.options.isDebug && signal === 'SIGKILL') {
+      if (this.options.isDebug && signal === "SIGKILL") {
         // exit if died during debug
         this.logger.error(message);
-        this.logger.error('[master] worker kill by debugger, exiting...');
+        this.logger.error("[master] worker kill by debugger, exiting...");
         setTimeout(() => this.close(), 10);
       } else {
         const err = new Error(message);
-        err.name = 'AppWorkerDiedError';
+        err.name = "AppWorkerDiedError";
         this.logger.error(err);
       }
     }
@@ -453,20 +498,24 @@ export class Master extends ReadyEventEmitter {
     this.workerManager.deleteWorker(data.workerId);
     // send message to agent with alive workers
     this.messenger.send({
-      action: 'egg-pids',
-      to: 'agent',
+      action: "egg-pids",
+      to: "agent",
       data: this.workerManager.getListeningWorkerIds(),
     });
 
     if (this.appWorker.isAllWorkerStarted) {
       // cfork will only refork at production mode
       this.messenger.send({
-        action: 'app-worker-died',
-        to: 'parent',
+        action: "app-worker-died",
+        to: "parent",
       });
     } else {
       // exit if died during startup
-      this.logger.error('[master] app_worker#%s:%s start fail, exiting with code:1', worker.id, worker.workerId);
+      this.logger.error(
+        "[master] app_worker#%s:%s start fail, exiting with code:1",
+        worker.id,
+        worker.workerId,
+      );
       process.exit(1);
     }
   }
@@ -476,7 +525,12 @@ export class Master extends ReadyEventEmitter {
    */
   onAppStart(data: { workerId: number; address: ListeningAddress }): void {
     const worker = this.workerManager.getWorker(data.workerId)!;
-    debug('got app_worker#%s:%s app-start event, data: %j', worker.id, worker.workerId, data);
+    debug(
+      "got app_worker#%s:%s app-start event, data: %j",
+      worker.id,
+      worker.workerId,
+      data,
+    );
 
     const address = data.address;
     // worker should listen stickyWorkerPort when sticky mode
@@ -486,45 +540,47 @@ export class Master extends ReadyEventEmitter {
       }
       // worker should listen REALPORT when not sticky mode
     } else if (
-      this.options.startMode !== 'worker_threads' &&
+      this.options.startMode !== "worker_threads" &&
       !isUnixSock(address) &&
       String(address.port) !== String(this.#realPort)
     ) {
       return;
     }
-    worker.state = 'listening';
+    worker.state = "listening";
 
     // send message to agent with alive workers
     this.messenger.send({
-      action: 'egg-pids',
-      to: 'agent',
+      action: "egg-pids",
+      to: "agent",
       data: this.workerManager.getListeningWorkerIds(),
     });
     // send message to app with current agent worker id
     this.messenger.send({
-      action: 'egg-pids',
-      to: 'app',
+      action: "egg-pids",
+      to: "app",
       data: [this.agentWorker.instance.workerId],
       receiverWorkerId: String(worker.workerId),
       receiverPid: String(worker.workerId),
     });
 
     this.appWorker.startSuccessCount++;
-    const remain = this.appWorker.isAllWorkerStarted ? 0 : this.options.workers - this.appWorker.startSuccessCount;
+    const remain = this.appWorker.isAllWorkerStarted
+      ? 0
+      : this.options.workers - this.appWorker.startSuccessCount;
     this.log(
-      '[master] app_worker#%s:%s started at %s, remain %s (%sms)',
+      "[master] app_worker#%s:%s started at %s, remain %s (%sms)",
       worker.id,
       worker.workerId,
       address.port,
       remain,
-      Date.now() - this.appWorker.startTime
+      Date.now() - this.appWorker.startTime,
     );
 
     // Send egg-ready when app is started after launched
     if (this.appWorker.isAllWorkerStarted) {
       this.messenger.send({
-        action: 'egg-ready',
-        to: 'app',
+        action: "egg-ready",
+        to: "app",
         data: this.options,
       });
     }
@@ -534,7 +590,10 @@ export class Master extends ReadyEventEmitter {
       worker.disableRefork = false;
     }
 
-    if (this.appWorker.isAllWorkerStarted || this.appWorker.startSuccessCount < this.options.workers) {
+    if (
+      this.appWorker.isAllWorkerStarted ||
+      this.appWorker.startSuccessCount < this.options.workers
+    ) {
       return;
     }
 
@@ -550,7 +609,7 @@ export class Master extends ReadyEventEmitter {
     this.#appAddress = getAddress(address);
 
     if (this.options.sticky) {
-      this.startMasterSocketServer(err => {
+      this.startMasterSocketServer((err) => {
         if (err) {
           return this.ready(err);
         }
@@ -570,24 +629,36 @@ export class Master extends ReadyEventEmitter {
         fs.unlinkSync(this.options.pidFile);
       } catch (err: any) {
         /* istanbul ignore next */
-        this.logger.error('[master] delete pidFile %s fail with %s', this.options.pidFile, err.message);
+        this.logger.error(
+          "[master] delete pidFile %s fail with %s",
+          this.options.pidFile,
+          err.message,
+        );
       }
     }
     // istanbul can't cover here
     // https://github.com/gotwarlost/istanbul/issues/567
-    const level = code === 0 ? 'info' : 'error';
-    this.logger[level]('[master] exit with code:%s', code);
+    const level = code === 0 ? "info" : "error";
+    this.logger[level]("[master] exit with code:%s", code);
   }
 
   onSignal(signal: string): void {
     if (this.closed) return;
 
-    this.log('[master] master is killed by signal %s, closing', signal);
+    this.log("[master] master is killed by signal %s, closing", signal);
     if (this.isProduction) {
       // logger more info
       const { used_heap_size, heap_size_limit } = v8.getHeapStatistics();
-      this.logger.info('[master] system memory: total %s, free %s', os.totalmem(), os.freemem());
-      this.logger.info('[master] process info: heap_limit %s, heap_used %s', heap_size_limit, used_heap_size);
+      this.logger.info(
+        "[master] system memory: total %s, free %s",
+        os.totalmem(),
+        os.freemem(),
+      );
+      this.logger.info(
+        "[master] process info: heap_limit %s, heap_used %s",
+        heap_size_limit,
+        used_heap_size,
+      );
     }
 
     this.close();
@@ -597,7 +668,7 @@ export class Master extends ReadyEventEmitter {
    * reload workers, for develop purpose
    */
   onReload(): void {
-    this.log('[master] reload %s workers...', this.options.workers);
+    this.log("[master] reload %s workers...", this.options.workers);
     for (const worker of this.workerManager.listWorkers()) {
       worker.isDevReload = true;
     }
@@ -607,15 +678,15 @@ export class Master extends ReadyEventEmitter {
   async close(): Promise<void> {
     this.closed = true;
     setTimeout(() => {
-      this.log('[master] close timeout, exiting with code:2');
+      this.log("[master] close timeout, exiting with code:2");
       process.exit(2);
     }, 15000);
     try {
       await this._doClose();
-      this.log('[master] close done, exiting with code:0');
+      this.log("[master] close done, exiting with code:0");
       process.exit(0);
     } catch (e) {
-      this.logger.error('[master] close with error: ', e);
+      this.logger.error("[master] close with error: ", e);
       process.exit(1);
     }
   }
@@ -624,31 +695,41 @@ export class Master extends ReadyEventEmitter {
     // kill app workers
     // kill agent worker
     // exit itself
-    const legacyTimeout = process.env.EGG_MASTER_CLOSE_TIMEOUT || '5000';
-    const appTimeout = parseInt(process.env.EGG_APP_CLOSE_TIMEOUT || legacyTimeout);
-    const agentTimeout = parseInt(process.env.EGG_AGENT_CLOSE_TIMEOUT || legacyTimeout);
-    this.logger.info('[master] send kill SIGTERM to app workers, will exit with code:0 after %sms', appTimeout);
-    this.logger.info('[master] wait %sms', appTimeout);
+    const legacyTimeout = process.env.EGG_MASTER_CLOSE_TIMEOUT || "5000";
+    const appTimeout = parseInt(
+      process.env.EGG_APP_CLOSE_TIMEOUT || legacyTimeout,
+    );
+    const agentTimeout = parseInt(
+      process.env.EGG_AGENT_CLOSE_TIMEOUT || legacyTimeout,
+    );
+    this.logger.info(
+      "[master] send kill SIGTERM to app workers, will exit with code:0 after %sms",
+      appTimeout,
+    );
+    this.logger.info("[master] wait %sms", appTimeout);
     try {
       await this.killAppWorkers(appTimeout);
     } catch (e) {
-      this.logger.error('[master] app workers exit error: ', e);
+      this.logger.error("[master] app workers exit error: ", e);
     }
-    this.logger.info('[master] send kill SIGTERM to agent worker, will exit with code:0 after %sms', agentTimeout);
-    this.logger.info('[master] wait %sms', agentTimeout);
+    this.logger.info(
+      "[master] send kill SIGTERM to agent worker, will exit with code:0 after %sms",
+      agentTimeout,
+    );
+    this.logger.info("[master] wait %sms", agentTimeout);
     try {
       await this.killAgentWorker(agentTimeout);
     } catch (e) {
-      this.logger.error('[master] agent worker exit error: ', e);
+      this.logger.error("[master] agent worker exit error: ", e);
     }
   }
 }
 
 function isProduction(options: ClusterOptions) {
   if (options.env) {
-    return options.env !== 'local' && options.env !== 'unittest';
+    return options.env !== "local" && options.env !== "unittest";
   }
-  return process.env.NODE_ENV === 'production';
+  return process.env.NODE_ENV === "production";
 }
 
 interface ListeningAddress {
@@ -659,7 +740,12 @@ interface ListeningAddress {
   addressType?: number;
 }
 
-function getAddress({ addressType, address, port, protocol }: ListeningAddress): string {
+function getAddress({
+  addressType,
+  address,
+  port,
+  protocol,
+}: ListeningAddress): string {
   // unix sock
   // https://nodejs.org/api/cluster.html#cluster_event_listening_1
   if (addressType === -1) {
@@ -667,14 +753,14 @@ function getAddress({ addressType, address, port, protocol }: ListeningAddress):
   }
 
   // {"address":"::","family":"IPv6","port":17001}
-  if (address === '::') {
-    address = '';
+  if (address === "::") {
+    address = "";
   }
-  if (!address && process.env.HOST && process.env.HOST !== '0.0.0.0') {
+  if (!address && process.env.HOST && process.env.HOST !== "0.0.0.0") {
     address = process.env.HOST;
   }
   if (!address) {
-    address = '127.0.0.1';
+    address = "127.0.0.1";
   }
   return `${protocol}://${address}:${port}`;
 }

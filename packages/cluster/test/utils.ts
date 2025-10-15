@@ -1,11 +1,14 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { mm, type MockClusterOptions } from '@eggjs/mock';
+import { mm, type MockClusterOptions } from "@eggjs/mock";
 
-export function cluster(baseDir: string, options: MockClusterOptions = {}): ReturnType<typeof mm.cluster> {
+export function cluster(
+  baseDir: string,
+  options: MockClusterOptions = {},
+): ReturnType<typeof mm.cluster> {
   return mm.cluster({
     baseDir: getFilepath(baseDir),
-    framework: path.join(import.meta.dirname, '../../egg'),
+    framework: path.join(import.meta.dirname, "../../egg"),
     cache: false,
     opt: {
       // clear execArgv from egg-bin
@@ -17,5 +20,5 @@ export function cluster(baseDir: string, options: MockClusterOptions = {}): Retu
 }
 
 export function getFilepath(name: string): string {
-  return path.join(import.meta.dirname, 'fixtures', name);
+  return path.join(import.meta.dirname, "fixtures", name);
 }

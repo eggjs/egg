@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  app.get('/', function () {
-    this.body = '123';
+  app.get("/", function () {
+    this.body = "123";
   });
 };

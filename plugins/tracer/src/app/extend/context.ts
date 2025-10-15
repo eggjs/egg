@@ -1,8 +1,8 @@
-import { Context } from 'egg';
+import { Context } from "egg";
 
-import type { Tracer } from '../../lib/tracer.ts';
+import type { Tracer } from "../../lib/tracer.ts";
 
-const TRACER: unique symbol = Symbol('context tracer');
+const TRACER: unique symbol = Symbol("context tracer");
 
 export default class TracerContext extends Context {
   get tracer(): Tracer {

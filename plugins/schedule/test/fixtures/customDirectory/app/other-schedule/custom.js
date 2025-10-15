@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
   interval: 4000,
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('customDirectory');
+  ctx.logger.info("customDirectory");
 };

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   app.ready(() => {
-    app.emit('agentInstantiated');
+    app.emit("agentInstantiated");
   });
 };

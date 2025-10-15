@@ -1,8 +1,8 @@
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-import type { JSONPConfig } from './config/config.default.ts';
+import type { JSONPConfig } from "./config/config.default.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     /**

@@ -1,3 +1,3 @@
 exports.logger = {
-  level: 'debug',
+  level: "debug",
 };

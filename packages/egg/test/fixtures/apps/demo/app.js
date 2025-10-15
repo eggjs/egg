@@ -1,4 +1,4 @@
-const { mm } = require('mm');
+const { mm } = require("mm");
 
 class DemoAppTest {
   constructor(app) {
@@ -9,18 +9,18 @@ class DemoAppTest {
 
     // Mock "lifecycle" function with a counter
     // Before calling "ready()"
-    mm(this.app.lifecycle, 'triggerServerDidReady', () => {
+    mm(this.app.lifecycle, "triggerServerDidReady", () => {
       this.app.triggerCount++;
     });
   }
 
   configWillLoad() {
-    this.app.config.tips = 'hello egg started';
+    this.app.config.tips = "hello egg started";
   }
 
   async didReady() {
     // dynamic router
-    this.app.all('/all', this.app.controller.home);
+    this.app.all("/all", this.app.controller.home);
   }
 }
 

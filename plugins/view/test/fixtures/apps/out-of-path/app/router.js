@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.get('/render', 'view.render');
+module.exports = (app) => {
+  app.get("/render", "view.render");
 };

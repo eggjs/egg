@@ -10,13 +10,13 @@
   },
   "devDependencies": {
     "oxc-minify": "catalog:",
-    "prettier": "catalog:"
+    "oxfmt": "catalog:"
   },
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "prettier": "prettier --config .prettierrc --ignore-path .prettierignore --write \"**/*.{js,jsx,tsx,ts,less,md,json}\""
+    "fmt": "oxfmt \"**/*.{js,jsx,tsx,ts}\""
   },
   "engines": {
     "node": ">=22.18.0"

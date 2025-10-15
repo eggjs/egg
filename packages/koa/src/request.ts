@@ -1,18 +1,18 @@
-import net, { type Socket } from 'node:net';
-import { format as stringify } from 'node:url';
-import qs, { type ParsedUrlQuery } from 'node:querystring';
-import util from 'node:util';
-import type { IncomingMessage, ServerResponse } from 'node:http';
+import net, { type Socket } from "node:net";
+import { format as stringify } from "node:url";
+import qs, { type ParsedUrlQuery } from "node:querystring";
+import util from "node:util";
+import type { IncomingMessage, ServerResponse } from "node:http";
 
-import accepts, { type Accepts } from 'accepts';
-import contentType from 'content-type';
-import parse from 'parseurl';
-import typeis from 'type-is';
-import fresh from 'fresh';
+import accepts, { type Accepts } from "accepts";
+import contentType from "content-type";
+import parse from "parseurl";
+import typeis from "type-is";
+import fresh from "fresh";
 
-import type { Application } from './application.ts';
-import type { Context } from './context.ts';
-import type { Response } from './response.ts';
+import type { Application } from "./application.ts";
+import type { Context } from "./context.ts";
+import type { Response } from "./response.ts";
 
 export interface RequestSocket extends Socket {
   encrypted: boolean;
@@ -27,12 +27,17 @@ export class Request {
   response: Response;
   originalUrl: string;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(
+    app: Application,
+    ctx: Context,
+    req: IncomingMessage,
+    res: ServerResponse,
+  ) {
     this.app = app;
     this.req = req;
     this.res = res;
     this.ctx = ctx;
-    this.originalUrl = req.url ?? '/';
+    this.originalUrl = req.url ?? "/";
     // Set up custom inspect
     this[util.inspect.custom] = this.inspect.bind(this);
   }
@@ -41,7 +46,7 @@ export class Request {
    * Return request header.
    */
 
-  get header(): IncomingMessage['headers'] {
+  get header(): IncomingMessage["headers"] {
     return this.req.headers;
   }
 
@@ -57,7 +62,7 @@ export class Request {
    * Return request header, alias as request.header
    */
 
-  get headers(): IncomingMessage['headers'] {
+  get headers(): IncomingMessage["headers"] {
     return this.req.headers;
   }
 
@@ -74,7 +79,7 @@ export class Request {
    */
 
   get url(): string {
-    return this.req.url ?? '/';
+    return this.req.url ?? "/";
   }
 
   /**
@@ -110,7 +115,7 @@ export class Request {
    */
 
   get method() {
-    return this.req.method ?? 'GET';
+    return this.req.method ?? "GET";
   }
 
   /**
@@ -124,7 +129,7 @@ export class Request {
    * Get request pathname.
    */
   get path() {
-    return parse(this.req)?.pathname ?? '';
+    return parse(this.req)?.pathname ?? "";
   }
 
   /**
@@ -170,8 +175,8 @@ export class Request {
    * Get query string.
    */
   get querystring() {
-    if (!this.req) return '';
-    return (parse(this.req)?.query as string) ?? '';
+    if (!this.req) return "";
+    return (parse(this.req)?.query as string) ?? "";
   }
 
   /**
@@ -193,7 +198,7 @@ export class Request {
    */
   get search() {
     const querystring = this.querystring;
-    if (!querystring) return '';
+    if (!querystring) return "";
     return `?${querystring}`;
   }
 
@@ -213,16 +218,16 @@ export class Request {
    */
   get host(): string {
     const proxy = this.app.proxy;
-    let host = proxy ? this.get<string>('X-Forwarded-Host') : '';
+    let host = proxy ? this.get<string>("X-Forwarded-Host") : "";
     if (host) {
       host = splitCommaSeparatedValues(host, 1)[0];
     }
     if (!host) {
       if (this.req.httpVersionMajor >= 2) {
-        host = this.get(':authority');
+        host = this.get(":authority");
       }
       if (!host) {
-        host = this.get('Host');
+        host = this.get("Host");
       }
     }
     return host;
@@ -236,12 +241,12 @@ export class Request {
   get hostname(): string {
     const host = this.host;
     if (!host) {
-      return '';
+      return "";
     }
-    if (host[0] === '[') {
-      return this.URL.hostname || ''; // IPv6
+    if (host[0] === "[") {
+      return this.URL.hostname || ""; // IPv6
     }
-    return host.split(':', 1)[0];
+    return host.split(":", 1)[0];
   }
 
   protected _memoizedURL: URL | undefined;
@@ -252,7 +257,7 @@ export class Request {
    */
   get URL() {
     if (!this._memoizedURL) {
-      const originalUrl = this.originalUrl || ''; // avoid undefined in template string
+      const originalUrl = this.originalUrl || ""; // avoid undefined in template string
       try {
         this._memoizedURL = new URL(`${this.origin}${originalUrl}`);
       } catch {
@@ -272,7 +277,7 @@ export class Request {
     const status = this.response.status;
 
     // GET or HEAD for weak freshness validation only
-    if (method !== 'GET' && method !== 'HEAD') {
+    if (method !== "GET" && method !== "HEAD") {
       return false;
     }
 
@@ -297,7 +302,7 @@ export class Request {
    * Check if the request is idempotent.
    */
   get idempotent(): boolean {
-    const methods = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'];
+    const methods = ["GET", "HEAD", "PUT", "DELETE", "OPTIONS", "TRACE"];
     return methods.includes(this.method);
   }
 
@@ -314,9 +319,9 @@ export class Request {
   get charset(): string | undefined {
     try {
       const { parameters } = contentType.parse(this.req);
-      return parameters.charset || '';
+      return parameters.charset || "";
     } catch {
-      return '';
+      return "";
     }
   }
 
@@ -324,8 +329,8 @@ export class Request {
    * Return parsed Content-Length when present.
    */
   get length(): number | undefined {
-    const len = this.get<string>('Content-Length');
-    if (len === '') {
+    const len = this.get<string>("Content-Length");
+    if (len === "") {
       return;
     }
     return Number.parseInt(len);
@@ -341,16 +346,16 @@ export class Request {
    */
   get protocol(): string {
     if (this.socket.encrypted) {
-      return 'https';
+      return "https";
     }
     if (!this.app.proxy) {
-      return 'http';
+      return "http";
     }
-    let proto = this.get<string>('X-Forwarded-Proto');
+    let proto = this.get<string>("X-Forwarded-Proto");
     if (proto) {
       proto = splitCommaSeparatedValues(proto, 1)[0];
     }
-    return proto || 'http';
+    return proto || "http";
   }
 
   /**
@@ -359,7 +364,7 @@ export class Request {
    *    this.protocol == 'https'
    */
   get secure(): boolean {
-    return this.protocol === 'https';
+    return this.protocol === "https";
   }
 
   /**
@@ -388,7 +393,7 @@ export class Request {
    */
   get ip() {
     if (!this._ip) {
-      this._ip = this.ips[0] || this.socket.remoteAddress || '';
+      this._ip = this.ips[0] || this.socket.remoteAddress || "";
     }
     return this._ip;
   }
@@ -413,7 +418,7 @@ export class Request {
     const offset = this.app.subdomainOffset;
     const hostname = this.hostname;
     if (net.isIP(hostname)) return [];
-    return hostname.split('.').reverse().slice(offset);
+    return hostname.split(".").reverse().slice(offset);
   }
 
   protected _accept: Accepts;
@@ -470,7 +475,10 @@ export class Request {
    */
   accepts(args: string[]): string | string[] | false;
   accepts(...args: string[]): string | string[] | false;
-  accepts(args?: string | string[], ...others: string[]): string | string[] | false {
+  accepts(
+    args?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     return this.accept.types(args as string, ...others);
   }
 
@@ -485,7 +493,10 @@ export class Request {
   acceptsEncodings(): string[];
   acceptsEncodings(encodings: string[]): string | false;
   acceptsEncodings(...encodings: string[]): string | false;
-  acceptsEncodings(encodings?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsEncodings(
+    encodings?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     if (!encodings) {
       return this.accept.encodings();
     }
@@ -508,7 +519,10 @@ export class Request {
   acceptsCharsets(): string[];
   acceptsCharsets(charsets: string[]): string | false;
   acceptsCharsets(...charsets: string[]): string | false;
-  acceptsCharsets(charsets?: string | string[], ...others: string[]): string[] | string | false {
+  acceptsCharsets(
+    charsets?: string | string[],
+    ...others: string[]
+  ): string[] | string | false {
     if (!charsets) {
       return this.accept.charsets();
     }
@@ -531,7 +545,10 @@ export class Request {
   acceptsLanguages(): string[];
   acceptsLanguages(languages: string[]): string | false;
   acceptsLanguages(...languages: string[]): string | false;
-  acceptsLanguages(languages?: string | string[], ...others: string[]): string | string[] | false {
+  acceptsLanguages(
+    languages?: string | string[],
+    ...others: string[]
+  ): string | string[] | false {
     if (!languages) {
       return this.accept.languages();
     }
@@ -577,9 +594,9 @@ export class Request {
    * parameters such as "charset".
    */
   get type(): string {
-    const type = this.get<string>('Content-Type');
-    if (!type) return '';
-    return type.split(';')[0];
+    const type = this.get<string>("Content-Type");
+    if (!type) return "";
+    return type.split(";")[0];
   }
 
   /**
@@ -602,12 +619,12 @@ export class Request {
   get<T = string | string[]>(field: string): T {
     const req = this.req;
     switch ((field = field.toLowerCase())) {
-      case 'referer':
-      case 'referrer': {
-        return (req.headers.referrer || req.headers.referer || '') as T;
+      case "referer":
+      case "referrer": {
+        return (req.headers.referrer || req.headers.referer || "") as T;
       }
       default: {
-        return (req.headers[field] || '') as T;
+        return (req.headers[field] || "") as T;
       }
     }
   }
@@ -642,7 +659,7 @@ export class Request {
  */
 function splitCommaSeparatedValues(value: string, limit?: number): string[] {
   return value
-    .split(',', limit)
-    .map(v => v.trim())
-    .filter(v => v.length > 0);
+    .split(",", limit)
+    .map((v) => v.trim())
+    .filter((v) => v.length > 0);
 }

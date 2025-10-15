@@ -1,4 +1,4 @@
-import type { EggAppConfig } from 'egg';
+import type { EggAppConfig } from "egg";
 
 export default {
   view: {

@@ -1,9 +1,9 @@
-exports.middleware = ['static', 'match', 'common'];
+exports.middleware = ["static", "match", "common"];
 
 exports.match = {
-  match: '/match',
+  match: "/match",
 };
 
 exports.common = {
-  match: '/common',
+  match: "/common",
 };

@@ -1,5 +1,5 @@
 export default {
-  coreMiddleware: ['status'],
+  coreMiddleware: ["status"],
 
   urllib: {
     keepAlive: true,
@@ -9,5 +9,5 @@ export default {
     maxFreeSockets: 256,
   },
 
-  egg: 'egg',
+  egg: "egg",
 };

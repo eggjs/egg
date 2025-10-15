@@ -1,11 +1,11 @@
-import { rm } from 'node:fs/promises';
-import { rmSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { scheduler } from 'node:timers/promises';
+import { rm } from "node:fs/promises";
+import { rmSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { scheduler } from "node:timers/promises";
 
 export function getSourceDirname(): string {
-  if (typeof __dirname !== 'undefined') {
+  if (typeof __dirname !== "undefined") {
     return path.dirname(__dirname);
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -27,7 +27,7 @@ export function rimrafSync(filepath: string): void {
 
 export function getProperty(target: any, prop: PropertyKey): any {
   const member = target[prop];
-  if (typeof member === 'function') {
+  if (typeof member === "function") {
     return member.bind(target);
   }
   return member;

@@ -1,7 +1,18 @@
-import util from 'node:util';
-import { isSymbol, isRegExp, isPrimitive, isClass, isFunction, isGeneratorFunction, isAsyncFunction } from 'is-type-of';
+import util from "node:util";
+import {
+  isSymbol,
+  isRegExp,
+  isPrimitive,
+  isClass,
+  isFunction,
+  isGeneratorFunction,
+  isAsyncFunction,
+} from "is-type-of";
 
-export function convertObject(obj: any, ignore: string | RegExp | (string | RegExp)[] = []): any {
+export function convertObject(
+  obj: any,
+  ignore: string | RegExp | (string | RegExp)[] = [],
+): any {
   if (!Array.isArray(ignore)) {
     ignore = [ignore];
   }
@@ -18,7 +29,7 @@ function convertValue(key: string, value: any, ignore: (string | RegExp)[]) {
 
   let hit = false;
   for (const matchKey of ignore) {
-    if (typeof matchKey === 'string' && matchKey === key) {
+    if (typeof matchKey === "string" && matchKey === key) {
       hit = true;
       break;
     } else if (isRegExp(matchKey) && matchKey.test(key)) {
@@ -42,7 +53,7 @@ function convertValue(key: string, value: any, ignore: (string | RegExp)[]) {
   }
 
   // support class
-  const name = value.name || 'anonymous';
+  const name = value.name || "anonymous";
   if (isClass(value)) {
     return `<Class ${name}>`;
   }
@@ -56,7 +67,7 @@ function convertValue(key: string, value: any, ignore: (string | RegExp)[]) {
 
   const typeName = value.constructor.name;
   if (typeName) {
-    if (Buffer.isBuffer(value) || typeof value === 'string') {
+    if (Buffer.isBuffer(value) || typeof value === "string") {
       return `<${typeName} len: ${value.length}>`;
     }
     return `<${typeName}>`;

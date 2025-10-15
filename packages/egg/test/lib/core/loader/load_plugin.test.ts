@@ -1,29 +1,33 @@
-import { strict as assert } from 'node:assert';
-import path from 'node:path';
+import { strict as assert } from "node:assert";
+import path from "node:path";
 
-import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
-import { mm } from '@eggjs/mock';
-import { EggConsoleLogger } from 'egg-logger';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from "vitest";
+import { mm } from "@eggjs/mock";
+import { EggConsoleLogger } from "egg-logger";
 
-import { type MockApplication, createApp, getFilepath } from '../../../utils.ts';
-import { AppWorkerLoader, AgentWorkerLoader } from '../../../../src/index.ts';
+import {
+  type MockApplication,
+  createApp,
+  getFilepath,
+} from "../../../utils.ts";
+import { AppWorkerLoader, AgentWorkerLoader } from "../../../../src/index.ts";
 
 // const EGG_BASE = getFilepath('../..');
 
-describe('test/lib/core/loader/load_plugin.test.ts', () => {
+describe("test/lib/core/loader/load_plugin.test.ts", () => {
   let app: MockApplication;
   const logger: any = new EggConsoleLogger();
   beforeAll(() => {
-    app = createApp('apps/empty');
+    app = createApp("apps/empty");
     return app.ready();
   });
   afterAll(() => app.close());
   afterEach(mm.restore);
 
-  it('should loadConfig all plugins', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should loadConfig all plugins", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -31,43 +35,43 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader.loadConfig();
     assert.deepEqual(appLoader.plugins.b, {
       enable: true,
-      name: 'b',
+      name: "b",
       dependencies: [],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'node_modules/b'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      path: path.join(baseDir, "node_modules/b"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
     assert.deepEqual(appLoader.plugins.c, {
       enable: true,
-      name: 'c',
+      name: "c",
       dependencies: [],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'node_modules/c'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      path: path.join(baseDir, "node_modules/c"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
     assert.deepEqual(appLoader.plugins.e, {
       enable: true,
-      name: 'e',
-      dependencies: ['f'],
+      name: "e",
+      dependencies: ["f"],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'plugins/e'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      path: path.join(baseDir, "plugins/e"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
-    if (process.platform !== 'win32') {
+    if (process.platform !== "win32") {
       assert.match(appLoader.plugins.onerror.path!, /\/onerror\//);
     }
-    assert.equal(appLoader.plugins.onerror.package, '@eggjs/onerror');
+    assert.equal(appLoader.plugins.onerror.package, "@eggjs/onerror");
     assert.match(appLoader.plugins.onerror.version!, /\d+\.\d+\.\d+/);
     assert(Array.isArray(appLoader.orderPlugins));
   });
 
-  it('should same name plugin level follow: app > framework > egg', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should same name plugin level follow: app > framework > egg", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -76,20 +80,20 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
 
     assert.deepEqual(appLoader.plugins.rds, {
       enable: true,
-      name: 'rds',
-      dependencies: ['session'],
+      name: "rds",
+      dependencies: ["session"],
       optionalDependencies: [],
       env: [],
-      package: 'rds',
-      path: path.join(baseDir, 'node_modules/rds'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      package: "rds",
+      path: path.join(baseDir, "node_modules/rds"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
   });
 
-  it('should plugin support alias name', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should plugin support alias name", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -97,21 +101,21 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader.loadConfig();
     assert.deepEqual(appLoader.plugins.d1, {
       enable: true,
-      name: 'd1',
-      package: 'd',
+      name: "d1",
+      package: "d",
       dependencies: [],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'node_modules/d'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      path: path.join(baseDir, "node_modules/d"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
     assert(!appLoader.plugins.d);
   });
 
-  it('should support package.json config', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should support package.json config", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -119,47 +123,50 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader.loadConfig();
     assert.deepEqual(appLoader.plugins.g, {
       enable: true,
-      name: 'g',
-      dependencies: ['f'],
+      name: "g",
+      dependencies: ["f"],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'plugins/g'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      path: path.join(baseDir, "plugins/g"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
   });
 
-  it('should show warning message when plugin name wrong', async () => {
+  it("should show warning message when plugin name wrong", async () => {
     let message: any;
-    mm(logger, 'warn', (m: any) => {
-      if (m.includes('different') && !message) {
+    mm(logger, "warn", (m: any) => {
+      if (m.includes("different") && !message) {
         message = m;
       }
     });
-    const baseDir = getFilepath('apps/loader-plugin');
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
     });
     await appLoader.loadConfig();
 
-    assert(message === '[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)');
+    assert(
+      message ===
+        "[@eggjs/core/egg_loader] pluginName(e) is different from pluginConfigName(wrong-name)",
+    );
   });
 
-  it('should loadConfig plugins with custom plugins config', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should loadConfig plugins with custom plugins config", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     const plugins: any = {
       foo: {
         enable: true,
-        path: path.join(baseDir, 'node_modules/d'),
+        path: path.join(baseDir, "node_modules/d"),
       },
       d1: {
-        env: ['unittest'],
+        env: ["unittest"],
       },
     };
     const appLoader = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       plugins,
       app,
@@ -169,31 +176,31 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
 
     assert.deepEqual(appLoader.plugins.d1, {
       enable: true,
-      name: 'd1',
-      package: 'd',
+      name: "d1",
+      package: "d",
       dependencies: [],
       optionalDependencies: [],
-      env: ['unittest'],
-      path: path.join(baseDir, 'node_modules/d'),
-      from: '<options.plugins>',
+      env: ["unittest"],
+      path: path.join(baseDir, "node_modules/d"),
+      from: "<options.plugins>",
     });
     assert.deepEqual(appLoader.plugins.foo, {
       enable: true,
-      name: 'foo',
+      name: "foo",
       dependencies: [],
       optionalDependencies: [],
       env: [],
-      path: path.join(baseDir, 'node_modules/d'),
-      from: '<options.plugins>',
+      path: path.join(baseDir, "node_modules/d"),
+      from: "<options.plugins>",
     });
     assert(!appLoader.plugins.d);
   });
 
-  it('should throw error when plugin not exists', async () => {
+  it("should throw error when plugin not exists", async () => {
     await assert.rejects(async () => {
-      const baseDir = getFilepath('apps/loader-plugin-noexist');
+      const baseDir = getFilepath("apps/loader-plugin-noexist");
       const appLoader = new AppWorkerLoader({
-        env: 'unittest',
+        env: "unittest",
         baseDir,
         app,
         logger,
@@ -202,11 +209,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     }, /Can not find plugin noexist in /);
   });
 
-  it('should throw error when app baseDir not exists', async () => {
+  it("should throw error when app baseDir not exists", async () => {
     await assert.rejects(async () => {
-      const baseDir = getFilepath('apps/notexist-app');
+      const baseDir = getFilepath("apps/notexist-app");
       const appLoader = new AppWorkerLoader({
-        env: 'unittest',
+        env: "unittest",
         baseDir,
         app,
         logger,
@@ -215,28 +222,28 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     }, /notexist-app not exists/);
   });
 
-  it('should keep plugin list sorted', async () => {
-    mm(process.env, 'NODE_ENV', 'development');
-    const baseDir = getFilepath('apps/loader-plugin-dep');
+  it("should keep plugin list sorted", async () => {
+    mm(process.env, "NODE_ENV", "development");
+    const baseDir = getFilepath("apps/loader-plugin-dep");
     const appLoader = new AppWorkerLoader({
-      env: 'local',
+      env: "local",
       baseDir,
       app,
       logger,
     });
     await appLoader.loadConfig();
     expect(
-      appLoader.orderPlugins.map(plugin => {
+      appLoader.orderPlugins.map((plugin) => {
         return plugin.name;
-      })
+      }),
     ).toMatchSnapshot();
   });
 
-  it('should throw recursive deps error', async () => {
+  it("should throw recursive deps error", async () => {
     await assert.rejects(async () => {
-      const baseDir = getFilepath('apps/loader-plugin-dep-recursive');
+      const baseDir = getFilepath("apps/loader-plugin-dep-recursive");
       const appLoader = new AppWorkerLoader({
-        env: 'unittest',
+        env: "unittest",
         baseDir,
         app,
         logger,
@@ -245,11 +252,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     }, /sequencify plugins has problem, missing: \[\], recursive: \[a,b,c,a\]/);
   });
 
-  it('should throw error when plugin dep not exists', async () => {
+  it("should throw error when plugin dep not exists", async () => {
     await assert.rejects(async () => {
-      const baseDir = getFilepath('apps/loader-plugin-dep-missing');
+      const baseDir = getFilepath("apps/loader-plugin-dep-missing");
       const appLoader = new AppWorkerLoader({
-        env: 'unittest',
+        env: "unittest",
         baseDir,
         app,
         logger,
@@ -258,11 +265,11 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     }, /sequencify plugins has problem, missing: \[a1\], recursive: \[\]\s+>> Plugin \[a1\] is disabled or missed, but is required by \[c\]/);
   });
 
-  it('should auto fill plugin infos', async () => {
-    mm(process.env, 'NODE_ENV', 'test');
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should auto fill plugin infos", async () => {
+    mm(process.env, "NODE_ENV", "test");
+    const baseDir = getFilepath("apps/loader-plugin");
     const appLoader1 = new AppWorkerLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -270,40 +277,40 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader1.loadConfig();
     // unittest disable
     const keys1 = appLoader1.orderPlugins
-      .map(plugin => {
+      .map((plugin) => {
         return plugin.name;
       })
-      .join(',');
-    assert(keys1.includes('b,c,d1,f,e'));
+      .join(",");
+    assert(keys1.includes("b,c,d1,f,e"));
     assert(!appLoader1.plugins.a1);
 
-    mm(process.env, 'NODE_ENV', 'development');
+    mm(process.env, "NODE_ENV", "development");
     const appLoader2 = new AppWorkerLoader({
-      env: 'local',
+      env: "local",
       baseDir,
       app,
       logger,
     });
     await appLoader2.loadConfig();
     const keys2 = appLoader2.orderPlugins
-      .map(plugin => {
+      .map((plugin) => {
         return plugin.name;
       })
-      .join(',');
-    assert(keys2.includes('d1,a1,b,c,f,e'));
+      .join(",");
+    assert(keys2.includes("d1,a1,b,c,f,e"));
     assert.deepEqual(appLoader2.plugins.a1, {
       enable: true,
-      name: 'a1',
-      dependencies: ['d1'],
+      name: "a1",
+      dependencies: ["d1"],
       optionalDependencies: [],
-      env: ['local', 'prod'],
-      path: path.join(baseDir, 'node_modules/a1'),
-      from: path.join(baseDir, 'config/plugin.js'),
+      env: ["local", "prod"],
+      path: path.join(baseDir, "node_modules/a1"),
+      from: path.join(baseDir, "config/plugin.js"),
     });
   });
 
-  it('should customize loadPlugin', async () => {
-    const baseDir = getFilepath('apps/loader-plugin');
+  it("should customize loadPlugin", async () => {
+    const baseDir = getFilepath("apps/loader-plugin");
     class CustomAppLoader extends AppWorkerLoader {
       hasAppLoadPlugin = false;
 
@@ -313,7 +320,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       }
     }
     const appLoader = new CustomAppLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,
@@ -329,7 +336,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
       }
     }
     const agentLoader = new CustomAgentLoader({
-      env: 'unittest',
+      env: "unittest",
       baseDir,
       app,
       logger,

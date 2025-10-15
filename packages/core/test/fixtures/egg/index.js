@@ -1,4 +1,4 @@
-const { EggLoader, EggCore } = require('../../..');
+const { EggLoader, EggCore } = require("../../..");
 
 class AppLoader extends EggLoader {
   async loadAll() {
@@ -19,15 +19,15 @@ class AppLoader extends EggLoader {
 class Application extends EggCore {
   constructor(options = {}) {
     super(options);
-    this.on('error', err => {
+    this.on("error", (err) => {
       console.error(err);
     });
   }
 
-  get [Symbol.for('egg#eggPath')]() {
+  get [Symbol.for("egg#eggPath")]() {
     return __dirname;
   }
-  get [Symbol.for('egg#loader')]() {
+  get [Symbol.for("egg#loader")]() {
     return AppLoader;
   }
 }

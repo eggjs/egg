@@ -1,7 +1,7 @@
-import { Controller, Singleton } from 'egg';
-import { Redis } from 'ioredis';
+import { Controller, Singleton } from "egg";
+import { Redis } from "ioredis";
 
-declare module 'egg' {
+declare module "egg" {
   interface IController {
     home: HomeController;
   }
@@ -15,8 +15,8 @@ export default class HomeController extends Controller {
   async index(): Promise<void> {
     const { ctx, app } = this;
     const redis = app.redis;
-    await redis.set('foo', 'bar');
-    const cacheValue = await redis.get('foo');
+    await redis.set("foo", "bar");
+    const cacheValue = await redis.get("foo");
     ctx.body = cacheValue;
   }
 }

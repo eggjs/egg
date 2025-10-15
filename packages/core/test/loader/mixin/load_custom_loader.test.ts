@@ -1,14 +1,14 @@
-import assert from 'node:assert/strict';
-import { describe, it, beforeAll, afterAll } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it, beforeAll, afterAll } from "vitest";
 
-import { request } from '@eggjs/supertest';
+import { request } from "@eggjs/supertest";
 
-import { createApp, type Application } from '../../helper.js';
+import { createApp, type Application } from "../../helper.js";
 
-describe('test/loader/mixin/load_custom_loader.test.ts', () => {
+describe("test/loader/mixin/load_custom_loader.test.ts", () => {
   let app: Application;
   beforeAll(async () => {
-    app = createApp('custom-loader');
+    app = createApp("custom-loader");
     await app.loader.loadPlugin();
     await app.loader.loadConfig();
     await app.loader.loadController();
@@ -18,52 +18,52 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
   });
   afterAll(() => app.close());
 
-  it('should load to app', async () => {
+  it("should load to app", async () => {
     console.log((app as any).adapter);
     const res = await (app as any).adapter.docker.inspectDocker();
     assert(res);
-    assert(res.inject === 'app');
+    assert(res.inject === "app");
   });
 
-  it('should support exports load to app', () => {
-    assert((app as any).util.test.sayHi('egg') === 'hi, egg');
-    assert((app as any).util.sub.fn.echo() === 'echo custom_loader');
+  it("should support exports load to app", () => {
+    assert((app as any).util.test.sayHi("egg") === "hi, egg");
+    assert((app as any).util.sub.fn.echo() === "echo custom_loader");
   });
 
-  it('should load to ctx', async () => {
+  it("should load to ctx", async () => {
     await request(app.callback())
-      .get('/users/popomore')
+      .get("/users/popomore")
       .expect({
         adapter: {
-          directory: 'app/adapter',
-          inject: 'app',
+          directory: "app/adapter",
+          inject: "app",
         },
-        repository: 'popomore',
+        repository: "popomore",
       })
       .expect(200);
   });
 
-  it('should support loadunit', () => {
+  it("should support loadunit", () => {
     let name = (app as any).plugin.a.getName();
-    assert(name === 'plugina');
+    assert(name === "plugina");
     name = (app as any).plugin.b.getName();
-    assert(name === 'pluginb');
+    assert(name === "pluginb");
   });
 
-  it('should loadConfig first', async () => {
-    const app = createApp('custom-loader');
+  it("should loadConfig first", async () => {
+    const app = createApp("custom-loader");
     try {
       await app.loader.loadCustomLoader();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
-      assert(err.message === 'should loadConfig first');
+      assert(err.message === "should loadConfig first");
     } finally {
       app.close();
     }
   });
 
-  it('support set directory', async () => {
-    const app = createApp('custom-loader');
+  it("support set directory", async () => {
+    const app = createApp("custom-loader");
     try {
       app.loader.config = {
         customLoader: {
@@ -71,51 +71,53 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
         },
       } as any;
       await app.loader.loadCustomLoader();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
-      assert(err.message === 'directory is required for config.customLoader.custom');
+      assert(
+        err.message === "directory is required for config.customLoader.custom",
+      );
     } finally {
       app.close();
     }
   });
 
-  it('inject support app/ctx', async () => {
-    const app = createApp('custom-loader');
+  it("inject support app/ctx", async () => {
+    const app = createApp("custom-loader");
     try {
       app.loader.config = {
         customLoader: {
           custom: {
-            directory: 'a',
-            inject: 'unknown',
+            directory: "a",
+            inject: "unknown",
           },
         },
       } as any;
       await app.loader.loadCustomLoader();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
-      assert(err.message === 'inject only support app or ctx');
+      assert(err.message === "inject only support app or ctx");
     } finally {
       app.close();
     }
   });
 
-  it('should not overwrite the existing property', async () => {
-    const app = createApp('custom-loader');
+  it("should not overwrite the existing property", async () => {
+    const app = createApp("custom-loader");
     try {
       app.loader.config = {
         coreMiddleware: [],
         middleware: [],
         customLoader: {
           config: {
-            directory: 'app/config',
-            inject: 'app',
+            directory: "app/config",
+            inject: "app",
           },
         },
       };
       await app.loader.loadCustomLoader();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
-      assert(err.message === 'customLoader should not override app.config');
+      assert(err.message === "customLoader should not override app.config");
     } finally {
       app.close();
     }
@@ -124,15 +126,15 @@ describe('test/loader/mixin/load_custom_loader.test.ts', () => {
       app.loader.config = {
         customLoader: {
           cookies: {
-            directory: 'app/cookies',
-            inject: 'ctx',
+            directory: "app/cookies",
+            inject: "ctx",
           },
         },
       } as any;
       await app.loader.loadCustomLoader();
-      throw new Error('should not run');
+      throw new Error("should not run");
     } catch (err: any) {
-      assert(err.message === 'customLoader should not override ctx.cookies');
+      assert(err.message === "customLoader should not override ctx.cookies");
     } finally {
       app.close();
     }

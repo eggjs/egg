@@ -1,5 +1,5 @@
 module.exports = {
   helperShow() {
-    return 'from extend helper';
+    return "from extend helper";
   },
 };

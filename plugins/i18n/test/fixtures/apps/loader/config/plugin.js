@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   a: {
     enable: true,
-    path: path.join(__dirname, '../a'),
+    path: path.join(__dirname, "../a"),
   },
   b: {
     enable: true,
-    path: path.join(__dirname, '../b'),
+    path: path.join(__dirname, "../b"),
   },
   c: {
     enable: true,
-    path: path.join(__dirname, '../c'),
+    path: path.join(__dirname, "../c"),
   },
   nunjucks: {
     enable: true,
-    package: 'egg-view-nunjucks',
+    package: "egg-view-nunjucks",
   },
 };

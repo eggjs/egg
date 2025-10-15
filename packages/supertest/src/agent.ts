@@ -1,11 +1,16 @@
-import http from 'node:http';
-import http2 from 'node:http2';
-import type { Server } from 'node:net';
+import http from "node:http";
+import http2 from "node:http2";
+import type { Server } from "node:net";
 
-import { agent as Agent } from 'superagent';
+import { agent as Agent } from "superagent";
 
-import { Test } from './test.ts';
-import type { AgentOptions, H1RequestListener, H2RequestListener, App } from './types.ts';
+import { Test } from "./test.ts";
+import type {
+  AgentOptions,
+  H1RequestListener,
+  H2RequestListener,
+  App,
+} from "./types.ts";
 
 /**
  * Initialize a new `TestAgent`.
@@ -21,7 +26,7 @@ export class TestAgent extends Agent {
 
   constructor(appOrListener: App, options: AgentOptions = {}) {
     super(options);
-    if (typeof appOrListener === 'function') {
+    if (typeof appOrListener === "function") {
       if (options.http2) {
         this.#http2 = true;
         this.app = http2.createServer(appOrListener as H2RequestListener); // eslint-disable-line no-param-reassign
@@ -48,50 +53,51 @@ export class TestAgent extends Agent {
     }
 
     if (this._host) {
-      req.set('host', this._host);
+      req.set("host", this._host);
     }
 
     const that = this as any;
     // access not internal methods
-    req.on('response', that._saveCookies.bind(this));
-    req.on('redirect', that._saveCookies.bind(this));
-    req.on('redirect', that._attachCookies.bind(this, req));
+    req.on("response", that._saveCookies.bind(this));
+    req.on("redirect", that._saveCookies.bind(this));
+    req.on("redirect", that._attachCookies.bind(this, req));
     that._setDefaults(req);
     that._attachCookies(req);
 
     return req;
   }
   delete(url: string): Test {
-    return this._testRequest('delete', url);
+    return this._testRequest("delete", url);
   }
   del(url: string): Test {
-    return this._testRequest('delete', url);
+    return this._testRequest("delete", url);
   }
   get(url: string): Test {
-    return this._testRequest('get', url);
+    return this._testRequest("get", url);
   }
   head(url: string): Test {
-    return this._testRequest('head', url);
+    return this._testRequest("head", url);
   }
   put(url: string): Test {
-    return this._testRequest('put', url);
+    return this._testRequest("put", url);
   }
   post(url: string): Test {
-    return this._testRequest('post', url);
+    return this._testRequest("post", url);
   }
   patch(url: string): Test {
-    return this._testRequest('patch', url);
+    return this._testRequest("patch", url);
   }
   options(url: string): Test {
-    return this._testRequest('options', url);
+    return this._testRequest("options", url);
   }
   trace(url: string): Test {
-    return this._testRequest('trace', url);
+    return this._testRequest("trace", url);
   }
 }
 
 // allow keep use by `agent()`
-export const proxyAgent: typeof TestAgent & ((app: App, options?: AgentOptions) => TestAgent) = new Proxy(TestAgent, {
+export const proxyAgent: typeof TestAgent &
+  ((app: App, options?: AgentOptions) => TestAgent) = new Proxy(TestAgent, {
   apply(target, _, argumentsList) {
     return new target(argumentsList[0], argumentsList[1]);
   },

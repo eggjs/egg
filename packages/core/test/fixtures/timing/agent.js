@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const block = require('./block');
+const block = require("./block");
 
-module.exports = agent => {
+module.exports = (agent) => {
   block();
 
   agent.beforeStart(function* () {

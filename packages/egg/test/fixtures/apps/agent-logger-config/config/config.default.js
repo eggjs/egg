@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
   logger: {
-    dir: '/tmp/foo',
+    dir: "/tmp/foo",
   },
 };

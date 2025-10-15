@@ -1,4 +1,4 @@
-const { scheduler } = require('node:timers/promises');
+const { scheduler } = require("node:timers/promises");
 
 class NunjucksView {
   async render(filename, locals, options) {
@@ -7,7 +7,7 @@ class NunjucksView {
       filename,
       locals,
       options,
-      type: 'nunjucks',
+      type: "nunjucks",
     };
   }
 

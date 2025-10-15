@@ -1,9 +1,9 @@
-import { defineConfigFactory, type PartialEggConfig } from 'egg';
+import { defineConfigFactory, type PartialEggConfig } from "egg";
 
-export default defineConfigFactory(appInfo => {
+export default defineConfigFactory((appInfo) => {
   const config = {
     // use for cookie sign key, should change to your own and keep security
-    keys: appInfo.name + '_{{keys}}',
+    keys: appInfo.name + "_{{keys}}",
 
     // add your egg config in here
     middleware: [] as string[],
@@ -11,7 +11,7 @@ export default defineConfigFactory(appInfo => {
     // change multipart mode to file
     // @see https://github.com/eggjs/multipart/blob/master/src/config/config.default.ts#L104
     multipart: {
-      mode: 'file' as const,
+      mode: "file" as const,
     },
   } as PartialEggConfig;
 

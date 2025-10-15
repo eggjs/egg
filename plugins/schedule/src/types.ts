@@ -1,10 +1,10 @@
-import type { EggScheduleConfig } from './config/config.default.ts';
-import type { Schedule } from './lib/schedule.ts';
-import type { ScheduleWorker } from './lib/schedule_worker.ts';
-import type { BaseStrategy } from './lib/strategy/base.ts';
-import type { TimerStrategy } from './lib/strategy/timer.ts';
+import type { EggScheduleConfig } from "./config/config.default.ts";
+import type { Schedule } from "./lib/schedule.ts";
+import type { ScheduleWorker } from "./lib/schedule_worker.ts";
+import type { BaseStrategy } from "./lib/strategy/base.ts";
+import type { TimerStrategy } from "./lib/strategy/timer.ts";
 
-declare module 'egg' {
+declare module "egg" {
   interface EggAppConfig {
     /**
      * Schedule Config

@@ -1,22 +1,28 @@
-import assert from 'node:assert';
-import { extname } from 'node:path';
-import util from 'node:util';
-import Stream from 'node:stream';
-import type { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from 'node:http';
+import assert from "node:assert";
+import { extname } from "node:path";
+import util from "node:util";
+import Stream from "node:stream";
+import type {
+  IncomingMessage,
+  OutgoingHttpHeaders,
+  ServerResponse,
+} from "node:http";
 
-import contentDisposition, { type Options as ContentDispositionOptions } from 'content-disposition';
-import { getType } from 'cache-content-type';
-import onFinish from 'on-finished';
-import escape from 'escape-html';
-import { is as typeis } from 'type-is';
-import statuses from 'statuses';
-import destroy from 'destroy';
-import vary from 'vary';
-import encodeUrl from 'encodeurl';
+import contentDisposition, {
+  type Options as ContentDispositionOptions,
+} from "content-disposition";
+import { getType } from "cache-content-type";
+import onFinish from "on-finished";
+import escape from "escape-html";
+import { is as typeis } from "type-is";
+import statuses from "statuses";
+import destroy from "destroy";
+import vary from "vary";
+import encodeUrl from "encodeurl";
 
-import type { Application } from './application.ts';
-import type { Context } from './context.ts';
-import type { Request } from './request.ts';
+import type { Application } from "./application.ts";
+import type { Context } from "./context.ts";
+import type { Request } from "./request.ts";
 
 export class Response {
   [key: symbol]: unknown;
@@ -26,7 +32,12 @@ export class Response {
   ctx: Context;
   request: Request;
 
-  constructor(app: Application, ctx: Context, req: IncomingMessage, res: ServerResponse) {
+  constructor(
+    app: Application,
+    ctx: Context,
+    req: IncomingMessage,
+    res: ServerResponse,
+  ) {
     this.app = app;
     this.req = req;
     this.res = res;
@@ -38,7 +49,7 @@ export class Response {
   /**
    * Return the request socket.
    */
-  get socket(): ServerResponse['socket'] {
+  get socket(): ServerResponse["socket"] {
     return this.res.socket;
   }
 
@@ -71,7 +82,7 @@ export class Response {
    */
   set status(code: number) {
     if (this.headerSent) return;
-    assert.ok(Number.isInteger(code), 'status code must be a number');
+    assert.ok(Number.isInteger(code), "status code must be a number");
     assert.ok(code >= 100 && code <= 999, `invalid status code: ${code}`);
     this._explicitStatus = true;
     this.res.statusCode = code;
@@ -111,7 +122,9 @@ export class Response {
   /**
    * Set response body.
    */
-  set body(val: string | Buffer | object | Stream | null | undefined | boolean) {
+  set body(
+    val: string | Buffer | object | Stream | null | undefined | boolean,
+  ) {
     const original = this._body;
     this._body = val;
 
@@ -123,9 +136,9 @@ export class Response {
       if (val === null) {
         this._explicitNullBody = true;
       }
-      this.remove('Content-Type');
-      this.remove('Content-Length');
-      this.remove('Transfer-Encoding');
+      this.remove("Content-Type");
+      this.remove("Content-Length");
+      this.remove("Transfer-Encoding");
       return;
     }
 
@@ -133,18 +146,18 @@ export class Response {
     if (!this._explicitStatus) this.status = 200;
 
     // set the content-type only if not yet set
-    const setType = !this.has('Content-Type');
+    const setType = !this.has("Content-Type");
 
     // string
-    if (typeof val === 'string') {
-      if (setType) this.type = /^\s*?</.test(val) ? 'html' : 'text';
+    if (typeof val === "string") {
+      if (setType) this.type = /^\s*?</.test(val) ? "html" : "text";
       this.length = Buffer.byteLength(val);
       return;
     }
 
     // buffer
     if (Buffer.isBuffer(val)) {
-      if (setType) this.type = 'bin';
+      if (setType) this.type = "bin";
       this.length = val.length;
       return;
     }
@@ -154,22 +167,22 @@ export class Response {
       onFinish(this.res, destroy.bind(null, val));
       // oxlint-disable-next-line eqeqeq
       if (original != val) {
-        val.once('error', err => this.ctx.onerror(err));
+        val.once("error", (err) => this.ctx.onerror(err));
         // overwriting
         if (original !== null && original !== undefined) {
-          this.remove('Content-Length');
+          this.remove("Content-Length");
         }
       }
 
       if (setType) {
-        this.type = 'bin';
+        this.type = "bin";
       }
       return;
     }
 
     // json
-    this.remove('Content-Length');
-    this.type = 'json';
+    this.remove("Content-Length");
+    this.type = "json";
   }
 
   /**
@@ -177,8 +190,8 @@ export class Response {
    */
   set length(n: number | string | undefined) {
     if (n === undefined) return;
-    if (!this.has('Transfer-Encoding')) {
-      this.set('Content-Length', n);
+    if (!this.has("Transfer-Encoding")) {
+      this.set("Content-Length", n);
     }
   }
 
@@ -188,15 +201,15 @@ export class Response {
    * When Content-Length is not defined it will return `undefined`.
    */
   get length(): number | undefined {
-    if (this.has('Content-Length')) {
-      return Number.parseInt(this.get('Content-Length')) || 0;
+    if (this.has("Content-Length")) {
+      return Number.parseInt(this.get("Content-Length")) || 0;
     }
 
     const body = this.body;
     if (!body || body instanceof Stream) {
       return undefined;
     }
-    if (typeof body === 'string') {
+    if (typeof body === "string") {
       return Buffer.byteLength(body);
     }
     if (Buffer.isBuffer(body)) {
@@ -221,10 +234,10 @@ export class Response {
   }
 
   protected _getBackReferrer(): string | undefined {
-    const referrer = this.ctx.get<string>('Referrer');
+    const referrer = this.ctx.get<string>("Referrer");
     if (referrer) {
       // referrer is a relative path
-      if (referrer.startsWith('/')) {
+      if (referrer.startsWith("/")) {
         return referrer;
       }
 
@@ -252,28 +265,28 @@ export class Response {
    */
   redirect(url: string, alt?: string): void {
     // location
-    if (url === 'back') {
-      url = this._getBackReferrer() || alt || '/';
+    if (url === "back") {
+      url = this._getBackReferrer() || alt || "/";
     }
-    if (url.startsWith('https://') || url.startsWith('http://')) {
+    if (url.startsWith("https://") || url.startsWith("http://")) {
       // formatting url again avoid security escapes
       url = new URL(url).toString();
     }
-    this.set('Location', encodeUrl(url));
+    this.set("Location", encodeUrl(url));
 
     // status
     if (!statuses.redirect[this.status]) this.status = 302;
 
     // html
-    if (this.ctx.accepts('html')) {
+    if (this.ctx.accepts("html")) {
       url = escape(url);
-      this.type = 'text/html; charset=utf-8';
+      this.type = "text/html; charset=utf-8";
       this.body = `Redirecting to ${url}.`;
       return;
     }
 
     // text
-    this.type = 'text/plain; charset=utf-8';
+    this.type = "text/plain; charset=utf-8";
     this.body = `Redirecting to ${url}.`;
   }
 
@@ -282,7 +295,7 @@ export class Response {
    */
   attachment(filename?: string, options?: ContentDispositionOptions): void {
     if (filename) this.type = extname(filename);
-    this.set('Content-Disposition', contentDisposition(filename, options));
+    this.set("Content-Disposition", contentDisposition(filename, options));
   }
 
   /**
@@ -299,12 +312,12 @@ export class Response {
    */
   set type(type: string | null | undefined) {
     if (!type) {
-      this.remove('Content-Type');
+      this.remove("Content-Type");
       return;
     }
     const mimeType = getType(type);
     if (mimeType) {
-      this.set('Content-Type', mimeType);
+      this.set("Content-Type", mimeType);
     }
   }
 
@@ -313,9 +326,9 @@ export class Response {
    * parameters such as "charset".
    */
   get type(): string {
-    const type = this.get<string>('Content-Type');
-    if (!type) return '';
-    return type.split(';', 1)[0];
+    const type = this.get<string>("Content-Type");
+    if (!type) return "";
+    return type.split(";", 1)[0];
   }
 
   /**
@@ -340,9 +353,9 @@ export class Response {
    *     this.response.lastModified = '2013-09-13';
    */
   set lastModified(val: string | Date | undefined) {
-    if (typeof val === 'string') val = new Date(val);
+    if (typeof val === "string") val = new Date(val);
     if (val) {
-      this.set('Last-Modified', val.toUTCString());
+      this.set("Last-Modified", val.toUTCString());
     }
   }
 
@@ -350,7 +363,7 @@ export class Response {
    * Get the Last-Modified date in Date form, if it exists.
    */
   get lastModified(): Date | undefined {
-    const date = this.get<string>('last-modified');
+    const date = this.get<string>("last-modified");
     if (date) return new Date(date);
   }
 
@@ -364,14 +377,14 @@ export class Response {
    */
   set etag(val: string) {
     if (!/^(W\/)?"/.test(val)) val = `"${val}"`;
-    this.set('ETag', val);
+    this.set("ETag", val);
   }
 
   /**
    * Get the ETag of a response.
    */
   get etag() {
-    return this.get('ETag');
+    return this.get("ETag");
   }
 
   /**
@@ -386,7 +399,7 @@ export class Response {
    *     // => "text/plain"
    */
   get<T = string | string[] | number>(field: string): T {
-    return (this.header[field.toLowerCase()] || '') as T;
+    return (this.header[field.toLowerCase()] || "") as T;
   }
 
   /**
@@ -415,13 +428,16 @@ export class Response {
    *    this.set('Accept', 'application/json');
    *    this.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' });
    */
-  set(field: string | Record<string, string>, val?: string | number | unknown[]): void {
+  set(
+    field: string | Record<string, string>,
+    val?: string | number | unknown[],
+  ): void {
     if (this.headerSent) return;
-    if (typeof field === 'string') {
+    if (typeof field === "string") {
       let value = val as string | string[];
       if (Array.isArray(val)) {
-        value = val.map(v => (typeof v === 'string' ? v : String(v)));
-      } else if (typeof val !== 'string') {
+        value = val.map((v) => (typeof v === "string" ? v : String(v)));
+      } else if (typeof val !== "string") {
         value = String(val);
       }
       this.res.setHeader(field, value);
@@ -487,7 +503,7 @@ export class Response {
   inspect(): object | undefined {
     if (!this.res) return;
     const o = this.toJSON();
-    Reflect.set(o, 'body', this.body);
+    Reflect.set(o, "body", this.body);
     return o;
   }
 

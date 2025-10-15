@@ -1,4 +1,4 @@
-exports.middleware = ['static'];
+exports.middleware = ["static"];
 
 exports.static = {
   enable: false,

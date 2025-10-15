@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  framework1: 'framework1',
+  framework1: "framework1",
 };

@@ -1,8 +1,8 @@
-import { Application } from 'egg';
+import { Application } from "egg";
 
-import { ScheduleWorker } from '../../lib/schedule_worker.ts';
+import { ScheduleWorker } from "../../lib/schedule_worker.ts";
 
-const SCHEDULE_WORKER = Symbol('application scheduleWorker');
+const SCHEDULE_WORKER = Symbol("application scheduleWorker");
 
 export default class ScheduleApplication extends Application {
   /**

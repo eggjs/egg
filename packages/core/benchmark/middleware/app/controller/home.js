@@ -4,6 +4,6 @@ module.exports = {
   },
 
   async index() {
-    this.body = 'hello world';
+    this.body = "hello world";
   },
 };

@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = require('../framework');
+module.exports = require("../framework");

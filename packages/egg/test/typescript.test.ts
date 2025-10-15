@@ -1,10 +1,10 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
-import { strict as assert } from 'node:assert';
+import { describe, it, beforeAll, afterAll } from "vitest";
+import { strict as assert } from "node:assert";
 
-import { type MockApplication, createApp } from './utils.ts';
+import { type MockApplication, createApp } from "./utils.ts";
 
-describe.skip('test/typescript.test.ts', () => {
-  describe('compiler code', () => {
+describe.skip("test/typescript.test.ts", () => {
+  describe("compiler code", () => {
     let app: MockApplication;
     beforeAll(async () => {
       // await coffee.fork(
@@ -31,33 +31,41 @@ describe.skip('test/typescript.test.ts', () => {
       //   .expect('code', 0)
       //   .end();
 
-      app = createApp('apps/app-ts');
+      app = createApp("apps/app-ts");
       await app.ready();
     });
 
     afterAll(async () => {
       await app.close();
       assert.deepStrictEqual(app._app.stages, [
-        'configWillLoad',
-        'configDidLoad',
-        'didLoad',
-        'willReady',
-        'didReady',
-        'serverDidReady',
-        'beforeClose',
+        "configWillLoad",
+        "configDidLoad",
+        "didLoad",
+        "willReady",
+        "didReady",
+        "serverDidReady",
+        "beforeClose",
       ]);
     });
 
-    it('controller run ok', async () => {
-      await app.httpRequest().get('/foo').expect(200).expect({ env: 'unittest' });
+    it("controller run ok", async () => {
+      await app
+        .httpRequest()
+        .get("/foo")
+        .expect(200)
+        .expect({ env: "unittest" });
     });
 
-    it('controller of app.router run ok', async () => {
-      await app.httpRequest().get('/test').expect(200).expect({ env: 'unittest' });
+    it("controller of app.router run ok", async () => {
+      await app
+        .httpRequest()
+        .get("/test")
+        .expect(200)
+        .expect({ env: "unittest" });
     });
   });
 
-  describe('type check', () => {
+  describe("type check", () => {
     // it('should compile with esModuleInterop without error', async () => {
     //   await coffee.fork(
     //     importResolve('typescript/bin/tsc'),

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-exports.keys = '123456';
+exports.keys = "123456";
 
 exports.logger = {
-  level: 'WARN',
-  consoleLevel: 'WARN',
+  level: "WARN",
+  consoleLevel: "WARN",
 };

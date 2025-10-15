@@ -1,9 +1,9 @@
-module.exports = app => {
-  app.get('/foo.js', async function () {
-    this.body = 'foo.js';
+module.exports = (app) => {
+  app.get("/foo.js", async function () {
+    this.body = "foo.js";
   });
 
-  app.get('/foo', async function () {
-    this.body = 'foo';
+  app.get("/foo", async function () {
+    this.body = "foo";
   });
 };

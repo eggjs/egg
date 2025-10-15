@@ -1,5 +1,5 @@
 exports.watcher = {
   eventSources: {
-    custom: require('../custom'),
+    custom: require("../custom"),
   },
 };

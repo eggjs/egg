@@ -1,4 +1,4 @@
-declare module 'egg' {
+declare module "egg" {
   interface Foo {
     bar(): string;
   }

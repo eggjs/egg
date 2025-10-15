@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
 exports.development = {
   overrideDefault: true,
-  watchDirs: ['app/service'],
+  watchDirs: ["app/service"],
 };

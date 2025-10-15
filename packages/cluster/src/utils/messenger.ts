@@ -1,12 +1,12 @@
-import { debuglog } from 'node:util';
-import workerThreads from 'node:worker_threads';
+import { debuglog } from "node:util";
+import workerThreads from "node:worker_threads";
 
-import type { Master } from '../master.ts';
-import type { WorkerManager } from './worker_manager.ts';
+import type { Master } from "../master.ts";
+import type { WorkerManager } from "./worker_manager.ts";
 
-const debug = debuglog('egg/cluster/messenger');
+const debug = debuglog("egg/cluster/messenger");
 
-export type MessageCharacter = 'agent' | 'app' | 'master' | 'parent';
+export type MessageCharacter = "agent" | "app" | "master" | "parent";
 
 export interface MessageBody {
   action: string;
@@ -76,11 +76,11 @@ export class Messenger {
     this.#master = master;
     this.#workerManager = workerManager;
     this.#hasParent = !!workerThreads.parentPort || !!process.send;
-    process.on('message', (msg: MessageBody) => {
-      msg.from = 'parent';
+    process.on("message", (msg: MessageBody) => {
+      msg.from = "parent";
       this.send(msg);
     });
-    process.once('disconnect', () => {
+    process.once("disconnect", () => {
       this.#hasParent = false;
     });
   }
@@ -93,7 +93,7 @@ export class Messenger {
    */
   send(data: MessageBody): void {
     if (!data.from) {
-      data.from = 'master';
+      data.from = "master";
     }
 
     // https://github.com/eggjs/egg/blob/b6861f1c7548f05a281386050dfeaeb30f236558/lib/core/messenger/ipc.js#L56
@@ -101,31 +101,33 @@ export class Messenger {
     const receiverWorkerId = data.receiverWorkerId ?? data.receiverPid;
     if (receiverWorkerId) {
       if (receiverWorkerId === String(process.pid)) {
-        data.to = 'master';
-      } else if (receiverWorkerId === String(this.#workerManager.getAgent()!.workerId)) {
-        data.to = 'agent';
+        data.to = "master";
+      } else if (
+        receiverWorkerId === String(this.#workerManager.getAgent()!.workerId)
+      ) {
+        data.to = "agent";
       } else {
-        data.to = 'app';
+        data.to = "app";
       }
     }
 
     // default from -> to rules
     if (!data.to) {
-      if (data.from === 'agent') {
-        data.to = 'app';
+      if (data.from === "agent") {
+        data.to = "app";
       }
-      if (data.from === 'app') {
-        data.to = 'agent';
+      if (data.from === "app") {
+        data.to = "agent";
       }
-      if (data.from === 'parent') {
-        data.to = 'master';
+      if (data.from === "parent") {
+        data.to = "master";
       }
     }
 
     // app -> master
     // agent -> master
-    if (data.to === 'master') {
-      debug('%s -> master, data: %j', data.from, data);
+    if (data.to === "master") {
+      debug("%s -> master, data: %j", data.from, data);
       // app/agent to master
       this.sendToMaster(data);
       return;
@@ -134,24 +136,24 @@ export class Messenger {
     // master -> parent
     // app -> parent
     // agent -> parent
-    if (data.to === 'parent') {
-      debug('%s -> parent, data: %j', data.from, data);
+    if (data.to === "parent") {
+      debug("%s -> parent, data: %j", data.from, data);
       this.sendToParent(data);
       return;
     }
 
     // parent -> master -> app
     // agent -> master -> app
-    if (data.to === 'app') {
-      debug('%s -> %s, data: %j', data.from, data.to, data);
+    if (data.to === "app") {
+      debug("%s -> %s, data: %j", data.from, data.to, data);
       this.sendToAppWorker(data);
       return;
     }
 
     // parent -> master -> agent
     // app -> master -> agent，可能不指定 to
-    if (data.to === 'agent') {
-      debug('%s -> %s, data: %j', data.from, data.to, data);
+    if (data.to === "agent") {
+      debug("%s -> %s, data: %j", data.from, data.to, data);
       this.sendToAgentWorker(data);
       return;
     }
@@ -183,7 +185,7 @@ export class Messenger {
    */
   sendToAppWorker(data: MessageBody): void {
     for (const worker of this.#workerManager.listWorkers()) {
-      if (worker.state === 'disconnected') {
+      if (worker.state === "disconnected") {
         continue;
       }
       // check receiverWorkerId

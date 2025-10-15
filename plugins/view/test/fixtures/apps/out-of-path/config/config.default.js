@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 module.exports = {
   view: {
-    defaultViewEngine: 'nunjucks',
+    defaultViewEngine: "nunjucks",
   },
 
-  keys: '123',
+  keys: "123",
 };

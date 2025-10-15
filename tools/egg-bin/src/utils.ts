@@ -1,11 +1,13 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export async function readPackageJSON(baseDir: string): Promise<Record<string, any>> {
-  const pkgFile = path.join(baseDir, 'package.json');
+export async function readPackageJSON(
+  baseDir: string,
+): Promise<Record<string, any>> {
+  const pkgFile = path.join(baseDir, "package.json");
   try {
-    const pkgJSON = await fs.readFile(pkgFile, 'utf8');
+    const pkgJSON = await fs.readFile(pkgFile, "utf8");
     return JSON.parse(pkgJSON);
   } catch {
     return {};
@@ -13,7 +15,7 @@ export async function readPackageJSON(baseDir: string): Promise<Record<string, a
 }
 
 export async function hasTsConfig(baseDir: string): Promise<boolean> {
-  const pkgFile = path.join(baseDir, 'tsconfig.json');
+  const pkgFile = path.join(baseDir, "tsconfig.json");
   try {
     await fs.access(pkgFile);
     return true;
@@ -23,7 +25,7 @@ export async function hasTsConfig(baseDir: string): Promise<boolean> {
 }
 
 export function getSourceDirname(): string {
-  if (typeof __dirname === 'string') {
+  if (typeof __dirname === "string") {
     return __dirname;
   }
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

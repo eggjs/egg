@@ -1,17 +1,17 @@
-import { debuglog } from 'node:util';
-import crypto, { type Cipheriv } from 'node:crypto';
-import assert from 'node:assert';
+import { debuglog } from "node:util";
+import crypto, { type Cipheriv } from "node:crypto";
+import assert from "node:assert";
 
-const debug = debuglog('egg/cookies:keygrip');
+const debug = debuglog("egg/cookies:keygrip");
 
 const KEY_LEN = 32;
 const IV_SIZE = 16;
 const passwordCache = new Map();
 
 const replacer: Record<string, string> = {
-  '/': '_',
-  '+': '-',
-  '=': '',
+  "/": "_",
+  "+": "-",
+  "=": "",
 };
 
 function constantTimeCompare(a: Buffer, b: Buffer) {
@@ -25,11 +25,14 @@ function constantTimeCompare(a: Buffer, b: Buffer) {
 
 export class Keygrip {
   readonly #keys: string[];
-  readonly #hash = 'sha256';
-  readonly #cipher = 'aes-256-cbc';
+  readonly #hash = "sha256";
+  readonly #cipher = "aes-256-cbc";
 
   constructor(keys: string[]) {
-    assert(Array.isArray(keys) && keys.length > 0, 'keys must be provided and should be an array');
+    assert(
+      Array.isArray(keys) && keys.length > 0,
+      "keys must be provided and should be an array",
+    );
     this.#keys = keys;
   }
 
@@ -37,7 +40,11 @@ export class Keygrip {
   encrypt(data: string, key?: string): Buffer {
     key = key || this.#keys[0];
     const password = keyToPassword(key);
-    const cipher = crypto.createCipheriv(this.#cipher, password.key, password.iv);
+    const cipher = crypto.createCipheriv(
+      this.#cipher,
+      password.key,
+      password.iv,
+    );
     return crypt(cipher, data);
   }
 
@@ -58,10 +65,14 @@ export class Keygrip {
   #decryptByKey(data: string | Buffer, key: string) {
     try {
       const password = keyToPassword(key);
-      const cipher = crypto.createDecipheriv(this.#cipher, password.key, password.iv);
+      const cipher = crypto.createDecipheriv(
+        this.#cipher,
+        password.key,
+        password.iv,
+      );
       return crypt(cipher, data);
     } catch (err: any) {
-      debug('crypt error: %s', err);
+      debug("crypt error: %s", err);
       return false;
     }
   }
@@ -74,8 +85,8 @@ export class Keygrip {
     return crypto
       .createHmac(this.#hash, key)
       .update(data)
-      .digest('base64')
-      .replace(/\/|\+|=/g, x => {
+      .digest("base64")
+      .replace(/\/|\+|=/g, (x) => {
         return replacer[x];
       });
   }
@@ -84,8 +95,13 @@ export class Keygrip {
     const keys = this.#keys;
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
-      if (constantTimeCompare(Buffer.from(digest), Buffer.from(this.sign(data, key)))) {
-        debug('data %s match key %s, index: %d', data, key, i);
+      if (
+        constantTimeCompare(
+          Buffer.from(digest),
+          Buffer.from(this.sign(data, key)),
+        )
+      ) {
+        debug("data %s match key %s, index: %d", data, key, i);
         return i;
       }
     }
@@ -94,7 +110,9 @@ export class Keygrip {
 }
 
 function crypt(cipher: Cipheriv, data: string | Buffer): Buffer {
-  const text = Buffer.isBuffer(data) ? cipher.update(data) : cipher.update(data, 'utf-8');
+  const text = Buffer.isBuffer(data)
+    ? cipher.update(data)
+    : cipher.update(data, "utf-8");
   const pad = cipher.final();
   return Buffer.concat([text, pad]);
 }
@@ -110,7 +128,7 @@ function keyToPassword(key: string): { key: Buffer; iv: Buffer } {
   let lastHash = null,
     nBytes = 0;
   while (nBytes < bytes.length) {
-    const hash = crypto.createHash('md5');
+    const hash = crypto.createHash("md5");
     if (lastHash) hash.update(lastHash);
     hash.update(key);
     lastHash = hash.digest();

@@ -1,8 +1,8 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { readFile } from 'node:fs/promises';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 
-import type { Context, MiddlewareFunc } from '../../lib/egg.ts';
+import type { Context, MiddlewareFunc } from "../../lib/egg.ts";
 
 export type SiteFileContentFun = (ctx: Context) => Promise<Buffer | string>;
 
@@ -12,14 +12,14 @@ export interface SiteFileMiddlewareOptions {
   [key: string]: string | Buffer | boolean | SiteFileContentFun | URL;
 }
 
-const BUFFER_CACHE = Symbol('siteFile URL buffer cache');
+const BUFFER_CACHE = Symbol("siteFile URL buffer cache");
 
 export default (options: SiteFileMiddlewareOptions): MiddlewareFunc => {
   return async function siteFile(ctx, next): Promise<void> {
-    if (ctx.method !== 'HEAD' && ctx.method !== 'GET') {
+    if (ctx.method !== "HEAD" && ctx.method !== "GET") {
       return next();
     }
-    if (ctx.path[0] !== '/') {
+    if (ctx.path[0] !== "/") {
       return next();
     }
 
@@ -30,17 +30,17 @@ export default (options: SiteFileMiddlewareOptions): MiddlewareFunc => {
 
     // '/favicon.ico': 'https://eggjs.org/favicon.ico' or '/favicon.ico': async (ctx) => 'https://eggjs.org/favicon.ico'
     // content is function
-    if (typeof content === 'function') {
+    if (typeof content === "function") {
       content = await content(ctx);
     }
     // content is url
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       return ctx.redirect(content);
     }
 
     // URL
     if (content instanceof URL) {
-      if (content.protocol !== 'file:') {
+      if (content.protocol !== "file:") {
         return ctx.redirect(content.href);
       }
       // protocol = file:
@@ -49,7 +49,7 @@ export default (options: SiteFileMiddlewareOptions): MiddlewareFunc => {
         buffer = await readFile(fileURLToPath(content));
         Reflect.set(content, BUFFER_CACHE, buffer);
       }
-      ctx.set('cache-control', options.cacheControl);
+      ctx.set("cache-control", options.cacheControl);
       ctx.body = content;
       ctx.type = path.extname(ctx.path);
       return;
@@ -58,7 +58,7 @@ export default (options: SiteFileMiddlewareOptions): MiddlewareFunc => {
     // '/robots.txt': Buffer <xx..
     // content is buffer
     if (Buffer.isBuffer(content)) {
-      ctx.set('cache-control', options.cacheControl);
+      ctx.set("cache-control", options.cacheControl);
       ctx.body = content;
       ctx.type = path.extname(ctx.path);
       return;

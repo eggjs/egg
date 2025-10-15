@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 module.exports = function () {
   return async function (ctx, next) {
     ctx.body = [];
-    ctx.body.push('generator before');
+    ctx.body.push("generator before");
     await next();
-    ctx.body.push('generator after');
+    ctx.body.push("generator after");
   };
 };

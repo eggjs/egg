@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 exports.loader = {
-  service: { ignore: 'util/**' },
-  controller: { ignore: 'util/**' },
+  service: { ignore: "util/**" },
+  controller: { ignore: "util/**" },
 };
 
-exports.name = 'config-test';
+exports.name = "config-test";
 
 exports.test = 1;
 

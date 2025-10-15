@@ -1,5 +1,5 @@
-'use strict';
-require('this is a pen');
+"use strict";
+require("this is a pen");
 exports.customCon = function* () {
-  this.body = 'test';
+  this.body = "test";
 };

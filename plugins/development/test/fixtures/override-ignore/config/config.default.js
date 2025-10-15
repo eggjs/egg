@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
 exports.development = {
   overrideIgnore: true,
-  ignoreDirs: ['app/public'],
+  ignoreDirs: ["app/public"],
 };

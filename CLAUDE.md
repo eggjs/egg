@@ -583,7 +583,10 @@ This approach ensures:
   - Provides additional linting rules beyond TypeScript checking
   - Significantly faster than ESLint with comparable rules
   - Uses `--type-aware` flag for enhanced TypeScript analysis
-- **Prettier** - Code formatting (primarily for documentation)
+- **oxfmt** - Fast code formatter from the oxc project
+  - Formats JavaScript and TypeScript files
+  - Replaces Prettier for JS/TS code formatting
+  - Uses sensible defaults (double quotes, semicolons, 2-space indentation)
 - Run `pnpm lint` to check code quality with oxlint
 - Run `pnpm lint:fix` to auto-fix linting issues
 - Each package uses oxlint which automatically respects `.gitignore` patterns

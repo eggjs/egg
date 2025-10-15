@@ -1,11 +1,11 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { readJSON } from 'utility';
-import { importModule } from '@eggjs/utils';
+import { readJSON } from "utility";
+import { importModule } from "@eggjs/utils";
 
-import { Agent } from './agent.ts';
-import { Application } from './application.ts';
-import { type EggPlugin } from './types.ts';
+import { Agent } from "./agent.ts";
+import { Application } from "./application.ts";
+import { type EggPlugin } from "./types.ts";
 
 export interface StartEggOptions {
   /** specify framework that can be absolute path or npm package */
@@ -14,7 +14,7 @@ export interface StartEggOptions {
   baseDir?: string;
   /** ignore single process mode warning */
   ignoreWarning?: boolean;
-  mode?: 'single';
+  mode?: "single";
   env?: string;
   plugins?: EggPlugin;
 }
@@ -30,14 +30,16 @@ export interface SingleModeAgent extends Agent {
 /**
  * Start egg with single process
  */
-export async function startEgg(options: StartEggOptions = {}): Promise<SingleModeApplication> {
+export async function startEgg(
+  options: StartEggOptions = {},
+): Promise<SingleModeApplication> {
   options.baseDir = options.baseDir ?? process.cwd();
-  options.mode = 'single';
+  options.mode = "single";
 
   // get agent from options.framework and package.egg.framework
   if (!options.framework) {
     try {
-      const pkg = await readJSON(path.join(options.baseDir, 'package.json'));
+      const pkg = await readJSON(path.join(options.baseDir, "package.json"));
       options.framework = pkg.egg.framework;
     } catch {
       // ignore
@@ -65,6 +67,6 @@ export async function startEgg(options: StartEggOptions = {}): Promise<SingleMod
   await application.ready();
 
   // emit egg-ready message in agent and application
-  application.messenger.broadcast('egg-ready');
+  application.messenger.broadcast("egg-ready");
   return application;
 }

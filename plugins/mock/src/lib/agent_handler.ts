@@ -1,18 +1,18 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import { createAgent, MockAgent } from './parallel/agent.ts';
-import { getEggOptions } from './utils.ts';
+import { createAgent, MockAgent } from "./parallel/agent.ts";
+import { getEggOptions } from "./utils.ts";
 
-const debug = debuglog('egg/mock/lib/agent_handler');
+const debug = debuglog("egg/mock/lib/agent_handler");
 
 let agent: MockAgent;
 
 export async function setupAgent(): Promise<MockAgent> {
   debug(
-    'setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s',
+    "setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s",
     process.env.ENABLE_MOCHA_PARALLEL,
     process.env.AUTO_AGENT,
-    !!agent
+    !!agent,
   );
   if (agent) {
     await agent.ready();
@@ -26,7 +26,7 @@ export async function setupAgent(): Promise<MockAgent> {
 }
 
 export async function closeAgent(): Promise<void> {
-  debug('setupAgent call, agent: %s', !!agent);
+  debug("setupAgent call, agent: %s", !!agent);
   if (agent) {
     await agent.close();
   }

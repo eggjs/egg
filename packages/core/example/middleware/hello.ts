@@ -1,7 +1,7 @@
-import type { MiddlewareFunc } from '../../src/index.ts';
+import type { MiddlewareFunc } from "../../src/index.ts";
 
 export const hello: MiddlewareFunc = async (ctx, next) => {
-  console.log('Hello middleware');
+  console.log("Hello middleware");
   console.log(ctx.app.BaseContextClass);
   console.log(ctx.app.Service);
   console.log(ctx.service);

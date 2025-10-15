@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  fileExtensions: ['.foo'],
-  whitelist: ['.whitelist'],
+  fileExtensions: [".foo"],
+  whitelist: [".whitelist"],
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

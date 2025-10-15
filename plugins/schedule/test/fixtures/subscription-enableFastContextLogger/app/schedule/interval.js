@@ -1,15 +1,15 @@
-const Subscription = require('egg').Subscription;
+const Subscription = require("egg").Subscription;
 
 class Interval extends Subscription {
   static get schedule() {
     return {
-      type: 'worker',
+      type: "worker",
       interval: 4000,
     };
   }
 
   async subscribe() {
-    this.app.logger.info('interval');
+    this.app.logger.info("interval");
   }
 }
 

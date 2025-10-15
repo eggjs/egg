@@ -1,3 +1,3 @@
 module.exports = async (ctx: any) => {
-  ctx.body = 'ok';
+  ctx.body = "ok";
 };

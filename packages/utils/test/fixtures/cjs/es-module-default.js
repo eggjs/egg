@@ -1,6 +1,6 @@
 exports.__esModule = true;
-exports['default'] = {
+exports["default"] = {
   fn() {},
-  foo: 'bar',
+  foo: "bar",
   one: 1,
 };

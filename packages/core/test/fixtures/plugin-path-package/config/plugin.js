@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   session: {
-    path: path.join(__dirname, '../session'),
+    path: path.join(__dirname, "../session"),
   },
   hsfclient: {
-    package: 'hsfclient',
+    package: "hsfclient",
   },
 };

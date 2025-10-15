@@ -1,8 +1,8 @@
-import { jsonp as jsonpBody } from 'jsonp-body';
-import { Context } from 'egg';
+import { jsonp as jsonpBody } from "jsonp-body";
+import { Context } from "egg";
 
-import { JSONP_CONFIG } from '../../lib/private_key.ts';
-import type { JSONPConfig } from '../../config/config.default.ts';
+import { JSONP_CONFIG } from "../../lib/private_key.ts";
+import type { JSONPConfig } from "../../config/config.default.ts";
 
 interface JSONPConfigData {
   jsonpFunction?: string;
@@ -32,8 +32,8 @@ export default class JSONPContext extends Context {
       return;
     }
 
-    this.set('x-content-type-options', 'nosniff');
-    this.type = 'js';
+    this.set("x-content-type-options", "nosniff");
+    this.type = "js";
     body = body === undefined ? null : body;
     // protect from jsonp xss
     this.body = jsonpBody(body, jsonpConfig.jsonpFunction, jsonpConfig.options);

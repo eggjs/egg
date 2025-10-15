@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'stream',
-  fileModeMatch: 'foobar',
+  mode: "stream",
+  fileModeMatch: "foobar",
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

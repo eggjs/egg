@@ -1,4 +1,4 @@
-import { defineProject, type UserWorkspaceConfig } from 'vitest/config';
+import { defineProject, type UserWorkspaceConfig } from "vitest/config";
 
 const config: UserWorkspaceConfig = defineProject({
   test: {

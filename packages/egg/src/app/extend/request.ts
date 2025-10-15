@@ -1,16 +1,16 @@
-import querystring from 'node:querystring';
+import querystring from "node:querystring";
 
-import { Request as EggCoreRequest } from '@eggjs/core';
+import { Request as EggCoreRequest } from "@eggjs/core";
 
-import type { Application } from '../../lib/application.ts';
-import type Context from './context.ts';
-import Response from './response.ts';
+import type { Application } from "../../lib/application.ts";
+import type Context from "./context.ts";
+import Response from "./response.ts";
 
-const QUERY_CACHE = Symbol('request query cache');
-const QUERIES_CACHE = Symbol('request queries cache');
-const PROTOCOL = Symbol('request protocol');
-const HOST = Symbol('request host');
-const IPS = Symbol('request ips');
+const QUERY_CACHE = Symbol("request query cache");
+const QUERIES_CACHE = Symbol("request queries cache");
+const PROTOCOL = Symbol("request protocol");
+const HOST = Symbol("request host");
+const IPS = Symbol("request ips");
 const RE_ARRAY_KEY = /[^[\]]+\[\]$/;
 
 export default class Request extends EggCoreRequest {
@@ -49,8 +49,8 @@ export default class Request extends EggCoreRequest {
     if (this.app.config.proxy) {
       host = getFromHeaders(this, this.app.config.hostHeaders);
     }
-    host = host || this.get('host') || '';
-    this[HOST] = host = host.split(',')[0].trim();
+    host = host || this.get("host") || "";
+    this[HOST] = host = host.split(",")[0].trim();
     return host;
   }
 
@@ -69,7 +69,7 @@ export default class Request extends EggCoreRequest {
     }
     // detect encrypted socket
     if (this.socket?.encrypted) {
-      this[PROTOCOL] = protocol = 'https';
+      this[PROTOCOL] = protocol = "https";
       return protocol;
     }
     // get from headers specified in `app.config.protocolHeaders`
@@ -81,7 +81,7 @@ export default class Request extends EggCoreRequest {
       }
     }
     // use protocol specified in `app.config.protocol`
-    this[PROTOCOL] = protocol = this.app.config.protocol || 'http';
+    this[PROTOCOL] = protocol = this.app.config.protocol || "http";
     return protocol;
   }
 
@@ -143,7 +143,7 @@ export default class Request extends EggCoreRequest {
     const ip = this.ips[0] ?? this.socket.remoteAddress;
     // will be '::ffff:x.x.x.x', should convert to standard IPv4 format
     // https://zh.wikipedia.org/wiki/IPv6
-    this._ip = ip && ip.startsWith('::ffff:') ? ip.substring(7) : ip;
+    this._ip = ip && ip.startsWith("::ffff:") ? ip.substring(7) : ip;
     return this._ip;
   }
 
@@ -172,9 +172,10 @@ export default class Request extends EggCoreRequest {
    * @since 1.0.0
    */
   get acceptJSON(): boolean {
-    if (this.path.endsWith('.json')) return true;
-    if (this.response.type && this.response.type.indexOf('json') >= 0) return true;
-    if (this.accepts('html', 'text', 'json') === 'json') return true;
+    if (this.path.endsWith(".json")) return true;
+    if (this.response.type && this.response.type.indexOf("json") >= 0)
+      return true;
+    if (this.accepts("html", "text", "json") === "json") return true;
     return false;
   }
 
@@ -182,10 +183,13 @@ export default class Request extends EggCoreRequest {
   // https://github.com/koajs/qs/issues/5
   _customQuery(
     cacheName: symbol,
-    filter: (value: string | string[]) => string | string[]
+    filter: (value: string | string[]) => string | string[],
   ): Record<string, string | string[]> {
-    const str = this.querystring || '';
-    let c = this[cacheName] as Record<string, Record<string, string | string[]>>;
+    const str = this.querystring || "";
+    let c = this[cacheName] as Record<
+      string,
+      Record<string, string | string[]>
+    >;
     if (!c) {
       c = this[cacheName] = {};
     }
@@ -255,7 +259,10 @@ export default class Request extends EggCoreRequest {
    * ```
    */
   get queries(): Record<string, string[]> {
-    return this._customQuery(QUERIES_CACHE, arrayValue) as Record<string, string[]>;
+    return this._customQuery(QUERIES_CACHE, arrayValue) as Record<
+      string,
+      string[]
+    >;
   }
 
   /**
@@ -284,11 +291,11 @@ function arrayValue(value: string | string[]) {
 }
 
 function getFromHeaders(request: Request, names: string) {
-  if (!names) return '';
+  if (!names) return "";
   const fields = names.split(/\s*,\s*/);
   for (const name of fields) {
     const value = request.get<string>(name);
     if (value) return value;
   }
-  return '';
+  return "";
 }

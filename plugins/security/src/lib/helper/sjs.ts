@@ -9,23 +9,25 @@
 const MATCH_VULNERABLE_REGEXP = /[\x00-\x2f\x3a-\x40\x5b-\x60\x7b-\x7f]/;
 // eslint-enable-next-line
 
-const BASIC_ALPHABETS = new Set('abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
+const BASIC_ALPHABETS = new Set(
+  "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""),
+);
 
 const map: Record<string, string> = {
-  '\t': '\\t',
-  '\n': '\\n',
-  '\r': '\\r',
+  "\t": "\\t",
+  "\n": "\\n",
+  "\r": "\\r",
 };
 
 export default function escapeJavaScript(text: string): string {
-  const str = '' + text;
+  const str = "" + text;
   const match = MATCH_VULNERABLE_REGEXP.exec(str);
 
   if (!match) {
     return str;
   }
 
-  let res = '';
+  let res = "";
   let index = 0;
   let lastIndex = 0;
   let ascii;
@@ -40,7 +42,7 @@ export default function escapeJavaScript(text: string): string {
         if (code > 127) {
           continue;
         } else {
-          map[ascii] = '\\x' + code.toString(16);
+          map[ascii] = "\\x" + code.toString(16);
         }
       }
     }

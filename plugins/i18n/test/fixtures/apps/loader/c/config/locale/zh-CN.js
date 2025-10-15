@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  pluginC: 'i18n form locale',
+  pluginC: "i18n form locale",
 };

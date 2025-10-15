@@ -1,10 +1,10 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
-import spawn from 'cross-spawn';
-import mri from 'mri';
-import * as prompts from '@clack/prompts';
-import colors from 'picocolors';
+import spawn from "cross-spawn";
+import mri from "mri";
+import * as prompts from "@clack/prompts";
+import colors from "picocolors";
 
 const { blue, blueBright, green, greenBright, yellow } = colors;
 
@@ -13,9 +13,9 @@ const argv = mri<{
   help?: boolean;
   overwrite?: boolean;
 }>(process.argv.slice(2), {
-  alias: { h: 'help', t: 'template' },
-  boolean: ['help', 'overwrite'],
-  string: ['template'],
+  alias: { h: "help", t: "template" },
+  boolean: ["help", "overwrite"],
+  string: ["template"],
 });
 const cwd = process.cwd();
 
@@ -47,36 +47,38 @@ type Template = {
 
 const TEMPLATES: Template[] = [
   {
-    name: 'tegg',
-    display: 'Tegg starter, egg@4 with tegg module',
+    name: "tegg",
+    display: "Tegg starter, egg@4 with tegg module",
     color: green,
   },
   {
-    name: 'simple-ts',
-    display: 'Simple starter, egg@4 with vanilla TypeScript',
+    name: "simple-ts",
+    display: "Simple starter, egg@4 with vanilla TypeScript",
     color: blue,
   },
   {
-    name: 'egg3-tegg',
-    display: 'Tegg starter, egg@3 with tegg module',
+    name: "egg3-tegg",
+    display: "Tegg starter, egg@3 with tegg module",
     color: green,
   },
   {
-    name: 'egg3-simple-ts',
-    display: 'Simple starter, egg@3 with vanilla TypeScript',
+    name: "egg3-simple-ts",
+    display: "Simple starter, egg@3 with vanilla TypeScript",
     color: blue,
   },
   {
-    name: 'egg3-simple-js',
-    display: 'Simple starter, egg@3 with vanilla JavaScript',
+    name: "egg3-simple-js",
+    display: "Simple starter, egg@3 with vanilla JavaScript",
     color: yellow,
   },
 ];
 
-const defaultTargetDir = 'egg-project';
+const defaultTargetDir = "egg-project";
 
 export async function init(): Promise<void> {
-  const argTargetDir = argv._[0] ? formatTargetDir(String(argv._[0])) : undefined;
+  const argTargetDir = argv._[0]
+    ? formatTargetDir(String(argv._[0]))
+    : undefined;
   const argTemplate = argv.template;
   const argOverwrite = argv.overwrite;
 
@@ -87,19 +89,23 @@ export async function init(): Promise<void> {
   }
 
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent);
-  const cancel = () => prompts.cancel('Operation cancelled');
+  const cancel = () => prompts.cancel("Operation cancelled");
 
-  prompts.intro(`${greenBright('Egg.js')} - Born to build better enterprise application and framework`);
+  prompts.intro(
+    `${greenBright("Egg.js")} - Born to build better enterprise application and framework`,
+  );
 
   // 1. Get project name and target dir
   let targetDir = argTargetDir;
   if (!targetDir) {
     const projectName = await prompts.text({
-      message: 'Project name:',
+      message: "Project name:",
       defaultValue: defaultTargetDir,
       placeholder: defaultTargetDir,
-      validate: value => {
-        return value.length === 0 || formatTargetDir(value).length > 0 ? undefined : 'Invalid project name';
+      validate: (value) => {
+        return value.length === 0 || formatTargetDir(value).length > 0
+          ? undefined
+          : "Invalid project name";
       },
     });
     if (prompts.isCancel(projectName)) return cancel();
@@ -109,32 +115,34 @@ export async function init(): Promise<void> {
   // 2. Handle directory if exist and not empty
   if (fs.existsSync(targetDir) && !isEmpty(targetDir)) {
     const overwrite = argOverwrite
-      ? 'yes'
+      ? "yes"
       : await prompts.select({
           message:
-            (targetDir === '.' ? 'Current directory' : `Target directory "${targetDir}"`) +
+            (targetDir === "."
+              ? "Current directory"
+              : `Target directory "${targetDir}"`) +
             ` is not empty. Please choose how to proceed:`,
           options: [
             {
-              label: 'Cancel operation',
-              value: 'no',
+              label: "Cancel operation",
+              value: "no",
             },
             {
-              label: 'Remove existing files and continue',
-              value: 'yes',
+              label: "Remove existing files and continue",
+              value: "yes",
             },
             {
-              label: 'Ignore files and continue',
-              value: 'ignore',
+              label: "Ignore files and continue",
+              value: "ignore",
             },
           ],
         });
     if (prompts.isCancel(overwrite)) return cancel();
     switch (overwrite) {
-      case 'yes':
+      case "yes":
         emptyDir(targetDir);
         break;
-      case 'no':
+      case "no":
         cancel();
         return;
     }
@@ -144,12 +152,12 @@ export async function init(): Promise<void> {
   let packageName = path.basename(path.resolve(targetDir));
   if (!isValidPackageName(packageName)) {
     const packageNameResult = await prompts.text({
-      message: 'Package name:',
+      message: "Package name:",
       defaultValue: toValidPackageName(packageName),
       placeholder: toValidPackageName(packageName),
       validate(dir) {
         if (!isValidPackageName(dir)) {
-          return 'Invalid package.json name';
+          return "Invalid package.json name";
         }
       },
     });
@@ -160,7 +168,7 @@ export async function init(): Promise<void> {
   // 4. Choose a template
   let template = argTemplate;
   let hasInvalidArgTemplate = false;
-  if (argTemplate && !TEMPLATES.some(t => t.name === argTemplate)) {
+  if (argTemplate && !TEMPLATES.some((t) => t.name === argTemplate)) {
     template = undefined;
     hasInvalidArgTemplate = true;
   }
@@ -168,8 +176,8 @@ export async function init(): Promise<void> {
     const selectedTemplate = await prompts.select({
       message: hasInvalidArgTemplate
         ? `"${argTemplate}" isn't a valid template. Please choose from below: `
-        : 'Select a template:',
-      options: TEMPLATES.map(template => {
+        : "Select a template:",
+      options: TEMPLATES.map((template) => {
         const templateColor = template.color;
         return {
           label: templateColor(template.display || template.name),
@@ -185,28 +193,35 @@ export async function init(): Promise<void> {
   const root = path.join(cwd, targetDir);
   fs.mkdirSync(root, { recursive: true });
 
-  const pkgManager = pkgInfo ? pkgInfo.name : 'npm';
+  const pkgManager = pkgInfo ? pkgInfo.name : "npm";
 
-  const { customCommand } = TEMPLATES.find(t => t.name === template) ?? {};
+  const { customCommand } = TEMPLATES.find((t) => t.name === template) ?? {};
 
   if (customCommand) {
     const fullCustomCommand = getFullCustomCommand(customCommand, pkgInfo);
 
-    const [command, ...args] = fullCustomCommand.split(' ');
+    const [command, ...args] = fullCustomCommand.split(" ");
     // we replace TARGET_DIR here because targetDir may include a space
-    const replacedArgs = args.map(arg => arg.replace('TARGET_DIR', () => targetDir));
+    const replacedArgs = args.map((arg) =>
+      arg.replace("TARGET_DIR", () => targetDir),
+    );
     const { status } = spawn.sync(command, replacedArgs, {
-      stdio: 'inherit',
+      stdio: "inherit",
     });
     process.exit(status ?? 0);
   }
 
-  prompts.log.step(`Scaffolding project with ${blueBright(template)} in ${root}...`);
+  prompts.log.step(
+    `Scaffolding project with ${blueBright(template)} in ${root}...`,
+  );
 
   const templateDir = path.join(import.meta.dirname, `templates/${template}`);
 
   const write = (file: string, content?: string) => {
-    const targetPath = path.join(root, file.startsWith('_') ? file.slice(1) : file);
+    const targetPath = path.join(
+      root,
+      file.startsWith("_") ? file.slice(1) : file,
+    );
     if (content) {
       fs.writeFileSync(targetPath, content);
     } else {
@@ -215,12 +230,15 @@ export async function init(): Promise<void> {
   };
 
   const files = fs.readdirSync(templateDir);
-  for (const file of files.filter(f => f !== 'package.json')) {
+  for (const file of files.filter((f) => f !== "package.json")) {
     write(file);
   }
 
-  let pkgJsonContent = fs.readFileSync(path.join(templateDir, `package.json`), 'utf-8');
-  pkgJsonContent = pkgJsonContent.replaceAll('{{name}}', packageName);
+  let pkgJsonContent = fs.readFileSync(
+    path.join(templateDir, `package.json`),
+    "utf-8",
+  );
+  pkgJsonContent = pkgJsonContent.replaceAll("{{name}}", packageName);
   const pkg = JSON.parse(pkgJsonContent);
 
   // set packageManager
@@ -228,29 +246,31 @@ export async function init(): Promise<void> {
     pkg.packageManager = `${pkgInfo.name}@${pkgInfo.version}`;
   }
 
-  write('package.json', JSON.stringify(pkg, null, 2) + '\n');
+  write("package.json", JSON.stringify(pkg, null, 2) + "\n");
 
   const cdProjectName = path.relative(cwd, root);
 
   // 5. Run git init if user choose to run git init
   const runGitInit = await prompts.confirm({
-    message: 'Initialize git repository?',
+    message: "Initialize git repository?",
     initialValue: true,
   });
   if (runGitInit) {
-    spawn.sync('git', ['init', cdProjectName], { stdio: 'pipe' });
-    prompts.log.success('Git repository initialized');
+    spawn.sync("git", ["init", cdProjectName], { stdio: "pipe" });
+    prompts.log.success("Git repository initialized");
   }
 
-  let doneMessage = '';
+  let doneMessage = "";
   doneMessage += `Done. Now run:\n`;
   if (root !== cwd) {
-    doneMessage += `\n  cd ${cdProjectName.includes(' ') ? `"${cdProjectName}"` : cdProjectName}`;
+    doneMessage += `\n  cd ${
+      cdProjectName.includes(" ") ? `"${cdProjectName}"` : cdProjectName
+    }`;
   }
   switch (pkgManager) {
-    case 'yarn':
-      doneMessage += '\n  yarn';
-      doneMessage += '\n  yarn dev';
+    case "yarn":
+      doneMessage += "\n  yarn";
+      doneMessage += "\n  yarn dev";
       break;
     default:
       doneMessage += `\n  ${pkgManager} install`;
@@ -261,7 +281,7 @@ export async function init(): Promise<void> {
 }
 
 function formatTargetDir(targetDir: string) {
-  return targetDir.trim().replace(/\/+$/g, '');
+  return targetDir.trim().replace(/\/+$/g, "");
 }
 
 function copy(src: string, dest: string) {
@@ -274,16 +294,18 @@ function copy(src: string, dest: string) {
 }
 
 function isValidPackageName(projectName: string) {
-  return /^(?:@[a-z\d\-*~][a-z\d\-*._~]*\/)?[a-z\d\-~][a-z\d\-._~]*$/.test(projectName);
+  return /^(?:@[a-z\d\-*~][a-z\d\-*._~]*\/)?[a-z\d\-~][a-z\d\-._~]*$/.test(
+    projectName,
+  );
 }
 
 function toValidPackageName(projectName: string) {
   return projectName
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/^[._]/, '')
-    .replace(/[^a-z\d\-~]+/g, '-');
+    .replace(/\s+/g, "-")
+    .replace(/^[._]/, "")
+    .replace(/[^a-z\d\-~]+/g, "-");
 }
 
 function copyDir(srcDir: string, destDir: string) {
@@ -297,7 +319,7 @@ function copyDir(srcDir: string, destDir: string) {
 
 function isEmpty(path: string) {
   const files = fs.readdirSync(path);
-  return files.length === 0 || (files.length === 1 && files[0] === '.git');
+  return files.length === 0 || (files.length === 1 && files[0] === ".git");
 }
 
 function emptyDir(dir: string) {
@@ -305,7 +327,7 @@ function emptyDir(dir: string) {
     return;
   }
   for (const file of fs.readdirSync(dir)) {
-    if (file === '.git') {
+    if (file === ".git") {
       continue;
     }
     fs.rmSync(path.resolve(dir, file), { recursive: true, force: true });
@@ -319,8 +341,8 @@ interface PkgInfo {
 
 function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
   if (!userAgent) return undefined;
-  const pkgSpec = userAgent.split(' ')[0];
-  const pkgSpecArr = pkgSpec.split('/');
+  const pkgSpec = userAgent.split(" ")[0];
+  const pkgSpecArr = pkgSpec.split("/");
   return {
     name: pkgSpecArr[0],
     version: pkgSpecArr[1],
@@ -333,40 +355,42 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
 // }
 
 function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
-  const pkgManager = pkgInfo ? pkgInfo.name : 'npm';
-  const isYarn1 = pkgManager === 'yarn' && pkgInfo?.version.startsWith('1.');
+  const pkgManager = pkgInfo ? pkgInfo.name : "npm";
+  const isYarn1 = pkgManager === "yarn" && pkgInfo?.version.startsWith("1.");
 
   return (
     customCommand
       .replace(/^npm create (?:-- )?/, () => {
         // `bun create` uses it's own set of templates,
         // the closest alternative is using `bun x` directly on the package
-        if (pkgManager === 'bun') {
-          return 'bun x create-';
+        if (pkgManager === "bun") {
+          return "bun x create-";
         }
         // pnpm doesn't support the -- syntax
-        if (pkgManager === 'pnpm') {
-          return 'pnpm create ';
+        if (pkgManager === "pnpm") {
+          return "pnpm create ";
         }
         // For other package managers, preserve the original format
-        return customCommand.startsWith('npm create -- ') ? `${pkgManager} create -- ` : `${pkgManager} create `;
+        return customCommand.startsWith("npm create -- ")
+          ? `${pkgManager} create -- `
+          : `${pkgManager} create `;
       })
       // Only Yarn 1.x doesn't support `@version` in the `create` command
-      .replace('@latest', () => (isYarn1 ? '' : '@latest'))
+      .replace("@latest", () => (isYarn1 ? "" : "@latest"))
       .replace(/^npm exec/, () => {
         // Prefer `pnpm dlx`, `yarn dlx`, or `bun x`
-        if (pkgManager === 'pnpm') {
-          return 'pnpm dlx';
+        if (pkgManager === "pnpm") {
+          return "pnpm dlx";
         }
-        if (pkgManager === 'yarn' && !isYarn1) {
-          return 'yarn dlx';
+        if (pkgManager === "yarn" && !isYarn1) {
+          return "yarn dlx";
         }
-        if (pkgManager === 'bun') {
-          return 'bun x';
+        if (pkgManager === "bun") {
+          return "bun x";
         }
         // Use `npm exec` in all other cases,
         // including Yarn 1.x and other custom npm clients.
-        return 'npm exec';
+        return "npm exec";
       })
   );
 }

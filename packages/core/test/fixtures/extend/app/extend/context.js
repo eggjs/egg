@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 module.exports = {
   get appContext() {
-    return 'app context';
+    return "app context";
   },
 
   ajax: function () {
-    return 'app ajax patch';
+    return "app ajax patch";
   },
 };

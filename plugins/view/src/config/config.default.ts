@@ -1,6 +1,6 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { defineConfigFactory, type EggConfigFactory } from 'egg';
+import { defineConfigFactory, type EggConfigFactory } from "egg";
 
 export interface ViewConfig {
   /**
@@ -30,12 +30,12 @@ export interface ViewConfig {
   mapping: Record<string, string>;
 }
 
-const config: EggConfigFactory = defineConfigFactory(appInfo => ({
+const config: EggConfigFactory = defineConfigFactory((appInfo) => ({
   view: {
-    root: path.join(appInfo.baseDir, 'app/view'),
+    root: path.join(appInfo.baseDir, "app/view"),
     cache: true,
-    defaultExtension: '.html',
-    defaultViewEngine: '',
+    defaultExtension: ".html",
+    defaultViewEngine: "",
     mapping: {},
   },
 }));

@@ -1,45 +1,45 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = {
   session: {
     enable: true,
-    path: path.join(__dirname, '../node_modules/session'),
+    path: path.join(__dirname, "../node_modules/session"),
   },
 
   hsfclient: {
     enable: false,
-    path: path.join(__dirname, '../plugins/hsfclient'),
+    path: path.join(__dirname, "../plugins/hsfclient"),
   },
 
   configclient: {
     enable: false,
-    path: path.join(__dirname, '../plugins/configclient'),
+    path: path.join(__dirname, "../plugins/configclient"),
   },
 
   eagleeye: {
     enable: false,
-    path: path.join(__dirname, '../plugins/eagleeye'),
+    path: path.join(__dirname, "../plugins/eagleeye"),
   },
 
   diamond: {
     enable: false,
-    path: path.join(__dirname, '../plugins/diamond'),
+    path: path.join(__dirname, "../plugins/diamond"),
   },
 
   zzz: {
     enable: true,
-    path: path.join(__dirname, '../plugins/zzz'),
+    path: path.join(__dirname, "../plugins/zzz"),
   },
 
   package: {
     enable: true,
-    package: 'package',
+    package: "package",
   },
 
   opt: {
     enable: false,
-    package: 'opt',
+    package: "opt",
   },
 };

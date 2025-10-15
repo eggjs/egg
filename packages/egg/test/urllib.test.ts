@@ -1,9 +1,9 @@
-import { test, expect } from 'vitest';
+import { test, expect } from "vitest";
 
-import * as urllib from '../src/urllib.ts';
+import * as urllib from "../src/urllib.ts";
 
-test('should expose properties', () => {
+test("should expose properties", () => {
   expect(Object.keys(urllib).sort()).toMatchSnapshot();
 
-  expect(typeof urllib.MockAgent).toBe('function');
+  expect(typeof urllib.MockAgent).toBe("function");
 });

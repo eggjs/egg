@@ -1,14 +1,14 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { readJSONSync } from 'utility';
-import { Request, Test } from '@eggjs/supertest';
+import { readJSONSync } from "utility";
+import { Request, Test } from "@eggjs/supertest";
 
-import { createServer } from './mock_http_server.ts';
-import { getSourceDirname } from './utils.ts';
+import { createServer } from "./mock_http_server.ts";
+import { getSourceDirname } from "./utils.ts";
 
 // patch from https://github.com/visionmedia/supertest/blob/199506d8dbfe0bb1434fc07c38cdcd1ab4c7c926/index.js#L19
 
-let pkgVersion = '';
+let pkgVersion = "";
 
 /**
  * Test against the given `app`,
@@ -24,20 +24,25 @@ export class EggTestRequest extends Request {
 
   protected _testRequest(method: string, url: string): Test {
     // support pathFor(url)
-    if (url[0] !== '/') {
+    if (url[0] !== "/") {
       const realUrl = this.#app.router.pathFor(url);
       if (!realUrl) {
-        throw new Error(`Can't find router:${url}, please check your 'app/router.js'`);
+        throw new Error(
+          `Can't find router:${url}, please check your 'app/router.js'`,
+        );
       }
       url = realUrl;
     }
     const test = super._testRequest(method, url);
     if (!pkgVersion) {
-      const pkgFile = path.join(getSourceDirname(), '../package.json');
+      const pkgFile = path.join(getSourceDirname(), "../package.json");
       const pkg = readJSONSync(pkgFile);
       pkgVersion = pkg.version;
     }
-    test.set('User-Agent', `@eggjs/mock/${pkgVersion} Node.js/${process.version}`);
+    test.set(
+      "User-Agent",
+      `@eggjs/mock/${pkgVersion} Node.js/${process.version}`,
+    );
     return test;
   }
 }

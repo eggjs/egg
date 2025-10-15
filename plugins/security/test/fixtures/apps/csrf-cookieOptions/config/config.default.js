@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-exports.keys = 'cookie options';
+exports.keys = "cookie options";
 
 exports.security = {
   csrf: {

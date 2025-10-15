@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   const err = Error();
-  err.name = 'MockError';
+  err.name = "MockError";
   throw err;
 };

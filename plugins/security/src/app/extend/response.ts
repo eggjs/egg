@@ -1,6 +1,6 @@
-import { Response } from 'egg';
+import { Response } from "egg";
 
-import SecurityContext from './context.ts';
+import SecurityContext from "./context.ts";
 
 const unsafeRedirect = Response.prototype.redirect;
 
@@ -42,15 +42,15 @@ export default class SecurityResponse extends Response {
    * ```
    */
   redirect(url: string, alt?: string): void {
-    url = (url || '/').trim();
+    url = (url || "/").trim();
 
     // Process with `//`
-    if (url[0] === '/' && url[1] === '/') {
-      url = '/';
+    if (url[0] === "/" && url[1] === "/") {
+      url = "/";
     }
 
     // if begin with '/', it means an internal jump
-    if (url[0] === '/' && url[1] !== '\\') {
+    if (url[0] === "/" && url[1] !== "\\") {
       this.unsafeRedirect(url, alt);
       return;
     }
@@ -59,23 +59,26 @@ export default class SecurityResponse extends Response {
     try {
       urlObject = new URL(url);
     } catch {
-      url = '/';
+      url = "/";
       this.unsafeRedirect(url);
       return;
     }
 
     const domainWhiteList = this.app.config.security.domainWhiteList;
-    if (urlObject.protocol !== 'http:' && urlObject.protocol !== 'https:') {
-      url = '/';
+    if (urlObject.protocol !== "http:" && urlObject.protocol !== "https:") {
+      url = "/";
     } else if (!urlObject.hostname) {
-      url = '/';
+      url = "/";
     } else {
       if (domainWhiteList && domainWhiteList.length !== 0) {
         if (!this.ctx.isSafeDomain(urlObject.hostname)) {
           const message = `a security problem has been detected for url "${url}", redirection is prohibited.`;
-          if (process.env.NODE_ENV === 'production') {
-            this.app.coreLogger.warn('[@eggjs/security/response/redirect] %s', message);
-            url = '/';
+          if (process.env.NODE_ENV === "production") {
+            this.app.coreLogger.warn(
+              "[@eggjs/security/response/redirect] %s",
+              message,
+            );
+            url = "/";
           } else {
             // Exception will be thrown out in a non-PROD env.
             return this.ctx.throw(500, message);

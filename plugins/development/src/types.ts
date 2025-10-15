@@ -1,6 +1,6 @@
-import type { DevelopmentConfig } from './config/config.default.ts';
+import type { DevelopmentConfig } from "./config/config.default.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     /**

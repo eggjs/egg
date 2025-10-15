@@ -1,4 +1,4 @@
-import type { ILifecycleBoot, Application } from 'egg';
+import type { ILifecycleBoot, Application } from "egg";
 
 export default class AppBoot implements ILifecycleBoot {
   #app: Application;
@@ -12,6 +12,6 @@ export default class AppBoot implements ILifecycleBoot {
   }
 
   async configWillLoad(): Promise<void> {
-    this.#app.config.coreMiddleware.push('eggLoaderTrace');
+    this.#app.config.coreMiddleware.push("eggLoaderTrace");
   }
 }

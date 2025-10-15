@@ -1,15 +1,15 @@
-const path = require('path');
+const path = require("path");
 
 exports.onerror = {
-  templatePath: path.join(__dirname, '../template.mustache'),
+  templatePath: path.join(__dirname, "../template.mustache"),
 };
 
 exports.logger = {
-  level: 'NONE',
-  consoleLevel: 'NONE',
+  level: "NONE",
+  consoleLevel: "NONE",
 };
 
-exports.keys = 'foo,bar';
+exports.keys = "foo,bar";
 
 exports.security = {
   csrf: false,

@@ -1,4 +1,4 @@
-import { LogRotator } from '../../lib/rotator.ts';
+import { LogRotator } from "../../lib/rotator.ts";
 
 const extensions: {
   LogRotator: typeof LogRotator;

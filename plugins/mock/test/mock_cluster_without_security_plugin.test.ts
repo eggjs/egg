@@ -1,13 +1,13 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
 
-import mm, { type MockApplication } from '../src/index.ts';
-import { getFixtures } from './helper.ts';
+import mm, { type MockApplication } from "../src/index.ts";
+import { getFixtures } from "./helper.ts";
 
-describe('test/mock_cluster_without_security_plugin.test.ts', () => {
+describe("test/mock_cluster_without_security_plugin.test.ts", () => {
   let app: MockApplication;
   beforeAll(async () => {
     app = mm.cluster({
-      baseDir: getFixtures('disable-security'),
+      baseDir: getFixtures("disable-security"),
       coverage: false,
     });
     await app.ready();
@@ -18,21 +18,21 @@ describe('test/mock_cluster_without_security_plugin.test.ts', () => {
 
   afterEach(mm.restore);
 
-  it('should mock cluster work', async () => {
+  it("should mock cluster work", async () => {
     app.mockSession({
       user: {
-        foo: 'bar',
+        foo: "bar",
       },
-      hello: 'egg mock session data',
+      hello: "egg mock session data",
     });
     await app
       .httpRequest()
-      .get('/session')
+      .get("/session")
       .expect({
         user: {
-          foo: 'bar',
+          foo: "bar",
         },
-        hello: 'egg mock session data',
+        hello: "egg mock session data",
       });
   });
 });

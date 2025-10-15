@@ -1,8 +1,12 @@
-import { pathToRegexp } from 'path-to-regexp';
+import { pathToRegexp } from "path-to-regexp";
 
 export type PathMatchingFun = (ctx: any) => boolean;
 
-export type PathMatchingPattern = string | RegExp | PathMatchingFun | (string | RegExp | PathMatchingFun)[];
+export type PathMatchingPattern =
+  | string
+  | RegExp
+  | PathMatchingFun
+  | (string | RegExp | PathMatchingFun)[];
 
 export interface PathMatchingOptions {
   ignore?: PathMatchingPattern;
@@ -13,7 +17,7 @@ export interface PathMatchingOptions {
 export function pathMatching(options: PathMatchingOptions): PathMatchingFun {
   options = options || {};
   if (options.match && options.ignore) {
-    throw new Error('options.match and options.ignore can not both present');
+    throw new Error("options.match and options.ignore can not both present");
   }
   if (!options.match && !options.ignore) {
     return () => true;
@@ -31,8 +35,11 @@ export function pathMatching(options: PathMatchingOptions): PathMatchingFun {
   };
 }
 
-function toPathMatch(pattern: PathMatchingPattern, pathToRegexpFn: any): PathMatchingFun {
-  if (typeof pattern === 'string') {
+function toPathMatch(
+  pattern: PathMatchingPattern,
+  pathToRegexpFn: any,
+): PathMatchingFun {
+  if (typeof pattern === "string") {
     let reg = pathToRegexpFn(pattern, [], { end: false });
     if (reg.regexp) {
       // support path-to-regexp@8
@@ -40,20 +47,22 @@ function toPathMatch(pattern: PathMatchingPattern, pathToRegexpFn: any): PathMat
       reg = reg.regexp;
     }
     if (reg.global) reg.lastIndex = 0;
-    return ctx => reg.test(ctx.path);
+    return (ctx) => reg.test(ctx.path);
   }
   if (pattern instanceof RegExp) {
-    return ctx => {
+    return (ctx) => {
       if (pattern.global) {
         pattern.lastIndex = 0;
       }
       return pattern.test(ctx.path);
     };
   }
-  if (typeof pattern === 'function') return pattern;
+  if (typeof pattern === "function") return pattern;
   if (Array.isArray(pattern)) {
-    const matchFns = pattern.map(item => toPathMatch(item, pathToRegexpFn));
-    return ctx => matchFns.some(matchFn => matchFn(ctx));
+    const matchFns = pattern.map((item) => toPathMatch(item, pathToRegexpFn));
+    return (ctx) => matchFns.some((matchFn) => matchFn(ctx));
   }
-  throw new Error(`match/ignore pattern must be RegExp, Array or String, but got ${pattern}`);
+  throw new Error(
+    `match/ignore pattern must be RegExp, Array or String, but got ${pattern}`,
+  );
 }

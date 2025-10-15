@@ -1,11 +1,11 @@
-import { debuglog } from 'node:util';
-import assert from 'node:assert';
+import { debuglog } from "node:util";
+import assert from "node:assert";
 
-import { getApp } from './app_handler.ts';
+import { getApp } from "./app_handler.ts";
 
-const debug = debuglog('egg/mock/lib/inject_context');
+const debug = debuglog("egg/mock/lib/inject_context");
 
-const MOCHA_SUITE_APP = Symbol.for('mocha#suite#app');
+const MOCHA_SUITE_APP = Symbol.for("mocha#suite#app");
 
 /**
  * Monkey patch the mocha instance with egg context.
@@ -14,7 +14,7 @@ const MOCHA_SUITE_APP = Symbol.for('mocha#suite#app');
  */
 export function injectContext(mocha: any): void {
   if (mocha._injectContextLoaded) {
-    debug('mocha already injected context, skip it');
+    debug("mocha already injected context, skip it");
     return;
   }
   const { Runner } = mocha;
@@ -22,7 +22,7 @@ export function injectContext(mocha: any): void {
   const runTests = Runner.prototype.runTests;
 
   function getTestTitle(suite: any, test: any) {
-    const suiteTitle = suite.root ? 'root suite' : suite.title;
+    const suiteTitle = suite.root ? "root suite" : suite.title;
     if (!test) {
       return `"${suiteTitle}"`;
     }
@@ -31,12 +31,12 @@ export function injectContext(mocha: any): void {
 
   // Inject ctx for before/after.
   Runner.prototype.runSuite = async function (suite: any, fn: any) {
-    debug('run suite: %s', suite.title);
+    debug("run suite: %s", suite.title);
     let app;
     const self = this;
     try {
       app = await getApp(suite);
-      debug('get app: %s', !!app);
+      debug("get app: %s", !!app);
       await app.ready();
     } catch {
       // 可能 app.ready 时报错，不使用失败的 app
@@ -52,7 +52,7 @@ export function injectContext(mocha: any): void {
       suite.ctx[MOCHA_SUITE_APP] = app;
       const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
       await mockContextFun.call(app, async function () {
-        await new Promise<void>(resolve => {
+        await new Promise<void>((resolve) => {
           runSuite.call(self, suite, (aErrSuite: Error) => {
             errSuite = aErrSuite;
             resolve();
@@ -62,7 +62,7 @@ export function injectContext(mocha: any): void {
     } catch (err) {
       // mockContext 失败后动态注册一个 beforeAll hook
       // 快速失败，直接阻塞后续用例
-      suite.beforeAll('egg-mock-mock-ctx-failed', async () => {
+      suite.beforeAll("egg-mock-mock-ctx-failed", async () => {
         throw err;
       });
       return runSuite.call(self, suite, (aErrSuite: Error) => {
@@ -110,9 +110,10 @@ export function injectContext(mocha: any): void {
       }
 
       try {
-        const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
+        const mockContextFun =
+          app.mockModuleContextScope || app.mockContextScope;
         await mockContextFun.call(app, async function () {
-          return await new Promise<void>(resolve => {
+          return await new Promise<void>((resolve) => {
             runTests.call(self, suite, () => {
               return resolve();
             });
@@ -124,12 +125,12 @@ export function injectContext(mocha: any): void {
       }
       return next(i + 1);
     }
-    next(0).catch(err => {
+    next(0).catch((err) => {
       self.fail(suite, err);
       done(suite);
     });
   };
 
   mocha._injectContextLoaded = true;
-  debug('inject context success');
+  debug("inject context success");
 }

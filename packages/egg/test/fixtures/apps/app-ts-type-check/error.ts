@@ -8,7 +8,7 @@ import {
   EggAppConfig,
   PowerPartial,
   Singleton,
-} from 'egg';
+} from "egg";
 
 new BaseContextClass({} as Context).ctx;
 
@@ -34,7 +34,7 @@ new MyService();
 const app = new Application({
   baseDir: __dirname,
   plugins: {},
-  type: 'application',
+  type: "application",
 });
 new app.ContextHttpClient();
 new app.HttpClient();
@@ -42,13 +42,17 @@ new app.HttpClient();
 new Agent(undefined, 1123);
 
 // test error in yadan
-import { BaseContextClass as YadanBaseContextClass, Application as YadanApplication, Agent as YadanAgent } from 'yadan';
+import {
+  BaseContextClass as YadanBaseContextClass,
+  Application as YadanApplication,
+  Agent as YadanAgent,
+} from "yadan";
 
 new YadanBaseContextClass();
 const yadan = new YadanApplication({
   baseDir: __dirname,
   plugins: {},
-  type: 'application',
+  type: "application",
 });
 new yadan.ContextHttpClient();
 new yadan.HttpClient();
@@ -66,4 +70,4 @@ console.info(config2.security.csrf);
 
 // singleton
 const redis = {} as Singleton<{ test(): void }>;
-redis.get('123').checkSingleTon();
+redis.get("123").checkSingleTon();

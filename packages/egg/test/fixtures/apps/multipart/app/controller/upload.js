@@ -1,5 +1,5 @@
-const path = require('path');
-const fs = require('fs');
+const path = require("path");
+const fs = require("fs");
 
 module.exports = async function () {
   const parts = this.multipart();
@@ -17,12 +17,14 @@ module.exports = async function () {
 
   if (!filePart || !filePart.filename) {
     this.body = {
-      message: 'no file',
+      message: "no file",
     };
     return;
   }
 
-  const ws = fs.createWriteStream(path.join(this.app.config.logger.dir, 'multipart-test-file'));
+  const ws = fs.createWriteStream(
+    path.join(this.app.config.logger.dir, "multipart-test-file"),
+  );
   filePart.pipe(ws);
   this.body = {
     filename: filePart.filename,

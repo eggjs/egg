@@ -1,7 +1,7 @@
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('interval');
+  ctx.logger.info("interval");
 };

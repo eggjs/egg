@@ -1,2 +1,2 @@
-exports.foo = 'bar';
+exports.foo = "bar";
 exports.one = 1;

@@ -1,1 +1,1 @@
-console.log('start hook success');
+console.log("start hook success");

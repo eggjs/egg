@@ -1,8 +1,14 @@
-import * as assert from 'assert';
-import * as path from 'path';
-const EGG_LOADER = Symbol.for('egg#loader');
-const EGG_PATH = Symbol.for('egg#eggPath');
-import { BaseContextClass, EggCore, EggCoreOptions, EggLoader, EggLoaderOptions } from '../../..';
+import * as assert from "assert";
+import * as path from "path";
+const EGG_LOADER = Symbol.for("egg#loader");
+const EGG_PATH = Symbol.for("egg#eggPath");
+import {
+  BaseContextClass,
+  EggCore,
+  EggCoreOptions,
+  EggLoader,
+  EggLoaderOptions,
+} from "../../..";
 
 // normal
 const app = new EggCore<{ env: string }>();
@@ -42,10 +48,10 @@ new BaseContextClass({ app: {} });
 // ready & close
 (async function test() {
   const app2 = new EggCore({
-    baseDir: path.resolve(__dirname, '../app-getter/'),
+    baseDir: path.resolve(__dirname, "../app-getter/"),
   });
-  assert(app2.type === 'application');
-  assert(app2.name === 'app-getter');
+  assert(app2.type === "application");
+  assert(app2.name === "app-getter");
   assert(app2.plugins === app.loader.plugins);
   app2.beforeClose(() => {});
   app2.beforeStart(() => {});
@@ -63,7 +69,7 @@ new BaseContextClass({ app: {} });
   ]);
   await app2.ready();
   await app2.close();
-})().catch(e => {
+})().catch((e) => {
   console.error(e);
   process.exit(1);
 });
@@ -91,57 +97,59 @@ class MyLoader extends EggLoader {
     this.loadHelperExtend();
     this.loadCustomAgent();
     this.loadService();
-    this.loadController({ ignore: ['**/node_module'] });
+    this.loadController({ ignore: ["**/node_module"] });
     this.loadRouter();
-    this.loadMiddleware({ ignore: ['**/node_module'] });
+    this.loadMiddleware({ ignore: ["**/node_module"] });
   }
 }
-const app3 = new MyEgg({ baseDir: path.resolve(__dirname, '../app-getter/') });
+const app3 = new MyEgg({ baseDir: path.resolve(__dirname, "../app-getter/") });
 assert(app3.plugins === app3.loader.plugins);
 assert(app3.config === app3.loader.config);
 assert(app3.deprecate);
-app3.deprecate('is deprecate');
+app3.deprecate("is deprecate");
 
 // loadTo
 const app4 = { context: {} } as any;
-const baseDir = path.join(__dirname, '../load_to_app');
-const directory = path.join(baseDir, 'app/model');
+const baseDir = path.join(__dirname, "../load_to_app");
+const directory = path.join(baseDir, "app/model");
 const loader = new EggLoader({
   baseDir,
   app: app4,
   logger: console as any,
 });
-loader.loadToApp(directory, 'model');
+loader.loadToApp(directory, "model");
 assert(app4.model.user);
-loader.loadToContext(directory, 'model');
+loader.loadToContext(directory, "model");
 assert(app4.context.model.user);
 
 // loadTo with options
 const app5 = { context: {} } as any;
-const baseDir2 = path.join(__dirname, '../load_dirs');
+const baseDir2 = path.join(__dirname, "../load_dirs");
 const loader2 = new EggLoader({
   baseDir: baseDir2,
   app: app5,
   logger: console as any,
 });
-loader2.loadToApp('dao', 'dao', { match: '**/test*.js', caseStyle: 'lower' });
+loader2.loadToApp("dao", "dao", { match: "**/test*.js", caseStyle: "lower" });
 assert(app5.dao);
-loader2.loadToContext('dao', 'dao', {
-  caseStyle: 'lower',
-  ignore: ['testFunction.js', 'testReturnFunction.js'],
+loader2.loadToContext("dao", "dao", {
+  caseStyle: "lower",
+  ignore: ["testFunction.js", "testReturnFunction.js"],
 });
 assert(app5.context.dao);
-assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction')));
-assert(loader2.loadFile(path.resolve(baseDir2, './dao/testFunction'), { abc: 123 }));
+assert(loader2.loadFile(path.resolve(baseDir2, "./dao/testFunction")));
+assert(
+  loader2.loadFile(path.resolve(baseDir2, "./dao/testFunction"), { abc: 123 }),
+);
 
 // file loader
 const FileLoader = loader.FileLoader;
 const app6 = {} as any;
 new FileLoader({
-  directory: path.join(__dirname, '../load_dirs'),
+  directory: path.join(__dirname, "../load_dirs"),
   target: app6,
-  match: ['dao/*'],
-  caseStyle: 'upper',
+  match: ["dao/*"],
+  caseStyle: "upper",
   filter(obj) {
     return !!obj;
   },
@@ -163,10 +171,10 @@ class CustomFileLoader extends FileLoader {
   }
 }
 new CustomFileLoader({
-  directory: path.join(__dirname, '../load_dirs'),
+  directory: path.join(__dirname, "../load_dirs"),
   target: app9,
-  match: ['dao/*'],
-  caseStyle: 'upper',
+  match: ["dao/*"],
+  caseStyle: "upper",
   filter(obj) {
     return !!obj;
   },
@@ -181,12 +189,12 @@ new CustomFileLoader({
 const ContextLoader = loader.ContextLoader;
 const app7 = { context: {} } as any;
 new ContextLoader({
-  directory: path.join(__dirname, '../load_dirs'),
-  property: 'kick',
-  fieldClass: 'ass',
+  directory: path.join(__dirname, "../load_dirs"),
+  property: "kick",
+  fieldClass: "ass",
   inject: app7,
-  match: ['dao/*'],
-  caseStyle: 'upper',
+  match: ["dao/*"],
+  caseStyle: "upper",
   filter(obj) {
     return !!obj;
   },
@@ -210,12 +218,12 @@ class CustomContextLoader extends ContextLoader {
   }
 }
 new CustomContextLoader({
-  directory: path.join(__dirname, '../load_dirs'),
-  property: 'kick',
-  fieldClass: 'ass',
+  directory: path.join(__dirname, "../load_dirs"),
+  property: "kick",
+  fieldClass: "ass",
   inject: app8,
-  match: ['dao/*'],
-  caseStyle: 'upper',
+  match: ["dao/*"],
+  caseStyle: "upper",
   filter(obj) {
     return !!obj;
   },

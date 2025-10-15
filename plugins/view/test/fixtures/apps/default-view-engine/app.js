@@ -1,26 +1,26 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   app.view.use(
-    'ejs',
+    "ejs",
     class EjsView {
       render() {
-        return Promise.resolve('ejs');
+        return Promise.resolve("ejs");
       }
       renderString() {
-        return Promise.resolve('ejs');
+        return Promise.resolve("ejs");
       }
-    }
+    },
   );
   app.view.use(
-    'nunjucks',
+    "nunjucks",
     class EjsView {
       render() {
-        return Promise.resolve('nunjucks');
+        return Promise.resolve("nunjucks");
       }
       renderString() {
-        return Promise.resolve('nunjucks');
+        return Promise.resolve("nunjucks");
       }
-    }
+    },
   );
 };

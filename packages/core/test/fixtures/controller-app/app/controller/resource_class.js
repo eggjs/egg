@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   return class Resource extends app.Controller {
     async index(ctx) {
-      ctx.body = 'index';
+      ctx.body = "index";
     }
 
     async create(ctx) {
-      ctx.body = 'create';
+      ctx.body = "create";
     }
   };
 };

@@ -1,4 +1,4 @@
-const { Base } = require('sdk-base');
+const { Base } = require("sdk-base");
 
 class Client extends Base {
   constructor() {

@@ -1,7 +1,7 @@
-const a = require('../lib/a');
+const a = require("../lib/a");
 
-describe('a.js', () => {
-  it('should success', () => {
+describe("a.js", () => {
+  it("should success", () => {
     a(true);
   });
 });

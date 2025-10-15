@@ -2,7 +2,7 @@ export interface MockOptions {
   /**
    * The mode of the application
    */
-  mode?: 'cluster' | 'single';
+  mode?: "cluster" | "single";
 
   /**
    * The directory of the application
@@ -62,7 +62,7 @@ export interface MockClusterOptions extends MockOptions {
    * opt pass to coffee, such as { execArgv: ['--debug'] }
    */
   opt?: object;
-  startMode?: 'process' | 'worker_threads';
+  startMode?: "process" | "worker_threads";
 }
 
 /**
@@ -89,6 +89,6 @@ export type {
   MockResponseCallbackOptions,
   MockResultFunction,
   MockHttpClientMethod,
-} from './mock_httpclient.js';
+} from "./mock_httpclient.js";
 
-export type { MockAgent } from 'urllib';
+export type { MockAgent } from "urllib";

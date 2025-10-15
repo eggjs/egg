@@ -1,4 +1,4 @@
-const egg = require('egg');
+const egg = require("egg");
 
 async function startCluster(options) {
   // print for the testcase that will assert stdout

@@ -1,1 +1,1 @@
-console.log('@@inject1.js run');
+console.log("@@inject1.js run");

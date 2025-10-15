@@ -1,5 +1,5 @@
-import z from 'zod';
-import { Context } from 'egg';
+import z from "zod";
+import { Context } from "egg";
 
 const CSRFSupportRequestItem: z.ZodObject<{
   path: z.ZodType<RegExp>;
@@ -22,13 +22,15 @@ export const LookupAddress = z.object({
 }>;
 export type LookupAddress = z.infer<typeof LookupAddress>;
 
-const LookupAddressAndStringArray: z.ZodArray<z.ZodUnion<[z.ZodString, typeof LookupAddress]>> = z
-  .union([z.string(), LookupAddress])
-  .array();
+const LookupAddressAndStringArray: z.ZodArray<
+  z.ZodUnion<[z.ZodString, typeof LookupAddress]>
+> = z.union([z.string(), LookupAddress]).array();
 const SSRFCheckAddressFunction: z.ZodFunction<
   z.ZodTuple<
     [
-      z.ZodUnion<[z.ZodString, typeof LookupAddress, typeof LookupAddressAndStringArray]>,
+      z.ZodUnion<
+        [z.ZodString, typeof LookupAddress, typeof LookupAddressAndStringArray]
+      >,
       z.ZodUnion<[z.ZodNumber, z.ZodString]>,
       z.ZodString,
     ],
@@ -40,7 +42,7 @@ const SSRFCheckAddressFunction: z.ZodFunction<
   .args(
     z.union([z.string(), LookupAddress, LookupAddressAndStringArray]),
     z.union([z.number(), z.string()]),
-    z.string()
+    z.string(),
   )
   .returns(z.boolean());
 /**
@@ -50,29 +52,47 @@ const SSRFCheckAddressFunction: z.ZodFunction<
 export type SSRFCheckAddressFunction = z.infer<typeof SSRFCheckAddressFunction>;
 
 export const SecurityMiddlewareName: z.ZodEnum<
-  ['csrf', 'hsts', 'methodnoallow', 'noopen', 'nosniff', 'csp', 'xssProtection', 'xframe', 'dta']
-> = z.enum(['csrf', 'hsts', 'methodnoallow', 'noopen', 'nosniff', 'csp', 'xssProtection', 'xframe', 'dta']);
+  [
+    "csrf",
+    "hsts",
+    "methodnoallow",
+    "noopen",
+    "nosniff",
+    "csp",
+    "xssProtection",
+    "xframe",
+    "dta",
+  ]
+> = z.enum([
+  "csrf",
+  "hsts",
+  "methodnoallow",
+  "noopen",
+  "nosniff",
+  "csp",
+  "xssProtection",
+  "xframe",
+  "dta",
+]);
 export type SecurityMiddlewareName = z.infer<typeof SecurityMiddlewareName>;
 
 /**
  * (ctx) => boolean
  */
-const IgnoreOrMatchHandler: z.ZodFunction<z.ZodTuple<[z.ZodType<Context>], z.ZodUnknown>, z.ZodBoolean> = z
-  .function()
-  .args(z.instanceof(Context))
-  .returns(z.boolean());
+const IgnoreOrMatchHandler: z.ZodFunction<
+  z.ZodTuple<[z.ZodType<Context>], z.ZodUnknown>,
+  z.ZodBoolean
+> = z.function().args(z.instanceof(Context)).returns(z.boolean());
 export type IgnoreOrMatchHandler = z.infer<typeof IgnoreOrMatchHandler>;
 
-const IgnoreOrMatch: z.ZodUnion<[z.ZodString, z.ZodType<RegExp>, typeof IgnoreOrMatchHandler]> = z.union([
-  z.string(),
-  z.instanceof(RegExp),
-  IgnoreOrMatchHandler,
-]);
+const IgnoreOrMatch: z.ZodUnion<
+  [z.ZodString, z.ZodType<RegExp>, typeof IgnoreOrMatchHandler]
+> = z.union([z.string(), z.instanceof(RegExp), IgnoreOrMatchHandler]);
 export type IgnoreOrMatch = z.infer<typeof IgnoreOrMatch>;
 
-const IgnoreOrMatchOption: z.ZodOptional<z.ZodUnion<[typeof IgnoreOrMatch, z.ZodArray<typeof IgnoreOrMatch>]>> = z
-  .union([IgnoreOrMatch, IgnoreOrMatch.array()])
-  .optional();
+const IgnoreOrMatchOption: z.ZodOptional<
+  z.ZodUnion<[typeof IgnoreOrMatch, z.ZodArray<typeof IgnoreOrMatch>]>
+> = z.union([IgnoreOrMatch, IgnoreOrMatch.array()]).optional();
 export type IgnoreOrMatchOption = z.infer<typeof IgnoreOrMatchOption>;
 
 export const SecurityConfig: z.ZodObject<any> = z.object({
@@ -93,14 +113,16 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
    *
    * Default to `'csrf,hsts,methodnoallow,noopen,nosniff,csp,xssProtection,xframe,dta'`
    */
-  defaultMiddleware: z.union([z.string(), z.array(SecurityMiddlewareName)]).default(SecurityMiddlewareName.options),
+  defaultMiddleware: z
+    .union([z.string(), z.array(SecurityMiddlewareName)])
+    .default(SecurityMiddlewareName.options),
   /**
    * whether defend csrf attack
    */
   csrf: z.preprocess(
-    val => {
+    (val) => {
       // transform old config, `csrf: false` to `csrf: { enable: false }`
-      if (typeof val === 'boolean') {
+      if (typeof val === "boolean") {
         return { enable: val };
       }
       return val;
@@ -118,7 +140,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
          *
          * Default to `'ctoken'`
          */
-        type: z.enum(['ctoken', 'referer', 'all', 'any']).default('ctoken'),
+        type: z.enum(["ctoken", "referer", "all", "any"]).default("ctoken"),
         /**
          * ignore json request
          *
@@ -132,31 +154,33 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
          *
          * Default to `'csrfToken'`
          */
-        cookieName: z.union([z.string(), z.array(z.string())]).default('csrfToken'),
+        cookieName: z
+          .union([z.string(), z.array(z.string())])
+          .default("csrfToken"),
         /**
          * csrf token session name
          *
          * Default to `'csrfToken'`
          */
-        sessionName: z.string().default('csrfToken'),
+        sessionName: z.string().default("csrfToken"),
         /**
          * csrf token request header name
          *
          * Default to `'x-csrf-token'`
          */
-        headerName: z.string().default('x-csrf-token'),
+        headerName: z.string().default("x-csrf-token"),
         /**
          * csrf token request body field name
          *
          * Default to `'_csrf'`
          */
-        bodyName: z.union([z.string(), z.array(z.string())]).default('_csrf'),
+        bodyName: z.union([z.string(), z.array(z.string())]).default("_csrf"),
         /**
          * csrf token request query field name
          *
          * Default to `'_csrf'`
          */
-        queryName: z.union([z.string(), z.array(z.string())]).default('_csrf'),
+        queryName: z.union([z.string(), z.array(z.string())]).default("_csrf"),
         /**
          * rotate csrf token when it is invalid
          *
@@ -175,13 +199,23 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
          *
          * Default to `undefined`, auto set the cookie domain in the safe way
          */
-        cookieDomain: z.union([z.string(), z.function().args(z.instanceof(Context)).returns(z.string())]).optional(),
+        cookieDomain: z
+          .union([
+            z.string(),
+            z.function().args(z.instanceof(Context)).returns(z.string()),
+          ])
+          .optional(),
         /**
          * csrf token check requests config
          */
         supportedRequests: z
           .array(CSRFSupportRequestItem)
-          .default([{ path: /^\//, methods: ['POST', 'PATCH', 'DELETE', 'PUT', 'CONNECT'] }]),
+          .default([
+            {
+              path: /^\//,
+              methods: ["POST", "PATCH", "DELETE", "PUT", "CONNECT"],
+            },
+          ]),
         /**
          * referer or origin header white list.
          * It only works when using `'referer'` type
@@ -210,7 +244,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
             overwrite: true,
           }),
       })
-      .default({})
+      .default({}),
   ),
   /**
    * whether enable X-Frame-Options response header
@@ -228,7 +262,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
        *
        * Default to `'SAMEORIGIN'`
        */
-      value: z.string().default('SAMEORIGIN'),
+      value: z.string().default("SAMEORIGIN"),
     })
     .default({}),
   /**
@@ -311,7 +345,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
        *
        * Default to `'1; mode=block'`
        */
-      value: z.coerce.string().default('1; mode=block'),
+      value: z.coerce.string().default("1; mode=block"),
     })
     .default({}),
   /**
@@ -326,7 +360,9 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
        */
       enable: z.boolean().default(false),
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP#csp_overview
-      policy: z.record(z.union([z.string(), z.array(z.string()), z.boolean()])).default({}),
+      policy: z
+        .record(z.union([z.string(), z.array(z.string()), z.boolean()]))
+        .default({}),
       /**
        * whether enable report only mode
        * Default to `undefined`
@@ -356,7 +392,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
        *
        * Default to `'no-referrer-when-downgrade'`
        */
-      value: z.string().default('no-referrer-when-downgrade'),
+      value: z.string().default("no-referrer-when-downgrade"),
     })
     .default({}),
   /**
@@ -387,7 +423,10 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
 export type SecurityConfig = z.infer<typeof SecurityConfig>;
 
 const SecurityHelperOnTagAttrHandler: z.ZodFunction<
-  z.ZodTuple<[z.ZodString, z.ZodString, z.ZodString, z.ZodBoolean], z.ZodUnknown>,
+  z.ZodTuple<
+    [z.ZodString, z.ZodString, z.ZodString, z.ZodBoolean],
+    z.ZodUnknown
+  >,
   z.ZodUnion<[z.ZodString, z.ZodVoid]>
 > = z
   .function()
@@ -397,7 +436,9 @@ const SecurityHelperOnTagAttrHandler: z.ZodFunction<
 /**
  * (tag: string, name: string, value: string, isWhiteAttr: boolean) => string | void
  */
-export type SecurityHelperOnTagAttrHandler = z.infer<typeof SecurityHelperOnTagAttrHandler>;
+export type SecurityHelperOnTagAttrHandler = z.infer<
+  typeof SecurityHelperOnTagAttrHandler
+>;
 
 export const SecurityHelperConfig: z.ZodObject<any> = z.object({
   shtml: z
@@ -427,7 +468,9 @@ interface PluginConfig {
 
 const config = {
   security: SecurityConfig.parse({}) satisfies SecurityConfig as SecurityConfig,
-  helper: SecurityHelperConfig.parse({}) satisfies SecurityHelperConfig as SecurityHelperConfig,
+  helper: SecurityHelperConfig.parse(
+    {},
+  ) satisfies SecurityHelperConfig as SecurityHelperConfig,
 } satisfies PluginConfig as PluginConfig;
 
 export default config;

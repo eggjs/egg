@@ -1,3 +1,3 @@
 exports.logger = {
-  consoleLevel: 'NONE',
+  consoleLevel: "NONE",
 };

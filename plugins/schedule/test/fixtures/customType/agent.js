@@ -7,6 +7,6 @@ module.exports = class Boot {
         }, this.schedule.interval);
       }
     }
-    agent.schedule.use('cluster', ClusterStrategy);
+    agent.schedule.use("cluster", ClusterStrategy);
   }
 };

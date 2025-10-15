@@ -1,34 +1,41 @@
-import type { Server } from 'node:http';
-import net, { type AddressInfo } from 'node:net';
-import assert from 'node:assert/strict';
-import { setTimeout as sleep } from 'node:timers/promises';
+import type { Server } from "node:http";
+import net, { type AddressInfo } from "node:net";
+import assert from "node:assert/strict";
+import { setTimeout as sleep } from "node:timers/promises";
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import Koa from '../../src/index.ts';
+import Koa from "../../src/index.ts";
 
-describe('res.writable', () => {
-  describe('when continuous requests in one persistent connection', () => {
-    function requestTwice(server: Server, done: (err: Error | null, datas: Buffer[]) => void) {
+describe("res.writable", () => {
+  describe("when continuous requests in one persistent connection", () => {
+    function requestTwice(
+      server: Server,
+      done: (err: Error | null, datas: Buffer[]) => void,
+    ) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
+      const buf = Buffer.from(
+        "GET / HTTP/1.1\r\nHost: localhost:" +
+          port +
+          "\r\nConnection: keep-alive\r\n\r\n",
+      );
       const client = net.connect(port);
       const datas: Buffer[] = [];
       client
-        .on('error', done)
-        .on('data', data => datas.push(data))
-        .on('end', () => done(null, datas));
+        .on("error", done)
+        .on("data", (data) => datas.push(data))
+        .on("end", () => done(null, datas));
       setImmediate(() => client.write(buf));
       setImmediate(() => client.write(buf));
       setTimeout(() => client.end(), 100);
     }
 
-    it('should always be writable and respond to all requests', async () => {
+    it("should always be writable and respond to all requests", async () => {
       const app = new Koa();
       let count = 0;
-      app.use(ctx => {
+      app.use((ctx) => {
         count++;
-        ctx.body = 'request ' + count + ', writable: ' + ctx.writable;
+        ctx.body = "request " + count + ", writable: " + ctx.writable;
       });
 
       const server = app.listen();
@@ -41,10 +48,14 @@ describe('res.writable', () => {
     });
   });
 
-  describe('when socket closed before response sent', () => {
+  describe("when socket closed before response sent", () => {
     function requestClosed(server: Server) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
+      const buf = Buffer.from(
+        "GET / HTTP/1.1\r\nHost: localhost:" +
+          port +
+          "\r\nConnection: keep-alive\r\n\r\n",
+      );
       const client = net.connect(port);
       setImmediate(() => {
         client.write(buf);
@@ -52,10 +63,10 @@ describe('res.writable', () => {
       });
     }
 
-    it('should not be writable', async () => {
+    it("should not be writable", async () => {
       const app = new Koa();
       let writable = false;
-      app.use(async ctx => {
+      app.use(async (ctx) => {
         await sleep(1000);
         if (ctx.writable) {
           writable = true;
@@ -68,10 +79,14 @@ describe('res.writable', () => {
     });
   });
 
-  describe('when response finished', () => {
+  describe("when response finished", () => {
     function request(server: Server) {
       const port = (server.address() as AddressInfo).port;
-      const buf = Buffer.from('GET / HTTP/1.1\r\nHost: localhost:' + port + '\r\nConnection: keep-alive\r\n\r\n');
+      const buf = Buffer.from(
+        "GET / HTTP/1.1\r\nHost: localhost:" +
+          port +
+          "\r\nConnection: keep-alive\r\n\r\n",
+      );
       const client = net.connect(port);
       setImmediate(() => {
         client.write(buf);
@@ -81,10 +96,10 @@ describe('res.writable', () => {
       }, 100);
     }
 
-    it('should not be writable', async () => {
+    it("should not be writable", async () => {
       const app = new Koa();
       let writable = false;
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.res.end();
         if (ctx.writable) {
           writable = true;

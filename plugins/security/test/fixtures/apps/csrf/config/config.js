@@ -1,4 +1,4 @@
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
   /**
@@ -9,6 +9,6 @@ exports.security = {
   },
 
   csrf: {
-    ignore: [/^\/api\//, ctx => !!ctx.get('ignore-csrf')],
+    ignore: [/^\/api\//, (ctx) => !!ctx.get("ignore-csrf")],
   },
 };

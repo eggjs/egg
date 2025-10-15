@@ -1,7 +1,7 @@
-const assert = require('assert');
+const assert = require("assert");
 
-describe('mocha-test foo.test.js', () => {
-  it('should work', () => {
+describe("mocha-test foo.test.js", () => {
+  it("should work", () => {
     assert(true);
   });
 });

@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
 exports.fakeplugin = {
-  foo: 'bar-unittest',
+  foo: "bar-unittest",
 };

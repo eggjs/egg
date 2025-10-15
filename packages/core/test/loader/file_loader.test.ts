@@ -1,18 +1,21 @@
-import assert from 'node:assert/strict';
-import path from 'node:path';
+import assert from "node:assert/strict";
+import path from "node:path";
 
-import { describe, it, expect } from 'vitest';
-import { isClass } from 'is-type-of';
-import yaml from 'js-yaml';
+import { describe, it, expect } from "vitest";
+import { isClass } from "is-type-of";
+import yaml from "js-yaml";
 
-import { FileLoader, CaseStyle } from '../../src/loader/file_loader.ts';
-import { getFilepath } from '../helper.ts';
+import { FileLoader, CaseStyle } from "../../src/loader/file_loader.ts";
+import { getFilepath } from "../helper.ts";
 
-const dirBase = getFilepath('load_dirs');
+const dirBase = getFilepath("load_dirs");
 
-describe('test/loader/file_loader.test.ts', () => {
-  it('should load files with package.json#exports', async () => {
-    const directory = path.join(__dirname, '../../../../plugins/mock/src/app/middleware');
+describe("test/loader/file_loader.test.ts", () => {
+  it("should load files with package.json#exports", async () => {
+    const directory = path.join(
+      __dirname,
+      "../../../../plugins/mock/src/app/middleware",
+    );
     const services: Record<string, any> = {};
     await new FileLoader({
       directory,
@@ -21,10 +24,10 @@ describe('test/loader/file_loader.test.ts', () => {
     expect(services.clusterAppMock).toBeDefined();
   });
 
-  it('should load files', async () => {
+  it("should load files", async () => {
     const services: Record<string, any> = {};
     await new FileLoader({
-      directory: path.join(dirBase, 'services'),
+      directory: path.join(dirBase, "services"),
       target: services,
     }).load();
 
@@ -36,29 +39,29 @@ describe('test/loader/file_loader.test.ts', () => {
     assert(services.hyphenDir.a);
     assert(services.underscoreDir.a);
     assert(services.userProfile);
-    assert('load' in services.dir.service);
-    assert('app' in services.dir.service);
+    assert("load" in services.dir.service);
+    assert("app" in services.dir.service);
     assert.equal(services.dir.service.load, true);
 
     await Promise.all([
-      new Promise<void>(resolve => {
+      new Promise<void>((resolve) => {
         services.foo.get((err: Error, v: string) => {
           assert.ifError(err);
-          assert.equal(v, 'bar');
+          assert.equal(v, "bar");
           resolve();
         });
       }),
-      new Promise<void>(resolve => {
-        services.userProfile.getByName('mk2', (err: Error, user: object) => {
+      new Promise<void>((resolve) => {
+        services.userProfile.getByName("mk2", (err: Error, user: object) => {
           assert.ifError(err);
-          assert.deepEqual(user, { name: 'mk2' });
+          assert.deepEqual(user, { name: "mk2" });
           resolve();
         });
       }),
     ]);
   });
 
-  it('should not overwrite property', async () => {
+  it("should not overwrite property", async () => {
     const app = {
       services: {
         foo: {},
@@ -66,68 +69,77 @@ describe('test/loader/file_loader.test.ts', () => {
     };
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'services'),
+        directory: path.join(dirBase, "services"),
         target: app.services,
       }).load();
     }, /can't overwrite property 'foo'/);
   });
 
-  it('should not overwrite property from loading', async () => {
+  it("should not overwrite property from loading", async () => {
     const app: Record<string, any> = { services: {} };
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: [path.join(dirBase, 'services'), path.join(dirBase, 'overwrite_services')],
+        directory: [
+          path.join(dirBase, "services"),
+          path.join(dirBase, "overwrite_services"),
+        ],
         target: app.services,
       }).load();
     }, /can't overwrite property 'foo'/);
   });
 
-  it('should overwrite property from loading', async () => {
+  it("should overwrite property from loading", async () => {
     const app = { services: {} };
     await new FileLoader({
-      directory: [path.join(dirBase, 'services'), path.join(dirBase, 'overwrite_services')],
+      directory: [
+        path.join(dirBase, "services"),
+        path.join(dirBase, "overwrite_services"),
+      ],
       override: true,
       target: app.services,
     }).load();
   });
 
-  it('should loading without call function', async () => {
+  it("should loading without call function", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'services'),
+      directory: path.join(dirBase, "services"),
       target: app.services,
       call: false,
     }).load();
     assert.deepEqual(app.services.fooService(), { a: 1 });
   });
 
-  it('should loading without call es6 class', async () => {
+  it("should loading without call es6 class", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'class'),
+      directory: path.join(dirBase, "class"),
       target: app.services,
     }).load();
     assert.throws(() => {
       app.services.UserProxy();
     }, /cannot be invoked without 'new'/);
     const instance = new app.services.UserProxy();
-    assert.deepEqual(instance.getUser(), { name: 'xiaochen.gaoxc' });
+    assert.deepEqual(instance.getUser(), { name: "xiaochen.gaoxc" });
   });
 
-  it('should loading without call babel class', async () => {
+  it("should loading without call babel class", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'babel'),
+      directory: path.join(dirBase, "babel"),
       target: app.services,
     }).load();
     const instance = new app.services.UserProxy();
-    assert.deepEqual(instance.getUser(), { name: 'xiaochen.gaoxc' });
+    assert.deepEqual(instance.getUser(), { name: "xiaochen.gaoxc" });
   });
 
-  it('should only load property match the filers', async () => {
+  it("should only load property match the filers", async () => {
     const app: Record<string, any> = { middlewares: {} };
     await new FileLoader({
-      directory: [path.join(dirBase, 'middlewares/default'), path.join(dirBase, 'middlewares/app')],
+      directory: [
+        path.join(dirBase, "middlewares/default"),
+        path.join(dirBase, "middlewares/app"),
+      ],
       target: app.middlewares,
       call: false,
       // filters: [ 'm1', 'm2', 'dm1', 'dm2' ],
@@ -138,30 +150,30 @@ describe('test/loader/file_loader.test.ts', () => {
     assert(app.middlewares.dm2);
   });
 
-  it('should support ignore string', async () => {
+  it("should support ignore string", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'ignore'),
+      directory: path.join(dirBase, "ignore"),
       target: app.services,
-      ignore: 'util/**',
+      ignore: "util/**",
     }).load();
     assert.equal(app.services.a.a, 1);
   });
 
-  it('should support ignore array', async () => {
+  it("should support ignore array", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'ignore'),
+      directory: path.join(dirBase, "ignore"),
       target: app.services,
-      ignore: ['util/a.js', 'util/b/b.js'],
+      ignore: ["util/a.js", "util/b/b.js"],
     }).load();
     assert.equal(app.services.a.a, 1);
   });
 
-  it('should support lowercase first letter', async () => {
+  it("should support lowercase first letter", async () => {
     const app: Record<string, any> = { services: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'lowercase'),
+      directory: path.join(dirBase, "lowercase"),
       target: app.services,
       lowercaseFirst: true,
     }).load();
@@ -170,29 +182,32 @@ describe('test/loader/file_loader.test.ts', () => {
     assert(app.services.someDir.someSubClass);
   });
 
-  it('should support options.initializer with es6 class', async () => {
+  it("should support options.initializer with es6 class", async () => {
     const app: Record<string, any> = { dao: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'dao'),
+      directory: path.join(dirBase, "dao"),
       target: app.dao,
-      ignore: 'util/**',
+      ignore: "util/**",
       initializer(exports: any, opt) {
         return new exports(app, opt.path);
       },
     }).load();
     assert(app.dao.TestClass);
-    assert.deepEqual(app.dao.TestClass.user, { name: 'kai.fangk' });
+    assert.deepEqual(app.dao.TestClass.user, { name: "kai.fangk" });
     assert.equal(app.dao.TestClass.app, app);
-    assert.equal(app.dao.TestClass.path, path.join(dirBase, 'dao/TestClass.js'));
-    assert.deepEqual(app.dao.testFunction.user, { name: 'kai.fangk' });
-    assert.deepEqual(app.dao.testReturnFunction.user, { name: 'kai.fangk' });
+    assert.equal(
+      app.dao.TestClass.path,
+      path.join(dirBase, "dao/TestClass.js"),
+    );
+    assert.deepEqual(app.dao.testFunction.user, { name: "kai.fangk" });
+    assert.deepEqual(app.dao.testReturnFunction.user, { name: "kai.fangk" });
   });
 
-  it('should support options.initializer custom type', async () => {
+  it("should support options.initializer custom type", async () => {
     const app: Record<string, any> = { yml: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'yml'),
-      match: '**/*.yml',
+      directory: path.join(dirBase, "yml"),
+      match: "**/*.yml",
       target: app.yml,
       initializer(exports: any) {
         return yaml.load(exports.toString());
@@ -202,79 +217,79 @@ describe('test/loader/file_loader.test.ts', () => {
     assert.deepEqual(app.yml.config.map, { a: 1, b: 2 });
   });
 
-  it('should pass es6 module', async () => {
+  it("should pass es6 module", async () => {
     const app: Record<string, any> = { model: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'es6_module'),
+      directory: path.join(dirBase, "es6_module"),
       target: app.model,
     }).load();
     assert.equal(app.model.mod.a, 1);
   });
 
-  it('should pass ts module', async () => {
+  it("should pass ts module", async () => {
     const app: Record<string, any> = { model: {} };
     await new FileLoader({
-      directory: path.join(dirBase, 'ts_module'),
+      directory: path.join(dirBase, "ts_module"),
       target: app.model,
     }).load();
     assert.equal(app.model.mod.a, 1);
-    assert.equal(app.model.mod2.foo, 'bar');
+    assert.equal(app.model.mod2.foo, "bar");
     assert(app.model.mod2.HelloFoo);
     assert.equal(app.model.mod3.ok, true);
-    assert.equal(app.model.mod3.foo, 'bar');
+    assert.equal(app.model.mod3.foo, "bar");
   });
 
-  it('should contain syntax error filepath', async () => {
+  it("should contain syntax error filepath", async () => {
     const app: Record<string, any> = { model: {} };
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'syntax_error'),
+        directory: path.join(dirBase, "syntax_error"),
         target: app.model,
       }).load();
     }, /error: Unexpected identifier|Expected|A 'yield' expression is only allowed in a generator body/);
   });
 
-  it('should throw when directory contains dot', async () => {
+  it("should throw when directory contains dot", async () => {
     const mod = {};
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'error/dotdir'),
+        directory: path.join(dirBase, "error/dotdir"),
         target: mod,
       }).load();
     }, /dot.dir is not match 'a-z0-9_-' in dot.dir\/a.js/);
   });
 
-  it('should throw when directory contains underscore', async () => {
+  it("should throw when directory contains underscore", async () => {
     const mod: Record<string, any> = {};
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'error/underscore-dir'),
+        directory: path.join(dirBase, "error/underscore-dir"),
         target: mod,
       }).load();
     }, /_underscore is not match 'a-z0-9_-' in _underscore\/a.js/);
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'error/underscore-file-in-dir'),
+        directory: path.join(dirBase, "error/underscore-file-in-dir"),
         target: mod,
       }).load();
     }, /_a is not match 'a-z0-9_-' in dir\/_a.js/);
   });
 
-  it('should throw when file starts with underscore', async () => {
+  it("should throw when file starts with underscore", async () => {
     const mod: Record<string, any> = {};
     await assert.rejects(async () => {
       await new FileLoader({
-        directory: path.join(dirBase, 'error/underscore-file'),
+        directory: path.join(dirBase, "error/underscore-file"),
         target: mod,
       }).load();
     }, /_private is not match 'a-z0-9_-' in _private.js/);
   });
 
-  describe('caseStyle', () => {
-    it('should load when caseStyle = upper', async () => {
+  describe("caseStyle", () => {
+    it("should load when caseStyle = upper", async () => {
       const target: Record<string, any> = {};
       await new FileLoader({
-        directory: path.join(dirBase, 'camelize'),
+        directory: path.join(dirBase, "camelize"),
         target,
         caseStyle: CaseStyle.upper,
       }).load();
@@ -285,10 +300,10 @@ describe('test/loader/file_loader.test.ts', () => {
       assert(target.FooBar4);
     });
 
-    it('should load when caseStyle = camel', async () => {
+    it("should load when caseStyle = camel", async () => {
       const target: Record<string, any> = {};
       await new FileLoader({
-        directory: path.join(dirBase, 'camelize'),
+        directory: path.join(dirBase, "camelize"),
         target,
         caseStyle: CaseStyle.camel,
       }).load();
@@ -299,10 +314,10 @@ describe('test/loader/file_loader.test.ts', () => {
       assert(target.fooBar4);
     });
 
-    it('should load when caseStyle = lower', async () => {
+    it("should load when caseStyle = lower", async () => {
       const target: Record<string, any> = {};
       await new FileLoader({
-        directory: path.join(dirBase, 'camelize'),
+        directory: path.join(dirBase, "camelize"),
         target,
         caseStyle: CaseStyle.lower,
       }).load();
@@ -313,30 +328,30 @@ describe('test/loader/file_loader.test.ts', () => {
       assert(target.fooBar4);
     });
 
-    it('should load when caseStyle is function', async () => {
+    it("should load when caseStyle is function", async () => {
       const target: Record<string, any> = {};
       await new FileLoader({
-        directory: path.join(dirBase, 'camelize'),
+        directory: path.join(dirBase, "camelize"),
         target,
         caseStyle(filepath) {
           return filepath
-            .replace('.js', '')
-            .split('/')
-            .map(property => property.replaceAll('_', ''));
+            .replace(".js", "")
+            .split("/")
+            .map((property) => property.replaceAll("_", ""));
         },
       }).load();
 
       assert(target.foobar1);
       assert(target.fooBar2);
       assert(target.FooBar3);
-      assert(target['foo-bar4']);
+      assert(target["foo-bar4"]);
     });
 
-    it('should throw when caseStyle do not return array', async () => {
+    it("should throw when caseStyle do not return array", async () => {
       const target: Record<string, any> = {};
       await assert.rejects(async () => {
         await new FileLoader({
-          directory: path.join(dirBase, 'camelize'),
+          directory: path.join(dirBase, "camelize"),
           target,
           caseStyle(filepath: string) {
             return filepath as any;
@@ -345,10 +360,10 @@ describe('test/loader/file_loader.test.ts', () => {
       }, /caseStyle expect an array, but got/);
     });
 
-    it('should be overridden by lowercaseFirst', async () => {
+    it("should be overridden by lowercaseFirst", async () => {
       const target: Record<string, any> = {};
       await new FileLoader({
-        directory: path.join(dirBase, 'camelize'),
+        directory: path.join(dirBase, "camelize"),
         target,
         caseStyle: CaseStyle.upper,
         lowercaseFirst: true,
@@ -361,11 +376,11 @@ describe('test/loader/file_loader.test.ts', () => {
     });
   });
 
-  it('should load files with inject', async () => {
+  it("should load files with inject", async () => {
     const inject: Record<string, any> = {};
     const target: Record<string, any> = {};
     await new FileLoader({
-      directory: path.join(dirBase, 'inject'),
+      directory: path.join(dirBase, "inject"),
       target,
       inject,
     }).load();
@@ -377,24 +392,24 @@ describe('test/loader/file_loader.test.ts', () => {
     assert.equal(inject.a, true);
   });
 
-  it('should load files with filter', async () => {
+  it("should load files with filter", async () => {
     const target: Record<string, any> = {};
     await new FileLoader({
-      directory: path.join(dirBase, 'filter'),
+      directory: path.join(dirBase, "filter"),
       target,
       filter(obj) {
         return Array.isArray(obj);
       },
     }).load();
-    assert.deepEqual(Object.keys(target), ['arr']);
+    assert.deepEqual(Object.keys(target), ["arr"]);
 
     await new FileLoader({
-      directory: path.join(dirBase, 'filter'),
+      directory: path.join(dirBase, "filter"),
       target,
       filter(obj) {
         return isClass(obj);
       },
     }).load();
-    assert.deepEqual(Object.keys(target), ['arr', 'class']);
+    assert.deepEqual(Object.keys(target), ["arr", "class"]);
   });
 });

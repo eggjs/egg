@@ -1,4 +1,4 @@
-import assert from 'node:assert';
+import assert from "node:assert";
 
 /**
  * RegExp to match field-content in RFC 7230 sec 3.2
@@ -77,7 +77,7 @@ export interface CookieSetOptions {
   /**
    * The cookie priority.
    */
-  priority?: 'low' | 'medium' | 'high' | 'LOW' | 'MEDIUM' | 'HIGH';
+  priority?: "low" | "medium" | "high" | "LOW" | "MEDIUM" | "HIGH";
 }
 
 export class Cookie {
@@ -86,21 +86,35 @@ export class Cookie {
   readonly attrs: CookieSetOptions;
 
   constructor(name: string, value?: string | null, attrs?: CookieSetOptions) {
-    assert(fieldContentRegExp.test(name), 'argument name is invalid');
-    assert(!value || fieldContentRegExp.test(value), 'argument value is invalid');
+    assert(fieldContentRegExp.test(name), "argument name is invalid");
+    assert(
+      !value || fieldContentRegExp.test(value),
+      "argument value is invalid",
+    );
     this.name = name;
-    this.value = value ?? '';
+    this.value = value ?? "";
     this.attrs = mergeDefaultAttrs(attrs);
-    assert(!this.attrs.path || fieldContentRegExp.test(this.attrs.path), 'argument option path is invalid');
-    if (typeof this.attrs.domain === 'function') {
+    assert(
+      !this.attrs.path || fieldContentRegExp.test(this.attrs.path),
+      "argument option path is invalid",
+    );
+    if (typeof this.attrs.domain === "function") {
       this.attrs.domain = this.attrs.domain();
     }
-    assert(!this.attrs.domain || fieldContentRegExp.test(this.attrs.domain), 'argument option domain is invalid');
     assert(
-      !this.attrs.sameSite || this.attrs.sameSite === true || sameSiteRegExp.test(this.attrs.sameSite),
-      'argument option sameSite is invalid'
+      !this.attrs.domain || fieldContentRegExp.test(this.attrs.domain),
+      "argument option domain is invalid",
     );
-    assert(!this.attrs.priority || PRIORITY_REGEXP.test(this.attrs.priority), 'argument option priority is invalid');
+    assert(
+      !this.attrs.sameSite ||
+        this.attrs.sameSite === true ||
+        sameSiteRegExp.test(this.attrs.sameSite),
+      "argument option sameSite is invalid",
+    );
+    assert(
+      !this.attrs.priority || PRIORITY_REGEXP.test(this.attrs.priority),
+      "argument option priority is invalid",
+    );
     if (!value) {
       this.attrs.expires = new Date(0);
       // make sure maxAge is empty
@@ -109,41 +123,46 @@ export class Cookie {
   }
 
   toString(): string {
-    return this.name + '=' + this.value;
+    return this.name + "=" + this.value;
   }
 
   toHeader(): string {
     let header = this.toString();
     const attrs = this.attrs;
     if (attrs.path) {
-      header += '; path=' + attrs.path;
+      header += "; path=" + attrs.path;
     }
-    const maxAge = typeof attrs.maxAge === 'string' ? parseInt(attrs.maxAge, 10) : attrs.maxAge;
+    const maxAge =
+      typeof attrs.maxAge === "string"
+        ? parseInt(attrs.maxAge, 10)
+        : attrs.maxAge;
     // ignore 0, `session` and other invalid maxAge
     if (maxAge) {
-      header += '; max-age=' + Math.round(maxAge / 1000);
+      header += "; max-age=" + Math.round(maxAge / 1000);
       attrs.expires = new Date(Date.now() + maxAge);
     }
     if (attrs.expires) {
-      header += '; expires=' + attrs.expires.toUTCString();
+      header += "; expires=" + attrs.expires.toUTCString();
     }
     if (attrs.domain) {
-      header += '; domain=' + attrs.domain;
+      header += "; domain=" + attrs.domain;
     }
     if (attrs.priority) {
-      header += '; priority=' + attrs.priority.toLowerCase();
+      header += "; priority=" + attrs.priority.toLowerCase();
     }
     if (attrs.sameSite) {
-      header += '; samesite=' + (attrs.sameSite === true ? 'strict' : attrs.sameSite.toLowerCase());
+      header +=
+        "; samesite=" +
+        (attrs.sameSite === true ? "strict" : attrs.sameSite.toLowerCase());
     }
     if (attrs.secure) {
-      header += '; secure';
+      header += "; secure";
     }
     if (attrs.httpOnly) {
-      header += '; httponly';
+      header += "; httponly";
     }
     if (attrs.partitioned) {
-      header += '; partitioned';
+      header += "; partitioned";
     }
     return header;
   }
@@ -151,7 +170,7 @@ export class Cookie {
 
 function mergeDefaultAttrs(attrs?: CookieSetOptions) {
   const merged = {
-    path: '/',
+    path: "/",
     httpOnly: true,
     secure: false,
     overwrite: false,

@@ -1,4 +1,4 @@
-const { Base } = require('sdk-base');
+const { Base } = require("sdk-base");
 
 class CustomEventSource extends Base {
   constructor(options) {
@@ -8,11 +8,11 @@ class CustomEventSource extends Base {
   }
 
   watch(path) {
-    this.emit('info', 'info12345');
-    this.emit('warn', 'warn12345');
+    this.emit("info", "info12345");
+    this.emit("warn", "warn12345");
     this._h = setInterval(() => {
-      this.emit('fuzzy-change', {
-        path: '/home/admin',
+      this.emit("fuzzy-change", {
+        path: "/home/admin",
         foo: this._options.foo,
       });
     }, 1000);

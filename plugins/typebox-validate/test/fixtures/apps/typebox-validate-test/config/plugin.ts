@@ -1,9 +1,9 @@
-import type { EggPlugin } from 'egg';
+import type { EggPlugin } from "egg";
 
 const plugin: EggPlugin = {
   typeboxValidate: {
     enable: true,
-    package: '@eggjs/typebox-validate',
+    package: "@eggjs/typebox-validate",
   },
 };
 

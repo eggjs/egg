@@ -1,4 +1,4 @@
-import { describe } from 'vitest';
+import { describe } from "vitest";
 
 // import utils from '../utils';
 // import assert from 'assert';
@@ -6,7 +6,7 @@ import { describe } from 'vitest';
 
 // let app;
 
-describe.skip('test/lib/start.test.js', () => {
+describe.skip("test/lib/start.test.js", () => {
   //   afterEach(() => app.close());
   //   describe('start', () => {
   //     it('should dump config and plugins', async () => {

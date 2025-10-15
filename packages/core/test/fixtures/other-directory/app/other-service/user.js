@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   return class UserService extends app.Service {};
 };

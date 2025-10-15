@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'xssProtection',
+  defaultMiddleware: "xssProtection",
   xssProtection: {
-    value: '0',
+    value: "0",
   },
 };

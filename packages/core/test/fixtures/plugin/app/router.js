@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
-  app.get('/', async function () {
+  app.get("/", async function () {
     const foo2 = await this.service.foo2();
     const foo3 = await this.service.foo3.foo3();
     this.body = {
@@ -14,7 +14,7 @@ module.exports = function (app) {
     };
   });
 
-  app.get('/proxy', async function () {
+  app.get("/proxy", async function () {
     this.body = {
       coupon: await this.proxy.couponQuery.query(),
       userInfo: await this.proxy.userInfoQuery.query(),

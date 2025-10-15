@@ -1,15 +1,15 @@
-import { debuglog } from 'node:util';
-import type { WatchEventType, Stats } from 'node:fs';
+import { debuglog } from "node:util";
+import type { WatchEventType, Stats } from "node:fs";
 
-import { Base } from 'sdk-base';
-import camelcase from 'camelcase';
-import { importModule } from '@eggjs/utils';
-import type { EggAppConfig } from 'egg';
+import { Base } from "sdk-base";
+import camelcase from "camelcase";
+import { importModule } from "@eggjs/utils";
+import type { EggAppConfig } from "egg";
 
-import { BaseEventSource } from './event-sources/base.ts';
-import { isEqualOrParentPath } from './utils.ts';
+import { BaseEventSource } from "./event-sources/base.ts";
+import { isEqualOrParentPath } from "./utils.ts";
 
-const debug = debuglog('egg/watcher/lib/watcher');
+const debug = debuglog("egg/watcher/lib/watcher");
 
 export interface ChangeInfo extends Record<string, any> {
   event: WatchEventType;
@@ -29,21 +29,23 @@ export class Watcher extends Base {
 
   constructor(config: EggAppConfig) {
     super({
-      initMethod: '_init',
+      initMethod: "_init",
     });
     this.#config = config;
   }
 
   protected async _init(): Promise<void> {
     const watcherType = this.#config.watcher?.type;
-    debug('init with watcherType %o', watcherType);
+    debug("init with watcherType %o", watcherType);
     if (!watcherType) {
       // If watcher config is not defined, skip initialization
-      debug('watcherType is not defined, skip initialization');
+      debug("watcherType is not defined, skip initialization");
       return;
     }
-    let EventSource = this.#config.watcher?.eventSources[watcherType] as unknown as typeof BaseEventSource;
-    if (typeof EventSource === 'string') {
+    let EventSource = this.#config.watcher?.eventSources[
+      watcherType
+    ] as unknown as typeof BaseEventSource;
+    if (typeof EventSource === "string") {
       EventSource = await importModule(EventSource, {
         importDefaultOnly: true,
       });
@@ -54,26 +56,26 @@ export class Watcher extends Base {
     //
     // e.g:
     // config => { watcher: { type: 'custom' },  watcherCustom: { ... } }
-    const key = camelcase(['watcher', watcherType]);
+    const key = camelcase(["watcher", watcherType]);
     const eventSourceOptions = this.#config[key] ?? {};
     this.#eventSource = Reflect.construct(EventSource, [eventSourceOptions]);
     this.#eventSource
-      .on('change', this.#onChange.bind(this))
-      .on('fuzzy-change', this.#onFuzzyChange.bind(this))
-      .on('info', (...args) => this.emit('info', ...args))
-      .on('warn', (...args) => this.emit('warn', ...args))
-      .on('error', (...args) => this.emit('error', ...args));
+      .on("change", this.#onChange.bind(this))
+      .on("fuzzy-change", this.#onFuzzyChange.bind(this))
+      .on("info", (...args) => this.emit("info", ...args))
+      .on("warn", (...args) => this.emit("warn", ...args))
+      .on("error", (...args) => this.emit("error", ...args));
     await this.#eventSource.ready();
   }
 
   watch(path: string | string[], listener: WatchListener): void {
-    debug('watch %o', path);
-    this.emit('info', '[@eggjs/watcher] Start watching: %j', path);
+    debug("watch %o", path);
+    this.emit("info", "[@eggjs/watcher] Start watching: %j", path);
     if (!path) return;
 
     // support array
     if (Array.isArray(path)) {
-      path.forEach(p => this.watch(p, listener));
+      path.forEach((p) => this.watch(p, listener));
       return;
     }
 
@@ -110,12 +112,16 @@ export class Watcher extends Base {
   */
 
   #onChange(info: ChangeInfo) {
-    debug('onChange %o', info);
-    this.emit('info', '[@eggjs/watcher] Received a change event from eventSource: %j', info);
+    debug("onChange %o", info);
+    this.emit(
+      "info",
+      "[@eggjs/watcher] Received a change event from eventSource: %j",
+      info,
+    );
     const path = info.path;
 
     for (const p of this.eventNames()) {
-      if (typeof p !== 'string') continue;
+      if (typeof p !== "string") continue;
       // if it is a sub path, emit a `change` event
       if (isEqualOrParentPath(p, path)) {
         this.emit(p, info);
@@ -124,12 +130,16 @@ export class Watcher extends Base {
   }
 
   #onFuzzyChange(info: ChangeInfo) {
-    debug('onFuzzyChange %o', info);
-    this.emit('info', '[@eggjs/watcher] Received a fuzzy-change event from eventSource: %j', info);
+    debug("onFuzzyChange %o", info);
+    this.emit(
+      "info",
+      "[@eggjs/watcher] Received a fuzzy-change event from eventSource: %j",
+      info,
+    );
     const path = info.path;
 
     for (const p of this.eventNames()) {
-      if (typeof p !== 'string') continue;
+      if (typeof p !== "string") continue;
       // if it is a parent path, emit a `change` event
       // just the opposite to `_onChange`
       if (isEqualOrParentPath(path, p)) {

@@ -1,11 +1,11 @@
-import assert from 'node:assert';
+import assert from "node:assert";
 
-import { isClass, isPrimitive } from 'is-type-of';
+import { isClass, isPrimitive } from "is-type-of";
 
-import { FileLoader, EXPORTS, type FileLoaderOptions } from './file_loader.ts';
-import type { Context } from '../egg.ts';
+import { FileLoader, EXPORTS, type FileLoaderOptions } from "./file_loader.ts";
+import type { Context } from "../egg.ts";
 
-const CLASS_LOADER = Symbol('classLoader');
+const CLASS_LOADER = Symbol("classLoader");
 
 export interface ClassLoaderOptions {
   ctx: Context;
@@ -17,7 +17,7 @@ export class ClassLoader {
   _ctx: Context;
 
   constructor(options: ClassLoaderOptions) {
-    assert(options.ctx, 'options.ctx is required');
+    assert(options.ctx, "options.ctx is required");
     const properties = options.properties;
     this._ctx = options.ctx;
 
@@ -40,7 +40,8 @@ export class ClassLoader {
   }
 }
 
-export interface ContextLoaderOptions extends Omit<FileLoaderOptions, 'target'> {
+export interface ContextLoaderOptions
+  extends Omit<FileLoaderOptions, "target"> {
   /** required inject */
   inject: Record<string, any>;
   /** property name defined to target */
@@ -63,8 +64,8 @@ export class ContextLoader extends FileLoader {
    * @param {String} options.fieldClass - determine the field name of inject object.
    */
   constructor(options: ContextLoaderOptions) {
-    assert(options.property, 'options.property is required');
-    assert(options.inject, 'options.inject is required');
+    assert(options.property, "options.property is required");
+    assert(options.inject, "options.inject is required");
     const target = {};
     if (options.fieldClass) {
       options.inject[options.fieldClass] = target;
@@ -88,7 +89,8 @@ export class ContextLoader extends FileLoader {
         if (!ctx[CLASS_LOADER]) {
           ctx[CLASS_LOADER] = new Map();
         }
-        const classLoader: Map<string | symbol, ClassLoader> = ctx[CLASS_LOADER];
+        const classLoader: Map<string | symbol, ClassLoader> =
+          ctx[CLASS_LOADER];
         let instance = classLoader.get(property);
         if (!instance) {
           instance = getInstance(target, ctx);

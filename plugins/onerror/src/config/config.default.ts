@@ -1,7 +1,7 @@
-import path from 'node:path';
+import path from "node:path";
 
-import type { Context } from 'egg';
-import type { OnerrorError, OnerrorOptions } from 'koa-onerror';
+import type { Context } from "egg";
+import type { OnerrorError, OnerrorOptions } from "koa-onerror";
 
 export interface OnerrorConfig extends OnerrorOptions {
   /**
@@ -27,8 +27,11 @@ export interface OnerrorConfig extends OnerrorOptions {
 
 export default {
   onerror: {
-    errorPageUrl: '',
+    errorPageUrl: "",
     appErrorFilter: undefined,
-    templatePath: path.join(import.meta.dirname, '../lib/onerror_page.mustache.html'),
+    templatePath: path.join(
+      import.meta.dirname,
+      "../lib/onerror_page.mustache.html",
+    ),
   } as OnerrorConfig,
 };

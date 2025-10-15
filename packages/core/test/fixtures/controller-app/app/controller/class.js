@@ -4,7 +4,7 @@ module.exports = class HomeController {
   }
 
   callFunction() {
-    this.ctx.body = 'done';
+    this.ctx.body = "done";
   }
 
   async callGeneratorFunction() {
@@ -25,7 +25,7 @@ module.exports = class HomeController {
 
   // won't be loaded
   get nofunction() {
-    return 'done';
+    return "done";
   }
 
   get request() {

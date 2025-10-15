@@ -1,3 +1,3 @@
 module.exports = () => {
-  console.log('agent argv: ', process.execArgv);
+  console.log("agent argv: ", process.execArgv);
 };

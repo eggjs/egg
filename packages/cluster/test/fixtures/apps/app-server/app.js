@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
-  app.on('server', () => {
+  app.on("server", () => {
     app.serverEmit = true;
   });
 };

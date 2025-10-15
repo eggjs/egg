@@ -1,19 +1,19 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   const exports = {
     logrotator: {
       filesRotateByHour: [
         path.join(appInfo.baseDir, `logs/${appInfo.name}/egg-web.log`),
         path.join(appInfo.baseDir, `logs/${appInfo.name}/egg-web.log`),
         // relative path
-        'egg-web.log',
+        "egg-web.log",
         // ignore unexist file
         path.join(appInfo.baseDir, `logs/${appInfo.name}/no-exist.log`),
       ],
-      hourDelimiter: '_',
+      hourDelimiter: "_",
     },
   };
   return exports;

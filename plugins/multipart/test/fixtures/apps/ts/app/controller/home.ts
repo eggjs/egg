@@ -1,4 +1,4 @@
-import { Controller } from 'egg';
+import { Controller } from "egg";
 
 class HomeController extends Controller {
   async index(): Promise<void> {

@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-module.exports = app =>
+module.exports = (app) =>
   class UserService2 extends app.Service {
     get userInfo() {
-      return 'service2';
+      return "service2";
     }
   };

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = {
   // 插件简写

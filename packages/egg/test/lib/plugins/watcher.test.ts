@@ -1,21 +1,30 @@
-import { strict as assert } from 'node:assert';
-import { scheduler } from 'node:timers/promises';
-import fs from 'node:fs';
+import { strict as assert } from "node:assert";
+import { scheduler } from "node:timers/promises";
+import fs from "node:fs";
 
-import { describe, it, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { mm } from '@eggjs/mock';
+import {
+  describe,
+  it,
+  beforeEach,
+  afterEach,
+  beforeAll,
+  afterAll,
+} from "vitest";
+import { mm } from "@eggjs/mock";
 
-import { cluster, type MockApplication, getFilepath } from '../../utils.ts';
+import { cluster, type MockApplication, getFilepath } from "../../utils.ts";
 
-const file_path1 = getFilepath('apps/watcher-development-app/tmp.txt');
-const file_path2 = getFilepath('apps/watcher-development-app/tmp/tmp.txt');
-const file_path1_agent = getFilepath('apps/watcher-development-app/tmp-agent.txt');
+const file_path1 = getFilepath("apps/watcher-development-app/tmp.txt");
+const file_path2 = getFilepath("apps/watcher-development-app/tmp/tmp.txt");
+const file_path1_agent = getFilepath(
+  "apps/watcher-development-app/tmp-agent.txt",
+);
 
-describe('test/lib/plugins/watcher.test.ts', () => {
-  describe('default', () => {
+describe("test/lib/plugins/watcher.test.ts", () => {
+  describe("default", () => {
     let app: MockApplication;
     beforeEach(() => {
-      app = cluster('apps/watcher-development-app');
+      app = cluster("apps/watcher-development-app");
       app.coverage(false);
       return app.ready();
     });
@@ -23,18 +32,22 @@ describe('test/lib/plugins/watcher.test.ts', () => {
     afterEach(() => app.close());
     afterEach(mm.restore);
 
-    it('should app watcher work', async () => {
+    it("should app watcher work", async () => {
       let count = 0;
 
-      await app.httpRequest().get('/app-watch').expect(200).expect('app watch success');
+      await app
+        .httpRequest()
+        .get("/app-watch")
+        .expect(200)
+        .expect("app watch success");
 
       await scheduler.wait(5000);
-      fs.writeFileSync(file_path1, 'aaa');
+      fs.writeFileSync(file_path1, "aaa");
       await scheduler.wait(5000);
 
       await app
         .httpRequest()
-        .get('/app-msg')
+        .get("/app-msg")
         .expect(200)
         .expect(function (res) {
           const lastCount = count;
@@ -42,12 +55,12 @@ describe('test/lib/plugins/watcher.test.ts', () => {
           assert(count > lastCount, `count: ${count}, lastCount: ${lastCount}`);
         });
 
-      fs.writeFileSync(file_path2, 'aaa');
+      fs.writeFileSync(file_path2, "aaa");
       await scheduler.wait(5000);
 
       await app
         .httpRequest()
-        .get('/app-msg')
+        .get("/app-msg")
         .expect(200)
         .expect(function (res) {
           const lastCount = count;
@@ -56,18 +69,22 @@ describe('test/lib/plugins/watcher.test.ts', () => {
         });
     });
 
-    it.skip('should agent watcher work', async () => {
+    it.skip("should agent watcher work", async () => {
       let count = 0;
-      await app.httpRequest().get('/agent-watch').expect(200).expect('agent watch success');
+      await app
+        .httpRequest()
+        .get("/agent-watch")
+        .expect(200)
+        .expect("agent watch success");
 
-      fs.writeFileSync(file_path1_agent, 'bbb');
+      fs.writeFileSync(file_path1_agent, "bbb");
       await scheduler.wait(5000);
 
       await app
         .httpRequest()
-        .get('/agent-msg')
+        .get("/agent-msg")
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           const lastCount = count;
           count = parseInt(res.text);
           assert(count > lastCount);
@@ -75,20 +92,22 @@ describe('test/lib/plugins/watcher.test.ts', () => {
     });
   });
 
-  describe('config.watcher.type is default', () => {
+  describe("config.watcher.type is default", () => {
     let app: MockApplication;
     beforeAll(() => {
-      app = cluster('apps/watcher-type-default');
+      app = cluster("apps/watcher-type-default");
       app.coverage(false);
       return app.ready();
     });
 
     afterAll(() => app.close());
 
-    it('should warn user', async () => {
+    it("should warn user", async () => {
       await scheduler.wait(3000);
-      const logPath = getFilepath('apps/watcher-type-default/logs/watcher-type-default/egg-agent.log');
-      const content = fs.readFileSync(logPath, 'utf8');
+      const logPath = getFilepath(
+        "apps/watcher-type-default/logs/watcher-type-default/egg-agent.log",
+      );
+      const content = fs.readFileSync(logPath, "utf8");
       assert.match(content, /defaultEventSource watcher will NOT take effect/);
     });
   });

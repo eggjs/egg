@@ -1,1 +1,1 @@
-exports.keys = 'foo,bar';
+exports.keys = "foo,bar";

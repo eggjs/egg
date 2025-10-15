@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-exports.keys = 'i18n';
+exports.keys = "i18n";
 
 exports.i18n = {
-  cookieDomain: '.foo.com',
+  cookieDomain: ".foo.com",
 };

@@ -1,7 +1,7 @@
-export default { name: 'egg from ts' };
+export default { name: "egg from ts" };
 
 function foo(bar?: string) {
-  return bar ?? '';
+  return bar ?? "";
 }
 
 if (process.env.NOT_EXISTS) {

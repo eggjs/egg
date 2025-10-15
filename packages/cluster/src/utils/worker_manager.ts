@@ -1,7 +1,7 @@
-import { EventEmitter } from 'node:events';
+import { EventEmitter } from "node:events";
 
-import { BaseAgentWorker } from './mode/base/agent.ts';
-import { BaseAppWorker } from './mode/base/app.ts';
+import { BaseAgentWorker } from "./mode/base/agent.ts";
+import { BaseAppWorker } from "./mode/base/app.ts";
 
 // worker manager to record agent and worker forked by egg-cluster
 // can do some check stuff here to monitor the healthy
@@ -55,7 +55,7 @@ export class WorkerManager extends EventEmitter {
   getListeningWorkerIds(): number[] {
     const keys = [];
     for (const [id, worker] of this.workers.entries()) {
-      if (worker.state === 'listening') {
+      if (worker.state === "listening") {
         keys.push(id);
       }
     }
@@ -64,7 +64,7 @@ export class WorkerManager extends EventEmitter {
 
   count(): { agent: number; worker: number } {
     return {
-      agent: this.agent?.status === 'started' ? 1 : 0,
+      agent: this.agent?.status === "started" ? 1 : 0,
       worker: this.listWorkerIds().length,
     };
   }
@@ -80,7 +80,7 @@ export class WorkerManager extends EventEmitter {
       }
       this.exception++;
       if (this.exception >= 3) {
-        this.emit('exception', count);
+        this.emit("exception", count);
         clearInterval(this.timer);
       }
     }, 10000);

@@ -1,4 +1,4 @@
-import type { RedisOptions, ClusterOptions, Redis } from 'ioredis';
+import type { RedisOptions, ClusterOptions, Redis } from "ioredis";
 
 export interface RedisClientOptions extends RedisOptions {
   /**

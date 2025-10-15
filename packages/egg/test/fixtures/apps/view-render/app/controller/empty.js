@@ -1,3 +1,3 @@
 module.exports = async function () {
-  await this.render('index.html');
+  await this.render("index.html");
 };

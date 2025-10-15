@@ -1,5 +1,5 @@
 module.exports = {
-  get [Symbol.for('view')]() {
-    return 'view';
+  get [Symbol.for("view")]() {
+    return "view";
   },
 };

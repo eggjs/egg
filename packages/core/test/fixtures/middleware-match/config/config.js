@@ -1,5 +1,5 @@
 exports.status = {
   match(ctx) {
-    return ctx.method === 'GET';
+    return ctx.method === "GET";
   },
 };

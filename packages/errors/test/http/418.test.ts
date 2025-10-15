@@ -1,22 +1,22 @@
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { strict as assert } from 'assert';
-import { ImATeapotError, E418 } from '../../src/index.ts';
+import { strict as assert } from "assert";
+import { ImATeapotError, E418 } from "../../src/index.ts";
 
-describe('test/http/418.test.ts', () => {
-  it('should instantiate', () => {
+describe("test/http/418.test.ts", () => {
+  it("should instantiate", () => {
     const err = new ImATeapotError();
-    assert(err.code === 'IMA_TEAPOT');
+    assert(err.code === "IMA_TEAPOT");
     assert(err.message === "I'm a teapot");
-    assert(err.name === 'ImATeapotError');
+    assert(err.name === "ImATeapotError");
     assert(err.status === 418);
   });
 
-  it('should alias to short name E418', () => {
+  it("should alias to short name E418", () => {
     const err = new E418();
-    assert(err.code === 'IMA_TEAPOT');
+    assert(err.code === "IMA_TEAPOT");
     assert(err.message === "I'm a teapot");
-    assert(err.name === 'ImATeapotError');
+    assert(err.name === "ImATeapotError");
     assert(err.status === 418);
   });
 });

@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const path = require('path');
-const block = require('./block');
+const path = require("path");
+const block = require("./block");
 
-module.exports = app => {
+module.exports = (app) => {
   block();
 
   app.beforeStart(function* () {
@@ -12,13 +12,13 @@ module.exports = app => {
 
   app.beforeStart(function* () {
     block();
-  }, 'mock Block');
+  }, "mock Block");
 
-  const cb = app.readyCallback('mockReadyCallbackWithoutFunction');
+  const cb = app.readyCallback("mockReadyCallbackWithoutFunction");
   setTimeout(cb, 1000);
 
-  const directory = path.join(app.baseDir, 'app/proxy');
-  app.loader.loadToContext(directory, 'proxy');
+  const directory = path.join(app.baseDir, "app/proxy");
+  app.loader.loadToContext(directory, "proxy");
 
   app.loader.loadController();
 };

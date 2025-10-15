@@ -1,8 +1,8 @@
-const { describe, it } = require('vitest');
-const assert = require('assert');
+const { describe, it } = require("vitest");
+const assert = require("assert");
 
-describe('test/parallel_a.test.js', () => {
-  it('should work', () => {
+describe("test/parallel_a.test.js", () => {
+  it("should work", () => {
     assert(!global.test);
   });
 });

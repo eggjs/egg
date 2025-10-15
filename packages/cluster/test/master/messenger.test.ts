@@ -1,61 +1,61 @@
-import { scheduler } from 'node:timers/promises';
+import { scheduler } from "node:timers/promises";
 
-import { describe, it, afterEach } from 'vitest';
-import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterEach } from "vitest";
+import { mm, type MockApplication } from "@eggjs/mock";
 
-import { cluster } from '../utils.ts';
+import { cluster } from "../utils.ts";
 
 let app: MockApplication;
 
 afterEach(mm.restore);
 
-describe('Messenger', () => {
+describe("Messenger", () => {
   afterEach(() => app.close());
 
-  it('parent -> app/agent', async () => {
-    app = cluster('apps/messenger');
+  it("parent -> app/agent", async () => {
+    app = cluster("apps/messenger");
     // app.debug();
 
     await app.ready();
 
     app.proc.send({
-      action: 'parent2app',
-      data: 'parent -> app',
-      to: 'app',
+      action: "parent2app",
+      data: "parent -> app",
+      to: "app",
     });
     app.proc.send({
-      action: 'parent2agent',
-      data: 'parent -> agent',
-      to: 'agent',
+      action: "parent2agent",
+      data: "parent -> agent",
+      to: "agent",
     });
 
     await scheduler.wait(1000);
-    app.expect('stdout', /parent -> agent/);
-    app.expect('stdout', /parent -> app/);
+    app.expect("stdout", /parent -> agent/);
+    app.expect("stdout", /parent -> app/);
   });
 
-  it('should app <-> agent', async () => {
-    app = cluster('apps/messenger');
+  it("should app <-> agent", async () => {
+    app = cluster("apps/messenger");
     // app.debug();
     await app.ready();
 
     await scheduler.wait(1000);
-    app.expect('stdout', /app -> agent/);
+    app.expect("stdout", /app -> agent/);
     // app.expect('stdout', /agent -> app/);
     // app.expect('stdout', /app: agent2appbystring/);
     // app.expect('stdout', /agent: app2agentbystring/);
   });
 
-  it.skip('should send multi app worker', async () => {
-    app = cluster('apps/send-to-multiapp', { workers: 4 });
+  it.skip("should send multi app worker", async () => {
+    app = cluster("apps/send-to-multiapp", { workers: 4 });
     // app.debug();
     await app.ready();
     await scheduler.wait(1000);
-    app.expect('stdout', /\d+ '?got'?/);
+    app.expect("stdout", /\d+ '?got'?/);
   });
 
-  it('sendTo should work', async () => {
-    app = cluster('apps/messenger');
+  it("sendTo should work", async () => {
+    app = cluster("apps/messenger");
     // app.debug();
     await app.ready();
     // app.proc.on('message', console.log);

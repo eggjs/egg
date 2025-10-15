@@ -1,9 +1,9 @@
 exports.app = function () {
-  return 'app';
+  return "app";
 };
 
 exports.override = function () {
-  return 'app';
+  return "app";
 };
 
 exports.exists = function (obj) {

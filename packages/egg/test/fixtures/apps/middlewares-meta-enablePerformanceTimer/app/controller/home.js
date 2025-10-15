@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = async ctx => {
-  ctx.body = 'home';
+module.exports = async (ctx) => {
+  ctx.body = "home";
 };

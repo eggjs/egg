@@ -1,4 +1,4 @@
-const { scheduler } = require('node:timers/promises');
+const { scheduler } = require("node:timers/promises");
 
 class EjsView {
   async render(filename, locals, options) {
@@ -7,7 +7,7 @@ class EjsView {
       filename,
       locals,
       options,
-      type: 'ejs',
+      type: "ejs",
       originalLocals: options.locals,
     };
   }
@@ -18,7 +18,7 @@ class EjsView {
       tpl,
       locals,
       options,
-      type: 'ejs',
+      type: "ejs",
     };
   }
 }

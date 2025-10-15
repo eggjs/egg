@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
 module.exports = {
-  foo: 'agent bar',
-  bar: 'foo',
+  foo: "agent bar",
+  bar: "foo",
 };

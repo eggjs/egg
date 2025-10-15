@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'stream',
+  mode: "stream",
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

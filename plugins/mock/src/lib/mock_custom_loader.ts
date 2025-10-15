@@ -1,6 +1,6 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-const debug = debuglog('egg/mock/lib/mock_custom_loader');
+const debug = debuglog("egg/mock/lib/mock_custom_loader");
 
 export function setCustomLoader(app: any): void {
   const customLoader = app.config.customLoader;
@@ -14,16 +14,18 @@ export function setCustomLoader(app: any): void {
 
   function addMethod(loaderConfig: any) {
     const field = loaderConfig.field as string;
-    const appMethodName = 'mock' + field.replace(/^[a-z]/i, s => s.toUpperCase());
+    const appMethodName =
+      "mock" + field.replace(/^[a-z]/i, (s) => s.toUpperCase());
     if (app[appMethodName]) {
       app.coreLogger.warn("Can't override app.%s", appMethodName);
       return;
     }
-    debug('[addMethod] %s => %j', appMethodName, loaderConfig);
+    debug("[addMethod] %s => %j", appMethodName, loaderConfig);
     app[appMethodName] = function (service: any, methodName: string, fn: any) {
-      if (typeof service === 'string') {
-        const arr = service.split('.');
-        service = loaderConfig.inject === 'ctx' ? this[field + 'Classes'] : this[field];
+      if (typeof service === "string") {
+        const arr = service.split(".");
+        service =
+          loaderConfig.inject === "ctx" ? this[field + "Classes"] : this[field];
         for (const key of arr) {
           service = service[key];
         }

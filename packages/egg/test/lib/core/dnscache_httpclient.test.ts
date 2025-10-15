@@ -1,11 +1,11 @@
-import { describe } from 'vitest';
+import { describe } from "vitest";
 // import { strict as assert } from 'node:assert';
 // import dns from 'node:dns/promises';
 // import { parse as urlparse } from 'node:url';
 // import { mm } from '@eggjs/mock';
 // import { createApp, type MockApplication, startLocalServer } from '../../utils.js';
 
-describe.skip('test/lib/core/dnscache_httpclient.test.ts', () => {
+describe.skip("test/lib/core/dnscache_httpclient.test.ts", () => {
   //   let app: MockApplication;
   //   let url: string;
   //   let host: string;

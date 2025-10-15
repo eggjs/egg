@@ -1,5 +1,5 @@
-module.exports = app => {
-  app.get('/', async function () {
-    this.body = 'Hi, this is home';
+module.exports = (app) => {
+  app.get("/", async function () {
+    this.body = "Hi, this is home";
   });
 };

@@ -1,4 +1,4 @@
-import type { Application, ILifecycleBoot } from 'egg';
+import type { Application, ILifecycleBoot } from "egg";
 
 export class Boot implements ILifecycleBoot {
   private readonly app;
@@ -8,9 +8,12 @@ export class Boot implements ILifecycleBoot {
 
   async didLoad(): Promise<void> {
     // reload logger to new fd after rotating
-    this.app.messenger.on('log-reload', () => {
+    this.app.messenger.on("log-reload", () => {
       this.app.loggers.reload();
-      this.app.coreLogger.info('[@eggjs/logrotator] %s logger reload: got log-reload message', this.app.type);
+      this.app.coreLogger.info(
+        "[@eggjs/logrotator] %s logger reload: got log-reload message",
+        this.app.type,
+      );
     });
   }
 }

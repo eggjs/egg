@@ -435,9 +435,6 @@ catalogs:
     picocolors:
       specifier: ^1.1.1
       version: 1.1.1
-    prettier:
-      specifier: ^3.6.2
-      version: 3.6.2
     ready-callback:
       specifier: ^4.0.0
       version: 4.0.0
@@ -579,9 +576,6 @@ importers:
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 0.2.0
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
       rimraf:
         specifier: 'catalog:'
         version: 6.0.1
@@ -821,9 +815,6 @@ importers:
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      prettier:
-        specifier: 'catalog:'
-        version: 3.6.2
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -2056,9 +2047,9 @@ importers:
       oxc-minify:
         specifier: 'catalog:'
         version: 0.94.0
-      prettier:
+      oxfmt:
         specifier: 'catalog:'
-        version: 3.6.2
+        version: 0.5.0
 
   tools/create-egg:
     dependencies:
@@ -6325,11 +6316,6 @@ packages:
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
     engines: {node: ^10 || ^12 || >=14}
-
-  prettier@3.6.2:
-    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
-    engines: {node: '>=14'}
-    hasBin: true
 
   pretty-ms@9.3.0:
     resolution: {integrity: sha512-gjVS5hOP+M3wMm5nmNOucbIrqudzs9v/57bWRHQWLYklXqoXKrVfYW2W9+glfGsqtPgpiz5WwyEEB+ksXIx3gQ==}
@@ -11667,8 +11653,6 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
-
-  prettier@3.6.2: {}
 
   pretty-ms@9.3.0:
     dependencies:

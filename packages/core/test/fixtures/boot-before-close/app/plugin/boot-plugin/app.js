@@ -4,6 +4,6 @@ module.exports = class BootHook {
   }
 
   async beforeClose() {
-    this.app.bootLog.push('beforeClose in plugin');
+    this.app.bootLog.push("beforeClose in plugin");
   }
 };

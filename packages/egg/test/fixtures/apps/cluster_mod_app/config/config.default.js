@@ -1,4 +1,4 @@
-exports.keys = 'foo';
+exports.keys = "foo";
 
 exports.security = {
   csrf: {

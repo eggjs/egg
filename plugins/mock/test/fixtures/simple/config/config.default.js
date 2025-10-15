@@ -1,6 +1,6 @@
 module.exports = {
   logger: {
-    consoleLevel: 'NONE',
+    consoleLevel: "NONE",
   },
-  keys: '123',
+  keys: "123",
 };

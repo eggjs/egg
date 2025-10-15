@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'referrerPolicy',
+  defaultMiddleware: "referrerPolicy",
   referrerPolicy: {
     enable: true,
   },

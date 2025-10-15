@@ -1,1 +1,1 @@
-export const JSONP_CONFIG: unique symbol = Symbol('jsonp#config');
+export const JSONP_CONFIG: unique symbol = Symbol("jsonp#config");

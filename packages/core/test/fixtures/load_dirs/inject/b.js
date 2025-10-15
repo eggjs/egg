@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = inject => {
+module.exports = (inject) => {
   inject.b = true;
   return {};
 };

@@ -1,15 +1,15 @@
-import path from 'node:path';
-import { debuglog } from 'node:util';
+import path from "node:path";
+import { debuglog } from "node:util";
 
-import { exists } from 'utility';
-import { ms } from 'humanize-ms';
-import type { ILifecycleBoot } from 'egg';
+import { exists } from "utility";
+import { ms } from "humanize-ms";
+import type { ILifecycleBoot } from "egg";
 
-import type I18nApplication from './app/extend/application.ts';
-import { loadLocaleResources } from './locales.ts';
-import { formatLocale } from './utils.ts';
+import type I18nApplication from "./app/extend/application.ts";
+import { loadLocaleResources } from "./locales.ts";
+import { formatLocale } from "./utils.ts";
 
-const debug = debuglog('egg/i18n/app');
+const debug = debuglog("egg/i18n/app");
 
 /**
  * I18n 国际化
@@ -74,18 +74,18 @@ export default class I18n implements ILifecycleBoot {
     i18nConfig.dirs = Array.isArray(i18nConfig.dirs) ? i18nConfig.dirs : [];
     // 按 egg > 插件 > 框架 > 应用的顺序遍历 config/locale(config/locales) 目录，加载所有配置文件
     for (const unit of this.app.loader.getLoadUnits()) {
-      let localePath = path.join(unit.path, 'config/locale');
+      let localePath = path.join(unit.path, "config/locale");
       /**
        * 优先选择 `config/locale` 目录下的多语言文件，不存在时再选择 `config/locales` 目录
        * 避免 2 个目录同时存在时可能导致的冲突
        */
       if (!(await exists(localePath))) {
-        localePath = path.join(unit.path, 'config/locales');
+        localePath = path.join(unit.path, "config/locales");
       }
       i18nConfig.dirs.push(localePath);
     }
 
-    debug('app.config.i18n.dirs:', i18nConfig.dirs);
+    debug("app.config.i18n.dirs:", i18nConfig.dirs);
 
     await loadLocaleResources(this.app, i18nConfig);
 

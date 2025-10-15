@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
   /**
@@ -12,8 +12,8 @@ exports.security = {
 
   csrf: {
     ignore: /^\/api\//,
-    queryName: ['_csrf', '_csgo'],
-    bodyName: ['_csrf', '_csgo'],
-    cookieName: ['ctoken', 'csrfToken'],
+    queryName: ["_csrf", "_csgo"],
+    bodyName: ["_csrf", "_csgo"],
+    cookieName: ["ctoken", "csrfToken"],
   },
 };

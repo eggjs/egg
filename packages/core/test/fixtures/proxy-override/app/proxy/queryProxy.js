@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class QueryProxy extends app.Proxy {
@@ -8,7 +8,7 @@ module.exports = function (app) {
 
     *query() {
       return {
-        foo: 'bar',
+        foo: "bar",
       };
     }
   }

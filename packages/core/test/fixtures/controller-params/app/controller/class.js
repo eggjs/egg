@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = class HomeController {
   constructor(ctx) {
@@ -6,12 +6,12 @@ module.exports = class HomeController {
   }
 
   async generatorFunction(...args) {
-    this.ctx.body = 'done';
+    this.ctx.body = "done";
     return args;
   }
 
   async asyncFunction(...args) {
-    this.ctx.body = 'done';
+    this.ctx.body = "done";
     return args;
   }
 };

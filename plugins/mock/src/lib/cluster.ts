@@ -1,20 +1,23 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import os from 'node:os';
-import childProcess from 'node:child_process';
-import { once } from 'node:events';
-import { existsSync } from 'node:fs';
+import { debuglog } from "node:util";
+import path from "node:path";
+import os from "node:os";
+import childProcess from "node:child_process";
+import { once } from "node:events";
+import { existsSync } from "node:fs";
 
-import { Coffee } from 'coffee';
-import { Ready } from 'get-ready';
+import { Coffee } from "coffee";
+import { Ready } from "get-ready";
 
-import { request as supertestRequest } from './supertest.ts';
-import { sleep, rimrafSync } from './utils.ts';
-import { formatOptions } from './format_options.ts';
-import type { MockClusterOptions, MockClusterApplicationOptions } from './types.ts';
-import type ApplicationUnittest from '../app/extend/application.ts';
+import { request as supertestRequest } from "./supertest.ts";
+import { sleep, rimrafSync } from "./utils.ts";
+import { formatOptions } from "./format_options.ts";
+import type {
+  MockClusterOptions,
+  MockClusterApplicationOptions,
+} from "./types.ts";
+import type ApplicationUnittest from "../app/extend/application.ts";
 
-const debug = debuglog('egg/mock/lib/cluster');
+const debug = debuglog("egg/mock/lib/cluster");
 
 const clusters = new Map();
 declare global {
@@ -23,13 +26,19 @@ declare global {
 }
 globalThis.eggMockMasterPort = 17000 + (process.pid % 1000);
 
-let serverBin = path.join(import.meta.dirname, 'start-cluster.js');
+let serverBin = path.join(import.meta.dirname, "start-cluster.js");
 if (!existsSync(serverBin)) {
-  serverBin = path.join(import.meta.dirname, 'start-cluster.ts');
+  serverBin = path.join(import.meta.dirname, "start-cluster.ts");
 }
-let requestCallFunctionFile = path.join(import.meta.dirname, 'request_call_function.js');
+let requestCallFunctionFile = path.join(
+  import.meta.dirname,
+  "request_call_function.js",
+);
 if (!existsSync(requestCallFunctionFile)) {
-  requestCallFunctionFile = path.join(import.meta.dirname, 'request_call_function.ts');
+  requestCallFunctionFile = path.join(
+    import.meta.dirname,
+    "request_call_function.ts",
+  );
 }
 
 /**
@@ -89,9 +98,9 @@ export class ClusterApplication extends Coffee {
     }
 
     const args = [JSON.stringify(options)];
-    debug('fork %s, args: %s, opt: %j', serverBin, args.join(' '), opt);
+    debug("fork %s, args: %s, opt: %j", serverBin, args.join(" "), opt);
     super({
-      method: 'fork',
+      method: "fork",
       cmd: serverBin,
       args,
       opt,
@@ -111,19 +120,19 @@ export class ClusterApplication extends Coffee {
     }
 
     process.nextTick(() => {
-      this.proc.on('message', (msg: any) => {
+      this.proc.on("message", (msg: any) => {
         // 'egg-ready' and { action: 'egg-ready' }
         const action = msg && msg.action ? msg.action : msg;
         switch (action) {
-          case 'egg-ready':
+          case "egg-ready":
             // data: { port: 17703, address: 'http://127.0.0.1:17703', protocol: 'http' }
-            debug('on message egg-ready %o', msg);
+            debug("on message egg-ready %o", msg);
             this._address = msg.data.address;
-            this.emit('close', 0);
+            this.emit("close", 0);
             break;
-          case 'app-worker-died':
-          case 'agent-worker-died':
-            this.emit('close', 1);
+          case "app-worker-died":
+          case "agent-worker-died":
+            this.emit("close", 1);
             break;
           default:
             // ignore it
@@ -159,7 +168,7 @@ export class ClusterApplication extends Coffee {
     if (this._address) {
       return this._address;
     }
-    return 'http://127.0.0.1:' + this.port;
+    return "http://127.0.0.1:" + this.port;
   }
 
   /**
@@ -188,14 +197,14 @@ export class ClusterApplication extends Coffee {
     const proc = this.proc;
     const baseDir = this.baseDir;
     if (proc?.connected) {
-      proc.kill('SIGTERM');
-      await once(proc, 'exit');
+      proc.kill("SIGTERM");
+      await once(proc, "exit");
     }
 
     clusters.delete(baseDir);
-    debug('delete cluster cache %s, remain %s', baseDir, [...clusters.keys()]);
+    debug("delete cluster cache %s, remain %s", baseDir, [...clusters.keys()]);
 
-    if (os.platform() === 'win32') {
+    if (os.platform() === "win32") {
       await sleep(1000);
     }
   }
@@ -209,7 +218,7 @@ export class ClusterApplication extends Coffee {
     const self = this;
     return {
       pathFor(url: string): any {
-        return self._callFunctionOnAppWorker('pathFor', [url], 'router', true);
+        return self._callFunctionOnAppWorker("pathFor", [url], "router", true);
       },
     };
   }
@@ -218,7 +227,7 @@ export class ClusterApplication extends Coffee {
    * get app[property] value in app worker
    */
   getAppInstanceProperty(property: string): any {
-    return this._callFunctionOnAppWorker('__getter__', [], property, true);
+    return this._callFunctionOnAppWorker("__getter__", [], property, true);
   }
 
   /**
@@ -229,8 +238,8 @@ export class ClusterApplication extends Coffee {
    * @function ClusterApplication#expectLog
    */
   mockLog(logger?: string): void {
-    logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('mockLog', [logger], null, true);
+    logger = logger ?? "logger";
+    this._callFunctionOnAppWorker("mockLog", [logger], null, true);
   }
 
   /**
@@ -242,8 +251,8 @@ export class ClusterApplication extends Coffee {
    * @function ClusterApplication#expectLog
    */
   expectLog(str: string, logger?: string): void {
-    logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('expectLog', [str, logger], null, true);
+    logger = logger ?? "logger";
+    this._callFunctionOnAppWorker("expectLog", [str, logger], null, true);
   }
 
   /**
@@ -255,31 +264,36 @@ export class ClusterApplication extends Coffee {
    * @function ClusterApplication#notExpectLog
    */
   notExpectLog(str: string, logger?: string): void {
-    logger = logger ?? 'logger';
-    this._callFunctionOnAppWorker('notExpectLog', [str, logger], null, true);
+    logger = logger ?? "logger";
+    this._callFunctionOnAppWorker("notExpectLog", [str, logger], null, true);
   }
 
   httpRequest(): ReturnType<typeof supertestRequest> {
     return supertestRequest(this);
   }
 
-  _callFunctionOnAppWorker(method: string, args: any[] = [], property: any = undefined, needResult = false): any {
+  _callFunctionOnAppWorker(
+    method: string,
+    args: any[] = [],
+    property: any = undefined,
+    needResult = false,
+  ): any {
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
-      if (typeof arg === 'function') {
+      if (typeof arg === "function") {
         args[i] = {
-          __egg_mock_type: 'function',
+          __egg_mock_type: "function",
           value: arg.toString(),
         };
       } else if (arg instanceof Error) {
         const errObject: any = {
-          __egg_mock_type: 'error',
+          __egg_mock_type: "error",
           name: arg.name,
           message: arg.message,
           stack: arg.stack,
         };
         for (const key in arg) {
-          if (key !== 'name' && key !== 'message' && key !== 'stack') {
+          if (key !== "name" && key !== "message" && key !== "stack") {
             errObject[key] = (arg as any)[key];
           }
         }
@@ -293,9 +307,13 @@ export class ClusterApplication extends Coffee {
       property,
       needResult,
     };
-    const child = childProcess.spawnSync(process.execPath, [requestCallFunctionFile, JSON.stringify(data)], {
-      stdio: 'pipe',
-    });
+    const child = childProcess.spawnSync(
+      process.execPath,
+      [requestCallFunctionFile, JSON.stringify(data)],
+      {
+        stdio: "pipe",
+      },
+    );
     // if (child.stderr && child.stderr.length > 0) {
     //   console.error(child.stderr.toString());
     // }
@@ -321,7 +339,9 @@ export class ClusterApplication extends Coffee {
 
 export type MockClusterApplication = ClusterApplication & ApplicationUnittest;
 
-export function createCluster(initOptions?: MockClusterOptions): MockClusterApplication {
+export function createCluster(
+  initOptions?: MockClusterOptions,
+): MockClusterApplication {
   const options = formatOptions(initOptions) as MockClusterApplicationOptions;
   if (options.cache && clusters.has(options.baseDir)) {
     const clusterApp = clusters.get(options.baseDir);
@@ -335,13 +355,13 @@ export function createCluster(initOptions?: MockClusterOptions): MockClusterAppl
   }
 
   if (options.clean !== false) {
-    const logDir = path.join(options.baseDir, 'logs');
+    const logDir = path.join(options.baseDir, "logs");
     try {
       rimrafSync(logDir);
     } catch (err: any) {
       console.error(`remove log dir ${logDir} failed: ${err.stack}`);
     }
-    const runDir = path.join(options.baseDir, 'run');
+    const runDir = path.join(options.baseDir, "run");
     try {
       rimrafSync(runDir);
     } catch (err: any) {
@@ -352,10 +372,14 @@ export function createCluster(initOptions?: MockClusterOptions): MockClusterAppl
   let clusterApp = new ClusterApplication(options);
   clusterApp = new Proxy(clusterApp, {
     get(target, prop) {
-      debug('proxy handler.get %s', prop);
+      debug("proxy handler.get %s", prop);
       // proxy mockXXX function to app worker
       const method = prop;
-      if (typeof method === 'string' && /^mock\w+$/.test(method) && target[method] === undefined) {
+      if (
+        typeof method === "string" &&
+        /^mock\w+$/.test(method) &&
+        target[method] === undefined
+      ) {
         return function mockProxy(...args: any[]) {
           return target._callFunctionOnAppWorker(method, args, null, true);
         };
@@ -377,9 +401,9 @@ export async function restore(): Promise<void> {
 }
 
 // ensure to close App process on test exit.
-process.on('exit', () => {
+process.on("exit", () => {
   for (const clusterApp of clusters.values()) {
-    debug('on exit close clusterApp, port: %s', clusterApp.port);
+    debug("on exit close clusterApp, port: %s", clusterApp.port);
     clusterApp.close();
   }
 });

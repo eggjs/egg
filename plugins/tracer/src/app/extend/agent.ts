@@ -1,3 +1,3 @@
-import TracerApplication from './application.ts';
+import TracerApplication from "./application.ts";
 
 export default TracerApplication;

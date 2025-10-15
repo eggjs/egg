@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
 exports.helpers = {
   shtml: {
-    domainWhiteList: ['.shaoshuai.me'],
+    domainWhiteList: [".shaoshuai.me"],
     whiteList: {
-      a: [, /*'target'*/ 'href', 'title'],
-      img: ['src', 'alt', 'title', 'width', 'height'],
+      a: [, /*'target'*/ "href", "title"],
+      img: ["src", "alt", "title", "width", "height"],
     },
   },
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

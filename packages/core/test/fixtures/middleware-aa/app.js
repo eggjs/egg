@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.use(require('./app/middleware/custom')());
+module.exports = (app) => {
+  app.use(require("./app/middleware/custom")());
 };

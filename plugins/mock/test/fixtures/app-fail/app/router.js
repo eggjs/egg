@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-throw new Error('load error');
+throw new Error("load error");

@@ -1,5 +1,5 @@
-import assert from 'node:assert';
-import { debuglog } from 'node:util';
+import assert from "node:assert";
+import { debuglog } from "node:util";
 
 import {
   Application as KoaApplication,
@@ -8,26 +8,34 @@ import {
   Response as KoaResponse,
   type MiddlewareFunc as KoaMiddlewareFunc,
   type Next,
-} from '@eggjs/koa';
-import { EggConsoleLogger, type Logger } from 'egg-logger';
-import { EggRouter as Router, type RegisterOptions, type ResourcesController } from '@eggjs/router';
-import type { ReadyFunctionArg } from 'get-ready';
+} from "@eggjs/koa";
+import { EggConsoleLogger, type Logger } from "egg-logger";
+import {
+  EggRouter as Router,
+  type RegisterOptions,
+  type ResourcesController,
+} from "@eggjs/router";
+import type { ReadyFunctionArg } from "get-ready";
 
-import { BaseContextClass } from './base_context_class.ts';
-import { Timing } from './utils/timing.ts';
-import { Lifecycle } from './lifecycle.ts';
-import { EggLoader } from './loader/egg_loader.ts';
-import utils, { type Fun } from './utils/index.ts';
-import type { EggAppConfig } from './types.ts';
-import { Singleton, type SingletonCreateMethod, type SingletonOptions } from './singleton.ts';
+import { BaseContextClass } from "./base_context_class.ts";
+import { Timing } from "./utils/timing.ts";
+import { Lifecycle } from "./lifecycle.ts";
+import { EggLoader } from "./loader/egg_loader.ts";
+import utils, { type Fun } from "./utils/index.ts";
+import type { EggAppConfig } from "./types.ts";
+import {
+  Singleton,
+  type SingletonCreateMethod,
+  type SingletonOptions,
+} from "./singleton.ts";
 
-const debug = debuglog('egg/core/egg');
+const debug = debuglog("egg/core/egg");
 
-export const EGG_LOADER: symbol = Symbol.for('egg#loader');
+export const EGG_LOADER: symbol = Symbol.for("egg#loader");
 
 export interface EggCoreOptions {
   baseDir: string;
-  type: 'application' | 'agent';
+  type: "application" | "agent";
   plugins?: any;
   serverScope?: string;
   env?: string;
@@ -90,7 +98,8 @@ export class Context extends KoaContext {
 }
 
 // export @eggjs/core types
-export type MiddlewareFunc<T extends KoaContext = Context> = KoaMiddlewareFunc<T>;
+export type MiddlewareFunc<T extends KoaContext = Context> =
+  KoaMiddlewareFunc<T>;
 
 export class EggCore extends KoaApplication {
   options: EggCoreOptions;
@@ -112,7 +121,10 @@ export class EggCore extends KoaApplication {
 
   readonly controller: Record<string, any> = {};
   /** auto inject on loadMiddleware() */
-  readonly middlewares: Record<string, (opt: unknown, app: EggCore) => MiddlewareFunc> = {};
+  readonly middlewares: Record<
+    string,
+    (opt: unknown, app: EggCore) => MiddlewareFunc
+  > = {};
 
   /**
    * @class
@@ -124,11 +136,17 @@ export class EggCore extends KoaApplication {
    */
   constructor(options: EggCoreInitOptions = {}) {
     options.baseDir = options.baseDir ?? process.cwd();
-    options.type = options.type ?? 'application';
-    assert(typeof options.baseDir === 'string', 'options.baseDir required, and must be a string');
+    options.type = options.type ?? "application";
+    assert(
+      typeof options.baseDir === "string",
+      "options.baseDir required, and must be a string",
+    );
     // assert(fs.existsSync(options.baseDir), `Directory ${options.baseDir} not exists`);
     // assert(fs.statSync(options.baseDir).isDirectory(), `Directory ${options.baseDir} is not a directory`);
-    assert(options.type === 'application' || options.type === 'agent', 'options.type should be application or agent');
+    assert(
+      options.type === "application" || options.type === "agent",
+      "options.type should be application or agent",
+    );
     super();
 
     this.timing = new Timing();
@@ -190,9 +208,9 @@ export class EggCore extends KoaApplication {
       app: this,
       logger: this.console,
     });
-    this.lifecycle.on('error', err => this.emit('error', err));
-    this.lifecycle.on('ready_timeout', id => this.emit('ready_timeout', id));
-    this.lifecycle.on('ready_stat', data => this.emit('ready_stat', data));
+    this.lifecycle.on("error", (err) => this.emit("error", err));
+    this.lifecycle.on("ready_timeout", (id) => this.emit("ready_timeout", id));
+    this.lifecycle.on("ready_stat", (data) => this.emit("ready_stat", data));
 
     /**
      * The loader instance, the default class is {@link EggLoader}.
@@ -204,7 +222,7 @@ export class EggCore extends KoaApplication {
     let Loader: typeof EggLoader;
     if (EGG_LOADER in this) {
       this.deprecate(
-        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead'
+        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead',
       );
       Loader = this[EGG_LOADER] as typeof EggLoader;
     } else {
@@ -216,7 +234,7 @@ export class EggCore extends KoaApplication {
       plugins: options.plugins,
       logger: this.console,
       serverScope: options.serverScope,
-      env: options.env ?? '',
+      env: options.env ?? "",
       EggCoreClass: EggCore,
     });
   }
@@ -254,8 +272,8 @@ export class EggCore extends KoaApplication {
    * @since 1.0.0
    */
   use<T extends KoaContext = Context>(fn: MiddlewareFunc<T>): this {
-    assert(typeof fn === 'function', 'app.use() requires a function');
-    debug('[use] add middleware: %o', fn._name || fn.name || '-');
+    assert(typeof fn === "function", "app.use() requires a function");
+    debug("[use] add middleware: %o", fn._name || fn.name || "-");
     this.middleware.push(fn as unknown as KoaMiddlewareFunc);
     return this;
   }
@@ -265,7 +283,7 @@ export class EggCore extends KoaApplication {
    * @member {String}
    * @since 1.0.0
    */
-  get type(): 'application' | 'agent' {
+  get type(): "application" | "agent" {
     return this.options.type;
   }
 
@@ -295,7 +313,7 @@ export class EggCore extends KoaApplication {
    * @since 1.0.0
    */
   get name(): string {
-    return this.loader ? this.loader.pkg.name : '';
+    return this.loader ? this.loader.pkg.name : "";
   }
 
   /**
@@ -331,9 +349,9 @@ export class EggCore extends KoaApplication {
    */
   beforeStart(scope: Fun, name?: string): void {
     this.deprecate(
-      '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
-    this.lifecycle.registerBeforeStart(scope, name ?? '');
+    this.lifecycle.registerBeforeStart(scope, name ?? "");
   }
 
   /**
@@ -376,7 +394,7 @@ export class EggCore extends KoaApplication {
    */
   readyCallback(name: string, opts: object): (...args: unknown[]) => void {
     this.deprecate(
-      '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
     return this.lifecycle.legacyReadyCallback(name, opts);
   }
@@ -395,7 +413,7 @@ export class EggCore extends KoaApplication {
    */
   beforeClose(fn: Fun, name?: string): void {
     this.deprecate(
-      '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
     this.lifecycle.registerBeforeClose(fn, name);
   }
@@ -436,15 +454,22 @@ export class EggCore extends KoaApplication {
    * @param {Object} params - more parameters
    * @returns {String} url
    */
-  url(name: string, params?: Parameters<Router['url']>[1]): string {
+  url(name: string, params?: Parameters<Router["url"]>[1]): string {
     return this.router.url(name, params);
   }
 
   // delegate all router method to application
   // 'head', 'options', 'get', 'put', 'patch', 'post', 'delete'
   // 'all', 'resources', 'register', 'redirect'
-  head(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  head(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  head(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  head(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   head(...args: any): EggCore {
     this.router.head.apply(this.router, args);
@@ -456,21 +481,38 @@ export class EggCore extends KoaApplication {
   //   this.router.options.apply(this.router, args);
   //   return this;
   // }
-  get(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  get(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  get(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  get(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   get(...args: any): EggCore {
     this.router.get.apply(this.router, args);
     return this;
   }
-  put(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  put(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  put(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  put(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   put(...args: any): EggCore {
     this.router.put.apply(this.router, args);
     return this;
   }
-  patch(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  patch(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
   patch(
     name: string,
     path: string | RegExp | (string | RegExp)[],
@@ -481,14 +523,24 @@ export class EggCore extends KoaApplication {
     this.router.patch.apply(this.router, args);
     return this;
   }
-  post(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  post(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  post(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  post(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   post(...args: any): EggCore {
     this.router.post.apply(this.router, args);
     return this;
   }
-  delete(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  delete(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
   delete(
     name: string,
     path: string | RegExp | (string | RegExp)[],
@@ -499,16 +551,30 @@ export class EggCore extends KoaApplication {
     this.router.delete.apply(this.router, args);
     return this;
   }
-  del(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  del(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  del(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  del(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   del(...args: any): EggCore {
     this.router.del.apply(this.router, args);
     return this;
   }
 
-  all(path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
-  all(name: string, path: string | RegExp | (string | RegExp)[], ...middlewares: (MiddlewareFunc | string)[]): EggCore;
+  all(
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
+  all(
+    name: string,
+    path: string | RegExp | (string | RegExp)[],
+    ...middlewares: (MiddlewareFunc | string)[]
+  ): EggCore;
 
   all(...args: any): EggCore {
     this.router.all.apply(this.router, args);
@@ -516,13 +582,21 @@ export class EggCore extends KoaApplication {
   }
 
   resources(prefix: string, controller: string | ResourcesController): EggCore;
-  resources(prefix: string, middleware: MiddlewareFunc, controller: string | ResourcesController): EggCore;
-  resources(name: string, prefix: string, controller: string | ResourcesController): EggCore;
+  resources(
+    prefix: string,
+    middleware: MiddlewareFunc,
+    controller: string | ResourcesController,
+  ): EggCore;
+  resources(
+    name: string,
+    prefix: string,
+    controller: string | ResourcesController,
+  ): EggCore;
   resources(
     name: string,
     prefix: string,
     middleware: MiddlewareFunc,
-    controller: string | ResourcesController
+    controller: string | ResourcesController,
   ): EggCore;
 
   resources(...args: any): EggCore {
@@ -539,7 +613,7 @@ export class EggCore extends KoaApplication {
     path: string | RegExp | (string | RegExp)[],
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
-    opts?: RegisterOptions
+    opts?: RegisterOptions,
   ): this {
     this.router.register(path, methods, middleware, opts);
     return this;

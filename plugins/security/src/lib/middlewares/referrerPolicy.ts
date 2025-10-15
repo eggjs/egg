@@ -1,22 +1,22 @@
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-import { checkIfIgnore } from '../utils.ts';
-import type { SecurityConfig } from '../../config/config.default.ts';
+import { checkIfIgnore } from "../utils.ts";
+import type { SecurityConfig } from "../../config/config.default.ts";
 
 // https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Referrer-Policy
 const ALLOWED_POLICIES_ENUM = [
-  'no-referrer',
-  'no-referrer-when-downgrade',
-  'origin',
-  'origin-when-cross-origin',
-  'same-origin',
-  'strict-origin',
-  'strict-origin-when-cross-origin',
-  'unsafe-url',
-  '',
+  "no-referrer",
+  "no-referrer-when-downgrade",
+  "origin",
+  "origin-when-cross-origin",
+  "same-origin",
+  "strict-origin",
+  "strict-origin-when-cross-origin",
+  "unsafe-url",
+  "",
 ];
 
-export default (options: SecurityConfig['referrerPolicy']): MiddlewareFunc => {
+export default (options: SecurityConfig["referrerPolicy"]): MiddlewareFunc => {
   return async function referrerPolicy(ctx, next) {
     await next();
 
@@ -35,6 +35,6 @@ export default (options: SecurityConfig['referrerPolicy']): MiddlewareFunc => {
       throw new Error(`"${policy}" is not available.`);
     }
 
-    ctx.set('referrer-policy', policy);
+    ctx.set("referrer-policy", policy);
   };
 };

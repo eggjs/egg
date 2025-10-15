@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
   interval: 4000,
-  env: ['unittest'],
+  env: ["unittest"],
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('env unittest');
+  ctx.logger.info("env unittest");
 };

@@ -1,5 +1,9 @@
-import { Master, type MasterOptions } from './master.ts';
-import { type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode } from './utils/options.ts';
+import { Master, type MasterOptions } from "./master.ts";
+import {
+  type ClusterOptions,
+  type ClusterHTTPSSecureOptions,
+  type ClusterStartMode,
+} from "./utils/options.ts";
 
 /**
  * cluster start flow:
@@ -18,6 +22,12 @@ export async function startCluster(options: ClusterOptions): Promise<void> {
   await new Master(options).ready();
 }
 
-export { Master, type MasterOptions, type ClusterOptions, type ClusterHTTPSSecureOptions, type ClusterStartMode };
+export {
+  Master,
+  type MasterOptions,
+  type ClusterOptions,
+  type ClusterHTTPSSecureOptions,
+  type ClusterStartMode,
+};
 
-export * from './error/index.ts';
+export * from "./error/index.ts";

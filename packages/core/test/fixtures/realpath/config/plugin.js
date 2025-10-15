@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
 exports.a = {
   enable: true,
-  pacakge: 'b',
+  pacakge: "b",
 };

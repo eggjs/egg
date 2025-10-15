@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
 exports.workerStartTimeout = 1000;

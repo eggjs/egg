@@ -1,15 +1,15 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
+import path from "node:path";
+import fs from "node:fs/promises";
 
-import dayjs from 'dayjs';
-import type { Application, Subscription } from 'egg';
-import type { EggScheduleTaskOptions } from 'egg/schedule';
+import dayjs from "dayjs";
+import type { Application, Subscription } from "egg";
+import type { EggScheduleTaskOptions } from "egg/schedule";
 
 export default (app: Application): typeof Subscription => {
   return class CleanTmpdir extends app.Subscription {
     static get schedule(): EggScheduleTaskOptions {
       return {
-        type: 'worker',
+        type: "worker",
         cron: app.config.multipart.cleanSchedule.cron,
         disable: app.config.multipart.cleanSchedule.disable,
         immediate: false,
@@ -21,15 +21,25 @@ export default (app: Application): typeof Subscription => {
       if (
         await fs.access(dir).then(
           () => true,
-          () => false
+          () => false,
         )
       ) {
-        ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir] removing tmpdir: %j', dir);
+        ctx.coreLogger.info(
+          "[@eggjs/multipart:CleanTmpdir] removing tmpdir: %j",
+          dir,
+        );
         try {
           await fs.rm(dir, { force: true, recursive: true });
-          ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir:success] tmpdir: %j has been removed', dir);
+          ctx.coreLogger.info(
+            "[@eggjs/multipart:CleanTmpdir:success] tmpdir: %j has been removed",
+            dir,
+          );
         } catch (err) {
-          ctx.coreLogger.error('[@eggjs/multipart:CleanTmpdir:error] remove tmpdir: %j error: %s', dir, err);
+          ctx.coreLogger.error(
+            "[@eggjs/multipart:CleanTmpdir:error] remove tmpdir: %j error: %s",
+            dir,
+            err,
+          );
           ctx.coreLogger.error(err);
         }
       }
@@ -38,24 +48,33 @@ export default (app: Application): typeof Subscription => {
     async subscribe() {
       const { ctx } = this;
       const config = ctx.app.config;
-      ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir] start clean tmpdir: %j', config.multipart.tmpdir);
+      ctx.coreLogger.info(
+        "[@eggjs/multipart:CleanTmpdir] start clean tmpdir: %j",
+        config.multipart.tmpdir,
+      );
       // last year
-      const lastYear = dayjs().subtract(1, 'years');
-      const lastYearDir = path.join(config.multipart.tmpdir, lastYear.format('YYYY'));
+      const lastYear = dayjs().subtract(1, "years");
+      const lastYearDir = path.join(
+        config.multipart.tmpdir,
+        lastYear.format("YYYY"),
+      );
       await this._remove(lastYearDir);
       // 3 months
       for (let i = 1; i <= 3; i++) {
-        const date = dayjs().subtract(i, 'months');
-        const dir = path.join(config.multipart.tmpdir, date.format('YYYY/MM'));
+        const date = dayjs().subtract(i, "months");
+        const dir = path.join(config.multipart.tmpdir, date.format("YYYY/MM"));
         await this._remove(dir);
       }
       // 7 days
       for (let i = 1; i <= 7; i++) {
-        const date = dayjs().subtract(i, 'days');
-        const dir = path.join(config.multipart.tmpdir, date.format('YYYY/MM/DD'));
+        const date = dayjs().subtract(i, "days");
+        const dir = path.join(
+          config.multipart.tmpdir,
+          date.format("YYYY/MM/DD"),
+        );
         await this._remove(dir);
       }
-      ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir] end');
+      ctx.coreLogger.info("[@eggjs/multipart:CleanTmpdir] end");
     }
   };
 };

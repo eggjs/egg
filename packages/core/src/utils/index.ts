@@ -1,25 +1,25 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import fs from 'node:fs';
-import { stat } from 'node:fs/promises';
-import BuiltinModule from 'node:module';
+import { debuglog } from "node:util";
+import path from "node:path";
+import fs from "node:fs";
+import { stat } from "node:fs/promises";
+import BuiltinModule from "node:module";
 
-import { importResolve, importModule } from '@eggjs/utils';
+import { importResolve, importModule } from "@eggjs/utils";
 
-const debug = debuglog('egg/core/utils');
+const debug = debuglog("egg/core/utils");
 
 export type Fun = (...args: unknown[]) => unknown;
 
 // Guard against poorly mocked module constructors.
 const Module =
-  typeof module !== 'undefined' && module.constructor.length > 1
+  typeof module !== "undefined" && module.constructor.length > 1
     ? module.constructor
     : /* istanbul ignore next */
       BuiltinModule;
 
 const extensions = (Module as any)._extensions;
-const extensionNames = Object.keys(extensions).concat(['.cjs', '.mjs']);
-debug('Module extensions: %j', extensionNames);
+const extensionNames = Object.keys(extensions).concat([".cjs", ".mjs"]);
+debug("Module extensions: %j", extensionNames);
 
 function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
   stackIndex = stackIndex === undefined ? 2 : stackIndex;
@@ -34,13 +34,13 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
   const obj: any = {};
   Error.captureStackTrace(obj);
   let callSite = obj.stack[stackIndex];
-  let fileName = '';
+  let fileName = "";
   if (callSite) {
     // egg-mock will create a proxy
     // https://github.com/eggjs/egg-mock/blob/master/lib/app.js#L174
     fileName = callSite.getFileName();
     /* istanbul ignore if */
-    if (fileName && fileName.endsWith('egg-mock/lib/app.js')) {
+    if (fileName && fileName.endsWith("egg-mock/lib/app.js")) {
       // TODO: add test
       callSite = obj.stack[stackIndex + 1];
       fileName = callSite.getFileName();
@@ -50,7 +50,7 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
   Error.prepareStackTrace = prep;
   Error.stackTraceLimit = limit;
 
-  if (!callSite || !fileName) return '<anonymous>';
+  if (!callSite || !fileName) return "<anonymous>";
   if (!withLine) return fileName;
   return `${fileName}:${callSite.getLineNumber()}:${callSite.getColumnNumber()}`;
 }
@@ -58,10 +58,12 @@ function getCalleeFromStack(withLine?: boolean, stackIndex?: number): string {
 const utils = {
   deprecated(message: string): void {
     if (debug.enabled) {
-      console.trace('[@eggjs/core/deprecated] %s', message);
+      console.trace("[@eggjs/core/deprecated] %s", message);
     } else {
-      console.log('[@eggjs/core/deprecated] %s', message);
-      console.log('[@eggjs/core/deprecated] set NODE_DEBUG=@eggjs/core/utils can show call stack');
+      console.log("[@eggjs/core/deprecated] %s", message);
+      console.log(
+        "[@eggjs/core/deprecated] set NODE_DEBUG=@eggjs/core/utils can show call stack",
+      );
     }
   },
 
@@ -78,11 +80,11 @@ const utils = {
   },
 
   async loadFile(filepath: string): Promise<any> {
-    debug('[loadFile:start] filepath: %s', filepath);
+    debug("[loadFile:start] filepath: %s", filepath);
     try {
       // if not js module, just return content buffer
       const extname = path.extname(filepath);
-      if (extname && !extensionNames.includes(extname) && extname !== '.ts') {
+      if (extname && !extensionNames.includes(extname) && extname !== ".ts") {
         return fs.readFileSync(filepath);
       }
       const obj = await importModule(filepath, { importDefaultOnly: true });
@@ -93,9 +95,11 @@ const utils = {
         console.trace(e);
         throw e;
       }
-      const err = new Error(`[egg/core] load file: ${filepath}, error: ${e.message}`);
+      const err = new Error(
+        `[egg/core] load file: ${filepath}, error: ${e.message}`,
+      );
       err.cause = e;
-      debug('[loadFile] handle %s error: %s', filepath, e);
+      debug("[loadFile] handle %s error: %s", filepath, e);
       throw err;
     }
   },
@@ -104,19 +108,30 @@ const utils = {
     return importResolve(filepath, options);
   },
 
-  methods: ['head', 'options', 'get', 'put', 'patch', 'post', 'delete'] as const,
+  methods: [
+    "head",
+    "options",
+    "get",
+    "put",
+    "patch",
+    "post",
+    "delete",
+  ] as const,
 
   async callFn(fn: Fun, args?: unknown[], ctx?: unknown): Promise<unknown> {
     args = args || [];
-    if (typeof fn !== 'function') return;
+    if (typeof fn !== "function") return;
     return ctx ? fn.call(ctx, ...args) : fn(...args);
   },
 
-  getCalleeFromStack: getCalleeFromStack as (withLine?: boolean, stackIndex?: number) => string,
+  getCalleeFromStack: getCalleeFromStack as (
+    withLine?: boolean,
+    stackIndex?: number,
+  ) => string,
 
   getResolvedFilename(filepath: string, baseDir: string): string {
     const reg = /[/\\]/g;
-    return filepath.replace(baseDir + path.sep, '').replace(reg, '/');
+    return filepath.replace(baseDir + path.sep, "").replace(reg, "/");
   },
 };
 

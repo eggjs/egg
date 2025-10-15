@@ -1,17 +1,17 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import context from '../test-helpers/context.ts';
+import context from "../test-helpers/context.ts";
 
-describe('ctx.toJSON()', () => {
-  it('should return a json representation', () => {
+describe("ctx.toJSON()", () => {
+  it("should return a json representation", () => {
     const ctx = context();
 
-    ctx.req.method = 'POST';
-    ctx.req.url = '/items';
-    ctx.req.headers['content-type'] = 'text/plain';
+    ctx.req.method = "POST";
+    ctx.req.url = "/items";
+    ctx.req.headers["content-type"] = "text/plain";
     ctx.status = 200;
-    ctx.body = '<p>Hey</p>';
+    ctx.body = "<p>Hey</p>";
 
     // oxlint-disable-next-line unicorn/prefer-structured-clone
     const obj = JSON.parse(JSON.stringify(ctx));
@@ -20,25 +20,25 @@ describe('ctx.toJSON()', () => {
 
     assert.deepEqual(
       {
-        method: 'POST',
-        url: '/items',
+        method: "POST",
+        url: "/items",
         header: {
-          'content-type': 'text/plain',
+          "content-type": "text/plain",
         },
       },
-      req
+      req,
     );
 
     assert.deepEqual(
       {
         status: 200,
-        message: 'OK',
+        message: "OK",
         header: {
-          'content-type': 'text/html; charset=utf-8',
-          'content-length': '10',
+          "content-type": "text/html; charset=utf-8",
+          "content-length": "10",
         },
       },
-      res
+      res,
     );
   });
 });

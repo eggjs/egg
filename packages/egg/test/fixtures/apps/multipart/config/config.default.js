@@ -1,5 +1,5 @@
 exports.multipart = {
-  fileExtensions: ['.foo'],
+  fileExtensions: [".foo"],
 };
 
-exports.keys = 'foo,key';
+exports.keys = "foo,key";

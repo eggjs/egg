@@ -2,11 +2,13 @@
  * remote command execution
  */
 
-const BASIC_ALPHABETS = new Set('abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ.-_'.split(''));
+const BASIC_ALPHABETS = new Set(
+  "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ.-_".split(""),
+);
 
 export default function cliFilter(text: string): string {
-  const str = '' + text;
-  let res = '';
+  const str = "" + text;
+  let res = "";
   let ascii;
 
   for (let index = 0; index < str.length; index++) {

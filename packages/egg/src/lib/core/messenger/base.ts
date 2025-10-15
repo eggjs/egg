@@ -1,7 +1,7 @@
-import { EventEmitter, captureRejectionSymbol } from 'node:events';
+import { EventEmitter, captureRejectionSymbol } from "node:events";
 
-import { MessageUnhandledRejectionError } from '../../error/index.ts';
-import { EggApplicationCore } from '../../egg.ts';
+import { MessageUnhandledRejectionError } from "../../error/index.ts";
+import { EggApplicationCore } from "../../egg.ts";
 
 export class BaseMessenger extends EventEmitter {
   protected readonly egg: EggApplicationCore;
@@ -13,8 +13,14 @@ export class BaseMessenger extends EventEmitter {
     this[captureRejectionSymbol] = this.onRejection.bind(this);
   }
 
-  private onRejection(err: Error, event: string | symbol, ...args: any[]): void {
-    this.egg.coreLogger.error(new MessageUnhandledRejectionError(err, event, args));
+  private onRejection(
+    err: Error,
+    event: string | symbol,
+    ...args: any[]
+  ): void {
+    this.egg.coreLogger.error(
+      new MessageUnhandledRejectionError(err, event, args),
+    );
   }
 
   emit(eventName: string | symbol, ...args: any[]): boolean {
@@ -26,7 +32,9 @@ export class BaseMessenger extends EventEmitter {
       if (!(err instanceof Error)) {
         err = new Error(String(err));
       }
-      this.egg.coreLogger.error(new MessageUnhandledRejectionError(err, eventName, args));
+      this.egg.coreLogger.error(
+        new MessageUnhandledRejectionError(err, eventName, args),
+      );
       return hasListeners;
     }
   }

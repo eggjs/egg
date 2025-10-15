@@ -1,3 +1,3 @@
 module.exports = function () {
-  return Promise.resolve({ clients: 'Test Config' });
+  return Promise.resolve({ clients: "Test Config" });
 };

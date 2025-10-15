@@ -1,4 +1,4 @@
-import { EggApplicationLoader } from './EggApplicationLoader.ts';
+import { EggApplicationLoader } from "./EggApplicationLoader.ts";
 
 /**
  * App worker process Loader, will load plugins

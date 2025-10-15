@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 module.exports = async function () {
-  await this.render('home.html', {
+  await this.render("home.html", {
     user: {
-      name: 'fengmk2',
+      name: "fengmk2",
     },
   });
 };

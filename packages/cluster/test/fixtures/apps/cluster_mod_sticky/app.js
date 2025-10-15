@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const net = require('net');
+const net = require("net");
 
-module.exports = app => {
+module.exports = (app) => {
   // don't use the port that egg-mock defined
   app._options.port = undefined;
   const server = net.createServer();

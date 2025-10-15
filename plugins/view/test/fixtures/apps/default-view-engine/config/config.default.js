@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
 module.exports = {
   view: {
-    defaultViewEngine: 'ejs',
+    defaultViewEngine: "ejs",
     mapping: {
-      '.nj': 'nunjucks',
-      '.ejs': 'ejs',
+      ".nj": "nunjucks",
+      ".ejs": "ejs",
     },
   },
 
-  keys: '123',
+  keys: "123",
 };

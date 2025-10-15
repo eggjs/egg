@@ -1,13 +1,13 @@
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { mm } from '@eggjs/mock';
-import { createApp, type MockApplication } from '../../utils.ts';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
+import { mm } from "@eggjs/mock";
+import { createApp, type MockApplication } from "../../utils.ts";
 
-describe('test/lib/plugins/onerror.test.ts', () => {
+describe("test/lib/plugins/onerror.test.ts", () => {
   let app: MockApplication;
   beforeAll(() => {
-    mm.env('local');
-    mm(process.env, 'EGG_LOG', 'NONE');
-    app = createApp('apps/onerror');
+    mm.env("local");
+    mm(process.env, "EGG_LOG", "NONE");
+    app = createApp("apps/onerror");
     return app.ready();
   });
 
@@ -15,8 +15,12 @@ describe('test/lib/plugins/onerror.test.ts', () => {
 
   afterEach(mm.restore);
 
-  it('should redirect to error page', () => {
-    mm(app.config, 'env', 'test');
-    return app.httpRequest().get('/?status=500').expect('Location', 'http://eggjs.org/500?real_status=500').expect(302);
+  it("should redirect to error page", () => {
+    mm(app.config, "env", "test");
+    return app
+      .httpRequest()
+      .get("/?status=500")
+      .expect("Location", "http://eggjs.org/500?real_status=500")
+      .expect(302);
   });
 });

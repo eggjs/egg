@@ -1,8 +1,8 @@
 exports.schedule = {
-  type: 'worker',
-  cron: '*/5 * * * * *',
+  type: "worker",
+  cron: "*/5 * * * * *",
 };
 
-exports.task = async ctx => {
-  ctx.logger.warn('cron wow');
+exports.task = async (ctx) => {
+  ctx.logger.warn("cron wow");
 };

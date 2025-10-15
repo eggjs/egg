@@ -4,16 +4,16 @@ import {
   type RequestOptions,
   type ClientOptions as HttpClientOptions,
   type HttpClientResponse,
-} from 'urllib';
-import { ms } from 'humanize-ms';
+} from "urllib";
+import { ms } from "humanize-ms";
 
-import type { EggApplicationCore } from '../egg.ts';
+import type { EggApplicationCore } from "../egg.ts";
 
 export {
   type HttpClientResponse,
   type RequestURL as HttpClientRequestURL,
   type ClientOptions as HttpClientOptions,
-} from 'urllib';
+} from "urllib";
 
 export interface HttpClientRequestOptions extends RequestOptions {
   ctx?: any;
@@ -39,7 +39,7 @@ export class HttpClient extends RawHttpClient {
 
   async request<T = any>(
     url: HttpClientRequestURL,
-    options?: HttpClientRequestOptions
+    options?: HttpClientRequestOptions,
   ): Promise<HttpClientResponse<T>> {
     options = options ?? {};
     if (options.ctx?.tracer) {
@@ -50,7 +50,10 @@ export class HttpClient extends RawHttpClient {
     return await super.request<T>(url, options);
   }
 
-  async curl<T = any>(url: HttpClientRequestURL, options?: HttpClientRequestOptions): Promise<HttpClientResponse<T>> {
+  async curl<T = any>(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions,
+  ): Promise<HttpClientResponse<T>> {
     return await this.request<T>(url, options);
   }
 }
@@ -60,7 +63,7 @@ export type { HttpClient as EggHttpClient, HttpClient as EggContextHttpClient };
 
 function normalizeConfig(app: EggApplicationCore) {
   const config = app.config.httpclient;
-  if (typeof config.request?.timeout === 'string') {
+  if (typeof config.request?.timeout === "string") {
     config.request.timeout = ms(config.request.timeout);
   }
 }

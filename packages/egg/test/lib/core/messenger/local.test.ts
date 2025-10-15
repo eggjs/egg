@@ -1,14 +1,17 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
-import { mm } from '@eggjs/mock';
-import { singleProcessApp, type SingleModeApplication } from '../../../utils.ts';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
+import { mm } from "@eggjs/mock";
+import {
+  singleProcessApp,
+  type SingleModeApplication,
+} from "../../../utils.ts";
 
-describe('test/lib/core/messenger/local.test.ts', () => {
+describe("test/lib/core/messenger/local.test.ts", () => {
   let app: SingleModeApplication;
 
   beforeAll(async () => {
-    app = await singleProcessApp('apps/demo');
+    app = await singleProcessApp("apps/demo");
   });
 
   afterAll(() => app.close());
@@ -19,8 +22,8 @@ describe('test/lib/core/messenger/local.test.ts', () => {
     app.agent.messenger.close();
   });
 
-  describe('broadcast()', () => {
-    it('app.messenger.broadcast should work', done => {
+  describe("broadcast()", () => {
+    it("app.messenger.broadcast should work", (done) => {
       // // @ts-ignore
       // done = pending(2, done);
       // app.messenger.once('broadcast-event', (msg: unknown) => {
@@ -28,16 +31,16 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       //   // @ts-ignore
       //   done();
       // });
-      app.agent.messenger.once('broadcast-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.agent.messenger.once("broadcast-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.messenger.broadcast('broadcast-event', { foo: 'bar' });
+      app.messenger.broadcast("broadcast-event", { foo: "bar" });
     });
 
-    it('agent.messenger.broadcast should work', done => {
+    it("agent.messenger.broadcast should work", (done) => {
       // // @ts-ignore
       // done = pending(2, done);
       // app.messenger.once('broadcast-event', (msg: unknown) => {
@@ -45,108 +48,108 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       //   // @ts-ignore
       //   done();
       // });
-      app.agent.messenger.once('broadcast-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.agent.messenger.once("broadcast-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.agent.messenger.broadcast('broadcast-event', { foo: 'bar' });
+      app.agent.messenger.broadcast("broadcast-event", { foo: "bar" });
     });
   });
 
-  describe('sendToApp()', () => {
-    it('app.messenger.sendToApp should work', done => {
-      app.agent.messenger.once('sendToApp-event', () => {
-        throw new Error('should not emit on agent');
+  describe("sendToApp()", () => {
+    it("app.messenger.sendToApp should work", (done) => {
+      app.agent.messenger.once("sendToApp-event", () => {
+        throw new Error("should not emit on agent");
       });
 
-      app.messenger.once('sendToApp-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.messenger.once("sendToApp-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.messenger.sendToApp('sendToApp-event', { foo: 'bar' });
+      app.messenger.sendToApp("sendToApp-event", { foo: "bar" });
     });
 
-    it('agent.messenger.sendToApp should work', done => {
-      app.agent.messenger.once('sendToApp-event', () => {
-        throw new Error('should not emit on agent');
+    it("agent.messenger.sendToApp should work", (done) => {
+      app.agent.messenger.once("sendToApp-event", () => {
+        throw new Error("should not emit on agent");
       });
 
-      app.messenger.once('sendToApp-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.messenger.once("sendToApp-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.agent.messenger.sendToApp('sendToApp-event', { foo: 'bar' });
-    });
-  });
-
-  describe('sendToAgent()', () => {
-    it('app.messenger.sendToAgent should work', done => {
-      app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
-        // @ts-ignore
-        done();
-      });
-
-      app.messenger.once('sendToAgent-event', () => {
-        throw new Error('should not emit on app');
-      });
-
-      app.messenger.sendToAgent('sendToAgent-event', { foo: 'bar' });
-    });
-
-    it('agent.messenger.sendToAgent should work', done => {
-      app.agent.messenger.once('sendToAgent-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
-        // @ts-ignore
-        done();
-      });
-
-      app.messenger.once('sendToAgent-event', () => {
-        throw new Error('should not emit on app');
-      });
-
-      app.agent.messenger.sendToAgent('sendToAgent-event', { foo: 'bar' });
+      app.agent.messenger.sendToApp("sendToApp-event", { foo: "bar" });
     });
   });
 
-  describe('sendRandom()', () => {
-    it('app.messenger.sendRandom should work', done => {
-      app.agent.messenger.once('sendRandom-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+  describe("sendToAgent()", () => {
+    it("app.messenger.sendToAgent should work", (done) => {
+      app.agent.messenger.once("sendToAgent-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.messenger.once('sendRandom-event', () => {
-        throw new Error('should not emit on app');
+      app.messenger.once("sendToAgent-event", () => {
+        throw new Error("should not emit on app");
       });
 
-      app.messenger.sendRandom('sendRandom-event', { foo: 'bar' });
+      app.messenger.sendToAgent("sendToAgent-event", { foo: "bar" });
     });
 
-    it('agent.messenger.sendRandom should work', done => {
-      app.agent.messenger.once('sendRandom-event', () => {
-        throw new Error('should not emit on agent');
-      });
-
-      app.messenger.once('sendRandom-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+    it("agent.messenger.sendToAgent should work", (done) => {
+      app.agent.messenger.once("sendToAgent-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.agent.messenger.sendRandom('sendRandom-event', { foo: 'bar' });
+      app.messenger.once("sendToAgent-event", () => {
+        throw new Error("should not emit on app");
+      });
+
+      app.agent.messenger.sendToAgent("sendToAgent-event", { foo: "bar" });
     });
   });
 
-  describe('sendTo(pid)', () => {
-    it('app.messenger.sendTo should work', done => {
+  describe("sendRandom()", () => {
+    it("app.messenger.sendRandom should work", (done) => {
+      app.agent.messenger.once("sendRandom-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
+        // @ts-ignore
+        done();
+      });
+
+      app.messenger.once("sendRandom-event", () => {
+        throw new Error("should not emit on app");
+      });
+
+      app.messenger.sendRandom("sendRandom-event", { foo: "bar" });
+    });
+
+    it("agent.messenger.sendRandom should work", (done) => {
+      app.agent.messenger.once("sendRandom-event", () => {
+        throw new Error("should not emit on agent");
+      });
+
+      app.messenger.once("sendRandom-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
+        // @ts-ignore
+        done();
+      });
+
+      app.agent.messenger.sendRandom("sendRandom-event", { foo: "bar" });
+    });
+  });
+
+  describe("sendTo(pid)", () => {
+    it("app.messenger.sendTo should work", (done) => {
       // // @ts-ignore
       // done = pending(2, done);
       // app.messenger.once('sendTo-event', (msg: unknown) => {
@@ -154,23 +157,23 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       //   // @ts-ignore
       //   done();
       // });
-      app.agent.messenger.once('sendTo-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.agent.messenger.once("sendTo-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
       // keep compatible with old code, use process.pid as number
-      let res = (app.messenger as any).sendTo(process.pid, 'sendTo-event', {
-        foo: 'bar',
+      let res = (app.messenger as any).sendTo(process.pid, "sendTo-event", {
+        foo: "bar",
       });
       assert(res === app.messenger);
       // should ignore if target process is not self
-      res = app.messenger.sendTo('1', 'sendTo-event', { foo: 'bar' });
+      res = app.messenger.sendTo("1", "sendTo-event", { foo: "bar" });
       assert(res === app.messenger);
     });
 
-    it('agent.messenger.sendTo should work', done => {
+    it("agent.messenger.sendTo should work", (done) => {
       // // @ts-ignore
       // done = pending(done, 2);
       // app.messenger.once('sendTo-event', (msg: unknown) => {
@@ -178,66 +181,66 @@ describe('test/lib/core/messenger/local.test.ts', () => {
       //   // @ts-ignore
       //   done();
       // });
-      app.agent.messenger.once('sendTo-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.agent.messenger.once("sendTo-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.agent.messenger.sendTo(String(process.pid), 'sendTo-event', {
-        foo: 'bar',
+      app.agent.messenger.sendTo(String(process.pid), "sendTo-event", {
+        foo: "bar",
       });
     });
   });
 
-  describe('send()', () => {
-    it('app.messenger.send should not throw when app.agent not exist', () => {
-      mm(app, 'agent', undefined);
-      app.messenger.send('send-event', { foo: 'bar' });
+  describe("send()", () => {
+    it("app.messenger.send should not throw when app.agent not exist", () => {
+      mm(app, "agent", undefined);
+      app.messenger.send("send-event", { foo: "bar" });
     });
 
-    it('app.messenger.send should work', done => {
-      app.agent.messenger.once('send-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+    it("app.messenger.send should work", (done) => {
+      app.agent.messenger.once("send-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.messenger.once('send-event', () => {
-        throw new Error('should not emit on app');
+      app.messenger.once("send-event", () => {
+        throw new Error("should not emit on app");
       });
 
-      app.messenger.send('send-event', { foo: 'bar' });
+      app.messenger.send("send-event", { foo: "bar" });
     });
 
-    it('agent.messenger.send should work', done => {
-      app.agent.messenger.once('send-event', () => {
-        throw new Error('should not emit on agent');
+    it("agent.messenger.send should work", (done) => {
+      app.agent.messenger.once("send-event", () => {
+        throw new Error("should not emit on agent");
       });
 
-      app.messenger.once('send-event', (msg: unknown) => {
-        assert.deepEqual(msg, { foo: 'bar' });
+      app.messenger.once("send-event", (msg: unknown) => {
+        assert.deepEqual(msg, { foo: "bar" });
         // @ts-ignore
         done();
       });
 
-      app.agent.messenger.send('send-event', { foo: 'bar' });
+      app.agent.messenger.send("send-event", { foo: "bar" });
     });
   });
 
-  describe('onMessage()', () => {
-    it('should ignore if message format error', () => {
+  describe("onMessage()", () => {
+    it("should ignore if message format error", () => {
       (app.messenger as any).onMessage();
-      app.messenger.onMessage('foo');
+      app.messenger.onMessage("foo");
       app.messenger.onMessage({ action: 1 });
     });
 
-    it('should emit with action', done => {
+    it("should emit with action", (done) => {
       app.messenger.once(
-        'test-action', // @ts-ignore
-        done
+        "test-action", // @ts-ignore
+        done,
       );
-      app.messenger.onMessage({ action: 'test-action' });
+      app.messenger.onMessage({ action: "test-action" });
     });
   });
 });

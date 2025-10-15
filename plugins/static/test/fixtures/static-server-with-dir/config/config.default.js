@@ -1,11 +1,14 @@
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
-    keys: 'aaa',
+    keys: "aaa",
     static: {
-      prefix: '/public',
-      dir: [path.join(appInfo.baseDir, '/app/public'), path.join(appInfo.baseDir, '/dist/static')],
+      prefix: "/public",
+      dir: [
+        path.join(appInfo.baseDir, "/app/public"),
+        path.join(appInfo.baseDir, "/dist/static"),
+      ],
       buffer: true,
     },
   };

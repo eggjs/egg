@@ -8,7 +8,7 @@
  *   fengmk2 <fengmk2@gmail.com> (http://fengmk2.github.com)
  */
 
-'use strict';
+"use strict";
 
 /**
  * Module dependencies.
@@ -16,6 +16,6 @@
 
 exports.get = function (callback) {
   setTimeout(function () {
-    callback(null, 'bar');
+    callback(null, "bar");
   }, 1);
 };

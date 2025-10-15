@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'nosniff',
+  defaultMiddleware: "nosniff",
 };

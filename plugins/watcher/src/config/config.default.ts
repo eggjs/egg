@@ -1,4 +1,4 @@
-import path from 'node:path';
+import path from "node:path";
 
 export interface WatcherConfig {
   /**
@@ -20,10 +20,13 @@ export default {
    * @property {string} type - event source type
    */
   watcher: {
-    type: 'default', // default event source
+    type: "default", // default event source
     eventSources: {
-      default: path.join(import.meta.dirname, '../lib/event-sources/default'),
-      development: path.join(import.meta.dirname, '../lib/event-sources/development'),
+      default: path.join(import.meta.dirname, "../lib/event-sources/default"),
+      development: path.join(
+        import.meta.dirname,
+        "../lib/event-sources/development",
+      ),
     },
   } as WatcherConfig,
 };

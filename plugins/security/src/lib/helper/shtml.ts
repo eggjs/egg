@@ -1,17 +1,17 @@
-import type { BaseContextClass } from 'egg';
-import xss from 'xss';
+import type { BaseContextClass } from "egg";
+import xss from "xss";
 
-import { isSafeDomain, getFromUrl } from '../utils.ts';
-import type { SecurityHelperOnTagAttrHandler } from '../../config/config.default.ts';
+import { isSafeDomain, getFromUrl } from "../utils.ts";
+import type { SecurityHelperOnTagAttrHandler } from "../../config/config.default.ts";
 
-const BUILD_IN_ON_TAG_ATTR = Symbol('buildInOnTagAttr');
+const BUILD_IN_ON_TAG_ATTR = Symbol("buildInOnTagAttr");
 
 // default rule: https://github.com/leizongmin/js-xss/blob/master/lib/default.js
 // add domain filter based on xss module
 // custom options http://jsxss.com/zh/options.html
 // eg: support a tag，filter attributes except for title : whiteList: {a: ['title']}
 export default function shtml(this: BaseContextClass, val: string): string {
-  if (typeof val !== 'string') {
+  if (typeof val !== "string") {
     return val;
   }
 
@@ -19,7 +19,9 @@ export default function shtml(this: BaseContextClass, val: string): string {
   const shtmlConfig = {
     ...this.app.config.helper.shtml,
     ...securityOptions.shtml,
-    [BUILD_IN_ON_TAG_ATTR]: undefined as SecurityHelperOnTagAttrHandler | undefined,
+    [BUILD_IN_ON_TAG_ATTR]: undefined as
+      | SecurityHelperOnTagAttrHandler
+      | undefined,
   };
   const domainWhiteList = this.app.config.security.domainWhiteList;
   const app = this.app;
@@ -29,19 +31,19 @@ export default function shtml(this: BaseContextClass, val: string): string {
       _tag: string,
       name: string,
       value: string,
-      isWhiteAttr: boolean
+      isWhiteAttr: boolean,
     ): string | void => {
-      if (isWhiteAttr && (name === 'href' || name === 'src')) {
+      if (isWhiteAttr && (name === "href" || name === "src")) {
         if (!value) {
           return;
         }
 
         value = String(value);
-        if (value[0] === '/' || value[0] === '#') {
+        if (value[0] === "/" || value[0] === "#") {
           return;
         }
 
-        const hostname = getFromUrl(value, 'hostname');
+        const hostname = getFromUrl(value, "hostname");
         if (!hostname) {
           return;
         }
@@ -50,15 +52,18 @@ export default function shtml(this: BaseContextClass, val: string): string {
         // Just check for `shtmlConfig.domainWhiteList` and `ctx.whiteList`.
         if (!isSafeDomain(hostname, domainWhiteList)) {
           // Check for `shtmlConfig.domainWhiteList` first (duplicated now)
-          if (shtmlConfig.domainWhiteList && shtmlConfig.domainWhiteList.length > 0) {
+          if (
+            shtmlConfig.domainWhiteList &&
+            shtmlConfig.domainWhiteList.length > 0
+          ) {
             app.deprecate(
-              '[@eggjs/security/lib/helper/shtml] `config.helper.shtml.domainWhiteList` has been deprecate. Please use `config.security.domainWhiteList` instead.'
+              "[@eggjs/security/lib/helper/shtml] `config.helper.shtml.domainWhiteList` has been deprecate. Please use `config.security.domainWhiteList` instead.",
             );
             if (!isSafeDomain(hostname, shtmlConfig.domainWhiteList)) {
-              return '';
+              return "";
             }
           } else {
-            return '';
+            return "";
           }
         }
       }
@@ -67,13 +72,28 @@ export default function shtml(this: BaseContextClass, val: string): string {
     // avoid overriding user configuration 'onTagAttr'
     if (shtmlConfig.onTagAttr) {
       const customOnTagAttrHandler = shtmlConfig.onTagAttr;
-      shtmlConfig.onTagAttr = function (tag: string, name: string, value: string, isWhiteAttr: boolean): string | void {
-        const result = customOnTagAttrHandler.apply(this, [tag, name, value, isWhiteAttr]);
+      shtmlConfig.onTagAttr = function (
+        tag: string,
+        name: string,
+        value: string,
+        isWhiteAttr: boolean,
+      ): string | void {
+        const result = customOnTagAttrHandler.apply(this, [
+          tag,
+          name,
+          value,
+          isWhiteAttr,
+        ]);
         if (result !== undefined) {
           return result;
         }
         // fallback to build-in handler
-        return shtmlConfig[BUILD_IN_ON_TAG_ATTR]!.apply(this, [tag, name, value, isWhiteAttr]);
+        return shtmlConfig[BUILD_IN_ON_TAG_ATTR]!.apply(this, [
+          tag,
+          name,
+          value,
+          isWhiteAttr,
+        ]);
       };
     } else {
       shtmlConfig.onTagAttr = shtmlConfig[BUILD_IN_ON_TAG_ATTR];

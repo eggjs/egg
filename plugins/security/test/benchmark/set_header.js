@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const Benchmark = require('benchmark');
-const benchmarks = require('beautify-benchmark');
+const Benchmark = require("benchmark");
+const benchmarks = require("beautify-benchmark");
 const suite = new Benchmark.Suite();
 
 class Response {
@@ -26,41 +26,45 @@ class Response {
 
 suite
 
-  .add('set()', () => {
+  .add("set()", () => {
     const r = new Response();
-    r.set('X-Frame-Options1', 'X-Frame-Options1 value');
-    r.set('X-Frame-Options2', 'X-Frame-Options2 value');
-    r.set('X-Frame-Options3', 'X-Frame-Options3 value');
+    r.set("X-Frame-Options1", "X-Frame-Options1 value");
+    r.set("X-Frame-Options2", "X-Frame-Options2 value");
+    r.set("X-Frame-Options3", "X-Frame-Options3 value");
   })
 
-  .add('set() with lower case name', () => {
+  .add("set() with lower case name", () => {
     const r = new Response();
-    r.set('x-frame-options1', 'X-Frame-Options1 value');
-    r.set('x-frame-options2', 'X-Frame-Options2 value');
-    r.set('x-frame-options3', 'X-Frame-Options3 value');
+    r.set("x-frame-options1", "X-Frame-Options1 value");
+    r.set("x-frame-options2", "X-Frame-Options2 value");
+    r.set("x-frame-options3", "X-Frame-Options3 value");
   })
 
-  .add('setWithoutLowerCase()', () => {
+  .add("setWithoutLowerCase()", () => {
     const r = new Response();
-    r.setWithoutLowerCase('X-Frame-Options1', 'X-Frame-Options1 value');
-    r.setWithoutLowerCase('X-Frame-Options2', 'X-Frame-Options2 value');
-    r.setWithoutLowerCase('X-Frame-Options3', 'X-Frame-Options3 value');
+    r.setWithoutLowerCase("X-Frame-Options1", "X-Frame-Options1 value");
+    r.setWithoutLowerCase("X-Frame-Options2", "X-Frame-Options2 value");
+    r.setWithoutLowerCase("X-Frame-Options3", "X-Frame-Options3 value");
   })
 
-  .add('setWithoutLowerCase() with lower case name', () => {
+  .add("setWithoutLowerCase() with lower case name", () => {
     const r = new Response();
-    r.setWithoutLowerCase('x-frame-options1', 'X-Frame-Options1 value');
-    r.setWithoutLowerCase('x-frame-options2', 'X-Frame-Options2 value');
-    r.setWithoutLowerCase('x-frame-options3', 'X-Frame-Options3 value');
+    r.setWithoutLowerCase("x-frame-options1", "X-Frame-Options1 value");
+    r.setWithoutLowerCase("x-frame-options2", "X-Frame-Options2 value");
+    r.setWithoutLowerCase("x-frame-options3", "X-Frame-Options3 value");
   })
 
-  .on('cycle', event => {
+  .on("cycle", (event) => {
     benchmarks.add(event.target);
   })
-  .on('start', () => {
-    console.log('\n  setHeader() Benchmark\n  node version: %s, date: %s\n  Starting...', process.version, Date());
+  .on("start", () => {
+    console.log(
+      "\n  setHeader() Benchmark\n  node version: %s, date: %s\n  Starting...",
+      process.version,
+      Date(),
+    );
   })
-  .on('complete', () => {
+  .on("complete", () => {
     benchmarks.log();
   })
   .run({ async: false });

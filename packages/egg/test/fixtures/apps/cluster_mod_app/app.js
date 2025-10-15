@@ -1,19 +1,19 @@
-'use strict';
+"use strict";
 
-const ApiClient = require('./lib/api_client');
-const ApiClient2 = require('./lib/api_client_2');
-const RegistryClient = require('./lib/registry_client');
+const ApiClient = require("./lib/api_client");
+const ApiClient2 = require("./lib/api_client_2");
+const RegistryClient = require("./lib/registry_client");
 
 module.exports = function (app) {
   app.registryClient = app.cluster(RegistryClient).create();
 
   app.registryClient.subscribe(
     {
-      dataId: 'demo.DemoService',
+      dataId: "demo.DemoService",
     },
-    val => {
+    (val) => {
       app.val = val;
-    }
+    },
   );
 
   app.apiClient = new ApiClient({ cluster: app.cluster });

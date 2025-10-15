@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = class Service {
   constructor(ctx) {

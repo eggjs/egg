@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (antx, appConfig) {
   appConfig.app.sub.val = 2;

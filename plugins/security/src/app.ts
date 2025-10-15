@@ -1,7 +1,7 @@
-import type { ILifecycleBoot, Application } from 'egg';
+import type { ILifecycleBoot, Application } from "egg";
 
-import { preprocessConfig } from './lib/utils.ts';
-import { SecurityConfig } from './config/config.default.ts';
+import { preprocessConfig } from "./lib/utils.ts";
+import { SecurityConfig } from "./config/config.default.ts";
 
 export default class AppBoot implements ILifecycleBoot {
   private readonly app;
@@ -12,10 +12,10 @@ export default class AppBoot implements ILifecycleBoot {
 
   configWillLoad(): void {
     const app = this.app;
-    app.config.coreMiddleware.push('securities');
+    app.config.coreMiddleware.push("securities");
     // parse config and check if config is legal
     const parsed = SecurityConfig.parse(app.config.security);
-    if (typeof app.config.security.csrf === 'boolean') {
+    if (typeof app.config.security.csrf === "boolean") {
       // support old config: `config.security.csrf = false`
       app.config.security.csrf = parsed.csrf;
     }
@@ -23,7 +23,9 @@ export default class AppBoot implements ILifecycleBoot {
     if (app.config.security.csrf.enable) {
       const { ignoreJSON } = app.config.security.csrf;
       if (ignoreJSON) {
-        app.deprecate('[@eggjs/security/app] `config.security.csrf.ignoreJSON` is not safe now, please disable it.');
+        app.deprecate(
+          "[@eggjs/security/app] `config.security.csrf.ignoreJSON` is not safe now, please disable it.",
+        );
       }
     }
 

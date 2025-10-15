@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   const options = app.config.mock;
 
   app.mockClient = app.createAppWorkerClient(
-    'mock',
+    "mock",
     {
       on(event, listner) {
         return this._on(event, listner);
@@ -25,31 +25,31 @@ module.exports = app => {
         return this._unSubscribe(reg, listner);
       },
       *getData(key) {
-        return yield this._invoke('getData', [key]);
+        return yield this._invoke("getData", [key]);
       },
       *getError() {
-        return yield this._invoke('getError', []);
+        return yield this._invoke("getError", []);
       },
       *getTimeout() {
-        return yield this._invoke('getTimeout', []);
+        return yield this._invoke("getTimeout", []);
       },
       *getDataGenerator(key) {
-        return yield this._invoke('getDataGenerator', [key]);
+        return yield this._invoke("getDataGenerator", [key]);
       },
       *save(key, value) {
-        return yield this._invoke('save', [key, value]);
+        return yield this._invoke("save", [key, value]);
       },
       saveCallback(key, value, callback) {
-        this._invoke('save', [key, value]).then(callback, callback);
+        this._invoke("save", [key, value]).then(callback, callback);
       },
       saveAsync(key, value) {
-        this._invokeOneway('save', [key, value]);
+        this._invokeOneway("save", [key, value]);
       },
     },
-    options
+    options,
   );
 
-  app.mockClient.ready(app.readyCallback('worker_mock_client'), {
+  app.mockClient.ready(app.readyCallback("worker_mock_client"), {
     isWeakDep: app.config.runMode === 0,
   });
 };

@@ -1,14 +1,14 @@
-import path from 'node:path';
-import moment from 'moment';
-import fs from 'node:fs/promises';
-import { debuglog } from 'node:util';
+import path from "node:path";
+import moment from "moment";
+import fs from "node:fs/promises";
+import { debuglog } from "node:util";
 
-import { exists } from 'utility';
+import { exists } from "utility";
 
-import { LogRotator, type RotateFile, type RotatorOptions } from './rotator.ts';
-import { walkLoggerFile } from './utils.ts';
+import { LogRotator, type RotateFile, type RotatorOptions } from "./rotator.ts";
+import { walkLoggerFile } from "./utils.ts";
 
-const debug = debuglog('egg/logrotator/lib/day_rotator');
+const debug = debuglog("egg/logrotator/lib/day_rotator");
 
 // rotate log by day
 // rename from foo.log to foo.log.YYYY-MM-DD
@@ -47,7 +47,7 @@ export class DayRotator extends LogRotator {
     const rotateLogDirs = this.app.config.logger.rotateLogDirs;
     if (rotateLogDirs && rotateLogDirs.length > 0) {
       this.app.deprecate(
-        '[@eggjs/logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers'
+        "[@eggjs/logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers",
       );
 
       for (const dir of rotateLogDirs) {
@@ -57,7 +57,7 @@ export class DayRotator extends LogRotator {
         try {
           const names = await fs.readdir(dir);
           for (const name of names) {
-            if (!name.endsWith('.log')) {
+            if (!name.endsWith(".log")) {
               continue;
             }
             this._setFile(path.join(dir, name), files);
@@ -83,10 +83,16 @@ export class DayRotator extends LogRotator {
     }
 
     if (!files.has(srcPath)) {
-      const ext = this.app.config.logrotator.gzip === true ? '.gz' : '';
+      const ext = this.app.config.logrotator.gzip === true ? ".gz" : "";
       // allow 2 minutes deviation
-      const targetPath = srcPath + moment().subtract(23, 'hours').subtract(58, 'minutes').format('.YYYY-MM-DD') + ext;
-      debug('set file %s => %s', srcPath, targetPath);
+      const targetPath =
+        srcPath +
+        moment()
+          .subtract(23, "hours")
+          .subtract(58, "minutes")
+          .format(".YYYY-MM-DD") +
+        ext;
+      debug("set file %s => %s", srcPath, targetPath);
       files.set(srcPath, { srcPath, targetPath });
     }
   }

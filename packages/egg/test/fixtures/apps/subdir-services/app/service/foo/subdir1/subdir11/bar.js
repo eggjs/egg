@@ -6,7 +6,7 @@ module.exports = function (app) {
 
     async get(name) {
       return {
-        bar: 'bar111',
+        bar: "bar111",
       };
     }
   }

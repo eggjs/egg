@@ -1,9 +1,9 @@
-import '../../../../src/index.ts';
+import "../../../../src/index.ts";
 
-import type { EggAppConfig } from 'egg';
+import type { EggAppConfig } from "egg";
 
 export default {
-  keys: 'foo,bar',
+  keys: "foo,bar",
   development: {
     fastReady: false,
   },

@@ -1,5 +1,5 @@
 module.exports = class LordService {
   jsService() {
-    return 'from js service';
+    return "from js service";
   }
 };

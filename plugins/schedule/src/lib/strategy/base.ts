@@ -1,8 +1,8 @@
-import type { EggLogger } from 'egg';
+import type { EggLogger } from "egg";
 
-import type { EggScheduleJobInfo } from '../types.ts';
-import type { EggScheduleConfig } from '../../config/config.default.ts';
-import type Agent from '../../app/extend/agent.ts';
+import type { EggScheduleJobInfo } from "../types.ts";
+import type { EggScheduleConfig } from "../../config/config.default.ts";
+import type Agent from "../../app/extend/agent.ts";
 
 export class BaseStrategy {
   protected agent: Agent;
@@ -16,7 +16,7 @@ export class BaseStrategy {
     this.agent = agent;
     this.key = key;
     this.scheduleConfig = scheduleConfig;
-    this.logger = this.agent.getLogger('scheduleLogger');
+    this.logger = this.agent.getLogger("scheduleLogger");
   }
 
   /** keep compatibility */
@@ -58,8 +58,10 @@ export class BaseStrategy {
       args,
     } as EggScheduleJobInfo;
 
-    this.logger.info(`[Job#${info.id}] ${info.key} triggered, send random by agent`);
-    this.agent.messenger.sendRandom('egg-schedule', info);
+    this.logger.info(
+      `[Job#${info.id}] ${info.key} triggered, send random by agent`,
+    );
+    this.agent.messenger.sendRandom("egg-schedule", info);
     this.onJobStart(info);
   }
 
@@ -82,13 +84,15 @@ export class BaseStrategy {
       id: this.getSeqId(),
       args,
     } as EggScheduleJobInfo;
-    this.logger.info(`[Job#${info.id}] ${info.key} triggered, send all by agent`);
+    this.logger.info(
+      `[Job#${info.id}] ${info.key} triggered, send all by agent`,
+    );
     // send to all workers
-    this.agent.messenger.send('egg-schedule', info);
+    this.agent.messenger.send("egg-schedule", info);
     this.onJobStart(info);
   }
 
   getSeqId(): string {
-    return `${Date.now()}${process.hrtime().join('')}${this.count}`;
+    return `${Date.now()}${process.hrtime().join("")}${this.count}`;
   }
 }

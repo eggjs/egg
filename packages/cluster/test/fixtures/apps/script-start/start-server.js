@@ -1,12 +1,12 @@
-const { scheduler } = require('node:timers/promises');
-const utils = require('../../../utils');
+const { scheduler } = require("node:timers/promises");
+const utils = require("../../../utils");
 
 (async () => {
-  const app = utils.cluster('apps/agent-exit');
+  const app = utils.cluster("apps/agent-exit");
   app.debug();
   await app.end();
 
-  app.proc.on('message', () => {
+  app.proc.on("message", () => {
     process.send(app.proc.pid, () => {
       // close child process IPC
       // node v6 process._channel

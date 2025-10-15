@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 
 module.exports = {
   b: {
     enable: true,
-    package: '@scope/b',
+    package: "@scope/b",
   },
-  'a-duplicate': {
+  "a-duplicate": {
     enable: true,
-    package: '@scope/a',
+    package: "@scope/a",
   },
   a: {
     enable: true,
-    package: 'a',
+    package: "a",
   },
 };

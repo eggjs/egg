@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-module.exports = async ctx => {
+module.exports = async (ctx) => {
   const start = Date.now();
   ctx.runInBackground(async () => {
     const start = Date.now();

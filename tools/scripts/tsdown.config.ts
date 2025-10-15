@@ -1,10 +1,10 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: 'src/**/*.ts',
+  entry: "src/**/*.ts",
   unbundle: true,
   unused: {
-    level: 'error',
+    level: "error",
   },
   dts: true,
   exports: {

@@ -1,16 +1,16 @@
-import crypto from 'node:crypto';
-import { debuglog, promisify } from 'node:util';
-import fs from 'node:fs/promises';
-import { createReadStream, statSync, readFileSync } from 'node:fs';
-import zlib from 'node:zlib';
-import path from 'node:path';
+import crypto from "node:crypto";
+import { debuglog, promisify } from "node:util";
+import fs from "node:fs/promises";
+import { createReadStream, statSync, readFileSync } from "node:fs";
+import zlib from "node:zlib";
+import path from "node:path";
 
-import mime from 'mime-types';
-import { compressible } from '@eggjs/compressible';
-import readDir from 'fs-readdir-recursive';
-import { exists, decodeURIComponent as safeDecodeURIComponent } from 'utility';
+import mime from "mime-types";
+import { compressible } from "@eggjs/compressible";
+import readDir from "fs-readdir-recursive";
+import { exists, decodeURIComponent as safeDecodeURIComponent } from "utility";
 
-const debug = debuglog('egg/koa-static-cache');
+const debug = debuglog("egg/koa-static-cache");
 
 const gzip = promisify(zlib.gzip);
 
@@ -110,7 +110,11 @@ export class FileManager {
   map?: FileMap;
 
   constructor(store?: FileStore | FileMap) {
-    if (store && typeof store.set === 'function' && typeof store.get === 'function') {
+    if (
+      store &&
+      typeof store.set === "function" &&
+      typeof store.get === "function"
+    ) {
       this.store = store as FileStore;
     } else {
       this.map = store || Object.create(null);
@@ -135,14 +139,18 @@ export function staticCache(): MiddlewareFunc;
 export function staticCache(dir: string): MiddlewareFunc;
 export function staticCache(options: Options): MiddlewareFunc;
 export function staticCache(dir: string, options: Options): MiddlewareFunc;
-export function staticCache(dir: string, options: Options, files: FileMap | FileStore): MiddlewareFunc;
+export function staticCache(
+  dir: string,
+  options: Options,
+  files: FileMap | FileStore,
+): MiddlewareFunc;
 export function staticCache(
   dirOrOptions?: string | Options,
   options: Options = {},
-  filesStoreOrMap?: FileMap | FileStore
+  filesStoreOrMap?: FileMap | FileStore,
 ): MiddlewareFunc {
-  let dir = '';
-  if (typeof dirOrOptions === 'string') {
+  let dir = "";
+  if (typeof dirOrOptions === "string") {
     // dir priority than options.dir
     dir = dirOrOptions;
   } else if (dirOrOptions) {
@@ -156,13 +164,13 @@ export function staticCache(
     dir = process.cwd();
   }
   dir = path.normalize(dir);
-  debug('staticCache dir: %s', dir);
+  debug("staticCache dir: %s", dir);
 
   // prefix must be ASCII code
-  options.prefix = (options.prefix ?? '').replace(/\/*$/, '/');
+  options.prefix = (options.prefix ?? "").replace(/\/*$/, "/");
   const files = new FileManager(filesStoreOrMap ?? options.files);
   const enableGzip = !!options.gzip;
-  const filePrefix = path.normalize(options.prefix.replace(/^\//, ''));
+  const filePrefix = path.normalize(options.prefix.replace(/^\//, ""));
 
   // option.filter
   let fileFilter: FileFilter = () => {
@@ -173,27 +181,27 @@ export function staticCache(
       return (options.filter as string[]).includes(file);
     };
   }
-  if (typeof options.filter === 'function') {
+  if (typeof options.filter === "function") {
     fileFilter = options.filter;
   }
 
   if (options.preload !== false) {
-    debug('preload: %s', dir);
-    readDir(dir, filename => {
+    debug("preload: %s", dir);
+    readDir(dir, (filename) => {
       // ignore dot files and node_modules
-      return !filename.startsWith('.') && filename !== 'node_modules';
+      return !filename.startsWith(".") && filename !== "node_modules";
     })
       .filter(fileFilter)
-      .forEach(name => {
+      .forEach((name) => {
         loadFile(name, dir, options, files);
       });
-    debug('preload end');
+    debug("preload end");
   }
 
-  debug('prepare middleware');
+  debug("prepare middleware");
   return async (ctx: any, next: Next) => {
     // only accept HEAD and GET
-    if (ctx.method !== 'HEAD' && ctx.method !== 'GET') return await next();
+    if (ctx.method !== "HEAD" && ctx.method !== "GET") return await next();
     // check prefix first to avoid calculate
     if (!ctx.path.startsWith(options.prefix)) return await next();
 
@@ -210,13 +218,13 @@ export function staticCache(
     // try to load file
     if (!file) {
       if (!options.dynamic) return await next();
-      if (path.basename(filename)[0] === '.') return await next();
+      if (path.basename(filename)[0] === ".") return await next();
       if (filename.charAt(0) === path.sep) {
         filename = filename.slice(1);
       }
 
       // trim prefix
-      if (options.prefix !== '/') {
+      if (options.prefix !== "/") {
         if (filename.indexOf(filePrefix) !== 0) {
           return await next();
         }
@@ -238,7 +246,7 @@ export function staticCache(
 
     ctx.status = 200;
 
-    if (enableGzip) ctx.vary('Accept-Encoding');
+    if (enableGzip) ctx.vary("Accept-Encoding");
 
     if (!file.buffer) {
       const stats = await fs.stat(file.path!);
@@ -261,18 +269,21 @@ export function staticCache(
 
     ctx.type = file.type;
     ctx.length = file.zipBuffer ? file.zipBuffer.length : file.length!;
-    ctx.set('cache-control', file.cacheControl ?? 'public, max-age=' + file.maxAge);
-    if (file.md5) ctx.set('content-md5', file.md5);
+    ctx.set(
+      "cache-control",
+      file.cacheControl ?? "public, max-age=" + file.maxAge,
+    );
+    if (file.md5) ctx.set("content-md5", file.md5);
 
-    if (ctx.method === 'HEAD') {
+    if (ctx.method === "HEAD") {
       return;
     }
 
-    const acceptGzip = ctx.acceptsEncodings('gzip') === 'gzip';
+    const acceptGzip = ctx.acceptsEncodings("gzip") === "gzip";
 
     if (file.zipBuffer) {
       if (acceptGzip) {
-        ctx.set('content-encoding', 'gzip');
+        ctx.set("content-encoding", "gzip");
         ctx.body = file.zipBuffer;
       } else {
         ctx.body = file.buffer;
@@ -280,18 +291,23 @@ export function staticCache(
       return;
     }
 
-    const shouldGzip = enableGzip && file.length! > 1024 && acceptGzip && file.type && compressible(file.type);
+    const shouldGzip =
+      enableGzip &&
+      file.length! > 1024 &&
+      acceptGzip &&
+      file.type &&
+      compressible(file.type);
 
     if (file.buffer) {
       if (shouldGzip) {
-        const gzFile = files.get(filename + '.gz') as FileMeta;
+        const gzFile = files.get(filename + ".gz") as FileMeta;
         if (options.usePrecompiledGzip && gzFile && gzFile.buffer) {
           // if .gz file already read from disk
           file.zipBuffer = gzFile.buffer;
         } else {
           file.zipBuffer = await gzip(file.buffer);
         }
-        ctx.set('content-encoding', 'gzip');
+        ctx.set("content-encoding", "gzip");
         ctx.body = file.zipBuffer;
       } else {
         ctx.body = file.buffer;
@@ -303,18 +319,18 @@ export function staticCache(
 
     // update file hash
     if (!file.md5) {
-      const hash = crypto.createHash('md5');
-      stream.on('data', hash.update.bind(hash));
-      stream.on('end', () => {
-        file.md5 = hash.digest('base64');
+      const hash = crypto.createHash("md5");
+      stream.on("data", hash.update.bind(hash));
+      stream.on("end", () => {
+        file.md5 = hash.digest("base64");
       });
     }
 
     ctx.body = stream;
     // enable gzip will remove content length
     if (shouldGzip) {
-      ctx.remove('content-length');
-      ctx.set('content-encoding', 'gzip');
+      ctx.remove("content-length");
+      ctx.set("content-encoding", "gzip");
       ctx.body = stream.pipe(zlib.createGzip());
     }
   };
@@ -323,7 +339,12 @@ export function staticCache(
 /**
  * load file and add file content to cache
  */
-function loadFile(name: string, dir: string, options: Options, fileManager: FileManager) {
+function loadFile(
+  name: string,
+  dir: string,
+  options: Options,
+  fileManager: FileManager,
+) {
   const pathname = path.normalize(path.join(options.prefix!, name));
   if (!fileManager.get(pathname)) {
     fileManager.set(pathname, {});
@@ -333,14 +354,18 @@ function loadFile(name: string, dir: string, options: Options, fileManager: File
   const stats = statSync(filename);
   const buffer = readFileSync(filename);
 
-  obj.cacheControl = typeof options.cacheControl === 'function' ? options.cacheControl(filename) : options.cacheControl; // if cacheControl is a function, it will be called with the filename
-  obj.maxAge = (typeof obj.maxAge === 'number' ? obj.maxAge : options.maxAge) || 0;
-  obj.type = obj.mime = mime.lookup(pathname) || 'application/octet-stream';
+  obj.cacheControl =
+    typeof options.cacheControl === "function"
+      ? options.cacheControl(filename)
+      : options.cacheControl; // if cacheControl is a function, it will be called with the filename
+  obj.maxAge =
+    (typeof obj.maxAge === "number" ? obj.maxAge : options.maxAge) || 0;
+  obj.type = obj.mime = mime.lookup(pathname) || "application/octet-stream";
   obj.mtime = stats.mtime;
   obj.length = stats.size;
-  obj.md5 = crypto.createHash('md5').update(buffer).digest('base64');
+  obj.md5 = crypto.createHash("md5").update(buffer).digest("base64");
 
-  debug('file: %s', JSON.stringify(obj, null, 2));
+  debug("file: %s", JSON.stringify(obj, null, 2));
   if (options.buffer) {
     obj.buffer = buffer;
   }

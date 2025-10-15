@@ -1,3 +1,3 @@
 module.exports = async () => {
-  return 'foo3';
+  return "foo3";
 };

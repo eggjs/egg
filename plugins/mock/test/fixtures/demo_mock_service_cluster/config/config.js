@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
 module.exports = {
   urllib: {
     keepAlive: false,
   },
   logger: {
-    consoleLevel: 'NONE',
+    consoleLevel: "NONE",
   },
-  keys: '123',
+  keys: "123",
 };

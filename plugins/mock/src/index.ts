@@ -1,14 +1,14 @@
-import mm from 'mm';
-import { mock as _mock } from 'mm';
+import mm from "mm";
+import { mock as _mock } from "mm";
 
-import { createCluster, type MockClusterApplication } from './lib/cluster.ts';
-import { createApp } from './lib/app.ts';
+import { createCluster, type MockClusterApplication } from "./lib/cluster.ts";
+import { createApp } from "./lib/app.ts";
 // import { getMockAgent } from './lib/mock_agent.js';
-import { restore } from './lib/restore.ts';
-import { setGetAppCallback } from './lib/app_handler.ts';
-import type ApplicationUnittest from './app/extend/application.ts';
+import { restore } from "./lib/restore.ts";
+import { setGetAppCallback } from "./lib/app_handler.ts";
+import type ApplicationUnittest from "./app/extend/application.ts";
 
-export * from './lib/types.ts';
+export * from "./lib/types.ts";
 
 // egg-bin will set this flag to require files for instrument
 // if (process.env.EGG_BIN_PREREQUIRE) {
@@ -63,8 +63,8 @@ const mock = {
    * @see https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js#L78
    */
   env(env: string): void {
-    _mock(process.env, 'EGG_MOCK_SERVER_ENV', env as any);
-    _mock(process.env, 'EGG_SERVER_ENV', env as any);
+    _mock(process.env, "EGG_MOCK_SERVER_ENV", env as any);
+    _mock(process.env, "EGG_SERVER_ENV", env as any);
   },
 
   /**
@@ -72,13 +72,13 @@ const mock = {
    * @param {String} level - logger level
    */
   consoleLevel(level: string): void {
-    level = (level || '').toUpperCase();
-    _mock(process.env, 'EGG_LOG', level as any);
+    level = (level || "").toUpperCase();
+    _mock(process.env, "EGG_LOG", level as any);
   },
 
   home(homePath?: string): void {
     if (homePath) {
-      _mock(process.env, 'EGG_HOME', homePath as any);
+      _mock(process.env, "EGG_HOME", homePath as any);
     }
   },
 
@@ -95,7 +95,9 @@ const proxyMock = new Proxy(_mock, {
     // mm.isMocked(foo, 'bar')
     return Reflect.get(mock, property, receiver);
   },
-}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) & ExtendedMock & typeof mm;
+}) as unknown as ((target: any, property: PropertyKey, value?: any) => void) &
+  ExtendedMock &
+  typeof mm;
 
 export default proxyMock;
 
@@ -112,14 +114,14 @@ export {
 
 process.setMaxListeners(100);
 
-process.once('SIGQUIT', () => {
+process.once("SIGQUIT", () => {
   process.exit(0);
 });
 
-process.once('SIGTERM', () => {
+process.once("SIGTERM", () => {
   process.exit(0);
 });
 
-process.once('SIGINT', () => {
+process.once("SIGINT", () => {
   process.exit(0);
 });

@@ -1,13 +1,13 @@
-import path from 'node:path';
-import { existsSync } from 'node:fs';
-import { EventEmitter } from 'node:events';
-import type { Worker as ClusterProcessWorker } from 'node:cluster';
-import type { Worker as ThreadWorker } from 'node:worker_threads';
+import path from "node:path";
+import { existsSync } from "node:fs";
+import { EventEmitter } from "node:events";
+import type { Worker as ClusterProcessWorker } from "node:cluster";
+import type { Worker as ThreadWorker } from "node:worker_threads";
 
-import type { Logger } from 'egg-logger';
+import type { Logger } from "egg-logger";
 
-import type { MessageBody, Messenger } from '../../messenger.ts';
-import type { MasterOptions } from '../../../master.ts';
+import type { MessageBody, Messenger } from "../../messenger.ts";
+import type { MasterOptions } from "../../../master.ts";
 
 export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   instance: T;
@@ -21,11 +21,11 @@ export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   abstract get id(): number;
 
   get state(): string {
-    return Reflect.get(this.instance!, 'state') as string;
+    return Reflect.get(this.instance!, "state") as string;
   }
 
   set state(state: string) {
-    Reflect.set(this.instance!, 'state', state);
+    Reflect.set(this.instance!, "state", state);
   }
 
   abstract get exitedAfterDisconnect(): boolean;
@@ -33,50 +33,50 @@ export abstract class BaseAppWorker<T = ThreadWorker | ClusterProcessWorker> {
   abstract get exitCode(): number;
 
   get disableRefork(): boolean {
-    return Reflect.get(this.instance!, 'disableRefork') as boolean;
+    return Reflect.get(this.instance!, "disableRefork") as boolean;
   }
 
   set disableRefork(disableRefork: boolean) {
-    Reflect.set(this.instance!, 'disableRefork', disableRefork);
+    Reflect.set(this.instance!, "disableRefork", disableRefork);
   }
 
   get isDevReload(): boolean {
-    return Reflect.get(this.instance!, 'isDevReload') as boolean;
+    return Reflect.get(this.instance!, "isDevReload") as boolean;
   }
 
   set isDevReload(isDevReload: boolean) {
-    Reflect.set(this.instance!, 'isDevReload', isDevReload);
+    Reflect.set(this.instance!, "isDevReload", isDevReload);
   }
 
   abstract send(data: MessageBody): void;
 
   clean(): void {
-    throw new Error('BaseAppWorker should implement clean.');
+    throw new Error("BaseAppWorker should implement clean.");
   }
 
   // static methods use on src/app_worker.ts
 
   static get workerId(): number {
-    throw new Error('BaseAppWorker should implement workerId.');
+    throw new Error("BaseAppWorker should implement workerId.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static on(..._args: any[]): void {
-    throw new Error('BaseAppWorker should implement on.');
+    throw new Error("BaseAppWorker should implement on.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static send(_message: MessageBody): void {
-    throw new Error('BaseAgentWorker should implement send.');
+    throw new Error("BaseAgentWorker should implement send.");
   }
 
   static kill(): void {
-    throw new Error('BaseAppWorker should implement kill.');
+    throw new Error("BaseAppWorker should implement kill.");
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   static gracefulExit(_options: any): void {
-    throw new Error('BaseAgentWorker should implement gracefulExit.');
+    throw new Error("BaseAgentWorker should implement gracefulExit.");
   }
 }
 
@@ -95,17 +95,12 @@ export abstract class BaseAppUtils extends EventEmitter {
 
   constructor(
     options: MasterOptions,
-    {
-      log,
-      logger,
-      messenger,
-      isProduction,
-    }: {
+    { log, logger, messenger, isProduction }: {
       log: LogFun;
       logger: Logger;
       messenger: Messenger;
       isProduction: boolean;
-    }
+    },
   ) {
     super();
     this.options = options;
@@ -116,16 +111,16 @@ export abstract class BaseAppUtils extends EventEmitter {
   }
 
   getAppWorkerFile(): string {
-    const srcDirname = path.join(import.meta.dirname, '../../..');
-    let appWorkerFile = path.join(srcDirname, 'app_worker.js');
+    const srcDirname = path.join(import.meta.dirname, "../../..");
+    let appWorkerFile = path.join(srcDirname, "app_worker.js");
     if (!existsSync(appWorkerFile)) {
-      appWorkerFile = path.join(srcDirname, 'app_worker.ts');
+      appWorkerFile = path.join(srcDirname, "app_worker.ts");
     }
     return appWorkerFile;
   }
 
   fork(): void {
-    throw new Error('BaseApp should implement fork.');
+    throw new Error("BaseApp should implement fork.");
   }
 
   abstract kill(timeout: number): Promise<void>;

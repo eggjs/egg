@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
   get() {
-    return 'object.get';
+    return "object.get";
   },
 };

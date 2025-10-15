@@ -1,12 +1,12 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import { request } from '@eggjs/supertest';
+import { request } from "@eggjs/supertest";
 
-import Koa, { type MiddlewareFunc } from '../../src/index.ts';
+import Koa, { type MiddlewareFunc } from "../../src/index.ts";
 
-describe('app.use(fn)', () => {
-  it('should compose middleware', async () => {
+describe("app.use(fn)", () => {
+  it("should compose middleware", async () => {
     const app = new Koa();
     const calls: number[] = [];
 
@@ -34,12 +34,12 @@ describe('app.use(fn)', () => {
 
     const server = app.listen();
 
-    await request(server).get('/').expect(404);
+    await request(server).get("/").expect(404);
 
     assert.deepStrictEqual(calls, [1, 2, 3, 4, 5, 6]);
   });
 
-  it('should compose mixed middleware', async () => {
+  it("should compose mixed middleware", async () => {
     const app = new Koa();
     const calls: number[] = [];
 
@@ -67,21 +67,21 @@ describe('app.use(fn)', () => {
 
     const server = app.listen();
 
-    await request(server).get('/').expect(404);
+    await request(server).get("/").expect(404);
 
     assert.deepStrictEqual(calls, [1, 2, 3, 4, 5, 6]);
   });
 
   // https://github.com/koajs/koa/pull/530#issuecomment-148138051
-  it('should catch thrown errors in non-async functions', async () => {
+  it("should catch thrown errors in non-async functions", async () => {
     const app = new Koa();
 
-    app.use(ctx => ctx.throw('Not Found', 404));
+    app.use((ctx) => ctx.throw("Not Found", 404));
 
-    await request(app.callback()).get('/').expect(404);
+    await request(app.callback()).get("/").expect(404);
   });
 
-  it('should throw error on generator middleware', () => {
+  it("should throw error on generator middleware", () => {
     const app = new Koa();
 
     app.use((_ctx, next) => next());
@@ -89,30 +89,33 @@ describe('app.use(fn)', () => {
       () => {
         // oxlint-disable-next-line consistent-function-scoping
         app.use(function* generatorMiddleware(_ctx: unknown, next: unknown) {
-          console.log('pre generator');
+          console.log("pre generator");
           yield next;
           // this.body = 'generator';
-          console.log('post generator');
+          console.log("post generator");
         } as unknown as MiddlewareFunc);
       },
       // oxlint-disable-next-line prefer-await-to-callbacks
-      err => {
+      (err) => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
-      }
+      },
     );
   });
 
-  it('should throw error for non-function', () => {
+  it("should throw error for non-function", () => {
     const app = new Koa();
 
-    for (const v of [null, undefined, 0, false, 'not a function']) {
-      assert.throws(() => app.use(v as unknown as MiddlewareFunc), /middleware must be a function!/);
+    for (const v of [null, undefined, 0, false, "not a function"]) {
+      assert.throws(
+        () => app.use(v as unknown as MiddlewareFunc),
+        /middleware must be a function!/,
+      );
     }
   });
 
-  it('should remove generator functions support', () => {
+  it("should remove generator functions support", () => {
     const app = new Koa();
     assert.throws(
       () => {
@@ -122,11 +125,11 @@ describe('app.use(fn)', () => {
         } as unknown as MiddlewareFunc);
       },
       // oxlint-disable-next-line prefer-await-to-callbacks
-      err => {
+      (err) => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
-      }
+      },
     );
   });
 });

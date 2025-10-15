@@ -1,32 +1,35 @@
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import type { EggCore } from '../src/index.ts';
+import type { EggCore } from "../src/index.ts";
 import {
   Application,
   type EggCoreInitOptions,
   // @ts-ignore
-} from './fixtures/egg-esm/index.ts';
+} from "./fixtures/egg-esm/index.ts";
 
 // @ts-ignore
-export { Application } from './fixtures/egg-esm/index.ts';
+export { Application } from "./fixtures/egg-esm/index.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function getFilepath(name: string): string {
-  const filepath = path.join(__dirname, 'fixtures', name);
-  if (process.platform === 'win32') {
+  const filepath = path.join(__dirname, "fixtures", name);
+  if (process.platform === "win32") {
     return filepath.toLowerCase();
   }
   return filepath;
 }
 
-export function createApp(name: string, options?: EggCoreInitOptions & { Application?: typeof EggCore }): Application {
+export function createApp(
+  name: string,
+  options?: EggCoreInitOptions & { Application?: typeof EggCore },
+): Application {
   const baseDir = getFilepath(name);
   options = options ?? {};
   options.baseDir = baseDir;
-  options.type = options.type ?? 'application';
+  options.type = options.type ?? "application";
 
   const CustomApplication = options.Application ?? Application;
   return new CustomApplication(options) as Application;
@@ -35,5 +38,5 @@ export function createApp(name: string, options?: EggCoreInitOptions & { Applica
 export const symbol: {
   view: symbol;
 } = {
-  view: Symbol('view'),
+  view: Symbol("view"),
 };

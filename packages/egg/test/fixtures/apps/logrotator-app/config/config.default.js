@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 exports.logrotator = {
   maxFileSize: 1024,
@@ -6,10 +6,10 @@ exports.logrotator = {
   rotateDuration: 30000,
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.customLogger = {
   scheduleLogger: {
-    consoleLevel: 'DEBUG',
+    consoleLevel: "DEBUG",
   },
 };

@@ -1,12 +1,13 @@
-exports.index = ctx => {
+exports.index = (ctx) => {
   ctx.body = {
     csrf: ctx.csrf,
     env: ctx.app.config.env,
-    supportedRequestsMethods: ctx.app.config.security.csrf.supportedRequests[0].methods,
+    supportedRequestsMethods:
+      ctx.app.config.security.csrf.supportedRequests[0].methods,
   };
 };
 
-exports.update = ctx => {
+exports.update = (ctx) => {
   ctx.session.body = ctx.request.body;
   ctx.body = ctx.request.body;
 };

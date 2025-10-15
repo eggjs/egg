@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

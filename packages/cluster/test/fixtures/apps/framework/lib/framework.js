@@ -1,5 +1,5 @@
-const path = require('path');
-const egg = require('egg');
+const path = require("path");
+const egg = require("egg");
 const Application = egg.Application;
 const AppWorkerLoader = egg.AppWorkerLoader;
 
@@ -13,11 +13,11 @@ class Loader extends AppWorkerLoader {
 }
 
 class ChairApplication extends Application {
-  get [Symbol.for('egg#eggPath')]() {
-    return path.join(__dirname, '..');
+  get [Symbol.for("egg#eggPath")]() {
+    return path.join(__dirname, "..");
   }
 
-  get [Symbol.for('egg#loader')]() {
+  get [Symbol.for("egg#loader")]() {
     return Loader;
   }
 }

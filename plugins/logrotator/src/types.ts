@@ -1,7 +1,7 @@
-import type { LogrotatorConfig } from './config/config.default.ts';
-import type { LogRotator } from './lib/rotator.ts';
+import type { LogrotatorConfig } from "./config/config.default.ts";
+import type { LogRotator } from "./lib/rotator.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     /**

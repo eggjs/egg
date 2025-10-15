@@ -1,7 +1,7 @@
-const path = require('node:path');
+const path = require("node:path");
 
-const file_path1 = path.join(__dirname, 'tmp-agent.txt');
-const dir_path = path.join(__dirname, 'tmp-agent');
+const file_path1 = path.join(__dirname, "tmp-agent.txt");
+const dir_path = path.join(__dirname, "tmp-agent");
 
 module.exports = function (agent) {
   let count = 0;
@@ -9,17 +9,17 @@ module.exports = function (agent) {
     count++;
   }
 
-  agent.messenger.on('i-want-agent-file-changed-count', function () {
-    agent.messenger.broadcast('agent-file-changed-count', count);
+  agent.messenger.on("i-want-agent-file-changed-count", function () {
+    agent.messenger.broadcast("agent-file-changed-count", count);
   });
 
-  agent.messenger.on('agent-unwatch', function () {
+  agent.messenger.on("agent-unwatch", function () {
     agent.watcher.unwatch([file_path1, dir_path], listener);
-    agent.messenger.broadcast('agent-unwatch-success', 'agent unwatch success');
+    agent.messenger.broadcast("agent-unwatch-success", "agent unwatch success");
   });
 
-  agent.messenger.on('agent-watch', function () {
+  agent.messenger.on("agent-watch", function () {
     agent.watcher.watch([file_path1, dir_path], listener);
-    agent.messenger.broadcast('agent-watch-success', 'agent watch success');
+    agent.messenger.broadcast("agent-watch-success", "agent watch success");
   });
 };

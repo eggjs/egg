@@ -1,1 +1,1 @@
-exports.middleware = ['static', 'custom'];
+exports.middleware = ["static", "custom"];

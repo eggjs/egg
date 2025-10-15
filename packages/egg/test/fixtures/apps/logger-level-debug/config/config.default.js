@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
 };
 
-exports.keys = 'test key';
+exports.keys = "test key";

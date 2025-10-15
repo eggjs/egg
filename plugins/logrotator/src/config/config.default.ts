@@ -59,7 +59,7 @@ export default {
   logrotator: {
     disableRotateByDay: false,
     filesRotateByHour: null,
-    hourDelimiter: '-',
+    hourDelimiter: "-",
     filesRotateBySize: null,
     maxFileSize: 50 * 1024 * 1024,
     maxFiles: 10,

@@ -1,6 +1,6 @@
-import TestMiddleware from './test';
+import TestMiddleware from "./test";
 
-declare module 'egg' {
+declare module "egg" {
   interface IMiddleware {
     test: typeof TestMiddleware;
   }

@@ -49,12 +49,12 @@ export interface I18nConfig {
 
 export default {
   i18n: {
-    defaultLocale: 'en_US',
+    defaultLocale: "en_US",
     dirs: [],
-    queryField: 'locale',
-    cookieField: 'locale',
-    cookieDomain: '',
-    cookieMaxAge: '1y',
+    queryField: "locale",
+    cookieField: "locale",
+    cookieDomain: "",
+    cookieMaxAge: "1y",
     localeAlias: {},
     writeCookie: true,
     dir: undefined,

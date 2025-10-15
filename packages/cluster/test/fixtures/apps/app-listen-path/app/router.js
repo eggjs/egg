@@ -1,5 +1,5 @@
-module.exports = app => {
-  app.get('/', ctx => {
-    ctx.body = 'done';
+module.exports = (app) => {
+  app.get("/", (ctx) => {
+    ctx.body = "done";
   });
 };

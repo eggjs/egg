@@ -1,7 +1,7 @@
-import assert from 'assert';
+import assert from "assert";
 
-describe('mocha-test-ts-esm/foo.test.ts', () => {
-  it('should work', () => {
+describe("mocha-test-ts-esm/foo.test.ts", () => {
+  it("should work", () => {
     assert(true);
   });
 });

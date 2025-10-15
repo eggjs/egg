@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.logger = {
-  level: 'DEBUG',
+  level: "DEBUG",
   enablePerformanceTimer: true,
 };
 
-exports.keys = 'foo';
+exports.keys = "foo";

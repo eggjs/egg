@@ -1,19 +1,21 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
+import { debuglog } from "node:util";
+import path from "node:path";
 
-import { mm, isMocked } from 'mm';
-import { getFrameworkPath } from '@eggjs/utils';
-import { readJSONSync } from 'utility';
+import { mm, isMocked } from "mm";
+import { getFrameworkPath } from "@eggjs/utils";
+import { readJSONSync } from "utility";
 
-import type { MockOptions, MockApplicationOptions } from './types.ts';
-import { getSourceDirname } from './utils.ts';
+import type { MockOptions, MockApplicationOptions } from "./types.ts";
+import { getSourceDirname } from "./utils.ts";
 
-const debug = debuglog('egg/mock/lib/format_options');
+const debug = debuglog("egg/mock/lib/format_options");
 
 /**
  * format the options
  */
-export function formatOptions(initOptions?: MockOptions): MockApplicationOptions {
+export function formatOptions(
+  initOptions?: MockOptions,
+): MockApplicationOptions {
   const options = {
     baseDir: process.cwd(),
     cache: true,
@@ -27,7 +29,11 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
   // formatOptions({ baseDir: 'app' }); // baseDir => $PWD/test/fixtures/app
   // ```
   if (!path.isAbsolute(options.baseDir)) {
-    options.baseDir = path.join(process.cwd(), 'test/fixtures', options.baseDir);
+    options.baseDir = path.join(
+      process.cwd(),
+      "test/fixtures",
+      options.baseDir,
+    );
   }
 
   let framework = initOptions?.framework ?? initOptions?.customEgg;
@@ -38,7 +44,7 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
     options.plugin = false;
   } else {
     if (!framework) {
-      framework = '';
+      framework = "";
     }
     // it will throw when framework is not found
     framework = getFrameworkPath({ framework, baseDir: options.baseDir });
@@ -48,13 +54,13 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
   const plugins = (options.plugins = options.plugins || {});
 
   // add self as a plugin
-  let pluginPath = path.join(getSourceDirname(), '..');
+  let pluginPath = path.join(getSourceDirname(), "..");
   // for dist directory
   // convert `/eggjs/mock/dist` to `/eggjs/mock`
-  if (pluginPath.endsWith('/dist') || pluginPath.endsWith('\\dist')) {
-    pluginPath = path.join(pluginPath, '..');
+  if (pluginPath.endsWith("/dist") || pluginPath.endsWith("\\dist")) {
+    pluginPath = path.join(pluginPath, "..");
   }
-  plugins['egg-mock'] = {
+  plugins["egg-mock"] = {
     enable: true,
     path: pluginPath,
   };
@@ -63,7 +69,7 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
   if (options.plugin !== false) {
     // add self to plugin list
     const pluginPath = process.cwd();
-    const pkgPath = path.join(pluginPath, 'package.json');
+    const pkgPath = path.join(pluginPath, "package.json");
     const pluginName = getPluginName(pkgPath);
     if (options.plugin && !pluginName) {
       throw new Error(`should set "eggPlugin" property in ${pkgPath}`);
@@ -78,8 +84,11 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
 
   // mock HOME as baseDir, but ignore if it has been mocked
   const env = process.env.EGG_SERVER_ENV;
-  if (!isMocked(process.env, 'HOME') && (env === 'default' || env === 'test' || env === 'prod')) {
-    mm(process.env, 'HOME', options.baseDir);
+  if (
+    !isMocked(process.env, "HOME") &&
+    (env === "default" || env === "test" || env === "prod")
+  ) {
+    mm(process.env, "HOME", options.baseDir);
   }
 
   // disable cache after call mm.env(),
@@ -88,7 +97,7 @@ export function formatOptions(initOptions?: MockOptions): MockApplicationOptions
     options.cache = false;
   }
 
-  debug('[formatOptions] options: %j', options);
+  debug("[formatOptions] options: %j", options);
   return options;
 }
 

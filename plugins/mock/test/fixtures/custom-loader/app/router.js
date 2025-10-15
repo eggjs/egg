@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.router.get('/users/:name', app.controller.user.get);
+module.exports = (app) => {
+  app.router.get("/users/:name", app.controller.user.get);
 };

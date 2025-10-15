@@ -1,5 +1,5 @@
 module.exports = {
   mockEnv() {
-    this.config.env = 'mocked by plugin';
+    this.config.env = "mocked by plugin";
   },
 };

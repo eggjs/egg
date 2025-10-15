@@ -1,9 +1,9 @@
-import { strict as assert } from 'node:assert';
-import { app } from '../../../../dist/commonjs/bootstrap.js';
+import { strict as assert } from "node:assert";
+import { app } from "../../../../dist/commonjs/bootstrap.js";
 
-describe('test/multi_mock_context.test.ts', () => {
-  describe('mockContext', () => {
-    it('should only reused once', async () => {
+describe("test/multi_mock_context.test.ts", () => {
+  describe("mockContext", () => {
+    it("should only reused once", async () => {
       const currentContext = app.currentContext;
       const ctx1 = app.mockContext();
       const ctx2 = app.mockContext();

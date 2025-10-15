@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
+module.exports = (app) => {
   return {
     *bar() {
-      this.ctx.body = 'this is obj bar!';
+      this.ctx.body = "this is obj bar!";
     },
 
     *error() {
@@ -12,7 +12,7 @@ module.exports = app => {
 
     subObj: {
       *hello() {
-        this.ctx.body = 'this is subObj hello!';
+        this.ctx.body = "this is subObj hello!";
       },
     },
   };

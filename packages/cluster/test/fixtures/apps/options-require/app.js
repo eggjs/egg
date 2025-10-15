@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = () => {
-  if (require.extensions['.ts']) {
-    console.log('### inject ts-node/register at app');
+  if (require.extensions[".ts"]) {
+    console.log("### inject ts-node/register at app");
   }
 };

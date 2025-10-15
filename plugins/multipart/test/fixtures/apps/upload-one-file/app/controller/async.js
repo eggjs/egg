@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const path = require('path');
-const { Controller } = require('egg');
+const path = require("path");
+const { Controller } = require("egg");
 
 module.exports = class UploadController extends Controller {
   async async() {
@@ -11,11 +11,17 @@ module.exports = class UploadController extends Controller {
       options.limits = { fileSize: parseInt(ctx.query.fileSize) };
     }
     const stream = await ctx.getFileStream(options);
-    if (ctx.query.foo === 'error') {
+    if (ctx.query.foo === "error") {
       // mock undefined error
       stream.foo();
     }
-    const name = 'egg-multipart-test/' + process.version + '-' + Date.now() + '-' + path.basename(stream.filename);
+    const name =
+      "egg-multipart-test/" +
+      process.version +
+      "-" +
+      Date.now() +
+      "-" +
+      path.basename(stream.filename);
     const result = await ctx.oss.put(name, stream);
     ctx.body = {
       name: result.name,
@@ -29,7 +35,13 @@ module.exports = class UploadController extends Controller {
     const ctx = this.ctx;
     const stream = await ctx.getFileStream({ requireFile: false });
     if (stream.filename) {
-      const name = 'egg-multipart-test/' + process.version + '-' + Date.now() + '-' + path.basename(stream.filename);
+      const name =
+        "egg-multipart-test/" +
+        process.version +
+        "-" +
+        Date.now() +
+        "-" +
+        path.basename(stream.filename);
       const result = await ctx.oss.put(name, stream);
       ctx.body = {
         name: result.name,

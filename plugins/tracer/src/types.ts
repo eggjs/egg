@@ -1,7 +1,7 @@
-import type { TracerConfig } from './config/config.default.ts';
-import type { Tracer } from './lib/tracer.ts';
+import type { TracerConfig } from "./config/config.default.ts";
+import type { Tracer } from "./lib/tracer.ts";
 
-declare module 'egg' {
+declare module "egg" {
   interface EggAppConfig {
     /**
      * tracer config

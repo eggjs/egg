@@ -1,42 +1,49 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import context from '../test-helpers/context.ts';
+import context from "../test-helpers/context.ts";
 
-describe('ctx.acceptsEncodings()', () => {
-  describe('with no arguments', () => {
-    describe('when Accept-Encoding is populated', () => {
-      it('should return accepted types', () => {
+describe("ctx.acceptsEncodings()", () => {
+  describe("with no arguments", () => {
+    describe("when Accept-Encoding is populated", () => {
+      it("should return accepted types", () => {
         const ctx = context();
-        ctx.req.headers['accept-encoding'] = 'gzip, compress;q=0.2';
-        assert.deepStrictEqual(ctx.acceptsEncodings(), ['gzip', 'compress', 'identity']);
-        assert.strictEqual(ctx.acceptsEncodings('gzip', 'compress'), 'gzip');
+        ctx.req.headers["accept-encoding"] = "gzip, compress;q=0.2";
+        assert.deepStrictEqual(ctx.acceptsEncodings(), [
+          "gzip",
+          "compress",
+          "identity",
+        ]);
+        assert.strictEqual(ctx.acceptsEncodings("gzip", "compress"), "gzip");
       });
     });
 
-    describe('when Accept-Encoding is not populated', () => {
-      it('should return identity', () => {
+    describe("when Accept-Encoding is not populated", () => {
+      it("should return identity", () => {
         const ctx = context();
-        assert.deepStrictEqual(ctx.acceptsEncodings(), ['identity']);
-        assert.strictEqual(ctx.acceptsEncodings('gzip', 'deflate', 'identity'), 'identity');
+        assert.deepStrictEqual(ctx.acceptsEncodings(), ["identity"]);
+        assert.strictEqual(
+          ctx.acceptsEncodings("gzip", "deflate", "identity"),
+          "identity",
+        );
       });
     });
   });
 
-  describe('with multiple arguments', () => {
-    it('should return the best fit', () => {
+  describe("with multiple arguments", () => {
+    it("should return the best fit", () => {
       const ctx = context();
-      ctx.req.headers['accept-encoding'] = 'gzip, compress;q=0.2';
-      assert.strictEqual(ctx.acceptsEncodings('compress', 'gzip'), 'gzip');
-      assert.strictEqual(ctx.acceptsEncodings('gzip', 'compress'), 'gzip');
+      ctx.req.headers["accept-encoding"] = "gzip, compress;q=0.2";
+      assert.strictEqual(ctx.acceptsEncodings("compress", "gzip"), "gzip");
+      assert.strictEqual(ctx.acceptsEncodings("gzip", "compress"), "gzip");
     });
   });
 
-  describe('with an array', () => {
-    it('should return the best fit', () => {
+  describe("with an array", () => {
+    it("should return the best fit", () => {
       const ctx = context();
-      ctx.req.headers['accept-encoding'] = 'gzip, compress;q=0.2';
-      assert.strictEqual(ctx.acceptsEncodings(['compress', 'gzip']), 'gzip');
+      ctx.req.headers["accept-encoding"] = "gzip, compress;q=0.2";
+      assert.strictEqual(ctx.acceptsEncodings(["compress", "gzip"]), "gzip");
     });
   });
 });

@@ -1,5 +1,5 @@
 export class Foo {
   public bar() {
-    return 'bar';
+    return "bar";
   }
 }

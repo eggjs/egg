@@ -1,3 +1,3 @@
 module.exports = (app: any) => {
-  app.fromCustomAgent = 'from custom agent';
+  app.fromCustomAgent = "from custom agent";
 };

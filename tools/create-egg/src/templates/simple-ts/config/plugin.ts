@@ -1,4 +1,4 @@
-import type { EggPlugin } from 'egg';
+import type { EggPlugin } from "egg";
 
 const plugins: EggPlugin = {
   // static: true,

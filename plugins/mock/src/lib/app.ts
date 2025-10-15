@@ -1,27 +1,37 @@
-import { debuglog } from 'node:util';
-import { strict as assert } from 'node:assert';
-import os from 'node:os';
-import path from 'node:path';
+import { debuglog } from "node:util";
+import { strict as assert } from "node:assert";
+import os from "node:os";
+import path from "node:path";
 
-import { Base } from 'sdk-base';
-import { detectPort } from 'detect-port';
-import { importModule } from '@eggjs/utils';
+import { Base } from "sdk-base";
+import { detectPort } from "detect-port";
+import { importModule } from "@eggjs/utils";
 
-import { sleep, rimraf, getProperty } from './utils.ts';
-import { formatOptions } from './format_options.ts';
-import { context } from './context.ts';
-import { setCustomLoader } from './mock_custom_loader.ts';
-import { createServer } from './mock_http_server.ts';
-import type { MockOptions, MockApplicationOptions } from './types.ts';
-import ApplicationUnittest from '../app/extend/application.ts';
-import AgentUnittest from '../app/extend/agent.ts';
+import { sleep, rimraf, getProperty } from "./utils.ts";
+import { formatOptions } from "./format_options.ts";
+import { context } from "./context.ts";
+import { setCustomLoader } from "./mock_custom_loader.ts";
+import { createServer } from "./mock_http_server.ts";
+import type { MockOptions, MockApplicationOptions } from "./types.ts";
+import ApplicationUnittest from "../app/extend/application.ts";
+import AgentUnittest from "../app/extend/agent.ts";
 
-const debug = debuglog('egg/mock/lib/app');
+const debug = debuglog("egg/mock/lib/app");
 
 const apps = new Map<string, ApplicationUnittest>();
-const APP_INIT = Symbol('appInit');
-const MESSENGER = Symbol('messenger');
-const MOCK_APP_METHOD = ['ready', 'closed', 'isClosed', 'close', '_agent', '_app', 'on', 'once', 'then'];
+const APP_INIT = Symbol("appInit");
+const MESSENGER = Symbol("messenger");
+const MOCK_APP_METHOD = [
+  "ready",
+  "closed",
+  "isClosed",
+  "close",
+  "_agent",
+  "_app",
+  "on",
+  "once",
+  "then",
+];
 
 class MockApplicationWorker extends Base {
   _agent: AgentUnittest;
@@ -34,7 +44,7 @@ class MockApplicationWorker extends Base {
 
   constructor(options: MockApplicationOptions) {
     super({
-      initMethod: '_init',
+      initMethod: "_init",
       ...options,
     });
     this.baseDir = options.baseDir;
@@ -49,18 +59,18 @@ class MockApplicationWorker extends Base {
       this.options.beforeInit = undefined;
     }
     if (this.options.clean !== false) {
-      const logDir = path.join(this.options.baseDir, 'logs');
+      const logDir = path.join(this.options.baseDir, "logs");
       try {
-        if (os.platform() === 'win32') {
+        if (os.platform() === "win32") {
           await sleep(1000);
         }
         await rimraf(logDir);
       } catch (err: any) {
         console.error(`remove log dir ${logDir} failed: ${err.stack}`);
       }
-      const runDir = path.join(this.options.baseDir, 'run');
+      const runDir = path.join(this.options.baseDir, "run");
       try {
-        if (os.platform() === 'win32') {
+        if (os.platform() === "win32") {
           await sleep(1000);
         }
         await rimraf(runDir);
@@ -70,55 +80,62 @@ class MockApplicationWorker extends Base {
     }
 
     this.options.clusterPort = await detectPort();
-    debug('[init] options: %o', this.options);
+    debug("[init] options: %o", this.options);
     const egg = await importModule(this.options.framework);
-    assert(egg.Agent, `should export Agent class from framework ${this.options.framework}`);
+    assert(
+      egg.Agent,
+      `should export Agent class from framework ${this.options.framework}`,
+    );
 
     const Agent = egg.Agent;
-    const agent = (this._agent = new Agent({ ...this.options }) as AgentUnittest);
-    debug('agent instantiate');
+    const agent = (this._agent = new Agent({
+      ...this.options,
+    }) as AgentUnittest);
+    debug("agent instantiate");
     await agent.ready();
-    debug('agent ready');
+    debug("agent ready");
 
     const ApplicationClass = bindMessenger(egg.Application, agent);
-    const app = (this._app = new ApplicationClass({ ...this.options }) as unknown as ApplicationUnittest);
+    const app = (this._app = new ApplicationClass({
+      ...this.options,
+    }) as unknown as ApplicationUnittest);
 
     // https://github.com/eggjs/egg/blob/8bb7c7e7d59d6aeca4b2ed1eb580368dcb731a4d/lib/egg.js#L125
     // egg single mode mount this at start(), so egg-mock should impel it.
     app.agent = agent;
-    Reflect.set(agent, 'app', app);
+    Reflect.set(agent, "app", app);
 
     // egg-mock plugin need to override egg context
     Object.assign(app.context, context);
 
-    debug('app instantiate');
+    debug("app instantiate");
     this[APP_INIT] = true;
-    debug('this[APP_INIT] = true');
+    debug("this[APP_INIT] = true");
     this.#bindEvent();
-    debug('http server instantiate');
+    debug("http server instantiate");
     createServer(app);
     await app.ready();
     // work for config ready
     setCustomLoader(app);
 
     const msg = {
-      action: 'egg-ready',
+      action: "egg-ready",
       data: this.options,
     };
     app.messenger.onMessage(msg);
     agent.messenger.onMessage(msg);
-    debug('app ready');
+    debug("app ready");
   }
 
   #bindEvent() {
-    debug('bind cache events to app');
+    debug("bind cache events to app");
     for (const args of this._initOnListeners) {
-      debug('on(%s), use cache and pass to app', args);
+      debug("on(%s), use cache and pass to app", args);
       this._app.on(args[0], args[1]);
       this.removeListener(args[0], args[1]);
     }
     for (const args of this._initOnceListeners) {
-      debug('once(%s), use cache and pass to app', args);
+      debug("once(%s), use cache and pass to app", args);
       this._app.once(args[0], args[1]);
       this.removeListener(args[0], args[1]);
     }
@@ -126,10 +143,10 @@ class MockApplicationWorker extends Base {
 
   on(...args: any[]) {
     if (this[APP_INIT]) {
-      debug('on(%s), pass to app', args);
+      debug("on(%s), pass to app", args);
       this._app.on(args[0], args[1]);
     } else {
-      debug('on(%s), cache it because app has not init', args);
+      debug("on(%s), cache it because app has not init", args);
       this._initOnListeners.add(args);
       super.on(args[0], args[1]);
     }
@@ -138,10 +155,10 @@ class MockApplicationWorker extends Base {
 
   once(...args: any[]) {
     if (this[APP_INIT]) {
-      debug('once(%s), pass to app', args);
+      debug("once(%s), pass to app", args);
       this._app.once(args[0], args[1]);
     } else {
-      debug('once(%s), cache it because app has not init', args);
+      debug("once(%s), cache it because app has not init", args);
       this._initOnceListeners.add(args);
       // maybe some edge case bug here
       super.on(args[0], args[1]);
@@ -166,9 +183,9 @@ class MockApplicationWorker extends Base {
     }
 
     apps.delete(baseDir);
-    debug('delete app cache %s, remain %s', baseDir, [...apps.keys()]);
+    debug("delete app cache %s, remain %s", baseDir, [...apps.keys()]);
 
-    if (os.platform() === 'win32') {
+    if (os.platform() === "win32") {
       await sleep(1000);
     }
   }
@@ -184,14 +201,14 @@ class MockApplicationWorker extends Base {
 export function createApp(createOptions?: MockOptions): ApplicationUnittest {
   const options = formatOptions({
     ...createOptions,
-    mode: 'single',
+    mode: "single",
   });
-  debug('[createApp] options: %o', options);
+  debug("[createApp] options: %o", options);
   if (options.cache && apps.has(options.baseDir)) {
     const app = apps.get(options.baseDir);
     // return cache when it hasn't been killed
     if (app && !app.isClosed) {
-      debug('use cache app %s', options.baseDir);
+      debug("use cache app %s", options.baseDir);
       return app;
     }
     // delete the cache when it's closed
@@ -210,29 +227,31 @@ export function createApp(createOptions?: MockOptions): ApplicationUnittest {
       }
       // it's asynchronous when agent and app are loading,
       // so should get the properties after loader ready
-      debug('proxy handler.get %s', prop);
+      debug("proxy handler.get %s", prop);
       return target._app[prop];
     },
     set(target, prop: string, value) {
       if (MOCK_APP_METHOD.includes(prop)) return true;
       if (!target[APP_INIT]) throw new Error(`can't set ${prop} before ready`);
-      debug('proxy handler.set %s', prop);
+      debug("proxy handler.set %s", prop);
       target._app[prop] = value;
       return true;
     },
     defineProperty(target, prop: string, descriptor) {
       // can't define properties on MockApplication
       if (MOCK_APP_METHOD.includes(prop)) return true;
-      if (!target[APP_INIT]) throw new Error(`can't defineProperty ${prop} before ready`);
-      debug('proxy handler.defineProperty %s', prop);
+      if (!target[APP_INIT])
+        throw new Error(`can't defineProperty ${prop} before ready`);
+      debug("proxy handler.defineProperty %s", prop);
       Object.defineProperty(target._app, prop, descriptor);
       return true;
     },
     deleteProperty(target, prop: string) {
       // can't delete properties on MockApplication
       if (MOCK_APP_METHOD.includes(prop)) return true;
-      if (!target[APP_INIT]) throw new Error(`can't delete ${prop} before ready`);
-      debug('proxy handler.deleteProperty %s', prop);
+      if (!target[APP_INIT])
+        throw new Error(`can't delete ${prop} before ready`);
+      debug("proxy handler.deleteProperty %s", prop);
       delete target._app[prop];
       return true;
     },
@@ -243,14 +262,14 @@ export function createApp(createOptions?: MockOptions): ApplicationUnittest {
       if (!target[APP_INIT]) {
         throw new Error(`can't getOwnPropertyDescriptor ${prop} before ready`);
       }
-      debug('proxy handler.getOwnPropertyDescriptor %s', prop);
+      debug("proxy handler.getOwnPropertyDescriptor %s", prop);
       return Object.getOwnPropertyDescriptor(target._app, prop);
     },
     getPrototypeOf(target) {
       if (!target[APP_INIT]) {
         throw new Error("can't getPrototypeOf before ready");
       }
-      debug('proxy handler.getPrototypeOf %s');
+      debug("proxy handler.getPrototypeOf %s");
       return Object.getPrototypeOf(target._app);
     },
   });
@@ -272,7 +291,7 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
         this.messenger.sendToAgent(action, data);
       };
       // enable agent to send to a random app
-      agentMessenger.on('egg-ready', () => {
+      agentMessenger.on("egg-ready", () => {
         agentMessenger.sendRandom = (action: string, data: unknown) => {
           agentMessenger.sendToApp(action, data);
           return agentMessenger;
@@ -283,10 +302,14 @@ function bindMessenger(ApplicationClass: any, agent: AgentUnittest) {
         apply: this._sendMessage.bind(this),
       });
     }
-    _sendMessage(_target: any, _thisArg: unknown, [action, data, to]: [string, unknown | undefined, string]) {
+    _sendMessage(
+      _target: any,
+      _thisArg: unknown,
+      [action, data, to]: [string, unknown | undefined, string],
+    ) {
       const appMessenger = this.messenger;
       setImmediate(() => {
-        if (to === 'app' || to === 'application') {
+        if (to === "app" || to === "application") {
           appMessenger.onMessage({ action, data });
         } else {
           agentMessenger.onMessage({ action, data });

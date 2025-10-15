@@ -1,22 +1,22 @@
-import { setTimeout as sleep } from 'node:timers/promises';
+import { setTimeout as sleep } from "node:timers/promises";
 
-import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, afterAll, beforeAll, expect } from 'vitest';
+import { mm, type MockApplication } from "@eggjs/mock";
+import { describe, it, afterAll, beforeAll, expect } from "vitest";
 
-import { getFixtures, getLogContent } from './utils.ts';
+import { getFixtures, getLogContent } from "./utils.ts";
 
-describe('cluster - context', () => {
+describe("cluster - context", () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('context'), workers: 1 });
+    app = mm.cluster({ baseDir: getFixtures("context"), workers: 1 });
     // app.debug();
     await app.ready();
   });
   afterAll(() => app.close());
 
-  it('should work', async () => {
+  it("should work", async () => {
     await sleep(5000);
-    const log = getLogContent('context');
+    const log = getLogContent("context");
     // console.log(log);
     expect(log).toMatch(/method: SCHEDULE/);
     expect(log).toMatch(/path: \/__schedule/);
@@ -27,18 +27,18 @@ describe('cluster - context', () => {
   });
 });
 
-describe.skip('cluster - async', () => {
+describe.skip("cluster - async", () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('async'), workers: 1 });
+    app = mm.cluster({ baseDir: getFixtures("async"), workers: 1 });
     // app.debug();
     await app.ready();
   });
   afterAll(() => app.close());
 
-  it('should work', async () => {
+  it("should work", async () => {
     await sleep(5000);
-    const log = getLogContent('async');
+    const log = getLogContent("async");
     expect(log).toMatch(/method: SCHEDULE/);
     expect(log).toMatch(/path: \/__schedule/);
     expect(log).toMatch(/(.*?)sub(\/|\\)cron\.js/);

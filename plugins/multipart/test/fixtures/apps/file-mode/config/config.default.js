@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
-  mode: 'file',
+  mode: "file",
   // fileSize: 10,
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

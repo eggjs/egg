@@ -1,5 +1,5 @@
-'use strict';
+"use strict";
 
-exports.a = 'a1';
+exports.a = "a1";
 
 exports.custom = true;

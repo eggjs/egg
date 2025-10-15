@@ -1,5 +1,5 @@
 // import { Context } from 'egg';
-import { EggContext } from '../../../../../../src/index.js';
+import { EggContext } from "../../../../../../src/index.js";
 
 export interface CustomBody {
   bar: string;

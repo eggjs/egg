@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = function () {
   return async function appCustom(ctx) {
-    ctx.body = 'app custom';
+    ctx.body = "app custom";
   };
 };

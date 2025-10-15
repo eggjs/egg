@@ -1,4 +1,4 @@
-import type { EggContext } from '../egg.ts';
+import type { EggContext } from "../egg.ts";
 
 export class BaseContextLogger {
   readonly #ctx: EggContext;
@@ -19,9 +19,12 @@ export class BaseContextLogger {
     this.#pathName = pathName;
   }
 
-  protected _log(method: 'info' | 'warn' | 'error' | 'debug', args: any[]): void {
+  protected _log(
+    method: "info" | "warn" | "error" | "debug",
+    args: any[],
+  ): void {
     // add `[${pathName}]` in log
-    if (this.#pathName && typeof args[0] === 'string') {
+    if (this.#pathName && typeof args[0] === "string") {
       args[0] = `[${this.#pathName}] ${args[0]}`;
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -35,7 +38,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   debug(...args: any[]): void {
-    this._log('debug', args);
+    this._log("debug", args);
   }
 
   /**
@@ -44,7 +47,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   info(...args: any[]): void {
-    this._log('info', args);
+    this._log("info", args);
   }
 
   /**
@@ -53,7 +56,7 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   warn(...args: any[]): void {
-    this._log('warn', args);
+    this._log("warn", args);
   }
 
   /**
@@ -62,6 +65,6 @@ export class BaseContextLogger {
    * @since 1.2.0
    */
   error(...args: any[]): void {
-    this._log('error', args);
+    this._log("error", args);
   }
 }

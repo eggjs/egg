@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-exports.keys = 'multipart';
+exports.keys = "multipart";
 
 exports.multipart = {
-  fileSize: '1kb',
+  fileSize: "1kb",
   fileModeMatch: /^\/non-exists-routers-/i,
 };

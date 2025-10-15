@@ -1,10 +1,10 @@
-import workerThreads, { type Worker } from 'node:worker_threads';
+import workerThreads, { type Worker } from "node:worker_threads";
 
-import { type Options as gracefulExitOptions } from 'graceful-process';
+import { type Options as gracefulExitOptions } from "graceful-process";
 
-import { BaseAgentUtils, BaseAgentWorker } from '../../base/agent.ts';
-import type { MessageBody } from '../../../messenger.ts';
-import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
+import { BaseAgentUtils, BaseAgentWorker } from "../../base/agent.ts";
+import type { MessageBody } from "../../../messenger.ts";
+import { ClusterAgentWorkerError } from "../../../../error/ClusterAgentWorkerError.ts";
 
 export class AgentThreadWorker extends BaseAgentWorker<Worker> {
   get workerId(): number {
@@ -28,8 +28,8 @@ export class AgentThreadWorker extends BaseAgentWorker<Worker> {
 
   static gracefulExit(options: gracefulExitOptions): void {
     const { beforeExit } = options;
-    process.on('exit', async code => {
-      if (typeof beforeExit === 'function') {
+    process.on("exit", async (code) => {
+      if (typeof beforeExit === "function") {
         await beforeExit();
       }
       process.exit(code);
@@ -48,40 +48,53 @@ export class AgentThreadUtils extends BaseAgentUtils {
     // start agent worker
     const argv = [JSON.stringify(this.options)];
     const agentPath = this.getAgentWorkerFile();
-    const worker = (this.#worker = new workerThreads.Worker(agentPath, { argv }));
+    const worker = (this.#worker = new workerThreads.Worker(agentPath, {
+      argv,
+    }));
 
     // wrap agent worker
     const agentWorker = (this.instance = new AgentThreadWorker(worker));
-    this.emit('agent_forked', agentWorker);
-    agentWorker.status = 'starting';
+    this.emit("agent_forked", agentWorker);
+    agentWorker.status = "starting";
     agentWorker.id = ++this.#id;
-    this.log('[master] agent_worker#%s:%s start with worker_threads', agentWorker.id, agentWorker.workerId);
+    this.log(
+      "[master] agent_worker#%s:%s start with worker_threads",
+      agentWorker.id,
+      agentWorker.workerId,
+    );
 
-    worker.on('message', msg => {
-      if (typeof msg === 'string') {
+    worker.on("message", (msg) => {
+      if (typeof msg === "string") {
         msg = {
           action: msg,
           data: msg,
         };
       }
-      msg.from = 'agent';
+      msg.from = "agent";
       this.messenger.send(msg);
     });
 
-    worker.on('error', err => {
-      this.logger.error(new ClusterAgentWorkerError(agentWorker.id, agentWorker.workerId, agentWorker.status, err));
+    worker.on("error", (err) => {
+      this.logger.error(
+        new ClusterAgentWorkerError(
+          agentWorker.id,
+          agentWorker.workerId,
+          agentWorker.status,
+          err,
+        ),
+      );
     });
 
     // agent exit message
-    worker.once('exit', (code: number, signal: string) => {
+    worker.once("exit", (code: number, signal: string) => {
       this.messenger.send({
-        action: 'agent-exit',
+        action: "agent-exit",
         data: {
           code,
           signal,
         },
-        to: 'master',
-        from: 'agent',
+        to: "master",
+        from: "agent",
       });
     });
   }
@@ -92,7 +105,9 @@ export class AgentThreadUtils extends BaseAgentUtils {
 
   async kill(): Promise<void> {
     if (this.#worker) {
-      this.log(`[master] kill agent worker#${this.#id} (worker_threads) by worker.terminate()`);
+      this.log(
+        `[master] kill agent worker#${this.#id} (worker_threads) by worker.terminate()`,
+      );
       this.clean();
       await this.#worker.terminate();
     }

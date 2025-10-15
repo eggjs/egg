@@ -1,22 +1,26 @@
-import { assign } from 'utility';
-import { now, diff } from 'performance-ms';
-import { utils, Context as EggCoreContext, Router } from '@eggjs/core';
-import type { Cookies as ContextCookies } from '@eggjs/cookies';
-import type { EggLogger } from 'egg-logger';
+import { assign } from "utility";
+import { now, diff } from "performance-ms";
+import { utils, Context as EggCoreContext, Router } from "@eggjs/core";
+import type { Cookies as ContextCookies } from "@eggjs/cookies";
+import type { EggLogger } from "egg-logger";
 
-import type { Application } from '../../lib/application.ts';
-import type { HttpClientRequestURL, HttpClientRequestOptions, HttpClient } from '../../lib/core/httpclient.ts';
-import type { BaseContextClass } from '../../lib//core/base_context_class.ts';
-import type Request from './request.ts';
-import type Response from './response.ts';
-import type Helper from './helper.ts';
+import type { Application } from "../../lib/application.ts";
+import type {
+  HttpClientRequestURL,
+  HttpClientRequestOptions,
+  HttpClient,
+} from "../../lib/core/httpclient.ts";
+import type { BaseContextClass } from "../../lib//core/base_context_class.ts";
+import type Request from "./request.ts";
+import type Response from "./response.ts";
+import type Helper from "./helper.ts";
 
-const HELPER = Symbol('ctx helper');
-const LOCALS = Symbol('ctx locals');
-const LOCALS_LIST = Symbol('ctx localsList');
-const COOKIES = Symbol('ctx cookies');
-const CONTEXT_HTTPCLIENT = Symbol('ctx httpclient');
-const CONTEXT_ROUTER = Symbol('ctx router');
+const HELPER = Symbol("ctx helper");
+const LOCALS = Symbol("ctx locals");
+const LOCALS_LIST = Symbol("ctx localsList");
+const COOKIES = Symbol("ctx cookies");
+const CONTEXT_HTTPCLIENT = Symbol("ctx httpclient");
+const CONTEXT_ROUTER = Symbol("ctx router");
 
 interface Cookies extends ContextCookies {
   request: any;
@@ -47,7 +51,11 @@ export default class Context extends EggCoreContext {
   get cookies() {
     let cookies = this[COOKIES];
     if (!cookies) {
-      this[COOKIES] = cookies = new this.app.ContextCookies(this, this.app.keys, this.app.config.cookies);
+      this[COOKIES] = cookies = new this.app.ContextCookies(
+        this,
+        this.app.keys,
+        this.app.config.cookies,
+      );
     }
     return cookies as Cookies;
   }
@@ -79,7 +87,10 @@ export default class Context extends EggCoreContext {
    * @param {Object} [options] - options for request.
    * @return {Object} see {@link ContextHttpClient#curl}
    */
-  async curl(url: HttpClientRequestURL, options?: HttpClientRequestOptions): ReturnType<HttpClient['request']> {
+  async curl(
+    url: HttpClientRequestURL,
+    options?: HttpClientRequestOptions,
+  ): ReturnType<HttpClient["request"]> {
     return await this.httpclient.curl(url, options);
   }
 
@@ -143,7 +154,7 @@ export default class Context extends EggCoreContext {
    * ```
    */
   get logger(): EggLogger {
-    return this.getLogger('logger');
+    return this.getLogger("logger");
   }
 
   /**
@@ -153,7 +164,7 @@ export default class Context extends EggCoreContext {
    * @since 1.0.0
    */
   get coreLogger(): EggLogger {
-    return this.getLogger('coreLogger');
+    return this.getLogger("coreLogger");
   }
 
   /**
@@ -225,10 +236,16 @@ export default class Context extends EggCoreContext {
    * });
    * ```
    */
-  runInBackground(scope: (ctx: Context) => Promise<void>, taskName?: string): void {
+  runInBackground(
+    scope: (ctx: Context) => Promise<void>,
+    taskName?: string,
+  ): void {
     // try to use custom function name first
     if (!taskName) {
-      taskName = Reflect.get(scope, '_name') || scope.name || utils.getCalleeFromStack(true);
+      taskName =
+        Reflect.get(scope, "_name") ||
+        scope.name ||
+        utils.getCalleeFromStack(true);
     }
     // use setImmediate to ensure all sync logic will run async
     setImmediate(() => {
@@ -238,18 +255,29 @@ export default class Context extends EggCoreContext {
 
   // let plugins or frameworks to reuse _runInBackground in some cases.
   // e.g.: https://github.com/eggjs/egg-mock/pull/78
-  async _runInBackground(scope: (ctx: Context) => Promise<void>, taskName: string): Promise<void> {
+  async _runInBackground(
+    scope: (ctx: Context) => Promise<void>,
+    taskName: string,
+  ): Promise<void> {
     const startTime = now();
     try {
       await scope(this as any);
-      this.coreLogger.info('[egg:background] task:%s success (%dms)', taskName, diff(startTime));
+      this.coreLogger.info(
+        "[egg:background] task:%s success (%dms)",
+        taskName,
+        diff(startTime),
+      );
     } catch (err: any) {
       // background task process log
-      this.coreLogger.info('[egg:background] task:%s fail (%dms)', taskName, diff(startTime));
+      this.coreLogger.info(
+        "[egg:background] task:%s fail (%dms)",
+        taskName,
+        diff(startTime),
+      );
 
       // emit error when promise catch, and set err.runInBackground flag
       err.runInBackground = true;
-      this.app.emit('error', err, this);
+      this.app.emit("error", err, this);
     }
   }
 

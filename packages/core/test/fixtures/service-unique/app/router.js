@@ -1,3 +1,3 @@
 module.exports = function (app) {
-  app.get('/same', 'same');
+  app.get("/same", "same");
 };

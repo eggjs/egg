@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     customLogger: {
       monitorLogger: {
-        file: path.join(appInfo.baseDir, 'logs/monitor.log'),
-        formatter: meta => meta.message,
+        file: path.join(appInfo.baseDir, "logs/monitor.log"),
+        formatter: (meta) => meta.message,
       },
     },
   };

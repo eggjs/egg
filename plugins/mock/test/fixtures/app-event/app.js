@@ -1,16 +1,16 @@
-const { scheduler } = require('node:timers/promises');
+const { scheduler } = require("node:timers/promises");
 
-module.exports = app => {
+module.exports = (app) => {
   app.ready(() => {
     // after ready
-    console.log('emit appReady event in app.js');
-    app.emit('appReady');
+    console.log("emit appReady event in app.js");
+    app.emit("appReady");
   });
-  console.log('register ready event in app.js');
+  console.log("register ready event in app.js");
 
   process.nextTick(() => {
     // before ready, after app instantiate
-    app.emit('appInstantiated');
+    app.emit("appInstantiated");
   });
 
   app.beforeStart(async function () {

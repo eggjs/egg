@@ -1,3 +1,3 @@
 module.exports = function (app) {
-  app.get('/user', app.controller.user);
+  app.get("/user", app.controller.user);
 };

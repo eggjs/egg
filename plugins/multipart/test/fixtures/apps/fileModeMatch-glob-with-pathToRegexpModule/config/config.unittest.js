@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 exports.logger = {
-  consoleLevel: 'NONE',
+  consoleLevel: "NONE",
   coreLogger: {
     // consoleLevel: 'DEBUG',
   },

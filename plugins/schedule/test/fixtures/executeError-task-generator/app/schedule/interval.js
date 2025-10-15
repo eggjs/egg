@@ -1,10 +1,10 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
   interval: 2000,
 };
 
 exports.task = function* () {
-  throw new Error('interval error');
+  throw new Error("interval error");
 };

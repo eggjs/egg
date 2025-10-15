@@ -1,13 +1,13 @@
-import { describe, it, beforeAll, afterAll } from 'vitest';
-import { request } from '@eggjs/supertest';
+import { describe, it, beforeAll, afterAll } from "vitest";
+import { request } from "@eggjs/supertest";
 
-import { createApp, type Application } from '../../helper.js';
+import { createApp, type Application } from "../../helper.js";
 
-describe('test/loader/mixin/load_helper_extend.test.ts', () => {
-  describe('helper', () => {
+describe("test/loader/mixin/load_helper_extend.test.ts", () => {
+  describe("helper", () => {
     let app: Application;
     beforeAll(async () => {
-      app = createApp('helper');
+      app = createApp("helper");
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
       await app.loader.loadApplicationExtend();
@@ -19,36 +19,36 @@ describe('test/loader/mixin/load_helper_extend.test.ts', () => {
     });
     afterAll(() => app.close());
 
-    it('should load extend from chair, plugin and helper', async () => {
+    it("should load extend from chair, plugin and helper", async () => {
       await request(app.callback())
-        .get('/')
+        .get("/")
         .expect(/app: true/)
         .expect(/plugin a: false/)
         .expect(/plugin b: true/)
         .expect(200);
     });
 
-    it('should override chair by application', async () => {
+    it("should override chair by application", async () => {
       await request(app.callback())
-        .get('/')
+        .get("/")
         .expect(/override: app/)
         .expect(200);
     });
 
-    it('should not call directly', async () => {
+    it("should not call directly", async () => {
       await request(app.callback())
-        .get('/')
+        .get("/")
         .expect(/not exists on locals: false/)
         .expect(200);
     });
   });
 
-  describe('no Helper', () => {
+  describe("no Helper", () => {
     let app: Application;
     afterAll(() => app.close());
 
-    it('should not extend helper', async () => {
-      app = createApp('no-helper');
+    it("should not extend helper", async () => {
+      app = createApp("no-helper");
       // should not throw
       await app.loader.loadHelperExtend();
     });

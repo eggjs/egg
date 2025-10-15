@@ -1,21 +1,21 @@
-import assert from 'node:assert';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
-import fs from 'node:fs/promises';
-import { createWriteStream } from 'node:fs';
-import { Readable, PassThrough } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
+import assert from "node:assert";
+import path from "node:path";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs/promises";
+import { createWriteStream } from "node:fs";
+import { Readable, PassThrough } from "node:stream";
+import { pipeline } from "node:stream/promises";
 
 // @ts-expect-error no types
-import parse from 'co-busboy';
-import dayjs from 'dayjs';
-import { Context } from 'egg';
+import parse from "co-busboy";
+import dayjs from "dayjs";
+import { Context } from "egg";
 
-import { humanizeBytes } from '../../lib/utils.ts';
-import { LimitError } from '../../lib/LimitError.ts';
-import { MultipartFileTooLargeError } from '../../lib/MultipartFileTooLargeError.ts';
+import { humanizeBytes } from "../../lib/utils.ts";
+import { LimitError } from "../../lib/LimitError.ts";
+import { MultipartFileTooLargeError } from "../../lib/MultipartFileTooLargeError.ts";
 
-const HAS_CONSUMED = Symbol('Context#multipartHasConsumed');
+const HAS_CONSUMED = Symbol("Context#multipartHasConsumed");
 
 export interface EggFile {
   field: string;
@@ -66,7 +66,13 @@ export interface MultipartOptions {
     parts?: number;
     headerPairs?: number;
   };
-  checkFile?(fieldname: string, file: any, filename: string, encoding: string, mimetype: string): void | Error;
+  checkFile?(
+    fieldname: string,
+    file: any,
+    filename: string,
+    encoding: string,
+    mimetype: string,
+  ): void | Error;
 }
 
 export default class MultipartContext extends Context {
@@ -81,17 +87,22 @@ export default class MultipartContext extends Context {
    *  - {Function} options.checkFile
    * @return {Yieldable | AsyncIterable<Yieldable>} parts
    */
-  multipart(options: MultipartOptions = {}): AsyncIterable<MultipartFileStream> {
+  multipart(
+    options: MultipartOptions = {},
+  ): AsyncIterable<MultipartFileStream> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const ctx = this;
     // multipart/form-data
-    if (!ctx.is('multipart')) ctx.throw(400, 'Content-Type must be multipart/*');
+    if (!ctx.is("multipart"))
+      ctx.throw(400, "Content-Type must be multipart/*");
 
     assert(!ctx[HAS_CONSUMED], "the multipart request can't be consumed twice");
     ctx[HAS_CONSUMED] = true;
 
-    const { autoFields, defaultCharset, defaultParamCharset, checkFile } = ctx.app.config.multipart;
-    const { fieldNameSize, fieldSize, fields, fileSize, files } = ctx.app.config.multipart;
+    const { autoFields, defaultCharset, defaultParamCharset, checkFile } =
+      ctx.app.config.multipart;
+    const { fieldNameSize, fieldSize, fields, fileSize, files } =
+      ctx.app.config.multipart;
     options = extractOptions(options);
 
     const parseOptions = Object.assign(
@@ -101,7 +112,7 @@ export default class MultipartContext extends Context {
         defParamCharset: defaultParamCharset,
         checkFile,
       },
-      options
+      options,
     );
 
     // https://github.com/mscdex/busboy#busboy-methods
@@ -114,7 +125,7 @@ export default class MultipartContext extends Context {
         fileSize,
         files,
       },
-      options.limits
+      options.limits,
     );
 
     // mount asyncIterator, so we can use `for await` to get parts
@@ -127,7 +138,11 @@ export default class MultipartContext extends Context {
         if (!part) continue;
 
         if (Array.isArray(part)) {
-          if (part[3]) throw new LimitError('Request_fieldSize_limit', 'Reach fieldSize limit');
+          if (part[3])
+            throw new LimitError(
+              "Request_fieldSize_limit",
+              "Reach fieldSize limit",
+            );
           // TODO: still not support at busboy 1.x (only support at urlencoded)
           // https://github.com/mscdex/busboy/blob/v0.3.1/lib/types/multipart.js#L5
           // https://github.com/mscdex/busboy/blob/master/lib/types/multipart.js#L251
@@ -136,8 +151,8 @@ export default class MultipartContext extends Context {
           // user click `upload` before choose a file, `part` will be file stream, but `part.filename` is empty must handler this, such as log error.
           if (!part.filename) {
             ctx.coreLogger.debug(
-              '[egg-multipart] file field `%s` is upload without file stream, will drop it.',
-              part.fieldname
+              "[egg-multipart] file field `%s` is upload without file stream, will drop it.",
+              part.fieldname,
             );
             await pipeline(part, new PassThrough());
             continue;
@@ -147,10 +162,19 @@ export default class MultipartContext extends Context {
           // busboy only set truncated when consume the stream
           if (part.truncated) {
             // in case of emit 'limit' too fast
-            throw new LimitError('Request_fileSize_limit', 'Reach fileSize limit');
+            throw new LimitError(
+              "Request_fileSize_limit",
+              "Reach fileSize limit",
+            );
           } else {
-            part.once('limit', function (this: MultipartFileStream) {
-              this.emit('error', new LimitError('Request_fileSize_limit', 'Reach fileSize limit'));
+            part.once("limit", function (this: MultipartFileStream) {
+              this.emit(
+                "error",
+                new LimitError(
+                  "Request_fileSize_limit",
+                  "Reach fileSize limit",
+                ),
+              );
               this.resume();
             });
           }
@@ -204,12 +228,18 @@ export default class MultipartContext extends Context {
 
           if (!storeDir) {
             // ${tmpdir}/YYYY/MM/DD/HH
-            storeDir = path.join(ctx.app.config.multipart.tmpdir, dayjs().format('YYYY/MM/DD/HH'));
+            storeDir = path.join(
+              ctx.app.config.multipart.tmpdir,
+              dayjs().format("YYYY/MM/DD/HH"),
+            );
             await fs.mkdir(storeDir, { recursive: true });
           }
 
           // write to tmp file
-          const filepath = path.join(storeDir, randomUUID() + path.extname(filename));
+          const filepath = path.join(
+            storeDir,
+            randomUUID() + path.extname(filename),
+          );
           const target = createWriteStream(filepath);
           await pipeline(part, target);
 
@@ -256,7 +286,9 @@ export default class MultipartContext extends Context {
    * @since 1.0.0
    * @deprecated Not safe enough, use `ctx.multipart()` instead
    */
-  async getFileStream(options: MultipartOptions = {}): Promise<MultipartFileStream> {
+  async getFileStream(
+    options: MultipartOptions = {},
+  ): Promise<MultipartFileStream> {
     options.autoFields = true;
     const parts: any = this.multipart(options);
     let stream: MultipartFileStream = await parts();
@@ -273,23 +305,26 @@ export default class MultipartContext extends Context {
     }
 
     if (stream.truncated) {
-      throw new LimitError('Request_fileSize_limit', 'Request file too large, please check multipart config');
+      throw new LimitError(
+        "Request_fileSize_limit",
+        "Request file too large, please check multipart config",
+      );
     }
 
     stream.fields = parts.field;
-    stream.once('limit', () => {
+    stream.once("limit", () => {
       const err = new MultipartFileTooLargeError(
-        'Request file too large, please check multipart config',
+        "Request file too large, please check multipart config",
         stream.fields,
-        stream.filename
+        stream.filename,
       );
-      if (stream.listenerCount('error') > 0) {
-        stream.emit('error', err);
+      if (stream.listenerCount("error") > 0) {
+        stream.emit("error", err);
         this.coreLogger.warn(err);
       } else {
         this.coreLogger.error(err);
         // ignore next error event
-        stream.on('error', () => {});
+        stream.on("error", () => {});
       }
       // ignore all data
       stream.resume();
@@ -312,7 +347,11 @@ export default class MultipartContext extends Context {
           await fs.rm(file.filepath, { force: true, recursive: true });
         } catch (err) {
           // warning log
-          this.coreLogger.warn('[egg-multipart-cleanupRequestFiles-error] file: %j, error: %s', file, err);
+          this.coreLogger.warn(
+            "[egg-multipart-cleanupRequestFiles-error] file: %j, error: %s",
+            file,
+            err,
+          );
         }
       }
     }
@@ -321,7 +360,7 @@ export default class MultipartContext extends Context {
 
 function extractOptions(options: MultipartOptions = {}) {
   const opts: MultipartOptions = {};
-  if (typeof options.autoFields === 'boolean') {
+  if (typeof options.autoFields === "boolean") {
     opts.autoFields = options.autoFields;
   }
   if (options.limits) {
@@ -347,9 +386,11 @@ function extractOptions(options: MultipartOptions = {}) {
 
   // limits
   if (options.limits) {
-    const limits: Record<string, number | undefined> = (opts.limits = { ...options.limits });
+    const limits: Record<string, number | undefined> = (opts.limits = {
+      ...options.limits,
+    });
     for (const key in limits) {
-      if (key.endsWith('Size') && limits[key]) {
+      if (key.endsWith("Size") && limits[key]) {
         limits[key] = humanizeBytes(limits[key]);
       }
     }

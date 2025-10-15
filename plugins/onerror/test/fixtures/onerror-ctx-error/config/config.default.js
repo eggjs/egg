@@ -1,8 +1,8 @@
-exports.middleware = ['trigger'];
+exports.middleware = ["trigger"];
 
-exports.keys = 'foo,bar';
+exports.keys = "foo,bar";
 
 exports.logger = {
-  level: 'NONE',
-  consoleLevel: 'NONE',
+  level: "NONE",
+  consoleLevel: "NONE",
 };

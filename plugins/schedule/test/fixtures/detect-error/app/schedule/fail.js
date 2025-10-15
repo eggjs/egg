@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
 exports.schedule = {
-  type: 'worker',
+  type: "worker",
   interval: 40000,
   immediate: true,
 };
 
 exports.task = async function (ctx) {
-  ctx.logger.info('fail');
-  return Promise.reject('fail');
+  ctx.logger.info("fail");
+  return Promise.reject("fail");
 };

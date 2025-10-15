@@ -1,4 +1,4 @@
-const { Base } = require('sdk-base');
+const { Base } = require("sdk-base");
 
 class CustomEventSource extends Base {
   constructor(options) {
@@ -8,10 +8,10 @@ class CustomEventSource extends Base {
   }
 
   watch(path) {
-    this.emit('info', 'info12345');
-    this.emit('warn', 'warn12345');
+    this.emit("info", "info12345");
+    this.emit("warn", "warn12345");
     this._h = setInterval(() => {
-      this.emit('change', {
+      this.emit("change", {
         path,
         foo: this._options.foo,
       });

@@ -1,18 +1,18 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import type { ILifecycleBoot, EggLogger } from 'egg';
+import type { ILifecycleBoot, EggLogger } from "egg";
 
-import type { EggScheduleJobInfo } from './lib/types.ts';
-import type Application from './app/extend/application.ts';
+import type { EggScheduleJobInfo } from "./lib/types.ts";
+import type Application from "./app/extend/application.ts";
 
-const debug = debuglog('egg/schedule/app');
+const debug = debuglog("egg/schedule/app");
 
 export default class Boot implements ILifecycleBoot {
   #app: Application;
   #logger: EggLogger;
   constructor(app: Application) {
     this.#app = app;
-    this.#logger = app.getLogger('scheduleLogger');
+    this.#logger = app.getLogger("scheduleLogger");
   }
 
   async configDidLoad(): Promise<void> {
@@ -23,12 +23,15 @@ export default class Boot implements ILifecycleBoot {
     for (const s in scheduleWorker.scheduleItems) {
       const schedule = scheduleWorker.scheduleItems[s];
       if (!schedule.schedule.disable) {
-        this.#logger.info('[@eggjs/schedule]: register schedule %s', schedule.key);
+        this.#logger.info(
+          "[@eggjs/schedule]: register schedule %s",
+          schedule.key,
+        );
       }
     }
 
     // register schedule event
-    this.#app.messenger.on('egg-schedule', async info => {
+    this.#app.messenger.on("egg-schedule", async (info) => {
       debug('app got "egg-schedule" message: %o', info);
       const { id, key } = info;
       this.#logger.debug(`[Job#${id}] ${key} await app ready`);
@@ -51,7 +54,7 @@ export default class Boot implements ILifecycleBoot {
 
       // run with anonymous context
       const ctx = this.#app.createAnonymousContext({
-        method: 'SCHEDULE',
+        method: "SCHEDULE",
         url: `/__schedule?path=${key}&${schedule.scheduleQueryString}`,
       });
 
@@ -72,7 +75,9 @@ export default class Boot implements ILifecycleBoot {
 
       const rt = Date.now() - start;
 
-      const msg = `[Job#${id}] ${key} execute ${success ? 'succeed' : 'failed'}, used ${rt}ms.`;
+      const msg = `[Job#${id}] ${key} execute ${
+        success ? "succeed" : "failed"
+      }, used ${rt}ms.`;
       if (success) {
         this.#logger.info(msg);
       } else {
@@ -80,7 +85,7 @@ export default class Boot implements ILifecycleBoot {
       }
 
       // notify agent job finish
-      this.#app.messenger.sendToAgent('egg-schedule', {
+      this.#app.messenger.sendToAgent("egg-schedule", {
         ...info,
         success,
         workerId: process.pid,
@@ -88,6 +93,6 @@ export default class Boot implements ILifecycleBoot {
         message: e?.message,
       } as EggScheduleJobInfo);
     });
-    debug('configDidLoad');
+    debug("configDidLoad");
   }
 }

@@ -13,7 +13,7 @@ import {
   HttpClientRequestURL,
   HttpClientRequestOptions,
   HttpClientResponse,
-} from 'egg';
+} from "egg";
 
 // base context class
 new BaseContextClass({} as Context);
@@ -27,7 +27,7 @@ class CustomBaseContextClass extends BaseContextClass {
   test() {
     this.logger.info(this.ctx);
     this.logger.info(this.app.config.keys);
-    this.logger.info(this.ctx.curl('http://127.0.0.1', { method: 'GET' }));
+    this.logger.info(this.ctx.curl("http://127.0.0.1", { method: "GET" }));
   }
 }
 new CustomBaseContextClass({} as Context).test();
@@ -36,39 +36,39 @@ new CustomBaseContextClass({} as Context).test();
 const app = new Application({
   baseDir: __dirname,
   plugins: {},
-  type: 'application',
+  type: "application",
 });
-app.logger.info('123');
+app.logger.info("123");
 app.middleware.slice(0);
 app.name.substring(0);
-app.on('egg-ready', () => {});
-app.emit('egg-ready');
-app.getLogger('test').info('123');
+app.on("egg-ready", () => {});
+app.emit("egg-ready");
+app.getLogger("test").info("123");
 app.inspect();
 app.listen(1002);
 app.logger.info(app.locals.test);
 const ctxHttpClient = new app.ContextHttpClient({} as Context);
-ctxHttpClient.request('http://127.0.0.1');
-ctxHttpClient.request('http://127.0.0.1', { method: 'GET' });
+ctxHttpClient.request("http://127.0.0.1");
+ctxHttpClient.request("http://127.0.0.1", { method: "GET" });
 const appHttpClient = new app.HttpClient(app);
-appHttpClient.request('http://127.0.0.1');
-appHttpClient.request('http://127.0.0.1', { method: 'GET' });
-app.httpclient.request('http://127.0.0.1').catch(() => {});
-app.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
+appHttpClient.request("http://127.0.0.1");
+appHttpClient.request("http://127.0.0.1", { method: "GET" });
+app.httpclient.request("http://127.0.0.1").catch(() => {});
+app.httpclient.request("http://127.0.0.1", { method: "GET" }).catch(() => {});
 app.logger.info(app.Service);
 app.logger.info(app.Controller);
 app.controller.test().then(() => {});
 
 async function main() {
-  await app.runInAnonymousContextScope(async ctx => {
-    await ctx.httpclient.request('url', {});
-    await ctx.httpclient.request('url');
-    await ctx.httpclient.curl('url', {});
-    await ctx.httpclient.curl('url');
-    await app.httpclient.request('url', {});
-    await app.httpclient.request('url');
-    await app.httpclient.curl('url', {});
-    const { res } = await app.httpclient.curl('url', { streaming: true });
+  await app.runInAnonymousContextScope(async (ctx) => {
+    await ctx.httpclient.request("url", {});
+    await ctx.httpclient.request("url");
+    await ctx.httpclient.curl("url", {});
+    await ctx.httpclient.curl("url");
+    await app.httpclient.request("url", {});
+    await app.httpclient.request("url");
+    await app.httpclient.curl("url", {});
+    const { res } = await app.httpclient.curl("url", { streaming: true });
     for await (const chunk of res) {
       console.log(chunk.toString());
     }
@@ -77,45 +77,45 @@ async function main() {
 main();
 
 // agent
-const agent = new Agent({ baseDir: __dirname, plugins: {}, type: 'agent' });
-agent.logger.info('123');
+const agent = new Agent({ baseDir: __dirname, plugins: {}, type: "agent" });
+agent.logger.info("123");
 agent.name.substring(0);
-agent.on('egg-ready', () => {});
-agent.emit('egg-ready');
-agent.getLogger('test').info('123');
+agent.on("egg-ready", () => {});
+agent.emit("egg-ready");
+agent.getLogger("test").info("123");
 agent.inspect();
 agent.listen(1002);
-agent.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
+agent.httpclient.request("http://127.0.0.1", { method: "GET" }).catch(() => {});
 agent.logger.info(agent.Service);
 agent.logger.info(agent.Controller);
 
 async function request<T = any>(
   url: HttpClientRequestURL,
-  options: HttpClientRequestOptions
+  options: HttpClientRequestOptions,
 ): Promise<HttpClientResponse<T>> {
   const response = await agent.httpclient.request<T>(url, options);
   return response as HttpClientResponse<T>;
 }
 
-request<{ name: 'string' }>('http://127.0.0.1', {}).then(response => {
+request<{ name: "string" }>("http://127.0.0.1", {}).then((response) => {
   console.log(response.data.name);
 });
 
 // single process mode
-start({ baseDir: __dirname, ignoreWarning: true }).then(app => {
+start({ baseDir: __dirname, ignoreWarning: true }).then((app) => {
   const port = 1002;
-  app.logger.info('123');
-  app.on('egg-ready', () => {});
-  app.emit('egg-ready');
-  app.getLogger('test').info('123');
+  app.logger.info("123");
+  app.on("egg-ready", () => {});
+  app.emit("egg-ready");
+  app.getLogger("test").info("123");
   app.inspect();
   app.listen(port);
   app.logger.info(app.locals.test);
   const ctxHttpClient = new app.ContextHttpClient({} as Context);
-  ctxHttpClient.request('http://127.0.0.1', { method: 'GET' });
+  ctxHttpClient.request("http://127.0.0.1", { method: "GET" });
   const appHttpClient = new app.HttpClient(app);
-  appHttpClient.request('http://127.0.0.1', { method: 'GET' });
-  app.httpclient.request('http://127.0.0.1', { method: 'GET' }).catch(() => {});
+  appHttpClient.request("http://127.0.0.1", { method: "GET" });
+  app.httpclient.request("http://127.0.0.1", { method: "GET" }).catch(() => {});
   app.logger.info(app.Service);
   app.logger.info(app.Controller);
   app.controller.test().then(() => {});
@@ -151,11 +151,11 @@ new MySubscription({} as Context);
 
 // config
 const config = {} as EggAppConfig;
-config.keys = '123123';
+config.keys = "123123";
 config.customLoader = {
   model: {
-    directory: 'app/model',
-    inject: 'app',
+    directory: "app/model",
+    inject: "app",
   },
 };
 const httpclientOption = {
@@ -172,82 +172,83 @@ config.httpclient = {
   httpsAgent: httpclientOption,
   enableProxy: true,
   request: {
-    method: 'GET',
+    method: "GET",
   },
-  proxy: 'http://127.0.0.1:8888',
+  proxy: "http://127.0.0.1:8888",
 };
 config.httpclient = httpclientOption;
 config.logger = {
-  dir: 'logs',
-  encoding: 'utf8',
-  env: 'prod',
-  level: 'INFO',
-  consoleLevel: 'INFO',
+  dir: "logs",
+  encoding: "utf8",
+  env: "prod",
+  level: "INFO",
+  consoleLevel: "INFO",
   disableConsoleAfterReady: true,
   outputJSON: false,
   buffer: true,
-  appLogName: 'app-web.log',
-  coreLogName: 'egg-web.log',
-  agentLogName: 'egg-agent.log',
-  errorLogName: 'common-error.log',
+  appLogName: "app-web.log",
+  coreLogName: "egg-web.log",
+  agentLogName: "egg-agent.log",
+  errorLogName: "common-error.log",
   allowDebugAtProd: false,
   coreLogger: {},
 };
 config.customLogger = {
   myLogger: {
-    file: './test.log',
-    jsonFile: './test.json',
-    formatter: (meta: any) => meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message,
-    contextFormatter: meta => JSON.stringify(meta),
+    file: "./test.log",
+    jsonFile: "./test.json",
+    formatter: (meta: any) =>
+      meta.date + " " + meta.level + " " + meta.pid + " " + meta.message,
+    contextFormatter: (meta) => JSON.stringify(meta),
     buffer: true,
-    eol: '\r\n',
+    eol: "\r\n",
   },
 
   otherLogger: {
-    file: './other.log',
+    file: "./other.log",
   },
 };
 
 // partial config
 const config2 = {} as PowerPartial<EggAppConfig>;
-config2.keys = '123123';
+config2.keys = "123123";
 config2.customLoader = {
   model: {
-    directory: 'app/model',
+    directory: "app/model",
   },
 };
 config2.customLoader = {
   model: {
-    inject: 'app',
+    inject: "app",
   },
 };
 config2.security = {
   csrf: false,
   ssrf: {
-    ipBlackList: ['10.0.0.0/8'],
+    ipBlackList: ["10.0.0.0/8"],
     checkAddress(ip) {
-      return ip === '127.0.0.1';
+      return ip === "127.0.0.1";
     },
   },
 };
 config2.logger = {
-  dir: 'logs',
-  encoding: 'utf8',
-  env: 'prod',
-  level: 'INFO',
+  dir: "logs",
+  encoding: "utf8",
+  env: "prod",
+  level: "INFO",
   coreLogger: {
-    file: './test.log',
-    level: 'ALL',
+    file: "./test.log",
+    level: "ALL",
   },
 };
 
 // singleton
 const redis = {} as Singleton<{ test(): void }>;
-redis.get('123').test();
+redis.get("123").test();
 
 // extends egg
 app.config.mySpecConfig.substring(0);
-declare module 'egg' {
+declare module "egg" {
   interface IApplicationLocals {
     test: string;
   }

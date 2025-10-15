@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.closeFn = false;
   app.closeGeneratorFn = false;
   app.closeAsyncFn = false;
@@ -6,15 +6,15 @@ module.exports = app => {
 
   app.beforeClose(() => {
     app.closeFn = true;
-    app.closeOrderArray.push('closeFn');
+    app.closeOrderArray.push("closeFn");
   });
   app.beforeClose(async function () {
     app.closeGeneratorFn = true;
-    app.closeOrderArray.push('closeGeneratorFn');
+    app.closeOrderArray.push("closeGeneratorFn");
   });
   app.beforeClose(function () {
-    app.closeOrderArray.push('closeAsyncFn');
-    return new Promise(resolve => {
+    app.closeOrderArray.push("closeAsyncFn");
+    return new Promise((resolve) => {
       app.closeAsyncFn = true;
       resolve();
     });
@@ -33,10 +33,10 @@ module.exports = app => {
   app.beforeClose(onlyOnce);
 
   app.beforeClose(() => {
-    app.closeEvent = 'before';
+    app.closeEvent = "before";
   });
-  app.once('close', () => {
-    app.closeEvent = 'after';
+  app.once("close", () => {
+    app.closeEvent = "after";
   });
 
   app.beforeClose(() => {

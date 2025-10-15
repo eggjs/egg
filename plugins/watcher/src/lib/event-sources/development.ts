@@ -1,11 +1,11 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import fs, { type FSWatcher, type WatchEventType } from 'node:fs';
+import { debuglog } from "node:util";
+import path from "node:path";
+import fs, { type FSWatcher, type WatchEventType } from "node:fs";
 
-import { BaseEventSource } from './base.ts';
-import type { ChangeInfo } from '../watcher.ts';
+import { BaseEventSource } from "./base.ts";
+import type { ChangeInfo } from "../watcher.ts";
 
-const debug = debuglog('egg-watcher/lib/event-sources/development');
+const debug = debuglog("egg-watcher/lib/event-sources/development");
 
 // only used by local dev environment
 export default class DevelopmentEventSource extends BaseEventSource {
@@ -20,13 +20,13 @@ export default class DevelopmentEventSource extends BaseEventSource {
     try {
       const stat = fs.statSync(file, { throwIfNoEntry: false });
       if (!stat) {
-        debug('watch %o ignore, file not exists', file);
+        debug("watch %o ignore, file not exists", file);
         return;
       }
-      debug('watch %o, isFile: %o', file, stat.isFile());
+      debug("watch %o, isFile: %o", file, stat.isFile());
       // https://nodejs.org/docs/latest/api/fs.html#fswatchfilename-options-listener
       let recursive = true;
-      if (process.platform === 'linux' && process.version.startsWith('v18.')) {
+      if (process.platform === "linux" && process.version.startsWith("v18.")) {
         // https://github.com/fgnass/filewatcher/pull/6
         // disable recursive on linux + Node.js <= 18
         recursive = false;
@@ -38,7 +38,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
           recursive,
         },
         (event, filename) => {
-          debug('watch %o => event: %o, filename: %o', file, event, filename);
+          debug("watch %o => event: %o, filename: %o", file, event, filename);
           let changePath = file;
           if (stat.isFile()) {
             this.#onFsWatchChange(event, changePath);
@@ -49,14 +49,19 @@ export default class DevelopmentEventSource extends BaseEventSource {
             }
             this.#onFsWatchChange(event, changePath);
           }
-        }
+        },
       );
       // 保存 handler，用于解除监听
       this.#fileWatching.set(file, handler);
     } catch (e) {
       // file not exist, do nothing
       // do not emit error, in case of too many logs
-      this.emit('warn', '[@eggjs/watcher:DevelopmentEventSource] watch %o error: %s', file, e);
+      this.emit(
+        "warn",
+        "[@eggjs/watcher:DevelopmentEventSource] watch %o error: %s",
+        file,
+        e,
+      );
     }
   }
 
@@ -74,7 +79,11 @@ export default class DevelopmentEventSource extends BaseEventSource {
 
   #onFsWatchChange(event: WatchEventType, file: string) {
     if (!file) {
-      this.emit('warn', '[@eggjs/watcher:DevelopmentEventSource] event: %o', event);
+      this.emit(
+        "warn",
+        "[@eggjs/watcher:DevelopmentEventSource] event: %o",
+        event,
+      );
       return;
     }
     // { event: 'change',
@@ -101,6 +110,6 @@ export default class DevelopmentEventSource extends BaseEventSource {
       stat,
       isDirectory: stat?.isDirectory(),
     } as ChangeInfo;
-    this.emit('change', info);
+    this.emit("change", info);
   }
 }

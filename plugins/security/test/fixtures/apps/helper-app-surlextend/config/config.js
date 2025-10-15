@@ -1,6 +1,6 @@
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  domainWhiteList: ['.domain.com'],
-  protocolWhiteList: ['test'],
+  domainWhiteList: [".domain.com"],
+  protocolWhiteList: ["test"],
 };

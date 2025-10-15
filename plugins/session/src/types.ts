@@ -1,7 +1,10 @@
-import type { SessionConfig } from './config/config.default.ts';
-import type { SessionStoreOrAppSessionStoreClass, SessionStore } from './app/extend/application.ts';
+import type { SessionConfig } from "./config/config.default.ts";
+import type {
+  SessionStoreOrAppSessionStoreClass,
+  SessionStore,
+} from "./app/extend/application.ts";
 
-declare module 'egg' {
+declare module "egg" {
   // add EggAppConfig overrides types
   interface EggAppConfig {
     session: SessionConfig;
@@ -9,7 +12,9 @@ declare module 'egg' {
 
   interface Application {
     // add Application instance property
-    set sessionStore(store: SessionStoreOrAppSessionStoreClass | null | undefined);
+    set sessionStore(
+      store: SessionStoreOrAppSessionStoreClass | null | undefined,
+    );
     get sessionStore(): SessionStore | undefined;
   }
 }

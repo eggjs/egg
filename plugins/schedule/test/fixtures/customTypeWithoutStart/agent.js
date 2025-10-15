@@ -7,5 +7,5 @@ module.exports = function (agent) {
       }, this.schedule.interval);
     }
   }
-  agent.schedule.use('cluster', ClusterStrategy);
+  agent.schedule.use("cluster", ClusterStrategy);
 };

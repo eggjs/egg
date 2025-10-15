@@ -1,20 +1,20 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach } from "vitest";
 
-import mm, { type MockApplication } from '../src/index.ts';
-import { getFixtures } from './helper.ts';
+import mm, { type MockApplication } from "../src/index.ts";
+import { getFixtures } from "./helper.ts";
 
-describe.sequential('test/app.test.ts', () => {
+describe.sequential("test/app.test.ts", () => {
   afterEach(mm.restore);
 
   // test mm.app
-  call('app');
+  call("app");
   // test mm.cluster
   // call('cluster');
 
-  it('should alias app.agent to app._agent', async () => {
-    const baseDir = getFixtures('app');
+  it("should alias app.agent to app._agent", async () => {
+    const baseDir = getFixtures("app");
     const app = mm.app({
       baseDir,
       // customEgg: path.join(__dirname, '../node_modules/egg'),
@@ -25,8 +25,8 @@ describe.sequential('test/app.test.ts', () => {
     assert.equal(app.agent.app, app._app);
   });
 
-  it('should not use cache when app is closed', async () => {
-    const baseDir = getFixtures('app');
+  it("should not use cache when app is closed", async () => {
+    const baseDir = getFixtures("app");
     const app1 = mm.app({
       baseDir,
       // customEgg: path.join(__dirname, '../node_modules/egg'),
@@ -44,46 +44,49 @@ describe.sequential('test/app.test.ts', () => {
     assert(app1 !== app2);
   });
 
-  it('should auto find framework when egg.framework exists on package.json', async () => {
-    const baseDir = getFixtures('yadan_app');
+  it("should auto find framework when egg.framework exists on package.json", async () => {
+    const baseDir = getFixtures("yadan_app");
     const app = mm.app({
       baseDir,
     });
     await app.ready();
-    assert.equal(app.config.foobar, 'yadan');
+    assert.equal(app.config.foobar, "yadan");
     await app.close();
   });
 
-  it('should show fail tips when Agent not export by default', async () => {
-    const baseDir = getFixtures('yadan_app_fail');
+  it("should show fail tips when Agent not export by default", async () => {
+    const baseDir = getFixtures("yadan_app_fail");
     const app = mm.app({
       baseDir,
     });
-    await assert.rejects(app.ready(), /should export Agent class from framework/);
+    await assert.rejects(
+      app.ready(),
+      /should export Agent class from framework/,
+    );
     await app.close();
   });
 
-  it('should emit server event on app without superTest', async () => {
-    const baseDir = getFixtures('server');
+  it("should emit server event on app without superTest", async () => {
+    const baseDir = getFixtures("server");
     const app = mm.app({
       baseDir,
     });
     await app.ready();
-    assert(app.emitServer, 'app.emitServer not exists');
-    assert(app.server, 'app.server not exists');
+    assert(app.emitServer, "app.emitServer not exists");
+    assert(app.server, "app.server not exists");
     await app.close();
   });
 
-  it('support options.beforeInit', async () => {
-    const baseDir = getFixtures('app');
+  it("support options.beforeInit", async () => {
+    const baseDir = getFixtures("app");
     const app = mm.app({
       baseDir,
       // customEgg: path.join(__dirname, '../node_modules/egg'),
       cache: false,
       beforeInit(instance) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           setTimeout(() => {
-            instance.options.test = 'abc';
+            instance.options.test = "abc";
             resolve();
           }, 100);
         });
@@ -91,24 +94,24 @@ describe.sequential('test/app.test.ts', () => {
     });
     await app.ready();
     assert(!app.options.beforeInit);
-    assert((app.options as any).test === 'abc');
+    assert((app.options as any).test === "abc");
   });
 
-  it('should emit error when load Application fail', async () => {
-    const baseDir = getFixtures('app-fail');
+  it("should emit error when load Application fail", async () => {
+    const baseDir = getFixtures("app-fail");
     const app = mm.app({ baseDir, cache: false });
     await assert.rejects(app.ready(), /load error/);
     await app.close();
   });
 
-  it('should FrameworkErrorformater work during app boot', async () => {
+  it("should FrameworkErrorformater work during app boot", async () => {
     // let logMsg = '';
     let catchErr: any;
     // mm(process.stderr, 'write', (msg: string) => {
     //   logMsg = msg;
     // });
     const app = mm.app({
-      baseDir: getFixtures('app-boot-error'),
+      baseDir: getFixtures("app-boot-error"),
     });
     try {
       await app.ready();
@@ -116,20 +119,20 @@ describe.sequential('test/app.test.ts', () => {
       catchErr = err;
     }
 
-    assert.equal(catchErr.code, 'customPlugin_99');
+    assert.equal(catchErr.code, "customPlugin_99");
     // console.log(catchErr);
     // assert.match(logMsg, /CustomError: mock error/);
     // assert.match(logMsg, /framework\.CustomError\: mock error \[ https\:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/);
   });
 
-  it('should FrameworkErrorformater work during app boot ready', async () => {
-    let logMsg: string = '';
+  it("should FrameworkErrorformater work during app boot ready", async () => {
+    let logMsg: string = "";
     let catchErr: any;
-    mm(process.stderr, 'write', (msg: string) => {
+    mm(process.stderr, "write", (msg: string) => {
       logMsg = msg;
     });
     const app = mm.app({
-      baseDir: getFixtures('app-boot-ready-error'),
+      baseDir: getFixtures("app-boot-ready-error"),
     });
     try {
       await app.ready();
@@ -137,10 +140,14 @@ describe.sequential('test/app.test.ts', () => {
       catchErr = err;
     }
 
-    assert(catchErr.code === 'customPlugin_99');
+    assert(catchErr.code === "customPlugin_99");
     assert.match(logMsg, /CustomError: mock error/);
     // console.log(logMsg);
-    assert(/framework\.CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/.test(logMsg));
+    assert(
+      /framework\.CustomError: mock error \[ https:\/\/eggjs\.org\/zh-cn\/faq\/customPlugin_99 \]/.test(
+        logMsg,
+      ),
+    );
   });
 });
 
@@ -148,8 +155,8 @@ function call(method: string) {
   let app: MockApplication;
   describe(`mm.${method}()`, () => {
     beforeAll(async () => {
-      const baseDir = getFixtures('app');
-      mm(process, 'cwd', () => baseDir);
+      const baseDir = getFixtures("app");
+      mm(process, "cwd", () => baseDir);
       app = (mm as any)[method]({
         // cache: false,
         // coverage: false,
@@ -158,103 +165,133 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work', async () => {
-      await app.httpRequest().get('/').expect('foo').expect(200);
+    it("should work", async () => {
+      await app.httpRequest().get("/").expect("foo").expect(200);
     });
 
-    it('should emit server event on app', async () => {
-      await app.httpRequest().get('/keepAliveTimeout').expect(200).expect({
+    it("should emit server event on app", async () => {
+      await app.httpRequest().get("/keepAliveTimeout").expect(200).expect({
         keepAliveTimeout: 5000,
       });
     });
 
-    it.skip('should app.expectLog(), app.notExpectLog() work', async () => {
-      await app.httpRequest().get('/logger').expect(200).expect({
+    it.skip("should app.expectLog(), app.notExpectLog() work", async () => {
+      await app.httpRequest().get("/logger").expect(200).expect({
         ok: true,
       });
       // app.expectLog('[app.expectLog() test] ok');
       // app.expectLog('[app.expectLog() test] ok', 'logger');
       // app.expectLog('[app.expectLog(coreLogger) test] ok', 'coreLogger');
 
-      app.notExpectLog('[app.notExpectLog() test] fail');
-      app.notExpectLog('[app.notExpectLog() test] fail', 'logger');
-      app.notExpectLog('[app.notExpectLog(coreLogger) test] fail', 'coreLogger');
+      app.notExpectLog("[app.notExpectLog() test] fail");
+      app.notExpectLog("[app.notExpectLog() test] fail", "logger");
+      app.notExpectLog(
+        "[app.notExpectLog(coreLogger) test] fail",
+        "coreLogger",
+      );
 
-      if (method === 'app') {
+      if (method === "app") {
         app.expectLog(/\[app\.expectLog\(\) test\] ok/);
         app.expectLog(/\[app\.expectLog\(\) test\] ok/, app.logger);
-        app.expectLog('[app.expectLog(coreLogger) test] ok', app.coreLogger);
-        app.expectLog(/\[app\.expectLog\(coreLogger\) test\] ok/, 'coreLogger');
+        app.expectLog("[app.expectLog(coreLogger) test] ok", app.coreLogger);
+        app.expectLog(/\[app\.expectLog\(coreLogger\) test\] ok/, "coreLogger");
 
         app.notExpectLog(/\[app\.notExpectLog\(\) test\] fail/);
         app.notExpectLog(/\[app\.notExpectLog\(\) test\] fail/, app.logger);
-        app.notExpectLog('[app.notExpectLog(coreLogger) test] fail', app.coreLogger);
-        app.notExpectLog(/\[app\.notExpectLog\(coreLogger\) test\] fail/, 'coreLogger');
+        app.notExpectLog(
+          "[app.notExpectLog(coreLogger) test] fail",
+          app.coreLogger,
+        );
+        app.notExpectLog(
+          /\[app\.notExpectLog\(coreLogger\) test\] fail/,
+          "coreLogger",
+        );
       }
 
       try {
-        app.expectLog('[app.expectLog(coreLogger) test] ok');
-        throw new Error('should not run this');
+        app.expectLog("[app.expectLog(coreLogger) test] ok");
+        throw new Error("should not run this");
       } catch (err: any) {
-        assert(err.message.includes('Can\'t find String:"[app.expectLog(coreLogger) test] ok" in '));
-        assert(err.message.includes('app-web.log'));
+        assert(
+          err.message.includes(
+            'Can\'t find String:"[app.expectLog(coreLogger) test] ok" in ',
+          ),
+        );
+        assert(err.message.includes("app-web.log"));
       }
 
       try {
-        app.notExpectLog('[app.expectLog() test] ok');
-        throw new Error('should not run this');
+        app.notExpectLog("[app.expectLog() test] ok");
+        throw new Error("should not run this");
       } catch (err: any) {
-        assert(err.message.includes('Find String:"[app.expectLog() test] ok" in '));
-        assert(err.message.includes('app-web.log'));
+        assert(
+          err.message.includes('Find String:"[app.expectLog() test] ok" in '),
+        );
+        assert(err.message.includes("app-web.log"));
       }
     });
 
-    it('should app.mockLog() then app.expectLog() work', async () => {
+    it("should app.mockLog() then app.expectLog() work", async () => {
       app.mockLog();
-      app.mockLog('logger');
-      app.mockLog('coreLogger');
-      await app.httpRequest().get('/logger').expect(200).expect({
+      app.mockLog("logger");
+      app.mockLog("coreLogger");
+      await app.httpRequest().get("/logger").expect(200).expect({
         ok: true,
       });
-      app.expectLog('[app.expectLog() test] ok');
-      app.expectLog('[app.expectLog() test] ok', 'logger');
-      app.expectLog('[app.expectLog(coreLogger) test] ok', 'coreLogger');
+      app.expectLog("[app.expectLog() test] ok");
+      app.expectLog("[app.expectLog() test] ok", "logger");
+      app.expectLog("[app.expectLog(coreLogger) test] ok", "coreLogger");
 
-      app.notExpectLog('[app.notExpectLog() test] fail');
-      app.notExpectLog('[app.notExpectLog() test] fail', 'logger');
-      app.notExpectLog('[app.notExpectLog(coreLogger) test] fail', 'coreLogger');
+      app.notExpectLog("[app.notExpectLog() test] fail");
+      app.notExpectLog("[app.notExpectLog() test] fail", "logger");
+      app.notExpectLog(
+        "[app.notExpectLog(coreLogger) test] fail",
+        "coreLogger",
+      );
 
-      if (method === 'app') {
+      if (method === "app") {
         app.expectLog(/\[app\.expectLog\(\) test\] ok/);
         app.expectLog(/\[app\.expectLog\(\) test\] ok/, app.logger);
-        app.expectLog('[app.expectLog(coreLogger) test] ok', app.coreLogger);
-        app.expectLog(/\[app\.expectLog\(coreLogger\) test\] ok/, 'coreLogger');
+        app.expectLog("[app.expectLog(coreLogger) test] ok", app.coreLogger);
+        app.expectLog(/\[app\.expectLog\(coreLogger\) test\] ok/, "coreLogger");
 
         app.notExpectLog(/\[app\.notExpectLog\(\) test\] fail/);
         app.notExpectLog(/\[app\.notExpectLog\(\) test\] fail/, app.logger);
-        app.notExpectLog('[app.notExpectLog(coreLogger) test] fail', app.coreLogger);
-        app.notExpectLog(/\[app\.notExpectLog\(coreLogger\) test\] fail/, 'coreLogger');
+        app.notExpectLog(
+          "[app.notExpectLog(coreLogger) test] fail",
+          app.coreLogger,
+        );
+        app.notExpectLog(
+          /\[app\.notExpectLog\(coreLogger\) test\] fail/,
+          "coreLogger",
+        );
       }
 
       try {
-        app.expectLog('[app.expectLog(coreLogger) test] ok');
-        throw new Error('should not run this');
+        app.expectLog("[app.expectLog(coreLogger) test] ok");
+        throw new Error("should not run this");
       } catch (err: any) {
-        assert(err.message.includes('Can\'t find String:"[app.expectLog(coreLogger) test] ok" in '));
-        assert(err.message.includes('app-web.log'));
+        assert(
+          err.message.includes(
+            'Can\'t find String:"[app.expectLog(coreLogger) test] ok" in ',
+          ),
+        );
+        assert(err.message.includes("app-web.log"));
       }
 
       try {
-        app.notExpectLog('[app.expectLog() test] ok');
-        throw new Error('should not run this');
+        app.notExpectLog("[app.expectLog() test] ok");
+        throw new Error("should not run this");
       } catch (err: any) {
-        assert(err.message.includes('Find String:"[app.expectLog() test] ok" in '));
-        assert(err.message.includes('app-web.log'));
+        assert(
+          err.message.includes('Find String:"[app.expectLog() test] ok" in '),
+        );
+        assert(err.message.includes("app-web.log"));
       }
 
-      if (method === 'app') {
-        assert('_mockLogs' in app.logger && app.logger._mockLogs);
-        assert('_mockLogs' in app.coreLogger && app.coreLogger._mockLogs);
+      if (method === "app") {
+        assert("_mockLogs" in app.logger && app.logger._mockLogs);
+        assert("_mockLogs" in app.coreLogger && app.coreLogger._mockLogs);
         await mm.restore();
         assert(!app.logger._mockLogs);
         assert(!app.coreLogger._mockLogs);
@@ -262,7 +299,7 @@ function call(method: string) {
     });
 
     it("should app.mockLog() don't read from file", async () => {
-      await app.httpRequest().get('/logger').expect(200).expect({
+      await app.httpRequest().get("/logger").expect(200).expect({
         ok: true,
       });
       // app.expectLog('INFO');
@@ -270,22 +307,22 @@ function call(method: string) {
       // app.notExpectLog('INFO');
     });
 
-    it('should request with ua', async () => {
+    it("should request with ua", async () => {
       await app
         .httpRequest()
-        .get('/ua')
+        .get("/ua")
         .expect(200)
         .expect(/@eggjs\/mock\/\d+\.\d+\.\d+/);
     });
   });
 
   describe(`mm.${method}({ baseDir, plugin=string })`, () => {
-    const pluginDir = getFixtures('fooPlugin');
+    const pluginDir = getFixtures("fooPlugin");
     beforeAll(async () => {
-      mm(process, 'cwd', () => pluginDir);
+      mm(process, "cwd", () => pluginDir);
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/foo'),
-        plugin: 'fooPlugin',
+        baseDir: getFixtures("apps/foo"),
+        plugin: "fooPlugin",
         // cache: false,
         // coverage: false,
       });
@@ -293,10 +330,10 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work', async () => {
+    it("should work", async () => {
       app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
           fooPlugin: true,
         })
@@ -305,11 +342,11 @@ function call(method: string) {
   });
 
   describe(`mm.${method}({ baseDir, plugin=true })`, () => {
-    const pluginDir = getFixtures('fooPlugin');
+    const pluginDir = getFixtures("fooPlugin");
     beforeAll(async () => {
-      mm(process, 'cwd', () => pluginDir);
+      mm(process, "cwd", () => pluginDir);
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/foo'),
+        baseDir: getFixtures("apps/foo"),
         plugin: true,
         // cache: false,
         // coverage: false,
@@ -318,10 +355,10 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work', async () => {
+    it("should work", async () => {
       app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
           fooPlugin: true,
         })
@@ -332,11 +369,11 @@ function call(method: string) {
   describe(`mm.${method}({ baseDir, plugins })`, () => {
     beforeAll(async () => {
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/foo'),
+        baseDir: getFixtures("apps/foo"),
         plugins: {
           fooPlugin: {
             enable: true,
-            path: getFixtures('fooPlugin'),
+            path: getFixtures("fooPlugin"),
           },
         },
         // cache: false,
@@ -346,10 +383,10 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work', async () => {
+    it("should work", async () => {
       await app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
           fooPlugin: true,
         })
@@ -360,8 +397,8 @@ function call(method: string) {
   describe(`mm.${method}({ baseDir, framework=fullpath })`, () => {
     beforeAll(async () => {
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/barapp'),
-        framework: getFixtures('bar'),
+        baseDir: getFixtures("apps/barapp"),
+        framework: getFixtures("bar"),
         // cache: false,
         // coverage: false,
       });
@@ -369,13 +406,13 @@ function call(method: string) {
     });
     afterAll(() => app.close());
 
-    it('should work with old way', async () => {
+    it("should work with old way", async () => {
       await app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
-          foo: 'bar',
-          foobar: 'bar',
+          foo: "bar",
+          foobar: "bar",
         })
         .expect(200);
     });
@@ -383,11 +420,11 @@ function call(method: string) {
 
   describe(`mm.${method}({ baseDir, customEgg=true })`, () => {
     beforeAll(async () => {
-      mm(process, 'cwd', () => {
-        return getFixtures('bar');
+      mm(process, "cwd", () => {
+        return getFixtures("bar");
       });
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/barapp'),
+        baseDir: getFixtures("apps/barapp"),
         customEgg: true,
         // cache: false,
         // coverage: false,
@@ -396,13 +433,13 @@ function call(method: string) {
     });
     afterAll(() => app && app.close());
 
-    it('should work', async () => {
+    it("should work", async () => {
       await app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
-          foo: 'bar',
-          foobar: 'bar',
+          foo: "bar",
+          foobar: "bar",
         })
         .expect(200);
     });
@@ -410,11 +447,11 @@ function call(method: string) {
 
   describe(`mm.${method}({ baseDir, framework=true })`, () => {
     beforeAll(async () => {
-      mm(process, 'cwd', () => {
-        return getFixtures('bar');
+      mm(process, "cwd", () => {
+        return getFixtures("bar");
       });
       app = (mm as any)[method]({
-        baseDir: getFixtures('apps/barapp'),
+        baseDir: getFixtures("apps/barapp"),
         framework: true,
         // cache: false,
         // coverage: false,
@@ -423,13 +460,13 @@ function call(method: string) {
     });
     afterAll(() => app && app.close());
 
-    it('should work', async () => {
+    it("should work", async () => {
       await app
         .httpRequest()
-        .get('/')
+        .get("/")
         .expect({
-          foo: 'bar',
-          foobar: 'bar',
+          foo: "bar",
+          foobar: "bar",
         })
         .expect(200);
     });
@@ -440,14 +477,14 @@ function call(method: string) {
     let app2: MockApplication;
     beforeAll(async () => {
       app1 = (mm as any)[method]({
-        baseDir: getFixtures('cache'),
+        baseDir: getFixtures("cache"),
         // coverage: false,
       });
       await app1.ready();
     });
     beforeAll(async () => {
       app2 = (mm as any)[method]({
-        baseDir: getFixtures('cache'),
+        baseDir: getFixtures("cache"),
         // coverage: false,
       });
       await app2.ready();
@@ -457,7 +494,7 @@ function call(method: string) {
       await app2.close();
     });
 
-    it('should equal', () => {
+    it("should equal", () => {
       assert.equal(app1, app2);
     });
   });

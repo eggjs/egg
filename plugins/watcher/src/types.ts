@@ -1,7 +1,7 @@
-import type { Watcher } from './lib/watcher.ts';
-import type { WatcherConfig } from './config/config.default.ts';
+import type { Watcher } from "./lib/watcher.ts";
+import type { WatcherConfig } from "./config/config.default.ts";
 
-declare module 'egg' {
+declare module "egg" {
   interface EggApplicationCore {
     watcher: Watcher;
   }

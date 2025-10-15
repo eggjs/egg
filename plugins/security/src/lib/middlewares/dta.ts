@@ -1,5 +1,5 @@
-import type { MiddlewareFunc } from 'egg';
-import { isSafePath } from '../utils.ts';
+import type { MiddlewareFunc } from "egg";
+import { isSafePath } from "../utils.ts";
 
 // https://en.wikipedia.org/wiki/Directory_traversal_attack
 export default (): MiddlewareFunc => {

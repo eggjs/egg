@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
 module.exports = { a: 1 };

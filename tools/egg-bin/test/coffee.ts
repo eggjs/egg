@@ -1,16 +1,20 @@
-import type { ForkOptions } from 'node:child_process';
+import type { ForkOptions } from "node:child_process";
 
-import coffee from 'coffee';
+import coffee from "coffee";
 
 const coffeeFork = {
-  fork(modulePath: string, args: string[], options: ForkOptions = {}): ReturnType<typeof coffee.fork> {
+  fork(
+    modulePath: string,
+    args: string[],
+    options: ForkOptions = {},
+  ): ReturnType<typeof coffee.fork> {
     options.execArgv = [
       // '--require', 'ts-node/register/transpile-only',
-      '--import',
-      'ts-node/register/transpile-only',
-      '--no-warnings',
-      '--loader',
-      'ts-node/esm',
+      "--import",
+      "ts-node/register/transpile-only",
+      "--no-warnings",
+      "--loader",
+      "ts-node/esm",
       ...(options.execArgv ?? []),
     ];
     options.env = {

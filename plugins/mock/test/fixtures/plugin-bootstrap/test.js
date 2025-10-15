@@ -1,1 +1,1 @@
-require('../../../dist/commonjs/bootstrap');
+require("../../../dist/commonjs/bootstrap");

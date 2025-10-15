@@ -1,15 +1,15 @@
-const sleep = timeout => callback => setTimeout(callback, timeout);
+const sleep = (timeout) => (callback) => setTimeout(callback, timeout);
 
-module.exports = app => {
-  app.get('/getData', async function () {
-    this.body = await app.mockClient.getData('hello');
+module.exports = (app) => {
+  app.get("/getData", async function () {
+    this.body = await app.mockClient.getData("hello");
   });
 
-  app.get('/getDataGenerator', async function () {
-    this.body = await app.mockClient.getDataGenerator('hello');
+  app.get("/getDataGenerator", async function () {
+    this.body = await app.mockClient.getDataGenerator("hello");
   });
 
-  app.get('/getError', async function () {
+  app.get("/getError", async function () {
     try {
       await app.mockClient.getError();
     } catch (err) {
@@ -18,12 +18,12 @@ module.exports = app => {
   });
 
   function subThunk() {
-    return callback => {
-      app.mockClient.subscribe({ id: 'foo' }, val => callback(null, val));
+    return (callback) => {
+      app.mockClient.subscribe({ id: "foo" }, (val) => callback(null, val));
     };
   }
 
-  app.get('/sub', async function () {
+  app.get("/sub", async function () {
     const first = await subThunk();
     await sleep(1000);
     const second = await subThunk();
@@ -34,17 +34,17 @@ module.exports = app => {
     };
   });
 
-  app.get('/save', async function () {
-    app.mockClient.saveAsync('hello', 'node');
-    this.body = 'ok';
+  app.get("/save", async function () {
+    app.mockClient.saveAsync("hello", "node");
+    this.body = "ok";
   });
 
-  app.get('/timeout', async function () {
+  app.get("/timeout", async function () {
     try {
       await app.mockClient.getTimeout();
-      this.body = 'ok';
+      this.body = "ok";
     } catch (err) {
-      this.body = 'timeout';
+      this.body = "timeout";
     }
   });
 };

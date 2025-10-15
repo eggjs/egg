@@ -1,11 +1,11 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'xframe',
+  defaultMiddleware: "xframe",
   xframe: {
-    ignore: ['/ignore1', '/ignore2'],
+    ignore: ["/ignore1", "/ignore2"],
     enable: true,
   },
 };

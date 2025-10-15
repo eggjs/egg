@@ -1,5 +1,5 @@
-const EventEmitter = require('events').EventEmitter;
-const { sleep } = require('../../../../../utils');
+const EventEmitter = require("events").EventEmitter;
+const { sleep } = require("../../../../../utils");
 
 class MockClient extends EventEmitter {
   constructor(options) {
@@ -10,7 +10,7 @@ class MockClient extends EventEmitter {
     setImmediate(
       function () {
         this.ready(true);
-      }.bind(this)
+      }.bind(this),
     );
   }
 
@@ -18,7 +18,7 @@ class MockClient extends EventEmitter {
     this._ready = !!this._ready;
     this._readyCallbacks = this._readyCallbacks || [];
 
-    if (typeof flagOrFunction === 'function') {
+    if (typeof flagOrFunction === "function") {
       this._readyCallbacks.push(flagOrFunction);
     } else {
       this._ready = !!flagOrFunction;
@@ -34,8 +34,8 @@ class MockClient extends EventEmitter {
 
   getCallback(key, callback) {
     setTimeout(function () {
-      if (id === 'error') {
-        callback(new Error('mock error'));
+      if (id === "error") {
+        callback(new Error("mock error"));
       } else {
         callback(null, this.cache.get(key));
       }
@@ -52,7 +52,7 @@ class MockClient extends EventEmitter {
 
   *getTimeout() {
     yield sleep(6000);
-    return 'timeout';
+    return "timeout";
   }
 
   *getDataGenerator(key) {
@@ -68,7 +68,7 @@ class MockClient extends EventEmitter {
   getError() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        reject(new Error('mock error'));
+        reject(new Error("mock error"));
       }, 100);
     });
   }

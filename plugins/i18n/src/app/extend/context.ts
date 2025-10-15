@@ -1,10 +1,10 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import { Context } from 'egg';
+import { Context } from "egg";
 
-import { formatLocale } from '../../utils.ts';
+import { formatLocale } from "../../utils.ts";
 
-const debug = debuglog('egg/i18n/app/extend/context');
+const debug = debuglog("egg/i18n/app/extend/context");
 
 export default class I18nContext extends Context {
   /**
@@ -92,17 +92,18 @@ export default class I18nContext extends Context {
       return this.__locale;
     }
 
-    const { localeAlias, defaultLocale, cookieField, queryField, writeCookie } = this.app.config.i18n;
+    const { localeAlias, defaultLocale, cookieField, queryField, writeCookie } =
+      this.app.config.i18n;
     const cookieLocale = this.cookies.get(cookieField, { signed: false });
 
     // 1. Query
     let locale = this.query[queryField] as string;
-    let localeOrigin = 'query';
+    let localeOrigin = "query";
 
     // 2. Cookie
     if (!locale && cookieLocale) {
       locale = cookieLocale;
-      localeOrigin = 'cookie';
+      localeOrigin = "cookie";
     }
 
     // 3. Header
@@ -112,7 +113,7 @@ export default class I18nContext extends Context {
       let languages = this.acceptsLanguages();
       if (languages) {
         if (Array.isArray(languages)) {
-          if (languages[0] === '*') {
+          if (languages[0] === "*") {
             languages = languages.slice(1);
           }
           if (languages.length > 0) {
@@ -120,21 +121,21 @@ export default class I18nContext extends Context {
               const lang = formatLocale(l);
               if (this.app.isSupportLocale(lang) || localeAlias[lang]) {
                 locale = lang;
-                localeOrigin = 'header';
+                localeOrigin = "header";
                 break;
               }
             }
           }
         } else {
           locale = languages;
-          localeOrigin = 'header';
+          localeOrigin = "header";
         }
       }
 
       // all missing, set it to defaultLocale
       if (!locale) {
         locale = defaultLocale;
-        localeOrigin = 'default';
+        localeOrigin = "default";
       }
     }
 
@@ -142,14 +143,18 @@ export default class I18nContext extends Context {
     if (locale in localeAlias) {
       const originalLocale = locale;
       locale = localeAlias[locale];
-      debug('Used alias, received %s but using %s', originalLocale, locale);
+      debug("Used alias, received %s but using %s", originalLocale, locale);
     }
 
     locale = formatLocale(locale);
 
     // validate locale
     if (!this.app.isSupportLocale(locale)) {
-      debug('Locale %s is not supported. Using default (%s)', locale, defaultLocale);
+      debug(
+        "Locale %s is not supported. Using default (%s)",
+        locale,
+        defaultLocale,
+      );
       locale = defaultLocale;
     }
 
@@ -157,7 +162,7 @@ export default class I18nContext extends Context {
     if (writeCookie && cookieLocale !== locale && !this.headerSent) {
       updateCookie(this, locale);
     }
-    debug('Locale: %s from %s', locale, localeOrigin);
+    debug("Locale: %s from %s", locale, localeOrigin);
     this.__locale = locale;
     this.__localeOrigin = localeOrigin;
     return locale;
@@ -174,7 +179,7 @@ export default class I18nContext extends Context {
 
   __setLocale(locale: string): void {
     this.__locale = locale;
-    this.__localeOrigin = 'set';
+    this.__localeOrigin = "set";
     if (this.app.config.i18n.writeCookie && !this.headerSent) {
       updateCookie(this, locale);
     }
@@ -192,5 +197,5 @@ function updateCookie(ctx: Context, locale: string) {
     overwrite: true,
   };
   ctx.cookies.set(cookieField, locale, cookieOptions);
-  debug('Saved cookie with locale %s, options: %j', locale, cookieOptions);
+  debug("Saved cookie with locale %s, options: %j", locale, cookieOptions);
 }

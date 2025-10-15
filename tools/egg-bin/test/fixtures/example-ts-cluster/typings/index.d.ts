@@ -1,6 +1,6 @@
-import 'egg';
+import "egg";
 
 // extend egg
-declare module 'egg' {
+declare module "egg" {
   interface Context {}
 }

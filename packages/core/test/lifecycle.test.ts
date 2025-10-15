@@ -1,14 +1,14 @@
-import { strict as assert } from 'node:assert';
+import { strict as assert } from "node:assert";
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
-import { Lifecycle } from '../src/lifecycle.ts';
-import { EggCore } from '../src/egg.ts';
+import { Lifecycle } from "../src/lifecycle.ts";
+import { EggCore } from "../src/egg.ts";
 
-describe('test/lifecycle.test.ts', () => {
-  it('should forbid adding hook after initialization', () => {
+describe("test/lifecycle.test.ts", () => {
+  it("should forbid adding hook after initialization", () => {
     const lifecycle = new Lifecycle({
-      baseDir: '.',
+      baseDir: ".",
       app: new EggCore(),
     });
 
@@ -21,15 +21,15 @@ describe('test/lifecycle.test.ts', () => {
             this.app = app;
           }
           configDidLoad() {
-            console.log('test');
+            console.log("test");
           }
-        }
+        },
       );
     }, /do not add hook when lifecycle has been initialized/);
 
     assert.throws(() => {
       lifecycle.addFunctionAsBootHook(() => {
-        console.log('test');
+        console.log("test");
       });
     }, /do not add hook when lifecycle has been initialized/);
   });

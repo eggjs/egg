@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-module.exports = app => {
-  app.post('/upload', app.controller.upload);
-  app.post('/upload_file', app.controller.upload);
-  app.post('/upload_file/foo', app.controller.upload);
-  app.post('/save', app.controller.save);
+module.exports = (app) => {
+  app.post("/upload", app.controller.upload);
+  app.post("/upload_file", app.controller.upload);
+  app.post("/upload_file/foo", app.controller.upload);
+  app.post("/save", app.controller.save);
 };

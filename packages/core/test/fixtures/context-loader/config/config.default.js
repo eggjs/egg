@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.name = 'config';
+exports.name = "config";

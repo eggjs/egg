@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // d(opt) <-- a --> b -> c(opt)
 //          /      /
@@ -6,26 +6,26 @@
 module.exports = {
   a: {
     enable: true,
-    package: 'a',
+    package: "a",
   },
   b: {
     enable: true,
-    package: 'b',
+    package: "b",
   },
   c: {
     enable: false,
-    package: 'c',
+    package: "c",
   },
   d: {
     enable: false,
-    package: 'd',
+    package: "d",
   },
   e: {
     enable: true,
-    package: 'e',
+    package: "e",
   },
   f: {
     enable: true,
-    package: 'f',
+    package: "f",
   },
 };

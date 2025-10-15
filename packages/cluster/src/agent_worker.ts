@@ -1,13 +1,13 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-import { EggConsoleLogger as ConsoleLogger } from 'egg-logger';
-import { importModule } from '@eggjs/utils';
+import { EggConsoleLogger as ConsoleLogger } from "egg-logger";
+import { importModule } from "@eggjs/utils";
 
-import { BaseAgentWorker } from './utils/mode/base/agent.ts';
-import { AgentThreadWorker } from './utils/mode/impl/worker_threads/agent.ts';
-import { AgentProcessWorker } from './utils/mode/impl/process/agent.ts';
+import { BaseAgentWorker } from "./utils/mode/base/agent.ts";
+import { AgentThreadWorker } from "./utils/mode/impl/worker_threads/agent.ts";
+import { AgentProcessWorker } from "./utils/mode/impl/process/agent.ts";
 
-const debug = debuglog('egg/cluster/agent_worker');
+const debug = debuglog("egg/cluster/agent_worker");
 
 /**
  * agent worker is child_process forked by master.
@@ -22,7 +22,7 @@ async function main() {
     framework: string;
     baseDir: string;
     require?: string[];
-    startMode?: 'process' | 'worker_threads';
+    startMode?: "process" | "worker_threads";
   };
   if (options.require) {
     // inject
@@ -34,17 +34,19 @@ async function main() {
   }
 
   let AgentWorker: typeof BaseAgentWorker;
-  if (options.startMode === 'worker_threads') {
+  if (options.startMode === "worker_threads") {
     AgentWorker = AgentThreadWorker as any;
   } else {
     AgentWorker = AgentProcessWorker as any;
   }
 
-  const consoleLogger = new ConsoleLogger({ level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL });
+  const consoleLogger = new ConsoleLogger({
+    level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL,
+  });
   const { Agent } = await importModule(options.framework, {
     paths: [options.baseDir],
   });
-  debug('new Agent with options %j', options);
+  debug("new Agent with options %j", options);
   let agent: any;
   try {
     agent = new Agent(options);
@@ -55,7 +57,7 @@ async function main() {
 
   function startErrorHandler(err: Error) {
     consoleLogger.error(err);
-    consoleLogger.error('[agent_worker] start error, exiting with code:1');
+    consoleLogger.error("[agent_worker] start error, exiting with code:1");
     AgentWorker.kill();
   }
 
@@ -65,16 +67,16 @@ async function main() {
       return;
     }
 
-    agent.removeListener('error', startErrorHandler);
-    AgentWorker.send({ action: 'agent-start', to: 'master' });
+    agent.removeListener("error", startErrorHandler);
+    AgentWorker.send({ action: "agent-start", to: "master" });
   });
 
   // exit if agent start error
-  agent.once('error', startErrorHandler);
+  agent.once("error", startErrorHandler);
 
   AgentWorker.gracefulExit({
     logger: consoleLogger,
-    label: 'agent_worker',
+    label: "agent_worker",
     beforeExit: () => agent.close(),
   });
 }

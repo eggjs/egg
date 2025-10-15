@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.keys = '11';
+exports.keys = "11";

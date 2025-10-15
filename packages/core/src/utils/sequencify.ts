@@ -1,6 +1,6 @@
-import { debuglog } from 'node:util';
+import { debuglog } from "node:util";
 
-const debug = debuglog('egg/core/utils/sequencify');
+const debug = debuglog("egg/core/utils/sequencify");
 
 export interface SequencifyResult {
   sequence: string[];
@@ -21,7 +21,7 @@ function sequence(
   recursive: string[],
   nest: string[],
   optional: boolean,
-  parent: string
+  parent: string,
 ): void {
   for (const name of names) {
     if (result.requires[name]) {
@@ -37,19 +37,40 @@ function sequence(
       nest.push(name);
       recursive.push(...nest.slice(0));
       nest.pop();
-    } else if (node.dependencies.length > 0 || node.optionalDependencies.length > 0) {
+    } else if (
+      node.dependencies.length > 0 ||
+      node.optionalDependencies.length > 0
+    ) {
       nest.push(name);
       if (node.dependencies.length > 0) {
-        sequence(tasks, node.dependencies, result, missing, recursive, nest, optional, name);
+        sequence(
+          tasks,
+          node.dependencies,
+          result,
+          missing,
+          recursive,
+          nest,
+          optional,
+          name,
+        );
       }
       if (node.optionalDependencies.length > 0) {
-        sequence(tasks, node.optionalDependencies, result, missing, recursive, nest, true, name);
+        sequence(
+          tasks,
+          node.optionalDependencies,
+          result,
+          missing,
+          recursive,
+          nest,
+          true,
+          name,
+        );
       }
       nest.pop();
     }
     if (!optional) {
       result.requires[name] = true;
-      debug('task: %s is enabled by %s', name, parent);
+      debug("task: %s is enabled by %s", name, parent);
     }
     if (!result.sequence.includes(name)) {
       result.sequence.push(name);
@@ -61,7 +82,7 @@ function sequence(
 // names: array of task names
 export function sequencify(
   tasks: Record<string, SequencifyTask>,
-  names: string[]
+  names: string[],
 ): {
   sequence: string[];
   missingTasks: string[];
@@ -74,14 +95,14 @@ export function sequencify(
   const missing: string[] = []; // missing tasks
   const recursive: string[] = []; // recursive task dependencies
 
-  sequence(tasks, names, result, missing, recursive, [], false, 'app');
+  sequence(tasks, names, result, missing, recursive, [], false, "app");
 
   if (missing.length > 0 || recursive.length > 0) {
     result.sequence = []; // results are incomplete at best, completely wrong at worst, remove them to avoid confusion
   }
 
   return {
-    sequence: result.sequence.filter(item => result.requires[item]),
+    sequence: result.sequence.filter((item) => result.requires[item]),
     missingTasks: missing,
     recursiveDependencies: recursive,
   };

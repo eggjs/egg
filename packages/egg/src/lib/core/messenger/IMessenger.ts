@@ -1,4 +1,4 @@
-import type { EventEmitter } from 'node:events';
+import type { EventEmitter } from "node:events";
 
 export interface IMessenger extends EventEmitter {
   /**

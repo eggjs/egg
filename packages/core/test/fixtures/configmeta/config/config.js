@@ -1,4 +1,4 @@
-const HttpClient = require('urllib').HttpClient;
+const HttpClient = require("urllib").HttpClient;
 const urllib = new HttpClient();
 
 exports.urllib = {
@@ -10,7 +10,7 @@ exports.urllib = {
   httpclient: urllib,
 };
 
-exports.buffer = Buffer.from('1234');
+exports.buffer = Buffer.from("1234");
 exports.array = [];
 
 exports.console = console;

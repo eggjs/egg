@@ -1,8 +1,8 @@
-import { METHODS } from 'node:http';
+import { METHODS } from "node:http";
 
-import type { MiddlewareFunc } from 'egg';
+import type { MiddlewareFunc } from "egg";
 
-const METHODS_NOT_ALLOWED = ['TRACE', 'TRACK'];
+const METHODS_NOT_ALLOWED = ["TRACE", "TRACK"];
 const safeHttpMethodsMap: Record<string, boolean> = {};
 
 for (const method of METHODS) {

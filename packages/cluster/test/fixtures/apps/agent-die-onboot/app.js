@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-console.log('agent-error-but-app-start');
+console.log("agent-error-but-app-start");

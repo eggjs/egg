@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-exports.keys = 'keys';
+exports.keys = "keys";
 exports.session = {
   logValue: false,
 };

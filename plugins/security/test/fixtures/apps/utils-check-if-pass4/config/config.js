@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-exports.keys = 'test key';
+exports.keys = "test key";
 
 exports.security = {
-  defaultMiddleware: 'csp',
-  ignore: '/ignore',
+  defaultMiddleware: "csp",
+  ignore: "/ignore",
   csp: {
-    ignore: '/myignore',
+    ignore: "/myignore",
     enable: true,
   },
 };

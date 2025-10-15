@@ -1,2 +1,2 @@
 exports.dump = null;
-exports.keys = 'test key';
+exports.keys = "test key";

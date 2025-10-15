@@ -1,11 +1,11 @@
-import assert from 'node:assert/strict';
-import { describe, it } from 'vitest';
+import assert from "node:assert/strict";
+import { describe, it } from "vitest";
 
-import Koa from '../../src/index.ts';
+import Koa from "../../src/index.ts";
 
-describe('app.toJSON()', () => {
-  it('should work', () => {
-    process.env.NODE_ENV = 'test';
+describe("app.toJSON()", () => {
+  it("should work", () => {
+    process.env.NODE_ENV = "test";
 
     const app = new Koa();
     const obj = app.toJSON();
@@ -14,9 +14,9 @@ describe('app.toJSON()', () => {
       {
         subdomainOffset: 2,
         proxy: false,
-        env: 'test',
+        env: "test",
       },
-      obj
+      obj,
     );
   });
 });

@@ -1,8 +1,8 @@
-const EggApplication = require('../egg').Application;
-const utils = require('../../utils');
+const EggApplication = require("../egg").Application;
+const utils = require("../../utils");
 
 class Application extends EggApplication {
-  get [Symbol.for('egg#eggPath')]() {
+  get [Symbol.for("egg#eggPath")]() {
     return __dirname;
   }
   toJSON() {
@@ -14,8 +14,8 @@ class Application extends EggApplication {
   }
 }
 
-const app = utils.createApp('application', { Application });
+const app = utils.createApp("application", { Application });
 app.loader.loadAll();
-app.ready(err => {
+app.ready((err) => {
   process.exit(err ? 1 : 0);
 });

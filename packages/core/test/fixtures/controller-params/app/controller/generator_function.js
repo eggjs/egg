@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
 module.exports = async function (...args) {
-  this.body = 'done';
+  this.body = "done";
   return args;
 };

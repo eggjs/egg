@@ -1,12 +1,17 @@
-import http from 'node:http';
-import fs from 'node:fs';
+import http from "node:http";
+import fs from "node:fs";
 
-import { onerror, type OnerrorOptions, type OnerrorError } from 'koa-onerror';
-import type { ILifecycleBoot, Application, Context } from 'egg';
+import { onerror, type OnerrorOptions, type OnerrorError } from "koa-onerror";
+import type { ILifecycleBoot, Application, Context } from "egg";
 
-import { ErrorView } from './lib/error_view.ts';
-import { isProd, detectStatus, detectErrorMessage, accepts } from './lib/utils.ts';
-import type { OnerrorConfig } from './config/config.default.ts';
+import { ErrorView } from "./lib/error_view.ts";
+import {
+  isProd,
+  detectStatus,
+  detectErrorMessage,
+  accepts,
+} from "./lib/utils.ts";
+import type { OnerrorConfig } from "./config/config.default.ts";
 
 export interface OnerrorErrorWithCode extends OnerrorError {
   code?: string;
@@ -23,9 +28,9 @@ export default class Boot implements ILifecycleBoot {
   async didLoad(): Promise<void> {
     // logging error
     const config = this.app.config.onerror;
-    const viewTemplate = fs.readFileSync(config.templatePath, 'utf8');
+    const viewTemplate = fs.readFileSync(config.templatePath, "utf8");
     const app = this.app;
-    app.on('error', (err, ctx) => {
+    app.on("error", (err, ctx) => {
       if (!ctx) {
         ctx = app.currentContext || app.createAnonymousContext();
       }
@@ -62,7 +67,9 @@ export default class Boot implements ILifecycleBoot {
       html(err, ctx: Context) {
         const status = detectStatus(err);
         const errorPageUrl =
-          typeof config.errorPageUrl === 'function' ? config.errorPageUrl(err, ctx) : config.errorPageUrl;
+          typeof config.errorPageUrl === "function"
+            ? config.errorPageUrl(err, ctx)
+            : config.errorPageUrl;
 
         // keep the real response status
         ctx.realStatus = status;
@@ -71,7 +78,9 @@ export default class Boot implements ILifecycleBoot {
           // 5xx
           if (status >= 500) {
             if (errorPageUrl) {
-              const statusQuery = (errorPageUrl.indexOf('?') > 0 ? '&' : '?') + `real_status=${status}`;
+              const statusQuery =
+                (errorPageUrl.indexOf("?") > 0 ? "&" : "?") +
+                `real_status=${status}`;
               return ctx.redirect(errorPageUrl + statusQuery);
             }
             ctx.status = 500;
@@ -84,7 +93,7 @@ export default class Boot implements ILifecycleBoot {
           return;
         }
         // show simple error format for unittest
-        if (app.config.env === 'unittest') {
+        if (app.config.env === "unittest") {
           ctx.status = status;
           ctx.body = `${err.name}: ${err.message}\n${err.stack}`;
           return;
@@ -144,14 +153,14 @@ export default class Boot implements ILifecycleBoot {
       js(err, ctx: Context) {
         errorOptions.json!.call(ctx, err, ctx);
 
-        if (typeof ctx.createJsonpBody === 'function') {
+        if (typeof ctx.createJsonpBody === "function") {
           ctx.createJsonpBody(ctx.body);
         }
       },
     };
 
     // support customize error response
-    const keys: (keyof OnerrorConfig)[] = ['all', 'html', 'json', 'text', 'js'];
+    const keys: (keyof OnerrorConfig)[] = ["all", "html", "json", "text", "js"];
     for (const type of keys) {
       if (config[type]) {
         Reflect.set(errorOptions, type, config[type]);

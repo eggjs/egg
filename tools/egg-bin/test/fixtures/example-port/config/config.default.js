@@ -1,4 +1,4 @@
-exports.key = '12345';
+exports.key = "12345";
 
 exports.cluster = {
   listen: {

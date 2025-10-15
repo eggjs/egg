@@ -1,120 +1,165 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import cp from 'node:child_process';
-import { scheduler } from 'node:timers/promises';
+import path from "node:path";
+import fs from "node:fs/promises";
+import cp from "node:child_process";
+import { scheduler } from "node:timers/promises";
 
-import { describe, it, beforeAll, afterAll, beforeEach, afterEach, expect } from 'vitest';
-import coffee from 'coffee';
-import { request } from 'urllib';
-import { mm, restore } from 'mm';
-import { detectPort } from 'detect-port';
+import {
+  describe,
+  it,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+  expect,
+} from "vitest";
+import coffee from "coffee";
+import { request } from "urllib";
+import { mm, restore } from "mm";
+import { detectPort } from "detect-port";
 
-import { cleanup, type Coffee } from './utils.ts';
-import { isWindows } from '../src/helper.ts';
+import { cleanup, type Coffee } from "./utils.ts";
+import { isWindows } from "../src/helper.ts";
 
 const __dirname = import.meta.dirname;
 
-describe('test/ts.test.ts', () => {
-  const eggBin = path.join(__dirname, '../bin/run.js');
-  const homePath = path.join(__dirname, 'fixtures/home');
+describe("test/ts.test.ts", () => {
+  const eggBin = path.join(__dirname, "../bin/run.js");
+  const homePath = path.join(__dirname, "fixtures/home");
   const waitTime = 5000;
   let fixturePath: string;
 
-  beforeEach(() => mm(process.env, 'MOCK_HOME_DIR', homePath));
+  beforeEach(() => mm(process.env, "MOCK_HOME_DIR", homePath));
   afterEach(restore);
 
   beforeAll(() => fs.mkdir(homePath, { recursive: true }));
   afterAll(() => fs.rm(homePath, { recursive: true, force: true }));
 
-  describe('should display correct stack traces', () => {
+  describe("should display correct stack traces", () => {
     let app: Coffee;
     beforeEach(async () => {
-      fixturePath = path.join(__dirname, 'fixtures/ts');
+      fixturePath = path.join(__dirname, "fixtures/ts");
       await cleanup(fixturePath);
-      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync("npm", ["run", isWindows ? "windows-build" : "build"], {
         cwd: fixturePath,
         shell: isWindows,
       });
     });
 
     afterEach(async () => {
-      if (app?.proc) app.proc.kill('SIGTERM');
+      if (app?.proc) app.proc.kill("SIGTERM");
       await cleanup(fixturePath);
     });
 
-    it('--ts', async () => {
+    it("--ts", async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=1', '--ts', `--port=${port}`, fixturePath]) as Coffee;
+      app = coffee.fork(eggBin, [
+        "start",
+        "--workers=1",
+        "--ts",
+        `--port=${port}`,
+        fixturePath,
+      ]) as Coffee;
       app.debug();
-      app.expect('code', 0);
+      app.expect("code", 0);
 
       await scheduler.wait(waitTime);
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: "json",
+      });
       // console.log(result.data);
-      expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
+      expect(result.data.stack).toContain(
+        path.normalize("app/controller/home.ts:6:13"),
+      );
     });
 
-    it('--typescript', async () => {
+    it("--typescript", async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=1', '--typescript', `--port=${port}`, fixturePath]) as Coffee;
+      app = coffee.fork(eggBin, [
+        "start",
+        "--workers=1",
+        "--typescript",
+        `--port=${port}`,
+        fixturePath,
+      ]) as Coffee;
       // app.debug();
-      app.expect('code', 0);
+      app.expect("code", 0);
 
       await scheduler.wait(waitTime);
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: "json",
+      });
       // console.log(result.data);
-      expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
+      expect(result.data.stack).toContain(
+        path.normalize("app/controller/home.ts:6:13"),
+      );
     });
 
-    it('--sourcemap', async () => {
+    it("--sourcemap", async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=1', '--sourcemap', `--port=${port}`, fixturePath]) as Coffee;
+      app = coffee.fork(eggBin, [
+        "start",
+        "--workers=1",
+        "--sourcemap",
+        `--port=${port}`,
+        fixturePath,
+      ]) as Coffee;
       // app.debug();
-      app.expect('code', 0);
+      app.expect("code", 0);
 
       await scheduler.wait(waitTime);
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: "json",
+      });
       // console.log(result.data);
-      expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
+      expect(result.data.stack).toContain(
+        path.normalize("app/controller/home.ts:6:13"),
+      );
     });
   });
 
-  describe('pkg.egg.typescript', () => {
+  describe("pkg.egg.typescript", () => {
     let app: Coffee;
     beforeEach(async () => {
-      fixturePath = path.join(__dirname, 'fixtures/ts-pkg');
+      fixturePath = path.join(__dirname, "fixtures/ts-pkg");
       await cleanup(fixturePath);
-      cp.spawnSync('npm', ['run', isWindows ? 'windows-build' : 'build'], {
+      cp.spawnSync("npm", ["run", isWindows ? "windows-build" : "build"], {
         cwd: fixturePath,
         shell: isWindows,
       });
     });
 
     afterEach(async () => {
-      if (app?.proc) app.proc.kill('SIGTERM');
+      if (app?.proc) app.proc.kill("SIGTERM");
       await cleanup(fixturePath);
     });
 
-    it('should got correct stack', async () => {
+    it("should got correct stack", async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=1', `--port=${port}`, fixturePath]) as Coffee;
+      app = coffee.fork(eggBin, [
+        "start",
+        "--workers=1",
+        `--port=${port}`,
+        fixturePath,
+      ]) as Coffee;
       // app.debug();
-      app.expect('code', 0);
+      app.expect("code", 0);
 
       await scheduler.wait(waitTime);
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: "json",
+      });
       // console.log(result.data);
       expect(result.data.stack).toMatch(/home\.ts:6:13/);
       // assert(result.data.stack.includes(path.normalize('app/controller/home.ts:6:13')));

@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-throw new Error('app worker throw');
+throw new Error("app worker throw");

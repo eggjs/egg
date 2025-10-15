@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-exports.index = ctx => ctx.render('home.nj');
+exports.index = (ctx) => ctx.render("home.nj");

@@ -1,10 +1,10 @@
-import path from 'node:path';
+import path from "node:path";
 
-import { defineConfigFactory, type PartialEggConfig } from 'egg';
+import { defineConfigFactory, type PartialEggConfig } from "egg";
 
-import type { Options as StaticCacheOptions } from '@eggjs/koa-static-cache';
+import type { Options as StaticCacheOptions } from "@eggjs/koa-static-cache";
 
-export interface StaticDirOptions extends Omit<StaticCacheOptions, 'dir'> {
+export interface StaticDirOptions extends Omit<StaticCacheOptions, "dir"> {
   /**
    * static files store dir
    */
@@ -42,7 +42,7 @@ export interface StaticDirOptions extends Omit<StaticCacheOptions, 'dir'> {
   maxFiles: number;
 }
 
-export interface StaticConfig extends Omit<StaticDirOptions, 'dir'> {
+export interface StaticConfig extends Omit<StaticDirOptions, "dir"> {
   /**
    * static files store dir
    * Default to `${baseDir}/app/public`
@@ -55,21 +55,23 @@ export interface StaticConfig extends Omit<StaticDirOptions, 'dir'> {
   dirs?: Array<string | StaticDirOptions>;
 }
 
-import type { EggConfigFactory } from 'egg';
+import type { EggConfigFactory } from "egg";
 
-const config: EggConfigFactory = defineConfigFactory((appInfo): PartialEggConfig => {
-  return {
-    static: {
-      prefix: '/public/',
-      dir: path.join(appInfo.baseDir, 'app/public'),
-      // dirs: [ dir1, dir2 ] or [ dir1, { prefix: '/static2', dir: dir2 } ],
-      // support lazy load
-      dynamic: true,
-      preload: false,
-      buffer: false,
-      maxFiles: 1000,
-    },
-  };
-});
+const config: EggConfigFactory = defineConfigFactory(
+  (appInfo): PartialEggConfig => {
+    return {
+      static: {
+        prefix: "/public/",
+        dir: path.join(appInfo.baseDir, "app/public"),
+        // dirs: [ dir1, dir2 ] or [ dir1, { prefix: '/static2', dir: dir2 } ],
+        // support lazy load
+        dynamic: true,
+        preload: false,
+        buffer: false,
+        maxFiles: 1000,
+      },
+    };
+  },
+);
 
 export default config;

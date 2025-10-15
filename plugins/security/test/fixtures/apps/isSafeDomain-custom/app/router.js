@@ -1,19 +1,19 @@
 module.exports = function (app) {
-  const customWhiteList = ['*.foo.com', '*.bar.net'];
+  const customWhiteList = ["*.foo.com", "*.bar.net"];
 
-  app.get('/unsafe', async function () {
+  app.get("/unsafe", async function () {
     const unsafeDomains = [
       // unsafe
-      'aAa-domain.com',
-      '192.1.168.0',
-      'http://www.baidu.com/zh-CN',
-      'www.alimama.com',
-      'foo.com.cn',
-      'a.foo.com.cn',
+      "aAa-domain.com",
+      "192.1.168.0",
+      "http://www.baidu.com/zh-CN",
+      "www.alimama.com",
+      "foo.com.cn",
+      "a.foo.com.cn",
 
       // safe
-      'pre-www.foo.com',
-      'pre-www.bar.net',
+      "pre-www.foo.com",
+      "pre-www.bar.net",
     ];
     let unsafeCounter = 0;
     for (let unsafeDomain of unsafeDomains) {
@@ -25,18 +25,18 @@ module.exports = function (app) {
     this.body = unsafeCounter === 6 ? false : true;
   });
 
-  app.get('/safe', async function () {
+  app.get("/safe", async function () {
     const safeDomains = [
-      'a.foo.com',
-      'a.b.foo.com',
-      'a.b.c.foo.com',
-      'pre-www.foo.com',
-      'test.pre-www.foo.com',
-      'a.bar.net',
-      'a.b.bar.net',
-      'a.b.c.bar.net',
-      'pre-www.bar.net',
-      'test.pre-www.bar.net',
+      "a.foo.com",
+      "a.b.foo.com",
+      "a.b.c.foo.com",
+      "pre-www.foo.com",
+      "test.pre-www.foo.com",
+      "a.bar.net",
+      "a.b.bar.net",
+      "a.b.c.bar.net",
+      "pre-www.bar.net",
+      "test.pre-www.bar.net",
     ];
     let safeCounter = 0;
 

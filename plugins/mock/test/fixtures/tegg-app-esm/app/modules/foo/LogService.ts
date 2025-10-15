@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from "@eggjs/tegg";
 
 interface Tracer {
   traceId: string;

@@ -1,20 +1,29 @@
-import { readFileSync } from 'node:fs';
-import { once } from 'node:events';
-import { rm } from 'node:fs/promises';
-import path from 'node:path';
-import http from 'node:http';
-import { type AddressInfo } from 'node:net';
-import { scheduler } from 'node:timers/promises';
+import { readFileSync } from "node:fs";
+import { once } from "node:events";
+import { rm } from "node:fs/promises";
+import path from "node:path";
+import http from "node:http";
+import { type AddressInfo } from "node:net";
+import { scheduler } from "node:timers/promises";
 
-import { mm, type MockOptions, type MockClusterOptions, type MockApplication } from '@eggjs/mock';
-import { Application as Koa } from '@eggjs/koa';
-import { request } from '@eggjs/supertest';
+import {
+  mm,
+  type MockOptions,
+  type MockClusterOptions,
+  type MockApplication,
+} from "@eggjs/mock";
+import { Application as Koa } from "@eggjs/koa";
+import { request } from "@eggjs/supertest";
 
-import { startEgg, type StartEggOptions, type SingleModeAgent } from '../src/index.ts';
+import {
+  startEgg,
+  type StartEggOptions,
+  type SingleModeAgent,
+} from "../src/index.ts";
 
 const __dirname = import.meta.dirname;
-const fixtures = path.join(__dirname, 'fixtures');
-const eggPath = path.join(__dirname, '..');
+const fixtures = path.join(__dirname, "fixtures");
+const eggPath = path.join(__dirname, "..");
 
 export async function rimraf(target: string): Promise<void> {
   await rm(target, { force: true, recursive: true });
@@ -23,12 +32,15 @@ export async function rimraf(target: string): Promise<void> {
 export { mm };
 export type { MockApplication, MockOptions, MockClusterOptions };
 export interface SingleModeApplication extends MockApplication {
-  agent: SingleModeAgent & MockApplication['agent'];
+  agent: SingleModeAgent & MockApplication["agent"];
 }
 
 export const restore: () => void = () => mm.restore();
 
-export function app(name: string | MockOptions, options?: MockOptions): MockApplication {
+export function app(
+  name: string | MockOptions,
+  options?: MockOptions,
+): MockApplication {
   options = formatOptions(name, options);
   const app = mm.app(options);
   return app;
@@ -44,7 +56,10 @@ export const createApp: typeof app = app;
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export function cluster(name: string | MockClusterOptions, options?: MockClusterOptions): MockApplication {
+export function cluster(
+  name: string | MockClusterOptions,
+  options?: MockClusterOptions,
+): MockApplication {
   options = formatOptions(name, options);
   return mm.cluster(options) as unknown as MockApplication;
 }
@@ -56,23 +71,26 @@ export function cluster(name: string | MockClusterOptions, options?: MockCluster
  * @param {Object} [options] - optional
  * @return {App} app - Application object.
  */
-export async function singleProcessApp(baseDir: string, options: StartEggOptions = {}): Promise<SingleModeApplication> {
-  if (!baseDir.startsWith('/')) {
-    baseDir = path.join(__dirname, 'fixtures', baseDir);
+export async function singleProcessApp(
+  baseDir: string,
+  options: StartEggOptions = {},
+): Promise<SingleModeApplication> {
+  if (!baseDir.startsWith("/")) {
+    baseDir = path.join(__dirname, "fixtures", baseDir);
   }
-  options.env = options.env || 'unittest';
+  options.env = options.env || "unittest";
   options.baseDir = baseDir;
   const app = await startEgg(options);
-  Reflect.set(app, 'httpRequest', () => request(app.callback()));
+  Reflect.set(app, "httpRequest", () => request(app.callback()));
   return app as unknown as SingleModeApplication;
 }
 
 let localServer: http.Server | undefined;
-process.once('beforeExit', () => {
+process.once("beforeExit", () => {
   localServer && localServer.close();
   localServer = undefined;
 });
-process.once('exit', () => {
+process.once("exit", () => {
   localServer && localServer.close();
   localServer = undefined;
 });
@@ -85,31 +103,31 @@ export async function startLocalServer(): Promise<string> {
 
   let retry = false;
   const app = new Koa();
-  app.use(async ctx => {
-    if (ctx.path === '/get_headers') {
+  app.use(async (ctx) => {
+    if (ctx.path === "/get_headers") {
       ctx.body = ctx.request.headers;
       return;
     }
 
-    if (ctx.path === '/timeout') {
+    if (ctx.path === "/timeout") {
       await scheduler.wait(10000);
       ctx.body = `${ctx.method} ${ctx.path}`;
       return;
     }
 
-    if (ctx.path === '/error') {
+    if (ctx.path === "/error") {
       ctx.status = 500;
-      ctx.body = 'this is an error';
+      ctx.body = "this is an error";
       return;
     }
 
-    if (ctx.path === '/retry') {
+    if (ctx.path === "/retry") {
       if (!retry) {
         retry = true;
         ctx.status = 500;
       } else {
-        ctx.set('x-retry', '1');
-        ctx.body = 'retry suc';
+        ctx.set("x-retry", "1");
+        ctx.body = "retry suc";
         retry = false;
       }
       return;
@@ -119,7 +137,7 @@ export async function startLocalServer(): Promise<string> {
   });
   localServer = http.createServer(app.callback());
   localServer.listen(0);
-  await once(localServer, 'listening');
+  await once(localServer, "listening");
   const address = localServer!.address() as AddressInfo;
   return `http://127.0.0.1:${address.port}`;
 }
@@ -129,20 +147,20 @@ export function getFilepath(name: string): string {
 }
 
 export function getJSON(name: string): any {
-  return JSON.parse(readFileSync(getFilepath(name), 'utf-8'));
+  return JSON.parse(readFileSync(getFilepath(name), "utf-8"));
 }
 
 function formatOptions(name: string | MockOptions, options?: MockOptions) {
   let baseDir: string;
-  if (typeof name === 'string') {
+  if (typeof name === "string") {
     baseDir = name;
   } else {
     // name is options
     options = name;
     baseDir = options.baseDir!;
   }
-  if (!baseDir.startsWith('/')) {
-    baseDir = path.join(__dirname, 'fixtures', baseDir);
+  if (!baseDir.startsWith("/")) {
+    baseDir = path.join(__dirname, "fixtures", baseDir);
   }
   return {
     baseDir,

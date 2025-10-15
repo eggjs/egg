@@ -1,22 +1,22 @@
-import os from 'node:os';
-import fs from 'node:fs';
-import path from 'node:path';
-import assert from 'node:assert';
-import { debuglog } from 'node:util';
-import { type SecureContextOptions } from 'node:tls';
+import os from "node:os";
+import fs from "node:fs";
+import path from "node:path";
+import assert from "node:assert";
+import { debuglog } from "node:util";
+import { type SecureContextOptions } from "node:tls";
 
-import { getFrameworkPath, importModule } from '@eggjs/utils';
+import { getFrameworkPath, importModule } from "@eggjs/utils";
 
-const debug = debuglog('egg/cluster/utils/options');
+const debug = debuglog("egg/cluster/utils/options");
 
 export interface ClusterHTTPSSecureOptions {
-  key: SecureContextOptions['key'];
-  cert: SecureContextOptions['cert'];
-  ca?: SecureContextOptions['ca'];
-  passphrase?: SecureContextOptions['passphrase'];
+  key: SecureContextOptions["key"];
+  cert: SecureContextOptions["cert"];
+  ca?: SecureContextOptions["ca"];
+  passphrase?: SecureContextOptions["passphrase"];
 }
 
-export type ClusterStartMode = 'process' | 'worker_threads';
+export type ClusterStartMode = "process" | "worker_threads";
 
 /** Cluster start options */
 export interface ClusterOptions {
@@ -49,11 +49,11 @@ export interface ClusterOptions {
   /**
    * @deprecated please use `options.https.key` instead
    */
-  key?: ClusterHTTPSSecureOptions['key'];
+  key?: ClusterHTTPSSecureOptions["key"];
   /**
    * @deprecated please use `options.https.cert` instead
    */
-  cert?: ClusterHTTPSSecureOptions['cert'];
+  cert?: ClusterHTTPSSecureOptions["cert"];
   /**
    * will inject into worker/agent process
    */
@@ -91,17 +91,19 @@ export interface ParsedClusterOptions extends ClusterOptions {
   startMode: ClusterStartMode;
 }
 
-export async function parseOptions(options?: ClusterOptions): Promise<ParsedClusterOptions> {
+export async function parseOptions(
+  options?: ClusterOptions,
+): Promise<ParsedClusterOptions> {
   options = {
     baseDir: process.cwd(),
     port: options?.https ? 8443 : undefined,
-    startMode: 'process',
+    startMode: "process",
     // ports: [],
     env: process.env.EGG_SERVER_ENV,
     ...options,
   };
 
-  const pkgPath = path.join(options.baseDir!, 'package.json');
+  const pkgPath = path.join(options.baseDir!, "package.json");
   assert(fs.existsSync(pkgPath), `${pkgPath} should exist`);
 
   options.framework = getFrameworkPath({
@@ -109,7 +111,7 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
     // compatible customEgg only when call startCluster directly without framework
     framework: options.framework ?? options.customEgg,
   });
-  debug('[parseOptions] %o', options);
+  debug("[parseOptions] %o", options);
 
   const egg = await importModule(options.framework, {
     paths: [options.baseDir!],
@@ -119,7 +121,9 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
 
   if (options.https === true) {
     // Keep compatible options.key, options.cert
-    console.warn('[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`');
+    console.warn(
+      "[@eggjs/cluster:deprecated] [master] Please use `https: { key, cert, ca }` instead of `https: true`",
+    );
     options.https = {
       key: options.key,
       cert: options.cert,
@@ -128,27 +132,36 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
 
   // https
   if (options.https) {
-    assert(options.https.key, 'options.https.key should exists');
-    if (typeof options.https.key === 'string') {
-      assert(fs.existsSync(options.https.key), 'options.https.key file should exists');
+    assert(options.https.key, "options.https.key should exists");
+    if (typeof options.https.key === "string") {
+      assert(
+        fs.existsSync(options.https.key),
+        "options.https.key file should exists",
+      );
     }
-    assert(options.https.cert, 'options.https.cert should exists');
-    if (typeof options.https.cert === 'string') {
-      assert(fs.existsSync(options.https.cert), 'options.https.cert file should exists');
+    assert(options.https.cert, "options.https.cert should exists");
+    if (typeof options.https.cert === "string") {
+      assert(
+        fs.existsSync(options.https.cert),
+        "options.https.cert file should exists",
+      );
     }
-    if (typeof options.https.ca === 'string') {
-      assert(fs.existsSync(options.https.ca), 'options.https.ca file should exists');
+    if (typeof options.https.ca === "string") {
+      assert(
+        fs.existsSync(options.https.ca),
+        "options.https.ca file should exists",
+      );
     }
   }
 
-  if (options.port && typeof options.port === 'string') {
+  if (options.port && typeof options.port === "string") {
     options.port = parseInt(options.port);
   }
   if (options.port === null) {
     options.port = undefined;
   }
 
-  if (options.workers && typeof options.workers === 'string') {
+  if (options.workers && typeof options.workers === "string") {
     options.workers = parseInt(options.workers);
   }
   if (!options.workers) {
@@ -156,18 +169,20 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
   }
 
   if (options.require) {
-    if (typeof options.require === 'string') {
+    if (typeof options.require === "string") {
       options.require = [options.require];
     }
   }
 
   // don't print deprecated message in production env.
   // it will print to stderr.
-  if (process.env.NODE_ENV === 'production') {
-    process.env.NO_DEPRECATION = '*';
+  if (process.env.NODE_ENV === "production") {
+    process.env.NO_DEPRECATION = "*";
   }
 
-  const isDebug = process.execArgv.some(argv => argv.includes('--debug') || argv.includes('--inspect'));
+  const isDebug = process.execArgv.some(
+    (argv) => argv.includes("--debug") || argv.includes("--inspect"),
+  );
   if (isDebug) {
     options.isDebug = isDebug;
   }

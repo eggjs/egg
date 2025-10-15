@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = {
   logger: {
-    agentLogName: 'my-agent.log',
+    agentLogName: "my-agent.log",
   },
 };

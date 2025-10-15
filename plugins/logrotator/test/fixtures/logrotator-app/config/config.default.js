@@ -1,14 +1,16 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 module.exports = () => {
   const exports = {
     logrotator: {
-      filesRotateByHour: [path.join(__dirname, '../logs', 'logrotator', 'hour.log')],
+      filesRotateByHour: [
+        path.join(__dirname, "../logs", "logrotator", "hour.log"),
+      ],
       filesRotateBySize: [
-        path.join(__dirname, '../logs', 'logrotator', 'egg-web.log'),
-        path.join(__dirname, '../logs', 'logrotator', 'size.log'),
+        path.join(__dirname, "../logs", "logrotator", "egg-web.log"),
+        path.join(__dirname, "../logs", "logrotator", "size.log"),
       ],
       maxFileSize: 1024,
       maxFiles: 2,
@@ -17,21 +19,21 @@ module.exports = () => {
 
     customLogger: {
       bizLogger: {
-        file: path.join(__dirname, '../logs', 'mybiz', 'biz.log'),
-        consoleLevel: 'NONE',
+        file: path.join(__dirname, "../logs", "mybiz", "biz.log"),
+        consoleLevel: "NONE",
       },
       relativeLogger: {
-        file: 'relative.log',
-        consoleLevel: 'NONE',
+        file: "relative.log",
+        consoleLevel: "NONE",
       },
       sizeLogger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'size.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "size.log"),
       },
       hourLogger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'hour.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "hour.log"),
       },
       foo1Logger: {
-        file: path.join(__dirname, '../logs', 'logrotator', 'foo1.log'),
+        file: path.join(__dirname, "../logs", "logrotator", "foo1.log"),
       },
     },
   };

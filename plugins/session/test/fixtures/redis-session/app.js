@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   // set redis session store
   app.sessionStore = class Store {
     constructor(app) {
@@ -12,7 +12,7 @@ module.exports = app => {
 
     async set(key, value, maxAge) {
       value = JSON.stringify(value);
-      await this.app.redis.set(key, value, 'PX', maxAge);
+      await this.app.redis.set(key, value, "PX", maxAge);
     }
 
     async destroy(key) {

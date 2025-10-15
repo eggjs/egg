@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = function (app) {
   class Bar extends app.Service {
@@ -9,7 +9,7 @@ module.exports = function (app) {
     *get(name) {
       return {
         name: name,
-        bar: 'bar1',
+        bar: "bar1",
       };
     }
   }

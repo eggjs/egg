@@ -1,8 +1,8 @@
-const { importResolve } = require('../../../src/index.ts');
+const { importResolve } = require("../../../src/index.ts");
 
 console.log(
-  '%o',
+  "%o",
   importResolve(__dirname, {
     paths: __dirname,
-  })
+  }),
 );

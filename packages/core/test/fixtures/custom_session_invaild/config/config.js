@@ -1,4 +1,4 @@
-exports.middleware = ['session'];
+exports.middleware = ["session"];
 
 exports.hsf = {
   enable: false,

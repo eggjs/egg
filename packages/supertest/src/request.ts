@@ -1,9 +1,9 @@
-import http from 'node:http';
-import http2 from 'node:http2';
-import type { Server } from 'node:net';
+import http from "node:http";
+import http2 from "node:http2";
+import type { Server } from "node:net";
 
-import type { H1RequestListener, H2RequestListener, App } from './types.ts';
-import { Test } from './test.ts';
+import type { H1RequestListener, H2RequestListener, App } from "./types.ts";
+import { Test } from "./test.ts";
 
 export interface RequestOptions {
   http2?: boolean;
@@ -14,7 +14,7 @@ export class Request {
   #http2 = false;
 
   constructor(appOrListener: App, options: RequestOptions = {}) {
-    if (typeof appOrListener === 'function') {
+    if (typeof appOrListener === "function") {
       if (options.http2) {
         this.#http2 = true;
         this.app = http2.createServer(appOrListener as H2RequestListener); // eslint-disable-line no-param-reassign
@@ -34,30 +34,30 @@ export class Request {
     return req;
   }
   delete(url: string): Test {
-    return this._testRequest('delete', url);
+    return this._testRequest("delete", url);
   }
   del(url: string): Test {
-    return this._testRequest('delete', url);
+    return this._testRequest("delete", url);
   }
   get(url: string): Test {
-    return this._testRequest('get', url);
+    return this._testRequest("get", url);
   }
   head(url: string): Test {
-    return this._testRequest('head', url);
+    return this._testRequest("head", url);
   }
   put(url: string): Test {
-    return this._testRequest('put', url);
+    return this._testRequest("put", url);
   }
   post(url: string): Test {
-    return this._testRequest('post', url);
+    return this._testRequest("post", url);
   }
   patch(url: string): Test {
-    return this._testRequest('patch', url);
+    return this._testRequest("patch", url);
   }
   options(url: string): Test {
-    return this._testRequest('options', url);
+    return this._testRequest("options", url);
   }
   trace(url: string): Test {
-    return this._testRequest('trace', url);
+    return this._testRequest("trace", url);
   }
 }

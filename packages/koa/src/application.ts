@@ -1,25 +1,25 @@
-import util, { debuglog } from 'node:util';
-import Emitter from 'node:events';
-import Stream from 'node:stream';
-import type { AsyncLocalStorage } from 'node:async_hooks';
-import http, { type IncomingMessage, type ServerResponse } from 'node:http';
+import util, { debuglog } from "node:util";
+import Emitter from "node:events";
+import Stream from "node:stream";
+import type { AsyncLocalStorage } from "node:async_hooks";
+import http, { type IncomingMessage, type ServerResponse } from "node:http";
 
-import { getAsyncLocalStorage } from 'gals';
-import { isGeneratorFunction } from 'is-type-of';
-import onFinished from 'on-finished';
-import statuses from 'statuses';
-import compose from 'koa-compose';
+import { getAsyncLocalStorage } from "gals";
+import { isGeneratorFunction } from "is-type-of";
+import onFinished from "on-finished";
+import statuses from "statuses";
+import compose from "koa-compose";
 
-import { HttpError } from 'http-errors';
-import { Context } from './context.ts';
-import { Request } from './request.ts';
-import { Response } from './response.ts';
-import type { CustomError, AnyProto } from './types.ts';
+import { HttpError } from "http-errors";
+import { Context } from "./context.ts";
+import { Request } from "./request.ts";
+import { Response } from "./response.ts";
+import type { CustomError, AnyProto } from "./types.ts";
 
 // Re-export for external use
 export { Context, Request, Response };
 
-const debug = debuglog('egg/koa/application');
+const debug = debuglog("egg/koa/application");
 
 // oxlint-disable-next-line typescript/no-explicit-any
 export type ProtoImplClass<T = object> = new (...args: any[]) => T;
@@ -81,20 +81,23 @@ export class Application extends Emitter {
     options = options || {};
     this._proxy = options.proxy || false;
     this.subdomainOffset = options.subdomainOffset || 2;
-    this.proxyIpHeader = options.proxyIpHeader || 'X-Forwarded-For';
+    this.proxyIpHeader = options.proxyIpHeader || "X-Forwarded-For";
     this.maxIpsCount = options.maxIpsCount || 0;
-    this._env = options.env || process.env.NODE_ENV || 'development';
+    this._env = options.env || process.env.NODE_ENV || "development";
     if (options.keys) {
       this._keys = options.keys;
     }
     this.middleware = [];
     this.ctxStorage = getAsyncLocalStorage();
     this.silent = false;
-    this.ContextClass = class ApplicationContext extends Context {} as ProtoImplClass<Context>;
+    this.ContextClass =
+      class ApplicationContext extends Context {} as ProtoImplClass<Context>;
     this.context = this.ContextClass.prototype;
-    this.RequestClass = class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
+    this.RequestClass =
+      class ApplicationRequest extends Request {} as ProtoImplClass<Request>;
     this.request = this.RequestClass.prototype;
-    this.ResponseClass = class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
+    this.ResponseClass =
+      class ApplicationResponse extends Response {} as ProtoImplClass<Response>;
     this.response = this.ResponseClass.prototype;
     // Set up custom inspect
     this[util.inspect.custom] = this.inspect.bind(this);
@@ -129,7 +132,7 @@ export class Application extends Emitter {
    */
   // oxlint-disable-next-line typescript/no-explicit-any
   listen(...args: any[]): http.Server {
-    debug('listen with args: %o', args);
+    debug("listen with args: %o", args);
     const server = http.createServer(this.callback());
     return server.listen(...args);
   }
@@ -157,16 +160,17 @@ export class Application extends Emitter {
    * Use the given middleware `fn`.
    */
   use<T extends Context = Context>(fn: MiddlewareFunc<T>): this {
-    if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
-    const name = fn._name || fn.name || '-';
+    if (typeof fn !== "function")
+      throw new TypeError("middleware must be a function!");
+    const name = fn._name || fn.name || "-";
     if (isGeneratorFunction(fn)) {
       throw new TypeError(
         `Support for generators was removed, middleware: ${name}. ` +
-          'See the documentation for examples of how to convert old middleware ' +
-          'https://github.com/koajs/koa/blob/master/docs/migration.md'
+          "See the documentation for examples of how to convert old middleware " +
+          "https://github.com/koajs/koa/blob/master/docs/migration.md",
       );
     }
-    debug('use %o #%d', name, this.middleware.length);
+    debug("use %o #%d", name, this.middleware.length);
     this.middleware.push(fn as MiddlewareFunc<Context>);
     return this;
   }
@@ -178,8 +182,8 @@ export class Application extends Emitter {
   callback(): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
     const fn = compose(this.middleware);
 
-    if (!this.listenerCount('error')) {
-      this.on('error', this.onerror.bind(this));
+    if (!this.listenerCount("error")) {
+      this.on("error", this.onerror.bind(this));
     }
 
     const handleRequest = (req: IncomingMessage, res: ServerResponse) => {
@@ -203,8 +207,11 @@ export class Application extends Emitter {
    * Handle request in callback.
    * @private
    */
-  protected async handleRequest(ctx: Context, fnMiddleware: (ctx: Context) => Promise<void>): Promise<void> {
-    this.emit('request', ctx);
+  protected async handleRequest(
+    ctx: Context,
+    fnMiddleware: (ctx: Context) => Promise<void>,
+  ): Promise<void> {
+    this.emit("request", ctx);
     const res = ctx.res;
     res.statusCode = 404;
     const onerror = (err: CustomError) => ctx.onerror(err);
@@ -213,7 +220,7 @@ export class Application extends Emitter {
       if (err) {
         onerror(err);
       }
-      this.emit('response', ctx);
+      this.emit("response", ctx);
     });
     try {
       await fnMiddleware(ctx);
@@ -240,15 +247,18 @@ export class Application extends Emitter {
     // When dealing with cross-globals a normal `instanceof` check doesn't work properly.
     // See https://github.com/koajs/koa/issues/1466
     // We can probably remove it once jest fixes https://github.com/facebook/jest/issues/2549.
-    const isNativeError = err instanceof Error || Object.prototype.toString.call(err) === '[object Error]';
-    if (!isNativeError) throw new TypeError(util.format('non-error thrown: %j', err));
+    const isNativeError =
+      err instanceof Error ||
+      Object.prototype.toString.call(err) === "[object Error]";
+    if (!isNativeError)
+      throw new TypeError(util.format("non-error thrown: %j", err));
 
     if (err.status === 404 || err.expose) return;
     if (this.silent) return;
 
     const msg = err.stack || err.toString();
     // oxlint-disable-next-line no-console
-    console.error(`\n${msg.replaceAll(/^/gm, '  ')}\n`);
+    console.error(`\n${msg.replaceAll(/^/gm, "  ")}\n`);
   }
 
   /**
@@ -272,8 +282,8 @@ export class Application extends Emitter {
       return;
     }
 
-    if (ctx.method === 'HEAD') {
-      if (!res.headersSent && !ctx.response.has('Content-Length')) {
+    if (ctx.method === "HEAD") {
+      if (!res.headersSent && !ctx.response.has("Content-Length")) {
         const { length } = ctx.response;
         if (Number.isInteger(length)) ctx.length = length;
       }
@@ -284,8 +294,8 @@ export class Application extends Emitter {
     // status body
     if (body === null || body === undefined) {
       if (ctx.response._explicitNullBody) {
-        ctx.response.remove('Content-Type');
-        ctx.response.remove('Transfer-Encoding');
+        ctx.response.remove("Content-Type");
+        ctx.response.remove("Transfer-Encoding");
         res.end();
         return;
       }
@@ -295,7 +305,7 @@ export class Application extends Emitter {
         body = ctx.message || String(code);
       }
       if (!res.headersSent) {
-        ctx.type = 'text';
+        ctx.type = "text";
         ctx.length = Buffer.byteLength(body);
       }
       res.end(body);
@@ -307,7 +317,7 @@ export class Application extends Emitter {
       res.end(body);
       return;
     }
-    if (typeof body === 'string') {
+    if (typeof body === "string") {
       res.end(body);
       return;
     }

@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-const EggApplication = require('../egg').Application;
+const EggApplication = require("../egg").Application;
 
 class Application extends EggApplication {
-  [Symbol.for('egg#eggPath')]() {
+  [Symbol.for("egg#eggPath")]() {
     return __dirname;
   }
 }

@@ -1,6 +1,6 @@
-import { Application, IBoot } from '../../../../src/index.js';
-import testExportClass from './lib/export-class.js';
-import testLogger from './lib/logger.js';
+import { Application, IBoot } from "../../../../src/index.js";
+import testExportClass from "./lib/export-class.js";
+import testLogger from "./lib/logger.js";
 
 export default class AppBoot implements IBoot {
   private readonly app: Application;
@@ -18,32 +18,32 @@ export default class AppBoot implements IBoot {
   }
 
   configWillLoad() {
-    this.stages.push('configWillLoad');
+    this.stages.push("configWillLoad");
   }
 
   configDidLoad() {
     testExportClass(this.app);
     testLogger(this.app);
-    this.stages.push('configDidLoad');
+    this.stages.push("configDidLoad");
   }
 
   async didLoad() {
-    this.stages.push('didLoad');
+    this.stages.push("didLoad");
   }
 
   async willReady() {
-    this.stages.push('willReady');
+    this.stages.push("willReady");
   }
 
   async didReady() {
-    this.stages.push('didReady');
+    this.stages.push("didReady");
   }
 
   async serverDidReady() {
-    this.stages.push('serverDidReady');
+    this.stages.push("serverDidReady");
   }
 
   async beforeClose() {
-    this.stages.push('beforeClose');
+    this.stages.push("beforeClose");
   }
 }

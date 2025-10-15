@@ -1,3 +1,3 @@
 module.exports = async function () {
-  this.body = 'done';
+  this.body = "done";
 };

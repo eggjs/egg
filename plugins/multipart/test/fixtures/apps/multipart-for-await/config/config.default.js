@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 exports.multipart = {
   fieldSize: 10,
@@ -6,4 +6,4 @@ exports.multipart = {
   fileSize: 1024 * 1024 * 2,
 };
 
-exports.keys = 'multipart';
+exports.keys = "multipart";

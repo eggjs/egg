@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 module.exports = () => {
-  process.on('message', msg => {
-    if (msg.action === 'kill-agent') process.exit(1);
+  process.on("message", (msg) => {
+    if (msg.action === "kill-agent") process.exit(1);
   });
 };

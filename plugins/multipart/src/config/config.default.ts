@@ -1,8 +1,8 @@
-import os from 'node:os';
-import path from 'node:path';
+import os from "node:os";
+import path from "node:path";
 
-import type { Context, EggAppInfo } from 'egg';
-import type { PathMatchingPattern } from '@eggjs/path-matching';
+import type { Context, EggAppInfo } from "egg";
+import type { PathMatchingPattern } from "@eggjs/path-matching";
 
 export type MatchItem = string | RegExp | ((ctx: Context) => boolean);
 
@@ -12,7 +12,7 @@ export interface MultipartConfig {
    * If set mode to `file`, it's the easy way to handle multipart request and save it to local files.
    * If you don't know the Node.js Stream work, maybe you should use the `file` mode to get started.
    */
-  mode: 'stream' | 'file';
+  mode: "stream" | "file";
   /**
    * special url to use file mode when global `mode` is `stream`.
    */
@@ -86,27 +86,33 @@ export interface MultipartConfig {
      */
     disable: boolean;
   };
-  checkFile?(fieldname: string, file: any, filename: string, encoding: string, mimetype: string): void | Error;
+  checkFile?(
+    fieldname: string,
+    file: any,
+    filename: string,
+    encoding: string,
+    mimetype: string,
+  ): void | Error;
 }
 
 export default (appInfo: EggAppInfo) => {
   return {
     multipart: {
-      mode: 'stream',
+      mode: "stream",
       autoFields: false,
-      defaultCharset: 'utf8',
-      defaultParamCharset: 'utf8',
+      defaultCharset: "utf8",
+      defaultParamCharset: "utf8",
       fieldNameSize: 100,
-      fieldSize: '100kb',
+      fieldSize: "100kb",
       fields: 10,
-      fileSize: '10mb',
+      fileSize: "10mb",
       files: 10,
       fileExtensions: [],
       whitelist: null,
       allowArrayField: false,
-      tmpdir: path.join(os.tmpdir(), 'egg-multipart-tmp', appInfo.name),
+      tmpdir: path.join(os.tmpdir(), "egg-multipart-tmp", appInfo.name),
       cleanSchedule: {
-        cron: '0 30 4 * * *',
+        cron: "0 30 4 * * *",
         disable: false,
       },
     } as MultipartConfig,

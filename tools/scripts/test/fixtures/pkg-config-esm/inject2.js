@@ -1,1 +1,1 @@
-console.log('@@@ inject script2');
+console.log("@@@ inject script2");

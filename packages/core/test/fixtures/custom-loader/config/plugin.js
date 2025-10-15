@@ -1,8 +1,8 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
 exports.b = {
   enable: true,
-  path: path.join(__dirname, 'b'),
+  path: path.join(__dirname, "b"),
 };

@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const path = require('path');
+const path = require("path");
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
-    keys: 'foo,bar',
+    keys: "foo,bar",
     development: {
-      watchDirs: [path.join(appInfo.baseDir, 'lib')],
+      watchDirs: [path.join(appInfo.baseDir, "lib")],
     },
   };
 };

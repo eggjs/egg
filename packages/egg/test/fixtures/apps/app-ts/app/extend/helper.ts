@@ -1,5 +1,5 @@
 // import { IHelper } from 'egg';
-import { IHelper } from '../../../../../../src/index.js';
+import { IHelper } from "../../../../../../src/index.js";
 
 export default {
   test(this: IHelper) {
@@ -7,6 +7,6 @@ export default {
   },
 
   test2(this: IHelper) {
-    this.ctx.logger.info('foo');
+    this.ctx.logger.info("foo");
   },
 };

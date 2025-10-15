@@ -1,6 +1,6 @@
-import type { ILifecycleBoot, Agent } from 'egg';
+import type { ILifecycleBoot, Agent } from "egg";
 
-import { preprocessConfig } from './lib/utils.ts';
+import { preprocessConfig } from "./lib/utils.ts";
 
 export default class AgentBoot implements ILifecycleBoot {
   private readonly agent;

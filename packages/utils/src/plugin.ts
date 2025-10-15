@@ -1,11 +1,11 @@
-import { debuglog } from 'node:util';
-import path from 'node:path';
-import assert from 'node:assert';
-import os from 'node:os';
-import { stat, mkdir, writeFile, realpath } from 'node:fs/promises';
-import { importModule } from './import.ts';
+import { debuglog } from "node:util";
+import path from "node:path";
+import assert from "node:assert";
+import os from "node:os";
+import { stat, mkdir, writeFile, realpath } from "node:fs/promises";
+import { importModule } from "./import.ts";
 
-const debug = debuglog('egg/utils/plugin');
+const debug = debuglog("egg/utils/plugin");
 
 const tmpDir = os.tmpdir();
 
@@ -39,14 +39,16 @@ export interface Plugin {
 /**
  * @see https://github.com/eggjs/egg-core/blob/2920f6eade07959d25f5c4f96b154d3fbae877db/lib/loader/mixin/plugin.js#L203
  */
-export async function getPlugins(options: LoaderOptions): Promise<Record<string, Plugin>> {
+export async function getPlugins(
+  options: LoaderOptions,
+): Promise<Record<string, Plugin>> {
   const loader = await getLoader(options);
   await loader.loadPlugin();
   return loader.allPlugins;
 }
 
 interface Unit {
-  type: 'plugin' | 'framework' | 'app';
+  type: "plugin" | "framework" | "app";
   path: string;
 }
 
@@ -59,7 +61,9 @@ export async function getLoadUnits(options: LoaderOptions): Promise<Unit[]> {
   return loader.getLoadUnits();
 }
 
-export async function getConfig(options: LoaderOptions): Promise<Record<string, any>> {
+export async function getConfig(
+  options: LoaderOptions,
+): Promise<Record<string, any>> {
   const loader = await getLoader(options);
   await loader.loadPlugin();
   await loader.loadConfig();
@@ -93,19 +97,24 @@ interface IEggLoaderOptions {
 type EggLoaderImplClass<T = IEggLoader> = new (options: IEggLoaderOptions) => T;
 
 export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
-  assert(options.framework, 'framework is required');
+  assert(options.framework, "framework is required");
   assert(await exists(options.framework), `${options.framework} should exist`);
   if (!(options.baseDir && (await exists(options.baseDir)))) {
-    options.baseDir = path.join(tmpDir, 'egg_utils', `${Date.now()}`, 'tmp_app');
+    options.baseDir = path.join(
+      tmpDir,
+      "egg_utils",
+      `${Date.now()}`,
+      "tmp_app",
+    );
     await mkdir(options.baseDir, { recursive: true });
     await writeFile(
-      path.join(options.baseDir, 'package.json'),
+      path.join(options.baseDir, "package.json"),
       JSON.stringify({
-        name: 'tmp_app',
-        type: 'module',
-      })
+        name: "tmp_app",
+        type: "module",
+      }),
     );
-    debug('[getLoader] create baseDir: %o', options.baseDir);
+    debug("[getLoader] create baseDir: %o", options.baseDir);
   }
 
   const { EggCore, EggLoader } = await findEggCore(options);
@@ -124,14 +133,14 @@ export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
 }
 
 export async function findEggCore(
-  options: LoaderOptions
+  options: LoaderOptions,
 ): Promise<{ EggCore?: object; EggLoader: EggLoaderImplClass }> {
   const baseDirRealpath = await realpath(options.baseDir);
   const frameworkRealpath = await realpath(options.framework);
   const paths = [frameworkRealpath, baseDirRealpath];
   // custom framework => egg => @eggjs/core
   try {
-    const { EggCore, EggLoader } = await importModule('egg', { paths });
+    const { EggCore, EggLoader } = await importModule("egg", { paths });
     if (EggLoader) {
       return { EggCore, EggLoader };
     }
@@ -140,7 +149,7 @@ export async function findEggCore(
   }
 
   // egg-core 在 6.2.3 版本中更名为 @eggjs/core，为兼容老版本，支持同时查找两个包，优先使用新名字
-  const names = ['@eggjs/core', 'egg-core'];
+  const names = ["@eggjs/core", "egg-core"];
   for (const name of names) {
     try {
       const { EggCore, EggLoader } = await importModule(name, { paths });
@@ -148,7 +157,12 @@ export async function findEggCore(
         return { EggCore, EggLoader };
       }
     } catch (err: any) {
-      debug('[findEggCore] import "%s" from paths:%o error: %o', name, paths, err);
+      debug(
+        '[findEggCore] import "%s" from paths:%o error: %o',
+        name,
+        paths,
+        err,
+      );
     }
 
     try {
@@ -169,5 +183,8 @@ export async function findEggCore(
     }
   }
 
-  assert(false, `Can't find ${names.join(' or ')} from ${options.baseDir} and ${options.framework}`);
+  assert(
+    false,
+    `Can't find ${names.join(" or ")} from ${options.baseDir} and ${options.framework}`,
+  );
 }

@@ -1,3 +1,3 @@
 export default {
-  egg: 'egg-unittest',
+  egg: "egg-unittest",
 };

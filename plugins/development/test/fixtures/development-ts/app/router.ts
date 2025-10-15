@@ -1,12 +1,12 @@
-import { Application } from 'egg';
+import { Application } from "egg";
 
 const router = (app: Application): void => {
-  app.get('/foo.js', async ctx => {
-    ctx.body = 'foo.js';
+  app.get("/foo.js", async (ctx) => {
+    ctx.body = "foo.js";
   });
 
-  app.get('/foo', async ctx => {
-    ctx.body = 'foo';
+  app.get("/foo", async (ctx) => {
+    ctx.body = "foo";
   });
 };
 

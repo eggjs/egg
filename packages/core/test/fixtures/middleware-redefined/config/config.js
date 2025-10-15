@@ -1,1 +1,1 @@
-exports.middleware = ['status'];
+exports.middleware = ["status"];
