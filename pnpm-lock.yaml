@@ -414,6 +414,9 @@ catalogs:
     oxc-minify:
       specifier: ^0.94.0
       version: 0.94.0
+    oxfmt:
+      specifier: ^0.5.0
+      version: 0.5.0
     oxlint:
       specifier: ^1.22.0
       version: 1.22.0
@@ -567,6 +570,9 @@ importers:
       mocha:
         specifier: 'catalog:'
         version: 11.7.4
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.5.0
       oxlint:
         specifier: 'catalog:'
         version: 1.22.0(oxlint-tsgolint@0.2.0)
@@ -2941,6 +2947,50 @@ packages:
 
   '@oxc-resolver/binding-win32-x64-msvc@11.8.3':
     resolution: {integrity: sha512-MoathdI2zWifsGPsgnZjYplEm2NJ4pZxu8eSCYCe+8TToDRpQ+D8BTcr8Fox2AyNEQdT57l/0LzID4812+3f/A==}
+    cpu: [x64]
+    os: [win32]
+
+  '@oxfmt/darwin-arm64@0.5.0':
+    resolution: {integrity: sha512-2czonKk4uwiRjNgij1ZmiX8lhMFNHE3/rT/KqMCsWw/xSiPmETDvcR9bPotDLvQHyXyAWSBZrZE6x7aWzpqFSQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@oxfmt/darwin-x64@0.5.0':
+    resolution: {integrity: sha512-8Ne/QBPmfRCxXQF9PhqwGP6+7+x4DdxtcLv7WMNsmE2A+GZaMRYonNS6gXc28rE63p7WKBNwtF9r30mD6f18yA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@oxfmt/linux-arm64-gnu@0.5.0':
+    resolution: {integrity: sha512-qBQghpNXi6FJlEW7Og2JO43O3/XdYLMTuXO7M+vdIutWfuWDWzZZVjGXOlqYFdOgh4FhM43D0xyb06A+VbImgg==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxfmt/linux-arm64-musl@0.5.0':
+    resolution: {integrity: sha512-epwFyUfmagnnZ+VqtBtfI23tXgGTra9TlFNSAvTL+CnFrPEoyNgvuarP8a+rcz4a1jwtQcmjiglnHgmE5cQO3g==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@oxfmt/linux-x64-gnu@0.5.0':
+    resolution: {integrity: sha512-47weEDQwidwSsi7v80UZUIrV6aJHeBbv7xAxfa26ZZW1WtqjzwFBMIeWTK8/czgkc+3d07+i4lUym4dzYVbc0w==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@oxfmt/linux-x64-musl@0.5.0':
+    resolution: {integrity: sha512-6PoHL2dQeqX9oFa+MK8toftKAXiinQkX3OaLDkkhccnFjR7juTGY49zM3N4nxFfhWpzUafPHZfx/eZqOgMUx6w==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@oxfmt/win32-arm64@0.5.0':
+    resolution: {integrity: sha512-BUp6t2ah86pp182nhTpi4LIuXfijE1gEzFb8wVG/3Odxsxj5RZod6ceU2a9tTc/gQ1nBakHPjaGt667GyS+KXA==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@oxfmt/win32-x64@0.5.0':
+    resolution: {integrity: sha512-Ii1yPu89ulgocsfH/kqO6+CLhRLuT2EtyvM7JrhoDlwvDNG89NDfVIRVpZtC24UiyQBKJFVreMTnF6GGX/wbeQ==}
     cpu: [x64]
     os: [win32]
 
@@ -6060,6 +6110,11 @@ packages:
   oxc-resolver@11.8.3:
     resolution: {integrity: sha512-wPY3eiw24QOiNqArh5FWRrKYr1Yuxya8bE8CV7yBfz7jodCrg0HqBu6cvHHSicxFug7D4TN6ox1hysA9arHTqw==}
 
+  oxfmt@0.5.0:
+    resolution: {integrity: sha512-nsMR1XOq/7qHjussSD/37xZMbo0ySc+h6eBMnJ9go42BCadatXqNrUIhJ5lwP9HnKcHslDAGnXy16VTTsnvrbA==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
+
   oxlint-tsgolint@0.2.0:
     resolution: {integrity: sha512-37Hy+FT1sz8hHUo31JIgFDA8NcFndexrg5okutWRPXNejJwB9hKN+pyInaQQIv4XDsgNcQsSR2VJoq99eaGk9g==}
     hasBin: true
@@ -8145,6 +8200,30 @@ snapshots:
     optional: true
 
   '@oxc-resolver/binding-win32-x64-msvc@11.8.3':
+    optional: true
+
+  '@oxfmt/darwin-arm64@0.5.0':
+    optional: true
+
+  '@oxfmt/darwin-x64@0.5.0':
+    optional: true
+
+  '@oxfmt/linux-arm64-gnu@0.5.0':
+    optional: true
+
+  '@oxfmt/linux-arm64-musl@0.5.0':
+    optional: true
+
+  '@oxfmt/linux-x64-gnu@0.5.0':
+    optional: true
+
+  '@oxfmt/linux-x64-musl@0.5.0':
+    optional: true
+
+  '@oxfmt/win32-arm64@0.5.0':
+    optional: true
+
+  '@oxfmt/win32-x64@0.5.0':
     optional: true
 
   '@oxlint-tsgolint/darwin-arm64@0.2.0':
@@ -11371,6 +11450,17 @@ snapshots:
       '@oxc-resolver/binding-win32-arm64-msvc': 11.8.3
       '@oxc-resolver/binding-win32-ia32-msvc': 11.8.3
       '@oxc-resolver/binding-win32-x64-msvc': 11.8.3
+
+  oxfmt@0.5.0:
+    optionalDependencies:
+      '@oxfmt/darwin-arm64': 0.5.0
+      '@oxfmt/darwin-x64': 0.5.0
+      '@oxfmt/linux-arm64-gnu': 0.5.0
+      '@oxfmt/linux-arm64-musl': 0.5.0
+      '@oxfmt/linux-x64-gnu': 0.5.0
+      '@oxfmt/linux-x64-musl': 0.5.0
+      '@oxfmt/win32-arm64': 0.5.0
+      '@oxfmt/win32-x64': 0.5.0
 
   oxlint-tsgolint@0.2.0:
     optionalDependencies:
