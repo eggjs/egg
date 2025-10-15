@@ -3,10 +3,29 @@ import { version } from '../../package.json';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Egg',
+  title: 'Egg.js',
   description: 'Born to build better enterprise frameworks and apps',
 
-  head: [['link', { rel: 'icon', href: '/favicon.png' }]],
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.png' }],
+    [
+      'meta',
+      {
+        name: 'description',
+        content: 'Born to build better enterprise frameworks and apps',
+      },
+    ],
+    [
+      'meta',
+      { name: 'keywords', content: 'Egg.js, Node.js, Koa, web framework' },
+    ],
+    ['meta', { name: 'author', content: 'Egg.js' }],
+    [
+      'meta',
+      { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
+    ],
+    ['meta', { name: 'robots', content: 'index, follow' }],
+  ],
 
   // Use docs as the root directory for content
   srcDir: 'docs',
@@ -18,6 +37,9 @@ export default defineConfig({
   sitemap: {
     hostname: 'https://eggjs.org',
   },
+
+  // Ignore localhost links in dead link checking
+  ignoreDeadLinks: 'localhostLinks',
 
   // i18n configuration
   locales: {
@@ -80,7 +102,14 @@ export default defineConfig({
     search: {
       provider: 'local',
     },
+
+    editLink: {
+      pattern: 'https://github.com/eggjs/egg/edit/next/site/docs/:path',
+      text: 'Edit this page',
+    },
   },
+
+  lastUpdated: true,
 
   // Custom CSS for theme color
   vite: {
@@ -126,7 +155,11 @@ function nav(): DefaultTheme.NavItem[] {
 // Chinese navigation
 function navZhCN(): DefaultTheme.NavItem[] {
   return [
-    { text: '简介', link: '/zh-CN/intro/', activeMatch: '/zh-CN/intro/' },
+    {
+      text: '简介',
+      link: '/zh-CN/intro/overview',
+      activeMatch: '/zh-CN/intro/',
+    },
     {
       text: '基础功能',
       link: '/zh-CN/basics/structure',
@@ -262,8 +295,8 @@ function sidebarCommunity(): DefaultTheme.SidebarItem[] {
     {
       text: 'Community',
       items: [
-        { text: 'Articles', link: 'articles' },
         { text: 'Contributing', link: 'contributing' },
+        { text: 'Frequently Asked Questions', link: 'faq' },
       ],
     },
   ];
@@ -275,7 +308,7 @@ function sidebarIntroZhCN(): DefaultTheme.SidebarItem[] {
     {
       text: '简介',
       items: [
-        { text: '概览', link: 'index' },
+        { text: '概览', link: 'overview' },
         { text: '快速入门', link: 'quickstart' },
         { text: '渐进式开发', link: 'progressive' },
         { text: 'Egg 与 Koa', link: 'egg-and-koa' },
@@ -291,15 +324,21 @@ function sidebarBasicsZhCN(): DefaultTheme.SidebarItem[] {
       text: '基础功能',
       items: [
         { text: '目录结构', link: 'structure' },
+        { text: '依赖注入', link: 'di' },
+        { text: '控制器', link: 'controller' },
+        { text: 'HTTP 控制器', link: 'httpcontroller' },
+        { text: 'MCP 控制器', link: 'mcpcontroller' },
+        { text: 'Schedule 控制器', link: 'schedule' },
+        { text: '参数校验', link: 'ajv' },
+        { text: '切面编程', link: 'aop' },
+        { text: '异步任务', link: 'backgroundTask' },
+        { text: '事件中枢', link: 'eventbus' },
         { text: '内置对象', link: 'objects' },
         { text: '运行环境', link: 'env' },
         { text: '配置', link: 'config' },
-        { text: '插件', link: 'plugin' },
+        { text: 'AOP 中间件(推荐)', link: 'aop-middleware' },
         { text: '中间件', link: 'middleware' },
-        { text: '路由', link: 'router' },
-        { text: '控制器', link: 'controller' },
-        { text: '服务', link: 'service' },
-        { text: '定时任务', link: 'schedule' },
+        { text: '插件', link: 'plugin' },
         { text: '框架扩展', link: 'extend' },
         { text: '启动自定义', link: 'app-start' },
         { text: '单元测试', link: 'unittest' },
@@ -370,8 +409,9 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
     {
       text: '社区',
       items: [
-        { text: '文章', link: 'articles' },
+        // { text: '文章', link: 'articles' },
         { text: '参与贡献', link: 'contributing' },
+        { text: '常见问题', link: 'faq' },
       ],
     },
   ];

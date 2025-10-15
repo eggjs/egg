@@ -1,10 +1,4 @@
----
-title: 社区
-order: 0
-nav:
-  title: 社区
-  order: 6
----
+# 社区
 
 ## 交流群
 
@@ -22,7 +16,7 @@ nav:
   - [awesome-egg](https://github.com/eggjs/awesome-egg)
 - 文章
   - [如何评价阿里开源的企业级 Node.js 框架 Egg？](https://www.zhihu.com/question/50526101/answer/144952130) 由 [@天猪](https://github.com/atian25) 提供
-  - 你也可以到[知乎专栏](https://zhuanlan.zhihu.com/eggjs)看我们的文章
+  - 你也可以到[知乎专栏](https://www.zhihu.com/column/eggjs)看我们的文章
 
 ## 项目赞助
 

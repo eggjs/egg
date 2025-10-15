@@ -1,10 +1,4 @@
----
-title: Egg.js 是什么
-order: 0
-nav:
-  title: 指南
-  order: 1
----
+# Egg.js 是什么
 
 **Egg.js 为企业级框架和应用而生**。我们希望 Egg.js 能孕育出更多上层框架，帮助开发团队和开发人员降低开发和维护成本。
 

@@ -1,8 +1,6 @@
----
-title: 依赖注入
----
+# 依赖注入
 
-# Proto
+## Proto
 
 在领域驱动开发中，一般我们会将逻辑放到 Service 中，在 egg 里，通过 Proto 来实现。
 

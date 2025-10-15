@@ -1,10 +1,4 @@
----
-title: 进阶
-order: 0
-nav:
-  title: 进阶
-  order: 5
----
+# 进阶
 
 - [加载器（Loader）](./loader.md)
 - [插件开发](./plugin.md)
