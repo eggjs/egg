@@ -3,20 +3,22 @@ title: 依赖注入
 ---
 
 # Proto
+
 在领域驱动开发中，一般我们会将逻辑放到 Service 中，在 egg 里，通过 Proto 来实现。
 
 Proto 提供了可配置相关信息：
+
 - 实例化方式：每次请求实例化/全局单例
 - 访问级别：module 外是否可访问
 - 实例化名称
 
 ## 实例化方式
 
-包含了 [ContextProto](./contextproto) 和 [SingletonProto](./singletonproto) 两种形式，具体细节可以查看相关文档。
+包含了 ContextProto 和 SingletonProto 两种形式，具体细节可以查看下面的相关文档。
 
 ## 实例化名称
 
-十分关键，决定 [@Inject](../inject) 注入的实例应该是哪个。默认会把 Proto 类的首字母转为小写，如 UserAdapter 会转换为 userAdapter。如果有不符合预期的可以手动指定，比如：
+十分关键，决定 `@Inject` 注入的实例应该是哪个。默认会把 Proto 类的首字母转为小写，如 UserAdapter 会转换为 userAdapter。如果有不符合预期的可以手动指定，比如：
 
 ```ts
 // MISTAdapter 的实例名称即为 mistAdapter
@@ -36,7 +38,7 @@ app root dir
         │   ├── Private.ts
         │   ├── Public.ts
         │   └── Access.ts  // 可以 Inject Private/Public
-        └── barModule  
+        └── barModule
             └── Access.ts  // 只可以 Inject Public
 ```
 
@@ -57,7 +59,7 @@ Module 内逻辑应尽可能高内聚，只对外暴露必要的接口
 @SingletonProto({
   // 原型的实例化名称，非必传
   name?: string;
-              
+
   // 对象是在 module 内可访问还是全局可访问
   // 默认值为 AccessLevel.PRIVATE
   accessLevel?: AccessLevel;
@@ -78,7 +80,7 @@ export class HelloService {
 }
 
 @SingletonProto({
-  name: 'worldInterface'
+  name: 'worldInterface',
 })
 export class WorldService {
   async world(): Promise<string> {
@@ -93,7 +95,7 @@ export class WorldService {
 
 每次请求都会实例化一个 ContextProto。
 :::info
-绝大多数 service 都是无状态的，本身不会存储请求上下文，这种情况推荐使用 [SingletonProto](./singletonproto) 即可。因为只需要全局初始化一个对象，而不需要每个请求都初始化一个对象（会导致应用性能下降）。
+绝大多数 service 都是无状态的，本身不会存储请求上下文，这种情况推荐使用 SingletonProto 即可。因为只需要全局初始化一个对象，而不需要每个请求都初始化一个对象（会导致应用性能下降）。
 对于需要存储请求上下文信息，并在多个 service 间共享的场景，则可以使用 ContextProto，以保证不同请求获取的对象是隔离的。
 :::
 
@@ -108,7 +110,7 @@ enum AccessLevel {
 @ContextProto({
   // 原型的实例化名称，非必传
   name?: string;
-              
+
   // 对象是在 module 内可访问还是全局可访问
   // 默认值为 AccessLevel.PRIVATE
   accessLevel?: AccessLevel;
@@ -148,10 +150,10 @@ import { HelloService, WorldService } from './service';
 export class UseProtoDemo {
   @Inject()
   helloService: HelloService;
-  
+
   @Inject()
   worldInterface: WorldService;
-  
+
   async say(): Promise<string> {
     return this.helloService.hello() + ',' + this.worldInterface.world();
   }
@@ -209,10 +211,10 @@ import { Inject, SingletonProto, EggLogger } from 'egg';
 export class HelloService {
   @Inject()
   fooService: FooService; // 注入其它原型实例
-  
+
   @Inject()
   logger: EggLogger; // 注入 egg 对象
-  
+
   async hello(user: User): Promise<string> {
     this.logger.info(`[HelloService] hello ${this.fooService.hello()}`);
   }
@@ -222,11 +224,11 @@ export class HelloService {
 ## 使用说明
 
 Inject 在使用时有一些点需要注意：
+
 - 原型之间不允许有循环依赖，比如 Proto A - inject -> Proto B - inject- > Proto A
 - 类似原型之间不允许有循环依赖，module 之间也不能有循环依赖
 - 一个 module 内不能有实例化方式和名称同时相同的原型
 - <font color=red>不可以注入 egg 的 ctx/app，用什么注入什么</font>
-
 
 ### Inject name 的作用
 
@@ -242,7 +244,7 @@ export class HelloService {
 }
 
 @SingletonProto({
-  name: 'worldInterface'
+  name: 'worldInterface',
 })
 export class WorldService {
   async world(): Promise<string> {
@@ -255,10 +257,10 @@ export class WorldService {
 class Foo {
   @Inject()
   helloService: HelloService;
-  
+
   @Inject({ name: 'helloService' })
-  aliasHelloService: HelloService;  // 等价于上面的 helloService
-  
+  aliasHelloService: HelloService; // 等价于上面的 helloService
+
   @Inject({ name: 'worldInterface' })
   worldService: WorldService;
 }
@@ -293,12 +295,11 @@ import { Inject, SingletonProto, EggAppConfig } from 'egg';
 class Foo {
   @Inject()
   config: EggAppConfig;
-  
+
   bar() {
     console.log('current env is %s', this.config.env);
   }
 }
-
 ```
 
 ### 注入 logger
@@ -311,9 +312,9 @@ export default {
   customLogger: {
     fooLogger: {
       file: 'foo.log',
-    }
-  }
-}
+    },
+  },
+};
 ```
 
 代码中可以直接注入:
@@ -326,11 +327,11 @@ class FooService {
   // 注入 ${appname}-web.log
   @Inject()
   logger: EggLogger;
-  
+
   // 注入 egg-web.log
   @Inject()
   coreLogger: EggLogger;
-  
+
   // 注入 customLogger 名字为 fooLogger
   @Inject()
   fooLogger: EggLogger;
@@ -351,15 +352,15 @@ class FooService {
   // 注入整个 ctx.service，再获取对应需要的 xxxService
   @Inject()
   service: Service;
-  
+
   get xxxService() {
     return this.service.xxxService;
   }
 }
 ```
 
-
 ### 注入 httpclient
+
 ```ts
 import { Inject, SingletonProto, EggHttpClient } from 'egg';
 
@@ -367,7 +368,7 @@ import { Inject, SingletonProto, EggHttpClient } from 'egg';
 class Foo {
   @Inject()
   httpclient: EggHttpClient;
-  
+
   async bar() {
     await this.httpclient.request('https://alipay.com');
   }
@@ -385,9 +386,8 @@ class Foo {
 export default {
   getHeader() {
     return '23333';
-  }
-}
-
+  },
+};
 ```
 
 先将方法封装成一个对象。
@@ -398,7 +398,7 @@ class HeaderHelper {
   constructor(ctx) {
     this.ctx = ctx;
   }
-  
+
   getHeader(): string {
     return this.ctx.getHeader();
   }
@@ -416,9 +416,9 @@ export default {
     if (!this[HEADER_HELPER]) {
       this[HEADER_HELPER] = new HeaderHelper(this);
     }
-    return this[HEADER_HELPER]
-  }
-}
+    return this[HEADER_HELPER];
+  },
+};
 ```
 
 ## module 内原型名称冲突
@@ -432,8 +432,15 @@ export default {
 ```
 
 ### 示例
+
 ```ts
-import { EggLogger, Inject, InitTypeQualifier, ObjectInitType, SingletonProto } from 'egg';
+import {
+  EggLogger,
+  Inject,
+  InitTypeQualifier,
+  ObjectInitType,
+  SingletonProto,
+} from 'egg';
 
 @SingletonProto()
 export class HelloService {
@@ -471,9 +478,11 @@ export class HelloService {
 # Qualifier 动态注入
 
 ## 使用场景
+
 我们代码中经常会在不同场景下有不同的实现，比较简单的做法是，在需要使用的地方去使用 if/else 或者 switch 去切换。但是这个面临的一个问题是，每次我们需要扩展一个类型时，至少需要修改两个地方，一个是增加实现，一个是在使用的地方增加代码分支。往往会产生遗漏，导致我们的代码出现问题。我们希望变更是收敛的，只要我们实现了就能动态的获取到。因此引入了动态注入的方式来解决这个问题。
 
 ## 使用
+
 1. 定义一个抽象类和一个类型枚举。
 
 ```typescript
@@ -488,15 +497,13 @@ export abstract class AbstractHello {
 }
 ```
 
-
-
 2. 定义一个自定义枚举。
 
 :::danger
 注意事项：
 
-+ **ATTRIBUTE 不要重复了，可能会导致实现被覆盖**
-+ **抽象类不要指定错了，可能导致实现被覆盖**
+- **ATTRIBUTE 不要重复了，可能会导致实现被覆盖**
+- **抽象类不要指定错了，可能导致实现被覆盖**
 
 :::
 
@@ -513,8 +520,6 @@ export const HELLO_ATTRIBUTE = Symbol('HELLO_ATTRIBUTE');
 export const Hello: ImplDecorator<AbstractHello, typeof HelloType> =
   QualifierImplDecoratorUtil.generatorDecorator(AbstractHello, HELLO_ATTRIBUTE);
 ```
-
-
 
 3. 实现抽象类。
 
@@ -533,8 +538,6 @@ export class BarHello extends AbstractHello {
 }
 ```
 
-
-
 4. 动态获取实现。
 
 ```typescript
@@ -548,20 +551,23 @@ export class HelloService {
   private eggObjectFactory: EggObjectFactory;
 
   async hello(): Promise<string> {
-    const helloImpl = await this.eggObjectFactory.getEggObject(AbstractHello, HelloType.BAR);
+    const helloImpl = await this.eggObjectFactory.getEggObject(
+      AbstractHello,
+      HelloType.BAR,
+    );
     return helloImpl.hello();
   }
 }
 ```
 
 ## FAQ
-+ 如果我没有枚举，类型是无限扩展的怎么办？
+
+- 如果我没有枚举，类型是无限扩展的怎么办？
 
 ```typescript
 // 通过使用一个 record 来伪装成一个 enum
 type AnyEnum = Record<string, string>;
 
-export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> = 
+export const Convertor: ImplDecorator<AbstractFoo, AnyEnum> =
   QualifierImplDecoratorUtil.generatorDecorator(AbstractFoo, FOO_ATTRIBUTE);
 ```
-

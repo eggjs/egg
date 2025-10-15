@@ -1,7 +1,4 @@
----
-title: Egg and Koa
-order: 1
----
+# Egg and Koa
 
 ## Asynchronous Programming Model
 

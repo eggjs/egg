@@ -1,7 +1,4 @@
----
-title: Progressive Development
-order: 3
----
+# Progressive Development
 
 Egg provides both [Plugin](../basics/plugin.md) and [Framework](../advanced/framework.md), and the former has two loading modes which are `path` and `package`. Then how should we choose?
 

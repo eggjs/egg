@@ -138,7 +138,7 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
 - **`tools/egg-bin/`** - CLI development tool package (@eggjs/bin)
   - `src/` - TypeScript source code for CLI commands
   - `test/` - Comprehensive test suite with mocha
-- **`site/`** - Documentation website built with Dumi
+- **`site/`** - Documentation website built with VitePress v2
 
 ### Core Architecture (packages/egg/)
 
@@ -204,8 +204,9 @@ The framework follows a specific loading order:
 
 ### Documentation Site
 
-- `pnpm run site:dev` - Start documentation development server
-- `pnpm run site:build` - Build documentation site
+- `pnpm run site:dev` - Start VitePress documentation development server
+- `pnpm run site:build` - Build VitePress documentation site
+- `pnpm run site:preview` - Preview built documentation site
 - `pnpm run site:prettier` - Format documentation files
 - `pnpm run puml` - Generate PlantUML diagrams
 
@@ -541,7 +542,17 @@ This approach ensures:
 
 ### Documentation
 
-- Main docs are in the `site/` directory using Dumi
+- Main docs are in the `site/` directory using VitePress v2
+- Documentation structure:
+  - `site/.vitepress/config.mts` - VitePress configuration with i18n support
+  - `site/docs/` - English documentation (root locale)
+  - `site/docs/zh-CN/` - Chinese documentation
+  - `site/docs/public/` - Static assets (images, logos, etc.)
+- VitePress features:
+  - Full i18n support (English and Chinese)
+  - Clean URLs without .html extension
+  - Local search built-in
+  - Responsive design and dark mode support
 - Examples are in the `examples/` directory
 - Use `pnpm run site:dev` to work on documentation
 - Plugin documentation follows the standardized format

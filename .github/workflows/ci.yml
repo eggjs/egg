@@ -51,6 +51,9 @@ jobs:
       - name: Run build
         run: pnpm run build
 
+      - name: Run site build
+        run: pnpm run site:build
+
   test:
     strategy:
       fail-fast: false

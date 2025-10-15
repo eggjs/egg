@@ -1,7 +1,4 @@
----
-title: Egg@2 Upgrade guideline
-order: 4
----
+# Egg@2 Upgrade guideline
 
 ## Background
 
