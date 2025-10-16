@@ -64,8 +64,12 @@
   },
   "lint-staged": {
     "*": "prettier --write --ignore-unknown --cache",
-    "*.{ts,js,json,md,yml}": [
+    "*.{json,md,yml,yaml}": [
       "prettier --ignore-unknown --write",
+      "oxlint --type-aware --fix"
+    ],
+    "*.{ts,js,mjs,cjs,jsx,tsx}": [
+      "oxfmt",
       "oxlint --type-aware --fix"
     ]
   },
