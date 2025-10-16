@@ -15,15 +15,9 @@ export default defineConfig({
         content: 'Born to build better enterprise frameworks and apps',
       },
     ],
-    [
-      'meta',
-      { name: 'keywords', content: 'Egg.js, Node.js, Koa, web framework' },
-    ],
+    ['meta', { name: 'keywords', content: 'Egg.js, Node.js, Koa, web framework' }],
     ['meta', { name: 'author', content: 'Egg.js' }],
-    [
-      'meta',
-      { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
-    ],
+    ['meta', { name: 'viewport', content: 'width=device-width, initial-scale=1.0' }],
     ['meta', { name: 'robots', content: 'index, follow' }],
   ],
 
