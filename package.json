@@ -67,7 +67,10 @@
       "prettier --ignore-unknown --write",
       "oxlint --type-aware --fix"
     ],
-    "*.{ts,js,mjs,cjs,jsx,tsx}": [
+    "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
+      "prettier --ignore-unknown --write"
+    ],
+    "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
       "oxfmt",
       "oxlint --type-aware --fix"
     ]
