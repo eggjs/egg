@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tracer",
-  "version": "4.0.0-beta.27",
+  "version": "4.0.0-beta.28",
   "publishConfig": {
     "access": "public",
     "exports": {
