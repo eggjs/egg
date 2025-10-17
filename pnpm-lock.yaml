@@ -15,18 +15,6 @@ catalogs:
     '@eggjs/scripts':
       specifier: ^4.0.0
       version: 4.0.0
-    '@eggjs/tegg':
-      specifier: beta
-      version: 4.0.0-beta.11
-    '@eggjs/tegg-config':
-      specifier: beta
-      version: 4.0.0-beta.11
-    '@eggjs/tegg-controller-plugin':
-      specifier: beta
-      version: 4.0.0-beta.11
-    '@eggjs/tegg-plugin':
-      specifier: beta
-      version: 4.0.0-beta.11
     '@fengmk2/ps-tree':
       specifier: ^2.0.1
       version: 2.0.2
@@ -1546,18 +1534,6 @@ importers:
       '@eggjs/errors':
         specifier: workspace:*
         version: link:../../packages/errors
-      '@eggjs/tegg':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-config':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-controller-plugin':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.11(@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)
-      '@eggjs/tegg-plugin':
-        specifier: 'catalog:'
-        version: 4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)
       '@eggjs/tracer':
         specifier: workspace:*
         version: link:../tracer
@@ -2281,145 +2257,21 @@ packages:
   '@docsearch/js@4.2.0':
     resolution: {integrity: sha512-KBHVPO29QiGUFJYeAqxW0oXtGf/aghNmRrIRPT4/28JAefqoCkNn/ZM/jeQ7fHjl0KNM6C+KlLVYjwyz6lNZnA==}
 
-  '@eggjs/ajv-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-6KkM9/tGUZin8Gp3aoVuhCiXFdISXhSDD6+F+zmhnOWKvAFAagWcbM77ADr5cyTTGjAJowKPpqvJb8bjoUz5+g==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/aop-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-ai4BTvSUWIm9ehOdFRt9nIPl53v0V2cJAOkxOz2ObR2OhOnKHr3shcBbNPZxQt/0WA68NZpQ7wYhk1QKsf/wqw==}
-    engines: {node: '>=22.18.0'}
-
   '@eggjs/compressible@3.0.0':
     resolution: {integrity: sha512-Bz/u+0zhmZ/44xdIL1MLfknaDFQpE+bSfJ4OjCb2NnHpg+LVmmNwEpRW4hUi3v2MhaO3sNWD93gBTtJ00q2iIA==}
     engines: {node: '>= 18.19.0'}
 
-  '@eggjs/controller-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-ZTo4MzV3UyTAjLua6TWfkC2UdW3pjE6ASw+ONcZS7JZ6uD/MbMJTculRULjpk3WKC8KtU6UrVd5qyr48blACyg==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/cookies@4.0.0-beta.27':
-    resolution: {integrity: sha512-aCG3tiYeaodhoWof7kSy/jm+wwbpxR9HHveFNqGJcDWFc69scza7PQ4XxhVct/r2a9r5qwF1mgraVzYio7EY3g==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/core-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-WLnBmOTJPjahU9XpNkAacsCB47OWYwuSplVVCxFajsoK4aXEL//BSAKL5MvqpF857FXtBqCdSMRnslbt4y+0gg==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/dal-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-tNf50wuqTqmHHXBzrLahrx7TZiYKIjXZ1mj7GM5ylsG1+EvDLcGkFALHaML3xJ0+UDqFWlnoHlbc9QR2aWeQoQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/egg-module-common@4.0.0-beta.11':
-    resolution: {integrity: sha512-dZpsNLcIqxIxLcLtd29WC+oGyF01Jwh14Mo+3+YNVkYpe/WdvKqcoxkvrm+k7WIlz1qj0fzQ8V8k/5nGSHKWlQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/eventbus-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-09glegPlC2O+jgX4UJ6WQ9RQsbgsJZwYMhNowhKl+WPXpW4WUx5g3R8l9owpCUCE/F7+mcF+e7TiRkIbP60sSg==}
-    engines: {node: '>=22.18.0'}
-
   '@eggjs/ip@2.1.0':
     resolution: {integrity: sha512-jOsufOpySKBld+N1GG8IAW9EEQNmQ6bDaBnrRlYFk6AspoxG8gAzXSW93ZFfEPwscS5rL7UbDUKyIHUkmkTPyw==}
     engines: {node: '>= 14.0.0'}
-
-  '@eggjs/rds@1.3.0':
-    resolution: {integrity: sha512-MshrDFuP18G30Zt1U0NcxHFmFEfi6LDXOUDAJ5Qvf4rn6PDzZ8U0kvp/C8tHeWA2RK3rIDGRqWlqvAzwwdGpFA==}
-    engines: {node: '>= 16.17.0'}
-
-  '@eggjs/router@4.0.0-beta.27':
-    resolution: {integrity: sha512-Ie1dZYIeAbS9TskRbOuJF2EN0hVbPqoD8TUJG/YVNjtm6zVWHW4XQd8aF46ZBs0o78pdAh0hszVVUdHEZNHfag==}
-    engines: {node: '>=22.18.0'}
 
   '@eggjs/scripts@4.0.0':
     resolution: {integrity: sha512-IlzOvt222qqbchhfD8/hpcgmH1dS5IPGXH3lVc3dTkJUXa3fLsUV8xEclF4h8+aF9E4saji7KP20EmEQ0Jg3ew==}
     engines: {node: '>=18.19.0'}
     hasBin: true
 
-  '@eggjs/standalone-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-DfTVJFCv7rc53g6SeIe8MjlC3vzEAdaHnk+TEXyHaPc0oFuvYjIf7ikYrwhn5khaw2U8NS5vZNSCdoHt6qKrPw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-background-task@4.0.0-beta.11':
-    resolution: {integrity: sha512-dtATtPZQ2MMwdwdmluAPxylNKu48+JyvLVQta9UdAQQsDwJ3A4e1Jftpuh/FzXSFTSTYNcjkE8+v/DXEFM7FDA==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: beta
-
-  '@eggjs/tegg-common-util@4.0.0-beta.11':
-    resolution: {integrity: sha512-3PeUQc6NQ695Cjb67QVMnpVFmrlpMDYnL8W++yRqhx/MlYJ3714ZTkzUGhSvT4QlY5vVq9+J3sFRxHLfD9YDCQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-config@4.0.0-beta.11':
-    resolution: {integrity: sha512-kfvI2H0+ndYar4DS6AM7+QvApYNpLI62FfVGxsmGdtSzA6qqoyvEY3VGD8nBa9+uSURRNBdvoFlaI0KKriEDBQ==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: beta
-
-  '@eggjs/tegg-controller-plugin@4.0.0-beta.11':
-    resolution: {integrity: sha512-tvv/WnZVMR401B6EwwO8XBiRmaKd4hPns+w6haIIbsJ+Ucno+SM2/a4Zr/eFOvNLtGIWP5rGnbKK0SJyc6aNrw==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      '@eggjs/tegg-plugin': 4.0.0-beta.11
-      egg: beta
-
-  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.11':
-    resolution: {integrity: sha512-XGfsO2GRDOBuWCu2HGgeZXIQKcE7qu9F+bTXfvv6QCX8y9uTtlNcJ1qH0IpAe9d6Kcrt8rtPU4jYSFwsJaJnVQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11':
-    resolution: {integrity: sha512-pDsWFR7Wb1IJ3LRuH9RFJklSPZXgXoPwJqN2ixE5hhqOHWCd09N8Yr9C9ksGZUajWJRLO93s98Lx8JQEYrwi1A==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-lifecycle@4.0.0-beta.11':
-    resolution: {integrity: sha512-Pe3mpIeqGwKGib5VT1rsJ2SSO7yuTM7yTPmt/Rx+x5kCijxdn3afyB6eUhF7HaLEiy+CvQVmrihJhX5jS2Y08w==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-loader@4.0.0-beta.11':
-    resolution: {integrity: sha512-w2xD5njLGgJp6jmBHuvaZTW2px+ec6OozKaiAxC2ranwte2FQcY0TL7P38kcBJTvwnbkT/ozVzcdzsBKKE8wPw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-metadata@4.0.0-beta.11':
-    resolution: {integrity: sha512-xGejj5Pxjw4+TntYVIQ8zOmTaxBQE/uwKOILCoClMyn/gOfm3nuu31Jp/M297xtBCcJaDO3EnrUAlRXksHGpNA==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-orm-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-Sy4OwCMqN8E0ydDCHSKt7uoSTeHd3tSwuU6ClMtiCpGXmbQZe07jncq1RZH2v3BzalzpYfYccnukFex/q2jbYw==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-plugin@4.0.0-beta.11':
-    resolution: {integrity: sha512-F/kZoC3cl5GlhNlpOc/lm/BwNsu0iGzccZk24IuibewAgw+E7InL5bKGOjXm25/x1AxK3qVTkwtXiNOF0jkRuQ==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      '@eggjs/tegg-config': 4.0.0-beta.11
-      egg: beta
-
-  '@eggjs/tegg-runtime@4.0.0-beta.11':
-    resolution: {integrity: sha512-eqDgvSKgfsbE+CL0pYGS2WrFjaJ2/IG06nhoPmN4TO/kVDRJ5nq4Zi+dbUctdnnOU8wg4rqZ5Gt5HZyNfXWJDQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-lZZk6B5lqKzRRaQGrQGDPLOa/tLEUnjC77TnDAokqPo2PSjhqUVlT4dfR5qh/qDdclULDDsUUbYKLfLIw61hKQ==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11':
-    resolution: {integrity: sha512-4LoFyRnk8x2v3fCcBEQ1aaF8lFa6/kSaihqPVIjlIIZm2g3Rz3nAwX2iRPwAHPAGndKoeTY8iElZKfepu4xl0w==}
-    engines: {node: '>=22.18.0'}
-
-  '@eggjs/tegg-types@4.0.0-beta.11':
-    resolution: {integrity: sha512-caHAEGgA3yiaT+5njaO3FaGFQLvasZohqD6QL20E1Ti99Rcw2vhQJT3TrPedqE9lycBsOmJtuE06OwL8bazz2A==}
-    engines: {node: '>=22.18.0'}
-    peerDependencies:
-      egg: beta
-
-  '@eggjs/tegg@4.0.0-beta.11':
-    resolution: {integrity: sha512-YJOX79jwbEmMd1NBDhUu/wdL1T73a377xjR7JqQmXKihXHSG/hchyhVeeKF30aRuGyDByOkeSL4XuxuFw17gjw==}
-    engines: {node: '>=22.18.0'}
-
   '@eggjs/utils@4.4.1':
     resolution: {integrity: sha512-/bu4ORRNSLSjrQQ4KDBgtyF92EmgmtdgjoXBIhBexxEqoV5Tg6kX4xdcG42cw+Cq3WBnUq/PzSthEPHbSlkQgg==}
-
-  '@eggjs/utils@5.0.0-beta.27':
-    resolution: {integrity: sha512-NlPJjPULNqtx1ChWE6Jutz2pD/UCnulVH21ffutDkolGQiPFsBdebd2/K759I1+IRtJ+fLhFfWn5GEpcHqmKcw==}
-    engines: {node: '>=22.18.0'}
 
   '@emnapi/core@1.5.0':
     resolution: {integrity: sha512-sbP8GzB1WDzacS8fgNPpHlp6C9VZe+SJP3F90W9rLemaQj2PzIuTEl1qDOYQf58YIpyjViI24y9aPWCjEzY2cg==}
@@ -3308,9 +3160,6 @@ packages:
   '@sinclair/typebox@0.23.5':
     resolution: {integrity: sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==}
 
-  '@sinclair/typebox@0.32.35':
-    resolution: {integrity: sha512-Ul3YyOTU++to8cgNkttakC0dWvpERr6RYoHO2W47DLbFvrwBDJUY31B1sImH6JZSYc4Kt4PyHtoPNu+vL2r2dA==}
-
   '@sinclair/typebox@0.34.41':
     resolution: {integrity: sha512-6gS8pZzSXdyRHTIqoqSVknxolr1kzfy4/CeDnrzsVz8TTIWUbOBr6gnzOmTYJ3eXQNh4IYHIGi5aIL7sOZ2G/g==}
 
@@ -3962,10 +3811,6 @@ packages:
 
   await-first@1.0.0:
     resolution: {integrity: sha512-SK20HicVu6lXvNM0nS1flurrs4/1NdhvccvEn52Gf+vpERZnnkKBnJvAQDsYkzJnsHs1bRNNKEiobEet7a/0TA==}
-    engines: {node: '>= 6.0.0'}
-
-  aws-ssl-profiles@1.1.2:
-    resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
     engines: {node: '>= 6.0.0'}
 
   balanced-match@1.0.2:
@@ -4728,10 +4573,6 @@ packages:
     resolution: {integrity: sha512-zCnTtlxNoAiDc3gqY2aYAWFx7XWWiasuF2K8Me5WbN8otHKTUKBwjPtNpRs/rbUZm7KxWAaNj7P1a/p52GbVug==}
     engines: {node: '>=0.10.0'}
 
-  extend2@4.0.0:
-    resolution: {integrity: sha512-d/h9M79qdaVeAzjJ5Rn2dCt0bENlD34tCRyWhynrngEh+LB+QLPpxB2tAqx/YkLr14dVF0J8xKGGPymvWiuXSg==}
-    engines: {node: '>=18.7.0'}
-
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
@@ -4868,9 +4709,6 @@ packages:
     resolution: {integrity: sha512-pMaFftXPtiGIHCJHdcUUx9Rby/rFT/Kkt3fIIGCs+9PMDIljSyRiqraTlxNtBReJRDfUefpa263RQ3vnp5G/LQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     deprecated: This package is no longer supported.
-
-  generate-function@2.3.1:
-    resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
 
   get-caller-file@2.0.5:
     resolution: {integrity: sha512-DyFP3BM/3YHTQOCUL/w0OZHR0lpKeGrxotcHWcqNEdnltqFwXVfhEBQ94eIo34AfQpo0rGki4cyIiftY06h2Fg==}
@@ -5208,9 +5046,6 @@ packages:
     resolution: {integrity: sha512-+Pgi+vMuUNkJyExiMBt5IlFoMyKnr5zhJ4Uspz58WOhBF5QoIZkFyNHIbBAtHwzVAgk5RtndVNsDRN61/mmDqg==}
     engines: {node: '>=12'}
 
-  is-property@1.0.2:
-    resolution: {integrity: sha512-Ks/IoX00TtClbGQr4TWXemAnktAQvYB7HzcCxDGqEZU6oCmb2INHuOoKxbtR+HFkmYWBKv/dOZtGRiAjDhj92g==}
-
   is-stream@2.0.1:
     resolution: {integrity: sha512-hFoiJiTl63nn+kstHGBtewWSKnQLpyb155KHheA1l39uvtO9nWIop1p3udqPcUd/xbF1VLMO4n7OI6p7RbngDg==}
     engines: {node: '>=8'}
@@ -5505,9 +5340,6 @@ packages:
   lodash.ismatch@4.4.0:
     resolution: {integrity: sha512-fPMfXjGQEV9Xsq/8MTSgUf255gawYRbjwMyDbcvDhXgV7enSZA0hynz6vMPnpAb5iONEzBHBPsT+0zes5Z301g==}
 
-  lodash.snakecase@4.1.1:
-    resolution: {integrity: sha512-QZ1d4xoBHYUeuouhEq3lk3Uq7ldgyFXGBhg04+oRLnIz8o9T65Eh+8YdroUwn846zchkA9yDsDl5CVVaV2nqYw==}
-
   lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
 
@@ -5525,9 +5357,6 @@ packages:
 
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
-
-  long@5.3.2:
-    resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
 
   lower-case-first@1.0.2:
     resolution: {integrity: sha512-UuxaYakO7XeONbKrZf5FEgkantPf5DUqDayzP5VXZrtRPdH86s4kN47I8B3TW10S4QKiE3ziHNf3kRN//okHjA==}
@@ -5552,10 +5381,6 @@ packages:
   lru-cache@7.18.3:
     resolution: {integrity: sha512-jumlc0BIUrS3qJGgIkWZsyfAM7NCWiBcCDhnd+3NNM5KbBmLTgHVfWBcg6W+rLUsIpzpERPsvwUP7CckAQSOoA==}
     engines: {node: '>=12'}
-
-  lru.min@1.1.2:
-    resolution: {integrity: sha512-Nv9KddBcQSlQopmBHXSsZVY5xsdlZkdH/Iey0BlcBYggMd4two7cZnKOK9vmy3nY0O5RGH99z1PCeTpPqszUYg==}
-    engines: {bun: '>=1.0.0', deno: '>=1.30.0', node: '>=8.0.0'}
 
   luxon@3.7.2:
     resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
@@ -5799,20 +5624,12 @@ packages:
   mute-stream@0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
 
-  mysql2@3.15.1:
-    resolution: {integrity: sha512-WZMIRZstT2MFfouEaDz/AGFnGi1A2GwaDe7XvKTdRJEYiAHbOrh4S3d8KFmQeh11U85G+BFjIvS1Di5alusZsw==}
-    engines: {node: '>= 8.0'}
-
   mz-modules@2.1.0:
     resolution: {integrity: sha512-sjk8lcRW3vrVYnZ+W+67L/2rL+jbO5K/N6PFGIcLWTiYytNr22Ah9FDXFs+AQntTM1boZcoHi5qS+CV1seuPog==}
     engines: {node: '>=6.0.0'}
 
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
-
-  named-placeholders@1.1.3:
-    resolution: {integrity: sha512-eLoBxg6wE/rZkJPhU/xRX1WTpkFEwDJEN96oxFrTsqBdbT5ec295Q+CoHrL9IT0DipqKhmGcaZmwOt8OON5x1w==}
-    engines: {node: '>=12.0.0'}
 
   nano-spawn@2.0.0:
     resolution: {integrity: sha512-tacvGzUY5o2D8CBh2rrwxyNojUsZNU2zjNTzKQrkgGJQTbGAfArVWXSKMBokBeeg6C7OLRGUEyoFlYbfeWQIqw==}
@@ -6227,10 +6044,6 @@ packages:
   platform@1.3.6:
     resolution: {integrity: sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==}
 
-  pluralize@8.0.0:
-    resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
-    engines: {node: '>=4'}
-
   postcss-selector-parser@6.1.2:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
     engines: {node: '>=4'}
@@ -6363,9 +6176,6 @@ packages:
   redis-parser@3.0.0:
     resolution: {integrity: sha512-DJnGAeenTdpMEH6uAJRK/uiyEIH9WVsUmoLwzudwGJUwZPp80PDBWPHXSAGNPwNvIXAbe7MSUB1zQFugFml66A==}
     engines: {node: '>=4'}
-
-  reflect-metadata@0.2.2:
-    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   regex-recursion@6.0.2:
     resolution: {integrity: sha512-0YCaSCq2VRIebiaUviZNs0cBz1kg5kVS2UKUfNIx8YVs1cN3AV7NTctO5FOKBA+UT2BPJIWZauYHPqJODG50cg==}
@@ -6552,9 +6362,6 @@ packages:
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
 
-  seq-queue@0.0.5:
-    resolution: {integrity: sha512-hr3Wtp/GZIc/6DAGPDcV4/9WoZhjrkXsi5B/07QgX8tsdc6ilr7BFM6PM6rbdAX1kFSDYeZGLipIZZKyQP0O5Q==}
-
   serialize-javascript@6.0.2:
     resolution: {integrity: sha512-Saa1xPByTTq2gdeFZYLLo+RFE35NHZkAbqZeWNd3BpzppeVisAqpDjcp8dyf6uIvEqJRd46jemmyA4iFIeVk8g==}
 
@@ -6700,10 +6507,6 @@ packages:
 
   spy@1.0.0:
     resolution: {integrity: sha512-UPZwZSOuEj1InzelgmBPj3f74qywS99VCJVklZVnhXEnZjwTLe+PybMxBXWWr6Aiu140cFLAEmMop5YsC++Jog==}
-
-  sqlstring@2.3.3:
-    resolution: {integrity: sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==}
-    engines: {node: '>= 0.6'}
 
   ssri@10.0.6:
     resolution: {integrity: sha512-MGrFH9Z4NP9Iyhqn16sDtBpRRNJ0Y2hNa6D65h736fVSaPCHr4DM4sWUNvVaSuC+0OBGhwsrydQwmgfg5LncqQ==}
@@ -7391,86 +7194,11 @@ snapshots:
 
   '@docsearch/js@4.2.0': {}
 
-  '@eggjs/ajv-decorator@4.0.0-beta.11':
-    dependencies:
-      '@sinclair/typebox': 0.32.35
-      ajv: 8.17.1
-
-  '@eggjs/aop-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
   '@eggjs/compressible@3.0.0':
     dependencies:
       mime-db: 1.52.0
 
-  '@eggjs/controller-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/cookies': 4.0.0-beta.27
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      is-type-of: 2.2.0
-      path-to-regexp: 1.9.0
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/cookies@4.0.0-beta.27':
-    dependencies:
-      should-send-same-site-none: 2.0.5
-      utility: 2.5.0
-
-  '@eggjs/core-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/dal-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/rds': 1.3.0
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      lodash.snakecase: 4.1.1
-      pluralize: 8.0.0
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/egg-module-common@4.0.0-beta.11': {}
-
-  '@eggjs/eventbus-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
   '@eggjs/ip@2.1.0': {}
-
-  '@eggjs/rds@1.3.0':
-    dependencies:
-      mysql2: 3.15.1
-      sqlstring: 2.3.3
-
-  '@eggjs/router@4.0.0-beta.27':
-    dependencies:
-      http-errors: 2.0.0
-      inflection: 3.0.2
-      is-type-of: 2.2.0
-      koa-compose: 4.1.0
-      methods: 1.1.2
-      path-to-regexp: 1.9.0
-      urijs: 1.19.11
-      utility: 2.5.0
 
   '@eggjs/scripts@4.0.0':
     dependencies:
@@ -7486,174 +7214,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eggjs/standalone-decorator@4.0.0-beta.11': {}
-
-  '@eggjs/tegg-background-task@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      egg: link:packages/egg
-
-  '@eggjs/tegg-common-util@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/utils': 5.0.0-beta.27
-      extend2: 4.0.0
-      globby: 14.1.0
-      js-yaml: 4.1.0
-      reflect-metadata: 0.2.2
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/utils': 5.0.0-beta.27
-      egg: link:packages/egg
-
-  '@eggjs/tegg-controller-plugin@4.0.0-beta.11(@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg))(egg@packages+egg)':
-    dependencies:
-      '@eggjs/egg-module-common': 4.0.0-beta.11
-      '@eggjs/router': 4.0.0-beta.27
-      '@eggjs/tegg': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-plugin': 4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      egg: link:packages/egg
-      egg-errors: 2.3.2
-      globby: 14.1.0
-      path-to-regexp: 1.9.0
-      sdk-base: 5.0.1
-
-  '@eggjs/tegg-dynamic-inject-runtime@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-dynamic-inject@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-lifecycle@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-loader@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      globby: 14.1.0
-      is-type-of: 2.2.0
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-metadata@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      egg-errors: 2.3.2
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-orm-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-      lodash: 4.17.21
-      pluralize: 8.0.0
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-plugin@4.0.0-beta.11(@eggjs/tegg-config@4.0.0-beta.11(egg@packages+egg))(egg@packages+egg)':
-    dependencies:
-      '@eggjs/egg-module-common': 4.0.0-beta.11
-      '@eggjs/tegg': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-config': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject-runtime': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
-      egg: link:packages/egg
-      extend2: 4.0.0
-      sdk-base: 5.0.1
-
-  '@eggjs/tegg-runtime@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-schedule-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-transaction-decorator@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
-  '@eggjs/tegg-types@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      egg: link:packages/egg
-
-  '@eggjs/tegg@4.0.0-beta.11(egg@packages+egg)':
-    dependencies:
-      '@eggjs/ajv-decorator': 4.0.0-beta.11
-      '@eggjs/aop-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/controller-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/core-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/dal-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/eventbus-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/standalone-decorator': 4.0.0-beta.11
-      '@eggjs/tegg-background-task': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-common-util': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-dynamic-inject': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-lifecycle': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-loader': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-metadata': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-orm-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-runtime': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-schedule-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-transaction-decorator': 4.0.0-beta.11(egg@packages+egg)
-      '@eggjs/tegg-types': 4.0.0-beta.11(egg@packages+egg)
-    transitivePeerDependencies:
-      - egg
-
   '@eggjs/utils@4.4.1': {}
-
-  '@eggjs/utils@5.0.0-beta.27': {}
 
   '@emnapi/core@1.5.0':
     dependencies:
@@ -8361,8 +7922,6 @@ snapshots:
 
   '@sinclair/typebox@0.23.5': {}
 
-  '@sinclair/typebox@0.32.35': {}
-
   '@sinclair/typebox@0.34.41': {}
 
   '@sindresorhus/merge-streams@2.3.0': {}
@@ -8995,8 +8554,6 @@ snapshots:
   await-first@1.0.0:
     dependencies:
       ee-first: 1.1.1
-
-  aws-ssl-profiles@1.1.2: {}
 
   balanced-match@1.0.2: {}
 
@@ -9903,8 +9460,6 @@ snapshots:
     dependencies:
       is-extendable: 0.1.1
 
-  extend2@4.0.0: {}
-
   extend@3.0.2: {}
 
   fast-deep-equal@3.1.3: {}
@@ -10057,10 +9612,6 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
       wide-align: 1.1.5
-
-  generate-function@2.3.1:
-    dependencies:
-      is-property: 1.0.2
 
   get-caller-file@2.0.5: {}
 
@@ -10400,8 +9951,6 @@ snapshots:
 
   is-plain-obj@4.1.0: {}
 
-  is-property@1.0.2: {}
-
   is-stream@2.0.1: {}
 
   is-stream@4.0.1: {}
@@ -10677,8 +10226,6 @@ snapshots:
 
   lodash.ismatch@4.4.0: {}
 
-  lodash.snakecase@4.1.1: {}
-
   lodash@4.17.21: {}
 
   log-symbols@3.0.0:
@@ -10700,8 +10247,6 @@ snapshots:
 
   long@4.0.0: {}
 
-  long@5.3.2: {}
-
   lower-case-first@1.0.2:
     dependencies:
       lower-case: 1.1.4
@@ -10721,8 +10266,6 @@ snapshots:
       yallist: 4.0.0
 
   lru-cache@7.18.3: {}
-
-  lru.min@1.1.2: {}
 
   luxon@3.7.2: {}
 
@@ -11002,18 +10545,6 @@ snapshots:
 
   mute-stream@0.0.8: {}
 
-  mysql2@3.15.1:
-    dependencies:
-      aws-ssl-profiles: 1.1.2
-      denque: 2.1.0
-      generate-function: 2.3.1
-      iconv-lite: 0.7.0
-      long: 5.3.2
-      lru.min: 1.1.2
-      named-placeholders: 1.1.3
-      seq-queue: 0.0.5
-      sqlstring: 2.3.3
-
   mz-modules@2.1.0:
     dependencies:
       glob: 7.2.3
@@ -11027,10 +10558,6 @@ snapshots:
       any-promise: 1.3.0
       object-assign: 4.1.1
       thenify-all: 1.6.0
-
-  named-placeholders@1.1.3:
-    dependencies:
-      lru-cache: 7.18.3
 
   nano-spawn@2.0.0: {}
 
@@ -11520,8 +11047,6 @@ snapshots:
 
   platform@1.3.6: {}
 
-  pluralize@8.0.0: {}
-
   postcss-selector-parser@6.1.2:
     dependencies:
       cssesc: 3.0.0
@@ -11648,8 +11173,6 @@ snapshots:
   redis-parser@3.0.0:
     dependencies:
       redis-errors: 1.2.0
-
-  reflect-metadata@0.2.2: {}
 
   regex-recursion@6.0.2:
     dependencies:
@@ -11845,8 +11368,6 @@ snapshots:
       tslib: 2.8.1
       upper-case-first: 2.0.2
 
-  seq-queue@0.0.5: {}
-
   serialize-javascript@6.0.2:
     dependencies:
       randombytes: 2.1.0
@@ -12016,8 +11537,6 @@ snapshots:
       through: 2.3.8
 
   spy@1.0.0: {}
-
-  sqlstring@2.3.3: {}
 
   ssri@10.0.6:
     dependencies:
