@@ -63,10 +63,6 @@
     "version:rc": "node scripts/version.js prerelease --prerelease-tag=rc"
   },
   "lint-staged": {
-    "*.{json,md,yml,yaml,html,xml}": [
-      "prettier --ignore-unknown --write",
-      "oxlint --type-aware --fix"
-    ],
     "!(*.{ts,mts,cts,js,mjs,cjs,jsx,tsx})": [
       "prettier --ignore-unknown --write"
     ],
