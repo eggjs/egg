@@ -20,7 +20,6 @@
     "prepublishOnly": "npm run clean && npm run tsc"
   },
   "dependencies": {
-    "egg-scripts": "^3.1.0",
     "@eggjs/tegg": "^3.5.2",
     "@eggjs/tegg-aop-plugin": "^3.5.2",
     "@eggjs/tegg-config": "^3.5.2",

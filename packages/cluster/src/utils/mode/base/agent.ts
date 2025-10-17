@@ -65,11 +65,7 @@ export abstract class BaseAgentUtils extends EventEmitter {
 
   constructor(
     options: MasterOptions,
-    {
-      log,
-      logger,
-      messenger,
-    }: {
+    { log, logger, messenger }: {
       log: LogFun;
       logger: Logger;
       messenger: Messenger;

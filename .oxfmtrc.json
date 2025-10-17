@@ -1,0 +1,23 @@
+{
+  "indentStyle": "space",
+  "indentWidth": 2,
+  "lineWidth": 120,
+  "quoteStyle": "single",
+  // "jsxQuoteStyle": "double",
+  "quoteProperties": "as-needed",
+  "trailingCommas": "es5",
+  // "semicolons": "always",
+  "arrowParentheses": "as-needed"
+  // "bracketSpacing": true,
+  // "bracketSameLine": false,
+  // "attributePosition": "auto",
+  // "expand": "auto"
+  // "experimentalOperatorPosition": "before",
+  // "experimentalSortImports": {
+  //   "partitionByNewline": false,
+  //   "partitionByComment": false,
+  //   "sortSideEffects": false,
+  //   "order": "asc",
+  //   "ignoreCase": true
+  // }
+}

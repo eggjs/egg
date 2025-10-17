@@ -11,10 +11,6 @@ catalog:
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
   '@eggjs/scripts': ^4.0.0
-  '@eggjs/tegg': beta
-  '@eggjs/tegg-config': beta
-  '@eggjs/tegg-controller-plugin': beta
-  '@eggjs/tegg-plugin': beta
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
   '@oxc-node/core': ^0.0.32
@@ -151,7 +147,8 @@ catalog:
   on-finished: ^2.4.1
   onelogger: ^1.0.1
   oxc-minify: ^0.95.0
-  oxlint: ^1.22.0
+  oxfmt: ^0.5.0
+  oxlint: ^1.23.0
   oxlint-tsgolint: ^0.2.0
   parseurl: ^1.3.3
   path-to-regexp: ^6.3.0

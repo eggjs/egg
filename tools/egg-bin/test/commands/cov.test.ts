@@ -161,6 +161,7 @@ describe('test/commands/cov.test.ts', () => {
           // .debug()
           .expect('stdout', /1\) should fail/)
           .expect('stdout', /1 failing/)
+
           // The formatted coverage report will automatically wrap when output.
           // There is a certain probability that it will be truncated.
           // For example:

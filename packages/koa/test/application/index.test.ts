@@ -140,14 +140,11 @@ describe('app', () => {
 
   it('should print object works', () => {
     const app = new Koa();
-    const ctx = app.createContext(
-      {} as unknown as IncomingMessage,
-      {
-        getHeaders() {
-          return {};
-        },
-      } as unknown as ServerResponse
-    );
+    const ctx = app.createContext({} as unknown as IncomingMessage, {
+      getHeaders() {
+        return {};
+      },
+    } as unknown as ServerResponse);
     console.log(ctx.request);
     console.log(ctx.response);
     console.log(ctx.context);
