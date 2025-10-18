@@ -86,6 +86,9 @@
       "path": "./plugins/view"
     },
     {
+      "path": "./plugins/view-nunjucks"
+    },
+    {
       "path": "./plugins/tracer"
     },
     {

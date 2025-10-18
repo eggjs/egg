@@ -112,6 +112,14 @@ This is the **Eggjs** framework - a progressive Node.js framework for building e
     - Extends context with render() method for template rendering
     - Built-in mapping configuration for file extensions to engines
     - Template engine agnostic - works with ejs, nunjucks, handlebars, etc.
+  - `view-nunjucks/` - Nunjucks template engine plugin (merged from egg-view-nunjucks)
+    - Provides Nunjucks template engine integration for Egg applications
+    - Built on Mozilla's Nunjucks templating engine
+    - Extends ViewHelper with Nunjucks-specific safe string helpers
+    - Auto-injects CSRF tokens and CSP nonce attributes
+    - Supports custom filters and template caching
+    - Includes sandbox protection against prototype pollution attacks
+    - Depends on security and view plugins
   - `tracer/` - Request tracing plugin (merged from @eggjs/tracer)
     - Provides distributed tracing capabilities for Egg applications
     - Automatically generates and tracks traceId, spanId, and parentSpanId

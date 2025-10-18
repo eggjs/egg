@@ -1,0 +1,1 @@
+{% include "./relative-b.tpl" -%}

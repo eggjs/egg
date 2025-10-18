@@ -1,0 +1,95 @@
+{
+  "name": "@eggjs/view-nunjucks",
+  "version": "3.0.0-beta.28",
+  "description": "nunjucks view plugin for egg",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./config/config.local": "./src/config/config.local.ts",
+    "./lib/engine": "./src/lib/engine.ts",
+    "./lib/environment": "./src/lib/environment.ts",
+    "./lib/file_loader": "./src/lib/file_loader.ts",
+    "./lib/helper": "./src/lib/helper.ts",
+    "./lib/view": "./src/lib/view.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./config/config.local": "./dist/config/config.local.js",
+      "./lib/engine": "./dist/lib/engine.js",
+      "./lib/environment": "./dist/lib/environment.js",
+      "./lib/file_loader": "./dist/lib/file_loader.js",
+      "./lib/helper": "./dist/lib/helper.js",
+      "./lib/view": "./dist/lib/view.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "eggPlugin": {
+    "name": "nunjucks",
+    "dep": [
+      "security",
+      "view"
+    ]
+  },
+  "keywords": [
+    "egg",
+    "eggPlugin",
+    "egg-plugin",
+    "egg-view",
+    "nunjucks",
+    "view",
+    "template"
+  ],
+  "dependencies": {
+    "nunjucks": "^3.2.4"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/nunjucks": "catalog:",
+    "cheerio": "^1.0.0",
+    "common-tags": "^1.8.2",
+    "marked": "^15.0.6",
+    "nunjucks-markdown": "^2.0.1",
+    "oxlint": "catalog:",
+    "rimraf": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eggjs/egg.git",
+    "directory": "plugins/view-nunjucks"
+  },
+  "bugs": "https://github.com/eggjs/egg/issues",
+  "homepage": "https://github.com/eggjs/egg/tree/next/plugins/view-nunjucks#readme",
+  "author": "TZ <atian25@qq.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

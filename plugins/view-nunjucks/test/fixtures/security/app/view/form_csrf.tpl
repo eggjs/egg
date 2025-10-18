@@ -1,0 +1,6 @@
+<form id="form1" method="post">
+  <input type="text" name="foo" value="bar" />
+</form>
+<form id="form2">
+  <input type="hidden" data-a="a" name="_csrf" value="{{ctx.csrf}}" />
+</form>
