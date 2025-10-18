@@ -64,9 +64,12 @@
     "nunjucks": "catalog:"
   },
   "peerDependencies": {
+    "@eggjs/view": "workspace:*",
     "egg": "workspace:*"
   },
   "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/view": "workspace:*",
     "@types/nunjucks": "catalog:",
     "cheerio": "^1.0.0",
     "common-tags": "catalog:",

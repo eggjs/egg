@@ -2012,6 +2012,12 @@ importers:
         specifier: 'catalog:'
         version: 3.2.4(chokidar@3.6.0)
     devDependencies:
+      '@eggjs/mock':
+        specifier: workspace:*
+        version: link:../mock
+      '@eggjs/view':
+        specifier: workspace:*
+        version: link:../view
       '@types/nunjucks':
         specifier: 'catalog:'
         version: 3.2.6

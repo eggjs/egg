@@ -21,12 +21,17 @@ export interface RenderOptions extends PlainObject {
   viewEngine?: string;
 }
 
-export interface ViewEngine {
-  render: (name: string, locals?: Record<string, any>, options?: RenderOptions) => Promise<string>;
-  renderString: (tpl: string, locals?: Record<string, any>, options?: RenderOptions) => Promise<string>;
-}
+export abstract class ViewEngineBase {
+  ctx: Context;
+  app: Application;
+  constructor(ctx: Context) {
+    this.ctx = ctx;
+    this.app = ctx.app;
+  }
 
-export type ViewEngineClass = new (app: Context) => ViewEngine;
+  abstract render(name: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
+  abstract renderString(tpl: string, locals?: Record<string, any>, options?: RenderOptions): Promise<string>;
+}
 
 /**
  * ViewManager will manage all view engine that is registered.
@@ -34,7 +39,7 @@ export type ViewEngineClass = new (app: Context) => ViewEngine;
  * It can find the real file, then retrieve the view engine based on extension.
  * The plugin just register view engine using {@link ViewManager#use}
  */
-export class ViewManager extends Map<string, ViewEngineClass> {
+export class ViewManager extends Map<string, typeof ViewEngineBase> {
   config: ViewManagerConfig;
   extMap: Map<string, string>;
   fileMap: Map<string, string>;
@@ -67,7 +72,7 @@ export class ViewManager extends Map<string, ViewEngineClass> {
    * @param {String} name - the name of view engine
    * @param {Object} viewEngine - the class of view engine
    */
-  use(name: string, viewEngine: ViewEngineClass): void {
+  use(name: string, viewEngine: typeof ViewEngineBase): void {
     assert(name, 'name is required');
     assert(!this.has(name), `${name} has been registered`);
 

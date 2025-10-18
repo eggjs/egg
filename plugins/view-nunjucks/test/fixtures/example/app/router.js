@@ -2,37 +2,37 @@
 const path = require('path');
 const fs = require('fs');
 module.exports = app => {
-  app.get('/', function* () {
-    yield this.render('home.tpl', { user: 'egg' });
+  app.get('/', async function () {
+    await this.render('home.tpl', { user: 'egg' });
   });
 
-  app.get('/string', function* () {
-    this.body = yield this.renderString('hi, {{ user }}', { user: 'egg' });
+  app.get('/string', async function () {
+    this.body = await this.renderString('hi, {{ user }}', { user: 'egg' });
   });
 
-  app.get('/string_options', function* () {
-    this.body = yield this.renderString(
+  app.get('/string_options', async function () {
+    this.body = await this.renderString(
       fs.readFileSync(path.resolve(__dirname, './view/layout.tpl')).toString(),
       { user: 'egg' },
       { path: path.resolve(__dirname, './view/layout.tpl') }
     );
   });
 
-  app.get('/inject', function* () {
-    yield this.render('inject.tpl', { user: 'egg' });
+  app.get('/inject', async function () {
+    await this.render('inject.tpl', { user: 'egg' });
   });
 
-  app.get('/filter', function* () {
-    this.body = yield this.renderString('{{ user | hello }}', { user: 'egg' });
+  app.get('/filter', async function () {
+    this.body = await this.renderString('{{ user | hello }}', { user: 'egg' });
   });
 
-  app.get('/filter/include', function* () {
-    yield this.render('include-test.tpl', { list: ['egg', 'yadan'] });
+  app.get('/filter/include', async function () {
+    await this.render('include-test.tpl', { list: ['egg', 'yadan'] });
   });
 
-  app.get('/not_found', function* () {
+  app.get('/not_found', async function () {
     try {
-      yield this.render('not_found.tpl', {
+      await this.render('not_found.tpl', {
         user: 'egg',
       });
     } catch (e) {
@@ -41,14 +41,14 @@ module.exports = app => {
     }
   });
 
-  app.get('/locals', function* () {
+  app.get('/locals', async function () {
     this.locals = { b: 'ctx' };
-    this.body = yield this.renderString('{{ a }}, {{ b }}, {{ c }}', { c: 'locals' });
+    this.body = await this.renderString('{{ a }}, {{ b }}, {{ c }}', { c: 'locals' });
   });
 
-  app.get('/error_string', function* () {
+  app.get('/error_string', async function () {
     try {
-      this.body = yield this.renderString('{{a');
+      this.body = await this.renderString('{{a');
     } catch (err) {
       this.status = 500;
       this.body = err;

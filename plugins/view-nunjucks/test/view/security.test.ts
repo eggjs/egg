@@ -1,32 +1,36 @@
-'use strict';
+import path from 'node:path';
+import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { mock, type MockApplication } from '@eggjs/mock';
+import { stripIndent } from 'common-tags';
+import { load } from 'cheerio';
 
-const path = require('path');
-const mm = require('egg-mock');
-const cheerio = require('cheerio');
-const assert = require('assert');
-const stripIndent = require('common-tags').stripIndent;
+function getFixtures(name: string): string {
+  return path.join(import.meta.dirname, '../fixtures', name);
+}
 
-describe('test/view/security.test.js', () => {
-  let app;
+describe('test/view/security.test.ts', () => {
+  let app: MockApplication;
 
-  before(function* () {
-    app = mm.app({
-      baseDir: 'security',
-      framework: path.join(__dirname, '../fixtures/framework'),
+  beforeAll(async () => {
+    app = mock.app({
+      baseDir: getFixtures('security'),
+      framework: getFixtures('framework'),
     });
-    yield app.ready();
+    await app.ready();
   });
-  after(() => app.close());
-  afterEach(mm.restore);
 
-  it('should escape', function* () {
+  afterAll(() => app.close());
+  afterEach(() => mock.restore());
+
+  it('should escape', () => {
     // - https://snyk.io/vuln/npm:nunjucks:20160906
     // - https://github.com/mozilla/nunjucks/issues/835
-    yield app
+    return app
       .httpRequest()
       .get('/escape')
       .expect(200)
-      .expect(stripIndent`
+      .expect(
+        stripIndent`
         &lt;html&gt;
         &lt;p&gt;arr&lt;/p&gt;
         &lt;p&gt;obj&lt;/p&gt;
@@ -38,50 +42,53 @@ describe('test/view/security.test.js', () => {
         <html>
         <p>arr</p>
         <p>obj</p>
-      `);
+      `
+      );
   });
 
-  it('should render xss', function* () {
-    yield app
+  it('should render xss', () => {
+    return app
       .httpRequest()
       .get('/xss')
       .expect(200)
-      .expect(stripIndent`
+      .expect(
+        stripIndent`
         http://eggjs.github.io/index.html?a=&lt;div&gt;
         http://eggjs.github.io/index.html?a=<div>
         http://eggjs.github.io/index.html?a=&lt;div&gt;
         &lt;div id=&quot;a&quot;&gt;&#39;a&#39;&lt;/div&gt;
-      `);
+      `
+      );
   });
 
-  it('should render sjs', function* () {
-    yield app.httpRequest().get('/sjs').expect(200).expect('var foo = "\\x22hello\\x22";');
+  it('should render sjs', () => {
+    return app.httpRequest().get('/sjs').expect(200).expect('var foo = "\\x22hello\\x22";');
   });
 
-  it('should render shtml', function* () {
-    yield app.httpRequest().get('/shtml').expect(200).expect('<img><h1>foo</h1>');
+  it('should render shtml', () => {
+    return app.httpRequest().get('/shtml').expect(200).expect('<img><h1>foo</h1>');
   });
 
-  it('should inject csrf hidden field in form', function* () {
-    const result = yield app.httpRequest().get('/form_csrf').expect(200);
+  it('should inject csrf hidden field in form', async () => {
+    const result = await app.httpRequest().get('/form_csrf').expect(200);
 
-    const $ = cheerio.load(result.text);
-    assert($('#form1 input').length === 2);
-    assert($('#form1 [name=_csrf]').attr('name') === '_csrf');
-    assert($('#form1 [name=_csrf]').val().length > 1);
-    assert($('#form2 input').length === 1);
-    assert($('#form2 input').attr('data-a') === 'a');
-    assert($('#form2 input').val().length > 1);
+    const $ = load(result.text);
+    expect($('#form1 input').length).toBe(2);
+    expect($('#form1 [name=_csrf]').attr('name')).toBe('_csrf');
+    expect($('#form1 [name=_csrf]').val()!.toString().length).toBeGreaterThan(1);
+    expect($('#form2 input').length).toBe(1);
+    expect($('#form2 input').attr('data-a')).toBe('a');
+    expect($('#form2 input').val()!.toString().length).toBeGreaterThan(1);
   });
 
-  it('should inject nonce attribute to script tag', function* () {
-    const result = yield app.httpRequest().get('/nonce').expect(200);
+  it('should inject nonce attribute to script tag', async () => {
+    const result = await app.httpRequest().get('/nonce').expect(200);
 
-    const $ = cheerio.load(result.text);
+    const $ = load(result.text);
     const expectedNonce = $('#input1').val();
-    assert($('#script1').attr('nonce') === expectedNonce);
-    assert($('#script2').attr('nonce') === expectedNonce);
-    assert($('#script3').attr('nonce') === expectedNonce);
+    expect($('#script1').attr('nonce')).toBe(expectedNonce);
+    expect($('#script2').attr('nonce')).toBe(expectedNonce);
+    expect($('#script3').attr('nonce')).toBe(expectedNonce);
   });
 
   // http://disse.cting.org/2016/08/02/2016-08-02-sandbox-break-out-nunjucks-template-engine
@@ -226,7 +233,7 @@ describe('test/view/security.test.js', () => {
         .expect(500);
     });
 
-    it('global.process.mainModule.require', () => {
+    it('global.process.mainModule.require (duplicate test)', () => {
       return app
         .httpRequest()
         .get('/sandbox')
@@ -246,7 +253,7 @@ describe('test/view/security.test.js', () => {
         .expect(500);
     });
 
-    it('global.process.mainModule.require', () => {
+    it('global.process.mainModule.require with os.platform', () => {
       return app
         .httpRequest()
         .get('/sandbox')

@@ -1,6 +1,18 @@
-import type { Application } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
+
 import { NunjucksView } from './lib/view.ts';
 
-export default (app: Application): void => {
-  app.view.use('nunjucks', NunjucksView as any);
-};
+export default class ViewNunjucksAppBoot implements ILifecycleBoot {
+  app: Application;
+  constructor(app: Application) {
+    this.app = app;
+  }
+
+  configDidLoad(): void {
+    this.app.view.use('nunjucks', NunjucksView);
+  }
+
+  async didLoad(): Promise<void> {
+    await this.app.nunjucks.ready();
+  }
+}

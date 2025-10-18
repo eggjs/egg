@@ -3,7 +3,7 @@ import assert from 'node:assert';
 
 import type { Context, Application } from 'egg';
 
-import { ViewManager, type ViewManagerConfig, type RenderOptions, type ViewEngine } from './view_manager.ts';
+import { ViewManager, type ViewManagerConfig, type RenderOptions, ViewEngineBase } from './view_manager.ts';
 
 /**
  * View instance for each request.
@@ -84,14 +84,14 @@ export class ContextView {
     return await viewEngine.renderString(tpl, this._setLocals(locals), options);
   }
 
-  private _getViewEngine(name: string): ViewEngine {
+  private _getViewEngine(name: string): ViewEngineBase {
     // get view engine
-    const ViewEngine = this.viewManager.get(name);
-    assert(ViewEngine, `Can't find ViewEngine "${name}"`);
+    const ViewEngineImpl = this.viewManager.get(name);
+    assert(ViewEngineImpl, `Can't find ViewEngine "${name}"`);
 
     // use view engine to render
-    const engine = new ViewEngine(this.ctx);
-    return engine;
+    const engine = Reflect.construct(ViewEngineImpl, [this.ctx]);
+    return engine as ViewEngineBase;
   }
 
   /**

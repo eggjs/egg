@@ -1,3 +1,5 @@
+import './types.ts';
+
 export { NunjucksEnvironment } from './lib/environment.ts';
 export { NunjucksFileLoader } from './lib/file_loader.ts';
 export { createHelper } from './lib/helper.ts';

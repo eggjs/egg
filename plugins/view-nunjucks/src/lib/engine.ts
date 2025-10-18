@@ -1,4 +1,5 @@
 import type { Application } from 'egg';
+
 import { NunjucksEnvironment } from './environment.ts';
 
 /**
@@ -10,7 +11,7 @@ export function createEngine(app: Application): NunjucksEnvironment {
   const coreLogger = app.loggers.coreLogger;
 
   const viewPaths = app.config.view.root;
-  coreLogger.info('[egg-view-nunjucks] loading templates from %j', viewPaths);
+  coreLogger.info('[@eggjs/view-nunjucks] loading templates from %j', viewPaths);
 
   const config = app.config.nunjucks as any;
   config.noCache = !config.cache;

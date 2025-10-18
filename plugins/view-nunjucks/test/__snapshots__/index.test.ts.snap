@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should exports keep stable 1`] = `
+{
+  "NunjucksEnvironment": [Function],
+  "NunjucksFileLoader": [Function],
+  "NunjucksView": [Function],
+  "createEngine": [Function],
+  "createHelper": [Function],
+}
+`;

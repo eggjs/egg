@@ -4,6 +4,9 @@ import type { NunjucksEnvironment } from './lib/environment.ts';
 declare module 'egg' {
   // Extend EggAppConfig with nunjucks configuration
   interface EggAppConfig {
+    /**
+     * Nunjucks plugin configuration
+     */
     nunjucks: NunjucksConfig;
   }
 

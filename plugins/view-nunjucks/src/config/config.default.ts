@@ -1,6 +1,3 @@
-/**
- * Nunjucks plugin configuration
- */
 export interface NunjucksConfig {
   /**
    * Controls if output with dangerous characters are escaped automatically
@@ -34,14 +31,12 @@ export interface NunjucksConfig {
   noCache?: boolean;
 }
 
-export default (): { nunjucks: NunjucksConfig } => {
-  return {
-    nunjucks: {
-      autoescape: true,
-      throwOnUndefined: false,
-      trimBlocks: false,
-      lstripBlocks: false,
-      cache: true,
-    },
-  };
+export default {
+  nunjucks: {
+    autoescape: true,
+    throwOnUndefined: false,
+    trimBlocks: false,
+    lstripBlocks: false,
+    cache: true,
+  } as NunjucksConfig,
 };

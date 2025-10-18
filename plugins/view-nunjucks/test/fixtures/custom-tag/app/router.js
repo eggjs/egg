@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = app => {
-  app.get('/markdown', function* () {
-    yield this.render('markdown.tpl', { user: 'egg' });
+  app.get('/markdown', async function () {
+    await this.render('markdown.tpl', { user: 'egg' });
   });
 };

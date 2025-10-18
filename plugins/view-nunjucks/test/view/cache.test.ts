@@ -1,109 +1,105 @@
-'use strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const fs = require('fs');
-const path = require('path');
-const mm = require('egg-mock');
-const assert = require('assert');
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { mock, mm, type MockApplication } from '@eggjs/mock';
+import { getFixtures } from '../utils.ts';
 
-describe('test/view/cache.test.js', () => {
-  before(function () {
-    this.timeout(5000);
-  });
-
-  afterEach(mm.restore);
+describe('test/view/cache.test.ts', () => {
+  afterEach(() => mock.restore());
 
   describe('should render cache template at prod', () => {
-    let app;
-    let templateFilePath;
-    let templateContent;
+    let app: MockApplication;
+    let templateFilePath: string;
+    let templateContent: string;
 
-    beforeEach(function* () {
+    beforeEach(async () => {
       mm(process.env, 'EGG_SERVER_ENV', 'prod');
 
-      app = mm.app({
-        baseDir: 'cache/prod',
-        framework: path.join(__dirname, '../fixtures/framework'),
+      app = mock.app({
+        baseDir: getFixtures('cache/prod'),
+        framework: getFixtures('framework'),
       });
 
-      yield app.ready();
+      await app.ready();
 
       templateFilePath = path.join(app.config.baseDir, 'app/view/home.tpl');
       templateContent = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
     });
 
-    afterEach(() => app.close());
-    afterEach(() => {
+    afterEach(async () => {
       fs.writeFileSync(templateFilePath, templateContent);
-      app.nunjucks.cleanCache();
+      (app as any).nunjucks.cleanCache();
+      await app.close();
     });
 
-    it('use cache', function* () {
-      yield app
+    it('use cache', async () => {
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
 
       fs.writeFileSync(templateFilePath, 'TEMPLATE CHANGED');
 
-      yield app
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
     });
 
-    it('clean cache', function* () {
-      yield app
+    it('clean cache', async () => {
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
 
-      yield app
+      await app
         .httpRequest()
         .get('/sub')
         .expect(200, /hi, sub egg/);
 
       fs.writeFileSync(templateFilePath, 'TEMPLATE CHANGED');
 
-      const count = app.nunjucks.cleanCache();
-      assert(count === 2);
+      const count = (app as any).nunjucks.cleanCache();
+      expect(count).toBe(2);
 
-      yield app
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /TEMPLATE CHANGED/);
     });
 
-    it('clean cache by name', function* () {
-      yield app
+    it('clean cache by name', async () => {
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
 
       fs.writeFileSync(templateFilePath, 'TEMPLATE CHANGED');
 
-      const count = app.nunjucks.cleanCache(templateFilePath);
+      const count = (app as any).nunjucks.cleanCache(templateFilePath);
 
-      assert(count === 1);
+      expect(count).toBe(1);
 
-      yield app
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /TEMPLATE CHANGED/);
     });
 
-    it('clean cache by path', function* () {
-      yield app
+    it('clean cache by path', async () => {
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
 
       fs.writeFileSync(templateFilePath, 'TEMPLATE CHANGED');
 
-      const count = app.nunjucks.cleanCache(templateFilePath);
+      const count = (app as any).nunjucks.cleanCache(templateFilePath);
 
-      assert(count === 1);
+      expect(count).toBe(1);
 
-      yield app
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /TEMPLATE CHANGED/);
@@ -111,39 +107,39 @@ describe('test/view/cache.test.js', () => {
   });
 
   describe('should render modified template in local env', () => {
-    let app;
-    let templateFilePath;
-    let templateContent;
+    let app: MockApplication;
+    let templateFilePath: string;
+    let templateContent: string;
 
-    beforeEach(function* () {
+    beforeEach(async () => {
       mm(process.env, 'EGG_SERVER_ENV', 'local');
 
-      app = mm.app({
-        baseDir: 'cache/local',
-        framework: path.join(__dirname, '../fixtures/framework'),
+      app = mock.app({
+        baseDir: getFixtures('cache/local'),
+        framework: getFixtures('framework'),
       });
-      yield app.ready();
+      await app.ready();
 
       templateFilePath = path.join(app.config.baseDir, 'app/view/home.tpl');
       templateContent = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
     });
 
-    afterEach(() => app.close());
-    afterEach(() => {
+    afterEach(async () => {
       if (templateContent) {
         fs.writeFileSync(templateFilePath, templateContent);
       }
+      await app.close();
     });
 
-    it('cache = false', function* () {
-      yield app
+    it('cache = false', async () => {
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /hi, egg/);
 
       fs.writeFileSync(templateFilePath, 'TEMPLATE CHANGED');
 
-      yield app
+      await app
         .httpRequest()
         .get('/')
         .expect(200, /TEMPLATE CHANGED/);
