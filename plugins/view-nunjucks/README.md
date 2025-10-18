@@ -1,59 +1,60 @@
-# egg-view-nunjucks
+# @eggjs/view-nunjucks
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-[![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 
-[npm-image]: https://img.shields.io/npm/v/egg-view-nunjucks.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-view-nunjucks
-[travis-image]: https://img.shields.io/travis/eggjs/egg-view-nunjucks.svg?style=flat-square
-[travis-url]: https://travis-ci.org/eggjs/egg-view-nunjucks
-[codecov-image]: https://img.shields.io/codecov/c/github/eggjs/egg-view-nunjucks.svg?style=flat-square
-[codecov-url]: https://codecov.io/github/eggjs/egg-view-nunjucks?branch=master
-[david-image]: https://img.shields.io/david/eggjs/egg-view-nunjucks.svg?style=flat-square
-[david-url]: https://david-dm.org/eggjs/egg-view-nunjucks
-[snyk-image]: https://snyk.io/test/npm/egg-view-nunjucks/badge.svg?style=flat-square
-[snyk-url]: https://snyk.io/test/npm/egg-view-nunjucks
-[download-image]: https://img.shields.io/npm/dm/egg-view-nunjucks.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-view-nunjucks
+[npm-image]: https://img.shields.io/npm/v/@eggjs/view-nunjucks.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@eggjs/view-nunjucks
+[snyk-image]: https://snyk.io/test/npm/@eggjs/view-nunjucks/badge.svg?style=flat-square
+[snyk-url]: https://snyk.io/test/npm/@eggjs/view-nunjucks
+[download-image]: https://img.shields.io/npm/dm/@eggjs/view-nunjucks.svg?style=flat-square
+[download-url]: https://npmjs.org/package/@eggjs/view-nunjucks
 
 [nunjucks](http://mozilla.github.io/nunjucks/) view plugin for egg.
 
 ## Install
 
 ```bash
-$ npm i egg-view-nunjucks --save
+npm install @eggjs/view-nunjucks
+pnpm add @eggjs/view-nunjucks
+yarn add @eggjs/view-nunjucks
 ```
 
 ## Usage
 
-```js
-// {app_root}/config/plugin.js
-exports.nunjucks = {
-  enable: true,
-  package: 'egg-view-nunjucks',
-};
-```
+Enable plugin in `config/plugin.ts`
 
-Set mapping in config
-
-```js
-// {app_root}/config/config.default.js
-exports.view = {
-  defaultViewEngine: 'nunjucks',
-  mapping: {
-    '.nj': 'nunjucks',
+```ts
+export default {
+  nunjucks: {
+    enable: true,
+    package: '@eggjs/view-nunjucks',
   },
 };
 ```
 
-Render in controller
+Set mapping in `config/config.default.ts`
 
-```js
-// {app_root}/app/controller/test.js
+```ts
+import { defineConfig } from 'egg';
+
+export default defineConfig({
+  view: {
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.nj': 'nunjucks',
+    },
+  },
+});
+```
+
+Render in controller by `ctx.render`
+
+```ts
+// {app_root}/app/controller/test.ts
+import { Controller } from 'egg';
+
 class TestController extends Controller {
   async list() {
     const ctx = this.ctx;
@@ -71,19 +72,21 @@ class TestController extends Controller {
 }
 ```
 
-## Feature
+## Features
 
 ### Filter
 
-- `escape` filter is replaced by `helper.escape` which is provided by `egg-security` for better performance
-- Add your filters to `app/extend/filter.js`, then they will be injected automatically to nunjucks
+- `escape` filter is replaced by `helper.escape` which is provided by [@eggjs/security](https://github.com/eggjs/egg/tree/next/plugins/security) for better performance
+- Add your filters to `app/extend/filter.ts`, then they will be injected automatically to nunjucks
 
-```js
-// {app_root}/app/extend/filter.js
-exports.hello = name => `hi, ${name}`;
+```ts
+// {app_root}/app/extend/filter.ts
+export const hello = (name: string) => `hi, ${name}`;
 
 // so you could use it at template
-// {app_root}/app/controller/test.js
+// {app_root}/app/controller/test.ts
+import { Controller } from 'egg';
+
 class TestController extends Controller {
   async list() {
     const ctx = this.ctx;
@@ -102,19 +105,20 @@ class TestController extends Controller {
 
 you can extend custom tag like this:
 
-```js
-// {app_root}/app.js
-const markdown = require('nunjucks-markdown');
-const marked = require('marked');
+```ts
+// {app_root}/app/extend/application.ts
+import { Application } from 'egg';
+import markdown from 'nunjucks-markdown';
+import marked from 'marked';
 
-module.exports = app => {
+export default (app: Application) => {
   markdown.register(app.nunjucks, marked);
 };
 ```
 
 ### Security
 
-see [egg-security](https://github.com/eggjs/egg-security)
+see [@eggjs/security](https://github.com/eggjs/egg/tree/next/plugins/security)
 
 - auto inject `_csrf` attr to form field
 - auto inject `nonce` attr to script tag
@@ -128,11 +132,11 @@ see [egg-security](https://github.com/eggjs/egg-security)
 ### More
 
 - `app.nunjucks` - nunjucks environment
-- `app.nunjucks.cleanCache(fullPath/tplName)` to easy clean cache, can use with custom [egg-watcher](https://github.com/eggjs/egg-watcher)
+- `app.nunjucks.cleanCache(fullPath/tplName)` to easy clean cache, can use with custom [@eggjs/watcher](https://github.com/eggjs/egg/tree/next/plugins/watcher)
 
 ## Configuration
 
-see [config/config.default.js](config/config.default.js) for more detail.
+see [config/config.default.ts](https://github.com/eggjs/egg/blob/next/plugins/view-nunjucks/src/config/config.default.ts) for more details.
 
 ## Questions & Suggestions
 
@@ -141,3 +145,9 @@ Please open an issue [here](https://github.com/eggjs/egg/issues).
 ## License
 
 [MIT](LICENSE)
+
+## Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=eggjs/egg)](https://github.com/eggjs/egg/graphs/contributors)
+
+Made with [contributors-img](https://contrib.rocks).

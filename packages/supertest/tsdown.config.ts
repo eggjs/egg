@@ -1,17 +1,12 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
+import baseConfig from '../tsdown.config.ts';
+
 const config: UserConfig = defineConfig({
-  entry: {
-    index: 'src/index.ts',
-  },
-  unbundle: true,
-  dts: true,
+  ...baseConfig,
   unused: {
     level: 'error',
     ignore: ['@types/superagent'],
-  },
-  exports: {
-    devExports: true,
   },
 });
 

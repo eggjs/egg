@@ -49,6 +49,7 @@
     "@eggjs/mock": "workspace:*",
     "@types/mustache": "catalog:",
     "@types/stack-trace": "catalog:",
+    "egg": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

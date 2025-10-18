@@ -58,10 +58,11 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/tsconfig": "workspace:*",
-    "@types/safe-timers": "catalog:",
     "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
+    "@eggjs/tsconfig": "workspace:*",
+    "@types/safe-timers": "catalog:",
+    "egg": "workspace:*",
     "oxlint": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

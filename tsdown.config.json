@@ -1,0 +1,10 @@
+{
+  "unbundle": true,
+  "unused": {
+    "level": "error"
+  },
+  "dts": true,
+  "exports": {
+    "devExports": true
+  }
+}

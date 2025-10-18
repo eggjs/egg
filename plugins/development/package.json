@@ -59,6 +59,7 @@
     "@eggjs/mock": "workspace:*",
     "@eggjs/supertest": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "egg": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:"
   },

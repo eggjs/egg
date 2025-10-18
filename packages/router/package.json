@@ -59,20 +59,12 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./EggRouter": "./src/EggRouter.ts",
-    "./Layer": "./src/Layer.ts",
-    "./Router": "./src/Router.ts",
-    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
       ".": "./dist/index.js",
-      "./EggRouter": "./dist/EggRouter.js",
-      "./Layer": "./dist/Layer.js",
-      "./Router": "./dist/Router.js",
-      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

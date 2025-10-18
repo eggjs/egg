@@ -1,15 +1,3 @@
-import { defineConfig, type UserConfig } from 'tsdown';
+import pluginConfig from '../tsdown.config.ts';
 
-const config: UserConfig = defineConfig({
-  entry: 'src/**/*.ts',
-  unbundle: true,
-  unused: {
-    level: 'error',
-  },
-  dts: true,
-  exports: {
-    devExports: true,
-  },
-});
-
-export default config;
+export default pluginConfig;

@@ -25,6 +25,7 @@
     "prettier": "catalog:",
     "rimraf": "catalog:",
     "semver": "catalog:",
+    "tsdown": "catalog:",
     "typescript": "catalog:",
     "unplugin-unused": "catalog:",
     "urllib": "catalog:",

@@ -1,15 +1,9 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
+import pluginConfig from '../tsdown.config.ts';
+
 const config: UserConfig = defineConfig({
-  entry: 'src/**/*.ts',
-  unbundle: true,
-  dts: true,
-  unused: {
-    level: 'error',
-  },
-  exports: {
-    devExports: true,
-  },
+  ...pluginConfig,
   copy: [
     {
       from: 'src/lib/onerror_page.mustache.html',

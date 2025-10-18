@@ -207,6 +207,9 @@ catalogs:
     coffee:
       specifier: '5'
       version: 5.5.1
+    common-tags:
+      specifier: ^1.8.2
+      version: 1.8.2
     content-disposition:
       specifier: ~0.5.4
       version: 0.5.4
@@ -360,6 +363,9 @@ catalogs:
     lint-staged:
       specifier: ^16.2.4
       version: 16.2.4
+    marked:
+      specifier: ^15.0.12
+      version: 15.0.12
     matcher:
       specifier: ^4.0.0
       version: 4.0.0
@@ -396,6 +402,12 @@ catalogs:
     npminstall:
       specifier: ^7.12.0
       version: 7.12.0
+    nunjucks:
+      specifier: ^3.2.4
+      version: 3.2.4
+    nunjucks-markdown:
+      specifier: ^2.0.1
+      version: 2.0.1
     on-finished:
       specifier: ^2.4.1
       version: 2.4.1
@@ -481,7 +493,7 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     tsdown:
-      specifier: ^0.15.6
+      specifier: 0.15.6
       version: 0.15.6
     type-fest:
       specifier: ^5.0.1
@@ -579,6 +591,9 @@ importers:
       semver:
         specifier: 'catalog:'
         version: 7.7.3
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1346,9 +1361,6 @@ importers:
       debounce:
         specifier: 'catalog:'
         version: 2.2.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       multimatch:
         specifier: 'catalog:'
         version: 7.0.0
@@ -1365,6 +1377,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1377,9 +1392,6 @@ importers:
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../../packages/utils
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       humanize-ms:
         specifier: 'catalog:'
         version: 2.0.0
@@ -1408,6 +1420,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       egg-view-nunjucks:
         specifier: 'catalog:'
         version: 2.3.0(chokidar@3.6.0)
@@ -1423,9 +1438,6 @@ importers:
 
   plugins/jsonp:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       jsonp-body:
         specifier: 'catalog:'
         version: 2.0.0
@@ -1439,6 +1451,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1451,9 +1466,6 @@ importers:
 
   plugins/logrotator:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       moment:
         specifier: 'catalog:'
         version: 2.30.1
@@ -1473,6 +1485,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1506,9 +1521,6 @@ importers:
       detect-port:
         specifier: 'catalog:'
         version: 2.1.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       egg-logger:
         specifier: 'catalog:'
         version: 3.6.1
@@ -1543,6 +1555,9 @@ importers:
       '@types/methods':
         specifier: 'catalog:'
         version: 1.1.4
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1564,9 +1579,6 @@ importers:
       dayjs:
         specifier: 'catalog:'
         version: 1.11.18
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -1583,6 +1595,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       formstream:
         specifier: 'catalog:'
         version: 1.5.2
@@ -1610,9 +1625,6 @@ importers:
       cookie:
         specifier: 'catalog:'
         version: 1.0.2
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       koa-onerror:
         specifier: 'catalog:'
         version: 5.0.1
@@ -1632,6 +1644,9 @@ importers:
       '@types/stack-trace':
         specifier: 'catalog:'
         version: 0.0.33
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1687,9 +1702,6 @@ importers:
       cron-parser:
         specifier: 'catalog:'
         version: 4.9.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       humanize-ms:
         specifier: 'catalog:'
         version: 2.0.0
@@ -1715,6 +1727,9 @@ importers:
       '@types/safe-timers':
         specifier: 'catalog:'
         version: 1.1.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
         version: 1.23.0(oxlint-tsgolint@0.2.0)
@@ -1739,9 +1754,6 @@ importers:
       csrf:
         specifier: 'catalog:'
         version: 3.1.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       escape-html:
         specifier: 'catalog:'
         version: 1.0.3
@@ -1800,6 +1812,9 @@ importers:
       benchmark:
         specifier: 'catalog:'
         version: 2.1.4
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       egg-view-nunjucks:
         specifier: 'catalog:'
         version: 2.3.0(chokidar@3.6.0)
@@ -1818,9 +1833,6 @@ importers:
 
   plugins/session:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       koa-session:
         specifier: 'catalog:'
         version: 7.0.2
@@ -1843,6 +1855,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.7.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1858,9 +1873,6 @@ importers:
       '@eggjs/koa-static-cache':
         specifier: workspace:*
         version: link:../../packages/koa-static-cache
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       koa-compose:
         specifier: 'catalog:'
         version: 4.1.0
@@ -1883,6 +1895,9 @@ importers:
       '@types/koa-range':
         specifier: 'catalog:'
         version: 0.3.5
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       oxlint:
         specifier: 'catalog:'
         version: 1.23.0(oxlint-tsgolint@0.2.0)
@@ -1897,10 +1912,6 @@ importers:
         version: 4.0.0-beta.18(@types/debug@4.1.12)(@types/node@24.7.2)(@vitest/ui@4.0.0-beta.18)(esbuild@0.25.10)(jiti@2.6.0)(less@4.4.2)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1)
 
   plugins/tracer:
-    dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -1908,6 +1919,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1966,9 +1980,6 @@ importers:
 
   plugins/view:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       is-type-of:
         specifier: 'catalog:'
         version: 2.2.0
@@ -1982,6 +1993,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)
@@ -1994,11 +2008,8 @@ importers:
 
   plugins/view-nunjucks:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       nunjucks:
-        specifier: ^3.2.4
+        specifier: 'catalog:'
         version: 3.2.4(chokidar@3.6.0)
     devDependencies:
       '@types/nunjucks':
@@ -2008,13 +2019,16 @@ importers:
         specifier: ^1.0.0
         version: 1.1.2
       common-tags:
-        specifier: ^1.8.2
+        specifier: 'catalog:'
         version: 1.8.2
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       marked:
-        specifier: ^15.0.6
+        specifier: 'catalog:'
         version: 15.0.12
       nunjucks-markdown:
-        specifier: ^2.0.1
+        specifier: 'catalog:'
         version: 2.0.1(nunjucks@3.2.4(chokidar@3.6.0))
       oxlint:
         specifier: 'catalog:'
@@ -2040,9 +2054,6 @@ importers:
       camelcase:
         specifier: 'catalog:'
         version: 8.0.0
-      egg:
-        specifier: workspace:*
-        version: link:../../packages/egg
       sdk-base:
         specifier: 'catalog:'
         version: 5.0.1
@@ -2053,6 +2064,9 @@ importers:
       '@eggjs/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      egg:
+        specifier: workspace:*
+        version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.8.3)(typescript@5.9.3)(unplugin-unused@0.5.4)

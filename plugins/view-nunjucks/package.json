@@ -18,6 +18,7 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "access": "public",
     "exports": {
       ".": "./dist/index.js",
       "./app": "./dist/app.js",
@@ -60,7 +61,7 @@
     "template"
   ],
   "dependencies": {
-    "nunjucks": "^3.2.4"
+    "nunjucks": "catalog:"
   },
   "peerDependencies": {
     "egg": "workspace:*"
@@ -68,9 +69,10 @@
   "devDependencies": {
     "@types/nunjucks": "catalog:",
     "cheerio": "^1.0.0",
-    "common-tags": "^1.8.2",
-    "marked": "^15.0.6",
-    "nunjucks-markdown": "^2.0.1",
+    "common-tags": "catalog:",
+    "egg": "workspace:*",
+    "marked": "catalog:",
+    "nunjucks-markdown": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "catalog:",
     "tsdown": "catalog:",

@@ -9,6 +9,7 @@
     "isolatedDeclarations": true,
     "types": ["node"]
   },
+  "include": ["./packages/tsdown.config.json", "./plugins/tsdown.config.json", "./tools/tsdown.config.json"],
   "references": [
     {
       "path": "./packages/egg"

@@ -76,6 +76,7 @@ catalog:
   cluster-reload: ^2.0.0
   co-busboy: ^2.0.1
   coffee: '5'
+  common-tags: ^1.8.2
   content-disposition: ~0.5.4
   content-type: ^1.0.5
   cookie: ^1.0.2
@@ -130,6 +131,7 @@ catalog:
   koa-session: ^7.0.2
   koa-static: ^5.0.0
   lint-staged: ^16.2.4
+  marked: ^15.0.12
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
   methods: ^1.1.2
@@ -145,6 +147,8 @@ catalog:
   nanoid: ^5.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
+  nunjucks: ^3.2.4
+  nunjucks-markdown: ^2.0.1
   on-finished: ^2.4.1
   onelogger: ^1.0.1
   oxc-minify: ^0.95.0
@@ -173,7 +177,7 @@ catalog:
   terminal-link: ^5.0.0
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
-  tsdown: ^0.15.6
+  tsdown: 0.15.6
   type-fest: ^5.0.1
   type-is: ^2.0.0
   typescript: ^5.9.3
