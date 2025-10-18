@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mock, type MockApplication } from '@eggjs/mock';
 import { stripIndent } from 'common-tags';
 
@@ -40,13 +40,9 @@ describe('test/view/helper.test.ts', () => {
       );
   });
 
-  it('should use override escape', () => {
-    return app
-      .httpRequest()
-      .get('/escape')
-      .expect(200)
-      .expect(
-        stripIndent`
+  it('should use override escape', async () => {
+    const res = await app.httpRequest().get('/escape');
+    expect(res.text).toBe(stripIndent`
         <safe>
         &lt;escape2&gt;
         <helper-safe>
@@ -54,8 +50,8 @@ describe('test/view/helper.test.ts', () => {
         &lt;helper-escape&gt;
         &lt;helper-escape&gt;
         &lt;helper2&gt;
-      `
-      );
+      `);
+    expect(res.status).toBe(200);
   });
 
   describe('fill nunjucks filter to helper', () => {
