@@ -9,7 +9,8 @@ function getFixtures(name: string): string {
   return path.join(import.meta.dirname, '../fixtures', name);
 }
 
-describe('test/view/security.test.ts', () => {
+// TODO: windows will return \r\n, not \n
+describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () => {
   let app: MockApplication;
 
   beforeAll(async () => {
@@ -23,8 +24,7 @@ describe('test/view/security.test.ts', () => {
   afterAll(() => app.close());
   afterEach(() => mock.restore());
 
-  // FIXME: not work on windows
-  it.skipIf(process.platform === 'win32')('should escape', () => {
+  it('should escape', () => {
     // - https://snyk.io/vuln/npm:nunjucks:20160906
     // - https://github.com/mozilla/nunjucks/issues/835
     return app

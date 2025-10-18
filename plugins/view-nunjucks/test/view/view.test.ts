@@ -3,7 +3,8 @@ import { mock, type MockApplication } from '@eggjs/mock';
 
 import { getFixtures } from '../utils.ts';
 
-describe('test/view/view.test.ts', () => {
+// TODO: windows will return \r\n, not \n
+describe.skipIf(process.platform === 'win32')('test/view/view.test.ts', () => {
   let app: MockApplication;
 
   beforeAll(async () => {
