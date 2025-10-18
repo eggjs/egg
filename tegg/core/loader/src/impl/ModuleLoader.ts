@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
-import { globby } from 'globby';
+import globby from 'globby';
 import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
 import { LoaderUtil } from '../LoaderUtil.js';
 import { LoaderFactory } from '../LoaderFactory.js';

@@ -3,7 +3,7 @@ import fs, { promises as fsPromise } from 'node:fs';
 import path from 'node:path';
 
 import { extend } from 'extend2';
-import { globbySync } from 'globby';
+import globby from 'globby';
 import { load as yamlLoad } from 'js-yaml';
 import type {
   InlineModuleReferenceConfig,
@@ -91,7 +91,7 @@ export class ModuleConfigUtil {
   ): readonly ModuleReference[] {
     const ref: ModuleReference[] = [];
     const realOptions: ReadModuleReferenceOptions = Object.assign({}, DEFAULT_READ_MODULE_REF_OPTS, options);
-    const packagePaths = globbySync(
+    const packagePaths = globby.sync(
       [
         '**/package.json',
         // not load node_modules
