@@ -137,37 +137,37 @@ test.skipIf(process.platform === 'win32')(
 
 // FIXME: HelloService.test.skip.ts
 // use "@oxc-node/core/register" to support decorator metadata
-test
-  .skipIf(process.platform === 'win32')
-  .skip('successfully scaffolds a project based on tegg starter template', () => {
-    const projectName = 'create-egg-test-tegg';
-    const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
-      cwd: tempDir,
-    });
-    const projectDir = path.join(tempDir, projectName);
-    const generatedFiles = fs.readdirSync(projectDir).sort();
-
-    // Assertions
-    expect(stdout).toContain(`Scaffolding project with`);
-    expect(generatedFiles).matchSnapshot();
-
-    // run test
-    const monoRepoDir = path.join(import.meta.dirname, '../../../');
-    const eggDir = path.join(monoRepoDir, 'packages/egg');
-    const mockDir = path.join(monoRepoDir, 'plugins/mock');
-    const binDir = path.join(monoRepoDir, 'tools/egg-bin');
-    const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
-    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, {
-      cwd: projectDir,
-      stdout: 'inherit',
-      stderr: 'inherit',
-    });
-    // execaCommandSync(`pnpm update --latest`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
-    const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
-    expect(testStdout).toContain('2 passed');
-    // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir });
+test.skipIf(process.platform === 'win32')('successfully scaffolds a project based on tegg starter template', () => {
+  const projectName = 'create-egg-test-tegg';
+  const { stdout } = run([projectName, '--template', 'tegg', '--overwrite'], {
+    cwd: tempDir,
   });
+  const projectDir = path.join(tempDir, projectName);
+  const generatedFiles = fs.readdirSync(projectDir).sort();
+
+  // Assertions
+  expect(stdout).toContain(`Scaffolding project with`);
+  expect(generatedFiles).matchSnapshot();
+
+  // run test
+  // const monoRepoDir = path.join(import.meta.dirname, '../../../');
+  // const eggDir = path.join(monoRepoDir, 'packages/egg');
+  // const mockDir = path.join(monoRepoDir, 'plugins/mock');
+  // const binDir = path.join(monoRepoDir, 'tools/egg-bin');
+  // const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
+  // execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, {
+  //   cwd: projectDir,
+  //   stdout: 'inherit',
+  //   stderr: 'inherit',
+  // });
+  execaCommandSync(`pnpm install`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
+  execaCommandSync(`pnpm ls @oxc-node/core`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
+  // execaCommandSync(`pnpm update --latest`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
+  const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+  expect(testStdout).toContain('2 passed');
+  // run typecheck
+  execaCommandSync('pnpm typecheck', { cwd: projectDir });
+});
 
 test('works with the -t alias', () => {
   const { stdout } = run([projectName, '-t', 'tegg', '--overwrite'], {
