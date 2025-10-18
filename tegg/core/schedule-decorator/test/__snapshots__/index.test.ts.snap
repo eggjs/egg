@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "IS_SCHEDULE": Symbol(EggPrototype#isSchedule),
+  "SCHEDULE_METADATA": Symbol(EggPrototype#schedule#metadata),
+  "SCHEDULE_OPTIONS": Symbol(EggPrototype#schedule#options),
+  "SCHEDULE_PARAMS": Symbol(EggPrototype#schedule#params),
+  "Schedule": [Function],
+  "ScheduleInfoUtil": [Function],
+  "ScheduleMetaBuilder": [Function],
+  "ScheduleMetadata": [Function],
+  "ScheduleMetadataUtil": [Function],
+  "ScheduleType": {
+    "ALL": "all",
+    "WORKER": "worker",
+  },
+}
+`;

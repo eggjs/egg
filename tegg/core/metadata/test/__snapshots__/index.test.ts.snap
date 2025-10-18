@@ -1,0 +1,53 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "AbstractProtoDescriptor": [Function],
+  "AppGraph": [Function],
+  "ClassProtoDescriptor": [Function],
+  "ClassUtil": [Function],
+  "ClazzMap": [Function],
+  "EggLoadUnitType": {
+    "APP": "APP",
+    "MODULE": "MODULE",
+    "PLUGIN": "PLUGIN",
+  },
+  "EggPrototypeBuilder": [Function],
+  "EggPrototypeCreatorFactory": [Function],
+  "EggPrototypeFactory": [Function],
+  "EggPrototypeImpl": [Function],
+  "EggPrototypeLifecycleUtil": LifecycleUtil {
+    "lifecycleSet": Set {},
+    "objLifecycleSet": Map {},
+  },
+  "EggPrototypeNotFound": [Function],
+  "ErrorCodes": {
+    "EGG_PROTO_NOT_FOUND": "EGG_PROTO_NOT_FOUND",
+    "INCOMPATIBLE_PROTO_INJECT": "INCOMPATIBLE_PROTO_INJECT",
+    "MULTI_PROTO_FOUND": "MULTI_PROTO_FOUND",
+  },
+  "GlobalGraph": [Function],
+  "GlobalModuleNode": [Function],
+  "GlobalModuleNodeBuilder": [Function],
+  "IncompatibleProtoInject": [Function],
+  "LoadUnitFactory": [Function],
+  "LoadUnitLifecycleUtil": LifecycleUtil {
+    "lifecycleSet": Set {},
+    "objLifecycleSet": Map {},
+  },
+  "LoadUnitMultiInstanceProtoHook": [Function],
+  "ModuleDependencyMeta": [Function],
+  "ModuleDescriptorDumper": [Function],
+  "ModuleGraph": [Function],
+  "ModuleLoadUnit": [Function],
+  "ModuleNode": [Function],
+  "MultiPrototypeFound": [Function],
+  "ProtoDependencyMeta": [Function],
+  "ProtoDescriptorHelper": [Function],
+  "ProtoDescriptorType": {
+    "CLASS": "CLASS",
+  },
+  "ProtoNode": [Function],
+  "TeggError": [Function],
+}
+`;

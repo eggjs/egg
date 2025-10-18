@@ -1,0 +1,7 @@
+{
+  "name": "config-module",
+  "eggModule": {
+    "name": "config"
+  },
+  "type": "module"
+}

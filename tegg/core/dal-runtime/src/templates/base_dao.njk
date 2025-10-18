@@ -1,0 +1,164 @@
+{% macro newDataLogic(columns, old, new) %}
+let tmp;
+{% for column in table.columns %}
+// empty-line
+tmp = {{ old }}.{{ column.propertyName }};
+if (tmp !== undefined) {
+  {{ new }}.${{ column.propertyName }} = tmp;
+}
+{% endfor %}
+{% endmacro %}
+
+{% macro findLogic(funcName, sqlName, idx, uniq) %}
+public async {{ funcName }}(
+  {% for key in idx.keys %}
+  ${{ key.propertyName }}: {{columnMap[key.propertyName].type.type | dbTypeToTSType}}{% if loop.last !== true %},{% endif%}
+  {% endfor %}
+): Promise<{{ clazzName }}{{ '| null' if uniq else '[]' }}> {
+  return this.dataSource.{{ 'executeScalar' if uniq else 'execute' }}('{{ sqlName }}', {
+    {% for key in idx.keys %}
+    ${{ key.propertyName }},
+    {% endfor %}
+  });
+}
+{% endmacro %}
+
+{% macro generatePrimaryType(primary) %}
+{% if (primary.keys | length) === 1 %}
+{{primary.keys[0].propertyName}}: {{ columnMap[primary.keys[0].propertyName].type.type | dbTypeToTSType}}
+{% else %}
+primary: {
+  {% for key in primary.keys %}
+  {{ key.propertyName }}: {{columnMap[key.propertyName].type.type | dbTypeToTSType}}{% if loop.last !== true %},{% endif%}
+  {% endfor %}
+}
+{% endif %}
+{% endmacro %}
+
+{% macro generateUpdateValue(primary) %}
+{% if (primary.keys | length) === 1 %}
+const newData: Record<string, any> = {
+  primary: {
+    {{primary.keys[0].propertyName}},
+  },
+};
+{% else %}
+const newData: Record<string, any> = {
+  primary,
+};
+{% endif %}
+{% endmacro %}
+
+{% macro generateDeleteValue(primary) %}
+{% if (primary.keys | length) === 1 %}
+{
+  {{primary.keys[0].propertyName}},
+}
+
+{% else %}
+primary
+{% endif %}
+{% endmacro %}
+
+{% macro generateInsertType(primary) %}
+Optional<{{clazzName}},
+  {% for key in primary.keys %}
+  '{{ key.propertyName }}'{% if loop.last !== true %}|{% endif%}
+  {% endfor %}
+>
+{% endmacro %}
+
+import fs from 'node:fs';
+import path from 'node:path';
+import type { InsertResult, UpdateResult, DeleteResult } from '{{dalPkg}}';
+import { Inject } from '{{teggPkg}}';
+import { Dao } from '{{teggPkg}}/dal';
+import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '{{dalPkg}}';
+import { {{ clazzName }} } from '{{ tableModelPath }}';
+import {{ clazzName }}Extension from '{{ extensionPath }}';
+import Structure from '{{ structurePath }}';
+
+const SQL = Symbol('Dao#sql');
+
+// empty-line
+type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
+/**
+ * 自动生成的 {{ clazzName }}DAO 基类
+ * @class Base{{ clazzName }}DAO
+ * @classdesc 该文件由 {{teggPkg}} 自动生成，请**不要**修改它！
+ */
+/* istanbul ignore next */
+@Dao()
+export class Base{{ clazzName }}DAO {
+  static clazzModel = {{ clazzName }};
+  static clazzExtension = {{ clazzName }}Extension;
+  static tableStature = Structure;
+  static get tableSql() {
+    if (!this[SQL]) {
+      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/{{clazzName}}.sql'), 'utf8');
+    }
+    return this[SQL];
+  }
+
+  @Inject({
+    name: DataSourceInjectName,
+  })
+  @DataSourceQualifier('{{moduleName}}.{{ table.dataSourceName }}.{{ clazzName }}')
+  protected readonly dataSource: DataSource<{{clazzName}}>;
+
+  // empty-line
+  {# insert: 插入 #}
+  public async insert(raw: {{generateInsertType(primaryIndex)}}): Promise<InsertResult> {
+    const data: Record<string, any> = {};
+
+    {{ newDataLogic(columns, 'raw', 'data') }}
+
+    // empty-line
+    return this.dataSource.executeRawScalar('insert', data);
+  }
+
+  // empty-line
+  {# update: 更新 #}
+  public async update({{generatePrimaryType(primaryIndex)}}, data: Partial<{{ ((clazzName)) }}>): Promise<UpdateResult> {
+    // empty-line
+    {{ generateUpdateValue(primaryIndex) }}
+
+    {{ newDataLogic(columns, 'data', 'newData') }}
+
+    // empty-line
+    return this.dataSource.executeRawScalar('update', newData);
+  }
+
+  {% for funcName in [ 'delete', 'del' ] %}
+  // empty-line
+  {# delete: 删除 #}
+  public async {{ funcName }}({{generatePrimaryType(primaryIndex)}}): Promise<DeleteResult> {
+    return this.dataSource.executeRawScalar('delete', {{generateDeleteValue(primaryIndex)}});
+  }
+  {% endfor %}
+
+  {% for idx in table.indices %}
+  // empty-line
+  {# 某个索引 #}
+  {% set tmpName = ((idx.keys[0].propertyName if (idx.keys | length) === 1 else idx.name) | pascalCase) %}
+  {% set findName = 'findBy' + tmpName %}
+  {% set findOneName = 'findOneBy' + tmpName %}
+    {{ findLogic(findName, findName, idx, false) }}
+    // empty-line
+    {{ findLogic(findOneName, findOneName, idx, true) }}
+  {% endfor %}
+
+  // empty-line
+  {# 某个索引 #}
+  {% if primaryIndex %}
+    {% set tmpName = ((primaryIndex.keys[0].propertyName if (primaryIndex.keys | length) === 1 else primaryIndex.name) | pascalCase) %}
+    {% set findName = 'findBy' + tmpName %}
+    {% set findOneName = 'findOneBy' + tmpName %}
+      {{ findLogic(findName, findName, primaryIndex, true) }}
+      {% if (primaryIndex.keys | length) === 1 %}
+      // empty-line
+      {{ findLogic('findByPrimary', findName, primaryIndex, true) }}
+      {% endif %}
+  {% endif %}
+}
+// empty-line

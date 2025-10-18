@@ -1,0 +1,7 @@
+{
+  "name": "constructorSimple",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/constructor-module-config/modules/module-with-config",
+  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

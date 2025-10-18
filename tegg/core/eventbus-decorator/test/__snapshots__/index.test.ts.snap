@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "CORK_ID": Symbol(eventBus#corkId),
+  "EVENT_CONTEXT_INJECT": Symbol(EggPrototype#event#handler#context#inject),
+  "EVENT_NAME": Symbol(EggPrototype#eventName),
+  "Event": [Function],
+  "EventContext": [Function],
+  "EventInfoUtil": [Function],
+}
+`;

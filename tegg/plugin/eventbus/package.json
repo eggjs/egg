@@ -1,0 +1,101 @@
+{
+  "name": "@eggjs/tegg-eventbus-plugin",
+  "version": "4.0.0-beta.11",
+  "eggPlugin": {
+    "name": "eventbusModule",
+    "strict": false,
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "description": "tegg event plugin",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "eventbus",
+    "tegg"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./lib/EggContextEventBus": "./src/lib/EggContextEventBus.ts",
+    "./lib/EggEventContext": "./src/lib/EggEventContext.ts",
+    "./lib/EventbusLoadUnitHook": "./src/lib/EventbusLoadUnitHook.ts",
+    "./lib/EventbusProtoHook": "./src/lib/EventbusProtoHook.ts",
+    "./lib/EventHandlerProtoManager": "./src/lib/EventHandlerProtoManager.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/eventbus",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/eventbus"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-eventbus-runtime": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*"
+  },
+  "peerDependencies": {
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "mocha": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./lib/EggContextEventBus": "./dist/lib/EggContextEventBus.js",
+      "./lib/EggEventContext": "./dist/lib/EggEventContext.js",
+      "./lib/EventbusLoadUnitHook": "./dist/lib/EventbusLoadUnitHook.js",
+      "./lib/EventbusProtoHook": "./dist/lib/EventbusProtoHook.js",
+      "./lib/EventHandlerProtoManager": "./dist/lib/EventHandlerProtoManager.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

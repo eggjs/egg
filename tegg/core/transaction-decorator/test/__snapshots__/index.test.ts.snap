@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "IS_TRANSACTION_CLAZZ": Symbol(EggPrototype#IS_TRANSACTION_CLAZZ),
+  "PropagationType": {
+    "ALWAYS_NEW": "ALWAYS_NEW",
+    "REQUIRED": "REQUIRED",
+  },
+  "TRANSACTION_META_DATA": Symbol(EggPrototype#transaction#metaData),
+  "TransactionMetaBuilder": [Function],
+  "TransactionMetadataUtil": [Function],
+  "Transactional": [Function],
+}
+`;

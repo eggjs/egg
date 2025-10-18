@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "AccessLevel": {
+    "PRIVATE": "PRIVATE",
+    "PUBLIC": "PUBLIC",
+  },
+  "CONSTRUCTOR_QUALIFIER_META_DATA": Symbol(EggPrototype#constructorQualifier),
+  "ConfigSourceQualifier": [Function],
+  "ConfigSourceQualifierAttribute": Symbol(Qualifier.ConfigSource),
+  "ContextProto": [Function],
+  "DEFAULT_PROTO_IMPL_TYPE": "DEFAULT",
+  "EggQualifier": [Function],
+  "EggQualifierAttribute": Symbol(Qualifier.Egg),
+  "EggType": {
+    "APP": "APP",
+    "CONTEXT": "CONTEXT",
+  },
+  "INIT_TYPE_TRY_ORDER": [
+    "CONTEXT",
+    "SINGLETON",
+    "ALWAYS_NEW",
+  ],
+  "InitTypeQualifier": [Function],
+  "InitTypeQualifierAttribute": Symbol(Qualifier.InitType),
+  "Inject": [Function],
+  "InjectOptional": [Function],
+  "InjectType": {
+    "CONSTRUCTOR": "CONSTRUCTOR",
+    "PROPERTY": "PROPERTY",
+  },
+  "LoadUnitNameQualifierAttribute": Symbol(Qualifier.LoadUnitName),
+  "MetadataUtil": [Function],
+  "ModuleQualifier": [Function],
+  "MultiInstanceInfo": [Function],
+  "MultiInstanceProto": [Function],
+  "MultiInstanceType": {
+    "DYNAMIC": "DYNAMIC",
+    "STATIC": "STATIC",
+  },
+  "ObjectInitType": {
+    "ALWAYS_NEW": "ALWAYS_NEW",
+    "CONTEXT": "CONTEXT",
+    "SINGLETON": "SINGLETON",
+  },
+  "PROPERTY_QUALIFIER_META_DATA": Symbol(EggPrototype#propertyQualifier),
+  "Prototype": [Function],
+  "PrototypeUtil": [Function],
+  "QUALIFIER_META_DATA": Symbol(EggPrototype#qualifier),
+  "QualifierUtil": [Function],
+  "SingletonProto": [Function],
+}
+`;

@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "EGG_CONTEXT": Symbol(context#eggContext),
+  "ROOT_PROTO": Symbol(context#rootProto),
+  "TEGG_CONTEXT": Symbol(context#teggContext),
+}
+`;

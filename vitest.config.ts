@@ -1,11 +1,14 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig, type UserWorkspaceConfig } from 'vitest/config';
 
-export default defineConfig({
+const config: UserWorkspaceConfig = defineConfig({
   test: {
     projects: [
       'packages/*',
       'plugins/*',
       'tools/create-egg',
+      'tegg/core/*',
+      'tegg/plugin/*',
+      'tegg/standalone/*',
       // FIXME: enable this will cause one test file run twice
       // {
       //   extends: true,
@@ -23,3 +26,5 @@ export default defineConfig({
     hookTimeout: 20000,
   },
 });
+
+export default config;

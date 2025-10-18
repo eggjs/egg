@@ -1,0 +1,11 @@
+{
+  "name": "multi-module-common",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/eventbus/test/fixtures/apps/event-app/app/event-module",
+  "clazzList": [
+    { "name": "HelloLogger", "filePath": "HelloLogger.ts" },
+    { "name": "HelloService", "filePath": "HelloService.ts" },
+    { "name": "MultiEventHandler", "filePath": "MultiEventHandler.ts" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

@@ -1,0 +1,1 @@
+import '@eggjs/tegg-plugin';

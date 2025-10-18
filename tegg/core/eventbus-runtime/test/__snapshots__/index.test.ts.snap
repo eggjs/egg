@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "EventContextFactory": [Function],
+  "EventHandlerFactory": [Function],
+  "SingletonEventBus": [Function],
+}
+`;

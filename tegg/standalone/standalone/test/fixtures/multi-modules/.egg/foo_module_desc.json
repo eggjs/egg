@@ -1,0 +1,11 @@
+{
+  "name": "foo",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/multi-modules/foo",
+  "clazzList": [
+    { "name": "Foo", "filePath": "foo.ts" },
+    { "name": "Hello", "filePath": "foo.ts" },
+    { "name": "HelloContext", "filePath": "foo.ts" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

@@ -1,0 +1,15 @@
+{
+  "name": "dal",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/dal-transaction-module",
+  "clazzList": [
+    { "name": "Foo", "filePath": "src/Foo.ts" },
+    { "name": "FooService", "filePath": "src/FooService.ts" },
+    { "name": "FooRunner", "filePath": "src/main.ts" },
+    { "name": "FooDAO", "filePath": "src/dal/dao/FooDAO.ts" },
+    { "name": "BaseFooDAO", "filePath": "src/dal/dao/base/BaseFooDAO.ts" }
+  ],
+  "multiInstanceClazzList": [
+    { "name": "DataSourceDelegate", "filePath": "../../../../../plugin/dal/src/lib/DataSource.ts" }
+  ],
+  "protos": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "subscriber",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/schedule/test/fixtures/schedule-app/app/subscriber",
+  "clazzList": [{ "name": "FooSubscriber", "filePath": "Subscriber.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

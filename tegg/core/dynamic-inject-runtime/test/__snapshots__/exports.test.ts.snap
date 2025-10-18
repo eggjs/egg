@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE": "EGG_OBJECT_FACTORY_PROTOTYPE",
+  "EggObjectFactory": [Function],
+  "EggObjectFactoryObject": [Function],
+  "EggObjectFactoryPrototype": [Function],
+}
+`;

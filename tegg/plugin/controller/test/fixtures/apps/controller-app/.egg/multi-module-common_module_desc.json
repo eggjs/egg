@@ -1,0 +1,12 @@
+{
+  "name": "multi-module-common",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/controller/test/fixtures/apps/controller-app/modules/multi-module-common",
+  "clazzList": [
+    { "name": "BarMethodAdvice", "filePath": "../../../../../../../../node:internal/modules/esm/loader" },
+    { "name": "CountAdvice", "filePath": "../../../../../../../../node:internal/modules/esm/loader" },
+    { "name": "FooControllerAdvice", "filePath": "../../../../../../../../node:internal/modules/esm/loader" },
+    { "name": "FooMethodAdvice", "filePath": "../../../../../../../../node:internal/modules/esm/loader" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

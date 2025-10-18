@@ -1,0 +1,7 @@
+{
+  "name": "simple",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/inject-module-config/modules/module-with-config",
+  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

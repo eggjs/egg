@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "Attribute": [Function],
+  "AttributeMeta": [Function],
+  "AttributeMetaBuilder": [Function],
+  "DataSource": [Function],
+  "IS_MODEL": Symbol(EggPrototype#model#isModel),
+  "Index": [Function],
+  "IndexMeta": [Function],
+  "IndexMetaBuilder": [Function],
+  "MODEL_DATA_ATTRIBUTES": Symbol(EggPrototype#model#attributes),
+  "MODEL_DATA_INDICES": Symbol(EggPrototype#model#indices),
+  "MODEL_DATA_SOURCE": Symbol(EggPrototype#model#dataSource),
+  "MODEL_DATA_TABLE_NAME": Symbol(EggPrototype#model#tableName),
+  "MODEL_METADATA": Symbol(EggPrototype#model#metadata),
+  "MODEL_PROTO_IMPL_TYPE": "MODEL_PROTO",
+  "Model": [Function],
+  "ModelInfoUtil": [Function],
+  "ModelMetaBuilder": [Function],
+  "ModelMetadata": [Function],
+  "ModelMetadataUtil": [Function],
+  "NameUtil": [Function],
+}
+`;

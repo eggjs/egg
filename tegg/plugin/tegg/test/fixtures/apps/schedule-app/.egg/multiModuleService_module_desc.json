@@ -1,0 +1,7 @@
+{
+  "name": "multiModuleService",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/schedule-app/modules/multi-module-service",
+  "clazzList": [{ "name": "AppService", "filePath": "AppService.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

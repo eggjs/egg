@@ -1,0 +1,19 @@
+{
+  "name": "ormModule",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/orm/test/fixtures/apps/orm-app/modules/orm-module",
+  "clazzList": [
+    { "name": "AppService", "filePath": "AppService.ts" },
+    { "name": "CtxService", "filePath": "CtxService.ts" },
+    { "name": "PkgService", "filePath": "PkgService.ts" },
+    {
+      "name": "App",
+      "filePath": "../../../../../../../../node_modules/.pnpm/reflect-metadata@0.2.2/node_modules/reflect-metadata/Reflect.js"
+    },
+    {
+      "name": "Pkg",
+      "filePath": "../../../../../../../../node_modules/.pnpm/reflect-metadata@0.2.2/node_modules/reflect-metadata/Reflect.js"
+    }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

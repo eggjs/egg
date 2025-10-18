@@ -1,0 +1,6 @@
+{
+  "name": "foo",
+  "dependencies": {
+    "module-b": "^1.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "aopModule",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/aop-module",
+  "clazzList": [
+    { "name": "CallTrace", "filePath": "Hello.ts" },
+    { "name": "CrosscutAdvice", "filePath": "Hello.ts" },
+    { "name": "Hello", "filePath": "Hello.ts" },
+    { "name": "PointcutAdvice", "filePath": "Hello.ts" },
+    { "name": "Foo", "filePath": "main.ts" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

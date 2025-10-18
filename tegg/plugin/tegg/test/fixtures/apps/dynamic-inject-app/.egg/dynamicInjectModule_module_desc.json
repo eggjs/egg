@@ -1,0 +1,14 @@
+{
+  "name": "dynamicInjectModule",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/dynamic-inject-app/modules/dynamic-inject-module",
+  "clazzList": [
+    { "name": "HelloService", "filePath": "HelloService.ts" },
+    { "name": "SingletonHelloService", "filePath": "SingletonHelloService.ts" },
+    { "name": "BarContextHello", "filePath": "impl/BarContextHello.ts" },
+    { "name": "BarSingletonHello", "filePath": "impl/BarSingletonHello.ts" },
+    { "name": "FooContextHello", "filePath": "impl/FooContextHello.ts" },
+    { "name": "FooSingletonHello", "filePath": "impl/FooSingletonHello.ts" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

@@ -1,0 +1,10 @@
+{
+  "name": "foo",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/app-multi-inject-multi/app/modules/foo",
+  "clazzList": [],
+  "multiInstanceClazzList": [
+    { "name": "BizManager", "filePath": "../bar/BizManager.ts" },
+    { "name": "Secret", "filePath": "Secret.ts" }
+  ],
+  "protos": []
+}

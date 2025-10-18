@@ -4,12 +4,16 @@ packages:
   - examples/*
   - tools/*
   - site
+  - tegg/core/*
+  - tegg/plugin/*
+  - tegg/standalone/*
 
 catalog:
   '@clack/prompts': ^0.11.0
   '@eggjs/compressible': ^3.0.0
   '@eggjs/ip': ^2.1.0
   '@eggjs/redis': ^3.0.0
+  '@eggjs/rds': ^1.3.0
   '@eggjs/scripts': ^4.0.0
   '@fengmk2/ps-tree': ^2.0.1
   '@oclif/core': ^4.2.0
@@ -54,6 +58,11 @@ catalog:
   '@types/type-is': ^1.6.6
   '@types/urijs': ^1.19.25
   '@types/vary': ^1.1.3
+  '@types/lodash.snakecase': ^4.1.9
+  '@types/pluralize': ^0.0.33
+  '@types/js-beautify': ^1.14.3
+  '@types/lodash': ^4.17.20
+  '@types/sqlstring': ^2.3.2
   '@vitest/coverage-v8': 4.0.0-beta.18
   '@vitest/ui': 4.0.0-beta.18
   accepts: ^1.3.8
@@ -76,6 +85,8 @@ catalog:
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
   cluster-reload: ^2.0.0
+  lodash.snakecase: ^4.1.1
+  lodash: ^4.17.21
   co-busboy: ^2.0.1
   coffee: '5'
   common-tags: ^1.8.2
@@ -193,6 +204,15 @@ catalog:
   xss: ^1.0.15
   ylru: ^2.0.0
   zod: ^3.24.1
+  reflect-metadata: ^0.2.2
+  extend2: ^4.0.0
+  pluralize: ^8.0.0
+  js-beautify: ^1.15.3
+  sqlstring: ^2.3.3
+  await-first: ^1.0.0
+  egg-errors: ^2.3.0
+  mysql2: ^3.12.0
+  leoric: ^2.12.2
 
 catalogMode: prefer
 

@@ -1,0 +1,17 @@
+import { SqlMap } from '{{dalPkg}}';
+// empty-line
+/**
+ * Define Custom SQLs
+ *
+ * import { SqlMap, SqlType } from '{{dalPkg}}';
+ *
+ * export default {
+ *   findByName: {
+ *     type: SqlType.SELECT,
+ *     sql: 'SELECT {{ allColumns }} from foo where name = {{ name }}'
+ *   },
+ * }
+ */
+export default {
+// empty-line
+} as Record<string, SqlMap>;

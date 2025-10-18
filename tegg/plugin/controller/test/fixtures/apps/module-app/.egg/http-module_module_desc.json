@@ -1,0 +1,7 @@
+{
+  "name": "http-module",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/controller/test/fixtures/apps/module-app/modules/http-module",
+  "clazzList": [{ "name": "AppController", "filePath": "../../../../../../../../node:internal/modules/esm/loader" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

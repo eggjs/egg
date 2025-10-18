@@ -1,0 +1,7 @@
+{
+  "name": "teggAjv",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/ajv",
+  "clazzList": [{ "name": "Ajv", "filePath": "../../node:internal/modules/esm/module_job" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "demo",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/ajv/test/fixtures/apps/ajv-app/modules/demo",
+  "clazzList": [{ "name": "FooController", "filePath": "FooController.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

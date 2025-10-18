@@ -1,0 +1,30 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "ASPECT_LIST": Symbol(EggPrototype#aspectList),
+  "Advice": [Function],
+  "AdviceInfoUtil": [Function],
+  "Aspect": [Function],
+  "AspectBuilder": [Function],
+  "AspectInfoUtil": [Function],
+  "AspectMetaBuilder": [Function],
+  "CROSSCUT_INFO_LIST": Symbol(EggPrototype#crosscutInfoList),
+  "ClassPointInfo": [Function],
+  "Crosscut": [Function],
+  "CrosscutAdviceFactory": [Function],
+  "CrosscutInfoUtil": [Function],
+  "CustomPointInfo": [Function],
+  "IS_ADVICE": Symbol(EggPrototype#isAdvice),
+  "IS_CROSSCUT_ADVICE": Symbol(EggPrototype#isCrosscutAdvice),
+  "NamePointInfo": [Function],
+  "POINTCUT_ADVICE_INFO_LIAR": Symbol(EggPrototype#pointcutAdviceInfoList),
+  "Pointcut": [Function],
+  "PointcutAdviceInfoUtil": [Function],
+  "PointcutType": {
+    "CLASS": "CLASS",
+    "CUSTOM": "CUSTOM",
+    "NAME": "NAME",
+  },
+}
+`;

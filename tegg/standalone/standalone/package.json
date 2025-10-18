@@ -1,0 +1,76 @@
+{
+  "name": "@eggjs/tegg-standalone",
+  "description": "tegg standalone",
+  "version": "4.0.0-beta.11",
+  "keywords": [
+    "egg",
+    "typescript",
+    "background",
+    "async",
+    "tegg",
+    "standalone"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
+    "clean": "tsc -b --clean && rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/tegg/tree/next/standalone/standalone",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "standalone/standalone"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-aop-runtime": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-dal-plugin": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/tegg-ajv-plugin": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*",
+    "@eggjs/utils": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "mm": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

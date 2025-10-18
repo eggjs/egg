@@ -1,0 +1,15 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "IdenticalUtil": [Function],
+  "LifecycleDestroy": [Function],
+  "LifecycleInit": [Function],
+  "LifecyclePostConstruct": [Function],
+  "LifecyclePostInject": [Function],
+  "LifecyclePreDestroy": [Function],
+  "LifecyclePreInject": [Function],
+  "LifecyclePreLoad": [Function],
+  "LifecycleUtil": [Function],
+}
+`;

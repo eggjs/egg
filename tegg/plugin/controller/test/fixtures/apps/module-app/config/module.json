@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../modules/http-module"
+  },
+  {
+    "path": "../modules/foo-module"
+  }
+]

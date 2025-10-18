@@ -1,0 +1,7 @@
+{
+  "name": "config",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/app-with-no-module-json/modules/config-module",
+  "clazzList": [{ "name": "ConfigService", "filePath": "ConfigService.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

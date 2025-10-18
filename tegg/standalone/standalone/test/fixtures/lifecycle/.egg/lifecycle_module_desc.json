@@ -1,0 +1,7 @@
+{
+  "name": "lifecycle",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/lifecycle",
+  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

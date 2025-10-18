@@ -1,0 +1,10 @@
+{
+  "name": "dal",
+  "eggModule": {
+    "name": "dal"
+  },
+  "dependencies": {
+    "@eggjs/tegg-dal-plugin": "*"
+  },
+  "type": "module"
+}

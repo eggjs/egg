@@ -1,0 +1,10 @@
+{
+  "name": "egg-app",
+  "egg": {
+    "framework": "foo"
+  },
+  "dependencies": {
+    "used": "*"
+  },
+  "type": "module"
+}

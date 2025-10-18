@@ -1,0 +1,17 @@
+import { SingletonProto, AccessLevel } from '{{teggPkg}}';
+import { Base{{ clazzName }}DAO } from './base/Base{{ clazzName }}DAO';
+// empty-line
+/**
+ * {{ clazzName }}DAO 类
+{% if user.name %} * @author {{ user.name }} {% if user.email %}<{{ user.email }}>{% endif %}
+{% endif %} * @class {{ clazzName }}DAO
+ * @classdesc 在此扩展关于 {{ clazzName }} 数据的一切操作
+ * @extends Base{{ clazzName }}DAO
+ */
+@SingletonProto({
+  accessLevel: AccessLevel.PUBLIC,
+})
+export default class {{ clazzName }}DAO extends Base{{ clazzName }}DAO {
+  // empty-line
+}
+// empty-line

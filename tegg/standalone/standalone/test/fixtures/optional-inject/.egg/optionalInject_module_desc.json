@@ -1,0 +1,10 @@
+{
+  "name": "optionalInject",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/optional-inject",
+  "clazzList": [
+    { "name": "Bar", "filePath": "bar.ts" },
+    { "name": "Foo", "filePath": "foo.ts" }
+  ],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

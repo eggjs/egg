@@ -1,0 +1,7 @@
+{
+  "name": "multiCallbackInstanceModuleLogger",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/multi-callback-instance-module/logger",
+  "clazzList": [],
+  "multiInstanceClazzList": [{ "name": "DynamicLogger", "filePath": "DynamicLogger.ts" }],
+  "protos": []
+}

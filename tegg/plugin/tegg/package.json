@@ -1,0 +1,132 @@
+{
+  "name": "@eggjs/tegg-plugin",
+  "eggPlugin": {
+    "name": "tegg",
+    "dependencies": [
+      "teggConfig"
+    ]
+  },
+  "version": "4.0.0-beta.11",
+  "description": "module plugin for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/extend/application": "./src/app/extend/application.ts",
+    "./app/extend/application.unittest": "./src/app/extend/application.unittest.ts",
+    "./app/extend/context": "./src/app/extend/context.ts",
+    "./app/middleware/tegg_ctx_lifecycle_middleware": "./src/app/middleware/tegg_ctx_lifecycle_middleware.ts",
+    "./lib/AppLoadUnit": "./src/lib/AppLoadUnit.ts",
+    "./lib/AppLoadUnitInstance": "./src/lib/AppLoadUnitInstance.ts",
+    "./lib/CompatibleUtil": "./src/lib/CompatibleUtil.ts",
+    "./lib/ConfigSourceLoadUnitHook": "./src/lib/ConfigSourceLoadUnitHook.ts",
+    "./lib/ctx_lifecycle_middleware": "./src/lib/ctx_lifecycle_middleware.ts",
+    "./lib/EggAppLoader": "./src/lib/EggAppLoader.ts",
+    "./lib/EggCompatibleObject": "./src/lib/EggCompatibleObject.ts",
+    "./lib/EggCompatibleProtoImpl": "./src/lib/EggCompatibleProtoImpl.ts",
+    "./lib/EggContextCompatibleHook": "./src/lib/EggContextCompatibleHook.ts",
+    "./lib/EggContextHandler": "./src/lib/EggContextHandler.ts",
+    "./lib/EggContextImpl": "./src/lib/EggContextImpl.ts",
+    "./lib/EggModuleLoader": "./src/lib/EggModuleLoader.ts",
+    "./lib/EggQualifierProtoHook": "./src/lib/EggQualifierProtoHook.ts",
+    "./lib/ModuleConfigLoader": "./src/lib/ModuleConfigLoader.ts",
+    "./lib/ModuleHandler": "./src/lib/ModuleHandler.ts",
+    "./lib/run_in_background": "./src/lib/run_in_background.ts",
+    "./lib/Utils": "./src/lib/Utils.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:mocha": "egg-bin test",
+    "cov:mocha": "egg-bin cov",
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/tegg",
+  "bugs": {
+    "url": "https://github.com/eggjs/tegg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/tegg.git",
+    "directory": "plugin/tegg"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-background-task": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-dynamic-inject-runtime": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "extend2": "catalog:",
+    "sdk-base": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/bin": "workspace:*",
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/mocha": "catalog:",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "egg-logger": "catalog:",
+    "mocha": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/extend/application": "./dist/app/extend/application.js",
+      "./app/extend/application.unittest": "./dist/app/extend/application.unittest.js",
+      "./app/extend/context": "./dist/app/extend/context.js",
+      "./app/middleware/tegg_ctx_lifecycle_middleware": "./dist/app/middleware/tegg_ctx_lifecycle_middleware.js",
+      "./lib/AppLoadUnit": "./dist/lib/AppLoadUnit.js",
+      "./lib/AppLoadUnitInstance": "./dist/lib/AppLoadUnitInstance.js",
+      "./lib/CompatibleUtil": "./dist/lib/CompatibleUtil.js",
+      "./lib/ConfigSourceLoadUnitHook": "./dist/lib/ConfigSourceLoadUnitHook.js",
+      "./lib/ctx_lifecycle_middleware": "./dist/lib/ctx_lifecycle_middleware.js",
+      "./lib/EggAppLoader": "./dist/lib/EggAppLoader.js",
+      "./lib/EggCompatibleObject": "./dist/lib/EggCompatibleObject.js",
+      "./lib/EggCompatibleProtoImpl": "./dist/lib/EggCompatibleProtoImpl.js",
+      "./lib/EggContextCompatibleHook": "./dist/lib/EggContextCompatibleHook.js",
+      "./lib/EggContextHandler": "./dist/lib/EggContextHandler.js",
+      "./lib/EggContextImpl": "./dist/lib/EggContextImpl.js",
+      "./lib/EggModuleLoader": "./dist/lib/EggModuleLoader.js",
+      "./lib/EggQualifierProtoHook": "./dist/lib/EggQualifierProtoHook.js",
+      "./lib/ModuleConfigLoader": "./dist/lib/ModuleConfigLoader.js",
+      "./lib/ModuleHandler": "./dist/lib/ModuleHandler.js",
+      "./lib/run_in_background": "./dist/lib/run_in_background.js",
+      "./lib/Utils": "./dist/lib/Utils.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

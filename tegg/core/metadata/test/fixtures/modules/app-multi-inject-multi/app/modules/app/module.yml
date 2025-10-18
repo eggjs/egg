@@ -1,0 +1,11 @@
+BizManager:
+  clients:
+    foo:
+      secret: '1'
+    bar:
+      secret: '2'
+
+secret:
+  keys:
+    - '1'
+    - '2'

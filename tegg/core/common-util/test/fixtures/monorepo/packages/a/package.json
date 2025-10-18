@@ -1,0 +1,10 @@
+{
+  "eggModule": {
+    "name": "a"
+  },
+  "dependencies": {
+    "c": "*"
+  },
+  "name": "b",
+  "author": ""
+}

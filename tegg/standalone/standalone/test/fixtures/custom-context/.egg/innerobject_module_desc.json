@@ -1,0 +1,7 @@
+{
+  "name": "innerobject",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/custom-context",
+  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

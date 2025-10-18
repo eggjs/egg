@@ -1,0 +1,7 @@
+{
+  "name": "dependency2",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/dependency/node_modules/dependency-2",
+  "clazzList": [{ "name": "Hello2", "filePath": "foo.js" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

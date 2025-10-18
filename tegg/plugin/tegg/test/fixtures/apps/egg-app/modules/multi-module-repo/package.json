@@ -1,0 +1,7 @@
+{
+  "name": "multi-module-repo",
+  "eggModule": {
+    "name": "multiModuleRepo"
+  },
+  "type": "module"
+}

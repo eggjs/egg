@@ -1,0 +1,7 @@
+{
+  "name": "entry",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/dependency",
+  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}

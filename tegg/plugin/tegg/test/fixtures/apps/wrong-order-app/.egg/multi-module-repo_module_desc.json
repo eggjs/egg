@@ -1,0 +1,7 @@
+{
+  "name": "multi-module-repo",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/wrong-order-app/modules/multi-module-repo",
+  "clazzList": [{ "name": "AppRepo", "filePath": "AppRepo.ts" }],
+  "multiInstanceClazzList": [],
+  "protos": []
+}
