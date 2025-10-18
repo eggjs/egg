@@ -9,7 +9,7 @@ export class BaseContextClass {
   ctx: Context;
   app: EggCore;
   config: Record<string, any>;
-  service: BaseContextClass;
+  service: Record<string, any>;
 
   /**
    * @since 1.0.0

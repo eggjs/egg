@@ -5,32 +5,32 @@
 ## 环境准备
 
 - 操作系统：支持 macOS、Linux、Windows
-- 运行环境：建议选择 [LTS 版本][node.js]，最低要求 8.x。
+- 运行环境：建议选择 [LTS 版本][node.js]，最低要求 22.18.0。
 
 ## 快速初始化
 
-我们推荐直接使用脚手架。只需几条简单指令，即可快速生成项目（`npm >= 6.1.0`）：
+我们推荐直接使用脚手架。只需几条简单指令，即可快速生成项目：
 
 ```bash
-$ mkdir egg-example && cd egg-example
-$ npm init egg --type=simple
-$ npm i
+npx create-egg@beta --template tegg hackernews-tegg
+
+cd hackernews-tegg
+npm install
 ```
 
 启动项目：
 
 ```bash
-$ npm run dev
-$ open http://localhost:7001
-```
+npm run dev
 
-**注**：请确保你使用的 npm 版本不低于 6.1.0。
+open http://localhost:7001
+```
 
 ## 逐步搭建
 
-通常你可以通过上一节的方式，使用 `npm init egg` 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
+通常你可以通过上一节的方式，使用 `npx create-egg@beta` 快速选择适合对应业务模型的脚手架，快速启动 Egg.js 项目的开发。
 
-但为了让大家更好地了解 Egg.js，接下来，我们将跳过脚手架，手动一步步地搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews)。
+但为了让大家更好地了解 Egg.js，接下来，我们将跳过脚手架，手动一步步地搭建出一个 [Hacker News](https://github.com/eggjs/examples/tree/master/hackernews-tegg)。
 
 **注意：实际项目中，我们推荐使用上一节的脚手架直接初始化。**
 
@@ -41,18 +41,18 @@ $ open http://localhost:7001
 先来初始化下目录结构：
 
 ```bash
-$ mkdir egg-example
-$ cd egg-example
-$ npm init
-$ npm i egg --save
-$ npm i egg-bin --save-dev
+mkdir hackernews-tegg
+cd hackernews-tegg
+npm init
+npm i egg
+npm i @eggjs/bin --save-dev
 ```
 
 添加 `npm scripts` 到 `package.json`：
 
 ```json
 {
-  "name": "egg-example",
+  "name": "hackernews-tegg",
   "scripts": {
     "dev": "egg-bin dev"
   }
@@ -61,7 +61,7 @@ $ npm i egg-bin --save-dev
 
 ### 编写 Controller
 
-如果你熟悉 Web 开发或 MVC，肯定猜到我们第一步需要编写的是 [Controller](../basics/controller.md) 和 [Router](../basics/router.md)。
+如果你熟悉 Web 开发或 MVC，肯定猜到我们第一步需要编写的是 [HTTP Controller](../basics/httpcontroller.md)。
 
 ```js
 // app/controller/home.js
@@ -114,11 +114,6 @@ egg-example
 $ npm run dev
 $ open http://localhost:7001
 ```
-
-> 注意：
->
-> - Controller 有 `class` 和 `exports` 两种编写方式，本文示范的是前者，你可能需要参考 [Controller](../basics/controller.md) 文档。
-> - Config 也有 `module.exports` 和 `exports` 的写法，具体参考 [Node.js modules 文档](https://nodejs.org/api/modules.html#modules_exports_shortcut)。
 
 ### 静态资源
 
@@ -429,13 +424,13 @@ describe('test/app/middleware/robot.test.js', () => {
 执行以下命令安装依赖：
 
 ```bash
-$ npm i egg-mock --save-dev
+npm i -D @eggjs/mock
 ```
 
 执行测试：
 
 ```bash
-$ npm test
+npm test
 ```
 
 就这么简单。更多请参见[单元测试](../core/unittest.md)。
@@ -444,16 +439,16 @@ $ npm test
 
 短短几章内容，只能讲解 Egg 的冰山一角。我们建议开发者继续阅读其他章节：
 
-- 关于骨架类型，参见[骨架说明](../tutorials/)。
+- 关于骨架类型，参见[骨架说明](../tutorials/index.md)。
 - 提供了强大的扩展机制，参见[插件](../basics/plugin.md)。
 - 一个大规模的团队需要遵循一定的约束和约定。在 Egg 里，我们建议封装适合自己团队的上层框架，详见[框架开发](../advanced/framework.md)。
 - 这是一个渐进式的框架，代码的共建、复用和下沉竟然可以如此无痛。建议阅读[渐进式开发](../intro/progressive.md)。
 - 写单元测试其实是一件很简单的事，Egg 提供了非常多的配套辅助。我们强烈建议大家采用测试驱动开发，具体参见[单元测试](../core/unittest.md)。
 
 [node.js]: http://nodejs.org
-[egg-bin]: https://github.com/eggjs/egg-bin
-[@eggjs/static]: https://github.com/eggjs/static
-[@eggjs/development]: https://github.com/eggjs/development
-[egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
+[egg-bin]: https://github.com/eggjs/egg/tree/master/tools/egg-bin
+[@eggjs/static]: https://github.com/eggjs/egg/tree/master/plugins/static
+[@eggjs/development]: https://github.com/eggjs/egg/tree/master/plugins/development
+[@eggjs/view-nunjucks]: https://github.com/eggjs/egg/tree/master/plugins/view-nunjucks
 [urllib]: https://www.npmjs.com/package/urllib
 [nunjucks]: https://mozilla.github.io/nunjucks/

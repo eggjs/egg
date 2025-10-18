@@ -1,9 +1,4 @@
----
-title: 教程
-nav:
-  title: 教程
-  order: 2
----
+# 教程
 
 - [快速入门](../intro/quickstart.md)
 - [渐进式开发](../intro/progressive.md)
@@ -14,7 +9,7 @@ nav:
 你可以使用骨架类型，像下面这样：
 
 ```bash
-$ npm init egg --type=simple
+npx create-egg@beta --template tegg
 ```
 
 ### 选项

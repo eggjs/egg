@@ -1,6 +1,4 @@
----
-title: Schedule Controller
----
+# Schedule Controller
 
 ## 使用场景
 

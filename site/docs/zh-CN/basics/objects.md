@@ -1,7 +1,4 @@
----
-title: 框架内置基础对象
-order: 2
----
+# 框架内置基础对象
 
 在本章中，我们将初步了解框架内部内置的一些基础对象。这些对象包括从 [Koa] 继承而来的 4 个对象（`Application`，`Context`，`Request`，`Response`）以及框架扩展的其他一些对象（`Controller`，`Service`，`Helper`，`Config`，`Logger`）。在后续的文档中，我们会经常遇到它们。
 

@@ -1,7 +1,4 @@
----
-title: HttpClient
-order: 5
----
+# HttpClient
 
 互联网时代，无数服务是基于 HTTP 协议进行通信的，Web 应用调用后端 HTTP 服务是一种非常常见的应用场景。
 
@@ -9,18 +6,21 @@ order: 5
 
 ## 通过 `app` 使用 HttpClient
 
-框架在应用初始化的时候，会自动将 [HttpClient] 初始化到 `app.httpclient`。同时增加了一个 `app.curl(url, options)` 方法，它等价于 `app.httpclient.request(url, options)`。
+框架在应用初始化的时候，会自动将 [HttpClient] 初始化到 `app.httpClient`。
 
-这样就可以非常方便地使用 `app.curl` 方法完成一次 HTTP 请求。
+这样就可以非常方便地使用 `app.httpClient.request` 方法完成一次 HTTP 请求。
 
-```js
-// app.js
-module.exports = (app) => {
+```ts
+// app.ts
+export default (app: EggApplication) => {
   app.beforeStart(async () => {
     // 示例：启动时去读取 https://registry.npmmirror.com/egg/latest 的版本信息
-    const result = await app.curl('https://registry.npmmirror.com/egg/latest', {
-      dataType: 'json',
-    });
+    const result = await app.httpClient.request(
+      'https://registry.npmmirror.com/egg/latest',
+      {
+        dataType: 'json',
+      },
+    );
     app.logger.info('Egg 最新版本：%s', result.data.version);
   });
 };
@@ -28,21 +28,24 @@ module.exports = (app) => {
 
 ## 通过 `ctx` 使用 HttpClient
 
-框架在 Context 中同样提供了 `ctx.curl(url, options)` 和 `ctx.httpclient`，以保持与 app 下的使用体验一致。这样，在有 Context 的地方（如在 controller 中）非常方便地使用 `ctx.curl()` 方法完成一次 HTTP 请求。
+框架在 Context 中同样提供了 `ctx.httpClient`，以保持与 app 下的使用体验一致。这样，在有 Context 的地方（如在 controller 中）非常方便地使用 `ctx.httpClient.request(url, options)` 方法完成一次 HTTP 请求。
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async index() {
     const ctx = this.ctx;
 
     // 示例：请求一个 npm 模块信息
-    const result = await ctx.curl('https://registry.npmmirror.com/egg/latest', {
-      // 自动解析 JSON 响应
-      dataType: 'json',
-      // 3 秒超时
-      timeout: 3000,
-    });
+    const result = await ctx.httpClient.request(
+      'https://registry.npmmirror.com/egg/latest',
+      {
+        // 自动解析 JSON 响应
+        dataType: 'json',
+        // 3 秒超时
+        timeout: 3000,
+      },
+    );
 
     ctx.body = {
       status: result.status,
@@ -63,12 +66,14 @@ HTTP 已经被广泛大量使用。尽管 HTTP 有多种请求方式，但是万
 
 读取数据几乎都是使用 GET 请求。它是 HTTP 世界最常见的一种，也是最广泛的一种。它的请求参数也是最容易构造的。
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async get() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/get?foo=bar');
+    const result = await ctx.httpClient.request(
+      'https://httpbin.org/get?foo=bar',
+    );
     ctx.status = result.status;
     ctx.set(result.headers);
     ctx.body = result.data;
@@ -91,12 +96,12 @@ class NpmController extends Controller {
 
 以发送 JSON body 的场景举例：
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async post() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.httpClient.request('https://httpbin.org/post', {
       // 必须指定 method
       method: 'POST',
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
@@ -120,12 +125,12 @@ class NpmController extends Controller {
 PUT 与 POST 类似，它更加适合更新数据和替换数据的语义。
 除了 method 参数需要设置为 `PUT`，其他参数几乎与 POST 完全一样。
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async put() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/put', {
+    const result = await ctx.httpClient.request('https://httpbin.org/put', {
       // 必须指定 method
       method: 'PUT',
       // 通过 contentType 告诉 HttpClient 以 JSON 格式发送
@@ -145,12 +150,12 @@ class NpmController extends Controller {
 
 删除数据会选择 DELETE 请求。它通常可以不需要增加请求 body，但是 `HttpClient` 不会对此进行限制。
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async del() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/delete', {
+    const result = await ctx.httpClient.request('https://httpbin.org/delete', {
       // 必须指定 method
       method: 'DELETE',
       // 明确告诉 HttpClient 以 JSON 格式处理响应 body
@@ -169,12 +174,12 @@ class NpmController extends Controller {
 
 面向浏览器设计的 Form 表单（不包含文件）提交接口，通常都要求以 `content-type: application/x-www-form-urlencoded` 的格式提交请求数据。
 
-```js
-// app/controller/npm.js
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+export default class NpmController extends Controller {
   async submit() {
     const ctx = this.ctx;
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.httpClient.request('https://httpbin.org/post', {
       // 必须指定 method，支持 POST，PUT 和 DELETE
       method: 'POST',
       // 不需要设置 contentType，HttpClient 会默认以 application/x-www-form-urlencoded 格式发送请求
@@ -201,13 +206,13 @@ class NpmController extends Controller {
 
 [urllib] 内置了 [formstream] 模块来帮助我们生成可以被消费的 `form` 对象。
 
-```js
-// app/controller/http.js
-class HttpController extends Controller {
+```ts
+// app/controller/http.ts
+export default class HttpController extends Controller {
   async upload() {
     const { ctx } = this;
 
-    const result = await ctx.curl('https://httpbin.org/post', {
+    const result = await ctx.httpClient.request('https://httpbin.org/post', {
       method: 'POST',
       dataType: 'json',
       data: {
@@ -238,18 +243,19 @@ class HttpController extends Controller {
 
 其实，在 Node.js 的世界里面，Stream 才是主流。如果服务端支持流式上传，最友好的方式还是直接发送 Stream。Stream 实际会以 `Transfer-Encoding: chunked` 传输编码格式发送，这个转换是 [HTTP] 模块自动实现的。
 
-```js
-// app/controller/npm.js
-const fs = require('fs');
-const FormStream = require('formstream');
-class NpmController extends Controller {
+```ts
+// app/controller/npm.ts
+import fs from 'node:fs';
+import FormStream from 'formstream';
+
+export default class NpmController extends Controller {
   async uploadByStream() {
     const ctx = this.ctx;
     // 上传当前文件本身用于测试
-    const fileStream = fs.createReadStream(__filename);
+    const fileStream = fs.createReadStream(import.meta.filename);
     // httpbin.org 不支持 stream 模式，使用本地 stream 接口代替
     const url = `${ctx.protocol}://${ctx.host}/stream`;
-    const result = await ctx.curl(url, {
+    const result = await ctx.httpClient.request(url, {
       // 必须指定 method，支持 POST，PUT
       method: 'POST',
       // 以 stream 模式提交
@@ -266,57 +272,33 @@ class NpmController extends Controller {
 
 ## options 参数详解
 
-由于 HTTP 请求的复杂性，导致 `httpclient.request(url, options)` 的 options 参数会非常多。
+由于 HTTP 请求的复杂性，导致 `httpClient.request(url, options)` 的 options 参数会非常多。
 接下来将以参数说明和代码配合一起讲解每个可选参数的实际用途。
 
 ### HttpClient 默认全局配置
 
-```javascript
-// config/config.default.js
-exports.httpclient = {
-  // 是否开启本地 DNS 缓存，默认关闭，开启后有两个特性
-  // 1. 所有 DNS 查询都会默认优先使用缓存的，即使 DNS 查询错误也不影响应用
-  // 2. 对同一个域名，在 dnsCacheLookupInterval 的间隔内（默认 10s）只会查询一次
-  enableDNSCache: false,
-  // 对同一个域名进行 DNS 查询的最小间隔时间
-  dnsCacheLookupInterval: 10000,
-  // DNS 同时缓存的最大域名数量，默认 1000
-  dnsCacheMaxLength: 1000,
+```ts
+// config/config.default.ts
+export default {
+  httpClient: {
+    // 是否开启本地 DNS 缓存，默认关闭，开启后有两个特性
+    // 1. 所有 DNS 查询都会默认优先使用缓存的，即使 DNS 查询错误也不影响应用
+    // 2. 对同一个域名，在 dnsCacheLookupInterval 的间隔内（默认 10s）只会查询一次
+    enableDNSCache: false,
+    // 对同一个域名进行 DNS 查询的最小间隔时间
+    dnsCacheLookupInterval: 10000,
+    // DNS 同时缓存的最大域名数量，默认 1000
+    dnsCacheMaxLength: 1000,
 
-  request: {
-    // 默认 request 超时时间
-    timeout: 3000,
-  },
-
-  httpAgent: {
-    // 默认开启 http KeepAlive 功能
-    keepAlive: true,
-    // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketTimeout: 4000,
-    // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
-    timeout: 30000,
-    // 允许创建的最大 socket 数
-    maxSockets: Number.MAX_SAFE_INTEGER,
-    // 最大空闲 socket 数
-    maxFreeSockets: 256,
-  },
-
-  httpsAgent: {
-    // 默认开启 https KeepAlive 功能
-    keepAlive: true,
-    // 空闲的 KeepAlive socket 最长可以存活 4 秒
-    freeSocketTimeout: 4000,
-    // 当 socket 超过 30 秒都没有任何活动，就会被当作超时处理掉
-    timeout: 30000,
-    // 允许创建的最大 socket 数
-    maxSockets: Number.MAX_SAFE_INTEGER,
-    // 最大空闲 socket 数
-    maxFreeSockets: 256,
+    request: {
+      // 默认 request 超时时间
+      timeout: 3000,
+    },
   },
 };
 ```
 
-应用可以通过 `config/config.default.js` 覆盖此配置。
+应用可以通过 `config/config.default.ts` 覆盖此配置。
 
 ### `data: Object`
 
@@ -327,20 +309,20 @@ exports.httpclient = {
   - `contentType = json`：通过 `JSON.stringify(data)` 处理，并设置为 body 发送。
   - 其他：通过 `querystring.stringify(data)` 处理，并设置为 body 发送。
 
-```javascript
+```ts
 // GET + data
-ctx.curl(url, {
+ctx.httpClient.request(url, {
   data: { foo: 'bar' },
 });
 
 // POST + data
-ctx.curl(url, {
+ctx.httpClient.request(url, {
   method: 'POST',
   data: { foo: 'bar' },
 });
 
 // POST + JSON + data
-ctx.curl(url, {
+ctx.httpClient.request(url, {
   method: 'POST',
   contentType: 'json',
   data: { foo: 'bar' },
@@ -354,8 +336,8 @@ ctx.curl(url, {
 
 此设置适用于需要以 `stream` 发送数据，并且附带额外的请求参数以 `url` query 形式传递的场景：
 
-```javascript
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   dataAsQueryString: true,
   data: {
@@ -370,8 +352,8 @@ ctx.curl(url, {
 
 发送请求正文。若设置此参数，将直接忽略 `data` 参数。
 
-```javascript
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   // 直接发送原始 XML 数据，不需 HttpClient 经行特殊处理
   content: '<xml><hello>world</hello></xml>',
@@ -385,8 +367,8 @@ ctx.curl(url, {
 
 文件上传，支持以下格式：`String | ReadStream | Buffer | Array | Object`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   files: '/path/to/read',
   data: {
@@ -397,8 +379,8 @@ ctx.curl(url, {
 
 多文件上传：
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   files: {
     file1: '/path/to/read',
@@ -415,8 +397,8 @@ ctx.curl(url, {
 
 设置发送请求正文的可读数据流，默认值为 `null`。一旦设置了此参数，`HttpClient` 将忽略 `data` 和 `content`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   stream: fs.createReadStream('/path/to/read'),
 });
@@ -426,8 +408,8 @@ ctx.curl(url, {
 
 设置接收响应数据的可写数据流，默认值为 `null`。一旦设置此参数，返回值 `result.data` 将被设置为 `null`，因数据已写入 `writeStream`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   writeStream: fs.createWriteStream('/path/to/store'),
 });
 ```
@@ -446,8 +428,8 @@ ctx.curl(url, {
 
 例如，以 JSON 格式发送 `data`：
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   method: 'POST',
   data: {
     foo: 'bar',
@@ -463,13 +445,13 @@ ctx.curl(url, {
 
 **注意：若设为 `json`，解析失败则抛出 `JSONResponseFormatError` 异常。**
 
-```js
-const jsonResult = await ctx.curl(url, {
+```ts
+const jsonResult = await ctx.httpClient.request(url, {
   dataType: 'json',
 });
 console.log(jsonResult.data);
 
-const htmlResult = await ctx.curl(url, {
+const htmlResult = await ctx.httpClient.request(url, {
   dataType: 'text',
 });
 console.log(htmlResult.data);
@@ -479,8 +461,8 @@ console.log(htmlResult.data);
 
 是否自动过滤特殊控制字符（U+0000～U+001F），默认为 `false`。某些 CGI 系统返回的 JSON 可能含有这些字符。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   fixJSONCtlChars: true,
   dataType: 'json',
 });
@@ -490,8 +472,8 @@ ctx.curl(url, {
 
 自定义请求头。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   headers: {
     'x-foo': 'bar',
   },
@@ -502,13 +484,13 @@ ctx.curl(url, {
 
 请求超时时间，默认是 `[5000, 5000]`，即创建连接超时是 5 秒，接收响应超时是 5 秒。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   // 创建连接超时 3 秒，接收响应超时 3 秒
   timeout: 3000,
 });
 
-ctx.curl(url, {
+ctx.httpClient.request(url, {
   // 创建连接超时 1 秒，接收响应超时 30 秒，用于响应比较大的场景
   timeout: [1000, 30000],
 });
@@ -518,8 +500,8 @@ ctx.curl(url, {
 
 允许通过此参数覆盖默认的 HttpAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   agent: false,
 });
 ```
@@ -528,8 +510,8 @@ ctx.curl(url, {
 
 允许通过此参数覆盖默认的 HttpsAgent，如果你不想开启 KeepAlive，可以设置此参数为 `false`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   httpsAgent: false,
 });
 ```
@@ -538,8 +520,8 @@ ctx.curl(url, {
 
 简单登录授权（Basic Authentication）参数，将以明文方式将登录信息以 `Authorization` 请求头发送出去。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   // 参数必须按照 `user:password` 格式设置
   auth: 'foo:bar',
 });
@@ -549,8 +531,8 @@ ctx.curl(url, {
 
 摘要登录授权（Digest Authentication）参数，设置此参数会自动对 401 响应尝试生成 `Authorization` 请求头，尝试以授权方式请求一次。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   // 参数必须按照 `user:password` 格式设置
   digestAuth: 'foo:bar',
 });
@@ -560,8 +542,8 @@ ctx.curl(url, {
 
 是否自动跟进 3xx 的跳转响应，默认是 `false`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   followRedirect: true,
 });
 ```
@@ -570,8 +552,8 @@ ctx.curl(url, {
 
 设置最大自动跳转次数，避免循环跳转无法终止，默认是 10 次。此参数不宜设置过大，它只在 `followRedirect=True` 情况下才会生效。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   followRedirect: true,
   // 最多自动跳转 5 次
   maxRedirects: 5,
@@ -582,8 +564,8 @@ ctx.curl(url, {
 
 允许通过 `formatRedirectUrl` 自定义实现 302、301 等跳转 URL 的拼接，默认是 `url.resolve(from, to)`。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   formatRedirectUrl: (from, to) => {
     // 比如可以在这里修正跳转不正确的 URL
     if (to === '//foo/') {
@@ -598,8 +580,8 @@ ctx.curl(url, {
 
 HttpClient 在请求正式发送之前，会尝试调用 `beforeRequest` 钩子，允许我们在这里对请求参数做最后一次修改。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   beforeRequest: (options) => {
     // 比如可以在这里设置全局请求 ID，便于日志跟踪
     options.headers['x-request-id'] = uuid.v1();
@@ -611,8 +593,8 @@ ctx.curl(url, {
 
 是否直接返回响应流，默认为 `false`。一旦启用 `streaming`，HttpClient 会在拿到响应对象 res 之后立即返回，此时 `result.headers` 和 `result.status` 已可读取，只是没有读取数据 `data`。
 
-```js
-const result = await ctx.curl(url, {
+```ts
+const result = await ctx.httpClient.request(url, {
   streaming: true,
 });
 
@@ -627,15 +609,16 @@ ctx.body = result.res;
 
 是否支持 gzip 响应格式，默认为 `false`。开启 gzip 之后，HttpClient 将自动设置 `Accept-Encoding: gzip` 请求头，并且会自动解压带有 `Content-Encoding: gzip` 响应头的数据。
 
-```js
-ctx.curl(url, {
+```ts
+ctx.httpClient.request(url, {
   gzip: true,
 });
 ```
 
 ### `timing: Boolean`
 
-是否开启请求各阶段的时间测量，默认为 `false`。开启 timing 之后，可以通过 `result.res.timing` 拿到这次 HTTP 请求各阶段的时间测量值（单位是毫秒）。通过这些测量值，我们可以非常方便地定位到这次请求最慢的环节发生在哪个阶段。效果类似于Chrome network timing。
+是否开启请求各阶段的时间测量，默认为 `false`。开启 timing 之后，可以通过 `result.res.timing` 拿到这次 HTTP 请求各阶段的时间测量值（单位是毫秒）。
+通过这些测量值，我们可以非常方便地定位到这次请求最慢的环节发生在哪个阶段。效果类似于 Chrome network timing。
 
 timing 各阶段测量值解析：
 
@@ -646,8 +629,8 @@ timing 各阶段测量值解析：
 - waiting：收到第一个字节响应数据耗时
 - contentDownload：全部响应数据接收完毕耗时
 
-```js
-const result = await ctx.curl(url, {
+```ts
+const result = await ctx.httpClient.request(url, {
   timing: true,
 });
 console.log(result.res.timing);
@@ -667,11 +650,11 @@ console.log(result.res.timing);
 
 ## 调试辅助
 
-如果你需要对 HttpClient 的请求进行抓包调试，可以添加以下配置到 `config.local.js`：
+如果你需要对 HttpClient 的请求进行抓包调试，可以添加以下配置到 `config/config.local.ts`：
 
-```js
-// config.local.js
-module.exports = () => {
+```ts
+// config/config.local.ts
+export default () => {
   const config = {};
 
   // add http_proxy to httpclient
@@ -761,7 +744,7 @@ $ http_proxy=http://127.0.0.1:8888 npm run dev
 请求发送之前，会触发一个 `request` 事件，允许对请求做拦截。
 
 ```js
-app.httpclient.on('request', (req) => {
+app.httpClient.on('request', (req) => {
   req.url; // 请求 URL
   req.ctx; // 发起这次请求的当前上下文
 
@@ -774,7 +757,7 @@ app.httpclient.on('request', (req) => {
 请求结束之后会触发一个 `response` 事件，这样外部就可以订阅这个事件来打印日志。
 
 ```js
-app.httpclient.on('response', (result) => {
+app.httpClient.on('response', (result) => {
   result.res.status; // 响应状态码
   result.ctx; // 发起这次请求的当前上下文
   result.req; // 对应的 req 对象，即 request 事件里的那个 req
@@ -788,7 +771,7 @@ app.httpclient.on('response', (result) => {
 其他参考链接：
 
 - [urllib](https://github.com/node-modules/urllib)
-- [httpclient](https://github.com/eggjs/egg/blob/master/lib/core/httpclient.js)
+- [httpclient](https://github.com/eggjs/egg/blob/next/packages/egg/src/lib/core/httpclient.ts)
 - [formstream](https://github.com/node-modules/formstream)
 - [http](https://nodejs.org/api/http.html)
 - [https](https://nodejs.org/api/https.html)

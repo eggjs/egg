@@ -1,10 +1,4 @@
----
-title: 核心功能
-order: 0
-nav:
-  title: 核心功能
-  order: 3
----
+# 核心功能
 
 - [本地开发](./development.md)
 - [单元测试](./unittest.md)

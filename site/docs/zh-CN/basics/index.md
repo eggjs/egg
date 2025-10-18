@@ -14,7 +14,7 @@
 - [运行环境](./env.md)
 - [配置](./config.md)
 - [AOP 中间件(推荐)](./aop-middleware.md)
-- [中间件](./middleware.md)
+- [Koa 中间件](./middleware.md)
 - [插件](./plugin.md)
 - [框架拓展](./extend.md)
 - [启动自定义](./app-start.md)

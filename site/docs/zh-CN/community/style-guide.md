@@ -1,6 +1,4 @@
----
-title: 代码风格指南
----
+# 代码风格指南
 
 建议开发者使用 `npm init egg --type=simple showcase` 来生成并观察推荐的项目结构和配置。
 

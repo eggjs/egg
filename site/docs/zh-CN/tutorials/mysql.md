@@ -1,6 +1,4 @@
----
-title: MySQL
----
+# MySQL
 
 在 Web 应用方面，MySQL 是最常见且最优秀的关系型数据库之一。许多网站选择 MySQL 作为网站数据库。
 

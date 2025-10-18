@@ -12,6 +12,7 @@ import { EggApplicationCore, type EggApplicationCoreOptions, type Context } from
 import { AppWorkerLoader } from './loader/index.ts';
 import Helper from '../app/extend/helper.ts';
 import { CookieLimitExceedError } from './error/index.ts';
+import type { IController } from './types.ts';
 
 // client error => 400 Bad Request
 // Refs: https://nodejs.org/dist/latest-v8.x/docs/api/http.html#http_event_clienterror
@@ -39,6 +40,8 @@ function escapeHeaderValue(value: string) {
  * @augments EggApplicationCore
  */
 export class Application extends EggApplicationCore {
+  declare controller: IController;
+
   // will auto set after 'server' event emit
   server?: http.Server;
   #locals: Record<string, any> = {};

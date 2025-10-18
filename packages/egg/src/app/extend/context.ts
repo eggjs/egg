@@ -6,7 +6,7 @@ import type { EggLogger } from 'egg-logger';
 
 import type { Application } from '../../lib/application.ts';
 import type { HttpClientRequestURL, HttpClientRequestOptions, HttpClient } from '../../lib/core/httpclient.ts';
-import type { BaseContextClass } from '../../lib//core/base_context_class.ts';
+import type { IService } from '../../lib/types.ts';
 import type Request from './request.ts';
 import type Response from './response.ts';
 import type Helper from './helper.ts';
@@ -27,7 +27,7 @@ export default class Context extends EggCoreContext {
   declare app: Application;
   declare request: Request;
   declare response: Response;
-  declare service: BaseContextClass;
+  declare service: IService;
   declare proxy: any;
 
   /**

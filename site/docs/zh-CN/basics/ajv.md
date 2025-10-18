@@ -1,10 +1,6 @@
----
-title: 参数校验
----
-
 # Ajv 入参校验
 
-参考 [egg-typebox-validate](https://github.com/eggjs-community/egg-typebox-validate) 的最佳实践，结合 ajv + [typebox](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#json-types) + ErrorCode 统一错误码规范，只需要定义一次参数校验 Schema，就能同时拥有参数校验和类型定义（完整的 TypeScript 类型提示）。
+参考 [@eggjs/typebox-validate](https://github.com/eggjs/egg/tree/master/plugins/typebox-validate) 的最佳实践，结合 ajv + [typebox](https://github.com/sinclairzx81/typebox?tab=readme-ov-file#json-types) + ErrorCode 统一错误码规范，只需要定义一次参数校验 Schema，就能同时拥有参数校验和类型定义（完整的 TypeScript 类型提示）。
 
 > 让请求入参校验变得轻松自然，不再是一件烦恼重复的事情😄。
 

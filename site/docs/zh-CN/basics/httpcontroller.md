@@ -1,6 +1,4 @@
----
-title: HTTP 注解
----
+# HTTP Controller
 
 ## 使用场景
 

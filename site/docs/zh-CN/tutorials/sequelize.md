@@ -1,6 +1,4 @@
----
-title: Sequelize
----
+# Sequelize
 
 在前面的章节中，我们介绍了如何在框架中通过 [egg-mysql] 插件来访问数据库。在一些较为复杂的应用中，我们可能会需要一个 ORM 框架来帮助我们管理数据层的代码。在 Node.js 社区中，[sequelize] 是一个广泛使用的 ORM 框架，它支持 MySQL、PostgreSQL、SQLite 和 MSSQL 等多个数据源。
 
