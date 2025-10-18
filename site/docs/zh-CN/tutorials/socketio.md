@@ -1,6 +1,4 @@
----
-title: Socket.IO
----
+# Socket.IO
 
 **Socket.IO** 是一个基于 Node.js 的实时应用程序框架。在即时通讯、通知与消息推送，实时分析等场景中有较为广泛的应用。
 

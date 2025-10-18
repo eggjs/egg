@@ -1,7 +1,4 @@
----
-title: 渐进式开发
-order: 3
----
+# 渐进式开发
 
 在 Egg 里面，有[插件](../basics/plugin.md)和[框架](../advanced/framework.md)，前者还包括了 `path` 和 `package` 两种加载模式，那我们应该如何选择呢？
 

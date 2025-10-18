@@ -1,7 +1,4 @@
----
-title: 启动自定义
-order: 12
----
+# 启动自定义
 
 我们常常需要在应用启动期间进行一些初始化工作，待初始化完成后，应用才可以启动成功，并开始对外提供服务。
 
@@ -17,12 +14,16 @@ order: 12
 - 应用启动完成（`serverDidReady`）；
 - 应用即将关闭（`beforeClose`）。
 
-我们可以在 `app.js` 中定义这个 Boot 类。下面我们抽取几个在应用开发中常用的生命周期函数为例：
+我们可以在 `app.ts` 中定义这个 Boot 类。下面我们抽取几个在应用开发中常用的生命周期函数为例：
 
-```js
-// app.js
-class AppBootHook {
-  constructor(app) {
+```ts
+// app.ts
+import type { Application, ILifecycleBoot } from 'egg';
+
+export default class AppBootHook implements ILifecycleBoot {
+  private readonly app: Application;
+
+  constructor(app: Application) {
     this.app = app;
   }
 
@@ -76,8 +77,6 @@ class AppBootHook {
     });
   }
 }
-
-module.exports = AppBootHook;
 ```
 
 **注意：在自定义生命周期函数中，不建议进行耗时的操作，因为框架会有启动的超时检测。**

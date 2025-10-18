@@ -1,18 +1,15 @@
----
-title: View 模板渲染
-order: 8
----
+# View 模板渲染
 
 绝大多数情况下，我们都需要读取数据后渲染模板，然后呈现给用户。因此，我们需要引入相应的模板引擎。
 
-框架内置了 `egg-view` 作为模板解决方案，支持多模板渲染。每个模板引擎均以插件方式引入，并保持渲染 API 的一致性。如想深入了解，可查看[模板插件开发](../advanced/view-plugin.md)。
+框架内置了 `@eggjs/view` 作为模板解决方案，支持多模板渲染。每个模板引擎均以插件方式引入，并保持渲染 API 的一致性。如想深入了解，可查看[模板插件开发](../advanced/view-plugin.md)。
 
-以下以官方支持的 View 插件 `egg-view-nunjucks` 为例。
+以下以官方支持的 View 插件 `@eggjs/view-nunjucks` 为例。
 
 ## 引入 view 插件
 
 ```bash
-$ npm i egg-view-nunjucks --save
+npm i @eggjs/view-nunjucks
 ```
 
 ### 启用插件
@@ -200,6 +197,6 @@ await ctx.renderString('{{ helper.lowercaseFirst(name) }}', data);
 
 框架内置的 [@eggjs/security] 插件，提供了常见的安全辅助函数，包括 `helper.shtml`、`surl`、`sjs` 等，强烈建议阅读安全性相关的[文档内容](./security.md)。
 
-[@eggjs/security]: https://github.com/eggjs/security
-[egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
-[egg-view]: https://github.com/eggjs/egg-view
+[@eggjs/security]: https://github.com/eggjs/egg/tree/master/plugins/security
+[@eggjs/view-nunjucks]: https://github.com/eggjs/egg/tree/master/plugins/view-nunjucks
+[@eggjs/view]: https://github.com/eggjs/egg/tree/master/plugins/view

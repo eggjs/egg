@@ -44,23 +44,22 @@ egg-project
 
 如上，由框架约定的目录：
 
-- `app/router.js` 用于配置 URL 路由规则，具体参见 [Router](./router.md)。
+- `app/router.ts` 用于配置 URL 路由规则，具体参见 [Router](./router.md)。
 - `app/controller/**` 用于解析用户的输入，处理后返回相应的结果，具体参见 [Controller](./controller.md)。
 - `app/service/**` 用于编写业务逻辑层，建议使用，具体参见 [Service](./service.md)。
 - `app/middleware/**` 用于编写中间件，具体参见 [Middleware](./middleware.md)。
-- `app/public/**` 用于放置静态资源，具体参见内置插件 [@eggjs/static](https://github.com/eggjs/static)。
+- `app/public/**` 用于放置静态资源，具体参见内置插件 [@eggjs/static](https://github.com/eggjs/egg/tree/master/plugins/static)。
 - `app/extend/**` 用于框架的扩展，具体参见 [框架扩展](./extend.md)。
-- `config/config.{env}.js` 用于编写配置文件，具体参见 [配置](./config.md)。
-- `config/plugin.js` 用于配置需要加载的插件，具体参见 [插件](./plugin.md)。
+- `config/config.{env}.ts` 用于编写配置文件，具体参见 [配置](./config.md)。
+- `config/plugin.ts` 用于配置需要加载的插件，具体参见 [插件](./plugin.md)。
 - `test/**` 用于单元测试，具体参见 [单元测试](../core/unittest.md)。
-- `app.js` 和 `agent.js` 用于自定义启动时的初始化工作，具体参见 [启动自定义](./app-start.md)。关于 `agent.js` 的作用，参见 [Agent 机制](../core/cluster-and-ipc.md#agent-机制)。
+- `app.ts` 和 `agent.ts` 用于自定义启动时的初始化工作，具体参见 [启动自定义](./app-start.md)。关于 `agent.ts` 的作用，参见 [Agent 机制](../core/cluster-and-ipc.md#agent-机制)。
 
 由内置插件约定的目录：
 
-- `app/public/**` 用于放置静态资源，具体参见内置插件 [@eggjs/static](https://github.com/eggjs/static)。
-- `app/schedule/**` 用于定时任务，具体参见 [定时任务](./schedule.md)。
+- `app/public/**` 用于放置静态资源，具体参见内置插件 [@eggjs/static](https://github.com/eggjs/egg/tree/master/plugins/static)。
 
-**若需自定义自己的目录规范，参见 [Loader API](https://eggjs.org/zh-cn/advanced/loader.html)**
+**若需自定义自己的目录规范，参见 [加载器（Loader）](../advanced/loader.md)**
 
 - `app/view/**` 用于放置模板文件，具体参见 [模板渲染](../core/view.md)。
 - `app/model/**` 用于放置领域模型，如 [`egg-sequelize`](https://github.com/eggjs/egg-sequelize) 等领域类相关插件。

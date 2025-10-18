@@ -1,6 +1,4 @@
----
-title: MCP Controller
----
+# MCP Controller
 
 ## 使用场景
 

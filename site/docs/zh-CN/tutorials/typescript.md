@@ -1,6 +1,4 @@
----
-title: TypeScript
----
+# TypeScript
 
 > [TypeScript](https://www.typescriptlang.org/) 是 JavaScript 的一个类型超集，它可以被编译成纯 JavaScript。
 

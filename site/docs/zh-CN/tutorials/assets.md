@@ -1,6 +1,4 @@
----
-title: 静态资源
----
+# 静态资源
 
 [`egg-view-assets`](https://github.com/eggjs/egg-view-assets) 提供了通用的静态资源管理和本地开发方案，具有以下功能：
 

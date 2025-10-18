@@ -1,8 +1,4 @@
----
-title: 异步任务
----
-
-# BackgroundTask
+# BackgroundTask 异步任务
 
 ## 使用场景
 

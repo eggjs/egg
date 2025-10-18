@@ -1,7 +1,4 @@
----
-title: 安全
-order: 10
----
+# 安全
 
 ## Web 安全概念
 
@@ -15,14 +12,14 @@ Web 应用中存在很多安全风险，这些风险可能会被黑客利用。�
 
 框架本身针对 Web 端常见的安全风险，内置了丰富的解决方案：
 
-- 利用 [extend](https://github.com/eggjs/egg/blob/master/docs/source/zh-cn/basics/extend.md) 机制，扩展了 Helper API，提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。
+- 利用 [extend](../basics/extend.md) 机制，扩展了 Helper API，提供了各种模板过滤函数，防止钓鱼或 XSS 攻击。
 - 常见 Web 安全头的支持。
 - CSRF 的防御方案。
 - 灵活的安全配置，可以对不同的请求 url 进行匹配。
 - 可定制的白名单，用于安全跳转和 url 过滤。
 - 各种模板相关的工具函数做预处理。
 
-框架内置了安全插件 [@eggjs/security](https://github.com/eggjs/security)，提供了默认的安全实践。
+框架内置了安全插件 [@eggjs/security](https://github.com/eggjs/egg/tree/master/plugins/security)，提供了默认的安全实践。
 
 ### 开启与关闭配置
 
@@ -40,7 +37,7 @@ exports.security = {
 
 ### Match 和 Ignore
 
-`match` 和 `ignore` 方法和格式，与 [中间件通用配置](../basics/middleware.md#match和ignore) 一致。
+`match` 和 `ignore` 方法和格式，与 [中间件通用配置](../basics/middleware.md#match-和-ignore) 一致。
 
 如果只想针对某个路径开启，可以配置 `match` 选项。例如，只对 `/example` 开启 CSP：
 
@@ -108,7 +105,7 @@ console.log(ctx.helper.escape(str));
 // => &gt;&lt;script&gt;alert(&quot;abc&quot;) &lt;/script&gt;&lt;
 ```
 
-当网站需要直接输出用户输入的结果时，请务必使用 `helper.escape()` 包裹起来，如在 [egg-view-nunjucks](https://github.com/eggjs/egg-view-nunjucks) 里面就覆盖掉了内置的 `escape`。
+当网站需要直接输出用户输入的结果时，请务必使用 `helper.escape()` 包裹起来，如在 [@eggjs/view-nunjucks](https://github.com/eggjs/egg/tree/master/plugins/view-nunjucks) 里面就覆盖掉了内置的 `escape`。
 
 另外一种情况，网站输出的内容会提供给 JavaScript 来使用。这个时候需要使用 `helper.sjs()` 来进行过滤。
 
@@ -280,7 +277,7 @@ module.exports = {
 };
 ```
 
-为防范 [BREACH 攻击](http://breachattack.com/)，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化。[egg-view-nunjucks] 等视图插件会自动对表单进行注入，开发者无需关心。
+为防范 [BREACH 攻击](http://breachattack.com/)，通过同步方式渲染到页面上的 CSRF token 在每次请求时都会变化。[@eggjs/view-nunjucks](https://github.com/eggjs/egg/tree/master/plugins/view-nunjucks) 等视图插件会自动对表单进行注入，开发者无需关心。
 
 ##### AJAX 请求
 
@@ -641,8 +638,6 @@ exports.security = {
 ### app.injectHijackingDefense(str)
 
 对于未开启 HTTPS 的网站，此函数可以有效防止运营商劫持。
-
-[egg-view-nunjucks]: https://github.com/eggjs/egg-view-nunjucks
 
 ## Revert CVE
 

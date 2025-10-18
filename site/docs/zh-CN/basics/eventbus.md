@@ -1,8 +1,4 @@
----
-title: 消息中枢
----
-
-# EventBus
+# EventBus 消息中枢
 
 ## 使用场景
 

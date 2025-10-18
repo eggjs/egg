@@ -1,7 +1,4 @@
----
-title: Egg.js 与 Koa
-order: 1
----
+# Egg.js 与 Koa
 
 ## 异步编程模型
 
