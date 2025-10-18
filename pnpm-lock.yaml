@@ -938,6 +938,36 @@ importers:
       '@eggjs/static':
         specifier: workspace:*
         version: link:../../plugins/static
+      '@eggjs/tegg':
+        specifier: workspace:*
+        version: link:../../tegg/core/tegg
+      '@eggjs/tegg-ajv-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/ajv
+      '@eggjs/tegg-aop-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/aop
+      '@eggjs/tegg-config':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/config
+      '@eggjs/tegg-controller-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/controller
+      '@eggjs/tegg-dal-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/dal
+      '@eggjs/tegg-eventbus-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/eventbus
+      '@eggjs/tegg-orm-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/orm
+      '@eggjs/tegg-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/tegg
+      '@eggjs/tegg-schedule-plugin':
+        specifier: workspace:*
+        version: link:../../tegg/plugin/schedule
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../utils
