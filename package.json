@@ -67,6 +67,7 @@
       "prettier --ignore-unknown --write"
     ],
     "*.{ts,mts,cts,js,mjs,cjs,jsx,tsx}": [
+      "oxfmt",
       "oxlint --type-aware --fix"
     ]
   },
