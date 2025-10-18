@@ -15,6 +15,7 @@ export default defineConfig({
       //   },
       // },
     ],
+    exclude: ['packages/tsdown.config.ts'],
     coverage: {
       provider: 'v8',
       exclude: ['**/test/**'],

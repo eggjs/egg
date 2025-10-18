@@ -1,18 +1,14 @@
 import { defineConfig } from 'tsdown';
 
+import baseConfig from '../../tsdown.config.json' with { type: 'json' };
+
 const config = defineConfig({
-  entry: {
-    index: 'src/index.ts',
-  },
+  ...baseConfig,
   // MEMO: @oclif/core only work on unbundle mode
   unbundle: true,
-  dts: true,
   unused: {
     level: 'error',
     ignore: ['utility'],
-  },
-  exports: {
-    devExports: true,
   },
   copy: [
     {

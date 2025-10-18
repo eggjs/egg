@@ -47,10 +47,11 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
+    "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/koa-compose": "catalog:",
     "@types/koa-range": "catalog:",
-    "@eggjs/mock": "workspace:*",
+    "egg": "workspace:*",
     "oxlint": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",

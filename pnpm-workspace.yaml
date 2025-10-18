@@ -20,6 +20,7 @@ catalog:
   '@types/accepts': ^1.3.7
   '@types/body-parser': ^1.19.5
   '@types/bytes': ^3.1.5
+  '@types/common-tags': ^1.8.4
   '@types/content-disposition': ^0.5.8
   '@types/content-type': ^1.1.8
   '@types/cookie-parser': ^1.4.8
@@ -42,7 +43,8 @@ catalog:
   '@types/mime-types': ^3.0.0
   '@types/mocha': ^10.0.10
   '@types/mustache': ^4.2.5
-  '@types/node': ^24.7.2
+  '@types/node': ^24.8.1
+  '@types/nunjucks': ^3.2.6
   '@types/on-finished': ^2.3.4
   '@types/parseurl': ^1.3.3
   '@types/safe-timers': ^1.1.2
@@ -69,12 +71,14 @@ catalog:
   cache-content-type: ^2.0.0
   camelcase: ^8.0.0
   cfork: ^2.0.0
+  cheerio: ^1.0.0
   ci-parallel-vars: ^1.0.1
   circular-json-for-egg: ^1.0.0
   cluster-client: ^3.7.0
   cluster-reload: ^2.0.0
   co-busboy: ^2.0.1
   coffee: '5'
+  common-tags: ^1.8.2
   content-disposition: ~0.5.4
   content-type: ^1.0.5
   cookie: ^1.0.2
@@ -129,6 +133,7 @@ catalog:
   koa-session: ^7.0.2
   koa-static: ^5.0.0
   lint-staged: ^16.2.4
+  marked: ^15.0.12
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
   methods: ^1.1.2
@@ -144,6 +149,8 @@ catalog:
   nanoid: ^5.0.0
   node-homedir: ^2.0.0
   npminstall: ^7.12.0
+  nunjucks: ^3.2.4
+  nunjucks-markdown: ^2.0.1
   on-finished: ^2.4.1
   onelogger: ^1.0.1
   oxc-minify: ^0.95.0
@@ -172,7 +179,7 @@ catalog:
   terminal-link: ^5.0.0
   ts-node: ^10.9.2
   tsconfig-paths: ^4.2.0
-  tsdown: ^0.15.6
+  tsdown: 0.15.6
   type-fest: ^5.0.1
   type-is: ^2.0.0
   typescript: ^5.9.3

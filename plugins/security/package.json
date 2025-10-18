@@ -136,6 +136,7 @@
     "@types/type-is": "catalog:",
     "beautify-benchmark": "catalog:",
     "benchmark": "catalog:",
+    "egg": "workspace:*",
     "egg-view-nunjucks": "catalog:",
     "spy": "catalog:",
     "tsdown": "catalog:",

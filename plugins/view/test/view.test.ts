@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 
 import { mm, type MockApplication } from '@eggjs/mock';
 import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
+import { ViewEngineBase } from '../src/index.ts';
 
 function getFixtures(name: string) {
   return path.join(import.meta.dirname, 'fixtures', name);
@@ -36,7 +37,7 @@ describe('test/view.test.ts', () => {
       });
 
       it('should throw when name has been registered', () => {
-        class View {
+        class View extends ViewEngineBase {
           render(): Promise<string> {
             return Promise.resolve('');
           }

@@ -85,6 +85,7 @@
     "@eggjs/schedule": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
     "@types/node": "catalog:",
+    "egg": "workspace:*",
     "egg-logger": "catalog:",
     "glob": "catalog:",
     "tsdown": "catalog:",

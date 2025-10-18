@@ -131,7 +131,7 @@ try {
   execSync('git add .', { stdio: 'inherit' });
 
   // Create commit message with [skip ci] to avoid triggering CI for release commits
-  const commitMessage = `chore(release): ${versionType} version bump [skip ci]
+  const commitMessage = `chore(release): ${versionType} version bump
 
 ${updatedVersions.map(pkg => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 

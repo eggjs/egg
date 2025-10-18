@@ -73,6 +73,7 @@
     "@eggjs/tsconfig": "workspace:*",
     "@types/bytes": "catalog:",
     "@types/node": "catalog:",
+    "egg": "workspace:*",
     "formstream": "catalog:",
     "is-type-of": "catalog:",
     "stream-wormhole": "catalog:",

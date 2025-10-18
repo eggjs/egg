@@ -68,6 +68,7 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/tsconfig": "workspace:*",
+    "egg": "workspace:*",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"

@@ -117,11 +117,12 @@
     "egg": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/tracer": "workspace:*",
     "@eggjs/errors": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
     "@types/methods": "catalog:",
-    "typescript": "catalog:",
-    "tsdown": "catalog:"
+    "egg": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
   },
   "scripts": {
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
