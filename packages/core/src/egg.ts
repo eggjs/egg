@@ -57,7 +57,7 @@ export class Context extends KoaContext {
   declare app: EggCore;
   declare request: Request;
   declare response: Response;
-  declare service: BaseContextClass;
+  declare service: Record<string, any>;
 
   // #region router
 

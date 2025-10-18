@@ -341,3 +341,26 @@ export interface EggPlugin {
   jsonp?: EggPluginItem;
   view?: EggPluginItem;
 }
+
+/**
+ * The empty interface `IService` is a placeholder, for egg
+ * to auto injection service to ctx.service
+ *
+ * @example
+ *
+ * import { Service } from 'egg';
+ * class FooService extends Service {
+ *   async bar() {}
+ * }
+ *
+ * declare module 'egg' {
+ *   export interface IService {
+ *     foo: FooService;
+ *   }
+ * }
+ *
+ * Now I can get ctx.service.foo at controller and other service file.
+ */
+export interface IService extends Record<string, any> {}
+
+export interface IController extends Record<string, any> {}
