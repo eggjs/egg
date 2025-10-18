@@ -1,5 +1,6 @@
 import path from 'node:path';
-import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
+
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest';
 import { mock, type MockApplication } from '@eggjs/mock';
 
 function getFixtures(name: string): string {
@@ -20,7 +21,9 @@ describe('test/view/custom.test.ts', () => {
   afterAll(() => app.close());
   afterEach(() => mock.restore());
 
-  it('should render markdown with custom tag', () => {
-    return app.httpRequest().get('/markdown').expect(200).expect('<h2 id="hi-egg">hi egg</h2>\n');
+  it('should render markdown with custom tag', async () => {
+    const res = await app.httpRequest().get('/markdown');
+    expect(res.text).toBe('<h2>hi egg</h2>\n');
+    expect(res.status).toBe(200);
   });
 });

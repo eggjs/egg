@@ -107,13 +107,20 @@ you can extend custom tag like this:
 
 ```ts
 // {app_root}/app/extend/application.ts
-import { Application } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
 import markdown from 'nunjucks-markdown';
-import marked from 'marked';
+import { marked } from 'marked';
 
-export default (app: Application) => {
-  markdown.register(app.nunjucks, marked);
-};
+export default class AppBoot implements ILifecycleBoot {
+  app: Application;
+  constructor(app: Application) {
+    this.app = app;
+  }
+
+  async didLoad(): Promise<void> {
+    markdown.register(app.nunjucks, marked);
+  }
+}
 ```
 
 ### Security
