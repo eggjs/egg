@@ -9,7 +9,6 @@
     "isolatedDeclarations": true,
     "types": ["node"]
   },
-  "include": ["./packages/tsdown.config.ts", "./plugins/tsdown.config.ts", "./tools/tsdown.config.ts"],
   "references": [
     {
       "path": "./packages/egg"

@@ -70,8 +70,9 @@
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/view": "workspace:*",
+    "@types/common-tags": "catalog:",
     "@types/nunjucks": "catalog:",
-    "cheerio": "^1.0.0",
+    "cheerio": "catalog:",
     "common-tags": "catalog:",
     "egg": "workspace:*",
     "marked": "catalog:",

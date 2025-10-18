@@ -39,6 +39,9 @@ catalogs:
     '@types/bytes':
       specifier: ^3.1.5
       version: 3.1.5
+    '@types/common-tags':
+      specifier: ^1.8.4
+      version: 1.8.4
     '@types/content-disposition':
       specifier: ^0.5.8
       version: 0.5.9
@@ -189,6 +192,9 @@ catalogs:
     cfork:
       specifier: ^2.0.0
       version: 2.0.0
+    cheerio:
+      specifier: ^1.0.0
+      version: 1.1.2
     ci-parallel-vars:
       specifier: ^1.0.1
       version: 1.0.1
@@ -2018,11 +2024,14 @@ importers:
       '@eggjs/view':
         specifier: workspace:*
         version: link:../view
+      '@types/common-tags':
+        specifier: 'catalog:'
+        version: 1.8.4
       '@types/nunjucks':
         specifier: 'catalog:'
         version: 3.2.6
       cheerio:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.1.2
       common-tags:
         specifier: 'catalog:'
@@ -3370,6 +3379,9 @@ packages:
 
   '@types/chai@5.2.2':
     resolution: {integrity: sha512-8kB30R7Hwqf40JPiKhVzodJs2Qc1ZJ5zuT3uzw5Hq/dhNCl3G3l83jfpdI1e20BP348+fV7VIL/+FxaXkqBmWg==}
+
+  '@types/common-tags@1.8.4':
+    resolution: {integrity: sha512-S+1hLDJPjWNDhcGxsxEbepzaxWqURP/o+3cP4aa2w7yBXgdcmKGQtZzP8JbyfOd0m+33nh+8+kvxYE2UJtBDkg==}
 
   '@types/connect@3.4.38':
     resolution: {integrity: sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug==}
@@ -8183,6 +8195,8 @@ snapshots:
   '@types/chai@5.2.2':
     dependencies:
       '@types/deep-eql': 4.0.2
+
+  '@types/common-tags@1.8.4': {}
 
   '@types/connect@3.4.38':
     dependencies:

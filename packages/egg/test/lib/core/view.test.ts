@@ -2,6 +2,7 @@ import { strict as assert } from 'node:assert';
 import path from 'node:path';
 
 import { describe, it, beforeAll, afterAll } from 'vitest';
+import { ViewEngineBase } from '@eggjs/view';
 
 import { type MockApplication, createApp, getFilepath } from '../../utils.ts';
 
@@ -16,7 +17,7 @@ describe('multiple view engine', () => {
 
   describe('use', () => {
     it('should register success', () => {
-      class View {
+      class View extends ViewEngineBase {
         async render() {
           return '';
         }

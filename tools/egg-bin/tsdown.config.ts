@@ -1,6 +1,6 @@
 import { defineConfig } from 'tsdown';
 
-import baseConfig from '../tsdown.config.ts';
+import baseConfig from '../../tsdown.config.json' with { type: 'json' };
 
 const config = defineConfig({
   ...baseConfig,

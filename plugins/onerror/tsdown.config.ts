@@ -1,9 +1,10 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
-import pluginConfig from '../tsdown.config.ts';
+import baseConfig from '../../tsdown.config.json' with { type: 'json' };
 
 const config: UserConfig = defineConfig({
-  ...pluginConfig,
+  ...(baseConfig as UserConfig),
+  entry: 'src/**/*.ts',
   copy: [
     {
       from: 'src/lib/onerror_page.mustache.html',

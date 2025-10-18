@@ -1,9 +1,9 @@
 import { defineConfig, type UserConfig } from 'tsdown';
 
-import baseConfig from '../tsdown.config.ts';
+import baseConfig from '../../tsdown.config.json' with { type: 'json' };
 
 const config: UserConfig = defineConfig({
-  ...baseConfig,
+  ...(baseConfig as UserConfig),
   entry: 'src/**/*.ts',
   copy: [
     {

@@ -1,10 +1,12 @@
-import { defineConfig } from 'tsdown';
+import { defineConfig, type UserConfig } from 'tsdown';
 
-import baseConfig from '../tsdown.config.ts';
+import baseConfig from '../../tsdown.config.json' with { type: 'json' };
 
-export default defineConfig({
-  ...baseConfig,
+const config = defineConfig({
+  ...(baseConfig as UserConfig),
   entry: 'src/**/*.ts',
   // MEMO: @oclif/core only work on unbundle mode
   unbundle: true,
 });
+
+export default config;
