@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/view",
-  "version": "4.0.0-beta.28",
+  "version": "4.0.0-beta.29",
   "description": "Base view plugin for egg",
   "publishConfig": {
     "access": "public",

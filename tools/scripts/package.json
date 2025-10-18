@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/scripts",
-  "version": "5.0.0-beta.28",
+  "version": "5.0.0-beta.29",
   "description": "deploy tool for egg project",
   "type": "module",
   "exports": {

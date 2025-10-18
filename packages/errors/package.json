@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/errors",
-  "version": "3.0.0-beta.28",
+  "version": "3.0.0-beta.29",
   "description": "@eggjs/errors provide two kinds of errors that is Error and Exception.",
   "type": "module",
   "exports": {
