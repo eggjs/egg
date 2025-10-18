@@ -363,4 +363,23 @@ export interface EggPlugin {
  */
 export interface IService extends Record<string, any> {}
 
+/**
+ * The empty interface `IController` is a placeholder, for egg
+ * to auto injection controller to app.controller
+ *
+ * @example
+ *
+ * import { Controller } from 'egg';
+ * class HomeController extends Controller {
+ *   async index() {}
+ * }
+ *
+ * declare module 'egg' {
+ *   export interface IController {
+ *     home: HomeController;
+ *   }
+ * }
+ *
+ * Now I can get app.controller.home in the application.
+ */
 export interface IController extends Record<string, any> {}
