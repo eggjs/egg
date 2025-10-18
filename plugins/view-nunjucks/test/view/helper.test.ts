@@ -1,4 +1,5 @@
 import path from 'node:path';
+
 import { describe, it, beforeAll, afterAll, afterEach } from 'vitest';
 import { mock, type MockApplication } from '@eggjs/mock';
 import { stripIndent } from 'common-tags';
