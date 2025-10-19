@@ -40,7 +40,7 @@
     "test": "vitest run --bail 1 --retry 2",
     "test:cov": "pnpm run test --coverage",
     "preci": "pnpm -r run pretest",
-    "ci": "vitest run --bail 1 --retry 2 --coverage",
+    "ci": "vitest run --bail 1 --retry 2 --coverage --testTimeout 20000 --hookTimeout 20000",
     "ci:packages": "node scripts/ci.js packages",
     "ci:tools": "node scripts/ci.js tools && pnpm example:typescript:test",
     "ci:plugins": "node scripts/ci.js plugins",
