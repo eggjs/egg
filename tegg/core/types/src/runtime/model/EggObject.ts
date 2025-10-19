@@ -4,13 +4,14 @@ import type { EggPrototype, LoadUnit } from '../../metadata/index.ts';
 import type { EggRuntimeContext } from './EggContext.ts';
 import type { LoadUnitInstance } from './LoadUnitInstance.ts';
 
-export enum EggObjectStatus {
-  PENDING = 'PENDING',
-  READY = 'READY',
-  ERROR = 'ERROR',
-  DESTROYING = 'DESTROYING',
-  DESTROYED = 'DESTROYED',
-}
+export const EggObjectStatus = {
+  PENDING: 'PENDING',
+  READY: 'READY',
+  ERROR: 'ERROR',
+  DESTROYING: 'DESTROYING',
+  DESTROYED: 'DESTROYED',
+} as const;
+export type EggObjectStatus = (typeof EggObjectStatus)[keyof typeof EggObjectStatus];
 
 export interface EggObjectLifeCycleContext extends LifecycleContext {
   readonly loadUnit: LoadUnit;

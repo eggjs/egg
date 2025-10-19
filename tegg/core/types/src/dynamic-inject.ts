@@ -14,4 +14,4 @@ export interface EggObjectFactory {
   getEggObjects<T extends object>(abstractClazz: EggAbstractClazz<T>): Promise<AsyncIterable<T>>;
 }
 
-export const QUALIFIER_IMPL_MAP = Symbol.for('EggPrototype#qualifierImplMap');
+export const QUALIFIER_IMPL_MAP: symbol = Symbol.for('EggPrototype#qualifierImplMap');

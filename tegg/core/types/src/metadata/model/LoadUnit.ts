@@ -3,11 +3,12 @@ import type { LifecycleContext, LifecycleObject } from '../../lifecycle/index.ts
 import type { EggPrototype } from './EggPrototype.ts';
 import type { Loader } from './Loader.ts';
 
-export enum EggLoadUnitType {
-  MODULE = 'MODULE',
-  PLUGIN = 'PLUGIN',
-  APP = 'APP',
-}
+export const EggLoadUnitType = {
+  MODULE: 'MODULE',
+  PLUGIN: 'PLUGIN',
+  APP: 'APP',
+} as const;
+export type EggLoadUnitType = (typeof EggLoadUnitType)[keyof typeof EggLoadUnitType];
 
 export type EggLoadUnitTypeLike = EggLoadUnitType | string;
 

@@ -1,12 +1,13 @@
-export enum ScheduleType {
-  WORKER = 'worker',
-  ALL = 'all',
-}
+export const ScheduleType = {
+  WORKER: 'worker',
+  ALL: 'all',
+} as const;
+export type ScheduleType = (typeof ScheduleType)[keyof typeof ScheduleType];
 
-export const IS_SCHEDULE = Symbol.for('EggPrototype#isSchedule');
-export const SCHEDULE_PARAMS = Symbol.for('EggPrototype#schedule#params');
-export const SCHEDULE_OPTIONS = Symbol.for('EggPrototype#schedule#options');
-export const SCHEDULE_METADATA = Symbol.for('EggPrototype#schedule#metadata');
+export const IS_SCHEDULE: symbol = Symbol.for('EggPrototype#isSchedule');
+export const SCHEDULE_PARAMS: symbol = Symbol.for('EggPrototype#schedule#params');
+export const SCHEDULE_OPTIONS: symbol = Symbol.for('EggPrototype#schedule#options');
+export const SCHEDULE_METADATA: symbol = Symbol.for('EggPrototype#schedule#metadata');
 
 export type ScheduleTypeLike = ScheduleType | string;
 

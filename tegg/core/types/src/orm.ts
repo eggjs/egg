@@ -34,8 +34,8 @@ export interface ModelAttributeInfo {
 
 export const MODEL_PROTO_IMPL_TYPE = 'MODEL_PROTO';
 
-export const IS_MODEL = Symbol.for('EggPrototype#model#isModel');
-export const MODEL_DATA_SOURCE = Symbol.for('EggPrototype#model#dataSource');
-export const MODEL_DATA_TABLE_NAME = Symbol.for('EggPrototype#model#tableName');
-export const MODEL_DATA_INDICES = Symbol.for('EggPrototype#model#indices');
-export const MODEL_DATA_ATTRIBUTES = Symbol.for('EggPrototype#model#attributes');
+export const IS_MODEL: symbol = Symbol.for('EggPrototype#model#isModel');
+export const MODEL_DATA_SOURCE: symbol = Symbol.for('EggPrototype#model#dataSource');
+export const MODEL_DATA_TABLE_NAME: symbol = Symbol.for('EggPrototype#model#tableName');
+export const MODEL_DATA_INDICES: symbol = Symbol.for('EggPrototype#model#indices');
+export const MODEL_DATA_ATTRIBUTES: symbol = Symbol.for('EggPrototype#model#attributes');

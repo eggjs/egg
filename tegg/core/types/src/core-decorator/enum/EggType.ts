@@ -1,4 +1,5 @@
-export enum EggType {
-  APP = 'APP',
-  CONTEXT = 'CONTEXT',
-}
+export const EggType = {
+  APP: 'APP',
+  CONTEXT: 'CONTEXT',
+} as const;
+export type EggType = (typeof EggType)[keyof typeof EggType];

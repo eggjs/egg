@@ -1,13 +1,13 @@
-export const ConfigSourceQualifierAttribute = Symbol.for('Qualifier.ConfigSource');
+export const ConfigSourceQualifierAttribute: symbol = Symbol.for('Qualifier.ConfigSource');
 
-export const EggQualifierAttribute = Symbol.for('Qualifier.Egg');
+export const EggQualifierAttribute: symbol = Symbol.for('Qualifier.Egg');
 
-export const InitTypeQualifierAttribute = Symbol.for('Qualifier.InitType');
+export const InitTypeQualifierAttribute: symbol = Symbol.for('Qualifier.InitType');
 
-export const LoadUnitNameQualifierAttribute = Symbol.for('Qualifier.LoadUnitName');
+export const LoadUnitNameQualifierAttribute: symbol = Symbol.for('Qualifier.LoadUnitName');
 
-export const QUALIFIER_META_DATA = Symbol.for('EggPrototype#qualifier');
+export const QUALIFIER_META_DATA: symbol = Symbol.for('EggPrototype#qualifier');
 
-export const PROPERTY_QUALIFIER_META_DATA = Symbol.for('EggPrototype#propertyQualifier');
+export const PROPERTY_QUALIFIER_META_DATA: symbol = Symbol.for('EggPrototype#propertyQualifier');
 
-export const CONSTRUCTOR_QUALIFIER_META_DATA = Symbol.for('EggPrototype#constructorQualifier');
+export const CONSTRUCTOR_QUALIFIER_META_DATA: symbol = Symbol.for('EggPrototype#constructorQualifier');

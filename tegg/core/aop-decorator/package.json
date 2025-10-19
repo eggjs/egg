@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/aop-decorator",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg aop decorator",
   "keywords": [
     "tegg",
@@ -9,11 +9,11 @@
     "egg"
   ],
   "author": "killagu <killa123@126.com>",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/aop-decorator",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/aop-decorator",
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/aop-decorator"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/aop-decorator"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -46,7 +46,7 @@
     "dist"
   ],
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "devDependencies": {
     "@types/node": "catalog:",

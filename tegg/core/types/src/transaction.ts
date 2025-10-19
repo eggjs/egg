@@ -1,9 +1,10 @@
-export enum PropagationType {
+export const PropagationType = {
   /** 不管是当前调用栈是否存在事务，始终让当前函数在新的事务中执行 */
-  ALWAYS_NEW = 'ALWAYS_NEW',
+  ALWAYS_NEW: 'ALWAYS_NEW',
   /** 如果当前调用栈存在事务则复用，否则创建一个 */
-  REQUIRED = 'REQUIRED',
-}
+  REQUIRED: 'REQUIRED',
+} as const;
+export type PropagationType = (typeof PropagationType)[keyof typeof PropagationType];
 
 export interface TransactionalParams {
   /** 事务传播方式，默认 REQUIRED */
@@ -22,5 +23,5 @@ export interface TransactionMetadata {
   datasourceName?: string;
 }
 
-export const TRANSACTION_META_DATA = Symbol.for('EggPrototype#transaction#metaData');
-export const IS_TRANSACTION_CLAZZ = Symbol.for('EggPrototype#IS_TRANSACTION_CLAZZ');
+export const TRANSACTION_META_DATA: symbol = Symbol.for('EggPrototype#transaction#metaData');
+export const IS_TRANSACTION_CLAZZ: symbol = Symbol.for('EggPrototype#IS_TRANSACTION_CLAZZ');

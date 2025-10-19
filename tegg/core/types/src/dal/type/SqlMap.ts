@@ -5,12 +5,12 @@ export interface BaseSqlMap {
 }
 
 export interface FullSqlMap extends BaseSqlMap {
-  type: SqlType.DELETE | SqlType.INSERT | SqlType.UPDATE | SqlType.SELECT;
+  type: typeof SqlType.DELETE | typeof SqlType.INSERT | typeof SqlType.UPDATE | typeof SqlType.SELECT;
   sql: string;
 }
 
 export interface BlockSqlMap extends BaseSqlMap {
-  type: SqlType.BLOCK;
+  type: typeof SqlType.BLOCK;
   content: string;
 }
 
@@ -18,6 +18,6 @@ export type SqlMap = FullSqlMap | BlockSqlMap;
 
 export interface GenerateSqlMap {
   name: string;
-  type: SqlType.DELETE | SqlType.UPDATE | SqlType.INSERT | SqlType.SELECT;
+  type: typeof SqlType.DELETE | typeof SqlType.UPDATE | typeof SqlType.INSERT | typeof SqlType.SELECT;
   sql: string;
 }

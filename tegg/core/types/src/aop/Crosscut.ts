@@ -10,26 +10,26 @@ export interface CrosscutOptions {
 
 // TODO type check for methodName
 export interface ClassCrosscutParam {
-  type: PointcutType.CLASS;
+  type: typeof PointcutType.CLASS;
   clazz: EggProtoImplClass;
   methodName: PropertyKey;
 }
 
 export interface NameCrosscutParam {
-  type: PointcutType.NAME;
+  type: typeof PointcutType.NAME;
   className: RegExp;
   methodName: RegExp;
 }
 
 export interface CustomCrosscutParam {
-  type: PointcutType.CUSTOM;
+  type: typeof PointcutType.CUSTOM;
   callback: CustomPointcutCallback;
 }
 
 export type CrosscutParam = ClassCrosscutParam | NameCrosscutParam | CustomCrosscutParam;
 
-export const CROSSCUT_INFO_LIST = Symbol.for('EggPrototype#crosscutInfoList');
-export const IS_CROSSCUT_ADVICE = Symbol.for('EggPrototype#isCrosscutAdvice');
+export const CROSSCUT_INFO_LIST: symbol = Symbol.for('EggPrototype#crosscutInfoList');
+export const IS_CROSSCUT_ADVICE: symbol = Symbol.for('EggPrototype#isCrosscutAdvice');
 
 export interface CrosscutInfo {
   pointcutInfo: PointcutInfo;

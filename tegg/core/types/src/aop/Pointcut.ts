@@ -6,20 +6,21 @@ export interface PointcutOptions<K = any> {
   adviceParams?: K;
 }
 
-export enum PointcutType {
+export const PointcutType = {
   /**
    * use class type to match
    */
-  CLASS = 'CLASS',
+  CLASS: 'CLASS',
   /**
    * use regexp to match className and methodName
    */
-  NAME = 'NAME',
+  NAME: 'NAME',
   /**
    * use custom function to match
    */
-  CUSTOM = 'CUSTOM',
-}
+  CUSTOM: 'CUSTOM',
+} as const;
+export type PointcutType = (typeof PointcutType)[keyof typeof PointcutType];
 
 export interface PointcutInfo {
   type: PointcutType;
@@ -29,4 +30,4 @@ export interface PointcutInfo {
 
 export type CustomPointcutCallback = (clazz: EggProtoImplClass, method: PropertyKey) => boolean;
 
-export const POINTCUT_ADVICE_INFO_LIAR = Symbol.for('EggPrototype#pointcutAdviceInfoList');
+export const POINTCUT_ADVICE_INFO_LIAR: symbol = Symbol.for('EggPrototype#pointcutAdviceInfoList');

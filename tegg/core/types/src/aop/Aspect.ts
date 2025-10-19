@@ -13,4 +13,4 @@ export interface AspectAdvice {
   adviceParams: any;
 }
 
-export const ASPECT_LIST = Symbol.for('EggPrototype#aspectList');
+export const ASPECT_LIST: symbol = Symbol.for('EggPrototype#aspectList');
