@@ -5,7 +5,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { ScheduleMetadata } from '../model/index.ts';
 
 export class ScheduleMetadataUtil {
-  static setScheduleMetadata(clazz: EggProtoImplClass, metaData: ScheduleMetadata<object>) {
+  static setScheduleMetadata(clazz: EggProtoImplClass, metaData: ScheduleMetadata<object>): void {
     MetadataUtil.defineMetaData(SCHEDULE_METADATA, metaData, clazz);
   }
 

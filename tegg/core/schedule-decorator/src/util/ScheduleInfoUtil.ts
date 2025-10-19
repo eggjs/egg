@@ -7,15 +7,15 @@ export class ScheduleInfoUtil {
     return MetadataUtil.getBooleanMetaData(IS_SCHEDULE, clazz);
   }
 
-  static setIsSchedule(isSchedule: boolean, clazz: EggProtoImplClass) {
+  static setIsSchedule(isSchedule: boolean, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(IS_SCHEDULE, isSchedule, clazz);
   }
 
-  static setScheduleParams<T>(scheduleParams: ScheduleParams<T>, clazz: EggProtoImplClass) {
+  static setScheduleParams<T>(scheduleParams: ScheduleParams<T>, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(SCHEDULE_PARAMS, scheduleParams, clazz);
   }
 
-  static setScheduleOptions(scheduleParams: ScheduleOptions, clazz: EggProtoImplClass) {
+  static setScheduleOptions(scheduleParams: ScheduleOptions, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(SCHEDULE_OPTIONS, scheduleParams, clazz);
   }
 
