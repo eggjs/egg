@@ -36,7 +36,7 @@ export class DataSourceManager {
     this.dataSourceConfigs = [];
   }
 
-  addDefaultConfig(config: OrmConfig) {
+  addDefaultConfig(config: OrmConfig): void {
     this.defaultDataSourceConfig = config;
   }
 
@@ -44,7 +44,7 @@ export class DataSourceManager {
     return this.defaultDataSourceConfig;
   }
 
-  addConfig(config: OrmConfig) {
+  addConfig(config: OrmConfig): void {
     this.dataSourceConfigs.push(config);
   }
 

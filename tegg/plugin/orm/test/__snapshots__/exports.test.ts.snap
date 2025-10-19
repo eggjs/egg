@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`plugin/orm/exports.test.ts > should export stable 1`] = `
+{
+  "LeoricRegister": [Function],
+  "Orm": [Function],
+}
+`;

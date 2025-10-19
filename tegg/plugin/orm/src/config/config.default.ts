@@ -7,12 +7,3 @@ export interface AppOrmConfig extends OrmConfig {
 export default {
   orm: {} as AppOrmConfig,
 };
-
-declare module 'egg' {
-  interface EggAppConfig {
-    /**
-     * orm config
-     */
-    orm: AppOrmConfig;
-  }
-}

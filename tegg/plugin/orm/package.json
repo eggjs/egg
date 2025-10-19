@@ -6,7 +6,7 @@
       "tegg"
     ]
   },
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "orm decorator for egg",
   "keywords": [
     "egg",
@@ -42,18 +42,18 @@
     "cov:mocha": "npm run prepare-test && egg-bin cov",
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit --project tsconfig.build.json",
     "prepublishOnly": "npm run build",
     "prepare-test": "node ./test/fixtures/prepare.js"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/orm",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/orm",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/orm"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/orm"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -79,8 +79,6 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",
-    "@types/mocha": "catalog:",
-    "mocha": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "mysql2": "catalog:",

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import os from 'node:os';
+import path from 'node:path';
 
+import { describe, it, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 import Realm from 'leoric';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { Context } from 'egg';
@@ -11,12 +12,11 @@ import { Pkg } from './fixtures/apps/orm-app/modules/orm-module/model/Pkg.ts';
 import { App } from './fixtures/apps/orm-app/modules/orm-module/model/App.ts';
 import { CtxService } from './fixtures/apps/orm-app/modules/orm-module/CtxService.ts';
 
-describe('plugin/orm/test/orm.test.ts', () => {
-  // TODO win32 ci not support mysql
-  if (['win32'].includes(os.platform())) {
-    return;
-  }
+function getFixtures(name: string) {
+  return path.join(import.meta.dirname, 'fixtures', name);
+}
 
+describe('plugin/orm/test/orm.test.ts', () => {
   let app: MockApplication;
   let appService: AppService;
 
@@ -25,14 +25,14 @@ describe('plugin/orm/test/orm.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
-      baseDir: 'apps/orm-app',
+      baseDir: getFixtures('apps/orm-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 
@@ -81,7 +81,7 @@ describe('plugin/orm/test/orm.test.ts', () => {
     appService = await app.getEggObject(AppService);
 
     describe('raw query', () => {
-      before(async () => {
+      beforeAll(async () => {
         const appModel = await appService.createApp({
           name: 'egg',
           desc: 'the framework',

@@ -22,9 +22,9 @@ import type { Bone } from 'leoric';
 export default class SingletonModelProto implements EggPrototype {
   [key: symbol]: PropertyDescriptor;
   private readonly qualifiers: QualifierInfo[];
-  readonly accessLevel = AccessLevel.PUBLIC;
+  readonly accessLevel: AccessLevel = AccessLevel.PUBLIC;
   id: Id;
-  readonly initType = ObjectInitType.SINGLETON;
+  readonly initType: ObjectInitType = ObjectInitType.SINGLETON;
   readonly injectObjects: (InjectObjectProto | InjectConstructorProto)[] = [];
   readonly loadUnitId: string;
   readonly moduleName: string;

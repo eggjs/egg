@@ -1,4 +1,4 @@
-import { type LifecycleHook } from '@eggjs/tegg';
+import type { LifecycleHook } from '@eggjs/tegg';
 import {
   EggLoadUnitType,
   EggPrototypeCreatorFactory,

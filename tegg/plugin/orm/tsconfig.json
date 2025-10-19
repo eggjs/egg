@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./",
-    "target": "ES2021",
-    "types": ["mocha"]
+    // legacy target for leoric, let unittest can work
+    "target": "ES2021"
   }
 }

@@ -1,10 +1,9 @@
-import assert from 'node:assert/strict';
+import { describe, it, expect } from 'vitest';
 
-import { Orm, LeoricRegister } from '../src/index.ts';
+import * as exports from '../src/index.ts';
 
 describe('plugin/orm/exports.test.ts', () => {
-  it('should export Orm', () => {
-    assert.ok(Orm);
-    assert.ok(LeoricRegister);
+  it('should export stable', () => {
+    expect(exports).toMatchSnapshot();
   });
 });

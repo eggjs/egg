@@ -1,7 +1,6 @@
-import { Application } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
 import { MODEL_PROTO_IMPL_TYPE } from '@eggjs/tegg-orm-decorator';
 
-import { Orm } from './lib/SingletonORM.ts';
 import { DataSourceManager } from './lib/DataSourceManager.ts';
 import { LeoricRegister } from './lib/LeoricRegister.ts';
 import { ModelProtoManager } from './lib/ModelProtoManager.ts';
@@ -10,7 +9,7 @@ import SingletonModelProto from './lib/SingletonModelProto.ts';
 import { SingletonModelObject } from './lib/SingletonModelObject.ts';
 import { ORMLoadUnitHook } from './lib/ORMLoadUnitHook.ts';
 
-export default class OrmAppBootHook {
+export default class OrmAppBootHook implements ILifecycleBoot {
   private readonly app: Application;
   private readonly dataSourceManager: DataSourceManager;
   private readonly leoricRegister: LeoricRegister;
@@ -32,13 +31,13 @@ export default class OrmAppBootHook {
     this.ormLoadUnitHook = new ORMLoadUnitHook();
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.modelProtoHook);
     this.app.eggObjectFactory.registerEggObjectCreateMethod(SingletonModelProto, SingletonModelObject.createObject);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.ormLoadUnitHook);
   }
 
-  configDidLoad() {
+  configDidLoad(): void {
     const config = this.app.config.orm;
     if (config.datasources) {
       for (const datasource of config.datasources) {
@@ -49,19 +48,12 @@ export default class OrmAppBootHook {
     }
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
     await this.leoricRegister.register();
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.modelProtoHook);
-  }
-}
-
-declare module 'egg' {
-  interface Application {
-    leoricRegister: LeoricRegister;
-    orm: Orm;
   }
 }

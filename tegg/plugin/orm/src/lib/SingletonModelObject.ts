@@ -20,10 +20,9 @@ export class SingletonModelObject implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id);
   }
 
-  async init() {
+  async init(): Promise<void> {
     const clazz = class ContextModelClass extends this.proto.model {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      // @ts-ignore: name is a static property of the class
       static get name() {
         return super.name;
       }
@@ -43,15 +42,18 @@ export class SingletonModelObject implements EggObject {
     this.status = EggObjectStatus.READY;
   }
 
-  injectProperty() {
+  injectProperty(): void {
     throw new Error('never call ModelObject#injectProperty');
   }
 
-  get isReady() {
+  get isReady(): boolean {
     return this.status === EggObjectStatus.READY;
   }
 
-  get obj() {
+  /**
+   * get Model Class, to store instance objects
+   */
+  get obj(): typeof Bone {
     return this._obj;
   }
 

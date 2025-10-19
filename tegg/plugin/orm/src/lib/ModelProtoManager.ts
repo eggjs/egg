@@ -1,5 +1,5 @@
-import { type EggPrototype } from '@eggjs/tegg-metadata';
-import { type EggProtoImplClass } from '@eggjs/tegg';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggProtoImplClass } from '@eggjs/tegg';
 
 export interface ModelProtoPair {
   proto: EggPrototype;
@@ -9,7 +9,7 @@ export interface ModelProtoPair {
 export class ModelProtoManager {
   private readonly protos: Array<ModelProtoPair> = [];
 
-  addProto(clazz: EggProtoImplClass, proto: EggPrototype) {
+  addProto(clazz: EggProtoImplClass, proto: EggPrototype): void {
     this.protos.push({ proto, clazz });
   }
 

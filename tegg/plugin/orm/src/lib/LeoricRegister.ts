@@ -18,7 +18,7 @@ export class LeoricRegister extends Base {
     this.realmMap = new Map();
   }
 
-  getConfig(datasource?: string) {
+  getConfig(datasource?: string): OrmConfig | undefined {
     let config: OrmConfig | undefined;
     if (!datasource) {
       config = this.dataSourceManager.getDefaultConfig();
@@ -50,7 +50,7 @@ export class LeoricRegister extends Base {
     return realm;
   }
 
-  generateLeoricAttributes(metadata: ModelMetadata) {
+  generateLeoricAttributes(metadata: ModelMetadata): Record<string, any> {
     const attributes: Record<string, any> = {};
     for (const attribute of metadata.attributes) {
       attributes[attribute.propertyName] = {
@@ -65,7 +65,7 @@ export class LeoricRegister extends Base {
     return attributes;
   }
 
-  async register() {
+  async register(): Promise<void> {
     for (const { proto, clazz } of this.modelProtoManager.getProtos()) {
       const metadata = ModelMetadataUtil.getModelMetadata(clazz);
       if (!metadata) throw new Error(`not found metadata for model ${proto.id}`);
