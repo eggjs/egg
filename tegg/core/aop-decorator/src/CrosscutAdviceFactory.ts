@@ -6,7 +6,7 @@ import { CrosscutInfoUtil } from './util/index.ts';
 export class CrosscutAdviceFactory {
   private readonly crosscutAdviceClazzList: Array<EggProtoImplClass<IAdvice>> = [];
 
-  registerCrossAdviceClazz(clazz: EggProtoImplClass<IAdvice>) {
+  registerCrossAdviceClazz(clazz: EggProtoImplClass<IAdvice>): void {
     assert(CrosscutInfoUtil.isCrosscutAdvice(clazz), `clazz ${clazz.name} is not crosscut advice`);
     this.crosscutAdviceClazzList.push(clazz);
   }

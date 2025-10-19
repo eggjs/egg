@@ -23,7 +23,7 @@ export class AspectBuilder {
     this.adviceList = [];
   }
 
-  addAdvice(adviceInfo: AdviceInfo) {
+  addAdvice(adviceInfo: AdviceInfo): void {
     this.adviceList.push(adviceInfo);
   }
 

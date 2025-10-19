@@ -3,7 +3,7 @@ import { IS_CROSSCUT_ADVICE, CROSSCUT_INFO_LIST } from '@eggjs/tegg-types';
 import type { CrosscutInfo, EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 
 export class CrosscutInfoUtil {
-  static setIsCrosscutAdvice(isCrosscutAdvice: boolean, clazz: EggProtoImplClass<IAdvice>) {
+  static setIsCrosscutAdvice(isCrosscutAdvice: boolean, clazz: EggProtoImplClass<IAdvice>): void {
     MetadataUtil.defineMetaData(IS_CROSSCUT_ADVICE, isCrosscutAdvice, clazz);
   }
 
@@ -11,7 +11,7 @@ export class CrosscutInfoUtil {
     return !!MetadataUtil.getMetaData(IS_CROSSCUT_ADVICE, clazz);
   }
 
-  static addCrosscutInfo(crosscutInfo: CrosscutInfo, clazz: EggProtoImplClass<IAdvice>) {
+  static addCrosscutInfo(crosscutInfo: CrosscutInfo, clazz: EggProtoImplClass<IAdvice>): void {
     const crosscutInfoList = MetadataUtil.initOwnArrayMetaData<CrosscutInfo>(CROSSCUT_INFO_LIST, clazz, []);
     crosscutInfoList.push(crosscutInfo);
   }

@@ -11,7 +11,7 @@ const defaultAdviceParam = {
 };
 
 export function Advice(param?: PrototypeParams) {
-  return function (constructor: EggProtoImplClass<IAdvice>) {
+  return function (constructor: EggProtoImplClass<IAdvice>): void {
     AdviceInfoUtil.setIsAdvice(true, constructor);
     const func = Prototype({
       ...defaultAdviceParam,

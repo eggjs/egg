@@ -1,10 +1,10 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
 import type { EggProtoImplClass, IAdvice } from '@eggjs/tegg-types';
 
-export const IS_ADVICE = Symbol.for('EggPrototype#isAdvice');
+export const IS_ADVICE: symbol = Symbol.for('EggPrototype#isAdvice');
 
 export class AdviceInfoUtil {
-  static setIsAdvice(isAdvice: boolean, clazz: EggProtoImplClass<IAdvice>) {
+  static setIsAdvice(isAdvice: boolean, clazz: EggProtoImplClass<IAdvice>): void {
     MetadataUtil.defineMetaData(IS_ADVICE, isAdvice, clazz);
   }
 

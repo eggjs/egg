@@ -27,16 +27,16 @@ export class PointcutAdviceOverwriteChildExample implements IAdvice {
 @ContextProto()
 export class ParentExample {
   @Pointcut(PointcutAdviceOverwriteParentExample)
-  overwriteMethod() {}
+  overwriteMethod(): void {}
 
   @Pointcut(PointcutAdviceNoOverwriteParentExample)
-  noOverwriteMethod() {}
+  noOverwriteMethod(): void {}
 }
 
 @ContextProto()
 export class ChildExample extends ParentExample {
   @Pointcut(PointcutAdviceOverwriteChildExample)
-  overwriteMethod() {}
+  overwriteMethod(): void {}
 }
 
 @Advice()

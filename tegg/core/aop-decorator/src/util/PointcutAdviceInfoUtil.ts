@@ -8,7 +8,7 @@ interface PointcutAdviceInfo {
 }
 
 export class PointcutAdviceInfoUtil {
-  static addPointcutAdviceInfo(adviceInfo: AdviceInfo, clazz: EggProtoImplClass, method: PropertyKey) {
+  static addPointcutAdviceInfo(adviceInfo: AdviceInfo, clazz: EggProtoImplClass, method: PropertyKey): void {
     const pointcutAdviceInfoList = MetadataUtil.initOwnArrayMetaData<PointcutAdviceInfo>(
       POINTCUT_ADVICE_INFO_LIAR,
       clazz,

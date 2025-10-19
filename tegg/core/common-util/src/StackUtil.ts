@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
 import { debuglog } from 'node:util';
 
-const debug = debuglog('@eggjs/tegg-common-util/StackUtil');
+const debug = debuglog('egg/tegg/core/common-util/StackUtil');
 
 /**
  * Capture call site stack from v8.
@@ -15,7 +15,7 @@ function prepareObjectStackTrace(_: Error, stack: NodeJS.CallSite[]) {
 export class StackUtil {
   // from egg-core/utils
   // https://github.com/eggjs/core/blob/5.x/lib/utils/index.js#L51
-  static getCalleeFromStack(withLine: boolean, stackIndex?: number) {
+  static getCalleeFromStack(withLine: boolean, stackIndex?: number): string {
     stackIndex = stackIndex === undefined ? 2 : stackIndex;
     const limit = Error.stackTraceLimit;
     const prep = Error.prepareStackTrace;
@@ -32,7 +32,7 @@ export class StackUtil {
       debug('call stack: %o', obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n'));
     }
     const callSite = obj.stack[stackIndex];
-    let fileName: string | undefined;
+    let fileName: string | null = null;
     if (callSite) {
       // egg-mock will create a proxy
       // https://github.com/eggjs/egg-mock/blob/master/lib/app.js#L174

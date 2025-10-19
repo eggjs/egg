@@ -2,7 +2,7 @@ import { PointcutType } from '@eggjs/tegg-types';
 import type { CustomPointcutCallback, EggProtoImplClass, PointcutInfo } from '@eggjs/tegg-types';
 
 export class ClassPointInfo implements PointcutInfo {
-  readonly type = PointcutType.CLASS;
+  readonly type: PointcutType = PointcutType.CLASS;
   readonly clazz: EggProtoImplClass;
   readonly method: PropertyKey;
 
@@ -23,7 +23,7 @@ export class ClassPointInfo implements PointcutInfo {
 }
 
 export class NamePointInfo implements PointcutInfo {
-  readonly type = PointcutType.NAME;
+  readonly type: PointcutType = PointcutType.NAME;
   readonly className: RegExp;
   readonly methodName: RegExp;
 
@@ -38,7 +38,7 @@ export class NamePointInfo implements PointcutInfo {
 }
 
 export class CustomPointInfo implements PointcutInfo {
-  readonly type = PointcutType.CUSTOM;
+  readonly type: PointcutType = PointcutType.CUSTOM;
   readonly cb: CustomPointcutCallback;
 
   constructor(cb: CustomPointcutCallback) {

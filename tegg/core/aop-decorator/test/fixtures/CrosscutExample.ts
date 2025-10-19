@@ -7,7 +7,7 @@ import { Advice, Crosscut } from '../../src/index.js';
 export class CrosscutExample {
   constructor() {}
 
-  hello() {
+  hello(): void {
     console.log('hello');
   }
 }

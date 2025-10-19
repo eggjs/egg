@@ -11,7 +11,7 @@ export function Pointcut<T extends object, K = any>(
   adviceClazz: EggProtoImplClass<IAdvice<T, K>>,
   options?: PointcutOptions<K>
 ) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     assert(AdviceInfoUtil.isAdvice(adviceClazz), `class ${adviceClazz} has no @Advice decorator`);
     const targetClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;

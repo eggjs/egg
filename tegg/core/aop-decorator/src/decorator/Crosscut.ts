@@ -9,7 +9,7 @@ const defaultCrossOptions = {
 };
 
 export function Crosscut(param: CrosscutParam, options?: CrosscutOptions) {
-  return function (constructor: EggProtoImplClass<IAdvice>) {
+  return function (constructor: EggProtoImplClass<IAdvice>): void {
     let crosscutInfo: CrosscutInfo;
     if (param.type === PointcutType.CLASS) {
       crosscutInfo = {
