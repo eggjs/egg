@@ -73,7 +73,7 @@ export class EggObjectFactoryPrototype implements EggPrototype {
     return true;
   }
 
-  static create(ctx: EggPrototypeLifecycleContext) {
+  static create(ctx: EggPrototypeLifecycleContext): EggObjectFactoryPrototype {
     return new EggObjectFactoryPrototype(
       ctx.clazz as EggProtoImplClass<EggObjectFactory>,
       ctx.loadUnit,

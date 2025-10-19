@@ -1,17 +1,16 @@
 import { EggContainerFactory, EggObjectFactory as TEggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type { EggRuntimeContext, EggObject, EggObjectName, EggPrototype } from '@eggjs/tegg-types';
-import { EggObjectFactory } from './EggObjectFactory.js';
-import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype.js';
 
-const OBJ = Symbol('EggObjectFactoryObject#obj');
+import { EggObjectFactory } from './EggObjectFactory.ts';
+import { EggObjectFactoryPrototype } from './EggObjectFactoryPrototype.ts';
 
 export class EggObjectFactoryObject implements EggObject {
   readonly proto: EggObjectFactoryPrototype;
   readonly name: EggObjectName;
   readonly ctx?: EggRuntimeContext;
   readonly id: string;
-  private [OBJ]: EggObjectFactory;
+  #objFactory: EggObjectFactory;
 
   constructor(name: EggObjectName, proto: EggObjectFactoryPrototype) {
     this.proto = proto;
@@ -19,12 +18,12 @@ export class EggObjectFactoryObject implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id, this.ctx?.id);
   }
 
-  get obj() {
-    if (!this[OBJ]) {
-      this[OBJ] = this.proto.constructEggObject() as EggObjectFactory;
-      this[OBJ].eggContainerFactory = EggContainerFactory;
+  get obj(): EggObjectFactory {
+    if (!this.#objFactory) {
+      this.#objFactory = this.proto.constructEggObject() as EggObjectFactory;
+      this.#objFactory.eggContainerFactory = EggContainerFactory;
     }
-    return this[OBJ];
+    return this.#objFactory;
   }
 
   static async createObject(name: EggObjectName, proto: EggPrototype): Promise<EggObjectFactoryObject> {

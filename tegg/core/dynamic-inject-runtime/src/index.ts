@@ -1,3 +1,3 @@
-export * from './EggObjectFactory.js';
-export * from './EggObjectFactoryObject.js';
-export * from './EggObjectFactoryPrototype.js';
+export * from './EggObjectFactory.ts';
+export * from './EggObjectFactoryObject.ts';
+export * from './EggObjectFactoryPrototype.ts';

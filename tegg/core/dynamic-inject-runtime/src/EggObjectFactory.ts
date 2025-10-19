@@ -3,7 +3,8 @@ import type { QualifierValue, EggAbstractClazz, EggObjectFactory as IEggObjectFa
 import type { EggContainerFactory } from '@eggjs/tegg-runtime';
 import { PrototypeUtil, SingletonProto } from '@eggjs/core-decorator';
 import { QualifierImplUtil } from '@eggjs/tegg-dynamic-inject';
-import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype.js';
+
+import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype.ts';
 
 @SingletonProto({
   protoImplType: EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE,
@@ -13,7 +14,7 @@ import { EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE } from './EggObjectFactoryPrototype
 export class EggObjectFactory implements IEggObjectFactory {
   eggContainerFactory: typeof EggContainerFactory;
 
-  async getEggObject<T extends object>(abstractClazz: EggAbstractClazz<T>, qualifierValue: QualifierValue) {
+  async getEggObject<T extends object>(abstractClazz: EggAbstractClazz<T>, qualifierValue: QualifierValue): Promise<T> {
     const implClazz = QualifierImplUtil.getQualifierImp(abstractClazz, qualifierValue);
     if (!implClazz) {
       throw new Error(`has no impl for ${abstractClazz.name} with qualifier ${qualifierValue}`);
@@ -26,7 +27,7 @@ export class EggObjectFactory implements IEggObjectFactory {
     return eggObject.obj as T;
   }
 
-  async getEggObjects<T extends object>(abstractClazz: EggAbstractClazz<T>) {
+  async getEggObjects<T extends object>(abstractClazz: EggAbstractClazz<T>): Promise<AsyncIterable<T>> {
     const implClazzMap = QualifierImplUtil.getQualifierImpMap(abstractClazz);
     const getEggObject = this.getEggObject.bind(this);
     const qualifierValues = Array.from(implClazzMap.keys());
@@ -36,10 +37,12 @@ export class EggObjectFactory implements IEggObjectFactory {
         return {
           key: 0,
           async next() {
+            // @ts-expect-error key is not defined
             if (this.key === qualifierValues.length) {
               return { done: true } as IteratorResult<T>;
             }
 
+            // @ts-expect-error key is not defined
             const value = await getEggObject(abstractClazz, qualifierValues[this.key++]);
             return { value, done: false } as IteratorResult<T>;
           },

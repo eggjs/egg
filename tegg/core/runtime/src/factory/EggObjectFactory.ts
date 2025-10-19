@@ -21,7 +21,7 @@ export class EggObjectFactory {
   static eggObjectMap: Map<string, EggObjectPair> = new Map();
   static eggObjectCreateMap: Map<EggPrototypeClass, CreateObjectMethod> = new Map();
 
-  public static registerEggObjectCreateMethod(protoClass: EggPrototypeClass, method: CreateObjectMethod) {
+  public static registerEggObjectCreateMethod(protoClass: EggPrototypeClass, method: CreateObjectMethod): void {
     this.eggObjectCreateMap.set(protoClass, method);
   }
 
