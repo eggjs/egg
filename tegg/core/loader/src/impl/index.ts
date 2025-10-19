@@ -1,1 +1,1 @@
-export * from './ModuleLoader.js';
+export * from './ModuleLoader.ts';

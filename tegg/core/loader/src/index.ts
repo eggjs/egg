@@ -1,3 +1,3 @@
-export * from './LoaderFactory.js';
-export * from './LoaderUtil.js';
-export * from './impl/index.js';
+export * from './LoaderFactory.ts';
+export * from './LoaderUtil.ts';
+export * from './impl/index.ts';

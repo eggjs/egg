@@ -21,7 +21,7 @@ export class LoaderFactory {
     return creator(unitPath);
   }
 
-  static registerLoader(type: EggLoadUnitTypeLike, creator: LoaderCreator) {
+  static registerLoader(type: EggLoadUnitTypeLike, creator: LoaderCreator): void {
     this.loaderCreatorMap.set(type, creator);
   }
 

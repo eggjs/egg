@@ -15,7 +15,7 @@ export interface CallTraceMsg {
 export class CallTrace {
   msgs: Array<CallTraceMsg> = [];
 
-  addMsg(msg: CallTraceMsg) {
+  addMsg(msg: CallTraceMsg): void {
     this.msgs.push(msg);
   }
 }

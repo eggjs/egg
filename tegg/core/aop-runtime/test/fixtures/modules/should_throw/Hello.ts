@@ -14,7 +14,7 @@ export class Hello {
   id = 233;
 
   @Pointcut(PointcutAdvice)
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 }

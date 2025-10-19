@@ -8,8 +8,8 @@ import { Hello } from '../hello_succeed/Hello.ts';
 import { CallTrace } from '../hello_cross_cut/CallTrace.ts';
 
 export const pointcutAdviceParams = {
-  point: Math.random().toString(),
-  cut: Math.random().toString(),
+  point: Math.random().toString() as string,
+  cut: Math.random().toString() as string,
 };
 
 // 测试aop修改ctx的args的值

@@ -9,15 +9,16 @@ export class Foo {}
 export class HelloConstructorInject {
   id = 233;
 
+  // @ts-expect-error: readonly property in constructor
   constructor(@Inject() readonly foo: Foo) {}
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async helloWithException(name: string) {
+  async helloWithException(name: string): Promise<never> {
     throw new Error(`ops, exception for ${name}`);
   }
 }

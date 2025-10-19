@@ -8,8 +8,8 @@ import { Hello } from '../hello_succeed/Hello.ts';
 import { CallTrace } from './CallTrace.ts';
 
 export const crosscutAdviceParams = {
-  cross: Math.random().toString(),
-  cut: Math.random().toString(),
+  cross: Math.random().toString() as string,
+  cut: Math.random().toString() as string,
 };
 
 @Crosscut(

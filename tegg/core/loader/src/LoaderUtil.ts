@@ -14,11 +14,11 @@ interface LoaderUtilConfig {
 
 export class LoaderUtil {
   static config: LoaderUtilConfig = {};
-  static setConfig(config: LoaderUtilConfig) {
+  static setConfig(config: LoaderUtilConfig): void {
     this.config = config;
   }
 
-  static supportExtensions() {
+  static supportExtensions(): string[] {
     const extensions = Object.keys((Module as any)._extensions);
     if (process.env.VITEST === 'true' && !extensions.includes('.ts')) {
       extensions.push('.ts');
@@ -26,7 +26,7 @@ export class LoaderUtil {
     return extensions;
   }
 
-  static get extension() {
+  static get extension(): string {
     return LoaderUtil.supportExtensions().includes('.ts') ? '.ts' : '.js';
   }
 

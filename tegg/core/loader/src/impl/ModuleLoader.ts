@@ -1,11 +1,13 @@
 import path from 'node:path';
 import { debuglog } from 'node:util';
+
 import globby from 'globby';
 import type { EggProtoImplClass, Loader } from '@eggjs/tegg-types';
-import { LoaderUtil } from '../LoaderUtil.js';
-import { LoaderFactory } from '../LoaderFactory.js';
 
-const debug = debuglog('@eggjs/tegg-loader/impl/ModuleLoader');
+import { LoaderUtil } from '../LoaderUtil.ts';
+import { LoaderFactory } from '../LoaderFactory.ts';
+
+const debug = debuglog('egg/tegg/loader/impl/ModuleLoader');
 
 export class ModuleLoader implements Loader {
   private readonly moduleDir: string;

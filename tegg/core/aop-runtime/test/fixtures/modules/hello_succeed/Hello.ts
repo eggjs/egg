@@ -8,17 +8,17 @@ export class Hello {
   id = 233;
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async helloWithException(name: string) {
+  async helloWithException(name: string): Promise<never> {
     throw new Error(`ops, exception for ${name}`);
   }
 
   @Pointcut(StatePointcutAdvice)
-  async helloState(name: string) {
+  async helloState(name: string): Promise<string> {
     return `hello ${name}`;
   }
 }

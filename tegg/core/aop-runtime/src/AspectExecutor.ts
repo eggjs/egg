@@ -44,7 +44,7 @@ export class AspectExecutor {
     this.aspectAdviceList = aspectAdviceList;
   }
 
-  async execute(...args: any[]) {
+  async execute(...args: any[]): Promise<unknown> {
     const ctx = new InternalAdviceContext(this.obj as Record<string, IAdvice>, this.method, args);
     await this.beforeCall(ctx);
     try {
@@ -59,7 +59,7 @@ export class AspectExecutor {
     }
   }
 
-  async beforeCall(ctx: InternalAdviceContext) {
+  async beforeCall(ctx: InternalAdviceContext): Promise<void> {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.beforeCall) {
@@ -77,7 +77,7 @@ export class AspectExecutor {
     }
   }
 
-  async afterReturn(ctx: InternalAdviceContext, result: any) {
+  async afterReturn(ctx: InternalAdviceContext, result: any): Promise<void> {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterReturn) {
@@ -87,7 +87,7 @@ export class AspectExecutor {
     }
   }
 
-  async afterThrow(ctx: InternalAdviceContext, error: Error) {
+  async afterThrow(ctx: InternalAdviceContext, error: Error): Promise<void> {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterThrow) {
@@ -97,7 +97,7 @@ export class AspectExecutor {
     }
   }
 
-  async afterFinally(ctx: InternalAdviceContext) {
+  async afterFinally(ctx: InternalAdviceContext): Promise<void> {
     for (const aspectAdvice of this.aspectAdviceList) {
       const advice = ctx.that[aspectAdvice.name];
       if (advice.afterFinally) {
@@ -107,7 +107,7 @@ export class AspectExecutor {
     }
   }
 
-  async doExecute(ctx: InternalAdviceContext) {
+  async doExecute(ctx: InternalAdviceContext): Promise<unknown> {
     const lastCall = () => {
       const originMethod = Object.getPrototypeOf(this.obj)[this.method];
       return Reflect.apply(originMethod, ctx.that, ctx.args);

@@ -4,7 +4,7 @@ import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 import { GraphNode } from '@eggjs/tegg-common-util';
 import { ClassProtoDescriptor, GlobalGraph, ProtoDependencyMeta, ProtoNode } from '@eggjs/tegg-metadata';
 
-export function pointCutGraphHook(globalGraph: GlobalGraph) {
+export function pointCutGraphHook(globalGraph: GlobalGraph): void {
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {
     for (const pointCuttedProtoNode of moduleNode.val.protos) {
       const pointCutAdviceProtoList = findPointCutAdvice(globalGraph, pointCuttedProtoNode);

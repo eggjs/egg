@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/module-test-util",
-  "version": "4.0.0-beta.4",
+  "version": "4.0.0-beta.29",
   "private": true,
   "description": "module test util",
   "keywords": [
@@ -25,14 +25,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/test-util",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/test-util",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/test-util"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/test-util"
   },
   "engines": {
     "node": ">=22.18.0"

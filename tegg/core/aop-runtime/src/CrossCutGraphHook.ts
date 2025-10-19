@@ -2,7 +2,7 @@ import { AspectMetaBuilder, type CrosscutInfo, CrosscutInfoUtil } from '@eggjs/a
 import { GraphNode } from '@eggjs/tegg-common-util';
 import { ClassProtoDescriptor, GlobalGraph, ProtoDependencyMeta, ProtoNode } from '@eggjs/tegg-metadata';
 
-export function crossCutGraphHook(globalGraph: GlobalGraph) {
+export function crossCutGraphHook(globalGraph: GlobalGraph): void {
   for (const moduleNode of globalGraph.moduleGraph.nodes.values()) {
     for (const crossCutProtoNode of moduleNode.val.protos) {
       const protoNodes = findCrossCuttedClazz(globalGraph, crossCutProtoNode);

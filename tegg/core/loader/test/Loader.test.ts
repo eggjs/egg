@@ -47,7 +47,10 @@ describe('core/loader/test/Loader.test.ts', () => {
           console.log(prototypes);
         },
         (err: Error) => {
-          assert.match(err.message, /Syntax Error|ERROR: Expected ";" but found "here"/);
+          assert.match(
+            err.message,
+            /Syntax Error|ERROR: Expected ";" but found "here"|failed: Expected `;` but found `Identifier`/
+          );
           return true;
         }
       );
