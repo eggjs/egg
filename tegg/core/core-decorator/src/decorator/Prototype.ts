@@ -10,8 +10,15 @@ const DEFAULT_PARAMS = {
   protoImplType: DEFAULT_PROTO_IMPL_TYPE,
 };
 
-export function Prototype(param?: PrototypeParams) {
-  return function (clazz: EggProtoImplClass) {
+export type PrototypeDecorator = (clazz: EggProtoImplClass) => void;
+
+/**
+ * Prototype decorator Factory
+ * @param param - Prototype parameters
+ * @returns Prototype decorator
+ */
+export function Prototype(param?: PrototypeParams): PrototypeDecorator {
+  return function (clazz: EggProtoImplClass): void {
     PrototypeUtil.setIsEggPrototype(clazz);
     const property: Partial<EggPrototypeInfo> = {
       ...DEFAULT_PARAMS,

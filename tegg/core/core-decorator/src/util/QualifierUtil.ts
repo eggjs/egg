@@ -5,7 +5,7 @@ import type { EggProtoImplClass, QualifierAttribute, QualifierInfo, QualifierVal
 import { MetadataUtil } from './MetadataUtil.ts';
 
 export class QualifierUtil {
-  static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue) {
+  static addProtoQualifier(clazz: EggProtoImplClass, attribute: QualifierAttribute, value: QualifierValue): void {
     const qualifiers = MetadataUtil.initOwnMapMetaData(
       QUALIFIER_META_DATA,
       clazz,
@@ -38,7 +38,7 @@ export class QualifierUtil {
     parameterIndex: number | undefined,
     attribute: QualifierAttribute,
     value: QualifierValue
-  ) {
+  ): void {
     if (typeof parameterIndex === 'number') {
       const argNames = ObjectUtils.getConstructorArgNameList(clazz);
       const argName = argNames[parameterIndex];
@@ -53,7 +53,7 @@ export class QualifierUtil {
     property: PropertyKey,
     attribute: QualifierAttribute,
     value: QualifierValue
-  ) {
+  ): void {
     const properQualifiers = MetadataUtil.initOwnMapMetaData(
       PROPERTY_QUALIFIER_META_DATA,
       clazz,

@@ -2,14 +2,14 @@ import { ContextProto } from '../../../src/index.ts';
 
 @ContextProto()
 export class TestService {
-  sayHi() {
+  sayHi(): void {
     console.info('hi');
   }
 }
 
 @ContextProto({ name: 'abcabc' })
 export class TestService2 {
-  sayHi() {
+  sayHi(): void {
     console.info('hi');
   }
 }

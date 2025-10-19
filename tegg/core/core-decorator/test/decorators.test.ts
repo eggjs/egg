@@ -227,8 +227,8 @@ describe('test/decorators.test.ts', () => {
   });
 
   it('should get the right file path', () => {
-    console.warn(CacheService.fileName);
-    console.warn(PrototypeUtil.getFilePath(CacheService));
+    // console.warn(CacheService.fileName);
+    // console.warn(PrototypeUtil.getFilePath(CacheService));
     assert.equal(PrototypeUtil.getFilePath(CacheService), CacheService.fileName);
   });
 

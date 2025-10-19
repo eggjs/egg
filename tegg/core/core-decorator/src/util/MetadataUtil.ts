@@ -1,11 +1,11 @@
 import type { EggProtoImplClass, MetaDataKey } from '@eggjs/tegg-types';
 
 export class MetadataUtil {
-  static deleteMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass) {
+  static deleteMetaData(metadataKey: MetaDataKey, clazz: EggProtoImplClass): void {
     Reflect.deleteMetadata(metadataKey, clazz);
   }
 
-  static defineMetaData<T>(metadataKey: MetaDataKey, metadataValue: T, clazz: EggProtoImplClass) {
+  static defineMetaData<T>(metadataKey: MetaDataKey, metadataValue: T, clazz: EggProtoImplClass): void {
     Reflect.defineMetadata(metadataKey, metadataValue, clazz);
   }
 

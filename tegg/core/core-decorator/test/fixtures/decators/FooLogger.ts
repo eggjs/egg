@@ -1,7 +1,8 @@
 import { AccessLevel, ObjectInitType } from '@eggjs/tegg-types';
-import { MultiInstanceProto } from '../../../src/index.js';
 
-export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
+import { MultiInstanceProto } from '../../../src/index.ts';
+
+export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,

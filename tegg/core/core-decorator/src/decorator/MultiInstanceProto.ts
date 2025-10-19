@@ -18,7 +18,7 @@ const DEFAULT_PARAMS = {
 };
 
 export function MultiInstanceProto(param: MultiInstancePrototypeParams) {
-  return function (clazz: EggProtoImplClass) {
+  return function (clazz: EggProtoImplClass): void {
     PrototypeUtil.setIsEggMultiInstancePrototype(clazz);
     if ((param as MultiInstancePrototypeStaticParams).objects) {
       const property: EggMultiInstancePrototypeInfo = {

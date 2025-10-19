@@ -37,7 +37,14 @@ function guessInjectInfo(clazz: EggProtoImplClass, name: PropertyKey, proto: any
   };
 }
 
-export function Inject(param?: InjectParams | string) {
+export type InjectDecorator = (target: any, propertyKey?: PropertyKey, parameterIndex?: number) => void;
+
+/**
+ * Inject decorator Factory
+ * @param param - Inject parameters
+ * @returns Inject decorator
+ */
+export function Inject(param?: InjectParams | string): InjectDecorator {
   const injectParam = typeof param === 'string' ? { name: param } : param;
 
   function propertyInject(target: any, propertyKey: PropertyKey) {
@@ -113,7 +120,7 @@ export function Inject(param?: InjectParams | string) {
     }
   }
 
-  return function (target: any, propertyKey?: PropertyKey, parameterIndex?: number) {
+  return function (target: any, propertyKey?: PropertyKey, parameterIndex?: number): void {
     if (typeof parameterIndex === 'undefined') {
       propertyInject(target, propertyKey!);
     } else {
@@ -122,7 +129,12 @@ export function Inject(param?: InjectParams | string) {
   };
 }
 
-export function InjectOptional(param?: Omit<InjectParams, 'optional'> | string) {
+/**
+ * InjectOptional decorator Factory
+ * @param param - InjectOptional parameters
+ * @returns InjectOptional decorator
+ */
+export function InjectOptional(param?: Omit<InjectParams, 'optional'> | string): InjectDecorator {
   const injectParam = typeof param === 'string' ? { name: param } : param;
 
   return Inject({

@@ -1,25 +1,25 @@
-import { ContextProto } from '../../../src/index.ts';
-import { Inject, InjectOptional } from '../../../src/index.ts';
+import { ContextProto, Inject, InjectOptional } from '../../../src/index.ts';
 import { type ICache } from './ICache.ts';
 import { TestService, TestService2 } from './OtherService.ts';
 
 @ContextProto()
 export class TestService3 {
-  sayHi() {
+  sayHi(): void {
     console.info('hi');
   }
 }
 
 @ContextProto()
 export class TestService4 {
-  sayHi() {
+  sayHi(): void {
     console.info('hi');
   }
 }
 
 @ContextProto()
 export default class CacheService {
-  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
+  static fileName: string =
+    process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @Inject({
     name: 'fooCache',

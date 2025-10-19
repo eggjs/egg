@@ -29,9 +29,21 @@ export class StackUtil {
     };
     Error.captureStackTrace(obj);
     if (debug.enabled) {
-      debug('call stack: %o', obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n'));
+      debug(
+        'call stack: \n------------------------------------------\n%s\n------------------------------------------',
+        obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n')
+      );
     }
-    const callSite = obj.stack[stackIndex];
+    let callSite = obj.stack[stackIndex];
+    // skip the @oxc-project/runtime/src/helpers/decorate.js stack frame
+    // node_modules/.pnpm/@oxc-project+runtime@0.92.0/node_modules/@oxc-project/runtime/src/helpers/decorate.js
+    if (callSite) {
+      const fileName = callSite.getFileName() ?? '';
+      if (fileName.includes('/@oxc-project/runtime/') || fileName.includes('\\@oxc-project\\runtime\\')) {
+        callSite = obj.stack[stackIndex + 1];
+      }
+    }
+
     let fileName: string | null = null;
     if (callSite) {
       // egg-mock will create a proxy
