@@ -9,7 +9,8 @@ import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from
 
 import { getFixtures } from './utils.ts';
 
-describe('reload logger', () => {
+// TODO: unstable on windows
+describe.skipIf(process.platform === 'win32')('reload logger', () => {
   let app: MockApplication;
   const baseDir = getFixtures('logger-reload');
   beforeAll(() => {

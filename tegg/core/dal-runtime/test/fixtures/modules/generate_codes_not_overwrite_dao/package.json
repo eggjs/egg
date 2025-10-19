@@ -1,0 +1,7 @@
+{
+  "name": "dal",
+  "eggModule": {
+    "name": "dal"
+  },
+  "type": "module"
+}

@@ -1,0 +1,7 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    // legacy target for leoric, let unittest can work
+    "target": "ES2021"
+  }
+}

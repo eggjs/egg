@@ -1,0 +1,7 @@
+{
+  "name": "hello-point-cut",
+  "eggModule": {
+    "name": "helloPointCut"
+  },
+  "type": "module"
+}

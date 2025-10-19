@@ -1,0 +1,108 @@
+{
+  "name": "@eggjs/tegg-orm-plugin",
+  "eggPlugin": {
+    "name": "teggOrm",
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "version": "4.0.0-beta.29",
+  "description": "orm decorator for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg",
+    "orm",
+    "leoric"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./config/config.default": "./src/config/config.default.ts",
+    "./lib/DataSourceManager": "./src/lib/DataSourceManager.ts",
+    "./lib/LeoricRegister": "./src/lib/LeoricRegister.ts",
+    "./lib/ModelProtoHook": "./src/lib/ModelProtoHook.ts",
+    "./lib/ModelProtoManager": "./src/lib/ModelProtoManager.ts",
+    "./lib/ORMLoadUnitHook": "./src/lib/ORMLoadUnitHook.ts",
+    "./lib/SingletonModelObject": "./src/lib/SingletonModelObject.ts",
+    "./lib/SingletonModelProto": "./src/lib/SingletonModelProto.ts",
+    "./lib/SingletonORM": "./src/lib/SingletonORM.ts",
+    "./lib/types": "./src/lib/types.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit --project tsconfig.build.json",
+    "prepublishOnly": "npm run build",
+    "pretest": "node ./test/fixtures/prepare.js"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/orm",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/orm"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-orm-decorator": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "leoric": "catalog:",
+    "sdk-base": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "mysql2": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./config/config.default": "./dist/config/config.default.js",
+      "./lib/DataSourceManager": "./dist/lib/DataSourceManager.js",
+      "./lib/LeoricRegister": "./dist/lib/LeoricRegister.js",
+      "./lib/ModelProtoHook": "./dist/lib/ModelProtoHook.js",
+      "./lib/ModelProtoManager": "./dist/lib/ModelProtoManager.js",
+      "./lib/ORMLoadUnitHook": "./dist/lib/ORMLoadUnitHook.js",
+      "./lib/SingletonModelObject": "./dist/lib/SingletonModelObject.js",
+      "./lib/SingletonModelProto": "./dist/lib/SingletonModelProto.js",
+      "./lib/SingletonORM": "./dist/lib/SingletonORM.js",
+      "./lib/types": "./dist/lib/types.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

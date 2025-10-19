@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "AspectExecutor": [Function],
+  "EggObjectAopHook": [Function],
+  "EggPrototypeCrossCutHook": [Function],
+  "LoadUnitAopHook": [Function],
+  "crossCutGraphHook": [Function],
+  "pointCutGraphHook": [Function],
+}
+`;

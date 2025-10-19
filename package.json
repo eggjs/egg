@@ -31,7 +31,7 @@
     "vitest": "catalog:"
   },
   "scripts": {
-    "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist **/*/*.tsbuildinfo",
+    "clean": "pnpm -r run clean && rimraf packages/*/dist plugins/*/dist tools/*/dist examples/*/dist tegg/**/dist **/*/*.tsbuildinfo",
     "build": "pnpm -r run build",
     "lint": "oxlint --type-aware",
     "typecheck": "pnpm clean && pnpm -r run typecheck",
@@ -39,7 +39,8 @@
     "pretest": "pnpm run clean && pnpm -r run pretest",
     "test": "vitest run --bail 1 --retry 2",
     "test:cov": "pnpm run test --coverage",
-    "ci": "vitest run --bail 1 --retry 2 --coverage",
+    "preci": "pnpm -r run pretest",
+    "ci": "vitest run --bail 1 --retry 2 --coverage --testTimeout 20000 --hookTimeout 20000",
     "ci:packages": "node scripts/ci.js packages",
     "ci:tools": "node scripts/ci.js tools && pnpm example:typescript:test",
     "ci:plugins": "node scripts/ci.js plugins",

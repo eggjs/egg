@@ -1,0 +1,81 @@
+{
+  "name": "@eggjs/tegg-ajv-plugin",
+  "eggPlugin": {
+    "name": "teggAjv",
+    "strict": false,
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "eggModule": {
+    "name": "teggAjv"
+  },
+  "version": "4.0.0-beta.29",
+  "description": "ajv plugin for egg and tegg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg",
+    "ajv"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./lib/Ajv": "./src/lib/Ajv.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/ajv",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/ajv"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/ajv-formats": "^3.0.1",
+    "@eggjs/ajv-keywords": "^5.1.0",
+    "@eggjs/tegg": "workspace:*",
+    "ajv": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-controller-plugin": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./lib/Ajv": "./dist/lib/Ajv.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

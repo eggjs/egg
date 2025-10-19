@@ -1,0 +1,65 @@
+{
+  "name": "@eggjs/dal-decorator",
+  "version": "4.0.0-beta.29",
+  "description": "tegg dal decorator",
+  "keywords": [
+    "egg",
+    "typescript",
+    "decorator",
+    "tegg",
+    "dal"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/dal-decorator",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/dal-decorator"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/rds": "catalog:",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "lodash.snakecase": "catalog:",
+    "pluralize": "catalog:"
+  },
+  "devDependencies": {
+    "@types/lodash.snakecase": "catalog:",
+    "@types/node": "catalog:",
+    "@types/pluralize": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

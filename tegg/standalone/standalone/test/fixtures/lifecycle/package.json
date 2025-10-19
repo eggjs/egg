@@ -1,0 +1,7 @@
+{
+  "name": "lifecycle",
+  "eggModule": {
+    "name": "lifecycle"
+  },
+  "type": "module"
+}

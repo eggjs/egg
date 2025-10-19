@@ -124,6 +124,28 @@ jobs:
 
           Write-Host "Memurai is ready on 127.0.0.1:6379"
 
+      # install and start MySQL (will automatically start mysqld)
+      - name: Start MySQL (macOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        uses: shogo82148/actions-setup-mysql@b9917bb49fa1c316abfb6931011d54da7f5470d9 # v1
+        with:
+          mysql-version: '8'
+          auto-start: 'true'
+      - name: Init DB (macOS or Linux)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
+        run: |
+          mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
+      - name: Start MySQL (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        run: |
+          choco install -y mysql
+          refreshenv
+          # MySQL default root has no password, set a password and create database/user
+          # & mysqladmin -u root password root
+          & mysql -uroot -e "CREATE DATABASE IF NOT EXISTS test;"
+
       - name: Install pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
 
@@ -154,8 +176,8 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
         node: ['22']
         # 0-based index
-        shardIndex: [0, 1, 2, 3, 4]
-        shardTotal: [5]
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
 
     name: Test bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}

@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "CoreTestHelper": [Function],
+  "EggContextStorage": [Function],
+  "EggTestContext": [Function],
+  "LoaderUtil": [Function],
+  "TestLoader": [Function],
+}
+`;

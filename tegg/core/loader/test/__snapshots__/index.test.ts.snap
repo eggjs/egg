@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "LoaderFactory": [Function],
+  "LoaderUtil": [Function],
+  "ModuleLoader": [Function],
+}
+`;

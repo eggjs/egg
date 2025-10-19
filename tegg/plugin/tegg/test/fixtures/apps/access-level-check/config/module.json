@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../modules/module-a"
+  },
+  {
+    "path": "../modules/module-main"
+  }
+]

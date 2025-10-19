@@ -1,0 +1,36 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "AbstractEggContext": [Function],
+  "ContextHandler": [Function],
+  "ContextInitiator": [Function],
+  "ContextObjectGraph": [Function],
+  "EggAlwaysNewObjectContainer": [Function],
+  "EggContainerFactory": [Function],
+  "EggContextLifecycleUtil": LifecycleUtil {
+    "lifecycleSet": Set {},
+    "objLifecycleSet": Map {},
+  },
+  "EggObjectFactory": [Function],
+  "EggObjectImpl": [Function],
+  "EggObjectLifecycleUtil": LifecycleUtil {
+    "lifecycleSet": Set {},
+    "objLifecycleSet": Map {},
+  },
+  "EggObjectStatus": {
+    "DESTROYED": "DESTROYED",
+    "DESTROYING": "DESTROYING",
+    "ERROR": "ERROR",
+    "PENDING": "PENDING",
+    "READY": "READY",
+  },
+  "EggObjectUtil": [Function],
+  "LoadUnitInstanceFactory": [Function],
+  "LoadUnitInstanceLifecycleUtil": LifecycleUtil {
+    "lifecycleSet": Set {},
+    "objLifecycleSet": Map {},
+  },
+  "ModuleLoadUnitInstance": [Function],
+}
+`;

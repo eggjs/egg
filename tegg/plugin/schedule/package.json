@@ -1,0 +1,99 @@
+{
+  "name": "@eggjs/tegg-schedule-plugin",
+  "eggPlugin": {
+    "name": "teggSchedule",
+    "dependencies": [
+      "tegg",
+      "schedule"
+    ]
+  },
+  "version": "4.0.0-beta.29",
+  "description": "schedule decorator for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg",
+    "schedule"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./app": "./src/app.ts",
+    "./lib/EggScheduleAdapter": "./src/lib/EggScheduleAdapter.ts",
+    "./lib/EggScheduleMetadataConvertor": "./src/lib/EggScheduleMetadataConvertor.ts",
+    "./lib/SchedulePrototypeHook": "./src/lib/SchedulePrototypeHook.ts",
+    "./lib/ScheduleSubscriberRegister": "./src/lib/ScheduleSubscriberRegister.ts",
+    "./lib/ScheduleWorkerLoadUnitHook": "./src/lib/ScheduleWorkerLoadUnitHook.ts",
+    "./lib/ScheduleWorkerRegister": "./src/lib/ScheduleWorkerRegister.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/schedule",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/schedule"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-schedule-decorator": "workspace:*"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./agent": "./dist/agent.js",
+      "./app": "./dist/app.js",
+      "./lib/EggScheduleAdapter": "./dist/lib/EggScheduleAdapter.js",
+      "./lib/EggScheduleMetadataConvertor": "./dist/lib/EggScheduleMetadataConvertor.js",
+      "./lib/SchedulePrototypeHook": "./dist/lib/SchedulePrototypeHook.js",
+      "./lib/ScheduleSubscriberRegister": "./dist/lib/ScheduleSubscriberRegister.js",
+      "./lib/ScheduleWorkerLoadUnitHook": "./dist/lib/ScheduleWorkerLoadUnitHook.js",
+      "./lib/ScheduleWorkerRegister": "./dist/lib/ScheduleWorkerRegister.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

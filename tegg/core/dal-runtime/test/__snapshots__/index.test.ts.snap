@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "BaseSqlMapGenerator": [Function],
+  "CodeGenerator": [Function],
+  "DaoLoader": [Function],
+  "DataSource": [Function],
+  "DatabaseForker": [Function],
+  "MysqlDataSource": [Function],
+  "NunjucksConverter": [Function],
+  "NunjucksUtils": [Function],
+  "SqlGenerator": [Function],
+  "SqlMapLoader": [Function],
+  "SqlUtil": [Function],
+  "TableModelInstanceBuilder": [Function],
+  "TableSqlMap": [Function],
+  "TemplateUtil": [Function],
+}
+`;

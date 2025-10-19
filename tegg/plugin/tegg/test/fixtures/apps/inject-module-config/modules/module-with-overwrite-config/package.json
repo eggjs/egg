@@ -1,0 +1,7 @@
+{
+  "name": "overwrite",
+  "eggModule": {
+    "name": "overwrite"
+  },
+  "type": "module"
+}

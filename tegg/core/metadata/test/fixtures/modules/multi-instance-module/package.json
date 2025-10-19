@@ -1,0 +1,7 @@
+{
+  "name": "multi-instance-module",
+  "eggModule": {
+    "name": "multiInstanceModule"
+  },
+  "type": "module"
+}

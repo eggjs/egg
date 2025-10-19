@@ -1,0 +1,8 @@
+[
+  {
+    "path": "../modules/multi-module-repo"
+  },
+  {
+    "path": "../modules/multi-module-service"
+  }
+]

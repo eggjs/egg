@@ -1,0 +1,9 @@
+dataSource:
+  foo:
+    connectionLimit: 100
+    database: 'test_dal_standalone'
+    host: '127.0.0.1'
+    user: root
+    port: 3306
+    timezone: '+08:00'
+    forkDb: true

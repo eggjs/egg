@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`should export stable 1`] = `
+{
+  "FSUtil": [Function],
+  "Graph": [Function],
+  "GraphNode": [Function],
+  "GraphPath": [Function],
+  "MapUtil": [Function],
+  "ModuleConfigUtil": [Function],
+  "ModuleConfigs": [Function],
+  "ModuleReferenceConfigHelp": [Function],
+  "NameUtil": [Function],
+  "ObjectUtils": [Function],
+  "ProxyUtil": [Function],
+  "StackUtil": [Function],
+  "TimerUtil": [Function],
+}
+`;

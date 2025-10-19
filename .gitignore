@@ -10,6 +10,7 @@ run
 .idea
 .DS_Store
 .tmp
+.egg
 
 *-lock.json
 *-lock.yaml
@@ -78,5 +79,27 @@ tools/egg-bin/test/fixtures/**/node_modules/
 
 !tools/egg-bin/test/fixtures/example-declarations/node_modules/
 !tools/egg-bin/test/fixtures/custom-framework-app/node_modules/
+
+tegg/plugin/oneapi/test/fixtures/modules/*/oneapi
+tegg/plugin/dal/test/fixtures/modules/*/dal/
+tegg/core/dal-runtime/test/fixtures/modules/*/dal
+tegg/core/dal-runtime/test/fixtures/modules/*/src/dal/
+!tegg/core/dal-runtime/test/fixtures/modules/dal/dal
+!tegg/core/dal-runtime/test/fixtures/modules/generate_codes_not_overwrite_dao/dal/extension/FooExtension.ts
+!tegg/core/dal-runtime/test/fixtures/modules/generate_codes_not_overwrite_dao/dal/dao/FooDAO.ts
+tegg/plugin/tegg/test/fixtures/apps/**/*.js
+!tegg/core/common-util/test/fixtures/**/node_modules
+!tegg/core/common-util/test/fixtures/**/node_modules/**/*.js
+!tegg/plugin/*/test/fixtures/**/*.js
+!tegg/plugin/*/typings/*.d.ts
+!tegg/plugin/*/test/fixtures/apps/*/config/*.js
+!tegg/plugin/*/test/fixtures/apps/**/typings/*.d.ts
+!tegg/core/eventbus-decorator/src/type.d.ts
+!tegg/plugin/orm/test/fixtures/prepare.js
+!tegg/benchmark/**/*.js
+!tegg/standalone/standalone/test/fixtures/**/node_modules
+!tegg/standalone/standalone/test/fixtures/**/node_modules/**/*.js
+!tegg/plugin/tegg/test/fixtures/**/node_modules
+!tegg/plugin/config/test/fixtures/**/node_modules
 
 *.tsbuildinfo

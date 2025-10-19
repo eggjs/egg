@@ -105,6 +105,9 @@
     },
     {
       "path": "./tools/create-egg"
+    },
+    {
+      "path": "./tegg/plugin/orm"
     }
   ]
 }

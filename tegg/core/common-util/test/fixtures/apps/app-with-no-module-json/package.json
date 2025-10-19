@@ -1,0 +1,7 @@
+{
+  "name": "foo",
+  "dependencies": {
+    "module-c": "^1.0.0",
+    "dep": "^1.0.0"
+  }
+}

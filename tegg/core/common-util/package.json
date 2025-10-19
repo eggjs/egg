@@ -1,0 +1,64 @@
+{
+  "name": "@eggjs/tegg-common-util",
+  "description": "common util for tegg",
+  "version": "4.0.0-beta.29",
+  "keywords": [
+    "egg",
+    "typescript",
+    "collection",
+    "tegg"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "killagu <killa123@126.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/common-util",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/common-util"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/tegg-types": "workspace:*",
+    "@eggjs/utils": "workspace:*",
+    "reflect-metadata": "catalog:",
+    "extend2": "catalog:",
+    "globby": "catalog:",
+    "js-yaml": "catalog:"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}

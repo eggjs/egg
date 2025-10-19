@@ -1,0 +1,121 @@
+{
+  "name": "@eggjs/tegg-controller-plugin",
+  "eggPlugin": {
+    "name": "teggController",
+    "strict": false,
+    "dependencies": [
+      "tegg"
+    ]
+  },
+  "version": "4.0.0-beta.29",
+  "description": "controller decorator for egg",
+  "keywords": [
+    "egg",
+    "plugin",
+    "typescript",
+    "module",
+    "tegg"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app/middleware/tegg_root_proto": "./src/app/middleware/tegg_root_proto.ts",
+    "./lib/AppLoadUnitControllerHook": "./src/lib/AppLoadUnitControllerHook.ts",
+    "./lib/ControllerLoadUnit": "./src/lib/ControllerLoadUnit.ts",
+    "./lib/ControllerLoadUnitHandler": "./src/lib/ControllerLoadUnitHandler.ts",
+    "./lib/ControllerLoadUnitInstance": "./src/lib/ControllerLoadUnitInstance.ts",
+    "./lib/ControllerMetadataManager": "./src/lib/ControllerMetadataManager.ts",
+    "./lib/ControllerRegister": "./src/lib/ControllerRegister.ts",
+    "./lib/ControllerRegisterFactory": "./src/lib/ControllerRegisterFactory.ts",
+    "./lib/EggControllerLoader": "./src/lib/EggControllerLoader.ts",
+    "./lib/EggControllerPrototypeHook": "./src/lib/EggControllerPrototypeHook.ts",
+    "./lib/errors": "./src/lib/errors.ts",
+    "./lib/impl/http/Acl": "./src/lib/impl/http/Acl.ts",
+    "./lib/impl/http/HTTPControllerRegister": "./src/lib/impl/http/HTTPControllerRegister.ts",
+    "./lib/impl/http/HTTPMethodRegister": "./src/lib/impl/http/HTTPMethodRegister.ts",
+    "./lib/impl/http/Req": "./src/lib/impl/http/Req.ts",
+    "./lib/RootProtoManager": "./src/lib/RootProtoManager.ts",
+    "./types": "./src/types.ts",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rimraf dist *.tsbuildinfo",
+    "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/controller",
+  "bugs": {
+    "url": "https://github.com/eggjs/egg/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/controller"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@eggjs/egg-module-common": "workspace:*",
+    "@eggjs/router": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
+    "@eggjs/tegg-metadata": "workspace:*",
+    "@eggjs/tegg-runtime": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*",
+    "egg-errors": "catalog:",
+    "globby": "catalog:",
+    "path-to-regexp": "catalog:path-to-regexp1",
+    "sdk-base": "catalog:"
+  },
+  "peerDependencies": {
+    "egg": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*"
+  },
+  "devDependencies": {
+    "@eggjs/mock": "workspace:*",
+    "@eggjs/module-test-util": "workspace:*",
+    "@eggjs/tegg-config": "workspace:*",
+    "@eggjs/tegg-plugin": "workspace:*",
+    "@eggjs/tracer": "workspace:*",
+    "@types/node": "catalog:",
+    "egg": "workspace:*",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./app": "./dist/app.js",
+      "./app/middleware/tegg_root_proto": "./dist/app/middleware/tegg_root_proto.js",
+      "./lib/AppLoadUnitControllerHook": "./dist/lib/AppLoadUnitControllerHook.js",
+      "./lib/ControllerLoadUnit": "./dist/lib/ControllerLoadUnit.js",
+      "./lib/ControllerLoadUnitHandler": "./dist/lib/ControllerLoadUnitHandler.js",
+      "./lib/ControllerLoadUnitInstance": "./dist/lib/ControllerLoadUnitInstance.js",
+      "./lib/ControllerMetadataManager": "./dist/lib/ControllerMetadataManager.js",
+      "./lib/ControllerRegister": "./dist/lib/ControllerRegister.js",
+      "./lib/ControllerRegisterFactory": "./dist/lib/ControllerRegisterFactory.js",
+      "./lib/EggControllerLoader": "./dist/lib/EggControllerLoader.js",
+      "./lib/EggControllerPrototypeHook": "./dist/lib/EggControllerPrototypeHook.js",
+      "./lib/errors": "./dist/lib/errors.js",
+      "./lib/impl/http/Acl": "./dist/lib/impl/http/Acl.js",
+      "./lib/impl/http/HTTPControllerRegister": "./dist/lib/impl/http/HTTPControllerRegister.js",
+      "./lib/impl/http/HTTPMethodRegister": "./dist/lib/impl/http/HTTPMethodRegister.js",
+      "./lib/impl/http/Req": "./dist/lib/impl/http/Req.js",
+      "./lib/RootProtoManager": "./dist/lib/RootProtoManager.js",
+      "./types": "./dist/types.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
