@@ -1,4 +1,4 @@
-import { Agent, type ILifecycleBoot } from 'egg';
+import type { Agent, ILifecycleBoot } from 'egg';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { EggLoadUnitType } from '@eggjs/tegg-metadata';
 import { ScheduleInfoUtil, ScheduleMetaBuilder } from '@eggjs/tegg/schedule';
@@ -14,7 +14,7 @@ export default class ScheduleAppBootHook implements ILifecycleBoot {
     this.scheduleSubscriberRegister = new ScheduleSubscriberRegister(this.agent);
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     // FIXME: tegg use lots singleton, in mm.app test case, agent/app in one process
     // if use start tegg in agent, the app will use the same singleton
     // so we should refactor tegg to not use singleton.

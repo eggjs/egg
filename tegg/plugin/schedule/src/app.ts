@@ -17,12 +17,12 @@ export default class ScheduleAppBootHook implements ILifecycleBoot {
     this.schedulePrototypeHook = new SchedulePrototypeHook();
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.scheduleWorkerLoadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.schedulePrototypeHook);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.scheduleWorkerLoadUnitHook);
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.schedulePrototypeHook);
   }

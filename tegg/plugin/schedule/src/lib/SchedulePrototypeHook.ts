@@ -1,5 +1,5 @@
-import { type LifecycleHook } from '@eggjs/tegg-lifecycle';
-import { type EggPrototype, type EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { ScheduleInfoUtil, ScheduleMetadataUtil, ScheduleMetaBuilder } from '@eggjs/tegg-schedule-decorator';
 
 export class SchedulePrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {

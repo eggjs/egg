@@ -12,7 +12,7 @@ export class FooSubscriber {
   @Inject()
   private readonly logger: EggLogger;
 
-  async subscribe() {
+  async subscribe(): Promise<void> {
     this.logger.info('schedule called');
     // console.warn('FooSubscriber schedule called');
   }

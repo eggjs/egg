@@ -7,7 +7,7 @@
       "schedule"
     ]
   },
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "schedule decorator for egg",
   "keywords": [
     "egg",
@@ -42,14 +42,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/schedule",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/schedule",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/schedule"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/schedule"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -74,9 +74,7 @@
     "@eggjs/module-test-util": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    "mocha": "catalog:",
     "egg": "workspace:*",
     "typescript": "catalog:",
     "tsdown": "catalog:",
