@@ -1,7 +1,0 @@
-{
-  "name": "overwrite",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/inject-module-config/modules/module-with-overwrite-config",
-  "clazzList": [{ "name": "Bar", "filePath": "bar.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}

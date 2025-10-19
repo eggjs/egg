@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { Application, type ILifecycleBoot } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
 import { CrosscutAdviceFactory } from '@eggjs/tegg/aop';
 import {
   crossCutGraphHook,
@@ -29,13 +29,13 @@ export default class AopAppHook implements ILifecycleBoot {
     this.eggObjectAopHook = new EggObjectAopHook();
   }
 
-  configDidLoad() {
+  configDidLoad(): void {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.registerLifecycle(this.eggObjectAopHook);
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
     assert(GlobalGraph.instance, 'GlobalGraph.instance is not set');
     GlobalGraph.instance.registerBuildHook(crossCutGraphHook);
@@ -44,7 +44,7 @@ export default class AopAppHook implements ILifecycleBoot {
     this.app.eggContextLifecycleUtil.registerLifecycle(this.aopContextHook);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eggPrototypeCrossCutHook);
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.loadUnitAopHook);
     this.app.eggObjectLifecycleUtil.deleteLifecycle(this.eggObjectAopHook);

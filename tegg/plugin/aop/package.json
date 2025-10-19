@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-aop-plugin",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "eggPlugin": {
     "name": "aopModule",
     "dependencies": [
@@ -33,14 +33,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/aop",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/aop",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/aop"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/aop"
   },
   "engines": {
     "node": ">=22.18.0"

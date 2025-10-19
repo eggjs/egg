@@ -1,7 +1,0 @@
-{
-  "name": "a",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/invalid-inject/app/modules/module-a",
-  "clazzList": [{ "name": "BarService", "filePath": "BarService.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}

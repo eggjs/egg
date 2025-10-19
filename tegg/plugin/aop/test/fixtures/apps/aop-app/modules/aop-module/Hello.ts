@@ -21,11 +21,11 @@ export class Hello {
   logger: EggLogger;
 
   @Pointcut(PointcutAdvice)
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 
-  async helloEggObjectAop() {
+  async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
   }
 }
@@ -63,11 +63,11 @@ export class SingletonHello {
   logger: EggLogger;
 
   @Pointcut(ContextPointcutAdvice)
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 
-  async helloEggObjectAop() {
+  async helloEggObjectAop(): Promise<void> {
     this.logger.info('foo');
   }
 }

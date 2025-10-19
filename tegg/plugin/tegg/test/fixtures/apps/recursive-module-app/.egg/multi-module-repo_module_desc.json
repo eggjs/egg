@@ -1,7 +1,0 @@
-{
-  "name": "multi-module-repo",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/recursive-module-app/modules/multi-module-repo",
-  "clazzList": [{ "name": "AppRepo", "filePath": "AppRepo.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}

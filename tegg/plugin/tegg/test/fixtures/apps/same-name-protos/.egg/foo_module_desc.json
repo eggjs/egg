@@ -1,7 +1,0 @@
-{
-  "name": "foo",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/same-name-protos/app/modules/module-foo",
-  "clazzList": [{ "name": "FooService", "filePath": "FooService.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}
