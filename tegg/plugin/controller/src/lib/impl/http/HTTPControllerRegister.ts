@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 
-import { Application, Router } from 'egg';
+import type { Application, Router } from 'egg';
 import {
   CONTROLLER_META_DATA,
   type ControllerMetadata,
@@ -23,7 +23,7 @@ export class HTTPControllerRegister implements ControllerRegister {
   private readonly eggContainerFactory: typeof EggContainerFactory;
   private controllerProtos: EggPrototype[] = [];
 
-  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application) {
+  static create(proto: EggPrototype, controllerMeta: ControllerMetadata, app: Application): HTTPControllerRegister {
     assert(controllerMeta.type === ControllerType.HTTP, 'controller meta type is not HTTP');
     if (!HTTPControllerRegister.instance) {
       HTTPControllerRegister.instance = new HTTPControllerRegister(app.router, app.eggContainerFactory);
@@ -44,7 +44,7 @@ export class HTTPControllerRegister implements ControllerRegister {
     return Promise.resolve();
   }
 
-  static clean() {
+  static clean(): void {
     if (this.instance) {
       this.instance.controllerProtos = [];
       this.instance.checkRouters.clear();
@@ -52,7 +52,7 @@ export class HTTPControllerRegister implements ControllerRegister {
     this.instance = undefined;
   }
 
-  doRegister(rootProtoManager: RootProtoManager) {
+  doRegister(rootProtoManager: RootProtoManager): void {
     const methodMap = new Map<HTTPMethodMeta, EggPrototype>();
     for (const proto of this.controllerProtos) {
       const metadata = proto.getMetaData(CONTROLLER_META_DATA) as HTTPControllerMeta;

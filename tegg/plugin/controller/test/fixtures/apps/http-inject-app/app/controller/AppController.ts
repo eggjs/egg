@@ -1,6 +1,6 @@
-import { Context as EggContext } from 'egg';
 import {
   Context,
+  type EggContext,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -21,16 +21,24 @@ export class AppController {
     method: HTTPMethodEnum.POST,
     path: '/testRequest',
   })
-  async testRequest(@Context() ctx: EggContext, @Request() request: HTTPRequest, @Cookies() cookies: HTTPCookies) {
+  async testRequest(
+    @Context() ctx: EggContext,
+    @Request() request: HTTPRequest,
+    @Cookies() cookies: HTTPCookies
+  ): Promise<{
+    success: boolean;
+    traceId: string;
+    headers: Record<string, string>;
+    method: string;
+    requestBody: string;
+    cookies: string | undefined;
+  }> {
     const traceId = await ctx.tracer.traceId;
     return {
       success: true,
       traceId,
-      // @ts-expect-error HTTPRequest is not a real Request
       headers: Object.fromEntries(request.headers),
-      // @ts-expect-error HTTPRequest is not a real Request
       method: request.method,
-      // @ts-expect-error HTTPRequest is not a real Request
       requestBody: await request.text(),
       cookies: cookies.get('test', { signed: false }),
     };

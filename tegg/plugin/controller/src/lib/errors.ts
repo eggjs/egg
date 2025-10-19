@@ -1,8 +1,9 @@
 import { TeggError } from '@eggjs/tegg-metadata';
 
-enum ErrorCodes {
-  ROUTER_CONFLICT = 'ROUTER_CONFLICT',
-}
+const ErrorCodes = {
+  ROUTER_CONFLICT: 'ROUTER_CONFLICT',
+} as const;
+type ErrorCodes = (typeof ErrorCodes)[keyof typeof ErrorCodes];
 
 /** 路由冲突错误 */
 export class RouterConflictError extends TeggError {

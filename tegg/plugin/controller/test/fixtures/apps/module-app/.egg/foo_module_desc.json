@@ -1,7 +1,7 @@
 {
   "name": "foo",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/controller/test/fixtures/apps/module-app/modules/foo-module",
-  "clazzList": [{ "name": "AppService", "filePath": "../../../../../../../../node:internal/modules/esm/module_job" }],
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/controller/test/fixtures/apps/module-app/modules/foo-module",
+  "clazzList": [{ "name": "AppService", "filePath": "AppService.ts" }],
   "multiInstanceClazzList": [],
   "protos": []
 }

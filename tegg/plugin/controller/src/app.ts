@@ -1,5 +1,5 @@
 import type { Application, ILifecycleBoot } from 'egg';
-import { type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import type { LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerType } from '@eggjs/tegg';
 import { type LoadUnitInstanceLifecycleContext, ModuleLoadUnitInstance } from '@eggjs/tegg-runtime';
 
@@ -35,7 +35,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.controllerPrototypeHook = new EggControllerPrototypeHook();
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
     this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, unitPath => {
@@ -65,7 +65,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.prepareMiddleware(this.app.config.coreMiddleware);
   }
 
-  prepareMiddleware(middlewareNames: string[]) {
+  prepareMiddleware(middlewareNames: string[]): string[] {
     if (!middlewareNames.includes('teggCtxLifecycleMiddleware')) {
       middlewareNames.unshift('teggCtxLifecycleMiddleware');
     }
@@ -75,7 +75,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     return middlewareNames;
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
     this.controllerLoadUnitHandler = new ControllerLoadUnitHandler(this.app);
     await this.controllerLoadUnitHandler.ready();
@@ -87,7 +87,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     HTTPControllerRegister.instance?.doRegister(this.app.rootProtoManager);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     if (this.controllerLoadUnitHandler) {
       await this.controllerLoadUnitHandler.destroy();
     }
@@ -95,13 +95,5 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.controllerPrototypeHook);
     ControllerMetadataManager.instance.clear();
     HTTPControllerRegister.clean();
-  }
-}
-
-declare module 'egg' {
-  interface Application {
-    rootProtoManager: RootProtoManager;
-    controllerRegisterFactory: ControllerRegisterFactory;
-    controllerMetaBuilderFactory: typeof ControllerMetaBuilderFactory;
   }
 }

@@ -1,4 +1,4 @@
-import { type EggPrototype, type EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { ControllerMetaBuilderFactory, ControllerMetadataUtil, type LifecycleHook } from '@eggjs/tegg';
 
 export class EggControllerPrototypeHook implements LifecycleHook<EggPrototypeLifecycleContext, EggPrototype> {

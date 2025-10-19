@@ -15,7 +15,7 @@ export class ControllerLoadUnit implements LoadUnit {
   private readonly loader: Loader;
   id: Id;
   readonly name: string;
-  readonly type = CONTROLLER_LOAD_UNIT;
+  readonly type: string = CONTROLLER_LOAD_UNIT;
   readonly unitPath: string;
   private eggPrototypeFactory: EggPrototypeFactory;
   private eggPrototypeCreatorFactory: typeof EggPrototypeCreatorFactory;
@@ -36,7 +36,7 @@ export class ControllerLoadUnit implements LoadUnit {
     this.eggPrototypeCreatorFactory = eggPrototypeCreatorFactory;
   }
 
-  async init() {
+  async init(): Promise<void> {
     const clazzList = await this.loader.load();
     for (const clazz of clazzList) {
       const protos = await this.eggPrototypeCreatorFactory.createProto(clazz, this);
@@ -55,12 +55,12 @@ export class ControllerLoadUnit implements LoadUnit {
     return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
   }
 
-  registerEggPrototype(proto: EggPrototype) {
+  registerEggPrototype(proto: EggPrototype): void {
     const protoList = MapUtil.getOrStore(this.protoMap, proto.name, []);
     protoList.push(proto);
   }
 
-  deletePrototype(proto: EggPrototype) {
+  deletePrototype(proto: EggPrototype): void {
     const protos = this.protoMap.get(proto.name);
     if (protos) {
       const index = protos.indexOf(proto);
@@ -70,7 +70,7 @@ export class ControllerLoadUnit implements LoadUnit {
     }
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     for (const namedProtos of this.protoMap.values()) {
       // Delete prototype will delete item
       // array iterator is not safe

@@ -1,5 +1,5 @@
-import { type EggPrototype } from '@eggjs/tegg-metadata';
-import { type EggContext } from '@eggjs/tegg';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggContext } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
 export type GetRootProtoCallback = (ctx: EggContext) => EggPrototype | undefined;
@@ -8,7 +8,7 @@ export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
   protoMap: Map<string, GetRootProtoCallback[]> = new Map();
 
-  registerRootProto(method: string, cb: GetRootProtoCallback, host: string) {
+  registerRootProto(method: string, cb: GetRootProtoCallback, host: string): void {
     host = host || '';
     const cbList = MapUtil.getOrStore(this.protoMap, method + host, []);
     cbList.push(cb);

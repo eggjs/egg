@@ -7,7 +7,7 @@
       "tegg"
     ]
   },
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "controller decorator for egg",
   "keywords": [
     "egg",
@@ -48,14 +48,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/controller",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/controller",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/controller"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/controller"
   },
   "engines": {
     "node": ">=22.18.0"

@@ -2,8 +2,8 @@ import path from 'node:path';
 
 import { Base } from 'sdk-base';
 import type { Application } from 'egg';
-import { EggLoadUnitType, type LoadUnit } from '@eggjs/tegg-metadata';
-import { type LoadUnitInstance } from '@eggjs/tegg-runtime';
+import type { EggLoadUnitType, LoadUnit } from '@eggjs/tegg-metadata';
+import type { LoadUnitInstance } from '@eggjs/tegg-runtime';
 
 import { CONTROLLER_LOAD_UNIT } from './ControllerLoadUnit.ts';
 
@@ -17,7 +17,7 @@ export class ControllerLoadUnitHandler extends Base {
     this.app = app;
   }
 
-  async _init() {
+  async _init(): Promise<void> {
     const controllerDir = path.join(this.app.config.baseDir, 'app/controller');
     const loader = this.app.loaderFactory.createLoader(controllerDir, CONTROLLER_LOAD_UNIT as EggLoadUnitType);
     this.controllerLoadUnit = await this.app.loadUnitFactory.createLoadUnit(
@@ -30,7 +30,7 @@ export class ControllerLoadUnitHandler extends Base {
     );
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     if (this.controllerLoadUnit) {
       await this.app.loadUnitFactory.destroyLoadUnit(this.controllerLoadUnit);
     }

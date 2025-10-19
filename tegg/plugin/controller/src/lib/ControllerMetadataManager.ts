@@ -4,13 +4,13 @@ import { MapUtil } from '@eggjs/tegg-common-util';
 export class ControllerMetadataManager {
   private readonly controllers = new Map<ControllerTypeLike, ControllerMetadata[]>();
 
-  static instance = new ControllerMetadataManager();
+  static instance: ControllerMetadataManager = new ControllerMetadataManager();
 
   constructor() {
     this.controllers = new Map();
   }
 
-  addController(metadata: ControllerMetadata) {
+  addController(metadata: ControllerMetadata): void {
     const typeControllers = MapUtil.getOrStore(this.controllers, metadata.type, []);
     // 1.check controller name
     // 2.check proto name
@@ -25,7 +25,7 @@ export class ControllerMetadataManager {
     typeControllers.push(metadata);
   }
 
-  clear() {
+  clear(): void {
     this.controllers.clear();
   }
 }

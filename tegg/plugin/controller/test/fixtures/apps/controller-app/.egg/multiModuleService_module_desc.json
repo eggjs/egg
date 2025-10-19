@@ -1,7 +1,7 @@
 {
   "name": "multiModuleService",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/controller/test/fixtures/apps/controller-app/modules/multi-module-service",
-  "clazzList": [{ "name": "AppService", "filePath": "../../../../../../../../node:internal/modules/esm/module_job" }],
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/controller/test/fixtures/apps/controller-app/modules/multi-module-service",
+  "clazzList": [{ "name": "AppService", "filePath": "AppService.ts" }],
   "multiInstanceClazzList": [],
   "protos": []
 }

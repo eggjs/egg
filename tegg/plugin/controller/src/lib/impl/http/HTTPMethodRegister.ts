@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { Context, Router } from 'egg';
+import type { Context, Router } from 'egg';
 import {
   type EggContext,
   HTTPControllerMeta,
@@ -127,7 +127,7 @@ export class HTTPMethodRegister {
     };
   }
 
-  checkDuplicate() {
+  checkDuplicate(): void {
     // 1. check duplicate with egg controller
     this.checkDuplicateInRouter(this.router);
 
@@ -169,7 +169,7 @@ export class HTTPMethodRegister {
     }
   }
 
-  register(rootProtoManager: RootProtoManager) {
+  register(rootProtoManager: RootProtoManager): void {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
     const routerFunc = this.router[this.methodMeta.method.toLowerCase() as keyof Router] as Function;

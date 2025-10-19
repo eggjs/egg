@@ -1,4 +1,4 @@
-import { type EggPrototype, type LoadUnit } from '@eggjs/tegg-metadata';
+import type { EggPrototype, LoadUnit } from '@eggjs/tegg-metadata';
 import { type EggObjectName, type EggPrototypeName, IdenticalUtil } from '@eggjs/tegg';
 import {
   type EggObject,
@@ -25,11 +25,11 @@ export class ControllerLoadUnitInstance implements LoadUnitInstance {
     return this.protoToCreateMap.entries();
   }
 
-  addProtoToCreate() {
+  addProtoToCreate(): void {
     throw new Error('controller load unit not allow have singleton proto');
   }
 
-  deleteProtoToCreate() {
+  deleteProtoToCreate(): void {
     throw new Error('controller load unit not allow have singleton proto');
   }
 

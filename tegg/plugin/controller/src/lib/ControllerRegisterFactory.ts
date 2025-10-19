@@ -1,8 +1,8 @@
 import type { Application } from 'egg';
-import { type ControllerMetadata, type ControllerTypeLike } from '@eggjs/tegg';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/tegg';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 
-import { type ControllerRegister } from './ControllerRegister.ts';
+import type { ControllerRegister } from './ControllerRegister.ts';
 
 export type RegisterCreator = (
   proto: EggPrototype,
@@ -19,7 +19,7 @@ export class ControllerRegisterFactory {
     this.registerCreatorMap = new Map();
   }
 
-  registerControllerRegister(type: ControllerTypeLike, creator: RegisterCreator) {
+  registerControllerRegister(type: ControllerTypeLike, creator: RegisterCreator): void {
     this.registerCreatorMap.set(type, creator);
   }
 

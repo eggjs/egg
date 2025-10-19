@@ -1,6 +1,9 @@
-import { type Next, type EggContext, type HTTPControllerMeta, type HTTPMethodMeta } from '@eggjs/tegg';
+import type { Next, EggContext, HTTPControllerMeta, HTTPMethodMeta, MiddlewareFunc } from '@eggjs/tegg';
 
-export function aclMiddlewareFactory(controllerMeta: HTTPControllerMeta, methodMeta: HTTPMethodMeta) {
+export function aclMiddlewareFactory(
+  controllerMeta: HTTPControllerMeta,
+  methodMeta: HTTPMethodMeta
+): MiddlewareFunc | undefined {
   if (!controllerMeta.hasMethodAcl(methodMeta)) {
     return;
   }

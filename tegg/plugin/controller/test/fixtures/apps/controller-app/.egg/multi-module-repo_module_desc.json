@@ -1,9 +1,9 @@
 {
   "name": "multi-module-repo",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/controller/test/fixtures/apps/controller-app/modules/multi-module-repo",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/controller/test/fixtures/apps/controller-app/modules/multi-module-repo",
   "clazzList": [
-    { "name": "AppRepo", "filePath": "../../../../../../../../node:internal/modules/esm/module_job" },
-    { "name": "PersistenceService", "filePath": "../../../../../../../../node:internal/modules/esm/module_job" }
+    { "name": "AppRepo", "filePath": "AppRepo.ts" },
+    { "name": "PersistenceService", "filePath": "PersistenceService.ts" }
   ],
   "multiInstanceClazzList": [],
   "protos": []
