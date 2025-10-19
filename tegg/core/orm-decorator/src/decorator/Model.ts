@@ -5,7 +5,7 @@ import type { EggProtoImplClass, ModelParams } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/index.ts';
 
 export function Model(param?: ModelParams) {
-  return function (clazz: EggProtoImplClass) {
+  return function (clazz: EggProtoImplClass): void {
     ModelInfoUtil.setIsModel(true, clazz);
     const func = SingletonProto({
       name: clazz.name,

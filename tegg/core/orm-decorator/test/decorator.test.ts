@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
-import { ModelInfoUtil } from '../src/index.js';
-import { Foo } from './fixtures/Foo.js';
+
+import { ModelInfoUtil } from '../src/index.ts';
+import { Foo } from './fixtures/Foo.ts';
 
 describe('test/decorator.test.ts', () => {
   it('should work', () => {

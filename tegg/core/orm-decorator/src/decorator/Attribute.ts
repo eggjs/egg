@@ -5,7 +5,7 @@ import type { AttributeOptions, EggProtoImplClass } from '@eggjs/tegg-types';
 import { ModelInfoUtil } from '../util/index.ts';
 
 export function Attribute(dataType: string, options?: AttributeOptions) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     const clazz = target.constructor as EggProtoImplClass;
     assert(
       typeof propertyKey === 'string',

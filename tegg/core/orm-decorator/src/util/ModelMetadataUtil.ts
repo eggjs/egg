@@ -3,10 +3,10 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import { ModelMetadata } from '../model/index.ts';
 
-export const MODEL_METADATA = Symbol.for('EggPrototype#model#metadata');
+export const MODEL_METADATA: symbol = Symbol.for('EggPrototype#model#metadata');
 
 export class ModelMetadataUtil {
-  static setModelMetadata(clazz: EggProtoImplClass, metaData: ModelMetadata) {
+  static setModelMetadata(clazz: EggProtoImplClass, metaData: ModelMetadata): void {
     MetadataUtil.defineMetaData(MODEL_METADATA, metaData, clazz);
   }
 

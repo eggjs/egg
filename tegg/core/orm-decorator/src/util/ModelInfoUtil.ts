@@ -17,7 +17,7 @@ import {
 type ModelAttributeMap = Map<string, ModelAttributeInfo>;
 
 export class ModelInfoUtil {
-  static setIsModel(isModel: boolean, clazz: EggProtoImplClass) {
+  static setIsModel(isModel: boolean, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(IS_MODEL, isModel, clazz);
   }
 
@@ -25,7 +25,7 @@ export class ModelInfoUtil {
     return MetadataUtil.getBooleanMetaData(IS_MODEL, clazz);
   }
 
-  static setDataSource(dataSource: string, clazz: EggProtoImplClass) {
+  static setDataSource(dataSource: string, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(MODEL_DATA_SOURCE, dataSource, clazz);
   }
 
@@ -33,7 +33,7 @@ export class ModelInfoUtil {
     return MetadataUtil.getMetaData(MODEL_DATA_SOURCE, clazz);
   }
 
-  static setTableName(tableName: string, clazz: EggProtoImplClass) {
+  static setTableName(tableName: string, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(MODEL_DATA_TABLE_NAME, tableName, clazz);
   }
 
@@ -41,7 +41,7 @@ export class ModelInfoUtil {
     return MetadataUtil.getMetaData(MODEL_DATA_TABLE_NAME, clazz);
   }
 
-  static addModelIndex(fields: string[], options: IndexOptions | undefined, clazz: EggProtoImplClass) {
+  static addModelIndex(fields: string[], options: IndexOptions | undefined, clazz: EggProtoImplClass): void {
     const indexInfo: Array<ModelIndexInfo> = MetadataUtil.initOwnArrayMetaData(MODEL_DATA_INDICES, clazz, []);
     indexInfo.push({
       fields,
@@ -58,7 +58,7 @@ export class ModelInfoUtil {
     options: AttributeOptions | undefined,
     clazz: EggProtoImplClass,
     property: string
-  ) {
+  ): void {
     const attributeMap: ModelAttributeMap = MetadataUtil.initOwnMapMetaData(MODEL_DATA_ATTRIBUTES, clazz, new Map());
     attributeMap.set(property, {
       dataType,
