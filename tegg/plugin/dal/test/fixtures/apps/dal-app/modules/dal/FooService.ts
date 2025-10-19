@@ -12,7 +12,7 @@ export class FooService {
   private readonly fooDAO: FooDAO;
 
   @Transactional()
-  async succeedTransaction() {
+  async succeedTransaction(): Promise<void> {
     const foo = Foo.buildObj();
     foo.name = 'insert_succeed_transaction_1';
     const foo2 = Foo.buildObj();
@@ -22,7 +22,7 @@ export class FooService {
   }
 
   @Transactional()
-  async failedTransaction() {
+  async failedTransaction(): Promise<void> {
     const foo = Foo.buildObj();
     foo.name = 'insert_failed_transaction_1';
     const foo2 = Foo.buildObj();

@@ -17,7 +17,7 @@ export default class DalAppBootHook implements ILifecycleBoot {
     this.app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.dalModuleLoadUnitHook = new DalModuleLoadUnitHook(this.app.config.env, this.app.moduleConfigs);
     this.dalTableEggPrototypeHook = new DalTableEggPrototypeHook(this.app.logger);
     this.transactionPrototypeHook = new TransactionPrototypeHook(this.app.moduleConfigs, this.app.logger);
@@ -26,7 +26,7 @@ export default class DalAppBootHook implements ILifecycleBoot {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     if (this.dalTableEggPrototypeHook) {
       this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.dalTableEggPrototypeHook);
     }

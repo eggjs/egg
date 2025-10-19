@@ -1,7 +1,7 @@
-import { TableSqlMap } from '@eggjs/dal-runtime';
+import type { TableSqlMap } from '@eggjs/dal-runtime';
 
 export class SqlMapManager {
-  static instance = new SqlMapManager();
+  static instance: SqlMapManager = new SqlMapManager();
 
   private sqlMaps: Map</* moduleName */ string, Map<string, TableSqlMap>>;
 
@@ -13,7 +13,7 @@ export class SqlMapManager {
     return this.sqlMaps.get(moduleName)?.get(clazzName);
   }
 
-  set(moduleName: string, sqlMap: TableSqlMap) {
+  set(moduleName: string, sqlMap: TableSqlMap): void {
     let tables = this.sqlMaps.get(moduleName);
     if (!tables) {
       tables = new Map();
@@ -22,7 +22,7 @@ export class SqlMapManager {
     tables.set(sqlMap.name, sqlMap);
   }
 
-  clear() {
+  clear(): void {
     this.sqlMaps.clear();
   }
 }

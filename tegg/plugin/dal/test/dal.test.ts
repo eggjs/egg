@@ -1,11 +1,11 @@
-import { expect } from 'vitest';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
+// @ts-ignore exclude file
 import FooDAO from './fixtures/apps/dal-app/modules/dal/dal/dao/FooDAO.ts';
 import { Foo } from './fixtures/apps/dal-app/modules/dal/Foo.ts';
 import { getFixtures } from './utils.ts';
 
-// TODO: mysql service only start on CI environment
 describe('plugin/dal/test/dal.test.ts', () => {
   let app: MockApplication;
 
@@ -13,14 +13,14 @@ describe('plugin/dal/test/dal.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/dal-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 

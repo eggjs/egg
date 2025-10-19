@@ -1,7 +1,7 @@
-import { TableModel } from '@eggjs/dal-decorator';
+import type { TableModel } from '@eggjs/dal-decorator';
 
 export class TableModelManager {
-  static instance = new TableModelManager();
+  static instance: TableModelManager = new TableModelManager();
 
   private tableModels: Map</* moduleName */ string, Map<string, TableModel>>;
 
@@ -13,7 +13,7 @@ export class TableModelManager {
     return this.tableModels.get(moduleName)?.get(clazzName);
   }
 
-  set(moduleName: string, tableModel: TableModel) {
+  set(moduleName: string, tableModel: TableModel): void {
     let tables = this.tableModels.get(moduleName);
     if (!tables) {
       tables = new Map();
@@ -22,7 +22,7 @@ export class TableModelManager {
     tables.set(tableModel.clazz.name, tableModel);
   }
 
-  clear() {
+  clear(): void {
     this.tableModels.clear();
   }
 }

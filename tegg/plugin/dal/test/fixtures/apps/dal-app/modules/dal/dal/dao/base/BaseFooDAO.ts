@@ -13,8 +13,6 @@ import Structure from '../../structure/Foo.json' with { type: 'json' };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const SQL = Symbol('Dao#sql');
-
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 /**
  * 自动生成的 FooDAO 基类
@@ -24,15 +22,15 @@ type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 /* istanbul ignore next */
 @Dao()
 export class BaseFooDAO {
-  static clazzModel = Foo;
-  static clazzExtension = FooExtension;
-  static tableStature = Structure;
-  private static [SQL] = '';
-  static get tableSql() {
-    if (!this[SQL]) {
-      this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/Foo.sql'), 'utf8');
+  static clazzModel: typeof Foo = Foo;
+  static clazzExtension: typeof FooExtension = FooExtension;
+  static tableStature: typeof Structure = Structure;
+  private static _SQL: string;
+  static get tableSql(): string {
+    if (!this._SQL) {
+      this._SQL = fs.readFileSync(path.join(__dirname, '../../structure/Foo.sql'), 'utf8');
     }
-    return this[SQL];
+    return this._SQL;
   }
   @Inject({
     name: DataSourceInjectName,

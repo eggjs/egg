@@ -1,8 +1,9 @@
 import crypto from 'node:crypto';
+
 import { type DataSourceOptions, MysqlDataSource } from '@eggjs/dal-runtime';
 
 export class MysqlDataSourceManager {
-  static instance = new MysqlDataSourceManager();
+  static instance: MysqlDataSourceManager = new MysqlDataSourceManager();
 
   private readonly dataSourceIndices: Map<
     string /* moduleName */,
@@ -22,7 +23,7 @@ export class MysqlDataSourceManager {
     }
   }
 
-  async createDataSource(moduleName: string, dataSourceName: string, config: DataSourceOptions) {
+  async createDataSource(moduleName: string, dataSourceName: string, config: DataSourceOptions): Promise<void> {
     const { logger, ...dsConfig } = config || {};
     const dataSourceConfig = {
       ...dsConfig,
@@ -44,7 +45,7 @@ export class MysqlDataSourceManager {
     await dataSource.ready();
   }
 
-  clear() {
+  clear(): void {
     this.dataSourceIndices.clear();
   }
 

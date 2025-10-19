@@ -303,7 +303,7 @@ export class Foo {
   })
   jsonColumn: object;
 
-  static buildObj() {
+  static buildObj(): Foo {
     const foo = new Foo();
     foo.name = 'name';
     foo.col1 = 'col1';

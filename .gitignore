@@ -10,6 +10,7 @@ run
 .idea
 .DS_Store
 .tmp
+.egg
 
 *-lock.json
 *-lock.yaml
