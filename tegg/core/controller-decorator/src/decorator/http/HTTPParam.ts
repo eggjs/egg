@@ -84,7 +84,7 @@ export function HTTPParam(param?: HTTPParamParams) {
   };
 }
 
-export function Request() {
+export function InjectRequest() {
   return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     const [nodeMajor] = process.versions.node.split('.').map(v => Number(v));
     assert(nodeMajor >= 16, `[controller/${target.name}] expect node version >=16, but now is ${nodeMajor}`);
@@ -99,7 +99,14 @@ export function Request() {
   };
 }
 
-export function Cookies() {
+export {
+  /**
+   * @deprecated Use `InjectRequest` instead, keep compatible with tegg version 3.x
+   */
+  InjectRequest as Request,
+};
+
+export function InjectCookies() {
   return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
@@ -111,3 +118,10 @@ export function Cookies() {
     HTTPInfoUtil.setHTTPMethodParamType(HTTPParamType.COOKIES, parameterIndex, controllerClazz, methodName);
   };
 }
+
+export {
+  /**
+   * @deprecated Use `InjectCookies` instead, keep compatible with tegg version 3.x
+   */
+  InjectCookies as Cookies,
+};

@@ -1,9 +1,9 @@
 {
-  "name": "@examples/helloworld-typescript",
+  "name": "@examples/helloworld-tegg",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Hello World example using TypeScript",
+  "description": "Hello World example using tegg",
   "egg": {
     "typescript": true
   },
@@ -38,18 +38,12 @@
   },
   "exports": {
     "./app": "./app.ts",
-    "./app/controller/home": "./app/controller/home.ts",
-    "./app/middleware/hello": "./app/middleware/hello.ts",
-    "./app/router": "./app/router.ts",
     "./config/config.default": "./config/config.default.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       "./app": "./dist/app.js",
-      "./app/controller/home": "./dist/app/controller/home.js",
-      "./app/middleware/hello": "./dist/app/middleware/hello.js",
-      "./app/router": "./dist/app/router.js",
       "./config/config.default": "./dist/config/config.default.js",
       "./package.json": "./package.json"
     }

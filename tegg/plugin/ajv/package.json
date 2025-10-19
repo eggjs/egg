@@ -24,6 +24,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./lib/Ajv": "./src/lib/Ajv.ts",
+    "./types": "./src/types.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -72,6 +73,7 @@
     "exports": {
       ".": "./dist/index.js",
       "./lib/Ajv": "./dist/lib/Ajv.js",
+      "./types": "./dist/types.js",
       "./package.json": "./package.json"
     }
   },

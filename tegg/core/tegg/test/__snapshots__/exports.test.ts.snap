@@ -101,7 +101,10 @@ exports[`should export stable 1`] = `
   "InitTypeQualifier": [Function],
   "InitTypeQualifierAttribute": Symbol(Qualifier.InitType),
   "Inject": [Function],
+  "InjectContext": [Function],
+  "InjectCookies": [Function],
   "InjectOptional": [Function],
+  "InjectRequest": [Function],
   "InjectType": {
     "CONSTRUCTOR": "CONSTRUCTOR",
     "PROPERTY": "PROPERTY",

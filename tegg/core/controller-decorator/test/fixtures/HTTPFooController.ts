@@ -4,6 +4,7 @@ import type { EggContext, Next, IncomingHttpHeaders } from '@eggjs/tegg-types';
 import {
   HTTPController,
   Context,
+  InjectContext,
   Middleware,
   HTTPBody,
   HTTPParam,
@@ -158,7 +159,7 @@ export class Error2Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233): Promise<void> {
+  async bar(@InjectContext() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233): Promise<void> {
     console.log(ctx, id, id2);
   }
 }
