@@ -1,6 +1,4 @@
-import assert from 'node:assert/strict';
-
-import { test } from 'vitest';
+import { expect, test } from 'vitest';
 
 import {
   Acl,
@@ -16,15 +14,15 @@ import {
 } from '../src/index.ts';
 
 test('should exports work', async () => {
-  assert(Acl);
-  assert(Context);
-  assert(ContextProto);
-  assert(Inject);
-  assert(AccessLevel);
-  assert(EventInfoUtil);
-  assert(QualifierImplUtil);
-  assert(BackgroundTaskHelper);
-  assert(orm.DataSource);
-  assert(orm.Attribute);
-  assert(aop.Advice);
+  expect(Acl).toBeDefined();
+  expect(Context).toBeDefined();
+  expect(ContextProto).toBeDefined();
+  expect(Inject).toBeDefined();
+  expect(AccessLevel).toBeDefined();
+  expect(EventInfoUtil).toBeDefined();
+  expect(QualifierImplUtil).toBeDefined();
+  expect(BackgroundTaskHelper).toBeDefined();
+  expect(orm.DataSource).toBeDefined();
+  expect(orm.Attribute).toBeDefined();
+  expect(aop.Advice).toBeDefined();
 });

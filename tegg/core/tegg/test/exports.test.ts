@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
 
-import * as types from '../src/index.ts';
+import * as exports from '../src/index.ts';
 
 test('should export stable', async () => {
-  expect(types).toMatchSnapshot();
+  expect(exports).toMatchSnapshot();
 });

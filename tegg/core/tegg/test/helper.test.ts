@@ -1,6 +1,4 @@
-import assert from 'node:assert/strict';
-
-import { test } from 'vitest';
+import { expect, test } from 'vitest';
 
 import {
   AbstractEggContext,
@@ -9,11 +7,16 @@ import {
   ModuleConfigUtil,
   LoadUnitLifecycleUtil,
 } from '../src/helper.ts';
+import * as exports from '../src/helper.ts';
 
 test('should helper exports work', async () => {
-  assert(AbstractEggContext);
-  assert(LoadUnitInstanceLifecycleUtil);
-  assert(LoaderUtil);
-  assert(ModuleConfigUtil);
-  assert(LoadUnitLifecycleUtil);
+  expect(AbstractEggContext).toBeDefined();
+  expect(LoadUnitInstanceLifecycleUtil).toBeDefined();
+  expect(LoaderUtil).toBeDefined();
+  expect(ModuleConfigUtil).toBeDefined();
+  expect(LoadUnitLifecycleUtil).toBeDefined();
+});
+
+test('should helper exports stable', async () => {
+  expect(exports).toMatchSnapshot();
 });
