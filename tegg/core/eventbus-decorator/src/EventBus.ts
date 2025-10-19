@@ -17,7 +17,7 @@ export interface EventBus extends Pick<TypedEventEmitter<Events>, 'emit'> {
   uncork(corkId: string): boolean;
 }
 
-export const CORK_ID = Symbol.for('eventBus#corkId');
+export const CORK_ID: symbol = Symbol.for('eventBus#corkId');
 
 export interface ContextEventBus extends EventBus {
   cork(): void;

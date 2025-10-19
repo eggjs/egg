@@ -10,7 +10,7 @@ export interface IEventContext {
 }
 
 export function EventContext() {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert(
       propertyKey === 'handle',
       `[eventHandler ${target.name}] expect method name be handle, but now is ${String(propertyKey)}`

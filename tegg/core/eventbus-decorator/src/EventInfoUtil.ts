@@ -3,18 +3,18 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
 import type { EventName } from './EventBus.ts';
 
-export const EVENT_NAME = Symbol.for('EggPrototype#eventName');
-export const EVENT_CONTEXT_INJECT = Symbol.for('EggPrototype#event#handler#context#inject');
+export const EVENT_NAME: symbol = Symbol.for('EggPrototype#eventName');
+export const EVENT_CONTEXT_INJECT: symbol = Symbol.for('EggPrototype#event#handler#context#inject');
 
 export class EventInfoUtil {
   /**
    * @deprecated
    */
-  static setEventName(eventName: EventName, clazz: EggProtoImplClass) {
+  static setEventName(eventName: EventName, clazz: EggProtoImplClass): void {
     EventInfoUtil.addEventName(eventName, clazz);
   }
 
-  static addEventName(eventName: EventName, clazz: EggProtoImplClass) {
+  static addEventName(eventName: EventName, clazz: EggProtoImplClass): void {
     const eventNameList = MetadataUtil.initOwnArrayMetaData<EventName>(EVENT_NAME, clazz, []);
     eventNameList.push(eventName);
   }
