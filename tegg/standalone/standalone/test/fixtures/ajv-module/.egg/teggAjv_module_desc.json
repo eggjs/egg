@@ -1,7 +1,0 @@
-{
-  "name": "teggAjv",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/ajv",
-  "clazzList": [{ "name": "Ajv", "filePath": "src/lib/Ajv.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}

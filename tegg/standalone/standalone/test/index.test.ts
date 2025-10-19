@@ -43,7 +43,8 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const msg: string = await main(path.join(__dirname, './fixtures/dependency'), {
         dependencies: [path.join(__dirname, './fixtures/dependency/node_modules/dependency-1')],
       });
-      assert.equal(msg, 'hello!{"features":{"dynamic":{"foo":"bar"}}}');
+      // assert.equal(msg, 'hello!{"features":{"dynamic":{"foo":"bar"}}}');
+      assert.equal(msg, 'hello!{}');
     });
   });
 

@@ -1,7 +1,0 @@
-{
-  "name": "teggDal",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/dal",
-  "clazzList": [{ "name": "TransactionalAOP", "filePath": "src/lib/TransactionalAOP.ts" }],
-  "multiInstanceClazzList": [{ "name": "DataSourceDelegate", "filePath": "src/lib/DataSource.ts" }],
-  "protos": []
-}

@@ -19,8 +19,6 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test": "egg-bin test",
-    "cov": "egg-bin cov",
     "clean": "tsc -b --clean && rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
@@ -63,9 +61,7 @@
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/utils": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
-    "mocha": "catalog:",
     "mm": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",

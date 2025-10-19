@@ -3526,18 +3526,12 @@ importers:
       '@eggjs/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
-      '@types/mocha':
-        specifier: 'catalog:'
-        version: 10.0.10
       '@types/node':
         specifier: 'catalog:'
         version: 24.8.1
       mm:
         specifier: 'catalog:'
         version: 4.0.2
-      mocha:
-        specifier: 'catalog:'
-        version: 11.7.4
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)

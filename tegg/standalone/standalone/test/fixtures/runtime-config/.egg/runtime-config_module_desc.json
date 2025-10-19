@@ -1,7 +1,0 @@
-{
-  "name": "runtime-config",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/runtime-config",
-  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}

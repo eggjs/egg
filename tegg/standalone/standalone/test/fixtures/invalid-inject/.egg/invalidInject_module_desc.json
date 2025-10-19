@@ -1,7 +1,0 @@
-{
-  "name": "invalidInject",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/standalone/standalone/test/fixtures/invalid-inject",
-  "clazzList": [{ "name": "Foo", "filePath": "foo.ts" }],
-  "multiInstanceClazzList": [],
-  "protos": []
-}
