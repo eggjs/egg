@@ -1,8 +1,8 @@
-import assert from 'node:assert/strict';
-import { it } from 'vitest';
+import { it, assert } from 'vitest';
 import { PropagationType } from '@eggjs/tegg-types';
-import { TransactionMetadataUtil, TransactionMetaBuilder, Transactional } from '../../src/index.js';
-import { Foo, Bar, FooBar, BarFoo } from '../fixtures/transaction.js';
+
+import { TransactionMetadataUtil, TransactionMetaBuilder, Transactional } from '../../src/index.ts';
+import { Foo, Bar, FooBar, BarFoo } from '../fixtures/transaction.ts';
 
 it('should build meta data success', () => {
   assert.ok(TransactionMetadataUtil.isTransactionClazz(Foo));
@@ -57,5 +57,5 @@ it('should build meta data success', () => {
 
   assert.throws(() => {
     Transactional({ propagation: 'xx' as PropagationType });
-  }, new Error('unknown propagation type xx'));
+  }, /unknown propagation type xx/);
 });

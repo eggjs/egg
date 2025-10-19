@@ -1,1 +1,1 @@
-export * from './TransactionMetaBuilder.js';
+export * from './TransactionMetaBuilder.ts';

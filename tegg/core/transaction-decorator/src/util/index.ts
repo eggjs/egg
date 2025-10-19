@@ -1,1 +1,1 @@
-export * from './TransactionMetadataUtil.js';
+export * from './TransactionMetadataUtil.ts';

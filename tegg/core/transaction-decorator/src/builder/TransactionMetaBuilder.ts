@@ -1,5 +1,6 @@
 import type { EggProtoImplClass, TransactionMetadata } from '@eggjs/tegg-types';
-import { TransactionMetadataUtil } from '../util/index.js';
+
+import { TransactionMetadataUtil } from '../util/index.ts';
 
 export class TransactionMetaBuilder {
   private readonly clazz: EggProtoImplClass;

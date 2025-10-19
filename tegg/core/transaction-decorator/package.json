@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-transaction-decorator",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg transaction decorator",
   "keywords": [
     "egg",
@@ -10,15 +10,21 @@
     "tegg"
   ],
   "author": "qile222 <chhxxc@gmail.com>",
-  "homepage": "https://github.com/eggjs/tegg",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/transaction-decorator",
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/transaction-decorator"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/transaction-decorator"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
   },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
@@ -46,13 +52,7 @@
     "dist"
   ],
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
-  },
-  "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "tsdown": "catalog:",
-    "unplugin-unused": "catalog:"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

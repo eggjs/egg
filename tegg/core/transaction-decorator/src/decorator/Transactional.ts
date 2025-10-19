@@ -1,6 +1,7 @@
 import { PropagationType } from '@eggjs/tegg-types';
 import type { EggProtoImplClass, TransactionalParams } from '@eggjs/tegg-types';
-import { TransactionMetadataUtil } from '../util/index.js';
+
+import { TransactionMetadataUtil } from '../util/index.ts';
 
 export function Transactional(params?: TransactionalParams) {
   const propagation = params?.propagation || PropagationType.REQUIRED;
@@ -9,7 +10,7 @@ export function Transactional(params?: TransactionalParams) {
   }
   const datasourceName = params?.datasourceName;
 
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     const constructor: EggProtoImplClass = target.constructor;
     TransactionMetadataUtil.setIsTransactionClazz(constructor);
     TransactionMetadataUtil.addTransactionMetadata(constructor, {

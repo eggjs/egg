@@ -1,9 +1,13 @@
 import { MetadataUtil } from '@eggjs/core-decorator';
-import { IS_TRANSACTION_CLAZZ, TRANSACTION_META_DATA, type TransactionMetadata } from '@eggjs/tegg-types';
-import type { EggProtoImplClass } from '@eggjs/tegg-types';
+import {
+  IS_TRANSACTION_CLAZZ,
+  TRANSACTION_META_DATA,
+  type TransactionMetadata,
+  type EggProtoImplClass,
+} from '@eggjs/tegg-types';
 
 export class TransactionMetadataUtil {
-  static setIsTransactionClazz(clazz: EggProtoImplClass) {
+  static setIsTransactionClazz(clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(IS_TRANSACTION_CLAZZ, true, clazz);
   }
 
@@ -11,7 +15,7 @@ export class TransactionMetadataUtil {
     return MetadataUtil.getBooleanMetaData(IS_TRANSACTION_CLAZZ, clazz);
   }
 
-  static addTransactionMetadata(clazz: EggProtoImplClass, data: TransactionMetadata) {
+  static addTransactionMetadata(clazz: EggProtoImplClass, data: TransactionMetadata): void {
     const list = MetadataUtil.initOwnArrayMetaData<TransactionMetadata>(TRANSACTION_META_DATA, clazz, []);
     list.push(data);
   }
