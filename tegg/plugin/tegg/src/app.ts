@@ -1,3 +1,4 @@
+// init loader
 import './lib/AppLoadUnit.ts';
 import './lib/AppLoadUnitInstance.ts';
 import './lib/EggCompatibleObject.ts';
@@ -13,7 +14,7 @@ import { hijackRunInBackground } from './lib/run_in_background.ts';
 import { EggQualifierProtoHook } from './lib/EggQualifierProtoHook.ts';
 import { ConfigSourceLoadUnitHook } from './lib/ConfigSourceLoadUnitHook.ts';
 
-export default class App implements ILifecycleBoot {
+export default class TeggAppBoot implements ILifecycleBoot {
   private readonly app: Application;
   private compatibleHook?: EggContextCompatibleHook;
   private eggContextHandler: EggContextHandler;
@@ -25,18 +26,18 @@ export default class App implements ILifecycleBoot {
     this.app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     this.app.config.coreMiddleware.push('teggCtxLifecycleMiddleware');
   }
 
-  configDidLoad() {
+  configDidLoad(): void {
     this.eggContextHandler = new EggContextHandler(this.app);
     this.app.eggContextHandler = this.eggContextHandler;
     this.eggContextHandler.register();
     this.app.moduleHandler = new ModuleHandler(this.app);
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     hijackRunInBackground(this.app);
     this.loadUnitMultiInstanceProtoHook = new LoadUnitMultiInstanceProtoHook();
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitMultiInstanceProtoHook);
@@ -54,7 +55,7 @@ export default class App implements ILifecycleBoot {
     this.app.eggContextLifecycleUtil.registerLifecycle(this.compatibleHook);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     CompatibleUtil.clean();
     await this.app.moduleHandler.destroy();
     if (this.compatibleHook) {

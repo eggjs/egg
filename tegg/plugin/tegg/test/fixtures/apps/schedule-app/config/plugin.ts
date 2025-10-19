@@ -9,5 +9,10 @@ export default {
     enable: true,
   },
 
+  tegg: {
+    package: '@eggjs/tegg-plugin',
+    enable: true,
+  },
+
   watcher: false,
 };

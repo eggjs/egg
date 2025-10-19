@@ -1,6 +1,6 @@
 {
   "name": "backgroundModule",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/background-app/modules/multi-module-background",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/background-app/modules/multi-module-background",
   "clazzList": [
     { "name": "TestObj", "filePath": "BackgroundService.ts" },
     { "name": "BackgroundService", "filePath": "BackgroundService.ts" },

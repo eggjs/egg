@@ -1,4 +1,4 @@
-import { type Application } from 'egg';
+import type { Application } from 'egg';
 import { ContextHandler, type EggContext } from '@eggjs/tegg-runtime';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';
 
@@ -19,7 +19,7 @@ export class EggContextHandler {
     return await this.app.ctxStorage.run(ctx, fn);
   }
 
-  register() {
+  register(): void {
     ContextHandler.getContextCallback = () => {
       return this.getContextCallback();
     };

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 
 import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.ts';
 import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.ts';

@@ -23,7 +23,7 @@ import {
 } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
-const debug = debuglog('tegg/plugin/tegg/lib/AppLoadUnit');
+const debug = debuglog('egg/tegg/plugin/tegg/lib/AppLoadUnit');
 
 export class AppLoadUnit implements LoadUnit {
   private readonly loader: Loader;
@@ -40,7 +40,7 @@ export class AppLoadUnit implements LoadUnit {
     this.loader = loader;
   }
 
-  async init() {
+  async init(): Promise<void> {
     const clazzList = await this.loader.load();
     if (debug.enabled) {
       debug(
@@ -86,12 +86,12 @@ export class AppLoadUnit implements LoadUnit {
     return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
   }
 
-  registerEggPrototype(proto: EggPrototype) {
+  registerEggPrototype(proto: EggPrototype): void {
     const protoList = MapUtil.getOrStore(this.protoMap, proto.name, []);
     protoList.push(proto);
   }
 
-  deletePrototype(proto: EggPrototype) {
+  deletePrototype(proto: EggPrototype): void {
     const protos = this.protoMap.get(proto.name);
     if (protos) {
       const index = protos.indexOf(proto);
@@ -101,7 +101,7 @@ export class AppLoadUnit implements LoadUnit {
     }
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     for (const namedProtos of this.protoMap.values()) {
       // Delete prototype will delete item
       // array iterator is not safe

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 
 import MainService from './fixtures/apps/access-level-check/modules/module-main/MainService.ts';
@@ -8,7 +9,7 @@ import { getAppBaseDir } from './utils.ts';
 describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   let app: MockApplication;
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -16,7 +17,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getAppBaseDir('access-level-check'),
     });

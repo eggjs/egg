@@ -1,4 +1,4 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 import { type Loader, TeggError } from '@eggjs/tegg-metadata';
 import {
   AccessLevel,
@@ -18,14 +18,14 @@ import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';
 import { ModuleConfigLoader } from './ModuleConfigLoader.ts';
 import { COMPATIBLE_PROTO_IMPLE_TYPE } from './EggCompatibleProtoImpl.ts';
 
-export const APP_CLAZZ_BLACK_LIST = ['eggObjectFactory', 'moduleConfigs'];
+export const APP_CLAZZ_BLACK_LIST: readonly string[] = ['eggObjectFactory', 'moduleConfigs'];
 
-export const CONTEXT_CLAZZ_BLACK_LIST = [
+export const CONTEXT_CLAZZ_BLACK_LIST: readonly string[] = [
   // just use the app.logger, ctx logger is deprecated.
   'logger',
 ];
-export const DEFAULT_APP_CLAZZ: string[] = [];
-export const DEFAULT_CONTEXT_CLAZZ = ['user'];
+export const DEFAULT_APP_CLAZZ: readonly string[] = [];
+export const DEFAULT_CONTEXT_CLAZZ: readonly string[] = ['user'];
 
 export class EggAppLoader implements Loader {
   private readonly app: Application;

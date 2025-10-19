@@ -5,7 +5,7 @@ export class BarService {
   @Inject()
   doesNotExist: object;
 
-  bar() {
+  bar(): void {
     console.log(this.doesNotExist);
   }
 }

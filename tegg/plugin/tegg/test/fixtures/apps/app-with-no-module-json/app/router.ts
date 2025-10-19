@@ -1,5 +1,5 @@
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
-export default (app: Application) => {
+export default (app: Application): void => {
   app.router.get('/config', app.controller.app.baseDir);
 };

@@ -34,11 +34,11 @@ export class AppLoadUnitInstance implements LoadUnitInstance {
     return this.protoToCreateMap.entries();
   }
 
-  addProtoToCreate(name: string, proto: EggPrototype) {
+  addProtoToCreate(name: string, proto: EggPrototype): void {
     this.protoToCreateMap.set(name, proto);
   }
 
-  deleteProtoToCreate(name: string) {
+  deleteProtoToCreate(name: string): void {
     this.protoToCreateMap.delete(name);
   }
 

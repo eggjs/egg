@@ -1,4 +1,6 @@
-export default () => {
+import { type EggAppConfig } from 'egg';
+
+export default function (): EggAppConfig {
   const config = {
     keys: 'test key',
     security: {
@@ -7,5 +9,5 @@ export default () => {
       },
     },
   };
-  return config;
-};
+  return config as unknown as EggAppConfig;
+}

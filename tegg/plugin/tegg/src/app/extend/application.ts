@@ -13,73 +13,69 @@ import {
   EggContextLifecycleUtil,
   EggObjectLifecycleUtil,
   LoadUnitInstanceLifecycleUtil,
-  type EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 import { type EggProtoImplClass, IdenticalUtil, type RuntimeConfig, type QualifierInfo } from '@eggjs/tegg';
 import { Application } from 'egg';
-
-import { ModuleHandler } from '../../lib/ModuleHandler.ts';
-import { EggContextHandler } from '../../lib/EggContextHandler.ts';
 
 export default class TEggPluginApplication extends Application {
   // @eggjs/tegg-metadata should not depend by other egg plugins.
   // May make multi singleton instances.
   // So tegg-compatible should delegate the metadata factories
   // TODO delegate all the singleton
-  get eggPrototypeCreatorFactory() {
+  get eggPrototypeCreatorFactory(): typeof EggPrototypeCreatorFactory {
     return EggPrototypeCreatorFactory;
   }
 
-  get eggPrototypeFactory() {
+  get eggPrototypeFactory(): EggPrototypeFactory {
     return EggPrototypeFactory.instance;
   }
 
-  get loadUnitLifecycleUtil() {
+  get loadUnitLifecycleUtil(): typeof LoadUnitLifecycleUtil {
     return LoadUnitLifecycleUtil;
   }
 
-  get loadUnitFactory() {
+  get loadUnitFactory(): typeof LoadUnitFactory {
     return LoadUnitFactory;
   }
 
-  get eggObjectFactory() {
+  get eggObjectFactory(): typeof EggObjectFactory {
     return EggObjectFactory;
   }
 
-  get loadUnitInstanceFactory() {
+  get loadUnitInstanceFactory(): typeof LoadUnitInstanceFactory {
     return LoadUnitInstanceFactory;
   }
 
-  get loadUnitInstanceLifecycleUtil() {
+  get loadUnitInstanceLifecycleUtil(): typeof LoadUnitInstanceLifecycleUtil {
     return LoadUnitInstanceLifecycleUtil;
   }
 
-  get eggContainerFactory() {
+  get eggContainerFactory(): typeof EggContainerFactory {
     return EggContainerFactory;
   }
 
-  get loaderFactory() {
+  get loaderFactory(): typeof LoaderFactory {
     return LoaderFactory;
   }
 
-  get eggPrototypeLifecycleUtil() {
+  get eggPrototypeLifecycleUtil(): typeof EggPrototypeLifecycleUtil {
     return EggPrototypeLifecycleUtil;
   }
 
-  get eggContextLifecycleUtil() {
+  get eggContextLifecycleUtil(): typeof EggContextLifecycleUtil {
     return EggContextLifecycleUtil;
   }
 
-  get eggObjectLifecycleUtil() {
+  get eggObjectLifecycleUtil(): typeof EggObjectLifecycleUtil {
     return EggObjectLifecycleUtil;
   }
 
-  get abstractEggContext() {
+  get abstractEggContext(): typeof AbstractEggContext {
     return AbstractEggContext;
   }
 
-  get identicalUtil() {
+  get identicalUtil(): typeof IdenticalUtil {
     return IdenticalUtil;
   }
 
@@ -92,7 +88,11 @@ export default class TEggPluginApplication extends Application {
     };
   }
 
-  async getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+  async getEggObject<T>(
+    clazz: EggProtoImplClass<T>,
+    name?: string,
+    qualifiers?: QualifierInfo | QualifierInfo[]
+  ): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
@@ -104,47 +104,11 @@ export default class TEggPluginApplication extends Application {
     return eggObject.obj as T;
   }
 
-  async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+  async getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
     const eggObject = await EggContainerFactory.getOrCreateEggObjectFromName(name, qualifiers as QualifierInfo[]);
     return eggObject.obj as T;
-  }
-}
-
-declare module 'egg' {
-  interface Application {
-    eggPrototypeCreatorFactory: typeof EggPrototypeCreatorFactory;
-    eggPrototypeFactory: EggPrototypeFactory;
-    eggContainerFactory: typeof EggContainerFactory;
-    loadUnitFactory: typeof LoadUnitFactory;
-    eggObjectFactory: typeof EggObjectFactory;
-    loadUnitInstanceFactory: typeof LoadUnitInstanceFactory;
-    abstractEggContext: typeof AbstractEggContext;
-    identicalUtil: typeof IdenticalUtil;
-    loaderFactory: typeof LoaderFactory;
-
-    loadUnitLifecycleUtil: typeof LoadUnitLifecycleUtil;
-    loadUnitInstanceLifecycleUtil: typeof LoadUnitInstanceLifecycleUtil;
-    eggPrototypeLifecycleUtil: typeof EggPrototypeLifecycleUtil;
-    eggContextLifecycleUtil: typeof EggContextLifecycleUtil;
-    eggObjectLifecycleUtil: typeof EggObjectLifecycleUtil;
-
-    // TODO: how to define teggContext?
-    teggContext: TEggContext;
-    moduleHandler: ModuleHandler;
-    eggContextHandler: EggContextHandler;
-
-    // getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    getEggObject<T>(
-      clazz: new (...args: any[]) => T,
-      name?: string,
-      qualifiers?: QualifierInfo | QualifierInfo[]
-    ): Promise<T>;
-    getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-
-    // set on ModuleHandler.init()
-    module: EggModule;
   }
 }

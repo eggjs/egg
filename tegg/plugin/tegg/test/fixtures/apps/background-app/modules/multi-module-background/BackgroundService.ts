@@ -24,7 +24,7 @@ export default class BackgroundService {
   @Inject()
   private readonly countService: CountService;
 
-  async backgroundAdd(delay = 1000) {
+  async backgroundAdd(delay = 1000): Promise<void> {
     this.backgroundTaskHelper.timeout = 5000;
     this.backgroundTaskHelper.run(async () => {
       await TimerUtil.sleep(delay);

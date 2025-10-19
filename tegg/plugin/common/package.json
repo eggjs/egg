@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/egg-module-common",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "common module",
   "keywords": [
     "egg",
@@ -25,14 +25,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/common",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/common",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/common"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/common"
   },
   "engines": {
     "node": ">=22.18.0"

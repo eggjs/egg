@@ -8,12 +8,12 @@ import { SingletonProto, AccessLevel, LifecycleInit } from '@eggjs/tegg';
   accessLevel: AccessLevel.PUBLIC,
 })
 export class Ajv implements IAjv {
-  static InvalidParamErrorClass = AjvInvalidParamError;
+  static InvalidParamErrorClass: typeof AjvInvalidParamError = AjvInvalidParamError;
 
   #ajvInstance: Ajv2019;
 
   @LifecycleInit()
-  protected _init() {
+  protected _init(): void {
     this.#ajvInstance = new Ajv2019();
     // @ts-expect-error ajv-keywords is not typed
     keyWords(this.#ajvInstance, 'transform');

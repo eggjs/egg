@@ -10,7 +10,7 @@
   "eggModule": {
     "name": "teggAjv"
   },
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "ajv plugin for egg and tegg",
   "keywords": [
     "egg",
@@ -35,14 +35,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/ajv",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/ajv",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/ajv"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/ajv"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -53,6 +53,9 @@
     "@eggjs/tegg": "workspace:*",
     "ajv": "catalog:"
   },
+  "peerDependencies": {
+    "egg": "workspace:*"
+  },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
@@ -60,8 +63,8 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
   "publishConfig": {

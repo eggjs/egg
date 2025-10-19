@@ -26,7 +26,7 @@ export default class TEggPluginApplicationUnittest extends Application {
     return ctx;
   }
 
-  async destroyModuleContext(ctx: Context) {
+  async destroyModuleContext(ctx: Context): Promise<void> {
     hasMockModuleContext = false;
 
     const teggCtx = ctx.teggContext;
@@ -58,22 +58,5 @@ export default class TEggPluginApplicationUnittest extends Application {
         await teggCtx.destroy(lifecycle);
       }
     }, data);
-  }
-}
-
-declare module 'egg' {
-  export interface Application {
-    /**
-     * Mock the module context, only for unittest
-     */
-    mockModuleContext(data?: any): Promise<Context>;
-    /**
-     * Mock the module context scope, only for unittest
-     */
-    mockModuleContextScope<R = any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R>;
-    /**
-     * Destroy the module context, only for unittest
-     */
-    destroyModuleContext(context: Context): Promise<void>;
   }
 }

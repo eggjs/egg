@@ -12,7 +12,7 @@
 [download-image]: https://img.shields.io/npm/dm/@eggjs/tegg-ajv-plugin.svg?style=flat-square
 [download-url]: https://npmjs.org/package/@eggjs/tegg-ajv-plugin
 
-参考 [egg-typebox-validate](https://github.com/xiekw2010/egg-typebox-validate) 的最佳实践，结合 ajv + typebox，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义（完整的 ts 类型提示）。
+参考 [@eggjs/typebox-validate](https://github.com/eggjs/egg/tree/next/plugins/typebox-validate) 的最佳实践，结合 ajv + typebox，只需要定义一次参数类型和规则，就能同时拥有参数校验和类型定义（完整的 ts 类型提示）。
 
 ## egg 模式
 

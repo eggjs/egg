@@ -2,7 +2,7 @@ function prepareObjectStackTrace(_: Error, stack: NodeJS.CallSite[]) {
   return stack;
 }
 
-export function getCalleeFromStack(withLine: boolean, stackIndex?: number) {
+export function getCalleeFromStack(withLine: boolean, stackIndex?: number): string {
   stackIndex = stackIndex === undefined ? 2 : stackIndex;
   const limit = Error.stackTraceLimit;
   const prep = Error.prepareStackTrace;

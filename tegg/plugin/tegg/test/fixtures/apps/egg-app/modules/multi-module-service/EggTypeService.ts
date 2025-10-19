@@ -25,7 +25,7 @@ export default class EggTypeService {
   @EggQualifier(EggType.APP)
   logger: EggLogger;
 
-  testInject() {
+  testInject(): { app: AppDefObj; ctx: AppDefObj } {
     return {
       app: this.appAppDefineObject,
       ctx: this.ctxAppDefineObject,

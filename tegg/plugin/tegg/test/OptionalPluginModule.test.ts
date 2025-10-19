@@ -1,29 +1,32 @@
 // import assert from 'node:assert/strict';
-// import { mm, MockApplication } from '@eggjs/mock';
-// import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used.js';
 
-// describe('plugin/tegg/test/OptionalPluginModule.test.ts', () => {
-//   let app: MockApplication;
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
+import { mm, type MockApplication } from '@eggjs/mock';
 
-//   after(async () => {
-//     await app.close();
-//   });
+// import { UsedProto } from './fixtures/apps/plugin-module/node_modules/foo-plugin/Used.ts';
 
-//   afterEach(() => {
-//     return mm.restore();
-//   });
+describe.skip('plugin/tegg/test/OptionalPluginModule.test.ts', () => {
+  let app: MockApplication;
 
-//   before(async () => {
-//     app = mm.app({
-//       baseDir: 'apps/plugin-module',
-//     });
-//     await app.ready();
-//   });
+  afterAll(async () => {
+    await app.close();
+  });
 
-//   it('should work', async () => {
-//     await app.mockModuleContextScope(async ctx => {
-//       const usedProto = await ctx.getEggObject(UsedProto);
-//       assert(usedProto);
-//     });
-//   });
-// });
+  afterEach(() => {
+    return mm.restore();
+  });
+
+  beforeAll(async () => {
+    app = mm.app({
+      baseDir: 'apps/plugin-module',
+    });
+    await app.ready();
+  });
+
+  it('should work', async () => {
+    // await app.mockModuleContextScope(async ctx => {
+    //   const usedProto = await ctx.getEggObject(UsedProto);
+    //   assert(usedProto);
+    // });
+  });
+});

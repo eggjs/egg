@@ -8,7 +8,7 @@ export class BarService {
   @InjectOptional()
   doesNotExist2?: object;
 
-  bar() {
+  bar(): { nil1: string; nil2: string } {
     return {
       nil1: this.doesNotExist1 ? 'N' : 'Y',
       nil2: this.doesNotExist2 ? 'N' : 'Y',

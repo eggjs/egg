@@ -7,7 +7,7 @@ export default class AppBoot {
     this.app = app;
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     if (this.app.moduleConfigs?.overwrite?.config) {
       (this.app.moduleConfigs.overwrite.config as Record<string, any>).features.dynamic.bar = 'overwrite foo';
     }

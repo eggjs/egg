@@ -7,9 +7,9 @@ import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { ctxLifecycleMiddleware } from '../../lib/ctx_lifecycle_middleware.ts';
 
 export default class TEggPluginContext extends Context {
-  [TEGG_CONTEXT]: TEggContext | undefined;
+  // [TEGG_CONTEXT]: TEggContext | undefined;
 
-  async beginModuleScope(func: () => Promise<void>) {
+  async beginModuleScope(func: () => Promise<void>): Promise<void> {
     await ctxLifecycleMiddleware(this, func);
   }
 
@@ -17,10 +17,10 @@ export default class TEggPluginContext extends Context {
     if (!this[TEGG_CONTEXT]) {
       throw new Error('tegg context have not ready, should call after teggCtxLifecycleMiddleware');
     }
-    return this[TEGG_CONTEXT];
+    return this[TEGG_CONTEXT] as TEggContext;
   }
 
-  async getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string) {
+  async getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string): Promise<T> {
     const protoObj = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass);
     if (!protoObj) {
       throw new Error(`can not get proto for clazz ${clazz.name}`);
@@ -30,7 +30,7 @@ export default class TEggPluginContext extends Context {
     return eggObject.obj as T;
   }
 
-  async getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]) {
+  async getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
     }
@@ -39,21 +39,5 @@ export default class TEggPluginContext extends Context {
       qualifiers as QualifierInfo[]
     );
     return eggObject.obj as T;
-  }
-}
-
-declare module 'egg' {
-  interface Context {
-    beginModuleScope(func: () => Promise<void>): Promise<void>;
-    // getEggObject<T>(clazz: EggProtoImplClass<T>, name?: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    getEggObject<T>(
-      clazz: new (...args: any[]) => T,
-      name?: string,
-      qualifiers?: QualifierInfo | QualifierInfo[]
-    ): Promise<T>;
-    getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
-    teggContext: TEggContext;
-
-    module: EggModule;
   }
 }

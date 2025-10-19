@@ -6,7 +6,7 @@
       "teggConfig"
     ]
   },
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "module plugin for egg",
   "keywords": [
     "egg",
@@ -54,14 +54,14 @@
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/tegg",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/tegg",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/tegg"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/tegg"
   },
   "engines": {
     "node": ">=22.18.0"

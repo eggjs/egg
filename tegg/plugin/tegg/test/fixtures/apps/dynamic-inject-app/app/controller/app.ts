@@ -3,7 +3,7 @@ import { HelloService } from '../../modules/dynamic-inject-module/HelloService.t
 import { SingletonHelloService } from '../../modules/dynamic-inject-module/SingletonHelloService.ts';
 
 export default class App extends Controller {
-  async dynamicInject() {
+  async dynamicInject(): Promise<void> {
     // const helloService = await this.ctx.module.dynamicInjectModule.helloService;
     const helloService = await this.ctx.getEggObject(HelloService);
     const msgs = await helloService.hello();
@@ -11,7 +11,7 @@ export default class App extends Controller {
     this.ctx.body = msgs;
   }
 
-  async singletonDynamicInject() {
+  async singletonDynamicInject(): Promise<void> {
     // const helloService = await this.app.module.dynamicInjectModule.singletonHelloService;
     const helloService = await this.app.getEggObject(SingletonHelloService);
     const msgs = await helloService.hello();

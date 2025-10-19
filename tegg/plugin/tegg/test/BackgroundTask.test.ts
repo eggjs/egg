@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
 
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
-// import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import { BackgroundTaskHelper } from '@eggjs/tegg';
 import { type EggContext, EggContextLifecycleUtil } from '@eggjs/tegg-runtime';
 
@@ -15,7 +15,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
   const appDir = getAppBaseDir('background-app');
   let app: MockApplication;
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -23,7 +23,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: appDir,
     });
@@ -47,7 +47,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
     await TimerUtil.sleep(7000);
     const errorLog = fs.readFileSync(path.resolve(appDir, 'logs/egg-app/common-error.log'), 'utf-8');
     assert(errorLog.includes('Can not read property `testObj` because egg ctx has been destroyed ['));
-  });
+  }, 10000);
 
   it('should release', async () => {
     let teggCtx: EggContext;

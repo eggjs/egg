@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
 import EggTypeService from './fixtures/apps/egg-app/modules/multi-module-service/EggTypeService.ts';
 import TraceService from './fixtures/apps/egg-app/modules/multi-module-service/TraceService.ts';
@@ -9,7 +10,7 @@ import { getAppBaseDir } from './utils.ts';
 describe('plugin/tegg/test/EggCompatible.test.ts', () => {
   let app: MockApplication;
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -17,7 +18,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getAppBaseDir('egg-app'),
     });

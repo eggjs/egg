@@ -1,6 +1,6 @@
 import { EggLoadUnitType, LoadUnitFactory, GlobalGraph, ModuleDescriptorDumper } from '@eggjs/tegg-metadata';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { Application } from 'egg';
+import type { Application } from 'egg';
 
 import { EggAppLoader } from './EggAppLoader.ts';
 
@@ -51,7 +51,7 @@ export class EggModuleLoader {
     }
   }
 
-  async load() {
+  async load(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await this.buildAppGraph();
     await this.loadApp();
     await this.loadModule();

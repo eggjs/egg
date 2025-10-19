@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
+import { describe, it, afterAll, afterEach, beforeAll } from 'vitest';
 
 import { getAppBaseDir } from './utils.ts';
 
@@ -8,7 +9,7 @@ describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
   let app: MockApplication;
   const baseDir = getAppBaseDir('app-with-no-module-json');
 
-  after(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
@@ -16,7 +17,7 @@ describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir,
     });

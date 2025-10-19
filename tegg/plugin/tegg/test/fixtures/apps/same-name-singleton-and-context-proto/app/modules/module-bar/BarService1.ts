@@ -6,7 +6,7 @@ export class BarService1 {
   @Inject()
   fooService: FooService;
 
-  type() {
+  type(): string {
     return this.fooService.type;
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "moduleMain",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/access-level-check/modules/module-main",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/access-level-check/modules/module-main",
   "clazzList": [
     { "name": "BarService", "filePath": "BarService.ts" },
     { "name": "FooService", "filePath": "FooService.ts" },

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm } from '@eggjs/mock';
+import { describe, it, afterEach } from 'vitest';
 
 import { getAppBaseDir } from '../utils.ts';
 
@@ -15,7 +16,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         baseDir: getAppBaseDir('recursive-module-app'),
       });
       await assert.rejects(() => app.ready(), /module has recursive deps/);
-      return app.close();
+      await app.close();
     });
   });
 
@@ -25,7 +26,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         baseDir: getAppBaseDir('wrong-order-app'),
       });
       await app.ready();
-      return app.close();
+      await app.close();
     });
   });
 });

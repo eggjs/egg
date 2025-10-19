@@ -3,7 +3,7 @@ import TraceService from '../../modules/multi-module-service/TraceService.js';
 import AppService from '../../modules/multi-module-service/AppService.js';
 
 export default class App extends Controller {
-  async find() {
+  async find(): Promise<void> {
     const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
     const appService = await this.ctx.app.getEggObject<AppService>(AppService);
     const traceId = await traceService.getTraceId();
@@ -14,7 +14,7 @@ export default class App extends Controller {
     };
   }
 
-  async find2() {
+  async find2(): Promise<void> {
     const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
     const appService = await this.ctx.app.getEggObject<AppService>(AppService);
     const traceId = await traceService.getTraceId();
@@ -25,7 +25,7 @@ export default class App extends Controller {
     };
   }
 
-  async save() {
+  async save(): Promise<void> {
     const app = this.ctx.request.body;
     const traceService = await this.ctx.app.getEggObject<TraceService>(TraceService);
     const appService = await this.ctx.app.getEggObject<AppService>(AppService);

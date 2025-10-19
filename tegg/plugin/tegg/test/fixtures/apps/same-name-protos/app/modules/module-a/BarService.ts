@@ -8,7 +8,7 @@ export class BarService {
   @ModuleQualifier('foo')
   fooService: FooService;
 
-  bar() {
+  bar(): void {
     console.log(this.fooService);
   }
 }

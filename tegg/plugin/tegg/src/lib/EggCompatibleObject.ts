@@ -4,11 +4,12 @@ import { type EggPrototype } from '@eggjs/tegg-metadata';
 
 import { EggCompatibleProtoImpl } from './EggCompatibleProtoImpl.ts';
 
-const OBJ = Symbol('EggCompatibleObject#obj');
+// const OBJ = Symbol('EggCompatibleObject#obj');
 
 export class EggCompatibleObject implements EggObject {
   readonly isReady: boolean = true;
-  private [OBJ]: object;
+  // private [OBJ]: object;
+  #obj: object;
   readonly proto: EggCompatibleProtoImpl;
   readonly name: EggObjectName;
   readonly id: string;
@@ -27,17 +28,17 @@ export class EggCompatibleObject implements EggObject {
   // If the egg object is a getter,
   // access may have side effect.
   // So access egg object lazy.
-  get obj() {
+  get obj(): object {
     if (this.isContext) {
       return this.proto.constructEggObject();
     }
-    if (!this[OBJ]) {
-      this[OBJ] = this.proto.constructEggObject();
+    if (!this.#obj) {
+      this.#obj = this.proto.constructEggObject();
     }
-    return this[OBJ];
+    return this.#obj;
   }
 
-  injectProperty() {
+  injectProperty(): void {
     return;
   }
 

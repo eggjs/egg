@@ -1,5 +1,5 @@
 import { Base } from 'sdk-base';
-import { Application, Context } from 'egg';
+import type { Application } from 'egg';
 import { EggLoadUnitType, type LoadUnit, LoadUnitFactory } from '@eggjs/tegg-metadata';
 import { type LoadUnitInstance, LoadUnitInstanceFactory } from '@eggjs/tegg-runtime';
 
@@ -20,7 +20,7 @@ export class ModuleHandler extends Base {
     this.loadUnitLoader = new EggModuleLoader(this.app);
   }
 
-  async init() {
+  async init(): Promise<void> {
     try {
       this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
         COMPATIBLE_PROTO_IMPLE_TYPE,
@@ -38,7 +38,7 @@ export class ModuleHandler extends Base {
         }
         instances.push(instance);
       }
-      CompatibleUtil.contextModuleCompatible((this.app as any).context as Context, instances);
+      CompatibleUtil.contextModuleCompatible(this.app.context, instances);
       this.loadUnitInstances = instances;
       this.ready(true);
     } catch (e) {
@@ -47,7 +47,7 @@ export class ModuleHandler extends Base {
     }
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     if (this.loadUnitInstances) {
       for (const instance of this.loadUnitInstances) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);

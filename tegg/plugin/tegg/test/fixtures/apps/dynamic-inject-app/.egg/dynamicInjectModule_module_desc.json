@@ -1,6 +1,6 @@
 {
   "name": "dynamicInjectModule",
-  "unitPath": "/Users/fengmk2/git/github.com/eggjs/tegg/plugin/tegg/test/fixtures/apps/dynamic-inject-app/modules/dynamic-inject-module",
+  "unitPath": "/Users/fengmk2/git/github.com/eggjs/egg/tegg/plugin/tegg/test/fixtures/apps/dynamic-inject-app/modules/dynamic-inject-module",
   "clazzList": [
     { "name": "HelloService", "filePath": "HelloService.ts" },
     { "name": "SingletonHelloService", "filePath": "SingletonHelloService.ts" },

@@ -9,7 +9,7 @@ export default class Foo extends Subscription {
     };
   }
 
-  async subscribe() {
+  async subscribe(): Promise<void> {
     await this.ctx.beginModuleScope(async () => {
       const appService = await this.ctx.getEggObject(AppService);
       await appService.findApp();

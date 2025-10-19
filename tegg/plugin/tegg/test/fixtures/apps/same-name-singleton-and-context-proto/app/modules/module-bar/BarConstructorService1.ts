@@ -3,9 +3,12 @@ import { FooService } from '../module-foo/FooService.js';
 
 @SingletonProto()
 export class BarConstructorService1 {
-  constructor(@Inject() readonly fooService: FooService) {}
+  constructor(
+    // @ts-expect-error readonly property in constructor
+    @Inject() readonly fooService: FooService
+  ) {}
 
-  type() {
+  type(): string {
     return this.fooService.type;
   }
 }

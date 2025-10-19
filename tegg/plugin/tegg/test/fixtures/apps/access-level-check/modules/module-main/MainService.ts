@@ -12,11 +12,11 @@ export default class MainService {
   @Inject()
   barService: BarService;
 
-  public invokeFoo() {
+  public invokeFoo(): string {
     return this.fooService.moduleMainFooServiceMethod();
   }
 
-  public invokeBar() {
+  public invokeBar(): string {
     return this.barService.moduleMainBarServiceMethod();
   }
 }

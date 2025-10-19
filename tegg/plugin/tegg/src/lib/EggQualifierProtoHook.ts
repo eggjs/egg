@@ -1,16 +1,16 @@
 import { debuglog } from 'node:util';
 import { type LoadUnitLifecycleContext, type LoadUnit } from '@eggjs/tegg-metadata';
 import { type LifecycleHook, PrototypeUtil, QualifierUtil, EggQualifierAttribute, EggType } from '@eggjs/tegg';
-import { Application } from 'egg';
+import type { Application } from 'egg';
+import { ObjectUtils } from '@eggjs/tegg-common-util';
 import {
   APP_CLAZZ_BLACK_LIST,
   CONTEXT_CLAZZ_BLACK_LIST,
   DEFAULT_APP_CLAZZ,
   DEFAULT_CONTEXT_CLAZZ,
-} from './EggAppLoader.js';
-import { ObjectUtils } from '@eggjs/tegg-common-util';
+} from './EggAppLoader.ts';
 
-const debug = debuglog('tegg/plugin/tegg/lib/EggQualifierProtoHook');
+const debug = debuglog('egg/tegg/plugin/tegg/lib/EggQualifierProtoHook');
 
 export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   private readonly app: Application;

@@ -12,7 +12,7 @@ export default class FooService {
     return 'moduleA-FooService-Method';
   }
 
-  public moduleMainFooServiceInvokeBar() {
+  public moduleMainFooServiceInvokeBar(): string {
     return this.barService.moduleABarServiceMethod();
   }
 }

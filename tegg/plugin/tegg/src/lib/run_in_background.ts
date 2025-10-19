@@ -1,9 +1,8 @@
-import { Application, type Context } from 'egg';
+import type { Application, Context } from 'egg';
 import { BackgroundTaskHelper, PrototypeUtil } from '@eggjs/tegg';
 import { type EggPrototype } from '@eggjs/tegg-metadata';
 import { TEGG_CONTEXT } from '@eggjs/egg-module-common';
 
-import TEggPluginContext from '../app/extend/context.ts';
 import { getCalleeFromStack } from './Utils.ts';
 
 export const LONG_STACK_DELIMITER = '\n --------------------\n';
@@ -19,12 +18,9 @@ function addLongStackTrace(err: Error, causeError: Error) {
   }
 }
 
-export function hijackRunInBackground(app: Application) {
+export function hijackRunInBackground(app: Application): void {
   const eggRunInBackground = app.context.runInBackground;
-  app.context.runInBackground = function runInBackground(
-    this: TEggPluginContext,
-    scope: (ctx: Context) => Promise<any>
-  ) {
+  app.context.runInBackground = function runInBackground(this: Context, scope: (ctx: Context) => Promise<any>) {
     if (!this[TEGG_CONTEXT]) {
       return Reflect.apply(eggRunInBackground, this, [scope]);
     }
@@ -43,8 +39,10 @@ export function hijackRunInBackground(app: Application) {
         resolveBackgroundTask();
       }
     };
-    const taskName = (scope as any)._name || scope.name || getCalleeFromStack(true, 2);
-    (scope as any)._name = taskName;
+    // @ts-expect-error _name is not defined
+    const taskName = scope._name || scope.name || getCalleeFromStack(true, 2);
+    // @ts-expect-error _name is not defined
+    scope._name = taskName;
     Object.defineProperty(newScope, 'name', {
       value: taskName,
       enumerable: false,

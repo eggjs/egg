@@ -12,4 +12,8 @@ export default {
     enable: true,
   },
   watcher: false,
+  tegg: {
+    package: '@eggjs/tegg-plugin',
+    enable: true,
+  },
 };

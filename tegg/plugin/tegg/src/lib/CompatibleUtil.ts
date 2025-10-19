@@ -1,4 +1,4 @@
-import { Application, Context } from 'egg';
+import type { Application, Context } from 'egg';
 import { type EggPrototype, EggPrototypeFactory } from '@eggjs/tegg-metadata';
 import { InitTypeQualifierAttribute, ObjectInitType } from '@eggjs/tegg';
 import { EggContainerFactory, type LoadUnitInstance } from '@eggjs/tegg-runtime';
@@ -49,7 +49,7 @@ export class CompatibleUtil {
     };
   }
 
-  static appCompatible(app: Application, loadUnitInstance: LoadUnitInstance) {
+  static appCompatible(app: Application, loadUnitInstance: LoadUnitInstance): void {
     const moduleLoadUnitProxy = ProxyUtil.safeProxy(
       loadUnitInstance,
       CompatibleUtil.singletonModuleProxyFactory(app, loadUnitInstance)
@@ -60,7 +60,7 @@ export class CompatibleUtil {
     });
   }
 
-  static contextModuleProxyFactory(holder: Record<string, any>, ctx: Context, loadUnitInstance: LoadUnitInstance) {
+  static contextModuleProxyFactory(holder: Record<string, any>, ctx: Context, loadUnitInstance: LoadUnitInstance): any {
     const cacheKey = `_${loadUnitInstance.name}Proxy`;
     if (!holder[cacheKey]) {
       let deprecated = false;
@@ -80,7 +80,12 @@ export class CompatibleUtil {
     return holder[cacheKey];
   }
 
-  static contextModuleCompatible(ctx: Context, loadUnitInstances: LoadUnitInstance[]) {
+  /**
+   * Compatible the context module, only for koa application
+   * @param contextPrototype - The prototype of the context
+   * @param loadUnitInstances - The load unit instances
+   */
+  static contextModuleCompatible(contextPrototype: any, loadUnitInstances: LoadUnitInstance[]): void {
     const loadUnitInstanceMap = loadUnitInstances.reduce(
       (p, c) => {
         p[c.name] = c;
@@ -89,12 +94,13 @@ export class CompatibleUtil {
       {} as Record<PropertyKey, LoadUnitInstance>
     );
 
-    Reflect.defineProperty(ctx, 'module', {
+    // add module property to context prototype
+    // make `ctx.module` is a proxy object, when access `ctx.module.xxx`, it will return the egg object
+    // TODO: will be removed in future version, should use `app.getEggObject(clazzName)` instead of `ctx.module.xxx`
+    Reflect.defineProperty(contextPrototype, 'module', {
       configurable: true,
       enumerable: true,
       get(this: Context): any {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const ctx = this;
         if (!this._moduleProxy) {
           const ctxModule = Object.create(loadUnitInstanceMap);
           this._moduleProxy = ProxyUtil.safeProxy(ctxModule, (_, p: PropertyKey) => {
@@ -102,7 +108,7 @@ export class CompatibleUtil {
             if (!loadUnitInstance) {
               return;
             }
-            return CompatibleUtil.contextModuleProxyFactory(ctxModule, ctx, loadUnitInstance);
+            return CompatibleUtil.contextModuleProxyFactory(ctxModule, this, loadUnitInstance);
           });
         }
         return this._moduleProxy;
@@ -110,7 +116,7 @@ export class CompatibleUtil {
     });
   }
 
-  static clean() {
+  static clean(): void {
     this.singletonProtoCache.clear();
     this.requestProtoCache.clear();
   }

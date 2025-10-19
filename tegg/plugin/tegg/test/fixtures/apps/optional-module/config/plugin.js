@@ -10,4 +10,9 @@ exports.teggConfig = {
   enable: true,
 };
 
+exports.tegg = {
+  package: '@eggjs/tegg-plugin',
+  enable: true,
+};
+
 exports.watcher = false;

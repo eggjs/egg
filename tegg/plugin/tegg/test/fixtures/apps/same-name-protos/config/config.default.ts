@@ -1,8 +1,8 @@
 import path from 'node:path';
 
-import { type EggAppInfo } from 'egg';
+import { type EggAppConfig, type EggAppInfo } from 'egg';
 
-export default function (appInfo: EggAppInfo) {
+export default function (appInfo: EggAppInfo): EggAppConfig {
   const config = {
     keys: 'test key',
     customLogger: {
@@ -16,5 +16,5 @@ export default function (appInfo: EggAppInfo) {
       },
     },
   };
-  return config;
+  return config as unknown as EggAppConfig;
 }

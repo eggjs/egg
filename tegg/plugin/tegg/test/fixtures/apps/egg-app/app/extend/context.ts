@@ -1,13 +1,11 @@
-const COUNTER = Symbol('Context#counter');
-
 export default {
-  [COUNTER]: 0,
+  __COUNTER__: 0,
 
   get counter(): number {
-    if (!this[COUNTER]) {
-      this[COUNTER] = 0;
+    if (!this.__COUNTER__) {
+      this.__COUNTER__ = 0;
     }
-    return this[COUNTER]++;
+    return this.__COUNTER__++;
   },
 
   get user() {

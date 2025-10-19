@@ -4,7 +4,7 @@ import { type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 import { EggContextImpl } from './EggContextImpl.ts';
 
-export async function ctxLifecycleMiddleware(ctx: Context, next: Next) {
+export async function ctxLifecycleMiddleware(ctx: Context, next: Next): Promise<void> {
   // should not recreate teggContext
   if (ctx[TEGG_CONTEXT]) {
     await next();
