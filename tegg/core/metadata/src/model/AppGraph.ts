@@ -50,7 +50,7 @@ export class ClazzMap {
     this.graph = graph;
   }
 
-  async build() {
+  async build(): Promise<void> {
     const graph = this.graph;
     /**
      * 1. iterate all module get all MultiInstanceClazz
@@ -187,7 +187,7 @@ export class ModuleNode implements GraphNodeObj {
     this.clazzList = [];
   }
 
-  async addClazz(clazz: EggProtoImplClass) {
+  async addClazz(clazz: EggProtoImplClass): Promise<void> {
     if (!this.clazzList.includes(clazz)) {
       this.clazzList.push(clazz);
     }
@@ -230,7 +230,7 @@ export class AppGraph {
     this.graph = new Graph<ModuleNode>();
   }
 
-  addNode(moduleNode: ModuleNode) {
+  addNode(moduleNode: ModuleNode): void {
     if (!this.graph.addVertex(new GraphNode(moduleNode))) {
       throw new Error(`duplicate module: ${moduleNode}`);
     }
@@ -246,7 +246,7 @@ export class AppGraph {
     return Array.from(clazzSet);
   }
 
-  async build() {
+  async build(): Promise<void> {
     this.clazzMap = new ClazzMap(this.graph);
     await this.clazzMap.build();
 
@@ -298,7 +298,7 @@ export class AppGraph {
     }
   }
 
-  sort() {
+  sort(): void {
     const loopPath = this.graph.loopPath();
     if (loopPath) {
       throw new Error('module has recursive deps: ' + loopPath);

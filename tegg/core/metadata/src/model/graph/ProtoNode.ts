@@ -1,5 +1,6 @@
 import { type GraphNodeObj, type ProtoDescriptor } from '@eggjs/tegg-types';
 import { type EdgeMeta } from '@eggjs/tegg-common-util';
+
 import { ProtoDescriptorHelper } from '../ProtoDescriptorHelper.ts';
 import { type ProtoSelectorContext } from './ProtoSelector.ts';
 
@@ -36,7 +37,7 @@ export class ProtoNode implements GraphNodeObj {
     return ProtoDescriptorHelper.selectProto(this.proto, ctx);
   }
 
-  static createProtoId(proto: ProtoDescriptor) {
+  static createProtoId(proto: ProtoDescriptor): string {
     const id = [
       proto.name,
       proto.instanceModuleName,

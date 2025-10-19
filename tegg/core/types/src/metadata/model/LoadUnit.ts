@@ -34,4 +34,4 @@ export interface LoadUnitPair {
   ctx: LoadUnitLifecycleContext;
 }
 
-export type LoadUnitCreator = (ctx: LoadUnitLifecycleContext) => LoadUnit;
+export type LoadUnitCreator = (ctx: LoadUnitLifecycleContext) => LoadUnit | Promise<LoadUnit>;

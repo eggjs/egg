@@ -3,7 +3,7 @@ import is from 'is-type-of';
 import { type Loader } from '@eggjs/tegg-types';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 
-import { GlobalModuleNodeBuilder, GlobalGraph } from '../../src/index.ts';
+import { GlobalModuleNodeBuilder, GlobalGraph, GlobalModuleNode } from '../../src/index.ts';
 
 export class LoaderUtil {
   static async loadFile(filePath: string): Promise<EggProtoImplClass[]> {
@@ -39,7 +39,7 @@ export function buildModuleNode(
     moduleName: string;
   }[],
   optional = false
-) {
+): GlobalModuleNode {
   const builder = GlobalModuleNodeBuilder.create(modulePath, optional);
   for (const clazz of clazzList) {
     builder.addClazz(clazz);
@@ -50,7 +50,7 @@ export function buildModuleNode(
   return builder.build();
 }
 
-export async function buildGlobalGraph(modulePaths: string[], loaders: Loader[]) {
+export async function buildGlobalGraph(modulePaths: string[], loaders: Loader[]): Promise<void> {
   GlobalGraph.instance = new GlobalGraph();
   const multiInstanceEggProtoClass: {
     clazz: any;

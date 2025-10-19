@@ -19,7 +19,7 @@ import type {
 } from '@eggjs/tegg-types';
 import { Graph, GraphNode, MapUtil } from '@eggjs/tegg-common-util';
 import { IdenticalUtil, LifecycleUtil } from '@eggjs/tegg-lifecycle';
-import { FrameworkErrorFormater } from 'egg-errors';
+import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { PrototypeUtil, QualifierUtil } from '@eggjs/core-decorator';
 
 import { EggPrototypeFactory, LoadUnitFactory, EggPrototypeCreatorFactory } from '../factory/index.ts';
@@ -125,12 +125,12 @@ export class ModuleGraph {
     }
 
     const result = nodes.map(node => node.val.toString());
-    throw FrameworkErrorFormater.formatError(
+    throw FrameworkErrorFormatter.formatError(
       new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result))
     );
   }
 
-  async build() {
+  async build(): Promise<void> {
     const protoGraphNodes: GraphNode<ProtoNode>[] = [];
     for (const clazz of this.clazzList) {
       if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
@@ -194,7 +194,7 @@ export class ModuleGraph {
     }
   }
 
-  sort() {
+  sort(): void {
     const loopPath = this.graph.loopPath();
     if (loopPath) {
       throw new Error('proto has recursive deps: ' + loopPath);
@@ -216,7 +216,7 @@ export class ModuleLoadUnit implements LoadUnit {
   readonly id: string;
   readonly name: string;
   readonly unitPath: string;
-  readonly type = EggLoadUnitType.MODULE;
+  readonly type: EggLoadUnitType = EggLoadUnitType.MODULE;
 
   get globalGraph(): GlobalGraph {
     return GlobalGraph.instance!;
@@ -253,7 +253,7 @@ export class ModuleLoadUnit implements LoadUnit {
     }
   }
 
-  async preLoad() {
+  async preLoad(): Promise<void> {
     this.loadClazz();
     for (const protoClass of this.clazzList) {
       // TODO refactor lifecycle hook to ProtoDescriptor or EggPrototype
@@ -269,7 +269,7 @@ export class ModuleLoadUnit implements LoadUnit {
     }
   }
 
-  async init() {
+  async init(): Promise<void> {
     this.loadClazz();
     for (const protoDescriptor of this.protos) {
       const proto = await EggPrototypeCreatorFactory.createProtoByDescriptor(protoDescriptor, this);
@@ -286,12 +286,12 @@ export class ModuleLoadUnit implements LoadUnit {
     return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
   }
 
-  registerEggPrototype(proto: EggPrototype) {
+  registerEggPrototype(proto: EggPrototype): void {
     const protoList = MapUtil.getOrStore(this.protoMap, proto.name, []);
     protoList.push(proto);
   }
 
-  deletePrototype(proto: EggPrototype) {
+  deletePrototype(proto: EggPrototype): void {
     const protos = this.protoMap.get(proto.name);
     if (protos) {
       const index = protos.indexOf(proto);
@@ -301,7 +301,7 @@ export class ModuleLoadUnit implements LoadUnit {
     }
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     for (const namedProtoMap of this.protoMap.values()) {
       for (const proto of namedProtoMap.slice()) {
         EggPrototypeFactory.instance.deletePrototype(proto, this);

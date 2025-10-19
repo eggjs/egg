@@ -8,11 +8,11 @@ import {
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import type { EggProtoImplClass } from '@eggjs/tegg-types';
 
-export const SecretQualifierAttribute = Symbol.for('Qualifier.Secret');
+export const SecretQualifierAttribute: symbol = Symbol.for('Qualifier.Secret');
 export const SecretInjectName = 'secret';
 
 export function SecretQualifier(chatModelName: string) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     QualifierUtil.addProperQualifier(
       target.constructor as EggProtoImplClass,
       propertyKey,

@@ -1,4 +1,4 @@
-import { FrameworkBaseError } from 'egg-errors';
+import { FrameworkBaseError } from '@eggjs/errors';
 import { ErrorCodes } from '@eggjs/tegg-types';
 import type { EggPrototypeName, QualifierInfo } from '@eggjs/tegg-types';
 

@@ -9,7 +9,7 @@ import {
   type ProtoDescriptor,
   type QualifierInfo,
 } from '@eggjs/tegg-types';
-import { FrameworkErrorFormater } from 'egg-errors';
+import { FrameworkErrorFormatter } from '@eggjs/errors';
 import { QualifierUtil } from '@eggjs/core-decorator';
 
 import { EggPrototypeNotFound, MultiPrototypeFound } from '../../errors.ts';
@@ -79,11 +79,11 @@ export class GlobalGraph {
     this.buildHooks = [];
   }
 
-  registerBuildHook(hook: GlobalGraphBuildHook) {
+  registerBuildHook(hook: GlobalGraphBuildHook): void {
     this.buildHooks.push(hook);
   }
 
-  addModuleNode(moduleNode: GlobalModuleNode) {
+  addModuleNode(moduleNode: GlobalModuleNode): void {
     if (!this.moduleGraph.addVertex(new GraphNode<GlobalModuleNode, ModuleDependencyMeta>(moduleNode))) {
       throw new Error(`duplicate module: ${moduleNode}`);
     }
@@ -94,7 +94,7 @@ export class GlobalGraph {
     }
   }
 
-  build() {
+  build(): void {
     for (const moduleNode of this.moduleGraph.nodes.values()) {
       for (const protoNode of moduleNode.val.protos) {
         for (const injectObj of protoNode.val.proto.injectObjects) {
@@ -111,13 +111,13 @@ export class GlobalGraph {
     moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>,
     protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
     injectObj: InjectObjectDescriptor
-  ) {
+  ): void {
     const injectProto = this.findDependencyProtoNode(protoNode.val.proto, injectObj);
     if (!injectProto) {
       if (!this.strict) {
         return;
       }
-      throw FrameworkErrorFormater.formatError(
+      throw FrameworkErrorFormatter.formatError(
         new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName)
       );
     }
@@ -129,7 +129,7 @@ export class GlobalGraph {
     protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
     injectNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
     injectName: PropertyKey
-  ) {
+  ): void {
     this.protoGraph.addEdge(
       protoNode,
       injectNode,
@@ -227,10 +227,10 @@ export class GlobalGraph {
         ]),
       });
     }
-    throw FrameworkErrorFormater.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
+    throw FrameworkErrorFormatter.formatError(new MultiPrototypeFound(injectObject.objName, injectObject.qualifiers));
   }
 
-  findModuleNode(moduleName: string) {
+  findModuleNode(moduleName: string): GraphNode<GlobalModuleNode, ModuleDependencyMeta> | undefined {
     for (const node of this.moduleGraph.nodes.values()) {
       if (node.val.name === moduleName) {
         return node;
@@ -277,7 +277,7 @@ export class GlobalGraph {
     }
   }
 
-  sort() {
+  sort(): void {
     this.#sortModule();
     this.#sortClazz();
   }

@@ -17,7 +17,7 @@ export class GlobalModuleNodeBuilder {
     this.protos = [];
   }
 
-  addClazz(clazz: EggProtoImplClass) {
+  addClazz(clazz: EggProtoImplClass): this {
     const proto = ProtoDescriptorHelper.createByInstanceClazz(clazz, {
       moduleName: this.name,
       unitPath: this.unitPath,
@@ -26,7 +26,11 @@ export class GlobalModuleNodeBuilder {
     return this;
   }
 
-  async addMultiInstanceClazz(clazz: EggProtoImplClass, defineModuleName: string, defineUnitPath: string) {
+  async addMultiInstanceClazz(
+    clazz: EggProtoImplClass,
+    defineModuleName: string,
+    defineUnitPath: string
+  ): Promise<this> {
     const protos = await ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
       defineModuleName,
       defineUnitPath,
@@ -37,7 +41,7 @@ export class GlobalModuleNodeBuilder {
     return this;
   }
 
-  build() {
+  build(): GlobalModuleNode {
     const node = new GlobalModuleNode({
       name: this.name,
       unitPath: this.unitPath,
@@ -49,7 +53,7 @@ export class GlobalModuleNodeBuilder {
     return node;
   }
 
-  static create(unitPath: string, optional = false) {
+  static create(unitPath: string, optional = false): GlobalModuleNodeBuilder {
     const name = ModuleConfigUtil.readModuleNameSync(unitPath);
     return new GlobalModuleNodeBuilder({
       name,

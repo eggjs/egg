@@ -15,7 +15,7 @@ export class LoadUnitFactory {
   private static loadUnitMap: Map<string, LoadUnitPair> = new Map();
   private static loadUnitIdMap: Map<Id, LoadUnit> = new Map();
 
-  protected static async getLoanUnit(ctx: LoadUnitLifecycleContext, type: EggLoadUnitTypeLike) {
+  protected static async getLoanUnit(ctx: LoadUnitLifecycleContext, type: EggLoadUnitTypeLike): Promise<LoadUnit> {
     const creator = LoadUnitFactory.loadUnitCreatorMap.get(type);
     if (!creator) {
       throw new Error(`not find creator for load unit type ${type}`);
@@ -50,7 +50,7 @@ export class LoadUnitFactory {
     return await LoadUnitFactory.getLoanUnit(ctx, type);
   }
 
-  static async destroyLoadUnit(loadUnit: LoadUnit) {
+  static async destroyLoadUnit(loadUnit: LoadUnit): Promise<void> {
     const { ctx } = LoadUnitFactory.loadUnitMap.get(loadUnit.unitPath)!;
     try {
       await LoadUnitLifecycleUtil.objectPreDestroy(ctx, loadUnit);
@@ -68,7 +68,7 @@ export class LoadUnitFactory {
     return LoadUnitFactory.loadUnitIdMap.get(id);
   }
 
-  static registerLoadUnitCreator(type: EggLoadUnitTypeLike, creator: LoadUnitCreator) {
+  static registerLoadUnitCreator(type: EggLoadUnitTypeLike, creator: LoadUnitCreator): void {
     LoadUnitFactory.loadUnitCreatorMap.set(type, creator);
   }
 }

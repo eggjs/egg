@@ -13,12 +13,12 @@ import type {
 
 import { EggPrototypeLifecycleUtil, ClassProtoDescriptor } from '../model/index.ts';
 
-const debug = debuglog('tegg/core/metadata/factory/EggPrototypeCreatorFactory');
+const debug = debuglog('egg/tegg/core/metadata/factory/EggPrototypeCreatorFactory');
 
 export class EggPrototypeCreatorFactory {
   private static creatorMap = new Map<string, EggPrototypeCreator>();
 
-  static registerPrototypeCreator(type: string, creator: EggPrototypeCreator) {
+  static registerPrototypeCreator(type: string, creator: EggPrototypeCreator): void {
     this.creatorMap.set(type, creator);
   }
 

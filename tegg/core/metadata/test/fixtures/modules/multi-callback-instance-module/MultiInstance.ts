@@ -6,7 +6,7 @@ import {
 } from '@eggjs/core-decorator';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 
-export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
+export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -12,11 +12,11 @@ import { type EggProtoImplClass, LoadUnitNameQualifierAttribute, QualifierUtil }
 
 import { Secret, SecretQualifierAttribute } from '../foo/Secret.ts';
 
-export const BizManagerQualifierAttribute = Symbol.for('Qualifier.BizManager');
+export const BizManagerQualifierAttribute: symbol = Symbol.for('Qualifier.BizManager');
 export const BizManagerInjectName = 'bizManager';
 
 export function BizManagerQualifier(chatModelName: string) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     QualifierUtil.addProperQualifier(
       target.constructor as EggProtoImplClass,
       propertyKey,

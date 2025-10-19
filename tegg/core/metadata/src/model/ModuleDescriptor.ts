@@ -56,12 +56,12 @@ export class ModuleDescriptorDumper {
     );
   }
 
-  static dumpPath(desc: ModuleDescriptor, options?: ModuleDumpOptions) {
+  static dumpPath(desc: ModuleDescriptor, options?: ModuleDumpOptions): string {
     const dumpDir = DUMP_PATH ?? options?.dumpDir ?? desc.unitPath;
     return path.join(dumpDir, '.egg', `${desc.name}_module_desc.json`);
   }
 
-  static async dump(desc: ModuleDescriptor, options?: ModuleDumpOptions) {
+  static async dump(desc: ModuleDescriptor, options?: ModuleDumpOptions): Promise<void> {
     const dumpPath = ModuleDescriptorDumper.dumpPath(desc, options);
     await fs.mkdir(path.dirname(dumpPath), { recursive: true });
     await fs.writeFile(dumpPath, ModuleDescriptorDumper.stringifyDescriptor(desc));

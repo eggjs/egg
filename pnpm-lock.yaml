@@ -2717,6 +2717,9 @@ importers:
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../core-decorator
+      '@eggjs/errors':
+        specifier: workspace:*
+        version: link:../../../packages/errors
       '@eggjs/tegg-common-util':
         specifier: workspace:*
         version: link:../common-util
@@ -2726,9 +2729,6 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
-      egg-errors:
-        specifier: 'catalog:'
-        version: 2.3.2
     devDependencies:
       '@types/node':
         specifier: 'catalog:'

@@ -42,7 +42,7 @@ export class GlobalModuleNode implements GraphNodeObj {
     this.protos = [];
   }
 
-  addProto(proto: ProtoDescriptor) {
+  addProto(proto: ProtoDescriptor): void {
     this.protos.push(new GraphNode(new ProtoNode(proto)));
   }
 

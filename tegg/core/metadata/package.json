@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-metadata",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg metadata",
   "keywords": [
     "egg",
@@ -24,31 +24,31 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/metadata",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/metadata",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/metadata"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/metadata"
   },
   "engines": {
     "node": ">=22.18.0"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/errors": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*",
-    "egg-errors": "catalog:"
+    "@eggjs/tegg-types": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "globby": "catalog:",
     "is-type-of": "catalog:",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
   "publishConfig": {

@@ -1,6 +1,6 @@
 import { AccessLevel, ObjectInitType, MultiInstanceProto } from '@eggjs/core-decorator';
 
-export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
+export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,

@@ -4,7 +4,7 @@ import type { EggProtoImplClass, LifecycleHook, LoadUnit, LoadUnitLifecycleConte
 export class LoadUnitMultiInstanceProtoHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {
   static multiInstanceClazzSet: Set<EggProtoImplClass> = new Set();
 
-  static setAllClassList(clazzList: readonly EggProtoImplClass[]) {
+  static setAllClassList(clazzList: readonly EggProtoImplClass[]): void {
     for (const clazz of clazzList) {
       if (PrototypeUtil.isEggMultiInstancePrototype(clazz)) {
         this.multiInstanceClazzSet.add(clazz);
@@ -12,7 +12,7 @@ export class LoadUnitMultiInstanceProtoHook implements LifecycleHook<LoadUnitLif
     }
   }
 
-  static clear() {
+  static clear(): void {
     this.multiInstanceClazzSet.clear();
   }
 
