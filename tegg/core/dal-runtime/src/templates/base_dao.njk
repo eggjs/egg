@@ -73,9 +73,10 @@ import path from 'node:path';
 import type { InsertResult, UpdateResult, DeleteResult } from '{{dalPkg}}';
 import { Inject } from '{{teggPkg}}';
 import { Dao } from '{{teggPkg}}/dal';
-import { DataSource, DataSourceInjectName, DataSourceQualifier, ColumnTsType } from '{{dalPkg}}';
+import { type DataSource, type ColumnTsType, DataSourceInjectName, DataSourceQualifier } from '{{dalPkg}}';
 import { {{ clazzName }} } from '{{ tableModelPath }}';
 import {{ clazzName }}Extension from '{{ extensionPath }}';
+// @ts-expect-error ignore json file
 import Structure from '{{ structurePath }}';
 
 const SQL = Symbol('Dao#sql');
@@ -90,10 +91,10 @@ type Optional<T, K extends keyof T> = Omit<T, K> & Partial<T>;
 /* istanbul ignore next */
 @Dao()
 export class Base{{ clazzName }}DAO {
-  static clazzModel = {{ clazzName }};
-  static clazzExtension = {{ clazzName }}Extension;
-  static tableStature = Structure;
-  static get tableSql() {
+  static clazzModel: typeof {{ clazzName }} = {{ clazzName }};
+  static clazzExtension: typeof {{ clazzName }}Extension = {{ clazzName }}Extension;
+  static tableStature: typeof Structure = Structure;
+  static get tableSql(): string {
     if (!this[SQL]) {
       this[SQL] = fs.readFileSync(path.join(__dirname, '../../structure/{{clazzName}}.sql'), 'utf8');
     }

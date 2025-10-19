@@ -50,9 +50,11 @@ export class CodeGenerator {
       dalPkg: this.dalPkg,
       id: tableModel.columns.find(t => t.propertyName === 'id'),
       primaryIndex: tableModel.getPrimary(),
-      tableModelPath: TemplateUtil.importPath(tableModelAbsolutePath, path.dirname(filePath)),
-      extensionPath: `../../extension/${tableModel.clazz.name}Extension`,
+      tableModelPath: TemplateUtil.importPath(tableModelAbsolutePath, path.dirname(filePath)) + '.ts',
+      extensionPath: `../../extension/${tableModel.clazz.name}Extension.ts`,
       structurePath: `../../structure/${tableModel.clazz.name}.json`,
+      // FIXME: not support with { type: 'json' } in nunjucks
+      // importStructurePathWithJSON: `import Structure from '../../structure/${tableModel.clazz.name}.json' with { type: 'json' }`,
       sqlPath: `../../structure/${tableModel.clazz.name}.sql`,
       columnMap: tableModel.columns.reduce<Record<string, ColumnModel>>((p, c) => {
         p[c.propertyName] = c;

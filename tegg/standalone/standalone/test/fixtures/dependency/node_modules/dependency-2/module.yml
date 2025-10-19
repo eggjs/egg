@@ -1,0 +1,3 @@
+features:
+  dynamic:
+    foo: 'bar'
