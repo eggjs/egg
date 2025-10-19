@@ -1,8 +1,8 @@
 import path from 'node:path';
 
-import type { EggAppInfo } from 'egg';
+import { defineConfigFactory, type EggConfigFactory } from 'egg';
 
-export default function (appInfo: EggAppInfo) {
+const factory: EggConfigFactory = defineConfigFactory(appInfo => {
   const config = {
     keys: 'test key',
     customLogger: {
@@ -17,4 +17,6 @@ export default function (appInfo: EggAppInfo) {
     },
   };
   return config;
-}
+});
+
+export default factory;

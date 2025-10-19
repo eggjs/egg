@@ -5,7 +5,7 @@ import { debuglog } from 'node:util';
 import { ModuleConfigUtil, type ModuleReference, type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
 import { importResolve } from '@eggjs/utils';
 
-const debug = debuglog('tegg/plugin/config/ModuleScanner');
+const debug = debuglog('egg/tegg/plugin/config/ModuleScanner');
 
 export class ModuleScanner {
   private readonly baseDir: string;

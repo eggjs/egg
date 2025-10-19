@@ -2,11 +2,11 @@ import { debuglog } from 'node:util';
 
 import type { Application, ILifecycleBoot } from 'egg';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
-import type { ModuleReference, ModuleConfigHolder } from '@eggjs/tegg-common-util';
+import type { ModuleReference } from '@eggjs/tegg-common-util';
 
 import { ModuleScanner } from './lib/ModuleScanner.ts';
 
-const debug = debuglog('tegg/plugin/config/app');
+const debug = debuglog('egg/tegg/plugin/config/app');
 
 export default class App implements ILifecycleBoot {
   private readonly app: Application;
@@ -17,7 +17,7 @@ export default class App implements ILifecycleBoot {
     ModuleConfigUtil.setConfigNames(configNames);
   }
 
-  configWillLoad() {
+  configWillLoad(): void {
     const { readModuleOptions } = this.app.config.tegg;
     const moduleScanner = new ModuleScanner(this.app.baseDir, readModuleOptions);
     this.app.moduleReferences = moduleScanner.loadModuleReferences();
@@ -42,29 +42,7 @@ export default class App implements ILifecycleBoot {
     debug('load moduleConfigs: %o', this.app.moduleConfigs);
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     ModuleConfigUtil.setConfigNames(undefined);
-  }
-}
-
-declare module 'egg' {
-  // export type ModuleReference = ModuleReferenceAlias;
-
-  interface ModuleConfig {}
-
-  // interface ModuleConfigHolder {
-  //   name: string;
-  //   config: ModuleConfig;
-  //   reference: ModuleReference;
-  // }
-
-  // interface ModuleConfigApplication {
-  //   moduleReferences: readonly ModuleReference[];
-  //   moduleConfigs: Record<string, ModuleConfigHolder>;
-  // }
-
-  interface EggApplicationCore {
-    moduleReferences: readonly ModuleReference[];
-    moduleConfigs: Record<string, ModuleConfigHolder>;
   }
 }

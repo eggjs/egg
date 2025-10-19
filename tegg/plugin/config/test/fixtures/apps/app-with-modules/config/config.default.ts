@@ -2,7 +2,7 @@ export default () => {
   return {
     tegg: {
       readModuleOptions: {
-        extraFilePattern: ['!**/dist'],
+        extraFilePattern: ['!**/dist'] as string[],
       },
     },
   };

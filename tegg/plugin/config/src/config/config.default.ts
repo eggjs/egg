@@ -1,7 +1,6 @@
-import { defineConfigFactory } from 'egg';
-import { type ReadModuleReferenceOptions } from '@eggjs/tegg-common-util';
+import { defineConfigFactory, type EggConfigFactory } from 'egg';
 
-export default defineConfigFactory(appInfo => {
+const factory: EggConfigFactory = defineConfigFactory(appInfo => {
   return {
     tegg: {
       readModuleOptions: {
@@ -13,13 +12,4 @@ export default defineConfigFactory(appInfo => {
   };
 });
 
-declare module 'egg' {
-  interface EggAppConfig {
-    /**
-     * tegg config
-     */
-    tegg: {
-      readModuleOptions: ReadModuleReferenceOptions;
-    };
-  }
-}
+export default factory;
