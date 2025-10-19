@@ -12,11 +12,11 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
   private lifecycleSet: Set<LifecycleHook<T, R>> = new Set();
   private objLifecycleSet: Map<string, Set<LifecycleHook<T, R>>> = new Map();
 
-  registerLifecycle(lifecycle: LifecycleHook<T, R>) {
+  registerLifecycle(lifecycle: LifecycleHook<T, R>): void {
     this.lifecycleSet.add(lifecycle);
   }
 
-  deleteLifecycle(lifecycle: LifecycleHook<T, R>) {
+  deleteLifecycle(lifecycle: LifecycleHook<T, R>): void {
     this.lifecycleSet.delete(lifecycle);
   }
 
@@ -24,18 +24,18 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     return Array.from(this.lifecycleSet);
   }
 
-  registerObjectLifecycle(obj: R, lifecycle: LifecycleHook<T, R>) {
+  registerObjectLifecycle(obj: R, lifecycle: LifecycleHook<T, R>): void {
     if (!this.objLifecycleSet.has(obj.id)) {
       this.objLifecycleSet.set(obj.id, new Set());
     }
     this.objLifecycleSet.get(obj.id)!.add(lifecycle);
   }
 
-  deleteObjectLifecycle(obj: R, lifecycle: LifecycleHook<T, R>) {
+  deleteObjectLifecycle(obj: R, lifecycle: LifecycleHook<T, R>): void {
     this.objLifecycleSet.get(obj.id)?.delete(lifecycle);
   }
 
-  clearObjectLifecycle(obj: R) {
+  clearObjectLifecycle(obj: R): void {
     this.objLifecycleSet.delete(obj.id);
   }
 
@@ -46,21 +46,21 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     return [];
   }
 
-  async objectPreCreate(ctx: T, obj: R) {
+  async objectPreCreate(ctx: T, obj: R): Promise<void> {
     const globalLifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
     await Promise.all(globalLifecycleList.map(lifecycle => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
     await Promise.all(objLifecycleList.map(lifecycle => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
   }
 
-  async objectPostCreate(ctx: T, obj: R) {
+  async objectPostCreate(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
     await Promise.all(lifecycleList.map(lifecycle => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
     await Promise.all(objLifecycleList.map(lifecycle => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
   }
 
-  async objectPreDestroy(ctx: T, obj: R) {
+  async objectPreDestroy(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
     await Promise.all(lifecycleList.map(lifecycle => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
@@ -71,7 +71,7 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
     obj: R
-  ) {
+  ): Promise<void> {
     if (!lifecycle || !lifecycle.preCreate) {
       return;
     }
@@ -82,7 +82,7 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
     obj: R
-  ) {
+  ): Promise<void> {
     if (!lifecycle || !lifecycle.postCreate) {
       return;
     }
@@ -93,24 +93,24 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
     obj: R
-  ) {
+  ): Promise<void> {
     if (!lifecycle || !lifecycle.preDestroy) {
       return;
     }
     await lifecycle.preDestroy(ctx, obj);
   }
 
-  static setLifecycleHook(method: string, hookName: LifecycleHookName, clazz: EggProtoImplClass) {
+  static setLifecycleHook(method: string, hookName: LifecycleHookName, clazz: EggProtoImplClass): void {
     const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
     MetadataUtil.defineMetaData(LIFECYCLE_HOOK, method, clazz);
   }
 
-  getLifecycleHook(hookName: LifecycleHookName, proto: EggPrototype) {
+  getLifecycleHook(hookName: LifecycleHookName, proto: EggPrototype): LifecycleHookName | undefined {
     const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
     return proto.getMetaData<LifecycleHookName>(LIFECYCLE_HOOK);
   }
 
-  static getStaticLifecycleHook(hookName: LifecycleHookName, clazz: EggProtoImplClass) {
+  static getStaticLifecycleHook(hookName: LifecycleHookName, clazz: EggProtoImplClass): string | undefined {
     const LIFECYCLE_HOOK = Symbol.for(`EggPrototype#Lifecycle${hookName}`);
     return MetadataUtil.getMetaData<string>(LIFECYCLE_HOOK, clazz);
   }

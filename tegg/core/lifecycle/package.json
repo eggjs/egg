@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-lifecycle",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg lifecycle definition",
   "keywords": [
     "egg",
@@ -24,14 +24,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/lifecycle",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/lifecycle",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/lifecycle"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/lifecycle"
   },
   "engines": {
     "node": ">=22.18.0"

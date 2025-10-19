@@ -20,7 +20,7 @@ export class IdenticalUtil {
     return `${loadUnitId}:INSTANCE`;
   }
 
-  static createContextId(traceId?: string) {
+  static createContextId(traceId?: string): Id {
     // CONTEXT:0
     if (traceId) {
       return `CONTEXT:${traceId}:${this.ctxIndex++}`;
@@ -28,7 +28,7 @@ export class IdenticalUtil {
     return `CONTEXT:${this.ctxIndex++}`;
   }
 
-  static createObjectId(protoId: Id, ctxId?: Id) {
+  static createObjectId(protoId: Id, ctxId?: Id): Id {
     if (ctxId) {
       // LOAD_UNIT:xxx:PROTO:CONTEXT:xxx:INSTANCE:CONTEXT:0
       return `${protoId}:INSTANCE:${ctxId}`;
