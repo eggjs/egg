@@ -2290,9 +2290,6 @@ importers:
       '@eggjs/tegg-types':
         specifier: workspace:*
         version: link:../types
-      egg:
-        specifier: workspace:*
-        version: link:../../../packages/egg
     devDependencies:
       '@eggjs/tegg-common-util':
         specifier: workspace:*
@@ -2300,6 +2297,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.8.1
+      egg:
+        specifier: workspace:*
+        version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
         version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)

@@ -21,7 +21,7 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
 
   private backgroundTasks: Array<Promise<void>> = [];
 
-  async init() {
+  async init(): Promise<void> {
     const ctx = ContextHandler.getContext();
     assert(ctx, 'background task helper must be init in context');
     EggContextLifecycleUtil.registerObjectLifecycle(ctx, {
@@ -34,7 +34,7 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
     }
   }
 
-  run(fn: () => Promise<void>) {
+  run(fn: () => Promise<void>): void {
     const backgroundTask = new Promise<void>(resolve => {
       try {
         fn()
