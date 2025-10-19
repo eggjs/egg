@@ -1,1 +1,1 @@
-export * from './StandaloneUtil.js';
+export * from './StandaloneUtil.ts';
