@@ -28,7 +28,7 @@ export class CodeGenerator {
 
   private njkEnv: Environment;
 
-  createNunjucksEnv() {
+  createNunjucksEnv(): void {
     this.njkEnv = nunjucks.configure(path.join(__dirname, './templates'), {
       autoescape: false,
     });
@@ -37,7 +37,7 @@ export class CodeGenerator {
     this.njkEnv.addFilter('dbTypeToTSType', TemplateUtil.dbTypeToTsType);
   }
 
-  genCode(tplName: Templates, filePath: string, tableModel: TableModel) {
+  genCode(tplName: Templates, filePath: string, tableModel: TableModel): string {
     let tableModelAbsolutePath = PrototypeUtil.getFilePath(tableModel.clazz)!;
     tableModelAbsolutePath = tableModelAbsolutePath.substring(0, tableModelAbsolutePath.length - 3);
     const data = {
@@ -62,7 +62,7 @@ export class CodeGenerator {
     return this.njkEnv.render(`${tplName}.njk`, data);
   }
 
-  async generate(tableModel: TableModel) {
+  async generate(tableModel: TableModel): Promise<void> {
     let dalDir: string;
     try {
       await fs.access(path.join(this.moduleDir, 'src'));

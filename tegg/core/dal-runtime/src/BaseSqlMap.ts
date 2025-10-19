@@ -48,8 +48,8 @@ export class BaseSqlMapGenerator {
   }
 
   // TODO index 的左匹配
-  generateFindByIndexes() {
-    const sqlMaps: Array<GenerateSqlMap> = [];
+  generateFindByIndexes(): GenerateSqlMap[] {
+    const sqlMaps: GenerateSqlMap[] = [];
     for (const index of this.tableModel.indices) {
       if (index.type === IndexType.PRIMARY) continue;
 
@@ -79,7 +79,7 @@ export class BaseSqlMapGenerator {
     return sqlMaps;
   }
 
-  generateInsert() {
+  generateInsert(): string {
     let sql = `INSERT INTO \`${this.tableModel.name}\` `;
     sql += '{% set ___first = true %}';
 
@@ -205,7 +205,7 @@ export class BaseSqlMapGenerator {
     return sql;
   }
 
-  generateUpdate() {
+  generateUpdate(): string | undefined {
     const primary = this.tableModel.getPrimary();
     if (!primary) {
       this.logger.warn(`表 \`${this.tableModel.name}\` 没有主键，无法生成主键更新语句。`);
@@ -263,7 +263,7 @@ export class BaseSqlMapGenerator {
     return sql;
   }
 
-  generateDelete() {
+  generateDelete(): string | undefined {
     const primary = this.tableModel.getPrimary();
     if (!primary) {
       this.logger.warn(`表 \`${this.tableModel.name}\` 没有主键，无法生成主键删除语句。`);

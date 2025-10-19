@@ -1,8 +1,10 @@
 import assert from 'node:assert';
+
 import { describe, it } from 'vitest';
 import { TableModel } from '@eggjs/dal-decorator';
+
 import { Foo } from './fixtures/modules/dal/Foo.js';
-import { SqlMapLoader } from '../src/SqlMapLoader.js';
+import { SqlMapLoader } from '../src/SqlMapLoader.ts';
 import { BaseFooDAO } from './fixtures/modules/dal/dal/dao/base/BaseFooDAO.js';
 
 describe('test/TableSqlMap.test.ts', () => {

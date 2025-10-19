@@ -32,7 +32,7 @@ export class TemplateUtil {
     }
   }
 
-  static importPath(tableModelPath: string, currentPath: string) {
+  static importPath(tableModelPath: string, currentPath: string): string {
     return path.relative(currentPath, tableModelPath);
   }
 
@@ -93,7 +93,7 @@ export class TemplateUtil {
     [ColumnType.GEOMETRYCOLLECTION]: 'toGeometryCollection',
   } as Record<ColumnType, string>;
 
-  static getSpatialFilter(columnType: ColumnType) {
+  static getSpatialFilter(columnType: ColumnType): string {
     const filter = TemplateUtil.spatialFilter[columnType];
     if (!filter) {
       throw new Error(`type ${columnType} is not spatial type`);

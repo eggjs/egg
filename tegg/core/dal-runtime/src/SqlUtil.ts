@@ -17,7 +17,7 @@ const MUL_CHAR_LEADING_COMMENT_NEXT_STATE = {
 };
 
 export class SqlUtil {
-  static minify(sql: string) {
+  static minify(sql: string): string {
     let ret = '';
 
     let state = 'START';

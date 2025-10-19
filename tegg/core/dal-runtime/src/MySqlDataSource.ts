@@ -41,7 +41,7 @@ export class MysqlDataSource extends Base {
     this.client = new RDSClient(this.rdsOptions);
   }
 
-  protected async _init() {
+  protected async _init(): Promise<void> {
     if (this.initSql) {
       await this.#doInit(1);
     }

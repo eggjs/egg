@@ -79,7 +79,7 @@ export class TableSqlMap {
     return ret;
   }
 
-  generate(name: string, data: object, timezone: string) {
+  generate(name: string, data: object, timezone: string): string {
     const generator = this.sqlGenerator[name];
     // istanbul ignore if
     if (!generator) {
@@ -101,7 +101,7 @@ export class TableSqlMap {
     return generator.type;
   }
 
-  getTemplateString(name: string) {
+  getTemplateString(name: string): string {
     const generator = this.sqlGenerator[name];
     // istanbul ignore if
     if (!generator) {

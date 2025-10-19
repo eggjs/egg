@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 
 import { RDSClient } from '@eggjs/rds';
+// TODO: should export RDSConnection from @eggjs/rds
 import type { RDSConnection } from '@eggjs/rds/lib/connection.js';
 
 import { type DataSourceOptions } from './MySqlDataSource.ts';
@@ -15,11 +16,11 @@ export class DatabaseForker {
     this.options = options;
   }
 
-  shouldFork() {
-    return this.env === 'unittest' && this.options.forkDb;
+  shouldFork(): boolean {
+    return this.env === 'unittest' && !!this.options.forkDb;
   }
 
-  async forkDb(moduleDir: string) {
+  async forkDb(moduleDir: string): Promise<void> {
     assert(this.shouldFork(), 'fork db only run in unittest');
     // 尽早判断不应该 fork，避免对 rds pool 配置造成污染
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,7 +52,7 @@ export class DatabaseForker {
     await conn.query(`use ${this.options.database};`);
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     assert(this.shouldFork(), 'fork db only run in unittest');
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { name, initSql, forkDb, database, ...mysqlOptions } = this.options;

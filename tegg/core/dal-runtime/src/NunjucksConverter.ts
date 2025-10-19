@@ -13,7 +13,7 @@ export class NunjucksConverter {
    * @param {String} code 转换前的代码
    * @return {String} 转换后的代码
    */
-  static convertNormalVariableCode(code: string) {
+  static convertNormalVariableCode(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\(runtime\.contextOrFrameLookup\((.+?),(.*?),\W*?"(.+?)"\)/g,
       '\noutput += runtime.escapeSQL.call(this, "$3", runtime.contextOrFrameLookup($1, $2, "$3")'
@@ -38,7 +38,7 @@ export class NunjucksConverter {
    * @param {String} code 转换前的代码
    * @return {String} 转换后的代码
    */
-  static convertTernaryCode(code: string) {
+  static convertTernaryCode(code: string): string {
     // 先找到所有的 runtime.suppressValue((...?...:...), env...)
     const ternaryBefore =
       code.match(/\Woutput\W*?\+=\W*?runtime\.suppressValue\(\(.*\W*?\?\W*?.*?:.*\),\W*?env\.opts\.autoescape/g) || [];
@@ -78,7 +78,7 @@ export class NunjucksConverter {
    * @param {String} code 转换前的代码
    * @return {String} 转换后的代码
    */
-  static convertNestedObjectCode(code: string) {
+  static convertNestedObjectCode(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\(runtime\.memberLookup\((.+?)\), env\.opts\.autoescape\)/g,
       '\noutput += runtime.escapeSQL.call(this, "<...>", runtime.memberLookup($1), env.opts.autoescape)'
@@ -103,7 +103,7 @@ export class NunjucksConverter {
    * @param {String} code 转换前的代码
    * @return {String} 转换后的代码
    */
-  static convertValueInsideFor(code: string) {
+  static convertValueInsideFor(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\((t_\d+), env\.opts\.autoescape\)/g,
       '\noutput += runtime.escapeSQL.call(this, "for.$1", $1, env.opts.autoescape)'

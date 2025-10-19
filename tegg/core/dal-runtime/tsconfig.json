@@ -1,8 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "baseUrl": "./",
-    "target": "ES2020"
-  },
+  "extends": "../../../tsconfig.json",
   "exclude": ["test"]
 }

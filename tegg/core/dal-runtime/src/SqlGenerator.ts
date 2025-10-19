@@ -361,7 +361,7 @@ export class SqlGenerator {
     return sqls.join(', ');
   }
 
-  generate(tableModel: TableModel) {
+  generate(tableModel: TableModel): string {
     const createSql: string[] = [];
     createSql.push(`CREATE TABLE IF NOT EXISTS ${tableModel.name} (`);
 

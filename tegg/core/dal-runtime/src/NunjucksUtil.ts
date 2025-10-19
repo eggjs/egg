@@ -59,7 +59,7 @@ function _compile(this: any) {
 }
 
 export class NunjucksUtils {
-  static createEnv(modelName: string) {
+  static createEnv(modelName: string): Environment {
     if (envs[modelName]) return envs[modelName];
 
     const env = (envs[modelName] = nunjucks.configure({
@@ -69,7 +69,7 @@ export class NunjucksUtils {
     return env;
   }
 
-  static compile(modelName: string, sqlName: string, sql: string) {
+  static compile(modelName: string, sqlName: string, sql: string): Template {
     // istanbul ignore if
     if (!envs[modelName]) {
       throw new Error(`you should create an Environment for ${modelName} first.`);
