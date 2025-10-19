@@ -44,19 +44,19 @@
     "globby": "catalog:",
     "js-yaml": "catalog:"
   },
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": "./dist/index.js",
-      "./package.json": "./package.json"
-    }
-  },
   "devDependencies": {
     "@types/js-yaml": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

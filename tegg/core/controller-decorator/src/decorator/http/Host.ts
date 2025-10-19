@@ -23,7 +23,7 @@ export function Host(host: HostType) {
     MethodInfoUtil.setMethodHosts(parseHost(), controllerClazz, methodName);
   }
 
-  return function (target: any, propertyKey?: PropertyKey) {
+  return function (target: any, propertyKey?: PropertyKey): void {
     if (propertyKey === undefined) {
       classHost(target);
     } else {

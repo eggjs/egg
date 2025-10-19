@@ -5,7 +5,7 @@ import { MetadataUtil } from '@eggjs/core-decorator';
 import { ControllerMetaBuilderFactory } from '../builder/index.ts';
 
 export class ControllerMetadataUtil {
-  static setControllerMetadata(clazz: EggProtoImplClass, metaData: ControllerMetadata) {
+  static setControllerMetadata(clazz: EggProtoImplClass, metaData: ControllerMetadata): void {
     MetadataUtil.defineMetaData(CONTROLLER_META_DATA, metaData, clazz);
   }
 

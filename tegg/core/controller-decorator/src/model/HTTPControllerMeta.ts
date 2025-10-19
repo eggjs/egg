@@ -9,7 +9,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
   readonly protoName: EggPrototypeName;
   readonly controllerName: string;
   readonly className: string;
-  public readonly type = ControllerType.HTTP;
+  public readonly type: ControllerType = ControllerType.HTTP;
   public readonly path?: string;
   public readonly middlewares: readonly MiddlewareFunc[];
   public readonly methods: readonly HTTPMethodMeta[];
@@ -39,7 +39,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     this.hosts = hosts;
   }
 
-  getMethodRealPath(method: HTTPMethodMeta) {
+  getMethodRealPath(method: HTTPMethodMeta): string {
     if (this.path) {
       return path.posix.join(this.path, method.path);
     }
@@ -57,7 +57,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     return `${method.method} ${this.controllerName}.${method.name}`;
   }
 
-  getMethodMiddlewares(method: HTTPMethodMeta) {
+  getMethodMiddlewares(method: HTTPMethodMeta): MiddlewareFunc[] {
     if (this.middlewares.length) {
       return [...this.middlewares, ...method.middlewares];
     }

@@ -6,7 +6,7 @@ import { ControllerInfoUtil } from '../ControllerInfoUtil.ts';
 export class ControllerValidator {
   // should throw error
   // 1. use controller middleware but not has controller decorator
-  static validate(clazz: EggProtoImplClass) {
+  static validate(clazz: EggProtoImplClass): void {
     const controllerType = ControllerInfoUtil.getControllerType(clazz);
     const middlewares = ControllerInfoUtil.getControllerMiddlewares(clazz);
     if (middlewares.length && !controllerType) {

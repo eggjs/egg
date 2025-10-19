@@ -20,6 +20,12 @@
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/tegg-types": "workspace:*"
   },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "tsdown": "catalog:",
+    "unplugin-unused": "catalog:"
+  },
   "scripts": {
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
@@ -47,12 +53,6 @@
   ],
   "bugs": {
     "url": "https://github.com/eggjs/egg/issues"
-  },
-  "devDependencies": {
-    "@types/node": "catalog:",
-    "typescript": "catalog:",
-    "tsdown": "catalog:",
-    "unplugin-unused": "catalog:"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",

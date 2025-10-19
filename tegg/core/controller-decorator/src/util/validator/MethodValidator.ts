@@ -9,7 +9,7 @@ export class MethodValidator {
   // 1. use method middleware but not has method decorator
   // 2. use context decorator but not has method decorator
   // 3. method decorator type is not same as controller decorator type
-  static validate(clazz: EggProtoImplClass, methodName: string) {
+  static validate(clazz: EggProtoImplClass, methodName: string): void {
     const methodControllerType = MethodInfoUtil.getMethodControllerType(clazz, methodName);
     const methodMiddlewares = MethodInfoUtil.getMethodMiddlewares(clazz, methodName);
     const contextIndex = MethodInfoUtil.getMethodContextIndex(clazz, methodName);

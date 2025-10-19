@@ -30,7 +30,8 @@ async function middleware3(ctx: EggContext, next: Next) {
 })
 @Middleware(middleware1)
 export class FooController {
-  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
+  static fileName: string =
+    process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @HTTPMethod({
     path: '/bar/:id',
@@ -44,7 +45,7 @@ export class FooController {
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
     @HTTPParam() id: string
-  ) {
+  ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
 }
@@ -53,7 +54,8 @@ export class FooController {
   path: '/foo/:fooId',
 })
 export class ControllerWithParam {
-  static fileName = process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
+  static fileName: string =
+    process.platform === 'win32' ? import.meta.filename.replaceAll('\\', '/') : import.meta.filename;
 
   @HTTPMethod({
     path: '/bar/:id',
@@ -64,7 +66,7 @@ export class ControllerWithParam {
     @HTTPParam() id: string,
     @HTTPParam() fooId: string,
     @HTTPHeaders() headers: IncomingHttpHeaders
-  ) {
+  ): Promise<void> {
     console.log(ctx, id, fooId, headers);
   }
 }
@@ -85,7 +87,7 @@ export class FoxController {
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
     @HTTPParam() id: string
-  ) {
+  ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
 }
@@ -106,7 +108,7 @@ export class FxxController {
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
     @HTTPParam() id: string
-  ) {
+  ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
 }
@@ -130,7 +132,7 @@ export class DefaultValueController {
     @HTTPParam() id = 233,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>
-  ) {
+  ): Promise<void> {
     console.log(ctx, id, query, queries);
   }
 }
@@ -143,7 +145,7 @@ export class Error1Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id: number) {
+  async bar(@Context() ctx: EggContext, id: number): Promise<void> {
     console.log(ctx, id);
   }
 }
@@ -156,7 +158,7 @@ export class Error2Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233) {
+  async bar(@Context() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233): Promise<void> {
     console.log(ctx, id, id2);
   }
 }

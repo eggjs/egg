@@ -11,7 +11,7 @@ import { HTTPInfoUtil } from '../../util/index.ts';
 // refactor HTTPQuery, HTTPBody, HTTPParam
 
 export function HTTPBody() {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',
@@ -24,7 +24,7 @@ export function HTTPBody() {
 }
 
 export function HTTPHeaders() {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',
@@ -37,7 +37,7 @@ export function HTTPHeaders() {
 }
 
 export function HTTPQuery(param?: HTTPQueryParams) {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',
@@ -53,7 +53,7 @@ export function HTTPQuery(param?: HTTPQueryParams) {
 }
 
 export function HTTPQueries(param?: HTTPQueriesParams) {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',
@@ -69,7 +69,7 @@ export function HTTPQueries(param?: HTTPQueriesParams) {
 }
 
 export function HTTPParam(param?: HTTPParamParams) {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',
@@ -85,7 +85,7 @@ export function HTTPParam(param?: HTTPParamParams) {
 }
 
 export function Request() {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     const [nodeMajor] = process.versions.node.split('.').map(v => Number(v));
     assert(nodeMajor >= 16, `[controller/${target.name}] expect node version >=16, but now is ${nodeMajor}`);
     assert.equal(
@@ -100,7 +100,7 @@ export function Request() {
 }
 
 export function Cookies() {
-  return function (target: any, propertyKey: PropertyKey, parameterIndex: number) {
+  return function (target: any, propertyKey: PropertyKey, parameterIndex: number): void {
     assert.equal(
       typeof propertyKey,
       'string',

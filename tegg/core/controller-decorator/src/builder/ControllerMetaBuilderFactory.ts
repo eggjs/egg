@@ -15,7 +15,7 @@ export class ControllerMetaBuilderFactory {
   static registerControllerMetaBuilder(
     controllerType: ControllerTypeLike,
     controllerBuilderCreator: ControllerMetaBuilderCreator
-  ) {
+  ): void {
     this.builderCreatorMap.set(controllerType, controllerBuilderCreator);
   }
 

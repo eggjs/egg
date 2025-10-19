@@ -1,1 +1,1 @@
-export class HTTPResponse extends (Response || Object) {}
+export class HTTPResponse extends Response {}

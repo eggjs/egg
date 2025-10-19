@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
+
 import { describe, it } from 'vitest';
-import { HTTPPriorityUtil } from '../../src/index.js';
+
+import { HTTPPriorityUtil } from '../../src/index.ts';
 
 describe('test/util/HTTPPriority.test.ts', () => {
   describe('path has no regexp', () => {

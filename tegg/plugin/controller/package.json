@@ -71,7 +71,7 @@
     "@eggjs/tegg-types": "workspace:*",
     "egg-errors": "catalog:",
     "globby": "catalog:",
-    "path-to-regexp": "catalog:",
+    "path-to-regexp": "catalog:path-to-regexp1",
     "sdk-base": "catalog:"
   },
   "peerDependencies": {

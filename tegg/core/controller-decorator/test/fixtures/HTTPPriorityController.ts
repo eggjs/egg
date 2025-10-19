@@ -1,5 +1,6 @@
 import { HTTPMethodEnum } from '@eggjs/tegg-types';
-import { HTTPController, HTTPMethod } from '../../src/index.js';
+
+import { HTTPController, HTTPMethod } from '../../src/index.ts';
 
 @HTTPController({
   path: '/foo',
@@ -9,7 +10,7 @@ export class PriorityController {
     method: HTTPMethodEnum.GET,
     path: '/*',
   })
-  async regexpMethod() {
+  async regexpMethod(): Promise<void> {
     return Promise.resolve();
   }
 
@@ -17,7 +18,7 @@ export class PriorityController {
     method: HTTPMethodEnum.GET,
     path: '/users/:id',
   })
-  async paramMethod() {
+  async paramMethod(): Promise<void> {
     return Promise.resolve();
   }
 
@@ -25,7 +26,7 @@ export class PriorityController {
     method: HTTPMethodEnum.GET,
     path: '/web/users/*',
   })
-  async regexpMethod2() {
+  async regexpMethod2(): Promise<void> {
     return Promise.resolve();
   }
 }
@@ -36,7 +37,7 @@ export class TooLongController {
     method: HTTPMethodEnum.GET,
     path: '/:id1/:id2/:id3/:id4/:id5/:id6/:id7/:id8/:id9/:id10/:id11/:id12/:id13/:id14/:id15',
   })
-  async tooLongMethod() {
+  async tooLongMethod(): Promise<void> {
     return Promise.resolve();
   }
 }

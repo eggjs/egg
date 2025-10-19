@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/controller-decorator",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg controller decorator",
   "keywords": [
     "egg",
@@ -25,14 +25,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/controller-decorator",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/controller-decorator",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/controller-decorator"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/controller-decorator"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -45,7 +45,7 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-types": "workspace:*",
     "is-type-of": "catalog:",
-    "path-to-regexp": "catalog:"
+    "path-to-regexp": "catalog:path-to-regexp1"
   },
   "devDependencies": {
     "@types/node": "catalog:",

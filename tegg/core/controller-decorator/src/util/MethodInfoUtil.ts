@@ -20,7 +20,11 @@ type MethodAopMiddlewareMap = Map<string, EggProtoImplClass<IAdvice>[]>;
 type MethodAclMap = Map<string, string | undefined>;
 
 export class MethodInfoUtil {
-  static setMethodControllerType(clazz: EggProtoImplClass, methodName: string, controllerType: ControllerTypeLike) {
+  static setMethodControllerType(
+    clazz: EggProtoImplClass,
+    methodName: string,
+    controllerType: ControllerTypeLike
+  ): void {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(
       METHOD_CONTROLLER_TYPE_MAP,
       clazz,
@@ -34,7 +38,7 @@ export class MethodInfoUtil {
     return methodControllerMap?.get(methodName) as ControllerTypeLike | undefined;
   }
 
-  static setMethodContextIndexInArgs(index: number, clazz: EggProtoImplClass, methodName: string) {
+  static setMethodContextIndexInArgs(index: number, clazz: EggProtoImplClass, methodName: string): void {
     const methodContextIndexMap: MethodContextIndexMap = MetadataUtil.initOwnMapMetaData(
       METHOD_CONTEXT_INDEX,
       clazz,
@@ -51,7 +55,7 @@ export class MethodInfoUtil {
     return methodContextIndexMap?.get(methodName);
   }
 
-  static addMethodMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass, methodName: string) {
+  static addMethodMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass, methodName: string): void {
     const methodMiddlewareMap: MethodMiddlewareMap = MetadataUtil.initOwnMapMetaData(
       METHOD_MIDDLEWARES,
       clazz,
@@ -66,7 +70,11 @@ export class MethodInfoUtil {
     return methodMiddlewareMap?.get(methodName) || [];
   }
 
-  static addMethodAopMiddleware(middleware: EggProtoImplClass<IAdvice>, clazz: EggProtoImplClass, methodName: string) {
+  static addMethodAopMiddleware(
+    middleware: EggProtoImplClass<IAdvice>,
+    clazz: EggProtoImplClass,
+    methodName: string
+  ): void {
     const methodMiddlewareMap: MethodAopMiddlewareMap = MetadataUtil.initOwnMapMetaData(
       METHOD_AOP_MIDDLEWARES,
       clazz,
@@ -84,7 +92,7 @@ export class MethodInfoUtil {
     return methodMiddlewareMap?.get(methodName) || [];
   }
 
-  static setMethodAcl(code: string | undefined, clazz: EggProtoImplClass, methodName: string) {
+  static setMethodAcl(code: string | undefined, clazz: EggProtoImplClass, methodName: string): void {
     const methodAclMap: MethodAclMap = MetadataUtil.initOwnMapMetaData(METHOD_ACL, clazz, new Map());
     methodAclMap.set(methodName, code);
   }
@@ -99,7 +107,7 @@ export class MethodInfoUtil {
     return methodAclMap?.get(methodName);
   }
 
-  static setMethodHosts(hosts: string[], clazz: EggProtoImplClass, methodName: string) {
+  static setMethodHosts(hosts: string[], clazz: EggProtoImplClass, methodName: string): void {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(METHOD_CONTROLLER_HOST, clazz, new Map());
     methodControllerMap.set(methodName, hosts);
   }
@@ -122,7 +130,7 @@ export class MethodInfoUtil {
     return !(methodControllerMap && methodControllerMap.get(methodName));
   }
 
-  static registerAopMiddlewarePointcut(clazz: EggProtoImplClass, methodName: string) {
+  static registerAopMiddlewarePointcut(clazz: EggProtoImplClass, methodName: string): void {
     const methodControllerMap: MethodAopRegisterMap = MetadataUtil.initOwnMapMetaData(
       METHOD_AOP_REGISTER_MAP,
       clazz,

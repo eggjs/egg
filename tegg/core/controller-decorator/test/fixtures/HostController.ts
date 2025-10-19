@@ -1,4 +1,4 @@
-import { Host } from '../../src/index.js';
+import { Host } from '../../src/index.ts';
 
 @Host('foo.eggjs.com')
 export class HostController {

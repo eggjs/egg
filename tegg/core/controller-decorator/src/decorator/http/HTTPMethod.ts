@@ -6,7 +6,7 @@ import type { EggProtoImplClass, HTTPMethodParams } from '@eggjs/tegg-types';
 import { HTTPInfoUtil, MethodInfoUtil } from '../../util/index.ts';
 
 export function HTTPMethod(param: HTTPMethodParams) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     assert.equal(
       typeof propertyKey,
       'string',

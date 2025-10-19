@@ -1,1 +1,1 @@
-export class HTTPRequest extends (Request || Object) {}
+export class HTTPRequest extends Request {}

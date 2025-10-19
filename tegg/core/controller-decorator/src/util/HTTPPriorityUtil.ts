@@ -16,7 +16,8 @@ export class HTTPPriorityUtil {
    * priority = hasRegExp
    *   : regexpIndex.reduce((p,c) => p + c * 1000, 0)
    *   : 100000;
-   * @param {string} path -
+   * @param {string} path - path to calculate priority
+   * @returns {number} priority
    */
   static calcPathPriority(path: string): number {
     const tokens = parse(path);

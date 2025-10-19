@@ -76,7 +76,7 @@ export class HTTPControllerMethodMetaBuilder {
     return paramTypeMap;
   }
 
-  getPriority() {
+  getPriority(): number {
     const priority = HTTPInfoUtil.getHTTPMethodPriority(this.clazz, this.methodName);
     if (priority !== undefined) {
       return priority;

@@ -67,7 +67,7 @@ export class HTTPControllerMetaBuilder {
     return metadata;
   }
 
-  static create(clazz: EggProtoImplClass) {
+  static create(clazz: EggProtoImplClass): HTTPControllerMetaBuilder {
     return new HTTPControllerMetaBuilder(clazz);
   }
 }

@@ -11,12 +11,12 @@ import type { ControllerTypeLike, EggProtoImplClass, MiddlewareFunc } from '@egg
 import { MetadataUtil } from '@eggjs/core-decorator';
 
 export class ControllerInfoUtil {
-  static addControllerMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass) {
+  static addControllerMiddleware(middleware: MiddlewareFunc, clazz: EggProtoImplClass): void {
     const middlewares = MetadataUtil.initOwnArrayMetaData<MiddlewareFunc>(CONTROLLER_MIDDLEWARES, clazz, []);
     middlewares.push(middleware);
   }
 
-  static addControllerAopMiddleware(middleware: EggProtoImplClass<IAdvice>, clazz: EggProtoImplClass) {
+  static addControllerAopMiddleware(middleware: EggProtoImplClass<IAdvice>, clazz: EggProtoImplClass): void {
     const middlewares = MetadataUtil.initOwnArrayMetaData<EggProtoImplClass<IAdvice>>(
       CONTROLLER_AOP_MIDDLEWARES,
       clazz,
@@ -33,11 +33,11 @@ export class ControllerInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_AOP_MIDDLEWARES, clazz) || [];
   }
 
-  static setControllerType(clazz: EggProtoImplClass, controllerType: ControllerTypeLike) {
+  static setControllerType(clazz: EggProtoImplClass, controllerType: ControllerTypeLike): void {
     MetadataUtil.defineMetaData(CONTROLLER_TYPE, controllerType, clazz);
   }
 
-  static setControllerName(clazz: EggProtoImplClass, controllerName: string) {
+  static setControllerName(clazz: EggProtoImplClass, controllerName: string): void {
     MetadataUtil.defineMetaData(CONTROLLER_NAME, controllerName, clazz);
   }
 
@@ -49,7 +49,7 @@ export class ControllerInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_TYPE, clazz);
   }
 
-  static setControllerAcl(code: string | undefined, clazz: EggProtoImplClass) {
+  static setControllerAcl(code: string | undefined, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(CONTROLLER_ACL, code, clazz);
   }
 
@@ -61,7 +61,7 @@ export class ControllerInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_ACL, clazz);
   }
 
-  static addControllerHosts(hosts: string[], clazz: EggProtoImplClass) {
+  static addControllerHosts(hosts: string[], clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(CONTROLLER_HOST, hosts, clazz);
   }
 

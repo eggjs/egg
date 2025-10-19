@@ -1,5 +1,6 @@
 import type { EggContext, Next } from '@eggjs/tegg-types';
-import { Middleware } from '../../src/index.js';
+
+import { Middleware } from '../../src/index.ts';
 
 async function middleware1(ctx: EggContext, next: Next) {
   console.log(ctx, next);

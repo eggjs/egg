@@ -6,7 +6,7 @@ import { AccessLevel, ControllerType } from '@eggjs/tegg-types';
 import { ControllerInfoUtil, HTTPInfoUtil } from '../../util/index.ts';
 
 export function HTTPController(param?: HTTPControllerParams) {
-  return function (constructor: EggProtoImplClass) {
+  return function (constructor: EggProtoImplClass): void {
     ControllerInfoUtil.setControllerType(constructor, ControllerType.HTTP);
     if (param?.controllerName) {
       ControllerInfoUtil.setControllerName(constructor, param.controllerName);

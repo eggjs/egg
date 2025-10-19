@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import pathToRegexp from 'path-to-regexp';
+import pathToRegexp, { type Key as PathToRegexpKey } from 'path-to-regexp';
 import { HTTPParamType } from '@eggjs/tegg-types';
 import type { HTTPMethodEnum, MethodMeta, MiddlewareFunc } from '@eggjs/tegg-types';
 
@@ -11,31 +11,31 @@ export abstract class ParamMeta {
 }
 
 export class RequestParamMeta extends ParamMeta {
-  type = HTTPParamType.REQUEST;
+  type: HTTPParamType = HTTPParamType.REQUEST;
 
-  validate() {
+  validate(): void {
     return;
   }
 }
 
 export class BodyParamMeta extends ParamMeta {
-  type = HTTPParamType.BODY;
+  type: HTTPParamType = HTTPParamType.BODY;
 
-  validate() {
+  validate(): void {
     return;
   }
 }
 
 export class HeadersParamMeta extends ParamMeta {
-  type = HTTPParamType.HEADERS;
+  type: HTTPParamType = HTTPParamType.HEADERS;
 
-  validate() {
+  validate(): void {
     return;
   }
 }
 
 export class QueryParamMeta extends ParamMeta {
-  type = HTTPParamType.QUERY;
+  type: HTTPParamType = HTTPParamType.QUERY;
   name: string;
 
   constructor(name: string) {
@@ -43,13 +43,13 @@ export class QueryParamMeta extends ParamMeta {
     this.name = name;
   }
 
-  validate() {
+  validate(): void {
     return;
   }
 }
 
 export class QueriesParamMeta extends ParamMeta {
-  type = HTTPParamType.QUERIES;
+  type: HTTPParamType = HTTPParamType.QUERIES;
   name: string;
 
   constructor(name: string) {
@@ -57,13 +57,13 @@ export class QueriesParamMeta extends ParamMeta {
     this.name = name;
   }
 
-  validate() {
+  validate(): void {
     return;
   }
 }
 
 export class PathParamMeta extends ParamMeta {
-  type = HTTPParamType.PARAM;
+  type: HTTPParamType = HTTPParamType.PARAM;
   name: string;
 
   constructor(name: string) {
@@ -71,8 +71,8 @@ export class PathParamMeta extends ParamMeta {
     this.name = name;
   }
 
-  validate(httpPath: string) {
-    const names: pathToRegexp.Key[] = [];
+  validate(httpPath: string): void {
+    const names: PathToRegexpKey[] = [];
     pathToRegexp(httpPath, names);
     if (!names.find(name => String(name.name) === this.name)) {
       throw new Error(`can not find param ${this.name} in path ${httpPath}`);
@@ -81,9 +81,9 @@ export class PathParamMeta extends ParamMeta {
 }
 
 export class CookiesParamMeta extends ParamMeta {
-  type = HTTPParamType.COOKIES;
+  type: HTTPParamType = HTTPParamType.COOKIES;
 
-  validate() {
+  validate(): void {
     return;
   }
 }
@@ -126,7 +126,7 @@ export class HTTPMethodMeta implements MethodMeta {
 }
 
 export class ParamMetaUtil {
-  static createParam(type: HTTPParamType, name?: string) {
+  static createParam(type: HTTPParamType, name?: string): ParamMeta {
     switch (type) {
       case HTTPParamType.PARAM: {
         assert(name, 'path param must has name');

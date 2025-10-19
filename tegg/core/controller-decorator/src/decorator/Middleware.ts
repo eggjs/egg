@@ -6,10 +6,11 @@ import { AdviceInfoUtil } from '@eggjs/aop-decorator';
 
 import { ControllerInfoUtil, MethodInfoUtil } from '../util/index.ts';
 
-enum MiddlewareType {
-  AOP = 'AOP',
-  MiddlewareFunc = 'MiddlewareFunc',
-}
+const MiddlewareType = {
+  AOP: 'AOP',
+  MiddlewareFunc: 'MiddlewareFunc',
+} as const;
+type MiddlewareType = (typeof MiddlewareType)[keyof typeof MiddlewareType];
 
 function isAop(mw: MiddlewareFunc | EggProtoImplClass<IAdvice>) {
   return isClass(mw) && AdviceInfoUtil.isAdvice(mw as EggProtoImplClass<IAdvice>);
@@ -62,7 +63,7 @@ export function Middleware(...middlewares: Array<MiddlewareFunc> | Array<EggProt
     }
   }
 
-  return function (target: any, propertyKey?: PropertyKey) {
+  return function (target: any, propertyKey?: PropertyKey): void {
     const type = isAopTypeOrMiddlewareType(middlewares);
     if (propertyKey === undefined) {
       if (type === MiddlewareType.AOP) {

@@ -17,7 +17,7 @@ type HTTPMethodParamNameMap = Map<string, Map<number, string>>;
 type HTTPMethodPriorityMap = Map<string, number>;
 
 export class HTTPInfoUtil {
-  static setHTTPPath(path: string, clazz: EggProtoImplClass) {
+  static setHTTPPath(path: string, clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(CONTROLLER_HTTP_PATH, path, clazz);
   }
 
@@ -25,7 +25,7 @@ export class HTTPInfoUtil {
     return MetadataUtil.getMetaData(CONTROLLER_HTTP_PATH, clazz);
   }
 
-  static setHTTPMethodPath(path: string, clazz: EggProtoImplClass, methodName: string) {
+  static setHTTPMethodPath(path: string, clazz: EggProtoImplClass, methodName: string): void {
     const methodPathMap = MetadataUtil.initOwnMapMetaData(CONTROLLER_METHOD_PATH_MAP, clazz, new Map());
     methodPathMap.set(methodName, path);
   }
@@ -35,7 +35,7 @@ export class HTTPInfoUtil {
     return methodPathMap?.get(methodName);
   }
 
-  static setHTTPMethodMethod(method: HTTPMethodEnum, clazz: EggProtoImplClass, methodName: string) {
+  static setHTTPMethodMethod(method: HTTPMethodEnum, clazz: EggProtoImplClass, methodName: string): void {
     const methodMap: HTTPMethodMethodMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_METHOD_MAP,
       clazz,
@@ -54,7 +54,7 @@ export class HTTPInfoUtil {
     parameterIndex: number,
     clazz: EggProtoImplClass,
     methodName: string
-  ) {
+  ): void {
     const methodParamMap: HTTPMethodParamTypeMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PARAM_TYPE_MAP,
       clazz,
@@ -94,7 +94,7 @@ export class HTTPInfoUtil {
     parameterIndex: number,
     clazz: EggProtoImplClass,
     methodName: string
-  ) {
+  ): void {
     const methodParamNameMap: HTTPMethodParamNameMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PARAM_NAME_MAP,
       clazz,
@@ -125,7 +125,7 @@ export class HTTPInfoUtil {
     return methodPriorityMap?.get(methodName);
   }
 
-  static setHTTPMethodPriority(priority: number, clazz: EggProtoImplClass, methodName: string) {
+  static setHTTPMethodPriority(priority: number, clazz: EggProtoImplClass, methodName: string): void {
     const methodPriorityMap: HTTPMethodPriorityMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PRIORITY,
       clazz,

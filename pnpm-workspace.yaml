@@ -214,6 +214,10 @@ catalog:
   ylru: ^2.0.0
   zod: ^3.24.1
 
+catalogs:
+  path-to-regexp1:
+    path-to-regexp: ^1.9.0
+
 catalogMode: prefer
 
 minimumReleaseAge: 1440

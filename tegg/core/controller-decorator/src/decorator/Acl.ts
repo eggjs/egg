@@ -20,7 +20,7 @@ export function Acl(code?: string) {
     MethodInfoUtil.setMethodAcl(code, controllerClazz, methodName);
   }
 
-  return function (target: any, propertyKey?: PropertyKey) {
+  return function (target: any, propertyKey?: PropertyKey): void {
     if (propertyKey === undefined) {
       classAcl(target);
     } else {
