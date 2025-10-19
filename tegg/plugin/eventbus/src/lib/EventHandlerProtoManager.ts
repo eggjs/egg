@@ -1,5 +1,5 @@
-import { Application } from 'egg';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import type { Application } from 'egg';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 import { EventContextFactory, EventHandlerFactory } from '@eggjs/tegg-eventbus-runtime';
 import { EVENT_NAME, type EventName } from '@eggjs/tegg';
 
@@ -13,11 +13,11 @@ export class EventHandlerProtoManager {
     this.app = app;
   }
 
-  addProto(proto: EggPrototype) {
+  addProto(proto: EggPrototype): void {
     this.protos.add(proto);
   }
 
-  async register() {
+  async register(): Promise<void> {
     const eventHandlerFactory = await this.app.getEggObject(EventHandlerFactory);
     for (const proto of this.protos) {
       const eventList = (proto.getMetaData(EVENT_NAME) as EventName[]) ?? [];
@@ -29,7 +29,7 @@ export class EventHandlerProtoManager {
     eventFactory.registerContextCreator(createContextFactory(this.app));
   }
 
-  getProtos() {
+  getProtos(): EggPrototype[] {
     return Array.from(this.protos);
   }
 }

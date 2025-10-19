@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-plugin",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "eggPlugin": {
     "name": "eventbusModule",
     "strict": false,
@@ -41,14 +41,14 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/plugin/eventbus",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/eventbus",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "plugin/eventbus"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/plugin/eventbus"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -71,10 +71,8 @@
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
-    "mocha": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "unplugin-unused": "catalog:"

@@ -15,23 +15,23 @@ export class HelloService {
   @Inject()
   private readonly eventBus: ContextEventBus;
 
-  cork() {
+  cork(): void {
     this.eventBus.cork();
   }
 
-  uncork() {
+  uncork(): void {
     this.eventBus.uncork();
   }
 
-  hello() {
+  hello(): void {
     this.eventBus.emit('helloEgg', '01');
   }
 
-  hi() {
+  hi(): void {
     this.eventBus.emit('hiEgg', 'Ydream');
   }
 
-  traceTest() {
+  traceTest(): void {
     this.eventBus.emit('trace');
   }
 }

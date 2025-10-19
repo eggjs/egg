@@ -1,4 +1,4 @@
-import { expect } from 'vitest';
+import { describe, afterEach, beforeAll, afterAll, it, expect } from 'vitest';
 import { mm, type MockApplication } from '@eggjs/mock';
 import { TimerUtil } from '@eggjs/tegg-common-util';
 import { type IEventContext } from '@eggjs/tegg';
@@ -15,14 +15,14 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
     return mm.restore();
   });
 
-  before(async () => {
+  beforeAll(async () => {
     app = mm.app({
       baseDir: getFixtures('apps/event-app'),
     });
     await app.ready();
   });
 
-  after(() => {
+  afterAll(() => {
     return app.close();
   });
 

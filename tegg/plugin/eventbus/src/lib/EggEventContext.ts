@@ -1,8 +1,10 @@
-import { Context, Application } from 'egg';
+import type { Context, Application } from 'egg';
 import { AbstractEggContext, type EggContext } from '@eggjs/tegg-runtime';
 import { IdenticalUtil } from '@eggjs/tegg';
 import { EGG_CONTEXT, TEGG_CONTEXT } from '@eggjs/egg-module-common';
-import { type ContextCreator } from '@eggjs/tegg-eventbus-runtime';
+import type { ContextCreator } from '@eggjs/tegg-eventbus-runtime';
+
+type CreateContextFactory = (app: Application) => ContextCreator;
 
 // AbstractEggContext use lots of static method
 // In chair application mode plugin is in .sff
@@ -10,7 +12,7 @@ import { type ContextCreator } from '@eggjs/tegg-eventbus-runtime';
 export function eggEventContextFactory(
   AbstractEggContextClazz: typeof AbstractEggContext,
   identicalUtil: typeof IdenticalUtil
-) {
+): CreateContextFactory {
   class EggEventContext extends AbstractEggContextClazz {
     readonly id: string;
 

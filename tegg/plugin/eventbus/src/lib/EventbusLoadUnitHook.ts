@@ -11,6 +11,7 @@ import { EventContextFactory, EventHandlerFactory, SingletonEventBus } from '@eg
 const REGISTER_CLAZZ = [EventHandlerFactory, EventContextFactory, SingletonEventBus];
 
 // EggQualifier only for egg plugin
+// allow to inject logger in SingletonEventBus
 QualifierUtil.addProperQualifier(SingletonEventBus, 'logger', EggQualifierAttribute, EggType.APP);
 
 export class EventbusLoadUnitHook implements LifecycleHook<LoadUnitLifecycleContext, LoadUnit> {

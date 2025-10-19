@@ -76,10 +76,8 @@
     "@eggjs/tegg-plugin": "workspace:*",
     "@eggjs/tracer": "workspace:*",
     "@types/node": "catalog:",
-    "@types/mocha": "catalog:",
     "egg": "workspace:*",
     "globby": "catalog:",
-    "mocha": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

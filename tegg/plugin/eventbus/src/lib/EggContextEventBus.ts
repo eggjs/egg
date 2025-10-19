@@ -19,7 +19,7 @@ export class EggContextEventBus implements ContextEventBus {
     this.eventBus = eggObject.obj as SingletonEventBus;
   }
 
-  cork() {
+  cork(): void {
     if (!this.corkId) {
       this.corkId = this.eventBus.generateCorkId();
       this.context.set(CORK_ID, this.corkId);

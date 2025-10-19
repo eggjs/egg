@@ -1,5 +1,5 @@
 import { type LifecycleHook, EVENT_NAME } from '@eggjs/tegg';
-import { type EggPrototype, type EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 
 import { EventHandlerProtoManager } from './EventHandlerProtoManager.ts';
 

@@ -1,4 +1,5 @@
-import { type Application, type ILifecycleBoot } from 'egg';
+import type { Application, ILifecycleBoot } from 'egg';
+
 import { EventHandlerProtoManager } from './lib/EventHandlerProtoManager.ts';
 import { EventbusLoadUnitHook } from './lib/EventbusLoadUnitHook.ts';
 import { EventbusProtoHook } from './lib/EventbusProtoHook.ts';
@@ -16,17 +17,17 @@ export default class EventbusAppHook implements ILifecycleBoot {
     this.eventbusProtoHook = new EventbusProtoHook(this.eventHandlerProtoManager);
   }
 
-  configDidLoad() {
+  configDidLoad(): void {
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.eventbusProtoHook);
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.eventbusLoadUnitHook);
   }
 
-  async didLoad() {
+  async didLoad(): Promise<void> {
     await this.app.moduleHandler.ready();
     await this.eventHandlerProtoManager.register();
   }
 
-  async beforeClose() {
+  async beforeClose(): Promise<void> {
     this.app.eggPrototypeLifecycleUtil.deleteLifecycle(this.eventbusProtoHook);
     this.app.loadUnitLifecycleUtil.deleteLifecycle(this.eventbusLoadUnitHook);
   }
