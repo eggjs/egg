@@ -16,7 +16,7 @@ export class ContextInitiator {
     this.eggContext.set(CONTEXT_INITIATOR, this);
   }
 
-  async init(obj: EggObject) {
+  async init(obj: EggObject): Promise<void> {
     if (this.eggObjectInitRecorder.get(obj) === true) {
       return;
     }

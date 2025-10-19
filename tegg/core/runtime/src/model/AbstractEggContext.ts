@@ -29,11 +29,11 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
 
   abstract id: string;
 
-  addProtoToCreate(name: string, proto: EggPrototype) {
+  addProtoToCreate(name: string, proto: EggPrototype): void {
     this.protoToCreate.set(name, proto);
   }
 
-  deleteProtoToCreate(name: string) {
+  deleteProtoToCreate(name: string): void {
     this.protoToCreate.delete(name);
   }
 
@@ -107,7 +107,7 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
     return this.protoToCreate.entries();
   }
 
-  set(key: string | symbol, val: any) {
+  set(key: string | symbol, val: any): void {
     this.contextData.set(key, val);
   }
 }

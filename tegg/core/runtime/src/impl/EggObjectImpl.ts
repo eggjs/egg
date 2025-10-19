@@ -31,7 +31,7 @@ export class EggObjectImpl implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id, ctx?.id);
   }
 
-  async initWithInjectProperty(ctx: EggObjectLifeCycleContext) {
+  async initWithInjectProperty(ctx: EggObjectLifeCycleContext): Promise<void> {
     // 1. create obj
     // 2. call obj lifecycle preCreate
     // 3. inject deps
@@ -97,7 +97,7 @@ export class EggObjectImpl implements EggObject {
     }
   }
 
-  async initWithInjectConstructor(ctx: EggObjectLifeCycleContext) {
+  async initWithInjectConstructor(ctx: EggObjectLifeCycleContext): Promise<void> {
     // 1. create inject deps
     // 2. create obj
     // 3. call obj lifecycle preCreate
@@ -176,7 +176,7 @@ export class EggObjectImpl implements EggObject {
     }
   }
 
-  async init(ctx: EggObjectLifeCycleContext) {
+  async init(ctx: EggObjectLifeCycleContext): Promise<void> {
     if (this.proto.injectType === InjectType.CONSTRUCTOR) {
       await this.initWithInjectConstructor(ctx);
     } else {
@@ -184,7 +184,7 @@ export class EggObjectImpl implements EggObject {
     }
   }
 
-  async destroy(ctx: EggObjectLifeCycleContext) {
+  async destroy(ctx: EggObjectLifeCycleContext): Promise<void> {
     if (this.status === EggObjectStatus.READY) {
       this.status = EggObjectStatus.DESTROYING;
       // global hook
@@ -206,15 +206,15 @@ export class EggObjectImpl implements EggObject {
     }
   }
 
-  injectProperty(name: EggObjectName, descriptor: PropertyDescriptor) {
+  injectProperty(name: EggObjectName, descriptor: PropertyDescriptor): void {
     Reflect.defineProperty(this._obj, name, descriptor);
   }
 
-  get obj() {
+  get obj(): object {
     return this._obj;
   }
 
-  get isReady() {
+  get isReady(): boolean {
     return this.status === EggObjectStatus.READY;
   }
 

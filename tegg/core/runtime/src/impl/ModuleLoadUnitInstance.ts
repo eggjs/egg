@@ -40,11 +40,11 @@ export class ModuleLoadUnitInstance implements LoadUnitInstance {
     return this.protoToCreateMap[Symbol.iterator]();
   }
 
-  addProtoToCreate(name: string, proto: EggPrototype) {
+  addProtoToCreate(name: string, proto: EggPrototype): void {
     this.protoToCreateMap.push([name, proto]);
   }
 
-  deleteProtoToCreate(name: string) {
+  deleteProtoToCreate(name: string): void {
     const index = this.protoToCreateMap.findIndex(([protoName]) => protoName === name);
     if (index !== -1) {
       this.protoToCreateMap.splice(index, 1);

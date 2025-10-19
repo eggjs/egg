@@ -24,7 +24,7 @@ export class EggContainerFactory {
   private static containerGetMethodMap: Map<ObjectInitTypeLike, ContainerGetMethod> = new Map();
   private static ContextInitiatorClass: typeof ContextInitiatorType;
 
-  static registerContainerGetMethod(initType: ObjectInitTypeLike, method: ContainerGetMethod) {
+  static registerContainerGetMethod(initType: ObjectInitTypeLike, method: ContainerGetMethod): void {
     if (debug.enabled) {
       debug(
         'registerContainerGetMethod %o %o, exists: %s',

@@ -21,7 +21,7 @@ export class LoadUnitInstanceFactory {
   private static creatorMap: Map<EggLoadUnitTypeLike, LoadUnitInstanceCreator> = new Map();
   private static instanceMap: Map<string, LoadUnitInstancePair> = new Map();
 
-  static registerLoadUnitInstanceClass(type: EggLoadUnitTypeLike, creator: LoadUnitInstanceCreator) {
+  static registerLoadUnitInstanceClass(type: EggLoadUnitTypeLike, creator: LoadUnitInstanceCreator): void {
     this.creatorMap.set(type, creator);
   }
 
@@ -52,7 +52,7 @@ export class LoadUnitInstanceFactory {
     return this.instanceMap.get(instanceId)?.instance;
   }
 
-  static async destroyLoadUnitInstance(loadUnitInstance: LoadUnitInstance) {
+  static async destroyLoadUnitInstance(loadUnitInstance: LoadUnitInstance): Promise<void> {
     const { ctx } = this.instanceMap.get(loadUnitInstance.id)!;
     await LoadUnitInstanceLifecycleUtil.objectPreDestroy(ctx, loadUnitInstance);
     if (loadUnitInstance.destroy) {

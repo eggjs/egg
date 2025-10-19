@@ -5,18 +5,18 @@ import { EggObjectFactory } from '../factory/EggObjectFactory.ts';
 import { EggContainerFactory } from '../factory/EggContainerFactory.ts';
 
 export class EggAlwaysNewObjectContainer implements EggContainer<LifecycleContext> {
-  static instance = new EggAlwaysNewObjectContainer();
+  static instance: EggAlwaysNewObjectContainer = new EggAlwaysNewObjectContainer();
   readonly id: Id;
 
   constructor() {
     this.id = 'ALWAYS_NEW_OBJECT_CONTAINER';
   }
 
-  addProtoToCreate() {
+  addProtoToCreate(): void {
     return;
   }
 
-  deleteProtoToCreate() {
+  deleteProtoToCreate(): void {
     return;
   }
 
