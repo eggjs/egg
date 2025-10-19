@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-dynamic-inject",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg dynamic inject",
   "type": "module",
   "exports": {
@@ -24,14 +24,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/dynamic-inject",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/dynamic-inject",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/dynamic-inject"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/dynamic-inject"
   },
   "engines": {
     "node": ">=22.18.0"

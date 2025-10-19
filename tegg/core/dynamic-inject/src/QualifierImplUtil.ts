@@ -7,7 +7,7 @@ export class QualifierImplUtil {
     abstractClazz: EggAbstractClazz,
     qualifierValue: QualifierValue,
     implClazz: EggProtoImplClass
-  ) {
+  ): void {
     const implMap = MetadataUtil.initOwnMapMetaData(
       QUALIFIER_IMPL_MAP,
       abstractClazz as unknown as EggProtoImplClass,
