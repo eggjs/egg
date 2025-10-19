@@ -1,7 +1,7 @@
 {
   "name": "@eggjs/tegg-standalone",
   "description": "tegg standalone",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "keywords": [
     "egg",
     "typescript",
@@ -19,21 +19,21 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test:mocha": "egg-bin test",
-    "cov:mocha": "egg-bin cov",
+    "test": "egg-bin test",
+    "cov": "egg-bin cov",
     "clean": "tsc -b --clean && rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build"
   },
-  "homepage": "https://github.com/eggjs/tegg/tree/next/standalone/standalone",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/standalone/standalone",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "standalone/standalone"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/standalone/standalone"
   },
   "engines": {
     "node": ">=22.18.0"
@@ -65,6 +65,7 @@
     "@eggjs/utils": "workspace:*",
     "@types/mocha": "catalog:",
     "@types/node": "catalog:",
+    "mocha": "catalog:",
     "mm": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",

@@ -48,8 +48,6 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test:mocha": "egg-bin test",
-    "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist *.tsbuildinfo",
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "prepublishOnly": "npm run build"
@@ -83,15 +81,12 @@
     "@eggjs/tegg-config": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tracer": "workspace:*",
-    "@types/mocha": "catalog:",
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "egg-logger": "catalog:",
-    "mocha": "catalog:",
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"

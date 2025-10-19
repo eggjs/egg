@@ -35,8 +35,6 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "test:mocha": "egg-bin test",
-    "cov:mocha": "egg-bin cov",
     "clean": "rimraf dist",
     "build": "tsdown && rimraf dist *.tsbuildinfo && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
@@ -68,7 +66,6 @@
     "@eggjs/tegg-plugin": "workspace:*"
   },
   "devDependencies": {
-    "@eggjs/bin": "workspace:*",
     "@eggjs/mock": "workspace:*",
     "@eggjs/tegg-common-util": "workspace:*",
     "@eggjs/module-test-util": "workspace:*",
