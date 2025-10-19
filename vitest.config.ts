@@ -9,7 +9,6 @@ const config: UserWorkspaceConfig = defineConfig({
       'tegg/core/*',
       'tegg/plugin/*',
       'tegg/standalone/*',
-      'examples/*',
       // FIXME: enable this will cause one test file run twice
       // {
       //   extends: true,
