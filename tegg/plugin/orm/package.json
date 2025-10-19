@@ -42,7 +42,7 @@
     "build": "tsdown && npm run clean && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit --project tsconfig.build.json",
     "prepublishOnly": "npm run build",
-    "prepare-test": "node ./test/fixtures/prepare.js"
+    "pretest": "node ./test/fixtures/prepare.js"
   },
   "homepage": "https://github.com/eggjs/egg/tree/next/tegg/plugin/orm",
   "bugs": {
