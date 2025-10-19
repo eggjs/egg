@@ -1,4 +1,3 @@
-import os from 'node:os';
 import mysql from 'mysql2';
 
 const config = {
@@ -56,10 +55,6 @@ async function init() {
 
 (async () => {
   try {
-    // TODO win32 ci not support mysql
-    if (['win32'].includes(os.platform())) {
-      return;
-    }
     connect();
     await init();
     console.log('prepare database done');

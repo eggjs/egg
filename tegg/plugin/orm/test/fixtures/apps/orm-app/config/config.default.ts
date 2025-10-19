@@ -1,4 +1,4 @@
-export default () => {
+export default (): any => {
   const config = {
     keys: 'test key',
     security: {

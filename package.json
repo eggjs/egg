@@ -39,6 +39,7 @@
     "pretest": "pnpm run clean && pnpm -r run pretest",
     "test": "vitest run --bail 1 --retry 2",
     "test:cov": "pnpm run test --coverage",
+    "preci": "pnpm -r run pretest",
     "ci": "vitest run --bail 1 --retry 2 --coverage",
     "ci:packages": "node scripts/ci.js packages",
     "ci:tools": "node scripts/ci.js tools && pnpm example:typescript:test",
