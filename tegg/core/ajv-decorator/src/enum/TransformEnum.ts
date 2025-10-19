@@ -3,25 +3,25 @@
  * This keyword applies only to strings. If the data is not a string, the transform keyword is ignored.
  * @see https://github.com/ajv-validator/ajv-keywords?tab=readme-ov-file#transform
  */
-export enum TransformEnum {
+export const TransformEnum = {
   /** remove whitespace from start and end */
-  trim = 'trim',
+  trim: 'trim',
   /** remove whitespace from start */
-  trimStart = 'trimStart',
+  trimStart: 'trimStart',
   /**
    * @alias trimStart
    */
-  trimLeft = 'trimLeft',
+  trimLeft: 'trimLeft',
   /** remove whitespace from end */
-  trimEnd = 'trimEnd',
+  trimEnd: 'trimEnd',
   /**
    * @alias trimEnd
    */
-  trimRight = 'trimRight',
+  trimRight: 'trimRight',
   /** convert to lower case */
-  toLowerCase = 'toLowerCase',
+  toLowerCase: 'toLowerCase',
   /** convert to upper case */
-  toUpperCase = 'toUpperCase',
+  toUpperCase: 'toUpperCase',
   /**
    * change string case to be equal to one of `enum` values in the schema
    *
@@ -41,5 +41,7 @@ export enum TransformEnum {
    * console.log(data) // ['pH','pH','pH','pH'];
    * ```
    */
-  toEnumCase = 'toEnumCase',
-}
+  toEnumCase: 'toEnumCase',
+};
+
+export type TransformEnum = (typeof TransformEnum)[keyof typeof TransformEnum];

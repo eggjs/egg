@@ -24,14 +24,14 @@
     "prepublishOnly": "npm run build"
   },
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/ajv-decorator",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/ajv-decorator",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/ajv-decorator"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/ajv-decorator"
   },
   "engines": {
     "node": ">=22.18.0"

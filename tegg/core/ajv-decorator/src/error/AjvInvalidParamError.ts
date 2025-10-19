@@ -17,5 +17,6 @@ export class AjvInvalidParamError extends Error {
     this.errorData = options.errorData;
     this.currentSchema = options.currentSchema;
     this.errors = options.errors;
+    Error.captureStackTrace(this, this.constructor);
   }
 }
