@@ -6,7 +6,7 @@ import type { EggProtoImplClass, TableParams } from '@eggjs/tegg-types';
 import { TableInfoUtil } from '../util/index.ts';
 
 export function Table(params?: TableParams) {
-  return function (constructor: EggProtoImplClass) {
+  return function (constructor: EggProtoImplClass): void {
     TableInfoUtil.setIsTable(constructor);
     if (params) {
       TableInfoUtil.setTableParams(constructor, params);

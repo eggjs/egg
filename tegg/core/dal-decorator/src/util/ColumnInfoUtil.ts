@@ -6,12 +6,12 @@ export type ColumnInfoMap = Map<string, ColumnParams>;
 export type ColumnTypeMap = Map<string, ColumnTypeParams>;
 
 export class ColumnInfoUtil {
-  static addColumnInfo(clazz: EggProtoImplClass, property: string, column: ColumnInfoUtil) {
+  static addColumnInfo(clazz: EggProtoImplClass, property: string, column: ColumnInfoUtil): void {
     const columnInfoMap = MetadataUtil.initOwnMapMetaData(DAL_COLUMN_INFO_MAP, clazz, new Map());
     columnInfoMap.set(property, column);
   }
 
-  static addColumnType(clazz: EggProtoImplClass, property: string, type: ColumnTypeParams) {
+  static addColumnType(clazz: EggProtoImplClass, property: string, type: ColumnTypeParams): void {
     const columnInfoMap = MetadataUtil.initOwnMapMetaData(DAL_COLUMN_TYPE_MAP, clazz, new Map());
     columnInfoMap.set(property, type);
   }

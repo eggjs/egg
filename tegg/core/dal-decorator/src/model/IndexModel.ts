@@ -39,12 +39,12 @@ export class IndexModel {
     this.parser = params.parser;
   }
 
-  static buildIndexName(keys: string[], type: IndexType) {
+  static buildIndexName(keys: string[], type: IndexType): string {
     const prefix = type === IndexType.UNIQUE ? 'uk_' : 'idx_';
     return prefix + keys.join('_');
   }
 
-  static build(params: IndexParams, columns: ColumnModel[], clazz: EggProtoImplClass<unknown>) {
+  static build(params: IndexParams, columns: ColumnModel[], clazz: EggProtoImplClass<unknown>): IndexModel {
     const type = params.type ?? IndexType.INDEX;
     const keys: Array<IndexKey> = params.keys.map(t => {
       const column = columns.find(c => c.propertyName === t);

@@ -6,7 +6,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { DaoInfoUtil } from '../util/index.ts';
 
 export function Dao() {
-  return function (constructor: EggProtoImplClass) {
+  return function (constructor: EggProtoImplClass): void {
     DaoInfoUtil.setIsDao(constructor);
     const func = Prototype({
       accessLevel: AccessLevel.PUBLIC,

@@ -3,7 +3,7 @@ import type { EggProtoImplClass } from '@eggjs/tegg-types';
 import { MetadataUtil } from '@eggjs/core-decorator';
 
 export class DaoInfoUtil {
-  static setIsDao(clazz: EggProtoImplClass) {
+  static setIsDao(clazz: EggProtoImplClass): void {
     MetadataUtil.defineMetaData(DAL_IS_DAO, true, clazz);
   }
 

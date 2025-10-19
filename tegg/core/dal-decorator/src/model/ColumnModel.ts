@@ -49,7 +49,7 @@ export class ColumnModel {
     this.secondaryEngineAttribute = params.secondaryEngineAttribute;
   }
 
-  static build(property: string, type: ColumnTypeParams, params?: ColumnParams) {
+  static build(property: string, type: ColumnTypeParams, params?: ColumnParams): ColumnModel {
     const columnName = params?.name ?? snakecase(property);
     let canNull = params?.canNull ?? false;
     if (params?.primaryKey) {
