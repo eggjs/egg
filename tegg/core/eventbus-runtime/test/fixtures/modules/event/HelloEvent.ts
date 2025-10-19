@@ -14,14 +14,14 @@ export class HelloProducer {
   @Inject()
   private readonly eventBus: EventBus;
 
-  trigger() {
+  trigger(): void {
     this.eventBus.emit('hello', '01');
   }
 }
 
 @Event('hello')
 export class HelloHandler {
-  handle(hello: string) {
+  handle(hello: string): void {
     console.log('hello, ', hello);
   }
 }

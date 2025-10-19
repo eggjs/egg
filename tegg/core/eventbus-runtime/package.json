@@ -1,6 +1,6 @@
 {
   "name": "@eggjs/tegg-eventbus-runtime",
-  "version": "4.0.0-beta.11",
+  "version": "4.0.0-beta.29",
   "description": "tegg eventbus runtime",
   "keywords": [
     "egg",
@@ -28,14 +28,14 @@
   },
   "author": "killagu <killa123@126.com>",
   "license": "MIT",
-  "homepage": "https://github.com/eggjs/tegg/tree/next/core/eventbus-runtime",
+  "homepage": "https://github.com/eggjs/egg/tree/next/tegg/core/eventbus-runtime",
   "bugs": {
-    "url": "https://github.com/eggjs/tegg/issues"
+    "url": "https://github.com/eggjs/egg/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:eggjs/tegg.git",
-    "directory": "core/eventbus-runtime"
+    "url": "git@github.com:eggjs/egg.git",
+    "directory": "tegg/core/eventbus-runtime"
   },
   "dependencies": {
     "@eggjs/core-decorator": "workspace:*",
@@ -45,9 +45,6 @@
     "@eggjs/tegg-types": "workspace:*",
     "await-event": "catalog:",
     "await-first": "catalog:"
-  },
-  "engines": {
-    "node": ">=22.18.0"
   },
   "devDependencies": {
     "@eggjs/module-test-util": "workspace:*",
@@ -59,6 +56,9 @@
     "typescript": "catalog:",
     "tsdown": "catalog:",
     "unplugin-unused": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
   },
   "publishConfig": {
     "access": "public",

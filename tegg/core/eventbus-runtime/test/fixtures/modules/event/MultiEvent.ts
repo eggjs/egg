@@ -16,14 +16,14 @@ export class TimeoutProducer {
   @Inject()
   private readonly eventBus: EventBus;
 
-  trigger() {
+  trigger(): void {
     this.eventBus.emit('timeout');
   }
 }
 
 @Event('timeout')
 export class Timeout0Handler {
-  handle() {
+  handle(): void {
     throw new Error('mock error');
   }
 }
@@ -34,7 +34,7 @@ export class Timeout100Handler {
   @Inject()
   private readonly logger: EggLogger;
 
-  async handle() {
+  async handle(): Promise<void> {
     await TimerUtil.sleep(100);
     // access logger, ensure context still alive
     this.logger.info('timeout 100');

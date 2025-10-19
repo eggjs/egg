@@ -76,7 +76,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     return String(++this.corkIdSequence);
   }
 
-  cork(corkId: string) {
+  cork(corkId: string): void {
     let corkEvents = this.corkedEvents.get(corkId);
     if (!corkEvents) {
       corkEvents = {
@@ -88,7 +88,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     corkEvents!.times++;
   }
 
-  uncork(corkId: string) {
+  uncork(corkId: string): boolean {
     const corkEvents = this.corkedEvents.get(corkId);
     if (!corkEvents) {
       throw new Error(`eventbus corkId ${corkId} not found`);
@@ -105,7 +105,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
     return true;
   }
 
-  queueEvent(corkId: string, event: Event) {
+  queueEvent(corkId: string, event: Event): void {
     const corkedEvents = this.corkedEvents.get(corkId);
     if (!corkedEvents) {
       throw new Error(`eventbus corkId ${corkId} not found`);

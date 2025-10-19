@@ -15,11 +15,11 @@ export class MultiWithContextProducer {
   @Inject()
   private readonly eventBus: EventBus;
 
-  foo() {
+  foo(): void {
     this.eventBus.emit('foo', '123');
   }
 
-  bar() {
+  bar(): void {
     this.eventBus.emit('bar', '321');
   }
 }
@@ -29,7 +29,7 @@ export class MultiWithContextProducer {
 export class MultiWithContextHandler {
   static eventName: string;
   static msg: string;
-  async handle(@EventContext() ctx: IEventContext, msg: string) {
+  async handle(@EventContext() ctx: IEventContext, msg: string): Promise<void> {
     MultiWithContextHandler.eventName = ctx.eventName;
     MultiWithContextHandler.msg = msg;
   }

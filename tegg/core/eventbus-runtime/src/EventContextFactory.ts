@@ -14,7 +14,7 @@ export class EventContextFactory {
     return this.creator(parentContext);
   }
 
-  registerContextCreator(creator: ContextCreator) {
+  registerContextCreator(creator: ContextCreator): void {
     this.creator = creator;
   }
 }

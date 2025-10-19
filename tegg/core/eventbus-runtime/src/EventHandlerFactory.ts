@@ -17,12 +17,12 @@ import { SingletonProto } from '@eggjs/core-decorator';
 export class EventHandlerFactory {
   private handlerProtoMap: Map<EventName, Array<EggPrototype>> = new Map();
 
-  registerHandler(event: EventName, proto: EggPrototype) {
+  registerHandler(event: EventName, proto: EggPrototype): void {
     const protos = MapUtil.getOrStore(this.handlerProtoMap, event, []);
     protos.push(proto);
   }
 
-  hasListeners(event: EventName) {
+  hasListeners(event: EventName): boolean {
     return this.handlerProtoMap.has(event);
   }
 
