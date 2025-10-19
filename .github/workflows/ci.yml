@@ -176,8 +176,8 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
         node: ['22']
         # 0-based index
-        shardIndex: [0, 1, 2, 3, 4]
-        shardTotal: [5]
+        shardIndex: [0, 1, 2]
+        shardTotal: [3]
 
     name: Test bin (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
     runs-on: ${{ matrix.os }}
