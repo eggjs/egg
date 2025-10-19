@@ -16,14 +16,14 @@ export interface CallTraceMsg {
 export class CallTrace {
   msgs: Array<CallTraceMsg> = [];
 
-  addMsg(msg: CallTraceMsg) {
+  addMsg(msg: CallTraceMsg): void {
     this.msgs.push(msg);
   }
 }
 
 export const pointcutAdviceParams = {
-  point: Math.random().toString(),
-  cut: Math.random().toString(),
+  point: Math.random().toString() as string,
+  cut: Math.random().toString() as string,
 };
 
 @Advice()
@@ -95,19 +95,19 @@ export class Hello {
   id = 233;
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async hello(name: string) {
+  async hello(name: string): Promise<string> {
     return `hello ${name}`;
   }
 
   @Pointcut(PointcutAdvice, { adviceParams: pointcutAdviceParams })
-  async helloWithException(name: string) {
+  async helloWithException(name: string): Promise<string> {
     throw new Error(`ops, exception for ${name}`);
   }
 }
 
 export const crosscutAdviceParams = {
-  cross: Math.random().toString(),
-  cut: Math.random().toString(),
+  cross: Math.random().toString() as string,
+  cut: Math.random().toString() as string,
 };
 
 @Crosscut(

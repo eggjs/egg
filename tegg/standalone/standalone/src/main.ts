@@ -1,6 +1,6 @@
 import { Runner, type RunnerOptions } from './Runner.ts';
 
-export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+export async function preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']): Promise<void> {
   try {
     await Runner.preLoad(cwd, dependencies);
   } catch (e) {

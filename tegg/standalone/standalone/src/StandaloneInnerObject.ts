@@ -1,14 +1,12 @@
 import { type EggObject, EggObjectFactory } from '@eggjs/tegg-runtime';
 import { IdenticalUtil, type EggObjectName } from '@eggjs/tegg';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 
 import { StandaloneInnerObjectProto } from './StandaloneInnerObjectProto.ts';
 
-const OBJ = Symbol('EggCompatibleObject#obj');
-
 export class StandaloneInnerObject implements EggObject {
   readonly isReady: boolean = true;
-  private [OBJ]: object;
+  #obj: object;
   readonly proto: StandaloneInnerObjectProto;
   readonly name: EggObjectName;
   readonly id: string;
@@ -19,14 +17,14 @@ export class StandaloneInnerObject implements EggObject {
     this.id = IdenticalUtil.createObjectId(this.proto.id);
   }
 
-  get obj() {
-    if (!this[OBJ]) {
-      this[OBJ] = this.proto.constructEggObject();
+  get obj(): object {
+    if (!this.#obj) {
+      this.#obj = this.proto.constructEggObject();
     }
-    return this[OBJ];
+    return this.#obj;
   }
 
-  injectProperty() {
+  injectProperty(): void {
     return;
   }
 

@@ -10,11 +10,13 @@ Tegg is a modular IoC (Inversion of Control) framework for Egg.js, providing dep
 
 - Node.js >= 22.18.0
 - ESM only (no CommonJS)
-- egg >= 4.0.0
+- egg >= 4.1.0
 
 ## Monorepo Structure
 
-This is a pnpm workspaces monorepo with catalog mode for centralized dependency management:
+**IMPORTANT:** Tegg is part of the main [Egg.js monorepo](https://github.com/eggjs/egg). All build, test, and version management commands should be run from the monorepo root.
+
+The tegg packages are organized as follows within the main monorepo:
 
 ```
 core/          # 24 core packages - decorators, runtime, metadata, loaders
@@ -25,9 +27,10 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 **Dependency Management:**
 
 - Uses pnpm workspaces with `catalog:` protocol for shared external dependencies
-- Uses `workspace:*` protocol for internal monorepo dependencies
-- All shared dependency versions centralized in `pnpm-workspace.yaml`
-- `catalogMode: prefer` set in `.npmrc` for automatic catalog usage
+- Uses `workspace:*` protocol for internal monorepo dependencies (both tegg and egg packages)
+- All shared dependency versions centralized in the root `pnpm-workspace.yaml` (not in tegg/)
+- `catalogMode: prefer` set in root `.npmrc` for automatic catalog usage
+- Tegg packages are defined in root pnpm-workspace.yaml as `tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`
 
 ### Key Core Packages
 
@@ -52,57 +55,74 @@ standalone/    # 1 standalone package - standalone runtime without Egg.js
 
 ## Development Commands
 
+**Note:** All commands below should be run from the **monorepo root** (`../egg`), not from the tegg directory.
+
 ### Build & Clean
 
 ```bash
-pnpm run build               # Build all packages (runs build in all workspaces)
-pnpm run clean               # Clean all build artifacts (runs clean in all workspaces)
+pnpm run build               # Build all packages including tegg (runs build in all workspaces)
+pnpm run clean               # Clean all build artifacts including tegg (removes dist, tsbuildinfo)
 ```
 
 ### Testing
 
+All tegg packages use **Vitest** for testing and are integrated with the main Egg.js monorepo test suite.
+
 ```bash
-pnpm test                    # Run vitest tests (core packages)
-pnpm run test:mocha          # Run mocha tests (plugin packages)
-pnpm run cov                 # Run coverage for vitest tests
-pnpm run cov:mocha           # Run coverage for mocha tests
-pnpm run ci                  # Full CI: cov + cov:mocha
+pnpm test                    # Run vitest tests for all packages (from monorepo root)
+pnpm run test:cov            # Run tests with coverage
+pnpm run ci                  # Full CI: vitest with coverage and bail on first failure
 ```
+
+**Note:** Tests are configured in the monorepo root `vitest.config.ts` which includes all tegg packages (`tegg/core/*`, `tegg/plugin/*`, `tegg/standalone/*`).
 
 ### Type Checking & Linting
 
 ```bash
-pnpm run typecheck           # Type check all workspaces
-pnpm run lint                # Run oxlint with type-aware checking
-pnpm run lint:fix            # Auto-fix lint issues
+pnpm run typecheck           # Clean and type check all workspaces (including tegg)
+pnpm run lint                # Run oxlint with type-aware checking on all packages
+pnpm run fmtcheck            # Check code formatting with oxfmt
 ```
 
+**Note:** oxlint automatically runs with `--type-aware` flag for enhanced TypeScript checking.
+
 ### Version Management
+
+**Note:** Run these commands from the monorepo root (`../egg`).
 
 ```bash
 pnpm run version:patch       # Bump patch version (0.0.X)
 pnpm run version:minor       # Bump minor version (0.X.0)
 pnpm run version:major       # Bump major version (X.0.0)
-pnpm run version:beta        # Bump prerelease beta version
+pnpm run version:prepatch    # Bump to next prerelease patch version
+pnpm run version:preminor    # Bump to next prerelease minor version
+pnpm run version:premajor    # Bump to next prerelease major version
 pnpm run version:alpha       # Bump prerelease alpha version
+pnpm run version:beta        # Bump prerelease beta version
 pnpm run version:rc          # Bump prerelease rc version
 ```
 
 ### Working with Individual Packages
 
+**Note:** Run from the monorepo root to work with individual tegg packages.
+
 ```bash
 # Install dependencies
-pnpm install                 # Install all dependencies using catalog versions
+pnpm install                          # Install all dependencies using catalog versions
 
-# Type check a specific package
-pnpm -r run typecheck        # Type check all packages recursively
+# Type check specific packages
+pnpm -r run typecheck                 # Type check all packages recursively
+pnpm --filter @eggjs/tegg-runtime run typecheck
 
-# Test a specific package
-pnpm --filter @eggjs/tegg-runtime test
-
-# Build a specific package
+# Build specific packages
 pnpm --filter @eggjs/tegg-metadata run build
+pnpm --filter @eggjs/tegg-runtime run build
+
+# Clean specific package
+pnpm --filter @eggjs/tegg-runtime run clean
 ```
+
+**Note:** Individual tegg packages don't have test scripts in their package.json. Tests are run via the monorepo root vitest configuration.
 
 ## Architecture Concepts
 
@@ -269,17 +289,22 @@ const impl = await eggObjectFactory.getEggObject(
 
 ### Creating a New Core Package
 
-1. Add to `core/` directory with standard structure
+1. Add to `tegg/core/` directory within the main monorepo
 2. Include `tsconfig.json` extending `@eggjs/tsconfig`
-3. Add `"typecheck": "tsc --noEmit"` script to `package.json`
+3. Add standard scripts to `package.json`:
+   - `"typecheck": "tsc --noEmit"`
+   - `"clean": "rimraf dist *.tsbuildinfo"`
+   - `"build": "tsdown && npm run clean && tsc -p tsconfig.build.json"`
 4. Export public API through `src/index.ts`
+5. Use `workspace:*` for internal dependencies and `catalog:` for external dependencies
 
 ### Creating a New Plugin
 
-1. Add to `plugin/` directory
+1. Add to `tegg/plugin/` directory within the main monorepo
 2. Define `eggPlugin` in `package.json` with dependencies
 3. Create `app.ts` for initialization
-4. Add tests using `@eggjs/mock`
+4. Add tests using Vitest and `@eggjs/mock`
+5. Tests will be automatically discovered by the root `vitest.config.ts`
 
 ### Working with TypeScript
 

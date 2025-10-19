@@ -26,7 +26,7 @@ export class EggModuleLoader {
     this.options = options;
   }
 
-  async init() {
+  async init(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await EggModuleLoader.generateAppGraph(
       this.moduleReferences,
       this.options

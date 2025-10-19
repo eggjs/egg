@@ -164,7 +164,7 @@ export class Runner {
     }
   }
 
-  async load() {
+  async load(): Promise<LoadUnit[]> {
     StandaloneContextHandler.register();
     LoadUnitFactory.registerLoadUnitCreator(StandaloneLoadUnitType, () => {
       return new StandaloneLoadUnit(this.innerObjects);
@@ -186,7 +186,7 @@ export class Runner {
     return [standaloneLoadUnit, ...loadUnits];
   }
 
-  static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+  static getModuleReferences(cwd: string, dependencies?: RunnerOptions['dependencies']): readonly ModuleReference[] {
     const moduleDirs = (dependencies || []).concat(cwd);
     return moduleDirs.reduce(
       (list, baseDir) => {
@@ -197,7 +197,7 @@ export class Runner {
     );
   }
 
-  static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']) {
+  static async preLoad(cwd: string, dependencies?: RunnerOptions['dependencies']): Promise<void> {
     const moduleReferences = Runner.getModuleReferences(cwd, dependencies);
     await EggModuleLoader.preLoad(moduleReferences, {
       baseDir: cwd,
@@ -243,7 +243,7 @@ export class Runner {
     LoadUnitLifecycleUtil.registerLifecycle(this.dalModuleLoadUnitHook);
   }
 
-  async init() {
+  async init(): Promise<void> {
     await this.initLoaderInstance();
 
     this.loadUnits = await this.load();
@@ -264,7 +264,7 @@ export class Runner {
     this.runnerProto = proto as EggPrototype;
   }
 
-  async run<T>(aCtx?: EggContext) {
+  async run<T>(aCtx?: EggContext): Promise<T> {
     const lifecycle = {};
     const ctx = aCtx || new StandaloneContext();
     return await ContextHandler.run(ctx, async () => {
@@ -286,7 +286,7 @@ export class Runner {
     });
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     if (this.loadUnitInstances) {
       for (const instance of this.loadUnitInstances) {
         await LoadUnitInstanceFactory.destroyLoadUnitInstance(instance);

@@ -1,4 +1,4 @@
-import { ContextProto, Inject, ConfigSourceQualifier } from '@eggjs/tegg';
+import { ContextProto, Inject } from '@eggjs/tegg';
 import { Runner, type MainRunner } from '@eggjs/tegg/standalone';
 // import { Hello } from 'dependency-2';
 

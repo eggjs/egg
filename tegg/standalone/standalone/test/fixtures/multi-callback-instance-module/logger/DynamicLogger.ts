@@ -13,10 +13,10 @@ import {
 } from '@eggjs/tegg';
 import { type EggObject, ModuleConfigUtil, type EggObjectLifeCycleContext } from '@eggjs/tegg/helper';
 
-export const LOG_PATH_ATTRIBUTE = Symbol.for('LOG_PATH_ATTRIBUTE');
+export const LOG_PATH_ATTRIBUTE: symbol = Symbol.for('LOG_PATH_ATTRIBUTE') as symbol;
 
 export function LogPath(name: string) {
-  return function (target: any, propertyKey: PropertyKey) {
+  return function (target: any, propertyKey: PropertyKey): void {
     QualifierUtil.addProperQualifier(target.constructor as EggProtoImplClass, propertyKey, LOG_PATH_ATTRIBUTE, name);
   };
 }
@@ -47,14 +47,14 @@ export class DynamicLogger {
   loggerName: string;
 
   @LifecycleInit()
-  async init(ctx: EggObjectLifeCycleContext, obj: EggObject) {
+  async init(ctx: EggObjectLifeCycleContext, obj: EggObject): Promise<void> {
     const loggerName = obj.proto.getQualifier(LOG_PATH_ATTRIBUTE);
     this.loggerName = loggerName as string;
     this.stream = fs.createWriteStream(path.join(ctx.loadUnit.unitPath, `${loggerName}.log`));
   }
 
   @LifecycleDestroy()
-  async destroy() {
+  async destroy(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.stream.end((err: any) => {
         if (err) {
@@ -65,7 +65,7 @@ export class DynamicLogger {
     });
   }
 
-  info(msg: string) {
+  info(msg: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.stream.write(msg + EOL, (err: any) => {
         if (err) {

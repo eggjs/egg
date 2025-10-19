@@ -16,7 +16,7 @@ export class StandaloneLoadUnit implements LoadUnit {
   readonly id: string = 'StandaloneLoadUnit';
   readonly name: string = 'StandaloneLoadUnit';
   readonly unitPath: string = 'MockStandaloneLoadUnitPath';
-  readonly type = StandaloneLoadUnitType;
+  readonly type: string = StandaloneLoadUnitType;
 
   private innerObject: Record<string, InnerObject[]>;
   private protoMap: Map<EggPrototypeName, EggPrototype[]> = new Map();
@@ -25,7 +25,7 @@ export class StandaloneLoadUnit implements LoadUnit {
     this.innerObject = innerObject;
   }
 
-  async init() {
+  async init(): Promise<void> {
     for (const [name, objs] of Object.entries(this.innerObject)) {
       for (const { obj, qualifiers } of objs) {
         const proto = new StandaloneInnerObjectProto(
@@ -50,12 +50,12 @@ export class StandaloneLoadUnit implements LoadUnit {
     return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
   }
 
-  registerEggPrototype(proto: EggPrototype) {
+  registerEggPrototype(proto: EggPrototype): void {
     const protoList = MapUtil.getOrStore(this.protoMap, proto.name, []);
     protoList.push(proto);
   }
 
-  deletePrototype(proto: EggPrototype) {
+  deletePrototype(proto: EggPrototype): void {
     const protos = this.protoMap.get(proto.name);
     if (protos) {
       const index = protos.indexOf(proto);
@@ -65,7 +65,7 @@ export class StandaloneLoadUnit implements LoadUnit {
     }
   }
 
-  async destroy() {
+  async destroy(): Promise<void> {
     for (const namedProtoMap of this.protoMap.values()) {
       for (const proto of namedProtoMap.values()) {
         EggPrototypeFactory.instance.deletePrototype(proto, this);

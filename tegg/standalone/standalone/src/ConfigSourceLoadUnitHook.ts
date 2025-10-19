@@ -1,4 +1,4 @@
-import { type LoadUnit, type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
 import {
   type LifecycleHook,
   PrototypeUtil,
