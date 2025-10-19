@@ -15,7 +15,7 @@ import {
 export class Foo implements EggObjectLifecycle {
   private called: string[] = [];
 
-  getLifecycleCalled() {
+  getLifecycleCalled(): string[] {
     return this.called;
   }
 
@@ -54,7 +54,7 @@ export class Foo implements EggObjectLifecycle {
 export class Bar {
   private called: string[] = [];
 
-  getLifecycleCalled() {
+  getLifecycleCalled(): string[] {
     return this.called;
   }
 
@@ -63,36 +63,36 @@ export class Bar {
   }
 
   @LifecyclePostConstruct()
-  protected async _postConstruct() {
+  protected async _postConstruct(): Promise<void> {
     this.called.push('postConstruct');
   }
 
   @LifecyclePreInject()
-  protected async _preInject() {
+  protected async _preInject(): Promise<void> {
     this.called.push('preInject');
   }
 
   @LifecyclePostInject()
-  protected async _postInject() {
+  protected async _postInject(): Promise<void> {
     this.called.push('postInject');
   }
 
-  protected async init() {
+  protected async init(): Promise<void> {
     this.called.push('init should not called');
   }
 
   @LifecycleInit()
-  protected async _init() {
+  protected async _init(): Promise<void> {
     this.called.push('init');
   }
 
   @LifecyclePreDestroy()
-  protected async _preDestroy() {
+  protected async _preDestroy(): Promise<void> {
     this.called.push('preDestroy');
   }
 
   @LifecycleDestroy()
-  protected async _destroy() {
+  protected async _destroy(): Promise<void> {
     this.called.push('destroy');
   }
 }

@@ -11,7 +11,7 @@ export default class AppService {
     return this.appRepo.findApp(name);
   }
 
-  save(app: App) {
+  save(app: App): Promise<void> {
     return this.appRepo.insertApp(app);
   }
 }

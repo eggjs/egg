@@ -8,7 +8,7 @@ import {
 import { MultiInstanceProto } from '@eggjs/core-decorator';
 import { LifecycleInit } from '@eggjs/tegg-lifecycle';
 
-export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
+export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 
 @MultiInstanceProto({
   accessLevel: AccessLevel.PUBLIC,
@@ -39,7 +39,7 @@ export class FooLogger {
   foo: QualifierValue | undefined;
 
   @LifecycleInit()
-  async init(ctx: EggObjectLifeCycleContext, obj: EggObject) {
+  async init(ctx: EggObjectLifeCycleContext, obj: EggObject): Promise<void> {
     this.loadUnitPath = ctx.loadUnit.unitPath;
     this.foo = obj.proto.getQualifier(FOO_ATTRIBUTE);
   }

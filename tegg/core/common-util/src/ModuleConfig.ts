@@ -36,7 +36,7 @@ const DEFAULT_READ_MODULE_REF_OPTS = {
 export class ModuleConfigUtil {
   static configNames: string[] | undefined;
 
-  public static setConfigNames(configNames: string[] | undefined) {
+  public static setConfigNames(configNames: string[] | undefined): void {
     ModuleConfigUtil.configNames = configNames;
   }
 
@@ -152,7 +152,7 @@ export class ModuleConfigUtil {
     return ref;
   }
 
-  public static readModuleFromNodeModules(baseDir: string) {
+  public static readModuleFromNodeModules(baseDir: string): ModuleReference[] {
     const ref: ModuleReference[] = [];
     let pkgContent: string;
     try {

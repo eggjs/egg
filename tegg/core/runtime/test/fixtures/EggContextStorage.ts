@@ -5,9 +5,9 @@ import type { EggRuntimeContext } from '@eggjs/tegg-types';
 import { ContextHandler } from '../../src/index.ts';
 
 export class EggContextStorage {
-  static storage = new AsyncLocalStorage<EggRuntimeContext>();
+  static storage: AsyncLocalStorage<EggRuntimeContext> = new AsyncLocalStorage();
 
-  static register() {
+  static register(): void {
     ContextHandler.getContextCallback = () => {
       return EggContextStorage.storage.getStore();
     };

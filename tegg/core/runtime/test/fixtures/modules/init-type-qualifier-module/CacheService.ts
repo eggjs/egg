@@ -13,7 +13,7 @@ export default class CacheService {
   @Inject({ name: 'cache' })
   contextCache: ICache;
 
-  setSingletonCache(key: string, val: string) {
+  setSingletonCache(key: string, val: string): void {
     this.singletonCache.set(key, val);
   }
 
@@ -21,7 +21,7 @@ export default class CacheService {
     return this.singletonCache.get(key);
   }
 
-  setContextCache(key: string, val: string) {
+  setContextCache(key: string, val: string): void {
     this.contextCache.set(key, val);
   }
 

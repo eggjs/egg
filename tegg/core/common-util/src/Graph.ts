@@ -1,6 +1,6 @@
 import type { GraphNodeObj } from '@eggjs/tegg-types';
 
-const inspect = Symbol.for('nodejs.util.inspect.custom');
+// const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 export interface EdgeMeta {
   equal(meta: EdgeMeta): boolean;
@@ -14,13 +14,14 @@ export class GraphNode<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
 
   constructor(val: T) {
     this.val = val;
+    // this[inspect] = this.toJSON;
   }
 
-  get id() {
+  get id(): string {
     return this.val.id;
   }
 
-  addToVertex(node: GraphNode<T, M>, meta?: M) {
+  addToVertex(node: GraphNode<T, M>, meta?: M): boolean {
     if (this.toNodeMap.has(node.id)) {
       return false;
     }
@@ -28,7 +29,7 @@ export class GraphNode<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
-  addFromVertex(node: GraphNode<T, M>, meta?: M) {
+  addFromVertex(node: GraphNode<T, M>, meta?: M): boolean {
     if (this.fromNodeMap.has(node.id)) {
       return false;
     }
@@ -36,11 +37,11 @@ export class GraphNode<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return true;
   }
 
-  [inspect]() {
-    return this.toJSON();
-  }
+  // [inspect](): object {
+  //   return this.toJSON();
+  // }
 
-  toJSON() {
+  toJSON(): object {
     return {
       val: this.val,
       toNodes: Array.from(this.toNodeMap.values()),
@@ -48,7 +49,7 @@ export class GraphNode<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     };
   }
 
-  toString() {
+  toString(): string {
     return this.val.toString();
   }
 }
@@ -64,7 +65,7 @@ export class GraphPath<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return val === 0;
   }
 
-  popVertex() {
+  popVertex(): void {
     const nodeHandler = this.nodes.pop();
     if (nodeHandler) {
       const val = this.nodeIdMap.get(nodeHandler.node.id)!;
@@ -72,7 +73,7 @@ export class GraphPath<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     }
   }
 
-  toString() {
+  toString(): string {
     const res = this.nodes.reduce((p, c) => {
       let msg = '';
       if (c.meta) {
@@ -87,9 +88,9 @@ export class GraphPath<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return res.join('');
   }
 
-  [inspect]() {
-    return this.toString();
-  }
+  // [inspect]() {
+  //   return this.toString();
+  // }
 }
 
 export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
@@ -143,7 +144,12 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     return;
   }
 
-  accessNode(node: GraphNode<T, M>, nodes: Array<GraphNode<T, M>>, accessed: boolean[], res: Array<GraphNode<T, M>>) {
+  accessNode(
+    node: GraphNode<T, M>,
+    nodes: Array<GraphNode<T, M>>,
+    accessed: boolean[],
+    res: Array<GraphNode<T, M>>
+  ): void {
     const index = nodes.indexOf(node);
     if (accessed[index]) {
       return;

@@ -1,7 +1,7 @@
 import { AccessLevel, ObjectInitType, type QualifierValue, type ObjectInfo } from '@eggjs/tegg-types';
 import { Inject, MultiInstanceInfo, MultiInstanceProto, SingletonProto } from '@eggjs/core-decorator';
 
-export const FOO_ATTRIBUTE = Symbol.for('FOO_ATTRIBUTE');
+export const FOO_ATTRIBUTE: symbol = Symbol.for('FOO_ATTRIBUTE');
 
 @SingletonProto()
 export class Bar {

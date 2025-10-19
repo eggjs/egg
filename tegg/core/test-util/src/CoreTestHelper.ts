@@ -20,9 +20,9 @@ import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
 import { LoaderUtil } from './LoaderUtil.ts';
 
 export class EggContextStorage {
-  static storage = new AsyncLocalStorage<EggContext>();
+  static storage: AsyncLocalStorage<EggContext> = new AsyncLocalStorage();
 
-  static register() {
+  static register(): void {
     ContextHandler.getContextCallback = () => {
       return EggContextStorage.storage.getStore();
     };
@@ -33,7 +33,7 @@ export class EggContextStorage {
 }
 
 export class CoreTestHelper {
-  static contextStorage = new AsyncLocalStorage();
+  static contextStorage: AsyncLocalStorage<EggContext> = new AsyncLocalStorage();
 
   static async getLoadUnitInstance(moduleDir: string): Promise<LoadUnitInstance> {
     const loader = LoaderFactory.createLoader(moduleDir, EggLoadUnitType.MODULE);

@@ -1,5 +1,11 @@
 import { type EggProtoImplClass, PrototypeUtil } from '@eggjs/core-decorator';
-import { EggLoadUnitType, GlobalGraph, type GlobalGraphBuildHook, GlobalModuleNodeBuilder } from '@eggjs/tegg-metadata';
+import {
+  EggLoadUnitType,
+  GlobalGraph,
+  type GlobalGraphBuildHook,
+  GlobalModuleNodeBuilder,
+  type GlobalModuleNode,
+} from '@eggjs/tegg-metadata';
 import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
 import { LoaderFactory } from '@eggjs/tegg-loader';
 
@@ -28,7 +34,7 @@ export class LoaderUtil {
       moduleName: string;
     }[],
     optional = false
-  ) {
+  ): GlobalModuleNode {
     const builder = GlobalModuleNodeBuilder.create(modulePath, optional);
     for (const clazz of clazzList) {
       builder.addClazz(clazz);
@@ -39,7 +45,7 @@ export class LoaderUtil {
     return builder.build();
   }
 
-  static async buildGlobalGraph(modulePaths: string[], hooks?: GlobalGraphBuildHook[]) {
+  static async buildGlobalGraph(modulePaths: string[], hooks?: GlobalGraphBuildHook[]): Promise<void> {
     GlobalGraph.instance = new GlobalGraph();
     for (const hook of hooks ?? []) {
       GlobalGraph.instance.registerBuildHook(hook);

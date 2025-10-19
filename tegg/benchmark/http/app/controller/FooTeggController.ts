@@ -6,7 +6,7 @@ export default class FooTeggController {
     method: HTTPMethodEnum.GET,
     path: '/hello',
   })
-  async hello() {
+  async hello(): Promise<string> {
     return 'hello, tegg';
   }
 }

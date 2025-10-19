@@ -8,7 +8,7 @@ import { LoaderUtil } from '@eggjs/module-test-util';
 import { LoadUnitInstanceFactory } from '../src/index.ts';
 
 export default class TestUtil {
-  static async createLoadUnitInstance(modulePath: string, buildGraph = true) {
+  static async createLoadUnitInstance(modulePath: string, buildGraph = true): Promise<LoadUnitInstance> {
     const absolutePath = path.join(__dirname, 'fixtures/modules', modulePath);
     if (buildGraph) {
       await LoaderUtil.buildGlobalGraph([absolutePath]);
@@ -18,7 +18,7 @@ export default class TestUtil {
     return await LoadUnitInstanceFactory.createLoadUnitInstance(loadUnit);
   }
 
-  static async destroyLoadUnitInstance(loadUnitInstance: LoadUnitInstance) {
+  static async destroyLoadUnitInstance(loadUnitInstance: LoadUnitInstance): Promise<void> {
     await LoadUnitInstanceFactory.destroyLoadUnitInstance(loadUnitInstance);
     await LoadUnitFactory.destroyLoadUnit(loadUnitInstance.loadUnit);
   }

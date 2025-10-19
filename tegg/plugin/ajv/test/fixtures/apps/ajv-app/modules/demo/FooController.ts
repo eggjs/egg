@@ -1,7 +1,7 @@
 import { HTTPController, HTTPMethod, HTTPMethodEnum, Inject, HTTPBody } from '@eggjs/tegg';
-import { type Ajv, type Static, Type, TransformEnum } from '@eggjs/tegg/ajv';
+import { type Ajv, type Static, Type, TransformEnum, type TSchema } from '@eggjs/tegg/ajv';
 
-const RequestBodySchema = Type.Object({
+const RequestBodySchema: TSchema = Type.Object({
   fullname: Type.String({
     transform: [TransformEnum.trim],
     maxLength: 100,
@@ -21,7 +21,7 @@ export class FooController {
     method: HTTPMethodEnum.POST,
     path: '/foo',
   })
-  async echo(@HTTPBody() body: RequestBody) {
+  async echo(@HTTPBody() body: RequestBody): Promise<{ body: RequestBody }> {
     this.ajv.validate(RequestBodySchema, body);
     return {
       body,

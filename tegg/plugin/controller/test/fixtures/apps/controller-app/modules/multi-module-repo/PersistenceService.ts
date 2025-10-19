@@ -4,7 +4,7 @@ import { SingletonProto } from '@eggjs/tegg';
 export default class PersistenceService {
   private store: Map<string, string> = new Map();
 
-  public set(key: string, val: string) {
+  public set(key: string, val: string): void {
     this.store.set(key, val);
   }
 

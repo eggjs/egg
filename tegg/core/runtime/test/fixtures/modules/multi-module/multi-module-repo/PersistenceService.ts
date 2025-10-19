@@ -8,7 +8,7 @@ import { Prototype } from '@eggjs/core-decorator';
 export default class PersistenceService {
   private store: Map<string, string> = new Map();
 
-  public set(key: string, val: string) {
+  public set(key: string, val: string): void {
     this.store.set(key, val);
   }
 

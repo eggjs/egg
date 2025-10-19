@@ -16,7 +16,7 @@ export default class ContextCache implements ICache {
     };
   }
 
-  set(key: string, val: string) {
+  set(key: string, val: string): void {
     this.map.set(key, val);
   }
 }

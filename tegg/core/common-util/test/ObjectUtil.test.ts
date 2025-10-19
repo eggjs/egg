@@ -3,21 +3,21 @@ import { describe, it } from 'vitest';
 import { ObjectUtils } from '../src/index.js';
 
 export function InitTypeQualifier() {
-  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number) {
+  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number): void {
     console.log(_target, _propertyKey, _parameterIndex);
     // ...
   };
 }
 
 export function ModuleQualifier(_foo: string) {
-  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number) {
+  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number): void {
     console.log(_target, _propertyKey, _parameterIndex, _foo);
     // ...
   };
 }
 
 export function Inject(_arg?: any) {
-  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number) {
+  return function (_target: any, _propertyKey?: PropertyKey, _parameterIndex?: number): void {
     console.log(_target, _propertyKey, _parameterIndex, _arg);
     // ...
   };
@@ -37,11 +37,14 @@ describe('test/ObjectUtil.test.ts', () => {
   it('getConstructorArgNameList should work', () => {
     class ConstructorObject {
       constructor(
+        // @ts-expect-error: readonly property in constructor
         @InitTypeQualifier()
         @ModuleQualifier('foo')
         @Inject({ name: 'fooCache' })
         readonly xCache: any, // fpp...
+        // @ts-expect-error: readonly property in constructor
         /* test */ @Inject() readonly cache: unknown,
+        // @ts-expect-error: readonly property in constructor
         readonly v233 = 666
       ) {}
     }

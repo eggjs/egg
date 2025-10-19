@@ -1,5 +1,5 @@
 export class ProxyUtil {
-  static safeProxy<T extends object>(obj: T, getter: (obj: T, p: PropertyKey) => any) {
+  static safeProxy<T extends object>(obj: T, getter: (obj: T, p: PropertyKey) => any): T {
     return new Proxy(obj, {
       get(target: T, p: PropertyKey): any {
         // @ts-expect-error No index signature with a parameter of type 'string' was found on type 'Object'.
