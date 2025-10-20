@@ -1,5 +1,6 @@
-import type { Logger, LifecycleHook } from '@eggjs/tegg';
-import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg/helper';
+import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
+import type { Logger } from '@eggjs/tegg-types';
+import type { EggPrototype, EggPrototypeLifecycleContext } from '@eggjs/tegg-metadata';
 import { DaoInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { SqlMapLoader } from '@eggjs/dal-runtime';
 

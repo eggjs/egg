@@ -49,9 +49,12 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
+    "@eggjs/ajv-decorator": "workspace:*",
     "@eggjs/ajv-formats": "^3.0.1",
     "@eggjs/ajv-keywords": "^5.1.0",
-    "@eggjs/tegg": "workspace:*",
+    "@eggjs/aop-decorator": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
     "ajv": "catalog:"
   },
   "peerDependencies": {
@@ -59,6 +62,7 @@
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-controller-plugin": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",

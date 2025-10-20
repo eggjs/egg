@@ -717,7 +717,7 @@ export interface Context {
 ```typescript
 // notify/EC_FOO.js
 
-import { Subscription, Context } from 'egg;
+import { Subscription, Context } from 'egg';
 
 class FooSubscriber extends Subscription {
   private readonly ctx: Context;
@@ -734,7 +734,6 @@ class FooSubscriber extends Subscription {
 }
 
 module.exports = Subscription;
-
 ```
 
 #### 注入 egg 对象

@@ -1,6 +1,6 @@
 import { ContextHandler, type EggObject, EggObjectStatus } from '@eggjs/tegg-runtime';
 import type { EggPrototype } from '@eggjs/tegg-metadata';
-import type { EggPrototypeName, EggObjectName } from '@eggjs/tegg';
+import type { EggPrototypeName, EggObjectName } from '@eggjs/core-decorator';
 import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type { Bone } from 'leoric';
 import { EGG_CONTEXT } from '@eggjs/egg-module-common';

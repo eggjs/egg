@@ -1,5 +1,5 @@
 import type { Context } from 'egg';
-import { HTTPRequest as BaseHTTPRequest } from '@eggjs/tegg';
+import { HTTPRequest as BaseHTTPRequest } from '@eggjs/controller-decorator';
 
 export class HTTPRequest extends BaseHTTPRequest {
   constructor(ctx: Context) {

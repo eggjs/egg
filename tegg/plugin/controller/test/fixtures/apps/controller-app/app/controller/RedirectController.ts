@@ -1,4 +1,4 @@
-import { Context as EggContext } from 'egg';
+import type { Context as EggContext } from 'egg';
 import { Context, HTTPController, HTTPMethod, HTTPMethodEnum } from '@eggjs/tegg';
 
 @HTTPController()

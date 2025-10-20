@@ -18,7 +18,8 @@ import type {
   EggContext as TEggContext,
 } from '@eggjs/tegg-runtime';
 import type { LoaderFactory } from '@eggjs/tegg-loader';
-import type { IdenticalUtil, QualifierInfo } from '@eggjs/tegg';
+import type { QualifierInfo } from '@eggjs/core-decorator';
+import type { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 
 import type { ModuleHandler } from './lib/ModuleHandler.ts';
 import type { EggContextHandler } from './lib/EggContextHandler.ts';

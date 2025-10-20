@@ -9,9 +9,11 @@ import {
   type MultiInstancePrototypeGetObjectsContext,
   type ObjectInfo,
   ObjectInitType,
-} from '@eggjs/tegg';
-import { EggLoadUnitType, LoaderFactory, ModuleConfigUtil } from '@eggjs/tegg/helper';
-import { DataSourceInjectName, DataSourceQualifierAttribute, TableInfoUtil, TableModel } from '@eggjs/tegg/dal';
+} from '@eggjs/core-decorator';
+import { EggLoadUnitType } from '@eggjs/tegg-types';
+import { LoaderFactory } from '@eggjs/tegg-loader';
+import { ModuleConfigUtil } from '@eggjs/tegg-common-util';
+import { DataSourceInjectName, DataSourceQualifierAttribute, TableInfoUtil, TableModel } from '@eggjs/dal-decorator';
 import { DataSource } from '@eggjs/dal-runtime';
 
 import { TableModelManager } from './TableModelManager.ts';

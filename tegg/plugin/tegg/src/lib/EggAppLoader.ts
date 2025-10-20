@@ -10,7 +10,7 @@ import {
   ObjectInitType,
   PrototypeUtil,
   QualifierUtil,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
 import { ObjectUtils } from '@eggjs/tegg-common-util';
 import { BackgroundTaskHelper } from '@eggjs/tegg-background-task';
 import { EggObjectFactory } from '@eggjs/tegg-dynamic-inject-runtime';

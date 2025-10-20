@@ -1,6 +1,5 @@
-import { type Context, Application } from 'egg';
-
-import { type EggContext, type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
+import type { Context, Application } from 'egg';
+import type { EggContext, EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 import { EggContextImpl } from '../../lib/EggContextImpl.ts';
 
@@ -8,8 +7,8 @@ const TEGG_LIFECYCLE_CACHE: Map<EggContext, EggContextLifecycleContext> = new Ma
 
 let hasMockModuleContext = false;
 
-export default class TEggPluginApplicationUnittest extends Application {
-  async mockModuleContext(data?: any): Promise<Context> {
+export default class TEggPluginApplicationUnittest {
+  async mockModuleContext(this: Application, data?: any): Promise<Context> {
     this.deprecate('app.mockModuleContext is deprecated, use mockModuleContextScope.');
     if (hasMockModuleContext) {
       throw new Error('should not call mockModuleContext twice.');
@@ -26,7 +25,7 @@ export default class TEggPluginApplicationUnittest extends Application {
     return ctx;
   }
 
-  async destroyModuleContext(ctx: Context): Promise<void> {
+  async destroyModuleContext(this: Application, ctx: Context): Promise<void> {
     hasMockModuleContext = false;
 
     const teggCtx = ctx.teggContext;

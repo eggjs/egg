@@ -93,65 +93,65 @@ export { BaseContextClass } from './lib/core/base_context_class.ts';
 export { BaseHookClass as Boot } from './lib/core/base_hook_class.ts';
 
 // export tegg decorators
-export {
-  AccessLevel,
-  Acl,
-  ObjectInitType,
-  type ObjectInitTypeLike,
-  type ObjectInfo,
-  type MultiInstancePrototypeGetObjectsContext,
-  QualifierUtil,
-  type EggProtoImplClass,
-  /**
-   * @example
-   * ```ts
-   * import { InjectContext, Context } from 'egg';
-   *
-   * @HTTPController()
-   * export class FooController {
-   *   @HTTPMethod({
-   *     path: '/foo',
-   *     method: HTTPMethodEnum.GET,
-   *   })
-   * async bar(@InjectContext() ctx: Context, id: number): Promise<void> {
-   *   console.log(ctx, id);
-   * }
-   * ```
-   */
-  InjectContext,
-  InjectRequest,
-  InjectCookies,
-  Inject,
-  InjectOptional,
-  EggQualifier,
-  EggType,
-  HTTPController,
-  HTTPMethod,
-  HTTPMethodEnum,
-  HTTPBody,
-  HTTPQuery,
-  HTTPQueries,
-  HTTPParam,
-  HTTPHeaders,
-  HTTPParamType,
-  HTTPRequest,
-  HTTPResponse,
-  Host,
-  Middleware,
-  Event,
-  EventContext,
-  type EggObjectLifecycle,
-  LifecycleDestroy,
-  LifecycleInit,
-  LifecyclePostConstruct,
-  LifecyclePostInject,
-  LifecyclePreDestroy,
-  LifecyclePreInject,
-  LifecyclePreLoad,
-  SingletonProto,
-  MultiInstanceProto,
-  type ImplDecorator,
-  QualifierImplDecoratorUtil,
-  type EggObjectFactory,
-  type IncomingHttpHeaders,
-} from '@eggjs/tegg';
+// export {
+//   AccessLevel,
+//   Acl,
+//   ObjectInitType,
+//   type ObjectInitTypeLike,
+//   type ObjectInfo,
+//   type MultiInstancePrototypeGetObjectsContext,
+//   QualifierUtil,
+//   type EggProtoImplClass,
+//   /**
+//    * @example
+//    * ```ts
+//    * import { InjectContext, Context } from 'egg';
+//    *
+//    * @HTTPController()
+//    * export class FooController {
+//    *   @HTTPMethod({
+//    *     path: '/foo',
+//    *     method: HTTPMethodEnum.GET,
+//    *   })
+//    * async bar(@InjectContext() ctx: Context, id: number): Promise<void> {
+//    *   console.log(ctx, id);
+//    * }
+//    * ```
+//    */
+//   InjectContext,
+//   InjectRequest,
+//   InjectCookies,
+//   Inject,
+//   InjectOptional,
+//   EggQualifier,
+//   EggType,
+//   HTTPController,
+//   HTTPMethod,
+//   HTTPMethodEnum,
+//   HTTPBody,
+//   HTTPQuery,
+//   HTTPQueries,
+//   HTTPParam,
+//   HTTPHeaders,
+//   HTTPParamType,
+//   HTTPRequest,
+//   HTTPResponse,
+//   Host,
+//   Middleware,
+//   Event,
+//   EventContext,
+//   type EggObjectLifecycle,
+//   LifecycleDestroy,
+//   LifecycleInit,
+//   LifecyclePostConstruct,
+//   LifecyclePostInject,
+//   LifecyclePreDestroy,
+//   LifecyclePreInject,
+//   LifecyclePreLoad,
+//   SingletonProto,
+//   MultiInstanceProto,
+//   type ImplDecorator,
+//   QualifierImplDecoratorUtil,
+//   type EggObjectFactory,
+//   type IncomingHttpHeaders,
+// } from '@eggjs/tegg';

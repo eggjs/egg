@@ -15,7 +15,7 @@ import {
   type MetaDataKey,
   type QualifierAttribute,
   type QualifierValue,
-} from '@eggjs/tegg';
+} from '@eggjs/core-decorator';
 import { type Id, IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type { Bone } from 'leoric';
 

@@ -1,5 +1,5 @@
 import '@eggjs/tracer/types';
-import { Context as EggContext } from 'egg';
+import type { Context as EggContext } from 'egg';
 import {
   Context,
   HTTPBody,

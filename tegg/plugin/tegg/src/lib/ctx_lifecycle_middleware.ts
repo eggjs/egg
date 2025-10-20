@@ -1,6 +1,6 @@
 import { ROOT_PROTO, TEGG_CONTEXT } from '@eggjs/egg-module-common';
 import type { Context, Next } from 'egg';
-import { type EggContextLifecycleContext } from '@eggjs/tegg-runtime';
+import type { EggContextLifecycleContext } from '@eggjs/tegg-runtime';
 
 import { EggContextImpl } from './EggContextImpl.ts';
 

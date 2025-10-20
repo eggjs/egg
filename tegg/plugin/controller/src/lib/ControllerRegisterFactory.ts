@@ -1,5 +1,5 @@
 import type { Application } from 'egg';
-import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/tegg';
+import type { ControllerMetadata, ControllerTypeLike } from '@eggjs/controller-decorator';
 import type { EggPrototype } from '@eggjs/tegg-metadata';
 
 import type { ControllerRegister } from './ControllerRegister.ts';

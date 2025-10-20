@@ -11,9 +11,9 @@ import {
   QueriesParamMeta,
   QueryParamMeta,
   HTTPCookies,
-} from '@eggjs/tegg';
+} from '@eggjs/controller-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
-import { type EggPrototype } from '@eggjs/tegg-metadata';
+import type { EggPrototype } from '@eggjs/tegg-metadata';
 import pathToRegexp from 'path-to-regexp';
 import { EggRouter } from '@eggjs/router';
 import { FrameworkErrorFormater } from 'egg-errors';

@@ -1,5 +1,6 @@
-import { type LoadUnit, type LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
-import { CONTROLLER_META_DATA, type ControllerMetadata, type LifecycleHook } from '@eggjs/tegg';
+import type { LoadUnit, LoadUnitLifecycleContext } from '@eggjs/tegg-metadata';
+import { CONTROLLER_META_DATA, type ControllerMetadata } from '@eggjs/controller-decorator';
+import type { LifecycleHook } from '@eggjs/tegg-lifecycle';
 
 import { ControllerRegisterFactory } from './ControllerRegisterFactory.ts';
 import { ControllerMetadataManager } from './ControllerMetadataManager.ts';

@@ -1,8 +1,8 @@
+import type { Context } from 'egg';
 import type { EggPrototype } from '@eggjs/tegg-metadata';
-import type { EggContext } from '@eggjs/tegg';
 import { MapUtil } from '@eggjs/tegg-common-util';
 
-export type GetRootProtoCallback = (ctx: EggContext) => EggPrototype | undefined;
+export type GetRootProtoCallback = (ctx: Context) => EggPrototype | undefined;
 
 export class RootProtoManager {
   // <method, GetRootProtoCallback[]>
@@ -14,7 +14,7 @@ export class RootProtoManager {
     cbList.push(cb);
   }
 
-  getRootProto(ctx: EggContext): EggPrototype | undefined {
+  getRootProto(ctx: Context): EggPrototype | undefined {
     const hostCbList = this.protoMap.get(ctx.method + ctx.host);
     if (hostCbList) {
       for (const cb of hostCbList) {

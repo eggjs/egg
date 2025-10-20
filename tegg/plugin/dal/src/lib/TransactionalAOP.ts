@@ -1,6 +1,6 @@
-import { Advice, type AdviceContext, type IAdvice } from '@eggjs/tegg/aop';
-import { AccessLevel, type EggProtoImplClass, ObjectInitType } from '@eggjs/tegg';
-import { PropagationType } from '@eggjs/tegg/transaction';
+import { Advice, type AdviceContext, type IAdvice } from '@eggjs/aop-decorator';
+import { AccessLevel, type EggProtoImplClass, ObjectInitType } from '@eggjs/core-decorator';
+import { PropagationType } from '@eggjs/tegg-types';
 import { MysqlDataSource } from '@eggjs/dal-runtime';
 
 export interface TransactionalParams {

@@ -1,7 +1,7 @@
 import { debuglog } from 'node:util';
 
 import type { Agent } from 'egg';
-import { PrototypeUtil, type EggProtoImplClass } from '@eggjs/tegg';
+import { PrototypeUtil, type EggProtoImplClass } from '@eggjs/core-decorator';
 import { ScheduleMetadata } from '@eggjs/tegg-schedule-decorator';
 
 import { EggScheduleMetadataConvertor } from './EggScheduleMetadataConvertor.ts';

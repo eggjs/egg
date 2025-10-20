@@ -57,17 +57,24 @@
     "node": ">=22.18.0"
   },
   "dependencies": {
+    "@eggjs/aop-decorator": "workspace:*",
+    "@eggjs/core-decorator": "workspace:*",
+    "@eggjs/dal-decorator": "workspace:*",
     "@eggjs/dal-runtime": "workspace:*",
-    "@eggjs/tegg": "workspace:*",
+    "@eggjs/tegg-common-util": "workspace:*",
+    "@eggjs/tegg-lifecycle": "workspace:*",
+    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
-    "@eggjs/dal-decorator": "workspace:*"
+    "@eggjs/tegg-transaction-decorator": "workspace:*",
+    "@eggjs/tegg-types": "workspace:*"
   },
   "peerDependencies": {
-    "egg": "workspace:*",
-    "@eggjs/tegg-plugin": "workspace:*"
+    "@eggjs/tegg-plugin": "workspace:*",
+    "egg": "workspace:*"
   },
   "devDependencies": {
     "@eggjs/mock": "workspace:*",
+    "@eggjs/tegg": "workspace:*",
     "@eggjs/tegg-aop-plugin": "workspace:*",
     "@eggjs/tegg-config": "workspace:*",
     "@eggjs/tegg-plugin": "workspace:*",
@@ -75,8 +82,8 @@
     "@types/node": "catalog:",
     "egg": "workspace:*",
     "globby": "catalog:",
-    "typescript": "catalog:",
     "tsdown": "catalog:",
+    "typescript": "catalog:",
     "unplugin-unused": "catalog:"
   },
   "publishConfig": {

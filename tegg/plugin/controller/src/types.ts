@@ -1,5 +1,5 @@
 import '@eggjs/tegg-plugin/types';
-import type { ControllerMetaBuilderFactory } from '@eggjs/tegg';
+import type { ControllerMetaBuilderFactory } from '@eggjs/controller-decorator';
 
 import type { RootProtoManager } from './lib/RootProtoManager.ts';
 import type { ControllerRegisterFactory } from './lib/ControllerRegisterFactory.ts';

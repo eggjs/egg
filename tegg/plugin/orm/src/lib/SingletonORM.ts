@@ -1,4 +1,4 @@
-import { AccessLevel, Inject, SingletonProto } from '@eggjs/tegg';
+import { AccessLevel, Inject, SingletonProto } from '@eggjs/core-decorator';
 
 import { LeoricRegister } from './LeoricRegister.ts';
 import type { RealmType } from './types.ts';
