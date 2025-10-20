@@ -15,7 +15,8 @@ import {
   LoadUnitInstanceLifecycleUtil,
 } from '@eggjs/tegg-runtime';
 import { LoaderFactory } from '@eggjs/tegg-loader';
-import { type EggProtoImplClass, type RuntimeConfig, type QualifierInfo } from '@eggjs/core-decorator';
+import type { EggProtoImplClass, QualifierInfo } from '@eggjs/core-decorator';
+import type { RuntimeConfig } from '@eggjs/tegg-types';
 import { IdenticalUtil } from '@eggjs/tegg-lifecycle';
 import type { Application } from 'egg';
 
