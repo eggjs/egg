@@ -24,6 +24,22 @@ const config: UserWorkspaceConfig = defineConfig({
       exclude: ['**/test/**'],
     },
     hookTimeout: 20000,
+    env: {
+      // TODO: aop plugin required this flag, otherwise there will be a SyntaxError: Invalid or unexpected token
+      NODE_OPTIONS: '--import=tsx/esm',
+      // FIXME: TypeError: Cannot read properties of undefined (reading 'mode')
+      // NODE_OPTIONS: '--import=@oxc-node/core/register',
+    },
+    // poolOptions: {
+    //   forks: {
+    //     execArgv: [
+    //       // TODO: aop plugin required this flag, otherwise there will be a SyntaxError: Invalid or unexpected token
+    //       '--import=tsx/esm',
+    //       // TODO: TypeScript enum is not supported in strip-only mode
+    //       // '--experimental-transform-types',
+    //     ],
+    //   },
+    // },
   },
 });
 

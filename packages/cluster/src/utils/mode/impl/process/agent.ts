@@ -1,3 +1,4 @@
+import { debuglog } from 'node:util';
 import { fork, type ChildProcess, type ForkOptions } from 'node:child_process';
 
 import { sendmessage } from 'sendmessage';
@@ -7,6 +8,8 @@ import { BaseAgentWorker, BaseAgentUtils } from '../../base/agent.ts';
 import { terminate } from '../../../terminate.ts';
 import type { MessageBody } from '../../../messenger.ts';
 import { ClusterAgentWorkerError } from '../../../../error/ClusterAgentWorkerError.ts';
+
+const debug = debuglog('egg/cluster/agent');
 
 export class AgentProcessWorker extends BaseAgentWorker<ChildProcess> {
   get workerId(): number {
@@ -53,6 +56,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
       forkOptions.execArgv = process.execArgv.concat([`--inspect-port=${debugPort}`]);
     }
 
+    debug('forkOptions: %j', forkOptions);
     const agentProcess = (this.#agentProcess = fork(this.getAgentWorkerFile(), args, forkOptions));
     const agentWorker = (this.instance = new AgentProcessWorker(agentProcess));
     agentWorker.status = 'starting';

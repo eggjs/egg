@@ -137,38 +137,40 @@ const plugins: Record<string, EggPluginItem> = {
     enable: true,
     package: '@eggjs/tegg-config',
   },
-  // tegg: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-plugin',
-  // },
-  // teggAjv: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-ajv-plugin',
-  // },
-  // aopModule: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-aop-plugin',
-  // },
-  // teggController: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-controller-plugin',
-  // },
-  // teggDal: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-dal-plugin',
-  // },
-  // teggEventbus: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-eventbus-plugin',
-  // },
-  // teggOrm: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-orm-plugin',
-  // },
-  // teggSchedule: {
-  //   enable: true,
-  //   package: '@eggjs/tegg-schedule-plugin',
-  // },
+  tegg: {
+    enable: true,
+    package: '@eggjs/tegg-plugin',
+  },
+  teggAjv: {
+    enable: true,
+    package: '@eggjs/tegg-ajv-plugin',
+  },
+  aopModule: {
+    enable: true,
+    package: '@eggjs/tegg-aop-plugin',
+  },
+  teggController: {
+    enable: true,
+    package: '@eggjs/tegg-controller-plugin',
+  },
+  teggDal: {
+    enable: true,
+    package: '@eggjs/tegg-dal-plugin',
+  },
+  // FIXME: AgentWorkerLoader.requireFile() load file: ~/tegg/plugin/eventbus/src/app/extend/context.ts, error: Invalid or unexpected token on worker_threads mode
+  teggEventbus: {
+    // FIXME: MultiPrototypeFound: multi proto found for name:eventContextFactory and qualifiers [{"value":"SINGLETON"}] [ https://eggjs.org/zh-cn/faq/TEGG_MULTI_PROTO_FOUND ]
+    enable: false,
+    package: '@eggjs/tegg-eventbus-plugin',
+  },
+  teggOrm: {
+    enable: true,
+    package: '@eggjs/tegg-orm-plugin',
+  },
+  teggSchedule: {
+    enable: true,
+    package: '@eggjs/tegg-schedule-plugin',
+  },
 };
 
 export default plugins;

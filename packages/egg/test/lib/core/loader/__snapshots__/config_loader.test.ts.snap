@@ -1,0 +1,17 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`test/lib/core/loader/config_loader.test.ts > should get middlewares 1`] = `
+[
+  "meta",
+  "siteFile",
+  "notfound",
+  "static",
+  "bodyParser",
+  "overrideMethod",
+  "session",
+  "clusterAppMock",
+  "securities",
+  "teggRootProto",
+  "teggCtxLifecycleMiddleware",
+]
+`;

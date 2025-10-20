@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { encodeURIComponent as safeEncodeURIComponent } from 'utility';
-import inflection from 'inflection';
+import { singularize, pluralize } from 'inflection';
 import methods from 'methods';
 import { isGeneratorFunction } from 'is-type-of';
 
@@ -256,9 +256,9 @@ export class EggRouter extends Router {
       const opts = REST_MAP[key];
       let routeName;
       if (opts.member) {
-        routeName = inflection.singularize(options.name ?? '');
+        routeName = singularize(options.name ?? '');
       } else {
-        routeName = inflection.pluralize(options.name ?? '');
+        routeName = pluralize(options.name ?? '');
       }
       if (opts.namePrefix) {
         routeName = opts.namePrefix + routeName;
