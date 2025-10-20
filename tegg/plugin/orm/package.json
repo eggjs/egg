@@ -63,7 +63,6 @@
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-orm-decorator": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*",
     "leoric": "catalog:",
     "sdk-base": "catalog:"
   },

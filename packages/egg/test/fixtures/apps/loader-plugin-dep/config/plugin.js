@@ -37,4 +37,14 @@ module.exports = {
   },
 
   development: false,
+
+  // enable tegg plugins
+  tegg: true,
+  teggConfig: true,
+  teggController: true,
+  teggDal: true,
+  teggSchedule: true,
+  teggOrm: true,
+  teggAjv: true,
+  aopModule: true,
 };

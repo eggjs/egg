@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 
 import { mm, type MockApplication } from '@eggjs/mock';
-import { describe, it, beforeEach, afterEach } from 'vitest';
+import { describe, it, afterEach, afterAll, beforeAll } from 'vitest';
 
 import { BarService } from './fixtures/apps/optional-inject/app/modules/module-a/BarService.ts';
 import { FooService } from './fixtures/apps/optional-inject/app/modules/module-a/FooService.ts';
@@ -15,16 +15,18 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
   let app: MockApplication;
 
   afterEach(async () => {
-    await app.close();
     return mm.restore();
   });
 
   describe('optional', () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
       app = mm.app({
         baseDir: getAppBaseDir('optional-inject'),
       });
       await app.ready();
+    });
+    afterAll(async () => {
+      await app.close();
     });
 
     it('should work with property', async () => {
@@ -47,11 +49,14 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
   });
 
   describe('default initType qualifier', async () => {
-    beforeEach(async () => {
+    beforeAll(async () => {
       app = mm.app({
         baseDir: getAppBaseDir('same-name-singleton-and-context-proto'),
       });
       await app.ready();
+    });
+    afterAll(async () => {
+      await app.close();
     });
 
     it('should work with singletonProto', async () => {
@@ -83,10 +88,16 @@ describe('plugin/tegg/test/Inject.test.ts', () => {
     });
   });
 
-  it('should throw error if no proto found', async () => {
-    app = mm.app({
-      baseDir: getAppBaseDir('invalid-inject'),
+  describe('invalid inject', () => {
+    afterAll(async () => {
+      await app.close();
     });
-    await assert.rejects(app.ready(), /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:a/);
+
+    it('should throw error if no proto found', async () => {
+      app = mm.app({
+        baseDir: getAppBaseDir('invalid-inject'),
+      });
+      await assert.rejects(app.ready(), /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:a/);
+    });
   });
 });

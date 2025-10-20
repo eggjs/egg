@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { scheduler } from 'node:timers/promises';
+// import { scheduler } from 'node:timers/promises';
 
 import { mm } from '@eggjs/mock';
 import { describe, it, afterEach } from 'vitest';
@@ -17,7 +17,7 @@ describe('test/lib/EggModuleLoader.test.ts', () => {
         baseDir: getAppBaseDir('recursive-module-app'),
       });
       await assert.rejects(async () => {
-        await scheduler.wait(1000);
+        // await scheduler.wait(1000);
         await app.ready();
       }, /module has recursive deps/);
       await app.close();

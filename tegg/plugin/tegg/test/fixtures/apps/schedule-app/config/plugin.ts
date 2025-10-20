@@ -14,5 +14,13 @@ export default {
     enable: true,
   },
 
+  teggEventbus: false,
+  teggController: false,
+  teggDal: false,
+  teggSchedule: false,
+  teggOrm: false,
+  teggAjv: false,
+  aopModule: false,
+
   watcher: false,
 };

@@ -23,7 +23,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
     afterEach(() => app.close());
     afterEach(mm.restore);
 
-    it.only('should app watcher work', async () => {
+    it('should app watcher work', async () => {
       let count = 0;
 
       await app.httpRequest().get('/app-watch').expect(200).expect('app watch success');

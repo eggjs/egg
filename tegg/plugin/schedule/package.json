@@ -59,8 +59,7 @@
     "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
     "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/tegg-schedule-decorator": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*"
+    "@eggjs/tegg-schedule-decorator": "workspace:*"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

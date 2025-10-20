@@ -25,6 +25,8 @@ const config: UserWorkspaceConfig = defineConfig({
     },
     hookTimeout: 20000,
     env: {
+      // disable tegg plugins by default on unittest, make test speed up
+      DISABLE_TEGG_PLUGINS: 'true',
       // TODO: aop plugin required this flag, otherwise there will be a SyntaxError: Invalid or unexpected token
       NODE_OPTIONS: '--import=tsx/esm',
       // FIXME: TypeError: Cannot read properties of undefined (reading 'mode')

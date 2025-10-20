@@ -11,7 +11,5 @@ exports[`test/lib/core/loader/config_loader.test.ts > should get middlewares 1`]
   "session",
   "clusterAppMock",
   "securities",
-  "teggRootProto",
-  "teggCtxLifecycleMiddleware",
 ]
 `;

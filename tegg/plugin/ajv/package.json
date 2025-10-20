@@ -52,7 +52,6 @@
     "@eggjs/ajv-decorator": "workspace:*",
     "@eggjs/ajv-formats": "^3.0.1",
     "@eggjs/ajv-keywords": "^5.1.0",
-    "@eggjs/aop-decorator": "workspace:*",
     "@eggjs/core-decorator": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
     "ajv": "catalog:"

@@ -57,10 +57,8 @@
     "@eggjs/eventbus-decorator": "workspace:*",
     "@eggjs/tegg-eventbus-runtime": "workspace:*",
     "@eggjs/tegg-lifecycle": "workspace:*",
-    "@eggjs/tegg-loader": "workspace:*",
     "@eggjs/tegg-metadata": "workspace:*",
-    "@eggjs/tegg-runtime": "workspace:*",
-    "@eggjs/tegg-types": "workspace:*"
+    "@eggjs/tegg-runtime": "workspace:*"
   },
   "peerDependencies": {
     "@eggjs/tegg-plugin": "workspace:*",

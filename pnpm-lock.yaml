@@ -550,7 +550,7 @@ catalogs:
       specifier: 0.15.6
       version: 0.15.6
     tsx:
-      specifier: ^4.20.6
+      specifier: 4.20.6
       version: 4.20.6
     type-fest:
       specifier: ^5.0.1
@@ -3049,9 +3049,6 @@ importers:
       '@eggjs/ajv-keywords':
         specifier: ^5.1.0
         version: 5.1.1
-      '@eggjs/aop-decorator':
-        specifier: workspace:*
-        version: link:../../core/aop-decorator
       '@eggjs/core-decorator':
         specifier: workspace:*
         version: link:../../core/core-decorator
@@ -3354,18 +3351,12 @@ importers:
       '@eggjs/tegg-lifecycle':
         specifier: workspace:*
         version: link:../../core/lifecycle
-      '@eggjs/tegg-loader':
-        specifier: workspace:*
-        version: link:../../core/loader
       '@eggjs/tegg-metadata':
         specifier: workspace:*
         version: link:../../core/metadata
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
-      '@eggjs/tegg-types':
-        specifier: workspace:*
-        version: link:../../core/types
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*
@@ -3421,9 +3412,6 @@ importers:
       '@eggjs/tegg-runtime':
         specifier: workspace:*
         version: link:../../core/runtime
-      '@eggjs/tegg-types':
-        specifier: workspace:*
-        version: link:../../core/types
       leoric:
         specifier: 'catalog:'
         version: 2.13.8(mysql2@3.15.2)
@@ -3491,9 +3479,6 @@ importers:
       '@eggjs/tegg-schedule-decorator':
         specifier: workspace:*
         version: link:../../core/schedule-decorator
-      '@eggjs/tegg-types':
-        specifier: workspace:*
-        version: link:../../core/types
     devDependencies:
       '@eggjs/mock':
         specifier: workspace:*

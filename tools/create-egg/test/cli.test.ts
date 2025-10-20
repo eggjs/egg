@@ -16,6 +16,16 @@ const tempDirPrefix = path.join(tmpdir(), 'my-app-temp-');
 const tempDir = fs.mkdtempSync(tempDirPrefix);
 
 const run = <SO extends SyncOptions>(args: string[], options?: SO): SyncResult<SO> => {
+  options = options
+    ? {
+        ...options,
+        env: {
+          ...options.env,
+          // ignore NODE_OPTIONS
+          NODE_OPTIONS: undefined,
+        },
+      }
+    : undefined;
   return execaCommandSync(`node ${CLI_PATH} ${args.join(' ')}`, options);
 };
 
@@ -126,12 +136,18 @@ test.skipIf(process.platform === 'win32')(
     const mockDir = path.join(monoRepoDir, 'plugins/mock');
     const binDir = path.join(monoRepoDir, 'tools/egg-bin');
     const tracerDir = path.join(monoRepoDir, 'plugins/tracer');
-    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, { cwd: projectDir });
+    execaCommandSync(`pnpm link ${mockDir} ${eggDir} ${binDir} ${tracerDir}`, {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
     // execaCommandSync(`pnpm install`, { cwd: projectDir });
-    const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+    const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir });
+    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
   }
 );
 
@@ -162,13 +178,27 @@ test.skipIf(process.platform === 'win32' || process.env.CI)(
     //   stdout: 'inherit',
     //   stderr: 'inherit',
     // });
-    execaCommandSync(`pnpm install`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
-    execaCommandSync(`pnpm ls @oxc-node/core`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
+    // execaCommandSync(`pnpm add -D tsx`, { cwd: projectDir });
+    execaCommandSync(`pnpm install`, {
+      cwd: projectDir,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      env: { NODE_OPTIONS: undefined },
+    });
+    execaCommandSync(`pnpm ls @oxc-node/core`, {
+      cwd: projectDir,
+      stdout: 'inherit',
+      stderr: 'inherit',
+      env: { NODE_OPTIONS: undefined },
+    });
     // execaCommandSync(`pnpm update --latest`, { cwd: projectDir, stdout: 'inherit', stderr: 'inherit' });
-    const { stdout: testStdout } = execaCommandSync('pnpm test:local', { cwd: projectDir });
+    const { stdout: testStdout } = execaCommandSync('pnpm test:local', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir });
+    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
   }
 );
 
