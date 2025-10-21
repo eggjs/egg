@@ -203,7 +203,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter="@eggjs/bin" ci
+        run: pnpm run --filter=./tools/bin ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
@@ -221,16 +221,13 @@ jobs:
       fail-fast: false
       matrix:
         os: ['ubuntu-latest']
-        node: ['22']
-        # 1-based index
-        shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [5]
+        node: ['22', '24']
 
-    name: Test scripts (${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    name: Test scripts (${{ matrix.os }}, ${{ matrix.node }})
     runs-on: ${{ matrix.os }}
 
     concurrency:
-      group: test-egg-scripts-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }}, ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+      group: test-egg-scripts-${{ github.workflow }}-#${{ github.event.pull_request.number || github.head_ref || github.ref }}-(${{ matrix.os }}, ${{ matrix.node }})
       cancel-in-progress: true
 
     steps:
@@ -250,7 +247,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter="@eggjs/scripts" ci --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: pnpm run --filter=./tools/scripts ci
 
       - name: Code Coverage
         if: ${{ matrix.os != 'windows-latest' }}

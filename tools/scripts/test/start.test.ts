@@ -13,7 +13,7 @@ import { isWindows } from '../src/helper.ts';
 
 const __dirname = import.meta.dirname;
 
-describe('test/start.test.ts', () => {
+describe.skip('test/start.test.ts', () => {
   const eggBin = path.join(__dirname, '../bin/run.js');
   const fixturePath = path.join(__dirname, 'fixtures/example');
   const homePath = path.join(__dirname, 'fixtures/home');

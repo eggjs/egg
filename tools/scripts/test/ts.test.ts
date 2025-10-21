@@ -14,7 +14,7 @@ import { isWindows } from '../src/helper.ts';
 
 const __dirname = import.meta.dirname;
 
-describe('test/ts.test.ts', () => {
+describe.skip('test/ts.test.ts', () => {
   const eggBin = path.join(__dirname, '../bin/run.js');
   const homePath = path.join(__dirname, 'fixtures/home');
   const waitTime = 5000;

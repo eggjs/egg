@@ -39,7 +39,7 @@ export async function cleanup(baseDir: string) {
       }
     }
 
-    await scheduler.wait(5000);
+    await scheduler.wait(500);
   }
 }
 
