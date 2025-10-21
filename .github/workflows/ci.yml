@@ -203,7 +203,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run tests
-        run: pnpm run --filter=./tools/bin ci
+        run: pnpm run --filter=./tools/egg-bin ci
         env:
           # https://github.com/jamiebuilds/ci-parallel-vars
           CI_NODE_INDEX: ${{ matrix.shardIndex }}
