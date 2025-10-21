@@ -2207,9 +2207,6 @@ importers:
 
   site:
     dependencies:
-      egg:
-        specifier: workspace:*
-        version: link:../packages/egg
       vitepress:
         specifier: 'catalog:'
         version: 2.0.0-alpha.12(@types/node@24.8.1)(esbuild@0.25.11)(jiti@2.6.1)(less@4.4.2)(nprogress@0.2.0)(oxc-minify@0.95.0)(postcss@8.5.6)(sass@1.93.2)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
