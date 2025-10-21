@@ -4,6 +4,11 @@ import {
   HTTPMethod,
   HTTPMethodEnum,
   HTTPParam,
+  HTTPRequest,
+  HTTPCookies,
+  type Cookies,
+  HTTPContext,
+  type Context,
   type IncomingHttpHeaders,
   type EggLogger,
   Inject,
@@ -29,6 +34,21 @@ export default class SimpleController {
     this.logger.info('request headers: %j', headers);
     return {
       message: `hello ${custom}`,
+    };
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/request' })
+  async getRequest(@HTTPRequest() request: Request, @HTTPCookies() cookies: Cookies) {
+    return {
+      message: `hello ${request.method} ${request.url}`,
+      cookies: cookies.get('test', { signed: false }),
+    };
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/context' })
+  async getContext(@HTTPContext() ctx: Context) {
+    return {
+      message: `hello ${ctx.request.method} ${ctx.request.url}`,
     };
   }
 }

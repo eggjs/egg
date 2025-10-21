@@ -1,16 +1,15 @@
 import assert from 'node:assert';
 
-import type { Context, Router } from 'egg';
+import type { Router, MiddlewareFunc } from 'egg';
 import {
   type EggContext,
   HTTPControllerMeta,
   HTTPMethodMeta,
   HTTPParamType,
-  type Next,
   PathParamMeta,
   QueriesParamMeta,
   QueryParamMeta,
-  HTTPCookies,
+  Cookies,
 } from '@eggjs/controller-decorator';
 import { EggContainerFactory } from '@eggjs/tegg-runtime';
 import type { EggPrototype } from '@eggjs/tegg-metadata';
@@ -20,7 +19,7 @@ import { FrameworkErrorFormater } from 'egg-errors';
 
 import { RootProtoManager } from '../../RootProtoManager.ts';
 import { aclMiddlewareFactory } from './Acl.ts';
-import { HTTPRequest } from './Req.ts';
+import { initRequest } from './Req.ts';
 import { RouterConflictError } from '../../errors.ts';
 
 const noop = () => {
@@ -51,21 +50,24 @@ export class HTTPMethodRegister {
     this.eggContainerFactory = eggContainerFactory;
   }
 
-  private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined) {
+  private createHandler(methodMeta: HTTPMethodMeta, host: string | undefined): MiddlewareFunc {
     const argsLength = methodMeta.paramMap.size;
     const hasContext = methodMeta.contextParamIndex !== undefined;
     const contextIndex = methodMeta.contextParamIndex;
     const methodArgsLength = argsLength + (hasContext ? 1 : 0);
-    // eslint-disable-next-line
-    const self = this;
-    return async function (ctx: Context, next: Next) {
+    // oxlint-disable-next-line no-this-alias
+    const methodRegister = this;
+    return async function (ctx, next) {
       // if hosts is not empty and host is not matched, not execute
       if (host && host !== ctx.host) {
         return await next();
       }
       // HTTP decorator core implement
       // use controller metadata map http request to function arguments
-      const eggObj = await self.eggContainerFactory.getOrCreateEggObject(self.proto, self.proto.name);
+      const eggObj = await methodRegister.eggContainerFactory.getOrCreateEggObject(
+        methodRegister.proto,
+        methodRegister.proto.name
+      );
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
       const args: Array<object | string | string[]> = Array.from({ length: methodArgsLength });
@@ -80,7 +82,7 @@ export class HTTPMethodRegister {
           }
           case HTTPParamType.PARAM: {
             const pathParam: PathParamMeta = param as PathParamMeta;
-            args[index] = (ctx.params as Record<string, string>)[pathParam.name];
+            args[index] = ctx.params![pathParam.name];
             break;
           }
           case HTTPParamType.QUERY: {
@@ -98,11 +100,11 @@ export class HTTPMethodRegister {
             break;
           }
           case HTTPParamType.REQUEST: {
-            args[index] = new HTTPRequest(ctx);
+            args[index] = initRequest(ctx);
             break;
           }
           case HTTPParamType.COOKIES: {
-            args[index] = new HTTPCookies(ctx, []);
+            args[index] = new Cookies(ctx, []);
             break;
           }
           default:
@@ -112,7 +114,7 @@ export class HTTPMethodRegister {
       const body = await Reflect.apply(realMethod, realObj, args);
       // https://github.com/koajs/koa/blob/master/lib/response.js#L88
       // ctx.status is set
-      const explicitStatus = (ctx.response as any)._explicitStatus;
+      const explicitStatus = ctx.response._explicitStatus;
 
       if (
         // has body
@@ -169,6 +171,9 @@ export class HTTPMethodRegister {
     }
   }
 
+  /**
+   * register method to router
+   */
   register(rootProtoManager: RootProtoManager): void {
     const methodRealPath = this.controllerMeta.getMethodRealPath(this.methodMeta);
     const methodName = this.controllerMeta.getMethodName(this.methodMeta);
@@ -178,9 +183,9 @@ export class HTTPMethodRegister {
     if (aclMiddleware) {
       methodMiddlewares.push(aclMiddleware);
     }
-    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [undefined];
-    hosts.forEach(h => {
-      const handler = this.createHandler(this.methodMeta, h);
+    const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) ?? [undefined];
+    hosts.forEach(host => {
+      const handler = this.createHandler(this.methodMeta, host);
       Reflect.apply(routerFunc, this.router, [methodName, methodRealPath, ...methodMiddlewares, handler]);
       // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
       const regExp = pathToRegexp(methodRealPath, {
@@ -193,7 +198,7 @@ export class HTTPMethodRegister {
             return this.proto;
           }
         },
-        h || ''
+        host || ''
       );
     });
   }

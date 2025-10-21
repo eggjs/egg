@@ -1,5 +1,5 @@
 import type { EggScheduleConfig } from './config/config.default.ts';
-import type { Schedule } from './lib/schedule.ts';
+import type { Scheduler } from './lib/schedule.ts';
 import type { ScheduleWorker } from './lib/schedule_worker.ts';
 import type { BaseStrategy } from './lib/strategy/base.ts';
 import type { TimerStrategy } from './lib/strategy/timer.ts';
@@ -27,7 +27,7 @@ declare module 'egg' {
     /**
      * Schedule
      */
-    schedule: Schedule;
+    schedule: Scheduler;
   }
 
   interface Application {

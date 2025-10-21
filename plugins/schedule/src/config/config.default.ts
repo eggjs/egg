@@ -1,5 +1,7 @@
-import { type PartialEggConfig } from 'egg';
+import type { PartialEggConfig } from 'egg';
 import type { ParserOptions as CronOptions } from 'cron-parser';
+
+export type { CronOptions };
 
 export interface EggScheduleConfig {
   type?: 'worker' | 'all';

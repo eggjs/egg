@@ -36,7 +36,8 @@
     "incremental": false,
     // https://nodejs.org/en/learn/typescript/publishing-a-ts-package#treat-types-like-a-test
     "erasableSyntaxOnly": true,
-    "verbatimModuleSyntax": true,
+    // only for lib, not good for app
+    "verbatimModuleSyntax": false,
     "rewriteRelativeImportExtensions": true,
     "allowImportingTsExtensions": true,
     // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html#isolated-declarations

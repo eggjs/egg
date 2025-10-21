@@ -1,11 +1,9 @@
 {
-  "name": "@eggjs/site",
-  "version": "4.1.0-beta.27",
+  "name": "site",
   "private": true,
-  "description": "Eggjs documentation site",
+  "description": "Egg.js documentation site",
   "type": "module",
   "dependencies": {
-    "egg": "workspace:*",
     "vitepress": "catalog:"
   },
   "devDependencies": {

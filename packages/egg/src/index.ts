@@ -21,7 +21,7 @@ export { Singleton, type SingletonCreateMethod, type SingletonOptions } from '@e
 export * from './lib/error/index.ts';
 
 // export loggers
-export type { LoggerLevel, EggLogger } from 'egg-logger';
+export type { LoggerLevel, EggLogger, EggLogger as Logger } from 'egg-logger';
 
 // export httpClients
 export * from './lib/core/httpclient.ts';
@@ -102,10 +102,14 @@ export {
   type MultiInstancePrototypeGetObjectsContext,
   QualifierUtil,
   type EggProtoImplClass,
+  Inject,
+  InjectOptional,
+  EggQualifier,
+  EggType,
   /**
    * @example
    * ```ts
-   * import { InjectContext, Context } from 'egg';
+   * import { HTTPContext, Context } from 'egg';
    *
    * @HTTPController()
    * export class FooController {
@@ -113,18 +117,15 @@ export {
    *     path: '/foo',
    *     method: HTTPMethodEnum.GET,
    *   })
-   * async bar(@InjectContext() ctx: Context, id: number): Promise<void> {
+   * async bar(@HTTPContext() ctx: Context, id: number): Promise<void> {
    *   console.log(ctx, id);
    * }
    * ```
    */
-  InjectContext,
-  InjectRequest,
-  InjectCookies,
-  Inject,
-  InjectOptional,
-  EggQualifier,
-  EggType,
+  HTTPContext,
+  HTTPRequest,
+  HTTPCookies,
+  Cookies,
   HTTPController,
   HTTPMethod,
   HTTPMethodEnum,
@@ -134,8 +135,6 @@ export {
   HTTPParam,
   HTTPHeaders,
   HTTPParamType,
-  HTTPRequest,
-  HTTPResponse,
   Host,
   Middleware,
   Event,

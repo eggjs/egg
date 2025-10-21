@@ -1,14 +1,13 @@
 import type { Context } from 'egg';
-import { HTTPRequest as BaseHTTPRequest } from '@eggjs/controller-decorator';
 
-export class HTTPRequest extends BaseHTTPRequest {
-  constructor(ctx: Context) {
-    const request = ctx.request;
-    // href: https://github.com/eggjs/koa/blob/master/src/request.ts#L90C1-L98C4
-    super(request.href, {
-      method: request.method,
-      headers: request.headers as unknown as HeadersInit,
-      body: (ctx.request as any).rawBody,
-    });
-  }
+export function initRequest(ctx: Context): Request {
+  // href: https://github.com/eggjs/egg/blob/next/packages/koa/src/request.ts#L90C1-L98C4
+  return new Request(ctx.request.href, {
+    method: ctx.request.method,
+    // @ts-expect-error Type 'IncomingHttpHeaders' is not assignable to type 'HeadersInit | undefined'
+    headers: ctx.request.headers,
+    // @ts-expect-error should export from ctx.request
+    // oxlint-disable-next-line no-invalid-fetch-options
+    body: ctx.request.rawBody,
+  });
 }

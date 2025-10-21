@@ -3,8 +3,7 @@ import type { EggContext, Next, IncomingHttpHeaders } from '@eggjs/tegg-types';
 
 import {
   HTTPController,
-  Context,
-  InjectContext,
+  HTTPContext,
   Middleware,
   HTTPBody,
   HTTPParam,
@@ -41,7 +40,7 @@ export class FooController {
   @Middleware(middleware2)
   @Middleware(middleware3)
   async bar(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
@@ -63,7 +62,7 @@ export class ControllerWithParam {
     method: HTTPMethodEnum.GET,
   })
   async bar(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() id: string,
     @HTTPParam() fooId: string,
     @HTTPHeaders() headers: IncomingHttpHeaders
@@ -83,7 +82,7 @@ export class FoxController {
   @Middleware(middleware2)
   @Middleware(middleware3)
   async bar(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
@@ -104,7 +103,7 @@ export class FxxController {
   @Middleware(middleware2)
   @Middleware(middleware3)
   async bar(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
@@ -129,7 +128,7 @@ export class DefaultValueController {
   @Middleware(middleware2)
   @Middleware(middleware3)
   async bar(
-    @Context() ctx: EggContext,
+    @HTTPContext() ctx: EggContext,
     @HTTPParam() id = 233,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>
@@ -146,7 +145,7 @@ export class Error1Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@Context() ctx: EggContext, id: number): Promise<void> {
+  async bar(@HTTPContext() ctx: EggContext, id: number): Promise<void> {
     console.log(ctx, id);
   }
 }
@@ -159,7 +158,7 @@ export class Error2Controller {
   })
   @Middleware(middleware2)
   @Middleware(middleware3)
-  async bar(@InjectContext() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233): Promise<void> {
+  async bar(@HTTPContext() ctx: EggContext, id = 233, @HTTPParam() id2: number = 233): Promise<void> {
     console.log(ctx, id, id2);
   }
 }
