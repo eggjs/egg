@@ -6,18 +6,22 @@ import {
   HTTPParam,
   HTTPRequest,
   HTTPCookies,
-  type Cookies,
+  Cookies,
   HTTPContext,
-  type Context,
-  type IncomingHttpHeaders,
-  type EggLogger,
+  Context,
+  IncomingHttpHeaders,
+  Logger,
   Inject,
 } from 'egg';
+import { Foo } from '../../biz/Foo.ts';
 
 @HTTPController()
 export default class SimpleController {
   @Inject()
-  private logger: EggLogger;
+  private logger: Logger;
+
+  @Inject()
+  private foo: Foo;
 
   // declare a `GET /api/hello/:name` interface
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/hello/:name' })
@@ -49,6 +53,14 @@ export default class SimpleController {
   async getContext(@HTTPContext() ctx: Context) {
     return {
       message: `hello ${ctx.request.method} ${ctx.request.url}`,
+    };
+  }
+
+  @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/foo' })
+  async getFoo() {
+    return {
+      message: `hello, bar: ${await this.foo.bar()}`,
+      data: await this.foo.fetch(),
     };
   }
 }

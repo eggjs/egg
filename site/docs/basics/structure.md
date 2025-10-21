@@ -1,69 +1,74 @@
----
-title: Structure
-order: 1
----
+# Directory Structure
 
-In the [Quick Start](../intro/quickstart.md), we should have a preliminary impression on the framework, next let us simply understand the directory convention specification.
+In the [Quick Start](../intro/quickstart.md), you should have gained a preliminary impression of the framework. Next, let's briefly understand the directory conventions.
 
 ```bash
 egg-project
 ├── package.json
-├── app.js (optional)
-├── agent.js (optional)
+├── app.ts (optional)
+├── agent.ts (optional)
 ├── app
-|   ├── router.js
 │   ├── controller
-│   |   └── home.js
+│   │   ├── http
+│   │   │   ├── HomeController.ts
+│   │   │   └── UserController.ts
+│   │   ├── rpc
+│   │   │   └── UserRPCController.ts
+│   │   ├── mcp
+│   │   │   └── MyMCPController.ts
+│   │   └── schedule
+│   │       └── MyTaskController.ts
 │   ├── service (optional)
-│   |   └── user.js
+│   │   └── UserService.ts
 │   ├── middleware (optional)
-│   |   └── response_time.js
-│   ├── schedule (optional)
-│   |   └── my_task.js
+│   │   └── ResponseTimeMiddleware.ts
 │   ├── public (optional)
-│   |   └── reset.css
+│   │   └── reset.css
 │   ├── view (optional)
-│   |   └── home.tpl
+│   │   └── home.tpl
 │   └── extend (optional)
-│       ├── helper.js (optional)
-│       ├── request.js (optional)
-│       ├── response.js (optional)
-│       ├── context.js (optional)
-│       ├── application.js (optional)
-│       └── agent.js (optional)
+│       ├── helper.ts (optional)
+│       ├── request.ts (optional)
+│       ├── response.ts (optional)
+│       ├── context.ts (optional)
+│       ├── application.ts (optional)
+│       └── agent.ts (optional)
 ├── config
-|   ├── plugin.js
-|   ├── config.default.js
-│   ├── config.prod.js
-|   ├── config.test.js (optional)
-|   ├── config.local.js (optional)
-|   └── config.unittest.js (optional)
+|   ├── plugin.ts
+|   ├── config.default.ts
+│   ├── config.prod.ts
+|   ├── config.test.ts (optional)
+|   ├── config.local.ts (optional)
+|   └── config.unittest.ts (optional)
 └── test
     ├── middleware
-    |   └── response_time.test.js
+    |   └── ResponseTimeMiddleware.test.ts
     └── controller
-        └── home.test.js
+           ├── http
+           │   └── HomeController.test.ts
+           ├── mcp
+           │   └── MyMCPController.test.ts
+           └── schedule
+               └── MyTaskController.test.ts
 ```
 
-As above, directories by conventions of framework:
+As shown above, directories defined by framework conventions:
 
-- `app/router.js` used to configure URL routing rules, see [Router](./router.md) for details.
-- `app/controller/**` used to parse the input from user, return the corresponding results after processing, see [Controller](./controller.md) for details.
-- `app/service/**` used for business logic layer, optional, recommend to use，see [Service](./service.md) for details.
-- `app/middleware/**` uesd for middleware, optional, see [Middleware](./middleware.md) for details.
-- `app/public/**` used to place static resources, optional, see built-in plugin [@eggjs/static](https://github.com/eggjs/static) for details.
-- `app/extend/**` used for extensions of the framework, optional, see [Extend EGG](./extend.md) for details.
-- `config/config.{env}.js` used to write configuration files, see [Configuration](./config.md) for details.
-- `config/plugin.js` used to configure the plugins that need to be loaded, see [Plugin](./plugin.md) for details.
-- `test/**` used for unit test, see [Unit Test](../core/unittest.md) for details.
-- `app.js` and `agent.js` are used to customize the initialization works at startup, see [Application Startup Configuration](./app-start.md) for details. For the role of `agent.js` see [Agent Mechanism](../core/cluster-and-ipc.md#agent-mechanism).
+- `app/controller/**` - Used to parse user input, process it, and return corresponding results. See [Controller](./controller.md) for details.
+- `app/service/**` - Used to write business logic layer. Recommended for use. See [Service](./service.md) for details.
+- `app/middleware/**` - Used to write middleware. See [Middleware](./middleware.md) for details.
+- `app/public/**` - Used to place static resources. See the built-in plugin [@eggjs/static](https://github.com/eggjs/egg/tree/next/plugins/static) for details.
+- `app/extend/**` - Used for framework extensions. See [Framework Extension](./extend.md) for details.
+- `config/config.{env}.ts` - Used to write configuration files. See [Configuration](./config.md) for details.
+- `config/plugin.ts` - Used to configure plugins to be loaded. See [Plugin](./plugin.md) for details.
+- `test/**` - Used for unit testing. See [Unit Testing](../core/unittest.md) for details.
+- `app.ts` and `agent.ts` - Used to customize initialization work at startup. See [Startup Customization](./app-start.md) for details. For the role of `agent.ts`, see [Agent Mechanism](../core/cluster-and-ipc.md#agent-mechanism).
 
-Directories by conventions of built-in plugins:
+Directories defined by built-in plugin conventions:
 
-- `app/public/**` used to place static resources, optional, see built-in plugin [@eggjs/static](https://github.com/eggjs/static) for details.
-- `app/schedule/**` used for scheduled tasks, optional, see [Scheduled Task](./schedule.md) for details.
+- `app/public/**` - Used to place static resources. See the built-in plugin [@eggjs/static](https://github.com/eggjs/egg/tree/next/plugins/static) for details.
 
-**To customize your own directory specification, see [Loader API](../advanced/loader.md)**
+**To customize your own directory conventions, see [Loader](../advanced/loader.md)**
 
-- `app/view/**` used to place view files, optional, by view plugins conventions, see [View Rendering](../core/view.md) for details.
-- `app/model/**` used to place the domain model, optional, by the domain related plugins conventions, such as [egg-sequelize](https://github.com/eggjs/egg-sequelize).
+- `app/view/**` - Used to place template files. See [Template Rendering](../core/view.md) for details.
+- `app/model/**` - Used to place domain models, such as domain-related plugins like [`egg-sequelize`](https://github.com/eggjs/egg-sequelize).

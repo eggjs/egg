@@ -49,6 +49,7 @@ export default defineConfig({
           '/core/': { base: '/core/', items: sidebarCore() },
           '/tutorials/': { base: '/tutorials/', items: sidebarTutorials() },
           '/community/': { base: '/community/', items: sidebarCommunity() },
+          '/faq/': { base: '/faq/', items: sidebarFaq() },
         },
       },
     },
@@ -77,6 +78,7 @@ export default defineConfig({
             base: '/zh-CN/community/',
             items: sidebarCommunityZhCN(),
           },
+          '/zh-CN/faq/': { base: '/zh-CN/faq/', items: sidebarFaq() },
         },
       },
     },
@@ -100,6 +102,10 @@ export default defineConfig({
     editLink: {
       pattern: 'https://github.com/eggjs/egg/edit/next/site/docs/:path',
       text: 'Edit this page',
+    },
+
+    outline: {
+      level: [2, 3],
     },
   },
 
@@ -130,8 +136,9 @@ function nav(): DefaultTheme.NavItem[] {
       activeMatch: '/community/',
       items: [
         { text: 'Community', link: '/community/' },
-        { text: 'Contributing', link: '/community/contributing' },
+        { text: 'Contributing', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md' },
         { text: 'Frequently Asked Questions', link: '/community/faq' },
+        { text: 'Common Errors', link: '/faq/' },
         { text: 'CNode Community', link: 'https://cnodejs.org/' },
         { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
       ],
@@ -185,8 +192,9 @@ function navZhCN(): DefaultTheme.NavItem[] {
       activeMatch: '/zh-CN/community/',
       items: [
         { text: '社区', link: '/zh-CN/community/' },
-        { text: '参与贡献', link: '/zh-CN/community/contributing' },
+        { text: '参与贡献', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md' },
         { text: '常见问题', link: '/zh-CN/community/faq' },
+        { text: '常见错误', link: '/zh-CN/faq/' },
         { text: 'CNode 社区', link: 'https://cnodejs.org/' },
         { text: 'Node.js 专栏', link: 'https://www.yuque.com/egg/nodejs' },
       ],
@@ -246,7 +254,7 @@ function sidebarBasics(): DefaultTheme.SidebarItem[] {
         { text: 'Runtime Environment', link: 'env' },
         { text: 'Configuration', link: 'config' },
         { text: 'AOP Middleware (Recommended)', link: 'aop-middleware' },
-        { text: 'Middleware', link: 'middleware' },
+        { text: 'Koa Middleware', link: 'middleware' },
         { text: 'Plugin', link: 'plugin' },
         { text: 'Extend EGG', link: 'extend' },
         { text: 'Application Startup Lifecycle', link: 'app-start' },
@@ -353,7 +361,7 @@ function sidebarBasicsZhCN(): DefaultTheme.SidebarItem[] {
         { text: '运行环境', link: 'env' },
         { text: '配置', link: 'config' },
         { text: 'AOP 中间件(推荐)', link: 'aop-middleware' },
-        { text: '中间件', link: 'middleware' },
+        { text: 'Koa 中间件', link: 'middleware' },
         { text: '插件', link: 'plugin' },
         { text: '框架扩展', link: 'extend' },
         { text: '启动自定义', link: 'app-start' },
@@ -429,6 +437,15 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
         { text: '参与贡献', link: 'contributing' },
         { text: '常见问题', link: 'faq' },
       ],
+    },
+  ];
+}
+
+function sidebarFaq(): DefaultTheme.SidebarItem[] {
+  return [
+    {
+      text: 'FAQ',
+      items: [{ text: 'TEGG_EGG_PROTO_NOT_FOUND', link: 'TEGG_EGG_PROTO_NOT_FOUND' }],
     },
   ];
 }

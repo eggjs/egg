@@ -1,0 +1,3 @@
+# Common Errors
+
+- [TEGG_EGG_PROTO_NOT_FOUND](TEGG_EGG_PROTO_NOT_FOUND.md)
