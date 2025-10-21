@@ -2,7 +2,7 @@
 
 ## 使用场景
 
-通常 Web 应用会采用 `MVC` 架构，其中 C 即为控制器 (Controller)，负责解析用户的输入，处理后返回相应的结果。
+通常 Web 应用会采用 `MVC` 架构，其中 `C` 即为控制器 (Controller)，负责解析用户的输入，处理后返回相应的结果。
 通俗来说，当需要在应用中增加一个对外提供服务的 HTTP 等类型的接口时，使用对应的 Controller 装饰器进行定义和实现。
 
 应用实现 HTTPController 后，客户端可通过 HTTP 协议请求服务端的控制器，控制器处理结束后响应客户端，这是一个最基础的 ”请求 - 响应“ 流程。
@@ -21,8 +21,8 @@
 
 egg 提供了不同的 Controller 装饰器，用于实现不同类型的接口，可依据需求场景进行选择。
 
-| Controller 装饰器                                    | 说明                                                                                  |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| [@HTTPController / @HTTPMethod](./httpcontroller.md) | 用于实现 HTTP 接口<br/>函数应用中若只需返回 JSON 类型数据时，推荐使用 WebGWController |
-| [@MCPController](./mcpcontroller.md)                 | 用于实现 MCP Server                                                                   |
-| [@Schedule](./schedule.md)                           | 用于**标准应用**实现定时任务接口                                                      |
+| Controller 装饰器                                    | 说明                             |
+| ---------------------------------------------------- | -------------------------------- |
+| [@HTTPController / @HTTPMethod](./httpcontroller.md) | 用于实现 HTTP 接口               |
+| [@MCPController](./mcpcontroller.md)                 | 用于实现 MCP Server              |
+| [@Schedule](./schedule.md)                           | 用于**标准应用**实现定时任务接口 |

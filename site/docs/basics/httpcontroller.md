@@ -1,23 +1,23 @@
 # HTTP Controller
 
-## 使用场景
+## Use Cases
 
-需要在应用中，提供 HTTP 服务时，通过 HTTPController 装饰器申明 HTTP 接口。建议用于强依赖 HTTP 协议的场景。常见场景有：
+When you need to provide HTTP services in your application, use the HTTPController decorator to declare HTTP interfaces. It's recommended for scenarios that strongly depend on the HTTP protocol. Common scenarios include:
 
-- SSR 场景，在服务端流式渲染 HTML 后返回给前端。
-- SSE 场景，通过 Server-Sent Events 与前端实时通信，实现 AI 对话等功能。
-- 依赖 cookie 等 HTTP 协议数据进行业务逻辑处理的场景。
+- SSR scenarios, where HTML is rendered on the server side and returned to the frontend.
+- SSE scenarios, communicating with the frontend in real-time through Server-Sent Events to implement features like AI conversations.
+- Scenarios that rely on HTTP protocol data such as cookies for business logic processing.
 
-## 使用方式
+## Usage
 
-使用 `HTTPController` 装饰器申明一个类为 HTTP 控制器，使用 `HTTPMethod` 装饰器申明该类中的方法对应的具体 HTTP 接口信息。
+Use the `HTTPController` decorator to declare a class as an HTTP controller, and use the `HTTPMethod` decorator to declare the specific HTTP interface information for methods in that class.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';
 
 @HTTPController()
 export default class SimpleController {
-  // 申明一个 GET /api/hello/:name 接口
+  // Declare a GET /api/hello/:name interface
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/hello/:name' })
   async hello(@HTTPParam() name: string) {
     return {
@@ -27,12 +27,12 @@ export default class SimpleController {
 }
 ```
 
-`HTTPController` 装饰器支持传入 `path` 参数，用于指定该控制器的基础 HTTP path，和 `HTTPMethod` 中的 `path` 参数拼接后，为最终的 HTTP path。
+The `HTTPController` decorator supports passing a `path` parameter to specify the base HTTP path for the controller, which will be concatenated with the `path` parameter in `HTTPMethod` to form the final HTTP path.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 
-// 设置 path 参数，用于指定该类下所有接口的 path 前缀
+// Set path parameter to specify the path prefix for all interfaces in this class
 @HTTPController({ path: '/api' })
 export default class PathController {
   // GET /api/hello
@@ -49,17 +49,17 @@ export default class PathController {
 }
 ```
 
-## path 优先级
+## Path Priority
 
-通过 `HTTPMethod` 装饰器设置的 `path` 使用 [path-to-regexp](https://github.com/pillarjs/path-to-regexp) 进行解析，支持一些简单的参数、通配符等功能。若有多个 `HTTPMethod` 同时满足 `path` 匹配时，则需要通过优先级来确定匹配的接口，优先级越高的接口会被优先匹配。
+The `path` set through the `HTTPMethod` decorator is parsed using [path-to-regexp](https://github.com/pillarjs/path-to-regexp), which supports simple parameters, wildcards, and other features. When multiple `HTTPMethod` decorators satisfy path matching simultaneously, priority is needed to determine the matched interface. Interfaces with higher priority will be matched first.
 
-egg 默认会给每个接口都计算一个优先级。默认优先级规则应该满足绝大多数场景使用。因此大多数场景，都无需手动指定优先级。默认优先级规则如下所示：
+Egg automatically calculates a priority for each interface. The default priority rules should satisfy most scenarios. Therefore, in most cases, there's no need to manually specify priority. The default priority rules are as follows:
 
 > priority = pathHasRegExp
 > ? regexpIndexInPath.reduce((p,c) => p + c \* 1000, 0)
 > : 100000
 
-结合具体例子来看，下列接口的默认优先级由低到高分别如下所示：
+Combined with specific examples, the default priorities of the following interfaces are shown from low to high:
 
 | Path                          | RegExp index | priority |
 | ----------------------------- | ------------ | -------- |
@@ -69,7 +69,7 @@ egg 默认会给每个接口都计算一个优先级。默认优先级规则应�
 | /hello/:name/message/:message | [1, 3]       | 4000     |
 | /hello/world                  | []           | 100000   |
 
-对于默认优先级无法满足的业务场景，可通过 `HTTPMethod` 装饰器的 `priority` 参数手动指定优先级。
+For business scenarios where the default priority is insufficient, you can manually specify priority through the `priority` parameter of the `HTTPMethod` decorator.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
@@ -79,7 +79,7 @@ export default class PriorityController {
   @HTTPMethod({
     method: HTTPMethodEnum.GET,
     path: '/(api|openapi)/echo',
-    priority: 100000, // 指定该接口优先级更高
+    priority: 100000, // Specify higher priority for this interface
   })
   async high() {
     // ...
@@ -95,14 +95,14 @@ export default class PriorityController {
 }
 ```
 
-## 请求参数装饰器
+## Request Parameter Decorators
 
 ### HTTPHeaders
 
-`HTTPHeaders` 装饰器用于获取完整的 HTTP 请求头。
+The `HTTPHeaders` decorator is used to get the complete HTTP request headers.
 
 :::warning
-⚠️注意: headers 中的 key 会被转为小写，取值时请使用小写字符进行取值。
+⚠️ Note: Keys in headers will be converted to lowercase. Please use lowercase characters when retrieving values.
 :::
 
 ```typescript
@@ -127,7 +127,7 @@ export default class ArgsController {
 
 ### HTTPQuery/HTTPQueries
 
-`HTTPQuery/HTTPQueries` 装饰器用于获取 HTTP 请求中 querystring 参数。`HTTPQuery` 只取第一个参数，类型必须为 `string`；`HTTPQueries` 以数组形式注入参数，数组包含一个或多个值，类型为 `string[]`。
+The `HTTPQuery/HTTPQueries` decorators are used to get querystring parameters from HTTP requests. `HTTPQuery` only takes the first parameter and must be of type `string`; `HTTPQueries` injects parameters as an array containing one or more values, of type `string[]`.
 
 ```typescript
 import {
@@ -145,8 +145,8 @@ export default class ArgsController {
     // /api/query?user=asd&user=fgh
     // user = 'asd'
     // users = ['asd', 'fgh']
-    @HTTPQuery() user?: string, // 未设置 name 时，将自动读取变量名为 name
-    @HTTPQueries({ name: 'user' }) users?: string[], // 也可手动指定 name
+    @HTTPQuery() user?: string, // When name is not set, variable name will be used automatically
+    @HTTPQueries({ name: 'user' }) users?: string[], // Can also manually specify name
   ) {
     // ...
   }
@@ -155,7 +155,7 @@ export default class ArgsController {
 
 ### HTTPParam
 
-`HTTPParam` 装饰器用于获取 HTTP 请求 `path` 中匹配的参数，只能为 string 类型。参数名默认和变量名相同，若有别名等需求，也可手动指定名称。
+The `HTTPParam` decorator is used to get matched parameters from the HTTP request `path`, which can only be of string type. The parameter name is the same as the variable name by default, but can also be manually specified if there are alias requirements.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPParam } from 'egg';
@@ -165,11 +165,11 @@ export default class ArgsController {
   // curl http://127.0.0.1:7001/api/2088000
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/:id' })
   async getParamId(@HTTPParam() id: string) {
-    // id 为 '2088000'
+    // id is '2088000'
     // ...
   }
 
-  // 匹配 path 中第一个正则表达式匹配的字符
+  // Match the first regex-matched character in path
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/foo/(.*)' })
   async getParamBar(@HTTPParam({ name: '0' }) bar: string) {
     // ...
@@ -179,7 +179,7 @@ export default class ArgsController {
 
 ### HTTPBody
 
-`HTTPBody` 装饰器用于获取请求体内容，框架在注入时，会先根据请求头中的 `content-type` 对请求体进行解析，支持 json、text 以及 form-urlencoded。其他 `content-type` 类型会注入空值，可通过 `Request` 装饰器获取原始请求体，自行进行处理。
+The `HTTPBody` decorator is used to get request body content. When injecting, the framework will first parse the request body according to the `content-type` in the request header, supporting json, text, and form-urlencoded. Other `content-type` types will inject empty values. You can get the raw request body through the `Request` decorator and process it yourself.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum, HTTPBody } from 'egg';
@@ -206,8 +206,8 @@ export default class ArgsController {
   // content-type: application/x-www-form-urlencoded
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/api/formdata-body' })
   async getFormBody(
-    @HTTPBody() body: FormData, // 函数应用中，为  FormData 类型
-    // @HTTPBody() body: BodyData, // 标准应用中，为普通对象
+    @HTTPBody() body: FormData, // In function apps, it's FormData type
+    // @HTTPBody() body: BodyData, // In standard apps, it's a plain object
   ) {
     // ...
   }
@@ -216,7 +216,7 @@ export default class ArgsController {
 
 ### Cookies
 
-`Cookies` 装饰器用于获取完整的 HTTP Cookies。
+The `Cookies` decorator is used to get the complete HTTP Cookies.
 
 ```typescript
 import {
@@ -241,10 +241,10 @@ export default class ArgsController {
 
 ### HTTPRequest
 
-`HTTPRequest` 装饰器用于获取完整的 HTTP 请求对象，可获取 url、headers 以及 body 等请求信息，具体 api 可参考类型定义。
+The `HTTPRequest` decorator is used to get the complete HTTP request object, allowing you to get request information such as url, headers, and body. For specific APIs, please refer to the type definitions.
 
 :::warning
-⚠️ 注意：通过 @HTTPBody 装饰器注入请求体后，会对请求体进行消费。若同时注入 @HTTPRequest，再次消费请求体时，将会导致错误（注入 @HTTPRequest，不消费请求体，获取 url、headers 等信息不会有影响）。
+⚠️ Note: After injecting the request body through the @HTTPBody decorator, the request body will be consumed. If you also inject @HTTPRequest and consume the request body again, it will cause an error (injecting @HTTPRequest without consuming the request body to get url, headers, etc. will not be affected).
 :::
 
 ```typescript
@@ -262,19 +262,19 @@ export default class ArgsController {
   async getRequest(@HTTPRequest() request: Request) {
     const headerData = request.headers.get('x-header-key');
     const url = request.url;
-    // 获取请求体 arrayBuffer
+    // Get request body arrayBuffer
     const arrayBufferData = await request.arrayBuffer();
     // ...
   }
 
   @HTTPMethod({ method: HTTPMethodEnum.POST, path: '/api/request2' })
   async getRequest2(@HTTPBody() body: object, @HTTPRequest() request: Request) {
-    // 同时注入 HTTPBody 和 Request，通过 request 读取 header、url 等信息可正常运行
+    // Injecting both HTTPBody and Request, reading header, url, etc. through request works normally
     const headerData = request.headers.get('x-header-key');
     const url = request.url;
-    // ❌ 错误示例
-    // 已经通过 HTTPBody 注入请求体的情况下
-    // 又同时通过 request 再次消费请求体时，将会抛出异常
+    // ❌ Wrong example
+    // When the request body has already been injected through HTTPBody
+    // Consuming the request body again through request will throw an exception
     // const arrayBufferData = await request.arrayBuffer();
     // ...
   }
@@ -283,10 +283,10 @@ export default class ArgsController {
 
 ### HTTPContext
 
-在标准应用中，可使用 `HTTPContext` 装饰器，用于获取 egg 的 [Context][Context] 对象。
+In standard applications, you can use the `HTTPContext` decorator to get the Egg [Context][Context] object.
 
 :::warning
-⚠️ 注意：函数应用中，不支持使用 `HTTPContext` 装饰器。
+⚠️ Note: The `HTTPContext` decorator is not supported in function applications.
 :::
 
 ```typescript
@@ -307,11 +307,11 @@ export default class ArgsController {
 }
 ```
 
-## HTTP 响应
+## HTTP Response
 
-### 默认响应
+### Default Response
 
-默认情况下，`HTTPMethod` 函数返回对象时，框架会进行 `JSON.stringify` 处理，并设置 `Content-Type: application/json` 返回给客户端。
+By default, when the `HTTPMethod` function returns an object, the framework will process it with `JSON.stringify` and set `Content-Type: application/json` to return to the client.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
@@ -327,11 +327,11 @@ export default class ResponseController {
 }
 ```
 
-### 自定义响应
+### Custom Response
 
-#### 函数应用
+#### Function Applications
 
-在函数应用中，当需要返回非 JSON 数据，或需要设置 HTTP 响应码以及响应头等数据时，可通过全局注入的 `Response` 对象进行设置并返回。
+In function applications, when you need to return non-JSON data or set HTTP response codes and response headers, you can set and return through the globally injected `Response` object.
 
 ```typescript
 import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
@@ -340,7 +340,7 @@ import { HTTPController, HTTPMethod, HTTPMethodEnum } from 'egg';
 export default class ResponseController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/custom-response' })
   async customResponse() {
-    // Response 为全局对象，无需 import
+    // Response is a global object, no need to import
     return new Response('<h1>Hello World</h1>', {
       status: 200,
       headers: {
@@ -353,9 +353,9 @@ export default class ResponseController {
 }
 ```
 
-#### 标准应用
+#### Standard Applications
 
-在标准应用中，可以通过 [Context][Context] 提供的 api 来自定义设置 HTTP 响应码和响应头等信息。
+In standard applications, you can use the APIs provided by [Context][Context] to customize HTTP response codes and response headers.
 
 ```typescript
 import {
@@ -370,12 +370,12 @@ import {
 export default class ResponseController {
   @HTTPMethod({ method: HTTPMethodEnum.GET, path: '/api/custom-response' })
   async customResponse(@HTTPContext() ctx: Context) {
-    // 自定义响应码
+    // Custom response code
     ctx.status = 200;
-    // 添加自定义响应头
+    // Add custom response header
     ctx.set('x-custom', 'custom');
-    // 设置 Content-Type 的语法糖，等价于 ctx.set('content-type', 'application/json')
-    // 支持 json、html 等常见类型，可参考 https://github.com/jshttp/mime-types
+    // Syntactic sugar for setting Content-Type, equivalent to ctx.set('content-type', 'application/json')
+    // Supports common types like json, html, etc. See https://github.com/jshttp/mime-types
     ctx.type = 'html';
 
     return '<h1>Hello World</h1>';
@@ -383,9 +383,9 @@ export default class ResponseController {
 }
 ```
 
-### 流式响应
+### Stream Response
 
-只需要将流式数据包装为一个 `Readable` 对象并返回即可。
+Simply wrap the streaming data as a `Readable` object and return it.
 
 ```typescript
 import { Readable } from 'node:stream';
@@ -398,11 +398,11 @@ import {
   HTTPMethodEnum,
 } from 'egg';
 
-// 构造流式数据
+// Construct streaming data
 async function* generate(count = 5, duration = 500) {
   yield '<html><head><title>hello stream</title></head><body>';
   for (let i = 0; i < count; i++) {
-    yield `<h2>流式内容${i + 1}，${Date()}</h2>`;
+    yield `<h2>Stream content ${i + 1}, ${Date()}</h2>`;
     await setTimeout(duration);
   }
   yield '</body></html>';

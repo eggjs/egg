@@ -1,7 +1,4 @@
----
-title: Application Startup Configuration
-order: 12
----
+# Application Startup Configuration
 
 When the application starts up, we often need to set up some initialization logic. The application bootstraps with those specific configurations. It is in a healthy state and be able to take external service requests after those configurations successfully applied. Otherwise, it failed.
 
