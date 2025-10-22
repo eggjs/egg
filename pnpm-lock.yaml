@@ -547,8 +547,8 @@ catalogs:
       specifier: ^4.2.0
       version: 4.2.0
     tsdown:
-      specifier: 0.15.6
-      version: 0.15.6
+      specifier: 0.15.9
+      version: 0.15.9
     tsx:
       specifier: 4.20.6
       version: 4.20.6
@@ -701,7 +701,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -732,7 +732,7 @@ importers:
         version: link:../../packages/tsconfig
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -796,7 +796,7 @@ importers:
         version: 5.5.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -836,7 +836,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -921,7 +921,7 @@ importers:
         version: 3.6.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1105,7 +1105,7 @@ importers:
         version: 1.0.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1123,7 +1123,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1141,7 +1141,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1259,7 +1259,7 @@ importers:
         version: 4.0.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1311,7 +1311,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1345,7 +1345,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1403,7 +1403,7 @@ importers:
         version: 1.19.25
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1440,7 +1440,7 @@ importers:
         version: 4.21.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1470,7 +1470,7 @@ importers:
         version: 2.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1501,7 +1501,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1547,7 +1547,7 @@ importers:
         version: 2.3.0(chokidar@3.6.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1575,7 +1575,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1615,7 +1615,7 @@ importers:
         version: 11.0.3
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1679,7 +1679,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1728,7 +1728,7 @@ importers:
         version: 2.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1768,7 +1768,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1805,7 +1805,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1854,7 +1854,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1942,7 +1942,7 @@ importers:
         version: 1.0.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1979,7 +1979,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2022,7 +2022,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2043,7 +2043,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2089,7 +2089,7 @@ importers:
         version: 7.7.3
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2117,7 +2117,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2166,7 +2166,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2197,7 +2197,7 @@ importers:
         version: link:../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2232,7 +2232,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2257,7 +2257,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2303,7 +2303,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2334,7 +2334,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2371,7 +2371,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2414,7 +2414,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2436,7 +2436,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2476,7 +2476,7 @@ importers:
         version: 0.0.33
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2531,7 +2531,7 @@ importers:
         version: 2.3.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2556,7 +2556,7 @@ importers:
         version: 5.5.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2599,7 +2599,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2627,7 +2627,7 @@ importers:
         version: 5.5.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2679,7 +2679,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2701,7 +2701,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2732,7 +2732,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2769,7 +2769,7 @@ importers:
         version: 2.2.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2803,7 +2803,7 @@ importers:
         version: 0.0.33
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2840,7 +2840,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2865,7 +2865,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2880,7 +2880,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2950,7 +2950,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -2987,7 +2987,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3009,7 +3009,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3027,7 +3027,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3079,7 +3079,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3131,7 +3131,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3146,7 +3146,7 @@ importers:
         version: 24.9.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3174,7 +3174,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3253,7 +3253,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3323,7 +3323,7 @@ importers:
         version: 11.1.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3381,7 +3381,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3445,7 +3445,7 @@ importers:
         version: 3.15.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3503,7 +3503,7 @@ importers:
         version: link:../../../packages/egg
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3573,7 +3573,7 @@ importers:
         version: 3.6.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3631,7 +3631,7 @@ importers:
         version: 4.0.2
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3662,7 +3662,7 @@ importers:
         version: 9.6.0
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
 
   tools/egg-bin:
     dependencies:
@@ -3753,7 +3753,7 @@ importers:
         version: 6.0.1
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -3802,7 +3802,7 @@ importers:
         version: 1.23.0(oxlint-tsgolint@0.2.0)
       tsdown:
         specifier: 'catalog:'
-        version: 0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
+        version: 0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -8111,8 +8111,8 @@ packages:
   rndm@1.2.0:
     resolution: {integrity: sha512-fJhQQI5tLrQvYIYFpOnFinzv9dwmR7hRnUz1XqP3OJ1jIweTNOd6aTO4jwQSgcBSFUB+/KHJxuGneime+FdzOw==}
 
-  rolldown-plugin-dts@0.16.11:
-    resolution: {integrity: sha512-9IQDaPvPqTx3RjG2eQCK5GYZITo203BxKunGI80AGYicu1ySFTUyugicAaTZWRzFWh9DSnzkgNeMNbDWBbSs0w==}
+  rolldown-plugin-dts@0.16.12:
+    resolution: {integrity: sha512-9dGjm5oqtKcbZNhpzyBgb8KrYiU616A7IqcFWG7Msp1RKAXQ/hapjivRg+g5IYWSiFhnk3OKYV5T4Ft1t8Cczg==}
     engines: {node: '>=20.18.0'}
     peerDependencies:
       '@ts-macro/tsc': ^0.3.6
@@ -8633,8 +8633,8 @@ packages:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
 
-  tsdown@0.15.6:
-    resolution: {integrity: sha512-W6++O3JeV9gm3JY6P/vLiC7zzTcJbZhQxXb+p3AvRMpDOPBIg82yXULyZCcwjsihY/bFG+Qw37HkezZbP7fzUg==}
+  tsdown@0.15.9:
+    resolution: {integrity: sha512-C0EJYpXIYdlJokTumIL4lmv/wEiB20oa6iiYsXFE7Q0VKF3Ju6TQ7XAn4JQdm+2iQGEfl8cnEKcX5DB7iVR5Dw==}
     engines: {node: '>=20.19.0'}
     hasBin: true
     peerDependencies:
@@ -13409,7 +13409,7 @@ snapshots:
 
   rndm@1.2.0: {}
 
-  rolldown-plugin-dts@0.16.11(oxc-resolver@11.10.0)(rolldown@1.0.0-beta.44)(typescript@5.9.3):
+  rolldown-plugin-dts@0.16.12(oxc-resolver@11.10.0)(rolldown@1.0.0-beta.44)(typescript@5.9.3):
     dependencies:
       '@babel/generator': 7.28.3
       '@babel/parser': 7.28.4
@@ -13981,7 +13981,7 @@ snapshots:
       minimist: 1.2.8
       strip-bom: 3.0.0
 
-  tsdown@0.15.6(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4):
+  tsdown@0.15.9(oxc-resolver@11.10.0)(typescript@5.9.3)(unplugin-unused@0.5.4):
     dependencies:
       ansis: 4.2.0
       cac: 6.7.14
@@ -13991,7 +13991,7 @@ snapshots:
       empathic: 2.0.0
       hookable: 5.5.3
       rolldown: 1.0.0-beta.44
-      rolldown-plugin-dts: 0.16.11(oxc-resolver@11.10.0)(rolldown@1.0.0-beta.44)(typescript@5.9.3)
+      rolldown-plugin-dts: 0.16.12(oxc-resolver@11.10.0)(rolldown@1.0.0-beta.44)(typescript@5.9.3)
       semver: 7.7.3
       tinyexec: 1.0.1
       tinyglobby: 0.2.15
