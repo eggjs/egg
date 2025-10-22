@@ -80,7 +80,7 @@ jobs:
 
       - name: Start Redis (MacOS or Linux)
         if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest' }}
-        uses: shogo82148/actions-setup-redis@c04803072c41cb7407800faf677b1e3384959c3b # v1
+        uses: shogo82148/actions-setup-redis@712e9d9eb2a89b3b4b4a6e15e8de5d2cfe208eec # v1
         with:
           redis-version: '7'
           auto-start: 'true'
