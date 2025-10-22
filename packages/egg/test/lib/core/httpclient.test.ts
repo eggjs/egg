@@ -64,7 +64,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
       (err: any) => {
         // assert.equal(err.name, 'HttpClientError');
         assert.equal(err.code, 'ENETUNREACH');
-        // assert.equal(err.message, 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/zh-cn/faq/httpclient_ENETUNREACH ]');
+        // assert.equal(err.message, 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/faq/httpclient_ENETUNREACH ]');
         return true;
       }
     );

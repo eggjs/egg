@@ -27,7 +27,7 @@ import { SingletonProto, AccessLevel } from 'egg';
 
 @SingletonProto({
   // 确保 Proto 的访问级别为 PUBLIC
-  accessLevel: AccessLevel.PUBLIC,
+  accessLevel: AccessLevel.PUBLIC, // [!code focus]
 })
 export class Foo {
   async bar(): Promise<string> {

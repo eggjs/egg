@@ -1,4 +1,8 @@
+import path from 'node:path';
+import fs from 'node:fs';
+
 import { defineConfig, type DefaultTheme } from 'vitepress';
+
 import { version } from '../../package.json';
 
 // https://vitepress.dev/reference/site-config
@@ -120,6 +124,10 @@ export default defineConfig({
         },
       },
     },
+  },
+
+  markdown: {
+    lineNumbers: false,
   },
 });
 
@@ -442,10 +450,15 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
 }
 
 function sidebarFaq(): DefaultTheme.SidebarItem[] {
+  const faqFiles = fs.readdirSync(path.join(import.meta.dirname, '../docs/faq'));
+  const faqItems = faqFiles.map(file => ({
+    text: file.replace('.md', ''),
+    link: `${file}`,
+  }));
   return [
     {
       text: 'FAQ',
-      items: [{ text: 'TEGG_EGG_PROTO_NOT_FOUND', link: 'TEGG_EGG_PROTO_NOT_FOUND' }],
+      items: faqItems,
     },
   ];
 }

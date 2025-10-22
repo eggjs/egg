@@ -88,7 +88,7 @@ export class HTTPControllerRegister implements ControllerRegister {
         this.checkRouters,
         this.eggContainerFactory
       );
-      // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/zh-cn/faq/TEGG_ROUTER_CONFLICT ]
+      // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/faq/TEGG_ROUTER_CONFLICT ]
       // methodRegister.checkDuplicate();
       methodRegister.register(rootProtoManager);
     }
