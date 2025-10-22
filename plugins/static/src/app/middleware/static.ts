@@ -16,7 +16,7 @@ export default (options: StaticConfig, app: Application): MiddlewareFunc => {
 
   function rangeMiddleware(ctx: Context, next: Next) {
     // if match static file, and use range middleware.
-    const isMatch = prefixes.some(p => ctx.path.startsWith(p));
+    const isMatch = prefixes.some((p) => ctx.path.startsWith(p));
     if (isMatch) {
       return range(ctx as any, next);
     }
@@ -40,7 +40,7 @@ export default (options: StaticConfig, app: Application): MiddlewareFunc => {
     } else {
       assert(
         typeof dirObj.dir === 'string',
-        '`config.static.dirs` should contains `[].dir` property when object style'
+        '`config.static.dirs` should contains `[].dir` property when object style',
       );
       newOptions = {
         ...options,

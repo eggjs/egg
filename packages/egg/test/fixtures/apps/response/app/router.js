@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', function () {
     this.body = 'hello';
     assert.equal(this.response.length, 5);

@@ -85,7 +85,7 @@ describe('test/index.test.ts', () => {
         1: 'what',
         2: new Date(81, 8, 4),
       },
-      'string + array is array'
+      'string + array is array',
     );
   });
 
@@ -137,7 +137,7 @@ describe('test/index.test.ts', () => {
         7: 's',
         8: 't',
       },
-      'number + string is object form of string'
+      'number + string is object form of string',
     );
   });
 
@@ -156,7 +156,7 @@ describe('test/index.test.ts', () => {
         1: 'what',
         2: new Date(81, 8, 4),
       },
-      'number + arr is object with array contents'
+      'number + arr is object with array contents',
     );
   });
 
@@ -475,7 +475,7 @@ describe('test/index.test.ts', () => {
           },
         },
       },
-      'original object is merged'
+      'original object is merged',
     );
     assert.deepEqual(
       deep,
@@ -502,7 +502,7 @@ describe('test/index.test.ts', () => {
           },
         },
       },
-      'deep is unchanged'
+      'deep is unchanged',
     );
     assert.deepEqual(
       target,
@@ -533,7 +533,7 @@ describe('test/index.test.ts', () => {
           },
         },
       },
-      'deep + object + object is deeply merged object'
+      'deep + object + object is deeply merged object',
     );
 
     (target.layer as any).deep = 339;
@@ -562,7 +562,7 @@ describe('test/index.test.ts', () => {
           },
         },
       },
-      'deep is unchanged after setting target property'
+      'deep is unchanged after setting target property',
     );
     // ----- NEVER USE EXTEND WITH THE ABOVE SITUATION ------------------------------
   });

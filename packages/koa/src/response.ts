@@ -154,7 +154,7 @@ export class Response {
       onFinish(this.res, destroy.bind(null, val));
       // oxlint-disable-next-line eqeqeq
       if (original != val) {
-        val.once('error', err => this.ctx.onerror(err));
+        val.once('error', (err) => this.ctx.onerror(err));
         // overwriting
         if (original !== null && original !== undefined) {
           this.remove('Content-Length');
@@ -420,7 +420,7 @@ export class Response {
     if (typeof field === 'string') {
       let value = val as string | string[];
       if (Array.isArray(val)) {
-        value = val.map(v => (typeof v === 'string' ? v : String(v)));
+        value = val.map((v) => (typeof v === 'string' ? v : String(v)));
       } else if (typeof val !== 'string') {
         value = String(val);
       }

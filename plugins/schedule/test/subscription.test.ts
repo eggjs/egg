@@ -27,7 +27,10 @@ describe('cluster - subscription', () => {
 describe('cluster - subscription-generator', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('subscription-generator'), workers: 1 });
+    app = mm.cluster({
+      baseDir: getFixtures('subscription-generator'),
+      workers: 1,
+    });
     // app.debug();
     await app.ready();
   });
@@ -43,7 +46,10 @@ describe('cluster - subscription-generator', () => {
 describe('cluster - subscription-enableFastContextLogger', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('subscription-enableFastContextLogger'), workers: 1 });
+    app = mm.cluster({
+      baseDir: getFixtures('subscription-enableFastContextLogger'),
+      workers: 1,
+    });
     // app.debug();
     await app.ready();
   });

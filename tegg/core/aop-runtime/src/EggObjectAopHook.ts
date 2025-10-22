@@ -22,7 +22,7 @@ export class EggObjectAopHook implements LifecycleHook<EggObjectLifeCycleContext
     }
     for (const aspect of aspectList) {
       for (const advice of aspect.adviceList) {
-        const injectObject = eggObject.proto.injectObjects.find(t => t.objName === advice.name);
+        const injectObject = eggObject.proto.injectObjects.find((t) => t.objName === advice.name);
         assert(injectObject, `not found inject advice ${advice.name}`);
         const adviceObj = EggContainerFactory.getEggObject(injectObject!.proto, advice.name);
         Object.defineProperty(obj, advice.name, {

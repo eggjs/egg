@@ -2,7 +2,7 @@
 
 module.exports = function (agent) {
   let count = 1;
-  agent.messenger.on('egg-pids', data => console.log('#%s agent get %s workers', count++, data.length, data));
+  agent.messenger.on('egg-pids', (data) => console.log('#%s agent get %s workers', count++, data.length, data));
 };
 
 process.on('message', function (msg) {

@@ -39,9 +39,9 @@ export class EventHandlerFactory {
   async getHandlers(event: EventName): Promise<Array<EventHandler<keyof Events>>> {
     const handlerProtos = this.getHandlerProtos(event);
     return await Promise.all(
-      handlerProtos.map(proto => {
+      handlerProtos.map((proto) => {
         return this.getHandler(proto);
-      })
+      }),
     );
   }
 

@@ -23,7 +23,7 @@ it('should check extends', async () => {
     // .debug()
     .expect(
       'stdout',
-      / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/
+      / Property 'hello' is missing in type 'BarContextHello' but required in type 'AbstractContextHello'/,
     )
     .notExpect('code', 0)
     .end();

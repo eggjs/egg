@@ -63,7 +63,7 @@ describe('test/lib/plugins/session.test.ts', () => {
         sessionUid: '1',
         uid: '2',
       })
-      .expect(res => {
+      .expect((res) => {
         assert(!res.headers['set-cookie']);
       })
       .expect(200);

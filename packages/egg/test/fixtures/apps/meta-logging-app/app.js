@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.ready(() => {
     app.config.tips = 'hello egg started';
     // dynamic router

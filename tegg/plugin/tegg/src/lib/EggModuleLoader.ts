@@ -21,7 +21,7 @@ export class EggModuleLoader {
   private async buildAppGraph() {
     for (const plugin of Object.values(this.app.plugins)) {
       if (!plugin.enable) continue;
-      const modulePlugin = this.app.moduleReferences.find(t => t.path === plugin.path);
+      const modulePlugin = this.app.moduleReferences.find((t) => t.path === plugin.path);
       if (modulePlugin) {
         modulePlugin.optional = false;
       }
@@ -30,7 +30,7 @@ export class EggModuleLoader {
     for (const moduleDescriptor of moduleDescriptors) {
       ModuleDescriptorDumper.dump(moduleDescriptor, {
         dumpDir: this.app.baseDir,
-      }).catch(e => {
+      }).catch((e) => {
         e.message = 'dump module descriptor failed: ' + e.message;
         this.app.logger.warn(e);
       });

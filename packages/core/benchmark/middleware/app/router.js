@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   const asyncMiddlewares = [];
 
   for (let i = 0; i < 20; i++) {

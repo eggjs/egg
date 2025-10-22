@@ -27,7 +27,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .httpRequest()
       .get('/apps/foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.app).toBe('mock-app:foo');
       });
   });
@@ -38,7 +38,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .httpRequest()
       .get('/apps/foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.app).toBe('mock-app:foo');
       });
     expect((global as any).constructAppService).toBeUndefined();
@@ -50,7 +50,7 @@ describe('plugin/controller/test/http/module.test.ts', () => {
       .httpRequest()
       .get('/apps2/foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.app).toBe('mock-app:foo');
       });
     expect((global as any).constructAppService).toBe(true);

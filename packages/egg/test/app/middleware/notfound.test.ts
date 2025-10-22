@@ -74,7 +74,7 @@ describe('test/app/middleware/notfound.test.ts', () => {
         .httpRequest()
         .get('/notfound')
         .expect(
-          '<h1>404 Not Found</h1><p><pre><code>config.notfound.pageUrl(/notfound)</code></pre> is unimplemented</p>'
+          '<h1>404 Not Found</h1><p><pre><code>config.notfound.pageUrl(/notfound)</code></pre> is unimplemented</p>',
         )
         .expect(404);
     });

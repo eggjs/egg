@@ -50,7 +50,7 @@ export class Master extends ReadyEventEmitter {
 
   constructor(options?: ClusterOptions) {
     super();
-    this.#start(options).catch(err => {
+    this.#start(options).catch((err) => {
       this.ready(err);
     });
   }
@@ -65,7 +65,9 @@ export class Master extends ReadyEventEmitter {
 
     // app started or not
     this.isStarted = false;
-    this.logger = new ConsoleLogger({ level: process.env.EGG_MASTER_LOGGER_LEVEL ?? 'INFO' });
+    this.logger = new ConsoleLogger({
+      level: process.env.EGG_MASTER_LOGGER_LEVEL ?? 'INFO',
+    });
     this.#logMethod = 'info';
     if (this.options.env === 'local' || process.env.NODE_ENV === 'development') {
       this.#logMethod = 'debug';
@@ -99,7 +101,7 @@ export class Master extends ReadyEventEmitter {
       '[master] start with env: isProduction: %s, EGG_SERVER_ENV: %s, NODE_ENV: %s',
       this.isProduction,
       this.options.env,
-      process.env.NODE_ENV
+      process.env.NODE_ENV,
     );
 
     const startTime = Date.now();
@@ -107,13 +109,15 @@ export class Master extends ReadyEventEmitter {
     this.ready(() => {
       this.isStarted = true;
       const stickyMsg = this.options.sticky ? ' with STICKY MODE!' : '';
-      const startedURL = terminalLink(this.#appAddress, this.#appAddress, { fallback: false });
+      const startedURL = terminalLink(this.#appAddress, this.#appAddress, {
+        fallback: false,
+      });
       this.logger.info(
         '[master] %s started on %s (%sms)%s',
         frameworkPkg.name,
         startedURL,
         Date.now() - startTime,
-        stickyMsg
+        stickyMsg,
       );
       if (this.options.debugPort) {
         const url = getAddress({
@@ -259,7 +263,7 @@ export class Master extends ReadyEventEmitter {
         {
           pauseOnConnect: true,
         },
-        connection => {
+        (connection) => {
           // We received a connection and need to pass it to the appropriate
           // worker. Get the worker for this connection's source IP and pass
           // it the connection.
@@ -274,7 +278,7 @@ export class Master extends ReadyEventEmitter {
             const worker = this.stickyWorker(connection.remoteAddress) as AppProcessWorker;
             worker.instance.send('sticky-session:connection', connection);
           }
-        }
+        },
       )
       .listen(this.#realPort, cb);
   }
@@ -350,8 +354,8 @@ export class Master extends ReadyEventEmitter {
         agentWorker.instance.id,
         agentWorker.instance.workerId,
         data.code,
-        data.signal
-      )
+        data.signal,
+      ),
     );
     err.name = 'AgentWorkerDiedError';
     this.logger.error(err);
@@ -373,7 +377,7 @@ export class Master extends ReadyEventEmitter {
       this.logger.error(
         '[master] agent_worker#%s:%s start fail, exiting with code:1',
         agentWorker.instance.id,
-        agentWorker.instance.workerId
+        agentWorker.instance.workerId,
       );
       process.exit(1);
     }
@@ -413,7 +417,7 @@ export class Master extends ReadyEventEmitter {
       '[master] agent_worker#%s:%s started (%sms)',
       this.agentWorker.instance.id,
       this.agentWorker.instance.workerId,
-      Date.now() - this.agentWorker.startTime
+      Date.now() - this.agentWorker.startTime,
     );
   }
 
@@ -434,7 +438,7 @@ export class Master extends ReadyEventEmitter {
         signal,
         worker.exitedAfterDisconnect,
         worker.state,
-        this.workerManager.listWorkerIds()
+        this.workerManager.listWorkerIds(),
       );
       if (this.options.isDebug && signal === 'SIGKILL') {
         // exit if died during debug
@@ -517,7 +521,7 @@ export class Master extends ReadyEventEmitter {
       worker.workerId,
       address.port,
       remain,
-      Date.now() - this.appWorker.startTime
+      Date.now() - this.appWorker.startTime,
     );
 
     // Send egg-ready when app is started after launched
@@ -550,7 +554,7 @@ export class Master extends ReadyEventEmitter {
     this.#appAddress = getAddress(address);
 
     if (this.options.sticky) {
-      this.startMasterSocketServer(err => {
+      this.startMasterSocketServer((err) => {
         if (err) {
           return this.ready(err);
         }

@@ -245,7 +245,7 @@ describe('test/options.test.ts', () => {
       ];
       assert(
         expectPaths.includes(options.framework),
-        `should get egg at ${expectPaths.join(', ')}, but got ${options.framework}`
+        `should get egg at ${expectPaths.join(', ')}, but got ${options.framework}`,
       );
     });
   });

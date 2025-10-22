@@ -35,12 +35,12 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
   }
 
   run(fn: () => Promise<void>): void {
-    const backgroundTask = new Promise<void>(resolve => {
+    const backgroundTask = new Promise<void>((resolve) => {
       try {
         fn()
           // fn is resolve, resolve the task
           .then(resolve)
-          .catch(e => {
+          .catch((e) => {
             e.message = '[BackgroundTaskHelper] background throw error:' + e.message;
             this.logger.error(e);
             // fn is rejected, resolve the task
@@ -86,11 +86,11 @@ export class BackgroundTaskHelper implements EggObjectLifecycle {
     let promiseResolve: () => void;
     const now = Date.now();
 
-    const p = new Promise<void>(r => {
+    const p = new Promise<void>((r) => {
       promiseResolve = r;
       timer = setTimeout(() => {
         this.logger.error(
-          `[BackgroundTaskHelper] task is timeout actual is ${Date.now() - now} expect is ${this.timeout}`
+          `[BackgroundTaskHelper] task is timeout actual is ${Date.now() - now} expect is ${this.timeout}`,
         );
         r();
       }, this.timeout);

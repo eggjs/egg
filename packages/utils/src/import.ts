@@ -63,7 +63,7 @@ export function isSupportTypeScript(): boolean {
       Object.keys(extensions),
       process.env.VITEST,
       process.env.EGG_TS_ENABLE,
-      process.versions.node
+      process.versions.node,
     );
   }
   return _supportTypeScript;
@@ -122,7 +122,7 @@ function tryToResolveByDirnameFromPackage(dirname: string, pkg: any): string | u
         '[tryToResolveByDirnameFromPackage] %o, use pkg.main or pkg.module: %o, isESM: %s',
         mainIndexFilePath,
         defaultMainFile,
-        isESM
+        isESM,
       );
       return mainIndexFilePath;
     }
@@ -169,7 +169,7 @@ function tryToResolveByDirnameFromPackage(dirname: string, pkg: any): string | u
         '[tryToResolveByDirnameFromPackage] %o, use pkg.exports[.]: %o, pkg.type: %o',
         mainIndexFilePath,
         defaultExport,
-        pkgType
+        pkgType,
       );
       return mainIndexFilePath;
     }

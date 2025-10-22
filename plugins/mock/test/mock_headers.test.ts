@@ -22,7 +22,7 @@ describe('test/mock_headers.test.ts', () => {
 
     await request(app.callback())
       .get('/header')
-      .expect(res => {
+      .expect((res) => {
         assert.equal(res.body.header, '');
       })
       .expect(200);
@@ -35,7 +35,7 @@ describe('test/mock_headers.test.ts', () => {
     });
     await request(app.callback())
       .get('/header')
-      .expect(res => {
+      .expect((res) => {
         assert.equal(res.body.header, 'customheader');
       })
       .expect(200);
@@ -48,7 +48,7 @@ describe('test/mock_headers.test.ts', () => {
     });
     await request(app.callback())
       .get('/header')
-      .expect(res => {
+      .expect((res) => {
         assert.equal(res.body.header, 'customheader');
       })
       .expect(200);

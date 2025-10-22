@@ -24,7 +24,9 @@ describe('test/view/cache.test.ts', () => {
       await app.ready();
 
       templateFilePath = path.join(app.config.baseDir, 'app/view/home.tpl');
-      templateContent = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
+      templateContent = fs.readFileSync(templateFilePath, {
+        encoding: 'utf-8',
+      });
     });
 
     afterEach(async () => {
@@ -121,7 +123,9 @@ describe('test/view/cache.test.ts', () => {
       await app.ready();
 
       templateFilePath = path.join(app.config.baseDir, 'app/view/home.tpl');
-      templateContent = fs.readFileSync(templateFilePath, { encoding: 'utf-8' });
+      templateContent = fs.readFileSync(templateFilePath, {
+        encoding: 'utf-8',
+      });
     });
 
     afterEach(async () => {

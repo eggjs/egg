@@ -13,13 +13,13 @@ export class IndexMetaBuilder {
   }
 
   build(): Array<IndexMeta> {
-    return ModelInfoUtil.getModelIndices(this.clazz).map(indexInfo => this.buildIndexMeta(indexInfo));
+    return ModelInfoUtil.getModelIndices(this.clazz).map((indexInfo) => this.buildIndexMeta(indexInfo));
   }
 
   private buildIndexMeta(indexInfo: ModelIndexInfo): IndexMeta {
     const fields: string[] = [];
     for (const field of indexInfo.fields) {
-      const attribute = this.attributes.find(t => t.propertyName === field);
+      const attribute = this.attributes.find((t) => t.propertyName === field);
       if (!attribute) {
         throw new Error(`model ${this.clazz.name} has no attribute named ${field}`);
       }
@@ -30,7 +30,9 @@ export class IndexMetaBuilder {
     if (indexInfo.options?.name) {
       indexName = indexInfo.options!.name;
     } else {
-      indexName = NameUtil.getIndexName(fields, { unique: indexInfo.options?.unique });
+      indexName = NameUtil.getIndexName(fields, {
+        unique: indexInfo.options?.unique,
+      });
     }
     return new IndexMeta(indexName, fields, indexInfo.options?.unique ?? false, indexInfo.options?.primary ?? false);
   }

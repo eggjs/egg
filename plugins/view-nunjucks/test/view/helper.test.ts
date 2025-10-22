@@ -36,8 +36,8 @@ describe.skipIf(process.platform === 'win32')('test/view/helper.test.ts', () => 
         value: bar
         value: bar
         /nunjucks_filters
-      `
-        )
+      `,
+        ),
       );
   });
 

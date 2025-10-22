@@ -33,13 +33,13 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
       const controllerDir = path.join(baseDir, 'app/controller');
       const loader = new EggControllerLoader(controllerDir);
 
-      LoadUnitFactory.registerLoadUnitCreator(CONTROLLER_LOAD_UNIT, ctx => {
+      LoadUnitFactory.registerLoadUnitCreator(CONTROLLER_LOAD_UNIT, (ctx) => {
         return new ControllerLoadUnit(
           'tegg-app-controller',
           ctx.unitPath,
           ctx.loader,
           new EggPrototypeFactory(),
-          EggPrototypeCreatorFactory
+          EggPrototypeCreatorFactory,
         );
       });
 
@@ -62,12 +62,12 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
             methodMeta,
             router,
             new Map(),
-            EggContainerFactory
+            EggContainerFactory,
           );
           await register.checkDuplicate();
         }
       }).rejects.toThrow(
-        /RouterConflictError: register http controller GET AppController.get failed, GET \/apps\/:id is conflict with exists rule \/apps\/:id/
+        /RouterConflictError: register http controller GET AppController.get failed, GET \/apps\/:id is conflict with exists rule \/apps\/:id/,
       );
     });
 
@@ -85,12 +85,12 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
           } as any,
           router,
           new Map(),
-          EggContainerFactory
+          EggContainerFactory,
         );
 
         await register.checkDuplicate();
       }).rejects.toThrow(
-        /RouterConflictError: register http controller GET AppController.test failed, GET \/apps\/123 is conflict with exists rule \/apps\/:id/
+        /RouterConflictError: register http controller GET AppController.test failed, GET \/apps\/123 is conflict with exists rule \/apps\/:id/,
       );
     });
 
@@ -108,7 +108,7 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
             methodMeta,
             router,
             routerMap,
-            EggContainerFactory
+            EggContainerFactory,
           );
           await register.checkDuplicate();
         }
@@ -119,12 +119,12 @@ describe('plugin/controller/test/lib/HTTPControllerRegister.test.ts', () => {
             methodMeta,
             router,
             routerMap,
-            EggContainerFactory
+            EggContainerFactory,
           );
           await register.checkDuplicate();
         }
       }).rejects.toThrow(
-        /RouterConflictError: register http controller GET AppController2\.get failed, GET \/foo\/:id is conflict with exists rule \/foo\/:id/
+        /RouterConflictError: register http controller GET AppController2\.get failed, GET \/foo\/:id is conflict with exists rule \/foo\/:id/,
       );
     });
   });

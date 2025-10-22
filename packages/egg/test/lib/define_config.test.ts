@@ -34,7 +34,7 @@ describe('test/lib/define_config.test.ts', () => {
     });
 
     it('should work with config factory function', () => {
-      const configFactory = defineConfigFactory(appInfo => ({
+      const configFactory = defineConfigFactory((appInfo) => ({
         keys: appInfo.name + '_keys',
         middleware: [],
         env: appInfo.env,

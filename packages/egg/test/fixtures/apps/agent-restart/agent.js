@@ -2,7 +2,7 @@
 
 const client = require('./client');
 
-module.exports = agent => {
+module.exports = (agent) => {
   agent.startAgent({
     name: 'mock',
     client: client,

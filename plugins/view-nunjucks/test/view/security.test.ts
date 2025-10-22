@@ -44,7 +44,7 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         <html>
         <p>arr</p>
         <p>obj</p>
-      `
+      `,
       );
   });
 
@@ -59,7 +59,7 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         http://eggjs.github.io/index.html?a=<div>
         http://eggjs.github.io/index.html?a=&lt;div&gt;
         &lt;div id=&quot;a&quot;&gt;&#39;a&#39;&lt;/div&gt;
-      `
+      `,
       );
   });
 
@@ -230,7 +230,9 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         .httpRequest()
         .get('/sandbox')
         .query({ name: 'bar' })
-        .query({ tpl: "{{global.process.mainModule.require('child_process').execSync('tail /etc/passwd')}}" })
+        .query({
+          tpl: "{{global.process.mainModule.require('child_process').execSync('tail /etc/passwd')}}",
+        })
         .expect(/Unable to call `global\["process"\]\["mainModule"\]\["require"\]`, which is undefined or falsey/)
         .expect(500);
     });
@@ -240,7 +242,9 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         .httpRequest()
         .get('/sandbox')
         .query({ name: 'bar' })
-        .query({ tpl: "{{global.process.mainModule.require('child_process').execSync('tail /etc/passwd')}}" })
+        .query({
+          tpl: "{{global.process.mainModule.require('child_process').execSync('tail /etc/passwd')}}",
+        })
         .expect(/Unable to call `global\["process"\]\["mainModule"\]\["require"\]`, which is undefined or falsey/)
         .expect(500);
     });
@@ -250,7 +254,9 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         .httpRequest()
         .get('/sandbox')
         .query({ name: 'bar' })
-        .query({ tpl: "{{process.mainModule.require('child_process').execSync('tail /etc/passwd')}}" })
+        .query({
+          tpl: "{{process.mainModule.require('child_process').execSync('tail /etc/passwd')}}",
+        })
         .expect(/Unable to call `process\["mainModule"\]\["require"\]`, which is undefined or falsey/)
         .expect(500);
     });
@@ -260,7 +266,9 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         .httpRequest()
         .get('/sandbox')
         .query({ name: 'bar' })
-        .query({ tpl: "{{global.process.mainModule.require('os').platform()}}" })
+        .query({
+          tpl: "{{global.process.mainModule.require('os').platform()}}",
+        })
         .expect(/Unable to call `global\["process"\]\["mainModule"\]\["require"\]`, which is undefined or falsey/)
         .expect(500);
     });

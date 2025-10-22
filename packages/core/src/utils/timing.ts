@@ -107,6 +107,6 @@ export class Timing {
       times = width / timelineDuration;
     }
     // follow https://github.com/node-modules/time-profile/blob/master/lib/profiler.js#L88
-    return prefix + EOL + this.#list.map(item => this.itemToString(timelineEnd, item, times)).join(EOL);
+    return prefix + EOL + this.#list.map((item) => this.itemToString(timelineEnd, item, times)).join(EOL);
   }
 }

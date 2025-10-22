@@ -50,11 +50,11 @@ export class EggPrototypeCreatorFactory {
       })!;
       assert(
         multiInstanceProtoInfo,
-        `multiInstanceProtoInfo is undefined, clazz: ${clazz.name}, unitPath: ${loadUnit.unitPath}, moduleName: ${loadUnit.name}`
+        `multiInstanceProtoInfo is undefined, clazz: ${clazz.name}, unitPath: ${loadUnit.unitPath}, moduleName: ${loadUnit.name}`,
       );
       for (const obj of multiInstanceProtoInfo.objects) {
-        defaultQualifier.forEach(qualifier => {
-          if (!obj.qualifiers.find(t => t.attribute === qualifier.attribute)) {
+        defaultQualifier.forEach((qualifier) => {
+          if (!obj.qualifiers.find((t) => t.attribute === qualifier.attribute)) {
             obj.qualifiers.push(qualifier);
           }
         });
@@ -74,8 +74,8 @@ export class EggPrototypeCreatorFactory {
       if (!property.qualifiers) {
         property.qualifiers = [];
       }
-      defaultQualifier.forEach(qualifier => {
-        if (!property.qualifiers!.find(t => t.attribute === qualifier.attribute)) {
+      defaultQualifier.forEach((qualifier) => {
+        if (!property.qualifiers!.find((t) => t.attribute === qualifier.attribute)) {
           property.qualifiers!.push(qualifier);
         }
       });
@@ -105,11 +105,11 @@ export class EggPrototypeCreatorFactory {
     if (debug.enabled && loadUnit.name === 'egg-app') {
       debug(
         'createProto, get protos:%o, from clazz:%o, from loadUnit:%o:%o:%o',
-        protos.map(t => t.name),
+        protos.map((t) => t.name),
         clazz.name,
         loadUnit.type,
         loadUnit.name,
-        loadUnit.unitPath
+        loadUnit.unitPath,
       );
     }
     return protos;
@@ -117,7 +117,7 @@ export class EggPrototypeCreatorFactory {
 
   static async createProtoByDescriptor(
     protoDescriptor: ClassProtoDescriptor,
-    loadUnit: LoadUnit
+    loadUnit: LoadUnit,
   ): Promise<EggPrototype> {
     const creator = this.getPrototypeCreator(protoDescriptor.protoImplType);
     if (!creator) {

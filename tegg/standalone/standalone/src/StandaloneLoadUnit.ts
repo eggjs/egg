@@ -34,7 +34,7 @@ export class StandaloneLoadUnit implements LoadUnit {
           (() => obj) as any,
           ObjectInitType.SINGLETON,
           this.id,
-          qualifiers || []
+          qualifiers || [],
         );
         EggPrototypeFactory.instance.registerPrototype(proto, this);
       }
@@ -42,12 +42,12 @@ export class StandaloneLoadUnit implements LoadUnit {
   }
 
   containPrototype(proto: EggPrototype): boolean {
-    return !!this.protoMap.get(proto.name)?.find(t => t === proto);
+    return !!this.protoMap.get(proto.name)?.find((t) => t === proto);
   }
 
   getEggPrototype(name: string, qualifiers: QualifierInfo[]): EggPrototype[] {
     const protos = this.protoMap.get(name);
-    return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
+    return protos?.filter((proto) => proto.verifyQualifiers(qualifiers)) || [];
   }
 
   registerEggPrototype(proto: EggPrototype): void {

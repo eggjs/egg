@@ -52,7 +52,7 @@ describe('test/framework/formatter.test.ts', () => {
       });
       const message = FrameworkErrorFormatter.format(err);
       expect(message).toMatch(
-        /errorContext: \{"str":"str","num":123,"obj":\{"buf":\{"type":"Buffer","data":\[97,97,97\]\},"obj":\{"date":".*","obj":\{"arr":\["abc",123\]\}\},"arr":\[false,true\]\}\}/
+        /errorContext: \{"str":"str","num":123,"obj":\{"buf":\{"type":"Buffer","data":\[97,97,97\]\},"obj":\{"date":".*","obj":\{"arr":\["abc",123\]\}\},"arr":\[false,true\]\}\}/,
       );
     });
 

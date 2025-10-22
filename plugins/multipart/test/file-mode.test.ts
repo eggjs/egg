@@ -69,7 +69,11 @@ describe('test/file-mode.test.ts', () => {
 
     expect(res.status).toBe(200);
     const data = JSON.parse(res.data);
-    expect(data.body).toEqual({ foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    expect(data.body).toEqual({
+      foo: 'fengmk2',
+      love: 'egg',
+      work: 'with Node.js',
+    });
     expect(data.files.length).toBe(3);
     expect(data.files[0].field).toBe('file1');
     expect(data.files[0].filename).toBe('foooooooo.js');
@@ -366,7 +370,7 @@ describe('test/file-mode.test.ts', () => {
       const currentMonth = new Date().getMonth();
       const fourMonthBefore = path.join(
         app.config.multipart.tmpdir,
-        dayjs().subtract(4, 'months').format('YYYY/MM/DD/HH')
+        dayjs().subtract(4, 'months').format('YYYY/MM/DD/HH'),
       );
       if (currentMonth < 4) {
         // if current month is less than April, four months before should be last year.
@@ -374,14 +378,14 @@ describe('test/file-mode.test.ts', () => {
       } else {
         shouldKeepDirs.push(fourMonthBefore);
       }
-      await Promise.all(oldDirs.map(dir => fs.mkdir(dir, { recursive: true })));
-      await Promise.all(shouldKeepDirs.map(dir => fs.mkdir(dir, { recursive: true })));
+      await Promise.all(oldDirs.map((dir) => fs.mkdir(dir, { recursive: true })));
+      await Promise.all(shouldKeepDirs.map((dir) => fs.mkdir(dir, { recursive: true })));
 
       await Promise.all(
-        oldDirs.map(dir => {
+        oldDirs.map((dir) => {
           // create files
           return fs.writeFile(path.join(dir, Date.now() + ''), Date());
-        })
+        }),
       );
 
       app.mockLog();

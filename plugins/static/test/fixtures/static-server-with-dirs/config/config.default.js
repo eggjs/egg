@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   return {
     keys: 'aaa',
     static: {

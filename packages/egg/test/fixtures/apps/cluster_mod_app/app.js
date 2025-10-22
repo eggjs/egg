@@ -11,9 +11,9 @@ module.exports = function (app) {
     {
       dataId: 'demo.DemoService',
     },
-    val => {
+    (val) => {
       app.val = val;
-    }
+    },
   );
 
   app.apiClient = new ApiClient({ cluster: app.cluster });

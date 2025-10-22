@@ -110,7 +110,7 @@ export class GlobalGraph {
   buildInjectEdge(
     moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>,
     protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
-    injectObj: InjectObjectDescriptor
+    injectObj: InjectObjectDescriptor,
   ): void {
     const injectProto = this.findDependencyProtoNode(protoNode.val.proto, injectObj);
     if (!injectProto) {
@@ -118,7 +118,7 @@ export class GlobalGraph {
         return;
       }
       throw FrameworkErrorFormatter.formatError(
-        new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName)
+        new EggPrototypeNotFound(injectObj.objName, protoNode.val.proto.instanceModuleName),
       );
     }
     this.addInject(moduleNode, protoNode, injectProto, injectObj.objName);
@@ -128,14 +128,14 @@ export class GlobalGraph {
     moduleNode: GraphNode<GlobalModuleNode, ModuleDependencyMeta>,
     protoNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
     injectNode: GraphNode<ProtoNode, ProtoDependencyMeta>,
-    injectName: PropertyKey
+    injectName: PropertyKey,
   ): void {
     this.protoGraph.addEdge(
       protoNode,
       injectNode,
       new ProtoDependencyMeta({
         injectObj: injectName,
-      })
+      }),
     );
     const injectModule = this.findModuleNode(injectNode.val.proto.instanceModuleName);
     if (!injectModule) {
@@ -154,7 +154,7 @@ export class GlobalGraph {
       ProtoNode.createProtoId(proto),
       new ProtoDependencyMeta({
         injectObj: injectObject.objName,
-      })
+      }),
     );
     return edge?.val.proto;
   }
@@ -162,7 +162,7 @@ export class GlobalGraph {
   #findDependencyProtoWithDefaultQualifiers(
     proto: ProtoDescriptor,
     injectObject: InjectObjectDescriptor,
-    qualifiers: QualifierInfo[]
+    qualifiers: QualifierInfo[],
   ): GraphNode<ProtoNode, ProtoDependencyMeta>[] {
     // TODO perf O(n(proto count)*m(inject count)*n)
     const result: GraphNode<ProtoNode, ProtoDependencyMeta>[] = [];
@@ -182,7 +182,7 @@ export class GlobalGraph {
 
   findDependencyProtoNode(
     proto: ProtoDescriptor,
-    injectObject: InjectObjectDescriptor
+    injectObject: InjectObjectDescriptor,
   ): GraphNode<ProtoNode, ProtoDependencyMeta> | undefined {
     // 1. find proto with request
     // 2. try to add Context qualifier to find
@@ -215,7 +215,7 @@ export class GlobalGraph {
     if (protoWithSelfInitType.length === 1) {
       return protoWithSelfInitType[0];
     }
-    const loadUnitQualifier = injectObject.qualifiers.find(t => t.attribute === LoadUnitNameQualifierAttribute);
+    const loadUnitQualifier = injectObject.qualifiers.find((t) => t.attribute === LoadUnitNameQualifierAttribute);
     if (!loadUnitQualifier) {
       return this.findDependencyProtoNode(proto, {
         ...injectObject,
@@ -246,10 +246,10 @@ export class GlobalGraph {
     debug('sortModule, loopPath: %o', loopPath);
     this.moduleConfigList = this.moduleGraph
       .sort()
-      .filter(t => {
+      .filter((t) => {
         return t.val.optional !== true || t.fromNodeMap.size > 0;
       })
-      .map(t => {
+      .map((t) => {
         return {
           name: t.val.name,
           path: t.val.unitPath,

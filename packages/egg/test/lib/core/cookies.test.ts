@@ -134,7 +134,7 @@ describe('test/lib/core/cookies.test.ts', () => {
       assert(cookie);
       assert.equal(
         cookie,
-        'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly'
+        'cookiedel=; path=/hello; expires=Thu, 01 Jan 1970 00:00:00 GMT; domain=eggjs.org; secure; httponly',
       );
       const expires = cookie.match(/expires=([^;]+);/)![1];
       assert.equal(new Date() > new Date(expires), true);

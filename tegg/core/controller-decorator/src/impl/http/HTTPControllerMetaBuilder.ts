@@ -54,7 +54,7 @@ export class HTTPControllerMetaBuilder {
       methods,
       needAcl,
       aclCode,
-      hosts
+      hosts,
     );
     ControllerMetadataUtil.setControllerMetadata(this.clazz, metadata);
     for (const method of metadata.methods) {

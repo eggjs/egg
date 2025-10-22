@@ -144,7 +144,10 @@ function nav(): DefaultTheme.NavItem[] {
       activeMatch: '/community/',
       items: [
         { text: 'Community', link: '/community/' },
-        { text: 'Contributing', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md' },
+        {
+          text: 'Contributing',
+          link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.md',
+        },
         { text: 'Frequently Asked Questions', link: '/community/faq' },
         { text: 'Common Errors', link: '/faq/' },
         { text: 'CNode Community', link: 'https://cnodejs.org/' },
@@ -200,7 +203,10 @@ function navZhCN(): DefaultTheme.NavItem[] {
       activeMatch: '/zh-CN/community/',
       items: [
         { text: '社区', link: '/zh-CN/community/' },
-        { text: '参与贡献', link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md' },
+        {
+          text: '参与贡献',
+          link: 'https://github.com/eggjs/egg/blob/next/CONTRIBUTING.zh-CN.md',
+        },
         { text: '常见问题', link: '/zh-CN/community/faq' },
         { text: '常见错误', link: '/zh-CN/faq/' },
         { text: 'CNode 社区', link: 'https://cnodejs.org/' },
@@ -451,7 +457,7 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
 
 function sidebarFaq(): DefaultTheme.SidebarItem[] {
   const faqFiles = fs.readdirSync(path.join(import.meta.dirname, '../docs/faq'));
-  const faqItems = faqFiles.map(file => ({
+  const faqItems = faqFiles.map((file) => ({
     text: file.replace('.md', ''),
     link: `${file}`,
   }));

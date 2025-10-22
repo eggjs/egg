@@ -24,7 +24,7 @@ describe('test/nosniff.test.ts', () => {
       .httpRequest()
       .get('/disable')
       .set('accept', 'text/html')
-      .expect(res => expect(res.headers['x-content-type-options']).toBeUndefined())
+      .expect((res) => expect(res.headers['x-content-type-options']).toBeUndefined())
       .expect(200);
   });
 
@@ -32,7 +32,7 @@ describe('test/nosniff.test.ts', () => {
     await app
       .httpRequest()
       .get('/redirect')
-      .expect(res => expect(res.headers['x-content-type-options']).toBeUndefined())
+      .expect((res) => expect(res.headers['x-content-type-options']).toBeUndefined())
       .expect('location', '/')
       .expect(302);
   });
@@ -41,7 +41,7 @@ describe('test/nosniff.test.ts', () => {
     return app
       .httpRequest()
       .get('/redirect301')
-      .expect(res => expect(res.headers['x-content-type-options']).toBeUndefined())
+      .expect((res) => expect(res.headers['x-content-type-options']).toBeUndefined())
       .expect('location', '/')
       .expect(301);
   });
@@ -50,7 +50,7 @@ describe('test/nosniff.test.ts', () => {
     return app
       .httpRequest()
       .get('/redirect307')
-      .expect(res => expect(res.headers['x-content-type-options']).toBeUndefined())
+      .expect((res) => expect(res.headers['x-content-type-options']).toBeUndefined())
       .expect('location', '/')
       .expect(307);
   });

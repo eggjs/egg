@@ -22,7 +22,9 @@ export function getPublishablePackages(baseDir) {
       const fullDir = path.join(baseDir, dirPath);
 
       if (fs.existsSync(fullDir)) {
-        const folders = fs.readdirSync(fullDir).filter(folder => fs.statSync(path.join(fullDir, folder)).isDirectory());
+        const folders = fs
+          .readdirSync(fullDir)
+          .filter((folder) => fs.statSync(path.join(fullDir, folder)).isDirectory());
 
         for (const folder of folders) {
           const packageJsonPath = path.join(fullDir, folder, 'package.json');

@@ -9,7 +9,7 @@ const defaultPointcutOptions = {
 
 export function Pointcut<T extends object, K = any>(
   adviceClazz: EggProtoImplClass<IAdvice<T, K>>,
-  options?: PointcutOptions<K>
+  options?: PointcutOptions<K>,
 ) {
   return function (target: any, propertyKey: PropertyKey): void {
     assert(AdviceInfoUtil.isAdvice(adviceClazz), `class ${adviceClazz} has no @Advice decorator`);
@@ -22,7 +22,7 @@ export function Pointcut<T extends object, K = any>(
         adviceParams: options?.adviceParams,
       },
       targetClazz,
-      methodName
+      methodName,
     );
   };
 }

@@ -13,7 +13,10 @@ import { getFixtures } from './utils.ts';
 describe('rotate_by_day', () => {
   let app: MockApplication;
   beforeAll(() => {
-    fs.rmSync(getFixtures('logrotator-app/logs'), { force: true, recursive: true });
+    fs.rmSync(getFixtures('logrotator-app/logs'), {
+      force: true,
+      recursive: true,
+    });
     app = mm.app({
       baseDir: getFixtures('logrotator-app'),
       cache: false,
@@ -51,8 +54,8 @@ describe('rotate_by_day', () => {
 
     const files = glob.sync(path.join(app.config.logger.dir, '*.log.*'));
     expect(files.length).toBeGreaterThan(4);
-    expect(files.some(name => name.includes('foo1.log.'))).toBe(true);
-    expect(files.some(name => name.includes('relative.log.'))).toBe(true);
+    expect(files.some((name) => name.includes('foo1.log.'))).toBe(true);
+    expect(files.some((name) => name.includes('relative.log.'))).toBe(true);
     for (const file of files) {
       expect(file).toMatch(/log.\d{4}-\d{2}-\d{2}$/);
     }
@@ -107,13 +110,13 @@ describe('rotate_by_day', () => {
     });
     fs.writeFileSync(
       path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`),
-      'foo'
+      'foo',
     );
     await app.runSchedule(schedule);
     expect(
       fs.existsSync(
-        path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`)
-      )
+        path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`),
+      ),
     ).toBe(true);
   });
 
@@ -123,13 +126,13 @@ describe('rotate_by_day', () => {
     });
     fs.writeFileSync(
       path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`),
-      'foo'
+      'foo',
     );
     await app.runSchedule(schedule);
     expect(
       fs.existsSync(
-        path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`)
-      )
+        path.join(app.config.logger.dir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`),
+      ),
     ).toBe(true);
   });
 

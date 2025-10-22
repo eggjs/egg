@@ -1,6 +1,6 @@
 const { scheduler } = require('node:timers/promises');
 
-module.exports = app => {
+module.exports = (app) => {
   const timeout = process.env.EGG_MASTER_CLOSE_TIMEOUT || 5000;
 
   app.beforeClose(async () => {

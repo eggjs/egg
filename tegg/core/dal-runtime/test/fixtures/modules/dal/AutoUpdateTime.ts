@@ -10,7 +10,7 @@ export class AutoUpdateTime {
       primaryKey: true,
       autoIncrement: true,
       comment: 'the primary key',
-    }
+    },
   )
   id: number;
 
@@ -21,7 +21,7 @@ export class AutoUpdateTime {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   date: Date;
 
@@ -33,7 +33,7 @@ export class AutoUpdateTime {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   date2: Date;
 
@@ -44,7 +44,7 @@ export class AutoUpdateTime {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   date3: Date;
 
@@ -56,7 +56,7 @@ export class AutoUpdateTime {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   date4: Date;
 }

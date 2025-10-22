@@ -98,7 +98,7 @@ export class EggObjectUtil {
           Object.setPrototypeOf(obj, v);
           return true;
         },
-      }
+      },
     );
     return proxy;
   }
@@ -174,7 +174,7 @@ export class EggObjectUtil {
             Object.setPrototypeOf(obj, v);
             return true;
           },
-        }
+        },
       );
     }
     return proto[PROTO_OBJ_PROXY];

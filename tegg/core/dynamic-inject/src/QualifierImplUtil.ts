@@ -6,23 +6,23 @@ export class QualifierImplUtil {
   static addQualifierImpl(
     abstractClazz: EggAbstractClazz,
     qualifierValue: QualifierValue,
-    implClazz: EggProtoImplClass
+    implClazz: EggProtoImplClass,
   ): void {
     const implMap = MetadataUtil.initOwnMapMetaData(
       QUALIFIER_IMPL_MAP,
       abstractClazz as unknown as EggProtoImplClass,
-      new Map()
+      new Map(),
     );
     implMap.set(qualifierValue, implClazz);
   }
 
   static getQualifierImp(
     abstractClazz: EggAbstractClazz,
-    qualifierValue: QualifierValue
+    qualifierValue: QualifierValue,
   ): EggProtoImplClass | undefined {
     const implMap: Map<QualifierValue, EggProtoImplClass> | undefined = MetadataUtil.getMetaData(
       QUALIFIER_IMPL_MAP,
-      abstractClazz as unknown as EggProtoImplClass
+      abstractClazz as unknown as EggProtoImplClass,
     );
     return implMap?.get(qualifierValue);
   }
@@ -30,7 +30,7 @@ export class QualifierImplUtil {
   static getQualifierImpMap(abstractClazz: EggAbstractClazz): Map<QualifierValue, EggProtoImplClass> {
     const implMap: Map<QualifierValue, EggProtoImplClass> | undefined = MetadataUtil.getMetaData(
       QUALIFIER_IMPL_MAP,
-      abstractClazz as unknown as EggProtoImplClass
+      abstractClazz as unknown as EggProtoImplClass,
     );
     return implMap || new Map();
   }

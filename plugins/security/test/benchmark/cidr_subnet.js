@@ -27,14 +27,14 @@ suite
   .add('0.0.0/32 not match', () => {
     parsed1.contains('0.0.0.1');
   })
-  .on('cycle', event => {
+  .on('cycle', (event) => {
     benchmarks.add(event.target);
   })
   .on('start', () => {
     console.log(
       '\n  ip.cidrsubnet().contains() Benchmark\n  node version: %s, date: %s\n  Starting...',
       process.version,
-      Date()
+      Date(),
     );
   })
   .on('complete', () => {

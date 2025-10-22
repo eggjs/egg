@@ -25,7 +25,7 @@ describe('plugin/dal/test/dal.test.ts', () => {
   });
 
   it('should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const fooDAO = await ctx.getEggObject(FooDAO);
       const foo = new Foo();
       foo.name = 'name';

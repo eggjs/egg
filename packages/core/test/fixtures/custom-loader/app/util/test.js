@@ -1,3 +1,3 @@
 'use strict';
 
-exports.sayHi = name => `hi, ${name}`;
+exports.sayHi = (name) => `hi, ${name}`;

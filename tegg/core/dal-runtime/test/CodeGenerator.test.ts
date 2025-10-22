@@ -37,13 +37,13 @@ describe('test/CodeGenerator.test.ts', () => {
     await generator.generate(multiPrimaryKeyTableModel);
     const daoFile = await fs.readFile(
       path.join(__dirname, './fixtures/modules/generate_codes_not_overwrite_dao/dal/dao/FooDAO.ts'),
-      'utf8'
+      'utf8',
     );
     assert(/customFind/.test(daoFile));
 
     const extensionFile = await fs.readFile(
       path.join(__dirname, './fixtures/modules/generate_codes_not_overwrite_dao/dal/extension/FooExtension.ts'),
-      'utf8'
+      'utf8',
     );
     assert(/customFind/.test(extensionFile));
   });
@@ -59,7 +59,7 @@ describe('test/CodeGenerator.test.ts', () => {
 
     const daoFile = await fs.readFile(
       path.join(__dirname, './fixtures/modules/generate_codes_to_src/src/dal/dao/FooDAO.ts'),
-      'utf8'
+      'utf8',
     );
     assert(daoFile);
   });

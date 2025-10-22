@@ -1,6 +1,6 @@
 const path = require('path');
 
-module.exports = info => {
+module.exports = (info) => {
   const exports = {
     keys: 'test key',
   };

@@ -45,7 +45,7 @@ class RegistryClient extends Base {
     }
     this.emit(
       key,
-      this._registered.get(key).map(url => parse(url, true))
+      this._registered.get(key).map((url) => parse(url, true)),
     );
   }
 

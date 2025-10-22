@@ -17,7 +17,7 @@ describe('test/app/extend/context.jsonp.test.ts', () => {
       .expect('Content-Type', 'application/javascript; charset=utf-8')
       .expect('X-Content-Type-Options', 'nosniff')
       .expect(
-        '/**/ typeof $jQuery110208780175377614796_1406016639408 === \'function\' && $jQuery110208780175377614796_1406016639408({"name":"fengmk2"});'
+        '/**/ typeof $jQuery110208780175377614796_1406016639408 === \'function\' && $jQuery110208780175377614796_1406016639408({"name":"fengmk2"});',
       )
       .expect(200);
   });

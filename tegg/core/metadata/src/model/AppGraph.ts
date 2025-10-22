@@ -29,7 +29,7 @@ export interface InstanceClazzMeta {
 export type ClazzMetaMap = Record<EggPrototypeName, InstanceClazzMeta[]>;
 
 function verifyQualifier(clazzQualifiers: QualifierInfo[], qualifier: QualifierInfo) {
-  const selfQualifiers = clazzQualifiers.find(t => t.attribute === qualifier.attribute);
+  const selfQualifiers = clazzQualifiers.find((t) => t.attribute === qualifier.attribute);
   return selfQualifiers?.value === qualifier.value;
 }
 
@@ -108,14 +108,14 @@ export class ClazzMap {
   findDependencyModule(
     objName: EggPrototypeName,
     properQualifiers: QualifierInfo[],
-    intoModule: GraphNode<ModuleNode>
+    intoModule: GraphNode<ModuleNode>,
   ): GraphNode<ModuleNode>[] {
     const result: Set<GraphNode<ModuleNode>> = new Set();
     const objInfo = this.clazzMap[objName];
     if (!objInfo) {
       return [];
     }
-    let mayObjs = objInfo.filter(obj => {
+    let mayObjs = objInfo.filter((obj) => {
       // 1. check accessLevel
       if (obj.instanceModule !== intoModule && obj.accessLevel === AccessLevel.PRIVATE) {
         return false;
@@ -126,12 +126,12 @@ export class ClazzMap {
 
     // 3. auto set init type qualifier
     if (mayObjs.length > 1) {
-      const initTypeQualifiers = INIT_TYPE_TRY_ORDER.map(type => ({
+      const initTypeQualifiers = INIT_TYPE_TRY_ORDER.map((type) => ({
         attribute: InitTypeQualifierAttribute,
         value: type,
       }));
       for (const initTypeQualifier of initTypeQualifiers) {
-        const mayInitTypeObjs = mayObjs.filter(obj => {
+        const mayInitTypeObjs = mayObjs.filter((obj) => {
           return verifyQualifiers(obj.qualifiers, [...properQualifiers, initTypeQualifier]);
         });
         if (mayInitTypeObjs.length > 0) {
@@ -146,7 +146,7 @@ export class ClazzMap {
         attribute: LoadUnitNameQualifierAttribute,
         value: intoModule.val.name,
       };
-      const mayLoadUnitNameObjs = mayObjs.filter(obj => {
+      const mayLoadUnitNameObjs = mayObjs.filter((obj) => {
         return verifyQualifiers(obj.qualifiers, [...properQualifiers, moduleNameQualifiers]);
       });
       if (mayLoadUnitNameObjs.length > 0) {
@@ -159,9 +159,9 @@ export class ClazzMap {
         'multi class found for %s@%o in module %j',
         objName,
         properQualifiers,
-        mayObjs.map(t => {
+        mayObjs.map((t) => {
           return t.instanceModule.val.moduleConfig.path;
-        })
+        }),
       );
       throw new Error(message);
     }
@@ -272,7 +272,7 @@ export class AppGraph {
                 const dependencyModules = this.clazzMap.findDependencyModule(
                   injectObject.objName,
                   properQualifiers,
-                  node
+                  node,
                 );
                 for (const moduleNode of dependencyModules) {
                   // 5. add edge
@@ -305,9 +305,9 @@ export class AppGraph {
     }
     this.moduleConfigList = this.graph
       .sort()
-      .filter(t => {
+      .filter((t) => {
         return t.val.moduleConfig.optional !== true || t.fromNodeMap.size > 0;
       })
-      .map(t => t.val.moduleConfig);
+      .map((t) => t.val.moduleConfig);
   }
 }

@@ -385,8 +385,8 @@ describe.skip('agent and worker exception', () => {
 
     assert(
       app.stderr.includes(
-        'nodejs.ClusterWorkerExceptionError: [master] 0 agent and 1 worker(s) alive, exit to avoid unknown state'
-      )
+        'nodejs.ClusterWorkerExceptionError: [master] 0 agent and 1 worker(s) alive, exit to avoid unknown state',
+      ),
     );
     assert(app.stderr.includes('[master] exit with code:1'));
   });
@@ -406,8 +406,8 @@ describe.skip('agent and worker exception', () => {
 
     assert(
       app.stderr.includes(
-        'nodejs.ClusterWorkerExceptionError: [master] 1 agent and 0 worker(s) alive, exit to avoid unknown state'
-      )
+        'nodejs.ClusterWorkerExceptionError: [master] 1 agent and 0 worker(s) alive, exit to avoid unknown state',
+      ),
     );
     assert(app.stderr.includes('[master] exit with code:1'));
   });

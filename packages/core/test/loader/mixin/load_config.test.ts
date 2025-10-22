@@ -66,7 +66,7 @@ describe('test/loader/mixin/load_config.test.ts', () => {
         foo: {
           bar: 'env_bar',
         },
-      })
+      }),
     );
     app = createApp('config-env-app-config');
     const loader = app.loader;

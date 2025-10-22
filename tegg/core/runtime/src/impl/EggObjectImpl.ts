@@ -55,7 +55,7 @@ export class EggObjectImpl implements EggObject {
         await objLifecycleHook[preInjectMethod](ctx, this);
       }
       await Promise.all(
-        this.proto.injectObjects.map(async injectObject => {
+        this.proto.injectObjects.map(async (injectObject) => {
           const proto = injectObject.proto;
           const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
           if (!loadUnit) {
@@ -67,13 +67,13 @@ export class EggObjectImpl implements EggObject {
           ) {
             this.injectProperty(
               injectObject.refName,
-              EggObjectUtil.contextEggObjectGetProperty(proto, injectObject.objName)
+              EggObjectUtil.contextEggObjectGetProperty(proto, injectObject.objName),
             );
           } else {
             const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
             this.injectProperty(injectObject.refName, EggObjectUtil.eggObjectGetProperty(injectObj));
           }
-        })
+        }),
       );
 
       // global hook
@@ -105,7 +105,7 @@ export class EggObjectImpl implements EggObject {
     // 5. success create
     try {
       const constructArgs: any[] = await Promise.all(
-        this.proto.injectObjects!.map(async injectObject => {
+        this.proto.injectObjects!.map(async (injectObject) => {
           const proto = injectObject.proto;
           const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
           if (!loadUnit) {
@@ -119,18 +119,18 @@ export class EggObjectImpl implements EggObject {
           }
           const injectObj = await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
           return EggObjectUtil.eggObjectProxy(injectObj);
-        })
+        }),
       );
       if (typeof this.proto.multiInstanceConstructorIndex !== 'undefined') {
         const qualifiers =
           this.proto.multiInstanceConstructorAttributes
-            ?.map(t => {
+            ?.map((t) => {
               return {
                 attribute: t,
                 value: this.proto.getQualifier(t),
               } as QualifierInfo;
             })
-            ?.filter(t => typeof t.value !== 'undefined') ?? [];
+            ?.filter((t) => typeof t.value !== 'undefined') ?? [];
         const objInfo: ObjectInfo = {
           name: this.proto.name,
           qualifiers,
@@ -221,7 +221,7 @@ export class EggObjectImpl implements EggObject {
   static async createObject(
     name: EggObjectName,
     proto: EggPrototype,
-    lifecycleContext: EggObjectLifeCycleContext
+    lifecycleContext: EggObjectLifeCycleContext,
   ): Promise<EggObjectImpl> {
     const obj = new EggObjectImpl(name, proto);
     await obj.init(lifecycleContext);

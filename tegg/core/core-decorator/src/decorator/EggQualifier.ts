@@ -10,7 +10,7 @@ export function EggQualifier(eggType: EggType) {
       propertyKey,
       parameterIndex,
       EggQualifierAttribute,
-      eggType
+      eggType,
     );
   };
 }

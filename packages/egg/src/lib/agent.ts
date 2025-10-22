@@ -25,7 +25,7 @@ export class Agent extends EggApplicationCore {
       () => {
         this.coreLogger.info('[]');
       },
-      24 * 60 * 60 * 1000
+      24 * 60 * 60 * 1000,
     );
   }
 

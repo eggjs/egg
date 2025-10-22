@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.emit('eventOnReady');
   app.emit('eventOnReady');
   app.emit('eventOnceReady');

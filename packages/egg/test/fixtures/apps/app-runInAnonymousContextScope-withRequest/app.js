@@ -23,7 +23,7 @@ module.exports = class Boot {
       },
     };
 
-    await this.app.runInAnonymousContextScope(async ctx => {
+    await this.app.runInAnonymousContextScope(async (ctx) => {
       ctx.logger.info('inside before close on ctx logger');
       this.app.logger.info('inside before close on app logger');
     }, request);

@@ -2,7 +2,7 @@ module.exports = function (app) {
   app.get('/shtml-configuration', async function () {
     this.body =
       this.helper.shtml(
-        '<h1>Hello</h1><img onload="alert(1);" src="http://xx.com/1.png" title="this is image"><a title="xx">aa</a>'
+        '<h1>Hello</h1><img onload="alert(1);" src="http://xx.com/1.png" title="this is image"><a title="xx">aa</a>',
       ) == '&lt;h1&gt;Hello&lt;/h1&gt;<img><a title="xx">aa</a>';
   });
 

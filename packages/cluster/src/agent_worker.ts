@@ -40,7 +40,9 @@ async function main() {
     AgentWorker = AgentProcessWorker as any;
   }
 
-  const consoleLogger = new ConsoleLogger({ level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL });
+  const consoleLogger = new ConsoleLogger({
+    level: process.env.EGG_AGENT_WORKER_LOGGER_LEVEL,
+  });
   const { Agent } = await importModule(options.framework, {
     paths: [options.baseDir],
   });

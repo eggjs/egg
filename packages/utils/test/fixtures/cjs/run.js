@@ -4,5 +4,5 @@ console.log(
   '%o',
   importResolve(__dirname, {
     paths: __dirname,
-  })
+  }),
 );

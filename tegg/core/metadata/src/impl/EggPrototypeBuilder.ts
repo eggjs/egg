@@ -57,7 +57,7 @@ export class EggPrototypeBuilder {
     builder.loadUnit = loadUnit;
     builder.qualifiers = QualifierUtil.mergeQualifiers(
       QualifierUtil.getProtoQualifiers(clazz),
-      ctx.prototypeInfo.qualifiers ?? []
+      ctx.prototypeInfo.qualifiers ?? [],
     );
     builder.properQualifiers = ctx.prototypeInfo.properQualifiers ?? {};
     builder.multiInstanceConstructorIndex = PrototypeUtil.getMultiInstanceConstructorIndex(clazz);
@@ -71,7 +71,7 @@ export class EggPrototypeBuilder {
     return EggPrototypeFactory.instance.getPrototype(
       injectObject.objName,
       this.loadUnit,
-      QualifierUtil.mergeQualifiers(propertyQualifiers, multiInstancePropertyQualifiers)
+      QualifierUtil.mergeQualifiers(propertyQualifiers, multiInstancePropertyQualifiers),
     );
   }
 
@@ -86,7 +86,7 @@ export class EggPrototypeBuilder {
           attribute: InitTypeQualifierAttribute,
           value: ObjectInitType.CONTEXT,
         },
-      ])
+      ]),
     );
   }
 
@@ -101,7 +101,7 @@ export class EggPrototypeBuilder {
           attribute: InitTypeQualifierAttribute,
           value: this.initType,
         },
-      ])
+      ]),
     );
   }
 
@@ -111,7 +111,10 @@ export class EggPrototypeBuilder {
       return this.tryFindDefaultPrototype(injectObject);
     } catch (e) {
       if (
-        !(e instanceof MultiPrototypeFound && !propertyQualifiers.find(t => t.attribute === InitTypeQualifierAttribute))
+        !(
+          e instanceof MultiPrototypeFound &&
+          !propertyQualifiers.find((t) => t.attribute === InitTypeQualifierAttribute)
+        )
       ) {
         throw e;
       }
@@ -174,7 +177,7 @@ export class EggPrototypeBuilder {
       this.className,
       this.injectType,
       this.multiInstanceConstructorIndex,
-      this.multiInstanceConstructorAttributes
+      this.multiInstanceConstructorAttributes,
     );
   }
 }

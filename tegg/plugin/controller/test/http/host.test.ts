@@ -28,7 +28,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/1')
       .set('host', 'foo.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         console.log('res: ', res.text, res.body);
         expect(res.text).toBe('foo');
       });
@@ -41,7 +41,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/2')
       .set('host', 'bar.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('bar');
       });
   });
@@ -55,7 +55,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/apple')
       .set('host', 'apple.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('apple');
       });
 
@@ -64,7 +64,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/a')
       .set('host', 'a.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('a');
       });
   });
@@ -76,7 +76,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/orange')
       .set('host', 'o.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('orange');
       });
 
@@ -85,7 +85,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/orange')
       .set('host', 'orange.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('orange');
       });
 
@@ -94,7 +94,7 @@ describe('plugin/controller/test/http/host.test.ts', () => {
       .get('/apps/juice')
       .set('host', 'juice.eggjs.com')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('juice');
       });
 

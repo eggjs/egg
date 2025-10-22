@@ -27,7 +27,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
   });
 
   it('msg should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const helloService = await ctx.getEggObject(HelloService);
       let msg: string | undefined;
       // helloLogger is in child context
@@ -43,7 +43,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
   });
 
   it('cork/uncork should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const helloService = await ctx.getEggObject(HelloService);
       let helloTime = 0;
       // helloLogger is in child context
@@ -65,7 +65,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
   });
 
   it('can call cork/uncork multi times', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const helloService = await ctx.getEggObject(HelloService);
       const eventWaiter = await app.getEventWaiter();
 
@@ -89,7 +89,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
   });
 
   it('reentry cork/uncork should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const helloService = await ctx.getEggObject(HelloService);
       const eventWaiter = await app.getEventWaiter();
 
@@ -116,7 +116,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
       helloCalled++;
     });
     await Promise.all([
-      app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async (ctx) => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
@@ -125,7 +125,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
         helloService.uncork();
         await eventWaiter.await('helloEgg');
       }),
-      app.mockModuleContextScope(async ctx => {
+      app.mockModuleContextScope(async (ctx) => {
         const helloService = await ctx.getEggObject(HelloService);
         const eventWaiter = await app.getEventWaiter();
         helloService.cork();
@@ -139,7 +139,7 @@ describe('plugin/eventbus/test/eventbus.test.ts', () => {
   });
 
   it('multi event handler should work', async function () {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const helloService = await ctx.getEggObject(HelloService);
       let eventName = '';
       let msg = '';

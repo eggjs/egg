@@ -17,8 +17,8 @@ describe('test/builder/ModelMetaBuilder.test.ts', () => {
           new AttributeMeta('varchar(20)', 'name', 'name', true, false, false, false),
           new AttributeMeta('varchar(20)', 'foo', 'foo', true, false, false, true),
         ],
-        [new IndexMeta('uk_name', ['name'], true, false)]
-      )
+        [new IndexMeta('uk_name', ['name'], true, false)],
+      ),
     );
   });
 });

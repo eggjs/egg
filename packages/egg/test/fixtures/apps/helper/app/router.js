@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('home', '/home', 'home');
 
   app.get('/pathFor', function () {

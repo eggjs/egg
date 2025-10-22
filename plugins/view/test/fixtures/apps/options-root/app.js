@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   class View {
     async render(name, locals, options) {
       return {

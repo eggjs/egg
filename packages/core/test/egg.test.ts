@@ -61,7 +61,7 @@ describe('test/egg.test.ts', () => {
             // @ts-expect-error test error
             type: 'nothing',
           }),
-        /options.type should be application or agent/
+        /options.type should be application or agent/,
       );
     });
 
@@ -72,7 +72,7 @@ describe('test/egg.test.ts', () => {
             // @ts-expect-error test error
             baseDir: 1,
           }),
-        /options.baseDir required, and must be a string/
+        /options.baseDir required, and must be a string/,
       );
     });
 
@@ -82,7 +82,7 @@ describe('test/egg.test.ts', () => {
           new EggCore({
             baseDir: 'not-exist',
           }),
-        /not-exist not exists/
+        /not-exist not exists/,
       );
     });
 
@@ -92,7 +92,7 @@ describe('test/egg.test.ts', () => {
           new EggCore({
             baseDir: getFilepath('egg/index.js'),
           }),
-        /not a directory|no such file or directory/
+        /not a directory|no such file or directory/,
       );
     });
 
@@ -152,7 +152,7 @@ describe('test/egg.test.ts', () => {
     afterEach(() => app.close());
 
     // FIXME: no callback done
-    it.skip('should log info when plugin is not ready', done => {
+    it.skip('should log info when plugin is not ready', (done) => {
       app = createApp('notready');
       mm(app.console, 'warn', (message: string, b: any, a: any) => {
         assert.equal(message, '[@eggjs/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.');
@@ -170,7 +170,7 @@ describe('test/egg.test.ts', () => {
     });
 
     // FIXME: not work in vitest
-    it.skip('should log info when plugin is ready', done => {
+    it.skip('should log info when plugin is ready', (done) => {
       app = createApp('ready');
       app.loader.loadAll();
       let message = '';
@@ -808,7 +808,7 @@ describe('test/egg.test.ts', () => {
         let error: any;
         try {
           await new Promise((_resolve, reject) => {
-            app.on('error', err => reject(err));
+            app.on('error', (err) => reject(err));
           });
         } catch (e) {
           error = e;
@@ -830,7 +830,7 @@ describe('test/egg.test.ts', () => {
         let error: any;
         try {
           await new Promise((_resolve, reject) => {
-            app.on('error', err => reject(err));
+            app.on('error', (err) => reject(err));
           });
         } catch (e) {
           error = e;
@@ -881,7 +881,7 @@ describe('test/egg.test.ts', () => {
       it('should warn write filename and function', async () => {
         let timeoutId: any;
         const app = createApp('boot-timeout');
-        app.once('ready_timeout', id => {
+        app.once('ready_timeout', (id) => {
           timeoutId = id;
         });
         await app.loader.loadAll();

@@ -1,11 +1,11 @@
 'use strict';
 
-exports.renderEjs = ctx => ctx.render('ext/a.ejs', { data: 1 }, { opt: 1 });
-exports.renderNunjucks = ctx => ctx.render('ext/a.nj', { data: 1 }, { opt: 1 });
-exports.renderWithOptions = ctx => ctx.render('ext/a.nj', {}, { viewEngine: 'ejs' });
+exports.renderEjs = (ctx) => ctx.render('ext/a.ejs', { data: 1 }, { opt: 1 });
+exports.renderNunjucks = (ctx) => ctx.render('ext/a.nj', { data: 1 }, { opt: 1 });
+exports.renderWithOptions = (ctx) => ctx.render('ext/a.nj', {}, { viewEngine: 'ejs' });
 
-exports.renderWithoutExt = ctx => ctx.render('loader/a', { data: 1 }, { opt: 1 });
-exports.renderExtWithoutConfig = ctx => {
+exports.renderWithoutExt = (ctx) => ctx.render('loader/a', { data: 1 }, { opt: 1 });
+exports.renderExtWithoutConfig = (ctx) => {
   try {
     return ctx.render('loader/a.noext');
   } catch (err) {
@@ -13,7 +13,7 @@ exports.renderExtWithoutConfig = ctx => {
   }
 };
 
-exports.renderWithoutViewEngine = ctx => {
+exports.renderWithoutViewEngine = (ctx) => {
   try {
     return ctx.render('loader/a.html');
   } catch (err) {
@@ -21,10 +21,10 @@ exports.renderWithoutViewEngine = ctx => {
   }
 };
 
-exports.renderMultipleRoot = ctx => ctx.render('loader/from-view2.ejs');
-exports.renderMultipleRootWithoutExtension = ctx => ctx.render('loader/from-view2');
-exports.loadSameFile = ctx => ctx.render('loader/a.nj');
-exports.loadFileNoexist = ctx => {
+exports.renderMultipleRoot = (ctx) => ctx.render('loader/from-view2.ejs');
+exports.renderMultipleRootWithoutExtension = (ctx) => ctx.render('loader/from-view2');
+exports.loadSameFile = (ctx) => ctx.render('loader/a.nj');
+exports.loadFileNoexist = (ctx) => {
   try {
     return ctx.render('noexist.ejs');
   } catch (err) {
@@ -34,9 +34,9 @@ exports.loadFileNoexist = ctx => {
 
 const tpl = 'hello world';
 const opt = { viewEngine: 'ejs' };
-exports.renderString = ctx => ctx.renderString(tpl, { data: 1 }, opt).then(data => (ctx.body = data));
+exports.renderString = (ctx) => ctx.renderString(tpl, { data: 1 }, opt).then((data) => (ctx.body = data));
 
-exports.renderStringWithoutViewEngine = ctx => {
+exports.renderStringWithoutViewEngine = (ctx) => {
   try {
     return ctx.renderString(tpl);
   } catch (err) {
@@ -44,7 +44,7 @@ exports.renderStringWithoutViewEngine = ctx => {
   }
 };
 
-exports.renderLocals = ctx => {
+exports.renderLocals = (ctx) => {
   ctx.locals = {
     a: 1,
     b: 1,
@@ -52,7 +52,7 @@ exports.renderLocals = ctx => {
   return ctx.render('ext/a.ejs', { b: 2 });
 };
 
-exports.renderOriginalLocals = ctx => {
+exports.renderOriginalLocals = (ctx) => {
   ctx.locals = {
     a: 1,
     b: 1,
@@ -60,7 +60,7 @@ exports.renderOriginalLocals = ctx => {
   return ctx.render('ext/a.ejs', { b: 2 });
 };
 
-exports.renderStringLocals = ctx => {
+exports.renderStringLocals = (ctx) => {
   ctx.locals = {
     a: 1,
     b: 1,
@@ -68,13 +68,13 @@ exports.renderStringLocals = ctx => {
   return ctx.render('', { b: 2 }, { viewEngine: 'ejs' });
 };
 
-exports.renderStringTwice = async ctx => {
+exports.renderStringTwice = async (ctx) => {
   const opt = { viewEngine: 'ejs' };
   const res = await Promise.all([ctx.renderString('a', {}, opt), ctx.renderString('b', {}, opt)]);
-  ctx.body = res.map(o => o.tpl).join(',');
+  ctx.body = res.map((o) => o.tpl).join(',');
 };
 
-exports.renderAsync = ctx => ctx.render('ext/a.async');
+exports.renderAsync = (ctx) => ctx.render('ext/a.async');
 
-exports.renderStringAsync = ctx =>
-  ctx.renderString('async function', {}, { viewEngine: 'async' }).then(data => (ctx.body = data));
+exports.renderStringAsync = (ctx) =>
+  ctx.renderString('async function', {}, { viewEngine: 'async' }).then((data) => (ctx.body = data));

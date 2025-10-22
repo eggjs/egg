@@ -32,7 +32,7 @@ describe('test/cookie.test.ts', () => {
           path: '/',
           httpOnly: true,
         }).toHeader(),
-        /^name=value; path=\/; max-age=1; expires=(.*?)GMT; domain=eggjs\.org; secure; httponly$/
+        /^name=value; path=\/; max-age=1; expires=(.*?)GMT; domain=eggjs\.org; secure; httponly$/,
       );
     });
 
@@ -73,7 +73,7 @@ describe('test/cookie.test.ts', () => {
           httpOnly: true,
         })
           .toHeader()
-          .match(/^name=value; path=\/; max-age=1; expires=(.*?)GMT; domain=eggjs\.org; secure; httponly$/)
+          .match(/^name=value; path=\/; max-age=1; expires=(.*?)GMT; domain=eggjs\.org; secure; httponly$/),
       );
     });
 
@@ -155,7 +155,7 @@ describe('test/cookie.test.ts', () => {
     describe('when set to falsy values', () => {
       it('should not add "samesite" attribute in header', () => {
         const falsyValues = [false, 0, '', null, undefined, NaN];
-        falsyValues.forEach(falsy => {
+        falsyValues.forEach((falsy) => {
           const cookie = new Cookie('foo', 'bar', { sameSite: falsy as any });
           assert.ok(Object.is(cookie.attrs.sameSite, falsy));
           assert.equal(cookie.toHeader(), 'foo=bar; path=/; httponly');

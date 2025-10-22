@@ -40,7 +40,7 @@ export class HTTPMethodRegister {
     methodMeta: HTTPMethodMeta,
     router: Router,
     checkRouters: Map<string, Router>,
-    eggContainerFactory: typeof EggContainerFactory
+    eggContainerFactory: typeof EggContainerFactory,
   ) {
     this.proto = proto;
     this.controllerMeta = controllerMeta;
@@ -66,11 +66,13 @@ export class HTTPMethodRegister {
       // use controller metadata map http request to function arguments
       const eggObj = await methodRegister.eggContainerFactory.getOrCreateEggObject(
         methodRegister.proto,
-        methodRegister.proto.name
+        methodRegister.proto.name,
       );
       const realObj = eggObj.obj;
       const realMethod = realObj[methodMeta.name];
-      const args: Array<object | string | string[]> = Array.from({ length: methodArgsLength });
+      const args: Array<object | string | string[]> = Array.from({
+        length: methodArgsLength,
+      });
       if (hasContext) {
         args[contextIndex!] = ctx;
       }
@@ -136,7 +138,7 @@ export class HTTPMethodRegister {
     // 2. check duplicate with host tegg controller
     let hostRouter: Router | undefined;
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) || [];
-    hosts.forEach(h => {
+    hosts.forEach((h) => {
       if (h) {
         hostRouter = this.checkRouters.get(h);
         if (!hostRouter) {
@@ -165,7 +167,7 @@ export class HTTPMethodRegister {
     if (matched.route) {
       const [layer] = matched.path;
       const err = new RouterConflictError(
-        `register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`
+        `register http controller ${methodName} failed, ${this.methodMeta.method} ${methodRealPath} is conflict with exists rule ${layer.path}`,
       );
       throw FrameworkErrorFormater.format(err);
     }
@@ -184,7 +186,7 @@ export class HTTPMethodRegister {
       methodMiddlewares.push(aclMiddleware);
     }
     const hosts = this.controllerMeta.getMethodHosts(this.methodMeta) ?? [undefined];
-    hosts.forEach(host => {
+    hosts.forEach((host) => {
       const handler = this.createHandler(this.methodMeta, host);
       Reflect.apply(routerFunc, this.router, [methodName, methodRealPath, ...methodMiddlewares, handler]);
       // https://github.com/eggjs/egg-core/blob/0af6178022e7734c4a8b17bb56d592b315207883/lib/egg.js#L279
@@ -198,7 +200,7 @@ export class HTTPMethodRegister {
             return this.proto;
           }
         },
-        host || ''
+        host || '',
       );
     });
   }

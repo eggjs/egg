@@ -35,7 +35,7 @@ describe('plugin/controller/test/http/request.test.ts', () => {
       .set('test', headerKey)
       .set('cookie', 'test=foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.headers.test).toBe(headerKey);
         expect(res.body.method).toBe('POST');
         expect(res.body.requestBody).toBe(JSON.stringify(param));

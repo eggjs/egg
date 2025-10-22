@@ -161,7 +161,10 @@ export class Router {
           }
         }
       } else {
-        this.register(path || '(.*)', [], m, { end: false, ignoreCaptures: !hasPath });
+        this.register(path || '(.*)', [], m, {
+          end: false,
+          ignoreCaptures: !hasPath,
+        });
       }
     }
 
@@ -295,7 +298,7 @@ export class Router {
 
       const allowed: Record<string, string> = {};
       ctx.matched.forEach((route: Router) => {
-        route.methods.forEach(method => {
+        route.methods.forEach((method) => {
           allowed[method] = method;
         });
       });
@@ -379,7 +382,7 @@ export class Router {
       destination = routeUrl;
     }
 
-    return this.all(source, ctx => {
+    return this.all(source, (ctx) => {
       ctx.redirect(destination);
       ctx.status = status;
     });
@@ -398,7 +401,7 @@ export class Router {
     path: string | RegExp | (string | RegExp)[],
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
-    opts?: RegisterOptions
+    opts?: RegisterOptions,
   ): Layer | Layer[] {
     // support array of paths
     if (Array.isArray(path)) {
@@ -419,7 +422,7 @@ export class Router {
     path: string | RegExp,
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
-    opts?: RegisterOptions
+    opts?: RegisterOptions,
   ): Layer {
     opts = opts ?? {};
     // create route
@@ -606,7 +609,7 @@ export class Router {
   protected _formatRouteParams(
     nameOrPath: string | RegExp | (string | RegExp)[],
     pathOrMiddleware: string | RegExp | (string | RegExp)[] | MiddlewareFunc | ResourcesController,
-    middlewares: (MiddlewareFunc | string | ResourcesController)[]
+    middlewares: (MiddlewareFunc | string | ResourcesController)[],
   ): {
     path: string | RegExp | (string | RegExp)[];
     middlewares: (MiddlewareFunc | string | ResourcesController)[];

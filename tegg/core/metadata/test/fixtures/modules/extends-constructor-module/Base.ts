@@ -26,7 +26,7 @@ export class FooConstructorLogger extends ConstructorBase {
     // @ts-expect-error readonly property in constructor
     @Inject() readonly bar: Bar,
     // @ts-expect-error readonly property in constructor
-    @Inject() readonly logger: Logger
+    @Inject() readonly logger: Logger,
   ) {
     super(logger);
   }

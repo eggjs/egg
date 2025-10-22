@@ -24,7 +24,7 @@ describe('ctx.redirect(url)', () => {
   it('should auto fix not encode url', async () => {
     const app = new Koa();
 
-    app.use(ctx => {
+    app.use((ctx) => {
       ctx.redirect('https://google.com/😓?hello=你好(*´▽｀)ノノ&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28');
     });
 
@@ -32,7 +32,7 @@ describe('ctx.redirect(url)', () => {
     assert.equal(res.status, 302);
     assert.equal(
       res.headers.location,
-      'https://google.com/%F0%9F%98%93?hello=%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28'
+      'https://google.com/%F0%9F%98%93?hello=%E4%BD%A0%E5%A5%BD(*%C2%B4%E2%96%BD%EF%BD%80)%E3%83%8E%E3%83%8E&p=123&q=%F0%9F%98%93%3Fhello%3D%E4%BD%A0%E5%A5%BD%28',
     );
   });
 

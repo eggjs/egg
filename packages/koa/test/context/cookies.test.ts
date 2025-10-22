@@ -73,7 +73,7 @@ describe('ctx.cookies', () => {
         app.proxy = true;
         app.keys = ['a', 'b'];
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.cookies.set('name', 'jon', { signed: true });
           ctx.status = 204;
         });

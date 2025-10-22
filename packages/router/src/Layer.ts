@@ -50,7 +50,7 @@ export class Layer {
     path: string | RegExp,
     methods: string[],
     middlewares: MiddlewareFunc | MiddlewareFunc[],
-    opts?: LayerOptions | string
+    opts?: LayerOptions | string,
   ) {
     if (typeof opts === 'string') {
       // new Layer(path, methods, middlewares, name);
@@ -69,7 +69,7 @@ export class Layer {
     }
 
     // ensure middleware is a function
-    this.stack.forEach(fn => {
+    this.stack.forEach((fn) => {
       const type = typeof fn;
       if (type !== 'function') {
         throw new TypeError(
@@ -79,7 +79,7 @@ export class Layer {
             '`: `middleware` ' +
             'must be a function, not `' +
             type +
-            '`'
+            '`',
         );
       }
       if (isGeneratorFunction(fn)) {
@@ -87,7 +87,7 @@ export class Layer {
           methods.toString() +
             ' `' +
             (this.opts.name || path) +
-            '`: Please use async function instead of generator function'
+            '`: Please use async function instead of generator function',
         );
       }
     });
@@ -195,7 +195,7 @@ export class Layer {
           replace[token.name] = args[j++];
         }
       }
-    } else if (tokens.some(token => typeof token === 'object' && token.name)) {
+    } else if (tokens.some((token) => typeof token === 'object' && token.name)) {
       // route.url(params);
       replace = params as object;
     } else {
@@ -244,7 +244,7 @@ export class Layer {
     };
     middleware.param = param;
 
-    const names = params.map(p => {
+    const names = params.map((p) => {
       return p.name;
     });
 

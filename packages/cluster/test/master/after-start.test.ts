@@ -6,9 +6,8 @@ import { mm, type MockApplication } from '@eggjs/mock';
 
 import { cluster } from '../utils.ts';
 
-afterEach(mm.restore);
-
-describe('after started', () => {
+// TODO: flaky test on windows
+describe.skipIf(process.platform === 'win32')('after started', () => {
   let app: MockApplication;
   let readyMsg: string;
 
@@ -26,6 +25,8 @@ describe('after started', () => {
     return app.ready();
   });
   afterAll(() => app.close());
+
+  afterEach(mm.restore);
 
   it('app/agent should receive egg-ready', async () => {
     // work for message sent

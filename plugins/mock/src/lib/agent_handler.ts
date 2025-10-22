@@ -12,7 +12,7 @@ export async function setupAgent(): Promise<MockAgent> {
     'setupAgent call, env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s, agent: %s',
     process.env.ENABLE_MOCHA_PARALLEL,
     process.env.AUTO_AGENT,
-    !!agent
+    !!agent,
   );
   if (agent) {
     await agent.ready();

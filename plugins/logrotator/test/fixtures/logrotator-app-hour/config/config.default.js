@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   const exports = {
     logrotator: {
       filesRotateByHour: [

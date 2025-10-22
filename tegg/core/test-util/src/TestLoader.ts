@@ -15,7 +15,9 @@ export class TestLoader implements Loader {
 
   async load(): Promise<EggProtoImplClass[]> {
     const protoClassList: EggProtoImplClass[] = [];
-    const files = globby.sync(['**/*', '!**/node_modules', '!**/*.d.ts'], { cwd: this.moduleDir });
+    const files = globby.sync(['**/*', '!**/node_modules', '!**/*.d.ts'], {
+      cwd: this.moduleDir,
+    });
     for (const file of files) {
       const realPath = path.join(this.moduleDir, file);
       const protoClazz = await LoaderUtil.loadFile(realPath);

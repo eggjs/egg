@@ -86,10 +86,10 @@ export class LeoricRegister extends Base {
           tableName: metadata.tableName,
           hooks,
         },
-        {}
+        {},
       );
     }
-    await Promise.all(Array.from(this.realmMap.values()).map(realm => realm.connect()));
+    await Promise.all(Array.from(this.realmMap.values()).map((realm) => realm.connect()));
     this.ready(true);
   }
 }

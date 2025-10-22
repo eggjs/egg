@@ -54,7 +54,7 @@ describe('test/lib/router.test.js', () => {
         ctx.n = ctx.n ? ctx.n + 1 : 1;
         return next();
       },
-      nestedRouter.routes()
+      nestedRouter.routes(),
     );
 
     app.use(parentRouter.routes());
@@ -100,7 +100,7 @@ describe('test/lib/router.test.js', () => {
       },
       function (ctx) {
         ctx.body.message += '!';
-      }
+      },
     );
 
     app.use(router.routes());
@@ -130,7 +130,7 @@ describe('test/lib/router.test.js', () => {
       function (_ctx, next) {
         return next();
       },
-      nestedRouter.routes()
+      nestedRouter.routes(),
     );
 
     app.use(parentRouter.routes());
@@ -215,7 +215,7 @@ describe('test/lib/router.test.js', () => {
       },
       function (ctx) {
         ctx.body = { order: 1 };
-      }
+      },
     );
 
     await request(app.use(router.routes()).callback()).get('/user/account.jsx').expect(404);
@@ -361,7 +361,7 @@ describe('test/lib/router.test.js', () => {
           bar: ctx.bar,
           foo: ctx.foo,
         };
-      }
+      },
     );
     const res = await request(app.callback()).get('/match/this').expect(200);
     expect(res.body.bar).toBe('baz');
@@ -405,7 +405,7 @@ describe('test/lib/router.test.js', () => {
         return readVersion().then(function () {
           ctx.status = 204;
         });
-      }
+      },
     );
     await request(app.callback()).get('/').expect(204);
   });
@@ -504,7 +504,7 @@ describe('test/lib/router.test.js', () => {
             };
             return notAllowedErr;
           },
-        })
+        }),
       );
       router.get('/users', function () {});
       router.put('/users', function () {});
@@ -585,7 +585,7 @@ describe('test/lib/router.test.js', () => {
             };
             return notImplementedErr;
           },
-        })
+        }),
       );
       router.get('/users', function () {});
       router.put('/users', function () {});
@@ -938,12 +938,18 @@ describe('test/lib/router.test.js', () => {
       router.get('books', '/:category/:title', function (ctx) {
         ctx.status = 204;
       });
-      let url = router.url('books', { category: 'programming', title: 'how to node' });
+      let url = router.url('books', {
+        category: 'programming',
+        title: 'how to node',
+      });
       expect(url).toBe('/programming/how%20to%20node');
       url = router.url('books', 'programming', 'how to node');
       expect(url).toBe('/programming/how%20to%20node');
 
-      const err = router.url('not-exists', { category: 'programming', title: 'how to node' }) as Error;
+      const err = router.url('not-exists', {
+        category: 'programming',
+        title: 'how to node',
+      }) as Error;
       expect(err.message).toBe('No route found for name: not-exists');
     });
 
@@ -961,7 +967,10 @@ describe('test/lib/router.test.js', () => {
       });
       router.use(embeddedRouter.routes());
       app.use(router.routes());
-      let url = router.url('chapters', { chapterName: 'Learning ECMA6', pageNumber: 123 });
+      let url = router.url('chapters', {
+        chapterName: 'Learning ECMA6',
+        pageNumber: 123,
+      });
       expect(url).toBe('/books/chapters/Learning%20ECMA6/123');
       url = router.url('chapters', 'Learning ECMA6', 123);
       expect(url).toBe('/books/chapters/Learning%20ECMA6/123');
@@ -984,7 +993,10 @@ describe('test/lib/router.test.js', () => {
       embeddedRouter.use(embeddedRouter2.routes());
       router.use(embeddedRouter.routes());
       app.use(router.routes());
-      const url = router.url('chapters', { chapterName: 'Learning ECMA6', pageNumber: 123 });
+      const url = router.url('chapters', {
+        chapterName: 'Learning ECMA6',
+        pageNumber: 123,
+      });
       expect(url).toBe('/books/chapters/Learning%20ECMA6/pages/123');
     });
 
@@ -1396,12 +1408,18 @@ describe('test/lib/router.test.js', () => {
 
   describe('Static Router#url()', () => {
     it('generates route URL', () => {
-      const url = Router.url('/:category/:title', { category: 'programming', title: 'how-to-node' });
+      const url = Router.url('/:category/:title', {
+        category: 'programming',
+        title: 'how-to-node',
+      });
       expect(url).toBe('/programming/how-to-node');
     });
 
     it('escapes using encodeURIComponent()', () => {
-      const url = Router.url('/:category/:title', { category: 'programming', title: 'how to node' });
+      const url = Router.url('/:category/:title', {
+        category: 'programming',
+        title: 'how to node',
+      });
       expect(url).toBe('/programming/how%20to%20node');
     });
 

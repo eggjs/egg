@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/throw', function () {
     this.body = 'foo';
     setTimeout(() => {

@@ -122,7 +122,7 @@ export class FileLoader {
         if (index === item.properties.length - 1) {
           if (property in target && !this.options.override) {
             throw new Error(
-              `can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`
+              `can't overwrite property '${properties}' from ${target[property][FULLPATH]} by ${item.fullpath}`,
             );
           }
           obj = item.exports;
@@ -180,7 +180,7 @@ export class FileLoader {
     let ignore = this.options.ignore;
     if (ignore) {
       ignore = Array.isArray(ignore) ? ignore : [ignore];
-      ignore = ignore.filter(f => !!f).map(f => '!' + f);
+      ignore = ignore.filter((f) => !!f).map((f) => '!' + f);
       files = files.concat(ignore);
     }
 
@@ -287,7 +287,7 @@ async function getExports(fullpath: string, options: FileLoaderOptions, pathName
 
 function defaultCamelize(filepath: string, caseStyle: CaseStyle): string[] {
   const properties = filepath.slice(0, filepath.lastIndexOf('.')).split('/');
-  return properties.map(property => {
+  return properties.map((property) => {
     if (!/^[a-z][a-z0-9_-]*$/i.test(property)) {
       throw new Error(`${property} is not match 'a-z0-9_-' in ${filepath}`);
     }
@@ -298,7 +298,7 @@ function defaultCamelize(filepath: string, caseStyle: CaseStyle): string[] {
     // FooBar.js  > FooBar
     // FooBar.js  > FooBar
     // FooBar.js  > fooBar (if lowercaseFirst is true)
-    property = property.replaceAll(/[_-][a-z]/gi, s => s.slice(1).toUpperCase());
+    property = property.replaceAll(/[_-][a-z]/gi, (s) => s.slice(1).toUpperCase());
     let first = property[0];
     if (caseStyle === CaseStyle.lower) {
       first = first.toLowerCase();

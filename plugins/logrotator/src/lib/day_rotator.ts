@@ -47,7 +47,7 @@ export class DayRotator extends LogRotator {
     const rotateLogDirs = this.app.config.logger.rotateLogDirs;
     if (rotateLogDirs && rotateLogDirs.length > 0) {
       this.app.deprecate(
-        '[@eggjs/logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers'
+        '[@eggjs/logrotator] Do not use app.config.logger.rotateLogDirs, only rotate core loggers and custom loggers',
       );
 
       for (const dir of rotateLogDirs) {

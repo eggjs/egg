@@ -31,7 +31,7 @@ export class FrameworkErrorFormatter {
       // @ts-expect-error ignore
       err.errorContext,
       process.pid,
-      hostname
+      hostname,
     );
   }
 

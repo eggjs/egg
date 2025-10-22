@@ -43,7 +43,7 @@ const createNonEmptyDir = (overrideFolder?: string) => {
 const templateFiles = fs
   .readdirSync(path.join(SRC_PATH, 'templates', 'tegg'))
   // _gitignore is renamed to .gitignore
-  .map(filePath => (filePath.startsWith('_') ? filePath.slice(1) : filePath))
+  .map((filePath) => (filePath.startsWith('_') ? filePath.slice(1) : filePath))
   .sort();
 
 const clearAnyPreviousFolders = () => {
@@ -147,8 +147,11 @@ test.skipIf(process.platform === 'win32')(
     });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
-  }
+    execaCommandSync('pnpm typecheck', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
+  },
 );
 
 // use "@oxc-node/core/register" to support decorator metadata
@@ -198,8 +201,11 @@ test.skipIf(process.platform === 'win32' || process.env.CI)(
     });
     expect(testStdout).toContain('2 passed');
     // run typecheck
-    execaCommandSync('pnpm typecheck', { cwd: projectDir, env: { NODE_OPTIONS: undefined } });
-  }
+    execaCommandSync('pnpm typecheck', {
+      cwd: projectDir,
+      env: { NODE_OPTIONS: undefined },
+    });
+  },
 );
 
 test('works with the -t alias', () => {

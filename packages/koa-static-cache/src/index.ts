@@ -139,7 +139,7 @@ export function staticCache(dir: string, options: Options, files: FileMap | File
 export function staticCache(
   dirOrOptions?: string | Options,
   options: Options = {},
-  filesStoreOrMap?: FileMap | FileStore
+  filesStoreOrMap?: FileMap | FileStore,
 ): MiddlewareFunc {
   let dir = '';
   if (typeof dirOrOptions === 'string') {
@@ -179,12 +179,12 @@ export function staticCache(
 
   if (options.preload !== false) {
     debug('preload: %s', dir);
-    readDir(dir, filename => {
+    readDir(dir, (filename) => {
       // ignore dot files and node_modules
       return !filename.startsWith('.') && filename !== 'node_modules';
     })
       .filter(fileFilter)
-      .forEach(name => {
+      .forEach((name) => {
         loadFile(name, dir, options, files);
       });
     debug('preload end');

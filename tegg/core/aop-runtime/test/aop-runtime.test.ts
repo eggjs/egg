@@ -47,7 +47,7 @@ describe('test/aop-runtime.test.ts', () => {
           path.join(__dirname, 'fixtures/modules/state_point_cut'),
           path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
         ],
-        [crossCutGraphHook, pointCutGraphHook]
+        [crossCutGraphHook, pointCutGraphHook],
       );
     });
 
@@ -69,7 +69,7 @@ describe('test/aop-runtime.test.ts', () => {
         const traceMsg = callTrace.msgs;
         assert.deepStrictEqual(
           msg,
-          `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`
+          `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`,
         );
         assert.deepStrictEqual(traceMsg, [
           {
@@ -202,7 +202,7 @@ describe('test/aop-runtime.test.ts', () => {
           path.join(__dirname, 'fixtures/modules/hello_point_cut'),
           path.join(__dirname, 'fixtures/modules/hello_cross_cut'),
         ],
-        [crossCutGraphHook, pointCutGraphHook]
+        [crossCutGraphHook, pointCutGraphHook],
       );
     });
 
@@ -225,7 +225,7 @@ describe('test/aop-runtime.test.ts', () => {
         console.log('msg: ', msg, traceMsg);
         assert.deepStrictEqual(
           msg,
-          `withPointAroundResult(hello withPointAroundParam(aop)${JSON.stringify(pointcutAdviceParams)})`
+          `withPointAroundResult(hello withPointAroundParam(aop)${JSON.stringify(pointcutAdviceParams)})`,
         );
         assert.deepStrictEqual(traceMsg, [
           {

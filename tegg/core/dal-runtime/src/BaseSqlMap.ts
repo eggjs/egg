@@ -15,7 +15,7 @@ export class BaseSqlMapGenerator {
   }
 
   generateAllColumns(countIf: boolean): string {
-    const str = this.tableModel.columns.map(t => `\`${t.columnName}\``).join(',');
+    const str = this.tableModel.columns.map((t) => `\`${t.columnName}\``).join(',');
     return countIf ? `{% if $$count == true %}0{% else %}${str}{% endif %}` : str;
   }
 
@@ -31,7 +31,7 @@ export class BaseSqlMapGenerator {
                FROM \`${this.tableModel.name}\`
                WHERE `;
 
-    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{$${indexKey.propertyName}}}`).join(' AND ');
+    sql += primary.keys.map((indexKey) => `\`${indexKey.columnName}\` = {{$${indexKey.propertyName}}}`).join(' AND ');
     if (primary.keys.length === 1) {
       result.push({
         type: SqlType.SELECT,
@@ -58,7 +58,7 @@ export class BaseSqlMapGenerator {
                  WHERE `;
 
       sql += index.keys
-        .map(indexKey => {
+        .map((indexKey) => {
           const s = `\`${indexKey.columnName}\` {{ "IS" if $${indexKey.propertyName} == null else "=" }} {{$${indexKey.propertyName}}}`;
           return s;
         })
@@ -108,7 +108,7 @@ export class BaseSqlMapGenerator {
 
           \`${columnName}\`
         {% endif %}
-        `.trim()
+        `.trim(),
         );
 
         if (TemplateUtil.isSpatialType(column)) {
@@ -124,7 +124,7 @@ export class BaseSqlMapGenerator {
 
           {{$${propertyName} | ${filter}}}
         {% endif %}
-        `.trim()
+        `.trim(),
           );
         } else if (column.type.type === ColumnType.JSON) {
           values.push(
@@ -138,7 +138,7 @@ export class BaseSqlMapGenerator {
 
           {{$${propertyName} | toJson}}
         {% endif %}
-        `.trim()
+        `.trim(),
           );
         } else {
           values.push(
@@ -152,7 +152,7 @@ export class BaseSqlMapGenerator {
 
           {{$${propertyName}}}
         {% endif %}
-        `.trim()
+        `.trim(),
           );
         }
       } else {
@@ -181,7 +181,7 @@ export class BaseSqlMapGenerator {
         {% endif %}
 
         \`${columnName}\`
-        `.trim()
+        `.trim(),
         );
 
         values.push(
@@ -193,7 +193,7 @@ export class BaseSqlMapGenerator {
         {% endif %}
 
         {{ $${propertyName} if $${propertyName} !== undefined else '${now}' }}
-        `.trim()
+        `.trim(),
         );
       }
     }
@@ -256,9 +256,7 @@ export class BaseSqlMapGenerator {
     }
 
     sql += kv.join('');
-    sql += `WHERE ${primary.keys
-      .map(indexKey => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName}}}`)
-      .join(' AND ')}`;
+    sql += `WHERE ${primary.keys.map((indexKey) => `\`${indexKey.columnName}\` = {{primary.${indexKey.propertyName}}}`).join(' AND ')}`;
 
     return sql;
   }
@@ -274,7 +272,7 @@ export class BaseSqlMapGenerator {
                FROM \`${this.tableModel.name}\`
                WHERE `;
 
-    sql += primary.keys.map(indexKey => `\`${indexKey.columnName}\` = {{${indexKey.propertyName}}}`).join(' AND ');
+    sql += primary.keys.map((indexKey) => `\`${indexKey.columnName}\` = {{${indexKey.propertyName}}}`).join(' AND ');
 
     return sql;
   }

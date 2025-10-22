@@ -8,7 +8,7 @@ const pids = {
 
 module.exports = function (agent) {
   // from parent
-  agent.messenger.on('parent2agent', msg => console.log(msg));
+  agent.messenger.on('parent2agent', (msg) => console.log(msg));
 
   // send to parent
   process.send({
@@ -23,21 +23,24 @@ module.exports = function (agent) {
     // compatible with string
     process.send('agent2appbystring');
   });
-  agent.messenger.on('app2agent', msg => console.log(msg));
+  agent.messenger.on('app2agent', (msg) => console.log(msg));
 
   // compatible with string
-  agent.messenger.on('app2agentbystring', msg => console.log('agent: ' + msg));
+  agent.messenger.on('app2agentbystring', (msg) => console.log('agent: ' + msg));
 
   agent.messenger.on('egg-ready', () => {
-    agent.messenger.sendToApp('worker_online', { type: 'agent', pid: process.pid });
+    agent.messenger.sendToApp('worker_online', {
+      type: 'agent',
+      pid: process.pid,
+    });
   });
 
-  agent.messenger.on('worker_online', data => {
+  agent.messenger.on('worker_online', (data) => {
     workerOnline(data);
     sendToProcess(agent.messenger);
   });
 
-  agent.messenger.on('send_to_pid', data => {
+  agent.messenger.on('send_to_pid', (data) => {
     if (data.type === 'app') {
       console.log('app sendTo agent done');
     }

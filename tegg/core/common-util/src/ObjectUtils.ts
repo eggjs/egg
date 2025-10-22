@@ -31,11 +31,11 @@ export class ObjectUtils {
     argsString = argsString.replace(/=\([\s\S]*\)/g, '');
     const args = argsString.split(',');
     const argNames = args
-      .map(arg => {
+      .map((arg) => {
         // Remove default value
         return arg.replace(/=[\s\S]*/g, '').trim();
       })
-      .filter(arg => arg.length);
+      .filter((arg) => arg.length);
     return argNames;
   }
 
@@ -48,10 +48,10 @@ export class ObjectUtils {
     if (!constructorMatch) {
       return [];
     }
-    const params = constructorMatch[1].split(',').map(param => param.trim());
+    const params = constructorMatch[1].split(',').map((param) => param.trim());
     return params
-      .map(param => param.match(/(\w+)\s*(?=\s*(?:=|\/\/|\s*$))/))
+      .map((param) => param.match(/(\w+)\s*(?=\s*(?:=|\/\/|\s*$))/))
       .filter(Boolean)
-      .map(match => match![0].trim());
+      .map((match) => match![0].trim());
   }
 }

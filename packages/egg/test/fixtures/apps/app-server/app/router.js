@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', function () {
     this.body = this.app.serverEmit;
   });

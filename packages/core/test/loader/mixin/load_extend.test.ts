@@ -97,10 +97,10 @@ describe('test/loader/mixin/load_extend.test.ts', () => {
       (err: any) => {
         assert.match(
           err.message,
-          /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/
+          /error: Unexpected end of input|Failed to parse source for import analysis because the content contains invalid JS syntax/,
         );
         return true;
-      }
+      },
     );
   });
 

@@ -39,7 +39,7 @@ export class HttpClient extends RawHttpClient {
 
   async request<T = any>(
     url: HttpClientRequestURL,
-    options?: HttpClientRequestOptions
+    options?: HttpClientRequestOptions,
   ): Promise<HttpClientResponse<T>> {
     options = options ?? {};
     if (options.ctx?.tracer) {

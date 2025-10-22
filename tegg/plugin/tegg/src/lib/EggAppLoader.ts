@@ -50,7 +50,7 @@ export class EggAppLoader implements Loader {
           // ctx has been destroyed, throw humanize error info
           throw TeggError.create(
             `Can not read property \`${name}\` because egg ctx has been destroyed`,
-            'read_after_ctx_destroyed'
+            'read_after_ctx_destroyed',
           );
         }
 
@@ -105,7 +105,7 @@ export class EggAppLoader implements Loader {
   private getLoggerNames(ctxClazzNames: string[], singletonClazzNames: string[]): string[] {
     const loggerNames = Array.from(this.app.loggers.keys());
     // filter logger/coreLogger
-    return loggerNames.filter(t => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
+    return loggerNames.filter((t) => !ctxClazzNames.includes(t) && !singletonClazzNames.includes(t));
   }
 
   async load(): Promise<EggProtoImplClass[]> {
@@ -114,15 +114,15 @@ export class EggAppLoader implements Loader {
     const contextProperties = ObjectUtils.getProperties((app as any).context);
     // custom plugin may define property conflict with default list
     const allSingletonClazzNameSet = new Set([...appProperties, ...DEFAULT_APP_CLAZZ]);
-    APP_CLAZZ_BLACK_LIST.forEach(t => allSingletonClazzNameSet.delete(t));
+    APP_CLAZZ_BLACK_LIST.forEach((t) => allSingletonClazzNameSet.delete(t));
     const allSingletonClazzNames = Array.from(allSingletonClazzNameSet);
     const allContextClazzNamesSet = new Set([...contextProperties, ...DEFAULT_CONTEXT_CLAZZ]);
-    CONTEXT_CLAZZ_BLACK_LIST.forEach(t => allContextClazzNamesSet.delete(t));
+    CONTEXT_CLAZZ_BLACK_LIST.forEach((t) => allContextClazzNamesSet.delete(t));
     const allContextClazzNames = Array.from(allContextClazzNamesSet);
     const loggerNames = this.getLoggerNames(allContextClazzNames, allSingletonClazzNames);
-    const allSingletonClazzs = allSingletonClazzNames.map(name => this.buildClazz(name, EggType.APP));
-    const allContextClazzs = allContextClazzNames.map(name => this.buildClazz(name, EggType.CONTEXT));
-    const appLoggerClazzs = loggerNames.map(name => this.buildAppLoggerClazz(name));
+    const allSingletonClazzs = allSingletonClazzNames.map((name) => this.buildClazz(name, EggType.APP));
+    const allContextClazzs = allContextClazzNames.map((name) => this.buildClazz(name, EggType.CONTEXT));
+    const appLoggerClazzs = loggerNames.map((name) => this.buildAppLoggerClazz(name));
     const moduleConfigList = this.moduleConfigLoader.loadModuleConfigList();
 
     return [

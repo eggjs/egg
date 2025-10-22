@@ -83,7 +83,7 @@ describe('test/csrf.test.ts', () => {
       .set('accept', 'text/html')
       .expect(200)
       .expect('')
-      .expect(res => {
+      .expect((res) => {
         expect(res.header['set-cookie']).toBeFalsy();
       });
   });
@@ -276,7 +276,7 @@ describe('test/csrf.test.ts', () => {
       .set('cookie', 'csrfToken=1')
       .send({ title: 'invalid token' })
       .expect(403)
-      .expect(res => expect(res.header['set-cookie']).toBeTruthy());
+      .expect((res) => expect(res.header['set-cookie']).toBeTruthy());
   });
 
   it('should show deprecate message if ignoreJSON = true', async () => {

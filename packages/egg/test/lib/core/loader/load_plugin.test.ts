@@ -226,9 +226,9 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     });
     await appLoader.loadConfig();
     expect(
-      appLoader.orderPlugins.map(plugin => {
+      appLoader.orderPlugins.map((plugin) => {
         return plugin.name;
-      })
+      }),
     ).toMatchSnapshot();
   });
 
@@ -270,7 +270,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     await appLoader1.loadConfig();
     // unittest disable
     const keys1 = appLoader1.orderPlugins
-      .map(plugin => {
+      .map((plugin) => {
         return plugin.name;
       })
       .join(',');
@@ -286,7 +286,7 @@ describe('test/lib/core/loader/load_plugin.test.ts', () => {
     });
     await appLoader2.loadConfig();
     const keys2 = appLoader2.orderPlugins
-      .map(plugin => {
+      .map((plugin) => {
         return plugin.name;
       })
       .join(',');

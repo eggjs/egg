@@ -143,7 +143,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
   //   });
   // });
 
-  it('should mock url get and post', done => {
+  it('should mock url get and post', (done) => {
     agent.mockHttpclient(url, 'get', {
       data: 'mock url get',
     });
@@ -161,7 +161,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should support request', done => {
+  it('should support request', (done) => {
     agent.mockHttpclient(url, 'get', {
       data: 'mock url get',
     });
@@ -179,7 +179,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should set default method to *', done => {
+  it('should set default method to *', (done) => {
     agent.mockHttpclient(url, {
       data: 'mock url *',
     });
@@ -197,7 +197,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should support curl', done => {
+  it('should support curl', (done) => {
     agent.mockHttpclient(url, 'get', {
       data: 'mock url get',
     });
@@ -215,7 +215,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should support json', done => {
+  it('should support json', (done) => {
     agent.mockHttpclient(url, 'get', {
       data: { method: 'get' },
     });
@@ -233,7 +233,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should support text', done => {
+  it('should support text', (done) => {
     agent.mockHttpclient(url, 'get', {
       data: 'mock url get',
     });
@@ -251,7 +251,7 @@ describe.skip('test/mock_agent_httpclient.test.ts', () => {
     });
   });
 
-  it('should mock url and get response event on urllib', done => {
+  it('should mock url and get response event on urllib', (done) => {
     agent.mockHttpclient(url, {
       data: Buffer.from('mock response'),
     });

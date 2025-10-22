@@ -31,7 +31,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
             success: true,
           },
         },
-        null
+        null,
       );
 
       const data = await dataEvent;
@@ -58,7 +58,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
             success: true,
           },
         },
-        null
+        null,
       );
     });
   });
@@ -161,7 +161,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
 
     it('app should accept agent message', async () => {
       function count(data: string, key: string) {
-        return data.split('\n').filter(line => {
+        return data.split('\n').filter((line) => {
           return line.indexOf(key) >= 0;
         }).length;
       }
@@ -188,7 +188,7 @@ describe.skip('test/lib/core/messenger/ipc.test.ts', () => {
 
     it('app should accept agent message', async () => {
       function count(data: string, key: string) {
-        return data.split('\n').filter(line => {
+        return data.split('\n').filter((line) => {
           return line.indexOf(key) >= 0;
         }).length;
       }

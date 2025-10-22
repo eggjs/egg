@@ -3,7 +3,7 @@ const { Application } = require('@eggjs/koa');
 const app = new Application();
 
 // response
-app.use(ctx => {
+app.use((ctx) => {
   ctx.body = `Hello World, CJS!`;
 });
 

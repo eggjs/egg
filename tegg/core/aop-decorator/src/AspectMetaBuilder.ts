@@ -12,7 +12,7 @@ export class AspectMetaBuilder {
     clazz: EggProtoImplClass,
     options: {
       crosscutAdviceFactory: CrosscutAdviceFactory;
-    }
+    },
   ) {
     this.clazz = clazz;
     this.crosscutAdviceFactory = options.crosscutAdviceFactory;

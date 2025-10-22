@@ -12,7 +12,7 @@ import { QualifierImplUtil } from './QualifierImplUtil.ts';
 export class QualifierImplDecoratorUtil {
   static generatorDecorator<T extends object, Enum extends ImplTypeEnum>(
     abstractClazz: EggAbstractClazz<T>,
-    attribute: QualifierAttribute
+    attribute: QualifierAttribute,
   ): ImplDecorator<T, Enum> {
     return function (type: Enum[keyof Enum]) {
       return function (clazz: EggProtoImplClass<T>) {

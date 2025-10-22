@@ -1,3 +1,3 @@
 'use strict';
 
-exports.hello = str => 'hi, ' + str;
+exports.hello = (str) => 'hi, ' + str;

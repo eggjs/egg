@@ -57,7 +57,7 @@ async function getChildPids(pid: number) {
   let childrenPids: number[] = [];
   try {
     const children = await pstree(pid);
-    childrenPids = children!.map(c => parseInt(c.PID));
+    childrenPids = children!.map((c) => parseInt(c.PID));
   } catch (err) {
     // if get children error, just ignore it
     debug('pstree %s error: %s, ignore it', pid, err);
@@ -77,7 +77,7 @@ function kill(pids: number[], signal: string) {
 }
 
 function getUnterminatedProcesses(pids: number[]) {
-  return pids.filter(pid => {
+  return pids.filter((pid) => {
     try {
       // success means it's still alive
       process.kill(pid, 0);

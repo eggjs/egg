@@ -29,7 +29,7 @@ describe('plugin/tegg/test/NoModuleJson.test.ts', () => {
       .httpRequest()
       .get('/config')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert.equal(res.body.baseDir, baseDir);
       });
   });

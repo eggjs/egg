@@ -26,7 +26,10 @@ describe('index.test.ts', () => {
 
     it('support custom pathToRegexpModule', async () => {
       const pathToRegexpV8 = await import('path-to-regexp-v8');
-      const fn = match({ match: '/api{/*path}', pathToRegexpModule: pathToRegexpV8 });
+      const fn = match({
+        match: '/api{/*path}',
+        pathToRegexpModule: pathToRegexpV8,
+      });
       expect(fn({ path: '/api/hello' })).toBe(true);
       expect(fn({ path: '/api/' })).toBe(true);
       expect(fn({ path: '/api' })).toBe(true);
@@ -56,7 +59,7 @@ describe('index.test.ts', () => {
 
     it('support function', () => {
       const fn = match({
-        match: ctx => ctx.path.startsWith('/api'),
+        match: (ctx) => ctx.path.startsWith('/api'),
       });
       expect(fn({ path: '/api/hello' })).toBe(true);
       expect(fn({ path: '/api/' })).toBe(true);
@@ -68,7 +71,7 @@ describe('index.test.ts', () => {
 
     it('support array', () => {
       const fn = match({
-        match: [ctx => ctx.path.startsWith('/api'), '/ajax', /^\/foo$/],
+        match: [(ctx) => ctx.path.startsWith('/api'), '/ajax', /^\/foo$/],
       });
       expect(fn({ path: '/api/hello' })).toBe(true);
       expect(fn({ path: '/api/' })).toBe(true);
@@ -113,7 +116,7 @@ describe('index.test.ts', () => {
 
     it('support function', () => {
       const fn = match({
-        ignore: ctx => ctx.path.startsWith('/api'),
+        ignore: (ctx) => ctx.path.startsWith('/api'),
       });
       expect(fn({ path: '/api/hello' })).toBe(false);
       expect(fn({ path: '/api/' })).toBe(false);
@@ -125,7 +128,7 @@ describe('index.test.ts', () => {
 
     it('support array', () => {
       const fn = match({
-        ignore: [ctx => ctx.path.startsWith('/api'), '/ajax', /^\/foo$/],
+        ignore: [(ctx) => ctx.path.startsWith('/api'), '/ajax', /^\/foo$/],
       });
       expect(fn({ path: '/api/hello' })).toBe(false);
       expect(fn({ path: '/api/' })).toBe(false);

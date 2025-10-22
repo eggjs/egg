@@ -98,7 +98,7 @@ describe('test/onerror.test.ts', () => {
       .httpRequest()
       .get('/user')
       .set('Accept', 'application/json')
-      .expect(res => {
+      .expect((res) => {
         assert(res.body);
         assert(res.body.message === 'test error');
         assert(res.body.stack.includes('Error: test error'));
@@ -112,7 +112,7 @@ describe('test/onerror.test.ts', () => {
     await app
       .httpRequest()
       .get('/user.json')
-      .expect(res => {
+      .expect((res) => {
         assert(res.body);
         assert(res.body.message === 'test error');
         assert(res.body.stack.includes('Error: test error'));
@@ -321,7 +321,10 @@ describe('test/onerror.test.ts', () => {
   if (process.platform === 'linux') {
     // ignore Error: write ECONNRESET on windows and macos
     it('should log warn 4xx', async () => {
-      fs.rmSync(getFixtures('onerror-4xx/logs'), { force: true, recursive: true });
+      fs.rmSync(getFixtures('onerror-4xx/logs'), {
+        force: true,
+        recursive: true,
+      });
       const app = mm.app({
         baseDir: getFixtures('onerror-4xx'),
       });

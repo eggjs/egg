@@ -155,7 +155,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
       // adjust env for win
       this.env.PATH || this.env.Path,
     ]
-      .filter(x => !!x)
+      .filter((x) => !!x)
       .join(path.delimiter);
 
     // for alinode
@@ -249,12 +249,12 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
         ...flags,
         baseDir,
       },
-      ignoreKeys
+      ignoreKeys,
     );
     // Note: `spawn` is not like `fork`, had to pass `execArgv` yourself
     const serverBin = await this.getServerBin();
     const eggArgs = [...execArgv, serverBin, clusterOptions, `--title=${flags.title}`];
-    const spawnScript = `${command} ${eggArgs.map(a => `'${a}'`).join(' ')}`;
+    const spawnScript = `${command} ${eggArgs.map((a) => `'${a}'`).join(' ')}`;
     this.log('Spawn %o', spawnScript);
 
     // whether run in the background.
@@ -280,7 +280,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
     } else {
       options.stdio = ['inherit', 'inherit', 'inherit', 'ipc'];
       const child = (this.#child = spawn(command, eggArgs, options));
-      child.once('exit', code => {
+      child.once('exit', (code) => {
         if (!code) return;
         // command should exit after child process exit
         this.exit(code);
@@ -288,7 +288,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
 
       // attach master signal to child
       const signals = ['SIGINT', 'SIGQUIT', 'SIGTERM'] as NodeJS.Signals[];
-      signals.forEach(event => {
+      signals.forEach((event) => {
         process.once(event, () => {
           debug('Kill child %s with %s', child.pid, event);
           child.kill(event);
@@ -352,7 +352,7 @@ export default class Start<T extends typeof Start> extends BaseCommand<T> {
 
 function stringify(obj: Record<string, any>, ignore: string[]) {
   const result: Record<string, any> = {};
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (!ignore.includes(key)) {
       result[key] = obj[key];
     }

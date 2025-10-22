@@ -52,7 +52,9 @@ describe.skip('test/ts.test.ts', () => {
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: 'json',
+      });
       // console.log(result.data);
       expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
     });
@@ -67,7 +69,9 @@ describe.skip('test/ts.test.ts', () => {
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: 'json',
+      });
       // console.log(result.data);
       expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
     });
@@ -82,7 +86,9 @@ describe.skip('test/ts.test.ts', () => {
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: 'json',
+      });
       // console.log(result.data);
       expect(result.data.stack).toContain(path.normalize('app/controller/home.ts:6:13'));
     });
@@ -114,7 +120,9 @@ describe.skip('test/ts.test.ts', () => {
 
       // expect(replaceWeakRefMessage(app.stderr)).toBe('');
       expect(app.stdout).toMatch(/egg started on http:\/\/127\.0\.0\.1:\d+/);
-      const result = await request(`http://127.0.0.1:${port}`, { dataType: 'json' });
+      const result = await request(`http://127.0.0.1:${port}`, {
+        dataType: 'json',
+      });
       // console.log(result.data);
       expect(result.data.stack).toMatch(/home\.ts:6:13/);
       // assert(result.data.stack.includes(path.normalize('app/controller/home.ts:6:13')));

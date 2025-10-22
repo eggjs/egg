@@ -25,7 +25,7 @@ describe('test/EggRouter.test.ts', () => {
     const app = { controller: {} };
     const router = new EggRouter({}, app);
     expect(router).toBeDefined();
-    ['head', 'options', 'get', 'put', 'patch', 'post', 'delete', 'all', 'resources'].forEach(method => {
+    ['head', 'options', 'get', 'put', 'patch', 'post', 'delete', 'all', 'resources'].forEach((method) => {
       expect(Reflect.get(router, method)).toBeInstanceOf(Function);
     });
   });

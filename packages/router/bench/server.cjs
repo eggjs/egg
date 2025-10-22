@@ -4,7 +4,7 @@ const { Router } = require('..');
 const app = new Application();
 const router = new Router();
 
-const ok = ctx => {
+const ok = (ctx) => {
   ctx.status = 200;
 };
 const n = parseInt(process.env.FACTOR || '10', 10);

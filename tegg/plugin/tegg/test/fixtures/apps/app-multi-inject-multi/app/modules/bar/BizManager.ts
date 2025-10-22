@@ -21,7 +21,7 @@ export function BizManagerQualifier(chatModelName: string) {
       target.constructor as EggProtoImplClass,
       propertyKey,
       BizManagerQualifierAttribute,
-      chatModelName
+      chatModelName,
     );
   };
 }
@@ -61,7 +61,7 @@ export class BizManager {
   readonly secret: string;
 
   constructor(@Inject() secret: Secret, @MultiInstanceInfo([BizManagerQualifierAttribute]) objInfo: ObjectInfo) {
-    this.name = objInfo.qualifiers.find(t => t.attribute === BizManagerQualifierAttribute)!.value as string;
+    this.name = objInfo.qualifiers.find((t) => t.attribute === BizManagerQualifierAttribute)!.value as string;
     this.secret = secret.getSecret(this.name);
   }
 }

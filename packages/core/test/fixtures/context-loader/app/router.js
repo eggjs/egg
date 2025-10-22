@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/depth', async function () {
     this.body = {
       one: this.depth.one.get(),

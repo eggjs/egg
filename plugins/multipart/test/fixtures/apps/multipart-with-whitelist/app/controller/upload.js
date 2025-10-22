@@ -3,7 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 
-module.exports = async ctx => {
+module.exports = async (ctx) => {
   const parts = ctx.multipart();
   let part;
   while ((part = await parts()) != null) {

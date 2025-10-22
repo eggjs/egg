@@ -148,7 +148,7 @@ export class Graph<T extends GraphNodeObj, M extends EdgeMeta = EdgeMeta> {
     node: GraphNode<T, M>,
     nodes: Array<GraphNode<T, M>>,
     accessed: boolean[],
-    res: Array<GraphNode<T, M>>
+    res: Array<GraphNode<T, M>>,
   ): void {
     const index = nodes.indexOf(node);
     if (accessed[index]) {

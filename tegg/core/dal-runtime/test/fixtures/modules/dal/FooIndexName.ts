@@ -26,7 +26,7 @@ export class FooIndexName {
       primaryKey: true,
       autoIncrement: true,
       comment: 'the primary key',
-    }
+    },
   )
   id: number;
 
@@ -37,7 +37,7 @@ export class FooIndexName {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   name: string;
 
@@ -48,7 +48,7 @@ export class FooIndexName {
     },
     {
       name: 'col1',
-    }
+    },
   )
   col1: string;
 

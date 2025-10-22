@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', app.controller.home.index);
   app.get('/unknownFile', app.controller.home.unknownFile);
   app.get('/csrf', app.controller.home.csrf);

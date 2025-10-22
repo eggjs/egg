@@ -81,7 +81,7 @@ describe.sequential('test/app.test.ts', () => {
       // customEgg: path.join(__dirname, '../node_modules/egg'),
       cache: false,
       beforeInit(instance) {
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           setTimeout(() => {
             instance.options.test = 'abc';
             resolve();

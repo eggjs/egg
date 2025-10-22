@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/uncaughtException', async function () {
     setTimeout(() => {
       const error = new Error('MockError');

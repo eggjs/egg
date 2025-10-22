@@ -16,11 +16,11 @@ export default (): PartialEggConfig => {
     patchAjv: (ajv: Ajv) => {
       ajv.addFormat('byte', {
         type: 'number',
-        validate: x => x >= 0 && x <= 255 && x % 1 === 0,
+        validate: (x) => x >= 0 && x <= 255 && x % 1 === 0,
       });
       ajv.addFormat('json-string', {
         type: 'string',
-        validate: x => {
+        validate: (x) => {
           try {
             JSON.parse(x);
             return true;
@@ -31,7 +31,7 @@ export default (): PartialEggConfig => {
       });
       ajv.addFormat('semver', {
         type: 'string',
-        validate: x => valid(x) != null,
+        validate: (x) => valid(x) != null,
       });
     },
   };

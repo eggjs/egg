@@ -218,7 +218,7 @@ export class SqlGenerator {
         break;
       }
       case ColumnType.ENUM: {
-        const enumValue: string = columnType.enums.map(t => `'${t}'`).join(',');
+        const enumValue: string = columnType.enums.map((t) => `'${t}'`).join(',');
         sqls.push(`ENUM(${enumValue})`);
         if (columnType.characterSet) {
           sqls.push(`CHARACTER SET ${columnType.characterSet}`);
@@ -229,7 +229,7 @@ export class SqlGenerator {
         break;
       }
       case ColumnType.SET: {
-        const enumValue: string = columnType.enums.map(t => `'${t}'`).join(',');
+        const enumValue: string = columnType.enums.map((t) => `'${t}'`).join(',');
         sqls.push(`SET(${enumValue})`);
         if (columnType.characterSet) {
           sqls.push(`CHARACTER SET ${columnType.characterSet}`);
@@ -289,7 +289,7 @@ export class SqlGenerator {
       }
     }
     indexSql.push(indexModel.name);
-    indexSql.push(`(${indexModel.keys.map(t => t.columnName).join(',')})`);
+    indexSql.push(`(${indexModel.keys.map((t) => t.columnName).join(',')})`);
     if (indexModel.storeType) {
       indexSql.push(`USING ${indexModel.storeType}`);
     }

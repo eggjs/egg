@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/mockerror', async () => {
     // eslint-disable-next-line
     hi.foo();
@@ -10,12 +10,12 @@ module.exports = app => {
     throw err;
   });
 
-  app.get('/500', async ctx => {
+  app.get('/500', async (ctx) => {
     ctx.status = 500;
     ctx.body = 'hi, this custom 500 page';
   });
 
-  app.get('/special', async ctx => {
+  app.get('/special', async (ctx) => {
     ctx.errorPageUrl = '/specialerror';
     // eslint-disable-next-line
     hi.foo();

@@ -1,5 +1,5 @@
-module.exports = app => {
-  app.get('/', ctx => {
+module.exports = (app) => {
+  app.get('/', (ctx) => {
     ctx.body = ctx.app.serverEmit;
   });
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class ApiService extends app.Service {
     async getName() {
       await sleep(100);
@@ -10,5 +10,5 @@ module.exports = app => {
 };
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

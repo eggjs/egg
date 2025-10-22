@@ -27,7 +27,10 @@ describe('cluster - immediate', () => {
 describe('cluster - immediate-onlyonce', () => {
   let app: MockApplication;
   beforeAll(async () => {
-    app = mm.cluster({ baseDir: getFixtures('immediate-onlyonce'), workers: 1 });
+    app = mm.cluster({
+      baseDir: getFixtures('immediate-onlyonce'),
+      workers: 1,
+    });
     // app.debug();
     await app.ready();
   });

@@ -20,7 +20,7 @@ describe('test/framework.test.ts', () => {
       (err: Error) => {
         assert.equal(err.message, `${path.join(baseDir, 'package.json')} should exist`);
         return true;
-      }
+      },
     );
   });
 
@@ -47,7 +47,7 @@ describe('test/framework.test.ts', () => {
       (err: Error) => {
         assert.equal(err.message, `${frameworkPath} should exist`);
         return true;
-      }
+      },
     );
   });
 
@@ -74,7 +74,7 @@ describe('test/framework.test.ts', () => {
         const frameworkPaths = [path.join(baseDir, 'node_modules'), path.join(process.cwd(), 'node_modules')].join(',');
         assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
         return true;
-      }
+      },
     );
   });
 
@@ -98,7 +98,7 @@ describe('test/framework.test.ts', () => {
         const frameworkPaths = [path.join(baseDir, 'node_modules'), path.join(process.cwd(), 'node_modules')].join(',');
         assert.equal(err.message, `noexist is not found in ${frameworkPaths}`);
         return true;
-      }
+      },
     );
   });
 
@@ -124,7 +124,7 @@ describe('test/framework.test.ts', () => {
         const frameworkPaths = [path.join(baseDir, 'node_modules'), path.join(process.cwd(), 'node_modules')].join(',');
         assert.equal(err.message, `egg is not found in ${frameworkPaths}`);
         return true;
-      }
+      },
     );
   });
 

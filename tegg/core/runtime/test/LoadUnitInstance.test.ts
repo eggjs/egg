@@ -38,7 +38,7 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
       const countControllerProto = EggPrototypeFactory.instance.getPrototype('countController');
       const countControllerObj = await EggContainerFactory.getOrCreateEggObject(
         countControllerProto,
-        countControllerProto.name
+        countControllerProto.name,
       );
       const countController = countControllerObj.obj as CountController;
       const countResult = await countController.getCount();
@@ -195,7 +195,7 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
         ContextHandler.run(saveCtx, async () => {
           const saveAppServiceObj = await EggContainerFactory.getOrCreateEggObject(
             saveAppServiceProto,
-            saveAppServiceProto.name
+            saveAppServiceProto.name,
           );
           const saveAppService = saveAppServiceObj.obj as AppService;
           await saveAppService.save({
@@ -207,7 +207,7 @@ describe('test/LoadUnit/LoadUnitInstance.test.ts', () => {
         ContextHandler.run(findCtx, async () => {
           const findAppServiceObj = await EggContainerFactory.getOrCreateEggObject(
             saveAppServiceProto,
-            saveAppServiceProto.name
+            saveAppServiceProto.name,
           );
           const findAppService = findAppServiceObj.obj as AppService;
           return findAppService;

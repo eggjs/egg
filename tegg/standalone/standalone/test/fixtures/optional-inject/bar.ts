@@ -6,6 +6,6 @@ export class Bar {
     // @ts-ignore
     @InjectOptional() readonly hello?: object,
     // @ts-ignore
-    @Inject({ optional: true }) readonly world?: object
+    @Inject({ optional: true }) readonly world?: object,
   ) {}
 }

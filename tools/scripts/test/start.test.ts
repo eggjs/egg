@@ -68,8 +68,8 @@ describe.skip('test/start.test.ts', () => {
       // should rotate log
       const fileList = await fs.readdir(logDir);
       // console.log(fileList);
-      assert(fileList.some(name => name.match(/master-stdout\.log\.\d+\.\d+/)));
-      assert(fileList.some(name => name.match(/master-stderr\.log\.\d+\.\d+/)));
+      assert(fileList.some((name) => name.match(/master-stdout\.log\.\d+\.\d+/)));
+      assert(fileList.some((name) => name.match(/master-stderr\.log\.\d+\.\d+/)));
 
       const result = await request(`http://127.0.0.1:${port}`);
       assert.equal(result.data.toString(), 'hi, egg');
@@ -149,7 +149,9 @@ describe.skip('test/start.test.ts', () => {
       mm(process.env, 'WAIT_TIME', 3000);
       mm(process.env, 'ERROR', 'error message');
 
-      const app = coffee.fork(eggBin, ['start', '--daemon', '--workers=1'], { cwd });
+      const app = coffee.fork(eggBin, ['start', '--daemon', '--workers=1'], {
+        cwd,
+      });
       // app.debug();
       // TODO: find a windows replacement for tail command
       if (!isWindows) {
@@ -166,7 +168,9 @@ describe.skip('test/start.test.ts', () => {
       mm(process.env, 'WAIT_TIME', 10000);
 
       await coffee
-        .fork(eggBin, ['start', '--daemon', '--workers=1', '--timeout=5000'], { cwd })
+        .fork(eggBin, ['start', '--daemon', '--workers=1', '--timeout=5000'], {
+          cwd,
+        })
         // .debug()
         .expect('stdout', /Wait Start: 1.../)
         .expect('stderr', /Start failed, 5s timeout/)

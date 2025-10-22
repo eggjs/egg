@@ -21,7 +21,7 @@ export function isSafeDomain(domain: string, whiteList: string[]): boolean {
   // add prefix `.`, because all domains in white list start with `.`
   const hostname = '.' + domain;
 
-  return whiteList.some(rule => {
+  return whiteList.some((rule) => {
     // Check whether we've got '*' as a wild character symbol
     if (rule.includes('*')) {
       return matcher.isMatch(domain, rule);
@@ -60,7 +60,7 @@ export function checkIfIgnore(opts: { enable: boolean; matching?: PathMatchingFu
 
 const IP_RE = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 const topDomains: Record<string, number> = {};
-['.net.cn', '.gov.cn', '.org.cn', '.com.cn'].forEach(item => {
+['.net.cn', '.gov.cn', '.org.cn', '.com.cn'].forEach((item) => {
   topDomains[item] = 2 - item.split('.').length;
 });
 
@@ -124,7 +124,7 @@ export function preprocessConfig(config: SecurityConfig): void {
     ssrf.checkAddress = (
       ipAddresses: string | LookupAddress | (string | LookupAddress)[],
       _family: number | string,
-      hostname: string
+      hostname: string,
     ): boolean => {
       // Check white hostname first
       if (hostname && hostnameExceptionList) {

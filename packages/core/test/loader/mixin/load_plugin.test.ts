@@ -81,7 +81,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     app = createApp('plugin');
     const loader = app.loader;
     const loaderOrders: string[] = [];
-    ['loadEggPlugins', 'loadAppPlugins', 'loadCustomPlugins'].forEach(method => {
+    ['loadEggPlugins', 'loadAppPlugins', 'loadCustomPlugins'].forEach((method) => {
       mm(loader, method, async () => {
         loaderOrders.push(method);
         return {};
@@ -345,8 +345,8 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     await loader.loadPlugin();
     await loader.loadConfig();
     assert.deepEqual(
-      loader.orderPlugins.map(plugin => plugin.name),
-      ['session', 'zzz', 'package', 'b', 'c1', 'f', 'a', 'd', 'e']
+      loader.orderPlugins.map((plugin) => plugin.name),
+      ['session', 'zzz', 'package', 'b', 'c1', 'f', 'a', 'd', 'e'],
     );
   });
 
@@ -380,7 +380,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
       //   - diamond required by [hsfclient]
       assert.equal(
         msg,
-        'Following plugins will be enabled implicitly.\n  - eagleeye required by [hsfclient]\n  - configclient required by [hsfclient]\n  - diamond required by [hsfclient]'
+        'Following plugins will be enabled implicitly.\n  - eagleeye required by [hsfclient]\n  - configclient required by [hsfclient]\n  - diamond required by [hsfclient]',
       );
     });
     const loader = app.loader;
@@ -419,7 +419,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     await loader.loadPlugin();
     await loader.loadConfig();
     assert(!loader.plugins.testMe);
-    const plugins = loader.orderPlugins.map(plugin => plugin.name);
+    const plugins = loader.orderPlugins.map((plugin) => plugin.name);
     assert(!plugins.includes('testMe'));
   });
 
@@ -433,7 +433,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     await loader1.loadConfig();
 
     // unittest 环境不开启
-    const keys1 = loader1.orderPlugins.map(plugin => plugin.name).join(',');
+    const keys1 = loader1.orderPlugins.map((plugin) => plugin.name).join(',');
     assert(keys1.includes('b,c,d1,f,e'));
     assert(!loader1.plugins.a1);
 
@@ -442,7 +442,7 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     const loader2 = app2.loader;
     await loader2.loadPlugin();
     await loader2.loadConfig();
-    const keys2 = loader2.orderPlugins.map(plugin => plugin.name).join(',');
+    const keys2 = loader2.orderPlugins.map((plugin) => plugin.name).join(',');
     assert(keys2.includes('d1,a1,b,c,f,e'));
     assert.deepEqual(loader2.plugins.a1, {
       enable: true,
@@ -572,8 +572,8 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     const loader = app.loader;
     await loader.loadPlugin();
     assert.deepEqual(
-      loader.orderPlugins.map(p => p.name),
-      ['session', 'zzz', 'package', 'e', 'b', 'a', 'f']
+      loader.orderPlugins.map((p) => p.name),
+      ['session', 'zzz', 'package', 'e', 'b', 'a', 'f'],
     );
   });
 
@@ -604,8 +604,8 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     const loader = app.loader;
     await loader.loadPlugin();
     assert.deepEqual(
-      loader.orderPlugins.map(p => p.name),
-      ['zookeeper', 'ddcs', 'vip', 'zoneclient', 'rpc', 'ldc']
+      loader.orderPlugins.map((p) => p.name),
+      ['zookeeper', 'ddcs', 'vip', 'zoneclient', 'rpc', 'ldc'],
     );
   });
 
@@ -622,8 +622,8 @@ describe.skipIf(process.platform === 'win32')('test/loader/mixin/load_plugin.tes
     const loader = app.loader;
     await loader.loadPlugin();
     assert.deepEqual(
-      loader.orderPlugins.map(p => p.name),
-      ['zoneclient', 'ldc', 'rpcServer', 'tracelog', 'gateway']
+      loader.orderPlugins.map((p) => p.name),
+      ['zoneclient', 'ldc', 'rpcServer', 'tracelog', 'gateway'],
     );
 
     assert.equal(loader.allPlugins.zoneclient.enable, true);

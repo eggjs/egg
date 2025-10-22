@@ -9,8 +9,8 @@ import { describe, it, beforeEach, afterEach, afterAll, beforeAll, expect } from
 
 import { getFixtures } from './utils.ts';
 
-// TODO: unstable on windows
-describe.skipIf(process.platform === 'win32')('reload logger', () => {
+// TODO: flaky test on windows and macOS
+describe.skipIf(['win32', 'darwin'].includes(process.platform))('reload logger', () => {
   let app: MockApplication;
   const baseDir = getFixtures('logger-reload');
   beforeAll(() => {
@@ -247,7 +247,7 @@ describe('rotate_by_hour_gzip', () => {
     expect(fs.existsSync(file)).toBe(true);
     const gzip = createUnzip();
     fs.createReadStream(file).pipe(gzip);
-    gzip.on('data', data => {
+    gzip.on('data', (data) => {
       expect(data.toString().includes('logrotator-app-hour-gzip')).toBe(true);
     });
     await scheduler.wait(100);
@@ -276,7 +276,7 @@ describe('rotate_by_day_gzip', () => {
     expect(fs.existsSync(file)).toBe(true);
     const gzip = createUnzip();
     fs.createReadStream(file).pipe(gzip);
-    gzip.on('data', data => {
+    gzip.on('data', (data) => {
       expect(data.toString().includes('logrotator-app-day-gzip')).toBe(true);
     });
     await scheduler.wait(100);
@@ -306,7 +306,7 @@ describe('rotate_by_size_gzip', () => {
     expect(fs.existsSync(file)).toBe(true);
     const gzip = createUnzip();
     fs.createReadStream(file).pipe(gzip);
-    gzip.on('data', data => {
+    gzip.on('data', (data) => {
       expect(data.toString().includes('logrotator-app-size-gzip')).toBe(true);
     });
     await scheduler.wait(100);

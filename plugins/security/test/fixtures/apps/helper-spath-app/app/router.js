@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/safepath', async function () {
     const foo = '1.jpg';
     this.body = `var foo = "${this.helper.spath(foo)}";` === 'var foo = "1.jpg";';

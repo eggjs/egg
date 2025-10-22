@@ -50,7 +50,11 @@ describe.skip('test/enable-pathToRegexpModule.test.ts', () => {
 
     assert(res.status === 200);
     const data = JSON.parse(res.data);
-    assert.deepStrictEqual(data.body, { foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    assert.deepStrictEqual(data.body, {
+      foo: 'fengmk2',
+      love: 'egg',
+      work: 'with Node.js',
+    });
     assert(data.files.length === 3);
     assert(data.files[0].field === 'file1');
     assert(data.files[0].filename === 'foooooooo.js');
@@ -91,7 +95,11 @@ describe.skip('test/enable-pathToRegexpModule.test.ts', () => {
 
     assert.equal(res.status, 200);
     const data = JSON.parse(res.data);
-    assert.deepStrictEqual(data.body, { foo: 'fengmk2', love: 'egg', work: 'with Node.js' });
+    assert.deepStrictEqual(data.body, {
+      foo: 'fengmk2',
+      love: 'egg',
+      work: 'with Node.js',
+    });
     assert(data.files.length === 3);
     assert(data.files[0].field === 'file1');
     assert(data.files[0].filename === 'foooooooo.js');

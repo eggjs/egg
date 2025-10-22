@@ -9,7 +9,7 @@ export class AppController {
   })
   async get(
     @HTTPContext() ctx: Context,
-    @HTTPParam() id: string
+    @HTTPParam() id: string,
   ): Promise<{
     traceId: string;
     app: string;

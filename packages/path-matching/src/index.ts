@@ -40,10 +40,10 @@ function toPathMatch(pattern: PathMatchingPattern, pathToRegexpFn: any): PathMat
       reg = reg.regexp;
     }
     if (reg.global) reg.lastIndex = 0;
-    return ctx => reg.test(ctx.path);
+    return (ctx) => reg.test(ctx.path);
   }
   if (pattern instanceof RegExp) {
-    return ctx => {
+    return (ctx) => {
       if (pattern.global) {
         pattern.lastIndex = 0;
       }
@@ -52,8 +52,8 @@ function toPathMatch(pattern: PathMatchingPattern, pathToRegexpFn: any): PathMat
   }
   if (typeof pattern === 'function') return pattern;
   if (Array.isArray(pattern)) {
-    const matchFns = pattern.map(item => toPathMatch(item, pathToRegexpFn));
-    return ctx => matchFns.some(matchFn => matchFn(ctx));
+    const matchFns = pattern.map((item) => toPathMatch(item, pathToRegexpFn));
+    return (ctx) => matchFns.some((matchFn) => matchFn(ctx));
   }
   throw new Error(`match/ignore pattern must be RegExp, Array or String, but got ${pattern}`);
 }

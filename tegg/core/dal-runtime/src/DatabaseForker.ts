@@ -41,7 +41,7 @@ export class DatabaseForker {
   }
 
   private async doForkTable(conn: RDSConnection, sqlFile: string) {
-    const sqls = sqlFile.split(';').filter(t => !!t.trim());
+    const sqls = sqlFile.split(';').filter((t) => !!t.trim());
     for (const sql of sqls) {
       await conn.query(sql);
     }

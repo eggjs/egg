@@ -98,7 +98,9 @@ describe.skip('test/start-without-demon-2.test.ts', () => {
 
     it('should start', async () => {
       const port = await detectPort();
-      app = coffee.fork(eggBin, ['start', '--workers=2', `--port=${port}`], { cwd: fixturePath }) as Coffee;
+      app = coffee.fork(eggBin, ['start', '--workers=2', `--port=${port}`], {
+        cwd: fixturePath,
+      }) as Coffee;
       // app.debug();
       app.expect('code', 0);
 

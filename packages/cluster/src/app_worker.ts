@@ -95,7 +95,7 @@ async function main() {
       listenConfig,
       port,
       protocol,
-      debugPort
+      debugPort,
     );
 
     AppWorker.send({

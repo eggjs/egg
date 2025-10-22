@@ -23,12 +23,12 @@ export class MethodInfoUtil {
   static setMethodControllerType(
     clazz: EggProtoImplClass,
     methodName: string,
-    controllerType: ControllerTypeLike
+    controllerType: ControllerTypeLike,
   ): void {
     const methodControllerMap: METHOD_MAP = MetadataUtil.initOwnMapMetaData(
       METHOD_CONTROLLER_TYPE_MAP,
       clazz,
-      new Map()
+      new Map(),
     );
     methodControllerMap.set(methodName, controllerType);
   }
@@ -42,7 +42,7 @@ export class MethodInfoUtil {
     const methodContextIndexMap: MethodContextIndexMap = MetadataUtil.initOwnMapMetaData(
       METHOD_CONTEXT_INDEX,
       clazz,
-      new Map()
+      new Map(),
     );
     methodContextIndexMap.set(methodName, index);
   }
@@ -50,7 +50,7 @@ export class MethodInfoUtil {
   static getMethodContextIndex(clazz: EggProtoImplClass, methodName: string): number | undefined {
     const methodContextIndexMap: MethodContextIndexMap | undefined = MetadataUtil.getMetaData(
       METHOD_CONTEXT_INDEX,
-      clazz
+      clazz,
     );
     return methodContextIndexMap?.get(methodName);
   }
@@ -59,7 +59,7 @@ export class MethodInfoUtil {
     const methodMiddlewareMap: MethodMiddlewareMap = MetadataUtil.initOwnMapMetaData(
       METHOD_MIDDLEWARES,
       clazz,
-      new Map()
+      new Map(),
     );
     const methodMiddlewares = MapUtil.getOrStore(methodMiddlewareMap, methodName, []);
     methodMiddlewares.push(middleware);
@@ -73,12 +73,12 @@ export class MethodInfoUtil {
   static addMethodAopMiddleware(
     middleware: EggProtoImplClass<IAdvice>,
     clazz: EggProtoImplClass,
-    methodName: string
+    methodName: string,
   ): void {
     const methodMiddlewareMap: MethodAopMiddlewareMap = MetadataUtil.initOwnMapMetaData(
       METHOD_AOP_MIDDLEWARES,
       clazz,
-      new Map()
+      new Map(),
     );
     const methodMiddlewares = MapUtil.getOrStore(methodMiddlewareMap, methodName, []);
     methodMiddlewares.push(middleware);
@@ -87,7 +87,7 @@ export class MethodInfoUtil {
   static getMethodAopMiddlewares(clazz: EggProtoImplClass, methodName: string): EggProtoImplClass<IAdvice>[] {
     const methodMiddlewareMap: MethodAopMiddlewareMap | undefined = MetadataUtil.getMetaData(
       METHOD_AOP_MIDDLEWARES,
-      clazz
+      clazz,
     );
     return methodMiddlewareMap?.get(methodName) || [];
   }
@@ -125,7 +125,7 @@ export class MethodInfoUtil {
   static shouldRegisterAopMiddlewarePointCut(clazz: EggProtoImplClass, methodName: string): boolean {
     const methodControllerMap: MethodAopRegisterMap | undefined = MetadataUtil.getMetaData(
       METHOD_AOP_REGISTER_MAP,
-      clazz
+      clazz,
     );
     return !(methodControllerMap && methodControllerMap.get(methodName));
   }
@@ -134,7 +134,7 @@ export class MethodInfoUtil {
     const methodControllerMap: MethodAopRegisterMap = MetadataUtil.initOwnMapMetaData(
       METHOD_AOP_REGISTER_MAP,
       clazz,
-      new Map()
+      new Map(),
     );
     methodControllerMap.set(methodName, true);
   }

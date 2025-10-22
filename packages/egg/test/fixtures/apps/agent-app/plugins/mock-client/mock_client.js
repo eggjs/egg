@@ -10,7 +10,7 @@ class MockClient extends EventEmitter {
     setImmediate(
       function () {
         this.ready(true);
-      }.bind(this)
+      }.bind(this),
     );
   }
 

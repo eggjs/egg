@@ -2,7 +2,7 @@
 
 const stripIndent = require('common-tags').stripIndent;
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/xss', async function () {
     const tpl = stripIndent`
       {{ url }}

@@ -34,7 +34,7 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
   it('should work', () => {
     const fooControllerMetaData = ControllerMetaBuilderFactory.build(
       FooController,
-      ControllerType.HTTP
+      ControllerType.HTTP,
     )! as HTTPControllerMeta;
     assert(fooControllerMetaData.protoName === 'fooController');
     assert(fooControllerMetaData.controllerName === 'FooController');
@@ -60,7 +60,7 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
   it('controller name should work', () => {
     const fxxControllerMetaData = ControllerMetaBuilderFactory.build(
       FoxController,
-      ControllerType.HTTP
+      ControllerType.HTTP,
     )! as HTTPControllerMeta;
     assert(fxxControllerMetaData.controllerName === 'FxxController');
     assert(fxxControllerMetaData.protoName === 'foxController');
@@ -70,7 +70,7 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
   it('proto name should work', () => {
     const fxxControllerMetaData = ControllerMetaBuilderFactory.build(
       FxxController,
-      ControllerType.HTTP
+      ControllerType.HTTP,
     )! as HTTPControllerMeta;
     assert(fxxControllerMetaData.protoName === 'FooController');
     assert(fxxControllerMetaData.className === 'FxxController');
@@ -130,21 +130,21 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
 
     describe('path is /foo/*', () => {
       it('should equals 1000', () => {
-        const methodMeta = priorityMeta.methods.find(t => t.name === 'regexpMethod')!;
+        const methodMeta = priorityMeta.methods.find((t) => t.name === 'regexpMethod')!;
         assert(methodMeta.priority === 1000);
       });
     });
 
     describe('path is /foo/users/:id', () => {
       it('should equals 2000', () => {
-        const methodMeta = priorityMeta.methods.find(t => t.name === 'paramMethod')!;
+        const methodMeta = priorityMeta.methods.find((t) => t.name === 'paramMethod')!;
         assert(methodMeta.priority === 2000);
       });
     });
 
     describe('path is /web/users/*', () => {
       it('should equals 3000', () => {
-        const methodMeta = priorityMeta.methods.find(t => t.name === 'regexpMethod2')!;
+        const methodMeta = priorityMeta.methods.find((t) => t.name === 'regexpMethod2')!;
         assert(methodMeta.priority === 3000);
       });
     });
@@ -153,7 +153,7 @@ describe('core/controller-decorator/test/http/HTTPMeta.test.ts', () => {
       it('should throw error', () => {
         const builder = ControllerMetaBuilderFactory.createControllerMetaBuilder(
           TooLongController,
-          ControllerType.HTTP
+          ControllerType.HTTP,
         )!;
         assert.throws(() => {
           builder.build();

@@ -9,7 +9,7 @@ exports.getClusterPort = async function () {
 };
 
 exports.getHosts = async function () {
-  this.body = this.app.val && this.app.val.map(url => url.host).join(',');
+  this.body = this.app.val && this.app.val.map((url) => url.host).join(',');
 };
 
 exports.publish = async function () {

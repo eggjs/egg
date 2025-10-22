@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.locals = {
     'app.global': {
       id: '12306',

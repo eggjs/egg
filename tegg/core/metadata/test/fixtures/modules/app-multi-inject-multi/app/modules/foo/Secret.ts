@@ -17,7 +17,7 @@ export function SecretQualifier(chatModelName: string) {
       target.constructor as EggProtoImplClass,
       propertyKey,
       SecretQualifierAttribute,
-      chatModelName
+      chatModelName,
     );
   };
 }

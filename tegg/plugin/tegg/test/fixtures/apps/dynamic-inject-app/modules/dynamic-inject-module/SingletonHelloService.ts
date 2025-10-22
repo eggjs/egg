@@ -14,7 +14,7 @@ export class SingletonHelloService {
       this.eggObjectFactory.getEggObject(AbstractSingletonHello, SingletonHelloType.FOO),
       this.eggObjectFactory.getEggObject(AbstractSingletonHello, SingletonHelloType.BAR),
     ]);
-    const msgs = helloImpls.map(helloImpl => helloImpl.hello());
+    const msgs = helloImpls.map((helloImpl) => helloImpl.hello());
     return msgs;
   }
 }

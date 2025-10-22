@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class Sub2 extends app.Service {
     constructor(ctx) {
       super(ctx);

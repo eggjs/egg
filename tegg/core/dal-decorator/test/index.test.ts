@@ -30,7 +30,7 @@ describe('test/dal/index.test.ts', () => {
             primaryKey: true,
           },
         ],
-      ])
+      ]),
     );
     assert.deepStrictEqual(
       columnTypeMap,
@@ -48,7 +48,7 @@ describe('test/dal/index.test.ts', () => {
             length: 100,
           },
         ],
-      ])
+      ]),
     );
 
     assert.deepStrictEqual(indexList, [

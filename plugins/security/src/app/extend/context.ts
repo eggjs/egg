@@ -254,7 +254,7 @@ export default class SecurityContext extends Context {
   private logCsrfNotice(msg: string): void {
     if (this.app.config.env === 'local') {
       this.logger.warn(
-        `${msg}. See https://eggjs.org/zh-CN/core/security/#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81-csrf-%E7%9A%84%E9%98%B2%E8%8C%83`
+        `${msg}. See https://eggjs.org/zh-CN/core/security/#%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81-csrf-%E7%9A%84%E9%98%B2%E8%8C%83`,
       );
     }
   }

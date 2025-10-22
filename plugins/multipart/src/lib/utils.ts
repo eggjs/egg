@@ -58,12 +58,12 @@ export function normalizeOptions(options: MultipartConfig): MultipartConfig {
 
   // normalize whitelist
   if (Array.isArray(options.whitelist)) {
-    options.whitelist = options.whitelist.map(extname => extname.toLowerCase());
+    options.whitelist = options.whitelist.map((extname) => extname.toLowerCase());
   }
 
   // normalize fileExtensions
   if (Array.isArray(options.fileExtensions)) {
-    options.fileExtensions = options.fileExtensions.map(extname => {
+    options.fileExtensions = options.fileExtensions.map((extname) => {
       return extname.startsWith('.') || extname === '' ? extname.toLowerCase() : `.${extname.toLowerCase()}`;
     });
   }

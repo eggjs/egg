@@ -32,10 +32,16 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const loadUnit = await LoadUnitFactory.createLoadUnit(extendsConstructorModule, EggLoadUnitType.MODULE, loader);
 
       const fooConstructor = loadUnit.getEggPrototype('fooConstructor', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.CONTEXT },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.CONTEXT,
+        },
       ]);
       const fooConstructorLogger = loadUnit.getEggPrototype('fooConstructorLogger', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.CONTEXT },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.CONTEXT,
+        },
       ]);
 
       assert.strictEqual(fooConstructor.length, 1);
@@ -59,13 +65,22 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       assert(loadUnit.id === 'LOAD_UNIT:app-repo');
       assert(loadUnit.unitPath === repoModulePath);
       const appRepoProto = loadUnit.getEggPrototype('appRepo', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.SINGLETON,
+        },
       ]);
       const sprintRepoProto = loadUnit.getEggPrototype('sprintRepo', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.SINGLETON,
+        },
       ]);
       const userRepoProto = loadUnit.getEggPrototype('userRepo', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.SINGLETON,
+        },
       ]);
       assert.strictEqual(appRepoProto.length, 1);
       assert.strictEqual(appRepoProto[0].className, 'AppRepo');
@@ -92,7 +107,10 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
 
       const loadUnit = await LoadUnitFactory.createLoadUnit(optionalInjectModulePath, EggLoadUnitType.MODULE, loader);
       const optionalInjectServiceProto = loadUnit.getEggPrototype('optionalInjectService', [
-        { attribute: InitTypeQualifierAttribute, value: ObjectInitType.SINGLETON },
+        {
+          attribute: InitTypeQualifierAttribute,
+          value: ObjectInitType.SINGLETON,
+        },
       ]);
       assert.deepStrictEqual(optionalInjectServiceProto[0].injectObjects, []);
     });
@@ -111,7 +129,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
           assert(e.message.includes('Object persistenceService not found'));
           assert(e.message.includes('faq/TEGG_EGG_PROTO_NOT_FOUND'));
           return true;
-        }
+        },
       );
     });
 
@@ -125,7 +143,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
         (e: Error) => {
           assert(e.message.includes('duplicate proto: invalidateService'));
           return true;
-        }
+        },
       );
     });
   });
@@ -147,7 +165,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const loadUnit = await LoadUnitFactory.createLoadUnit(sameObjectModulePath, EggLoadUnitType.MODULE, loader);
       const singletonProto = loadUnit.getEggPrototype('singletonCountService', [])[0];
       assert(singletonProto);
-      const injectProto = singletonProto.injectObjects.find(t => t.objName === 'appCache');
+      const injectProto = singletonProto.injectObjects.find((t) => t.objName === 'appCache');
       assert(injectProto);
       assert(injectProto.proto.initType === ObjectInitType.CONTEXT);
     });
@@ -190,7 +208,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const loadUnit = await LoadUnitFactory.createLoadUnit(
         multiCallbackInstanceModule,
         EggLoadUnitType.MODULE,
-        loader
+        loader,
       );
       assert.equal(loadUnit.id, 'LOAD_UNIT:multiCallbackInstanceModule');
       assert.equal(loadUnit.unitPath, multiCallbackInstanceModule);
@@ -214,7 +232,7 @@ describe('test/LoadUnit/LoadUnit.test.ts', () => {
       const barLoader = new TestLoader(barInstanceModule);
       await buildGlobalGraph(
         [appInstanceModule, app2InstanceModule, fooInstanceModule, barInstanceModule],
-        [loader, loader2, fooLoader, barLoader]
+        [loader, loader2, fooLoader, barLoader],
       );
       const loadUnit = await LoadUnitFactory.createLoadUnit(appInstanceModule, EggLoadUnitType.MODULE, loader);
       const loadUnit2 = await LoadUnitFactory.createLoadUnit(app2InstanceModule, EggLoadUnitType.MODULE, loader2);

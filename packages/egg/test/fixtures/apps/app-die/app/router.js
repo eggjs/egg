@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/exit', async function () {
     process.exit(1);
   });

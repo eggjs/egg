@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     const httpclient = app.httpclient;
 

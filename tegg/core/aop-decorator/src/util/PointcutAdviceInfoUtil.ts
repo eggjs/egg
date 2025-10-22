@@ -12,7 +12,7 @@ export class PointcutAdviceInfoUtil {
     const pointcutAdviceInfoList = MetadataUtil.initOwnArrayMetaData<PointcutAdviceInfo>(
       POINTCUT_ADVICE_INFO_LIAR,
       clazz,
-      []
+      [],
     );
     // FIXME: parent/child should has correct order
     pointcutAdviceInfoList.unshift({
@@ -24,6 +24,6 @@ export class PointcutAdviceInfoUtil {
   static getPointcutAdviceInfoList(clazz: EggProtoImplClass, method: PropertyKey): Array<AdviceInfo> {
     const pointcutAdviceInfoList: Array<PointcutAdviceInfo> | undefined =
       MetadataUtil.getMetaData(POINTCUT_ADVICE_INFO_LIAR, clazz) || [];
-    return pointcutAdviceInfoList.filter(t => t.method === method).map(t => t.adviceInfo);
+    return pointcutAdviceInfoList.filter((t) => t.method === method).map((t) => t.adviceInfo);
   }
 }

@@ -16,11 +16,11 @@ export class ConfigSourceLoadUnitHook implements LifecycleHook<LoadUnitLifecycle
     const classList = await ctx.loader.load();
     for (const clazz of classList) {
       const injectObjects = PrototypeUtil.getInjectObjects(clazz);
-      const moduleConfigObject = injectObjects.find(t => t.objName === 'moduleConfig');
+      const moduleConfigObject = injectObjects.find((t) => t.objName === 'moduleConfig');
       const configSourceQualifier = QualifierUtil.getProperQualifier(
         clazz,
         'moduleConfig',
-        ConfigSourceQualifierAttribute
+        ConfigSourceQualifierAttribute,
       );
       if (moduleConfigObject && !configSourceQualifier) {
         ConfigSourceQualifier(loadUnit.name)(clazz.prototype, moduleConfigObject.refName);

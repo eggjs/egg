@@ -42,7 +42,7 @@ export class CompatibleUtil {
       if (!deprecated) {
         deprecated = true;
         app.deprecate(
-          `[egg/module] Please use await app.getEggObject(clazzName) instead of app.${loadUnitInstance.name}.${String(p)}`
+          `[egg/module] Please use await app.getEggObject(clazzName) instead of app.${loadUnitInstance.name}.${String(p)}`,
         );
       }
       return eggObj.obj;
@@ -52,7 +52,7 @@ export class CompatibleUtil {
   static appCompatible(app: Application, loadUnitInstance: LoadUnitInstance): void {
     const moduleLoadUnitProxy = ProxyUtil.safeProxy(
       loadUnitInstance,
-      CompatibleUtil.singletonModuleProxyFactory(app, loadUnitInstance)
+      CompatibleUtil.singletonModuleProxyFactory(app, loadUnitInstance),
     );
     Reflect.defineProperty(app.module, loadUnitInstance.name, {
       configurable: true,
@@ -70,7 +70,7 @@ export class CompatibleUtil {
         if (!deprecated) {
           deprecated = true;
           ctx.app.deprecate(
-            `[egg/module] Please use await ctx.getEggObject(clazzName) instead of ctx.${loadUnitInstance.name}.${String(p)}`
+            `[egg/module] Please use await ctx.getEggObject(clazzName) instead of ctx.${loadUnitInstance.name}.${String(p)}`,
           );
         }
         return eggObj.obj;
@@ -91,7 +91,7 @@ export class CompatibleUtil {
         p[c.name] = c;
         return p;
       },
-      {} as Record<PropertyKey, LoadUnitInstance>
+      {} as Record<PropertyKey, LoadUnitInstance>,
     );
 
     // add module property to context prototype

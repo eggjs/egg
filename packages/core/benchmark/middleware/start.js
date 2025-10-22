@@ -13,6 +13,6 @@ app.loader
     app.listen(7001);
     console.log('server started at 7001');
   })
-  .catch(err => {
+  .catch((err) => {
     throw err;
   });

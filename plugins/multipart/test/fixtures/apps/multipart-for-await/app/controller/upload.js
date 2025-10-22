@@ -34,7 +34,7 @@ module.exports = class UploadController extends Controller {
               }
               setImmediate(callback);
             },
-          })
+          }),
         );
         files[fieldname] = {
           fileName: filename,

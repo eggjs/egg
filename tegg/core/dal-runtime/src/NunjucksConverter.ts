@@ -16,7 +16,7 @@ export class NunjucksConverter {
   static convertNormalVariableCode(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\(runtime\.contextOrFrameLookup\((.+?),(.*?),\W*?"(.+?)"\)/g,
-      '\noutput += runtime.escapeSQL.call(this, "$3", runtime.contextOrFrameLookup($1, $2, "$3")'
+      '\noutput += runtime.escapeSQL.call(this, "$3", runtime.contextOrFrameLookup($1, $2, "$3")',
     );
   }
 
@@ -44,11 +44,11 @@ export class NunjucksConverter {
       code.match(/\Woutput\W*?\+=\W*?runtime\.suppressValue\(\(.*\W*?\?\W*?.*?:.*\),\W*?env\.opts\.autoescape/g) || [];
 
     // 进行逐一处理
-    const ternaryAfter = ternaryBefore.map(str => {
+    const ternaryAfter = ternaryBefore.map((str) => {
       return str
         .replace(
           /([?:])runtime\.contextOrFrameLookup\((.+?),(.*?),\W*?"(.+?)"\)/g,
-          '$1runtime.escapeSQL.call(this, "$4", runtime.contextOrFrameLookup($2, $3, "$4"))'
+          '$1runtime.escapeSQL.call(this, "$4", runtime.contextOrFrameLookup($2, $3, "$4"))',
         )
         .replace(/env.opts.autoescape$/g, 'false');
     });
@@ -81,7 +81,7 @@ export class NunjucksConverter {
   static convertNestedObjectCode(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\(runtime\.memberLookup\((.+?)\), env\.opts\.autoescape\)/g,
-      '\noutput += runtime.escapeSQL.call(this, "<...>", runtime.memberLookup($1), env.opts.autoescape)'
+      '\noutput += runtime.escapeSQL.call(this, "<...>", runtime.memberLookup($1), env.opts.autoescape)',
     );
   }
 
@@ -106,7 +106,7 @@ export class NunjucksConverter {
   static convertValueInsideFor(code: string): string {
     return code.replace(
       /\Woutput\W*?\+=\W*?runtime\.suppressValue\((t_\d+), env\.opts\.autoescape\)/g,
-      '\noutput += runtime.escapeSQL.call(this, "for.$1", $1, env.opts.autoescape)'
+      '\noutput += runtime.escapeSQL.call(this, "for.$1", $1, env.opts.autoescape)',
     );
   }
 }

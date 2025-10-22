@@ -69,8 +69,8 @@ describe('test/LoadUnit/AppGraph.test.ts', () => {
     await graph.build();
     graph.sort();
     assert.deepStrictEqual(
-      graph.moduleConfigList.map(t => t.name),
-      ['app', 'app2', 'bar', 'foo']
+      graph.moduleConfigList.map((t) => t.name),
+      ['app', 'app2', 'bar', 'foo'],
     );
   });
 });

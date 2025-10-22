@@ -25,7 +25,7 @@ function graceful(proc: ChildProcess) {
   if (!hadHook) {
     hadHook = true;
     let signal: NodeJS.Signals;
-    ['SIGINT', 'SIGQUIT', 'SIGTERM'].forEach(event => {
+    ['SIGINT', 'SIGQUIT', 'SIGTERM'].forEach((event) => {
       process.once(event, () => {
         signal = event as NodeJS.Signals;
         process.exit(0);
@@ -349,7 +349,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     const forkExecArgv = [...this.globalExecArgv, ...(options.execArgv || [])];
     const NODE_OPTIONS = env.NODE_OPTIONS ? `NODE_OPTIONS='${env.NODE_OPTIONS}' ` : '';
     const forkExecArgvString = forkExecArgv.length ? ' ' + forkExecArgv.join(' ') + ' ' : ' ';
-    const forkArgsString = forkArgs.map(a => `'${a}'`).join(' ');
+    const forkArgsString = forkArgs.map((a) => `'${a}'`).join(' ');
     const fullCommand = `${NODE_OPTIONS}${process.execPath}${forkExecArgvString}${modulePath} ${forkArgsString}`;
     if (options.dryRun) {
       console.log('dry run: $ %s', fullCommand);
@@ -368,7 +368,7 @@ export abstract class BaseCommand<T extends typeof Command> extends Command {
     graceful(proc);
 
     return new Promise<void>((resolve, reject) => {
-      proc.once('exit', code => {
+      proc.once('exit', (code) => {
         debug('fork pid: %o exit code %o', proc.pid, code);
         children.delete(proc);
         if (code !== 0) {

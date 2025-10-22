@@ -8,7 +8,7 @@ class StartCommand extends BaseStartCommand {
   *run(context) {
     yield super.run(context);
     const child = this.child;
-    child.on('message', msg => {
+    child.on('message', (msg) => {
       if (msg && msg.action === 'egg-ready') {
         console.log('READY!!!');
       }

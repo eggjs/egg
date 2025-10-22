@@ -33,9 +33,9 @@ export class LoaderUtil {
   static filePattern(): string[] {
     const extensions = LoaderUtil.supportExtensions();
     const extensionPattern = extensions
-      .map(t => t.substring(1))
+      .map((t) => t.substring(1))
       // JSON file will not export class
-      .filter(t => t !== 'json')
+      .filter((t) => t !== 'json')
       .join('|');
 
     const filePattern = [
@@ -69,7 +69,9 @@ export class LoaderUtil {
     } catch (e: any) {
       console.trace('[tegg/loader] loadFile %s error:', filePath);
       console.error(e);
-      throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, { cause: e });
+      throw new Error(`[tegg/loader] load ${filePath} failed: ${e.message}`, {
+        cause: e,
+      });
     }
     const clazzList: EggProtoImplClass[] = [];
     const exportNames = Object.keys(exports);

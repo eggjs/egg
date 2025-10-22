@@ -1,6 +1,6 @@
 const { scheduler } = require('node:timers/promises');
 
-module.exports = app => {
+module.exports = (app) => {
   if (process.env.ERROR) {
     app.logger.error(new Error(process.env.ERROR));
   }

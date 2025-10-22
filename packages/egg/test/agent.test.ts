@@ -41,7 +41,7 @@ describe('test/agent.test.ts', () => {
       const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
-        /nodejs\.MessageUnhandledRejectionError: event: agent-throw-async, error: agent error in async function/
+        /nodejs\.MessageUnhandledRejectionError: event: agent-throw-async, error: agent error in async function/,
       );
       app.notExpect('stderr', /nodejs.AgentWorkerDiedError/);
     });
@@ -52,7 +52,7 @@ describe('test/agent.test.ts', () => {
       const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
-        /nodejs\.MessageUnhandledRejectionError: event: agent-throw, error: agent error in sync function/
+        /nodejs\.MessageUnhandledRejectionError: event: agent-throw, error: agent error in sync function/,
       );
       app.notExpect('stderr', /nodejs.AgentWorkerDiedError/);
     });
@@ -63,7 +63,7 @@ describe('test/agent.test.ts', () => {
       const body = fs.readFileSync(path.join(baseDir, 'logs/agent-throw/common-error.log'), 'utf8');
       assert.match(
         body,
-        /nodejs\.MessageUnhandledRejectionError: event: agent-throw-string, error: agent error string/
+        /nodejs\.MessageUnhandledRejectionError: event: agent-throw-string, error: agent error string/,
       );
       app.notExpect('stderr', /nodejs.AgentWorkerDiedError/);
     });

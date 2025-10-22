@@ -643,6 +643,6 @@ export class Request {
 function splitCommaSeparatedValues(value: string, limit?: number): string[] {
   return value
     .split(',', limit)
-    .map(v => v.trim())
-    .filter(v => v.length > 0);
+    .map((v) => v.trim())
+    .filter((v) => v.length > 0);
 }

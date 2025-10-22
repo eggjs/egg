@@ -100,7 +100,7 @@ describe('test/AspectMetaBuild.test.ts', () => {
       });
       const aspects = builder.build();
       assert(aspects.length === 2);
-      const overwriteAspect = aspects.find(t => t.method === 'overwriteMethod');
+      const overwriteAspect = aspects.find((t) => t.method === 'overwriteMethod');
       assert(overwriteAspect);
       assert(overwriteAspect.clazz === ChildExample);
       const overwriteAdvices = overwriteAspect.adviceList;
@@ -129,7 +129,7 @@ describe('test/AspectMetaBuild.test.ts', () => {
         },
       ]);
 
-      const noOverwriteAspect = aspects.find(t => t.method === 'noOverwriteMethod');
+      const noOverwriteAspect = aspects.find((t) => t.method === 'noOverwriteMethod');
       assert(noOverwriteAspect);
       assert(noOverwriteAspect.clazz === ChildExample);
       const noOverwriteAdvices = noOverwriteAspect.adviceList;
@@ -154,7 +154,7 @@ describe('test/AspectMetaBuild.test.ts', () => {
       const aspects = builder.build();
       assert(aspects.length === 2);
 
-      const overwriteAspect = aspects.find(t => t.method === 'overwriteMethod');
+      const overwriteAspect = aspects.find((t) => t.method === 'overwriteMethod');
       assert(overwriteAspect);
       assert(overwriteAspect.clazz === ParentExample);
       const overwriteAdvices = overwriteAspect.adviceList;
@@ -171,7 +171,7 @@ describe('test/AspectMetaBuild.test.ts', () => {
         },
       ]);
 
-      const noOverwriteAspect = aspects.find(t => t.method === 'noOverwriteMethod');
+      const noOverwriteAspect = aspects.find((t) => t.method === 'noOverwriteMethod');
       assert(noOverwriteAspect);
       assert(noOverwriteAspect.clazz === ParentExample);
       const noOverwriteAdvices = noOverwriteAspect.adviceList;

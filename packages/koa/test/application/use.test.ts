@@ -76,7 +76,7 @@ describe('app.use(fn)', () => {
   it('should catch thrown errors in non-async functions', async () => {
     const app = new Koa();
 
-    app.use(ctx => ctx.throw('Not Found', 404));
+    app.use((ctx) => ctx.throw('Not Found', 404));
 
     await request(app.callback()).get('/').expect(404);
   });
@@ -96,11 +96,11 @@ describe('app.use(fn)', () => {
         } as unknown as MiddlewareFunc);
       },
       // oxlint-disable-next-line prefer-await-to-callbacks
-      err => {
+      (err) => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
-      }
+      },
     );
   });
 
@@ -122,11 +122,11 @@ describe('app.use(fn)', () => {
         } as unknown as MiddlewareFunc);
       },
       // oxlint-disable-next-line prefer-await-to-callbacks
-      err => {
+      (err) => {
         assert.ok(err instanceof TypeError);
         assert.match(err.message, /Support for generators was removed/);
         return true;
-      }
+      },
     );
   });
 });

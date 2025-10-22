@@ -16,8 +16,8 @@ export class EggControllerLoader implements Loader {
     const filePattern = LoaderUtil.filePattern();
     let files: string[];
     try {
-      const httpControllers = (await globby(filePattern, { cwd: this.controllerDir })).map(file =>
-        path.join(this.controllerDir, file)
+      const httpControllers = (await globby(filePattern, { cwd: this.controllerDir })).map((file) =>
+        path.join(this.controllerDir, file),
       );
       files = httpControllers;
     } catch {

@@ -98,7 +98,7 @@ export async function init(): Promise<void> {
       message: 'Project name:',
       defaultValue: defaultTargetDir,
       placeholder: defaultTargetDir,
-      validate: value => {
+      validate: (value) => {
         return value.length === 0 || formatTargetDir(value).length > 0 ? undefined : 'Invalid project name';
       },
     });
@@ -160,7 +160,7 @@ export async function init(): Promise<void> {
   // 4. Choose a template
   let template = argTemplate;
   let hasInvalidArgTemplate = false;
-  if (argTemplate && !TEMPLATES.some(t => t.name === argTemplate)) {
+  if (argTemplate && !TEMPLATES.some((t) => t.name === argTemplate)) {
     template = undefined;
     hasInvalidArgTemplate = true;
   }
@@ -169,7 +169,7 @@ export async function init(): Promise<void> {
       message: hasInvalidArgTemplate
         ? `"${argTemplate}" isn't a valid template. Please choose from below: `
         : 'Select a template:',
-      options: TEMPLATES.map(template => {
+      options: TEMPLATES.map((template) => {
         const templateColor = template.color;
         return {
           label: templateColor(template.display || template.name),
@@ -187,14 +187,14 @@ export async function init(): Promise<void> {
 
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm';
 
-  const { customCommand } = TEMPLATES.find(t => t.name === template) ?? {};
+  const { customCommand } = TEMPLATES.find((t) => t.name === template) ?? {};
 
   if (customCommand) {
     const fullCustomCommand = getFullCustomCommand(customCommand, pkgInfo);
 
     const [command, ...args] = fullCustomCommand.split(' ');
     // we replace TARGET_DIR here because targetDir may include a space
-    const replacedArgs = args.map(arg => arg.replace('TARGET_DIR', () => targetDir));
+    const replacedArgs = args.map((arg) => arg.replace('TARGET_DIR', () => targetDir));
     const { status } = spawn.sync(command, replacedArgs, {
       stdio: 'inherit',
     });
@@ -215,7 +215,7 @@ export async function init(): Promise<void> {
   };
 
   const files = fs.readdirSync(templateDir);
-  for (const file of files.filter(f => f !== 'package.json')) {
+  for (const file of files.filter((f) => f !== 'package.json')) {
     write(file);
   }
 

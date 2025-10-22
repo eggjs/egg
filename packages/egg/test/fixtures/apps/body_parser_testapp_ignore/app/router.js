@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/test/body_parser/user', function () {
     this.body = {
       url: this.url,

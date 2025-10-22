@@ -1,4 +1,4 @@
-module.exports = agent => {
+module.exports = (agent) => {
   agent.messenger.on('agent-throw', () => {
     throw new Error('agent error in sync function');
   });

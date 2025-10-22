@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = condition => {
+module.exports = (condition) => {
   if (condition) {
     return 'a';
   }

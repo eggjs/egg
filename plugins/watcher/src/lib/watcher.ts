@@ -73,7 +73,7 @@ export class Watcher extends Base {
 
     // support array
     if (Array.isArray(path)) {
-      path.forEach(p => this.watch(p, listener));
+      path.forEach((p) => this.watch(p, listener));
       return;
     }
 

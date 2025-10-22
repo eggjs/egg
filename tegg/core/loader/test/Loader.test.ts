@@ -11,10 +11,10 @@ describe('core/loader/test/Loader.test.ts', () => {
       const loader = LoaderFactory.createLoader(repoModulePath, EggLoadUnitType.MODULE);
       const prototypes = await loader.load();
       assert.equal(prototypes.length, 4);
-      const appRepoProto = prototypes.find(t => t.name === 'AppRepo');
-      const appRepo2Proto = prototypes.find(t => t.name === 'AppRepo2');
-      const sprintRepoProto = prototypes.find(t => t.name === 'SprintRepo');
-      const userRepoProto = prototypes.find(t => t.name === 'UserRepo');
+      const appRepoProto = prototypes.find((t) => t.name === 'AppRepo');
+      const appRepo2Proto = prototypes.find((t) => t.name === 'AppRepo2');
+      const sprintRepoProto = prototypes.find((t) => t.name === 'SprintRepo');
+      const userRepoProto = prototypes.find((t) => t.name === 'UserRepo');
       assert(appRepoProto);
       assert(appRepo2Proto);
       assert(sprintRepoProto);
@@ -49,10 +49,10 @@ describe('core/loader/test/Loader.test.ts', () => {
         (err: Error) => {
           assert.match(
             err.message,
-            /Syntax Error|ERROR: Expected ";" but found "here"|failed: Expected `;` but found `Identifier`/
+            /Syntax Error|ERROR: Expected ";" but found "here"|failed: Expected `;` but found `Identifier`/,
           );
           return true;
-        }
+        },
       );
     });
   });

@@ -16,14 +16,14 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
   it('optional module dep should work', () => {
     const graph = new GlobalGraph();
     graph.addModuleNode(
-      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/root'), [RootProto], [])
+      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/root'), [RootProto], []),
     );
     graph.addModuleNode(
-      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/used'), [UsedProto], [], true)
+      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/used'), [UsedProto], [], true),
     );
 
     graph.addModuleNode(
-      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/unused'), [UnusedProto], [], true)
+      buildModuleNode(path.join(__dirname, './fixtures/modules/app-graph-modules/unused'), [UnusedProto], [], true),
     );
 
     graph.build();
@@ -49,36 +49,36 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
       buildModuleNode(
         path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app'),
         [App],
-        multiInstanceClazzList
-      )
+        multiInstanceClazzList,
+      ),
     );
     graph.addModuleNode(
       buildModuleNode(
         path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/app2'),
         [App2],
-        multiInstanceClazzList
-      )
+        multiInstanceClazzList,
+      ),
     );
     graph.addModuleNode(
       buildModuleNode(
         path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/bar'),
         [],
-        multiInstanceClazzList
-      )
+        multiInstanceClazzList,
+      ),
     );
     graph.addModuleNode(
       buildModuleNode(
         path.join(__dirname, './fixtures/modules/app-multi-inject-multi/app/modules/foo'),
         [],
-        multiInstanceClazzList
-      )
+        multiInstanceClazzList,
+      ),
     );
 
     graph.build();
     graph.sort();
     assert.deepStrictEqual(
-      graph.moduleConfigList.map(t => t.name),
-      ['app', 'app2', 'bar', 'foo']
+      graph.moduleConfigList.map((t) => t.name),
+      ['app', 'app2', 'bar', 'foo'],
     );
   });
 
@@ -93,8 +93,8 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     const moduleProtoDescriptors = graph.moduleProtoDescriptorMap.get('extendsModule');
     assert(moduleProtoDescriptors);
     assert.deepStrictEqual(
-      moduleProtoDescriptors!.map(t => t.name),
-      ['logger', 'base', 'foo']
+      moduleProtoDescriptors!.map((t) => t.name),
+      ['logger', 'base', 'foo'],
     );
   });
 
@@ -108,8 +108,8 @@ describe('test/LoadUnit/GlobalGraph.test.ts', () => {
     graph.sort();
     const moduleProtoDescriptors = graph.moduleProtoDescriptorMap.get('extendsModule');
     assert.deepStrictEqual(
-      moduleProtoDescriptors!.map(t => t.name),
-      ['logger', 'bar', 'constructorBase', 'fooConstructor', 'fooConstructorLogger']
+      moduleProtoDescriptors!.map((t) => t.name),
+      ['logger', 'bar', 'constructorBase', 'fooConstructor', 'fooConstructorLogger'],
     );
   });
 });

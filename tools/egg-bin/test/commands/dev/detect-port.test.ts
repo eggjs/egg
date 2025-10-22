@@ -11,7 +11,7 @@ describe('test/commands/dev/detect-port.test.ts', () => {
   before(async () => {
     serverPort = await detect(7001);
     server = net.createServer();
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve) => {
       server.listen(serverPort, resolve);
     });
   });

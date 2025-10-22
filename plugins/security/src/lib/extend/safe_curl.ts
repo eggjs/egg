@@ -7,7 +7,9 @@ const SSRF_HTTPCLIENT = Symbol('SSRF_HTTPCLIENT');
 type HttpClient = EggApplicationCore['HttpClient'];
 type HttpClientParameters = Parameters<HttpClient['prototype']['request']>;
 export type HttpClientRequestURL = HttpClientParameters[0];
-export type HttpClientOptions = HttpClientParameters[1] & { checkAddress?: SSRFCheckAddressFunction };
+export type HttpClientOptions = HttpClientParameters[1] & {
+  checkAddress?: SSRFCheckAddressFunction;
+};
 export type HttpClientResponse<T = any> = Awaited<ReturnType<HttpClient['prototype']['request']>> & { data: T };
 
 /**
@@ -16,7 +18,7 @@ export type HttpClientResponse<T = any> = Awaited<ReturnType<HttpClient['prototy
 export async function safeCurlForApplication<T = any>(
   app: EggApplicationCore,
   url: HttpClientRequestURL,
-  options: HttpClientOptions = {}
+  options: HttpClientOptions = {},
 ): Promise<HttpClientResponse<T>> {
   const ssrfConfig = app.config.security.ssrf;
   if (ssrfConfig?.checkAddress) {

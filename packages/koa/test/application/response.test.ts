@@ -14,7 +14,7 @@ describe('app.response', () => {
   const app5 = new Koa();
 
   it('should merge properties', () => {
-    app1.use(ctx => {
+    app1.use((ctx) => {
       assert.strictEqual(ctx.response.msg, 'hello');
       ctx.status = 204;
     });
@@ -23,7 +23,7 @@ describe('app.response', () => {
   });
 
   it('should not affect the original prototype', () => {
-    app2.use(ctx => {
+    app2.use((ctx) => {
       assert.strictEqual(ctx.response.msg, undefined);
       ctx.status = 204;
     });
@@ -32,7 +32,7 @@ describe('app.response', () => {
   });
 
   it('should not include status message in body for http2', async () => {
-    app3.use(ctx => {
+    app3.use((ctx) => {
       ctx.req.httpVersionMajor = 2;
       ctx.status = 404;
     });
@@ -41,7 +41,7 @@ describe('app.response', () => {
   });
 
   it('should set ._explicitNullBody correctly', async () => {
-    app4.use(ctx => {
+    app4.use((ctx) => {
       ctx.body = null;
       assert.strictEqual(ctx.response._explicitNullBody, true);
     });
@@ -50,7 +50,7 @@ describe('app.response', () => {
   });
 
   it('should not set ._explicitNullBody incorrectly', async () => {
-    app5.use(ctx => {
+    app5.use((ctx) => {
       ctx.body = undefined;
       assert.strictEqual(ctx.response._explicitNullBody, undefined);
       ctx.body = '';

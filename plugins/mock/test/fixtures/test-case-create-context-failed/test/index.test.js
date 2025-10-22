@@ -6,7 +6,7 @@ setGetAppCallback((suite, test) => {
     ready: async () => {
       // ...
     },
-    mockContextScope: async scope => {
+    mockContextScope: async (scope) => {
       if (!test) {
         await scope({});
       } else {

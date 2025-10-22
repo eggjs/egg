@@ -19,7 +19,7 @@ import { FSUtil } from './FSUtil.ts';
 
 export class ModuleReferenceConfigHelp {
   static isInlineModuleReference(
-    moduleReference: ModuleReferenceConfig
+    moduleReference: ModuleReferenceConfig,
   ): moduleReference is InlineModuleReferenceConfig {
     return !!(moduleReference as InlineModuleReferenceConfig).path;
   }
@@ -54,7 +54,7 @@ export class ModuleConfigUtil {
   private static readModuleReferenceFromModuleJson(
     configDir: string,
     moduleJsonPath: string,
-    cwd?: string
+    cwd?: string,
   ): readonly ModuleReference[] {
     const moduleJsonContent = fs.readFileSync(moduleJsonPath, 'utf8');
     const moduleJson: ModuleReferenceConfig[] = JSON.parse(moduleJsonContent);
@@ -87,7 +87,7 @@ export class ModuleConfigUtil {
 
   private static readModuleReferenceFromScan(
     baseDir: string,
-    options?: ReadModuleReferenceOptions
+    options?: ReadModuleReferenceOptions,
   ): readonly ModuleReference[] {
     const ref: ModuleReference[] = [];
     const realOptions: ReadModuleReferenceOptions = Object.assign({}, DEFAULT_READ_MODULE_REF_OPTS, options);
@@ -105,7 +105,7 @@ export class ModuleConfigUtil {
       {
         cwd: baseDir,
         deep: realOptions.deep,
-      }
+      },
     );
     const moduleDirSet = new Set<string>();
     for (const packagePath of packagePaths) {
@@ -139,7 +139,7 @@ export class ModuleConfigUtil {
     const moduleReferences = this.readModuleFromNodeModules(baseDir);
     for (const moduleReference of moduleReferences) {
       const moduleBasePath = path.basename(moduleReference.path);
-      moduleDirSet.forEach(modulePath => {
+      moduleDirSet.forEach((modulePath) => {
         if (path.basename(modulePath) === moduleBasePath) {
           throw new Error('duplicate import of module reference: ' + moduleBasePath);
         }
@@ -166,7 +166,9 @@ export class ModuleConfigUtil {
       try {
         // https://nodejs.org/api/packages.html#package-entry-points
         // ignore cases where the package entry is exports but package.json is not exported
-        packageJsonPath = importResolve(`${dependencyKey}/package.json`, { paths: [baseDir] });
+        packageJsonPath = importResolve(`${dependencyKey}/package.json`, {
+          paths: [baseDir],
+        });
       } catch {
         continue;
       }

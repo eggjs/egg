@@ -26,13 +26,13 @@ export function setupApp(): ApplicationUnittest {
   debug(
     'env.ENABLE_MOCHA_PARALLEL: %s, process.env.AUTO_AGENT: %s',
     process.env.ENABLE_MOCHA_PARALLEL,
-    process.env.AUTO_AGENT
+    process.env.AUTO_AGENT,
   );
   if (process.env.ENABLE_MOCHA_PARALLEL && process.env.AUTO_AGENT) {
     // setup agent first
     app = createParallelApp({
       ...options,
-      beforeInit: async parallelApp => {
+      beforeInit: async (parallelApp) => {
         const agent = await setupAgent();
         parallelApp.options.clusterPort = agent.options.clusterPort;
         debug('mockParallelApp beforeInit get clusterPort: %s', parallelApp.options.clusterPort);

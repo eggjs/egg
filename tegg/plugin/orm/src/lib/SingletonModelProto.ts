@@ -49,7 +49,7 @@ export default class SingletonModelProto implements EggPrototype {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
@@ -63,7 +63,7 @@ export default class SingletonModelProto implements EggPrototype {
   }
 
   getQualifier(attribute: QualifierAttribute): QualifierValue | undefined {
-    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+    return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
   static createProto(ctx: EggPrototypeLifecycleContext): SingletonModelProto {

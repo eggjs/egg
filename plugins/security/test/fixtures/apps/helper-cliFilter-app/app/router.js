@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/cliFilter', async function () {
     const port = '8889|chmod 777 /tmp/muma.sh;';
     this.body =

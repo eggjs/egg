@@ -60,7 +60,7 @@ export default class Cov<T extends typeof Cov> extends Test<T> {
 
     // add c8 args
     // https://github.com/eggjs/egg/issues/3930
-    const c8Args = flags.c8.split(' ').filter(a => a.trim());
+    const c8Args = flags.c8.split(' ').filter((a) => a.trim());
     if (flags.typescript) {
       this.env.SPAWN_WRAP_SHIM_ROOT = path.join(flags.base, 'node_modules');
       c8Args.push('--extension');

@@ -16,7 +16,7 @@ import { CronParams, Schedule, ScheduleType } from 'egg/schedule';
     immediate: true,
     // disable: true,
     // env: ['local', 'unittest'],
-  }
+  },
 )
 export class CronSubscriber {
   @Inject()

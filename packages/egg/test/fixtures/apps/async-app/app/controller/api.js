@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class ApiController extends app.Controller {
     async index() {
       const result = await this.service.api.getName();

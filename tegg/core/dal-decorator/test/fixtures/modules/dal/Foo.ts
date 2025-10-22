@@ -15,7 +15,7 @@ export class Foo {
     },
     {
       primaryKey: true,
-    }
+    },
   )
   id: number;
 

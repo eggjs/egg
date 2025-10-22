@@ -23,7 +23,7 @@ describe('test/lifecycle.test.ts', () => {
           configDidLoad() {
             console.log('test');
           }
-        }
+        },
       );
     }, /do not add hook when lifecycle has been initialized/);
 

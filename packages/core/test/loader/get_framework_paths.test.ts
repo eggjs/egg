@@ -16,7 +16,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
     app = createApp('eggpath');
     let eggPaths = app.loader.eggPaths;
     if (process.platform === 'win32') {
-      eggPaths = eggPaths.map(filepath => filepath.toLowerCase());
+      eggPaths = eggPaths.map((filepath) => filepath.toLowerCase());
     }
     assert.deepEqual(eggPaths, [getFilepath('egg-esm')]);
   });
@@ -118,7 +118,7 @@ describe('test/loader/get_framework_paths.test.ts', () => {
         // console.error(err);
         assert.match(err.message, /Symbol.for\('egg#eggPath'\) should be string/);
         return true;
-      }
+      },
     );
   });
 });

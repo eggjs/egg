@@ -50,7 +50,7 @@ describe('test/egg-ts.test.ts', () => {
 
         await request(app.callback())
           .get('/')
-          .expect(res => {
+          .expect((res) => {
             assert(res.text.includes('from extend context'));
             assert(res.text.includes('from extend application'));
             assert(res.text.includes('from extend request'));
@@ -90,7 +90,7 @@ describe('test/egg-ts.test.ts', () => {
 
         await request(app.callback())
           .get('/')
-          .expect(res => {
+          .expect((res) => {
             // console.log(res.text);
             assert(res.text.includes('from extend context'));
             assert(res.text.includes('from extend application'));

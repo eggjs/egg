@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/test', function () {
     this.app.locals.foo = 'bar';
     this.locals.abc = '123';

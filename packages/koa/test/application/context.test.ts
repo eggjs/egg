@@ -20,7 +20,7 @@ describe('app.context', () => {
   });
 
   it('should merge properties', () => {
-    app1.use(ctx => {
+    app1.use((ctx) => {
       assert.equal(ctx.msg, 'hello app1');
       assert.equal(ctx.request.foo, undefined);
       ctx.status = 204;
@@ -30,7 +30,7 @@ describe('app.context', () => {
   });
 
   it('should not affect the original prototype', () => {
-    app2.use(ctx => {
+    app2.use((ctx) => {
       assert.equal(ctx.msg, undefined);
       assert.equal(ctx.request.foo, 'bar');
       ctx.status = 204;

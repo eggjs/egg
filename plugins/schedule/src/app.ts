@@ -28,7 +28,7 @@ export default class Boot implements ILifecycleBoot {
     }
 
     // register schedule event
-    this.#app.messenger.on('egg-schedule', async info => {
+    this.#app.messenger.on('egg-schedule', async (info) => {
       debug('app got "egg-schedule" message: %o', info);
       const { id, key } = info;
       this.#logger.debug(`[Job#${id}] ${key} await app ready`);

@@ -77,7 +77,7 @@ export function Inject(param?: InjectParams | string): InjectDecorator {
       'propertyInject, clazz: %s, propertyKey: %s, injectObject: %o',
       target.constructor.name,
       propertyKey,
-      injectObject
+      injectObject,
     );
     // console.trace();
 

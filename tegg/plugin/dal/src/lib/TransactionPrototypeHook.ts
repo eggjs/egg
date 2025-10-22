@@ -34,7 +34,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       if (transactionMetadata.datasourceName) {
         assert(
           datasourceConfigs[transactionMetadata.datasourceName],
-          `method ${clazzName} specified datasource ${transactionMetadata.datasourceName} not exists`
+          `method ${clazzName} specified datasource ${transactionMetadata.datasourceName} not exists`,
         );
         datasourceName = transactionMetadata.datasourceName;
         this.logger.info(`use datasource [${transactionMetadata.datasourceName}] for class ${clazzName}`);
@@ -44,7 +44,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
           datasourceName = dataSources[0];
         } else {
           throw new Error(
-            `method ${clazzName} not specified datasource, module ${moduleName} has multi datasource, should specify datasource name`
+            `method ${clazzName} not specified datasource, module ${moduleName} has multi datasource, should specify datasource name`,
           );
         }
         this.logger.info(`use default datasource ${dataSources[0]} for class ${clazzName}`);
@@ -61,7 +61,7 @@ export class TransactionPrototypeHook implements LifecycleHook<EggPrototypeLifec
       };
       assert(
         adviceParams.propagation === PropagationType.REQUIRED,
-        'Transactional propagation only support required for now'
+        'Transactional propagation only support required for now',
       );
       Pointcut(TransactionalAOP, { adviceParams })((ctx.clazz as any).prototype, transactionMetadata.method);
     }

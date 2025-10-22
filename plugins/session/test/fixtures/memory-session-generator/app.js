@@ -1,6 +1,6 @@
 const sessions = {};
 
-module.exports = app => {
+module.exports = (app) => {
   app.sessionStore = {
     async get(key) {
       return sessions[key];

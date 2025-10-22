@@ -21,7 +21,7 @@ export function BizManagerQualifier(chatModelName: string) {
       target.constructor as EggProtoImplClass,
       propertyKey,
       BizManagerQualifierAttribute,
-      chatModelName
+      chatModelName,
     );
   };
 }

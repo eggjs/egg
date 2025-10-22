@@ -191,7 +191,7 @@ export class EggApplicationCore extends EggCore {
         this.dumpConfig();
         this.dumpTiming();
         this.coreLogger.info('[egg] dump config after ready, %sms', Date.now() - dumpStartTime);
-      })
+      }),
     );
     this.#setupTimeoutTimer();
 
@@ -472,7 +472,7 @@ export class EggApplicationCore extends EggCore {
         config: this.config,
         plugins: this.loader.allPlugins,
         appInfo: this.loader.appInfo,
-      }
+      },
     );
     convertObject(config, ignoreList);
     return {
@@ -524,7 +524,7 @@ export class EggApplicationCore extends EggCore {
             '[egg][dumpTiming][slow-boot-action] #%d %dms, name: %s',
             item.index,
             item.duration,
-            item.name
+            item.name,
           );
         }
       }
@@ -550,7 +550,7 @@ export class EggApplicationCore extends EggCore {
       this.coreLogger.error(
         '[egg][setupTimeoutTimer] check run/%s_timing_%s.json for more details.',
         this.type,
-        process.pid
+        process.pid,
       );
       this.emit('startTimeout');
       this.dumpConfig();

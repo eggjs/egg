@@ -54,7 +54,7 @@ suite
     r.setWithoutLowerCase('x-frame-options3', 'X-Frame-Options3 value');
   })
 
-  .on('cycle', event => {
+  .on('cycle', (event) => {
     benchmarks.add(event.target);
   })
   .on('start', () => {

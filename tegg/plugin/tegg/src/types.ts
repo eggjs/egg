@@ -53,7 +53,7 @@ declare module 'egg' {
     getEggObject<T>(
       clazz: new (...args: any[]) => T,
       name?: string,
-      qualifiers?: QualifierInfo | QualifierInfo[]
+      qualifiers?: QualifierInfo | QualifierInfo[],
     ): Promise<T>;
     getEggObjectFromName<T extends object>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
 
@@ -80,7 +80,7 @@ declare module 'egg' {
     getEggObject<T>(
       clazz: new (...args: any[]) => T,
       name?: string,
-      qualifiers?: QualifierInfo | QualifierInfo[]
+      qualifiers?: QualifierInfo | QualifierInfo[],
     ): Promise<T>;
     getEggObjectFromName<T>(name: string, qualifiers?: QualifierInfo | QualifierInfo[]): Promise<T>;
     teggContext: TEggContext;

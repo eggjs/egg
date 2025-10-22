@@ -26,7 +26,7 @@ describe('res.header', () => {
     const app = new Koa();
     let header;
 
-    app.use(ctx => {
+    app.use((ctx) => {
       ctx.set('x-foo', '42');
       header = { ...ctx.response.header };
     });

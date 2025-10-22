@@ -3,6 +3,6 @@ exports.schedule = {
   interval: '4s',
 };
 
-exports.task = async ctx => {
+exports.task = async (ctx) => {
   ctx.app.logger.info('interval');
 };

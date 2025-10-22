@@ -2,7 +2,7 @@
 
 const client = require('./client');
 
-module.exports = app => {
+module.exports = (app) => {
   const mock = app.createAppWorkerClient('mock', {
     subscribe: function (info, listener) {
       this._subscribe(info, listener);
@@ -10,5 +10,5 @@ module.exports = app => {
     },
   });
 
-  mock.subscribe('aaa', data => console.log(data));
+  mock.subscribe('aaa', (data) => console.log(data));
 };

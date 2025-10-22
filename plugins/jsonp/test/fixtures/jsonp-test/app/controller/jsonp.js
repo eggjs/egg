@@ -1,10 +1,10 @@
-exports.index = ctx => {
+exports.index = (ctx) => {
   ctx.body = { foo: 'bar' };
 };
 
 exports.empty = function () {};
 
-exports.mark = ctx => {
+exports.mark = (ctx) => {
   ctx.body = { jsonpFunction: ctx.acceptJSONP };
 };
 

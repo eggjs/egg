@@ -11,7 +11,7 @@ type CreateContextFactory = (app: Application) => ContextCreator;
 // Make different @eggjs/tegg-runtime exits
 export function eggEventContextFactory(
   AbstractEggContextClazz: typeof AbstractEggContext,
-  identicalUtil: typeof IdenticalUtil
+  identicalUtil: typeof IdenticalUtil,
 ): CreateContextFactory {
   class EggEventContext extends AbstractEggContextClazz {
     readonly id: string;

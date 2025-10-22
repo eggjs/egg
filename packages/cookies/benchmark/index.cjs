@@ -65,7 +65,7 @@ suite
   .add('EggCookies.get with encrypt', function () {
     createEggCookie().get('eggEncrypt', { encrypt: true });
   })
-  .on('cycle', event => benchmarks.add(event.target))
+  .on('cycle', (event) => benchmarks.add(event.target))
   .on('start', () => console.log('\n  node version: %s, date: %s\n  Starting...', process.version, Date()))
   .on('complete', () => {
     benchmarks.log();

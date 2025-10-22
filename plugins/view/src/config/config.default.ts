@@ -30,7 +30,7 @@ export interface ViewConfig {
   mapping: Record<string, string>;
 }
 
-const config: EggConfigFactory = defineConfigFactory(appInfo => ({
+const config: EggConfigFactory = defineConfigFactory((appInfo) => ({
   view: {
     root: path.join(appInfo.baseDir, 'app/view'),
     cache: true,

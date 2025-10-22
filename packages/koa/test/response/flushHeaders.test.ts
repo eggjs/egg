@@ -76,7 +76,7 @@ describe('ctx.flushHeaders()', () => {
   it('should flush headers first and delay to send data', async () => {
     const app = new Koa();
 
-    app.use(ctx => {
+    app.use((ctx) => {
       ctx.type = 'json';
       ctx.status = 200;
       ctx.headers.Link =
@@ -108,7 +108,7 @@ describe('ctx.flushHeaders()', () => {
         .request({
           port,
         })
-        .on('response', res => {
+        .on('response', (res) => {
           const onData = () => reject(new Error('boom'));
           res.on('data', onData);
 
@@ -127,11 +127,11 @@ describe('ctx.flushHeaders()', () => {
 
   it('should catch stream error', async () => {
     const app = new Koa();
-    app.once('error', err => {
+    app.once('error', (err) => {
       assert.equal(err.message, 'mock error');
     });
 
-    app.use(ctx => {
+    app.use((ctx) => {
       ctx.type = 'json';
       ctx.status = 200;
       ctx.headers.Link =

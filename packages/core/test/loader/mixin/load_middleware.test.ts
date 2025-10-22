@@ -188,7 +188,7 @@ describe('test/loader/mixin/load_middleware.test.ts', () => {
       await app.loader.loadPlugin();
       await app.loader.loadConfig();
       await app.loader.loadCustomApp();
-      const directory = app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/middleware'));
+      const directory = app.loader.getLoadUnits().map((unit) => path.join(unit.path, 'app/middleware'));
       directory.push(path.join(baseDir, 'app/other-middleware'));
       await app.loader.loadMiddleware({
         directory,

@@ -47,7 +47,7 @@ describe('test/cookies.test.ts', () => {
       {
         headers: { cookie },
       },
-      { keys: ['another key'] }
+      { keys: ['another key'] },
     );
     const value = newCookies.get('foo', { encrypt: true });
     assert(value === undefined);
@@ -69,7 +69,7 @@ describe('test/cookies.test.ts', () => {
       {},
       {
         secure: true,
-      }
+      },
     );
     cookies.set('foo', 'bar', { encrypt: true });
     const cookie = cookies.ctx.response.headers['set-cookie'][0];
@@ -81,7 +81,7 @@ describe('test/cookies.test.ts', () => {
       {},
       {
         secure: true,
-      }
+      },
     );
     cookies.set('foo', 'bar', { encrypt: true, domain: () => 'foo.com' });
     const cookie = cookies.ctx.response.headers['set-cookie'][0];
@@ -93,7 +93,7 @@ describe('test/cookies.test.ts', () => {
       {},
       {
         secure: true,
-      }
+      },
     );
     cookies.set('foo', 'bar', { encrypt: true, domain: '' });
     const cookie = cookies.ctx.response.headers['set-cookie'][0];
@@ -105,7 +105,7 @@ describe('test/cookies.test.ts', () => {
       {},
       {
         secure: true,
-      }
+      },
     );
     cookies.set('foo', 'bar', { encrypt: true, domain: 'foo.com' });
     const cookie = cookies.ctx.response.headers['set-cookie'][0];
@@ -156,7 +156,7 @@ describe('test/cookies.test.ts', () => {
     assert(cookies.get('foo', { signed: true }) === undefined);
     assert(
       cookies.ctx.response.headers['set-cookie'][0] ===
-        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly'
+        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly',
     );
   });
 
@@ -165,7 +165,7 @@ describe('test/cookies.test.ts', () => {
       {
         headers: { cookie: 'foo=bar;foo.sig=bar.sig;' },
       },
-      { keys: ['hello', 'world'] }
+      { keys: ['hello', 'world'] },
     );
     cookies.set('foo', 'bar');
     const cookie = cookies.ctx.response.headers['set-cookie'].join(';');
@@ -174,7 +174,7 @@ describe('test/cookies.test.ts', () => {
       {
         headers: { cookie },
       },
-      { keys: ['hi', 'hello'] }
+      { keys: ['hi', 'hello'] },
     );
 
     assert(newCookies.get('foo', { signed: true }) === 'bar');
@@ -205,12 +205,12 @@ describe('test/cookies.test.ts', () => {
     assert(
       cookies.ctx.response.headers['set-cookie']
         .join(';')
-        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/)
+        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/),
     );
     assert(
       cookies.ctx.response.headers['set-cookie']
         .join(';')
-        .match(/foo\.sig=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/)
+        .match(/foo\.sig=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/),
     );
   });
 
@@ -220,7 +220,7 @@ describe('test/cookies.test.ts', () => {
     assert(
       cookies.ctx.response.headers['set-cookie']
         .join(';')
-        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/)
+        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/),
     );
   });
 
@@ -230,12 +230,12 @@ describe('test/cookies.test.ts', () => {
     assert(
       cookies.ctx.response.headers['set-cookie']
         .join(';')
-        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/)
+        .match(/foo=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/),
     );
     assert(
       cookies.ctx.response.headers['set-cookie']
         .join(';')
-        .match(/foo\.sig=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/)
+        .match(/foo\.sig=; path=\/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly/),
     );
   });
 
@@ -270,7 +270,7 @@ describe('test/cookies.test.ts', () => {
     assert(cookies.ctx.response.headers['set-cookie'][1] === 'foo1=bar1; path=/; httponly');
     assert(
       cookies.ctx.response.headers['set-cookie'][2] ===
-        'foo1.sig=_OGF14M_XqPTd58nMRUco2iwwhlZvq7h8ifl3Kej_jg; path=/; httponly'
+        'foo1.sig=_OGF14M_XqPTd58nMRUco2iwwhlZvq7h8ifl3Kej_jg; path=/; httponly',
     );
   });
 
@@ -335,7 +335,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { sameSite: 'None' }
+        { sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -361,7 +361,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       { secure: true },
-      { sameSite: 'None' }
+      { sameSite: 'None' },
     );
     const opts: CookieSetOptions = {
       signed: 1,
@@ -386,7 +386,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       { secure: true },
-      { sameSite: 'None' }
+      { sameSite: 'None' },
     );
     const opts: CookieSetOptions = {
       signed: 1,
@@ -409,7 +409,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       { secure: true },
-      { sameSite: 'None' }
+      { sameSite: 'None' },
     );
     cookies.set('foo', 'hello', opts);
 
@@ -431,7 +431,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       { secure: true },
-      { sameSite: 'none' }
+      { sameSite: 'none' },
     );
 
     const opts: CookieSetOptions = {
@@ -457,7 +457,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       null,
-      { sameSite: 'none' }
+      { sameSite: 'none' },
     );
     const opts: CookieSetOptions = {
       signed: 1,
@@ -482,7 +482,7 @@ describe('test/cookies.test.ts', () => {
         },
       },
       { secure: true },
-      { sameSite: 'none' }
+      { sameSite: 'none' },
     );
 
     const opts: CookieSetOptions = {
@@ -515,7 +515,7 @@ describe('test/cookies.test.ts', () => {
             },
           },
           { secure: true },
-          { partitioned: true, sameSite: 'None' }
+          { partitioned: true, sameSite: 'None' },
         );
         const opts: CookieSetOptions = {
           signed: 1,
@@ -541,7 +541,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, sameSite: 'None' }
+        { partitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -566,7 +566,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, sameSite: 'None' }
+        { partitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -589,7 +589,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, sameSite: 'None' }
+        { partitioned: true, sameSite: 'None' },
       );
       cookies.set('foo', 'hello', opts);
 
@@ -609,7 +609,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, sameSite: 'None' }
+        { partitioned: true, sameSite: 'None' },
       );
       cookies.set('foo', 'hello', opts);
 
@@ -627,7 +627,7 @@ describe('test/cookies.test.ts', () => {
             'user-agent': '',
           },
         },
-        { secure: true }
+        { secure: true },
       );
       cookies.set('foo', 'hello', {
         sameSite: 'None',
@@ -652,7 +652,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         null,
-        { partitioned: true, sameSite: 'None' }
+        { partitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -677,7 +677,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -692,12 +692,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(headers[0], 'foo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly');
       assert.equal(
         headers[1],
-        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly'
+        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly',
       );
       assert.equal(headers[2], 'foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         headers[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned',
       );
     });
 
@@ -711,7 +711,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         secure: true,
@@ -738,7 +738,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, overwrite: true, sameSite: 'none' }
+        {
+          partitioned: true,
+          removeUnpartitioned: true,
+          overwrite: true,
+          sameSite: 'none',
+        },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -753,12 +758,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(headers[0], 'foo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly');
       assert.equal(
         headers[1],
-        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly'
+        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly',
       );
       assert.equal(headers[2], 'foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         headers[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned',
       );
     });
 
@@ -772,7 +777,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -797,7 +802,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true }
+        { partitioned: true, removeUnpartitioned: true },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -828,7 +833,7 @@ describe('test/cookies.test.ts', () => {
             },
           },
           { secure: true },
-          { autoChips: true, sameSite: 'None' }
+          { autoChips: true, sameSite: 'None' },
         );
         const opts: CookieSetOptions = {
           signed: 1,
@@ -854,7 +859,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, sameSite: 'None' }
+        { autoChips: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -879,7 +884,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, sameSite: 'None' }
+        { autoChips: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -893,12 +898,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(setCookies[0], '_CHIPS-foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         setCookies[1],
-        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned'
+        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned',
       );
       assert.equal(setCookies[2], 'foo=hello; path=/; samesite=none; secure; httponly');
       assert.equal(
         setCookies[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly',
       );
 
       cookies = Cookies(
@@ -910,7 +915,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, sameSite: 'None' }
+        { autoChips: true, sameSite: 'None' },
       );
       cookies.set('foo', 'hello', opts);
 
@@ -920,12 +925,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(setCookies[0], '_CHIPS-foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         setCookies[1],
-        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned'
+        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned',
       );
       assert.equal(setCookies[2], 'foo=hello; path=/; samesite=none; secure; httponly');
       assert.equal(
         setCookies[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly',
       );
 
       // empty user-agent
@@ -938,7 +943,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: true,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        },
       );
       cookies.set('foo', 'hello', opts);
 
@@ -947,16 +957,16 @@ describe('test/cookies.test.ts', () => {
       setCookies = cookies.ctx.response.headers['set-cookie'];
       assert.equal(
         setCookies[0],
-        'foo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly'
+        'foo=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly',
       );
       assert.equal(
         setCookies[1],
-        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly'
+        'foo.sig=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; samesite=none; secure; httponly',
       );
       assert.equal(setCookies[2], 'foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         setCookies[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned',
       );
 
       cookies = Cookies(
@@ -967,7 +977,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       cookies.set('foo', 'hello', {
         sameSite: 'None',
@@ -981,12 +991,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(setCookies[0], '_CHIPS-foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         setCookies[1],
-        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned'
+        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned',
       );
       assert.equal(setCookies[2], 'foo=hello; path=/; samesite=none; secure; httponly');
       assert.equal(
         setCookies[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly',
       );
 
       // read from cookie
@@ -999,7 +1009,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       assert.equal(cookies.get('foo'), 'hello');
       assert.equal(cookies.get('_CHIPS-foo'), 'hello');
@@ -1011,7 +1021,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       assert.equal(cookies.get('foo', { signed: true }), 'hello');
       assert.equal(cookies.get('foo', { signed: false }), 'hello');
@@ -1025,7 +1035,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       assert.equal(cookies.get('foo', { signed: true }), undefined);
       assert.equal(cookies.get('foo', { signed: false }), 'hello');
@@ -1038,7 +1048,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       assert.equal(cookies.get('foo', { signed: true }), undefined);
       assert.equal(cookies.get('foo', { signed: false }), 'hello');
@@ -1051,7 +1061,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       assert.equal(cookies.get('foo', { signed: true }), undefined);
       assert.equal(cookies.get('foo', { signed: false }), '');
@@ -1068,7 +1078,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         null,
-        { autoChips: true, sameSite: 'None' }
+        { autoChips: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1093,7 +1103,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: true, sameSite: 'None' }
+        { autoChips: true, partitioned: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1108,7 +1118,7 @@ describe('test/cookies.test.ts', () => {
       assert.equal(headers[0], 'foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         headers[1],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly; partitioned',
       );
     });
 
@@ -1122,7 +1132,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1137,12 +1152,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(headers[0], '_CHIPS-foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         headers[1],
-        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned'
+        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned',
       );
       assert.equal(headers[2], 'foo=hello; path=/; samesite=none; secure; httponly');
       assert.equal(
         headers[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly',
       );
     });
 
@@ -1156,7 +1171,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1192,7 +1212,12 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, partitioned: false, removeUnpartitioned: true, sameSite: 'None' }
+        {
+          autoChips: true,
+          partitioned: false,
+          removeUnpartitioned: true,
+          sameSite: 'None',
+        },
       );
       const opts: CookieSetOptions = {
         secure: true,
@@ -1219,7 +1244,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' },
       );
       cookies.set('foo', 'hello', {
         signed: 1,
@@ -1268,7 +1293,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' }
+        { partitioned: true, removeUnpartitioned: true, sameSite: 'None' },
       );
       cookies.set('foo', 'hello', {
         signed: 1,
@@ -1311,7 +1336,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, overwrite: true, sameSite: 'none' }
+        { autoChips: true, overwrite: true, sameSite: 'none' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1326,12 +1351,12 @@ describe('test/cookies.test.ts', () => {
       assert.equal(headers[0], '_CHIPS-foo=hello; path=/; samesite=none; secure; httponly; partitioned');
       assert.equal(
         headers[1],
-        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned'
+        '_CHIPS-foo.sig=G4Idm9Wdp_vfCnUbOpQG284o22SgTe88SUmG6QW1ylk; path=/; samesite=none; secure; httponly; partitioned',
       );
       assert.equal(headers[2], 'foo=hello; path=/; samesite=none; secure; httponly');
       assert.equal(
         headers[3],
-        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly'
+        'foo.sig=ZWbaA4bWk8ByBuYVgfmJ2DMvhhS3sOctMbfXAQ2vnwI; path=/; samesite=none; secure; httponly',
       );
     });
 
@@ -1345,7 +1370,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true, sameSite: 'None' }
+        { autoChips: true, sameSite: 'None' },
       );
       const opts: CookieSetOptions = {
         signed: 1,
@@ -1370,7 +1395,7 @@ describe('test/cookies.test.ts', () => {
           },
         },
         { secure: true },
-        { autoChips: true }
+        { autoChips: true },
       );
       const opts: CookieSetOptions = {
         signed: 1,

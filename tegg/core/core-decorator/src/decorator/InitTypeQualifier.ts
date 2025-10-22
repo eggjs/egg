@@ -10,7 +10,7 @@ export function InitTypeQualifier(initType: ObjectInitTypeLike) {
       propertyKey,
       parameterIndex,
       InitTypeQualifierAttribute,
-      initType
+      initType,
     );
   };
 }

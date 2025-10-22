@@ -22,7 +22,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
         },
       },
     } as any);
-    client.on('request', info => {
+    client.on('request', (info) => {
       info.args.headers = info.args.headers || {};
       info.args.headers['mock-traceid'] = 'mock-traceid';
       info.args.headers['mock-rpcid'] = 'mock-rpcid';
@@ -34,8 +34,8 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
 
   afterEach(mm.restore);
 
-  it.skip('should request ok with log', done => {
-    client.once('response', info => {
+  it.skip('should request ok with log', (done) => {
+    client.once('response', (info) => {
       assert.equal(info.req.options.headers['mock-traceid'], 'mock-traceid');
       assert.equal(info.req.options.headers['mock-rpcid'], 'mock-rpcid');
       // @ts-ignore
@@ -46,7 +46,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
       .request(url, {
         dataType: 'text',
       })
-      .then(res => {
+      .then((res) => {
         assert.equal(res.status, 200);
       });
   });
@@ -66,7 +66,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
         assert.equal(err.code, 'ENETUNREACH');
         // assert.equal(err.message, 'connect ENETUNREACH 1.1.1.1:80 - Local (127.0.0.1) [ https://eggjs.org/faq/httpclient_ENETUNREACH ]');
         return true;
-      }
+      },
     );
   });
 
@@ -78,13 +78,13 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
       (err: any) => {
         assert.equal(err.name, 'HttpClientRequestTimeoutError');
         return true;
-      }
+      },
     );
   });
 
   it('should request ok with log', async () => {
     let info: any;
-    client.once('response', meta => {
+    client.once('response', (meta) => {
       info = meta;
     });
     const { status } = await client.request(url, {
@@ -99,7 +99,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
 
   it('should curl ok with log', async () => {
     let info: any;
-    client.once('response', meta => {
+    client.once('response', (meta) => {
       info = meta;
     });
     const { status } = await client.curl(url, {
@@ -126,7 +126,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
         assert(err.res);
         assert.equal(err.res.status, 500);
         return true;
-      }
+      },
     );
   });
 
@@ -198,7 +198,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
           assert(err.name === 'HttpClientRequestTimeoutError');
           assert(err.message.includes('Request timeout for 100 ms'));
           return true;
-        }
+        },
       );
     });
   });
@@ -221,7 +221,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
           assert(err.name === 'HttpClientRequestTimeoutError');
           assert(err.message.includes('Request timeout for 100 ms'));
           return true;
-        }
+        },
       );
     });
 
@@ -234,7 +234,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
           assert(err);
           assert(err.message.includes('url should start with http, but got unknown url'));
           return true;
-        }
+        },
       );
     });
   });
@@ -257,7 +257,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
           assert(err.name === 'HttpClientRequestTimeoutError');
           assert(err.message.includes('Request timeout for 99 ms'));
           return true;
-        }
+        },
       );
     });
 
@@ -270,7 +270,7 @@ describe.skipIf(process.platform === 'win32')('test/lib/core/httpclient.test.ts'
           assert(err);
           assert(err.message.includes('url should start with http, but got unknown url'));
           return true;
-        }
+        },
       );
     });
   });

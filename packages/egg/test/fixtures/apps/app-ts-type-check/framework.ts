@@ -63,7 +63,7 @@ app.logger.info(app.Controller);
 app.controller.test().then(() => {});
 
 // test from yadan
-app.fromYadan().then(result => result.substring(0));
+app.fromYadan().then((result) => result.substring(0));
 app.config.yadanType.substring(0);
 
 // agent
@@ -83,7 +83,7 @@ agent.logger.info(agent.Controller);
 class MyController extends Controller {
   async test() {
     // test from yadan
-    this.ctx.fromYadan().then(result => result.substring(0));
+    this.ctx.fromYadan().then((result) => result.substring(0));
     this.ctx.logger.info(this.app.config.keys);
     await this.ctx.service.test();
     await this.service.myserv.test();

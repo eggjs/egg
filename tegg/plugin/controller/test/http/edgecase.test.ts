@@ -35,7 +35,7 @@ describe('plugin/controller/test/http/edgecase.test.ts', () => {
       .httpRequest()
       .get('/Middleware/Method')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.text).toBe('hello, view');
       });
   });

@@ -23,7 +23,7 @@ describe('test/mock_cookies.test.ts', () => {
     await app
       .httpRequest()
       .get('/')
-      .expect(res => {
+      .expect((res) => {
         assert.deepEqual(res.body, {});
       })
       .expect(200);

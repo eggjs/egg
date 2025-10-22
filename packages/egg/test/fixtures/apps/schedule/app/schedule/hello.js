@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class LoggerExample extends app.Subscription {
     static get schedule() {
       return {

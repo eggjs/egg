@@ -28,7 +28,7 @@ export class MethodValidator {
     if (methodControllerType !== controllerType) {
       const desc = ClassUtil.classDescription(clazz);
       throw new Error(
-        `${desc}:${methodName} method decorator ${methodControllerType} can not be used with ${controllerType}`
+        `${desc}:${methodName} method decorator ${methodControllerType} can not be used with ${controllerType}`,
       );
     }
   }

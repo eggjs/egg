@@ -27,7 +27,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .httpRequest()
       .get('/middleware/global')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.count).toBe(0);
       });
   });
@@ -38,7 +38,7 @@ describe('plugin/controller/test/http/middleware.test.ts', () => {
       .httpRequest()
       .get('/middleware/method')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.log).toBe('use middleware');
       });
   });

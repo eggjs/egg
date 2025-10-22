@@ -23,10 +23,10 @@ export class ControllerLoadUnitHandler extends Base {
     this.controllerLoadUnit = await this.app.loadUnitFactory.createLoadUnit(
       controllerDir,
       CONTROLLER_LOAD_UNIT,
-      loader
+      loader,
     );
     this.controllerLoadUnitInstance = await this.app.loadUnitInstanceFactory.createLoadUnitInstance(
-      this.controllerLoadUnit
+      this.controllerLoadUnit,
     );
   }
 

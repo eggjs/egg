@@ -52,6 +52,6 @@ export class DataSourceManager {
     if (this.defaultDataSourceConfig?.database === name) {
       return this.defaultDataSourceConfig;
     }
-    return this.dataSourceConfigs.find(t => t.database === name);
+    return this.dataSourceConfigs.find((t) => t.database === name);
   }
 }

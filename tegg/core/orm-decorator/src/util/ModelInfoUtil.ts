@@ -57,7 +57,7 @@ export class ModelInfoUtil {
     dataType: string,
     options: AttributeOptions | undefined,
     clazz: EggProtoImplClass,
-    property: string
+    property: string,
   ): void {
     const attributeMap: ModelAttributeMap = MetadataUtil.initOwnMapMetaData(MODEL_DATA_ATTRIBUTES, clazz, new Map());
     attributeMap.set(property, {

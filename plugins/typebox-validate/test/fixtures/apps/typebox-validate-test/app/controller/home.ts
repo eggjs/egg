@@ -6,13 +6,19 @@ const TYPEBOX_ID = Type.Object({
   id: Type.String(),
 });
 
-const ValidateWithRedirect = ValidateFactory(ctx => {
+const ValidateWithRedirect = ValidateFactory((ctx) => {
   ctx.redirect('/422');
 });
 
 export const TYPEBOX_BODY: TObject<TProperties> = Type.Object({
   name: Type.String(),
-  description: Type.Optional(Type.String({ transform: ['trim', 'toLowerCase'], minLength: 1, maxLength: 4 })),
+  description: Type.Optional(
+    Type.String({
+      transform: ['trim', 'toLowerCase'],
+      minLength: 1,
+      maxLength: 4,
+    }),
+  ),
   email: Type.String({ format: 'email' }),
   byte: Type.Optional(Type.Number({ format: 'byte' })),
   version: Type.Optional(Type.String({ format: 'semver' })),
@@ -20,7 +26,7 @@ export const TYPEBOX_BODY: TObject<TProperties> = Type.Object({
 });
 
 export default class HomeController extends Controller {
-  @Validate([[TYPEBOX_ID, ctx => ctx.params]])
+  @Validate([[TYPEBOX_ID, (ctx) => ctx.params]])
   public async create(): Promise<void> {
     const { ctx } = this;
     const res1 = ctx.tValidate(TYPEBOX_BODY, ctx.request.body);
@@ -51,11 +57,11 @@ export default class HomeController extends Controller {
   }
 
   @Validate([
-    [TYPEBOX_ID, ctx => ctx.params],
+    [TYPEBOX_ID, (ctx) => ctx.params],
     [
       TYPEBOX_BODY,
-      ctx => ctx.request.body,
-      (_ctx, errors) => 'kaiwei custom error: ' + errors.map(e => e.message).join(':'),
+      (ctx) => ctx.request.body,
+      (_ctx, errors) => 'kaiwei custom error: ' + errors.map((e) => e.message).join(':'),
     ],
   ])
   public async delete(): Promise<void> {
@@ -70,8 +76,8 @@ export default class HomeController extends Controller {
   }
 
   @ValidateWithRedirect([
-    [TYPEBOX_ID, ctx => ctx.params],
-    [TYPEBOX_BODY, ctx => ctx.request.body],
+    [TYPEBOX_ID, (ctx) => ctx.params],
+    [TYPEBOX_BODY, (ctx) => ctx.request.body],
   ])
   public async put(): Promise<void> {
     const { ctx } = this;

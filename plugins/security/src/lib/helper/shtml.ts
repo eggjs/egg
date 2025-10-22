@@ -29,7 +29,7 @@ export default function shtml(this: BaseContextClass, val: string): string {
       _tag: string,
       name: string,
       value: string,
-      isWhiteAttr: boolean
+      isWhiteAttr: boolean,
     ): string | void => {
       if (isWhiteAttr && (name === 'href' || name === 'src')) {
         if (!value) {
@@ -52,7 +52,7 @@ export default function shtml(this: BaseContextClass, val: string): string {
           // Check for `shtmlConfig.domainWhiteList` first (duplicated now)
           if (shtmlConfig.domainWhiteList && shtmlConfig.domainWhiteList.length > 0) {
             app.deprecate(
-              '[@eggjs/security/lib/helper/shtml] `config.helper.shtml.domainWhiteList` has been deprecate. Please use `config.security.domainWhiteList` instead.'
+              '[@eggjs/security/lib/helper/shtml] `config.helper.shtml.domainWhiteList` has been deprecate. Please use `config.security.domainWhiteList` instead.',
             );
             if (!isSafeDomain(hostname, shtmlConfig.domainWhiteList)) {
               return '';

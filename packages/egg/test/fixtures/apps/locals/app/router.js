@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/app_same_ref', async function () {
     let app1, app2;
     this.app.locals = {

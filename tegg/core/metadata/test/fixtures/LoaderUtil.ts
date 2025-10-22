@@ -38,7 +38,7 @@ export function buildModuleNode(
     unitPath: string;
     moduleName: string;
   }[],
-  optional = false
+  optional = false,
 ): GlobalModuleNode {
   const builder = GlobalModuleNodeBuilder.create(modulePath, optional);
   for (const clazz of clazzList) {

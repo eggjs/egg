@@ -68,7 +68,7 @@ export class AppThreadWorker extends BaseAppWorker<ThreadWorker> {
   }
 
   static gracefulExit(options: gracefulExitOptions): void {
-    process.on('exit', async code => {
+    process.on('exit', async (code) => {
       if (typeof options.beforeExit === 'function') {
         await options.beforeExit();
       }
@@ -118,7 +118,7 @@ export class AppThreadUtils extends BaseAppUtils {
     }
 
     // handle worker exit
-    worker.on('exit', async code => {
+    worker.on('exit', async (code) => {
       appWorker.state = 'dead';
       this.messenger.send({
         action: 'app-exit',

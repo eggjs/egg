@@ -1,6 +1,6 @@
 const { scheduler } = require('node:timers/promises');
 
-module.exports = app => {
+module.exports = (app) => {
   app.beforeClose(async () => {
     console.log('app closing');
     await scheduler.wait(10);

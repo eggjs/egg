@@ -72,7 +72,7 @@ export class HTTPControllerRegister implements ControllerRegister {
         method,
         this.router,
         this.checkRouters,
-        this.eggContainerFactory
+        this.eggContainerFactory,
       );
       methodRegister.checkDuplicate();
     }
@@ -86,7 +86,7 @@ export class HTTPControllerRegister implements ControllerRegister {
         method,
         this.router,
         this.checkRouters,
-        this.eggContainerFactory
+        this.eggContainerFactory,
       );
       // Error: framework.RouterConflictError: register http controller GET AppController2.get failed, GET /apps/:id is conflict with exists rule /apps/:id [ https://eggjs.org/faq/TEGG_ROUTER_CONFLICT ]
       // methodRegister.checkDuplicate();

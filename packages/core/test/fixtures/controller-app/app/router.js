@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/async-function', 'asyncFunction');
   app.get('/generator-function', 'generatorFunction');
   app.get('/generator-function-ctx', 'generatorFunctionCtx');

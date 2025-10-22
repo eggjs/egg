@@ -14,7 +14,7 @@ export function pointCutGraphHook(globalGraph: GlobalGraph): void {
           moduleNode,
           pointCuttedProtoNode,
           pointCutAdviceProto,
-          pointCutAdviceProto.val.proto.name
+          pointCutAdviceProto.val.proto.name,
         );
       }
     }

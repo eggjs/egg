@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   // set redis session store
   app.sessionStore = class Store {
     constructor(app) {

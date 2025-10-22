@@ -28,7 +28,7 @@ export class AgentThreadWorker extends BaseAgentWorker<Worker> {
 
   static gracefulExit(options: gracefulExitOptions): void {
     const { beforeExit } = options;
-    process.on('exit', async code => {
+    process.on('exit', async (code) => {
       if (typeof beforeExit === 'function') {
         await beforeExit();
       }
@@ -48,7 +48,9 @@ export class AgentThreadUtils extends BaseAgentUtils {
     // start agent worker
     const argv = [JSON.stringify(this.options)];
     const agentPath = this.getAgentWorkerFile();
-    const worker = (this.#worker = new workerThreads.Worker(agentPath, { argv }));
+    const worker = (this.#worker = new workerThreads.Worker(agentPath, {
+      argv,
+    }));
 
     // wrap agent worker
     const agentWorker = (this.instance = new AgentThreadWorker(worker));
@@ -57,7 +59,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
     agentWorker.id = ++this.#id;
     this.log('[master] agent_worker#%s:%s start with worker_threads', agentWorker.id, agentWorker.workerId);
 
-    worker.on('message', msg => {
+    worker.on('message', (msg) => {
       if (typeof msg === 'string') {
         msg = {
           action: msg,
@@ -68,7 +70,7 @@ export class AgentThreadUtils extends BaseAgentUtils {
       this.messenger.send(msg);
     });
 
-    worker.on('error', err => {
+    worker.on('error', (err) => {
       this.logger.error(new ClusterAgentWorkerError(agentWorker.id, agentWorker.workerId, agentWorker.status, err));
     });
 

@@ -38,7 +38,7 @@ describe('test/inject.test.ts', () => {
       const expectedNonce = parts[0];
       const scriptTag = parts[1];
       expect(scriptTag).toBe(
-        `<script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script>`
+        `<script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script><script nonce="${expectedNonce}"></script>`,
       );
     });
 
@@ -52,7 +52,7 @@ describe('test/inject.test.ts', () => {
     it('should inject IspInjectDefence', async () => {
       const res = await app.httpRequest().get('/testispInjection').expect(200);
       expect(res.text).toBe(
-        '<!--for injection--><!--<script>document.write("haha250")</script></html>--><!--for injection-->\n  <html>\n  <head>\n      <title></title>\n  </head>\n  <body>\n\n  </body>\n  </html>\n<!--for injection--><!--</html>--><!--for injection-->'
+        '<!--for injection--><!--<script>document.write("haha250")</script></html>--><!--for injection-->\n  <html>\n  <head>\n      <title></title>\n  </head>\n  <body>\n\n  </body>\n  </html>\n<!--for injection--><!--</html>--><!--for injection-->',
       );
     });
   });

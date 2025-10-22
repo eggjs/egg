@@ -12,7 +12,7 @@ async function main() {
   await startCluster(options);
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error(err);
   process.exit(1);
 });

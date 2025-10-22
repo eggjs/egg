@@ -74,7 +74,7 @@ export class PathParamMeta extends ParamMeta {
   validate(httpPath: string): void {
     const names: PathToRegexpKey[] = [];
     pathToRegexp(httpPath, names);
-    if (!names.find(name => String(name.name) === this.name)) {
+    if (!names.find((name) => String(name.name) === this.name)) {
       throw new Error(`can not find param ${this.name} in path ${httpPath}`);
     }
   }
@@ -110,7 +110,7 @@ export class HTTPMethodMeta implements MethodMeta {
     priority: number,
     needAcl: boolean,
     aclCode: string | undefined,
-    hosts: string[] | undefined
+    hosts: string[] | undefined,
   ) {
     this.name = name;
     this.path = path;

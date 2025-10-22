@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   const appBeforeReadyTracers = [];
   const appAfterReadyTracers = [];
 

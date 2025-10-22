@@ -1,6 +1,6 @@
 const path = require('node:path');
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/log', async function () {
     this.logger.warn('%s %s', this.method, this.path);
     this.logger.error(new Error('error'));

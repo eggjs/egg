@@ -338,7 +338,7 @@ describe('test/app/extend/request.test.ts', () => {
             },
             url: '/',
           },
-          { reuseCtxStorage: false }
+          { reuseCtxStorage: false },
         );
         context.type = 'application/json';
         assert(context.request.acceptJSON === true);
@@ -352,7 +352,7 @@ describe('test/app/extend/request.test.ts', () => {
             },
             url: '/',
           },
-          { reuseCtxStorage: false }
+          { reuseCtxStorage: false },
         );
         assert.equal(context.request.acceptJSON, true);
       });
@@ -365,7 +365,7 @@ describe('test/app/extend/request.test.ts', () => {
             },
             url: '/',
           },
-          { reuseCtxStorage: false }
+          { reuseCtxStorage: false },
         );
         const request = context.request;
         assert(request.acceptJSON === false);

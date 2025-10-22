@@ -31,7 +31,7 @@ export class AttributeMetaBuilder {
       attributeInfo.options?.allowNull ?? true,
       attributeInfo.options?.autoIncrement ?? false,
       attributeInfo.options?.primary ?? false,
-      attributeInfo.options?.unique ?? false
+      attributeInfo.options?.unique ?? false,
     );
   }
 }

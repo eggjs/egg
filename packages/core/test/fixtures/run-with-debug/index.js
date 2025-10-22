@@ -16,6 +16,6 @@ class Application extends EggApplication {
 
 const app = utils.createApp('application', { Application });
 app.loader.loadAll();
-app.ready(err => {
+app.ready((err) => {
   process.exit(err ? 1 : 0);
 });

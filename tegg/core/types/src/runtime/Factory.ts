@@ -8,5 +8,5 @@ export type ContainerGetMethod = (proto: EggPrototype) => EggContainer<Lifecycle
 export type CreateObjectMethod = (
   name: EggObjectName,
   proto: EggPrototype,
-  lifecycleContext: EggObjectLifeCycleContext
+  lifecycleContext: EggObjectLifeCycleContext,
 ) => Promise<EggObject>;

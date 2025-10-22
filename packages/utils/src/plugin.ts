@@ -103,7 +103,7 @@ export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
       JSON.stringify({
         name: 'tmp_app',
         type: 'module',
-      })
+      }),
     );
     debug('[getLoader] create baseDir: %o', options.baseDir);
   }
@@ -124,7 +124,7 @@ export async function getLoader(options: LoaderOptions): Promise<IEggLoader> {
 }
 
 export async function findEggCore(
-  options: LoaderOptions
+  options: LoaderOptions,
 ): Promise<{ EggCore?: object; EggLoader: EggLoaderImplClass }> {
   const baseDirRealpath = await realpath(options.baseDir);
   const frameworkRealpath = await realpath(options.framework);

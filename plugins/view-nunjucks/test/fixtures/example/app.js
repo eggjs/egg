@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.locals = { a: 'app', b: 'app', c: 'app' };
 };

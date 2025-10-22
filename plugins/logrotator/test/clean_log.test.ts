@@ -31,7 +31,7 @@ describe('test/clean_log.test.ts', () => {
       'anotherFile',
       new FileTransport({
         file: path.join(app.config.customLogger.bizLogger.file, '..', 'another-biz.log'),
-      })
+      }),
     );
   });
   afterEach(() => app.close());
@@ -50,17 +50,17 @@ describe('test/clean_log.test.ts', () => {
       path.join(
         app.config.customLogger.bizLogger.file,
         '..',
-        `biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`
+        `biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`,
       ),
-      'foo'
+      'foo',
     );
     fs.writeFileSync(
       path.join(
         app.config.customLogger.bizLogger.file,
         '..',
-        `another-biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`
+        `another-biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`,
       ),
-      'foo'
+      'foo',
     );
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(32, 'days').format('YYYY-MM-DD')}`), 'foo');
     fs.writeFileSync(path.join(logDir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`), 'foo');
@@ -71,17 +71,17 @@ describe('test/clean_log.test.ts', () => {
       path.join(
         app.config.customLogger.bizLogger.file,
         '..',
-        `biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`
+        `biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`,
       ),
-      'foo'
+      'foo',
     );
     fs.writeFileSync(
       path.join(
         app.config.customLogger.bizLogger.file,
         '..',
-        `another-biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`
+        `another-biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`,
       ),
-      'foo'
+      'foo',
     );
 
     await app.runSchedule(schedule);
@@ -89,8 +89,8 @@ describe('test/clean_log.test.ts', () => {
     const files = glob.sync(path.join(logDir, '*.log.*'));
     expect(files.length).toBeGreaterThanOrEqual(5);
     expect(
-      files.some(name => name.includes('foo.log.')),
-      `files: ${JSON.stringify(files)}`
+      files.some((name) => name.includes('foo.log.')),
+      `files: ${JSON.stringify(files)}`,
     );
 
     let filepath: string;
@@ -113,14 +113,14 @@ describe('test/clean_log.test.ts', () => {
     filepath = path.join(
       app.config.customLogger.bizLogger.file,
       '..',
-      `biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`
+      `biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`,
     );
     expect(fs.existsSync(filepath)).toBe(true);
 
     filepath = path.join(
       app.config.customLogger.bizLogger.file,
       '..',
-      `another-biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`
+      `another-biz.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`,
     );
     expect(fs.existsSync(filepath)).toBe(true);
 
@@ -145,9 +145,9 @@ describe('test/clean_log.test.ts', () => {
         path.join(
           app.config.customLogger.bizLogger.file,
           '..',
-          `biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`
-        )
-      )
+          `biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`,
+        ),
+      ),
     ).toBe(false);
 
     expect(
@@ -155,9 +155,9 @@ describe('test/clean_log.test.ts', () => {
         path.join(
           app.config.customLogger.bizLogger.file,
           '..',
-          `another-biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`
-        )
-      )
+          `another-biz.log.${now.clone().subtract(1, 'years').format('YYYY-MM-DD')}`,
+        ),
+      ),
     ).toBe(false);
   });
 
@@ -237,19 +237,19 @@ describe('test/clean_log.test.ts', () => {
 
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.format('YYYY-MM-DD')}`))).toBe(true);
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.clone().subtract(1, 'days').format('YYYY-MM-DD')}`))).toBe(
-      true
+      true,
     );
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.clone().subtract(7, 'days').format('YYYY-MM-DD')}`))).toBe(
-      true
+      true,
     );
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.clone().subtract(31, 'days').format('YYYY-MM-DD')}`))).toBe(
-      true
+      true,
     );
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.clone().subtract(32, 'days').format('YYYY-MM-DD')}`))).toBe(
-      true
+      true,
     );
     expect(fs.existsSync(path.join(logDir, `foo.log.${now.clone().subtract(33, 'days').format('YYYY-MM-DD')}`))).toBe(
-      true
+      true,
     );
   });
 

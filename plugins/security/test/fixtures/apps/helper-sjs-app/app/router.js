@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/sjs', async function () {
     const foo = '"hello"123abc"';
     this.body =

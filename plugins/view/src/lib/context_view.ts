@@ -106,7 +106,7 @@ export class ContextView {
         helper: this.ctx.helper,
       },
       this.ctx.locals,
-      locals
+      locals,
     );
   }
 }
