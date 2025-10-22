@@ -26,10 +26,9 @@ export class SingletonConstructorBarDepth3 {
   accessLevel: AccessLevel.PUBLIC,
 })
 export class SingletonBarConstructorDepth2 {
-  // @ts-expect-error: readonly property in constructor
   constructor(
-    @Inject()
-    readonly singletonConstructorBarDepth3: SingletonConstructorBarDepth3,
+    // @ts-expect-error: readonly property in constructor
+    @Inject() readonly singletonConstructorBarDepth3: SingletonConstructorBarDepth3,
   ) {}
 
   async hello(): Promise<string> {
@@ -41,10 +40,9 @@ export class SingletonBarConstructorDepth2 {
   accessLevel: AccessLevel.PUBLIC,
 })
 export class ContextConstructorFoo {
-  // @ts-expect-error: readonly property in constructor
   constructor(
-    @Inject()
-    readonly singletonBarConstructorDepth2: SingletonBarConstructorDepth2,
+    // @ts-expect-error: readonly property in constructor
+    @Inject() readonly singletonBarConstructorDepth2: SingletonBarConstructorDepth2,
   ) {}
 
   async hello(): Promise<string> {

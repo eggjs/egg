@@ -38,12 +38,28 @@
   },
   "exports": {
     "./app": "./app.ts",
+    "./app/biz/Foo": "./app/biz/Foo.ts",
+    "./app/biz/HelloService": "./app/biz/HelloService.ts",
+    "./app/biz/WorldService": "./app/biz/WorldService.ts",
+    "./app/port/controller/ArgsController": "./app/port/controller/ArgsController.ts",
+    "./app/port/controller/HomeController": "./app/port/controller/HomeController.ts",
+    "./app/port/controller/SimpleController": "./app/port/controller/SimpleController.ts",
+    "./app/port/schedule/CronDemo": "./app/port/schedule/CronDemo.ts",
+    "./app/port/schedule/Demo": "./app/port/schedule/Demo.ts",
     "./config/config.default": "./config/config.default.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       "./app": "./dist/app.js",
+      "./app/biz/Foo": "./dist/app/biz/Foo.js",
+      "./app/biz/HelloService": "./dist/app/biz/HelloService.js",
+      "./app/biz/WorldService": "./dist/app/biz/WorldService.js",
+      "./app/port/controller/ArgsController": "./dist/app/port/controller/ArgsController.js",
+      "./app/port/controller/HomeController": "./dist/app/port/controller/HomeController.js",
+      "./app/port/controller/SimpleController": "./dist/app/port/controller/SimpleController.js",
+      "./app/port/schedule/CronDemo": "./dist/app/port/schedule/CronDemo.js",
+      "./app/port/schedule/Demo": "./dist/app/port/schedule/Demo.js",
       "./config/config.default": "./dist/config/config.default.js",
       "./package.json": "./package.json"
     }
