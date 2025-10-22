@@ -149,7 +149,7 @@ catalog:
   lint-staged: ^16.2.5
   lodash: ^4.17.21
   lodash.snakecase: ^4.1.1
-  marked: ^15.0.12
+  marked: ^16.0.0
   matcher: ^4.0.0
   merge-descriptors: ^2.0.0
   methods: ^1.1.2
