@@ -50,45 +50,49 @@ describe.skipIf(process.version.startsWith('v24'))('test/cluster2/master.test.ts
     });
   });
 
-  describe('app worker should not die with matched serverGracefulIgnoreCode', () => {
-    let app: MockApplication;
-    beforeAll(() => {
-      mm.env('default');
-      app = cluster('apps/app-die-ignore-code');
-      app.coverage(false);
-      return app.ready();
-    });
-    afterAll(() => app.close());
+  // TODO: flaky test on windows, Hook timed out in 20000ms
+  describe.skipIf(process.platform === 'win32')(
+    'app worker should not die with matched serverGracefulIgnoreCode',
+    () => {
+      let app: MockApplication;
+      beforeAll(() => {
+        mm.env('default');
+        app = cluster('apps/app-die-ignore-code');
+        app.coverage(false);
+        return app.ready();
+      });
+      afterAll(() => app.close());
 
-    it('should not restart when matched uncaughtException happened', async () => {
-      try {
-        await app.httpRequest().get('/uncaughtException');
-      } catch {
-        // do nothing
-      }
+      it('should not restart when matched uncaughtException happened', async () => {
+        try {
+          await app.httpRequest().get('/uncaughtException');
+        } catch {
+          // do nothing
+        }
 
-      // wait for app worker restart
-      await scheduler.wait(5000);
+        // wait for app worker restart
+        await scheduler.wait(5000);
 
-      // error pipe to console
-      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
-    });
+        // error pipe to console
+        app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
+      });
 
-    it('should still log uncaughtException when matched uncaughtException happened', async () => {
-      try {
-        await app.httpRequest().get('/uncaughtException');
-      } catch {
-        // do nothing
-      }
+      it('should still log uncaughtException when matched uncaughtException happened', async () => {
+        try {
+          await app.httpRequest().get('/uncaughtException');
+        } catch {
+          // do nothing
+        }
 
-      // wait for app worker restart
-      await scheduler.wait(5000);
+        // wait for app worker restart
+        await scheduler.wait(5000);
 
-      app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
-      app.expect('stderr', /matches ignore list/);
-      app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
-    });
-  });
+        app.expect('stderr', /\[graceful:worker:\d+:uncaughtException] throw error 1 times/);
+        app.expect('stderr', /matches ignore list/);
+        app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
+      });
+    }
+  );
 
   describe('Master start fail', () => {
     let master: MockApplication;

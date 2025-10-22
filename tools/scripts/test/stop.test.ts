@@ -43,7 +43,7 @@ describe('test/stop.test.ts', () => {
         `--port=${port}`,
         fixturePath,
       ]) as Coffee;
-      // app.debug();
+      app.debug();
       app.expect('code', 0);
       await scheduler.wait(waitTime);
 
