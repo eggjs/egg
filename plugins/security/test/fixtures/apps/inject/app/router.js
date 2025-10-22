@@ -9,7 +9,7 @@ const mockHtml = `
   </html>
 `;
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/testcsrf', async function () {
     let bodyString = '<form></form>';
     this.body = app.injectCsrf(bodyString);

@@ -109,7 +109,7 @@ export class Application extends EggApplicationCore {
         socket.remoteAddress,
         socket.remotePort,
         err.code,
-        err.message
+        err.message,
       );
     }
 
@@ -132,9 +132,9 @@ export class Application extends EggApplicationCore {
       // + body: ''
       // + headers: {}
       // + status: 400
-      p.then(ret => {
+      p.then((ret) => {
         this.#responseRaw(socket, ret || {});
-      }).catch(err => {
+      }).catch((err) => {
         this.logger.error(err);
         this.#responseRaw(socket);
       });
@@ -250,7 +250,7 @@ export class Application extends EggApplicationCore {
         }
         throw new Error('Please set config.keys first');
       }
-      this._keys = this.config.keys.split(',').map(s => s.trim());
+      this._keys = this.config.keys.split(',').map((s) => s.trim());
     }
     return this._keys;
   }
@@ -288,12 +288,12 @@ export class Application extends EggApplicationCore {
    */
   #warnConfusedConfig(): void {
     const confusedConfigurations = this.config.confusedConfigurations;
-    Object.keys(confusedConfigurations).forEach(key => {
+    Object.keys(confusedConfigurations).forEach((key) => {
       if (this.config[key] !== undefined) {
         this.logger.warn(
           '[egg:application] Unexpected config key `%o` exists, Please use `%o` instead.',
           key,
-          confusedConfigurations[key]
+          confusedConfigurations[key],
         );
       }
     });

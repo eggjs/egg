@@ -2,7 +2,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const { sendToWormhole } = require('stream-wormhole');
 
-module.exports = async ctx => {
+module.exports = async (ctx) => {
   const parts = ctx.multipart();
   let part;
   while ((part = await parts()) != null) {

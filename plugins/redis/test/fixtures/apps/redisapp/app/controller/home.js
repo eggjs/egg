@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   return class HomeController extends app.Controller {
     async index() {
       const { ctx, app } = this;

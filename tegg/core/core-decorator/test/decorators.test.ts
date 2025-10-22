@@ -129,11 +129,11 @@ describe('test/decorators.test.ts', () => {
       assert(PrototypeUtil.isEggPrototype(QualifierCacheService));
       const property = 'cache';
       assert(
-        QualifierUtil.getProperQualifier(QualifierCacheService, property, LoadUnitNameQualifierAttribute) === 'foo'
+        QualifierUtil.getProperQualifier(QualifierCacheService, property, LoadUnitNameQualifierAttribute) === 'foo',
       );
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, InitTypeQualifierAttribute) ===
-          ObjectInitType.SINGLETON
+          ObjectInitType.SINGLETON,
       );
     });
 
@@ -167,11 +167,11 @@ describe('test/decorators.test.ts', () => {
       const property = 'cache';
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.LoadUnitName')) ===
-          'foo'
+          'foo',
       );
       assert(
         QualifierUtil.getProperQualifier(QualifierCacheService, property, Symbol.for('Qualifier.InitType')) ===
-          ObjectInitType.SINGLETON
+          ObjectInitType.SINGLETON,
       );
     });
 
@@ -202,7 +202,7 @@ describe('test/decorators.test.ts', () => {
         const qualifier = QualifierUtil.getProperQualifier(
           ConstructorQualifierObject,
           property,
-          InitTypeQualifierAttribute
+          InitTypeQualifierAttribute,
         );
         assert.equal(qualifier, expected, `expect initType for ${property} to be ${expected}`);
       }
@@ -243,7 +243,7 @@ describe('test/decorators.test.ts', () => {
           unitPath: 'foo',
           moduleName: '',
         }),
-        expectObjectProperty
+        expectObjectProperty,
       );
     });
   });
@@ -274,7 +274,7 @@ describe('test/decorators.test.ts', () => {
       assert(PrototypeUtil.isEggMultiInstancePrototype(ParentStaticMultiInstanceProto));
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentStaticMultiInstanceProto),
-        MultiInstanceType.STATIC
+        MultiInstanceType.STATIC,
       );
       assert(PrototypeUtil.getStaticMultiInstanceProperty(ParentStaticMultiInstanceProto));
       assert(await PrototypeUtil.getMultiInstanceProperty(ParentStaticMultiInstanceProto, fakeCtx));
@@ -285,7 +285,7 @@ describe('test/decorators.test.ts', () => {
       assert.strictEqual(PrototypeUtil.getStaticMultiInstanceProperty(ChildStaticMultiInstanceProto), undefined);
       assert.strictEqual(
         await PrototypeUtil.getMultiInstanceProperty(ChildStaticMultiInstanceProto, fakeCtx),
-        undefined
+        undefined,
       );
       assert.strictEqual(PrototypeUtil.getFilePath(ChildStaticMultiInstanceProto), undefined);
     });
@@ -293,7 +293,7 @@ describe('test/decorators.test.ts', () => {
     it('dynamic multipleInstanceProto should not be inherited', async () => {
       assert.strictEqual(
         PrototypeUtil.getEggMultiInstancePrototypeType(ParentDynamicMultiInstanceProto),
-        MultiInstanceType.DYNAMIC
+        MultiInstanceType.DYNAMIC,
       );
       assert(await PrototypeUtil.getDynamicMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
       assert(await PrototypeUtil.getMultiInstanceProperty(ParentDynamicMultiInstanceProto, fakeCtx));
@@ -301,11 +301,11 @@ describe('test/decorators.test.ts', () => {
       assert.strictEqual(PrototypeUtil.getEggMultiInstancePrototypeType(ChildDynamicMultiInstanceProto), undefined);
       assert.strictEqual(
         await PrototypeUtil.getDynamicMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx),
-        undefined
+        undefined,
       );
       assert.strictEqual(
         await PrototypeUtil.getMultiInstanceProperty(ChildDynamicMultiInstanceProto, fakeCtx),
-        undefined
+        undefined,
       );
     });
   });

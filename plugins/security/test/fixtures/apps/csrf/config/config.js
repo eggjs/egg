@@ -9,6 +9,6 @@ exports.security = {
   },
 
   csrf: {
-    ignore: [/^\/api\//, ctx => !!ctx.get('ignore-csrf')],
+    ignore: [/^\/api\//, (ctx) => !!ctx.get('ignore-csrf')],
   },
 };

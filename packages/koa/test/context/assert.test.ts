@@ -15,7 +15,7 @@ describe('ctx.assert(value, status)', () => {
         message: 'Not Found',
         status: 404,
         expose: true,
-      }
+      },
     );
 
     assert.throws(
@@ -26,7 +26,7 @@ describe('ctx.assert(value, status)', () => {
         message: 'Please login!',
         status: 401,
         expose: true,
-      }
+      },
     );
   });
 
@@ -41,7 +41,7 @@ describe('ctx.assert(value, status)', () => {
         message: 'Not Found',
         status: 404,
         expose: true,
-      }
+      },
     );
   });
 
@@ -57,7 +57,7 @@ describe('ctx.assert(value, status)', () => {
         status: 404,
         expose: true,
         foo: 'bar',
-      }
+      },
     );
   });
 
@@ -73,7 +73,7 @@ describe('ctx.assert(value, status)', () => {
         status: 500,
         expose: false,
         foo: 'bar',
-      }
+      },
     );
 
     assert.throws(
@@ -88,7 +88,7 @@ describe('ctx.assert(value, status)', () => {
         status: 500,
         expose: false,
         foo: 'bar',
-      }
+      },
     );
   });
 
@@ -103,7 +103,7 @@ describe('ctx.assert(value, status)', () => {
         message: 'Internal Server Error',
         status: 500,
         expose: false,
-      }
+      },
     );
   });
 });

@@ -22,8 +22,8 @@ describe('test/ModuleGraph.test.ts', () => {
     await graph.build();
     graph.sort();
     assert.deepStrictEqual(
-      graph.clazzList.map(t => t.name),
-      ['Logger', 'Bar', 'ConstructorBase', 'FooConstructor', 'FooConstructorLogger']
+      graph.clazzList.map((t) => t.name),
+      ['Logger', 'Bar', 'ConstructorBase', 'FooConstructor', 'FooConstructorLogger'],
     );
   });
 });

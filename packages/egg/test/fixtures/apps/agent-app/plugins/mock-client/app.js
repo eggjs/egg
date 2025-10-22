@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   const options = app.config.mock;
 
   app.mockClient = app.createAppWorkerClient(
@@ -46,7 +46,7 @@ module.exports = app => {
         this._invokeOneway('save', [key, value]);
       },
     },
-    options
+    options,
   );
 
   app.mockClient.ready(app.readyCallback('worker_mock_client'), {

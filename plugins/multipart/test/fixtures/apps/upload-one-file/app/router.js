@@ -13,7 +13,7 @@ async function readableToBytes(stream) {
   return Buffer.concat(chunks, totalLength);
 }
 
-module.exports = app => {
+module.exports = (app) => {
   // mock oss
   app.context.oss = {
     async put(name, stream) {
@@ -29,7 +29,7 @@ module.exports = app => {
     },
   };
 
-  app.get('/', async ctx => {
+  app.get('/', async (ctx) => {
     ctx.body = {
       app: is.object(ctx.app.oss),
       ctx: is.object(ctx.oss),
@@ -37,18 +37,18 @@ module.exports = app => {
     };
   });
 
-  app.get('/uploadtest', async ctx => {
+  app.get('/uploadtest', async (ctx) => {
     const name = 'egg-oss-test-upload-' + process.version + '-' + Date.now();
     ctx.body = await ctx.oss.put(name, fs.createReadStream(__filename));
   });
 
-  app.get('/upload', async ctx => {
+  app.get('/upload', async (ctx) => {
     ctx.set('x-csrf', ctx.csrf);
     ctx.body = 'hi';
     // await ctx.render('upload.html');
   });
 
-  app.post('/upload', async ctx => {
+  app.post('/upload', async (ctx) => {
     const stream = await ctx.getFileStream();
     const name = 'egg-multipart-test/' + process.version + '-' + Date.now() + '-' + path.basename(stream.filename);
     // 文件处理，上传到云存储等等
@@ -61,7 +61,7 @@ module.exports = app => {
     };
   });
 
-  app.post('/upload2', async ctx => {
+  app.post('/upload2', async (ctx) => {
     await ctx.getFileStream({ limits: { fileSize: '1kb' } });
     ctx.body = ctx.request.body;
   });

@@ -29,13 +29,13 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
       .httpRequest()
       .get('/invokeFoo')
       .expect(200)
-      .expect(ret => {
+      .expect((ret) => {
         assert(ret.body.ret, 'moduleMain-FooService-Method');
       });
   });
 
   it('should work: private has some name', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const mainService = await ctx.getEggObject(MainService);
       assert(mainService);
       assert.equal(mainService.invokeFoo(), 'moduleMain-FooService-Method');
@@ -43,7 +43,7 @@ describe('plugin/tegg/test/AccessLevelCheck.test.ts', () => {
   });
 
   it('should work: public/private has some name', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const mainService = await ctx.getEggObject(MainService);
       assert(mainService);
       assert.equal(mainService.invokeBar(), 'moduleMain-BarService-Method');

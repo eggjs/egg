@@ -3,7 +3,7 @@ import { TableModel } from '@eggjs/dal-decorator';
 export class TableModelInstanceBuilder {
   constructor(tableModel: TableModel, row: Record<string, any>) {
     for (const [key, value] of Object.entries(row)) {
-      const column = tableModel.columns.find(t => t.columnName === key);
+      const column = tableModel.columns.find((t) => t.columnName === key);
       Reflect.set(this, column?.propertyName ?? key, value);
     }
   }

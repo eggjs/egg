@@ -7,7 +7,7 @@ import type { ControllerRegister } from './ControllerRegister.ts';
 export type RegisterCreator = (
   proto: EggPrototype,
   controllerMeta: ControllerMetadata,
-  app: Application
+  app: Application,
 ) => ControllerRegister;
 
 export class ControllerRegisterFactory {

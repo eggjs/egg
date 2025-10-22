@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   class CustomController extends app.Controller {
     success(result) {
       this.ctx.body = {

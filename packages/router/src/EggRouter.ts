@@ -176,14 +176,14 @@ export class EggRouter extends Router {
     path: string | RegExp | (string | RegExp)[],
     methods: string[],
     middleware: MiddlewareFunc | string | (MiddlewareFunc | string | ResourcesController)[],
-    opts?: RegisterOptions
+    opts?: RegisterOptions,
   ): Layer | Layer[] {
     // patch register to support bind ctx function middleware and string controller
     middleware = Array.isArray(middleware) ? middleware : [middleware];
     for (const mw of middleware) {
       if (isGeneratorFunction(mw)) {
         throw new TypeError(
-          methods.toString() + ' `' + path + '`: Please use async function instead of generator function'
+          methods.toString() + ' `' + path + '`: Please use async function instead of generator function',
         );
       }
     }
@@ -353,7 +353,7 @@ function resolveController(controller: string | MiddlewareFunc | ResourcesContro
     // resolveController('foo.bar.Home', app)
     const actions = controller.split('.');
     let obj = app.controller;
-    actions.forEach(key => {
+    actions.forEach((key) => {
       obj = obj[key];
       if (!obj) throw new Error(`app.controller.${controller} not exists`);
     });

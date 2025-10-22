@@ -28,7 +28,7 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
       .httpRequest()
       .get('/config')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert.deepStrictEqual(res.body, {
           moduleConfigs: { features: { dynamic: { foo: 'bar', bar: 'foo' } } },
           moduleConfig: { features: { dynamic: { foo: 'bar', bar: 'foo' } } },
@@ -41,7 +41,7 @@ describe('plugin/tegg/test/ModuleConfig.test.ts', () => {
       .httpRequest()
       .get('/overwrite_config')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert.deepStrictEqual(res.body, {
           moduleConfigs: {
             features: { dynamic: { foo: 'bar', bar: 'overwrite foo' } },

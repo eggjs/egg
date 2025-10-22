@@ -157,7 +157,7 @@ describe('test/application.test.ts', () => {
       await scheduler.wait(1000);
       const logs = fs.readFileSync(
         getFilepath('apps/confused-configuration/logs/confused-configuration/confused-configuration-web.log'),
-        'utf8'
+        'utf8',
       );
       assert.match(logs, /Unexpected config key `'bodyparser'` exists, Please use `'bodyParser'` instead\./);
       assert.match(logs, /Unexpected config key `'notFound'` exists, Please use `'notfound'` instead\./);

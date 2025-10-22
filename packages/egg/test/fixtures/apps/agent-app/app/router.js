@@ -1,6 +1,6 @@
-const sleep = timeout => callback => setTimeout(callback, timeout);
+const sleep = (timeout) => (callback) => setTimeout(callback, timeout);
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/getData', async function () {
     this.body = await app.mockClient.getData('hello');
   });
@@ -18,8 +18,8 @@ module.exports = app => {
   });
 
   function subThunk() {
-    return callback => {
-      app.mockClient.subscribe({ id: 'foo' }, val => callback(null, val));
+    return (callback) => {
+      app.mockClient.subscribe({ id: 'foo' }, (val) => callback(null, val));
     };
   }
 

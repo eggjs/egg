@@ -8,7 +8,7 @@ export type EggScheduleFunction = (ctx: Context, data: any) => Promise<any>;
 
 export function eggScheduleAdapterFactory(
   proto: EggPrototype,
-  metaData: ScheduleMetadata<object>
+  metaData: ScheduleMetadata<object>,
 ): EggScheduleFunction {
   return async function (ctx: Context, data: any) {
     ctx[ROOT_PROTO] = proto;

@@ -13,13 +13,13 @@ export class IndexMetaBuilder {
   }
 
   build(): Array<IndexMeta> {
-    return ModelInfoUtil.getModelIndices(this.clazz).map(indexInfo => this.buildIndexMeta(indexInfo));
+    return ModelInfoUtil.getModelIndices(this.clazz).map((indexInfo) => this.buildIndexMeta(indexInfo));
   }
 
   private buildIndexMeta(indexInfo: ModelIndexInfo): IndexMeta {
     const fields: string[] = [];
     for (const field of indexInfo.fields) {
-      const attribute = this.attributes.find(t => t.propertyName === field);
+      const attribute = this.attributes.find((t) => t.propertyName === field);
       if (!attribute) {
         throw new Error(`model ${this.clazz.name} has no attribute named ${field}`);
       }

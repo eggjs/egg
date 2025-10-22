@@ -36,7 +36,7 @@ describe('ctx.attachment([filename])', () => {
     it('should work with http client', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.attachment('path/to/include-no-ascii-char-中文名-ok.json');
         ctx.body = { foo: 'bar' };
       });
@@ -45,7 +45,7 @@ describe('ctx.attachment([filename])', () => {
         .get('/')
         .expect(
           'content-disposition',
-          'attachment; filename="include-no-ascii-char-???-ok.json"; filename*=UTF-8\'\'include-no-ascii-char-%E4%B8%AD%E6%96%87%E5%90%8D-ok.json'
+          'attachment; filename="include-no-ascii-char-???-ok.json"; filename*=UTF-8\'\'include-no-ascii-char-%E4%B8%AD%E6%96%87%E5%90%8D-ok.json',
         )
         .expect({ foo: 'bar' })
         .expect(200);
@@ -69,7 +69,7 @@ describe('contentDisposition(filename, options)', () => {
       ctx.attachment('€ rates.pdf');
       assert.equal(
         ctx.response.header['content-disposition'],
-        'attachment; filename="? rates.pdf"; filename*=UTF-8\'\'%E2%82%AC%20rates.pdf'
+        'attachment; filename="? rates.pdf"; filename*=UTF-8\'\'%E2%82%AC%20rates.pdf',
       );
     });
 
@@ -79,7 +79,7 @@ describe('contentDisposition(filename, options)', () => {
         ctx.attachment('£ and € rates.pdf', { fallback: false });
         assert.equal(
           ctx.response.header['content-disposition'],
-          "attachment; filename*=UTF-8''%C2%A3%20and%20%E2%82%AC%20rates.pdf"
+          "attachment; filename*=UTF-8''%C2%A3%20and%20%E2%82%AC%20rates.pdf",
         );
       });
 
@@ -96,7 +96,7 @@ describe('contentDisposition(filename, options)', () => {
         ctx.attachment('£ and € rates.pdf', { fallback: true });
         assert.equal(
           ctx.response.header['content-disposition'],
-          'attachment; filename="£ and ? rates.pdf"; filename*=UTF-8\'\'%C2%A3%20and%20%E2%82%AC%20rates.pdf'
+          'attachment; filename="£ and ? rates.pdf"; filename*=UTF-8\'\'%C2%A3%20and%20%E2%82%AC%20rates.pdf',
         );
       });
 
@@ -122,7 +122,7 @@ describe('contentDisposition(filename, options)', () => {
         });
         assert.equal(
           ctx.response.header['content-disposition'],
-          'attachment; filename="£ and EURO rates.pdf"; filename*=UTF-8\'\'%C2%A3%20and%20%E2%82%AC%20rates.pdf'
+          'attachment; filename="£ and EURO rates.pdf"; filename*=UTF-8\'\'%C2%A3%20and%20%E2%82%AC%20rates.pdf',
         );
       });
 
@@ -131,7 +131,7 @@ describe('contentDisposition(filename, options)', () => {
         ctx.attachment('"£ rates".pdf', { fallback: '£ rates.pdf' });
         assert.equal(
           ctx.response.header['content-disposition'],
-          'attachment; filename="£ rates.pdf"; filename*=UTF-8\'\'%22%C2%A3%20rates%22.pdf'
+          'attachment; filename="£ rates.pdf"; filename*=UTF-8\'\'%22%C2%A3%20rates%22.pdf',
         );
       });
 
@@ -146,7 +146,7 @@ describe('contentDisposition(filename, options)', () => {
         ctx.attachment('€ rates.pdf', { fallback: '/path/to/EURO rates.pdf' });
         assert.equal(
           ctx.response.header['content-disposition'],
-          'attachment; filename="EURO rates.pdf"; filename*=UTF-8\'\'%E2%82%AC%20rates.pdf'
+          'attachment; filename="EURO rates.pdf"; filename*=UTF-8\'\'%E2%82%AC%20rates.pdf',
         );
       });
 

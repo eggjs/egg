@@ -28,7 +28,7 @@ export class ScheduleMetaBuilder {
       params.scheduleData,
       scheduleOptions.immediate!,
       scheduleOptions.disable!,
-      scheduleOptions.env
+      scheduleOptions.env,
     );
   }
 }

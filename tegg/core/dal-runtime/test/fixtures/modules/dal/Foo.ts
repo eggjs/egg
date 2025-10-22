@@ -59,7 +59,7 @@ export class Foo {
       primaryKey: true,
       autoIncrement: true,
       comment: 'the primary key',
-    }
+    },
   )
   id: number;
 
@@ -70,7 +70,7 @@ export class Foo {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   name: string;
 
@@ -81,7 +81,7 @@ export class Foo {
     },
     {
       name: 'col1',
-    }
+    },
   )
   col1: string;
 
@@ -181,7 +181,7 @@ export class Foo {
     },
     {
       canNull: true,
-    }
+    },
   )
   timestampColumn: Date;
 

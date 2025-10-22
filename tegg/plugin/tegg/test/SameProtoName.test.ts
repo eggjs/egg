@@ -25,7 +25,7 @@ describe('plugin/tegg/test/SameProtoName.test.ts', () => {
   });
 
   it('should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const barService = await ctx.getEggObject(BarService);
       assert(barService);
       assert(barService.fooService);

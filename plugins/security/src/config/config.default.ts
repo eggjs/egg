@@ -40,7 +40,7 @@ const SSRFCheckAddressFunction: z.ZodFunction<
   .args(
     z.union([z.string(), LookupAddress, LookupAddressAndStringArray]),
     z.union([z.number(), z.string()]),
-    z.string()
+    z.string(),
   )
   .returns(z.boolean());
 /**
@@ -98,7 +98,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
    * whether defend csrf attack
    */
   csrf: z.preprocess(
-    val => {
+    (val) => {
       // transform old config, `csrf: false` to `csrf: { enable: false }`
       if (typeof val === 'boolean') {
         return { enable: val };
@@ -213,7 +213,7 @@ export const SecurityConfig: z.ZodObject<any> = z.object({
             overwrite: true,
           }),
       })
-      .default({})
+      .default({}),
   ),
   /**
    * whether enable X-Frame-Options response header

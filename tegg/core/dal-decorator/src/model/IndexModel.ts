@@ -46,8 +46,8 @@ export class IndexModel {
 
   static build(params: IndexParams, columns: ColumnModel[], clazz: EggProtoImplClass<unknown>): IndexModel {
     const type = params.type ?? IndexType.INDEX;
-    const keys: Array<IndexKey> = params.keys.map(t => {
-      const column = columns.find(c => c.propertyName === t);
+    const keys: Array<IndexKey> = params.keys.map((t) => {
+      const column = columns.find((c) => c.propertyName === t);
       if (!column) {
         throw new Error(`Table ${clazz.name} index configuration error: has no property named "${t}"`);
       }
@@ -59,8 +59,8 @@ export class IndexModel {
     const name =
       params.name ??
       IndexModel.buildIndexName(
-        keys.map(t => t.columnName),
-        type
+        keys.map((t) => t.columnName),
+        type,
       );
     return new IndexModel({
       name,

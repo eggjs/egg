@@ -54,7 +54,7 @@ describe('test/lib/router.test.js', () => {
         ctx.n = ctx.n ? ctx.n + 1 : 1;
         return next();
       },
-      nestedRouter.routes()
+      nestedRouter.routes(),
     );
 
     app.use(parentRouter.routes());
@@ -100,7 +100,7 @@ describe('test/lib/router.test.js', () => {
       },
       function (ctx) {
         ctx.body.message += '!';
-      }
+      },
     );
 
     app.use(router.routes());
@@ -130,7 +130,7 @@ describe('test/lib/router.test.js', () => {
       function (_ctx, next) {
         return next();
       },
-      nestedRouter.routes()
+      nestedRouter.routes(),
     );
 
     app.use(parentRouter.routes());
@@ -215,7 +215,7 @@ describe('test/lib/router.test.js', () => {
       },
       function (ctx) {
         ctx.body = { order: 1 };
-      }
+      },
     );
 
     await request(app.use(router.routes()).callback()).get('/user/account.jsx').expect(404);
@@ -361,7 +361,7 @@ describe('test/lib/router.test.js', () => {
           bar: ctx.bar,
           foo: ctx.foo,
         };
-      }
+      },
     );
     const res = await request(app.callback()).get('/match/this').expect(200);
     expect(res.body.bar).toBe('baz');
@@ -405,7 +405,7 @@ describe('test/lib/router.test.js', () => {
         return readVersion().then(function () {
           ctx.status = 204;
         });
-      }
+      },
     );
     await request(app.callback()).get('/').expect(204);
   });
@@ -504,7 +504,7 @@ describe('test/lib/router.test.js', () => {
             };
             return notAllowedErr;
           },
-        })
+        }),
       );
       router.get('/users', function () {});
       router.put('/users', function () {});
@@ -585,7 +585,7 @@ describe('test/lib/router.test.js', () => {
             };
             return notImplementedErr;
           },
-        })
+        }),
       );
       router.get('/users', function () {});
       router.put('/users', function () {});

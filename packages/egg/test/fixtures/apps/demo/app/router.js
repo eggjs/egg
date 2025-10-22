@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('home', '/', 'home');
   app.get('/hello', app.controller.hello);
   app.get('/logger', app.controller.logger);

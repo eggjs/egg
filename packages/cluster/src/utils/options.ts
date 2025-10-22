@@ -167,7 +167,7 @@ export async function parseOptions(options?: ClusterOptions): Promise<ParsedClus
     process.env.NO_DEPRECATION = '*';
   }
 
-  const isDebug = process.execArgv.some(argv => argv.includes('--debug') || argv.includes('--inspect'));
+  const isDebug = process.execArgv.some((argv) => argv.includes('--debug') || argv.includes('--inspect'));
   if (isDebug) {
     options.isDebug = isDebug;
   }

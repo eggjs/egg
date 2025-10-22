@@ -29,7 +29,7 @@ export class GlobalModuleNodeBuilder {
   async addMultiInstanceClazz(
     clazz: EggProtoImplClass,
     defineModuleName: string,
-    defineUnitPath: string
+    defineUnitPath: string,
   ): Promise<this> {
     const protos = await ProtoDescriptorHelper.createByMultiInstanceClazz(clazz, {
       defineModuleName,

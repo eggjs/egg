@@ -51,7 +51,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
 
   it('should release', async () => {
     let teggCtx: EggContext;
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       // teggCtx = ctx[TEGG_CONTEXT]
       teggCtx = ctx.teggContext;
       const backgroundTaskHelper = await ctx.getEggObject(BackgroundTaskHelper);
@@ -64,7 +64,7 @@ describe('plugin/tegg/test/BackgroundTask.test.ts', () => {
   });
 
   it('config should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       const backgroundTaskHelper = await ctx.getEggObject(BackgroundTaskHelper);
       assert(backgroundTaskHelper.timeout === Infinity);
     });

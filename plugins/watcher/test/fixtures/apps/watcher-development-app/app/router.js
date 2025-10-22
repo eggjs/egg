@@ -15,27 +15,27 @@ module.exports = function (app) {
     }
   }
 
-  app.get('/app-watch', async ctx => {
+  app.get('/app-watch', async (ctx) => {
     app.watcher.watch([file_path1, dir_path], callback);
     ctx.body = 'app watch success';
   });
 
-  app.get('/app-unwatch', async ctx => {
+  app.get('/app-unwatch', async (ctx) => {
     app.watcher.unwatch([file_path1, dir_path], callback);
     ctx.body = 'app unwatch success';
   });
 
-  app.get('/app-msg', async ctx => {
+  app.get('/app-msg', async (ctx) => {
     ctx.body = fileChangeCount;
   });
 
-  app.get('/app-hasDir', async ctx => {
+  app.get('/app-hasDir', async (ctx) => {
     ctx.body = {
       hasDir,
     };
   });
 
-  app.get('/agent-watch', async ctx => {
+  app.get('/agent-watch', async (ctx) => {
     app.messenger.broadcast('agent-watch');
     ctx.body = await new Promise(function (resolve) {
       app.messenger.on('agent-watch-success', function (msg) {
@@ -44,7 +44,7 @@ module.exports = function (app) {
     });
   });
 
-  app.get('/agent-unwatch', async ctx => {
+  app.get('/agent-unwatch', async (ctx) => {
     app.messenger.broadcast('agent-unwatch');
     ctx.body = await new Promise(function (resolve) {
       app.messenger.on('agent-unwatch-success', function (msg) {
@@ -53,7 +53,7 @@ module.exports = function (app) {
     });
   });
 
-  app.get('/agent-msg', async ctx => {
+  app.get('/agent-msg', async (ctx) => {
     app.messenger.broadcast('i-want-agent-file-changed-count');
     ctx.body = await new Promise(function (resolve) {
       app.messenger.on('agent-file-changed-count', function (msg) {

@@ -38,7 +38,7 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
   configWillLoad(): void {
     this.app.loadUnitLifecycleUtil.registerLifecycle(this.loadUnitHook);
     this.app.eggPrototypeLifecycleUtil.registerLifecycle(this.controllerPrototypeHook);
-    this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, unitPath => {
+    this.app.loaderFactory.registerLoader(CONTROLLER_LOAD_UNIT, (unitPath) => {
       return new EggControllerLoader(unitPath);
     });
     this.controllerRegisterFactory.registerControllerRegister(ControllerType.HTTP, HTTPControllerRegister.create);
@@ -50,15 +50,15 @@ export default class ControllerAppBootHook implements ILifecycleBoot {
           ctx.unitPath,
           ctx.loader,
           this.app.eggPrototypeFactory,
-          this.app.eggPrototypeCreatorFactory
+          this.app.eggPrototypeCreatorFactory,
         );
-      }
+      },
     );
     this.app.loadUnitInstanceFactory.registerLoadUnitInstanceClass(
       CONTROLLER_LOAD_UNIT,
       (ctx: LoadUnitInstanceLifecycleContext): ModuleLoadUnitInstance => {
         return new ModuleLoadUnitInstance(ctx.loadUnit);
-      }
+      },
     );
 
     // init http root proto middleware

@@ -56,6 +56,6 @@ export class EggPrototypeFactory {
 
     // 2. find public proto in global
     const protos = this.publicProtoMap.get(name);
-    return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
+    return protos?.filter((proto) => proto.verifyQualifiers(qualifiers)) || [];
   }
 }

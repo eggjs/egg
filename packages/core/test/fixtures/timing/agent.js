@@ -2,7 +2,7 @@
 
 const block = require('./block');
 
-module.exports = agent => {
+module.exports = (agent) => {
   block();
 
   agent.beforeStart(function* () {

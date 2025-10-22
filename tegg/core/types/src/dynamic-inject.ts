@@ -8,7 +8,7 @@ export type ImplTypeEnum = {
 };
 
 export type ImplDecorator<T extends object, Enum extends ImplTypeEnum> = (
-  type: Enum[keyof Enum]
+  type: Enum[keyof Enum],
 ) => (clazz: EggProtoImplClass<T>) => void;
 
 export interface EggObjectFactory {

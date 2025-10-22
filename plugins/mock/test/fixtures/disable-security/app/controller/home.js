@@ -40,7 +40,7 @@ exports.urllib = async function () {
   let r = this.app.httpclient[method](url + '/mock_url', {
     dataType,
   });
-  if (method === 'request') r = r.then(d => d);
+  if (method === 'request') r = r.then((d) => d);
   const r1 = await r;
   const r2 = await this.app.httpclient[method](url + '/mock_url', {
     method: 'POST',

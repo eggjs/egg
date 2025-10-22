@@ -43,7 +43,7 @@ export class EggPrototypeImpl implements EggPrototype {
     className?: string,
     injectType?: InjectType,
     multiInstanceConstructorIndex?: number,
-    multiInstanceConstructorAttributes?: QualifierAttribute[]
+    multiInstanceConstructorAttributes?: QualifierAttribute[],
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -70,12 +70,12 @@ export class EggPrototypeImpl implements EggPrototype {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
   getQualifier(attribute: string): QualifierValue | undefined {
-    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+    return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
   constructEggObject(...args: any): object {

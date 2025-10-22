@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.view.use('ejs', require('./ejs'));
   app.view.use('nunjucks', require('./nunjucks'));
   app.view.use('async', require('./async'));

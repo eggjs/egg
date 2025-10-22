@@ -212,7 +212,7 @@ describe('ctx.onerror(err)', () => {
 
       // oxlint-disable-next-line promise/avoid-new
       const gotRightErrorPromise = new Promise<void>((resolve, reject) => {
-        app.on('error', receivedError => {
+        app.on('error', (receivedError) => {
           try {
             assert.strictEqual(receivedError, error);
             resolve();

@@ -13,7 +13,7 @@ export type Coffee = _Coffee & {
 };
 
 export async function cleanup(baseDir: string) {
-  const processList = await findNodeProcess(x => {
+  const processList = await findNodeProcess((x) => {
     const dir = isWindows ? baseDir.replace(/\\/g, '\\\\') : baseDir;
     const prefix = isWindows ? '\\"baseDir\\":\\"' : '"baseDir":"';
     return x.cmd.includes(`${prefix}${dir}`);

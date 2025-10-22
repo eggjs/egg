@@ -68,8 +68,8 @@ describe.skip('test/start.test.ts', () => {
       // should rotate log
       const fileList = await fs.readdir(logDir);
       // console.log(fileList);
-      assert(fileList.some(name => name.match(/master-stdout\.log\.\d+\.\d+/)));
-      assert(fileList.some(name => name.match(/master-stderr\.log\.\d+\.\d+/)));
+      assert(fileList.some((name) => name.match(/master-stdout\.log\.\d+\.\d+/)));
+      assert(fileList.some((name) => name.match(/master-stderr\.log\.\d+\.\d+/)));
 
       const result = await request(`http://127.0.0.1:${port}`);
       assert.equal(result.data.toString(), 'hi, egg');

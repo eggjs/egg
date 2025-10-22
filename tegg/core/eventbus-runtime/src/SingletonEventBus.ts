@@ -116,7 +116,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
   emitWithContext<E extends keyof Events>(
     parentContext: EggRuntimeContext,
     event: E,
-    args: Arguments<Events[E]>
+    args: Arguments<Events[E]>,
   ): boolean {
     const corkId = parentContext.get(CORK_ID);
     const hasListener = this.eventHandlerFactory.hasListeners(event);
@@ -152,7 +152,7 @@ export class SingletonEventBus implements EventBus, EventWaiter {
       try {
         const handlerProtos = this.eventHandlerFactory.getHandlerProtos(event);
         await Promise.all(
-          handlerProtos.map(async proto => {
+          handlerProtos.map(async (proto) => {
             try {
               await this.eventHandlerFactory.handle(event, proto, args);
             } catch (e: any) {
@@ -160,14 +160,14 @@ export class SingletonEventBus implements EventBus, EventWaiter {
               e.message = `[EventBus] process event ${String(event)} for handler ${String(proto.name)} failed: ${e.message}`;
               this.logger.error(e);
             }
-          })
+          }),
         );
       } catch (e: any) {
         e.message = `[EventBus] process event ${String(event)} failed: ${e.message}`;
         this.logger.error(e);
       } finally {
         if (ctx.destroy) {
-          ctx.destroy(lifecycle).catch(e => {
+          ctx.destroy(lifecycle).catch((e) => {
             e.message = '[tegg/SingletonEventBus] destroy tegg ctx failed:' + e.message;
             this.logger.error(e);
           });

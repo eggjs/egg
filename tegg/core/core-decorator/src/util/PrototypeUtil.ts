@@ -18,15 +18,15 @@ import { MetadataUtil } from './MetadataUtil.ts';
 export class PrototypeUtil {
   static readonly IS_EGG_OBJECT_PROTOTYPE: symbol = Symbol.for('EggPrototype#isEggPrototype');
   static readonly IS_EGG_OBJECT_MULTI_INSTANCE_PROTOTYPE: symbol = Symbol.for(
-    'EggPrototype#isEggMultiInstancePrototype'
+    'EggPrototype#isEggMultiInstancePrototype',
   );
   static readonly FILE_PATH: symbol = Symbol.for('EggPrototype.filePath');
   static readonly PROTOTYPE_PROPERTY: symbol = Symbol.for('EggPrototype.Property');
   static readonly MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY: symbol = Symbol.for(
-    'EggPrototype.MultiInstanceStaticProperty'
+    'EggPrototype.MultiInstanceStaticProperty',
   );
   static readonly MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY: symbol = Symbol.for(
-    'EggPrototype.MultiInstanceCallbackProperty'
+    'EggPrototype.MultiInstanceCallbackProperty',
   );
   static readonly INJECT_OBJECT_NAME_SET: symbol = Symbol.for('EggPrototype.injectObjectNames');
   static readonly INJECT_TYPE: symbol = Symbol.for('EggPrototype.injectType');
@@ -34,7 +34,7 @@ export class PrototypeUtil {
   static readonly CLAZZ_PROTO: symbol = Symbol.for('EggPrototype.clazzProto');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_INDEX: symbol = Symbol.for('EggPrototype#multiInstanceConstructorIndex');
   static readonly MULTI_INSTANCE_CONSTRUCTOR_ATTRIBUTES: symbol = Symbol.for(
-    'EggPrototype#multiInstanceConstructorAttributes'
+    'EggPrototype#multiInstanceConstructorAttributes',
   );
 
   /**
@@ -79,7 +79,7 @@ export class PrototypeUtil {
     }
     const metadata = MetadataUtil.getOwnMetaData<EggMultiInstancePrototypeInfo>(
       PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY,
-      clazz
+      clazz,
     );
     if (metadata) {
       return MultiInstanceType.STATIC;
@@ -124,7 +124,7 @@ export class PrototypeUtil {
 
   static async getInitType(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): Promise<string | undefined> {
     const property = PrototypeUtil.getProperty(clazz) ?? (await PrototypeUtil.getMultiInstanceProperty(clazz, ctx));
     return property?.initType;
@@ -132,7 +132,7 @@ export class PrototypeUtil {
 
   static async getAccessLevel(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): Promise<string | undefined> {
     const property = PrototypeUtil.getProperty(clazz) ?? (await PrototypeUtil.getMultiInstanceProperty(clazz, ctx));
     return property?.accessLevel;
@@ -140,14 +140,14 @@ export class PrototypeUtil {
 
   static async getObjNames(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): Promise<EggPrototypeName[]> {
     const property = PrototypeUtil.getProperty(clazz);
     if (property) {
       return [property.name];
     }
     const multiInstanceProperty = await PrototypeUtil.getMultiInstanceProperty(clazz, ctx);
-    return multiInstanceProperty?.objects.map(t => t.name) || [];
+    return multiInstanceProperty?.objects.map((t) => t.name) || [];
   }
 
   /**
@@ -166,7 +166,7 @@ export class PrototypeUtil {
    */
   static setMultiInstanceCallbackProperty(
     clazz: EggProtoImplClass,
-    property: EggMultiInstanceCallbackPrototypeInfo
+    property: EggMultiInstanceCallbackPrototypeInfo,
   ): void {
     MetadataUtil.defineMetaData(PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY, property, clazz);
   }
@@ -178,7 +178,7 @@ export class PrototypeUtil {
   static getStaticMultiInstanceProperty(clazz: EggProtoImplClass): EggMultiInstancePrototypeInfo | undefined {
     const metadata = MetadataUtil.getOwnMetaData<EggMultiInstancePrototypeInfo>(
       PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY,
-      clazz
+      clazz,
     );
     if (metadata) {
       return metadata;
@@ -192,11 +192,11 @@ export class PrototypeUtil {
    */
   static async getDynamicMultiInstanceProperty(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): Promise<EggMultiInstancePrototypeInfo | undefined> {
     const callBackMetadata = MetadataUtil.getOwnMetaData<EggMultiInstanceCallbackPrototypeInfo>(
       PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY,
-      clazz
+      clazz,
     );
     if (callBackMetadata) {
       const objects = await callBackMetadata.getObjects(ctx);
@@ -214,18 +214,18 @@ export class PrototypeUtil {
    */
   static async getMultiInstanceProperty(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): Promise<EggMultiInstancePrototypeInfo | undefined> {
     const metadata = MetadataUtil.getOwnMetaData<EggMultiInstancePrototypeInfo>(
       PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_STATIC_PROPERTY,
-      clazz
+      clazz,
     );
     if (metadata) {
       return metadata;
     }
     const callBackMetadata = MetadataUtil.getOwnMetaData<EggMultiInstanceCallbackPrototypeInfo>(
       PrototypeUtil.MULTI_INSTANCE_PROTOTYPE_CALLBACK_PROPERTY,
-      clazz
+      clazz,
     );
     if (callBackMetadata) {
       const objects = await callBackMetadata.getObjects(ctx);
@@ -241,8 +241,8 @@ export class PrototypeUtil {
         },
       ];
       for (const object of objects) {
-        defaultQualifier.forEach(qualifier => {
-          if (!object.qualifiers.find(t => t.attribute === qualifier.attribute)) {
+        defaultQualifier.forEach((qualifier) => {
+          if (!object.qualifiers.find((t) => t.attribute === qualifier.attribute)) {
             object.qualifiers.push(qualifier);
           }
         });
@@ -289,7 +289,7 @@ export class PrototypeUtil {
     const objs: InjectConstructorInfo[] = MetadataUtil.initArrayMetaData(
       PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET,
       clazz,
-      []
+      [],
     );
     objs.push(injectConstructorInfo);
     MetadataUtil.defineMetaData(PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET, objs, clazz);
@@ -308,7 +308,7 @@ export class PrototypeUtil {
     if (injectType === InjectType.CONSTRUCTOR) {
       return MetadataUtil.getArrayMetaData<InjectConstructorInfo>(
         PrototypeUtil.INJECT_CONSTRUCTOR_NAME_SET,
-        clazz
+        clazz,
       ).sort((a, b) => {
         return a.refIndex - b.refIndex;
       });

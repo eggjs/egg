@@ -24,7 +24,7 @@ export class ModuleHandler extends Base {
     try {
       this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
         COMPATIBLE_PROTO_IMPLE_TYPE,
-        EggCompatibleProtoImpl.create
+        EggCompatibleProtoImpl.create,
       );
 
       await this.loadUnitLoader.load();

@@ -32,7 +32,7 @@ export class AppController {
   })
   async get(
     @HTTPContext() ctx: Context,
-    @HTTPParam() id: string
+    @HTTPParam() id: string,
   ): Promise<{
     traceId: string;
     app: App | null;
@@ -51,7 +51,7 @@ export class AppController {
   })
   async find(
     @HTTPContext() ctx: Context,
-    @HTTPQuery() name: string
+    @HTTPQuery() name: string,
   ): Promise<{
     traceId: string;
     app: App | null;
@@ -71,7 +71,7 @@ export class AppController {
   async save(
     @HTTPContext() ctx: Context,
     @HTTPBody() app: App,
-    @HTTPHeaders() headers: IncomingHttpHeaders
+    @HTTPHeaders() headers: IncomingHttpHeaders,
   ): Promise<{
     success: boolean;
     traceId: string;

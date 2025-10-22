@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = agent => {};
+module.exports = (agent) => {};

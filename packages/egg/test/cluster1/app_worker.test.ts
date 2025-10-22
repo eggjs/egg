@@ -96,12 +96,12 @@ describe('test/cluster1/app_worker.test.ts', () => {
     afterEach(() => app.close());
 
     it('should do customized request when HTTP request packet broken', async () => {
-      const version = process.version.split('.').map(a => parseInt(a.replace('v', '')));
+      const version = process.version.split('.').map((a) => parseInt(a.replace('v', '')));
       let html: string | RegExp = '';
       if ((version[0] === 8 && version[1] >= 10) || (version[0] === 9 && version[1] >= 4) || version[0] > 9) {
         html = new RegExp(
           'GET /foo bar HTTP/1.1\r\nHost: 127.0.0.1:\\d+\r\nAccept-Encoding: gzip, ' +
-            'deflate\r\nUser-Agent: @eggjs/mock/\\d+.\\d+.\\d+ Node\\.js/v\\d+.\\d+.\\d+\r\nConnection: close\r\n\r\n'
+            'deflate\r\nUser-Agent: @eggjs/mock/\\d+.\\d+.\\d+ Node\\.js/v\\d+.\\d+.\\d+\r\nConnection: close\r\n\r\n',
         );
       }
 
@@ -150,7 +150,7 @@ describe('test/cluster1/app_worker.test.ts', () => {
 });
 
 function connect(port: number) {
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     const socket = net.createConnection(port, '127.0.0.1', () => {
       socket.write('GET http://127.0.0.1:8080/ HTTP', () => {
         socket.destroy();

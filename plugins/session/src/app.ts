@@ -15,7 +15,7 @@ export default class AppBoot implements ILifecycleBoot {
 
     if (!app.config.session.httpOnly) {
       app.coreLogger.warn(
-        '[@eggjs/session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.'
+        '[@eggjs/session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.',
       );
     }
     app.config.coreMiddleware.push('session');

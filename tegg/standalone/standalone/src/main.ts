@@ -24,7 +24,7 @@ export async function main<T = void>(cwd: string, options?: RunnerOptions): Prom
   try {
     return await runner.run<T>();
   } finally {
-    runner.destroy().catch(e => {
+    runner.destroy().catch((e) => {
       e.message = `[tegg/standalone] destroy tegg failed: ${e.message}`;
       console.warn(e);
     });

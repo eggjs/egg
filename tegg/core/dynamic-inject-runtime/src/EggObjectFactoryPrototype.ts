@@ -37,7 +37,7 @@ export class EggObjectFactoryPrototype implements EggPrototype {
     this.clazz = clazz;
     this.qualifiers = QualifierUtil.mergeQualifiers(
       QualifierUtil.getProtoQualifiers(clazz),
-      prototypeInfo.qualifiers ?? []
+      prototypeInfo.qualifiers ?? [],
     );
     this.id = IdenticalUtil.createProtoId(loadUnit.id, NameUtil.getClassName(this.clazz));
     this.initType = prototypeInfo.initType;
@@ -56,12 +56,12 @@ export class EggObjectFactoryPrototype implements EggPrototype {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
   getQualifier(attribute: string): QualifierValue | undefined {
-    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+    return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
   verifyQualifiers(qualifiers: QualifierInfo[]): boolean {
@@ -77,12 +77,12 @@ export class EggObjectFactoryPrototype implements EggPrototype {
     return new EggObjectFactoryPrototype(
       ctx.clazz as EggProtoImplClass<EggObjectFactory>,
       ctx.loadUnit,
-      ctx.prototypeInfo
+      ctx.prototypeInfo,
     );
   }
 }
 
 EggPrototypeCreatorFactory.registerPrototypeCreator(
   EGG_OBJECT_FACTORY_PROTO_IMPLE_TYPE,
-  EggObjectFactoryPrototype.create
+  EggObjectFactoryPrototype.create,
 );

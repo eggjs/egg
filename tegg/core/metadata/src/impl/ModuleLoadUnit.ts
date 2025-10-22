@@ -43,7 +43,7 @@ class ProtoNode implements GraphNodeObj {
     clazz: EggProtoImplClass,
     objName: EggPrototypeName,
     initType: ObjectInitTypeLike,
-    qualifiers: QualifierInfo[]
+    qualifiers: QualifierInfo[],
   ) {
     this.name = objName;
     this.id = '' + id++;
@@ -62,7 +62,7 @@ class ProtoNode implements GraphNodeObj {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
@@ -86,18 +86,18 @@ export class ModuleGraph {
       'ModuleGraph constructor on moduleName: %o, unitPath: %o, clazzList size: %o',
       this.name,
       this.unitPath,
-      this.clazzList.length
+      this.clazzList.length,
     );
   }
 
   private findInjectNode(
     objName: EggPrototypeName,
     qualifiers: QualifierInfo[],
-    parentInitTye: ObjectInitTypeLike
+    parentInitTye: ObjectInitTypeLike,
   ): GraphNode<ProtoNode> | undefined {
     let nodes = Array.from(this.graph.nodes.values())
-      .filter(t => t.val.name === objName)
-      .filter(t => t.val.verifyQualifiers(qualifiers));
+      .filter((t) => t.val.name === objName)
+      .filter((t) => t.val.verifyQualifiers(qualifiers));
     if (nodes.length === 0) {
       return undefined;
     }
@@ -110,7 +110,7 @@ export class ModuleGraph {
       value: parentInitTye,
     };
 
-    nodes = nodes.filter(t => t.val.verifyQualifiers([initTypeQualifier]));
+    nodes = nodes.filter((t) => t.val.verifyQualifiers([initTypeQualifier]));
     if (nodes.length === 1) {
       return nodes[0];
     }
@@ -124,9 +124,9 @@ export class ModuleGraph {
       return nodes[0];
     }
 
-    const result = nodes.map(node => node.val.toString());
+    const result = nodes.map((node) => node.val.toString());
     throw FrameworkErrorFormatter.formatError(
-      new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result))
+      new MultiPrototypeFound(String(objName), qualifiers, JSON.stringify(result)),
     );
   }
 
@@ -143,7 +143,7 @@ export class ModuleGraph {
           for (const obj of properties.objects || []) {
             const instanceQualifiers = [...qualifiers, ...obj.qualifiers];
             protoGraphNodes.push(
-              new GraphNode(new ProtoNode(clazz, obj.name, properties.initType, instanceQualifiers))
+              new GraphNode(new ProtoNode(clazz, obj.name, properties.initType, instanceQualifiers)),
             );
           }
         }
@@ -233,8 +233,8 @@ export class ModuleLoadUnit implements LoadUnit {
     const protos = this.globalGraph.moduleProtoDescriptorMap.get(this.name);
     if (protos) {
       // TODO ModuleLoadUnit should support all proto descriptor
-      this.protos = protos!.filter(t => ClassProtoDescriptor.isClassProtoDescriptor(t));
-      this.clazzList = this.protos.map(t => t.clazz);
+      this.protos = protos!.filter((t) => ClassProtoDescriptor.isClassProtoDescriptor(t));
+      this.clazzList = this.protos.map((t) => t.clazz);
     } else {
       this.protos = [];
       this.clazzList = [];
@@ -243,7 +243,7 @@ export class ModuleLoadUnit implements LoadUnit {
       'doLoadClazz on moduleName: %o, protos size: %o, clazzList size: %o',
       this.name,
       this.protos.length,
-      this.clazzList.length
+      this.clazzList.length,
     );
   }
 
@@ -278,12 +278,12 @@ export class ModuleLoadUnit implements LoadUnit {
   }
 
   containPrototype(proto: EggPrototype): boolean {
-    return !!this.protoMap.get(proto.name)?.find(t => t === proto);
+    return !!this.protoMap.get(proto.name)?.find((t) => t === proto);
   }
 
   getEggPrototype(name: string, qualifiers: QualifierInfo[]): EggPrototype[] {
     const protos = this.protoMap.get(name);
-    return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
+    return protos?.filter((proto) => proto.verifyQualifiers(qualifiers)) || [];
   }
 
   registerEggPrototype(proto: EggPrototype): void {

@@ -37,7 +37,7 @@ export class FooLoggerConstructor {
   bar: string;
 
   constructor(@Inject() bar: Bar, @MultiInstanceInfo([FOO_ATTRIBUTE]) objInfo: ObjectInfo) {
-    this.foo = objInfo.qualifiers.find(t => t.attribute === FOO_ATTRIBUTE)?.value;
+    this.foo = objInfo.qualifiers.find((t) => t.attribute === FOO_ATTRIBUTE)?.value;
     this.bar = bar.bar;
   }
 }

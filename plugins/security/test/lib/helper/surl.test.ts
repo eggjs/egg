@@ -59,8 +59,8 @@ describe('test/lib/helper/surl.test.ts', () => {
     expect(ctx.helper.surl('\\\\   <s> ')).toBe('');
     expect(
       ctx.helper.surl(
-        '\'"></script><script/src=http://lxy.pw/04ZI2u?507706></script>&bgPicUrl=https://cdn.com/images/giftprod/T1_GNfXfxXXXXXXXXX39e6601453bedfa5afee114ae1fa9bdd&_network=wifi&ttid=201200@laiwang_iphone_5.5.2'
-      )
+        '\'"></script><script/src=http://lxy.pw/04ZI2u?507706></script>&bgPicUrl=https://cdn.com/images/giftprod/T1_GNfXfxXXXXXXXXX39e6601453bedfa5afee114ae1fa9bdd&_network=wifi&ttid=201200@laiwang_iphone_5.5.2',
+      ),
     ).toBe('');
   });
 

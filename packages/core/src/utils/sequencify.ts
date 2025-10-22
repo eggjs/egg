@@ -21,7 +21,7 @@ function sequence(
   recursive: string[],
   nest: string[],
   optional: boolean,
-  parent: string
+  parent: string,
 ): void {
   for (const name of names) {
     if (result.requires[name]) {
@@ -61,7 +61,7 @@ function sequence(
 // names: array of task names
 export function sequencify(
   tasks: Record<string, SequencifyTask>,
-  names: string[]
+  names: string[],
 ): {
   sequence: string[];
   missingTasks: string[];
@@ -81,7 +81,7 @@ export function sequencify(
   }
 
   return {
-    sequence: result.sequence.filter(item => result.requires[item]),
+    sequence: result.sequence.filter((item) => result.requires[item]),
     missingTasks: missing,
     recursiveDependencies: recursive,
   };

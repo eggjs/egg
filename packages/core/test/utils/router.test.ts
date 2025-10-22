@@ -136,21 +136,21 @@ describe('test/utils/router.test.ts', () => {
           id: 10,
           page: 2,
           tags: ['chair', 'develop'],
-        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
       assert(
         app.router.url('edit_post', {
           id: [10],
           page: [2],
           tags: ['chair', 'develop'],
-        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
       assert(
         app.router.url('edit_post', {
           id: [10, 11],
           page: [2],
           tags: ['chair', 'develop'],
-        }) === '/posts/10/edit?page=2&tags=chair&tags=develop'
+        }) === '/posts/10/edit?page=2&tags=chair&tags=develop',
       );
     });
 

@@ -35,12 +35,12 @@ export interface EventWaiter {
 
   awaitFirst<E1 extends EventKeys, E2 extends EventKeys>(
     e1: E1,
-    e2: E2
+    e2: E2,
   ): Promise<{ event: E1 | E2; args: Arguments<Events[E1] | Events[E2]> }>;
   awaitFirst<E1 extends EventKeys, E2 extends EventKeys, E3 extends EventKeys>(
     e1: E1,
     e2: E2,
-    e3: E3
+    e3: E3,
   ): Promise<{
     event: E1 | E2 | E3;
     args: Arguments<Events[E1] | Events[E2] | Events[E3]>;
@@ -49,7 +49,7 @@ export interface EventWaiter {
     e1: E1,
     e2: E2,
     e3: E3,
-    e4: E4
+    e4: E4,
   ): Promise<{
     event: E1 | E2 | E3 | E4;
     args: Arguments<Events[E1] | Events[E2] | Events[E3] | Events[E4]>;

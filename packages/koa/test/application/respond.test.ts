@@ -16,7 +16,7 @@ describe('app.respond', () => {
     it('should function (ctx)', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'Hello';
         ctx.respond = false;
 
@@ -36,7 +36,7 @@ describe('app.respond', () => {
 
     it('should ignore set header after header sent', () => {
       const app = new Koa();
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'Hello';
         ctx.respond = false;
 
@@ -54,14 +54,14 @@ describe('app.respond', () => {
         .get('/')
         .expect(200)
         .expect('lol')
-        .expect(res => {
+        .expect((res) => {
           assert.ok(!res.headers.foo);
         });
     });
 
     it('should ignore set status after header sent', () => {
       const app = new Koa();
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'Hello';
         ctx.respond = false;
 
@@ -83,7 +83,7 @@ describe('app.respond', () => {
     it('should not send Content-Type header', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = '';
         ctx.type = null;
       });
@@ -100,7 +100,7 @@ describe('app.respond', () => {
     it('should not respond with the body', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'Hello';
       });
 
@@ -116,7 +116,7 @@ describe('app.respond', () => {
     it('should keep json headers', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = { hello: 'world' };
       });
 
@@ -132,7 +132,7 @@ describe('app.respond', () => {
     it('should keep string headers', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'hello world';
       });
 
@@ -148,7 +148,7 @@ describe('app.respond', () => {
     it('should keep buffer headers', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = Buffer.from('hello world');
       });
 
@@ -166,7 +166,7 @@ describe('app.respond', () => {
 
       const { length } = fs.readFileSync('package.json');
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.length = length;
         ctx.body = fs.createReadStream('package.json');
       });
@@ -194,7 +194,7 @@ describe('app.respond', () => {
     it('should respond with a 200 if body = ""', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = '';
       });
 
@@ -206,7 +206,7 @@ describe('app.respond', () => {
     it('should not overwrite the content-type', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 200;
         ctx.type = 'application/javascript';
       });
@@ -234,14 +234,14 @@ describe('app.respond', () => {
     it('should not cause an app error', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         const res = ctx.res;
         ctx.status = 200;
         res.setHeader('Content-Type', 'text/html');
         res.write('Hello');
       });
 
-      app.on('error', err => {
+      app.on('error', (err) => {
         throw err;
       });
 
@@ -253,7 +253,7 @@ describe('app.respond', () => {
     it('should send the right body', () => {
       const app = new Koa();
 
-      app.use(async ctx => {
+      app.use(async (ctx) => {
         const res = ctx.res;
         ctx.status = 200;
         res.setHeader('Content-Type', 'text/html');
@@ -273,7 +273,7 @@ describe('app.respond', () => {
       it('should respond with the associated status message', () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 400;
         });
 
@@ -287,7 +287,7 @@ describe('app.respond', () => {
       it('should respond without a body', async () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 204;
         });
 
@@ -303,7 +303,7 @@ describe('app.respond', () => {
       it('should respond without a body', async () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 205;
         });
 
@@ -319,7 +319,7 @@ describe('app.respond', () => {
       it('should respond without a body', async () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 304;
         });
 
@@ -336,7 +336,7 @@ describe('app.respond', () => {
         const app = new Koa();
         statuses.message['700'] = 'custom status';
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 700;
         });
 
@@ -354,7 +354,7 @@ describe('app.respond', () => {
       it('should respond with the custom status message', async () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.status = 200;
           ctx.message = 'ok';
         });
@@ -373,7 +373,7 @@ describe('app.respond', () => {
       it('should respond with the status code number', () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.res.statusCode = 701;
         });
 
@@ -388,7 +388,7 @@ describe('app.respond', () => {
     it('should respond 204 by default', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = null;
       });
 
@@ -402,7 +402,7 @@ describe('app.respond', () => {
     it('should respond 204 with status=200', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 200;
         ctx.body = null;
       });
@@ -417,7 +417,7 @@ describe('app.respond', () => {
     it('should respond 205 with status=205', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 205;
         ctx.body = null;
       });
@@ -432,7 +432,7 @@ describe('app.respond', () => {
     it('should respond 304 with status=304', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 304;
         ctx.body = null;
       });
@@ -449,7 +449,7 @@ describe('app.respond', () => {
     it('should respond', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'Hello';
       });
 
@@ -463,7 +463,7 @@ describe('app.respond', () => {
     it('should respond', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = Buffer.from('Hello');
       });
 
@@ -477,7 +477,7 @@ describe('app.respond', () => {
     it('should respond', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = fs.createReadStream('package.json');
         ctx.set('Content-Type', 'application/json; charset=utf-8');
       });
@@ -493,7 +493,7 @@ describe('app.respond', () => {
     it('should strip content-length when overwriting', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = 'hello';
         ctx.body = fs.createReadStream('package.json');
         ctx.set('Content-Type', 'application/json; charset=utf-8');
@@ -510,7 +510,7 @@ describe('app.respond', () => {
     it('should keep content-length if not overwritten', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.length = fs.readFileSync('package.json').length;
         ctx.body = fs.createReadStream('package.json');
         ctx.set('Content-Type', 'application/json; charset=utf-8');
@@ -527,7 +527,7 @@ describe('app.respond', () => {
     it('should keep content-length if overwritten with the same stream', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.length = fs.readFileSync('package.json').length;
         const stream = fs.createReadStream('package.json');
         ctx.body = stream;
@@ -547,7 +547,7 @@ describe('app.respond', () => {
     it('should handle errors', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.set('Content-Type', 'application/json; charset=utf-8');
         ctx.body = fs.createReadStream('does not exist');
       });
@@ -569,7 +569,7 @@ describe('app.respond', () => {
     it('should handle errors when no content status', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 204;
         ctx.body = fs.createReadStream('does not exist');
       });
@@ -582,7 +582,7 @@ describe('app.respond', () => {
     it('should handle all intermediate stream body errors', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = fs.createReadStream('does not exist');
         ctx.body = fs.createReadStream('does not exist');
         ctx.body = fs.createReadStream('does not exist');
@@ -606,7 +606,7 @@ describe('app.respond', () => {
     it('should respond with json', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = { hello: 'world' };
       });
 
@@ -621,7 +621,7 @@ describe('app.respond', () => {
       it('should respond with json body and headers', () => {
         const app = new Koa();
 
-        app.use(ctx => {
+        app.use((ctx) => {
           ctx.length = 17;
           ctx.type = 'json';
           ctx.set('foo', 'bar');
@@ -649,7 +649,7 @@ describe('app.respond', () => {
         throw new Error('boom');
       });
 
-      app.on('error', err => {
+      app.on('error', (err) => {
         assert.equal(err.message, 'boom');
       });
 
@@ -735,7 +735,7 @@ describe('app.respond', () => {
     it('should 200', () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 304;
         ctx.body = 'hello';
         ctx.status = 200;
@@ -749,7 +749,7 @@ describe('app.respond', () => {
     it('should 204', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.status = 200;
         ctx.body = 'hello';
         ctx.set('content-type', 'text/plain; charset=utf8');
@@ -768,7 +768,7 @@ describe('app.respond', () => {
     it('should preserve given status', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = null;
         ctx.status = 404;
       });
@@ -780,7 +780,7 @@ describe('app.respond', () => {
     it('should respond with correct headers', async () => {
       const app = new Koa();
 
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.body = null;
         ctx.status = 401;
       });

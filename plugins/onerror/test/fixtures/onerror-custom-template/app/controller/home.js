@@ -1,4 +1,4 @@
-exports.index = async ctx => {
+exports.index = async (ctx) => {
   const err = new Error('test error');
   if (ctx.query.code) {
     err.code = ctx.query.code;
@@ -12,12 +12,12 @@ exports.index = async ctx => {
   throw err;
 };
 
-exports.csrf = async ctx => {
+exports.csrf = async (ctx) => {
   ctx.set('x-csrf', ctx.csrf);
   ctx.body = 'test';
 };
 
-exports.test = async ctx => {
+exports.test = async (ctx) => {
   const err = new SyntaxError('syntax error');
   if (ctx.query.status) {
     err.status = Number(ctx.query.status);

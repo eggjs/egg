@@ -26,7 +26,7 @@ export default (app: Application): EggScheduleHandler => ({
     const maxDays = app.config.logrotator.maxDays;
     if (maxDays && maxDays > 0) {
       try {
-        const tasks = Array.from(logDirs, logDir => removeExpiredLogFiles(logDir, maxDays, logger));
+        const tasks = Array.from(logDirs, (logDir) => removeExpiredLogFiles(logDir, maxDays, logger));
         await Promise.all(tasks);
       } catch (err) {
         logger.error(err);
@@ -48,7 +48,7 @@ async function removeExpiredLogFiles(logDir: string, maxDays: number, logger: Ap
 
   const files = await fs.readdir(logDir);
   const expiredDate = moment().subtract(maxDays, 'days').startOf('date');
-  const names = files.filter(file => {
+  const names = files.filter((file) => {
     const name = path.extname(file).slice(1);
     if (!/^\d{4}-\d{2}-\d{2}/.test(name)) {
       return false;
@@ -66,7 +66,7 @@ async function removeExpiredLogFiles(logDir: string, maxDays: number, logger: Ap
   logger.info(`[@eggjs/logrotator] start remove ${logDir} files: ${names.join(', ')}`);
 
   await Promise.all(
-    names.map(async name => {
+    names.map(async (name) => {
       const logFile = path.join(logDir, name);
       try {
         await fs.unlink(logFile);
@@ -75,6 +75,6 @@ async function removeExpiredLogFiles(logDir: string, maxDays: number, logger: Ap
         err.message = `[@eggjs/logrotator] remove logFile ${logFile} error, ${err.message}`;
         logger.error(err);
       }
-    })
+    }),
   );
 }

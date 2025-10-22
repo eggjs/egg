@@ -37,7 +37,7 @@ export default class TEggPluginContext {
     }
     const eggObject = await this.app.eggContainerFactory.getOrCreateEggObjectFromName(
       name,
-      qualifiers as QualifierInfo[]
+      qualifiers as QualifierInfo[],
     );
     return eggObject.obj as T;
   }

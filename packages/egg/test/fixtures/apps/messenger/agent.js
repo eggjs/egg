@@ -9,7 +9,7 @@ module.exports = function (agent) {
       console.log('[agent] agent-to-app', msg);
     });
 
-    agent.messenger.on('pid', pid => {
+    agent.messenger.on('pid', (pid) => {
       agent.messenger.sendTo(pid, 'agent-to-app', 'agent msg ' + pid);
     });
     agent.messenger.on('ready', () => {

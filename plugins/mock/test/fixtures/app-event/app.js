@@ -1,6 +1,6 @@
 const { scheduler } = require('node:timers/promises');
 
-module.exports = app => {
+module.exports = (app) => {
   app.ready(() => {
     // after ready
     console.log('emit appReady event in app.js');

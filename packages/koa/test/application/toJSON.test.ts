@@ -16,7 +16,7 @@ describe('app.toJSON()', () => {
         proxy: false,
         env: 'test',
       },
-      obj
+      obj,
     );
   });
 });

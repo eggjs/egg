@@ -38,7 +38,7 @@ export async function loadLocaleResources(app: I18nApplication, options: I18nCon
         resource = flattening(
           await importModule(filepath, {
             importDefaultOnly: true,
-          })
+          }),
         );
       } else if (name.endsWith('.json')) {
         resource = flattening(await readJSON(filepath));

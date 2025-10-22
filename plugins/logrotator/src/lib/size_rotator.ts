@@ -31,7 +31,7 @@ export class SizeRotator extends LogRotator {
       try {
         if (size >= maxFileSize) {
           this.logger.info(
-            `[@eggjs/logrotator] file ${logPath} reach the maximum file size, current size: ${size}, max size: ${maxFileSize}`
+            `[@eggjs/logrotator] file ${logPath} reach the maximum file size, current size: ${size}, max size: ${maxFileSize}`,
           );
           // delete max log file if exists, otherwise will throw when rename
           const maxFileName = `${logPath}.${maxFiles}`;

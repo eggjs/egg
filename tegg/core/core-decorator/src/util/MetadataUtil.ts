@@ -75,7 +75,7 @@ export class MetadataUtil {
   static initOwnMapMetaData<K, V>(
     metadataKey: MetaDataKey,
     clazz: EggProtoImplClass,
-    defaultValue: Map<K, V>
+    defaultValue: Map<K, V>,
   ): Map<K, V> {
     const ownMetaData: Map<K, V> | undefined = this.getOwnMetaData(metadataKey, clazz);
     if (!ownMetaData) {

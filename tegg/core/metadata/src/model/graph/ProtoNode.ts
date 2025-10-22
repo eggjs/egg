@@ -42,7 +42,7 @@ export class ProtoNode implements GraphNodeObj {
       proto.name,
       proto.instanceModuleName,
       proto.initType,
-      ...proto.qualifiers.map(t => String(t.attribute) + String(t.value)),
+      ...proto.qualifiers.map((t) => String(t.attribute) + String(t.value)),
     ];
     return id.join('@');
   }

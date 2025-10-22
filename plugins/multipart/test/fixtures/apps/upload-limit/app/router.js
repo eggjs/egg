@@ -3,7 +3,7 @@ const fs = require('node:fs/promises');
 const { createWriteStream } = require('node:fs');
 const os = require('node:os');
 
-module.exports = app => {
+module.exports = (app) => {
   // mock oss
   app.context.oss = {
     async put(name, stream) {
@@ -15,13 +15,13 @@ module.exports = app => {
         stream.pipe(writeStream);
 
         if (!name.includes('not-handle-error-event')) {
-          stream.on('error', err => {
+          stream.on('error', (err) => {
             console.log('read stream error: %s', err);
             reject(err);
           });
         }
 
-        writeStream.on('error', err => {
+        writeStream.on('error', (err) => {
           console.log('write stream error: %s', err);
           reject(err);
         });
@@ -38,12 +38,12 @@ module.exports = app => {
     },
   };
 
-  app.get('/upload', async ctx => {
+  app.get('/upload', async (ctx) => {
     ctx.set('x-csrf', ctx.csrf);
     ctx.body = 'hi';
   });
 
-  app.post('/upload', async ctx => {
+  app.post('/upload', async (ctx) => {
     const stream = await ctx.getFileStream();
     const name = 'egg-multipart-test/' + process.version + '-' + Date.now() + '-' + path.basename(stream.filename);
     const result = await ctx.oss.put(name, stream);

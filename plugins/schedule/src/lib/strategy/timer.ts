@@ -19,7 +19,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     const { interval, cron, cronOptions, immediate } = this.scheduleConfig;
     assert(
       interval || cron || immediate,
-      `[@eggjs/schedule] ${this.key} \`schedule.interval\` or \`schedule.cron\` or \`schedule.immediate\` must be present`
+      `[@eggjs/schedule] ${this.key} \`schedule.interval\` or \`schedule.cron\` or \`schedule.immediate\` must be present`,
     );
 
     // init cron parser
@@ -58,7 +58,7 @@ export abstract class TimerStrategy extends BaseStrategy {
     const nextTick = this.getNextTick();
     if (nextTick) {
       this.logger.info(
-        `[Timer] ${this.key} next time will execute after ${nextTick}ms at ${logDate(new Date(Date.now() + nextTick))}`
+        `[Timer] ${this.key} next time will execute after ${nextTick}ms at ${logDate(new Date(Date.now() + nextTick))}`,
       );
       this.safeTimeout(() => this.handler(), nextTick);
     } else {

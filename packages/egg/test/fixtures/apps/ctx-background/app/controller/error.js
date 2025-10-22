@@ -1,6 +1,6 @@
 const fs = require('fs/promises');
 
-module.exports = async ctx => {
+module.exports = async (ctx) => {
   ctx.body = 'hello error';
   ctx.runInBackground(async function mockError(ctx) {
     const buf = await fs.readFile(__filename + '-not-exists');

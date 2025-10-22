@@ -28,7 +28,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           .httpRequest()
           .get('/foo?pass=true')
           .set('accept', 'application/json')
-          .expect(res => {
+          .expect((res) => {
             expect(res.text).toBe('hello, foo');
           });
       });
@@ -41,7 +41,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
             .httpRequest()
             .get('/foo')
             .set('accept', 'application/json')
-            .expect(res => {
+            .expect((res) => {
               expect(res.body).toEqual({
                 target: 'http://alipay.com/401',
                 stat: 'deny',
@@ -65,7 +65,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
           .httpRequest()
           .get('/bar?pass=true&code=mock1')
           .set('accept', 'application/json')
-          .expect(res => {
+          .expect((res) => {
             expect(res.text).toBe('hello, bar');
           });
       });
@@ -78,7 +78,7 @@ describe('plugin/controller/test/http/acl.test.ts', () => {
             .httpRequest()
             .get('/bar?pass=true&code=mock2')
             .set('accept', 'application/json')
-            .expect(res => {
+            .expect((res) => {
               expect(res.body).toEqual({
                 target: 'http://alipay.com/403',
                 stat: 'deny',

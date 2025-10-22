@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/safejson', async function () {
     const obj = {
       a: 1,

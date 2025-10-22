@@ -36,7 +36,7 @@ export async function findNodeProcess(filterFn?: FilterFunction): Promise<NodePr
 }
 
 export function kill(pids: number[], signal?: string | number) {
-  pids.forEach(pid => {
+  pids.forEach((pid) => {
     try {
       process.kill(pid, signal);
     } catch (err: any) {

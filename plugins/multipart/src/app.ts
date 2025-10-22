@@ -17,7 +17,7 @@ export default class AppBootHook implements ILifecycleBoot {
       this.app.coreLogger.info(
         '[@eggjs/multipart] will save temporary files to %j, cleanup job cron: %j',
         options.tmpdir,
-        options.cleanSchedule.cron
+        options.cleanSchedule.cron,
       );
       // enable multipart middleware
       this.app.config.coreMiddleware.push('multipart');

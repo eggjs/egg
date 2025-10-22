@@ -203,7 +203,7 @@ export class Cookies {
         headers = ignoreCookiesByNameAndPath(
           headers,
           removeUnpartitionedCookie.name,
-          removeUnpartitionedCookie.attrs.path
+          removeUnpartitionedCookie.attrs.path,
         );
         headers = pushCookie(headers, removeUnpartitionedCookie);
       }
@@ -321,7 +321,7 @@ function pushCookie(cookies: string[], cookie: Cookie) {
 
 function ignoreCookiesByName(cookies: string[], name: string) {
   const prefix = `${name}=`;
-  return cookies.filter(c => !c.startsWith(prefix));
+  return cookies.filter((c) => !c.startsWith(prefix));
 }
 
 function ignoreCookiesByNameAndPath(cookies: string[], name: string, path: string | null | undefined) {
@@ -333,7 +333,7 @@ function ignoreCookiesByNameAndPath(cookies: string[], name: string, path: strin
   const includedPath = `; path=${path};`;
   // foo=hello; path=/path1
   const endsWithPath = `; path=${path}`;
-  return cookies.filter(c => {
+  return cookies.filter((c) => {
     if (c.startsWith(prefix)) {
       if (c.includes(includedPath) || c.endsWith(endsWithPath)) {
         return false;

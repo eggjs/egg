@@ -49,28 +49,28 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
   async objectPreCreate(ctx: T, obj: R): Promise<void> {
     const globalLifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(globalLifecycleList.map(lifecycle => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map(lifecycle => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
+    await Promise.all(globalLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
+    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreCreate(lifecycle, ctx, obj)));
   }
 
   async objectPostCreate(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(lifecycleList.map(lifecycle => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map(lifecycle => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
+    await Promise.all(lifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
+    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPostCreate(lifecycle, ctx, obj)));
   }
 
   async objectPreDestroy(ctx: T, obj: R): Promise<void> {
     const lifecycleList = this.getLifecycleList();
     const objLifecycleList = this.getObjectLifecycleList(obj);
-    await Promise.all(lifecycleList.map(lifecycle => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
-    await Promise.all(objLifecycleList.map(lifecycle => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
+    await Promise.all(lifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
+    await Promise.all(objLifecycleList.map((lifecycle) => LifecycleUtil.callPreDestroy(lifecycle, ctx, obj)));
   }
 
   static async callPreCreate<T extends LifecycleContext, R extends LifecycleObject<T>>(
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
-    obj: R
+    obj: R,
   ): Promise<void> {
     if (!lifecycle || !lifecycle.preCreate) {
       return;
@@ -81,7 +81,7 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
   static async callPostCreate<T extends LifecycleContext, R extends LifecycleObject<T>>(
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
-    obj: R
+    obj: R,
   ): Promise<void> {
     if (!lifecycle || !lifecycle.postCreate) {
       return;
@@ -92,7 +92,7 @@ export class LifecycleUtil<T extends LifecycleContext, R extends LifecycleObject
   static async callPreDestroy<T extends LifecycleContext, R extends LifecycleObject<T>>(
     lifecycle: LifecycleHook<T, R> | undefined,
     ctx: T,
-    obj: R
+    obj: R,
   ): Promise<void> {
     if (!lifecycle || !lifecycle.preDestroy) {
       return;

@@ -10,7 +10,7 @@ export function ModuleQualifier(moduleName: string) {
       propertyKey,
       parameterIndex,
       LoadUnitNameQualifierAttribute,
-      moduleName
+      moduleName,
     );
   };
 }

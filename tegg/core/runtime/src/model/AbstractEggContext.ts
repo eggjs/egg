@@ -47,9 +47,9 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
     }
     this.eggObjectMap.clear();
     await Promise.all(
-      objs.map(async obj => {
+      objs.map(async (obj) => {
         await EggObjectFactory.destroyObject(obj);
-      })
+      }),
     );
     this.contextData.clear();
     this.destroyed = true;
@@ -64,7 +64,7 @@ export abstract class AbstractEggContext implements EggRuntimeContext {
     if (this.destroyed) {
       throw TeggError.create(
         `Can not read property \`${String(name)}\` because egg ctx has been destroyed`,
-        'read_after_ctx_destroyed'
+        'read_after_ctx_destroyed',
       );
     }
     const protoObjMap = this.eggObjectMap.get(proto.id);

@@ -1,3 +1,3 @@
 'use strict';
 
-exports.someMethod = str => `test ${str}`;
+exports.someMethod = (str) => `test ${str}`;

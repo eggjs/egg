@@ -9,7 +9,7 @@ export default class Boot implements ILifecycleBoot {
 
   async didLoad(): Promise<void> {
     // should watch error event
-    this.agent.on('error', err => {
+    this.agent.on('error', (err) => {
       this.agent.coreLogger.error(err);
     });
   }

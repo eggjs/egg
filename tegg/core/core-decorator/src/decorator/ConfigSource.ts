@@ -10,7 +10,7 @@ export function ConfigSourceQualifier(moduleName: string) {
       propertyKey,
       parameterIndex,
       ConfigSourceQualifierAttribute,
-      moduleName
+      moduleName,
     );
   };
 }

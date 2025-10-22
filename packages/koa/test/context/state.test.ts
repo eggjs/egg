@@ -9,12 +9,12 @@ describe('ctx.state', () => {
   it('should provide a ctx.state namespace', () => {
     const app = new Koa();
 
-    app.use(ctx => {
+    app.use((ctx) => {
       assert.deepEqual(ctx.state, {});
       ctx.state.user = 'example';
     });
 
-    app.use(ctx => {
+    app.use((ctx) => {
       assert.deepEqual(ctx.state, { user: 'example' });
     });
 
@@ -31,13 +31,13 @@ describe('ctx.state', () => {
       }
     };
 
-    app.use(ctx => {
+    app.use((ctx) => {
       assert.deepEqual(ctx.state, { foo: 'bar' });
       // @ts-expect-error for testing
       ctx.state.user = 'example';
     });
 
-    app.use(ctx => {
+    app.use((ctx) => {
       assert.deepEqual(ctx.state, { foo: 'bar' });
     });
 

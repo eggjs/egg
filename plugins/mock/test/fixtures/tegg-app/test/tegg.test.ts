@@ -12,7 +12,7 @@ describe('test/tegg.test.ts', () => {
   });
 
   describe('callback function', () => {
-    it('should work', done => {
+    it('should work', (done) => {
       app.mockModuleContextScope(async () => {
         const logService = await app.getEggObject(LogService);
         assert(logService.getTracerId());

@@ -98,7 +98,7 @@ describe('test/onerror.test.ts', () => {
       .httpRequest()
       .get('/user')
       .set('Accept', 'application/json')
-      .expect(res => {
+      .expect((res) => {
         assert(res.body);
         assert(res.body.message === 'test error');
         assert(res.body.stack.includes('Error: test error'));
@@ -112,7 +112,7 @@ describe('test/onerror.test.ts', () => {
     await app
       .httpRequest()
       .get('/user.json')
-      .expect(res => {
+      .expect((res) => {
         assert(res.body);
         assert(res.body.message === 'test error');
         assert(res.body.stack.includes('Error: test error'));

@@ -41,7 +41,7 @@ async function init() {
       '  `name` varchar(100) NOT NULL,\n' +
       '  `desc` varchar(100) NOT NULL,\n' +
       '  PRIMARY KEY (`id`)\n' +
-      ');'
+      ');',
   );
   await query(
     'CREATE TABLE `pkgs` (\n' +
@@ -49,7 +49,7 @@ async function init() {
       '  `name` varchar(100) NOT NULL,\n' +
       '  `desc` varchar(100) NOT NULL,\n' +
       '  PRIMARY KEY (`id`)\n' +
-      ');'
+      ');',
   );
 }
 

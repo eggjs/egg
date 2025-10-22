@@ -44,7 +44,7 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         <html>
         <p>arr</p>
         <p>obj</p>
-      `
+      `,
       );
   });
 
@@ -59,7 +59,7 @@ describe.skipIf(process.platform === 'win32')('test/view/security.test.ts', () =
         http://eggjs.github.io/index.html?a=<div>
         http://eggjs.github.io/index.html?a=&lt;div&gt;
         &lt;div id=&quot;a&quot;&gt;&#39;a&#39;&lt;/div&gt;
-      `
+      `,
       );
   });
 

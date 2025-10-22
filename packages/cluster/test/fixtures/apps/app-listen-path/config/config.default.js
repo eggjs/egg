@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-module.exports = app => {
+module.exports = (app) => {
   return {
     keys: '123',
     cluster: {

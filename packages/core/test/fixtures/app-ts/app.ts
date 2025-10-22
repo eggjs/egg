@@ -63,7 +63,7 @@ new BaseContextClass({ app: {} });
   ]);
   await app2.ready();
   await app2.close();
-})().catch(e => {
+})().catch((e) => {
   console.error(e);
   process.exit(1);
 });

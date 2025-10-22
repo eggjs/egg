@@ -29,7 +29,7 @@ describe('test/app/extend/context.test.ts', () => {
 
   describe('getEggObject', () => {
     it('should work', async () => {
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         const appService = await ctx.getEggObject(AppService);
         assert(appService instanceof AppService);
 
@@ -41,7 +41,7 @@ describe('test/app/extend/context.test.ts', () => {
 
   describe('getEggObjectFromName', () => {
     it('should work', async () => {
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         const appService = await ctx.getEggObjectFromName('appService');
         assert(appService instanceof AppService);
 
@@ -53,7 +53,7 @@ describe('test/app/extend/context.test.ts', () => {
 
   describe('beginModuleScope', () => {
     it('should be reentrant', async () => {
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         await ctx.beginModuleScope(async () => {
           // ...do nothing
         });
@@ -65,7 +65,7 @@ describe('test/app/extend/context.test.ts', () => {
   describe('runInBackground', () => {
     it('should notify background task helper', async () => {
       let backgroundIsDone = false;
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         ctx.runInBackground(async () => {
           await TimerUtil.sleep(100);
           backgroundIsDone = true;
@@ -76,7 +76,7 @@ describe('test/app/extend/context.test.ts', () => {
 
     it('recursive runInBackground should work', async () => {
       let backgroundIsDone = false;
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         ctx.runInBackground(async () => {
           await TimerUtil.sleep(100);
           ctx.runInBackground(async () => {
@@ -90,10 +90,10 @@ describe('test/app/extend/context.test.ts', () => {
 
     it('stack should be continuous', async () => {
       let backgroundError: Error | undefined;
-      app.on('error', e => {
+      app.on('error', (e) => {
         backgroundError = e;
       });
-      await app.mockModuleContextScope(async ctx => {
+      await app.mockModuleContextScope(async (ctx) => {
         ctx.runInBackground(async () => {
           throw new Error('background');
         });

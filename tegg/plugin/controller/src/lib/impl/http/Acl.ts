@@ -3,7 +3,7 @@ import type { Context } from 'egg';
 
 export function aclMiddlewareFactory(
   controllerMeta: HTTPControllerMeta,
-  methodMeta: HTTPMethodMeta
+  methodMeta: HTTPMethodMeta,
 ): MiddlewareFunc | undefined {
   if (!controllerMeta.hasMethodAcl(methodMeta)) {
     return;

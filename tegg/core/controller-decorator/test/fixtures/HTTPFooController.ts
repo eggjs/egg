@@ -44,7 +44,7 @@ export class FooController {
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
-    @HTTPParam() id: string
+    @HTTPParam() id: string,
   ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
@@ -65,7 +65,7 @@ export class ControllerWithParam {
     @HTTPContext() ctx: EggContext,
     @HTTPParam() id: string,
     @HTTPParam() fooId: string,
-    @HTTPHeaders() headers: IncomingHttpHeaders
+    @HTTPHeaders() headers: IncomingHttpHeaders,
   ): Promise<void> {
     console.log(ctx, id, fooId, headers);
   }
@@ -86,7 +86,7 @@ export class FoxController {
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
-    @HTTPParam() id: string
+    @HTTPParam() id: string,
   ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
@@ -107,7 +107,7 @@ export class FxxController {
     @HTTPBody() body: unknown,
     @HTTPQuery() query: Record<string, unknown>,
     @HTTPQueries() queries: Record<string, unknown[]>,
-    @HTTPParam() id: string
+    @HTTPParam() id: string,
   ): Promise<void> {
     console.log(ctx, body, query, queries, id);
   }
@@ -131,7 +131,7 @@ export class DefaultValueController {
     @HTTPContext() ctx: EggContext,
     @HTTPParam() id = 233,
     @HTTPQuery() query: Record<string, unknown>,
-    @HTTPQueries() queries: Record<string, unknown[]>
+    @HTTPQueries() queries: Record<string, unknown[]>,
   ): Promise<void> {
     console.log(ctx, id, query, queries);
   }

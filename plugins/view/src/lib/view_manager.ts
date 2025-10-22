@@ -50,7 +50,7 @@ export class ViewManager extends Map<string, typeof ViewEngineBase> {
   constructor(app: Application) {
     super();
     this.config = app.config.view as unknown as ViewManagerConfig;
-    this.config.root = app.config.view.root.split(/\s*,\s*/g).filter(filepath => existsSync(filepath));
+    this.config.root = app.config.view.root.split(/\s*,\s*/g).filter((filepath) => existsSync(filepath));
     this.extMap = new Map();
     this.fileMap = new Map();
     for (const ext of Object.keys(this.config.mapping)) {
@@ -80,12 +80,12 @@ export class ViewManager extends Map<string, typeof ViewEngineBase> {
     assert(viewEngine.prototype.render, 'viewEngine should implement `render` method');
     assert(
       !isGeneratorFunction(viewEngine.prototype.render),
-      'viewEngine `render` method should not be generator function'
+      'viewEngine `render` method should not be generator function',
     );
     assert(viewEngine.prototype.renderString, 'viewEngine should implement `renderString` method');
     assert(
       !isGeneratorFunction(viewEngine.prototype.renderString),
-      'viewEngine `renderString` method should not be generator function'
+      'viewEngine `renderString` method should not be generator function',
     );
 
     this.set(name, viewEngine);

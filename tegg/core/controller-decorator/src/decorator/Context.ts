@@ -9,7 +9,7 @@ export function InjectContext() {
     assert.equal(
       typeof propertyKey,
       'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`,
     );
     const methodName = propertyKey as string;
     const controllerClazz = target.constructor as EggProtoImplClass;

@@ -41,7 +41,7 @@ export default class TEggPluginApplicationUnittest {
   async mockModuleContextScope<R = any>(fn: (ctx: Context) => Promise<R>, data?: any): Promise<R> {
     if (hasMockModuleContext) {
       throw new Error(
-        'mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.'
+        'mockModuleContextScope can not use with mockModuleContext, should use mockModuleContextScope only.',
       );
     }
     // @ts-expect-error mockContextScope only exists in MockApplication

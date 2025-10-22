@@ -26,14 +26,14 @@ export default function surl(this: BaseContextClass, val: string): string {
           '[@eggjs/security/surl] url: %j, protocol: %j, ' +
             'protocol is empty or not in white list, convert to empty string',
           val,
-          protocol
+          protocol,
         );
       }
       return '';
     }
   }
 
-  return val.replace(/["'<>]/g, ch => {
+  return val.replace(/["'<>]/g, (ch) => {
     return escapeMap[ch];
   });
 }

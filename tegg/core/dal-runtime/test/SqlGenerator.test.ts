@@ -58,7 +58,7 @@ describe('test/SqlGenerator.test.ts', () => {
         '  json_column JSON NOT NULL,\n' +
         "  FULLTEXT KEY idx_col1 (col1) COMMENT 'index comment\\n',\n" +
         "  UNIQUE KEY uk_name_col1 (name,col1) USING BTREE COMMENT 'index comment\\n'\n" +
-        ") DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT='foo table';"
+        ") DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT='foo table';",
     );
   });
 
@@ -74,7 +74,7 @@ describe('test/SqlGenerator.test.ts', () => {
         '  date_2 DATETIME(3) ON UPDATE CURRENT_TIMESTAMP(3) NOT NULL UNIQUE KEY,\n' +
         '  date_3 TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL UNIQUE KEY,\n' +
         '  date_4 TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3) NOT NULL UNIQUE KEY\n' +
-        ') ;'
+        ') ;',
     );
   });
 
@@ -92,7 +92,7 @@ describe('test/SqlGenerator.test.ts', () => {
         '  bool_column BOOL NOT NULL,\n' +
         "  FULLTEXT KEY idx_col1_bool_column (col1,bool_column) COMMENT 'index comment\\n',\n" +
         "  UNIQUE KEY uk_name_col1_bit_column (name,col1,bit_column) USING BTREE COMMENT 'index comment\\n'\n" +
-        ") DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT='foo table';"
+        ") DEFAULT CHARACTER SET utf8mb4, DEFAULT COLLATE utf8mb4_unicode_ci, COMMENT='foo table';",
     );
   });
 });

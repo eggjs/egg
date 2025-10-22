@@ -19,7 +19,7 @@ describe('app.onerror(err)', () => {
         app.onerror('foo' as any);
       },
       TypeError,
-      'non-error thrown: foo'
+      'non-error thrown: foo',
     );
   });
 

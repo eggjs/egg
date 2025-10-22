@@ -94,7 +94,7 @@ export default (): MiddlewareFunc => {
     // @ts-expect-error dynamic property
     const fn = target[method];
     try {
-      Promise.resolve(fn.call(target, ...args)).then(result => {
+      Promise.resolve(fn.call(target, ...args)).then((result) => {
         ctx.body = needResult ? { success: true, result } : { success: true };
       });
     } catch (err: any) {

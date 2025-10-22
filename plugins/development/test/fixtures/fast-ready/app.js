@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   const done = app.readyCallback('delay 200ms');
   setTimeout(() => {
     app.logger.info('delayed 200ms done.');

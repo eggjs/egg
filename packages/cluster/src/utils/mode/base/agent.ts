@@ -73,7 +73,7 @@ export abstract class BaseAgentUtils extends EventEmitter {
       log: LogFun;
       logger: Logger;
       messenger: Messenger;
-    }
+    },
   ) {
     super();
     this.options = options;

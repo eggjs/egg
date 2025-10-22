@@ -35,7 +35,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
         desc: 'mock-desc',
       })
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert(res.body.success === true);
         assert(res.body.traceId);
       });
@@ -43,7 +43,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
       .httpRequest()
       .get('/apps?name=foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert(res.body.traceId);
         assert.deepStrictEqual(res.body.app, {
           name: 'foo',
@@ -62,7 +62,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
         desc: 'mock-desc',
       })
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert(res.body.success === true);
         assert(res.body.traceId);
       });
@@ -70,7 +70,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
       .httpRequest()
       .get('/apps2?name=foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         assert(res.body.traceId);
         assert.deepStrictEqual(res.body.app, {
           name: 'foo',
@@ -103,12 +103,12 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
         user: {
           userName: 'mock_user',
         },
-      }
+      },
     );
   });
 
   it('custom logger should work', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       await app.module.multiModuleService.customLoggerService.printLog();
       await app.destroyModuleContext(ctx);
     });
@@ -135,7 +135,7 @@ describe('plugin/tegg/test/EggCompatible.test.ts', () => {
   });
 
   it('should load egg object with no side effect', async () => {
-    await app.mockModuleContextScope(async ctx => {
+    await app.mockModuleContextScope(async (ctx) => {
       assert.equal(ctx.counter, 0);
       assert.equal(ctx.counter, 1);
     });

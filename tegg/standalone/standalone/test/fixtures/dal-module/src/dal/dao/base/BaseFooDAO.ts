@@ -490,7 +490,7 @@ export class BaseFooDAO {
 
   public async findOneByUkNameCol1(
     $name: ColumnTsType['VARCHAR'],
-    $col1: ColumnTsType['VARCHAR']
+    $col1: ColumnTsType['VARCHAR'],
   ): Promise<Foo | null> {
     return this.dataSource.executeScalar('findOneByUkNameCol1', {
       $name,

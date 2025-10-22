@@ -72,7 +72,7 @@ const MOCK_CONFIG_INDEX = Symbol('MOCK_CONFIG_INDEX');
 export type MockHttpClientMethod = (
   mockUrl: string | RegExp,
   mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-  mockResult?: MockResultOptions | MockResultFunction | string
+  mockResult?: MockResultOptions | MockResultFunction | string,
 ) => void;
 
 export function createMockHttpClient(app: any): MockHttpClientMethod {
@@ -92,7 +92,7 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
   return function mockHttpClient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): void {
     let mockMethods = mockMethod as string[];
     if (!mockResult) {
@@ -103,7 +103,7 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
     if (!Array.isArray(mockMethods)) {
       mockMethods = [mockMethods];
     }
-    mockMethods = mockMethods.map(method => (method || 'GET').toUpperCase());
+    mockMethods = mockMethods.map((method) => (method || 'GET').toUpperCase());
 
     // use MockAgent on undici
     let mockConfigs = app[MOCK_CONFIGS];
@@ -121,7 +121,7 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
       const urlObject = new URL(mockUrl);
       origin = urlObject.origin;
       const originalPathname = urlObject.pathname;
-      pathMethod = path => {
+      pathMethod = (path) => {
         if (path === originalPathname) return true;
         // should match /foo?a=1 including query
         if (path.includes('?')) return path.startsWith(originalPathname);
@@ -129,11 +129,11 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
       };
     } else if (mockUrl instanceof RegExp) {
       let requestOrigin = '';
-      originMethod = value => {
+      originMethod = (value) => {
         requestOrigin = value;
         return true;
       };
-      pathMethod = path => {
+      pathMethod = (path) => {
         for (const config of mockConfigs) {
           if (config.mockUrl.test(`${requestOrigin}${path}`)) {
             mm(app, MOCK_CONFIG_INDEX, config.mockConfigIndex);
@@ -159,7 +159,7 @@ export function createMockHttpClient(app: any): MockHttpClientMethod {
           path: pathMethod ?? pathname,
           method: method === '*' ? () => true : method,
         })
-        .reply(options => {
+        .reply((options) => {
           // not support mockResult as an async function
           const requestUrl = `${options.origin}${options.path}`;
           let mockRequestResult;

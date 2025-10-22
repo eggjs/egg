@@ -1,3 +1,3 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/api', app.middlewares.router(), 'api.index');
 };

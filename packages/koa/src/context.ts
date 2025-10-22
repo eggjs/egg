@@ -79,7 +79,7 @@ export class Context {
     value: unknown,
     status?: number,
     errorMessageOrProps?: string | Record<string, unknown>,
-    errorProps?: Record<string, unknown>
+    errorProps?: Record<string, unknown>,
   ) {
     if (value) {
       return;

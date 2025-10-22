@@ -3,8 +3,8 @@
 const { performance } = require('perf_hooks');
 const { randomUUID } = require('crypto');
 
-module.exports = app => {
-  app.httpclient.on('request', req => {
+module.exports = (app) => {
+  app.httpclient.on('request', (req) => {
     if (!req.ctx) {
       // auto set anonymous context
       req.ctx = req.args.ctx = app.createAnonymousContext();
@@ -21,7 +21,7 @@ module.exports = app => {
     app.logger.info('[httpclient] [%s] %s %s start', req.ctx.traceId, req.args.method, req.url);
   });
 
-  app.httpclient.on('response', response => {
+  app.httpclient.on('response', (response) => {
     const req = response.req;
     const res = response.res;
     app.logger.info(
@@ -30,7 +30,7 @@ module.exports = app => {
       req.args.method,
       req.url,
       res.status,
-      Math.floor((performance.now() - req.starttime) * 1000) / 1000
+      Math.floor((performance.now() - req.starttime) * 1000) / 1000,
     );
   });
 };

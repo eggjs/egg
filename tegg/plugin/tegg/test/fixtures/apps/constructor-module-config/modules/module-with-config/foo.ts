@@ -11,7 +11,7 @@ export class Foo {
   constructor(
     @Inject() moduleConfig: Record<string, any>,
     // @ts-expect-error readonly property in constructor
-    @Inject() readonly logger: EggLogger
+    @Inject() readonly logger: EggLogger,
   ) {
     this.foo = moduleConfig.features.dynamic.foo;
     this.bar = moduleConfig.features.dynamic.bar;

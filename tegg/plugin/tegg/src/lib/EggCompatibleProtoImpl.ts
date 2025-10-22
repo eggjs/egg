@@ -33,7 +33,7 @@ export class EggCompatibleProtoImpl implements EggPrototype {
     clazz: EggProtoImplClass,
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
-    qualifiers: QualifierInfo[]
+    qualifiers: QualifierInfo[],
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -55,12 +55,12 @@ export class EggCompatibleProtoImpl implements EggPrototype {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
   getQualifier(attribute: string): QualifierValue | undefined {
-    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+    return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
   constructEggObject(): object {
@@ -81,7 +81,7 @@ export class EggCompatibleProtoImpl implements EggPrototype {
       clazz,
       ctx.prototypeInfo.initType,
       loadUnit.id,
-      QualifierUtil.mergeQualifiers(QualifierUtil.getProtoQualifiers(clazz), ctx.prototypeInfo.qualifiers ?? [])
+      QualifierUtil.mergeQualifiers(QualifierUtil.getProtoQualifiers(clazz), ctx.prototypeInfo.qualifiers ?? []),
     );
     return proto;
   }

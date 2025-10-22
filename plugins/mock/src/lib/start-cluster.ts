@@ -18,7 +18,7 @@ async function main() {
   const { startCluster } = await importModule(options.framework);
   assert(
     isAsyncFunction(startCluster),
-    `framework(${options.framework}) should export startCluster as an async function`
+    `framework(${options.framework}) should export startCluster as an async function`,
   );
   await startCluster(options);
 }

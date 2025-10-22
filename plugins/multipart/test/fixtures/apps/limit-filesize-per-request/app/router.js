@@ -1,7 +1,7 @@
 'use strict';
 
-module.exports = app => {
-  app.post('/upload-limit-1mb', async ctx => {
+module.exports = (app) => {
+  app.post('/upload-limit-1mb', async (ctx) => {
     await ctx.saveRequestFiles({ limits: { fileSize: '1mb' } });
     ctx.body = {
       body: ctx.request.body,
@@ -9,7 +9,7 @@ module.exports = app => {
     };
   });
 
-  app.post('/upload-limit-2mb', async ctx => {
+  app.post('/upload-limit-2mb', async (ctx) => {
     await ctx.saveRequestFiles({ limits: { fileSize: '2mb' } });
     ctx.body = {
       body: ctx.request.body,

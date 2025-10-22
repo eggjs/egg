@@ -29,10 +29,10 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
     if (debug.enabled) {
       debug(
         'preCreate, get clazzList:%o, appProperties:%o, ctxProperties:%o, from unitPath:%o',
-        clazzList.map(t => t.name),
+        clazzList.map((t) => t.name),
         appProperties.length,
         ctxProperties.length,
-        ctx.unitPath
+        ctx.unitPath,
       );
     }
     for (const clazz of clazzList) {
@@ -40,14 +40,14 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
       if (debug.enabled && inbjectObjects.length > 0) {
         debug(
           'preCreate, get injectObjects:%o, from clazz:%o, from unitPath:%o',
-          inbjectObjects.map(t => t.refName),
+          inbjectObjects.map((t) => t.refName),
           clazz.name,
-          ctx.unitPath
+          ctx.unitPath,
         );
       }
       for (const injectObject of inbjectObjects) {
         const propertyQualifiers = QualifierUtil.getProperQualifiers(clazz, injectObject.refName);
-        const hasEggQualifier = propertyQualifiers.find(t => t.attribute === EggQualifierAttribute);
+        const hasEggQualifier = propertyQualifiers.find((t) => t.attribute === EggQualifierAttribute);
         if (hasEggQualifier) {
           continue;
         }
@@ -59,7 +59,7 @@ export class EggQualifierProtoHook implements LifecycleHook<LoadUnitLifecycleCon
             'preCreate, add proper qualifier:%o to clazz:%o, from unitPath:%o',
             injectObject.refName,
             clazz.name,
-            ctx.unitPath
+            ctx.unitPath,
           );
         }
       }

@@ -13,7 +13,7 @@ const FooSubscriberFilePath = path.join(
   'schedule-app',
   'app',
   'subscriber',
-  'Subscriber.ts'
+  'Subscriber.ts',
 );
 
 describe('plugin/schedule/test/schedule.test.ts', () => {

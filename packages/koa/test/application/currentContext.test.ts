@@ -8,18 +8,18 @@ describe('app.currentContext', () => {
   it('should get currentContext', async () => {
     const app = new Koa({});
 
-    app.use(async ctx => {
+    app.use(async (ctx) => {
       assert.equal(ctx, app.currentContext);
 
       // oxlint-disable-next-line promise/avoid-new
-      await new Promise<void>(resolve => {
+      await new Promise<void>((resolve) => {
         setTimeout(() => {
           assert.equal(ctx, app.currentContext);
           resolve();
         }, 1);
       });
       // oxlint-disable-next-line promise/avoid-new
-      await new Promise<void>(resolve => {
+      await new Promise<void>((resolve) => {
         assert.equal(ctx, app.currentContext);
         setImmediate(() => {
           assert.equal(ctx, app.currentContext);

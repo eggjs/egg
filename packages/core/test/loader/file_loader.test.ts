@@ -41,14 +41,14 @@ describe('test/loader/file_loader.test.ts', () => {
     assert.equal(services.dir.service.load, true);
 
     await Promise.all([
-      new Promise<void>(resolve => {
+      new Promise<void>((resolve) => {
         services.foo.get((err: Error, v: string) => {
           assert.ifError(err);
           assert.equal(v, 'bar');
           resolve();
         });
       }),
-      new Promise<void>(resolve => {
+      new Promise<void>((resolve) => {
         services.userProfile.getByName('mk2', (err: Error, user: object) => {
           assert.ifError(err);
           assert.deepEqual(user, { name: 'mk2' });
@@ -322,7 +322,7 @@ describe('test/loader/file_loader.test.ts', () => {
           return filepath
             .replace('.js', '')
             .split('/')
-            .map(property => property.replaceAll('_', ''));
+            .map((property) => property.replaceAll('_', ''));
         },
       }).load();
 

@@ -6,7 +6,7 @@ export class FooService {
     // @ts-expect-error readonly property in constructor
     @Inject({ optional: true }) readonly doesNotExist1?: object,
     // @ts-expect-error readonly property in constructor
-    @InjectOptional() readonly doesNotExist2?: object
+    @InjectOptional() readonly doesNotExist2?: object,
   ) {}
 
   foo(): { nil1: string; nil2: string } {

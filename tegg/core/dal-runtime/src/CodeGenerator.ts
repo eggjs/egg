@@ -32,8 +32,8 @@ export class CodeGenerator {
     this.njkEnv = nunjucks.configure(path.join(__dirname, './templates'), {
       autoescape: false,
     });
-    this.njkEnv.addFilter('pascalCase', name => _.upperFirst(_.camelCase(name)));
-    this.njkEnv.addFilter('camelCase', name => _.camelCase(name));
+    this.njkEnv.addFilter('pascalCase', (name) => _.upperFirst(_.camelCase(name)));
+    this.njkEnv.addFilter('camelCase', (name) => _.camelCase(name));
     this.njkEnv.addFilter('dbTypeToTSType', TemplateUtil.dbTypeToTsType);
   }
 
@@ -48,7 +48,7 @@ export class CodeGenerator {
       moduleName: this.moduleName,
       teggPkg: this.teggPkg,
       dalPkg: this.dalPkg,
-      id: tableModel.columns.find(t => t.propertyName === 'id'),
+      id: tableModel.columns.find((t) => t.propertyName === 'id'),
       primaryIndex: tableModel.getPrimary(),
       tableModelPath: TemplateUtil.importPath(tableModelAbsolutePath, path.dirname(filePath)) + '.ts',
       extensionPath: `../../extension/${tableModel.clazz.name}Extension.ts`,

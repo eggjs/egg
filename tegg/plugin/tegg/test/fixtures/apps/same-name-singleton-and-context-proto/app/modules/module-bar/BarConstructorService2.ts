@@ -5,7 +5,7 @@ import { FooService } from './FooService.js';
 export class BarConstructorService2 {
   constructor(
     // @ts-expect-error readonly property in constructor
-    @Inject() readonly fooService: FooService
+    @Inject() readonly fooService: FooService,
   ) {}
 
   type(): string {

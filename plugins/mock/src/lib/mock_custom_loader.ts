@@ -14,7 +14,7 @@ export function setCustomLoader(app: any): void {
 
   function addMethod(loaderConfig: any) {
     const field = loaderConfig.field as string;
-    const appMethodName = 'mock' + field.replace(/^[a-z]/i, s => s.toUpperCase());
+    const appMethodName = 'mock' + field.replace(/^[a-z]/i, (s) => s.toUpperCase());
     if (app[appMethodName]) {
       app.coreLogger.warn("Can't override app.%s", appMethodName);
       return;

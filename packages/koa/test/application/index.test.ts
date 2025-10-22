@@ -12,12 +12,12 @@ describe('app', () => {
   it('should handle socket errors', async () => {
     const app = new Koa();
 
-    app.use(ctx => {
+    app.use((ctx) => {
       // triggers ctx.socket.writable == false
       ctx.socket.emit('error', new Error('boom'));
     });
 
-    app.on('error', err => {
+    app.on('error', (err) => {
       assert.strictEqual(err.message, 'boom');
     });
 
@@ -35,11 +35,11 @@ describe('app', () => {
     const app = new Koa();
     let requestCount = 0;
     let responseCount = 0;
-    app.on('request', ctx => {
+    app.on('request', (ctx) => {
       assert.equal(ctx.url, '/');
       requestCount++;
     });
-    app.on('response', ctx => {
+    app.on('response', (ctx) => {
       assert.equal(ctx.url, '/');
       assert.equal(ctx.status, 404);
       responseCount++;
@@ -71,7 +71,7 @@ describe('app', () => {
   it('should not .writeHead when !socket.writable', async () => {
     const app = new Koa();
 
-    app.use(ctx => {
+    app.use((ctx) => {
       // set .writable to false
       (ctx.socket as unknown as { writable: boolean }).writable = false;
       ctx.status = 204;

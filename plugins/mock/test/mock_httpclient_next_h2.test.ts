@@ -34,7 +34,7 @@ describe('test/mock_httpclient_next_h2.test.ts', () => {
       data: Buffer.from('mock all response'),
     });
 
-    app.httpclient.once('response', result => {
+    app.httpclient.once('response', (result) => {
       assert('url' in result.req);
       // assert('size' in result.req);
       assert('options' in result.req);
@@ -46,7 +46,7 @@ describe('test/mock_httpclient_next_h2.test.ts', () => {
     });
 
     let count = 0;
-    app.httpClient.on('response', result => {
+    app.httpClient.on('response', (result) => {
       if (count === 0) {
         const options = result.req.options;
         assert(options.method === 'GET');

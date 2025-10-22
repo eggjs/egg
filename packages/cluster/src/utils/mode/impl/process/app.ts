@@ -76,11 +76,11 @@ export class AppProcessUtils extends BaseAppUtils {
     });
 
     let debugPort = process.debugPort;
-    cluster.on('fork', worker => {
+    cluster.on('fork', (worker) => {
       const appWorker = new AppProcessWorker(worker);
       this.emit('worker_forked', appWorker);
       appWorker.disableRefork = true;
-      worker.on('message', msg => {
+      worker.on('message', (msg) => {
         if (typeof msg === 'string') {
           msg = {
             action: msg,
@@ -95,7 +95,7 @@ export class AppProcessUtils extends BaseAppUtils {
         appWorker.id,
         appWorker.workerId,
         appWorker.state,
-        Object.keys(cluster.workers!)
+        Object.keys(cluster.workers!),
       );
 
       // send debug message, due to `brk` scene, send here instead of app_worker.js
@@ -114,7 +114,7 @@ export class AppProcessUtils extends BaseAppUtils {
         });
       }
     });
-    cluster.on('disconnect', worker => {
+    cluster.on('disconnect', (worker) => {
       const appWorker = new AppProcessWorker(worker);
       this.log(
         '[master] app_worker#%s:%s disconnect, suicide: %s, state: %s, current workers: %j',
@@ -122,7 +122,7 @@ export class AppProcessUtils extends BaseAppUtils {
         appWorker.workerId,
         appWorker.exitedAfterDisconnect,
         appWorker.state,
-        Object.keys(cluster.workers!)
+        Object.keys(cluster.workers!),
       );
     });
     cluster.on('exit', (worker, code, signal) => {
@@ -143,11 +143,11 @@ export class AppProcessUtils extends BaseAppUtils {
 
   async kill(timeout: number): Promise<void> {
     await Promise.all(
-      Object.keys(cluster.workers!).map(id => {
+      Object.keys(cluster.workers!).map((id) => {
         const worker = cluster.workers![id]!;
         Reflect.set(worker, 'disableRefork', true);
         return terminate(worker.process, timeout);
-      })
+      }),
     );
   }
 }

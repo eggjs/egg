@@ -24,14 +24,14 @@ function getScheduleLoader(app: EggApplicationCore) {
         assert(scheduleConfig, `schedule(${fullpath}): must have "schedule" and "task" properties`);
         assert(
           isClass(schedule) || isFunction(schedule.task),
-          `schedule(${fullpath}: \`schedule.task\` should be function or \`schedule\` should be class`
+          `schedule(${fullpath}: \`schedule.task\` should be function or \`schedule\` should be class`,
         );
 
         let task: EggScheduleTask;
         if (isClass(schedule)) {
           assert(
             !isGeneratorFunction(schedule.prototype.subscribe),
-            `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`
+            `schedule(${fullpath}): "schedule" generator function is not support, should use async function instead`,
           );
           task = async (ctx: Context, ...args: any[]) => {
             const instance = new schedule(ctx);
@@ -41,7 +41,7 @@ function getScheduleLoader(app: EggApplicationCore) {
         } else {
           assert(
             !isGeneratorFunction(schedule.task),
-            `schedule(${fullpath}): "task" generator function is not support, should use async function instead`
+            `schedule(${fullpath}): "task" generator function is not support, should use async function instead`,
           );
           task = schedule.task;
           // task = app.toAsyncFunction(schedule.task);
@@ -71,7 +71,7 @@ function getScheduleLoader(app: EggApplicationCore) {
 
 export async function loadSchedule(app: EggApplicationCore): Promise<Record<string, EggScheduleItem>> {
   const dirs = [
-    ...app.loader.getLoadUnits().map(unit => path.join(unit.path, 'app/schedule')),
+    ...app.loader.getLoadUnits().map((unit) => path.join(unit.path, 'app/schedule')),
     ...(app.config.schedule.directory ?? []),
   ];
 

@@ -20,7 +20,7 @@ describe('test/loader/get_appname.test.ts', () => {
       },
       (err: any) => {
         return err.message.includes(`name is required from ${pkg}`);
-      }
+      },
     );
   });
 });

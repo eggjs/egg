@@ -54,7 +54,7 @@ describe('test/app/extend/application.test.ts', () => {
           'config',
           'httpclient',
           'loggers',
-        ].every(p => Object.prototype.hasOwnProperty.call(app.inspect(), p))
+        ].every((p) => Object.prototype.hasOwnProperty.call(app.inspect(), p)),
       );
       assert(app.inspect().name === 'demo');
     });

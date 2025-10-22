@@ -22,7 +22,7 @@ describe.skip('test/bootstrap.test.ts', () => {
           ],
           {
             cwd: getFixtures('apps/helloworld'),
-          }
+          },
         )
         .debug()
         .expect('code', 0)

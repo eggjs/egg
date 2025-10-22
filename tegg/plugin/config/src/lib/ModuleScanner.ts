@@ -23,7 +23,7 @@ export class ModuleScanner {
   loadModuleReferences(): readonly ModuleReference[] {
     const moduleReferences = ModuleConfigUtil.readModuleReference(this.baseDir, this.readModuleOptions || {});
     const appPkg: { egg?: { framework?: string } } = JSON.parse(
-      readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8')
+      readFileSync(path.join(this.baseDir, 'package.json'), 'utf-8'),
     );
     const framework = appPkg.egg?.framework;
     if (!framework) {
@@ -37,7 +37,7 @@ export class ModuleScanner {
     const optionalModuleReferences = ModuleConfigUtil.readModuleReference(frameworkDir, this.readModuleOptions || {});
     const result = [...moduleReferences];
     for (const optionalModuleReference of optionalModuleReferences) {
-      if (!result.some(t => t.path === optionalModuleReference.path)) {
+      if (!result.some((t) => t.path === optionalModuleReference.path)) {
         result.push({
           ...optionalModuleReference,
           optional: true,

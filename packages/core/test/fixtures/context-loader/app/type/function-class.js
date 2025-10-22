@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app =>
+module.exports = (app) =>
   class Service {
     constructor(ctx) {
       this.ctx = ctx;

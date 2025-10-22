@@ -370,7 +370,7 @@ describe('test/file-mode.test.ts', () => {
       const currentMonth = new Date().getMonth();
       const fourMonthBefore = path.join(
         app.config.multipart.tmpdir,
-        dayjs().subtract(4, 'months').format('YYYY/MM/DD/HH')
+        dayjs().subtract(4, 'months').format('YYYY/MM/DD/HH'),
       );
       if (currentMonth < 4) {
         // if current month is less than April, four months before should be last year.
@@ -378,14 +378,14 @@ describe('test/file-mode.test.ts', () => {
       } else {
         shouldKeepDirs.push(fourMonthBefore);
       }
-      await Promise.all(oldDirs.map(dir => fs.mkdir(dir, { recursive: true })));
-      await Promise.all(shouldKeepDirs.map(dir => fs.mkdir(dir, { recursive: true })));
+      await Promise.all(oldDirs.map((dir) => fs.mkdir(dir, { recursive: true })));
+      await Promise.all(shouldKeepDirs.map((dir) => fs.mkdir(dir, { recursive: true })));
 
       await Promise.all(
-        oldDirs.map(dir => {
+        oldDirs.map((dir) => {
           // create files
           return fs.writeFile(path.join(dir, Date.now() + ''), Date());
-        })
+        }),
       );
 
       app.mockLog();

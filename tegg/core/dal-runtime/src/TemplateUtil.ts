@@ -51,11 +51,11 @@ export class TemplateUtil {
     return `Point(${point.x}, ${point.y})`;
   }
   static toLine(val: Line): string {
-    const points = val.map(t => TemplateUtil.toPoint(t));
+    const points = val.map((t) => TemplateUtil.toPoint(t));
     return `LINESTRING(${points.join(',')})`;
   }
   static toPolygon(val: Polygon): string {
-    const lines = val.map(t => TemplateUtil.toLine(t));
+    const lines = val.map((t) => TemplateUtil.toLine(t));
     return `POLYGON(${lines.join(',')})`;
   }
   static toGeometry(val: Geometry): string {
@@ -64,19 +64,19 @@ export class TemplateUtil {
     return (TemplateUtil as any)[filterName](val);
   }
   static toMultiPoint(val: MultiPoint): string {
-    const points = val.map(t => TemplateUtil.toPoint(t));
+    const points = val.map((t) => TemplateUtil.toPoint(t));
     return `MULTIPOINT(${points.join(',')})`;
   }
   static toMultiLine(val: MultiLine): string {
-    const lines = val.map(t => TemplateUtil.toLine(t));
+    const lines = val.map((t) => TemplateUtil.toLine(t));
     return `MULTILINESTRING(${lines.join(',')})`;
   }
   static toMultiPolygon(val: MultiPolygon): string {
-    const polygon = val.map(t => TemplateUtil.toPolygon(t));
+    const polygon = val.map((t) => TemplateUtil.toPolygon(t));
     return `MULTIPOLYGON(${polygon.join(',')})`;
   }
   static toGeometryCollection(val: GeometryCollection): string {
-    const geometries = val.map(t => {
+    const geometries = val.map((t) => {
       return TemplateUtil.toGeometry(t);
     });
     return `GEOMETRYCOLLECTION(${geometries.join(',')})`;

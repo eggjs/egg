@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', app.controller.home.index);
   app.get('/clusterPort', app.controller.home.getClusterPort);
   app.post('/publish', app.controller.home.publish);

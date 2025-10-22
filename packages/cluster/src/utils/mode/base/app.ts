@@ -105,7 +105,7 @@ export abstract class BaseAppUtils extends EventEmitter {
       logger: Logger;
       messenger: Messenger;
       isProduction: boolean;
-    }
+    },
   ) {
     super();
     this.options = options;

@@ -14,7 +14,7 @@ exports.hello = function () {
   this.body = 'hi';
 };
 
-exports.service = async ctx => {
+exports.service = async (ctx) => {
   ctx.body = {
     foo1: await ctx.service.foo.get(),
     foo2: await ctx.service.bar.foo.get(),
@@ -42,7 +42,7 @@ exports.urllib = async function () {
     dataType,
     data,
   });
-  if (method === 'request') r = r.then(d => d);
+  if (method === 'request') r = r.then((d) => d);
   const r1 = await r;
   const r2 = await this.app.httpclient[method](url + '/mock_url', {
     method: 'POST',

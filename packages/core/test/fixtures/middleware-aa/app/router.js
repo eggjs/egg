@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/router', app.middlewares.router(), controller);
   app.get('/static', controller);
   app.get('/match', controller);

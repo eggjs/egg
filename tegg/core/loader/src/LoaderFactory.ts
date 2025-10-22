@@ -31,7 +31,7 @@ export class LoaderFactory {
     for (const moduleReference of moduleReferences) {
       const loader = LoaderFactory.createLoader(
         moduleReference.path,
-        moduleReference.loaderType || EggLoadUnitType.MODULE
+        moduleReference.loaderType || EggLoadUnitType.MODULE,
       );
       const res: ModuleDescriptor = {
         name: moduleReference.name,

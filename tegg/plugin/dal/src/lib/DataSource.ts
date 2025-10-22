@@ -30,12 +30,12 @@ import { TransactionalAOP } from './TransactionalAOP.ts';
     const result: ObjectInfo[] = [];
     const loader = LoaderFactory.createLoader(ctx.unitPath, EggLoadUnitType.MODULE);
     const clazzList = await loader.load();
-    const tableClazzList = clazzList.filter(t => {
+    const tableClazzList = clazzList.filter((t) => {
       return TableInfoUtil.getIsTable(t);
     });
     const dataSourceLength = dataSources.length;
     for (const dataSource of dataSources) {
-      const moduleClazzList = tableClazzList.filter(clazz => {
+      const moduleClazzList = tableClazzList.filter((clazz) => {
         const tableParams = TableInfoUtil.getTableParams(clazz);
         const dataSourceName = tableParams?.dataSourceName ?? 'default';
         return dataSourceLength === 1 || dataSourceName === dataSource;
@@ -63,9 +63,11 @@ export class DataSourceDelegate<T> extends DataSource<T> {
   constructor(
     @Inject({ name: 'transactionalAOP' }) transactionalAOP: TransactionalAOP,
     @MultiInstanceInfo([DataSourceQualifierAttribute, LoadUnitNameQualifierAttribute])
-    objInfo: ObjectInfo
+    objInfo: ObjectInfo,
   ) {
-    const dataSourceQualifierValue = objInfo.qualifiers.find(t => t.attribute === DataSourceQualifierAttribute)?.value;
+    const dataSourceQualifierValue = objInfo.qualifiers.find(
+      (t) => t.attribute === DataSourceQualifierAttribute,
+    )?.value;
     assert(dataSourceQualifierValue);
     const [moduleName, dataSource, clazzName] = (dataSourceQualifierValue as string).split('.');
     const tableModel = TableModelManager.instance.get(moduleName, clazzName);

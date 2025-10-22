@@ -31,7 +31,7 @@ export class StandaloneInnerObjectProto implements EggPrototype {
     clazz: EggProtoImplClass,
     initType: ObjectInitTypeLike,
     loadUnitId: Id,
-    qualifiers: QualifierInfo[]
+    qualifiers: QualifierInfo[],
   ) {
     this.id = id;
     this.clazz = clazz;
@@ -53,7 +53,7 @@ export class StandaloneInnerObjectProto implements EggPrototype {
   }
 
   verifyQualifier(qualifier: QualifierInfo): boolean {
-    const selfQualifiers = this.qualifiers.find(t => t.attribute === qualifier.attribute);
+    const selfQualifiers = this.qualifiers.find((t) => t.attribute === qualifier.attribute);
     return selfQualifiers?.value === qualifier.value;
   }
 
@@ -66,7 +66,7 @@ export class StandaloneInnerObjectProto implements EggPrototype {
   }
 
   getQualifier(attribute: string): QualifierValue | undefined {
-    return this.qualifiers.find(t => t.attribute === attribute)?.value;
+    return this.qualifiers.find((t) => t.attribute === attribute)?.value;
   }
 
   static create(ctx: EggPrototypeLifecycleContext): EggPrototype {
@@ -79,7 +79,7 @@ export class StandaloneInnerObjectProto implements EggPrototype {
       clazz,
       ctx.prototypeInfo.initType,
       loadUnit.id,
-      QualifierUtil.getProtoQualifiers(clazz)
+      QualifierUtil.getProtoQualifiers(clazz),
     );
     return proto;
   }

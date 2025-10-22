@@ -232,13 +232,13 @@ describe('test/app/extend/context.test.ts', () => {
       assert(/background run anonymous result file size: \d+/.test(log));
       assert(
         /\[egg:background] task:saveUserInfo success \([\d.]+ms\)/.test(
-          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')
-        )
+          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8'),
+        ),
       );
       assert(
         /\[egg:background] task:.*?app[/\\]controller[/\\]home\.js:\d+:\d+ success \([\d.]+ms\)/.test(
-          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')
-        )
+          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8'),
+        ),
       );
     });
 
@@ -251,8 +251,8 @@ describe('test/app/extend/context.test.ts', () => {
       assert(/background run result file size: \d+/.test(log));
       assert(
         /\[egg:background] task:customTaskName success \([\d.]+ms\)/.test(
-          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')
-        )
+          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8'),
+        ),
       );
     });
 
@@ -275,8 +275,8 @@ describe('test/app/extend/context.test.ts', () => {
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
         /\[egg:background] task:mockError fail \([\d.]+ms\)/.test(
-          fs.readFileSync(path.join(lgoDir, 'egg-web.log'), 'utf8')
-        )
+          fs.readFileSync(path.join(lgoDir, 'egg-web.log'), 'utf8'),
+        ),
       );
     });
 
@@ -352,8 +352,8 @@ describe('test/app/extend/context.test.ts', () => {
       assert(/ENOENT: no such file or directory/.test(log));
       assert(
         /\[egg:background] task:mockError fail \([\d.]+ms\)/.test(
-          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8')
-        )
+          fs.readFileSync(path.join(logDir, 'egg-web.log'), 'utf8'),
+        ),
       );
     });
   });
@@ -375,8 +375,8 @@ describe('test/app/extend/context.test.ts', () => {
 
       it('should curl as promise ok', () => {
         return startLocalServer()
-          .then(localServer => app.mockContext().curl(`${localServer}/foo/bar`))
-          .then(res => assert(res.status === 200));
+          .then((localServer) => app.mockContext().curl(`${localServer}/foo/bar`))
+          .then((res) => assert(res.status === 200));
       });
     });
 

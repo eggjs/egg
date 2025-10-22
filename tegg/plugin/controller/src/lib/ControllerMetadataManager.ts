@@ -14,11 +14,11 @@ export class ControllerMetadataManager {
     const typeControllers = MapUtil.getOrStore(this.controllers, metadata.type, []);
     // 1.check controller name
     // 2.check proto name
-    const sameNameControllers = typeControllers.filter(c => c.controllerName === metadata.controllerName);
+    const sameNameControllers = typeControllers.filter((c) => c.controllerName === metadata.controllerName);
     if (sameNameControllers.length) {
       throw new Error(`duplicate controller name ${metadata.controllerName}`);
     }
-    const sameProtoControllers = typeControllers.filter(c => c.protoName === metadata.protoName);
+    const sameProtoControllers = typeControllers.filter((c) => c.protoName === metadata.protoName);
     if (sameProtoControllers.length) {
       throw new Error(`duplicate proto name ${String(metadata.protoName)}`);
     }

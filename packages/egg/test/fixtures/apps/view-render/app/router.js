@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('home', '/', app.controller.home);
   app.get('async', '/async', 'async.index');
   app.get('empty', '/empty', app.controller.empty);

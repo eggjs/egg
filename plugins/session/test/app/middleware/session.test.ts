@@ -47,7 +47,7 @@ describe('test/app/middlewares/session.test.js', () => {
         .get('/set?foo=bar')
         .expect(200)
         .expect({ foo: 'bar' })
-        .expect(res => {
+        .expect((res) => {
           const cookie = res.get('Set-Cookie')!.join('|');
           expect(cookie).not.toContain('; samesite=none;');
         })
@@ -67,7 +67,7 @@ describe('test/app/middlewares/session.test.js', () => {
       await app.ready();
       app.expectLog(
         '[@eggjs/session]: please set `config.session.httpOnly` to true. It is very dangerous if session can read by client JavaScript.',
-        'coreLogger'
+        'coreLogger',
       );
       await app.close();
     });
@@ -88,12 +88,12 @@ describe('test/app/middlewares/session.test.js', () => {
         .get('/set?foo=bar')
         .set(
           'user-agent',
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
         )
         .set('x-forwarded-proto', 'https')
         .expect(200)
         .expect({ foo: 'bar' })
-        .expect(res => {
+        .expect((res) => {
           const cookie = res.get('Set-Cookie')!.join('|');
           expect(cookie).toContain('; samesite=none;');
         });
@@ -115,12 +115,12 @@ describe('test/app/middlewares/session.test.js', () => {
         .get('/set?foo=bar')
         .set(
           'user-agent',
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.4044.138 Safari/537.36'
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.4044.138 Safari/537.36',
         )
         .set('x-forwarded-proto', 'https')
         .expect(200)
         .expect({ foo: 'bar' })
-        .expect(res => {
+        .expect((res) => {
           const cookies = res.headers['set-cookie'];
           console.log(cookies);
         });
@@ -146,7 +146,7 @@ describe('test/app/middlewares/session.test.js', () => {
       await agent
         .get('/maxAge?maxAge=100')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           cookie = res.get('Set-Cookie')!.join(';');
         });
 
@@ -164,7 +164,7 @@ describe('test/app/middlewares/session.test.js', () => {
       await agent
         .get('/maxAge?maxAge=100')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           cookie = res.get('Set-Cookie')!.join(';');
         });
 
@@ -207,12 +207,12 @@ describe('test/app/middlewares/session.test.js', () => {
         .get('/set?foo=bar')
         .set(
           'user-agent',
-          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36',
         )
         .set('x-forwarded-proto', 'https')
         .expect(200)
         .expect({ foo: 'bar' })
-        .expect(res => {
+        .expect((res) => {
           const cookie = res.get('Set-Cookie')!.join('|');
           expect(cookie).not.toContain('expires');
           expect(cookie).not.toContain('max-age');
@@ -223,7 +223,7 @@ describe('test/app/middlewares/session.test.js', () => {
       await agent
         .get('/maxAge?maxAge=session')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           const cookie = res.get('Set-Cookie')!.join(';');
           expect(cookie).toMatch(/EGG_SESS=.*?;/);
           expect(cookie).not.toContain('expires');
@@ -234,7 +234,7 @@ describe('test/app/middlewares/session.test.js', () => {
 
   // ['cookie-session', 'memory-session', 'memory-session-generator', 'redis-session']
   // skip redis-session because it uses redis
-  ['cookie-session', 'memory-session', 'memory-session-generator'].forEach(name => {
+  ['cookie-session', 'memory-session', 'memory-session-generator'].forEach((name) => {
     describe(name, () => {
       beforeAll(() => {
         app = mm.app({
@@ -267,12 +267,12 @@ describe('test/app/middlewares/session.test.js', () => {
           .get('/get')
           .expect(200)
           .expect({})
-          .expect(res => {
+          .expect((res) => {
             expect(
               !res
                 .get('Set-Cookie')!
                 .join('')
-                .match(/EGG_SESS/)
+                .match(/EGG_SESS/),
             ).toBe(true);
           });
       });
@@ -327,7 +327,7 @@ describe('test/app/middlewares/session.test.js', () => {
           .get('/maxAge?maxAge=100')
           .expect(200)
           .expect({ key: 'foo', foo: 'bar' })
-          .expect(res => {
+          .expect((res) => {
             cookie = res.get('Set-Cookie')!.join(';');
             expect(cookie).toMatch(/EGG_SESS=.*?;/);
             expect(cookie).toMatch(/expires=/);

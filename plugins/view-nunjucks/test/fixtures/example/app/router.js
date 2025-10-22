@@ -1,7 +1,7 @@
 'use strict';
 const path = require('path');
 const fs = require('fs');
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', async function () {
     await this.render('home.tpl', { user: 'egg' });
   });
@@ -14,7 +14,7 @@ module.exports = app => {
     this.body = await this.renderString(
       fs.readFileSync(path.resolve(__dirname, './view/layout.tpl')).toString(),
       { user: 'egg' },
-      { path: path.resolve(__dirname, './view/layout.tpl') }
+      { path: path.resolve(__dirname, './view/layout.tpl') },
     );
   });
 

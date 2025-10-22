@@ -2,7 +2,7 @@
 
 module.exports = function (agent) {
   let pids;
-  agent.messenger.on('egg-pids', data => {
+  agent.messenger.on('egg-pids', (data) => {
     pids = data;
   });
   agent.messenger.on('egg-ready', () => {

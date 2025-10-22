@@ -31,7 +31,7 @@ export class StackUtil {
     if (debug.enabled) {
       debug(
         'call stack: \n------------------------------------------\n%s\n------------------------------------------',
-        obj.stack.map(callSite => callSite.getFileName() ?? '<anonymous>').join('\n')
+        obj.stack.map((callSite) => callSite.getFileName() ?? '<anonymous>').join('\n'),
       );
     }
     let callSite = obj.stack[stackIndex];

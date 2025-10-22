@@ -1,4 +1,4 @@
-exports.index = ctx => {
+exports.index = (ctx) => {
   ctx.body = {
     csrf: ctx.csrf,
     env: ctx.app.config.env,
@@ -6,7 +6,7 @@ exports.index = ctx => {
   };
 };
 
-exports.update = ctx => {
+exports.update = (ctx) => {
   ctx.session.body = ctx.request.body;
   ctx.body = ctx.request.body;
 };

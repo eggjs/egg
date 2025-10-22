@@ -26,7 +26,7 @@ export class HTTPControllerMeta implements ControllerMetadata {
     methods: HTTPMethodMeta[],
     needAcl: boolean,
     aclCode: string | undefined,
-    hosts: string[] | undefined
+    hosts: string[] | undefined,
   ) {
     this.protoName = protoName;
     this.controllerName = controllerName;

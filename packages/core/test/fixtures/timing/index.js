@@ -21,7 +21,7 @@ class Application extends EggApplication {
 
 const app = utils.createApp('application', { Application });
 app.loader.loadAll();
-app.ready(err => {
+app.ready((err) => {
   fs.writeFileSync(path.join(__dirname, 'timing.json'), JSON.stringify(app.timing.toJSON()));
   process.exit(err ? 1 : 0);
 });

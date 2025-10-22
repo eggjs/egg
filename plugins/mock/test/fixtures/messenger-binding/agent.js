@@ -6,7 +6,7 @@ module.exports = class Boot {
   async willReady() {
     const agent = this.agent;
     agent.received = [];
-    agent.messenger.on('action', data => {
+    agent.messenger.on('action', (data) => {
       agent.received.push(data);
       console.error('agent.js received action data: %o', data);
     });

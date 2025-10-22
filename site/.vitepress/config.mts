@@ -457,7 +457,7 @@ function sidebarCommunityZhCN(): DefaultTheme.SidebarItem[] {
 
 function sidebarFaq(): DefaultTheme.SidebarItem[] {
   const faqFiles = fs.readdirSync(path.join(import.meta.dirname, '../docs/faq'));
-  const faqItems = faqFiles.map(file => ({
+  const faqItems = faqFiles.map((file) => ({
     text: file.replace('.md', ''),
     link: `${file}`,
   }));

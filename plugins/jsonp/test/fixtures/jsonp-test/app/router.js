@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/default', app.jsonp(), 'jsonp.index');
   app.get('/empty', app.jsonp(), 'jsonp.empty');
   app.get('/disable', 'jsonp.index');
@@ -10,7 +10,7 @@ module.exports = app => {
     app.jsonp({
       whiteList: [/https?:\/\/test\.com\//, /https?:\/\/foo\.com\//],
     }),
-    'jsonp.index'
+    'jsonp.index',
   );
   app.get('/csrf', app.jsonp({ csrf: true }), 'jsonp.index');
   app.get('/both', app.jsonp({ csrf: true, whiteList: 'test.com' }), 'jsonp.index');
@@ -25,6 +25,6 @@ module.exports = app => {
       }
     },
     app.jsonp(),
-    'jsonp.error'
+    'jsonp.error',
   );
 };

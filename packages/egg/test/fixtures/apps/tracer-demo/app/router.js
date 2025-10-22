@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', 'home.index');
   app.get('/foo', 'foo.index');
 };

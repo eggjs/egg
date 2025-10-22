@@ -19,7 +19,7 @@ describe('test/Layer.test.ts', () => {
       (ctx, next) => {
         ctx.status = 204;
         return next();
-      }
+      },
     );
     await request(app.callback()).get('/programming/how-to-node').expect(204);
   });
@@ -29,7 +29,7 @@ describe('test/Layer.test.ts', () => {
       const app = new Application();
       const router = new Router();
       app.use(router.routes());
-      router.get('/:category/:title', ctx => {
+      router.get('/:category/:title', (ctx) => {
         expect(ctx.params).toBeDefined();
         expect(ctx.params.category).toBe('match');
         expect(ctx.params.title).toBe('this');
@@ -42,7 +42,7 @@ describe('test/Layer.test.ts', () => {
       const app = new Application();
       const router = new Router();
       app.use(router.routes());
-      router.get('/:category/:title', ctx => {
+      router.get('/:category/:title', (ctx) => {
         expect(ctx.params).toBeDefined();
         expect(ctx.params.category).toBe('100%');
         expect(ctx.params.title).toBe('101%');
@@ -64,13 +64,13 @@ describe('test/Layer.test.ts', () => {
           expect(ctx.captures[0]).toBe('1');
           return next();
         },
-        ctx => {
+        (ctx) => {
           expect(ctx.captures).toBeDefined();
           expect(Array.isArray(ctx.captures)).toBe(true);
           expect(ctx.captures.length).toBe(1);
           expect(ctx.captures[0]).toBe('1');
           ctx.status = 204;
-        }
+        },
       );
       await request(app.callback()).get('/api/1').expect(204);
     });
@@ -92,7 +92,7 @@ describe('test/Layer.test.ts', () => {
           expect(ctx.captures.length).toBe(1);
           expect(ctx.captures[0]).toBe('101%');
           ctx.status = 204;
-        }
+        },
       );
       await request(app.callback()).get('/api/101%').expect(204);
     });
@@ -114,7 +114,7 @@ describe('test/Layer.test.ts', () => {
           expect(ctx.captures.length).toBe(1);
           expect(ctx.captures[0]).toBe(undefined);
           ctx.status = 204;
-        }
+        },
       );
       await request(app.callback()).get('/api').expect(204);
     });
@@ -150,7 +150,7 @@ describe('test/Layer.test.ts', () => {
           function (ctx) {
             ctx.body = ctx.user;
           },
-        ]
+        ],
       );
       route.param('user', (id, ctx, next) => {
         ctx.user = { name: 'alex' };
@@ -173,10 +173,10 @@ describe('test/Layer.test.ts', () => {
         '/users/:user',
         ['GET'],
         [
-          ctx => {
+          (ctx) => {
             ctx.body = ctx.user;
           },
-        ]
+        ],
       );
       route.param('user', function (id, ctx, next) {
         ctx.user = { name: 'alex' };

@@ -21,7 +21,7 @@ export class ProtoDescriptorHelper {
   static addDefaultQualifier(
     qualifiers: QualifierInfo[],
     initType: ObjectInitTypeLike,
-    loadUnitName: string
+    loadUnitName: string,
   ): QualifierInfo[] {
     const defaultQualifiers = [
       {
@@ -35,7 +35,7 @@ export class ProtoDescriptorHelper {
     ];
     const res = [...qualifiers];
     for (const defaultQualifier of defaultQualifiers) {
-      if (!qualifiers.find(t => t.attribute === defaultQualifier.attribute)) {
+      if (!qualifiers.find((t) => t.attribute === defaultQualifier.attribute)) {
         res.push(defaultQualifier);
       }
     }
@@ -49,7 +49,7 @@ export class ProtoDescriptorHelper {
       defineUnitPath: string;
       instanceModuleName: string;
       instanceDefineUnitPath: string;
-    }
+    },
   ): Promise<ProtoDescriptor[]> {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
     const type = PrototypeUtil.getEggMultiInstancePrototypeType(clazz);
@@ -71,7 +71,7 @@ export class ProtoDescriptorHelper {
       defineUnitPath: string;
       instanceModuleName: string;
       instanceDefineUnitPath: string;
-    }
+    },
   ): Promise<ProtoDescriptor[]> {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
 
@@ -90,7 +90,7 @@ export class ProtoDescriptorHelper {
       defineUnitPath: string;
       instanceModuleName: string;
       instanceDefineUnitPath: string;
-    }
+    },
   ): ProtoDescriptor[] {
     assert(PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not MultiInstancePrototype`);
 
@@ -108,7 +108,7 @@ export class ProtoDescriptorHelper {
       defineUnitPath: string;
       instanceModuleName: string;
       instanceDefineUnitPath: string;
-    }
+    },
   ): ProtoDescriptor[] {
     const res: ProtoDescriptor[] = [];
 
@@ -117,9 +117,9 @@ export class ProtoDescriptorHelper {
       qualifiers = ProtoDescriptorHelper.addDefaultQualifier(
         qualifiers,
         instanceProperty.initType,
-        options.instanceModuleName
+        options.instanceModuleName,
       );
-      const injectObjects: InjectObjectDescriptor[] = PrototypeUtil.getInjectObjects(clazz).map(t => {
+      const injectObjects: InjectObjectDescriptor[] = PrototypeUtil.getInjectObjects(clazz).map((t) => {
         const qualifiers = QualifierUtil.getProperQualifiers(clazz, t.refName);
         const instanceQualifier = obj.properQualifiers?.[t.refName] ?? [];
         return {
@@ -141,7 +141,7 @@ export class ProtoDescriptorHelper {
           defineUnitPath: options.defineUnitPath,
           clazz,
           properQualifiers: obj.properQualifiers || {},
-        })
+        }),
       );
     }
     return res;
@@ -149,7 +149,7 @@ export class ProtoDescriptorHelper {
 
   static createByInstanceClazz(
     clazz: EggProtoImplClass,
-    ctx: MultiInstancePrototypeGetObjectsContext
+    ctx: MultiInstancePrototypeGetObjectsContext,
   ): ProtoDescriptor {
     assert(PrototypeUtil.isEggPrototype(clazz), `clazz ${clazz.name} is not EggPrototype`);
     assert(!PrototypeUtil.isEggMultiInstancePrototype(clazz), `clazz ${clazz.name} is not Prototype`);
@@ -160,9 +160,9 @@ export class ProtoDescriptorHelper {
     const protoQualifiers = ProtoDescriptorHelper.addDefaultQualifier(
       QualifierUtil.getProtoQualifiers(clazz),
       property.initType,
-      ctx.moduleName
+      ctx.moduleName,
     );
-    const injectObjects = PrototypeUtil.getInjectObjects(clazz).map(t => {
+    const injectObjects = PrototypeUtil.getInjectObjects(clazz).map((t) => {
       const qualifiers = QualifierUtil.getProperQualifiers(clazz, t.refName);
       return {
         ...t,

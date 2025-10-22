@@ -29,7 +29,7 @@ export class EggModuleLoader {
   async init(): Promise<void> {
     GlobalGraph.instance = this.globalGraph = await EggModuleLoader.generateAppGraph(
       this.moduleReferences,
-      this.options
+      this.options,
     );
   }
 
@@ -39,7 +39,7 @@ export class EggModuleLoader {
       for (const moduleDescriptor of moduleDescriptors) {
         ModuleDescriptorDumper.dump(moduleDescriptor, {
           dumpDir: options.baseDir,
-        }).catch(e => {
+        }).catch((e) => {
           e.message = 'dump module descriptor failed: ' + e.message;
           options.logger.warn(e);
         });

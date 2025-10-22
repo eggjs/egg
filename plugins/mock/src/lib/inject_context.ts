@@ -52,7 +52,7 @@ export function injectContext(mocha: any): void {
       suite.ctx[MOCHA_SUITE_APP] = app;
       const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
       await mockContextFun.call(app, async function () {
-        await new Promise<void>(resolve => {
+        await new Promise<void>((resolve) => {
           runSuite.call(self, suite, (aErrSuite: Error) => {
             errSuite = aErrSuite;
             resolve();
@@ -112,7 +112,7 @@ export function injectContext(mocha: any): void {
       try {
         const mockContextFun = app.mockModuleContextScope || app.mockContextScope;
         await mockContextFun.call(app, async function () {
-          return await new Promise<void>(resolve => {
+          return await new Promise<void>((resolve) => {
             runTests.call(self, suite, () => {
               return resolve();
             });
@@ -124,7 +124,7 @@ export function injectContext(mocha: any): void {
       }
       return next(i + 1);
     }
-    next(0).catch(err => {
+    next(0).catch((err) => {
       self.fail(suite, err);
       done(suite);
     });

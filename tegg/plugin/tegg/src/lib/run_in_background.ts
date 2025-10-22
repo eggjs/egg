@@ -27,7 +27,7 @@ export function hijackRunInBackground(app: Application): void {
     }
     const caseError = new Error('cause');
     let resolveBackgroundTask: () => void;
-    const backgroundTaskPromise = new Promise<void>(resolve => {
+    const backgroundTaskPromise = new Promise<void>((resolve) => {
       resolveBackgroundTask = resolve;
     });
     const newScope = async () => {

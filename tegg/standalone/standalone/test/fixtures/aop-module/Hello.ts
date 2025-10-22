@@ -116,7 +116,7 @@ export const crosscutAdviceParams = {
     clazz: Hello,
     methodName: 'hello',
   },
-  { adviceParams: crosscutAdviceParams }
+  { adviceParams: crosscutAdviceParams },
 )
 @Advice()
 export class CrosscutAdvice implements IAdvice<Hello, string> {

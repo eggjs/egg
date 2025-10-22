@@ -178,7 +178,7 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
         currentIndex + 1,
         totalRuns,
         files.length,
-        fileCount
+        fileCount,
       );
     }
 
@@ -197,15 +197,15 @@ export default class Test<T extends typeof Test> extends BaseCommand<T> {
       // force exit
       '--exit',
       flags.bail ? '--bail' : '',
-      grep.map(pattern => `--grep='${pattern}'`).join(' '),
+      grep.map((pattern) => `--grep='${pattern}'`).join(' '),
       flags.timeout ? `--timeout=${flags.timeout}` : '--no-timeout',
       flags.parallel ? '--parallel' : '',
       flags.parallel && flags.jobs ? `--jobs=${flags.jobs}` : '',
       this.env.TEST_REPORTER ? `--reporter=${this.env.TEST_REPORTER}` : '',
-      ...requires.map(r => `--require=${r}`),
+      ...requires.map((r) => `--require=${r}`),
       ...files,
       flags['dry-run'] ? '--dry-run' : '',
-    ].filter(a => a.trim());
+    ].filter((a) => a.trim());
   }
 
   protected async getChangedTestFiles(dir: string, ext: string): Promise<string[]> {

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-module.exports = agent => {
+module.exports = (agent) => {
   if (fs.existsSync(path.join(agent.baseDir, 'logs/started'))) {
     process.exit(1);
   }

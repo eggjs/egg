@@ -18,7 +18,7 @@ describe('test/ModuleConfig.test.ts', () => {
       const config = ModuleConfigUtil.loadModuleConfigSync(
         path.join(__dirname, './fixtures/modules/dev-module-config'),
         undefined,
-        'dev'
+        'dev',
       );
       assert.deepStrictEqual(config, {
         mysql: { host: '127.0.0.1', port: 11306 },
@@ -28,10 +28,10 @@ describe('test/ModuleConfig.test.ts', () => {
     it('should load with configNames', async () => {
       ModuleConfigUtil.setConfigNames(['module.default', 'module.dev']);
       const config = await ModuleConfigUtil.loadModuleConfig(
-        path.join(__dirname, './fixtures/modules/dev-module-config')
+        path.join(__dirname, './fixtures/modules/dev-module-config'),
       );
       const configSync = ModuleConfigUtil.loadModuleConfigSync(
-        path.join(__dirname, './fixtures/modules/dev-module-config')
+        path.join(__dirname, './fixtures/modules/dev-module-config'),
       );
       assert.deepStrictEqual(config, {
         mysql: { host: '127.0.0.1', port: 11306 },
@@ -78,7 +78,7 @@ describe('test/ModuleConfig.test.ts', () => {
             ModuleConfigUtil.readModuleReference(fixturesPath);
           },
           /duplicate import of module reference/,
-          'did not throw with expected message'
+          'did not throw with expected message',
         );
       });
 

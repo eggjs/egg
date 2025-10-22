@@ -18,7 +18,7 @@ describe('test/import.test.ts', () => {
     it('should import file from typescript under development', () => {
       assert.equal(
         importResolve(path.join(__dirname, '../../../plugins/mock/app')),
-        path.join(__dirname, '../../../plugins/mock/src/app.ts')
+        path.join(__dirname, '../../../plugins/mock/src/app.ts'),
       );
     });
 
@@ -32,14 +32,14 @@ describe('test/import.test.ts', () => {
         importResolve('./index.js', {
           paths: [getFilepath('cjs')],
         }),
-        getFilepath('cjs/index.js')
+        getFilepath('cjs/index.js'),
       );
       assert.equal(importResolve(getFilepath('cjs/exports')), getFilepath('cjs/exports.js'));
       assert.equal(
         importResolve('./exports', {
           paths: [getFilepath('cjs')],
         }),
-        getFilepath('cjs/exports.js')
+        getFilepath('cjs/exports.js'),
       );
       assert.equal(importResolve(getFilepath('cjs-index')), getFilepath('cjs-index/index.cjs'));
       assert.equal(importResolve(getFilepath('cjs/extend')), getFilepath('cjs/extend/index.js'));
@@ -47,19 +47,19 @@ describe('test/import.test.ts', () => {
         importResolve('./extend', {
           paths: [getFilepath('cjs')],
         }),
-        getFilepath('cjs/extend/index.js')
+        getFilepath('cjs/extend/index.js'),
       );
       assert.equal(
         importResolve('../index', {
           paths: [getFilepath('cjs/extend')],
         }),
-        getFilepath('cjs/index.js')
+        getFilepath('cjs/index.js'),
       );
       assert.equal(
         importResolve('../../index', {
           paths: [getFilepath('cjs/extend/foo')],
         }),
-        getFilepath('cjs/index.js')
+        getFilepath('cjs/index.js'),
       );
     });
 
@@ -68,14 +68,14 @@ describe('test/import.test.ts', () => {
         importResolve('inject', {
           paths: [getFilepath('cjs')],
         }),
-        getFilepath('cjs/node_modules/inject/index.js')
+        getFilepath('cjs/node_modules/inject/index.js'),
       );
 
       assert.equal(
         importResolve('tsconfig-paths-demo/register', {
           paths: [getFilepath('cjs')],
         }),
-        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js')
+        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js'),
       );
     });
 
@@ -84,14 +84,14 @@ describe('test/import.test.ts', () => {
         importResolve('tsconfig-paths-demo/register', {
           paths: [getFilepath('cjs/node_modules/inject')],
         }),
-        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js')
+        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js'),
       );
 
       assert.equal(
         importResolve('tsconfig-paths-demo/register', {
           paths: [getFilepath('cjs/node_modules/@foo/bar')],
         }),
-        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js')
+        getFilepath('cjs/node_modules/tsconfig-paths-demo/register.js'),
       );
     });
 
@@ -110,7 +110,7 @@ describe('test/import.test.ts', () => {
           assert.match(err.stack ?? '', /Cannot find package/);
           assert.match(err.message, /Cannot find package/);
           return true;
-        }
+        },
       );
     });
 
@@ -129,7 +129,7 @@ describe('test/import.test.ts', () => {
         importResolve('./index.js', {
           paths: [getFilepath('esm')],
         }),
-        getFilepath('esm/index.js')
+        getFilepath('esm/index.js'),
       );
       assert.equal(importResolve(getFilepath('esm-index')), getFilepath('esm-index/index.mjs'));
       assert.equal(importResolve(getFilepath('esm/config/plugin')), getFilepath('esm/config/plugin.js'));
@@ -137,7 +137,7 @@ describe('test/import.test.ts', () => {
         importResolve('./config/plugin', {
           paths: [getFilepath('esm')],
         }),
-        getFilepath('esm/config/plugin.js')
+        getFilepath('esm/config/plugin.js'),
       );
       assert.throws(() => {
         importResolve(getFilepath('esm/config/plugin.default'));
@@ -149,7 +149,7 @@ describe('test/import.test.ts', () => {
         importResolve('inject', {
           paths: [getFilepath('esm')],
         }),
-        getFilepath('esm/node_modules/inject/index.js')
+        getFilepath('esm/node_modules/inject/index.js'),
       );
     });
 
@@ -171,14 +171,14 @@ describe('test/import.test.ts', () => {
         importResolve('egg/package.json', {
           paths: [getFilepath('framework-egg-default')],
         }),
-        getFilepath('framework-egg-default/node_modules/egg/package.json')
+        getFilepath('framework-egg-default/node_modules/egg/package.json'),
       );
     });
 
     it('should work on /path/app => /path/app.js', () => {
       assert.equal(
         importResolve(getFilepath('framework-egg-default/app')),
-        getFilepath('framework-egg-default/app.js')
+        getFilepath('framework-egg-default/app.js'),
       );
     });
   });
@@ -395,13 +395,13 @@ describe('test/import.test.ts', () => {
         await importModule(getFilepath('cjs/module-exports-null.js'), {
           importDefaultOnly: true,
         }),
-        null
+        null,
       );
       assert.equal(
         await importModule(getFilepath('cjs/module-exports-null'), {
           importDefaultOnly: true,
         }),
-        null
+        null,
       );
       assert.equal(
         (
@@ -409,7 +409,7 @@ describe('test/import.test.ts', () => {
             importDefaultOnly: false,
           })
         ).default,
-        null
+        null,
       );
     });
 
@@ -418,13 +418,13 @@ describe('test/import.test.ts', () => {
         await importModule(getFilepath('esm/export-default-null.js'), {
           importDefaultOnly: true,
         }),
-        null
+        null,
       );
       assert.equal(
         await importModule(getFilepath('esm/export-default-null'), {
           importDefaultOnly: true,
         }),
-        null
+        null,
       );
       assert.equal(
         (
@@ -432,7 +432,7 @@ describe('test/import.test.ts', () => {
             importDefaultOnly: false,
           })
         ).default,
-        null
+        null,
       );
     });
   });

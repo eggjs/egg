@@ -20,7 +20,7 @@ export class ControllerInfoUtil {
     const middlewares = MetadataUtil.initOwnArrayMetaData<EggProtoImplClass<IAdvice>>(
       CONTROLLER_AOP_MIDDLEWARES,
       clazz,
-      []
+      [],
     );
     middlewares.push(middleware);
   }

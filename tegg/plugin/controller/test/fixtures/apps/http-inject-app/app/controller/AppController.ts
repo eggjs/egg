@@ -23,7 +23,7 @@ export class AppController {
   async testRequest(
     @HTTPContext() ctx: EggContext,
     @HTTPRequest() request: Request,
-    @HTTPCookies() cookies: Cookies
+    @HTTPCookies() cookies: Cookies,
   ): Promise<{
     success: boolean;
     traceId: string;

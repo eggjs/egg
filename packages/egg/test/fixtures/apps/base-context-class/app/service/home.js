@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   return class HomeController extends app.Service {
     async show() {
       this.ctx.body = 'hello';

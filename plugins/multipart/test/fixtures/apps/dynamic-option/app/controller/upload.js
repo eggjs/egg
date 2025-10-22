@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class extends app.Controller {
     async index(ctx) {
       try {

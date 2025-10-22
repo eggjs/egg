@@ -30,7 +30,7 @@ export class EggContainerFactory {
         'registerContainerGetMethod %o %o, exists: %s',
         initType,
         method.toString(),
-        this.containerGetMethodMap.has(initType)
+        this.containerGetMethodMap.has(initType),
       );
     }
     this.containerGetMethodMap.set(initType, method);
@@ -69,7 +69,7 @@ export class EggContainerFactory {
         'getOrCreateEggObject without context, get eggObject:%o, from proto:%o, name:%s',
         obj.name,
         proto.name,
-        name
+        name,
       );
     }
     return obj;
@@ -83,7 +83,7 @@ export class EggContainerFactory {
   static async getOrCreateEggObjectFromClazz(
     clazz: EggProtoImplClass,
     name?: EggObjectName,
-    qualifiers?: QualifierInfo[]
+    qualifiers?: QualifierInfo[],
   ): Promise<EggObject> {
     let proto = PrototypeUtil.getClazzProto(clazz as EggProtoImplClass) as EggPrototype | undefined;
     const isMultiInstance = PrototypeUtil.isEggMultiInstancePrototype(clazz as EggProtoImplClass);
@@ -102,7 +102,7 @@ export class EggContainerFactory {
         name,
         qualifiers,
         proto,
-        isMultiInstance
+        isMultiInstance,
       );
       throw new Error(`can not get proto for clazz ${clazz.name}`);
     }

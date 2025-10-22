@@ -45,7 +45,7 @@ describe('test/ObjectUtil.test.ts', () => {
         // @ts-expect-error: readonly property in constructor
         /* test */ @Inject() readonly cache: unknown,
         // @ts-expect-error: readonly property in constructor
-        readonly v233 = 666
+        readonly v233 = 666,
       ) {}
     }
 

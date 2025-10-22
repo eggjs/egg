@@ -29,7 +29,7 @@ export class SingletonBarConstructorDepth2 {
   // @ts-expect-error: readonly property in constructor
   constructor(
     @Inject()
-    readonly singletonConstructorBarDepth3: SingletonConstructorBarDepth3
+    readonly singletonConstructorBarDepth3: SingletonConstructorBarDepth3,
   ) {}
 
   async hello(): Promise<string> {
@@ -44,7 +44,7 @@ export class ContextConstructorFoo {
   // @ts-expect-error: readonly property in constructor
   constructor(
     @Inject()
-    readonly singletonBarConstructorDepth2: SingletonBarConstructorDepth2
+    readonly singletonBarConstructorDepth2: SingletonBarConstructorDepth2,
   ) {}
 
   async hello(): Promise<string> {

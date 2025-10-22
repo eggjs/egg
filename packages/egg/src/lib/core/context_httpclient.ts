@@ -28,7 +28,7 @@ export class ContextHttpClient {
 
   async request<T = any>(
     url: HttpClientRequestURL,
-    options?: HttpClientRequestOptions
+    options?: HttpClientRequestOptions,
   ): Promise<HttpClientResponse<T>> {
     return await this.curl<T>(url, options);
   }

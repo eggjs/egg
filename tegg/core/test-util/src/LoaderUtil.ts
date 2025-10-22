@@ -33,7 +33,7 @@ export class LoaderUtil {
       unitPath: string;
       moduleName: string;
     }[],
-    optional = false
+    optional = false,
   ): GlobalModuleNode {
     const builder = GlobalModuleNodeBuilder.create(modulePath, optional);
     for (const clazz of clazzList) {
@@ -81,7 +81,7 @@ export class LoaderUtil {
         }
       }
       GlobalGraph.instance.addModuleNode(
-        LoaderUtil.buildModuleNode(modulePath, eggProtoClass, multiInstanceEggProtoClass)
+        LoaderUtil.buildModuleNode(modulePath, eggProtoClass, multiInstanceEggProtoClass),
       );
     }
     GlobalGraph.instance.build();

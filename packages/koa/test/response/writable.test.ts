@@ -16,7 +16,7 @@ describe('res.writable', () => {
       const datas: Buffer[] = [];
       client
         .on('error', done)
-        .on('data', data => datas.push(data))
+        .on('data', (data) => datas.push(data))
         .on('end', () => done(null, datas));
       setImmediate(() => client.write(buf));
       setImmediate(() => client.write(buf));
@@ -26,7 +26,7 @@ describe('res.writable', () => {
     it('should always be writable and respond to all requests', async () => {
       const app = new Koa();
       let count = 0;
-      app.use(ctx => {
+      app.use((ctx) => {
         count++;
         ctx.body = 'request ' + count + ', writable: ' + ctx.writable;
       });
@@ -55,7 +55,7 @@ describe('res.writable', () => {
     it('should not be writable', async () => {
       const app = new Koa();
       let writable = false;
-      app.use(async ctx => {
+      app.use(async (ctx) => {
         await sleep(1000);
         if (ctx.writable) {
           writable = true;
@@ -84,7 +84,7 @@ describe('res.writable', () => {
     it('should not be writable', async () => {
       const app = new Koa();
       let writable = false;
-      app.use(ctx => {
+      app.use((ctx) => {
         ctx.res.end();
         if (ctx.writable) {
           writable = true;

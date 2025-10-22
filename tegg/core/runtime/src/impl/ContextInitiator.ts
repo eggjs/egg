@@ -23,14 +23,14 @@ export class ContextInitiator {
     this.eggObjectInitRecorder.set(obj, true);
     const injectObjectProtos = ContextObjectGraph.getContextProto(obj.proto);
     await Promise.all(
-      injectObjectProtos.map(async injectObject => {
+      injectObjectProtos.map(async (injectObject) => {
         const proto = injectObject.proto;
         const loadUnit = LoadUnitFactory.getLoadUnitById(proto.loadUnitId);
         if (!loadUnit) {
           throw new Error(`can not find load unit: ${proto.loadUnitId}`);
         }
         await EggContainerFactory.getOrCreateEggObject(proto, injectObject.objName);
-      })
+      }),
     );
   }
 

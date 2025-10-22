@@ -11,7 +11,7 @@ describe('app.request', () => {
   const app2 = new Koa();
 
   it('should merge properties', () => {
-    app1.use(ctx => {
+    app1.use((ctx) => {
       assert.strictEqual(ctx.request.message, 'hello');
       ctx.status = 204;
     });
@@ -20,7 +20,7 @@ describe('app.request', () => {
   });
 
   it('should not affect the original prototype', () => {
-    app2.use(ctx => {
+    app2.use((ctx) => {
       assert.strictEqual(ctx.request.message, undefined);
       ctx.status = 204;
     });
@@ -30,7 +30,7 @@ describe('app.request', () => {
 
   it('should access ip work', () => {
     const app = new Koa();
-    app.use(ctx => {
+    app.use((ctx) => {
       ctx.status = 200;
       ctx.body = ctx.request.ip;
     });

@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.beforeStart(async () => {
     await Promise.resolve();
     app.beforeStartExecuted = true;

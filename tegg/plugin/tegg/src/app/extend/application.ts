@@ -93,7 +93,7 @@ export default class TEggPluginApplication {
   async getEggObject<T>(
     clazz: EggProtoImplClass<T>,
     name?: string,
-    qualifiers?: QualifierInfo | QualifierInfo[]
+    qualifiers?: QualifierInfo | QualifierInfo[],
   ): Promise<T> {
     if (qualifiers) {
       qualifiers = Array.isArray(qualifiers) ? qualifiers : [qualifiers];
@@ -101,7 +101,7 @@ export default class TEggPluginApplication {
     const eggObject = await EggContainerFactory.getOrCreateEggObjectFromClazz(
       clazz as EggProtoImplClass,
       name,
-      qualifiers as QualifierInfo[]
+      qualifiers as QualifierInfo[],
     );
     return eggObject.obj as T;
   }

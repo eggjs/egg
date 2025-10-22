@@ -79,15 +79,15 @@ export class TableModel<T = object> {
   }
 
   getPrimary(): IndexModel | undefined {
-    const index = this.indices.find(t => t.type === IndexType.PRIMARY);
+    const index = this.indices.find((t) => t.type === IndexType.PRIMARY);
     if (index) {
       return index;
     }
-    const primaryColumn = this.columns.filter(t => t.primaryKey === true);
+    const primaryColumn = this.columns.filter((t) => t.primaryKey === true);
     return new IndexModel({
       name: 'PRIMARY',
       type: IndexType.PRIMARY,
-      keys: primaryColumn.map(t => {
+      keys: primaryColumn.map((t) => {
         return {
           columnName: t.columnName,
           propertyName: t.propertyName,

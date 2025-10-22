@@ -75,7 +75,7 @@ export class Keygrip {
       .createHmac(this.#hash, key)
       .update(data)
       .digest('base64')
-      .replace(/\/|\+|=/g, x => {
+      .replace(/\/|\+|=/g, (x) => {
         return replacer[x];
       });
   }

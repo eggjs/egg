@@ -13,7 +13,7 @@ export type ValidateDecorator = (rules: ValidateRule[]) => MethodDecorator;
  * Validate decorator factory
  */
 export function ValidateFactory(
-  customHandler: (ctx: Context, data?: unknown, schema?: TSchema, customError?: CustomErrorMessage) => void
+  customHandler: (ctx: Context, data?: unknown, schema?: TSchema, customError?: CustomErrorMessage) => void,
 ): ValidateDecorator {
   return function Validate(rules: ValidateRule[]): MethodDecorator {
     return (_, __, descriptor: PropertyDescriptor): PropertyDescriptor => {

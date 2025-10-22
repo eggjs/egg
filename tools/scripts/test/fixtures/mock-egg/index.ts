@@ -59,12 +59,12 @@ export class Application {
 
   constructor(options: any) {
     console.log('Application', options);
-    process.once('exit', code => {
+    process.once('exit', (code) => {
       this.close()
         .then(() => {
           console.log('app close done');
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('app close failed: %s', error);
         });
       console.log('[app_worker] exit with code:%s', code);
@@ -92,7 +92,7 @@ export class Application {
 export class Agent {
   constructor(options: any) {
     console.log('Agent', options);
-    process.once('exit', code => {
+    process.once('exit', (code) => {
       console.log('[agent_worker] exit with code:%s', code);
     });
   }

@@ -79,7 +79,7 @@ describe('request(url)', () => {
       await once(server, 'listening');
       const url = 'http://localhost:' + (server.address() as AddressInfo).port;
       const test = request(url).get('/');
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         test.end(function (this: Test, err, res) {
           assert.equal(this, test);
           assert.equal(err, null);
@@ -147,7 +147,7 @@ describe('request(app)', () => {
         key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
         cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem')),
       },
-      app
+      app,
     );
 
     app.get('/', (_req, res) => {
@@ -605,8 +605,8 @@ describe('request(app)', () => {
         expect(err.message.replace(/[^a-zA-Z]/g, '')).toBe(
           "expected {\n  stringValue: 'foo',\n  numberValue: 3,\n  nestedObject: { innerString: 5 }\n} response body, got {\n  stringValue: 'foo',\n  numberValue: 3,\n  nestedObject: { innerString: '5' }\n}".replace(
             /[^a-zA-Z]/g,
-            ''
-          )
+            '',
+          ),
         ); // eslint-disable-line max-len
         shouldIncludeStackWithThisFile(err);
       }
@@ -1017,7 +1017,7 @@ describe('assert ordering by call order', () => {
       .get('/')
       .expect('hey')
       .expect(200)
-      .end(err => {
+      .end((err) => {
         assert(err instanceof Error);
         expect(err.message).toBe("expected 'hey' response body, " + 'got \'{"message":"something went wrong"}\'');
         shouldIncludeStackWithThisFile(err);
@@ -1037,7 +1037,7 @@ describe('assert ordering by call order', () => {
       .get('/')
       .expect(200)
       .expect('hey')
-      .end(err => {
+      .end((err) => {
         assert(err instanceof Error);
         expect(err.message).toBe('expected 200 "OK", got 500 "Internal Server Error"');
         shouldIncludeStackWithThisFile(err);
@@ -1057,7 +1057,7 @@ describe('assert ordering by call order', () => {
       .get('/')
       .expect('content-type', /html/)
       .expect('hello')
-      .end(err => {
+      .end((err) => {
         assert(err instanceof Error);
         expect(err.message).toBe('expected "content-type" matching /html/, ' + 'got "application/json; charset=utf-8"');
         shouldIncludeStackWithThisFile(err);
@@ -1073,10 +1073,10 @@ describe('assert ordering by call order', () => {
 
     request(app)
       .get('/')
-      .expect(res => {
+      .expect((res) => {
         res.body.first = 1;
       })
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.first === 1).toBe(true);
         res.body.second = 2;
       })
@@ -1096,7 +1096,7 @@ describe('assert ordering by call order', () => {
 
     request(app)
       .get('/')
-      .expect(res => {
+      .expect((res) => {
         res.body.first = 1;
       })
       .expect(200, (err, res) => {
@@ -1115,7 +1115,7 @@ describe('assert ordering by call order', () => {
     request(app)
       .get('/')
       .expect('X-Some-Header', 'Some value')
-      .expect(res => {
+      .expect((res) => {
         res.headers['x-some-header'] = '';
       })
       .expect('X-Some-Header', '');
@@ -1131,12 +1131,12 @@ describe('assert ordering by call order', () => {
     request(app)
       .get('/')
       .expect(/some body value/)
-      .expect(res => {
+      .expect((res) => {
         res.body.somebody = 'nobody';
       })
       .expect(/some body value/) // res.text should not be modified.
       .expect({ somebody: 'nobody' })
-      .expect(res => {
+      .expect((res) => {
         res.text = 'gone';
       })
       .expect('gone')
@@ -1275,7 +1275,7 @@ describe('request.get(url).query(vals) works as expected', function () {
     request(app)
       .get('/')
       .expect(400)
-      .then(res => {
+      .then((res) => {
         expect(res.body.promise).toBe(true);
       });
   });

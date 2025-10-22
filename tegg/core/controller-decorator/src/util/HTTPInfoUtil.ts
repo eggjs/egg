@@ -39,7 +39,7 @@ export class HTTPInfoUtil {
     const methodMap: HTTPMethodMethodMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_METHOD_MAP,
       clazz,
-      new Map()
+      new Map(),
     );
     methodMap.set(methodName, method);
   }
@@ -53,12 +53,12 @@ export class HTTPInfoUtil {
     paramType: HTTPParamType,
     parameterIndex: number,
     clazz: EggProtoImplClass,
-    methodName: string
+    methodName: string,
   ): void {
     const methodParamMap: HTTPMethodParamTypeMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PARAM_TYPE_MAP,
       clazz,
-      new Map()
+      new Map(),
     );
     const paramMap = MapUtil.getOrStore(methodParamMap, methodName, new Map());
     paramMap.set(parameterIndex, paramType);
@@ -67,7 +67,7 @@ export class HTTPInfoUtil {
   static getParamIndexList(clazz: EggProtoImplClass, methodName: string): number[] {
     const methodParamMap: HTTPMethodParamTypeMap | undefined = MetadataUtil.getMetaData(
       CONTROLLER_METHOD_PARAM_TYPE_MAP,
-      clazz
+      clazz,
     );
     const paramMap = methodParamMap?.get(methodName);
     if (!paramMap) {
@@ -79,11 +79,11 @@ export class HTTPInfoUtil {
   static getHTTPMethodParamType(
     parameterIndex: number,
     clazz: EggProtoImplClass,
-    methodName: string
+    methodName: string,
   ): HTTPParamType | undefined {
     const methodParamMap: HTTPMethodParamTypeMap | undefined = MetadataUtil.getMetaData(
       CONTROLLER_METHOD_PARAM_TYPE_MAP,
-      clazz
+      clazz,
     );
     const paramMap = methodParamMap?.get(methodName);
     return paramMap?.get(parameterIndex);
@@ -93,12 +93,12 @@ export class HTTPInfoUtil {
     paramName: string,
     parameterIndex: number,
     clazz: EggProtoImplClass,
-    methodName: string
+    methodName: string,
   ): void {
     const methodParamNameMap: HTTPMethodParamNameMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PARAM_NAME_MAP,
       clazz,
-      new Map()
+      new Map(),
     );
     const paramMap = MapUtil.getOrStore(methodParamNameMap, methodName, new Map());
     paramMap.set(parameterIndex, paramName);
@@ -107,11 +107,11 @@ export class HTTPInfoUtil {
   static getHTTPMethodParamName(
     parameterIndex: number,
     clazz: EggProtoImplClass,
-    methodName: string
+    methodName: string,
   ): string | undefined {
     const methodParamNameMap: HTTPMethodParamNameMap | undefined = MetadataUtil.getMetaData(
       CONTROLLER_METHOD_PARAM_NAME_MAP,
-      clazz
+      clazz,
     );
     const paramMap = methodParamNameMap?.get(methodName);
     return paramMap?.get(parameterIndex);
@@ -120,7 +120,7 @@ export class HTTPInfoUtil {
   static getHTTPMethodPriority(clazz: EggProtoImplClass, methodName: string): number | undefined {
     const methodPriorityMap: HTTPMethodPriorityMap | undefined = MetadataUtil.getMetaData(
       CONTROLLER_METHOD_PRIORITY,
-      clazz
+      clazz,
     );
     return methodPriorityMap?.get(methodName);
   }
@@ -129,7 +129,7 @@ export class HTTPInfoUtil {
     const methodPriorityMap: HTTPMethodPriorityMap = MetadataUtil.initOwnMapMetaData(
       CONTROLLER_METHOD_PRIORITY,
       clazz,
-      new Map()
+      new Map(),
     );
     methodPriorityMap.set(methodName, priority);
   }

@@ -42,7 +42,7 @@ export class DalModuleLoadUnitHook implements LifecycleHook<LoadUnitLifecycleCon
           }
           throw e;
         }
-      })
+      }),
     );
   }
 }

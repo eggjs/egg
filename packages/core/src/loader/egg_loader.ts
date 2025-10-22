@@ -102,7 +102,7 @@ export class EggLoader {
       } else {
         this.logger.info(
           '[@eggjs/core/egg_loader] skip register "tsconfig-paths" because tsconfig.json not exists at %s',
-          tsConfigFile
+          tsConfigFile,
         );
       }
     }
@@ -350,7 +350,7 @@ export class EggLoader {
       }
       if (this.app.deprecate) {
         this.app.deprecate(
-          'Symbol.for(\'egg#eggPath\') is deprecated, please use "override the `customEggPaths()` method" instead'
+          'Symbol.for(\'egg#eggPath\') is deprecated, please use "override the `customEggPaths()` method" instead',
         );
       }
       assert(typeof eggPath === 'string', "Symbol.for('egg#eggPath') should be string");
@@ -450,7 +450,7 @@ export class EggLoader {
           '[egg/core] Plugin %o is disabled by env unmatched, require env(%o) but got env is %o',
           name,
           plugin.env,
-          env
+          env,
         );
         plugin.enable = false;
         continue;
@@ -485,18 +485,18 @@ export class EggLoader {
     const appPlugins = await this.readPluginConfigs(path.join(this.options.baseDir, 'config/plugin.default'));
     debug(
       'Loaded app plugins: %j',
-      Object.keys(appPlugins).map(k => `${k}:${appPlugins[k].enable}`)
+      Object.keys(appPlugins).map((k) => `${k}:${appPlugins[k].enable}`),
     );
     return appPlugins;
   }
 
   protected async loadEggPlugins(): Promise<Record<string, EggPluginInfo>> {
     // loader plugins from framework
-    const eggPluginConfigPaths = this.eggPaths.map(eggPath => path.join(eggPath, 'config/plugin.default'));
+    const eggPluginConfigPaths = this.eggPaths.map((eggPath) => path.join(eggPath, 'config/plugin.default'));
     const eggPlugins = await this.readPluginConfigs(eggPluginConfigPaths);
     debug(
       'Loaded egg plugins: %j',
-      Object.keys(eggPlugins).map(k => `${k}:${eggPlugins[k].enable}`)
+      Object.keys(eggPlugins).map((k) => `${k}:${eggPlugins[k].enable}`),
     );
     return eggPlugins;
   }
@@ -638,7 +638,7 @@ export class EggLoader {
       // pluginName is configured in config/plugin.js
       // pluginConfigName is pkg.eggPlugin.name
       logger.warn(
-        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`
+        `[@eggjs/core/egg_loader] pluginName(${plugin.name}) is different from pluginConfigName(${config.name})`,
       );
     }
 
@@ -657,7 +657,7 @@ export class EggLoader {
   protected getOrderPlugins(
     allPlugins: Record<string, EggPluginInfo>,
     enabledPluginNames: string[],
-    appPlugins: Record<string, EggPluginInfo>
+    appPlugins: Record<string, EggPluginInfo>,
   ): EggPluginInfo[] {
     // no plugins enabled
     if (enabledPluginNames.length === 0) {
@@ -670,7 +670,7 @@ export class EggLoader {
     // catch error when result.sequence is empty
     if (result.sequence.length === 0) {
       const err = new Error(
-        `sequencify plugins has problem, missing: [${result.missingTasks}], recursive: [${result.recursiveDependencies}]`
+        `sequencify plugins has problem, missing: [${result.missingTasks}], recursive: [${result.recursiveDependencies}]`,
       );
       // find plugins which is required by the missing plugin
       for (const missName of result.missingTasks) {
@@ -715,22 +715,22 @@ export class EggLoader {
     //   - monitor required by [rpcClient]
     //   - diamond required by [rpcClient]
     if (implicitEnabledPlugins.length > 0) {
-      let message = implicitEnabledPlugins.map(name => `  - ${name} required by [${requireMap[name]}]`).join('\n');
+      let message = implicitEnabledPlugins.map((name) => `  - ${name} required by [${requireMap[name]}]`).join('\n');
       this.options.logger.info(`Following plugins will be enabled implicitly.\n${message}`);
 
       // should warn when the plugin is disabled by app
       const disabledPlugins = implicitEnabledPlugins.filter(
-        name => appPlugins[name] && appPlugins[name].enable === false
+        (name) => appPlugins[name] && appPlugins[name].enable === false,
       );
       if (disabledPlugins.length > 0) {
-        message = disabledPlugins.map(name => `  - ${name} required by [${requireMap[name]}]`).join('\n');
+        message = disabledPlugins.map((name) => `  - ${name} required by [${requireMap[name]}]`).join('\n');
         this.options.logger.warn(
-          `Following plugins will be enabled implicitly that is disabled by application.\n${message}`
+          `Following plugins will be enabled implicitly that is disabled by application.\n${message}`,
         );
       }
     }
 
-    return result.sequence.map(name => allPlugins[name]);
+    return result.sequence.map((name) => allPlugins[name]);
   }
 
   protected getLookupDirs(): Set<string> {
@@ -760,7 +760,7 @@ export class EggLoader {
     if (plugin.package) {
       assert(
         isValidatePackageName(plugin.package),
-        `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`
+        `plugin ${plugin.name} invalid, use 'path' instead of package: "${plugin.package}"`,
       );
     }
     return this.#resolvePluginPath(plugin);
@@ -809,7 +809,7 @@ export class EggLoader {
                   };
             };
       };
-    }
+    },
   ): Promise<string> {
     let realPluginPath = pluginPath;
     const exports = pluginPkg.eggPlugin?.exports;
@@ -862,7 +862,7 @@ export class EggLoader {
         '[formatPluginPathFromPackageJSON] resolve plugin path from %o to %o, defaultExport: %o',
         pluginPath,
         realPluginPath,
-        defaultExport
+        defaultExport,
       );
     }
     return realPluginPath;
@@ -884,7 +884,7 @@ export class EggLoader {
           '[@eggjs/core] plugin %s has been defined that is %j, but you define again in %s',
           name,
           targetPlugin,
-          plugin.from
+          plugin.from,
         );
       }
       if (plugin.path || plugin.package) {
@@ -984,7 +984,7 @@ export class EggLoader {
     dirpath: string,
     filename: string,
     extraInject: object | undefined,
-    type: EggDirInfoType
+    type: EggDirInfoType,
   ): Promise<Record<string, any> | undefined> {
     const isPlugin = type === 'plugin';
     const isApp = type === 'app';
@@ -1111,7 +1111,7 @@ export class EggLoader {
    * @private
    */
   protected getExtendFilePaths(name: string): string[] {
-    return this.getLoadUnits().map(unit => path.join(unit.path, 'app/extend', name));
+    return this.getLoadUnits().map((unit) => path.join(unit.path, 'app/extend', name));
   }
 
   /**
@@ -1157,7 +1157,7 @@ export class EggLoader {
       }
       const properties = Object.getOwnPropertyNames(ext)
         .concat(Object.getOwnPropertySymbols(ext) as unknown as string[])
-        .filter(name => name !== 'constructor'); // ignore class constructor for extend
+        .filter((name) => name !== 'constructor'); // ignore class constructor for extend
 
       for (const property of properties) {
         if (mergeRecord.has(property)) {
@@ -1165,7 +1165,7 @@ export class EggLoader {
             'Property: "%s" already exists in "%s"，it will be redefined by "%s"',
             property,
             mergeRecord.get(property),
-            filepath
+            filepath,
           );
         }
 
@@ -1285,7 +1285,7 @@ export class EggLoader {
   async loadService(options?: Partial<ContextLoaderOptions>): Promise<void> {
     this.timing.start('Load Service');
     // 载入到 app.serviceClasses
-    const servicePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/service'));
+    const servicePaths = this.getLoadUnits().map((unit) => path.join(unit.path, 'app/service'));
     options = {
       call: true,
       caseStyle: CaseStyle.lower,
@@ -1324,7 +1324,7 @@ export class EggLoader {
     const app = this.app;
 
     // load middleware to app.middleware
-    const middlewarePaths = this.getLoadUnits().map(unit => path.join(unit.path, 'app/middleware'));
+    const middlewarePaths = this.getLoadUnits().map((unit) => path.join(unit.path, 'app/middleware'));
     opt = {
       call: false,
       override: true,
@@ -1470,7 +1470,7 @@ export class EggLoader {
       assert(loaderConfig.directory, `directory is required for config.customLoader.${property}`);
       let directory: string | string[];
       if (loaderConfig.loadunit === true) {
-        directory = this.getLoadUnits().map(unit => path.join(unit.path, loaderConfig.directory));
+        directory = this.getLoadUnits().map((unit) => path.join(unit.path, loaderConfig.directory));
       } else {
         directory = path.join(this.appInfo.baseDir, loaderConfig.directory);
       }
@@ -1613,7 +1613,7 @@ export class EggLoader {
   async loadToApp(
     directory: string | string[],
     property: string | symbol,
-    options?: Omit<FileLoaderOptions, 'inject' | 'target'>
+    options?: Omit<FileLoaderOptions, 'inject' | 'target'>,
   ): Promise<void> {
     const target = {};
     Reflect.set(this.app, property, target);
@@ -1640,7 +1640,7 @@ export class EggLoader {
   async loadToContext(
     directory: string | string[],
     property: string | symbol,
-    options?: Omit<ContextLoaderOptions, 'inject' | 'property'>
+    options?: Omit<ContextLoaderOptions, 'inject' | 'property'>,
   ): Promise<void> {
     const loadOptions: ContextLoaderOptions = {
       ...options,
@@ -1715,7 +1715,7 @@ function isValidatePackageName(name: string) {
 // support pathMatching on middleware
 function wrapMiddleware(
   mw: MiddlewareFunc,
-  options: PathMatchingOptions & { enable?: boolean }
+  options: PathMatchingOptions & { enable?: boolean },
 ): MiddlewareFunc | null {
   // support options.enable
   if (options.enable === false) {
@@ -1768,7 +1768,7 @@ function wrapControllerClass(Controller: typeof BaseContextClass, fullPath: stri
         const controllerMethodName = `${Controller.name}.${key}`;
         if (isGeneratorFunction(d.value)) {
           throw new TypeError(
-            `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`
+            `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`,
           );
         }
         ret[key] = controllerMethodToMiddleware(Controller, key);
@@ -1801,7 +1801,7 @@ function wrapObject(obj: Record<string, any>, fullPath: string, prefix?: string)
     const item = obj[key];
     if (isGeneratorFunction(item)) {
       throw new TypeError(
-        `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`
+        `Support for generators was removed, controller \`${controllerMethodName}\`, fullpath: ${fullPath}`,
       );
     }
     if (typeof item === 'function') {

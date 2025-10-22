@@ -18,7 +18,7 @@ export const crosscutAdviceParams = {
     clazz: Hello,
     methodName: 'hello',
   },
-  { adviceParams: crosscutAdviceParams }
+  { adviceParams: crosscutAdviceParams },
 )
 @Advice({
   accessLevel: AccessLevel.PUBLIC,

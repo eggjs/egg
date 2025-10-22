@@ -2,20 +2,20 @@
 
 module.exports = function (app) {
   const done = app.readyCallback('app_subscribe_data');
-  app.subClient.subscribe('mock-data', val => {
+  app.subClient.subscribe('mock-data', (val) => {
     app.mockData = val;
     done();
   });
 
   const done1 = app.readyCallback('app_subscribe_not_exist_data');
-  app.subClient.subscribe('not-exist-data', val => {
+  app.subClient.subscribe('not-exist-data', (val) => {
     app.notExistData = val;
     done1();
   });
 
   app.get('/', async function () {
-    const val = await new Promise(resolve => {
-      app.subClient.subscribe('mock-data', val => {
+    const val = await new Promise((resolve) => {
+      app.subClient.subscribe('mock-data', (val) => {
         resolve(val);
       });
     });
@@ -27,8 +27,8 @@ module.exports = function (app) {
   });
 
   app.get('/not-exist', async function () {
-    const _val = await new Promise(resolve => {
-      app.subClient.subscribe('not-exist-data', val => {
+    const _val = await new Promise((resolve) => {
+      app.subClient.subscribe('not-exist-data', (val) => {
         resolve(val);
       });
     });

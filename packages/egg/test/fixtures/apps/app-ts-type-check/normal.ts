@@ -60,7 +60,7 @@ app.logger.info(app.Controller);
 app.controller.test().then(() => {});
 
 async function main() {
-  await app.runInAnonymousContextScope(async ctx => {
+  await app.runInAnonymousContextScope(async (ctx) => {
     await ctx.httpclient.request('url', {});
     await ctx.httpclient.request('url');
     await ctx.httpclient.curl('url', {});
@@ -91,18 +91,18 @@ agent.logger.info(agent.Controller);
 
 async function request<T = any>(
   url: HttpClientRequestURL,
-  options: HttpClientRequestOptions
+  options: HttpClientRequestOptions,
 ): Promise<HttpClientResponse<T>> {
   const response = await agent.httpclient.request<T>(url, options);
   return response as HttpClientResponse<T>;
 }
 
-request<{ name: 'string' }>('http://127.0.0.1', {}).then(response => {
+request<{ name: 'string' }>('http://127.0.0.1', {}).then((response) => {
   console.log(response.data.name);
 });
 
 // single process mode
-start({ baseDir: __dirname, ignoreWarning: true }).then(app => {
+start({ baseDir: __dirname, ignoreWarning: true }).then((app) => {
   const port = 1002;
   app.logger.info('123');
   app.on('egg-ready', () => {});
@@ -198,7 +198,7 @@ config.customLogger = {
     file: './test.log',
     jsonFile: './test.json',
     formatter: (meta: any) => meta.date + ' ' + meta.level + ' ' + meta.pid + ' ' + meta.message,
-    contextFormatter: meta => JSON.stringify(meta),
+    contextFormatter: (meta) => JSON.stringify(meta),
     buffer: true,
     eol: '\r\n',
   },

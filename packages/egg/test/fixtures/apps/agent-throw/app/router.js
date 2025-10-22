@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/agent-throw', async function () {
     app.messenger.broadcast('agent-throw');
     this.body = 'done';

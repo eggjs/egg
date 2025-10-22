@@ -47,7 +47,7 @@ exports.urllib = async function () {
     dataType,
     data,
   });
-  if (method === 'request') r = r.then(d => d);
+  if (method === 'request') r = r.then((d) => d);
   const r1 = await r;
   const r2 = await this.app.httpclient[method](requestUrl, {
     method: 'POST',
@@ -63,7 +63,7 @@ exports.urllib = async function () {
   };
 };
 
-exports.streaming = async ctx => {
+exports.streaming = async (ctx) => {
   const url = 'http://' + ctx.host;
   const response = await ctx.httpclient.request(url + '/mock_url', {
     method: 'GET',

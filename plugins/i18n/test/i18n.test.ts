@@ -297,7 +297,7 @@ describe('test/i18n.test.ts', () => {
           .set('Cookie', 'locale=zh-cn')
           .expect(200)
           .expect('<li>邮箱: </li>\n<li>fengmk2，今天过得如何？</li>\n<li>foo bar</li>\n')
-          .expect(res => {
+          .expect((res) => {
             // cookie should not change
             const setCookies = res.headers['set-cookie'];
             expect(setCookies).not.toContain('locale=');
@@ -315,17 +315,17 @@ describe('test/i18n.test.ts', () => {
       expect(ctx.response.headers['set-cookie']).toBeDefined();
       expect(ctx.response.headers['set-cookie']).toHaveLength(1);
       expect(ctx.response.headers['set-cookie']![0]).toMatch(
-        /^locale=zh-cn; path=\/; max-age=31557600; expires=[^;]+ GMT$/
+        /^locale=zh-cn; path=\/; max-age=31557600; expires=[^;]+ GMT$/,
       );
       ctx.locale = 'en-us';
       expect(ctx.response.headers['set-cookie']).toHaveLength(1);
       expect(ctx.response.headers['set-cookie']![0]).toMatch(
-        /^locale=en-us; path=\/; max-age=31557600; expires=[^;]+ GMT$/
+        /^locale=en-us; path=\/; max-age=31557600; expires=[^;]+ GMT$/,
       );
       expect(ctx.locale).toBe('en-us');
       expect(ctx.response.headers['set-cookie']).toHaveLength(1);
       expect(ctx.response.headers['set-cookie']![0]).toMatch(
-        /^locale=en-us; path=\/; max-age=31557600; expires=[^;]+ GMT$/
+        /^locale=en-us; path=\/; max-age=31557600; expires=[^;]+ GMT$/,
       );
     });
   });

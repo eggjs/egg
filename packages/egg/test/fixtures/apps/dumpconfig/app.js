@@ -7,7 +7,7 @@ function readJSON(p) {
   return JSON.parse(fs.readFileSync(p));
 }
 
-module.exports = app => {
+module.exports = (app) => {
   const baseDir = app.config.baseDir;
   let json;
 

@@ -176,7 +176,7 @@ describe.sequential('test/egg.test.ts', () => {
       assertFile(path.join(baseDir, `run/application_timing_${process.pid}.json`));
       assertFile(
         path.join(baseDir, 'logs/dumptiming-timeout/common-error.log'),
-        /unfinished timing item: {"name":"Did Load in app.js:didLoad"/
+        /unfinished timing item: {"name":"Did Load in app.js:didLoad"/,
       );
       await app.close();
     });
@@ -190,7 +190,7 @@ describe.sequential('test/egg.test.ts', () => {
       await scheduler.wait(100);
       assertFile(
         path.join(baseDir, 'logs/dumptiming-slowBootActionMinDuration/egg-web.log'),
-        /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/
+        /\[slow-boot-action] #\d+ \d+ms, name: Did Load in app\.js:didLoad/,
       );
       await app.close();
     });
@@ -284,7 +284,7 @@ describe.sequential('test/egg.test.ts', () => {
             dir: logDir,
           },
           rundir: runDir,
-        })
+        }),
       );
 
       app = createApp('apps/config-env');
@@ -394,7 +394,7 @@ describe.sequential('test/egg.test.ts', () => {
 
       const logPath = path.join(
         getFilepath('apps/base-context-class'),
-        'logs/base-context-class/base-context-class-web.log'
+        'logs/base-context-class/base-context-class-web.log',
       );
       const log = fs.readFileSync(logPath, 'utf8');
       assert(log.match(/INFO .*? \[service\.home\] appname: base-context-class/));

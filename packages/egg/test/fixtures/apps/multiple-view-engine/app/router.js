@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/render-ejs', 'view.renderEjs');
   app.get('/render-nunjucks', 'view.renderNunjucks');
   app.get('/render-with-options', 'view.renderWithOptions');

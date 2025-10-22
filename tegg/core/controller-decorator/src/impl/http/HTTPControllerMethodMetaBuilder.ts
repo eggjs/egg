@@ -47,7 +47,7 @@ export class HTTPControllerMethodMetaBuilder {
       if (!paramType) {
         const classDesc = ClassUtil.classDescription(this.clazz);
         throw new Error(
-          `${classDesc}:${this.methodName} param ${i} has no http param type, Please add @HTTPBody, @HTTPParam, @HTTPQuery, @HTTPQueries`
+          `${classDesc}:${this.methodName} param ${i} has no http param type, Please add @HTTPBody, @HTTPParam, @HTTPQuery, @HTTPQueries`,
         );
       }
     }
@@ -118,7 +118,7 @@ export class HTTPControllerMethodMetaBuilder {
       priority,
       needAcl,
       aclCode,
-      hosts
+      hosts,
     );
   }
 }

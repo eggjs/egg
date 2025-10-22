@@ -26,7 +26,7 @@ describe('ctx.toJSON()', () => {
           'content-type': 'text/plain',
         },
       },
-      req
+      req,
     );
 
     assert.deepEqual(
@@ -38,7 +38,7 @@ describe('ctx.toJSON()', () => {
           'content-length': '10',
         },
       },
-      res
+      res,
     );
   });
 });

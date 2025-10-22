@@ -14,7 +14,7 @@ export class AttributeMeta {
     allowNull: boolean,
     autoIncrement: boolean,
     primary: boolean,
-    unique: boolean
+    unique: boolean,
   ) {
     this.dataType = dataType;
     this.propertyName = propertyName;

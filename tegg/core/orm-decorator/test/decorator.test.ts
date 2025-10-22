@@ -40,7 +40,7 @@ describe('test/decorator.test.ts', () => {
             options: { unique: true },
           },
         ],
-      ])
+      ]),
     );
     assert.deepStrictEqual(indices, [
       {

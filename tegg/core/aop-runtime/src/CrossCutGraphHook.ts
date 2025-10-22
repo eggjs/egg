@@ -14,7 +14,7 @@ export function crossCutGraphHook(globalGraph: GlobalGraph): void {
           crossCuttedModuleNode,
           crossCuttedProtoNode,
           crossCutProtoNode,
-          crossCutProtoNode.val.proto.name
+          crossCutProtoNode.val.proto.name,
         );
       }
     }

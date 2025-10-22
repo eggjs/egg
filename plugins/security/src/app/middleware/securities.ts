@@ -14,8 +14,8 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
     typeof options.defaultMiddleware === 'string'
       ? (options.defaultMiddleware
           .split(',')
-          .map(m => m.trim())
-          .filter(m => !!m) as SecurityMiddlewareName[])
+          .map((m) => m.trim())
+          .filter((m) => !!m) as SecurityMiddlewareName[])
       : options.defaultMiddleware;
 
   if (options.match || options.ignore) {
@@ -34,13 +34,13 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
       app.coreLogger.warn(
         '[egg-security] Please use `config.security.%s = { enable: false }` instead of `config.security.%s = false`',
         middlewareName,
-        middlewareName
+        middlewareName,
       );
     }
 
     assert(
       opt === false || typeof opt === 'object',
-      `config.security.${middlewareName} must be an object, or false(if you turn it off)`
+      `config.security.${middlewareName} must be an object, or false(if you turn it off)`,
     );
 
     if (opt === false || (opt && opt.enable === false)) {
@@ -54,13 +54,13 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
     // use opt.match first (compatibility)
     if (opt.match && opt.ignore) {
       app.coreLogger.warn(
-        '[@eggjs/security/middleware/securities] `options.match` and `options.ignore` are both set, using `options.match`'
+        '[@eggjs/security/middleware/securities] `options.match` and `options.ignore` are both set, using `options.match`',
       );
       opt.ignore = undefined;
     }
     if (!opt.ignore && opt.blackUrls) {
       app.deprecate(
-        '[@eggjs/security/middleware/securities] Please use `config.security.xframe.ignore` instead, `config.security.xframe.blackUrls` will be removed very soon'
+        '[@eggjs/security/middleware/securities] Please use `config.security.xframe.ignore` instead, `config.security.xframe.blackUrls` will be removed very soon',
       );
       opt.ignore = opt.blackUrls;
     }
@@ -75,7 +75,7 @@ export default (_: unknown, app: Application): MiddlewareFunc => {
 
   app.coreLogger.info(
     '[@eggjs/security/middleware/securities] compose %d middlewares into one security middleware',
-    middlewares.length
+    middlewares.length,
   );
   return compose(middlewares);
 };

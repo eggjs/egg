@@ -67,7 +67,7 @@ describe('test/lib/plugins/watcher.test.ts', () => {
         .httpRequest()
         .get('/agent-msg')
         .expect(200)
-        .expect(res => {
+        .expect((res) => {
           const lastCount = count;
           count = parseInt(res.text);
           assert(count > lastCount);

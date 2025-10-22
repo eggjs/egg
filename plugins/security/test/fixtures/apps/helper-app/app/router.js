@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   app.get('/escape', async function () {
     this.body = this.helper.escape('&"\'<>_-aA') === '&amp;&quot;&#39;&lt;&gt;_-aA';
   });

@@ -1,4 +1,4 @@
-module.exports = agent => {
+module.exports = (agent) => {
   const agentBeforeReadyTracers = [];
   const agentAfterReadyTracers = [];
 

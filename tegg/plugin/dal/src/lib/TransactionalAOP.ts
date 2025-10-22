@@ -15,7 +15,7 @@ export interface TransactionalParams {
 export class TransactionalAOP implements IAdvice<EggProtoImplClass, TransactionalParams> {
   public async around(
     ctx: AdviceContext<EggProtoImplClass, TransactionalParams>,
-    next: () => Promise<any>
+    next: () => Promise<any>,
   ): Promise<void> {
     const { propagation, dataSourceGetter } = ctx.adviceParams!;
     const dataSource = dataSourceGetter();

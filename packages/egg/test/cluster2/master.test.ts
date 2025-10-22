@@ -91,7 +91,7 @@ describe.skipIf(process.version.startsWith('v24'))('test/cluster2/master.test.ts
         app.expect('stderr', /matches ignore list/);
         app.notExpect('stdout', /app_worker#1:\d+ disconnect/);
       });
-    }
+    },
   );
 
   describe('Master start fail', () => {
@@ -99,7 +99,7 @@ describe.skipIf(process.version.startsWith('v24'))('test/cluster2/master.test.ts
 
     afterAll(() => master.close());
 
-    it('should master exit with 1', done => {
+    it('should master exit with 1', (done) => {
       mm.consoleLevel('NONE');
       master = cluster('apps/worker-die');
       master.coverage(false);

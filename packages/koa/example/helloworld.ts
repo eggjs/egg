@@ -2,7 +2,7 @@ import Koa from '../src/index.ts';
 
 const app = new Koa();
 
-app.use(async ctx => {
+app.use(async (ctx) => {
   ctx.body = 'Hello World, TypeScript!';
 });
 

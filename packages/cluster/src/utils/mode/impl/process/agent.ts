@@ -66,7 +66,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
       '[master] agent_worker#%s:%s start with clusterPort:%s',
       agentWorker.id,
       agentWorker.workerId,
-      this.options.clusterPort
+      this.options.clusterPort,
     );
 
     // send debug message
@@ -95,7 +95,7 @@ export class AgentProcessUtils extends BaseAgentUtils {
       this.messenger.send(msg);
     });
     // logger error event
-    agentProcess.on('error', err => {
+    agentProcess.on('error', (err) => {
       err.name = 'AgentWorkerError';
       this.logger.error(new ClusterAgentWorkerError(agentWorker.id, agentWorker.workerId, agentWorker.status, err));
     });

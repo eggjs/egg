@@ -2,7 +2,7 @@
 
 const path = require('path');
 
-module.exports = info => {
+module.exports = (info) => {
   return {
     logger: {
       buffer: false,

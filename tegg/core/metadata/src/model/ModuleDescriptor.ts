@@ -27,17 +27,17 @@ export class ModuleDescriptorDumper {
       `"unitPath": "${moduleDescriptor.unitPath}",` +
       (typeof moduleDescriptor.optional !== 'undefined' ? `"optional": ${moduleDescriptor.optional},` : '') +
       `"clazzList": [${moduleDescriptor.clazzList
-        .map(t => {
+        .map((t) => {
           return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
         })
         .join(',')}],` +
       `"multiInstanceClazzList": [${moduleDescriptor.multiInstanceClazzList
-        .map(t => {
+        .map((t) => {
           return ModuleDescriptorDumper.stringifyClazz(t, moduleDescriptor);
         })
         .join(',')}],` +
       `"protos": [${moduleDescriptor.protos
-        .map(t => {
+        .map((t) => {
           return JSON.stringify(t);
         })
         .join(',')}]` +

@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app) => {
   return {
     async index(ctx) {
       if (ctx.get('x-traceid')) {

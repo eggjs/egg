@@ -85,7 +85,7 @@ export async function startLocalServer(): Promise<string> {
 
   let retry = false;
   const app = new Koa();
-  app.use(async ctx => {
+  app.use(async (ctx) => {
     if (ctx.path === '/get_headers') {
       ctx.body = ctx.request.headers;
       return;

@@ -94,22 +94,22 @@ export class Lifecycle extends EventEmitter {
     const eggReadyTimeoutEnv = Number.parseInt(process.env.EGG_READY_TIMEOUT_ENV || '10000');
     assert(
       Number.isInteger(eggReadyTimeoutEnv),
-      `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`
+      `process.env.EGG_READY_TIMEOUT_ENV ${process.env.EGG_READY_TIMEOUT_ENV} should be able to parseInt.`,
     );
     this.readyTimeout = eggReadyTimeoutEnv;
 
     this.#initReady();
-    this.on('ready_stat', data => {
+    this.on('ready_stat', (data) => {
       this.logger.info('[egg/core/lifecycle:ready_stat] end ready task %s, remain %j', data.id, data.remain);
-    }).on('ready_timeout', id => {
+    }).on('ready_timeout', (id) => {
       this.logger.warn(
         '[egg/core/lifecycle:ready_timeout] %s seconds later %s was still unable to finish.',
         this.readyTimeout / 1000,
-        id
+        id,
       );
     });
 
-    this.ready(err => {
+    this.ready((err) => {
       this.triggerDidReady(err);
       debug('app ready');
       this.timing.end(`${this.options.app.type} Start`);
@@ -181,7 +181,7 @@ export class Lifecycle extends EventEmitter {
     debug('%s init lifecycle', this.app.type);
     assert(this.#init === false, 'lifecycle have been init');
     this.#init = true;
-    this.#boots = this.#bootHooks.map(BootHootOrBootClass => {
+    this.#boots = this.#bootHooks.map((BootHootOrBootClass) => {
       let instance = BootHootOrBootClass as ILifecycleBoot;
       if (isClass(BootHootOrBootClass)) {
         instance = new BootHootOrBootClass(this.app);

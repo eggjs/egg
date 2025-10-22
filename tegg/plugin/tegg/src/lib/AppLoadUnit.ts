@@ -45,10 +45,10 @@ export class AppLoadUnit implements LoadUnit {
     if (debug.enabled) {
       debug(
         'init, get clazzList:%j, from unitPath:%o:%o:%o',
-        clazzList.map(t => t.name),
+        clazzList.map((t) => t.name),
         this.type,
         this.name,
-        this.unitPath
+        this.unitPath,
       );
     }
     for (const clazz of clazzList) {
@@ -67,7 +67,7 @@ export class AppLoadUnit implements LoadUnit {
           value: this.name,
         },
       ];
-      defaultQualifier.forEach(qualifier => {
+      defaultQualifier.forEach((qualifier) => {
         QualifierUtil.addProtoQualifier(clazz, qualifier.attribute, qualifier.value);
       });
       const protos = await EggPrototypeCreatorFactory.createProto(clazz, this);
@@ -78,12 +78,12 @@ export class AppLoadUnit implements LoadUnit {
   }
 
   containPrototype(proto: EggPrototype): boolean {
-    return !!this.protoMap.get(proto.name)?.find(t => t === proto);
+    return !!this.protoMap.get(proto.name)?.find((t) => t === proto);
   }
 
   getEggPrototype(name: string, qualifiers: QualifierInfo[]): EggPrototype[] {
     const protos = this.protoMap.get(name);
-    return protos?.filter(proto => proto.verifyQualifiers(qualifiers)) || [];
+    return protos?.filter((proto) => proto.verifyQualifiers(qualifiers)) || [];
   }
 
   registerEggPrototype(proto: EggPrototype): void {

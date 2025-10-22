@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   return class xxx extends app.BaseContextClass {
     async getPathname() {
       return this.pathName;

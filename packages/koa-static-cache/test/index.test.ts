@@ -30,8 +30,8 @@ app.use(
         return !file.includes('node_modules');
       },
     },
-    files
-  )
+    files,
+  ),
 );
 
 const server = http.createServer(app.callback());
@@ -44,7 +44,7 @@ app2.use(
     filter(file: string) {
       return !file.includes('node_modules');
     },
-  })
+  }),
 );
 const server2 = http.createServer(app2.callback());
 
@@ -56,7 +56,7 @@ app3.use(
     filter(file: string) {
       return !file.includes('node_modules');
     },
-  })
+  }),
 );
 const server3 = http.createServer(app3.callback());
 
@@ -69,7 +69,7 @@ app4.use(
       return !file.includes('node_modules');
     },
     files: files4,
-  })
+  }),
 );
 
 const app5 = new Koa();
@@ -81,7 +81,7 @@ app5.use(
     filter(file: string) {
       return !file.includes('node_modules');
     },
-  })
+  }),
 );
 const server5 = http.createServer(app5.callback());
 
@@ -100,7 +100,7 @@ describe('cacheControl function', () => {
         }
         return 'public, max-age=0';
       },
-    })
+    }),
   );
   const server = app.listen();
 
@@ -119,7 +119,7 @@ describe('Static Cache', () => {
     app.use(
       staticCache(path.join(__dirname, '..'), {
         dir: __dirname,
-      })
+      }),
     );
     const server = app.listen();
     await request(server).get('/src/index.ts').expect(200);
@@ -130,7 +130,7 @@ describe('Static Cache', () => {
     app.use(
       staticCache({
         dir: path.join(__dirname, '..'),
-      })
+      }),
     );
     const server = app.listen();
     await request(server).get('/src/index.ts').expect(200);
@@ -141,7 +141,7 @@ describe('Static Cache', () => {
     app.use(
       staticCache({
         dir: path.join(__dirname, '..'),
-      })
+      }),
     );
     const server = app.listen();
     await request(server).get('//src/index.ts').expect(200);
@@ -435,7 +435,7 @@ describe('Static Cache', () => {
       staticCache({
         dir: path.join(__dirname, '..'),
         filter: ['index.js'],
-      })
+      }),
     );
     const server = app.listen();
     await request(server).get('/README.md').expect(404);
@@ -449,7 +449,7 @@ describe('Static Cache', () => {
         filter(file: string) {
           return file.indexOf('index.js') === 0;
         },
-      })
+      }),
     );
     const server = app.listen();
     await request(server).get('/README.md').expect(404);
@@ -464,7 +464,7 @@ describe('Static Cache', () => {
         preload: false,
         dynamic: true,
         files,
-      })
+      }),
     );
     assert.deepEqual(files, {});
     const res = await request(app.listen()).get('/package.json').expect(200);
@@ -488,7 +488,7 @@ describe('Static Cache', () => {
           '\\package': '\\package.json',
         },
         files,
-      })
+      }),
     );
     assert.deepEqual(files, {});
     const res = await request(app.listen()).get('/package').expect(200);
@@ -512,7 +512,7 @@ describe('Static Cache', () => {
         dir: __dirname,
         preload: false,
         dynamic: true,
-      })
+      }),
     );
     await request(app.listen()).get('/%2E%2E/package.json').expect(404);
   });

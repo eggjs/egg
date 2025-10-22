@@ -17,9 +17,9 @@ function isAop(mw: MiddlewareFunc | EggProtoImplClass<IAdvice>) {
 }
 
 function isAopTypeOrMiddlewareType(
-  middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>
+  middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>,
 ): MiddlewareType {
-  const adviceCount = middlewares.filter(t => isAop(t)).length;
+  const adviceCount = middlewares.filter((t) => isAop(t)).length;
   if (adviceCount) {
     if (adviceCount === middlewares.length) {
       return MiddlewareType.AOP;
@@ -31,7 +31,7 @@ function isAopTypeOrMiddlewareType(
 
 export function Middleware(...middlewares: Array<MiddlewareFunc> | Array<EggProtoImplClass<IAdvice>>) {
   function functionTypeClassMiddleware(constructor: EggProtoImplClass) {
-    middlewares.forEach(mid => {
+    middlewares.forEach((mid) => {
       ControllerInfoUtil.addControllerMiddleware(mid as MiddlewareFunc, constructor);
     });
   }
@@ -46,11 +46,11 @@ export function Middleware(...middlewares: Array<MiddlewareFunc> | Array<EggProt
     assert.equal(
       typeof propertyKey,
       'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`,
     );
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;
-    middlewares.forEach(mid => {
+    middlewares.forEach((mid) => {
       MethodInfoUtil.addMethodMiddleware(mid as MiddlewareFunc, controllerClazz, methodName);
     });
   }

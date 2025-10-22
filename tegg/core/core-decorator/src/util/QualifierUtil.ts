@@ -9,7 +9,7 @@ export class QualifierUtil {
     const qualifiers = MetadataUtil.initOwnMapMetaData(
       QUALIFIER_META_DATA,
       clazz,
-      new Map<QualifierAttribute, QualifierValue>()
+      new Map<QualifierAttribute, QualifierValue>(),
     );
     qualifiers.set(attribute, value);
   }
@@ -17,7 +17,7 @@ export class QualifierUtil {
   static getProtoQualifiers(clazz: EggProtoImplClass): QualifierInfo[] {
     const qualifiers: Map<QualifierAttribute, QualifierValue> | undefined = MetadataUtil.getMetaData(
       QUALIFIER_META_DATA,
-      clazz
+      clazz,
     );
     if (!qualifiers) {
       return [];
@@ -37,7 +37,7 @@ export class QualifierUtil {
     property: PropertyKey | undefined,
     parameterIndex: number | undefined,
     attribute: QualifierAttribute,
-    value: QualifierValue
+    value: QualifierValue,
   ): void {
     if (typeof parameterIndex === 'number') {
       const argNames = ObjectUtils.getConstructorArgNameList(clazz);
@@ -52,12 +52,12 @@ export class QualifierUtil {
     clazz: EggProtoImplClass,
     property: PropertyKey,
     attribute: QualifierAttribute,
-    value: QualifierValue
+    value: QualifierValue,
   ): void {
     const properQualifiers = MetadataUtil.initOwnMapMetaData(
       PROPERTY_QUALIFIER_META_DATA,
       clazz,
-      new Map<PropertyKey, Map<QualifierAttribute, QualifierValue>>()
+      new Map<PropertyKey, Map<QualifierAttribute, QualifierValue>>(),
     );
     const qualifiers = MapUtil.getOrStore(properQualifiers, property, new Map<PropertyKey, QualifierValue>());
     qualifiers.set(attribute, value);
@@ -83,7 +83,7 @@ export class QualifierUtil {
   static getQualifierValue(clazz: EggProtoImplClass, attribute: QualifierAttribute): QualifierValue | undefined {
     const qualifiers: Map<QualifierAttribute, QualifierValue> | undefined = MetadataUtil.getMetaData(
       QUALIFIER_META_DATA,
-      clazz
+      clazz,
     );
     return qualifiers?.get(attribute);
   }
@@ -91,7 +91,7 @@ export class QualifierUtil {
   static getProperQualifier(
     clazz: EggProtoImplClass,
     property: PropertyKey,
-    attribute: QualifierAttribute
+    attribute: QualifierAttribute,
   ): QualifierValue | undefined {
     const properQualifiers: Map<PropertyKey, Map<QualifierAttribute, QualifierValue>> | undefined =
       MetadataUtil.getMetaData(PROPERTY_QUALIFIER_META_DATA, clazz);
@@ -101,7 +101,7 @@ export class QualifierUtil {
 
   static matchQualifiers(clazzQualifiers: QualifierInfo[], requestQualifiers: QualifierInfo[]): boolean {
     for (const request of requestQualifiers) {
-      if (!clazzQualifiers.find(t => t.attribute === request.attribute && t.value === request.value)) {
+      if (!clazzQualifiers.find((t) => t.attribute === request.attribute && t.value === request.value)) {
         return false;
       }
     }

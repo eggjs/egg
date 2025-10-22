@@ -11,7 +11,7 @@ export class ModelMetadata {
     dataSource: string | undefined,
     tableName: string,
     attributes: Array<AttributeMeta>,
-    indices: Array<IndexMeta>
+    indices: Array<IndexMeta>,
   ) {
     this.dataSource = dataSource;
     this.tableName = tableName;

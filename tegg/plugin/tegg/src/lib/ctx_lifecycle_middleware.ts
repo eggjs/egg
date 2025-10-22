@@ -27,7 +27,7 @@ export async function ctxLifecycleMiddleware(ctx: Context, next: Next): Promise<
     await next();
   } finally {
     if (teggCtx.destroy) {
-      teggCtx.destroy(lifecycleCtx).catch(e => {
+      teggCtx.destroy(lifecycleCtx).catch((e) => {
         e.message = `[tegg/ctxLifecycleMiddleware] destroy tegg ctx failed: ${e.message}`;
         ctx.logger.error(e);
       });

@@ -1,6 +1,6 @@
 const { scheduler } = require('node:timers/promises');
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/', async function () {
     this.logger.debug('hi %s %s', this.method, this.url);
     // wait for writing to file

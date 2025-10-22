@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('helper', '/helper', async function () {
     await this.render('helper.tpl', { user: 'egg' });
   });

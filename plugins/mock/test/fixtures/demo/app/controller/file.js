@@ -1,6 +1,6 @@
 const assert = require('assert');
 
-module.exports = app => {
+module.exports = (app) => {
   return async function file(ctx) {
     const ctxFromStorage = app.ctxStorage.getStore();
     assert(ctxFromStorage !== ctx);

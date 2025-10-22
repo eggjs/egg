@@ -13,7 +13,7 @@ export class MultiPrimaryKey {
       primaryKey: true,
       autoIncrement: true,
       comment: 'the primary key',
-    }
+    },
   )
   id1: number;
 
@@ -25,7 +25,7 @@ export class MultiPrimaryKey {
       primaryKey: true,
       autoIncrement: true,
       comment: 'the primary key',
-    }
+    },
   )
   id2: number;
 
@@ -36,7 +36,7 @@ export class MultiPrimaryKey {
     },
     {
       uniqueKey: true,
-    }
+    },
   )
   name: string;
 }

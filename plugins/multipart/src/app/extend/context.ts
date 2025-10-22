@@ -101,7 +101,7 @@ export default class MultipartContext extends Context {
         defParamCharset: defaultParamCharset,
         checkFile,
       },
-      options
+      options,
     );
 
     // https://github.com/mscdex/busboy#busboy-methods
@@ -114,7 +114,7 @@ export default class MultipartContext extends Context {
         fileSize,
         files,
       },
-      options.limits
+      options.limits,
     );
 
     // mount asyncIterator, so we can use `for await` to get parts
@@ -137,7 +137,7 @@ export default class MultipartContext extends Context {
           if (!part.filename) {
             ctx.coreLogger.debug(
               '[egg-multipart] file field `%s` is upload without file stream, will drop it.',
-              part.fieldname
+              part.fieldname,
             );
             await pipeline(part, new PassThrough());
             continue;
@@ -281,7 +281,7 @@ export default class MultipartContext extends Context {
       const err = new MultipartFileTooLargeError(
         'Request file too large, please check multipart config',
         stream.fields,
-        stream.filename
+        stream.filename,
       );
       if (stream.listenerCount('error') > 0) {
         stream.emit('error', err);

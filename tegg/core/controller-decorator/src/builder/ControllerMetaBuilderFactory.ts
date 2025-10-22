@@ -14,14 +14,14 @@ export class ControllerMetaBuilderFactory {
 
   static registerControllerMetaBuilder(
     controllerType: ControllerTypeLike,
-    controllerBuilderCreator: ControllerMetaBuilderCreator
+    controllerBuilderCreator: ControllerMetaBuilderCreator,
   ): void {
     this.builderCreatorMap.set(controllerType, controllerBuilderCreator);
   }
 
   static createControllerMetaBuilder(
     clazz: EggProtoImplClass,
-    controllerType?: ControllerTypeLike
+    controllerType?: ControllerTypeLike,
   ): ControllerMetaBuilder | undefined {
     if (!controllerType) {
       controllerType = ControllerInfoUtil.getControllerType(clazz);

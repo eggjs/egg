@@ -98,7 +98,7 @@ export class Cookie {
     assert(!this.attrs.domain || fieldContentRegExp.test(this.attrs.domain), 'argument option domain is invalid');
     assert(
       !this.attrs.sameSite || this.attrs.sameSite === true || sameSiteRegExp.test(this.attrs.sameSite),
-      'argument option sameSite is invalid'
+      'argument option sameSite is invalid',
     );
     assert(!this.attrs.priority || PRIORITY_REGEXP.test(this.attrs.priority), 'argument option priority is invalid');
     if (!value) {

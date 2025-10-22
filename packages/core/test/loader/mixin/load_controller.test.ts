@@ -57,7 +57,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.callGeneratorFunction[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#callGeneratorFunction()'
+          classFilePath + '#callGeneratorFunction()',
       );
 
       return request(app.callback()).get('/object-generator-function').expect(200).expect('done');
@@ -69,7 +69,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.subObject.callGeneratorFunction[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#subObject.callGeneratorFunction()'
+          classFilePath + '#subObject.callGeneratorFunction()',
       );
 
       return request(app.callback()).get('/subObject-generator-function').expect(200).expect('done');
@@ -81,7 +81,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.subObject.subSubObject.callGeneratorFunction[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#subObject.subSubObject.callGeneratorFunction()'
+          classFilePath + '#subObject.subSubObject.callGeneratorFunction()',
       );
 
       return request(app.callback()).get('/subSubObject-generator-function').expect(200).expect('done');
@@ -93,7 +93,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.callGeneratorFunctionWithArg[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#callGeneratorFunctionWithArg()'
+          classFilePath + '#callGeneratorFunctionWithArg()',
       );
 
       return request(app.callback()).get('/object-generator-function-arg').expect(200).expect('done');
@@ -105,7 +105,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.callAsyncFunction[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#callAsyncFunction()'
+          classFilePath + '#callAsyncFunction()',
       );
 
       return request(app.callback()).get('/object-async-function').expect(200).expect('done');
@@ -117,7 +117,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/object.js');
       assert(
         app.controller.object.callAsyncFunctionWithArg[app.loader.FileLoader.FULLPATH] ===
-          classFilePath + '#callAsyncFunctionWithArg()'
+          classFilePath + '#callAsyncFunctionWithArg()',
       );
 
       return request(app.callback()).get('/object-async-function-arg').expect(200).expect('done');
@@ -143,7 +143,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class.js');
       assert(
         app.controller.class.callFunction[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callFunction()`
+          `${classFilePath}#HomeController.callFunction()`,
       );
 
       return request(app.callback()).get('/class-function').expect(200).expect('done');
@@ -155,7 +155,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class.js');
       assert(
         app.controller.class.callGeneratorFunction[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callGeneratorFunction()`
+          `${classFilePath}#HomeController.callGeneratorFunction()`,
       );
 
       return request(app.callback()).get('/class-generator-function').expect(200).expect('done');
@@ -167,7 +167,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class.js');
       assert(
         app.controller.class.callGeneratorFunctionWithArg[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callGeneratorFunctionWithArg()`
+          `${classFilePath}#HomeController.callGeneratorFunctionWithArg()`,
       );
 
       return request(app.callback()).get('/class-generator-function-arg').expect(200).expect('done');
@@ -179,7 +179,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class.js');
       assert(
         app.controller.class.callAsyncFunction[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callAsyncFunction()`
+          `${classFilePath}#HomeController.callAsyncFunction()`,
       );
 
       return request(app.callback()).get('/class-async-function').expect(200).expect('done');
@@ -191,7 +191,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class.js');
       assert(
         app.controller.class.callAsyncFunctionWithArg[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callAsyncFunctionWithArg()`
+          `${classFilePath}#HomeController.callAsyncFunctionWithArg()`,
       );
 
       return request(app.callback()).get('/class-async-function-arg').expect(200).expect('done');
@@ -202,7 +202,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class_inherited.js');
       assert(
         app.controller.classInherited.callInheritedFunction[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callInheritedFunction()`
+          `${classFilePath}#HomeController.callInheritedFunction()`,
       );
 
       return request(app.callback()).get('/class-inherited-function').expect(200).expect('inherited');
@@ -214,7 +214,7 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       const classFilePath = path.join(app.baseDir, 'app/controller/class_inherited.js');
       assert(
         app.controller.classInherited.callOverriddenFunction[app.loader.FileLoader.FULLPATH] ===
-          `${classFilePath}#HomeController.callOverriddenFunction()`
+          `${classFilePath}#HomeController.callOverriddenFunction()`,
       );
 
       return request(app.callback()).get('/class-overridden-function').expect(200).expect('own');
@@ -233,7 +233,8 @@ describe('test/loader/mixin/load_controller.test.ts', () => {
       assert(app.controller.classWrapFunction.get.name === 'classControllerMiddleware');
       const classFilePath = path.join(app.baseDir, 'app/controller/class_wrap_function.js');
       assert(
-        app.controller.classWrapFunction.get[app.loader.FileLoader.FULLPATH] === `${classFilePath}#HomeController.get()`
+        app.controller.classWrapFunction.get[app.loader.FileLoader.FULLPATH] ===
+          `${classFilePath}#HomeController.get()`,
       );
 
       return request(app.callback()).get('/class-wrap-function').expect(200).expect('done');

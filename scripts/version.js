@@ -19,7 +19,7 @@ const isDryRun = args.includes('--dry-run');
 
 // Get prerelease tag if provided
 let prereleaseTag = 'beta'; // default
-const prereleaseArg = args.find(arg => arg.startsWith('--prerelease-tag='));
+const prereleaseArg = args.find((arg) => arg.startsWith('--prerelease-tag='));
 if (prereleaseArg) {
   prereleaseTag = prereleaseArg.split('=')[1];
 }
@@ -29,7 +29,7 @@ const validPrereleaseTags = ['alpha', 'beta', 'rc'];
 
 if (!validVersionTypes.includes(versionType)) {
   console.error(
-    `Usage: node scripts/version.js [${validVersionTypes.join('|')}] [--prerelease-tag=alpha|beta|rc] [--dry-run]`
+    `Usage: node scripts/version.js [${validVersionTypes.join('|')}] [--prerelease-tag=alpha|beta|rc] [--dry-run]`,
   );
   process.exit(1);
 }
@@ -100,7 +100,7 @@ packageFolders.forEach(({ folder, directory }) => {
 });
 
 // Update root package.json version (use egg's version as reference)
-const eggVersion = updatedVersions.find(pkg => pkg.name === 'egg')?.newVersion;
+const eggVersion = updatedVersions.find((pkg) => pkg.name === 'egg')?.newVersion;
 if (eggVersion) {
   const rootPackageJsonPath = path.join(__dirname, '..', 'package.json');
   const rootPackageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf8'));
@@ -133,7 +133,7 @@ try {
   // Create commit message with [skip ci] to avoid triggering CI for release commits
   const commitMessage = `chore(release): ${versionType} version bump
 
-${updatedVersions.map(pkg => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
+${updatedVersions.map((pkg) => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 
   // Commit changes
   console.log('\n💾 Creating version commit...');
@@ -153,7 +153,7 @@ ${updatedVersions.map(pkg => `- ${pkg.name}@${pkg.newVersion}`).join('\n')}`;
 
   // Restore backup files
   console.log('🔄 Restoring original files...');
-  backups.forEach(backup => {
+  backups.forEach((backup) => {
     fs.writeFileSync(backup.path, backup.content);
   });
 

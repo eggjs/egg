@@ -235,7 +235,7 @@ export class ErrorView {
    */
   serializeData(
     stack: Frame[],
-    frameFormatter: (frame: Frame, index: number) => any
+    frameFormatter: (frame: Frame, index: number) => any,
   ): {
     code: any;
     message: string;
@@ -253,7 +253,7 @@ export class ErrorView {
       message,
       name: this.error.name,
       status: this.error.status,
-      frames: stack instanceof Array ? stack.filter(frame => frame.getFileName()).map(frameFormatter) : [],
+      frames: stack instanceof Array ? stack.filter((frame) => frame.getFileName()).map(frameFormatter) : [],
     };
   }
 
@@ -270,7 +270,7 @@ export class ErrorView {
   } {
     const headers: { key: string; value: string | string[] | undefined }[] = [];
 
-    Object.keys(this.request.headers).forEach(key => {
+    Object.keys(this.request.headers).forEach((key) => {
       if (this._filterHeaders.includes(key)) {
         return;
       }
@@ -281,7 +281,7 @@ export class ErrorView {
     });
 
     const parsedCookies = parse(this.request.headers.cookie || '');
-    const cookies = Object.keys(parsedCookies).map(key => {
+    const cookies = Object.keys(parsedCookies).map((key) => {
       return { key, value: parsedCookies[key] };
     });
 

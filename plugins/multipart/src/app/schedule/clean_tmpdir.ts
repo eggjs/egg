@@ -21,7 +21,7 @@ export default (app: Application): typeof Subscription => {
       if (
         await fs.access(dir).then(
           () => true,
-          () => false
+          () => false,
         )
       ) {
         ctx.coreLogger.info('[@eggjs/multipart:CleanTmpdir] removing tmpdir: %j', dir);

@@ -2,7 +2,7 @@
 
 const MockClient = require('./mock_client');
 
-module.exports = agent => {
+module.exports = (agent) => {
   const done = agent.readyCallback('agent_configclient');
   const options = agent.config.mock;
 

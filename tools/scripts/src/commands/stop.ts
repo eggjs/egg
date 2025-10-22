@@ -46,7 +46,7 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
     this.log(`stopping egg application${flags.title ? ` with --title=${flags.title}` : ''}`);
 
     // node ~/eggjs/scripts/scripts/start-cluster.cjs {"title":"egg-server","workers":4,"port":7001,"baseDir":"~/eggjs/test/showcase","framework":"~/eggjs/test/showcase/node_modules/egg"}
-    let processList = await this.findNodeProcesses(item => {
+    let processList = await this.findNodeProcesses((item) => {
       const cmd = item.cmd;
       const matched = flags.title
         ? cmd.includes('start-cluster') && cmd.includes(format(osRelated.titleTemplate, flags.title))
@@ -56,7 +56,7 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
       }
       return matched;
     });
-    let pids = processList.map(x => x.pid);
+    let pids = processList.map((x) => x.pid);
 
     if (pids.length) {
       this.log('got master pid %j, list:', pids);
@@ -75,7 +75,7 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
     // node --debug-port=5856 /Users/tz/Workspaces/eggjs/test/showcase/node_modules/_egg-cluster@1.8.0@egg-cluster/lib/agent_worker.js {"framework":"/Users/tz/Workspaces/eggjs/test/showcase/node_modules/egg","baseDir":"/Users/tz/Workspaces/eggjs/test/showcase","port":7001,"workers":2,"plugins":null,"https":false,"key":"","cert":"","title":"egg-server","clusterPort":52406}
     // node /Users/tz/Workspaces/eggjs/test/showcase/node_modules/_egg-cluster@1.8.0@egg-cluster/lib/app_worker.js {"framework":"/Users/tz/Workspaces/eggjs/test/showcase/node_modules/egg","baseDir":"/Users/tz/Workspaces/eggjs/test/showcase","port":7001,"workers":2,"plugins":null,"https":false,"key":"","cert":"","title":"egg-server","clusterPort":52406}
     // ~/bin/node --no-deprecation --trace-warnings ~/eggjs/examples/helloworld/node_modules/@eggjs/cluster/dist/commonjs/agent_worker.js {"baseDir":"~/eggjs/examples/helloworld","startMode":"process","framework":"~/eggjs/examples/helloworld/node_modules/egg","title":"egg-server-helloworld","workers":10,"clusterPort":58977}
-    processList = await this.findNodeProcesses(item => {
+    processList = await this.findNodeProcesses((item) => {
       const cmd = item.cmd;
       const matched = flags.title
         ? (osRelated.appWorkerPath.test(cmd) || osRelated.agentWorkerPath.test(cmd)) &&
@@ -86,7 +86,7 @@ export default class Stop<T extends typeof Stop> extends BaseCommand<T> {
       }
       return matched;
     });
-    pids = processList.map(x => x.pid);
+    pids = processList.map((x) => x.pid);
 
     if (pids.length) {
       this.log('got worker/agent pids %j that is not killed by master', pids);

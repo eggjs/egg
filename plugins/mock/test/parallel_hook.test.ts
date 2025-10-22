@@ -17,7 +17,7 @@ describe.skip('test/bootstrap-plugin.test.ts', () => {
           ['-r', getFixtures('../lib/parallel/agent_register'), '--parallel', '--jobs', '2', '--exit'],
           {
             cwd: getFixtures('apps/parallel-test'),
-          }
+          },
         )
         // .debug()
         .expect('code', 0)

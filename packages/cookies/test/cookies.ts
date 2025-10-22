@@ -5,7 +5,7 @@ import { Cookies, type DefaultCookieOptions } from '../src/index.ts';
 export default function createCookie(
   req?: any,
   options?: { keys?: string[] | null; secure?: boolean } | null,
-  defaultCookieOptions?: DefaultCookieOptions
+  defaultCookieOptions?: DefaultCookieOptions,
 ): Cookies {
   options = options || {};
   let keys = options.keys;

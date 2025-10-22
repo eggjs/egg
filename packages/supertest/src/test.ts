@@ -77,7 +77,7 @@ export class Test extends Request {
   expect(
     a: number | string | RegExp | object | AssertFunction,
     b?: string | number | RegExp | CallbackFunction,
-    c?: CallbackFunction
+    c?: CallbackFunction,
   ): Test {
     // callback
     if (typeof a === 'function') {
@@ -108,7 +108,7 @@ export class Test extends Request {
     }
 
     // multiple statuses
-    if (Array.isArray(a) && a.length > 0 && a.every(val => typeof val === 'number')) {
+    if (Array.isArray(a) && a.length > 0 && a.every((val) => typeof val === 'number')) {
       // .expect([200, 300])
       this._asserts.push(wrapAssertFn(this._assertStatusArray.bind(this, a)));
       return this;
@@ -296,14 +296,14 @@ export class Test extends Request {
         return new AssertError(
           'expected "' + field + '" matching ' + fieldExpected + ', got "' + actual + '"',
           header,
-          actual
+          actual,
         );
       }
     } else {
       return new AssertError(
         'expected "' + field + '" of "' + fieldExpected + '", got "' + actual + '"',
         header,
-        actual
+        actual,
       );
     }
   }
@@ -318,7 +318,7 @@ export class Test extends Request {
       return new AssertError(
         'expected ' + status + ' "' + a + '", got ' + res.status + ' "' + b + '"',
         status,
-        res.status
+        res.status,
       );
     }
   }
@@ -333,7 +333,7 @@ export class Test extends Request {
       return new AssertError(
         'expected one of "' + expectedList + '", got ' + res.status + ' "' + b + '"',
         statusArray,
-        res.status
+        res.status,
       );
     }
   }

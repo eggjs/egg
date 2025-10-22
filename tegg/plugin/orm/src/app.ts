@@ -25,7 +25,7 @@ export default class OrmAppBootHook implements ILifecycleBoot {
     this.modelProtoHook = new ModelProtoHook(this.modelProtoManager);
     this.app.eggPrototypeCreatorFactory.registerPrototypeCreator(
       MODEL_PROTO_IMPL_TYPE,
-      SingletonModelProto.createProto
+      SingletonModelProto.createProto,
     );
     this.app.leoricRegister = this.leoricRegister;
     this.ormLoadUnitHook = new ORMLoadUnitHook();

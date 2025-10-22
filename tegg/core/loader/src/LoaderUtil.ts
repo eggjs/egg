@@ -33,9 +33,9 @@ export class LoaderUtil {
   static filePattern(): string[] {
     const extensions = LoaderUtil.supportExtensions();
     const extensionPattern = extensions
-      .map(t => t.substring(1))
+      .map((t) => t.substring(1))
       // JSON file will not export class
-      .filter(t => t !== 'json')
+      .filter((t) => t !== 'json')
       .join('|');
 
     const filePattern = [

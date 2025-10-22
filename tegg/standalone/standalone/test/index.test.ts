@@ -213,7 +213,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const runner = new Runner(fixturePath);
       await assert.rejects(
         runner.init(),
-        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/
+        /EggPrototypeNotFound: Object doesNotExist not found in LOAD_UNIT:invalidInject/,
       );
       await runner.destroy();
     });
@@ -226,7 +226,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       const msg = await main(fixturePath);
       assert.deepEqual(
         msg,
-        `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`
+        `withCrossAroundResult(withPointAroundResult(hello withPointAroundParam(withCrosscutAroundParam(aop))${JSON.stringify(pointcutAdviceParams)})${JSON.stringify(crosscutAdviceParams)})`,
       );
     });
   });
@@ -308,7 +308,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
           assert.deepEqual(err.errorData, {});
           assert.equal(
             err.currentSchema,
-            '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}'
+            '{"type":"object","properties":{"fullname":{"transform":["trim"],"maxLength":100,"type":"string"},"skipDependencies":{"type":"boolean"},"registryName":{"type":"string"}},"required":["fullname","skipDependencies"]}',
           );
           assert.deepEqual(err.errors, [
             {
@@ -322,7 +322,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
             },
           ]);
           return true;
-        }
+        },
       );
     });
 
@@ -345,7 +345,7 @@ describe('standalone/standalone/test/index.test.ts', () => {
       if (process.platform === 'win32') {
         fooPath = pathToFileURL(fooPath).toString();
       }
-      Foo = await import(fooPath).then(m => m.Foo);
+      Foo = await import(fooPath).then((m) => m.Foo);
     });
 
     it('should work', async () => {

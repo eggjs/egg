@@ -60,9 +60,9 @@ export class AppLoadUnitInstance implements LoadUnitInstance {
     }
     this.eggObjectMap.clear();
     await Promise.all(
-      objs.map(async obj => {
+      objs.map(async (obj) => {
         await EggObjectFactory.destroyObject(obj);
-      })
+      }),
     );
   }
 
@@ -102,5 +102,5 @@ export class AppLoadUnitInstance implements LoadUnitInstance {
 
 LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
   EggLoadUnitType.APP,
-  AppLoadUnitInstance.createModuleLoadUnitInstance
+  AppLoadUnitInstance.createModuleLoadUnitInstance,
 );

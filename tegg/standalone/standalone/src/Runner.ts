@@ -171,7 +171,7 @@ export class Runner {
     });
     LoadUnitInstanceFactory.registerLoadUnitInstanceClass(
       StandaloneLoadUnitType,
-      ModuleLoadUnitInstance.createModuleLoadUnitInstance
+      ModuleLoadUnitInstance.createModuleLoadUnitInstance,
     );
     const standaloneLoadUnit = await LoadUnitFactory.createLoadUnit(
       'MockStandaloneLoadUnitPath',
@@ -180,7 +180,7 @@ export class Runner {
         async load(): Promise<EggProtoImplClass[]> {
           return [];
         },
-      }
+      },
     );
     const loadUnits = await this.loadUnitLoader.load();
     return [standaloneLoadUnit, ...loadUnits];
@@ -193,7 +193,7 @@ export class Runner {
         const module = typeof baseDir === 'string' ? { baseDir } : baseDir;
         return list.concat(...ModuleConfigUtil.readModuleReference(module.baseDir, module));
       },
-      [] as readonly ModuleReference[]
+      [] as readonly ModuleReference[],
     );
   }
 
@@ -277,7 +277,7 @@ export class Runner {
         return await runner.main();
       } finally {
         if (ctx.destroy) {
-          ctx.destroy(lifecycle).catch(e => {
+          ctx.destroy(lifecycle).catch((e) => {
             e.message = `[tegg/standalone] destroy tegg context failed: ${e.message}`;
             console.warn(e);
           });

@@ -22,7 +22,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
     // pids of agent or app managed by master
     // - retrieve app worker pids when it's an agent worker
     // - retrieve agent worker pids when it's an app worker
-    this.on('egg-pids', workerIds => {
+    this.on('egg-pids', (workerIds) => {
       debug('[%s:%s] got egg-pids %j', this.egg.type, this.pid, workerIds);
       this.opids = workerIds.map((workerId: number) => String(workerId));
     });
@@ -140,7 +140,7 @@ export class Messenger extends BaseMessenger implements IMessenger {
         this.pid,
         message.action,
         message.data,
-        message.receiverWorkerId ?? message.receiverPid
+        message.receiverWorkerId ?? message.receiverPid,
       );
       this.emit(message.action, message.data);
     } else {

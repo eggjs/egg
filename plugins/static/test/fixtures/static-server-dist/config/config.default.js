@@ -1,4 +1,4 @@
-module.exports = info => {
+module.exports = (info) => {
   return {
     keys: 'test key',
     static: {

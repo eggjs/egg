@@ -34,7 +34,7 @@ httpClient
     }
     process.exit(0);
   })
-  .catch(err => {
+  .catch((err) => {
     // ignore ECONNREFUSED error on mockRestore
     if (method === 'mockRestore' && err.message.includes('ECONNREFUSED')) {
       process.exit(0);

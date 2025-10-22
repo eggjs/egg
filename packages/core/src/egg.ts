@@ -190,9 +190,9 @@ export class EggCore extends KoaApplication {
       app: this,
       logger: this.console,
     });
-    this.lifecycle.on('error', err => this.emit('error', err));
-    this.lifecycle.on('ready_timeout', id => this.emit('ready_timeout', id));
-    this.lifecycle.on('ready_stat', data => this.emit('ready_stat', data));
+    this.lifecycle.on('error', (err) => this.emit('error', err));
+    this.lifecycle.on('ready_timeout', (id) => this.emit('ready_timeout', id));
+    this.lifecycle.on('ready_stat', (data) => this.emit('ready_stat', data));
 
     /**
      * The loader instance, the default class is {@link EggLoader}.
@@ -204,7 +204,7 @@ export class EggCore extends KoaApplication {
     let Loader: typeof EggLoader;
     if (EGG_LOADER in this) {
       this.deprecate(
-        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead'
+        'Symbol.for("egg#loader") is deprecated, please use "override the `customEggLoader()` method" instead',
       );
       Loader = this[EGG_LOADER] as typeof EggLoader;
     } else {
@@ -331,7 +331,7 @@ export class EggCore extends KoaApplication {
    */
   beforeStart(scope: Fun, name?: string): void {
     this.deprecate(
-      '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`beforeStart` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
     this.lifecycle.registerBeforeStart(scope, name ?? '');
   }
@@ -376,7 +376,7 @@ export class EggCore extends KoaApplication {
    */
   readyCallback(name: string, opts: object): (...args: unknown[]) => void {
     this.deprecate(
-      '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`readyCallback` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
     return this.lifecycle.legacyReadyCallback(name, opts);
   }
@@ -395,7 +395,7 @@ export class EggCore extends KoaApplication {
    */
   beforeClose(fn: Fun, name?: string): void {
     this.deprecate(
-      '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles'
+      '`beforeClose` was deprecated, please use "Life Cycles" instead, see https://www.eggjs.org/advanced/loader#life-cycles',
     );
     this.lifecycle.registerBeforeClose(fn, name);
   }
@@ -522,7 +522,7 @@ export class EggCore extends KoaApplication {
     name: string,
     prefix: string,
     middleware: MiddlewareFunc,
-    controller: string | ResourcesController
+    controller: string | ResourcesController,
   ): EggCore;
 
   resources(...args: any): EggCore {
@@ -539,7 +539,7 @@ export class EggCore extends KoaApplication {
     path: string | RegExp | (string | RegExp)[],
     methods: string[],
     middleware: MiddlewareFunc | MiddlewareFunc[],
-    opts?: RegisterOptions
+    opts?: RegisterOptions,
   ): this {
     this.router.register(path, methods, middleware, opts);
     return this;

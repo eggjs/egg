@@ -163,7 +163,7 @@ export class Application extends Emitter {
       throw new TypeError(
         `Support for generators was removed, middleware: ${name}. ` +
           'See the documentation for examples of how to convert old middleware ' +
-          'https://github.com/koajs/koa/blob/master/docs/migration.md'
+          'https://github.com/koajs/koa/blob/master/docs/migration.md',
       );
     }
     debug('use %o #%d', name, this.middleware.length);

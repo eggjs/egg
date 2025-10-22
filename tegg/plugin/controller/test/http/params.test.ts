@@ -31,7 +31,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
         desc: 'mock-desc',
       })
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.success).toBe(true);
         expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
       });
@@ -48,7 +48,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
         desc: 'mock-desc',
       })
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.success).toBe(true);
         expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
         expect(res.body.sessionId).toBe('mock-session-id');
@@ -61,7 +61,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .httpRequest()
       .get('/apps?name=foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
         expect(res.body.app).toEqual({
           name: 'foo',
@@ -76,7 +76,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .httpRequest()
       .get('/apps/foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
         expect(res.body.app).toEqual({
           name: 'foo',
@@ -91,7 +91,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .httpRequest()
       .get('/apps/foo')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.traceId).match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
         expect(res.body.app).toEqual({
           name: 'foo',
@@ -106,7 +106,7 @@ describe('plugin/controller/test/http/params.test.ts', () => {
       .httpRequest()
       .get('/foo/fooId/bar/barId')
       .expect(200)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toEqual({
           fooId: 'fooId',
           barId: 'barId',

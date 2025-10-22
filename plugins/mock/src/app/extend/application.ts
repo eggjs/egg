@@ -200,7 +200,7 @@ export default abstract class ApplicationUnittest extends Application {
       // but the mock function is normal function, need to change it return a promise
       if (type === 'async' && !isAsyncFunction(fn)) {
         mock(obj, name, function (this: any, ...args: any[]) {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             resolve(fn.apply(this, args));
           });
         });
@@ -322,7 +322,7 @@ export default abstract class ApplicationUnittest extends Application {
   mockHttpclient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
@@ -334,7 +334,7 @@ export default abstract class ApplicationUnittest extends Application {
   mockHttpClient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);
@@ -349,7 +349,7 @@ export default abstract class ApplicationUnittest extends Application {
   mockUrllib(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     this.deprecate('[@eggjs/mock] Please use app.mockHttpClient instead of app.mockUrllib');
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
@@ -461,12 +461,12 @@ export default abstract class ApplicationUnittest extends Application {
     if (expectOrNot) {
       assert(
         match,
-        `Can't find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`
+        `Can't find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`,
       );
     } else {
       assert(
         !match,
-        `Find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`
+        `Find ${type}:"${str}" in ${filepath}, log content: ...${content.substring(content.length - 500)}`,
       );
     }
   }

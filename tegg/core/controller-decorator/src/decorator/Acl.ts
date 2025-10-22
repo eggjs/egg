@@ -13,7 +13,7 @@ export function Acl(code?: string) {
     assert.equal(
       typeof propertyKey,
       'string',
-      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`
+      `[controller/${target.name}] expect method name be typeof string, but now is ${String(propertyKey)}`,
     );
     const controllerClazz = target.constructor as EggProtoImplClass;
     const methodName = propertyKey as string;

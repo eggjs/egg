@@ -49,7 +49,7 @@ export default class DevelopmentEventSource extends BaseEventSource {
             }
             this.#onFsWatchChange(event, changePath);
           }
-        }
+        },
       );
       // 保存 handler，用于解除监听
       this.#fileWatching.set(file, handler);

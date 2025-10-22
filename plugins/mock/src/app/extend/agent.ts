@@ -22,7 +22,7 @@ export default abstract class AgentUnittest extends Agent {
   mockHttpclient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     return this.mockHttpClient(mockUrl, mockMethod, mockResult);
   }
@@ -34,7 +34,7 @@ export default abstract class AgentUnittest extends Agent {
   mockHttpClient(
     mockUrl: string | RegExp,
     mockMethod: string | string[] | MockResultOptions | MockResultFunction,
-    mockResult?: MockResultOptions | MockResultFunction | string
+    mockResult?: MockResultOptions | MockResultFunction | string,
   ): this {
     if (!this._mockHttpClient) {
       this._mockHttpClient = createMockHttpClient(this);
